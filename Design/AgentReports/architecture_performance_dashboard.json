@@ -1,41 +1,32 @@
 {
-  "dashboardRevision": "5c7ed147c4f49c1a5bc6ea0b697922cd74845277",
-  "gateState": "rejected",
+  "dashboardRevision": "9a0aa14252e6559680328e520d26c16bfc7b444e",
+  "gateState": "accepted",
   "inputCount": 7,
   "inputs": [
     {
       "category": "architecture",
-      "claimedEnvironmentIdentitySha256": null,
-      "claimedRevision": null,
-      "claimedRevisionField": null,
-      "dirty": null,
-      "disposition": "rejected",
-      "freshness": "unknown",
+      "claimedEnvironmentIdentitySha256": "1750156ad389d4f28a392531d19339a96140da898d5c2dfd1920c38d6486239e",
+      "claimedRevision": "9a0aa14252e6559680328e520d26c16bfc7b444e",
+      "claimedRevisionField": "exactCommit",
+      "dirty": false,
+      "disposition": "accepted",
+      "freshness": "current",
       "id": "assembly-dependency-report",
       "laneState": "active",
       "metrics": {
-        "ambiguousTypeTokenOccurrenceCount": 66,
+        "ambiguousTypeTokenOccurrenceCount": 70,
         "assemblyCount": 21,
-        "declaredTypeCount": 2731,
-        "distinctCrossDomainTypeReferenceCount": 2925,
-        "externalReferenceCount": 100,
+        "declaredTypeCount": 2877,
+        "distinctCrossDomainTypeReferenceCount": 3069,
+        "externalReferenceCount": 102,
         "firstPartyEdgeCount": 92,
-        "resolvedCrossDomainTypeOccurrenceCount": 33509,
-        "sourceFileCount": 1340,
+        "resolvedCrossDomainTypeOccurrenceCount": 34599,
+        "sourceFileCount": 1436,
         "unownedScopedSourceFileCount": 0
       },
       "ownerValidatorId": "architecture-assembly-report",
       "path": "Design/AgentReports/2026-07-10_aph-700_first_party_assembly_dependencies.json",
-      "reasons": [
-        {
-          "code": "UNKNOWN_REVISION",
-          "message": "input does not declare exactCommit or baselineCommit"
-        },
-        {
-          "code": "UNKNOWN_ENVIRONMENT",
-          "message": "input does not declare environmentIdentitySha256"
-        }
-      ],
+      "reasons": [],
       "requirement": "required",
       "sourceStatus": null,
       "taskId": "APH-700"
@@ -108,7 +99,7 @@
       "reasons": [
         {
           "code": "REVISION_MISMATCH",
-          "message": "exactCommit 8e1f21c2a4326ff08371d621e808f38f79b2b197 does not match dashboard revision 5c7ed147c4f49c1a5bc6ea0b697922cd74845277"
+          "message": "exactCommit 8e1f21c2a4326ff08371d621e808f38f79b2b197 does not match dashboard revision 9a0aa14252e6559680328e520d26c16bfc7b444e"
         },
         {
           "code": "DIRTY_INPUT",
@@ -167,7 +158,7 @@
       "reasons": [
         {
           "code": "REVISION_MISMATCH",
-          "message": "exactCommit 8e1f21c2a4326ff08371d621e808f38f79b2b197 does not match dashboard revision 5c7ed147c4f49c1a5bc6ea0b697922cd74845277"
+          "message": "exactCommit 8e1f21c2a4326ff08371d621e808f38f79b2b197 does not match dashboard revision 9a0aa14252e6559680328e520d26c16bfc7b444e"
         },
         {
           "code": "DIRTY_INPUT",
@@ -209,7 +200,7 @@
       "reasons": [
         {
           "code": "REVISION_MISMATCH",
-          "message": "exactCommit a527e151e9e43a491ba30f4c19a0320dc54faf5c does not match dashboard revision 5c7ed147c4f49c1a5bc6ea0b697922cd74845277"
+          "message": "exactCommit a527e151e9e43a491ba30f4c19a0320dc54faf5c does not match dashboard revision 9a0aa14252e6559680328e520d26c16bfc7b444e"
         }
       ],
       "requirement": "advisory",
@@ -249,7 +240,7 @@
       "reasons": [
         {
           "code": "REVISION_MISMATCH",
-          "message": "exactCommit 2b19449570ccf1b78c43ea0154e83785ecb3031e does not match dashboard revision 5c7ed147c4f49c1a5bc6ea0b697922cd74845277"
+          "message": "exactCommit 2b19449570ccf1b78c43ea0154e83785ecb3031e does not match dashboard revision 9a0aa14252e6559680328e520d26c16bfc7b444e"
         }
       ],
       "requirement": "advisory",
@@ -291,7 +282,7 @@
       "reasons": [
         {
           "code": "REVISION_MISMATCH",
-          "message": "baselineCommit 7084805d771142706f340e9f2e52a68570bcb72b does not match dashboard revision 5c7ed147c4f49c1a5bc6ea0b697922cd74845277"
+          "message": "baselineCommit 7084805d771142706f340e9f2e52a68570bcb72b does not match dashboard revision 9a0aa14252e6559680328e520d26c16bfc7b444e"
         }
       ],
       "requirement": "advisory",
@@ -300,29 +291,29 @@
     },
     {
       "category": "runtime-performance",
-      "claimedEnvironmentIdentitySha256": null,
-      "claimedRevision": null,
-      "claimedRevisionField": null,
-      "dirty": null,
-      "disposition": "rejected",
-      "freshness": "unknown",
+      "claimedEnvironmentIdentitySha256": "1750156ad389d4f28a392531d19339a96140da898d5c2dfd1920c38d6486239e",
+      "claimedRevision": "9a0aa14252e6559680328e520d26c16bfc7b444e",
+      "claimedRevisionField": "exactCommit",
+      "dirty": false,
+      "disposition": "accepted",
+      "freshness": "current",
       "id": "editor-match-performance",
       "laneState": "active",
       "metrics": {
         "airMissileProjectileCount": 0,
         "allocatedBytesCurrentThread": 0,
-        "averageFrameMs": 7.203,
+        "averageFrameMs": 2.808,
         "culledUnitCount": 59,
         "editorP95FrameBudgetMs": 20,
         "editorP95FrameBudgetPassed": true,
-        "frameCount": 557,
+        "frameCount": 1426,
         "groundMissileProjectileCount": 0,
         "markerCount": 22,
-        "maxFrameMs": 34.985,
+        "maxFrameMs": 14.429,
         "minimapMarkerCount": 22,
-        "observationSeconds": 4.005,
-        "p95FrameMs": 11.477,
-        "p99FrameMs": 13.16,
+        "observationSeconds": 4.001,
+        "p95FrameMs": 4.112,
+        "p99FrameMs": 4.623,
         "projectileCount": 0,
         "renderVisualStateCount": 105,
         "runtimeBuildingCount": 628,
@@ -334,16 +325,7 @@
       },
       "ownerValidatorId": "performance-editor-match-p95",
       "path": "Design/AgentReports/performance_regression_match_baseline.json",
-      "reasons": [
-        {
-          "code": "UNKNOWN_REVISION",
-          "message": "input does not declare exactCommit or baselineCommit"
-        },
-        {
-          "code": "UNKNOWN_ENVIRONMENT",
-          "message": "input does not declare environmentIdentitySha256"
-        }
-      ],
+      "reasons": [],
       "requirement": "required",
       "sourceStatus": null,
       "taskId": null
@@ -353,7 +335,7 @@
     "errors": [],
     "path": "Design/AgentReports/ArchitectureMaturity/validator_registry.json",
     "schemaVersion": 1,
-    "sha256": "cacda7796dcd1796cefeb7fa5f5fb312eedfa5ac7621223711ad1f21658edc3c",
+    "sha256": "ef862b538596b3bc0a06c96f1e27f67717387e7d8957418bbf08aac42c9221ae",
     "state": "current"
   },
   "schemaVersion": 2,
@@ -361,16 +343,16 @@
     "advisoryAttentionCount": 5,
     "advisoryInputCount": 5,
     "freshnessCounts": {
-      "current": 0,
+      "current": 2,
       "malformed": 0,
       "missing": 0,
       "stale": 5,
-      "unknown": 2
+      "unknown": 0
     },
-    "healthyInputCount": 0,
+    "healthyInputCount": 2,
     "registryErrorCount": 0,
     "requiredInputCount": 2,
-    "requiredRejectedCount": 2,
-    "requiresAttentionCount": 7
+    "requiredRejectedCount": 0,
+    "requiresAttentionCount": 5
   }
 }

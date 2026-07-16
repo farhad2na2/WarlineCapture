@@ -8,7 +8,7 @@ This is a post-hardening program, not a replacement for `architecture_performanc
 
 The program has two activation lanes. The **Core Architecture Lane** covers Phases 0-5, 7, and 8 and may begin now from the accepted early-development closeout. The **Release Certification Lane** covers Phases 6 and 9 and remains inactive until the pre-release backlog activation criteria are met. Core architecture tasks must preserve fail-closed release contracts but do not wait for long thermal, repeated cold/warm, or sustained release evidence.
 
-When this program activates, every task must follow `Design/Architecture/agent_pull_request_review_merge_workflow.md` for shared-object worktrees, `codex/<task-id>-<slug>` branches, implementation ownership, independent findings-first review, risk-based integration, tracker administration, PR merge, and cleanup. This tracker remains authoritative for maturity scope, dependencies, acceptance, and evidence; the PR workflow is authoritative for git integration and role separation.
+The user replaced the planned pull-request workflow for this program with direct commits to a clean `main` checkout. Remaining tasks must not create branches, worktrees, or pull requests. Bounded ownership, focused review, zero-error validation, task-owned staging, stable commits, fetch/rebase discipline, and push verification remain mandatory.
 
 A literal `10 / 10` is treated as a sustained operating standard, not a one-time checkbox. The program can establish `9.5+` quality and the controls needed to retain it; production history must supply the final evidence.
 
@@ -18,13 +18,13 @@ A literal `10 / 10` is treated as a sustained operating standard, not a one-time
 |---|---|
 | Document date | 2026-07-16 |
 | Prerequisite tracker | `Design/Architecture/architecture_performance_hardening_implementation_tracker.md` |
-| Git integration authority | `Design/Architecture/agent_pull_request_review_merge_workflow.md` |
+| Git integration authority | This tracker's direct-`main` Status Rules and Decision Log exception |
 | Core Architecture Lane prerequisite | Early-development tracker complete; compiler, architecture, critical behavior, Editor performance, and GC closeout gates green |
 | Release Certification Lane prerequisite | Core Architecture Lane complete plus `pre_release_performance_certification_backlog.md` activated; Phase 9 additionally requires that backlog accepted |
-| Assumed entry rating | approximately `8.8 / 10` |
+| Accepted entry rating | evidence-backed `8.5 / 10` from `AM-008` |
 | Practical target | evidence-backed `9.5+ / 10` |
 | Aspirational target | sustained `10 / 10` operating standard |
-| Program status | Ready to start Phase 0 in the Core Architecture Lane; Release Certification Lane deferred |
+| Program status | Phase 0 accepted; Phase 1 ready in the Core Architecture Lane; Release Certification Lane deferred |
 
 The core entry review verifies the accepted architecture/code-quality evidence and records release-only gaps as `measurement-required`; it does not convert them into passes. The release-lane entry review must reject missing, malformed, stale, commit-unknown, thermally invalid, visually incomplete, or deferred evidence and must never pass by weakening a budget or allowlist.
 
@@ -109,16 +109,16 @@ Release-only categories are reported separately and never averaged into a premat
 
 | Field | Status |
 |---|---|
-| Checklist complete | `7 / 86` (`8.1%`) |
-| Core Architecture Lane | `7 / 68` (`10.3%`); active |
+| Checklist complete | `8 / 86` (`9.3%`) |
+| Core Architecture Lane | `8 / 68` (`11.8%`); active |
 | Release Certification Lane | `0 / 18` (`0.0%`); deferred |
 | Program state | Core Architecture Lane active; release work inactive |
-| Current phase | Phase 0 - Entry Baseline And Scorecard |
-| Current task | `AM-008` ready, not yet claimed |
-| Core entry baseline | Prerequisite accepted by `AM-001`; environment identity accepted by `AM-002`; canonical scenarios accepted by `AM-003`; scorecard, budgets, freshness, and exception policy accepted by `AM-004`; validator ownership and fail-closed dashboard enforcement accepted by `AM-005`; current source/dependency/runtime ownership inventory accepted by `AM-006` against `202b53025d793d6bfe3f0379782b7e185e92be07`; lifecycle ownership inventory accepted by `AM-007` against `7f41260803d85f46f6bb11a0078b395bc30d1ee4`; exact-identity performance evidence recapture remains Phase 0 exit work |
+| Current phase | Phase 1 - Responsibility And Decomposition Hardening |
+| Current task | `AM-009` ready, not yet claimed |
+| Core entry baseline | Phase 0 accepted by `AM-001` through `AM-008`; exact-identity assembly and bounded Editor Match evidence are current at `9a0aa14252e6559680328e520d26c16bfc7b444e`; the dashboard required gate is accepted; the entry rating and owned deltas are published in `entry_baseline_report.md` |
 | Release entry review | Deferred until `pre_release_performance_certification_backlog.md` activates |
-| Architecture rating | Not re-audited for this program |
-| Performance evidence | Core budgets are frozen by `AM-004`; the AM-005 dashboard rejects both required legacy rows because their exact commit and AM-002 environment identity are unknown; measurements remain unclaimed |
+| Architecture rating | Evidence-backed Phase 0 entry rating `8.5 / 10`; planning baseline only, not a `9.5` claim |
+| Performance evidence | Required bounded Editor Match gate current at `9a0aa14252e6559680328e520d26c16bfc7b444e`: 1,426 frames, 2.808 ms average, 4.112 ms P95 against 20 ms, 0 current-thread allocated bytes; broader scenario/GC/memory proof remains later Core work |
 | Android evidence | Deferred; retain historical diagnostics and recapture only when the release lane activates |
 | Sustained release evidence | Deferred; `0 / 3` qualifying release candidates |
 
@@ -148,7 +148,7 @@ No production behavior changes. Establish a reproducible baseline and prevent an
 - [x] `AM-005` Regenerate the architecture dashboard, produce the validator registry, and reject every required input reported as stale, unknown, malformed, duplicate-owned, or tied to a different commit.
 - [x] `AM-006` Produce a current source-size, dependency, assembly-cycle, runtime-loop, static-state, managed-helper, and active-work ownership inventory.
 - [x] `AM-007` Produce a lifecycle inventory for Worlds, persistent native containers, query caches, presentation pools, scene roots, event subscriptions, and static caches.
-- [ ] `AM-008` Publish the entry baseline report with ratings by area, accepted evidence links, known residual risks, and the exact deltas this program owns.
+- [x] `AM-008` Publish the entry baseline report with ratings by area, accepted evidence links, known residual risks, and the exact deltas this program owns.
 
 Phase 0 must produce these commit-bound artifacts before any implementation extraction begins:
 
@@ -534,3 +534,16 @@ The implementing agent works directly on `main`, owns the bounded substantive an
 - Residual risks: AM-007 identifies ownership debt but does not change runtime behavior, prove memory plateau, or claim performance. Candidate resolution belongs to bounded later work packages using the required creator, capacity policy, disposer, and lifecycle-test fields.
 - Exclusions preserved: operation-map, FirstLaunch, audio, UI visual-lock, production C# behavior, scenes, prefabs, packages, and `ProjectSettings` were read for lifecycle evidence but not edited.
 - Next task: `AM-008` publishes the exact-identity Phase 0 entry baseline report and owned delta list.
+
+### 2026-07-16 - AM-008 - Phase 0 entry baseline report
+
+- Workflow path: direct commits to `main`; no branch, worktree, or PR workflow.
+- Entry baseline: `9a0aa14252e6559680328e520d26c16bfc7b444e`, tree `0f3bf4a00a69c417f5a92f3811d88250a7c8d5ef`; environment identity SHA-256 `1750156ad389d4f28a392531d19339a96140da898d5c2dfd1920c38d6486239e`.
+- Result: Phase 0 is accepted for the Core Architecture Lane with an evidence-backed `8.5 / 10` planning baseline. Ratings, targets, evidence links, residual risks, and exact later-phase deltas are published in `Design/AgentReports/ArchitectureMaturity/entry_baseline_report.md`.
+- Required evidence: the current assembly report records 21 assemblies, 92 first-party edges, 102 external references, 1,436 scoped source files, and zero unowned scoped source files. The bounded Editor Match capture records 1,426 frames, 2.808 ms average, 4.112 ms P95, zero current-thread allocated bytes, 733 units, 628 buildings, and 46 visible-model estimate.
+- Dashboard: revision `9a0aa14252e6559680328e520d26c16bfc7b444e`; required gate `accepted`; two required inputs current; zero required rejected; zero unknown/missing/malformed inputs; zero registry errors. Five historical advisory inputs remain stale and release-deferred without blocking Core work.
+- Validation: real Unity compile-only run completed with zero compiler errors; the APH-700 Unity execute method regenerated the report successfully; the Match performance execute method passed its accepted 20 ms/zero-allocation/full-fixture contract; 14 dashboard Python tests passed; all 11 baseline-manifest content hashes reconciled; JSON identities, environment hashes, clean flags, dashboard invariants, checklist math, and `git diff --check` passed.
+- Test infrastructure note: a focused Unity Test Runner attempt compiled successfully but stalled in the package prebuild hook after UPM disconnected, before executing test cases. It was stopped; the production generator and capture execute methods then supplied direct functional evidence. No test failure was reported or hidden.
+- Residual risks: category-specific ownership/lifecycle/UI/pool/determinism/diagnostics/enforcement gaps remain explicitly assigned to `AM-009` through `AM-052` and `AM-063` through `AM-078`. Release-only Android and sustained-candidate rows remain deferred.
+- Exclusions preserved: operation-map, FirstLaunch, audio, UI visual-lock, gameplay/runtime behavior, scenes, prefabs, packages, and `ProjectSettings` were not edited by AM-008.
+- Next task: `AM-009` ranks the largest and most coupled production owners using size, dependency, state, update-cost, and change-frequency evidence rather than line count alone.

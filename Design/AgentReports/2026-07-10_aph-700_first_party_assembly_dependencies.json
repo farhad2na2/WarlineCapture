@@ -2,17 +2,20 @@
   "schemaVersion": 1,
   "taskId": "APH-700",
   "scope": "Direct dependencies and source-level cross-domain type references for first-party asmdefs under Assets/Game, Assets/Tests, and Assets/Editor.",
-  "determinismContract": "No timestamp or mutable VCS state; ordinal path ordering, normalized LF output, and a content-derived source fingerprint.",
-  "sourceFingerprintSha256": "e2ccb0d2f8d4f39eb57649f9074c5bca109800613e6a958ef0c6bb5c2f3d304d",
+  "determinismContract": "Explicit evidence identity, no timestamp, ordinal path ordering, normalized LF output, and a content-derived source fingerprint.",
+  "exactCommit": "9a0aa14252e6559680328e520d26c16bfc7b444e",
+  "environmentIdentitySha256": "1750156ad389d4f28a392531d19339a96140da898d5c2dfd1920c38d6486239e",
+  "dirty": false,
+  "sourceFingerprintSha256": "7b9abb5fb16999ed458dbddda8af851f30a0697cf8d774773b383f66da268200",
   "summary": {
     "assemblyCount": 21,
     "firstPartyEdgeCount": 92,
-    "externalReferenceCount": 100,
-    "sourceFileCount": 1340,
-    "declaredTypeCount": 2731,
-    "resolvedCrossDomainTypeOccurrenceCount": 33509,
-    "distinctCrossDomainTypeReferenceCount": 2925,
-    "ambiguousTypeTokenOccurrenceCount": 66,
+    "externalReferenceCount": 102,
+    "sourceFileCount": 1436,
+    "declaredTypeCount": 2877,
+    "resolvedCrossDomainTypeOccurrenceCount": 34599,
+    "distinctCrossDomainTypeReferenceCount": 3069,
+    "ambiguousTypeTokenOccurrenceCount": 70,
     "unownedScopedSourceFileCount": 0
   },
   "assemblies": [
@@ -38,8 +41,8 @@
       "name": "Game.Components",
       "asmdefPath": "Assets/Game/Scripts/Components/Game.Components.asmdef",
       "asmdefGuid": "8dc2bdc0432f84ec68f4c183e272057c",
-      "sourceFileCount": 55,
-      "declaredTypeCount": 515,
+      "sourceFileCount": 56,
+      "declaredTypeCount": 536,
       "firstPartyDependencyCount": 0,
       "externalDependencyCount": 5
     },
@@ -47,17 +50,17 @@
       "name": "Game.Composition",
       "asmdefPath": "Assets/Game/Scripts/Composition/Game.Composition.asmdef",
       "asmdefGuid": "b737596b8d3047aba94b5d61f3fce5cb",
-      "sourceFileCount": 45,
-      "declaredTypeCount": 55,
+      "sourceFileCount": 48,
+      "declaredTypeCount": 58,
       "firstPartyDependencyCount": 14,
-      "externalDependencyCount": 10
+      "externalDependencyCount": 11
     },
     {
       "name": "Game.Configs",
       "asmdefPath": "Assets/Game/Scripts/Configs/Game.Configs.asmdef",
       "asmdefGuid": "bcb6e320b3b234ce6af70f1ee35aca90",
-      "sourceFileCount": 48,
-      "declaredTypeCount": 115,
+      "sourceFileCount": 54,
+      "declaredTypeCount": 142,
       "firstPartyDependencyCount": 3,
       "externalDependencyCount": 6
     },
@@ -65,10 +68,10 @@
       "name": "Game.Editor",
       "asmdefPath": "Assets/Game/Scripts/Editor/Game.Editor.asmdef",
       "asmdefGuid": "f904b4f32c8634430b43f82380f2405f",
-      "sourceFileCount": 102,
-      "declaredTypeCount": 139,
+      "sourceFileCount": 124,
+      "declaredTypeCount": 168,
       "firstPartyDependencyCount": 15,
-      "externalDependencyCount": 13
+      "externalDependencyCount": 14
     },
     {
       "name": "Game.Narrative.Contracts",
@@ -110,8 +113,8 @@
       "name": "Game.Runtime",
       "asmdefPath": "Assets/Game/Scripts/Game.Runtime.asmdef",
       "asmdefGuid": "361d0433287ed4a42bf3fd161956446a",
-      "sourceFileCount": 518,
-      "declaredTypeCount": 1105,
+      "sourceFileCount": 548,
+      "declaredTypeCount": 1138,
       "firstPartyDependencyCount": 7,
       "externalDependencyCount": 11
     },
@@ -146,8 +149,8 @@
       "name": "Game.Tests.Editor",
       "asmdefPath": "Assets/Tests/Editor/Game.Tests.Editor.asmdef",
       "asmdefGuid": "75d949434cfb844baba7f313bdfe96db",
-      "sourceFileCount": 276,
-      "declaredTypeCount": 282,
+      "sourceFileCount": 304,
+      "declaredTypeCount": 310,
       "firstPartyDependencyCount": 18,
       "externalDependencyCount": 12
     },
@@ -164,8 +167,8 @@
       "name": "Game.UI.Contracts",
       "asmdefPath": "Assets/Game/Scripts/UI/Contracts/Game.UI.Contracts.asmdef",
       "asmdefGuid": "3a7cc43f5e5f4cb3ad4e8c07ec142741",
-      "sourceFileCount": 21,
-      "declaredTypeCount": 117,
+      "sourceFileCount": 22,
+      "declaredTypeCount": 118,
       "firstPartyDependencyCount": 1,
       "externalDependencyCount": 0
     },
@@ -173,8 +176,8 @@
       "name": "Game.UI.Runtime",
       "asmdefPath": "Assets/Game/Scripts/UI/Game.UI.Runtime.asmdef",
       "asmdefGuid": "9f75d2491e8544c9b83f9f610b61d8d4",
-      "sourceFileCount": 140,
-      "declaredTypeCount": 185,
+      "sourceFileCount": 144,
+      "declaredTypeCount": 189,
       "firstPartyDependencyCount": 4,
       "externalDependencyCount": 6
     },
@@ -191,7 +194,7 @@
       "name": "Game.UI.Shell.Ecs",
       "asmdefPath": "Assets/Game/Scripts/UI/Shell/Ecs/Game.UI.Shell.Ecs.asmdef",
       "asmdefGuid": "7fd1b0c6978e4c088f6be3617b2cb9f4",
-      "sourceFileCount": 43,
+      "sourceFileCount": 44,
       "declaredTypeCount": 35,
       "firstPartyDependencyCount": 8,
       "externalDependencyCount": 5
@@ -466,9 +469,9 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Composition/Game.Composition.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Authorings/Game.Authoring.asmdef",
       "declaredReference": "Game.Authoring",
-      "resolvedTypeOccurrenceCount": 34,
+      "resolvedTypeOccurrenceCount": 36,
       "distinctResolvedTypeCount": 5,
-      "referencingSourceFileCount": 13,
+      "referencingSourceFileCount": 14,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Composition",
@@ -484,6 +487,21 @@
             "Assets/Game/Scripts/Composition/SelectionPortraitSpriteResolverUiSystemHelper.cs",
             "Assets/Game/Scripts/Composition/UiCatalogAuthoringMetadataUiSystemHelper.cs",
             "Assets/Game/Scripts/Composition/UnitRenderingMetadataAuthoringSystem.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Composition",
+          "targetAssembly": "Game.Authoring",
+          "fullTypeName": "Game.Authoring.MapSurfaceAuthoring",
+          "typeName": "MapSurfaceAuthoring",
+          "occurrenceCount": 8,
+          "sourceFileCount": 5,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Composition/MapSurfaceRuntimeBootstrapSceneSystemHelper.cs",
+            "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs",
+            "Assets/Game/Scripts/Composition/MatchBootstrapStartupConfigProjection.cs",
+            "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+            "Assets/Game/Scripts/Composition/OperationMapSceneView.cs"
           ]
         },
         {
@@ -509,20 +527,6 @@
             "Assets/Game/Scripts/Composition/BuildingSpawnPrefabLookupKeyPrefabSystemHelper.cs",
             "Assets/Game/Scripts/Composition/SelectionPortraitSpriteResolverUiSystemHelper.cs",
             "Assets/Game/Scripts/Composition/UiCatalogAuthoringMetadataUiSystemHelper.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Composition",
-          "targetAssembly": "Game.Authoring",
-          "fullTypeName": "Game.Authoring.MapSurfaceAuthoring",
-          "typeName": "MapSurfaceAuthoring",
-          "occurrenceCount": 6,
-          "sourceFileCount": 4,
-          "sourceFiles": [
-            "Assets/Game/Scripts/Composition/MapSurfaceRuntimeBootstrapSceneSystemHelper.cs",
-            "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs",
-            "Assets/Game/Scripts/Composition/MatchBootstrapStartupConfigProjection.cs",
-            "Assets/Game/Scripts/Composition/MatchSceneView.cs"
           ]
         },
         {
@@ -569,9 +573,9 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Composition/Game.Composition.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Components/Game.Components.asmdef",
       "declaredReference": "Game.Components",
-      "resolvedTypeOccurrenceCount": 162,
-      "distinctResolvedTypeCount": 46,
-      "referencingSourceFileCount": 7,
+      "resolvedTypeOccurrenceCount": 211,
+      "distinctResolvedTypeCount": 58,
+      "referencingSourceFileCount": 8,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Composition",
@@ -590,7 +594,7 @@
           "targetAssembly": "Game.Components",
           "fullTypeName": "Game.Components.GridConfig",
           "typeName": "GridConfig",
-          "occurrenceCount": 13,
+          "occurrenceCount": 14,
           "sourceFileCount": 2,
           "sourceFiles": [
             "Assets/Game/Scripts/Composition/MatchBootstrapStartupConfigProjection.cs",
@@ -624,6 +628,18 @@
         {
           "sourceAssembly": "Game.Composition",
           "targetAssembly": "Game.Components",
+          "fullTypeName": "Game.Components.ActiveOperationMapComponent",
+          "typeName": "ActiveOperationMapComponent",
+          "occurrenceCount": 9,
+          "sourceFileCount": 2,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Composition/MatchHudMinimapDataSourceAdapter.cs",
+            "Assets/Game/Scripts/Composition/OperationMapRuntimeBootstrapSceneSystemHelper.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Composition",
+          "targetAssembly": "Game.Components",
           "fullTypeName": "Game.Components.MatchStartRequestElement",
           "typeName": "MatchStartRequestElement",
           "occurrenceCount": 8,
@@ -647,6 +663,18 @@
         {
           "sourceAssembly": "Game.Composition",
           "targetAssembly": "Game.Components",
+          "fullTypeName": "Game.Components.OperationMapMetadataComponent",
+          "typeName": "OperationMapMetadataComponent",
+          "occurrenceCount": 7,
+          "sourceFileCount": 2,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Composition/MatchHudMinimapDataSourceAdapter.cs",
+            "Assets/Game/Scripts/Composition/OperationMapRuntimeBootstrapSceneSystemHelper.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Composition",
+          "targetAssembly": "Game.Components",
           "fullTypeName": "Game.Components.MapSurfaceRuntimeBakedBlobTag",
           "typeName": "MapSurfaceRuntimeBakedBlobTag",
           "occurrenceCount": 6,
@@ -658,36 +686,12 @@
         {
           "sourceAssembly": "Game.Composition",
           "targetAssembly": "Game.Components",
-          "fullTypeName": "Game.Components.SceneLifecycleStateComponent",
-          "typeName": "SceneLifecycleStateComponent",
+          "fullTypeName": "Game.Components.OperationMapReadinessFlags",
+          "typeName": "OperationMapReadinessFlags",
           "occurrenceCount": 6,
           "sourceFileCount": 1,
           "sourceFiles": [
-            "Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Composition",
-          "targetAssembly": "Game.Components",
-          "fullTypeName": "Game.Components.MapSurfaceBlob",
-          "typeName": "MapSurfaceBlob",
-          "occurrenceCount": 5,
-          "sourceFileCount": 2,
-          "sourceFiles": [
-            "Assets/Game/Scripts/Composition/MapSurfaceRuntimeBootstrapSceneSystemHelper.cs",
-            "Assets/Game/Scripts/Composition/MatchHudMinimapDataSourceAdapter.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Composition",
-          "targetAssembly": "Game.Components",
-          "fullTypeName": "Game.Components.MatchStartStateComponent",
-          "typeName": "MatchStartStateComponent",
-          "occurrenceCount": 5,
-          "sourceFileCount": 2,
-          "sourceFiles": [
-            "Assets/Game/Scripts/Composition/MatchStartSceneSystemHelper.cs",
-            "Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs"
+            "Assets/Game/Scripts/Composition/OperationMapRuntimeBootstrapSceneSystemHelper.cs"
           ]
         }
       ]
@@ -698,9 +702,9 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Composition/Game.Composition.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Configs/Game.Configs.asmdef",
       "declaredReference": "Game.Configs",
-      "resolvedTypeOccurrenceCount": 156,
-      "distinctResolvedTypeCount": 46,
-      "referencingSourceFileCount": 15,
+      "resolvedTypeOccurrenceCount": 172,
+      "distinctResolvedTypeCount": 49,
+      "referencingSourceFileCount": 18,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Composition",
@@ -715,6 +719,20 @@
             "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeModelUtilitySystemHelper.cs",
             "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativePanelPresentationSystemHelper.cs",
             "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeSequencePresentationSystemHelper.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Composition",
+          "targetAssembly": "Game.Configs",
+          "fullTypeName": "Game.Configs.AIControllerConfig",
+          "typeName": "AIControllerConfig",
+          "occurrenceCount": 8,
+          "sourceFileCount": 4,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs",
+            "Assets/Game/Scripts/Composition/MatchBootstrapStartupConfigProjection.cs",
+            "Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs",
+            "Assets/Game/Scripts/Composition/MatchSceneView.cs"
           ]
         },
         {
@@ -748,14 +766,41 @@
         {
           "sourceAssembly": "Game.Composition",
           "targetAssembly": "Game.Configs",
-          "fullTypeName": "Game.Configs.AIControllerConfig",
-          "typeName": "AIControllerConfig",
+          "fullTypeName": "Game.Configs.BuildingPlacementSystemConfig",
+          "typeName": "BuildingPlacementSystemConfig",
+          "occurrenceCount": 6,
+          "sourceFileCount": 4,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs",
+            "Assets/Game/Scripts/Composition/MatchBootstrapStartupConfigProjection.cs",
+            "Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs",
+            "Assets/Game/Scripts/Composition/MatchSceneView.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Composition",
+          "targetAssembly": "Game.Configs",
+          "fullTypeName": "Game.Configs.MapBuildingPlacementConfig",
+          "typeName": "MapBuildingPlacementConfig",
           "occurrenceCount": 6,
           "sourceFileCount": 3,
           "sourceFiles": [
             "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs",
-            "Assets/Game/Scripts/Composition/MatchBootstrapStartupConfigProjection.cs",
-            "Assets/Game/Scripts/Composition/MatchSceneView.cs"
+            "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+            "Assets/Game/Scripts/Composition/OperationMapSceneView.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Composition",
+          "targetAssembly": "Game.Configs",
+          "fullTypeName": "Game.Configs.MapVehiclePlacementConfig",
+          "typeName": "MapVehiclePlacementConfig",
+          "occurrenceCount": 6,
+          "sourceFileCount": 3,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs",
+            "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+            "Assets/Game/Scripts/Composition/OperationMapSceneView.cs"
           ]
         },
         {
@@ -767,19 +812,6 @@
           "sourceFileCount": 2,
           "sourceFiles": [
             "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs",
-            "Assets/Game/Scripts/Composition/MatchSceneView.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Composition",
-          "targetAssembly": "Game.Configs",
-          "fullTypeName": "Game.Configs.BuildingPlacementSystemConfig",
-          "typeName": "BuildingPlacementSystemConfig",
-          "occurrenceCount": 5,
-          "sourceFileCount": 3,
-          "sourceFiles": [
-            "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs",
-            "Assets/Game/Scripts/Composition/MatchBootstrapStartupConfigProjection.cs",
             "Assets/Game/Scripts/Composition/MatchSceneView.cs"
           ]
         },
@@ -806,32 +838,6 @@
           "sourceFiles": [
             "Assets/Game/Scripts/Composition/GameplayFeatureStartupCompositionSystemHelper.cs",
             "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs",
-            "Assets/Game/Scripts/Composition/MatchSceneView.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Composition",
-          "targetAssembly": "Game.Configs",
-          "fullTypeName": "Game.Configs.AIPlanEntryStartupConfig",
-          "typeName": "AIPlanEntryStartupConfig",
-          "occurrenceCount": 4,
-          "sourceFileCount": 3,
-          "sourceFiles": [
-            "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs",
-            "Assets/Game/Scripts/Composition/MatchBootstrapStartupConfigProjection.cs",
-            "Assets/Game/Scripts/Composition/MatchSceneView.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Composition",
-          "targetAssembly": "Game.Configs",
-          "fullTypeName": "Game.Configs.GridAuthoringConfig",
-          "typeName": "GridAuthoringConfig",
-          "occurrenceCount": 4,
-          "sourceFileCount": 3,
-          "sourceFiles": [
-            "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs",
-            "Assets/Game/Scripts/Composition/MatchBootstrapStartupConfigProjection.cs",
             "Assets/Game/Scripts/Composition/MatchSceneView.cs"
           ]
         }
@@ -937,7 +943,7 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Composition/Game.Composition.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Narrative/Runtime/Game.Narrative.Runtime.asmdef",
       "declaredReference": "Game.Narrative.Runtime",
-      "resolvedTypeOccurrenceCount": 21,
+      "resolvedTypeOccurrenceCount": 22,
       "distinctResolvedTypeCount": 6,
       "referencingSourceFileCount": 2,
       "topTypeReferences": [
@@ -946,7 +952,7 @@
           "targetAssembly": "Game.Narrative.Runtime",
           "fullTypeName": "Game.Narrative.Runtime.FirstLaunchNarrativeSequenceIntent",
           "typeName": "FirstLaunchNarrativeSequenceIntent",
-          "occurrenceCount": 12,
+          "occurrenceCount": 14,
           "sourceFileCount": 1,
           "sourceFiles": [
             "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeSequencePresentationSystemHelper.cs"
@@ -966,8 +972,8 @@
         {
           "sourceAssembly": "Game.Composition",
           "targetAssembly": "Game.Narrative.Runtime",
-          "fullTypeName": "Game.Narrative.Runtime.FirstLaunchNarrativeSequenceIntentKind",
-          "typeName": "FirstLaunchNarrativeSequenceIntentKind",
+          "fullTypeName": "Game.Narrative.Runtime.FirstLaunchNarrativeSequenceStateDefinition",
+          "typeName": "FirstLaunchNarrativeSequenceStateDefinition",
           "occurrenceCount": 2,
           "sourceFileCount": 1,
           "sourceFiles": [
@@ -977,9 +983,9 @@
         {
           "sourceAssembly": "Game.Composition",
           "targetAssembly": "Game.Narrative.Runtime",
-          "fullTypeName": "Game.Narrative.Runtime.FirstLaunchNarrativeSequenceStateDefinition",
-          "typeName": "FirstLaunchNarrativeSequenceStateDefinition",
-          "occurrenceCount": 2,
+          "fullTypeName": "Game.Narrative.Runtime.FirstLaunchNarrativeSequenceIntentKind",
+          "typeName": "FirstLaunchNarrativeSequenceIntentKind",
+          "occurrenceCount": 1,
           "sourceFileCount": 1,
           "sourceFiles": [
             "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeSequencePresentationSystemHelper.cs"
@@ -1015,9 +1021,9 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Composition/Game.Composition.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Rendering/Game.Rendering.asmdef",
       "declaredReference": "Game.Rendering",
-      "resolvedTypeOccurrenceCount": 32,
+      "resolvedTypeOccurrenceCount": 34,
       "distinctResolvedTypeCount": 9,
-      "referencingSourceFileCount": 5,
+      "referencingSourceFileCount": 6,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Composition",
@@ -1033,6 +1039,18 @@
         {
           "sourceAssembly": "Game.Composition",
           "targetAssembly": "Game.Rendering",
+          "fullTypeName": "Game.Rendering.RuntimeCameraReferenceSystem",
+          "typeName": "RuntimeCameraReferenceSystem",
+          "occurrenceCount": 6,
+          "sourceFileCount": 2,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs",
+            "Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Composition",
+          "targetAssembly": "Game.Rendering",
           "fullTypeName": "Game.Rendering.StaticMapPresentationManifest",
           "typeName": "StaticMapPresentationManifest",
           "occurrenceCount": 4,
@@ -1041,17 +1059,6 @@
             "Assets/Game/Scripts/Composition/MatchSceneView.cs",
             "Assets/Game/Scripts/Composition/StaticMapPresentationManifestIndex.cs",
             "Assets/Game/Scripts/Composition/StaticMapPresentationStreamer.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Composition",
-          "targetAssembly": "Game.Rendering",
-          "fullTypeName": "Game.Rendering.RuntimeCameraReferenceSystem",
-          "typeName": "RuntimeCameraReferenceSystem",
-          "occurrenceCount": 4,
-          "sourceFileCount": 1,
-          "sourceFiles": [
-            "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs"
           ]
         },
         {
@@ -1162,9 +1169,9 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Composition/Game.Composition.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Game.Runtime.asmdef",
       "declaredReference": "Game.Runtime",
-      "resolvedTypeOccurrenceCount": 188,
+      "resolvedTypeOccurrenceCount": 194,
       "distinctResolvedTypeCount": 59,
-      "referencingSourceFileCount": 14,
+      "referencingSourceFileCount": 15,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Composition",
@@ -1208,6 +1215,19 @@
         {
           "sourceAssembly": "Game.Composition",
           "targetAssembly": "Game.Runtime",
+          "fullTypeName": "Game.Runtime.RuntimeGameplayStateSystem",
+          "typeName": "RuntimeGameplayStateSystem",
+          "occurrenceCount": 8,
+          "sourceFileCount": 3,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs",
+            "Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs",
+            "Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Composition",
+          "targetAssembly": "Game.Runtime",
           "fullTypeName": "Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper",
           "typeName": "RuntimeDecorationSpawnerPresentationSystemHelper",
           "occurrenceCount": 8,
@@ -1234,25 +1254,13 @@
         {
           "sourceAssembly": "Game.Composition",
           "targetAssembly": "Game.Runtime",
-          "fullTypeName": "Game.Runtime.RuntimeGameplayStateSystem",
-          "typeName": "RuntimeGameplayStateSystem",
-          "occurrenceCount": 6,
-          "sourceFileCount": 2,
-          "sourceFiles": [
-            "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs",
-            "Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Composition",
-          "targetAssembly": "Game.Runtime",
           "fullTypeName": "Game.Runtime.AIStartupSystem",
           "typeName": "AIStartupSystem",
           "occurrenceCount": 5,
           "sourceFileCount": 2,
           "sourceFiles": [
-            "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs",
-            "Assets/Game/Scripts/Composition/MatchBootstrapStartupConfigProjection.cs"
+            "Assets/Game/Scripts/Composition/MatchBootstrapStartupConfigProjection.cs",
+            "Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs"
           ]
         },
         {
@@ -1282,13 +1290,13 @@
         {
           "sourceAssembly": "Game.Composition",
           "targetAssembly": "Game.Runtime",
-          "fullTypeName": "Game.Runtime.BuildingUiCommandSystemHelper.Context",
-          "typeName": "Context",
+          "fullTypeName": "Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper",
+          "typeName": "BuildingRuntimeUpdateCompositionSystemHelper",
           "occurrenceCount": 4,
           "sourceFileCount": 2,
           "sourceFiles": [
             "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs",
-            "Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs"
+            "Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs"
           ]
         }
       ]
@@ -1310,7 +1318,7 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Composition/Game.Composition.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/UI/Contracts/Game.UI.Contracts.asmdef",
       "declaredReference": "Game.UI.Contracts",
-      "resolvedTypeOccurrenceCount": 104,
+      "resolvedTypeOccurrenceCount": 106,
       "distinctResolvedTypeCount": 43,
       "referencingSourceFileCount": 12,
       "topTypeReferences": [
@@ -1378,6 +1386,17 @@
         {
           "sourceAssembly": "Game.Composition",
           "targetAssembly": "Game.UI.Contracts",
+          "fullTypeName": "Game.UI.Contracts.MatchHudMinimapGridModel",
+          "typeName": "MatchHudMinimapGridModel",
+          "occurrenceCount": 5,
+          "sourceFileCount": 1,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Composition/MatchHudMinimapDataSourceAdapter.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Composition",
+          "targetAssembly": "Game.UI.Contracts",
           "fullTypeName": "Game.UI.Contracts.MatchHudMinimapSurfaceFeatureModel",
           "typeName": "MatchHudMinimapSurfaceFeatureModel",
           "occurrenceCount": 5,
@@ -1419,17 +1438,6 @@
           "sourceFileCount": 1,
           "sourceFiles": [
             "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Composition",
-          "targetAssembly": "Game.UI.Contracts",
-          "fullTypeName": "Game.UI.Contracts.BuildingUiCommandFailure",
-          "typeName": "BuildingUiCommandFailure",
-          "occurrenceCount": 3,
-          "sourceFileCount": 1,
-          "sourceFiles": [
-            "Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs"
           ]
         }
       ]
@@ -1801,9 +1809,9 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Configs/Game.Configs.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Components/Game.Components.asmdef",
       "declaredReference": "Game.Components",
-      "resolvedTypeOccurrenceCount": 78,
-      "distinctResolvedTypeCount": 14,
-      "referencingSourceFileCount": 4,
+      "resolvedTypeOccurrenceCount": 97,
+      "distinctResolvedTypeCount": 22,
+      "referencingSourceFileCount": 7,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Configs",
@@ -1842,6 +1850,18 @@
         {
           "sourceAssembly": "Game.Configs",
           "targetAssembly": "Game.Components",
+          "fullTypeName": "Game.Components.OperationMapAnchorKind",
+          "typeName": "OperationMapAnchorKind",
+          "occurrenceCount": 7,
+          "sourceFileCount": 2,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Configs/OperationMapConfigModels.cs",
+            "Assets/Game/Scripts/Configs/ScenarioSetupConfig.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Configs",
+          "targetAssembly": "Game.Components",
           "fullTypeName": "Game.Components.ResourceExchangeRouteType",
           "typeName": "ResourceExchangeRouteType",
           "occurrenceCount": 6,
@@ -1875,6 +1895,17 @@
         {
           "sourceAssembly": "Game.Configs",
           "targetAssembly": "Game.Components",
+          "fullTypeName": "Game.Components.OperationMapBlob",
+          "typeName": "OperationMapBlob",
+          "occurrenceCount": 4,
+          "sourceFileCount": 1,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Configs/OperationMapDefinition.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Configs",
+          "targetAssembly": "Game.Components",
           "fullTypeName": "Game.Components.ThreatDetectionKind",
           "typeName": "ThreatDetectionKind",
           "occurrenceCount": 4,
@@ -1888,28 +1919,6 @@
           "targetAssembly": "Game.Components",
           "fullTypeName": "Game.Components.MapSurfaceCompactSample",
           "typeName": "MapSurfaceCompactSample",
-          "occurrenceCount": 3,
-          "sourceFileCount": 1,
-          "sourceFiles": [
-            "Assets/Game/Scripts/Configs/MapSurfaceDataAsset.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Configs",
-          "targetAssembly": "Game.Components",
-          "fullTypeName": "Game.Components.MapSurfaceConnection",
-          "typeName": "MapSurfaceConnection",
-          "occurrenceCount": 3,
-          "sourceFileCount": 1,
-          "sourceFiles": [
-            "Assets/Game/Scripts/Configs/MapSurfaceDataAsset.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Configs",
-          "targetAssembly": "Game.Components",
-          "fullTypeName": "Game.Components.MapSurfaceMovementMask",
-          "typeName": "MapSurfaceMovementMask",
           "occurrenceCount": 3,
           "sourceFileCount": 1,
           "sourceFiles": [
@@ -1947,17 +1956,17 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Editor/Game.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Authorings/Game.Authoring.asmdef",
       "declaredReference": "Game.Authoring",
-      "resolvedTypeOccurrenceCount": 139,
-      "distinctResolvedTypeCount": 8,
-      "referencingSourceFileCount": 20,
+      "resolvedTypeOccurrenceCount": 156,
+      "distinctResolvedTypeCount": 10,
+      "referencingSourceFileCount": 26,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Editor",
           "targetAssembly": "Game.Authoring",
           "fullTypeName": "Game.Authoring.MapSurfaceAuthoring",
           "typeName": "MapSurfaceAuthoring",
-          "occurrenceCount": 50,
-          "sourceFileCount": 7,
+          "occurrenceCount": 57,
+          "sourceFileCount": 11,
           "sourceFiles": [
             "Assets/Game/Scripts/Editor/MapPrefabBakeAuthoringSetup.cs",
             "Assets/Game/Scripts/Editor/MapSurfaceAuthoringEditor.cs",
@@ -1965,7 +1974,10 @@
             "Assets/Game/Scripts/Editor/MapSurfaceBlockerAuditSystem.cs",
             "Assets/Game/Scripts/Editor/MapSurfaceDebugCaptureSystem.cs",
             "Assets/Game/Scripts/Editor/MapSurfacePreviewOverlaySystem.cs",
-            "Assets/Game/Scripts/Editor/MapSurfacePreviewProofCapture.cs"
+            "Assets/Game/Scripts/Editor/MapSurfacePreviewProofCapture.cs",
+            "Assets/Game/Scripts/Editor/OperationMapCurrentCompatibilitySceneViewStager.cs",
+            "Assets/Game/Scripts/Editor/OperationMapCurrentStagedSpatialBindingValidator.cs",
+            "Assets/Game/Scripts/Editor/OperationMapPhase0BaselineProbe.cs"
           ]
         },
         {
@@ -2017,6 +2029,19 @@
         {
           "sourceAssembly": "Game.Editor",
           "targetAssembly": "Game.Authoring",
+          "fullTypeName": "Game.Authoring.GridAuthoring",
+          "typeName": "GridAuthoring",
+          "occurrenceCount": 8,
+          "sourceFileCount": 3,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Editor/OperationMapCurrentCompatibilityDefinitionBuilder.cs",
+            "Assets/Game/Scripts/Editor/OperationMapPhase0CameraMinimapOwnershipProbe.cs",
+            "Assets/Game/Scripts/Editor/OperationMapPhase0NavigationMetadataOwnershipProbe.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Editor",
+          "targetAssembly": "Game.Authoring",
           "fullTypeName": "Game.Authoring.BuildingDefinitionAuthoring",
           "typeName": "BuildingDefinitionAuthoring",
           "occurrenceCount": 4,
@@ -2024,6 +2049,18 @@
           "sourceFiles": [
             "Assets/Game/Scripts/Editor/BuildingDestroyedVisualPrefabMigration.cs",
             "Assets/Game/Scripts/Editor/MapBuildingMeshGroupingMigration.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Editor",
+          "targetAssembly": "Game.Authoring",
+          "fullTypeName": "Game.Authoring.StaticGridBlockerAuthoring",
+          "typeName": "StaticGridBlockerAuthoring",
+          "occurrenceCount": 2,
+          "sourceFileCount": 2,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Editor/OperationMapCurrentCompatibilityDefinitionBuilder.cs",
+            "Assets/Game/Scripts/Editor/OperationMapCurrentStagedSpatialBindingValidator.cs"
           ]
         },
         {
@@ -2124,19 +2161,20 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Editor/Game.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Components/Game.Components.asmdef",
       "declaredReference": "Game.Components",
-      "resolvedTypeOccurrenceCount": 627,
-      "distinctResolvedTypeCount": 123,
-      "referencingSourceFileCount": 19,
+      "resolvedTypeOccurrenceCount": 684,
+      "distinctResolvedTypeCount": 127,
+      "referencingSourceFileCount": 24,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Editor",
           "targetAssembly": "Game.Components",
           "fullTypeName": "Game.Components.UnitSourcePrefabKey",
           "typeName": "UnitSourcePrefabKey",
-          "occurrenceCount": 46,
-          "sourceFileCount": 3,
+          "occurrenceCount": 59,
+          "sourceFileCount": 4,
           "sourceFiles": [
             "Assets/Game/Scripts/Editor/CanvasMatchRenderedGeometryAudit.cs",
+            "Assets/Game/Scripts/Editor/MatchPerformanceFixtureSeed.cs",
             "Assets/Game/Scripts/Editor/MatchRuntimeShellSmokeValidation.cs",
             "Assets/Game/Scripts/Editor/ScenarioLab/BattleScenarioLabValidationRunner.cs"
           ]
@@ -2159,6 +2197,36 @@
         {
           "sourceAssembly": "Game.Editor",
           "targetAssembly": "Game.Components",
+          "fullTypeName": "Game.Components.Faction",
+          "typeName": "Faction",
+          "occurrenceCount": 26,
+          "sourceFileCount": 5,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Editor/AirMissileLauncherValidationRunner.cs",
+            "Assets/Game/Scripts/Editor/MatchHudTacticalFollowCameraPlayModeValidation.cs",
+            "Assets/Game/Scripts/Editor/MatchPerformanceFixtureSeed.cs",
+            "Assets/Game/Scripts/Editor/MatchRuntimeShellSmokeValidation.cs",
+            "Assets/Game/Scripts/Editor/TacticalFollowAttackCinematicPlayModeValidation.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Editor",
+          "targetAssembly": "Game.Components",
+          "fullTypeName": "Game.Components.UnitHealth",
+          "typeName": "UnitHealth",
+          "occurrenceCount": 26,
+          "sourceFileCount": 5,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Editor/AirMissileLauncherValidationRunner.cs",
+            "Assets/Game/Scripts/Editor/MatchGcAllocationCallstackCapture.cs",
+            "Assets/Game/Scripts/Editor/MatchPerformanceFixtureSeed.cs",
+            "Assets/Game/Scripts/Editor/MatchRuntimeShellSmokeValidation.cs",
+            "Assets/Game/Scripts/Editor/ScenarioLab/BattleScenarioLabValidationRunner.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Editor",
+          "targetAssembly": "Game.Components",
           "fullTypeName": "Game.Components.RuntimeGameplayStateComponent",
           "typeName": "RuntimeGameplayStateComponent",
           "occurrenceCount": 23,
@@ -2169,34 +2237,6 @@
             "Assets/Game/Scripts/Editor/MatchHudFullMapPopupPrefabSetup.cs",
             "Assets/Game/Scripts/Editor/MatchRuntimeShellSmokeValidation.cs",
             "Assets/Game/Scripts/Editor/ScenarioLab/BattleScenarioLabValidationRunner.cs",
-            "Assets/Game/Scripts/Editor/TacticalFollowAttackCinematicPlayModeValidation.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Editor",
-          "targetAssembly": "Game.Components",
-          "fullTypeName": "Game.Components.UnitHealth",
-          "typeName": "UnitHealth",
-          "occurrenceCount": 23,
-          "sourceFileCount": 4,
-          "sourceFiles": [
-            "Assets/Game/Scripts/Editor/AirMissileLauncherValidationRunner.cs",
-            "Assets/Game/Scripts/Editor/MatchGcAllocationCallstackCapture.cs",
-            "Assets/Game/Scripts/Editor/MatchRuntimeShellSmokeValidation.cs",
-            "Assets/Game/Scripts/Editor/ScenarioLab/BattleScenarioLabValidationRunner.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Editor",
-          "targetAssembly": "Game.Components",
-          "fullTypeName": "Game.Components.Faction",
-          "typeName": "Faction",
-          "occurrenceCount": 21,
-          "sourceFileCount": 4,
-          "sourceFiles": [
-            "Assets/Game/Scripts/Editor/AirMissileLauncherValidationRunner.cs",
-            "Assets/Game/Scripts/Editor/MatchHudTacticalFollowCameraPlayModeValidation.cs",
-            "Assets/Game/Scripts/Editor/MatchRuntimeShellSmokeValidation.cs",
             "Assets/Game/Scripts/Editor/TacticalFollowAttackCinematicPlayModeValidation.cs"
           ]
         },
@@ -2228,6 +2268,33 @@
         {
           "sourceAssembly": "Game.Editor",
           "targetAssembly": "Game.Components",
+          "fullTypeName": "Game.Components.RuntimeBuildingCombatInfo",
+          "typeName": "RuntimeBuildingCombatInfo",
+          "occurrenceCount": 17,
+          "sourceFileCount": 2,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Editor/MatchPerformanceFixtureSeed.cs",
+            "Assets/Game/Scripts/Editor/MatchRuntimeShellSmokeValidation.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Editor",
+          "targetAssembly": "Game.Components",
+          "fullTypeName": "Game.Components.MapSurfaceBlob",
+          "typeName": "MapSurfaceBlob",
+          "occurrenceCount": 15,
+          "sourceFileCount": 5,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Editor/MapSurfaceAuthoringEditor.cs",
+            "Assets/Game/Scripts/Editor/MapSurfaceBakeSystem.cs",
+            "Assets/Game/Scripts/Editor/MapSurfacePreviewOverlaySystem.cs",
+            "Assets/Game/Scripts/Editor/OperationMapCurrentCompatibilityDefinitionBuilder.cs",
+            "Assets/Game/Scripts/Editor/OperationMapPhase0NavigationMetadataOwnershipProbe.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Editor",
+          "targetAssembly": "Game.Components",
           "fullTypeName": "Game.Components.GridConfig",
           "typeName": "GridConfig",
           "occurrenceCount": 15,
@@ -2238,30 +2305,6 @@
             "Assets/Game/Scripts/Editor/MatchGcAllocationCallstackCapture.cs",
             "Assets/Game/Scripts/Editor/ScenarioLab/BattleScenarioLabValidationRunner.cs"
           ]
-        },
-        {
-          "sourceAssembly": "Game.Editor",
-          "targetAssembly": "Game.Components",
-          "fullTypeName": "Game.Components.AirMissileProjectileComponent",
-          "typeName": "AirMissileProjectileComponent",
-          "occurrenceCount": 15,
-          "sourceFileCount": 3,
-          "sourceFiles": [
-            "Assets/Game/Scripts/Editor/AirMissileLauncherValidationRunner.cs",
-            "Assets/Game/Scripts/Editor/MatchRuntimeShellSmokeValidation.cs",
-            "Assets/Game/Scripts/Editor/ScenarioLab/BattleScenarioLabValidationRunner.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Editor",
-          "targetAssembly": "Game.Components",
-          "fullTypeName": "Game.Components.RuntimeBuildingCombatInfo",
-          "typeName": "RuntimeBuildingCombatInfo",
-          "occurrenceCount": 15,
-          "sourceFileCount": 1,
-          "sourceFiles": [
-            "Assets/Game/Scripts/Editor/MatchRuntimeShellSmokeValidation.cs"
-          ]
         }
       ]
     },
@@ -2271,28 +2314,28 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Editor/Game.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Composition/Game.Composition.asmdef",
       "declaredReference": "Game.Composition",
-      "resolvedTypeOccurrenceCount": 90,
-      "distinctResolvedTypeCount": 3,
-      "referencingSourceFileCount": 17,
+      "resolvedTypeOccurrenceCount": 141,
+      "distinctResolvedTypeCount": 4,
+      "referencingSourceFileCount": 25,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Editor",
           "targetAssembly": "Game.Composition",
           "fullTypeName": "Game.Composition.MatchSceneView",
           "typeName": "MatchSceneView",
-          "occurrenceCount": 49,
-          "sourceFileCount": 10,
+          "occurrenceCount": 83,
+          "sourceFileCount": 15,
           "sourceFiles": [
             "Assets/Game/Scripts/Editor/CanvasMatchFpsValidation.cs",
             "Assets/Game/Scripts/Editor/CanvasMatchRenderedGeometryAudit.cs",
             "Assets/Game/Scripts/Editor/MapBuildingPlacementBakeEditor.cs",
             "Assets/Game/Scripts/Editor/MapVehiclePlacementBakeEditor.cs",
             "Assets/Game/Scripts/Editor/MatchHudTacticalFollowCameraPlayModeValidation.cs",
+            "Assets/Game/Scripts/Editor/MobileVisualQualityCaptureMatrix.cs",
             "Assets/Game/Scripts/Editor/MobileVisualQualityPlayModeCapture.cs",
-            "Assets/Game/Scripts/Editor/RuntimeCitySpawnerStep13Validation.cs",
-            "Assets/Game/Scripts/Editor/StaticMapPresentationBaker.cs",
-            "Assets/Game/Scripts/Editor/StaticMapPresentationSceneWiring.cs",
-            "Assets/Game/Scripts/Editor/TacticalFollowAttackCinematicPlayModeValidation.cs"
+            "Assets/Game/Scripts/Editor/OperationMapCurrentCompatibilityDefinitionBuilder.cs",
+            "Assets/Game/Scripts/Editor/OperationMapPhase0BaselineProbe.cs",
+            "Assets/Game/Scripts/Editor/OperationMapPhase0OwnershipProbe.cs"
           ]
         },
         {
@@ -2300,8 +2343,8 @@
           "targetAssembly": "Game.Composition",
           "fullTypeName": "Game.Composition.MenuBootstrapView",
           "typeName": "MenuBootstrapView",
-          "occurrenceCount": 35,
-          "sourceFileCount": 10,
+          "occurrenceCount": 36,
+          "sourceFileCount": 11,
           "sourceFiles": [
             "Assets/Game/Scripts/Editor/CampaignOperationsPrefabBuilder.cs",
             "Assets/Game/Scripts/Editor/CanvasMatchFpsValidation.cs",
@@ -2309,10 +2352,23 @@
             "Assets/Game/Scripts/Editor/CanvasMenuFallbackValidation.cs",
             "Assets/Game/Scripts/Editor/MatchHudTacticalFollowCameraPlayModeValidation.cs",
             "Assets/Game/Scripts/Editor/MissionBriefingPrefabBuilder.cs",
+            "Assets/Game/Scripts/Editor/MobileVisualQualityCaptureMatrix.cs",
             "Assets/Game/Scripts/Editor/MobileVisualQualityPlayModeCapture.cs",
             "Assets/Game/Scripts/Editor/Narrative/FirstLaunchNarrativeMenuSceneInstaller.cs",
-            "Assets/Game/Scripts/Editor/OperationsDashboardPrefabBuilder.cs",
-            "Assets/Game/Scripts/Editor/TacticalFollowAttackCinematicPlayModeValidation.cs"
+            "Assets/Game/Scripts/Editor/OperationsDashboardPrefabBuilder.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Editor",
+          "targetAssembly": "Game.Composition",
+          "fullTypeName": "Game.Composition.OperationMapSceneView",
+          "typeName": "OperationMapSceneView",
+          "occurrenceCount": 16,
+          "sourceFileCount": 3,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Editor/OperationMapCurrentCompatibilitySceneViewStager.cs",
+            "Assets/Game/Scripts/Editor/OperationMapCurrentStagedSpatialBindingValidator.cs",
+            "Assets/Game/Scripts/Editor/OperationMapSceneViewEditor.cs"
           ]
         },
         {
@@ -2335,10 +2391,27 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Editor/Game.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Configs/Game.Configs.asmdef",
       "declaredReference": "Game.Configs",
-      "resolvedTypeOccurrenceCount": 194,
-      "distinctResolvedTypeCount": 35,
-      "referencingSourceFileCount": 30,
+      "resolvedTypeOccurrenceCount": 351,
+      "distinctResolvedTypeCount": 55,
+      "referencingSourceFileCount": 40,
       "topTypeReferences": [
+        {
+          "sourceAssembly": "Game.Editor",
+          "targetAssembly": "Game.Configs",
+          "fullTypeName": "Game.Configs.MapSurfaceDataAsset",
+          "typeName": "MapSurfaceDataAsset",
+          "occurrenceCount": 29,
+          "sourceFileCount": 7,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Editor/MapPrefabBakeAuthoringSetup.cs",
+            "Assets/Game/Scripts/Editor/MapSurfaceAuthoringEditor.cs",
+            "Assets/Game/Scripts/Editor/MapSurfaceBakeSystem.cs",
+            "Assets/Game/Scripts/Editor/MapSurfaceDebugCaptureSystem.cs",
+            "Assets/Game/Scripts/Editor/OperationMapCurrentCompatibilityDefinitionBuilder.cs",
+            "Assets/Game/Scripts/Editor/OperationMapPhase0BaselineProbe.cs",
+            "Assets/Game/Scripts/Editor/OperationMapPhase0NavigationMetadataOwnershipProbe.cs"
+          ]
+        },
         {
           "sourceAssembly": "Game.Editor",
           "targetAssembly": "Game.Configs",
@@ -2358,15 +2431,58 @@
         {
           "sourceAssembly": "Game.Editor",
           "targetAssembly": "Game.Configs",
-          "fullTypeName": "Game.Configs.MapSurfaceDataAsset",
-          "typeName": "MapSurfaceDataAsset",
-          "occurrenceCount": 17,
-          "sourceFileCount": 4,
+          "fullTypeName": "Game.Configs.RuntimeCitySpawnerSystemConfig",
+          "typeName": "RuntimeCitySpawnerSystemConfig",
+          "occurrenceCount": 26,
+          "sourceFileCount": 2,
           "sourceFiles": [
-            "Assets/Game/Scripts/Editor/MapPrefabBakeAuthoringSetup.cs",
-            "Assets/Game/Scripts/Editor/MapSurfaceAuthoringEditor.cs",
-            "Assets/Game/Scripts/Editor/MapSurfaceBakeSystem.cs",
-            "Assets/Game/Scripts/Editor/MapSurfaceDebugCaptureSystem.cs"
+            "Assets/Game/Scripts/Editor/MapPrototypes/M01RuntimeMapPrototypeEditorUtility.cs",
+            "Assets/Game/Scripts/Editor/RuntimeCitySpawnerStep13Validation.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Editor",
+          "targetAssembly": "Game.Configs",
+          "fullTypeName": "Game.Configs.OperationMapDefinition",
+          "typeName": "OperationMapDefinition",
+          "occurrenceCount": 19,
+          "sourceFileCount": 5,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Editor/OperationMapCurrentCompatibilityDefinitionBuilder.cs",
+            "Assets/Game/Scripts/Editor/OperationMapCurrentCompatibilitySceneViewStager.cs",
+            "Assets/Game/Scripts/Editor/OperationMapCurrentStagedDefinitionBuilder.cs",
+            "Assets/Game/Scripts/Editor/OperationMapCurrentStagedSpatialBindingValidator.cs",
+            "Assets/Game/Scripts/Editor/OperationMapSceneViewEditor.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Editor",
+          "targetAssembly": "Game.Configs",
+          "fullTypeName": "Game.Configs.MapBuildingPlacementConfig",
+          "typeName": "MapBuildingPlacementConfig",
+          "occurrenceCount": 18,
+          "sourceFileCount": 5,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Editor/MapBuildingPlacementBakeEditor.cs",
+            "Assets/Game/Scripts/Editor/OperationMapCurrentCompatibilityPlacementStager.cs",
+            "Assets/Game/Scripts/Editor/OperationMapCurrentCompatibilitySceneViewStager.cs",
+            "Assets/Game/Scripts/Editor/OperationMapPhase0BaselineProbe.cs",
+            "Assets/Game/Scripts/Editor/OperationMapPhase0PlacementOwnershipProbe.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Editor",
+          "targetAssembly": "Game.Configs",
+          "fullTypeName": "Game.Configs.MapVehiclePlacementConfig",
+          "typeName": "MapVehiclePlacementConfig",
+          "occurrenceCount": 18,
+          "sourceFileCount": 5,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Editor/MapVehiclePlacementBakeEditor.cs",
+            "Assets/Game/Scripts/Editor/OperationMapCurrentCompatibilityPlacementStager.cs",
+            "Assets/Game/Scripts/Editor/OperationMapCurrentCompatibilitySceneViewStager.cs",
+            "Assets/Game/Scripts/Editor/OperationMapPhase0BaselineProbe.cs",
+            "Assets/Game/Scripts/Editor/OperationMapPhase0PlacementOwnershipProbe.cs"
           ]
         },
         {
@@ -2410,67 +2526,12 @@
         {
           "sourceAssembly": "Game.Editor",
           "targetAssembly": "Game.Configs",
-          "fullTypeName": "Game.Configs.NarrativePunctuationConfig",
-          "typeName": "NarrativePunctuationConfig",
-          "occurrenceCount": 9,
-          "sourceFileCount": 4,
-          "sourceFiles": [
-            "Assets/Game/Scripts/Editor/Narrative/FirstLaunchNarrativeConfigBuilder.cs",
-            "Assets/Game/Scripts/Editor/Narrative/FirstLaunchNarrativeMenuSceneInstaller.cs",
-            "Assets/Game/Scripts/Editor/Narrative/FirstLaunchNarrativePerformanceValidation.cs",
-            "Assets/Game/Scripts/Editor/Narrative/FirstLaunchNarrativeRuntimeVideoCapture.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Editor",
-          "targetAssembly": "Game.Configs",
-          "fullTypeName": "Game.Configs.RuntimeCitySpawnerSystemConfig",
-          "typeName": "RuntimeCitySpawnerSystemConfig",
-          "occurrenceCount": 9,
+          "fullTypeName": "Game.Configs.RuntimeOperationMapCameraPose",
+          "typeName": "RuntimeOperationMapCameraPose",
+          "occurrenceCount": 12,
           "sourceFileCount": 1,
           "sourceFiles": [
-            "Assets/Game/Scripts/Editor/RuntimeCitySpawnerStep13Validation.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Editor",
-          "targetAssembly": "Game.Configs",
-          "fullTypeName": "Game.Configs.NarrativeSequenceConfig",
-          "typeName": "NarrativeSequenceConfig",
-          "occurrenceCount": 8,
-          "sourceFileCount": 4,
-          "sourceFiles": [
-            "Assets/Game/Scripts/Editor/Narrative/FirstLaunchNarrativeConfigBuilder.cs",
-            "Assets/Game/Scripts/Editor/Narrative/FirstLaunchNarrativeMenuSceneInstaller.cs",
-            "Assets/Game/Scripts/Editor/Narrative/FirstLaunchNarrativePerformanceValidation.cs",
-            "Assets/Game/Scripts/Editor/Narrative/FirstLaunchNarrativeRuntimeVideoCapture.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Editor",
-          "targetAssembly": "Game.Configs",
-          "fullTypeName": "Game.Configs.NarrativeSpeakerCatalog",
-          "typeName": "NarrativeSpeakerCatalog",
-          "occurrenceCount": 7,
-          "sourceFileCount": 4,
-          "sourceFiles": [
-            "Assets/Game/Scripts/Editor/Narrative/FirstLaunchNarrativeConfigBuilder.cs",
-            "Assets/Game/Scripts/Editor/Narrative/FirstLaunchNarrativeMenuSceneInstaller.cs",
-            "Assets/Game/Scripts/Editor/Narrative/FirstLaunchNarrativePerformanceValidation.cs",
-            "Assets/Game/Scripts/Editor/Narrative/FirstLaunchNarrativeRuntimeVideoCapture.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Editor",
-          "targetAssembly": "Game.Configs",
-          "fullTypeName": "Game.Configs.AudioEventCatalogConfig",
-          "typeName": "AudioEventCatalogConfig",
-          "occurrenceCount": 7,
-          "sourceFileCount": 3,
-          "sourceFiles": [
-            "Assets/Game/Scripts/Editor/AudioMemoryPlaybackCapture.cs",
-            "Assets/Game/Scripts/Editor/AudioRuntimeConfigAssetBuilder.cs",
-            "Assets/Game/Scripts/Editor/ContentResidencyInventoryGenerator.cs"
+            "Assets/Game/Scripts/Editor/MapPrototypes/M01RuntimeMapPrototypeEditorUtility.cs"
           ]
         }
       ]
@@ -2492,18 +2553,19 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Editor/Game.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Rendering/Game.Rendering.asmdef",
       "declaredReference": "Game.Rendering",
-      "resolvedTypeOccurrenceCount": 29,
+      "resolvedTypeOccurrenceCount": 38,
       "distinctResolvedTypeCount": 4,
-      "referencingSourceFileCount": 4,
+      "referencingSourceFileCount": 5,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Editor",
           "targetAssembly": "Game.Rendering",
           "fullTypeName": "Game.Rendering.StaticMapPresentationManifest",
           "typeName": "StaticMapPresentationManifest",
-          "occurrenceCount": 14,
-          "sourceFileCount": 4,
+          "occurrenceCount": 19,
+          "sourceFileCount": 5,
           "sourceFiles": [
+            "Assets/Game/Scripts/Editor/OperationMapPhase0BaselineProbe.cs",
             "Assets/Game/Scripts/Editor/StaticMapAndroidBuildSceneResolver.cs",
             "Assets/Game/Scripts/Editor/StaticMapPresentationBaker.cs",
             "Assets/Game/Scripts/Editor/StaticMapPresentationOutputOwnership.cs",
@@ -2515,9 +2577,10 @@
           "targetAssembly": "Game.Rendering",
           "fullTypeName": "Game.Rendering.StaticMapPresentationChunkEntry",
           "typeName": "StaticMapPresentationChunkEntry",
-          "occurrenceCount": 6,
-          "sourceFileCount": 2,
+          "occurrenceCount": 8,
+          "sourceFileCount": 3,
           "sourceFiles": [
+            "Assets/Game/Scripts/Editor/OperationMapPhase0BaselineProbe.cs",
             "Assets/Game/Scripts/Editor/StaticMapPresentationBaker.cs",
             "Assets/Game/Scripts/Editor/StaticMapPresentationOutputOwnership.cs"
           ]
@@ -2527,9 +2590,10 @@
           "targetAssembly": "Game.Rendering",
           "fullTypeName": "Game.Rendering.StaticMapPresentationSourceEntry",
           "typeName": "StaticMapPresentationSourceEntry",
-          "occurrenceCount": 5,
-          "sourceFileCount": 1,
+          "occurrenceCount": 7,
+          "sourceFileCount": 2,
           "sourceFiles": [
+            "Assets/Game/Scripts/Editor/OperationMapPhase0BaselineProbe.cs",
             "Assets/Game/Scripts/Editor/StaticMapPresentationBaker.cs"
           ]
         },
@@ -2563,9 +2627,9 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Editor/Game.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Game.Runtime.asmdef",
       "declaredReference": "Game.Runtime",
-      "resolvedTypeOccurrenceCount": 206,
-      "distinctResolvedTypeCount": 46,
-      "referencingSourceFileCount": 21,
+      "resolvedTypeOccurrenceCount": 230,
+      "distinctResolvedTypeCount": 49,
+      "referencingSourceFileCount": 23,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Editor",
@@ -2593,6 +2657,17 @@
             "Assets/Game/Scripts/Editor/ScenarioLab/BattleScenarioLabSceneBuilder.cs",
             "Assets/Game/Scripts/Editor/ScenarioLab/BattleScenarioLabValidationRunner.cs",
             "Assets/Game/Scripts/Editor/ScenarioLab/BattleScenarioLabVisualProofCapture.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Editor",
+          "targetAssembly": "Game.Runtime",
+          "fullTypeName": "Game.Runtime.RuntimeCityRAndDMapView",
+          "typeName": "RuntimeCityRAndDMapView",
+          "occurrenceCount": 13,
+          "sourceFileCount": 1,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Editor/MapPrototypes/M01RuntimeMapPrototypeEditorUtility.cs"
           ]
         },
         {
@@ -2646,6 +2721,17 @@
         {
           "sourceAssembly": "Game.Editor",
           "targetAssembly": "Game.Runtime",
+          "fullTypeName": "Game.Runtime.RuntimeCityRAndDMapSystem",
+          "typeName": "RuntimeCityRAndDMapSystem",
+          "occurrenceCount": 7,
+          "sourceFileCount": 1,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Editor/MapPrototypes/M01RuntimeMapPrototypeEditorUtility.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Editor",
+          "targetAssembly": "Game.Runtime",
           "fullTypeName": "Game.Runtime.BattleScenarioResult",
           "typeName": "BattleScenarioResult",
           "occurrenceCount": 6,
@@ -2667,29 +2753,6 @@
           "sourceFiles": [
             "Assets/Game/Scripts/Editor/ScenarioLab/BattleScenarioLabSceneBuilder.cs",
             "Assets/Game/Scripts/Editor/ScenarioLab/BattleScenarioLabValidationRunner.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Editor",
-          "targetAssembly": "Game.Runtime",
-          "fullTypeName": "Game.Runtime.PremiumWorldSelectionFrameView",
-          "typeName": "PremiumWorldSelectionFrameView",
-          "occurrenceCount": 6,
-          "sourceFileCount": 2,
-          "sourceFiles": [
-            "Assets/Game/Scripts/Editor/PremiumWorldMarkerPrefabBuilder.cs",
-            "Assets/Game/Scripts/Editor/PremiumWorldMarkerVisualProofCapture.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Editor",
-          "targetAssembly": "Game.Runtime",
-          "fullTypeName": "Game.Runtime.RuntimeBuildingEntityLink",
-          "typeName": "RuntimeBuildingEntityLink",
-          "occurrenceCount": 6,
-          "sourceFileCount": 1,
-          "sourceFiles": [
-            "Assets/Game/Scripts/Editor/MatchRuntimeShellSmokeValidation.cs"
           ]
         }
       ]
@@ -2760,9 +2823,9 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Editor/Game.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/UI/Contracts/Game.UI.Contracts.asmdef",
       "declaredReference": "Game.UI.Contracts",
-      "resolvedTypeOccurrenceCount": 29,
-      "distinctResolvedTypeCount": 11,
-      "referencingSourceFileCount": 6,
+      "resolvedTypeOccurrenceCount": 31,
+      "distinctResolvedTypeCount": 12,
+      "referencingSourceFileCount": 7,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Editor",
@@ -2809,6 +2872,17 @@
           "sourceFileCount": 1,
           "sourceFiles": [
             "Assets/Game/Scripts/Editor/CanvasMenuFallbackValidation.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Editor",
+          "targetAssembly": "Game.UI.Contracts",
+          "fullTypeName": "Game.UI.Contracts.UiAssistantCommandIntentKind",
+          "typeName": "UiAssistantCommandIntentKind",
+          "occurrenceCount": 2,
+          "sourceFileCount": 1,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Editor/OperationMapPhase0CameraMinimapOwnershipProbe.cs"
           ]
         },
         {
@@ -2864,17 +2938,6 @@
           "sourceFileCount": 1,
           "sourceFiles": [
             "Assets/Game/Scripts/Editor/MatchRuntimeShellSmokeValidation.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Editor",
-          "targetAssembly": "Game.UI.Contracts",
-          "fullTypeName": "Game.UI.Contracts.UiShellLoadingProgressModel",
-          "typeName": "UiShellLoadingProgressModel",
-          "occurrenceCount": 1,
-          "sourceFileCount": 1,
-          "sourceFiles": [
-            "Assets/Game/Scripts/Editor/CanvasMenuFallbackValidation.cs"
           ]
         }
       ]
@@ -3120,10 +3183,22 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Editor/Game.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/UI/Shell/Ecs/Game.UI.Shell.Ecs.asmdef",
       "declaredReference": "Game.UI.Shell.Ecs",
-      "resolvedTypeOccurrenceCount": 0,
-      "distinctResolvedTypeCount": 0,
-      "referencingSourceFileCount": 0,
-      "topTypeReferences": []
+      "resolvedTypeOccurrenceCount": 1,
+      "distinctResolvedTypeCount": 1,
+      "referencingSourceFileCount": 1,
+      "topTypeReferences": [
+        {
+          "sourceAssembly": "Game.Editor",
+          "targetAssembly": "Game.UI.Shell.Ecs",
+          "fullTypeName": "Game.UI.Shell.Ecs.UiShellEcsGateway",
+          "typeName": "UiShellEcsGateway",
+          "occurrenceCount": 1,
+          "sourceFileCount": 1,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Editor/OperationMapPhase0CameraMinimapOwnershipProbe.cs"
+          ]
+        }
+      ]
     },
     {
       "sourceAssembly": "Game.Narrative.Runtime",
@@ -3480,17 +3555,17 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Game.Runtime.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Components/Game.Components.asmdef",
       "declaredReference": "Game.Components",
-      "resolvedTypeOccurrenceCount": 10417,
-      "distinctResolvedTypeCount": 417,
-      "referencingSourceFileCount": 355,
+      "resolvedTypeOccurrenceCount": 10450,
+      "distinctResolvedTypeCount": 425,
+      "referencingSourceFileCount": 372,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Runtime",
           "targetAssembly": "Game.Components",
           "fullTypeName": "Game.Components.GridConfig",
           "typeName": "GridConfig",
-          "occurrenceCount": 690,
-          "sourceFileCount": 136,
+          "occurrenceCount": 701,
+          "sourceFileCount": 140,
           "sourceFiles": [
             "Assets/Game/Scripts/Environment/RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper.cs",
             "Assets/Game/Scripts/Environment/RuntimeCityChainUtilitySystemHelper.cs",
@@ -3498,10 +3573,10 @@
             "Assets/Game/Scripts/Environment/RuntimeCityGenerationCompositionSystemHelper.cs",
             "Assets/Game/Scripts/Environment/RuntimeCityHouseYardWallPrefabSystemHelper.cs",
             "Assets/Game/Scripts/Environment/RuntimeCityLayoutUtilitySystemHelper.cs",
+            "Assets/Game/Scripts/Environment/RuntimeCityRAndDMapCompositionSystemHelper.cs",
             "Assets/Game/Scripts/Environment/RuntimeCityReadinessQueryCompositionSystemHelper.cs",
             "Assets/Game/Scripts/Environment/RuntimeCityRoadBuildBridgeCompositionSystemHelper.cs",
-            "Assets/Game/Scripts/Environment/RuntimeCityRoadLayoutUtilitySystemHelper.cs",
-            "Assets/Game/Scripts/Environment/RuntimeCityStartupSystemHelper.cs"
+            "Assets/Game/Scripts/Environment/RuntimeCityRoadLayoutUtilitySystemHelper.cs"
           ]
         },
         {
@@ -3530,7 +3605,7 @@
           "fullTypeName": "Game.Components.Faction",
           "typeName": "Faction",
           "occurrenceCount": 321,
-          "sourceFileCount": 74,
+          "sourceFileCount": 75,
           "sourceFiles": [
             "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs",
             "Assets/Game/Scripts/ScenarioLab/BattleScenarioDr001Runner.cs",
@@ -3649,8 +3724,8 @@
           "targetAssembly": "Game.Components",
           "fullTypeName": "Game.Components.BuildingResourceStorageComponent",
           "typeName": "BuildingResourceStorageComponent",
-          "occurrenceCount": 155,
-          "sourceFileCount": 26,
+          "occurrenceCount": 162,
+          "sourceFileCount": 28,
           "sourceFiles": [
             "Assets/Game/Scripts/Systems/AircraftFuelSafetyReturnSystem.cs",
             "Assets/Game/Scripts/Systems/BuildingMaterialFabricationReadModelUiSystemHelper.cs",
@@ -3659,9 +3734,9 @@
             "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
             "Assets/Game/Scripts/Systems/BuildingResourceHaulerTransferEcsSystem.cs",
             "Assets/Game/Scripts/Systems/BuildingResourceProductionEcsSystem.cs",
-            "Assets/Game/Scripts/Systems/BuildingResourceStorageTransferSystemHelper.cs",
-            "Assets/Game/Scripts/Systems/BuildingRuntimeEntityCompositionSystemHelper.cs",
-            "Assets/Game/Scripts/Systems/BuildingRuntimeOwnershipCompositionSystemHelper.cs"
+            "Assets/Game/Scripts/Systems/BuildingResourceStorageQueryCache.cs",
+            "Assets/Game/Scripts/Systems/BuildingResourceStorageReservationSystemHelper.cs",
+            "Assets/Game/Scripts/Systems/BuildingResourceStorageTransferSystemHelper.cs"
           ]
         },
         {
@@ -3692,9 +3767,9 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Game.Runtime.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Configs/Game.Configs.asmdef",
       "declaredReference": "Game.Configs",
-      "resolvedTypeOccurrenceCount": 243,
-      "distinctResolvedTypeCount": 54,
-      "referencingSourceFileCount": 44,
+      "resolvedTypeOccurrenceCount": 318,
+      "distinctResolvedTypeCount": 64,
+      "referencingSourceFileCount": 52,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Runtime",
@@ -3706,6 +3781,20 @@
           "sourceFiles": [
             "Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs",
             "Assets/Game/Scripts/Systems/AIStartupSystem.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Runtime",
+          "targetAssembly": "Game.Configs",
+          "fullTypeName": "Game.Configs.RuntimeOperationMapVisualStage",
+          "typeName": "RuntimeOperationMapVisualStage",
+          "occurrenceCount": 20,
+          "sourceFileCount": 4,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Environment/RuntimeCityRAndDMapCompositionSystemHelper.cs",
+            "Assets/Game/Scripts/Environment/RuntimeCityRAndDMapSystem.cs",
+            "Assets/Game/Scripts/Environment/RuntimeOperationMapVisualQualitySystemHelper.cs",
+            "Assets/Game/Scripts/Environment/RuntimeOperationMapVisualRecipePresentationSystemHelper.cs"
           ]
         },
         {
@@ -3739,6 +3828,36 @@
         {
           "sourceAssembly": "Game.Runtime",
           "targetAssembly": "Game.Configs",
+          "fullTypeName": "Game.Configs.RuntimeOperationMapVisualRecipe",
+          "typeName": "RuntimeOperationMapVisualRecipe",
+          "occurrenceCount": 15,
+          "sourceFileCount": 4,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Environment/RuntimeCityRAndDMapCompositionSystemHelper.cs",
+            "Assets/Game/Scripts/Environment/RuntimeCityRAndDMapView.cs",
+            "Assets/Game/Scripts/Environment/RuntimeOperationMapGenerationRecoverySystemHelper.cs",
+            "Assets/Game/Scripts/Environment/RuntimeOperationMapVisualRecipePresentationSystemHelper.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Runtime",
+          "targetAssembly": "Game.Configs",
+          "fullTypeName": "Game.Configs.RuntimeCitySpawnerSystemConfig",
+          "typeName": "RuntimeCitySpawnerSystemConfig",
+          "occurrenceCount": 13,
+          "sourceFileCount": 6,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Environment/RuntimeCityCompositionSystemHelper.cs",
+            "Assets/Game/Scripts/Environment/RuntimeCityConfigCompositionSystemHelper.cs",
+            "Assets/Game/Scripts/Environment/RuntimeCityRAndDMapCompositionSystemHelper.cs",
+            "Assets/Game/Scripts/Environment/RuntimeCityRAndDMapView.cs",
+            "Assets/Game/Scripts/Systems/BuildingGameplayResultCompositionSystemHelper.cs",
+            "Assets/Game/Scripts/Systems/ManagedGameplayStartupSystemHelper.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Runtime",
+          "targetAssembly": "Game.Configs",
           "fullTypeName": "Game.Configs.AIControllerRole",
           "typeName": "AIControllerRole",
           "occurrenceCount": 11,
@@ -3765,65 +3884,24 @@
         {
           "sourceAssembly": "Game.Runtime",
           "targetAssembly": "Game.Configs",
+          "fullTypeName": "Game.Configs.RuntimeOperationMapCameraPose",
+          "typeName": "RuntimeOperationMapCameraPose",
+          "occurrenceCount": 11,
+          "sourceFileCount": 2,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Environment/RuntimeCityRAndDMapCompositionSystemHelper.cs",
+            "Assets/Game/Scripts/Environment/RuntimeCityRAndDMapView.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Runtime",
+          "targetAssembly": "Game.Configs",
           "fullTypeName": "Game.Configs.UnitAnimationKind",
           "typeName": "UnitAnimationKind",
           "occurrenceCount": 11,
           "sourceFileCount": 1,
           "sourceFiles": [
             "Assets/Game/Scripts/Systems/UnitAnimationIndexSystem.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Runtime",
-          "targetAssembly": "Game.Configs",
-          "fullTypeName": "Game.Configs.RTSSelectionSystemConfig",
-          "typeName": "RTSSelectionSystemConfig",
-          "occurrenceCount": 9,
-          "sourceFileCount": 5,
-          "sourceFiles": [
-            "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs",
-            "Assets/Game/Scripts/Systems/ManagedGameplayStartupSystemHelper.cs",
-            "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs",
-            "Assets/Game/Scripts/Systems/SelectionRuntimeConfigStartupSystemHelper.cs",
-            "Assets/Game/Scripts/Systems/SelectionUiCameraSystemHelper.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Runtime",
-          "targetAssembly": "Game.Configs",
-          "fullTypeName": "Game.Configs.MapVehiclePlacementConfigEntry",
-          "typeName": "MapVehiclePlacementConfigEntry",
-          "occurrenceCount": 8,
-          "sourceFileCount": 2,
-          "sourceFiles": [
-            "Assets/Game/Scripts/Systems/MapVehiclePlacementClearanceSystemHelper.cs",
-            "Assets/Game/Scripts/Systems/MapVehiclePlacementSpawnPrefabSystemHelper.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Runtime",
-          "targetAssembly": "Game.Configs",
-          "fullTypeName": "Game.Configs.MapBuildingPlacementConfigEntry",
-          "typeName": "MapBuildingPlacementConfigEntry",
-          "occurrenceCount": 8,
-          "sourceFileCount": 1,
-          "sourceFiles": [
-            "Assets/Game/Scripts/Systems/MapBuildingPlacementSpawnPrefabSystemHelper.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Runtime",
-          "targetAssembly": "Game.Configs",
-          "fullTypeName": "Game.Configs.RoadBuildSystemConfig",
-          "typeName": "RoadBuildSystemConfig",
-          "occurrenceCount": 7,
-          "sourceFileCount": 5,
-          "sourceFiles": [
-            "Assets/Game/Scripts/Systems/ManagedGameplayStartupSystemHelper.cs",
-            "Assets/Game/Scripts/Systems/RoadBuildCompositionLifecycleCompositionSystemHelper.cs",
-            "Assets/Game/Scripts/Systems/RoadBuildCompositionSystemHelper.cs",
-            "Assets/Game/Scripts/Systems/RoadBuildConfigSystem.cs",
-            "Assets/Game/Scripts/Systems/RoadBuildStartupSystem.cs"
           ]
         }
       ]
@@ -3943,7 +4021,7 @@
       "declaredReference": "Game.Tactical.Contracts",
       "resolvedTypeOccurrenceCount": 153,
       "distinctResolvedTypeCount": 3,
-      "referencingSourceFileCount": 29,
+      "referencingSourceFileCount": 30,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Runtime",
@@ -3951,18 +4029,18 @@
           "fullTypeName": "Game.Tactical.Contracts.TacticalCommandReasonCode",
           "typeName": "TacticalCommandReasonCode",
           "occurrenceCount": 75,
-          "sourceFileCount": 23,
+          "sourceFileCount": 24,
           "sourceFiles": [
             "Assets/Game/Scripts/Systems/AttackOrderCommandSystem.cs",
-            "Assets/Game/Scripts/Systems/BuildingPlacementCommandRequestCompositionSystemHelper.cs",
+            "Assets/Game/Scripts/Systems/BuildingCampItemCommandPolicySystemHelper.cs",
+            "Assets/Game/Scripts/Systems/BuildingPlacementCommandResultMapper.cs",
             "Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.cs",
             "Assets/Game/Scripts/Systems/FocusedUnitUiReadModelUiSystemHelper.cs",
             "Assets/Game/Scripts/Systems/RtsSelectionAttackTargetModeCommandSystem.cs",
             "Assets/Game/Scripts/Systems/RtsSelectionBoardTargetModeCommandSystem.cs",
             "Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushCompositionSystemHelper.cs",
             "Assets/Game/Scripts/Systems/RtsSelectionImmediateSelectedUnitCommandSystem.cs",
-            "Assets/Game/Scripts/Systems/RtsSelectionMoveTargetModeCommandSystem.cs",
-            "Assets/Game/Scripts/Systems/ScanIntelCommandSystem.cs"
+            "Assets/Game/Scripts/Systems/RtsSelectionMoveTargetModeCommandSystem.cs"
           ]
         },
         {
@@ -4434,9 +4512,9 @@
       "sourceAsmdefPath": "Assets/Tests/Editor/Game.Tests.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Components/Game.Components.asmdef",
       "declaredReference": "Game.Components",
-      "resolvedTypeOccurrenceCount": 10333,
-      "distinctResolvedTypeCount": 383,
-      "referencingSourceFileCount": 162,
+      "resolvedTypeOccurrenceCount": 10538,
+      "distinctResolvedTypeCount": 398,
+      "referencingSourceFileCount": 171,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Tests.Editor",
@@ -4521,9 +4599,29 @@
         {
           "sourceAssembly": "Game.Tests.Editor",
           "targetAssembly": "Game.Components",
+          "fullTypeName": "Game.Components.GridConfig",
+          "typeName": "GridConfig",
+          "occurrenceCount": 271,
+          "sourceFileCount": 51,
+          "sourceFiles": [
+            "Assets/Tests/Editor/AIBuildPlannerValidationTests.cs",
+            "Assets/Tests/Editor/AIEndToEndValidationTests.cs",
+            "Assets/Tests/Editor/AIProductionValidationTests.cs",
+            "Assets/Tests/Editor/AirAttackGateBypassTests.cs",
+            "Assets/Tests/Editor/AlertObjectiveAudioFeedbackTests.cs",
+            "Assets/Tests/Editor/AssistantCommandIntentSystemTests.cs",
+            "Assets/Tests/Editor/AutomaticCombatFactionTargetingTests.cs",
+            "Assets/Tests/Editor/BaseBreachValidationTests.cs",
+            "Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs",
+            "Assets/Tests/Editor/BuildingProductionSystemTests.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Tests.Editor",
+          "targetAssembly": "Game.Components",
           "fullTypeName": "Game.Components.BuildingResourceStorageComponent",
           "typeName": "BuildingResourceStorageComponent",
-          "occurrenceCount": 267,
+          "occurrenceCount": 269,
           "sourceFileCount": 18,
           "sourceFiles": [
             "Assets/Tests/Editor/BuildingProductionSystemTests.cs",
@@ -4536,26 +4634,6 @@
             "Assets/Tests/Editor/ResourceExchangeAIRecoverySystemTests.cs",
             "Assets/Tests/Editor/ResourceExchangeAriaAnnouncementSystemTests.cs",
             "Assets/Tests/Editor/ResourceExchangeEconomyEventSystemTests.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Tests.Editor",
-          "targetAssembly": "Game.Components",
-          "fullTypeName": "Game.Components.GridConfig",
-          "typeName": "GridConfig",
-          "occurrenceCount": 264,
-          "sourceFileCount": 49,
-          "sourceFiles": [
-            "Assets/Tests/Editor/AIBuildPlannerValidationTests.cs",
-            "Assets/Tests/Editor/AIEndToEndValidationTests.cs",
-            "Assets/Tests/Editor/AIProductionValidationTests.cs",
-            "Assets/Tests/Editor/AirAttackGateBypassTests.cs",
-            "Assets/Tests/Editor/AlertObjectiveAudioFeedbackTests.cs",
-            "Assets/Tests/Editor/AssistantCommandIntentSystemTests.cs",
-            "Assets/Tests/Editor/AutomaticCombatFactionTargetingTests.cs",
-            "Assets/Tests/Editor/BaseBreachValidationTests.cs",
-            "Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs",
-            "Assets/Tests/Editor/BuildingProductionSystemTests.cs"
           ]
         },
         {
@@ -4619,7 +4697,7 @@
           "targetAssembly": "Game.Components",
           "fullTypeName": "Game.Components.ResourceExchangeQueueComponent",
           "typeName": "ResourceExchangeQueueComponent",
-          "occurrenceCount": 192,
+          "occurrenceCount": 196,
           "sourceFileCount": 17,
           "sourceFiles": [
             "Assets/Tests/Editor/Balance/BalanceHarnessContractTests.cs",
@@ -4642,10 +4720,27 @@
       "sourceAsmdefPath": "Assets/Tests/Editor/Game.Tests.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Composition/Game.Composition.asmdef",
       "declaredReference": "Game.Composition",
-      "resolvedTypeOccurrenceCount": 136,
-      "distinctResolvedTypeCount": 19,
-      "referencingSourceFileCount": 16,
+      "resolvedTypeOccurrenceCount": 164,
+      "distinctResolvedTypeCount": 24,
+      "referencingSourceFileCount": 23,
       "topTypeReferences": [
+        {
+          "sourceAssembly": "Game.Tests.Editor",
+          "targetAssembly": "Game.Composition",
+          "fullTypeName": "Game.Composition.MatchSceneView",
+          "typeName": "MatchSceneView",
+          "occurrenceCount": 40,
+          "sourceFileCount": 7,
+          "sourceFiles": [
+            "Assets/Tests/Editor/AudioPlaybackPresentationSceneBindingTests.cs",
+            "Assets/Tests/Editor/MatchSceneReferenceSceneSystemHelperTests.cs",
+            "Assets/Tests/Editor/OperationMapCurrentCompatibilityDefinitionTests.cs",
+            "Assets/Tests/Editor/OperationMapRuntimeBootstrapSceneSystemHelperTests.cs",
+            "Assets/Tests/Editor/ResourceExchangeStartupProjectionSystemHelperTests.cs",
+            "Assets/Tests/Editor/StaticMapPresentationSceneWiringTests.cs",
+            "Assets/Tests/Editor/StaticMapPresentationStreamerTests.cs"
+          ]
+        },
         {
           "sourceAssembly": "Game.Tests.Editor",
           "targetAssembly": "Game.Composition",
@@ -4654,21 +4749,6 @@
           "occurrenceCount": 34,
           "sourceFileCount": 1,
           "sourceFiles": [
-            "Assets/Tests/Editor/StaticMapPresentationStreamerTests.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Tests.Editor",
-          "targetAssembly": "Game.Composition",
-          "fullTypeName": "Game.Composition.MatchSceneView",
-          "typeName": "MatchSceneView",
-          "occurrenceCount": 32,
-          "sourceFileCount": 5,
-          "sourceFiles": [
-            "Assets/Tests/Editor/AudioPlaybackPresentationSceneBindingTests.cs",
-            "Assets/Tests/Editor/MatchSceneReferenceSceneSystemHelperTests.cs",
-            "Assets/Tests/Editor/ResourceExchangeStartupProjectionSystemHelperTests.cs",
-            "Assets/Tests/Editor/StaticMapPresentationSceneWiringTests.cs",
             "Assets/Tests/Editor/StaticMapPresentationStreamerTests.cs"
           ]
         },
@@ -4696,6 +4776,29 @@
           "sourceFileCount": 1,
           "sourceFiles": [
             "Assets/Tests/Editor/BuildDrawerCatalogQueryUiSystemHelperTests.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Tests.Editor",
+          "targetAssembly": "Game.Composition",
+          "fullTypeName": "Game.Composition.OperationMapRuntimeBootstrapSceneSystemHelper",
+          "typeName": "OperationMapRuntimeBootstrapSceneSystemHelper",
+          "occurrenceCount": 8,
+          "sourceFileCount": 1,
+          "sourceFiles": [
+            "Assets/Tests/Editor/OperationMapRuntimeBootstrapSceneSystemHelperTests.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Tests.Editor",
+          "targetAssembly": "Game.Composition",
+          "fullTypeName": "Game.Composition.MatchHudMinimapDataSourceAdapter",
+          "typeName": "MatchHudMinimapDataSourceAdapter",
+          "occurrenceCount": 6,
+          "sourceFileCount": 2,
+          "sourceFiles": [
+            "Assets/Tests/Editor/MatchHudMinimapDataSourceAdapterTests.cs",
+            "Assets/Tests/Editor/OperationMapMobileSafeLookupTests.cs"
           ]
         },
         {
@@ -4734,35 +4837,13 @@
         {
           "sourceAssembly": "Game.Tests.Editor",
           "targetAssembly": "Game.Composition",
-          "fullTypeName": "Game.Composition.MenuBootstrapCompositionSystemHelper",
-          "typeName": "MenuBootstrapCompositionSystemHelper",
+          "fullTypeName": "Game.Composition.MatchBootstrapCompositionSystemHelper",
+          "typeName": "MatchBootstrapCompositionSystemHelper",
           "occurrenceCount": 3,
           "sourceFileCount": 2,
           "sourceFiles": [
-            "Assets/Tests/Editor/AudioPlaybackPresentationSceneBindingTests.cs",
-            "Assets/Tests/Editor/StaticMapPresentationStreamerTests.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Tests.Editor",
-          "targetAssembly": "Game.Composition",
-          "fullTypeName": "Game.Composition.FirstLaunchNarrativeProfileCompositionSystemHelper",
-          "typeName": "FirstLaunchNarrativeProfileCompositionSystemHelper",
-          "occurrenceCount": 3,
-          "sourceFileCount": 1,
-          "sourceFiles": [
-            "Assets/Tests/Editor/Narrative/FirstLaunchNarrativeCompositionBoundaryTests.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Tests.Editor",
-          "targetAssembly": "Game.Composition",
-          "fullTypeName": "Game.Composition.FirstLaunchNarrativeSequencePresentationSystemHelper",
-          "typeName": "FirstLaunchNarrativeSequencePresentationSystemHelper",
-          "occurrenceCount": 3,
-          "sourceFileCount": 1,
-          "sourceFiles": [
-            "Assets/Tests/Editor/Narrative/FirstLaunchNarrativeSequencePresentationSystemHelperTests.cs"
+            "Assets/Tests/Editor/AndroidVisualQualityValidationTests.cs",
+            "Assets/Tests/Editor/MatchGameplayStartupCompositionSystemHelperTests.cs"
           ]
         }
       ]
@@ -4773,9 +4854,9 @@
       "sourceAsmdefPath": "Assets/Tests/Editor/Game.Tests.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Configs/Game.Configs.asmdef",
       "declaredReference": "Game.Configs",
-      "resolvedTypeOccurrenceCount": 510,
-      "distinctResolvedTypeCount": 58,
-      "referencingSourceFileCount": 53,
+      "resolvedTypeOccurrenceCount": 685,
+      "distinctResolvedTypeCount": 76,
+      "referencingSourceFileCount": 61,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Tests.Editor",
@@ -4795,6 +4876,23 @@
             "Assets/Tests/Editor/InitialFactionBaseValidationTests.cs",
             "Assets/Tests/Editor/SelectionOrderMarkerPresentationSystemHelperTests.cs",
             "Assets/Tests/Editor/UiBuildDrawerDualCostReadModelTests.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Tests.Editor",
+          "targetAssembly": "Game.Configs",
+          "fullTypeName": "Game.Configs.OperationMapDefinition",
+          "typeName": "OperationMapDefinition",
+          "occurrenceCount": 57,
+          "sourceFileCount": 7,
+          "sourceFiles": [
+            "Assets/Tests/Editor/OperationMapCatalogConfigTests.cs",
+            "Assets/Tests/Editor/OperationMapContractValidationTests.cs",
+            "Assets/Tests/Editor/OperationMapCurrentCompatibilityDefinitionTests.cs",
+            "Assets/Tests/Editor/OperationMapIdentityConfigTests.cs",
+            "Assets/Tests/Editor/OperationMapMetadataBlobCreationTests.cs",
+            "Assets/Tests/Editor/OperationMapRuntimeBootstrapSceneSystemHelperTests.cs",
+            "Assets/Tests/Editor/OperationMapSpatialConfigTests.cs"
           ]
         },
         {
@@ -4839,6 +4937,18 @@
             "Assets/Tests/Editor/AIFactionControlStartupSystemValidationTests.cs",
             "Assets/Tests/Editor/AIStartupSystemValidationTests.cs",
             "Assets/Tests/Editor/FactionEconomyStartupSystemValidationTests.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Tests.Editor",
+          "targetAssembly": "Game.Configs",
+          "fullTypeName": "Game.Configs.ScenarioSetupConfig",
+          "typeName": "ScenarioSetupConfig",
+          "occurrenceCount": 23,
+          "sourceFileCount": 2,
+          "sourceFiles": [
+            "Assets/Tests/Editor/OperationMapContractValidationTests.cs",
+            "Assets/Tests/Editor/OperationMapIdentityConfigTests.cs"
           ]
         },
         {
@@ -4900,34 +5010,6 @@
             "Assets/Tests/Editor/MaterialsScenarioRecoveryStartupSystemHelperTests.cs",
             "Assets/Tests/Editor/ResourceExchangeStartupProjectionSystemHelperTests.cs"
           ]
-        },
-        {
-          "sourceAssembly": "Game.Tests.Editor",
-          "targetAssembly": "Game.Configs",
-          "fullTypeName": "Game.Configs.AudioMixerBusConfig",
-          "typeName": "AudioMixerBusConfig",
-          "occurrenceCount": 17,
-          "sourceFileCount": 4,
-          "sourceFiles": [
-            "Assets/Tests/Editor/AudioConfigContractTests.cs",
-            "Assets/Tests/Editor/AudioPlaybackPresentationBridgeSystemHelperTests.cs",
-            "Assets/Tests/Editor/AudioPlaybackPresentationSceneBindingTests.cs",
-            "Assets/Tests/Editor/AudioRuntimeConfigAssetBuilderTests.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Tests.Editor",
-          "targetAssembly": "Game.Configs",
-          "fullTypeName": "Game.Configs.InitialUnitsSpawnerAuthoringConfig.FactionEntry",
-          "typeName": "FactionEntry",
-          "occurrenceCount": 17,
-          "sourceFileCount": 4,
-          "sourceFiles": [
-            "Assets/Tests/Editor/BuildingRuntimeValidationTests.cs",
-            "Assets/Tests/Editor/CustomGameStartupSystemHelperTests.cs",
-            "Assets/Tests/Editor/InitialFactionBaseValidationTests.cs",
-            "Assets/Tests/Editor/InitialFactionSpawnCellSystemTests.cs"
-          ]
         }
       ]
     },
@@ -4937,16 +5019,16 @@
       "sourceAsmdefPath": "Assets/Tests/Editor/Game.Tests.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Editor/Game.Editor.asmdef",
       "declaredReference": "Game.Editor",
-      "resolvedTypeOccurrenceCount": 107,
-      "distinctResolvedTypeCount": 23,
-      "referencingSourceFileCount": 12,
+      "resolvedTypeOccurrenceCount": 141,
+      "distinctResolvedTypeCount": 31,
+      "referencingSourceFileCount": 18,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Tests.Editor",
           "targetAssembly": "Game.Editor",
           "fullTypeName": "Game.Editor.Aph700ReportArtifacts",
           "typeName": "Aph700ReportArtifacts",
-          "occurrenceCount": 15,
+          "occurrenceCount": 16,
           "sourceFileCount": 1,
           "sourceFiles": [
             "Assets/Tests/Editor/Aph700AssemblyDependencyReportGeneratorTests.cs"
@@ -4977,12 +5059,45 @@
         {
           "sourceAssembly": "Game.Tests.Editor",
           "targetAssembly": "Game.Editor",
+          "fullTypeName": "Game.Editor.OperationMapPhase0BaselineProbe",
+          "typeName": "OperationMapPhase0BaselineProbe",
+          "occurrenceCount": 9,
+          "sourceFileCount": 1,
+          "sourceFiles": [
+            "Assets/Tests/Editor/OperationMapPhase0BaselineProbeTests.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Tests.Editor",
+          "targetAssembly": "Game.Editor",
           "fullTypeName": "Game.Editor.AudioMemoryPlaybackReport",
           "typeName": "AudioMemoryPlaybackReport",
           "occurrenceCount": 8,
           "sourceFileCount": 1,
           "sourceFiles": [
             "Assets/Tests/Editor/AudioMemoryPlaybackCaptureTests.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Tests.Editor",
+          "targetAssembly": "Game.Editor",
+          "fullTypeName": "Game.Editor.ContentResidencyAssetRecord",
+          "typeName": "ContentResidencyAssetRecord",
+          "occurrenceCount": 7,
+          "sourceFileCount": 1,
+          "sourceFiles": [
+            "Assets/Tests/Editor/ContentResidencyInventoryGeneratorTests.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Tests.Editor",
+          "targetAssembly": "Game.Editor",
+          "fullTypeName": "Game.Editor.ContentResidencyReport",
+          "typeName": "ContentResidencyReport",
+          "occurrenceCount": 7,
+          "sourceFileCount": 1,
+          "sourceFiles": [
+            "Assets/Tests/Editor/ContentResidencyInventoryGeneratorTests.cs"
           ]
         },
         {
@@ -4999,12 +5114,12 @@
         {
           "sourceAssembly": "Game.Tests.Editor",
           "targetAssembly": "Game.Editor",
-          "fullTypeName": "Game.Editor.ContentResidencyReport",
-          "typeName": "ContentResidencyReport",
-          "occurrenceCount": 6,
+          "fullTypeName": "Game.Editor.StaticMapAndroidBuildManifestSnapshot",
+          "typeName": "StaticMapAndroidBuildManifestSnapshot",
+          "occurrenceCount": 7,
           "sourceFileCount": 1,
           "sourceFiles": [
-            "Assets/Tests/Editor/ContentResidencyInventoryGeneratorTests.cs"
+            "Assets/Tests/Editor/StaticMapAndroidBuildSceneResolverTests.cs"
           ]
         },
         {
@@ -5016,39 +5131,6 @@
           "sourceFileCount": 1,
           "sourceFiles": [
             "Assets/Tests/Editor/MapSurfaceLayeredGridFocusedTests.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Tests.Editor",
-          "targetAssembly": "Game.Editor",
-          "fullTypeName": "Game.Editor.MapSurfaceBakeSystem",
-          "typeName": "MapSurfaceBakeSystem",
-          "occurrenceCount": 6,
-          "sourceFileCount": 1,
-          "sourceFiles": [
-            "Assets/Tests/Editor/MapSurfaceLayeredGridFocusedTests.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Tests.Editor",
-          "targetAssembly": "Game.Editor",
-          "fullTypeName": "Game.Editor.AndroidPackedAssetContribution",
-          "typeName": "AndroidPackedAssetContribution",
-          "occurrenceCount": 5,
-          "sourceFileCount": 1,
-          "sourceFiles": [
-            "Assets/Tests/Editor/AndroidBuildReportGeneratorTests.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Tests.Editor",
-          "targetAssembly": "Game.Editor",
-          "fullTypeName": "Game.Editor.AudioMemoryEventSnapshot",
-          "typeName": "AudioMemoryEventSnapshot",
-          "occurrenceCount": 5,
-          "sourceFileCount": 1,
-          "sourceFiles": [
-            "Assets/Tests/Editor/AudioMemoryPlaybackCaptureTests.cs"
           ]
         }
       ]
@@ -5209,19 +5291,20 @@
       "sourceAsmdefPath": "Assets/Tests/Editor/Game.Tests.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Rendering/Game.Rendering.asmdef",
       "declaredReference": "Game.Rendering",
-      "resolvedTypeOccurrenceCount": 270,
+      "resolvedTypeOccurrenceCount": 275,
       "distinctResolvedTypeCount": 49,
-      "referencingSourceFileCount": 13,
+      "referencingSourceFileCount": 14,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Tests.Editor",
           "targetAssembly": "Game.Rendering",
           "fullTypeName": "Game.Rendering.StaticMapPresentationManifest",
           "typeName": "StaticMapPresentationManifest",
-          "occurrenceCount": 41,
-          "sourceFileCount": 6,
+          "occurrenceCount": 45,
+          "sourceFileCount": 7,
           "sourceFiles": [
             "Assets/Tests/Editor/StaticMapAndroidBuildSceneResolverTests.cs",
+            "Assets/Tests/Editor/StaticMapPresentationManifestSchemaCompatibilityTests.cs",
             "Assets/Tests/Editor/StaticMapPresentationOutputOwnershipTests.cs",
             "Assets/Tests/Editor/StaticMapPresentationOwnershipTests.cs",
             "Assets/Tests/Editor/StaticMapPresentationSceneWiringTests.cs",
@@ -5328,12 +5411,12 @@
         {
           "sourceAssembly": "Game.Tests.Editor",
           "targetAssembly": "Game.Rendering",
-          "fullTypeName": "Game.Rendering.UnitRenderBudgetAnimationReadiness",
-          "typeName": "UnitRenderBudgetAnimationReadiness",
-          "occurrenceCount": 8,
+          "fullTypeName": "Game.Rendering.UnitRenderBudgetSnapshot.Snapshot",
+          "typeName": "Snapshot",
+          "occurrenceCount": 9,
           "sourceFileCount": 1,
           "sourceFiles": [
-            "Assets/Tests/Editor/UnitRenderBudgetSystemTests.cs"
+            "Assets/Tests/Editor/StaticMapAndroidBuildSceneResolverTests.cs"
           ]
         }
       ]
@@ -5355,9 +5438,9 @@
       "sourceAsmdefPath": "Assets/Tests/Editor/Game.Tests.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Game.Runtime.asmdef",
       "declaredReference": "Game.Runtime",
-      "resolvedTypeOccurrenceCount": 2790,
-      "distinctResolvedTypeCount": 372,
-      "referencingSourceFileCount": 149,
+      "resolvedTypeOccurrenceCount": 2855,
+      "distinctResolvedTypeCount": 391,
+      "referencingSourceFileCount": 152,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Tests.Editor",
@@ -5401,7 +5484,7 @@
           "targetAssembly": "Game.Runtime",
           "fullTypeName": "Game.Runtime.BuildingDefinition",
           "typeName": "BuildingDefinition",
-          "occurrenceCount": 101,
+          "occurrenceCount": 102,
           "sourceFileCount": 18,
           "sourceFiles": [
             "Assets/Tests/Editor/AlertObjectiveAudioFeedbackTests.cs",
@@ -5421,9 +5504,10 @@
           "targetAssembly": "Game.Runtime",
           "fullTypeName": "Game.Runtime.RtsCameraSystem",
           "typeName": "RtsCameraSystem",
-          "occurrenceCount": 52,
-          "sourceFileCount": 1,
+          "occurrenceCount": 57,
+          "sourceFileCount": 2,
           "sourceFiles": [
+            "Assets/Tests/Editor/OperationMapMobileSafeLookupTests.cs",
             "Assets/Tests/Editor/RtsCameraSystemTests.cs"
           ]
         },
@@ -5480,6 +5564,18 @@
         {
           "sourceAssembly": "Game.Tests.Editor",
           "targetAssembly": "Game.Runtime",
+          "fullTypeName": "Game.Runtime.RtsCameraRequestSystem",
+          "typeName": "RtsCameraRequestSystem",
+          "occurrenceCount": 45,
+          "sourceFileCount": 2,
+          "sourceFiles": [
+            "Assets/Tests/Editor/OperationMapMobileSafeLookupTests.cs",
+            "Assets/Tests/Editor/RtsCameraSystemTests.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Tests.Editor",
+          "targetAssembly": "Game.Runtime",
           "fullTypeName": "Game.Runtime.TransportBoardingCommandSystem",
           "typeName": "TransportBoardingCommandSystem",
           "occurrenceCount": 39,
@@ -5494,32 +5590,18 @@
         {
           "sourceAssembly": "Game.Tests.Editor",
           "targetAssembly": "Game.Runtime",
-          "fullTypeName": "Game.Runtime.RtsCameraRequestSystem",
-          "typeName": "RtsCameraRequestSystem",
-          "occurrenceCount": 39,
-          "sourceFileCount": 1,
+          "fullTypeName": "Game.Runtime.RuntimeGameplayStateSystem",
+          "typeName": "RuntimeGameplayStateSystem",
+          "occurrenceCount": 35,
+          "sourceFileCount": 7,
           "sourceFiles": [
-            "Assets/Tests/Editor/RtsCameraSystemTests.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Tests.Editor",
-          "targetAssembly": "Game.Runtime",
-          "fullTypeName": "Game.Runtime.BattleScenarioDefinition",
-          "typeName": "BattleScenarioDefinition",
-          "occurrenceCount": 33,
-          "sourceFileCount": 14,
-          "sourceFiles": [
-            "Assets/Tests/Editor/ScenarioLab/BattleScenarioAd001RunnerTests.cs",
-            "Assets/Tests/Editor/ScenarioLab/BattleScenarioAd002RunnerTests.cs",
-            "Assets/Tests/Editor/ScenarioLab/BattleScenarioAd003RunnerTests.cs",
-            "Assets/Tests/Editor/ScenarioLab/BattleScenarioAd004RunnerTests.cs",
-            "Assets/Tests/Editor/ScenarioLab/BattleScenarioAd005RunnerTests.cs",
-            "Assets/Tests/Editor/ScenarioLab/BattleScenarioAd006RunnerTests.cs",
-            "Assets/Tests/Editor/ScenarioLab/BattleScenarioAd007RunnerTests.cs",
-            "Assets/Tests/Editor/ScenarioLab/BattleScenarioAd008RunnerTests.cs",
-            "Assets/Tests/Editor/ScenarioLab/BattleScenarioAd009RunnerTests.cs",
-            "Assets/Tests/Editor/ScenarioLab/BattleScenarioAd010RunnerTests.cs"
+            "Assets/Tests/Editor/BuildingPlacementConstructionTransactionTests.cs",
+            "Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs",
+            "Assets/Tests/Editor/MatchGameplayStartupCompositionSystemHelperTests.cs",
+            "Assets/Tests/Editor/RoadBuildCommandCompositionSystemHelperTests.cs",
+            "Assets/Tests/Editor/RtsCameraSystemTests.cs",
+            "Assets/Tests/Editor/RtsSelectionInputSystemTests.cs",
+            "Assets/Tests/Editor/RuntimeGameplayStateSystemTests.cs"
           ]
         }
       ]
@@ -5673,16 +5755,16 @@
       "sourceAsmdefPath": "Assets/Tests/Editor/Game.Tests.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/UI/Contracts/Game.UI.Contracts.asmdef",
       "declaredReference": "Game.UI.Contracts",
-      "resolvedTypeOccurrenceCount": 296,
-      "distinctResolvedTypeCount": 69,
-      "referencingSourceFileCount": 30,
+      "resolvedTypeOccurrenceCount": 311,
+      "distinctResolvedTypeCount": 70,
+      "referencingSourceFileCount": 31,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Tests.Editor",
           "targetAssembly": "Game.UI.Contracts",
           "fullTypeName": "Game.UI.Contracts.UiShellPresentationCommandModel",
           "typeName": "UiShellPresentationCommandModel",
-          "occurrenceCount": 23,
+          "occurrenceCount": 24,
           "sourceFileCount": 9,
           "sourceFiles": [
             "Assets/Tests/Editor/CampaignOperationsScreenTests.cs",
@@ -5699,23 +5781,38 @@
         {
           "sourceAssembly": "Game.Tests.Editor",
           "targetAssembly": "Game.UI.Contracts",
+          "fullTypeName": "Game.UI.Contracts.MatchHudMinimapGridModel",
+          "typeName": "MatchHudMinimapGridModel",
+          "occurrenceCount": 18,
+          "sourceFileCount": 2,
+          "sourceFiles": [
+            "Assets/Tests/Editor/MatchHudMinimapDataSourceAdapterTests.cs",
+            "Assets/Tests/Editor/MatchHudMinimapProjectionUiSystemHelperTests.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Tests.Editor",
+          "targetAssembly": "Game.UI.Contracts",
+          "fullTypeName": "Game.UI.Contracts.UiMatchHudHeaderModel",
+          "typeName": "UiMatchHudHeaderModel",
+          "occurrenceCount": 17,
+          "sourceFileCount": 4,
+          "sourceFiles": [
+            "Assets/Tests/Editor/MatchHudAssistantUiSystemHelperTests.cs",
+            "Assets/Tests/Editor/ResourceExchangeHeaderRoutingTests.cs",
+            "Assets/Tests/Editor/ResourceExchangePopupPrefabTests.cs",
+            "Assets/Tests/Editor/UiShellEcsGatewayResourceHeaderTests.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Tests.Editor",
+          "targetAssembly": "Game.UI.Contracts",
           "fullTypeName": "Game.UI.Contracts.BuildingPendingProductionUiEntry",
           "typeName": "BuildingPendingProductionUiEntry",
           "occurrenceCount": 13,
           "sourceFileCount": 1,
           "sourceFiles": [
             "Assets/Tests/Editor/BuildDrawerCatalogQueryUiSystemHelperTests.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Tests.Editor",
-          "targetAssembly": "Game.UI.Contracts",
-          "fullTypeName": "Game.UI.Contracts.MatchHudMinimapGridModel",
-          "typeName": "MatchHudMinimapGridModel",
-          "occurrenceCount": 13,
-          "sourceFileCount": 1,
-          "sourceFiles": [
-            "Assets/Tests/Editor/MatchHudMinimapProjectionUiSystemHelperTests.cs"
           ]
         },
         {
@@ -5730,20 +5827,6 @@
             "Assets/Tests/Editor/MatchHudAssistantUiSystemHelperTests.cs",
             "Assets/Tests/Editor/ResourceExchangeHeaderRoutingTests.cs",
             "Assets/Tests/Editor/ResourceExchangePopupPrefabTests.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Tests.Editor",
-          "targetAssembly": "Game.UI.Contracts",
-          "fullTypeName": "Game.UI.Contracts.UiMatchHudHeaderModel",
-          "typeName": "UiMatchHudHeaderModel",
-          "occurrenceCount": 12,
-          "sourceFileCount": 4,
-          "sourceFiles": [
-            "Assets/Tests/Editor/MatchHudAssistantUiSystemHelperTests.cs",
-            "Assets/Tests/Editor/ResourceExchangeHeaderRoutingTests.cs",
-            "Assets/Tests/Editor/ResourceExchangePopupPrefabTests.cs",
-            "Assets/Tests/Editor/UiShellEcsGatewayResourceHeaderTests.cs"
           ]
         },
         {
@@ -5824,8 +5907,8 @@
       "sourceAsmdefPath": "Assets/Tests/Editor/Game.Tests.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/UI/Game.UI.Runtime.asmdef",
       "declaredReference": "Game.UI.Runtime",
-      "resolvedTypeOccurrenceCount": 733,
-      "distinctResolvedTypeCount": 85,
+      "resolvedTypeOccurrenceCount": 741,
+      "distinctResolvedTypeCount": 86,
       "referencingSourceFileCount": 34,
       "topTypeReferences": [
         {
@@ -5851,7 +5934,7 @@
           "targetAssembly": "Game.UI.Runtime",
           "fullTypeName": "Game.UI.Runtime.UISettingsModel",
           "typeName": "UISettingsModel",
-          "occurrenceCount": 51,
+          "occurrenceCount": 52,
           "sourceFileCount": 9,
           "sourceFiles": [
             "Assets/Tests/Editor/AndroidPerformanceRecorderTests.cs",
@@ -5984,7 +6067,7 @@
       "sourceAsmdefPath": "Assets/Tests/Editor/Game.Tests.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/UI/Shell/Ecs/Contracts/Game.UI.Shell.Contracts.Ecs.asmdef",
       "declaredReference": "Game.UI.Shell.Contracts.Ecs",
-      "resolvedTypeOccurrenceCount": 455,
+      "resolvedTypeOccurrenceCount": 472,
       "distinctResolvedTypeCount": 31,
       "referencingSourceFileCount": 29,
       "topTypeReferences": [
@@ -6011,6 +6094,26 @@
         {
           "sourceAssembly": "Game.Tests.Editor",
           "targetAssembly": "Game.UI.Shell.Contracts.Ecs",
+          "fullTypeName": "Game.UI.Shell.Contracts.Ecs.UiShellRootComponent",
+          "typeName": "UiShellRootComponent",
+          "occurrenceCount": 38,
+          "sourceFileCount": 21,
+          "sourceFiles": [
+            "Assets/Tests/Editor/AssistantCommandIntentGatewayTests.cs",
+            "Assets/Tests/Editor/AssistantCommandIntentSystemTests.cs",
+            "Assets/Tests/Editor/AssistantControlOwnerSystemTests.cs",
+            "Assets/Tests/Editor/AssistantMessagePrioritySystemTests.cs",
+            "Assets/Tests/Editor/AssistantPanelGatewayTests.cs",
+            "Assets/Tests/Editor/AssistantPerformanceDiagnosticsValidation.cs",
+            "Assets/Tests/Editor/AssistantReadModelSystemTests.cs",
+            "Assets/Tests/Editor/AssistantTargetLockReadModelSystemTests.cs",
+            "Assets/Tests/Editor/AudioPlaybackPresentationSceneBindingTests.cs",
+            "Assets/Tests/Editor/AudioSettingsUiProjectionTests.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Tests.Editor",
+          "targetAssembly": "Game.UI.Shell.Contracts.Ecs",
           "fullTypeName": "Game.UI.Shell.Contracts.Ecs.UiShellRouteRequestComponent",
           "typeName": "UiShellRouteRequestComponent",
           "occurrenceCount": 38,
@@ -6026,26 +6129,6 @@
             "Assets/Tests/Editor/ResourceExchangeUiActionRequestSystemTests.cs",
             "Assets/Tests/Editor/SettingsAudioRuntimeSmokeValidation.cs",
             "Assets/Tests/Editor/SettingsPopupValidationTests.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Tests.Editor",
-          "targetAssembly": "Game.UI.Shell.Contracts.Ecs",
-          "fullTypeName": "Game.UI.Shell.Contracts.Ecs.UiShellRootComponent",
-          "typeName": "UiShellRootComponent",
-          "occurrenceCount": 36,
-          "sourceFileCount": 21,
-          "sourceFiles": [
-            "Assets/Tests/Editor/AssistantCommandIntentGatewayTests.cs",
-            "Assets/Tests/Editor/AssistantCommandIntentSystemTests.cs",
-            "Assets/Tests/Editor/AssistantControlOwnerSystemTests.cs",
-            "Assets/Tests/Editor/AssistantMessagePrioritySystemTests.cs",
-            "Assets/Tests/Editor/AssistantPanelGatewayTests.cs",
-            "Assets/Tests/Editor/AssistantPerformanceDiagnosticsValidation.cs",
-            "Assets/Tests/Editor/AssistantReadModelSystemTests.cs",
-            "Assets/Tests/Editor/AssistantTargetLockReadModelSystemTests.cs",
-            "Assets/Tests/Editor/AudioPlaybackPresentationSceneBindingTests.cs",
-            "Assets/Tests/Editor/AudioSettingsUiProjectionTests.cs"
           ]
         },
         {
@@ -6101,6 +6184,37 @@
         {
           "sourceAssembly": "Game.Tests.Editor",
           "targetAssembly": "Game.UI.Shell.Contracts.Ecs",
+          "fullTypeName": "Game.UI.Shell.Contracts.Ecs.UiMatchHudHeaderComponent",
+          "typeName": "UiMatchHudHeaderComponent",
+          "occurrenceCount": 27,
+          "sourceFileCount": 9,
+          "sourceFiles": [
+            "Assets/Tests/Editor/AssistantMessagePrioritySystemTests.cs",
+            "Assets/Tests/Editor/AssistantNarrationRequestSystemTests.cs",
+            "Assets/Tests/Editor/AssistantPanelGatewayTests.cs",
+            "Assets/Tests/Editor/AssistantPerformanceDiagnosticsValidation.cs",
+            "Assets/Tests/Editor/AssistantReadModelSystemTests.cs",
+            "Assets/Tests/Editor/AssistantTargetLockReadModelSystemTests.cs",
+            "Assets/Tests/Editor/CombatDamageObservationTelemetryTests.cs",
+            "Assets/Tests/Editor/UiMatchHudResourceReadModelSystemTests.cs",
+            "Assets/Tests/Editor/UiShellEcsGatewayResourceHeaderTests.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Tests.Editor",
+          "targetAssembly": "Game.UI.Shell.Contracts.Ecs",
+          "fullTypeName": "Game.UI.Shell.Contracts.Ecs.UiResourceExchangeStateComponent",
+          "typeName": "UiResourceExchangeStateComponent",
+          "occurrenceCount": 25,
+          "sourceFileCount": 2,
+          "sourceFiles": [
+            "Assets/Tests/Editor/ResourceExchangeUiActionRequestSystemTests.cs",
+            "Assets/Tests/Editor/UiResourceExchangeReadModelSystemTests.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Tests.Editor",
+          "targetAssembly": "Game.UI.Shell.Contracts.Ecs",
           "fullTypeName": "Game.UI.Shell.Contracts.Ecs.UiShellRouteHistoryComponent",
           "typeName": "UiShellRouteHistoryComponent",
           "occurrenceCount": 21,
@@ -6114,37 +6228,6 @@
             "Assets/Tests/Editor/SkirmishSetupScreenTests.cs",
             "Assets/Tests/Editor/UIShellCurrentContentLoadTests.cs",
             "Assets/Tests/Editor/UiShellAudioRoutePopupTests.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Tests.Editor",
-          "targetAssembly": "Game.UI.Shell.Contracts.Ecs",
-          "fullTypeName": "Game.UI.Shell.Contracts.Ecs.UiResourceExchangeStateComponent",
-          "typeName": "UiResourceExchangeStateComponent",
-          "occurrenceCount": 21,
-          "sourceFileCount": 3,
-          "sourceFiles": [
-            "Assets/Tests/Editor/ResourceExchangeUiActionRequestSystemTests.cs",
-            "Assets/Tests/Editor/UiResourceExchangeReadModelSystemTests.cs",
-            "Assets/Tests/Editor/UiShellEcsGatewayResourceHeaderTests.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Tests.Editor",
-          "targetAssembly": "Game.UI.Shell.Contracts.Ecs",
-          "fullTypeName": "Game.UI.Shell.Contracts.Ecs.UiMatchHudHeaderComponent",
-          "typeName": "UiMatchHudHeaderComponent",
-          "occurrenceCount": 18,
-          "sourceFileCount": 8,
-          "sourceFiles": [
-            "Assets/Tests/Editor/AssistantMessagePrioritySystemTests.cs",
-            "Assets/Tests/Editor/AssistantNarrationRequestSystemTests.cs",
-            "Assets/Tests/Editor/AssistantPanelGatewayTests.cs",
-            "Assets/Tests/Editor/AssistantPerformanceDiagnosticsValidation.cs",
-            "Assets/Tests/Editor/AssistantReadModelSystemTests.cs",
-            "Assets/Tests/Editor/AssistantTargetLockReadModelSystemTests.cs",
-            "Assets/Tests/Editor/CombatDamageObservationTelemetryTests.cs",
-            "Assets/Tests/Editor/UiMatchHudResourceReadModelSystemTests.cs"
           ]
         },
         {
@@ -6171,7 +6254,7 @@
       "sourceAsmdefPath": "Assets/Tests/Editor/Game.Tests.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/UI/Shell/Ecs/Game.UI.Shell.Ecs.asmdef",
       "declaredReference": "Game.UI.Shell.Ecs",
-      "resolvedTypeOccurrenceCount": 69,
+      "resolvedTypeOccurrenceCount": 71,
       "distinctResolvedTypeCount": 19,
       "referencingSourceFileCount": 24,
       "topTypeReferences": [
@@ -6227,6 +6310,17 @@
         {
           "sourceAssembly": "Game.Tests.Editor",
           "targetAssembly": "Game.UI.Shell.Ecs",
+          "fullTypeName": "Game.UI.Shell.Ecs.UiResourceExchangeReadModelSystem",
+          "typeName": "UiResourceExchangeReadModelSystem",
+          "occurrenceCount": 5,
+          "sourceFileCount": 1,
+          "sourceFiles": [
+            "Assets/Tests/Editor/UiResourceExchangeReadModelSystemTests.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Tests.Editor",
+          "targetAssembly": "Game.UI.Shell.Ecs",
           "fullTypeName": "Game.UI.Shell.Ecs.AssistantThreatReadModelSystem",
           "typeName": "AssistantThreatReadModelSystem",
           "occurrenceCount": 4,
@@ -6271,17 +6365,6 @@
           "sourceFileCount": 1,
           "sourceFiles": [
             "Assets/Tests/Editor/UiMatchHudResourceReadModelSystemTests.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Tests.Editor",
-          "targetAssembly": "Game.UI.Shell.Ecs",
-          "fullTypeName": "Game.UI.Shell.Ecs.UiResourceExchangeReadModelSystem",
-          "typeName": "UiResourceExchangeReadModelSystem",
-          "occurrenceCount": 3,
-          "sourceFileCount": 1,
-          "sourceFiles": [
-            "Assets/Tests/Editor/UiResourceExchangeReadModelSystemTests.cs"
           ]
         },
         {
@@ -6338,8 +6421,8 @@
       "sourceAsmdefPath": "Assets/Tests/PlayMode/Game.Tests.PlayMode.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Components/Game.Components.asmdef",
       "declaredReference": "Game.Components",
-      "resolvedTypeOccurrenceCount": 536,
-      "distinctResolvedTypeCount": 98,
+      "resolvedTypeOccurrenceCount": 541,
+      "distinctResolvedTypeCount": 100,
       "referencingSourceFileCount": 10,
       "topTypeReferences": [
         {
@@ -7094,9 +7177,9 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/UI/Game.UI.Runtime.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/UI/Contracts/Game.UI.Contracts.asmdef",
       "declaredReference": "Game.UI.Contracts",
-      "resolvedTypeOccurrenceCount": 522,
-      "distinctResolvedTypeCount": 91,
-      "referencingSourceFileCount": 56,
+      "resolvedTypeOccurrenceCount": 526,
+      "distinctResolvedTypeCount": 92,
+      "referencingSourceFileCount": 57,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.UI.Runtime",
@@ -7399,9 +7482,9 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/UI/Shell/Ecs/Game.UI.Shell.Ecs.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Components/Game.Components.asmdef",
       "declaredReference": "Game.Components",
-      "resolvedTypeOccurrenceCount": 870,
+      "resolvedTypeOccurrenceCount": 871,
       "distinctResolvedTypeCount": 103,
-      "referencingSourceFileCount": 30,
+      "referencingSourceFileCount": 31,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.UI.Shell.Ecs",
@@ -7628,9 +7711,9 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/UI/Shell/Ecs/Game.UI.Shell.Ecs.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/UI/Contracts/Game.UI.Contracts.asmdef",
       "declaredReference": "Game.UI.Contracts",
-      "resolvedTypeOccurrenceCount": 263,
-      "distinctResolvedTypeCount": 59,
-      "referencingSourceFileCount": 19,
+      "resolvedTypeOccurrenceCount": 267,
+      "distinctResolvedTypeCount": 60,
+      "referencingSourceFileCount": 20,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.UI.Shell.Ecs",
@@ -7733,6 +7816,19 @@
         {
           "sourceAssembly": "Game.UI.Shell.Ecs",
           "targetAssembly": "Game.UI.Contracts",
+          "fullTypeName": "Game.UI.Contracts.UiMatchHudHeaderModel",
+          "typeName": "UiMatchHudHeaderModel",
+          "occurrenceCount": 8,
+          "sourceFileCount": 3,
+          "sourceFiles": [
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Contracts.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.CommandHeader.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.UI.Shell.Ecs",
+          "targetAssembly": "Game.UI.Contracts",
           "fullTypeName": "Game.UI.Contracts.UiAssistantGoalRowModel",
           "typeName": "UiAssistantGoalRowModel",
           "occurrenceCount": 8,
@@ -7740,19 +7836,6 @@
           "sourceFiles": [
             "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Assistant.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.AssistantSettings.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.UI.Shell.Ecs",
-          "targetAssembly": "Game.UI.Contracts",
-          "fullTypeName": "Game.UI.Contracts.UiMatchHudHeaderModel",
-          "typeName": "UiMatchHudHeaderModel",
-          "occurrenceCount": 7,
-          "sourceFileCount": 3,
-          "sourceFiles": [
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Contracts.cs",
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.CommandHeader.cs",
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs"
           ]
         }
       ]
@@ -7857,7 +7940,7 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/UI/Shell/Ecs/Game.UI.Shell.Ecs.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/UI/Shell/Ecs/Contracts/Game.UI.Shell.Contracts.Ecs.asmdef",
       "declaredReference": "Game.UI.Shell.Contracts.Ecs",
-      "resolvedTypeOccurrenceCount": 532,
+      "resolvedTypeOccurrenceCount": 531,
       "distinctResolvedTypeCount": 39,
       "referencingSourceFileCount": 36,
       "topTypeReferences": [
@@ -7901,7 +7984,7 @@
           "targetAssembly": "Game.UI.Shell.Contracts.Ecs",
           "fullTypeName": "Game.UI.Shell.Contracts.Ecs.UiResourceExchangeStateComponent",
           "typeName": "UiResourceExchangeStateComponent",
-          "occurrenceCount": 23,
+          "occurrenceCount": 22,
           "sourceFileCount": 8,
           "sourceFiles": [
             "Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestDispatchSystemHelper.cs",
@@ -8135,6 +8218,12 @@
     {
       "sourceAssembly": "Game.Composition",
       "sourceAsmdefPath": "Assets/Game/Scripts/Composition/Game.Composition.asmdef",
+      "declaredReference": "Unity.Scenes",
+      "referenceKind": "externalName"
+    },
+    {
+      "sourceAssembly": "Game.Composition",
+      "sourceAsmdefPath": "Assets/Game/Scripts/Composition/Game.Composition.asmdef",
       "declaredReference": "Unity.TextMeshPro",
       "referenceKind": "externalName"
     },
@@ -8232,6 +8321,12 @@
       "sourceAssembly": "Game.Editor",
       "sourceAsmdefPath": "Assets/Game/Scripts/Editor/Game.Editor.asmdef",
       "declaredReference": "Unity.ResourceManager",
+      "referenceKind": "externalName"
+    },
+    {
+      "sourceAssembly": "Game.Editor",
+      "sourceAsmdefPath": "Assets/Game/Scripts/Editor/Game.Editor.asmdef",
+      "declaredReference": "Unity.Scenes",
       "referenceKind": "externalName"
     },
     {
@@ -8637,8 +8732,8 @@
       "targetAssembly": "Game.Components",
       "fullTypeName": "Game.Components.GridConfig",
       "typeName": "GridConfig",
-      "occurrenceCount": 690,
-      "sourceFileCount": 136,
+      "occurrenceCount": 701,
+      "sourceFileCount": 140,
       "sourceFiles": [
         "Assets/Game/Scripts/Environment/RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper.cs",
         "Assets/Game/Scripts/Environment/RuntimeCityChainUtilitySystemHelper.cs",
@@ -8646,10 +8741,10 @@
         "Assets/Game/Scripts/Environment/RuntimeCityGenerationCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Environment/RuntimeCityHouseYardWallPrefabSystemHelper.cs",
         "Assets/Game/Scripts/Environment/RuntimeCityLayoutUtilitySystemHelper.cs",
+        "Assets/Game/Scripts/Environment/RuntimeCityRAndDMapCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Environment/RuntimeCityReadinessQueryCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Environment/RuntimeCityRoadBuildBridgeCompositionSystemHelper.cs",
-        "Assets/Game/Scripts/Environment/RuntimeCityRoadLayoutUtilitySystemHelper.cs",
-        "Assets/Game/Scripts/Environment/RuntimeCityStartupSystemHelper.cs"
+        "Assets/Game/Scripts/Environment/RuntimeCityRoadLayoutUtilitySystemHelper.cs"
       ]
     },
     {
@@ -8738,7 +8833,7 @@
       "fullTypeName": "Game.Components.Faction",
       "typeName": "Faction",
       "occurrenceCount": 321,
-      "sourceFileCount": 74,
+      "sourceFileCount": 75,
       "sourceFiles": [
         "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs",
         "Assets/Game/Scripts/ScenarioLab/BattleScenarioDr001Runner.cs",
@@ -8815,9 +8910,29 @@
     {
       "sourceAssembly": "Game.Tests.Editor",
       "targetAssembly": "Game.Components",
+      "fullTypeName": "Game.Components.GridConfig",
+      "typeName": "GridConfig",
+      "occurrenceCount": 271,
+      "sourceFileCount": 51,
+      "sourceFiles": [
+        "Assets/Tests/Editor/AIBuildPlannerValidationTests.cs",
+        "Assets/Tests/Editor/AIEndToEndValidationTests.cs",
+        "Assets/Tests/Editor/AIProductionValidationTests.cs",
+        "Assets/Tests/Editor/AirAttackGateBypassTests.cs",
+        "Assets/Tests/Editor/AlertObjectiveAudioFeedbackTests.cs",
+        "Assets/Tests/Editor/AssistantCommandIntentSystemTests.cs",
+        "Assets/Tests/Editor/AutomaticCombatFactionTargetingTests.cs",
+        "Assets/Tests/Editor/BaseBreachValidationTests.cs",
+        "Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs",
+        "Assets/Tests/Editor/BuildingProductionSystemTests.cs"
+      ]
+    },
+    {
+      "sourceAssembly": "Game.Tests.Editor",
+      "targetAssembly": "Game.Components",
       "fullTypeName": "Game.Components.BuildingResourceStorageComponent",
       "typeName": "BuildingResourceStorageComponent",
-      "occurrenceCount": 267,
+      "occurrenceCount": 269,
       "sourceFileCount": 18,
       "sourceFiles": [
         "Assets/Tests/Editor/BuildingProductionSystemTests.cs",
@@ -8830,26 +8945,6 @@
         "Assets/Tests/Editor/ResourceExchangeAIRecoverySystemTests.cs",
         "Assets/Tests/Editor/ResourceExchangeAriaAnnouncementSystemTests.cs",
         "Assets/Tests/Editor/ResourceExchangeEconomyEventSystemTests.cs"
-      ]
-    },
-    {
-      "sourceAssembly": "Game.Tests.Editor",
-      "targetAssembly": "Game.Components",
-      "fullTypeName": "Game.Components.GridConfig",
-      "typeName": "GridConfig",
-      "occurrenceCount": 264,
-      "sourceFileCount": 49,
-      "sourceFiles": [
-        "Assets/Tests/Editor/AIBuildPlannerValidationTests.cs",
-        "Assets/Tests/Editor/AIEndToEndValidationTests.cs",
-        "Assets/Tests/Editor/AIProductionValidationTests.cs",
-        "Assets/Tests/Editor/AirAttackGateBypassTests.cs",
-        "Assets/Tests/Editor/AlertObjectiveAudioFeedbackTests.cs",
-        "Assets/Tests/Editor/AssistantCommandIntentSystemTests.cs",
-        "Assets/Tests/Editor/AutomaticCombatFactionTargetingTests.cs",
-        "Assets/Tests/Editor/BaseBreachValidationTests.cs",
-        "Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs",
-        "Assets/Tests/Editor/BuildingProductionSystemTests.cs"
       ]
     },
     {
@@ -8933,7 +9028,7 @@
       "targetAssembly": "Game.Components",
       "fullTypeName": "Game.Components.ResourceExchangeQueueComponent",
       "typeName": "ResourceExchangeQueueComponent",
-      "occurrenceCount": 192,
+      "occurrenceCount": 196,
       "sourceFileCount": 17,
       "sourceFiles": [
         "Assets/Tests/Editor/Balance/BalanceHarnessContractTests.cs",
@@ -9071,6 +9166,26 @@
     {
       "sourceAssembly": "Game.Tests.Editor",
       "targetAssembly": "Game.Components",
+      "fullTypeName": "Game.Components.FactionEconomy",
+      "typeName": "FactionEconomy",
+      "occurrenceCount": 164,
+      "sourceFileCount": 33,
+      "sourceFiles": [
+        "Assets/Tests/Editor/AIBuildPlannerAllocationTests.cs",
+        "Assets/Tests/Editor/AIBuildPlannerValidationTests.cs",
+        "Assets/Tests/Editor/AIEconomyValidationTests.cs",
+        "Assets/Tests/Editor/AIEndToEndValidationTests.cs",
+        "Assets/Tests/Editor/AIProductionValidationTests.cs",
+        "Assets/Tests/Editor/AISettingsValidationTests.cs",
+        "Assets/Tests/Editor/AIStartupSystemValidationTests.cs",
+        "Assets/Tests/Editor/BuildingConstructionResourceTransactionSystemHelperTests.cs",
+        "Assets/Tests/Editor/BuildingPlacementConstructionTransactionTests.cs",
+        "Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs"
+      ]
+    },
+    {
+      "sourceAssembly": "Game.Tests.Editor",
+      "targetAssembly": "Game.Components",
       "fullTypeName": "Game.Components.GridWalkable",
       "typeName": "GridWalkable",
       "occurrenceCount": 164,
@@ -9089,32 +9204,12 @@
       ]
     },
     {
-      "sourceAssembly": "Game.Tests.Editor",
-      "targetAssembly": "Game.Components",
-      "fullTypeName": "Game.Components.FactionEconomy",
-      "typeName": "FactionEconomy",
-      "occurrenceCount": 161,
-      "sourceFileCount": 32,
-      "sourceFiles": [
-        "Assets/Tests/Editor/AIBuildPlannerAllocationTests.cs",
-        "Assets/Tests/Editor/AIBuildPlannerValidationTests.cs",
-        "Assets/Tests/Editor/AIEconomyValidationTests.cs",
-        "Assets/Tests/Editor/AIEndToEndValidationTests.cs",
-        "Assets/Tests/Editor/AIProductionValidationTests.cs",
-        "Assets/Tests/Editor/AISettingsValidationTests.cs",
-        "Assets/Tests/Editor/AIStartupSystemValidationTests.cs",
-        "Assets/Tests/Editor/BuildingPlacementConstructionTransactionTests.cs",
-        "Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs",
-        "Assets/Tests/Editor/BuildingUiQuerySystemTests.cs"
-      ]
-    },
-    {
       "sourceAssembly": "Game.Runtime",
       "targetAssembly": "Game.Components",
       "fullTypeName": "Game.Components.BuildingResourceStorageComponent",
       "typeName": "BuildingResourceStorageComponent",
-      "occurrenceCount": 155,
-      "sourceFileCount": 26,
+      "occurrenceCount": 162,
+      "sourceFileCount": 28,
       "sourceFiles": [
         "Assets/Game/Scripts/Systems/AircraftFuelSafetyReturnSystem.cs",
         "Assets/Game/Scripts/Systems/BuildingMaterialFabricationReadModelUiSystemHelper.cs",
@@ -9123,9 +9218,9 @@
         "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Systems/BuildingResourceHaulerTransferEcsSystem.cs",
         "Assets/Game/Scripts/Systems/BuildingResourceProductionEcsSystem.cs",
-        "Assets/Game/Scripts/Systems/BuildingResourceStorageTransferSystemHelper.cs",
-        "Assets/Game/Scripts/Systems/BuildingRuntimeEntityCompositionSystemHelper.cs",
-        "Assets/Game/Scripts/Systems/BuildingRuntimeOwnershipCompositionSystemHelper.cs"
+        "Assets/Game/Scripts/Systems/BuildingResourceStorageQueryCache.cs",
+        "Assets/Game/Scripts/Systems/BuildingResourceStorageReservationSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingResourceStorageTransferSystemHelper.cs"
       ]
     },
     {
@@ -9150,19 +9245,19 @@
       "targetAssembly": "Game.Components",
       "fullTypeName": "Game.Components.FactionTacticalMaterialsComponent",
       "typeName": "FactionTacticalMaterialsComponent",
-      "occurrenceCount": 144,
-      "sourceFileCount": 29,
+      "occurrenceCount": 143,
+      "sourceFileCount": 30,
       "sourceFiles": [
         "Assets/Tests/Editor/AIBuildPlannerAllocationTests.cs",
         "Assets/Tests/Editor/AIBuildPlannerValidationTests.cs",
         "Assets/Tests/Editor/AIEndToEndValidationTests.cs",
         "Assets/Tests/Editor/Balance/BalanceHarnessContractTests.cs",
+        "Assets/Tests/Editor/BuildingConstructionResourceTransactionSystemHelperTests.cs",
         "Assets/Tests/Editor/BuildingPlacementConstructionTransactionTests.cs",
         "Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs",
         "Assets/Tests/Editor/BuildingUiQuerySystemTests.cs",
         "Assets/Tests/Editor/FactionConstructionResourceUtilitySystemHelperTests.cs",
-        "Assets/Tests/Editor/FactionEconomyStartupSystemValidationTests.cs",
-        "Assets/Tests/Editor/FactionTacticalMaterialsUtilitySystemHelperTests.cs"
+        "Assets/Tests/Editor/FactionEconomyStartupSystemValidationTests.cs"
       ]
     },
     {
@@ -9251,7 +9346,7 @@
       "fullTypeName": "Game.Components.FactionEconomy",
       "typeName": "FactionEconomy",
       "occurrenceCount": 136,
-      "sourceFileCount": 22,
+      "sourceFileCount": 23,
       "sourceFiles": [
         "Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs",
         "Assets/Game/Scripts/Systems/AIBuildPlannerSystem.cs",
@@ -9259,10 +9354,10 @@
         "Assets/Game/Scripts/Systems/AIBuildPlanningReadSystemHelper.cs",
         "Assets/Game/Scripts/Systems/AIEconomySystem.cs",
         "Assets/Game/Scripts/Systems/AIProductionSystem.cs",
-        "Assets/Game/Scripts/Systems/BuildingGameplayEcsQueryCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingFactionAIOilAllocationInputSystemHelper.cs",
         "Assets/Game/Scripts/Systems/BuildingMaterialFabricationReadModelUiSystemHelper.cs",
-        "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
-        "Assets/Game/Scripts/Systems/FactionConstructionResourceUtilitySystemHelper.cs"
+        "Assets/Game/Scripts/Systems/FactionConstructionResourceUtilitySystemHelper.cs",
+        "Assets/Game/Scripts/Systems/FactionEconomyStartupSystem.cs"
       ]
     },
     {
@@ -9391,18 +9486,18 @@
       "fullTypeName": "Game.Components.FactionTacticalMaterialsComponent",
       "typeName": "FactionTacticalMaterialsComponent",
       "occurrenceCount": 114,
-      "sourceFileCount": 19,
+      "sourceFileCount": 20,
       "sourceFiles": [
         "Assets/Game/Scripts/Balance/BalanceMetrics.cs",
         "Assets/Game/Scripts/Systems/AIBuildPlannerSystem.cs",
         "Assets/Game/Scripts/Systems/AIBuildPlanningPolicySystemHelper.cs",
         "Assets/Game/Scripts/Systems/AIBuildPlanningReadSystemHelper.cs",
         "Assets/Game/Scripts/Systems/AIMaterialsRecoveryNeedMutationSystemHelper.cs",
-        "Assets/Game/Scripts/Systems/BuildingGameplayEcsQueryCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingFactionAIOilAllocationInputSystemHelper.cs",
         "Assets/Game/Scripts/Systems/BuildingMaterialFabricationReadModelUiSystemHelper.cs",
         "Assets/Game/Scripts/Systems/FactionConstructionResourceUtilitySystemHelper.cs",
         "Assets/Game/Scripts/Systems/FactionEconomyStartupSystem.cs",
-        "Assets/Game/Scripts/Systems/FactionTacticalMaterialsUtilitySystemHelper.cs"
+        "Assets/Game/Scripts/Systems/FactionTacticalMaterialsStartupSystemHelper.cs"
       ]
     },
     {
@@ -9451,7 +9546,7 @@
       "fullTypeName": "Game.Components.UnitSourcePrefabKey",
       "typeName": "UnitSourcePrefabKey",
       "occurrenceCount": 108,
-      "sourceFileCount": 38,
+      "sourceFileCount": 39,
       "sourceFiles": [
         "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs",
         "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
@@ -9543,6 +9638,26 @@
       ]
     },
     {
+      "sourceAssembly": "Game.Tests.Editor",
+      "targetAssembly": "Game.Runtime",
+      "fullTypeName": "Game.Runtime.BuildingDefinition",
+      "typeName": "BuildingDefinition",
+      "occurrenceCount": 102,
+      "sourceFileCount": 18,
+      "sourceFiles": [
+        "Assets/Tests/Editor/AlertObjectiveAudioFeedbackTests.cs",
+        "Assets/Tests/Editor/BuildDrawerCatalogQueryUiSystemHelperTests.cs",
+        "Assets/Tests/Editor/BuildingBarrierSystemTests.cs",
+        "Assets/Tests/Editor/BuildingDestroyedVisualPresentationSystemHelperTests.cs",
+        "Assets/Tests/Editor/BuildingFactionVisualSystemTests.cs",
+        "Assets/Tests/Editor/BuildingMaterialsCostConfigProjectionTests.cs",
+        "Assets/Tests/Editor/BuildingPlacementCommitCompositionSystemHelperTests.cs",
+        "Assets/Tests/Editor/BuildingPlacementConstructionTransactionTests.cs",
+        "Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs",
+        "Assets/Tests/Editor/BuildingProductionSystemTests.cs"
+      ]
+    },
+    {
       "sourceAssembly": "Game.Runtime",
       "targetAssembly": "Game.Components",
       "fullTypeName": "Game.Components.RtsSelectionCommandResultElement",
@@ -9560,26 +9675,6 @@
         "Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs",
         "Assets/Game/Scripts/Systems/TransportBoardingCommandRouting.cs",
         "Assets/Game/Scripts/Systems/TransportBoardingCommandRoutingSystemHelper.cs"
-      ]
-    },
-    {
-      "sourceAssembly": "Game.Tests.Editor",
-      "targetAssembly": "Game.Runtime",
-      "fullTypeName": "Game.Runtime.BuildingDefinition",
-      "typeName": "BuildingDefinition",
-      "occurrenceCount": 101,
-      "sourceFileCount": 18,
-      "sourceFiles": [
-        "Assets/Tests/Editor/AlertObjectiveAudioFeedbackTests.cs",
-        "Assets/Tests/Editor/BuildDrawerCatalogQueryUiSystemHelperTests.cs",
-        "Assets/Tests/Editor/BuildingBarrierSystemTests.cs",
-        "Assets/Tests/Editor/BuildingDestroyedVisualPresentationSystemHelperTests.cs",
-        "Assets/Tests/Editor/BuildingFactionVisualSystemTests.cs",
-        "Assets/Tests/Editor/BuildingMaterialsCostConfigProjectionTests.cs",
-        "Assets/Tests/Editor/BuildingPlacementCommitCompositionSystemHelperTests.cs",
-        "Assets/Tests/Editor/BuildingPlacementConstructionTransactionTests.cs",
-        "Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs",
-        "Assets/Tests/Editor/BuildingProductionSystemTests.cs"
       ]
     },
     {

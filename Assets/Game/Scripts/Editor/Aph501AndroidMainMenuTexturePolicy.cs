@@ -16,7 +16,7 @@ namespace Game.Editor
         internal const int AndroidMaxTextureSize = 2048;
         internal const int AndroidCompressionQuality = 100;
 
-        [MenuItem("Warline Capture/Performance/Apply Android Main Menu Texture Policy")]
+        [MenuItem("Game/Performance/Apply Android Main Menu Texture Policy")]
         public static void ApplyToTrackedSprites()
         {
             string[] paths = FindTrackedSpritePaths();

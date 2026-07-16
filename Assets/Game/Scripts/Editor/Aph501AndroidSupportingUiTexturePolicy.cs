@@ -18,7 +18,7 @@ namespace Game.Editor
 
         private static readonly string[] Roots = { MatchHudRoot, MainMenuV15CRoot };
 
-        [MenuItem("Warline Capture/Performance/Apply Android Supporting UI Texture Policy")]
+        [MenuItem("Game/Performance/Apply Android Supporting UI Texture Policy")]
         public static void ApplyToTrackedSprites()
         {
             string[] paths = FindTrackedSpritePaths();

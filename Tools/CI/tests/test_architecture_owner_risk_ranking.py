@@ -48,6 +48,8 @@ class ArchitectureOwnerRiskRankingTests(unittest.TestCase):
             }),
         )
         self.write(ranking.ASSEMBLY_PATH, "{}\n")
+        self.write(ranking.TOOL_PATH, "tool\n")
+        self.write(ranking.TEST_PATH, "tests\n")
         self.write("Design/runtime.md", "measured\n")
 
     def tearDown(self) -> None:

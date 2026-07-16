@@ -25,6 +25,8 @@ OWNERSHIP_PATH = "Design/AgentReports/ArchitectureMaturity/ownership_inventory.j
 LIFECYCLE_PATH = "Design/AgentReports/ArchitectureMaturity/lifecycle_inventory.json"
 ASSEMBLY_PATH = "Design/AgentReports/2026-07-10_aph-700_first_party_assembly_dependencies.json"
 CURRENT_RUNTIME_PATH = "Design/AgentReports/ArchitectureMaturity/owner_runtime_measurements.json"
+TOOL_PATH = "Tools/CI/architecture_owner_risk_ranking.py"
+TEST_PATH = "Tools/CI/tests/test_architecture_owner_risk_ranking.py"
 HISTORY_COMMIT_LIMIT = 500
 FIRST_WAVE_LIMIT = 3
 
@@ -608,7 +610,7 @@ def build_ranking(
         else tuple(measured_runtime)
     )
     responsibility_audits = tuple(responsibility_audits)
-    authority_paths = (OWNERSHIP_PATH, LIFECYCLE_PATH, ASSEMBLY_PATH, *sorted({
+    authority_paths = (OWNERSHIP_PATH, LIFECYCLE_PATH, ASSEMBLY_PATH, TOOL_PATH, TEST_PATH, *sorted({
         entry["source"] for entry in measured_runtime if isinstance(entry.get("source"), str)
     }))
     governed_paths = (*authority_paths, *sorted({

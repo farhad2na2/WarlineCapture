@@ -187,6 +187,105 @@ public sealed class OperationMapMetadataUtilityTests
     }
 
     [Test]
+    public void ActiveInfrastructureAnchor_ResolvesExactTypedRecord()
+    {
+        using World world = new("OperationMapMetadataUtilityTests.Infrastructure");
+        BlobAssetReference<OperationMapBlob> blob = CreateInfrastructureMetadataBlob(
+            new InfrastructureAnchor(OperationMapAnchorKind.Runway, 1, 2, new float3(20f, 1f, 30f), 24f));
+        CreateActiveRoot(world.EntityManager, blob);
+
+        Assert.That(OperationMapMetadataUtility.TryResolveActiveInfrastructureAnchor(
+            world.EntityManager,
+            OperationMapAnchorKind.Runway,
+            1,
+            2,
+            out OperationMapAnchorBlob anchor,
+            out bool hasActiveMap,
+            out bool hasMatchingAnchor,
+            out string error), Is.True, error);
+        Assert.That(hasActiveMap, Is.True);
+        Assert.That(hasMatchingAnchor, Is.True);
+        Assert.That(anchor.Position, Is.EqualTo(new float3(20f, 1f, 30f)));
+        Assert.That(anchor.Radius, Is.EqualTo(24f));
+        blob.Dispose();
+    }
+
+    [Test]
+    public void ActiveInfrastructureAnchor_MissingRecordPermitsCompatibilityFallback()
+    {
+        using World world = new("OperationMapMetadataUtilityTests.InfrastructureFallback");
+        BlobAssetReference<OperationMapBlob> blob = CreateInfrastructureMetadataBlob(
+            new InfrastructureAnchor(OperationMapAnchorKind.Runway, 1, 2, new float3(20f, 1f, 30f), 24f));
+        CreateActiveRoot(world.EntityManager, blob);
+
+        Assert.That(OperationMapMetadataUtility.TryResolveActiveInfrastructureAnchor(
+            world.EntityManager,
+            OperationMapAnchorKind.Helipad,
+            1,
+            2,
+            out _,
+            out bool hasActiveMap,
+            out bool hasMatchingAnchor,
+            out string error), Is.False);
+        Assert.That(hasActiveMap, Is.True);
+        Assert.That(hasMatchingAnchor, Is.False);
+        Assert.That(error, Is.Null);
+        blob.Dispose();
+    }
+
+    [Test]
+    public void ActiveInfrastructureAnchor_DuplicateRecordFailsClosed()
+    {
+        using World world = new("OperationMapMetadataUtilityTests.InfrastructureDuplicate");
+        InfrastructureAnchor runway = new(OperationMapAnchorKind.Runway, 1, 2, new float3(20f, 1f, 30f), 24f);
+        BlobAssetReference<OperationMapBlob> blob = CreateInfrastructureMetadataBlob(runway, runway);
+        CreateActiveRoot(world.EntityManager, blob);
+
+        Assert.That(OperationMapMetadataUtility.TryResolveActiveInfrastructureAnchor(
+            world.EntityManager,
+            OperationMapAnchorKind.Runway,
+            1,
+            2,
+            out _,
+            out bool hasActiveMap,
+            out bool hasMatchingAnchor,
+            out string error), Is.False);
+        Assert.That(hasActiveMap, Is.True);
+        Assert.That(hasMatchingAnchor, Is.True);
+        Assert.That(error, Does.Contain("ambiguous"));
+        blob.Dispose();
+    }
+
+    [TestCase(0f, 20f, 30f, 0f, "invalid")]
+    [TestCase(1000f, 20f, 30f, 10f, "outside")]
+    public void ActiveInfrastructureAnchor_InvalidGeometryFailsClosed(
+        float x,
+        float y,
+        float z,
+        float radius,
+        string expectedError)
+    {
+        using World world = new("OperationMapMetadataUtilityTests.InfrastructureInvalid");
+        BlobAssetReference<OperationMapBlob> blob = CreateInfrastructureMetadataBlob(
+            new InfrastructureAnchor(OperationMapAnchorKind.Helipad, 2, 0, new float3(x, y, z), radius));
+        CreateActiveRoot(world.EntityManager, blob);
+
+        Assert.That(OperationMapMetadataUtility.TryResolveActiveInfrastructureAnchor(
+            world.EntityManager,
+            OperationMapAnchorKind.Helipad,
+            2,
+            0,
+            out _,
+            out bool hasActiveMap,
+            out bool hasMatchingAnchor,
+            out string error), Is.False);
+        Assert.That(hasActiveMap, Is.True);
+        Assert.That(hasMatchingAnchor, Is.True);
+        Assert.That(error, Does.Contain(expectedError));
+        blob.Dispose();
+    }
+
+    [Test]
     public void MinimapProjection_ZeroRotationMatchesCurrentLowerLeftXZContract()
     {
         OperationMapMinimapBlob projection = new()
@@ -297,6 +396,82 @@ public sealed class OperationMapMetadataUtilityTests
         CameraMin = new float3(-80f, 10f, -80f),
         CameraMax = new float3(80f, 40f, 80f)
     };
+
+    private readonly struct InfrastructureAnchor
+    {
+        public readonly OperationMapAnchorKind Kind;
+        public readonly int FactionId;
+        public readonly int LaneIndex;
+        public readonly float3 Position;
+        public readonly float Radius;
+
+        public InfrastructureAnchor(
+            OperationMapAnchorKind kind,
+            int factionId,
+            int laneIndex,
+            float3 position,
+            float radius)
+        {
+            Kind = kind;
+            FactionId = factionId;
+            LaneIndex = laneIndex;
+            Position = position;
+            Radius = radius;
+        }
+    }
+
+    private static Entity CreateActiveRoot(
+        EntityManager entityManager,
+        BlobAssetReference<OperationMapBlob> blob)
+    {
+        Entity root = entityManager.CreateEntity(
+            typeof(OperationMapRootComponent),
+            typeof(ActiveOperationMapComponent),
+            typeof(OperationMapMetadataComponent));
+        entityManager.SetComponentData(root, new ActiveOperationMapComponent
+        {
+            OperationMapId = new FixedString64Bytes("opmap.skirmish.desert_base_01"),
+            Generation = 1
+        });
+        entityManager.SetComponentData(root, new OperationMapMetadataComponent
+        {
+            Blob = blob,
+            Generation = 1
+        });
+        return root;
+    }
+
+    private static BlobAssetReference<OperationMapBlob> CreateInfrastructureMetadataBlob(
+        params InfrastructureAnchor[] sourceAnchors)
+    {
+        using BlobBuilder builder = new(Allocator.Temp);
+        ref OperationMapBlob root = ref builder.ConstructRoot<OperationMapBlob>();
+        root.OperationMapId = new FixedString64Bytes("opmap.skirmish.desert_base_01");
+        root.Grid = new OperationMapGridBlob
+        {
+            Origin = new float3(-100f, 0f, -100f),
+            Dimensions = new int2(100, 100),
+            CellSize = 2f
+        };
+        BlobBuilderArray<OperationMapAnchorBlob> anchors = builder.Allocate(ref root.Anchors, sourceAnchors.Length);
+        for (int index = 0; index < sourceAnchors.Length; index++)
+        {
+            InfrastructureAnchor source = sourceAnchors[index];
+            anchors[index] = new OperationMapAnchorBlob
+            {
+                Id = new FixedString64Bytes($"anchor.infrastructure.{index}"),
+                Kind = source.Kind,
+                Position = source.Position,
+                Rotation = quaternion.identity,
+                Radius = source.Radius,
+                FactionId = source.FactionId,
+                LaneIndex = source.LaneIndex
+            };
+        }
+
+        builder.Allocate(ref root.Cameras, 0);
+        return builder.CreateBlobAssetReference<OperationMapBlob>(Allocator.Persistent);
+    }
 
     private static BlobAssetReference<OperationMapBlob> CreateMetadataBlob(
         int width = 320,

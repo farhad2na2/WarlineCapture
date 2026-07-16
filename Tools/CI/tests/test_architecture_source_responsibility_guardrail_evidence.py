@@ -34,6 +34,10 @@ def measure_bytes(raw: bytes) -> tuple[int, int]:
     return lines, len(normalized)
 
 
+def count_total_occurrences(contents: str, values: list[str]) -> int:
+    return sum(contents.count(value) for value in values)
+
+
 class ArchitectureSourceResponsibilityGuardrailEvidenceTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
@@ -43,10 +47,25 @@ class ArchitectureSourceResponsibilityGuardrailEvidenceTests(unittest.TestCase):
 
     def test_identity_and_exact_task_scope(self) -> None:
         baseline = self.data["sourceBaseline"]
+        program_baseline = self.data["programBaseline"]
         self.assertEqual(baseline["branch"], "main")
         self.assertEqual(git("branch", "--show-current").strip(), "main")
         self.assertRegex(baseline["commit"], r"^[0-9a-f]{40}$")
         self.assertEqual(git("rev-parse", f"{baseline['commit']}^{{tree}}").strip(), baseline["tree"])
+        self.assertEqual(
+            git("rev-parse", f"{program_baseline['commit']}^{{tree}}").strip(),
+            program_baseline["tree"],
+        )
+        allowed_paths = set(self.data["implementationChangePaths"])
+        for entry in self.data["priorImplementationCommits"]:
+            self.assertRegex(entry["commit"], r"^[0-9a-f]{40}$")
+            self.assertEqual(git("rev-parse", f"{entry['commit']}^{{tree}}").strip(), entry["tree"])
+            git("merge-base", "--is-ancestor", program_baseline["commit"], entry["commit"])
+            git("merge-base", "--is-ancestor", entry["commit"], baseline["commit"])
+            parent = git("rev-parse", f"{entry['commit']}^").strip()
+            changed_paths = set(git("diff", "--name-only", parent, entry["commit"]).splitlines())
+            self.assertTrue(changed_paths)
+            self.assertTrue(changed_paths.issubset(allowed_paths), entry["commit"])
         accepted = self.data.get("acceptedEvidence")
         if self.data["acceptanceRequired"]:
             self.assertIsNotNone(accepted, "Accepted AM-016 evidence must bind an immutable commit and tree.")
@@ -63,7 +82,7 @@ class ArchitectureSourceResponsibilityGuardrailEvidenceTests(unittest.TestCase):
         else:
             changed = git("diff", "--name-only", baseline["commit"]).splitlines()
             changed += git("ls-files", "--others", "--exclude-standard").splitlines()
-        self.assertEqual(set(changed), set(self.data["implementationChangePaths"]))
+        self.assertEqual(set(changed), allowed_paths)
         production_changes = [path for path in changed if path.startswith("Assets/Game/Scripts/")]
         self.assertEqual(production_changes, [], "AM-016 must not change runtime production behavior.")
 
@@ -122,6 +141,8 @@ class ArchitectureSourceResponsibilityGuardrailEvidenceTests(unittest.TestCase):
                 continue
             candidate_text = candidate.read_text(encoding="utf-8")
             current_matches = sum(symbol in candidate_text for symbol in boundary["managedLifecycleSymbols"])
+            current_occurrences = count_total_occurrences(candidate_text, boundary["managedLifecycleSymbols"])
+            current_domain_occurrences = candidate_text.count(boundary["domainSymbol"])
             current_domain_owner = (
                 boundary["domainSymbol"] in candidate_text
                 and current_matches >= boundary["managedLifecycleMatchThreshold"]
@@ -131,16 +152,29 @@ class ArchitectureSourceResponsibilityGuardrailEvidenceTests(unittest.TestCase):
                 continue
 
             baseline_text = ""
+            baseline_lines = 0
+            baseline_bytes = 0
             if existed_at_baseline:
                 baseline_text = git("show", f"{baseline_commit}:{relative}")
+                baseline_lines, baseline_bytes = measure_bytes(baseline_text.encode("utf-8"))
             baseline_matches = sum(symbol in baseline_text for symbol in boundary["managedLifecycleSymbols"])
+            baseline_occurrences = count_total_occurrences(baseline_text, boundary["managedLifecycleSymbols"])
+            baseline_domain_occurrences = baseline_text.count(boundary["domainSymbol"])
             baseline_domain_owner = (
                 boundary["domainSymbol"] in baseline_text
                 and baseline_matches >= boundary["managedLifecycleMatchThreshold"]
             )
+            baseline_generic_owner = baseline_matches >= boundary["genericLifecycleMatchThreshold"]
+            current_lines, current_bytes = measure_bytes(candidate.read_bytes())
             if current_domain_owner:
                 self.assertTrue(baseline_domain_owner, relative)
-            self.assertLessEqual(current_matches, baseline_matches, relative)
+                self.assertLessEqual(current_domain_occurrences, baseline_domain_occurrences, relative)
+            if current_generic_owner:
+                self.assertTrue(baseline_generic_owner, relative)
+                self.assertLessEqual(current_matches, baseline_matches, relative)
+                self.assertLessEqual(current_occurrences, baseline_occurrences, relative)
+                self.assertLessEqual(current_lines, baseline_lines, relative)
+                self.assertLessEqual(current_bytes, baseline_bytes, relative)
 
     def test_growth_authorizations_are_exact_accepted_am013_blobs(self) -> None:
         authorizations = self.contract["growthAuthorizations"]

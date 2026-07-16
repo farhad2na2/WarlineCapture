@@ -887,6 +887,12 @@ public sealed class ProductionSourceGrowthArchitectureTests
             int currentLifecycleMatches = CountContainedSymbols(
                 candidateContent,
                 contract.ReplacementOwnerBoundary.ManagedLifecycleSymbols);
+            int currentLifecycleOccurrences = CountTotalOccurrences(
+                candidateContent,
+                contract.ReplacementOwnerBoundary.ManagedLifecycleSymbols);
+            int currentDomainOccurrences = CountOccurrences(
+                candidateContent,
+                contract.ReplacementOwnerBoundary.DomainSymbol);
             bool currentDomainOwner =
                 candidateContent.Contains(contract.ReplacementOwnerBoundary.DomainSymbol, StringComparison.Ordinal) &&
                 currentLifecycleMatches >= contract.ReplacementOwnerBoundary.ManagedLifecycleMatchThreshold;
@@ -896,30 +902,54 @@ public sealed class ProductionSourceGrowthArchitectureTests
                 continue;
 
             int baselineLifecycleMatches = 0;
+            int baselineLifecycleOccurrences = 0;
+            int baselineDomainOccurrences = 0;
             bool baselineDomainOwner = false;
+            bool baselineGenericOwner = false;
+            SourceFile baselineSource = new(candidate.Path, 0, 0);
             if (existedAtBaseline)
             {
-                string baselineContent = Encoding.UTF8.GetString(RunGitBytes(
-                    $"show {contract.ReplacementOwnerBoundary.BaselineCommit}:{candidate.Path}"));
+                byte[] baselineBytes = RunGitBytes(
+                    $"show {contract.ReplacementOwnerBoundary.BaselineCommit}:{candidate.Path}");
+                string baselineContent = Encoding.UTF8.GetString(baselineBytes);
+                baselineSource = MeasureContent(candidate.Path, baselineBytes);
                 baselineLifecycleMatches = CountContainedSymbols(
                     baselineContent,
                     contract.ReplacementOwnerBoundary.ManagedLifecycleSymbols);
+                baselineLifecycleOccurrences = CountTotalOccurrences(
+                    baselineContent,
+                    contract.ReplacementOwnerBoundary.ManagedLifecycleSymbols);
+                baselineDomainOccurrences = CountOccurrences(
+                    baselineContent,
+                    contract.ReplacementOwnerBoundary.DomainSymbol);
                 baselineDomainOwner =
                     baselineContent.Contains(
                         contract.ReplacementOwnerBoundary.DomainSymbol,
                         StringComparison.Ordinal) &&
                     baselineLifecycleMatches >= contract.ReplacementOwnerBoundary.ManagedLifecycleMatchThreshold;
+                baselineGenericOwner =
+                    baselineLifecycleMatches >= contract.ReplacementOwnerBoundary.GenericLifecycleMatchThreshold;
             }
 
             bool grewDomainOwnership = currentDomainOwner &&
-                (!baselineDomainOwner || currentLifecycleMatches > baselineLifecycleMatches);
+                (!baselineDomainOwner ||
+                 currentLifecycleMatches > baselineLifecycleMatches ||
+                 currentDomainOccurrences > baselineDomainOccurrences);
             bool grewGenericOwnership = currentGenericOwner &&
-                currentLifecycleMatches > baselineLifecycleMatches;
+                (!baselineGenericOwner ||
+                 currentLifecycleMatches > baselineLifecycleMatches ||
+                 currentLifecycleOccurrences > baselineLifecycleOccurrences ||
+                 candidate.LineCount > baselineSource.LineCount ||
+                 candidate.ByteCount > baselineSource.ByteCount);
             if (grewDomainOwnership || grewGenericOwnership)
             {
                 violations.Add(
-                    $"replacement owner {candidate.Path} grew managed lifecycle ownership from " +
-                    $"{baselineLifecycleMatches} to {currentLifecycleMatches} symbols");
+                    $"replacement owner {candidate.Path} grew managed lifecycle ownership " +
+                    $"(symbols {baselineLifecycleMatches}->{currentLifecycleMatches}, " +
+                    $"occurrences {baselineLifecycleOccurrences}->{currentLifecycleOccurrences}, " +
+                    $"domain {baselineDomainOccurrences}->{currentDomainOccurrences}, " +
+                    $"lines {baselineSource.LineCount}->{candidate.LineCount}, " +
+                    $"bytes {baselineSource.ByteCount}->{candidate.ByteCount})");
             }
         }
 
@@ -1739,6 +1769,11 @@ public sealed class ProductionSourceGrowthArchitectureTests
             count++;
             searchStart = found + value.Length;
         }
+    }
+
+    private static int CountTotalOccurrences(string contents, IEnumerable<string> values)
+    {
+        return values.Sum(value => CountOccurrences(contents, value));
     }
 
     private static HashSet<string> ExtractIds(Regex regex, string contents)

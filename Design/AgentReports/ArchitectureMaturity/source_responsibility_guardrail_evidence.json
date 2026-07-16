@@ -4,9 +4,27 @@
   "acceptanceRequired": false,
   "sourceBaseline": {
     "branch": "main",
+    "commit": "bbe0f82c07514440f59f8cf48fb0e8147cd561cc",
+    "tree": "38039e12b616e4b890fbbb4f94e1b71296f07508"
+  },
+  "programBaseline": {
     "commit": "5f24549a18199db04921bb0ad6adf075872b03ff",
     "tree": "ad633be5b7bdfcffd90ed5ab2fa7aba25e129aee"
   },
+  "priorImplementationCommits": [
+    {
+      "commit": "8e2f99163634f408e8fd1ac5a389a70b57354750",
+      "tree": "95fa3ab631891b50af4fe4247f46d4c1bf6b23db"
+    },
+    {
+      "commit": "1fc81af52da11eed3a41a9862db186e83f213dad",
+      "tree": "e5e14b48d3e648f8bcb9d88c6a5b53256d595d6a"
+    },
+    {
+      "commit": "e5d17376784d595f44437e631c6b0b4676983a42",
+      "tree": "462952edccdc7aceef874ef52e0c4aef90f29050"
+    }
+  ],
   "acceptedEvidence": null,
   "implementationChangePaths": [
     "Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs",
@@ -37,13 +55,13 @@
   ],
   "canonicalValidator": {
     "path": "Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs",
-    "sha256": "131812f87e99c67c45e224d677f10a8744f83ccd0a09f22cb1e960d2c81d0bbc",
+    "sha256": "f41bb1f91b55f3aaee0a6c5cfe99e55a51a9c546815cde60ee435490aa45201d",
     "result": "Passed",
     "passedTests": 17,
     "compilerErrors": 0,
     "log": "Design/AgentReports/ArchitectureMaturity/am016_source_growth_validation.log",
-    "logSha256": "c0cc5a6eb5a86871eb388fe7cb22109194fbd35f93a5fb145b8ad22e1f54e238",
-    "logBytes": 61498
+    "logSha256": "d19bdcc0eb2d108ae2a644ed57d5eee4ea413f26a1de2692160fba137cf188c4",
+    "logBytes": 65130
   },
   "authorityDecision": {
     "validatorOwnerId": "architecture-source-growth",
@@ -53,6 +71,6 @@
   },
   "validatorAuthority": {
     "path": "Tools/CI/tests/test_architecture_source_responsibility_guardrail_evidence.py",
-    "sha256": "0731deb2b6a9ebfa269f37114deaf8fc883bcaba41bc41cf25c3189c04d463c2"
+    "sha256": "ba0937d56252dce64f9e6f7dabe95508233209963b1957f5be2a7c46a3044ddc"
   }
 }

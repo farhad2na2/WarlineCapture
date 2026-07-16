@@ -15,14 +15,18 @@ namespace Game.Composition
             World world,
             RuntimeGridBootstrapStartupSystemHelper runtimeGridBootstrapSystem,
             MapSurfaceRuntimeBootstrapSceneSystemHelper mapSurfaceRuntimeBootstrapSystem,
-            GridAuthoringConfig runtimeGridConfig,
-            MapSurfaceAuthoring mapSurfaceAuthoring,
+            MatchSceneView sceneView,
             BuildingPlacementSystemConfig buildingPlacementConfig,
             AIStartupSystem aiStartupSystem,
             IReadOnlyList<AIControllerConfig> aiControllerConfigs,
             AISettingsSnapshot aiSettings,
             List<InitialFactionSpawnCellFallbackEntry> initialFactionSpawnCellFallbackEntries)
         {
+            GridAuthoringConfig runtimeGridConfig = sceneView != null ? sceneView.RuntimeGridConfig : null;
+            MapSurfaceAuthoring mapSurfaceAuthoring = sceneView != null ? sceneView.MapSurfaceAuthoring : null;
+            OperationMapCameraPoseCameraHelper.TryApplyInitialPose(
+                world,
+                sceneView != null ? sceneView.WorldCamera : null);
             if (runtimeGridConfig == null)
             {
                 Debug.LogError("[MatchBootstrap] missingRuntimeGridConfig");

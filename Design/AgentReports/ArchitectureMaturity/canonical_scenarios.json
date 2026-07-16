@@ -1,0 +1,2018 @@
+{
+  "artifactId": "AM-003",
+  "artifactType": "architecture-maturity-canonical-scenario-catalog",
+  "baseline": {
+    "branch": "codex/am-003-canonical-scenarios",
+    "commit": "a5bf7b72cdfb9457c6af1e98ee2bcaae983f9ff6",
+    "gitObjectFormat": "sha1",
+    "tree": "8b2f87e5d9006fd9cea8a97c2153abfe2d265d2a"
+  },
+  "caveats": [
+    {
+      "id": "CAVEAT-CONSTRUCTION-BURST",
+      "text": "The production fixtures prove one placement and one production queue path; no existing fixture defines a repeated construction-burst population, so burst scale remains a visible follow-up gap."
+    },
+    {
+      "id": "CAVEAT-HISTORICAL-SOAK",
+      "text": "Historical development or release soak output is diagnostic context only and is never acceptance evidence for this baseline."
+    },
+    {
+      "id": "CAVEAT-IDLE-FLOOR",
+      "text": "MatchPerformanceFixtureSeed creates a synthetic historical entity floor; it is not representative content distribution or proof of a naturally idle mission."
+    },
+    {
+      "id": "CAVEAT-LAB-AIRCRAFT",
+      "text": "Scenario Lab aircraft coverage exercises isolated air-defense definitions and visual playback, not full Match aircraft scheduling, formation scale, airport logistics, or release rendering performance."
+    },
+    {
+      "id": "CAVEAT-MAX-COMBAT-COUNT",
+      "text": "MatchGcAllocationCallstackCapture caps arming at 64 but currently succeeds with any positive armed count; this catalog raises the canonical acceptance signal to exactly 64 armed attackers and fails closed below that count."
+    },
+    {
+      "id": "CAVEAT-TRANSPORT-RUNWAY",
+      "text": "Transport fixtures cover boarding, disembark, rope, parachute, and cargo-drop states; they do not prove airport runway reservation, taxi, takeoff, landing, or full Match route contention."
+    }
+  ],
+  "coverageMatrix": [
+    {
+      "coverageId": "CAT-AIRCRAFT",
+      "executable": true,
+      "scenarioIds": [
+        "AM003-SCN-005-AIRCRAFT"
+      ],
+      "state": "implemented"
+    },
+    {
+      "coverageId": "CAT-CONSTRUCTION",
+      "executable": true,
+      "scenarioIds": [
+        "AM003-SCN-003-CONSTRUCTION"
+      ],
+      "state": "implemented"
+    },
+    {
+      "coverageId": "CAT-IDLE-MATCH",
+      "executable": true,
+      "scenarioIds": [
+        "AM003-SCN-001-IDLE-MATCH"
+      ],
+      "state": "implemented"
+    },
+    {
+      "coverageId": "CAT-LONG-SOAK",
+      "executable": false,
+      "reason": "AM-003 defines the normative 60-second warmup and 1800-second measurement procedure but does not trigger or schedule the lengthy soak; execution is deferred to the later activation/release cycle.",
+      "scenarioIds": [
+        "AM003-SCN-010-LONG-SOAK"
+      ],
+      "state": "defined-deferred"
+    },
+    {
+      "coverageId": "CAT-MAJOR-MATCH-UI",
+      "executable": true,
+      "scenarioIds": [
+        "AM003-SCN-007-MAJOR-MATCH-UI"
+      ],
+      "state": "implemented-with-explicit-support-selector-gap"
+    },
+    {
+      "coverageId": "CAT-MAXIMUM-COMBAT",
+      "executable": true,
+      "scenarioIds": [
+        "AM003-SCN-002-MAXIMUM-COMBAT"
+      ],
+      "state": "implemented"
+    },
+    {
+      "coverageId": "CAT-PROJECTILES",
+      "executable": true,
+      "scenarioIds": [
+        "AM003-SCN-006-PROJECTILES"
+      ],
+      "state": "implemented"
+    },
+    {
+      "coverageId": "CAT-RETURNING-USER-MATCH-TO-MENU",
+      "executable": true,
+      "scenarioIds": [
+        "AM003-SCN-009-RETURNING-MATCH-TO-MENU"
+      ],
+      "state": "implemented"
+    },
+    {
+      "coverageId": "CAT-RETURNING-USER-MENU-TO-MATCH",
+      "executable": true,
+      "scenarioIds": [
+        "AM003-SCN-008-RETURNING-MENU-TO-MATCH"
+      ],
+      "state": "implemented"
+    },
+    {
+      "coverageId": "CAT-TRANSPORT",
+      "executable": true,
+      "scenarioIds": [
+        "AM003-SCN-004-TRANSPORT"
+      ],
+      "state": "implemented"
+    },
+    {
+      "coverageId": "GAP-RESULT-ROUTE",
+      "evidence": [
+        "Assets/Game/Scripts/UI/Contracts/UIRoute.cs",
+        "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Core.cs"
+      ],
+      "executable": false,
+      "reason": "UIRoute has no Result member and TryReadMissionResult returns false unconditionally, so Result cannot be a required executable route scenario.",
+      "scenarioIds": [],
+      "state": "unimplemented-coverage-gap"
+    },
+    {
+      "coverageId": "GAP-SUPPORT-SELECTOR",
+      "evidence": [
+        "Assets/Game/Scripts/UI/MainMenuPlayUI.cs",
+        "Design/Match_HUD_And_Gameplay_Implementation_Spec.md"
+      ],
+      "executable": false,
+      "reason": "The Match HUD design requires SUPPORT to open support choices or enter SupportTargeting, but MatchHudLargeTacticalPopup currently exposes only Assistant, BuildDrawer, FullMap, and ResourceExchange; no production Support selector popup boundary is implemented for an executable scenario.",
+      "scenarioIds": [],
+      "state": "unimplemented-coverage-gap"
+    },
+    {
+      "coverageId": "SURFACE-ARIA-ASSISTANT",
+      "executable": true,
+      "scenarioIds": [
+        "AM003-SCN-007-MAJOR-MATCH-UI"
+      ],
+      "state": "implemented"
+    },
+    {
+      "coverageId": "SURFACE-BUILD-DRAWER",
+      "executable": true,
+      "scenarioIds": [
+        "AM003-SCN-007-MAJOR-MATCH-UI"
+      ],
+      "state": "implemented"
+    },
+    {
+      "coverageId": "SURFACE-CURRENT-ORDER-FEEDBACK",
+      "executable": true,
+      "scenarioIds": [
+        "AM003-SCN-007-MAJOR-MATCH-UI"
+      ],
+      "state": "implemented"
+    },
+    {
+      "coverageId": "SURFACE-FULL-MAP",
+      "executable": true,
+      "scenarioIds": [
+        "AM003-SCN-007-MAJOR-MATCH-UI"
+      ],
+      "state": "implemented"
+    },
+    {
+      "coverageId": "SURFACE-MATCH-SETTINGS",
+      "executable": true,
+      "scenarioIds": [
+        "AM003-SCN-007-MAJOR-MATCH-UI"
+      ],
+      "state": "implemented"
+    },
+    {
+      "coverageId": "SURFACE-MINIMAP",
+      "executable": true,
+      "scenarioIds": [
+        "AM003-SCN-007-MAJOR-MATCH-UI"
+      ],
+      "state": "implemented"
+    },
+    {
+      "coverageId": "SURFACE-OBJECTIVES",
+      "executable": true,
+      "scenarioIds": [
+        "AM003-SCN-007-MAJOR-MATCH-UI"
+      ],
+      "state": "implemented"
+    },
+    {
+      "coverageId": "SURFACE-PASSENGER-DRAWER",
+      "executable": true,
+      "scenarioIds": [
+        "AM003-SCN-007-MAJOR-MATCH-UI"
+      ],
+      "state": "implemented"
+    },
+    {
+      "coverageId": "SURFACE-PLACEMENT-CONFIRMATION",
+      "executable": true,
+      "scenarioIds": [
+        "AM003-SCN-007-MAJOR-MATCH-UI"
+      ],
+      "state": "implemented"
+    },
+    {
+      "coverageId": "SURFACE-RESOURCE-EXCHANGE",
+      "executable": true,
+      "scenarioIds": [
+        "AM003-SCN-007-MAJOR-MATCH-UI"
+      ],
+      "state": "implemented"
+    },
+    {
+      "coverageId": "SURFACE-SELECTION-COMMAND-RAIL",
+      "executable": true,
+      "scenarioIds": [
+        "AM003-SCN-007-MAJOR-MATCH-UI"
+      ],
+      "state": "implemented"
+    },
+    {
+      "coverageId": "SURFACE-SQUAD-TRAY",
+      "executable": true,
+      "scenarioIds": [
+        "AM003-SCN-007-MAJOR-MATCH-UI"
+      ],
+      "state": "implemented"
+    }
+  ],
+  "determinism": {
+    "arrayOrdering": {
+      "coverageMatrix": "coverageId code-point ascending",
+      "orderedSteps": "order integer ascending",
+      "pathAndStringSets": "UTF-8 code-point ascending with duplicates rejected",
+      "scenarios": "id code-point ascending"
+    },
+    "canonicalization": "jq walk sorts every string-array set, then jq -S emits default two-space indentation followed by one LF",
+    "encoding": "UTF-8",
+    "lineEndings": "LF",
+    "markdownProjection": "deterministic renderer version 1; scenario and coverage rows preserve canonical JSON order",
+    "timestampPolicy": "No generated or reviewed timestamp is stored.",
+    "unchangedInputResult": "Byte-identical JSON and Markdown"
+  },
+  "executionPolicy": {
+    "attemptsPerRequiredRunner": 1,
+    "budgetAuthority": "AM-004",
+    "budgetRule": "All AM-004 placeholders remain null until AM-004 freezes accepted scenario-specific budgets.",
+    "commitBinding": "Runner checkout commit and tree must exactly equal baseline.commit and baseline.tree.",
+    "longSoakScheduling": "AM-003 defines the normative 60-second warmup and 1800-second measurement procedure but does not trigger, schedule, or accept a soak execution; activation belongs to the later activation/release cycle.",
+    "requiredRunnerOutcome": "passed",
+    "retryPolicy": "prohibited",
+    "skipPolicy": "A skipped, ignored, missing, unsupported, not-run, or no-runner result for any required runner is failure.",
+    "unexpectedLogPolicy": "Unhandled exception, assertion failure, fatal marker, timeout, or required diagnostic absence is failure."
+  },
+  "globalExclusions": [
+    {
+      "id": "EXC-ANDROID-RELEASE",
+      "reason": "Android release-device execution, thermal acceptance, and sustained release execution remain deferred to the inactive Release Certification Lane.",
+      "state": "deferred"
+    },
+    {
+      "id": "EXC-FIRST-LAUNCH",
+      "reason": "FirstLaunch is pre-completed for returning-user scenarios and remains separately owned; this catalog does not exercise or modify it.",
+      "state": "excluded-separately-owned"
+    },
+    {
+      "id": "EXC-OPERATION-MAP-RND",
+      "reason": "Separately owned operation-map R&D changes are outside AM-003; the currently activated compatibility metadata and canonical Match scene at the bound baseline are runtime authorities and are not excluded.",
+      "state": "excluded-rnd-ownership-only"
+    }
+  ],
+  "scenarios": [
+    {
+      "acceptanceSignals": [
+        "Match route is active and transition is not running.",
+        "MatchPerformanceFixtureSeed final counts are at least 733 source entities, 628 buildings, 105 render visual states, and 59 culled units.",
+        "No gameplay command, construction request, transport request, aircraft scenario, or projectile scenario is active during measurement.",
+        "Required frame, GC, system, entity, and UI metrics are present; no required runner is skipped."
+      ],
+      "actions": [
+        {
+          "instruction": "Enter Match through the production Menu-to-Match route.",
+          "order": 1
+        },
+        {
+          "instruction": "Call MatchPerformanceFixtureSeed.Ensure once and assert a second call adds no entities.",
+          "order": 2
+        },
+        {
+          "instruction": "Hold camera, selection, commands, popups, construction, transport, aircraft, and projectiles inactive for the full measurement window.",
+          "order": 3
+        }
+      ],
+      "am004BudgetPlaceholders": [
+        {
+          "budgetId": "AM004.AM003-SCN-001-IDLE-MATCH.frame-time",
+          "metric": "frameTimeMs",
+          "status": "pending-am-004",
+          "threshold": null,
+          "unit": "milliseconds"
+        },
+        {
+          "budgetId": "AM004.AM003-SCN-001-IDLE-MATCH.gc-allocation",
+          "metric": "gcAllocationAfterWarmup",
+          "status": "pending-am-004",
+          "threshold": null,
+          "unit": "bytes"
+        },
+        {
+          "budgetId": "AM004.AM003-SCN-001-IDLE-MATCH.memory-growth",
+          "metric": "memoryGrowth",
+          "status": "pending-am-004",
+          "threshold": null,
+          "unit": "bytes"
+        }
+      ],
+      "category": "idle-match",
+      "exclusions": [
+        "Android release, thermal, and sustained release acceptance",
+        "Natural mission-content representativeness",
+        "Separately owned operation-map R&D changes; currently activated compatibility metadata and the canonical Match scene are not excluded"
+      ],
+      "existingFixtureRefs": [
+        "Assets/Game/Scripts/Editor/MatchGcAllocationCallstackCapture.cs",
+        "Assets/Game/Scripts/Editor/MatchPerformanceFixtureSeed.cs",
+        "Assets/Tests/Editor/MatchGcAllocationCallstackCaptureTests.cs",
+        "Assets/Tests/Editor/MatchPerformanceFixtureSeedTests.cs",
+        "Design/Architecture/performance_regression_contract.md"
+      ],
+      "failureDiagnostics": [
+        "Capture frame-time percentiles, GC call stacks, top system samples, entity counts, UI object counts, and fatal/error markers.",
+        "Capture route, transition phase, frame index, fixture initial/final counts, and second-Ensure deltas.",
+        "Fail immediately on count deficit, mutation during measurement, missing metric, timeout, skipped runner, or retry request."
+      ],
+      "fixedSeed": {
+        "derivation": "AM-003 scenario ordinal",
+        "type": "uint32",
+        "value": 3001
+      },
+      "id": "AM003-SCN-001-IDLE-MATCH",
+      "measurementWindow": {
+        "duration": 300,
+        "unit": "frames"
+      },
+      "metrics": [
+        "entityCounts",
+        "frameTimeAverageMs",
+        "frameTimeMaxMs",
+        "frameTimeP95Ms",
+        "frameTimeP99Ms",
+        "gcAllocationPerFrameP95Bytes",
+        "gcAllocationRecurringSites",
+        "gcAllocationTotalBytes",
+        "memoryGrowthBytes",
+        "namedHotSystemP95P99MaxMs",
+        "uiObjectCounts"
+      ],
+      "prerequisites": [
+        "Exact baseline commit and tree are checked out with a clean tracked worktree.",
+        "Menu scene production shell can enter Match and create the default ECS World.",
+        "Profiler categories required by the existing capture fixture are available.",
+        "Returning-user profile state is FirstLaunch completed."
+      ],
+      "purpose": "Establish the deterministic steady-state Match floor without player-driven activity.",
+      "releaseLaneState": {
+        "androidReleaseExecution": "deferred",
+        "coreLaneExecution": "executable-procedure-defined",
+        "sustainedReleaseExecution": "deferred",
+        "thermalExecution": "deferred"
+      },
+      "setup": [
+        {
+          "instruction": "Reset shell route history and ensure Match is unloaded before loading Menu.",
+          "order": 1
+        },
+        {
+          "instruction": "Apply fixed seed 3001 before any scenario-owned random choice.",
+          "order": 2
+        },
+        {
+          "instruction": "Enter Match and wait for GridConfig, shell root, Match HUD, and runtime fixture boundaries.",
+          "order": 3
+        }
+      ],
+      "stabilization": [
+        "Complete tracked ECS jobs before warmup.",
+        "Exclude scene load, import, and first-install frames before warmup begins.",
+        "Require stable fixture counts for 30 consecutive frames."
+      ],
+      "surfaces": [
+        "Match HUD steady state",
+        "Match world"
+      ],
+      "teardownReset": [
+        "Clear scenario-owned seed, metrics, entities, and temporary report state.",
+        "Return to MainMenu through the production route.",
+        "Stop profiler capture and restore profiler/logging state.",
+        "Unload Match and assert one preserved lifecycle root with no Match runtime UI binding."
+      ],
+      "uiStates": {
+        "after": [
+          "MainMenu active",
+          "No Match HUD content installed"
+        ],
+        "before": [
+          "MainMenu ready",
+          "No popup visible"
+        ],
+        "measurement": [
+          "Match HUD ready",
+          "No popup visible",
+          "No selection or sticky command mode"
+        ]
+      },
+      "warmupWindow": {
+        "duration": 180,
+        "unit": "frames"
+      },
+      "worldStates": {
+        "after": [
+          "Default ECS World preserved",
+          "Match scene unloaded"
+        ],
+        "before": [
+          "Default ECS World created",
+          "Match scene unloaded"
+        ],
+        "measurement": [
+          "Fixture floor stable",
+          "Match scene loaded",
+          "No active scenario-owned orders"
+        ]
+      }
+    },
+    {
+      "acceptanceSignals": [
+        "Battle VFX pools are prewarmed before warmup.",
+        "Each armed attacker has a live high-health target in range and enters recurring attack activity.",
+        "Exactly 64 attack-capable non-air-missile-launcher attackers are armed; fewer than 64 is failure.",
+        "Required frame, GC, system, combat-count, projectile-count, presentation-count, and UI metrics are present; no required runner is skipped."
+      ],
+      "actions": [
+        {
+          "instruction": "Run the battle-state preparation path and record candidates and armed count.",
+          "order": 1
+        },
+        {
+          "instruction": "Assert armed count equals 64 before warmup; do not downgrade to the current positive-count success condition.",
+          "order": 2
+        },
+        {
+          "instruction": "Maintain all 64 attackers in commanded combat against scenario-owned high-health targets through measurement.",
+          "order": 3
+        }
+      ],
+      "am004BudgetPlaceholders": [
+        {
+          "budgetId": "AM004.AM003-SCN-002-MAXIMUM-COMBAT.frame-time",
+          "metric": "frameTimeMs",
+          "status": "pending-am-004",
+          "threshold": null,
+          "unit": "milliseconds"
+        },
+        {
+          "budgetId": "AM004.AM003-SCN-002-MAXIMUM-COMBAT.gc-allocation",
+          "metric": "gcAllocationAfterWarmup",
+          "status": "pending-am-004",
+          "threshold": null,
+          "unit": "bytes"
+        },
+        {
+          "budgetId": "AM004.AM003-SCN-002-MAXIMUM-COMBAT.memory-growth",
+          "metric": "memoryGrowth",
+          "status": "pending-am-004",
+          "threshold": null,
+          "unit": "bytes"
+        }
+      ],
+      "category": "maximum-combat",
+      "exclusions": [
+        "Air-missile launcher coverage, which belongs to the aircraft/projectile scenarios",
+        "Android release, thermal, and sustained release acceptance",
+        "Separately owned operation-map R&D changes; currently activated compatibility metadata and the canonical Match scene are not excluded"
+      ],
+      "existingFixtureRefs": [
+        "Assets/Game/Scripts/Editor/MatchGcAllocationCallstackCapture.cs",
+        "Assets/Game/Scripts/Editor/MatchPerformanceFixtureSeed.cs",
+        "Assets/Tests/Editor/MatchGcAllocationCallstackCaptureTests.cs",
+        "Assets/Tests/Editor/MatchPerformanceFixtureSeedTests.cs",
+        "Design/Architecture/performance_regression_contract.md"
+      ],
+      "failureDiagnostics": [
+        "Capture candidate count, armed count, rejected candidate component state, target count, target health, attack cooldown/trace state, projectile count, and VFX pool count.",
+        "Capture frame-time percentiles, GC call stacks, top system samples, entity/presentation/UI counts, and fatal/error markers.",
+        "Fail immediately on armed count below 64, combat decay, missing metric, timeout, skipped runner, or retry request."
+      ],
+      "fixedSeed": {
+        "derivation": "AM-003 scenario ordinal",
+        "type": "uint32",
+        "value": 3002
+      },
+      "id": "AM003-SCN-002-MAXIMUM-COMBAT",
+      "measurementWindow": {
+        "duration": 300,
+        "unit": "frames"
+      },
+      "metrics": [
+        "armedAttackerCount",
+        "combatTargetCount",
+        "entityCounts",
+        "frameTimeAverageMs",
+        "frameTimeMaxMs",
+        "frameTimeP95Ms",
+        "frameTimeP99Ms",
+        "gcAllocationPerFrameP95Bytes",
+        "gcAllocationRecurringSites",
+        "gcAllocationTotalBytes",
+        "memoryGrowthBytes",
+        "namedCombatSystemP95P99MaxMs",
+        "presentationObjectCounts",
+        "projectileCounts",
+        "uiObjectCounts"
+      ],
+      "prerequisites": [
+        "Exact baseline commit and tree are checked out with a clean tracked worktree.",
+        "Ground and air combat VFX references needed by the battle prewarm path resolve.",
+        "Match contains at least 64 eligible attack-capable units after fixture setup.",
+        "Returning-user profile state is FirstLaunch completed."
+      ],
+      "purpose": "Exercise the largest combat workload defined by the existing battle capture while closing its positive-count weakness.",
+      "releaseLaneState": {
+        "androidReleaseExecution": "deferred",
+        "coreLaneExecution": "executable-fail-closed-with-exact-count",
+        "sustainedReleaseExecution": "deferred",
+        "thermalExecution": "deferred"
+      },
+      "setup": [
+        {
+          "instruction": "Reset route and enter Match through the production shell.",
+          "order": 1
+        },
+        {
+          "instruction": "Apply fixed seed 3002 and ensure the Match historical fixture floor.",
+          "order": 2
+        },
+        {
+          "instruction": "Prewarm every collected unit-attack, ground-missile, and air-missile VFX prefab with the existing battle prewarm path.",
+          "order": 3
+        }
+      ],
+      "stabilization": [
+        "Complete tracked ECS jobs before battle preparation.",
+        "Exclude scene load, import, fixture seeding, target creation, and VFX prewarm frames from measurement.",
+        "Require exactly 64 armed attackers and stable target/projectile counters before warmup."
+      ],
+      "surfaces": [
+        "Combat simulation",
+        "Match HUD",
+        "Projectile and impact presentation"
+      ],
+      "teardownReset": [
+        "Clear seed, metrics, and VFX scenario state.",
+        "Remove every scenario-owned target and combat order.",
+        "Return to MainMenu, unload Match, and assert lifecycle/UI cleanup.",
+        "Stop capture and restore profiler/logging state."
+      ],
+      "uiStates": {
+        "after": [
+          "MainMenu active",
+          "No Match HUD content installed"
+        ],
+        "before": [
+          "MainMenu ready"
+        ],
+        "measurement": [
+          "Combat feedback may update",
+          "Match HUD ready",
+          "No modal popup obscures combat"
+        ]
+      },
+      "warmupWindow": {
+        "duration": 180,
+        "unit": "frames"
+      },
+      "worldStates": {
+        "after": [
+          "Match scene unloaded",
+          "No scenario-owned targets or engage orders"
+        ],
+        "before": [
+          "Fixture floor stable",
+          "Match runtime ready"
+        ],
+        "measurement": [
+          "Exactly 64 armed attackers active",
+          "Recurring combat and presentation active",
+          "Scenario-owned targets alive"
+        ]
+      }
+    },
+    {
+      "acceptanceSignals": [
+        "A building placement request is accepted and committed through the production boundary.",
+        "A production command is accepted and queues exactly one unit with the expected production index.",
+        "Placement confirmation and runtime feedback transition through started, completed, and production-queued states.",
+        "Required frame, GC, construction timing, request-count, entity-count, and UI metrics are present; no required runner is skipped."
+      ],
+      "actions": [
+        {
+          "instruction": "Open Build Drawer, select one deterministic building entry, and start placement.",
+          "order": 1
+        },
+        {
+          "instruction": "Move preview to the deterministic valid cell and confirm placement.",
+          "order": 2
+        },
+        {
+          "instruction": "Select the completed producer and queue one deterministic unit production.",
+          "order": 3
+        },
+        {
+          "instruction": "Hold the completed building and queued production state through the remaining measurement frames.",
+          "order": 4
+        }
+      ],
+      "am004BudgetPlaceholders": [
+        {
+          "budgetId": "AM004.AM003-SCN-003-CONSTRUCTION.frame-time",
+          "metric": "frameTimeMs",
+          "status": "pending-am-004",
+          "threshold": null,
+          "unit": "milliseconds"
+        },
+        {
+          "budgetId": "AM004.AM003-SCN-003-CONSTRUCTION.gc-allocation",
+          "metric": "gcAllocationAfterWarmup",
+          "status": "pending-am-004",
+          "threshold": null,
+          "unit": "bytes"
+        },
+        {
+          "budgetId": "AM004.AM003-SCN-003-CONSTRUCTION.memory-growth",
+          "metric": "memoryGrowth",
+          "status": "pending-am-004",
+          "threshold": null,
+          "unit": "bytes"
+        }
+      ],
+      "category": "construction",
+      "exclusions": [
+        "Android release, thermal, and sustained release acceptance",
+        "Construction burst scale beyond one placement and one queued production",
+        "Separately owned operation-map R&D changes; currently activated compatibility metadata and the canonical Match scene are not excluded"
+      ],
+      "existingFixtureRefs": [
+        "Assets/Tests/PlayMode/Aph806BuildingPlacementProductionPlayModeTests.cs",
+        "Assets/Tests/PlayMode/BuildingPlacementProductionPlayModeTests.cs",
+        "Design/Architecture/performance_regression_contract.md"
+      ],
+      "failureDiagnostics": [
+        "Capture frame-time percentiles, GC sites, building-placement/production system samples, entity/UI counts, and feedback text/reason codes.",
+        "Capture placement command/result codes, selected catalog item, cell validity, cost/resource deltas, building entity identity, producer identity, pending production count, and production index.",
+        "Fail immediately on rejected command, unexpected count, missing metric, timeout, skipped runner, or retry request."
+      ],
+      "fixedSeed": {
+        "derivation": "AM-003 scenario ordinal",
+        "type": "uint32",
+        "value": 3003
+      },
+      "id": "AM003-SCN-003-CONSTRUCTION",
+      "measurementWindow": {
+        "duration": 300,
+        "unit": "frames"
+      },
+      "metrics": [
+        "buildingEntityDelta",
+        "frameTimeAverageMs",
+        "frameTimeMaxMs",
+        "frameTimeP95Ms",
+        "frameTimeP99Ms",
+        "gcAllocationPerFrameP95Bytes",
+        "gcAllocationRecurringSites",
+        "gcAllocationTotalBytes",
+        "memoryGrowthBytes",
+        "namedConstructionSystemP95P99MaxMs",
+        "placementRequestCountsByResult",
+        "productionQueueCount",
+        "uiObjectCounts"
+      ],
+      "prerequisites": [
+        "Exact baseline commit and tree are checked out with a clean tracked worktree.",
+        "Match building-placement config and deterministic buildable catalog entry resolve.",
+        "Player resources cover the fixture costs and the selected cell is valid.",
+        "Returning-user profile state is FirstLaunch completed."
+      ],
+      "purpose": "Measure one complete production placement-to-queue flow through the existing production boundaries.",
+      "releaseLaneState": {
+        "androidReleaseExecution": "deferred",
+        "coreLaneExecution": "executable-single-cycle-burst-gap-declared",
+        "sustainedReleaseExecution": "deferred",
+        "thermalExecution": "deferred"
+      },
+      "setup": [
+        {
+          "instruction": "Reset route, enter Match, and apply fixed seed 3003.",
+          "order": 1
+        },
+        {
+          "instruction": "Select deterministic valid placement cell and building/unit catalog entries.",
+          "order": 2
+        },
+        {
+          "instruction": "Snapshot resources, building count, pending production count, and UI state before warmup.",
+          "order": 3
+        }
+      ],
+      "stabilization": [
+        "Exclude initial catalog binding and asset load frames from measurement.",
+        "Require no pending placement or production command before warmup.",
+        "Wait for Match loading gate, build catalog, resource projection, and placement query to stabilize."
+      ],
+      "surfaces": [
+        "Build Drawer",
+        "Construction simulation",
+        "Current-order and feedback",
+        "Placement confirmation",
+        "Selection and command rail"
+      ],
+      "teardownReset": [
+        "Cancel any pending placement and clear placement preview state.",
+        "Remove scenario-owned building/production entities or unload Match.",
+        "Restore resources and selection state through fixture reset.",
+        "Return to MainMenu and assert lifecycle/UI cleanup."
+      ],
+      "uiStates": {
+        "after": [
+          "MainMenu active",
+          "No placement confirmation visible"
+        ],
+        "before": [
+          "Build Drawer closed",
+          "Match HUD ready",
+          "No placement active"
+        ],
+        "measurement": [
+          "Build Drawer opens then closes",
+          "Current-order/feedback reflects accepted results",
+          "Placement confirmation visible only while placement is active",
+          "Selection/command rail reflects producer"
+        ]
+      },
+      "warmupWindow": {
+        "duration": 60,
+        "unit": "frames"
+      },
+      "worldStates": {
+        "after": [
+          "Match scene unloaded",
+          "Scenario-owned placement and production state cleared"
+        ],
+        "before": [
+          "No pending building placement",
+          "No pending production"
+        ],
+        "measurement": [
+          "One building committed",
+          "One production queued"
+        ]
+      }
+    },
+    {
+      "acceptanceSignals": [
+        "All 16 warmup scenarios and all 64 measured scenarios execute as distinct samples, not retries.",
+        "Each measured sample boards and disembarks all 8 selected passengers.",
+        "Required board/update/disembark timings, allocation, passenger, route, visual-state, entity, and UI metrics are present.",
+        "Required catalog logic tests, production PlayMode transport tests, and performance validator pass without skip."
+      ],
+      "actions": [
+        {
+          "instruction": "Run the 16-scenario warmup defined by TransportBoardingPerformanceValidation.",
+          "order": 1
+        },
+        {
+          "instruction": "Run 64 measured board-all/update/disembark-all samples with 8 passengers each.",
+          "order": 2
+        },
+        {
+          "instruction": "Run required TB-001, TB-002, TB-003, TB-005, TB-006, TB-007, TB-008, and TB-009 production visual playback checks once each.",
+          "order": 3
+        },
+        {
+          "instruction": "Run the cleanup/run-again validation once and reject residue.",
+          "order": 4
+        }
+      ],
+      "am004BudgetPlaceholders": [
+        {
+          "budgetId": "AM004.AM003-SCN-004-TRANSPORT.command-time",
+          "metric": "transportCommandTimeMs",
+          "status": "pending-am-004",
+          "threshold": null,
+          "unit": "milliseconds"
+        },
+        {
+          "budgetId": "AM004.AM003-SCN-004-TRANSPORT.gc-allocation",
+          "metric": "gcAllocationMeasuredSamples",
+          "status": "pending-am-004",
+          "threshold": null,
+          "unit": "bytes"
+        },
+        {
+          "budgetId": "AM004.AM003-SCN-004-TRANSPORT.memory-growth",
+          "metric": "memoryGrowth",
+          "status": "pending-am-004",
+          "threshold": null,
+          "unit": "bytes"
+        }
+      ],
+      "category": "transport",
+      "exclusions": [
+        "Airport/runway reservation, taxi, takeoff, landing, and full Match route contention",
+        "Android release, thermal, and sustained release acceptance",
+        "Separately owned operation-map R&D changes; currently activated compatibility metadata and the canonical Match scene are not excluded"
+      ],
+      "existingFixtureRefs": [
+        "Assets/Game/Scripts/Editor/ScenarioLab/BattleScenarioLabValidationRunner.cs",
+        "Assets/Game/Scripts/ScenarioLab/TransportBoardingScenarioCatalog.cs",
+        "Assets/Tests/Editor/ScenarioLab/TransportBoardingScenarioLabTests.cs",
+        "Assets/Tests/Editor/TransportBoardingPerformanceValidation.cs",
+        "Assets/Tests/PlayMode/Aph807TransportBoardingFlowPlayModeTests.cs",
+        "Assets/Tests/PlayMode/GameSceneTransportBoardingPlayModeTests.cs"
+      ],
+      "failureDiagnostics": [
+        "Capture board-command, boarding-update, disembark-command, total timing samples, current-thread allocation, and boarded/disembarked counts.",
+        "Capture scenario ID, transport/passenger source keys, command result/reason code, passenger buffer length, disabled/passenger/drop components, pathfinding snapshot, and residue counts.",
+        "Fail immediately on any skipped/no-runner result, passenger mismatch, residue, timeout, missing metric, or retry request."
+      ],
+      "fixedSeed": {
+        "derivation": "AM-003 scenario ordinal",
+        "type": "uint32",
+        "value": 3004
+      },
+      "id": "AM003-SCN-004-TRANSPORT",
+      "measurementWindow": {
+        "duration": 64,
+        "unit": "scenario-executions"
+      },
+      "metrics": [
+        "allocatedBytesCurrentThread",
+        "boardCommandAverageP95P99MaxMs",
+        "boardedPassengerCount",
+        "boardingUpdateAverageP95P99MaxMs",
+        "disembarkCommandAverageP95P99MaxMs",
+        "disembarkedPassengerCount",
+        "entityCounts",
+        "pathRequestCounts",
+        "residueCounts",
+        "totalAverageP95P99MaxMs",
+        "transportResultCountsByReason",
+        "uiObjectCounts",
+        "visualStateCounts"
+      ],
+      "prerequisites": [
+        "Exact baseline commit and tree are checked out with a clean tracked worktree.",
+        "Required visual playback scenarios have registered runners.",
+        "The performance fixture can create a 64 by 64 grid, one transport, and 8 selected passengers.",
+        "Transport Scenario Lab definitions and production prefab registry resolve."
+      ],
+      "purpose": "Exercise deterministic boarding, disembark, rope, parachute, cargo, rejection, and cleanup behavior with the existing batch validator.",
+      "releaseLaneState": {
+        "androidReleaseExecution": "deferred",
+        "coreLaneExecution": "executable-existing-logic-visual-and-performance-fixtures",
+        "sustainedReleaseExecution": "deferred",
+        "thermalExecution": "deferred"
+      },
+      "setup": [
+        {
+          "instruction": "Apply fixed seed 3004 and reset Scenario Lab/session state.",
+          "order": 1
+        },
+        {
+          "instruction": "Validate the twelve-entry TransportBoardingScenarioCatalog and required definition paths.",
+          "order": 2
+        },
+        {
+          "instruction": "Create clean world/grid/transport/passenger state per performance sample.",
+          "order": 3
+        }
+      ],
+      "stabilization": [
+        "Complete all tracked jobs before timing boundaries and result reads.",
+        "Dispose and recreate the isolated World for each performance sample.",
+        "Require no transport/passenger/drop/runtime-grid/command residue before each visual execution."
+      ],
+      "surfaces": [
+        "Passenger drawer",
+        "Transport boarding simulation",
+        "Transport command feedback",
+        "Transport visual playback"
+      ],
+      "teardownReset": [
+        "Clear Scenario Lab SessionState keys and report state.",
+        "Dispose every sample World and native grid allocation.",
+        "Run cleanup/run-again residue validation.",
+        "Unload Scenario Lab or Match scene used by visual playback."
+      ],
+      "uiStates": {
+        "after": [
+          "No Scenario Lab overlay state retained",
+          "No passenger drawer bound"
+        ],
+        "before": [
+          "No passenger drawer open"
+        ],
+        "measurement": [
+          "Command feedback reflects accepted or production rejection reason",
+          "Passenger drawer reflects onboard/empty state where Match HUD is used"
+        ]
+      },
+      "warmupWindow": {
+        "duration": 16,
+        "unit": "scenario-executions"
+      },
+      "worldStates": {
+        "after": [
+          "All isolated Worlds disposed",
+          "No transport scenario residue"
+        ],
+        "before": [
+          "Eight selected passengers",
+          "Fresh grid and transport state"
+        ],
+        "measurement": [
+          "Eight passengers board",
+          "Eight passengers disembark",
+          "Required visual states are observed"
+        ]
+      }
+    },
+    {
+      "acceptanceSignals": [
+        "AD-001 through AD-011 definitions are discovered in stable scenario-ID order and execute with registered runners.",
+        "Aircraft target classes and air-missile projectile/impact evidence required by AD-002, AD-003, AD-008, and AD-011 are observed.",
+        "All required variants pass and no suite entry is skipped, even though the current suite runner treats no-runner entries as skipped.",
+        "Required scenario, variant, timing, allocation, entity, target-class, projectile, and visual-state metrics are present."
+      ],
+      "actions": [
+        {
+          "instruction": "Run one complete AD-001 through AD-011 suite as warmup and discard its performance samples.",
+          "order": 1
+        },
+        {
+          "instruction": "Run AD-001 through AD-011 once each in scenario-ID order for measurement.",
+          "order": 2
+        },
+        {
+          "instruction": "Require registered runners, passed variants, aircraft targets, air projectiles, impacts, and stable report identity for every required definition.",
+          "order": 3
+        }
+      ],
+      "am004BudgetPlaceholders": [
+        {
+          "budgetId": "AM004.AM003-SCN-005-AIRCRAFT.frame-time",
+          "metric": "frameTimeMs",
+          "status": "pending-am-004",
+          "threshold": null,
+          "unit": "milliseconds"
+        },
+        {
+          "budgetId": "AM004.AM003-SCN-005-AIRCRAFT.gc-allocation",
+          "metric": "gcAllocationMeasuredScenarios",
+          "status": "pending-am-004",
+          "threshold": null,
+          "unit": "bytes"
+        },
+        {
+          "budgetId": "AM004.AM003-SCN-005-AIRCRAFT.memory-growth",
+          "metric": "memoryGrowth",
+          "status": "pending-am-004",
+          "threshold": null,
+          "unit": "bytes"
+        }
+      ],
+      "category": "aircraft",
+      "exclusions": [
+        "Android release, thermal, and sustained release acceptance",
+        "Full Match aircraft scheduling, formations, airport logistics, and rendering scale",
+        "Separately owned operation-map R&D changes; currently activated compatibility metadata and the canonical Match scene are not excluded"
+      ],
+      "existingFixtureRefs": [
+        "Assets/Game/Scripts/Editor/ScenarioLab/BattleScenarioLabSuiteRunner.cs",
+        "Assets/Game/Scripts/Editor/ScenarioLab/BattleScenarioLabValidationRunner.cs",
+        "Assets/Tests/Editor/ScenarioLab/BattleScenarioAd002RunnerTests.cs",
+        "Assets/Tests/Editor/ScenarioLab/BattleScenarioAd003RunnerTests.cs",
+        "Assets/Tests/Editor/ScenarioLab/BattleScenarioAd008RunnerTests.cs",
+        "Assets/Tests/Editor/ScenarioLab/BattleScenarioAd011RunnerTests.cs"
+      ],
+      "failureDiagnostics": [
+        "Capture per-scenario frame/system timing, GC allocation, entity/projectile/visual counts, and cleanup residue.",
+        "Capture suite scenario ID, asset path, runner registration, variant ID, support mode, target class/source key, projectile/impact state, failure reason, and report path.",
+        "Fail immediately on skipped/no-runner entry, unsupported operation, missing aircraft target/projectile/impact, malformed report, timeout, or retry request."
+      ],
+      "fixedSeed": {
+        "derivation": "AM-003 scenario ordinal",
+        "type": "uint32",
+        "value": 3005
+      },
+      "id": "AM003-SCN-005-AIRCRAFT",
+      "measurementWindow": {
+        "duration": 11,
+        "unit": "scenario-executions"
+      },
+      "metrics": [
+        "aircraftTargetCountsByClass",
+        "entityCounts",
+        "frameTimeAverageP95P99MaxMs",
+        "gcAllocationPerScenarioBytes",
+        "memoryGrowthBytes",
+        "namedAircraftSystemP95P99MaxMs",
+        "projectileAndImpactCounts",
+        "scenarioDurationAverageP95P99MaxMs",
+        "suiteResultCounts",
+        "variantResultCounts",
+        "visualStateCounts"
+      ],
+      "prerequisites": [
+        "AD-001 through AD-011 definition assets and Scenario Lab prefab registry resolve.",
+        "Every required AD definition has a registered runtime runner.",
+        "Exact baseline commit and tree are checked out with a clean tracked worktree.",
+        "Scenario Lab scene references and visual playback dependencies resolve."
+      ],
+      "purpose": "Execute the canonical isolated aircraft and air-defense workload while making Scenario Lab limitations explicit.",
+      "releaseLaneState": {
+        "androidReleaseExecution": "deferred",
+        "coreLaneExecution": "executable-scenario-lab-with-limitations",
+        "sustainedReleaseExecution": "deferred",
+        "thermalExecution": "deferred"
+      },
+      "setup": [
+        {
+          "instruction": "Apply fixed seed 3005 and clear Scenario Lab suite/session state.",
+          "order": 1
+        },
+        {
+          "instruction": "Discover AD definition assets and sort by scenario ID.",
+          "order": 2
+        },
+        {
+          "instruction": "Assert the exact required ID set AD-001 through AD-011 and reject duplicate or missing IDs.",
+          "order": 3
+        }
+      ],
+      "stabilization": [
+        "Complete tracked ECS jobs and require prefab registry/runtime grid readiness before each execution.",
+        "Discard first complete suite performance samples as warmup.",
+        "Reset Scenario Lab runtime state between definitions."
+      ],
+      "surfaces": [
+        "Air projectile and impact presentation",
+        "Air-defense simulation",
+        "Aircraft simulation",
+        "Scenario Lab overlay"
+      ],
+      "teardownReset": [
+        "Assert no aircraft/projectile/impact residue before exit.",
+        "Clear Scenario Lab entities, commands, SessionState keys, and report state.",
+        "Unload Scenario Lab scene and dispose temporary Worlds."
+      ],
+      "uiStates": {
+        "after": [
+          "No Scenario Lab overlay state retained"
+        ],
+        "before": [
+          "Scenario Lab overlay ready"
+        ],
+        "measurement": [
+          "Current scenario and variant IDs visible",
+          "Result reflects pass/failure without skip"
+        ]
+      },
+      "warmupWindow": {
+        "duration": 11,
+        "unit": "scenario-executions"
+      },
+      "worldStates": {
+        "after": [
+          "No Scenario Lab aircraft residue"
+        ],
+        "before": [
+          "Prefab registry and runtime grid ready"
+        ],
+        "measurement": [
+          "Required aircraft target class active",
+          "Required projectile and impact states observed"
+        ]
+      }
+    },
+    {
+      "acceptanceSignals": [
+        "AD-001 observes both ground and air projectile paths and an intercept event.",
+        "GM-001 launches a visible ground rocket, applies damage on impact, and restores the rack visual.",
+        "GroundMissileLauncherPlayModeTests and required Scenario Lab runners pass without skip.",
+        "Required launch, flight, impact, damage, timing, allocation, entity, projectile, VFX, and cleanup metrics are present."
+      ],
+      "actions": [
+        {
+          "instruction": "Run GM-001 once as warmup and discard its performance sample.",
+          "order": 1
+        },
+        {
+          "instruction": "Run GM-001 once and measure visible ground-rocket launch, flight, impact, damage, and visual restoration.",
+          "order": 2
+        },
+        {
+          "instruction": "Run AD-001 once and measure incoming ground projectile, air interceptor projectile, intercept event, and cleanup.",
+          "order": 3
+        }
+      ],
+      "am004BudgetPlaceholders": [
+        {
+          "budgetId": "AM004.AM003-SCN-006-PROJECTILES.frame-time",
+          "metric": "frameTimeMs",
+          "status": "pending-am-004",
+          "threshold": null,
+          "unit": "milliseconds"
+        },
+        {
+          "budgetId": "AM004.AM003-SCN-006-PROJECTILES.gc-allocation",
+          "metric": "gcAllocationMeasuredScenarios",
+          "status": "pending-am-004",
+          "threshold": null,
+          "unit": "bytes"
+        },
+        {
+          "budgetId": "AM004.AM003-SCN-006-PROJECTILES.memory-growth",
+          "metric": "memoryGrowth",
+          "status": "pending-am-004",
+          "threshold": null,
+          "unit": "bytes"
+        }
+      ],
+      "category": "projectiles",
+      "exclusions": [
+        "Android release, thermal, and sustained release acceptance",
+        "Full Match projectile saturation beyond the maximum-combat scenario",
+        "Separately owned operation-map R&D changes; currently activated compatibility metadata and the canonical Match scene are not excluded"
+      ],
+      "existingFixtureRefs": [
+        "Assets/Game/Scripts/Editor/ScenarioLab/BattleScenarioLabSuiteRunner.cs",
+        "Assets/Game/Scripts/Editor/ScenarioLab/BattleScenarioLabValidationRunner.cs",
+        "Assets/Tests/Editor/ScenarioLab/BattleScenarioAd001RunnerTests.cs",
+        "Assets/Tests/Editor/ScenarioLab/BattleScenarioGm001RunnerTests.cs",
+        "Assets/Tests/PlayMode/GroundMissileLauncherPlayModeTests.cs"
+      ],
+      "failureDiagnostics": [
+        "Capture frame/system timing, GC allocation, projectile/VFX/entity counts, closest intercept distances, and timeout/failure reason.",
+        "Capture scenario/variant IDs, launcher and target source keys, launch state, projectile entity/visual identity, altitude/distance observations, impact event, damage delta, visual restoration, and cleanup residue.",
+        "Fail immediately on skipped/no-runner entry, missing visible rocket/projectile/impact/damage/restoration, timeout, missing metric, or retry request."
+      ],
+      "fixedSeed": {
+        "derivation": "AM-003 scenario ordinal",
+        "type": "uint32",
+        "value": 3006
+      },
+      "id": "AM003-SCN-006-PROJECTILES",
+      "measurementWindow": {
+        "duration": 2,
+        "unit": "scenario-executions"
+      },
+      "metrics": [
+        "damageDelta",
+        "entityCounts",
+        "frameTimeAverageP95P99MaxMs",
+        "gcAllocationPerScenarioBytes",
+        "impactCounts",
+        "memoryGrowthBytes",
+        "namedProjectileSystemP95P99MaxMs",
+        "projectileCountsByKind",
+        "scenarioDurationMs",
+        "vfxPoolAndVisualCounts"
+      ],
+      "prerequisites": [
+        "Exact baseline commit and tree are checked out with a clean tracked worktree.",
+        "GM-001 and AD-001 definition assets and production prefab registry resolve.",
+        "GM-001 and AD-001 have registered runners.",
+        "Ground and air missile VFX references resolve."
+      ],
+      "purpose": "Exercise production ground-rocket and air-interceptor launch-to-impact lifecycles.",
+      "releaseLaneState": {
+        "androidReleaseExecution": "deferred",
+        "coreLaneExecution": "executable-existing-playmode-and-scenario-lab-fixtures",
+        "sustainedReleaseExecution": "deferred",
+        "thermalExecution": "deferred"
+      },
+      "setup": [
+        {
+          "instruction": "Apply fixed seed 3006 and clear Scenario Lab/projectile state.",
+          "order": 1
+        },
+        {
+          "instruction": "Prewarm ground and air missile VFX used by GM-001 and AD-001.",
+          "order": 2
+        },
+        {
+          "instruction": "Snapshot launcher rack, target health, projectile counts, and visual counts.",
+          "order": 3
+        }
+      ],
+      "stabilization": [
+        "Complete tracked jobs between scenario setup, action, and result reads.",
+        "Discard the first GM-001 execution as warmup.",
+        "Require launcher, target, prefab registry, runtime grid, and VFX references before execution."
+      ],
+      "surfaces": [
+        "Air projectile presentation",
+        "Ground projectile presentation",
+        "Impact feedback",
+        "Projectile simulation"
+      ],
+      "teardownReset": [
+        "Assert rack visual restoration and zero scenario-owned projectile residue.",
+        "Clear projectile, impact, launcher, target, and VFX scenario state.",
+        "Unload Scenario Lab scene and dispose temporary Worlds."
+      ],
+      "uiStates": {
+        "after": [
+          "No projectile scenario overlay state retained"
+        ],
+        "before": [
+          "Scenario Lab overlay ready"
+        ],
+        "measurement": [
+          "Current scenario/variant visible",
+          "Impact/result feedback visible"
+        ]
+      },
+      "warmupWindow": {
+        "duration": 1,
+        "unit": "scenario-executions"
+      },
+      "worldStates": {
+        "after": [
+          "Launcher rack visual restored",
+          "No scenario-owned projectile residue"
+        ],
+        "before": [
+          "Launcher and target ready",
+          "No projectile active"
+        ],
+        "measurement": [
+          "Ground and air projectile lifecycles active",
+          "Impact and damage observed"
+        ]
+      }
+    },
+    {
+      "acceptanceSignals": [
+        "All twelve currently implemented required Match UI surfaces are installed, interactable, and observed in the declared action sequence.",
+        "Large tactical popup mutual exclusion is preserved across ARIA Assistant, Build Drawer, Full Map, and Resource Exchange.",
+        "Match Settings opens in Match context and closes without route corruption.",
+        "Required frame, GC, projection/version, interaction, object-count, popup-count, and world-state metrics are present; no required runner is skipped."
+      ],
+      "actions": [
+        {
+          "instruction": "Observe objectives, minimap, squad tray, selection/command rail, and current-order/feedback in the base Match HUD.",
+          "order": 1
+        },
+        {
+          "instruction": "Select a deterministic squad, issue one move command, and observe selection/command rail plus current-order/feedback.",
+          "order": 2
+        },
+        {
+          "instruction": "Select the deterministic loaded transport and open/close the passenger drawer.",
+          "order": 3
+        },
+        {
+          "instruction": "Open/close ARIA Assistant, then Build Drawer, then Full Map, then Resource Exchange; assert only one large tactical popup is active.",
+          "order": 4
+        },
+        {
+          "instruction": "Open/close Match Settings and assert Match context.",
+          "order": 5
+        },
+        {
+          "instruction": "Start deterministic building placement, observe placement confirmation, then cancel and verify feedback/current-order reset.",
+          "order": 6
+        },
+        {
+          "instruction": "Use minimap focus once and select one squad from the squad tray.",
+          "order": 7
+        }
+      ],
+      "am004BudgetPlaceholders": [
+        {
+          "budgetId": "AM004.AM003-SCN-007-MAJOR-MATCH-UI.frame-time",
+          "metric": "frameTimeMs",
+          "status": "pending-am-004",
+          "threshold": null,
+          "unit": "milliseconds"
+        },
+        {
+          "budgetId": "AM004.AM003-SCN-007-MAJOR-MATCH-UI.gc-allocation",
+          "metric": "gcAllocationAfterWarmup",
+          "status": "pending-am-004",
+          "threshold": null,
+          "unit": "bytes"
+        },
+        {
+          "budgetId": "AM004.AM003-SCN-007-MAJOR-MATCH-UI.memory-growth",
+          "metric": "memoryGrowth",
+          "status": "pending-am-004",
+          "threshold": null,
+          "unit": "bytes"
+        }
+      ],
+      "category": "major-match-ui",
+      "exclusions": [
+        "Android release, thermal, and sustained release acceptance",
+        "FirstLaunch UI",
+        "Result route, which is explicitly unimplemented",
+        "Separately owned operation-map R&D changes; currently activated compatibility metadata and the canonical Match scene are not excluded",
+        "Support selector, which is an explicit non-executable implementation gap"
+      ],
+      "existingFixtureRefs": [
+        "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab",
+        "Assets/Game/Scripts/UI/Contracts/UIRoute.cs",
+        "Assets/Game/Scripts/UI/MainMenuPlayUI.cs",
+        "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Core.cs",
+        "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs",
+        "Assets/Tests/PlayMode/Aph806BuildingPlacementProductionPlayModeTests.cs",
+        "Assets/Tests/PlayMode/Aph807TransportBoardingFlowPlayModeTests.cs"
+      ],
+      "failureDiagnostics": [
+        "Capture active route/phase, popup kind/count, selected entity/squad, command mode/result/reason, placement state, passenger count, minimap input, objective/squad projection versions, and object identities.",
+        "Capture frame-time percentiles, GC sites, UI marker samples, managed projection rebuild counts, object/pool counts, world entity counts, and fatal/error markers.",
+        "Fail immediately on missing/duplicate surface, overlapping large popup, wrong Settings context, stale projection, missing metric, timeout, skipped runner, or retry request."
+      ],
+      "fixedSeed": {
+        "derivation": "AM-003 scenario ordinal",
+        "type": "uint32",
+        "value": 3007
+      },
+      "id": "AM003-SCN-007-MAJOR-MATCH-UI",
+      "measurementWindow": {
+        "duration": 300,
+        "unit": "frames"
+      },
+      "metrics": [
+        "activePopupCountByKind",
+        "entityCounts",
+        "frameTimeAverageMs",
+        "frameTimeMaxMs",
+        "frameTimeP95Ms",
+        "frameTimeP99Ms",
+        "gcAllocationPerFrameP95Bytes",
+        "gcAllocationRecurringSites",
+        "gcAllocationTotalBytes",
+        "interactionResultCounts",
+        "managedProjectionRebuildCounts",
+        "memoryGrowthBytes",
+        "namedUiMarkerP95P99MaxMs",
+        "uiObjectAndPoolCounts"
+      ],
+      "prerequisites": [
+        "A deterministic selectable squad, loaded transport, valid building entry/cell, objectives, and minimap data are available.",
+        "Exact baseline commit and tree are checked out with a clean tracked worktree.",
+        "Match HUD prefab and all popup prefabs referenced by UIShellContentView resolve.",
+        "Returning-user profile state is FirstLaunch completed."
+      ],
+      "purpose": "Exercise the twelve currently implemented major Match HUD surfaces and popups through production bindings in one fixed interaction sequence while retaining the Support selector gap.",
+      "releaseLaneState": {
+        "androidReleaseExecution": "deferred",
+        "coreLaneExecution": "executable-production-ui-sequence",
+        "sustainedReleaseExecution": "deferred",
+        "thermalExecution": "deferred"
+      },
+      "setup": [
+        {
+          "instruction": "Reset route, enter Match, apply fixed seed 3007, and wait for Match HUD bindings.",
+          "order": 1
+        },
+        {
+          "instruction": "Create deterministic squad, loaded transport, objective, minimap, and valid placement preconditions through existing fixture boundaries.",
+          "order": 2
+        },
+        {
+          "instruction": "Snapshot UI object/pool counts, projection versions, popup state, selection state, and world counts.",
+          "order": 3
+        }
+      ],
+      "stabilization": [
+        "Exclude initial prefab installation, catalog binding, and asset load frames before warmup.",
+        "Require all base HUD views bound and no popup/placement active before warmup.",
+        "Wait for MatchHudReady and stable UI read-model versions for 30 frames."
+      ],
+      "surfaces": [
+        "ARIA Assistant",
+        "Build Drawer",
+        "Current-order and feedback",
+        "Full Map",
+        "Match Settings",
+        "Minimap",
+        "Objectives",
+        "Passenger drawer",
+        "Placement confirmation",
+        "Resource Exchange",
+        "Selection and command rail",
+        "Squad tray"
+      ],
+      "teardownReset": [
+        "Clear selection, sticky command mode, feedback, and passenger-drawer state.",
+        "Close every popup and cancel placement through production commands.",
+        "Compare final UI object/pool/world counts against reset expectations.",
+        "Return to MainMenu, unload Match, and assert no Match HUD content remains."
+      ],
+      "uiStates": {
+        "after": [
+          "MainMenu active",
+          "No Match HUD or Match popup installed"
+        ],
+        "before": [
+          "Match HUD ready",
+          "No placement active",
+          "No popup visible"
+        ],
+        "measurement": [
+          "All twelve required surfaces observed",
+          "At most one large tactical popup active",
+          "Match Settings uses Match context",
+          "Selection, order, feedback, placement, passenger, objective, minimap, and squad states update"
+        ]
+      },
+      "warmupWindow": {
+        "duration": 60,
+        "unit": "frames"
+      },
+      "worldStates": {
+        "after": [
+          "Match scene unloaded",
+          "Scenario-owned commands and placement cleared"
+        ],
+        "before": [
+          "Deterministic squad/transport/objective/placement prerequisites ready"
+        ],
+        "measurement": [
+          "No duplicate shell root or runtime binding",
+          "World remains live while UI actions project current state"
+        ]
+      }
+    },
+    {
+      "acceptanceSignals": [
+        "Canonical Match publishes exactly one active compatibility operation-map root with OperationMapId opmap.skirmish.desert_base_01, ScenarioId scenario.skirmish.desert_base_standard, and MissionId skirmish.",
+        "Each transition loads Match additively, preserves the default ECS World and one lifecycle root, binds runtime UI, and crossfades to Match music.",
+        "Exactly five measured Menu-to-Match transitions complete; repetitions are samples, never retries.",
+        "Required transition, loading, frame, GC, world/lifecycle, UI-binding, audio, entity, and object-count metrics are present; no required runner is skipped.",
+        "Returning-user profile bypasses FirstLaunch and Menu is ready before measurement."
+      ],
+      "actions": [
+        {
+          "instruction": "Execute one complete Menu-to-Match-to-Menu round trip as warmup.",
+          "order": 1
+        },
+        {
+          "instruction": "For each of five measured samples, enqueue EnterMatch with UIRoute.Match and PushHistory false.",
+          "order": 2
+        },
+        {
+          "instruction": "Wait for Match scene, MatchSceneView, exactly one active compatibility operation-map root with the canonical IDs, runtime UI dependencies, Match HUD binding, stable shell state, and Match music.",
+          "order": 3
+        },
+        {
+          "instruction": "Record sample and return to Menu for reset; a failed sample terminates the scenario and is not retried.",
+          "order": 4
+        }
+      ],
+      "am004BudgetPlaceholders": [
+        {
+          "budgetId": "AM004.AM003-SCN-008-RETURNING-MENU-TO-MATCH.gc-allocation",
+          "metric": "transitionGcAllocation",
+          "status": "pending-am-004",
+          "threshold": null,
+          "unit": "bytes"
+        },
+        {
+          "budgetId": "AM004.AM003-SCN-008-RETURNING-MENU-TO-MATCH.memory-growth",
+          "metric": "transitionMemoryGrowth",
+          "status": "pending-am-004",
+          "threshold": null,
+          "unit": "bytes"
+        },
+        {
+          "budgetId": "AM004.AM003-SCN-008-RETURNING-MENU-TO-MATCH.transition-time",
+          "metric": "transitionDuration",
+          "status": "pending-am-004",
+          "threshold": null,
+          "unit": "milliseconds"
+        }
+      ],
+      "category": "returning-user-menu-to-match",
+      "exclusions": [
+        "Android release cold/warm startup acceptance",
+        "FirstLaunch execution or ownership",
+        "Result route",
+        "Separately owned operation-map R&D changes; currently activated compatibility metadata and the canonical Match scene are not excluded"
+      ],
+      "existingFixtureRefs": [
+        "Assets/Game/Scripts/UI/Contracts/UIRoute.cs",
+        "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Core.cs",
+        "Assets/Game/Scripts/UI/Shell/Ecs/UiShellFlowSystem.cs",
+        "Assets/Tests/PlayMode/Aph805MenuMatchMenuLifecyclePlayModeTests.cs",
+        "Assets/Tests/PlayMode/MenuMatchMusicPlayModeTests.cs"
+      ],
+      "failureDiagnostics": [
+        "Capture frame-time, GC allocation, memory/object/entity deltas, loading progress, timeout, and fatal/error markers per sample.",
+        "Capture route request, shell current mode/route/phase/sequence/running flag, scene load state, World identity, lifecycle-root count, operation-map root count and active map/scenario/mission IDs, UI dependency bindings, music clip/source state, and transition phase timings.",
+        "Fail immediately on FirstLaunch appearance, scene/binding/music mismatch, duplicate lifecycle or operation-map root, non-canonical active map IDs, World replacement, timeout, skipped runner, or retry request."
+      ],
+      "fixedSeed": {
+        "derivation": "AM-003 scenario ordinal",
+        "type": "uint32",
+        "value": 3008
+      },
+      "id": "AM003-SCN-008-RETURNING-MENU-TO-MATCH",
+      "measurementWindow": {
+        "duration": 5,
+        "unit": "transitions"
+      },
+      "metrics": [
+        "audioCrossfadeDurationMs",
+        "entityCountDelta",
+        "frameTimeAverageP95P99MaxMs",
+        "gcAllocationPerTransitionBytes",
+        "lifecycleRootCount",
+        "loadingGateDurationMs",
+        "memoryGrowthBytes",
+        "operationMapRootCountAndActiveIds",
+        "sceneObjectCountDelta",
+        "transitionDurationAverageP95P99MaxMs",
+        "uiBindingCounts",
+        "worldIdentityChanges"
+      ],
+      "prerequisites": [
+        "Exact baseline commit and tree are checked out with a clean tracked worktree.",
+        "MatchSceneView resolves OperationMapCatalog with OperationMapId opmap.skirmish.desert_base_01, ScenarioId scenario.skirmish.desert_base_standard, and MissionId skirmish.",
+        "Menu and canonical Match scenes plus serialized lifecycle/UI/audio references resolve.",
+        "Production UI shell gateway accepts EnterMatch.",
+        "Profile state is explicitly FirstLaunch completed without editing separately owned FirstLaunch files."
+      ],
+      "purpose": "Measure returning-user Menu-to-Match lifecycle, active compatibility operation-map publication, UI binding, World preservation, and audio transition.",
+      "releaseLaneState": {
+        "androidReleaseExecution": "deferred",
+        "coreLaneExecution": "executable-five-sample-returning-user-transition",
+        "sustainedReleaseExecution": "deferred",
+        "thermalExecution": "deferred"
+      },
+      "setup": [
+        {
+          "instruction": "Set fixture profile to FirstLaunch completed and apply fixed seed 3008.",
+          "order": 1
+        },
+        {
+          "instruction": "Load Menu single, wait for MenuBootstrapView and default ECS World, and assert one lifecycle root.",
+          "order": 2
+        },
+        {
+          "instruction": "Snapshot World identity, zero Menu operation-map roots, scene objects, entities, UI bindings, and active Menu music.",
+          "order": 3
+        }
+      ],
+      "stabilization": [
+        "Do not include warmup round-trip samples in measurement.",
+        "Require Match fully unloaded, zero operation-map roots, and no Match HUD binding before each sample.",
+        "Require MenuReady, transition-running false, one lifecycle root, and stable Menu music before each sample."
+      ],
+      "surfaces": [
+        "Activated compatibility operation-map lifecycle",
+        "Main Menu",
+        "Match HUD",
+        "Menu-to-Match loading transition",
+        "Music transition"
+      ],
+      "teardownReset": [
+        "After each measured sample, return through production Match-to-Menu route.",
+        "After sample five, leave Menu ready and clear scenario metrics/seed state.",
+        "Assert Match unload, runtime UI cleanup, one lifecycle root, zero operation-map roots, and preserved World before the next sample."
+      ],
+      "uiStates": {
+        "after": [
+          "MainMenu ready",
+          "Menu music active",
+          "No Match HUD installed"
+        ],
+        "before": [
+          "FirstLaunch not visible",
+          "MainMenu ready",
+          "Transition not running"
+        ],
+        "measurement": [
+          "Loading transition progresses",
+          "Match HUD ready and bound",
+          "Match music active"
+        ]
+      },
+      "warmupWindow": {
+        "duration": 1,
+        "unit": "round-trips"
+      },
+      "worldStates": {
+        "after": [
+          "Default ECS World preserved",
+          "Match scene unloaded",
+          "No operation-map root",
+          "One lifecycle root"
+        ],
+        "before": [
+          "Default ECS World created",
+          "Match scene unloaded",
+          "No operation-map root",
+          "One lifecycle root"
+        ],
+        "measurement": [
+          "Exactly one active compatibility operation-map root with canonical map/scenario/mission IDs",
+          "Match scene loaded additively",
+          "One lifecycle root",
+          "Same default ECS World"
+        ]
+      }
+    },
+    {
+      "acceptanceSignals": [
+        "Before return, canonical Match has exactly one active compatibility operation-map root with the canonical map/scenario/mission IDs; after unload, operation-map root count is zero.",
+        "Each transition unloads Match, preserves Menu and the default ECS World, retains exactly one lifecycle root, and removes Match runtime/UI references.",
+        "Exactly five measured Match-to-Menu transitions complete; repetitions are samples, never retries.",
+        "Menu music is restored and Match music is inactive after each transition.",
+        "Required transition, unload, frame, GC, world/lifecycle, UI cleanup, audio, entity, and object-count metrics are present; no required runner is skipped."
+      ],
+      "actions": [
+        {
+          "instruction": "Execute one complete Menu-to-Match-to-Menu round trip as warmup.",
+          "order": 1
+        },
+        {
+          "instruction": "For each of five measured samples, begin from stable Match with exactly one active compatibility operation-map root and enqueue ReturnToMainMenu with UIRoute.MainMenu and PushHistory false.",
+          "order": 2
+        },
+        {
+          "instruction": "Wait for Match unload, zero operation-map roots, shell MainMenu readiness, runtime UI cleanup, one lifecycle root, preserved World, and Menu music.",
+          "order": 3
+        },
+        {
+          "instruction": "Record sample and enter Match again for the next sample; a failed sample terminates the scenario and is not retried.",
+          "order": 4
+        }
+      ],
+      "am004BudgetPlaceholders": [
+        {
+          "budgetId": "AM004.AM003-SCN-009-RETURNING-MATCH-TO-MENU.gc-allocation",
+          "metric": "transitionGcAllocation",
+          "status": "pending-am-004",
+          "threshold": null,
+          "unit": "bytes"
+        },
+        {
+          "budgetId": "AM004.AM003-SCN-009-RETURNING-MATCH-TO-MENU.memory-growth",
+          "metric": "transitionMemoryGrowth",
+          "status": "pending-am-004",
+          "threshold": null,
+          "unit": "bytes"
+        },
+        {
+          "budgetId": "AM004.AM003-SCN-009-RETURNING-MATCH-TO-MENU.transition-time",
+          "metric": "transitionDuration",
+          "status": "pending-am-004",
+          "threshold": null,
+          "unit": "milliseconds"
+        }
+      ],
+      "category": "returning-user-match-to-menu",
+      "exclusions": [
+        "Android release cold/warm startup acceptance",
+        "FirstLaunch execution or ownership",
+        "Result route",
+        "Separately owned operation-map R&D changes; currently activated compatibility metadata and the canonical Match scene are not excluded"
+      ],
+      "existingFixtureRefs": [
+        "Assets/Game/Scripts/UI/Contracts/UIRoute.cs",
+        "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Core.cs",
+        "Assets/Game/Scripts/UI/Shell/Ecs/UiShellFlowSystem.cs",
+        "Assets/Tests/PlayMode/Aph805MenuMatchMenuLifecyclePlayModeTests.cs",
+        "Assets/Tests/PlayMode/MenuMatchMusicPlayModeTests.cs"
+      ],
+      "failureDiagnostics": [
+        "Capture frame-time, GC allocation, memory/object/entity deltas, unload phase timings, timeout, and fatal/error markers per sample.",
+        "Capture route request, shell route/phase/sequence/running flag, scene unload state, World identity, lifecycle-root count, operation-map root count and active IDs before unload, destroyed MatchSceneView state, retained runtime references, HUD content, and music source state.",
+        "Fail immediately on retained Match scene/runtime/UI/operation-map root, missing or non-canonical pre-return operation-map root, duplicate lifecycle root, World replacement, music mismatch, timeout, skipped runner, or retry request."
+      ],
+      "fixedSeed": {
+        "derivation": "AM-003 scenario ordinal",
+        "type": "uint32",
+        "value": 3009
+      },
+      "id": "AM003-SCN-009-RETURNING-MATCH-TO-MENU",
+      "measurementWindow": {
+        "duration": 5,
+        "unit": "transitions"
+      },
+      "metrics": [
+        "audioCrossfadeDurationMs",
+        "entityCountDelta",
+        "frameTimeAverageP95P99MaxMs",
+        "gcAllocationPerTransitionBytes",
+        "lifecycleRootCount",
+        "matchRuntimeReferenceCounts",
+        "memoryGrowthBytes",
+        "operationMapRootCountAndActiveIds",
+        "sceneObjectCountDelta",
+        "transitionDurationAverageP95P99MaxMs",
+        "uiCleanupCounts",
+        "worldIdentityChanges"
+      ],
+      "prerequisites": [
+        "Exact baseline commit and tree are checked out with a clean tracked worktree.",
+        "MatchSceneView resolves OperationMapCatalog with OperationMapId opmap.skirmish.desert_base_01, ScenarioId scenario.skirmish.desert_base_standard, and MissionId skirmish.",
+        "Menu and canonical Match scenes plus serialized lifecycle/UI/audio references resolve.",
+        "Production UI shell gateway accepts ReturnToMainMenu.",
+        "Profile state is explicitly FirstLaunch completed without editing separately owned FirstLaunch files."
+      ],
+      "purpose": "Measure returning-user Match-to-Menu unload, active compatibility operation-map disposal, runtime cleanup, World preservation, and audio restoration.",
+      "releaseLaneState": {
+        "androidReleaseExecution": "deferred",
+        "coreLaneExecution": "executable-five-sample-returning-user-transition",
+        "sustainedReleaseExecution": "deferred",
+        "thermalExecution": "deferred"
+      },
+      "setup": [
+        {
+          "instruction": "Set fixture profile to FirstLaunch completed and apply fixed seed 3009.",
+          "order": 1
+        },
+        {
+          "instruction": "Load Menu, enter Match through production route, and wait for Match HUD/runtime bindings.",
+          "order": 2
+        },
+        {
+          "instruction": "Snapshot World identity, lifecycle root, exactly one active compatibility operation-map root and canonical IDs, Match runtime references, scene objects, entities, HUD binding, and Match music.",
+          "order": 3
+        }
+      ],
+      "stabilization": [
+        "Do not include warmup round-trip samples in measurement.",
+        "Require Match runtime UI dependencies bound before issuing return.",
+        "Require MatchHudReady, transition-running false, one lifecycle root, exactly one active compatibility operation-map root with canonical IDs, and stable Match music before each sample."
+      ],
+      "surfaces": [
+        "Activated compatibility operation-map lifecycle",
+        "Main Menu",
+        "Match HUD",
+        "Match-to-Menu unloading transition",
+        "Music transition"
+      ],
+      "teardownReset": [
+        "After each measured sample, assert runtime cleanup and zero operation-map roots before re-entering Match.",
+        "After sample five, leave Menu ready with Match unloaded, one lifecycle root, and zero operation-map roots.",
+        "Clear scenario metrics and seed state."
+      ],
+      "uiStates": {
+        "after": [
+          "MainMenu ready",
+          "Menu music active",
+          "No Match HUD installed"
+        ],
+        "before": [
+          "Match HUD ready and bound",
+          "Match music active",
+          "Transition not running"
+        ],
+        "measurement": [
+          "MainMenu becomes ready",
+          "Match HUD is removed",
+          "Unloading transition progresses"
+        ]
+      },
+      "warmupWindow": {
+        "duration": 1,
+        "unit": "round-trips"
+      },
+      "worldStates": {
+        "after": [
+          "Default ECS World preserved",
+          "Match scene unloaded",
+          "No operation-map root",
+          "One lifecycle root"
+        ],
+        "before": [
+          "Default ECS World active",
+          "Exactly one active compatibility operation-map root with canonical map/scenario/mission IDs",
+          "Match scene loaded",
+          "One lifecycle root"
+        ],
+        "measurement": [
+          "Compatibility operation-map root is disposed during unload",
+          "Match runtime state is removed during unload",
+          "Same default ECS World"
+        ]
+      }
+    },
+    {
+      "acceptanceSignals": [
+        "Match route, World identity, lifecycle-root count, fixture floor, HUD binding, and seed remain stable for the full measurement.",
+        "No retry, pause, backgrounding, skipped runner, fatal marker, timeout, or metrics gap is accepted.",
+        "Required interval frame/GC/system/entity/UI/object/pool/memory-growth samples and start/end state snapshots are present.",
+        "When the later activation/release cycle schedules this normative procedure, the soak completes 60 seconds of warmup and 1800 seconds of uninterrupted measured foreground Match time."
+      ],
+      "actions": [
+        {
+          "instruction": "Enter Match, ensure the deterministic idle fixture floor, and start the 60-second warmup.",
+          "order": 1
+        },
+        {
+          "instruction": "Run 1800 uninterrupted seconds in foreground with fixed camera, no player commands, no popups, and one-second structured interval sampling.",
+          "order": 2
+        },
+        {
+          "instruction": "Record start/end and interval state; terminate on any route, World, lifecycle, fixture, HUD, fatal, or collector discontinuity.",
+          "order": 3
+        }
+      ],
+      "am004BudgetPlaceholders": [
+        {
+          "budgetId": "AM004.AM003-SCN-010-LONG-SOAK.frame-time",
+          "metric": "frameTimeMs",
+          "status": "pending-am-004",
+          "threshold": null,
+          "unit": "milliseconds"
+        },
+        {
+          "budgetId": "AM004.AM003-SCN-010-LONG-SOAK.gc-allocation",
+          "metric": "gcAllocationAfterWarmup",
+          "status": "pending-am-004",
+          "threshold": null,
+          "unit": "bytes"
+        },
+        {
+          "budgetId": "AM004.AM003-SCN-010-LONG-SOAK.memory-growth",
+          "metric": "memoryGrowth",
+          "status": "pending-am-004",
+          "threshold": null,
+          "unit": "bytes"
+        }
+      ],
+      "category": "long-soak",
+      "exclusions": [
+        "AM-003 execution; the soak is definition-only and not scheduled",
+        "Android release, thermal, battery, and sustained release acceptance",
+        "Historical soak evidence as acceptance for this baseline",
+        "Separately owned operation-map R&D changes; currently activated compatibility metadata and the canonical Match scene are not excluded"
+      ],
+      "existingFixtureRefs": [
+        "Assets/Game/Scripts/Editor/MatchGcAllocationCallstackCapture.cs",
+        "Assets/Game/Scripts/Editor/MatchPerformanceFixtureSeed.cs",
+        "Assets/Tests/Editor/MatchGcAllocationCallstackCaptureTests.cs",
+        "Assets/Tests/Editor/MatchPerformanceFixtureSeedTests.cs",
+        "Design/AgentReports/2026-07-12_aph-804_release_evidence_contract.md",
+        "Design/Architecture/performance_regression_contract.md"
+      ],
+      "failureDiagnostics": [
+        "Capture one-second interval frame/GC/system/entity/UI/object/pool/memory samples plus route/phase, World identity, lifecycle-root count, fixture counts, HUD binding, process state, and fatal/error markers.",
+        "Fail immediately on interruption, backgrounding, route/World/root/HUD/count drift, missing interval, timeout, skipped runner, or retry request.",
+        "On failure retain the first divergent interval, preceding ten intervals, top GC call stacks, top system samples, object/entity deltas, and teardown status."
+      ],
+      "fixedSeed": {
+        "derivation": "AM-003 scenario ordinal",
+        "type": "uint32",
+        "value": 3010
+      },
+      "id": "AM003-SCN-010-LONG-SOAK",
+      "measurementWindow": {
+        "duration": 1800,
+        "unit": "seconds"
+      },
+      "metrics": [
+        "entityCountTimeSeries",
+        "frameTimeAverageMs",
+        "frameTimeMaxMs",
+        "frameTimeP95Ms",
+        "frameTimeP99Ms",
+        "gcAllocationIntervalAndTotalBytes",
+        "lifecycleRootCountTimeSeries",
+        "managedAndNativeMemoryGrowthBytes",
+        "namedHotSystemP95P99MaxMs",
+        "poolAndPresentationObjectCountTimeSeries",
+        "routeAndWorldIdentityChanges",
+        "uiObjectCountTimeSeries"
+      ],
+      "prerequisites": [
+        "Exact baseline commit and tree are checked out with a clean tracked worktree.",
+        "Host can keep the Editor foreground and uninterrupted for 1860 seconds plus setup/teardown.",
+        "Menu-to-Match route, default ECS World, Match HUD, fixture seeding, and structured interval recorder are available.",
+        "Returning-user profile state is FirstLaunch completed."
+      ],
+      "purpose": "Define a long core-lane steady-state Match soak without claiming deferred Android sustained acceptance.",
+      "releaseLaneState": {
+        "androidReleaseExecution": "deferred",
+        "coreLaneExecution": "definition-only-deferred-not-scheduled",
+        "sustainedReleaseExecution": "deferred",
+        "thermalExecution": "deferred"
+      },
+      "setup": [
+        {
+          "instruction": "Reset route, enter Match through production shell, and apply fixed seed 3010.",
+          "order": 1
+        },
+        {
+          "instruction": "Ensure fixture floor and assert a second Ensure call is idempotent.",
+          "order": 2
+        },
+        {
+          "instruction": "Snapshot route, World, lifecycle, fixture, HUD, entity/UI/object/pool, memory, and recorder state.",
+          "order": 3
+        }
+      ],
+      "stabilization": [
+        "Complete the full 60-second warmup before any acceptance sample.",
+        "Complete tracked jobs and require stable fixture/entity/UI/object/pool counts for 30 frames.",
+        "Exclude scene load, import, seeding, first-install, and recorder-start frames."
+      ],
+      "surfaces": [
+        "Long-duration Match simulation",
+        "Match HUD steady state",
+        "Structured performance recorder"
+      ],
+      "teardownReset": [
+        "Historical APH-804 output may be compared diagnostically but cannot satisfy this run.",
+        "Restore profiler/logging state and clear seed/recorder/session state.",
+        "Return to MainMenu, unload Match, and assert one lifecycle root with no Match runtime UI.",
+        "Stop and flush structured capture without dropping the final interval."
+      ],
+      "uiStates": {
+        "after": [
+          "MainMenu ready",
+          "No Match HUD installed"
+        ],
+        "before": [
+          "Match HUD ready",
+          "No popup visible"
+        ],
+        "measurement": [
+          "Match HUD remains bound",
+          "No popup, selection, or sticky command mode",
+          "UI object counts remain continuously sampled"
+        ]
+      },
+      "warmupWindow": {
+        "duration": 60,
+        "unit": "seconds"
+      },
+      "worldStates": {
+        "after": [
+          "Default ECS World preserved",
+          "Match scene unloaded"
+        ],
+        "before": [
+          "Fixture floor stable",
+          "One lifecycle root"
+        ],
+        "measurement": [
+          "Fixture floor remains stable",
+          "Same default ECS World",
+          "Same route and one lifecycle root"
+        ]
+      }
+    }
+  ],
+  "schemaVersion": 1,
+  "scope": {
+    "productionBehaviorChanged": false,
+    "sharedTrackerChanged": false,
+    "writeAllowlist": [
+      "Design/AgentReports/ArchitectureMaturity/canonical_scenarios.json",
+      "Design/AgentReports/ArchitectureMaturity/canonical_scenarios.md"
+    ]
+  },
+  "sourceAuthorities": [
+    "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab",
+    "Assets/Game/Scripts/Editor/MatchGcAllocationCallstackCapture.cs",
+    "Assets/Game/Scripts/Editor/MatchPerformanceFixtureSeed.cs",
+    "Assets/Game/Scripts/Editor/ScenarioLab/BattleScenarioLabSuiteRunner.cs",
+    "Assets/Game/Scripts/Editor/ScenarioLab/BattleScenarioLabValidationRunner.cs",
+    "Assets/Game/Scripts/ScenarioLab/TransportBoardingScenarioCatalog.cs",
+    "Assets/Game/Scripts/UI/Contracts/UIRoute.cs",
+    "Assets/Game/Scripts/UI/MainMenuPlayUI.cs",
+    "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Core.cs",
+    "Assets/Game/Scripts/UI/Shell/Ecs/UiShellFlowSystem.cs",
+    "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs",
+    "Assets/Tests/Editor/MatchGcAllocationCallstackCaptureTests.cs",
+    "Assets/Tests/Editor/MatchPerformanceFixtureSeedTests.cs",
+    "Assets/Tests/Editor/ScenarioLab/TransportBoardingScenarioLabTests.cs",
+    "Assets/Tests/Editor/TransportBoardingPerformanceValidation.cs",
+    "Assets/Tests/PlayMode/Aph805MenuMatchMenuLifecyclePlayModeTests.cs",
+    "Assets/Tests/PlayMode/Aph806BuildingPlacementProductionPlayModeTests.cs",
+    "Assets/Tests/PlayMode/Aph807TransportBoardingFlowPlayModeTests.cs",
+    "Assets/Tests/PlayMode/BuildingPlacementProductionPlayModeTests.cs",
+    "Assets/Tests/PlayMode/GameSceneTransportBoardingPlayModeTests.cs",
+    "Assets/Tests/PlayMode/GroundMissileLauncherPlayModeTests.cs",
+    "Assets/Tests/PlayMode/MenuMatchMusicPlayModeTests.cs",
+    "Design/AgentReports/2026-07-12_aph-804_release_evidence_contract.md",
+    "Design/Architecture/performance_regression_contract.md",
+    "Design/Match_HUD_And_Gameplay_Implementation_Spec.md"
+  ]
+}

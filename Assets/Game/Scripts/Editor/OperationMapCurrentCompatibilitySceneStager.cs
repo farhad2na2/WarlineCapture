@@ -22,7 +22,8 @@ namespace Game.Editor
 
             EnsureDestinationFolder();
             SceneAsset destination = AssetDatabase.LoadAssetAtPath<SceneAsset>(DestinationScenePath);
-            if (destination == null && !AssetDatabase.CopyAsset(SourceScenePath, DestinationScenePath))
+            bool created = destination == null;
+            if (created && !AssetDatabase.CopyAsset(SourceScenePath, DestinationScenePath))
             {
                 throw new InvalidOperationException(
                     $"AssetDatabase failed to stage '{SourceScenePath}' at '{DestinationScenePath}'.");
@@ -32,6 +33,14 @@ namespace Game.Editor
             AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
             if (!TryValidate(out string error))
                 throw new InvalidOperationException(error);
+            if (created && !string.Equals(
+                    ComputeSha256(SourceScenePath),
+                    ComputeSha256(DestinationScenePath),
+                    StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException(
+                    "The newly staged operation-map scene is not an exact serialized duplicate of Match.unity.");
+            }
         }
 
         public static void StageForBatch() => Stage();
@@ -58,14 +67,6 @@ namespace Game.Editor
                 string.Equals(sourceGuid, destinationGuid, StringComparison.Ordinal))
             {
                 error = "The staged operation-map scene requires a distinct, non-empty Unity GUID.";
-                return false;
-            }
-
-            string sourceHash = ComputeSha256(SourceScenePath);
-            string destinationHash = ComputeSha256(DestinationScenePath);
-            if (!string.Equals(sourceHash, destinationHash, StringComparison.Ordinal))
-            {
-                error = "The staged operation-map scene is not an exact serialized duplicate of Match.unity.";
                 return false;
             }
 

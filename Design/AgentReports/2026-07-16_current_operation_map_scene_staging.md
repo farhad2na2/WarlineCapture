@@ -28,9 +28,10 @@ build setting, subscene, config, manifest, chunk, or renderer ownership changed.
 - OperationMaps folder GUID: `d27005f8aaf7044aa9f2a330f938ecc8`.
 - Skirmish folder GUID: `f3ebcfac38bab47ce909e0bd7f70a57f`.
 
-`OperationMapCurrentCompatibilitySceneStager` is idempotent and fail-closed:
-an existing staged scene is accepted only when its scene bytes exactly match
-the source and its Unity GUID remains distinct.
+At initial staging, `OperationMapCurrentCompatibilitySceneStager` required the
+new scene bytes to exactly match the source and required a distinct GUID. After
+the accepted root-extraction step, rerunning the stager preserves the existing
+distinct-GUID staged scene without overwriting its extracted content.
 
 ## Validation
 

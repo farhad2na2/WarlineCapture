@@ -699,7 +699,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 19% (33/177 checklist items complete).
+Overall implementation progress: 19% (34/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -710,7 +710,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 | 2. Per-map static presentation ownership | Not started / compatibility subset | 0 | 14 | 0% | Preserve the current baked map safely; future-map generation remains undecided. |
 | 2A. Local Addressables packaging foundation | Later / direction-specific | 0 | 20 | 0% | Do not implement before the map-delivery direction is selected. |
 | 3. Current-map compatibility registration | In progress / shared | 5 | 10 | 50% | Current identities/definition are registered and schema-v1 read compatibility is explicit; runtime launch remains. |
-| 4. Non-destructive scene ownership split | In progress / shared priority | 3 | 14 | 21% | Final ownership inventory is accepted; the canonical folder and exact distinct-GUID staged scene now exist, while no scene object has moved yet. |
+| 4. Non-destructive scene ownership split | In progress / shared priority | 4 | 14 | 29% | Canonical folders and a distinct-GUID staged scene exist; only the eleven accepted map/compatibility roots remain in the staged scene while the source Match scene is unchanged. |
 | 5. Runtime selection, loading, and teardown | In progress / shared contracts | 1 | 14 | 7% | Pure readiness/failure/teardown data contracts only; concrete loading is later. |
 | 6. Metadata, camera, minimap, and movement binding | In progress / shared | 2 | 12 | 17% | Scenario-required anchors validate against map metadata, and the existing RTS camera bridge prefers active-map camera bounds with grid fallback. |
 | 7. M01 operation-map slice | Later / shared contracts only | 0 | 10 | 0% | Map-neutral ids/anchors may proceed; physical rollout remains gated. |
@@ -852,7 +852,7 @@ Exit criteria:
 - [x] Create `opmap_skirmish_desert_base_01.unity` as a staged duplicate with a new scene GUID; do not copy generated chunks or their `.meta` files. See the same staging report.
 - [ ] Add `Game.Composition.OperationMapSceneView` as a non-updating serialized-reference view only if direct scene references require it.
 - [ ] Keep the original `Match.unity` fully functional until the extracted map passes all parity gates.
-- [ ] Move/copy only classified map roots into the staged operation-map scene while shared binary assets remain referenced, not duplicated.
+- [x] Move/copy only classified map roots into the staged operation-map scene while shared binary assets remain referenced, not duplicated. See `../AgentReports/2026-07-16_current_operation_map_root_extraction.md`.
 - [ ] Assign or create the map-owned subscene without breaking the original `MatchSubScene` compatibility path.
 - [ ] Generate map-specific building and vehicle placement configs from the staged scene rather than reusing stale hierarchy assumptions blindly.
 - [ ] Bind map surface, grid, blockers, lightmaps/probes, runways, helipads, bounds, and metadata from the staged scene.
@@ -1087,6 +1087,7 @@ Exit criteria:
 | 2026-07-16 | Scenario-required operation-map anchor validation | `../AgentReports/2026-07-16_operation_map_scenario_anchor_validation.md`; focused EditMode `33 / 33`; source-growth/naming `24 / 24`; Unity compile; `git diff --check` | Passed | Added deterministic scenario-owned anchor id/kind requirements and fail-closed validation against resolved map anchors. No scene, map asset, loader, generated output, or runtime update loop changed. |
 | 2026-07-16 | Active operation-map camera bounds binding | `../AgentReports/2026-07-16_operation_map_camera_bounds_binding.md`; focused EditMode `33 / 33`; source-growth/naming `24 / 24`; decision `D-164`; Unity compile; `git diff --check` | Passed | Existing RTS camera bridge now prefers the single active map's immutable camera extent and retains `GridConfig` as compatibility fallback. No loader, scene, map asset, or new update loop changed. |
 | 2026-07-16 | Current operation-map scene staging | `../AgentReports/2026-07-16_current_operation_map_scene_staging.md`; focused EditMode `10 / 10`; source-growth/naming `24 / 24`; source/staged SHA-256 `dca7c83b...3a46`; distinct GUIDs; Unity compile; `git diff --check` | Passed | Created canonical folders and a byte-identical distinct-GUID staged scene through AssetDatabase-safe tooling. Original Match scene and all runtime/generated ownership remain unchanged. |
+| 2026-07-16 | Current operation-map root extraction | `../AgentReports/2026-07-16_current_operation_map_root_extraction.md`; focused EditMode `28 / 28`; source-growth/naming `24 / 24`; original SHA-256 `dca7c83b...3a46`; staged SHA-256 `6de82627...8b32`; Unity compile | Passed | Removed exactly five accepted shell roots from only the staged scene and retained the exact eleven-root map/compatibility set. Original Match runtime route remains unchanged. |
 
 ## Open Decisions
 

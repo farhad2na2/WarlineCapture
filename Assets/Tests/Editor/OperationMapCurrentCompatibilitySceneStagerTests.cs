@@ -20,10 +20,10 @@ public sealed class OperationMapCurrentCompatibilitySceneStagerTests
     }
 
     [Test]
-    public void StagedSceneRemainsExactSerializedDuplicate()
+    public void StagedSceneContainsOnlyAcceptedMapAndCompatibilityRoots()
     {
         Assert.That(
-            OperationMapCurrentCompatibilitySceneStager.TryValidate(out string error),
+            OperationMapCurrentCompatibilityRootExtractor.TryValidate(out string error),
             Is.True,
             error);
     }

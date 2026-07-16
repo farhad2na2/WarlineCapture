@@ -200,6 +200,7 @@ public sealed class AndroidBuildReportGeneratorTests
             UnityVersion = "6000.5.2f1",
             ScriptingBackend = "IL2CPP",
             TargetArchitecture = "ARM64",
+            FrameTimingStatsEnabled = true,
             ArtifactPath = "Build\\AndroidAPK\\WarlineCapture.apk",
             ArtifactBytes = 75,
             ArtifactSha256 = new string('A', 64)
@@ -218,6 +219,7 @@ public sealed class AndroidBuildReportGeneratorTests
         Assert.AreEqual("Android", report.BuildTarget);
         Assert.AreEqual("IL2CPP", report.ScriptingBackend);
         Assert.AreEqual("ARM64", report.TargetArchitecture);
+        Assert.IsTrue(report.FrameTimingStatsEnabled);
         Assert.IsTrue(report.DetailedBuildReport);
         Assert.AreEqual("Build/AndroidAPK/WarlineCapture.apk", report.ArtifactPath);
         Assert.AreEqual(75ul, report.ArtifactBytes);
@@ -226,6 +228,7 @@ public sealed class AndroidBuildReportGeneratorTests
         Assert.AreEqual(1, report.BuildReportIncludedTextures.Count);
         Assert.AreEqual("Assets/A.asset", report.BuildReportIncludedTextures[0].SourceAssetPath);
         StringAssert.Contains("\"buildReportIncludedAssets\"", json);
+        StringAssert.Contains("\"frameTimingStatsEnabled\": true", json);
         StringAssert.Contains("\"allIncludedTexturePathsExported\": true", json);
         StringAssert.Contains("\"buildReportIncludedTextures\"", json);
         StringAssert.Contains("Compressed APK/AAB package", json);

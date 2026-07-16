@@ -112,6 +112,7 @@ class AndroidReleasePerformanceCiContractTests(unittest.TestCase):
             '$buildReport.buildTarget -cne "Android"',
             '$buildReport.scriptingBackend -cne "IL2CPP"',
             '$buildReport.targetArchitecture -cne "ARM64"',
+            '$buildReport.frameTimingStatsEnabled -ne $true',
             '$buildReport.detailedBuildReport -ne $true',
             '$buildReport.artifactPath -cne $profile.build.apkPath',
             '$buildReport.artifactSha256 -cne $apkSha256',

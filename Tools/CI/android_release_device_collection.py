@@ -67,6 +67,7 @@ RESOLVED_ACTIVITY_SUMMARY_PATTERN = re.compile(
     r"specificIndex=-?\d+ isDefault=(?:true|false)"
 )
 MAX_COMMAND_ERROR_DETAIL_CHARS = 2048
+CAPTURE_SCREEN_TIMEOUT_MS = 30 * 60 * 1000
 
 
 class CollectionError(RuntimeError):
@@ -585,6 +586,7 @@ def validate_preinstall_inputs(
         "buildTarget": "Android",
         "scriptingBackend": "IL2CPP",
         "targetArchitecture": "ARM64",
+        "frameTimingStatsEnabled": True,
         "detailedBuildReport": True,
         "artifactPath": profile["build"]["apkPath"],
         "artifactSha256": apk_sha,
@@ -770,6 +772,43 @@ def _force_stop(adb: AdbBoundary, package: str) -> None:
 
 def _clear_logcat(adb: AdbBoundary) -> None:
     _run(adb, ("logcat", "-b", "all", "-c"), "logcat clear")
+
+
+def prepare_unattended_display(adb: AdbBoundary) -> int:
+    raw_timeout = _text(
+        _run(
+            adb,
+            ("shell", "settings", "get", "system", "screen_off_timeout"),
+            "screen timeout query",
+        ).stdout
+    ).strip()
+    if not re.fullmatch(r"\d+", raw_timeout):
+        raise CollectionError(f"screen timeout must be one non-negative integer, found {raw_timeout!r}")
+    original_timeout_ms = int(raw_timeout)
+    capture_timeout_ms = max(original_timeout_ms, CAPTURE_SCREEN_TIMEOUT_MS)
+    _run(
+        adb,
+        (
+            "shell",
+            "settings",
+            "put",
+            "system",
+            "screen_off_timeout",
+            str(capture_timeout_ms),
+        ),
+        "capture screen timeout configuration",
+    )
+    _run(adb, ("shell", "input", "keyevent", "KEYCODE_WAKEUP"), "device wake")
+    _run(adb, ("shell", "wm", "dismiss-keyguard"), "keyguard dismissal")
+    return original_timeout_ms
+
+
+def restore_screen_timeout(adb: AdbBoundary, timeout_ms: int) -> None:
+    _run(
+        adb,
+        ("shell", "settings", "put", "system", "screen_off_timeout", str(timeout_ms)),
+        "screen timeout restoration",
+    )
 
 
 def _launch(adb: AdbBoundary, profile: dict[str, Any]) -> None:
@@ -1159,8 +1198,12 @@ def run_collection(
     require_exact_target(boundary, serial)
     device = collect_device_identity(boundary, inputs.profile)
     installed = install_and_verify(boundary, inputs.apk_path, inputs.apk_sha256, inputs.profile)
-    cold, warm = collect_startup_samples(boundary, timer, inputs.profile)
-    sustained = collect_sustained(boundary, timer, inputs.profile, output)
+    original_screen_timeout_ms = prepare_unattended_display(boundary)
+    try:
+        cold, warm = collect_startup_samples(boundary, timer, inputs.profile)
+        sustained = collect_sustained(boundary, timer, inputs.profile, output)
+    finally:
+        restore_screen_timeout(boundary, original_screen_timeout_ms)
     evidence = assemble_evidence(inputs, device, installed, cold, warm, sustained)
     result = validate_evidence(
         evidence,

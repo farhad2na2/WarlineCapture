@@ -216,9 +216,11 @@ namespace Game.Editor
         {
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel26;
             PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
+            PlayerSettings.enableFrameTimingStats = true;
             //PlayerSettings.Android.targetSdkVersion = (AndroidSdkVersions)34;
             EditorUserBuildSettings.buildAppBundle = buildAppBundle;
-            UnityEngine.Debug.Log("[BuildScript] Android build configured: architectures=ARM64");
+            UnityEngine.Debug.Log(
+                "[BuildScript] Android build configured: architectures=ARM64 frameTimingStats=1");
         }
 
         private static void ConfigureGradleUserHome()

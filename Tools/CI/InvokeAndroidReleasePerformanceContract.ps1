@@ -154,6 +154,7 @@ try {
         $buildReport.buildTarget -cne "Android" -or
         $buildReport.scriptingBackend -cne "IL2CPP" -or
         $buildReport.targetArchitecture -cne "ARM64" -or
+        ($buildReport.frameTimingStatsEnabled -isnot [bool]) -or $buildReport.frameTimingStatsEnabled -ne $true -or
         ($buildReport.detailedBuildReport -isnot [bool]) -or $buildReport.detailedBuildReport -ne $true -or
         $buildReport.artifactPath -cne $profile.build.apkPath -or
         $buildReport.artifactSha256 -cne $apkSha256 -or

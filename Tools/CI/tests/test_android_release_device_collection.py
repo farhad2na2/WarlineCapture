@@ -28,8 +28,10 @@ from Tools.CI.android_release_device_collection import (
     parse_du_bytes,
     parse_resolved_launcher,
     parse_thermal_snapshot,
+    prepare_unattended_display,
     require_unplugged_battery,
     require_install_completion,
+    restore_screen_timeout,
     run_collection,
     sha256_file,
     validate_transport_serial,
@@ -241,6 +243,22 @@ class InstalledArtifactSizeAdb:
         raise AssertionError
 
 
+class DisplayPreparationAdb:
+    def __init__(self, timeout_output: str = "300000\n") -> None:
+        self.timeout_output = timeout_output
+        self.calls: list[tuple[str, ...]] = []
+
+    def run(self, args, *, timeout=60.0, use_serial=True):
+        args = tuple(args)
+        self.calls.append(args)
+        if args == ("shell", "settings", "get", "system", "screen_off_timeout"):
+            return result(args, self.timeout_output)
+        return result(args)
+
+    def start_logcat(self, output_path):
+        raise AssertionError
+
+
 class IdentityAdb:
     def __init__(self, profile: dict, soc_manufacturer: str, serial: str | None = None) -> None:
         self.profile = profile
@@ -410,6 +428,27 @@ class AndroidReleaseDeviceCollectionTests(unittest.TestCase):
         with self.assertRaisesRegex(CollectionError, "unplugged"):
             require_unplugged_battery(output)
 
+    def test_unattended_display_extends_timeout_wakes_and_restores(self) -> None:
+        adb = DisplayPreparationAdb()
+        original_timeout_ms = prepare_unattended_display(adb)
+        restore_screen_timeout(adb, original_timeout_ms)
+
+        self.assertEqual(300000, original_timeout_ms)
+        self.assertEqual(
+            [
+                ("shell", "settings", "get", "system", "screen_off_timeout"),
+                ("shell", "settings", "put", "system", "screen_off_timeout", "1800000"),
+                ("shell", "input", "keyevent", "KEYCODE_WAKEUP"),
+                ("shell", "wm", "dismiss-keyguard"),
+                ("shell", "settings", "put", "system", "screen_off_timeout", "300000"),
+            ],
+            adb.calls,
+        )
+
+    def test_unattended_display_rejects_unknown_timeout(self) -> None:
+        with self.assertRaisesRegex(CollectionError, "one non-negative integer"):
+            prepare_unattended_display(DisplayPreparationAdb("null\n"))
+
     def test_cold_runs_clear_and_warm_runs_do_not(self) -> None:
         adb = StartupAdb()
         cold, warm = collect_startup_samples(adb, FakeClock(), self.profile)
@@ -553,6 +592,7 @@ class AndroidReleaseDeviceCollectionTests(unittest.TestCase):
             "buildTarget": "Android",
             "scriptingBackend": "IL2CPP",
             "targetArchitecture": "ARM64",
+            "frameTimingStatsEnabled": True,
             "detailedBuildReport": True,
             "artifactPath": self.profile["build"]["apkPath"],
             "artifactSha256": sha256_file(apk),

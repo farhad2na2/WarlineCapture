@@ -107,6 +107,7 @@ namespace Game.Editor
                 UnityVersion = UnityEngine.Application.unityVersion,
                 ScriptingBackend = PlayerSettings.GetScriptingBackend(NamedBuildTarget.Android).ToString(),
                 TargetArchitecture = FormatAndroidArchitectures(PlayerSettings.Android.targetArchitectures),
+                FrameTimingStatsEnabled = PlayerSettings.enableFrameTimingStats,
                 ArtifactPath = NormalizeArtifactPath(artifactFilePath),
                 ArtifactBytes = checked((ulong)new FileInfo(artifactFilePath).Length),
                 ArtifactSha256 = ComputeSha256(artifactFilePath)
@@ -235,6 +236,9 @@ namespace Game.Editor
             RequireEvidence(evidence.TargetArchitecture, nameof(evidence.TargetArchitecture));
             RequireEvidence(evidence.ArtifactPath, nameof(evidence.ArtifactPath));
             RequireEvidence(evidence.ArtifactSha256, nameof(evidence.ArtifactSha256));
+            if (!evidence.FrameTimingStatsEnabled)
+                throw new InvalidOperationException(
+                    "Release Android build evidence requires Frame Timing Stats.");
 
             return new AndroidBuildReportDocument
             {
@@ -249,6 +253,7 @@ namespace Game.Editor
                 BuildTarget = "Android",
                 ScriptingBackend = evidence.ScriptingBackend.Trim(),
                 TargetArchitecture = evidence.TargetArchitecture.Trim(),
+                FrameTimingStatsEnabled = true,
                 DetailedBuildReport = true,
                 ArtifactPath = NormalizeSourceAssetPath(evidence.ArtifactPath),
                 ArtifactBytes = evidence.ArtifactBytes,
@@ -297,6 +302,7 @@ namespace Game.Editor
             builder.Append("- Target: `").Append(report.BuildTarget).Append("`\n");
             builder.Append("- Scripting backend: `").Append(report.ScriptingBackend).Append("`\n");
             builder.Append("- Target architecture: `").Append(report.TargetArchitecture).Append("`\n");
+            builder.Append("- Frame Timing Stats: `enabled`\n");
             builder.Append("- Detailed BuildReport: `true`\n");
             builder.Append("- Artifact: `").Append(EscapeMarkdown(report.ArtifactPath)).Append("`\n");
             builder.Append("- Artifact SHA-256: `").Append(report.ArtifactSha256).Append("`\n\n");
@@ -606,6 +612,7 @@ namespace Game.Editor
         public string UnityVersion { get; set; }
         public string ScriptingBackend { get; set; }
         public string TargetArchitecture { get; set; }
+        public bool FrameTimingStatsEnabled { get; set; }
         public string ArtifactPath { get; set; }
         public ulong ArtifactBytes { get; set; }
         public string ArtifactSha256 { get; set; }
@@ -639,6 +646,7 @@ namespace Game.Editor
         public string BuildTarget { get; set; }
         public string ScriptingBackend { get; set; }
         public string TargetArchitecture { get; set; }
+        public bool FrameTimingStatsEnabled { get; set; }
         public bool DetailedBuildReport { get; set; }
         public string ArtifactPath { get; set; }
         public ulong ArtifactBytes { get; set; }

@@ -605,6 +605,25 @@ def require_install_completion(result: CommandResult, label: str) -> None:
         raise CollectionError(f"{label} returned an unexpected response: {response!r}")
 
 
+def ensure_package_uninstalled(adb: AdbBoundary, package: str) -> None:
+    listing = _text(
+        _run(
+            adb,
+            ("shell", "pm", "list", "packages", "--user", "0", package),
+            "installed package query",
+        ).stdout
+    )
+    rows = [line.strip() for line in listing.splitlines() if line.strip()]
+    expected_row = f"package:{package}"
+    if rows not in ([], [expected_row]):
+        raise CollectionError(f"installed package query was ambiguous: {rows!r}")
+    if not rows:
+        return
+
+    uninstall = adb.run(("uninstall", package), timeout=120.0)
+    _require_success_word(uninstall, "package uninstall")
+
+
 def install_and_verify(
     adb: AdbBoundary,
     apk_path: Path,
@@ -613,8 +632,7 @@ def install_and_verify(
 ) -> InstalledPackage:
     package = profile["build"]["packageName"]
     activity = profile["build"]["activity"]
-    uninstall = adb.run(("uninstall", package), timeout=120.0)
-    _require_success_word(uninstall, "package uninstall")
+    ensure_package_uninstalled(adb, package)
     install = adb.run(("install", "--no-streaming", str(apk_path)), timeout=600.0)
     require_install_completion(install, "exact APK install")
 

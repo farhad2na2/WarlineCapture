@@ -20,6 +20,7 @@ from Tools.CI.android_release_device_collection import (
     collect_device_identity,
     collect_startup_samples,
     collect_sustained,
+    ensure_package_uninstalled,
     launch_argv,
     monitor_sustained_run,
     parse_battery,
@@ -198,6 +199,27 @@ class NoCallAdb:
         raise AssertionError
 
 
+class PackageStateAdb:
+    def __init__(self, listing: str, uninstall: CommandResult | None = None) -> None:
+        self.listing = listing
+        self.uninstall = uninstall
+        self.calls: list[tuple[str, ...]] = []
+
+    def run(self, args, *, timeout=60.0, use_serial=True):
+        args = tuple(args)
+        self.calls.append(args)
+        if args[:4] == ("shell", "pm", "list", "packages"):
+            return result(args, self.listing)
+        if args[:1] == ("uninstall",):
+            if self.uninstall is None:
+                raise AssertionError("unexpected uninstall")
+            return self.uninstall
+        raise AssertionError(f"unexpected ADB call: {args!r}")
+
+    def start_logcat(self, output_path):
+        raise AssertionError
+
+
 class IdentityAdb:
     def __init__(self, profile: dict, soc_manufacturer: str) -> None:
         self.profile = profile
@@ -248,6 +270,33 @@ class AndroidReleaseDeviceCollectionTests(unittest.TestCase):
             require_install_completion(
                 result(("install",), stdout="Performing Push Install"),
                 "exact APK install",
+            )
+
+    def test_package_uninstall_is_idempotent_only_after_exact_package_query(self) -> None:
+        package = self.profile["build"]["packageName"]
+        absent = PackageStateAdb("")
+        ensure_package_uninstalled(absent, package)
+        self.assertEqual(1, len(absent.calls))
+
+        present = PackageStateAdb(
+            f"package:{package}\n",
+            result(("uninstall", package), "Success\n"),
+        )
+        ensure_package_uninstalled(present, package)
+        self.assertEqual(("uninstall", package), present.calls[-1])
+
+        with self.assertRaisesRegex(CollectionError, "ambiguous"):
+            ensure_package_uninstalled(
+                PackageStateAdb(f"package:{package}\npackage:unexpected\n"),
+                package,
+            )
+        with self.assertRaisesRegex(CollectionError, "package uninstall failed"):
+            ensure_package_uninstalled(
+                PackageStateAdb(
+                    f"package:{package}\n",
+                    result(("uninstall", package), "Failure\n", returncode=1),
+                ),
+                package,
             )
 
     def test_resolved_launcher_accepts_only_canonical_adb_formats(self) -> None:

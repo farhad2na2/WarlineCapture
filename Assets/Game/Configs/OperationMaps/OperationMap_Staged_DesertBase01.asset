@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Configs::Game.Configs.OperationMapDefinition
   operationMapId: opmap.skirmish.desert_base_01
   schemaVersion: 1
-  contentVersion: 1
+  contentVersion: 2
   sourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900
-  contentHash: a18761d6ee1faceb1543d0752c5c6e7c82e0279a4c4aaa0f77185a1eae80fda3
+  contentHash: 2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c
   generatedMetadataHash: 178b3673d4d7bc640807daa3258f8d4914410c7ba2461953e8d2752a82d12407
   bounds:
     worldMin: {x: 0, y: -6.9545445, z: 0}

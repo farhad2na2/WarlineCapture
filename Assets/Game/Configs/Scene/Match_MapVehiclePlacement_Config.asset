@@ -226,8 +226,8 @@ MonoBehaviour:
     vehiclePrefab: {fileID: 8969431421773950753, guid: d08c88d57a5f34f80a264cbfd1e2da4b, type: 3}
     vehicleSourceKey: unit_veh_tank_usa
     factionId: 1
-    worldCenter: {x: 842.4027, y: 2.4460812, z: 372.8972}
-    worldPosition: {x: 841.3336, y: 1.0320015, z: 372.8972}
+    worldCenter: {x: 841.4027, y: 2.4460812, z: 372.8972}
+    worldPosition: {x: 840.3336, y: 1.0320015, z: 372.8972}
     worldEulerAngles: {x: -0, y: 90, z: -0}
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
   - sourcePath: Map/Vehicles/MapVehicle_Tank_USA/SM_Veh_Tank_USA_01

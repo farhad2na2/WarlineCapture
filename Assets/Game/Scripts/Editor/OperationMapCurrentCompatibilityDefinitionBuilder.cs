@@ -35,13 +35,13 @@ namespace Game.Editor
         private const string CameraId = "camera.skirmish.desert_base_01.active";
         private const string MinimapId = "minimap.skirmish.desert_base_01.full";
         private const string SourceIdentityHash = "2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900";
-        private const string ContentHash = "a18761d6ee1faceb1543d0752c5c6e7c82e0279a4c4aaa0f77185a1eae80fda3";
+        private const string ContentHash = "2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c";
         private const string GeneratedMetadataHash = "574afec991fbc1a684531c9f727c20eb296271260e7a4e1c4a8c300a2b642e79";
         private const string GridContentHash = "8ef1b3f17074774040111a48ea82901b3355da8b8b86c8dc5c6e2a0bcccc2cfb";
         private const string SurfaceContentHash = "aa08cb9115e8727bfdbc671a4a2cfd9334ef48134c00d58d7d29e350c45b752c";
-        private const string MatchSceneFileHash = "a99e575cb8bc1f8a7c101025eca8ed84c22a89f5a6549b27b246a9efc021b89c";
+        private const string MatchSceneFileHash = "182f3b4cb50f48e1a573e1e90ee0c13baf9d62fce46e35b1850ef72097db5d75";
         private const string SubSceneFileHash = "bcc255f3fb140a0d91687b45b679b47fb60f01f5cfa8690bac3032ec642dadd8";
-        private const string ManifestFileHash = "b389013b4753e73e65424e1ca06737507aa6fc6a6be429903b2da683b052ec01";
+        private const string ManifestFileHash = "494e0052e1c55578238fd1200517999a437fb35465aac3eb295ec0c79e0cc715";
 
         [MenuItem("Tools/Warline Capture/Operation Maps/Rebuild Current Compatibility Definition")]
         public static void Run()
@@ -104,7 +104,7 @@ namespace Game.Editor
 
             Set(definition, "operationMapId", OperationMapId);
             Set(definition, "schemaVersion", 1);
-            Set(definition, "contentVersion", 1);
+            Set(definition, "contentVersion", 2);
             Set(definition, "sourceIdentityHash", SourceIdentityHash);
             Set(definition, "contentHash", ContentHash);
             Set(definition, "generatedMetadataHash", GeneratedMetadataHash);

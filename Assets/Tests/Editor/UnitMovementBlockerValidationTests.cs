@@ -1201,6 +1201,8 @@ public sealed class UnitMovementBlockerValidationTests
             };
             var slopeClassifier = new MapSurfaceSlopeClassifier();
             int checkedPlacements = 0;
+            int invalidCellCount = 0;
+            var invalidCellDetails = new System.Collections.Generic.List<string>(16);
 
             for (int placementIndex = 0; placementIndex < vehicleConfig.Placements.Count; placementIndex++)
             {
@@ -1217,24 +1219,37 @@ public sealed class UnitMovementBlockerValidationTests
                 {
                     for (int x = min.x; x < max.x; x++)
                     {
-                        Assert.IsTrue(
-                            x >= 0 && x < surface.Dimensions.x && y >= 0 && y < surface.Dimensions.y,
-                            $"Authored tank footprint leaves the baked grid. source={placement.SourcePath} cell=({x},{y})");
+                        if (x < 0 || x >= surface.Dimensions.x || y < 0 || y >= surface.Dimensions.y)
+                        {
+                            AddInvalidCell($"source={placement.SourcePath} cell=({x},{y}) outsideGrid");
+                            continue;
+                        }
 
-                        int cellIndex = (y * surface.Dimensions.x) + x;
-                        MapSurfaceCell surfaceCell = surface.Cells[cellIndex];
-                        Assert.Greater(
-                            surfaceCell.SurfaceCount,
-                            0,
-                            $"Authored tank footprint has no baked surface. source={placement.SourcePath} cell=({x},{y})");
+                        int2 cell = new(x, y);
+                        if (!MapSurfaceBlobAccess.TryGetSurfaceRange(
+                                ref surface,
+                                cell,
+                                out MapSurfaceCellSurfaceRange surfaceRange))
+                        {
+                            AddInvalidCell($"source={placement.SourcePath} center={centerCell} cell=({x},{y}) noSurface");
+                            continue;
+                        }
 
                         bool allowsTrackedVehicle = false;
-                        int firstSurfaceIndex = surfaceCell.SurfaceCount == 1
-                            ? surfaceCell.InlineSurfaceIndex
-                            : surfaceCell.FirstSurfaceIndex;
-                        for (int surfaceOffset = 0; surfaceOffset < surfaceCell.SurfaceCount; surfaceOffset++)
+                        MapSurfaceSample rejectedSample = default;
+                        for (int surfaceOffset = 0; surfaceOffset < surfaceRange.SurfaceCount; surfaceOffset++)
                         {
-                            MapSurfaceSample sample = surface.Samples[firstSurfaceIndex + surfaceOffset];
+                            if (!MapSurfaceBlobAccess.TryGetSurface(
+                                    ref surface,
+                                    surfaceRange,
+                                    surfaceOffset,
+                                    out MapSurfaceSample sample))
+                            {
+                                AddInvalidCell($"source={placement.SourcePath} center={centerCell} cell=({x},{y}) offset={surfaceOffset} lookupFailed");
+                                continue;
+                            }
+
+                            rejectedSample = sample;
                             if (slopeClassifier.AllowsMovement(sample, MapSurfaceMovementMask.TrackedVehicle))
                             {
                                 allowsTrackedVehicle = true;
@@ -1242,9 +1257,13 @@ public sealed class UnitMovementBlockerValidationTests
                             }
                         }
 
-                        Assert.IsTrue(
-                            allowsTrackedVehicle,
-                            $"Authored tank footprint is not tracked-vehicle walkable. source={placement.SourcePath} center={centerCell} cell=({x},{y})");
+                        if (!allowsTrackedVehicle)
+                        {
+                            AddInvalidCell(
+                                $"source={placement.SourcePath} center={centerCell} cell=({x},{y}) " +
+                                $"surfaceType={rejectedSample.SurfaceType} movementMask={rejectedSample.MovementMask} " +
+                                $"flags={rejectedSample.Flags} slope={rejectedSample.SlopeDegrees:0.###}");
+                        }
                     }
                 }
 
@@ -1252,6 +1271,18 @@ public sealed class UnitMovementBlockerValidationTests
             }
 
             Assert.Greater(checkedPlacements, 0, "No Unit_Veh_Tank_USA placements were found in the baked vehicle placement config.");
+            Assert.AreEqual(
+                0,
+                invalidCellCount,
+                $"Authored tank footprints contain {invalidCellCount} non-traversable baked cells. " +
+                string.Join(" | ", invalidCellDetails));
+
+            void AddInvalidCell(string detail)
+            {
+                invalidCellCount++;
+                if (invalidCellDetails.Count < 32)
+                    invalidCellDetails.Add(detail);
+            }
         }
         finally
         {

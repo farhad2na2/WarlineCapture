@@ -731,7 +731,7 @@ namespace Game.Editor
             return new Dictionary<string, string>(StringComparer.Ordinal)
             {
                 [MatchScenePath] =
-                    "a99e575cb8bc1f8a7c101025eca8ed84c22a89f5a6549b27b246a9efc021b89c",
+                    "182f3b4cb50f48e1a573e1e90ee0c13baf9d62fce46e35b1850ef72097db5d75",
                 [MatchSubScenePath] =
                     "bcc255f3fb140a0d91687b45b679b47fb60f01f5cfa8690bac3032ec642dadd8",
                 [MatchSceneViewSourcePath] =
@@ -739,7 +739,7 @@ namespace Game.Editor
                 [BaselineEvidencePath] =
                     "d4d4674850766c5cd95e1bb5fbb6f26893e0bb019dbaf266a0c9897a3befc807",
                 [TrackerPath] =
-                    "61d9a147b3b9af0831418626a0cbad271a11177f1f5100cb69afa0d1888e90fc"
+                    "743169ee0d67beedfe7549d893faba3aedb3a3ef3d14f296b21b4b4ab7456bd4"
             };
         }
 

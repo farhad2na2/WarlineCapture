@@ -30,7 +30,7 @@
     "directInputHashes": [
         {
             "path": "Assets/Game/Scenes/Match.unity",
-            "sha256": "a99e575cb8bc1f8a7c101025eca8ed84c22a89f5a6549b27b246a9efc021b89c"
+            "sha256": "182f3b4cb50f48e1a573e1e90ee0c13baf9d62fce46e35b1850ef72097db5d75"
         },
         {
             "path": "Assets/Game/Scenes/Match/MatchSubScene.unity",
@@ -46,7 +46,7 @@
         },
         {
             "path": "Design/Architecture/operation_map_scene_split_and_generator_tracker.md",
-            "sha256": "61d9a147b3b9af0831418626a0cbad271a11177f1f5100cb69afa0d1888e90fc"
+            "sha256": "743169ee0d67beedfe7549d893faba3aedb3a3ef3d14f296b21b4b4ab7456bd4"
         }
     ],
     "matchSceneViewFields": [

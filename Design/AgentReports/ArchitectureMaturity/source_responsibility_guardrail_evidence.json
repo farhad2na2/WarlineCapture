@@ -4,8 +4,8 @@
   "acceptanceRequired": false,
   "sourceBaseline": {
     "branch": "main",
-    "commit": "bbe0f82c07514440f59f8cf48fb0e8147cd561cc",
-    "tree": "38039e12b616e4b890fbbb4f94e1b71296f07508"
+    "commit": "7be5f22b365f282abdc247456ff2a5de533db279",
+    "tree": "8c66e40d929bac437d231627b5fac01bbbbf4bad"
   },
   "programBaseline": {
     "commit": "5f24549a18199db04921bb0ad6adf075872b03ff",
@@ -30,7 +30,9 @@
     "Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs",
     "Design/AgentReports/ArchitectureMaturity/am016_source_growth_validation.log",
     "Design/AgentReports/ArchitectureMaturity/source_responsibility_guardrail_evidence.json",
+    "Design/Architecture/architecture_performance_hardening_implementation_tracker.md",
     "Design/Architecture/post_hardening_source_responsibility_guardrails.json",
+    "Design/Architecture/production_source_growth_baseline.md",
     "Tools/CI/tests/test_architecture_source_responsibility_guardrail_evidence.py"
   ],
   "contract": {
@@ -60,8 +62,8 @@
     "passedTests": 17,
     "compilerErrors": 0,
     "log": "Design/AgentReports/ArchitectureMaturity/am016_source_growth_validation.log",
-    "logSha256": "d19bdcc0eb2d108ae2a644ed57d5eee4ea413f26a1de2692160fba137cf188c4",
-    "logBytes": 65130
+    "logSha256": "fa7151823441103db61c0efc8cf4626ebd2579d6fda5a40335bd6e39570a1a01",
+    "logBytes": 56262
   },
   "authorityDecision": {
     "validatorOwnerId": "architecture-source-growth",

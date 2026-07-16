@@ -109,16 +109,16 @@ Release-only categories are reported separately and never averaged into a premat
 
 | Field | Status |
 |---|---|
-| Checklist complete | `3 / 86` (`3.5%`) |
-| Core Architecture Lane | `3 / 68` (`4.4%`); active |
+| Checklist complete | `4 / 86` (`4.7%`) |
+| Core Architecture Lane | `4 / 68` (`5.9%`); active |
 | Release Certification Lane | `0 / 18` (`0.0%`); deferred |
 | Program state | Core Architecture Lane active; release work inactive |
 | Current phase | Phase 0 - Entry Baseline And Scorecard |
-| Current task | `AM-004` ready, not yet claimed |
-| Core entry baseline | Prerequisite accepted by `AM-001`; environment identity accepted by `AM-002`; canonical scenarios accepted by `AM-003` at `a5bf7b72cdfb9457c6af1e98ee2bcaae983f9ff6`; refreshed gate evidence remains Phase 0 work |
+| Current task | `AM-005` ready, not yet claimed |
+| Core entry baseline | Prerequisite accepted by `AM-001`; environment identity accepted by `AM-002`; canonical scenarios accepted by `AM-003`; scorecard, budgets, freshness, and exception policy accepted by `AM-004` against `76f80c7a23b06ba6719593cb5f2815e476db7987`; refreshed gate evidence remains Phase 0 work |
 | Release entry review | Deferred until `pre_release_performance_certification_backlog.md` activates |
 | Architecture rating | Not re-audited for this program |
-| Performance evidence | Must be recaptured at the exact entry commit |
+| Performance evidence | Core budgets are frozen by `AM-004`; exact-commit measurements remain required and unclaimed |
 | Android evidence | Deferred; retain historical diagnostics and recapture only when the release lane activates |
 | Sustained release evidence | Deferred; `0 / 3` qualifying release candidates |
 
@@ -144,7 +144,7 @@ No production behavior changes. Establish a reproducible baseline and prevent an
 - [x] `AM-001` Verify the prerequisite tracker is closed and its compiler, architecture, critical behavior, Editor performance, and GC gates are green. Record every release-only gap as deferred/measurement-required without blocking the Core Architecture Lane.
 - [x] `AM-002` Record the exact entry commit, branch, Unity editor version, package lock hash, build target, scripting backend, and active quality configuration.
 - [x] `AM-003` Define canonical scenarios for idle Match, maximum combat, construction, transport, aircraft, projectiles, every major popup, Menu-to-Match transitions, and long-duration soak.
-- [ ] `AM-004` Freeze the core architecture scorecard, metric definitions, performance budgets, GC classification policy, memory-growth threshold, and evidence freshness rules. Keep release-only device-tier fields explicitly `measurement-required` until `AM-053`.
+- [x] `AM-004` Freeze the core architecture scorecard, metric definitions, performance budgets, GC classification policy, memory-growth threshold, and evidence freshness rules. Keep release-only device-tier fields explicitly `measurement-required` until `AM-053`.
 - [ ] `AM-005` Regenerate the architecture dashboard, produce the validator registry, and reject every required input reported as stale, unknown, malformed, duplicate-owned, or tied to a different commit.
 - [ ] `AM-006` Produce a current source-size, dependency, assembly-cycle, runtime-loop, static-state, managed-helper, and active-work ownership inventory.
 - [ ] `AM-007` Produce a lifecycle inventory for Worlds, persistent native containers, query caches, presentation pools, scene roots, event subscriptions, and static caches.
@@ -478,3 +478,17 @@ The implementation agent owns substantive commits, pushes, PR creation, and revi
 - Residual risks: the catalog exposes fixture limitations for exact maximum-combat saturation, construction burst scale, transport runway behavior, full Match aircraft lifecycle, and historical soak freshness. AM-003 defines procedures and does not execute Unity, Player, Android, thermal, or sustained certification.
 - Exclusions preserved: current operation-map compatibility metadata and canonical Match authorities were retained while separately owned operation-map R&D, FirstLaunch, audio, UI visual-lock, and production assets remained unmodified.
 - Next task: `AM-004` freezes scorecard metrics, budgets, freshness rules, and the exception registry.
+
+### 2026-07-16 - AM-004 - Core scorecard and evidence policy
+
+- Workflow path: pull request.
+- Implementation branch and PR: `codex/am-004-scorecard`; [PR #17](https://github.com/farhad2na2/WarlineCapture/pull/17).
+- Baseline: `76f80c7a23b06ba6719593cb5f2815e476db7987`, tree `af237ee62e29e8d5191d4e3051451b6b47ab1712`; reviewed artifact head `87a4a1ddbd60d28aefc6b61614e4f5725db83d2f`.
+- Result: the seven-category Core score model, accepted Editor/GC/UI budgets, all 30 canonical scenario dispositions, GC classification, 10-warmup plus 100-measured lifecycle policy, memory plateau/slope/return tolerances, content-based freshness, and deferred release fields are frozen without claiming current measurements or a recomputed rating.
+- Evidence: `Design/AgentReports/ArchitectureMaturity/entry_scorecard.json`, matching Markdown rendering, and `Design/AgentReports/ArchitectureMaturity/exception_registry.json`.
+- Validation: canonical JSON serialization, exact parent commit/tree, category weights totaling 100, 30 unique AM-003 budget IDs with JSON/Markdown parity, frozen lifecycle/memory invariants, governed content hashes, source-ratchet hash/count reconciliation, exact three-file substantive scope, and `git diff --check` passed.
+- Independent review: the first complete review found no material scorecard issue. A later P2 rereview rejected an ambiguous selected-section hash ordering rule; the final artifact specifies source-document order, exact boundaries, UTF-8/LF normalization, per-line trailing LF, and no inserted separator. Final rereview recomputed `836d070c6dd0a97de857357cc2fb54301fd1df233588c5845e0d952d92b9b8ff` and found no remaining material issue.
+- Exception result: zero qualified active temporary exceptions and zero performance/GC waivers. The registry separately audits 139 exact-ceiling source-growth ratchets, 25 managed-boundary inventory entries, and the separately owned operation-map R&D authorization without promoting them into Core passes.
+- Residual risks: current architecture ratings and exact-entry performance measurements remain unclaimed; AM-005 must implement the frozen content/environment freshness rules and reject the currently stale or unknown dashboard inputs. Graphics/device residency and sustained evidence remain inactive until `AM-053`.
+- Exclusions preserved: two concurrent operation-map commits were rebased intact; operation-map, FirstLaunch, audio, UI visual-lock, production code, scenes, prefabs, packages, and `ProjectSettings` were not edited by AM-004.
+- Next task: `AM-005` regenerates the architecture dashboard and validator registry with fail-closed freshness enforcement.

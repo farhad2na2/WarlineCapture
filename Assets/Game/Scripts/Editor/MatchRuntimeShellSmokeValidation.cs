@@ -300,7 +300,7 @@ namespace Game.Editor
             if (phase == Phase.WaitingForShellReady)
             {
                 if (MatchCaptureWorldBootstrapUtility.EnsureDefaultGameWorld())
-                    Debug.Log("[MatchRuntimeShellSmokeValidation] initialized missing batch-mode Default World.");
+                    Debug.Log("[MatchRuntimeShellSmokeValidation] repaired missing batch-mode capture ECS boundary.");
 
                 if (!TryGetShellState(out UiShellStateComponent shellState) ||
                     shellState.CurrentMode != UiShellMode.MainMenu ||

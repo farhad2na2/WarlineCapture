@@ -286,6 +286,77 @@ public sealed class OperationMapMetadataUtilityTests
     }
 
     [Test]
+    public void RunwayGeometry_UsesHorizontalForwardAndRadiusAsHalfLength()
+    {
+        OperationMapAnchorBlob anchor = new()
+        {
+            Id = new FixedString64Bytes("anchor.infrastructure.runway"),
+            Kind = OperationMapAnchorKind.Runway,
+            Position = new float3(10f, 3f, 20f),
+            Rotation = quaternion.RotateY(math.radians(90f)),
+            Radius = 25f,
+            FactionId = 1,
+            LaneIndex = 0
+        };
+
+        Assert.That(OperationMapMetadataUtility.TryResolveRunwayGeometry(
+            in anchor,
+            out float3 center,
+            out float3 forward,
+            out float3 start,
+            out float3 end), Is.True);
+        Assert.That(center, Is.EqualTo(new float3(10f, 3f, 20f)));
+        Assert.That(math.distance(forward, new float3(1f, 0f, 0f)), Is.LessThan(0.0001f));
+        Assert.That(math.distance(start, new float3(-15f, 3f, 20f)), Is.LessThan(0.0001f));
+        Assert.That(math.distance(end, new float3(35f, 3f, 20f)), Is.LessThan(0.0001f));
+    }
+
+    [Test]
+    public void RunwayGeometry_RejectsVerticalForwardAxis()
+    {
+        OperationMapAnchorBlob anchor = new()
+        {
+            Id = new FixedString64Bytes("anchor.infrastructure.runway"),
+            Kind = OperationMapAnchorKind.Runway,
+            Position = float3.zero,
+            Rotation = quaternion.RotateX(math.radians(-90f)),
+            Radius = 25f
+        };
+
+        Assert.That(OperationMapMetadataUtility.TryResolveRunwayGeometry(
+            in anchor,
+            out _,
+            out _,
+            out _,
+            out _), Is.False);
+    }
+
+    [Test]
+    public void HelipadGeometry_PreservesCenterRotationAndClearanceRadius()
+    {
+        quaternion expectedRotation = quaternion.RotateY(math.radians(35f));
+        OperationMapAnchorBlob anchor = new()
+        {
+            Id = new FixedString64Bytes("anchor.infrastructure.helipad"),
+            Kind = OperationMapAnchorKind.Helipad,
+            Position = new float3(4f, 6f, 8f),
+            Rotation = expectedRotation,
+            Radius = 7f,
+            FactionId = 2,
+            LaneIndex = 1
+        };
+
+        Assert.That(OperationMapMetadataUtility.TryResolveHelipadGeometry(
+            in anchor,
+            out float3 center,
+            out quaternion rotation,
+            out float clearanceRadius), Is.True);
+        Assert.That(center, Is.EqualTo(new float3(4f, 6f, 8f)));
+        Assert.That(math.distance(rotation.value, expectedRotation.value), Is.LessThan(0.0001f));
+        Assert.That(clearanceRadius, Is.EqualTo(7f));
+    }
+
+    [Test]
     public void MinimapProjection_ZeroRotationMatchesCurrentLowerLeftXZContract()
     {
         OperationMapMinimapBlob projection = new()
@@ -369,6 +440,15 @@ public sealed class OperationMapMetadataUtilityTests
             OperationMapMinimapBlob projection = metadata.Minimap;
             OperationMapMetadataUtility.TryFindAnchor(ref metadata, in anchorId, out _);
             OperationMapMetadataUtility.TryWorldToMinimapNormalized(in projection, float3.zero, out _);
+            OperationMapAnchorBlob runway = new()
+            {
+                Id = new FixedString64Bytes("anchor.infrastructure.runway"),
+                Kind = OperationMapAnchorKind.Runway,
+                Position = float3.zero,
+                Rotation = quaternion.identity,
+                Radius = 20f
+            };
+            OperationMapMetadataUtility.TryResolveRunwayGeometry(in runway, out _, out _, out _, out _);
 
             long before = GC.GetAllocatedBytesForCurrentThread();
             for (int index = 0; index < 1024; index++)
@@ -376,6 +456,7 @@ public sealed class OperationMapMetadataUtilityTests
                 OperationMapMetadataUtility.TryFindAnchor(ref metadata, in anchorId, out _);
                 OperationMapMetadataUtility.ClampToCameraBounds(in bounds, new float3(index, 20f, -index));
                 OperationMapMetadataUtility.TryWorldToMinimapNormalized(in projection, float3.zero, out _);
+                OperationMapMetadataUtility.TryResolveRunwayGeometry(in runway, out _, out _, out _, out _);
             }
             long after = GC.GetAllocatedBytesForCurrentThread();
 

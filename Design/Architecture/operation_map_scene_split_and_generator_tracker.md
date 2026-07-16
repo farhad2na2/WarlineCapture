@@ -501,6 +501,10 @@ No planned runtime assembly may reference `Game.Editor`. `Game.Components`, `Gam
 
 All heavyweight fields in `OperationMapDefinition` must be lazy references. In particular, the schema-v1 compatibility manifest currently contains 16,542 source entries and mesh/material references; loading every map manifest with the catalog would violate memory and transition budgets.
 
+#### Infrastructure Anchor Geometry
+
+`Runway` anchors encode runway center in `Position`, horizontal travel direction as `Rotation * forward`, and world-space half-length in `Radius`; their two thresholds are `Position +/- forward * Radius`. `Helipad` anchors encode landing-area center, orientation, and positive clearance radius. Faction and lane values provide exact ownership and deterministic identity for both kinds. Infrastructure radius must be positive, and a runway whose forward axis projects to zero on XZ is invalid. Mutable helipad slot reservation/occupancy remains in `BuildingFactionProductionSpawnPointReadModel`; it is not copied into immutable map metadata. See `../AgentReports/2026-07-17_operation_map_infrastructure_anchor_geometry_contract.md`.
+
 Managed config ids are serialized as `string` for Unity authoring. `OperationMapCatalogValidator` validates non-empty canonical format, ordinal uniqueness, and UTF-8 capacity. Composition converts them once into `FixedString64Bytes` when publishing ECS state. Gameplay code never compares raw managed strings or scene paths.
 
 Minimum serialized field ownership is fixed as follows:
@@ -902,7 +906,7 @@ Exit criteria:
 - [ ] Bind objective focus/jump to typed operation-map anchor ids.
 - [x] Bind ARIA `Show Me` and camera intents to typed operation-map anchors. See `../AgentReports/2026-07-16_operation_map_aria_objective_anchor_binding.md`.
 - [ ] Bind friendly/hostile deployment and spawn anchors. Loader-neutral typed lookup and active-map precedence are implemented; current-map anchor identities/transforms remain pending. See `../AgentReports/2026-07-17_operation_map_faction_spawn_anchor_foundation.md`.
-- [ ] Bind runway and helipad anchors for taxi, takeoff, return, and landing behavior. Loader-neutral exact typed resolution and fail-closed validation are implemented; current-map anchor identities plus runway endpoint and helipad slot semantics remain pending, so existing building-derived behavior stays authoritative. See `../AgentReports/2026-07-17_operation_map_infrastructure_anchor_foundation.md`.
+- [ ] Bind runway and helipad anchors for taxi, takeoff, return, and landing behavior. Loader-neutral exact typed resolution, fail-closed validation, and runway/helipad geometry semantics are implemented; current-map anchor records and gameplay consumer integration remain pending, so existing building-derived behavior stays authoritative. See `../AgentReports/2026-07-17_operation_map_infrastructure_anchor_foundation.md` and `../AgentReports/2026-07-17_operation_map_infrastructure_anchor_geometry_contract.md`.
 - [x] Bind blocker/path/build metadata to movement and placement validation. See `../AgentReports/2026-07-16_operation_map_blocker_path_build_binding.md`.
 - [x] Bind ground-height/surface metadata for soldiers, vehicles, and aircraft clearance. See `../AgentReports/2026-07-16_operation_map_surface_binding.md`.
 - [x] Add validation for every anchor required by each active scenario. See `../AgentReports/2026-07-16_operation_map_scenario_anchor_validation.md`.
@@ -1110,6 +1114,7 @@ Exit criteria:
 | 2026-07-16 | Active operation-map blocker/path/build binding | `../AgentReports/2026-07-16_operation_map_blocker_path_build_binding.md`; startup binding `5 / 5`; runtime grid `5 / 5`; movement/blocker passed; placement `19 / 19`; Unity compile; `git diff --check` | Passed | Active navigation metadata now fail-closes on grid/count/capability drift, while authored blocked cells initialize the existing shared walkability authority used by movement, pathfinding, and placement. No loading, generator, or delivery behavior was added. |
 | 2026-07-17 | Operation-map faction spawn anchor foundation | `../AgentReports/2026-07-17_operation_map_faction_spawn_anchor_foundation.md`; faction spawn `5 / 5`; AI startup `1 / 1`; Unity compile; `git diff --check` | Passed; Phase 6 row remains open | Runtime startup now prefers exact typed faction deployment/spawn anchors and rejects ambiguity or out-of-grid records. Current compatibility map positions remain unapproved and were not guessed. |
 | 2026-07-17 | Operation-map runway/helipad anchor foundation | `../AgentReports/2026-07-17_operation_map_infrastructure_anchor_foundation.md`; metadata utility `16 / 16`; Unity compile; `git diff --check` | Passed; Phase 6 row remains open | Added exact typed `Runway`/`Helipad` resolution with compatibility-fallback, ambiguity, geometry, and grid validation. Existing building-derived behavior remains authoritative until approved current-map records and endpoint/slot semantics exist. |
+| 2026-07-17 | Operation-map infrastructure anchor geometry contract | `../AgentReports/2026-07-17_operation_map_infrastructure_anchor_geometry_contract.md`; metadata utility `19 / 19`; spatial config `26 / 26`; Unity compile; `git diff --check` | Passed; Phase 6 row remains open | Defines runway center/forward/half-length thresholds and helipad center/orientation/clearance radius with pure allocation-free math. Dynamic helipad slots remain in the existing ECS read model; current-map records and consumer integration remain pending. |
 
 ## Open Decisions
 

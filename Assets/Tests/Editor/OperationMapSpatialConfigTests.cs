@@ -166,6 +166,32 @@ public sealed class OperationMapSpatialConfigTests
     }
 
     [Test]
+    public void InfrastructureAnchors_RequirePositiveGeometryRadius()
+    {
+        OperationMapAnchorConfig runway = new(
+            "anchor.ch01.m01.runway.faction_1",
+            OperationMapAnchorKind.Runway,
+            Vector3.zero,
+            Vector3.zero,
+            0f,
+            1,
+            0);
+        OperationMapAnchorConfig helipad = new(
+            "anchor.ch01.m01.helipad.faction_1",
+            OperationMapAnchorKind.Helipad,
+            Vector3.zero,
+            Vector3.zero,
+            0f,
+            1,
+            0);
+
+        Assert.That(runway.TryValidate(out string runwayError), Is.False);
+        Assert.That(runwayError, Does.Contain("positive"));
+        Assert.That(helipad.TryValidate(out string helipadError), Is.False);
+        Assert.That(helipadError, Does.Contain("positive"));
+    }
+
+    [Test]
     public void Definition_RequiresResolvableCamerasAndUniqueTypedAnchors()
     {
         OperationMapDefinition map = CreateValidDefinition();

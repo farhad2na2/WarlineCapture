@@ -429,6 +429,12 @@ namespace Game.Configs
                 return false;
             }
 
+            if ((kind == OperationMapAnchorKind.Runway || kind == OperationMapAnchorKind.Helipad) && radius <= 0f)
+            {
+                error = $"Infrastructure anchor '{anchorId}' requires a positive half-length or clearance radius.";
+                return false;
+            }
+
             if (factionId < -1 || laneIndex < -1)
             {
                 error = $"Anchor '{anchorId}' faction and lane metadata must be -1 or non-negative.";

@@ -910,7 +910,7 @@ namespace Game.Editor
             AddSource(sources, "Assets/Game/Scripts/Composition/MatchHudMinimapDataSourceAdapter.cs", "38e6ba48f43e12d19b122b2baa950953b071b91e5a43406213bc513ab20e7a02", "public bool TryGetGrid(out MatchHudMinimapGridModel grid)", "TryGetActiveMapProjection(em, out OperationMapMinimapBlob projection)");
             AddSource(sources, "Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs", "89afee7610468e9a4da4d36fbdb265966553b887c0df0f20f02b5fe725934544", "public static bool InitialCameraFocusRequested;");
             AddSource(sources, "Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs", "76b91da24026174d7ee13fd5691dfd6f75192b779e2805e212d3949748657aca", "InitialUnitsRuntimeState.InitialCameraFocusRequested = true;");
-            AddSource(sources, "Assets/Game/Scripts/Systems/OperationMapMetadataUtility.cs", "22508ccb11051449e9592116912d6a0986f78b8a4e261dd636a62325ed9c0b79", "public static bool TryFindAnchor(");
+            AddSource(sources, "Assets/Game/Scripts/Systems/OperationMapMetadataUtility.cs", "d9034ab4df5dfad60cf25bee65df110e7fa4fa6203d718c2bf21ca69f4e89c53", "public static bool TryFindAnchor(");
             AddSource(sources, "Assets/Game/Scripts/Systems/RtsCameraRequestSystem.cs", "429284516114bc58607a1fb3098f3ed2ed52259bf39c60f6e34f52b3060fe85e", "skipClamp: tacticalFollowPoseValid", "TryGetActiveOperationMapCameraBoundary(entityManager, out boundary)");
             AddSource(sources, "Assets/Game/Scripts/Systems/RtsCameraSystem.cs", "215f6e947fa074b8216899f280043de5d04a3978f82fabe34555708cc9644c9c", "public void ClampCameraToGroundBoundary(Camera worldCamera)", "focusWorldPosition = ClampGroundPositionToBoundary(focusWorldPosition);");
             AddSource(sources, "Assets/Game/Scripts/Systems/RtsSelectionRuntimeCameraSystemHelper.cs", "012ed914ad46e349620422de90799acf3fb670b4a073753c1a3fcc99dd8f2e67", "private void ConsumeInitialCameraFocusRequest(Context context)");
@@ -926,7 +926,7 @@ namespace Game.Editor
             AddSource(sources, "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Actions.cs", "6e5e5c4b2e154ee8601abd03c496d56459921f82966921ec375baebe44e0d1b5", "private static AssistantCommandIntentKind ToAssistantCommandIntentKind(", "AssistantRecommendationKind.CameraFocus => AssistantCommandIntentKind.FocusCamera", "TargetId = recommendation.TargetId");
             AddSource(sources, Opmap002Path, "d4d4674850766c5cd95e1bb5fbb6f26893e0bb019dbaf266a0c9897a3befc807", "result=Passed chunks=514 sources=16542");
             AddSource(sources, Opmap004Path, "29961188be1577dc9e232f9815fa7e27ef0a2b0a73b0acd26e338b22a782f4e3", "\"reportSchema\": \"warline.operation-map.phase0-ownership\"", "\"result\": \"NeedsDecision\"");
-            AddSource(sources, TrackerPath, "5ffd997145ad953fecbb6373372ee632025001c38a556c5ae73b716c1cda8900", "Inventory minimap projection, camera clamp, initial camera, full-map bounds, and objective-focus sources.");
+            AddSource(sources, TrackerPath, "87918da89eff0a6182243e26bd9331642892c3c67bb20a6383633ef2e4e260ac", "Inventory minimap projection, camera clamp, initial camera, full-map bounds, and objective-focus sources.");
             return sources;
         }
 

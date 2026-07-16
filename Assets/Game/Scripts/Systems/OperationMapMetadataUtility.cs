@@ -272,15 +272,10 @@ namespace Game.Runtime
             }
 
             hasMatchingAnchor = true;
-            float rotationLengthSq = math.lengthsq(anchor.Rotation.value);
             if (matchCount != 1 ||
-                anchor.Id.IsEmpty ||
-                !math.all(math.isfinite(anchor.Position)) ||
-                !math.all(math.isfinite(anchor.Rotation.value)) ||
-                !math.isfinite(rotationLengthSq) ||
-                rotationLengthSq < MinimumProjectionExtent ||
-                !math.isfinite(anchor.Radius) ||
-                anchor.Radius <= 0f)
+                !IsValidInfrastructureAnchor(in anchor) ||
+                (kind == OperationMapAnchorKind.Runway &&
+                 !TryResolveRunwayGeometry(in anchor, out _, out _, out _, out _)))
             {
                 error = $"Active operation map has invalid or ambiguous {kind} anchors for faction {factionId}, lane {laneIndex}.";
                 return false;
@@ -302,6 +297,51 @@ namespace Game.Runtime
 
             error = null;
             return true;
+        }
+
+        public static bool TryResolveRunwayGeometry(
+            in OperationMapAnchorBlob anchor,
+            out float3 center,
+            out float3 forward,
+            out float3 start,
+            out float3 end)
+        {
+            center = default;
+            forward = default;
+            start = default;
+            end = default;
+            if (anchor.Kind != OperationMapAnchorKind.Runway || !IsValidInfrastructureAnchor(in anchor))
+                return false;
+
+            float3 horizontalForward = math.mul(anchor.Rotation, new float3(0f, 0f, 1f));
+            horizontalForward.y = 0f;
+            float lengthSq = math.lengthsq(horizontalForward);
+            if (!math.isfinite(lengthSq) || lengthSq < MinimumProjectionExtent)
+                return false;
+
+            center = anchor.Position;
+            forward = horizontalForward * math.rsqrt(lengthSq);
+            start = center - (forward * anchor.Radius);
+            end = center + (forward * anchor.Radius);
+            return math.all(math.isfinite(start)) && math.all(math.isfinite(end));
+        }
+
+        public static bool TryResolveHelipadGeometry(
+            in OperationMapAnchorBlob anchor,
+            out float3 center,
+            out quaternion rotation,
+            out float clearanceRadius)
+        {
+            center = default;
+            rotation = quaternion.identity;
+            clearanceRadius = 0f;
+            if (anchor.Kind != OperationMapAnchorKind.Helipad || !IsValidInfrastructureAnchor(in anchor))
+                return false;
+
+            center = anchor.Position;
+            rotation = math.normalize(anchor.Rotation);
+            clearanceRadius = anchor.Radius;
+            return math.all(math.isfinite(rotation.value));
         }
 
         public static bool IsInsideWorldBounds(in OperationMapBoundsComponent bounds, float3 position) =>
@@ -435,6 +475,18 @@ namespace Game.Runtime
             math.all(math.isfinite(projection.ProjectionSize)) &&
             math.isfinite(projection.OrientationDegrees) &&
             math.all(projection.ProjectionSize >= new float2(MinimumProjectionExtent));
+
+        private static bool IsValidInfrastructureAnchor(in OperationMapAnchorBlob anchor)
+        {
+            float rotationLengthSq = math.lengthsq(anchor.Rotation.value);
+            return !anchor.Id.IsEmpty &&
+                   math.all(math.isfinite(anchor.Position)) &&
+                   math.all(math.isfinite(anchor.Rotation.value)) &&
+                   math.isfinite(rotationLengthSq) &&
+                   rotationLengthSq >= MinimumProjectionExtent &&
+                   math.isfinite(anchor.Radius) &&
+                   anchor.Radius > 0f;
+        }
 
         private static bool IsValidGrid(in OperationMapGridBlob grid) =>
             grid.Dimensions.x > 0 &&

@@ -20,7 +20,7 @@ from Tools.CI.android_release_device_collection import (
     collect_device_identity,
     collect_startup_samples,
     collect_sustained,
-    ensure_package_uninstalled,
+    ensure_release_package_available,
     launch_argv,
     measure_installed_artifact_bytes,
     monitor_sustained_run,
@@ -202,9 +202,9 @@ class NoCallAdb:
 
 
 class PackageStateAdb:
-    def __init__(self, listing: str, uninstall: CommandResult | None = None) -> None:
+    def __init__(self, listing: str, install: CommandResult | None = None) -> None:
         self.listing = listing
-        self.uninstall = uninstall
+        self.install = install
         self.calls: list[tuple[str, ...]] = []
 
     def run(self, args, *, timeout=60.0, use_serial=True):
@@ -212,10 +212,10 @@ class PackageStateAdb:
         self.calls.append(args)
         if args[:4] == ("shell", "pm", "list", "packages"):
             return result(args, self.listing)
-        if args[:1] == ("uninstall",):
-            if self.uninstall is None:
-                raise AssertionError("unexpected uninstall")
-            return self.uninstall
+        if args[:1] == ("install",):
+            if self.install is None:
+                raise AssertionError("unexpected install")
+            return self.install
         raise AssertionError(f"unexpected ADB call: {args!r}")
 
     def start_logcat(self, output_path):
@@ -315,31 +315,34 @@ class AndroidReleaseDeviceCollectionTests(unittest.TestCase):
                 "exact APK install",
             )
 
-    def test_package_uninstall_is_idempotent_only_after_exact_package_query(self) -> None:
+    def test_exact_installed_package_is_reused_only_after_exact_package_query(self) -> None:
         package = self.profile["build"]["packageName"]
-        absent = PackageStateAdb("")
-        ensure_package_uninstalled(absent, package)
-        self.assertEqual(1, len(absent.calls))
-
-        present = PackageStateAdb(
-            f"package:{package}\n",
-            result(("uninstall", package), "Success\n"),
+        apk = Path("Build/AndroidAPK/WarlineCapture.apk")
+        absent = PackageStateAdb(
+            "",
+            result(("install", "--no-streaming", str(apk)), "Success\n"),
         )
-        ensure_package_uninstalled(present, package)
-        self.assertEqual(("uninstall", package), present.calls[-1])
+        self.assertTrue(ensure_release_package_available(absent, package, apk))
+        self.assertEqual(("install", "--no-streaming", str(apk)), absent.calls[-1])
+
+        present = PackageStateAdb(f"package:{package}\n")
+        self.assertFalse(ensure_release_package_available(present, package, apk))
+        self.assertEqual(1, len(present.calls))
 
         with self.assertRaisesRegex(CollectionError, "ambiguous"):
-            ensure_package_uninstalled(
+            ensure_release_package_available(
                 PackageStateAdb(f"package:{package}\npackage:unexpected\n"),
                 package,
+                apk,
             )
-        with self.assertRaisesRegex(CollectionError, "package uninstall failed"):
-            ensure_package_uninstalled(
+        with self.assertRaisesRegex(CollectionError, "exact APK install failed"):
+            ensure_release_package_available(
                 PackageStateAdb(
-                    f"package:{package}\n",
-                    result(("uninstall", package), "Failure\n", returncode=1),
+                    "",
+                    result(("install", "--no-streaming", str(apk)), "Failure\n", returncode=1),
                 ),
                 package,
+                apk,
             )
 
     def test_resolved_launcher_accepts_only_canonical_adb_formats(self) -> None:

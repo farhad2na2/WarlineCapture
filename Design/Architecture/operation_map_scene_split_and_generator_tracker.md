@@ -699,7 +699,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 12% (21/177 checklist items complete).
+Overall implementation progress: 12% (22/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -710,7 +710,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 | 2. Per-map static presentation ownership | Not started / compatibility subset | 0 | 14 | 0% | Preserve the current baked map safely; future-map generation remains undecided. |
 | 2A. Local Addressables packaging foundation | Later / direction-specific | 0 | 20 | 0% | Do not implement before the map-delivery direction is selected. |
 | 3. Current-map compatibility registration | In progress / shared | 1 | 10 | 10% | Current map id approved; content registration awaits exact measured metadata and a loader-neutral reference contract. |
-| 4. Non-destructive scene ownership split | Not started / shared priority | 0 | 14 | 0% | Primary objective: separate current map ownership from `Match.unity`. |
+| 4. Non-destructive scene ownership split | In progress / shared priority | 1 | 14 | 7% | Final ownership inventory accepted; no scene object has moved yet. |
 | 5. Runtime selection, loading, and teardown | In progress / shared contracts | 1 | 14 | 7% | Pure readiness/failure/teardown data contracts only; concrete loading is later. |
 | 6. Metadata, camera, minimap, and movement binding | Not started / shared | 0 | 12 | 0% | Shared bounds, surface, grid, blockers, camera, minimap, runway, and helipad metadata. |
 | 7. M01 operation-map slice | Later / shared contracts only | 0 | 10 | 0% | Map-neutral ids/anchors may proceed; physical rollout remains gated. |
@@ -847,7 +847,7 @@ Exit criteria:
 
 **Execution: `Shared now`.** This phase separates the existing map from the Match shell without selecting how future maps are generated or delivered.
 
-- [ ] Finalize the shell-owned versus map-owned dependency inventory from Phase 0.
+- [x] Finalize the shell-owned versus map-owned dependency inventory from Phase 0. See `operation_map_scene_ownership_inventory.md`.
 - [ ] Create `Assets/Game/Scenes/OperationMaps/Skirmish/` and its Unity folder `.meta` files through Unity/AssetDatabase-safe tooling.
 - [ ] Create `opmap_skirmish_desert_base_01.unity` as a staged duplicate with a new scene GUID; do not copy generated chunks or their `.meta` files.
 - [ ] Add `Game.Composition.OperationMapSceneView` as a non-updating serialized-reference view only if direct scene references require it.
@@ -1076,6 +1076,7 @@ Exit criteria:
 | 2026-07-16 | Shared operation-map metadata utility | `../AgentReports/2026-07-16_operation_map_metadata_utility.md`; focused EditMode `6 / 6`; affected compile; source-growth `15 / 15`; `git diff --check` | Passed; enabling foundation | Added allocation-free blob camera/anchor lookup, bounds tests/clamps, and current-compatible plus oriented minimap projection math. No Phase 6 binding checkbox closed because gameplay/UI consumers and surface/runway/helipad paths remain unbound. |
 | 2026-07-16 | Shared operation-map metadata blob creation | `../AgentReports/2026-07-16_operation_map_metadata_blob_creation.md`; focused EditMode `4 / 4`; affected compile; source-growth `15 / 15`; `git diff --check` | Passed; enabling foundation | Added validated deterministic one-shot creation of the small persistent metadata blob with explicit caller disposal ownership. Invalid configs create no blob; heavy map payloads and all loading/publication behavior remain excluded. |
 | 2026-07-16 | Shared operation-map runtime bootstrap contract | `../AgentReports/2026-07-16_operation_map_runtime_bootstrap_contract.md`; focused EditMode `5 / 5`; source-growth `15 / 15`; non-ECS naming `9 / 9`; SystemBase migration `19 / 19`; Unity compile; `git diff --check` | Passed; enabling foundation | Added an explicit-World, no-update-loop composition boundary that publishes validated metadata into the ECS lifecycle contract and owns only its immutable blob. Selection, scene loading/unloading, Addressables, generators, and production composition integration remain excluded; no checklist item closes yet. |
+| 2026-07-16 | Final shared scene ownership inventory | `operation_map_scene_ownership_inventory.md`; accepted Phase 0 evidence/decision cross-check; checklist recount; `git diff --check` | Passed | Consolidated every accepted shell/map/shared/compatibility/mixed disposition into the atomic split contract. This closes inventory only; no scene, asset, prefab, bake, or runtime binding changed. |
 
 ## Open Decisions
 

@@ -2,8 +2,8 @@
 
 > Rendered from `validator_registry.json`; edit the JSON authority and regenerate.
 
-- Baseline commit: `acf21c7c900a55aa19fdb8a19a5693be38d2c036`
-- Baseline tree: `bcaa69b9a83cc5cbee201469eba0d07859212ef9`
+- Baseline commit: `5c7ed147c4f49c1a5bc6ea0b697922cd74845277`
+- Baseline tree: `5170ec5b70e1ecaa53fe955404660b0e976747bb`
 - Environment identity: `Design/AgentReports/ArchitectureMaturity/entry_environment.json` (`1750156ad389d4f28a392531d19339a96140da898d5c2dfd1920c38d6486239e`)
 - Validators: 24
 - Evidence inputs: 7

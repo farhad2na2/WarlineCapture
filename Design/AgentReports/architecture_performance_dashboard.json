@@ -1,5 +1,5 @@
 {
-  "dashboardRevision": "acf21c7c900a55aa19fdb8a19a5693be38d2c036",
+  "dashboardRevision": "5c7ed147c4f49c1a5bc6ea0b697922cd74845277",
   "gateState": "rejected",
   "inputCount": 7,
   "inputs": [
@@ -108,7 +108,7 @@
       "reasons": [
         {
           "code": "REVISION_MISMATCH",
-          "message": "exactCommit 8e1f21c2a4326ff08371d621e808f38f79b2b197 does not match dashboard revision acf21c7c900a55aa19fdb8a19a5693be38d2c036"
+          "message": "exactCommit 8e1f21c2a4326ff08371d621e808f38f79b2b197 does not match dashboard revision 5c7ed147c4f49c1a5bc6ea0b697922cd74845277"
         },
         {
           "code": "DIRTY_INPUT",
@@ -167,7 +167,7 @@
       "reasons": [
         {
           "code": "REVISION_MISMATCH",
-          "message": "exactCommit 8e1f21c2a4326ff08371d621e808f38f79b2b197 does not match dashboard revision acf21c7c900a55aa19fdb8a19a5693be38d2c036"
+          "message": "exactCommit 8e1f21c2a4326ff08371d621e808f38f79b2b197 does not match dashboard revision 5c7ed147c4f49c1a5bc6ea0b697922cd74845277"
         },
         {
           "code": "DIRTY_INPUT",
@@ -209,7 +209,7 @@
       "reasons": [
         {
           "code": "REVISION_MISMATCH",
-          "message": "exactCommit a527e151e9e43a491ba30f4c19a0320dc54faf5c does not match dashboard revision acf21c7c900a55aa19fdb8a19a5693be38d2c036"
+          "message": "exactCommit a527e151e9e43a491ba30f4c19a0320dc54faf5c does not match dashboard revision 5c7ed147c4f49c1a5bc6ea0b697922cd74845277"
         }
       ],
       "requirement": "advisory",
@@ -249,7 +249,7 @@
       "reasons": [
         {
           "code": "REVISION_MISMATCH",
-          "message": "exactCommit 2b19449570ccf1b78c43ea0154e83785ecb3031e does not match dashboard revision acf21c7c900a55aa19fdb8a19a5693be38d2c036"
+          "message": "exactCommit 2b19449570ccf1b78c43ea0154e83785ecb3031e does not match dashboard revision 5c7ed147c4f49c1a5bc6ea0b697922cd74845277"
         }
       ],
       "requirement": "advisory",
@@ -291,7 +291,7 @@
       "reasons": [
         {
           "code": "REVISION_MISMATCH",
-          "message": "baselineCommit 7084805d771142706f340e9f2e52a68570bcb72b does not match dashboard revision acf21c7c900a55aa19fdb8a19a5693be38d2c036"
+          "message": "baselineCommit 7084805d771142706f340e9f2e52a68570bcb72b does not match dashboard revision 5c7ed147c4f49c1a5bc6ea0b697922cd74845277"
         }
       ],
       "requirement": "advisory",
@@ -353,7 +353,7 @@
     "errors": [],
     "path": "Design/AgentReports/ArchitectureMaturity/validator_registry.json",
     "schemaVersion": 1,
-    "sha256": "1cc6ffcde3ab67d37bafef1e17a1379c332deb51b6fc12dc45c36394895a51a2",
+    "sha256": "cacda7796dcd1796cefeb7fa5f5fb312eedfa5ac7621223711ad1f21658edc3c",
     "state": "current"
   },
   "schemaVersion": 2,

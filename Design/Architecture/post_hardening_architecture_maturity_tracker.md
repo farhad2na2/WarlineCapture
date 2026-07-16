@@ -77,8 +77,8 @@ Release-only categories are reported separately and never averaged into a premat
 - Preserve Unity `.meta` files, serialized references, ECS update order, and existing user-owned work.
 - Do not combine balance changes, art changes, or unrelated gameplay features with architecture slices.
 - New findings do not silently increase the active checklist. Record them in the Decision Log and obtain explicit scope approval.
-- Implementation agents push their task branch and open a PR but never merge or self-accept tracker state. The independent review/merge coordinator owns findings, final integration gates, administrative tracker/evidence commits, merge, and branch/worktree cleanup.
-- Direct pushes may still be technically possible, but this planned program uses PRs. Do not claim branch protection/rulesets are active or require GitHub approval counts while all agents share one GitHub identity.
+- This program now works directly on a clean `main` checkout, as explicitly requested by the user. Do not create task branches, worktrees, or pull requests for remaining rows.
+- Each bounded slice still requires focused review, final integration gates, zero compiler errors where compilation is relevant, task-owned staging, and a stable commit before pushing `main`. Do not claim branch protection, review approvals, or PR evidence that does not exist.
 - Preserve Jenkins and existing CI/performance contracts; do not introduce GitHub Actions as a substitute.
 
 ## Global Architecture Guardrails
@@ -109,16 +109,16 @@ Release-only categories are reported separately and never averaged into a premat
 
 | Field | Status |
 |---|---|
-| Checklist complete | `4 / 86` (`4.7%`) |
-| Core Architecture Lane | `4 / 68` (`5.9%`); active |
+| Checklist complete | `5 / 86` (`5.8%`) |
+| Core Architecture Lane | `5 / 68` (`7.4%`); active |
 | Release Certification Lane | `0 / 18` (`0.0%`); deferred |
 | Program state | Core Architecture Lane active; release work inactive |
 | Current phase | Phase 0 - Entry Baseline And Scorecard |
-| Current task | `AM-005` ready, not yet claimed |
-| Core entry baseline | Prerequisite accepted by `AM-001`; environment identity accepted by `AM-002`; canonical scenarios accepted by `AM-003`; scorecard, budgets, freshness, and exception policy accepted by `AM-004` against `76f80c7a23b06ba6719593cb5f2815e476db7987`; refreshed gate evidence remains Phase 0 work |
+| Current task | `AM-006` ready, not yet claimed |
+| Core entry baseline | Prerequisite accepted by `AM-001`; environment identity accepted by `AM-002`; canonical scenarios accepted by `AM-003`; scorecard, budgets, freshness, and exception policy accepted by `AM-004`; validator ownership and fail-closed dashboard enforcement accepted by `AM-005` against `5c7ed147c4f49c1a5bc6ea0b697922cd74845277`; exact-identity evidence recapture remains Phase 0 exit work |
 | Release entry review | Deferred until `pre_release_performance_certification_backlog.md` activates |
 | Architecture rating | Not re-audited for this program |
-| Performance evidence | Core budgets are frozen by `AM-004`; exact-commit measurements remain required and unclaimed |
+| Performance evidence | Core budgets are frozen by `AM-004`; the AM-005 dashboard rejects both required legacy rows because their exact commit and AM-002 environment identity are unknown; measurements remain unclaimed |
 | Android evidence | Deferred; retain historical diagnostics and recapture only when the release lane activates |
 | Sustained release evidence | Deferred; `0 / 3` qualifying release candidates |
 
@@ -145,7 +145,7 @@ No production behavior changes. Establish a reproducible baseline and prevent an
 - [x] `AM-002` Record the exact entry commit, branch, Unity editor version, package lock hash, build target, scripting backend, and active quality configuration.
 - [x] `AM-003` Define canonical scenarios for idle Match, maximum combat, construction, transport, aircraft, projectiles, every major popup, Menu-to-Match transitions, and long-duration soak.
 - [x] `AM-004` Freeze the core architecture scorecard, metric definitions, performance budgets, GC classification policy, memory-growth threshold, and evidence freshness rules. Keep release-only device-tier fields explicitly `measurement-required` until `AM-053`.
-- [ ] `AM-005` Regenerate the architecture dashboard, produce the validator registry, and reject every required input reported as stale, unknown, malformed, duplicate-owned, or tied to a different commit.
+- [x] `AM-005` Regenerate the architecture dashboard, produce the validator registry, and reject every required input reported as stale, unknown, malformed, duplicate-owned, or tied to a different commit.
 - [ ] `AM-006` Produce a current source-size, dependency, assembly-cycle, runtime-loop, static-state, managed-helper, and active-work ownership inventory.
 - [ ] `AM-007` Produce a lifecycle inventory for Worlds, persistent native containers, query caches, presentation pools, scene roots, event subscriptions, and static caches.
 - [ ] `AM-008` Publish the entry baseline report with ratings by area, accepted evidence links, known residual risks, and the exact deltas this program owns.
@@ -418,7 +418,7 @@ Every implementation slice runs the rows relevant to its ownership. Every phase 
 Each implementation package must record:
 
 - Role/context, task ID, `AM-WP-###` ID, lane, prerequisite state, and workflow path.
-- Branch, isolated shared-object worktree, PR URL, baseline commit, tested head, and dirty-worktree exclusions.
+- Direct-to-`main` workflow, baseline commit, tested head, pushed commit, and dirty-worktree exclusions.
 - Exact allowed files, generated/config/scene authority, files intentionally not touched, active owners checked, and overlap resolution.
 - Ownership change and behavior-preservation statement.
 - Current/future owner, assembly boundary, update order, lifecycle, Burst/thread constraints, and explicit `ISystem`/`SystemBase` decision.
@@ -427,7 +427,7 @@ Each implementation package must record:
 - Residual risks and unexercised paths.
 - Rollback condition, recommended next task, and focused commit message.
 
-The implementation agent owns substantive commits, pushes, PR creation, and review revisions but never merges. The independent coordinator reports findings first, returns substantive fixes to the implementer, runs integrated validation on the final head, and may then add only administrative snapshot, checklist, Decision Log, Implementation Log, or evidence commits. Proposed completion becomes authoritative only when the coordinator merges the PR to `main` and records cleanup.
+The implementing agent works directly on `main`, owns the bounded substantive and administrative commits, runs focused review and integrated validation before each push, and stages only task-owned files. A row becomes authoritative when its stable commits are pushed to `origin/main` and its tracker evidence is recorded; known-broken work is never pushed.
 
 ## Decision Log
 
@@ -437,6 +437,7 @@ The implementation agent owns substantive commits, pushes, PR creation, and revi
 | 2026-07-13 | Target practical `9.5+`, with `10 / 10` as a sustained standard | No finite checklist proves permanent architectural perfection; permanent regression controls and multiple green releases provide stronger evidence | This tracker, Phases 8 and 9 |
 | 2026-07-16 | Activate the Core Architecture Lane independently from release certification | Current development benefits from ownership, lifecycle, UI allocation, pool, determinism, diagnostics, and CI hardening; repeated long release qualification remains intentionally deferred until content stabilizes | User approval; completed early-development hardening tracker; pre-release backlog |
 | 2026-07-16 | Make the pre-release backlog the sole release-certification obligation source | Phase 6 and Phase 9 must sequence existing backlog contracts rather than creating duplicate collectors, schemas, or evidence definitions | `pre_release_performance_certification_backlog.md` |
+| 2026-07-16 | Use direct commits to `main` for the remaining maturity program | The user explicitly rejected PRs and task branches because their coordination consumes excessive tokens; bounded review, validation, owned-file staging, stable commits, and push discipline remain mandatory | User instruction; AM-005 direct integration |
 
 ## Implementation Log
 
@@ -492,3 +493,17 @@ The implementation agent owns substantive commits, pushes, PR creation, and revi
 - Residual risks: current architecture ratings and exact-entry performance measurements remain unclaimed; AM-005 must implement the frozen content/environment freshness rules and reject the currently stale or unknown dashboard inputs. Graphics/device residency and sustained evidence remain inactive until `AM-053`.
 - Exclusions preserved: two concurrent operation-map commits were rebased intact; operation-map, FirstLaunch, audio, UI visual-lock, production code, scenes, prefabs, packages, and `ProjectSettings` were not edited by AM-004.
 - Next task: `AM-005` regenerates the architecture dashboard and validator registry with fail-closed freshness enforcement.
+
+### 2026-07-16 - AM-005 - Validator registry and fail-closed dashboard
+
+- Workflow path: direct commit to `main`, per the user's replacement of the planned PR workflow.
+- Baseline: `acf21c7c900a55aa19fdb8a19a5693be38d2c036`; implementation and evidence baseline: `5c7ed147c4f49c1a5bc6ea0b697922cd74845277`, tree `5170ec5b70e1ecaa53fe955404660b0e976747bb`.
+- Result: 24 canonical validators own 35 unique responsibilities; four composite/wrapper entrypoints are explicitly non-canonical aliases; seven dashboard evidence inputs have one owner each and are classified as two required Core rows plus five advisory/deferred rows.
+- Evidence: `Design/AgentReports/ArchitectureMaturity/validator_registry.json` and matching Markdown rendering; refreshed `Design/AgentReports/architecture_performance_dashboard.json` and Markdown rendering.
+- Fail-closed behavior: required missing, malformed, schema-incomplete, revision-unknown, commit-mismatched, dirty, environment-unknown, environment-mismatched, duplicate-ID, duplicate-path-owner, duplicate-responsibility-owner, and malformed-registry states reject the gate. `--revision` is mandatory and `--check` returns exit `2` while rejected.
+- Current dashboard disposition: registry current with zero registry errors; both required inputs rejected as `unknown` because the tracked APH-700 assembly report and Editor Match performance report declare neither an exact revision nor the AM-002 environment hash. All five historical audio/build/content rows are advisory/deferred and stale; they remain visible without blocking Core work.
+- Validation: 14 focused Python tests passed; production registry reports 24 unique validator IDs and 35 unique responsibilities; JSON parse/invariants passed; byte-identical regeneration passed; expected fail-closed production check returned `2`; `git diff --check` passed; no Unity or production compilation was required because AM-005 changes only Python CI tooling and generated documentation/evidence.
+- Review: bounded self-review found and resolved two pre-push gaps: provenance fields leaking into metrics and a syntactically valid but schema-empty artifact being accepted. A final identity review made `--revision` mandatory so no run can silently bind evidence to an unintended `HEAD`.
+- Residual risks: Phase 0 exit remains blocked on exact-identity regeneration of the two required evidence rows and on later ownership/lifecycle inventories. No architecture rating, performance pass, GC pass, Android pass, or release-certification claim is made by AM-005.
+- Exclusions preserved: operation-map, FirstLaunch, audio, UI visual-lock, production code, scenes, prefabs, packages, and `ProjectSettings` were not edited.
+- Next task: `AM-006` produces the source-size, dependency, assembly-cycle, runtime-loop, static-state, managed-helper, and active-work ownership inventory.

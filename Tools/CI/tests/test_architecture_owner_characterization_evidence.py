@@ -18,26 +18,44 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def git_blob_sha256(commit: str, path: str) -> str:
+    content = subprocess.run(
+        ["git", "show", f"{commit}:{path}"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    ).stdout
+    return hashlib.sha256(content).hexdigest()
+
+
 class ArchitectureOwnerCharacterizationEvidenceTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.data = json.loads(EVIDENCE_PATH.read_text(encoding="utf-8"))
 
-    def test_baseline_and_selected_production_owners_are_unchanged(self) -> None:
+    def test_baseline_and_accepted_characterization_sources_are_immutable(self) -> None:
         baseline = self.data["sourceBaseline"]
-        tree = subprocess.run(
+        baseline_tree = subprocess.run(
             ["git", "rev-parse", f"{baseline['commit']}^{{tree}}"],
             cwd=ROOT,
             check=True,
             capture_output=True,
             text=True,
         ).stdout.strip()
-        self.assertEqual(tree, baseline["tree"])
+        self.assertEqual(baseline_tree, baseline["tree"])
+        accepted = self.data["acceptedEvidence"]
+        accepted_tree = subprocess.run(
+            ["git", "rev-parse", f"{accepted['commit']}^{{tree}}"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+        self.assertEqual(accepted_tree, accepted["tree"])
         for owner in self.data["productionOwners"]:
-            path = ROOT / owner["path"]
-            self.assertEqual(owner["sha256"], sha256(path))
+            self.assertEqual(owner["sha256"], git_blob_sha256(accepted["commit"], owner["path"]))
             diff = subprocess.run(
-                ["git", "diff", "--exit-code", baseline["commit"], "--", owner["path"]],
+                ["git", "diff", "--exit-code", baseline["commit"], accepted["commit"], "--", owner["path"]],
                 cwd=ROOT,
                 capture_output=True,
                 text=True,

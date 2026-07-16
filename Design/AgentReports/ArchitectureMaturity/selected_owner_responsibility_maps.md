@@ -6,10 +6,10 @@ Artifact: `am010-selected-owner-responsibility-maps-v1`
 
 ## Evidence Binding
 
-- Authoritative JSON SHA-256: `a2465d59c76ddca78eb91e8717674ac410f32d4096a103b09fc69be88edcecf0`
+- Authoritative JSON SHA-256: `5e40a2565cc1c65192c12196f78738fd919a6865413c11236e21b3d9e9816a48`
 - Source baseline: `ab955a7721fd0616b627daab508632d023e047d8` / tree `a40d19b327a33bc2aca8e126dcdc61616ccee458` on `main`
 - AM-009 ranking: `Design/AgentReports/ArchitectureMaturity/owner_risk_ranking.json` / SHA-256 `ec381d90aa68ca4adc4387de344085f9ba0c0aabe7a1afb190155e381c803847`
-- Freshness-bound evidence files: `14`
+- Freshness-bound evidence files: `15`
 - Initial modification scopes remain the exact disjoint AM-009 one-file allowlists.
 - Proposed extraction paths are planning only and require the recorded expanded allowlist before implementation.
 
@@ -87,6 +87,7 @@ Artifact: `am010-selected-owner-responsibility-maps-v1`
 ### Bounded Extraction Candidates
 
 - Extract only the missile-trail presentation bridge: publish explicit ECS trail-sync data from GroundMissileRocketTrailSystem and consume it in a documented managed presentation boundary; retain launch phases, projectile simulation, impact damage, and all other presentation requests in their current owners. Evidence: `Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs:518-536`, `Assets/Game/Scripts/Effects/MissileTrailVfxView.cs:33-53`, `Assets/Game/Scripts/Effects/MissileTrailVfxView.cs:84-140`.
+  - Status: `proposed`
   - Proposed output paths: `Assets/Game/Scripts/Components/MissileTrailSyncRequest.cs`, `Assets/Game/Scripts/Systems/MissileTrailSyncPresentationSystem.cs`
   - Required expanded allowlist: `Assets/Game/Scripts/Components/MissileTrailSyncRequest.cs`, `Assets/Game/Scripts/Systems/MissileTrailSyncPresentationSystem.cs`
   - Authority boundary: GroundMissileRocketTrailSystem owns production of transient sync requests; the managed presentation system owns request consumption only; MissileTrailVfxView retains pooled trail create/update/release state.
@@ -97,7 +98,7 @@ Artifact: `am010-selected-owner-responsibility-maps-v1`
 
 - Modification scope: `transport-boarding-runtime`
 - Initial allowed paths: `Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs`
-- Source SHA-256: `4bf4aa8c443121efb03585d08102ba79c1959d6094833b8c5816fe857044cd36`
+- Source SHA-256: `3a37f081d9102919da2632c4f26cbbab0a4a5210eeeffe97529ca09cf75e535f`
 
 ### Declared ECS Types
 
@@ -138,18 +139,18 @@ Artifact: `am010-selected-owner-responsibility-maps-v1`
 ### Failure And Edge Behavior
 
 - Missing transport, capacity, passenger buffer, grid, footprint, or transform produces TransportMissingOrInvalid and cancels the request. Evidence: `Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs:311-325`.
-- Air transports wait unless air state exists, flight/rolling flags are clear, physical height is grounded, and no rope disembark is active. Evidence: `Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs:448-465`.
-- Unknown passenger kinds normalize to soldier, capacities/cargo weights clamp nonnegative, and missing GridConfig falls back to footprint, goal, world-distance, and cell-distance reach checks. Evidence: `Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs:339-345`, `Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs:441-445`, `Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs:501-525`.
-- Dead passenger-buffer entries are ignored and transport existence/capacity are rechecked on the main thread before boarding to reject stale job decisions. Evidence: `Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs:187-213`, `Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs:413-438`.
-- The optional GridConfig path assumes at most one matching entity because it calls GetSingletonEntity; AM-011 must characterize or guard the multiple-grid case before extraction. Evidence: `Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs:94-100`.
-- Passenger occupancy counts every live matching buffer entry and does not deduplicate entities; duplicate entries therefore consume duplicate capacity and require an explicit invariant test. Evidence: `Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs:413-438`, `Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs:564-593`.
+- Air transports wait unless air state exists, flight/rolling flags are clear, physical height is grounded, and no rope disembark is active. Evidence: `Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs:438-455`.
+- Unknown passenger kinds normalize to soldier and seat capacities clamp nonnegative in the stateless capacity rules; cargo weight and missing-GridConfig reach fallback remain in the boarding system. Evidence: `Assets/Game/Scripts/Systems/UnitTransportBoardingCapacityRules.cs:9-30`, `Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs:339-343`, `Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs:457-530`.
+- Dead passenger-buffer entries are ignored and transport existence/capacity are rechecked on the main thread before boarding to reject stale job decisions. Evidence: `Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs:187-213`, `Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs:407-435`, `Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs:547-579`, `Assets/Game/Scripts/Systems/UnitTransportBoardingCapacityRules.cs:32-55`.
+- The optional GridConfig path assumes at most one matching entity because it calls GetSingletonEntity; AM-011 records this as a known limitation and AM-012 leaves the behavior unchanged. Evidence: `Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs:94-100`.
+- Passenger occupancy counts every live matching buffer entry and does not deduplicate entities; duplicate entries therefore consume duplicate capacity and require an explicit invariant test. Evidence: `Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs:407-435`, `Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs:547-579`, `Assets/Game/Scripts/Systems/UnitTransportBoardingCapacityRules.cs:32-55`.
 
 ### Tests And Validation Commands
 
 - Run Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/am010-unit-transport.log -- -quit -executeMethod UnitTransportValidationTests.RunBatchValidation for focused ground, cargo, landed-state, reach, ramp, and architecture coverage. Evidence: `Assets/Tests/Editor/UnitTransportValidationTests.cs:27-128`.
 - Run Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/am010-boarding-performance.log -- -quit -executeMethod TransportBoardingPerformanceValidation.RunBatchValidation for the current 16-warmup/64-measurement fixture. Evidence: `Assets/Tests/Editor/TransportBoardingPerformanceValidation.cs:43-67`.
 - Run Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/am010-boarding-playmode.log -- -quit -runTests -testPlatform PlayMode -testFilter GameSceneTransportBoardingPlayModeTests -testResults /private/tmp/am010-boarding-playmode.xml for scene-flow boarding coverage. Evidence: `Assets/Tests/PlayMode/GameSceneTransportBoardingPlayModeTests.cs:231-307`.
-- UnitTransportBoardingSystemExtractionTests characterizes passenger-kind and capacity/occupancy rules relevant to the proposed extraction. Evidence: `Assets/Tests/Editor/UnitTransportBoardingSystemExtractionTests.cs:66-183`.
+- UnitTransportBoardingCapacityRulesTests directly covers the extracted normalization, capacity, missing-passenger, metadata-precedence, and occupancy-classification rules. Evidence: `Assets/Tests/Editor/UnitTransportBoardingCapacityRulesTests.cs:10-185`.
 
 ### Allowed Dependencies
 
@@ -165,13 +166,15 @@ Artifact: `am010-selected-owner-responsibility-maps-v1`
 
 ### Bounded Extraction Candidates
 
-- Extract only duplicated passenger-kind, capacity, and occupancy rules into a stateless Burst-compatible utility with explicit inputs; retain query ownership, ordering, revalidation, ECB playback, diagnostics, and passenger mutation in current owners. Evidence: `Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs:394-445`, `Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs:544-600`.
-  - Proposed output paths: `Assets/Game/Scripts/Systems/UnitTransportBoardingCapacityRules.cs`
+- AM-012 extracted only duplicated passenger-kind, capacity, and occupancy-classification rules into a stateless Burst-compatible utility with explicit inputs; query ownership, ordering, revalidation, ECB playback, diagnostics, and passenger mutation remain in the boarding system. Evidence: `Assets/Game/Scripts/Systems/UnitTransportBoardingCapacityRules.cs:7-55`, `Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs:339-435`, `Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs:534-579`.
+  - Status: `completed`
+  - Output paths: `Assets/Game/Scripts/Systems/UnitTransportBoardingCapacityRules.cs`
   - Required expanded allowlist: `Assets/Game/Scripts/Systems/UnitTransportBoardingCapacityRules.cs`
   - Authority boundary: The utility owns no state and returns only normalized kind, capacity, or occupancy values from explicit unmanaged inputs.
   - Proposed update order: Existing job and main-thread revalidation call sites retain their current order and invoke the same stateless rules.
   - Cleanup authority: The utility owns no containers, entities, requests, or lifecycle cleanup.
+  - Completion evidence: `Design/AgentReports/ArchitectureMaturity/transport_capacity_rules_extraction_evidence.json` (`55c1d3e65be57f22cab031c955a8874257c53c68edc0ccf807577eb7496ee2ad`)
 
-## AM-011 Gate
+## Extraction Gate Status
 
-AM-011 must add characterization coverage for every recorded failure/edge behavior and bounded extraction candidate before AM-012 edits production code. Existing focused performance fixtures must be recaptured after characterization and before extraction.
+AM-011 characterization is accepted. Each completed extraction must retain exact evidence identity, focused behavior coverage, full regression coverage, and a fresh zero-allocation performance capture before the next production slice begins.

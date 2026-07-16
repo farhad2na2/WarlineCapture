@@ -106,6 +106,16 @@ class ArchitectureOwnerResponsibilityMapTests(unittest.TestCase):
             text=True,
         ).stdout.strip()
         self.assertEqual(commit_tree, baseline["tree"])
+        authorized_changes = {}
+        for change in self.data.get("authorizedProductionChanges", []):
+            self.assertNotIn(change["path"], authorized_changes)
+            evidence_path = ROOT / change["evidencePath"]
+            self.assertEqual(change["evidenceSha256"], sha256(evidence_path))
+            extraction = json.loads(evidence_path.read_text(encoding="utf-8"))
+            self.assertIn(change["path"], extraction["productionChangePaths"])
+            extraction_files = {entry["path"]: entry["sha256"] for entry in extraction["ownedFiles"]}
+            self.assertEqual(extraction_files[change["path"]], sha256(ROOT / change["path"]))
+            authorized_changes[change["path"]] = change
         referenced_paths = {
             reference["path"]
             for entry in self.data["owners"]
@@ -119,6 +129,8 @@ class ArchitectureOwnerResponsibilityMapTests(unittest.TestCase):
         for relative_path in sorted(referenced_paths):
             self.assertEqual(evidence[relative_path], sha256(ROOT / relative_path), relative_path)
             if relative_path.startswith("Assets/Tests/"):
+                continue
+            if relative_path in authorized_changes:
                 continue
             diff = subprocess.run(
                 ["git", "diff", "--exit-code", baseline["commit"], "--", relative_path],
@@ -138,12 +150,17 @@ class ArchitectureOwnerResponsibilityMapTests(unittest.TestCase):
         candidate_paths: set[str] = set()
         for entry in self.data["owners"]:
             for candidate in entry["boundedExtractionCandidates"]:
+                status = candidate.get("status", "proposed")
+                self.assertIn(status, {"proposed", "completed"})
                 output_paths = candidate.get("proposedOutputPaths")
                 self.assertIsInstance(output_paths, list)
                 self.assertTrue(output_paths)
                 self.assertEqual(candidate.get("requiredExpandedAllowedPaths"), output_paths)
                 for field in ("authorityBoundary", "proposedUpdateOrder", "cleanupAuthority"):
                     self.assertTrue(candidate.get(field), f"{entry['path']}:{field}")
+                if status == "completed":
+                    evidence_path = ROOT / candidate["evidencePath"]
+                    self.assertEqual(candidate["evidenceSha256"], sha256(evidence_path))
                 for output_path in output_paths:
                     self.assertTrue(output_path.startswith("Assets/Game/Scripts/"), output_path)
                     self.assertTrue(output_path.endswith(".cs"), output_path)

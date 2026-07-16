@@ -337,7 +337,7 @@ namespace Game.Runtime
                 }
 
                 DynamicBuffer<UnitTransportPassengerElement> passengers = PassengerLookup[transport];
-                byte passengerKind = ResolvePassengerKind(boarding.PassengerKind);
+                byte passengerKind = UnitTransportBoardingCapacityRules.NormalizePassengerKind(boarding.PassengerKind);
                 int cargoWeight = math.max(0, boarding.CargoWeight);
                 int capacity = ResolvePassengerCapacity(transport, passengerKind);
                 int occupied = CountPassengerOccupancy(transport, passengers, passengerKind);
@@ -393,21 +393,15 @@ namespace Game.Runtime
 
             private int ResolvePassengerCapacity(Entity transport, byte passengerKind)
             {
-                if (passengerKind == UnitTransportPassengerKind.Vehicle)
-                {
-                    return TransportCargoCapacityLookup.HasComponent(transport)
-                        ? math.max(0, TransportCargoCapacityLookup[transport].VehicleCapacity)
-                        : 0;
-                }
-
-                int soldierCapacity = math.max(0, TransportCapacityLookup[transport].SoldierCapacity);
-                if (TransportCargoCapacityLookup.HasComponent(transport) &&
-                    TransportCargoCapacityLookup[transport].SoldierCapacity > 0)
-                {
-                    soldierCapacity = math.max(0, TransportCargoCapacityLookup[transport].SoldierCapacity);
-                }
-
-                return soldierCapacity;
+                bool hasCargoCapacity = TransportCargoCapacityLookup.HasComponent(transport);
+                UnitTransportCargoCapacity cargoCapacity = hasCargoCapacity
+                    ? TransportCargoCapacityLookup[transport]
+                    : default;
+                return UnitTransportBoardingCapacityRules.ResolveCapacity(
+                    TransportCapacityLookup[transport],
+                    hasCargoCapacity,
+                    cargoCapacity,
+                    passengerKind);
             }
 
             private int CountPassengerOccupancy(Entity transport, DynamicBuffer<UnitTransportPassengerElement> passengers, byte passengerKind)
@@ -416,33 +410,29 @@ namespace Game.Runtime
                 for (int i = 0; i < passengers.Length; i++)
                 {
                     Entity passenger = passengers[i].Passenger;
-                    if (!EntityStorageInfoLookup.Exists(passenger))
-                        continue;
-
-                    byte storedKind = UnitTransportPassengerKind.Soldier;
-                    if (TransportCargoPassengerLookup.HasComponent(passenger) &&
-                        TransportCargoPassengerLookup[passenger].Transport == transport)
+                    bool passengerExists = EntityStorageInfoLookup.Exists(passenger);
+                    bool hasCargoPassenger = passengerExists && TransportCargoPassengerLookup.HasComponent(passenger);
+                    UnitTransportCargoPassenger cargoPassenger = hasCargoPassenger
+                        ? TransportCargoPassengerLookup[passenger]
+                        : default;
+                    bool hasBoardingTarget = passengerExists && BoardingTargetLookup.HasComponent(passenger);
+                    UnitTransportBoardingTarget boardingTarget = hasBoardingTarget
+                        ? BoardingTargetLookup[passenger]
+                        : default;
+                    if (UnitTransportBoardingCapacityRules.CountsTowardOccupancy(
+                            transport,
+                            passengerKind,
+                            passengerExists,
+                            hasCargoPassenger,
+                            cargoPassenger,
+                            hasBoardingTarget,
+                            boardingTarget))
                     {
-                        storedKind = ResolvePassengerKind(TransportCargoPassengerLookup[passenger].PassengerKind);
-                    }
-                    else if (BoardingTargetLookup.HasComponent(passenger) &&
-                             BoardingTargetLookup[passenger].Transport == transport)
-                    {
-                        storedKind = ResolvePassengerKind(BoardingTargetLookup[passenger].PassengerKind);
-                    }
-
-                    if (storedKind == passengerKind)
                         count++;
+                    }
                 }
 
                 return count;
-            }
-
-            private static byte ResolvePassengerKind(byte passengerKind)
-            {
-                return passengerKind == UnitTransportPassengerKind.Vehicle
-                    ? UnitTransportPassengerKind.Vehicle
-                    : UnitTransportPassengerKind.Soldier;
             }
 
             private bool IsTransportLandedForBoarding(Entity transport)
@@ -543,22 +533,15 @@ namespace Game.Runtime
 
         private static int ResolvePassengerCapacity(EntityManager em, Entity transport, byte passengerKind)
         {
-            if (passengerKind == UnitTransportPassengerKind.Vehicle)
-            {
-                return em.HasComponent<UnitTransportCargoCapacity>(transport)
-                    ? math.max(0, em.GetComponentData<UnitTransportCargoCapacity>(transport).VehicleCapacity)
-                    : 0;
-            }
-
-            int soldierCapacity = math.max(0, em.GetComponentData<UnitTransportCapacity>(transport).SoldierCapacity);
-            if (em.HasComponent<UnitTransportCargoCapacity>(transport))
-            {
-                UnitTransportCargoCapacity cargoCapacity = em.GetComponentData<UnitTransportCargoCapacity>(transport);
-                if (cargoCapacity.SoldierCapacity > 0)
-                    soldierCapacity = math.max(0, cargoCapacity.SoldierCapacity);
-            }
-
-            return soldierCapacity;
+            bool hasCargoCapacity = em.HasComponent<UnitTransportCargoCapacity>(transport);
+            UnitTransportCargoCapacity cargoCapacity = hasCargoCapacity
+                ? em.GetComponentData<UnitTransportCargoCapacity>(transport)
+                : default;
+            return UnitTransportBoardingCapacityRules.ResolveCapacity(
+                em.GetComponentData<UnitTransportCapacity>(transport),
+                hasCargoCapacity,
+                cargoCapacity,
+                passengerKind);
         }
 
         private static int CountPassengerOccupancy(EntityManager em, Entity transport, byte passengerKind)
@@ -571,33 +554,29 @@ namespace Game.Runtime
             for (int i = 0; i < passengers.Length; i++)
             {
                 Entity passenger = passengers[i].Passenger;
-                if (!em.Exists(passenger))
-                    continue;
-
-                byte storedKind = UnitTransportPassengerKind.Soldier;
-                if (em.HasComponent<UnitTransportCargoPassenger>(passenger) &&
-                    em.GetComponentData<UnitTransportCargoPassenger>(passenger).Transport == transport)
+                bool passengerExists = em.Exists(passenger);
+                bool hasCargoPassenger = passengerExists && em.HasComponent<UnitTransportCargoPassenger>(passenger);
+                UnitTransportCargoPassenger cargoPassenger = hasCargoPassenger
+                    ? em.GetComponentData<UnitTransportCargoPassenger>(passenger)
+                    : default;
+                bool hasBoardingTarget = passengerExists && em.HasComponent<UnitTransportBoardingTarget>(passenger);
+                UnitTransportBoardingTarget boardingTarget = hasBoardingTarget
+                    ? em.GetComponentData<UnitTransportBoardingTarget>(passenger)
+                    : default;
+                if (UnitTransportBoardingCapacityRules.CountsTowardOccupancy(
+                        transport,
+                        passengerKind,
+                        passengerExists,
+                        hasCargoPassenger,
+                        cargoPassenger,
+                        hasBoardingTarget,
+                        boardingTarget))
                 {
-                    storedKind = ResolvePassengerKind(em.GetComponentData<UnitTransportCargoPassenger>(passenger).PassengerKind);
-                }
-                else if (em.HasComponent<UnitTransportBoardingTarget>(passenger) &&
-                         em.GetComponentData<UnitTransportBoardingTarget>(passenger).Transport == transport)
-                {
-                    storedKind = ResolvePassengerKind(em.GetComponentData<UnitTransportBoardingTarget>(passenger).PassengerKind);
-                }
-
-                if (storedKind == passengerKind)
                     count++;
+                }
             }
 
             return count;
-        }
-
-        private static byte ResolvePassengerKind(byte passengerKind)
-        {
-            return passengerKind == UnitTransportPassengerKind.Vehicle
-                ? UnitTransportPassengerKind.Vehicle
-                : UnitTransportPassengerKind.Soldier;
         }
     }
 }

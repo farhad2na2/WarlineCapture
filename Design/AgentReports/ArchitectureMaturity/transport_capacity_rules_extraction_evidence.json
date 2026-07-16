@@ -1,0 +1,83 @@
+{
+  "artifactId": "am012-transport-capacity-rules-extraction-evidence-v1",
+  "schemaVersion": 1,
+  "sourceBaseline": {
+    "branch": "main",
+    "commit": "50e574c87f09730148982d5dacb9269005e7d626",
+    "tree": "48c755aec9847fe762a25975c64fc69a5b3c2c48"
+  },
+  "productionChangePaths": [
+    "Assets/Game/Scripts/Systems/UnitTransportBoardingCapacityRules.cs",
+    "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs"
+  ],
+  "ownedFiles": [
+    {
+      "path": "Assets/Game/Scripts/Systems/UnitTransportBoardingCapacityRules.cs",
+      "sha256": "911e730307ef6360ca9a8b6716b72d71a2c38f906edcbfecb3a9098f0f685683"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs",
+      "sha256": "3a37f081d9102919da2632c4f26cbbab0a4a5210eeeffe97529ca09cf75e535f"
+    },
+    {
+      "path": "Assets/Tests/Editor/UnitTransportBoardingCapacityRulesTests.cs",
+      "sha256": "cc287c631535d1bc8ab7104c64bcfb46f72f20e27bfc6e79f315e2de1b5d8c9c"
+    }
+  ],
+  "validatorAuthority": {
+    "path": "Tools/CI/tests/test_architecture_transport_capacity_rules_evidence.py",
+    "sha256": "980494f1f5f7d3749ad1bfea4b24f883f15e92701a97f1304ce168bc683bbec1"
+  },
+  "authorityBoundary": {
+    "extractedAuthority": "None. UnitTransportBoardingCapacityRules is stateless and returns normalized kind, capacity, or occupancy classification from explicit unmanaged values.",
+    "retainedAuthority": "UnitTransportBoardingSystem retains query and lookup ownership, job scheduling, decision order, main-thread stale-decision revalidation, diagnostics, ECB playback, and passenger-state mutation handoff.",
+    "updateOrder": "CollectBoardingDecisionsJob and the existing main-thread ReadyToBoard revalidation retain their original positions and invoke the same rules at those call sites.",
+    "lifecycle": "The rules type owns no World state, entities, containers, subscriptions, pooled objects, requests, or cleanup."
+  },
+  "directRuleTests": [
+    "NormalizePassengerKind_MapsOnlyVehicleToVehicle",
+    "ResolveCapacity_UsesCargoVehicleSlotsAndClampsNegativeValues",
+    "ResolveCapacity_UsesPositiveCargoSoldierOverrideOtherwiseLegacyCapacity",
+    "CountsTowardOccupancy_RejectsMissingPassenger",
+    "CountsTowardOccupancy_PrefersMatchingCargoPassengerMetadata",
+    "CountsTowardOccupancy_UsesMatchingBoardingTargetThenDefaultsToSoldier"
+  ],
+  "unityValidations": [
+    {
+      "id": "capacity-rules",
+      "command": "Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/am012-post-rebase-compile.log -- -quit -executeMethod UnitTransportBoardingCapacityRulesTests.RunArchitectureCapacityRulesValidation",
+      "result": "Passed",
+      "passedTests": 6,
+      "compilerErrors": 0
+    },
+    {
+      "id": "transport-characterization",
+      "command": "Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/am012-transport-characterization.log -- -quit -executeMethod UnitTransportValidationTests.RunBoardingArchitectureCharacterizationValidation",
+      "result": "Passed",
+      "passedTests": 6,
+      "compilerErrors": 0
+    },
+    {
+      "id": "transport-full-regression",
+      "command": "Tools/CI/invoke_unity_macos.sh --timeout 900 --log /private/tmp/am012-transport-full.log -- -quit -executeMethod UnitTransportValidationTests.RunBatchValidation",
+      "result": "Passed",
+      "passedTests": 88,
+      "compilerErrors": 0
+    },
+    {
+      "id": "architecture-naming-contract",
+      "command": "Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/am012-architecture-contract.log -- -quit -executeMethod ScriptArchitectureAlignmentContractTests.RunBroadShellValidation",
+      "result": "Passed",
+      "passedTests": 1,
+      "compilerErrors": 0
+    }
+  ],
+  "performanceEvidence": {
+    "command": "Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/am012-transport-performance.log -- -quit -executeMethod TransportBoardingPerformanceValidation.RunBatchValidation",
+    "result": "Passed",
+    "baselineReportPath": "Design/AgentReports/ArchitectureMaturity/am011_transport_boarding_performance.json",
+    "baselineReportSha256": "a4d0ecb3cdb1b584a87f7b33f873c4bb0c4253a7a4857da4cec6041f222a84a8",
+    "currentReportPath": "Design/AgentReports/ArchitectureMaturity/am012_transport_boarding_performance.json",
+    "currentReportSha256": "96f6efdf35b061016ac96bdd5f7bce952757a03fc6ea1f7c8c0f711e78995515"
+  }
+}

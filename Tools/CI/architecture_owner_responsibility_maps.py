@@ -74,20 +74,25 @@ def render(data: dict, json_sha256: str) -> str:
 
         lines.extend(["", "### Bounded Extraction Candidates", ""])
         for candidate in owner["boundedExtractionCandidates"]:
+            status = candidate.get("status", "proposed")
+            output_label = "Output paths" if status == "completed" else "Proposed output paths"
             lines.extend([
                 f"- {candidate['statement']} Evidence: {format_references(candidate['references'])}.",
-                "  - Proposed output paths: " + ", ".join(f"`{path}`" for path in candidate["proposedOutputPaths"]),
+                f"  - Status: `{status}`",
+                f"  - {output_label}: " + ", ".join(f"`{path}`" for path in candidate["proposedOutputPaths"]),
                 "  - Required expanded allowlist: " + ", ".join(f"`{path}`" for path in candidate["requiredExpandedAllowedPaths"]),
                 f"  - Authority boundary: {candidate['authorityBoundary']}",
                 f"  - Proposed update order: {candidate['proposedUpdateOrder']}",
                 f"  - Cleanup authority: {candidate['cleanupAuthority']}",
             ])
+            if status == "completed":
+                lines.append(f"  - Completion evidence: `{candidate['evidencePath']}` (`{candidate['evidenceSha256']}`)")
 
     lines.extend([
         "",
-        "## AM-011 Gate",
+        "## Extraction Gate Status",
         "",
-        "AM-011 must add characterization coverage for every recorded failure/edge behavior and bounded extraction candidate before AM-012 edits production code. Existing focused performance fixtures must be recaptured after characterization and before extraction.",
+        "AM-011 characterization is accepted. Each completed extraction must retain exact evidence identity, focused behavior coverage, full regression coverage, and a fresh zero-allocation performance capture before the next production slice begins.",
         "",
     ])
     return "\n".join(lines)

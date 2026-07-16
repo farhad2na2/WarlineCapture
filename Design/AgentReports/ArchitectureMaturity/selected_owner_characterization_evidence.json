@@ -6,6 +6,10 @@
     "commit": "0108927d29b85c332bba3d5ea74264f7c60d8a4d",
     "tree": "abb8b8343263edb4042d76ccba588bb067930163"
   },
+  "acceptedEvidence": {
+    "commit": "d2690f6cc14334c9179fa0550db8a16d753ff22a",
+    "tree": "562145cea01d6a75146fa616b2af00aa061e4139"
+  },
   "productionOwners": [
     {
       "path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs",
@@ -33,7 +37,7 @@
   ],
   "validatorAuthority": {
     "path": "Tools/CI/tests/test_architecture_owner_characterization_evidence.py",
-    "sha256": "5c0590730fefd5041dc3c09b459fd3fa2ab21253a6d13a7d3fcd67a742af81b4"
+    "sha256": "c57d838b2b2ea2b2b63094a043b1dc792ae22f9ff0bd9c751f7aca429782b919"
   },
   "characterizationCases": [
     {

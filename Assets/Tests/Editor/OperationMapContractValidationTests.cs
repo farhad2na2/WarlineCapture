@@ -15,6 +15,12 @@ public sealed class OperationMapContractValidationTests
         ScenarioSetupConfig scenario = CreateScenario(
             "scenario.skirmish.desert_patrol",
             map.OperationMapId);
+        Set(scenario, "requiredAnchors", new[]
+        {
+            new ScenarioAnchorRequirementConfig(
+                "anchor.skirmish.objective.alpha",
+                OperationMapAnchorKind.Objective)
+        });
 
         Assert.That(
             OperationMapContractValidation.TryValidate(
@@ -24,6 +30,65 @@ public sealed class OperationMapContractValidationTests
                 out string error),
             Is.True,
             error);
+    }
+
+    [Test]
+    public void ScenarioRequiredAnchorMustExistOnResolvedMap()
+    {
+        OperationMapDefinition map = CreateValidDefinition("opmap.skirmish.desert_base_01");
+        ScenarioSetupConfig scenario = CreateScenario(
+            "scenario.skirmish.desert_patrol",
+            map.OperationMapId);
+        Set(scenario, "requiredAnchors", new[]
+        {
+            new ScenarioAnchorRequirementConfig(
+                "anchor.skirmish.objective.missing",
+                OperationMapAnchorKind.Objective)
+        });
+
+        Assert.That(TryValidate(map, scenario, out string error), Is.False);
+        StringAssert.Contains("requires missing anchor", error);
+    }
+
+    [Test]
+    public void ScenarioRequiredAnchorKindMustMatchResolvedMap()
+    {
+        OperationMapDefinition map = CreateValidDefinition("opmap.skirmish.desert_base_01");
+        ScenarioSetupConfig scenario = CreateScenario(
+            "scenario.skirmish.desert_patrol",
+            map.OperationMapId);
+        Set(scenario, "requiredAnchors", new[]
+        {
+            new ScenarioAnchorRequirementConfig(
+                "anchor.skirmish.objective.alpha",
+                OperationMapAnchorKind.Spawn)
+        });
+
+        Assert.That(TryValidate(map, scenario, out string error), Is.False);
+        StringAssert.Contains("declares Objective", error);
+    }
+
+    [Test]
+    public void ScenarioRequiredAnchorsRejectDuplicatesAndInvalidKinds()
+    {
+        ScenarioSetupConfig scenario = CreateScenario(
+            "scenario.skirmish.desert_patrol",
+            "opmap.skirmish.desert_base_01");
+        ScenarioAnchorRequirementConfig valid = new(
+            "anchor.skirmish.objective.alpha",
+            OperationMapAnchorKind.Objective);
+        Set(scenario, "requiredAnchors", new[] { valid, valid });
+        Assert.That(scenario.TryValidate(out string duplicateError), Is.False);
+        StringAssert.Contains("duplicate required anchor", duplicateError);
+
+        Set(scenario, "requiredAnchors", new[]
+        {
+            new ScenarioAnchorRequirementConfig(
+                "anchor.skirmish.objective.alpha",
+                OperationMapAnchorKind.None)
+        });
+        Assert.That(scenario.TryValidate(out string kindError), Is.False);
+        StringAssert.Contains("must declare a kind", kindError);
     }
 
     [Test]
@@ -238,6 +303,16 @@ public sealed class OperationMapContractValidationTests
             map.ContentHash,
             map.GeneratedMetadataHash);
     }
+
+    private static bool TryValidate(
+        OperationMapDefinition map,
+        ScenarioSetupConfig scenario,
+        out string error) =>
+        OperationMapContractValidation.TryValidate(
+            new[] { map },
+            new[] { scenario },
+            new[] { EvidenceFor(map) },
+            out error);
 
     private static void Set<T>(object target, string fieldName, T value)
     {

@@ -136,7 +136,7 @@ namespace Game.Configs
                     return false;
                 }
 
-                if (!scenario.TryValidateIdentity(out error))
+                if (!scenario.TryValidate(out error))
                 {
                     error = $"Scenario setup '{scenario.ScenarioId ?? "<null>"}' is invalid: {error}";
                     return false;
@@ -151,27 +151,76 @@ namespace Game.Configs
                     }
                 }
 
-                if (!ContainsOperationMap(definitions, scenario.OperationMapId))
+                int operationMapIndex = FindOperationMapIndex(definitions, scenario.OperationMapId);
+                if (operationMapIndex < 0)
                 {
                     error = $"Scenario '{scenario.ScenarioId}' references unresolved operation-map id " +
                             $"'{scenario.OperationMapId}'.";
                     return false;
                 }
+
+                if (!TryValidateRequiredAnchors(definitions[operationMapIndex], scenario, out error))
+                    return false;
             }
 
             error = null;
             return true;
         }
 
-        private static bool ContainsOperationMap(OperationMapDefinition[] definitions, string operationMapId)
+        private static int FindOperationMapIndex(OperationMapDefinition[] definitions, string operationMapId)
         {
             for (int index = 0; index < definitions.Length; index++)
             {
                 if (string.Equals(definitions[index].OperationMapId, operationMapId, StringComparison.Ordinal))
-                    return true;
+                    return index;
             }
 
-            return false;
+            return -1;
+        }
+
+        private static bool TryValidateRequiredAnchors(
+            OperationMapDefinition definition,
+            ScenarioSetupConfig scenario,
+            out string error)
+        {
+            ReadOnlySpan<OperationMapAnchorConfig> mapAnchors = definition.Anchors;
+            ReadOnlySpan<ScenarioAnchorRequirementConfig> requirements = scenario.RequiredAnchors;
+            for (int requirementIndex = 0; requirementIndex < requirements.Length; requirementIndex++)
+            {
+                ScenarioAnchorRequirementConfig requirement = requirements[requirementIndex];
+                bool found = false;
+                for (int anchorIndex = 0; anchorIndex < mapAnchors.Length; anchorIndex++)
+                {
+                    if (!string.Equals(
+                            requirement.AnchorId,
+                            mapAnchors[anchorIndex].AnchorId,
+                            StringComparison.Ordinal))
+                    {
+                        continue;
+                    }
+
+                    found = true;
+                    if (mapAnchors[anchorIndex].Kind != requirement.Kind)
+                    {
+                        error = $"Scenario '{scenario.ScenarioId}' requires anchor " +
+                                $"'{requirement.AnchorId}' as {requirement.Kind}, but operation map " +
+                                $"'{definition.OperationMapId}' declares {mapAnchors[anchorIndex].Kind}.";
+                        return false;
+                    }
+
+                    break;
+                }
+
+                if (!found)
+                {
+                    error = $"Scenario '{scenario.ScenarioId}' requires missing anchor " +
+                            $"'{requirement.AnchorId}' on operation map '{definition.OperationMapId}'.";
+                    return false;
+                }
+            }
+
+            error = null;
+            return true;
         }
 
         private static int FindEvidenceIndex(OperationMapContractEvidence[] evidence, string operationMapId)

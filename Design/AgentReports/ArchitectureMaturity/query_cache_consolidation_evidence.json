@@ -6,6 +6,10 @@
     "commit": "64b7ff7d5b8c06dbd51439d7e1f12bb48762dd4a",
     "tree": "fc44b1e1129ea60aecbd9bdf95f9f5326d4ecf7b"
   },
+  "acceptedEvidence": {
+    "commit": "664ae7fa4544699faad7da01b11db60434e39088",
+    "tree": "3d9f539d83f6771103d0470b2024fd3c4757b499"
+  },
   "productionChangePaths": [
     "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
     "Assets/Game/Scripts/Systems/BuildingResourceStorageQueryCache.cs",

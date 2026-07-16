@@ -109,12 +109,15 @@ Release-only categories are reported separately and never averaged into a premat
 
 | Field | Status |
 |---|---|
-| Checklist complete | `12 / 86` (`14.0%`) |
-| Core Architecture Lane | `12 / 68` (`17.6%`); active |
+| Checklist complete | `13 / 86` (`15.1%`) |
+| Core Architecture Lane | `13 / 68` (`19.1%`); active |
 | Release Certification Lane | `0 / 18` (`0.0%`); deferred |
 | Program state | Core Architecture Lane active; release work inactive |
 | Current phase | Phase 1 - Responsibility And Decomposition Hardening |
-| Current task | `AM-013` ready, not yet claimed |
+| Current task | `AM-014` ready, not yet claimed |
+| Blockers | None for `AM-014`; release-only device, thermal, cold/warm, and sustained certification remain intentionally deferred |
+| Latest validation | AM-013: Unity `3 / 3`, `13 / 13`, `52 / 52`, and `1 / 1` with zero compiler errors; Python `5 / 5` focused and `59 / 59` integrated; `git diff --check` passed |
+| Latest evidence | `query_cache_consolidation_evidence.json`, accepted implementation commit `664ae7fa4544699faad7da01b11db60434e39088` |
 | Core entry baseline | Phase 0 accepted by `AM-001` through `AM-008`; exact-identity assembly and bounded Editor Match evidence are current at `9a0aa14252e6559680328e520d26c16bfc7b444e`; the dashboard required gate is accepted; the entry rating and owned deltas are published in `entry_baseline_report.md` |
 | Release entry review | Deferred until `pre_release_performance_certification_backlog.md` activates |
 | Architecture rating | Evidence-backed Phase 0 entry rating `8.5 / 10`; planning baseline only, not a `9.5` claim |
@@ -213,7 +216,7 @@ Reduce change risk in oversized systems without replacing the architecture or ch
 - [x] `AM-010` Write a responsibility map for each selected owner, including inputs, outputs, state authority, update order, side effects, tests, and allowed dependencies.
 - [x] `AM-011` Add missing characterization tests before extracting behavior from any selected owner.
 - [x] `AM-012` Extract one capability or ECS phase at a time behind existing contracts, preserving system order and avoiding a new coordinator-shaped helper.
-- [ ] `AM-013` Consolidate duplicated query-cache, command-queue, fixed-capacity scratch, and projection-cache mechanics only where one narrow shared contract removes real duplication.
+- [x] `AM-013` Consolidate duplicated query-cache, command-queue, fixed-capacity scratch, and projection-cache mechanics only where one narrow shared contract removes real duplication.
 - [ ] `AM-014` Add update-order and behavior-equivalence tests for every decomposition that crosses a system or assembly boundary.
 - [ ] `AM-015` Complete measured decomposition of the highest-risk remaining UI/presentation helper after its characterization coverage is green.
 - [ ] `AM-016` Update source-growth and responsibility guardrails so extracted files cannot regrow into equivalent god owners elsewhere.
@@ -605,3 +608,17 @@ The implementing agent works directly on `main`, owns the bounded substantive an
 - Independent review: the initial review found a production-scope proof gap and one stale landed-state reference. Exact pre/post-acceptance production-diff enforcement and the corrected reference resolved both; final rereview returned `PASS`.
 - Exclusions preserved: operation-map, FirstLaunch, audio, UI visual-lock, scenes, prefabs, packages, and `ProjectSettings` were not edited by AM-012. The disjoint operation-map commit was rebased intact and became the extraction baseline.
 - Next task: `AM-013` audits duplicated query-cache, command-queue, fixed-capacity scratch, and projection-cache mechanics and consolidates only a narrow contract with measured duplication and no new broad owner.
+
+### 2026-07-16 - AM-013 - World-scoped component query-cache consolidation
+
+- Workflow path: direct commits to `main`; no branch, worktree, or PR workflow.
+- Accepted implementation commit: `664ae7fa4544699faad7da01b11db60434e39088`, tree `3d9f539d83f6771103d0470b2024fd3c4757b499`; source baseline `64b7ff7d5b8c06dbd51439d7e1f12bb48762dd4a`, tree `fc44b1e1129ea60aecbd9bdf95f9f5326d4ecf7b`.
+- Result: the two identical one-component, World-bound query wrappers were replaced by `WorldScopedComponentQueryCache<T>`. The faction-resource consumer preserves read/write storage access, while the hauler bridge preserves read-only move-order access. Both duplicate wrapper types and their metadata were removed.
+- Retained boundaries: domain command queues remain separate because payload, ownership, consumption, failure, and overflow contracts differ. Fixed-capacity scratch remains tied to its owning query/budget invariants. Projection caches remain separate because their presentation lifecycles and invalidation keys differ. No generic cache service, static World/query, managed ECS system, coordinator-shaped helper, or additional state authority was introduced.
+- Behavior proof: the shared cache directly verifies read-only matching, read/write matching, same-World reuse, and different-World rebinding. Existing faction-resource and building-resource suites preserve the affected consumers' behavior.
+- Unity validation: shared cache `3 / 3`; faction resource `13 / 13`; building resource production `52 / 52`; broad architecture contract `1 / 1`; zero compiler errors in every accepted run.
+- Evidence: `Design/AgentReports/ArchitectureMaturity/query_cache_consolidation_evidence.json` and `Tools/CI/tests/test_architecture_query_cache_consolidation_evidence.py` bind exact source/test hashes, exact production scope, deleted wrappers, consumer access modes, retained-separate decisions, and Unity pass counts.
+- Validation: five focused AM-013 evidence tests and 59 integrated ownership/lifecycle/ranking/dashboard/responsibility/characterization/extraction/consolidation tests passed; Python compilation and `git diff --check` passed. A new performance capture was not required because query creation, World rebinding, and reuse behavior are unchanged; AM-017 owns the post-Phase-1 canonical recapture.
+- Focused review: direct comparison against both deleted wrappers confirmed semantic equivalence, exact access modes, and no broad/static owner. Delegated reviewers produced no actionable handoff, so acceptance used the bounded local review plus the fail-closed evidence suite.
+- Exclusions preserved: operation-map, FirstLaunch, audio, UI visual-lock, scenes, prefabs, packages, and `ProjectSettings` were not edited by AM-013.
+- Next task: `AM-014` adds update-order and behavior-equivalence tests for every Phase 1 decomposition that crossed a system or assembly boundary. The AM-012 capacity-rules extraction remains within the existing system/assembly; AM-013 changed a helper boundary only, so the audit must explicitly record whether any additional test is required rather than inventing a cross-system claim.

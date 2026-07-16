@@ -1,3 +1,4 @@
 * text=auto eol=lf
 
 Assets/Game/Scenes/Generated/*.unity filter=lfs diff=lfs merge=lfs -text
+Assets/Game/Scenes/OperationMaps/**/*.unity filter=lfs diff=lfs merge=lfs -text

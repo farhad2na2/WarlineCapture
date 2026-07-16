@@ -1,0 +1,30 @@
+using Game.Editor;
+using NUnit.Framework;
+using UnityEditor;
+
+public sealed class OperationMapCurrentCompatibilitySceneStagerTests
+{
+    [Test]
+    public void StagedSceneUsesCanonicalPathAndDistinctGuid()
+    {
+        Assert.That(
+            OperationMapCurrentCompatibilitySceneStager.DestinationScenePath,
+            Is.EqualTo(
+                "Assets/Game/Scenes/OperationMaps/Skirmish/" +
+                "opmap_skirmish_desert_base_01.unity"));
+        Assert.That(
+            AssetDatabase.AssetPathToGUID(OperationMapCurrentCompatibilitySceneStager.SourceScenePath),
+            Is.Not.EqualTo(
+                AssetDatabase.AssetPathToGUID(
+                    OperationMapCurrentCompatibilitySceneStager.DestinationScenePath)));
+    }
+
+    [Test]
+    public void StagedSceneRemainsExactSerializedDuplicate()
+    {
+        Assert.That(
+            OperationMapCurrentCompatibilitySceneStager.TryValidate(out string error),
+            Is.True,
+            error);
+    }
+}

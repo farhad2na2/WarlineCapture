@@ -699,7 +699,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 28% (49/177 checklist items complete).
+Overall implementation progress: 28% (50/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -712,7 +712,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 | 3. Current-map compatibility registration | Complete / shared | 10 | 10 | 100% | Current identities/definition, authored behavior, schema-v1 read compatibility, runtime activation/teardown, deterministic presentation, and Android chunk resolution are accepted. |
 | 4. Non-destructive scene ownership split | In progress / shared priority | 10 | 14 | 71% | The staged scene has fail-closed spatial/content validation; the original Match route remains validated and revision `d5784dcfa` plus the rollback recipe freeze the pre-cutover recovery boundary. |
 | 5. Runtime selection, loading, and teardown | In progress / shared contracts | 1 | 14 | 7% | Pure readiness/failure/teardown data contracts only; concrete loading is later. |
-| 6. Metadata, camera, minimap, and movement binding | In progress / shared | 6 | 12 | 50% | Scenario-required anchors validate against map metadata; camera bounds/poses and the current axis-aligned minimap projection resolve from active-map metadata with compatibility fallbacks; editor overlays and warmed allocation-free lookup coverage are approved. |
+| 6. Metadata, camera, minimap, and movement binding | In progress / shared | 7 | 12 | 58% | Scenario-required anchors validate against map metadata; camera bounds/poses, ARIA Show Me, and the current axis-aligned minimap projection resolve from active-map metadata with compatibility fallbacks; editor overlays and warmed allocation-free lookup coverage are approved. |
 | 7. M01 operation-map slice | Later / shared contracts only | 0 | 10 | 0% | Map-neutral ids/anchors may proceed; physical rollout remains gated. |
 | 8. Editor-time texture/mask generator | Later / editor direction only | 0 | 12 | 0% | Implement only if the editor-authored map direction is selected. |
 | 9. Mission and Skirmish scenario rollout | Later / shared contracts only | 0 | 10 | 0% | Scenario-to-map identity may proceed; physical rollout remains later. |
@@ -900,7 +900,7 @@ Exit criteria:
 - [x] Bind planning, battle, and initial camera transforms from typed camera ids/anchors. See `../AgentReports/2026-07-16_operation_map_camera_pose_binding.md`.
 - [x] Bind minimap projection and cached raster data from the active map. See `../AgentReports/2026-07-16_operation_map_minimap_projection_binding.md`.
 - [ ] Bind objective focus/jump to typed operation-map anchor ids.
-- [ ] Bind ARIA `Show Me` and camera intents to typed operation-map anchors.
+- [x] Bind ARIA `Show Me` and camera intents to typed operation-map anchors. See `../AgentReports/2026-07-16_operation_map_aria_objective_anchor_binding.md`.
 - [ ] Bind friendly/hostile deployment and spawn anchors.
 - [ ] Bind runway and helipad anchors for taxi, takeoff, return, and landing behavior.
 - [ ] Bind blocker/path/build metadata to movement and placement validation.
@@ -1103,6 +1103,7 @@ Exit criteria:
 | 2026-07-16 | Current operation-map authored behavior acceptance | `../AgentReports/2026-07-16_current_operation_map_authored_behavior_validation.md`; tank regression `1 / 1`; authored behavior `102 / 103` plus isolated staging `10 / 10`; static structure/source hiding `2 / 2`; lifecycle `1 / 1`; final Android resolver `23 / 23`; architecture/contracts `57 / 60` | Passed; unrelated source-growth debt recorded | Moved one Faction 1 authored USA tank one grid cell onto a fully traversable 3x3 footprint, regenerated both 29-entry vehicle configs, advanced compatibility content to version 2, and refreshed only the canonical manifest dependency identity. All 514 chunks and 16,542 presentation sources were reused with zero chunk writes/deletes. The three architecture failures remain the separately recorded `RuntimeCity*` R&D authorization debt. |
 | 2026-07-16 | Current operation-map compatibility checkpoint | `../AgentReports/2026-07-16_current_operation_map_compatibility_checkpoint.md`; lifecycle `1 / 1`; static structure `2 / 2`; isolated staged scene `10 / 10`; Android resolver `23 / 23`; checkpoint revision `5c86a3ea2` | Passed | The original Match route remains complete and functional while the distinct-GUID extracted scene stays staged. This does not approve staged-map baking, loading/unloading, Addressables, root removal, or atomic shell cutover. |
 | 2026-07-16 | Pre-cutover rollback checkpoint | Revision `d5784dcfa`; `operation_map_scene_split_rollback_recipe.md`; accepted canonical scene/config/subscene/manifest/build-setting identities | Passed | Freezes the exact recovery boundary before any future root removal or loader cutover. The M01 runtime-generation prototype remains outside operation-map checkpoint ownership. |
+| 2026-07-16 | ARIA operation-map objective anchor binding | `../AgentReports/2026-07-16_operation_map_aria_objective_anchor_binding.md`; assistant `28 / 28`; camera/minimap ownership `33 / 33`; Phase 0 ownership `26 / 26`; source-growth/naming `24 / 24`; two byte-identical evidence runs | Passed | Carries a stable objective anchor id through unmanaged read models and resolves it from the active immutable map blob only when a Show Me request is consumed. The separate objective-list focus/jump row remains open. |
 
 ## Open Decisions
 

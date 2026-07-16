@@ -282,22 +282,7 @@ namespace Game.UI.Shell.Ecs
 
         private static AssistantGoalReadModelElement ToGoal(MatchObjectiveRuntimeElement objective, uint sourceVersion)
         {
-            return new AssistantGoalReadModelElement
-            {
-                GoalId = objective.GoalId,
-                SourceVersion = (int)sourceVersion,
-                ObjectiveId = objective.ObjectiveId,
-                State = (AssistantGoalState)objective.State,
-                Priority = (AssistantMessagePriority)math.min((int)AssistantMessagePriority.Critical, (int)objective.Priority),
-                Title = objective.Title,
-                Body = objective.Body,
-                TargetEntity = objective.TargetEntity,
-                TargetCell = objective.TargetCell,
-                WorldPosition = objective.WorldPosition,
-                IsPrimary = objective.IsPrimary,
-                HasTargetCell = objective.HasTargetCell,
-                HasWorldPosition = objective.HasWorldPosition
-            };
+            return AssistantObjectiveProjectionUtility.ToGoal(in objective, sourceVersion);
         }
 
         private static bool GoalsMatch(
@@ -314,6 +299,7 @@ namespace Game.UI.Shell.Ecs
                 AssistantGoalReadModelElement current = goals[i];
                 if (current.GoalId != source.GoalId ||
                     !current.ObjectiveId.Equals(source.ObjectiveId) ||
+                    !current.OperationMapAnchorId.Equals(source.OperationMapAnchorId) ||
                     current.State != (AssistantGoalState)source.State ||
                     current.Priority != (AssistantMessagePriority)math.min((int)AssistantMessagePriority.Critical, (int)source.Priority) ||
                     !current.Title.Equals(source.Title) ||
@@ -553,6 +539,9 @@ namespace Game.UI.Shell.Ecs
                         CanExecute = focused.OwnedByPlayer
                     };
                 }
+
+                if (AssistantObjectiveProjectionUtility.TryBuildAnchorFocus(in goal, out var focus))
+                    return focus;
             }
 
             return default;
@@ -621,6 +610,7 @@ namespace Game.UI.Shell.Ecs
                    current.TargetEntity == expected.TargetEntity &&
                    current.TargetCell.Equals(expected.TargetCell) &&
                    current.WorldPosition.Equals(expected.WorldPosition) &&
+                   current.TargetId.Equals(expected.TargetId) &&
                    current.Title.Equals(expected.Title) &&
                    current.Reason.Equals(expected.Reason) &&
                    current.RejectionReason.Equals(expected.RejectionReason) &&

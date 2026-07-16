@@ -164,7 +164,7 @@ namespace Game.Tests.Editor
         }
 
         [Test]
-        public void PresenceFindings_PinInitialProducerAndKeepObjectiveWritersDecisionOwned()
+        public void PresenceFindings_PinInitialAndCameraFocusProducersAndKeepObjectiveWriterDecisionOwned()
         {
             OperationMapPhase0CameraMinimapOwnershipProbe.OwnershipReport report = LoadCommittedReport();
             Assert.That(
@@ -175,7 +175,7 @@ namespace Game.Tests.Editor
                 Is.EqualTo("Unresolved"));
             Assert.That(
                 report.presenceFindings.Single(row => row.stableIdentity == "objective-camera-focus-recommendation-producer").status,
-                Is.EqualTo("Unresolved"));
+                Is.EqualTo("Present"));
             Assert.That(
                 report.presenceFindings.Where(row => row.status == "Unresolved")
                     .All(row => row.currentAuthority == "No writer found in audited sources" &&
@@ -482,13 +482,17 @@ namespace Game.Tests.Editor
         public void RequiredShape_RejectsEveryUnknownFieldAndLocalData()
         {
             string json = File.ReadAllText(ReportPath);
+            string needsDecisionField =
+                "\"needsDecision\": " + LoadCommittedReport().counts.needsDecision;
             Assert.That(
                 OperationMapPhase0CameraMinimapOwnershipProbe.HasRequiredReportShape(
                     json.Replace("\"result\": \"NeedsDecision\"", "\"result\": \"NeedsDecision\",\n    \"futureRootField\": true")),
                 Is.False);
             Assert.That(
                 OperationMapPhase0CameraMinimapOwnershipProbe.HasRequiredReportShape(
-                    json.Replace("\"needsDecision\": 7", "\"needsDecision\": 7,\n        \"futureNestedField\": 1")),
+                    json.Replace(
+                        needsDecisionField,
+                        needsDecisionField + ",\n        \"futureNestedField\": 1")),
                 Is.False);
             Assert.That(
                 OperationMapPhase0CameraMinimapOwnershipProbe.HasRequiredReportShape(

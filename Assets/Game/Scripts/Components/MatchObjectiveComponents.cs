@@ -28,6 +28,7 @@ namespace Game.Components
     {
         public int GoalId;
         public FixedString64Bytes ObjectiveId;
+        public FixedString64Bytes OperationMapAnchorId;
         public MatchObjectiveState State;
         public byte Priority;
         public byte IsPrimary;

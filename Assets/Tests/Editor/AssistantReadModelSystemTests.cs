@@ -25,6 +25,8 @@ public sealed class AssistantReadModelSystemTests
             passed++;
             RunCase(test => test.AssistantRecommendationSystem_PublishesObjectiveRecommendation());
             passed++;
+            RunCase(test => test.AssistantRecommendationSystem_PublishesOperationMapObjectiveAnchorRecommendation());
+            passed++;
             RunCase(test => test.AssistantRecommendationSystem_PublishesNoSelectionRecommendation());
             passed++;
             RunCase(test => test.AssistantRecommendationSystem_PublishesFuelLogisticsWarningRecommendation());
@@ -97,12 +99,41 @@ public sealed class AssistantReadModelSystemTests
         Assert.AreEqual(AssistantGoalState.Active, goals[0].State);
         Assert.AreEqual(AssistantMessagePriority.High, goals[0].Priority);
         Assert.AreEqual("Neutralize hostile patrol", goals[0].Title.ToString());
+        Assert.AreEqual("anchor.objective.destroy_patrol_group", goals[0].OperationMapAnchorId.ToString());
         Assert.AreEqual(1, goals[0].IsPrimary);
         Assert.AreEqual(AssistantGoalState.Complete, goals[1].State);
 
         AssistantStateComponent assistant = _entityManager.GetComponentData<AssistantStateComponent>(boundary);
         Assert.AreNotEqual(0u, assistant.SourceVersion);
         Assert.AreEqual(1, assistant.UiDirty);
+    }
+
+    [Test]
+    public void AssistantRecommendationSystem_PublishesOperationMapObjectiveAnchorRecommendation()
+    {
+        Entity focusedUnit = CreateSelectedUnit();
+        CreateFocusedUnitReadModel(focusedUnit);
+        Entity boundary = CreateBoundary(withMission: true);
+        DynamicBuffer<MatchObjectiveRuntimeElement> objectives =
+            _entityManager.GetBuffer<MatchObjectiveRuntimeElement>(boundary);
+        MatchObjectiveRuntimeElement objective = objectives[0];
+        objective.TargetEntity = Entity.Null;
+        objective.HasTargetCell = 0;
+        objective.HasWorldPosition = 0;
+        objective.OperationMapAnchorId = new FixedString64Bytes("anchor.objective.destroy_patrol_group");
+        objectives[0] = objective;
+
+        _goalSystem.Update(_world.Unmanaged);
+        _recommendationSystem.Update(_world.Unmanaged);
+
+        DynamicBuffer<AssistantRecommendationElement> recommendations =
+            _entityManager.GetBuffer<AssistantRecommendationElement>(boundary);
+        Assert.AreEqual(1, recommendations.Length);
+        Assert.AreEqual(AssistantRecommendationKind.CameraFocus, recommendations[0].Kind);
+        Assert.AreEqual(AssistantTargetKind.Objective, recommendations[0].TargetKind);
+        Assert.AreEqual("anchor.objective.destroy_patrol_group", recommendations[0].TargetId.ToString());
+        Assert.AreEqual(1, recommendations[0].CanShow);
+        Assert.AreEqual(0, recommendations[0].CanExecute);
     }
 
     [Test]
@@ -356,6 +387,7 @@ public sealed class AssistantReadModelSystemTests
             IsPrimary = 1,
             Title = new FixedString64Bytes("Neutralize hostile patrol"),
             Body = new FixedString128Bytes("Destroy the verified patrol target."),
+            OperationMapAnchorId = new FixedString64Bytes("anchor.objective.destroy_patrol_group"),
             TargetCell = new int2(12, 8),
             HasTargetCell = 1
         });

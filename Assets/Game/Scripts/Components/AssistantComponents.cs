@@ -221,6 +221,7 @@ namespace Game.Components
         public int GoalId;
         public int SourceVersion;
         public FixedString64Bytes ObjectiveId;
+        public FixedString64Bytes OperationMapAnchorId;
         public AssistantGoalState State;
         public AssistantMessagePriority Priority;
         public FixedString64Bytes Title;
@@ -246,6 +247,7 @@ namespace Game.Components
         public Entity TargetEntity;
         public int2 TargetCell;
         public float3 WorldPosition;
+        public FixedString64Bytes TargetId;
         public FixedString64Bytes Title;
         public FixedString128Bytes Reason;
         public FixedString64Bytes RejectionReason;

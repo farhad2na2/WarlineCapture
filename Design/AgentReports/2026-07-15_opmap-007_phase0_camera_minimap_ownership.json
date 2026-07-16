@@ -5,13 +5,13 @@
     "result": "NeedsDecision",
     "counts": {
         "evidenceRows": 23,
-        "shellOwned": 10,
+        "shellOwned": 11,
         "mapOwned": 4,
         "sharedConfig": 0,
         "temporaryCompatibility": 2,
         "mixed": 5,
-        "unresolved": 2,
-        "needsDecision": 7
+        "unresolved": 1,
+        "needsDecision": 6
     },
     "crossReferences": [
         {
@@ -28,7 +28,7 @@
             "reportSchemaVersion": 1,
             "result": "NeedsDecision",
             "evidencePath": "Design/AgentReports/2026-07-15_opmap-004_phase0_ownership_baseline.json",
-            "evidenceSha256": "e1080bd90e88140d8151755b7ef6086c02d8683b7d277708004797893fc3c49b"
+            "evidenceSha256": "ec17f80733e2d0abd416244305a51c8402506681c19de4d9f8e060cbe81a7328"
         }
     ],
     "directInputHashes": [
@@ -38,7 +38,7 @@
         },
         {
             "path": "Assets/Game/Scenes/Match.unity",
-            "sha256": "dca7c83b765ce40099ce4fd62a53cbee5bc306107f8a026abcb941a59bf53a46"
+            "sha256": "182f3b4cb50f48e1a573e1e90ee0c13baf9d62fce46e35b1850ef72097db5d75"
         },
         {
             "path": "Assets/Game/Scenes/Match/MatchSubScene.unity",
@@ -50,7 +50,7 @@
         },
         {
             "path": "Assets/Game/Scripts/Components/AssistantComponents.cs",
-            "sha256": "ec5ea2a3110d61fd90e24a3727a02b10d88df29effe02be00ab7e0117a41423f"
+            "sha256": "2636d4345d2242b421150e058875f119859989427f860e5c1fdcb2761c716d54"
         },
         {
             "path": "Assets/Game/Scripts/Components/GridComponents.cs",
@@ -58,7 +58,11 @@
         },
         {
             "path": "Assets/Game/Scripts/Components/MatchObjectiveComponents.cs",
-            "sha256": "1a19f8883dbc721c38137601b1ee0fc99874f21cbda5b8a1c4c943b75dccd1b9"
+            "sha256": "46397bdd608efd572fc88e037b651f424ae1a39333b5da86b6f6f3bcd47d336c"
+        },
+        {
+            "path": "Assets/Game/Scripts/Components/OperationMapComponents.cs",
+            "sha256": "c5d1dc6fb6404893cfa99e226b8c62e909a99b347e0abf508f7416ccbb0b5e68"
         },
         {
             "path": "Assets/Game/Scripts/Components/RtsCameraRequestComponents.cs",
@@ -74,7 +78,7 @@
         },
         {
             "path": "Assets/Game/Scripts/Composition/MatchHudMinimapDataSourceAdapter.cs",
-            "sha256": "7bc84b485bb86989b7ceb3579ee80786906f092f70d2fa5108b5647175034498"
+            "sha256": "38e6ba48f43e12d19b122b2baa950953b071b91e5a43406213bc513ab20e7a02"
         },
         {
             "path": "Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs",
@@ -85,8 +89,12 @@
             "sha256": "76b91da24026174d7ee13fd5691dfd6f75192b779e2805e212d3949748657aca"
         },
         {
+            "path": "Assets/Game/Scripts/Systems/OperationMapMetadataUtility.cs",
+            "sha256": "c4b82353eba94f5628d50da20186dc9458bc6b52c13d1081e13cf292dbd6f386"
+        },
+        {
             "path": "Assets/Game/Scripts/Systems/RtsCameraRequestSystem.cs",
-            "sha256": "5f06bc885c6311fec72c353f8d4b7eb9f575f611d94e6ae6fb45ae47e3b08412"
+            "sha256": "429284516114bc58607a1fb3098f3ed2ed52259bf39c60f6e34f52b3060fe85e"
         },
         {
             "path": "Assets/Game/Scripts/Systems/RtsCameraSystem.cs",
@@ -110,7 +118,7 @@
         },
         {
             "path": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs",
-            "sha256": "0b428871939b67310698e385bbd977e9c30685d6704d892363a9be873e612d03"
+            "sha256": "ee833701ea4a2f8f6cddfbf64da8ea587896ae947d7ea6b37e8a53b94a93d5c1"
         },
         {
             "path": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapProjectionUiSystemHelper.cs",
@@ -118,15 +126,23 @@
         },
         {
             "path": "Assets/Game/Scripts/UI/Shell/Ecs/AssistantCommandIntentSystem.cs",
-            "sha256": "77f396716d63b2a772076031928b2aee85c1d13e29d66bc74e8fe86371841700"
+            "sha256": "342d96374779a5cdf2e3c12962e7882d47980a7e25e66e9a68f12d71e402b67d"
+        },
+        {
+            "path": "Assets/Game/Scripts/UI/Shell/Ecs/AssistantObjectiveProjectionUtility.cs",
+            "sha256": "646060a8f68b8aaa021c8151456bd60155f49ba5650afce6685e71644db535d3"
+        },
+        {
+            "path": "Assets/Game/Scripts/UI/Shell/Ecs/AssistantPreviewTargetUtility.cs",
+            "sha256": "9d1402974ce8f37c6646f5fcf41f8e82707a2c84c44238df75dd0204aa540406"
         },
         {
             "path": "Assets/Game/Scripts/UI/Shell/Ecs/AssistantReadModelSystems.cs",
-            "sha256": "6426e8c5b20b5588fa295a08768de880603910ec88a8c3abc6a2679f1af71d79"
+            "sha256": "469b9fd5a3b0cc34fed42a8144286b3fcb8dc4083b412e20c40b25c4dab29fdd"
         },
         {
             "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Actions.cs",
-            "sha256": "34f02bcf312053ad02ef69790b9c9c80d0f28409459142daa8648cd5b1764c5f"
+            "sha256": "6e5e5c4b2e154ee8601abd03c496d56459921f82966921ec375baebe44e0d1b5"
         },
         {
             "path": "Design/AgentReports/2026-07-14_opmap-002_phase0_baseline_probe.md",
@@ -134,11 +150,11 @@
         },
         {
             "path": "Design/AgentReports/2026-07-15_opmap-004_phase0_ownership_baseline.json",
-            "sha256": "e1080bd90e88140d8151755b7ef6086c02d8683b7d277708004797893fc3c49b"
+            "sha256": "ec17f80733e2d0abd416244305a51c8402506681c19de4d9f8e060cbe81a7328"
         },
         {
             "path": "Design/Architecture/operation_map_scene_split_and_generator_tracker.md",
-            "sha256": "b052d5399183383756f6cf8cb6302aa9e71b130bce26312ba1967224c788afbe"
+            "sha256": "889403dc26b79862fbaa5c0a0ef5782e6b8428756b8c3e1b849d184d10dfc443"
         }
     ],
     "presenceFindings": [
@@ -155,16 +171,17 @@
         },
         {
             "stableIdentity": "objective-camera-focus-recommendation-producer",
-            "status": "Unresolved",
-            "currentAuthority": "No writer found in audited sources",
-            "currentType": "Dormant AssistantRecommendationKind.CameraFocus mapping",
+            "status": "Present",
+            "currentAuthority": "Game.UI.Shell.Ecs.AssistantObjectiveProjectionUtility::TryBuildAnchorFocus",
+            "currentType": "Objective operation-map anchor to CameraFocus recommendation",
             "evidencePaths": [
                 "Assets/Game/Scripts/Components/AssistantComponents.cs",
+                "Assets/Game/Scripts/UI/Shell/Ecs/AssistantObjectiveProjectionUtility.cs",
                 "Assets/Game/Scripts/UI/Shell/Ecs/AssistantReadModelSystems.cs",
                 "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Actions.cs"
             ],
-            "rationale": "No writer found in audited sources. The audit covers every runtime C# source under Assets/Game/Scripts and fails closed on a new AssistantRecommendationKind.CameraFocus reference.",
-            "decisionOwner": "Mission UX owner and assistant architecture owner"
+            "rationale": "The typed objective anchor fallback publishes CameraFocus only when no entity, cell, or world-position target is available.",
+            "decisionOwner": ""
         },
         {
             "stableIdentity": "runtime-objective-writer",
@@ -254,15 +271,16 @@
         {
             "stableIdentity": "Game.Composition.MatchHudMinimapDataSourceAdapter::TryGetGrid(out Game.UI.Contracts.MatchHudMinimapGridModel)",
             "subject": "Minimap grid projection source",
-            "currentAuthority": "Managed UI adapter reading ECS GridConfig",
-            "currentType": "Game.Composition.MatchHudMinimapDataSourceAdapter",
+            "currentAuthority": "Managed UI adapter preferring active operation-map minimap metadata",
+            "currentType": "Active OperationMapMinimapBlob projection with GridConfig compatibility fallback",
             "classification": "MapOwned",
             "evidencePaths": [
                 "Assets/Game/Scripts/Components/GridComponents.cs",
+                "Assets/Game/Scripts/Components/OperationMapComponents.cs",
                 "Assets/Game/Scripts/Composition/MatchHudMinimapDataSourceAdapter.cs"
             ],
-            "rationale": "The adapter preserves the map-owned origin, dimensions, and cell size for UI projection.",
-            "migrationDisposition": "ReadOperationMapMetadata",
+            "rationale": "The adapter preserves active-map minimap origin and exact fractional extents while retaining the current grid fallback when active metadata is unavailable or unsupported.",
+            "migrationDisposition": "KeepActiveMapProjectionWithCompatibilityFallback",
             "decisionOwner": ""
         },
         {
@@ -299,14 +317,15 @@
         {
             "stableIdentity": "Game.Runtime.RtsCameraRequestSystem::SyncGroundBoundary(Unity.Entities.EntityManager,Game.Runtime.RtsCameraSystem,UnityEngine.Camera,bool)",
             "subject": "Camera boundary projection",
-            "currentAuthority": "Camera request ECS bridge reading GridConfig",
-            "currentType": "GridConfig -> UnityEngine.Rect -> RtsCameraSystem",
+            "currentAuthority": "Camera request ECS bridge preferring active operation-map camera metadata",
+            "currentType": "OperationMapCameraBoundsComponent or GridConfig fallback -> UnityEngine.Rect -> RtsCameraSystem",
             "classification": "Mixed",
             "evidencePaths": [
                 "Assets/Game/Scripts/Components/GridComponents.cs",
+                "Assets/Game/Scripts/Components/OperationMapComponents.cs",
                 "Assets/Game/Scripts/Systems/RtsCameraRequestSystem.cs"
             ],
-            "rationale": "Map-owned grid bounds are projected into mutable shell camera state; the future metadata binding boundary needs an explicit owner.",
+            "rationale": "Map-owned active camera bounds are projected into mutable shell camera state; GridConfig remains an explicit compatibility fallback.",
             "migrationDisposition": "DecisionRequired",
             "decisionOwner": "Camera architecture owner and operation-map architecture owner"
         },
@@ -443,21 +462,8 @@
                 "Assets/Game/Scripts/Components/RtsCameraRequestComponents.cs",
                 "Assets/Game/Scripts/UI/Shell/Ecs/AssistantCommandIntentSystem.cs"
             ],
-            "rationale": "A valid focus intent queues smooth camera focus and clearing of drag state; RtsCameraSystem later clamps the target to GridConfig bounds.",
+            "rationale": "A valid focus intent queues smooth camera focus and clearing of drag state; RtsCameraSystem later clamps the target to active operation-map camera bounds or the compatibility grid fallback.",
             "migrationDisposition": "KeepEcsIntentToShellCameraRequest",
-            "decisionOwner": ""
-        },
-        {
-            "stableIdentity": "Game.UI.Shell.Ecs.AssistantCommandIntentSystem::TryResolvePreviewTarget(ref Unity.Entities.SystemState,Game.Components.AssistantCommandIntentRequestElement,out Unity.Mathematics.float3)",
-            "subject": "Assistant focus target resolution",
-            "currentAuthority": "ECS assistant command intent system",
-            "currentType": "WorldPosition or LocalTransform position resolver",
-            "classification": "ShellOwned",
-            "evidencePaths": [
-                "Assets/Game/Scripts/UI/Shell/Ecs/AssistantCommandIntentSystem.cs"
-            ],
-            "rationale": "The generic focus path resolves world/entity positions but has no objective-id or operation-map-anchor resolver.",
-            "migrationDisposition": "AddTypedObjectiveAnchorResolverWhenObjectivesExist",
             "decisionOwner": ""
         },
         {
@@ -468,6 +474,7 @@
             "classification": "Unresolved",
             "evidencePaths": [
                 "Assets/Game/Scripts/Components/MatchObjectiveComponents.cs",
+                "Assets/Game/Scripts/UI/Shell/Ecs/AssistantObjectiveProjectionUtility.cs",
                 "Assets/Game/Scripts/UI/Shell/Ecs/AssistantReadModelSystems.cs"
             ],
             "rationale": "No writer found in audited sources for runtime objective rows or active objective state; the projection remains decision-owned.",
@@ -475,18 +482,35 @@
             "decisionOwner": "Mission runtime owner and assistant architecture owner"
         },
         {
+            "stableIdentity": "Game.UI.Shell.Ecs.AssistantPreviewTargetUtility::TryResolve(Unity.Entities.EntityManager,Unity.Entities.EntityQuery,in Game.Components.AssistantCommandIntentRequestElement,out Unity.Mathematics.float3)",
+            "subject": "Assistant focus target resolution",
+            "currentAuthority": "Pure ECS utility reading active operation-map metadata on pending requests",
+            "currentType": "World position, LocalTransform position, or typed OperationMapAnchorBlob resolver",
+            "classification": "ShellOwned",
+            "evidencePaths": [
+                "Assets/Game/Scripts/Components/OperationMapComponents.cs",
+                "Assets/Game/Scripts/Systems/OperationMapMetadataUtility.cs",
+                "Assets/Game/Scripts/UI/Shell/Ecs/AssistantCommandIntentSystem.cs",
+                "Assets/Game/Scripts/UI/Shell/Ecs/AssistantPreviewTargetUtility.cs"
+            ],
+            "rationale": "Objective focus resolves a stable anchor id only from generation-matched, ready active-map metadata and rejects missing, wrong-kind, failed, or non-finite anchors.",
+            "migrationDisposition": "KeepTypedMapAnchorConsumer",
+            "decisionOwner": ""
+        },
+        {
             "stableIdentity": "Game.UI.Shell.Ecs.AssistantRecommendationSystem::BuildRecommendation(Unity.Entities.DynamicBuffer<Game.Components.AssistantGoalReadModelElement>,Unity.Entities.DynamicBuffer<Game.Components.AssistantThreatReadModelElement>,Game.Components.FocusedUnitUiReadModelComponent,Game.Components.BuildingRuntimeFactionUsableFuelSummary,uint)",
             "subject": "Objective recommendation projection",
-            "currentAuthority": "ECS assistant recommendation system",
-            "currentType": "Objective goal -> Attack or Move recommendation",
-            "classification": "Unresolved",
+            "currentAuthority": "ECS assistant recommendation system with pure objective projection utility",
+            "currentType": "Objective goal -> Attack, Move, or typed operation-map CameraFocus recommendation",
+            "classification": "ShellOwned",
             "evidencePaths": [
+                "Assets/Game/Scripts/UI/Shell/Ecs/AssistantObjectiveProjectionUtility.cs",
                 "Assets/Game/Scripts/UI/Shell/Ecs/AssistantReadModelSystems.cs",
                 "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Actions.cs"
             ],
-            "rationale": "No objective CameraFocus writer was found in audited sources; objective goals currently produce Attack or Move.",
-            "migrationDisposition": "DecisionRequired",
-            "decisionOwner": "Mission UX owner and assistant architecture owner"
+            "rationale": "Entity, cell, and world-position targets retain precedence; an anchor-only objective emits a non-executable Show Me recommendation carrying the stable anchor id.",
+            "migrationDisposition": "KeepTypedObjectiveRecommendationPolicy",
+            "decisionOwner": ""
         },
         {
             "stableIdentity": "Game.UI.Shell.Ecs.UiShellEcsGateway.UiShellActionAdapter::ToAssistantCommandIntentKind(Game.UI.Contracts.UiAssistantCommandIntentKind,Game.Components.AssistantRecommendationKind)",
@@ -497,8 +521,8 @@
             "evidencePaths": [
                 "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Actions.cs"
             ],
-            "rationale": "The UI-to-ECS mapping exists, but remains dormant without a CameraFocus recommendation producer.",
-            "migrationDisposition": "KeepMappingAwaitTypedProducer",
+            "rationale": "The UI-to-ECS mapping copies the stable target id into the command request for request-time active-map resolution.",
+            "migrationDisposition": "KeepTypedCameraFocusMapping",
             "decisionOwner": ""
         }
     ]

@@ -14,6 +14,7 @@ public sealed class AssistantCommandIntentSystemTests
     private World _world;
     private EntityManager _entityManager;
     private SystemHandle _intentSystem;
+    private BlobAssetReference<OperationMapBlob> _operationMapBlob;
 
     public static void RunFocusedValidation()
     {
@@ -21,6 +22,8 @@ public sealed class AssistantCommandIntentSystemTests
         try
         {
             RunCase(test => test.AssistantCommandIntentSystem_QueuesCameraPreviewFromEntityTarget());
+            passed++;
+            RunCase(test => test.AssistantCommandIntentSystem_QueuesCameraPreviewFromOperationMapObjectiveAnchor());
             passed++;
             RunCase(test => test.AssistantCommandIntentSystem_RejectsPreviewWithoutWorldTarget());
             passed++;
@@ -80,6 +83,8 @@ public sealed class AssistantCommandIntentSystemTests
     public void TearDown()
     {
         _world?.Dispose();
+        if (_operationMapBlob.IsCreated)
+            _operationMapBlob.Dispose();
     }
 
     [Test]
@@ -433,6 +438,52 @@ public sealed class AssistantCommandIntentSystemTests
     }
 
     [Test]
+    public void AssistantCommandIntentSystem_QueuesCameraPreviewFromOperationMapObjectiveAnchor()
+    {
+        Entity boundary = CreateBoundary();
+        FixedString64Bytes anchorId = new("anchor.skirmish.objective.alpha");
+        CreateActiveOperationMap(anchorId, new float3(44f, 3f, 71f));
+        DynamicBuffer<AssistantRecommendationElement> recommendations =
+            _entityManager.AddBuffer<AssistantRecommendationElement>(boundary);
+        recommendations.Add(new AssistantRecommendationElement
+        {
+            RecommendationId = 3201,
+            SourceVersion = 9,
+            Kind = AssistantRecommendationKind.CameraFocus,
+            TargetKind = AssistantTargetKind.Objective,
+            TargetId = anchorId,
+            CanShow = 1
+        });
+        _entityManager.GetBuffer<AssistantCommandIntentRequestElement>(boundary).Add(
+            new AssistantCommandIntentRequestElement
+            {
+                RequestId = 8,
+                Frame = UnityEngine.Time.frameCount,
+                RecommendationId = 3201,
+                RecommendationSourceVersion = 9,
+                Kind = AssistantCommandIntentKind.ShowRecommendation,
+                TargetKind = AssistantTargetKind.Objective,
+                TargetId = anchorId
+            });
+
+        _intentSystem.Update(_world.Unmanaged);
+
+        using EntityQuery cameraQuery = _entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<RtsCameraRequestQueueComponent>(),
+            ComponentType.ReadOnly<RtsCameraRequestElement>());
+        DynamicBuffer<RtsCameraRequestElement> cameraRequests =
+            _entityManager.GetBuffer<RtsCameraRequestElement>(cameraQuery.GetSingletonEntity());
+        Assert.AreEqual(2, cameraRequests.Length);
+        Assert.AreEqual(RtsCameraRequestKind.SetSmoothFocusTarget, cameraRequests[0].Kind);
+        Assert.AreEqual(new float3(44f, 3f, 71f), cameraRequests[0].WorldPosition);
+        DynamicBuffer<AssistantPreviewHighlightElement> highlights =
+            _entityManager.GetBuffer<AssistantPreviewHighlightElement>(boundary);
+        Assert.AreEqual(1, highlights.Length);
+        Assert.AreEqual(AssistantTargetKind.Objective, highlights[0].TargetKind);
+        Assert.AreEqual(new float3(44f, 3f, 71f), highlights[0].WorldPosition);
+    }
+
+    [Test]
     public void AssistantCommandIntentSystem_RejectsPreviewWithoutWorldTarget()
     {
         Entity boundary = CreateBoundary();
@@ -604,5 +655,45 @@ public sealed class AssistantCommandIntentSystemTests
         _entityManager.SetComponentData(source, new Faction { Id = FactionIdentity.PlayerFactionId });
         _entityManager.SetComponentData(source, new UnitHealth { Current = 100, Max = 100 });
         return source;
+    }
+
+    private void CreateActiveOperationMap(FixedString64Bytes anchorId, float3 position)
+    {
+        FixedString64Bytes operationMapId = new("opmap.skirmish.desert_base_01");
+        using BlobBuilder builder = new(Allocator.Temp);
+        ref OperationMapBlob root = ref builder.ConstructRoot<OperationMapBlob>();
+        root.OperationMapId = operationMapId;
+        BlobBuilderArray<OperationMapAnchorBlob> anchors = builder.Allocate(ref root.Anchors, 1);
+        anchors[0] = new OperationMapAnchorBlob
+        {
+            Id = anchorId,
+            Kind = OperationMapAnchorKind.Objective,
+            Position = position,
+            Rotation = quaternion.identity,
+            FactionId = -1,
+            LaneIndex = -1
+        };
+        _operationMapBlob = builder.CreateBlobAssetReference<OperationMapBlob>(Allocator.Persistent);
+
+        Entity operationMap = _entityManager.CreateEntity(
+            typeof(ActiveOperationMapComponent),
+            typeof(OperationMapMetadataComponent),
+            typeof(OperationMapReadinessComponent));
+        _entityManager.SetComponentData(operationMap, new ActiveOperationMapComponent
+        {
+            OperationMapId = operationMapId,
+            Generation = 1
+        });
+        _entityManager.SetComponentData(operationMap, new OperationMapMetadataComponent
+        {
+            Blob = _operationMapBlob,
+            Generation = 1
+        });
+        _entityManager.SetComponentData(operationMap, new OperationMapReadinessComponent
+        {
+            Generation = 1,
+            ReadyFlags = OperationMapReadinessFlags.Metadata,
+            RequiredFlags = OperationMapReadinessFlags.Metadata
+        });
     }
 }

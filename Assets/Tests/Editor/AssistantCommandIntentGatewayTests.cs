@@ -82,6 +82,7 @@ public sealed class AssistantCommandIntentGatewayTests
         Entity boundary = CreateActiveBoundary();
         Entity source = _entityManager.CreateEntity();
         Entity target = _entityManager.CreateEntity();
+        FixedString64Bytes targetId = new("anchor.objective.destroy_patrol_group");
         DynamicBuffer<AssistantRecommendationElement> recommendations =
             _entityManager.AddBuffer<AssistantRecommendationElement>(boundary);
         recommendations.Add(new AssistantRecommendationElement
@@ -91,6 +92,7 @@ public sealed class AssistantCommandIntentGatewayTests
             Kind = AssistantRecommendationKind.Attack,
             Priority = AssistantMessagePriority.Normal,
             TargetKind = AssistantTargetKind.Entity,
+            TargetId = targetId,
             SourceEntity = source,
             TargetEntity = target,
             TargetCell = new int2(4, 5),
@@ -112,6 +114,7 @@ public sealed class AssistantCommandIntentGatewayTests
         Assert.AreEqual(7, requests[0].RecommendationSourceVersion);
         Assert.AreEqual(AssistantCommandIntentKind.ShowRecommendation, requests[0].Kind);
         Assert.AreEqual(AssistantTargetKind.Entity, requests[0].TargetKind);
+        Assert.AreEqual(targetId, requests[0].TargetId);
         Assert.AreEqual(source, requests[0].SourceEntity);
         Assert.AreEqual(target, requests[0].TargetEntity);
         Assert.AreEqual(new int2(4, 5), requests[0].TargetCell);

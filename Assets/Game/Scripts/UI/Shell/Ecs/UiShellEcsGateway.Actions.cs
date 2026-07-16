@@ -106,6 +106,7 @@ namespace Game.UI.Shell.Ecs
                 TargetEntity = recommendation.TargetEntity,
                 TargetCell = recommendation.TargetCell,
                 WorldPosition = recommendation.WorldPosition,
+                TargetId = recommendation.TargetId,
                 FromTakeover = fromTakeover ? (byte)1 : (byte)0
             });
             return true;

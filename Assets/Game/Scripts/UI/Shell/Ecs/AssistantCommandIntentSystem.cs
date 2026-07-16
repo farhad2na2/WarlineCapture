@@ -29,6 +29,7 @@ namespace Game.UI.Shell.Ecs
         private EntityQuery cameraRequestQuery;
         private EntityQuery selectionInputQuery;
         private EntityQuery gridQuery;
+        private EntityQuery operationMapMetadataQuery;
 
         public void OnCreate(ref SystemState state)
         {
@@ -44,6 +45,10 @@ namespace Game.UI.Shell.Ecs
                 ComponentType.ReadWrite<RtsSelectionInputRequestQueueComponent>(),
                 ComponentType.ReadWrite<RtsSelectionCommandIntentRequestElement>());
             gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
+            operationMapMetadataQuery = state.GetEntityQuery(
+                ComponentType.ReadOnly<ActiveOperationMapComponent>(),
+                ComponentType.ReadOnly<OperationMapMetadataComponent>(),
+                ComponentType.ReadOnly<OperationMapReadinessComponent>());
             state.RequireForUpdate(boundaryQuery);
         }
 
@@ -64,21 +69,26 @@ namespace Game.UI.Shell.Ecs
             bool needsAttackCommand = false;
             for (int i = 0; i < requests.Length; i++)
             {
-                if (IsTimedOut(requests[i], currentFrame) ||
-                    requests[i].Kind == AssistantCommandIntentKind.CancelPreview)
+                AssistantCommandIntentRequestElement pending = requests[i];
+                if (IsTimedOut(pending, currentFrame) ||
+                    pending.Kind == AssistantCommandIntentKind.CancelPreview)
                 {
                     continue;
                 }
 
-                if (requests[i].Kind == AssistantCommandIntentKind.SelectEntity)
+                if (pending.Kind == AssistantCommandIntentKind.SelectEntity)
                     needsSelectionCommand = true;
-                else if (requests[i].Kind == AssistantCommandIntentKind.MoveToWorldPosition)
+                else if (pending.Kind == AssistantCommandIntentKind.MoveToWorldPosition)
                     needsMoveCommand = true;
-                else if (requests[i].Kind == AssistantCommandIntentKind.AttackEntity)
+                else if (pending.Kind == AssistantCommandIntentKind.AttackEntity)
                     needsAttackCommand = true;
 
-                if (IsPreviewIntent(requests[i].Kind) &&
-                    TryResolvePreviewTarget(ref state, requests[i], out _))
+                if (IsPreviewIntent(pending.Kind) &&
+                    AssistantPreviewTargetUtility.TryResolve(
+                        state.EntityManager,
+                        operationMapMetadataQuery,
+                        in pending,
+                        out _))
                 {
                     needsCameraPreview = true;
                     break;
@@ -288,7 +298,11 @@ namespace Game.UI.Shell.Ecs
                     continue;
                 }
 
-                if (!TryResolvePreviewTarget(ref state, request, out float3 focusWorldPosition))
+                if (!AssistantPreviewTargetUtility.TryResolve(
+                        state.EntityManager,
+                        operationMapMetadataQuery,
+                        in request,
+                        out float3 focusWorldPosition))
                 {
                     ClearPreviewHighlight(highlights);
                     AddRejectedResult(
@@ -334,38 +348,6 @@ namespace Game.UI.Shell.Ecs
         {
             return kind == AssistantCommandIntentKind.ShowRecommendation ||
                    kind == AssistantCommandIntentKind.FocusCamera;
-        }
-
-        private static bool TryResolvePreviewTarget(
-            ref SystemState state,
-            AssistantCommandIntentRequestElement request,
-            out float3 focusWorldPosition)
-        {
-            focusWorldPosition = default;
-
-            if (request.TargetKind == AssistantTargetKind.WorldPosition &&
-                IsFinite(request.WorldPosition))
-            {
-                focusWorldPosition = request.WorldPosition;
-                return true;
-            }
-
-            if (request.TargetKind == AssistantTargetKind.Entity)
-            {
-                if (TryReadEntityPosition(ref state, request.TargetEntity, out focusWorldPosition))
-                    return true;
-
-                if (TryReadEntityPosition(ref state, request.SourceEntity, out focusWorldPosition))
-                    return true;
-
-                if (IsFinite(request.WorldPosition))
-                {
-                    focusWorldPosition = request.WorldPosition;
-                    return true;
-                }
-            }
-
-            return false;
         }
 
         private static bool IsTimedOut(AssistantCommandIntentRequestElement request, int currentFrame)
@@ -460,7 +442,9 @@ namespace Game.UI.Shell.Ecs
                 current.SourceEntity != request.SourceEntity ||
                 current.TargetEntity != request.TargetEntity ||
                 !current.TargetCell.Equals(request.TargetCell) ||
-                !current.WorldPosition.Equals(request.WorldPosition))
+                !current.WorldPosition.Equals(request.WorldPosition) ||
+                current.TargetKind != request.TargetKind ||
+                !current.TargetId.Equals(request.TargetId))
             {
                 reason = TacticalCommandReasonCode.CommandUnavailable;
                 return false;
@@ -646,20 +630,6 @@ namespace Game.UI.Shell.Ecs
         private static Entity ResolveExistingEntity(ref SystemState state, Entity entity)
         {
             return entity != Entity.Null && state.EntityManager.Exists(entity) ? entity : Entity.Null;
-        }
-
-        private static bool TryReadEntityPosition(ref SystemState state, Entity entity, out float3 position)
-        {
-            position = default;
-            if (entity == Entity.Null ||
-                !state.EntityManager.Exists(entity) ||
-                !state.EntityManager.HasComponent<LocalTransform>(entity))
-            {
-                return false;
-            }
-
-            position = state.EntityManager.GetComponentData<LocalTransform>(entity).Position;
-            return IsFinite(position);
         }
 
         private static bool IsFinite(float3 value)

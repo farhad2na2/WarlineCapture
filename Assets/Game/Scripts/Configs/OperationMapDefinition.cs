@@ -1,4 +1,8 @@
 using System;
+using Game.Components;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Game.Configs
@@ -152,6 +156,84 @@ namespace Game.Configs
 
             error = null;
             return true;
+        }
+
+        public bool TryCreatePersistentMetadataBlob(
+            out BlobAssetReference<OperationMapBlob> metadataBlob,
+            out string error)
+        {
+            metadataBlob = default;
+            if (!TryValidateMetadata(out error))
+                return false;
+
+            using BlobBuilder builder = new(Allocator.Temp);
+            ref OperationMapBlob root = ref builder.ConstructRoot<OperationMapBlob>();
+            root.OperationMapId = new FixedString64Bytes(operationMapId);
+            root.PlanningCameraId = new FixedString64Bytes(planningCameraId);
+            root.BattleCameraId = new FixedString64Bytes(battleCameraId);
+            root.SourceIdentityHash = new FixedString128Bytes(sourceIdentityHash);
+            root.ContentHash = new FixedString128Bytes(contentHash);
+            root.GeneratedMetadataHash = new FixedString128Bytes(generatedMetadataHash);
+            root.SchemaVersion = schemaVersion;
+            root.ContentVersion = contentVersion;
+
+            BlobBuilderArray<OperationMapAnchorBlob> blobAnchors = builder.Allocate(ref root.Anchors, anchors.Length);
+            for (int index = 0; index < anchors.Length; index++)
+            {
+                OperationMapAnchorConfig source = anchors[index];
+                blobAnchors[index] = new OperationMapAnchorBlob
+                {
+                    Id = new FixedString64Bytes(source.AnchorId),
+                    Kind = source.Kind,
+                    Position = ToFloat3(source.Position),
+                    Rotation = ToQuaternion(source.EulerAngles),
+                    Radius = source.Radius,
+                    FactionId = source.FactionId,
+                    LaneIndex = source.LaneIndex
+                };
+            }
+
+            BlobBuilderArray<OperationMapCameraBlob> blobCameras = builder.Allocate(ref root.Cameras, cameras.Length);
+            for (int index = 0; index < cameras.Length; index++)
+            {
+                OperationMapCameraConfig source = cameras[index];
+                blobCameras[index] = new OperationMapCameraBlob
+                {
+                    Id = new FixedString64Bytes(source.CameraId),
+                    Position = ToFloat3(source.Position),
+                    Rotation = ToQuaternion(source.EulerAngles),
+                    FieldOfView = source.FieldOfView,
+                    OrthographicSize = source.OrthographicSize,
+                    IsOrthographic = source.Orthographic ? (byte)1 : (byte)0,
+                    ClampToCameraBounds = source.ClampToCameraBounds ? (byte)1 : (byte)0
+                };
+            }
+
+            root.Minimap = new OperationMapMinimapBlob
+            {
+                Id = new FixedString64Bytes(minimap.MinimapId),
+                ProjectionOrigin = ToFloat3(minimap.ProjectionOrigin),
+                ProjectionSize = new float2(minimap.ProjectionSize.x, minimap.ProjectionSize.y),
+                OrientationDegrees = minimap.OrientationDegrees
+            };
+
+            metadataBlob = builder.CreateBlobAssetReference<OperationMapBlob>(Allocator.Persistent);
+            if (!metadataBlob.IsCreated)
+            {
+                error = "Failed to create persistent operation-map metadata blob.";
+                return false;
+            }
+
+            error = null;
+            return true;
+        }
+
+        private static float3 ToFloat3(Vector3 value) => new(value.x, value.y, value.z);
+
+        private static quaternion ToQuaternion(Vector3 eulerAngles)
+        {
+            Quaternion value = Quaternion.Euler(eulerAngles);
+            return new quaternion(value.x, value.y, value.z, value.w);
         }
 
         private bool ContainsCamera(string cameraId)

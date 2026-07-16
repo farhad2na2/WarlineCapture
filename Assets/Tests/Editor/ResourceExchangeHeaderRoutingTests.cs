@@ -51,6 +51,14 @@ public sealed class ResourceExchangeHeaderRoutingTests
                 nameof(MenuSceneShell_InstallsResourceExchangePopup),
                 test => test.MenuSceneShell_InstallsResourceExchangePopup(),
                 ref passed);
+            RunValidationStep(
+                nameof(MenuSceneShell_DirectResourceExchangeCloseIsIdempotent),
+                test => test.MenuSceneShell_DirectResourceExchangeCloseIsIdempotent(),
+                ref passed);
+            RunValidationStep(
+                nameof(MenuSceneShell_PopupLayerClearRemovesResourceExchangeCloseListener),
+                test => test.MenuSceneShell_PopupLayerClearRemovesResourceExchangeCloseListener(),
+                ref passed);
 
             Debug.Log($"[ResourceExchangeHeaderRoutingValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -280,6 +288,66 @@ public sealed class ResourceExchangeHeaderRoutingTests
             hitAfterClose && sourceAfterClose == "ResourceExchangePopup",
             "Closing Resource Exchange must remove the modal popup from gameplay UI hit testing.");
         runtimeUi.Dispose();
+    }
+
+    [Test]
+    public void MenuSceneShell_DirectResourceExchangeCloseIsIdempotent()
+    {
+        Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
+        UIShellContentView content = FindInScene<UIShellContentView>(scene);
+        Assert.NotNull(content);
+
+        MainMenuPlayUI runtimeUi = new();
+        try
+        {
+            content.BindGameplayRuntimeDependencies(null, runtimeUi);
+            Assert.NotNull(content.InstallResourceExchangePopup());
+            int installedVersion = content.ContentVersion;
+
+            content.CloseResourceExchangePopup();
+            int firstCloseVersion = content.ContentVersion;
+            content.CloseResourceExchangePopup();
+
+            AssertRegionIsEmpty(content.ShellView, UIShellRegionId.PopupLayer);
+            Assert.AreEqual(installedVersion + 1, firstCloseVersion);
+            Assert.AreEqual(firstCloseVersion, content.ContentVersion, "Closing an absent popup must not mutate shell content state.");
+        }
+        finally
+        {
+            runtimeUi.Dispose();
+        }
+    }
+
+    [Test]
+    public void MenuSceneShell_PopupLayerClearRemovesResourceExchangeCloseListener()
+    {
+        Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
+        UIShellContentView content = FindInScene<UIShellContentView>(scene);
+        Assert.NotNull(content);
+
+        var gateway = new RecordingGateway();
+        UiShellRuntimeGateway.Register(gateway);
+        MainMenuPlayUI runtimeUi = new();
+        try
+        {
+            content.BindGameplayRuntimeDependencies(null, runtimeUi);
+            GameObject popup = content.InstallResourceExchangePopup();
+            ResourceExchangePopupView popupView = popup.GetComponent<ResourceExchangePopupView>();
+            Assert.NotNull(popupView);
+            Assert.NotNull(popupView.CloseButton);
+            int installedVersion = content.ContentVersion;
+
+            content.ClearRegion(UIShellRegionId.PopupLayer);
+            popupView.CloseButton.onClick.Invoke();
+
+            AssertRegionIsEmpty(content.ShellView, UIShellRegionId.PopupLayer);
+            Assert.AreEqual(installedVersion + 1, content.ContentVersion);
+            Assert.AreEqual(0, gateway.ActionCount, "A cleared popup must not retain its typed close listener.");
+        }
+        finally
+        {
+            runtimeUi.Dispose();
+        }
     }
 
     private static ResourceExchangeActionResult RunResourceExchangeAction(

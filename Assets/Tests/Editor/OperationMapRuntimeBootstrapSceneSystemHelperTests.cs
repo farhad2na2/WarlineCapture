@@ -313,6 +313,53 @@ public sealed class OperationMapRuntimeBootstrapSceneSystemHelperTests
         }
     }
 
+    [Test]
+    public void MatchRuntimeBind_MissingCatalogFailsBeforeBootstrap()
+    {
+        using World world = new("OperationMapCompatibilityMissingCatalog");
+        GameObject owner = new("OperationMapCompatibilityMissingCatalogMatchView");
+        MatchSceneView view = owner.AddComponent<MatchSceneView>();
+        try
+        {
+            Assert.That(view.TryBindMatchRuntime(world, out string error), Is.False);
+            StringAssert.Contains("catalog is required", error);
+            Assert.That(CountRoots(world.EntityManager), Is.Zero);
+            Assert.That(Get<bool>(view, "matchRuntimeBound"), Is.False);
+        }
+        finally
+        {
+            view.DisposeOperationMapMetadataBootstrap();
+            Object.DestroyImmediate(owner);
+        }
+    }
+
+    [Test]
+    public void MatchRuntimeBind_MissingDefinitionFailsBeforeBootstrap()
+    {
+        using World world = new("OperationMapCompatibilityMissingDefinition");
+        OperationMapDefinition definition = CreateValidDefinition();
+        OperationMapCatalogConfig catalog = ScriptableObject.CreateInstance<OperationMapCatalogConfig>();
+        SetCatalogDefinitions(catalog, new[] { definition });
+        GameObject owner = new("OperationMapCompatibilityMissingDefinitionMatchView");
+        MatchSceneView view = owner.AddComponent<MatchSceneView>();
+        Set(view, "operationMapCatalog", catalog);
+        Set(view, "operationMapId", "opmap.skirmish.missing");
+        try
+        {
+            Assert.That(view.TryBindMatchRuntime(world, out string error), Is.False);
+            StringAssert.Contains("not present in the catalog", error);
+            Assert.That(CountRoots(world.EntityManager), Is.Zero);
+            Assert.That(Get<bool>(view, "matchRuntimeBound"), Is.False);
+        }
+        finally
+        {
+            view.DisposeOperationMapMetadataBootstrap();
+            Object.DestroyImmediate(owner);
+            Object.DestroyImmediate(catalog);
+            Object.DestroyImmediate(definition);
+        }
+    }
+
     private static int CountRoots(EntityManager entityManager)
     {
         using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<OperationMapRootComponent>());
@@ -416,5 +463,14 @@ public sealed class OperationMapRuntimeBootstrapSceneSystemHelperTests
             BindingFlags.Instance | BindingFlags.NonPublic);
         Assert.That(field, Is.Not.Null, fieldName);
         field.SetValue(view, value);
+    }
+
+    private static T Get<T>(MatchSceneView view, string fieldName)
+    {
+        FieldInfo field = typeof(MatchSceneView).GetField(
+            fieldName,
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.That(field, Is.Not.Null, fieldName);
+        return (T)field.GetValue(view);
     }
 }

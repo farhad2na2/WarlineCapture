@@ -129,12 +129,15 @@ namespace Game.Composition
                 return;
             }
 
+            if (!matchRuntimeBound)
+                return;
+
             matchBootstrapSystem.Update();
         }
 
         private void OnApplicationFocus(bool hasFocus)
         {
-            if (!Application.isPlaying)
+            if (!Application.isPlaying || !matchRuntimeBound)
                 return;
 
             matchBootstrapSystem.OnApplicationFocus(hasFocus);
@@ -142,7 +145,7 @@ namespace Game.Composition
 
         private void OnApplicationPause(bool pauseStatus)
         {
-            if (!Application.isPlaying)
+            if (!Application.isPlaying || !matchRuntimeBound)
                 return;
 
             matchBootstrapSystem.OnApplicationPause(pauseStatus);
@@ -150,7 +153,7 @@ namespace Game.Composition
 
         private void LateUpdate()
         {
-            if (!Application.isPlaying)
+            if (!Application.isPlaying || !matchRuntimeBound)
                 return;
 
             matchBootstrapSystem.LateUpdate();
@@ -159,7 +162,7 @@ namespace Game.Composition
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         private void OnGUI()
         {
-            if (!Application.isPlaying)
+            if (!Application.isPlaying || !matchRuntimeBound)
                 return;
 
             matchBootstrapSystem.OnGUI();
@@ -183,14 +186,29 @@ namespace Game.Composition
             if (matchRuntimeBound)
                 return;
 
-            if (!TryPublishCompatibilityOperationMapMetadata(
+            if (!TryBindMatchRuntime(
                     World.DefaultGameObjectInjectionWorld,
                     out string operationMapError))
                 Debug.LogError($"[OperationMapCompatibility] {operationMapError}");
+        }
+
+        internal bool TryBindMatchRuntime(World world, out string error)
+        {
+            if (matchRuntimeBound)
+            {
+                error = null;
+                return true;
+            }
+
+            if (!TryPublishCompatibilityOperationMapMetadata(world, out error))
+                return false;
+
             try
             {
                 matchBootstrapSystem.Awake(this, transform, gameObject.layer);
                 matchRuntimeBound = true;
+                error = null;
+                return true;
             }
             catch
             {

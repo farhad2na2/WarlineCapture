@@ -699,7 +699,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 28% (50/177 checklist items complete).
+Overall implementation progress: 29% (51/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -711,7 +711,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 | 2A. Local Addressables packaging foundation | Later / direction-specific | 0 | 20 | 0% | Do not implement before the map-delivery direction is selected. |
 | 3. Current-map compatibility registration | Complete / shared | 10 | 10 | 100% | Current identities/definition, authored behavior, schema-v1 read compatibility, runtime activation/teardown, deterministic presentation, and Android chunk resolution are accepted. |
 | 4. Non-destructive scene ownership split | In progress / shared priority | 10 | 14 | 71% | The staged scene has fail-closed spatial/content validation; the original Match route remains validated and revision `d5784dcfa` plus the rollback recipe freeze the pre-cutover recovery boundary. |
-| 5. Runtime selection, loading, and teardown | In progress / shared contracts | 1 | 14 | 7% | Pure readiness/failure/teardown data contracts only; concrete loading is later. |
+| 5. Runtime selection, loading, and teardown | In progress / shared contracts | 2 | 14 | 14% | Catalog preflight plus pure readiness/failure/teardown data contracts are bound; concrete loading is later. |
 | 6. Metadata, camera, minimap, and movement binding | In progress / shared | 7 | 12 | 58% | Scenario-required anchors validate against map metadata; camera bounds/poses, ARIA Show Me, and the current axis-aligned minimap projection resolve from active-map metadata with compatibility fallbacks; editor overlays and warmed allocation-free lookup coverage are approved. |
 | 7. M01 operation-map slice | Later / shared contracts only | 0 | 10 | 0% | Map-neutral ids/anchors may proceed; physical rollout remains gated. |
 | 8. Editor-time texture/mask generator | Later / editor direction only | 0 | 12 | 0% | Implement only if the editor-authored map direction is selected. |
@@ -873,7 +873,7 @@ Exit criteria:
 **Execution: `Shared contract now` only.** Define readiness, ownership, failure-unwind, and teardown contracts. Every concrete Addressables or runtime-scene loading/unloading implementation is `Later - delivery`.
 
 - [x] Add the planned operation-map root/queue/state/active/bounds/metadata/readiness ECS components and request/result buffers, carrying mission, scenario, and operation-map ids as bounded fixed strings. See `../AgentReports/2026-07-16_operation_map_ecs_lifecycle_contract.md`.
-- [ ] Resolve the operation-map catalog entry before beginning the match load transition.
+- [x] Resolve the operation-map catalog entry before beginning the match load transition. The current compatibility composition now fails closed before runtime bootstrap; concrete map loading remains deferred. See `../AgentReports/2026-07-16_operation_map_catalog_preflight_binding.md`.
 - [ ] Load the selected canonical operation-map scene additively through `OperationMapSceneLoadingSceneSystemHelper`, called by the existing composition lifecycle with no new update-loop `MonoBehaviour`.
 - [ ] Load and await the selected map's optional ECS subscene through the accepted Entities scene path.
 - [ ] Resolve exactly one `OperationMapSceneView` through `OperationMapSceneReferenceSceneSystemHelper` only after scene load succeeds.
@@ -1104,6 +1104,7 @@ Exit criteria:
 | 2026-07-16 | Current operation-map compatibility checkpoint | `../AgentReports/2026-07-16_current_operation_map_compatibility_checkpoint.md`; lifecycle `1 / 1`; static structure `2 / 2`; isolated staged scene `10 / 10`; Android resolver `23 / 23`; checkpoint revision `5c86a3ea2` | Passed | The original Match route remains complete and functional while the distinct-GUID extracted scene stays staged. This does not approve staged-map baking, loading/unloading, Addressables, root removal, or atomic shell cutover. |
 | 2026-07-16 | Pre-cutover rollback checkpoint | Revision `d5784dcfa`; `operation_map_scene_split_rollback_recipe.md`; accepted canonical scene/config/subscene/manifest/build-setting identities | Passed | Freezes the exact recovery boundary before any future root removal or loader cutover. The M01 runtime-generation prototype remains outside operation-map checkpoint ownership. |
 | 2026-07-16 | ARIA operation-map objective anchor binding | `../AgentReports/2026-07-16_operation_map_aria_objective_anchor_binding.md`; assistant `28 / 28`; camera/minimap ownership `33 / 33`; Phase 0 ownership `26 / 26`; source-growth/naming `24 / 24`; two byte-identical evidence runs | Passed | Carries a stable objective anchor id through unmanaged read models and resolves it from the active immutable map blob only when a Show Me request is consumed. The separate objective-list focus/jump row remains open. |
+| 2026-07-16 | Operation-map catalog preflight binding | `../AgentReports/2026-07-16_operation_map_catalog_preflight_binding.md`; focused bootstrap `10 / 10`; affected composition architecture `4 / 4`; source-growth/naming `24 / 24`; Unity compile; `git diff --check` | Passed | Missing or unresolved catalog entries now stop match runtime binding before bootstrap and leave no operation-map root. This is loader-neutral preflight only; no scene loading, Addressables, or generator behavior was added. |
 
 ## Open Decisions
 

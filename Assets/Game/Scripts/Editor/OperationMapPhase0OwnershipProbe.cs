@@ -735,11 +735,11 @@ namespace Game.Editor
                 [MatchSubScenePath] =
                     "bcc255f3fb140a0d91687b45b679b47fb60f01f5cfa8690bac3032ec642dadd8",
                 [MatchSceneViewSourcePath] =
-                    "ca0520236aee08ea31e64ef092090d9c51c1feab89f0aeb76e27f341675e8ce2",
+                    "d2c28e5eb39fd9d4694d79173b684f710237b434eb5b6605959790c85af48a0b",
                 [BaselineEvidencePath] =
                     "d4d4674850766c5cd95e1bb5fbb6f26893e0bb019dbaf266a0c9897a3befc807",
                 [TrackerPath] =
-                    "889403dc26b79862fbaa5c0a0ef5782e6b8428756b8c3e1b849d184d10dfc443"
+                    "fc7e811420e59f07a16c0aeca08b4b697332fb9e4cb810f79943a83679006c3b"
             };
         }
 

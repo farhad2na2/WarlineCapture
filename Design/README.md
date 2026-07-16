@@ -37,7 +37,7 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - FTUE and assistant: `FTUE_And_Command_Assistant_Design.md` defines the reusable ARIA command assistant, Chapter 1 FTUE flow, contextual recommendations, and safe assistant control takeover model. `ARIA_Assistant_ECS_Design.md` is the current assistant architecture and naming contract for match-header ARIA, panel goals/recommendations, read-aloud alerts, bounded control, ECS data ownership, and no service/provider/controller drift. The ECS vertical slice is now implemented for the match HUD header/panel, `Show Me`, `Do It`, bounded `Give Control`, `Stop`, prioritized alerts/reports, narration subtitle fallback, assistant settings, and validation/performance gates. `AssistantPanel_M01_Implementation_Contract.md` is the historical support/UI/gameplay handoff for `PREFAB-05_AssistantPanel` and M01 ARIA recommendation states; use the ECS design and tracker when it conflicts with older service/provider/controller wording. `Architecture/aria_assistant_ecs_implementation_tracker.md` is the implementation and validation source.
 - Agent coordination: `Agent_Coordination_Workflow.md` defines PM handoff, validation, cross-lane sync, tracking workflow, lane ownership, and commit/push rules for agents.
 - Gameplay architecture: `Architecture/gameplay_solid_ecs_contract.md` defines the SOLID/ECS runtime contract, bootstrap responsibility boundaries, service/logging rules, and no-new-drift guardrails.
-- Architecture/performance hardening: `Architecture/architecture_performance_hardening_implementation_tracker.md` is the active execution and evidence source for the 2026-07-09 architecture/performance audit. Do not copy its transient progress or red-gate state into static design summaries.
+- Architecture/performance hardening: `Architecture/architecture_performance_hardening_implementation_tracker.md` is complete for early development with `107 / 107` explicit dispositions. `Architecture/pre_release_performance_certification_backlog.md` preserves the 15 unpassed release-only certifications and remains inactive until beta/release activation criteria are met.
 - Architecture visuals: `Architecture/ArchitectureOverview.svg` is the high-level code architecture map. The detailed split diagrams cover assembly boundaries, runtime lifecycle, ECS data flow, UI shell, performance hot paths, and guardrails.
 - Performance regression: `Architecture/performance_regression_contract.md` defines the structured-metrics, budget, FreezeDetect, and hot-path rules for preventing new performance regressions.
 - Designer workflow: `Designer_Role_And_Documentation_Workflow.md` defines the Designer lane for README/design-index clarity, source-of-truth ordering, terminology alignment, product/design coherence, and documentation pruning recommendations.
@@ -85,8 +85,8 @@ This does not mean production is complete. Chapters 2-5 still need detailed miss
 | Campaign story inventory | [Campaign Narrative Sequence And Comic Catalog](Campaign_Narrative_Sequence_And_Comic_Catalog.md) | Bible, FPE, presentation rules, and mission contracts. | Scripts, storyboards, Story Archive, art/audio/localization, and sequence implementation. |
 | World and map | [3D Single-Map Gameplay Direction](3D_SingleMap_Gameplay_Direction.md) | GDD v0.2 and gameplay grammar. | Operation maps, map metadata, camera/minimap contracts, art, and tactical UI. |
 | Tactical economy and logistics | [Economy And Reward Design](Economy_Reward_Design.md), [Field Logistics](Field_Logistics_Oil_Fuel_Design.md), [Automated Fuel Logistics](Automated_Fuel_Logistics_Design.md), [Field Fabrication And Materials](Field_Fabrication_Materials_Design.md), and [Resource Logistics Exchange](Resource_Logistics_Exchange_Design.md) | Product economy, current building catalog, and runtime feature truth. | Balance configs, Match HUD/Build Drawer, AI economy, scenario authoring, and feature implementation trackers. |
-| Runtime architecture | [Gameplay SOLID/ECS Contract](Architecture/gameplay_solid_ecs_contract.md) | Product/system contracts and measured runtime constraints. | System implementation plans, source ownership, tests, and the active hardening tracker. |
-| Implementation status | [Architecture/Performance Hardening Tracker](Architecture/architecture_performance_hardening_implementation_tracker.md) and feature-specific trackers | Architecture contracts and current evidence. | Task execution and validation only; trackers do not redefine product or narrative intent. |
+| Runtime architecture | [Gameplay SOLID/ECS Contract](Architecture/gameplay_solid_ecs_contract.md) | Product/system contracts and measured runtime constraints. | System implementation plans, source ownership, the completed early-development hardening tracker, and the inactive pre-release certification backlog. |
+| Implementation status | [Architecture/Performance Hardening Tracker](Architecture/architecture_performance_hardening_implementation_tracker.md), [Pre-Release Performance Certification Backlog](Architecture/pre_release_performance_certification_backlog.md), and feature-specific trackers | Architecture contracts and current evidence. | Task execution and validation only; trackers do not redefine product or narrative intent. |
 
 ```mermaid
 flowchart TD
@@ -165,9 +165,10 @@ Connection rule: a lower-level document may narrow or implement an upstream deci
 45. `UIUX_Target_To_Canvas_Workflow_Guide.md`
 46. `Architecture/gameplay_solid_ecs_contract.md`
 47. `Architecture/architecture_performance_hardening_implementation_tracker.md`
-48. `Architecture/performance_regression_contract.md`
-49. `Designer_Role_And_Documentation_Workflow.md`
-50. `Agent_Coordination_Workflow.md`
+48. `Architecture/pre_release_performance_certification_backlog.md`
+49. `Architecture/performance_regression_contract.md`
+50. `Designer_Role_And_Documentation_Workflow.md`
+51. `Agent_Coordination_Workflow.md`
 
 ## Core Product And Gameplay
 
@@ -216,7 +217,8 @@ Connection rule: a lower-level document may narrow or implement an upstream deci
 - `Agent_Coordination_Workflow.md` - PM assistant operating workflow for agent handoffs, cross-lane contract changes, validation gates, and tracking updates.
 - `Designer_Role_And_Documentation_Workflow.md` - Designer lane workflow for README/design-index optimization, source-of-truth hierarchy, terminology alignment, documentation pruning, and product/design coherence reviews.
 - `Architecture/gameplay_solid_ecs_contract.md` - gameplay SOLID/ECS architecture contract, including bootstrap composition boundaries, ECS-first runtime rules, service/logging guidance, and no-new-drift migration rules.
-- `Architecture/architecture_performance_hardening_implementation_tracker.md` - active remediation program and current evidence for architecture boundaries, ECS hot paths, GC, frame performance, and content residency.
+- `Architecture/architecture_performance_hardening_implementation_tracker.md` - completed early-development remediation program and evidence for architecture boundaries, ECS hot paths, GC, frame performance, and content residency.
+- `Architecture/pre_release_performance_certification_backlog.md` - inactive release-only backlog for sustained Android, thermal, memory/residency, streaming, map comparison, and full visual certification.
 - `Architecture/ArchitectureOverview.svg` - high-level architecture overview for README/onboarding.
 - `Architecture/AssemblyBoundaries.svg` - assembly definition and dependency direction map.
 - `Architecture/RuntimeLifecycle.svg` - menu, shell, loading, match, result, and return lifecycle map.

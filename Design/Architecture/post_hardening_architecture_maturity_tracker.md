@@ -4,7 +4,7 @@
 
 Move WarlineCapture from the approximately `8.8 / 10` architecture expected after the current Architecture and Performance Hardening tracker reaches `107 / 107` to a practical, evidence-backed `9.5+ / 10` production architecture.
 
-This is a post-hardening program, not a replacement for `architecture_performance_hardening_implementation_tracker.md`. It must not begin until that tracker is complete and every one of its compiler, architecture, performance, GC, memory, visual, and device gates is genuinely green.
+This is a post-hardening program, not a replacement for `architecture_performance_hardening_implementation_tracker.md`. The prerequisite tracker closed its early-development scope with `107 / 107` explicit dispositions, including 15 unpassed release-only certifications transferred to `pre_release_performance_certification_backlog.md`. This maturity program must not begin until that backlog is activated and accepted, in addition to every compiler, architecture, performance, GC, memory, visual, and device gate required by the original entry contract being genuinely green.
 
 When this program activates, every task must follow `Design/Architecture/agent_pull_request_review_merge_workflow.md` for shared-object worktrees, `codex/<task-id>-<slug>` branches, implementation ownership, independent findings-first review, risk-based integration, tracker administration, PR merge, and cleanup. This tracker remains authoritative for maturity scope, dependencies, acceptance, and evidence; the PR workflow is authoritative for git integration and role separation.
 
@@ -17,13 +17,13 @@ A literal `10 / 10` is treated as a sustained operating standard, not a one-time
 | Document date | 2026-07-13 |
 | Prerequisite tracker | `Design/Architecture/architecture_performance_hardening_implementation_tracker.md` |
 | Git integration authority | `Design/Architecture/agent_pull_request_review_merge_workflow.md` |
-| Required prerequisite state | `107 / 107`, with no waived or stale required gate |
+| Required prerequisite state | Early-development tracker complete plus `pre_release_performance_certification_backlog.md` accepted, with no waived or stale required gate |
 | Assumed entry rating | approximately `8.8 / 10` |
 | Practical target | evidence-backed `9.5+ / 10` |
 | Aspirational target | sustained `10 / 10` operating standard |
-| Program status | Planned; inactive until the entry contract passes |
+| Program status | Planned; inactive because release certification is explicitly deferred |
 
-The entry review must reject a nominal `107 / 107` result when any required evidence is missing, malformed, stale, tied to an unknown commit, or passed by weakening a budget or allowlist.
+The entry review must reject a nominal `107 / 107` disposition when any required evidence is deferred, missing, malformed, stale, tied to an unknown commit, or passed by weakening a budget or allowlist. The current `92` accepted plus `15` deferred hardening closeout is intentionally not sufficient to activate this program.
 
 ## Rating Model
 
@@ -89,7 +89,7 @@ The final rating is an engineering assessment supported by the gates below. It i
 
 | Phase | Depends on | May overlap with |
 |---|---|---|
-| Phase 0 - Entry Baseline And Scorecard | prerequisite tracker `107 / 107` | none |
+| Phase 0 - Entry Baseline And Scorecard | prerequisite tracker closed and pre-release certification backlog accepted | none |
 | Phase 1 - Responsibility And Decomposition Hardening | Phase 0 | Phase 2 after inventories are complete |
 | Phase 2 - World Lifecycle And Dependency Hardening | Phase 0 | Phase 1 |
 | Phase 3 - Allocation-Free UI Projection | Phases 0 and 2 cache/lifecycle contract | Phase 4 |
@@ -104,7 +104,7 @@ The final rating is an engineering assessment supported by the gates below. It i
 
 No production behavior changes. Establish a reproducible baseline and prevent an architecture score from substituting for evidence.
 
-- [ ] `AM-001` Verify the prerequisite tracker is `107 / 107` and every required gate is green without a waiver that weakens its original acceptance criteria.
+- [ ] `AM-001` Verify the prerequisite tracker is closed, the pre-release certification backlog is accepted, and every required gate is green without a waiver that weakens its original acceptance criteria.
 - [ ] `AM-002` Record the exact entry commit, branch, Unity editor version, package lock hash, build target, scripting backend, and active quality configuration.
 - [ ] `AM-003` Define canonical scenarios for idle Match, maximum combat, construction, transport, aircraft, projectiles, every major popup, Menu-to-Match transitions, and long-duration soak.
 - [ ] `AM-004` Freeze the architecture scorecard, metric definitions, device tiers, performance budgets, GC classification policy, memory-growth threshold, and evidence freshness rules.
@@ -334,7 +334,7 @@ The implementation agent owns substantive commits, pushes, PR creation, and revi
 
 | Date | Decision | Reason | Evidence |
 |---|---|---|---|
-| 2026-07-13 | Treat `107 / 107` as the entry condition, not the final architecture target | Completing known hardening debt should produce approximately `8.8 / 10`; production maturity also requires simpler ownership, lifecycle proof, complete UI/device coverage, and sustained evidence | Architecture rating discussion and existing hardening tracker |
+| 2026-07-13 | Treat complete accepted hardening and release certification as the entry condition, not the final architecture target | Completing known hardening debt should produce approximately `8.8 / 10`; production maturity also requires simpler ownership, lifecycle proof, complete UI/device coverage, and sustained evidence | Architecture rating discussion, existing hardening tracker, and pre-release certification backlog |
 | 2026-07-13 | Target practical `9.5+`, with `10 / 10` as a sustained standard | No finite checklist proves permanent architectural perfection; permanent regression controls and multiple green releases provide stronger evidence | This tracker, Phases 8 and 9 |
 
 ## Implementation Log

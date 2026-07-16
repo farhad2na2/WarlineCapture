@@ -53,7 +53,7 @@ The first Campaign is provisionally titled `Shattered Relay`. It follows a local
 | ARIA match assistant | ECS-backed vertical slice complete and validated for the documented bounded feature set. | `Design/ARIA_Assistant_ECS_Design.md` and its implementation tracker. |
 | Campaign story and content | Detailed high-level product, narrative, FPE, presentation, feature exposure, and 25-mission chapter design complete. | GDD v0.2 and the connected Campaign authorities below. |
 | Campaign runtime product layer | Not yet a complete playable 25-mission product; objective/result/reward/progression/story-sequence/persistence work remains. | `Design/Gameplay_Features_High_Level_Spec.md` and feature maturity matrix. |
-| Architecture and performance | Active hardening program; use its tracker for current gates and evidence rather than copying progress into this README. | `Design/Architecture/architecture_performance_hardening_implementation_tracker.md`. |
+| Architecture and performance | Early-development hardening complete: 92 accepted tasks and 15 release-only certifications explicitly deferred. Release performance is not yet certified. | `Design/Architecture/architecture_performance_hardening_implementation_tracker.md` and `Design/Architecture/pre_release_performance_certification_backlog.md`. |
 | Overall project percentage | Not currently authoritative because the project-state source still needs PM refresh. | `Design/Project_State_Source.json` and generated dashboard. |
 
 ## Source Of Truth
@@ -104,7 +104,9 @@ Key project documents:
 - `Design/Architecture/performance_regression_contract.md`
   Performance validation contract for warmup windows, frame-time metrics, GC allocation evidence, and platform-aware budgets.
 - `Design/Architecture/architecture_performance_hardening_implementation_tracker.md`
-  Active multi-agent remediation program for assembly boundaries, ECS hot paths, GC evidence, performance, and residency gates.
+  Completed early-development remediation program for assembly boundaries, ECS hot paths, GC evidence, performance, and residency gates.
+- `Design/Architecture/pre_release_performance_certification_backlog.md`
+  Inactive release-only certification backlog; activate near beta/release candidate stabilization, not during routine early development.
 - `Design/UIUX_Target_To_Canvas_Workflow_Guide.md`
   Active workflow for converting accepted UI target locks into real Unity Canvas prefabs.
 - `Design/UI_Screen_Reference_To_Icons_Panels_GreenKey_Workflow.md`
@@ -218,6 +220,7 @@ The linked hierarchy below is the maintained documentation map. The older `Desig
   - Runtime Architecture And Performance
     - [Gameplay SOLID/ECS Contract](Design/Architecture/gameplay_solid_ecs_contract.md)
     - [Architecture/Performance Hardening Tracker](Design/Architecture/architecture_performance_hardening_implementation_tracker.md)
+      - [Pre-Release Performance Certification Backlog](Design/Architecture/pre_release_performance_certification_backlog.md)
     - [Performance Regression Contract](Design/Architecture/performance_regression_contract.md)
   - Systems And Economy
     - [Combat Catalog And Upgrade Design](Design/Combat_Catalog_And_Upgrade_Design.md)
@@ -426,7 +429,9 @@ The gameplay architecture contract is `Design/Architecture/gameplay_solid_ecs_co
 Current architecture source files:
 
 - `Design/Architecture/architecture_performance_hardening_implementation_tracker.md`
-  Active architecture/performance remediation program and current evidence source.
+  Completed early-development architecture/performance remediation program and evidence source.
+- `Design/Architecture/pre_release_performance_certification_backlog.md`
+  Deferred release qualification for sustained Android, thermal, residency, streaming, map comparison, and full visual evidence.
 - `Design/Architecture/gameplay_solid_ecs_contract.md`
   ECS/SOLID ownership, naming, UI view rules, service boundaries, assembly boundaries, GC rules, and Burst/job direction.
 - `Design/Architecture/menu_match_bootstrap_split_roadmap.md`

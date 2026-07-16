@@ -55,6 +55,9 @@ MATCH_READY_PATTERN = re.compile(
 RECORDER_MARKER_PATTERN = re.compile(r"\[APH-804 Recorder\]\s+complete=(?P<complete>[01])\b")
 SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 REVISION_PATTERN = re.compile(r"^[0-9a-f]{40}$")
+WIRELESS_ADB_SERIAL_PATTERN = re.compile(
+    r"^(?P<a>\d{1,3})\.(?P<b>\d{1,3})\.(?P<c>\d{1,3})\.(?P<d>\d{1,3}):(?P<port>\d{1,5})$"
+)
 COMPONENT_PATTERN = re.compile(
     r"(?:mResumedActivity:\s+|topResumedActivity=)ActivityRecord\{[^}]*\s"
     r"(?P<component>[A-Za-z0-9_.]+/[A-Za-z0-9_.$]+)(?:\s|\})"
@@ -288,6 +291,19 @@ def parse_wm_physical_size(output: str) -> tuple[int, int]:
     if width <= 0 or height <= 0:
         raise CollectionError("wm physical dimensions must be positive")
     return width, height
+
+
+def validate_transport_serial(requested_serial: str, pinned_hardware_serial: str) -> str:
+    if requested_serial == pinned_hardware_serial:
+        return requested_serial
+    match = WIRELESS_ADB_SERIAL_PATTERN.fullmatch(requested_serial)
+    if match is None:
+        raise CollectionError("requested serial must match the pinned hardware serial or an IPv4 ADB endpoint")
+    octets = [int(match.group(name)) for name in ("a", "b", "c", "d")]
+    port = int(match.group("port"))
+    if any(value > 255 for value in octets) or not 1 <= port <= 65535:
+        raise CollectionError("wireless ADB endpoint is outside the valid IPv4 or port range")
+    return requested_serial
 
 
 def parse_battery(output: str) -> dict[str, Any]:
@@ -538,8 +554,7 @@ def validate_preinstall_inputs(
     if REVISION_PATTERN.fullmatch(expected_revision) is None:
         raise CollectionError("expected revision must be exactly 40 lowercase hexadecimal characters")
     profile = load_profile(profile_path)
-    if serial != profile["device"]["serial"]:
-        raise CollectionError("requested serial does not match the pinned release profile")
+    validate_transport_serial(serial, profile["device"]["serial"])
     expected_apk = (root / profile["build"]["apkPath"]).resolve()
     if apk != expected_apk or not apk.is_file() or apk.stat().st_size <= 0:
         raise CollectionError("APK must be the exact non-empty artifact pinned by the release profile")
@@ -601,7 +616,7 @@ def collect_device_identity(adb: AdbBoundary, profile: dict[str, Any]) -> dict[s
         return value
 
     actual: dict[str, Any] = {
-        "serial": device["serial"],
+        "serial": prop("ro.serialno"),
         "manufacturer": prop("ro.product.manufacturer"),
         "model": prop("ro.product.model"),
         "deviceCodeName": prop("ro.product.device"),

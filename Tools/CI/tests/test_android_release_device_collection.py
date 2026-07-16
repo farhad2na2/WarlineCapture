@@ -32,6 +32,7 @@ from Tools.CI.android_release_device_collection import (
     require_install_completion,
     run_collection,
     sha256_file,
+    validate_transport_serial,
 )
 from Tools.CI.android_release_performance_gate import (
     DEFAULT_PROFILE,
@@ -241,9 +242,10 @@ class InstalledArtifactSizeAdb:
 
 
 class IdentityAdb:
-    def __init__(self, profile: dict, soc_manufacturer: str) -> None:
+    def __init__(self, profile: dict, soc_manufacturer: str, serial: str | None = None) -> None:
         self.profile = profile
         self.properties = {
+            "ro.serialno": serial or profile["device"]["serial"],
             "ro.product.manufacturer": profile["device"]["manufacturer"],
             "ro.product.model": profile["device"]["model"],
             "ro.product.device": profile["device"]["deviceCodeName"],
@@ -277,6 +279,27 @@ class AndroidReleaseDeviceCollectionTests(unittest.TestCase):
         actual = collect_device_identity(IdentityAdb(self.profile, "Mediatek"), self.profile)
 
         self.assertEqual(self.profile["device"], actual)
+
+        with self.assertRaisesRegex(CollectionError, "live device serial mismatch"):
+            collect_device_identity(IdentityAdb(self.profile, "Mediatek", "OTHER"), self.profile)
+
+    def test_transport_serial_allows_only_pinned_hardware_or_valid_ipv4_endpoint(self) -> None:
+        pinned = self.profile["device"]["serial"]
+        self.assertEqual(pinned, validate_transport_serial(pinned, pinned))
+        self.assertEqual(
+            "192.168.2.171:5555",
+            validate_transport_serial("192.168.2.171:5555", pinned),
+        )
+        for invalid in (
+            "",
+            "phone.local:5555",
+            "256.1.1.1:5555",
+            "192.168.2.171:0",
+            "192.168.2.171:65536",
+        ):
+            with self.subTest(invalid=invalid):
+                with self.assertRaises(CollectionError):
+                    validate_transport_serial(invalid, pinned)
 
     def test_install_completion_accepts_empty_adb_acknowledgment_for_later_hash_proof(self) -> None:
         require_install_completion(result(("install",), stdout=""), "exact APK install")

@@ -11,12 +11,16 @@ namespace Game.Runtime
         private Entity _cameraEntity;
         private EntityQuery _cameraQueueQuery;
         private EntityQuery _gridConfigQuery;
+        private EntityQuery _activeOperationMapBoundsQuery;
         private EntityQuery _tacticalFollowPoseQuery;
 
         protected override void OnCreate()
         {
             _cameraQueueQuery = GetEntityQuery(ComponentType.ReadOnly<RtsCameraRequestQueueComponent>());
             _gridConfigQuery = GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
+            _activeOperationMapBoundsQuery = GetEntityQuery(
+                ComponentType.ReadOnly<ActiveOperationMapComponent>(),
+                ComponentType.ReadOnly<OperationMapBoundsComponent>());
             _tacticalFollowPoseQuery = GetEntityQuery(ComponentType.ReadOnly<TacticalFollowCameraPoseComponent>());
             Enabled = false;
         }
@@ -305,9 +309,12 @@ namespace Game.Runtime
 
         private void SyncGroundBoundary(EntityManager entityManager, RtsCameraSystem cameraSystem, Camera worldCamera, bool skipClamp)
         {
-            if (TryGetGridConfig(entityManager, out GridConfig grid))
+            Rect boundary;
+            if (TryGetActiveOperationMapCameraBoundary(entityManager, out boundary) ||
+                TryGetGridConfig(entityManager, out GridConfig grid) &&
+                TryGetGridBoundary(in grid, out boundary))
             {
-                cameraSystem.SetGroundBoundary(ToGroundBoundary(grid));
+                cameraSystem.SetGroundBoundary(boundary);
                 if (!skipClamp)
                     cameraSystem.ClampCameraToGroundBoundary(worldCamera);
             }
@@ -315,6 +322,34 @@ namespace Game.Runtime
             {
                 cameraSystem.ClearGroundBoundary();
             }
+        }
+
+        private bool TryGetActiveOperationMapCameraBoundary(
+            EntityManager entityManager,
+            out Rect boundary)
+        {
+            boundary = default;
+            if (_activeOperationMapBoundsQuery.CalculateEntityCount() != 1)
+                return false;
+
+            Entity entity = _activeOperationMapBoundsQuery.GetSingletonEntity();
+            OperationMapBoundsComponent bounds =
+                entityManager.GetComponentData<OperationMapBoundsComponent>(entity);
+            float2 minimum = bounds.CameraMin.xz;
+            float2 maximum = bounds.CameraMax.xz;
+            if (!math.all(math.isfinite(minimum)) ||
+                !math.all(math.isfinite(maximum)) ||
+                math.any(maximum - minimum <= new float2(0.01f)))
+            {
+                return false;
+            }
+
+            boundary = new Rect(
+                minimum.x,
+                minimum.y,
+                maximum.x - minimum.x,
+                maximum.y - minimum.y);
+            return true;
         }
 
         private bool TryGetGridConfig(EntityManager entityManager, out GridConfig grid)
@@ -327,15 +362,16 @@ namespace Game.Runtime
             return grid.Width > 0 && grid.Height > 0 && grid.CellSize > 0.01f;
         }
 
-        private static Rect ToGroundBoundary(GridConfig grid)
+        private static bool TryGetGridBoundary(in GridConfig grid, out Rect boundary)
         {
             float minX = grid.Origin.x;
             float minZ = grid.Origin.z;
-            return new Rect(
+            boundary = new Rect(
                 minX,
                 minZ,
                 grid.Width * grid.CellSize,
                 grid.Height * grid.CellSize);
+            return true;
         }
 
         private static void ProcessRequest(RtsCameraRequestElement request, RtsCameraSystem cameraSystem, Camera worldCamera, Action orderMarkersHideRequested)

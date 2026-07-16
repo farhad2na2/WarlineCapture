@@ -2904,6 +2904,14 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
       "maxLines": 295,
       "maxBytes": 11398,
       "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/RtsCameraRequestSystem.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-164",
+      "maxLines": 578,
+      "maxBytes": 26940,
+      "scope": "production-over-500-review"
     }
   ]
 }

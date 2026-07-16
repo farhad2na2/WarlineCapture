@@ -699,7 +699,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 17% (30/177 checklist items complete).
+Overall implementation progress: 18% (31/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -712,7 +712,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 | 3. Current-map compatibility registration | In progress / shared | 5 | 10 | 50% | Current identities/definition are registered and schema-v1 read compatibility is explicit; runtime launch remains. |
 | 4. Non-destructive scene ownership split | In progress / shared priority | 1 | 14 | 7% | Final ownership inventory accepted; no scene object has moved yet. |
 | 5. Runtime selection, loading, and teardown | In progress / shared contracts | 1 | 14 | 7% | Pure readiness/failure/teardown data contracts only; concrete loading is later. |
-| 6. Metadata, camera, minimap, and movement binding | In progress / shared | 1 | 12 | 8% | Scenario-required anchor ids/kinds now validate against resolved operation-map metadata; consumer bindings remain. |
+| 6. Metadata, camera, minimap, and movement binding | In progress / shared | 2 | 12 | 17% | Scenario-required anchors validate against map metadata, and the existing RTS camera bridge prefers active-map camera bounds with grid fallback. |
 | 7. M01 operation-map slice | Later / shared contracts only | 0 | 10 | 0% | Map-neutral ids/anchors may proceed; physical rollout remains gated. |
 | 8. Editor-time texture/mask generator | Later / editor direction only | 0 | 12 | 0% | Implement only if the editor-authored map direction is selected. |
 | 9. Mission and Skirmish scenario rollout | Later / shared contracts only | 0 | 10 | 0% | Scenario-to-map identity may proceed; physical rollout remains later. |
@@ -896,7 +896,7 @@ Exit criteria:
 
 **Execution: `Shared now` where the binding consumes loader-neutral active-map metadata.**
 
-- [ ] Bind camera clamp bounds from active operation-map metadata.
+- [x] Bind camera clamp bounds from active operation-map metadata. See `../AgentReports/2026-07-16_operation_map_camera_bounds_binding.md`.
 - [ ] Bind planning, battle, and initial camera transforms from typed camera ids/anchors.
 - [ ] Bind minimap projection and cached raster data from the active map.
 - [ ] Bind objective focus/jump to typed operation-map anchor ids.
@@ -1085,6 +1085,7 @@ Exit criteria:
 | 2026-07-16 | Operation-map navigation metadata contract | `../AgentReports/2026-07-16_operation_map_navigation_metadata_contract.md`; focused EditMode `46 / 46`; source-growth/naming `24 / 24`; deterministic definition SHA-256 `a54e2937...974c`; Unity compile; `git diff --check` | Passed | Added bounded authored-navigation identity and runtime blocker/occupancy capability metadata without copying map payloads or binding gameplay behavior. Phase 6 movement/placement binding remains open. |
 | 2026-07-16 | Static-map schema-v1 read compatibility | `../AgentReports/2026-07-16_static_map_schema_v1_read_compatibility.md`; focused EditMode `37 / 37`; source-growth/naming `24 / 24`; canonical manifest SHA-256 `3940dcac...d93746`; runtime index `514` chunks; Unity compile; `git diff --check` | Passed | Established schema `1` as the explicit readable floor across runtime index, renderer ownership, scene wiring, and Android build resolution without advancing the schema or rewriting generated content. |
 | 2026-07-16 | Scenario-required operation-map anchor validation | `../AgentReports/2026-07-16_operation_map_scenario_anchor_validation.md`; focused EditMode `33 / 33`; source-growth/naming `24 / 24`; Unity compile; `git diff --check` | Passed | Added deterministic scenario-owned anchor id/kind requirements and fail-closed validation against resolved map anchors. No scene, map asset, loader, generated output, or runtime update loop changed. |
+| 2026-07-16 | Active operation-map camera bounds binding | `../AgentReports/2026-07-16_operation_map_camera_bounds_binding.md`; focused EditMode `33 / 33`; source-growth/naming `24 / 24`; decision `D-164`; Unity compile; `git diff --check` | Passed | Existing RTS camera bridge now prefers the single active map's immutable camera extent and retains `GridConfig` as compatibility fallback. No loader, scene, map asset, or new update loop changed. |
 
 ## Open Decisions
 

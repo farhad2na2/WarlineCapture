@@ -27,6 +27,7 @@ public sealed class RtsCameraSystemTests
             RunCase(nameof(PanCamera_ClampsViewportInsideGroundBoundary), test => test.PanCamera_ClampsViewportInsideGroundBoundary());
             RunCase(nameof(ResolveClampSafePerspectiveHeight_LeavesPanRoomAtMaxZoom), test => test.ResolveClampSafePerspectiveHeight_LeavesPanRoomAtMaxZoom());
             RunCase(nameof(ProcessPendingRequests_ClampsInitialCameraViewportInsideGrid), test => test.ProcessPendingRequests_ClampsInitialCameraViewportInsideGrid());
+            RunCase(nameof(ProcessPendingRequests_PrefersActiveOperationMapCameraBounds), test => test.ProcessPendingRequests_PrefersActiveOperationMapCameraBounds());
             RunCase(nameof(RuntimePanCamera_IgnoresDirectPanAndDragWhenTacticalFollowLocked), test => test.RuntimePanCamera_IgnoresDirectPanAndDragWhenTacticalFollowLocked());
             RunCase(nameof(RuntimeCameraTick_ReusesTacticalFollowQueriesWithoutManagedAllocation), test => test.RuntimeCameraTick_ReusesTacticalFollowQueriesWithoutManagedAllocation());
             RunCase(nameof(TacticalFollowQueryCache_RebindsWhenWorldChanges), test => test.TacticalFollowQueryCache_RebindsWhenWorldChanges());
@@ -271,6 +272,60 @@ public sealed class RtsCameraSystemTests
             cameraRequestSystem.ProcessPendingRequests(world.EntityManager, cameraSystem, camera);
 
             AssertCameraFootprintInside(cameraSystem, camera, new Rect(0f, 0f, 100f, 100f));
+        }
+        finally
+        {
+            if (world.IsCreated)
+                world.Dispose();
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
+    }
+
+    [Test]
+    public void ProcessPendingRequests_PrefersActiveOperationMapCameraBounds()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        var world = new World("RtsCameraSystemTests.ActiveOperationMapClamp");
+        World.DefaultGameObjectInjectionWorld = world;
+
+        try
+        {
+            RtsCameraSystem cameraSystem = world.GetOrCreateSystemManaged<RtsCameraSystem>();
+            RtsCameraRequestSystem cameraRequestSystem = world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
+            Camera camera = CreateCamera(new Vector3(-50f, 10f, -50f), Quaternion.Euler(90f, 0f, 0f));
+            camera.orthographic = true;
+            camera.orthographicSize = 5f;
+            camera.aspect = 1f;
+
+            Entity gridEntity = world.EntityManager.CreateEntity(typeof(GridConfig));
+            world.EntityManager.SetComponentData(gridEntity, new GridConfig
+            {
+                Width = 100,
+                Height = 100,
+                CellSize = 1f,
+                Origin = float3.zero
+            });
+
+            Entity mapEntity = world.EntityManager.CreateEntity(
+                typeof(ActiveOperationMapComponent),
+                typeof(OperationMapBoundsComponent));
+            world.EntityManager.SetComponentData(mapEntity, new ActiveOperationMapComponent
+            {
+                OperationMapId = new Unity.Collections.FixedString64Bytes("opmap.skirmish.desert_base_01"),
+                Generation = 1
+            });
+            world.EntityManager.SetComponentData(mapEntity, new OperationMapBoundsComponent
+            {
+                CameraMin = new float3(20f, 0f, 30f),
+                CameraMax = new float3(80f, 100f, 90f)
+            });
+
+            cameraRequestSystem.ProcessPendingRequests(world.EntityManager, cameraSystem, camera);
+
+            Rect expected = new(20f, 30f, 60f, 60f);
+            Assert.That(cameraSystem.TryGetGroundBoundary(out Rect actual), Is.True);
+            Assert.That(actual, Is.EqualTo(expected));
+            AssertCameraFootprintInside(cameraSystem, camera, expected);
         }
         finally
         {

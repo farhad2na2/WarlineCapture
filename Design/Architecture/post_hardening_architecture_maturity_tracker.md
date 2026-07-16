@@ -109,13 +109,13 @@ Release-only categories are reported separately and never averaged into a premat
 
 | Field | Status |
 |---|---|
-| Checklist complete | `2 / 86` (`2.3%`) |
-| Core Architecture Lane | `2 / 68` (`2.9%`); active |
+| Checklist complete | `3 / 86` (`3.5%`) |
+| Core Architecture Lane | `3 / 68` (`4.4%`); active |
 | Release Certification Lane | `0 / 18` (`0.0%`); deferred |
 | Program state | Core Architecture Lane active; release work inactive |
 | Current phase | Phase 0 - Entry Baseline And Scorecard |
-| Current task | `AM-003` ready, not yet claimed |
-| Core entry baseline | Prerequisite accepted by `AM-001`; exact environment identity accepted by `AM-002` at `68c785502151a54b6f6e4bb115789c8957962403`; refreshed gate evidence remains Phase 0 work |
+| Current task | `AM-004` ready, not yet claimed |
+| Core entry baseline | Prerequisite accepted by `AM-001`; environment identity accepted by `AM-002`; canonical scenarios accepted by `AM-003` at `a5bf7b72cdfb9457c6af1e98ee2bcaae983f9ff6`; refreshed gate evidence remains Phase 0 work |
 | Release entry review | Deferred until `pre_release_performance_certification_backlog.md` activates |
 | Architecture rating | Not re-audited for this program |
 | Performance evidence | Must be recaptured at the exact entry commit |
@@ -143,7 +143,7 @@ No production behavior changes. Establish a reproducible baseline and prevent an
 
 - [x] `AM-001` Verify the prerequisite tracker is closed and its compiler, architecture, critical behavior, Editor performance, and GC gates are green. Record every release-only gap as deferred/measurement-required without blocking the Core Architecture Lane.
 - [x] `AM-002` Record the exact entry commit, branch, Unity editor version, package lock hash, build target, scripting backend, and active quality configuration.
-- [ ] `AM-003` Define canonical scenarios for idle Match, maximum combat, construction, transport, aircraft, projectiles, every major popup, Menu-to-Match transitions, and long-duration soak.
+- [x] `AM-003` Define canonical scenarios for idle Match, maximum combat, construction, transport, aircraft, projectiles, every major popup, Menu-to-Match transitions, and long-duration soak.
 - [ ] `AM-004` Freeze the core architecture scorecard, metric definitions, performance budgets, GC classification policy, memory-growth threshold, and evidence freshness rules. Keep release-only device-tier fields explicitly `measurement-required` until `AM-053`.
 - [ ] `AM-005` Regenerate the architecture dashboard, produce the validator registry, and reject every required input reported as stale, unknown, malformed, duplicate-owned, or tied to a different commit.
 - [ ] `AM-006` Produce a current source-size, dependency, assembly-cycle, runtime-loop, static-state, managed-helper, and active-work ownership inventory.
@@ -465,3 +465,16 @@ The implementation agent owns substantive commits, pushes, PR creation, and revi
 - Residual risk: Android is a persisted machine-local Editor setting rather than a live Editor API observation. No Player runtime was launched, so runtime quality remains explicitly not observed and is not required for this documentation-only identity slice.
 - Exclusions preserved: the concurrent operation-map commit was rebased intact; operation-map, FirstLaunch, audio, UI visual-lock, production code, scenes, prefabs, packages, and `ProjectSettings` were not edited by AM-002.
 - Next task: `AM-003` defines the canonical scenario catalog.
+
+### 2026-07-16 - AM-003 - Canonical scenario catalog
+
+- Workflow path: pull request.
+- Implementation branch and PR: `codex/am-003-canonical-scenarios`; [PR #16](https://github.com/farhad2na2/WarlineCapture/pull/16).
+- Baseline: `a5bf7b72cdfb9457c6af1e98ee2bcaae983f9ff6`, tree `8b2f87e5d9006fd9cea8a97c2153abfe2d265d2a`; reviewed implementation head `f00e557eee8db6e12f5de4cf0faa2eed9c30cd8d`.
+- Result: ten deterministic canonical scenarios cover idle Match, maximum combat, construction, transport, aircraft, projectiles, twelve implemented Match UI surfaces, both returning-user Menu/Match transitions, and a definition-only long-soak procedure. Result and Support selector routes remain explicit non-executable implementation gaps.
+- Evidence: `Design/AgentReports/ArchitectureMaturity/canonical_scenarios.json` and matching rendered Markdown catalog.
+- Validation: canonical JSON serialization, schema and baseline invariants, unique/sorted scenario and coverage IDs, deterministic seeds and windows, null AM-004 thresholds, required retry/skip policy, cited path existence, JSON/Markdown ID parity, two-file substantive scope, and `git diff --check` passed.
+- Independent review: two findings rejected an accidentally active 30-minute Core soak and missing Support-selector coverage. Implementation commit `b61848e3f` made the soak definition-only/deferred and added the evidence-backed Support gap; complete latest-main rereview found no remaining material issue.
+- Residual risks: the catalog exposes fixture limitations for exact maximum-combat saturation, construction burst scale, transport runway behavior, full Match aircraft lifecycle, and historical soak freshness. AM-003 defines procedures and does not execute Unity, Player, Android, thermal, or sustained certification.
+- Exclusions preserved: current operation-map compatibility metadata and canonical Match authorities were retained while separately owned operation-map R&D, FirstLaunch, audio, UI visual-lock, and production assets remained unmodified.
+- Next task: `AM-004` freezes scorecard metrics, budgets, freshness rules, and the exception registry.

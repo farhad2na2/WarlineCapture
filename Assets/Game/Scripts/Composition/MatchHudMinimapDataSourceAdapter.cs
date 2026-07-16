@@ -19,6 +19,7 @@ namespace Game.Composition
         private Entity cachedGridRoadEntity = Entity.Null;
         private Entity cachedMarkerBoundaryEntity = Entity.Null;
         private Entity cachedMapSurfaceEntity = Entity.Null;
+        private Entity cachedOperationMapMetadataEntity = Entity.Null;
 
         public bool TryGetGrid(out MatchHudMinimapGridModel grid)
         {
@@ -27,7 +28,9 @@ namespace Game.Composition
                 return false;
 
             GridConfig gridConfig = em.GetComponentData<GridConfig>(gridEntity);
-            grid = ToModel(gridConfig);
+            grid = TryGetActiveMapProjection(em, out OperationMapMinimapBlob projection)
+                ? ToModel(gridConfig, projection)
+                : ToModel(gridConfig);
             return grid.IsValid;
         }
 
@@ -139,6 +142,47 @@ namespace Game.Composition
                 grid.Width,
                 grid.Height,
                 grid.CellSize);
+        }
+
+        private static MatchHudMinimapGridModel ToModel(GridConfig grid, OperationMapMinimapBlob projection)
+        {
+            return new MatchHudMinimapGridModel(
+                new Vector3(projection.ProjectionOrigin.x, projection.ProjectionOrigin.y, projection.ProjectionOrigin.z),
+                grid.Width,
+                grid.Height,
+                grid.CellSize,
+                new Vector2(projection.ProjectionSize.x, projection.ProjectionSize.y));
+        }
+
+        private bool TryGetActiveMapProjection(EntityManager em, out OperationMapMinimapBlob projection)
+        {
+            projection = default;
+            if (!IsValidEntity(
+                    em,
+                    cachedOperationMapMetadataEntity,
+                    ComponentType.ReadOnly<ActiveOperationMapComponent>(),
+                    ComponentType.ReadOnly<OperationMapMetadataComponent>()))
+            {
+                using EntityQuery query = em.CreateEntityQuery(
+                    ComponentType.ReadOnly<ActiveOperationMapComponent>(),
+                    ComponentType.ReadOnly<OperationMapMetadataComponent>());
+                if (query.CalculateEntityCount() != 1)
+                    return false;
+
+                cachedOperationMapMetadataEntity = query.GetSingletonEntity();
+            }
+
+            ActiveOperationMapComponent active = em.GetComponentData<ActiveOperationMapComponent>(cachedOperationMapMetadataEntity);
+            OperationMapMetadataComponent metadata = em.GetComponentData<OperationMapMetadataComponent>(cachedOperationMapMetadataEntity);
+            if (!metadata.Blob.IsCreated || active.Generation != metadata.Generation)
+                return false;
+
+            projection = metadata.Blob.Value.Minimap;
+            return math.all(math.isfinite(projection.ProjectionOrigin)) &&
+                   math.all(math.isfinite(projection.ProjectionSize)) &&
+                   math.all(projection.ProjectionSize > float2.zero) &&
+                   math.isfinite(projection.OrientationDegrees) &&
+                   math.abs(projection.OrientationDegrees) <= 0.001f;
         }
 
         private static bool TryGetDefaultEntityManager(out EntityManager em)

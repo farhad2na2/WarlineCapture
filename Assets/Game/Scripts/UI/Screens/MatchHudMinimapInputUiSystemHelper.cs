@@ -57,8 +57,7 @@ namespace Game.UI.Runtime
         private bool _staticMapDirty = true;
         private float _nextStaticMapRetryTime;
         private int _warmupStaticMapRefreshesRemaining;
-        private bool _hasCapturedProjectionGrid;
-        private bool _hasCachedGrid;
+        private bool _hasCapturedProjectionGrid, _hasCachedGrid;
         private bool _markersDirty = true;
         private MatchHudMinimapProjectionGrid _capturedProjectionGrid;
         private MatchHudMinimapProjectionGrid _currentProjectionGrid;
@@ -156,8 +155,8 @@ namespace Game.UI.Runtime
 
         public void NotifyStaticMapChanged()
         {
-            _staticMapDirty = true;
-            _markersDirty = true;
+            _staticMapDirty = _markersDirty = true;
+            _hasCachedGrid = false;
             _nextViewportRefreshTime = 0f;
         }
 

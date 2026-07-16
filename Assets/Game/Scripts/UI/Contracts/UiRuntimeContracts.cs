@@ -147,17 +147,29 @@ namespace Game.UI.Contracts
         public readonly int Width;
         public readonly int Height;
         public readonly float CellSize;
+        private readonly Vector2 projectionSize;
 
         public MatchHudMinimapGridModel(Vector3 origin, int width, int height, float cellSize)
+            : this(origin, width, height, cellSize, default)
+        {
+        }
+
+        public MatchHudMinimapGridModel(
+            Vector3 origin,
+            int width,
+            int height,
+            float cellSize,
+            Vector2 projectionSize)
         {
             Origin = origin;
             Width = width;
             Height = height;
             CellSize = cellSize;
+            this.projectionSize = projectionSize;
         }
 
-        public float WorldWidth => Mathf.Max(0.001f, Width * CellSize);
-        public float WorldHeight => Mathf.Max(0.001f, Height * CellSize);
+        public float WorldWidth => Mathf.Max(0.001f, projectionSize.x > 0f ? projectionSize.x : Width * CellSize);
+        public float WorldHeight => Mathf.Max(0.001f, projectionSize.y > 0f ? projectionSize.y : Height * CellSize);
         public bool IsValid => Width > 0 && Height > 0 && CellSize > 0f;
     }
 

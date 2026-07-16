@@ -109,13 +109,13 @@ Release-only categories are reported separately and never averaged into a premat
 
 | Field | Status |
 |---|---|
-| Checklist complete | `6 / 86` (`7.0%`) |
-| Core Architecture Lane | `6 / 68` (`8.8%`); active |
+| Checklist complete | `7 / 86` (`8.1%`) |
+| Core Architecture Lane | `7 / 68` (`10.3%`); active |
 | Release Certification Lane | `0 / 18` (`0.0%`); deferred |
 | Program state | Core Architecture Lane active; release work inactive |
 | Current phase | Phase 0 - Entry Baseline And Scorecard |
-| Current task | `AM-007` ready, not yet claimed |
-| Core entry baseline | Prerequisite accepted by `AM-001`; environment identity accepted by `AM-002`; canonical scenarios accepted by `AM-003`; scorecard, budgets, freshness, and exception policy accepted by `AM-004`; validator ownership and fail-closed dashboard enforcement accepted by `AM-005`; current source/dependency/runtime ownership inventory accepted by `AM-006` against `202b53025d793d6bfe3f0379782b7e185e92be07`; exact-identity performance evidence recapture remains Phase 0 exit work |
+| Current task | `AM-008` ready, not yet claimed |
+| Core entry baseline | Prerequisite accepted by `AM-001`; environment identity accepted by `AM-002`; canonical scenarios accepted by `AM-003`; scorecard, budgets, freshness, and exception policy accepted by `AM-004`; validator ownership and fail-closed dashboard enforcement accepted by `AM-005`; current source/dependency/runtime ownership inventory accepted by `AM-006` against `202b53025d793d6bfe3f0379782b7e185e92be07`; lifecycle ownership inventory accepted by `AM-007` against `7f41260803d85f46f6bb11a0078b395bc30d1ee4`; exact-identity performance evidence recapture remains Phase 0 exit work |
 | Release entry review | Deferred until `pre_release_performance_certification_backlog.md` activates |
 | Architecture rating | Not re-audited for this program |
 | Performance evidence | Core budgets are frozen by `AM-004`; the AM-005 dashboard rejects both required legacy rows because their exact commit and AM-002 environment identity are unknown; measurements remain unclaimed |
@@ -147,7 +147,7 @@ No production behavior changes. Establish a reproducible baseline and prevent an
 - [x] `AM-004` Freeze the core architecture scorecard, metric definitions, performance budgets, GC classification policy, memory-growth threshold, and evidence freshness rules. Keep release-only device-tier fields explicitly `measurement-required` until `AM-053`.
 - [x] `AM-005` Regenerate the architecture dashboard, produce the validator registry, and reject every required input reported as stale, unknown, malformed, duplicate-owned, or tied to a different commit.
 - [x] `AM-006` Produce a current source-size, dependency, assembly-cycle, runtime-loop, static-state, managed-helper, and active-work ownership inventory.
-- [ ] `AM-007` Produce a lifecycle inventory for Worlds, persistent native containers, query caches, presentation pools, scene roots, event subscriptions, and static caches.
+- [x] `AM-007` Produce a lifecycle inventory for Worlds, persistent native containers, query caches, presentation pools, scene roots, event subscriptions, and static caches.
 - [ ] `AM-008` Publish the entry baseline report with ratings by area, accepted evidence links, known residual risks, and the exact deltas this program owns.
 
 Phase 0 must produce these commit-bound artifacts before any implementation extraction begins:
@@ -521,3 +521,16 @@ The implementing agent works directly on `main`, owns the bounded substantive an
 - Residual risks: candidate rows still require responsibility classification in later bounded work packages; the inventory measures current structure but does not claim performance, GC, memory plateau, lifecycle cleanup, or release readiness. Phase 0 still needs the lifecycle inventory and entry baseline report.
 - Exclusions preserved: operation-map, FirstLaunch, audio, UI visual-lock, production code, scenes, prefabs, packages, and `ProjectSettings` were read for ownership/hash evidence but not edited.
 - Next task: `AM-007` produces the World, native-container, query-cache, presentation-pool, scene-root, subscription, and static-cache lifecycle inventory.
+
+### 2026-07-16 - AM-007 - Lifecycle ownership inventory
+
+- Workflow path: direct commits to `main`; no branch, worktree, or PR workflow.
+- Baseline: `d409eca06225a0f21b9ac8b2f324c9ce20864876`; accepted implementation and inventory baseline: `7f41260803d85f46f6bb11a0078b395bc30d1ee4`, tree `b90137d8c6dfd4b6bf7b5822955d2bf577671dd8`.
+- Result: the live non-Editor production tree contains 77 World owners with 87 default-world accesses, 129 native-container ownership candidates, 57 field-specific `Allocator.Persistent` observations, 505 query/lookup cache candidates, 15 presentation-pool candidates, 11 scene-root candidates, 79 named event-subscription candidates, and 47 static-cache candidates.
+- Lifecycle attention: 63 native fields have no directly observed teardown dispose, 157 non-system query/lookup fields require owner classification, 12 presentation pools have no directly observed teardown clear/dispose, 57 named subscriptions have no matching unsubscribe in the owner type, 71 have no unsubscribe directly in a teardown method, and 47 static caches have no directly observed teardown reset. These are classification rows, not automatic leak findings.
+- Evidence: `Design/AgentReports/ArchitectureMaturity/lifecycle_inventory.json` and matching Markdown rendering, generated by `Tools/CI/architecture_lifecycle_inventory.py`.
+- Validation: five focused Python tests passed; generic fields, nested owner attribution, member-depth filtering, direct teardown observation, exact subscription pairing, expression-bodied lifecycle methods, comments, strings, method locals, Editor source, exact Git identity, authority presence, active-owner ordering, and byte-identical regeneration were covered; production JSON/Markdown hashes matched an independent regeneration; `git diff --check` passed.
+- Review: broad lexical matches are constrained by owner/type/path signals and preserve source lines. Missing cleanup remains a review requirement because helper-call chains and framework-owned ECS lifetimes cannot be proven by lexical scanning alone. System-owned query fields are classified separately from explicit-dispose and unresolved owner rows.
+- Residual risks: AM-007 identifies ownership debt but does not change runtime behavior, prove memory plateau, or claim performance. Candidate resolution belongs to bounded later work packages using the required creator, capacity policy, disposer, and lifecycle-test fields.
+- Exclusions preserved: operation-map, FirstLaunch, audio, UI visual-lock, production C# behavior, scenes, prefabs, packages, and `ProjectSettings` were read for lifecycle evidence but not edited.
+- Next task: `AM-008` publishes the exact-identity Phase 0 entry baseline report and owned delta list.

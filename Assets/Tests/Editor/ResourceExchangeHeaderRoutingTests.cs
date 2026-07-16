@@ -59,6 +59,10 @@ public sealed class ResourceExchangeHeaderRoutingTests
                 nameof(MenuSceneShell_PopupLayerClearRemovesResourceExchangeCloseListener),
                 test => test.MenuSceneShell_PopupLayerClearRemovesResourceExchangeCloseListener(),
                 ref passed);
+            RunValidationStep(
+                nameof(MenuSceneShell_RebindingRuntimeUiTransfersOpenResourceExchangePopup),
+                test => test.MenuSceneShell_RebindingRuntimeUiTransfersOpenResourceExchangePopup(),
+                ref passed);
 
             Debug.Log($"[ResourceExchangeHeaderRoutingValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -347,6 +351,39 @@ public sealed class ResourceExchangeHeaderRoutingTests
         finally
         {
             runtimeUi.Dispose();
+        }
+    }
+
+    [Test]
+    public void MenuSceneShell_RebindingRuntimeUiTransfersOpenResourceExchangePopup()
+    {
+        Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
+        UIShellContentView content = FindInScene<UIShellContentView>(scene);
+        Assert.NotNull(content);
+
+        MainMenuPlayUI firstRuntimeUi = new();
+        MainMenuPlayUI secondRuntimeUi = new();
+        try
+        {
+            content.BindGameplayRuntimeDependencies(null, firstRuntimeUi);
+            GameObject popup = content.InstallResourceExchangePopup();
+            Canvas.ForceUpdateCanvases();
+            Vector2 popupCenter = RectTransformUtility.WorldToScreenPoint(null, popup.transform.position);
+            Assert.IsTrue(firstRuntimeUi.IsPointerOverAnyGameplayUi(popupCenter, out string firstSource));
+            Assert.AreEqual("ResourceExchangePopup", firstSource);
+
+            content.BindGameplayRuntimeDependencies(null, secondRuntimeUi);
+
+            Assert.IsFalse(
+                firstRuntimeUi.IsPointerOverAnyGameplayUi(popupCenter, out string staleSource) &&
+                staleSource == "ResourceExchangePopup");
+            Assert.IsTrue(secondRuntimeUi.IsPointerOverAnyGameplayUi(popupCenter, out string secondSource));
+            Assert.AreEqual("ResourceExchangePopup", secondSource);
+        }
+        finally
+        {
+            firstRuntimeUi.Dispose();
+            secondRuntimeUi.Dispose();
         }
     }
 

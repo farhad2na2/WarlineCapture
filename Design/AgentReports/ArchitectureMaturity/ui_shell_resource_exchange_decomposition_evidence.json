@@ -1,0 +1,61 @@
+{
+  "artifactId": "am015-ui-shell-resource-exchange-decomposition-v1",
+  "schemaVersion": 1,
+  "acceptanceRequired": false,
+  "sourceBaseline": {
+    "branch": "main",
+    "commit": "e18d3d650374a04b59a34f5a01c8bbafd6a15a4f",
+    "tree": "e9d5308e3eb9046c7e9062d5c3a2692e757fb621"
+  },
+  "selection": {
+    "rankingPath": "Design/AgentReports/ArchitectureMaturity/owner_risk_ranking.json",
+    "rankingSha256": "ec381d90aa68ca4adc4387de344085f9ba0c0aabe7a1afb190155e381c803847",
+    "ownerPath": "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs",
+    "screeningRank": 5,
+    "screeningScore": 12,
+    "reason": "Highest-ranked eligible recurring UI/presentation owner; contracts-only rows do not own runtime behavior."
+  },
+  "productionChangePaths": [
+    "Assets/Game/Scripts/UI/Shell/ResourceExchangeShellBinding.cs",
+    "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs"
+  ],
+  "ownedFiles": [
+    {"path": "Assets/Game/Scripts/UI/Shell/ResourceExchangeShellBinding.cs", "sha256": "640758d7b1562455285ee8da14b8da38fd9c31102397e1267eafa90328d7ee07"},
+    {"path": "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs", "sha256": "a729b621b4ae140807469c336e6277c6cfaaa81aac5dfe2fcd3c9b3e97d8d7a9"},
+    {"path": "Assets/Tests/Editor/ResourceExchangeHeaderRoutingTests.cs", "sha256": "17014df7fc6d1140162b6a82e0a813a5910dcb5878d842062ae21ae74a0e5e25"}
+  ],
+  "measuredDecomposition": {
+    "ownerLinesBefore": 952,
+    "ownerBytesBefore": 41372,
+    "ownerStateSlotsBefore": 52,
+    "ownerLinesAfter": 898,
+    "ownerBytesAfter": 38807,
+    "bindingLinesAfter": 94,
+    "bindingBytesAfter": 3160,
+    "movedStateSlots": 4,
+    "ownerResponsibilityBefore": "Own Resource Exchange popup instance, view, close button, listener, install, visual close, and region-clear reset.",
+    "ownerResponsibilityAfter": "Retain route interpretation, typed close action, runtime dependency authority, and popup-region ownership; delegate visual lifecycle state."
+  },
+  "authorityBoundary": {
+    "bindingOwns": "Resource Exchange popup instance/view/button/listener and visual install/close/reset lifecycle only.",
+    "shellRetains": "Route interpretation, typed action enqueue, current MainMenuPlayUI dependency, popup region mutation, content version, and public compatibility methods.",
+    "ecsDecision": "Managed Unity UI boundary; plain managed helper. No ISystem or SystemBase is introduced."
+  },
+  "unityValidations": [
+    {"id": "resource-exchange", "result": "Passed", "passedTests": 10, "compilerErrors": 0, "log": "/private/tmp/am015-resource-binding-rereview.log"},
+    {"id": "ui-shell", "result": "Passed", "passedTests": 14, "compilerErrors": 0, "log": "/private/tmp/am015-ui-shell-rereview.log"},
+    {"id": "settings", "result": "Passed", "passedTests": 8, "compilerErrors": 0, "log": "/private/tmp/am015-settings-regression.log"},
+    {"id": "architecture", "result": "Passed", "passedTests": 1, "compilerErrors": 0, "log": "/private/tmp/am015-architecture-contract.log"}
+  ],
+  "validationSources": [
+    {"id": "resource-exchange", "path": "Assets/Tests/Editor/ResourceExchangeHeaderRoutingTests.cs", "sha256": "17014df7fc6d1140162b6a82e0a813a5910dcb5878d842062ae21ae74a0e5e25", "runnerSteps": 10},
+    {"id": "ui-shell", "path": "Assets/Tests/Editor/UIShellCurrentContentLoadTests.cs", "sha256": "6f0441cc12bd091737f9851099fd6517ce2f1ad478eafed10dde2f1824953db6", "runnerSteps": 14},
+    {"id": "settings", "path": "Assets/Tests/Editor/SettingsPopupValidationTests.cs", "sha256": "a2a552c34808c5e8b2affa6d585282754a6fa0dbf6940b8bcaba2c1324f9444d", "runnerSteps": 8},
+    {"id": "architecture", "path": "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs", "sha256": "89eb3719a6fc681870516e9e35260f8f86e319a905663652b11ee50050b6ac97", "runnerSteps": 1}
+  ],
+  "performanceDecision": "AM-015 measures owner lines, bytes, state, and responsibility reduction. AM-017 owns the focused and canonical post-Phase-1 frame-time/GC recapture after all integrations.",
+  "validatorAuthority": {
+    "path": "Tools/CI/tests/test_architecture_ui_shell_decomposition_evidence.py",
+    "sha256": "d14581148d9f3d6791432a3d7723a272e6ffa4d90351e155b26e3ea2d0be8191"
+  }
+}

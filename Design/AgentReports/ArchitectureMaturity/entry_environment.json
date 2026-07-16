@@ -3,19 +3,25 @@
   "artifactType": "architecture-maturity-entry-environment",
   "baseline": {
     "branch": "codex/am-002-entry-environment",
-    "commit": "2f6d5d76d41ef81c7f5990bcc273320434cd5ede",
+    "commit": "68c785502151a54b6f6e4bb115789c8957962403",
     "gitObjectFormat": "sha1",
-    "originMainCommit": "2f6d5d76d41ef81c7f5990bcc273320434cd5ede",
+    "originMainCommit": "68c785502151a54b6f6e4bb115789c8957962403",
     "relationshipToOriginMain": "exact-match",
-    "tree": "143d3463dec1f7279b438d42ee0433cc488cf20f"
+    "tree": "a22c7a140b8326dd6a9bc2b00833a3b1764762af"
   },
   "configuration": {
     "buildTargets": {
       "activeEditorBuildTarget": {
-        "observationKind": "editor-session-state",
-        "reason": "No Unity Editor session was run or inspected in the dedicated baseline worktree. Repository-serialized platform identifiers are configuration, not proof of the active Editor BuildTarget.",
-        "status": "not-observed",
-        "value": null
+        "buildPlatformGroupName": "Android",
+        "buildTargetGroupSerializedValue": 7,
+        "buildTargetSerializedValue": 13,
+        "commitBound": false,
+        "evidenceRef": "provenance.machineLocalEditorSession",
+        "observationKind": "machine-local-editor-session-persistence",
+        "sourceCheckoutBaselineCommit": "68c785502151a54b6f6e4bb115789c8957962403",
+        "sourceCheckoutMatchesBaseline": true,
+        "status": "observed-machine-local",
+        "value": "Android"
       },
       "configuredTargetIds": [
         "Android",
@@ -47,10 +53,14 @@
     },
     "quality": {
       "activeEditorQuality": {
-        "observationKind": "editor-session-state",
-        "reason": "The Editor QualitySettings.GetQualityLevel value was not observed in the dedicated baseline worktree.",
-        "status": "not-observed",
-        "value": null
+        "index": 1,
+        "name": "Mobile",
+        "observationKind": "repository-serialized-current-quality",
+        "runtimeObservationPerformed": false,
+        "sourcePath": "ProjectSettings/QualitySettings.asset",
+        "sourceSelector": "QualitySettings.m_CurrentQuality",
+        "status": "repository-serialized-entry-identity",
+        "value": "Mobile"
       },
       "activeRuntimeQuality": {
         "observationKind": "player-runtime-state",
@@ -174,7 +184,7 @@
       ],
       "repositoryDeclaredCurrentQuality": {
         "index": 1,
-        "interpretation": "Serialized m_CurrentQuality only; not claimed as the observed Editor or Player runtime quality.",
+        "interpretation": "Serialized m_CurrentQuality used as the AM-002 active quality configuration identity; not claimed as a Player runtime observation.",
         "name": "Mobile",
         "status": "repository-declared"
       },
@@ -191,10 +201,25 @@
     },
     "scriptingBackends": {
       "activeEditorScriptingBackend": {
-        "observationKind": "editor-session-state-derived-from-active-target",
-        "reason": "No active Editor BuildTarget was observed in the dedicated baseline worktree, so no backend is claimed active.",
-        "status": "not-observed",
-        "value": null
+        "derivation": [
+          {
+            "evidenceRef": "provenance.machineLocalEditorSession",
+            "leg": "machine-local-active-build-target",
+            "selector": "EditorUserBuildSettings.m_ActiveBuildPlatformGroupName",
+            "value": "Android"
+          },
+          {
+            "evidenceRef": "configuration.scriptingBackends.source",
+            "leg": "repository-serialized-backend-for-observed-target",
+            "selector": "PlayerSettings.scriptingBackend.Android",
+            "serializedValue": 1,
+            "value": "IL2CPP"
+          }
+        ],
+        "observationKind": "derived-from-machine-local-editor-target-and-repository-declared-target-configuration",
+        "status": "derived-entry-identity",
+        "target": "Android",
+        "value": "IL2CPP"
       },
       "configuredByTargetGroup": [
         {
@@ -222,7 +247,8 @@
         "hashAlgorithm": "sha256",
         "path": "ProjectSettings/ProjectSettings.asset",
         "selectors": [
-          "PlayerSettings.scriptingBackend"
+          "PlayerSettings.scriptingBackend",
+          "PlayerSettings.scriptingBackend.Android"
         ]
       }
     },
@@ -248,10 +274,24 @@
       "configuration.buildTargets.configuredTargetIds": "serialized target ID ascending by Unicode code point",
       "configuration.quality.defaultByPlatform": "serializedPlatformId ascending by Unicode code point",
       "configuration.quality.levels": "index ascending; each excludedTargetPlatforms array ascending by Unicode code point",
+      "configuration.quality.source.selectors": "selector ascending by Unicode code point",
+      "configuration.scriptingBackends.activeEditorScriptingBackend.derivation": "leg ascending by Unicode code point",
       "configuration.scriptingBackends.configuredByTargetGroup": "serializedTargetGroupId ascending by Unicode code point",
+      "configuration.scriptingBackends.source.selectors": "selector ascending by Unicode code point",
+      "configuration.unityEditor.source.selectors": "selector ascending by Unicode code point",
       "provenance.gitQueries": "command ascending by Unicode code point",
+      "provenance.machineLocalEditorSession.conversion.selectors": "path ascending by Unicode code point",
       "provenance.sourceFiles": "path ascending by Unicode code point",
       "scope.writeAllowlist": "path ascending by Unicode code point"
+    },
+    "machineLocalRegenerationBoundary": {
+      "binary2textContentHash": "1dcf951a9b3dc80ba7df63391f585d2a54988df8138410cef42807be706ffefb",
+      "binary2textPath": "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Helpers/binary2text",
+      "convertedTextContentHash": "fd0e7e9a7e2f6b47f0d448ad4dcbfd2a2b6a5a96539fe93b3072002aa7ad1cd1",
+      "sourceBinaryContentHash": "f9f9af72d3449fc60146ea10f8becbeca67510a1835561bfcb23f1c6c0309ebd",
+      "sourceBinaryPath": "Library/EditorUserBuildSettings.asset",
+      "toolVersionEvidenceContentHash": "6016bc40b58d1735f4955f0d5c3621eb30f0a5c73a6d52498bed1909ef804284",
+      "unchangedInputDefinition": "Byte-identical regeneration requires unchanged baseline Git identities and tracked source hashes, source binary hash, binary2text hash, and tool-version-evidence hash."
     },
     "serialization": {
       "characterEncoding": "UTF-8",
@@ -261,16 +301,18 @@
       "trailingLineFeedCount": 1
     },
     "volatileInputsExcluded": [
-      "Editor and Player session state",
+      "Editor and Player session state other than the content-addressed EditorUserBuildSettings.asset input",
       "filesystem modification times",
-      "machine-local Library/** content",
+      "machine-local Library/** content other than the content-addressed EditorUserBuildSettings.asset input",
       "wall-clock generation timestamps"
     ]
   },
   "observationBoundary": {
-    "authority": "Commit-bound repository declarations at baseline.commit and baseline.tree.",
+    "authority": "Commit-bound repository declarations plus a content-addressed machine-local Editor session persistence observation; machine-local state is not repository authority.",
     "dedicatedWorktreeEditorSessionObserved": false,
-    "machineLocalLibraryContentCopiedOrHashed": false,
+    "machineLocalEditorSessionPersistenceObserved": true,
+    "machineLocalLibraryContentCopiedIntoRepository": false,
+    "machineLocalLibrarySourceHashed": true,
     "machineLocalMainCheckoutStateUsedAsRepositoryAuthority": false,
     "playerRuntimeObserved": false
   },
@@ -286,14 +328,79 @@
         "result": "sha1"
       },
       {
-        "command": "git rev-parse 2f6d5d76d41ef81c7f5990bcc273320434cd5ede^{tree}",
-        "result": "143d3463dec1f7279b438d42ee0433cc488cf20f"
+        "command": "git rev-parse 68c785502151a54b6f6e4bb115789c8957962403^{tree}",
+        "result": "a22c7a140b8326dd6a9bc2b00833a3b1764762af"
       },
       {
         "command": "git rev-parse origin/main",
-        "result": "2f6d5d76d41ef81c7f5990bcc273320434cd5ede"
+        "result": "68c785502151a54b6f6e4bb115789c8957962403"
       }
     ],
+    "machineLocalEditorSession": {
+      "authority": "non-repository-machine-local-observation",
+      "binary2text": {
+        "contentHash": "1dcf951a9b3dc80ba7df63391f585d2a54988df8138410cef42807be706ffefb",
+        "enclosingUnityEditorRevision": "eb73d3b415a1",
+        "enclosingUnityEditorVersion": "6000.5.2f1",
+        "hashAlgorithm": "sha256",
+        "name": "binary2text",
+        "path": "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Helpers/binary2text",
+        "versionEvidence": {
+          "contentHash": "6016bc40b58d1735f4955f0d5c3621eb30f0a5c73a6d52498bed1909ef804284",
+          "hashAlgorithm": "sha256",
+          "path": "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Info.plist",
+          "selectors": {
+            "CFBundleVersion": "6000.5.2f1",
+            "UnityBuildNumber": "eb73d3b415a1"
+          }
+        }
+      },
+      "conversion": {
+        "inputPath": "Library/EditorUserBuildSettings.asset",
+        "invocation": "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Helpers/binary2text /Users/farhad/Projects/WarlineCapture/Library/EditorUserBuildSettings.asset <temporary-output-path>",
+        "outputCommitted": false,
+        "outputContentHash": "fd0e7e9a7e2f6b47f0d448ad4dcbfd2a2b6a5a96539fe93b3072002aa7ad1cd1",
+        "outputHashAlgorithm": "sha256",
+        "outputReproducibilityCheck": "Two conversions from unchanged input and tool were byte-identical.",
+        "selectors": [
+          {
+            "convertedTextLine": 28,
+            "path": "EditorUserBuildSettings.m_ActiveBuildPlatformGroupName",
+            "rawType": "string",
+            "value": "Android"
+          },
+          {
+            "convertedTextLine": 23,
+            "path": "EditorUserBuildSettings.m_ActiveBuildTarget",
+            "rawType": "int",
+            "value": 13
+          },
+          {
+            "convertedTextLine": 26,
+            "path": "EditorUserBuildSettings.m_ActiveBuildTargetGroup",
+            "rawType": "int",
+            "value": 7
+          }
+        ],
+        "temporaryOutputPathRecorded": false
+      },
+      "mainCheckout": {
+        "absolutePath": "/Users/farhad/Projects/WarlineCapture",
+        "branch": "main",
+        "commit": "68c785502151a54b6f6e4bb115789c8957962403",
+        "commitEqualsBaseline": true,
+        "tree": "a22c7a140b8326dd6a9bc2b00833a3b1764762af"
+      },
+      "source": {
+        "bytes": 9672,
+        "contentHash": "f9f9af72d3449fc60146ea10f8becbeca67510a1835561bfcb23f1c6c0309ebd",
+        "gitIgnored": true,
+        "hashAlgorithm": "sha256",
+        "path": "Library/EditorUserBuildSettings.asset",
+        "pathBasis": "repository-relative-to-mainCheckout.absolutePath",
+        "tracked": false
+      }
+    },
     "sourceFiles": [
       {
         "contentHash": "1d236fe27a37ac281785ef94283f220b9135ca0ee73976117782a5b674ea935e",

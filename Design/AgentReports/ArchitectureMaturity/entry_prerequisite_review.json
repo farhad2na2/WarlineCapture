@@ -3,7 +3,7 @@
   "artifactId": "AM-001",
   "artifactType": "architecture-maturity-entry-prerequisite-review",
   "reviewDate": "2026-07-16",
-  "reviewMethod": "repository-evidence-review",
+  "reviewMethod": "bounded-repository-evidence-review",
   "reviewedBaseline": {
     "branch": "codex/am-001-prerequisite-review",
     "commit": "1a0f1eceb2d6c04359e2f868ddd9f99d26a0e713",
@@ -27,21 +27,27 @@
     "sharedTrackerChanged": false
   },
   "sourceDocuments": [
+    "Design/AgentReports/2026-06-11_perf_match-gc-callstack-capture.md",
     "Design/AgentReports/architecture_performance_dashboard.json",
-    "Design/AgentReports/architecture_performance_dashboard.md",
     "Design/AgentReports/architecture_performance_hardening_final_report.md",
-    "Design/Architecture/agent_pull_request_review_merge_workflow.md",
+    "Design/AgentReports/performance_regression_match_baseline.json",
+    "Design/AgentReports/performance_regression_match_baseline.md",
     "Design/Architecture/architecture_performance_hardening_implementation_tracker.md",
-    "Design/Architecture/performance_regression_accepted_baseline.json",
-    "Design/Architecture/post_hardening_architecture_maturity_tracker.md",
     "Design/Architecture/pre_release_performance_certification_backlog.md"
   ],
+  "revisionProvenance": {
+    "reviewBaselineCommit": "1a0f1eceb2d6c04359e2f868ddd9f99d26a0e713",
+    "trackerLastVerifiedCommit": "2327b2bbf5bf1bb03a1f6fa349b11eb0b90d357e",
+    "trackerArchitectureImplementationCommit": "98cb2bb6d4321132574ebc5247aa3f2c93359eac",
+    "finalReportAuditBaselineRevision": "b66453e979d847c3f05d61155266b166650b8df5",
+    "finalReportCloseoutWorkingBaseline": "1548ee09318305f885b90b9c9e122782f9e7c62f",
+    "dashboardRevision": "e9dcf183eb95637bb1975c97b11f5c43a1cb9e79",
+    "editorMeasurementDeclaredCommit": null,
+    "gcMeasurementDeclaredCommit": null,
+    "provenanceConclusion": "The review baseline is exact, but the bounded measurement artifacts do not declare that commit. Tracker, final-report, and dashboard revisions are historical evidence identities and are not represented as AM-001 measurements."
+  },
   "prerequisiteCloseout": {
     "status": "closed-for-early-development",
-    "closeoutDocumentationCommit": "b31107d3dbf0fdd4da8dc7bec056a548b14218c1",
-    "acceptedIntegrationCommit": "8caf7b00c1d2f3b154e366853bf8a864fbb864339",
-    "architectureImplementationCommit": "98cb2bb6d4321132574ebc5247aa3f2c93359eac",
-    "lastVerifiedCommitRecordedByTracker": "2327b2bbf5bf1bb03a1f6fa349b11eb0b90d357e",
     "dispositionCounts": {
       "accepted": 92,
       "deferredReleaseOnly": 15,
@@ -49,23 +55,27 @@
       "total": 107
     },
     "allTasksHaveDisposition": true,
-    "deferredTasksAreAccepted": false
+    "deferredTasksAreAccepted": false,
+    "redArchitectureGates": 0,
+    "redPerformanceGates": 0,
+    "authorityPaths": [
+      "Design/AgentReports/architecture_performance_hardening_final_report.md",
+      "Design/Architecture/architecture_performance_hardening_implementation_tracker.md"
+    ]
   },
   "acceptedCoreGates": [
     {
       "id": "CORE-ARCHITECTURE",
       "name": "Architecture",
       "status": "accepted-at-prerequisite-closeout",
-      "statusAtReviewedBaseline": "accepted-closeout-record-not-recaptured",
-      "acceptedEvidenceCommit": "8caf7b00c1d2f3b154e366853bf8a864fbb864339",
+      "reviewBaselineVerificationStatus": "not-rerun-by-am-001",
       "result": {
         "assemblyBoundary": "31/31 passed",
         "ecsBurstHotPath": "10/10 passed with no snapshot debt",
         "integratedArchitectureCloseout": "23/23 passed",
         "sourceGrowthAndOversizedOwnerGuard": "15/15 passed"
       },
-      "evidencePaths": [
-        "Design/AgentReports/2026-07-10_aph-700_first_party_assembly_dependencies.json",
+      "authorityPaths": [
         "Design/AgentReports/architecture_performance_hardening_final_report.md",
         "Design/Architecture/architecture_performance_hardening_implementation_tracker.md"
       ]
@@ -74,14 +84,13 @@
       "id": "CORE-COMPILER",
       "name": "Compiler",
       "status": "accepted-at-prerequisite-closeout",
-      "statusAtReviewedBaseline": "accepted-closeout-record-not-recaptured",
-      "acceptedEvidenceCommit": "8caf7b00c1d2f3b154e366853bf8a864fbb864339",
+      "reviewBaselineVerificationStatus": "not-rerun-by-am-001",
       "result": {
         "assembliesPassed": 12,
         "assembliesTotal": 12,
         "compilerErrors": 0
       },
-      "evidencePaths": [
+      "authorityPaths": [
         "Design/AgentReports/architecture_performance_hardening_final_report.md",
         "Design/Architecture/architecture_performance_hardening_implementation_tracker.md"
       ]
@@ -90,14 +99,13 @@
       "id": "CORE-CRITICAL-BEHAVIOR",
       "name": "Critical behavior",
       "status": "accepted-at-prerequisite-closeout",
-      "statusAtReviewedBaseline": "accepted-closeout-record-not-recaptured",
-      "acceptedEvidenceCommit": "8caf7b00c1d2f3b154e366853bf8a864fbb864339",
+      "reviewBaselineVerificationStatus": "not-rerun-by-am-001",
       "result": {
         "criticalPlayModeFlows": "5/5 passed",
         "coveredFlows": "Menu-to-Match-to-Menu, selection/move/attack, placement/production, boarding/disembark, and resource exchange",
         "staticMapStructuralParity": "2/2 passed"
       },
-      "evidencePaths": [
+      "authorityPaths": [
         "Design/AgentReports/architecture_performance_hardening_final_report.md",
         "Design/Architecture/architecture_performance_hardening_implementation_tracker.md"
       ]
@@ -106,250 +114,194 @@
       "id": "CORE-EDITOR-PERFORMANCE",
       "name": "Editor performance",
       "status": "accepted-at-prerequisite-closeout",
-      "statusAtReviewedBaseline": "accepted-closeout-record-not-recaptured-after-editor-frame-pacing-change",
-      "acceptedEvidenceCommit": "8caf7b00c1d2f3b154e366853bf8a864fbb864339",
+      "reviewBaselineVerificationStatus": "not-remeasured-at-review-baseline",
+      "measurementRevisionStatus": "unknown-direct-artifact-does-not-declare-commit",
       "result": {
-        "averageFrameMs": 7.2,
+        "averageFrameMs": 7.203,
+        "frameCount": 557,
         "measuredAllocationBytes": 0,
-        "measuredFrames": 557,
         "p95BudgetMs": 20,
-        "p95FrameMs": 11.48,
+        "p95BudgetPassed": true,
+        "p95FrameMs": 11.477,
         "p99FrameMs": 13.16,
         "runtimeBuildings": 628,
         "units": 733
       },
-      "evidencePaths": [
+      "authorityPaths": [
         "Design/AgentReports/architecture_performance_hardening_final_report.md",
-        "Design/Architecture/architecture_performance_hardening_implementation_tracker.md",
-        "Design/Architecture/performance_regression_accepted_baseline.json"
+        "Design/AgentReports/performance_regression_match_baseline.json",
+        "Design/AgentReports/performance_regression_match_baseline.md",
+        "Design/Architecture/architecture_performance_hardening_implementation_tracker.md"
       ]
     },
     {
       "id": "CORE-GC-CLOSEOUT",
       "name": "GC closeout",
       "status": "accepted-at-prerequisite-closeout",
-      "statusAtReviewedBaseline": "accepted-closeout-record-not-recaptured",
-      "acceptedEvidenceCommit": "8caf7b00c1d2f3b154e366853bf8a864fbb864339",
+      "reviewBaselineVerificationStatus": "not-remeasured-at-review-baseline",
+      "measurementRevisionStatus": "unknown-direct-artifact-does-not-declare-commit",
       "result": {
         "acceptanceBudgetBytes": 1024,
+        "captureDateUtc": "2026-07-15T12:38:25Z",
         "measuredFrames": 300,
         "playerRelevantBytes": 292,
         "warmupFrames": 180
       },
-      "evidencePaths": [
+      "authorityPaths": [
+        "Design/AgentReports/2026-06-11_perf_match-gc-callstack-capture.md",
         "Design/AgentReports/architecture_performance_hardening_final_report.md",
-        "Design/Architecture/architecture_performance_hardening_implementation_tracker.md",
-        "Design/Architecture/performance_regression_accepted_baseline.json"
+        "Design/Architecture/architecture_performance_hardening_implementation_tracker.md"
       ]
     }
   ],
+  "measurementEvidence": {
+    "editorPerformance": {
+      "directArtifactDeclaredCommit": null,
+      "directArtifactMetrics": {
+        "averageFrameMs": 7.203,
+        "editorP95FrameBudgetMs": 20,
+        "frameCount": 557,
+        "p95FrameMs": 11.477,
+        "p99FrameMs": 13.16
+      },
+      "dashboardEmbeddedMetrics": {
+        "averageFrameMs": 2.486,
+        "editorP95FrameBudgetMs": 50,
+        "frameCount": 1613,
+        "p95FrameMs": 3.824,
+        "p99FrameMs": 5.826
+      },
+      "dashboardSnapshotMatchesDirectArtifact": false,
+      "status": "accepted-closeout-metric-with-revision-and-dashboard-refresh-required",
+      "authorityPaths": [
+        "Design/AgentReports/architecture_performance_dashboard.json",
+        "Design/AgentReports/architecture_performance_hardening_final_report.md",
+        "Design/AgentReports/performance_regression_match_baseline.json",
+        "Design/AgentReports/performance_regression_match_baseline.md",
+        "Design/Architecture/architecture_performance_hardening_implementation_tracker.md"
+      ]
+    },
+    "gcCloseout": {
+      "artifactPathDateToken": "2026-06-11",
+      "internalCaptureDateUtc": "2026-07-15T12:38:25Z",
+      "artifactPathDateMatchesInternalCaptureDate": false,
+      "directArtifactDeclaredCommit": null,
+      "status": "accepted-closeout-metric-with-revision-refresh-required",
+      "authorityPaths": [
+        "Design/AgentReports/2026-06-11_perf_match-gc-callstack-capture.md",
+        "Design/AgentReports/architecture_performance_hardening_final_report.md",
+        "Design/Architecture/architecture_performance_hardening_implementation_tracker.md"
+      ]
+    }
+  },
   "deferredReleaseGaps": [
     {
       "id": "APH-311",
       "status": "deferred-measurement-required",
       "obligation": "Run separate 10-minute Android 30 FPS and 60 FPS tier sessions with frame, GPU, memory, thermal, and visual results.",
-      "retainedEvidenceStatus": "A short 45 FPS development diagnostic exists but does not satisfy either tier session.",
-      "evidencePaths": [
-        "Design/AgentReports/2026-07-10_perf_WarlineCapture_candidate_android_steady_summary.md",
-        "Design/Architecture/architecture_performance_hardening_implementation_tracker.md",
-        "Design/Architecture/pre_release_performance_certification_backlog.md"
-      ]
+      "retainedEvidenceStatus": "Historical device baselines are retained; the required tier sessions are unaccepted."
     },
     {
       "id": "APH-501",
       "status": "deferred-measurement-required",
-      "obligation": "Set installed-size and absolute peak, texture, mesh, audio, graphics-driver, and total runtime memory budgets from accepted same-device release evidence.",
-      "retainedEvidenceStatus": "APK and AAB ceilings are tracked; installed-size and absolute runtime memory limits remain null and fail closed.",
-      "evidencePaths": [
-        "Design/AgentReports/2026-07-13_aph-501_product_budget_evidence_handoff.md",
-        "Design/AgentReports/2026-07-15_aph-501_ui_texture_cpu_readability_audit.md",
-        "Design/Architecture/architecture_performance_hardening_implementation_tracker.md",
-        "Design/Architecture/performance_regression_accepted_baseline.json",
-        "Design/Architecture/pre_release_performance_certification_backlog.md"
-      ]
+      "obligation": "Set installed-size and absolute runtime memory/category budgets from accepted same-device release evidence.",
+      "retainedEvidenceStatus": "APK/AAB ceilings and a fail-closed budget schema exist; installed-size and absolute memory limits remain measurement-required."
     },
     {
       "id": "APH-502",
       "status": "deferred-measurement-required",
       "obligation": "Accept final included and excluded texture categories from a complete same-revision BuildReport and residency inventory.",
-      "retainedEvidenceStatus": "The deterministic 3,464-importer classification is provisional; final buckets are unaccepted.",
-      "evidencePaths": [
-        "Design/AgentReports/2026-07-10_aph-502_texture_importer_classification.json",
-        "Design/AgentReports/2026-07-10_aph-502_texture_importer_classification.md",
-        "Design/AgentReports/architecture_performance_content_residency_baseline.json",
-        "Design/Architecture/architecture_performance_hardening_implementation_tracker.md",
-        "Design/Architecture/pre_release_performance_certification_backlog.md"
-      ]
+      "retainedEvidenceStatus": "The deterministic classifier and provisional 3,464-importer inventory are retained; final categories are unaccepted."
     },
     {
       "id": "APH-504",
       "status": "deferred-measurement-required",
-      "obligation": "Authorize or reject the representative mip-streaming pilot using accepted visual, memory, and I/O evidence.",
-      "retainedEvidenceStatus": "The fail-closed pilot reports pilot_ready=false, mutation_authorized=false, and expansion_authorized=false.",
-      "evidencePaths": [
-        "Design/AgentReports/2026-07-14_aph-504_texture_streaming_pilot_plan.json",
-        "Design/AgentReports/2026-07-14_aph-504_texture_streaming_pilot_plan.md",
-        "Design/Architecture/architecture_performance_hardening_implementation_tracker.md",
-        "Design/Architecture/pre_release_performance_certification_backlog.md"
-      ]
+      "obligation": "Authorize or reject the representative mip-streaming pilot using measured quality and memory evidence.",
+      "retainedEvidenceStatus": "The selector remains fail closed and no importer mutation is authorized."
     },
     {
       "id": "APH-505",
       "status": "deferred-evidence-required",
-      "obligation": "Capture and accept identical near, medium, and far streaming comparisons without blur, pop, seams, or missing detail.",
-      "retainedEvidenceStatus": "The capture contract exists; no accepted before-and-after comparison exists.",
-      "evidencePaths": [
-        "Design/AgentReports/2026-07-13_aph-809_visual_capture_matrix.json",
-        "Design/AgentReports/2026-07-14_aph-504_texture_streaming_pilot_plan.md",
-        "Design/Architecture/architecture_performance_hardening_implementation_tracker.md",
-        "Design/Architecture/pre_release_performance_certification_backlog.md"
-      ]
+      "obligation": "Capture and review identical near, medium, and far streaming comparisons.",
+      "retainedEvidenceStatus": "The capture contract exists; no accepted comparison exists."
     },
     {
       "id": "APH-506",
       "status": "deferred-measurement-required",
-      "obligation": "Run the 10-minute camera pan and zoom memory/I/O collection on the pinned Android device and accept its thermal and visual evidence.",
-      "retainedEvidenceStatus": "The strict collector and focused contracts exist; no accepted device run exists.",
-      "evidencePaths": [
-        "Design/Architecture/architecture_performance_hardening_implementation_tracker.md",
-        "Design/Architecture/pre_release_performance_certification_backlog.md",
-        "Tools/CI/aph506_texture_streaming_device_collection.py",
-        "Tools/CI/tests/test_aph506_texture_streaming_device_collection.py"
-      ]
+      "obligation": "Run the 10-minute camera pan and zoom memory/I/O collection.",
+      "retainedEvidenceStatus": "The strict device collector and focused contracts exist; no accepted run exists."
     },
     {
       "id": "APH-508",
       "status": "deferred-measurement-required",
-      "obligation": "Measure generated animation texture residency, CPU-copy retention, precision safety, and unload behavior.",
-      "retainedEvidenceStatus": "Six RGBAHalf textures retain a concrete CPU-copy risk; device residency and unload behavior are unproven.",
-      "evidencePaths": [
-        "Design/AgentReports/2026-07-11_aph-508_animation_texture_audit.md",
-        "Design/AgentReports/architecture_performance_content_residency_baseline.json",
-        "Design/Architecture/architecture_performance_hardening_implementation_tracker.md",
-        "Design/Architecture/pre_release_performance_certification_backlog.md"
-      ]
+      "obligation": "Measure generated animation texture residency, CPU-copy retention, and unload behavior.",
+      "retainedEvidenceStatus": "A six-texture static audit exists; residency and unload safety remain unproven."
     },
     {
       "id": "APH-509",
       "status": "deferred-proof-required",
       "obligation": "Prove any package removal in an isolated import, compile, test, build, and device slice.",
-      "retainedEvidenceStatus": "A deterministic usage inventory exists; no candidate package has been removed or accepted for removal.",
-      "evidencePaths": [
-        "Design/AgentReports/2026-07-10_aph-509_package_usage_inventory.json",
-        "Design/AgentReports/2026-07-10_aph-509_package_usage_inventory.md",
-        "Design/Architecture/architecture_performance_hardening_implementation_tracker.md",
-        "Design/Architecture/pre_release_performance_certification_backlog.md"
-      ]
+      "retainedEvidenceStatus": "A deterministic package-usage inventory exists; no package has been removed."
     },
     {
       "id": "APH-510",
       "status": "deferred-measurement-required",
-      "obligation": "Publish accepted same-revision package, residency, frame, startup, and I/O category deltas.",
-      "retainedEvidenceStatus": "The package-size improvement is accepted; AAB, release-device, category-residency, and I/O comparison evidence is incomplete.",
-      "evidencePaths": [
-        "Design/AgentReports/architecture_performance_android_aab_build_report.json",
-        "Design/AgentReports/architecture_performance_android_apk_build_report.json",
-        "Design/Architecture/architecture_performance_hardening_implementation_tracker.md",
-        "Design/Architecture/pre_release_performance_certification_backlog.md",
-        "Tools/CI/aph510_android_category_comparison.py",
-        "Tools/CI/tests/test_aph510_android_category_comparison.py"
-      ]
+      "obligation": "Produce accepted same-revision package, residency, frame, startup, and I/O category deltas.",
+      "retainedEvidenceStatus": "Comparison tooling and package-size improvement evidence exist; the complete comparison is unaccepted."
     },
     {
       "id": "APH-601",
       "status": "deferred-measurement-required",
-      "obligation": "Record exact accepted-map CPU/GPU mesh memory and peak startup allocation on a clean current revision.",
-      "retainedEvidenceStatus": "Historical and candidate structural metrics exist; current accepted-map memory and startup allocation are not certified.",
-      "evidencePaths": [
-        "Design/AgentReports/2026-07-14_aph-601_aph-609_current_map_evidence_matrix.md",
-        "Design/Architecture/architecture_performance_hardening_implementation_tracker.md",
-        "Design/Architecture/pre_release_performance_certification_backlog.md"
-      ]
+      "obligation": "Record exact accepted-map CPU/GPU mesh memory and peak startup allocation.",
+      "retainedEvidenceStatus": "Startup instrumentation and structural measurements exist; exact accepted-map values remain open."
     },
     {
       "id": "APH-609",
       "status": "deferred-measurement-and-visual-review-required",
-      "obligation": "Complete normalized canonical, chunked, and GPU Resident Drawer metrics plus current-map visual review.",
-      "retainedEvidenceStatus": "A short comparison exists; cold-device, release package/startup/memory, normalized comparison, and full visual acceptance remain open.",
-      "evidencePaths": [
-        "Design/AgentReports/2026-07-11_gpu_instancing_android_comparison.md",
-        "Design/AgentReports/2026-07-14_aph-601_aph-609_current_map_evidence_matrix.md",
-        "Design/Architecture/architecture_performance_hardening_implementation_tracker.md",
-        "Design/Architecture/pre_release_performance_certification_backlog.md"
-      ]
+      "obligation": "Complete normalized canonical, chunked, and GPU Resident Drawer metrics plus visual review.",
+      "retainedEvidenceStatus": "A current-map matrix and short device comparison exist; full acceptance remains open."
     },
     {
       "id": "APH-803",
       "status": "deferred-certification-required",
-      "obligation": "Qualify a clean Android development artifact with launch, sustained frame, memory, thermal, process, crash, and visual evidence.",
-      "retainedEvidenceStatus": "The gate, recorder, collector, schemas, and diagnostics exist; no clean accepted development qualification exists.",
-      "evidencePaths": [
-        "Design/AgentReports/2026-07-11_aph-803_android_development_gate_plan.md",
-        "Design/AgentReports/2026-07-12_aph-803_android_runtime_recorder.md",
-        "Design/Architecture/architecture_performance_hardening_implementation_tracker.md",
-        "Design/Architecture/pre_release_performance_certification_backlog.md"
-      ]
+      "obligation": "Qualify a clean Android development artifact with launch, sustained, memory, and thermal evidence.",
+      "retainedEvidenceStatus": "Fail-closed gates, recorder, collector, schemas, and tests exist; qualification is unaccepted."
     },
     {
       "id": "APH-804",
       "status": "deferred-certification-required",
-      "obligation": "Qualify a clean Android release artifact for the 30 FPS tier with repeated startup, sustained timing, profiler counters, memory, installed-size, thermal, crash, and visual evidence.",
-      "retainedEvidenceStatus": "A clean timing-capable APK exists, but the final 600-second diagnostic emitted complete=false and is rejected.",
-      "evidencePaths": [
-        "Design/AgentReports/2026-07-12_aph-804_release_evidence_contract.md",
-        "Design/AgentReports/architecture_performance_android_apk_build_report.json",
-        "Design/Architecture/architecture_performance_hardening_implementation_tracker.md",
-        "Design/Architecture/pre_release_performance_certification_backlog.md"
-      ]
+      "obligation": "Qualify a clean Android release artifact for the 30 FPS tier.",
+      "retainedEvidenceStatus": "A timing-capable artifact contract exists, but the final 600-second diagnostic emitted complete=false and is rejected."
     },
     {
       "id": "APH-809",
       "status": "deferred-evidence-required",
-      "obligation": "Fill and approve the graphics-tier, Day/Night, static-map, and mip-streaming visual matrix.",
-      "retainedEvidenceStatus": "All 26 required slots are unsatisfied; 23:00 readability and near-map black/missing surfaces are known rejected findings.",
-      "evidencePaths": [
-        "Design/AgentReports/2026-07-13_aph-809_visual_capture_matrix.json",
-        "Design/AgentReports/2026-07-13_aph-809_visual_capture_matrix.md",
-        "Design/Architecture/architecture_performance_hardening_implementation_tracker.md",
-        "Design/Architecture/pre_release_performance_certification_backlog.md"
-      ]
+      "obligation": "Fill and approve the graphics-tier, Day/Night, map, and streaming visual matrix.",
+      "retainedEvidenceStatus": "All 26 slots remain unsatisfied; dark 23:00 readability and near-map black/missing surfaces are rejected findings."
     },
     {
       "id": "APH-902",
       "status": "deferred-certification-required",
-      "obligation": "Publish final same-device Android development and release reports, including separate 10-minute thermal sessions.",
-      "retainedEvidenceStatus": "Diagnostic evidence and report schemas are retained; no final same-device certification report is accepted.",
-      "evidencePaths": [
-        "Design/AgentReports/architecture_performance_hardening_final_report.md",
-        "Design/Architecture/architecture_performance_hardening_implementation_tracker.md",
-        "Design/Architecture/pre_release_performance_certification_backlog.md"
-      ]
+      "obligation": "Publish final same-device development and release reports including thermal sessions.",
+      "retainedEvidenceStatus": "Report schemas and diagnostics are retained; no final certification report is accepted."
     }
+  ],
+  "deferredReleaseGapAuthorityPaths": [
+    "Design/AgentReports/architecture_performance_hardening_final_report.md",
+    "Design/Architecture/architecture_performance_hardening_implementation_tracker.md",
+    "Design/Architecture/pre_release_performance_certification_backlog.md"
   ],
   "evidenceHealth": {
     "dashboard": {
       "dashboardRevision": "e9dcf183eb95637bb1975c97b11f5c43a1cb9e79",
-      "status": "requires-refresh-by-am-005",
+      "status": "historical-dashboard-requires-refresh",
       "currentInputs": 0,
+      "healthyInputs": 0,
       "staleInputs": 5,
       "unknownRevisionInputs": 2,
       "requiresAttentionInputs": 7,
-      "evidencePaths": [
-        "Design/AgentReports/architecture_performance_dashboard.json",
-        "Design/AgentReports/architecture_performance_dashboard.md"
-      ]
-    },
-    "acceptedBaseline": {
-      "status": "budget-authority-with-historical-gc-status-to-reconcile",
-      "acceptedBaselineVersion": 4,
-      "editorP95BudgetMs": 20,
-      "gcAcceptanceBudgetBytes": 1024,
-      "recordedGcStatus": "red-baseline",
-      "closeoutGcStatus": "accepted-at-292-bytes",
-      "evidencePaths": [
-        "Design/AgentReports/architecture_performance_hardening_final_report.md",
-        "Design/Architecture/architecture_performance_hardening_implementation_tracker.md",
-        "Design/Architecture/performance_regression_accepted_baseline.json"
+      "authorityPaths": [
+        "Design/AgentReports/architecture_performance_dashboard.json"
       ]
     }
   },
@@ -357,17 +309,17 @@
     {
       "id": "RISK-001",
       "status": "open-core-phase-zero",
-      "description": "The tracked dashboard has zero current inputs and seven inputs requiring attention; AM-005 must refresh it without weakening freshness rules."
+      "description": "The direct Editor and GC artifacts do not declare measurement commits, and the GC filename date differs from its internal capture date, so they cannot be represented as measurements of review baseline 1a0f1eceb2d6c04359e2f868ddd9f99d26a0e713."
     },
     {
       "id": "RISK-002",
       "status": "open-core-phase-zero",
-      "description": "The accepted-baseline JSON still labels the historical 269,482-byte GC capture red while the closeout authority records a 292-byte pass; AM-004/AM-005 must reconcile status and provenance while preserving the 1,024-byte budget."
+      "description": "The dashboard has zero healthy/current inputs and embeds an older Editor metric snapshot that differs from the direct performance baseline artifact."
     },
     {
       "id": "RISK-003",
       "status": "open-core-phase-zero",
-      "description": "Reviewed baseline 1a0f1eceb2d6c04359e2f868ddd9f99d26a0e713 postdates closeout measurements and changes Editor frame pacing; AM-001 did not recapture compiler, architecture, behavior, Editor performance, or GC evidence at this commit."
+      "description": "AM-001 did not rerun compiler, architecture, critical behavior, Editor performance, or GC gates at the review baseline."
     },
     {
       "id": "RISK-004",
@@ -397,7 +349,7 @@
     {
       "id": "RISK-009",
       "status": "deferred-release-only",
-      "description": "Candidate-unused packages remain installed because no isolated removal slice has passed import, compile, test, build, and device validation."
+      "description": "Candidate-unused packages remain installed pending isolated import, compile, test, build, and device proof."
     },
     {
       "id": "RISK-010",
@@ -407,14 +359,14 @@
   ],
   "untestedPaths": [
     "Android device, build, thermal, startup, memory, and visual certification",
-    "Editor compiler, architecture, PlayMode, performance, and GC reruns at reviewed baseline commit",
+    "Editor compiler, architecture, PlayMode, performance, and GC reruns at review baseline commit",
     "Operation-map, FirstLaunch, audio, UI visual-lock, production code, scenes, prefabs, and ProjectSettings"
   ],
   "entryDecision": {
     "coreArchitectureLane": "accepted",
     "releaseCertificationLane": "deferred",
     "releaseCertificationClaim": false,
-    "rationale": "The prerequisite tracker is closed with 107/107 explicit dispositions and all five core entry gate groups accepted at its early-development closeout. The 15 unpassed release-only obligations remain explicit and fail closed, so they do not block Core Architecture Lane entry and do block any release-certification claim.",
-    "phaseZeroCondition": "Current commit-bound environment, dashboard, performance, and GC evidence must still be produced by the assigned later Phase 0 tasks before Phase 0 exit."
+    "rationale": "The bounded authorities record 107/107 explicit dispositions, zero red architecture/performance gates, and accepted compiler, architecture, critical behavior, Editor performance, and GC closeout groups. The 15 release-only obligations remain explicitly unaccepted and fail closed.",
+    "phaseZeroCondition": "Later Phase 0 owners must produce exact-commit environment and refreshed gate/dashboard evidence before Phase 0 exit."
   }
 }

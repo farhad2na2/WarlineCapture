@@ -27,6 +27,8 @@
   ],
   "acceptedEvidence": null,
   "implementationChangePaths": [
+    "Assets/Game/Scripts/Editor/Aph501AndroidMainMenuTexturePolicy.cs",
+    "Assets/Game/Scripts/Editor/Aph501AndroidSupportingUiTexturePolicy.cs",
     "Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs",
     "Design/AgentReports/ArchitectureMaturity/am016_source_growth_validation.log",
     "Design/AgentReports/ArchitectureMaturity/source_responsibility_guardrail_evidence.json",
@@ -34,6 +36,10 @@
     "Design/Architecture/post_hardening_source_responsibility_guardrails.json",
     "Design/Architecture/production_source_growth_baseline.md",
     "Tools/CI/tests/test_architecture_source_responsibility_guardrail_evidence.py"
+  ],
+  "editorOnlyIntegrationPaths": [
+    "Assets/Game/Scripts/Editor/Aph501AndroidMainMenuTexturePolicy.cs",
+    "Assets/Game/Scripts/Editor/Aph501AndroidSupportingUiTexturePolicy.cs"
   ],
   "contract": {
     "path": "Design/Architecture/post_hardening_source_responsibility_guardrails.json",
@@ -62,8 +68,8 @@
     "passedTests": 17,
     "compilerErrors": 0,
     "log": "Design/AgentReports/ArchitectureMaturity/am016_source_growth_validation.log",
-    "logSha256": "fa7151823441103db61c0efc8cf4626ebd2579d6fda5a40335bd6e39570a1a01",
-    "logBytes": 56262
+    "logSha256": "a7a90b0cbe8ec6228d42a0c95ccbb76c69e1fd1c96bf7ce51bae0ffaa5d9c345",
+    "logBytes": 55340
   },
   "authorityDecision": {
     "validatorOwnerId": "architecture-source-growth",
@@ -73,6 +79,6 @@
   },
   "validatorAuthority": {
     "path": "Tools/CI/tests/test_architecture_source_responsibility_guardrail_evidence.py",
-    "sha256": "ba0937d56252dce64f9e6f7dabe95508233209963b1957f5be2a7c46a3044ddc"
+    "sha256": "6386d3d27681a6b86324360077c681ae852c7722c2eb39439030e0d6faa12516"
   }
 }

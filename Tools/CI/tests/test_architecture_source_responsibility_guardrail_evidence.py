@@ -83,7 +83,15 @@ class ArchitectureSourceResponsibilityGuardrailEvidenceTests(unittest.TestCase):
             changed = git("diff", "--name-only", baseline["commit"]).splitlines()
             changed += git("ls-files", "--others", "--exclude-standard").splitlines()
         self.assertEqual(set(changed), allowed_paths)
-        production_changes = [path for path in changed if path.startswith("Assets/Game/Scripts/")]
+        editor_only_paths = set(self.data["editorOnlyIntegrationPaths"])
+        self.assertTrue(editor_only_paths.issubset(allowed_paths))
+        for path in editor_only_paths:
+            self.assertTrue(path.startswith("Assets/Game/Scripts/Editor/"), path)
+        production_changes = [
+            path
+            for path in changed
+            if path.startswith("Assets/Game/Scripts/") and path not in editor_only_paths
+        ]
         self.assertEqual(production_changes, [], "AM-016 must not change runtime production behavior.")
 
     def test_contract_freezes_size_symbols_and_duplicate_owner_signature(self) -> None:

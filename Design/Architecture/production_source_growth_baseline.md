@@ -2036,7 +2036,7 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
     {
       "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativePanelPresentationSystemHelper.cs",
       "trackerTaskId": "APH-712",
-      "decisionId": "D-044",
+      "decisionId": "D-202",
       "maxLines": 140,
       "maxBytes": 5664,
       "scope": "system-helper"
@@ -2068,7 +2068,7 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
     {
       "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeShellCompositionSystemHelper.cs",
       "trackerTaskId": "APH-712",
-      "decisionId": "D-036",
+      "decisionId": "D-203",
       "maxLines": 87,
       "maxBytes": 3386,
       "scope": "system-helper"
@@ -2076,7 +2076,7 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
     {
       "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeSequencePresentationSystemHelper.cs",
       "trackerTaskId": "APH-712",
-      "decisionId": "D-048",
+      "decisionId": "D-204",
       "maxLines": 487,
       "maxBytes": 21062,
       "scope": "system-helper"

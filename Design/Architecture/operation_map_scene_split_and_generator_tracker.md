@@ -699,7 +699,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 23% (40/177 checklist items complete).
+Overall implementation progress: 23% (41/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -712,7 +712,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 | 3. Current-map compatibility registration | In progress / shared | 5 | 10 | 50% | Current identities/definition are registered and schema-v1 read compatibility is explicit; runtime launch remains. |
 | 4. Non-destructive scene ownership split | In progress / shared priority | 8 | 14 | 57% | The staged scene now has one non-updating serialized-reference view and fail-closed validation over its definition, spatial metadata, lighting/probes, runway/helipad content, placements, and map-owned subscene; source Match assets remain unchanged. |
 | 5. Runtime selection, loading, and teardown | In progress / shared contracts | 1 | 14 | 7% | Pure readiness/failure/teardown data contracts only; concrete loading is later. |
-| 6. Metadata, camera, minimap, and movement binding | In progress / shared | 4 | 12 | 33% | Scenario-required anchors validate against map metadata; camera bounds/poses and the current axis-aligned minimap projection resolve from active-map metadata with compatibility fallbacks. |
+| 6. Metadata, camera, minimap, and movement binding | In progress / shared | 5 | 12 | 42% | Scenario-required anchors validate against map metadata; camera bounds/poses and the current axis-aligned minimap projection resolve from active-map metadata with compatibility fallbacks; warmed active-map minimap/camera/surface/anchor lookups are allocation-free. |
 | 7. M01 operation-map slice | Later / shared contracts only | 0 | 10 | 0% | Map-neutral ids/anchors may proceed; physical rollout remains gated. |
 | 8. Editor-time texture/mask generator | Later / editor direction only | 0 | 12 | 0% | Implement only if the editor-authored map direction is selected. |
 | 9. Mission and Skirmish scenario rollout | Later / shared contracts only | 0 | 10 | 0% | Scenario-to-map identity may proceed; physical rollout remains later. |
@@ -907,7 +907,7 @@ Exit criteria:
 - [ ] Bind ground-height/surface metadata for soldiers, vehicles, and aircraft clearance.
 - [x] Add validation for every anchor required by each active scenario. See `../AgentReports/2026-07-16_operation_map_scenario_anchor_validation.md`.
 - [ ] Add editor/debug overlays for bounds, cameras, anchors, blockers, lanes, surface samples, and minimap extents.
-- [ ] Add mobile-safe caching and allocation tests for minimap, camera, surface, and anchor lookups.
+- [x] Add mobile-safe caching and allocation tests for minimap, camera, surface, and anchor lookups. See `../AgentReports/2026-07-16_operation_map_mobile_safe_lookup_validation.md`.
 
 Exit criteria:
 
@@ -1095,6 +1095,7 @@ Exit criteria:
 | 2026-07-16 | Current operation-map spatial binding validation | `../AgentReports/2026-07-16_current_operation_map_spatial_binding_validation.md`; focused EditMode `10 / 10`; source-growth/naming `24 / 24`; idempotent staging; byte-identical staged/source SHA-256 checks; Unity compile | Passed | Added editor-only fail-closed validation for the staged map's surface/grid GUIDs, blocker baseline, lighting/probes, runway geometry, airport/helipad placements, bounds, camera, minimap, and definition metadata. No runtime route or scene bytes changed. |
 | 2026-07-16 | Active operation-map camera pose binding | `../AgentReports/2026-07-16_operation_map_camera_pose_binding.md`; focused EditMode `8 / 8`; source-growth/naming `24 / 24`; compatibility fallback; Unity compile; `git diff --check` | Passed | Added a one-shot Unity-camera boundary that resolves planning/initial/battle poses from the single active map blob. Startup applies the planning pose when available; missing active metadata preserves the current scene camera. |
 | 2026-07-16 | Active operation-map minimap projection binding | `../AgentReports/2026-07-16_operation_map_minimap_projection_binding.md`; focused EditMode `22 / 22`; final adapter `5 / 5`; source-growth/naming `24 / 24`; exact fractional extents; unique-root/stale/missing compatibility fallbacks; Unity compile; `git diff --check` | Passed | The existing minimap adapter and raster cache now use the current active map's axis-aligned minimap origin/extents. Rotated metadata deliberately retains the legacy grid path until rotated raster filtering is implemented end to end. |
+| 2026-07-16 | Operation-map mobile-safe lookup validation | `../AgentReports/2026-07-16_operation_map_mobile_safe_lookup_validation.md`; focused EditMode `3 / 3`; source-growth/naming `24 / 24`; zero managed allocation after warmup for active-map minimap/camera and immutable surface/anchor lookups; Unity compile; `git diff --check` | Passed | Added test-only allocation and query-cache regression coverage. No runtime source, scene, map payload, generated output, loader, or Addressables behavior changed. |
 
 ## Open Decisions
 

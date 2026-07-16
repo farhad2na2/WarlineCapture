@@ -39,6 +39,7 @@ This document is a deterministic projection of `Design/AgentReports/Architecture
 | budgetAuthority | AM-004 |
 | budgetRule | All AM-004 placeholders remain null until AM-004 freezes accepted scenario-specific budgets. |
 | commitBinding | Runner checkout commit and tree must exactly equal baseline.commit and baseline.tree. |
+| longSoakScheduling | AM-003 defines the normative 60-second warmup and 1800-second measurement procedure but does not trigger, schedule, or accept a soak execution; activation belongs to the later activation/release cycle. |
 | requiredRunnerOutcome | passed |
 | retryPolicy | prohibited |
 | skipPolicy | A skipped, ignored, missing, unsupported, not-run, or no-runner result for any required runner is failure. |
@@ -61,14 +62,15 @@ Retries are prohibited. Every required runner gets one attempt. A skipped, ignor
 | `CAT-AIRCRAFT` | `implemented` | `true` | `AM003-SCN-005-AIRCRAFT` |  |
 | `CAT-CONSTRUCTION` | `implemented` | `true` | `AM003-SCN-003-CONSTRUCTION` |  |
 | `CAT-IDLE-MATCH` | `implemented` | `true` | `AM003-SCN-001-IDLE-MATCH` |  |
-| `CAT-LONG-SOAK` | `implemented` | `true` | `AM003-SCN-010-LONG-SOAK` |  |
-| `CAT-MAJOR-MATCH-UI` | `implemented` | `true` | `AM003-SCN-007-MAJOR-MATCH-UI` |  |
+| `CAT-LONG-SOAK` | `defined-deferred` | `false` | `AM003-SCN-010-LONG-SOAK` | AM-003 defines the normative 60-second warmup and 1800-second measurement procedure but does not trigger or schedule the lengthy soak; execution is deferred to the later activation/release cycle. |
+| `CAT-MAJOR-MATCH-UI` | `implemented-with-explicit-support-selector-gap` | `true` | `AM003-SCN-007-MAJOR-MATCH-UI` |  |
 | `CAT-MAXIMUM-COMBAT` | `implemented` | `true` | `AM003-SCN-002-MAXIMUM-COMBAT` |  |
 | `CAT-PROJECTILES` | `implemented` | `true` | `AM003-SCN-006-PROJECTILES` |  |
 | `CAT-RETURNING-USER-MATCH-TO-MENU` | `implemented` | `true` | `AM003-SCN-009-RETURNING-MATCH-TO-MENU` |  |
 | `CAT-RETURNING-USER-MENU-TO-MATCH` | `implemented` | `true` | `AM003-SCN-008-RETURNING-MENU-TO-MATCH` |  |
 | `CAT-TRANSPORT` | `implemented` | `true` | `AM003-SCN-004-TRANSPORT` |  |
 | `GAP-RESULT-ROUTE` | `unimplemented-coverage-gap` | `false` | None | Evidence: `Assets/Game/Scripts/UI/Contracts/UIRoute.cs`, `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Core.cs` |
+| `GAP-SUPPORT-SELECTOR` | `unimplemented-coverage-gap` | `false` | None | Evidence: `Assets/Game/Scripts/UI/MainMenuPlayUI.cs`, `Design/Match_HUD_And_Gameplay_Implementation_Spec.md` |
 | `SURFACE-ARIA-ASSISTANT` | `implemented` | `true` | `AM003-SCN-007-MAJOR-MATCH-UI` |  |
 | `SURFACE-BUILD-DRAWER` | `implemented` | `true` | `AM003-SCN-007-MAJOR-MATCH-UI` |  |
 | `SURFACE-CURRENT-ORDER-FEEDBACK` | `implemented` | `true` | `AM003-SCN-007-MAJOR-MATCH-UI` |  |
@@ -82,7 +84,11 @@ Retries are prohibited. Every required runner gets one attempt. A skipped, ignor
 | `SURFACE-SELECTION-COMMAND-RAIL` | `implemented` | `true` | `AM003-SCN-007-MAJOR-MATCH-UI` |  |
 | `SURFACE-SQUAD-TRAY` | `implemented` | `true` | `AM003-SCN-007-MAJOR-MATCH-UI` |  |
 
-The Result route is an explicit non-executable gap: `UIRoute` has no Result member, and `TryReadMissionResult` returns false unconditionally.
+### Non-Executable And Deferred Coverage
+
+- `CAT-LONG-SOAK`: AM-003 defines the normative 60-second warmup and 1800-second measurement procedure but does not trigger or schedule the lengthy soak; execution is deferred to the later activation/release cycle.
+- `GAP-RESULT-ROUTE`: UIRoute has no Result member and TryReadMissionResult returns false unconditionally, so Result cannot be a required executable route scenario.
+- `GAP-SUPPORT-SELECTOR`: The Match HUD design requires SUPPORT to open support choices or enter SupportTargeting, but MatchHudLargeTacticalPopup currently exposes only Assistant, BuildDrawer, FullMap, and ResourceExchange; no production Support selector popup boundary is implemented for an executable scenario.
 
 ## Caveats
 
@@ -103,10 +109,10 @@ The Result route is an explicit non-executable gap: `UIRoute` has no Result memb
 | `AM003-SCN-004-TRANSPORT` | `transport` | Exercise deterministic boarding, disembark, rope, parachute, cargo, rejection, and cleanup behavior with the existing batch validator. | 16 scenario-executions | 64 scenario-executions | `executable-existing-logic-visual-and-performance-fixtures` |
 | `AM003-SCN-005-AIRCRAFT` | `aircraft` | Execute the canonical isolated aircraft and air-defense workload while making Scenario Lab limitations explicit. | 11 scenario-executions | 11 scenario-executions | `executable-scenario-lab-with-limitations` |
 | `AM003-SCN-006-PROJECTILES` | `projectiles` | Exercise production ground-rocket and air-interceptor launch-to-impact lifecycles. | 1 scenario-executions | 2 scenario-executions | `executable-existing-playmode-and-scenario-lab-fixtures` |
-| `AM003-SCN-007-MAJOR-MATCH-UI` | `major-match-ui` | Exercise every major Match HUD surface and popup through production bindings in one fixed interaction sequence. | 60 frames | 300 frames | `executable-production-ui-sequence` |
+| `AM003-SCN-007-MAJOR-MATCH-UI` | `major-match-ui` | Exercise the twelve currently implemented major Match HUD surfaces and popups through production bindings in one fixed interaction sequence while retaining the Support selector gap. | 60 frames | 300 frames | `executable-production-ui-sequence` |
 | `AM003-SCN-008-RETURNING-MENU-TO-MATCH` | `returning-user-menu-to-match` | Measure returning-user Menu-to-Match lifecycle, UI binding, World preservation, and audio transition. | 1 round-trips | 5 transitions | `executable-five-sample-returning-user-transition` |
 | `AM003-SCN-009-RETURNING-MATCH-TO-MENU` | `returning-user-match-to-menu` | Measure returning-user Match-to-Menu unload, runtime cleanup, World preservation, and audio restoration. | 1 round-trips | 5 transitions | `executable-five-sample-returning-user-transition` |
-| `AM003-SCN-010-LONG-SOAK` | `long-soak` | Define a long core-lane steady-state Match soak without claiming deferred Android sustained acceptance. | 60 seconds | 1800 seconds | `executable-1800-second-editor-soak` |
+| `AM003-SCN-010-LONG-SOAK` | `long-soak` | Define a long core-lane steady-state Match soak without claiming deferred Android sustained acceptance. | 60 seconds | 1800 seconds | `definition-only-deferred-not-scheduled` |
 
 ## AM003-SCN-001-IDLE-MATCH
 
@@ -781,7 +787,7 @@ Exercise production ground-rocket and air-interceptor launch-to-impact lifecycle
 
 ## AM003-SCN-007-MAJOR-MATCH-UI
 
-Exercise every major Match HUD surface and popup through production bindings in one fixed interaction sequence.
+Exercise the twelve currently implemented major Match HUD surfaces and popups through production bindings in one fixed interaction sequence while retaining the Support selector gap.
 
 | Field | Value |
 |---|---|
@@ -858,7 +864,7 @@ Exercise every major Match HUD surface and popup through production bindings in 
 
 ### Acceptance Signals
 
-- All twelve required Match UI surfaces are installed, interactable, and observed in the declared action sequence.
+- All twelve currently implemented required Match UI surfaces are installed, interactable, and observed in the declared action sequence.
 - Large tactical popup mutual exclusion is preserved across ARIA Assistant, Build Drawer, Full Map, and Resource Exchange.
 - Match Settings opens in Match context and closes without route corruption.
 - Required frame, GC, projection/version, interaction, object-count, popup-count, and world-state metrics are present; no required runner is skipped.
@@ -907,6 +913,7 @@ Exercise every major Match HUD surface and popup through production bindings in 
 - FirstLaunch UI
 - Operation-map research and development
 - Result route, which is explicitly unimplemented
+- Support selector, which is an explicit non-executable implementation gap
 
 ## AM003-SCN-008-RETURNING-MENU-TO-MATCH
 
@@ -1142,7 +1149,7 @@ Define a long core-lane steady-state Match soak without claiming deferred Androi
 | Fixed seed | `3010` (uint32; AM-003 scenario ordinal) |
 | Warmup | `60` seconds |
 | Measurement | `1800` seconds |
-| Core lane | `executable-1800-second-editor-soak` |
+| Core lane | `definition-only-deferred-not-scheduled` |
 | Android release execution | `deferred` |
 | Thermal execution | `deferred` |
 | Sustained release execution | `deferred` |
@@ -1200,7 +1207,7 @@ Define a long core-lane steady-state Match soak without claiming deferred Androi
 - Match route, World identity, lifecycle-root count, fixture floor, HUD binding, and seed remain stable for the full measurement.
 - No retry, pause, backgrounding, skipped runner, fatal marker, timeout, or metrics gap is accepted.
 - Required interval frame/GC/system/entity/UI/object/pool/memory-growth samples and start/end state snapshots are present.
-- The core-lane soak completes 60 seconds of warmup and 1800 seconds of uninterrupted measured foreground Match time.
+- When the later activation/release cycle schedules this normative procedure, the soak completes 60 seconds of warmup and 1800 seconds of uninterrupted measured foreground Match time.
 
 ### Metrics
 
@@ -1240,6 +1247,7 @@ Define a long core-lane steady-state Match soak without claiming deferred Androi
 
 ### Exclusions
 
+- AM-003 execution; the soak is definition-only and not scheduled
 - Android release, thermal, battery, and sustained release acceptance
 - Historical soak evidence as acceptance for this baseline
 - Operation-map research and development
@@ -1270,5 +1278,6 @@ Define a long core-lane steady-state Match soak without claiming deferred Androi
 - `Assets/Tests/PlayMode/MenuMatchMusicPlayModeTests.cs`
 - `Design/AgentReports/2026-07-12_aph-804_release_evidence_contract.md`
 - `Design/Architecture/performance_regression_contract.md`
+- `Design/Match_HUD_And_Gameplay_Implementation_Spec.md`
 
 All authority paths above exist at the bound commit. No operation-map, FirstLaunch, tracker, production-code, scene, prefab, package, or project-setting file is changed by AM-003.

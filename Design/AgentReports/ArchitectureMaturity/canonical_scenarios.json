@@ -60,11 +60,12 @@
     },
     {
       "coverageId": "CAT-LONG-SOAK",
-      "executable": true,
+      "executable": false,
+      "reason": "AM-003 defines the normative 60-second warmup and 1800-second measurement procedure but does not trigger or schedule the lengthy soak; execution is deferred to the later activation/release cycle.",
       "scenarioIds": [
         "AM003-SCN-010-LONG-SOAK"
       ],
-      "state": "implemented"
+      "state": "defined-deferred"
     },
     {
       "coverageId": "CAT-MAJOR-MATCH-UI",
@@ -72,7 +73,7 @@
       "scenarioIds": [
         "AM003-SCN-007-MAJOR-MATCH-UI"
       ],
-      "state": "implemented"
+      "state": "implemented-with-explicit-support-selector-gap"
     },
     {
       "coverageId": "CAT-MAXIMUM-COMBAT",
@@ -122,6 +123,17 @@
       ],
       "executable": false,
       "reason": "UIRoute has no Result member and TryReadMissionResult returns false unconditionally, so Result cannot be a required executable route scenario.",
+      "scenarioIds": [],
+      "state": "unimplemented-coverage-gap"
+    },
+    {
+      "coverageId": "GAP-SUPPORT-SELECTOR",
+      "evidence": [
+        "Assets/Game/Scripts/UI/MainMenuPlayUI.cs",
+        "Design/Match_HUD_And_Gameplay_Implementation_Spec.md"
+      ],
+      "executable": false,
+      "reason": "The Match HUD design requires SUPPORT to open support choices or enter SupportTargeting, but MatchHudLargeTacticalPopup currently exposes only Assistant, BuildDrawer, FullMap, and ResourceExchange; no production Support selector popup boundary is implemented for an executable scenario.",
       "scenarioIds": [],
       "state": "unimplemented-coverage-gap"
     },
@@ -241,6 +253,7 @@
     "budgetAuthority": "AM-004",
     "budgetRule": "All AM-004 placeholders remain null until AM-004 freezes accepted scenario-specific budgets.",
     "commitBinding": "Runner checkout commit and tree must exactly equal baseline.commit and baseline.tree.",
+    "longSoakScheduling": "AM-003 defines the normative 60-second warmup and 1800-second measurement procedure but does not trigger, schedule, or accept a soak execution; activation belongs to the later activation/release cycle.",
     "requiredRunnerOutcome": "passed",
     "retryPolicy": "prohibited",
     "skipPolicy": "A skipped, ignored, missing, unsupported, not-run, or no-runner result for any required runner is failure.",
@@ -1249,7 +1262,7 @@
     },
     {
       "acceptanceSignals": [
-        "All twelve required Match UI surfaces are installed, interactable, and observed in the declared action sequence.",
+        "All twelve currently implemented required Match UI surfaces are installed, interactable, and observed in the declared action sequence.",
         "Large tactical popup mutual exclusion is preserved across ARIA Assistant, Build Drawer, Full Map, and Resource Exchange.",
         "Match Settings opens in Match context and closes without route corruption.",
         "Required frame, GC, projection/version, interaction, object-count, popup-count, and world-state metrics are present; no required runner is skipped."
@@ -1312,7 +1325,8 @@
         "Android release, thermal, and sustained release acceptance",
         "FirstLaunch UI",
         "Operation-map research and development",
-        "Result route, which is explicitly unimplemented"
+        "Result route, which is explicitly unimplemented",
+        "Support selector, which is an explicit non-executable implementation gap"
       ],
       "existingFixtureRefs": [
         "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab",
@@ -1360,7 +1374,7 @@
         "Match HUD prefab and all popup prefabs referenced by UIShellContentView resolve.",
         "Returning-user profile state is FirstLaunch completed."
       ],
-      "purpose": "Exercise every major Match HUD surface and popup through production bindings in one fixed interaction sequence.",
+      "purpose": "Exercise the twelve currently implemented major Match HUD surfaces and popups through production bindings in one fixed interaction sequence while retaining the Support selector gap.",
       "releaseLaneState": {
         "androidReleaseExecution": "deferred",
         "coreLaneExecution": "executable-production-ui-sequence",
@@ -1789,7 +1803,7 @@
         "Match route, World identity, lifecycle-root count, fixture floor, HUD binding, and seed remain stable for the full measurement.",
         "No retry, pause, backgrounding, skipped runner, fatal marker, timeout, or metrics gap is accepted.",
         "Required interval frame/GC/system/entity/UI/object/pool/memory-growth samples and start/end state snapshots are present.",
-        "The core-lane soak completes 60 seconds of warmup and 1800 seconds of uninterrupted measured foreground Match time."
+        "When the later activation/release cycle schedules this normative procedure, the soak completes 60 seconds of warmup and 1800 seconds of uninterrupted measured foreground Match time."
       ],
       "actions": [
         {
@@ -1830,6 +1844,7 @@
       ],
       "category": "long-soak",
       "exclusions": [
+        "AM-003 execution; the soak is definition-only and not scheduled",
         "Android release, thermal, battery, and sustained release acceptance",
         "Historical soak evidence as acceptance for this baseline",
         "Operation-map research and development"
@@ -1880,7 +1895,7 @@
       "purpose": "Define a long core-lane steady-state Match soak without claiming deferred Android sustained acceptance.",
       "releaseLaneState": {
         "androidReleaseExecution": "deferred",
-        "coreLaneExecution": "executable-1800-second-editor-soak",
+        "coreLaneExecution": "definition-only-deferred-not-scheduled",
         "sustainedReleaseExecution": "deferred",
         "thermalExecution": "deferred"
       },
@@ -1983,6 +1998,7 @@
     "Assets/Tests/PlayMode/GroundMissileLauncherPlayModeTests.cs",
     "Assets/Tests/PlayMode/MenuMatchMusicPlayModeTests.cs",
     "Design/AgentReports/2026-07-12_aph-804_release_evidence_contract.md",
-    "Design/Architecture/performance_regression_contract.md"
+    "Design/Architecture/performance_regression_contract.md",
+    "Design/Match_HUD_And_Gameplay_Implementation_Spec.md"
   ]
 }

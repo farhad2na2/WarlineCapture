@@ -28,7 +28,7 @@
             "reportSchemaVersion": 1,
             "result": "NeedsDecision",
             "evidencePath": "Design/AgentReports/2026-07-15_opmap-004_phase0_ownership_baseline.json",
-            "evidenceSha256": "ca3012fcd03a1a0f4de08da0af3d8df2e1af80a3a83f2d5d87072cc971cc5659"
+            "evidenceSha256": "45a048ead1289dc98f480e59c4b5759250453c3639341eb054b6169c0a0a73bc"
         }
     ],
     "directInputHashes": [
@@ -90,7 +90,7 @@
         },
         {
             "path": "Assets/Game/Scripts/Systems/OperationMapMetadataUtility.cs",
-            "sha256": "c4b82353eba94f5628d50da20186dc9458bc6b52c13d1081e13cf292dbd6f386"
+            "sha256": "c87662f94cc4a7cc91c94d09dc0809e959150b2ece28dab79ea3d177ef380e2a"
         },
         {
             "path": "Assets/Game/Scripts/Systems/RtsCameraRequestSystem.cs",
@@ -150,11 +150,11 @@
         },
         {
             "path": "Design/AgentReports/2026-07-15_opmap-004_phase0_ownership_baseline.json",
-            "sha256": "ca3012fcd03a1a0f4de08da0af3d8df2e1af80a3a83f2d5d87072cc971cc5659"
+            "sha256": "45a048ead1289dc98f480e59c4b5759250453c3639341eb054b6169c0a0a73bc"
         },
         {
             "path": "Design/Architecture/operation_map_scene_split_and_generator_tracker.md",
-            "sha256": "fc7e811420e59f07a16c0aeca08b4b697332fb9e4cb810f79943a83679006c3b"
+            "sha256": "0dc88b9a5a25ed1d22b344c914b056a14ee8f9443a4921569059e16690abb2c7"
         }
     ],
     "presenceFindings": [

@@ -3,6 +3,7 @@ using Game.Runtime;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System;
 using NUnit.Framework;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEditor;
@@ -21,7 +22,8 @@ public sealed class RuntimeGridDeduplicationSystemTests
             tests.RunWithFixture(tests.Deduplication_RemovesRuntimeGridWhenAuthoredGridExists);
             tests.RunWithFixture(tests.Deduplication_KeepsRuntimeGridWhenNoAuthoredGridExists);
             tests.RunWithFixture(tests.RuntimeGridBootstrapStartupSystemHelperCreatesRuntimeGridFromPlainHelper);
-            Debug.Log("[RuntimeGridDeduplicationFocusedValidation] result=Passed tests=3");
+            tests.RunWithFixture(tests.ActiveOperationMapMetadataDrivesRuntimeGridBootstrap);
+            Debug.Log("[RuntimeGridDeduplicationFocusedValidation] result=Passed tests=4");
             ValidationExit.Exit(0);
         }
         catch (Exception ex)
@@ -92,6 +94,59 @@ public sealed class RuntimeGridDeduplicationSystemTests
         Assert.AreEqual(120, _entityManager.GetBuffer<GridRoadDirt>(gridEntity).Length);
         Assert.IsTrue(_entityManager.HasComponent<DynamicBlockerComponent>(gridEntity));
         Assert.IsTrue(_entityManager.HasComponent<DynamicOccupancyComponent>(gridEntity));
+    }
+
+    [Test]
+    public void ActiveOperationMapMetadataDrivesRuntimeGridBootstrap()
+    {
+        using BlobBuilder builder = new(Allocator.Temp);
+        ref OperationMapBlob metadata = ref builder.ConstructRoot<OperationMapBlob>();
+        metadata.OperationMapId = new FixedString64Bytes("opmap.skirmish.desert_base_01");
+        metadata.Grid = new OperationMapGridBlob
+        {
+            Origin = new float3(7f, 0f, 11f),
+            Dimensions = new int2(24, 18),
+            CellSize = 1.25f
+        };
+        BlobAssetReference<OperationMapBlob> blob =
+            builder.CreateBlobAssetReference<OperationMapBlob>(Allocator.Persistent);
+        Entity root = _entityManager.CreateEntity(
+            typeof(OperationMapRootComponent),
+            typeof(ActiveOperationMapComponent),
+            typeof(OperationMapMetadataComponent));
+        _entityManager.SetComponentData(root, new ActiveOperationMapComponent
+        {
+            OperationMapId = metadata.OperationMapId,
+            Generation = 2
+        });
+        _entityManager.SetComponentData(root, new OperationMapMetadataComponent
+        {
+            Blob = blob,
+            Generation = 2
+        });
+
+        Assert.IsTrue(OperationMapMetadataUtility.TryResolveActiveGridConfig(
+            _entityManager,
+            out GridConfig grid,
+            out bool hasActiveMap,
+            out string error), error);
+        Assert.IsTrue(hasActiveMap);
+
+        var system = new RuntimeGridBootstrapStartupSystemHelper();
+        Assert.IsTrue(system.Ensure(
+            _entityManager,
+            grid.Width,
+            grid.Height,
+            grid.CellSize,
+            (Vector3)grid.Origin));
+
+        using EntityQuery gridQuery = _entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<GridConfig>(),
+            ComponentType.ReadOnly<RuntimeGridBootstrapGridTag>());
+        Entity gridEntity = gridQuery.GetSingletonEntity();
+        Assert.AreEqual(24 * 18, _entityManager.GetBuffer<GridWalkable>(gridEntity).Length);
+        Assert.AreEqual(new float3(7f, 0f, 11f), _entityManager.GetComponentData<GridConfig>(gridEntity).Origin);
+        blob.Dispose();
     }
 
     private void RunWithFixture(Action test)

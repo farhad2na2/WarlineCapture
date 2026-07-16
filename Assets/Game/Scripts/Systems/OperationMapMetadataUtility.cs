@@ -1,5 +1,6 @@
 using Game.Components;
 using Unity.Collections;
+using Unity.Entities;
 using Unity.Mathematics;
 
 namespace Game.Runtime
@@ -7,6 +8,76 @@ namespace Game.Runtime
     public static class OperationMapMetadataUtility
     {
         private const float MinimumProjectionExtent = 0.001f;
+
+        public static bool TryResolveActiveGridConfig(
+            EntityManager entityManager,
+            out GridConfig grid,
+            out bool hasActiveMap,
+            out string error)
+        {
+            grid = default;
+            hasActiveMap = false;
+
+            using EntityQuery rootQuery = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<OperationMapRootComponent>());
+            int rootCount = rootQuery.CalculateEntityCount();
+            if (rootCount == 0)
+            {
+                error = null;
+                return false;
+            }
+
+            hasActiveMap = true;
+            if (rootCount != 1)
+            {
+                error = $"Expected exactly one operation-map root, found {rootCount}.";
+                return false;
+            }
+
+            Entity rootEntity = rootQuery.GetSingletonEntity();
+            if (!entityManager.HasComponent<ActiveOperationMapComponent>(rootEntity) ||
+                !entityManager.HasComponent<OperationMapMetadataComponent>(rootEntity))
+            {
+                error = "The operation-map root is missing active identity or metadata.";
+                return false;
+            }
+
+            ActiveOperationMapComponent active =
+                entityManager.GetComponentData<ActiveOperationMapComponent>(rootEntity);
+            OperationMapMetadataComponent metadata =
+                entityManager.GetComponentData<OperationMapMetadataComponent>(rootEntity);
+            if (!metadata.Blob.IsCreated || metadata.Generation != active.Generation)
+            {
+                error = "Active operation-map metadata is missing or belongs to a different generation.";
+                return false;
+            }
+
+            ref OperationMapBlob blob = ref metadata.Blob.Value;
+            if (!blob.OperationMapId.Equals(active.OperationMapId))
+            {
+                error = "Active operation-map identity does not match its metadata blob.";
+                return false;
+            }
+
+            OperationMapGridBlob source = blob.Grid;
+            if (source.Dimensions.x <= 0 || source.Dimensions.y <= 0 ||
+                !math.isfinite(source.CellSize) || source.CellSize <= 0f ||
+                !math.all(math.isfinite(source.Origin)))
+            {
+                error = "Active operation-map grid metadata is invalid.";
+                return false;
+            }
+
+            grid = new GridConfig
+            {
+                Width = source.Dimensions.x,
+                Height = source.Dimensions.y,
+                CellSize = source.CellSize,
+                Origin = source.Origin
+            };
+            error = null;
+            return true;
+        }
 
         public static bool TryFindAnchor(
             ref OperationMapBlob metadata,

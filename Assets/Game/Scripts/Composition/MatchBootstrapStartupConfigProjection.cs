@@ -27,10 +27,34 @@ namespace Game.Composition
             OperationMapCameraPoseCameraHelper.TryApplyInitialPose(
                 world,
                 sceneView != null ? sceneView.WorldCamera : null);
-            if (runtimeGridConfig == null)
+
+            GridConfig startupGrid;
+            bool resolvedActiveGrid = OperationMapMetadataUtility.TryResolveActiveGridConfig(
+                world.EntityManager,
+                out startupGrid,
+                out bool hasActiveMap,
+                out string operationMapGridError);
+            if (!resolvedActiveGrid && hasActiveMap)
             {
-                Debug.LogError("[MatchBootstrap] missingRuntimeGridConfig");
-                return;
+                throw new System.InvalidOperationException(
+                    $"Operation-map grid binding failed: {operationMapGridError}");
+            }
+
+            if (!resolvedActiveGrid && runtimeGridConfig == null)
+            {
+                throw new System.InvalidOperationException(
+                    "Match startup requires active operation-map grid metadata or a compatibility grid config.");
+            }
+
+            if (!resolvedActiveGrid)
+            {
+                startupGrid = new GridConfig
+                {
+                    Width = runtimeGridConfig.Width,
+                    Height = runtimeGridConfig.Height,
+                    CellSize = runtimeGridConfig.CellSize,
+                    Origin = runtimeGridConfig.Origin
+                };
             }
 
             if (runtimeGridBootstrapSystem == null)
@@ -41,10 +65,10 @@ namespace Game.Composition
 
             runtimeGridBootstrapSystem.Ensure(
                 world.EntityManager,
-                runtimeGridConfig.Width,
-                runtimeGridConfig.Height,
-                runtimeGridConfig.CellSize,
-                runtimeGridConfig.Origin);
+                startupGrid.Width,
+                startupGrid.Height,
+                startupGrid.CellSize,
+                (Vector3)startupGrid.Origin);
             if (mapSurfaceRuntimeBootstrapSystem == null)
             {
                 Debug.LogWarning("[MatchBootstrap] missingMapSurfaceRuntimeBootstrapSystem");

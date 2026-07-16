@@ -47,6 +47,112 @@ public sealed class OperationMapMetadataUtilityTests
     }
 
     [Test]
+    public void ActiveGridConfig_ResolvesExactMetadataAndRejectsGenerationMismatch()
+    {
+        using World world = new("OperationMapMetadataUtilityTests.ActiveGrid");
+        EntityManager entityManager = world.EntityManager;
+        BlobAssetReference<OperationMapBlob> blob = CreateMetadataBlob();
+        Entity root = entityManager.CreateEntity(
+            typeof(OperationMapRootComponent),
+            typeof(ActiveOperationMapComponent),
+            typeof(OperationMapMetadataComponent));
+        entityManager.SetComponentData(root, new ActiveOperationMapComponent
+        {
+            OperationMapId = new FixedString64Bytes("opmap.skirmish.desert_base_01"),
+            Generation = 4
+        });
+        entityManager.SetComponentData(root, new OperationMapMetadataComponent
+        {
+            Blob = blob,
+            Generation = 4
+        });
+
+        Assert.That(OperationMapMetadataUtility.TryResolveActiveGridConfig(
+            entityManager,
+            out GridConfig grid,
+            out bool hasActiveMap,
+            out string error), Is.True, error);
+        Assert.That(hasActiveMap, Is.True);
+        Assert.That(grid.Width, Is.EqualTo(320));
+        Assert.That(grid.Height, Is.EqualTo(180));
+        Assert.That(grid.CellSize, Is.EqualTo(2f));
+        Assert.That(grid.Origin, Is.EqualTo(new float3(-10f, 0f, -20f)));
+
+        OperationMapMetadataComponent stale = entityManager.GetComponentData<OperationMapMetadataComponent>(root);
+        stale.Generation = 3;
+        entityManager.SetComponentData(root, stale);
+        Assert.That(OperationMapMetadataUtility.TryResolveActiveGridConfig(
+            entityManager,
+            out _,
+            out hasActiveMap,
+            out error), Is.False);
+        Assert.That(hasActiveMap, Is.True);
+        Assert.That(error, Does.Contain("different generation"));
+        blob.Dispose();
+    }
+
+    [Test]
+    public void ActiveGridConfig_NoRootPermitsCompatibilityFallback()
+    {
+        using World world = new("OperationMapMetadataUtilityTests.NoActiveGrid");
+
+        Assert.That(OperationMapMetadataUtility.TryResolveActiveGridConfig(
+            world.EntityManager,
+            out _,
+            out bool hasActiveMap,
+            out string error), Is.False);
+        Assert.That(hasActiveMap, Is.False);
+        Assert.That(error, Is.Null);
+    }
+
+    [Test]
+    public void ActiveGridConfig_DuplicateRootsFailClosed()
+    {
+        using World world = new("OperationMapMetadataUtilityTests.DuplicateGrid");
+        world.EntityManager.CreateEntity(typeof(OperationMapRootComponent));
+        world.EntityManager.CreateEntity(typeof(OperationMapRootComponent));
+
+        Assert.That(OperationMapMetadataUtility.TryResolveActiveGridConfig(
+            world.EntityManager,
+            out _,
+            out bool hasActiveMap,
+            out string error), Is.False);
+        Assert.That(hasActiveMap, Is.True);
+        Assert.That(error, Does.Contain("exactly one"));
+    }
+
+    [Test]
+    public void ActiveGridConfig_InvalidGridFailsClosed()
+    {
+        using World world = new("OperationMapMetadataUtilityTests.InvalidGrid");
+        EntityManager entityManager = world.EntityManager;
+        BlobAssetReference<OperationMapBlob> blob = CreateMetadataBlob(width: 0);
+        Entity root = entityManager.CreateEntity(
+            typeof(OperationMapRootComponent),
+            typeof(ActiveOperationMapComponent),
+            typeof(OperationMapMetadataComponent));
+        entityManager.SetComponentData(root, new ActiveOperationMapComponent
+        {
+            OperationMapId = new FixedString64Bytes("opmap.skirmish.desert_base_01"),
+            Generation = 1
+        });
+        entityManager.SetComponentData(root, new OperationMapMetadataComponent
+        {
+            Blob = blob,
+            Generation = 1
+        });
+
+        Assert.That(OperationMapMetadataUtility.TryResolveActiveGridConfig(
+            entityManager,
+            out _,
+            out bool hasActiveMap,
+            out string error), Is.False);
+        Assert.That(hasActiveMap, Is.True);
+        Assert.That(error, Does.Contain("grid metadata is invalid"));
+        blob.Dispose();
+    }
+
+    [Test]
     public void MinimapProjection_ZeroRotationMatchesCurrentLowerLeftXZContract()
     {
         OperationMapMinimapBlob projection = new()
@@ -158,11 +264,21 @@ public sealed class OperationMapMetadataUtilityTests
         CameraMax = new float3(80f, 40f, 80f)
     };
 
-    private static BlobAssetReference<OperationMapBlob> CreateMetadataBlob()
+    private static BlobAssetReference<OperationMapBlob> CreateMetadataBlob(
+        int width = 320,
+        int height = 180,
+        float cellSize = 2f)
     {
         using BlobBuilder builder = new(Allocator.Temp);
         ref OperationMapBlob root = ref builder.ConstructRoot<OperationMapBlob>();
         root.OperationMapId = new FixedString64Bytes("opmap.skirmish.desert_base_01");
+        root.Grid = new OperationMapGridBlob
+        {
+            Origin = new float3(-10f, 0f, -20f),
+            Dimensions = new int2(width, height),
+            CellSize = cellSize,
+            AuthoredBlockedCellCount = 0
+        };
         BlobBuilderArray<OperationMapAnchorBlob> anchors = builder.Allocate(ref root.Anchors, 1);
         anchors[0] = new OperationMapAnchorBlob
         {

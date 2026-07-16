@@ -2,7 +2,7 @@
   "taskId": "APH-500",
   "schemaVersion": 1,
   "status": "complete",
-  "exactCommit": "082a3533bc45652ef38525f5f76e8d8491531613",
+  "exactCommit": "2327b2bbf5bf1bb03a1f6fa349b11eb0b90d357e",
   "dirty": false,
   "unityVersion": "6000.5.2f1",
   "releaseBuildType": "release",
@@ -12,22 +12,22 @@
   "targetArchitecture": "ARM64",
   "detailedBuildReport": true,
   "artifactPath": "Build/AndroidAPK/WarlineCapture.apk",
-  "artifactBytes": 470365902,
-  "artifactSha256": "4469fecb5875b5c6f032840fb1afb3d9d1383113e39d27b8f45093a5bb70dd21",
+  "artifactBytes": 449902496,
+  "artifactSha256": "b4ce2922a33208bb348912b08160cf9aa5078144797b81b9b9b8ad31c7268eaf",
   "artifactSizeSemantics": "Compressed APK/AAB package file length. This is not a sum of per-asset packed contributions.",
   "buildReportSizeSemantics": "Unity BuildReport bytes. Included-asset rows are serialized packed contributions; packed file overhead and summary-unaccounted bytes are reported separately.",
   "packedFileCount": 554,
-  "packedAssetEntryCount": 23409,
+  "packedAssetEntryCount": 23410,
   "unattributedPackedEntryCount": 517,
-  "totalIncludedAssetCount": 6433,
+  "totalIncludedAssetCount": 6434,
   "reportedIncludedAssetCount": 100,
-  "attributedPackedAssetBytes": 702488443,
+  "attributedPackedAssetBytes": 650445935,
   "unattributedPackedAssetBytes": 312073,
-  "packedContentBytes": 702800516,
-  "packedFileOverheadBytes": 860402,
-  "accountedPackedFileBytes": 703660918,
-  "buildReportSummaryTotalSizeBytes": 3187062941,
-  "buildReportSummaryUnaccountedBytes": 2483402023,
+  "packedContentBytes": 650758008,
+  "packedFileOverheadBytes": 860382,
+  "accountedPackedFileBytes": 651618390,
+  "buildReportSummaryTotalSizeBytes": 3114957405,
+  "buildReportSummaryUnaccountedBytes": 2463339015,
   "buildReportIncludedAssets": [
     {
       "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_A.png",
@@ -184,71 +184,10 @@
       ]
     },
     {
-      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_operations_thumbnail_art.png",
-      "packedBytes": 4716792,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_campaign_thumbnail_art.png",
-      "packedBytes": 4716788,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_skirmish_thumbnail_art.png",
-      "packedBytes": 4716788,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_card_frame.png",
-      "packedBytes": 4580084,
-      "objectTypes": [
-        "UnityEngine.Sprite",
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_card_selected_frame.png",
-      "packedBytes": 4579892,
-      "objectTypes": [
-        "UnityEngine.Sprite",
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_selected_panel_frame.png",
-      "packedBytes": 4574844,
-      "objectTypes": [
-        "UnityEngine.Sprite",
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
       "sourceAssetPath": "Assets/Game/GeneratedCombinedMeshes/Model_PolygonMilitary_Mat_01_A_Combined 10.asset",
       "packedBytes": 4507444,
       "objectTypes": [
         "UnityEngine.Mesh"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_square_panel_frame.png",
-      "packedBytes": 4356512,
-      "objectTypes": [
-        "UnityEngine.Sprite",
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_objectives_panel_frame.png",
-      "packedBytes": 4245052,
-      "objectTypes": [
-        "UnityEngine.Sprite",
-        "UnityEngine.Texture2D"
       ]
     },
     {
@@ -295,14 +234,6 @@
       ]
     },
     {
-      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_selected_frame.png",
-      "packedBytes": 3392364,
-      "objectTypes": [
-        "UnityEngine.Sprite",
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
       "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Female_01_Alt_01_CombinedSkinned_19_lod0.asset",
       "packedBytes": 3263132,
       "objectTypes": [
@@ -324,22 +255,6 @@
       ]
     },
     {
-      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_square_button_frame.png",
-      "packedBytes": 3201756,
-      "objectTypes": [
-        "UnityEngine.Sprite",
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_square_button_selected_frame.png",
-      "packedBytes": 3201264,
-      "objectTypes": [
-        "UnityEngine.Sprite",
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
       "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Male_01_Alt_02_CombinedSkinned_26_lod0.asset",
       "packedBytes": 3073976,
       "objectTypes": [
@@ -351,22 +266,6 @@
       "packedBytes": 3071860,
       "objectTypes": [
         "UnityEngine.Mesh"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_frame.png",
-      "packedBytes": 2963504,
-      "objectTypes": [
-        "UnityEngine.Sprite",
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_wide_rail_frame.png",
-      "packedBytes": 2948332,
-      "objectTypes": [
-        "UnityEngine.Sprite",
-        "UnityEngine.Texture2D"
       ]
     },
     {
@@ -678,14 +577,6 @@
       ]
     },
     {
-      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_resource_chip_frame.png",
-      "packedBytes": 1907012,
-      "objectTypes": [
-        "UnityEngine.Sprite",
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
       "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Contractor_Male_01_CombinedSkinned_6_lod0.asset",
       "packedBytes": 1883944,
       "objectTypes": [
@@ -740,6 +631,110 @@
     {
       "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Male_02_Alt_01_CombinedSkinned_28_lod0.asset",
       "packedBytes": 1597004,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/Narrative/FirstLaunch/Commander/commander_portrait_choices.png",
+      "packedBytes": 1581880,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_background_command_table_no_ui.png",
+      "packedBytes": 1578992,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_art_campaign_valley.png",
+      "packedBytes": 1573472,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_art_operations_radar.png",
+      "packedBytes": 1573472,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_art_skirmish_airbase.png",
+      "packedBytes": 1573472,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait.png",
+      "packedBytes": 1573464,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Models/SM_Veh_Light_Armored_Car_01.fbx",
+      "packedBytes": 1536504,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Insurgent_Male_04_CombinedSkinned_14_lod0.asset",
+      "packedBytes": 1533116,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/BakedPoses/HumanM@DualGun_Aim01_Pose_0.50.asset",
+      "packedBytes": 1521828,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Models/SM_Veh_APC_Heavy_01.fbx",
+      "packedBytes": 1496820,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Insurgent_Female_02_CombinedSkinned_10_lod0.asset",
+      "packedBytes": 1450476,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Models/SM_Bld_OilTower_01.fbx",
+      "packedBytes": 1442312,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/BatchTexture.asset",
+      "packedBytes": 1398224,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Models/SM_Veh_SUV_01.fbx",
+      "packedBytes": 1341748,
       "objectTypes": [
         "UnityEngine.Mesh"
       ]
@@ -1898,14 +1893,14 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_campaign_thumbnail_art.png",
-      "packedBytes": 4716788,
+      "packedBytes": 701580,
       "objectTypes": [
         "UnityEngine.Texture2D"
       ]
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_icon_lock.png",
-      "packedBytes": 87756,
+      "packedBytes": 10860,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -1913,14 +1908,14 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_operations_thumbnail_art.png",
-      "packedBytes": 4716792,
+      "packedBytes": 701584,
       "objectTypes": [
         "UnityEngine.Texture2D"
       ]
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_skirmish_thumbnail_art.png",
-      "packedBytes": 4716788,
+      "packedBytes": 701580,
       "objectTypes": [
         "UnityEngine.Texture2D"
       ]
@@ -2103,7 +2098,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_attack_crosshair.png",
-      "packedBytes": 107484,
+      "packedBytes": 13964,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2111,7 +2106,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_build_tools.png",
-      "packedBytes": 82452,
+      "packedBytes": 10508,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2119,7 +2114,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_checkbox_checked.png",
-      "packedBytes": 60960,
+      "packedBytes": 8160,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2127,7 +2122,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_checkbox_empty.png",
-      "packedBytes": 60508,
+      "packedBytes": 8028,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2135,7 +2130,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_civilian_group.png",
-      "packedBytes": 67344,
+      "packedBytes": 8944,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2143,7 +2138,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_credits_coin.png",
-      "packedBytes": 90820,
+      "packedBytes": 11256,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2151,7 +2146,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_focus_reticle.png",
-      "packedBytes": 69208,
+      "packedBytes": 8696,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2159,7 +2154,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_fuel_can.png",
-      "packedBytes": 56308,
+      "packedBytes": 7100,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2167,7 +2162,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_hold_shield.png",
-      "packedBytes": 87192,
+      "packedBytes": 13496,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2175,7 +2170,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_menu_list.png",
-      "packedBytes": 52360,
+      "packedBytes": 6760,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2183,7 +2178,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_move_chevrons.png",
-      "packedBytes": 79596,
+      "packedBytes": 10064,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2191,7 +2186,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_north_arrow.png",
-      "packedBytes": 68412,
+      "packedBytes": 8700,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2199,7 +2194,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_objective_star.png",
-      "packedBytes": 87932,
+      "packedBytes": 10940,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2207,7 +2202,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_pause.png",
-      "packedBytes": 47248,
+      "packedBytes": 6124,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2215,7 +2210,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_scan_radar.png",
-      "packedBytes": 81128,
+      "packedBytes": 11596,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2223,7 +2218,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_select_cursor.png",
-      "packedBytes": 59400,
+      "packedBytes": 7536,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2231,7 +2226,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_settings_gear.png",
-      "packedBytes": 82920,
+      "packedBytes": 10344,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2239,7 +2234,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_squad_badge.png",
-      "packedBytes": 71536,
+      "packedBytes": 9188,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2247,7 +2242,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_stop_hand.png",
-      "packedBytes": 68164,
+      "packedBytes": 8748,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2255,7 +2250,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_supply_crate.png",
-      "packedBytes": 73188,
+      "packedBytes": 9292,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2263,7 +2258,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_support_parachute.png",
-      "packedBytes": 77984,
+      "packedBytes": 10336,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2271,7 +2266,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_warning_triangle.png",
-      "packedBytes": 81992,
+      "packedBytes": 11912,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2279,7 +2274,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_zoom_minus.png",
-      "packedBytes": 74536,
+      "packedBytes": 10844,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2287,7 +2282,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_zoom_plus.png",
-      "packedBytes": 75448,
+      "packedBytes": 10680,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2295,7 +2290,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_objectives_panel_frame.png",
-      "packedBytes": 4245052,
+      "packedBytes": 474172,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2303,7 +2298,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_panel_frame_large.png",
-      "packedBytes": 1222312,
+      "packedBytes": 137576,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2311,7 +2306,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_progress_fill_gold.png",
-      "packedBytes": 189888,
+      "packedBytes": 22112,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2319,7 +2314,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_progress_track_frame.png",
-      "packedBytes": 380836,
+      "packedBytes": 48612,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2327,7 +2322,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_frame.png",
-      "packedBytes": 2963504,
+      "packedBytes": 331604,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2335,7 +2330,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_selected_frame.png",
-      "packedBytes": 3392364,
+      "packedBytes": 382964,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2343,7 +2338,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_resource_chip_frame.png",
-      "packedBytes": 1907012,
+      "packedBytes": 216812,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2351,7 +2346,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_selected_panel_frame.png",
-      "packedBytes": 4574844,
+      "packedBytes": 511324,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2359,7 +2354,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_selected_squad_group_portrait.png",
-      "packedBytes": 787092,
+      "packedBytes": 118996,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2367,7 +2362,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_card_frame.png",
-      "packedBytes": 4580084,
+      "packedBytes": 514060,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2375,7 +2370,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_card_selected_frame.png",
-      "packedBytes": 4579892,
+      "packedBytes": 513868,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2383,7 +2378,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_rifle_portrait.png",
-      "packedBytes": 787076,
+      "packedBytes": 118980,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2391,7 +2386,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_square_button_frame.png",
-      "packedBytes": 3201756,
+      "packedBytes": 359028,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2399,7 +2394,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_square_button_selected_frame.png",
-      "packedBytes": 3201264,
+      "packedBytes": 358536,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2407,7 +2402,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_square_panel_frame.png",
-      "packedBytes": 4356512,
+      "packedBytes": 488336,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2415,7 +2410,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_wide_rail_frame.png",
-      "packedBytes": 2948332,
+      "packedBytes": 331636,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"

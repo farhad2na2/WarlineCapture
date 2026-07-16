@@ -699,7 +699,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 20% (35/177 checklist items complete).
+Overall implementation progress: 20% (36/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -710,7 +710,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 | 2. Per-map static presentation ownership | Not started / compatibility subset | 0 | 14 | 0% | Preserve the current baked map safely; future-map generation remains undecided. |
 | 2A. Local Addressables packaging foundation | Later / direction-specific | 0 | 20 | 0% | Do not implement before the map-delivery direction is selected. |
 | 3. Current-map compatibility registration | In progress / shared | 5 | 10 | 50% | Current identities/definition are registered and schema-v1 read compatibility is explicit; runtime launch remains. |
-| 4. Non-destructive scene ownership split | In progress / shared priority | 5 | 14 | 36% | The staged scene contains only accepted map/compatibility roots and references a distinct map-owned subscene; the source Match scene and subscene remain unchanged. |
+| 4. Non-destructive scene ownership split | In progress / shared priority | 6 | 14 | 43% | The staged scene and subscene have distinct ownership, and map-specific placement configs match all 451 building plus 29 vehicle identities while source Match assets remain unchanged. |
 | 5. Runtime selection, loading, and teardown | In progress / shared contracts | 1 | 14 | 7% | Pure readiness/failure/teardown data contracts only; concrete loading is later. |
 | 6. Metadata, camera, minimap, and movement binding | In progress / shared | 2 | 12 | 17% | Scenario-required anchors validate against map metadata, and the existing RTS camera bridge prefers active-map camera bounds with grid fallback. |
 | 7. M01 operation-map slice | Later / shared contracts only | 0 | 10 | 0% | Map-neutral ids/anchors may proceed; physical rollout remains gated. |
@@ -854,7 +854,7 @@ Exit criteria:
 - [ ] Keep the original `Match.unity` fully functional until the extracted map passes all parity gates.
 - [x] Move/copy only classified map roots into the staged operation-map scene while shared binary assets remain referenced, not duplicated. See `../AgentReports/2026-07-16_current_operation_map_root_extraction.md`.
 - [x] Assign or create the map-owned subscene without breaking the original `MatchSubScene` compatibility path. See `../AgentReports/2026-07-16_current_operation_map_subscene_staging.md`.
-- [ ] Generate map-specific building and vehicle placement configs from the staged scene rather than reusing stale hierarchy assumptions blindly.
+- [x] Generate map-specific building and vehicle placement configs from the staged scene rather than reusing stale hierarchy assumptions blindly. See `../AgentReports/2026-07-16_current_operation_map_placement_staging.md`.
 - [ ] Bind map surface, grid, blockers, lightmaps/probes, runways, helipads, bounds, and metadata from the staged scene.
 - [ ] Bake a map-specific presentation manifest/chunk set from the staged operation-map scene.
 - [ ] Validate source GlobalObjectIds, hierarchy paths, authored conversion counts, canonical renderer suppression, and entity parity.
@@ -1089,6 +1089,7 @@ Exit criteria:
 | 2026-07-16 | Current operation-map scene staging | `../AgentReports/2026-07-16_current_operation_map_scene_staging.md`; focused EditMode `10 / 10`; source-growth/naming `24 / 24`; source/staged SHA-256 `dca7c83b...3a46`; distinct GUIDs; Unity compile; `git diff --check` | Passed | Created canonical folders and a byte-identical distinct-GUID staged scene through AssetDatabase-safe tooling. Original Match scene and all runtime/generated ownership remain unchanged. |
 | 2026-07-16 | Current operation-map root extraction | `../AgentReports/2026-07-16_current_operation_map_root_extraction.md`; focused EditMode `28 / 28`; source-growth/naming `24 / 24`; original SHA-256 `dca7c83b...3a46`; staged SHA-256 `6de82627...8b32`; Unity compile | Passed | Removed exactly five accepted shell roots from only the staged scene and retained the exact eleven-root map/compatibility set. Original Match runtime route remains unchanged. |
 | 2026-07-16 | Current operation-map subscene staging | `../AgentReports/2026-07-16_current_operation_map_subscene_staging.md`; focused EditMode `3 / 3`; source-growth/naming `24 / 24`; canonical scene/subscene SHA-256 checks; distinct GUID/reference checks; Unity compile | Passed | Created a distinct map-owned subscene retaining Grid and temporary initial-unit authoring, excluded the shared prefab registry, and rebound only the staged map scene. The original Match compatibility route remains unchanged. |
+| 2026-07-16 | Current operation-map placement staging | `../AgentReports/2026-07-16_current_operation_map_placement_staging.md`; focused EditMode `4 / 4`; source-growth/naming `24 / 24`; staged hierarchy full-identity match; distinct GUID and serialized parity checks; Unity compile | Passed | Created map-specific configs for all 451 building and 29 vehicle placements only after validating the extracted hierarchy. Existing Match configs and runtime bindings remain unchanged. |
 
 ## Open Decisions
 

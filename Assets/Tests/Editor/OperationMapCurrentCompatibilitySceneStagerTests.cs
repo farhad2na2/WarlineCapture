@@ -41,4 +41,25 @@ public sealed class OperationMapCurrentCompatibilitySceneStagerTests
             Is.True,
             error);
     }
+
+    [Test]
+    public void StagedPlacementConfigsMatchTheExtractedMapHierarchy()
+    {
+        Assert.That(
+            OperationMapCurrentCompatibilityPlacementStager.TryValidate(out string error),
+            Is.True,
+            error);
+        Assert.That(
+            AssetDatabase.AssetPathToGUID(
+                OperationMapCurrentCompatibilityPlacementStager.SourceBuildingConfigPath),
+            Is.Not.EqualTo(
+                AssetDatabase.AssetPathToGUID(
+                    OperationMapCurrentCompatibilityPlacementStager.DestinationBuildingConfigPath)));
+        Assert.That(
+            AssetDatabase.AssetPathToGUID(
+                OperationMapCurrentCompatibilityPlacementStager.SourceVehicleConfigPath),
+            Is.Not.EqualTo(
+                AssetDatabase.AssetPathToGUID(
+                    OperationMapCurrentCompatibilityPlacementStager.DestinationVehicleConfigPath)));
+    }
 }

@@ -65,6 +65,9 @@ namespace Game.Editor
         private const string EvidenceCommitKey = "MatchGcAllocationCallstackCapture.EvidenceCommit";
         private const string EvidenceEnvironmentKey = "MatchGcAllocationCallstackCapture.EvidenceEnvironment";
         private const string EvidenceDirtyKey = "MatchGcAllocationCallstackCapture.EvidenceDirty";
+        private const string OverrideEnterPlayModeSettingsKey = "MatchGcAllocationCallstackCapture.OverrideEnterPlayModeSettings";
+        private const string PreviousEnterPlayModeOptionsEnabledKey = "MatchGcAllocationCallstackCapture.PreviousEnterPlayModeOptionsEnabled";
+        private const string PreviousEnterPlayModeOptionsKey = "MatchGcAllocationCallstackCapture.PreviousEnterPlayModeOptions";
 
         private static bool hasPendingBatchExit;
         private static int pendingBatchExitCode;
@@ -216,6 +219,7 @@ namespace Game.Editor
                 SessionState.SetString(EvidenceCommitKey, evidence.ExactCommit);
                 SessionState.SetString(EvidenceEnvironmentKey, evidence.EnvironmentIdentitySha256);
                 SessionState.SetBool(EvidenceDirtyKey, evidence.Dirty);
+                ConfigurePlayModeReloadForBatchValidation();
                 SessionState.SetBool(ActiveKey, true);
                 SessionState.SetInt(PhaseKey, (int)Phase.WaitingForPlayMode);
                 SessionState.SetInt(CaptureModeKey, (int)mode);
@@ -241,6 +245,34 @@ namespace Game.Editor
             EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
             Application.logMessageReceived -= OnLogMessageReceived;
             Application.logMessageReceived += OnLogMessageReceived;
+        }
+
+        private static void ConfigurePlayModeReloadForBatchValidation()
+        {
+            if (!Application.isBatchMode)
+                return;
+
+            SessionState.SetBool(OverrideEnterPlayModeSettingsKey, true);
+            SessionState.SetBool(PreviousEnterPlayModeOptionsEnabledKey, EditorSettings.enterPlayModeOptionsEnabled);
+            SessionState.SetInt(PreviousEnterPlayModeOptionsKey, (int)EditorSettings.enterPlayModeOptions);
+            EditorSettings.enterPlayModeOptionsEnabled = false;
+            EditorSettings.enterPlayModeOptions = EnterPlayModeOptions.None;
+        }
+
+        private static void RestorePlayModeReloadSettings()
+        {
+            if (!SessionState.GetBool(OverrideEnterPlayModeSettingsKey, false))
+                return;
+
+            EditorSettings.enterPlayModeOptionsEnabled =
+                SessionState.GetBool(PreviousEnterPlayModeOptionsEnabledKey, false);
+            EditorSettings.enterPlayModeOptions =
+                (EnterPlayModeOptions)SessionState.GetInt(
+                    PreviousEnterPlayModeOptionsKey,
+                    (int)EnterPlayModeOptions.None);
+            SessionState.EraseBool(OverrideEnterPlayModeSettingsKey);
+            SessionState.EraseBool(PreviousEnterPlayModeOptionsEnabledKey);
+            SessionState.EraseInt(PreviousEnterPlayModeOptionsKey);
         }
 
         private static void OnPlayModeStateChanged(PlayModeStateChange state)
@@ -2291,6 +2323,7 @@ namespace Game.Editor
         {
             PerformanceDiagnosticsCapturePolicy.SetSuppressLogging(false);
             RestoreEditorMcpBridge();
+            RestorePlayModeReloadSettings();
             SessionState.EraseBool(ActiveKey);
             SessionState.EraseInt(PhaseKey);
             SessionState.EraseInt(CaptureModeKey);

@@ -1346,7 +1346,8 @@ namespace Game.Editor
             SessionState.SetInt(PreviousEnterPlayModeOptionsKey, (int)EditorSettings.enterPlayModeOptions);
 
             EnterPlayModeOptions batchOptions =
-                EditorSettings.enterPlayModeOptions & ~EnterPlayModeOptions.DisableSceneReload;
+                EditorSettings.enterPlayModeOptions &
+                ~(EnterPlayModeOptions.DisableDomainReload | EnterPlayModeOptions.DisableSceneReload);
             bool batchOptionsEnabled = batchOptions != EnterPlayModeOptions.None;
             if (EditorSettings.enterPlayModeOptionsEnabled == batchOptionsEnabled &&
                 EditorSettings.enterPlayModeOptions == batchOptions)

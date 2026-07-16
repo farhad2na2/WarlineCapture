@@ -109,13 +109,13 @@ Release-only categories are reported separately and never averaged into a premat
 
 | Field | Status |
 |---|---|
-| Checklist complete | `1 / 86` (`1.2%`) |
-| Core Architecture Lane | `1 / 68` (`1.5%`); active |
+| Checklist complete | `2 / 86` (`2.3%`) |
+| Core Architecture Lane | `2 / 68` (`2.9%`); active |
 | Release Certification Lane | `0 / 18` (`0.0%`); deferred |
 | Program state | Core Architecture Lane active; release work inactive |
 | Current phase | Phase 0 - Entry Baseline And Scorecard |
-| Current task | `AM-002` ready, not yet claimed |
-| Core entry review | Accepted by `AM-001`; exact-commit environment and refreshed gate evidence remain Phase 0 work |
+| Current task | `AM-003` ready, not yet claimed |
+| Core entry baseline | Prerequisite accepted by `AM-001`; exact environment identity accepted by `AM-002` at `68c785502151a54b6f6e4bb115789c8957962403`; refreshed gate evidence remains Phase 0 work |
 | Release entry review | Deferred until `pre_release_performance_certification_backlog.md` activates |
 | Architecture rating | Not re-audited for this program |
 | Performance evidence | Must be recaptured at the exact entry commit |
@@ -142,7 +142,7 @@ Release-only categories are reported separately and never averaged into a premat
 No production behavior changes. Establish a reproducible baseline and prevent an architecture score from substituting for evidence.
 
 - [x] `AM-001` Verify the prerequisite tracker is closed and its compiler, architecture, critical behavior, Editor performance, and GC gates are green. Record every release-only gap as deferred/measurement-required without blocking the Core Architecture Lane.
-- [ ] `AM-002` Record the exact entry commit, branch, Unity editor version, package lock hash, build target, scripting backend, and active quality configuration.
+- [x] `AM-002` Record the exact entry commit, branch, Unity editor version, package lock hash, build target, scripting backend, and active quality configuration.
 - [ ] `AM-003` Define canonical scenarios for idle Match, maximum combat, construction, transport, aircraft, projectiles, every major popup, Menu-to-Match transitions, and long-duration soak.
 - [ ] `AM-004` Freeze the core architecture scorecard, metric definitions, performance budgets, GC classification policy, memory-growth threshold, and evidence freshness rules. Keep release-only device-tier fields explicitly `measurement-required` until `AM-053`.
 - [ ] `AM-005` Regenerate the architecture dashboard, produce the validator registry, and reject every required input reported as stale, unknown, malformed, duplicate-owned, or tied to a different commit.
@@ -452,3 +452,16 @@ The implementation agent owns substantive commits, pushes, PR creation, and revi
 - Residual risks: direct Editor and GC artifacts declare no measurement commit; the GC filename date differs from its internal capture date; the architecture dashboard has zero healthy/current inputs and an older Editor snapshot. Later Phase 0 tasks must refresh exact-commit environment, dashboard, performance, and GC evidence before Phase 0 exit.
 - Exclusions preserved: operation-map, FirstLaunch, audio, UI visual-lock, production code, scenes, prefabs, packages, and `ProjectSettings`.
 - Next task: `AM-002` records the exact entry environment identity.
+
+### 2026-07-16 - AM-002 - Exact entry environment identity
+
+- Workflow path: pull request.
+- Implementation branch and PR: `codex/am-002-entry-environment`; [PR #15](https://github.com/farhad2na2/WarlineCapture/pull/15).
+- Baseline: `68c785502151a54b6f6e4bb115789c8957962403`, tree `a22c7a140b8326dd6a9bc2b00833a3b1764762af`; reviewed implementation head `5d3bce4d9a860c8f361c272f623847a8038c2b47`.
+- Result: the entry environment records Unity `6000.5.2f1 (eb73d3b415a1)`, the package-lock SHA-256, Android as the persisted active Editor target, IL2CPP as its configured backend, and Mobile/index `1` as the serialized current quality configuration.
+- Evidence: `Design/AgentReports/ArchitectureMaturity/entry_environment.json`.
+- Validation: canonical JSON serialization, schema and identity invariants, deterministic array ordering, commit/tree equality, tracked authority hashes, machine-local source/tool/conversion hashes, repeated `binary2text` conversion, cited selectors, single-file substantive scope, and `git diff --check` passed.
+- Independent review: one P1 finding rejected null active target/backend/quality values. The implementation agent resolved it with content-addressed `Library/EditorUserBuildSettings.asset` evidence and explicit tracked-setting derivations; complete rereview found no remaining material issue.
+- Residual risk: Android is a persisted machine-local Editor setting rather than a live Editor API observation. No Player runtime was launched, so runtime quality remains explicitly not observed and is not required for this documentation-only identity slice.
+- Exclusions preserved: the concurrent operation-map commit was rebased intact; operation-map, FirstLaunch, audio, UI visual-lock, production code, scenes, prefabs, packages, and `ProjectSettings` were not edited by AM-002.
+- Next task: `AM-003` defines the canonical scenario catalog.

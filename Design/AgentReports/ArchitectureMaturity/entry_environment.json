@@ -1,0 +1,439 @@
+{
+  "artifactId": "AM-002",
+  "artifactType": "architecture-maturity-entry-environment",
+  "baseline": {
+    "branch": "codex/am-002-entry-environment",
+    "commit": "68c785502151a54b6f6e4bb115789c8957962403",
+    "gitObjectFormat": "sha1",
+    "originMainCommit": "68c785502151a54b6f6e4bb115789c8957962403",
+    "relationshipToOriginMain": "exact-match",
+    "tree": "a22c7a140b8326dd6a9bc2b00833a3b1764762af"
+  },
+  "configuration": {
+    "buildTargets": {
+      "activeEditorBuildTarget": {
+        "buildPlatformGroupName": "Android",
+        "buildTargetGroupSerializedValue": 7,
+        "buildTargetSerializedValue": 13,
+        "commitBound": false,
+        "evidenceRef": "provenance.machineLocalEditorSession",
+        "observationKind": "machine-local-editor-session-persistence",
+        "sourceCheckoutBaselineCommit": "68c785502151a54b6f6e4bb115789c8957962403",
+        "sourceCheckoutMatchesBaseline": true,
+        "status": "observed-machine-local",
+        "value": "Android"
+      },
+      "configuredTargetIds": [
+        "Android",
+        "GameCoreScarlett",
+        "GameCoreXboxOne",
+        "Lumin",
+        "Nintendo Switch",
+        "Nintendo Switch 2",
+        "PS4",
+        "PS5",
+        "Server",
+        "Stadia",
+        "Standalone",
+        "WebGL",
+        "Windows Store Apps",
+        "XboxOne",
+        "iPhone",
+        "tvOS"
+      ],
+      "configuredTargetIdsDerivation": "Code-point-sorted union of explicitly serialized scripting-backend target-group IDs and per-platform default-quality IDs.",
+      "idSemantics": "Unity serialized platform/build-target-group identifiers; membership does not prove module installation or active BuildTarget selection."
+    },
+    "packageLock": {
+      "contentHash": "1d236fe27a37ac281785ef94283f220b9135ca0ee73976117782a5b674ea935e",
+      "hashAlgorithm": "sha256",
+      "observationKind": "repository-declared",
+      "path": "Packages/packages-lock.json",
+      "selector": "entire file"
+    },
+    "quality": {
+      "activeEditorQuality": {
+        "index": 1,
+        "name": "Mobile",
+        "observationKind": "repository-serialized-current-quality",
+        "runtimeObservationPerformed": false,
+        "sourcePath": "ProjectSettings/QualitySettings.asset",
+        "sourceSelector": "QualitySettings.m_CurrentQuality",
+        "status": "repository-serialized-entry-identity",
+        "value": "Mobile"
+      },
+      "activeRuntimeQuality": {
+        "observationKind": "player-runtime-state",
+        "reason": "No Player runtime was launched for AM-002.",
+        "status": "not-observed",
+        "value": null
+      },
+      "defaultByPlatform": [
+        {
+          "qualityIndex": 1,
+          "qualityName": "Mobile",
+          "serializedPlatformId": "Android"
+        },
+        {
+          "qualityIndex": 3,
+          "qualityName": "Ultra",
+          "serializedPlatformId": "GameCoreScarlett"
+        },
+        {
+          "qualityIndex": 2,
+          "qualityName": "PC",
+          "serializedPlatformId": "GameCoreXboxOne"
+        },
+        {
+          "qualityIndex": 1,
+          "qualityName": "Mobile",
+          "serializedPlatformId": "Lumin"
+        },
+        {
+          "qualityIndex": 1,
+          "qualityName": "Mobile",
+          "serializedPlatformId": "Nintendo Switch"
+        },
+        {
+          "qualityIndex": 2,
+          "qualityName": "PC",
+          "serializedPlatformId": "Nintendo Switch 2"
+        },
+        {
+          "qualityIndex": 2,
+          "qualityName": "PC",
+          "serializedPlatformId": "PS4"
+        },
+        {
+          "qualityIndex": 3,
+          "qualityName": "Ultra",
+          "serializedPlatformId": "PS5"
+        },
+        {
+          "qualityIndex": 1,
+          "qualityName": "Mobile",
+          "serializedPlatformId": "Server"
+        },
+        {
+          "qualityIndex": 1,
+          "qualityName": "Mobile",
+          "serializedPlatformId": "Stadia"
+        },
+        {
+          "qualityIndex": 2,
+          "qualityName": "PC",
+          "serializedPlatformId": "Standalone"
+        },
+        {
+          "qualityIndex": 1,
+          "qualityName": "Mobile",
+          "serializedPlatformId": "WebGL"
+        },
+        {
+          "qualityIndex": 1,
+          "qualityName": "Mobile",
+          "serializedPlatformId": "Windows Store Apps"
+        },
+        {
+          "qualityIndex": 1,
+          "qualityName": "Mobile",
+          "serializedPlatformId": "XboxOne"
+        },
+        {
+          "qualityIndex": 1,
+          "qualityName": "Mobile",
+          "serializedPlatformId": "iPhone"
+        },
+        {
+          "qualityIndex": 1,
+          "qualityName": "Mobile",
+          "serializedPlatformId": "tvOS"
+        }
+      ],
+      "levels": [
+        {
+          "excludedTargetPlatforms": [
+            "Standalone"
+          ],
+          "index": 0,
+          "name": "Low"
+        },
+        {
+          "excludedTargetPlatforms": [
+            "Standalone"
+          ],
+          "index": 1,
+          "name": "Mobile"
+        },
+        {
+          "excludedTargetPlatforms": [
+            "Android",
+            "iPhone"
+          ],
+          "index": 2,
+          "name": "PC"
+        },
+        {
+          "excludedTargetPlatforms": [
+            "Android",
+            "iPhone"
+          ],
+          "index": 3,
+          "name": "Ultra"
+        }
+      ],
+      "repositoryDeclaredCurrentQuality": {
+        "index": 1,
+        "interpretation": "Serialized m_CurrentQuality used as the AM-002 active quality configuration identity; not claimed as a Player runtime observation.",
+        "name": "Mobile",
+        "status": "repository-declared"
+      },
+      "source": {
+        "contentHash": "c9262d2e43ac2691a563737472666dc3bff8b3d86bd8552f9fa7b29ae3dc7a39",
+        "hashAlgorithm": "sha256",
+        "path": "ProjectSettings/QualitySettings.asset",
+        "selectors": [
+          "QualitySettings.m_CurrentQuality",
+          "QualitySettings.m_PerPlatformDefaultQuality",
+          "QualitySettings.m_QualitySettings"
+        ]
+      }
+    },
+    "scriptingBackends": {
+      "activeEditorScriptingBackend": {
+        "derivation": [
+          {
+            "evidenceRef": "provenance.machineLocalEditorSession",
+            "leg": "machine-local-active-build-target",
+            "selector": "EditorUserBuildSettings.m_ActiveBuildPlatformGroupName",
+            "value": "Android"
+          },
+          {
+            "evidenceRef": "configuration.scriptingBackends.source",
+            "leg": "repository-serialized-backend-for-observed-target",
+            "selector": "PlayerSettings.scriptingBackend.Android",
+            "serializedValue": 1,
+            "value": "IL2CPP"
+          }
+        ],
+        "observationKind": "derived-from-machine-local-editor-target-and-repository-declared-target-configuration",
+        "status": "derived-entry-identity",
+        "target": "Android",
+        "value": "IL2CPP"
+      },
+      "configuredByTargetGroup": [
+        {
+          "backend": "IL2CPP",
+          "serializedTargetGroupId": "Android",
+          "serializedValue": 1
+        },
+        {
+          "backend": "IL2CPP",
+          "serializedTargetGroupId": "Standalone",
+          "serializedValue": 1
+        },
+        {
+          "backend": "IL2CPP",
+          "serializedTargetGroupId": "iPhone",
+          "serializedValue": 1
+        }
+      ],
+      "enumInterpretation": {
+        "apiEnumMember": "UnityEditor.ScriptingImplementation.IL2CPP",
+        "serializedValue": 1
+      },
+      "source": {
+        "contentHash": "ca22fac3fe8d7f5f11cfb0e0b23efc68961a6d728d20f95447698420d9e812c7",
+        "hashAlgorithm": "sha256",
+        "path": "ProjectSettings/ProjectSettings.asset",
+        "selectors": [
+          "PlayerSettings.scriptingBackend",
+          "PlayerSettings.scriptingBackend.Android"
+        ]
+      }
+    },
+    "unityEditor": {
+      "declaredRevision": "eb73d3b415a1",
+      "declaredVersion": "6000.5.2f1",
+      "declaredVersionWithRevision": "6000.5.2f1 (eb73d3b415a1)",
+      "editorInvocationPerformed": false,
+      "observationKind": "repository-declared",
+      "source": {
+        "contentHash": "0bd10e7d104bdb396187fb2b4c47d1f5494041120bd8fe22d47c678939c2bc47",
+        "hashAlgorithm": "sha256",
+        "path": "ProjectSettings/ProjectVersion.txt",
+        "selectors": [
+          "m_EditorVersion",
+          "m_EditorVersionWithRevision"
+        ]
+      }
+    }
+  },
+  "determinism": {
+    "arrayOrdering": {
+      "configuration.buildTargets.configuredTargetIds": "serialized target ID ascending by Unicode code point",
+      "configuration.quality.defaultByPlatform": "serializedPlatformId ascending by Unicode code point",
+      "configuration.quality.levels": "index ascending; each excludedTargetPlatforms array ascending by Unicode code point",
+      "configuration.quality.source.selectors": "selector ascending by Unicode code point",
+      "configuration.scriptingBackends.activeEditorScriptingBackend.derivation": "leg ascending by Unicode code point",
+      "configuration.scriptingBackends.configuredByTargetGroup": "serializedTargetGroupId ascending by Unicode code point",
+      "configuration.scriptingBackends.source.selectors": "selector ascending by Unicode code point",
+      "configuration.unityEditor.source.selectors": "selector ascending by Unicode code point",
+      "provenance.gitQueries": "command ascending by Unicode code point",
+      "provenance.machineLocalEditorSession.conversion.selectors": "path ascending by Unicode code point",
+      "provenance.sourceFiles": "path ascending by Unicode code point",
+      "scope.writeAllowlist": "path ascending by Unicode code point"
+    },
+    "machineLocalRegenerationBoundary": {
+      "binary2textContentHash": "1dcf951a9b3dc80ba7df63391f585d2a54988df8138410cef42807be706ffefb",
+      "binary2textPath": "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Helpers/binary2text",
+      "convertedTextContentHash": "fd0e7e9a7e2f6b47f0d448ad4dcbfd2a2b6a5a96539fe93b3072002aa7ad1cd1",
+      "sourceBinaryContentHash": "f9f9af72d3449fc60146ea10f8becbeca67510a1835561bfcb23f1c6c0309ebd",
+      "sourceBinaryPath": "Library/EditorUserBuildSettings.asset",
+      "toolVersionEvidenceContentHash": "6016bc40b58d1735f4955f0d5c3621eb30f0a5c73a6d52498bed1909ef804284",
+      "unchangedInputDefinition": "Byte-identical regeneration requires unchanged baseline Git identities and tracked source hashes, source binary hash, binary2text hash, and tool-version-evidence hash."
+    },
+    "serialization": {
+      "characterEncoding": "UTF-8",
+      "indentSpaces": 2,
+      "lineEnding": "LF",
+      "objectKeyOrdering": "lexicographic Unicode code point order",
+      "trailingLineFeedCount": 1
+    },
+    "volatileInputsExcluded": [
+      "Editor and Player session state other than the content-addressed EditorUserBuildSettings.asset input",
+      "filesystem modification times",
+      "machine-local Library/** content other than the content-addressed EditorUserBuildSettings.asset input",
+      "wall-clock generation timestamps"
+    ]
+  },
+  "observationBoundary": {
+    "authority": "Commit-bound repository declarations plus a content-addressed machine-local Editor session persistence observation; machine-local state is not repository authority.",
+    "dedicatedWorktreeEditorSessionObserved": false,
+    "machineLocalEditorSessionPersistenceObserved": true,
+    "machineLocalLibraryContentCopiedIntoRepository": false,
+    "machineLocalLibrarySourceHashed": true,
+    "machineLocalMainCheckoutStateUsedAsRepositoryAuthority": false,
+    "playerRuntimeObserved": false
+  },
+  "provenance": {
+    "contentHashAlgorithm": "sha256",
+    "gitQueries": [
+      {
+        "command": "git branch --show-current",
+        "result": "codex/am-002-entry-environment"
+      },
+      {
+        "command": "git rev-parse --show-object-format",
+        "result": "sha1"
+      },
+      {
+        "command": "git rev-parse 68c785502151a54b6f6e4bb115789c8957962403^{tree}",
+        "result": "a22c7a140b8326dd6a9bc2b00833a3b1764762af"
+      },
+      {
+        "command": "git rev-parse origin/main",
+        "result": "68c785502151a54b6f6e4bb115789c8957962403"
+      }
+    ],
+    "machineLocalEditorSession": {
+      "authority": "non-repository-machine-local-observation",
+      "binary2text": {
+        "contentHash": "1dcf951a9b3dc80ba7df63391f585d2a54988df8138410cef42807be706ffefb",
+        "enclosingUnityEditorRevision": "eb73d3b415a1",
+        "enclosingUnityEditorVersion": "6000.5.2f1",
+        "hashAlgorithm": "sha256",
+        "name": "binary2text",
+        "path": "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Helpers/binary2text",
+        "versionEvidence": {
+          "contentHash": "6016bc40b58d1735f4955f0d5c3621eb30f0a5c73a6d52498bed1909ef804284",
+          "hashAlgorithm": "sha256",
+          "path": "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Info.plist",
+          "selectors": {
+            "CFBundleVersion": "6000.5.2f1",
+            "UnityBuildNumber": "eb73d3b415a1"
+          }
+        }
+      },
+      "conversion": {
+        "inputPath": "Library/EditorUserBuildSettings.asset",
+        "invocation": "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Helpers/binary2text /Users/farhad/Projects/WarlineCapture/Library/EditorUserBuildSettings.asset <temporary-output-path>",
+        "outputCommitted": false,
+        "outputContentHash": "fd0e7e9a7e2f6b47f0d448ad4dcbfd2a2b6a5a96539fe93b3072002aa7ad1cd1",
+        "outputHashAlgorithm": "sha256",
+        "outputReproducibilityCheck": "Two conversions from unchanged input and tool were byte-identical.",
+        "selectors": [
+          {
+            "convertedTextLine": 28,
+            "path": "EditorUserBuildSettings.m_ActiveBuildPlatformGroupName",
+            "rawType": "string",
+            "value": "Android"
+          },
+          {
+            "convertedTextLine": 23,
+            "path": "EditorUserBuildSettings.m_ActiveBuildTarget",
+            "rawType": "int",
+            "value": 13
+          },
+          {
+            "convertedTextLine": 26,
+            "path": "EditorUserBuildSettings.m_ActiveBuildTargetGroup",
+            "rawType": "int",
+            "value": 7
+          }
+        ],
+        "temporaryOutputPathRecorded": false
+      },
+      "mainCheckout": {
+        "absolutePath": "/Users/farhad/Projects/WarlineCapture",
+        "branch": "main",
+        "commit": "68c785502151a54b6f6e4bb115789c8957962403",
+        "commitEqualsBaseline": true,
+        "tree": "a22c7a140b8326dd6a9bc2b00833a3b1764762af"
+      },
+      "source": {
+        "bytes": 9672,
+        "contentHash": "f9f9af72d3449fc60146ea10f8becbeca67510a1835561bfcb23f1c6c0309ebd",
+        "gitIgnored": true,
+        "hashAlgorithm": "sha256",
+        "path": "Library/EditorUserBuildSettings.asset",
+        "pathBasis": "repository-relative-to-mainCheckout.absolutePath",
+        "tracked": false
+      }
+    },
+    "sourceFiles": [
+      {
+        "contentHash": "1d236fe27a37ac281785ef94283f220b9135ca0ee73976117782a5b674ea935e",
+        "hashAlgorithm": "sha256",
+        "path": "Packages/packages-lock.json",
+        "purpose": "package-lock identity"
+      },
+      {
+        "contentHash": "ca22fac3fe8d7f5f11cfb0e0b23efc68961a6d728d20f95447698420d9e812c7",
+        "hashAlgorithm": "sha256",
+        "path": "ProjectSettings/ProjectSettings.asset",
+        "purpose": "target-group scripting-backend declarations"
+      },
+      {
+        "contentHash": "0bd10e7d104bdb396187fb2b4c47d1f5494041120bd8fe22d47c678939c2bc47",
+        "hashAlgorithm": "sha256",
+        "path": "ProjectSettings/ProjectVersion.txt",
+        "purpose": "Unity Editor version and revision declaration"
+      },
+      {
+        "contentHash": "c9262d2e43ac2691a563737472666dc3bff8b3d86bd8552f9fa7b29ae3dc7a39",
+        "hashAlgorithm": "sha256",
+        "path": "ProjectSettings/QualitySettings.asset",
+        "purpose": "quality-level identity, serialized current index, and per-platform defaults"
+      }
+    ]
+  },
+  "schemaVersion": 1,
+  "scope": {
+    "productionBehaviorChanged": false,
+    "sharedTrackerChanged": false,
+    "writeAllowlist": [
+      "Design/AgentReports/ArchitectureMaturity/entry_environment.json"
+    ]
+  }
+}

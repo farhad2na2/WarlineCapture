@@ -1,0 +1,42 @@
+{
+  "artifactId": "am013-query-cache-consolidation-evidence-v1",
+  "schemaVersion": 1,
+  "sourceBaseline": {
+    "branch": "main",
+    "commit": "64b7ff7d5b8c06dbd51439d7e1f12bb48762dd4a",
+    "tree": "fc44b1e1129ea60aecbd9bdf95f9f5326d4ecf7b"
+  },
+  "productionChangePaths": [
+    "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
+    "Assets/Game/Scripts/Systems/BuildingResourceStorageQueryCache.cs",
+    "Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs",
+    "Assets/Game/Scripts/Systems/UnitMoveOrderQueueQueryCache.cs",
+    "Assets/Game/Scripts/Systems/WorldScopedComponentQueryCache.cs"
+  ],
+  "removedProductionPaths": [
+    "Assets/Game/Scripts/Systems/BuildingResourceStorageQueryCache.cs",
+    "Assets/Game/Scripts/Systems/UnitMoveOrderQueueQueryCache.cs"
+  ],
+  "ownedFiles": [
+    {"path": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs", "sha256": "fc4f7838af89987d1cba5c2ba0ed22b1fe41c0cb5710e768e58d5dec94933a1f"},
+    {"path": "Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs", "sha256": "eb84f8ac622a320c64d2295be1edb554759507d307f0fa75f8d8f713abf0001e"},
+    {"path": "Assets/Game/Scripts/Systems/WorldScopedComponentQueryCache.cs", "sha256": "6d08e4f3d0a9ee1ee1be80f8efccb1e3df83c14a2fbb53cb99458fb7bf500e43"},
+    {"path": "Assets/Tests/Editor/WorldScopedComponentQueryCacheTests.cs", "sha256": "dbcb56050a1122df7e9c313324e548eeee70460b50f17631f650deb77ea24170"}
+  ],
+  "validatorAuthority": {
+    "path": "Tools/CI/tests/test_architecture_query_cache_consolidation_evidence.py",
+    "sha256": "21bff814188e2662669e81e00de07e8896696a46d464359a126843e3ec21332e"
+  },
+  "auditDecisions": [
+    {"category": "query-cache", "decision": "consolidated", "reason": "Two one-component caches had identical World identity, liveness, creation, and reuse behavior; only component type and access mode differed."},
+    {"category": "command-queue", "decision": "retained-separate", "reason": "Queues have domain-specific payloads, ownership, consumption, failure, and overflow contracts; no shared behavior owner was found."},
+    {"category": "fixed-capacity-scratch", "decision": "retained-separate", "reason": "Scratch capacities are tied to different query counts or fixed budgets and AddNoResize overflow invariants; sharing would hide capacity authority."},
+    {"category": "projection-cache", "decision": "retained-separate", "reason": "Projection caches bind different UI/presentation lifecycles and invalidation keys; a shared cache would create a broad managed owner."}
+  ],
+  "unityValidations": [
+    {"id": "query-cache", "command": "Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/am013-query-cache.log -- -quit -executeMethod WorldScopedComponentQueryCacheTests.RunArchitectureQueryCacheValidation", "result": "Passed", "passedTests": 3, "compilerErrors": 0},
+    {"id": "faction-resource", "command": "Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/am013-faction-resource.log -- -quit -executeMethod FactionResourceCompositionSystemHelperTests.RunFocusedValidation", "result": "Passed", "passedTests": 13, "compilerErrors": 0},
+    {"id": "building-resource", "command": "Tools/CI/invoke_unity_macos.sh --timeout 900 --log /private/tmp/am013-building-resource.log -- -quit -executeMethod BuildingResourceProductionEcsSystemTests.RunFocusedValidation", "result": "Passed", "passedTests": 52, "compilerErrors": 0},
+    {"id": "architecture-contract", "command": "Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/am013-architecture-contract.log -- -quit -executeMethod ScriptArchitectureAlignmentContractTests.RunBroadShellValidation", "result": "Passed", "passedTests": 1, "compilerErrors": 0}
+  ]
+}

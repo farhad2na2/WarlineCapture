@@ -18,7 +18,7 @@ namespace Game.Runtime
         private readonly HashSet<Entity> _invalidCapacityWarningEntities = new();
         private readonly ResourceHaulerAIOilAllocationPolicySystemHelper _aiOilAllocationPolicy = new();
         private readonly FactionFuelLogisticsTelemetryBridgeCompositionSystemHelper _fuelLogisticsTelemetry = new();
-        private readonly UnitMoveOrderQueueQueryCache _moveOrderQueueQueryCache = new();
+        private readonly WorldScopedComponentQueryCache<UnitMoveOrderQueueComponent> _moveOrderQueueQueryCache = new(readOnly: true);
         private uint _lastAutomaticAssignmentSignature;
         private uint _nextReservationId = 1u;
         private float _nextAutomaticAssignmentRefreshAt;

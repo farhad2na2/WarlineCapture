@@ -7,7 +7,7 @@ namespace Game.Runtime
 {
     public sealed class FactionResourceCompositionSystemHelper
     {
-        private readonly BuildingResourceStorageQueryCache _storageQueryCache = new();
+        private readonly WorldScopedComponentQueryCache<BuildingResourceStorageComponent> _storageQueryCache = new(readOnly: false);
 
         public readonly struct ResourceEconomySnapshot
         {

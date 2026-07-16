@@ -2896,6 +2896,14 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
       "maxLines": 865,
       "maxBytes": 34228,
       "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/OperationMapRuntimeBootstrapSceneSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-163",
+      "maxLines": 257,
+      "maxBytes": 10183,
+      "scope": "system-helper"
     }
   ]
 }

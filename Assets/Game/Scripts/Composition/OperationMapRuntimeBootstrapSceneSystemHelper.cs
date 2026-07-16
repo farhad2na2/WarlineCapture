@@ -1,0 +1,257 @@
+using System;
+using Game.Components;
+using Game.Configs;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Mathematics;
+
+namespace Game.Composition
+{
+    internal sealed class OperationMapRuntimeBootstrapSceneSystemHelper : IDisposable
+    {
+        private readonly World createdWorld;
+        private BlobAssetReference<OperationMapBlob> ownedMetadataBlob;
+        private bool disposed;
+
+        public OperationMapRuntimeBootstrapSceneSystemHelper(World world)
+        {
+            createdWorld = world;
+        }
+
+        public bool TryPublish(
+            OperationMapDefinition definition,
+            in FixedString64Bytes scenarioId,
+            in FixedString64Bytes missionId,
+            int generation,
+            OperationMapReadinessFlags readyFlags,
+            OperationMapReadinessFlags requiredFlags,
+            out Entity rootEntity,
+            out string error)
+        {
+            rootEntity = Entity.Null;
+            if (disposed)
+            {
+                error = "Operation-map metadata bootstrap is disposed.";
+                return false;
+            }
+
+            if (definition == null)
+            {
+                error = "Operation-map definition is required.";
+                return false;
+            }
+
+            if (scenarioId.IsEmpty || missionId.IsEmpty || generation <= 0)
+            {
+                error = "Scenario id, mission id, and a positive generation are required.";
+                return false;
+            }
+
+            if (!TryGetLiveEntityManager(out EntityManager entityManager))
+            {
+                error = "Operation-map metadata bootstrap requires a live ECS World.";
+                return false;
+            }
+
+            if (!TryResolveSingleRoot(entityManager, out rootEntity, out error))
+                return false;
+
+            if (rootEntity != Entity.Null &&
+                entityManager.HasComponent<ActiveOperationMapComponent>(rootEntity) &&
+                entityManager.GetComponentData<ActiveOperationMapComponent>(rootEntity).Generation >= generation)
+            {
+                error = "Operation-map generation must increase monotonically.";
+                rootEntity = Entity.Null;
+                return false;
+            }
+
+            if (!definition.TryCreatePersistentMetadataBlob(
+                    out BlobAssetReference<OperationMapBlob> newMetadataBlob,
+                    out error))
+            {
+                rootEntity = Entity.Null;
+                return false;
+            }
+
+            try
+            {
+                if (rootEntity == Entity.Null)
+                    rootEntity = CreateRoot(entityManager);
+                else
+                    EnsureRootContract(entityManager, rootEntity);
+
+                OperationMapBoundsConfig sourceBounds = definition.Bounds;
+                entityManager.SetComponentData(rootEntity, new ActiveOperationMapComponent
+                {
+                    OperationMapId = new FixedString64Bytes(definition.OperationMapId),
+                    ScenarioId = scenarioId,
+                    MissionId = missionId,
+                    SchemaVersion = definition.SchemaVersion,
+                    ContentVersion = definition.ContentVersion,
+                    Generation = generation
+                });
+                entityManager.SetComponentData(rootEntity, new OperationMapBoundsComponent
+                {
+                    WorldMin = ToFloat3(sourceBounds.WorldMin),
+                    WorldMax = ToFloat3(sourceBounds.WorldMax),
+                    PlayableMin = ToFloat3(sourceBounds.PlayableMin),
+                    PlayableMax = ToFloat3(sourceBounds.PlayableMax),
+                    CameraMin = ToFloat3(sourceBounds.CameraMin),
+                    CameraMax = ToFloat3(sourceBounds.CameraMax)
+                });
+                entityManager.SetComponentData(rootEntity, new OperationMapMetadataComponent
+                {
+                    Blob = newMetadataBlob,
+                    MetadataHash = new FixedString128Bytes(definition.GeneratedMetadataHash),
+                    Generation = generation
+                });
+                entityManager.SetComponentData(rootEntity, new OperationMapReadinessComponent
+                {
+                    Generation = generation,
+                    ReadyFlags = readyFlags,
+                    RequiredFlags = requiredFlags,
+                    FailedFlags = OperationMapReadinessFlags.None
+                });
+                entityManager.SetComponentData(rootEntity, new OperationMapLoadStateComponent
+                {
+                    ActiveRequestId = 0,
+                    Generation = generation,
+                    Progress01 = HasRequiredReadiness(readyFlags, requiredFlags) ? 1f : 0f,
+                    Status = HasRequiredReadiness(readyFlags, requiredFlags)
+                        ? OperationMapLoadStatusKind.Ready
+                        : OperationMapLoadStatusKind.BindingMetadata,
+                    Readiness = readyFlags,
+                    IsBusy = 0
+                });
+                entityManager.SetName(rootEntity, "OperationMapRuntimeRoot");
+
+                BlobAssetReference<OperationMapBlob> previousOwnedBlob = ownedMetadataBlob;
+                ownedMetadataBlob = newMetadataBlob;
+                newMetadataBlob = default;
+                if (previousOwnedBlob.IsCreated)
+                    previousOwnedBlob.Dispose();
+
+                error = null;
+                return true;
+            }
+            finally
+            {
+                if (newMetadataBlob.IsCreated)
+                    newMetadataBlob.Dispose();
+            }
+        }
+
+        public void ClearPublishedState()
+        {
+            if (TryGetLiveEntityManager(out EntityManager entityManager))
+            {
+                using EntityQuery query = entityManager.CreateEntityQuery(
+                    ComponentType.ReadOnly<OperationMapRootComponent>());
+                using NativeArray<Entity> roots = query.ToEntityArray(Allocator.Temp);
+                for (int index = 0; index < roots.Length; index++)
+                {
+                    if (entityManager.Exists(roots[index]))
+                        entityManager.DestroyEntity(roots[index]);
+                }
+            }
+
+            DisposeOwnedBlob();
+        }
+
+        public void Dispose()
+        {
+            if (disposed)
+                return;
+
+            ClearPublishedState();
+            disposed = true;
+        }
+
+        private static Entity CreateRoot(EntityManager entityManager)
+        {
+            Entity entity = entityManager.CreateEntity(
+                typeof(OperationMapRootComponent),
+                typeof(OperationMapQueueComponent),
+                typeof(OperationMapLoadStateComponent),
+                typeof(ActiveOperationMapComponent),
+                typeof(OperationMapBoundsComponent),
+                typeof(OperationMapMetadataComponent),
+                typeof(OperationMapReadinessComponent));
+            entityManager.AddBuffer<OperationMapLoadRequestElement>(entity);
+            entityManager.AddBuffer<OperationMapLoadResultElement>(entity);
+            return entity;
+        }
+
+        private static void EnsureRootContract(EntityManager entityManager, Entity rootEntity)
+        {
+            EnsureComponent<OperationMapQueueComponent>(entityManager, rootEntity);
+            EnsureComponent<OperationMapLoadStateComponent>(entityManager, rootEntity);
+            EnsureComponent<ActiveOperationMapComponent>(entityManager, rootEntity);
+            EnsureComponent<OperationMapBoundsComponent>(entityManager, rootEntity);
+            EnsureComponent<OperationMapMetadataComponent>(entityManager, rootEntity);
+            EnsureComponent<OperationMapReadinessComponent>(entityManager, rootEntity);
+            if (!entityManager.HasBuffer<OperationMapLoadRequestElement>(rootEntity))
+                entityManager.AddBuffer<OperationMapLoadRequestElement>(rootEntity);
+            if (!entityManager.HasBuffer<OperationMapLoadResultElement>(rootEntity))
+                entityManager.AddBuffer<OperationMapLoadResultElement>(rootEntity);
+        }
+
+        private static void EnsureComponent<T>(EntityManager entityManager, Entity entity)
+            where T : unmanaged, IComponentData
+        {
+            if (!entityManager.HasComponent<T>(entity))
+                entityManager.AddComponent<T>(entity);
+        }
+
+        private static bool TryResolveSingleRoot(
+            EntityManager entityManager,
+            out Entity rootEntity,
+            out string error)
+        {
+            using EntityQuery query = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<OperationMapRootComponent>());
+            using NativeArray<Entity> roots = query.ToEntityArray(Allocator.Temp);
+            if (roots.Length > 1)
+            {
+                rootEntity = Entity.Null;
+                error = "Exactly zero or one operation-map root is permitted before publication.";
+                return false;
+            }
+
+            rootEntity = roots.Length == 1 ? roots[0] : Entity.Null;
+            error = null;
+            return true;
+        }
+
+        private bool TryGetLiveEntityManager(out EntityManager entityManager)
+        {
+            entityManager = default;
+            if (createdWorld == null || !createdWorld.IsCreated)
+                return false;
+
+            try
+            {
+                entityManager = createdWorld.EntityManager;
+                return true;
+            }
+            catch (InvalidOperationException)
+            {
+                return false;
+            }
+        }
+
+        private void DisposeOwnedBlob()
+        {
+            if (ownedMetadataBlob.IsCreated)
+                ownedMetadataBlob.Dispose();
+            ownedMetadataBlob = default;
+        }
+
+        private static bool HasRequiredReadiness(
+            OperationMapReadinessFlags readyFlags,
+            OperationMapReadinessFlags requiredFlags) =>
+            (readyFlags & requiredFlags) == requiredFlags;
+
+        private static float3 ToFloat3(UnityEngine.Vector3 value) => new(value.x, value.y, value.z);
+    }
+}

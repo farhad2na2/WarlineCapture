@@ -109,15 +109,15 @@ Release-only categories are reported separately and never averaged into a premat
 
 | Field | Status |
 |---|---|
-| Checklist complete | `15 / 86` (`17.4%`) |
-| Core Architecture Lane | `15 / 68` (`22.1%`); active |
+| Checklist complete | `16 / 86` (`18.6%`) |
+| Core Architecture Lane | `16 / 68` (`23.5%`); active |
 | Release Certification Lane | `0 / 18` (`0.0%`); deferred |
 | Program state | Core Architecture Lane active; release work inactive |
 | Current phase | Phase 1 - Responsibility And Decomposition Hardening |
-| Current task | `AM-016` ready, not yet claimed |
-| Blockers | None for `AM-016`; release-only device, thermal, cold/warm, and sustained certification remain intentionally deferred |
-| Latest validation | AM-015: Unity Resource Exchange `10 / 10`, shell `14 / 14`, Settings `8 / 8`, architecture `1 / 1`, zero compiler errors; Python `5 / 5` focused and `69 / 69` integrated; independent rereview `PASS` |
-| Latest evidence | `ui_shell_resource_exchange_decomposition_evidence.json`, accepted implementation commit `09fb62a4ae7303894cace678442ae311988bb956` |
+| Current task | `AM-017` ready, not yet claimed |
+| Blockers | None for `AM-017`; release-only device, thermal, cold/warm, and sustained certification remain intentionally deferred |
+| Latest validation | AM-016: canonical source-growth `17 / 17`, broad architecture/naming `1 / 1`, zero compiler errors; Python `5 / 5` focused and `74 / 74` integrated; independent rereview `PASS` |
+| Latest evidence | `source_responsibility_guardrail_evidence.json`, accepted implementation commit `3950afd2288e8c7d326a33dca60124b02292bbda` |
 | Core entry baseline | Phase 0 accepted by `AM-001` through `AM-008`; exact-identity assembly and bounded Editor Match evidence are current at `9a0aa14252e6559680328e520d26c16bfc7b444e`; the dashboard required gate is accepted; the entry rating and owned deltas are published in `entry_baseline_report.md` |
 | Release entry review | Deferred until `pre_release_performance_certification_backlog.md` activates |
 | Architecture rating | Evidence-backed Phase 0 entry rating `8.5 / 10`; planning baseline only, not a `9.5` claim |
@@ -219,7 +219,7 @@ Reduce change risk in oversized systems without replacing the architecture or ch
 - [x] `AM-013` Consolidate duplicated query-cache, command-queue, fixed-capacity scratch, and projection-cache mechanics only where one narrow shared contract removes real duplication.
 - [x] `AM-014` Add update-order and behavior-equivalence tests for every decomposition that crosses a system or assembly boundary.
 - [x] `AM-015` Complete measured decomposition of the highest-risk remaining UI/presentation helper after its characterization coverage is green.
-- [ ] `AM-016` Update source-growth and responsibility guardrails so extracted files cannot regrow into equivalent god owners elsewhere.
+- [x] `AM-016` Update source-growth and responsibility guardrails so extracted files cannot regrow into equivalent god owners elsewhere.
 - [ ] `AM-017` Recapture focused and canonical Match performance/GC evidence after all Phase 1 integrations and reject any behavior or frame-time regression.
 
 ### Phase 1 Exit Gate
@@ -647,3 +647,17 @@ The implementing agent works directly on `main`, owns the bounded substantive an
 - Review: initial review found stale popup ownership when `MainMenuPlayUI` changed, optional commit binding, and weak validation-source proof. The binding now transfers ownership explicitly, a direct test freezes that behavior, acceptance requires an immutable commit/tree, and exact runner source hashes/counts are enforced. Independent rereview returned `PASS`.
 - Exclusions preserved: operation-map commits were rebased intact. Operation-map, FirstLaunch, audio, UI visual-lock assets, scenes, prefabs, packages, and `ProjectSettings` were not edited or staged by AM-015.
 - Next task: `AM-016` updates source-growth and responsibility guardrails so the extracted lifecycle cannot regrow inside `UIShellContentView` or reappear as an oversized replacement owner.
+
+### 2026-07-16 - AM-016 - Source responsibility and replacement-owner guardrails
+
+- Workflow path: direct commits to `main`; no branch, worktree, or PR workflow.
+- Accepted implementation commit: `3950afd2288e8c7d326a33dca60124b02292bbda`, tree `16e471ecbef3b764d5c661a5cb4b5575ef1d8258`; integrated source baseline `7be5f22b365f282abdc247456ff2a5de533db279`, tree `8c66e40d929bac437d231627b5fac01bbbbf4bad`.
+- Result: the canonical `architecture-source-growth` validator now freezes the decomposed Resource Exchange shell boundary rather than creating a parallel validator. `ResourceExchangeShellBinding` is fixed at 94 lines / 3,160 bytes / four state slots and `UIShellContentView` at 898 lines / 38,807 bytes / 49 state slots, with exact source hashes and required/forbidden responsibility symbols.
+- Replacement-owner policy: changed or new production candidates under `Assets/Game/Scripts` cannot acquire an equivalent domain signature or grow a generic managed lifecycle owner beyond the accepted baseline. The guard compares distinct lifecycle symbols, total lifecycle occurrences, Resource Exchange occurrences, lines, and bytes; its generic threshold remains three and its replacement-owner allowlist is empty.
+- Growth authority: four AM-013 authorizations remain bound to accepted commit `664ae7fa4544699faad7da01b11db60434e39088`. The historical 952-line shell authorization remains recorded but cannot override the stricter AM-016 ratchet.
+- Integration authority: the accepted FirstLaunch sources were not edited. Their stale helper ceilings are superseded append-only by `D-202`, `D-203`, and `D-204`, each bound to accepted FirstLaunch commit `7be5f22b365f282abdc247456ff2a5de533db279`. Historical decisions `D-036`, `D-044`, and `D-048` remain unchanged. The user-requested editor commands moved from `Warline Capture > Performance` to `Game > Performance`; those two Editor-only paths are declared explicitly and change no runtime behavior.
+- Evidence: `Design/AgentReports/ArchitectureMaturity/source_responsibility_guardrail_evidence.json`, `Design/Architecture/post_hardening_source_responsibility_guardrails.json`, and the hash-bound `am016_source_growth_validation.log` enforce exact scope, commit/tree ancestry, guarded-source identity, validator identity, accepted log identity, and no runtime production-source changes.
+- Validation: canonical source-growth `17 / 17`, broad architecture/naming `1 / 1`, zero compiler errors, Python `5 / 5` focused and `74 / 74` integrated, and `git diff --check` passed after the latest FirstLaunch and operation-map integrations.
+- Review: independent review found and drove fixes for weak generic-owner detection, shell-state substitution, missing immutable ancestry/log binding, same-symbol-count lifecycle growth, and retroactive FirstLaunch decision edits. The final immutable rereview of `3950afd2288e8c7d326a33dca60124b02292bbda` returned `PASS`.
+- Exclusions preserved: operation-map, FirstLaunch source, audio, UI visual-lock, scenes, prefabs, packages, and `ProjectSettings` were not edited by AM-016. No runtime `ISystem`, `SystemBase`, scheduling, gameplay, or presentation behavior changed.
+- Next task: `AM-017` recaptures focused and canonical Match performance/GC evidence after all Phase 1 integrations and rejects any behavior, frame-time, or allocation regression.

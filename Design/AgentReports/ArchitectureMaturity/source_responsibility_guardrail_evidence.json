@@ -1,7 +1,7 @@
 {
   "artifactId": "am016-source-responsibility-guardrail-v1",
   "schemaVersion": 1,
-  "acceptanceRequired": false,
+  "acceptanceRequired": true,
   "sourceBaseline": {
     "branch": "main",
     "commit": "7be5f22b365f282abdc247456ff2a5de533db279",
@@ -25,7 +25,10 @@
       "tree": "462952edccdc7aceef874ef52e0c4aef90f29050"
     }
   ],
-  "acceptedEvidence": null,
+  "acceptedEvidence": {
+    "commit": "3950afd2288e8c7d326a33dca60124b02292bbda",
+    "tree": "16e471ecbef3b764d5c661a5cb4b5575ef1d8258"
+  },
   "implementationChangePaths": [
     "Assets/Game/Scripts/Editor/Aph501AndroidMainMenuTexturePolicy.cs",
     "Assets/Game/Scripts/Editor/Aph501AndroidSupportingUiTexturePolicy.cs",

@@ -6,6 +6,10 @@
     "commit": "fba2b7c8026419ee3d5fb2c7c71b080f4f4c1580",
     "tree": "0ec20db95157c38039165e4152637d8030db048a"
   },
+  "acceptedEvidence": {
+    "commit": "c2b30a3fd892d42f7f7cc880dfcf47ccb68deadb",
+    "tree": "28b28b229b1ba8b08a2c4839815cc283ef9e3d10"
+  },
   "governedDecompositions": [
     {
       "id": "am012-transport-capacity-rules",

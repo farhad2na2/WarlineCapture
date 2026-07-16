@@ -109,15 +109,15 @@ Release-only categories are reported separately and never averaged into a premat
 
 | Field | Status |
 |---|---|
-| Checklist complete | `13 / 86` (`15.1%`) |
-| Core Architecture Lane | `13 / 68` (`19.1%`); active |
+| Checklist complete | `14 / 86` (`16.3%`) |
+| Core Architecture Lane | `14 / 68` (`20.6%`); active |
 | Release Certification Lane | `0 / 18` (`0.0%`); deferred |
 | Program state | Core Architecture Lane active; release work inactive |
 | Current phase | Phase 1 - Responsibility And Decomposition Hardening |
-| Current task | `AM-014` ready, not yet claimed |
-| Blockers | None for `AM-014`; release-only device, thermal, cold/warm, and sustained certification remain intentionally deferred |
-| Latest validation | AM-013: Unity `3 / 3`, `13 / 13`, `52 / 52`, and `1 / 1` with zero compiler errors; Python `5 / 5` focused and `59 / 59` integrated; `git diff --check` passed |
-| Latest evidence | `query_cache_consolidation_evidence.json`, accepted implementation commit `664ae7fa4544699faad7da01b11db60434e39088` |
+| Current task | `AM-015` ready, not yet claimed |
+| Blockers | None for `AM-015`; release-only device, thermal, cold/warm, and sustained certification remain intentionally deferred |
+| Latest validation | AM-014: Python `5 / 5` focused and `64 / 64` integrated; Python compilation and `git diff --check` passed; Unity rerun not required because the accepted slice changed evidence and CI only |
+| Latest evidence | `boundary_equivalence_audit_evidence.json`, accepted audit commit `c2b30a3fd892d42f7f7cc880dfcf47ccb68deadb` |
 | Core entry baseline | Phase 0 accepted by `AM-001` through `AM-008`; exact-identity assembly and bounded Editor Match evidence are current at `9a0aa14252e6559680328e520d26c16bfc7b444e`; the dashboard required gate is accepted; the entry rating and owned deltas are published in `entry_baseline_report.md` |
 | Release entry review | Deferred until `pre_release_performance_certification_backlog.md` activates |
 | Architecture rating | Evidence-backed Phase 0 entry rating `8.5 / 10`; planning baseline only, not a `9.5` claim |
@@ -217,7 +217,7 @@ Reduce change risk in oversized systems without replacing the architecture or ch
 - [x] `AM-011` Add missing characterization tests before extracting behavior from any selected owner.
 - [x] `AM-012` Extract one capability or ECS phase at a time behind existing contracts, preserving system order and avoiding a new coordinator-shaped helper.
 - [x] `AM-013` Consolidate duplicated query-cache, command-queue, fixed-capacity scratch, and projection-cache mechanics only where one narrow shared contract removes real duplication.
-- [ ] `AM-014` Add update-order and behavior-equivalence tests for every decomposition that crosses a system or assembly boundary.
+- [x] `AM-014` Add update-order and behavior-equivalence tests for every decomposition that crosses a system or assembly boundary.
 - [ ] `AM-015` Complete measured decomposition of the highest-risk remaining UI/presentation helper after its characterization coverage is green.
 - [ ] `AM-016` Update source-growth and responsibility guardrails so extracted files cannot regrow into equivalent god owners elsewhere.
 - [ ] `AM-017` Recapture focused and canonical Match performance/GC evidence after all Phase 1 integrations and reject any behavior or frame-time regression.
@@ -622,3 +622,15 @@ The implementing agent works directly on `main`, owns the bounded substantive an
 - Focused review: direct comparison against both deleted wrappers confirmed semantic equivalence, exact access modes, and no broad/static owner. Delegated reviewers produced no actionable handoff, so acceptance used the bounded local review plus the fail-closed evidence suite.
 - Exclusions preserved: operation-map, FirstLaunch, audio, UI visual-lock, scenes, prefabs, packages, and `ProjectSettings` were not edited by AM-013.
 - Next task: `AM-014` adds update-order and behavior-equivalence tests for every Phase 1 decomposition that crossed a system or assembly boundary. The AM-012 capacity-rules extraction remains within the existing system/assembly; AM-013 changed a helper boundary only, so the audit must explicitly record whether any additional test is required rather than inventing a cross-system claim.
+
+### 2026-07-16 - AM-014 - Phase 1 boundary-equivalence audit
+
+- Workflow path: direct commits to `main`; no branch, worktree, or PR workflow.
+- Accepted audit commit: `c2b30a3fd892d42f7f7cc880dfcf47ccb68deadb`, tree `28b28b229b1ba8b08a2c4839815cc283ef9e3d10`; source baseline `fba2b7c8026419ee3d5fb2c7c71b080f4f4c1580`, tree `0ec20db95157c38039165e4152637d8030db048a`.
+- Result: the complete accepted Phase 1 decomposition set contains AM-012 and AM-013 only. Both remain in `Game.Runtime`; neither creates, removes, or transfers authority to another ECS system. `UnitTransportBoardingSystem` remains the sole affected system and retains the same `SimulationSystemGroup` / `UpdateAfter(UnitGridMovementSystem)` contract.
+- Test decision: no additional cross-boundary test was added because no accepted decomposition crosses a system or assembly boundary. AM-012 retains its direct capacity-rules, six characterization, and `88 / 88` full-regression coverage. AM-013 retains its shared-cache, faction-resource, and building-resource suites. Creating an update-order test for a nonexistent boundary would weaken rather than clarify the contract.
+- Fail-closed evidence: `Design/AgentReports/ArchitectureMaturity/boundary_equivalence_audit_evidence.json` and `Tools/CI/tests/test_architecture_boundary_equivalence_evidence.py` bind the exact AM-012/AM-013 evidence hashes and accepted identities, resolve the owning asmdef at each pre/post commit, detect unmanaged `ISystem` and managed `SystemBase` declarations, compare the retained system's update-order attributes, require nonempty tests for any declared crossing, and reject production-source changes in the AM-014 slice.
+- Validation: five focused AM-014 checks and 64 integrated ownership/lifecycle/ranking/dashboard/responsibility/characterization/extraction/consolidation/boundary checks passed; Python compilation and `git diff --check` passed. Unity was not rerun because AM-014 changes only evidence and CI, and it validates content-bound green Unity evidence from AM-012 and AM-013.
+- Focused review: local review strengthened system discovery to cover both unmanaged and managed ECS systems. The delegated reviewer remained running without a handoff and was closed; no acceptance claim depends on that missing review.
+- Exclusions preserved: operation-map, FirstLaunch, audio, UI visual-lock, production C#, tests, scenes, prefabs, packages, and `ProjectSettings` were not edited by AM-014.
+- Next task: `AM-015` selects the highest-risk remaining UI/presentation helper from current ownership evidence, confirms characterization coverage, and performs one measured decomposition without creating another broad owner.

@@ -38,6 +38,9 @@ namespace Game.Editor
         private const string RequireInitialBuildingSmokeKey = "MatchRuntimeShellSmokeValidation.RequireInitialBuildingSmoke";
         private const string RequireFuelReadinessKey = "MatchRuntimeShellSmokeValidation.RequireFuelReadiness";
         private const string RequireResourceHaulerMovementKey = "MatchRuntimeShellSmokeValidation.RequireResourceHaulerMovement";
+        private const string EvidenceCommitKey = "MatchRuntimeShellSmokeValidation.EvidenceCommit";
+        private const string EvidenceEnvironmentKey = "MatchRuntimeShellSmokeValidation.EvidenceEnvironment";
+        private const string EvidenceDirtyKey = "MatchRuntimeShellSmokeValidation.EvidenceDirty";
         private const string InitialBuildingImmediateStatusKey = "MatchRuntimeShellSmokeValidation.InitialBuildingImmediateStatus";
         private const string FrameDiagKey = "MatchRuntimeShellSmokeValidation.FrameDiag";
         private const string ReadyAtKey = "MatchRuntimeShellSmokeValidation.ReadyAt";
@@ -129,6 +132,18 @@ namespace Game.Editor
 
         public static void RunPerformanceRegressionBaseline()
         {
+            ArchitectureEvidenceIdentity evidence = ArchitectureEvidenceIdentityUtility.ResolveIfAvailable(
+                Directory.GetCurrentDirectory(),
+                new[]
+                {
+                    Aph700AssemblyDependencyReportGenerator.JsonReportPath,
+                    Aph700AssemblyDependencyReportGenerator.MarkdownReportPath
+                });
+            if (evidence == null)
+                throw new InvalidOperationException("Performance evidence requires a Git-bound project checkout.");
+            SessionState.SetString(EvidenceCommitKey, evidence.ExactCommit);
+            SessionState.SetString(EvidenceEnvironmentKey, evidence.EnvironmentIdentitySha256);
+            SessionState.SetBool(EvidenceDirtyKey, evidence.Dirty);
             RunInternal(
                 requireFrameDiag: false,
                 requireAirMissileSmoke: false,
@@ -1662,6 +1677,7 @@ namespace Game.Editor
             StringBuilder builder = new();
             builder.AppendLine("{");
             AppendJson(builder, "source", "Game.Editor.MatchRuntimeShellSmokeValidation.RunPerformanceRegressionBaseline", trailingComma: true);
+            AppendEvidenceIdentityJson(builder);
             AppendJson(builder, "observationSeconds", elapsedSeconds, trailingComma: true);
             AppendJson(builder, "frameCount", BaselineFrameTimesMs.Count, trailingComma: true);
             AppendJson(builder, "averageFrameMs", averageMs, trailingComma: true);
@@ -1712,9 +1728,16 @@ namespace Game.Editor
             Directory.CreateDirectory(Path.GetDirectoryName(PerformanceRegressionReportPath) ?? ".");
 
             StringBuilder builder = new();
+            string evidenceCommit = SessionState.GetString(EvidenceCommitKey, "not-bound");
+            string evidenceEnvironment = SessionState.GetString(EvidenceEnvironmentKey, "not-bound");
+            string evidenceDirty = SessionState.GetBool(EvidenceDirtyKey, true).ToString().ToLowerInvariant();
             builder.AppendLine("# Performance Regression Match Baseline");
             builder.AppendLine();
             builder.AppendLine("Source: `Game.Editor.MatchRuntimeShellSmokeValidation.RunPerformanceRegressionBaseline`.");
+            builder.AppendLine();
+            builder.AppendLine($"- Exact commit: `{evidenceCommit}`");
+            builder.AppendLine($"- Environment identity SHA-256: `{evidenceEnvironment}`");
+            builder.AppendLine($"- Dirty at capture start: `{evidenceDirty}`");
             builder.AppendLine();
             builder.AppendLine("| Metric | Value |");
             builder.AppendLine("|---|---:|");
@@ -1748,6 +1771,18 @@ namespace Game.Editor
 
             File.WriteAllText(PerformanceRegressionReportPath, builder.ToString());
             Debug.Log($"[PerformanceRegressionBaseline] wroteReport {PerformanceRegressionReportPath}");
+        }
+
+        private static void AppendEvidenceIdentityJson(StringBuilder builder)
+        {
+            string exactCommit = SessionState.GetString(EvidenceCommitKey, string.Empty);
+            string environmentIdentity = SessionState.GetString(EvidenceEnvironmentKey, string.Empty);
+            if (string.IsNullOrWhiteSpace(exactCommit) || string.IsNullOrWhiteSpace(environmentIdentity))
+                return;
+
+            AppendJson(builder, "exactCommit", exactCommit, trailingComma: true);
+            AppendJson(builder, "environmentIdentitySha256", environmentIdentity, trailingComma: true);
+            AppendJson(builder, "dirty", SessionState.GetBool(EvidenceDirtyKey, true), trailingComma: true);
         }
 
         private static bool TryLoadPerformanceRegressionAcceptedBaseline(
@@ -2621,6 +2656,9 @@ namespace Game.Editor
             SessionState.EraseBool(RequireInitialBuildingSmokeKey);
             SessionState.EraseBool(RequireFuelReadinessKey);
             SessionState.EraseBool(RequireResourceHaulerMovementKey);
+            SessionState.EraseString(EvidenceCommitKey);
+            SessionState.EraseString(EvidenceEnvironmentKey);
+            SessionState.EraseBool(EvidenceDirtyKey);
             SessionState.EraseString(FrameDiagKey);
             SessionState.EraseString(InitialBuildingImmediateStatusKey);
             SessionState.EraseFloat(ReadyAtKey);

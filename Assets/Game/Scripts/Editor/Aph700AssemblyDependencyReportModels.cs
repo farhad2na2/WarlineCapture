@@ -21,7 +21,10 @@ namespace Game.Editor
         public string Scope { get; set; } =
             "Direct dependencies and source-level cross-domain type references for first-party asmdefs under Assets/Game, Assets/Tests, and Assets/Editor.";
         public string DeterminismContract { get; set; } =
-            "No timestamp or mutable VCS state; ordinal path ordering, normalized LF output, and a content-derived source fingerprint.";
+            "Explicit evidence identity, no timestamp, ordinal path ordering, normalized LF output, and a content-derived source fingerprint.";
+        public string ExactCommit { get; set; }
+        public string EnvironmentIdentitySha256 { get; set; }
+        public bool? Dirty { get; set; }
         public string SourceFingerprintSha256 { get; set; }
         public Aph700SummaryRecord Summary { get; set; }
         public List<Aph700AssemblyRecord> Assemblies { get; set; } = new();

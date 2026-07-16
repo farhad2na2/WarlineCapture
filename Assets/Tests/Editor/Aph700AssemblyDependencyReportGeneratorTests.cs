@@ -176,6 +176,20 @@ public sealed class Aph700AssemblyDependencyReportGeneratorTests
             RequireEqual(first.Json, second.Json, "Fixture JSON was not deterministic.");
             RequireEqual(first.Markdown, second.Markdown, "Fixture Markdown was not deterministic.");
 
+            Aph700ReportArtifacts bound = Aph700AssemblyDependencyReportGenerator.Generate(
+                root,
+                new string('c', 40),
+                new string('d', 64),
+                dirty: false);
+            using JsonDocument boundDocument = JsonDocument.Parse(bound.Json);
+            RequireEqual(new string('c', 40), boundDocument.RootElement.GetProperty("exactCommit").GetString(),
+                "Fixture exact commit was not serialized.");
+            RequireEqual(new string('d', 64),
+                boundDocument.RootElement.GetProperty("environmentIdentitySha256").GetString(),
+                "Fixture environment identity was not serialized.");
+            Require(!boundDocument.RootElement.GetProperty("dirty").GetBoolean(),
+                "Fixture clean identity was not serialized.");
+
             using JsonDocument document = JsonDocument.Parse(first.Json);
             JsonElement report = document.RootElement;
             RequireEqual(4, report.GetProperty("summary").GetProperty("assemblyCount").GetInt32(),

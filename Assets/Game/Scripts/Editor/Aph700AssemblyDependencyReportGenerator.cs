@@ -57,6 +57,24 @@ namespace Game.Editor
 
         public static Aph700ReportArtifacts Generate(string projectRoot)
         {
+            return Generate(projectRoot, identity: null);
+        }
+
+        public static Aph700ReportArtifacts Generate(
+            string projectRoot,
+            string exactCommit,
+            string environmentIdentitySha256,
+            bool dirty)
+        {
+            return Generate(
+                projectRoot,
+                new ArchitectureEvidenceIdentity(exactCommit, environmentIdentitySha256, dirty));
+        }
+
+        private static Aph700ReportArtifacts Generate(
+            string projectRoot,
+            ArchitectureEvidenceIdentity identity)
+        {
             string normalizedRoot = NormalizeProjectRoot(projectRoot);
             ThrowIfAssemblyReferenceFilesExist(normalizedRoot);
             List<Aph700AssemblyDefinition> assemblies = DiscoverAssemblies(normalizedRoot);
@@ -64,7 +82,12 @@ namespace Game.Editor
 
             Aph700ReferenceScanResult scan = Aph700CSharpSourceReferenceScanner.Scan(normalizedRoot, assemblies);
             scan.UnownedScopedSourceFileCount = unownedSourceFiles.Count;
-            Aph700ReportDocument report = BuildReport(normalizedRoot, assemblies, unownedSourceFiles, scan);
+            Aph700ReportDocument report = BuildReport(
+                normalizedRoot,
+                assemblies,
+                unownedSourceFiles,
+                scan,
+                identity);
             string json = NormalizeNewlines(JsonSerializer.Serialize(report, JsonOptions)) + "\n";
             string markdown = BuildMarkdown(report);
             return new Aph700ReportArtifacts(json, markdown);
@@ -73,7 +96,9 @@ namespace Game.Editor
         public static Aph700ReportArtifacts GenerateAndWriteReports(string projectRoot)
         {
             string normalizedRoot = NormalizeProjectRoot(projectRoot);
-            Aph700ReportArtifacts artifacts = Generate(normalizedRoot);
+            ArchitectureEvidenceIdentity identity =
+                ArchitectureEvidenceIdentityUtility.ResolveIfAvailable(normalizedRoot);
+            Aph700ReportArtifacts artifacts = Generate(normalizedRoot, identity);
             WriteIfChanged(Path.Combine(normalizedRoot, JsonReportPath), artifacts.Json);
             WriteIfChanged(Path.Combine(normalizedRoot, MarkdownReportPath), artifacts.Markdown);
             return artifacts;
@@ -82,9 +107,32 @@ namespace Game.Editor
         public static Aph700ReportArtifacts ValidateTrackedReports(string projectRoot)
         {
             string normalizedRoot = NormalizeProjectRoot(projectRoot);
-            Aph700ReportArtifacts expected = Generate(normalizedRoot);
+            string jsonPath = Path.Combine(normalizedRoot, JsonReportPath);
+            if (!File.Exists(jsonPath))
+                throw new FileNotFoundException($"Tracked APH-700 JSON report is missing: '{JsonReportPath}'.", jsonPath);
+            Aph700ReportDocument tracked;
+            try
+            {
+                tracked = JsonSerializer.Deserialize<Aph700ReportDocument>(
+                    File.ReadAllText(jsonPath),
+                    JsonOptions);
+            }
+            catch (JsonException exception)
+            {
+                throw new InvalidDataException("Tracked APH-700 JSON report is stale or malformed.", exception);
+            }
+
+            ArchitectureEvidenceIdentity identity =
+                string.IsNullOrWhiteSpace(tracked?.ExactCommit) &&
+                string.IsNullOrWhiteSpace(tracked?.EnvironmentIdentitySha256)
+                    ? null
+                    : new ArchitectureEvidenceIdentity(
+                        tracked?.ExactCommit,
+                        tracked?.EnvironmentIdentitySha256,
+                        tracked?.Dirty ?? true);
+            Aph700ReportArtifacts expected = Generate(normalizedRoot, identity);
             ValidateTrackedReport(
-                Path.Combine(normalizedRoot, JsonReportPath),
+                jsonPath,
                 expected.Json,
                 "JSON");
             ValidateTrackedReport(
@@ -98,7 +146,8 @@ namespace Game.Editor
             string projectRoot,
             IReadOnlyList<Aph700AssemblyDefinition> assemblies,
             IReadOnlyList<string> unownedSourceFiles,
-            Aph700ReferenceScanResult scan)
+            Aph700ReferenceScanResult scan,
+            ArchitectureEvidenceIdentity identity)
         {
             var byName = assemblies.ToDictionary(item => item.Name, StringComparer.Ordinal);
             var byGuid = assemblies
@@ -170,6 +219,9 @@ namespace Game.Editor
 
             var report = new Aph700ReportDocument
             {
+                ExactCommit = identity?.ExactCommit,
+                EnvironmentIdentitySha256 = identity?.EnvironmentIdentitySha256,
+                Dirty = identity?.Dirty,
                 SourceFingerprintSha256 = ComputeSourceFingerprint(
                     projectRoot,
                     assemblies,
@@ -223,6 +275,12 @@ namespace Game.Editor
             var builder = new StringBuilder(32768);
             builder.Append("# APH-700 First-Party Assembly Dependency Report\n\n");
             builder.Append("- Task: `").Append(report.TaskId).Append("`\n");
+            builder.Append("- Exact commit: `").Append(report.ExactCommit ?? "not-bound").Append("`\n");
+            builder.Append("- Environment identity SHA-256: `")
+                .Append(report.EnvironmentIdentitySha256 ?? "not-bound").Append("`\n");
+            builder.Append("- Dirty at capture start: `")
+                .Append(report.Dirty.HasValue ? report.Dirty.Value.ToString().ToLowerInvariant() : "not-bound")
+                .Append("`\n");
             builder.Append("- Source fingerprint (SHA-256): `").Append(report.SourceFingerprintSha256).Append("`\n");
             builder.Append("- Determinism: ").Append(report.DeterminismContract).Append("\n");
             builder.Append("- Scope: ").Append(report.Scope).Append("\n\n");

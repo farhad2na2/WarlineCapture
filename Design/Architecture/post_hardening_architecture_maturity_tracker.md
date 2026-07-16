@@ -109,12 +109,12 @@ Release-only categories are reported separately and never averaged into a premat
 
 | Field | Status |
 |---|---|
-| Checklist complete | `9 / 86` (`10.5%`) |
-| Core Architecture Lane | `9 / 68` (`13.2%`); active |
+| Checklist complete | `10 / 86` (`11.6%`) |
+| Core Architecture Lane | `10 / 68` (`14.7%`); active |
 | Release Certification Lane | `0 / 18` (`0.0%`); deferred |
 | Program state | Core Architecture Lane active; release work inactive |
 | Current phase | Phase 1 - Responsibility And Decomposition Hardening |
-| Current task | `AM-010` ready, not yet claimed |
+| Current task | `AM-011` ready, not yet claimed |
 | Core entry baseline | Phase 0 accepted by `AM-001` through `AM-008`; exact-identity assembly and bounded Editor Match evidence are current at `9a0aa14252e6559680328e520d26c16bfc7b444e`; the dashboard required gate is accepted; the entry rating and owned deltas are published in `entry_baseline_report.md` |
 | Release entry review | Deferred until `pre_release_performance_certification_backlog.md` activates |
 | Architecture rating | Evidence-backed Phase 0 entry rating `8.5 / 10`; planning baseline only, not a `9.5` claim |
@@ -210,7 +210,7 @@ Reduce change risk in oversized systems without replacing the architecture or ch
 `AM-009` scores candidates from `0-4` for responsibility count, dependency fan-in/fan-out, mutable/lifecycle state, measured runtime cost, and recent change frequency. Lines/bytes are recorded but used only as a tie-breaker. The first wave selects at most three non-overlapping owners and publishes the exact reason each was selected or rejected; no extraction begins from a raw largest-file list.
 
 - [x] `AM-009` Rank the largest and most coupled production files by lines, dependencies, state ownership, update-time cost, and change frequency; do not rank by lines alone.
-- [ ] `AM-010` Write a responsibility map for each selected owner, including inputs, outputs, state authority, update order, side effects, tests, and allowed dependencies.
+- [x] `AM-010` Write a responsibility map for each selected owner, including inputs, outputs, state authority, update order, side effects, tests, and allowed dependencies.
 - [ ] `AM-011` Add missing characterization tests before extracting behavior from any selected owner.
 - [ ] `AM-012` Extract one capability or ECS phase at a time behind existing contracts, preserving system order and avoiding a new coordinator-shaped helper.
 - [ ] `AM-013` Consolidate duplicated query-cache, command-queue, fixed-capacity scratch, and projection-cache mechanics only where one narrow shared contract removes real duplication.
@@ -561,3 +561,18 @@ The implementing agent works directly on `main`, owns the bounded substantive an
 - Independent review: initial reviews rejected ambiguous type coupling, local/state undercounting, stale or unattributed runtime scores, truncated decisions, incomplete Git binding, recursive-glob gaps, and heuristic-only overlap. Every finding was resolved; final rereview returned `PASS` with no blocker.
 - Exclusions preserved: operation-map, FirstLaunch, audio, UI visual-lock, gameplay behavior, scenes, prefabs, packages, and `ProjectSettings` were read only for hashes/ownership evidence and were not edited by AM-009.
 - Next task: `AM-010` writes responsibility maps for the two selected owners, including inputs, outputs, state authority, update order, side effects, tests, and allowed dependencies.
+
+### 2026-07-16 - AM-010 - Selected owner responsibility maps
+
+- Workflow path: direct commits to `main`; no branch, worktree, or PR workflow.
+- Source baseline: `ab955a7721fd0616b627daab508632d023e047d8`, tree `a40d19b327a33bc2aca8e126dcdc61616ccee458`; accepted responsibility-map implementation commit `c1e30c39452906f25ceb1c53a8376689e0e9fb8b`.
+- Result: exact responsibility maps now cover both AM-009 selections and their declared ECS types, inputs, outputs, state authority, update order, side effects, failure behavior, tests, allowed/forbidden dependencies, and bounded extraction candidates. Owner paths, modification scopes, and initial allowlists are paired exactly to their AM-009 ranking rows.
+- Ground-missile findings: the owner contains six unmanaged systems and two Burst jobs. `UnitAttackSystem` arms canonical launcher state; fire advances launcher phases; visual systems project state; projectile flight emits one-shot impact requests; impact owns request consumption and damage. AM-011 must characterize the currently unhandled `Recovering` phase and launcher in-flight cleanup when a projectile disappears before impact.
+- Ground-missile candidate: replace only the direct `MissileTrailVfxView` call with a neutral ECS request plus a documented managed presentation consumer. Producer order, consumer order, transient-request cleanup, pooled trail lifecycle, and the two-file future expanded allowlist are explicit; no implementation is authorized by AM-010.
+- Transport findings: boarding owns validation, landed/reach decisions, capacity revalidation, cancellation, movement retry, and handoff while `UnitTransportPassengerStateSystem` retains onboard-state authority. The active `UnityEngine.Time.frameCount` diagnostics throttle is explicit. Multiple-grid and duplicate-passenger-buffer invariants require AM-011 characterization.
+- Transport candidate: extract only duplicated passenger-kind, capacity, and occupancy rules into a stateless Burst-compatible utility. Query ownership, update order, stale-decision checks, diagnostics, ECB playback, and passenger mutation remain in their current owners.
+- Evidence: `Design/AgentReports/ArchitectureMaturity/selected_owner_responsibility_maps.json` and deterministic matching Markdown, generated by `Tools/CI/architecture_owner_responsibility_maps.py` and enforced by `Tools/CI/tests/test_architecture_owner_responsibility_maps.py`.
+- Validation: five focused AM-010 tests and 41 integrated ownership/lifecycle/ranking/dashboard/responsibility-map Python tests passed. Exact AM-009 row pairing, all cited source/test hashes, baseline diffs, line bounds, renderer/validator hashes, deterministic byte-for-byte Markdown regeneration, nonempty future expanded allowlists, order-independent overlap rejection, JSON parsing, Python compilation, and `git diff --check` passed. No production C# changed, so Unity compilation was not required for this documentation/CI slice.
+- Independent review: initial reviews rejected missing cross-file freshness, an incomplete trail consumer/cleanup boundary, unsupported authority language, an omitted managed dependency, inaccurate evidence ranges, overbroad stale-decision wording, pairing/overlap validator loopholes, and independent Markdown drift. All findings were resolved; final rereview returned `PASS`.
+- Exclusions preserved: operation-map, FirstLaunch, audio, UI visual-lock, production behavior, scenes, prefabs, packages, and `ProjectSettings` were read only where cited and were not edited by AM-010.
+- Next task: `AM-011` adds missing characterization tests for the recorded ground-missile phase/cleanup/trail boundary and transport capacity/occupancy/configuration invariants before any AM-012 production extraction.

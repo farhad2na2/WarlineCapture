@@ -48,7 +48,7 @@ namespace Game.Runtime
         {
             if (visual == null)
                 return;
-            if (stage != RuntimeOperationMapVisualStage.DistrictModules)
+            if (stage != RuntimeOperationMapVisualStage.DistrictModules || !cleanup.IsConfigured)
                 return;
 
             Transform[] transforms = visual.GetComponentsInChildren<Transform>(true);

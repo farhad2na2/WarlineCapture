@@ -509,6 +509,12 @@ namespace Game.Runtime
         private bool TryConfigureGeneration(int frameCount, out string failureReason)
         {
             failureReason = null;
+            if (_activeVisualRecipe != null)
+            {
+                EnsureGeneratedRoot();
+                return true;
+            }
+
             RuntimeCitySpawnerSystemConfig config = _view.Config;
             if (config == null)
             {

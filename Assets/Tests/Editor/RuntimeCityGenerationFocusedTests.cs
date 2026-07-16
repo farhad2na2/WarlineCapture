@@ -39,12 +39,13 @@ public sealed class RuntimeCityGenerationFocusedTests
             tests.VisualOnlyPresentation_GroundsLowestRendererPoint();
             tests.PlanOnlySpawnBridge_TracksPlacementWithoutCreatingVisuals();
             tests.VisualPrototypePrefabSelection_LimitsConsecutiveRepetitionDeterministically();
-            tests.VisualQualityClearance_SuppressesLargeRockInsideDistrict();
+            tests.VisualQualityClearance_PreservesLargeRockWithoutExplicitCleanup();
+            tests.VisualQualityClearance_SuppressesLargeRockWithExplicitCleanup();
             tests.VisualQualityClearance_SuppressesSmallDressingOutsideDistrictFootprint();
             tests.RuntimeCameraPose_PreservesStageAndClampsPresentationValues();
-            tests.RuntimeDistrictModuleRecipe_RequiresPrefabBoundsAndSlices();
+            tests.RuntimeDistrictModuleRecipe_SupportsExactPrefabReplayOrIndexedSlices();
             tests.RuntimePrototypeArchitecture_UsesPassiveViewAndSystemBaseOwner();
-            Debug.Log("[RuntimeCityGenerationFocusedValidation] result=Passed tests=27");
+            Debug.Log("[RuntimeCityGenerationFocusedValidation] result=Passed tests=28");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -968,7 +969,7 @@ public sealed class RuntimeCityGenerationFocusedTests
     }
 
     [Test]
-    public void VisualQualityClearance_SuppressesLargeRockInsideDistrict()
+    public void VisualQualityClearance_PreservesLargeRockWithoutExplicitCleanup()
     {
         GameObject visual = new("VisualQualityClearanceTest");
         GameObject structure = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -988,6 +989,36 @@ public sealed class RuntimeCityGenerationFocusedTests
                 visual,
                 Game.Configs.RuntimeOperationMapVisualStage.DistrictModules,
                 default);
+
+            Assert.IsTrue(obstruction.activeSelf);
+            Assert.AreEqual(0, quality.SuppressedObstructionCount);
+        }
+        finally
+        {
+            quality.Dispose();
+            UnityEngine.Object.DestroyImmediate(visual);
+        }
+    }
+
+    [Test]
+    public void VisualQualityClearance_SuppressesLargeRockWithExplicitCleanup()
+    {
+        GameObject visual = new("VisualQualityExplicitClearanceTest");
+        GameObject obstruction = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        var quality = new RuntimeOperationMapVisualQualitySystemHelper();
+        try
+        {
+            obstruction.name = "Test_SM_Env_Rock_01";
+            obstruction.transform.SetParent(visual.transform, false);
+            obstruction.transform.localScale = new Vector3(8f, 4f, 8f);
+            var cleanup = new Game.Configs.RuntimeOperationMapVisualCleanupSettings(
+                Vector2.zero,
+                new Vector2(100f, 100f));
+
+            quality.ApplyClearanceRules(
+                visual,
+                Game.Configs.RuntimeOperationMapVisualStage.DistrictModules,
+                cleanup);
 
             Assert.IsFalse(obstruction.activeSelf);
             Assert.AreEqual(1, quality.SuppressedObstructionCount);
@@ -1076,7 +1107,7 @@ public sealed class RuntimeCityGenerationFocusedTests
     }
 
     [Test]
-    public void RuntimeDistrictModuleRecipe_RequiresPrefabBoundsAndSlices()
+    public void RuntimeDistrictModuleRecipe_SupportsExactPrefabReplayOrIndexedSlices()
     {
         GameObject prefab = new("RuntimeDistrictModuleRecipeTest");
         try
@@ -1092,13 +1123,37 @@ public sealed class RuntimeCityGenerationFocusedTests
                 Vector3.one,
                 true,
                 cleanup,
-                new List<string> { "Art/Building_A", "Art/Road_A" });
+                new List<Game.Configs.RuntimeOperationMapDistrictSliceRecipe>
+                {
+                    new("Building_A", new[] { 0, 2 }, new Vector3(4f, 5f, 6f), Quaternion.identity, Vector3.one, true),
+                    new("Road_A", new[] { 1, 4 }, Vector3.zero, Quaternion.identity, Vector3.one, false)
+                });
 
             Assert.IsTrue(module.IsConfigured);
             Assert.AreEqual("TestDistrict", module.Name);
             Assert.AreSame(prefab, module.Prefab);
-            Assert.AreEqual(2, module.SlicePaths.Count);
-            Assert.AreEqual("Art/Building_A", module.SlicePaths[0]);
+            Assert.AreEqual(2, module.Slices.Count);
+            Assert.AreEqual("Building_A", module.Slices[0].Name);
+            Assert.AreEqual(2, module.Slices[0].SiblingIndices.Count);
+            Assert.AreEqual(0, module.Slices[0].SiblingIndices[0]);
+            Assert.AreEqual(2, module.Slices[0].SiblingIndices[1]);
+            Assert.AreEqual(new Vector3(4f, 5f, 6f), module.Slices[0].Position);
+            Assert.IsTrue(module.Slices[0].Active);
+            Assert.IsFalse(module.Slices[1].Active);
+
+            var completeModule = new Game.Configs.RuntimeOperationMapDistrictModuleRecipe(
+                "ExactDistrict",
+                prefab,
+                Vector3.zero,
+                Quaternion.identity,
+                Vector3.one,
+                true,
+                default,
+                new List<Game.Configs.RuntimeOperationMapDistrictSliceRecipe>(),
+                realizeAsCompletePrefab: true);
+            Assert.IsTrue(completeModule.IsConfigured);
+            Assert.IsTrue(completeModule.RealizeCompletePrefab);
+            Assert.AreEqual(0, completeModule.Slices.Count);
         }
         finally
         {

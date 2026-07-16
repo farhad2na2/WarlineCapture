@@ -1,6 +1,6 @@
 # Runtime Operation Map Generation R&D Implementation Tracker
 
-**Status:** Active quality goal; R49 adds explicit cancellation, partial-root cleanup, a one-attempt deterministic fallback, fresh failure evidence, and exact source-growth registration while preserving the accepted R48 three-seed visual baseline. Lifecycle recovery, 27 focused tests, 19 SystemBase/passive-view tests, broad naming, 15 source-growth checks, solution compilation, and scene validation pass. Project-owner visual acceptance, loading-shell event integration, Android evidence, gameplay integration, and production adoption remain pending.
+**Status:** Active. R60 is the stable pre-Android owner-validation candidate. It preserves exact editor-to-runtime replay after removing the oversized plus-shaped road, replacing it with a narrow compound link and blocked Old Market civilian route, relocating the bombing story layer, adding transition ground, and enforcing zero primary-road/building/large-terrain clearance intersections. Structural, matched-camera, lifecycle, focused architecture, and source-growth gates pass. Project-owner visual confirmation, broader parity-source polish, desktop generation-time improvement, Android profiling, gameplay integration, and production adoption remain open.
 
 **Created:** 2026-07-15
 
@@ -10,13 +10,13 @@
 
 **Reference scene:** `Assets/Game/Scenes/MapPrototypes/Chapter01/M01_VisualPrototype.unity`
 
-**Active goal:** Bring the M01 runtime-generated map to strong, visually accepted quality while making generation part of the player experience.
+**Active goal:** Reconstruct the accepted M01 editor result at runtime first: same visible prefab content, transforms, active state, materials, ground, lighting, framing, and rendered composition. After parity is proven, fix shared defects such as penetrating rocks and uncovered ground, then evaluate controlled procedural variation.
 
 **Continuation:** Thread heartbeat `m01-runtime-map-quality` reopens this tracker every 30 minutes until all quality gates are complete. The heartbeat must stop after this tracker reaches Complete.
 
 ## 1. Objective
 
-Prove whether Warline Capture can construct visually acceptable operation maps at runtime by extending the existing `RuntimeCity*` generator instead of creating a parallel map generator.
+Prove whether Warline Capture can reconstruct an accepted editor-authored operation map through the runtime generation experience without changing its visual result. Exact editor-to-runtime replay is Gate 1. Updating the existing `RuntimeCity*` procedural generator is a later experiment and cannot substitute for Gate 1.
 
 The experiment is motivated by three potential benefits:
 
@@ -24,7 +24,7 @@ The experiment is motivated by three potential benefits:
 - support many deterministic map variants from a compact recipe and shared art palette;
 - turn generation time into a visible loading experience rather than hiding a long blocking step.
 
-The current M01 editor prototype is the mandatory first visual-quality target. Early technical slices may be visibly incomplete while the adapters are being proven, but the initial R&D goal is not complete until runtime output reaches the editor prototype's overall composition, density, material coherence, landmark readability, and environmental storytelling. After that parity gate passes, the generator must improve the known weaknesses in the editor map rather than treating that scene as the final quality ceiling.
+The current M01 editor prototype is the mandatory golden source. The first runtime milestone is not "similar quality": the runtime result must reproduce the editor-authored visible content and matched-camera image closely enough that every remaining difference is measured and explained. The project owner is not a substitute for internal visual QA. No runtime output is sent for owner review until structural parity and matched-camera evidence pass. After parity, the same source and runtime result are improved together so penetrating rocks, uncovered ground, and other known weaknesses are removed without losing parity.
 
 ## 2. R&D Authority And Containment
 
@@ -88,8 +88,9 @@ RuntimeCityRAndDMapSystem (managed SystemBase)
        -> plan-only road and building adapters for accepted-seed parity runs
        -> RuntimeCityReadModel stage, progress, seed, city, and work counts
        -> RuntimeOperationMapVisualRecipePresentationSystemHelper
-            -> compact accepted-editor transform/prefab recipe
-            -> three district module records with bounded child paths for incremental realization
+            -> versioned export of the accepted editor composition
+            -> unambiguous prefab/subobject identity; duplicate names are never addresses
+            -> exact ground, transform, material, active-state, lighting, and effect replay
             -> staged runtime GameObject realization under one disposable root
 ```
 
@@ -190,35 +191,48 @@ Progress is intentionally approximate. The stage and exact work counts are autho
 
 **Exit:** Entering Play Mode in the isolated scene visibly constructs one deterministic city over multiple frames.
 
-### Phase 4 - Visual Quality Iterations
+### Phase 4 - Gate 1: Exact Editor-To-Runtime Replay
 
-- [x] Capture the first runtime output from the M01 review camera.
-- [x] Compare macro silhouette, road hierarchy, density, palette, landmarks, and story beats with the accepted M01 editor scene.
-- [x] Extract the accepted editor composition into 248 standalone entries plus three compact, incrementally realized district module records as a temporary parity bridge.
-- [x] Replace uniform placement with reviewed district intent using extensions to existing planner inputs.
-- [x] Add Old Market zones: market, authority/utility compound, damaged corridor, residential edge, and horizon closure.
-- [x] Curate prefab palettes and repetition limits without changing shared prefab assets.
-- [x] Add deterministic grouped clutter and damage storytelling.
-- [x] Match the editor prototype's market cluster, utility compound, damaged corridor, road hierarchy, horizon closure, and three primary visual anchors in the accepted runtime seed.
-- [x] Review at least three fixed seeds before accepting a rule change.
+- [x] Capture the first recipe-based runtime output and record that it is not exact parity.
+- [x] Diagnose the first replay defects: duplicate name-path ambiguity, 202 runtime suppressions, altered foundation, disabled effects, different lighting, different final camera, and different semantic fingerprints.
+- [x] Replace name-based district slice lookup with unambiguous source-object identity, or realize the complete source prefab while exactness is established. R50 uses complete prefab realization as an exactness probe; incremental sibling-index identity remains required before performance acceptance.
+- [x] Preserve editor-authored prefab content, transforms, scale, active renderer state, materials, lights, and effects without cleanup or procedural substitutions.
+- [x] Reproduce the editor `DesertGround`, render settings, lighting rig, fill light, final camera transform, projection, FOV, and post-processing.
+- [x] Emit editor and runtime visual manifests from the same inclusion rules and require equal counts and semantic hashes.
+- [x] Capture editor and runtime perspective and top-down images from identical cameras and deterministic render settings.
+- [x] Record pixel/perceptual deltas and inspect every material region difference; no unexplained difference passes.
+- [x] Exercise restart/clear after parity and prove one generated root with no duplicates.
+- [ ] Obtain project-owner confirmation only after internal parity evidence passes.
 
-**Exit:** The project owner accepts runtime output as reaching the editor prototype's visual-quality level. A merely functional or generically populated city does not pass.
+**Exit:** Runtime reconstructs the accepted editor M01 result. A deterministic result, a structurally valid result, or a result with similar object counts does not pass if it looks different.
 
-### Phase 4B - Improve Beyond The Editor Prototype
+### Phase 4B - Improve The Parity Result
 
-- [x] Record every visual issue still present in the accepted editor prototype.
-- [x] Classify each issue as a reusable generator rule, M01 authored constraint, palette problem, or presentation problem.
+The earlier checkmarks in this phase described changes to the rejected algorithmic map, not improvements to an editor-parity result. They are rescinded for this milestone.
+
+- [ ] Record every visual issue still present in the editor/runtime parity pair.
+- [ ] Classify each issue as a reusable replay rule, M01 authored constraint, palette problem, or presentation problem.
 - [x] Guarantee a continuous, visibly readable ground surface beneath the full playable composition and camera footprint.
-- [x] Reject or relocate large rocks, dunes, hills, and other terrain dressing that intersects structures or primary roads.
-- [x] Add coherent district aprons, road shoulders, and terrain transitions so modules do not read as disconnected islands.
+- [ ] Reject or relocate large rocks, dunes, hills, and other terrain dressing that intersects structures or primary roads.
+- [ ] Add coherent district aprons, road shoulders, and terrain transitions so modules do not read as disconnected islands.
 - [ ] Rebalance dense clusters and dead zones while retaining clear landmark silhouettes and tactical breathing room.
-- [x] Orient visual-only generated buildings toward their road circulation intent where the source prefab allows it.
-- [x] Improve horizon closure and framing without placing large silhouettes behind or through foreground structures.
-- [x] Keep the accepted seed deterministic and publish surface/clearance validation counts in the runtime evidence.
-- [x] Fix reusable issues in generator/config logic rather than hand-adjusting one generated run.
+- [ ] Orient buildings toward their road circulation intent where the source prefab allows it.
+- [ ] Improve horizon closure and framing without placing large silhouettes behind or through foreground structures.
+- [x] Keep the accepted replay deterministic and publish surface/clearance validation counts in the runtime evidence.
+- [x] Fix reusable issues in source/export/replay logic rather than patching one runtime instance.
 - [ ] Improve district transitions, repetition control, road edges, building orientation, empty areas, horizon composition, and damaged-area storytelling.
-- [x] Regenerate the accepted seed and the three-seed review set after each placement/story rule change; presentation-only R45 reproduced the R44 accepted-seed transform hash.
-- [x] Prevent improvements from reducing determinism, generation responsiveness, or cleanup reliability.
+- [x] Regenerate the accepted editor/runtime pair after every source or replay rule change.
+- [x] Prevent improvements from reducing determinism, generation responsiveness, cleanup reliability, or parity.
+
+#### R60 Known-Issue Classification
+
+| Issue | Classification | R60 disposition |
+|---|---|---|
+| Two oversized perpendicular road slabs crossed district buildings and read as a four-way autobahn | M01 authored constraint | Removed from the shared editor source; highway curbs, markings, crosswalk, and distant exit closures removed with them. |
+| A first local-route attempt crossed the residential module's dense authored rock field | Reusable source validation plus M01 authored constraint | South connector withdrawn; bombing moved to a bounded Old Market route. The generator now fails on any building or large-terrain overlap with a local-road corridor; R60 reports `0`. |
+| Dark gaps between district aprons made connected areas read as uncovered ground | Presentation problem | Added lower transition aprons beneath the Old Market-to-compound and Old Market-aftermath links while retaining one horizon-scale foundation. |
+| Destroyed truck, crater, barriers, smoke, and ruin did not communicate the bounded M01 civilian-route incident | M01 story composition | Regrouped at the blocked route endpoint and retargeted the aftermath review camera. |
+| Remaining district-edge repetition, building orientation, dead-zone balance, horizon polish, and non-road terrain/structure clearance | Shared-source visual quality backlog | Still open in Phase 4B; no acceptance checkbox is claimed. |
 
 **Exit:** Runtime M01 is visibly stronger than the original editor prototype and the improvements generalize to future runtime maps where appropriate.
 
@@ -302,13 +316,49 @@ These are initial experiment targets, not production promises.
 | Runtime-city focused validation | 11 of 11 passed |
 | SystemBase/MonoBehaviour architecture validation | 19 of 19 passed |
 | Broad runtime naming validation | 1 of 1 passed |
-| Deterministic regeneration | Compact recipe passed byte-for-byte regeneration with SHA-256 `B474CB9B3B95EA1116481F5056DB37386113EDC0D056DC690E39B42EC69ADF8A`; editor fingerprint remains `07FF5A66618BDCE2C662DD0EAF5C7C5E21373B4A670182C4E7A5EB9BD7EB42EC` |
+| Deterministic regeneration | Compact recipe passed self-regeneration with SHA-256 `B474CB9B3B95EA1116481F5056DB37386113EDC0D056DC690E39B42EC69ADF8A`, but it does **not** match the editor fingerprint `07FF5A66618BDCE2C662DD0EAF5C7C5E21373B4A670182C4E7A5EB9BD7EB42EC`; this is deterministic non-parity. |
 | Runtime warnings targeted by R19 | no generation exceptions, missing ground, large district-rock penetrations, or negative-scale collider warnings |
 | Visual evidence | `Logs/M01_RuntimeGenerationReveal_Market.png`, `Logs/M01_RuntimeGenerationBaseline.png`, and `Logs/M01_RuntimeGenerationTopDown.png` |
 
-These desktop measurements pass the initial first-geometry and total-generation budgets. Android, repeated-run determinism, frame-time percentile, memory, and build-size measurements remain open.
+These measurements describe the rejected compact replay and do not pass Gate 1. Timing evidence remains useful, but visual/structural parity, Android, repeated-run determinism, frame-time percentile, memory, and build-size measurements remain open.
 
-### Current Algorithmic Evidence
+### R50 Exact-Replay Retry Evidence
+
+R50 replaces the ambiguous name-path district replay with temporary complete-prefab realization. This is an exactness probe, not the accepted runtime implementation.
+
+| Measurement | R50 result |
+|---|---|
+| Runtime-generation version | `RuntimeCityEditorParity_R50_2026-07-16` |
+| Recipe identity | `M01RuntimeVisualRecipe_2026-07-16_v13_exact_replay` |
+| Runtime output | 251 work entries, 3 complete district modules, 10,268 active renderers, 1 exact editor foundation, and 0 cleanup suppressions |
+| Visual composition | The runtime perspective and top-down captures contain the editor-authored west market, east utility/airport, south residential district, roads, terrain, and landmarks. The rejected sparse algorithmic composition is no longer on the render path. |
+| Geometry comparison | The same-position perspective pair has 85.4% broad-edge overlap at a 5-pixel tolerance despite the known lighting mismatch. This is useful diagnostic evidence, not a parity threshold or acceptance result. |
+| Generation timing | 11.890 seconds smoke wall time; complete-prefab realization produced a 373.548 ms worst visual batch and therefore fails the desktop frame-pacing contract. |
+| Capture validity | Real graphics-device captures passed nonblank validation at average luminance `98.04 / 113.20 / 94.63`; `-nographics` captures were uniform gray and are rejected as evidence. |
+| Effects | Runtime/player particles remain enabled. The explicit evidence camera temporarily disables particle renderers because forced `Camera.Render` crashed Unity in `ParticleSystemRenderer_RenderMultipleMeshes`; renderer state is restored after capture. |
+| Camera diagnosis | Perspective uses the editor gameplay camera. The first R50 top-down capture incorrectly used `(0,280,0)` / size `145`; the tool is corrected to the editor-authored `(0,260,-4)` / size `116` / authored rotation, but a corrected pair is still required. |
+| Lighting diagnosis | Runtime configured both directional lights while the editor configures only the first and stops. The generator and serialized R&D scene now stop after the first light; the corrected pair is still required. |
+| Unity retry blocker | After the first successful real-graphics smoke, fresh Unity batch launches failed before project code because the Package Manager could not connect to its IPC stream. This does not pass or fail map parity; the matched editor/runtime rerender remains open. |
+
+R50 proves that the accepted content can be reconstructed from shared prefab references without embedding the editor scene, and it identifies the remaining evidence and performance work. Gate 1 remains open until manifests match and corrected same-camera images have no unexplained differences.
+
+### R51 Indexed-Replay Implementation State
+
+- Replaced duplicate-name slice addresses with serialized sibling-index chains rooted at each district prefab.
+- The editor exporter verifies every generated index chain resolves against the prefab asset before writing the recipe.
+- Runtime resolution walks existing transforms by integer index without path strings, reflection, LINQ, or per-frame lookup allocations.
+- Reusable collider and renderer component buffers replace the inherited per-slice `GetComponentsInChildren` arrays, preventing thousands of avoidable generation-time GC allocations.
+- The PlayMode smoke now writes sorted editor/runtime visual manifests and requires equal hashes plus renderer, light, and particle-renderer counts before captures can pass. Entries compare stable visual state rather than hierarchy names: world transforms, mesh/material identity, active/enabled state, renderer settings, and light state.
+- The same smoke now captures fresh editor perspective/top-down references before Play Mode, captures runtime from the matched cameras, and fails when RGB mean absolute error exceeds `3` or more than `1%` of pixels differ by over `8` in any channel. Exact structural manifest equality remains mandatory independently of this antialiasing tolerance.
+- Bounded district slices retain the prior 64-renderer partition threshold, preserve particles, and continue yielding through the `RuntimeCityRAndDMapSystem : SystemBase` generation coroutine.
+- `dotnet build WarlineCapture.sln --no-restore` and `dotnet build Game.Editor.csproj --no-restore` report Build succeeded with zero errors and zero warnings for the changed compile surface.
+- `M01_RuntimeVisualRecipe.asset` intentionally remains the last generated R50 full-prefab asset until Unity can execute `BuildValidateAndExit`; R51 runtime timing, renderer counts, manifests, and images are therefore not yet evidence.
+- A second normal Unity retry again failed before project code after 30 seconds because Package Manager could not connect to its newly requested IPC stream; the Hub process still had its 2026-07-15 start time.
+- A third normal retry in the next goal continuation failed identically on `Upm-42240`; Unity exited before compilation or `BuildValidateAndExit`. This satisfies the blocked-audit threshold. Required external action: fully quit Unity and Unity Hub, reopen Hub, confirm the license is active, then resume this goal.
+
+### Rejected Algorithmic Evidence
+
+The project owner rejected the R48/R49 algorithmic output on 2026-07-16 because it is visibly unrelated to the accepted editor M01 composition and far below the Match quality reference. The previous internal designation of this output as a stable feedback build was incorrect and is withdrawn. These measurements are retained only as historical diagnostics; they are not an acceptance baseline and procedural iteration is deferred until Gate 1 passes.
 
 | Measurement | R49 lifecycle/architecture closeout over the R48 three-seed visual baseline |
 |---|---|
@@ -329,7 +379,7 @@ These desktop measurements pass the initial first-geometry and total-generation 
 | Focused and scene validation | R49 prototype build and scene validation passed; 27 of 27 runtime-city focused tests passed. |
 | Broad regressions | 19 of 19 SystemBase/passive-view tests, 1 of 1 broad naming assertions, and 15 of 15 production source-growth checks passed. The accepted-recipe smoke remains green from R45 with 7,099 entries, 10,279 renderers, 202 clearance suppressions, 13.058 ms worst visual batch, and 41 budget yields. |
 | Performance/GC source audit | R49 adds only field/boolean checks to the steady `SystemBase` tick. Recovery scheduling is a one-shot transition with no LINQ, closure, temporary collection, scene search, boxing-prone enumeration, or recurring string formatting; terminal logs format only on cancel/failure/fallback transitions. Exact path/scope ceilings now cover every new or grown RuntimeCity R&D helper. Android managed-GC, native-memory, retained-memory, and instantiation-spike attribution gates remain open. |
-| Visual evidence | Loading/perspective/top-down PNGs are `Logs/M01_AlgorithmicSeed_<seed>_{Loading,Perspective,TopDown}.png`. Perspective SHA-256: seed 01 `9DFD33C826BE136A3B9D156AEA0DF1B7C24A4875E3CC848076BFAFD86AD5E597`, seed 02 `352C49EC4BE902741F611F5AB08DC19EBB5250EB7C3263A6D99A8656078B6FCF`, seed 03 `385C887257EB508BFACDF28DFC206FAD3C5FAEA726300C0C1BEE133C71922B85`. Top-down SHA-256: seed 01 `49D63C72827EFBDB22335A97CB67F63D8BE86F7A895C5349465453F82F85A5C8`, seed 02 `0D11B59CB673F84512A64BE8F0861B35BA9917C3E7554D41948C702B6DC34058`, seed 03 `4F94410332880DEC481EFA08FFF03C3F9073267B95342CA1AEB4344D81991C7F`. Internal review accepts this as a stable feedback build; project-owner visual acceptance remains open. |
+| Visual evidence | Loading/perspective/top-down PNGs are `Logs/M01_AlgorithmicSeed_<seed>_{Loading,Perspective,TopDown}.png`. They prove the rejected path is sparse, fragmented, poorly road-aligned, repetitive, and materially below the editor and Match references. They must not be sent for owner acceptance again. |
 
 R28 diagnosed the residential problem correctly: visual-only rural spillover moved the residential centroid from R27's `30.8,2.9/28` to `30.3,-25.5/31`, but sharing the southern half with damage reduced strict damage from 8 structures to 3. Rendered review rejected that combined composition.
 
@@ -588,10 +638,54 @@ Explicitly excluded unless the project owner expands scope:
 
 The implementation now proceeds in this order:
 
-1. [x] Diagnose occupancy and add a bounded visual-only terminal-branch policy. R36-R41 reduce the fixed seed from 108 to 93 road cells; all 14 terminal branches have nearby occupation and production road planning remains on the default policy.
-2. [x] Relocate the two extreme damage structures and the exposed east-yard satellite. R41 reports `edgeOutliers=none/0` while retaining 69 visual buildings and a southwest damage centroid.
-3. [x] Make aftermath readable through a recipe-owned algorithmic aftermath camera/reveal pose and bounded district fallback anchors. R45 evidence keeps the damage apron visible through its `2.5s` hold.
-4. [x] Regenerate loading, clean perspective, and top-down evidence for fixed seeds `26071501`, `26071502`, and `26071503`. R48 passes structural checks, retains occupied terminal branches, reports zero measured edge outliers, and has been visually inspected.
-5. [x] Add algorithmic reveal choreography and player-facing loading progress while preserving `RuntimeCityRAndDMapSystem` as the only frame owner. R48 keeps runtime overlay formatting change-gated and validates the compact status band against the capture frustum.
-6. [x] Run the broad SystemBase/passive-view, runtime naming, source-growth, and accepted-recipe gates to prove no regression outside algorithmic mode. R49 passes 19/19 architecture assertions, 1/1 naming assertion, and 15/15 source-growth checks; the accepted-recipe smoke remains green from R45.
-7. [ ] Obtain project-owner visual acceptance, replace the technical overlay with loading-shell progress events, and profile Android generation, memory, frame spikes, GC, thermals, and package-size savings before proposing production integration.
+1. [x] Record the owner rejection and withdraw the algorithmic output from the acceptance path.
+2. [x] Audit the compact recipe and identify concrete parity violations: duplicate name-path addressing, object suppression, altered foundation, disabled effects, lighting drift, camera drift, and unequal fingerprints.
+3. [x] Replay the complete editor-authored district prefabs without cleanup as an exactness probe and implement bounded, unambiguous sibling-index slices to replace the 373.548 ms whole-prefab spike.
+4. [x] Restore a functioning Unity licensing/Package Manager session, regenerate the indexed recipe/scene, and require every exported index chain to resolve.
+5. [x] Finish the matched rerender after the R50 ground, first-directional-light, perspective-camera, and top-down-camera corrections; do not use the pre-fix lighting image as acceptance evidence.
+6. [x] Generate comparable editor/runtime manifests and require equal visible-content counts and semantic hashes.
+7. [x] Generate same-camera perspective/top-down captures and inspect measured image deltas before any owner review.
+8. [x] Prove restart/clear, lifecycle recovery, architecture, focused tests, and performance/GC source contracts remain intact; require the indexed worst batch to return below the desktop budget.
+9. [~] After Gate 1 passes, replace the inappropriate plus-shaped autobahn, remove its building intersections, fix penetrating rocks and uncovered ground in the shared editor/runtime source, and prove parity again. R60 removes the highway, passes local-road clearance at `0`, restores ground transitions, and proves parity; broader non-road terrain/structure inspection remains open.
+10. [ ] Only then reconsider procedural variation, loading-shell integration, Android profiling, gameplay integration, and production adoption.
+
+### 2026-07-16 Roadmap Correction
+
+- The bad algorithmic screenshots were predictable from the existing evidence and should have been rejected internally.
+- Asking the project owner to validate that output conflated structural diagnostics with visual acceptance.
+- Gate 1 is now exact editor replay. Counts, determinism, ground coverage, or lack of exceptions cannot compensate for a visibly different map.
+- The project owner should next see a same-camera editor/runtime comparison that already passes internal structural and visual parity checks.
+
+### 2026-07-16 R50 Retry
+
+- Complete-prefab runtime replay restored the accepted editor composition and removed all 202 compact-recipe suppressions.
+- The retry self-rejected a 373.548 ms instantiation spike, a mismatched top-down camera, and an extra configured directional light.
+- The next implementation uses sibling-index source identity to preserve exact content while yielding between bounded slices; duplicate names are never runtime addresses.
+- Penetrating terrain and uncovered ground remain deliberately unchanged until Gate 1 proves the runtime is replaying the editor source exactly.
+- R51 implements that sibling-index source path and compiles, but remains ungenerated and unmeasured until Unity licensing and Package Manager startup recover.
+
+### 2026-07-16 R52 Exact Replay Gate
+
+- Reconstructed the source through three deterministic parity prefab snapshots plus indexed entry snapshots with no nested source-prefab ambiguity.
+- Editor and runtime manifests match at `10329` renderers, `11` lights, `71` particle renderers, and SHA-256 `C430A99A87D7E47799EDAE39451BE4F728D494AEC6FCEB03051156A7A3F00A02`.
+- Same-camera image comparison measured perspective RGB MAE `0.011` and top-down RGB MAE `0.000`; the remaining perspective delta is below one RGB code value and no material region difference remains unexplained.
+- Runtime completion took `18.780s`; smoke evidence completed in `24.390s` with `maxVisualBatchMs=6.212`, one budget yield, no suppressions, one foundation, and real graphics.
+- Evidence: `Logs/M01_R52_VolumeParityPlayMode_Graphics.log`, `Logs/M01_EditorCurrentReference.png`, `Logs/M01_EditorCurrentTopDown.png`, `Logs/M01_RuntimeGenerationBaseline.png`, and `Logs/M01_RuntimeGenerationTopDown.png`.
+- Owner review remains intentionally withheld until the shared visual source no longer contains the oversized plus-shaped road crossing district buildings.
+
+### 2026-07-16 R60 Blocked Old Market Route Candidate
+
+- Replaced the inappropriate `21 x 230 m` / `300 x 19 m` plus-shaped road slabs with one narrow Old Market-to-compound link and one short dusty civilian route ending at the bombing incident.
+- Removed the highway-specific curbs, lane stripes, intersection crosswalk, shoulder slabs, and four remote road closures.
+- Moved the crater, destroyed aid truck, fire, smoke, debris, barriers, fire light, and damaged corner composition onto the blocked route and retargeted the aftermath camera.
+- Added two lower transition aprons so the local links remain grounded without creating another full-map road or floating district platform.
+- Added a source-generation clearance gate covering local roads against buildings and large rocks, dunes, cliffs, hills, and boulders. `Logs/M01_R59_BlockedRouteClearance.log` reports `intersections=0`.
+- The exporter retained the `132` current parity prefabs and removed `129` stale snapshots from the prior source layout; final scene/recipe validation passed in `Logs/M01_R60_BlockedRouteBuildValidate_CleanSnapshots.log`.
+- Regenerated the exact recipe as `M01RuntimeVisualRecipe_2026-07-16_v16_blocked_market_route` under runtime marker `RuntimeCityM01BlockedRoute_R60_2026-07-16`.
+- Editor and runtime manifests match at `10247` renderers, `11` lights, `71` particle renderers, and SHA-256 `B262FBD0329FBEF2CEFA1033A48FADB5277DEC095B1272643E429080DBB8F7B0`.
+- Same-camera comparison measures perspective RGB MAE `0.011` and top-down RGB MAE `0.001`; direct inspection confirms the editor and runtime captures are visually identical.
+- Runtime completed in `14.430s`; the full smoke completed in `18.826s` with `maxVisualBatchMs=9.272`, `16` budget yields, `0` suppressions, and one foundation. The worst batch passes the `<50ms` desktop R&D ceiling, while total time still exceeds the pilot target and remains an explicit post-visual-acceptance optimization task.
+- Lifecycle recovery passed with one cancellation, one deterministic fallback, one attempt, `7017` recipe entries, and one foundation: `Logs/M01_R60_LifecycleRecovery.log`.
+- Validation passed: runtime prototype build/scene validation, 28 runtime-city focused tests, and 15 production source-growth architecture tests.
+- Evidence: `Logs/M01_R60_BlockedRouteBuildValidate_CleanSnapshots.log`, `Logs/M01_R60_BlockedRoutePlayMode_Graphics.log`, `Logs/M01_R60_FocusedTests.log`, `Logs/M01_R60_SourceGrowthTests_Retry.log`, `Logs/M01_EditorCurrentReference.png`, `Logs/M01_EditorCurrentTopDown.png`, `Logs/M01_RuntimeGenerationBaseline.png`, and `Logs/M01_RuntimeGenerationTopDown.png`.
+- This is the first internally accepted owner-review candidate after the algorithmic rejection. No Android optimization or production adoption is implied.

@@ -22,6 +22,8 @@ namespace Game.Runtime
         private Transform _recipeRoot;
         private RuntimeOperationMapVisualQualitySystemHelper _quality;
         private readonly List<Mesh> _generatedMeshes = new();
+        private readonly List<Collider> _colliderBuffer = new(128);
+        private readonly List<Renderer> _rendererBuffer = new(128);
 
         public RuntimeCityGenerationProgress Progress { get; private set; } = RuntimeCityGenerationProgress.Idle;
         public RuntimeOperationMapVisualStage CurrentVisualStage { get; private set; }
@@ -63,10 +65,17 @@ namespace Game.Runtime
 
             IReadOnlyList<RuntimeOperationMapVisualEntry> entries = recipe.Entries;
             IReadOnlyList<RuntimeOperationMapDistrictModuleRecipe> districtModules = recipe.DistrictModules;
-            int districtSliceCount = 0;
+            int districtWorkCount = 0;
             for (int moduleIndex = 0; moduleIndex < districtModules.Count; moduleIndex++)
-                districtSliceCount += districtModules[moduleIndex]?.SlicePaths.Count ?? 0;
-            int total = Mathf.Max(1, entries.Count + districtSliceCount);
+            {
+                RuntimeOperationMapDistrictModuleRecipe module = districtModules[moduleIndex];
+                districtWorkCount += module == null
+                    ? 0
+                    : module.RealizeCompletePrefab
+                        ? 1
+                        : module.Slices.Count;
+            }
+            int total = Mathf.Max(1, entries.Count + districtWorkCount);
             int batchSize = Mathf.Max(1, entriesPerFrame);
             float frameBudget = Mathf.Max(0.1f, frameBudgetMilliseconds);
             var stageRoots = new Dictionary<RuntimeOperationMapVisualStage, Transform>();
@@ -88,11 +97,36 @@ namespace Game.Runtime
                         if (module == null || !module.IsConfigured)
                             throw new InvalidOperationException($"Runtime district module {moduleIndex} is not configured.");
 
-                        Transform moduleRoot = CreateDistrictModuleRoot(module, stageRoot);
-                        for (int sliceIndex = 0; sliceIndex < module.SlicePaths.Count; sliceIndex++)
+                        if (module.RealizeCompletePrefab)
                         {
-                            string slicePath = module.SlicePaths[sliceIndex];
-                            GameObject visual = CreateDistrictSlice(module, slicePath, moduleRoot);
+                            GameObject visual = CreateCompleteDistrictModule(module, stageRoot);
+                            SpawnedEntryCount++;
+                            RendererCount += CountActiveRenderers(visual);
+                            stageEntryCount++;
+                            completed++;
+                            Progress = new RuntimeCityGenerationProgress(
+                                MapStage(stage),
+                                recipe.Seed,
+                                1,
+                                0,
+                                completed,
+                                total,
+                                (float)completed / total);
+
+                            float moduleMilliseconds = (Time.realtimeSinceStartup - batchStartedAt) * 1000f;
+                            MaxBatchMilliseconds = Mathf.Max(MaxBatchMilliseconds, moduleMilliseconds);
+                            if (moduleMilliseconds >= frameBudget)
+                                FrameBudgetYieldCount++;
+                            yield return null;
+                            batchStartedAt = Time.realtimeSinceStartup;
+                            continue;
+                        }
+
+                        Transform moduleRoot = CreateDistrictModuleRoot(module, stageRoot);
+                        for (int sliceIndex = 0; sliceIndex < module.Slices.Count; sliceIndex++)
+                        {
+                            RuntimeOperationMapDistrictSliceRecipe slice = module.Slices[sliceIndex];
+                            GameObject visual = CreateDistrictSlice(module, slice, moduleRoot);
                             _quality.ApplyClearanceRules(visual, stage, module.Cleanup);
                             SpawnedEntryCount++;
                             RendererCount += CountActiveRenderers(visual);
@@ -238,36 +272,64 @@ namespace Game.Runtime
             var moduleObject = new GameObject(module.Name);
             Transform moduleRoot = moduleObject.transform;
             moduleRoot.SetParent(stageRoot, false);
-            moduleRoot.SetPositionAndRotation(module.Position, module.Rotation);
-            moduleRoot.localScale = module.Scale;
             return moduleRoot;
         }
 
-        private static GameObject CreateDistrictSlice(
+        private GameObject CreateCompleteDistrictModule(
             RuntimeOperationMapDistrictModuleRecipe module,
-            string slicePath,
+            Transform stageRoot)
+        {
+            GameObject visual = Object.Instantiate(module.Prefab, stageRoot);
+            visual.name = module.Name;
+            Transform visualTransform = visual.transform;
+            visualTransform.SetPositionAndRotation(module.Position, module.Rotation);
+            visualTransform.localScale = module.Scale;
+            DisableVisualOnlyColliders(visual);
+            visual.SetActive(module.Active);
+            return visual;
+        }
+
+        private GameObject CreateDistrictSlice(
+            RuntimeOperationMapDistrictModuleRecipe module,
+            RuntimeOperationMapDistrictSliceRecipe slice,
             Transform moduleRoot)
         {
             Transform sourceRoot = module.Prefab.transform;
-            Transform sourceSlice = sourceRoot.Find(slicePath);
+            Transform sourceSlice = ResolveDistrictSlice(sourceRoot, slice);
             if (sourceSlice == null)
             {
                 throw new InvalidOperationException(
-                    $"Runtime district module {module.Name} is missing prefab slice {slicePath}.");
+                    $"Runtime district module {module.Name} is missing prefab slice {slice?.Name}.");
             }
 
             GameObject visual = Object.Instantiate(sourceSlice.gameObject, moduleRoot);
-            visual.name = $"{module.Name}/{slicePath}";
-            Matrix4x4 relativeMatrix = sourceRoot.worldToLocalMatrix * sourceSlice.localToWorldMatrix;
+            visual.name = $"{module.Name}/{slice.Name}";
             Transform visualTransform = visual.transform;
-            visualTransform.localPosition = relativeMatrix.GetColumn(3);
-            visualTransform.localRotation = relativeMatrix.rotation;
-            visualTransform.localScale = relativeMatrix.lossyScale;
+            visualTransform.SetPositionAndRotation(slice.Position, slice.Rotation);
+            visualTransform.localScale = slice.Scale;
+            visual.SetActive(slice.Active);
             DisableVisualOnlyColliders(visual);
-            ParticleSystem[] particleSystems = visual.GetComponentsInChildren<ParticleSystem>(true);
-            for (int i = 0; i < particleSystems.Length; i++)
-                particleSystems[i].gameObject.SetActive(false);
             return visual;
+        }
+
+        private static Transform ResolveDistrictSlice(
+            Transform sourceRoot,
+            RuntimeOperationMapDistrictSliceRecipe slice)
+        {
+            if (sourceRoot == null || slice == null || !slice.IsConfigured)
+                return null;
+
+            Transform current = sourceRoot;
+            IReadOnlyList<int> siblingIndices = slice.SiblingIndices;
+            for (int depth = 0; depth < siblingIndices.Count; depth++)
+            {
+                int siblingIndex = siblingIndices[depth];
+                if (siblingIndex < 0 || siblingIndex >= current.childCount)
+                    return null;
+                current = current.GetChild(siblingIndex);
+            }
+
+            return current;
         }
 
         private GameObject CreateEntry(RuntimeOperationMapVisualEntry entry, Transform parent, uint recipeSeed)
@@ -344,23 +406,27 @@ namespace Game.Runtime
             }
         }
 
-        private static void DisableVisualOnlyColliders(GameObject visual)
+        private void DisableVisualOnlyColliders(GameObject visual)
         {
-            Collider[] colliders = visual.GetComponentsInChildren<Collider>(true);
-            for (int i = 0; i < colliders.Length; i++)
-                colliders[i].enabled = false;
+            _colliderBuffer.Clear();
+            visual.GetComponentsInChildren(includeInactive: true, _colliderBuffer);
+            for (int i = 0; i < _colliderBuffer.Count; i++)
+                _colliderBuffer[i].enabled = false;
+            _colliderBuffer.Clear();
         }
 
-        private static int CountActiveRenderers(GameObject visual)
+        private int CountActiveRenderers(GameObject visual)
         {
-            Renderer[] renderers = visual.GetComponentsInChildren<Renderer>(false);
+            _rendererBuffer.Clear();
+            visual.GetComponentsInChildren(includeInactive: false, _rendererBuffer);
             int count = 0;
-            for (int i = 0; i < renderers.Length; i++)
+            for (int i = 0; i < _rendererBuffer.Count; i++)
             {
-                if (renderers[i].enabled)
+                if (_rendererBuffer[i].enabled)
                     count++;
             }
 
+            _rendererBuffer.Clear();
             return count;
         }
 

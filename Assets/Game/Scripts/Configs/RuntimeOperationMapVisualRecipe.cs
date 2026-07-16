@@ -279,6 +279,42 @@ namespace Game.Configs
     }
 
     [Serializable]
+    public sealed class RuntimeOperationMapDistrictSliceRecipe
+    {
+        [SerializeField] private string name;
+        [SerializeField] private int[] siblingIndices = Array.Empty<int>();
+        [SerializeField] private Vector3 position;
+        [SerializeField] private Quaternion rotation = Quaternion.identity;
+        [SerializeField] private Vector3 scale = Vector3.one;
+        [SerializeField] private bool active = true;
+
+        public RuntimeOperationMapDistrictSliceRecipe(
+            string sliceName,
+            int[] generatedSiblingIndices,
+            Vector3 worldPosition,
+            Quaternion worldRotation,
+            Vector3 worldScale,
+            bool isActive)
+        {
+            name = sliceName ?? string.Empty;
+            siblingIndices = generatedSiblingIndices ?? Array.Empty<int>();
+            position = worldPosition;
+            rotation = worldRotation;
+            scale = worldScale;
+            active = isActive;
+        }
+
+        public string Name => name;
+        public IReadOnlyList<int> SiblingIndices =>
+            siblingIndices ?? (IReadOnlyList<int>)Array.Empty<int>();
+        public Vector3 Position => position;
+        public Quaternion Rotation => rotation;
+        public Vector3 Scale => scale;
+        public bool Active => active;
+        public bool IsConfigured => SiblingIndices.Count > 0;
+    }
+
+    [Serializable]
     public sealed class RuntimeOperationMapDistrictModuleRecipe
     {
         [SerializeField] private string name;
@@ -287,8 +323,9 @@ namespace Game.Configs
         [SerializeField] private Quaternion rotation;
         [SerializeField] private Vector3 scale;
         [SerializeField] private bool active;
+        [SerializeField] private bool realizeCompletePrefab;
         [SerializeField] private RuntimeOperationMapVisualCleanupSettings cleanup;
-        [SerializeField] private List<string> slicePaths = new();
+        [SerializeField] private List<RuntimeOperationMapDistrictSliceRecipe> slices = new();
 
         public RuntimeOperationMapDistrictModuleRecipe(
             string moduleName,
@@ -298,7 +335,8 @@ namespace Game.Configs
             Vector3 moduleScale,
             bool moduleActive,
             RuntimeOperationMapVisualCleanupSettings cleanupSettings,
-            List<string> generatedSlicePaths)
+            List<RuntimeOperationMapDistrictSliceRecipe> generatedSlices,
+            bool realizeAsCompletePrefab = false)
         {
             name = moduleName ?? string.Empty;
             prefab = modulePrefab;
@@ -306,8 +344,9 @@ namespace Game.Configs
             rotation = moduleRotation;
             scale = moduleScale;
             active = moduleActive;
+            realizeCompletePrefab = realizeAsCompletePrefab;
             cleanup = cleanupSettings;
-            slicePaths = generatedSlicePaths ?? new List<string>();
+            slices = generatedSlices ?? new List<RuntimeOperationMapDistrictSliceRecipe>();
         }
 
         public string Name => name;
@@ -316,10 +355,13 @@ namespace Game.Configs
         public Quaternion Rotation => rotation;
         public Vector3 Scale => scale;
         public bool Active => active;
+        public bool RealizeCompletePrefab => realizeCompletePrefab;
         public RuntimeOperationMapVisualCleanupSettings Cleanup => cleanup;
-        public IReadOnlyList<string> SlicePaths =>
-            slicePaths ?? (IReadOnlyList<string>)Array.Empty<string>();
-        public bool IsConfigured => prefab != null && cleanup.IsConfigured && SlicePaths.Count > 0;
+        public IReadOnlyList<RuntimeOperationMapDistrictSliceRecipe> Slices =>
+            slices ?? (IReadOnlyList<RuntimeOperationMapDistrictSliceRecipe>)Array.Empty<RuntimeOperationMapDistrictSliceRecipe>();
+        public bool IsConfigured =>
+            prefab != null &&
+            (realizeCompletePrefab || Slices.Count > 0);
     }
 
     [Serializable]

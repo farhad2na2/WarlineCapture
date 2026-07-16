@@ -2940,17 +2940,17 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
     {
       "path": "Assets/Game/Scripts/Environment/RuntimeCityRAndDMapCompositionSystemHelper.cs",
       "trackerTaskId": "APH-713",
-      "decisionId": "D-176",
-      "maxLines": 938,
-      "maxBytes": 39593,
+      "decisionId": "D-200",
+      "maxLines": 944,
+      "maxBytes": 39735,
       "scope": "system-helper"
     },
     {
       "path": "Assets/Game/Scripts/Environment/RuntimeCityRAndDMapCompositionSystemHelper.cs",
       "trackerTaskId": "APH-713",
-      "decisionId": "D-177",
-      "maxLines": 938,
-      "maxBytes": 39593,
+      "decisionId": "D-201",
+      "maxLines": 944,
+      "maxBytes": 39735,
       "scope": "production-over-500-review"
     },
     {
@@ -2980,17 +2980,17 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
     {
       "path": "Assets/Game/Scripts/Environment/RuntimeOperationMapVisualQualitySystemHelper.cs",
       "trackerTaskId": "APH-713",
-      "decisionId": "D-181",
+      "decisionId": "D-199",
       "maxLines": 185,
-      "maxBytes": 7705,
+      "maxBytes": 7730,
       "scope": "system-helper"
     },
     {
       "path": "Assets/Game/Scripts/Environment/RuntimeOperationMapVisualRecipePresentationSystemHelper.cs",
       "trackerTaskId": "APH-713",
-      "decisionId": "D-182",
-      "maxLines": 385,
-      "maxBytes": 17442,
+      "decisionId": "D-198",
+      "maxLines": 454,
+      "maxBytes": 20437,
       "scope": "system-helper"
     },
     {

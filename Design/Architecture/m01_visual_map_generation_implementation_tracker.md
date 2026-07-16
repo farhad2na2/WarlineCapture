@@ -1,6 +1,6 @@
 # M01 Visual Map Generation Implementation Tracker
 
-**Status:** Editor-only M01 R&D visual prototype generated and validated; production promotion and canonical integration remain blocked by FirstLaunch Phase 10R / Gate 9R
+**Status:** Editor-only M01 R&D visual prototype is the golden visual source. A separately authorized isolated runtime-replay R&D track must reproduce this result exactly before attempting improvements or procedural variation. Production promotion and canonical integration remain blocked by FirstLaunch Phase 10R / Gate 9R.
 
 **Created:** 2026-07-15
 
@@ -15,7 +15,23 @@ This tracker defines the first visual-quality iteration of the dedicated M01 ope
 
 The first iteration is an **editor-viewable visual prototype only**. It does not need campaign loading, units, navigation, mission logic, or playability. Its purpose is to let the project owner judge composition, density, scale, lighting, and environmental storytelling before canonical promotion.
 
-Approved campaign maps are stable, reviewed, editor-baked scenes. Deterministic editor tooling may accelerate authoring; physical topology must never be generated at runtime.
+The production direction remains stable, reviewed, editor-baked campaign scenes. The project owner separately authorized isolated runtime-generation R&D after this tracker was written. That experiment is governed by [Runtime Operation Map Generation R&D Implementation Tracker](runtime_operation_map_generation_rnd_implementation_tracker.md), does not release Gate 9R, and may not change campaign loading or production ownership.
+
+### Runtime Replay Golden-Source Contract
+
+For the authorized R&D experiment, this editor scene is the golden source rather than a loose inspiration:
+
+- Gate 1 requires the runtime path to reconstruct the same visible prefab content, transforms, active state, materials, ground, lighting, effects, camera framing, and overall rendered composition.
+- Runtime cleanup, substitution, or procedural placement cannot be credited as parity, even when deterministic or structurally valid.
+- Editor and runtime evidence must use identical perspective and top-down cameras plus comparable deterministic render settings.
+- The current compact runtime recipe is known not to pass: its semantic fingerprint differs, duplicate object names make slice paths ambiguous, it suppresses editor objects, and it changes ground, effects, lighting, and camera framing.
+- Penetrating rocks, uncovered ground, and other editor issues are fixed only after exact replay is proven, then applied so editor and runtime remain in parity.
+- The old procedural city output is deferred and is not an M01 visual-acceptance candidate.
+- R50 complete-prefab replay restored the golden scene's full district composition with zero runtime cleanup, but remained diagnostic because its 373.548 ms worst visual batch failed the frame budget and its first capture exposed lighting and camera mismatches.
+- The accepted replay implementation splits work by unambiguous sibling-index identity. Duplicate object names are never runtime addresses.
+- R52 passed exact replay with equal editor/runtime manifests and matched-camera images while retaining `SystemBase` frame ownership and passive view boundaries.
+- R60 improved the golden source and exact replay together: the oversized plus-shaped road was replaced by local M01 routes, the bombing composition moved to the blocked civilian lane, transition ground was added, local-road clearance reports zero building or large-terrain intersections, and editor/runtime visual hashes remain equal.
+- Project-owner visual confirmation remains required before Android optimization or any production adoption decision.
 
 ## 2. Authority, Hold, And Dependencies
 

@@ -16,7 +16,7 @@ namespace Game.Editor
         public const string ScenePath = "Assets/Game/Scenes/MapPrototypes/Chapter01/M01_VisualPrototype.unity";
         public const string CaptureDirectory = "Design/ArtReview/OperationMaps/M01";
         public const int GenerationSeed = 26071501;
-        public const string GeneratorVersion = "M01VisualPrototype_2026-07-16_v13";
+        public const string GeneratorVersion = "M01VisualPrototype_2026-07-16_v15_blocked_market_route";
 
         private const int CaptureWidth = 1600;
         private const int CaptureHeight = 900;
@@ -69,6 +69,29 @@ namespace Game.Editor
             public Material Rust;
             public Material DistrictGround;
         }
+
+        private readonly struct LocalRoadSegmentDefinition
+        {
+            public LocalRoadSegmentDefinition(string name, Vector3 start, Vector3 end, bool dusty)
+            {
+                Name = name;
+                Start = start;
+                End = end;
+                Dusty = dusty;
+            }
+
+            public string Name { get; }
+            public Vector3 Start { get; }
+            public Vector3 End { get; }
+            public bool Dusty { get; }
+        }
+
+        private static readonly LocalRoadSegmentDefinition[] LocalRoadSegments =
+        {
+            new("MarketToCompound_A", new Vector3(10.5f, 0f, 9.3f), new Vector3(22f, 0f, 18f), false),
+            new("MarketToCompound_B", new Vector3(22f, 0f, 18f), new Vector3(36f, 0f, 35f), false),
+            new("CivilianRoute", new Vector3(10.5f, 0f, 9.3f), new Vector3(13f, 0f, -24f), true)
+        };
 
         [MenuItem("Game/Operation Maps/M01/Generate Visual Prototype")]
         public static void GenerateFromMenu()
@@ -202,6 +225,108 @@ namespace Game.Editor
             Debug.Log($"[M01DistrictBuildingAnalysis] result=Passed candidates={candidateCount}");
         }
 
+        public static void AnalyzeLocalRoadClearanceBatch()
+        {
+            Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            GameObject sceneRoot = FindSceneRoot(scene);
+            int intersectionCount = CountLocalRoadClearanceIntersections(sceneRoot, true);
+            Debug.Log($"[M01LocalRoadClearance] result=Passed intersections={intersectionCount}");
+        }
+
+        private static int CountLocalRoadClearanceIntersections(GameObject sceneRoot, bool logDetails)
+        {
+            Renderer[] renderers = sceneRoot.GetComponentsInChildren<Renderer>(true);
+            var analyzedOwners = new HashSet<int>();
+            int intersectionCount = 0;
+
+            for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
+            {
+                Transform owner = FindRoadClearanceOwner(renderers[rendererIndex].transform, sceneRoot.transform);
+                if (owner == null || !analyzedOwners.Add(owner.GetEntityId().GetHashCode()))
+                    continue;
+
+                Renderer[] ownerRenderers = owner.GetComponentsInChildren<Renderer>(true);
+                if (!TryGetCombinedBounds(ownerRenderers, out Bounds bounds))
+                    continue;
+
+                for (int segmentIndex = 0; segmentIndex < LocalRoadSegments.Length; segmentIndex++)
+                {
+                    LocalRoadSegmentDefinition segment = LocalRoadSegments[segmentIndex];
+                    if (!IntersectsRoadCorridor(bounds, segment, 3.2f))
+                        continue;
+
+                    intersectionCount++;
+                    if (logDetails)
+                    {
+                        Debug.Log(
+                            $"[M01LocalRoadClearance] road={segment.Name} obstacle={GetTransformPath(owner, sceneRoot.transform)} " +
+                            $"center={bounds.center} size={bounds.size}");
+                    }
+                }
+            }
+
+            return intersectionCount;
+        }
+
+        private static Transform FindRoadClearanceOwner(Transform candidate, Transform sceneRoot)
+        {
+            Transform terrainOwner = null;
+            Transform buildingOwner = null;
+            for (Transform current = candidate; current != null && current != sceneRoot; current = current.parent)
+            {
+                if (IsRoadTerrainObstacleName(current.name))
+                    terrainOwner = current;
+                if (ContainsName(current.name, "_Bld_") || ContainsName(current.name, "Building_"))
+                    buildingOwner = current;
+            }
+
+            Transform owner = buildingOwner != null ? buildingOwner : terrainOwner;
+            if (owner == null)
+                return null;
+
+            Renderer[] ownerRenderers = owner.GetComponentsInChildren<Renderer>(true);
+            if (!TryGetCombinedBounds(ownerRenderers, out Bounds bounds))
+                return null;
+
+            bool terrainIsLargeEnough = terrainOwner == null || Mathf.Max(bounds.size.x, bounds.size.z) >= 3f;
+            return terrainIsLargeEnough ? owner : null;
+        }
+
+        private static bool IsRoadTerrainObstacleName(string objectName)
+        {
+            return ContainsName(objectName, "_Env_Rock_") ||
+                   ContainsName(objectName, "_Env_Boulder_") ||
+                   ContainsName(objectName, "_Env_Cliff_") ||
+                   ContainsName(objectName, "_Env_Hill_") ||
+                   ContainsName(objectName, "_Env_SandDunes_");
+        }
+
+        private static bool IntersectsRoadCorridor(Bounds bounds, LocalRoadSegmentDefinition segment, float halfWidth)
+        {
+            Vector3 delta = segment.End - segment.Start;
+            float length = delta.magnitude;
+            if (length <= Mathf.Epsilon)
+                return false;
+
+            Vector3 forward = delta / length;
+            Vector3 right = new(forward.z, 0f, -forward.x);
+            Vector3 offset = bounds.center - (segment.Start + segment.End) * 0.5f;
+            float centerAcross = Vector3.Dot(offset, right);
+            float centerAlong = Vector3.Dot(offset, forward);
+            float extentAcross = Mathf.Abs(right.x) * bounds.extents.x + Mathf.Abs(right.z) * bounds.extents.z;
+            float extentAlong = Mathf.Abs(forward.x) * bounds.extents.x + Mathf.Abs(forward.z) * bounds.extents.z;
+            return Mathf.Abs(centerAcross) <= halfWidth + extentAcross &&
+                   Mathf.Abs(centerAlong) <= length * 0.5f + extentAlong;
+        }
+
+        private static string GetTransformPath(Transform transform, Transform stop)
+        {
+            string path = transform.name;
+            for (Transform current = transform.parent; current != null && current != stop; current = current.parent)
+                path = current.name + "/" + path;
+            return path;
+        }
+
         private static bool IsDistrictBuildingAssemblyCandidate(Transform candidate, Transform module)
         {
             if (candidate == null || candidate == module || candidate.childCount == 0)
@@ -331,7 +456,7 @@ namespace Game.Editor
             return new Palette
             {
                 Sand = CreateOrUpdateMaterial(SandMaterialPath, new Color(0.30f, 0.22f, 0.14f), 0f, 0.12f),
-                Asphalt = CreateOrUpdateMaterial(AsphaltMaterialPath, new Color(0.055f, 0.06f, 0.065f), 0f, 0.2f),
+                Asphalt = CreateOrUpdateMaterial(AsphaltMaterialPath, new Color(0.09f, 0.085f, 0.08f), 0f, 0.18f),
                 Concrete = CreateOrUpdateMaterial(ConcreteMaterialPath, new Color(0.35f, 0.33f, 0.29f), 0f, 0.18f),
                 Curb = CreateOrUpdateMaterial(CurbMaterialPath, new Color(0.69f, 0.62f, 0.50f), 0f, 0.22f),
                 WhitePaint = CreateOrUpdateMaterial(WhitePaintMaterialPath, new Color(0.88f, 0.84f, 0.70f), 0f, 0.25f),
@@ -410,127 +535,45 @@ namespace Game.Editor
             Transform terrainRoot = CreateRoot("01_Terrain_And_RoadPlan", parent).transform;
             CreateBox("DesertGround", new Vector3(0f, -1.05f, 16f), new Vector3(1200f, 2f, 900f), palette.Sand, terrainRoot);
 
-            CreateBox("MainRoadShoulder_NS", new Vector3(0f, -0.05f, 0f), new Vector3(27f, 0.1f, 236f), palette.DistrictGround, terrainRoot);
-            CreateBox("MainRoadShoulder_EW", new Vector3(0f, -0.05f, -18f), new Vector3(306f, 0.1f, 25f), palette.DistrictGround, terrainRoot);
+            CreateIrregularSurface("OldMarketUtilityGroundLink", new Vector3(15f, -0.035f, 14f), new Vector2(62f, 62f), palette.DistrictGround, terrainRoot);
+            CreateIrregularSurface("OldMarketAftermathGroundLink", new Vector3(13f, -0.034f, -10f), new Vector2(44f, 56f), palette.DistrictGround, terrainRoot);
             CreateIrregularSurface("OldMarketDistrictApron", new Vector3(-62f, -0.015f, 17f), new Vector2(118f, 102f), palette.DistrictGround, terrainRoot);
             CreateIrregularSurface("UtilityCompoundApron", new Vector3(69f, -0.015f, 17f), new Vector2(126f, 116f), palette.DistrictGround, terrainRoot);
             CreateIrregularSurface("ResidentialDistrictApron", new Vector3(-5f, -0.015f, -70f), new Vector2(138f, 98f), palette.DistrictGround, terrainRoot);
 
-            CreateBox("MainRoad_NS", new Vector3(0f, 0.03f, 0f), new Vector3(21f, 0.18f, 230f), palette.Asphalt, terrainRoot);
-            CreateBox("MainRoad_EW", new Vector3(0f, 0.04f, -18f), new Vector3(300f, 0.2f, 19f), palette.Asphalt, terrainRoot);
-            CreateBox("MarketServiceRoad", new Vector3(-64f, 0.02f, 48f), new Vector3(104f, 0.14f, 9f), palette.Concrete, terrainRoot);
-            CreateBox("CompoundAccessRoad", new Vector3(66f, 0.02f, 50f), new Vector3(105f, 0.14f, 10f), palette.Concrete, terrainRoot);
-
-            CreateVerticalCurbs(terrainRoot, palette.Curb, -11.3f);
-            CreateVerticalCurbs(terrainRoot, palette.Curb, 11.3f);
-            CreateHorizontalCurbs(terrainRoot, palette.Curb, -28.3f);
-            CreateHorizontalCurbs(terrainRoot, palette.Curb, -7.7f);
-            CreateRoadMarkings(terrainRoot, palette);
-            CreateIntersectionDetails(terrainRoot, palette);
-            CreateSouthernReliefConnector(terrainRoot, palette);
-            CreateRoadExitClosures(terrainRoot, palette);
+            CreateLocalRoadNetwork(terrainRoot, palette);
         }
 
-        private static void CreateSouthernReliefConnector(Transform parent, Palette palette)
+        private static void CreateLocalRoadNetwork(Transform parent, Palette palette)
         {
-            Vector3 center = new(-43f, 0f, -41f);
-            Quaternion rotation = Quaternion.Euler(0f, -14f, 0f);
+            for (int i = 0; i < LocalRoadSegments.Length; i++)
+                CreateLocalRoadSegment(LocalRoadSegments[i], parent, palette);
+        }
+
+        private static void CreateLocalRoadSegment(
+            LocalRoadSegmentDefinition segment,
+            Transform parent,
+            Palette palette)
+        {
+            Vector3 delta = segment.End - segment.Start;
+            float length = delta.magnitude + 1.5f;
+            Vector3 center = (segment.Start + segment.End) * 0.5f;
+            Quaternion rotation = Quaternion.Euler(0f, Mathf.Atan2(delta.x, delta.z) * Mathf.Rad2Deg, 0f);
+
             CreateBox(
-                "SouthReliefRoadShoulder",
+                $"{segment.Name}_Shoulder",
                 center + Vector3.down * 0.025f,
-                new Vector3(10f, 0.07f, 52f),
+                new Vector3(9.4f, 0.07f, length),
                 palette.DistrictGround,
                 parent,
                 rotation);
             CreateBox(
-                "SouthReliefRoad",
+                segment.Name,
                 center + Vector3.up * 0.035f,
-                new Vector3(6.5f, 0.12f, 49f),
-                palette.Concrete,
+                new Vector3(6.4f, 0.12f, length),
+                segment.Dusty ? palette.Concrete : palette.Asphalt,
                 parent,
                 rotation);
-
-            for (int i = -2; i <= 2; i++)
-            {
-                Vector3 offset = rotation * new Vector3(0f, 0f, i * 10f);
-                CreateBox(
-                    $"SouthReliefDash_{i + 3:00}",
-                    center + offset + Vector3.up * 0.14f,
-                    new Vector3(0.28f, 0.04f, 4.5f),
-                    palette.AmberPaint,
-                    parent,
-                    rotation);
-            }
-        }
-
-        private static void CreateRoadExitClosures(Transform parent, Palette palette)
-        {
-            CreateRoadExitClosure("West", new Vector3(-145f, 0f, -18f), true, parent, palette);
-            CreateRoadExitClosure("East", new Vector3(145f, 0f, -18f), true, parent, palette);
-            CreateRoadExitClosure("North", new Vector3(0f, 0f, 110f), false, parent, palette);
-            CreateRoadExitClosure("South", new Vector3(0f, 0f, -110f), false, parent, palette);
-        }
-
-        private static void CreateRoadExitClosure(
-            string name,
-            Vector3 position,
-            bool roadRunsEastWest,
-            Transform parent,
-            Palette palette)
-        {
-            Vector3 segmentOffset = roadRunsEastWest ? new Vector3(0f, 0f, 5.3f) : new Vector3(5.3f, 0f, 0f);
-            Vector3 segmentScale = roadRunsEastWest ? new Vector3(1.2f, 1.05f, 5.6f) : new Vector3(5.6f, 1.05f, 1.2f);
-            CreateBox($"{name}ExitBarrier_A", position + segmentOffset + Vector3.up * 0.52f, segmentScale, palette.Curb, parent);
-            CreateBox($"{name}ExitBarrier_B", position - segmentOffset + Vector3.up * 0.52f, segmentScale, palette.Curb, parent);
-
-            Vector3 bollardOffset = roadRunsEastWest ? new Vector3(0f, 0f, 1.9f) : new Vector3(1.9f, 0f, 0f);
-            CreateCylinder($"{name}ExitMarker_A", position + bollardOffset + Vector3.up * 0.7f, new Vector3(0.38f, 0.7f, 0.38f), palette.AmberPaint, parent);
-            CreateCylinder($"{name}ExitMarker_B", position - bollardOffset + Vector3.up * 0.7f, new Vector3(0.38f, 0.7f, 0.38f), palette.Rust, parent);
-        }
-
-        private static void CreateVerticalCurbs(Transform parent, Material material, float x)
-        {
-            CreateBox($"Curb_NS_{x:0}_North", new Vector3(x, 0.18f, 55f), new Vector3(1.5f, 0.34f, 90f), material, parent);
-            CreateBox($"Curb_NS_{x:0}_South", new Vector3(x, 0.18f, -78f), new Vector3(1.5f, 0.34f, 55f), material, parent);
-        }
-
-        private static void CreateHorizontalCurbs(Transform parent, Material material, float z)
-        {
-            CreateBox($"Curb_EW_{z:0}_West", new Vector3(-79f, 0.17f, z), new Vector3(126f, 0.34f, 1.5f), material, parent);
-            CreateBox($"Curb_EW_{z:0}_East", new Vector3(79f, 0.17f, z), new Vector3(126f, 0.34f, 1.5f), material, parent);
-        }
-
-        private static void CreateRoadMarkings(Transform parent, Palette palette)
-        {
-            for (int z = -103; z <= 103; z += 13)
-            {
-                if (z > -34 && z < 2)
-                    continue;
-                CreateBox($"NS_Dash_{z}", new Vector3(0f, 0.16f, z), new Vector3(0.35f, 0.05f, 5.4f), palette.AmberPaint, parent);
-            }
-
-            for (int x = -139; x <= 139; x += 14)
-            {
-                if (x > -18 && x < 18)
-                    continue;
-                CreateBox($"EW_Dash_{x}", new Vector3(x, 0.17f, -18f), new Vector3(5.6f, 0.05f, 0.34f), palette.WhitePaint, parent);
-            }
-
-            CreateBox("NS_Edge_West", new Vector3(-8.6f, 0.15f, 0f), new Vector3(0.25f, 0.04f, 226f), palette.WhitePaint, parent);
-            CreateBox("NS_Edge_East", new Vector3(8.6f, 0.15f, 0f), new Vector3(0.25f, 0.04f, 226f), palette.WhitePaint, parent);
-        }
-
-        private static void CreateIntersectionDetails(Transform parent, Palette palette)
-        {
-            for (int i = -4; i <= 4; i++)
-            {
-                float x = i * 1.8f;
-                CreateBox($"Crosswalk_N_{i}", new Vector3(x, 0.19f, -5.6f), new Vector3(0.9f, 0.04f, 3.2f), palette.WhitePaint, parent);
-                CreateBox($"Crosswalk_S_{i}", new Vector3(x, 0.19f, -30.4f), new Vector3(0.9f, 0.04f, 3.2f), palette.WhitePaint, parent);
-            }
-
-            CreateCylinder("OldMarketBollard_W", new Vector3(-12.6f, 0.65f, -5.8f), new Vector3(0.55f, 0.65f, 0.55f), palette.Turquoise, parent);
-            CreateCylinder("OldMarketBollard_E", new Vector3(12.6f, 0.65f, -5.8f), new Vector3(0.55f, 0.65f, 0.55f), palette.Rust, parent);
         }
 
         private static void CreateAuthoredDistrictModules(Transform parent)
@@ -617,11 +660,11 @@ namespace Game.Editor
         {
             Transform root = CreateRoot("05_BombingAftermath_StoryLayer", parent).transform;
 
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/Environment/SM_Env_Ground_Crater_02.prefab", "ImpactCrater", new Vector3(19f, 0.2f, -47f), 12f, 1.65f, root);
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/Vehicles/Destroyed/SM_Veh_Truck_01_Destroyed.prefab", "DestroyedAidTruck", new Vector3(21f, 0f, -43f), 24f, 1.05f, root);
-            PlacePrefab("Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Ruins_03.prefab", "BombedCornerRuin", new Vector3(45f, 0f, -49f), 182f, 1.15f, root);
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/FX/FX_Fire_01.prefab", "AftermathFire", new Vector3(18f, 0.7f, -43f), 0f, 0.9f, root);
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/FX/FX_Smoke_Large_01.prefab", "AftermathSmoke", new Vector3(13f, 0f, -38f), 0f, 0.68f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Environment/SM_Env_Ground_Crater_02.prefab", "ImpactCrater", new Vector3(13f, 0.2f, -22f), 4f, 1.45f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Vehicles/Destroyed/SM_Veh_Truck_01_Destroyed.prefab", "DestroyedAidTruck", new Vector3(12.7f, 0f, -18f), 4f, 1.05f, root);
+            PlacePrefab("Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Ruins_03.prefab", "BombedCornerRuin", new Vector3(26f, 0f, -24f), 182f, 1.05f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/FX/FX_Fire_01.prefab", "AftermathFire", new Vector3(11.5f, 0.7f, -18.5f), 0f, 0.8f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/FX/FX_Smoke_Large_01.prefab", "AftermathSmoke", new Vector3(13.5f, 0f, -20f), 0f, 0.58f, root);
 
             string[] debris =
             {
@@ -635,17 +678,17 @@ namespace Game.Editor
             for (int i = 0; i < 22; i++)
             {
                 float angle = (float)random.NextDouble() * Mathf.PI * 2f;
-                float radius = 5f + (float)random.NextDouble() * 18f;
-                Vector3 position = new(20f + Mathf.Cos(angle) * radius, 0f, -45f + Mathf.Sin(angle) * radius * 0.65f);
+                float radius = 4f + (float)random.NextDouble() * 12f;
+                Vector3 position = new(14f + Mathf.Cos(angle) * radius, 0f, -21f + Mathf.Sin(angle) * radius * 0.65f);
                 PlacePrefab(debris[i % debris.Length], $"AftermathDebris_{i + 1:00}", position, random.Next(0, 360), 0.8f + (float)random.NextDouble() * 0.7f, root);
             }
 
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 4; i++)
             {
-                PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Barrier_Tall_02.prefab", $"EmergencyBarrier_{i + 1:00}", new Vector3(-1f + i * 4f, 0f, -39f + (i % 2) * 1.2f), 8f, 1f, root);
+                PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Barrier_Tall_02.prefab", $"EmergencyBarrier_{i + 1:00}", new Vector3(8.5f + i * 2.4f, 0f, -10.5f + (i % 2) * 0.5f), 4f, 1f, root);
             }
 
-            CreatePointLight("AftermathFireLight", new Vector3(19f, 4f, -43f), new Color(1f, 0.21f, 0.045f), 5.5f, 31f, root);
+            CreatePointLight("AftermathFireLight", new Vector3(12f, 4f, -19f), new Color(1f, 0.21f, 0.045f), 5.5f, 27f, root);
         }
 
         private static void CreateHorizonAndEdgeDressing(Transform parent)
@@ -685,6 +728,10 @@ namespace Game.Editor
 
             if (GameObject.Find("OldMarketClockTower") == null || GameObject.Find("DestroyedAidTruck") == null || GameObject.Find("M01_Review_GameplayOverview") == null)
                 throw new InvalidOperationException("M01 visual prototype is missing a required visual anchor or review camera.");
+
+            int roadClearanceIntersections = CountLocalRoadClearanceIntersections(root, true);
+            if (roadClearanceIntersections != 0)
+                throw new InvalidOperationException($"M01 local roads intersect {roadClearanceIntersections} building or large-terrain bounds.");
         }
 
         private static void SimulateParticles()

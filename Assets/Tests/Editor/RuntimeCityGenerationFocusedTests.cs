@@ -32,6 +32,8 @@ public sealed class RuntimeCityGenerationFocusedTests
             tests.AlgorithmicAftermathPresentation_ReservesAuthoredAnchorsWhenDamageIsDense();
             tests.GenerationProgress_ReportsMonotonicStagesAndCompletion();
             tests.GenerationProgress_CancellationPreservesLastKnownWork();
+            tests.GenerationRecovery_SchedulesOnlyOneDeterministicFallback();
+            tests.GenerationRecovery_TerminalProgressPreservesEvidence();
             tests.VisualOnlySpawnBridge_SpawnsAndDeletesUsingExistingPresentation();
             tests.VisualOnlySpawnBridge_RotatesAndRecentersRectangularFootprint();
             tests.VisualOnlyPresentation_GroundsLowestRendererPoint();
@@ -42,7 +44,7 @@ public sealed class RuntimeCityGenerationFocusedTests
             tests.RuntimeCameraPose_PreservesStageAndClampsPresentationValues();
             tests.RuntimeDistrictModuleRecipe_RequiresPrefabBoundsAndSlices();
             tests.RuntimePrototypeArchitecture_UsesPassiveViewAndSystemBaseOwner();
-            Debug.Log("[RuntimeCityGenerationFocusedValidation] result=Passed tests=25");
+            Debug.Log("[RuntimeCityGenerationFocusedValidation] result=Passed tests=27");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -681,6 +683,98 @@ public sealed class RuntimeCityGenerationFocusedTests
     }
 
     [Test]
+    public void GenerationRecovery_SchedulesOnlyOneDeterministicFallback()
+    {
+        RuntimeOperationMapVisualRecipe primary =
+            ScriptableObject.CreateInstance<RuntimeOperationMapVisualRecipe>();
+        RuntimeOperationMapVisualRecipe fallback =
+            ScriptableObject.CreateInstance<RuntimeOperationMapVisualRecipe>();
+        var recovery = new RuntimeOperationMapGenerationRecoverySystemHelper();
+        try
+        {
+            Assert.IsFalse(recovery.TryScheduleFallback(
+                frameCount: 20,
+                fallbackEnabled: false,
+                primary,
+                fallback,
+                "disabled"));
+            Assert.IsFalse(recovery.TryScheduleFallback(
+                frameCount: 20,
+                fallbackEnabled: true,
+                primary,
+                primary,
+                "sameRecipe"));
+            Assert.IsTrue(recovery.TryScheduleFallback(
+                frameCount: 20,
+                fallbackEnabled: true,
+                primary,
+                fallback,
+                "missingGround"));
+            Assert.IsTrue(recovery.IsFallbackScheduled);
+            Assert.AreEqual(1, recovery.FallbackAttemptCount);
+            Assert.AreEqual("missingGround", recovery.FailureReason);
+            Assert.AreSame(fallback, recovery.FallbackRecipe);
+            Assert.IsFalse(recovery.TryActivateFallback(frameCount: 20));
+            Assert.IsTrue(recovery.TryActivateFallback(frameCount: 21));
+            Assert.IsTrue(recovery.IsFallbackActive);
+            Assert.IsFalse(recovery.TryScheduleFallback(
+                frameCount: 22,
+                fallbackEnabled: true,
+                primary,
+                fallback,
+                "secondFailure"));
+
+            recovery.Reset();
+            Assert.IsFalse(recovery.IsFallbackScheduled);
+            Assert.IsFalse(recovery.IsFallbackActive);
+            Assert.AreEqual(0, recovery.FallbackAttemptCount);
+            Assert.IsNull(recovery.FallbackRecipe);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(fallback);
+            UnityEngine.Object.DestroyImmediate(primary);
+        }
+    }
+
+    [Test]
+    public void GenerationRecovery_TerminalProgressPreservesEvidence()
+    {
+        var progress = new RuntimeCityGenerationProgress(
+            RuntimeCityGenerationStage.Buildings,
+            seed: 26071503u,
+            requestedCityCount: 2,
+            generatedCityCount: 1,
+            completedWorkItems: 7,
+            totalWorkItems: 22,
+            progress01: 0.63f);
+
+        RuntimeCityGenerationProgress cancelled =
+            RuntimeOperationMapGenerationRecoverySystemHelper.CreateTerminalProgress(
+                progress,
+                RuntimeCityGenerationStage.Cancelled);
+        RuntimeCityGenerationProgress failed =
+            RuntimeOperationMapGenerationRecoverySystemHelper.CreateTerminalProgress(
+                progress,
+                RuntimeCityGenerationStage.Failed);
+
+        Assert.AreEqual(RuntimeCityGenerationStage.Cancelled, cancelled.Stage);
+        Assert.AreEqual(RuntimeCityGenerationStage.Failed, failed.Stage);
+        Assert.AreEqual(progress.Seed, cancelled.Seed);
+        Assert.AreEqual(progress.RequestedCityCount, cancelled.RequestedCityCount);
+        Assert.AreEqual(progress.GeneratedCityCount, cancelled.GeneratedCityCount);
+        Assert.AreEqual(progress.CompletedWorkItems, cancelled.CompletedWorkItems);
+        Assert.AreEqual(progress.TotalWorkItems, cancelled.TotalWorkItems);
+        Assert.AreEqual(progress.Progress01, cancelled.Progress01);
+        Assert.AreEqual(progress.Seed, failed.Seed);
+        Assert.AreEqual(progress.CompletedWorkItems, failed.CompletedWorkItems);
+        Assert.AreEqual(progress.TotalWorkItems, failed.TotalWorkItems);
+        Assert.AreEqual(progress.Progress01, failed.Progress01);
+        Assert.IsTrue(cancelled.IsTerminal);
+        Assert.IsTrue(failed.IsTerminal);
+    }
+
+    [Test]
     public void VisualOnlySpawnBridge_SpawnsAndDeletesUsingExistingPresentation()
     {
         GameObject runtimeRoot = new("RuntimeCityVisualOnlyTestRoot");
@@ -1021,6 +1115,7 @@ public sealed class RuntimeCityGenerationFocusedTests
         const string PresentationPath = "Assets/Game/Scripts/Environment/RuntimeOperationMapVisualRecipePresentationSystemHelper.cs";
         const string QualityPath = "Assets/Game/Scripts/Environment/RuntimeOperationMapVisualQualitySystemHelper.cs";
         const string SurfaceGeometryPath = "Assets/Game/Scripts/Environment/RuntimeOperationMapSurfaceGeometrySystemHelper.cs";
+        const string RecoveryPath = "Assets/Game/Scripts/Environment/RuntimeOperationMapGenerationRecoverySystemHelper.cs";
 
         string viewSource = File.ReadAllText(ViewPath);
         string systemSource = File.ReadAllText(SystemPath);
@@ -1028,10 +1123,13 @@ public sealed class RuntimeCityGenerationFocusedTests
         string presentationSource = File.ReadAllText(PresentationPath);
         string qualitySource = File.ReadAllText(QualityPath);
         string surfaceGeometrySource = File.ReadAllText(SurfaceGeometryPath);
+        string recoverySource = File.ReadAllText(RecoveryPath);
 
         StringAssert.Contains("RuntimeCityRAndDMapView : MonoBehaviour", viewSource);
         StringAssert.Contains("public Camera PresentationCamera => presentationCamera;", viewSource);
         StringAssert.Contains("public float VisualRecipeFrameBudgetMilliseconds", viewSource);
+        StringAssert.Contains("public void RequestCancel()", viewSource);
+        StringAssert.Contains("_runtimeSystem?.RequestCancel();", viewSource);
         StringAssert.DoesNotContain("void Update(", viewSource);
         StringAssert.DoesNotContain("void LateUpdate(", viewSource);
         StringAssert.DoesNotContain("void FixedUpdate(", viewSource);
@@ -1046,10 +1144,15 @@ public sealed class RuntimeCityGenerationFocusedTests
         StringAssert.Contains("_composition.AdvancePresentation(UnityEngine.Time.unscaledDeltaTime);", systemSource);
         StringAssert.Contains("if (!presentationChanged)", systemSource);
         StringAssert.Contains("ResetPresentationCache", systemSource);
+        StringAssert.Contains("_composition.CancelForExit();", systemSource);
         StringAssert.DoesNotContain("MonoBehaviour", systemSource);
         StringAssert.Contains("public void AdvancePresentation(float unscaledDeltaTime)", compositionSource);
         StringAssert.Contains("GetAlgorithmicStageMinimumDuration", compositionSource);
         StringAssert.Contains("_view.VisualRecipeFrameBudgetMilliseconds", compositionSource);
+        StringAssert.Contains("TryActivateFallback", compositionSource);
+        StringAssert.Contains("CancelGeneration(\"viewUnbound\"", compositionSource);
+        StringAssert.Contains("TryScheduleFallback", recoverySource);
+        StringAssert.Contains("CreateTerminalProgress", recoverySource);
         StringAssert.DoesNotContain("MonoBehaviour", compositionSource);
 
         string retiredRoleSuffix = "Build" + "er";
@@ -1059,8 +1162,12 @@ public sealed class RuntimeCityGenerationFocusedTests
         StringAssert.DoesNotContain(retiredRoleSuffix, presentationSource);
         StringAssert.DoesNotContain(retiredRoleSuffix, qualitySource);
         StringAssert.DoesNotContain(retiredRoleSuffix, surfaceGeometrySource);
+        StringAssert.DoesNotContain(retiredRoleSuffix, recoverySource);
         StringAssert.DoesNotContain("MonoBehaviour", qualitySource);
         StringAssert.DoesNotContain("MonoBehaviour", surfaceGeometrySource);
+        StringAssert.DoesNotContain("MonoBehaviour", recoverySource);
+        StringAssert.DoesNotContain(".Select(", recoverySource);
+        StringAssert.DoesNotContain(".Where(", recoverySource);
         Assert.IsFalse(File.Exists($"Assets/Game/Scripts/Environment/RuntimeCityRAndDMap{retiredRoleSuffix}.cs"));
         Assert.IsFalse(File.Exists($"Assets/Game/Scripts/Environment/RuntimeOperationMapVisualRecipe{retiredRoleSuffix}.cs"));
     }

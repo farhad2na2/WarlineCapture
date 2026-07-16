@@ -37,6 +37,10 @@ namespace Game.Runtime
         public int FrameBudgetYieldCount => _composition?.FrameBudgetYieldCount ?? 0;
         public RuntimeOperationMapVisualStage CurrentVisualStage =>
             _composition?.CurrentVisualStage ?? RuntimeOperationMapVisualStage.TerrainAndRoads;
+        public bool IsGenerationActive => _composition?.IsGenerationActive ?? false;
+        public bool IsUsingFallback => _composition?.IsUsingFallback ?? false;
+        public int FallbackAttemptCount => _composition?.FallbackAttemptCount ?? 0;
+        public string RecoveryReason => _composition?.RecoveryReason;
 
         protected override void OnCreate()
         {
@@ -87,6 +91,7 @@ namespace Game.Runtime
             if (!ReferenceEquals(_view, view))
                 return;
 
+            _composition.CancelForExit();
             _composition.Dispose();
             _view.ApplyPresentation(null);
             _view = null;
@@ -97,6 +102,11 @@ namespace Game.Runtime
         public void RequestGeneration()
         {
             _composition?.RequestGeneration();
+        }
+
+        public void RequestCancel()
+        {
+            _composition?.RequestCancel();
         }
 
         public void RequestRestart()

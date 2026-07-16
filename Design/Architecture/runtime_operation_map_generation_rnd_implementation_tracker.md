@@ -1,6 +1,6 @@
 # Runtime Operation Map Generation R&D Implementation Tracker
 
-**Status:** Active quality goal; R48 adds deterministic aftermath-anchor reserves, three-layer district-ground blending, and a compact frustum-validated loading presentation while retaining continuous terrain, grounded structures, occupied road terminals, and zero measured edge outliers across all three fixed seeds. Desktop generation, focused, architecture, naming-assertion, and scene-validation gates pass. Project-owner visual acceptance, cancellation/fallback policy, Android evidence, gameplay integration, and production adoption remain pending.
+**Status:** Active quality goal; R49 adds explicit cancellation, partial-root cleanup, a one-attempt deterministic fallback, fresh failure evidence, and exact source-growth registration while preserving the accepted R48 three-seed visual baseline. Lifecycle recovery, 27 focused tests, 19 SystemBase/passive-view tests, broad naming, 15 source-growth checks, solution compilation, and scene validation pass. Project-owner visual acceptance, loading-shell event integration, Android evidence, gameplay integration, and production adoption remain pending.
 
 **Created:** 2026-07-15
 
@@ -231,8 +231,8 @@ Progress is intentionally approximate. The stage and exact work counts are autho
 - [ ] Replace technical overlay with loading-shell progress events after visual acceptance.
 - [x] Prioritize ground, primary roads, skyline anchors, and near-camera districts.
 - [x] Add a measured frame-time budget in addition to the fixed item-count safety cap.
-- [ ] Add cancellation when the player leaves loading.
-- [ ] Add failure recovery and a deterministic fallback map policy.
+- [x] Add cancellation when the player leaves loading.
+- [x] Add failure recovery and a deterministic fallback map policy.
 
 **Exit:** Longer generation reads as intentional map assembly and does not freeze interaction or obscure failure.
 
@@ -310,9 +310,9 @@ These desktop measurements pass the initial first-geometry and total-generation 
 
 ### Current Algorithmic Evidence
 
-| Measurement | R48 current presentation and three-seed placement/story baseline |
+| Measurement | R49 lifecycle/architecture closeout over the R48 three-seed visual baseline |
 |---|---|
-| Runtime-generation version | `RuntimeCityRuntimeGeneration_R48_2026-07-16` |
+| Runtime-generation version | `RuntimeCityRuntimeGeneration_R49_2026-07-16` |
 | Reviewed seeds | `26071501`, `26071502`, and `26071503` |
 | Time to roads / internal completion | seed 01 `0.065s / 1.595s`; seed 02 `0.075s / 1.631s`; seed 03 `0.067s / 1.535s`; every run completed over 15 generation frames |
 | Existing planner output | one city and 16 road strokes per seed; road cells `93 / 92 / 93`; visual buildings `69 / 66 / 68` |
@@ -323,11 +323,12 @@ These desktop measurements pass the initial first-geometry and total-generation 
 | Measured district centroids | seed 01 market `-36.4,-6.0/28`, utility `43.5,48.8/4`, residential `36.7,-14.5/26`, damage `-46.4,-58.6/4`; seed 02 and 03 retain the same four directional district intents in their review logs. |
 | Aftermath dressing | seed 01: 2 measured plus 2 reserved authored anchors, 4/4 groups, 17/20 props; seed 02: 1 measured plus 3 reserved authored anchors, 4/4 groups, 20/20 props; seed 03: 2 measured plus 2 reserved authored anchors, 4/4 groups, 18/20 props. All accepted props pass renderer-bounds collision clearance and the recipe-owned exposure arc. |
 | Three-seed transform SHA-256 | seed 01 `4751620F5317D197E59CCEC9237DB9D4CC11FC6610868910620E9D449CB800E5`; seed 02 `CFB76194055AFC7A73D0216437A97B032BBA6E9493E9F67BBDF8D7ED41D8FFDD`; seed 03 `9DD74FAE949DB15CA76B0EC1AFC86F6CD948A97E5687B1D06132881CD3E416E2` |
-| Repeat determinism | R45 independently reproduced its complete seed-01 fingerprint and counts. R48 preserves deterministic ordering and passes fixed-seed structural checks; the formal 10-run R48 gate remains open. |
+| Repeat determinism | R45 independently reproduced its complete seed-01 fingerprint and counts. R49 preserves the R48 deterministic placement/presentation rules and passes fixed-seed structural checks; the formal 10-run R49 gate remains open. |
 | Loading presentation | Six serialized camera poses; player-facing stage labels; aftermath hold `2.5s`; reveal stays active through Horizon; a compact top status band fits inside the 38-degree camera frustum; formatted debug text changes only with displayed stage/count data. Evidence capture primes temporal render history and emits separate loading, clean perspective, and top-down images. |
-| Focused and scene validation | R48 prototype build and scene validation passed; 25 of 25 runtime-city focused tests passed. |
-| Broad regressions | 19 of 19 SystemBase/passive-view tests passed. The broad runtime naming assertion passed 1 of 1, followed by a reproducible Unity 6000.5.2f1 batch-shutdown crash after the pass marker; the assertion result is green but the process-exit defect remains recorded. The accepted-recipe smoke remains green from R45 with 7,099 entries, 10,279 renderers, 202 clearance suppressions, 13.058 ms worst visual batch, and 41 budget yields. |
-| Performance/GC source audit | R46 trims and reserves anchor slots once at generation completion without LINQ or temporary collections. R47 creates four additional bounded 28-segment district surfaces once per generation. R48 capture-history priming is editor-only, while runtime status formatting remains change-gated. No recurring frame-path allocation was added; Android managed-GC, native-memory, retained-memory, and instantiation-spike attribution gates remain open. |
+| Lifecycle recovery | PlayMode validation cancels the primary run during `Roads`, verifies the partial generated root is empty after deferred destruction, then forces `missingConfig`. The fresh failure reports `stage=Planning seed=26071501`; exactly one next-frame fallback realizes 7,099 work items with one foundation and completes under the R49 version marker. |
+| Focused and scene validation | R49 prototype build and scene validation passed; 27 of 27 runtime-city focused tests passed. |
+| Broad regressions | 19 of 19 SystemBase/passive-view tests, 1 of 1 broad naming assertions, and 15 of 15 production source-growth checks passed. The accepted-recipe smoke remains green from R45 with 7,099 entries, 10,279 renderers, 202 clearance suppressions, 13.058 ms worst visual batch, and 41 budget yields. |
+| Performance/GC source audit | R49 adds only field/boolean checks to the steady `SystemBase` tick. Recovery scheduling is a one-shot transition with no LINQ, closure, temporary collection, scene search, boxing-prone enumeration, or recurring string formatting; terminal logs format only on cancel/failure/fallback transitions. Exact path/scope ceilings now cover every new or grown RuntimeCity R&D helper. Android managed-GC, native-memory, retained-memory, and instantiation-spike attribution gates remain open. |
 | Visual evidence | Loading/perspective/top-down PNGs are `Logs/M01_AlgorithmicSeed_<seed>_{Loading,Perspective,TopDown}.png`. Perspective SHA-256: seed 01 `9DFD33C826BE136A3B9D156AEA0DF1B7C24A4875E3CC848076BFAFD86AD5E597`, seed 02 `352C49EC4BE902741F611F5AB08DC19EBB5250EB7C3263A6D99A8656078B6FCF`, seed 03 `385C887257EB508BFACDF28DFC206FAD3C5FAEA726300C0C1BEE133C71922B85`. Top-down SHA-256: seed 01 `49D63C72827EFBDB22335A97CB67F63D8BE86F7A895C5349465453F82F85A5C8`, seed 02 `0D11B59CB673F84512A64BE8F0861B35BA9917C3E7554D41948C702B6DC34058`, seed 03 `4F94410332880DEC481EFA08FFF03C3F9073267B95342CA1AEB4344D81991C7F`. Internal review accepts this as a stable feedback build; project-owner visual acceptance remains open. |
 
 R28 diagnosed the residential problem correctly: visual-only rural spillover moved the residential centroid from R27's `30.8,2.9/28` to `30.3,-25.5/31`, but sharing the southern half with damage reduced strict damage from 8 structures to 3. Rendered review rejected that combined composition.
@@ -367,6 +368,8 @@ R46 introduced a recipe-owned minimum authored-anchor reserve. Dense seeds now d
 R47 added a wider low-contrast outer transition beneath each district core and existing transition band. The one-time composition adds four bounded 28-segment surfaces, softening the district-to-foundation boundary while preserving the runtime root, deterministic ordering, and `SystemBase` ownership.
 
 R48 compacted and frustum-validated the loading status presentation and split automated evidence into loading, clean perspective, and top-down captures. Editor-only capture now primes temporal render history before readback. All three fixed seeds complete in under 1.7 seconds with zero measured edge outliers, prototype validation passes, and the exact-version focused suite passes 25 of 25.
+
+R49 adds a passive cancel intent, `SystemBase` exit cancellation, terminal progress preservation, clean partial-root disposal, and a one-frame-delayed deterministic fallback that can run only once. The lifecycle validator proves cancel-at-Roads cleanup and a `missingConfig` recovery to the accepted 7,099-item recipe; fresh attempts no longer inherit the previous terminal stage. Focused validation passes 27/27, SystemBase/passive-view passes 19/19, broad naming passes 1/1, source growth passes 15/15, and the solution builds with zero errors.
 
 R40-R45 leak/source review moved immediate capture allocations out of the teardown window and found no runtime-generator stack in the remaining Unity editor shutdown diagnostics. These editor findings do not replace Android frame, managed-GC, native-memory, or retained-memory evidence.
 
@@ -412,6 +415,7 @@ Planned or active paths:
 - `Assets/Game/Scripts/Environment/RuntimeCityRAndDMapView.cs`
 - `Assets/Game/Scripts/Environment/RuntimeCityRAndDMapSystem.cs`
 - `Assets/Game/Scripts/Environment/RuntimeCityRAndDMapCompositionSystemHelper.cs`
+- `Assets/Game/Scripts/Environment/RuntimeOperationMapGenerationRecoverySystemHelper.cs`
 - `Assets/Game/Scripts/Environment/RuntimeCityRoadVisualPrototypeSystemHelper.cs`
 - `Assets/Game/Scripts/Environment/RuntimeCityAlgorithmicDistrictPresentationSystemHelper.cs`
 - `Assets/Game/Scripts/Environment/RuntimeOperationMapVisualRecipePresentationSystemHelper.cs`
@@ -589,5 +593,5 @@ The implementation now proceeds in this order:
 3. [x] Make aftermath readable through a recipe-owned algorithmic aftermath camera/reveal pose and bounded district fallback anchors. R45 evidence keeps the damage apron visible through its `2.5s` hold.
 4. [x] Regenerate loading, clean perspective, and top-down evidence for fixed seeds `26071501`, `26071502`, and `26071503`. R48 passes structural checks, retains occupied terminal branches, reports zero measured edge outliers, and has been visually inspected.
 5. [x] Add algorithmic reveal choreography and player-facing loading progress while preserving `RuntimeCityRAndDMapSystem` as the only frame owner. R48 keeps runtime overlay formatting change-gated and validates the compact status band against the capture frustum.
-6. [x] Run the broad SystemBase/passive-view and runtime naming suites plus the accepted-recipe smoke to prove no regression outside algorithmic mode. R48 passes 19/19 architecture assertions and 1/1 naming assertion; Unity's post-pass batch-shutdown crash is tracked separately from the green assertion result.
-7. [ ] Obtain project-owner visual acceptance, then add cancellation/fallback policy and profile Android generation, memory, frame spikes, GC, thermals, and package-size savings before proposing production integration.
+6. [x] Run the broad SystemBase/passive-view, runtime naming, source-growth, and accepted-recipe gates to prove no regression outside algorithmic mode. R49 passes 19/19 architecture assertions, 1/1 naming assertion, and 15/15 source-growth checks; the accepted-recipe smoke remains green from R45.
+7. [ ] Obtain project-owner visual acceptance, replace the technical overlay with loading-shell progress events, and profile Android generation, memory, frame spikes, GC, thermals, and package-size savings before proposing production integration.

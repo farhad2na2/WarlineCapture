@@ -2912,6 +2912,206 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
       "maxLines": 578,
       "maxBytes": 26940,
       "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityAlgorithmicAftermathPresentationSystemHelper.cs",
+      "trackerTaskId": "APH-713",
+      "decisionId": "D-173",
+      "maxLines": 425,
+      "maxBytes": 16141,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityAlgorithmicDistrictPresentationSystemHelper.cs",
+      "trackerTaskId": "APH-713",
+      "decisionId": "D-174",
+      "maxLines": 142,
+      "maxBytes": 5393,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityGenerationProgressSystemHelper.cs",
+      "trackerTaskId": "APH-713",
+      "decisionId": "D-175",
+      "maxLines": 193,
+      "maxBytes": 6447,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityRAndDMapCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-713",
+      "decisionId": "D-176",
+      "maxLines": 938,
+      "maxBytes": 39593,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityRAndDMapCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-713",
+      "decisionId": "D-177",
+      "maxLines": 938,
+      "maxBytes": 39593,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityRoadVisualPrototypeSystemHelper.cs",
+      "trackerTaskId": "APH-713",
+      "decisionId": "D-178",
+      "maxLines": 280,
+      "maxBytes": 10568,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeOperationMapGenerationRecoverySystemHelper.cs",
+      "trackerTaskId": "APH-713",
+      "decisionId": "D-179",
+      "maxLines": 79,
+      "maxBytes": 2716,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeOperationMapSurfaceGeometrySystemHelper.cs",
+      "trackerTaskId": "APH-713",
+      "decisionId": "D-180",
+      "maxLines": 79,
+      "maxBytes": 2658,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeOperationMapVisualQualitySystemHelper.cs",
+      "trackerTaskId": "APH-713",
+      "decisionId": "D-181",
+      "maxLines": 185,
+      "maxBytes": 7705,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeOperationMapVisualRecipePresentationSystemHelper.cs",
+      "trackerTaskId": "APH-713",
+      "decisionId": "D-182",
+      "maxLines": 385,
+      "maxBytes": 17442,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-713",
+      "decisionId": "D-183",
+      "maxLines": 858,
+      "maxBytes": 47077,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-713",
+      "decisionId": "D-184",
+      "maxLines": 858,
+      "maxBytes": 47077,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityBuildingPlacementPrefabSystemHelper.cs",
+      "trackerTaskId": "APH-713",
+      "decisionId": "D-185",
+      "maxLines": 256,
+      "maxBytes": 10862,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityBuildingPlotUtilitySystemHelper.cs",
+      "trackerTaskId": "APH-713",
+      "decisionId": "D-186",
+      "maxLines": 282,
+      "maxBytes": 10679,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper.cs",
+      "trackerTaskId": "APH-713",
+      "decisionId": "D-187",
+      "maxLines": 170,
+      "maxBytes": 8947,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityBulkPlotPlanUtilitySystemHelper.cs",
+      "trackerTaskId": "APH-713",
+      "decisionId": "D-188",
+      "maxLines": 227,
+      "maxBytes": 9324,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityDecorationBuildingSpawnPrefabSystemHelper.cs",
+      "trackerTaskId": "APH-713",
+      "decisionId": "D-189",
+      "maxLines": 133,
+      "maxBytes": 5234,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityFreeScatterDecorationPrefabSystemHelper.cs",
+      "trackerTaskId": "APH-713",
+      "decisionId": "D-190",
+      "maxLines": 186,
+      "maxBytes": 6929,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityGenerationCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-713",
+      "decisionId": "D-191",
+      "maxLines": 412,
+      "maxBytes": 21933,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityPrefabSelectionPrefabSystemHelper.cs",
+      "trackerTaskId": "APH-713",
+      "decisionId": "D-192",
+      "maxLines": 238,
+      "maxBytes": 8432,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityReadModelCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-713",
+      "decisionId": "D-193",
+      "maxLines": 22,
+      "maxBytes": 797,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityRoadLayoutUtilitySystemHelper.cs",
+      "trackerTaskId": "APH-713",
+      "decisionId": "D-194",
+      "maxLines": 390,
+      "maxBytes": 17084,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityRuralBuildingSpawnPrefabSystemHelper.cs",
+      "trackerTaskId": "APH-713",
+      "decisionId": "D-195",
+      "maxLines": 158,
+      "maxBytes": 6229,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCitySpawnBridgePrefabSystemHelper.cs",
+      "trackerTaskId": "APH-713",
+      "decisionId": "D-196",
+      "maxLines": 261,
+      "maxBytes": 9456,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityVisualPresentationSystemHelper.cs",
+      "trackerTaskId": "APH-713",
+      "decisionId": "D-197",
+      "maxLines": 166,
+      "maxBytes": 6374,
+      "scope": "system-helper-growth"
     }
   ]
 }

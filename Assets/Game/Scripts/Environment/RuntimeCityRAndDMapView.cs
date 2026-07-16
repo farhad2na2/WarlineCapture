@@ -12,6 +12,8 @@ namespace Game.Runtime
         [Header("Generation")]
         [SerializeField] private RuntimeCitySpawnerSystemConfig config;
         [SerializeField] private RuntimeOperationMapVisualRecipe visualRecipe;
+        [SerializeField] private RuntimeOperationMapVisualRecipe deterministicFallbackRecipe;
+        [SerializeField] private bool deterministicFallbackEnabled = true;
         [SerializeField] private bool generateOnStart = true;
         [SerializeField] private bool showDebugOverlay = true;
         [SerializeField, Min(1)] private int visualRecipeEntriesPerFrame = 8;
@@ -52,6 +54,9 @@ namespace Game.Runtime
 
         public RuntimeCitySpawnerSystemConfig Config => config;
         public RuntimeOperationMapVisualRecipe VisualRecipe => visualRecipe;
+        public RuntimeOperationMapVisualRecipe DeterministicFallbackRecipe =>
+            deterministicFallbackRecipe;
+        public bool DeterministicFallbackEnabled => deterministicFallbackEnabled;
         public bool GenerateOnStart => generateOnStart;
         public bool ShowDebugOverlay => showDebugOverlay;
         public int VisualRecipeEntriesPerFrame => Mathf.Max(1, visualRecipeEntriesPerFrame);
@@ -86,6 +91,11 @@ namespace Game.Runtime
         public void RequestGeneration()
         {
             _runtimeSystem?.RequestGeneration();
+        }
+
+        public void RequestCancel()
+        {
+            _runtimeSystem?.RequestCancel();
         }
 
         public void RequestRestart()

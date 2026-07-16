@@ -88,6 +88,20 @@ namespace Game.Editor
         private static uint _algorithmicReviewSeed;
         private static int _algorithmicReviewExitCode;
         private static RuntimeCitySpawnerSystemConfig _algorithmicReviewConfig;
+        private static double _lifecycleRecoveryDeadline;
+        private static int _lifecycleRecoveryExitCode;
+        private static int _lifecycleRecoveryCancelFrame;
+        private static bool _lifecycleRecoveryCancellationObserved;
+        private static RuntimeCitySpawnerSystemConfig _lifecycleRecoveryConfig;
+        private static LifecycleRecoveryValidationPhase _lifecycleRecoveryPhase;
+
+        private enum LifecycleRecoveryValidationPhase
+        {
+            WaitingForGeneration,
+            WaitingForCancellation,
+            WaitingForFallbackStart,
+            WaitingForFallbackCompletion
+        }
 
         [MenuItem("Game/Map Prototypes/M01/Build Runtime Generation Prototype")]
         public static void BuildPrototype()
@@ -206,6 +220,49 @@ namespace Game.Editor
             }
         }
 
+        public static void RunLifecycleRecoveryValidationAndExit()
+        {
+            try
+            {
+                ValidatePrototype();
+                EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+                RuntimeCityRAndDMapView view = UnityEngine.Object.FindAnyObjectByType<RuntimeCityRAndDMapView>();
+                if (view == null)
+                    throw new InvalidOperationException("Runtime M01 prototype has no map view for lifecycle recovery validation.");
+
+                RuntimeCitySpawnerSystemConfig sourceConfig =
+                    AssetDatabase.LoadAssetAtPath<RuntimeCitySpawnerSystemConfig>(ConfigPath);
+                if (sourceConfig == null)
+                    throw new InvalidOperationException($"Missing runtime prototype config: {ConfigPath}");
+
+                _lifecycleRecoveryConfig = ScriptableObject.CreateInstance<RuntimeCitySpawnerSystemConfig>();
+                _lifecycleRecoveryConfig.name = "M01_LifecycleRecoveryValidation";
+                EditorUtility.CopySerialized(sourceConfig, _lifecycleRecoveryConfig);
+
+                var viewSerialized = new SerializedObject(view);
+                viewSerialized.FindProperty("config").objectReferenceValue = _lifecycleRecoveryConfig;
+                viewSerialized.FindProperty("visualRecipe").objectReferenceValue = null;
+                viewSerialized.FindProperty("showDebugOverlay").boolValue = true;
+                viewSerialized.ApplyModifiedPropertiesWithoutUndo();
+
+                _lifecycleRecoveryDeadline = EditorApplication.timeSinceStartup + 120d;
+                _lifecycleRecoveryExitCode = 1;
+                _lifecycleRecoveryCancelFrame = -1;
+                _lifecycleRecoveryCancellationObserved = false;
+                _lifecycleRecoveryPhase = LifecycleRecoveryValidationPhase.WaitingForGeneration;
+                EditorApplication.update += MonitorLifecycleRecoveryValidation;
+                EditorApplication.playModeStateChanged += HandleLifecycleRecoveryPlayModeStateChanged;
+                EditorApplication.EnterPlaymode();
+            }
+            catch (Exception exception)
+            {
+                Debug.LogException(exception);
+                Debug.LogError("[M01RuntimeMapLifecycleRecoveryValidation] result=Failed reason=startupException");
+                DestroyLifecycleRecoveryConfig();
+                EditorApplication.Exit(1);
+            }
+        }
+
         public static void CaptureCurrentEditorReferenceAndExit()
         {
             try
@@ -275,6 +332,9 @@ namespace Game.Editor
             Assert(views[0].PresentationCamera != null, "Runtime map view must reference the staged presentation camera.");
             Assert(views[0].VisualRecipeFrameBudgetMilliseconds > 0f,
                 "Runtime map view must declare a positive visual generation frame budget.");
+            Assert(views[0].DeterministicFallbackEnabled, "Runtime map view must enable deterministic failure fallback.");
+            Assert(ReferenceEquals(views[0].DeterministicFallbackRecipe, visualRecipe),
+                "Runtime map view must retain the accepted M01 recipe as its deterministic fallback.");
             Assert(views[0].AlgorithmicReveal.GetMinimumDuration(RuntimeOperationMapVisualStage.Aftermath) >= 2f,
                 "Algorithmic aftermath reveal must remain readable for at least two seconds.");
             Assert(views[0].AlgorithmicAftermath.FallbackAnchorSpacingInRoadCells > 0f,
@@ -909,6 +969,168 @@ namespace Game.Editor
             EditorApplication.Exit(_algorithmicReviewExitCode);
         }
 
+        private static void MonitorLifecycleRecoveryValidation()
+        {
+            if (!EditorApplication.isPlaying)
+                return;
+
+            try
+            {
+                World world = World.DefaultGameObjectInjectionWorld;
+                RuntimeCityRAndDMapSystem runtimeSystem = world != null && world.IsCreated
+                    ? world.GetExistingSystemManaged<RuntimeCityRAndDMapSystem>()
+                    : null;
+                RuntimeCityRAndDMapView view = UnityEngine.Object.FindAnyObjectByType<RuntimeCityRAndDMapView>();
+                if (runtimeSystem == null || view == null || view.GeneratedRoot == null)
+                {
+                    if (EditorApplication.timeSinceStartup >= _lifecycleRecoveryDeadline)
+                        FailLifecycleRecoveryValidation("runtimeUnavailable");
+                    return;
+                }
+
+                RuntimeCityGenerationProgress progress = runtimeSystem.Progress;
+                switch (_lifecycleRecoveryPhase)
+                {
+                    case LifecycleRecoveryValidationPhase.WaitingForGeneration:
+                        if (!runtimeSystem.IsGenerationActive ||
+                            progress.Stage == RuntimeCityGenerationStage.Idle ||
+                            progress.IsTerminal)
+                        {
+                            break;
+                        }
+
+                        view.RequestCancel();
+                        _lifecycleRecoveryCancelFrame = Time.frameCount;
+                        _lifecycleRecoveryPhase = LifecycleRecoveryValidationPhase.WaitingForCancellation;
+                        Debug.Log(
+                            $"[M01RuntimeMapLifecycleRecoveryValidation] action=CancelRequested " +
+                            $"stage={progress.Stage} seed={progress.Seed} frame={Time.frameCount}");
+                        break;
+
+                    case LifecycleRecoveryValidationPhase.WaitingForCancellation:
+                        if (progress.Stage != RuntimeCityGenerationStage.Cancelled)
+                            break;
+                        if (runtimeSystem.IsGenerationActive)
+                        {
+                            FailLifecycleRecoveryValidation("cancelledButStillActive");
+                            return;
+                        }
+
+                        _lifecycleRecoveryCancellationObserved = true;
+                        if (Time.frameCount < _lifecycleRecoveryCancelFrame + 2)
+                            break;
+                        if (view.GeneratedRoot.childCount != 0)
+                        {
+                            FailLifecycleRecoveryValidation(
+                                $"cancelCleanupIncomplete:{view.GeneratedRoot.childCount}");
+                            return;
+                        }
+
+                        var viewSerialized = new SerializedObject(view);
+                        viewSerialized.FindProperty("config").objectReferenceValue = null;
+                        viewSerialized.ApplyModifiedPropertiesWithoutUndo();
+                        view.RequestGeneration();
+                        _lifecycleRecoveryPhase = LifecycleRecoveryValidationPhase.WaitingForFallbackStart;
+                        break;
+
+                    case LifecycleRecoveryValidationPhase.WaitingForFallbackStart:
+                        if (runtimeSystem.IsUsingFallback)
+                        {
+                            if (runtimeSystem.FallbackAttemptCount != 1 ||
+                                !string.Equals(runtimeSystem.RecoveryReason, "missingConfig", StringComparison.Ordinal))
+                            {
+                                FailLifecycleRecoveryValidation(
+                                    $"invalidFallbackStart:attempts={runtimeSystem.FallbackAttemptCount}:" +
+                                    $"reason={runtimeSystem.RecoveryReason}");
+                                return;
+                            }
+
+                            _lifecycleRecoveryPhase = LifecycleRecoveryValidationPhase.WaitingForFallbackCompletion;
+                            break;
+                        }
+
+                        if (progress.Stage == RuntimeCityGenerationStage.Failed && !runtimeSystem.IsGenerationActive)
+                        {
+                            FailLifecycleRecoveryValidation("failureDidNotActivateFallback");
+                            return;
+                        }
+                        break;
+
+                    case LifecycleRecoveryValidationPhase.WaitingForFallbackCompletion:
+                        if (progress.Stage == RuntimeCityGenerationStage.Completed)
+                        {
+                            if (!_lifecycleRecoveryCancellationObserved ||
+                                !runtimeSystem.IsUsingFallback ||
+                                runtimeSystem.FallbackAttemptCount != 1 ||
+                                !string.Equals(runtimeSystem.RecoveryReason, "missingConfig", StringComparison.Ordinal) ||
+                                runtimeSystem.VisualRecipeEntryCount < 150 ||
+                                runtimeSystem.FoundationVisualCount != 1 ||
+                                view.GeneratedRoot.childCount == 0)
+                            {
+                                FailLifecycleRecoveryValidation(
+                                    $"invalidFallbackCompletion:cancelled={_lifecycleRecoveryCancellationObserved}:" +
+                                    $"fallback={runtimeSystem.IsUsingFallback}:attempts={runtimeSystem.FallbackAttemptCount}:" +
+                                    $"reason={runtimeSystem.RecoveryReason}:entries={runtimeSystem.VisualRecipeEntryCount}:" +
+                                    $"foundations={runtimeSystem.FoundationVisualCount}:" +
+                                    $"children={view.GeneratedRoot.childCount}");
+                                return;
+                            }
+
+                            _lifecycleRecoveryExitCode = 0;
+                            EditorApplication.update -= MonitorLifecycleRecoveryValidation;
+                            Debug.Log(
+                                $"[M01RuntimeMapLifecycleRecoveryValidation] result=Passed " +
+                                $"version={RuntimeCityGenerationProgress.VersionTag} cancelled=1 " +
+                                $"fallback=1 attempts={runtimeSystem.FallbackAttemptCount} " +
+                                $"reason={runtimeSystem.RecoveryReason} " +
+                                $"recipeEntries={runtimeSystem.VisualRecipeEntryCount} " +
+                                $"foundations={runtimeSystem.FoundationVisualCount}");
+                            EditorApplication.ExitPlaymode();
+                            return;
+                        }
+
+                        if ((progress.Stage == RuntimeCityGenerationStage.Failed ||
+                             progress.Stage == RuntimeCityGenerationStage.Cancelled) &&
+                            !runtimeSystem.IsGenerationActive)
+                        {
+                            FailLifecycleRecoveryValidation($"fallbackTerminated:{progress.Stage}");
+                            return;
+                        }
+                        break;
+                }
+
+                if (EditorApplication.timeSinceStartup >= _lifecycleRecoveryDeadline)
+                    FailLifecycleRecoveryValidation($"timeout:{_lifecycleRecoveryPhase}");
+            }
+            catch (Exception exception)
+            {
+                Debug.LogException(exception);
+                FailLifecycleRecoveryValidation("monitorException");
+            }
+        }
+
+        private static void FailLifecycleRecoveryValidation(string reason)
+        {
+            _lifecycleRecoveryExitCode = 1;
+            EditorApplication.update -= MonitorLifecycleRecoveryValidation;
+            Debug.LogError(
+                $"[M01RuntimeMapLifecycleRecoveryValidation] result=Failed reason={reason} " +
+                $"phase={_lifecycleRecoveryPhase}");
+            if (EditorApplication.isPlaying)
+                EditorApplication.ExitPlaymode();
+        }
+
+        private static void HandleLifecycleRecoveryPlayModeStateChanged(PlayModeStateChange state)
+        {
+            if (state != PlayModeStateChange.EnteredEditMode)
+                return;
+
+            EditorApplication.update -= MonitorLifecycleRecoveryValidation;
+            EditorApplication.playModeStateChanged -= HandleLifecycleRecoveryPlayModeStateChanged;
+            DestroyLifecycleRecoveryConfig();
+            EditorApplication.Exit(_lifecycleRecoveryExitCode);
+        }
+
         private static void CaptureMarketRevealWhenReady(RuntimeCityRAndDMapSystem runtimeSystem)
         {
             if (_playModeMarketCaptureComplete ||
@@ -1504,6 +1726,15 @@ namespace Game.Editor
             _algorithmicReviewConfig = null;
         }
 
+        private static void DestroyLifecycleRecoveryConfig()
+        {
+            if (_lifecycleRecoveryConfig == null)
+                return;
+
+            UnityEngine.Object.DestroyImmediate(_lifecycleRecoveryConfig);
+            _lifecycleRecoveryConfig = null;
+        }
+
         private static void CaptureCamera(Camera camera, string outputPath)
         {
             const int width = 1600;
@@ -1562,6 +1793,8 @@ namespace Game.Editor
             var serialized = new SerializedObject(view);
             serialized.FindProperty("config").objectReferenceValue = config;
             serialized.FindProperty("visualRecipe").objectReferenceValue = visualRecipe;
+            serialized.FindProperty("deterministicFallbackRecipe").objectReferenceValue = visualRecipe;
+            serialized.FindProperty("deterministicFallbackEnabled").boolValue = true;
             serialized.FindProperty("generateOnStart").boolValue = true;
             serialized.FindProperty("showDebugOverlay").boolValue = true;
             serialized.FindProperty("visualRecipeEntriesPerFrame").intValue = 8;

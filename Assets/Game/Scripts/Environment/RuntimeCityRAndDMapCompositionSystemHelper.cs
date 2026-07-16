@@ -19,13 +19,16 @@ namespace Game.Runtime
         private RuntimeCityAlgorithmicDistrictPresentationSystemHelper _algorithmicDistrictPresentation;
         private RuntimeCityAlgorithmicAftermathPresentationSystemHelper _algorithmicAftermathPresentation;
         private RuntimeOperationMapVisualRecipePresentationSystemHelper _visualRecipePresentation;
+        private readonly RuntimeOperationMapGenerationRecoverySystemHelper _recovery = new();
         private IEnumerator _visualRoutine;
         private bool _visualRoutineRunning;
         private bool _generationActive;
         private bool _generateRequested;
         private bool _restartRequested;
         private bool _clearRequested;
+        private bool _cancelRequested;
         private int _restartAfterFrame = -1;
+        private RuntimeOperationMapVisualRecipe _activeVisualRecipe;
         private RuntimeCityGenerationProgress _lastProgress = RuntimeCityGenerationProgress.Idle;
         private RuntimeCityGenerationStage _lastLoggedStage = RuntimeCityGenerationStage.Idle;
         private float _generationStartedAt;
@@ -67,16 +70,27 @@ namespace Game.Runtime
             _visualRecipePresentation != null
                 ? _visualRecipePresentation.CurrentVisualStage
                 : _algorithmicVisualStage;
+        public bool IsGenerationActive =>
+            _generationActive ||
+            _visualRoutineRunning ||
+            (_runtimeCity?.IsGenerating ?? false) ||
+            _recovery.IsFallbackScheduled;
+        public bool IsUsingFallback => _recovery.IsFallbackActive;
+        public int FallbackAttemptCount => _recovery.FallbackAttemptCount;
+        public string RecoveryReason => _recovery.FailureReason;
         public bool IsPresentationComplete =>
             _lastProgress.Stage == RuntimeCityGenerationStage.Completed &&
-            (_view == null || _view.VisualRecipe != null || !_algorithmicCompletionRevealActive);
+            (_view == null || _activeVisualRecipe != null || !_algorithmicCompletionRevealActive);
 
         public void Configure(RuntimeCityRAndDMapView view, Material roadMaterial)
         {
+            _recovery.Reset();
             _view = view;
             _roadMaterial = roadMaterial;
             _generatedRoot = view != null ? view.GeneratedRoot : null;
             _presentationCamera = view != null ? view.PresentationCamera : null;
+            _activeVisualRecipe = view != null ? view.VisualRecipe : null;
+            _cancelRequested = false;
             _lastProgress = RuntimeCityGenerationProgress.Idle;
             _statusMessage = "Ready";
             _algorithmicVisualStage = RuntimeOperationMapVisualStage.TerrainAndRoads;
@@ -88,7 +102,7 @@ namespace Game.Runtime
         {
             if (_view == null)
                 return;
-            if (_view.VisualRecipe == null)
+            if (_activeVisualRecipe == null)
                 AdvanceAlgorithmicPresentation(unscaledDeltaTime);
             if (_presentationCamera == null)
                 return;
@@ -126,19 +140,30 @@ namespace Game.Runtime
 
         public void RequestGeneration()
         {
-            if (!_generationActive)
+            if (!IsGenerationActive)
                 _generateRequested = true;
+        }
+
+        public void RequestCancel()
+        {
+            _cancelRequested = true;
+            _clearRequested = false;
+            _restartRequested = false;
+            _generateRequested = false;
+            _restartAfterFrame = -1;
         }
 
         public void RequestRestart()
         {
             _restartRequested = true;
+            _cancelRequested = false;
             _clearRequested = false;
         }
 
         public void RequestClear()
         {
             _clearRequested = true;
+            _cancelRequested = false;
             _restartRequested = false;
             _generateRequested = false;
             _restartAfterFrame = -1;
@@ -148,6 +173,13 @@ namespace Game.Runtime
         {
             if (_view == null)
                 return;
+
+            if (_cancelRequested)
+            {
+                _cancelRequested = false;
+                CancelGeneration("requested", clearGeneratedMap: true);
+                return;
+            }
 
             if (_clearRequested)
             {
@@ -160,8 +192,13 @@ namespace Game.Runtime
             {
                 _restartRequested = false;
                 _generateRequested = false;
-                DisposeGeneration();
+                if (IsGenerationActive)
+                    CancelGeneration("restartRequested", clearGeneratedMap: false);
+                else
+                    DisposeGeneration();
                 ClearGeneratedRootChildren();
+                _recovery.Reset();
+                _activeVisualRecipe = _view.VisualRecipe;
                 _lastProgress = RuntimeCityGenerationProgress.Idle;
                 _statusMessage = "Restarting";
                 _restartAfterFrame = frameCount + 1;
@@ -174,29 +211,53 @@ namespace Game.Runtime
                 _generateRequested = true;
             }
 
-            if (_generateRequested && !_generationActive)
+            if (_recovery.TryActivateFallback(frameCount))
+            {
+                BeginFallbackGeneration(frameCount);
+                return;
+            }
+
+            if (_generateRequested && !IsGenerationActive)
             {
                 _generateRequested = false;
-                BeginGeneration(frameCount);
+                try
+                {
+                    BeginGeneration(frameCount);
+                }
+                catch (Exception exception)
+                {
+                    HandleFailure("startupException", exception, frameCount);
+                }
             }
 
             if (_generationActive)
                 StepGeneration(frameCount);
         }
 
+        public void CancelForExit()
+        {
+            if (IsGenerationActive)
+                CancelGeneration("viewUnbound", clearGeneratedMap: false);
+        }
+
         public void Dispose()
         {
+            if (IsGenerationActive)
+                CancelGeneration("disposed", clearGeneratedMap: false);
             DisposeGeneration();
             ClearGeneratedRootChildren();
+            _recovery.Reset();
             _view = null;
             _roadMaterial = null;
             _generatedRoot = null;
             _presentationCamera = null;
+            _activeVisualRecipe = null;
             _lastProgress = RuntimeCityGenerationProgress.Idle;
             _statusMessage = "Disposed";
             _generateRequested = false;
             _restartRequested = false;
             _clearRequested = false;
+            _cancelRequested = false;
             _restartAfterFrame = -1;
             _cameraStageAssigned = false;
             _cameraTransitionActive = false;
@@ -207,12 +268,33 @@ namespace Game.Runtime
 
         private void BeginGeneration(int frameCount)
         {
-            if (!TryConfigureGeneration(frameCount))
+            _recovery.Reset();
+            _activeVisualRecipe = _view.VisualRecipe;
+            RuntimeCitySpawnerSystemConfig config = _view.Config;
+            RuntimeOperationMapVisualRecipe seedRecipe =
+                _activeVisualRecipe != null
+                    ? _activeVisualRecipe
+                    : _view.DeterministicFallbackRecipe;
+            uint attemptSeed = config != null
+                ? config.RandomSeed
+                : seedRecipe != null ? seedRecipe.Seed : 0u;
+            _lastProgress = new RuntimeCityGenerationProgress(
+                RuntimeCityGenerationStage.Planning,
+                attemptSeed,
+                config != null ? Mathf.Max(0, config.CityCount) : 0,
+                generatedCityCount: 0,
+                completedWorkItems: 0,
+                totalWorkItems: 1,
+                progress01: 0f);
+            if (!TryConfigureGeneration(frameCount, out string failureReason))
+            {
+                HandleFailure(failureReason, exception: null, frameCount);
                 return;
+            }
 
             ResetCameraPresentation();
 
-            RuntimeOperationMapVisualRecipe visualRecipe = _view.VisualRecipe;
+            RuntimeOperationMapVisualRecipe visualRecipe = _activeVisualRecipe;
             if (visualRecipe != null)
             {
                 _statusMessage = "Planning and building accepted visual recipe";
@@ -255,22 +337,7 @@ namespace Game.Runtime
             }
             catch (Exception exception)
             {
-                RuntimeCityGenerationProgress progress = GetCombinedProgress();
-                _lastProgress = new RuntimeCityGenerationProgress(
-                    RuntimeCityGenerationStage.Failed,
-                    progress.Seed,
-                    progress.RequestedCityCount,
-                    progress.GeneratedCityCount,
-                    progress.CompletedWorkItems,
-                    progress.TotalWorkItems,
-                    progress.Progress01);
-                _statusMessage = $"Generation failed: {exception.GetType().Name}";
-                _generationActive = false;
-                _visualRoutineRunning = false;
-                Debug.LogException(exception, _view);
-                Debug.LogError(
-                    $"[RuntimeCityRnD] {RuntimeCityGenerationProgress.VersionTag} result=Failed reason=exception type={exception.GetType().Name}",
-                    _view);
+                HandleFailure($"exception:{exception.GetType().Name}", exception, frameCount);
             }
         }
 
@@ -281,14 +348,24 @@ namespace Game.Runtime
                 : RuntimeCityGenerationProgress.Idle;
             if (_runtimeCity != null && cityProgress.Stage != RuntimeCityGenerationStage.Completed)
             {
-                _lastProgress = cityProgress;
-                _statusMessage = $"Generation stopped: {cityProgress.Stage}";
-                _generationActive = false;
+                HandleFailure($"runtimeCityStopped:{cityProgress.Stage}", exception: null, Time.frameCount);
                 return;
             }
 
             CreateAlgorithmicAftermathDressing();
             _lastProgress = GetCombinedProgress();
+            if (_recovery.IsFallbackActive)
+            {
+                _statusMessage = "Deterministic fallback ready";
+                _generationActive = false;
+                Debug.Log(
+                    $"[RuntimeCityRnD] {RuntimeCityGenerationProgress.VersionTag} result=FallbackCompleted " +
+                    $"reason={_recovery.FailureReason} seed={_lastProgress.Seed} " +
+                    $"recipe={_activeVisualRecipe?.RecipeVersion}",
+                    _view);
+                return;
+            }
+
             if (_visualRecipePresentation == null)
             {
                 _algorithmicCompletionRevealActive = true;
@@ -301,6 +378,111 @@ namespace Game.Runtime
                     : $"Generation stopped: {_lastProgress.Stage}";
             }
             _generationActive = false;
+        }
+
+        private void BeginFallbackGeneration(int frameCount)
+        {
+            RuntimeOperationMapVisualRecipe fallbackRecipe = _recovery.FallbackRecipe;
+            if (fallbackRecipe == null)
+            {
+                HandleFailure("missingFallbackRecipe", exception: null, frameCount);
+                return;
+            }
+
+            try
+            {
+                DisposeGeneration(preserveProgress: true);
+                ClearGeneratedRootChildren();
+                EnsureGeneratedRoot();
+                _activeVisualRecipe = fallbackRecipe;
+                _generationStartedAt = Time.realtimeSinceStartup;
+                _generationStartedFrame = frameCount;
+                _lastLoggedStage = RuntimeCityGenerationStage.Idle;
+                ResetCameraPresentation();
+                _statusMessage = "Loading deterministic fallback map";
+                _visualRecipePresentation = new RuntimeOperationMapVisualRecipePresentationSystemHelper();
+                _visualRoutine = _visualRecipePresentation.Build(
+                    fallbackRecipe,
+                    _generatedRoot,
+                    _view.VisualRecipeEntriesPerFrame,
+                    _view.VisualRecipeFrameBudgetMilliseconds);
+                _visualRoutineRunning = _visualRoutine != null;
+                _generationActive = _visualRoutineRunning;
+                if (!_generationActive)
+                {
+                    HandleFailure("fallbackRoutineMissing", exception: null, frameCount);
+                    return;
+                }
+
+                Debug.Log(
+                    $"[RuntimeCityRnD] {RuntimeCityGenerationProgress.VersionTag} action=FallbackStarted " +
+                    $"reason={_recovery.FailureReason} seed={fallbackRecipe.Seed} " +
+                    $"recipe={fallbackRecipe.RecipeVersion}",
+                    _view);
+            }
+            catch (Exception exception)
+            {
+                HandleFailure($"fallbackStartupException:{exception.GetType().Name}", exception, frameCount);
+            }
+        }
+
+        private void HandleFailure(string reason, Exception exception, int frameCount)
+        {
+            string retainedReason = string.IsNullOrEmpty(reason) ? "unspecified" : reason;
+            RuntimeCityGenerationProgress progress = GetCombinedProgress();
+            _lastProgress = RuntimeOperationMapGenerationRecoverySystemHelper.CreateTerminalProgress(
+                progress,
+                RuntimeCityGenerationStage.Failed);
+            bool fallbackScheduled = _recovery.TryScheduleFallback(
+                frameCount,
+                _view != null && _view.DeterministicFallbackEnabled,
+                _activeVisualRecipe,
+                _view != null ? _view.DeterministicFallbackRecipe : null,
+                retainedReason);
+            _statusMessage = fallbackScheduled
+                ? "Generation failed; preparing deterministic fallback"
+                : $"Generation failed: {retainedReason}";
+            _generationActive = false;
+            _visualRoutineRunning = false;
+            _algorithmicCompletionRevealActive = false;
+
+            if (exception != null)
+                Debug.LogException(exception, _view);
+
+            DisposeGeneration(preserveProgress: true);
+            ClearGeneratedRootChildren();
+            Debug.LogError(
+                $"[RuntimeCityRnD] {RuntimeCityGenerationProgress.VersionTag} result=Failed " +
+                $"reason={retainedReason} stage={progress.Stage} seed={progress.Seed} " +
+                $"fallbackScheduled={(fallbackScheduled ? 1 : 0)}",
+                _view);
+        }
+
+        private void CancelGeneration(string reason, bool clearGeneratedMap)
+        {
+            if (!IsGenerationActive)
+                return;
+
+            RuntimeCityGenerationProgress progress = GetCombinedProgress();
+            RuntimeCityGenerationStage interruptedStage = progress.Stage;
+            _lastProgress = RuntimeOperationMapGenerationRecoverySystemHelper.CreateTerminalProgress(
+                progress,
+                RuntimeCityGenerationStage.Cancelled);
+            _statusMessage = $"Generation cancelled: {reason}";
+            _generationActive = false;
+            _visualRoutineRunning = false;
+            _algorithmicCompletionRevealActive = false;
+            _recovery.Reset();
+            DisposeGeneration(preserveProgress: true);
+            if (clearGeneratedMap)
+                ClearGeneratedRootChildren();
+            _activeVisualRecipe = _view != null ? _view.VisualRecipe : null;
+
+            Debug.LogWarning(
+                $"[RuntimeCityRnD] {RuntimeCityGenerationProgress.VersionTag} result=Cancelled " +
+                $"reason={reason} stage={interruptedStage} seed={progress.Seed} " +
+                $"work={progress.CompletedWorkItems}/{progress.TotalWorkItems}",
+                _view);
         }
 
         private static string GetVisualStageLabel(RuntimeOperationMapVisualStage stage)
@@ -324,33 +506,33 @@ namespace Game.Runtime
             }
         }
 
-        private bool TryConfigureGeneration(int frameCount)
+        private bool TryConfigureGeneration(int frameCount, out string failureReason)
         {
+            failureReason = null;
             RuntimeCitySpawnerSystemConfig config = _view.Config;
             if (config == null)
             {
-                _statusMessage = "Missing RuntimeCity config";
-                Debug.LogError(
-                    $"[RuntimeCityRnD] {RuntimeCityGenerationProgress.VersionTag} result=Failed reason=missingConfig",
-                    _view);
+                failureReason = "missingConfig";
                 return false;
             }
 
             if (config.CityCount <= 0)
             {
-                _statusMessage = "R&D config must generate at least one city";
-                Debug.LogError(
-                    $"[RuntimeCityRnD] {RuntimeCityGenerationProgress.VersionTag} result=Failed reason=cityCountZero config={config.name}",
-                    _view);
+                failureReason = "cityCountZero";
                 return false;
             }
 
             EnsureGeneratedRoot();
             GridConfig grid = CreateGrid();
-            bool createAlgorithmicVisuals = _view.VisualRecipe == null;
+            bool createAlgorithmicVisuals = _activeVisualRecipe == null;
             if (createAlgorithmicVisuals)
             {
-                CreateAlgorithmicFoundation(grid);
+                if (!CreateAlgorithmicFoundation(grid))
+                {
+                    failureReason = "missingAlgorithmicGroundMaterial";
+                    return false;
+                }
+
                 CreateAlgorithmicDistrictSurfaces(config, grid);
             }
 
@@ -395,11 +577,7 @@ namespace Game.Runtime
             if (started)
                 return true;
 
-            _statusMessage = "Generator did not start";
-            Debug.LogError(
-                $"[RuntimeCityRnD] {RuntimeCityGenerationProgress.VersionTag} result=Failed reason=notStarted seed={config.RandomSeed} cityCount={config.CityCount}",
-                _view);
-            DisposeGeneration();
+            failureReason = "notStarted";
             return false;
         }
 
@@ -439,7 +617,7 @@ namespace Game.Runtime
             RuntimeCityGenerationProgress cityProgress = _runtimeCity != null
                 ? _runtimeCity.GenerationProgress
                 : _lastProgress;
-            RuntimeOperationMapVisualRecipe visualRecipe = _view != null ? _view.VisualRecipe : null;
+            RuntimeOperationMapVisualRecipe visualRecipe = _activeVisualRecipe;
             if (visualRecipe == null)
                 return cityProgress;
 
@@ -468,20 +646,28 @@ namespace Game.Runtime
 
         private void ClearGeneratedMap()
         {
-            DisposeGeneration();
+            if (IsGenerationActive)
+                CancelGeneration("clearRequested", clearGeneratedMap: false);
+            else
+                DisposeGeneration();
+
             ClearGeneratedRootChildren();
+            _recovery.Reset();
+            _activeVisualRecipe = _view != null ? _view.VisualRecipe : null;
             _lastProgress = RuntimeCityGenerationProgress.Idle;
             _statusMessage = "Cleared";
         }
 
-        private void DisposeGeneration()
+        private void DisposeGeneration(bool preserveProgress = false)
         {
+            RuntimeCityGenerationProgress retainedProgress = _lastProgress;
             _algorithmicAftermathPresentation?.Dispose();
             _algorithmicAftermathPresentation = null;
             if (_runtimeCity != null)
             {
                 _runtimeCity.Dispose();
-                _lastProgress = _runtimeCity.GenerationProgress;
+                if (!preserveProgress)
+                    _lastProgress = _runtimeCity.GenerationProgress;
                 _runtimeCity = null;
             }
 
@@ -496,6 +682,8 @@ namespace Game.Runtime
             _visualRoutine = null;
             _visualRoutineRunning = false;
             _generationActive = false;
+            if (preserveProgress)
+                _lastProgress = retainedProgress;
         }
 
         private void CreateAlgorithmicAftermathDressing()
@@ -547,19 +735,13 @@ namespace Game.Runtime
                 _view);
         }
 
-        private void CreateAlgorithmicFoundation(GridConfig grid)
+        private bool CreateAlgorithmicFoundation(GridConfig grid)
         {
             Material material = _view.AlgorithmicGroundMaterial ??
                                 _view.RoadShoulderMaterial ??
                                 _roadMaterial;
             if (material == null)
-            {
-                Debug.LogError(
-                    $"[RuntimeCityRnD] {RuntimeCityGenerationProgress.VersionTag} " +
-                    "result=Failed reason=missingAlgorithmicGroundMaterial",
-                    _view);
-                return;
-            }
+                return false;
 
             float width = grid.Width * grid.CellSize;
             float depth = grid.Height * grid.CellSize;
@@ -574,6 +756,7 @@ namespace Game.Runtime
                 _view.AlgorithmicGroundColor);
             _algorithmicVisualQuality = new RuntimeOperationMapVisualQualitySystemHelper();
             _algorithmicVisualQuality.CreateFoundation(settings, _generatedRoot);
+            return _algorithmicVisualQuality.FoundationVisualCount == 1;
         }
 
         private void CreateAlgorithmicDistrictSurfaces(
@@ -687,7 +870,7 @@ namespace Game.Runtime
             out RuntimeOperationMapCameraPose pose)
         {
             pose = default;
-            RuntimeOperationMapVisualRecipe recipe = _view != null ? _view.VisualRecipe : null;
+            RuntimeOperationMapVisualRecipe recipe = _activeVisualRecipe;
             IReadOnlyList<RuntimeOperationMapCameraPose> cameraPoses = recipe != null
                 ? recipe.CameraPoses
                 : _view?.AlgorithmicCameraPoses;

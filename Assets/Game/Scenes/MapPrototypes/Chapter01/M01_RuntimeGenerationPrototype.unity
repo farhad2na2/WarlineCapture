@@ -780,6 +780,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Runtime::Game.Runtime.RuntimeCityRAndDMapView
   config: {fileID: 11400000, guid: 889382ef87d0a5b458249fa2e03869ea, type: 2}
   visualRecipe: {fileID: 11400000, guid: cb8f0d0cdbcd0474bb5c02dab1d9e500, type: 2}
+  deterministicFallbackRecipe: {fileID: 11400000, guid: cb8f0d0cdbcd0474bb5c02dab1d9e500, type: 2}
+  deterministicFallbackEnabled: 1
   generateOnStart: 1
   showDebugOverlay: 1
   visualRecipeEntriesPerFrame: 8

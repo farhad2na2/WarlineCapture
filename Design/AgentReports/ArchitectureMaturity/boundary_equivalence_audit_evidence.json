@@ -1,0 +1,48 @@
+{
+  "artifactId": "am014-boundary-equivalence-audit-v1",
+  "schemaVersion": 1,
+  "sourceBaseline": {
+    "branch": "main",
+    "commit": "fba2b7c8026419ee3d5fb2c7c71b080f4f4c1580",
+    "tree": "0ec20db95157c38039165e4152637d8030db048a"
+  },
+  "governedDecompositions": [
+    {
+      "id": "am012-transport-capacity-rules",
+      "evidencePath": "Design/AgentReports/ArchitectureMaturity/transport_capacity_rules_extraction_evidence.json",
+      "evidenceSha256": "01202829bcfdae4bcd9f56e70c2f989430842b95965491222836daf1b960b0d2",
+      "acceptedCommit": "1b549d0811cd081a0a586bc3cf9b33344d1b921d",
+      "acceptedTree": "bca11356c657e877cdd5e19f7eff54d57607d1b6",
+      "assemblyBefore": "Game.Runtime",
+      "assemblyAfter": "Game.Runtime",
+      "systemTypesBefore": ["UnitTransportBoardingSystem"],
+      "systemTypesAfter": ["UnitTransportBoardingSystem"],
+      "crossesSystemBoundary": false,
+      "crossesAssemblyBoundary": false,
+      "requiredBoundaryTests": [],
+      "behaviorEquivalenceValidationIds": ["capacity-rules", "transport-characterization", "transport-full-regression"]
+    },
+    {
+      "id": "am013-world-scoped-query-cache",
+      "evidencePath": "Design/AgentReports/ArchitectureMaturity/query_cache_consolidation_evidence.json",
+      "evidenceSha256": "49ba8bb6d839d10860f78f13133d3fb8de044464877ca6a918ed74d33a9484c2",
+      "acceptedCommit": "664ae7fa4544699faad7da01b11db60434e39088",
+      "acceptedTree": "3d9f539d83f6771103d0470b2024fd3c4757b499",
+      "assemblyBefore": "Game.Runtime",
+      "assemblyAfter": "Game.Runtime",
+      "systemTypesBefore": [],
+      "systemTypesAfter": [],
+      "crossesSystemBoundary": false,
+      "crossesAssemblyBoundary": false,
+      "requiredBoundaryTests": [],
+      "behaviorEquivalenceValidationIds": ["query-cache", "faction-resource", "building-resource"]
+    }
+  ],
+  "crossBoundaryDecompositionIds": [],
+  "newBoundaryTestPaths": [],
+  "decision": "No accepted Phase 1 decomposition moved behavior or authority to another ECS system or assembly. Existing direct and regression coverage proves behavior equivalence; additional update-order tests would describe a boundary that does not exist.",
+  "validatorAuthority": {
+    "path": "Tools/CI/tests/test_architecture_boundary_equivalence_evidence.py",
+    "sha256": "cc8c16f21ba555f71d9ab752bac98d88ee992fb535a167dc8a18cb1d9f8e1800"
+  }
+}

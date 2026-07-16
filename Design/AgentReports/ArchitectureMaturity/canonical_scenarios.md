@@ -9,8 +9,8 @@ This document is a deterministic projection of `Design/AgentReports/Architecture
 | Schema version | `1` |
 | Artifact | `AM-003` / `architecture-maturity-canonical-scenario-catalog` |
 | Branch | `codex/am-003-canonical-scenarios` |
-| Commit | `7dd5b81f7471f4bc6c209e80937ec5cad6212973` |
-| Tree | `9596b8d25dd9f911c17697666e9121b8dd63564c` |
+| Commit | `a5bf7b72cdfb9457c6af1e98ee2bcaae983f9ff6` |
+| Tree | `8b2f87e5d9006fd9cea8a97c2153abfe2d265d2a` |
 | Git object format | `sha1` |
 | Production behavior changed | `false` |
 | Shared tracker changed | `false` |
@@ -53,7 +53,7 @@ Retries are prohibited. Every required runner gets one attempt. A skipped, ignor
 |---|---|---|
 | `EXC-ANDROID-RELEASE` | `deferred` | Android release-device execution, thermal acceptance, and sustained release execution remain deferred to the inactive Release Certification Lane. |
 | `EXC-FIRST-LAUNCH` | `excluded-separately-owned` | FirstLaunch is pre-completed for returning-user scenarios and remains separately owned; this catalog does not exercise or modify it. |
-| `EXC-OPERATION-MAP-RND` | `excluded` | Operation-map research and development is outside AM-003. |
+| `EXC-OPERATION-MAP-RND` | `excluded-rnd-ownership-only` | Separately owned operation-map R&D changes are outside AM-003; the currently activated compatibility metadata and canonical Match scene at the bound baseline are runtime authorities and are not excluded. |
 
 ## Coverage Matrix
 
@@ -110,8 +110,8 @@ Retries are prohibited. Every required runner gets one attempt. A skipped, ignor
 | `AM003-SCN-005-AIRCRAFT` | `aircraft` | Execute the canonical isolated aircraft and air-defense workload while making Scenario Lab limitations explicit. | 11 scenario-executions | 11 scenario-executions | `executable-scenario-lab-with-limitations` |
 | `AM003-SCN-006-PROJECTILES` | `projectiles` | Exercise production ground-rocket and air-interceptor launch-to-impact lifecycles. | 1 scenario-executions | 2 scenario-executions | `executable-existing-playmode-and-scenario-lab-fixtures` |
 | `AM003-SCN-007-MAJOR-MATCH-UI` | `major-match-ui` | Exercise the twelve currently implemented major Match HUD surfaces and popups through production bindings in one fixed interaction sequence while retaining the Support selector gap. | 60 frames | 300 frames | `executable-production-ui-sequence` |
-| `AM003-SCN-008-RETURNING-MENU-TO-MATCH` | `returning-user-menu-to-match` | Measure returning-user Menu-to-Match lifecycle, UI binding, World preservation, and audio transition. | 1 round-trips | 5 transitions | `executable-five-sample-returning-user-transition` |
-| `AM003-SCN-009-RETURNING-MATCH-TO-MENU` | `returning-user-match-to-menu` | Measure returning-user Match-to-Menu unload, runtime cleanup, World preservation, and audio restoration. | 1 round-trips | 5 transitions | `executable-five-sample-returning-user-transition` |
+| `AM003-SCN-008-RETURNING-MENU-TO-MATCH` | `returning-user-menu-to-match` | Measure returning-user Menu-to-Match lifecycle, active compatibility operation-map publication, UI binding, World preservation, and audio transition. | 1 round-trips | 5 transitions | `executable-five-sample-returning-user-transition` |
+| `AM003-SCN-009-RETURNING-MATCH-TO-MENU` | `returning-user-match-to-menu` | Measure returning-user Match-to-Menu unload, active compatibility operation-map disposal, runtime cleanup, World preservation, and audio restoration. | 1 round-trips | 5 transitions | `executable-five-sample-returning-user-transition` |
 | `AM003-SCN-010-LONG-SOAK` | `long-soak` | Define a long core-lane steady-state Match soak without claiming deferred Android sustained acceptance. | 60 seconds | 1800 seconds | `definition-only-deferred-not-scheduled` |
 
 ## AM003-SCN-001-IDLE-MATCH
@@ -221,7 +221,7 @@ Establish the deterministic steady-state Match floor without player-driven activ
 
 - Android release, thermal, and sustained release acceptance
 - Natural mission-content representativeness
-- Operation-map research and development
+- Separately owned operation-map R&D changes; currently activated compatibility metadata and the canonical Match scene are not excluded
 
 ## AM003-SCN-002-MAXIMUM-COMBAT
 
@@ -335,7 +335,7 @@ Exercise the largest combat workload defined by the existing battle capture whil
 
 - Air-missile launcher coverage, which belongs to the aircraft/projectile scenarios
 - Android release, thermal, and sustained release acceptance
-- Operation-map research and development
+- Separately owned operation-map R&D changes; currently activated compatibility metadata and the canonical Match scene are not excluded
 
 ## AM003-SCN-003-CONSTRUCTION
 
@@ -448,7 +448,7 @@ Measure one complete production placement-to-queue flow through the existing pro
 
 - Android release, thermal, and sustained release acceptance
 - Construction burst scale beyond one placement and one queued production
-- Operation-map research and development
+- Separately owned operation-map R&D changes; currently activated compatibility metadata and the canonical Match scene are not excluded
 
 ## AM003-SCN-004-TRANSPORT
 
@@ -563,7 +563,7 @@ Exercise deterministic boarding, disembark, rope, parachute, cargo, rejection, a
 
 - Airport/runway reservation, taxi, takeoff, landing, and full Match route contention
 - Android release, thermal, and sustained release acceptance
-- Operation-map research and development
+- Separately owned operation-map R&D changes; currently activated compatibility metadata and the canonical Match scene are not excluded
 
 ## AM003-SCN-005-AIRCRAFT
 
@@ -674,7 +674,7 @@ Execute the canonical isolated aircraft and air-defense workload while making Sc
 
 - Android release, thermal, and sustained release acceptance
 - Full Match aircraft scheduling, formations, airport logistics, and rendering scale
-- Operation-map research and development
+- Separately owned operation-map R&D changes; currently activated compatibility metadata and the canonical Match scene are not excluded
 
 ## AM003-SCN-006-PROJECTILES
 
@@ -783,7 +783,7 @@ Exercise production ground-rocket and air-interceptor launch-to-impact lifecycle
 
 - Android release, thermal, and sustained release acceptance
 - Full Match projectile saturation beyond the maximum-combat scenario
-- Operation-map research and development
+- Separately owned operation-map R&D changes; currently activated compatibility metadata and the canonical Match scene are not excluded
 
 ## AM003-SCN-007-MAJOR-MATCH-UI
 
@@ -911,13 +911,13 @@ Exercise the twelve currently implemented major Match HUD surfaces and popups th
 
 - Android release, thermal, and sustained release acceptance
 - FirstLaunch UI
-- Operation-map research and development
 - Result route, which is explicitly unimplemented
+- Separately owned operation-map R&D changes; currently activated compatibility metadata and the canonical Match scene are not excluded
 - Support selector, which is an explicit non-executable implementation gap
 
 ## AM003-SCN-008-RETURNING-MENU-TO-MATCH
 
-Measure returning-user Menu-to-Match lifecycle, UI binding, World preservation, and audio transition.
+Measure returning-user Menu-to-Match lifecycle, active compatibility operation-map publication, UI binding, World preservation, and audio transition.
 
 | Field | Value |
 |---|---|
@@ -932,6 +932,7 @@ Measure returning-user Menu-to-Match lifecycle, UI binding, World preservation, 
 
 ### Surfaces
 
+- `Activated compatibility operation-map lifecycle`
 - `Main Menu`
 - `Match HUD`
 - `Menu-to-Match loading transition`
@@ -940,7 +941,8 @@ Measure returning-user Menu-to-Match lifecycle, UI binding, World preservation, 
 ### Prerequisites
 
 - Exact baseline commit and tree are checked out with a clean tracked worktree.
-- Menu and Match scenes and serialized lifecycle/UI/audio references resolve.
+- MatchSceneView resolves OperationMapCatalog with OperationMapId opmap.skirmish.desert_base_01, ScenarioId scenario.skirmish.desert_base_standard, and MissionId skirmish.
+- Menu and canonical Match scenes plus serialized lifecycle/UI/audio references resolve.
 - Production UI shell gateway accepts EnterMatch.
 - Profile state is explicitly FirstLaunch completed without editing separately owned FirstLaunch files.
 
@@ -956,31 +958,32 @@ Measure returning-user Menu-to-Match lifecycle, UI binding, World preservation, 
 
 1. Set fixture profile to FirstLaunch completed and apply fixed seed 3008.
 2. Load Menu single, wait for MenuBootstrapView and default ECS World, and assert one lifecycle root.
-3. Snapshot World identity, scene objects, entities, UI bindings, and active Menu music.
+3. Snapshot World identity, zero Menu operation-map roots, scene objects, entities, UI bindings, and active Menu music.
 
 ### Actions
 
 1. Execute one complete Menu-to-Match-to-Menu round trip as warmup.
 2. For each of five measured samples, enqueue EnterMatch with UIRoute.Match and PushHistory false.
-3. Wait for Match scene, MatchSceneView, runtime UI dependencies, Match HUD binding, stable shell state, and Match music.
+3. Wait for Match scene, MatchSceneView, exactly one active compatibility operation-map root with the canonical IDs, runtime UI dependencies, Match HUD binding, stable shell state, and Match music.
 4. Record sample and return to Menu for reset; a failed sample terminates the scenario and is not retried.
 
 ### Stabilization
 
 - Do not include warmup round-trip samples in measurement.
-- Require Match fully unloaded and no Match HUD binding before each sample.
+- Require Match fully unloaded, zero operation-map roots, and no Match HUD binding before each sample.
 - Require MenuReady, transition-running false, one lifecycle root, and stable Menu music before each sample.
 
 ### Required States
 
 | Phase | World state | UI state |
 |---|---|---|
-| Before | Default ECS World created; Match scene unloaded; One lifecycle root | FirstLaunch not visible; MainMenu ready; Transition not running |
-| Measurement | Match scene loaded additively; One lifecycle root; Same default ECS World | Loading transition progresses; Match HUD ready and bound; Match music active |
-| After | Default ECS World preserved; Match scene unloaded; One lifecycle root | MainMenu ready; Menu music active; No Match HUD installed |
+| Before | Default ECS World created; Match scene unloaded; No operation-map root; One lifecycle root | FirstLaunch not visible; MainMenu ready; Transition not running |
+| Measurement | Exactly one active compatibility operation-map root with canonical map/scenario/mission IDs; Match scene loaded additively; One lifecycle root; Same default ECS World | Loading transition progresses; Match HUD ready and bound; Match music active |
+| After | Default ECS World preserved; Match scene unloaded; No operation-map root; One lifecycle root | MainMenu ready; Menu music active; No Match HUD installed |
 
 ### Acceptance Signals
 
+- Canonical Match publishes exactly one active compatibility operation-map root with OperationMapId opmap.skirmish.desert_base_01, ScenarioId scenario.skirmish.desert_base_standard, and MissionId skirmish.
 - Each transition loads Match additively, preserves the default ECS World and one lifecycle root, binds runtime UI, and crossfades to Match music.
 - Exactly five measured Menu-to-Match transitions complete; repetitions are samples, never retries.
 - Required transition, loading, frame, GC, world/lifecycle, UI-binding, audio, entity, and object-count metrics are present; no required runner is skipped.
@@ -995,6 +998,7 @@ Measure returning-user Menu-to-Match lifecycle, UI binding, World preservation, 
 - `lifecycleRootCount`
 - `loadingGateDurationMs`
 - `memoryGrowthBytes`
+- `operationMapRootCountAndActiveIds`
 - `sceneObjectCountDelta`
 - `transitionDurationAverageP95P99MaxMs`
 - `uiBindingCounts`
@@ -1011,25 +1015,25 @@ Measure returning-user Menu-to-Match lifecycle, UI binding, World preservation, 
 ### Failure Diagnostics
 
 - Capture frame-time, GC allocation, memory/object/entity deltas, loading progress, timeout, and fatal/error markers per sample.
-- Capture route request, shell current mode/route/phase/sequence/running flag, scene load state, World identity, lifecycle-root count, UI dependency bindings, music clip/source state, and transition phase timings.
-- Fail immediately on FirstLaunch appearance, scene/binding/music mismatch, duplicate root, World replacement, timeout, skipped runner, or retry request.
+- Capture route request, shell current mode/route/phase/sequence/running flag, scene load state, World identity, lifecycle-root count, operation-map root count and active map/scenario/mission IDs, UI dependency bindings, music clip/source state, and transition phase timings.
+- Fail immediately on FirstLaunch appearance, scene/binding/music mismatch, duplicate lifecycle or operation-map root, non-canonical active map IDs, World replacement, timeout, skipped runner, or retry request.
 
 ### Teardown And Reset
 
 - After each measured sample, return through production Match-to-Menu route.
 - After sample five, leave Menu ready and clear scenario metrics/seed state.
-- Assert Match unload, runtime UI cleanup, one lifecycle root, and preserved World before the next sample.
+- Assert Match unload, runtime UI cleanup, one lifecycle root, zero operation-map roots, and preserved World before the next sample.
 
 ### Exclusions
 
 - Android release cold/warm startup acceptance
 - FirstLaunch execution or ownership
-- Operation-map research and development
 - Result route
+- Separately owned operation-map R&D changes; currently activated compatibility metadata and the canonical Match scene are not excluded
 
 ## AM003-SCN-009-RETURNING-MATCH-TO-MENU
 
-Measure returning-user Match-to-Menu unload, runtime cleanup, World preservation, and audio restoration.
+Measure returning-user Match-to-Menu unload, active compatibility operation-map disposal, runtime cleanup, World preservation, and audio restoration.
 
 | Field | Value |
 |---|---|
@@ -1044,6 +1048,7 @@ Measure returning-user Match-to-Menu unload, runtime cleanup, World preservation
 
 ### Surfaces
 
+- `Activated compatibility operation-map lifecycle`
 - `Main Menu`
 - `Match HUD`
 - `Match-to-Menu unloading transition`
@@ -1052,7 +1057,8 @@ Measure returning-user Match-to-Menu unload, runtime cleanup, World preservation
 ### Prerequisites
 
 - Exact baseline commit and tree are checked out with a clean tracked worktree.
-- Menu and Match scenes and serialized lifecycle/UI/audio references resolve.
+- MatchSceneView resolves OperationMapCatalog with OperationMapId opmap.skirmish.desert_base_01, ScenarioId scenario.skirmish.desert_base_standard, and MissionId skirmish.
+- Menu and canonical Match scenes plus serialized lifecycle/UI/audio references resolve.
 - Production UI shell gateway accepts ReturnToMainMenu.
 - Profile state is explicitly FirstLaunch completed without editing separately owned FirstLaunch files.
 
@@ -1068,31 +1074,32 @@ Measure returning-user Match-to-Menu unload, runtime cleanup, World preservation
 
 1. Set fixture profile to FirstLaunch completed and apply fixed seed 3009.
 2. Load Menu, enter Match through production route, and wait for Match HUD/runtime bindings.
-3. Snapshot World identity, lifecycle root, Match runtime references, scene objects, entities, HUD binding, and Match music.
+3. Snapshot World identity, lifecycle root, exactly one active compatibility operation-map root and canonical IDs, Match runtime references, scene objects, entities, HUD binding, and Match music.
 
 ### Actions
 
 1. Execute one complete Menu-to-Match-to-Menu round trip as warmup.
-2. For each of five measured samples, begin from stable Match and enqueue ReturnToMainMenu with UIRoute.MainMenu and PushHistory false.
-3. Wait for Match unload, shell MainMenu readiness, runtime UI cleanup, one lifecycle root, preserved World, and Menu music.
+2. For each of five measured samples, begin from stable Match with exactly one active compatibility operation-map root and enqueue ReturnToMainMenu with UIRoute.MainMenu and PushHistory false.
+3. Wait for Match unload, zero operation-map roots, shell MainMenu readiness, runtime UI cleanup, one lifecycle root, preserved World, and Menu music.
 4. Record sample and enter Match again for the next sample; a failed sample terminates the scenario and is not retried.
 
 ### Stabilization
 
 - Do not include warmup round-trip samples in measurement.
 - Require Match runtime UI dependencies bound before issuing return.
-- Require MatchHudReady, transition-running false, one lifecycle root, and stable Match music before each sample.
+- Require MatchHudReady, transition-running false, one lifecycle root, exactly one active compatibility operation-map root with canonical IDs, and stable Match music before each sample.
 
 ### Required States
 
 | Phase | World state | UI state |
 |---|---|---|
-| Before | Default ECS World active; Match scene loaded; One lifecycle root | Match HUD ready and bound; Match music active; Transition not running |
-| Measurement | Match runtime state is removed during unload; Same default ECS World | MainMenu becomes ready; Match HUD is removed; Unloading transition progresses |
-| After | Default ECS World preserved; Match scene unloaded; One lifecycle root | MainMenu ready; Menu music active; No Match HUD installed |
+| Before | Default ECS World active; Exactly one active compatibility operation-map root with canonical map/scenario/mission IDs; Match scene loaded; One lifecycle root | Match HUD ready and bound; Match music active; Transition not running |
+| Measurement | Compatibility operation-map root is disposed during unload; Match runtime state is removed during unload; Same default ECS World | MainMenu becomes ready; Match HUD is removed; Unloading transition progresses |
+| After | Default ECS World preserved; Match scene unloaded; No operation-map root; One lifecycle root | MainMenu ready; Menu music active; No Match HUD installed |
 
 ### Acceptance Signals
 
+- Before return, canonical Match has exactly one active compatibility operation-map root with the canonical map/scenario/mission IDs; after unload, operation-map root count is zero.
 - Each transition unloads Match, preserves Menu and the default ECS World, retains exactly one lifecycle root, and removes Match runtime/UI references.
 - Exactly five measured Match-to-Menu transitions complete; repetitions are samples, never retries.
 - Menu music is restored and Match music is inactive after each transition.
@@ -1107,6 +1114,7 @@ Measure returning-user Match-to-Menu unload, runtime cleanup, World preservation
 - `lifecycleRootCount`
 - `matchRuntimeReferenceCounts`
 - `memoryGrowthBytes`
+- `operationMapRootCountAndActiveIds`
 - `sceneObjectCountDelta`
 - `transitionDurationAverageP95P99MaxMs`
 - `uiCleanupCounts`
@@ -1123,21 +1131,21 @@ Measure returning-user Match-to-Menu unload, runtime cleanup, World preservation
 ### Failure Diagnostics
 
 - Capture frame-time, GC allocation, memory/object/entity deltas, unload phase timings, timeout, and fatal/error markers per sample.
-- Capture route request, shell route/phase/sequence/running flag, scene unload state, World identity, lifecycle-root count, destroyed MatchSceneView state, retained runtime references, HUD content, and music source state.
-- Fail immediately on retained Match scene/runtime/UI, duplicate root, World replacement, music mismatch, timeout, skipped runner, or retry request.
+- Capture route request, shell route/phase/sequence/running flag, scene unload state, World identity, lifecycle-root count, operation-map root count and active IDs before unload, destroyed MatchSceneView state, retained runtime references, HUD content, and music source state.
+- Fail immediately on retained Match scene/runtime/UI/operation-map root, missing or non-canonical pre-return operation-map root, duplicate lifecycle root, World replacement, music mismatch, timeout, skipped runner, or retry request.
 
 ### Teardown And Reset
 
-- After each measured sample, assert cleanup before re-entering Match.
-- After sample five, leave Menu ready with Match unloaded and one lifecycle root.
+- After each measured sample, assert runtime cleanup and zero operation-map roots before re-entering Match.
+- After sample five, leave Menu ready with Match unloaded, one lifecycle root, and zero operation-map roots.
 - Clear scenario metrics and seed state.
 
 ### Exclusions
 
 - Android release cold/warm startup acceptance
 - FirstLaunch execution or ownership
-- Operation-map research and development
 - Result route
+- Separately owned operation-map R&D changes; currently activated compatibility metadata and the canonical Match scene are not excluded
 
 ## AM003-SCN-010-LONG-SOAK
 
@@ -1250,7 +1258,7 @@ Define a long core-lane steady-state Match soak without claiming deferred Androi
 - AM-003 execution; the soak is definition-only and not scheduled
 - Android release, thermal, battery, and sustained release acceptance
 - Historical soak evidence as acceptance for this baseline
-- Operation-map research and development
+- Separately owned operation-map R&D changes; currently activated compatibility metadata and the canonical Match scene are not excluded
 
 ## Verified Authorities
 
@@ -1280,4 +1288,4 @@ Define a long core-lane steady-state Match soak without claiming deferred Androi
 - `Design/Architecture/performance_regression_contract.md`
 - `Design/Match_HUD_And_Gameplay_Implementation_Spec.md`
 
-All authority paths above exist at the bound commit. No operation-map, FirstLaunch, tracker, production-code, scene, prefab, package, or project-setting file is changed by AM-003.
+All authority paths above exist at the bound commit. No separately owned operation-map R&D, FirstLaunch, tracker, production-code, scene, prefab, package, or project-setting path is changed by AM-003. The currently activated compatibility metadata and canonical Match scene are baseline runtime authorities and remain unchanged.

@@ -1,0 +1,392 @@
+{
+  "artifactId": "am010-selected-owner-responsibility-maps-v1",
+  "schemaVersion": 1,
+  "sourceBaseline": {
+    "branch": "main",
+    "commit": "ab955a7721fd0616b627daab508632d023e047d8",
+    "tree": "a40d19b327a33bc2aca8e126dcdc61616ccee458"
+  },
+  "sourceAuthorities": {
+    "rankingPath": "Design/AgentReports/ArchitectureMaturity/owner_risk_ranking.json",
+    "rankingSha256": "ec381d90aa68ca4adc4387de344085f9ba0c0aabe7a1afb190155e381c803847"
+  },
+  "artifactAuthorities": {
+    "rendererPath": "Tools/CI/architecture_owner_responsibility_maps.py",
+    "rendererSha256": "94b25cbcd25b1c38c8f1dc2a1275297a3da31f560667437b96e20eca567371cf",
+    "validatorPath": "Tools/CI/tests/test_architecture_owner_responsibility_maps.py",
+    "validatorSha256": "a026af752ce5b2336aa112abebebd1561f29e963aceaa20143d97df48d2f4faf"
+  },
+  "summaryPath": "Design/AgentReports/ArchitectureMaturity/selected_owner_responsibility_maps.md",
+  "evidenceFiles": [
+    {"path": "Assets/Game/Scripts/Components/GroundMissileComponents.cs", "sha256": "60b62c7995a1e7e45c5d94196d759c7a01a8c368fe728e8b94000c796978cb9b"},
+    {"path": "Assets/Game/Scripts/Effects/MissileTrailVfxView.cs", "sha256": "416a070605499d1ceb691783acb7aede5818a5a841cec70f96aba924061519c9"},
+    {"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "sha256": "96efa78461a89825021528bf706cb1e61f0caae968f2a034f4db5d5467f9ac6c"},
+    {"path": "Assets/Game/Scripts/Systems/UnitAttackSystem.cs", "sha256": "7fb75ffde0519676634c49d2e552f5e7566ee0fd2416f8d16c339e846ec799b6"},
+    {"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "sha256": "4bf4aa8c443121efb03585d08102ba79c1959d6094833b8c5816fe857044cd36"},
+    {"path": "Assets/Game/Scripts/Systems/UnitTransportPassengerStateSystem.cs", "sha256": "8c30249ffbb65993369b04e06c4018ca1d18508df1e1c98381ca6ebd9d856863"},
+    {"path": "Assets/Tests/Editor/GroundMissileAttackPerformanceValidation.cs", "sha256": "e8a1a011f7c8c2a46ec1ca0dd4db76f88eae9a5df42acb1e801be0d778c8cd7b"},
+    {"path": "Assets/Tests/Editor/GroundMissileLauncherRuntimeTests.cs", "sha256": "864204139495ba808b6183e5b224a5370d459dfd5e55fdb204ccaff1bd4567ce"},
+    {"path": "Assets/Tests/Editor/TransportBoardingPerformanceValidation.cs", "sha256": "9abcf7a12ae984b714d1bbab92c0bda98d181edcd75457ea21b8aef3cb8e2418"},
+    {"path": "Assets/Tests/Editor/UnitTransportBoardingSystemExtractionTests.cs", "sha256": "824694305995cce4dab783b8fe815976a91e3080a3357875f85bde1a9ad1ba42"},
+    {"path": "Assets/Tests/Editor/UnitTransportValidationTests.cs", "sha256": "8c945f3b8a75448df5bb2f24104b0c7f85fc8b18e3685e103dc905b7d505c523"},
+    {"path": "Assets/Tests/PlayMode/GameSceneTransportBoardingPlayModeTests.cs", "sha256": "92309e14bcc3f7bd1c189d0c35732dbbf58c122b31ea639ef91dd3490c0ee086"},
+    {"path": "Assets/Tests/PlayMode/GroundMissileLauncherPlayModeTests.cs", "sha256": "00759de4bd833d54e9d261a2a27967c1a6397151cb2a88422bd13c5f4b0b27f1"},
+    {"path": "Design/AgentReports/ArchitectureMaturity/owner_risk_ranking.json", "sha256": "ec381d90aa68ca4adc4387de344085f9ba0c0aabe7a1afb190155e381c803847"}
+  ],
+  "owners": [
+    {
+      "path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs",
+      "sourceSha256": "96efa78461a89825021528bf706cb1e61f0caae968f2a034f4db5d5467f9ac6c",
+      "modificationScope": "ground-missile-runtime",
+      "initialAllowedPaths": [
+        "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs"
+      ],
+      "declaredTypes": [
+        {
+          "statement": "GroundMissileLauncherFireSystem is an unmanaged ISystem that advances launcher phases and creates missile projectiles.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 12, "lineEnd": 13}]
+        },
+        {
+          "statement": "GroundMissileLauncherVisualSystem, GroundMissileFlyingRocketVisualSystem, and GroundMissileRocketTrailSystem project launcher and rocket presentation state.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 294, "lineEnd": 520}]
+        },
+        {
+          "statement": "GroundMissileProjectileFlightSystem and its Burst IJobChunk advance simulation projectiles and emit impact requests.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 540, "lineEnd": 632}]
+        },
+        {
+          "statement": "GroundMissileImpactSystem consumes impact requests and resolves combat damage and feedback requests.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 638, "lineEnd": 724}]
+        }
+      ],
+      "inputs": [
+        {
+          "statement": "Fire reads launcher configuration, mutable launcher phase state including target world position, launcher/rocket transforms, faction, and elapsed time; dead launchers are excluded.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 20, "lineEnd": 61}]
+        },
+        {
+          "statement": "Visual projection reads launcher configuration/state, launcher transforms, visual references, and rocket visual buffers.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 297, "lineEnd": 312}]
+        },
+        {
+          "statement": "Projectile flight reads and writes GroundMissileProjectileComponent and LocalTransform through cached type handles.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 544, "lineEnd": 577}]
+        },
+        {
+          "statement": "Impact resolution reads GroundMissileImpactRequestComponent plus target health, transforms, faction, and optional damage-observation queue state.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 644, "lineEnd": 674}]
+        }
+      ],
+      "outputs": [
+        {
+          "statement": "Fire creates the projectile and interception target, records GroundMissileInFlightComponent on the launcher, and removes EngageTarget.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 140, "lineEnd": 175}]
+        },
+        {
+          "statement": "Visual systems update battery and rocket LocalTransform state and restore rocket parent/visibility when the launch visual finishes.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 333, "lineEnd": 411}, {"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 467, "lineEnd": 504}]
+        },
+        {
+          "statement": "Projectile completion adds GroundMissileImpactRequestComponent and removes flight and interception components.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 608, "lineEnd": 632}]
+        },
+        {
+          "statement": "Impact resolution updates direct and area UnitHealth, recent-damage state, removes launcher in-flight state, and destroys the consumed request entity.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 659, "lineEnd": 724}]
+        }
+      ],
+      "stateAuthority": [
+        {
+          "statement": "UnitAttackSystem arms the canonical launcher state as Preparing; Fire then owns the Preparing, Launching, Reloading, and Idle phase transitions and timer reset.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 40, "lineEnd": 92}, {"path": "Assets/Game/Scripts/Systems/UnitAttackSystem.cs", "lineStart": 1027, "lineEnd": 1062}]
+        },
+        {
+          "statement": "Visual systems are projection authorities only: they derive battery pose, slot visibility, and temporary rocket pose from launcher and flying-visual state.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 302, "lineEnd": 413}]
+        },
+        {
+          "statement": "Projectile flight owns elapsed trajectory state until it hands one one-shot impact request component to impact resolution.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 599, "lineEnd": 632}]
+        },
+        {
+          "statement": "Impact owns consumption of GroundMissileImpactRequestComponent and the resulting health and recent-attacker mutations; it does not retain persistent system state.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 651, "lineEnd": 724}]
+        }
+      ],
+      "updateOrder": [
+        {
+          "statement": "Fire runs after UnitAttackSystem so attack intent is available before phase advancement and projectile creation.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 12, "lineEnd": 13}]
+        },
+        {
+          "statement": "The local sequence is Fire, launcher Visual, Flying Rocket Visual, Rocket Trail, Projectile Flight, then Impact.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 294, "lineEnd": 295}, {"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 416, "lineEnd": 420}, {"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 518, "lineEnd": 520}, {"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 540, "lineEnd": 542}, {"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 638, "lineEnd": 639}]
+        },
+        {
+          "statement": "Both parallel jobs complete before their ECB playback, making structural handoffs visible to the following ordered system in the same frame.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 439, "lineEnd": 450}, {"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 569, "lineEnd": 581}]
+        }
+      ],
+      "sideEffects": [
+        {
+          "statement": "Launch and impact emit config-driven combat audio event requests through the audio event boundary.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 28, "lineEnd": 30}, {"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 118, "lineEnd": 118}, {"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 653, "lineEnd": 655}, {"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 708, "lineEnd": 713}]
+        },
+        {
+          "statement": "Launch and impact enqueue managed VFX presentation requests; the trail system synchronizes the missile trail view.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 125, "lineEnd": 137}, {"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 527, "lineEnd": 536}, {"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 829, "lineEnd": 849}]
+        },
+        {
+          "statement": "Impact appends combat-damage observations for direct and area hits for downstream telemetry and presentation.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 688, "lineEnd": 704}, {"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 755, "lineEnd": 773}]
+        }
+      ],
+      "failureBehavior": [
+        {
+          "statement": "Missing rocket buffers, battery entities, transforms, or VFX references fail as bounded no-ops rather than creating invalid presentation state.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 125, "lineEnd": 138}, {"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 186, "lineEnd": 190}, {"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 322, "lineEnd": 323}, {"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 391, "lineEnd": 403}]
+        },
+        {
+          "statement": "Projectile duration, speed, timers, damage, radius, and visible scale are clamped to prevent divide-by-zero, negative damage, and zero-scale instability.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 44, "lineEnd": 44}, {"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 120, "lineEnd": 123}, {"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 608, "lineEnd": 613}, {"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 663, "lineEnd": 666}]
+        },
+        {
+          "statement": "Direct damage is skipped for null, missing, non-health, friendly, dead, or zero-damage targets; area damage excludes static blockers, friendly/dead units, and targets outside the radius.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 671, "lineEnd": 686}, {"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 735, "lineEnd": 753}]
+        },
+        {
+          "statement": "GroundMissileLauncherPhase declares Recovering, but the fire update has no Recovering branch; characterization must define whether legacy Recovering state transitions or fails closed before extraction.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 40, "lineEnd": 92}, {"path": "Assets/Game/Scripts/Components/GroundMissileComponents.cs", "lineStart": 7, "lineEnd": 13}]
+        },
+        {
+          "statement": "GroundMissileInFlightComponent is cleared only when an impact request is consumed; interception or external projectile removal requires explicit launcher cleanup or it can leave attack gating stale.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 163, "lineEnd": 175}, {"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 714, "lineEnd": 720}]
+        }
+      ],
+      "tests": [
+        {
+          "statement": "GroundMissileLauncherRuntimeTests provides focused EditMode behavior coverage; run it through the Unity Test Framework EditMode filter.",
+          "references": [{"path": "Assets/Tests/Editor/GroundMissileLauncherRuntimeTests.cs", "lineStart": 14, "lineEnd": 14}]
+        },
+        {
+          "statement": "GroundMissileLauncherPlayModeTests covers the runtime scene flow; run it through the Unity Test Framework PlayMode filter.",
+          "references": [{"path": "Assets/Tests/PlayMode/GroundMissileLauncherPlayModeTests.cs", "lineStart": 10, "lineEnd": 12}]
+        },
+        {
+          "statement": "Run Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/am010-ground-missile-performance.log -- -quit -executeMethod GroundMissileAttackPerformanceValidation.RunBatchValidation for the current 16-warmup/64-measurement timing fixture.",
+          "references": [{"path": "Assets/Tests/Editor/GroundMissileAttackPerformanceValidation.cs", "lineStart": 18, "lineEnd": 43}]
+        }
+      ],
+      "allowedDependencies": [
+        {
+          "statement": "Allowed dependencies are unmanaged Unity ECS, Burst, Collections, Mathematics, Transforms, and neutral Game.Components data contracts already imported by the owner.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 1, "lineEnd": 8}]
+        },
+        {
+          "statement": "Narrow same-assembly runtime boundaries are allowed for combat audio requests, damage observations, and VFX requests; calls must remain explicit and data-oriented.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 118, "lineEnd": 137}, {"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 688, "lineEnd": 713}]
+        }
+      ],
+      "forbiddenDependencies": [
+        {
+          "statement": "Do not introduce UI, bootstrap, scene lookup, singleton service location, reflection, or manager/controller/facade dependencies into missile simulation.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 10, "lineEnd": 13}]
+        },
+        {
+          "statement": "Do not replace these unmanaged ISystem and Burst job boundaries with SystemBase or MonoBehaviour simulation ownership; the current direct MissileTrailVfxView call is legacy architecture debt that must move behind an ECS presentation request.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 416, "lineEnd": 454}, {"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 527, "lineEnd": 536}, {"path": "Assets/Game/Scripts/Effects/MissileTrailVfxView.cs", "lineStart": 9, "lineEnd": 9}]
+        },
+        {
+          "statement": "Do not retain Temp or TempJob containers across frames; each system owns completion, playback, and disposal of its local command buffer.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 439, "lineEnd": 450}, {"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 569, "lineEnd": 581}, {"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 657, "lineEnd": 724}]
+        }
+      ],
+      "boundedExtractionCandidates": [
+        {
+          "statement": "Extract only the missile-trail presentation bridge: publish explicit ECS trail-sync data from GroundMissileRocketTrailSystem and consume it in a documented managed presentation boundary; retain launch phases, projectile simulation, impact damage, and all other presentation requests in their current owners.",
+          "proposedOutputPaths": ["Assets/Game/Scripts/Components/MissileTrailSyncRequest.cs", "Assets/Game/Scripts/Systems/MissileTrailSyncPresentationSystem.cs"],
+          "requiredExpandedAllowedPaths": ["Assets/Game/Scripts/Components/MissileTrailSyncRequest.cs", "Assets/Game/Scripts/Systems/MissileTrailSyncPresentationSystem.cs"],
+          "authorityBoundary": "GroundMissileRocketTrailSystem owns production of transient sync requests; the managed presentation system owns request consumption only; MissileTrailVfxView retains pooled trail create/update/release state.",
+          "proposedUpdateOrder": "GroundMissileRocketTrailSystem produces after flying-rocket visual update; MissileTrailSyncPresentationSystem consumes afterward in presentation order and destroys only consumed request entities.",
+          "cleanupAuthority": "MissileTrailSyncPresentationSystem consumes transient requests; MissileTrailVfxView retains its two-missing-frame release, explicit Release, and ClearAll lifecycle until separately characterized.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "lineStart": 518, "lineEnd": 536}, {"path": "Assets/Game/Scripts/Effects/MissileTrailVfxView.cs", "lineStart": 33, "lineEnd": 53}, {"path": "Assets/Game/Scripts/Effects/MissileTrailVfxView.cs", "lineStart": 84, "lineEnd": 140}]
+        }
+      ]
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs",
+      "sourceSha256": "4bf4aa8c443121efb03585d08102ba79c1959d6094833b8c5816fe857044cd36",
+      "modificationScope": "transport-boarding-runtime",
+      "initialAllowedPaths": [
+        "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs"
+      ],
+      "declaredTypes": [
+        {
+          "statement": "UnitTransportBoardingSystem is an unmanaged ISystem in SimulationSystemGroup that performs the automatic boarding-completion tick.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 12, "lineEnd": 14}]
+        },
+        {
+          "statement": "BoardingDecisionKind and BoardingDecision represent the bounded decision handoff between parallel read evaluation and main-thread mutation.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 260, "lineEnd": 279}]
+        },
+        {
+          "statement": "CollectBoardingDecisionsJob is a Burst IJobEntity that excludes disabled passengers and evaluates transport validity, capacity, landed state, and reach.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 281, "lineEnd": 309}]
+        }
+      ],
+      "inputs": [
+        {
+          "statement": "The required passenger query reads UnitTransportBoardingTarget, UnitGrid, and LocalTransform and excludes Disabled passengers.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 38, "lineEnd": 49}]
+        },
+        {
+          "statement": "Transport and passenger lookups cover seat/cargo capacity, passenger buffers and kind metadata, grid/footprint/transforms, air and door state, rope requests, and movement progress.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 21, "lineEnd": 36}]
+        },
+        {
+          "statement": "Optional GridConfig supports resolved plane-ramp reach while diagnostics state gates queued feedback.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 50, "lineEnd": 70}, {"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 94, "lineEnd": 107}]
+        }
+      ],
+      "outputs": [
+        {
+          "statement": "Invalid transports and full capacity cancel UnitTransportBoardingTarget; not-landed and not-reached decisions preserve the request and may reissue movement.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 142, "lineEnd": 185}]
+        },
+        {
+          "statement": "A stopped ground passenger receives a target/path move order, manual move tags, and loses path retry cooldown.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 233, "lineEnd": 248}]
+        },
+        {
+          "statement": "Ready decisions revalidate transport and capacity, then delegate the successful passenger-state mutation to UnitTransportPassengerStateSystem before ECB playback.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 187, "lineEnd": 230}]
+        }
+      ],
+      "stateAuthority": [
+        {
+          "statement": "This owner controls current-target validation, landed/reach evaluation, capacity revalidation, cancellation, retry, and the final boarding handoff, but does not author the initial boarding command.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 142, "lineEnd": 225}]
+        },
+        {
+          "statement": "UnitTransportPassengerStateSystem remains the authority for onboard passenger mutation; this system delegates BoardPassenger rather than duplicating that state transition.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 108, "lineEnd": 108}, {"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 215, "lineEnd": 222}, {"path": "Assets/Game/Scripts/Systems/UnitTransportPassengerStateSystem.cs", "lineStart": 83, "lineEnd": 123}]
+        },
+        {
+          "statement": "The system owns its lookup/query caches and temporary decision list/ECB lifecycle, updating lookups every frame and disposing temporary state before return.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 17, "lineEnd": 36}, {"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 73, "lineEnd": 136}, {"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 229, "lineEnd": 230}]
+        }
+      ],
+      "updateOrder": [
+        {
+          "statement": "UnitTransportBoardingSystem runs in SimulationSystemGroup after UnitGridMovementSystem, so reach decisions observe movement from the current simulation tick.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 12, "lineEnd": 14}]
+        },
+        {
+          "statement": "The collection job is scheduled from state.Dependency and synchronously completed before diagnostics, cancellation, retry, or boarding mutations.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 109, "lineEnd": 142}]
+        },
+        {
+          "statement": "Main-thread transport/capacity revalidation occurs immediately before BoardPassenger, and all deferred structural mutations play back once at update end.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 187, "lineEnd": 230}]
+        }
+      ],
+      "sideEffects": [
+        {
+          "statement": "Diagnostics may create/use a diagnostic queue and append cancellation, waiting, or boarded records; waiting feedback is throttled to every 180 rendered frames.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 16, "lineEnd": 19}, {"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 102, "lineEnd": 107}, {"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 138, "lineEnd": 180}]
+        },
+        {
+          "statement": "Boarding presentation and passenger disablement are indirect side effects of the delegated BoardPassenger boundary, not direct managed-object mutation in this system.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 215, "lineEnd": 224}]
+        },
+        {
+          "statement": "The owner performs one explicit ECB playback; it contains no direct Debug.Log, object instantiate/destroy, or scene lookup call.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 229, "lineEnd": 230}]
+        }
+      ],
+      "failureBehavior": [
+        {
+          "statement": "Missing transport, capacity, passenger buffer, grid, footprint, or transform produces TransportMissingOrInvalid and cancels the request.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 311, "lineEnd": 325}]
+        },
+        {
+          "statement": "Air transports wait unless air state exists, flight/rolling flags are clear, physical height is grounded, and no rope disembark is active.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 448, "lineEnd": 465}]
+        },
+        {
+          "statement": "Unknown passenger kinds normalize to soldier, capacities/cargo weights clamp nonnegative, and missing GridConfig falls back to footprint, goal, world-distance, and cell-distance reach checks.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 339, "lineEnd": 345}, {"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 441, "lineEnd": 445}, {"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 501, "lineEnd": 525}]
+        },
+        {
+          "statement": "Dead passenger-buffer entries are ignored and transport existence/capacity are rechecked on the main thread before boarding to reject stale job decisions.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 187, "lineEnd": 213}, {"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 413, "lineEnd": 438}]
+        },
+        {
+          "statement": "The optional GridConfig path assumes at most one matching entity because it calls GetSingletonEntity; AM-011 must characterize or guard the multiple-grid case before extraction.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 94, "lineEnd": 100}]
+        },
+        {
+          "statement": "Passenger occupancy counts every live matching buffer entry and does not deduplicate entities; duplicate entries therefore consume duplicate capacity and require an explicit invariant test.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 413, "lineEnd": 438}, {"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 564, "lineEnd": 593}]
+        }
+      ],
+      "tests": [
+        {
+          "statement": "Run Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/am010-unit-transport.log -- -quit -executeMethod UnitTransportValidationTests.RunBatchValidation for focused ground, cargo, landed-state, reach, ramp, and architecture coverage.",
+          "references": [{"path": "Assets/Tests/Editor/UnitTransportValidationTests.cs", "lineStart": 27, "lineEnd": 113}]
+        },
+        {
+          "statement": "Run Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/am010-boarding-performance.log -- -quit -executeMethod TransportBoardingPerformanceValidation.RunBatchValidation for the current 16-warmup/64-measurement fixture.",
+          "references": [{"path": "Assets/Tests/Editor/TransportBoardingPerformanceValidation.cs", "lineStart": 43, "lineEnd": 67}]
+        },
+        {
+          "statement": "Run Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/am010-boarding-playmode.log -- -quit -runTests -testPlatform PlayMode -testFilter GameSceneTransportBoardingPlayModeTests -testResults /private/tmp/am010-boarding-playmode.xml for scene-flow boarding coverage.",
+          "references": [{"path": "Assets/Tests/PlayMode/GameSceneTransportBoardingPlayModeTests.cs", "lineStart": 231, "lineEnd": 307}]
+        },
+        {
+          "statement": "UnitTransportBoardingSystemExtractionTests characterizes passenger-kind and capacity/occupancy rules relevant to the proposed extraction.",
+          "references": [{"path": "Assets/Tests/Editor/UnitTransportBoardingSystemExtractionTests.cs", "lineStart": 66, "lineEnd": 183}]
+        }
+      ],
+      "allowedDependencies": [
+        {
+          "statement": "Allowed dependencies are unmanaged Unity ECS, Burst, Collections, Jobs, Mathematics, Transforms, and neutral Game.Components data contracts already imported by the owner.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 1, "lineEnd": 8}]
+        },
+        {
+          "statement": "Narrow same-assembly runtime boundaries are allowed for diagnostics, move-order application, footprint/grid math, and passenger-state mutation; inputs remain explicit.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 50, "lineEnd": 53}, {"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 108, "lineEnd": 108}, {"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 215, "lineEnd": 248}, {"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 495, "lineEnd": 507}]
+        },
+        {
+          "statement": "UnityEngine.Time.frameCount is an active managed dependency used only to throttle optional diagnostics; it is not simulation-time authority and should not spread into extracted rules.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 7, "lineEnd": 7}, {"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 102, "lineEnd": 107}]
+        }
+      ],
+      "forbiddenDependencies": [
+        {
+          "statement": "Do not introduce UI, bootstrap, Editor, config-asset behavior, singleton service location, reflection, or manager/controller/facade dependencies into boarding simulation.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 10, "lineEnd": 14}]
+        },
+        {
+          "statement": "Do not replace the unmanaged ISystem and Burst job boundary with SystemBase, MonoBehaviour, managed component objects, or direct object instantiate/destroy/find/load APIs.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 12, "lineEnd": 14}, {"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 281, "lineEnd": 303}]
+        },
+        {
+          "statement": "Do not move query ownership, decision ordering, main-thread stale-decision revalidation, ECB playback, diagnostics, or passenger-state authority into a broad helper.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 38, "lineEnd": 70}, {"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 142, "lineEnd": 230}]
+        }
+      ],
+      "boundedExtractionCandidates": [
+        {
+          "statement": "Extract only duplicated passenger-kind, capacity, and occupancy rules into a stateless Burst-compatible utility with explicit inputs; retain query ownership, ordering, revalidation, ECB playback, diagnostics, and passenger mutation in current owners.",
+          "proposedOutputPaths": ["Assets/Game/Scripts/Systems/UnitTransportBoardingCapacityRules.cs"],
+          "requiredExpandedAllowedPaths": ["Assets/Game/Scripts/Systems/UnitTransportBoardingCapacityRules.cs"],
+          "authorityBoundary": "The utility owns no state and returns only normalized kind, capacity, or occupancy values from explicit unmanaged inputs.",
+          "proposedUpdateOrder": "Existing job and main-thread revalidation call sites retain their current order and invoke the same stateless rules.",
+          "cleanupAuthority": "The utility owns no containers, entities, requests, or lifecycle cleanup.",
+          "references": [{"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 394, "lineEnd": 445}, {"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "lineStart": 544, "lineEnd": 600}]
+        }
+      ]
+    }
+  ]
+}

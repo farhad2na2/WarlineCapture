@@ -2,7 +2,8 @@
   "schemaVersion": 1,
   "contractId": "post-hardening-source-responsibility-v1",
   "replacementOwnerBoundary": {
-    "root": "Assets/Game/Scripts/UI/Shell",
+    "root": "Assets/Game/Scripts",
+    "baselineCommit": "5f24549a18199db04921bb0ad6adf075872b03ff",
     "domainSymbol": "ResourceExchange",
     "managedLifecycleSymbols": [
       "using UnityEngine;",
@@ -17,10 +18,8 @@
       "BindResourceExchangePopup"
     ],
     "managedLifecycleMatchThreshold": 3,
-    "allowedOwnerPaths": [
-      "Assets/Game/Scripts/UI/Shell/ResourceExchangeShellBinding.cs",
-      "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs"
-    ]
+    "genericLifecycleMatchThreshold": 6,
+    "allowedOwnerPaths": []
   },
   "growthAuthorizations": [
     {
@@ -62,6 +61,7 @@
       "maxLines": 94,
       "maxBytes": 3160,
       "maxResponsibilityDomainSymbolOccurrences": 10,
+      "maxStateSlots": 4,
       "responsibilities": [
         "resource-exchange-popup-instance",
         "resource-exchange-popup-view-binding",
@@ -105,6 +105,7 @@
       "maxLines": 898,
       "maxBytes": 38807,
       "maxResponsibilityDomainSymbolOccurrences": 11,
+      "maxStateSlots": 49,
       "responsibilities": [
         "ui-route-interpretation",
         "typed-ui-action-enqueue",

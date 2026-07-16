@@ -6,11 +6,15 @@ import hashlib
 import json
 import re
 import subprocess
+import sys
 import unittest
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT / "Tools/CI"))
+from architecture_owner_risk_ranking import state_slot_count, strip_comments_and_strings
+
 EVIDENCE_PATH = ROOT / "Design/AgentReports/ArchitectureMaturity/source_responsibility_guardrail_evidence.json"
 TRACKER_PATH = ROOT / "Design/Architecture/post_hardening_architecture_maturity_tracker.md"
 LEGACY_BASELINE_PATH = ROOT / "Design/Architecture/production_source_growth_baseline.md"
@@ -80,6 +84,7 @@ class ArchitectureSourceResponsibilityGuardrailEvidenceTests(unittest.TestCase):
         for entry in self.contract["entries"]:
             path = ROOT / entry["path"]
             content = path.read_text(encoding="utf-8")
+            clean_content = strip_comments_and_strings(content)
             lines, byte_count = measure_bytes(path.read_bytes())
             self.assertLessEqual(lines, entry["maxLines"], entry["path"])
             self.assertLessEqual(byte_count, entry["maxBytes"], entry["path"])
@@ -87,10 +92,11 @@ class ArchitectureSourceResponsibilityGuardrailEvidenceTests(unittest.TestCase):
             self.assertEqual(evidence_sources[entry["path"]]["maxLines"], entry["maxLines"])
             self.assertEqual(evidence_sources[entry["path"]]["maxBytes"], entry["maxBytes"])
             self.assertLessEqual(content.count(boundary["domainSymbol"]), entry["maxResponsibilityDomainSymbolOccurrences"])
+            self.assertLessEqual(state_slot_count(entry["path"], clean_content), entry["maxStateSlots"])
             for required in entry["requiredSymbols"]:
-                self.assertIn(required, content, f"{entry['path']} missing {required}")
+                self.assertIn(required, clean_content, f"{entry['path']} missing active {required}")
             for forbidden in entry["forbiddenSymbols"]:
-                self.assertNotIn(forbidden, content, f"{entry['path']} regained {forbidden}")
+                self.assertNotIn(forbidden, clean_content, f"{entry['path']} regained active {forbidden}")
 
             threshold = entry["responsibilitySignatureMatchThreshold"]
             if threshold <= 0:
@@ -102,16 +108,38 @@ class ArchitectureSourceResponsibilityGuardrailEvidenceTests(unittest.TestCase):
                 matches = sum(symbol in candidate_text for symbol in entry["responsibilitySignatureSymbols"])
                 self.assertLess(matches, threshold, str(candidate.relative_to(ROOT)))
 
+        baseline_commit = boundary["baselineCommit"]
+        self.assertRegex(baseline_commit, r"^[0-9a-f]{40}$")
         for candidate in production:
             relative = str(candidate.relative_to(ROOT))
             if not relative.startswith(boundary["root"] + "/"):
                 continue
             candidate_text = candidate.read_text(encoding="utf-8")
-            if boundary["domainSymbol"] not in candidate_text:
+            current_matches = sum(symbol in candidate_text for symbol in boundary["managedLifecycleSymbols"])
+            current_domain_owner = (
+                boundary["domainSymbol"] in candidate_text
+                and current_matches >= boundary["managedLifecycleMatchThreshold"]
+            )
+            current_generic_owner = current_matches >= boundary["genericLifecycleMatchThreshold"]
+            if (not current_domain_owner and not current_generic_owner) or relative in allowed_owners:
                 continue
-            matches = sum(symbol in candidate_text for symbol in boundary["managedLifecycleSymbols"])
-            if matches >= boundary["managedLifecycleMatchThreshold"]:
-                self.assertIn(relative, allowed_owners, relative)
+
+            baseline_probe = subprocess.run(
+                ["git", "cat-file", "-e", f"{baseline_commit}:{relative}"],
+                cwd=ROOT,
+                capture_output=True,
+            )
+            baseline_text = ""
+            if baseline_probe.returncode == 0:
+                baseline_text = git("show", f"{baseline_commit}:{relative}")
+            baseline_matches = sum(symbol in baseline_text for symbol in boundary["managedLifecycleSymbols"])
+            baseline_domain_owner = (
+                boundary["domainSymbol"] in baseline_text
+                and baseline_matches >= boundary["managedLifecycleMatchThreshold"]
+            )
+            if current_domain_owner:
+                self.assertTrue(baseline_domain_owner, relative)
+            self.assertLessEqual(current_matches, baseline_matches, relative)
 
     def test_growth_authorizations_are_exact_accepted_am013_blobs(self) -> None:
         authorizations = self.contract["growthAuthorizations"]
@@ -172,6 +200,9 @@ class ArchitectureSourceResponsibilityGuardrailEvidenceTests(unittest.TestCase):
         for metadata in (self.data["contract"], self.data["validatorAuthority"]):
             blob = git("show", f"{accepted['commit']}:{metadata['path']}", text=False)
             self.assertEqual(hashlib.sha256(blob).hexdigest(), metadata["sha256"])
+        log = self.data["canonicalValidator"]
+        blob = git("show", f"{accepted['commit']}:{log['log']}", text=False)
+        self.assertEqual(hashlib.sha256(blob).hexdigest(), log["logSha256"])
 
 
 if __name__ == "__main__":

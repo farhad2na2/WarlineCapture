@@ -1,0 +1,146 @@
+{
+  "activeTemporaryExceptions": [],
+  "artifactId": "AM-004-EXCEPTIONS",
+  "artifactType": "architecture-maturity-temporary-exception-registry",
+  "audit": [
+    {
+      "authorityPath": "Design/Architecture/m01_visual_map_generation_implementation_tracker.md",
+      "classification": "separately-owned-operation-map-r-and-d-authorization",
+      "count": 1,
+      "disposition": "Not imported, modified, approved, expired, or treated as a Core Architecture pass by AM-004. Its owner and tracker retain authority.",
+      "id": "AUDIT-OPERATION-MAP-R-AND-D",
+      "missingRequiredFields": [
+        "calendarExpiry"
+      ]
+    },
+    {
+      "authorityPath": "Design/Architecture/performance_regression_accepted_baseline.json",
+      "classification": "performance-and-gc-waivers",
+      "count": 0,
+      "disposition": "No frame, GC, memory, package, or evidence-freshness waiver was found or created.",
+      "id": "AUDIT-PERFORMANCE-WAIVERS",
+      "missingRequiredFields": []
+    },
+    {
+      "authorityPath": "Design/Architecture/production_source_growth_baseline.md",
+      "classification": "legacy-exact-ceiling-ratchet-authorizations-not-temporary-waivers",
+      "count": 139,
+      "disposition": "Retained under their existing validator and Decision Log authority. They authorize no growth beyond exact line/byte ceilings and are not evidence that an architecture requirement passes. Any temporary continuation claimed by this program must be registered separately with all mandatory fields.",
+      "id": "AUDIT-SOURCE-GROWTH-AUTHORIZATIONS",
+      "missingRequiredFields": [
+        "expiry",
+        "owner",
+        "removalTask"
+      ],
+      "scopeCounts": [
+        {
+          "count": 5,
+          "scope": "production-over-1000-growth"
+        },
+        {
+          "count": 15,
+          "scope": "production-over-500-review"
+        },
+        {
+          "count": 74,
+          "scope": "system-helper"
+        },
+        {
+          "count": 45,
+          "scope": "system-helper-growth"
+        }
+      ],
+      "sha256": "51dea48a2bc976d20cd576b3a854a20c517f8054ebdbf96a2db4a3d1e71fd5b7",
+      "taskCounts": [
+        {
+          "count": 2,
+          "taskId": "APH-607"
+        },
+        {
+          "count": 88,
+          "taskId": "APH-710"
+        },
+        {
+          "count": 19,
+          "taskId": "APH-712"
+        },
+        {
+          "count": 25,
+          "taskId": "APH-713"
+        },
+        {
+          "count": 5,
+          "taskId": "APH-806"
+        }
+      ]
+    },
+    {
+      "authorityPath": "Design/Architecture/systembase_to_isystem_inventory.md",
+      "classification": "legacy-managed-boundary-inventory-not-am004-temporary-waivers",
+      "count": 25,
+      "disposition": "Not promoted into the active registry. AM-006 must inventory each current managed boundary; any continued temporary waiver must be resubmitted with the complete admission contract.",
+      "id": "AUDIT-SYSTEMBASE-MANAGED-BOUNDARIES",
+      "missingRequiredFields": [
+        "allocationEvidence",
+        "approval",
+        "expiry",
+        "removalTask",
+        "updateFrequency"
+      ],
+      "sha256": "377c81c031b0cbdde92e691eef94b284ab0b4c406ce3ee72dbadf321b0bb81df"
+    }
+  ],
+  "baseline": {
+    "branch": "codex/am-004-scorecard",
+    "commit": "76f80c7a23b06ba6719593cb5f2815e476db7987",
+    "gitObjectFormat": "sha1",
+    "tree": "af237ee62e29e8d5191d4e3051451b6b47ab1712"
+  },
+  "determinism": {
+    "arrayOrdering": {
+      "activeTemporaryExceptions": "id ascending by Unicode code point",
+      "audit": "id ascending by Unicode code point",
+      "audit.missingRequiredFields": "value ascending by Unicode code point",
+      "audit.scopeCounts": "scope ascending by Unicode code point",
+      "audit.taskCounts": "taskId ascending by Unicode code point"
+    },
+    "serialization": {
+      "characterEncoding": "UTF-8",
+      "indentSpaces": 2,
+      "lineEnding": "LF",
+      "objectKeyOrdering": "lexicographic Unicode code point order",
+      "trailingLineFeedCount": 1
+    },
+    "unchangedInputDefinition": "Byte-identical regeneration requires unchanged baseline Git identities, authority paths and SHA-256 hashes, classification policy, and registered exception records. Wall-clock time and filesystem metadata are excluded."
+  },
+  "policy": {
+    "admission": {
+      "approval": "Explicit approval identity and evidence path; self-approval is invalid.",
+      "expiry": "A calendar date or objective removal condition that is machine-evaluable and cannot be indefinite.",
+      "mandatoryFields": [
+        "approval",
+        "expiry",
+        "id",
+        "measuredEffect",
+        "owner",
+        "rationale",
+        "removalTask"
+      ],
+      "measuredEffect": "Before/after metric, affected budget ID, measurement command, exact commit, and evidence path.",
+      "owner": "One accountable current owner, not an agent lane name without current ownership evidence.",
+      "rationale": "Why the exception is necessary and why a compliant alternative is not currently viable.",
+      "removalTask": "One open task with acceptance criteria that removes the exception."
+    },
+    "budgetRule": "An exception cannot raise or disable a budget. Budget loosening requires separate explicit user approval and a documented product tradeoff.",
+    "expiryRule": "Expired, malformed, missing-owner, missing-evidence, or removal-task-closed-without-removal records are invalid and fail closed.",
+    "renewalRule": "Renewal is a new independently reviewed decision with fresh measured effect; expiry is never silently extended.",
+    "state": "fail-closed"
+  },
+  "schemaVersion": 1,
+  "summary": {
+    "activeTemporaryExceptionCount": 0,
+    "legacyAuthorizationCount": 165,
+    "performanceWaiverCount": 0,
+    "state": "no-qualified-active-temporary-exceptions"
+  }
+}

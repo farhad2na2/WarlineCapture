@@ -1,0 +1,803 @@
+{
+  "artifactId": "AM-004",
+  "artifactType": "architecture-maturity-entry-scorecard",
+  "baseline": {
+    "branch": "codex/am-004-scorecard",
+    "commit": "76f80c7a23b06ba6719593cb5f2815e476db7987",
+    "gitObjectFormat": "sha1",
+    "tree": "af237ee62e29e8d5191d4e3051451b6b47ab1712"
+  },
+  "budgetAuthorities": [
+    {
+      "hashSelection": {
+        "concatenationOrder": "source-document-order",
+        "headingSet": [
+          "## Global Architecture Guardrails",
+          "## Rating Model",
+          "## Status Rules",
+          "### Core Evidence Contract"
+        ],
+        "lineEncoding": "UTF-8",
+        "lineEnding": "LF",
+        "rule": "Normalize line endings to LF, scan top-to-bottom, and treat headingSet as an unordered membership set. Include an exact selected level-two heading and every following line until but excluding the next line matching ^## . Include the exact selected Core Evidence Contract heading and every following line until but excluding the next line matching ^## . Concatenate included lines in source order with one LF after every included line and no inserted separator.",
+        "separator": "",
+        "trailingLineFeedCountPerIncludedLine": 1,
+        "version": 1
+      },
+      "id": "AUTH-MATURITY-TRACKER",
+      "path": "Design/Architecture/post_hardening_architecture_maturity_tracker.md",
+      "selectedContentSha256": "836d070c6dd0a97de857357cc2fb54301fd1df233588c5845e0d952d92b9b8ff"
+    },
+    {
+      "acceptedVersion": 4,
+      "id": "AUTH-PERFORMANCE-ACCEPTED-BASELINE",
+      "path": "Design/Architecture/performance_regression_accepted_baseline.json",
+      "sha256": "6bdf3579d76b22dedf967388fd6e5adf61d8542f807b22607bd4c5a30cb82eed"
+    },
+    {
+      "id": "AUTH-PERFORMANCE-CONTRACT",
+      "path": "Design/Architecture/performance_regression_contract.md",
+      "sha256": "b102ed34ed3ff734c532165c2bbc35842ee64a34a1ff3862c2c482ec798f0aaa"
+    }
+  ],
+  "coreBudgets": [
+    {
+      "authorityId": "AUTH-PERFORMANCE-ACCEPTED-BASELINE",
+      "comparison": "lessThanOrEqual",
+      "id": "CORE-EDITOR-FRAME-P95",
+      "limit": 20,
+      "metric": "editorFrameTimeP95",
+      "minimumMeasurementFrames": 180,
+      "requiredFixtureCounts": {
+        "runtimeBuildings": 600,
+        "units": 700,
+        "visibleModelEstimate": 40
+      },
+      "state": "active-unmeasured-at-am004-baseline",
+      "unit": "milliseconds"
+    },
+    {
+      "authorityId": "AUTH-PERFORMANCE-ACCEPTED-BASELINE",
+      "comparison": "lessThanOrEqual",
+      "id": "CORE-MATCH-GC-GLOBAL",
+      "limit": 1024,
+      "measurementFrames": 300,
+      "metric": "playerRelevantAllocatedBytesAfterWarmup",
+      "state": "active-unmeasured-at-am004-baseline",
+      "unit": "bytes",
+      "warmupFrames": 180
+    },
+    {
+      "authorityId": "AUTH-MATURITY-TRACKER",
+      "comparison": "equal",
+      "id": "CORE-OWNER-FOCUSED-RECURRING-GC",
+      "limit": 0,
+      "measurementFrames": 300,
+      "metric": "changedOwnerRecurringAllocatedBytes",
+      "state": "active-unmeasured-at-am004-baseline",
+      "unit": "bytes",
+      "warmupFrames": 180
+    },
+    {
+      "authorityId": "AM004-POLICY",
+      "comparison": "equal",
+      "id": "CORE-UI-TRANSITION-GC",
+      "limit": 0,
+      "metric": "focusedUiOpenCloseAllocatedBytes",
+      "rationale": "After one registered warmup open/close has initialized bounded assets and pools, each repeated open and close must allocate zero production managed bytes. First-use allocation is classified separately and cannot hide recurring transition allocation.",
+      "requiredWarmupTransitions": 1,
+      "state": "active-unmeasured-at-am004-baseline",
+      "unit": "bytes"
+    },
+    {
+      "authorityId": "AUTH-MATURITY-TRACKER",
+      "comparison": "equal",
+      "id": "CORE-UI-UNCHANGED-STATE-GC",
+      "limit": 0,
+      "measurementFrames": 300,
+      "metric": "focusedUiRecurringAllocatedBytes",
+      "requiredState": "surface-open-fully-bound-unchanged",
+      "state": "active-unmeasured-at-am004-baseline",
+      "unit": "bytes",
+      "warmupFrames": 180
+    }
+  ],
+  "determinism": {
+    "arrayOrdering": {
+      "budgetAuthorities": "id ascending by Unicode code point",
+      "coreBudgets": "id ascending by Unicode code point",
+      "evidenceFreshness.governedInputs": "path ascending by Unicode code point",
+      "gcClassificationPolicy.classes": "id ascending by Unicode code point",
+      "releaseLane.fields": "id ascending by Unicode code point",
+      "scenarioBudgetBindings": "budgetId ascending by Unicode code point",
+      "scope.excludedPaths": "path ascending by Unicode code point",
+      "scope.writeAllowlist": "path ascending by Unicode code point",
+      "scoreModel.anchors": "order ascending",
+      "scoreModel.categories": "id ascending by Unicode code point"
+    },
+    "serialization": {
+      "characterEncoding": "UTF-8",
+      "indentSpaces": 2,
+      "lineEnding": "LF",
+      "objectKeyOrdering": "lexicographic Unicode code point order",
+      "trailingLineFeedCount": 1
+    },
+    "unchangedInputDefinition": "Byte-identical regeneration requires unchanged baseline Git identities, governed input paths and SHA-256 hashes, and AM-004 policy values. Wall-clock time and filesystem metadata are excluded."
+  },
+  "evidenceFreshness": {
+    "acceptedStates": [
+      "current"
+    ],
+    "failClosedStates": [
+      "invalid",
+      "missing",
+      "stale",
+      "unknown"
+    ],
+    "governedInputs": [
+      {
+        "path": "Design/AgentReports/ArchitectureMaturity/canonical_scenarios.json",
+        "sha256": "cf7e02297df96e98eb950eb3ba2f43ed16f30c2501b002d30ce58d9081e3dbf6",
+        "type": "scenario"
+      },
+      {
+        "path": "Design/AgentReports/ArchitectureMaturity/entry_environment.json",
+        "sha256": "1750156ad389d4f28a392531d19339a96140da898d5c2dfd1920c38d6486239e",
+        "type": "environment"
+      },
+      {
+        "path": "Design/AgentReports/ArchitectureMaturity/entry_prerequisite_review.json",
+        "sha256": "83736b24e97ff9edd78a27c894ceee4557a76af415a2c32c3ffedca6059d7019",
+        "type": "prerequisite"
+      },
+      {
+        "path": "Design/Architecture/performance_regression_accepted_baseline.json",
+        "sha256": "6bdf3579d76b22dedf967388fd6e5adf61d8542f807b22607bd4c5a30cb82eed",
+        "type": "budget"
+      },
+      {
+        "path": "Design/Architecture/performance_regression_contract.md",
+        "sha256": "b102ed34ed3ff734c532165c2bbc35842ee64a34a1ff3862c2c482ec798f0aaa",
+        "type": "contract"
+      },
+      {
+        "hashSelection": {
+          "concatenationOrder": "source-document-order",
+          "headingSet": [
+            "## Global Architecture Guardrails",
+            "## Rating Model",
+            "## Status Rules",
+            "### Core Evidence Contract"
+          ],
+          "lineEncoding": "UTF-8",
+          "lineEnding": "LF",
+          "rule": "Normalize line endings to LF, scan top-to-bottom, and treat headingSet as an unordered membership set. Include an exact selected level-two heading and every following line until but excluding the next line matching ^## . Include the exact selected Core Evidence Contract heading and every following line until but excluding the next line matching ^## . Concatenate included lines in source order with one LF after every included line and no inserted separator.",
+          "separator": "",
+          "trailingLineFeedCountPerIncludedLine": 1,
+          "version": 1
+        },
+        "path": "Design/Architecture/post_hardening_architecture_maturity_tracker.md",
+        "selectedContentSha256": "836d070c6dd0a97de857357cc2fb54301fd1df233588c5845e0d952d92b9b8ff",
+        "type": "task"
+      }
+    ],
+    "instrumentationPolicy": {
+      "materialOverheadRule": "Record measured instrumentation overhead or attach a paired instrumentation-off control when the recorder can materially affect the result.",
+      "unknownOverheadDisposition": "invalid"
+    },
+    "rules": [
+      "Evidence must identify the exact tested commit and AM-002 environment identity.",
+      "A governed source, configuration, scenario, or tool hash mismatch makes the row stale.",
+      "Malformed, missing, unresolved, dirty, or commit-unknown evidence fails closed.",
+      "An unrelated documentation-only commit does not require recapture when every governed hash and the environment identity are unchanged.",
+      "A release-only row cannot be promoted by Core-lane evidence."
+    ]
+  },
+  "gcClassificationPolicy": {
+    "classes": [
+      {
+        "acceptance": "Permitted only before the measurement window, must be registered, bounded, and stable after warmup.",
+        "id": "one-time-warmup-cache",
+        "requiredEvidence": "Cache ID, owner, creation trigger, capacity, lifetime, and no post-warmup growth."
+      },
+      {
+        "acceptance": "Exactly zero recurring bytes in the focused unchanged-state window.",
+        "id": "owner-focused",
+        "requiredEvidence": "Changed-owner marker or allocation probe with 180 warmup and 300 measured frames."
+      },
+      {
+        "acceptance": "At most 1024 bytes over the canonical 300-frame measurement window after 180 warmup frames.",
+        "id": "player-relevant",
+        "requiredEvidence": "Attributed allocation samples and player-relevant classification."
+      },
+      {
+        "acceptance": "Reported separately and compared with its accepted non-loosening transition baseline; it cannot be hidden inside steady state.",
+        "id": "transition-only",
+        "requiredEvidence": "Per-transition allocation, transition identity, start/end state, and exact-commit baseline."
+      },
+      {
+        "acceptance": "Excluded only after attribution and a paired instrumentation-off or player control proves the bytes are not production recurring allocation.",
+        "id": "unity-editor-instrumentation",
+        "requiredEvidence": "Call stack, tool state, paired control, and retained raw sample."
+      }
+    ],
+    "discardPolicy": "Samples are retained. Classification changes attribution or gate ownership; it never deletes evidence.",
+    "unknownClassDisposition": "invalid"
+  },
+  "lifecyclePolicy": {
+    "countMetrics": [
+      "entityCountByArchetype",
+      "nativeContainerCountByOwner",
+      "poolActiveCountByPoolId",
+      "poolCapacityByPoolId",
+      "sceneRootCountByStableId",
+      "subscriptionCountByOwner"
+    ],
+    "measuredCycles": 100,
+    "memorySampleCadenceCycles": 5,
+    "permittedOneTimeCaches": [],
+    "plateauRule": {
+      "countTolerance": 0,
+      "monotonicGrowthAllowed": false,
+      "windowMeasuredCycles": 20
+    },
+    "sampleCadenceCycles": 1,
+    "state": "policy-frozen-measurement-required",
+    "totalCycles": 110,
+    "unregisteredCacheDisposition": "invalid",
+    "warmupCycles": 10
+  },
+  "memoryPolicy": {
+    "metrics": [
+      {
+        "id": "graphics-residency",
+        "metricSource": "Unity Memory Profiler or platform graphics-memory evidence tied to the exact artifact",
+        "numericNoiseTolerance": null,
+        "releaseOnly": true,
+        "state": "measurement-required-until-am053"
+      },
+      {
+        "id": "managed-memory",
+        "metricSource": "ProfilerRecorder or Memory Profiler managed-used metric",
+        "numericNoiseTolerance": {
+          "absoluteBytes": 1048576,
+          "percentOfWarmedBaseline": 1,
+          "rule": "maximum"
+        },
+        "releaseOnly": false,
+        "state": "measurement-required"
+      },
+      {
+        "id": "native-memory",
+        "metricSource": "ProfilerRecorder or Memory Profiler native-used metric",
+        "numericNoiseTolerance": {
+          "absoluteBytes": 4194304,
+          "percentOfWarmedBaseline": 1,
+          "rule": "maximum"
+        },
+        "releaseOnly": false,
+        "state": "measurement-required"
+      },
+      {
+        "id": "pool-memory",
+        "metricSource": "Project-owned pool capacities and backing allocation bytes by stable pool ID",
+        "numericNoiseTolerance": 0,
+        "releaseOnly": false,
+        "state": "measurement-required"
+      }
+    ],
+    "plateauWindowMeasuredCycles": 20,
+    "returnToBaseline": {
+      "comparison": "lessThanOrEqualWarmedBaselinePlusTolerance",
+      "tolerances": [
+        {
+          "absoluteBytes": null,
+          "id": "graphics-residency",
+          "percentOfWarmedBaseline": null,
+          "state": "measurement-required-until-am053"
+        },
+        {
+          "absoluteBytes": 1048576,
+          "id": "managed-memory",
+          "percentOfWarmedBaseline": 1,
+          "rule": "maximum",
+          "state": "active-unmeasured-at-am004-baseline"
+        },
+        {
+          "absoluteBytes": 4194304,
+          "id": "native-memory",
+          "percentOfWarmedBaseline": 1,
+          "rule": "maximum",
+          "state": "active-unmeasured-at-am004-baseline"
+        },
+        {
+          "absoluteBytes": 0,
+          "id": "pool-memory",
+          "percentOfWarmedBaseline": 0,
+          "rule": "maximum",
+          "state": "active-unmeasured-at-am004-baseline"
+        }
+      ],
+      "unknownToleranceDisposition": "invalid"
+    },
+    "sampleCadenceCycles": 5,
+    "singleBeforeAfterAccepted": false,
+    "slope": {
+      "acceptedBaselineOwner": "AM-008",
+      "comparison": "lessThanOrEqual",
+      "limitBytesPerCycle": 0,
+      "requiredInterpretation": "No positive post-warmup retained-growth trend. A measurement cannot pass until metric-specific noise and return tolerances are accepted without loosening this target."
+    },
+    "state": "policy-frozen-measurement-required",
+    "warmupCycles": 10
+  },
+  "releaseLane": {
+    "activationTask": "AM-053",
+    "fields": [
+      {
+        "authorityValue": 426399778,
+        "id": "aab-size-ceiling",
+        "state": "measurement-required-inactive",
+        "unit": "bytes"
+      },
+      {
+        "authorityValue": null,
+        "id": "absolute-peak-memory",
+        "state": "measurement-required-inactive",
+        "unit": "megabytes"
+      },
+      {
+        "authorityValue": 25,
+        "id": "android-frame-p95-high-end",
+        "state": "measurement-required-inactive",
+        "unit": "milliseconds"
+      },
+      {
+        "authorityValue": 33,
+        "id": "android-frame-p95-recommended",
+        "state": "measurement-required-inactive",
+        "unit": "milliseconds"
+      },
+      {
+        "authorityValue": 463359198,
+        "id": "apk-size-ceiling",
+        "state": "measurement-required-inactive",
+        "unit": "bytes"
+      },
+      {
+        "authorityValue": null,
+        "id": "installed-size",
+        "state": "measurement-required-inactive",
+        "unit": "bytes"
+      },
+      {
+        "authorityValue": 10,
+        "id": "peak-memory-relative-reduction",
+        "sameDeviceRequired": true,
+        "state": "measurement-required-inactive",
+        "unit": "percent"
+      },
+      {
+        "authorityValue": null,
+        "id": "resource-memory-categories",
+        "state": "measurement-required-inactive",
+        "unit": "bytes"
+      },
+      {
+        "authorityValue": null,
+        "id": "startup-p95",
+        "state": "measurement-required-inactive",
+        "unit": "milliseconds"
+      },
+      {
+        "authorityValue": null,
+        "id": "sustained-release-governance",
+        "state": "measurement-required-inactive",
+        "unit": "rating"
+      }
+    ],
+    "includedInCoreScore": false,
+    "state": "deferred-inactive"
+  },
+  "scenarioBudgetBindings": [
+    {
+      "budgetId": "AM004.AM003-SCN-001-IDLE-MATCH.frame-time",
+      "comparison": "lessThanOrEqual",
+      "limit": 20,
+      "metric": "frameTimeMs.p95",
+      "scenarioId": "AM003-SCN-001-IDLE-MATCH",
+      "state": "active-unmeasured-at-am004-baseline",
+      "unit": "milliseconds"
+    },
+    {
+      "budgetId": "AM004.AM003-SCN-001-IDLE-MATCH.gc-allocation",
+      "comparison": "lessThanOrEqualGlobalAndEqualFocusedOwner",
+      "limit": 1024,
+      "metric": "gcAllocationAfterWarmup",
+      "ownerFocusedLimit": 0,
+      "scenarioId": "AM003-SCN-001-IDLE-MATCH",
+      "state": "active-unmeasured-at-am004-baseline",
+      "unit": "bytes"
+    },
+    {
+      "budgetId": "AM004.AM003-SCN-001-IDLE-MATCH.memory-growth",
+      "comparison": "noPositivePostWarmupSlope",
+      "limit": 0,
+      "metric": "memoryGrowth.bytesPerCycle",
+      "scenarioId": "AM003-SCN-001-IDLE-MATCH",
+      "state": "policy-frozen-measurement-required",
+      "unit": "bytesPerCycle"
+    },
+    {
+      "budgetId": "AM004.AM003-SCN-002-MAXIMUM-COMBAT.frame-time",
+      "comparison": "lessThanOrEqual",
+      "limit": 20,
+      "metric": "frameTimeMs.p95",
+      "scenarioId": "AM003-SCN-002-MAXIMUM-COMBAT",
+      "state": "active-unmeasured-at-am004-baseline",
+      "unit": "milliseconds"
+    },
+    {
+      "budgetId": "AM004.AM003-SCN-002-MAXIMUM-COMBAT.gc-allocation",
+      "comparison": "lessThanOrEqualGlobalAndEqualFocusedOwner",
+      "limit": 1024,
+      "metric": "gcAllocationAfterWarmup",
+      "ownerFocusedLimit": 0,
+      "scenarioId": "AM003-SCN-002-MAXIMUM-COMBAT",
+      "state": "active-unmeasured-at-am004-baseline",
+      "unit": "bytes"
+    },
+    {
+      "budgetId": "AM004.AM003-SCN-002-MAXIMUM-COMBAT.memory-growth",
+      "comparison": "noPositivePostWarmupSlope",
+      "limit": 0,
+      "metric": "memoryGrowth.bytesPerCycle",
+      "scenarioId": "AM003-SCN-002-MAXIMUM-COMBAT",
+      "state": "policy-frozen-measurement-required",
+      "unit": "bytesPerCycle"
+    },
+    {
+      "budgetId": "AM004.AM003-SCN-003-CONSTRUCTION.frame-time",
+      "comparison": "lessThanOrEqual",
+      "limit": 20,
+      "metric": "frameTimeMs.p95",
+      "scenarioId": "AM003-SCN-003-CONSTRUCTION",
+      "state": "active-unmeasured-at-am004-baseline",
+      "unit": "milliseconds"
+    },
+    {
+      "budgetId": "AM004.AM003-SCN-003-CONSTRUCTION.gc-allocation",
+      "comparison": "lessThanOrEqualGlobalAndEqualFocusedOwner",
+      "limit": 1024,
+      "metric": "gcAllocationAfterWarmup",
+      "ownerFocusedLimit": 0,
+      "scenarioId": "AM003-SCN-003-CONSTRUCTION",
+      "state": "active-unmeasured-at-am004-baseline",
+      "unit": "bytes"
+    },
+    {
+      "budgetId": "AM004.AM003-SCN-003-CONSTRUCTION.memory-growth",
+      "comparison": "noPositivePostWarmupSlope",
+      "limit": 0,
+      "metric": "memoryGrowth.bytesPerCycle",
+      "scenarioId": "AM003-SCN-003-CONSTRUCTION",
+      "state": "policy-frozen-measurement-required",
+      "unit": "bytesPerCycle"
+    },
+    {
+      "budgetId": "AM004.AM003-SCN-004-TRANSPORT.command-time",
+      "comparison": null,
+      "limit": null,
+      "metric": "transportCommandTimeMs",
+      "scenarioId": "AM003-SCN-004-TRANSPORT",
+      "state": "measurement-required-no-accepted-authority",
+      "unit": "milliseconds"
+    },
+    {
+      "budgetId": "AM004.AM003-SCN-004-TRANSPORT.gc-allocation",
+      "comparison": "lessThanOrEqualGlobalAndEqualFocusedOwner",
+      "limit": 1024,
+      "metric": "gcAllocationMeasuredSamples",
+      "ownerFocusedLimit": 0,
+      "scenarioId": "AM003-SCN-004-TRANSPORT",
+      "state": "active-unmeasured-at-am004-baseline",
+      "unit": "bytes"
+    },
+    {
+      "budgetId": "AM004.AM003-SCN-004-TRANSPORT.memory-growth",
+      "comparison": "noPositivePostWarmupSlope",
+      "limit": 0,
+      "metric": "memoryGrowth.bytesPerCycle",
+      "scenarioId": "AM003-SCN-004-TRANSPORT",
+      "state": "policy-frozen-measurement-required",
+      "unit": "bytesPerCycle"
+    },
+    {
+      "budgetId": "AM004.AM003-SCN-005-AIRCRAFT.frame-time",
+      "comparison": "lessThanOrEqual",
+      "limit": 20,
+      "metric": "frameTimeMs.p95",
+      "scenarioId": "AM003-SCN-005-AIRCRAFT",
+      "state": "active-unmeasured-at-am004-baseline",
+      "unit": "milliseconds"
+    },
+    {
+      "budgetId": "AM004.AM003-SCN-005-AIRCRAFT.gc-allocation",
+      "comparison": "lessThanOrEqualGlobalAndEqualFocusedOwner",
+      "limit": 1024,
+      "metric": "gcAllocationMeasuredScenarios",
+      "ownerFocusedLimit": 0,
+      "scenarioId": "AM003-SCN-005-AIRCRAFT",
+      "state": "active-unmeasured-at-am004-baseline",
+      "unit": "bytes"
+    },
+    {
+      "budgetId": "AM004.AM003-SCN-005-AIRCRAFT.memory-growth",
+      "comparison": "noPositivePostWarmupSlope",
+      "limit": 0,
+      "metric": "memoryGrowth.bytesPerCycle",
+      "scenarioId": "AM003-SCN-005-AIRCRAFT",
+      "state": "policy-frozen-measurement-required",
+      "unit": "bytesPerCycle"
+    },
+    {
+      "budgetId": "AM004.AM003-SCN-006-PROJECTILES.frame-time",
+      "comparison": "lessThanOrEqual",
+      "limit": 20,
+      "metric": "frameTimeMs.p95",
+      "scenarioId": "AM003-SCN-006-PROJECTILES",
+      "state": "active-unmeasured-at-am004-baseline",
+      "unit": "milliseconds"
+    },
+    {
+      "budgetId": "AM004.AM003-SCN-006-PROJECTILES.gc-allocation",
+      "comparison": "lessThanOrEqualGlobalAndEqualFocusedOwner",
+      "limit": 1024,
+      "metric": "gcAllocationMeasuredScenarios",
+      "ownerFocusedLimit": 0,
+      "scenarioId": "AM003-SCN-006-PROJECTILES",
+      "state": "active-unmeasured-at-am004-baseline",
+      "unit": "bytes"
+    },
+    {
+      "budgetId": "AM004.AM003-SCN-006-PROJECTILES.memory-growth",
+      "comparison": "noPositivePostWarmupSlope",
+      "limit": 0,
+      "metric": "memoryGrowth.bytesPerCycle",
+      "scenarioId": "AM003-SCN-006-PROJECTILES",
+      "state": "policy-frozen-measurement-required",
+      "unit": "bytesPerCycle"
+    },
+    {
+      "budgetId": "AM004.AM003-SCN-007-MAJOR-MATCH-UI.frame-time",
+      "comparison": "lessThanOrEqual",
+      "limit": 20,
+      "metric": "frameTimeMs.p95",
+      "scenarioId": "AM003-SCN-007-MAJOR-MATCH-UI",
+      "state": "active-unmeasured-at-am004-baseline",
+      "unit": "milliseconds"
+    },
+    {
+      "budgetId": "AM004.AM003-SCN-007-MAJOR-MATCH-UI.gc-allocation",
+      "comparison": "equal",
+      "limit": 0,
+      "measurementFrames": 300,
+      "metric": "gcAllocationAfterWarmup",
+      "scenarioId": "AM003-SCN-007-MAJOR-MATCH-UI",
+      "state": "active-unmeasured-at-am004-baseline",
+      "unit": "bytes",
+      "warmupFrames": 180
+    },
+    {
+      "budgetId": "AM004.AM003-SCN-007-MAJOR-MATCH-UI.memory-growth",
+      "comparison": "noPositivePostWarmupSlope",
+      "limit": 0,
+      "metric": "memoryGrowth.bytesPerCycle",
+      "scenarioId": "AM003-SCN-007-MAJOR-MATCH-UI",
+      "state": "policy-frozen-measurement-required",
+      "unit": "bytesPerCycle"
+    },
+    {
+      "budgetId": "AM004.AM003-SCN-008-RETURNING-MENU-TO-MATCH.gc-allocation",
+      "comparison": "lessThanOrEqualAcceptedBaseline",
+      "limit": null,
+      "metric": "transitionGcAllocation",
+      "scenarioId": "AM003-SCN-008-RETURNING-MENU-TO-MATCH",
+      "state": "measurement-required-fail-closed",
+      "unit": "bytes"
+    },
+    {
+      "budgetId": "AM004.AM003-SCN-008-RETURNING-MENU-TO-MATCH.memory-growth",
+      "comparison": "noPositivePostWarmupSlopeAndReturnToAcceptedBaselineTolerance",
+      "limit": 0,
+      "metric": "transitionMemoryGrowth.bytesPerCycle",
+      "scenarioId": "AM003-SCN-008-RETURNING-MENU-TO-MATCH",
+      "state": "policy-frozen-measurement-required",
+      "unit": "bytesPerCycle"
+    },
+    {
+      "budgetId": "AM004.AM003-SCN-008-RETURNING-MENU-TO-MATCH.transition-time",
+      "comparison": null,
+      "limit": null,
+      "metric": "transitionDuration",
+      "scenarioId": "AM003-SCN-008-RETURNING-MENU-TO-MATCH",
+      "state": "measurement-required-no-accepted-authority",
+      "unit": "milliseconds"
+    },
+    {
+      "budgetId": "AM004.AM003-SCN-009-RETURNING-MATCH-TO-MENU.gc-allocation",
+      "comparison": "lessThanOrEqualAcceptedBaseline",
+      "limit": null,
+      "metric": "transitionGcAllocation",
+      "scenarioId": "AM003-SCN-009-RETURNING-MATCH-TO-MENU",
+      "state": "measurement-required-fail-closed",
+      "unit": "bytes"
+    },
+    {
+      "budgetId": "AM004.AM003-SCN-009-RETURNING-MATCH-TO-MENU.memory-growth",
+      "comparison": "noPositivePostWarmupSlopeAndReturnToAcceptedBaselineTolerance",
+      "limit": 0,
+      "metric": "transitionMemoryGrowth.bytesPerCycle",
+      "scenarioId": "AM003-SCN-009-RETURNING-MATCH-TO-MENU",
+      "state": "policy-frozen-measurement-required",
+      "unit": "bytesPerCycle"
+    },
+    {
+      "budgetId": "AM004.AM003-SCN-009-RETURNING-MATCH-TO-MENU.transition-time",
+      "comparison": null,
+      "limit": null,
+      "metric": "transitionDuration",
+      "scenarioId": "AM003-SCN-009-RETURNING-MATCH-TO-MENU",
+      "state": "measurement-required-no-accepted-authority",
+      "unit": "milliseconds"
+    },
+    {
+      "budgetId": "AM004.AM003-SCN-010-LONG-SOAK.frame-time",
+      "comparison": null,
+      "limit": null,
+      "metric": "frameTimeMs",
+      "scenarioId": "AM003-SCN-010-LONG-SOAK",
+      "state": "measurement-required-inactive-release-lane",
+      "unit": "milliseconds"
+    },
+    {
+      "budgetId": "AM004.AM003-SCN-010-LONG-SOAK.gc-allocation",
+      "comparison": null,
+      "limit": null,
+      "metric": "gcAllocationAfterWarmup",
+      "scenarioId": "AM003-SCN-010-LONG-SOAK",
+      "state": "measurement-required-inactive-release-lane",
+      "unit": "bytes"
+    },
+    {
+      "budgetId": "AM004.AM003-SCN-010-LONG-SOAK.memory-growth",
+      "comparison": null,
+      "limit": null,
+      "metric": "memoryGrowth",
+      "scenarioId": "AM003-SCN-010-LONG-SOAK",
+      "state": "measurement-required-inactive-release-lane",
+      "unit": "bytes"
+    }
+  ],
+  "schemaVersion": 1,
+  "scope": {
+    "excludedPaths": [
+      "operation-map owned production, prototype, tracker, scene, and generated paths",
+      "separately owned FirstLaunch paths",
+      "separately owned UI visual-lock paths",
+      "separately owned audio paths"
+    ],
+    "productionBehaviorChanges": false,
+    "writeAllowlist": [
+      "Design/AgentReports/ArchitectureMaturity/entry_scorecard.json",
+      "Design/AgentReports/ArchitectureMaturity/entry_scorecard.md",
+      "Design/AgentReports/ArchitectureMaturity/exception_registry.json"
+    ]
+  },
+  "scoreModel": {
+    "anchors": [
+      {
+        "meaning": "unsafe or undefined ownership; recurring regressions are expected",
+        "order": 1,
+        "score": "<5"
+      },
+      {
+        "meaning": "documented intent with substantial legacy or manual enforcement",
+        "order": 2,
+        "score": "5-6"
+      },
+      {
+        "meaning": "correct in major flows with incomplete automation or lifecycle proof",
+        "order": 3,
+        "score": "7"
+      },
+      {
+        "meaning": "broadly automated, measured, and behavior-covered with known bounded gaps",
+        "order": 4,
+        "score": "8"
+      },
+      {
+        "meaning": "fail-closed controls, explicit ownership, current measurements, and no material uncovered path",
+        "order": 5,
+        "score": "9"
+      },
+      {
+        "meaning": "independent review plus broad failure, lifecycle, and performance evidence with no high-severity residual risk",
+        "order": 6,
+        "score": "9.5"
+      },
+      {
+        "meaning": "the 9.5 standard sustained across multiple production releases without recurring architectural regression",
+        "order": 7,
+        "score": "10"
+      }
+    ],
+    "categories": [
+      {
+        "closeoutEvidence": null,
+        "currentRating": null,
+        "id": "diagnostics-continuous-governance",
+        "state": "measurement-required",
+        "target": 9.5,
+        "weightPercent": 10
+      },
+      {
+        "closeoutEvidence": 9.2,
+        "currentRating": null,
+        "id": "ecs-runtime-ownership",
+        "state": "current-evidence-required",
+        "target": 9.6,
+        "weightPercent": 20
+      },
+      {
+        "closeoutEvidence": 8.6,
+        "currentRating": null,
+        "id": "lifecycle-resource-safety",
+        "state": "current-evidence-required",
+        "target": 9.6,
+        "weightPercent": 15
+      },
+      {
+        "closeoutEvidence": 8.7,
+        "currentRating": null,
+        "id": "maintainability-testability",
+        "state": "current-evidence-required",
+        "target": 9.5,
+        "weightPercent": 15
+      },
+      {
+        "closeoutEvidence": 8.5,
+        "currentRating": null,
+        "id": "modularity-dependency-boundaries",
+        "state": "current-evidence-required",
+        "target": 9.4,
+        "weightPercent": 15
+      },
+      {
+        "closeoutEvidence": 8.2,
+        "currentRating": null,
+        "id": "performance-gc-discipline",
+        "state": "current-evidence-required",
+        "target": 9.7,
+        "weightPercent": 15
+      },
+      {
+        "closeoutEvidence": 8.2,
+        "closeoutEvidenceState": "provisional",
+        "currentRating": null,
+        "id": "ui-presentation-architecture",
+        "state": "current-evidence-required",
+        "target": 9.4,
+        "weightPercent": 10
+      }
+    ],
+    "coreScore": {
+      "claimThreshold": 9.5,
+      "current": null,
+      "historicalContextOnly": 8.8,
+      "minimumCategoryForClaim": 9,
+      "rounding": "weighted mean rounded to one decimal after all seven current category ratings exist",
+      "state": "not-recomputed"
+    }
+  }
+}

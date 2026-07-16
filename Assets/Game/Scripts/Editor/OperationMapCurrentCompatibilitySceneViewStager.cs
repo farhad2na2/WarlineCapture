@@ -47,6 +47,8 @@ namespace Game.Editor
             AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
             if (!TryValidate(out string validationError))
                 throw new InvalidOperationException(validationError);
+            if (!OperationMapCurrentStagedSpatialBindingValidator.TryValidate(out validationError))
+                throw new InvalidOperationException(validationError);
         }
 
         public static void StageForBatch() => Stage();

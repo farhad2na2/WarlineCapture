@@ -88,6 +88,15 @@ public sealed class OperationMapCurrentCompatibilitySceneStagerTests
                     OperationMapCurrentCompatibilityDefinitionBuilder.DefinitionPath)));
     }
 
+    [Test]
+    public void StagedSceneBindsCurrentSpatialAndLightingMetadata()
+    {
+        Assert.That(
+            OperationMapCurrentStagedSpatialBindingValidator.TryValidate(out string error),
+            Is.True,
+            error);
+    }
+
     [TestCase("Update")]
     [TestCase("LateUpdate")]
     [TestCase("FixedUpdate")]

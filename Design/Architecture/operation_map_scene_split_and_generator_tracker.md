@@ -699,7 +699,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 21% (37/177 checklist items complete).
+Overall implementation progress: 21% (38/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -710,7 +710,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 | 2. Per-map static presentation ownership | Not started / compatibility subset | 0 | 14 | 0% | Preserve the current baked map safely; future-map generation remains undecided. |
 | 2A. Local Addressables packaging foundation | Later / direction-specific | 0 | 20 | 0% | Do not implement before the map-delivery direction is selected. |
 | 3. Current-map compatibility registration | In progress / shared | 5 | 10 | 50% | Current identities/definition are registered and schema-v1 read compatibility is explicit; runtime launch remains. |
-| 4. Non-destructive scene ownership split | In progress / shared priority | 7 | 14 | 50% | The staged scene now has one non-updating serialized-reference view over its definition, map/surface, placement configs, and map-owned subscene; source Match assets remain unchanged. |
+| 4. Non-destructive scene ownership split | In progress / shared priority | 8 | 14 | 57% | The staged scene now has one non-updating serialized-reference view and fail-closed validation over its definition, spatial metadata, lighting/probes, runway/helipad content, placements, and map-owned subscene; source Match assets remain unchanged. |
 | 5. Runtime selection, loading, and teardown | In progress / shared contracts | 1 | 14 | 7% | Pure readiness/failure/teardown data contracts only; concrete loading is later. |
 | 6. Metadata, camera, minimap, and movement binding | In progress / shared | 2 | 12 | 17% | Scenario-required anchors validate against map metadata, and the existing RTS camera bridge prefers active-map camera bounds with grid fallback. |
 | 7. M01 operation-map slice | Later / shared contracts only | 0 | 10 | 0% | Map-neutral ids/anchors may proceed; physical rollout remains gated. |
@@ -855,7 +855,7 @@ Exit criteria:
 - [x] Move/copy only classified map roots into the staged operation-map scene while shared binary assets remain referenced, not duplicated. See `../AgentReports/2026-07-16_current_operation_map_root_extraction.md`.
 - [x] Assign or create the map-owned subscene without breaking the original `MatchSubScene` compatibility path. See `../AgentReports/2026-07-16_current_operation_map_subscene_staging.md`.
 - [x] Generate map-specific building and vehicle placement configs from the staged scene rather than reusing stale hierarchy assumptions blindly. See `../AgentReports/2026-07-16_current_operation_map_placement_staging.md`.
-- [ ] Bind map surface, grid, blockers, lightmaps/probes, runways, helipads, bounds, and metadata from the staged scene.
+- [x] Bind map surface, grid, blockers, lightmaps/probes, runways, helipads, bounds, and metadata from the staged scene. See `../AgentReports/2026-07-16_current_operation_map_spatial_binding_validation.md`.
 - [ ] Bake a map-specific presentation manifest/chunk set from the staged operation-map scene.
 - [ ] Validate source GlobalObjectIds, hierarchy paths, authored conversion counts, canonical renderer suppression, and entity parity.
 - [ ] Remove map roots and map-specific references from `Match.unity` only in the atomic cutover commit after staged parity passes.
@@ -1092,6 +1092,7 @@ Exit criteria:
 | 2026-07-16 | Current operation-map placement staging | `../AgentReports/2026-07-16_current_operation_map_placement_staging.md`; focused EditMode `4 / 4`; source-growth/naming `24 / 24`; staged hierarchy full-identity match; distinct GUID and serialized parity checks; Unity compile | Passed | Created map-specific configs for all 451 building and 29 vehicle placements only after validating the extracted hierarchy. Existing Match configs and runtime bindings remain unchanged. |
 | 2026-07-16 | Current operation-map scene-view binding | `../AgentReports/2026-07-16_current_operation_map_scene_view_binding.md`; focused EditMode `8 / 8`; source-growth/naming `24 / 24`; no-update-loop reflection checks; canonical scene/subscene SHA-256 checks; Unity compile | Passed | Added exactly one non-updating serialized-reference view to the staged map scene. It binds map-owned content without loader policy, self-registration, or changes to the current Match route. |
 | 2026-07-16 | Current operation-map staged definition | `../AgentReports/2026-07-16_current_operation_map_staged_definition.md`; focused EditMode `9 / 9`; source-growth/naming `24 / 24`; byte-identical staged definition/scene regeneration; canonical source SHA-256 checks; Unity compile | Passed | Added a distinct staged definition whose navigation metadata identifies the staged subscene, and made the staged scene view fail closed on definition/subscene mismatch. This is enabling Phase 4 evidence only; progress remains `37 / 177`. |
+| 2026-07-16 | Current operation-map spatial binding validation | `../AgentReports/2026-07-16_current_operation_map_spatial_binding_validation.md`; focused EditMode `10 / 10`; source-growth/naming `24 / 24`; idempotent staging; byte-identical staged/source SHA-256 checks; Unity compile | Passed | Added editor-only fail-closed validation for the staged map's surface/grid GUIDs, blocker baseline, lighting/probes, runway geometry, airport/helipad placements, bounds, camera, minimap, and definition metadata. No runtime route or scene bytes changed. |
 
 ## Open Decisions
 

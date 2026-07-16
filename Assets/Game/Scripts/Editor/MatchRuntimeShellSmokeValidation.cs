@@ -299,6 +299,9 @@ namespace Game.Editor
 
             if (phase == Phase.WaitingForShellReady)
             {
+                if (MatchCaptureWorldBootstrapUtility.EnsureDefaultGameWorld())
+                    Debug.Log("[MatchRuntimeShellSmokeValidation] initialized missing batch-mode Default World.");
+
                 if (!TryGetShellState(out UiShellStateComponent shellState) ||
                     shellState.CurrentMode != UiShellMode.MainMenu ||
                     shellState.ActiveRoute != UIRoute.MainMenu ||

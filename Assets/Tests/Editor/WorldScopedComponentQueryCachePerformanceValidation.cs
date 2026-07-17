@@ -73,18 +73,18 @@ public sealed class WorldScopedComponentQueryCachePerformanceValidation
             readOnly: true,
             moveOrderCache);
 
-        var gameplayConsumer = new GameplayRuntimeUpdateCompositionSystemHelper();
+        var warningPresentation = new ThreatWarningPresentationState();
         WorldScopedComponentQueryCache<ThreatWarningRuntimeStateComponent> warningStateCache =
             GetConfiguredCache<ThreatWarningRuntimeStateComponent>(
-                gameplayConsumer,
-                "_threatWarningStateQueryCache",
+                warningPresentation,
+                "_queryCache",
                 expectedReadOnly: false);
         ValidateCombination(
-            nameof(GameplayRuntimeUpdateCompositionSystemHelper),
+            nameof(ThreatWarningPresentationState),
             nameof(ThreatWarningRuntimeStateComponent),
             readOnly: false,
             warningStateCache);
-        gameplayConsumer.Dispose();
+        warningPresentation.Dispose();
     }
 
     [Test]
@@ -222,8 +222,8 @@ public sealed class WorldScopedComponentQueryCachePerformanceValidation
                 {
                     moveOrderCount++;
                 }
-                else if (runtimeType == typeof(GameplayRuntimeUpdateCompositionSystemHelper) &&
-                         field.Name == "_threatWarningStateQueryCache" &&
+                else if (runtimeType == typeof(ThreatWarningPresentationState) &&
+                         field.Name == "_queryCache" &&
                          componentType == typeof(ThreatWarningRuntimeStateComponent))
                 {
                     warningStateCount++;

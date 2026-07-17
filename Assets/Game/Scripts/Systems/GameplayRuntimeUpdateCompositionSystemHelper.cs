@@ -16,7 +16,6 @@ namespace Game.Runtime
     {
         private const int LoadingGateDiagnosticIntervalFrames = 120;
         private const int LoadingGateFailOpenFrames = 1800;
-        private const float ThreatWarningVisibleSeconds = 5f;
         private static readonly ProfilerMarker BeginUpdateMarker = new("GameplayRuntimeUpdate.BeginUpdate");
         private static readonly ProfilerMarker RoadBuildMarker = new("GameplayRuntimeUpdate.RoadBuild");
         private static readonly ProfilerMarker BuildingPlacementMarker = new("GameplayRuntimeUpdate.BuildingPlacement");
@@ -38,7 +37,7 @@ namespace Game.Runtime
         private EntityQuery _initialSpawnInitializedQuery;
         private EntityQuery _initialSpawnProgressQuery;
         private bool _hasInitialSpawnQueries;
-        private WorldScopedComponentQueryCache<ThreatWarningRuntimeStateComponent> _threatWarningStateQueryCache = new(readOnly: false);
+        private readonly ThreatWarningPresentationState _threatWarningPresentation = new();
 
         public void Update(
             World runtimeWorld,
@@ -191,7 +190,7 @@ namespace Game.Runtime
 #endif
             using (MainMenuMarker.Auto())
             {
-                PresentPendingThreatWarning(runtimeWorld, mainMenu, Time.unscaledTime, simulationActive);
+                _threatWarningPresentation.Present(runtimeWorld, mainMenu, Time.unscaledTime, simulationActive);
                 mainMenu?.Update();
             }
             hadSlowStep |= performanceDiagnosticsSystem.EndStep("MainMenu", stepStart);
@@ -256,59 +255,9 @@ namespace Game.Runtime
             }
         }
 
-        private void PresentPendingThreatWarning(
-            World runtimeWorld,
-            IMatchRuntimeUi mainMenu,
-            float now,
-            bool simulationActive)
-        {
-            if (!simulationActive)
-                return;
-
-            if (runtimeWorld == null || !runtimeWorld.IsCreated)
-                return;
-
-            EntityManager entityManager = runtimeWorld.EntityManager;
-            EntityQuery warningStateQuery = _threatWarningStateQueryCache.Get(entityManager);
-
-            if (mainMenu == null ||
-                !ThreatWarningRuntimeState.TryRead(
-                    entityManager,
-                    warningStateQuery,
-                    out ThreatWarningRuntimeStateComponent warningState) ||
-                warningState.HasPendingWarning == 0)
-                return;
-
-            string title = BuildThreatWarningTitle(
-                warningState.PendingType,
-                warningState.PendingEtaSeconds,
-                warningState.PendingThreatCount);
-            if (mainMenu.TryShowMatchHudThreatWarning(title, now + ThreatWarningVisibleSeconds))
-                ThreatWarningRuntimeState.ClearPendingWarning(entityManager, warningStateQuery);
-        }
-
-        private static string BuildThreatWarningTitle(ThreatWarningType type, float etaSeconds, int threatCount)
-        {
-            string key = type == ThreatWarningType.Air ? "warning_air_attack_type" : "warning_ground_attack_type";
-            string fallback = type == ThreatWarningType.Air ? "Air attack detected" : "Ground vehicle attack detected";
-            string title = GameStrings.Get(key);
-            if (string.IsNullOrWhiteSpace(title) || title == key)
-                title = fallback;
-
-            int eta = Mathf.CeilToInt(Mathf.Max(0f, etaSeconds));
-            if (eta > 0)
-                title = GameStrings.Format("warning_attack_eta_suffix", "{0} - ETA {1}s", title, eta);
-
-            if (threatCount > 1)
-                title = GameStrings.Format("warning_attack_count_suffix", "{0} x{1}", title, threatCount);
-
-            return title;
-        }
-
         public void Dispose()
         {
-            _threatWarningStateQueryCache.Dispose();
-            _threatWarningStateQueryCache = new WorldScopedComponentQueryCache<ThreatWarningRuntimeStateComponent>(readOnly: false);
+            _threatWarningPresentation.Dispose();
 
             if (!_hasInitialSpawnQueries)
                 return;

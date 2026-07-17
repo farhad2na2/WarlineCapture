@@ -33,41 +33,39 @@ namespace Game.Composition
         private readonly IGameTextResolver gameTextResolver = new GameTextResolverAdapter();
         private bool fallbackPerformanceDiagnosticsInitialized;
         private bool _staticMapBatchingInitialized;
-        private World _runtimeWorld;
+        private World runtimeWorld;
         private MatchSceneView sceneView;
-
         public MatchSceneView SceneView => sceneView;
         public bool HasSceneView => sceneView != null;
-        private MatchSceneView MatchScene => sceneView;
 
-        public Camera WorldCamera => MatchScene != null ? MatchScene.WorldCamera : null;
-        public Light DirectionalLight => MatchScene != null ? MatchScene.DirectionalLight : null;
-        public Volume GlobalVolume => MatchScene != null ? MatchScene.GlobalVolume : null;
-        public VisualQualityProfileAsset VisualQualityProfile => MatchScene != null ? MatchScene.VisualQualityProfile : null;
-        public CombinedMeshBaker DecorationCombinedMeshBaker => MatchScene != null ? MatchScene.DecorationCombinedMeshBaker : null;
-        public Transform DecorationRoot => MatchScene != null ? MatchScene.DecorationRoot : null;
+        public Camera WorldCamera => sceneView != null ? sceneView.WorldCamera : null;
+        public Light DirectionalLight => sceneView != null ? sceneView.DirectionalLight : null;
+        public Volume GlobalVolume => sceneView != null ? sceneView.GlobalVolume : null;
+        public VisualQualityProfileAsset VisualQualityProfile => sceneView != null ? sceneView.VisualQualityProfile : null;
+        public CombinedMeshBaker DecorationCombinedMeshBaker => sceneView != null ? sceneView.DecorationCombinedMeshBaker : null;
+        public Transform DecorationRoot => sceneView != null ? sceneView.DecorationRoot : null;
 
-        public RTSSelectionSystemConfig RtsSelectionConfig => MatchScene != null ? MatchScene.RtsSelectionConfig : null;
-        public RoadBuildSystemConfig RoadBuildConfig => MatchScene != null ? MatchScene.RoadBuildConfig : null;
-        public BuildingPlacementSystemConfig BuildingPlacementConfig => MatchScene != null ? MatchScene.BuildingPlacementConfig : null;
-        public MapBuildingPlacementConfig MapBuildingPlacementConfig => MatchScene != null ? MatchScene.MapBuildingPlacementConfig : null;
-        public MapVehiclePlacementConfig MapVehiclePlacementConfig => MatchScene != null ? MatchScene.MapVehiclePlacementConfig : null;
-        public Transform MapBuildingAuthoringRoot => MatchScene != null ? MatchScene.MapBuildingAuthoringRoot : null;
-        public Transform MapVehicleAuthoringRoot => MatchScene != null ? MatchScene.MapVehicleAuthoringRoot : null;
-        public UnitAttackTraceSystemConfig UnitAttackTraceConfig => MatchScene != null ? MatchScene.UnitAttackTraceConfig : null;
-        public RuntimeCitySpawnerSystemConfig RuntimeCitySpawnerConfig => MatchScene != null ? MatchScene.RuntimeCitySpawnerConfig : null;
-        public RuntimeDecorationSpawnerSystemConfig RuntimeDecorationSpawnerConfig => MatchScene != null ? MatchScene.RuntimeDecorationSpawnerConfig : null;
-        public RuntimeGridBlockerSystemConfig RuntimeGridBlockerConfig => MatchScene != null ? MatchScene.RuntimeGridBlockerConfig : null;
-        public DayNightSystemConfig DayNightConfig => MatchScene != null ? MatchScene.DayNightConfig : null;
-        public GameStringsConfig GameStringsConfig => MatchScene != null ? MatchScene.GameStringsConfig : null;
-        public AIPlanEntryStartupConfig AIPlanEntryConfig => MatchScene != null ? MatchScene.AIPlanEntryConfig : null;
+        public RTSSelectionSystemConfig RtsSelectionConfig => sceneView != null ? sceneView.RtsSelectionConfig : null;
+        public RoadBuildSystemConfig RoadBuildConfig => sceneView != null ? sceneView.RoadBuildConfig : null;
+        public BuildingPlacementSystemConfig BuildingPlacementConfig => sceneView != null ? sceneView.BuildingPlacementConfig : null;
+        public MapBuildingPlacementConfig MapBuildingPlacementConfig => sceneView != null ? sceneView.MapBuildingPlacementConfig : null;
+        public MapVehiclePlacementConfig MapVehiclePlacementConfig => sceneView != null ? sceneView.MapVehiclePlacementConfig : null;
+        public Transform MapBuildingAuthoringRoot => sceneView != null ? sceneView.MapBuildingAuthoringRoot : null;
+        public Transform MapVehicleAuthoringRoot => sceneView != null ? sceneView.MapVehicleAuthoringRoot : null;
+        public UnitAttackTraceSystemConfig UnitAttackTraceConfig => sceneView != null ? sceneView.UnitAttackTraceConfig : null;
+        public RuntimeCitySpawnerSystemConfig RuntimeCitySpawnerConfig => sceneView != null ? sceneView.RuntimeCitySpawnerConfig : null;
+        public RuntimeDecorationSpawnerSystemConfig RuntimeDecorationSpawnerConfig => sceneView != null ? sceneView.RuntimeDecorationSpawnerConfig : null;
+        public RuntimeGridBlockerSystemConfig RuntimeGridBlockerConfig => sceneView != null ? sceneView.RuntimeGridBlockerConfig : null;
+        public DayNightSystemConfig DayNightConfig => sceneView != null ? sceneView.DayNightConfig : null;
+        public GameStringsConfig GameStringsConfig => sceneView != null ? sceneView.GameStringsConfig : null;
+        public AIPlanEntryStartupConfig AIPlanEntryConfig => sceneView != null ? sceneView.AIPlanEntryConfig : null;
         private ResourceExchangeRecipeConfigSet ResourceExchangeConfig =>
-            MatchScene != null ? MatchScene.ResourceExchangeConfig : null;
-        public IReadOnlyList<AIControllerConfig> AIControllerConfigs => MatchScene != null ? MatchScene.AIControllerConfigs : Array.Empty<AIControllerConfig>();
-        private FactionVisualSettingsConfig FactionVisualConfig => MatchScene != null ? MatchScene.FactionVisualConfig : null;
-        private PrefabPreviewCameraConfig PrefabPreviewCameraConfig => MatchScene != null ? MatchScene.PrefabPreviewCameraConfig : null;
-        private GridAuthoringConfig RuntimeGridConfig => MatchScene != null ? MatchScene.RuntimeGridConfig : null;
-        private MapSurfaceAuthoring MapSurfaceAuthoring => MatchScene != null ? MatchScene.MapSurfaceAuthoring : null;
+            sceneView != null ? sceneView.ResourceExchangeConfig : null;
+        public IReadOnlyList<AIControllerConfig> AIControllerConfigs => sceneView != null ? sceneView.AIControllerConfigs : Array.Empty<AIControllerConfig>();
+        private FactionVisualSettingsConfig FactionVisualConfig => sceneView != null ? sceneView.FactionVisualConfig : null;
+        private PrefabPreviewCameraConfig PrefabPreviewCameraConfig => sceneView != null ? sceneView.PrefabPreviewCameraConfig : null;
+        private GridAuthoringConfig RuntimeGridConfig => sceneView != null ? sceneView.RuntimeGridConfig : null;
+        private MapSurfaceAuthoring MapSurfaceAuthoring => sceneView != null ? sceneView.MapSurfaceAuthoring : null;
 
         public RuntimeGridBlockerPresentationSystemHelper RuntimeGridBlockers { get; private set; }
         public RuntimeDecorationSpawnerPresentationSystemHelper RuntimeDecorations { get; private set; }
@@ -156,9 +154,9 @@ namespace Game.Composition
         {
             Initialize(view);
             _performanceDiagnosticsSystem = ResolvePerformanceDiagnosticsSystemHelper();
-            _runtimeWorld = runtimeWorld;
+            this.runtimeWorld = runtimeWorld;
             matchIntroStateQuery.Bind(runtimeWorld);
-            _runtimeCameraReferenceSystem = ResolveRuntimeCameraReferenceSystem(_runtimeWorld);
+            _runtimeCameraReferenceSystem = ResolveRuntimeCameraReferenceSystem(runtimeWorld);
 
             ResolveRuntimeRootSceneSystemHelper()?.Ensure(
                 ownerTransform,
@@ -324,9 +322,8 @@ namespace Game.Composition
             _managedRuntimeInitialized = false;
             _visualQualitySettingsInitialized = false;
             _staticMapBatchingInitialized = false;
-            _runtimeWorld = null;
+            runtimeWorld = null;
         }
-
 
         public void Initialize(MatchSceneView view)
         {
@@ -548,9 +545,7 @@ namespace Game.Composition
             IUnitImpostorRenderer unitImpostors,
             ref bool gameplayStartPending)
         {
-            gameplayRuntimeUpdateSystem.Update(
-                _runtimeWorld,
-                gameplayInitialized,
+            gameplayRuntimeUpdateSystem.Update(runtimeWorld, gameplayInitialized,
                 runtimeGameplayStateSystem,
                 performanceDiagnosticsSystem,
                 roadBuildRuntimeUpdate,
@@ -730,7 +725,7 @@ namespace Game.Composition
 
             InitializeVisualQualitySettingsIfNeeded();
             InitializeStaticMapBatchingIfNeeded();
-            int ownerLayer = MatchScene != null ? MatchScene.gameObject.layer : 0;
+            int ownerLayer = sceneView != null ? sceneView.gameObject.layer : 0;
 
             ManagedGameplayStartupSystemHelper.Result managedSystems = InitializeManagedRuntime(
                 DayNightConfig,
@@ -805,7 +800,7 @@ namespace Game.Composition
             _citizenPopulationReadModel = managedSystems.CitizenPopulationComposition?.ReadModel;
             _citizenPopulationEventSystem = managedSystems.CitizenPopulationComposition?.EventSystem;
             _buildingRuntimeBoundaryEntity = MatchBuildingRuntimeBootstrapStartupSystemHelper.Ensure(_buildingRuntimeBoundaryEntity);
-            ResolveRuntimeCameraReferenceSystem(_runtimeWorld)?.SetWorldCamera(WorldCamera);
+            ResolveRuntimeCameraReferenceSystem(runtimeWorld)?.SetWorldCamera(WorldCamera);
             _managedRuntimeInitialized = true;
             if (MainMenu != null)
             {
@@ -848,7 +843,7 @@ namespace Game.Composition
             if (_visualQualitySettingsInitialized)
                 return;
 
-            VisualQualitySettingsSystem visualQualitySettingsSystem = ResolveVisualQualitySettingsSystem(_runtimeWorld);
+            VisualQualitySettingsSystem visualQualitySettingsSystem = ResolveVisualQualitySettingsSystem(runtimeWorld);
             if (visualQualitySettingsSystem == null)
                 return;
 
@@ -917,7 +912,7 @@ namespace Game.Composition
             if (mapRoot == null)
                 return;
 
-            mapVisuals.Initialize(Application.platform, MatchScene.StaticMapPresentationManifest, mapRoot,
+            mapVisuals.Initialize(Application.platform, sceneView.StaticMapPresentationManifest, mapRoot,
                 MapBuildingAuthoringRoot,
                 MapVehicleAuthoringRoot,
                 DecorationRoot);
@@ -963,7 +958,7 @@ namespace Game.Composition
                 _runtimeBlockerRoot,
                 DecorationRoot,
                 DecorationCombinedMeshBaker,
-                MatchScene != null ? MatchScene.RuntimeGridDebugViews : null,
+                sceneView != null ? sceneView.RuntimeGridDebugViews : null,
                 _gameplaySceneBindingSystem);
 
             RuntimeCity = gameplaySystems.RuntimeCity;

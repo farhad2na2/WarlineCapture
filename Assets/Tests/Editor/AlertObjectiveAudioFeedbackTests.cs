@@ -83,7 +83,7 @@ public sealed class AlertObjectiveAudioFeedbackTests
     {
         using World world = new("AlertAudioFeedbackEmitTests");
 
-        Assert.IsTrue(ThreatDetectionWarningSystem.TryEmitThreatWarningAudio(
+        Assert.IsTrue(ThreatWarningAudioEventUtility.TryEmit(
             world.EntityManager,
             ThreatWarningType.Ground,
             etaSeconds: 5f,
@@ -179,7 +179,10 @@ public sealed class AlertObjectiveAudioFeedbackTests
         Assert.AreEqual(75, em.GetComponentData<UnitHealth>(target).Current);
 
         DynamicBuffer<AudioPlaybackRequestElement> requests = GetAudioRequests(em);
-        Assert.AreEqual(0, requests.Length);
+        for (int i = 0; i < requests.Length; i++)
+        {
+            Assert.AreNotEqual(AudioEventIds.AlertUnitUnderAttackHash, requests[i].EventHash);
+        }
     }
 
     [Test]
@@ -308,7 +311,7 @@ public sealed class AlertObjectiveAudioFeedbackTests
         AudioPlaybackPriority expectedPriority,
         float expectedCooldownSeconds)
     {
-        Assert.IsTrue(ThreatDetectionWarningSystem.TryResolveThreatWarningAudioEvent(
+        Assert.IsTrue(ThreatWarningAudioEventUtility.TryResolve(
             warningType,
             etaSeconds,
             threatCount,

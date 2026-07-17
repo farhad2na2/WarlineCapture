@@ -1,0 +1,64 @@
+{
+  "artifactId": "AM026-UI-PROJECTION-INVENTORY-ACCEPTANCE",
+  "schemaVersion": 1,
+  "taskId": "AM-026",
+  "result": "Accepted",
+  "sourceBaseline": {
+    "branch": "main",
+    "commit": "3678803e01b7b89299f301d2cf0168c5c8ca2439",
+    "note": "No non-protected UI, composition, or runtime-system source changed from the original fa2d9a595fb3545fb7ed7cc3b8f3e7d87268fb5c audit baseline."
+  },
+  "acceptedImplementation": {
+    "commit": "0664ecb124d0fcad9a97f0b8415aa40202cda362",
+    "tree": "16ef0fb6914bde188d9010c0c82afca1418033b5",
+    "files": [
+      {
+        "path": "Design/Architecture/ui_projection_allocation_inventory.md",
+        "sha256": "0db09d77f5dc29e8f96c6d55649cc5c27c9f3df7ab45604425f3cb6b627f5720"
+      },
+      {
+        "path": "Tools/CI/tests/test_architecture_ui_projection_inventory.py",
+        "sha256": "59a72bb6c9e2ddd085e32ff24efcd5ae42d4ca9968d2ee6643f39f787f27d515"
+      }
+    ]
+  },
+  "inventory": {
+    "surfaceCount": 29,
+    "surfaceIdRange": "UI-001..UI-029",
+    "uniqueSurfaceIds": 29,
+    "boundedWorkPackageCount": 23,
+    "workPackageIdRange": "AM-WP-001..AM-WP-023",
+    "workPackageSetSha256": "035f56a94571285d501fb6ee32ac162539fd4dfcce6386ebb715618efb809511",
+    "routeAndPopupReconciliationPresent": true,
+    "protectedOwnershipBoundaryPresent": true
+  },
+  "validation": {
+    "focusedInventoryTests": {
+      "passed": 7,
+      "failed": 0,
+      "result": "OK"
+    },
+    "integratedArchitectureTests": {
+      "passed": 145,
+      "failed": 1,
+      "externalFailure": "Assets/Game/Scripts/UI/Narrative/FirstLaunchLanguageChoiceView.cs remains a separately owned source-responsibility guardrail failure."
+    },
+    "gitDiffCheck": "passed",
+    "compilerValidation": "not required; no production C# or Unity asset changed"
+  },
+  "dependencyRule": "AM-026 is an audit-only inventory and may be accepted while AM-021 is blocked. AM-027 through AM-035 remain gated until the Phase 2 exit contract is accepted.",
+  "scope": {
+    "productionFilesChanged": 0,
+    "preservedDomains": [
+      "operation-map",
+      "FirstLaunch",
+      "audio",
+      "UI visual-lock",
+      "scenes",
+      "prefabs",
+      "packages",
+      "ProjectSettings"
+    ]
+  },
+  "nextTask": "AM-021 after map-owner handoff; no Phase 3 production task is dispatchable before Phase 2 acceptance"
+}

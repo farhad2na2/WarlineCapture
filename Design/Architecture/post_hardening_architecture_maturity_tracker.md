@@ -109,16 +109,16 @@ Release-only categories are reported separately and never averaged into a premat
 
 | Field | Status |
 |---|---|
-| Checklist complete | `20 / 86` (`23.3%`) |
-| Core Architecture Lane | `20 / 68` (`29.4%`); active |
+| Checklist complete | `21 / 86` (`24.4%`) |
+| Core Architecture Lane | `21 / 68` (`30.9%`); active |
 | Release Certification Lane | `0 / 18` (`0.0%`); deferred |
-| Program state | Core Architecture Lane active; Phase 1 accepted; Phase 2 persistent-resource ownership in progress; release work inactive |
+| Program state | Core Architecture Lane active; Phase 1 accepted; Phase 2 persistent-resource ownership blocked on map handoff; audit-only AM-026 accepted in parallel; release work inactive |
 | Current phase | Phase 2 - World Lifecycle And Dependency Hardening |
-| Current task | `AM-021` in progress; deterministic matrix covers `575` persistent resources with `548` explicit owners, `5` open ownership gaps, and `22` protected-owner rows |
-| Parallel preparatory work | `AM-026` remains dependency-blocked and receives no completion credit; `ui_projection_allocation_inventory.md` inventories 29 surfaces and drafts `AM-WP-001` through `AM-WP-023` for all characterized UI ownership, lifecycle, identity, route, and popup gaps; `AM-WP-007` remains additionally blocked on mission/objective owner handoff and `AM-WP-009` preserves audio/FirstLaunch consumers as read-only dependencies; `AM-WP-024` through `AM-WP-026` bound AM-022 recovery, AM-023 100-cycle stress, and AM-024 12-cycle retained-memory/pool trend without release testing; draft `AM-WP-027` freezes the canonical AM-025 Phase 2 exit suites, ownership delta, evidence identity, alias rejection, external-blocker rules, and acceptance workflow; all four Phase 2 packages remain dependency-blocked behind AM-021 |
+| Current task | `AM-021` blocked; deterministic matrix covers `575` persistent resources with `548` explicit owners, `5` open ownership gaps, and `22` protected-owner rows. No Phase 3 production task is dispatchable until Phase 2 acceptance |
+| Parallel preparatory work | Audit-only `AM-026` is accepted with 29 surfaces and `AM-WP-001` through `AM-WP-023`; production tasks `AM-027` through `AM-035` remain gated. `AM-WP-007` is additionally blocked on mission/objective owner handoff and `AM-WP-009` preserves audio/FirstLaunch consumers as read-only dependencies. `AM-WP-024` through `AM-WP-027` define AM-022 through AM-025 but remain dependency-blocked behind AM-021 |
 | Blockers | AM-021 has `5` remaining split-owner grid-container gaps in the active map lane. Architecture will not edit those paths until the map owner hands them off. Source-growth is externally blocked by four separately owned FirstLaunch `*SystemHelper` paths, and integrated architecture CI is externally blocked by `FirstLaunchLanguageChoiceView`; final broad-contract acceptance also remains gated by separately owned operation-map, FirstLaunch/UI, and package-bound violations. Release-only certification remains intentionally deferred |
-| Latest validation | AM-021 ownership evidence refresh: deterministic generator/check and `git diff --check` pass at current `main`; the matrix remains `575` resources, `548` explicit owners, `5` map-owned gaps, and `22` protected-owner rows. No production source changed and AM-021 remains blocked pending map-owner handoff |
-| Latest evidence | Refreshed `am021_persistent_resource_ownership.json` and Markdown projection against baseline `d9da484cc`; `am021_scenario_grid_ownership_evidence.json` remains the latest accepted implementation evidence at `981dcc2dc`. AM-021 remains in progress and receives no checklist credit yet |
+| Latest validation | AM-026 inventory contract `7 / 7`; integrated architecture `145 / 146` with the sole failure in separately owned `FirstLaunchLanguageChoiceView`; `git diff --check` passed; no compiler run required because no production C# or Unity asset changed |
+| Latest evidence | `am026_ui_projection_inventory_acceptance.json` binds 29 unique surfaces, 23 bounded work packages, route/popup reconciliation, protected ownership scope, and implementation commit `0664ecb12`. AM-021 ownership evidence remains current but blocked on five map-owned rows |
 | Core entry baseline | Phase 0 accepted by `AM-001` through `AM-008`; exact-identity assembly and bounded Editor Match evidence are current at `9a0aa14252e6559680328e520d26c16bfc7b444e`; the dashboard required gate is accepted; the entry rating and owned deltas are published in `entry_baseline_report.md` |
 | Release entry review | Deferred until `pre_release_performance_certification_backlog.md` activates |
 | Architecture rating | Evidence-backed Phase 0 entry rating `8.5 / 10`; planning baseline only, not a `9.5` claim |
@@ -236,7 +236,7 @@ Make runtime dependencies explicit and prove that caches and native resources ca
 - [x] `AM-018` Inventory production uses of global World lookup, mutable static caches, static event subscriptions, hidden singletons, and runtime object discovery.
 - [x] `AM-019` Define one standard World-bound query/entity cache contract covering positive lookup, negative lookup, invalidation, rebind, disposal, and destroyed-entity recovery.
 - [x] `AM-020` Move mutable runtime state that crosses World lifecycles into explicit World-owned systems, components, or lifecycle containers where practical.
-- [~] `AM-021` Give every persistent native container, query, event subscription, and presentation root an explicit creation and disposal owner.
+- [!] `AM-021` Give every persistent native container, query, event subscription, and presentation root an explicit creation and disposal owner. Blocked on the map owner resolving or handing off five split-owner grid containers; next action is to consume the requested `Gameplay-Clone` handoff commit and regenerate the deterministic ownership matrix.
 - [ ] `AM-022` Add tests for World destruction/recreation, domain reload, scene unload/reload, missing singleton recovery, and replaced command entities. Draft package: `Design/Architecture/WorkPackages/am_wp_024_world_lifecycle_recovery_matrix.md` (blocked until `AM-021` has zero ownership gaps).
 - [ ] `AM-023` Run at least 100 automated Menu-to-Match-to-Menu cycles without duplicate systems, stale entities, retained subscriptions, or presentation-root accumulation. Draft package: `Design/Architecture/WorkPackages/am_wp_025_menu_match_lifecycle_stress.md` (blocked on `AM-021` and `AM-022`).
 - [ ] `AM-024` Add native allocation and pool-count snapshots around lifecycle stress tests and prove no upward retained-memory trend after warmup. Draft package: `Design/Architecture/WorkPackages/am_wp_026_lifecycle_memory_pool_trend.md` (blocked on `AM-021` through `AM-023`).
@@ -252,12 +252,12 @@ Make runtime dependencies explicit and prove that caches and native resources ca
 
 Make every Canvas UI surface change-driven and allocation-free during unchanged steady state, including when popups are open.
 
-Preparatory artifacts, with no checklist credit until the Phase 2 dependency gate is accepted:
+The inventory task may be accepted independently because it is audit-only and changes no runtime ownership. All Phase 3 production remediation remains gated until the Phase 2 dependency gate is accepted:
 
 - Surface inventory: `Design/Architecture/ui_projection_allocation_inventory.md`
 - First bounded implementation package: `Design/Architecture/WorkPackages/am_wp_001_resource_exchange_projection_cache.md`
 
-- [ ] `AM-026` Inventory every Menu, Match HUD, drawer, popup, tooltip, selection panel, and ARIA view by polling owner, source versions, managed conversions, rebuild behavior, and allocation coverage.
+- [x] `AM-026` Inventory every Menu, Match HUD, drawer, popup, tooltip, selection panel, and ARIA view by polling owner, source versions, managed conversions, rebuild behavior, and allocation coverage.
 - [ ] `AM-027` Add or correct ECS source versions so each UI domain changes version only when its visible semantic data changes.
 - [ ] `AM-028` Standardize managed projection caches around World, boundary entity, source versions, item counts, settings versions, and explicit invalidation.
 - [ ] `AM-029` Convert Resource Exchange projection to cache managed strings/models and stop rebuilding unchanged data from `FixedString.ToString()` calls.
@@ -803,3 +803,12 @@ Accepted AM-020 progress snapshot:
 - Scope result: no production source changed. Operation-map, map generation, FirstLaunch, audio, UI visual-lock, scenes, prefabs, packages, `ProjectSettings`, and unrelated local work were preserved.
 - Validation: deterministic ownership generation/check and `git diff --check` passed. Compiler validation was not required because this slice changes generated Markdown/JSON evidence and tracker text only.
 - Blocker: all dependency-safe Phase 2 and UI preparatory packages are complete. AM-021 cannot close until the map owner hands off or resolves the five split-owner grid containers.
+
+### 2026-07-17 - AM-026 - UI projection allocation inventory accepted in parallel
+
+- Dependency decision: AM-026 is audit-only, changes no runtime ownership, and may earn completion credit while AM-021 is blocked. AM-027 through AM-035 remain gated until the Phase 2 exit contract is accepted.
+- Inventory result: 29 unique surfaces cover Menu, Match HUD, drawers, popups, tooltips, selection, ARIA, routes, and command-wheel presentation. Every row records polling/apply ownership, source/version identity, managed rebuild behavior, allocation coverage, and remediation routing.
+- Reconciliation result: all declared shell routes and popup kinds are classified; `AM-WP-001` through `AM-WP-023` exist exactly once and use the seven-section bounded-package contract.
+- Validation: focused inventory contract `7 / 7` and `git diff --check` passed. Integrated architecture passed `145 / 146`; its sole failure is the separately owned `FirstLaunchLanguageChoiceView` source-responsibility guardrail. Compiler validation was not required because no production C# or Unity asset changed.
+- Evidence: `am026_ui_projection_inventory_acceptance.json` binds the inventory, CI test, package-set hash, source baseline, and implementation commit `0664ecb12`.
+- Scope preserved: operation-map, map generation, FirstLaunch, audio, UI visual-lock, scenes, prefabs, packages, `ProjectSettings`, and unrelated local work were not edited.

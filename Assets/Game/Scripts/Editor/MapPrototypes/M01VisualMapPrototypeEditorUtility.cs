@@ -16,7 +16,7 @@ namespace Game.Editor
         public const string ScenePath = "Assets/Game/Scenes/MapPrototypes/Chapter01/M01_VisualPrototype.unity";
         public const string CaptureDirectory = "Design/ArtReview/OperationMaps/M01";
         public const int GenerationSeed = 26071501;
-        public const string GeneratorVersion = "M01VisualPrototype_2026-07-17_v24_compact_civilian_block";
+        public const string GeneratorVersion = "M01VisualPrototype_2026-07-17_v26_narrow_frontage_route";
 
         private const int CaptureWidth = 1600;
         private const int CaptureHeight = 900;
@@ -55,6 +55,10 @@ namespace Game.Editor
             "Assets/Game/Prefabs/Buildings/Building_WaterTank.prefab",
             "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Generator_Large_01.prefab",
             "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_03.prefab",
+            "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_02.prefab",
+            "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_05.prefab",
+            "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Fence_02.prefab",
+            "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Cart_Wood_01.prefab",
             "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Cart_Stall_01.prefab",
             "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_ClothCover_Large_01.prefab",
             "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Tent_Refugee_01.prefab",
@@ -150,6 +154,18 @@ namespace Game.Editor
             public Bounds Bounds { get; }
         }
 
+        private readonly struct TerrainClearanceZone
+        {
+            public TerrainClearanceZone(Vector2 center, float radius)
+            {
+                Center = center;
+                Radius = radius;
+            }
+
+            public Vector2 Center { get; }
+            public float Radius { get; }
+        }
+
         private static readonly LocalRoadSegmentDefinition[] LocalRoadSegments =
         {
             new("MarketStreet_West", new Vector3(-64f, 0f, 6f), new Vector3(-38f, 0f, 6f), true),
@@ -157,17 +173,33 @@ namespace Game.Editor
             new("CompoundApproach", new Vector3(-15f, 0f, 10f), new Vector3(15.5f, 0f, 18f), true)
         };
 
+        private const float LocalRoadWidth = 3.2f;
+        private const float MaximumLocalRoadLength = 36f;
+
+        private static readonly TerrainClearanceZone[] FrontageTerrainClearanceZones =
+        {
+            new(new Vector2(-39f, -15f), 8f),
+            new(new Vector2(-22f, -16f), 8f),
+            new(new Vector2(26f, -17f), 8f)
+        };
+
         private static readonly string[] AuthoredRoadClearanceObstacleNames =
         {
             "DestroyedAidTruck",
             "BombedCornerRuin",
             "CivilianAidTent",
-            "DamagedCivilianTent"
+            "DamagedCivilianTent",
+            "CivilianFrontageHouse_West",
+            "CivilianFrontageHouse_Center",
+            "CivilianFrontageHouse_East"
         };
 
         private static readonly string[] AuthoredTransitionStructureNames =
         {
-            "ResidentialTransitionHouse"
+            "ResidentialTransitionHouse",
+            "CivilianFrontageHouse_West",
+            "CivilianFrontageHouse_Center",
+            "CivilianFrontageHouse_East"
         };
 
         private static readonly string[] OldMarketBuildingSupportGroundNames =
@@ -448,6 +480,44 @@ namespace Game.Editor
             }
 
             Debug.Log($"[M01DistrictCompositionAnalysis] result=Passed candidates={candidateCount}");
+        }
+
+        public static void AnalyzeFrontageCompositionOwnersBatch()
+        {
+            Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            GameObject sceneRoot = FindSceneRoot(scene);
+            Transform modulesRoot = sceneRoot.transform.Find("_M01VisualGenerated/02_DemoAuthored_DistrictModules");
+            if (modulesRoot == null)
+                throw new InvalidOperationException("M01 district module root is missing.");
+
+            int candidateCount = 0;
+            for (int moduleIndex = 0; moduleIndex < modulesRoot.childCount; moduleIndex++)
+            {
+                Transform module = modulesRoot.GetChild(moduleIndex);
+                Transform compositionRoot = FindDistrictCompositionRoot(module);
+                for (int ownerIndex = 0; ownerIndex < compositionRoot.childCount; ownerIndex++)
+                {
+                    Transform owner = compositionRoot.GetChild(ownerIndex);
+                    if (!owner.gameObject.activeInHierarchy)
+                        continue;
+
+                    Renderer[] renderers = owner.GetComponentsInChildren<Renderer>(true);
+                    if (!TryGetCombinedBounds(renderers, out Bounds bounds) ||
+                        bounds.center.x < -10f || bounds.center.x > 42f ||
+                        bounds.center.z < -36f || bounds.center.z > 2f ||
+                        Mathf.Max(bounds.size.x, bounds.size.z) < 1.5f)
+                    {
+                        continue;
+                    }
+
+                    candidateCount++;
+                    Debug.Log(
+                        $"[M01FrontageCompositionOwner] module={module.name} owner={owner.name} " +
+                        $"center={bounds.center} size={bounds.size} renderers={renderers.Length}");
+                }
+            }
+
+            Debug.Log($"[M01FrontageCompositionAnalysis] result=Passed candidates={candidateCount}");
         }
 
         public static void AnalyzeTerrainStructurePenetrationsBatch()
@@ -961,7 +1031,7 @@ namespace Game.Editor
             CreateOldMarketStoryLayer(authoredRoot.transform, palette);
             CreateCompoundStoryLayer(authoredRoot.transform, palette);
             CreateBombingAftermath(authoredRoot.transform);
-            CreateCivilianEdgeStoryLayer(authoredRoot.transform);
+            CreateCivilianEdgeStoryLayer(authoredRoot.transform, palette);
             CreateHorizonAndEdgeDressing(generatedRoot.transform, palette);
             CreateLighting(sceneRoot.transform);
             CreateReviewCameras(cameraRoot.transform);
@@ -1089,7 +1159,7 @@ namespace Game.Editor
             float length = delta.magnitude + 1.2f;
             Vector3 center = (segment.Start + segment.End) * 0.5f;
             Quaternion rotation = Quaternion.Euler(0f, Mathf.Atan2(delta.x, delta.z) * Mathf.Rad2Deg, 0f);
-            float roadWidth = segment.Dusty ? 3.2f : 4.2f;
+            float roadWidth = segment.Dusty ? LocalRoadWidth : 4.2f;
 
             CreateBox(
                 $"{segment.Name}_Shoulder",
@@ -1127,6 +1197,7 @@ namespace Game.Editor
             int remoteRoadExclusions = 0;
             int roadStructureExclusions = 0;
             int roadTerrainExclusions = 0;
+            int frontageTerrainExclusions = 0;
             int unsupportedGroundExclusions = 0;
             int terrainMaterialOverrides = 0;
             int disabledRenderers = 0;
@@ -1151,8 +1222,9 @@ namespace Game.Editor
                 bool remoteRoadContent = IsRemoteLongRoad(moduleObject.transform, bounds, category, definition);
                 bool roadStructureContent = ContainsDescendantName(owner, "_Bld_") && IntersectsAnyLocalRoad(bounds, 3.2f);
                 bool roadTerrainContent = ContainsRoadTerrainObstacleName(owner) && IntersectsAnyLocalRoad(bounds, 3.2f);
+                bool frontageObstacleContent = IntersectsFrontageObstacleClearance(owner, bounds);
                 bool unsupportedGround = IsUnsupportedImportedGround(moduleObject.name, owner.name);
-                if (!outsideEnvelope && !airfieldContent && !excludedRoadContent && !majorRoadContent && !remoteRoadContent && !roadStructureContent && !roadTerrainContent && !unsupportedGround)
+                if (!outsideEnvelope && !airfieldContent && !excludedRoadContent && !majorRoadContent && !remoteRoadContent && !roadStructureContent && !roadTerrainContent && !frontageObstacleContent && !unsupportedGround)
                 {
                     if (ContainsImportedGroundSurfaceName(owner))
                     {
@@ -1179,6 +1251,8 @@ namespace Game.Editor
                     roadStructureExclusions++;
                 if (roadTerrainContent)
                     roadTerrainExclusions++;
+                if (frontageObstacleContent)
+                    frontageTerrainExclusions++;
                 if (unsupportedGround)
                     unsupportedGroundExclusions++;
             }
@@ -1189,7 +1263,7 @@ namespace Game.Editor
                 $"[M01DistrictCuration] module={moduleObject.name} envelopeExclusions={envelopeExclusions} " +
                 $"airfieldExclusions={airfieldExclusions} majorRoadExclusions={majorRoadExclusions} " +
                 $"remoteRoadExclusions={remoteRoadExclusions} roadStructureExclusions={roadStructureExclusions} " +
-                $"roadTerrainExclusions={roadTerrainExclusions} " +
+                $"roadTerrainExclusions={roadTerrainExclusions} frontageTerrainExclusions={frontageTerrainExclusions} " +
                 $"unsupportedGroundExclusions={unsupportedGroundExclusions} " +
                 $"terrainMaterialOverrides={terrainMaterialOverrides} terrainClearanceAdjustments={terrainClearanceAdjustments} " +
                 $"disabledRenderers={disabledRenderers} " +
@@ -1442,6 +1516,35 @@ namespace Game.Editor
             return overlapX >= 0.75f && overlapY >= 0.5f && overlapZ >= 0.75f && overlapX * overlapZ >= 1.5f;
         }
 
+        private static bool IntersectsFrontageObstacleClearance(Transform owner, Bounds bounds)
+        {
+            bool penetratingTerrain = ContainsPenetratingTerrainName(owner);
+            bool largeVegetation = ContainsDescendantName(owner, "_Env_Tree_Big_") &&
+                                   Mathf.Max(bounds.size.x, bounds.size.z) >= 1.5f;
+            if (!penetratingTerrain && !largeVegetation)
+                return false;
+
+            Vector2 center = new(bounds.center.x, bounds.center.z);
+            if ((penetratingTerrain || largeVegetation) &&
+                center.x >= -48f && center.x <= 35f &&
+                center.y >= -28f && center.y <= -7f)
+            {
+                return true;
+            }
+
+            if (!penetratingTerrain)
+                return false;
+
+            for (int zoneIndex = 0; zoneIndex < FrontageTerrainClearanceZones.Length; zoneIndex++)
+            {
+                TerrainClearanceZone zone = FrontageTerrainClearanceZones[zoneIndex];
+                if ((center - zone.Center).sqrMagnitude <= zone.Radius * zone.Radius)
+                    return true;
+            }
+
+            return false;
+        }
+
         private static bool IsRemoteLongRoad(
             Transform module,
             Bounds bounds,
@@ -1514,7 +1617,8 @@ namespace Game.Editor
                                                 string.Equals(category, "major-road", StringComparison.Ordinal));
                     bool majorRoadContent = string.Equals(category, "major-road", StringComparison.Ordinal);
                     bool remoteRoadContent = IsRemoteLongRoad(module, bounds, category, definition);
-                    if (!outsideEnvelope && !airfieldContent && !excludedRoadContent && !majorRoadContent && !remoteRoadContent)
+                    bool frontageObstacleContent = IntersectsFrontageObstacleClearance(owner, bounds);
+                    if (!outsideEnvelope && !airfieldContent && !excludedRoadContent && !majorRoadContent && !remoteRoadContent && !frontageObstacleContent)
                         continue;
 
                     violationCount++;
@@ -1523,7 +1627,8 @@ namespace Game.Editor
                         Debug.Log(
                             $"[M01DistrictCurationViolation] module={module.name} owner={owner.name} " +
                             $"center={bounds.center} outsideEnvelope={outsideEnvelope} airfield={airfieldContent} " +
-                            $"excludedRoad={excludedRoadContent} majorRoad={majorRoadContent} remoteRoad={remoteRoadContent}");
+                            $"excludedRoad={excludedRoadContent} majorRoad={majorRoadContent} remoteRoad={remoteRoadContent} " +
+                            $"frontageObstacle={frontageObstacleContent}");
                     }
                 }
             }
@@ -1657,9 +1762,22 @@ namespace Game.Editor
             CreatePointLight("AftermathFireLight", new Vector3(5f, 4f, -2f), new Color(1f, 0.21f, 0.045f), 5.5f, 24f, root);
         }
 
-        private static void CreateCivilianEdgeStoryLayer(Transform parent)
+        private static void CreateCivilianEdgeStoryLayer(Transform parent, Palette palette)
         {
             Transform root = CreateRoot("06_CivilianEdge_StoryLayer", parent).transform;
+
+            CreateIrregularSurface("CivilianFrontageCourtyard_West", new Vector3(-30f, -0.006f, -15f), new Vector2(29f, 15f), palette.DistrictGround, root, -2f);
+            CreateIrregularSurface("CivilianFrontageCourtyard_East", new Vector3(26f, -0.006f, -17f), new Vector2(19f, 15f), palette.DistrictGround, root, 4f);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_02.prefab", "CivilianFrontageHouse_West", new Vector3(-39f, 0f, -15f), 8f, 0.82f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_05.prefab", "CivilianFrontageHouse_Center", new Vector3(-22f, 0f, -16f), 352f, 0.76f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_02.prefab", "CivilianFrontageHouse_East", new Vector3(26f, 0f, -17f), 185f, 0.76f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Fence_02.prefab", "CivilianFrontageFence_West", new Vector3(-39f, 0f, -20f), 90f, 0.9f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Fence_02.prefab", "CivilianFrontageFence_Center", new Vector3(-22f, 0f, -21f), 90f, 0.82f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Fence_02.prefab", "CivilianFrontageFence_East", new Vector3(26f, 0f, -22f), 90f, 0.88f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Cart_Wood_01.prefab", "CivilianFrontageCart_West", new Vector3(-31f, 0f, -10f), 22f, 0.92f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Cart_Wood_01.prefab", "CivilianFrontageCart_East", new Vector3(19f, 0f, -11f), 338f, 0.88f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/SM_Prop_LightPole_01.prefab", "CivilianFrontageLightPole_West", new Vector3(-46f, 0f, -8f), 0f, 0.88f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/SM_Prop_LightPole_01.prefab", "CivilianFrontageLightPole_East", new Vector3(34f, 0f, -9f), 0f, 0.88f, root);
 
             PlacePrefab("Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Tent_Refugee_01.prefab", "CivilianAidTent", new Vector3(-8f, 0f, -1f), 92f, 0.92f, root);
             PlacePrefab("Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Tent_Refugee_Damaged_01.prefab", "DamagedCivilianTent", new Vector3(-16f, 0f, -6f), 108f, 0.82f, root);
@@ -1712,6 +1830,10 @@ namespace Game.Editor
             if (GameObject.Find("OldMarketClockTower") == null || GameObject.Find("DestroyedAidTruck") == null || GameObject.Find("M01_Review_GameplayOverview") == null)
                 throw new InvalidOperationException("M01 visual prototype is missing a required visual anchor or review camera.");
 
+            int roadPolicyViolations = CountLocalRoadPolicyViolations(true);
+            if (roadPolicyViolations != 0)
+                throw new InvalidOperationException($"M01 road plan violates {roadPolicyViolations} narrow local-route constraints.");
+
             int roadClearanceIntersections = CountLocalRoadClearanceIntersections(root, true);
             if (roadClearanceIntersections != 0)
                 throw new InvalidOperationException($"M01 local roads intersect {roadClearanceIntersections} building or large-terrain bounds.");
@@ -1735,6 +1857,37 @@ namespace Game.Editor
             int authoredTransitionOverlaps = CountAuthoredTransitionStructureOverlaps(root, true);
             if (authoredTransitionOverlaps != 0)
                 throw new InvalidOperationException($"M01 transition composition left {authoredTransitionOverlaps} authored structure overlaps.");
+        }
+
+        private static int CountLocalRoadPolicyViolations(bool logDetails)
+        {
+            int violationCount = 0;
+            for (int segmentIndex = 0; segmentIndex < LocalRoadSegments.Length; segmentIndex++)
+            {
+                LocalRoadSegmentDefinition segment = LocalRoadSegments[segmentIndex];
+                float width = segment.Dusty ? LocalRoadWidth : 4.2f;
+                float length = Vector3.Distance(segment.Start, segment.End);
+                if (width <= LocalRoadWidth + 0.001f && length <= MaximumLocalRoadLength)
+                    continue;
+
+                violationCount++;
+                if (logDetails)
+                {
+                    Debug.Log(
+                        $"[M01LocalRoadPolicyViolation] road={segment.Name} width={width:0.00} " +
+                        $"length={length:0.00} maximumWidth={LocalRoadWidth:0.00} maximumLength={MaximumLocalRoadLength:0.00}");
+                }
+            }
+
+            if (logDetails)
+            {
+                Debug.Log(
+                    $"[M01LocalRoadPolicy] result={(violationCount == 0 ? "Passed" : "Failed")} " +
+                    $"segments={LocalRoadSegments.Length} maximumWidth={LocalRoadWidth:0.00} " +
+                    $"maximumLength={MaximumLocalRoadLength:0.00} violations={violationCount}");
+            }
+
+            return violationCount;
         }
 
         private static void SimulateParticles()

@@ -1,10 +1,10 @@
 # M01 Visual Prototype Capture Manifest
 
-- Generator: `M01VisualPrototype_2026-07-17_v24_compact_civilian_block`
+- Generator: `M01VisualPrototype_2026-07-17_v26_narrow_frontage_route`
 - Seed: `26071501`
 - Unity: `6000.5.2f1`
 - Scene: `Assets/Game/Scenes/MapPrototypes/Chapter01/M01_VisualPrototype.unity`
-- Semantic fingerprint: `5347212FBC152C31CD6E066BD1CB61D9253342C649EE3BCE295A28EEA4E8500E`
+- Semantic fingerprint: `DE3E43200A459E4AE385F93E5575841FD564383B980889A2942752219D613416`
 - Resolution: `1600x900`
 - Gameplay overview: `m01_gameplay_overview.png`
 - Old Market approach: `m01_old_market_approach.png`

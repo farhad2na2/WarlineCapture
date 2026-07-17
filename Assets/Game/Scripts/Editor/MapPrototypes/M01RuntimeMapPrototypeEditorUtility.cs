@@ -22,7 +22,7 @@ namespace Game.Editor
         public const string ConfigPath = "Assets/Game/Configs/MapPrototypes/M01_RuntimeCity_Config.asset";
         public const string VisualRecipePath = "Assets/Game/Configs/MapPrototypes/M01_RuntimeVisualRecipe.asset";
         private const string SourceConfigPath = "Assets/Game/Configs/Scene/Game_RuntimeCitySpawner_Config.asset";
-        private const string VisualRecipeVersion = "M01RuntimeVisualRecipe_2026-07-17_v24_compact_civilian_block";
+        private const string VisualRecipeVersion = "M01RuntimeVisualRecipe_2026-07-17_v26_narrow_frontage_route";
         private const string DistrictSnapshotFolder = "Assets/Game/Prefabs/MapPrototypes/M01/RuntimeParity";
         private const int MaxDistrictSliceRenderers = 64;
         private const string PremiumLightingRigPath = "Assets/Game/Rendering/Prefabs/PremiumLightingRig.prefab";
@@ -41,11 +41,11 @@ namespace Game.Editor
         private const string RuntimeVisualManifestPath = "Logs/M01_RuntimeVisualManifest.txt";
         private const string EditorRendererPathReportPath = "Logs/M01_EditorRendererPaths.txt";
         private const string RuntimeRendererPathReportPath = "Logs/M01_RuntimeRendererPaths.txt";
-        private static readonly Vector3 AcceptedGameplayCameraPosition = new(-96f, 35f, -62f);
-        private static readonly Vector3 AcceptedGameplayCameraTarget = new(-28f, 4f, 2f);
-        private const float AcceptedGameplayCameraFieldOfView = 50f;
-        private static readonly Vector3 AcceptedTopDownCameraPosition = new(-12f, 230f, -7f);
-        private const float AcceptedTopDownCameraSize = 96f;
+        private static readonly Vector3 AcceptedGameplayCameraPosition = new(-88f, 31f, -52f);
+        private static readonly Vector3 AcceptedGameplayCameraTarget = new(-23f, 4f, 0f);
+        private const float AcceptedGameplayCameraFieldOfView = 46f;
+        private static readonly Vector3 AcceptedTopDownCameraPosition = new(-12f, 220f, -5f);
+        private const float AcceptedTopDownCameraSize = 90f;
         private static readonly string[] M01HallPrefabPaths =
         {
             "Assets/Game/Prefabs/Environment/City/Hall_01.prefab",

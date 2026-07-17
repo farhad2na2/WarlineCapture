@@ -1,10 +1,10 @@
 # M01 Visual Prototype Capture Manifest
 
-- Generator: `M01VisualPrototype_2026-07-17_v30_balanced_gameplay_framing`
+- Generator: `M01VisualPrototype_2026-07-17_v32_intact_authored_districts`
 - Seed: `26071501`
 - Unity: `6000.5.2f1`
 - Scene: `Assets/Game/Scenes/MapPrototypes/Chapter01/M01_VisualPrototype.unity`
-- Semantic fingerprint: `9129AF2B7BF3BB89F74AD8B3C14EC88D18310615D5E4A59D4B56022E4757E945`
+- Semantic fingerprint: `2AF6E8813D396870F8A8CAB7AE82B3ADF9B30E98424B12655BA0DCE5FBCB3324`
 - Resolution: `1600x900`
 - Gameplay overview: `m01_gameplay_overview.png`
 - Old Market approach: `m01_old_market_approach.png`

@@ -16,7 +16,7 @@ namespace Game.Editor
         public const string ScenePath = "Assets/Game/Scenes/MapPrototypes/Chapter01/M01_VisualPrototype.unity";
         public const string CaptureDirectory = "Design/ArtReview/OperationMaps/M01";
         public const int GenerationSeed = 26071501;
-        public const string GeneratorVersion = "M01VisualPrototype_2026-07-17_v30_balanced_gameplay_framing";
+        public const string GeneratorVersion = "M01VisualPrototype_2026-07-17_v32_intact_authored_districts";
 
         private const int CaptureWidth = 1600;
         private const int CaptureHeight = 900;
@@ -49,8 +49,6 @@ namespace Game.Editor
             SouthTownModulePath,
             "Assets/Game/Prefabs/Environment/City/Clock_Tower_01.prefab",
             "Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Ruins_03.prefab",
-            "Assets/Game/Prefabs/Buildings/Building_Hall.prefab",
-            "Assets/Game/Prefabs/Buildings/Building_Barrack.prefab",
             "Assets/Game/Prefabs/Buildings/Building_GuardTower.prefab",
             "Assets/Game/Prefabs/Buildings/Building_WaterTank.prefab",
             "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Generator_Large_01.prefab",
@@ -168,9 +166,8 @@ namespace Game.Editor
 
         private static readonly LocalRoadSegmentDefinition[] LocalRoadSegments =
         {
-            new("MarketStreet_West", new Vector3(-64f, 0f, 6f), new Vector3(-38f, 0f, 6f), true),
-            new("MarketStreet_Bend", new Vector3(-38f, 0f, 6f), new Vector3(-15f, 0f, 10f), true),
-            new("CompoundApproach", new Vector3(-15f, 0f, 10f), new Vector3(0.5f, 0f, 10f), true)
+            new("MarketExit", new Vector3(-10f, 0f, 18f), new Vector3(5f, 0f, 18f), true),
+            new("CompoundApproach", new Vector3(5f, 0f, 18f), new Vector3(22f, 0f, 20f), true)
         };
 
         private const float LocalRoadWidth = 3.2f;
@@ -232,19 +229,21 @@ namespace Game.Editor
         {
             new(
                 "OldMarket_West_DemoAuthored",
-                new Vector2(-113f, -33f),
-                new Vector2(-14f, 69f),
+                new Vector2(-155f, -85f),
+                new Vector2(10f, 110f),
+                false,
                 false),
             new(
                 "UtilityCompound_East_DemoAuthored",
-                new Vector2(-15f, -2f),
-                new Vector2(29f, 44f),
+                new Vector2(15f, -50f),
+                new Vector2(145f, 95f),
                 true,
-                true),
+                false),
             new(
                 "Residential_South_DemoAuthored",
-                new Vector2(-43f, -93f),
-                new Vector2(35f, -17f),
+                new Vector2(-80f, -145f),
+                new Vector2(75f, 10f),
+                false,
                 false)
         };
 
@@ -645,12 +644,15 @@ namespace Game.Editor
 
         private static bool HasHighConfidenceTerrainStructurePenetration(Bounds structure, Bounds terrain)
         {
-            bool terrainCenterInsideStructure =
-                Mathf.Abs(terrain.center.x - structure.center.x) <= structure.size.x * 0.38f &&
-                Mathf.Abs(terrain.center.z - structure.center.z) <= structure.size.z * 0.38f;
-            return terrainCenterInsideStructure &&
-                   terrain.max.y - structure.min.y >= 0.8f &&
+            return terrain.max.y - structure.min.y >= 0.35f &&
                    HasMeaningfulTerrainStructureOverlap(structure, terrain);
+        }
+
+        private static bool HasHorizontalTerrainStructureOverlap(Bounds structure, Bounds terrain)
+        {
+            float overlapX = Mathf.Min(structure.max.x, terrain.max.x) - Mathf.Max(structure.min.x, terrain.min.x);
+            float overlapZ = Mathf.Min(structure.max.z, terrain.max.z) - Mathf.Max(structure.min.z, terrain.min.z);
+            return overlapX >= 0.35f && overlapZ >= 0.35f && overlapX * overlapZ >= 0.5f;
         }
 
         private static Transform FindDistrictCompositionRoot(Transform module)
@@ -937,10 +939,14 @@ namespace Game.Editor
 
             string candidateName = candidate.name;
             bool buildingShell = ContainsName(candidateName, "_Bld_Shop_") ||
+                                 ContainsName(candidateName, "_Bld_Hall_") ||
                                  ContainsName(candidateName, "_Bld_Village_House_") ||
                                  ContainsName(candidateName, "_Bld_GasStation_") ||
                                  ContainsName(candidateName, "_Bld_Ruins_") ||
-                                 ContainsName(candidateName, "_Bld_Mosque_");
+                                 ContainsName(candidateName, "_Bld_Mosque_") ||
+                                 ContainsName(candidateName, "_Bld_Barracks_") ||
+                                 ContainsName(candidateName, "_Bld_Office_") ||
+                                 ContainsName(candidateName, "_Bld_Tower_");
             if (!buildingShell)
                 return false;
 
@@ -1228,8 +1234,8 @@ namespace Game.Editor
         {
             Transform modulesRoot = CreateRoot("02_DemoAuthored_DistrictModules", parent).transform;
             ApplyDistrictCuration(PlaceModule(TownMarketModulePath, "OldMarket_West_DemoAuthored", new Vector3(-68f, 0f, 12f), 0f, 0.82f, modulesRoot), palette);
-            ApplyDistrictCuration(PlaceModule(BaseCommandModulePath, "UtilityCompound_East_DemoAuthored", new Vector3(8f, 0f, 5f), 180f, 0.76f, modulesRoot), palette);
-            ApplyDistrictCuration(PlaceModule(SouthTownModulePath, "Residential_South_DemoAuthored", new Vector3(-5f, 0f, -54f), 0f, 0.58f, modulesRoot), palette);
+            ApplyDistrictCuration(PlaceModule(BaseCommandModulePath, "UtilityCompound_East_DemoAuthored", new Vector3(69f, 0f, 13f), 180f, 0.76f, modulesRoot), palette);
+            ApplyDistrictCuration(PlaceModule(SouthTownModulePath, "Residential_South_DemoAuthored", new Vector3(-5f, 0f, -68f), 0f, 0.58f, modulesRoot), palette);
         }
 
         private static void ApplyDistrictCuration(GameObject moduleObject, Palette palette)
@@ -1267,11 +1273,9 @@ namespace Game.Editor
                                             string.Equals(category, "major-road", StringComparison.Ordinal));
                 bool majorRoadContent = string.Equals(category, "major-road", StringComparison.Ordinal);
                 bool remoteRoadContent = IsRemoteLongRoad(moduleObject.transform, bounds, category, definition);
-                bool roadStructureContent = ContainsDescendantName(owner, "_Bld_") && IntersectsAnyLocalRoad(bounds, 3.2f);
-                bool roadTerrainContent = ContainsRoadTerrainObstacleName(owner) && IntersectsAnyLocalRoad(bounds, 3.2f);
                 bool frontageObstacleContent = IntersectsFrontageObstacleClearance(owner, bounds);
                 bool unsupportedGround = IsUnsupportedImportedGround(moduleObject.name, owner.name);
-                if (!outsideEnvelope && !airfieldContent && !excludedRoadContent && !majorRoadContent && !remoteRoadContent && !roadStructureContent && !roadTerrainContent && !frontageObstacleContent && !unsupportedGround)
+                if (!outsideEnvelope && !airfieldContent && !excludedRoadContent && !majorRoadContent && !remoteRoadContent && !frontageObstacleContent && !unsupportedGround)
                 {
                     if (ContainsImportedGroundSurfaceName(owner))
                     {
@@ -1294,10 +1298,6 @@ namespace Game.Editor
                     majorRoadExclusions++;
                 if (remoteRoadContent)
                     remoteRoadExclusions++;
-                if (roadStructureContent)
-                    roadStructureExclusions++;
-                if (roadTerrainContent)
-                    roadTerrainExclusions++;
                 if (frontageObstacleContent)
                     frontageTerrainExclusions++;
                 if (unsupportedGround)
@@ -1305,6 +1305,7 @@ namespace Game.Editor
             }
 
             int terrainClearanceAdjustments = ApplyTerrainStructureClearance(moduleObject.transform);
+            int buildingGroundingAdjustments = GroundUnsupportedDistrictBuildingAssemblies(moduleObject.transform);
 
             Debug.Log(
                 $"[M01DistrictCuration] module={moduleObject.name} envelopeExclusions={envelopeExclusions} " +
@@ -1312,9 +1313,132 @@ namespace Game.Editor
                 $"remoteRoadExclusions={remoteRoadExclusions} roadStructureExclusions={roadStructureExclusions} " +
                 $"roadTerrainExclusions={roadTerrainExclusions} frontageTerrainExclusions={frontageTerrainExclusions} " +
                 $"unsupportedGroundExclusions={unsupportedGroundExclusions} " +
-                $"terrainMaterialOverrides={terrainMaterialOverrides} terrainClearanceAdjustments={terrainClearanceAdjustments} " +
+                $"terrainMaterialOverrides={terrainMaterialOverrides} buildingGroundingAdjustments={buildingGroundingAdjustments} " +
+                $"terrainClearanceAdjustments={terrainClearanceAdjustments} buriedStructureExclusions=0 " +
                 $"disabledRenderers={disabledRenderers} " +
                 $"bounds={definition.Minimum}->{definition.Maximum}");
+        }
+
+        private static int GroundDistrictBuildingAssemblies(Transform module)
+        {
+            Transform[] transforms = module.GetComponentsInChildren<Transform>(true);
+            int adjustmentCount = 0;
+            for (int transformIndex = 0; transformIndex < transforms.Length; transformIndex++)
+            {
+                Transform candidate = transforms[transformIndex];
+                if (!candidate.gameObject.activeInHierarchy ||
+                    !IsDistrictBuildingAssemblyCandidate(candidate, module))
+                {
+                    continue;
+                }
+
+                if (!TryGetCombinedBounds(candidate.GetComponentsInChildren<Renderer>(true), out Bounds bounds))
+                    continue;
+
+                const float targetBottom = -0.04f;
+                float verticalAdjustment = targetBottom - bounds.min.y;
+                if (Mathf.Abs(verticalAdjustment) <= 0.04f)
+                    continue;
+
+                candidate.position += Vector3.up * verticalAdjustment;
+                PrefabUtility.RecordPrefabInstancePropertyModifications(candidate);
+                adjustmentCount++;
+                Debug.Log(
+                    $"[M01BuildingGrounding] module={module.name} building={candidate.name} " +
+                    $"adjusted={verticalAdjustment:0.00} originalBottom={bounds.min.y:0.00}");
+            }
+
+            return adjustmentCount;
+        }
+
+        private static int GroundUnsupportedDistrictBuildingAssemblies(Transform module)
+        {
+            Transform compositionRoot = FindDistrictCompositionRoot(module);
+            var supportSurfaces = new List<Bounds>(96);
+            for (int ownerIndex = 0; ownerIndex < compositionRoot.childCount; ownerIndex++)
+            {
+                Transform owner = compositionRoot.GetChild(ownerIndex);
+                if (!owner.gameObject.activeInHierarchy)
+                    continue;
+
+                string category = ClassifyDistrictCompositionOwner(owner);
+                bool supportsStructure = ContainsImportedGroundSurfaceName(owner) ||
+                                         string.Equals(category, "road", StringComparison.Ordinal) ||
+                                         string.Equals(category, "major-road", StringComparison.Ordinal) ||
+                                         ContainsPenetratingTerrainName(owner);
+                if (supportsStructure &&
+                    TryGetCombinedBounds(owner.GetComponentsInChildren<Renderer>(true), out Bounds supportBounds))
+                {
+                    supportSurfaces.Add(supportBounds);
+                }
+            }
+
+            Transform[] transforms = module.GetComponentsInChildren<Transform>(true);
+            int adjustmentCount = 0;
+            for (int transformIndex = 0; transformIndex < transforms.Length; transformIndex++)
+            {
+                Transform candidate = transforms[transformIndex];
+                if (!candidate.gameObject.activeInHierarchy ||
+                    !IsDistrictBuildingAssemblyCandidate(candidate, module) ||
+                    !TryGetCombinedBounds(candidate.GetComponentsInChildren<Renderer>(true), out Bounds bounds) ||
+                    bounds.min.y <= 0.4f ||
+                    HasDistrictSupport(bounds, supportSurfaces))
+                {
+                    continue;
+                }
+
+                const float targetBottom = -0.04f;
+                float verticalAdjustment = targetBottom - bounds.min.y;
+                candidate.position += Vector3.up * verticalAdjustment;
+                PrefabUtility.RecordPrefabInstancePropertyModifications(candidate);
+                adjustmentCount++;
+                Debug.Log(
+                    $"[M01UnsupportedBuildingGrounding] module={module.name} building={candidate.name} " +
+                    $"adjusted={verticalAdjustment:0.00} originalBottom={bounds.min.y:0.00}");
+            }
+
+            return adjustmentCount;
+        }
+
+        private static bool HasDistrictSupport(Bounds structure, IReadOnlyList<Bounds> supportSurfaces)
+        {
+            for (int supportIndex = 0; supportIndex < supportSurfaces.Count; supportIndex++)
+            {
+                Bounds support = supportSurfaces[supportIndex];
+                float overlapX = Mathf.Min(structure.max.x, support.max.x) - Mathf.Max(structure.min.x, support.min.x);
+                float overlapZ = Mathf.Min(structure.max.z, support.max.z) - Mathf.Max(structure.min.z, support.min.z);
+                float verticalGap = structure.min.y - support.max.y;
+                if (overlapX >= 0.5f && overlapZ >= 0.5f && verticalGap >= -0.35f && verticalGap <= 0.45f)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static int ExcludeFullyBuriedStructureOwners(Transform module)
+        {
+            Transform compositionRoot = FindDistrictCompositionRoot(module);
+            int exclusionCount = 0;
+            for (int ownerIndex = 0; ownerIndex < compositionRoot.childCount; ownerIndex++)
+            {
+                Transform owner = compositionRoot.GetChild(ownerIndex);
+                if (!owner.gameObject.activeInHierarchy || !ContainsDescendantName(owner, "_Bld_"))
+                    continue;
+                if (!TryGetCombinedBounds(owner.GetComponentsInChildren<Renderer>(true), out Bounds bounds) ||
+                    bounds.max.y > 0.15f)
+                {
+                    continue;
+                }
+
+                owner.gameObject.SetActive(false);
+                PrefabUtility.RecordPrefabInstancePropertyModifications(owner.gameObject);
+                exclusionCount++;
+                Debug.Log(
+                    $"[M01BuriedStructureExclusion] module={module.name} owner={owner.name} " +
+                    $"bounds={bounds}");
+            }
+
+            return exclusionCount;
         }
 
         private static int ApplyTerrainStructureClearance(Transform module)
@@ -1342,27 +1466,26 @@ namespace Game.Editor
             for (int terrainIndex = 0; terrainIndex < terrain.Count; terrainIndex++)
             {
                 CompositionBoundsRecord terrainRecord = terrain[terrainIndex];
-                float requiredLowering = 0f;
+                bool overlapsStructure = false;
                 for (int structureIndex = 0; structureIndex < structures.Count; structureIndex++)
                 {
                     Bounds structureBounds = structures[structureIndex].Bounds;
-                    if (!HasHighConfidenceTerrainStructurePenetration(structureBounds, terrainRecord.Bounds))
+                    if (!HasHorizontalTerrainStructureOverlap(structureBounds, terrainRecord.Bounds))
                         continue;
 
-                    requiredLowering = Mathf.Max(
-                        requiredLowering,
-                        terrainRecord.Bounds.max.y - structureBounds.min.y + 0.08f);
+                    overlapsStructure = true;
+                    break;
                 }
 
-                if (requiredLowering <= 0f)
+                if (!overlapsStructure)
                     continue;
 
-                terrainRecord.Owner.position += Vector3.down * requiredLowering;
-                PrefabUtility.RecordPrefabInstancePropertyModifications(terrainRecord.Owner);
+                terrainRecord.Owner.gameObject.SetActive(false);
+                PrefabUtility.RecordPrefabInstancePropertyModifications(terrainRecord.Owner.gameObject);
                 adjustmentCount++;
                 Debug.Log(
                     $"[M01TerrainStructureClearance] module={module.name} terrain={terrainRecord.Owner.name} " +
-                    $"lowered={requiredLowering:0.00}");
+                    "action=disabled reason=buildingFootprintOverlap");
             }
 
             return adjustmentCount;
@@ -1744,42 +1867,16 @@ namespace Game.Editor
         {
             Transform root = CreateRoot("04_UtilityCompound_StoryLayer", parent).transform;
 
-            CreateIrregularSurface("CompoundCourtyard", ShiftUtilityCompound(new Vector3(25f, -0.005f, 35f)), new Vector2(38f, 37f), palette.DistrictGround, root, -2f);
-            PlacePrefab("Assets/Game/Prefabs/Buildings/Building_Hall.prefab", "CompoundOperationsHall", ShiftUtilityCompound(new Vector3(20f, 0f, 35f)), 180f, 0.72f, root);
-            PlacePrefab("Assets/Game/Prefabs/Buildings/Building_Barrack.prefab", "CompoundServiceBuilding", ShiftUtilityCompound(new Vector3(34f, 0f, 36f)), 180f, 0.62f, root);
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Group_03.prefab", "CompoundCheckpoint", ShiftUtilityCompound(new Vector3(16.5f, 0f, 18.5f)), 78f, 0.9f, root);
-            PlacePrefab("Assets/Game/Prefabs/Buildings/Building_GuardTower.prefab", "CompoundGuardTower", ShiftUtilityCompound(new Vector3(39f, 0f, 49f)), 180f, 0.78f, root);
-            PlacePrefab("Assets/Game/Prefabs/Buildings/Building_WaterTank.prefab", "CompoundWaterTank", ShiftUtilityCompound(new Vector3(36f, 0f, 23f)), 20f, 0.76f, root);
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Crate_Stack_Cover_02.prefab", "CompoundSupplies_A", ShiftUtilityCompound(new Vector3(16f, 0f, 23f)), 12f, 0.9f, root);
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Crate_Stack_03.prefab", "CompoundSupplies_B", ShiftUtilityCompound(new Vector3(22f, 0f, 23f)), 84f, 0.9f, root);
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Generator_Large_01.prefab", "CompoundGenerator", ShiftUtilityCompound(new Vector3(29f, 0f, 23f)), 90f, 0.85f, root);
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/SM_Prop_LightPole_01.prefab", "CompoundLightPole", ShiftUtilityCompound(new Vector3(12f, 0f, 39f)), 0f, 0.9f, root);
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Signs/SM_Prop_Sign_Safety_03.prefab", "CompoundWarningSign", ShiftUtilityCompound(new Vector3(10f, 2.2f, 20f)), 78f, 1f, root);
-
-            CreateBox("CompoundWall_West", ShiftUtilityCompound(new Vector3(7f, 1.2f, 36f)), new Vector3(0.75f, 2.4f, 34f), palette.Concrete, root);
-            CreateBox("CompoundWall_East", ShiftUtilityCompound(new Vector3(44f, 1.2f, 36f)), new Vector3(0.75f, 2.4f, 34f), palette.Concrete, root);
-            CreateBox("CompoundWall_North", ShiftUtilityCompound(new Vector3(25.5f, 1.2f, 53f)), new Vector3(37.75f, 2.4f, 0.75f), palette.Concrete, root);
-            CreateBox("CompoundWall_SouthWest", ShiftUtilityCompound(new Vector3(10f, 1.2f, 19f)), new Vector3(6f, 2.4f, 0.75f), palette.Concrete, root);
-            CreateBox("CompoundWall_SouthEast", ShiftUtilityCompound(new Vector3(32f, 1.2f, 19f)), new Vector3(24f, 2.4f, 0.75f), palette.Concrete, root);
-            Vector3[] pillarPositions =
-            {
-                ShiftUtilityCompound(new Vector3(7f, 1.55f, 19f)), ShiftUtilityCompound(new Vector3(14f, 1.55f, 19f)),
-                ShiftUtilityCompound(new Vector3(20f, 1.55f, 19f)), ShiftUtilityCompound(new Vector3(44f, 1.55f, 19f)),
-                ShiftUtilityCompound(new Vector3(7f, 1.55f, 53f)), ShiftUtilityCompound(new Vector3(44f, 1.55f, 53f))
-            };
-            for (int i = 0; i < pillarPositions.Length; i++)
-                CreateBox($"CompoundWallPillar_{i + 1:00}", pillarPositions[i], new Vector3(1.2f, 3.1f, 1.2f), palette.Curb, root);
-
-            CreateBox("CompoundSecurityStripe_A", ShiftUtilityCompound(new Vector3(13f, 0.08f, 22f)), new Vector3(0.35f, 0.08f, 5f), palette.AmberPaint, root, Quaternion.Euler(0f, -12f, 0f));
-            CreateBox("CompoundSecurityStripe_B", ShiftUtilityCompound(new Vector3(15f, 0.08f, 22.5f)), new Vector3(0.35f, 0.08f, 5f), palette.Rust, root, Quaternion.Euler(0f, -12f, 0f));
-            CreatePointLight("CompoundSecurityLight", ShiftUtilityCompound(new Vector3(15f, 8f, 31f)), new Color(0.62f, 0.78f, 1f), 2.2f, 24f, root);
-        }
-
-        private static Vector3 ShiftUtilityCompound(Vector3 position)
-        {
-            position.x -= 15f;
-            position.z -= 8f;
-            return position;
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Group_03.prefab", "CompoundCheckpoint", new Vector3(23f, 0f, 28f), 90f, 1f, root);
+            PlacePrefab("Assets/Game/Prefabs/Buildings/Building_GuardTower.prefab", "CompoundGuardTower", new Vector3(31f, 0f, 46f), 180f, 0.9f, root);
+            PlacePrefab("Assets/Game/Prefabs/Buildings/Building_WaterTank.prefab", "CompoundWaterTank", new Vector3(55f, 0f, 51f), 20f, 0.9f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Crate_Stack_Cover_02.prefab", "CompoundSupplies_A", new Vector3(31f, 0f, 16f), 12f, 1f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Crate_Stack_03.prefab", "CompoundSupplies_B", new Vector3(38f, 0f, 18f), 84f, 1f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/SM_Prop_LightPole_01.prefab", "CompoundLightPole", new Vector3(24f, 0f, 39f), 0f, 1f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Signs/SM_Prop_Sign_Safety_03.prefab", "CompoundWarningSign", new Vector3(20.5f, 2.2f, 31f), 90f, 1.15f, root);
+            CreateBox("CompoundSecurityStripe_A", new Vector3(15f, 0.34f, 32f), new Vector3(0.4f, 0.08f, 12f), palette.AmberPaint, root);
+            CreateBox("CompoundSecurityStripe_B", new Vector3(18f, 0.34f, 32f), new Vector3(0.4f, 0.08f, 12f), palette.Rust, root);
+            CreatePointLight("CompoundSecurityLight", new Vector3(28f, 9f, 31f), new Color(0.62f, 0.78f, 1f), 2.2f, 28f, root);
         }
 
         private static void CreateBombingAftermath(Transform parent)

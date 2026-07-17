@@ -32,7 +32,9 @@ public sealed class M01VisualMapPrototypeEditorUtilityTests
             passed++;
             tests.LocalRoadPlan_IsNarrowConnectedAndNonBranching();
             passed++;
-            tests.RuntimeRecipe_CameraPosesMatchEditorOverviewAndRelocatedCompound();
+            tests.RuntimeRecipe_CameraPosesMatchEditorOverviewAndRestoredCompound();
+            passed++;
+            tests.GeneratedScene_PassesCloseQualityAudit();
             passed++;
             tests.ReviewCaptureSet_IsCompleteAndReadable();
             passed++;
@@ -86,7 +88,7 @@ public sealed class M01VisualMapPrototypeEditorUtilityTests
     }
 
     [Test]
-    public void RuntimeRecipe_CameraPosesMatchEditorOverviewAndRelocatedCompound()
+    public void RuntimeRecipe_CameraPosesMatchEditorOverviewAndRestoredCompound()
     {
         Scene scene = EditorSceneManager.OpenScene(M01VisualMapPrototypeEditorUtility.ScenePath, OpenSceneMode.Single);
         GameObject cameraObject = FindSceneObject(scene, "M01_VisualPrototype_Root");
@@ -110,8 +112,23 @@ public sealed class M01VisualMapPrototypeEditorUtilityTests
             TryGetCameraPose(recipe, Game.Configs.RuntimeOperationMapVisualStage.Compound, out Game.Configs.RuntimeOperationMapCameraPose compound),
             "The runtime recipe must include the Compound reveal camera pose.");
         Assert.That(Vector3.Distance(compound.Position, new Vector3(-80f, 52f, -92f)), Is.LessThan(0.01f));
-        Assert.That(Vector3.Distance(compound.Target, new Vector3(25f, 4f, 2f)), Is.LessThan(0.01f));
+        Assert.That(Vector3.Distance(compound.Target, new Vector3(48f, 4f, 25f)), Is.LessThan(0.01f));
         Assert.That(Mathf.Abs(compound.FieldOfView - 48f), Is.LessThan(0.01f));
+    }
+
+    [Test]
+    public void GeneratedScene_PassesCloseQualityAudit()
+    {
+        Assert.That(
+            M01VisualMapPrototypeEditorUtility.GetObviousQualityViolationCount(),
+            Is.Zero,
+            "M01 must not contain obvious building, road, burial, floating, or support violations.");
+
+        Scene scene = SceneManager.GetActiveScene();
+        GameObject root = FindSceneObject(scene, "M01_VisualPrototype_Root");
+        Assert.IsNull(
+            FindDescendant(root.transform, "CompoundOperationsHall"),
+            "The restored military compound must not contain the rejected civilian operations hall.");
     }
 
     [Test]

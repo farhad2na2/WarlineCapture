@@ -39,7 +39,7 @@ class ArchitectureDependencyHazardAcceptanceTests(unittest.TestCase):
         self.assertEqual(git_text("rev-parse", f"{evidence['commit']}^{{tree}}"), evidence["tree"])
         self.assertEqual(
             git_text("diff", "--name-only", baseline["commit"], evidence["commit"]).splitlines(),
-            sorted(row["path"] for row in evidence["files"]),
+            evidence["changedPaths"],
         )
 
     def test_evidence_file_hashes_match_committed_bytes(self) -> None:
@@ -62,7 +62,7 @@ class ArchitectureDependencyHazardAcceptanceTests(unittest.TestCase):
     def test_validation_and_tracker_disposition_are_accepted(self) -> None:
         validation = self.record["validation"]
         self.assertEqual(validation["focusedTests"], 11)
-        self.assertEqual(validation["integratedArchitectureTests"], 98)
+        self.assertEqual(validation["integratedArchitectureTests"], 102)
         self.assertEqual(validation["independentRereview"], "PASS")
         tracker = TRACKER_PATH.read_text(encoding="utf-8")
         self.assertIn("- [x] `AM-018` Inventory production uses", tracker)

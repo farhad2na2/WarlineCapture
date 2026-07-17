@@ -1,18 +1,22 @@
 {
   "acceptanceTest": {
     "path": "Tools/CI/tests/test_architecture_dependency_hazard_acceptance.py",
-    "sha256": "b7645cf8776a00e2494e61079f60742c88baab059fbb6dc9b84f1dec6ec49189"
+    "sha256": "50d1ecf9e3212b6fbb109c8a72ff55727e61d9d0881bbe256c899d2a8036a9ae"
   },
   "acceptedEvidence": {
-    "commit": "e4e6be3a7ecee81a9350cca7242e5bcb7b729f5c",
+    "changedPaths": [
+      "Design/AgentReports/ArchitectureMaturity/am018_dependency_hazard_inventory.json",
+      "Design/AgentReports/ArchitectureMaturity/am018_dependency_hazard_inventory.md"
+    ],
+    "commit": "02e8fd5b7f670e0cfb076f2d6198f89e23fa769a",
     "files": [
       {
         "path": "Design/AgentReports/ArchitectureMaturity/am018_dependency_hazard_inventory.json",
-        "sha256": "90c96c9947c18d583823bd8b1e87298aa29ce98ea861c1b07cf25f39dbe9fcde"
+        "sha256": "13f6066d269243438186c70ef09fc516bfbb7b7ad4e7acd173d8bd6a010c3d60"
       },
       {
         "path": "Design/AgentReports/ArchitectureMaturity/am018_dependency_hazard_inventory.md",
-        "sha256": "39dfb0476234e8d48a938adfaae9b703e9e172de1af8ed69eb8ee072350b711d"
+        "sha256": "afd51cdebe451eb05c7223719c753bcc1f323175b79710787fa8ee0f05638061"
       },
       {
         "path": "Tools/CI/architecture_dependency_hazard_inventory.py",
@@ -27,7 +31,7 @@
         "sha256": "692e526b50b41dc0d985486ede4e34d965aa5ebf014e423eba4f2a9d422d6741"
       }
     ],
-    "tree": "a7038dea8b91835f0f0edde70414bb93f3709cb3"
+    "tree": "81b2f731316d64a746f1df48a110d46b708ca002"
   },
   "artifactId": "AM018-ACCEPTANCE-RECORD",
   "inventorySummary": {
@@ -44,18 +48,18 @@
   },
   "result": "Accepted",
   "schemaVersion": 1,
-  "scopeRule": "The accepted AM-018 evidence scope is exactly the five-file Git diff from sourceBaseline.commit to acceptedEvidence.commit. Separately owned production paths are read-only source evidence; live map material changes are excluded and must remain unstaged.",
+  "scopeRule": "The accepted AM-018 evidence set is the five hash-bound files listed in acceptedEvidence.files. The post-integration refresh diff is exactly acceptedEvidence.changedPaths; separately owned operation-map sources are read-only source evidence, and live map material changes remain unstaged.",
   "sourceBaseline": {
     "branch": "main",
-    "commit": "b1005c7cc85de2c86001d2e52fa44c8ef5dd9329",
-    "tree": "7473df876b2ecd933859d2c3123e8d709daf31d4"
+    "commit": "d2990d16ce336085d2d83aa4cf4a7f196037070f",
+    "tree": "4e96416bc12ef979cce3d4f1529044c4e199a638"
   },
   "taskId": "AM-018",
   "validation": {
     "compilerValidation": "not-required-no-csharp-changes",
     "focusedTests": 11,
     "independentRereview": "PASS",
-    "integratedArchitectureTests": 98,
+    "integratedArchitectureTests": 102,
     "pythonSyntax": "passed"
   }
 }

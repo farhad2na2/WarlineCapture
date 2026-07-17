@@ -44,16 +44,20 @@ namespace Game.Runtime
             if (!entityManager.HasComponent<DynamicBlockerComponent>(gridEntity))
                 entityManager.AddComponentData(gridEntity, default(DynamicBlockerComponent));
             if (!entityManager.HasComponent<PathPoolComponent>(gridEntity))
-                entityManager.AddComponentData(gridEntity, new PathPoolComponent { Cells = new NativeList<int2>(1024, Allocator.Persistent) });
+                entityManager.AddComponentData(gridEntity, default(PathPoolComponent));
             if (!entityManager.HasComponent<DynamicOccupancyComponent>(gridEntity))
                 entityManager.AddComponentData(gridEntity, default(DynamicOccupancyComponent));
 
+            if (!RuntimeGridPersistentStorageUtility.IsStorageValid(entityManager, gridEntity, gridSize))
+                entityManager.CompleteAllTrackedJobs();
+            RuntimeGridPersistentStorageUtility.EnsureStorage(entityManager, gridEntity, gridSize);
+
+            // Acquire buffer handles after storage setup because adding missing storage components is structural.
             DynamicBuffer<GridWalkable> walkable = ResizeBuffer<GridWalkable>(entityManager, gridEntity, gridSize);
             DynamicBuffer<GridRoad> roads = ResizeBuffer<GridRoad>(entityManager, gridEntity, gridSize);
             DynamicBuffer<GridRoadSidewalk> sidewalks = ResizeBuffer<GridRoadSidewalk>(entityManager, gridEntity, gridSize);
             DynamicBuffer<GridRoadDirt> dirtRoads = ResizeBuffer<GridRoadDirt>(entityManager, gridEntity, gridSize);
-            RuntimeGridStorageInitialization.EnsureDynamicStorage(entityManager, gridEntity, gridSize);
-            RuntimeGridStorageInitialization.InitializeCells(
+            RuntimeGridPersistentStorageUtility.InitializeCells(
                 walkable, roads, sidewalks, dirtRoads, width, height, authoredBlockedCells);
 
             Debug.Log($"[RuntimeGridBootstrap] {FixMarker} ready entity={gridEntity.Index} size={width}x{height} cellSize={cellSize:0.###}");

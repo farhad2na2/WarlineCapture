@@ -63,36 +63,8 @@ namespace Game.Runtime
             for (int i = 0; i < runtimeGridEntities.Length; i++)
             {
                 Entity entity = runtimeGridEntities[i];
-                DisposeNativeGridData(em, entity);
+                RuntimeGridPersistentStorageUtility.DisposeStorage(em, entity);
                 em.DestroyEntity(entity);
-            }
-        }
-
-        private static void DisposeNativeGridData(EntityManager em, Entity entity)
-        {
-            if (em.HasComponent<DynamicBlockerComponent>(entity))
-            {
-                DynamicBlockerComponent data = em.GetComponentData<DynamicBlockerComponent>(entity);
-                if (data.Counts.IsCreated)
-                    data.Counts.Dispose();
-                if (data.Blocked.IsCreated)
-                    data.Blocked.Dispose();
-                if (data.FriendlyPassFactionIds.IsCreated)
-                    data.FriendlyPassFactionIds.Dispose();
-            }
-
-            if (em.HasComponent<PathPoolComponent>(entity))
-            {
-                PathPoolComponent pool = em.GetComponentData<PathPoolComponent>(entity);
-                if (pool.Cells.IsCreated)
-                    pool.Cells.Dispose();
-            }
-
-            if (em.HasComponent<DynamicOccupancyComponent>(entity))
-            {
-                DynamicOccupancyComponent occupancy = em.GetComponentData<DynamicOccupancyComponent>(entity);
-                if (occupancy.Occupied.IsCreated)
-                    occupancy.Occupied.Dispose();
             }
         }
     }

@@ -890,14 +890,6 @@ namespace Game.Runtime
         private void CreateScenarioGrid(EntityManager em, int width, int height)
         {
             int gridSize = width * height;
-            var blockerCounts = new NativeArray<int>(gridSize, Allocator.Persistent);
-            var blocked = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
-            var occupied = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
-            var friendlyPassFactionIds = new NativeArray<byte>(gridSize, Allocator.Persistent);
-            for (int i = 0; i < friendlyPassFactionIds.Length; i++)
-                friendlyPassFactionIds[i] = byte.MaxValue;
-            var pathPool = new NativeList<int2>(1024, Allocator.Persistent);
-
             Entity gridEntity = em.CreateEntity(
                 typeof(BattleScenarioLabRuntimeGridTag),
                 typeof(GridConfig),
@@ -906,19 +898,7 @@ namespace Game.Runtime
                 typeof(PathPoolComponent));
             em.SetName(gridEntity, "BattleScenarioLabRuntimeGrid");
             em.SetComponentData(gridEntity, new GridConfig { Width = width, Height = height, CellSize = 1f, Origin = float3.zero });
-            em.SetComponentData(gridEntity, new DynamicBlockerComponent
-            {
-                GridSize = gridSize,
-                Counts = blockerCounts,
-                Blocked = blocked,
-                FriendlyPassFactionIds = friendlyPassFactionIds
-            });
-            em.SetComponentData(gridEntity, new DynamicOccupancyComponent
-            {
-                GridSize = gridSize,
-                Occupied = occupied
-            });
-            em.SetComponentData(gridEntity, new PathPoolComponent { Cells = pathPool });
+            RuntimeGridPersistentStorageUtility.EnsureStorage(em, gridEntity, gridSize);
 
             em.AddBuffer<GridWalkable>(gridEntity);
             em.AddBuffer<GridRoad>(gridEntity);
@@ -988,33 +968,7 @@ namespace Game.Runtime
                 if (!em.Exists(grid))
                     continue;
 
-                if (em.HasComponent<DynamicBlockerComponent>(grid))
-                {
-                    DynamicBlockerComponent blocker = em.GetComponentData<DynamicBlockerComponent>(grid);
-                    if (blocker.Counts.IsCreated)
-                        blocker.Counts.Dispose();
-                    if (blocker.Blocked.IsCreated)
-                        blocker.Blocked.Dispose();
-                    if (blocker.FriendlyPassFactionIds.IsCreated)
-                        blocker.FriendlyPassFactionIds.Dispose();
-                    em.SetComponentData(grid, default(DynamicBlockerComponent));
-                }
-
-                if (em.HasComponent<DynamicOccupancyComponent>(grid))
-                {
-                    DynamicOccupancyComponent occupancy = em.GetComponentData<DynamicOccupancyComponent>(grid);
-                    if (occupancy.Occupied.IsCreated)
-                        occupancy.Occupied.Dispose();
-                    em.SetComponentData(grid, default(DynamicOccupancyComponent));
-                }
-
-                if (em.HasComponent<PathPoolComponent>(grid))
-                {
-                    PathPoolComponent pool = em.GetComponentData<PathPoolComponent>(grid);
-                    if (pool.Cells.IsCreated)
-                        pool.Cells.Dispose();
-                    em.SetComponentData(grid, default(PathPoolComponent));
-                }
+                RuntimeGridPersistentStorageUtility.DisposeStorage(em, grid);
             }
 
         }

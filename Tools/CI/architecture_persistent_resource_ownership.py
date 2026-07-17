@@ -51,29 +51,29 @@ PERSISTENT_NATIVE_RE = re.compile(
 )
 EXTERNAL_NATIVE_OWNERS = {
     ("Assets/Game/Scripts/Components/GridComponents.cs", "DynamicBlockerComponent", "Counts"): (
-        "RuntimeGridStorageInitialization/DynamicBlockerInitSystem",
-        "DynamicBlockerInitSystem.OnDestroy",
-        False,
+        "RuntimeGridPersistentStorageUtility.EnsureStorage",
+        "RuntimeGridPersistentStorageUtility.DisposeStorage",
+        True,
     ),
     ("Assets/Game/Scripts/Components/GridComponents.cs", "DynamicBlockerComponent", "Blocked"): (
-        "RuntimeGridStorageInitialization/DynamicBlockerInitSystem",
-        "DynamicBlockerInitSystem.OnDestroy",
-        False,
+        "RuntimeGridPersistentStorageUtility.EnsureStorage",
+        "RuntimeGridPersistentStorageUtility.DisposeStorage",
+        True,
     ),
     ("Assets/Game/Scripts/Components/GridComponents.cs", "DynamicBlockerComponent", "FriendlyPassFactionIds"): (
-        "RuntimeGridStorageInitialization/DynamicBlockerInitSystem",
-        "DynamicBlockerInitSystem.OnDestroy",
-        False,
+        "RuntimeGridPersistentStorageUtility.EnsureStorage",
+        "RuntimeGridPersistentStorageUtility.DisposeStorage",
+        True,
     ),
     ("Assets/Game/Scripts/Components/GridComponents.cs", "DynamicOccupancyComponent", "Occupied"): (
-        "RuntimeGridStorageInitialization/DynamicBlockerInitSystem",
-        "DynamicBlockerInitSystem.OnDestroy",
-        False,
+        "RuntimeGridPersistentStorageUtility.EnsureStorage",
+        "RuntimeGridPersistentStorageUtility.DisposeStorage",
+        True,
     ),
     ("Assets/Game/Scripts/Components/GridComponents.cs", "PathPoolComponent", "Cells"): (
-        "RuntimeGridStorageInitialization/RuntimeGridBootstrapStartupSystemHelper",
-        "DynamicBlockerInitSystem.OnDestroy",
-        False,
+        "RuntimeGridPersistentStorageUtility.EnsureStorage",
+        "RuntimeGridPersistentStorageUtility.DisposeStorage",
+        True,
     ),
     ("Assets/Game/Scripts/Systems/UnitPathfindingSystem.cs", "UnitPathfindingSystem", "_pendingPathStream"): (
         "UnitPathfindingScheduler->UnitPathfindingSystem",

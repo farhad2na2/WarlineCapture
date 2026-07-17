@@ -53,6 +53,31 @@ class PersistentResourceOwnershipTests(unittest.TestCase):
         ):
             self.assertIn(key, rows)
 
+    def test_grid_storage_containers_have_one_explicit_lifecycle_owner(self):
+        rows = {
+            (row["ownerType"], row["field"]): row
+            for row in self.report["categories"]["persistentNativeContainers"]
+        }
+        for key in (
+            ("DynamicBlockerComponent", "Counts"),
+            ("DynamicBlockerComponent", "Blocked"),
+            ("DynamicBlockerComponent", "FriendlyPassFactionIds"),
+            ("DynamicOccupancyComponent", "Occupied"),
+            ("PathPoolComponent", "Cells"),
+        ):
+            row = rows[key]
+            self.assertEqual("explicit", row["status"], key)
+            self.assertEqual(
+                "RuntimeGridPersistentStorageUtility.EnsureStorage",
+                row["creationOwner"],
+                key,
+            )
+            self.assertEqual(
+                "RuntimeGridPersistentStorageUtility.DisposeStorage",
+                row["disposalOwner"],
+                key,
+            )
+
     def test_borrowed_query_context_is_not_a_persistent_owner(self):
         rows = self.report["categories"]["persistentQueries"]
         self.assertFalse(any(

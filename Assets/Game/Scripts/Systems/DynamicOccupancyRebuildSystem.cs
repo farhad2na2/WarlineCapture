@@ -198,10 +198,7 @@ namespace Game.Runtime
                 _occupancyCounts.Dispose();
             _occupancyCounts = new NativeArray<int>(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
 
-            if (occ.Occupied.IsCreated)
-                occ.Occupied.Dispose();
-            occ.GridSize = gridSize;
-            occ.Occupied = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+            occ.Occupied.Clear();
 
             _cachedGridSize = gridSize;
             _occupancyRecords.Clear();

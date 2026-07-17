@@ -1,6 +1,5 @@
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Mathematics;
 using Game.Components;
 
 namespace Game.Runtime
@@ -24,26 +23,10 @@ namespace Game.Runtime
             if (_gridQuery.IsEmptyIgnoreFilter)
                 return;
 
-            Entity gridEntity = _gridQuery.GetSingletonEntity();
-            if (!state.EntityManager.HasComponent<DynamicBlockerComponent>(gridEntity))
-                return;
-
-            var data = state.EntityManager.GetComponentData<DynamicBlockerComponent>(gridEntity);
-            if (data.Counts.IsCreated) data.Counts.Dispose();
-            if (data.Blocked.IsCreated) data.Blocked.Dispose();
-            if (data.FriendlyPassFactionIds.IsCreated) data.FriendlyPassFactionIds.Dispose();
-
-            if (state.EntityManager.HasComponent<PathPoolComponent>(gridEntity))
-            {
-                var pool = state.EntityManager.GetComponentData<PathPoolComponent>(gridEntity);
-                if (pool.Cells.IsCreated) pool.Cells.Dispose();
-            }
-
-            if (state.EntityManager.HasComponent<DynamicOccupancyComponent>(gridEntity))
-            {
-                var occ = state.EntityManager.GetComponentData<DynamicOccupancyComponent>(gridEntity);
-                if (occ.Occupied.IsCreated) occ.Occupied.Dispose();
-            }
+            state.Dependency.Complete();
+            using NativeArray<Entity> gridEntities = _gridQuery.ToEntityArray(Allocator.Temp);
+            for (int index = 0; index < gridEntities.Length; index++)
+                RuntimeGridPersistentStorageUtility.DisposeStorage(state.EntityManager, gridEntities[index]);
         }
 
         public void OnUpdate(ref SystemState state)
@@ -62,7 +45,7 @@ namespace Game.Runtime
 
             if (!state.EntityManager.HasComponent<PathPoolComponent>(gridEntity))
             {
-                ecb.AddComponent(gridEntity, new PathPoolComponent { Cells = new NativeList<int2>(1024, Allocator.Persistent) });
+                ecb.AddComponent(gridEntity, default(PathPoolComponent));
                 addedMissingComponents = true;
             }
 
@@ -76,28 +59,17 @@ namespace Game.Runtime
                 ecb.Playback(state.EntityManager);
             ecb.Dispose();
 
-            var dataRw = SystemAPI.GetComponentRW<DynamicBlockerComponent>(gridEntity);
-            ref var data = ref dataRw.ValueRW;
-
-            if (data.GridSize == gridSize && data.Counts.IsCreated && data.Blocked.IsCreated && data.FriendlyPassFactionIds.IsCreated)
+            if (RuntimeGridPersistentStorageUtility.IsStorageValid(
+                    state.EntityManager,
+                    gridEntity,
+                    gridSize))
                 return;
 
-            if (data.Counts.IsCreated) data.Counts.Dispose();
-            if (data.Blocked.IsCreated) data.Blocked.Dispose();
-            if (data.FriendlyPassFactionIds.IsCreated) data.FriendlyPassFactionIds.Dispose();
-
-            data.GridSize = gridSize;
-            data.Counts = new NativeArray<int>(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
-            data.Blocked = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
-            data.FriendlyPassFactionIds = new NativeArray<byte>(gridSize, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
-            for (int i = 0; i < data.FriendlyPassFactionIds.Length; i++)
-                data.FriendlyPassFactionIds[i] = byte.MaxValue;
-
-            var occRw = SystemAPI.GetComponentRW<DynamicOccupancyComponent>(gridEntity);
-            ref var occ = ref occRw.ValueRW;
-            if (occ.Occupied.IsCreated) occ.Occupied.Dispose();
-            occ.GridSize = gridSize;
-            occ.Occupied = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+            state.Dependency.Complete();
+            RuntimeGridPersistentStorageUtility.EnsureStorage(
+                state.EntityManager,
+                gridEntity,
+                gridSize);
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Game.Editor
         public const string ConfigPath = "Assets/Game/Configs/MapPrototypes/M01_RuntimeCity_Config.asset";
         public const string VisualRecipePath = "Assets/Game/Configs/MapPrototypes/M01_RuntimeVisualRecipe.asset";
         private const string SourceConfigPath = "Assets/Game/Configs/Scene/Game_RuntimeCitySpawner_Config.asset";
-        private const string VisualRecipeVersion = "M01RuntimeVisualRecipe_2026-07-17_v26_narrow_frontage_route";
+        private const string VisualRecipeVersion = "M01RuntimeVisualRecipe_2026-07-17_v27_soft_road_edges";
         private const string DistrictSnapshotFolder = "Assets/Game/Prefabs/MapPrototypes/M01/RuntimeParity";
         private const int MaxDistrictSliceRenderers = 64;
         private const string PremiumLightingRigPath = "Assets/Game/Rendering/Prefabs/PremiumLightingRig.prefab";
@@ -998,6 +998,23 @@ namespace Game.Editor
             MeshRenderer renderer = gameObject.GetComponent<MeshRenderer>();
             if (meshFilter != null && renderer != null && meshFilter.sharedMesh != null)
             {
+                if (transform.childCount > 0)
+                {
+                    GameObject compositePrefab = CreateVisualEntryParitySnapshot(gameObject, stage, entries.Count);
+                    entries.Add(new RuntimeOperationMapVisualEntry(
+                        gameObject.name,
+                        stage,
+                        RuntimeOperationMapVisualEntryKind.Prefab,
+                        compositePrefab,
+                        null,
+                        transform.position,
+                        transform.rotation,
+                        transform.lossyScale,
+                        gameObject.activeSelf,
+                        allowParticles: false));
+                    return;
+                }
+
                 RuntimeOperationMapVisualEntryKind kind;
                 if (meshFilter.sharedMesh.name.StartsWith("Cube", StringComparison.OrdinalIgnoreCase))
                     kind = RuntimeOperationMapVisualEntryKind.Box;

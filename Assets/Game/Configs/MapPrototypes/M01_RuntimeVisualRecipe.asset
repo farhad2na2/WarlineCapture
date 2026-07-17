@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abf0edb1c282479f89b39a264e80a795, type: 3}
   m_Name: M01_RuntimeVisualRecipe
   m_EditorClassIdentifier: Game.Configs::Game.Configs.RuntimeOperationMapVisualRecipe
-  recipeVersion: M01RuntimeVisualRecipe_2026-07-17_v26_narrow_frontage_route
+  recipeVersion: M01RuntimeVisualRecipe_2026-07-17_v27_soft_road_edges
   seed: 26071501
   foundation:
     material: {fileID: 2100000, guid: 629d23cca1fcab142b732f0acea319ea, type: 2}
@@ -41323,7 +41323,7 @@ MonoBehaviour:
     material: {fileID: 2100000, guid: 668dd4cca36861740ad2849180ac2053, type: 2}
     position: {x: -51, y: -0.025, z: 6}
     rotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
-    scale: {x: 4.800001, y: 0.07, z: 27.200008}
+    scale: {x: 4.800001, y: 0.07, z: 26.000008}
     active: 1
     allowParticles: 0
     lightColor: {r: 0, g: 0, b: 0, a: 0}
@@ -41336,12 +41336,12 @@ MonoBehaviour:
       worldSize: {x: 0, y: 0}
   - name: MarketStreet_West
     stage: 0
-    kind: 1
-    prefab: {fileID: 0}
-    material: {fileID: 2100000, guid: 3b6acbff6d516b24ba59ade48d3bc9ab, type: 2}
+    kind: 0
+    prefab: {fileID: 2561271171231224008, guid: e0ea471d46e88184cbdc26fb18c066ff, type: 3}
+    material: {fileID: 0}
     position: {x: -51, y: 0.035, z: 6}
     rotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
-    scale: {x: 3.200001, y: 0.12, z: 27.200008}
+    scale: {x: 3.200001, y: 0.12, z: 26.000008}
     active: 1
     allowParticles: 0
     lightColor: {r: 0, g: 0, b: 0, a: 0}
@@ -41359,7 +41359,7 @@ MonoBehaviour:
     material: {fileID: 2100000, guid: 668dd4cca36861740ad2849180ac2053, type: 2}
     position: {x: -26.5, y: -0.025, z: 8}
     rotation: {x: -0, y: 0.6436842, z: -0, w: 0.7652912}
-    scale: {x: 4.8, y: 0.07, z: 24.545235}
+    scale: {x: 4.8, y: 0.07, z: 23.345236}
     active: 1
     allowParticles: 0
     lightColor: {r: 0, g: 0, b: 0, a: 0}
@@ -41372,12 +41372,12 @@ MonoBehaviour:
       worldSize: {x: 0, y: 0}
   - name: MarketStreet_Bend
     stage: 0
-    kind: 1
-    prefab: {fileID: 0}
-    material: {fileID: 2100000, guid: 3b6acbff6d516b24ba59ade48d3bc9ab, type: 2}
+    kind: 0
+    prefab: {fileID: 3798892051171238501, guid: 767c7bc61cb75e247a8228d97b7b75bb, type: 3}
+    material: {fileID: 0}
     position: {x: -26.5, y: 0.035, z: 8}
     rotation: {x: -0, y: 0.6436842, z: -0, w: 0.7652912}
-    scale: {x: 3.1999998, y: 0.12, z: 24.545235}
+    scale: {x: 3.1999998, y: 0.12, z: 23.345236}
     active: 1
     allowParticles: 0
     lightColor: {r: 0, g: 0, b: 0, a: 0}
@@ -41395,7 +41395,7 @@ MonoBehaviour:
     material: {fileID: 2100000, guid: 668dd4cca36861740ad2849180ac2053, type: 2}
     position: {x: 0.25, y: -0.025, z: 14}
     rotation: {x: -0, y: 0.61085486, z: -0, w: 0.7917426}
-    scale: {x: 4.8000007, y: 0.07, z: 32.731735}
+    scale: {x: 4.8000007, y: 0.07, z: 31.531733}
     active: 1
     allowParticles: 0
     lightColor: {r: 0, g: 0, b: 0, a: 0}
@@ -41408,12 +41408,12 @@ MonoBehaviour:
       worldSize: {x: 0, y: 0}
   - name: CompoundApproach
     stage: 0
-    kind: 1
-    prefab: {fileID: 0}
-    material: {fileID: 2100000, guid: 3b6acbff6d516b24ba59ade48d3bc9ab, type: 2}
+    kind: 0
+    prefab: {fileID: 5990214264656216525, guid: fec47242c8cb5a641b5af787ddc4c3d9, type: 3}
+    material: {fileID: 0}
     position: {x: 0.25, y: 0.035, z: 14}
     rotation: {x: -0, y: 0.61085486, z: -0, w: 0.7917426}
-    scale: {x: 3.2000003, y: 0.12, z: 32.731735}
+    scale: {x: 3.2000003, y: 0.12, z: 31.531733}
     active: 1
     allowParticles: 0
     lightColor: {r: 0, g: 0, b: 0, a: 0}

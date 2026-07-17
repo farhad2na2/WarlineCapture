@@ -16,7 +16,7 @@ namespace Game.Editor
         public const string ScenePath = "Assets/Game/Scenes/MapPrototypes/Chapter01/M01_VisualPrototype.unity";
         public const string CaptureDirectory = "Design/ArtReview/OperationMaps/M01";
         public const int GenerationSeed = 26071501;
-        public const string GeneratorVersion = "M01VisualPrototype_2026-07-17_v26_narrow_frontage_route";
+        public const string GeneratorVersion = "M01VisualPrototype_2026-07-17_v27_soft_road_edges";
 
         private const int CaptureWidth = 1600;
         private const int CaptureHeight = 900;
@@ -174,6 +174,7 @@ namespace Game.Editor
         };
 
         private const float LocalRoadWidth = 3.2f;
+        private const float LocalRoadShoulderAllowance = 1.6f;
         private const float MinimumLocalRoadLength = 2f;
         private const float MaximumLocalRoadLength = 36f;
         private const float MaximumLocalRoadTotalLength = 90f;
@@ -1150,17 +1151,34 @@ namespace Game.Editor
 
         private static void CreateLocalRoadNetwork(Transform parent, Palette palette)
         {
+            var roadSurfaces = new GameObject[LocalRoadSegments.Length];
             for (int i = 0; i < LocalRoadSegments.Length; i++)
-                CreateLocalRoadSegment(LocalRoadSegments[i], parent, palette);
+                roadSurfaces[i] = CreateLocalRoadSegment(LocalRoadSegments[i], parent, palette);
+
+            CreateLocalRoadNode(
+                "MarketStreet_WestEnd",
+                LocalRoadSegments[0].Start,
+                parent,
+                roadSurfaces[0].transform,
+                palette);
+            for (int i = 0; i < LocalRoadSegments.Length; i++)
+            {
+                CreateLocalRoadNode(
+                    $"{LocalRoadSegments[i].Name}_End",
+                    LocalRoadSegments[i].End,
+                    parent,
+                    roadSurfaces[i].transform,
+                    palette);
+            }
         }
 
-        private static void CreateLocalRoadSegment(
+        private static GameObject CreateLocalRoadSegment(
             LocalRoadSegmentDefinition segment,
             Transform parent,
             Palette palette)
         {
             Vector3 delta = segment.End - segment.Start;
-            float length = delta.magnitude + 1.2f;
+            float length = delta.magnitude;
             Vector3 center = (segment.Start + segment.End) * 0.5f;
             Quaternion rotation = Quaternion.Euler(0f, Mathf.Atan2(delta.x, delta.z) * Mathf.Rad2Deg, 0f);
             float roadWidth = segment.Dusty ? LocalRoadWidth : 4.2f;
@@ -1168,17 +1186,42 @@ namespace Game.Editor
             CreateBox(
                 $"{segment.Name}_Shoulder",
                 center + Vector3.down * 0.025f,
-                new Vector3(roadWidth + 1.6f, 0.07f, length),
+                new Vector3(roadWidth + LocalRoadShoulderAllowance, 0.07f, length),
                 palette.TransitionGround,
                 parent,
                 rotation);
-            CreateBox(
+            return CreateBox(
                 segment.Name,
                 center + Vector3.up * 0.035f,
                 new Vector3(roadWidth, 0.12f, length),
                 segment.Dusty ? palette.DirtRoad : palette.Asphalt,
                 parent,
                 rotation);
+        }
+
+        private static void CreateLocalRoadNode(
+            string name,
+            Vector3 position,
+            Transform terrainParent,
+            Transform roadOwner,
+            Palette palette)
+        {
+            float shoulderWidth = LocalRoadWidth + LocalRoadShoulderAllowance;
+            GameObject shoulder = CreateCylinder(
+                $"{name}_ShoulderBlend",
+                position + Vector3.down * 0.025f,
+                new Vector3(shoulderWidth, 0.035f, shoulderWidth),
+                palette.TransitionGround,
+                terrainParent);
+            shoulder.transform.SetParent(roadOwner, true);
+
+            GameObject dirt = CreateCylinder(
+                $"{name}_DirtBlend",
+                position + Vector3.up * 0.035f,
+                new Vector3(LocalRoadWidth, 0.06f, LocalRoadWidth),
+                palette.DirtRoad,
+                terrainParent);
+            dirt.transform.SetParent(roadOwner, true);
         }
 
         private static void CreateAuthoredDistrictModules(Transform parent, Palette palette)

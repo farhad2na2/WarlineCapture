@@ -18,7 +18,7 @@ namespace Game.Runtime
 
     public readonly struct RuntimeCityGenerationProgress
     {
-        public const string VersionTag = "RuntimeCityM01NarrowRoute_R71_2026-07-17";
+        public const string VersionTag = "RuntimeCityM01RoadEdges_R74_2026-07-17";
 
         public RuntimeCityGenerationProgress(
             RuntimeCityGenerationStage stage,

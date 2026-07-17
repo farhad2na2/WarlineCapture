@@ -1,0 +1,102 @@
+{
+  "artifactId": "am021-presentation-root-lifecycle-evidence-v1",
+  "schemaVersion": 1,
+  "sourceBaseline": {
+    "branch": "main",
+    "commit": "e1c66f1b069e3793f7042cd4af66603e5afd3fe9",
+    "tree": "54b4fe9e9d5b78cb525c39477821190a66507600"
+  },
+  "acceptedEvidence": {
+    "commit": "008e42d8489a68c523dd7c6729812bb02414e9ed",
+    "tree": "ea6e2a1a64a94869f9cfb4ddd73bab47078c335c"
+  },
+  "productionChangePaths": [
+    "Assets/Game/Scripts/Effects/MissileTrailVfxView.cs",
+    "Assets/Game/Scripts/Effects/UnitAttackImpactVfxView.cs",
+    "Assets/Game/Scripts/Environment/RuntimeCityRAndDMapCompositionSystemHelper.Lifecycle.cs",
+    "Assets/Game/Scripts/Environment/RuntimeCityRAndDMapCompositionSystemHelper.cs",
+    "Assets/Game/Scripts/Environment/RuntimeCityVisualPresentationSystemHelper.Lifecycle.cs",
+    "Assets/Game/Scripts/Environment/RuntimeCityVisualPresentationSystemHelper.cs",
+    "Assets/Game/Scripts/Systems/BuildingGameplayDisposalCompositionSystemHelper.Lifecycle.cs",
+    "Assets/Game/Scripts/Systems/BuildingPlacementStartupSystemHelper.Lifecycle.cs",
+    "Assets/Game/Scripts/Systems/BuildingPlacementStartupSystemHelper.cs",
+    "Assets/Game/Scripts/Systems/BuildingProductionTransportPresentationSystemHelper.Lifecycle.cs",
+    "Assets/Game/Scripts/Systems/BuildingProductionTransportPresentationSystemHelper.cs"
+  ],
+  "ownedFiles": [
+    {
+      "path": "Assets/Game/Scripts/Effects/MissileTrailVfxView.cs",
+      "sha256": "14315190f1fae32a47c22cbd25b58dfb863df06a53ba24e4de5075d1bff96e27"
+    },
+    {
+      "path": "Assets/Game/Scripts/Effects/UnitAttackImpactVfxView.cs",
+      "sha256": "c3e85a94f5f6b64b99be67338a6064647f35be543d845780c44dba38c04b0c07"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityRAndDMapCompositionSystemHelper.Lifecycle.cs",
+      "sha256": "29e2efb1f969ffa8626c29f2763673777e3d15ae61db414e6bdf30b72cd2bd99"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityRAndDMapCompositionSystemHelper.cs",
+      "sha256": "ebc9d525ef83eb71ba7362eed44b1427e39e7b46e7bad45eee38ed7b153b86c2"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityVisualPresentationSystemHelper.Lifecycle.cs",
+      "sha256": "08a178e023a570f5beb0ae6cb09cf79ca8b4b33f4b930f88cbd1d134c7901157"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityVisualPresentationSystemHelper.cs",
+      "sha256": "f74c50bca3cfc1e324e5c86731eae225780ba9b200a27174464b90cb3ea37dbd"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingGameplayDisposalCompositionSystemHelper.Lifecycle.cs",
+      "sha256": "39b16c8c90440979438969d206e761aeedd6b0f178bfd420749d8b5fa11bbb5e"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingPlacementStartupSystemHelper.Lifecycle.cs",
+      "sha256": "54edf12b223317f82372ebc34937d329e5a24f4c343c4aa60db35f1ed2bb6bb8"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingPlacementStartupSystemHelper.cs",
+      "sha256": "1dd54a780521bba880cdf837c56b9385a5d47601d9a6951e00b63c31626933a7"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingProductionTransportPresentationSystemHelper.Lifecycle.cs",
+      "sha256": "13259b68c761db2e7b058bae24cd40ce48c9c6daca7a4c297c092c2b8e7eeb6c"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingProductionTransportPresentationSystemHelper.cs",
+      "sha256": "1dcf8a0da138aac3b440d6e1c56f8a911d3f17c2a6b5ee5e007f7d3d63377488"
+    },
+    {
+      "path": "Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs",
+      "sha256": "528b8a4a19dfaab41ab579ccf0d0bb57cab38c83398b3780a2ea46309ec8aef3"
+    }
+  ],
+  "ownershipResult": {
+    "persistentResourceCount": 580,
+    "explicitOwnerCount": 548,
+    "gapCount": 10,
+    "protectedOwnerCount": 22,
+    "presentationRootGapCount": 0
+  },
+  "unityValidations": [
+    {
+      "id": "persistent-resource-lifecycle",
+      "result": "Passed",
+      "passedTests": 7,
+      "compilerErrors": 0
+    },
+    {
+      "id": "production-source-growth",
+      "result": "Passed",
+      "passedTests": 17,
+      "compilerErrors": 0
+    }
+  ],
+  "authorityBoundary": {
+    "creation": "Each process, runtime-city, placement, and transport presentation root remains created by its existing feature owner.",
+    "disposal": "Subsystem registration, runtime-city disposal, and building-gameplay shutdown now provide explicit idempotent teardown paths.",
+    "gameplayAuthority": "No gameplay state, ECS scheduling, update owner, or simulation authority changed."
+  }
+}

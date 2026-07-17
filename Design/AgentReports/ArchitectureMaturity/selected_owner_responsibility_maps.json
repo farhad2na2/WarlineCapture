@@ -27,11 +27,16 @@
       "path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs",
       "evidencePath": "Design/AgentReports/ArchitectureMaturity/transport_capacity_rules_extraction_evidence.json",
       "evidenceSha256": "01202829bcfdae4bcd9f56e70c2f989430842b95965491222836daf1b960b0d2"
+    },
+    {
+      "path": "Assets/Game/Scripts/Effects/MissileTrailVfxView.cs",
+      "evidencePath": "Design/AgentReports/ArchitectureMaturity/am021_presentation_root_lifecycle_evidence.json",
+      "evidenceSha256": "be1924677e78c6e76173d0b348c97997b9fbbd003fa905b8d35706159bad9143"
     }
   ],
   "evidenceFiles": [
     {"path": "Assets/Game/Scripts/Components/GroundMissileComponents.cs", "sha256": "60b62c7995a1e7e45c5d94196d759c7a01a8c368fe728e8b94000c796978cb9b"},
-    {"path": "Assets/Game/Scripts/Effects/MissileTrailVfxView.cs", "sha256": "416a070605499d1ceb691783acb7aede5818a5a841cec70f96aba924061519c9"},
+    {"path": "Assets/Game/Scripts/Effects/MissileTrailVfxView.cs", "sha256": "14315190f1fae32a47c22cbd25b58dfb863df06a53ba24e4de5075d1bff96e27"},
     {"path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs", "sha256": "96efa78461a89825021528bf706cb1e61f0caae968f2a034f4db5d5467f9ac6c"},
     {"path": "Assets/Game/Scripts/Systems/UnitAttackSystem.cs", "sha256": "7fb75ffde0519676634c49d2e552f5e7566ee0fd2416f8d16c339e846ec799b6"},
     {"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingCapacityRules.cs", "sha256": "911e730307ef6360ca9a8b6716b72d71a2c38f906edcbfecb3a9098f0f685683"},

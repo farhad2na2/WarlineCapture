@@ -48,8 +48,8 @@
   "artifactId": "AM-021",
   "baseline": {
     "branch": "main",
-    "commit": "e1c66f1b069e3793f7042cd4af66603e5afd3fe9",
-    "tree": "54b4fe9e9d5b78cb525c39477821190a66507600"
+    "commit": "008e42d8489a68c523dd7c6729812bb02414e9ed",
+    "tree": "ea6e2a1a64a94869f9cfb4ddd73bab47078c335c"
   },
   "categories": {
     "eventSubscriptions": [
@@ -12883,31 +12883,35 @@
       },
       {
         "creationOwner": "MissileTrailVfxView",
-        "disposalOwner": "unassigned",
+        "disposalOwner": "MissileTrailVfxView",
         "dontDestroyOnLoad": true,
         "lifecycleKind": "process-root",
-        "lifecycleMethods": [],
+        "lifecycleMethods": [
+          "OnDestroy"
+        ],
         "line": 1,
         "ownerType": "MissileTrailVfxView",
         "path": "Assets/Game/Scripts/Effects/MissileTrailVfxView.cs",
         "protectedOwnerIds": [],
         "root": "<component-root>",
         "sceneEventAccess": false,
-        "status": "gap"
+        "status": "explicit"
       },
       {
         "creationOwner": "UnitAttackImpactVfxView",
-        "disposalOwner": "unassigned",
+        "disposalOwner": "UnitAttackImpactVfxView",
         "dontDestroyOnLoad": true,
         "lifecycleKind": "process-root",
-        "lifecycleMethods": [],
+        "lifecycleMethods": [
+          "OnDestroy"
+        ],
         "line": 1,
         "ownerType": "UnitAttackImpactVfxView",
         "path": "Assets/Game/Scripts/Effects/UnitAttackImpactVfxView.cs",
         "protectedOwnerIds": [],
         "root": "<component-root>",
         "sceneEventAccess": false,
-        "status": "gap"
+        "status": "explicit"
       },
       {
         "creationOwner": "RuntimeCityAlgorithmicAftermathPresentationSystemHelper",
@@ -12951,8 +12955,10 @@
       },
       {
         "creationOwner": "RuntimeCityRAndDMapCompositionSystemHelper",
-        "destroyMethods": [],
-        "disposalOwner": "unassigned",
+        "destroyMethods": [
+          "DestroyGeneratedRoot"
+        ],
+        "disposalOwner": "RuntimeCityRAndDMapCompositionSystemHelper",
         "lifecycleKind": "runtime-created-root",
         "line": 648,
         "ownerType": "RuntimeCityRAndDMapCompositionSystemHelper",
@@ -12962,8 +12968,10 @@
         "path": "Assets/Game/Scripts/Environment/RuntimeCityRAndDMapCompositionSystemHelper.cs",
         "protectedOwnerIds": [],
         "root": "root",
-        "status": "gap",
-        "teardownPath": []
+        "status": "explicit",
+        "teardownPath": [
+          "Dispose->DestroyGeneratedRoot"
+        ]
       },
       {
         "creationOwner": "RuntimeCityRAndDMapView",
@@ -13005,10 +13013,13 @@
       },
       {
         "creationOwner": "RuntimeCityVisualPresentationSystemHelper",
-        "destroyMethods": [],
-        "disposalOwner": "unassigned",
+        "destroyMethods": [
+          "DestroyRoot",
+          "Dispose"
+        ],
+        "disposalOwner": "RuntimeCityVisualPresentationSystemHelper",
         "lifecycleKind": "runtime-created-root",
-        "line": 40,
+        "line": 41,
         "ownerType": "RuntimeCityVisualPresentationSystemHelper",
         "ownershipTransfers": [
           "_cityVisualRoot"
@@ -13016,8 +13027,11 @@
         "path": "Assets/Game/Scripts/Environment/RuntimeCityVisualPresentationSystemHelper.cs",
         "protectedOwnerIds": [],
         "root": "root",
-        "status": "gap",
-        "teardownPath": []
+        "status": "explicit",
+        "teardownPath": [
+          "Dispose",
+          "Dispose->DestroyRoot"
+        ]
       },
       {
         "creationOwner": "RuntimeOperationMapVisualRecipePresentationSystemHelper",
@@ -13076,17 +13090,22 @@
       },
       {
         "creationOwner": "BuildingPlacementStartupSystemHelper",
-        "destroyMethods": [],
-        "disposalOwner": "unassigned",
+        "destroyMethods": [
+          "Dispose"
+        ],
+        "disposalOwner": "BuildingPlacementStartupSystemHelper",
         "lifecycleKind": "runtime-created-root",
-        "line": 123,
+        "line": 9,
         "ownerType": "BuildingPlacementStartupSystemHelper",
         "ownershipTransfers": [],
-        "path": "Assets/Game/Scripts/Systems/BuildingPlacementStartupSystemHelper.cs",
+        "path": "Assets/Game/Scripts/Systems/BuildingPlacementStartupSystemHelper.Lifecycle.cs",
         "protectedOwnerIds": [],
         "root": "_buildingRoot",
-        "status": "gap",
-        "teardownPath": []
+        "status": "explicit",
+        "teardownPath": [
+          "Dispose",
+          "Dispose->Dispose"
+        ]
       },
       {
         "creationOwner": "BuildingPlacementVisualPresentationSystemHelper",
@@ -13110,19 +13129,25 @@
       },
       {
         "creationOwner": "BuildingProductionTransportPresentationSystemHelper",
-        "destroyMethods": [],
-        "disposalOwner": "unassigned",
+        "destroyMethods": [
+          "DestroyRuntimeRoot",
+          "Dispose"
+        ],
+        "disposalOwner": "BuildingProductionTransportPresentationSystemHelper",
         "lifecycleKind": "runtime-created-root",
-        "line": 1756,
+        "line": 38,
         "ownerType": "BuildingProductionTransportPresentationSystemHelper",
         "ownershipTransfers": [
           "_runtimeRoot"
         ],
-        "path": "Assets/Game/Scripts/Systems/BuildingProductionTransportPresentationSystemHelper.cs",
+        "path": "Assets/Game/Scripts/Systems/BuildingProductionTransportPresentationSystemHelper.Lifecycle.cs",
         "protectedOwnerIds": [],
         "root": "root",
-        "status": "gap",
-        "teardownPath": []
+        "status": "explicit",
+        "teardownPath": [
+          "Dispose",
+          "Dispose->DestroyRuntimeRoot"
+        ]
       },
       {
         "creationOwner": "ResourceExchangeVisualPresentationSystemHelper",
@@ -13249,8 +13274,8 @@
   },
   "schemaVersion": 1,
   "scope": {
-    "productionFileCount": 1013,
-    "sourceManifestSha256": "5f184bbb228f6c766b4364022c8521693896da388943bfa15686c7a00321f1cc",
+    "productionFileCount": 1017,
+    "sourceManifestSha256": "e99efb0f6cc1dbc20aa6462f7d45af56e274b5449ec9d77a338325956392239f",
     "sourceRoot": "Assets/Game/Scripts"
   },
   "sourceManifest": [
@@ -14024,11 +14049,11 @@
     },
     {
       "path": "Assets/Game/Scripts/Effects/MissileTrailVfxView.cs",
-      "sha256": "416a070605499d1ceb691783acb7aede5818a5a841cec70f96aba924061519c9"
+      "sha256": "14315190f1fae32a47c22cbd25b58dfb863df06a53ba24e4de5075d1bff96e27"
     },
     {
       "path": "Assets/Game/Scripts/Effects/UnitAttackImpactVfxView.cs",
-      "sha256": "b068f291b382320e2f9fa0e995439a4b0ffad27e8fff02ae4d709e46113d1bb8"
+      "sha256": "c3e85a94f5f6b64b99be67338a6064647f35be543d845780c44dba38c04b0c07"
     },
     {
       "path": "Assets/Game/Scripts/Environment/DayNightSystem.cs",
@@ -14151,8 +14176,12 @@
       "sha256": "3d5db00b31131694ae352ef8726fa6c0f944c243ddb1f6245bb356414685818f"
     },
     {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityRAndDMapCompositionSystemHelper.Lifecycle.cs",
+      "sha256": "29e2efb1f969ffa8626c29f2763673777e3d15ae61db414e6bdf30b72cd2bd99"
+    },
+    {
       "path": "Assets/Game/Scripts/Environment/RuntimeCityRAndDMapCompositionSystemHelper.cs",
-      "sha256": "2199403a498f45c828b0334b8d795ed1fb0172d8c9e35e5d0eeb56b75a38303c"
+      "sha256": "ebc9d525ef83eb71ba7362eed44b1427e39e7b46e7bad45eee38ed7b153b86c2"
     },
     {
       "path": "Assets/Game/Scripts/Environment/RuntimeCityRAndDMapSystem.cs",
@@ -14207,8 +14236,12 @@
       "sha256": "c2da091735b45cee08af6985cd61c857c0835e310da6ac63a8f9f863b0b45415"
     },
     {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityVisualPresentationSystemHelper.Lifecycle.cs",
+      "sha256": "08a178e023a570f5beb0ae6cb09cf79ca8b4b33f4b930f88cbd1d134c7901157"
+    },
+    {
       "path": "Assets/Game/Scripts/Environment/RuntimeCityVisualPresentationSystemHelper.cs",
-      "sha256": "e5cd5d7de4059ebc2f214f03c795661c92646e260dfb38f20c002bb7d327fdea"
+      "sha256": "f74c50bca3cfc1e324e5c86731eae225780ba9b200a27174464b90cb3ea37dbd"
     },
     {
       "path": "Assets/Game/Scripts/Environment/RuntimeCityWalkabilityUtilitySystemHelper.cs",
@@ -14760,7 +14793,7 @@
     },
     {
       "path": "Assets/Game/Scripts/Systems/BuildingGameplayDisposalCompositionSystemHelper.Lifecycle.cs",
-      "sha256": "274da10a5c907a04f9a3902416a2a5cce304f7666435837e618d26f1750fdfe1"
+      "sha256": "39b16c8c90440979438969d206e761aeedd6b0f178bfd420749d8b5fa11bbb5e"
     },
     {
       "path": "Assets/Game/Scripts/Systems/BuildingGameplayDisposalCompositionSystemHelper.cs",
@@ -14899,8 +14932,12 @@
       "sha256": "4b54c9193939eaac6c21dad8797c0f27b5ea3482bf1558a69a815a18002c22d8"
     },
     {
+      "path": "Assets/Game/Scripts/Systems/BuildingPlacementStartupSystemHelper.Lifecycle.cs",
+      "sha256": "54edf12b223317f82372ebc34937d329e5a24f4c343c4aa60db35f1ed2bb6bb8"
+    },
+    {
       "path": "Assets/Game/Scripts/Systems/BuildingPlacementStartupSystemHelper.cs",
-      "sha256": "31032634498adcf8e413dd206a1631bee34a2d32b835e36b87d206635350785a"
+      "sha256": "1dd54a780521bba880cdf837c56b9385a5d47601d9a6951e00b63c31626933a7"
     },
     {
       "path": "Assets/Game/Scripts/Systems/BuildingPlacementValidationUtilitySystemHelper.cs",
@@ -14959,8 +14996,12 @@
       "sha256": "4b8230aef17264b9b2b5762354f53404ef11f0fe9aea582cc104049f884fed35"
     },
     {
+      "path": "Assets/Game/Scripts/Systems/BuildingProductionTransportPresentationSystemHelper.Lifecycle.cs",
+      "sha256": "13259b68c761db2e7b058bae24cd40ce48c9c6daca7a4c297c092c2b8e7eeb6c"
+    },
+    {
       "path": "Assets/Game/Scripts/Systems/BuildingProductionTransportPresentationSystemHelper.cs",
-      "sha256": "990da60ff792573f80f19f56620306877f3eb93f69423255c0521e57ffd0be61"
+      "sha256": "1dcf8a0da138aac3b440d6e1c56f8a911d3f17c2a6b5ee5e007f7d3d63377488"
     },
     {
       "path": "Assets/Game/Scripts/Systems/BuildingProductionUpdateCompositionSystemHelper.cs",
@@ -17314,8 +17355,8 @@
       "persistentQueries": 454,
       "presentationRoots": 26
     },
-    "explicitOwnerCount": 542,
-    "gapCount": 16,
+    "explicitOwnerCount": 548,
+    "gapCount": 10,
     "protectedOwnerCount": 22,
     "totalResourceCount": 580
   }

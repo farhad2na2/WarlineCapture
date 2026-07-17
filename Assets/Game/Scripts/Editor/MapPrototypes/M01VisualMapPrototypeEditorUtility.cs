@@ -16,7 +16,7 @@ namespace Game.Editor
         public const string ScenePath = "Assets/Game/Scenes/MapPrototypes/Chapter01/M01_VisualPrototype.unity";
         public const string CaptureDirectory = "Design/ArtReview/OperationMaps/M01";
         public const int GenerationSeed = 26071501;
-        public const string GeneratorVersion = "M01VisualPrototype_2026-07-17_v28_horizon_belt";
+        public const string GeneratorVersion = "M01VisualPrototype_2026-07-17_v29_compact_utility_core";
 
         private const int CaptureWidth = 1600;
         private const int CaptureHeight = 900;
@@ -170,7 +170,7 @@ namespace Game.Editor
         {
             new("MarketStreet_West", new Vector3(-64f, 0f, 6f), new Vector3(-38f, 0f, 6f), true),
             new("MarketStreet_Bend", new Vector3(-38f, 0f, 6f), new Vector3(-15f, 0f, 10f), true),
-            new("CompoundApproach", new Vector3(-15f, 0f, 10f), new Vector3(15.5f, 0f, 18f), true)
+            new("CompoundApproach", new Vector3(-15f, 0f, 10f), new Vector3(0.5f, 0f, 10f), true)
         };
 
         private const float LocalRoadWidth = 3.2f;
@@ -237,8 +237,8 @@ namespace Game.Editor
                 false),
             new(
                 "UtilityCompound_East_DemoAuthored",
-                new Vector2(0f, 6f),
-                new Vector2(44f, 52f),
+                new Vector2(-15f, -2f),
+                new Vector2(29f, 44f),
                 true,
                 true),
             new(
@@ -1228,7 +1228,7 @@ namespace Game.Editor
         {
             Transform modulesRoot = CreateRoot("02_DemoAuthored_DistrictModules", parent).transform;
             ApplyDistrictCuration(PlaceModule(TownMarketModulePath, "OldMarket_West_DemoAuthored", new Vector3(-68f, 0f, 12f), 0f, 0.82f, modulesRoot), palette);
-            ApplyDistrictCuration(PlaceModule(BaseCommandModulePath, "UtilityCompound_East_DemoAuthored", new Vector3(23f, 0f, 13f), 180f, 0.76f, modulesRoot), palette);
+            ApplyDistrictCuration(PlaceModule(BaseCommandModulePath, "UtilityCompound_East_DemoAuthored", new Vector3(8f, 0f, 5f), 180f, 0.76f, modulesRoot), palette);
             ApplyDistrictCuration(PlaceModule(SouthTownModulePath, "Residential_South_DemoAuthored", new Vector3(-5f, 0f, -54f), 0f, 0.58f, modulesRoot), palette);
         }
 
@@ -1744,34 +1744,42 @@ namespace Game.Editor
         {
             Transform root = CreateRoot("04_UtilityCompound_StoryLayer", parent).transform;
 
-            CreateIrregularSurface("CompoundCourtyard", new Vector3(25f, -0.005f, 35f), new Vector2(38f, 37f), palette.DistrictGround, root, -2f);
-            PlacePrefab("Assets/Game/Prefabs/Buildings/Building_Hall.prefab", "CompoundOperationsHall", new Vector3(20f, 0f, 35f), 180f, 0.72f, root);
-            PlacePrefab("Assets/Game/Prefabs/Buildings/Building_Barrack.prefab", "CompoundServiceBuilding", new Vector3(34f, 0f, 36f), 180f, 0.62f, root);
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Group_03.prefab", "CompoundCheckpoint", new Vector3(16.5f, 0f, 18.5f), 78f, 0.9f, root);
-            PlacePrefab("Assets/Game/Prefabs/Buildings/Building_GuardTower.prefab", "CompoundGuardTower", new Vector3(39f, 0f, 49f), 180f, 0.78f, root);
-            PlacePrefab("Assets/Game/Prefabs/Buildings/Building_WaterTank.prefab", "CompoundWaterTank", new Vector3(36f, 0f, 23f), 20f, 0.76f, root);
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Crate_Stack_Cover_02.prefab", "CompoundSupplies_A", new Vector3(16f, 0f, 23f), 12f, 0.9f, root);
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Crate_Stack_03.prefab", "CompoundSupplies_B", new Vector3(22f, 0f, 23f), 84f, 0.9f, root);
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Generator_Large_01.prefab", "CompoundGenerator", new Vector3(29f, 0f, 23f), 90f, 0.85f, root);
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/SM_Prop_LightPole_01.prefab", "CompoundLightPole", new Vector3(12f, 0f, 39f), 0f, 0.9f, root);
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Signs/SM_Prop_Sign_Safety_03.prefab", "CompoundWarningSign", new Vector3(10f, 2.2f, 20f), 78f, 1f, root);
+            CreateIrregularSurface("CompoundCourtyard", ShiftUtilityCompound(new Vector3(25f, -0.005f, 35f)), new Vector2(38f, 37f), palette.DistrictGround, root, -2f);
+            PlacePrefab("Assets/Game/Prefabs/Buildings/Building_Hall.prefab", "CompoundOperationsHall", ShiftUtilityCompound(new Vector3(20f, 0f, 35f)), 180f, 0.72f, root);
+            PlacePrefab("Assets/Game/Prefabs/Buildings/Building_Barrack.prefab", "CompoundServiceBuilding", ShiftUtilityCompound(new Vector3(34f, 0f, 36f)), 180f, 0.62f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Group_03.prefab", "CompoundCheckpoint", ShiftUtilityCompound(new Vector3(16.5f, 0f, 18.5f)), 78f, 0.9f, root);
+            PlacePrefab("Assets/Game/Prefabs/Buildings/Building_GuardTower.prefab", "CompoundGuardTower", ShiftUtilityCompound(new Vector3(39f, 0f, 49f)), 180f, 0.78f, root);
+            PlacePrefab("Assets/Game/Prefabs/Buildings/Building_WaterTank.prefab", "CompoundWaterTank", ShiftUtilityCompound(new Vector3(36f, 0f, 23f)), 20f, 0.76f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Crate_Stack_Cover_02.prefab", "CompoundSupplies_A", ShiftUtilityCompound(new Vector3(16f, 0f, 23f)), 12f, 0.9f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Crate_Stack_03.prefab", "CompoundSupplies_B", ShiftUtilityCompound(new Vector3(22f, 0f, 23f)), 84f, 0.9f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Generator_Large_01.prefab", "CompoundGenerator", ShiftUtilityCompound(new Vector3(29f, 0f, 23f)), 90f, 0.85f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/SM_Prop_LightPole_01.prefab", "CompoundLightPole", ShiftUtilityCompound(new Vector3(12f, 0f, 39f)), 0f, 0.9f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Signs/SM_Prop_Sign_Safety_03.prefab", "CompoundWarningSign", ShiftUtilityCompound(new Vector3(10f, 2.2f, 20f)), 78f, 1f, root);
 
-            CreateBox("CompoundWall_West", new Vector3(7f, 1.2f, 36f), new Vector3(0.75f, 2.4f, 34f), palette.Concrete, root);
-            CreateBox("CompoundWall_East", new Vector3(44f, 1.2f, 36f), new Vector3(0.75f, 2.4f, 34f), palette.Concrete, root);
-            CreateBox("CompoundWall_North", new Vector3(25.5f, 1.2f, 53f), new Vector3(37.75f, 2.4f, 0.75f), palette.Concrete, root);
-            CreateBox("CompoundWall_SouthWest", new Vector3(10f, 1.2f, 19f), new Vector3(6f, 2.4f, 0.75f), palette.Concrete, root);
-            CreateBox("CompoundWall_SouthEast", new Vector3(32f, 1.2f, 19f), new Vector3(24f, 2.4f, 0.75f), palette.Concrete, root);
+            CreateBox("CompoundWall_West", ShiftUtilityCompound(new Vector3(7f, 1.2f, 36f)), new Vector3(0.75f, 2.4f, 34f), palette.Concrete, root);
+            CreateBox("CompoundWall_East", ShiftUtilityCompound(new Vector3(44f, 1.2f, 36f)), new Vector3(0.75f, 2.4f, 34f), palette.Concrete, root);
+            CreateBox("CompoundWall_North", ShiftUtilityCompound(new Vector3(25.5f, 1.2f, 53f)), new Vector3(37.75f, 2.4f, 0.75f), palette.Concrete, root);
+            CreateBox("CompoundWall_SouthWest", ShiftUtilityCompound(new Vector3(10f, 1.2f, 19f)), new Vector3(6f, 2.4f, 0.75f), palette.Concrete, root);
+            CreateBox("CompoundWall_SouthEast", ShiftUtilityCompound(new Vector3(32f, 1.2f, 19f)), new Vector3(24f, 2.4f, 0.75f), palette.Concrete, root);
             Vector3[] pillarPositions =
             {
-                new(7f, 1.55f, 19f), new(14f, 1.55f, 19f), new(20f, 1.55f, 19f), new(44f, 1.55f, 19f),
-                new(7f, 1.55f, 53f), new(44f, 1.55f, 53f)
+                ShiftUtilityCompound(new Vector3(7f, 1.55f, 19f)), ShiftUtilityCompound(new Vector3(14f, 1.55f, 19f)),
+                ShiftUtilityCompound(new Vector3(20f, 1.55f, 19f)), ShiftUtilityCompound(new Vector3(44f, 1.55f, 19f)),
+                ShiftUtilityCompound(new Vector3(7f, 1.55f, 53f)), ShiftUtilityCompound(new Vector3(44f, 1.55f, 53f))
             };
             for (int i = 0; i < pillarPositions.Length; i++)
                 CreateBox($"CompoundWallPillar_{i + 1:00}", pillarPositions[i], new Vector3(1.2f, 3.1f, 1.2f), palette.Curb, root);
 
-            CreateBox("CompoundSecurityStripe_A", new Vector3(13f, 0.08f, 22f), new Vector3(0.35f, 0.08f, 5f), palette.AmberPaint, root, Quaternion.Euler(0f, -12f, 0f));
-            CreateBox("CompoundSecurityStripe_B", new Vector3(15f, 0.08f, 22.5f), new Vector3(0.35f, 0.08f, 5f), palette.Rust, root, Quaternion.Euler(0f, -12f, 0f));
-            CreatePointLight("CompoundSecurityLight", new Vector3(15f, 8f, 31f), new Color(0.62f, 0.78f, 1f), 2.2f, 24f, root);
+            CreateBox("CompoundSecurityStripe_A", ShiftUtilityCompound(new Vector3(13f, 0.08f, 22f)), new Vector3(0.35f, 0.08f, 5f), palette.AmberPaint, root, Quaternion.Euler(0f, -12f, 0f));
+            CreateBox("CompoundSecurityStripe_B", ShiftUtilityCompound(new Vector3(15f, 0.08f, 22.5f)), new Vector3(0.35f, 0.08f, 5f), palette.Rust, root, Quaternion.Euler(0f, -12f, 0f));
+            CreatePointLight("CompoundSecurityLight", ShiftUtilityCompound(new Vector3(15f, 8f, 31f)), new Color(0.62f, 0.78f, 1f), 2.2f, 24f, root);
+        }
+
+        private static Vector3 ShiftUtilityCompound(Vector3 position)
+        {
+            position.x -= 15f;
+            position.z -= 8f;
+            return position;
         }
 
         private static void CreateBombingAftermath(Transform parent)

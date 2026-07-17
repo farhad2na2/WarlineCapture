@@ -22,7 +22,7 @@ namespace Game.Editor
         public const string ConfigPath = "Assets/Game/Configs/MapPrototypes/M01_RuntimeCity_Config.asset";
         public const string VisualRecipePath = "Assets/Game/Configs/MapPrototypes/M01_RuntimeVisualRecipe.asset";
         private const string SourceConfigPath = "Assets/Game/Configs/Scene/Game_RuntimeCitySpawner_Config.asset";
-        private const string VisualRecipeVersion = "M01RuntimeVisualRecipe_2026-07-17_v28_horizon_belt";
+        private const string VisualRecipeVersion = "M01RuntimeVisualRecipe_2026-07-17_v29_compact_utility_core";
         private const string DistrictSnapshotFolder = "Assets/Game/Prefabs/MapPrototypes/M01/RuntimeParity";
         private const int MaxDistrictSliceRenderers = 64;
         private const int MinimumVisualRecipeEntryCount = 128;

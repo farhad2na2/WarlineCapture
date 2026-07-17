@@ -1,0 +1,128 @@
+{
+  "artifactId": "AM020-WORLD-OWNED-RUNTIME-STATE-EVIDENCE",
+  "schemaVersion": 1,
+  "taskId": "AM-020",
+  "result": "Passed",
+  "sourceBaseline": {
+    "branch": "main",
+    "commit": "a28d40c9dcc5e5301a24230e80cf2145d5df8c52",
+    "tree": "1628cdb2b4d8959c364738c9a6402c34f6d2eff3"
+  },
+  "implementation": {
+    "initialCommit": "f993c3084",
+    "initialTree": "f24e2247644ef489eb92fe270d98d6be6c15d80e",
+    "finalCommit": "eab79c2f0",
+    "finalTree": "87845d4fa57f3b44623f1ee1d4d96f338461e91c",
+    "initialChangedPaths": [
+      "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs",
+      "Assets/Game/Scripts/Composition/MatchIntroEcsStateQuery.cs",
+      "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+      "Assets/Game/Scripts/Editor/GameplayRuntimeUpdateValidationRunner.cs",
+      "Assets/Game/Scripts/ScenarioLab/BattleScenarioDr001Runner.cs",
+      "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.cs",
+      "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs",
+      "Assets/Game/Scripts/Systems/ThreatWarningRuntimeState.cs",
+      "Assets/Tests/Editor/AlertObjectiveAudioFeedbackTests.cs",
+      "Assets/Tests/Editor/ThreatWarningValidationTests.cs",
+      "Assets/Tests/Editor/WorldScopedComponentQueryCachePerformanceValidation.cs",
+      "Tools/CI/tests/test_architecture_world_owned_runtime_state.py",
+      "Tools/CI/tests/test_architecture_world_scoped_cache_contract.py"
+    ],
+    "finalChangedPaths": [
+      "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs",
+      "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.cs",
+      "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs",
+      "Assets/Game/Scripts/Systems/ThreatWarningAudioEventUtility.cs",
+      "Assets/Game/Scripts/Systems/ThreatWarningAudioEventUtility.cs.meta",
+      "Assets/Game/Scripts/Systems/ThreatWarningPresentationState.cs",
+      "Assets/Game/Scripts/Systems/ThreatWarningPresentationState.cs.meta",
+      "Assets/Tests/Editor/AlertObjectiveAudioFeedbackTests.cs",
+      "Assets/Tests/Editor/WorldScopedComponentQueryCachePerformanceValidation.cs",
+      "Tools/CI/tests/test_architecture_world_owned_runtime_state.py"
+    ],
+    "finalFiles": [
+      {"path": "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs", "sha256": "cf92d616d57e154798686f17ceb50a513bd6c7503942d94ceed217d63884a7c7"},
+      {"path": "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.cs", "sha256": "f765c12cd3a1aed6ca012702ae657f7f2d712bd8e15d17f52dfb4f5683e0feef"},
+      {"path": "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs", "sha256": "8001d8393b3222511f39024eadb9e7ac5d0be4116f7e50fe24d8083b912cefe6"},
+      {"path": "Assets/Game/Scripts/Systems/ThreatWarningAudioEventUtility.cs", "sha256": "057d01807b9cdd384a6d949c506cc6f1f41224513d804dfb0d8257f1255d661a"},
+      {"path": "Assets/Game/Scripts/Systems/ThreatWarningAudioEventUtility.cs.meta", "sha256": "0ecafaccc74ae6f1881aed7710aabf9e7b6c0fd0acfbe8109b6d5b29959b4e51"},
+      {"path": "Assets/Game/Scripts/Systems/ThreatWarningPresentationState.cs", "sha256": "3d7d7f53146b05bfd21224ef8f376505d5643e1b54e3ccbf2627952f0b09d189"},
+      {"path": "Assets/Game/Scripts/Systems/ThreatWarningPresentationState.cs.meta", "sha256": "f87ff44ec0a2c73d96bc03a67bb5c7a56a07a1d02f7d2b50ed4170132f3cd869"},
+      {"path": "Assets/Tests/Editor/AlertObjectiveAudioFeedbackTests.cs", "sha256": "6921769baf4f836714dd69c94c8b34d979787355f1f088a51277bc3be89b2c0e"},
+      {"path": "Assets/Tests/Editor/WorldScopedComponentQueryCachePerformanceValidation.cs", "sha256": "d36cec9fe5a60698bfa57e795bd16e4810e2049db04b57614690fcc2669a5d05"},
+      {"path": "Tools/CI/tests/test_architecture_world_owned_runtime_state.py", "sha256": "73a8d99376d9bd2bf49bbde52c58ec30b2f17a0cf069553ac8beeaebdf0be121"}
+    ]
+  },
+  "ownership": {
+    "threatMailbox": "ThreatWarningRuntimeStateComponent in the active World",
+    "threatDetectionWriter": "ThreatDetectionWarningSystem unmanaged ISystem",
+    "threatPresentationCache": "ThreatWarningPresentationState",
+    "matchIntroWorldBinding": "MatchIntroEcsStateQuery",
+    "matchRuntimeWorldBinding": "MatchBootstrapCompositionSystemHelper",
+    "defaultWorldLookupAdded": false,
+    "systemBaseAdded": false,
+    "staticMutableAuthorityAdded": false
+  },
+  "validation": {
+    "worldLifecycleBehavior": {
+      "executeMethod": "ThreatWarningValidationTests.RunBatchValidation",
+      "passedTests": 18,
+      "compilerErrors": 0,
+      "resultMarker": "[ThreatWarningValidation] result=Passed",
+      "log": {"path": "Design/AgentReports/ArchitectureMaturity/Logs/am020_world_owned_state_behavior.log.gz", "sha256": "20c53abd3964bf90ebd1cd09b16bc7febf5a6c6107fd9fa63c38df7327ce1539"}
+    },
+    "worldCachePerformance": {
+      "executeMethod": "WorldScopedComponentQueryCachePerformanceValidation.RunBatchValidation",
+      "passedTests": 4,
+      "measuredPhases": 10,
+      "warmupOperationsPerPhase": 180,
+      "measuredOperationsPerPhase": 300,
+      "recurringManagedAllocatedBytesPerPhase": 0,
+      "compilerErrors": 0,
+      "resultMarker": "[WorldScopedComponentQueryCachePerformanceValidation] result=Passed tests=4 combinations=3 phases=10",
+      "log": {"path": "Design/AgentReports/ArchitectureMaturity/Logs/am020_world_owned_state_performance.log.gz", "sha256": "4f05862c67f4b7295b53888086d8319f5eade5f7f402876bfd244a30cf994744"}
+    },
+    "alertAudioBehavior": {
+      "executeMethod": "AlertObjectiveAudioFeedbackTests.RunFocusedValidation",
+      "passedTests": 9,
+      "compilerErrors": 0,
+      "resultMarker": "[AlertObjectiveAudioFeedbackValidation] result=Passed tests=9",
+      "log": {"path": "Design/AgentReports/ArchitectureMaturity/Logs/am020_alert_audio_behavior.log.gz", "sha256": "99d9daefffee45171389cf2fe689a9d627aba75e012c9f82c9664c47ea18f9d4"}
+    },
+    "sourceGrowth": {
+      "executeMethod": "ProductionSourceGrowthArchitectureTests.RunFocusedValidation",
+      "passedTests": 17,
+      "compilerErrors": 0,
+      "resultMarker": "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17",
+      "log": {"path": "Design/AgentReports/ArchitectureMaturity/Logs/am020_source_growth.log.gz", "sha256": "cd84036180229dbf4b4675c060d07ea83b52fdd1a49fd1beb1a72ed42c095ce3"}
+    },
+    "broadArchitecture": {
+      "executeMethod": "ScriptArchitectureAlignmentContractTests.RunBroadShellValidation",
+      "passedTests": 1,
+      "compilerErrors": 0,
+      "resultMarker": "[ScriptBroadShellValidation] result=Passed tests=1",
+      "log": {"path": "Design/AgentReports/ArchitectureMaturity/Logs/am020_world_owned_state_broad_architecture.log.gz", "sha256": "96ac07a7ed3bbe45d1bff87d565126b92492b69df4022a29ed5d7c6f7fbf8642"}
+    },
+    "integratedArchitectureTests": {
+      "passedTests": 121,
+      "result": "OK",
+      "log": {"path": "Design/AgentReports/ArchitectureMaturity/Logs/am020_world_owned_state_python.log.gz", "sha256": "6af1133292f90b75e5c27ac4c7d2d6e69f24544bad9aa457e1d6c6eda8bb69d7"}
+    },
+    "gitDiffCheck": "passed"
+  },
+  "independentReview": {
+    "agentId": "019f6fe5-b3f5-7182-8cec-e22a628a9a9b",
+    "initialResult": "CHANGES_REQUESTED",
+    "findingsClosed": 1,
+    "rereviewResult": "PASS"
+  },
+  "scope": {
+    "preservedConcurrentOwners": [
+      "operation-map and static-map implementation",
+      "FirstLaunch art and narrative assets",
+      "audio subsystem implementation outside the extracted threat-warning event utility",
+      "UI visual-lock assets"
+    ],
+    "nextTask": "AM-021"
+  }
+}

@@ -30,8 +30,8 @@
     "tree": "16e471ecbef3b764d5c661a5cb4b5575ef1d8258"
   },
   "contractAmendmentEvidence": {
-    "commit": "4eb6895ec095ff3ff80d5098e4583f4bf5247668",
-    "tree": "b63505ce80372e6a590261f40342a8b68c8f6b9d",
+    "commit": "cff736f1a1faaff8f4e0e9b5d49fa5c53c1363d2",
+    "tree": "1f75a1eb816cbdb4e594adc131ff08b039239082",
     "changePaths": [
       "Design/Architecture/post_hardening_source_responsibility_guardrails.json",
       "Tools/CI/tests/test_architecture_source_responsibility_guardrail_evidence.py"

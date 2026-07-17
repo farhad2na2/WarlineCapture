@@ -4,12 +4,12 @@
   "taskId": "AM-022",
   "result": "Accepted",
   "implementation": {
-    "commit": "0859b74d78d12b55eb01a9ef7ed33926da557495",
-    "tree": "d308a1bd37fa440d7d4ed1ff26c0f7c1d0818b97"
+    "commit": "3ffb08ab786b794a11d9e7bf7f7f392e7f495e07",
+    "tree": "b24591cc3f1e3597e18372917e98ff88e428724e"
   },
   "acceptedEvidence": {
     "path": "Design/AgentReports/ArchitectureMaturity/am022_world_lifecycle_recovery_evidence.json",
-    "sha256": "708a9c45b567841a57ff83a22489d34dd9f435b7af9a31dce587934009cd2777"
+    "sha256": "707118ac0c20f8464f60ad85b5ba5b4c2747a0e1e6c3ffaddc92c6ffaad56a7b"
   },
   "acceptance": {
     "editorRecoveryTests": 8,

@@ -118,7 +118,7 @@ Release-only categories are reported separately and never averaged into a premat
 | Parallel preparatory work | Audit-only `AM-026` is accepted with 29 surfaces and `AM-WP-001` through `AM-WP-023`; production tasks `AM-027` through `AM-035` remain gated. `AM-WP-007` is additionally blocked on mission/objective owner handoff and `AM-WP-009` preserves audio/FirstLaunch consumers as read-only dependencies. `AM-WP-024` through `AM-WP-027` define AM-022 through AM-025; AM-WP-024 is now dispatchable |
 | Blockers | Source-growth remains externally blocked by four separately owned FirstLaunch `*SystemHelper` paths; final broad-contract acceptance also remains gated by separately owned operation-map, FirstLaunch/UI, and package-bound violations. Release-only certification remains intentionally deferred. The `FirstLaunchLanguageChoiceView` guardrail false positive is resolved |
 | Latest validation | AM-022 final: Editor recovery `8 / 8`, PlayMode recovery `2 / 2`, `180` warmup plus `300` measured recovered-path calls with `0` managed bytes, Unity compiler errors `0`, and `git diff --check` passed. After the accepted lifecycle-owner guardrail amendment, canonical integrated architecture passes `147 / 147` |
-| Latest evidence | `am022_acceptance_record.json` binds implementation `0859b74d7`, all ten case families, `am022_world_lifecycle_recovery_evidence.json`, compressed Editor/PlayMode/integrated logs, and zero-gap AM-021 authority |
+| Latest evidence | `am022_acceptance_record.json` binds implementation `3ffb08ab7`, all ten case families, `am022_world_lifecycle_recovery_evidence.json`, compressed Editor/PlayMode/integrated logs, and zero-gap AM-021 authority |
 | Core entry baseline | Phase 0 accepted by `AM-001` through `AM-008`; exact-identity assembly and bounded Editor Match evidence are current at `9a0aa14252e6559680328e520d26c16bfc7b444e`; the dashboard required gate is accepted; the entry rating and owned deltas are published in `entry_baseline_report.md` |
 | Release entry review | Deferred until `pre_release_performance_certification_backlog.md` activates |
 | Architecture rating | Evidence-backed Phase 0 entry rating `8.5 / 10`; planning baseline only, not a `9.5` claim |
@@ -841,11 +841,11 @@ Accepted AM-020 progress snapshot:
 
 ### 2026-07-17 - AM-022 - Lifecycle recovery accepted
 
-- Implementation identity: `0859b74d78d12b55eb01a9ef7ed33926da557495`, tree `d308a1bd37fa440d7d4ed1ff26c0f7c1d0818b97`.
+- Implementation identity: `3ffb08ab786b794a11d9e7bf7f7f392e7f495e07`, tree `b24591cc3f1e3597e18372917e98ff88e428724e`.
 - Recovery result: all ten AM-WP-024 case families pass across the `8 / 8` Editor matrix and `2 / 2` PlayMode matrix, including the production Menu -> Match -> Menu lifecycle transition.
 - Allocation result: after `180` warmup operations, `300` recovered-World cache/runtime-state reads allocate exactly `0` recurring production-owned managed bytes.
 - Validation: Unity 6000.5.2f1 reports zero compiler errors; focused Editor and PlayMode suites pass; integrated architecture passes `146 / 147` with the sole failure in separately owned `FirstLaunchLanguageChoiceView`; `git diff --check` passes.
-- Follow-up resolution: the lifecycle-owner guardrail amendment at `4eb6895ec095ff3ff80d5098e4583f4bf5247668`, accepted by `97b94e1e2`, removes the false positive without allowlisting the view; canonical integrated architecture now passes `147 / 147`.
+- Follow-up resolution: the lifecycle-owner guardrail amendment at `cff736f1a1faaff8f4e0e9b5d49fa5c53c1363d2`, accepted by `783b8fc93`, removes the false positive without allowlisting the view; canonical integrated architecture now passes `147 / 147`.
 - Evidence: `am022_acceptance_record.json` and `am022_world_lifecycle_recovery_evidence.json` bind implementation identity, test sources, all compressed logs/results, AM-021 authority, measured windows, and external-failure ownership.
 - Scope preserved: no production, operation-map, FirstLaunch, audio, UI visual-lock, scene, prefab, package, `ProjectSettings`, or release-certification source changed.
 - Next action: dispatch AM-023 from `AM-WP-025`; AM-024 remains gated until the 100-cycle transition stress passes.

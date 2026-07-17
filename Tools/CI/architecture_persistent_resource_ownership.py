@@ -53,26 +53,32 @@ EXTERNAL_NATIVE_OWNERS = {
     ("Assets/Game/Scripts/Components/GridComponents.cs", "DynamicBlockerComponent", "Counts"): (
         "RuntimeGridStorageInitialization/DynamicBlockerInitSystem",
         "DynamicBlockerInitSystem.OnDestroy",
+        False,
     ),
     ("Assets/Game/Scripts/Components/GridComponents.cs", "DynamicBlockerComponent", "Blocked"): (
         "RuntimeGridStorageInitialization/DynamicBlockerInitSystem",
         "DynamicBlockerInitSystem.OnDestroy",
+        False,
     ),
     ("Assets/Game/Scripts/Components/GridComponents.cs", "DynamicBlockerComponent", "FriendlyPassFactionIds"): (
         "RuntimeGridStorageInitialization/DynamicBlockerInitSystem",
         "DynamicBlockerInitSystem.OnDestroy",
+        False,
     ),
     ("Assets/Game/Scripts/Components/GridComponents.cs", "DynamicOccupancyComponent", "Occupied"): (
         "RuntimeGridStorageInitialization/DynamicBlockerInitSystem",
         "DynamicBlockerInitSystem.OnDestroy",
+        False,
     ),
     ("Assets/Game/Scripts/Components/GridComponents.cs", "PathPoolComponent", "Cells"): (
         "RuntimeGridStorageInitialization/RuntimeGridBootstrapStartupSystemHelper",
         "DynamicBlockerInitSystem.OnDestroy",
+        False,
     ),
     ("Assets/Game/Scripts/Systems/UnitPathfindingSystem.cs", "UnitPathfindingSystem", "_pendingPathStream"): (
         "UnitPathfindingScheduler->UnitPathfindingSystem",
         "UnitPathfindingApply/UnitPathfindingSystem.OnDestroy",
+        True,
     ),
 }
 EXTERNAL_EVENT_OWNERS = {
@@ -248,7 +254,7 @@ def native_rows(
             protected = protected_owner_ids(path, exclusions)
             creation_owner = external_owner[0] if external_owner else owner_type
             disposal_owner = external_owner[1] if external_owner else owner_type if cleanup else "unassigned"
-            explicit = bool(external_owner or (create and cleanup))
+            explicit = external_owner[2] if external_owner else bool(create and cleanup)
             rows.append({
                 "path": path,
                 "line": line,
@@ -462,7 +468,7 @@ def presentation_root_rows(
     return sorted(rows, key=lambda row: (row["path"], row["ownerType"], row["line"], row["root"]))
 
 
-def build_report(root: Path) -> dict[str, Any]:
+def build_report(root: Path, baseline_ref: str = "HEAD") -> dict[str, Any]:
     exclusions = load_exclusions(root)
     index = build_source_index(root)
     raw = lifecycle.scan_lifecycle(root)
@@ -484,8 +490,8 @@ def build_report(root: Path) -> dict[str, Any]:
         "artifactId": ARTIFACT_ID,
         "baseline": {
             "branch": git_value(root, "branch", "--show-current"),
-            "commit": git_value(root, "rev-parse", "HEAD"),
-            "tree": git_value(root, "rev-parse", "HEAD^{tree}"),
+            "commit": git_value(root, "rev-parse", baseline_ref),
+            "tree": git_value(root, "rev-parse", f"{baseline_ref}^{{tree}}"),
         },
         "scope": {
             "sourceRoot": SOURCE_ROOT,
@@ -544,13 +550,23 @@ def main() -> int:
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])
     parser.add_argument("--json", default=DEFAULT_JSON)
     parser.add_argument("--markdown", default=DEFAULT_MARKDOWN)
+    parser.add_argument("--baseline-ref")
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
     root = args.root.resolve()
-    report = build_report(root)
+    json_path = root / args.json
+    baseline_ref = args.baseline_ref
+    if args.check and baseline_ref is None:
+        if not json_path.exists():
+            raise SystemExit(f"missing AM-021 ownership artifact: {relative(root, json_path)}")
+        try:
+            baseline_ref = json.loads(json_path.read_text(encoding="utf-8"))["baseline"]["commit"]
+        except (KeyError, TypeError, json.JSONDecodeError) as error:
+            raise SystemExit(f"invalid AM-021 baseline identity: {error}") from error
+    report = build_report(root, baseline_ref or "HEAD")
     json_content = json.dumps(report, indent=2, sort_keys=True) + "\n"
     markdown_content = render_markdown(report)
-    outputs = ((root / args.json, json_content), (root / args.markdown, markdown_content))
+    outputs = ((json_path, json_content), (root / args.markdown, markdown_content))
     if args.check:
         stale = [relative(root, path) for path, content in outputs if not path.exists() or path.read_text(encoding="utf-8") != content]
         if stale:

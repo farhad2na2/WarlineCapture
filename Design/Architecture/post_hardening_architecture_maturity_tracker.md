@@ -114,11 +114,11 @@ Release-only categories are reported separately and never averaged into a premat
 | Release Certification Lane | `0 / 18` (`0.0%`); deferred |
 | Program state | Core Architecture Lane active; Phase 1 accepted; Phase 2 persistent-resource ownership in progress; release work inactive |
 | Current phase | Phase 2 - World Lifecycle And Dependency Hardening |
-| Current task | `AM-021` in progress; inventory every persistent native container, query, subscription, and presentation root and assign one creation/disposal owner |
+| Current task | `AM-021` in progress; deterministic matrix covers `580` persistent resources with `537` explicit owners, `21` open ownership gaps, and `22` protected-owner rows |
 | Parallel preparatory work | `AM-026` remains dependency-blocked and receives no completion credit; `ui_projection_allocation_inventory.md` inventories 20 surfaces, draft `AM-WP-001` bounds Resource Exchange caching, and draft `AM-WP-002` bounds Build Drawer projection consolidation |
-| Blockers | None for the Core Architecture Lane. Separately owned operation-map and FirstLaunch work remains outside architecture scope. Release-only certification remains intentionally deferred |
-| Latest validation | AM-020: World lifecycle behavior `18 / 18`, governed cache performance `4 / 4` across ten zero-allocation phases, alert/audio behavior `9 / 9`, source-growth `17 / 17`, broad architecture `1 / 1`, integrated architecture CI `125 / 125`, zero compiler errors in current-source Unity validation, `git diff --check`, and independent rereview PASS |
-| Latest evidence | `am020_acceptance_record.json` and `am020_world_owned_runtime_state_evidence.json`; evidence commit `0c7d9e085`, implementation commits `f993c3084` and `eab79c2f0` |
+| Blockers | No external Core Architecture Lane blocker. AM-021 has `21` recorded ownership gaps: five split-owner grid containers, five Scenario Lab containers, five managed query-cache owners, and six presentation roots. Separately owned operation-map and FirstLaunch work remains outside architecture scope. Release-only certification remains intentionally deferred |
+| Latest validation | AM-021 UI lifecycle slice: focused lifecycle `2 / 2`, source-growth `17 / 17`, ownership generator `10 / 10`, integrated architecture CI `139 / 139`, zero compiler errors, deterministic regeneration/check, and `git diff --check` |
+| Latest evidence | `am021_persistent_resource_ownership.json` and Markdown projection at rebased implementation commit `7b1f4835b`; AM-021 remains in progress and receives no checklist credit yet |
 | Core entry baseline | Phase 0 accepted by `AM-001` through `AM-008`; exact-identity assembly and bounded Editor Match evidence are current at `9a0aa14252e6559680328e520d26c16bfc7b444e`; the dashboard required gate is accepted; the entry rating and owned deltas are published in `entry_baseline_report.md` |
 | Release entry review | Deferred until `pre_release_performance_certification_backlog.md` activates |
 | Architecture rating | Evidence-backed Phase 0 entry rating `8.5 / 10`; planning baseline only, not a `9.5` claim |
@@ -748,3 +748,14 @@ Accepted AM-020 progress snapshot:
 | Checklist complete | `20 / 86` (`23.3%`) |
 | Core Architecture Lane | `20 / 68` (`29.4%`); active |
 | Current task | `AM-021` ready |
+
+### 2026-07-17 - AM-021 - Persistent-resource ownership matrix and UI lifecycle slice
+
+- Workflow path: direct commits to `main`; no branch, worktree, or PR workflow.
+- Implementation identity: rebased commit `7b1f4835b7db2f5a7ed5d094f235e26472f5a9c5`, tree `c10cbfc5e10f2d98a25e1ccde23ca9880643598d`. AM-021 remains in progress and receives no checklist credit from this partial slice.
+- Inventory result: the deterministic ownership matrix records `580` persistent resources: `76` native containers, `454` query handles, `24` event subscriptions, and `26` presentation roots. It classifies `537` resources with explicit owners, `21` open ownership gaps, and `22` separately owned or protected rows that remain visible but unchanged.
+- UI lifecycle result: `RuntimeLogBuffer` now has a subsystem-registration reset that unsubscribes and clears process-lifetime state; menu bootstrap shutdown unbinds full-map publisher events; and the UI shell gateway centrally releases all eight static World-bound query handles on subsystem registration and World replacement.
+- Validation: focused lifecycle `2 / 2`, source-growth `17 / 17`, ownership generator `10 / 10`, and integrated architecture CI `139 / 139` passed; Unity reported zero compiler errors. Deterministic pinned-baseline regeneration/check and `git diff --check` also passed.
+- Remaining ownership gaps: five split-owner grid containers, five Scenario Lab containers, two building-resource query caches, three tactical-follow query-cache owner fields, and six presentation roots. The matrix records each exact path, owner, and missing disposal boundary.
+- Exclusions preserved: operation-map, active map-generation work, FirstLaunch, audio-owned behavior, UI visual-lock assets, scenes, prefabs, packages, and `ProjectSettings` were not edited by this slice. The map-owned grid rows remain serialized behind the active map lane.
+- Next action: resolve the non-map query-cache and presentation-root gaps, then coordinate the five grid-container ownership changes only after the map lane releases those paths.

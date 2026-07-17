@@ -89,6 +89,12 @@ class PersistentResourceOwnershipTests(unittest.TestCase):
         second = ownership.render_markdown(ownership.build_report(ROOT))
         self.assertEqual(first, second)
 
+    def test_report_can_pin_an_implementation_baseline(self):
+        report = ownership.build_report(ROOT, "HEAD^")
+        self.assertNotEqual(self.report["baseline"]["commit"], report["baseline"]["commit"])
+        self.assertEqual(40, len(report["baseline"]["commit"]))
+        self.assertEqual(40, len(report["baseline"]["tree"]))
+
 
 if __name__ == "__main__":
     unittest.main()

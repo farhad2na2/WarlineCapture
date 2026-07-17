@@ -114,8 +114,9 @@ Release-only categories are reported separately and never averaged into a premat
 | Release Certification Lane | `0 / 18` (`0.0%`); deferred |
 | Program state | Core Architecture Lane active; Phase 1 accepted; Phase 2 World-owned runtime-state migration in progress; release work inactive |
 | Current phase | Phase 2 - World Lifecycle And Dependency Hardening |
-| Current task | `AM-020` in progress; architecture implementation and rereview passed, awaiting separately owned operation-map input-hash refresh |
-| Blockers | Operation-map owner must refresh the placement-ownership probe hashes for `MatchBootstrapCompositionSystemHelper.cs` and `MatchSceneView.cs`, then rerun that probe; architecture scope must not edit the operation-map authority. Release-only certification remains intentionally deferred |
+| Current task | `AM-020` in progress; operation-map refresh is current and non-blocking, source-growth follow-up is implemented, and final focused validation/evidence binding is active |
+| Parallel preparatory work | `AM-026` remains dependency-blocked and receives no completion credit; `ui_projection_allocation_inventory.md` now inventories 20 surfaces and draft `AM-WP-001` bounds the future Resource Exchange managed-projection cache |
+| Blockers | None for the Core Architecture Lane. The operation-map refresh passed repeatability, focused tests, naming checks, and compiler checks; its two long-term configuration decisions remain in the separately owned map roadmap and do not block `AM-020`. Release-only certification remains intentionally deferred |
 | Latest validation | AM-020 implementation: Unity behavior `18 / 18`, governed cache/state performance `4 / 4` across ten zero-allocation phases, broad architecture `1 / 1`, serial Runtime/Composition/Editor-test builds with zero compiler errors, integrated architecture CI `121 / 121`, focused architecture guards `14 / 14`, and independent architecture rereview passed with no code finding |
 | Latest evidence | `am019_acceptance_record.json` and `am019_world_scoped_cache_contract_evidence.json`; accepted evidence commit `ea39268476bb4742edb131018c8c073efa4d34cf`, implementation commit `e733d7021eef7fb5b80fe3bd0774e5bcc5aed224` |
 | Core entry baseline | Phase 0 accepted by `AM-001` through `AM-008`; exact-identity assembly and bounded Editor Match evidence are current at `9a0aa14252e6559680328e520d26c16bfc7b444e`; the dashboard required gate is accepted; the entry rating and owned deltas are published in `entry_baseline_report.md` |
@@ -250,6 +251,11 @@ Make runtime dependencies explicit and prove that caches and native resources ca
 ## Phase 3 - Allocation-Free UI Projection
 
 Make every Canvas UI surface change-driven and allocation-free during unchanged steady state, including when popups are open.
+
+Preparatory artifacts, with no checklist credit until the Phase 2 dependency gate is accepted:
+
+- Surface inventory: `Design/Architecture/ui_projection_allocation_inventory.md`
+- First bounded implementation package: `Design/Architecture/WorkPackages/am_wp_001_resource_exchange_projection_cache.md`
 
 - [ ] `AM-026` Inventory every Menu, Match HUD, drawer, popup, tooltip, selection panel, and ARIA view by polling owner, source versions, managed conversions, rebuild behavior, and allocation coverage.
 - [ ] `AM-027` Add or correct ECS source versions so each UI domain changes version only when its visible semantic data changes.

@@ -48,8 +48,8 @@
   "artifactId": "AM-018",
   "baseline": {
     "branch": "main",
-    "commit": "b1005c7cc85de2c86001d2e52fa44c8ef5dd9329",
-    "tree": "7473df876b2ecd933859d2c3123e8d709daf31d4"
+    "commit": "d2990d16ce336085d2d83aa4cf4a7f196037070f",
+    "tree": "4e96416bc12ef979cce3d4f1529044c4e199a638"
   },
   "categories": {
     "globalWorldLookups": [
@@ -7912,7 +7912,7 @@
     },
     {
       "path": "Design/Architecture/post_hardening_architecture_maturity_tracker.md",
-      "sha256": "b773cde4d01017dd1c84a9f63b47e840ece3b4a5bb62245992f55094e6dbd23c"
+      "sha256": "80b8e213623011559eeab3c9270a6935a831184cf880686c05433e74c391ca53"
     },
     {
       "path": "Design/AgentReports/ArchitectureMaturity/lifecycle_inventory.json",
@@ -7936,8 +7936,8 @@
     }
   ],
   "sourceManifest": {
-    "digestSha256": "e62dbffa19ae52d3e7fbfc6d71243658b5859a555c5460a50a77ddd3f9d2f696",
-    "fileCount": 999,
+    "digestSha256": "e64785b1900f0dc56774a66b65b3ecdfba2a0492cfd8397d91c68f5671726301",
+    "fileCount": 1002,
     "files": [
       {
         "path": "Assets/Game/Scripts/AssemblyInfo.cs",
@@ -9713,7 +9713,7 @@
       },
       {
         "path": "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
-        "sha256": "e0af3018b60ce198ad51f8a497123bcdb92c530cef04a1bb14f813da5a49e5dd"
+        "sha256": "ada268bdeec4ffeb61d0c7805e14405bebc52023a0def7190bdbc2fe4790ea10"
       },
       {
         "path": "Assets/Game/Scripts/Systems/BuildingRuntimePublishCompositionSystemHelper.cs",
@@ -9738,6 +9738,10 @@
       {
         "path": "Assets/Game/Scripts/Systems/BuildingRuntimeSideEffectCompositionSystemHelper.cs",
         "sha256": "24f0a461a6e4b13b085d320e93d9822bc3d370a6bb295003c389e29ba302314d"
+      },
+      {
+        "path": "Assets/Game/Scripts/Systems/BuildingRuntimeSignatureUtility.cs",
+        "sha256": "5213891b2f0f868bec6e399528b1f517c2b2d83cd0ed9cfd4f76bdd9e2852d95"
       },
       {
         "path": "Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCommandSystemHelper.cs",
@@ -10140,8 +10144,16 @@
         "sha256": "e8b393925bfd5e84da7b5877da7ebda1b96f72d6ca1b320492eabae66f09cd56"
       },
       {
+        "path": "Assets/Game/Scripts/Systems/OperationMapMetadataUtility.ActiveMetadata.cs",
+        "sha256": "63ce20cf9e4b7bc2c19b0a2e975a84a3d552fe711074749e0f29f87f92d0640c"
+      },
+      {
         "path": "Assets/Game/Scripts/Systems/OperationMapMetadataUtility.cs",
-        "sha256": "d9034ab4df5dfad60cf25bee65df110e7fa4fa6203d718c2bf21ca69f4e89c53"
+        "sha256": "700c107acd38974e674c6489d7d9ec1cfe776740998690be6c7775160e03d99e"
+      },
+      {
+        "path": "Assets/Game/Scripts/Systems/OperationMapRunwayReadModelUtility.cs",
+        "sha256": "1e61c7de7d5e7ec76e88f846707f393e82df202814af594465c28c00877f22c0"
       },
       {
         "path": "Assets/Game/Scripts/Systems/PathPoolMaintenanceSystem.cs",

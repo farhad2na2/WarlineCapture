@@ -22,8 +22,10 @@ public sealed class StaticMapPresentationBakeInputTests
             tests.InvalidOutputExtensionsFail();
             tests.InvalidChunkSizesFail();
             tests.CurrentCompatibilityFactoryMatchesLegacyConstants();
+            tests.CurrentStagedFactoryMatchesMapOwnedConstants();
+            tests.CurrentSourceSceneViewsValidate();
             tests.CompatibilityValidationRejectsAlternateOwnership();
-            Debug.Log("[StaticMapPresentationBakeInputValidation] result=Passed tests=13");
+            Debug.Log("[StaticMapPresentationBakeInputValidation] result=Passed tests=15");
         }
         catch (Exception exception)
         {
@@ -172,6 +174,31 @@ public sealed class StaticMapPresentationBakeInputTests
     }
 
     [Test]
+    public void CurrentStagedFactoryMatchesMapOwnedConstants()
+    {
+        StaticMapPresentationBakeInput input =
+            StaticMapPresentationBaker.CreateCurrentStagedInput();
+
+        Assert.That(input.TryValidate(out string error), Is.True, error);
+        Assert.That(
+            input.SourceScenePath,
+            Is.EqualTo(StaticMapPresentationBaker.CurrentStagedOperationMapScenePath));
+        Assert.That(input.OutputRoot, Is.EqualTo(StaticMapPresentationBaker.OutputRoot));
+        Assert.DoesNotThrow(() => StaticMapPresentationBaker.ValidateSupportedInput(input));
+        Assert.Throws<InvalidOperationException>(() =>
+            StaticMapPresentationBaker.ValidateCompatibilityInput(input));
+    }
+
+    [Test]
+    public void CurrentSourceSceneViewsValidate()
+    {
+        Assert.DoesNotThrow(() => StaticMapPresentationBaker.ValidateSourceSceneView(
+            StaticMapPresentationBaker.CreateCurrentCompatibilityInput()));
+        Assert.DoesNotThrow(() => StaticMapPresentationBaker.ValidateSourceSceneView(
+            StaticMapPresentationBaker.CreateCurrentStagedInput()));
+    }
+
+    [Test]
     public void CompatibilityValidationRejectsAlternateOwnership()
     {
         StaticMapPresentationBakeInput alternate = Create(
@@ -185,7 +212,7 @@ public sealed class StaticMapPresentationBakeInputTests
 
         Assert.That(alternate.TryValidate(out string error), Is.True, error);
         Assert.Throws<InvalidOperationException>(() =>
-            StaticMapPresentationBaker.ValidateCompatibilityInput(alternate));
+            StaticMapPresentationBaker.ValidateSupportedInput(alternate));
     }
 
     private static StaticMapPresentationBakeInput CurrentInput()

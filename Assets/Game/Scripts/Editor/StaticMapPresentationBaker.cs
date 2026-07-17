@@ -19,6 +19,8 @@ namespace Game.Editor
     public static class StaticMapPresentationBaker
     {
         public const string CanonicalMatchScenePath = "Assets/Game/Scenes/Match.unity";
+        public const string CurrentStagedOperationMapScenePath =
+            "Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01.unity";
         public const string CurrentOperationMapId = "opmap.skirmish.desert_base_01";
         public const string OutputRoot =
             "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01";
@@ -108,6 +110,14 @@ namespace Game.Editor
             public int OverlaySources;
         }
 
+        private sealed class BakeSourceContext
+        {
+            public Transform MapRoot;
+            public Transform BuildingAuthoringRoot;
+            public Transform VehicleAuthoringRoot;
+            public Transform DecorationRoot;
+        }
+
         [MenuItem("Game/Tools/Performance/Bake Static Map Presentation")]
         public static void Bake()
         {
@@ -126,9 +136,21 @@ namespace Game.Editor
                 ChunkSize);
         }
 
+        internal static StaticMapPresentationBakeInput CreateCurrentStagedInput()
+        {
+            return new StaticMapPresentationBakeInput(
+                CurrentOperationMapId,
+                CurrentStagedOperationMapScenePath,
+                "Map",
+                OutputRoot,
+                ManifestPath,
+                StaticMapPresentationSceneIntegrity.CurrentIntegrityAssetPath,
+                ChunkSize);
+        }
+
         internal static void Bake(StaticMapPresentationBakeInput input)
         {
-            ValidateCompatibilityInput(input);
+            ValidateSupportedInput(input);
             if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
                 return;
 
@@ -365,9 +387,20 @@ namespace Game.Editor
 
         internal static void ValidateCompatibilityInput(StaticMapPresentationBakeInput input)
         {
+            ValidateSupportedInput(input);
+            if (!string.Equals(input.SourceScenePath, CanonicalMatchScenePath, StringComparison.Ordinal))
+                throw new InvalidOperationException(
+                    "Static presentation compatibility validation requires the canonical Match scene.");
+        }
+
+        internal static void ValidateSupportedInput(StaticMapPresentationBakeInput input)
+        {
             if (!input.TryValidate(out string error))
                 throw new InvalidOperationException(error);
-            if (!string.Equals(input.SourceScenePath, CanonicalMatchScenePath, StringComparison.Ordinal) ||
+            bool supportedSource =
+                string.Equals(input.SourceScenePath, CanonicalMatchScenePath, StringComparison.Ordinal) ||
+                string.Equals(input.SourceScenePath, CurrentStagedOperationMapScenePath, StringComparison.Ordinal);
+            if (!supportedSource ||
                 !string.Equals(input.SourceMapRootPath, "Map", StringComparison.Ordinal) ||
                 !string.Equals(input.OutputRoot, OutputRoot, StringComparison.Ordinal) ||
                 !string.Equals(input.ManifestPath, ManifestPath, StringComparison.Ordinal) ||
@@ -378,7 +411,25 @@ namespace Game.Editor
                 input.ChunkSize != ChunkSize)
             {
                 throw new InvalidOperationException(
-                    "Static presentation baker currently accepts only the current compatibility ownership contract.");
+                    "Static presentation baker accepts only the current map's compatibility or staged source ownership contract.");
+            }
+        }
+
+        internal static void ValidateSourceSceneView(StaticMapPresentationBakeInput input)
+        {
+            ValidateSupportedInput(input);
+            Scene scene = SceneManager.GetSceneByPath(input.SourceScenePath);
+            bool openedForValidation = !scene.IsValid() || !scene.isLoaded;
+            if (openedForValidation)
+                scene = EditorSceneManager.OpenScene(input.SourceScenePath, OpenSceneMode.Additive);
+            try
+            {
+                ResolveSourceContext(scene, input);
+            }
+            finally
+            {
+                if (openedForValidation && scene.IsValid() && scene.isLoaded)
+                    EditorSceneManager.CloseScene(scene, true);
             }
         }
 
@@ -404,10 +455,9 @@ namespace Game.Editor
             AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
 
             Scene sourceScene = EditorSceneManager.OpenScene(input.SourceScenePath, OpenSceneMode.Single);
-            MatchSceneView matchScene = FindMatchSceneView(sourceScene);
-            Transform mapRoot = ResolveMapRoot(matchScene, input.SourceMapRootPath);
+            BakeSourceContext sourceContext = ResolveSourceContext(sourceScene, input);
             BakeStats stats = new();
-            List<SourceDescriptor> sources = CollectSources(matchScene, mapRoot, input.ChunkSize, stats);
+            List<SourceDescriptor> sources = CollectSources(sourceContext, input.ChunkSize, stats);
             if (sources.Count == 0)
                 throw new InvalidOperationException("Static map presentation bake found no compatible source renderers.");
 
@@ -595,18 +645,18 @@ namespace Game.Editor
         }
 
         private static List<SourceDescriptor> CollectSources(
-            MatchSceneView matchScene,
-            Transform mapRoot,
+            BakeSourceContext sourceContext,
             float chunkSize,
             BakeStats stats)
         {
+            Transform mapRoot = sourceContext.MapRoot;
             MeshRenderer[] renderers = mapRoot.GetComponentsInChildren<MeshRenderer>(true);
             stats.Scanned = renderers.Length;
             List<SourceDescriptor> sources = new(renderers.Length);
             for (int i = 0; i < renderers.Length; i++)
             {
                 if (!TryCreateSourceDescriptor(
-                        matchScene,
+                        sourceContext,
                         mapRoot,
                         renderers[i],
                         chunkSize,
@@ -624,7 +674,7 @@ namespace Game.Editor
         }
 
         private static bool TryCreateSourceDescriptor(
-            MatchSceneView matchScene,
+            BakeSourceContext sourceContext,
             Transform mapRoot,
             MeshRenderer renderer,
             float chunkSize,
@@ -638,9 +688,9 @@ namespace Game.Editor
                 return false;
             }
 
-            if (IsInRoot(renderer.transform, matchScene.MapBuildingAuthoringRoot) ||
-                IsInRoot(renderer.transform, matchScene.MapVehicleAuthoringRoot) ||
-                IsInRoot(renderer.transform, matchScene.DecorationRoot))
+            if (IsInRoot(renderer.transform, sourceContext.BuildingAuthoringRoot) ||
+                IsInRoot(renderer.transform, sourceContext.VehicleAuthoringRoot) ||
+                IsInRoot(renderer.transform, sourceContext.DecorationRoot))
             {
                 stats.ExcludedAuthoring++;
                 return false;
@@ -836,13 +886,66 @@ namespace Game.Editor
             renderer.allowOcclusionWhenDynamic = source.Renderer.allowOcclusionWhenDynamic;
         }
 
-        private static MatchSceneView FindMatchSceneView(Scene scene)
+        private static BakeSourceContext ResolveSourceContext(
+            Scene scene,
+            StaticMapPresentationBakeInput input)
         {
-            MatchSceneView[] views = Object.FindObjectsByType<MatchSceneView>(FindObjectsInactive.Include);
-            MatchSceneView view = views.FirstOrDefault(candidate => candidate != null && candidate.gameObject.scene == scene);
-            return view != null
-                ? view
-                : throw new InvalidOperationException($"No MatchSceneView found in {scene.path}.");
+            MatchSceneView[] matchViews = scene.GetRootGameObjects()
+                .SelectMany(root => root.GetComponentsInChildren<MatchSceneView>(true))
+                .ToArray();
+            OperationMapSceneView[] operationMapViews = scene.GetRootGameObjects()
+                .SelectMany(root => root.GetComponentsInChildren<OperationMapSceneView>(true))
+                .ToArray();
+            if (matchViews.Length + operationMapViews.Length != 1)
+            {
+                throw new InvalidOperationException(
+                    $"Static presentation source scene requires exactly one supported scene view; found Match={matchViews.Length}, OperationMap={operationMapViews.Length}.");
+            }
+
+            if (matchViews.Length == 1)
+            {
+                MatchSceneView matchView = matchViews[0];
+                return new BakeSourceContext
+                {
+                    MapRoot = ResolveMapRoot(matchView, input.SourceMapRootPath),
+                    BuildingAuthoringRoot = matchView.MapBuildingAuthoringRoot,
+                    VehicleAuthoringRoot = matchView.MapVehicleAuthoringRoot,
+                    DecorationRoot = matchView.DecorationRoot
+                };
+            }
+
+            OperationMapSceneView operationMapView = operationMapViews[0];
+            if (!operationMapView.TryValidate(out string error) ||
+                !string.Equals(operationMapView.OperationMapId, input.OperationMapId, StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException(
+                    error ?? "Operation-map scene view identity does not match the bake input.");
+            }
+
+            Transform mapRoot = operationMapView.MapRoot;
+            if (mapRoot == null ||
+                !string.Equals(mapRoot.name, input.SourceMapRootPath, StringComparison.Ordinal) ||
+                mapRoot.parent != null)
+            {
+                throw new InvalidOperationException(
+                    $"Operation-map scene view does not bind root '{input.SourceMapRootPath}'.");
+            }
+
+            Transform buildings = mapRoot.Find("Buildings");
+            Transform vehicles = mapRoot.Find("Vehicles");
+            if (buildings == null || vehicles == null)
+            {
+                throw new InvalidOperationException(
+                    "Operation-map scene view requires exact Map/Buildings and Map/Vehicles authoring roots.");
+            }
+
+            return new BakeSourceContext
+            {
+                MapRoot = mapRoot,
+                BuildingAuthoringRoot = buildings,
+                VehicleAuthoringRoot = vehicles,
+                DecorationRoot = null
+            };
         }
 
         private static Transform ResolveMapRoot(

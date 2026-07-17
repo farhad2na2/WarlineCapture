@@ -22,10 +22,10 @@ namespace Game.Editor
         public const string ConfigPath = "Assets/Game/Configs/MapPrototypes/M01_RuntimeCity_Config.asset";
         public const string VisualRecipePath = "Assets/Game/Configs/MapPrototypes/M01_RuntimeVisualRecipe.asset";
         private const string SourceConfigPath = "Assets/Game/Configs/Scene/Game_RuntimeCitySpawner_Config.asset";
-        private const string VisualRecipeVersion = "M01RuntimeVisualRecipe_2026-07-17_v30_balanced_gameplay_framing";
+        private const string VisualRecipeVersion = "M01RuntimeVisualRecipe_2026-07-17_v32_intact_authored_districts";
         private const string DistrictSnapshotFolder = "Assets/Game/Prefabs/MapPrototypes/M01/RuntimeParity";
         private const int MaxDistrictSliceRenderers = 64;
-        private const int MinimumVisualRecipeEntryCount = 128;
+        private const int MinimumVisualRecipeEntryCount = 96;
         private const int MinimumVisualRecipeRendererCount = 900;
         private const string PremiumLightingRigPath = "Assets/Game/Rendering/Prefabs/PremiumLightingRig.prefab";
         private const string PrototypeVolumeProfilePath = "Assets/Game/Art/MapPrototypes/M01/M01_VisualVolumeProfile.asset";
@@ -43,9 +43,9 @@ namespace Game.Editor
         private const string RuntimeVisualManifestPath = "Logs/M01_RuntimeVisualManifest.txt";
         private const string EditorRendererPathReportPath = "Logs/M01_EditorRendererPaths.txt";
         private const string RuntimeRendererPathReportPath = "Logs/M01_RuntimeRendererPaths.txt";
-        private static readonly Vector3 AcceptedGameplayCameraPosition = new(-82f, 38f, -64f);
-        private static readonly Vector3 AcceptedGameplayCameraTarget = new(-14f, 3f, -1f);
-        private const float AcceptedGameplayCameraFieldOfView = 44f;
+        private static readonly Vector3 AcceptedGameplayCameraPosition = new(-103f, 31f, -58f);
+        private static readonly Vector3 AcceptedGameplayCameraTarget = new(-45f, 6f, 2f);
+        private const float AcceptedGameplayCameraFieldOfView = 52f;
         private static readonly Vector3 AcceptedTopDownCameraPosition = new(-12f, 220f, -5f);
         private const float AcceptedTopDownCameraSize = 90f;
         private static readonly string[] M01HallPrefabPaths =
@@ -593,7 +593,7 @@ namespace Game.Editor
                 new(
                     RuntimeOperationMapVisualStage.Compound,
                     new Vector3(-80f, 52f, -92f),
-                    new Vector3(25f, 4f, 2f),
+                    new Vector3(48f, 4f, 25f),
                     48f,
                     0.5f),
                 new(

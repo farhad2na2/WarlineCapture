@@ -255,13 +255,15 @@ This table is retained as decision history. R77 was rejected by the project owne
 
 | Visible issue | Classification | Next acceptance evidence |
 |---|---|---|
-| The complete authored Old Market, Utility, and Residential modules are restored and no longer fragmented into sparse islands, but overall M01 composition has not yet received project-owner acceptance. | M01 authored composition | Desktop owner review of the completed R78 runtime scene against the R78 editor source and Match quality target. |
+| The complete authored Old Market, Utility, and Residential modules are restored internally, but the matched R78 top-down view still reads as three separated macro-islands. The utility/military area is especially detached, the central gaps are too broad, and the single connector does not bind the composition into one operation map. | M01 authored composition | Desktop owner review of the completed R78 runtime scene against the R78 editor source, followed by a deliberate macro-layout pass; exact replay alone does not satisfy this item. |
 | The single narrow connector avoids the rejected plus-shaped autobahn and passes hard intersection checks, but it does not yet establish a complete circulation hierarchy across all districts. | Reusable road policy plus M01 authored constraint | Owner direction on route placement, followed by matched close, overview, and top-down evidence for any revision. |
 | Inherited prefab orientation, broad district transitions, empty-area balance, and damaged-area storytelling remain visually provisional. | M01 composition and presentation | Specific owner feedback on the R78 overview before another source mutation. |
 | The desert palette still occupies a narrow value range in places, reducing district and circulation separation. | Palette, lighting, and material hierarchy | Owner-approved value hierarchy that preserves the desert setting and remains identical in editor/runtime captures. |
 | Exact replay, continuous ground, and hard clearance are proven, but Match-quality completion, gameplay readability, Android performance, and production adoption are not. | Acceptance scope | Separate visual, gameplay, Android, memory, build-size, and production evidence after owner visual acceptance. |
 
 R78 is the fixed desktop owner-review baseline. Do not mutate the map, begin Android optimization, or resume procedural variation until the project owner reports the result of that review.
+
+Internal post-handover evidence review confirms that R78 must not be described as strong or Match-quality. `Design/ArtReview/OperationMaps/M01/m01_top_down_plan.png` visibly proves the disconnected macro-layout above. The stored `Logs/M01_QualityReference_Demo.png` and `Logs/M01_QualityReference_Demo2.png` files are uniform blank captures and therefore provide no valid Demo/Demo2 comparison evidence; they must be recaptured before any future reference-quality claim.
 
 **Exit:** Runtime M01 is visibly stronger than the original editor prototype and the improvements generalize to future runtime maps where appropriate.
 

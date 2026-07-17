@@ -16,7 +16,7 @@ namespace Game.Editor
         public const string ScenePath = "Assets/Game/Scenes/MapPrototypes/Chapter01/M01_VisualPrototype.unity";
         public const string CaptureDirectory = "Design/ArtReview/OperationMaps/M01";
         public const int GenerationSeed = 26071501;
-        public const string GeneratorVersion = "M01VisualPrototype_2026-07-17_v29_compact_utility_core";
+        public const string GeneratorVersion = "M01VisualPrototype_2026-07-17_v30_balanced_gameplay_framing";
 
         private const int CaptureWidth = 1600;
         private const int CaptureHeight = 900;

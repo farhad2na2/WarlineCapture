@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abf0edb1c282479f89b39a264e80a795, type: 3}
   m_Name: M01_RuntimeVisualRecipe
   m_EditorClassIdentifier: Game.Configs::Game.Configs.RuntimeOperationMapVisualRecipe
-  recipeVersion: M01RuntimeVisualRecipe_2026-07-17_v29_compact_utility_core
+  recipeVersion: M01RuntimeVisualRecipe_2026-07-17_v30_balanced_gameplay_framing
   seed: 26071501
   foundation:
     material: {fileID: 2100000, guid: 629d23cca1fcab142b732f0acea319ea, type: 2}
@@ -43,9 +43,9 @@ MonoBehaviour:
     fieldOfView: 50
     transitionSeconds: 0.55
   - stage: 3
-    position: {x: -65, y: 52, z: -84}
-    target: {x: 40, y: 4, z: 10}
-    fieldOfView: 50
+    position: {x: -80, y: 52, z: -92}
+    target: {x: 25, y: 4, z: 2}
+    fieldOfView: 48
     transitionSeconds: 0.5
   - stage: 4
     position: {x: -52, y: 38, z: -54}
@@ -53,9 +53,9 @@ MonoBehaviour:
     fieldOfView: 44
     transitionSeconds: 0.45
   - stage: 5
-    position: {x: -88, y: 31, z: -52}
-    target: {x: -23, y: 4, z: 0}
-    fieldOfView: 46
+    position: {x: -82, y: 38, z: -64}
+    target: {x: -14, y: 3, z: -1}
+    fieldOfView: 44
     transitionSeconds: 0.5
   districtModules:
   - name: OldMarket_West_DemoAuthored

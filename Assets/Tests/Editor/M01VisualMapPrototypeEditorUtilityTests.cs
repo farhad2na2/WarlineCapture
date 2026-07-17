@@ -32,6 +32,8 @@ public sealed class M01VisualMapPrototypeEditorUtilityTests
             passed++;
             tests.LocalRoadPlan_IsNarrowConnectedAndNonBranching();
             passed++;
+            tests.RuntimeRecipe_CameraPosesMatchEditorOverviewAndRelocatedCompound();
+            passed++;
             tests.ReviewCaptureSet_IsCompleteAndReadable();
             passed++;
 
@@ -81,6 +83,35 @@ public sealed class M01VisualMapPrototypeEditorUtilityTests
             0,
             M01VisualMapPrototypeEditorUtility.GetLocalRoadPolicyViolationCount(),
             "M01 must retain one bounded, connected, non-self-intersecting local route instead of an autobahn or cross.");
+    }
+
+    [Test]
+    public void RuntimeRecipe_CameraPosesMatchEditorOverviewAndRelocatedCompound()
+    {
+        Scene scene = EditorSceneManager.OpenScene(M01VisualMapPrototypeEditorUtility.ScenePath, OpenSceneMode.Single);
+        GameObject cameraObject = FindSceneObject(scene, "M01_VisualPrototype_Root");
+        Transform cameraTransform = FindDescendant(cameraObject.transform, "M01_Review_GameplayOverview");
+        Camera editorCamera = cameraTransform != null ? cameraTransform.GetComponent<Camera>() : null;
+        Assert.NotNull(editorCamera, "The editor gameplay overview camera must exist.");
+
+        Game.Configs.RuntimeOperationMapVisualRecipe recipe = AssetDatabase.LoadAssetAtPath<Game.Configs.RuntimeOperationMapVisualRecipe>(
+            M01RuntimeMapPrototypeEditorUtility.VisualRecipePath);
+        Assert.NotNull(recipe, "The generated runtime visual recipe must exist.");
+
+        Assert.IsTrue(
+            TryGetCameraPose(recipe, Game.Configs.RuntimeOperationMapVisualStage.Horizon, out Game.Configs.RuntimeOperationMapCameraPose horizon),
+            "The runtime recipe must include the final Horizon camera pose.");
+        Assert.That(Vector3.Distance(editorCamera.transform.position, horizon.Position), Is.LessThan(0.01f));
+        Assert.That(Mathf.Abs(editorCamera.fieldOfView - horizon.FieldOfView), Is.LessThan(0.01f));
+        Quaternion horizonRotation = Quaternion.LookRotation((horizon.Target - horizon.Position).normalized, Vector3.up);
+        Assert.That(Quaternion.Angle(editorCamera.transform.rotation, horizonRotation), Is.LessThan(0.01f));
+
+        Assert.IsTrue(
+            TryGetCameraPose(recipe, Game.Configs.RuntimeOperationMapVisualStage.Compound, out Game.Configs.RuntimeOperationMapCameraPose compound),
+            "The runtime recipe must include the Compound reveal camera pose.");
+        Assert.That(Vector3.Distance(compound.Position, new Vector3(-80f, 52f, -92f)), Is.LessThan(0.01f));
+        Assert.That(Vector3.Distance(compound.Target, new Vector3(25f, 4f, 2f)), Is.LessThan(0.01f));
+        Assert.That(Mathf.Abs(compound.FieldOfView - 48f), Is.LessThan(0.01f));
     }
 
     [Test]
@@ -138,6 +169,25 @@ public sealed class M01VisualMapPrototypeEditorUtilityTests
         }
 
         return null;
+    }
+
+    private static bool TryGetCameraPose(
+        Game.Configs.RuntimeOperationMapVisualRecipe recipe,
+        Game.Configs.RuntimeOperationMapVisualStage stage,
+        out Game.Configs.RuntimeOperationMapCameraPose pose)
+    {
+        IReadOnlyList<Game.Configs.RuntimeOperationMapCameraPose> poses = recipe.CameraPoses;
+        for (int i = 0; i < poses.Count; i++)
+        {
+            if (poses[i].Stage != stage)
+                continue;
+
+            pose = poses[i];
+            return true;
+        }
+
+        pose = default;
+        return false;
     }
 }
 #endif

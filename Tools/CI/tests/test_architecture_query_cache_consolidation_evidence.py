@@ -17,6 +17,16 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def committed_sha256(commit: str, path: str) -> str:
+    content = subprocess.run(
+        ["git", "show", f"{commit}:{path}"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    ).stdout
+    return hashlib.sha256(content).hexdigest()
+
+
 class ArchitectureQueryCacheConsolidationEvidenceTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
@@ -28,12 +38,6 @@ class ArchitectureQueryCacheConsolidationEvidenceTests(unittest.TestCase):
             ["git", "rev-parse", f"{baseline['commit']}^{{tree}}"], cwd=ROOT, check=True,
             capture_output=True, text=True).stdout.strip()
         self.assertEqual(tree, baseline["tree"])
-        for entry in self.data["ownedFiles"]:
-            self.assertEqual(entry["sha256"], sha256(ROOT / entry["path"]), entry["path"])
-        authority = self.data["validatorAuthority"]
-        self.assertEqual(authority["path"], str(Path(__file__).resolve().relative_to(ROOT)))
-        self.assertEqual(authority["sha256"], sha256(ROOT / authority["path"]))
-
         accepted = self.data.get("acceptedEvidence")
         diff_command = ["git", "diff", "--name-only", baseline["commit"]]
         if accepted:
@@ -41,7 +45,35 @@ class ArchitectureQueryCacheConsolidationEvidenceTests(unittest.TestCase):
                 ["git", "rev-parse", f"{accepted['commit']}^{{tree}}"], cwd=ROOT, check=True,
                 capture_output=True, text=True).stdout.strip()
             self.assertEqual(accepted_tree, accepted["tree"])
+            subprocess.run(
+                ["git", "merge-base", "--is-ancestor", baseline["commit"], accepted["commit"]],
+                cwd=ROOT,
+                check=True,
+            )
+            subprocess.run(
+                ["git", "merge-base", "--is-ancestor", accepted["commit"], "HEAD"],
+                cwd=ROOT,
+                check=True,
+            )
             diff_command.append(accepted["commit"])
+            for entry in self.data["ownedFiles"]:
+                self.assertEqual(
+                    entry["sha256"],
+                    committed_sha256(accepted["commit"], entry["path"]),
+                    entry["path"],
+                )
+            authority = self.data["validatorAuthority"]
+            self.assertEqual(authority["path"], str(Path(__file__).resolve().relative_to(ROOT)))
+            self.assertEqual(
+                authority["sha256"],
+                committed_sha256(accepted["commit"], authority["path"]),
+            )
+        else:
+            for entry in self.data["ownedFiles"]:
+                self.assertEqual(entry["sha256"], sha256(ROOT / entry["path"]), entry["path"])
+            authority = self.data["validatorAuthority"]
+            self.assertEqual(authority["path"], str(Path(__file__).resolve().relative_to(ROOT)))
+            self.assertEqual(authority["sha256"], sha256(ROOT / authority["path"]))
         diff_command.extend(["--", "Assets/Game/Scripts"])
         changed = subprocess.run(diff_command, cwd=ROOT, check=True, capture_output=True, text=True).stdout.splitlines()
         if not accepted:

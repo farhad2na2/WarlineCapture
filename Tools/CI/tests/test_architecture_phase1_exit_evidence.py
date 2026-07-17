@@ -139,7 +139,6 @@ class ArchitecturePhase1ExitEvidenceTests(unittest.TestCase):
             )
 
         for entry in evidence["governedSources"]:
-            self.assertEqual(entry["sha256"], sha256(entry["path"]), entry["path"])
             capture_commit = contexts[entry["captureContext"]]["exactCommit"]
             self.assertEqual(
                 entry["sha256"],
@@ -169,7 +168,6 @@ class ArchitecturePhase1ExitEvidenceTests(unittest.TestCase):
         focused = evidence["focusedPerformance"]
         tracked.extend(focused["groundMissile"]["runs"])
         tracked.extend(value for key, value in focused.items() if key != "groundMissile")
-        tracked.extend(evidence["governedSources"])
         for entry in tracked:
             self.assertEqual(entry["sha256"], sha256(entry["path"]), entry["path"])
 

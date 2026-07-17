@@ -23,8 +23,9 @@ public sealed class WorldScopedComponentQueryCachePerformanceValidation
         {
             var tests = new WorldScopedComponentQueryCachePerformanceValidation();
             tests.GovernedCaches_ReuseAndRebindWithZeroRecurringManagedAllocation();
+            tests.SingletonLookupPaths_ReuseWithZeroRecurringManagedAllocation();
             Debug.Log(
-                $"[WorldScopedComponentQueryCachePerformanceValidation] result=Passed tests=1 combinations={GovernedCombinationCount} phases={GovernedCombinationCount * 2}");
+                $"[WorldScopedComponentQueryCachePerformanceValidation] result=Passed tests=2 combinations={GovernedCombinationCount} phases={GovernedCombinationCount * 2 + 2}");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -66,6 +67,29 @@ public sealed class WorldScopedComponentQueryCachePerformanceValidation
             nameof(UnitMoveOrderQueueComponent),
             readOnly: true,
             moveOrderCache);
+    }
+
+    [Test]
+    public void SingletonLookupPaths_ReuseWithZeroRecurringManagedAllocation()
+    {
+        using World world = new(nameof(SingletonLookupPaths_ReuseWithZeroRecurringManagedAllocation));
+        EntityManager entityManager = world.EntityManager;
+        Entity positiveEntity = entityManager.CreateEntity(typeof(UnitMoveOrderQueueComponent));
+        var positiveCache = new WorldScopedComponentQueryCache<UnitMoveOrderQueueComponent>(readOnly: true);
+        var negativeCache = new WorldScopedComponentQueryCache<BuildingResourceStorageComponent>(readOnly: true);
+
+        ValidateSingletonLookup(
+            "positive",
+            positiveCache,
+            entityManager,
+            expectedResult: true,
+            expectedEntity: positiveEntity);
+        ValidateSingletonLookup(
+            "negative",
+            negativeCache,
+            entityManager,
+            expectedResult: false,
+            expectedEntity: Entity.Null);
     }
 
     private static void AssertGovernedConsumerMatrix()
@@ -164,15 +188,26 @@ public sealed class WorldScopedComponentQueryCachePerformanceValidation
         AssertMetrics(firstMetrics, consumerName, componentName, "initial-world");
 
         EntityQuery secondQuery = cache.Get(secondWorld.EntityManager);
-        Assert.IsFalse(
-            firstQuery.Equals(secondQuery),
-            $"{consumerName}/{componentName} must rebuild its query when the World changes.");
+        Assert.AreSame(
+            secondWorld,
+            GetBoundWorld(cache),
+            $"{consumerName}/{componentName} must bind its cached query to the replacement World.");
         AssertQueryContract<T>(secondQuery, readOnly, expectedEntityCount: 2);
         ReuseMetrics secondMetrics = MeasureSameWorldReuse(cache, secondWorld.EntityManager, secondQuery);
         AssertMetrics(secondMetrics, consumerName, componentName, "rebound-world");
 
         LogMetrics(consumerName, componentName, readOnly, "initial-world", firstMetrics);
         LogMetrics(consumerName, componentName, readOnly, "rebound-world", secondMetrics);
+    }
+
+    private static World GetBoundWorld<T>(WorldScopedComponentQueryCache<T> cache)
+        where T : unmanaged, IComponentData
+    {
+        FieldInfo worldField = typeof(WorldScopedComponentQueryCache<T>).GetField(
+            "_world",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.IsNotNull(worldField, "The cache World ownership must remain inspectable.");
+        return (World)worldField.GetValue(cache);
     }
 
     private static void PopulateWorld<T>(EntityManager entityManager, int targetCount)
@@ -246,6 +281,43 @@ public sealed class WorldScopedComponentQueryCachePerformanceValidation
             allocatedBytes,
             expectedQuery,
             lastQuery);
+    }
+
+    private static void ValidateSingletonLookup<T>(
+        string phase,
+        WorldScopedComponentQueryCache<T> cache,
+        EntityManager entityManager,
+        bool expectedResult,
+        Entity expectedEntity)
+        where T : unmanaged, IComponentData
+    {
+        var samples = new long[MeasuredOperations];
+        bool lastResult = false;
+        Entity lastEntity = Entity.Null;
+        for (int operation = 0; operation < WarmupOperations; operation++)
+            lastResult = cache.TryGetSingleton(entityManager, out lastEntity);
+
+        Assert.AreEqual(expectedResult, lastResult, $"{phase} warmup result changed.");
+        Assert.AreEqual(expectedEntity, lastEntity, $"{phase} warmup entity changed.");
+
+        long allocationStart = GC.GetAllocatedBytesForCurrentThread();
+        for (int operation = 0; operation < MeasuredOperations; operation++)
+        {
+            long startTicks = Stopwatch.GetTimestamp();
+            lastResult = cache.TryGetSingleton(entityManager, out lastEntity);
+            samples[operation] = Stopwatch.GetTimestamp() - startTicks;
+        }
+
+        long allocatedBytes = GC.GetAllocatedBytesForCurrentThread() - allocationStart;
+        Array.Sort(samples);
+        Assert.AreEqual(expectedResult, lastResult, $"{phase} measured result changed.");
+        Assert.AreEqual(expectedEntity, lastEntity, $"{phase} measured entity changed.");
+        Assert.AreEqual(0L, allocatedBytes, $"{phase} singleton lookup must allocate zero recurring managed bytes.");
+        Debug.Log(
+            $"[WorldScopedComponentQueryCachePerformanceValidation] singletonPhase={phase} " +
+            $"warmupOperations={WarmupOperations} measuredOperations={MeasuredOperations} " +
+            $"p95Ticks={PercentileNearestRank(samples, 95)} p99Ticks={PercentileNearestRank(samples, 99)} " +
+            $"maxTicks={samples[samples.Length - 1]} allocatedBytes={allocatedBytes}");
     }
 
     private static long PercentileNearestRank(long[] sortedSamples, int percentile)

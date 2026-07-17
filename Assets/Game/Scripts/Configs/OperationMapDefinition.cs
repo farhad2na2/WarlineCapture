@@ -4,6 +4,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 namespace Game.Configs
 {
@@ -25,6 +26,14 @@ namespace Game.Configs
         [SerializeField] private string battleCameraId;
         [SerializeField] private OperationMapMinimapConfig minimap;
         [SerializeField] private OperationMapAnchorConfig[] anchors = Array.Empty<OperationMapAnchorConfig>();
+        [Header("Lazy map content")]
+        [SerializeField] private AssetReference sourceSceneReference;
+        [SerializeField] private AssetReference optionalHeavyMetadataReference;
+        [SerializeField] private AssetReference staticPresentationManifestReference;
+        [SerializeField] private AssetReference mapSurfaceDataReference;
+        [SerializeField] private AssetReference minimapRasterReference;
+        [SerializeField] private AssetReference buildingPlacementsReference;
+        [SerializeField] private AssetReference vehiclePlacementsReference;
 
         public string OperationMapId => operationMapId;
         public int SchemaVersion => schemaVersion;
@@ -41,6 +50,13 @@ namespace Game.Configs
         public string BattleCameraId => battleCameraId;
         public OperationMapMinimapConfig Minimap => minimap;
         public ReadOnlySpan<OperationMapAnchorConfig> Anchors => anchors;
+        public AssetReference SourceSceneReference => sourceSceneReference;
+        public AssetReference OptionalHeavyMetadataReference => optionalHeavyMetadataReference;
+        public AssetReference StaticPresentationManifestReference => staticPresentationManifestReference;
+        public AssetReference MapSurfaceDataReference => mapSurfaceDataReference;
+        public AssetReference MinimapRasterReference => minimapRasterReference;
+        public AssetReference BuildingPlacementsReference => buildingPlacementsReference;
+        public AssetReference VehiclePlacementsReference => vehiclePlacementsReference;
 
         public bool TryValidateIdentity(out string error)
         {
@@ -173,6 +189,41 @@ namespace Game.Configs
             if (!OperationMapHashRules.IsValidSha256(generatedMetadataHash))
             {
                 error = "Operation-map generated-metadata hash must be 64 lowercase hexadecimal characters.";
+                return false;
+            }
+
+            error = null;
+            return true;
+        }
+
+        public bool TryValidateLocalContentReferences(out string error)
+        {
+            if (!TryValidateRequiredReference(sourceSceneReference, "source scene", out error) ||
+                !TryValidateRequiredReference(staticPresentationManifestReference, "static presentation manifest", out error) ||
+                !TryValidateRequiredReference(mapSurfaceDataReference, "map surface data", out error) ||
+                !TryValidateRequiredReference(minimapRasterReference, "minimap raster", out error) ||
+                !TryValidateRequiredReference(buildingPlacementsReference, "building placements", out error) ||
+                !TryValidateRequiredReference(vehiclePlacementsReference, "vehicle placements", out error))
+                return false;
+
+            if (optionalHeavyMetadataReference != null && !optionalHeavyMetadataReference.RuntimeKeyIsValid())
+            {
+                error = "Optional heavy metadata reference is present but invalid.";
+                return false;
+            }
+
+            error = null;
+            return true;
+        }
+
+        private static bool TryValidateRequiredReference(
+            AssetReference reference,
+            string role,
+            out string error)
+        {
+            if (reference == null || !reference.RuntimeKeyIsValid())
+            {
+                error = $"Operation-map {role} reference is missing or invalid.";
                 return false;
             }
 

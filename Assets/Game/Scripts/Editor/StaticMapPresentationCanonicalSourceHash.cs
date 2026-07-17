@@ -44,8 +44,13 @@ namespace Game.Editor
         internal static bool IsGeneratedOutputPath(string assetPath)
         {
             return !string.IsNullOrWhiteSpace(assetPath) &&
-                   (string.Equals(assetPath, StaticMapPresentationBaker.OutputRoot, StringComparison.Ordinal) ||
-                    assetPath.StartsWith(StaticMapPresentationBaker.OutputRoot + "/", StringComparison.Ordinal));
+                   (string.Equals(
+                        assetPath,
+                        StaticMapPresentationOutputPathContract.GeneratedRoot,
+                        StringComparison.Ordinal) ||
+                    assetPath.StartsWith(
+                        StaticMapPresentationOutputPathContract.GeneratedRoot + "/",
+                        StringComparison.Ordinal));
         }
 
         internal static string[] TraverseSourceDependencyGraph(

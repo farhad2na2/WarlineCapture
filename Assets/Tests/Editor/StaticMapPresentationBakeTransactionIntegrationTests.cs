@@ -10,7 +10,7 @@ using UnityEngine.SceneManagement;
 public sealed class StaticMapPresentationBakeTransactionIntegrationTests
 {
     private const string IntegrationScenePath =
-        "Assets/Game/GeneratedStaticMapPresentation/Scenes/StaticMapPresentation_chunk_p999_p999.unity";
+        "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_chunk_p999_p999.unity";
 
     [Test]
     public void Rollback_RestoresDeletedSceneBytesAndGuidAfterAssetDatabaseRefresh()

@@ -35,12 +35,21 @@ namespace Game.Editor
         {
             if (string.IsNullOrWhiteSpace(OperationMapId) || OperationMapId.Length > 64)
                 return Fail("Operation-map id must contain 1 to 64 characters.", out error);
+            if (!StaticMapPresentationOutputPathContract.TryResolveOutputRoot(
+                    OperationMapId,
+                    out string expectedOutputRoot,
+                    out error))
+            {
+                return false;
+            }
             if (!IsAssetFilePath(SourceScenePath, ".unity"))
                 return Fail("Source scene must be a normalized project-relative Unity scene path.", out error);
             if (!IsHierarchyPath(SourceMapRootPath))
                 return Fail("Source map root must be a normalized hierarchy path.", out error);
             if (!IsAssetFolderPath(OutputRoot))
                 return Fail("Output root must be a normalized project-relative asset folder.", out error);
+            if (!string.Equals(OutputRoot, expectedOutputRoot, StringComparison.Ordinal))
+                return Fail("Output root must be derived from the operation-map id.", out error);
             if (!IsOwnedOutputFile(ManifestPath, OutputRoot, ".asset"))
                 return Fail("Manifest must be an asset owned by the output root.", out error);
             if (!IsOwnedOutputFile(IntegrityPath, OutputRoot, ".json"))

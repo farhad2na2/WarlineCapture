@@ -10,7 +10,7 @@ using Object = UnityEngine.Object;
 public sealed class StaticMapPresentationManifestSchemaCompatibilityTests
 {
     private const string ManifestPath =
-        "Assets/Game/GeneratedStaticMapPresentation/StaticMapPresentationManifest.asset";
+        "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/StaticMapPresentationManifest.asset";
 
     public static void RunFocusedValidation()
     {

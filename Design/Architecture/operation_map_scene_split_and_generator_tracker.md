@@ -139,7 +139,7 @@ The current large map becomes the first reusable operation map through two stage
 | Extracted target | `Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01.unity` plus an optional map-owned subscene | Created only after per-map bake ownership exists; generated outputs live under a map-specific generated root. |
 | Match shell target | `Assets/Game/Scenes/Match.unity` | Keeps camera/runtime bootstrap and shell references; no longer owns map geometry or map-specific authored placements after cutover. |
 
-Primary use remains Skirmish, air/armor sandbox, fuel/logistics validation, and base-defense testing. The map may support multiple `ScenarioSetup` definitions. It should not become M01 merely because it already exists; M01 uses a dedicated smaller map unless visual and tutorial-readability evidence explicitly accepts a bounded reuse.
+Primary use remains Skirmish, air/armor sandbox, fuel/logistics validation, and base-defense testing. The map supports multiple `ScenarioSetup` definitions. Per the accepted one-map rollout, initial M01, campaign, operation, and Skirmish scenarios reuse this physical map through distinct scenario/objective/spawn/anchor data. A dedicated smaller M01 map is a later optional content milestone, not an initial requirement.
 
 ## Accepted Operation-Map Portfolio, Generation, And Distribution Decision
 
@@ -705,7 +705,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 33% (58/177 checklist items complete).
+Overall implementation progress: 33% (59/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -713,7 +713,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 |---|---|---:|---:|---:|---|
 | 0. Reproducible baseline and rollback | In progress / shared | 11 | 12 | 92% | Required by both directions before scene edits. |
 | 1. Operation-map and scenario data contracts | In progress | 11 | 12 | 92% | Typed identity, catalog resolution, complete spatial/navigation metadata, hashes, validation, and ownership chain are approved; the selected local-Addressables reference row remains. |
-| 2. Per-map static presentation ownership | In progress | 3 | 14 | 21% | Bake input, compatibility routing, and schema-2 map/scene identity are accepted; alternate output ownership remains fail-closed. |
+| 2. Per-map static presentation ownership | In progress | 4 | 14 | 29% | Bake input, compatibility routing, schema-2 map/scene identity, and the deterministic current-map output root are accepted; remaining cleanup/transaction/wiring ownership stays fail-closed. |
 | 2A. Local Addressables packaging foundation | Active / selected direction | 0 | 20 | 0% | Package only the single approved editor-authored map locally after Phase 2 ownership prerequisites pass. |
 | 3. Current-map compatibility registration | Complete / shared | 10 | 10 | 100% | Current identities/definition, authored behavior, schema-v1 read compatibility, runtime activation/teardown, deterministic presentation, and Android chunk resolution are accepted. |
 | 4. Non-destructive scene ownership split | In progress / shared priority | 10 | 14 | 71% | The staged scene has fail-closed spatial/content validation; the original Match route remains validated and revision `d5784dcfa` plus the rollback recipe freeze the pre-cutover recovery boundary. |
@@ -777,7 +777,7 @@ Exit criteria:
 - [x] Introduce `Game.Editor.StaticMapPresentationBakeInput` carrying operation-map id, source scene, source map root, output root, manifest path, integrity path, and chunk size. See `../AgentReports/2026-07-17_static_map_presentation_bake_input_contract.md`.
 - [x] Refactor `StaticMapPresentationBaker` so the current hardcoded constants remain only a compatibility entry point during migration. See `../AgentReports/2026-07-17_static_map_presentation_baker_compatibility_refactor.md`.
 - [x] Advance the manifest schema to include operation-map id and canonical scene GUID/path identity with an explicit migration test. See `../AgentReports/2026-07-17_static_map_presentation_manifest_schema2.md`.
-- [ ] Use one generated output root per operation map.
+- [x] Use one generated output root per operation map. The current output is under `Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01`; see `../AgentReports/2026-07-17_static_map_presentation_per_map_output_root.md`.
 - [ ] Namespace generated scene names by operation map so chunk coordinates cannot collide across maps.
 - [ ] Use one integrity ledger per operation map.
 - [ ] Restrict stale cleanup to paths owned by the same map id, manifest, and output-root contract.
@@ -1123,6 +1123,7 @@ Exit criteria:
 | 2026-07-17 | Static presentation bake-input contract | `../AgentReports/2026-07-17_static_map_presentation_bake_input_contract.md`; focused `7 / 7`; naming `9 / 9`; compile; `git diff --check` | Passed; Phase 2 input row complete | Added one immutable editor-only input carrying map identity, source ownership, output ownership, integrity, and chunk-size data. The current baker and all generated output remain unchanged. |
 | 2026-07-17 | Static presentation baker compatibility refactor and map-direction selection | `../AgentReports/2026-07-17_static_map_presentation_baker_compatibility_refactor.md`; focused `9 / 9`; two canonical no-op bakes; Android resolver `2 / 2`; naming `9 / 9`; compile; `git diff --check` | Passed; Phase 2 compatibility row complete | Routed the current baker through immutable input data while rejecting alternate output ownership until remaining helpers are map-scoped. Accepted editor-authored local Addressables with one physical map reused by all initial scenarios; no generated asset changed. |
 | 2026-07-17 | Static presentation manifest schema 2 | `../AgentReports/2026-07-17_static_map_presentation_manifest_schema2.md`; affected EditMode `111 / 111`; two accepted no-op bakes; naming `9 / 9`; source-growth `14 / 17` with unrelated upstream failures; compile; `git diff --check` | Passed; Phase 2 manifest identity row complete | Added operation-map id and canonical scene GUID/path identity with explicit schema-1 migration/read compatibility. Decoupled chunk-content reuse from manifest metadata schema; only the manifest changed and all 514 chunk scenes remained byte-stable. |
+| 2026-07-17 | Static presentation per-map output root | `../AgentReports/2026-07-17_static_map_presentation_per_map_output_root.md`; structured migration; 1,028 moved scene/meta blob comparisons; canonical no-op bake; bake-input `11 / 11`; baseline `8 / 8`; affected structural/resolver tests; ownership evidence refresh; naming/architecture gates; compile; `git diff --check` | Passed; Phase 2 output-root row complete | Moved the current map's manifest, integrity ledger, and 514 chunks into a deterministic map-owned root while preserving scene bytes and Unity GUIDs. No source map, runtime loader, Addressables setting, or second physical map changed. |
 
 ## Open Decisions
 

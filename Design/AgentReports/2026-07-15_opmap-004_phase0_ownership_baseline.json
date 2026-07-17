@@ -38,7 +38,7 @@
         },
         {
             "path": "Assets/Game/Scripts/Composition/MatchSceneView.cs",
-            "sha256": "d2c28e5eb39fd9d4694d79173b684f710237b434eb5b6605959790c85af48a0b"
+            "sha256": "1cfaf1b472523aa4af608ac7eac0fb4ce89cacec97ddbda7d4e3ccf65cd03847"
         },
         {
             "path": "Design/AgentReports/2026-07-14_opmap-002_phase0_baseline_probe.md",
@@ -46,7 +46,7 @@
         },
         {
             "path": "Design/Architecture/operation_map_scene_split_and_generator_tracker.md",
-            "sha256": "b11e46c49fca2fe50483236921f9a496607c65dee056cd493e16023d718388ec"
+            "sha256": "d7708240b0c303123a63b173464f285dd4388d4b49d96743dc631dcccabb183a"
         }
     ],
     "matchSceneViewFields": [
@@ -531,11 +531,11 @@
             "currentType": "Game.Rendering.StaticMapPresentationManifest",
             "currentElementCount": 1,
             "currentTargetIdentities": [
-                "Assets/Game/GeneratedStaticMapPresentation/StaticMapPresentationManifest.asset|guid:2d7b3d165106141ba81b98138bb8fa7f|localId:11400000|type:Game.Rendering.StaticMapPresentationManifest"
+                "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/StaticMapPresentationManifest.asset|guid:2d7b3d165106141ba81b98138bb8fa7f|localId:11400000|type:Game.Rendering.StaticMapPresentationManifest"
             ],
             "classification": "MapOwned",
             "evidencePaths": [
-                "Assets/Game/GeneratedStaticMapPresentation/StaticMapPresentationManifest.asset",
+                "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/StaticMapPresentationManifest.asset",
                 "Assets/Game/Scripts/Composition/MatchSceneView.cs",
                 "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
             ],

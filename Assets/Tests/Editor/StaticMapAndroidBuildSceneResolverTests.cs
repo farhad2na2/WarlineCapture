@@ -12,9 +12,9 @@ public sealed class StaticMapAndroidBuildSceneResolverTests
 {
     private const string Match = "Assets/Game/Scenes/Match.unity";
     private const string Menu = "Assets/Game/Scenes/MainMenu.unity";
-    private const string ChunkA = "Assets/Game/GeneratedStaticMapPresentation/Scenes/StaticMapPresentation_chunk_n001_p002.unity";
-    private const string ChunkB = "Assets/Game/GeneratedStaticMapPresentation/Scenes/StaticMapPresentation_chunk_p000_p000.unity";
-    private const string StaleChunk = "Assets/Game/GeneratedStaticMapPresentation/Scenes/StaticMapPresentation_chunk_p999_p999.unity";
+    private const string ChunkA = "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_chunk_n001_p002.unity";
+    private const string ChunkB = "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_chunk_p000_p000.unity";
+    private const string StaleChunk = "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_chunk_p999_p999.unity";
 
     public static void RunCurrentProjectValidation()
     {
@@ -115,7 +115,7 @@ public sealed class StaticMapAndroidBuildSceneResolverTests
             case "staleCanonicalDependency": computeCanonicalDependencyHash = () => "actual-canonical-dependency-hash"; break;
             case "nullChunk": snapshot = Snapshot(ChunkA, null); break;
             case "duplicateChunk": snapshot = Snapshot(ChunkA, ChunkA); break;
-            case "invalidChunk": snapshot = Snapshot(ChunkA, "Assets/Game/GeneratedStaticMapPresentation/Scenes/invalid.unity"); break;
+            case "invalidChunk": snapshot = Snapshot(ChunkA, "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/invalid.unity"); break;
             case "nonOwnedChunk": snapshot = Snapshot(ChunkA, "Assets/Game/Scenes/Other.unity"); break;
             case "missingChunk": exists = path => path != ChunkB; break;
             case "missingMatch": enabled = new[] { Menu }; break;

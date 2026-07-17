@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Game.Editor;
+using Game.Rendering;
 using NUnit.Framework;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -13,9 +14,9 @@ public sealed class OperationMapPhase0BaselineProbeTests
     private const string MatchScenePath = "Assets/Game/Scenes/Match.unity";
     private const string MatchSubScenePath = "Assets/Game/Scenes/Match/MatchSubScene.unity";
     private const string ManifestPath =
-        "Assets/Game/GeneratedStaticMapPresentation/StaticMapPresentationManifest.asset";
+        "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/StaticMapPresentationManifest.asset";
     private const string IntegrityPath =
-        "Assets/Game/GeneratedStaticMapPresentation/StaticMapPresentationSceneIntegrity.json";
+        "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/StaticMapPresentationSceneIntegrity.json";
 
     [Test]
     public void ComputeSha256_IsStableAndLowercase()
@@ -342,7 +343,7 @@ public sealed class OperationMapPhase0BaselineProbeTests
             "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
         const string matchGuid = "11111111111111111111111111111111";
         const string subSceneGuid = "22222222222222222222222222222222";
-        const string chunkPath = "Assets/Game/GeneratedStaticMapPresentation/Scenes/Chunk.unity";
+        const string chunkPath = "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/Chunk.unity";
 
         OperationMapPhase0BaselineProbe.ObjectIdentityReport asset =
             CreateAssetIdentity("Asset", "33333333333333333333333333333333", 11400000);
@@ -392,7 +393,8 @@ public sealed class OperationMapPhase0BaselineProbeTests
             manifest = new OperationMapPhase0BaselineProbe.ManifestReport
             {
                 asset = asset,
-                schemaVersion = 1,
+                schemaVersion = StaticMapPresentationManifest.CurrentSchemaVersion,
+                operationMapId = StaticMapPresentationBaker.CurrentOperationMapId,
                 canonicalScenePath = MatchScenePath,
                 canonicalSceneGuid = matchGuid,
                 canonicalSceneDependencyHash = hash128,
@@ -408,7 +410,7 @@ public sealed class OperationMapPhase0BaselineProbeTests
             generatedOutputs = new OperationMapPhase0BaselineProbe.GeneratedOutputsReport
             {
                 integrityPath =
-                    "Assets/Game/GeneratedStaticMapPresentation/StaticMapPresentationSceneIntegrity.json",
+                    "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/StaticMapPresentationSceneIntegrity.json",
                 integritySchemaVersion = 1,
                 integrityContentHash = hash128,
                 integrityFileSha256 = hash256,

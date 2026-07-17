@@ -19,11 +19,15 @@ namespace Game.Editor
     public static class StaticMapPresentationBaker
     {
         public const string CanonicalMatchScenePath = "Assets/Game/Scenes/Match.unity";
-        public const string OutputRoot = "Assets/Game/GeneratedStaticMapPresentation";
+        public const string CurrentOperationMapId = "opmap.skirmish.desert_base_01";
+        public const string OutputRoot =
+            "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01";
         public const string SceneOutputFolder = OutputRoot + "/Scenes";
         public const string ManifestPath = OutputRoot + "/StaticMapPresentationManifest.asset";
         public const float ChunkSize = 32f;
 
+        private const string LegacySceneOutputPrefix =
+            "Assets/Game/GeneratedStaticMapPresentation/Scenes/";
         private const int ChunkContentSchemaVersion = 1;
         private const float MatrixTolerance = 0.0005f;
 
@@ -111,7 +115,7 @@ namespace Game.Editor
         internal static StaticMapPresentationBakeInput CreateCurrentCompatibilityInput()
         {
             return new StaticMapPresentationBakeInput(
-                "opmap.skirmish.desert_base_01",
+                CurrentOperationMapId,
                 CanonicalMatchScenePath,
                 "Map",
                 OutputRoot,
@@ -151,6 +155,86 @@ namespace Game.Editor
                 manifest != null ? manifest.ContentHash : "<none>");
         }
 
+        [MenuItem("Game/Tools/Performance/Migrate Static Map Presentation Output Root")]
+        public static void MigrateCurrentOutputRoot()
+        {
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+            StaticMapPresentationManifest manifest = LoadExistingManifest(ManifestPath);
+            if (manifest == null)
+                throw new InvalidOperationException($"Missing moved manifest at {ManifestPath}.");
+
+            List<StaticMapPresentationChunkEntry> migratedChunks = new(manifest.Chunks.Count);
+            for (int i = 0; i < manifest.Chunks.Count; i++)
+            {
+                StaticMapPresentationChunkEntry chunk = manifest.Chunks[i];
+                string fileName = Path.GetFileName(chunk.ScenePath);
+                bool knownOwner = chunk.ScenePath.StartsWith(LegacySceneOutputPrefix, StringComparison.Ordinal) ||
+                                  chunk.ScenePath.StartsWith(SceneOutputFolder + "/", StringComparison.Ordinal);
+                if (!knownOwner || string.IsNullOrWhiteSpace(fileName))
+                {
+                    throw new InvalidOperationException(
+                        $"Manifest chunk has foreign output ownership: {chunk.ScenePath}");
+                }
+
+                string migratedScenePath = $"{SceneOutputFolder}/{fileName}";
+                if (AssetDatabase.LoadAssetAtPath<SceneAsset>(migratedScenePath) == null)
+                    throw new InvalidOperationException($"Moved chunk scene is missing: {migratedScenePath}");
+
+                migratedChunks.Add(new StaticMapPresentationChunkEntry(
+                    chunk.ChunkId,
+                    migratedScenePath,
+                    chunk.WorldBounds,
+                    chunk.SourceStartIndex,
+                    chunk.SourceCount));
+            }
+
+            List<StaticMapPresentationSourceEntry> sources = manifest.Sources.ToList();
+            string contentHash = ComputeContentHash(manifest.ChunkSize, migratedChunks, sources);
+            string[] expectedScenePaths = migratedChunks.Select(chunk => chunk.ScenePath).ToArray();
+            string projectRoot = RequireProjectRoot();
+            using StaticMapPresentationBakeTransaction transaction =
+                StaticMapPresentationBakeTransaction.Begin(
+                    projectRoot,
+                    new[] { ManifestPath, StaticMapPresentationSceneIntegrity.IntegrityAssetPath });
+            try
+            {
+                manifest.EditorSetData(
+                    CurrentOperationMapId,
+                    AssetDatabase.AssetPathToGUID(CanonicalMatchScenePath),
+                    CanonicalMatchScenePath,
+                    manifest.CanonicalSceneDependencyHash,
+                    manifest.ChunkSize,
+                    contentHash,
+                    migratedChunks,
+                    sources);
+                AssetDatabase.SaveAssetIfDirty(manifest);
+                StaticMapPresentationSceneIntegrity.Write(
+                    projectRoot,
+                    contentHash,
+                    expectedScenePaths);
+                AssetDatabase.ImportAsset(
+                    StaticMapPresentationSceneIntegrity.IntegrityAssetPath,
+                    ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ForceUpdate);
+                transaction.Commit();
+            }
+            catch
+            {
+                transaction.Rollback();
+                AssetDatabase.Refresh(
+                    ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ForceUpdate);
+                throw;
+            }
+
+            Debug.LogFormat(
+                LogType.Log,
+                LogOption.NoStacktrace,
+                null,
+                "[StaticMapPresentationOutputRootMigration] result=Passed map={0} chunks={1} contentHash={2}",
+                CurrentOperationMapId,
+                migratedChunks.Count,
+                contentHash);
+        }
+
         internal static void ValidateCompatibilityInput(StaticMapPresentationBakeInput input)
         {
             if (!input.TryValidate(out string error))
@@ -184,7 +268,7 @@ namespace Game.Editor
             string[] previousOwnedScenePaths =
                 StaticMapPresentationOutputOwnership.CaptureOwnedScenePaths(existingManifest);
             string previousContentHash = existingManifest != null
-                ? BuildContentHash(input.ChunkSize, existingManifest.Chunks, existingManifest.Sources)
+                ? ComputeContentHash(input.ChunkSize, existingManifest.Chunks, existingManifest.Sources)
                 : string.Empty;
             AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
 
@@ -221,7 +305,7 @@ namespace Game.Editor
             }
 
             string canonicalHash = StaticMapPresentationCanonicalSourceHash.Compute(input.SourceScenePath);
-            string contentHash = BuildContentHash(input.ChunkSize, chunkEntries, sourceEntries);
+            string contentHash = ComputeContentHash(input.ChunkSize, chunkEntries, sourceEntries);
             string[] expectedScenePaths = chunkEntries.Select(chunk => chunk.ScenePath).ToArray();
             string projectRoot = RequireProjectRoot();
             bool integrityReady = StaticMapPresentationSceneIntegrity.TryLoadAndValidate(
@@ -694,7 +778,7 @@ namespace Game.Editor
             builder.Append("|layer:").Append(layer);
         }
 
-        private static string BuildContentHash(
+        internal static string ComputeContentHash(
             float chunkSize,
             IReadOnlyList<StaticMapPresentationChunkEntry> chunks,
             IReadOnlyList<StaticMapPresentationSourceEntry> sources)
@@ -705,7 +789,7 @@ namespace Game.Editor
             for (int i = 0; i < chunks.Count; i++)
             {
                 StaticMapPresentationChunkEntry chunk = chunks[i];
-                builder.Append('|').Append(chunk.ChunkId).Append('|').Append(chunk.ScenePath);
+                builder.Append('|').Append(chunk.ChunkId);
                 AppendBounds(builder, chunk.WorldBounds);
             }
 

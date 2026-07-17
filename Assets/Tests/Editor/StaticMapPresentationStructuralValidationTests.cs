@@ -14,7 +14,7 @@ public sealed class StaticMapPresentationStructuralValidationTests
     private const float TransformTolerance = 0.0005f;
     private const float BoundsTolerance = 0.005f;
     private const string ManifestPath =
-        "Assets/Game/GeneratedStaticMapPresentation/StaticMapPresentationManifest.asset";
+        "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/StaticMapPresentationManifest.asset";
 
     [Test]
     public void Manifest_DefinesExactSourceChunkBijection()

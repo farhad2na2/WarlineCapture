@@ -26,7 +26,7 @@ namespace Game.Editor
         private const string SurfacePath = "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset";
         private const string SubScenePath = "Assets/Game/Scenes/Match/MatchSubScene.unity";
         private const string ManifestPath =
-            "Assets/Game/GeneratedStaticMapPresentation/StaticMapPresentationManifest.asset";
+            "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/StaticMapPresentationManifest.asset";
         private const long WorldCameraLocalId = 1220593093;
         private const long StartTransformLocalId = 229045073;
         private const long EndTransformLocalId = 29742182;

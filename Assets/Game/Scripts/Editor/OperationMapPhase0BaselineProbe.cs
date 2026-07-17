@@ -32,11 +32,11 @@ namespace Game.Editor
         private const string MatchScenePath = "Assets/Game/Scenes/Match.unity";
         private const string MatchSubScenePath = "Assets/Game/Scenes/Match/MatchSubScene.unity";
         private const string ManifestPath =
-            "Assets/Game/GeneratedStaticMapPresentation/StaticMapPresentationManifest.asset";
+            "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/StaticMapPresentationManifest.asset";
         private const string IntegrityPath =
-            "Assets/Game/GeneratedStaticMapPresentation/StaticMapPresentationSceneIntegrity.json";
+            "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/StaticMapPresentationSceneIntegrity.json";
         private const string GeneratedSceneFolder =
-            "Assets/Game/GeneratedStaticMapPresentation/Scenes";
+            StaticMapPresentationBaker.SceneOutputFolder;
         private const string AggregateAlgorithm =
             "sha256(utf8(path\\0sha256\\n), entries sorted by ordinal path)";
         private const int IntegritySchemaVersion = 1;
@@ -353,6 +353,10 @@ namespace Game.Editor
         {
             return manifest != null && IsObjectIdentityComplete(manifest.asset) &&
                    manifest.schemaVersion == StaticMapPresentationManifest.CurrentSchemaVersion &&
+                   string.Equals(
+                       manifest.operationMapId,
+                       StaticMapPresentationBaker.CurrentOperationMapId,
+                       StringComparison.Ordinal) &&
                    string.Equals(manifest.canonicalScenePath, MatchScenePath, StringComparison.Ordinal) &&
                    !string.IsNullOrWhiteSpace(manifest.canonicalSceneGuid) &&
                    IsHash128(manifest.canonicalSceneDependencyHash) &&
@@ -931,6 +935,7 @@ namespace Game.Editor
             {
                 asset = BuildObjectIdentity(manifest),
                 schemaVersion = manifest.SchemaVersion,
+                operationMapId = manifest.OperationMapId,
                 canonicalScenePath = manifest.CanonicalScenePath,
                 canonicalSceneGuid = AssetDatabase.AssetPathToGUID(manifest.CanonicalScenePath),
                 canonicalSceneDependencyHash = manifest.CanonicalSceneDependencyHash,
@@ -947,38 +952,10 @@ namespace Game.Editor
 
         private static string ComputeManifestContentHash(StaticMapPresentationManifest manifest)
         {
-            var builder = new StringBuilder(256 + manifest.Sources.Count * 72);
-            builder.Append(manifest.SchemaVersion).Append('|');
-            builder.Append(manifest.ChunkSize.ToString("R", CultureInfo.InvariantCulture));
-            for (int i = 0; i < manifest.Chunks.Count; i++)
-            {
-                StaticMapPresentationChunkEntry chunk = manifest.Chunks[i];
-                builder.Append('|').Append(chunk.ChunkId).Append('|').Append(chunk.ScenePath);
-                AppendBounds(builder, chunk.WorldBounds);
-            }
-
-            for (int i = 0; i < manifest.Sources.Count; i++)
-            {
-                StaticMapPresentationSourceEntry source = manifest.Sources[i];
-                builder.Append('|').Append(source.SourceGlobalObjectId);
-                builder.Append('|').Append(source.SourceDependencyHash);
-                builder.Append('|').Append(source.ChunkId);
-            }
-
-            return Hash128.Compute(builder.ToString()).ToString();
-        }
-
-        private static void AppendBounds(StringBuilder builder, Bounds bounds)
-        {
-            Vector3 center = bounds.center;
-            Vector3 size = bounds.size;
-            builder.Append('|')
-                .Append(center.x.ToString("R", CultureInfo.InvariantCulture)).Append(',')
-                .Append(center.y.ToString("R", CultureInfo.InvariantCulture)).Append(',')
-                .Append(center.z.ToString("R", CultureInfo.InvariantCulture)).Append(',')
-                .Append(size.x.ToString("R", CultureInfo.InvariantCulture)).Append(',')
-                .Append(size.y.ToString("R", CultureInfo.InvariantCulture)).Append(',')
-                .Append(size.z.ToString("R", CultureInfo.InvariantCulture));
+            return StaticMapPresentationBaker.ComputeContentHash(
+                manifest.ChunkSize,
+                manifest.Chunks,
+                manifest.Sources);
         }
 
         private static GeneratedOutputsReport BuildGeneratedOutputsReport(
@@ -1751,6 +1728,7 @@ namespace Game.Editor
         {
             public ObjectIdentityReport asset;
             public int schemaVersion;
+            public string operationMapId;
             public string canonicalScenePath;
             public string canonicalSceneGuid;
             public string canonicalSceneDependencyHash;

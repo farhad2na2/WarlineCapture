@@ -735,11 +735,11 @@ namespace Game.Editor
                 [MatchSubScenePath] =
                     "bcc255f3fb140a0d91687b45b679b47fb60f01f5cfa8690bac3032ec642dadd8",
                 [MatchSceneViewSourcePath] =
-                    "d2c28e5eb39fd9d4694d79173b684f710237b434eb5b6605959790c85af48a0b",
+                    "1cfaf1b472523aa4af608ac7eac0fb4ce89cacec97ddbda7d4e3ccf65cd03847",
                 [BaselineEvidencePath] =
                     "d4d4674850766c5cd95e1bb5fbb6f26893e0bb019dbaf266a0c9897a3befc807",
                 [TrackerPath] =
-                    "b11e46c49fca2fe50483236921f9a496607c65dee056cd493e16023d718388ec"
+                    "d7708240b0c303123a63b173464f285dd4388d4b49d96743dc631dcccabb183a"
             };
         }
 
@@ -952,7 +952,7 @@ namespace Game.Editor
                 ["runtimeGridBlockerConfig"] = new[] { "Assets/Game/Configs/Scene/Game_RuntimeGridBlocker_Config.asset|guid:b2010000000000000000000000000008|localId:11400000|type:Game.Configs.RuntimeGridBlockerSystemSceneConfigAsset" },
                 ["runtimeGridConfig"] = new[] { "Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset|guid:b201000000000000000000000000000b|localId:11400000|type:Game.Configs.GridAuthoringSceneConfigAsset" },
                 ["runtimeGridDebugViews"] = Array.Empty<string>(),
-                ["staticMapPresentationManifest"] = new[] { "Assets/Game/GeneratedStaticMapPresentation/StaticMapPresentationManifest.asset|guid:2d7b3d165106141ba81b98138bb8fa7f|localId:11400000|type:Game.Rendering.StaticMapPresentationManifest" },
+                ["staticMapPresentationManifest"] = new[] { "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/StaticMapPresentationManifest.asset|guid:2d7b3d165106141ba81b98138bb8fa7f|localId:11400000|type:Game.Rendering.StaticMapPresentationManifest" },
                 ["unitAttackTraceConfig"] = new[] { "Assets/Game/Configs/Scene/Game_UnitAttackTrace_Config.asset|guid:b2010000000000000000000000000005|localId:11400000|type:Game.Configs.UnitAttackTraceSystemSceneConfigAsset" },
                 ["visualQualityProfile"] = new[] { "Assets/Game/Rendering/VisualQualityConfig.asset|guid:d9e06dd77d8b4533a0efb56ed3e14cbb|localId:11400000|type:Game.Configs.VisualQualityProfileAsset" },
                 ["worldCamera"] = new[] { "Assets/Game/Scenes/Match.unity::Main Camera[5]|type:UnityEngine.Camera" }

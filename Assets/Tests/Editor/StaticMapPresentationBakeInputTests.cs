@@ -13,13 +13,15 @@ public sealed class StaticMapPresentationBakeInputTests
             tests.CurrentCompatibilityInputValidates();
             tests.SceneOutputFolderIsDerivedFromOwnedRoot();
             tests.EmptyOperationMapIdFails();
+            tests.OperationMapIdDerivesUniqueOutputRoot();
+            tests.OutputRootMustMatchOperationMapId();
             tests.InvalidSourceSceneOrRootFails();
             tests.OutputFilesOutsideOwnedRootFail();
             tests.InvalidOutputExtensionsFail();
             tests.InvalidChunkSizesFail();
             tests.CurrentCompatibilityFactoryMatchesLegacyConstants();
             tests.CompatibilityValidationRejectsAlternateOwnership();
-            Debug.Log("[StaticMapPresentationBakeInputValidation] result=Passed tests=9");
+            Debug.Log("[StaticMapPresentationBakeInputValidation] result=Passed tests=11");
         }
         catch (Exception exception)
         {
@@ -44,7 +46,8 @@ public sealed class StaticMapPresentationBakeInputTests
     {
         Assert.That(
             CurrentInput().SceneOutputFolder,
-            Is.EqualTo("Assets/Game/GeneratedStaticMapPresentation/Scenes"));
+            Is.EqualTo(
+                "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes"));
     }
 
     [Test]
@@ -52,6 +55,32 @@ public sealed class StaticMapPresentationBakeInputTests
     {
         AssertInvalid(Create(operationMapId: string.Empty));
         AssertInvalid(Create(operationMapId: new string('x', 65)));
+    }
+
+    [Test]
+    public void OperationMapIdDerivesUniqueOutputRoot()
+    {
+        Assert.That(StaticMapPresentationOutputPathContract.TryResolveOutputRoot(
+            "opmap.skirmish.desert_base_01",
+            out string firstRoot,
+            out string firstError), Is.True, firstError);
+        Assert.That(StaticMapPresentationOutputPathContract.TryResolveOutputRoot(
+            "opmap.ch01.district-edge_01",
+            out string secondRoot,
+            out string secondError), Is.True, secondError);
+        Assert.That(firstRoot, Is.EqualTo(StaticMapPresentationBaker.OutputRoot));
+        Assert.That(secondRoot, Is.EqualTo(
+            "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/ch01/district-edge_01"));
+        Assert.That(secondRoot, Is.Not.EqualTo(firstRoot));
+    }
+
+    [Test]
+    public void OutputRootMustMatchOperationMapId()
+    {
+        AssertInvalid(Create(outputRoot:
+            "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/test/wrong"));
+        AssertInvalid(Create(operationMapId: "opmap.skirmish/escape.invalid"));
+        AssertInvalid(Create(operationMapId: "opmap.Skirmish.invalid"));
     }
 
     [Test]
@@ -73,8 +102,8 @@ public sealed class StaticMapPresentationBakeInputTests
     [Test]
     public void InvalidOutputExtensionsFail()
     {
-        AssertInvalid(Create(manifestPath: "Assets/Game/GeneratedStaticMapPresentation/Manifest.json"));
-        AssertInvalid(Create(integrityPath: "Assets/Game/GeneratedStaticMapPresentation/Integrity.asset"));
+        AssertInvalid(Create(manifestPath: StaticMapPresentationBaker.OutputRoot + "/Manifest.json"));
+        AssertInvalid(Create(integrityPath: StaticMapPresentationBaker.OutputRoot + "/Integrity.asset"));
     }
 
     [Test]
@@ -106,9 +135,11 @@ public sealed class StaticMapPresentationBakeInputTests
         StaticMapPresentationBakeInput alternate = Create(
             operationMapId: "opmap.test.alternate",
             sourceScenePath: "Assets/Game/Scenes/OperationMaps/Test.unity",
-            outputRoot: "Assets/Game/GeneratedStaticMapPresentation/Test",
-            manifestPath: "Assets/Game/GeneratedStaticMapPresentation/Test/Manifest.asset",
-            integrityPath: "Assets/Game/GeneratedStaticMapPresentation/Test/Integrity.json");
+            outputRoot: "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/test/alternate",
+            manifestPath:
+                "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/test/alternate/Manifest.asset",
+            integrityPath:
+                "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/test/alternate/Integrity.json");
 
         Assert.That(alternate.TryValidate(out string error), Is.True, error);
         Assert.Throws<InvalidOperationException>(() =>
@@ -124,9 +155,10 @@ public sealed class StaticMapPresentationBakeInputTests
         string operationMapId = "opmap.skirmish.desert_base_01",
         string sourceScenePath = "Assets/Game/Scenes/Match.unity",
         string sourceMapRootPath = "Map",
-        string outputRoot = "Assets/Game/GeneratedStaticMapPresentation",
-        string manifestPath = "Assets/Game/GeneratedStaticMapPresentation/StaticMapPresentationManifest.asset",
-        string integrityPath = "Assets/Game/GeneratedStaticMapPresentation/StaticMapPresentationSceneIntegrity.json",
+        string outputRoot = StaticMapPresentationBaker.OutputRoot,
+        string manifestPath = StaticMapPresentationBaker.ManifestPath,
+        string integrityPath = StaticMapPresentationBaker.OutputRoot +
+            "/StaticMapPresentationSceneIntegrity.json",
         float chunkSize = 32f)
     {
         return new StaticMapPresentationBakeInput(

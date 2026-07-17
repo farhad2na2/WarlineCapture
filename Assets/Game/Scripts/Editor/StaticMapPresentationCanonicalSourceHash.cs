@@ -43,7 +43,7 @@ namespace Game.Editor
 
         internal static bool IsGeneratedOutputPath(string assetPath)
         {
-            return !string.IsNullOrWhiteSpace(assetPath) &&
+            return IsNormalizedAssetPath(assetPath) &&
                    (string.Equals(
                         assetPath,
                         StaticMapPresentationOutputPathContract.GeneratedRoot,
@@ -51,6 +51,14 @@ namespace Game.Editor
                     assetPath.StartsWith(
                         StaticMapPresentationOutputPathContract.GeneratedRoot + "/",
                         StringComparison.Ordinal));
+        }
+
+        private static bool IsNormalizedAssetPath(string assetPath)
+        {
+            return !string.IsNullOrWhiteSpace(assetPath) &&
+                   assetPath.IndexOf('\\') < 0 &&
+                   assetPath.IndexOf("//", StringComparison.Ordinal) < 0 &&
+                   !assetPath.Split('/').Any(segment => string.Equals(segment, "..", StringComparison.Ordinal));
         }
 
         internal static string[] TraverseSourceDependencyGraph(

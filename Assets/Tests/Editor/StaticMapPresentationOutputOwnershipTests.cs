@@ -543,32 +543,38 @@ public sealed class StaticMapPresentationOutputOwnershipTests
         string root = Path.Combine(Path.GetTempPath(), "WarlineCapture-Aph604-Canonical-" + Guid.NewGuid().ToString("N"));
         const string sourcePath = "Assets/Game/Scenes/Match.unity";
         string generatedPath = SceneA;
+        string alternateGeneratedPath = AlternateSceneA;
         string sourceFile = Path.Combine(root, "source.unity");
         string generatedFile = Path.Combine(root, "generated.unity");
+        string alternateGeneratedFile = Path.Combine(root, "alternate-generated.unity");
         try
         {
             WriteFile(sourceFile, "source-v1");
             WriteFile(sourceFile + ".meta", "source-meta");
             WriteFile(generatedFile, "generated-v1");
             WriteFile(generatedFile + ".meta", "generated-meta");
+            WriteFile(alternateGeneratedFile, "alternate-generated-v1");
+            WriteFile(alternateGeneratedFile + ".meta", "alternate-generated-meta");
             Dictionary<string, string> physicalPaths = new(StringComparer.Ordinal)
             {
                 [sourcePath] = sourceFile,
-                [generatedPath] = generatedFile
+                [generatedPath] = generatedFile,
+                [alternateGeneratedPath] = alternateGeneratedFile
             };
 
             string initialHash = StaticMapPresentationCanonicalSourceHash.ComputeDirectDependencySetHash(
-                new[] { sourcePath, generatedPath },
+                new[] { sourcePath, generatedPath, alternateGeneratedPath },
                 path => physicalPaths[path],
                 _ => throw new AssertionException("Physical test assets must not use fallback identity."));
             WriteFile(generatedFile, "generated-v2");
+            WriteFile(alternateGeneratedFile, "alternate-generated-v2");
             string generatedChangedHash = StaticMapPresentationCanonicalSourceHash.ComputeDirectDependencySetHash(
-                new[] { generatedPath, sourcePath },
+                new[] { alternateGeneratedPath, generatedPath, sourcePath },
                 path => physicalPaths[path],
                 _ => throw new AssertionException("Physical test assets must not use fallback identity."));
             WriteFile(sourceFile, "source-v2");
             string sourceChangedHash = StaticMapPresentationCanonicalSourceHash.ComputeDirectDependencySetHash(
-                new[] { sourcePath, generatedPath },
+                new[] { sourcePath, alternateGeneratedPath, generatedPath },
                 path => physicalPaths[path],
                 _ => throw new AssertionException("Physical test assets must not use fallback identity."));
 
@@ -748,9 +754,15 @@ public sealed class StaticMapPresentationOutputOwnershipTests
     }
 
     [TestCase("Assets/Game/GeneratedStaticMapPresentation", true)]
+    [TestCase("Assets/Game/GeneratedStaticMapPresentation/OperationMaps", true)]
     [TestCase("Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/StaticMapPresentationManifest.asset", true)]
     [TestCase("Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p000_p000.unity", true)]
+    [TestCase("Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/test/alternate/StaticMapPresentationSceneIntegrity.json", true)]
+    [TestCase("Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/test/alternate/Scenes/StaticMapPresentation_opmap_test_alternate_chunk_p000_p000.unity", true)]
+    [TestCase("Assets/Game/GeneratedStaticMapPresentation/OperationMapsSibling/opmap/test/alternate.asset", true)]
     [TestCase("Assets/Game/GeneratedStaticMapPresentationSibling/asset.asset", false)]
+    [TestCase("Assets/Game/GeneratedStaticMapPresentation/OperationMaps/../Source.asset", false)]
+    [TestCase("Assets\\Game\\GeneratedStaticMapPresentation\\OperationMaps\\opmap\\test\\alternate.asset", false)]
     [TestCase("Assets/Game/Scenes/Match.unity", false)]
     public void CanonicalSourceHash_ExcludesOnlyGeneratedPresentationOutput(string path, bool expected)
     {

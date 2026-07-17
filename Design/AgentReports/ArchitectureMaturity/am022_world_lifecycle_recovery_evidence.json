@@ -48,8 +48,39 @@
       }
     }
   },
+  "playModeRecoverySlice": {
+    "testFile": {
+      "path": "Assets/Tests/PlayMode/WorldSceneLifecycleRecoveryPlayModeTests.cs",
+      "sha256": "258da89ec29510494bfbe640fb92d548b8eb31bd56fbdac2d65c932d8695b44f"
+    },
+    "metaFile": {
+      "path": "Assets/Tests/PlayMode/WorldSceneLifecycleRecoveryPlayModeTests.cs.meta",
+      "sha256": "ec4e8e8ecc838fd1b4f28992486ed17cb15b50c573c87fe7ed3e2e5d401a4f09"
+    },
+    "caseFamiliesCovered": [
+      "production Menu to Match to Menu lifecycle-root uniqueness and Match dependency teardown",
+      "scene-owned missile presentation root destruction on unload",
+      "idempotent static presentation release",
+      "RuntimeLogBuffer subsystem reset, zero retained entries, and one rebind",
+      "replacement scene creates exactly one replacement presentation root"
+    ],
+    "validation": {
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "durationSeconds": 14.1283987,
+      "compilerErrors": 0,
+      "log": {
+        "path": "Design/AgentReports/ArchitectureMaturity/Logs/am022_playmode_recovery.log.gz",
+        "sha256": "51e39d974cb4bffc6a0f901761528f2e3fced43f5f638ae18726b6788fa1479c"
+      },
+      "results": {
+        "path": "Design/AgentReports/ArchitectureMaturity/Logs/am022_playmode_recovery.xml.gz",
+        "sha256": "4f69e61a944fa85f3482425ee8a484054740b3113597eb9bbeaf8816283b9e00"
+      }
+    }
+  },
   "remainingSlices": [
-    "bounded scene/root/subscription PlayMode recovery integration",
     "180 warmup plus 300 measured recovered-path zero-allocation proof and final integrated acceptance"
   ],
   "scope": {

@@ -114,11 +114,11 @@ Release-only categories are reported separately and never averaged into a premat
 | Release Certification Lane | `0 / 18` (`0.0%`); deferred |
 | Program state | Core Architecture Lane active; Phase 1 accepted; Phase 2 persistent-resource ownership accepted; AM-022 lifecycle recovery is dependency-ready; audit-only AM-026 accepted in parallel; release work inactive |
 | Current phase | Phase 2 - World Lifecycle And Dependency Hardening |
-| Current task | `AM-022` in progress; Editor recovery matrix slice passes `7 / 7`; scene/root PlayMode recovery and recovered-path allocation proof remain |
+| Current task | `AM-022` in progress; Editor recovery matrix passes `7 / 7` and PlayMode recovery passes `2 / 2`; recovered-path allocation proof and final acceptance remain |
 | Parallel preparatory work | Audit-only `AM-026` is accepted with 29 surfaces and `AM-WP-001` through `AM-WP-023`; production tasks `AM-027` through `AM-035` remain gated. `AM-WP-007` is additionally blocked on mission/objective owner handoff and `AM-WP-009` preserves audio/FirstLaunch consumers as read-only dependencies. `AM-WP-024` through `AM-WP-027` define AM-022 through AM-025; AM-WP-024 is now dispatchable |
 | Blockers | Source-growth is externally blocked by four separately owned FirstLaunch `*SystemHelper` paths, and integrated architecture CI is externally blocked by `FirstLaunchLanguageChoiceView`; final broad-contract acceptance also remains gated by separately owned operation-map, FirstLaunch/UI, and package-bound violations. Release-only certification remains intentionally deferred |
-| Latest validation | AM-022 Editor recovery matrix `7 / 7`, Unity compiler errors `0`, and `git diff --check` passed. It binds the zero-gap AM-021 authority and covers World/cache/gateway rebind, singleton recovery, command replacement, reset, system identity, and integrated Editor recovery |
-| Latest evidence | `am022_world_lifecycle_recovery_evidence.json` binds the first AM-WP-024 slice, test source/meta, compressed Unity log/results, and remaining PlayMode/allocation work |
+| Latest validation | AM-022 Editor recovery matrix `7 / 7` and PlayMode scene/root/subscription recovery `2 / 2` pass with Unity compiler errors `0`; the production Menu -> Match -> Menu case completes in the bounded PlayMode fixture. `git diff --check` passed |
+| Latest evidence | `am022_world_lifecycle_recovery_evidence.json` binds both AM-WP-024 test slices, source/meta identities, compressed Unity logs/results, and the remaining recovered-path allocation/final-acceptance slice |
 | Core entry baseline | Phase 0 accepted by `AM-001` through `AM-008`; exact-identity assembly and bounded Editor Match evidence are current at `9a0aa14252e6559680328e520d26c16bfc7b444e`; the dashboard required gate is accepted; the entry rating and owned deltas are published in `entry_baseline_report.md` |
 | Release entry review | Deferred until `pre_release_performance_certification_backlog.md` activates |
 | Architecture rating | Evidence-backed Phase 0 entry rating `8.5 / 10`; planning baseline only, not a `9.5` claim |
@@ -237,7 +237,7 @@ Make runtime dependencies explicit and prove that caches and native resources ca
 - [x] `AM-019` Define one standard World-bound query/entity cache contract covering positive lookup, negative lookup, invalidation, rebind, disposal, and destroyed-entity recovery.
 - [x] `AM-020` Move mutable runtime state that crosses World lifecycles into explicit World-owned systems, components, or lifecycle containers where practical.
 - [x] `AM-021` Give every persistent native container, query, event subscription, and presentation root an explicit creation and disposal owner.
-- [~] `AM-022` Add tests for World destruction/recreation, domain reload, scene unload/reload, missing singleton recovery, and replaced command entities. Active package: `Design/Architecture/WorkPackages/am_wp_024_world_lifecycle_recovery_matrix.md`; Editor recovery matrix passes `7 / 7`, with PlayMode scene/root recovery and recovered-path allocation proof remaining.
+- [~] `AM-022` Add tests for World destruction/recreation, domain reload, scene unload/reload, missing singleton recovery, and replaced command entities. Active package: `Design/Architecture/WorkPackages/am_wp_024_world_lifecycle_recovery_matrix.md`; Editor recovery matrix passes `7 / 7` and PlayMode recovery passes `2 / 2`, with recovered-path allocation proof and final acceptance remaining.
 - [ ] `AM-023` Run at least 100 automated Menu-to-Match-to-Menu cycles without duplicate systems, stale entities, retained subscriptions, or presentation-root accumulation. Draft package: `Design/Architecture/WorkPackages/am_wp_025_menu_match_lifecycle_stress.md` (blocked on `AM-021` and `AM-022`).
 - [ ] `AM-024` Add native allocation and pool-count snapshots around lifecycle stress tests and prove no upward retained-memory trend after warmup. Draft package: `Design/Architecture/WorkPackages/am_wp_026_lifecycle_memory_pool_trend.md` (blocked on `AM-021` through `AM-023`).
 - [ ] `AM-025` Run the full architecture, lifecycle, compiler, and focused allocation suites and publish the Phase 2 ownership delta. Draft package: `Design/Architecture/WorkPackages/am_wp_027_phase2_exit_acceptance.md` (blocked on `AM-021` through `AM-024`).
@@ -829,3 +829,12 @@ Accepted AM-020 progress snapshot:
 - Recovery result: seven tests cover World/cache/gateway replacement, missing/destroyed/component-removed/duplicate singletons, Road and Building Placement command replacement, buffer repair, monotonic placement transaction identity, subsystem reset, exact system-handle reuse, and an integrated Editor recovery sequence.
 - Validation: Unity 6000.5.2f1 passed `7 / 7` with zero compiler errors; `git diff --check` passed. Compressed log and NUnit XML are hash-bound in `am022_world_lifecycle_recovery_evidence.json`.
 - Remaining: bounded scene/root/subscription PlayMode recovery, then `180 + 300` recovered-path zero-allocation proof and final integrated acceptance. AM-023 remains gated.
+
+### 2026-07-17 - AM-022 - PlayMode scene/root/subscription recovery slice
+
+- Scope: added only the allowlisted `WorldSceneLifecycleRecoveryPlayModeTests` fixture and its `.meta`; production scenes and protected source remain read-only.
+- Production transition result: the existing APH-805 Menu -> Match -> Menu lifecycle behavior runs inside the AM-022 fixture and proves one lifecycle root, operation-map teardown, destroyed Match view, cleared Match dependencies, and removed Match HUD content.
+- Scene/root result: unloading a temporary runtime scene destroys its scene-owned missile presentation root; repeated release clears static ownership; a replacement scene creates exactly one replacement root.
+- Subscription result: repeated RuntimeLogBuffer subsystem reset clears initialization and retained entries; repeated initialization rebinds one process owner without stale retained state.
+- Validation: Unity 6000.5.2f1 PlayMode passed `2 / 2` in `14.1283987` seconds with zero compiler errors; `git diff --check` passed. Compressed log and NUnit XML are hash-bound in the AM-022 evidence.
+- Remaining: `180 + 300` recovered-path zero-allocation proof, integrated architecture validation, and final AM-022 acceptance. AM-023 remains gated.

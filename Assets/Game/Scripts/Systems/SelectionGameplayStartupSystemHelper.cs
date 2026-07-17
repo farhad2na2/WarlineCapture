@@ -15,9 +15,9 @@ using SelectionAllocationProbeScope = Game.Runtime.SelectionRuntimeDiagnosticsSy
 
 namespace Game.Runtime
 {
-    internal sealed class SelectionGameplayStartupSystemHelper
+    internal sealed partial class SelectionGameplayStartupSystemHelper
     {
-        private const double SelectionUiRefreshIntervalSeconds = 0.1d;
+        const double SelectionUiRefreshIntervalSeconds = 0.1d;
         private static readonly ProfilerMarker SelectionCommandFlushMarker = new("GameplayRuntimeUpdate.Selection.CommandFlush");
         private static readonly ProfilerMarker SelectionInputMarker = new("GameplayRuntimeUpdate.Selection.Input");
         private static readonly ProfilerMarker SelectionFocusedReadModelMarker = new("GameplayRuntimeUpdate.Selection.FocusedReadModel");
@@ -210,7 +210,11 @@ namespace Game.Runtime
                 BindSelectionMainMenu,
                 BindMatchHudSelectionPanel,
                 UpdateSelectionRuntimePhases,
-                selectionOrderMarkerSystem.Dispose,
+                CreateDisposeAction(
+                    rtsSelectionRuntimeCameraSystem,
+                    selectionUiCamera,
+                    tacticalFollowCameraModeSystem,
+                    selectionOrderMarkerSystem),
                 selectionUiCommand,
                 selectionUiReadModel,
                 selectionUiCamera,
@@ -1603,11 +1607,6 @@ namespace Game.Runtime
             return world != null && world.IsCreated
                 ? world.GetOrCreateSystemManaged<RtsCameraSystem>()
                 : null;
-        }
-
-        private static RtsSelectionRuntimeCameraSystemHelper ResolveRtsSelectionRuntimeCameraSystemHelper()
-        {
-            return new RtsSelectionRuntimeCameraSystemHelper();
         }
 
         private static SelectionRuntimeDiagnosticsSystemHelper ResolveSelectionRuntimeDiagnosticsSystem()

@@ -9,7 +9,7 @@ using Game.Components;
 
 namespace Game.Runtime
 {
-    public sealed class TacticalFollowCameraModeSystemHelper
+    public sealed partial class TacticalFollowCameraModeSystemHelper
     {
         private const float SingleUnitRadius = 2f;
         private const float MinGroupRadius = 3f;
@@ -43,7 +43,7 @@ namespace Game.Runtime
         private const float MissileImpactRadius = 3f;
         private const float MissileImpactDesiredDistance = 14f;
         private const float MissileImpactDesiredHeight = 6f;
-        private static readonly Unity.Mathematics.float3 BuildingForwardHint =
+        static readonly Unity.Mathematics.float3 BuildingForwardHint =
             math.normalize(new Unity.Mathematics.float3(0.55f, 0f, 0.83f));
 
         private World _singletonQueryWorld;
@@ -1535,22 +1535,6 @@ namespace Game.Runtime
                 ReasonCode = (int)TacticalCommandReasonCode.NoSelection
             });
             return entity;
-        }
-
-        private void EnsureSingletonQueries(EntityManager em)
-        {
-            World world = em.World;
-            if (_singletonQueryWorld == world && world != null && world.IsCreated)
-                return;
-
-            _singletonQueryWorld = world;
-            _targetQuery = em.CreateEntityQuery(ComponentType.ReadWrite<TacticalFollowCameraTargetComponent>());
-            _poseQuery = em.CreateEntityQuery(ComponentType.ReadWrite<TacticalFollowCameraPoseComponent>());
-            _requestQueueQuery = em.CreateEntityQuery(
-                ComponentType.ReadWrite<TacticalFollowCameraRequestQueueComponent>(),
-                ComponentType.ReadWrite<TacticalFollowCameraRequestElement>());
-            _modeQuery = em.CreateEntityQuery(ComponentType.ReadWrite<TacticalFollowCameraModeComponent>());
-            _uiReadModelQuery = em.CreateEntityQuery(ComponentType.ReadWrite<TacticalFollowCameraUiReadModelComponent>());
         }
 
         private static bool IsModeRequest(TacticalFollowCameraRequestKind kind)

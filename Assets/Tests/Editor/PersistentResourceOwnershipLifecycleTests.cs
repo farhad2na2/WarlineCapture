@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using Game.Components;
+using Game.Runtime;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
 using Game.UI.Shell.Contracts.Ecs;
@@ -84,6 +85,87 @@ public sealed class PersistentResourceOwnershipLifecycleTests
         }
     }
 
+    [Test]
+    public void TacticalFollowQueryCache_DisposeIsIdempotentAndRejectsReuse()
+    {
+        using World world = new(nameof(TacticalFollowQueryCache_DisposeIsIdempotentAndRejectsReuse));
+        var cache = new TacticalFollowCameraStateQueryCache();
+
+        Assert.IsFalse(cache.HasValidPose(world.EntityManager));
+        cache.Dispose();
+        cache.Dispose();
+
+        Assert.Throws<ObjectDisposedException>(() => cache.HasValidPose(world.EntityManager));
+    }
+
+    [Test]
+    public void SelectionShutdown_DisposesEveryTacticalFollowQueryOwner()
+    {
+        using World world = new(nameof(SelectionShutdown_DisposesEveryTacticalFollowQueryOwner));
+        var runtimeCamera = new RtsSelectionRuntimeCameraSystemHelper();
+        var selectionCamera = new SelectionUiCameraSystemHelper(null, null);
+        var tacticalMode = new TacticalFollowCameraModeSystemHelper();
+        TacticalFollowCameraStateQueryCache runtimeCache = ReadCache(
+            runtimeCamera,
+            "_tacticalFollowStateQueries");
+        TacticalFollowCameraStateQueryCache selectionCache = ReadCache(
+            selectionCamera,
+            "_tacticalFollowCameraStateQueryCache");
+        TacticalFollowCameraStateQueryCache modeCache = ReadCache(
+            tacticalMode,
+            "_stateQueryCache");
+
+        Assert.IsFalse(runtimeCache.HasValidPose(world.EntityManager));
+        Assert.IsFalse(selectionCache.HasValidPose(world.EntityManager));
+        Assert.IsFalse(modeCache.HasValidPose(world.EntityManager));
+
+        MethodInfo createDisposeAction = typeof(SelectionGameplayStartupSystemHelper).GetMethod(
+            "CreateDisposeAction",
+            BindingFlags.Static | BindingFlags.NonPublic);
+        Assert.IsNotNull(createDisposeAction);
+        var dispose = (Action)createDisposeAction.Invoke(
+            null,
+            new object[]
+            {
+                runtimeCamera,
+                selectionCamera,
+                tacticalMode,
+                new SelectionOrderMarkerPresentationSystemHelper()
+            });
+        dispose.Invoke();
+        dispose.Invoke();
+
+        Assert.Throws<ObjectDisposedException>(() => runtimeCache.HasValidPose(world.EntityManager));
+        Assert.Throws<ObjectDisposedException>(() => selectionCache.HasValidPose(world.EntityManager));
+        Assert.Throws<ObjectDisposedException>(() => modeCache.HasValidPose(world.EntityManager));
+    }
+
+    [Test]
+    public void BuildingGameplayShutdown_DisposesResourceQueryCaches()
+    {
+        using World world = new(nameof(BuildingGameplayShutdown_DisposesResourceQueryCaches));
+        var source = new BuildingGameplaySourceCompositionSystemHelper();
+        FactionResourceCompositionSystemHelper factionResources = source.FactionResourceCompositionSystemHelper;
+        BuildingResourceHaulerBridgeCompositionSystemHelper resourceHaulers =
+            source.BuildingResourceHaulerBridgeCompositionSystemHelper;
+        WorldScopedComponentQueryCache<BuildingResourceStorageComponent> storageCache = ReadCache<BuildingResourceStorageComponent>(
+            factionResources,
+            "_storageQueryCache");
+        WorldScopedComponentQueryCache<UnitMoveOrderQueueComponent> moveOrderCache = ReadCache<UnitMoveOrderQueueComponent>(
+            resourceHaulers,
+            "_moveOrderQueueQueryCache");
+
+        storageCache.Get(world.EntityManager);
+        moveOrderCache.Get(world.EntityManager);
+
+        new BuildingGameplayDisposalCompositionSystemHelper()
+            .CreateDisposeAction(source, () => default)
+            .Invoke();
+
+        Assert.Throws<ObjectDisposedException>(() => storageCache.Get(world.EntityManager));
+        Assert.Throws<ObjectDisposedException>(() => moveOrderCache.Get(world.EntityManager));
+    }
+
     private static void CreateShellBoundary(World world, UIRoute route)
     {
         Entity entity = world.EntityManager.CreateEntity(
@@ -95,5 +177,20 @@ public sealed class PersistentResourceOwnershipLifecycleTests
             CurrentMode = route == UIRoute.Match ? UiShellMode.MatchHud : UiShellMode.MainMenu,
             Phase = route == UIRoute.Match ? UiShellTransitionPhase.MatchHudReady : UiShellTransitionPhase.MenuReady
         });
+    }
+
+    private static TacticalFollowCameraStateQueryCache ReadCache(object owner, string fieldName)
+    {
+        FieldInfo field = owner.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.IsNotNull(field, $"Missing query-cache owner field {owner.GetType().Name}.{fieldName}.");
+        return (TacticalFollowCameraStateQueryCache)field.GetValue(owner);
+    }
+
+    private static WorldScopedComponentQueryCache<T> ReadCache<T>(object owner, string fieldName)
+        where T : unmanaged, IComponentData
+    {
+        FieldInfo field = owner.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.IsNotNull(field, $"Missing query-cache owner field {owner.GetType().Name}.{fieldName}.");
+        return (WorldScopedComponentQueryCache<T>)field.GetValue(owner);
     }
 }

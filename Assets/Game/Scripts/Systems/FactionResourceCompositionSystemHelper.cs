@@ -5,9 +5,9 @@ using UnityEngine;
 
 namespace Game.Runtime
 {
-    public sealed class FactionResourceCompositionSystemHelper
+    public sealed partial class FactionResourceCompositionSystemHelper
     {
-        private readonly WorldScopedComponentQueryCache<BuildingResourceStorageComponent> _storageQueryCache = new(readOnly: false);
+        readonly WorldScopedComponentQueryCache<BuildingResourceStorageComponent> _storageQueryCache = new(readOnly: false);
 
         public readonly struct ResourceEconomySnapshot
         {

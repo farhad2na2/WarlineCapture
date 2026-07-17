@@ -8,9 +8,9 @@ using RoutePolicy = Game.Runtime.ResourceHaulerAutomaticRoutePolicySystemHelper;
 
 namespace Game.Runtime
 {
-    internal sealed class BuildingResourceHaulerBridgeCompositionSystemHelper
+    internal sealed partial class BuildingResourceHaulerBridgeCompositionSystemHelper
     {
-        private static readonly bool VerboseResourceHaulerLogs = false;
+        static readonly bool VerboseResourceHaulerLogs = false;
         private static readonly FixedString64Bytes TrayTruckSourceKey = new("Unit_Veh_Truck_Tray");
         private static readonly FixedString64Bytes TankerTruckSourceKey = new("Unit_Veh_Truck_Tanker");
         private const float AutomaticAssignmentStableRefreshSeconds = 2f;

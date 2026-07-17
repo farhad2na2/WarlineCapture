@@ -6,9 +6,9 @@ using Game.Configs;
 
 namespace Game.Runtime
 {
-    public sealed class SelectionUiCameraSystemHelper
+    public sealed partial class SelectionUiCameraSystemHelper
     {
-        private enum MatchHudZoomLevel
+        enum MatchHudZoomLevel
         {
             ZoomedOut,
             Default,

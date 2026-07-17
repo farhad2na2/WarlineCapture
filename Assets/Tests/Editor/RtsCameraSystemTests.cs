@@ -462,6 +462,7 @@ public sealed class RtsCameraSystemTests
         }
         finally
         {
+            cache.Dispose();
             if (firstWorld.IsCreated)
                 firstWorld.Dispose();
             if (secondWorld.IsCreated)

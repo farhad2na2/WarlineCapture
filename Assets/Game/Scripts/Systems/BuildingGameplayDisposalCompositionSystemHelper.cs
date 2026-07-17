@@ -2,15 +2,8 @@ using System;
 
 namespace Game.Runtime
 {
-    internal sealed class BuildingGameplayDisposalCompositionSystemHelper
+    internal sealed partial class BuildingGameplayDisposalCompositionSystemHelper
     {
-        public Action CreateDisposeAction(
-            BuildingGameplaySourceCompositionSystemHelper source,
-            Func<BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext)
-        {
-            return () => source.BuildingGameplayDisposalExecutionCompositionSystemHelper.Dispose(CreateSource(source, createPlacementCommandContext));
-        }
-
         public BuildingGameplayDisposalExecutionCompositionSystemHelper.Source CreateSource(
             BuildingGameplaySourceCompositionSystemHelper source,
             Func<BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext)
@@ -26,7 +19,7 @@ namespace Game.Runtime
                 () => ExitBuildModeWithoutEntityManager(createPlacementCommandContext()));
         }
 
-        private static void ExitBuildModeWithoutEntityManager(BuildingPlacementCommandRequestCompositionSystemHelper.Context context)
+        static void ExitBuildModeWithoutEntityManager(BuildingPlacementCommandRequestCompositionSystemHelper.Context context)
         {
             context.SessionSystem?.ExitBuildMode(context.SessionContext);
         }

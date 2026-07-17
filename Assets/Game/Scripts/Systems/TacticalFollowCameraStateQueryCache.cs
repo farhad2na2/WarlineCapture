@@ -1,16 +1,18 @@
+using System;
 using Unity.Entities;
 using Unity.Transforms;
 using Game.Components;
 
 namespace Game.Runtime
 {
-    internal sealed class TacticalFollowCameraStateQueryCache
+    internal sealed class TacticalFollowCameraStateQueryCache : IDisposable
     {
         private World _world;
         private EntityQuery _modeQuery;
         private EntityQuery _poseQuery;
         private EntityQuery _followableSelectedUnitQuery;
         private EntityQuery _focusedUnitReadModelQuery;
+        private bool _disposed;
 
         public bool IsPanInputLocked(EntityManager entityManager)
         {
@@ -58,10 +60,14 @@ namespace Game.Runtime
 
         private void EnsureQueries(EntityManager entityManager)
         {
+            if (_disposed)
+                throw new ObjectDisposedException(nameof(TacticalFollowCameraStateQueryCache));
+
             World world = entityManager.World;
             if (_world == world && world != null && world.IsCreated)
                 return;
 
+            ReleaseQueries();
             _world = world;
             _modeQuery = entityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<TacticalFollowCameraModeComponent>());
@@ -75,6 +81,32 @@ namespace Game.Runtime
                 ComponentType.Exclude<UnitTransportCargoPassenger>());
             _focusedUnitReadModelQuery = entityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<FocusedUnitUiReadModelComponent>());
+        }
+
+        public void Dispose()
+        {
+            if (_disposed)
+                return;
+
+            ReleaseQueries();
+            _disposed = true;
+        }
+
+        private void ReleaseQueries()
+        {
+            if (_world != null && _world.IsCreated)
+            {
+                _modeQuery.Dispose();
+                _poseQuery.Dispose();
+                _followableSelectedUnitQuery.Dispose();
+                _focusedUnitReadModelQuery.Dispose();
+            }
+
+            _world = null;
+            _modeQuery = default;
+            _poseQuery = default;
+            _followableSelectedUnitQuery = default;
+            _focusedUnitReadModelQuery = default;
         }
     }
 }

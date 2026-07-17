@@ -6,9 +6,9 @@ using Game.Components;
 
 namespace Game.Runtime
 {
-    public sealed class RtsSelectionRuntimeCameraSystemHelper
+    public sealed partial class RtsSelectionRuntimeCameraSystemHelper
     {
-        private const float MatchIntroZoomOutHeightOffset = 8f;
+        const float MatchIntroZoomOutHeightOffset = 8f;
         private const float MatchIntroFieldOfViewOffset = 5f;
         private const float MatchIntroSettleSmoothTime = 1.1f;
         private const float MatchIntroZoomEpsilon = 0.1f;

@@ -18,12 +18,20 @@ MonoBehaviour:
   - m_GUID: 55e36a8d7e7a84e2b9893cee052b0e61
     m_Address: operation-map/opmap.skirmish.desert_base_01/definition
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - operation-map
+    - operation-map-local
+    - operation-map-pack-skirmish-desert-base-01
+    - operation-map-role-definition
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5f8cd53e9416439f9974a805ef924db2
     m_Address: operation-map/catalog
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - operation-map
+    - operation-map-local
+    - operation-map-pack-skirmish-desert-base-01
+    - operation-map-role-metadata
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: d6786f5b1e1b3491ab7f1f020f1abc0a, type: 2}

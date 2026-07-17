@@ -15,7 +15,7 @@ MonoBehaviour:
   m_DefaultGroup: 5f2bb383e5f6d46a6835e133d0864f20
   m_currentHash:
     serializedVersion: 2
-    Hash: 39091fbedcb5804d59cf4ca2b251e9cb
+    Hash: 00000000000000000000000000000000
   m_ExtractTypeTreeData: 0
   m_DisableWriteTypeTree: 0
   m_OptimizeCatalogSize: 0
@@ -110,6 +110,113 @@ MonoBehaviour:
   m_LabelTable:
     m_LabelNames:
     - default
+    - operation-map
+    - operation-map-local
+    - operation-map-pack-skirmish-desert-base-01
+    - operation-map-role-metadata
+    - operation-map-role-definition
+    - operation-map-role-source-scene
+    - operation-map-role-presentation
+    - operation-map-partition-skirmish-desert-base-01-region-n010-p002
+    - operation-map-partition-skirmish-desert-base-01-region-n009-n001
+    - operation-map-partition-skirmish-desert-base-01-region-n009-p002
+    - operation-map-partition-skirmish-desert-base-01-region-n007-p002
+    - operation-map-partition-skirmish-desert-base-01-region-n007-p006
+    - operation-map-partition-skirmish-desert-base-01-region-n006-p002
+    - operation-map-partition-skirmish-desert-base-01-region-n005-p002
+    - operation-map-partition-skirmish-desert-base-01-region-n004-n003
+    - operation-map-partition-skirmish-desert-base-01-region-n004-p009
+    - operation-map-partition-skirmish-desert-base-01-region-n004-n001
+    - operation-map-partition-skirmish-desert-base-01-region-n004-p002
+    - operation-map-partition-skirmish-desert-base-01-region-n003-p003
+    - operation-map-partition-skirmish-desert-base-01-region-n003-p001
+    - operation-map-partition-skirmish-desert-base-01-region-n003-p000
+    - operation-map-partition-skirmish-desert-base-01-region-n003-p002
+    - operation-map-partition-skirmish-desert-base-01-region-n003-p004
+    - operation-map-partition-skirmish-desert-base-01-region-n002-p002
+    - operation-map-partition-skirmish-desert-base-01-region-n002-p006
+    - operation-map-partition-skirmish-desert-base-01-region-n002-n001
+    - operation-map-partition-skirmish-desert-base-01-region-n001-p002
+    - operation-map-partition-skirmish-desert-base-01-region-n001-p003
+    - operation-map-partition-skirmish-desert-base-01-region-n001-p004
+    - operation-map-partition-skirmish-desert-base-01-region-n001-p013
+    - operation-map-partition-skirmish-desert-base-01-region-p000-n010
+    - operation-map-partition-skirmish-desert-base-01-region-p000-p002
+    - operation-map-partition-skirmish-desert-base-01-region-p000-p003
+    - operation-map-partition-skirmish-desert-base-01-region-p000-n003
+    - operation-map-partition-skirmish-desert-base-01-region-p001-n002
+    - operation-map-partition-skirmish-desert-base-01-region-p001-p006
+    - operation-map-partition-skirmish-desert-base-01-region-p001-p002
+    - operation-map-partition-skirmish-desert-base-01-region-p001-p007
+    - operation-map-partition-skirmish-desert-base-01-region-p001-n006
+    - operation-map-partition-skirmish-desert-base-01-region-p002-p002
+    - operation-map-partition-skirmish-desert-base-01-region-p002-p004
+    - operation-map-partition-skirmish-desert-base-01-region-p002-p001
+    - operation-map-partition-skirmish-desert-base-01-region-p002-p003
+    - operation-map-partition-skirmish-desert-base-01-region-p002-p000
+    - operation-map-partition-skirmish-desert-base-01-region-p002-p008
+    - operation-map-partition-skirmish-desert-base-01-region-p003-p000
+    - operation-map-partition-skirmish-desert-base-01-region-p003-p002
+    - operation-map-partition-skirmish-desert-base-01-region-p003-p003
+    - operation-map-partition-skirmish-desert-base-01-region-p003-p001
+    - operation-map-partition-skirmish-desert-base-01-region-p003-p005
+    - operation-map-partition-skirmish-desert-base-01-region-p003-n002
+    - operation-map-partition-skirmish-desert-base-01-region-p003-p016
+    - operation-map-partition-skirmish-desert-base-01-region-p004-p000
+    - operation-map-partition-skirmish-desert-base-01-region-p004-p001
+    - operation-map-partition-skirmish-desert-base-01-region-p004-p002
+    - operation-map-partition-skirmish-desert-base-01-region-p004-p003
+    - operation-map-partition-skirmish-desert-base-01-region-p004-n002
+    - operation-map-partition-skirmish-desert-base-01-region-p004-n001
+    - operation-map-partition-skirmish-desert-base-01-region-p004-p004
+    - operation-map-partition-skirmish-desert-base-01-region-p004-p011
+    - operation-map-partition-skirmish-desert-base-01-region-p005-p000
+    - operation-map-partition-skirmish-desert-base-01-region-p005-p001
+    - operation-map-partition-skirmish-desert-base-01-region-p005-p002
+    - operation-map-partition-skirmish-desert-base-01-region-p005-p003
+    - operation-map-partition-skirmish-desert-base-01-region-p005-p005
+    - operation-map-partition-skirmish-desert-base-01-region-p005-p004
+    - operation-map-partition-skirmish-desert-base-01-region-p006-p001
+    - operation-map-partition-skirmish-desert-base-01-region-p006-p002
+    - operation-map-partition-skirmish-desert-base-01-region-p006-p003
+    - operation-map-partition-skirmish-desert-base-01-region-p006-p004
+    - operation-map-partition-skirmish-desert-base-01-region-p006-p007
+    - operation-map-partition-skirmish-desert-base-01-region-p007-n003
+    - operation-map-partition-skirmish-desert-base-01-region-p007-p001
+    - operation-map-partition-skirmish-desert-base-01-region-p007-p002
+    - operation-map-partition-skirmish-desert-base-01-region-p007-p003
+    - operation-map-partition-skirmish-desert-base-01-region-p007-p004
+    - operation-map-partition-skirmish-desert-base-01-region-p007-p006
+    - operation-map-partition-skirmish-desert-base-01-region-p008-p002
+    - operation-map-partition-skirmish-desert-base-01-region-p008-p003
+    - operation-map-partition-skirmish-desert-base-01-region-p008-p001
+    - operation-map-partition-skirmish-desert-base-01-region-p008-p004
+    - operation-map-partition-skirmish-desert-base-01-region-p009-p001
+    - operation-map-partition-skirmish-desert-base-01-region-p009-p002
+    - operation-map-partition-skirmish-desert-base-01-region-p009-p003
+    - operation-map-partition-skirmish-desert-base-01-region-p009-p004
+    - operation-map-partition-skirmish-desert-base-01-region-p010-n011
+    - operation-map-partition-skirmish-desert-base-01-region-p010-p001
+    - operation-map-partition-skirmish-desert-base-01-region-p010-p002
+    - operation-map-partition-skirmish-desert-base-01-region-p010-p003
+    - operation-map-partition-skirmish-desert-base-01-region-p010-p000
+    - operation-map-partition-skirmish-desert-base-01-region-p011-p001
+    - operation-map-partition-skirmish-desert-base-01-region-p011-p002
+    - operation-map-partition-skirmish-desert-base-01-region-p011-p003
+    - operation-map-partition-skirmish-desert-base-01-region-p011-p009
+    - operation-map-partition-skirmish-desert-base-01-region-p012-p001
+    - operation-map-partition-skirmish-desert-base-01-region-p012-p002
+    - operation-map-partition-skirmish-desert-base-01-region-p012-p003
+    - operation-map-partition-skirmish-desert-base-01-region-p013-p002
+    - operation-map-partition-skirmish-desert-base-01-region-p013-p006
+    - operation-map-partition-skirmish-desert-base-01-region-p014-p002
+    - operation-map-partition-skirmish-desert-base-01-region-p015-n011
+    - operation-map-partition-skirmish-desert-base-01-region-p015-p002
+    - operation-map-partition-skirmish-desert-base-01-region-p016-n003
+    - operation-map-partition-skirmish-desert-base-01-region-p016-p002
+    - operation-map-partition-skirmish-desert-base-01-region-p018-n007
+    - operation-map-partition-skirmish-desert-base-01-region-p018-p002
+    - operation-map-partition-skirmish-desert-base-01-region-p019-p007
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: 11f3bcb7e92274cb9a2041ff8401d472, type: 2}

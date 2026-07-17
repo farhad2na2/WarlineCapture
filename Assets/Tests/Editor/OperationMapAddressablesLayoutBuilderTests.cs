@@ -1,4 +1,5 @@
 using Game.Editor;
+using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings;
@@ -31,8 +32,8 @@ public sealed class OperationMapAddressablesLayoutBuilderTests
 
         Assert.That(catalog.entries.Count, Is.EqualTo(2));
         Assert.That(shared.entries, Is.Empty);
-        Assert.That(core.entries, Is.Empty);
-        Assert.That(presentation.entries, Is.Empty);
+        Assert.That(core.entries.Count, Is.EqualTo(5));
+        Assert.That(presentation.entries.Count, Is.EqualTo(514));
 
         AssertEntry(settings, OperationMapAddressablesLayoutBuilder.CatalogPath, catalog, "operation-map/catalog");
         AssertEntry(
@@ -40,6 +41,63 @@ public sealed class OperationMapAddressablesLayoutBuilderTests
             OperationMapAddressablesLayoutBuilder.DefinitionPath,
             catalog,
             "operation-map/opmap.skirmish.desert_base_01/definition");
+        AssertEntry(settings, OperationMapAddressablesLayoutBuilder.SourceScenePath, core, OperationMapAddressablesLayoutBuilder.AddressPrefix + "source-scene");
+        AssertEntry(settings, OperationMapAddressablesLayoutBuilder.MapSurfacePath, core, OperationMapAddressablesLayoutBuilder.AddressPrefix + "map-surface");
+        AssertEntry(settings, OperationMapAddressablesLayoutBuilder.ManifestPath, core, OperationMapAddressablesLayoutBuilder.AddressPrefix + "static-manifest");
+        AssertEntry(settings, OperationMapAddressablesLayoutBuilder.BuildingPlacementsPath, core, OperationMapAddressablesLayoutBuilder.AddressPrefix + "building-placements");
+        AssertEntry(settings, OperationMapAddressablesLayoutBuilder.VehiclePlacementsPath, core, OperationMapAddressablesLayoutBuilder.AddressPrefix + "vehicle-placements");
+
+        Dictionary<string, int> partitionCounts = new();
+        foreach (AddressableAssetEntry entry in presentation.entries)
+        {
+            Assert.That(entry.address, Does.StartWith(OperationMapAddressablesLayoutBuilder.AddressPrefix + "presentation/chunk_"));
+            AssertOperationMapLabels(entry, OperationMapAddressablesLayoutBuilder.PresentationRoleLabel, true);
+            foreach (string label in entry.labels)
+            {
+                if (!label.StartsWith("operation-map-partition-", System.StringComparison.Ordinal))
+                    continue;
+                partitionCounts.TryGetValue(label, out int count);
+                partitionCounts[label] = count + 1;
+            }
+        }
+
+        Assert.That(partitionCounts, Is.Not.Empty);
+        foreach (KeyValuePair<string, int> partition in partitionCounts)
+            Assert.That(partition.Value, Is.InRange(1, 25), partition.Key);
+
+        AssertOperationMapLabels(settings.FindAssetEntry(UnityEditor.AssetDatabase.AssetPathToGUID(OperationMapAddressablesLayoutBuilder.CatalogPath)), OperationMapAddressablesLayoutBuilder.MetadataRoleLabel, false);
+        AssertOperationMapLabels(settings.FindAssetEntry(UnityEditor.AssetDatabase.AssetPathToGUID(OperationMapAddressablesLayoutBuilder.DefinitionPath)), OperationMapAddressablesLayoutBuilder.DefinitionRoleLabel, false);
+        foreach (AddressableAssetEntry entry in core.entries)
+        {
+            string role = entry.address.EndsWith("/source-scene", System.StringComparison.Ordinal)
+                ? OperationMapAddressablesLayoutBuilder.SourceSceneRoleLabel
+                : OperationMapAddressablesLayoutBuilder.MetadataRoleLabel;
+            AssertOperationMapLabels(entry, role, false);
+        }
+    }
+
+    private static void AssertOperationMapLabels(
+        AddressableAssetEntry entry,
+        string expectedRole,
+        bool expectsPartition)
+    {
+        Assert.That(entry.labels, Does.Contain(OperationMapAddressablesLayoutBuilder.OperationMapLabel));
+        Assert.That(entry.labels, Does.Contain(OperationMapAddressablesLayoutBuilder.LocalLabel));
+        Assert.That(entry.labels, Does.Contain(OperationMapAddressablesLayoutBuilder.PackLabel));
+        Assert.That(entry.labels, Does.Contain(expectedRole));
+
+        int roleCount = 0;
+        int partitionCount = 0;
+        foreach (string label in entry.labels)
+        {
+            if (label.StartsWith("operation-map-role-", System.StringComparison.Ordinal))
+                roleCount++;
+            if (label.StartsWith("operation-map-partition-", System.StringComparison.Ordinal))
+                partitionCount++;
+        }
+
+        Assert.That(roleCount, Is.EqualTo(1), entry.address);
+        Assert.That(partitionCount, Is.EqualTo(expectsPartition ? 1 : 0), entry.address);
     }
 
     private static AddressableAssetGroup RequireGroup(

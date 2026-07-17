@@ -92,6 +92,20 @@ namespace Game.Runtime
 
         private IBattleHudRuntimeFeedbackSink _battleHudFeedbackSink;
         private IMatchHudSelectionPanelView _matchHudSelectionPanelView;
+        private IMatchHudSelectionPanelView LiveMatchHudSelectionPanelView
+        {
+            get
+            {
+                if (_matchHudSelectionPanelView is UnityEngine.Object unityView && unityView == null)
+                {
+                    _matchHudSelectionPanelView = null;
+                    _selectionPanelHiddenApplied = false;
+                    ClearPanelCache();
+                }
+
+                return _matchHudSelectionPanelView;
+            }
+        }
         private World _queryWorld;
         private EntityQuery _feedbackQuery;
         private World _selectedTagQueryWorld;
@@ -311,7 +325,7 @@ namespace Game.Runtime
             bool validSelection = entity != Entity.Null && em.Exists(entity);
             QueueSelection(em, entity, selectionUiReadModelLookup);
             ProcessPendingFeedback(em);
-            _matchHudSelectionPanelView?.SetSelectionVisible(validSelection);
+            LiveMatchHudSelectionPanelView?.SetSelectionVisible(validSelection);
         }
 
         public void ApplySelection(Context context, EntityManager em, Entity entity)
@@ -325,14 +339,14 @@ namespace Game.Runtime
             bool validSelection = entity != Entity.Null && em.Exists(entity);
             QueueSelection(em, entity, selectionUiReadModelLookup);
             ProcessPendingFeedback(em);
-            _matchHudSelectionPanelView?.SetSelectionVisible(validSelection, portraitSprite);
+            LiveMatchHudSelectionPanelView?.SetSelectionVisible(validSelection, portraitSprite);
         }
 
         public void ApplySquadSelection(EntityManager em, int selectedCount)
         {
             QueueSquadSelection(em, selectedCount);
             ProcessPendingFeedback(em);
-            _matchHudSelectionPanelView?.SetSelectionVisible(selectedCount > 0);
+            LiveMatchHudSelectionPanelView?.SetSelectionVisible(selectedCount > 0);
         }
 
         public void ApplySquadSelection(Context context, int selectedCount)
@@ -345,7 +359,7 @@ namespace Game.Runtime
 
         public void ApplyBuildingSelection(Sprite portraitSprite)
         {
-            _matchHudSelectionPanelView?.SetSelectionVisible(true, portraitSprite);
+            LiveMatchHudSelectionPanelView?.SetSelectionVisible(true, portraitSprite);
         }
 
         public void RefreshFocusedSelectionReadModels(
@@ -427,7 +441,7 @@ namespace Game.Runtime
             IsBoardCommandAvailableDelegate isBoardCommandAvailable,
             HasSelectedBoardActionDelegate hasSelectedBoardAction)
         {
-            if (_matchHudSelectionPanelView == null)
+            if (LiveMatchHudSelectionPanelView == null)
                 return;
 
             if (!TryGetDefaultEntityManager(context, out EntityManager em))
@@ -881,8 +895,8 @@ namespace Game.Runtime
                 return;
 
             ClearPanelCache();
-            _matchHudSelectionPanelView?.Apply(MatchHudSelectionPanelModel.Hidden);
-            _matchHudSelectionPanelView?.ApplyTransportPassengers(MatchHudTransportPassengersModel.Hidden);
+            LiveMatchHudSelectionPanelView?.Apply(MatchHudSelectionPanelModel.Hidden);
+            LiveMatchHudSelectionPanelView?.ApplyTransportPassengers(MatchHudTransportPassengersModel.Hidden);
             _selectionPanelHiddenApplied = true;
         }
 
@@ -2009,7 +2023,7 @@ namespace Game.Runtime
         {
             QueueClearSelection(em);
             ProcessPendingFeedback(em);
-            _matchHudSelectionPanelView?.SetSelectionVisible(false);
+            LiveMatchHudSelectionPanelView?.SetSelectionVisible(false);
         }
 
         public void ClearSelection(Context context)
@@ -2024,7 +2038,7 @@ namespace Game.Runtime
         {
             QueueCommandMode(em, mode);
             ProcessPendingFeedback(em);
-            _matchHudSelectionPanelView?.SetBoardActionSelected(mode == TacticalCommandMode.Board);
+            LiveMatchHudSelectionPanelView?.SetBoardActionSelected(mode == TacticalCommandMode.Board);
         }
 
         public void ApplyCommandMode(Context context, TacticalCommandMode mode)
@@ -2045,7 +2059,7 @@ namespace Game.Runtime
             ResolveBattleHudFeedbackSink()?.ApplyBoardCommandMode(
                 MapBoardCommandModeDirection(direction),
                 boardAllInteractable);
-            _matchHudSelectionPanelView?.SetBoardActionSelected(true);
+            LiveMatchHudSelectionPanelView?.SetBoardActionSelected(true);
         }
 
         private static UiBoardCommandModeDirection MapBoardCommandModeDirection(BoardCommandModeDirection direction)
@@ -2065,7 +2079,7 @@ namespace Game.Runtime
             IBattleHudRuntimeFeedbackSink feedbackSink = ResolveBattleHudFeedbackSink();
             if (!HasStickyCommandMode())
                 feedbackSink?.ClearCommandModeTabs();
-            _matchHudSelectionPanelView?.SetBoardActionSelected(false);
+            LiveMatchHudSelectionPanelView?.SetBoardActionSelected(false);
         }
 
         public bool HasStickyCommandMode()
@@ -2125,11 +2139,11 @@ namespace Game.Runtime
                 case SelectionHudFeedbackKind.Selection:
                 case SelectionHudFeedbackKind.SquadSelection:
                     feedbackSink.ApplySelection(feedback.Label.ToString(), feedback.Status.ToString());
-                    _matchHudSelectionPanelView?.SetSelectionVisible(true);
+                    LiveMatchHudSelectionPanelView?.SetSelectionVisible(true);
                     break;
                 case SelectionHudFeedbackKind.ClearSelection:
                     feedbackSink.ClearSelection();
-                    _matchHudSelectionPanelView?.SetSelectionVisible(false);
+                    LiveMatchHudSelectionPanelView?.SetSelectionVisible(false);
                     break;
                 case SelectionHudFeedbackKind.CommandMode:
                     feedbackSink.ApplyCommandMode((TacticalCommandMode)feedback.CommandMode);

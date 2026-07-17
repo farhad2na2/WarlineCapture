@@ -12,32 +12,54 @@ using UnityEngine.TestTools;
 
 public sealed class Aph805MenuMatchMenuLifecyclePlayModeTests
 {
-    private const string MenuSceneName = "Menu";
-    private const string MatchSceneName = "Match";
-    private const float LifecycleTimeoutSeconds = 180f;
+    internal const string MenuSceneName = "Menu";
+    internal const string MatchSceneName = "Match";
+    internal const float LifecycleTimeoutSeconds = 180f;
+
+    internal sealed class TransitionContext
+    {
+        public MenuBootstrapView Menu { get; set; }
+        public MatchSceneView Match { get; set; }
+        public MatchBootstrapCompositionSystemHelper MatchBootstrap { get; set; }
+        public World World { get; set; }
+    }
 
     [UnityTest]
     public IEnumerator MenuToMatchToMenu_PreservesWorldBindsUiAndCleansMatchRuntime()
     {
+        var context = new TransitionContext();
+        yield return PrepareStableMenu(context);
+        yield return EnterStableMatch(context);
+        yield return ReturnToStableMenu(context);
+    }
+
+    internal static IEnumerator PrepareStableMenu(TransitionContext context)
+    {
+        Assert.That(context, Is.Not.Null);
         yield return EnsureMatchIsUnloaded();
         yield return LoadScene(MenuSceneName, LoadSceneMode.Single);
         yield return WaitUntil(
             () => FindInLoadedScene<MenuBootstrapView>(MenuSceneName) != null,
             "MenuBootstrapView did not become available.");
 
-        MenuBootstrapView menu = FindInLoadedScene<MenuBootstrapView>(MenuSceneName);
-        AssertMenuSerializedReferences(menu);
+        context.Menu = FindInLoadedScene<MenuBootstrapView>(MenuSceneName);
+        AssertMenuSerializedReferences(context.Menu);
 
         yield return WaitUntil(
             () => World.DefaultGameObjectInjectionWorld is { IsCreated: true },
             "The default ECS world was not created while Menu was active.");
 
-        World lifecycleWorld = World.DefaultGameObjectInjectionWorld;
+        context.World = World.DefaultGameObjectInjectionWorld;
         yield return WaitUntil(
-            () => CountLifecycleRoots(lifecycleWorld) == 1,
+            () => CountLifecycleRoots(context.World) == 1,
             "Menu composition did not create exactly one scene-lifecycle root.");
-        AssertLifecycleRootCount(lifecycleWorld, 1, "Menu composition must own one scene-lifecycle root.");
+        AssertLifecycleRootCount(context.World, 1, "Menu composition must own one scene-lifecycle root.");
+    }
 
+    internal static IEnumerator EnterStableMatch(TransitionContext context)
+    {
+        Assert.That(context?.Menu, Is.Not.Null);
+        Assert.That(context.World, Is.Not.Null);
         Assert.That(
             UiShellRuntimeGateway.TryEnqueueRouteRequest(
                 UiShellRouteIntent.EnterMatch,
@@ -53,26 +75,34 @@ public sealed class Aph805MenuMatchMenuLifecyclePlayModeTests
             () => FindInLoadedScene<MatchSceneView>(MatchSceneName) != null,
             "MatchSceneView did not become available after Match loaded.");
 
-        MatchSceneView match = FindInLoadedScene<MatchSceneView>(MatchSceneName);
-        AssertMatchSerializedReferences(match);
-        Assert.That(World.DefaultGameObjectInjectionWorld, Is.SameAs(lifecycleWorld));
-        Assert.That(lifecycleWorld.IsCreated, Is.True);
-        AssertLifecycleRootCount(lifecycleWorld, 1, "Match loading must not duplicate the scene-lifecycle root.");
+        context.Match = FindInLoadedScene<MatchSceneView>(MatchSceneName);
+        AssertMatchSerializedReferences(context.Match);
+        Assert.That(World.DefaultGameObjectInjectionWorld, Is.SameAs(context.World));
+        Assert.That(context.World.IsCreated, Is.True);
+        AssertLifecycleRootCount(context.World, 1, "Match loading must not duplicate the scene-lifecycle root.");
         yield return WaitUntil(
-            () => CountOperationMapRoots(lifecycleWorld) == 1,
+            () => CountOperationMapRoots(context.World) == 1,
             "Match composition did not publish exactly one active compatibility operation map.");
-        AssertActiveCompatibilityMap(lifecycleWorld);
+        AssertActiveCompatibilityMap(context.World);
 
         yield return WaitUntil(
-            () => match.MatchBootstrap.SelectionUiCommand != null &&
-                  match.MatchBootstrap.SelectionUiReadModel != null &&
-                  match.MatchBootstrap.MainMenu != null,
+            () => context.Match.MatchBootstrap.SelectionUiCommand != null &&
+                  context.Match.MatchBootstrap.SelectionUiReadModel != null &&
+                  context.Match.MatchBootstrap.MainMenu != null,
             "Match composition did not create the runtime UI dependencies.");
         yield return WaitUntil(
-            () => IsMatchUiBound(menu.ContentSystem, match.MatchBootstrap),
+            () => IsMatchUiBound(context.Menu.ContentSystem, context.Match.MatchBootstrap),
             "Menu composition did not bind Match runtime dependencies into the installed HUD.");
+        yield return WaitUntil(
+            () => IsStableShellState(UIRoute.Match, UiShellMode.MatchHud, UiShellTransitionPhase.MatchHudReady),
+            "Match shell route did not reach its stable idle checkpoint.");
 
-        MatchBootstrapCompositionSystemHelper matchBootstrap = match.MatchBootstrap;
+        context.MatchBootstrap = context.Match.MatchBootstrap;
+    }
+
+    internal static IEnumerator ReturnToStableMenu(TransitionContext context)
+    {
+        Assert.That(context?.MatchBootstrap, Is.Not.Null);
         Assert.That(
             UiShellRuntimeGateway.TryEnqueueRouteRequest(
                 UiShellRouteIntent.ReturnToMainMenu,
@@ -84,23 +114,26 @@ public sealed class Aph805MenuMatchMenuLifecyclePlayModeTests
         yield return WaitUntil(
             () => !SceneManager.GetSceneByName(MatchSceneName).isLoaded,
             "The production Menu composition did not unload Match.");
-        yield return null;
+        yield return WaitUntil(
+            () => IsStableShellState(UIRoute.MainMenu, UiShellMode.MainMenu, UiShellTransitionPhase.MenuReady),
+            "Menu shell route did not reach its stable idle checkpoint.");
 
         Assert.That(SceneManager.GetSceneByName(MenuSceneName).isLoaded, Is.True);
         Assert.That(FindInLoadedScene<MatchSceneView>(MatchSceneName), Is.Null);
-        Assert.That(World.DefaultGameObjectInjectionWorld, Is.SameAs(lifecycleWorld));
-        Assert.That(lifecycleWorld.IsCreated, Is.True);
-        AssertLifecycleRootCount(lifecycleWorld, 1, "Returning to Menu must preserve one lifecycle root.");
-        Assert.That(CountOperationMapRoots(lifecycleWorld), Is.Zero,
+        Assert.That(World.DefaultGameObjectInjectionWorld, Is.SameAs(context.World));
+        Assert.That(context.World.IsCreated, Is.True);
+        AssertLifecycleRootCount(context.World, 1, "Returning to Menu must preserve one lifecycle root.");
+        Assert.That(CountOperationMapRoots(context.World), Is.Zero,
             "Returning to Menu must dispose the compatibility operation-map root.");
-        Assert.That(matchBootstrap.HasSceneView, Is.False, "Match composition retained its destroyed scene view.");
-        Assert.That(matchBootstrap.SelectionUiCommand, Is.Null, "Match selection UI command survived teardown.");
-        Assert.That(matchBootstrap.SelectionUiReadModel, Is.Null, "Match selection read model survived teardown.");
-        Assert.That(matchBootstrap.MainMenu, Is.Null, "Match runtime UI survived teardown.");
+        Assert.That(context.MatchBootstrap.HasSceneView, Is.False, "Match composition retained its destroyed scene view.");
+        Assert.That(context.MatchBootstrap.SelectionUiCommand, Is.Null, "Match selection UI command survived teardown.");
+        Assert.That(context.MatchBootstrap.SelectionUiReadModel, Is.Null, "Match selection read model survived teardown.");
+        Assert.That(context.MatchBootstrap.MainMenu, Is.Null, "Match runtime UI survived teardown.");
         Assert.That(
-            menu.ContentSystem.GetComponentInChildren<MatchHudFooterContentView>(includeInactive: true),
+            context.Menu.ContentSystem.GetComponentInChildren<MatchHudFooterContentView>(includeInactive: true),
             Is.Null,
             "Match HUD content remained installed after returning to Menu.");
+        context.Match = null;
     }
 
     [UnityTearDown]
@@ -171,6 +204,18 @@ public sealed class Aph805MenuMatchMenuLifecyclePlayModeTests
                ReferenceEquals(ReadPrivateField(content, "_mainMenuPlayUi"), matchBootstrap.MainMenu);
     }
 
+    private static bool IsStableShellState(
+        UIRoute route,
+        UiShellMode mode,
+        UiShellTransitionPhase phase)
+    {
+        return UiShellRuntimeGateway.TryReadShellState(out UiShellStateModel state) &&
+               !state.IsTransitionRunning &&
+               state.ActiveRoute == route &&
+               state.CurrentMode == mode &&
+               state.Phase == phase;
+    }
+
     private static object ReadPrivateField(object owner, string fieldName)
     {
         if (owner == null)
@@ -221,7 +266,7 @@ public sealed class Aph805MenuMatchMenuLifecyclePlayModeTests
             yield return null;
     }
 
-    private static IEnumerator EnsureMatchIsUnloaded()
+    internal static IEnumerator EnsureMatchIsUnloaded()
     {
         Scene match = SceneManager.GetSceneByName(MatchSceneName);
         if (!match.IsValid() || !match.isLoaded)

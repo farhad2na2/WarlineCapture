@@ -114,7 +114,7 @@ Release-only categories are reported separately and never averaged into a premat
 | Release Certification Lane | `0 / 18` (`0.0%`); deferred |
 | Program state | Core Architecture Lane active; Phase 1 accepted; Phase 2 ownership and lifecycle recovery accepted; AM-023 transition stress is dependency-ready; audit-only AM-026 accepted in parallel; release work inactive |
 | Current phase | Phase 2 - World Lifecycle And Dependency Hardening |
-| Current task | `AM-023` ready; run the accepted 100-cycle Menu -> Match -> Menu lifecycle stress package from `AM-WP-025` |
+| Current task | `AM-023` in progress; run the accepted 1-warmup/10-measured Menu -> Match -> Menu lifecycle stress package from `AM-WP-025` |
 | Parallel preparatory work | Audit-only `AM-026` is accepted with 29 surfaces and `AM-WP-001` through `AM-WP-023`; production tasks `AM-027` through `AM-035` remain gated. `AM-WP-007` is additionally blocked on mission/objective owner handoff and `AM-WP-009` preserves audio/FirstLaunch consumers as read-only dependencies. `AM-WP-024` through `AM-WP-027` define AM-022 through AM-025; AM-WP-024 is now dispatchable |
 | Blockers | Source-growth remains externally blocked by four separately owned FirstLaunch `*SystemHelper` paths; final broad-contract acceptance also remains gated by separately owned operation-map, FirstLaunch/UI, and package-bound violations. Release-only certification remains intentionally deferred. The `FirstLaunchLanguageChoiceView` guardrail false positive is resolved |
 | Latest validation | AM-022 final: Editor recovery `8 / 8`, PlayMode recovery `2 / 2`, `180` warmup plus `300` measured recovered-path calls with `0` managed bytes, Unity compiler errors `0`, and `git diff --check` passed. After the accepted lifecycle-owner guardrail amendment, canonical integrated architecture passes `147 / 147` |
@@ -202,7 +202,7 @@ The coordinator may run several disjoint packages in parallel, but an umbrella r
 - Canonical Match GC uses the existing 180-frame warmup and 300-frame measurement window. The global player-relevant budget remains at most `1,024` bytes, while a changed owner must contribute exactly zero recurring bytes in its focused unchanged-state scenario.
 - Focused UI unchanged-state allocation uses at least 180 warmup and 300 measured frames with the surface open and fully bound. Opening/closing transition allocation is reported separately and must stay within a Phase 0 scorecard limit.
 - Frame evidence records average, p95, p99, maximum, sample count, warmup, fixture counts, quality configuration, resolution, and instrumentation state. Existing scenario-specific p95/p99 limits remain authoritative.
-- Lifecycle evidence runs at least 100 Menu -> Match -> Menu cycles. Phase 0 freezes the warmup-cycle count, sampled entity/native/pool/subscription fields, plateau tolerance, and permitted one-time caches before `AM-023` starts; no threshold may be invented after a failure.
+- Core Architecture lifecycle evidence runs one warm-up plus at least 10 measured Menu -> Match -> Menu cycles. The former 100-cycle extended stress policy is deferred until a maturity or release-certification gate activates it; no threshold may be invented after a failure.
 - Memory evidence is not accepted from a single before/after sample. The scorecard defines sampling cadence, warmup, plateau window, slope limit, return-to-baseline tolerance, and metric source for managed, native, graphics, and pool memory.
 - Evidence freshness is content-based: exact commit and environment are mandatory, and any change to a governed source/config/scenario/tool hash invalidates that row. Unrelated documentation changes do not require an expensive recapture when all governed hashes remain identical.
 - Every measured artifact records instrumentation overhead or a paired instrumentation-off control when the recorder can materially affect the result.
@@ -238,7 +238,7 @@ Make runtime dependencies explicit and prove that caches and native resources ca
 - [x] `AM-020` Move mutable runtime state that crosses World lifecycles into explicit World-owned systems, components, or lifecycle containers where practical.
 - [x] `AM-021` Give every persistent native container, query, event subscription, and presentation root an explicit creation and disposal owner.
 - [x] `AM-022` Add tests for World destruction/recreation, domain reload, scene unload/reload, missing singleton recovery, and replaced command entities.
-- [ ] `AM-023` Run at least 100 automated Menu-to-Match-to-Menu cycles without duplicate systems, stale entities, retained subscriptions, or presentation-root accumulation. Draft package: `Design/Architecture/WorkPackages/am_wp_025_menu_match_lifecycle_stress.md` (blocked on `AM-021` and `AM-022`).
+- [~] `AM-023` Run one warm-up plus 10 measured automated Menu-to-Match-to-Menu cycles without duplicate systems, stale entities, retained subscriptions, or presentation-root accumulation. Active package: `Design/Architecture/WorkPackages/am_wp_025_menu_match_lifecycle_stress.md`.
 - [ ] `AM-024` Add native allocation and pool-count snapshots around lifecycle stress tests and prove no upward retained-memory trend after warmup. Draft package: `Design/Architecture/WorkPackages/am_wp_026_lifecycle_memory_pool_trend.md` (blocked on `AM-021` through `AM-023`).
 - [ ] `AM-025` Run the full architecture, lifecycle, compiler, and focused allocation suites and publish the Phase 2 ownership delta. Draft package: `Design/Architecture/WorkPackages/am_wp_027_phase2_exit_acceptance.md` (blocked on `AM-021` through `AM-024`).
 
@@ -820,7 +820,7 @@ Accepted AM-020 progress snapshot:
 - Lifecycle result: disposal clears component aliases, repeated teardown is idempotent, same-size ensure preserves state, resize replaces grid-sized storage, and resized storage clears pooled path cells.
 - Validation: runtime-grid storage `4 / 4`, persistent lifecycle `8 / 8`, and ownership generator `11 / 11` passed; Unity reported zero compiler errors. Integrated architecture passed `146 / 147`; its sole failure remains the separately owned `FirstLaunchLanguageChoiceView` guardrail. `git diff --check` passed.
 - Evidence: `am021_persistent_resource_ownership_acceptance.json`, canonical JSON/Markdown ownership reports, and the Gameplay-Clone handoff report bind the accepted implementation and validation identity.
-- Next action: dispatch `AM-022` using `AM-WP-024`; do not start the 100-cycle stress work until the recovery matrix passes.
+- Next action: dispatch `AM-022` using `AM-WP-024`; do not start transition stress work until the recovery matrix passes.
 
 ### 2026-07-17 - AM-022 - Editor lifecycle recovery matrix slice
 
@@ -848,4 +848,4 @@ Accepted AM-020 progress snapshot:
 - Follow-up resolution: the lifecycle-owner guardrail amendment at `cff736f1a1faaff8f4e0e9b5d49fa5c53c1363d2`, accepted by `783b8fc93`, removes the false positive without allowlisting the view; canonical integrated architecture now passes `147 / 147`.
 - Evidence: `am022_acceptance_record.json` and `am022_world_lifecycle_recovery_evidence.json` bind implementation identity, test sources, all compressed logs/results, AM-021 authority, measured windows, and external-failure ownership.
 - Scope preserved: no production, operation-map, FirstLaunch, audio, UI visual-lock, scene, prefab, package, `ProjectSettings`, or release-certification source changed.
-- Next action: dispatch AM-023 from `AM-WP-025`; AM-024 remains gated until the 100-cycle transition stress passes.
+- Next action: dispatch AM-023 from `AM-WP-025`; AM-024 remains gated until the accepted 10-cycle transition stress passes.

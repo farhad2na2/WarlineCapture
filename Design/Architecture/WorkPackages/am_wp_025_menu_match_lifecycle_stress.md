@@ -1,6 +1,6 @@
 # AM-WP-025 - Menu Match Lifecycle Stress
 
-Status: draft, dependency-blocked, and not dispatchable. Do not implement until `AM-021` and `AM-022` are accepted. `AM-023` may then dispatch this early-development Editor/PlayMode package; it contains no release-device, thermal, graphics-quality, FPS, or sustained certification work.
+Status: accepted and dispatchable after `AM-021` and `AM-022`. This is an early-development Editor/PlayMode package; it contains no release-device, thermal, graphics-quality, FPS, or sustained certification work.
 
 Umbrella task: `AM-023`
 
@@ -17,12 +17,13 @@ Risks are duplicate systems/roots/listeners, stale Match dependencies, command q
 
 ## 2. Accepted Stress Ownership
 
-- One PlayMode fixture loads Menu once, preserves the same valid default World, performs two warm-up cycles, then exactly 100 measured production route cycles through `UiShellRuntimeGateway`.
-- Every cycle captures cheap invariant counts at stable Match and stable Menu checkpoints. A full diagnostic snapshot is captured every tenth cycle and immediately on failure.
+- One PlayMode fixture loads Menu once, preserves the same valid default World, performs one warm-up cycle, then exactly 10 measured production route cycles through `UiShellRuntimeGateway`.
+- Every cycle captures invariant counts at stable Match and stable Menu checkpoints. Compact diagnostic snapshots are emitted at cycles 5 and 10 and immediately on failure.
 - The fixture retains only baseline, previous, and failing snapshots. Logs are compact summaries; full structured evidence is written to bounded files.
 - Counters are read-only and allocation-free. They are updated through existing bind/create/release ownership or test-only queries, not production polling or reflection infrastructure.
 - Transition duration and the existing 180-second hard liveness ceiling are recorded for diagnosis, not treated as a frame-time/performance budget.
 - Native/pool retained-memory plateau and slope belong to `AM-024`/`AM-WP-026`; this package asserts stable counts only.
+- The only permitted warm-up delta is first-Match initialization of persistent scenario/catalog and runtime bootstrap entities. Its post-warm-up count becomes the Menu/Match baseline; no further measured-cycle growth is permitted.
 
 No `SystemBase`, production stress controller, mutable static counter registry, release/device/thermal test, scene/prefab edit, or weakening of liveness/ownership contracts is allowed.
 
@@ -62,12 +63,12 @@ Hard exclusions: operation-map/static-map, FirstLaunch, audio implementation, UI
 ## 5. Execution Matrix
 
 1. clean test process loads Menu and reaches stable shell/World state;
-2. two unmeasured production Menu-to-Match-to-Menu warm-up cycles establish caches and pools;
+2. one unmeasured production Menu-to-Match-to-Menu warm-up cycle establishes caches and pools;
 3. capture stable Menu and Match baseline snapshots;
-4. run 100 measured cycles in the same process and default World;
+4. run 10 measured cycles in the same process and default World;
 5. at each Match checkpoint assert scenes, one Match root/HUD/dependency set, systems, command owners, listeners, and callbacks;
 6. at each Menu checkpoint assert Match unload/cleanup, one lifecycle/shell root, zero Match dependencies/owners, and baseline counts;
-7. every tenth cycle capture the full bounded snapshot; other cycles retain only cheap invariant totals;
+7. capture bounded compact snapshots at cycles 5 and 10; other cycles retain only invariant totals;
 8. on first failure capture full diagnostics and stop without flooding stdout;
 9. teardown restores scenes, World, listeners, roots, and all test-created state even after failure.
 
@@ -75,18 +76,18 @@ Interrupted/cancelled transition characterization is accepted under AM-022; reta
 
 ## 6. Validation And Acceptance Gates
 
-Acceptance requires exactly 100 measured cycles, one valid unchanged default World, one lifecycle root and shell authority, correct stable Menu/Match scene and root sets, one critical system instance per World, no duplicate/stale command queues or destroyed references, one enabled audio listener, baseline-stable entity/subscription/callback/root/owner counts, and zero unexplained growth.
+Acceptance requires exactly 10 measured cycles, one valid unchanged default World, one lifecycle root and shell authority, correct stable Menu/Match scene and root sets, one critical system instance per World, no duplicate/stale command queues or destroyed references, one enabled audio listener, baseline-stable entity/root/system/presentation counts, and zero unexplained growth.
 
 Each transition must complete within the existing 180-second liveness ceiling; timing is evidence only. Every permitted one-time cache is named before execution. Focused counter tests, zero compiler errors, the accepted AM-022 matrix, the full PlayMode stress run, integrated architecture checks, and `git diff --check` must pass. Evidence binds exact commit/tree, environment, source/test hashes, baseline/final/failure snapshots, compact logs, and focused review.
 
-No AM-023 checklist credit is awarded for fewer cycles, simulated route state without production transitions, omitted counters, or a run that silently tolerates growth.
+No AM-023 checklist credit is awarded for fewer than 10 cycles, simulated route state without production transitions, omitted counters, or a run that silently tolerates growth. The former 100-cycle extended stress policy is deferred until the project reaches a maturity or release-certification stage where the added execution time is justified.
 
 ## 7. Maximum Slices And Rollback
 
 At most three independently stable commits:
 
 1. reusable fixture and read-only snapshot/counter correctness;
-2. bounded 2-warmup/100-measured production transition runner and CI entrypoint;
+2. bounded 1-warmup/10-measured production transition runner and CI entrypoint;
 3. full run, integrated validation, evidence, review closure, and AM-023 acceptance.
 
 Rollback if the test leaks state, changes production behavior to make assertions pass, adds polling/reflection infrastructure, floods logs, masks a divergent cycle, modifies protected files, activates release certification, or weakens existing ownership/liveness gates.

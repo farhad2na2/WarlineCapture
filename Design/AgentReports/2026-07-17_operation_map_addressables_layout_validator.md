@@ -19,3 +19,5 @@ Added a fail-closed editor validator for the single approved local operation-map
 - Architecture results: `/private/tmp/opmap-addressables-validator-architecture.xml`.
 
 The validator checklist row is complete. The stable-address and package-completion rows remain open until the real map-specific minimap raster is assigned and validated.
+
+The accepted local schema is also complete: every owned group uses local Build/Load paths, LZ4, bundle CRC plus cached-bundle CRC, hash-appended bundle naming, and the approved Pack Together or Pack Together By Label mode. Remote catalog and unique bundle ids remain disabled.

@@ -705,7 +705,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 44% (78/177 checklist items complete).
+Overall implementation progress: 45% (79/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -714,7 +714,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 | 0. Reproducible baseline and rollback | In progress / shared | 11 | 12 | 92% | Required by both directions before scene edits. |
 | 1. Operation-map and scenario data contracts | In progress | 11 | 12 | 92% | Typed identity, catalog resolution, complete spatial/navigation metadata, hashes, validation, and ownership chain are approved; the selected local-Addressables reference row remains. |
 | 2. Per-map static presentation ownership | Complete | 14 | 14 | 100% | Per-map bake/output ownership, integrity, rollback, no-op reuse, wiring, Android resolution, and synthetic multi-map isolation are accepted while the shipped catalog remains one physical map. |
-| 2A. Local Addressables packaging foundation | Active / selected direction | 9 | 20 | 45% | One-map groups, typed local identity, exact labels/partitions, and fail-closed layout validation are accepted; the real minimap-raster address remains. |
+| 2A. Local Addressables packaging foundation | Active / selected direction | 10 | 20 | 50% | One-map groups, typed local identity, exact labels/partitions, local bundle schema, and fail-closed layout validation are accepted; the real minimap-raster address remains. |
 | 3. Current-map compatibility registration | Complete / shared | 10 | 10 | 100% | Current identities/definition, authored behavior, schema-v1 read compatibility, runtime activation/teardown, deterministic presentation, and Android chunk resolution are accepted. |
 | 4. Non-destructive scene ownership split | In progress / shared priority | 10 | 14 | 71% | The staged scene has fail-closed spatial/content validation; the original Match route remains validated and revision `d5784dcfa` plus the rollback recipe freeze the pre-cutover recovery boundary. |
 | 5. Runtime selection, loading, and teardown | In progress | 2 | 14 | 14% | Catalog preflight plus pure readiness/failure/teardown data contracts are bound; concrete local Addressables loading follows Phase 2A. |
@@ -808,7 +808,7 @@ Exit criteria:
 - [ ] Assign and validate every required stable address without using direct scene paths in gameplay/composition policy.
 - [x] Assign and validate exactly one map-pack label and one role label per operation-map entry. See `../AgentReports/2026-07-17_operation_map_local_addresses_labels_partitions.md`.
 - [x] Partition presentation chunk scenes by deterministic region labels, targeting 16 to 32 chunks per bundle pending measured acceptance. Current deterministic five-by-five regions cap at 25 chunks; see `../AgentReports/2026-07-17_operation_map_local_addresses_labels_partitions.md`.
-- [ ] Configure LZ4, CRC/cache policy, hash-derived bundle naming, and explicit content build settings for operation-map groups.
+- [x] Configure LZ4, CRC/cache policy, hash-derived bundle naming, and explicit content build settings for operation-map groups. See `../AgentReports/2026-07-17_operation_map_addressables_layout_validator.md`.
 - [x] Add `OperationMapAddressablesLayoutValidator` for groups, paths, addresses, labels, partitions, catalog inclusion, and one-map ownership. See `../AgentReports/2026-07-17_operation_map_addressables_layout_validator.md`.
 - [ ] Add `OperationMapAddressablesBuildReport` output for per-map bytes, aggregate bytes, partition counts, required addresses, Entities artifacts, and duplicate dependencies.
 - [ ] Add an explicit CI/editor Addressables content-build step that fails when local content, catalog, layout report, or operation-map validation is absent or stale.

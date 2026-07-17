@@ -15,6 +15,9 @@ public sealed class StaticMapAndroidBuildSceneResolverTests
     private const string ChunkA = "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_n001_p002.unity";
     private const string ChunkB = "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p000_p000.unity";
     private const string StaleChunk = "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p999_p999.unity";
+    private const string AlternateMapId = "opmap.test.alternate";
+    private const string AlternateChunk = "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/test/alternate/Scenes/StaticMapPresentation_opmap_test_alternate_chunk_p000_p000.unity";
+    private const string AlternateStaleChunk = "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/test/alternate/Scenes/StaticMapPresentation_opmap_test_alternate_chunk_p999_p999.unity";
 
     public static void RunCurrentProjectValidation()
     {
@@ -109,7 +112,7 @@ public sealed class StaticMapAndroidBuildSceneResolverTests
             case "missing": snapshot = null; break;
             case "schema": snapshot = SnapshotWith(schemaVersion: StaticMapPresentationManifest.CurrentSchemaVersion + 1); break;
             case "empty": snapshot = SnapshotWith(chunks: Array.Empty<string>()); break;
-            case "canonical": snapshot = SnapshotWith(canonical: Menu); break;
+            case "canonical": snapshot = SnapshotWith(canonical: "Assets/Game/Scenes/UnselectedMap.unity"); break;
             case "contentHash": snapshot = SnapshotWith(contentHash: " "); break;
             case "canonicalDependencyHash": snapshot = SnapshotWith(canonicalDependencyHash: " "); break;
             case "staleCanonicalDependency": computeCanonicalDependencyHash = () => "actual-canonical-dependency-hash"; break;
@@ -172,6 +175,57 @@ public sealed class StaticMapAndroidBuildSceneResolverTests
 
         Assert.That(capturedHash, Is.EqualTo("content-hash"));
         CollectionAssert.AreEqual(new[] { ChunkB, ChunkA }, capturedPaths);
+    }
+
+    [Test]
+    public void Resolve_CatalogSelectedManifestSetIsMapScopedAndRejectsUnownedChunks()
+    {
+        StaticMapAndroidBuildManifestSnapshot current = Snapshot(ChunkA, ChunkB);
+        StaticMapAndroidBuildManifestSnapshot alternate = SnapshotWith(
+            operationMapId: AlternateMapId,
+            chunks: new[] { AlternateChunk });
+        var validatedIntegrityOwners = new List<string>();
+
+        string[] result = StaticMapAndroidBuildSceneResolver.Resolve(
+            new[] { Match },
+            new[] { current, alternate },
+            _ => true,
+            IsOwnedByMap,
+            _ => "canonical-dependency-hash",
+            (operationMapId, _, __) =>
+            {
+                validatedIntegrityOwners.Add(operationMapId);
+                return true;
+            });
+
+        CollectionAssert.AreEqual(
+            new[] { Match, ChunkA, ChunkB, AlternateChunk },
+            result);
+        CollectionAssert.AreEqual(
+            new[] { "opmap.skirmish.desert_base_01", AlternateMapId },
+            validatedIntegrityOwners);
+
+        Assert.Throws<InvalidOperationException>(() =>
+            StaticMapAndroidBuildSceneResolver.Resolve(
+                new[] { Match },
+                new[]
+                {
+                    current,
+                    SnapshotWith(operationMapId: AlternateMapId, chunks: new[] { ChunkA })
+                },
+                _ => true,
+                IsOwnedByMap,
+                _ => "canonical-dependency-hash",
+                (_, __, ___) => true));
+
+        Assert.Throws<InvalidOperationException>(() =>
+            StaticMapAndroidBuildSceneResolver.Resolve(
+                new[] { Match, AlternateStaleChunk },
+                new[] { current, alternate },
+                _ => true,
+                IsOwnedByMap,
+                _ => "canonical-dependency-hash",
+                (_, __, ___) => true));
     }
 
     [Test]
@@ -255,6 +309,15 @@ public sealed class StaticMapAndroidBuildSceneResolverTests
         return string.Equals(path, ChunkA, StringComparison.Ordinal) ||
                string.Equals(path, ChunkB, StringComparison.Ordinal) ||
                string.Equals(path, StaleChunk, StringComparison.Ordinal);
+    }
+
+    private static bool IsOwnedByMap(string operationMapId, string path)
+    {
+        if (string.Equals(operationMapId, "opmap.skirmish.desert_base_01", StringComparison.Ordinal))
+            return IsOwned(path);
+        return string.Equals(operationMapId, AlternateMapId, StringComparison.Ordinal) &&
+               (string.Equals(path, AlternateChunk, StringComparison.Ordinal) ||
+                string.Equals(path, AlternateStaleChunk, StringComparison.Ordinal));
     }
 
     private static int CountOccurrences(string source, string value)

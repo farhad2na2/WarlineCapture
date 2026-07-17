@@ -48,8 +48,8 @@
   "artifactId": "AM-021",
   "baseline": {
     "branch": "main",
-    "commit": "981dcc2dcbe2163aebd5001ec7e1c3912f189de7",
-    "tree": "930a9492b9250fdc88337d892bf6bb65ade1b7ee"
+    "commit": "d9da484cc057f60bb4a033da713d5b01583c546b",
+    "tree": "9e31965e9f1bc100759408aecaa6e7821bf21a94"
   },
   "categories": {
     "eventSubscriptions": [
@@ -86,7 +86,7 @@
         "lifecycleMethods": [
           "Shutdown"
         ],
-        "line": 315,
+        "line": 329,
         "ownerType": "FirstLaunchNarrativeCompositionSystemHelper",
         "pairedUnsubscribeObserved": true,
         "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs",
@@ -114,7 +114,7 @@
         "lifecycleMethods": [
           "Shutdown"
         ],
-        "line": 316,
+        "line": 330,
         "ownerType": "FirstLaunchNarrativeCompositionSystemHelper",
         "pairedUnsubscribeObserved": true,
         "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs",
@@ -142,7 +142,7 @@
         "lifecycleMethods": [
           "Shutdown"
         ],
-        "line": 317,
+        "line": 331,
         "ownerType": "FirstLaunchNarrativeCompositionSystemHelper",
         "pairedUnsubscribeObserved": true,
         "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs",
@@ -170,7 +170,7 @@
         "lifecycleMethods": [
           "Shutdown"
         ],
-        "line": 318,
+        "line": 332,
         "ownerType": "FirstLaunchNarrativeCompositionSystemHelper",
         "pairedUnsubscribeObserved": true,
         "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs",
@@ -198,7 +198,7 @@
         "lifecycleMethods": [
           "Shutdown"
         ],
-        "line": 319,
+        "line": 333,
         "ownerType": "FirstLaunchNarrativeCompositionSystemHelper",
         "pairedUnsubscribeObserved": true,
         "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs",
@@ -13189,8 +13189,8 @@
   },
   "schemaVersion": 1,
   "scope": {
-    "productionFileCount": 1021,
-    "sourceManifestSha256": "fe3425ddc0c53390bbcc8d5d35cdadfc2b0ef6e09c461f16ecc3679a9e0af8a7",
+    "productionFileCount": 1022,
+    "sourceManifestSha256": "c506c610ba2867a09813e16c72a706b8ffe069b6db12d1fa74491c5a56b2908b",
     "sourceRoot": "Assets/Game/Scripts"
   },
   "sourceManifest": [
@@ -13652,7 +13652,7 @@
     },
     {
       "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs",
-      "sha256": "7f67f81a6557129bf906b6331ec9118fefbc7e5db96e85b25211ca064b68d02e"
+      "sha256": "c44d16a5d8ad579ac99e15f5cc74e31dcbcea0a231c9f9375c642aa12c1a0bfe"
     },
     {
       "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeInteractivePresentationSystemHelper.cs",
@@ -13840,7 +13840,11 @@
     },
     {
       "path": "Assets/Game/Scripts/Configs/OperationMapCatalogConfig.cs",
-      "sha256": "9d994f6f0fed52c3b4a57c21e356ce96f20164efd7780822fd18bd4015a438d2"
+      "sha256": "0aa06035d10a73bd6d5f02737e34081eb1702af016b56f4e235d58acc52fa2f5"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/OperationMapCatalogEntryConfig.cs",
+      "sha256": "8cb7928a1544f41b865f898dc3905786977a3167391d9794dbdce0504d6cc9f5"
     },
     {
       "path": "Assets/Game/Scripts/Configs/OperationMapConfigModels.cs",
@@ -16600,7 +16604,7 @@
     },
     {
       "path": "Assets/Game/Scripts/UI/Narrative/FirstLaunchLanguageChoiceView.cs",
-      "sha256": "a5d32ae030c3f2c724978578818a4985cda78df6fa83bcdab7e4b3af37eecd2a"
+      "sha256": "8638f1d89ae23d24065fb861124473974df3aeb752a2090f2c4013ab894125fb"
     },
     {
       "path": "Assets/Game/Scripts/UI/Narrative/NarrativeCommanderIdentityView.cs",

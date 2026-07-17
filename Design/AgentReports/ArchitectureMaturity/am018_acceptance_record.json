@@ -1,0 +1,61 @@
+{
+  "acceptanceTest": {
+    "path": "Tools/CI/tests/test_architecture_dependency_hazard_acceptance.py",
+    "sha256": "b7645cf8776a00e2494e61079f60742c88baab059fbb6dc9b84f1dec6ec49189"
+  },
+  "acceptedEvidence": {
+    "commit": "e4e6be3a7ecee81a9350cca7242e5bcb7b729f5c",
+    "files": [
+      {
+        "path": "Design/AgentReports/ArchitectureMaturity/am018_dependency_hazard_inventory.json",
+        "sha256": "90c96c9947c18d583823bd8b1e87298aa29ce98ea861c1b07cf25f39dbe9fcde"
+      },
+      {
+        "path": "Design/AgentReports/ArchitectureMaturity/am018_dependency_hazard_inventory.md",
+        "sha256": "39dfb0476234e8d48a938adfaae9b703e9e172de1af8ed69eb8ee072350b711d"
+      },
+      {
+        "path": "Tools/CI/architecture_dependency_hazard_inventory.py",
+        "sha256": "90c2f1a5086eca6458ef5641721ca5a54e9badb6dba4146ee9b01be845c27f4b"
+      },
+      {
+        "path": "Tools/CI/tests/test_architecture_dependency_hazard_inventory.py",
+        "sha256": "92bcd13fbd3067315163281cc0864b446c68f12c7d8f33eb25402e8bbd83de45"
+      },
+      {
+        "path": "Tools/CI/tests/test_architecture_dependency_hazard_inventory_evidence.py",
+        "sha256": "692e526b50b41dc0d985486ede4e34d965aa5ebf014e423eba4f2a9d422d6741"
+      }
+    ],
+    "tree": "a7038dea8b91835f0f0edde70414bb93f3709cb3"
+  },
+  "artifactId": "AM018-ACCEPTANCE-RECORD",
+  "inventorySummary": {
+    "findingCount": 352,
+    "globalWorldLookupsCount": 87,
+    "hiddenSingletonsCount": 9,
+    "immutableReferenceClassificationCount": 69,
+    "mutableStaticCacheCandidateCount": 64,
+    "mutableStaticCachesCount": 241,
+    "mutableStaticLifecycleStateCount": 108,
+    "protectedFindingCount": 10,
+    "runtimeObjectDiscoveryCount": 7,
+    "staticEventSubscriptionsCount": 8
+  },
+  "result": "Accepted",
+  "schemaVersion": 1,
+  "scopeRule": "The accepted AM-018 evidence scope is exactly the five-file Git diff from sourceBaseline.commit to acceptedEvidence.commit. Separately owned production paths are read-only source evidence; live map material changes are excluded and must remain unstaged.",
+  "sourceBaseline": {
+    "branch": "main",
+    "commit": "b1005c7cc85de2c86001d2e52fa44c8ef5dd9329",
+    "tree": "7473df876b2ecd933859d2c3123e8d709daf31d4"
+  },
+  "taskId": "AM-018",
+  "validation": {
+    "compilerValidation": "not-required-no-csharp-changes",
+    "focusedTests": 11,
+    "independentRereview": "PASS",
+    "integratedArchitectureTests": 98,
+    "pythonSyntax": "passed"
+  }
+}

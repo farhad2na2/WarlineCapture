@@ -109,15 +109,15 @@ Release-only categories are reported separately and never averaged into a premat
 
 | Field | Status |
 |---|---|
-| Checklist complete | `17 / 86` (`19.8%`) |
-| Core Architecture Lane | `17 / 68` (`25.0%`); active |
+| Checklist complete | `18 / 86` (`20.9%`) |
+| Core Architecture Lane | `18 / 68` (`26.5%`); active |
 | Release Certification Lane | `0 / 18` (`0.0%`); deferred |
-| Program state | Core Architecture Lane active; Phase 1 accepted; release work inactive |
+| Program state | Core Architecture Lane active; Phase 1 accepted; Phase 2 inventory accepted; release work inactive |
 | Current phase | Phase 2 - World Lifecycle And Dependency Hardening |
-| Current task | `AM-018` ready, not yet claimed |
-| Blockers | None for `AM-018`; release-only device, thermal, cold/warm, and sustained certification remain intentionally deferred |
-| Latest validation | AM-017: zero compiler errors; Unity `253 / 253` behavior and GC-classification checks plus all focused/canonical performance gates; Python policy `4 / 4`, evidence `9 / 9`, combined focused `13 / 13`, and integrated `87 / 87`; independent rereview `PASS` |
-| Latest evidence | `am017_acceptance_record.json`, `am017_phase1_exit_evidence.json`, and `am017_focused_capture_manifest.json`; integrated accepted evidence commit `a8c42b409da2174ec634b6751696e9c703075882` |
+| Current task | `AM-019` ready, not yet claimed |
+| Blockers | None for `AM-019`; release-only device, thermal, cold/warm, and sustained certification remain intentionally deferred |
+| Latest validation | AM-018: focused Python `11 / 11`, integrated architecture CI `98 / 98`, Python syntax and deterministic regeneration passed; no production C# changed, so Unity compilation was not required; independent rereview `PASS` |
+| Latest evidence | `am018_acceptance_record.json` and generated JSON/Markdown dependency-hazard inventory; accepted evidence commit `e4e6be3a7ecee81a9350cca7242e5bcb7b729f5c` |
 | Core entry baseline | Phase 0 accepted by `AM-001` through `AM-008`; exact-identity assembly and bounded Editor Match evidence are current at `9a0aa14252e6559680328e520d26c16bfc7b444e`; the dashboard required gate is accepted; the entry rating and owned deltas are published in `entry_baseline_report.md` |
 | Release entry review | Deferred until `pre_release_performance_certification_backlog.md` activates |
 | Architecture rating | Evidence-backed Phase 0 entry rating `8.5 / 10`; planning baseline only, not a `9.5` claim |
@@ -232,7 +232,7 @@ Reduce change risk in oversized systems without replacing the architecture or ch
 
 Make runtime dependencies explicit and prove that caches and native resources cannot outlive their owning World.
 
-- [ ] `AM-018` Inventory production uses of global World lookup, mutable static caches, static event subscriptions, hidden singletons, and runtime object discovery.
+- [x] `AM-018` Inventory production uses of global World lookup, mutable static caches, static event subscriptions, hidden singletons, and runtime object discovery.
 - [ ] `AM-019` Define one standard World-bound query/entity cache contract covering positive lookup, negative lookup, invalidation, rebind, disposal, and destroyed-entity recovery.
 - [ ] `AM-020` Move mutable runtime state that crosses World lifecycles into explicit World-owned systems, components, or lifecycle containers where practical.
 - [ ] `AM-021` Give every persistent native container, query, event subscription, and presentation root an explicit creation and disposal owner.
@@ -684,3 +684,17 @@ The implementing agent works directly on `main`, owns the bounded substantive an
 - Exclusions preserved: operation-map, FirstLaunch, audio, UI visual-lock, scenes, prefabs, packages, and `ProjectSettings` were not edited. No runtime gameplay, ECS scheduling, presentation behavior, or release-only device certification was changed or claimed.
 - Phase result: Phase 1 exit gates are accepted. Selected owners remain decomposed without replacement-owner growth, and canonical behavior, frame-time, and managed-allocation gates are green.
 - Next task: `AM-018` inventories production uses of global World lookup, mutable static caches, static event subscriptions, hidden singletons, and runtime object discovery.
+
+### 2026-07-17 - AM-018 - Dependency and lifecycle hazard inventory accepted
+
+- Workflow path: direct commits to `main`; no branch, worktree, or PR workflow.
+- Accepted evidence commit: `e4e6be3a7ecee81a9350cca7242e5bcb7b729f5c`, tree `a7038dea8b91835f0f0edde70414bb93f3709cb3`; source baseline `b1005c7cc85de2c86001d2e52fa44c8ef5dd9329`, tree `7473df876b2ecd933859d2c3123e8d709daf31d4`.
+- Result: deterministic AM-018 evidence scans 999 non-Editor production C# files and records 352 findings: 87 global World lookups, 9 hidden singleton/global-access patterns, 241 static cache/state/reference candidates, 7 hierarchy/scene-root discovery rows, and 8 static event subscriptions.
+- World classification: `32` composition edges, `25` presentation edges, `21` authoring/debug reads, and `9` hidden service-locator dependencies. HSL rows route through `AM-019`, `AM-020`, and `AM-022`; boundary classifications remain visible and are not permanent exemptions.
+- Static-state classification: `64` cache lifecycle rows (`CLR`), `108` assignable mutable lifecycle rows (`MSL`), and `69` readonly-reference rows requiring immutable-table or lifecycle proof (`IRC`). Singleton rows distinguish six hidden/global mutable access points from three immutable fallback/null-object candidates.
+- Discovery/subscription classification: five runtime discovery rows route to `AM-020`/`AM-022`; two Baker-only hierarchy lookups are authoring/debug with no runtime-remediation route. Static subscriptions distinguish six indirect pairs, one direct teardown owner, and one unpaired process-lifetime subscription.
+- Evidence integrity: the source manifest hash-binds every scanned file; normative, executable, lifecycle, ownership, scorecard, exception, validator, and APH-703 taxonomy authorities are bound; tool/test hashes are embedded; protected exclusions are re-derived from the archived ownership authority rather than trusted from artifact data. `am018_acceptance_record.json` binds the exact five-file evidence commit/tree, hashes, scope, totals, and acceptance test.
+- Validation: focused Python `11 / 11`, integrated architecture CI `98 / 98`, Python syntax, deterministic regeneration, exact baseline ancestry/tree, source/authority/tool hashes, protected-path provenance, routing, summary arithmetic, Markdown projection, and `git diff --check` passed. No production C# changed, so Unity compilation was not required.
+- Independent review: the first pass rejected static-state undercounting, missing scene-root enumeration, incomplete tool/exclusion provenance, Baker misrouting, and missing AM-020 routing for HSL rows. All five findings were fixed; final rereview returned `PASS` with no blocker.
+- Exclusions preserved: operation-map, FirstLaunch, audio, UI visual-lock, gameplay/runtime behavior, scenes, prefabs, packages, and `ProjectSettings` were read only. The two live map material edits remained unstaged and are outside AM-018 scope.
+- Next task: `AM-019` defines one standard World-bound query/entity cache contract covering positive and negative lookup, invalidation, rebind, disposal, and destroyed-entity recovery.

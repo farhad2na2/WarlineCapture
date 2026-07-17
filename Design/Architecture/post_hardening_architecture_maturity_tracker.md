@@ -109,19 +109,19 @@ Release-only categories are reported separately and never averaged into a premat
 
 | Field | Status |
 |---|---|
-| Checklist complete | `16 / 86` (`18.6%`) |
-| Core Architecture Lane | `16 / 68` (`23.5%`); active |
+| Checklist complete | `17 / 86` (`19.8%`) |
+| Core Architecture Lane | `17 / 68` (`25.0%`); active |
 | Release Certification Lane | `0 / 18` (`0.0%`); deferred |
-| Program state | Core Architecture Lane active; release work inactive |
-| Current phase | Phase 1 - Responsibility And Decomposition Hardening |
-| Current task | `AM-017` ready, not yet claimed |
-| Blockers | None for `AM-017`; release-only device, thermal, cold/warm, and sustained certification remain intentionally deferred |
-| Latest validation | AM-016: canonical source-growth `17 / 17`, broad architecture/naming `1 / 1`, zero compiler errors; Python `5 / 5` focused and `74 / 74` integrated; independent rereview `PASS` |
-| Latest evidence | `source_responsibility_guardrail_evidence.json`, accepted implementation commit `3950afd2288e8c7d326a33dca60124b02292bbda` |
+| Program state | Core Architecture Lane active; Phase 1 accepted; release work inactive |
+| Current phase | Phase 2 - World Lifecycle And Dependency Hardening |
+| Current task | `AM-018` ready, not yet claimed |
+| Blockers | None for `AM-018`; release-only device, thermal, cold/warm, and sustained certification remain intentionally deferred |
+| Latest validation | AM-017: zero compiler errors; Unity `253 / 253` behavior and GC-classification checks plus all focused/canonical performance gates; Python policy `4 / 4`, evidence `9 / 9`, combined focused `13 / 13`, and integrated `87 / 87`; independent rereview `PASS` |
+| Latest evidence | `am017_acceptance_record.json`, `am017_phase1_exit_evidence.json`, and `am017_focused_capture_manifest.json`; integrated accepted evidence commit `a8c42b409da2174ec634b6751696e9c703075882` |
 | Core entry baseline | Phase 0 accepted by `AM-001` through `AM-008`; exact-identity assembly and bounded Editor Match evidence are current at `9a0aa14252e6559680328e520d26c16bfc7b444e`; the dashboard required gate is accepted; the entry rating and owned deltas are published in `entry_baseline_report.md` |
 | Release entry review | Deferred until `pre_release_performance_certification_backlog.md` activates |
 | Architecture rating | Evidence-backed Phase 0 entry rating `8.5 / 10`; planning baseline only, not a `9.5` claim |
-| Performance evidence | Required bounded Editor Match gate current at `9a0aa14252e6559680328e520d26c16bfc7b444e`: 1,426 frames, 2.808 ms average, 4.112 ms P95 against 20 ms, 0 current-thread allocated bytes; broader scenario/GC/memory proof remains later Core work |
+| Performance evidence | Phase 1 exit canonical median accepted at capture commit `cd6e764bd878c6d7cedcbaa3c5034f0f105825b6`: 1,442 frames, 2.777 ms average, 4.121 ms P95 against both 5.14 ms relative and 20 ms absolute ceilings, 0 current-thread allocated bytes; canonical player-relevant GC `262 / 1,024` bytes; all focused owner gates passed |
 | Android evidence | Deferred; retain historical diagnostics and recapture only when the release lane activates |
 | Sustained release evidence | Deferred; `0 / 3` qualifying release candidates |
 
@@ -220,7 +220,7 @@ Reduce change risk in oversized systems without replacing the architecture or ch
 - [x] `AM-014` Add update-order and behavior-equivalence tests for every decomposition that crosses a system or assembly boundary.
 - [x] `AM-015` Complete measured decomposition of the highest-risk remaining UI/presentation helper after its characterization coverage is green.
 - [x] `AM-016` Update source-growth and responsibility guardrails so extracted files cannot regrow into equivalent god owners elsewhere.
-- [ ] `AM-017` Recapture focused and canonical Match performance/GC evidence after all Phase 1 integrations and reject any behavior or frame-time regression.
+- [x] `AM-017` Recapture focused and canonical Match performance/GC evidence after all Phase 1 integrations and reject any behavior or frame-time regression.
 
 ### Phase 1 Exit Gate
 
@@ -669,3 +669,18 @@ The implementing agent works directly on `main`, owns the bounded substantive an
 - Frame gates: canonical Match P95 must pass both the accepted `20 ms` product ceiling and the entry-baseline relative ceiling of `5.14 ms`. Ground-missile and transport focused comparisons use the median of three complete measured batches and retain their exact baseline-plus-25% ceilings.
 - GC gates: canonical Match remains `180` warmup plus `300` measured frames at no more than `1,024` player-relevant bytes. Every changed owner remains exactly zero recurring bytes; the fully bound Resource Exchange shell uses `180 + 300` unchanged-state frames and 100 measured open/close transitions after one warmup transition.
 - Fail-closed rule: missing identity or capture fields, dirty state, behavior failure, source/runner drift, allocation failure, or either frame ceiling failure rejects the evidence. No threshold may be loosened after capture.
+
+### 2026-07-16 - AM-017 - Phase 1 exit performance and GC accepted
+
+- Workflow path: direct commits to `main`; no branch, worktree, or PR workflow.
+- Accepted evidence commit: integrated `a8c42b409da2174ec634b6751696e9c703075882`, tree `e1bcdd83d5fb086e4fefa9273a5a6e42790040fe`; original pre-rebase evidence commit `03b78663fd0237e721acfe7eb8a38d4ad8191161`. Focused capture remains exactly `9d4feba92e19945d96410b25250be09ffefd041b` and maps to integrated equivalent `e769858734ec957954c77fc39507dca23d491a86`; canonical capture remains exactly `cd6e764bd878c6d7cedcbaa3c5034f0f105825b6` and maps to integrated equivalent `1a57ef2d16d3076a7d45023941ba282ee9a08145`.
+- Canonical frame result: the median of three complete runs selected run 3 at 1,442 frames, `2.777 ms` average, `4.121 ms` P95, and zero current-thread allocated bytes. It passed both the frozen `5.14 ms` relative ceiling and the `20 ms` product ceiling. The other complete runs were `4.826 / 7.704 ms` and `2.716 / 4.122 ms` average/P95.
+- Canonical GC result: 180 warmup plus 300 measured frames produced `262 / 1,024` player-relevant bytes. All `646` samples and `34,666` bytes reconcile exactly across relevant/excluded and resolved/unresolved classifications; the separate attribution suite passed `41 / 41`.
+- Focused performance result: ground missile selected the median `1.094 / 1.163 ms` average/P95 run against `1.6425 / 1.72 ms`; transport selected `1.475 / 1.551 ms` against `1.75 / 1.88 ms`; Resource Exchange backend, GC, unchanged shell, 100 open/close transitions, and four query-cache phases passed their frozen frame-time and zero-allocation gates.
+- Behavior result: transport capacity, transport behavior, query-cache behavior, faction resources, building resources, Resource Exchange routing, UI shell, settings, source growth, and broad architecture passed `212 / 212`. Together with GC classification, the acceptance bundle records `253 / 253` Unity checks and zero compiler errors.
+- Evidence integrity: `am017_focused_capture_manifest.json` binds all 18 focused logs to one exact commit/tree/environment/context, exact runner bytes at that commit, report hashes, compressed log hashes, raw log hashes, and success markers. The final binder governs 19 runner/source files, recomputes frame and transport medians, parses GC arithmetic from the hashed report, and rejects any path outside the AM-017 ownership set or inside protected operation-map, FirstLaunch, audio, or visual-lock domains.
+- Rebase and worktree isolation: `am017_acceptance_record.json` preserves both original capture identities and their rebased equivalents, proves governed bytes are unchanged, and freezes the integrated baseline-to-evidence write set. Later unrelated operation-map or feature edits in the live worktree cannot invalidate, expand, or be staged with the accepted AM-017 scope.
+- Validation: Python policy `4 / 4`, evidence `9 / 9`, combined focused `13 / 13`, and integrated `87 / 87` architecture tests passed; `git diff --check` passed. Independent review first rejected weak log provenance, three omitted runners, and evidence-only GC arithmetic; all findings were corrected and the final rereview returned `PASS` with no material findings.
+- Exclusions preserved: operation-map, FirstLaunch, audio, UI visual-lock, scenes, prefabs, packages, and `ProjectSettings` were not edited. No runtime gameplay, ECS scheduling, presentation behavior, or release-only device certification was changed or claimed.
+- Phase result: Phase 1 exit gates are accepted. Selected owners remain decomposed without replacement-owner growth, and canonical behavior, frame-time, and managed-allocation gates are green.
+- Next task: `AM-018` inventories production uses of global World lookup, mutable static caches, static event subscriptions, hidden singletons, and runtime object discovery.

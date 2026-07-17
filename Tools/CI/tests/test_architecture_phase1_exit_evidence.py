@@ -14,6 +14,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 EVIDENCE_PATH = ROOT / "Design/AgentReports/ArchitectureMaturity/am017_phase1_exit_evidence.json"
 POLICY_PATH = ROOT / "Design/AgentReports/ArchitectureMaturity/phase1_exit_capture_policy.json"
+ACCEPTANCE_PATH = ROOT / "Design/AgentReports/ArchitectureMaturity/am017_acceptance_record.json"
 
 
 def load_json(path: str | Path) -> dict:
@@ -55,6 +56,7 @@ class ArchitecturePhase1ExitEvidenceTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.evidence = load_json(EVIDENCE_PATH)
         cls.policy = load_json(POLICY_PATH)
+        cls.acceptance = load_json(ACCEPTANCE_PATH)
 
     def assert_git_identity(self, commit: str, expected_tree: str) -> None:
         self.assertEqual(git_text("rev-parse", "--verify", f"{commit}^{{commit}}"), commit)
@@ -84,15 +86,30 @@ class ArchitecturePhase1ExitEvidenceTests(unittest.TestCase):
         evidence = self.evidence
         contexts = evidence["captureContexts"]
         source = evidence["sourceBaseline"]
+        accepted = self.acceptance["acceptedEvidence"]
+        integrated_source = self.acceptance["sourceBaseline"]
+        integration = {entry["context"]: entry for entry in self.acceptance["captureIntegration"]}
         focused = contexts["focused"]
         canonical = contexts["canonical"]
 
         self.assert_git_identity(source["commit"], source["tree"])
         self.assert_git_identity(focused["exactCommit"], focused["tree"])
         self.assert_git_identity(canonical["exactCommit"], canonical["tree"])
+        self.assertEqual(integrated_source["capturedCommit"], source["commit"])
+        self.assertEqual(integrated_source["capturedTree"], source["tree"])
         self.assert_is_ancestor(source["commit"], focused["exactCommit"])
         self.assert_is_ancestor(focused["exactCommit"], canonical["exactCommit"])
-        self.assert_is_ancestor(canonical["exactCommit"], "HEAD")
+        self.assert_is_ancestor(canonical["exactCommit"], accepted["capturedCommit"])
+        self.assert_git_identity(integrated_source["integratedCommit"], integrated_source["integratedTree"])
+        for context_name, context in (("focused", focused), ("canonical", canonical)):
+            mapped = integration[context_name]
+            self.assertEqual(mapped["capturedCommit"], context["exactCommit"])
+            self.assertEqual(mapped["capturedTree"], context["tree"])
+            self.assert_git_identity(mapped["integratedCommit"], mapped["integratedTree"])
+        self.assert_is_ancestor(integrated_source["integratedCommit"], integration["focused"]["integratedCommit"])
+        self.assert_is_ancestor(integration["focused"]["integratedCommit"], integration["canonical"]["integratedCommit"])
+        self.assert_is_ancestor(integration["canonical"]["integratedCommit"], accepted["integratedCommit"])
+        self.assert_is_ancestor(accepted["integratedCommit"], "HEAD")
         self.assertEqual(evidence["focusedCaptureCommit"], focused["exactCommit"])
         self.assertEqual(evidence["focusedCaptureTree"], focused["tree"])
         self.assertEqual(evidence["canonicalCaptureCommit"], canonical["exactCommit"])
@@ -115,6 +132,11 @@ class ArchitecturePhase1ExitEvidenceTests(unittest.TestCase):
                 environment["sha256"],
                 sha256_bytes(git_bytes(context["exactCommit"], environment["path"])),
             )
+            integrated_commit = integration["focused" if context is focused else "canonical"]["integratedCommit"]
+            self.assertEqual(
+                environment["sha256"],
+                sha256_bytes(git_bytes(integrated_commit, environment["path"])),
+            )
 
         for entry in evidence["governedSources"]:
             self.assertEqual(entry["sha256"], sha256(entry["path"]), entry["path"])
@@ -122,6 +144,12 @@ class ArchitecturePhase1ExitEvidenceTests(unittest.TestCase):
             self.assertEqual(
                 entry["sha256"],
                 sha256_bytes(git_bytes(capture_commit, entry["path"])),
+                entry["path"],
+            )
+            integrated_commit = integration[entry["captureContext"]]["integratedCommit"]
+            self.assertEqual(
+                entry["sha256"],
+                sha256_bytes(git_bytes(integrated_commit, entry["path"])),
                 entry["path"],
             )
 
@@ -390,12 +418,29 @@ class ArchitecturePhase1ExitEvidenceTests(unittest.TestCase):
             self.assert_log(entry)
 
     def test_owned_paths_are_exact_and_protected_work_is_absent(self) -> None:
-        baseline = self.evidence["sourceBaseline"]["commit"]
-        owned = set(self.evidence["ownedPaths"])
-        changed = set(filter(None, git_text("diff", "--name-only", baseline).splitlines()))
-        untracked = set(filter(None, git_text("ls-files", "--others", "--exclude-standard").splitlines()))
-        changed.update(untracked)
-        changed.update(path for path in owned if path.endswith(".log.gz") and (ROOT / path).is_file())
+        acceptance = self.acceptance
+        source = acceptance["sourceBaseline"]
+        accepted = acceptance["acceptedEvidence"]
+        self.assert_git_identity(source["capturedCommit"], source["capturedTree"])
+        self.assert_git_identity(source["integratedCommit"], source["integratedTree"])
+        self.assert_git_identity(accepted["capturedCommit"], accepted["capturedTree"])
+        self.assert_git_identity(accepted["integratedCommit"], accepted["integratedTree"])
+        self.assert_is_ancestor(source["capturedCommit"], accepted["capturedCommit"])
+        self.assert_is_ancestor(source["integratedCommit"], accepted["integratedCommit"])
+
+        captured_evidence_bytes = git_bytes(accepted["capturedCommit"], accepted["path"])
+        integrated_evidence_bytes = git_bytes(accepted["integratedCommit"], accepted["path"])
+        self.assertEqual(captured_evidence_bytes, integrated_evidence_bytes)
+        self.assertEqual(accepted["sha256"], sha256_bytes(integrated_evidence_bytes))
+        self.assertEqual(accepted["sha256"], sha256(accepted["path"]))
+        accepted_evidence = json.loads(integrated_evidence_bytes.decode("utf-8"))
+        owned = set(accepted_evidence["ownedPaths"])
+        changed = set(
+            filter(
+                None,
+                git_text("diff", "--name-only", source["integratedCommit"], accepted["integratedCommit"]).splitlines(),
+            )
+        )
         self.assertSetEqual(changed, owned)
         self.assertTrue(all((ROOT / path).is_file() for path in owned))
 

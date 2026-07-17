@@ -1,0 +1,47 @@
+{
+  "artifactId": "AM017-ACCEPTANCE-RECORD",
+  "schemaVersion": 1,
+  "taskId": "AM-017",
+  "result": "Accepted",
+  "sourceBaseline": {
+    "capturedCommit": "b8cb6ef87ed1a640d905bd686aa1fae619e34920",
+    "capturedTree": "08aa8808ef7907c70038d16c9972ffff98ac10e4",
+    "integratedCommit": "fcb31413036064535342f4e17806ec4b9cc691a0",
+    "integratedTree": "90daaf9550f024e08a8199961f4cc766ff416407"
+  },
+  "captureIntegration": [
+    {
+      "context": "focused",
+      "capturedCommit": "9d4feba92e19945d96410b25250be09ffefd041b",
+      "capturedTree": "ed0c082528a3e20894f3af4a1d7ff42bbe09d5c4",
+      "integratedCommit": "e769858734ec957954c77fc39507dca23d491a86",
+      "integratedTree": "1489e9c68f3631cf146790bcfee9a359e74c18da"
+    },
+    {
+      "context": "canonical",
+      "capturedCommit": "cd6e764bd878c6d7cedcbaa3c5034f0f105825b6",
+      "capturedTree": "6842cfb589a1e7cc05158356f3187a7b1d58954b",
+      "integratedCommit": "1a57ef2d16d3076a7d45023941ba282ee9a08145",
+      "integratedTree": "fdbfeaa963054ddd979a967daa9e5a17c9a375b1"
+    }
+  ],
+  "acceptedEvidence": {
+    "capturedCommit": "03b78663fd0237e721acfe7eb8a38d4ad8191161",
+    "capturedTree": "2b48d3ac1f9c5ebd381e33eaa4c30300174a2624",
+    "integratedCommit": "a8c42b409da2174ec634b6751696e9c703075882",
+    "integratedTree": "e1bcdd83d5fb086e4fefa9273a5a6e42790040fe",
+    "path": "Design/AgentReports/ArchitectureMaturity/am017_phase1_exit_evidence.json",
+    "sha256": "47c3b3d52507e3ed718d5e8a9f967c4ca478421def4cf07d9a41c0920836be95"
+  },
+  "validation": {
+    "focusedPolicyTests": 4,
+    "focusedEvidenceTests": 9,
+    "focusedCombinedTests": 13,
+    "integratedPythonTests": 87,
+    "unityAcceptanceTests": 253,
+    "compilerErrors": 0,
+    "independentRereview": "PASS"
+  },
+  "integrationRule": "Captured commits retain the exact immutable measurement identities. Integrated commits are the rebased equivalents on main after unrelated operation-map commits; every governed source and evidence byte must match its captured counterpart even though the full repository trees differ by unrelated upstream content.",
+  "scopeRule": "The exact integrated AM-017 write set is the Git diff from sourceBaseline.integratedCommit through acceptedEvidence.integratedCommit. Live unrelated worktree changes are not part of the acceptance scope and cannot invalidate or expand it."
+}

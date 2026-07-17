@@ -1,0 +1,131 @@
+{
+  "artifactId": "AM019-WORLD-SCOPED-CACHE-CONTRACT-EVIDENCE",
+  "schemaVersion": 1,
+  "taskId": "AM-019",
+  "result": "Passed",
+  "sourceBaseline": {
+    "branch": "main",
+    "commit": "57faa4226dcc9ef0dea9d915849509a85e7963e7",
+    "tree": "1130cd87a590e9753f840d10015b55d9e2f79627"
+  },
+  "implementation": {
+    "branch": "main",
+    "commit": "e733d7021eef7fb5b80fe3bd0774e5bcc5aed224",
+    "tree": "2e7049984ee379e41ffb59fe538bd1ffa1f7a797",
+    "changedPaths": [
+      "Assets/Game/Scripts/Systems/WorldScopedComponentQueryCache.cs",
+      "Assets/Tests/Editor/WorldScopedComponentQueryCachePerformanceValidation.cs",
+      "Assets/Tests/Editor/WorldScopedComponentQueryCacheTests.cs",
+      "Design/Architecture/world_scoped_query_entity_cache_contract.md",
+      "Tools/CI/tests/test_architecture_phase1_exit_evidence.py",
+      "Tools/CI/tests/test_architecture_query_cache_consolidation_evidence.py",
+      "Tools/CI/tests/test_architecture_world_scoped_cache_contract.py"
+    ],
+    "files": [
+      {
+        "path": "Assets/Game/Scripts/Systems/WorldScopedComponentQueryCache.cs",
+        "sha256": "774f66fb06b4ca453f725f6fdde85efa55092fdc286c02cf1c13b8fefdcd19f9"
+      },
+      {
+        "path": "Assets/Tests/Editor/WorldScopedComponentQueryCachePerformanceValidation.cs",
+        "sha256": "1a5f952eaddd9c568b0d59a719113ff47a84ff5d86e511087cc15c1cc5fa6632"
+      },
+      {
+        "path": "Assets/Tests/Editor/WorldScopedComponentQueryCacheTests.cs",
+        "sha256": "36acaa2603ea7fa5846eb7532b6283596c9f0dc4e0b7371f7a33ddc79a516f8e"
+      },
+      {
+        "path": "Design/Architecture/world_scoped_query_entity_cache_contract.md",
+        "sha256": "50605950f138c1a3a9d51c38a12542c97710146d603aaa41f2f280036973ae40"
+      },
+      {
+        "path": "Tools/CI/tests/test_architecture_phase1_exit_evidence.py",
+        "sha256": "77ac676279bf76f30a697b951f7e62da417e3ec6b8536852a68eeb58d71f24a8"
+      },
+      {
+        "path": "Tools/CI/tests/test_architecture_query_cache_consolidation_evidence.py",
+        "sha256": "ad2dc73206187b074fddec3ee1926e28a520890b86c7218767a61e9003abc745"
+      },
+      {
+        "path": "Tools/CI/tests/test_architecture_world_scoped_cache_contract.py",
+        "sha256": "623de3be5ce8f60ca5b91f8fbebc64b26c33adf518f65d86dc4de0e26dfbda5f"
+      }
+    ]
+  },
+  "contract": {
+    "explicitWorldBinding": true,
+    "positiveLookup": "component-order-version guarded",
+    "negativeLookup": "cached until explicit invalidation or World rebind",
+    "invalidation": "releases query and clears World plus entity resolution",
+    "rebind": "automatic when EntityManager.World changes",
+    "disposal": "idempotent, terminal, and safe after World destruction",
+    "destroyedEntityRecovery": "re-resolves after destruction or component removal",
+    "enableableSingletonPolicy": "fail closed with NotSupportedException",
+    "queryOwnership": "borrowed cache-owned handle with bounded lifetime",
+    "defaultWorldLookup": false,
+    "staticMutableState": false,
+    "systemBaseAdded": false
+  },
+  "validation": {
+    "behavior": {
+      "executeMethod": "WorldScopedComponentQueryCacheTests.RunArchitectureQueryCacheValidation",
+      "passedTests": 11,
+      "compilerErrors": 0,
+      "resultMarker": "[WorldScopedComponentQueryCache] result=Passed tests=11",
+      "log": {
+        "path": "Design/AgentReports/ArchitectureMaturity/Logs/am019_query_cache_behavior.log.gz",
+        "sha256": "bb9548c77dadf8685b4c51cbb3ba0b81efa33fdbc123cc365d8bb1a028bc6943"
+      }
+    },
+    "performance": {
+      "executeMethod": "WorldScopedComponentQueryCachePerformanceValidation.RunBatchValidation",
+      "passedTests": 2,
+      "measuredPhases": 6,
+      "warmupOperationsPerPhase": 180,
+      "measuredOperationsPerPhase": 300,
+      "recurringManagedAllocatedBytesPerPhase": 0,
+      "compilerErrors": 0,
+      "resultMarker": "[WorldScopedComponentQueryCachePerformanceValidation] result=Passed tests=2 combinations=2 phases=6",
+      "log": {
+        "path": "Design/AgentReports/ArchitectureMaturity/Logs/am019_query_cache_performance.log.gz",
+        "sha256": "35b5e2e99a64abd17a48c547cb9ffe600572c7d6c6143532c5826d9b1d8ffb64"
+      }
+    },
+    "broadArchitecture": {
+      "executeMethod": "ScriptArchitectureAlignmentContractTests.RunBroadShellValidation",
+      "passedTests": 1,
+      "compilerErrors": 0,
+      "resultMarker": "[ScriptBroadShellValidation] result=Passed tests=1",
+      "log": {
+        "path": "Design/AgentReports/ArchitectureMaturity/Logs/am019_broad_architecture.log.gz",
+        "sha256": "c5d4dc31bdba1ac8a3164e31143126efa1121732ec5886e3ae148f444c6c88ed"
+      }
+    },
+    "focusedPythonTests": 24,
+    "integratedArchitectureTests": 112,
+    "gitDiffCheck": "passed"
+  },
+  "independentReview": {
+    "agentId": "019f6f31-9630-7971-8237-5c06689d9439",
+    "initialResult": "CHANGES_REQUESTED",
+    "findingsClosed": 4,
+    "rereviewResult": "PASS"
+  },
+  "scope": {
+    "productionChangePaths": [
+      "Assets/Game/Scripts/Systems/WorldScopedComponentQueryCache.cs"
+    ],
+    "consumerMigration": false,
+    "preservedUnrelatedWork": [
+      "Assets/Game/Art/MapPrototypes/M01/Materials/M01_Asphalt.mat",
+      "Assets/Game/Art/MapPrototypes/M01/Materials/M01_RoadPaint_Amber.mat",
+      "Assets/Game/Scripts/Editor/BuildDrawerMobileLayoutPrefabSetup.cs",
+      "Assets/Game/Scripts/Editor/BuildDrawerMobileLayoutPrefabSetup.cs.meta"
+    ],
+    "nextTasks": [
+      "AM-020",
+      "AM-021",
+      "AM-022"
+    ]
+  }
+}

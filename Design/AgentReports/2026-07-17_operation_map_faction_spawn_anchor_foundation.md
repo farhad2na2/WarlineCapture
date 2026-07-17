@@ -15,9 +15,9 @@ Implemented the loader-neutral runtime contract for faction deployment/spawn anc
 - Invalid, duplicate, or out-of-grid typed anchors fail startup rather than silently selecting a fallback.
 - The lookup runs only during startup composition and introduces no update-loop owner or per-frame allocation path.
 
-## Remaining Dependency
+## Current-Map Completion
 
-The current compatibility operation-map definition contains only two debug anchors. Approved faction deployment/spawn identities and transforms must be authored and added to scenario requirements before the Phase 6 tracker row can close.
+The current compatibility definition now contains deterministic typed deployment anchors authored from the exact canonical faction-volume transforms. The committed metadata blob resolves both faction initial-spawn cells, closing the remaining current-map dependency. See `2026-07-17_operation_map_current_faction_spawn_and_build_manifest.md`.
 
 ## Validation
 

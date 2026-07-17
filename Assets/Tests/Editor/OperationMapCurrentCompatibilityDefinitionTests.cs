@@ -1,5 +1,6 @@
 using System.IO;
 using System.Security.Cryptography;
+using Exception = System.Exception;
 using Game.Configs;
 using Game.Editor;
 using Game.Composition;
@@ -12,6 +13,26 @@ using UnityEngine.SceneManagement;
 
 public sealed class OperationMapCurrentCompatibilityDefinitionTests
 {
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            var definitionTests = new OperationMapCurrentCompatibilityDefinitionTests();
+            definitionTests.CommittedDefinition_MatchesCurrentCompatibilityIdentitiesAndValidates();
+            definitionTests.CurrentInfrastructureAuthoring_IsDeterministicAndMatchesCommittedDefinition();
+            definitionTests.MatchScene_BindsCurrentCompatibilityCatalogAndIdentity();
+            new InitialFactionSpawnCellSystemTests()
+                .CurrentCompatibilityDefinitionResolvesFactionDeploymentCells();
+            Debug.Log("[OperationMapCurrentCompatibilityDefinitionValidation] result=Passed tests=4");
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError("[OperationMapCurrentCompatibilityDefinitionValidation] result=Failed");
+            Debug.LogException(exception);
+            throw;
+        }
+    }
+
     [Test]
     public void CommittedDefinition_MatchesCurrentCompatibilityIdentitiesAndValidates()
     {
@@ -43,9 +64,21 @@ public sealed class OperationMapCurrentCompatibilityDefinitionTests
         Assert.That(definition.PlanningCameraId, Is.EqualTo(definition.BattleCameraId));
         Assert.That(definition.Minimap.ProjectionOrigin, Is.EqualTo(Vector3.zero));
         Assert.That(definition.Minimap.ProjectionSize, Is.EqualTo(new Vector2(2048f, 1024f)));
-        Assert.That(definition.Anchors.Length, Is.EqualTo(6));
-        AssertInfrastructureAnchor(
+        Assert.That(definition.Anchors.Length, Is.EqualTo(8));
+        AssertDeploymentAnchor(
             definition.Anchors[2],
+            "anchor.skirmish.desert_base_01.deployment.faction_1",
+            1,
+            new Vector3(949f, 23f, 344.7f),
+            102.1f);
+        AssertDeploymentAnchor(
+            definition.Anchors[3],
+            "anchor.skirmish.desert_base_01.deployment.faction_2",
+            2,
+            new Vector3(1686f, 23f, 108f),
+            102.1f);
+        AssertInfrastructureAnchor(
+            definition.Anchors[4],
             "anchor.skirmish.desert_base_01.runway.faction_1.lane_0",
             OperationMapAnchorKind.Runway,
             1,
@@ -53,7 +86,7 @@ public sealed class OperationMapCurrentCompatibilityDefinitionTests
         for (int index = 0; index < 3; index++)
         {
             AssertInfrastructureAnchor(
-                definition.Anchors[index + 3],
+                definition.Anchors[index + 5],
                 $"anchor.skirmish.desert_base_01.helipad.faction_1.lane_{index}",
                 OperationMapAnchorKind.Helipad,
                 1,
@@ -98,7 +131,7 @@ public sealed class OperationMapCurrentCompatibilityDefinitionTests
             Assert.That(second[index].FactionId, Is.EqualTo(first[index].FactionId));
             Assert.That(second[index].LaneIndex, Is.EqualTo(first[index].LaneIndex));
 
-            OperationMapAnchorConfig committed = definition.Anchors[index + 2];
+            OperationMapAnchorConfig committed = definition.Anchors[index + 4];
             Assert.That(committed.AnchorId, Is.EqualTo(first[index].AnchorId));
             Assert.That(committed.Position, Is.EqualTo(first[index].Position));
             Assert.That(committed.EulerAngles, Is.EqualTo(first[index].EulerAngles));
@@ -162,6 +195,22 @@ public sealed class OperationMapCurrentCompatibilityDefinitionTests
         Assert.That(anchor.FactionId, Is.EqualTo(expectedFactionId));
         Assert.That(anchor.LaneIndex, Is.EqualTo(expectedLaneIndex));
         Assert.That(anchor.Radius, Is.GreaterThan(0f));
+        Assert.That(anchor.TryValidate(out string error), Is.True, error);
+    }
+
+    private static void AssertDeploymentAnchor(
+        OperationMapAnchorConfig anchor,
+        string expectedId,
+        int expectedFactionId,
+        Vector3 expectedPosition,
+        float expectedRadius)
+    {
+        Assert.That(anchor.AnchorId, Is.EqualTo(expectedId));
+        Assert.That(anchor.Kind, Is.EqualTo(OperationMapAnchorKind.Deployment));
+        Assert.That(anchor.FactionId, Is.EqualTo(expectedFactionId));
+        Assert.That(anchor.LaneIndex, Is.EqualTo(-1));
+        Assert.That(Vector3.Distance(anchor.Position, expectedPosition), Is.LessThan(0.001f));
+        Assert.That(anchor.Radius, Is.EqualTo(expectedRadius).Within(0.001f));
         Assert.That(anchor.TryValidate(out string error), Is.True, error);
     }
 }

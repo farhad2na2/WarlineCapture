@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Configs::Game.Configs.OperationMapDefinition
   operationMapId: opmap.skirmish.desert_base_01
   schemaVersion: 1
-  contentVersion: 3
+  contentVersion: 4
   sourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900
   contentHash: 2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c
-  generatedMetadataHash: b218a5b3ffd10fd8da1aff0301cdfd0d856f8f80aec07485af1d156b73f9dcc8
+  generatedMetadataHash: 9890e683b74f17958496632223c76e7713770af180dc7d5191e4c8708fad3d05
   bounds:
     worldMin: {x: 0, y: -6.9545445, z: 0}
     worldMax: {x: 2048, y: 100, z: 1024}
@@ -77,6 +77,20 @@ MonoBehaviour:
     eulerAngles: {x: -0, y: 0, z: 0}
     radius: 0
     factionId: -1
+    laneIndex: -1
+  - anchorId: anchor.skirmish.desert_base_01.deployment.faction_1
+    kind: 3
+    position: {x: 949, y: 23, z: 344.7}
+    eulerAngles: {x: -0, y: 0, z: 0}
+    radius: 102.1
+    factionId: 1
+    laneIndex: -1
+  - anchorId: anchor.skirmish.desert_base_01.deployment.faction_2
+    kind: 3
+    position: {x: 1686, y: 23, z: 108}
+    eulerAngles: {x: -0, y: 0, z: 0}
+    radius: 102.1
+    factionId: 2
     laneIndex: -1
   - anchorId: anchor.skirmish.desert_base_01.runway.faction_1.lane_0
     kind: 9

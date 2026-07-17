@@ -30,6 +30,8 @@ namespace Game.Editor
         private const long WorldCameraLocalId = 1220593093;
         private const long StartTransformLocalId = 229045073;
         private const long EndTransformLocalId = 29742182;
+        private const long Faction1TransformLocalId = 1851641272;
+        private const long Faction2TransformLocalId = 684472870;
         private const long GridAuthoringLocalId = 146043441;
         private const string OperationMapId = "opmap.skirmish.desert_base_01";
         private const string CameraId = "camera.skirmish.desert_base_01.active";
@@ -42,7 +44,7 @@ namespace Game.Editor
         private const string BuildingPlacementContentHash = "26973214f433c44ebca01f302ecbe05789c84e573dc48eb8b2c21f241823464d";
         private const string MatchSceneFileHash = "182f3b4cb50f48e1a573e1e90ee0c13baf9d62fce46e35b1850ef72097db5d75";
         private const string SubSceneFileHash = "bcc255f3fb140a0d91687b45b679b47fb60f01f5cfa8690bac3032ec642dadd8";
-        private const string ManifestFileHash = "494e0052e1c55578238fd1200517999a437fb35465aac3eb295ec0c79e0cc715";
+        private const string ManifestFileHash = "a006ed18eab6523d9f9aeec82d6f21b5ff7089d9743a95e778117fe0fbb89c1b";
 
         [MenuItem("Tools/Warline Capture/Operation Maps/Rebuild Current Compatibility Definition")]
         public static void Run()
@@ -90,9 +92,11 @@ namespace Game.Editor
             Camera camera = FindByLocalId<Camera>(scene, WorldCameraLocalId);
             Transform start = FindByLocalId<Transform>(scene, StartTransformLocalId);
             Transform end = FindByLocalId<Transform>(scene, EndTransformLocalId);
+            Transform faction1 = FindByLocalId<Transform>(scene, Faction1TransformLocalId);
+            Transform faction2 = FindByLocalId<Transform>(scene, Faction2TransformLocalId);
             GridAuthoring gridAuthoring = FindByLocalId<GridAuthoring>(subScene, GridAuthoringLocalId);
-            if (camera == null || start == null || end == null || gridAuthoring == null)
-                throw new InvalidOperationException("Current camera, grid authoring, or compatibility boundary anchors are missing.");
+            if (camera == null || start == null || end == null || faction1 == null || faction2 == null || gridAuthoring == null)
+                throw new InvalidOperationException("Current camera, grid authoring, faction volumes, or compatibility boundary anchors are missing.");
             int staticGridBlockerCount = CountComponents<StaticGridBlockerAuthoring>(subScene);
 
             GetSurfaceHeightRange(surface, out float minimumHeight, out float maximumHeight);
@@ -102,7 +106,7 @@ namespace Game.Editor
             float worldMaximumHeight = math.max(maximumHeight, 100f);
             OperationMapAnchorConfig[] infrastructureAnchors =
                 OperationMapCurrentInfrastructureAnchorAuthoring.BuildInfrastructureAnchors(buildingPlacements);
-            var anchors = new OperationMapAnchorConfig[2 + infrastructureAnchors.Length];
+            var anchors = new OperationMapAnchorConfig[4 + infrastructureAnchors.Length];
             anchors[0] = new OperationMapAnchorConfig(
                 "anchor.skirmish.desert_base_01.compat_start",
                 OperationMapAnchorKind.Debug,
@@ -115,7 +119,9 @@ namespace Game.Editor
                 end.position,
                 end.eulerAngles,
                 0f);
-            Array.Copy(infrastructureAnchors, 0, anchors, 2, infrastructureAnchors.Length);
+            anchors[2] = BuildFactionDeploymentAnchor(faction1, 1);
+            anchors[3] = BuildFactionDeploymentAnchor(faction2, 2);
+            Array.Copy(infrastructureAnchors, 0, anchors, 4, infrastructureAnchors.Length);
             string generatedMetadataHash =
                 OperationMapCurrentInfrastructureAnchorAuthoring.ComputeGeneratedMetadataHash(
                     BaseGeneratedMetadataHash,
@@ -131,7 +137,7 @@ namespace Game.Editor
 
             Set(definition, "operationMapId", OperationMapId);
             Set(definition, "schemaVersion", 1);
-            Set(definition, "contentVersion", 3);
+            Set(definition, "contentVersion", 4);
             Set(definition, "sourceIdentityHash", SourceIdentityHash);
             Set(definition, "contentHash", ContentHash);
             Set(definition, "generatedMetadataHash", generatedMetadataHash);
@@ -190,6 +196,22 @@ namespace Game.Editor
 
             EditorUtility.SetDirty(definition);
             AssetDatabase.SaveAssets();
+        }
+
+        private static OperationMapAnchorConfig BuildFactionDeploymentAnchor(
+            Transform factionVolume,
+            int factionId)
+        {
+            Vector3 scale = factionVolume.lossyScale;
+            float radius = math.min(math.abs(scale.x), math.abs(scale.z)) * 0.5f;
+            return new OperationMapAnchorConfig(
+                $"anchor.skirmish.desert_base_01.deployment.faction_{factionId}",
+                OperationMapAnchorKind.Deployment,
+                factionVolume.position,
+                factionVolume.eulerAngles,
+                radius,
+                factionId,
+                -1);
         }
 
         private static void GetSurfaceHeightRange(

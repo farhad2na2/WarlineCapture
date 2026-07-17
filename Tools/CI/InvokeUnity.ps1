@@ -131,7 +131,11 @@ while (-not $process.HasExited) {
 }
 
 $process.WaitForExit()
-$exitCode = if ($timedOut) { 124 } elseif ($null -eq $process.ExitCode) { 0 } else { $process.ExitCode }
+$process.Refresh()
+$exitCode = if ($timedOut) { 124 } elseif ($null -eq $process.ExitCode) { 1 } else { $process.ExitCode }
+if (-not $timedOut -and $null -eq $process.ExitCode) {
+    Write-InvocationLog "[UnityInvoke] ERROR: Unity exited without a readable process exit code. Failing closed."
+}
 Write-InvocationLog "[UnityInvoke] ExitCode: $exitCode"
 if ($NoProcessExit) {
     $global:LASTEXITCODE = $exitCode

@@ -16,6 +16,23 @@ public sealed class StaticMapAndroidBuildSceneResolverTests
     private const string ChunkB = "Assets/Game/GeneratedStaticMapPresentation/Scenes/StaticMapPresentation_chunk_p000_p000.unity";
     private const string StaleChunk = "Assets/Game/GeneratedStaticMapPresentation/Scenes/StaticMapPresentation_chunk_p999_p999.unity";
 
+    public static void RunCurrentProjectValidation()
+    {
+        try
+        {
+            var tests = new StaticMapAndroidBuildSceneResolverTests();
+            tests.ResolveForCurrentProject_IncludesEnabledBaseScenesThenEveryManifestChunkExactlyOnce();
+            tests.BuildScript_UsesManifestResolverForBothAndroidBuildPipelinesOnly();
+            Debug.Log("[StaticMapAndroidBuildSceneResolverValidation] result=Passed tests=2");
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError("[StaticMapAndroidBuildSceneResolverValidation] result=Failed");
+            Debug.LogException(exception);
+            throw;
+        }
+    }
+
     [Test]
     public void Resolve_PreservesBaseAndManifestOrderAndIncludesEveryPathOnce()
     {

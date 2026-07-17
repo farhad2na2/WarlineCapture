@@ -1,5 +1,6 @@
 using Game.Components;
 using Game.Configs;
+using Game.Editor;
 using Game.Runtime;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System;
@@ -9,6 +10,7 @@ using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using UnityEditor;
 using UnityEngine;
 
 public sealed class InitialFactionSpawnCellSystemTests
@@ -21,9 +23,10 @@ public sealed class InitialFactionSpawnCellSystemTests
             tests.TryGetConfiguredFactionSpawnCellPrefersActiveMapDeploymentAnchor();
             tests.TryGetConfiguredFactionSpawnCellUsesActiveMapSpawnAnchorWhenDeploymentIsAbsent();
             tests.TryGetConfiguredFactionSpawnCellRejectsAmbiguousActiveMapAnchors();
+            tests.CurrentCompatibilityDefinitionResolvesFactionDeploymentCells();
             tests.TryGetConfiguredFactionSpawnCellPrefersBakedEcsSpawnBuffer();
             tests.TryGetConfiguredFactionSpawnCellFallsBackToSerializedConfig();
-            Debug.Log("[InitialFactionSpawnCellFocusedValidation] result=Passed tests=5");
+            Debug.Log("[InitialFactionSpawnCellFocusedValidation] result=Passed tests=6");
         }
         catch (Exception exception)
         {
@@ -115,6 +118,47 @@ public sealed class InitialFactionSpawnCellSystemTests
             InitialFactionSpawnCellSystem system = new();
             Assert.Throws<InvalidOperationException>(() =>
                 system.TryGetConfiguredFactionSpawnCell(world.EntityManager, null, 2, out _));
+        }
+        finally
+        {
+            blob.Dispose();
+        }
+    }
+
+    [Test]
+    public void CurrentCompatibilityDefinitionResolvesFactionDeploymentCells()
+    {
+        OperationMapDefinition definition = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
+            OperationMapCurrentCompatibilityDefinitionBuilder.DefinitionPath);
+        Assert.That(definition, Is.Not.Null);
+        Assert.That(
+            definition.TryCreatePersistentMetadataBlob(
+                out BlobAssetReference<OperationMapBlob> blob,
+                out string error),
+            Is.True,
+            error);
+
+        using var world = new World("InitialFactionSpawnCellSystemTests_CurrentCompatibility");
+        try
+        {
+            AddActiveMap(world.EntityManager, blob);
+            InitialFactionSpawnCellSystem system = new();
+            Assert.That(
+                system.TryGetConfiguredFactionSpawnCell(
+                    world.EntityManager,
+                    null,
+                    1,
+                    out int2 faction1Cell),
+                Is.True);
+            Assert.That(faction1Cell, Is.EqualTo(new int2(949, 344)));
+            Assert.That(
+                system.TryGetConfiguredFactionSpawnCell(
+                    world.EntityManager,
+                    null,
+                    2,
+                    out int2 faction2Cell),
+                Is.True);
+            Assert.That(faction2Cell, Is.EqualTo(new int2(1686, 108)));
         }
         finally
         {
@@ -225,6 +269,26 @@ public sealed class InitialFactionSpawnCellSystemTests
         });
         entityManager.SetComponentData(root, new OperationMapMetadataComponent { Blob = blob, Generation = 1 });
         return blob;
+    }
+
+    private static void AddActiveMap(
+        EntityManager entityManager,
+        BlobAssetReference<OperationMapBlob> blob)
+    {
+        Entity root = entityManager.CreateEntity(
+            typeof(OperationMapRootComponent),
+            typeof(ActiveOperationMapComponent),
+            typeof(OperationMapMetadataComponent));
+        entityManager.SetComponentData(root, new ActiveOperationMapComponent
+        {
+            OperationMapId = blob.Value.OperationMapId,
+            Generation = 1
+        });
+        entityManager.SetComponentData(root, new OperationMapMetadataComponent
+        {
+            Blob = blob,
+            Generation = 1
+        });
     }
 
     private static InitialFactionSpawnCellFallbackEntry[] CreateFallbackEntries(InitialUnitsSpawnerAuthoringConfig config)

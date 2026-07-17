@@ -217,6 +217,7 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p018-n007
     - operation-map-partition-skirmish-desert-base-01-region-p018-p002
     - operation-map-partition-skirmish-desert-base-01-region-p019-p007
+    - operation-map-role-minimap-raster
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: 11f3bcb7e92274cb9a2041ff8401d472, type: 2}

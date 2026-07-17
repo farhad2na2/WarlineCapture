@@ -32,6 +32,7 @@ namespace Game.Editor
             "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01_BuildingPlacements.asset";
         public const string VehiclePlacementsPath =
             "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01_VehiclePlacements.asset";
+        public const string MinimapRasterPath = OperationMapMinimapRasterBaker.OutputPath;
         public const string AddressPrefix = "operation-map/opmap.skirmish.desert_base_01/";
         public const string PackLabel = "operation-map-pack-skirmish-desert-base-01";
         public const string OperationMapLabel = "operation-map";
@@ -40,6 +41,7 @@ namespace Game.Editor
         public const string SourceSceneRoleLabel = "operation-map-role-source-scene";
         public const string MetadataRoleLabel = "operation-map-role-metadata";
         public const string PresentationRoleLabel = "operation-map-role-presentation";
+        public const string MinimapRasterRoleLabel = "operation-map-role-minimap-raster";
 
         [MenuItem("Game/Operation Maps/Configure Local Addressables Groups")]
         public static void Run()
@@ -113,13 +115,24 @@ namespace Game.Editor
                 vehiclePlacementsEntry,
                 MetadataRoleLabel,
                 null);
+            AddressableAssetEntry minimapRasterEntry = MoveEntry(
+                settings,
+                core,
+                MinimapRasterPath,
+                AddressPrefix + "minimap-raster");
+            SetOperationMapLabels(
+                settings,
+                minimapRasterEntry,
+                MinimapRasterRoleLabel,
+                null);
 
             AssignDefinitionReferences(
                 sourceSceneEntry,
                 mapSurfaceEntry,
                 manifestEntry,
                 buildingPlacementsEntry,
-                vehiclePlacementsEntry);
+                vehiclePlacementsEntry,
+                minimapRasterEntry);
 
             StaticMapPresentationManifest manifest =
                 AssetDatabase.LoadAssetAtPath<StaticMapPresentationManifest>(ManifestPath);
@@ -149,7 +162,8 @@ namespace Game.Editor
             AddressableAssetEntry mapSurface,
             AddressableAssetEntry manifest,
             AddressableAssetEntry buildingPlacements,
-            AddressableAssetEntry vehiclePlacements)
+            AddressableAssetEntry vehiclePlacements,
+            AddressableAssetEntry minimapRaster)
         {
             OperationMapDefinition definition =
                 AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(DefinitionPath);
@@ -162,6 +176,7 @@ namespace Game.Editor
             SetAssetReferenceGuid(serializedDefinition, "staticPresentationManifestReference", manifest.guid);
             SetAssetReferenceGuid(serializedDefinition, "buildingPlacementsReference", buildingPlacements.guid);
             SetAssetReferenceGuid(serializedDefinition, "vehiclePlacementsReference", vehiclePlacements.guid);
+            SetAssetReferenceGuid(serializedDefinition, "minimapRasterReference", minimapRaster.guid);
             if (serializedDefinition.ApplyModifiedPropertiesWithoutUndo())
                 EditorUtility.SetDirty(definition);
         }

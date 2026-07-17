@@ -35,7 +35,7 @@ public sealed class OperationMapAddressablesLayoutBuilderTests
 
         Assert.That(catalog.entries.Count, Is.EqualTo(2));
         Assert.That(shared.entries, Is.Empty);
-        Assert.That(core.entries.Count, Is.EqualTo(5));
+        Assert.That(core.entries.Count, Is.EqualTo(6));
         Assert.That(presentation.entries.Count, Is.EqualTo(514));
 
         AssertEntry(settings, OperationMapAddressablesLayoutBuilder.CatalogPath, catalog, "operation-map/catalog");
@@ -49,6 +49,7 @@ public sealed class OperationMapAddressablesLayoutBuilderTests
         AssertEntry(settings, OperationMapAddressablesLayoutBuilder.ManifestPath, core, OperationMapAddressablesLayoutBuilder.AddressPrefix + "static-manifest");
         AssertEntry(settings, OperationMapAddressablesLayoutBuilder.BuildingPlacementsPath, core, OperationMapAddressablesLayoutBuilder.AddressPrefix + "building-placements");
         AssertEntry(settings, OperationMapAddressablesLayoutBuilder.VehiclePlacementsPath, core, OperationMapAddressablesLayoutBuilder.AddressPrefix + "vehicle-placements");
+        AssertEntry(settings, OperationMapAddressablesLayoutBuilder.MinimapRasterPath, core, OperationMapAddressablesLayoutBuilder.AddressPrefix + "minimap-raster");
 
         Dictionary<string, int> partitionCounts = new();
         foreach (AddressableAssetEntry entry in presentation.entries)
@@ -74,7 +75,9 @@ public sealed class OperationMapAddressablesLayoutBuilderTests
         {
             string role = entry.address.EndsWith("/source-scene", System.StringComparison.Ordinal)
                 ? OperationMapAddressablesLayoutBuilder.SourceSceneRoleLabel
-                : OperationMapAddressablesLayoutBuilder.MetadataRoleLabel;
+                : entry.address.EndsWith("/minimap-raster", System.StringComparison.Ordinal)
+                    ? OperationMapAddressablesLayoutBuilder.MinimapRasterRoleLabel
+                    : OperationMapAddressablesLayoutBuilder.MetadataRoleLabel;
             AssertOperationMapLabels(entry, role, false);
         }
     }
@@ -97,8 +100,10 @@ public sealed class OperationMapAddressablesLayoutBuilderTests
         AssertReference(
             definition.VehiclePlacementsReference,
             OperationMapAddressablesLayoutBuilder.VehiclePlacementsPath);
+        AssertReference(
+            definition.MinimapRasterReference,
+            OperationMapAddressablesLayoutBuilder.MinimapRasterPath);
         Assert.That(definition.OptionalHeavyMetadataReference.RuntimeKeyIsValid(), Is.False);
-        Assert.That(definition.MinimapRasterReference.RuntimeKeyIsValid(), Is.False);
     }
 
     private static void AssertOperationMapLabels(

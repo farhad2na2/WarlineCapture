@@ -705,16 +705,16 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 45% (79/177 checklist items complete).
+Overall implementation progress: 46% (81/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
 | Phase | Status | Complete | Total | Progress | Notes |
 |---|---|---:|---:|---:|---|
 | 0. Reproducible baseline and rollback | In progress / shared | 11 | 12 | 92% | Required by both directions before scene edits. |
-| 1. Operation-map and scenario data contracts | In progress | 11 | 12 | 92% | Typed identity, catalog resolution, complete spatial/navigation metadata, hashes, validation, and ownership chain are approved; the selected local-Addressables reference row remains. |
+| 1. Operation-map and scenario data contracts | Complete | 12 | 12 | 100% | Typed identity, catalog resolution, complete spatial/navigation metadata, hashes, lazy content references, validation, and ownership chain are approved. |
 | 2. Per-map static presentation ownership | Complete | 14 | 14 | 100% | Per-map bake/output ownership, integrity, rollback, no-op reuse, wiring, Android resolution, and synthetic multi-map isolation are accepted while the shipped catalog remains one physical map. |
-| 2A. Local Addressables packaging foundation | Active / selected direction | 10 | 20 | 50% | One-map groups, typed local identity, exact labels/partitions, local bundle schema, and fail-closed layout validation are accepted; the real minimap-raster address remains. |
+| 2A. Local Addressables packaging foundation | Active / selected direction | 11 | 20 | 55% | One-map groups, typed local identity, exact labels/partitions, local bundle schema, deterministic map-owned minimap raster, and strict fail-closed layout validation are accepted. |
 | 3. Current-map compatibility registration | Complete / shared | 10 | 10 | 100% | Current identities/definition, authored behavior, schema-v1 read compatibility, runtime activation/teardown, deterministic presentation, and Android chunk resolution are accepted. |
 | 4. Non-destructive scene ownership split | In progress / shared priority | 10 | 14 | 71% | The staged scene and its static-presentation source view have fail-closed validation; the original Match route remains validated and revision `d5784dcfa` plus the rollback recipe freeze the pre-cutover recovery boundary. |
 | 5. Runtime selection, loading, and teardown | In progress | 2 | 14 | 14% | Catalog preflight plus pure readiness/failure/teardown data contracts are bound; concrete local Addressables loading follows Phase 2A. |
@@ -805,8 +805,7 @@ Exit criteria:
 - [x] Create the explicit local shared group and admit assets only from measured cross-map GUID dependency evidence. It is intentionally empty for the one-map rollout; see `../AgentReports/2026-07-17_operation_map_local_addressables_group_topology.md`.
 - [x] Create one local Core group per approved operation map using stable map-pack identity and local Build/Load paths. See `../AgentReports/2026-07-17_operation_map_local_addressables_group_topology.md`.
 - [x] Create one local Presentation group per approved operation map using stable map-pack identity and local Build/Load paths. See `../AgentReports/2026-07-17_operation_map_local_addressables_group_topology.md`.
-- [ ] Assign and validate every required stable address without using direct scene paths in gameplay/composition policy.
-  - Progress: source scene, map surface, static manifest, and compatibility placement addresses are now written back as GUID-only lazy definition references. The row remains open pending the real map-owned minimap raster and strict complete-package validation. See `../AgentReports/2026-07-17_operation_map_definition_address_binding.md`.
+- [x] Assign and validate every required stable address without using direct scene paths in gameplay/composition policy. Source scene, map surface, static manifest, compatibility placements, and the deterministic map-owned minimap raster are bound through GUID-only lazy definition references. See `../AgentReports/2026-07-17_operation_map_definition_address_binding.md` and `../AgentReports/2026-07-18_operation_map_minimap_raster.md`.
 - [x] Assign and validate exactly one map-pack label and one role label per operation-map entry. See `../AgentReports/2026-07-17_operation_map_local_addresses_labels_partitions.md`.
 - [x] Partition presentation chunk scenes by deterministic region labels, targeting 16 to 32 chunks per bundle pending measured acceptance. Current deterministic five-by-five regions cap at 25 chunks; see `../AgentReports/2026-07-17_operation_map_local_addresses_labels_partitions.md`.
 - [x] Configure LZ4, CRC/cache policy, hash-derived bundle naming, and explicit content build settings for operation-map groups. See `../AgentReports/2026-07-17_operation_map_addressables_layout_validator.md`.

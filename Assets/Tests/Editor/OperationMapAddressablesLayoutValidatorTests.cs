@@ -4,7 +4,7 @@ using NUnit.Framework;
 public sealed class OperationMapAddressablesLayoutValidatorTests
 {
     [Test]
-    public void CurrentCompatibilityLayout_ValidatesWithoutInventingMinimapRaster()
+    public void CurrentCompatibilityLayout_ValidatesWithMapOwnedMinimapRaster()
     {
         Assert.That(OperationMapAddressablesLayoutValidator.TryValidateCurrentLayout(
             false,
@@ -12,11 +12,10 @@ public sealed class OperationMapAddressablesLayoutValidatorTests
     }
 
     [Test]
-    public void StrictLayout_FailsClosedOnMissingMinimapRaster()
+    public void StrictLayout_ValidatesCompleteLocalPackage()
     {
         Assert.That(OperationMapAddressablesLayoutValidator.TryValidateCurrentLayout(
             true,
-            out string error), Is.False);
-        StringAssert.Contains(OperationMapAddressablesLayoutValidator.MinimapRasterAddress, error);
+            out string error), Is.True, error);
     }
 }

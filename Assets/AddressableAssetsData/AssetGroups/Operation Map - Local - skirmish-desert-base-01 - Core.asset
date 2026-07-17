@@ -33,6 +33,15 @@ MonoBehaviour:
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-role-metadata
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3b1a8dbd670bf4e94863c00acbc3a3a7
+    m_Address: operation-map/opmap.skirmish.desert_base_01/minimap-raster
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - operation-map
+    - operation-map-local
+    - operation-map-pack-skirmish-desert-base-01
+    - operation-map-role-minimap-raster
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 819521cb66e1e4e90a46b49e04b15aec
     m_Address: operation-map/opmap.skirmish.desert_base_01/vehicle-placements
     m_ReadOnly: 0

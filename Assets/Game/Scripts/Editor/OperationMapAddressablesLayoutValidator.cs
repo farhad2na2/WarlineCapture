@@ -6,6 +6,7 @@ using UnityEditor;
 using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings;
 using UnityEditor.AddressableAssets.Settings.GroupSchemas;
+using UnityEngine;
 
 namespace Game.Editor
 {
@@ -26,7 +27,7 @@ namespace Game.Editor
 
             if (!TryRequireGroup(settings, OperationMapAddressablesLayoutBuilder.CatalogGroupName, 2, false, out AddressableAssetGroup catalog, out error) ||
                 !TryRequireGroup(settings, OperationMapAddressablesLayoutBuilder.SharedGroupName, 0, false, out AddressableAssetGroup shared, out error) ||
-                !TryRequireGroup(settings, OperationMapAddressablesLayoutBuilder.CoreGroupName, 5, false, out AddressableAssetGroup core, out error) ||
+                !TryRequireGroup(settings, OperationMapAddressablesLayoutBuilder.CoreGroupName, 6, false, out AddressableAssetGroup core, out error) ||
                 !TryRequireGroup(settings, OperationMapAddressablesLayoutBuilder.PresentationGroupName, 514, true, out AddressableAssetGroup presentation, out error))
                 return false;
 
@@ -60,11 +61,46 @@ namespace Game.Editor
                 !TryRequireEntry(settings, core, OperationMapAddressablesLayoutBuilder.MapSurfacePath, OperationMapAddressablesLayoutBuilder.AddressPrefix + "map-surface", OperationMapAddressablesLayoutBuilder.MetadataRoleLabel, false, out error) ||
                 !TryRequireEntry(settings, core, OperationMapAddressablesLayoutBuilder.ManifestPath, OperationMapAddressablesLayoutBuilder.AddressPrefix + "static-manifest", OperationMapAddressablesLayoutBuilder.MetadataRoleLabel, false, out error) ||
                 !TryRequireEntry(settings, core, OperationMapAddressablesLayoutBuilder.BuildingPlacementsPath, OperationMapAddressablesLayoutBuilder.AddressPrefix + "building-placements", OperationMapAddressablesLayoutBuilder.MetadataRoleLabel, false, out error) ||
-                !TryRequireEntry(settings, core, OperationMapAddressablesLayoutBuilder.VehiclePlacementsPath, OperationMapAddressablesLayoutBuilder.AddressPrefix + "vehicle-placements", OperationMapAddressablesLayoutBuilder.MetadataRoleLabel, false, out error))
+                !TryRequireEntry(settings, core, OperationMapAddressablesLayoutBuilder.VehiclePlacementsPath, OperationMapAddressablesLayoutBuilder.AddressPrefix + "vehicle-placements", OperationMapAddressablesLayoutBuilder.MetadataRoleLabel, false, out error) ||
+                !TryRequireEntry(settings, core, OperationMapAddressablesLayoutBuilder.MinimapRasterPath, MinimapRasterAddress, OperationMapAddressablesLayoutBuilder.MinimapRasterRoleLabel, false, out error))
                 return false;
 
             if (requireMinimapRaster && !ContainsAddress(settings, MinimapRasterAddress))
                 return Fail($"Missing required address: {MinimapRasterAddress}.", out error);
+
+            OperationMapDefinition definition = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
+                OperationMapAddressablesLayoutBuilder.DefinitionPath);
+            MapSurfaceDataAsset surface = AssetDatabase.LoadAssetAtPath<MapSurfaceDataAsset>(
+                OperationMapAddressablesLayoutBuilder.MapSurfacePath);
+            Texture2D minimapRaster = AssetDatabase.LoadAssetAtPath<Texture2D>(
+                OperationMapAddressablesLayoutBuilder.MinimapRasterPath);
+            TextureImporter minimapImporter = AssetImporter.GetAtPath(
+                OperationMapAddressablesLayoutBuilder.MinimapRasterPath) as TextureImporter;
+            TextureImporterPlatformSettings androidImporter =
+                minimapImporter?.GetPlatformTextureSettings("Android");
+            string minimapGuid = AssetDatabase.AssetPathToGUID(
+                OperationMapAddressablesLayoutBuilder.MinimapRasterPath);
+            if (definition == null || surface == null || minimapRaster == null || minimapImporter == null ||
+                minimapRaster.width != OperationMapMinimapRasterBaker.Resolution ||
+                minimapRaster.height != OperationMapMinimapRasterBaker.Resolution ||
+                minimapImporter.mipmapEnabled ||
+                minimapImporter.isReadable ||
+                androidImporter == null ||
+                !androidImporter.overridden ||
+                androidImporter.maxTextureSize != OperationMapMinimapRasterBaker.Resolution ||
+                androidImporter.format != TextureImporterFormat.ASTC_6x6 ||
+                definition.MinimapRasterReference == null ||
+                !string.Equals(definition.MinimapRasterReference.AssetGUID, minimapGuid, StringComparison.Ordinal) ||
+                !string.Equals(
+                    minimapImporter.userData,
+                    OperationMapMinimapRasterBaker.BuildImporterUserData(definition, surface),
+                    StringComparison.Ordinal))
+            {
+                return Fail("Operation-map minimap raster asset, source identity, or definition reference is stale.", out error);
+            }
+
+            if (!definition.TryValidateLocalContentReferences(out error))
+                return false;
 
             string subSceneGuid = AssetDatabase.AssetPathToGUID(
                 "Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01_subscene.unity");

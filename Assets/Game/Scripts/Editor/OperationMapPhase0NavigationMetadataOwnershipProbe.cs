@@ -66,7 +66,7 @@ namespace Game.Editor
         private const string DecisionRequired = "DecisionRequired";
 
         private const string ExpectedPayloadSha256 =
-            "f5059ddbc83e7d758fbefc9c960e41535e1c045f949ea31f3c75719f3b0a33a5";
+            "8009c700ca359a19c5d76a1c5121549d04a641dda6540947113ad17f68326152";
 
         private static readonly UTF8Encoding Utf8WithoutBom = new(false);
 
@@ -628,6 +628,8 @@ namespace Game.Editor
                 ["Assets/Game/Scripts/Composition/MapSurfaceRuntimeBootstrapSceneSystemHelper.cs"] = "4461ca141df0189dc9554d5ff5168fdb468b15164fcfcae684278036c74e8005",
                 ["Assets/Game/Scripts/Composition/MapSurfaceSceneOverlayPresentation.cs"] = "d3be1f2f62147af50973556181a7159b59573da0a0df22c4f1e3bcf2a548c9eb",
                 ["Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs"] = "5d5f43c00eab1a8646d68be885e5c7b583c8e4785e0ec16449ac19e503541efc",
+                ["Assets/Game/Scripts/Systems/OperationMapHelipadReadModelUtility.cs"] = "3f3305aa67d3394227cbbf61fe4611b09c67144be08b7baef7dbedc2b2ec7b87",
+                ["Assets/Game/Scripts/Systems/OperationMapRunwayReadModelUtility.cs"] = "1e61c7de7d5e7ec76e88f846707f393e82df202814af594465c28c00877f22c0",
                 ["Assets/Game/Scripts/Systems/BuildingRuntimeSurfaceOverlaySystem.cs"] = "35ecb50d19a3291336e4c10032a37ffd1fc31957e87d6beaaf1e54bf2f3ad9d0",
                 ["Assets/Game/Scripts/Systems/BuildingRunwaySystem.cs"] = "bd52eb7d779aa35c2c6d9ce3e4b190d78de9dc0bd00a5a345265c55a9919cf55",
                 ["Assets/Game/Scripts/Systems/BuildingSpawnCompositionSystemHelper.cs"] = "f4b59b87e76270f9c0f750dcb3a976b9270c5d3fe6013bd13eebf05cd6d798d7",

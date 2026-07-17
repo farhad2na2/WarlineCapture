@@ -8,7 +8,7 @@ namespace Game.Runtime
     public static class OperationMapHelipadReadModelUtility
     {
         private const float PositionToleranceSq = 0.0625f;
-        private static readonly FixedString128Bytes HelipadBuildingId = new("Building_Helipad");
+        private static readonly FixedString128Bytes HelipadBuildingId = new("building_helipad");
 
         public static void Bind(
             EntityManager entityManager,

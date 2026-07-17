@@ -194,7 +194,8 @@ public sealed class OperationMapHelipadReadModelUtilityTests
         in GridConfig grid) => new()
     {
         FactionId = factionId,
-        BuildingId = new FixedString128Bytes(buildingId),
+        BuildingId = new FixedString128Bytes(
+            BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(buildingId)),
         BuildingRuntimeId = runtimeId,
         SlotIndex = slotIndex,
         Cell = GridUtils.WorldToCell(in grid, position),

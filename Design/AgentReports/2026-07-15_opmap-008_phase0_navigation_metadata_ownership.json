@@ -7,10 +7,10 @@
         "authorities": 15,
         "runtimeConsumers": 15,
         "acceptedCrossReferences": 3,
-        "directInputs": 31,
+        "directInputs": 33,
         "needsDecision": 4
     },
-    "identityPayloadSha256": "f5059ddbc83e7d758fbefc9c960e41535e1c045f949ea31f3c75719f3b0a33a5",
+    "identityPayloadSha256": "8009c700ca359a19c5d76a1c5121549d04a641dda6540947113ad17f68326152",
     "acceptedEvidence": [
         {
             "task": "opmap-002",
@@ -130,6 +130,14 @@
         {
             "path": "Assets/Game/Scripts/Systems/MapSurfacePathfindingSnapshot.cs",
             "sha256": "8779412fa70d6f4551a291f8086352f6c171c65f49eabdacdac1f014a4b125d6"
+        },
+        {
+            "path": "Assets/Game/Scripts/Systems/OperationMapHelipadReadModelUtility.cs",
+            "sha256": "3f3305aa67d3394227cbbf61fe4611b09c67144be08b7baef7dbedc2b2ec7b87"
+        },
+        {
+            "path": "Assets/Game/Scripts/Systems/OperationMapRunwayReadModelUtility.cs",
+            "sha256": "1e61c7de7d5e7ec76e88f846707f393e82df202814af594465c28c00877f22c0"
         },
         {
             "path": "Assets/Game/Scripts/Systems/StaticGridBlockerUpdateSystem.cs",

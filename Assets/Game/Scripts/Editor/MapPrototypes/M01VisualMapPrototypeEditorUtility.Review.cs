@@ -51,10 +51,10 @@ namespace Game.Editor
 
         private static readonly CaptureDefinition[] CaptureDefinitions =
         {
-            new("GameplayOverview", "m01_gameplay_overview.png", new Vector3(-105f, 58f, -72f), new Vector3(-24f, 1f, -8f), 49f),
-            new("OldMarketApproach", "m01_old_market_approach.png", new Vector3(-103f, 31f, -58f), new Vector3(-45f, 6f, 2f), 40f),
+            new("GameplayOverview", "m01_gameplay_overview.png", new Vector3(-96f, 35f, -62f), new Vector3(-28f, 4f, 2f), 50f),
+            new("OldMarketApproach", "m01_old_market_approach.png", new Vector3(-92f, 29f, -53f), new Vector3(-43f, 5f, 5f), 42f),
             new("BombingAftermath", "m01_bombing_aftermath.png", new Vector3(32f, 13f, -31f), new Vector3(4f, 2f, -2f), 31f),
-            new("TopDownPlan", "m01_top_down_plan.png", new Vector3(-10f, 260f, -18f), new Vector3(-10f, 0f, -18f), 116f, true)
+            new("TopDownPlan", "m01_top_down_plan.png", new Vector3(-12f, 230f, -7f), new Vector3(-12f, 0f, -7f), 96f, true)
         };
 
         private static void CreateLighting(Transform parent)

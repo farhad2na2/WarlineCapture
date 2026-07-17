@@ -16,7 +16,7 @@ namespace Game.Editor
         public const string ScenePath = "Assets/Game/Scenes/MapPrototypes/Chapter01/M01_VisualPrototype.unity";
         public const string CaptureDirectory = "Design/ArtReview/OperationMaps/M01";
         public const int GenerationSeed = 26071501;
-        public const string GeneratorVersion = "M01VisualPrototype_2026-07-17_v23_dense_district_core";
+        public const string GeneratorVersion = "M01VisualPrototype_2026-07-17_v24_compact_civilian_block";
 
         private const int CaptureWidth = 1600;
         private const int CaptureHeight = 900;
@@ -49,6 +49,11 @@ namespace Game.Editor
             SouthTownModulePath,
             "Assets/Game/Prefabs/Environment/City/Clock_Tower_01.prefab",
             "Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Ruins_03.prefab",
+            "Assets/Game/Prefabs/Buildings/Building_Hall.prefab",
+            "Assets/Game/Prefabs/Buildings/Building_Barrack.prefab",
+            "Assets/Game/Prefabs/Buildings/Building_GuardTower.prefab",
+            "Assets/Game/Prefabs/Buildings/Building_WaterTank.prefab",
+            "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Generator_Large_01.prefab",
             "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_03.prefab",
             "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Cart_Stall_01.prefab",
             "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_ClothCover_Large_01.prefab",
@@ -103,6 +108,7 @@ namespace Game.Editor
                 Vector2 minimum,
                 Vector2 maximum,
                 bool excludeAirfield,
+                bool excludeRoads = false,
                 float remoteRoadDistance = 0f,
                 float remoteRoadSize = 0f)
             {
@@ -110,6 +116,7 @@ namespace Game.Editor
                 Minimum = minimum;
                 Maximum = maximum;
                 ExcludeAirfield = excludeAirfield;
+                ExcludeRoads = excludeRoads;
                 RemoteRoadDistance = remoteRoadDistance;
                 RemoteRoadSize = remoteRoadSize;
             }
@@ -118,6 +125,7 @@ namespace Game.Editor
             public Vector2 Minimum { get; }
             public Vector2 Maximum { get; }
             public bool ExcludeAirfield { get; }
+            public bool ExcludeRoads { get; }
             public float RemoteRoadDistance { get; }
             public float RemoteRoadSize { get; }
 
@@ -144,8 +152,9 @@ namespace Game.Editor
 
         private static readonly LocalRoadSegmentDefinition[] LocalRoadSegments =
         {
-            new("MarketExit", new Vector3(-14f, 0f, 9f), new Vector3(-10.5f, 0f, 9.3f), true),
-            new("MarketToCompound", new Vector3(-10.5f, 0f, 9.3f), new Vector3(-7f, 0f, 28f), true)
+            new("MarketStreet_West", new Vector3(-64f, 0f, 6f), new Vector3(-38f, 0f, 6f), true),
+            new("MarketStreet_Bend", new Vector3(-38f, 0f, 6f), new Vector3(-15f, 0f, 10f), true),
+            new("CompoundApproach", new Vector3(-15f, 0f, 10f), new Vector3(15.5f, 0f, 18f), true)
         };
 
         private static readonly string[] AuthoredRoadClearanceObstacleNames =
@@ -191,11 +200,10 @@ namespace Game.Editor
                 false),
             new(
                 "UtilityCompound_East_DemoAuthored",
-                new Vector2(-24f, -29f),
-                new Vector2(55f, 72f),
+                new Vector2(0f, 6f),
+                new Vector2(44f, 52f),
                 true,
-                40f,
-                18f),
+                true),
             new(
                 "Residential_South_DemoAuthored",
                 new Vector2(-43f, -93f),
@@ -1058,10 +1066,10 @@ namespace Game.Editor
             Transform terrainRoot = CreateRoot("01_Terrain_And_RoadPlan", parent).transform;
             CreateBox("DesertGround", new Vector3(0f, -1.05f, 16f), new Vector3(1200f, 2f, 900f), palette.Sand, terrainRoot);
 
-            CreateIrregularSurface("CentralOperationGround", new Vector3(-8f, -0.065f, -18f), new Vector2(250f, 205f), palette.TransitionGround, terrainRoot, 2f);
-            CreateIrregularSurface("OldMarketUtilityGroundLink", new Vector3(-10f, -0.035f, 14f), new Vector2(56f, 28f), palette.TransitionGround, terrainRoot, 6f);
-            CreateIrregularSurface("CivilianFrontageTransition", new Vector3(1f, -0.034f, -3f), new Vector2(68f, 30f), palette.TransitionGround, terrainRoot, -7f);
-            CreateIrregularSurface("CivilianFrontageApron", new Vector3(1f, -0.005f, -3f), new Vector2(56f, 24f), palette.DistrictGround, terrainRoot, 5f);
+            CreateIrregularSurface("CentralOperationGround", new Vector3(-18f, -0.065f, -5f), new Vector2(176f, 142f), palette.TransitionGround, terrainRoot, 2f);
+            CreateIrregularSurface("OldMarketUtilityGroundLink", new Vector3(-29f, -0.035f, 9f), new Vector2(86f, 25f), palette.TransitionGround, terrainRoot, 3f);
+            CreateIrregularSurface("CivilianFrontageTransition", new Vector3(-2f, -0.034f, -5f), new Vector2(62f, 28f), palette.TransitionGround, terrainRoot, -4f);
+            CreateIrregularSurface("CivilianFrontageApron", new Vector3(-2f, -0.005f, -5f), new Vector2(50f, 21f), palette.DistrictGround, terrainRoot, 2f);
 
             CreateLocalRoadNetwork(terrainRoot, palette);
         }
@@ -1117,6 +1125,7 @@ namespace Game.Editor
             int airfieldExclusions = 0;
             int majorRoadExclusions = 0;
             int remoteRoadExclusions = 0;
+            int roadStructureExclusions = 0;
             int roadTerrainExclusions = 0;
             int unsupportedGroundExclusions = 0;
             int terrainMaterialOverrides = 0;
@@ -1135,11 +1144,15 @@ namespace Game.Editor
                 bool outsideEnvelope = !definition.Contains(bounds.center);
                 bool airfieldContent = definition.ExcludeAirfield &&
                                        string.Equals(category, "airfield", StringComparison.Ordinal);
+                bool excludedRoadContent = definition.ExcludeRoads &&
+                                           (string.Equals(category, "road", StringComparison.Ordinal) ||
+                                            string.Equals(category, "major-road", StringComparison.Ordinal));
                 bool majorRoadContent = string.Equals(category, "major-road", StringComparison.Ordinal);
                 bool remoteRoadContent = IsRemoteLongRoad(moduleObject.transform, bounds, category, definition);
+                bool roadStructureContent = ContainsDescendantName(owner, "_Bld_") && IntersectsAnyLocalRoad(bounds, 3.2f);
                 bool roadTerrainContent = ContainsRoadTerrainObstacleName(owner) && IntersectsAnyLocalRoad(bounds, 3.2f);
                 bool unsupportedGround = IsUnsupportedImportedGround(moduleObject.name, owner.name);
-                if (!outsideEnvelope && !airfieldContent && !majorRoadContent && !remoteRoadContent && !roadTerrainContent && !unsupportedGround)
+                if (!outsideEnvelope && !airfieldContent && !excludedRoadContent && !majorRoadContent && !remoteRoadContent && !roadStructureContent && !roadTerrainContent && !unsupportedGround)
                 {
                     if (ContainsImportedGroundSurfaceName(owner))
                     {
@@ -1156,10 +1169,14 @@ namespace Game.Editor
                     envelopeExclusions++;
                 if (airfieldContent)
                     airfieldExclusions++;
+                if (excludedRoadContent && !majorRoadContent)
+                    majorRoadExclusions++;
                 if (majorRoadContent)
                     majorRoadExclusions++;
                 if (remoteRoadContent)
                     remoteRoadExclusions++;
+                if (roadStructureContent)
+                    roadStructureExclusions++;
                 if (roadTerrainContent)
                     roadTerrainExclusions++;
                 if (unsupportedGround)
@@ -1171,7 +1188,8 @@ namespace Game.Editor
             Debug.Log(
                 $"[M01DistrictCuration] module={moduleObject.name} envelopeExclusions={envelopeExclusions} " +
                 $"airfieldExclusions={airfieldExclusions} majorRoadExclusions={majorRoadExclusions} " +
-                $"remoteRoadExclusions={remoteRoadExclusions} roadTerrainExclusions={roadTerrainExclusions} " +
+                $"remoteRoadExclusions={remoteRoadExclusions} roadStructureExclusions={roadStructureExclusions} " +
+                $"roadTerrainExclusions={roadTerrainExclusions} " +
                 $"unsupportedGroundExclusions={unsupportedGroundExclusions} " +
                 $"terrainMaterialOverrides={terrainMaterialOverrides} terrainClearanceAdjustments={terrainClearanceAdjustments} " +
                 $"disabledRenderers={disabledRenderers} " +
@@ -1491,9 +1509,12 @@ namespace Game.Editor
                     bool outsideEnvelope = !definition.Contains(bounds.center);
                     bool airfieldContent = definition.ExcludeAirfield &&
                                            string.Equals(category, "airfield", StringComparison.Ordinal);
+                    bool excludedRoadContent = definition.ExcludeRoads &&
+                                               (string.Equals(category, "road", StringComparison.Ordinal) ||
+                                                string.Equals(category, "major-road", StringComparison.Ordinal));
                     bool majorRoadContent = string.Equals(category, "major-road", StringComparison.Ordinal);
                     bool remoteRoadContent = IsRemoteLongRoad(module, bounds, category, definition);
-                    if (!outsideEnvelope && !airfieldContent && !majorRoadContent && !remoteRoadContent)
+                    if (!outsideEnvelope && !airfieldContent && !excludedRoadContent && !majorRoadContent && !remoteRoadContent)
                         continue;
 
                     violationCount++;
@@ -1502,7 +1523,7 @@ namespace Game.Editor
                         Debug.Log(
                             $"[M01DistrictCurationViolation] module={module.name} owner={owner.name} " +
                             $"center={bounds.center} outsideEnvelope={outsideEnvelope} airfield={airfieldContent} " +
-                            $"majorRoad={majorRoadContent} remoteRoad={remoteRoadContent}");
+                            $"excludedRoad={excludedRoadContent} majorRoad={majorRoadContent} remoteRoad={remoteRoadContent}");
                     }
                 }
             }
@@ -1571,17 +1592,34 @@ namespace Game.Editor
         {
             Transform root = CreateRoot("04_UtilityCompound_StoryLayer", parent).transform;
 
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Group_03.prefab", "CompoundCheckpoint", new Vector3(23f, 0f, 28f), 90f, 1f, root);
-            PlacePrefab("Assets/Game/Prefabs/Buildings/Building_GuardTower.prefab", "CompoundGuardTower", new Vector3(31f, 0f, 46f), 180f, 0.9f, root);
-            PlacePrefab("Assets/Game/Prefabs/Buildings/Building_WaterTank.prefab", "CompoundWaterTank", new Vector3(55f, 0f, 51f), 20f, 0.9f, root);
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Crate_Stack_Cover_02.prefab", "CompoundSupplies_A", new Vector3(31f, 0f, 16f), 12f, 1f, root);
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Crate_Stack_03.prefab", "CompoundSupplies_B", new Vector3(38f, 0f, 18f), 84f, 1f, root);
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/SM_Prop_LightPole_01.prefab", "CompoundLightPole", new Vector3(24f, 0f, 39f), 0f, 1f, root);
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Signs/SM_Prop_Sign_Safety_03.prefab", "CompoundWarningSign", new Vector3(20.5f, 2.2f, 31f), 90f, 1.15f, root);
+            CreateIrregularSurface("CompoundCourtyard", new Vector3(25f, -0.005f, 35f), new Vector2(38f, 37f), palette.DistrictGround, root, -2f);
+            PlacePrefab("Assets/Game/Prefabs/Buildings/Building_Hall.prefab", "CompoundOperationsHall", new Vector3(20f, 0f, 35f), 180f, 0.72f, root);
+            PlacePrefab("Assets/Game/Prefabs/Buildings/Building_Barrack.prefab", "CompoundServiceBuilding", new Vector3(34f, 0f, 36f), 180f, 0.62f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Group_03.prefab", "CompoundCheckpoint", new Vector3(16.5f, 0f, 18.5f), 78f, 0.9f, root);
+            PlacePrefab("Assets/Game/Prefabs/Buildings/Building_GuardTower.prefab", "CompoundGuardTower", new Vector3(39f, 0f, 49f), 180f, 0.78f, root);
+            PlacePrefab("Assets/Game/Prefabs/Buildings/Building_WaterTank.prefab", "CompoundWaterTank", new Vector3(36f, 0f, 23f), 20f, 0.76f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Crate_Stack_Cover_02.prefab", "CompoundSupplies_A", new Vector3(16f, 0f, 23f), 12f, 0.9f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Crate_Stack_03.prefab", "CompoundSupplies_B", new Vector3(22f, 0f, 23f), 84f, 0.9f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Generator_Large_01.prefab", "CompoundGenerator", new Vector3(29f, 0f, 23f), 90f, 0.85f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/SM_Prop_LightPole_01.prefab", "CompoundLightPole", new Vector3(12f, 0f, 39f), 0f, 0.9f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Signs/SM_Prop_Sign_Safety_03.prefab", "CompoundWarningSign", new Vector3(10f, 2.2f, 20f), 78f, 1f, root);
 
-            CreateBox("CompoundSecurityStripe_A", new Vector3(15f, 0.34f, 32f), new Vector3(0.4f, 0.08f, 12f), palette.AmberPaint, root);
-            CreateBox("CompoundSecurityStripe_B", new Vector3(18f, 0.34f, 32f), new Vector3(0.4f, 0.08f, 12f), palette.Rust, root);
-            CreatePointLight("CompoundSecurityLight", new Vector3(28f, 9f, 31f), new Color(0.62f, 0.78f, 1f), 2.2f, 28f, root);
+            CreateBox("CompoundWall_West", new Vector3(7f, 1.2f, 36f), new Vector3(0.75f, 2.4f, 34f), palette.Concrete, root);
+            CreateBox("CompoundWall_East", new Vector3(44f, 1.2f, 36f), new Vector3(0.75f, 2.4f, 34f), palette.Concrete, root);
+            CreateBox("CompoundWall_North", new Vector3(25.5f, 1.2f, 53f), new Vector3(37.75f, 2.4f, 0.75f), palette.Concrete, root);
+            CreateBox("CompoundWall_SouthWest", new Vector3(10f, 1.2f, 19f), new Vector3(6f, 2.4f, 0.75f), palette.Concrete, root);
+            CreateBox("CompoundWall_SouthEast", new Vector3(32f, 1.2f, 19f), new Vector3(24f, 2.4f, 0.75f), palette.Concrete, root);
+            Vector3[] pillarPositions =
+            {
+                new(7f, 1.55f, 19f), new(14f, 1.55f, 19f), new(20f, 1.55f, 19f), new(44f, 1.55f, 19f),
+                new(7f, 1.55f, 53f), new(44f, 1.55f, 53f)
+            };
+            for (int i = 0; i < pillarPositions.Length; i++)
+                CreateBox($"CompoundWallPillar_{i + 1:00}", pillarPositions[i], new Vector3(1.2f, 3.1f, 1.2f), palette.Curb, root);
+
+            CreateBox("CompoundSecurityStripe_A", new Vector3(13f, 0.08f, 22f), new Vector3(0.35f, 0.08f, 5f), palette.AmberPaint, root, Quaternion.Euler(0f, -12f, 0f));
+            CreateBox("CompoundSecurityStripe_B", new Vector3(15f, 0.08f, 22.5f), new Vector3(0.35f, 0.08f, 5f), palette.Rust, root, Quaternion.Euler(0f, -12f, 0f));
+            CreatePointLight("CompoundSecurityLight", new Vector3(15f, 8f, 31f), new Color(0.62f, 0.78f, 1f), 2.2f, 24f, root);
         }
 
         private static void CreateBombingAftermath(Transform parent)

@@ -12,6 +12,8 @@ public sealed class WorldLifecycleRecoveryMatrixTests
 {
     private const string AuthorityPath =
         "Design/AgentReports/ArchitectureMaturity/am021_persistent_resource_ownership.json";
+    private const int WarmupOperations = 180;
+    private const int MeasuredOperations = 300;
 
     [Test]
     public void AcceptedAuthority_HasZeroGapsAndEveryProductionPathResolves()
@@ -147,5 +149,44 @@ public sealed class WorldLifecycleRecoveryMatrixTests
             if (secondWorld.IsCreated)
                 secondWorld.Dispose();
         }
+    }
+
+    [Test]
+    public void RecoveredWorld_UnchangedCacheAndRuntimeStateAllocateZeroAfterWarmup()
+    {
+        var cache = new WorldScopedComponentQueryCache<UnitMoveOrderQueueComponent>(readOnly: true);
+        using (World firstWorld = new(nameof(RecoveredWorld_UnchangedCacheAndRuntimeStateAllocateZeroAfterWarmup) + ".First"))
+        {
+            firstWorld.EntityManager.CreateEntity(typeof(UnitMoveOrderQueueComponent));
+            Assert.IsTrue(cache.TryGetSingleton(firstWorld.EntityManager, out _));
+        }
+
+        using World recoveredWorld = new(nameof(RecoveredWorld_UnchangedCacheAndRuntimeStateAllocateZeroAfterWarmup) + ".Recovered");
+        Entity expected = recoveredWorld.EntityManager.CreateEntity(typeof(UnitMoveOrderQueueComponent));
+        recoveredWorld.GetOrCreateSystem<ThreatDetectionWarningSystem>();
+        Assert.IsTrue(cache.TryGetSingleton(recoveredWorld.EntityManager, out Entity recovered));
+        Assert.AreEqual(expected, recovered);
+        Assert.IsTrue(ThreatWarningRuntimeState.TryRead(recoveredWorld.EntityManager, out _));
+
+        for (int index = 0; index < WarmupOperations; index++)
+        {
+            cache.TryGetSingleton(recoveredWorld.EntityManager, out _);
+            ThreatWarningRuntimeState.TryRead(recoveredWorld.EntityManager, out _);
+        }
+
+        bool allReadsSucceeded = true;
+        Entity finalEntity = Entity.Null;
+        long allocationStart = GC.GetAllocatedBytesForCurrentThread();
+        for (int index = 0; index < MeasuredOperations; index++)
+        {
+            allReadsSucceeded &= cache.TryGetSingleton(recoveredWorld.EntityManager, out finalEntity);
+            allReadsSucceeded &= ThreatWarningRuntimeState.TryRead(recoveredWorld.EntityManager, out _);
+        }
+        long allocatedBytes = GC.GetAllocatedBytesForCurrentThread() - allocationStart;
+
+        Assert.IsTrue(allReadsSucceeded);
+        Assert.AreEqual(expected, finalEntity);
+        Assert.AreEqual(0L, allocatedBytes, "Recovered unchanged ownership paths must allocate zero managed bytes.");
+        cache.Dispose();
     }
 }

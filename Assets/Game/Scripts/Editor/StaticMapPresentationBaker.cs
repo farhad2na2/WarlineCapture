@@ -58,14 +58,15 @@ namespace Game.Editor
             public readonly int X;
             public readonly int Z;
 
-            public ChunkKey(Vector3 worldCenter)
+            public ChunkKey(Vector3 worldCenter, float chunkSize)
             {
-                X = Mathf.FloorToInt(worldCenter.x / ChunkSize);
-                Z = Mathf.FloorToInt(worldCenter.z / ChunkSize);
+                X = Mathf.FloorToInt(worldCenter.x / chunkSize);
+                Z = Mathf.FloorToInt(worldCenter.z / chunkSize);
             }
 
             public string Id => $"chunk_{FormatCoordinate(X)}_{FormatCoordinate(Z)}";
-            public string ScenePath => $"{SceneOutputFolder}/StaticMapPresentation_{Id}.unity";
+            public string GetScenePath(string sceneOutputFolder) =>
+                $"{sceneOutputFolder}/StaticMapPresentation_{Id}.unity";
 
             public int CompareTo(ChunkKey other)
             {
@@ -103,13 +104,31 @@ namespace Game.Editor
         [MenuItem("Game/Tools/Performance/Bake Static Map Presentation")]
         public static void Bake()
         {
+            Bake(CreateCurrentCompatibilityInput());
+        }
+
+        internal static StaticMapPresentationBakeInput CreateCurrentCompatibilityInput()
+        {
+            return new StaticMapPresentationBakeInput(
+                "opmap.skirmish.desert_base_01",
+                CanonicalMatchScenePath,
+                "Map",
+                OutputRoot,
+                ManifestPath,
+                StaticMapPresentationSceneIntegrity.IntegrityAssetPath,
+                ChunkSize);
+        }
+
+        internal static void Bake(StaticMapPresentationBakeInput input)
+        {
+            ValidateCompatibilityInput(input);
             if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
                 return;
 
             SceneSetup[] previousSetup = EditorSceneManager.GetSceneManagerSetup();
             try
             {
-                BakeInternal();
+                BakeInternal(input);
             }
             finally
             {
@@ -120,7 +139,7 @@ namespace Game.Editor
 
         public static void ProbeManifestOwnership()
         {
-            StaticMapPresentationManifest manifest = LoadExistingManifest();
+            StaticMapPresentationManifest manifest = LoadExistingManifest(ManifestPath);
             Debug.LogFormat(
                 LogType.Log,
                 LogOption.NoStacktrace,
@@ -131,12 +150,31 @@ namespace Game.Editor
                 manifest != null ? manifest.ContentHash : "<none>");
         }
 
-        private static void BakeInternal()
+        internal static void ValidateCompatibilityInput(StaticMapPresentationBakeInput input)
         {
-            EnsureAssetFolder(OutputRoot);
-            EnsureAssetFolder(SceneOutputFolder);
+            if (!input.TryValidate(out string error))
+                throw new InvalidOperationException(error);
+            if (!string.Equals(input.SourceScenePath, CanonicalMatchScenePath, StringComparison.Ordinal) ||
+                !string.Equals(input.SourceMapRootPath, "Map", StringComparison.Ordinal) ||
+                !string.Equals(input.OutputRoot, OutputRoot, StringComparison.Ordinal) ||
+                !string.Equals(input.ManifestPath, ManifestPath, StringComparison.Ordinal) ||
+                !string.Equals(
+                    input.IntegrityPath,
+                    StaticMapPresentationSceneIntegrity.IntegrityAssetPath,
+                    StringComparison.Ordinal) ||
+                input.ChunkSize != ChunkSize)
+            {
+                throw new InvalidOperationException(
+                    "Static presentation baker currently accepts only the current compatibility ownership contract.");
+            }
+        }
 
-            StaticMapPresentationManifest existingManifest = LoadExistingManifest();
+        private static void BakeInternal(StaticMapPresentationBakeInput input)
+        {
+            EnsureAssetFolder(input.OutputRoot);
+            EnsureAssetFolder(input.SceneOutputFolder);
+
+            StaticMapPresentationManifest existingManifest = LoadExistingManifest(input.ManifestPath);
             int previousSchemaVersion = existingManifest != null ? existingManifest.SchemaVersion : 0;
             string previousCanonicalScenePath = existingManifest != null
                 ? existingManifest.CanonicalScenePath
@@ -145,15 +183,15 @@ namespace Game.Editor
             string[] previousOwnedScenePaths =
                 StaticMapPresentationOutputOwnership.CaptureOwnedScenePaths(existingManifest);
             string previousContentHash = existingManifest != null
-                ? BuildContentHash(existingManifest.Chunks, existingManifest.Sources)
+                ? BuildContentHash(input.ChunkSize, existingManifest.Chunks, existingManifest.Sources)
                 : string.Empty;
             AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
 
-            Scene sourceScene = EditorSceneManager.OpenScene(CanonicalMatchScenePath, OpenSceneMode.Single);
+            Scene sourceScene = EditorSceneManager.OpenScene(input.SourceScenePath, OpenSceneMode.Single);
             MatchSceneView matchScene = FindMatchSceneView(sourceScene);
-            Transform mapRoot = ResolveMapRoot(matchScene);
+            Transform mapRoot = ResolveMapRoot(matchScene, input.SourceMapRootPath);
             BakeStats stats = new();
-            List<SourceDescriptor> sources = CollectSources(matchScene, mapRoot, stats);
+            List<SourceDescriptor> sources = CollectSources(matchScene, mapRoot, input.ChunkSize, stats);
             if (sources.Count == 0)
                 throw new InvalidOperationException("Static map presentation bake found no compatible source renderers.");
 
@@ -178,11 +216,11 @@ namespace Game.Editor
                 .ToList();
             for (int i = 0; i < chunks.Count; i++)
             {
-                AddManifestEntries(chunks[i], chunkEntries, sourceEntries);
+                AddManifestEntries(chunks[i], input.SceneOutputFolder, chunkEntries, sourceEntries);
             }
 
-            string canonicalHash = StaticMapPresentationCanonicalSourceHash.Compute(CanonicalMatchScenePath);
-            string contentHash = BuildContentHash(chunkEntries, sourceEntries);
+            string canonicalHash = StaticMapPresentationCanonicalSourceHash.Compute(input.SourceScenePath);
+            string contentHash = BuildContentHash(input.ChunkSize, chunkEntries, sourceEntries);
             string[] expectedScenePaths = chunkEntries.Select(chunk => chunk.ScenePath).ToArray();
             string projectRoot = RequireProjectRoot();
             bool integrityReady = StaticMapPresentationSceneIntegrity.TryLoadAndValidate(
@@ -196,8 +234,8 @@ namespace Game.Editor
                 previousCanonicalScenePath,
                 previousChunkSize,
                 previousContentHash,
-                CanonicalMatchScenePath,
-                ChunkSize,
+                input.SourceScenePath,
+                input.ChunkSize,
                 contentHash,
                 previousOwnedScenePaths,
                 expectedScenePaths,
@@ -211,11 +249,11 @@ namespace Game.Editor
             int scenesWritten = 0;
             int staleScenesDeleted = 0;
             IEnumerable<string> mutableAssetPaths = reusedScenes
-                ? new[] { ManifestPath }
+                ? new[] { input.ManifestPath }
                 : previousOwnedScenePaths
                     .Concat(expectedScenePaths)
-                    .Append(ManifestPath)
-                    .Append(StaticMapPresentationSceneIntegrity.IntegrityAssetPath);
+                    .Append(input.ManifestPath)
+                    .Append(input.IntegrityPath);
             using StaticMapPresentationBakeTransaction transaction =
                 StaticMapPresentationBakeTransaction.Begin(projectRoot, mutableAssetPaths);
             try
@@ -233,7 +271,7 @@ namespace Game.Editor
                         contentHash);
                     for (int i = 0; i < chunks.Count; i++)
                     {
-                        CreateChunkScene(sourceScene, chunks[i]);
+                        CreateChunkScene(sourceScene, chunks[i], input.SceneOutputFolder);
                         scenesWritten++;
                     }
 
@@ -246,21 +284,21 @@ namespace Game.Editor
                         DeletePhysicalOwnedAsset);
                     StaticMapPresentationSceneIntegrity.Write(projectRoot, contentHash, expectedScenePaths);
                     AssetDatabase.ImportAsset(
-                        StaticMapPresentationSceneIntegrity.IntegrityAssetPath,
+                        input.IntegrityPath,
                         ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ForceUpdate);
                 }
 
-                StaticMapPresentationManifest manifest = LoadExistingManifest();
+                StaticMapPresentationManifest manifest = LoadExistingManifest(input.ManifestPath);
                 if (manifest == null)
                 {
                     manifest = ScriptableObject.CreateInstance<StaticMapPresentationManifest>();
-                    AssetDatabase.CreateAsset(manifest, ManifestPath);
+                    AssetDatabase.CreateAsset(manifest, input.ManifestPath);
                 }
 
                 manifest.EditorSetData(
-                    CanonicalMatchScenePath,
+                    input.SourceScenePath,
                     canonicalHash,
-                    ChunkSize,
+                    input.ChunkSize,
                     contentHash,
                     chunkEntries,
                     sourceEntries);
@@ -304,7 +342,7 @@ namespace Game.Editor
                 stats.ExcludedMaterial,
                 stats.ExcludedTransform,
                 stats.ExcludedOther,
-                ManifestPath,
+                input.ManifestPath,
                 contentHash,
                 reusedScenes ? 1 : 0,
                 scenesWritten,
@@ -315,6 +353,7 @@ namespace Game.Editor
         private static List<SourceDescriptor> CollectSources(
             MatchSceneView matchScene,
             Transform mapRoot,
+            float chunkSize,
             BakeStats stats)
         {
             MeshRenderer[] renderers = mapRoot.GetComponentsInChildren<MeshRenderer>(true);
@@ -322,7 +361,13 @@ namespace Game.Editor
             List<SourceDescriptor> sources = new(renderers.Length);
             for (int i = 0; i < renderers.Length; i++)
             {
-                if (!TryCreateSourceDescriptor(matchScene, mapRoot, renderers[i], stats, out SourceDescriptor source))
+                if (!TryCreateSourceDescriptor(
+                        matchScene,
+                        mapRoot,
+                        renderers[i],
+                        chunkSize,
+                        stats,
+                        out SourceDescriptor source))
                     continue;
 
                 sources.Add(source);
@@ -338,6 +383,7 @@ namespace Game.Editor
             MatchSceneView matchScene,
             Transform mapRoot,
             MeshRenderer renderer,
+            float chunkSize,
             BakeStats stats,
             out SourceDescriptor source)
         {
@@ -436,7 +482,7 @@ namespace Game.Editor
                 WorldScale = worldScale,
                 Layer = renderer.gameObject.layer,
                 OverlaySource = overlaySource,
-                Chunk = new ChunkKey(worldBounds.center)
+                Chunk = new ChunkKey(worldBounds.center, chunkSize)
             };
             source.DependencyHash = BuildSourceDependencyHash(source);
             return true;
@@ -444,6 +490,7 @@ namespace Game.Editor
 
         private static void AddManifestEntries(
             ChunkDescriptor chunk,
+            string sceneOutputFolder,
             List<StaticMapPresentationChunkEntry> chunkEntries,
             List<StaticMapPresentationSourceEntry> sourceEntries)
         {
@@ -471,13 +518,16 @@ namespace Game.Editor
 
             chunkEntries.Add(new StaticMapPresentationChunkEntry(
                 chunk.Key.Id,
-                chunk.Key.ScenePath,
+                chunk.Key.GetScenePath(sceneOutputFolder),
                 chunkBounds,
                 sourceStartIndex,
                 chunk.Sources.Count));
         }
 
-        private static void CreateChunkScene(Scene sourceScene, ChunkDescriptor chunk)
+        private static void CreateChunkScene(
+            Scene sourceScene,
+            ChunkDescriptor chunk,
+            string sceneOutputFolder)
         {
             Scene chunkScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive);
             try
@@ -491,8 +541,9 @@ namespace Game.Editor
                     CreateRendererClone(root.transform, generatedObjectName, source);
                 }
 
-                if (!EditorSceneManager.SaveScene(chunkScene, chunk.Key.ScenePath, true))
-                    throw new InvalidOperationException($"Failed to save static map presentation scene: {chunk.Key.ScenePath}");
+                string scenePath = chunk.Key.GetScenePath(sceneOutputFolder);
+                if (!EditorSceneManager.SaveScene(chunkScene, scenePath, true))
+                    throw new InvalidOperationException($"Failed to save static map presentation scene: {scenePath}");
             }
             finally
             {
@@ -548,17 +599,20 @@ namespace Game.Editor
                 : throw new InvalidOperationException($"No MatchSceneView found in {scene.path}.");
         }
 
-        private static Transform ResolveMapRoot(MatchSceneView matchScene)
+        private static Transform ResolveMapRoot(
+            MatchSceneView matchScene,
+            string sourceMapRootPath)
         {
             Transform current = matchScene.MapSurfaceAuthoring != null ? matchScene.MapSurfaceAuthoring.transform : null;
             while (current != null)
             {
-                if (string.Equals(current.name, "Map", StringComparison.Ordinal))
+                if (string.Equals(current.name, sourceMapRootPath, StringComparison.Ordinal))
                     return current;
                 current = current.parent;
             }
 
-            throw new InvalidOperationException("MatchSceneView does not resolve to a serialized Map root.");
+            throw new InvalidOperationException(
+                $"MatchSceneView does not resolve to serialized map root '{sourceMapRootPath}'.");
         }
 
         private static bool IsInRoot(Transform transform, Transform root)
@@ -638,12 +692,13 @@ namespace Game.Editor
         }
 
         private static string BuildContentHash(
+            float chunkSize,
             IReadOnlyList<StaticMapPresentationChunkEntry> chunks,
             IReadOnlyList<StaticMapPresentationSourceEntry> sources)
         {
             StringBuilder builder = new(256 + sources.Count * 72);
             builder.Append(StaticMapPresentationManifest.CurrentSchemaVersion).Append('|');
-            builder.Append(ChunkSize.ToString("R", CultureInfo.InvariantCulture));
+            builder.Append(chunkSize.ToString("R", CultureInfo.InvariantCulture));
             for (int i = 0; i < chunks.Count; i++)
             {
                 StaticMapPresentationChunkEntry chunk = chunks[i];
@@ -794,10 +849,10 @@ namespace Game.Editor
             return Path.GetFullPath(projectRoot);
         }
 
-        private static StaticMapPresentationManifest LoadExistingManifest()
+        private static StaticMapPresentationManifest LoadExistingManifest(string manifestPath)
         {
             string projectRoot = Path.GetDirectoryName(Application.dataPath);
-            string manifestFilePath = Path.Combine(projectRoot ?? string.Empty, ManifestPath);
+            string manifestFilePath = Path.Combine(projectRoot ?? string.Empty, manifestPath);
             bool manifestFileExists = System.IO.File.Exists(manifestFilePath);
             Debug.LogFormat(
                 LogType.Log,
@@ -813,22 +868,22 @@ namespace Game.Editor
                 return null;
 
             AssetDatabase.ImportAsset(
-                ManifestPath,
+                manifestPath,
                 ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ForceUpdate);
-            string manifestGuid = AssetDatabase.AssetPathToGUID(ManifestPath);
+            string manifestGuid = AssetDatabase.AssetPathToGUID(manifestPath);
             if (string.IsNullOrEmpty(manifestGuid))
             {
                 throw new InvalidOperationException(
-                    $"Static map presentation manifest exists at {ManifestPath} but Unity did not assign its GUID. " +
+                    $"Static map presentation manifest exists at {manifestPath} but Unity did not assign its GUID. " +
                     "Refusing to rewrite or clean owned output.");
             }
 
             StaticMapPresentationManifest manifest =
-                AssetDatabase.LoadAssetAtPath<StaticMapPresentationManifest>(ManifestPath);
+                AssetDatabase.LoadAssetAtPath<StaticMapPresentationManifest>(manifestPath);
             if (manifest != null)
                 return manifest;
 
-            Object mainAsset = AssetDatabase.LoadMainAssetAtPath(ManifestPath);
+            Object mainAsset = AssetDatabase.LoadMainAssetAtPath(manifestPath);
             string actualType = mainAsset != null ? mainAsset.GetType().FullName : "<unloaded>";
             throw new InvalidOperationException(
                 $"Static map presentation manifest GUID {manifestGuid} exists but cannot load as " +

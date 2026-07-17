@@ -1,7 +1,7 @@
 # Operation Map Scene Split And Generator Implementation Tracker
 
 Date: 2026-07-14
-Status: Shared-foundation implementation in progress; map-delivery direction pending R&D
+Status: Editor-authored local-Addressables direction accepted; single physical-map rollout in progress
 Workflow path: serial validated commits directly on `main`
 Design sources: `../3D_SingleMap_Gameplay_Direction.md`, `../Level_And_Mission_Content_Plan.md`, `../3D_Operation_Map_Texture_Mask_Workflow.md`, `../M01_FirstContact_Production_Contract.md`, `gameplay_solid_ecs_contract.md`, `performance_regression_contract.md`
 
@@ -19,51 +19,53 @@ Menu shell -> Match.unity runtime shell -> selected OperationMap loaded additive
 
 The current large desert/base map must remain playable and become the first reusable operation map. It must not be deleted, flattened into a giant mesh, or copied together with its generated presentation chunks. `Match.unity` becomes a stable runtime shell only after the existing map has a validated map-specific bake, load, camera, minimap, authoring-conversion, and rollback path.
 
-## Current Shared-Foundation Scope: 2026-07-15
+## Selected Map Direction: 2026-07-17
 
-Implementation is temporarily restricted to work that is required by both an editor-authored map direction and a runtime scene-based map direction. Runtime scene-based map R&D is proceeding separately. No delivery-direction-specific implementation may begin until that R&D is accepted or rejected and this tracker is updated with the selected direction.
+The accepted production direction is editor-authored operation-map scenes loaded additively through local Addressables. The initial release scope contains exactly one physical operation map, the current desert/base map registered as `opmap.skirmish.desert_base_01`. Campaign missions, operations, and Skirmish scenarios reuse that physical map and vary through scenario definitions, factions, objectives, spawn sets, anchors, resources, and mission rules. They must not duplicate the scene, subscene, static-presentation chunks, or map-owned assets.
+
+Runtime scene generation is not part of this implementation. Additional physical editor-authored maps remain a later content milestone after the one-map split, loader, teardown, parity, package-size, and device-performance gates pass. Remote Addressables delivery also remains deferred; the first implementation packages the single approved map locally with the application.
 
 | Tracker Area | Current Disposition |
 |---|---|
 | Phase 0 baseline, ownership inventory, and rollback | Active; shared by both directions. |
-| Phase 1 typed map/scenario identity and metadata contracts | Active only where independent of asset production and loading technology. |
-| Phase 2 ownership of the current map's existing static presentation | Active only as required to preserve and split the current baked map safely. Future-map presentation generation remains undecided. |
+| Phase 1 typed map/scenario identity and metadata contracts | Active, including local Addressables references required by the selected direction. |
+| Phase 2 ownership of the current map's existing static presentation | Active for per-map ownership and deterministic editor-only baking of the single approved physical map. |
 | Phase 3 current-map compatibility registration | Active; shared by both directions. |
 | Phase 4 non-destructive ownership split from `Match.unity` | Active; this is the primary implementation objective. |
-| Phase 5 readiness, one-active-map, failure-unwind, and teardown contracts | Contract work only. Concrete Addressables or runtime-scene loading/unloading implementation is later. |
+| Phase 5 readiness, one-active-map, failure-unwind, and teardown contracts | Active for concrete local Addressables additive loading/unloading after Phase 2A packaging is accepted. |
 | Phase 6 bounds, grid, surface, blocker, camera, minimap, runway, helipad, and movement metadata | Active; shared by both directions. |
-| Phase 7 and Phase 9 scenario/map ids and map-neutral mission anchors | Shared contract work only; physical map rollout remains later. |
-| Phase 10 parity, architecture, ECS, memory, FPS, GC, camera, minimap, and rollback validation | Active when triggered by shared-foundation changes. Addressables/build-layout checks remain later. |
-| Phase 2A local Addressables packaging | Later, only if the selected direction requires it. |
-| Phase 8 editor-time texture/mask generator | Later, only if the editor-authored direction is selected. |
+| Phase 7 and Phase 9 scenario/map ids and map-neutral mission anchors | Active for scenario reuse of the single approved physical map; no additional map scene is produced. |
+| Phase 10 parity, architecture, ECS, memory, FPS, GC, camera, minimap, rollback, Addressables, and build-layout validation | Active according to each implementation slice's risk. |
+| Phase 2A local Addressables packaging | Active for the single approved physical map and its map-owned dependencies. |
+| Phase 8 editor-time texture/mask generator | Deferred until an additional physical map is approved; not required to extract and package the current authored map. |
 | Phase 11 remote content migration | Later and independently gated. |
 
 The checklist count remains unchanged so deferred work is not lost or misreported as complete. Items marked later must not be implemented, checked off, or used to block the shared `Match.unity` ownership split.
 
-### Execution Labels While Map-Direction R&D Is Open
+### Execution Labels After Direction Selection
 
-These labels are normative. A task without a `Shared now` disposition must not be implemented during the current workstream.
+These labels remain normative for sequencing the accepted one-map implementation.
 
 | Label | Meaning |
 |---|---|
 | `Shared now` | Required whether maps remain editor-authored scenes or become runtime scene-based maps. May be implemented now. |
 | `Shared contract now` | Loader/generator-neutral data, readiness, failure, or teardown contract only. No concrete loading or content-production implementation. |
-| `Later - direction decision` | Depends on the selected map production/loading direction. Do not implement yet. |
-| `Later - editor direction only` | Editor generator or editor-authored future-map production. Implement only if that direction is accepted. |
-| `Later - delivery` | Addressables, remote delivery, concrete loading/unloading, and packaging. Implement after the map direction is selected. |
+| `Selected - local Addressables` | Required for local packaging or additive loading/unloading of the single approved editor-authored map. May begin when its prerequisite phase is accepted. |
+| `Later - additional maps` | Produces a second or later physical map. Do not implement during the one-map rollout. |
+| `Later - remote delivery` | Remote catalog, download, cache, and CDN work. Do not implement during local-first rollout. |
 
-The current implementation allowlist is therefore limited to:
+The implementation sequence is therefore:
 
 1. All Phase 0 reproducibility, ownership classification, validation baseline, and rollback work.
-2. Phase 1 typed ids and loader-neutral map/scenario metadata contracts; asset-provider, Addressables, and concrete scene-reference fields remain later.
-3. Phase 2 compatibility work needed to preserve the current map's existing static-presentation ownership during the split; future-map generation remains later.
-4. Phase 3 registration of the current map by stable id without choosing or implementing a loader.
+2. Phase 1 typed ids, map/scenario metadata, and selected local-Addressables reference contracts.
+3. Phase 2 per-map static-presentation ownership and deterministic editor-only baking for the current map; no future-map generation.
+4. Phase 3 registration of the current map by stable id and mapping every initially approved scenario to that same map id.
 5. Phase 4's non-destructive ownership split of the existing `Match.unity` map and its current bake products.
-6. Phase 5 ECS/readiness/failure/teardown contracts only; every concrete load/unload step remains later.
+6. Phase 2A local Addressables packaging, followed by Phase 5 concrete additive load, readiness, failure unwind, teardown, and unload.
 7. Phase 6 loader-neutral bounds, surface, grid, blocker, camera, minimap, runway, helipad, and movement metadata.
-8. Phase 10 validation only where exercised by the shared work above.
+8. Phase 10 validation for the complete single-map local package and runtime route.
 
-Explicitly out of scope until the R&D decision: Phase 2A Addressables, concrete Phase 5 loading/unloading, future physical M01/Skirmish maps, the entire Phase 8 editor generator, runtime map generation, all-map packaging, and Phase 11 remote content. Phases 7 and 9 may retain design ids and anchor requirements, but no physical future-map implementation may begin.
+Explicitly out of scope for the initial rollout: a second physical map, a dedicated physical M01 map, Phase 8 future-map generation, runtime map generation, multi-map packaging, and Phase 11 remote content. Scenario and mission ids may be distinct, but each initially resolves to `opmap.skirmish.desert_base_01` until a later physical-map milestone is separately approved.
 
 ## Audit Result: 2026-07-14
 
@@ -178,17 +180,17 @@ Shared meshes, materials, textures, prefabs, shaders, animation data, audio, and
 
 The accepted staged delivery direction is:
 
-- **Initial integrated build:** bundle every approved operation map in the application as local Addressables content. The game must be fully playable offline and must not require a remote catalog, content download, or Google Play Asset Delivery package.
+- **Initial integrated build:** bundle exactly the single approved physical map, `opmap.skirmish.desert_base_01`, in the application as local Addressables content. Every initially approved mission, operation, and Skirmish scenario resolves to it. The game must be fully playable offline and must not require a remote catalog, content download, or Google Play Asset Delivery package.
 - Keep one independently addressable pack boundary per map even while every pack is local. Do not flatten all maps into one bundle and do not replace stable Addressables keys with direct scene paths.
 - Resolve shared global art from one explicit shared dependency group so bundling all maps does not duplicate common meshes, materials, textures, animation data, audio, or shaders.
 - Load only the selected map's source scene, metadata, manifest, surface data, and nearby presentation chunks. Bundling all maps on disk does not permit loading all heavyweight map content into memory.
 - **Later distribution milestone:** move selected per-map groups from local Build/Load paths to remote HTTPS/CDN paths without changing scenario data, operation-map ids, gameplay ECS contracts, or scene-loading call sites.
 - Keep Google Play Asset Delivery out of the initial implementation. It may be evaluated later as a delivery adapter, but Addressables remains the canonical content identity and loading layer.
-- Establish authoritative one-map, two-map, and all-approved-maps package costs before treating the all-bundled layout as a production store release. The current `1.32-1.65 GB` twelve-map estimate is acceptable only as a planning warning, not as release approval.
+- Establish the authoritative one-map package cost before accepting the initial production store release. Two-map and portfolio-wide comparisons are later gates that must pass before a second physical map is approved; the current `1.32-1.65 GB` twelve-map estimate remains only a planning warning.
 
 ## Normative Addressables Packaging And Delivery Contract
 
-This section is the implementation specification for operation-map content. It distinguishes the accepted **local all-bundled milestone** from the later **remote content milestone**. Implementing local groups must not prematurely add download UI, network retries, remote catalogs, or a second delivery backend.
+This section is the implementation specification for operation-map content. It distinguishes the accepted **single-map local milestone** from later additional-map and remote-content milestones. Implementing local groups must not prematurely add download UI, network retries, remote catalogs, or a second delivery backend.
 
 ### Audited Baseline And Configuration Gap
 
@@ -488,7 +490,7 @@ No planned runtime assembly may reference `Game.Editor`. `Game.Components`, `Gam
 | Planned type | C# kind | Namespace / assembly | Planned file | Responsibility and constraints |
 |---|---|---|---|---|
 | `OperationMapDefinition` | `sealed ScriptableObject` | `Game.Configs` / `Game.Configs` | `Assets/Game/Scripts/Configs/OperationMapDefinition.cs` | Small canonical metadata for one map. Stores id/schema/content version, bounds/camera/minimap/anchors, and lazy `AssetReference` values for source scene, optional heavy metadata, map surface, placement configs, and static manifest. No concrete rendering type and no per-frame method. |
-| `OperationMapCatalogConfig` | `sealed ScriptableObject` | `Game.Configs` / `Game.Configs` | `Assets/Game/Scripts/Configs/OperationMapCatalogConfig.cs` | Ordered catalog entries and staged delivery policy. The initial catalog includes every approved map as `BuiltInLocal`; heavyweight map data remains lazy. Composition builds one lookup at transition/launch, not in gameplay updates. |
+| `OperationMapCatalogConfig` | `sealed ScriptableObject` | `Game.Configs` / `Game.Configs` | `Assets/Game/Scripts/Configs/OperationMapCatalogConfig.cs` | Ordered catalog entries and staged delivery policy. The initial catalog contains exactly `opmap.skirmish.desert_base_01` as `BuiltInLocal`; heavyweight map data remains lazy. Composition builds one lookup at transition/launch, not in gameplay updates. |
 | `OperationMapCatalogEntryConfig` | `[Serializable] struct` | `Game.Configs` / `Game.Configs` | same file | Stable map id, pack id, definition `AssetReference`, `OperationMapContentPackConfig`, inclusion flag, and sort/display metadata. It contains no scene path and no direct heavyweight object. |
 | `OperationMapContentPackConfig` | `[Serializable] struct` | `Game.Configs` / `Game.Configs` | `Assets/Game/Scripts/Configs/OperationMapConfigModels.cs` | Delivery kind, stable pack label, content version/hash, minimum compatible app/content schema, expected compressed/download bytes, and optional remote release id. Initial entries are local; remote fields remain empty. |
 | `ScenarioSetupConfig` | `sealed ScriptableObject` | `Game.Configs` / `Game.Configs` | `Assets/Game/Scripts/Configs/ScenarioSetupConfig.cs` | Mission/skirmish policy keyed by scenario id and operation-map id. Owns starting state, objectives, rewards, restrictions, feature gates, and ARIA hooks; owns no scene path or hierarchy reference. |
@@ -703,25 +705,25 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 32% (56/177 checklist items complete).
+Overall implementation progress: 32% (57/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
 | Phase | Status | Complete | Total | Progress | Notes |
 |---|---|---:|---:|---:|---|
 | 0. Reproducible baseline and rollback | In progress / shared | 11 | 12 | 92% | Required by both directions before scene edits. |
-| 1. Operation-map and scenario data contracts | In progress / shared subset | 11 | 12 | 92% | Typed identity, catalog resolution, complete loader-neutral spatial/navigation metadata, hashes, validation, and ownership chain are approved; delivery-specific references remain later. |
-| 2. Per-map static presentation ownership | In progress / compatibility subset | 1 | 14 | 7% | The immutable validated bake-input contract is accepted; the current hardcoded baker remains unchanged until the next compatibility refactor slice. |
-| 2A. Local Addressables packaging foundation | Later / direction-specific | 0 | 20 | 0% | Do not implement before the map-delivery direction is selected. |
+| 1. Operation-map and scenario data contracts | In progress | 11 | 12 | 92% | Typed identity, catalog resolution, complete spatial/navigation metadata, hashes, validation, and ownership chain are approved; the selected local-Addressables reference row remains. |
+| 2. Per-map static presentation ownership | In progress | 2 | 14 | 14% | The immutable bake-input contract and compatibility baker routing are accepted; alternate output ownership remains fail-closed. |
+| 2A. Local Addressables packaging foundation | Active / selected direction | 0 | 20 | 0% | Package only the single approved editor-authored map locally after Phase 2 ownership prerequisites pass. |
 | 3. Current-map compatibility registration | Complete / shared | 10 | 10 | 100% | Current identities/definition, authored behavior, schema-v1 read compatibility, runtime activation/teardown, deterministic presentation, and Android chunk resolution are accepted. |
 | 4. Non-destructive scene ownership split | In progress / shared priority | 10 | 14 | 71% | The staged scene has fail-closed spatial/content validation; the original Match route remains validated and revision `d5784dcfa` plus the rollback recipe freeze the pre-cutover recovery boundary. |
-| 5. Runtime selection, loading, and teardown | In progress / shared contracts | 2 | 14 | 14% | Catalog preflight plus pure readiness/failure/teardown data contracts are bound; concrete loading is later. |
+| 5. Runtime selection, loading, and teardown | In progress | 2 | 14 | 14% | Catalog preflight plus pure readiness/failure/teardown data contracts are bound; concrete local Addressables loading follows Phase 2A. |
 | 6. Metadata, camera, minimap, and movement binding | In progress / shared | 10 | 12 | 83% | Scenario-required anchors validate against map metadata; camera bounds/poses, ARIA Show Me, minimap projection, startup grid domain, authoritative surface payload, current faction deployment anchors, and current runway/helipad records are authored from accepted sources. Active-map spawn and aircraft consumers are accepted. |
 | 7. M01 operation-map slice | Later / shared contracts only | 0 | 10 | 0% | Map-neutral ids/anchors may proceed; physical rollout remains gated. |
 | 8. Editor-time texture/mask generator | Later / editor direction only | 0 | 12 | 0% | Implement only if the editor-authored map direction is selected. |
 | 9. Mission and Skirmish scenario rollout | Later / shared contracts only | 0 | 10 | 0% | Scenario-to-map identity may proceed; physical rollout remains later. |
 | 10. Full validation and all-bundled rollout | Shared validation subset only | 0 | 21 | 0% | Run shared parity/performance gates; Addressables/build-layout gates are later. |
-| 11. Deferred remote content migration | Later / direction-specific | 0 | 16 | 0% | Remote delivery remains independently gated. |
+| 11. Deferred remote content migration | Later / remote delivery | 0 | 16 | 0% | Remote delivery remains independently gated. |
 
 ## Phase 0: Reproducible Baseline And Rollback
 
@@ -748,7 +750,7 @@ Exit criteria:
 
 ## Phase 1: Operation-Map And Scenario Data Contracts
 
-**Execution: mixed.** Typed ids and loader-neutral metadata are `Shared now`; delivery-provider references and concrete scene-loading fields are `Later - direction decision`.
+**Execution: active for the selected local-Addressables direction.** Keep identity and gameplay metadata delivery-neutral while adding only the concrete asset references required by the one-map local package.
 
 - [x] Approve canonical operation-map ids: `opmap.<mode-or-chapter>.<slug>`. See `operation_map_and_scenario_identity_contract.md`.
 - [x] Approve canonical scenario ids: `scenario.<chapter>.<mission>.<slug>` and `scenario.skirmish.<slug>`. See the same identity contract.
@@ -770,10 +772,10 @@ Exit criteria:
 
 ## Phase 2: Per-Map Static Presentation Ownership
 
-**Execution: compatibility subset is `Shared now`.** Preserve and separate the current map's accepted bake ownership. Generalized future-map generation is `Later - direction decision`.
+**Execution: active for the selected editor-authored direction.** Preserve and separate the current map's accepted bake ownership. A second physical map remains `Later - additional maps`.
 
 - [x] Introduce `Game.Editor.StaticMapPresentationBakeInput` carrying operation-map id, source scene, source map root, output root, manifest path, integrity path, and chunk size. See `../AgentReports/2026-07-17_static_map_presentation_bake_input_contract.md`.
-- [ ] Refactor `StaticMapPresentationBaker` so the current hardcoded constants remain only a compatibility entry point during migration.
+- [x] Refactor `StaticMapPresentationBaker` so the current hardcoded constants remain only a compatibility entry point during migration. See `../AgentReports/2026-07-17_static_map_presentation_baker_compatibility_refactor.md`.
 - [ ] Advance the manifest schema to include operation-map id and canonical scene GUID/path identity with an explicit migration test.
 - [ ] Use one generated output root per operation map.
 - [ ] Namespace generated scene names by operation map so chunk coordinates cannot collide across maps.
@@ -797,7 +799,7 @@ Exit criteria:
 
 **Execution: `Later - delivery` for every checklist item.**
 
-**Later / direction-specific:** do not implement this phase while runtime scene-based map R&D is unresolved.
+**Selected - local Addressables:** implement for the single approved physical map after the required Phase 2 ownership rows pass.
 
 - [ ] Approve the exact `Operation Maps - Catalog`, `Operation Maps - Shared`, and per-map Local Core/Presentation group contract from this document.
 - [ ] Add `OperationMapCatalogEntryConfig`, `OperationMapContentPackConfig`, and `OperationMapDeliveryKind` with every initial approved entry set to `BuiltInLocal`.
@@ -817,8 +819,8 @@ Exit criteria:
 - [ ] Add focused fake-operation and PlayMode tests for source/chunk handle ownership, duplicate requests, failed-handle release, drain ordering, and sequential maps.
 - [ ] Prove that an Addressable source scene resolves its expected Entities subscene stream/content archive in Editor and Android without hand-addressing generated files.
 - [ ] Run Addressables Analyze and Build Layout checks and fail on unapproved cross-map duplicate dependency bytes/GUIDs.
-- [ ] Produce clean one-map, representative two-map, and all-approved-maps local artifacts with APK/AAB, installed-size, bundle, Entities, memory, and load-time deltas.
-- [ ] Validate every approved map launches offline from real local bundles on Editor and Android with no remote catalog, download query, network call, or remote helper implementation.
+- [ ] Produce the clean one-map local artifact with APK/AAB, installed-size, bundle, Entities, memory, and load-time deltas; defer two-map and portfolio artifacts until another physical map is approved.
+- [ ] Validate the single approved physical map launches offline from real local bundles on Editor and Android with no remote catalog, download query, network call, or remote helper implementation.
 
 Exit criteria:
 
@@ -920,14 +922,14 @@ Exit criteria:
 
 ## Phase 7: M01 Operation-Map Slice
 
-**Execution: `Later - direction decision` for physical map work.** Design ids and loader-neutral anchor requirements may remain documented, but no M01 map asset implementation begins now.
+**Execution: scenario work may target the single approved map now; a dedicated physical M01 map is `Later - additional maps`.**
 
 Implementation blocker: M01 planning and scaffolding may be studied, but M01 implementation and player-facing integration must not begin until `../M01_FirstContact_Production_Contract.md` releases its FirstLaunch Phase 10R / Gate 9R hold.
 
 - [ ] Reconfirm the M01 implementation hold before changing player-facing routes or assets.
-- [ ] Use the dedicated `opmap.ch01.district_edge_01` unless accepted evidence approves bounded reuse of the current map.
-- [ ] Create the M01 operation-map source scene/subscene only after the hold is released.
-- [ ] Create M01 `OperationMapDefinition` metadata with required bounds and surface/path data.
+- [ ] Resolve M01 to `opmap.skirmish.desert_base_01` for the initial rollout and validate that no dedicated physical map is required.
+- [ ] Verify M01 creates no duplicate operation-map source scene, subscene, presentation chunks, or map-owned assets.
+- [ ] Reuse the current `OperationMapDefinition` bounds and surface/path data while keeping M01 scenario identity distinct.
 - [ ] Add `camera.ch01.m01.planning`, battle camera data, and `minimap.ch01.m01.projection`.
 - [ ] Add M01 objective, spawn, patrol lane, tutorial move target, and camera-focus anchors.
 - [ ] Add M01 `ScenarioSetup` with rifle squad, enemy patrol, restrictions, objectives, rewards, and ARIA hooks.
@@ -942,7 +944,7 @@ Exit criteria:
 
 ## Phase 8: Editor-Time Texture/Mask Generator
 
-**Execution: `Later - editor direction only` for every checklist item.** Do not implement this phase unless the editor-authored map direction is selected after R&D.
+**Execution: `Later - additional maps` for every checklist item.** The editor-authored direction is selected, but this generator is unnecessary for extracting and packaging the existing map.
 
 - [ ] Define the reviewed map-pack folder/manifest contract for base visual, blocker mask, height mask, tree/rock masks, and generation seed/version.
 - [ ] Add the editor-only `OperationMapTextureMaskGenerator` entry point and its `OperationMapGenerationInput`/`OperationMapGenerationResult` value types under existing tooling conventions.
@@ -964,7 +966,7 @@ Exit criteria:
 
 ## Phase 9: Mission And Skirmish Scenario Rollout
 
-**Execution: `Later - direction decision` for physical map rollout.** Loader-neutral scenario/map ids may remain documented only.
+**Execution: scenario rollout may reuse the single approved physical map; producing another physical map is `Later - additional maps`.**
 
 - [ ] Add a Skirmish/sandbox `ScenarioSetup` for `opmap.skirmish.desert_base_01`.
 - [ ] Gate build, scan, support, aircraft, fuel logistics, resource exchange, and fabrication per scenario.
@@ -999,9 +1001,9 @@ Exit criteria:
 - [ ] Run map-authored building/vehicle/aircraft conversion and source-hiding regression validation.
 - [ ] Run editor generator deterministic/no-op and connectivity validation.
 - [ ] Run Editor performance comparison for load time, frame time, draw, triangles, memory, and GC.
-- [ ] Produce clean one-map, representative two-map, and all-approved-maps release artifacts; record the exact incremental APK/AAB, installed-size, Entities stream/archive, static-presentation, combined-mesh, shared-dependency, and aggregate cost.
+- [ ] Produce the clean one-map release artifact and record exact APK/AAB, installed-size, Entities stream/archive, static-presentation, combined-mesh, shared-dependency, and aggregate cost; defer representative two-map and portfolio artifacts.
 - [ ] Replace the provisional `80-110 MB` compressed per-map planning range with an accepted measured budget before approving broader map production.
-- [ ] Validate every approved operation map from real local Addressables bundles, including stable identity, shared dependency deduplication, offline launch, content-version mismatch, load failure unwind, teardown, and sequential switching.
+- [ ] Validate the single approved operation map from real local Addressables bundles, including stable identity, offline launch, content-version mismatch, load failure unwind, teardown, and sequential reload.
 - [ ] Run Android build-scene inclusion, APK/installed size, startup, memory, sustained FPS, and thermal validation.
 - [ ] Verify every catalog-approved local operation map and only those maps are packaged; no unapproved map, stale generated scene, foreign-owned chunk, or remote dependency is included.
 - [ ] Capture accepted screenshots for top-down, oblique, low-ground, minimap, bounds, and map transition states.
@@ -1020,7 +1022,7 @@ Exit criteria:
 
 **Execution: `Later - delivery` for every checklist item.**
 
-**Later / direction-specific:** this phase remains out of scope regardless of shared-foundation progress.
+**Later - remote delivery:** this phase remains out of scope for the local-first one-map rollout.
 
 This phase starts only after the all-bundled implementation is stable and the product owner explicitly requests remote delivery. It does not block the initial all-local milestone, but it is the accepted path when package/install budgets require downloadable maps.
 
@@ -1121,6 +1123,7 @@ Exit criteria:
 | 2026-07-17 | Current-map aircraft runtime acceptance | `../AgentReports/2026-07-17_operation_map_current_aircraft_runtime_acceptance.md`; current-map/binder `7 / 7`; combined lifecycle/architecture `85 / 85`; generated-project compile; deterministic navigation evidence; `git diff --check` | Passed; Phase 6 runway/helipad row complete | Verified the committed current-map definition through runtime activation, runway initialization, normalized helipad spawn consumption, compatibility teardown, takeoff, return/go-around, landing, occupancy, and initial-spawn regressions. Acceptance exposed and fixed the production `building_helipad` normalization mismatch hidden by the earlier synthetic test casing. |
 | 2026-07-17 | Current-map faction deployment anchors and Android manifest refresh | `../AgentReports/2026-07-17_operation_map_current_faction_spawn_and_build_manifest.md`; definition/integration `4 / 4`; Android resolver `2 / 2`; source-growth `17 / 17`; naming `9 / 9`; invocation contract `2 / 2`; compile; `git diff --check` | Passed; Phase 6 faction deployment row complete | Added deterministic faction deployment anchors from exact canonical transforms, verified initial spawn cells from the committed blob, regenerated the stale static-presentation manifest while reusing all 514 chunks, and made the Jenkins Unity wrapper fail closed when no process exit code is available. |
 | 2026-07-17 | Static presentation bake-input contract | `../AgentReports/2026-07-17_static_map_presentation_bake_input_contract.md`; focused `7 / 7`; naming `9 / 9`; compile; `git diff --check` | Passed; Phase 2 input row complete | Added one immutable editor-only input carrying map identity, source ownership, output ownership, integrity, and chunk-size data. The current baker and all generated output remain unchanged. |
+| 2026-07-17 | Static presentation baker compatibility refactor and map-direction selection | `../AgentReports/2026-07-17_static_map_presentation_baker_compatibility_refactor.md`; focused `9 / 9`; two canonical no-op bakes; Android resolver `2 / 2`; naming `9 / 9`; compile; `git diff --check` | Passed; Phase 2 compatibility row complete | Routed the current baker through immutable input data while rejecting alternate output ownership until remaining helpers are map-scoped. Accepted editor-authored local Addressables with one physical map reused by all initial scenarios; no generated asset changed. |
 
 ## Open Decisions
 
@@ -1130,7 +1133,7 @@ Exit criteria:
 | Extracted source path | `Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01.unity` | Confirm after Phase 0 dependency classification. |
 | Current map subscene | Approved: stage a distinct map-owned subscene with `Grid` and temporary `InitialUnitsSpawnerAuthoring`; keep `UnitPrefabRegistryAuthoring` on the original shared compatibility path until shell cutover ownership is implemented. | Revisit only at atomic cutover; do not duplicate the shared registry into map content. |
 | Manifest schema migration | Keep schema-v1 compatibility while introducing map id/source GUID and map-scoped outputs in a new schema. | Approve with multi-map ownership and no-op tests in Phase 2. |
-| Runtime loading | Direction unresolved. Keep `Match.unity` shell separation, one-active-map, readiness, failure-unwind, and teardown contracts loader-independent while runtime scene-based R&D is evaluated. | Select and document the concrete loader before implementing Phase 2A or Phase 5 loading/unloading. |
+| Runtime loading | Approved: local Addressables additive scene loading with one active operation map, explicit readiness, fail-closed unwind, teardown, and handle release. | Implement after Phase 2 per-map ownership and Phase 2A package validation. |
 | Remote migration trigger | Bundle every catalog-approved map locally for the initial milestone. Move selected stable per-map groups to HTTPS/CDN only after all-local stability and measured package/install evidence justify it. | Explicit Phase 11 product gate; no remote implementation during Phase 2A/10. |
-| M01 source | Dedicated `opmap.ch01.district_edge_01`. | Reconfirm after FirstLaunch releases the M01 hold. |
-| Generator | Direction unresolved. The editor texture/mask generator remains a later option; runtime scene-based map R&D is separate and must prove architecture, determinism, memory, and performance viability. | Update this tracker only after R&D selects a direction; do not implement Phase 8 meanwhile. |
+| M01 source | Initial M01 scenarios reuse `opmap.skirmish.desert_base_01`; a dedicated `opmap.ch01.district_edge_01` is a later optional content milestone. | Do not create or package a second physical scene during the one-map rollout. |
+| Generator | Editor-authored maps are selected. The texture/mask generator is deferred until a second physical map is approved. | Do not implement Phase 8 for the existing-map extraction. |

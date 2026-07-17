@@ -17,7 +17,9 @@ public sealed class StaticMapPresentationBakeInputTests
             tests.OutputFilesOutsideOwnedRootFail();
             tests.InvalidOutputExtensionsFail();
             tests.InvalidChunkSizesFail();
-            Debug.Log("[StaticMapPresentationBakeInputValidation] result=Passed tests=7");
+            tests.CurrentCompatibilityFactoryMatchesLegacyConstants();
+            tests.CompatibilityValidationRejectsAlternateOwnership();
+            Debug.Log("[StaticMapPresentationBakeInputValidation] result=Passed tests=9");
         }
         catch (Exception exception)
         {
@@ -81,6 +83,36 @@ public sealed class StaticMapPresentationBakeInputTests
         AssertInvalid(Create(chunkSize: 0f));
         AssertInvalid(Create(chunkSize: float.NaN));
         AssertInvalid(Create(chunkSize: float.PositiveInfinity));
+    }
+
+    [Test]
+    public void CurrentCompatibilityFactoryMatchesLegacyConstants()
+    {
+        StaticMapPresentationBakeInput input =
+            StaticMapPresentationBaker.CreateCurrentCompatibilityInput();
+
+        Assert.That(input.TryValidate(out string error), Is.True, error);
+        Assert.That(input.SourceScenePath, Is.EqualTo(StaticMapPresentationBaker.CanonicalMatchScenePath));
+        Assert.That(input.OutputRoot, Is.EqualTo(StaticMapPresentationBaker.OutputRoot));
+        Assert.That(input.SceneOutputFolder, Is.EqualTo(StaticMapPresentationBaker.SceneOutputFolder));
+        Assert.That(input.ManifestPath, Is.EqualTo(StaticMapPresentationBaker.ManifestPath));
+        Assert.That(input.ChunkSize, Is.EqualTo(StaticMapPresentationBaker.ChunkSize));
+        Assert.DoesNotThrow(() => StaticMapPresentationBaker.ValidateCompatibilityInput(input));
+    }
+
+    [Test]
+    public void CompatibilityValidationRejectsAlternateOwnership()
+    {
+        StaticMapPresentationBakeInput alternate = Create(
+            operationMapId: "opmap.test.alternate",
+            sourceScenePath: "Assets/Game/Scenes/OperationMaps/Test.unity",
+            outputRoot: "Assets/Game/GeneratedStaticMapPresentation/Test",
+            manifestPath: "Assets/Game/GeneratedStaticMapPresentation/Test/Manifest.asset",
+            integrityPath: "Assets/Game/GeneratedStaticMapPresentation/Test/Integrity.json");
+
+        Assert.That(alternate.TryValidate(out string error), Is.True, error);
+        Assert.Throws<InvalidOperationException>(() =>
+            StaticMapPresentationBaker.ValidateCompatibilityInput(alternate));
     }
 
     private static StaticMapPresentationBakeInput CurrentInput()

@@ -1,0 +1,79 @@
+{
+  "artifactId": "am021-scenario-grid-ownership-evidence-v1",
+  "schemaVersion": 1,
+  "sourceBaseline": {
+    "branch": "main",
+    "commit": "8981ea55c2884f68fc3dd5357f0f52df8e6aaf29",
+    "tree": "27ad87121cbf6505551fd790a41bf10311f3ed73"
+  },
+  "acceptedEvidence": {
+    "commit": "981dcc2dcbe2163aebd5001ec7e1c3912f189de7",
+    "tree": "930a9492b9250fdc88337d892bf6bb65ade1b7ee"
+  },
+  "productionChangePaths": [
+    "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs"
+  ],
+  "ownedFiles": [
+    {
+      "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
+      "sha256": "ad0708b5e19ed598e1fc00f9a4809b7f3e26b750e8dfbfae6f7e61b37d39a79f"
+    },
+    {
+      "path": "Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs",
+      "sha256": "6fa8cc4070f8f172441a5c03e0601b58bfab2dad8cae02524371dd4e182ffb13"
+    }
+  ],
+  "ownershipResult": {
+    "persistentResourceCount": 575,
+    "explicitOwnerCount": 548,
+    "gapCount": 5,
+    "protectedOwnerCount": 22,
+    "removedScenarioMirrorCount": 5
+  },
+  "validations": [
+    {
+      "id": "persistent-resource-lifecycle",
+      "result": "Passed",
+      "passedTests": 8,
+      "compilerErrors": 0,
+      "logSha256": "fbcab404ca5241cced7930b5a988f3a437812435e3ec97e8943dbe79371710ba"
+    },
+    {
+      "id": "production-source-growth",
+      "result": "BlockedExternal",
+      "compilerErrors": 0,
+      "taskOwnedRegression": false,
+      "blockingPaths": [
+        "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeLocaleTextUtilitySystemHelper.cs",
+        "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativePortraitVoiceSelectionPresentationSystemHelper.cs",
+        "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeProfileCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeSequencePresentationSystemHelper.cs"
+      ]
+    },
+    {
+      "id": "persistent-resource-ownership-generator",
+      "result": "Passed",
+      "passedTests": 10
+    },
+    {
+      "id": "integrated-architecture-python",
+      "result": "BlockedExternal",
+      "passedTests": 138,
+      "totalTests": 139,
+      "taskOwnedRegression": false,
+      "blockingPath": "Assets/Game/Scripts/UI/Narrative/FirstLaunchLanguageChoiceView.cs"
+    }
+  ],
+  "deferredReleaseObservation": {
+    "result": "ExcludedFromCoreAcceptance",
+    "passedTests": 368,
+    "totalTests": 373,
+    "errors": 5,
+    "reason": "Five APH-506 release-device mock tests omit the newly required ro.serialno property. Release certification remains deferred and these tests are outside AM-021 ownership."
+  },
+  "authorityBoundary": {
+    "creation": "Scenario Lab allocates the five persistent grid containers directly into the runtime grid entity components.",
+    "disposal": "The grid entity lifecycle remains the sole disposal path; BattleScenarioLabVisualPlayback no longer retains aliasing native-container fields.",
+    "gameplayAuthority": "No runtime grid behavior, ECS scheduling, system update owner, or simulation authority changed."
+  }
+}

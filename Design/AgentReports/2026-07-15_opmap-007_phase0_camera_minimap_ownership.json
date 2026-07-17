@@ -28,7 +28,7 @@
             "reportSchemaVersion": 1,
             "result": "NeedsDecision",
             "evidencePath": "Design/AgentReports/2026-07-15_opmap-004_phase0_ownership_baseline.json",
-            "evidenceSha256": "4ed021d6697d70d90aeb511044fdda02aecb8625607277ba50974db5a3c8dc4e"
+            "evidenceSha256": "a0ebcfdcc7273b2dba5a07b099635924f874699a415853885ea44e5064c12baf"
         }
     ],
     "directInputHashes": [
@@ -150,11 +150,11 @@
         },
         {
             "path": "Design/AgentReports/2026-07-15_opmap-004_phase0_ownership_baseline.json",
-            "sha256": "4ed021d6697d70d90aeb511044fdda02aecb8625607277ba50974db5a3c8dc4e"
+            "sha256": "a0ebcfdcc7273b2dba5a07b099635924f874699a415853885ea44e5064c12baf"
         },
         {
             "path": "Design/Architecture/operation_map_scene_split_and_generator_tracker.md",
-            "sha256": "9a786f54429434da085c6bde6fddff9d51d4ac558aaac924075f3ea279f8b1cf"
+            "sha256": "ab0ae3fbda4057874b513623bc55a816ceec912a6dcf9f339aa6f4db082dc200"
         }
     ],
     "presenceFindings": [

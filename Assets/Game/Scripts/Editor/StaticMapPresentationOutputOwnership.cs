@@ -147,9 +147,9 @@ namespace Game.Editor
                 rejectionReason = "scene-integrity-delegate-missing";
                 return false;
             }
-            if (previousSchemaVersion != StaticMapPresentationManifest.CurrentSchemaVersion)
+            if (!StaticMapPresentationManifest.IsSchemaReadable(previousSchemaVersion))
             {
-                rejectionReason = "schema-version-changed";
+                rejectionReason = "schema-version-unsupported";
                 return false;
             }
             if (!string.Equals(previousCanonicalScenePath, expectedCanonicalScenePath, StringComparison.Ordinal))

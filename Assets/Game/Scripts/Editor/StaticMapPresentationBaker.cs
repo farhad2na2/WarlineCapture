@@ -24,6 +24,7 @@ namespace Game.Editor
         public const string ManifestPath = OutputRoot + "/StaticMapPresentationManifest.asset";
         public const float ChunkSize = 32f;
 
+        private const int ChunkContentSchemaVersion = 1;
         private const float MatrixTolerance = 0.0005f;
 
         private sealed class SourceDescriptor
@@ -296,6 +297,8 @@ namespace Game.Editor
                 }
 
                 manifest.EditorSetData(
+                    input.OperationMapId,
+                    AssetDatabase.AssetPathToGUID(input.SourceScenePath),
                     input.SourceScenePath,
                     canonicalHash,
                     input.ChunkSize,
@@ -697,7 +700,7 @@ namespace Game.Editor
             IReadOnlyList<StaticMapPresentationSourceEntry> sources)
         {
             StringBuilder builder = new(256 + sources.Count * 72);
-            builder.Append(StaticMapPresentationManifest.CurrentSchemaVersion).Append('|');
+            builder.Append(ChunkContentSchemaVersion).Append('|');
             builder.Append(chunkSize.ToString("R", CultureInfo.InvariantCulture));
             for (int i = 0; i < chunks.Count; i++)
             {

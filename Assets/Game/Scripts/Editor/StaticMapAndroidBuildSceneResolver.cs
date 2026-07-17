@@ -11,6 +11,8 @@ namespace Game.Editor
     internal sealed class StaticMapAndroidBuildManifestSnapshot
     {
         internal int SchemaVersion { get; }
+        internal string OperationMapId { get; }
+        internal string CanonicalSceneGuid { get; }
         internal string CanonicalScenePath { get; }
         internal string CanonicalSceneDependencyHash { get; }
         internal string ContentHash { get; }
@@ -18,12 +20,16 @@ namespace Game.Editor
 
         internal StaticMapAndroidBuildManifestSnapshot(
             int schemaVersion,
+            string operationMapId,
+            string canonicalSceneGuid,
             string canonicalScenePath,
             string canonicalSceneDependencyHash,
             string contentHash,
             IReadOnlyList<string> chunkScenePaths)
         {
             SchemaVersion = schemaVersion;
+            OperationMapId = operationMapId;
+            CanonicalSceneGuid = canonicalSceneGuid;
             CanonicalScenePath = canonicalScenePath;
             CanonicalSceneDependencyHash = canonicalSceneDependencyHash;
             ContentHash = contentHash;
@@ -48,6 +54,8 @@ namespace Game.Editor
                 ? null
                 : new StaticMapAndroidBuildManifestSnapshot(
                     manifest.SchemaVersion,
+                    manifest.OperationMapId,
+                    manifest.CanonicalSceneGuid,
                     manifest.CanonicalScenePath,
                     manifest.CanonicalSceneDependencyHash,
                     manifest.ContentHash,
@@ -86,6 +94,15 @@ namespace Game.Editor
                 throw new ArgumentNullException("Android scene resolver delegates are required.");
             if (!StaticMapPresentationManifest.IsSchemaReadable(manifest.SchemaVersion))
                 throw new InvalidOperationException($"Static map presentation manifest schema is unsupported: {manifest.SchemaVersion}.");
+            if (!StaticMapPresentationManifest.HasRequiredIdentity(
+                    manifest.SchemaVersion,
+                    manifest.OperationMapId,
+                    manifest.CanonicalSceneGuid,
+                    manifest.CanonicalScenePath))
+            {
+                throw new InvalidOperationException(
+                    "Static map presentation manifest identity is incomplete.");
+            }
             if (!string.Equals(
                     manifest.CanonicalScenePath,
                     StaticMapPresentationBaker.CanonicalMatchScenePath,

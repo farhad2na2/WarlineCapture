@@ -89,8 +89,15 @@ public sealed class StaticMapPresentationStructuralValidationTests
     {
         failures.Require(manifest.SchemaVersion == StaticMapPresentationManifest.CurrentSchemaVersion,
             $"Manifest schema is {manifest.SchemaVersion}; expected {StaticMapPresentationManifest.CurrentSchemaVersion}.");
+        failures.Require(manifest.OperationMapId == "opmap.skirmish.desert_base_01",
+            $"Manifest operation-map id is invalid: {manifest.OperationMapId}");
+        failures.Require(!string.IsNullOrWhiteSpace(manifest.CanonicalSceneGuid),
+            "Manifest canonical scene GUID is empty.");
         failures.Require(!string.IsNullOrWhiteSpace(manifest.CanonicalScenePath),
             "Manifest canonical scene path is empty.");
+        failures.Require(
+            AssetDatabase.GUIDToAssetPath(manifest.CanonicalSceneGuid) == manifest.CanonicalScenePath,
+            "Manifest canonical scene GUID/path identity does not resolve to the same asset.");
         failures.Require(AssetDatabase.LoadAssetAtPath<SceneAsset>(manifest.CanonicalScenePath) != null,
             $"Manifest canonical scene does not exist: {manifest.CanonicalScenePath}");
         failures.Require(manifest.ChunkSize > 0f, "Manifest chunk size must be positive.");

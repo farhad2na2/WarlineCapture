@@ -23,7 +23,9 @@ public sealed class StaticMapAndroidBuildSceneResolverTests
             var tests = new StaticMapAndroidBuildSceneResolverTests();
             tests.ResolveForCurrentProject_IncludesEnabledBaseScenesThenEveryManifestChunkExactlyOnce();
             tests.BuildScript_UsesManifestResolverForBothAndroidBuildPipelinesOnly();
-            Debug.Log("[StaticMapAndroidBuildSceneResolverValidation] result=Passed tests=2");
+            tests.Resolve_CurrentSchemaWithoutMapIdentityFails();
+            tests.Resolve_LegacySchemaOneWithoutMapIdentityRemainsReadable();
+            Debug.Log("[StaticMapAndroidBuildSceneResolverValidation] result=Passed tests=4");
         }
         catch (Exception exception)
         {
@@ -31,6 +33,30 @@ public sealed class StaticMapAndroidBuildSceneResolverTests
             Debug.LogException(exception);
             throw;
         }
+    }
+
+    [Test]
+    public void Resolve_CurrentSchemaWithoutMapIdentityFails()
+    {
+        StaticMapAndroidBuildManifestSnapshot snapshot = SnapshotWith(operationMapId: string.Empty);
+
+        InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
+            Resolve(new[] { Match }, snapshot));
+
+        Assert.That(exception.Message, Does.Contain("identity is incomplete"));
+    }
+
+    [Test]
+    public void Resolve_LegacySchemaOneWithoutMapIdentityRemainsReadable()
+    {
+        StaticMapAndroidBuildManifestSnapshot snapshot = SnapshotWith(
+            schemaVersion: 1,
+            operationMapId: string.Empty,
+            canonicalSceneGuid: string.Empty);
+
+        string[] result = Resolve(new[] { Match }, snapshot);
+
+        CollectionAssert.AreEqual(new[] { Match, ChunkA, ChunkB }, result);
     }
 
     [Test]
@@ -207,6 +233,8 @@ public sealed class StaticMapAndroidBuildSceneResolverTests
 
     private static StaticMapAndroidBuildManifestSnapshot SnapshotWith(
         int schemaVersion = StaticMapPresentationManifest.CurrentSchemaVersion,
+        string operationMapId = "opmap.skirmish.desert_base_01",
+        string canonicalSceneGuid = "canonical-scene-guid",
         string canonical = Match,
         string canonicalDependencyHash = "canonical-dependency-hash",
         string contentHash = "content-hash",
@@ -214,6 +242,8 @@ public sealed class StaticMapAndroidBuildSceneResolverTests
     {
         return new StaticMapAndroidBuildManifestSnapshot(
             schemaVersion,
+            operationMapId,
+            canonicalSceneGuid,
             canonical,
             canonicalDependencyHash,
             contentHash,

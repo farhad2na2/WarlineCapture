@@ -67,6 +67,16 @@ namespace Game.Composition
                 return false;
             }
 
+            if (!StaticMapPresentationManifest.HasRequiredIdentity(
+                    manifest.SchemaVersion,
+                    manifest.OperationMapId,
+                    manifest.CanonicalSceneGuid,
+                    manifest.CanonicalScenePath))
+            {
+                error = "Static map presentation manifest identity is incomplete.";
+                return false;
+            }
+
             if (!IsFinite(manifest.ChunkSize) || manifest.ChunkSize <= 0f)
             {
                 error = "Static map presentation chunk size must be finite and positive.";

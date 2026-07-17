@@ -110,9 +110,11 @@ namespace Game.Rendering
     public sealed class StaticMapPresentationManifest : ScriptableObject
     {
         public const int MinimumReadableSchemaVersion = 1;
-        public const int CurrentSchemaVersion = 1;
+        public const int CurrentSchemaVersion = 2;
 
         [SerializeField] private int schemaVersion = CurrentSchemaVersion;
+        [SerializeField] private string operationMapId;
+        [SerializeField] private string canonicalSceneGuid;
         [SerializeField] private string canonicalScenePath;
         [SerializeField] private string canonicalSceneDependencyHash;
         [SerializeField] private float chunkSize;
@@ -121,6 +123,8 @@ namespace Game.Rendering
         [SerializeField] private List<StaticMapPresentationSourceEntry> sources = new();
 
         public int SchemaVersion => schemaVersion;
+        public string OperationMapId => operationMapId;
+        public string CanonicalSceneGuid => canonicalSceneGuid;
         public string CanonicalScenePath => canonicalScenePath;
         public string CanonicalSceneDependencyHash => canonicalSceneDependencyHash;
         public float ChunkSize => chunkSize;
@@ -131,7 +135,22 @@ namespace Game.Rendering
         public static bool IsSchemaReadable(int value) =>
             value >= MinimumReadableSchemaVersion && value <= CurrentSchemaVersion;
 
+        public static bool HasRequiredIdentity(
+            int version,
+            string mapId,
+            string sceneGuid,
+            string scenePath)
+        {
+            if (!IsSchemaReadable(version) || string.IsNullOrWhiteSpace(scenePath))
+                return false;
+
+            return version == 1 ||
+                   (!string.IsNullOrWhiteSpace(mapId) &&
+                    !string.IsNullOrWhiteSpace(sceneGuid));
+        }
+
 #if UNITY_EDITOR
+        [Obsolete("Schema-1 compatibility only. Use the operation-map identity overload.")]
         public void EditorSetData(
             string sourceScenePath,
             string sourceSceneDependencyHash,
@@ -140,7 +159,53 @@ namespace Game.Rendering
             List<StaticMapPresentationChunkEntry> generatedChunks,
             List<StaticMapPresentationSourceEntry> generatedSources)
         {
+            schemaVersion = 1;
+            operationMapId = string.Empty;
+            canonicalSceneGuid = string.Empty;
+            SetCommonData(
+                sourceScenePath,
+                sourceSceneDependencyHash,
+                generatedChunkSize,
+                generatedContentHash,
+                generatedChunks,
+                generatedSources);
+        }
+
+        public void EditorSetData(
+            string generatedOperationMapId,
+            string sourceSceneGuid,
+            string sourceScenePath,
+            string sourceSceneDependencyHash,
+            float generatedChunkSize,
+            string generatedContentHash,
+            List<StaticMapPresentationChunkEntry> generatedChunks,
+            List<StaticMapPresentationSourceEntry> generatedSources)
+        {
+            if (string.IsNullOrWhiteSpace(generatedOperationMapId))
+                throw new ArgumentException("Operation-map id is required.", nameof(generatedOperationMapId));
+            if (string.IsNullOrWhiteSpace(sourceSceneGuid))
+                throw new ArgumentException("Canonical scene GUID is required.", nameof(sourceSceneGuid));
+
             schemaVersion = CurrentSchemaVersion;
+            operationMapId = generatedOperationMapId;
+            canonicalSceneGuid = sourceSceneGuid;
+            SetCommonData(
+                sourceScenePath,
+                sourceSceneDependencyHash,
+                generatedChunkSize,
+                generatedContentHash,
+                generatedChunks,
+                generatedSources);
+        }
+
+        private void SetCommonData(
+            string sourceScenePath,
+            string sourceSceneDependencyHash,
+            float generatedChunkSize,
+            string generatedContentHash,
+            List<StaticMapPresentationChunkEntry> generatedChunks,
+            List<StaticMapPresentationSourceEntry> generatedSources)
+        {
             canonicalScenePath = sourceScenePath;
             canonicalSceneDependencyHash = sourceSceneDependencyHash;
             chunkSize = generatedChunkSize;

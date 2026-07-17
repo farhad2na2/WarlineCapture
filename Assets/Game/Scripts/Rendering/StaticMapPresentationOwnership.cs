@@ -85,6 +85,14 @@ namespace Game.Rendering
             _resolved.Clear();
             if (manifest == null || !StaticMapPresentationManifest.IsSchemaReadable(manifest.SchemaVersion))
                 return Fail("presentation manifest is missing or unsupported", out error);
+            if (!StaticMapPresentationManifest.HasRequiredIdentity(
+                    manifest.SchemaVersion,
+                    manifest.OperationMapId,
+                    manifest.CanonicalSceneGuid,
+                    manifest.CanonicalScenePath))
+            {
+                return Fail("presentation manifest identity is incomplete", out error);
+            }
             if (mapRoot == null)
                 return Fail("map root or presentation sources are missing", out error);
             if (!ValidateManifestShape(manifest, out error))

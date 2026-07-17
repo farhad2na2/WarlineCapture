@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4c5f72af84c49f88b01224d9fd277d8, type: 3}
   m_Name: StaticMapPresentationManifest
   m_EditorClassIdentifier: Game.Rendering::Game.Rendering.StaticMapPresentationManifest
-  schemaVersion: 1
+  schemaVersion: 2
+  operationMapId: opmap.skirmish.desert_base_01
+  canonicalSceneGuid: cc4f48a57793d4597b4ffac2906c515e
   canonicalScenePath: Assets/Game/Scenes/Match.unity
   canonicalSceneDependencyHash: 452fe53e2b0102b0859f6b96fb2e2a09
   chunkSize: 32

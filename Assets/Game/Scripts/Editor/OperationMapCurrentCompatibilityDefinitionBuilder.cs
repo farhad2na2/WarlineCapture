@@ -36,9 +36,10 @@ namespace Game.Editor
         private const string MinimapId = "minimap.skirmish.desert_base_01.full";
         private const string SourceIdentityHash = "2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900";
         private const string ContentHash = "2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c";
-        private const string GeneratedMetadataHash = "574afec991fbc1a684531c9f727c20eb296271260e7a4e1c4a8c300a2b642e79";
+        private const string BaseGeneratedMetadataHash = "574afec991fbc1a684531c9f727c20eb296271260e7a4e1c4a8c300a2b642e79";
         private const string GridContentHash = "8ef1b3f17074774040111a48ea82901b3355da8b8b86c8dc5c6e2a0bcccc2cfb";
         private const string SurfaceContentHash = "aa08cb9115e8727bfdbc671a4a2cfd9334ef48134c00d58d7d29e350c45b752c";
+        private const string BuildingPlacementContentHash = "26973214f433c44ebca01f302ecbe05789c84e573dc48eb8b2c21f241823464d";
         private const string MatchSceneFileHash = "182f3b4cb50f48e1a573e1e90ee0c13baf9d62fce46e35b1850ef72097db5d75";
         private const string SubSceneFileHash = "bcc255f3fb140a0d91687b45b679b47fb60f01f5cfa8690bac3032ec642dadd8";
         private const string ManifestFileHash = "494e0052e1c55578238fd1200517999a437fb35465aac3eb295ec0c79e0cc715";
@@ -65,13 +66,19 @@ namespace Game.Editor
             RequireFileHash(SubScenePath, SubSceneFileHash);
             RequireFileHash(GridPath, GridContentHash);
             RequireFileHash(SurfacePath, SurfaceContentHash);
+            RequireFileHash(
+                OperationMapCurrentCompatibilityPlacementStager.SourceBuildingConfigPath,
+                BuildingPlacementContentHash);
             RequireFileHash(ManifestPath, ManifestFileHash);
 
             GridAuthoringSceneConfigAsset grid =
                 AssetDatabase.LoadAssetAtPath<GridAuthoringSceneConfigAsset>(GridPath);
             MapSurfaceDataAsset surface = AssetDatabase.LoadAssetAtPath<MapSurfaceDataAsset>(SurfacePath);
-            if (grid == null || surface == null)
-                throw new InvalidOperationException("Current grid or map-surface asset is missing.");
+            MapBuildingPlacementConfig buildingPlacements =
+                AssetDatabase.LoadAssetAtPath<MapBuildingPlacementConfig>(
+                    OperationMapCurrentCompatibilityPlacementStager.SourceBuildingConfigPath);
+            if (grid == null || surface == null || buildingPlacements == null)
+                throw new InvalidOperationException("Current grid, map-surface, or building-placement asset is missing.");
 
             Scene scene = SceneManager.GetSceneByPath(MatchScenePath);
             if (!scene.IsValid() || !scene.isLoaded)
@@ -93,6 +100,26 @@ namespace Game.Editor
             Vector3 gridMax = gridMin + new Vector3(grid.Width * grid.CellSize, 0f, grid.Height * grid.CellSize);
             float worldMinimumHeight = math.min(minimumHeight, 15f);
             float worldMaximumHeight = math.max(maximumHeight, 100f);
+            OperationMapAnchorConfig[] infrastructureAnchors =
+                OperationMapCurrentInfrastructureAnchorAuthoring.BuildInfrastructureAnchors(buildingPlacements);
+            var anchors = new OperationMapAnchorConfig[2 + infrastructureAnchors.Length];
+            anchors[0] = new OperationMapAnchorConfig(
+                "anchor.skirmish.desert_base_01.compat_start",
+                OperationMapAnchorKind.Debug,
+                start.position,
+                start.eulerAngles,
+                0f);
+            anchors[1] = new OperationMapAnchorConfig(
+                "anchor.skirmish.desert_base_01.compat_end",
+                OperationMapAnchorKind.Debug,
+                end.position,
+                end.eulerAngles,
+                0f);
+            Array.Copy(infrastructureAnchors, 0, anchors, 2, infrastructureAnchors.Length);
+            string generatedMetadataHash =
+                OperationMapCurrentInfrastructureAnchorAuthoring.ComputeGeneratedMetadataHash(
+                    BaseGeneratedMetadataHash,
+                    anchors);
 
             OperationMapDefinition definition = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(DefinitionPath);
             if (definition == null)
@@ -104,10 +131,10 @@ namespace Game.Editor
 
             Set(definition, "operationMapId", OperationMapId);
             Set(definition, "schemaVersion", 1);
-            Set(definition, "contentVersion", 2);
+            Set(definition, "contentVersion", 3);
             Set(definition, "sourceIdentityHash", SourceIdentityHash);
             Set(definition, "contentHash", ContentHash);
-            Set(definition, "generatedMetadataHash", GeneratedMetadataHash);
+            Set(definition, "generatedMetadataHash", generatedMetadataHash);
             Set(definition, "bounds", new OperationMapBoundsConfig(
                 new Vector3(gridMin.x, worldMinimumHeight, gridMin.z),
                 new Vector3(gridMax.x, worldMaximumHeight, gridMax.z),
@@ -156,21 +183,7 @@ namespace Game.Editor
                 grid.Origin,
                 new Vector2(grid.Width * grid.CellSize, grid.Height * grid.CellSize),
                 0f));
-            Set(definition, "anchors", new[]
-            {
-                new OperationMapAnchorConfig(
-                    "anchor.skirmish.desert_base_01.compat_start",
-                    OperationMapAnchorKind.Debug,
-                    start.position,
-                    start.eulerAngles,
-                    0f),
-                new OperationMapAnchorConfig(
-                    "anchor.skirmish.desert_base_01.compat_end",
-                    OperationMapAnchorKind.Debug,
-                    end.position,
-                    end.eulerAngles,
-                    0f)
-            });
+            Set(definition, "anchors", anchors);
 
             if (!definition.TryValidateMetadata(out string error))
                 throw new InvalidOperationException(error);

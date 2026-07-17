@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using Game.Configs;
 using Game.Editor;
 using Game.Composition;
+using Game.Components;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -42,7 +43,22 @@ public sealed class OperationMapCurrentCompatibilityDefinitionTests
         Assert.That(definition.PlanningCameraId, Is.EqualTo(definition.BattleCameraId));
         Assert.That(definition.Minimap.ProjectionOrigin, Is.EqualTo(Vector3.zero));
         Assert.That(definition.Minimap.ProjectionSize, Is.EqualTo(new Vector2(2048f, 1024f)));
-        Assert.That(definition.Anchors.Length, Is.EqualTo(2));
+        Assert.That(definition.Anchors.Length, Is.EqualTo(6));
+        AssertInfrastructureAnchor(
+            definition.Anchors[2],
+            "anchor.skirmish.desert_base_01.runway.faction_1.lane_0",
+            OperationMapAnchorKind.Runway,
+            1,
+            0);
+        for (int index = 0; index < 3; index++)
+        {
+            AssertInfrastructureAnchor(
+                definition.Anchors[index + 3],
+                $"anchor.skirmish.desert_base_01.helipad.faction_1.lane_{index}",
+                OperationMapAnchorKind.Helipad,
+                1,
+                index);
+        }
         Assert.That(definition.NavigationMetadata.AuthoredSubSceneGuid,
             Is.EqualTo(AssetDatabase.AssetPathToGUID(
                 "Assets/Game/Scenes/Match/MatchSubScene.unity")));
@@ -55,6 +71,39 @@ public sealed class OperationMapCurrentCompatibilityDefinitionTests
             "Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset")));
         Assert.That(definition.SurfaceMetadata.ContentHash, Is.EqualTo(ComputeFileHash(
             "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset")));
+    }
+
+    [Test]
+    public void CurrentInfrastructureAuthoring_IsDeterministicAndMatchesCommittedDefinition()
+    {
+        MapBuildingPlacementConfig placements = AssetDatabase.LoadAssetAtPath<MapBuildingPlacementConfig>(
+            OperationMapCurrentCompatibilityPlacementStager.SourceBuildingConfigPath);
+        OperationMapDefinition definition = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
+            OperationMapCurrentCompatibilityDefinitionBuilder.DefinitionPath);
+
+        OperationMapAnchorConfig[] first =
+            OperationMapCurrentInfrastructureAnchorAuthoring.BuildInfrastructureAnchors(placements);
+        OperationMapAnchorConfig[] second =
+            OperationMapCurrentInfrastructureAnchorAuthoring.BuildInfrastructureAnchors(placements);
+
+        Assert.That(first.Length, Is.EqualTo(4));
+        Assert.That(second.Length, Is.EqualTo(first.Length));
+        for (int index = 0; index < first.Length; index++)
+        {
+            Assert.That(second[index].AnchorId, Is.EqualTo(first[index].AnchorId));
+            Assert.That(second[index].Kind, Is.EqualTo(first[index].Kind));
+            Assert.That(second[index].Position, Is.EqualTo(first[index].Position));
+            Assert.That(second[index].EulerAngles, Is.EqualTo(first[index].EulerAngles));
+            Assert.That(second[index].Radius, Is.EqualTo(first[index].Radius));
+            Assert.That(second[index].FactionId, Is.EqualTo(first[index].FactionId));
+            Assert.That(second[index].LaneIndex, Is.EqualTo(first[index].LaneIndex));
+
+            OperationMapAnchorConfig committed = definition.Anchors[index + 2];
+            Assert.That(committed.AnchorId, Is.EqualTo(first[index].AnchorId));
+            Assert.That(committed.Position, Is.EqualTo(first[index].Position));
+            Assert.That(committed.EulerAngles, Is.EqualTo(first[index].EulerAngles));
+            Assert.That(committed.Radius, Is.EqualTo(first[index].Radius));
+        }
     }
 
     [Test]
@@ -99,5 +148,20 @@ public sealed class OperationMapCurrentCompatibilityDefinitionTests
             result[index * 2 + 1] = digits[hash[index] & 0x0f];
         }
         return new string(result);
+    }
+
+    private static void AssertInfrastructureAnchor(
+        OperationMapAnchorConfig anchor,
+        string expectedId,
+        OperationMapAnchorKind expectedKind,
+        int expectedFactionId,
+        int expectedLaneIndex)
+    {
+        Assert.That(anchor.AnchorId, Is.EqualTo(expectedId));
+        Assert.That(anchor.Kind, Is.EqualTo(expectedKind));
+        Assert.That(anchor.FactionId, Is.EqualTo(expectedFactionId));
+        Assert.That(anchor.LaneIndex, Is.EqualTo(expectedLaneIndex));
+        Assert.That(anchor.Radius, Is.GreaterThan(0f));
+        Assert.That(anchor.TryValidate(out string error), Is.True, error);
     }
 }

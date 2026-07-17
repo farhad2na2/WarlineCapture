@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Configs::Game.Configs.OperationMapDefinition
   operationMapId: opmap.skirmish.desert_base_01
   schemaVersion: 1
-  contentVersion: 2
+  contentVersion: 3
   sourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900
   contentHash: 2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c
-  generatedMetadataHash: 178b3673d4d7bc640807daa3258f8d4914410c7ba2461953e8d2752a82d12407
+  generatedMetadataHash: fce6a63272f6c3331778a9d29ccc264c8496af3834a2dc7c88ee5727927272c2
   bounds:
     worldMin: {x: 0, y: -6.9545445, z: 0}
     worldMax: {x: 2048, y: 100, z: 1024}
@@ -78,3 +78,31 @@ MonoBehaviour:
     radius: 0
     factionId: -1
     laneIndex: -1
+  - anchorId: anchor.skirmish.desert_base_01.runway.faction_1.lane_0
+    kind: 9
+    position: {x: 886.8202, y: 0.6849844, z: 314.50977}
+    eulerAngles: {x: -0, y: 269.99036, z: 0}
+    radius: 90.65007
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.skirmish.desert_base_01.helipad.faction_1.lane_0
+    kind: 10
+    position: {x: 999.9, y: 0.73, z: 359.99994}
+    eulerAngles: {x: -0, y: 90, z: 0}
+    radius: 7.200793
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.skirmish.desert_base_01.helipad.faction_1.lane_1
+    kind: 10
+    position: {x: 1006.83, y: 0.73, z: 393.25995}
+    eulerAngles: {x: -0, y: 90, z: 0}
+    radius: 7.200793
+    factionId: 1
+    laneIndex: 1
+  - anchorId: anchor.skirmish.desert_base_01.helipad.faction_1.lane_2
+    kind: 10
+    position: {x: 975.8001, y: 0.73, z: 393.32996}
+    eulerAngles: {x: -0, y: 90, z: 0}
+    radius: 7.200793
+    factionId: 1
+    laneIndex: 2

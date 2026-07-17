@@ -210,14 +210,14 @@ Progress is intentionally approximate. The stage and exact work counts are autho
 
 The earlier checkmarks in this phase described changes to the rejected algorithmic map, not improvements to an editor-parity result. They are rescinded for this milestone.
 
-- [~] Record every visual issue still present in the editor/runtime parity pair. The R71 internal audit below records the currently visible debt; project-owner review may add or reprioritize issues.
-- [~] Classify each issue as a reusable replay rule, M01 authored constraint, palette problem, or presentation problem. R71 classifications are recorded below and remain provisional until owner review.
+- [~] Record every visual issue still present in the editor/runtime parity pair. The R71-R77 audit below is retained as superseded history; the R78 audit records the current visible debt. Project-owner review may add or reprioritize issues.
+- [~] Classify each issue as a reusable replay rule, M01 authored constraint, palette problem, or presentation problem. R78 classifications are recorded below and remain provisional until owner review.
 - [x] Guarantee a continuous, visibly readable ground surface beneath the full playable composition and camera footprint.
-- [x] Reject or relocate large rocks, dunes, hills, and other terrain dressing that intersects structures or primary roads. R64 clears every local-road intersection and lowers 11 high-confidence rock/building penetrations. R73 ranks and directly captures all `41` primary structures with remaining broad terrain contacts; inspection of every close view finds deliberate cliff edges, plinths, and rock foundations rather than rock visibly passing through a wall or roof. The broad `204` AABB contacts remain as diagnostic context and are not treated as defects when the rendered contact is intentional.
-- [~] Add coherent district aprons, road shoulders, and terrain transitions so modules do not read as disconnected islands. R74 retains the support-aware terrain cleanup and compact district placement, adds three road-facing civilian houses with bounded courtyards, and clears penetrating rocks and oversized vegetation across their continuous frontage. The route is constrained to `3.2 m` width and `36 m` maximum segment length; exact-length ribbons and bounded node caps replace the rectangular end overhangs while hard road/structure and primary-structure overlap gates remain at zero. Owner review is still required before this composition is accepted.
-- [~] Rebalance dense clusters and dead zones while retaining clear landmark silhouettes and tactical breathing room. R76 compacts the detached northeast utility lobe into the central settlement silhouette without moving Old Market or Residential; broader east/south dead-zone balance and owner acceptance remain open.
+- [x] Reject or relocate large rocks, dunes, hills, and other terrain dressing that intersects structures or primary roads. R78 disables `126` large rock/cliff owners whose horizontal bounds overlap primary building footprints. Its close audit reports zero remaining structure, road, burial, floating, or unsupported-assembly violations across eight deterministic close cameras.
+- [~] Add coherent district aprons, road shoulders, and terrain transitions so modules do not read as disconnected islands. R78 restores complete authored district terrain at original transforms, retains one continuous horizon foundation, and limits new circulation to one `32.12 m`, two-segment, `3.2 m` connector. Exact editor/runtime parity passes; owner review still decides whether the remaining district transitions read as coherent.
+- [~] Rebalance dense clusters and dead zones while retaining clear landmark silhouettes and tactical breathing room. R78 withdraws the fragmented R77 curation and restores the complete Old Market, Utility, and Residential modules at their original editor transforms. The resulting balance remains an owner-review question rather than an internally accepted Match-quality claim.
 - [ ] Orient buildings toward their road circulation intent where the source prefab allows it.
-- [~] Improve horizon closure and framing without placing large silhouettes behind or through foreground structures. R75 removes the `58` random perimeter accents and replaces them with five rear-only dune assemblies. R77 raises the final camera from `y=31` to `y=38`, shifts its target east from `x=-23` to `x=-14`, and narrows FOV from `46` to `44`; direct editor/runtime inspection shows a more balanced central composition without miniaturizing the map. Owner visual acceptance remains open.
+- [~] Improve horizon closure and framing without placing large silhouettes behind or through foreground structures. R78 rejects the R77 framing and restores the first editor prototype's closer gameplay camera at `(-103,31,-58)`, targeting `(-45,6,2)` with FOV `52`. Same-camera editor/runtime compositions match; owner visual acceptance of the composition remains open.
 - [x] Keep the accepted replay deterministic and publish surface/clearance validation counts in the runtime evidence.
 - [x] Fix reusable issues in source/export/replay logic rather than patching one runtime instance.
 - [ ] Improve district transitions, repetition control, road edges, building orientation, empty areas, horizon composition, and damaged-area storytelling.
@@ -234,9 +234,9 @@ The earlier checkmarks in this phase described changes to the rejected algorithm
 | Destroyed truck, crater, barriers, smoke, and ruin did not communicate the bounded M01 civilian-route incident | M01 story composition | Regrouped at the blocked route endpoint and retargeted the aftermath review camera. |
 | Remaining district-edge repetition, building orientation, dead-zone balance, horizon polish, and non-road terrain/structure clearance | Shared-source visual quality backlog | R64 removes imported major roads and the highest-confidence rock penetrations. Broader composition review remains open; no owner-acceptance checkbox is claimed. |
 
-#### R71 Current Visual-Issue Audit
+#### R71-R77 Superseded Visual-Issue Audit
 
-This audit is based on direct inspection of the matched editor/runtime perspective and top-down captures. It records visible debt rather than claiming owner acceptance or a Match-quality score.
+This table is retained as decision history. R77 was rejected by the project owner and none of its composition claims are current acceptance evidence.
 
 | Visible issue | Classification | Next acceptance evidence |
 |---|---|---|
@@ -251,7 +251,17 @@ This audit is based on direct inspection of the matched editor/runtime perspecti
 | The bombing aftermath is not clearly readable from the final gameplay overview despite being present and staged during generation. | M01 story composition and final-camera presentation | Owner feedback from the aftermath camera plus a final overview where the incident reads without oversized effects. |
 | Broader intentional rock/foundation contacts remain beyond the high-confidence penetration gate. | Reusable terrain-clearance policy plus M01 visual review | Close inspection or renderer-bounds evidence distinguishing structural foundations from visible penetrations. |
 
-R77 is the fixed owner-review baseline while this table is reviewed. No Android optimization or procedural-variation work starts from these classifications before visual direction is confirmed.
+#### R78 Current Visual-Issue Audit
+
+| Visible issue | Classification | Next acceptance evidence |
+|---|---|---|
+| The complete authored Old Market, Utility, and Residential modules are restored and no longer fragmented into sparse islands, but overall M01 composition has not yet received project-owner acceptance. | M01 authored composition | Desktop owner review of the completed R78 runtime scene against the R78 editor source and Match quality target. |
+| The single narrow connector avoids the rejected plus-shaped autobahn and passes hard intersection checks, but it does not yet establish a complete circulation hierarchy across all districts. | Reusable road policy plus M01 authored constraint | Owner direction on route placement, followed by matched close, overview, and top-down evidence for any revision. |
+| Inherited prefab orientation, broad district transitions, empty-area balance, and damaged-area storytelling remain visually provisional. | M01 composition and presentation | Specific owner feedback on the R78 overview before another source mutation. |
+| The desert palette still occupies a narrow value range in places, reducing district and circulation separation. | Palette, lighting, and material hierarchy | Owner-approved value hierarchy that preserves the desert setting and remains identical in editor/runtime captures. |
+| Exact replay, continuous ground, and hard clearance are proven, but Match-quality completion, gameplay readability, Android performance, and production adoption are not. | Acceptance scope | Separate visual, gameplay, Android, memory, build-size, and production evidence after owner visual acceptance. |
+
+R78 is the fixed desktop owner-review baseline. Do not mutate the map, begin Android optimization, or resume procedural variation until the project owner reports the result of that review.
 
 **Exit:** Runtime M01 is visibly stronger than the original editor prototype and the improvements generalize to future runtime maps where appropriate.
 
@@ -665,7 +675,7 @@ The implementation now proceeds in this order:
 6. [x] Generate comparable editor/runtime manifests and require equal visible-content counts and semantic hashes.
 7. [x] Generate same-camera perspective/top-down captures and inspect measured image deltas before any owner review.
 8. [x] Prove restart/clear, lifecycle recovery, architecture, focused tests, and performance/GC source contracts remain intact; require the indexed worst batch to return below the desktop budget.
-9. [~] After Gate 1 passes, replace the inappropriate plus-shaped autobahn, remove its building intersections, fix penetrating rocks and uncovered ground in the shared editor/runtime source, and prove parity again. R75 retains every R74 route, frontage, terrain-clearance, and parity correction, then removes the `58` random perimeter accents and closes only the rear skyline with five restrained dune assemblies. Exact editor/runtime parity passes with `8.517 ms` worst visual batch; lifecycle recovery and focused validation pass. The R75 desktop candidate is ready for owner review; owner visual acceptance and broader district composition work remain open.
+9. [~] After Gate 1 passes, replace the inappropriate plus-shaped autobahn, remove its building intersections, fix penetrating rocks and uncovered ground in the shared editor/runtime source, and prove parity again. R78 removes the major-road/runway content, restores all three complete authored districts, retains one `32.12 m` narrow connector, disables `126` large terrain owners that overlap primary building footprints, and grounds only `28` unsupported assemblies. The close audit reports zero hard violations; exact editor/runtime parity and focused validation pass. R78 is now the fixed desktop owner-review baseline, while owner visual acceptance and broader district-composition work remain open.
 10. [ ] Only then reconsider procedural variation, loading-shell integration, Android profiling, gameplay integration, and production adoption.
 
 ### 2026-07-16 Roadmap Correction

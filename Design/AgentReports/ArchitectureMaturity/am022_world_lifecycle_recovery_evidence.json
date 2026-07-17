@@ -1,0 +1,60 @@
+{
+  "artifactId": "AM022-WORLD-LIFECYCLE-RECOVERY-EVIDENCE",
+  "schemaVersion": 1,
+  "taskId": "AM-022",
+  "result": "InProgress",
+  "sourceBaseline": {
+    "commit": "92ae0ca575e2c9c78e663ae6f792855ccfe98ab3",
+    "tree": "b541616e5987382eae120c8ea16832d26161218a"
+  },
+  "acceptedAuthority": {
+    "task": "AM-021",
+    "persistentResourceCount": 575,
+    "explicitOwnerCount": 553,
+    "gapCount": 0,
+    "protectedOwnerCount": 22
+  },
+  "editorRecoverySlice": {
+    "testFile": {
+      "path": "Assets/Tests/Editor/WorldLifecycleRecoveryMatrixTests.cs",
+      "sha256": "004259ced3454132767b0ef2edb6bf8b5fd07e89d3feb55cff4a0f0c568ab985"
+    },
+    "metaFile": {
+      "path": "Assets/Tests/Editor/WorldLifecycleRecoveryMatrixTests.cs.meta",
+      "sha256": "e489d600f9e1d385a697b3fa2e0b5151872485e030c546d12bd1ae01665b8e2b"
+    },
+    "caseFamiliesCovered": [
+      "accepted authority and production-path resolution",
+      "World replacement and governed cache/gateway rebind",
+      "missing, destroyed, component-removed, and duplicate singleton recovery",
+      "Road and Building Placement command-entity replacement and buffer repair",
+      "monotonic Building Placement economy transaction identity",
+      "idempotent subsystem reset and reinitialization",
+      "duplicate-system prevention through exact unmanaged system handles",
+      "integrated World/cache/authority/command/system recovery"
+    ],
+    "validation": {
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "compilerErrors": 0,
+      "log": {
+        "path": "Design/AgentReports/ArchitectureMaturity/Logs/am022_editor_recovery_matrix.log.gz",
+        "sha256": "8ddf844157c7b8b3adf8d8c95b76adf5eef0f10b57959d175d35cc1962d011de"
+      },
+      "results": {
+        "path": "Design/AgentReports/ArchitectureMaturity/Logs/am022_editor_recovery_matrix.xml.gz",
+        "sha256": "3483ad2db4e921693dea50dc85efac7238e60b030a80f727177da5be1cf1881f"
+      }
+    }
+  },
+  "remainingSlices": [
+    "bounded scene/root/subscription PlayMode recovery integration",
+    "180 warmup plus 300 measured recovered-path zero-allocation proof and final integrated acceptance"
+  ],
+  "scope": {
+    "productionFilesChanged": 0,
+    "protectedDomainsChanged": 0,
+    "releaseCertificationActivated": false
+  }
+}

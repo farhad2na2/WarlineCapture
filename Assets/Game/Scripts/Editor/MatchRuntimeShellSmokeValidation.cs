@@ -136,8 +136,8 @@ namespace Game.Editor
                 Directory.GetCurrentDirectory(),
                 new[]
                 {
-                    Aph700AssemblyDependencyReportGenerator.JsonReportPath,
-                    Aph700AssemblyDependencyReportGenerator.MarkdownReportPath
+                    PerformanceRegressionMetricsArtifactPath,
+                    PerformanceRegressionReportPath
                 });
             if (evidence == null)
                 throw new InvalidOperationException("Performance evidence requires a Git-bound project checkout.");
@@ -299,9 +299,6 @@ namespace Game.Editor
 
             if (phase == Phase.WaitingForShellReady)
             {
-                if (MatchCaptureWorldBootstrapUtility.EnsureDefaultGameWorld())
-                    Debug.Log("[MatchRuntimeShellSmokeValidation] repaired missing batch-mode capture ECS boundary.");
-
                 if (!TryGetShellState(out UiShellStateComponent shellState) ||
                     shellState.CurrentMode != UiShellMode.MainMenu ||
                     shellState.ActiveRoute != UIRoute.MainMenu ||

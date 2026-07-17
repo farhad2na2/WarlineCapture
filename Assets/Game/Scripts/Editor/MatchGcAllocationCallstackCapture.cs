@@ -212,7 +212,7 @@ namespace Game.Editor
                 ResetState();
                 ArchitectureEvidenceIdentity evidence = ArchitectureEvidenceIdentityUtility.ResolveIfAvailable(
                     Directory.GetCurrentDirectory(),
-                    Array.Empty<string>());
+                    new[] { mode == CaptureMode.SteadyState ? SteadyStateReportPath : BattleReportPath });
                 if (evidence == null)
                     throw new InvalidOperationException("Match GC evidence requires a Git-bound project checkout.");
 
@@ -305,9 +305,6 @@ namespace Game.Editor
 
             if (phase == Phase.WaitingForShellReady)
             {
-                if (MatchCaptureWorldBootstrapUtility.EnsureDefaultGameWorld())
-                    Debug.Log("[MatchGcAllocationCallstackCapture] repaired missing batch-mode capture ECS boundary.");
-
                 if (!TryGetShellState(out UiShellStateComponent shellState) ||
                     shellState.CurrentMode != UiShellMode.MainMenu ||
                     shellState.ActiveRoute != UIRoute.MainMenu ||

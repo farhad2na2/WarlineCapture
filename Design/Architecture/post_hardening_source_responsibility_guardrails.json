@@ -19,6 +19,14 @@
     ],
     "managedLifecycleMatchThreshold": 3,
     "genericLifecycleMatchThreshold": 3,
+    "genericLifecycleAnchorSymbols": [
+      "UnityAction",
+      "UIPopupMotionView",
+      "UIShellRegionId.PopupLayer",
+      "DestroyRegionObject",
+      "InstallRoot(",
+      "BindResourceExchangePopup"
+    ],
     "allowedOwnerPaths": []
   },
   "growthAuthorizations": [

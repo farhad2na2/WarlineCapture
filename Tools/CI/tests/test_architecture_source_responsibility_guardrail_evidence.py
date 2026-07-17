@@ -83,6 +83,19 @@ class ArchitectureSourceResponsibilityGuardrailEvidenceTests(unittest.TestCase):
             changed = git("diff", "--name-only", baseline["commit"]).splitlines()
             changed += git("ls-files", "--others", "--exclude-standard").splitlines()
         self.assertEqual(set(changed), allowed_paths)
+        amendment = self.data.get("contractAmendmentEvidence")
+        if amendment:
+            self.assertIsNotNone(accepted, "A guardrail amendment requires the original accepted evidence.")
+            self.assertRegex(amendment["commit"], r"^[0-9a-f]{40}$")
+            self.assertEqual(
+                git("rev-parse", f"{amendment['commit']}^{{tree}}").strip(),
+                amendment["tree"],
+            )
+            git("merge-base", "--is-ancestor", accepted["commit"], amendment["commit"])
+            git("merge-base", "--is-ancestor", amendment["commit"], "HEAD")
+            parent = git("rev-parse", f"{amendment['commit']}^").strip()
+            amendment_paths = set(git("diff", "--name-only", parent, amendment["commit"]).splitlines())
+            self.assertEqual(amendment_paths, set(amendment["changePaths"]))
         editor_only_paths = set(self.data["editorOnlyIntegrationPaths"])
         self.assertTrue(editor_only_paths.issubset(allowed_paths))
         for path in editor_only_paths:
@@ -108,6 +121,8 @@ class ArchitectureSourceResponsibilityGuardrailEvidenceTests(unittest.TestCase):
         production = [path for path in production if "Editor" not in path.relative_to(ROOT).parts]
         boundary = self.contract["replacementOwnerBoundary"]
         allowed_owners = set(boundary["allowedOwnerPaths"])
+        generic_lifecycle_anchors = boundary["genericLifecycleAnchorSymbols"]
+        self.assertTrue(generic_lifecycle_anchors)
         for entry in self.contract["entries"]:
             path = ROOT / entry["path"]
             content = path.read_text(encoding="utf-8")
@@ -155,7 +170,10 @@ class ArchitectureSourceResponsibilityGuardrailEvidenceTests(unittest.TestCase):
                 boundary["domainSymbol"] in candidate_text
                 and current_matches >= boundary["managedLifecycleMatchThreshold"]
             )
-            current_generic_owner = current_matches >= boundary["genericLifecycleMatchThreshold"]
+            current_generic_owner = (
+                current_matches >= boundary["genericLifecycleMatchThreshold"]
+                and any(symbol in candidate_text for symbol in generic_lifecycle_anchors)
+            )
             if (not current_domain_owner and not current_generic_owner) or relative in allowed_owners:
                 continue
 
@@ -172,7 +190,10 @@ class ArchitectureSourceResponsibilityGuardrailEvidenceTests(unittest.TestCase):
                 boundary["domainSymbol"] in baseline_text
                 and baseline_matches >= boundary["managedLifecycleMatchThreshold"]
             )
-            baseline_generic_owner = baseline_matches >= boundary["genericLifecycleMatchThreshold"]
+            baseline_generic_owner = (
+                baseline_matches >= boundary["genericLifecycleMatchThreshold"]
+                and any(symbol in baseline_text for symbol in generic_lifecycle_anchors)
+            )
             current_lines, current_bytes = measure_bytes(candidate.read_bytes())
             if current_domain_owner:
                 self.assertTrue(baseline_domain_owner, relative)
@@ -240,8 +261,9 @@ class ArchitectureSourceResponsibilityGuardrailEvidenceTests(unittest.TestCase):
         validator = self.data["canonicalValidator"]
         blob = git("show", f"{accepted['commit']}:{validator['path']}", text=False)
         self.assertEqual(hashlib.sha256(blob).hexdigest(), validator["sha256"])
+        authority_commit = self.data.get("contractAmendmentEvidence", accepted)["commit"]
         for metadata in (self.data["contract"], self.data["validatorAuthority"]):
-            blob = git("show", f"{accepted['commit']}:{metadata['path']}", text=False)
+            blob = git("show", f"{authority_commit}:{metadata['path']}", text=False)
             self.assertEqual(hashlib.sha256(blob).hexdigest(), metadata["sha256"])
         log = self.data["canonicalValidator"]
         blob = git("show", f"{accepted['commit']}:{log['log']}", text=False)

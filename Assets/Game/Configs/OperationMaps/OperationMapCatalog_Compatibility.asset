@@ -14,3 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Configs::Game.Configs.OperationMapCatalogConfig
   definitions:
   - {fileID: 11400000, guid: 55e36a8d7e7a84e2b9893cee052b0e61, type: 2}
+  entries:
+  - definition: {fileID: 11400000, guid: 55e36a8d7e7a84e2b9893cee052b0e61, type: 2}
+    contentPack:
+      contentPackId: opmap-pack.skirmish.desert_base_01
+      deliveryKind: 0
+      contentVersion: 4
+      contentHash: 2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c

@@ -16,7 +16,7 @@ MonoBehaviour:
   operationMapId: opmap.skirmish.desert_base_01
   canonicalSceneGuid: cc4f48a57793d4597b4ffac2906c515e
   canonicalScenePath: Assets/Game/Scenes/Match.unity
-  canonicalSceneDependencyHash: 452fe53e2b0102b0859f6b96fb2e2a09
+  canonicalSceneDependencyHash: ba1bea7eb574b00416dcbeec8b867d0e
   chunkSize: 32
   contentHash: ec51367ab8853815a6c44d99f4fc3d6d
   chunks:

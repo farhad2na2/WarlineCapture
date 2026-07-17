@@ -24,10 +24,18 @@ public sealed class OperationMapCatalogConfigTests
         Assert.That(expected, Is.Not.Null);
         Assert.That(catalog.TryValidate(out string error), Is.True, error);
         Assert.That(catalog.Definitions.Length, Is.EqualTo(1));
+        Assert.That(catalog.Entries.Length, Is.EqualTo(1));
         Assert.That(catalog.TryResolve(expected.OperationMapId, out OperationMapDefinition resolved), Is.True);
         Assert.That(resolved, Is.SameAs(expected));
+        Assert.That(catalog.TryResolveEntry(expected.OperationMapId, out OperationMapCatalogEntryConfig entry), Is.True);
+        Assert.That(entry.Definition, Is.SameAs(expected));
+        Assert.That(entry.ContentPack.ContentPackId, Is.EqualTo("opmap-pack.skirmish.desert_base_01"));
+        Assert.That(entry.ContentPack.DeliveryKind, Is.EqualTo(OperationMapDeliveryKind.BuiltInLocal));
+        Assert.That(entry.ContentPack.ContentVersion, Is.EqualTo(expected.ContentVersion));
+        Assert.That(entry.ContentPack.ContentHash, Is.EqualTo(expected.ContentHash));
         Assert.That(catalog.TryResolve("opmap.skirmish.missing", out resolved), Is.False);
         Assert.That(resolved, Is.Null);
+        Assert.That(catalog.TryResolveEntry("opmap.skirmish.missing", out _), Is.False);
     }
 
     [Test]
@@ -52,6 +60,40 @@ public sealed class OperationMapCatalogConfigTests
         {
             UnityEngine.Object.DestroyImmediate(catalog);
         }
+    }
+
+    [Test]
+    public void ContentPackValidation_RejectsIdentityVersionHashAndDeliveryDrift()
+    {
+        OperationMapDefinition definition =
+            AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(DefinitionPath);
+
+        Assert.That(new OperationMapContentPackConfig(
+            "opmap-pack.skirmish.desert_base_01",
+            OperationMapDeliveryKind.BuiltInLocal,
+            definition.ContentVersion,
+            definition.ContentHash).TryValidate(definition, out string error), Is.True, error);
+
+        Assert.That(new OperationMapContentPackConfig(
+            "opmap-pack.skirmish.wrong",
+            OperationMapDeliveryKind.BuiltInLocal,
+            definition.ContentVersion,
+            definition.ContentHash).TryValidate(definition, out error), Is.False);
+        StringAssert.Contains("Content-pack id", error);
+
+        Assert.That(new OperationMapContentPackConfig(
+            "opmap-pack.skirmish.desert_base_01",
+            OperationMapDeliveryKind.BuiltInLocal,
+            definition.ContentVersion + 1,
+            definition.ContentHash).TryValidate(definition, out error), Is.False);
+        StringAssert.Contains("version and hash", error);
+
+        Assert.That(new OperationMapContentPackConfig(
+            "opmap-pack.skirmish.desert_base_01",
+            (OperationMapDeliveryKind)byte.MaxValue,
+            definition.ContentVersion,
+            definition.ContentHash).TryValidate(definition, out error), Is.False);
+        StringAssert.Contains("delivery kind", error);
     }
 
     [Test]

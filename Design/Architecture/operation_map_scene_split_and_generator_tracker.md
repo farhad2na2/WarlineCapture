@@ -705,7 +705,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 39% (69/177 checklist items complete).
+Overall implementation progress: 40% (71/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -714,7 +714,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 | 0. Reproducible baseline and rollback | In progress / shared | 11 | 12 | 92% | Required by both directions before scene edits. |
 | 1. Operation-map and scenario data contracts | In progress | 11 | 12 | 92% | Typed identity, catalog resolution, complete spatial/navigation metadata, hashes, validation, and ownership chain are approved; the selected local-Addressables reference row remains. |
 | 2. Per-map static presentation ownership | Complete | 14 | 14 | 100% | Per-map bake/output ownership, integrity, rollback, no-op reuse, wiring, Android resolution, and synthetic multi-map isolation are accepted while the shipped catalog remains one physical map. |
-| 2A. Local Addressables packaging foundation | Active / selected direction | 0 | 20 | 0% | Package only the single approved editor-authored map locally after Phase 2 ownership prerequisites pass. |
+| 2A. Local Addressables packaging foundation | Active / selected direction | 2 | 20 | 10% | Exact local group topology is approved and the single shipped map has typed `BuiltInLocal` content-pack identity; physical groups remain to be created. |
 | 3. Current-map compatibility registration | Complete / shared | 10 | 10 | 100% | Current identities/definition, authored behavior, schema-v1 read compatibility, runtime activation/teardown, deterministic presentation, and Android chunk resolution are accepted. |
 | 4. Non-destructive scene ownership split | In progress / shared priority | 10 | 14 | 71% | The staged scene has fail-closed spatial/content validation; the original Match route remains validated and revision `d5784dcfa` plus the rollback recipe freeze the pre-cutover recovery boundary. |
 | 5. Runtime selection, loading, and teardown | In progress | 2 | 14 | 14% | Catalog preflight plus pure readiness/failure/teardown data contracts are bound; concrete local Addressables loading follows Phase 2A. |
@@ -799,8 +799,8 @@ Exit criteria:
 
 **Selected - local Addressables:** implement for the single approved physical map after the required Phase 2 ownership rows pass.
 
-- [ ] Approve the exact `Operation Maps - Catalog`, `Operation Maps - Shared`, and per-map Local Core/Presentation group contract from this document.
-- [ ] Add `OperationMapCatalogEntryConfig`, `OperationMapContentPackConfig`, and `OperationMapDeliveryKind` with every initial approved entry set to `BuiltInLocal`.
+- [x] Approve the exact `Operation Maps - Catalog`, `Operation Maps - Shared`, and per-map Local Core/Presentation group contract from this document. See `../AgentReports/2026-07-17_operation_map_local_content_pack_contract.md`.
+- [x] Add `OperationMapCatalogEntryConfig`, `OperationMapContentPackConfig`, and `OperationMapDeliveryKind` with every initial approved entry set to `BuiltInLocal`. See `../AgentReports/2026-07-17_operation_map_local_content_pack_contract.md`.
 - [ ] Create the small local catalog group without any heavyweight map scene, manifest, surface, texture, mesh, or chunk dependency.
 - [ ] Create the explicit local shared group and admit assets only from measured cross-map GUID dependency evidence.
 - [ ] Create one local Core group per approved operation map using stable map-pack identity and local Build/Load paths.
@@ -1134,6 +1134,7 @@ Exit criteria:
 | 2026-07-17 | Static presentation selected-manifest wiring | `../AgentReports/2026-07-17_static_map_presentation_selected_manifest_wiring.md`; wiring/path `16 / 16`; real wiring command; no scene diff; compile; `git diff --check` | Passed; Phase 2 wiring row complete | Wiring resolves the serialized selected map through its catalog and derives the map-owned manifest path instead of using the compatibility manifest constant. |
 | 2026-07-17 | Static map Android catalog manifest resolution | `../AgentReports/2026-07-17_static_map_android_catalog_manifest_resolution.md`; resolver `26 / 26`; current-project probe; compile; `git diff --check` | Passed; Phase 2 Android resolver row complete | Android build-scene resolution validates the serialized catalog's map-owned manifest set and rejects stale, duplicate, missing, or cross-owner chunks; the shipped catalog still contains one physical map. |
 | 2026-07-17 | Static presentation multi-map validation matrix | `../AgentReports/2026-07-17_static_map_presentation_multimap_validation_matrix.md`; ownership/integrity/no-op `56 / 56`; structural `1 / 1`; rollback integration `1 / 1`; Android resolver `26 / 26`; compile; `git diff --check` | Passed; Phase 2 complete | Synthetic second-owner coverage proves independent paths, ledgers, transactions, structure, build resolution, and reuse while no second physical map asset is produced. |
+| 2026-07-17 | Local Addressables group and content-pack contract | `../AgentReports/2026-07-17_operation_map_local_content_pack_contract.md`; catalog/content-pack `4 / 4`; compile; `git diff --check` | Passed; Phase 2A `2 / 20` | Approved exact Catalog/Shared/per-map Core/Presentation topology and added typed one-to-one catalog entries. The single shipped map is explicitly `BuiltInLocal`; no Addressables group or runtime loading behavior changed. |
 
 ## Open Decisions
 

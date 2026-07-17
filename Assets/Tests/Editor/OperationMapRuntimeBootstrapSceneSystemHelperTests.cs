@@ -449,11 +449,30 @@ public sealed class OperationMapRuntimeBootstrapSceneSystemHelperTests
         OperationMapCatalogConfig catalog,
         OperationMapDefinition[] definitions)
     {
-        FieldInfo field = typeof(OperationMapCatalogConfig).GetField(
+        FieldInfo definitionsField = typeof(OperationMapCatalogConfig).GetField(
             "definitions",
             BindingFlags.Instance | BindingFlags.NonPublic);
-        Assert.That(field, Is.Not.Null);
-        field.SetValue(catalog, definitions);
+        Assert.That(definitionsField, Is.Not.Null);
+        definitionsField.SetValue(catalog, definitions);
+
+        OperationMapCatalogEntryConfig[] entries = new OperationMapCatalogEntryConfig[definitions.Length];
+        for (int index = 0; index < definitions.Length; index++)
+        {
+            OperationMapDefinition definition = definitions[index];
+            entries[index] = new OperationMapCatalogEntryConfig(
+                definition,
+                new OperationMapContentPackConfig(
+                    "opmap-pack." + definition.OperationMapId.Substring("opmap.".Length),
+                    OperationMapDeliveryKind.BuiltInLocal,
+                    definition.ContentVersion,
+                    definition.ContentHash));
+        }
+
+        FieldInfo entriesField = typeof(OperationMapCatalogConfig).GetField(
+            "entries",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.That(entriesField, Is.Not.Null);
+        entriesField.SetValue(catalog, entries);
     }
 
     private static void Set<T>(MatchSceneView view, string fieldName, T value)

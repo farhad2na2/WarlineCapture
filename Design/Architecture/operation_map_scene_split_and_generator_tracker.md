@@ -703,7 +703,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 31% (55/177 checklist items complete).
+Overall implementation progress: 32% (56/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -711,7 +711,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 |---|---|---:|---:|---:|---|
 | 0. Reproducible baseline and rollback | In progress / shared | 11 | 12 | 92% | Required by both directions before scene edits. |
 | 1. Operation-map and scenario data contracts | In progress / shared subset | 11 | 12 | 92% | Typed identity, catalog resolution, complete loader-neutral spatial/navigation metadata, hashes, validation, and ownership chain are approved; delivery-specific references remain later. |
-| 2. Per-map static presentation ownership | Not started / compatibility subset | 0 | 14 | 0% | Preserve the current baked map safely; future-map generation remains undecided. |
+| 2. Per-map static presentation ownership | In progress / compatibility subset | 1 | 14 | 7% | The immutable validated bake-input contract is accepted; the current hardcoded baker remains unchanged until the next compatibility refactor slice. |
 | 2A. Local Addressables packaging foundation | Later / direction-specific | 0 | 20 | 0% | Do not implement before the map-delivery direction is selected. |
 | 3. Current-map compatibility registration | Complete / shared | 10 | 10 | 100% | Current identities/definition, authored behavior, schema-v1 read compatibility, runtime activation/teardown, deterministic presentation, and Android chunk resolution are accepted. |
 | 4. Non-destructive scene ownership split | In progress / shared priority | 10 | 14 | 71% | The staged scene has fail-closed spatial/content validation; the original Match route remains validated and revision `d5784dcfa` plus the rollback recipe freeze the pre-cutover recovery boundary. |
@@ -772,7 +772,7 @@ Exit criteria:
 
 **Execution: compatibility subset is `Shared now`.** Preserve and separate the current map's accepted bake ownership. Generalized future-map generation is `Later - direction decision`.
 
-- [ ] Introduce `Game.Editor.StaticMapPresentationBakeInput` carrying operation-map id, source scene, source map root, output root, manifest path, integrity path, and chunk size.
+- [x] Introduce `Game.Editor.StaticMapPresentationBakeInput` carrying operation-map id, source scene, source map root, output root, manifest path, integrity path, and chunk size. See `../AgentReports/2026-07-17_static_map_presentation_bake_input_contract.md`.
 - [ ] Refactor `StaticMapPresentationBaker` so the current hardcoded constants remain only a compatibility entry point during migration.
 - [ ] Advance the manifest schema to include operation-map id and canonical scene GUID/path identity with an explicit migration test.
 - [ ] Use one generated output root per operation map.
@@ -1120,6 +1120,7 @@ Exit criteria:
 | 2026-07-17 | Active operation-map helipad read-model binding | `../AgentReports/2026-07-17_operation_map_helipad_read_model_binding.md`; helipad `5 / 5`; focused consumers/ownership/naming/source-growth `72 / 72`; Unity compile; byte-identical navigation evidence; `git diff --check` | Passed; Phase 6 row remains open | Active-map helipad centers now bind to existing mutable runtime production slots, suppress only unbound same-faction helipad fallbacks, preserve other factions and airport slots, and fail closed on missing or ambiguous ownership. Current-map aircraft acceptance remains pending. |
 | 2026-07-17 | Current-map aircraft runtime acceptance | `../AgentReports/2026-07-17_operation_map_current_aircraft_runtime_acceptance.md`; current-map/binder `7 / 7`; combined lifecycle/architecture `85 / 85`; generated-project compile; deterministic navigation evidence; `git diff --check` | Passed; Phase 6 runway/helipad row complete | Verified the committed current-map definition through runtime activation, runway initialization, normalized helipad spawn consumption, compatibility teardown, takeoff, return/go-around, landing, occupancy, and initial-spawn regressions. Acceptance exposed and fixed the production `building_helipad` normalization mismatch hidden by the earlier synthetic test casing. |
 | 2026-07-17 | Current-map faction deployment anchors and Android manifest refresh | `../AgentReports/2026-07-17_operation_map_current_faction_spawn_and_build_manifest.md`; definition/integration `4 / 4`; Android resolver `2 / 2`; source-growth `17 / 17`; naming `9 / 9`; invocation contract `2 / 2`; compile; `git diff --check` | Passed; Phase 6 faction deployment row complete | Added deterministic faction deployment anchors from exact canonical transforms, verified initial spawn cells from the committed blob, regenerated the stale static-presentation manifest while reusing all 514 chunks, and made the Jenkins Unity wrapper fail closed when no process exit code is available. |
+| 2026-07-17 | Static presentation bake-input contract | `../AgentReports/2026-07-17_static_map_presentation_bake_input_contract.md`; focused `7 / 7`; naming `9 / 9`; compile; `git diff --check` | Passed; Phase 2 input row complete | Added one immutable editor-only input carrying map identity, source ownership, output ownership, integrity, and chunk-size data. The current baker and all generated output remain unchanged. |
 
 ## Open Decisions
 

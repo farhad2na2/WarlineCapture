@@ -1,4 +1,5 @@
 using Game.UI.Contracts;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,6 +21,15 @@ namespace Game.UI.Runtime
         [SerializeField] private GameObject safeAreaPreview;
         [SerializeField] private AudioSource voiceSource;
         [SerializeField] private NarrativeSequenceAudioView sequenceAudioView;
+        [Header("Localization")]
+        [SerializeField] private TMP_FontAsset persianFont;
+        [SerializeField] private TMP_Text[] localizedTextTargets;
+        [SerializeField] private string[] localizedTextKeys;
+        [SerializeField] private string[] localizedTextEnglishFallbacks;
+
+        private TMP_Text[] languageTextTargets;
+        private TMP_FontAsset[] defaultFonts;
+        private TextAlignmentOptions[] defaultAlignments;
 
         public NarrativeDialogueView DialogueView => dialogueView;
         public NarrativePlaybackControlsView PlaybackControlsView => playbackControls;
@@ -87,6 +97,60 @@ namespace Game.UI.Runtime
                 commanderIdentityView.gameObject.SetActive(kind == NarrativeInteractiveStateKind.CommanderIdentity);
             if (guidanceChoiceView != null)
                 guidanceChoiceView.gameObject.SetActive(kind == NarrativeInteractiveStateKind.GuidanceChoice);
+        }
+
+        public void ApplyLanguage(bool rightToLeft, IGameTextResolver textResolver)
+        {
+            CacheDefaultTextPresentation();
+            for (int i = 0; i < languageTextTargets.Length; i++)
+            {
+                TMP_Text target = languageTextTargets[i];
+                if (target == null)
+                    continue;
+
+                target.font = rightToLeft && persianFont != null ? persianFont : defaultFonts[i];
+                target.alignment = rightToLeft
+                    ? ToRightAligned(defaultAlignments[i])
+                    : defaultAlignments[i];
+            }
+
+            int localizedCount = Mathf.Min(
+                localizedTextTargets?.Length ?? 0,
+                Mathf.Min(localizedTextKeys?.Length ?? 0, localizedTextEnglishFallbacks?.Length ?? 0));
+            IGameTextResolver resolver = textResolver ?? FallbackGameTextResolver.Instance;
+            for (int i = 0; i < localizedCount; i++)
+            {
+                if (localizedTextTargets[i] != null)
+                    localizedTextTargets[i].text = resolver.Get(localizedTextKeys[i], localizedTextEnglishFallbacks[i]);
+            }
+        }
+
+        private void CacheDefaultTextPresentation()
+        {
+            if (languageTextTargets != null)
+                return;
+
+            languageTextTargets = GetComponentsInChildren<TMP_Text>(true);
+            defaultFonts = new TMP_FontAsset[languageTextTargets.Length];
+            defaultAlignments = new TextAlignmentOptions[languageTextTargets.Length];
+            for (int i = 0; i < languageTextTargets.Length; i++)
+            {
+                defaultFonts[i] = languageTextTargets[i] != null ? languageTextTargets[i].font : null;
+                defaultAlignments[i] = languageTextTargets[i] != null
+                    ? languageTextTargets[i].alignment
+                    : TextAlignmentOptions.Left;
+            }
+        }
+
+        private static TextAlignmentOptions ToRightAligned(TextAlignmentOptions alignment)
+        {
+            return alignment switch
+            {
+                TextAlignmentOptions.Left => TextAlignmentOptions.Right,
+                TextAlignmentOptions.TopLeft => TextAlignmentOptions.TopRight,
+                TextAlignmentOptions.BottomLeft => TextAlignmentOptions.BottomRight,
+                _ => alignment
+            };
         }
 
     }

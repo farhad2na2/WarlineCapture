@@ -17,6 +17,13 @@ namespace Game.Composition
             DisplayName = profile?.firstLaunchCommanderDisplayName ?? "Commander"
         };
         public int CommanderPortraitIndex => Math.Max(0, profile?.firstLaunchCommanderPortraitIndex ?? 0);
+        public FirstLaunchNarrativeLanguage Language => Enum.TryParse(
+            profile?.firstLaunchLanguage,
+            true,
+            out FirstLaunchNarrativeLanguage language)
+                ? language
+                : FirstLaunchNarrativeLanguage.Unselected;
+        public bool RequiresLanguageSelection => Language == FirstLaunchNarrativeLanguage.Unselected;
         public NarrativeGuidanceMode Guidance => Enum.TryParse(
             profile?.firstLaunchGuidance,
             true,
@@ -51,6 +58,27 @@ namespace Game.Composition
 
             profile.firstLaunchStatus = FirstLaunchProfileState.InProgress;
             Save();
+        }
+
+        public void CommitLanguage(FirstLaunchNarrativeLanguage language, bool persist)
+        {
+            if (language != FirstLaunchNarrativeLanguage.English &&
+                language != FirstLaunchNarrativeLanguage.Persian)
+            {
+                return;
+            }
+
+            if (language == FirstLaunchNarrativeLanguage.Persian)
+            {
+                if (string.Equals(profile.firstLaunchCommanderCallsign, "COMMANDER", StringComparison.OrdinalIgnoreCase))
+                    profile.firstLaunchCommanderCallsign = "فرمانده";
+                if (string.Equals(profile.firstLaunchCommanderDisplayName, "Commander", StringComparison.OrdinalIgnoreCase))
+                    profile.firstLaunchCommanderDisplayName = "فرمانده";
+            }
+
+            profile.firstLaunchLanguage = language.ToString();
+            if (persist)
+                Save();
         }
 
         public void CommitCommanderIdentity(

@@ -203,12 +203,18 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--voice-map", type=Path, default=VOICE_MAP_PATH)
     parser.add_argument("--voice-root", type=Path, default=VOICE_ROOT)
     parser.add_argument("--manifest", type=Path, default=MANIFEST_PATH)
+    parser.add_argument("--language-code", default="")
     parser.add_argument("--ffmpeg", default="ffmpeg")
     parser.add_argument("--line-ids", nargs="*", default=[])
     parser.add_argument("--candidate-count", type=int, default=1)
     parser.add_argument("--commander-variants", action="store_true")
     parser.add_argument("--create-missing-voices", action="store_true")
-    return parser.parse_args()
+    args = parser.parse_args()
+    for attribute in ("api_key_file", "catalog", "voice_map", "voice_root", "manifest"):
+        path = getattr(args, attribute)
+        if not path.is_absolute():
+            setattr(args, attribute, (ROOT / path).resolve())
+    return args
 
 
 def read_api_key(path: Path) -> str:
@@ -239,12 +245,18 @@ def request_json(api_key: str, method: str, path: str, body: dict[str, Any] | No
         raise RuntimeError(f"ElevenLabs HTTP {exc.code} for {path}: {detail}") from exc
 
 
-def request_audio(api_key: str, voice_id: str, text: str, seed: int) -> tuple[bytes, dict[str, str]]:
+def request_audio(
+    api_key: str,
+    voice_id: str,
+    text: str,
+    seed: int,
+    language_code: str,
+) -> tuple[bytes, dict[str, str]]:
     query = urllib.parse.urlencode({"output_format": SOURCE_FORMAT})
     body = {
         "text": text,
         "model_id": TTS_MODEL,
-        "language_code": "en",
+        "language_code": language_code,
         "seed": seed,
         "apply_text_normalization": "on",
     }
@@ -431,6 +443,7 @@ def convert_audio(ffmpeg: str, source: Path, destination: Path, filter_name: str
 
 def generate_batch(args: argparse.Namespace, api_key: str, subscription: dict[str, Any], voice_map: dict[str, Any]) -> None:
     catalog = json.loads(args.catalog.read_text(encoding="utf-8"))
+    language_code = args.language_code or catalog.get("elevenLabsLanguageCode") or "en"
     lines = catalog.get("lines", [])
     catalog_ids = {line["lineId"] for line in lines}
     if catalog_ids != set(MAX_DURATIONS):
@@ -485,6 +498,7 @@ def generate_batch(args: argparse.Namespace, api_key: str, subscription: dict[st
                     voice["voiceId"],
                     directed_text(line_id, line["text"]),
                     seed,
+                    language_code,
                 )
                 raw_mp3.write_bytes(generated)
 
@@ -590,6 +604,7 @@ def generate_batch(args: argparse.Namespace, api_key: str, subscription: dict[st
             "sourceCatalog": args.catalog.relative_to(ROOT).as_posix(),
             "voiceMap": args.voice_map.relative_to(ROOT).as_posix(),
             "ttsModel": TTS_MODEL,
+            "ttsLanguageCode": language_code,
             "sourceOutputFormat": SOURCE_FORMAT,
             "unityOutputFormat": "mono PCM s16le 44100 Hz",
             "radioTreatment": (
@@ -611,6 +626,7 @@ def generate_commander_variants(
     if args.candidate_count < 1 or args.candidate_count > 5:
         raise RuntimeError("--candidate-count must be between 1 and 5.")
     catalog = json.loads(args.catalog.read_text(encoding="utf-8"))
+    language_code = args.language_code or catalog.get("elevenLabsLanguageCode") or "en"
     source_line = next((line for line in catalog.get("lines", []) if line["lineId"] == "p14_commander"), None)
     if source_line is None:
         raise RuntimeError("The p14_commander source line is missing from the FirstLaunch catalog.")
@@ -644,6 +660,7 @@ def generate_commander_variants(
                     voice["voiceId"],
                     f"{tags} {spoken_text(source_line['text'])}",
                     seed,
+                    language_code,
                 )
                 raw_mp3.write_bytes(generated)
                 tempo = 1.02
@@ -652,14 +669,21 @@ def generate_commander_variants(
                 if duration > maximum:
                     tempo *= duration / (maximum - 0.08)
                     if tempo > 1.18:
-                        raise RuntimeError(f"{clip_id} candidate {candidate_index} requires excessive compression.")
+                        print(
+                            f"[candidate-rejected] {clip_id} #{candidate_index}: "
+                            f"requires excessive compression ({tempo:.3f}x)",
+                            flush=True,
+                        )
+                        continue
                     convert_audio(ffmpeg, raw_mp3, output_wav, "commander-clean", tempo)
                     duration = wav_duration(output_wav)
                 if duration < minimum or duration > maximum:
-                    raise RuntimeError(
-                        f"{clip_id} candidate {candidate_index} duration {duration:.3f}s is outside "
-                        f"{minimum:.3f}-{maximum:.3f}s."
+                    print(
+                        f"[candidate-rejected] {clip_id} #{candidate_index}: duration {duration:.3f}s "
+                        f"is outside {minimum:.3f}-{maximum:.3f}s",
+                        flush=True,
                     )
+                    continue
                 candidates.append(
                     {
                         "index": candidate_index,
@@ -672,6 +696,9 @@ def generate_commander_variants(
                     }
                 )
                 print(f"[candidate] {clip_id} #{candidate_index}: {duration:.3f}s {tags}", flush=True)
+
+            if not candidates:
+                raise RuntimeError(f"No valid candidates were generated for {clip_id}.")
 
             selected = min(candidates, key=lambda candidate: abs(candidate["duration"] - target_duration))
             staged_wav = staged / f"{clip_id}.wav"

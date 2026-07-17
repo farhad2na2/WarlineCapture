@@ -43,13 +43,14 @@ namespace Game.Runtime
         public string firstLaunchCommanderDisplayName = "Commander";
         public int firstLaunchCommanderPortraitIndex;
         public string firstLaunchGuidance = "Full";
+        public string firstLaunchLanguage = nameof(Game.Narrative.Contracts.FirstLaunchNarrativeLanguage.Unselected);
         public bool firstLaunchWatched;
         public bool firstLaunchSkipped;
     }
 
     public static class FirstLaunchProfileState
     {
-        public const int CurrentSchemaVersion = 1;
+        public const int CurrentSchemaVersion = 2;
         public const string NotStarted = "NotStarted";
         public const string InProgress = "InProgress";
         public const string HandoffPending = "HandoffPending";

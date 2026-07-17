@@ -12,6 +12,7 @@
     "com.unity.multiplayer.center": "1.0.1",
     "com.unity.probuilder": "6.1.2",
     "com.unity.render-pipelines.universal": "17.5.0",
+    "com.nosuchstudio.rtltmpro": "https://github.com/hk1ll3r/RTLTMPro.git?path=/UPMPackage#69c9193fc27218f17679cc57382a61ac4a717b2b",
     "com.unity.serialization": "6.5.0",
     "com.unity.shadergraph": "17.5.0",
     "com.unity.test-framework": "1.7.0",

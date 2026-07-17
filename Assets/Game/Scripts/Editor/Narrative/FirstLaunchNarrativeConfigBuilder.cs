@@ -20,6 +20,9 @@ namespace Game.Editor
         public const string SequencePath = "Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchSequence.asset";
         public const string SpeakerPath = "Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchSpeakers.asset";
         public const string PunctuationPath = "Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchPunctuation.asset";
+        public const string PersianLocalePath = "Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchPersianLocale.asset";
+        private const string PersianCatalogPath = "Assets/Game/Data/Narrative/FirstLaunch/first_launch_persian_text_catalog.json";
+        private const string PersianVoiceRoot = "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/";
         public const string PanelAddressPrefix = "narrative.first_launch.panel";
         private const string PanelGroupName = "FirstLaunch Narrative Panels";
         private const float DialogueTailHoldSeconds = 0.25f;
@@ -57,6 +60,7 @@ namespace Game.Editor
                 BuildSequence();
                 BuildSpeakers();
                 BuildPunctuation();
+                BuildPersianLocale();
                 EditorUtility.SetDirty(addressableSettings);
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
@@ -67,6 +71,49 @@ namespace Game.Editor
                 addressableSettings = null;
                 panelGroup = null;
             }
+        }
+
+        private static void BuildPersianLocale()
+        {
+            TextAsset source = Load<TextAsset>(PersianCatalogPath);
+            PersianCatalogDto catalog = JsonUtility.FromJson<PersianCatalogDto>(source.text);
+            if (catalog == null || catalog.text == null || catalog.lines == null)
+                throw new InvalidOperationException($"Invalid Persian narrative catalog: {PersianCatalogPath}");
+
+            List<NarrativeLocaleTextRecord> localizedText = new(catalog.text.Length + catalog.lines.Length);
+            for (int i = 0; i < catalog.text.Length; i++)
+            {
+                PersianTextDto entry = catalog.text[i];
+                localizedText.Add(new NarrativeLocaleTextRecord(entry.key, entry.value));
+            }
+            for (int i = 0; i < catalog.lines.Length; i++)
+            {
+                PersianLineDto line = catalog.lines[i];
+                localizedText.Add(new NarrativeLocaleTextRecord(line.key, line.text));
+            }
+
+            List<NarrativeLocaleVoiceRecord> localizedVoices = new(catalog.lines.Length);
+            for (int i = 0; i < catalog.lines.Length; i++)
+            {
+                string lineId = catalog.lines[i].lineId;
+                localizedVoices.Add(new NarrativeLocaleVoiceRecord(
+                    lineId,
+                    AssetDatabase.LoadAssetAtPath<AudioClip>($"{PersianVoiceRoot}{lineId}.wav"),
+                    lineId == "p14_commander"
+                        ? AssetDatabase.LoadAssetAtPath<AudioClip>($"{PersianVoiceRoot}p14_commander_female.wav")
+                        : null,
+                    lineId == "p14_commander"
+                        ? AssetDatabase.LoadAssetAtPath<AudioClip>($"{PersianVoiceRoot}p14_commander_neutral.wav")
+                        : null));
+            }
+
+            NarrativeLocaleConfig locale = GetOrCreateAsset<NarrativeLocaleConfig>(PersianLocalePath);
+            Set(locale, "localeId", catalog.locale);
+            Set(locale, "language", FirstLaunchNarrativeLanguage.Persian);
+            Set(locale, "rightToLeft", true);
+            Set(locale, "text", localizedText);
+            Set(locale, "voices", localizedVoices);
+            EditorUtility.SetDirty(locale);
         }
 
         private static void BuildSequence()
@@ -387,6 +434,29 @@ namespace Game.Editor
             public readonly NarrativeSpeakerId Speaker;
             public readonly float Start, Deadline;
             public LineDefinition(string stateId, string lineId, NarrativeSpeakerId speaker, float start, float deadline, string text) { StateId = stateId; LineId = lineId; Speaker = speaker; Start = start; Deadline = deadline; Text = text; }
+        }
+
+        [Serializable]
+        private sealed class PersianCatalogDto
+        {
+            public string locale;
+            public PersianTextDto[] text;
+            public PersianLineDto[] lines;
+        }
+
+        [Serializable]
+        private sealed class PersianTextDto
+        {
+            public string key;
+            public string value;
+        }
+
+        [Serializable]
+        private sealed class PersianLineDto
+        {
+            public string lineId;
+            public string key;
+            public string text;
         }
     }
 }

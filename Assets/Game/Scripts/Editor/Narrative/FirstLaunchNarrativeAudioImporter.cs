@@ -10,6 +10,7 @@ namespace Game.Editor
     public static class FirstLaunchNarrativeAudioImporter
     {
         public const string VoiceRoot = "Assets/Game/Audio/Narrative/FirstLaunch/Voice";
+        public const string PersianVoiceRoot = VoiceRoot + "/fa";
         public const string RightsStatus = "ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE";
         public const float VorbisQuality = 0.7f;
 
@@ -43,45 +44,32 @@ namespace Game.Editor
         [MenuItem("Game/Narrative/Configure FirstLaunch Voice Imports")]
         public static void ConfigureTemporaryVoiceImports()
         {
-            ValidateAssetSet();
+            ValidateAssetSet(VoiceRoot);
+            ValidateAssetSet(PersianVoiceRoot);
 
             foreach (string clipId in ClipIds)
             {
-                string assetPath = GetAssetPath(clipId);
-                AudioImporter importer = AssetImporter.GetAtPath(assetPath) as AudioImporter;
-                if (importer == null)
-                    throw new InvalidOperationException($"Audio importer not found for {assetPath}.");
-
-                importer.forceToMono = true;
-                importer.loadInBackground = true;
-                importer.ambisonic = false;
-                importer.userData = BuildUserData(clipId);
-
-                AudioImporterSampleSettings settings = importer.defaultSampleSettings;
-                settings.loadType = AudioClipLoadType.CompressedInMemory;
-                settings.compressionFormat = AudioCompressionFormat.Vorbis;
-                settings.quality = VorbisQuality;
-                settings.preloadAudioData = true;
-                settings.sampleRateSetting = AudioSampleRateSetting.PreserveSampleRate;
-                importer.defaultSampleSettings = settings;
-
-                SetNormalizeFalseWhenSupported(importer);
-                importer.SaveAndReimport();
+                ConfigureClip(GetAssetPath(clipId), clipId, string.Empty);
+                ConfigureClip(GetPersianAssetPath(clipId), clipId, "fa-IR");
             }
 
             ValidateTemporaryVoiceImports();
-            Debug.Log($"Configured {ClipIds.Length} FirstLaunch voice clips.");
+            Debug.Log($"Configured {ClipIds.Length * 2} FirstLaunch voice clips across English and Persian.");
         }
 
         [MenuItem("Game/Narrative/Validate FirstLaunch Voice Imports")]
         public static void ValidateTemporaryVoiceImports()
         {
-            ValidateAssetSet();
+            ValidateAssetSet(VoiceRoot);
+            ValidateAssetSet(PersianVoiceRoot);
 
             foreach (string clipId in ClipIds)
-                ValidateClip(clipId);
+            {
+                ValidateClip(GetAssetPath(clipId), clipId, string.Empty);
+                ValidateClip(GetPersianAssetPath(clipId), clipId, "fa-IR");
+            }
 
-            Debug.Log($"Validated {ClipIds.Length} FirstLaunch voice clips.");
+            Debug.Log($"Validated {ClipIds.Length * 2} FirstLaunch voice clips across English and Persian.");
         }
 
         public static string GetAssetPath(string clipId)
@@ -92,9 +80,40 @@ namespace Game.Editor
             return $"{VoiceRoot}/{clipId}.wav";
         }
 
-        private static void ValidateAssetSet()
+        public static string GetPersianAssetPath(string clipId)
         {
-            string[] actualClipIds = Directory.GetFiles(VoiceRoot, "*.wav", SearchOption.TopDirectoryOnly)
+            if (!StableClipIdsView.Contains(clipId))
+                throw new ArgumentException($"Unknown FirstLaunch voice clip ID '{clipId}'.", nameof(clipId));
+
+            return $"{PersianVoiceRoot}/{clipId}.wav";
+        }
+
+        private static void ConfigureClip(string assetPath, string clipId, string locale)
+        {
+            AudioImporter importer = AssetImporter.GetAtPath(assetPath) as AudioImporter;
+            if (importer == null)
+                throw new InvalidOperationException($"Audio importer not found for {assetPath}.");
+
+            importer.forceToMono = true;
+            importer.loadInBackground = true;
+            importer.ambisonic = false;
+            importer.userData = BuildUserData(clipId, locale);
+
+            AudioImporterSampleSettings settings = importer.defaultSampleSettings;
+            settings.loadType = AudioClipLoadType.CompressedInMemory;
+            settings.compressionFormat = AudioCompressionFormat.Vorbis;
+            settings.quality = VorbisQuality;
+            settings.preloadAudioData = true;
+            settings.sampleRateSetting = AudioSampleRateSetting.PreserveSampleRate;
+            importer.defaultSampleSettings = settings;
+
+            SetNormalizeFalseWhenSupported(importer);
+            importer.SaveAndReimport();
+        }
+
+        private static void ValidateAssetSet(string voiceRoot)
+        {
+            string[] actualClipIds = Directory.GetFiles(voiceRoot, "*.wav", SearchOption.TopDirectoryOnly)
                 .Select(Path.GetFileNameWithoutExtension)
                 .OrderBy(value => value, StringComparer.Ordinal)
                 .ToArray();
@@ -104,13 +123,12 @@ namespace Game.Editor
             {
                 throw new InvalidOperationException(
                     $"FirstLaunch voice asset set mismatch. Expected [{string.Join(", ", expectedClipIds)}], " +
-                    $"found [{string.Join(", ", actualClipIds)}].");
+                    $"found [{string.Join(", ", actualClipIds)}] under {voiceRoot}.");
             }
         }
 
-        private static void ValidateClip(string clipId)
+        private static void ValidateClip(string assetPath, string clipId, string locale)
         {
-            string assetPath = GetAssetPath(clipId);
             AudioImporter importer = AssetImporter.GetAtPath(assetPath) as AudioImporter;
             AudioClip clip = AssetDatabase.LoadAssetAtPath<AudioClip>(assetPath);
 
@@ -128,15 +146,16 @@ namespace Game.Editor
             Require(settings.sampleRateSetting == AudioSampleRateSetting.PreserveSampleRate, assetPath, "Sample rate must be preserved");
             Require(clip.channels == 1, assetPath, "Imported clip must be mono");
             Require(clip.name == clipId, assetPath, $"AudioClip name must retain stable ID '{clipId}'");
-            Require(importer.userData == BuildUserData(clipId), assetPath, "Rights/runtime TTS metadata is missing");
+            Require(importer.userData == BuildUserData(clipId, locale), assetPath, "Rights/runtime TTS metadata is missing");
 
             if (TryGetNormalize(importer, out bool normalize))
                 Require(!normalize, assetPath, "Normalize must be disabled when the importer exposes the setting");
         }
 
-        private static string BuildUserData(string clipId)
+        private static string BuildUserData(string clipId, string locale)
         {
-            return $"clipId={clipId}; status={RightsStatus}; runtimeNetworkTts=false";
+            string localeMetadata = string.IsNullOrEmpty(locale) ? string.Empty : $"; locale={locale}";
+            return $"clipId={clipId}; status={RightsStatus}; runtimeNetworkTts=false{localeMetadata}";
         }
 
         private static void SetNormalizeFalseWhenSupported(AudioImporter importer)

@@ -49,6 +49,41 @@ The old offline SAPI and Edge TTS scripts remain historical development fallback
 They are not the source of the current shipping-intent clips and must not overwrite the
 ElevenLabs batch.
 
+## Persian localized batch
+
+The approved Persian source is
+`Assets/Game/Data/Narrative/FirstLaunch/first_launch_persian_text_catalog.json`.
+It uses locale `fa-IR` and ElevenLabs TTS language code `fa`. Persian generation must use
+`eleven_v3`; the existing multilingual v2 workflow does not support Persian.
+
+Sending the catalog to ElevenLabs exports the approved dialogue to an external service
+and consumes project credits, so generation requires explicit project-owner approval.
+After approval, generate the 17 stable line IDs and the Commander variants with:
+
+```powershell
+<python.exe> Tools/NarrativeVision/generate_first_launch_voice_elevenlabs.py `
+  --catalog Assets/Game/Data/Narrative/FirstLaunch/first_launch_persian_text_catalog.json `
+  --voice-root Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa `
+  --manifest Assets/Game/Audio/Narrative/FirstLaunch/first_launch_persian_voice_manifest.json `
+  --language-code fa `
+  --ffmpeg <ffmpeg.exe> `
+  --candidate-count 3
+
+<python.exe> Tools/NarrativeVision/generate_first_launch_voice_elevenlabs.py `
+  --catalog Assets/Game/Data/Narrative/FirstLaunch/first_launch_persian_text_catalog.json `
+  --voice-root Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa `
+  --manifest Assets/Game/Audio/Narrative/FirstLaunch/first_launch_persian_voice_manifest.json `
+  --language-code fa `
+  --ffmpeg <ffmpeg.exe> `
+  --candidate-count 3 `
+  --commander-variants
+```
+
+Then run `Game/Narrative/First Launch/Install Into Menu Scene` to import the WAV files
+and rebuild `FirstLaunchPersianLocale.asset` with local `AudioClip` references. Until
+that batch exists, Persian mode intentionally plays no voice instead of mismatched
+English speech.
+
 ## Environment and score assets
 
 `Environment/` contains dedicated AI-generated FirstLaunch music, location ambience,

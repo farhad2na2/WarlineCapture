@@ -13,6 +13,7 @@ namespace Game.Composition
     {
         private readonly Dictionary<string, NarrativeStateRecord> states = new(StringComparer.Ordinal);
         private readonly Dictionary<NarrativeSpeakerId, NarrativeSpeakerRecord> speakers = new();
+        private readonly Dictionary<string, NarrativeLocaleVoiceRecord> localizedVoices = new(StringComparer.Ordinal);
         private readonly FirstLaunchNarrativeSequenceUtilitySystemHelper sequenceRuntime = new();
         private NarrativeSequenceConfig config;
         private NarrativePunctuationConfig punctuation;
@@ -41,6 +42,7 @@ namespace Game.Composition
         public int CurrentStateIndex => sequenceRuntime.CurrentStateIndex;
         public bool ReducedMotionEnabled => settings.Accessibility.ReducedMotion;
         public bool SubtitlesEnabled => settings.Narrative.SubtitlesEnabled;
+        public string SkipLabel => textResolver.Get("narrative.first_launch.control.skip", "SKIP");
         internal int ResidentPanelAssetCount => panels.ResidentAssetCount;
         internal string CurrentPanelAssetKey => panels.CurrentKey;
         internal string NextPanelAssetKey => panels.NextKey;
@@ -50,7 +52,8 @@ namespace Game.Composition
             NarrativePunctuationConfig punctuationProfile,
             NarrativeSequenceView sequenceView,
             IGameTextResolver resolver,
-            in UISettingsModel runtimeSettings)
+            in UISettingsModel runtimeSettings,
+            NarrativeLocaleConfig localeConfig = null)
         {
             Cancel();
             config = sequenceConfig;
@@ -61,6 +64,7 @@ namespace Game.Composition
             portraitVoice.Reset(view?.CommanderIdentityView);
             states.Clear();
             speakers.Clear();
+            localizedVoices.Clear();
             sequenceRuntime.Output -= HandleSequenceOutput;
 
             if (config == null || speakerCatalog == null || punctuation == null || view == null)
@@ -89,8 +93,21 @@ namespace Game.Composition
                 if (speaker == null || !speakers.TryAdd(speaker.SpeakerId, speaker))
                     return false;
             }
+            if (localeConfig != null)
+            {
+                IReadOnlyList<NarrativeLocaleVoiceRecord> localeVoices = localeConfig.Voices;
+                for (int i = 0; i < localeVoices.Count; i++)
+                {
+                    NarrativeLocaleVoiceRecord voice = localeVoices[i];
+                    if (voice == null || string.IsNullOrWhiteSpace(voice.LineId))
+                        continue;
+                    localizedVoices[voice.LineId] = voice;
+                }
+            }
             if (!sequenceRuntime.Configure(config.EntryStateId, definitions))
                 return false;
+
+            view.ApplyLanguage(localeConfig != null && localeConfig.RightToLeft, textResolver);
 
             presentation = new NarrativeDialoguePresentationSystemHelper(view);
             panelMotion = new NarrativePanelMotionPresentationSystemHelper(view.PanelMotionRoot);
@@ -281,7 +298,7 @@ namespace Game.Composition
         private void ActivateStatePresentation(NarrativeStateRecord state, ulong transitionToken)
         {
             panelMotion?.Start(state.MotionPreset, state.DurationSeconds, settings.Accessibility.ReducedMotion);
-            view.SetSkipState(!string.IsNullOrEmpty(state.SkipStateId), true, "SKIP");
+            view.SetSkipState(!string.IsNullOrEmpty(state.SkipStateId), true, SkipLabel);
             view.SetInteractiveState(NarrativeInteractiveStateKind.None);
             view.ApplyLocation(FirstLaunchNarrativeModelUtilitySystemHelper.CreateLocation(state, textResolver));
             FirstLaunchNarrativeAudioPresentationSystemHelper.EnterState(view, settings, state);
@@ -351,10 +368,22 @@ namespace Game.Composition
             presentation.StartDialogue(
                 resolvedText,
                 speakerModel,
-                portraitVoice.ResolveVoiceClip(line),
+                ResolveVoiceClip(line),
                 Mathf.Max(0.1f, line.DeadlineSeconds - line.StartSeconds),
                 NarrativePunctuationUtilitySystemHelper.From(punctuation),
                 settings);
+        }
+
+        private AudioClip ResolveVoiceClip(NarrativeDialogueLineRecord line)
+        {
+            if (!localizedVoices.TryGetValue(line.LineId, out NarrativeLocaleVoiceRecord localized))
+                return portraitVoice.ResolveVoiceClip(line);
+
+            return portraitVoice.ResolveVoiceClip(
+                line.Speaker,
+                localized.VoiceClip,
+                localized.FemaleVoiceClip,
+                localized.NeutralVoiceClip);
         }
 
         private void HandleDialogueInput(NarrativeDialoguePhase phase)

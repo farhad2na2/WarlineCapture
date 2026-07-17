@@ -6,6 +6,7 @@ using Game.Narrative.Contracts;
 using Game.UI.Runtime;
 using Game.Configs;
 using Game.UI.Contracts;
+using RTLTMPro;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
@@ -17,8 +18,11 @@ namespace Game.Editor
     public static class FirstLaunchNarrativePresentationPrefabBuilder
     {
         public const string PrefabPath = "Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab";
+        public const string LanguageChoicePrefabPath = "Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchLanguageChoice.prefab";
         private const string BoldFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Bold SDF.asset";
         private const string MediumFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium SDF.asset";
+        private const string PersianFontSourcePath = "Assets/Game/Art/UI/Fonts/NotoSansArabic/NotoSansArabic-Regular.ttf";
+        private const string PersianFontAssetPath = "Assets/Game/Art/UI/Fonts/NotoSansArabic/NotoSansArabic-Narrative SDF.asset";
         private const string HudPanelPath = "Assets/Game/Art/UI/Panels/scn09_panel_detail_tall_frame.png";
         private const string HudButtonPath = "Assets/Game/Art/UI/Panels/scn09_panel_secondary_button_bg.png";
         private const string HudPrimaryButtonPath = "Assets/Game/Art/UI/Panels/scn09_panel_gold_action_button_bg.png";
@@ -33,6 +37,7 @@ namespace Game.Editor
 
             TMP_FontAsset bold = RequireAsset<TMP_FontAsset>(BoldFontPath);
             TMP_FontAsset medium = RequireAsset<TMP_FontAsset>(MediumFontPath);
+            TMP_FontAsset persian = GetOrCreatePersianFontAsset();
             Sprite frame = RequireAsset<Sprite>(FirstLaunchNarrativeDialogueAssetImporter.FramePath);
             Sprite pointer = RequireAsset<Sprite>(FirstLaunchNarrativeDialogueAssetImporter.PointerPath);
             Sprite hudPanel = RequireAsset<Sprite>(HudPanelPath);
@@ -193,12 +198,150 @@ namespace Game.Editor
             SetObject(sequenceView, "safeAreaPreview", safeAreaPreview);
             SetObject(sequenceView, "voiceSource", voiceSource);
             SetObject(sequenceView, "sequenceAudioView", sequenceAudioView);
+            SetObject(sequenceView, "persianFont", persian);
+            SetLocalizedInterfaceBindings(sequenceView, root);
             skipConfirmationView.transform.SetAsLastSibling();
 
             PrefabUtility.SaveAsPrefabAsset(root.gameObject, PrefabPath);
             Object.DestroyImmediate(root.gameObject);
             AssetDatabase.SaveAssets();
+            BuildLanguageChoicePrefab(bold, persian, hudPanel, hudButton);
             Debug.Log($"[FirstLaunchNarrativePresentationPrefabBuilder] Built {PrefabPath}");
+        }
+
+        private static void BuildLanguageChoicePrefab(
+            TMP_FontAsset englishFont,
+            TMP_FontAsset persianFont,
+            Sprite panel,
+            Sprite buttonFrame)
+        {
+            RectTransform root = CreateRect("FirstLaunchLanguageChoice", null);
+            Stretch(root);
+            CanvasGroup group = root.gameObject.AddComponent<CanvasGroup>();
+            FirstLaunchLanguageChoiceView view = root.gameObject.AddComponent<FirstLaunchLanguageChoiceView>();
+
+            Image dim = CreateImage("Dim", root, null, new Color(0.015f, 0.025f, 0.03f, 0.94f), true);
+            Stretch(dim.rectTransform);
+            RectTransform surface = CreateRect("LanguageSurface", root);
+            SetRect(surface, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(1120f, 560f), Vector2.zero);
+            ApplyLiveMenuScale(surface);
+            Image backing = surface.gameObject.AddComponent<Image>();
+            backing.sprite = panel;
+            backing.type = Image.Type.Sliced;
+
+            TMP_Text title = CreateText("Title", surface, "SELECT STORY LANGUAGE", englishFont, 46f, TextAlignmentOptions.Center, new Color(0.96f, 0.78f, 0.3f, 1f));
+            SetRect(title.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(880f, 70f), new Vector2(0f, -118f));
+            TMP_Text persianTitle = CreateText("PersianTitle", surface, "زبان داستان را انتخاب کنید", persianFont, 38f, TextAlignmentOptions.Center, new Color(0.9f, 0.88f, 0.8f, 1f));
+            SetRect(persianTitle.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(880f, 62f), new Vector2(0f, -180f));
+
+            Button englishButton = CreateFramedButton("EnglishButton", surface, buttonFrame, englishFont, "ENGLISH", new Vector2(390f, 136f));
+            SetRect(englishButton.GetComponent<RectTransform>(), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(390f, 136f), new Vector2(-225f, 120f));
+            Button persianButton = CreateFramedButton("PersianButton", surface, buttonFrame, persianFont, "فارسی", new Vector2(390f, 136f));
+            SetRect(persianButton.GetComponent<RectTransform>(), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(390f, 136f), new Vector2(225f, 120f));
+
+            SetObject(view, "group", group);
+            SetObject(view, "englishButton", englishButton);
+            SetObject(view, "persianButton", persianButton);
+            PrefabUtility.SaveAsPrefabAsset(root.gameObject, LanguageChoicePrefabPath);
+            Object.DestroyImmediate(root.gameObject);
+            AssetDatabase.SaveAssets();
+        }
+
+        private static TMP_FontAsset GetOrCreatePersianFontAsset()
+        {
+            TMP_FontAsset existing = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(PersianFontAssetPath);
+            if (existing != null)
+            {
+                existing.atlasPopulationMode = AtlasPopulationMode.Dynamic;
+                existing.ClearFontAssetData();
+                ConfigurePersianFontFallback(existing);
+                EditorUtility.SetDirty(existing);
+                return existing;
+            }
+
+            Font source = RequireAsset<Font>(PersianFontSourcePath);
+            TMP_FontAsset created = TMP_FontAsset.CreateFontAsset(source);
+            created.name = "NotoSansArabic-Narrative SDF";
+            created.atlasPopulationMode = AtlasPopulationMode.Dynamic;
+            created.isMultiAtlasTexturesEnabled = true;
+            AssetDatabase.CreateAsset(created, PersianFontAssetPath);
+            if (created.material != null)
+                AssetDatabase.AddObjectToAsset(created.material, created);
+            Texture2D[] atlases = created.atlasTextures;
+            for (int i = 0; i < atlases.Length; i++)
+            {
+                if (atlases[i] != null)
+                    AssetDatabase.AddObjectToAsset(atlases[i], created);
+            }
+            ConfigurePersianFontFallback(created);
+            EditorUtility.SetDirty(created);
+            AssetDatabase.SaveAssets();
+            return created;
+        }
+
+        private static void ConfigurePersianFontFallback(TMP_FontAsset font)
+        {
+            TMP_FontAsset latinFallback = RequireAsset<TMP_FontAsset>(MediumFontPath);
+            if (!font.fallbackFontAssetTable.Contains(latinFallback))
+                font.fallbackFontAssetTable.Add(latinFallback);
+        }
+
+        private static void SetLocalizedInterfaceBindings(NarrativeSequenceView view, RectTransform root)
+        {
+            TMP_Text[] targets =
+            {
+                FindText(root, "SafeArea/PlaybackControls/SkipButton/Label"),
+                FindText(root, "SafeArea/CommanderIdentitySurface/Title"),
+                FindText(root, "SafeArea/CommanderIdentitySurface/Instruction"),
+                FindText(root, "SafeArea/CommanderIdentitySurface/CallsignLabel"),
+                FindText(root, "SafeArea/CommanderIdentitySurface/ContinueButton/Label"),
+                FindText(root, "SafeArea/GuidanceChoiceSurface/Title"),
+                FindText(root, "SafeArea/GuidanceChoiceSurface/Instruction"),
+                FindText(root, "SafeArea/GuidanceChoiceSurface/FullGuidanceButton/Label"),
+                FindText(root, "SafeArea/GuidanceChoiceSurface/ContextualGuidanceButton/Label"),
+                FindText(root, "SafeArea/GuidanceChoiceSurface/MinimalGuidanceButton/Label"),
+                FindText(root, "SafeArea/GuidanceChoiceSurface/ContinueButton/Label"),
+                FindText(root, "SafeArea/SkipConfirmationSurface/Confirmation/Title"),
+                FindText(root, "SafeArea/SkipConfirmationSurface/Confirmation/Body"),
+                FindText(root, "SafeArea/SkipConfirmationSurface/Confirmation/CancelButton/Label"),
+                FindText(root, "SafeArea/SkipConfirmationSurface/Confirmation/ConfirmButton/Label")
+            };
+            string[] keys =
+            {
+                "narrative.first_launch.control.skip",
+                "narrative.first_launch.identity.title",
+                "narrative.first_launch.identity.instruction",
+                "narrative.first_launch.identity.callsign",
+                "narrative.first_launch.control.continue",
+                "narrative.first_launch.guidance.title",
+                "narrative.first_launch.guidance.instruction",
+                "narrative.first_launch.guidance.full",
+                "narrative.first_launch.guidance.contextual",
+                "narrative.first_launch.guidance.minimal",
+                "narrative.first_launch.control.continue",
+                "narrative.first_launch.skip.title",
+                "narrative.first_launch.skip.body",
+                "narrative.first_launch.control.cancel_skip",
+                "narrative.first_launch.control.confirm_skip"
+            };
+            string[] fallbacks =
+            {
+                "SKIP", "EMERGENCY CONTINUITY AUTHENTICATION", "CHOOSE YOUR COMMANDER IDENTITY", "COMMANDER", "CONTINUE  >",
+                "CHOOSE ARIA'S GUIDANCE LEVEL", "This can be changed later in Command Settings.", "FULL GUIDANCE", "TACTICAL HINTS",
+                "MINIMAL GUIDANCE", "CONTINUE", "SKIP TO TACTICAL COMMAND?",
+                "The default commander identity and Full Guidance setting will be used. You can change both later.", "KEEP WATCHING", "SKIP INTRO"
+            };
+            SetArray(view, "localizedTextTargets", targets);
+            SetStringArray(view, "localizedTextKeys", keys);
+            SetStringArray(view, "localizedTextEnglishFallbacks", fallbacks);
+        }
+
+        private static TMP_Text FindText(Transform root, string path)
+        {
+            Transform target = root.Find(path);
+            if (target == null || !target.TryGetComponent(out TMP_Text text))
+                throw new UnityException($"Missing localized narrative text target: {path}");
+            return text;
         }
 
         private static AudioSource CreateAudioSource(string name, Transform parent, bool loop)
@@ -898,7 +1041,7 @@ namespace Game.Editor
         private static TMP_Text CreateText(string name, Transform parent, string value, TMP_FontAsset font, float size, TextAlignmentOptions alignment, Color color)
         {
             RectTransform rect = CreateRect(name, parent);
-            TextMeshProUGUI text = rect.gameObject.AddComponent<TextMeshProUGUI>();
+            RTLTextMeshPro text = rect.gameObject.AddComponent<RTLTextMeshPro>();
             text.text = value;
             text.font = font;
             text.fontSize = size;
@@ -976,6 +1119,18 @@ namespace Game.Editor
             if (property == null)
                 throw new UnityException($"Missing serialized integer {target.GetType().Name}.{propertyName}");
             property.intValue = value;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static void SetStringArray(Object target, string propertyName, string[] values)
+        {
+            SerializedObject serialized = new(target);
+            SerializedProperty property = serialized.FindProperty(propertyName);
+            if (property == null || !property.isArray)
+                throw new UnityException($"Missing serialized string array {target.GetType().Name}.{propertyName}");
+            property.arraySize = values?.Length ?? 0;
+            for (int i = 0; i < property.arraySize; i++)
+                property.GetArrayElementAtIndex(i).stringValue = values[i] ?? string.Empty;
             serialized.ApplyModifiedPropertiesWithoutUndo();
         }
     }

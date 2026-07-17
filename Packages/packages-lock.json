@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.nosuchstudio.rtltmpro": {
+      "version": "https://github.com/hk1ll3r/RTLTMPro.git?path=/UPMPackage#69c9193fc27218f17679cc57382a61ac4a717b2b",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "69c9193fc27218f17679cc57382a61ac4a717b2b"
+    },
     "com.sniveler-code.gpu-animation": {
       "version": "file:com.sniveler-code.gpu-animation",
       "depth": 0,

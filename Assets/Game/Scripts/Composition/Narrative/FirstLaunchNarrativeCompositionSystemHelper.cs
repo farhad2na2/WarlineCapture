@@ -14,7 +14,8 @@ namespace Game.Composition
     {
         EnterMenu = 0,
         Playing = 1,
-        ResumeHandoff = 2
+        ResumeHandoff = 2,
+        AwaitingLanguage = 3
     }
 
     internal sealed class FirstLaunchNarrativeCompositionSystemHelper
@@ -24,7 +25,16 @@ namespace Game.Composition
         private readonly FirstLaunchNarrativeShellCompositionSystemHelper shellComposition = new();
         private readonly FirstLaunchNarrativeReviewPresentationSystemHelper reviewPresentation = new();
         private NarrativeSequenceView view;
+        private FirstLaunchLanguageChoiceView languageChoiceView;
+        private NarrativeSequenceConfig sequenceConfig;
+        private NarrativeSpeakerCatalog speakerCatalog;
+        private NarrativePunctuationConfig punctuationProfile;
+        private NarrativeLocaleConfig persianLocale;
+        private IGameTextResolver baseTextResolver;
         private bool initialized;
+        private bool reviewerMode;
+        private bool awaitingLanguage;
+        private bool sequenceEventsBound;
         private bool skipConfirmationPending;
         private string skipConfirmationReviewerStateId = string.Empty;
         public event Action MenuHandoffRequested;
@@ -43,7 +53,9 @@ namespace Game.Composition
             IGameTextResolver textResolver,
             SaveService persistence,
             bool bypassForDiagnostics,
-            bool startInReviewerMode = false)
+            bool startInReviewerMode = false,
+            FirstLaunchLanguageChoiceView configuredLanguageChoiceView = null,
+            NarrativeLocaleConfig configuredPersianLocale = null)
         {
             if (initialized)
                 return ResolveCurrentDisposition();
@@ -58,6 +70,15 @@ namespace Game.Composition
                     config,
                     NarrativeRouteRole.GuidanceChoice));
             view = sequenceView;
+            languageChoiceView = configuredLanguageChoiceView;
+            sequenceConfig = config;
+            speakerCatalog = speakers;
+            punctuationProfile = punctuation;
+            persianLocale = configuredPersianLocale;
+            baseTextResolver = textResolver ?? FallbackGameTextResolver.Instance;
+            reviewerMode = startInReviewerMode;
+            languageChoiceView?.Bind(HandleLanguageSelected);
+            languageChoiceView?.SetVisible(false);
             if (view?.SkipConfirmationView != null)
             {
                 view.SkipConfirmationView.Bind(ConfirmSkip, CancelSkip);
@@ -67,32 +88,38 @@ namespace Game.Composition
             if (profileComposition.ShouldEnterMenu(bypassForDiagnostics, startInReviewerMode))
             {
                 view?.SetVisible(false);
+                languageChoiceView?.SetVisible(false);
                 return FirstLaunchNarrativeStartupDisposition.EnterMenu;
             }
 
             if (profileComposition.ShouldResumeHandoff(startInReviewerMode))
             {
                 view?.SetVisible(false);
+                languageChoiceView?.SetVisible(false);
                 shellComposition.RequestHandoff();
                 return FirstLaunchNarrativeStartupDisposition.ResumeHandoff;
             }
 
-            if (!sequencePresentation.Initialize(config, speakers, punctuation, view, textResolver, SettingsService.Load()))
+            if (!startInReviewerMode && profileComposition.RequiresLanguageSelection && languageChoiceView != null)
             {
                 view?.SetVisible(false);
-                return FirstLaunchNarrativeStartupDisposition.EnterMenu;
+                awaitingLanguage = true;
+                languageChoiceView.SetVisible(true);
+                return FirstLaunchNarrativeStartupDisposition.AwaitingLanguage;
             }
 
-            sequencePresentation.InteractiveStateRequested += HandleInteractiveState;
-            sequencePresentation.CommanderIdentityCommitted += HandleCommanderIdentityCommitted;
-            sequencePresentation.GuidanceCommitted += HandleGuidanceCommitted;
-            sequencePresentation.HandoffRequested += HandleWatchedHandoff;
-            sequencePresentation.SkipRequested += HandleSkipRequested;
-            reviewPresentation.Initialize(startInReviewerMode, view, sequencePresentation);
-            profileComposition.MarkInProgress(startInReviewerMode);
-            sequencePresentation.Start();
-            reviewPresentation.Refresh(true);
-            return FirstLaunchNarrativeStartupDisposition.Playing;
+            FirstLaunchNarrativeLanguage language = startInReviewerMode
+                ? FirstLaunchNarrativeLanguage.English
+                : profileComposition.Language;
+            if (language == FirstLaunchNarrativeLanguage.Unselected)
+            {
+                language = FirstLaunchNarrativeLanguage.English;
+                profileComposition.CommitLanguage(language, true);
+            }
+
+            return StartNarrative(language)
+                ? FirstLaunchNarrativeStartupDisposition.Playing
+                : FirstLaunchNarrativeStartupDisposition.EnterMenu;
         }
 
         public void InitializeShell(
@@ -109,7 +136,9 @@ namespace Game.Composition
                 textResolver,
                 SaveService.CreateDefault(),
                 bypassForDiagnostics,
-                startInReviewerMode);
+                startInReviewerMode,
+                menuView.FirstLaunchLanguageChoiceView,
+                menuView.FirstLaunchPersianLocale);
             shellComposition.SetStartupDisposition(disposition);
         }
 
@@ -179,7 +208,7 @@ namespace Game.Composition
             skipConfirmationPending = false;
             skipConfirmationReviewerStateId = string.Empty;
             view?.SkipConfirmationView?.SetVisible(false);
-            view?.SetSkipState(true, true, "SKIP");
+            view?.SetSkipState(true, true, sequencePresentation.SkipLabel);
             SkipConfirmationVisibilityChanged?.Invoke(false);
             sequencePresentation.Resume();
         }
@@ -194,6 +223,8 @@ namespace Game.Composition
             sequencePresentation.HandoffRequested -= HandleWatchedHandoff;
             sequencePresentation.SkipRequested -= HandleSkipRequested;
             sequencePresentation.Cancel();
+            languageChoiceView?.Unbind();
+            languageChoiceView?.SetVisible(false);
             view?.SkipConfirmationView?.Unbind();
             view?.SkipConfirmationView?.SetVisible(false);
             reviewPresentation.Shutdown();
@@ -202,7 +233,91 @@ namespace Game.Composition
             skipConfirmationReviewerStateId = string.Empty;
             shellComposition.Reset();
             view = null;
+            languageChoiceView = null;
+            sequenceConfig = null;
+            speakerCatalog = null;
+            punctuationProfile = null;
+            persianLocale = null;
+            baseTextResolver = null;
+            reviewerMode = false;
+            awaitingLanguage = false;
+            sequenceEventsBound = false;
             profileComposition.Reset();
+        }
+
+        private void HandleLanguageSelected(FirstLaunchNarrativeLanguage language)
+        {
+            if (!awaitingLanguage ||
+                language != FirstLaunchNarrativeLanguage.English &&
+                language != FirstLaunchNarrativeLanguage.Persian)
+            {
+                return;
+            }
+
+            if (language == FirstLaunchNarrativeLanguage.Persian && persianLocale == null)
+            {
+                UnityEngine.Debug.LogError(
+                    "[FirstLaunchNarrative] Persian was selected, but no Persian locale is configured.");
+                languageChoiceView?.SetVisible(true);
+                return;
+            }
+
+            profileComposition.CommitLanguage(language, true);
+            awaitingLanguage = false;
+            languageChoiceView?.SetVisible(false);
+            if (StartNarrative(language))
+                return;
+
+            shellComposition.SetStartupDisposition(FirstLaunchNarrativeStartupDisposition.EnterMenu);
+        }
+
+        private bool StartNarrative(FirstLaunchNarrativeLanguage language)
+        {
+            if (language == FirstLaunchNarrativeLanguage.Persian && persianLocale == null)
+            {
+                UnityEngine.Debug.LogError(
+                    "[FirstLaunchNarrative] Cannot start Persian narrative without a Persian locale.");
+                return false;
+            }
+
+            NarrativeLocaleConfig locale = language == FirstLaunchNarrativeLanguage.Persian
+                ? persianLocale
+                : null;
+            IGameTextResolver resolver = locale != null
+                ? new FirstLaunchNarrativeLocaleTextUtilitySystemHelper(baseTextResolver, locale)
+                : baseTextResolver;
+            if (!sequencePresentation.Initialize(
+                    sequenceConfig,
+                    speakerCatalog,
+                    punctuationProfile,
+                    view,
+                    resolver,
+                    SettingsService.Load(),
+                    locale))
+            {
+                view?.SetVisible(false);
+                return false;
+            }
+
+            BindSequenceEvents();
+            reviewPresentation.Initialize(reviewerMode, view, sequencePresentation);
+            profileComposition.MarkInProgress(reviewerMode);
+            sequencePresentation.Start();
+            reviewPresentation.Refresh(true);
+            return true;
+        }
+
+        private void BindSequenceEvents()
+        {
+            if (sequenceEventsBound)
+                return;
+
+            sequencePresentation.InteractiveStateRequested += HandleInteractiveState;
+            sequencePresentation.CommanderIdentityCommitted += HandleCommanderIdentityCommitted;
+            sequencePresentation.GuidanceCommitted += HandleGuidanceCommitted;
+            sequencePresentation.HandoffRequested += HandleWatchedHandoff;
+            sequencePresentation.SkipRequested += HandleSkipRequested;
+            sequenceEventsBound = true;
         }
 
         private void HandleInteractiveState(NarrativeStateRecord state)
@@ -277,13 +392,15 @@ namespace Game.Composition
             skipConfirmationPending = true;
             skipConfirmationReviewerStateId = reviewerContinueStateId ?? string.Empty;
             sequencePresentation.Pause();
-            view?.SetSkipState(false, false, "SKIP");
+            view?.SetSkipState(false, false, sequencePresentation.SkipLabel);
             view?.SkipConfirmationView?.SetVisible(true);
             SkipConfirmationVisibilityChanged?.Invoke(true);
         }
 
         private FirstLaunchNarrativeStartupDisposition ResolveCurrentDisposition()
         {
+            if (awaitingLanguage)
+                return FirstLaunchNarrativeStartupDisposition.AwaitingLanguage;
             if (shellComposition.IsHandoffPending)
                 return FirstLaunchNarrativeStartupDisposition.ResumeHandoff;
             return sequencePresentation.IsRunning ? FirstLaunchNarrativeStartupDisposition.Playing : FirstLaunchNarrativeStartupDisposition.EnterMenu;

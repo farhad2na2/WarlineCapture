@@ -1,4 +1,5 @@
 using System;
+using Game.Narrative.Contracts;
 using UnityEngine;
 
 namespace Game.Runtime
@@ -74,6 +75,7 @@ namespace Game.Runtime
             profile.firstLaunchCommanderDisplayName = "Commander";
             profile.firstLaunchCommanderPortraitIndex = 0;
             profile.firstLaunchGuidance = "Full";
+            profile.firstLaunchLanguage = FirstLaunchNarrativeLanguage.Unselected.ToString();
             profile.firstLaunchWatched = false;
             profile.firstLaunchSkipped = false;
             SaveProfile(profile);
@@ -111,6 +113,18 @@ namespace Game.Runtime
             profile.firstLaunchGuidance = string.IsNullOrWhiteSpace(profile.firstLaunchGuidance)
                 ? "Full"
                 : profile.firstLaunchGuidance.Trim();
+            if (!Enum.TryParse(profile.firstLaunchLanguage, true, out FirstLaunchNarrativeLanguage language) ||
+                language == FirstLaunchNarrativeLanguage.Unselected &&
+                profile.firstLaunchStatus != FirstLaunchProfileState.NotStarted)
+            {
+                profile.firstLaunchLanguage = profile.firstLaunchStatus == FirstLaunchProfileState.NotStarted
+                    ? FirstLaunchNarrativeLanguage.Unselected.ToString()
+                    : FirstLaunchNarrativeLanguage.English.ToString();
+            }
+            else
+            {
+                profile.firstLaunchLanguage = language.ToString();
+            }
             return profile;
         }
 

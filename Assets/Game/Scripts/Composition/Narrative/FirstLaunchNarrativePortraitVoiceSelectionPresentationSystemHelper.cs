@@ -46,14 +46,27 @@ namespace Game.Composition
 
         public AudioClip ResolveVoiceClip(NarrativeDialogueLineRecord line)
         {
-            if (line.Speaker != NarrativeSpeakerId.Commander)
-                return line.VoiceClip;
+            return ResolveVoiceClip(
+                line.Speaker,
+                line.VoiceClip,
+                line.FemaleVoiceClip,
+                line.NeutralVoiceClip);
+        }
+
+        public AudioClip ResolveVoiceClip(
+            NarrativeSpeakerId speaker,
+            AudioClip voiceClip,
+            AudioClip femaleVoiceClip,
+            AudioClip neutralVoiceClip)
+        {
+            if (speaker != NarrativeSpeakerId.Commander)
+                return voiceClip;
 
             return portraitIndex switch
             {
-                0 or 2 or 5 => line.FemaleVoiceClip != null ? line.FemaleVoiceClip : line.VoiceClip,
-                NeutralCommanderPortraitIndex => line.NeutralVoiceClip != null ? line.NeutralVoiceClip : line.VoiceClip,
-                _ => line.VoiceClip
+                0 or 2 or 5 => femaleVoiceClip != null ? femaleVoiceClip : voiceClip,
+                NeutralCommanderPortraitIndex => neutralVoiceClip != null ? neutralVoiceClip : voiceClip,
+                _ => voiceClip
             };
         }
     }

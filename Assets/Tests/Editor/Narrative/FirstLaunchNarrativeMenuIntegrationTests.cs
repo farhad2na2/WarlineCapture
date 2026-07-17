@@ -3,6 +3,7 @@ using System.IO;
 using Game.Composition;
 using Game.Configs;
 using Game.Editor;
+using Game.Narrative.Contracts;
 using Game.Runtime;
 using Game.UI.Runtime;
 using NUnit.Framework;
@@ -20,11 +21,12 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
         {
             FirstLaunchNarrativeMenuIntegrationTests tests = new();
             tests.MenuScene_HasTopLevelNarrativeLayerAndExactConfigs();
+            tests.FreshProfile_LanguageChoicePrecedesNarrativeAndPersistsPersian();
             tests.FreshProfile_SkipRequiresLiveConfirmationAndPublishesOneHandoff();
             tests.CompletedAndPendingProfiles_SelectCorrectStartupDisposition();
             tests.ReviewerMode_ProvidesNavigationWithoutMutatingCompletedProfile();
             tests.CommittedIdentity_SkipRoutesDirectlyAndPreservesSelection();
-            Debug.Log("[FirstLaunchNarrativeMenuIntegrationValidation] result=Passed tests=5");
+            Debug.Log("[FirstLaunchNarrativeMenuIntegrationValidation] result=Passed tests=6");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -45,9 +47,25 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
         Assert.NotNull(bootstrap.FirstLaunchNarrativeConfig);
         Assert.NotNull(bootstrap.FirstLaunchSpeakerCatalog);
         Assert.NotNull(bootstrap.FirstLaunchPunctuationProfile);
+        Assert.NotNull(bootstrap.FirstLaunchLanguageChoiceView);
+        Assert.NotNull(bootstrap.FirstLaunchPersianLocale);
+        Assert.IsTrue(bootstrap.FirstLaunchPersianLocale.RightToLeft);
+        Assert.AreEqual(FirstLaunchNarrativeLanguage.Persian, bootstrap.FirstLaunchPersianLocale.Language);
+        Assert.AreEqual(17, bootstrap.FirstLaunchPersianLocale.Voices.Count);
+        for (int i = 0; i < bootstrap.FirstLaunchPersianLocale.Voices.Count; i++)
+        {
+            NarrativeLocaleVoiceRecord voice = bootstrap.FirstLaunchPersianLocale.Voices[i];
+            Assert.NotNull(voice.VoiceClip, voice.LineId);
+            if (voice.LineId == "p14_commander")
+            {
+                Assert.NotNull(voice.FemaleVoiceClip);
+                Assert.NotNull(voice.NeutralVoiceClip);
+            }
+        }
         Assert.AreEqual(26, bootstrap.FirstLaunchNarrativeConfig.States.Count);
         Assert.AreEqual(bootstrap.UiCanvas.transform, bootstrap.FirstLaunchNarrativeView.transform.parent);
-        Assert.AreEqual(bootstrap.UiCanvas.transform.childCount - 1, bootstrap.FirstLaunchNarrativeView.transform.GetSiblingIndex());
+        Assert.AreEqual(bootstrap.UiCanvas.transform.childCount - 2, bootstrap.FirstLaunchNarrativeView.transform.GetSiblingIndex());
+        Assert.AreEqual(bootstrap.UiCanvas.transform.childCount - 1, bootstrap.FirstLaunchLanguageChoiceView.transform.GetSiblingIndex());
         Assert.AreEqual("NarrativeLayer", bootstrap.FirstLaunchNarrativeView.name);
         CanvasGroup group = bootstrap.FirstLaunchNarrativeView.GetComponent<CanvasGroup>();
         Assert.NotNull(group);
@@ -59,6 +77,43 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
         Assert.NotNull(bootstrap.FirstLaunchNarrativeView.SkipConfirmationView);
         Assert.NotNull(bootstrap.FirstLaunchNarrativeView.ReviewerControlsView);
         Assert.IsTrue(scene.IsValid());
+    }
+
+    [Test]
+    public void FreshProfile_LanguageChoicePrecedesNarrativeAndPersistsPersian()
+    {
+        using Context context = CreateContext(new PlayerProfileSaveData());
+        FirstLaunchNarrativeStartupDisposition disposition = context.Helper.Initialize(
+            context.Sequence,
+            context.Speakers,
+            context.Punctuation,
+            context.View,
+            Game.UI.Contracts.FallbackGameTextResolver.Instance,
+            context.SaveService,
+            false,
+            false,
+            context.LanguageView,
+            context.PersianLocale);
+
+        Assert.AreEqual(FirstLaunchNarrativeStartupDisposition.AwaitingLanguage, disposition);
+        Assert.IsFalse(context.Helper.IsPlaying);
+        Assert.AreEqual(FirstLaunchProfileState.NotStarted, context.SaveService.LoadProfile().firstLaunchStatus);
+        Assert.AreEqual(FirstLaunchNarrativeLanguage.Unselected.ToString(), context.SaveService.LoadProfile().firstLaunchLanguage);
+        Assert.AreEqual(1f, context.LanguageView.GetComponent<CanvasGroup>().alpha);
+        Assert.AreEqual(0f, context.View.GetComponent<CanvasGroup>().alpha);
+
+        Button persian = Array.Find(
+            context.LanguageInstance.GetComponentsInChildren<Button>(true),
+            button => button.name == "PersianButton");
+        Assert.NotNull(persian);
+        persian.onClick.Invoke();
+
+        PlayerProfileSaveData saved = context.SaveService.LoadProfile();
+        Assert.IsTrue(context.Helper.IsPlaying);
+        Assert.AreEqual(FirstLaunchProfileState.InProgress, saved.firstLaunchStatus);
+        Assert.AreEqual(FirstLaunchNarrativeLanguage.Persian.ToString(), saved.firstLaunchLanguage);
+        Assert.AreEqual("فرمانده", saved.firstLaunchCommanderCallsign);
+        Assert.AreEqual(0f, context.LanguageView.GetComponent<CanvasGroup>().alpha);
     }
 
     [Test]
@@ -200,14 +255,19 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
         saveService.SaveProfile(profile);
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(FirstLaunchNarrativePresentationPrefabBuilder.PrefabPath);
         GameObject instance = UnityEngine.Object.Instantiate(prefab);
+        GameObject languagePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(FirstLaunchNarrativePresentationPrefabBuilder.LanguageChoicePrefabPath);
+        GameObject languageInstance = UnityEngine.Object.Instantiate(languagePrefab);
         return new Context(
             root,
             saveService,
             instance,
             instance.GetComponent<NarrativeSequenceView>(),
+            languageInstance,
+            languageInstance.GetComponent<FirstLaunchLanguageChoiceView>(),
             AssetDatabase.LoadAssetAtPath<NarrativeSequenceConfig>(FirstLaunchNarrativeConfigBuilder.SequencePath),
             AssetDatabase.LoadAssetAtPath<NarrativeSpeakerCatalog>(FirstLaunchNarrativeConfigBuilder.SpeakerPath),
-            AssetDatabase.LoadAssetAtPath<NarrativePunctuationConfig>(FirstLaunchNarrativeConfigBuilder.PunctuationPath));
+            AssetDatabase.LoadAssetAtPath<NarrativePunctuationConfig>(FirstLaunchNarrativeConfigBuilder.PunctuationPath),
+            AssetDatabase.LoadAssetAtPath<NarrativeLocaleConfig>(FirstLaunchNarrativeConfigBuilder.PersianLocalePath));
     }
 
     private sealed class Context : IDisposable
@@ -216,11 +276,14 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
         public readonly SaveService SaveService;
         public readonly GameObject Instance;
         public readonly NarrativeSequenceView View;
+        public readonly GameObject LanguageInstance;
+        public readonly FirstLaunchLanguageChoiceView LanguageView;
         public readonly NarrativeSequenceConfig Sequence;
         public readonly NarrativeSpeakerCatalog Speakers;
         public readonly NarrativePunctuationConfig Punctuation;
+        public readonly NarrativeLocaleConfig PersianLocale;
         public readonly FirstLaunchNarrativeCompositionSystemHelper Helper = new();
-        public Context(string root, SaveService saveService, GameObject instance, NarrativeSequenceView view, NarrativeSequenceConfig sequence, NarrativeSpeakerCatalog speakers, NarrativePunctuationConfig punctuation) { Root = root; SaveService = saveService; Instance = instance; View = view; Sequence = sequence; Speakers = speakers; Punctuation = punctuation; }
-        public void Dispose() { Helper.Shutdown(); UnityEngine.Object.DestroyImmediate(Instance); if (Directory.Exists(Root)) Directory.Delete(Root, true); }
+        public Context(string root, SaveService saveService, GameObject instance, NarrativeSequenceView view, GameObject languageInstance, FirstLaunchLanguageChoiceView languageView, NarrativeSequenceConfig sequence, NarrativeSpeakerCatalog speakers, NarrativePunctuationConfig punctuation, NarrativeLocaleConfig persianLocale) { Root = root; SaveService = saveService; Instance = instance; View = view; LanguageInstance = languageInstance; LanguageView = languageView; Sequence = sequence; Speakers = speakers; Punctuation = punctuation; PersianLocale = persianLocale; }
+        public void Dispose() { Helper.Shutdown(); UnityEngine.Object.DestroyImmediate(Instance); UnityEngine.Object.DestroyImmediate(LanguageInstance); if (Directory.Exists(Root)) Directory.Delete(Root, true); }
     }
 }

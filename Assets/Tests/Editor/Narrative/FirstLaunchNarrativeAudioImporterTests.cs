@@ -36,7 +36,7 @@ public sealed class FirstLaunchNarrativeAudioImporterTests
         {
             FirstLaunchNarrativeAudioImporterTests tests = new();
             tests.TemporaryVoiceBatch_HasStableMonoClipIdsAndRequiredImportSettings();
-            Debug.Log("[FirstLaunchNarrativeAudioImporterValidation] result=Passed tests=1 clips=19");
+            Debug.Log("[FirstLaunchNarrativeAudioImporterValidation] result=Passed tests=1 clips=38 locales=2");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -53,13 +53,23 @@ public sealed class FirstLaunchNarrativeAudioImporterTests
         FirstLaunchNarrativeAudioImporter.ConfigureTemporaryVoiceImports();
 
         CollectionAssert.AreEqual(ExpectedClipIds, FirstLaunchNarrativeAudioImporter.StableClipIds);
+        AssertVoiceSet(FirstLaunchNarrativeAudioImporter.VoiceRoot, false);
+        AssertVoiceSet(FirstLaunchNarrativeAudioImporter.PersianVoiceRoot, true);
+
+        Assert.DoesNotThrow(FirstLaunchNarrativeAudioImporter.ValidateTemporaryVoiceImports);
+    }
+
+    private static void AssertVoiceSet(string voiceRoot, bool persian)
+    {
         Assert.That(
-            Directory.GetFiles(FirstLaunchNarrativeAudioImporter.VoiceRoot, "*.wav", SearchOption.TopDirectoryOnly),
+            Directory.GetFiles(voiceRoot, "*.wav", SearchOption.TopDirectoryOnly),
             Has.Length.EqualTo(ExpectedClipIds.Length));
 
         foreach (string clipId in ExpectedClipIds)
         {
-            string assetPath = FirstLaunchNarrativeAudioImporter.GetAssetPath(clipId);
+            string assetPath = persian
+                ? FirstLaunchNarrativeAudioImporter.GetPersianAssetPath(clipId)
+                : FirstLaunchNarrativeAudioImporter.GetAssetPath(clipId);
             AudioImporter importer = AssetImporter.GetAtPath(assetPath) as AudioImporter;
             AudioClip clip = AssetDatabase.LoadAssetAtPath<AudioClip>(assetPath);
 
@@ -72,6 +82,8 @@ public sealed class FirstLaunchNarrativeAudioImporterTests
             Assert.IsFalse(importer.ambisonic, assetPath);
             StringAssert.Contains(FirstLaunchNarrativeAudioImporter.RightsStatus, importer.userData, assetPath);
             StringAssert.Contains("runtimeNetworkTts=false", importer.userData, assetPath);
+            if (persian)
+                StringAssert.Contains("locale=fa-IR", importer.userData, assetPath);
 
             AudioImporterSampleSettings settings = importer.defaultSampleSettings;
             Assert.AreEqual(AudioClipLoadType.CompressedInMemory, settings.loadType, assetPath);
@@ -82,8 +94,6 @@ public sealed class FirstLaunchNarrativeAudioImporterTests
 
             AssertNormalizeDisabledWhenSupported(importer, assetPath);
         }
-
-        Assert.DoesNotThrow(FirstLaunchNarrativeAudioImporter.ValidateTemporaryVoiceImports);
     }
 
     private static void AssertNormalizeDisabledWhenSupported(AudioImporter importer, string assetPath)

@@ -25,6 +25,8 @@ namespace Game.Composition
         [SerializeField] private NarrativeSequenceConfig firstLaunchNarrativeConfig;
         [SerializeField] private NarrativeSpeakerCatalog firstLaunchSpeakerCatalog;
         [SerializeField] private NarrativePunctuationConfig firstLaunchPunctuationProfile;
+        [SerializeField] private FirstLaunchLanguageChoiceView firstLaunchLanguageChoiceView;
+        [SerializeField] private NarrativeLocaleConfig firstLaunchPersianLocale;
 
         public RuntimeUiConfig RuntimeUiConfig => runtimeUiConfig;
         public RuntimeUiMode UiMode => runtimeUiConfig != null ? runtimeUiConfig.Mode : RuntimeUiMode.Canvas;
@@ -38,6 +40,8 @@ namespace Game.Composition
         public NarrativeSequenceConfig FirstLaunchNarrativeConfig => firstLaunchNarrativeConfig;
         public NarrativeSpeakerCatalog FirstLaunchSpeakerCatalog => firstLaunchSpeakerCatalog;
         public NarrativePunctuationConfig FirstLaunchPunctuationProfile => firstLaunchPunctuationProfile;
+        public FirstLaunchLanguageChoiceView FirstLaunchLanguageChoiceView => firstLaunchLanguageChoiceView;
+        public NarrativeLocaleConfig FirstLaunchPersianLocale => firstLaunchPersianLocale;
         public PerformanceDiagnosticsSystemHelper PerformanceDiagnostics => menuBootstrapSystem.PerformanceDiagnostics;
         public bool IsPerformanceDiagnosticsInitialized => menuBootstrapSystem.IsPerformanceDiagnosticsInitialized;
 
@@ -72,7 +76,9 @@ namespace Game.Composition
             NarrativeSequenceView configuredFirstLaunchNarrativeView = null,
             NarrativeSequenceConfig configuredFirstLaunchNarrativeConfig = null,
             NarrativeSpeakerCatalog configuredFirstLaunchSpeakerCatalog = null,
-            NarrativePunctuationConfig configuredFirstLaunchPunctuationProfile = null)
+            NarrativePunctuationConfig configuredFirstLaunchPunctuationProfile = null,
+            FirstLaunchLanguageChoiceView configuredFirstLaunchLanguageChoiceView = null,
+            NarrativeLocaleConfig configuredFirstLaunchPersianLocale = null)
         {
             if (configuredRuntimeUiConfig != null)
                 runtimeUiConfig = configuredRuntimeUiConfig;
@@ -90,6 +96,10 @@ namespace Game.Composition
                 firstLaunchSpeakerCatalog = configuredFirstLaunchSpeakerCatalog;
             if (configuredFirstLaunchPunctuationProfile != null)
                 firstLaunchPunctuationProfile = configuredFirstLaunchPunctuationProfile;
+            if (configuredFirstLaunchLanguageChoiceView != null)
+                firstLaunchLanguageChoiceView = configuredFirstLaunchLanguageChoiceView;
+            if (configuredFirstLaunchPersianLocale != null)
+                firstLaunchPersianLocale = configuredFirstLaunchPersianLocale;
         }
 
         public void ApplyRuntimeUiMode()

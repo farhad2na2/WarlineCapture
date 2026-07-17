@@ -1,6 +1,7 @@
 using System.IO;
 using NUnit.Framework;
 using Game.Runtime;
+using Game.Narrative.Contracts;
 
 public sealed class SaveServiceTests
 {
@@ -87,6 +88,7 @@ public sealed class SaveServiceTests
     {
         PlayerProfileSaveData fresh = _service.LoadProfile();
         Assert.AreEqual(FirstLaunchProfileState.NotStarted, fresh.firstLaunchStatus);
+        Assert.AreEqual(FirstLaunchNarrativeLanguage.Unselected.ToString(), fresh.firstLaunchLanguage);
         Assert.AreEqual(FirstLaunchProfileState.CurrentSchemaVersion, fresh.profileSchemaVersion);
 
         fresh.firstLaunchStatus = FirstLaunchProfileState.HandoffPending;
@@ -96,6 +98,7 @@ public sealed class SaveServiceTests
         fresh.firstLaunchGuidance = "Contextual";
         fresh.firstLaunchLastCompletedStateId = "FL-P18";
         fresh.firstLaunchWatched = true;
+        fresh.firstLaunchLanguage = FirstLaunchNarrativeLanguage.Persian.ToString();
         _service.SaveProfile(fresh);
 
         PlayerProfileSaveData loaded = _service.LoadProfile();
@@ -106,6 +109,7 @@ public sealed class SaveServiceTests
         Assert.AreEqual("Contextual", loaded.firstLaunchGuidance);
         Assert.AreEqual("FL-P18", loaded.firstLaunchLastCompletedStateId);
         Assert.IsTrue(loaded.firstLaunchWatched);
+        Assert.AreEqual(FirstLaunchNarrativeLanguage.Persian.ToString(), loaded.firstLaunchLanguage);
     }
 
     [Test]
@@ -131,6 +135,7 @@ public sealed class SaveServiceTests
         Assert.AreEqual(FirstLaunchProfileState.NotStarted, loaded.firstLaunchStatus);
         Assert.AreEqual("COMMANDER", loaded.firstLaunchCommanderCallsign);
         Assert.AreEqual("Full", loaded.firstLaunchGuidance);
+        Assert.AreEqual(FirstLaunchNarrativeLanguage.Unselected.ToString(), loaded.firstLaunchLanguage);
     }
 
     [Test]
@@ -148,6 +153,7 @@ public sealed class SaveServiceTests
             firstLaunchCommanderDisplayName = "Alex Morgan",
             firstLaunchCommanderPortraitIndex = 2,
             firstLaunchGuidance = "Contextual",
+            firstLaunchLanguage = FirstLaunchNarrativeLanguage.Persian.ToString(),
             firstLaunchWatched = true,
             firstLaunchSkipped = true
         });
@@ -165,6 +171,7 @@ public sealed class SaveServiceTests
         Assert.AreEqual("Commander", loaded.firstLaunchCommanderDisplayName);
         Assert.AreEqual(0, loaded.firstLaunchCommanderPortraitIndex);
         Assert.AreEqual("Full", loaded.firstLaunchGuidance);
+        Assert.AreEqual(FirstLaunchNarrativeLanguage.Unselected.ToString(), loaded.firstLaunchLanguage);
         Assert.IsFalse(loaded.firstLaunchWatched);
         Assert.IsFalse(loaded.firstLaunchSkipped);
     }

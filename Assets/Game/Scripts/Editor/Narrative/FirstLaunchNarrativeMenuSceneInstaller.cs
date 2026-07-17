@@ -25,6 +25,9 @@ namespace Game.Editor
             Transform existing = bootstrap.UiCanvas.transform.Find("NarrativeLayer");
             if (existing != null)
                 Object.DestroyImmediate(existing.gameObject);
+            Transform existingLanguage = bootstrap.UiCanvas.transform.Find("FirstLaunchLanguageLayer");
+            if (existingLanguage != null)
+                Object.DestroyImmediate(existingLanguage.gameObject);
 
             GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(FirstLaunchNarrativePresentationPrefabBuilder.PrefabPath);
             GameObject instance = PrefabUtility.InstantiatePrefab(prefab, bootstrap.UiCanvas.transform) as GameObject;
@@ -38,11 +41,25 @@ namespace Game.Editor
             rect.offsetMax = Vector2.zero;
             rect.SetAsLastSibling();
 
+            GameObject languagePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(FirstLaunchNarrativePresentationPrefabBuilder.LanguageChoicePrefabPath);
+            GameObject languageInstance = PrefabUtility.InstantiatePrefab(languagePrefab, bootstrap.UiCanvas.transform) as GameObject;
+            if (languageInstance == null)
+                throw new UnityException("Failed to instantiate FirstLaunch language choice prefab.");
+            languageInstance.name = "FirstLaunchLanguageLayer";
+            RectTransform languageRect = languageInstance.GetComponent<RectTransform>();
+            languageRect.anchorMin = Vector2.zero;
+            languageRect.anchorMax = Vector2.one;
+            languageRect.offsetMin = Vector2.zero;
+            languageRect.offsetMax = Vector2.zero;
+            languageRect.SetAsLastSibling();
+
             SerializedObject serialized = new(bootstrap);
             Set(serialized, "firstLaunchNarrativeView", instance.GetComponent<NarrativeSequenceView>());
             Set(serialized, "firstLaunchNarrativeConfig", AssetDatabase.LoadAssetAtPath<NarrativeSequenceConfig>(FirstLaunchNarrativeConfigBuilder.SequencePath));
             Set(serialized, "firstLaunchSpeakerCatalog", AssetDatabase.LoadAssetAtPath<NarrativeSpeakerCatalog>(FirstLaunchNarrativeConfigBuilder.SpeakerPath));
             Set(serialized, "firstLaunchPunctuationProfile", AssetDatabase.LoadAssetAtPath<NarrativePunctuationConfig>(FirstLaunchNarrativeConfigBuilder.PunctuationPath));
+            Set(serialized, "firstLaunchLanguageChoiceView", languageInstance.GetComponent<FirstLaunchLanguageChoiceView>());
+            Set(serialized, "firstLaunchPersianLocale", AssetDatabase.LoadAssetAtPath<NarrativeLocaleConfig>(FirstLaunchNarrativeConfigBuilder.PersianLocalePath));
             serialized.ApplyModifiedPropertiesWithoutUndo();
 
             EditorSceneManager.MarkSceneDirty(scene);

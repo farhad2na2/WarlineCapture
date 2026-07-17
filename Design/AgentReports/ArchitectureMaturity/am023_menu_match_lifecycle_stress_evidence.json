@@ -1,0 +1,129 @@
+{
+  "artifactId": "AM023-MENU-MATCH-LIFECYCLE-STRESS-EVIDENCE",
+  "schemaVersion": 1,
+  "taskId": "AM-023",
+  "result": "Accepted",
+  "implementation": {
+    "commit": "1a2e4a9921ab0867c00f20e74f2397fc5507c922",
+    "tree": "192b78fde448f6eda9d84902f68ae4ca730545a3"
+  },
+  "scope": {
+    "warmupCycles": 1,
+    "measuredCycles": 10,
+    "extendedHundredCycleStressDeferred": true,
+    "releaseCertificationActivated": false,
+    "protectedDomainFilesChanged": 0
+  },
+  "namedWarmupDelta": {
+    "owner": "persistent scenario/catalog and runtime bootstrap entities",
+    "preWarmupMenuEntityCount": 17,
+    "postWarmupMenuEntityCount": 494,
+    "rule": "The post-warm-up count is the measured Menu baseline; no measured-cycle growth is permitted."
+  },
+  "stableSnapshots": {
+    "menu": {
+      "cycles": [0, 5, 10],
+      "worldSequence": 0,
+      "loadedScenes": 1,
+      "sceneRoots": 1,
+      "entities": 494,
+      "managedSystems": 69,
+      "lifecycleRoots": 1,
+      "operationMapRoots": 0,
+      "menuViews": 1,
+      "matchViews": 0,
+      "matchHudViews": 0,
+      "enabledAudioListeners": 1,
+      "missileTrailRoots": 0
+    },
+    "match": {
+      "cycles": [0, 5, 10],
+      "worldSequence": 0,
+      "loadedScenes": 2,
+      "sceneRoots": 17,
+      "entities": 2027,
+      "managedSystems": 69,
+      "lifecycleRoots": 1,
+      "operationMapRoots": 1,
+      "menuViews": 1,
+      "matchViews": 1,
+      "matchHudViews": 1,
+      "enabledAudioListeners": 1,
+      "missileTrailRoots": 0
+    },
+    "criticalUnmanagedSystems": {
+      "UiShellFlowSystem": "same non-null SystemHandle at every checkpoint",
+      "UiActionRequestSystem": "same non-null SystemHandle at every checkpoint"
+    }
+  },
+  "lifecycleDefectClosed": {
+    "symptom": "A destroyed MatchHudSelectionPanelView remained reachable through IMatchHudSelectionPanelView during the teardown/rebind gap.",
+    "failure": "MissingReferenceException from MatchHudTransportPassengerDrawerView on the second production transition.",
+    "fixOwner": "SelectionHudFeedbackUiSystemHelper",
+    "fix": "Normalize a destroyed UnityEngine.Object-backed interface to null, clear its view cache, and wait for the replacement HUD binding.",
+    "productionBehaviorChanged": false
+  },
+  "sources": [
+    {
+      "path": "Assets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs",
+      "sha256": "7ff80b5d385051bce3e6e376f58f17d8116335afbdf1bd483e77161c740ce258"
+    },
+    {
+      "path": "Assets/Tests/PlayMode/Aph805MenuMatchMenuLifecyclePlayModeTests.cs",
+      "sha256": "19fe2d3bf169ed13869d71bd0c8290a50989164ba1c31adca1fa48a19048d1ff"
+    },
+    {
+      "path": "Assets/Tests/PlayMode/ArchitectureMenuMatchLifecycleSnapshotCollector.cs",
+      "sha256": "cba5988e94f4ae87e19356d02ef71396eef17c8bcb89bdcbee67f66f3c83109f"
+    },
+    {
+      "path": "Assets/Tests/PlayMode/ArchitectureMenuMatchLifecycleSnapshotCollector.cs.meta",
+      "sha256": "89c94fae66c0fd6f3518c38603c1d2e5084c4f8bda23af657331855372c7491a"
+    },
+    {
+      "path": "Assets/Tests/PlayMode/ArchitectureMenuMatchLifecycleStressPlayModeTests.cs",
+      "sha256": "0b3174f7cca89e222f058033ff7c116419145cbdec2a691a32254450cc86e349"
+    },
+    {
+      "path": "Assets/Tests/PlayMode/ArchitectureMenuMatchLifecycleStressPlayModeTests.cs.meta",
+      "sha256": "9e5bdcdecd02897defb857e14ae90476b1c1275ef34df91a348e2d534c6475e9"
+    },
+    {
+      "path": "Tools/CI/tests/test_architecture_menu_match_lifecycle_stress.py",
+      "sha256": "e66913cf7ab12ad67833b28b3ad544030c0da8fc8be210387095139a8cdb3498"
+    }
+  ],
+  "validation": {
+    "unityVersion": "6000.5.2f1",
+    "playMode": {
+      "passed": 1,
+      "failed": 0,
+      "durationSeconds": 188.705594,
+      "compilerErrors": 0,
+      "log": {
+        "path": "Design/AgentReports/ArchitectureMaturity/Logs/am023_ten_cycle_playmode.log.gz",
+        "sha256": "fc67467ed821105d51b9bc2b87f8a905c2c3b12d1d924f038cbefae5fcd5e581"
+      },
+      "results": {
+        "path": "Design/AgentReports/ArchitectureMaturity/Logs/am023_ten_cycle_playmode.xml.gz",
+        "sha256": "a5fa4e4d052b4411f141643f9e792ae9e420e39152a20b8cb40fc34a8c2a3747"
+      }
+    },
+    "staticContract": {
+      "result": "5 / 5 passed",
+      "log": {
+        "path": "Design/AgentReports/ArchitectureMaturity/Logs/am023_static_contract.log.gz",
+        "sha256": "aefe605f6672699ca05e7958e13f15664581cdf71afcaf431c2c45cc3b6ad4e1"
+      }
+    },
+    "integratedArchitecture": {
+      "result": "152 / 152 passed",
+      "log": {
+        "path": "Design/AgentReports/ArchitectureMaturity/Logs/am023_integrated_architecture.log.gz",
+        "sha256": "bafba3b539ded5fbf2ef9e3a438f9dfb965e0431bf950ef24769cbdc0a82a9aa"
+      }
+    },
+    "diffCheck": "passed"
+  },
+  "nextTask": "AM-024"
+}

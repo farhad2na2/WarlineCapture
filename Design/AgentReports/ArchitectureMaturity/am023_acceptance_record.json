@@ -1,0 +1,29 @@
+{
+  "artifactId": "AM023-ACCEPTANCE-RECORD",
+  "schemaVersion": 1,
+  "taskId": "AM-023",
+  "result": "Accepted",
+  "implementation": {
+    "commit": "1a2e4a9921ab0867c00f20e74f2397fc5507c922",
+    "tree": "192b78fde448f6eda9d84902f68ae4ca730545a3"
+  },
+  "acceptedEvidence": {
+    "path": "Design/AgentReports/ArchitectureMaturity/am023_menu_match_lifecycle_stress_evidence.json",
+    "sha256": "c688e7907b77da89da08720c4ddff072eec43da3500f87347b1f9765cf820da2"
+  },
+  "acceptance": {
+    "warmupCycles": 1,
+    "measuredCycles": 10,
+    "unchangedWorld": true,
+    "stableMenuSnapshots": 3,
+    "stableMatchSnapshots": 3,
+    "compilerErrors": 0,
+    "staticContractPassed": 5,
+    "integratedArchitecturePassed": 152,
+    "integratedArchitectureFailed": 0,
+    "extendedHundredCycleStressDeferred": true
+  },
+  "lifecycleDefectClosed": "Destroyed Unity-backed selection HUD interfaces are normalized to null at the owning feedback boundary before the replacement HUD binds.",
+  "scope": "No operation-map, FirstLaunch, audio, UI visual-lock, scene, prefab, package, ProjectSettings, or release-certification file changed.",
+  "nextTask": "AM-024"
+}

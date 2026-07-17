@@ -241,6 +241,28 @@ public sealed class PersistentResourceOwnershipLifecycleTests
         }
     }
 
+    [Test]
+    public void ScenarioLabGrid_DoesNotRetainDuplicateNativeContainerOwners()
+    {
+        string[] removedMirrorFields =
+        {
+            "scenarioGridBlockerCounts",
+            "scenarioGridBlocked",
+            "scenarioGridOccupied",
+            "scenarioGridFriendlyPassFactionIds",
+            "scenarioGridPathPool"
+        };
+
+        for (int i = 0; i < removedMirrorFields.Length; i++)
+        {
+            Assert.IsNull(
+                typeof(BattleScenarioLabVisualPlayback).GetField(
+                    removedMirrorFields[i],
+                    BindingFlags.Instance | BindingFlags.NonPublic),
+                $"Scenario Lab must not mirror ECS-owned native container {removedMirrorFields[i]}.");
+        }
+    }
+
     private static void CreateShellBoundary(World world, UIRoute route)
     {
         Entity entity = world.EntityManager.CreateEntity(

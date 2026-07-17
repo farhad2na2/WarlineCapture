@@ -54,12 +54,6 @@ namespace Game.Runtime
         private static readonly Vector3 DefaultCameraLookAt = new(16f, 0f, 16f);
 
         private Coroutine playbackRoutine;
-        private NativeArray<int> scenarioGridBlockerCounts;
-        private NativeBitArray scenarioGridBlocked;
-        private NativeBitArray scenarioGridOccupied;
-        private NativeArray<byte> scenarioGridFriendlyPassFactionIds;
-        private NativeList<int2> scenarioGridPathPool;
-
         public bool CanPlay(BattleScenarioDefinition definition)
         {
             if (definition == null)
@@ -895,16 +889,14 @@ namespace Game.Runtime
 
         private void CreateScenarioGrid(EntityManager em, int width, int height)
         {
-            DisposeScenarioGrid();
-
             int gridSize = width * height;
-            scenarioGridBlockerCounts = new NativeArray<int>(gridSize, Allocator.Persistent);
-            scenarioGridBlocked = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
-            scenarioGridOccupied = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
-            scenarioGridFriendlyPassFactionIds = new NativeArray<byte>(gridSize, Allocator.Persistent);
-            for (int i = 0; i < scenarioGridFriendlyPassFactionIds.Length; i++)
-                scenarioGridFriendlyPassFactionIds[i] = byte.MaxValue;
-            scenarioGridPathPool = new NativeList<int2>(1024, Allocator.Persistent);
+            var blockerCounts = new NativeArray<int>(gridSize, Allocator.Persistent);
+            var blocked = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+            var occupied = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+            var friendlyPassFactionIds = new NativeArray<byte>(gridSize, Allocator.Persistent);
+            for (int i = 0; i < friendlyPassFactionIds.Length; i++)
+                friendlyPassFactionIds[i] = byte.MaxValue;
+            var pathPool = new NativeList<int2>(1024, Allocator.Persistent);
 
             Entity gridEntity = em.CreateEntity(
                 typeof(BattleScenarioLabRuntimeGridTag),
@@ -917,16 +909,16 @@ namespace Game.Runtime
             em.SetComponentData(gridEntity, new DynamicBlockerComponent
             {
                 GridSize = gridSize,
-                Counts = scenarioGridBlockerCounts,
-                Blocked = scenarioGridBlocked,
-                FriendlyPassFactionIds = scenarioGridFriendlyPassFactionIds
+                Counts = blockerCounts,
+                Blocked = blocked,
+                FriendlyPassFactionIds = friendlyPassFactionIds
             });
             em.SetComponentData(gridEntity, new DynamicOccupancyComponent
             {
                 GridSize = gridSize,
-                Occupied = scenarioGridOccupied
+                Occupied = occupied
             });
-            em.SetComponentData(gridEntity, new PathPoolComponent { Cells = scenarioGridPathPool });
+            em.SetComponentData(gridEntity, new PathPoolComponent { Cells = pathPool });
 
             em.AddBuffer<GridWalkable>(gridEntity);
             em.AddBuffer<GridRoad>(gridEntity);
@@ -986,20 +978,6 @@ namespace Game.Runtime
             }
         }
 
-        private void DisposeScenarioGrid()
-        {
-            if (scenarioGridBlockerCounts.IsCreated)
-                scenarioGridBlockerCounts.Dispose();
-            if (scenarioGridBlocked.IsCreated)
-                scenarioGridBlocked.Dispose();
-            if (scenarioGridOccupied.IsCreated)
-                scenarioGridOccupied.Dispose();
-            if (scenarioGridFriendlyPassFactionIds.IsCreated)
-                scenarioGridFriendlyPassFactionIds.Dispose();
-            if (scenarioGridPathPool.IsCreated)
-                scenarioGridPathPool.Dispose();
-        }
-
         private void DisposeScenarioGrid(EntityManager em)
         {
             using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<BattleScenarioLabRuntimeGridTag>());
@@ -1039,11 +1017,6 @@ namespace Game.Runtime
                 }
             }
 
-            scenarioGridBlockerCounts = default;
-            scenarioGridBlocked = default;
-            scenarioGridOccupied = default;
-            scenarioGridFriendlyPassFactionIds = default;
-            scenarioGridPathPool = default;
         }
 
         private static void ConfigureTb001GroundVehicleScenario(EntityManager em, Entity transport, Entity soldier)

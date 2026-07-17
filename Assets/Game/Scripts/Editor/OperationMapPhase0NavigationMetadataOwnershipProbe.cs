@@ -66,7 +66,7 @@ namespace Game.Editor
         private const string DecisionRequired = "DecisionRequired";
 
         private const string ExpectedPayloadSha256 =
-            "2e140756fe2ab0cf76a25e732d55caa7f4d0393e38300ebdbc84f5c86fb8caa4";
+            "6505e9a214e232dbe718803d4560a4cddb7f59629a6ae3ca883426f74f5340f7";
 
         private static readonly UTF8Encoding Utf8WithoutBom = new(false);
 
@@ -627,9 +627,9 @@ namespace Game.Editor
                 ["Assets/Game/Scripts/Components/MapSurfaceComponents.cs"] = "f11cb3fa488153f20de6bf7ea4b5f1399266d38fa34dc737dc60ec6173d90036",
                 ["Assets/Game/Scripts/Composition/MapSurfaceRuntimeBootstrapSceneSystemHelper.cs"] = "4461ca141df0189dc9554d5ff5168fdb468b15164fcfcae684278036c74e8005",
                 ["Assets/Game/Scripts/Composition/MapSurfaceSceneOverlayPresentation.cs"] = "d3be1f2f62147af50973556181a7159b59573da0a0df22c4f1e3bcf2a548c9eb",
-                ["Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs"] = "e0af3018b60ce198ad51f8a497123bcdb92c530cef04a1bb14f813da5a49e5dd",
+                ["Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs"] = "ada268bdeec4ffeb61d0c7805e14405bebc52023a0def7190bdbc2fe4790ea10",
                 ["Assets/Game/Scripts/Systems/BuildingRuntimeSurfaceOverlaySystem.cs"] = "35ecb50d19a3291336e4c10032a37ffd1fc31957e87d6beaaf1e54bf2f3ad9d0",
-                ["Assets/Game/Scripts/Systems/BuildingRunwaySystem.cs"] = "8f81e5a883e478d8ace1aa96301340526289fd6b193f0db250663e00c2f31896",
+                ["Assets/Game/Scripts/Systems/BuildingRunwaySystem.cs"] = "bd52eb7d779aa35c2c6d9ce3e4b190d78de9dc0bd00a5a345265c55a9919cf55",
                 ["Assets/Game/Scripts/Systems/BuildingSpawnCompositionSystemHelper.cs"] = "f4b59b87e76270f9c0f750dcb3a976b9270c5d3fe6013bd13eebf05cd6d798d7",
                 ["Assets/Game/Scripts/Systems/DynamicBlockerInitSystem.cs"] = "5113911427664a72a5c0c7736aa633a6e8c4439e92fda9d14e7798230974fb7d",
                 ["Assets/Game/Scripts/Systems/DynamicOccupancyRebuildSystem.cs"] = "4ab5a347080e10c9168d21cd7be512ccb995ca056d93c4a91ffe0b751d3a0ab5",

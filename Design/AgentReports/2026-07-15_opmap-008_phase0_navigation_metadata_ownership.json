@@ -10,7 +10,7 @@
         "directInputs": 31,
         "needsDecision": 4
     },
-    "identityPayloadSha256": "2e140756fe2ab0cf76a25e732d55caa7f4d0393e38300ebdbc84f5c86fb8caa4",
+    "identityPayloadSha256": "6505e9a214e232dbe718803d4560a4cddb7f59629a6ae3ca883426f74f5340f7",
     "acceptedEvidence": [
         {
             "task": "opmap-002",
@@ -93,7 +93,7 @@
         },
         {
             "path": "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
-            "sha256": "e0af3018b60ce198ad51f8a497123bcdb92c530cef04a1bb14f813da5a49e5dd"
+            "sha256": "ada268bdeec4ffeb61d0c7805e14405bebc52023a0def7190bdbc2fe4790ea10"
         },
         {
             "path": "Assets/Game/Scripts/Systems/BuildingRuntimeSurfaceOverlaySystem.cs",
@@ -101,7 +101,7 @@
         },
         {
             "path": "Assets/Game/Scripts/Systems/BuildingRunwaySystem.cs",
-            "sha256": "8f81e5a883e478d8ace1aa96301340526289fd6b193f0db250663e00c2f31896"
+            "sha256": "bd52eb7d779aa35c2c6d9ce3e4b190d78de9dc0bd00a5a345265c55a9919cf55"
         },
         {
             "path": "Assets/Game/Scripts/Systems/BuildingSpawnCompositionSystemHelper.cs",

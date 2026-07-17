@@ -5,6 +5,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 using Game.Components;
+using RuntimeSignature = Game.Runtime.BuildingRuntimeSignatureUtility;
 
 namespace Game.Runtime
 {
@@ -568,6 +569,7 @@ namespace Game.Runtime
                     break;
                 default:
                     int runtimeBuildingSignature = ComputeRuntimeBuildingSignature(runtimeBuildings);
+                    runtimeBuildingSignature ^= OperationMapRunwayReadModelUtility.ResolveGenerationSignature(em);
                     if (runtimeBuildingSignature != _lastPublishedRuntimeBuildingSignature)
                     {
                         PublishBuildingSetReadModels(em, boundaryEntity, runtimeBuildings);
@@ -1185,6 +1187,11 @@ namespace Game.Runtime
             if (!TryGetGridConfig(em, out GridConfig grid))
                 return;
 
+            if (!OperationMapRunwayReadModelUtility.TryAppendRunways(
+                    em, buffer, in grid, out var mapFactions, out _, out _))
+                return;
+            int mapCount = buffer.Length;
+
             if (runtimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
             {
                 foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in runtimeBuildingMap)
@@ -1195,6 +1202,8 @@ namespace Game.Runtime
                 foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in runtimeBuildings)
                     PublishFactionRunwayForBuilding(buffer, grid, entry.Value);
             }
+
+            OperationMapRunwayReadModelUtility.RemoveBuildingFallbacks(buffer, mapCount, in mapFactions);
         }
 
         private void PublishFactionRunwayForBuilding(
@@ -1407,10 +1416,10 @@ namespace Game.Runtime
             hash = (hash * 31) + (building.HasOwnerFaction ? building.OwnerFactionId : 255);
             hash = (hash * 31) + Mathf.Max(0, building.OilStorageCapacity);
             hash = (hash * 31) + Mathf.Max(0, building.FuelStorageCapacity);
-            hash = AddFloatSignature(hash, storedOilBarrels);
-            hash = AddFloatSignature(hash, storedFuelBarrels);
-            hash = AddFloatSignature(hash, building.OilBarrelsPerDay);
-            hash = AddFloatSignature(hash, building.FuelBarrelsPerDay);
+            hash = RuntimeSignature.AddFloat(hash, storedOilBarrels);
+            hash = RuntimeSignature.AddFloat(hash, storedFuelBarrels);
+            hash = RuntimeSignature.AddFloat(hash, building.OilBarrelsPerDay);
+            hash = RuntimeSignature.AddFloat(hash, building.FuelBarrelsPerDay);
             hash = (hash * 31) + unchecked((int)storageVersion);
             return hash;
         }
@@ -1472,7 +1481,7 @@ namespace Game.Runtime
                         hash = (hash * 31) + row.ProductionSlotIndex;
                         hash = (hash * 31) + row.OwnerFactionId;
                         hash = (hash * 31) + row.HasOwnerFaction;
-                        hash = AddEntitySignature(hash, row.Unit);
+                        hash = RuntimeSignature.AddEntity(hash, row.Unit);
                         hash = (hash * 31) + row.UnitSourceKey.GetHashCode();
                         if (hasEntityManager)
                             hash = AddProducedUnitAliveSignature(hash, row.Unit, producedUnitEntityManager);
@@ -1503,7 +1512,7 @@ namespace Game.Runtime
                 {
                     RuntimeBuildingEntity.PendingProduction pending = building.PendingProductions[i];
                     hash = (hash * 31) + (pending?.ProductionIndex ?? -1);
-                    hash = AddUnityObjectSignature(hash, pending?.Prefab);
+                    hash = RuntimeSignature.AddUnityObject(hash, pending?.Prefab);
                     hash = (hash * 31) + (pending?.ReservedProductionSlotIndex ?? -1);
                 }
             }
@@ -1518,7 +1527,7 @@ namespace Game.Runtime
                 for (int i = 0; i < building.ProducedUnits.Count; i++)
                 {
                     Entity unit = building.ProducedUnits[i];
-                    hash = AddEntitySignature(hash, unit);
+                    hash = RuntimeSignature.AddEntity(hash, unit);
                     if (hasEntityManager)
                         hash = AddProducedUnitAliveSignature(hash, unit, producedUnitEntityManager);
                     if (building.ProducedUnitSourceKeys != null &&
@@ -1530,7 +1539,7 @@ namespace Game.Runtime
                              building.ProducedUnitPrefabs.TryGetValue(unit, out GameObject prefab) &&
                              prefab != null)
                     {
-                        hash = AddUnityObjectSignature(hash, prefab);
+                        hash = RuntimeSignature.AddUnityObject(hash, prefab);
                     }
                 }
             }
@@ -1549,25 +1558,8 @@ namespace Game.Runtime
 
             hash = (hash * 31) + 1;
             if (em.HasComponent<UnitHealth>(unit))
-                hash = AddFloatSignature(hash, em.GetComponentData<UnitHealth>(unit).Current);
+                hash = RuntimeSignature.AddFloat(hash, em.GetComponentData<UnitHealth>(unit).Current);
             return hash;
-        }
-
-        private static int AddEntitySignature(int hash, Entity entity)
-        {
-            hash = (hash * 31) + entity.Index;
-            hash = (hash * 31) + entity.Version;
-            return hash;
-        }
-
-        private static int AddUnityObjectSignature(int hash, UnityEngine.Object unityObject)
-        {
-            return (hash * 31) + (unityObject != null ? unityObject.GetEntityId().GetHashCode() : 0);
-        }
-
-        private static int AddFloatSignature(int hash, float value)
-        {
-            return (hash * 31) + Mathf.RoundToInt(value * 1000f);
         }
 
         private bool TryGetBoundaryEntity(EntityManager em, EntityQuery boundaryQuery, out Entity boundaryEntity)

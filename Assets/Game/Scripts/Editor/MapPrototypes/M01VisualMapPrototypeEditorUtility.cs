@@ -16,7 +16,7 @@ namespace Game.Editor
         public const string ScenePath = "Assets/Game/Scenes/MapPrototypes/Chapter01/M01_VisualPrototype.unity";
         public const string CaptureDirectory = "Design/ArtReview/OperationMaps/M01";
         public const int GenerationSeed = 26071501;
-        public const string GeneratorVersion = "M01VisualPrototype_2026-07-17_v27_soft_road_edges";
+        public const string GeneratorVersion = "M01VisualPrototype_2026-07-17_v28_horizon_belt";
 
         private const int CaptureWidth = 1600;
         private const int CaptureHeight = 900;
@@ -1839,29 +1839,16 @@ namespace Game.Editor
         private static void CreateHorizonAndEdgeDressing(Transform parent, Palette palette)
         {
             Transform root = CreateRoot("07_Horizon_And_EdgeDressing", parent).transform;
-            GameObject westDunes = PlacePrefab("Assets/PolygonMilitary/Prefabs/Environment/SM_Env_SandDunes_03.prefab", "HorizonDunes_West", new Vector3(-150f, -2.4f, 148f), 18f, 0.82f, root);
-            GameObject centerDunes = PlacePrefab("Assets/PolygonMilitary/Prefabs/Environment/SM_Env_SandDunes_01.prefab", "HorizonDunes_Center", new Vector3(0f, -2.6f, 164f), 0f, 0.92f, root);
-            GameObject eastDunes = PlacePrefab("Assets/PolygonMilitary/Prefabs/Environment/SM_Env_SandDunes_02.prefab", "HorizonDunes_East", new Vector3(150f, -2.4f, 146f), -24f, 0.82f, root);
+            GameObject westDunes = PlacePrefab("Assets/PolygonMilitary/Prefabs/Environment/SM_Env_SandDunes_03.prefab", "HorizonDunes_West", new Vector3(-142f, -2.8f, 154f), 18f, 0.9f, root);
+            GameObject westCenterDunes = PlacePrefab("Assets/PolygonMilitary/Prefabs/Environment/SM_Env_SandDunes_02.prefab", "HorizonDunes_WestCenter", new Vector3(-72f, -3f, 162f), -12f, 0.78f, root);
+            GameObject centerDunes = PlacePrefab("Assets/PolygonMilitary/Prefabs/Environment/SM_Env_SandDunes_01.prefab", "HorizonDunes_Center", new Vector3(0f, -2.9f, 168f), 0f, 1.02f, root);
+            GameObject eastCenterDunes = PlacePrefab("Assets/PolygonMilitary/Prefabs/Environment/SM_Env_SandDunes_03.prefab", "HorizonDunes_EastCenter", new Vector3(74f, -3f, 160f), 16f, 0.78f, root);
+            GameObject eastDunes = PlacePrefab("Assets/PolygonMilitary/Prefabs/Environment/SM_Env_SandDunes_02.prefab", "HorizonDunes_East", new Vector3(144f, -2.8f, 152f), -24f, 0.9f, root);
             OverrideRendererMaterials(westDunes.transform, palette.TransitionGround);
+            OverrideRendererMaterials(westCenterDunes.transform, palette.TransitionGround);
             OverrideRendererMaterials(centerDunes.transform, palette.TransitionGround);
+            OverrideRendererMaterials(eastCenterDunes.transform, palette.TransitionGround);
             OverrideRendererMaterials(eastDunes.transform, palette.TransitionGround);
-
-            string[] edgeProps =
-            {
-                "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Cactus_01.prefab",
-                "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Cactus_02.prefab",
-                "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Bush_Large_02.prefab",
-                "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Rock_03.prefab",
-                "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Pebbles_02.prefab"
-            };
-            var random = new System.Random(GenerationSeed + 190);
-            for (int i = 0; i < 58; i++)
-            {
-                bool horizontalEdge = i % 2 == 0;
-                float x = horizontalEdge ? -142f + (float)random.NextDouble() * 284f : (random.Next(0, 2) == 0 ? -143f : 143f);
-                float z = horizontalEdge ? (random.Next(0, 2) == 0 ? -101f : 101f) : -96f + (float)random.NextDouble() * 192f;
-                PlacePrefab(edgeProps[i % edgeProps.Length], $"EdgeAccent_{i + 1:00}", new Vector3(x, 0f, z), random.Next(0, 360), 0.75f + (float)random.NextDouble() * 0.9f, root);
-            }
         }
 
         private static void ValidateGeneratedScene(GameObject root)

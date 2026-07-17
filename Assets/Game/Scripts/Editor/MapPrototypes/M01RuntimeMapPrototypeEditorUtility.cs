@@ -22,9 +22,11 @@ namespace Game.Editor
         public const string ConfigPath = "Assets/Game/Configs/MapPrototypes/M01_RuntimeCity_Config.asset";
         public const string VisualRecipePath = "Assets/Game/Configs/MapPrototypes/M01_RuntimeVisualRecipe.asset";
         private const string SourceConfigPath = "Assets/Game/Configs/Scene/Game_RuntimeCitySpawner_Config.asset";
-        private const string VisualRecipeVersion = "M01RuntimeVisualRecipe_2026-07-17_v27_soft_road_edges";
+        private const string VisualRecipeVersion = "M01RuntimeVisualRecipe_2026-07-17_v28_horizon_belt";
         private const string DistrictSnapshotFolder = "Assets/Game/Prefabs/MapPrototypes/M01/RuntimeParity";
         private const int MaxDistrictSliceRenderers = 64;
+        private const int MinimumVisualRecipeEntryCount = 128;
+        private const int MinimumVisualRecipeRendererCount = 900;
         private const string PremiumLightingRigPath = "Assets/Game/Rendering/Prefabs/PremiumLightingRig.prefab";
         private const string PrototypeVolumeProfilePath = "Assets/Game/Art/MapPrototypes/M01/M01_VisualVolumeProfile.asset";
         private const string DesertSkyboxMaterialPath = "Assets/Game/Art/MapPrototypes/M01/M01_DesertSkybox.mat";
@@ -334,7 +336,8 @@ namespace Game.Editor
                 Assert(pose.IsConfigured, $"Runtime camera pose {i} is not configured.");
                 Assert(cameraStages.Add(pose.Stage), $"Runtime camera stage {pose.Stage} is duplicated.");
             }
-            Assert(visualRecipe.Entries.Count >= 150, $"Runtime visual recipe is below editor-parity density: entries={visualRecipe.Entries.Count}.");
+            Assert(visualRecipe.Entries.Count >= MinimumVisualRecipeEntryCount,
+                $"Runtime visual recipe is below the composition floor: entries={visualRecipe.Entries.Count} minimum={MinimumVisualRecipeEntryCount}.");
             Assert(visualRecipe.DistrictModules.Count == 3,
                 $"Runtime visual recipe must define three compact M01 district modules: actual={visualRecipe.DistrictModules.Count}.");
             for (int i = 0; i < visualRecipe.DistrictModules.Count; i++)
@@ -488,8 +491,12 @@ namespace Game.Editor
             CaptureGroup(sourceRoot.transform.Find("_M01VisualGenerated/07_Horizon_And_EdgeDressing"), RuntimeOperationMapVisualStage.Horizon, entries);
             RemoveStaleParitySnapshots(districtModules, entries);
 
-            if (entries.Count < 150)
-                throw new InvalidOperationException($"Accepted M01 scene produced too few runtime visual entries: {entries.Count}.");
+            if (entries.Count < MinimumVisualRecipeEntryCount)
+            {
+                throw new InvalidOperationException(
+                    $"Accepted M01 scene produced too few runtime visual entries: " +
+                    $"actual={entries.Count} minimum={MinimumVisualRecipeEntryCount}.");
+            }
 
             EnsureDirectoryForAsset(VisualRecipePath);
             RuntimeOperationMapVisualRecipe recipe = AssetDatabase.LoadAssetAtPath<RuntimeOperationMapVisualRecipe>(VisualRecipePath);
@@ -1114,7 +1121,8 @@ namespace Game.Editor
                         if (EditorApplication.timeSinceStartup < _playModeCaptureAfter)
                             return;
 
-                        if (runtimeSystem.VisualRecipeEntryCount < 150 || runtimeSystem.VisualRecipeRendererCount < 900)
+                        if (runtimeSystem.VisualRecipeEntryCount < MinimumVisualRecipeEntryCount ||
+                            runtimeSystem.VisualRecipeRendererCount < MinimumVisualRecipeRendererCount)
                         {
                             Debug.LogError(
                                 $"[M01RuntimeMapPlayModeSmoke] result=Failed reason=belowParityDensity " +
@@ -1448,7 +1456,7 @@ namespace Game.Editor
                                 !runtimeSystem.IsUsingFallback ||
                                 runtimeSystem.FallbackAttemptCount != 1 ||
                                 !string.Equals(runtimeSystem.RecoveryReason, "missingConfig", StringComparison.Ordinal) ||
-                                runtimeSystem.VisualRecipeEntryCount < 150 ||
+                                runtimeSystem.VisualRecipeEntryCount < MinimumVisualRecipeEntryCount ||
                                 runtimeSystem.FoundationVisualCount != 1 ||
                                 view.GeneratedRoot.childCount == 0)
                             {

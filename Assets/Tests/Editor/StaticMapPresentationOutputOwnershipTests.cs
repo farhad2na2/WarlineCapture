@@ -197,7 +197,7 @@ public sealed class StaticMapPresentationOutputOwnershipTests
         string sceneAPath = ProjectPath(projectRoot, SceneA);
         string sceneAMetaPath = sceneAPath + ".meta";
         string sceneBPath = ProjectPath(projectRoot, SceneB);
-        string integrityPath = ProjectPath(projectRoot, StaticMapPresentationSceneIntegrity.IntegrityAssetPath);
+        string integrityPath = ProjectPath(projectRoot, StaticMapPresentationSceneIntegrity.CurrentIntegrityAssetPath);
         try
         {
             WriteFile(manifestPath, "manifest-before");
@@ -213,7 +213,7 @@ public sealed class StaticMapPresentationOutputOwnershipTests
                         new[]
                         {
                             StaticMapPresentationBaker.ManifestPath,
-                            StaticMapPresentationSceneIntegrity.IntegrityAssetPath,
+                            StaticMapPresentationSceneIntegrity.CurrentIntegrityAssetPath,
                             SceneA,
                             SceneB
                         });
@@ -281,12 +281,16 @@ public sealed class StaticMapPresentationOutputOwnershipTests
             WriteFile(sceneBPath + ".meta", "scene-b-meta");
             StaticMapPresentationSceneIntegrity.Write(
                 projectRoot,
+                StaticMapPresentationBaker.CurrentOperationMapId,
+                StaticMapPresentationSceneIntegrity.CurrentIntegrityAssetPath,
                 "content-hash",
                 new[] { SceneB, SceneA });
 
             Assert.That(
                 StaticMapPresentationSceneIntegrity.TryLoadAndValidate(
                     projectRoot,
+                    StaticMapPresentationBaker.CurrentOperationMapId,
+                    StaticMapPresentationSceneIntegrity.CurrentIntegrityAssetPath,
                     "content-hash",
                     new[] { SceneA, SceneB },
                     out StaticMapPresentationSceneIntegrity integrity,
@@ -300,6 +304,8 @@ public sealed class StaticMapPresentationOutputOwnershipTests
             Assert.That(
                 StaticMapPresentationSceneIntegrity.TryLoadAndValidate(
                     projectRoot,
+                    StaticMapPresentationBaker.CurrentOperationMapId,
+                    StaticMapPresentationSceneIntegrity.CurrentIntegrityAssetPath,
                     "content-hash",
                     new[] { SceneA, SceneB },
                     out _,
@@ -312,12 +318,47 @@ public sealed class StaticMapPresentationOutputOwnershipTests
             Assert.That(
                 StaticMapPresentationSceneIntegrity.TryLoadAndValidate(
                     projectRoot,
+                    StaticMapPresentationBaker.CurrentOperationMapId,
+                    StaticMapPresentationSceneIntegrity.CurrentIntegrityAssetPath,
                     "content-hash",
                     new[] { SceneA, SceneB },
                     out _,
                     out string metaChangedReason),
                 Is.False);
             Assert.That(metaChangedReason, Is.EqualTo($"integrity-scene-file-changed:{SceneA}"));
+        }
+        finally
+        {
+            DeleteTemporaryProjectRoot(projectRoot);
+        }
+    }
+
+    [Test]
+    public void SceneIntegrity_RejectsLedgerOwnedByAnotherOperationMap()
+    {
+        string projectRoot = CreateTemporaryProjectRoot();
+        try
+        {
+            WriteFile(ProjectPath(projectRoot, SceneA), "scene-a");
+            WriteFile(ProjectPath(projectRoot, SceneA + ".meta"), "scene-a-meta");
+            StaticMapPresentationSceneIntegrity.Write(
+                projectRoot,
+                StaticMapPresentationBaker.CurrentOperationMapId,
+                StaticMapPresentationSceneIntegrity.CurrentIntegrityAssetPath,
+                "content-hash",
+                new[] { SceneA });
+
+            Assert.That(
+                StaticMapPresentationSceneIntegrity.TryLoadAndValidate(
+                    projectRoot,
+                    "opmap.ch01.district-edge_01",
+                    StaticMapPresentationSceneIntegrity.CurrentIntegrityAssetPath,
+                    "content-hash",
+                    new[] { SceneA },
+                    out _,
+                    out string rejectionReason),
+                Is.False);
+            Assert.That(rejectionReason, Is.EqualTo("integrity-ledger-owner-changed"));
         }
         finally
         {

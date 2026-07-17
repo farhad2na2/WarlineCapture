@@ -44,6 +44,27 @@ namespace Game.Editor
             return prefix;
         }
 
+        internal static bool TryResolveIntegrityAssetPath(
+            string operationMapId,
+            out string integrityAssetPath,
+            out string error)
+        {
+            integrityAssetPath = null;
+            if (!TryResolveOutputRoot(operationMapId, out string outputRoot, out error))
+                return false;
+
+            integrityAssetPath = outputRoot + "/StaticMapPresentationSceneIntegrity.json";
+            error = null;
+            return true;
+        }
+
+        internal static string RequireIntegrityAssetPath(string operationMapId)
+        {
+            if (!TryResolveIntegrityAssetPath(operationMapId, out string path, out string error))
+                throw new ArgumentException(error, nameof(operationMapId));
+            return path;
+        }
+
         private static bool TryResolveSegments(
             string operationMapId,
             out string[] segments,

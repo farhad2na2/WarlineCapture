@@ -13,6 +13,7 @@ public sealed class StaticMapPresentationBakeInputTests
             tests.CurrentCompatibilityInputValidates();
             tests.SceneOutputFolderIsDerivedFromOwnedRoot();
             tests.SceneFilePrefixIsDerivedFromOperationMapId();
+            tests.IntegrityLedgerPathIsDerivedFromOperationMapId();
             tests.EmptyOperationMapIdFails();
             tests.OperationMapIdDerivesUniqueOutputRoot();
             tests.OutputRootMustMatchOperationMapId();
@@ -22,7 +23,7 @@ public sealed class StaticMapPresentationBakeInputTests
             tests.InvalidChunkSizesFail();
             tests.CurrentCompatibilityFactoryMatchesLegacyConstants();
             tests.CompatibilityValidationRejectsAlternateOwnership();
-            Debug.Log("[StaticMapPresentationBakeInputValidation] result=Passed tests=12");
+            Debug.Log("[StaticMapPresentationBakeInputValidation] result=Passed tests=13");
         }
         catch (Exception exception)
         {
@@ -68,6 +69,27 @@ public sealed class StaticMapPresentationBakeInputTests
             alternatePrefix,
             Is.EqualTo("StaticMapPresentation_opmap_ch01_district-edge_01_"));
         Assert.That(alternatePrefix, Is.Not.EqualTo(CurrentInput().SceneFilePrefix));
+    }
+
+    [Test]
+    public void IntegrityLedgerPathIsDerivedFromOperationMapId()
+    {
+        Assert.That(
+            CurrentInput().IntegrityPath,
+            Is.EqualTo(StaticMapPresentationSceneIntegrity.CurrentIntegrityAssetPath));
+        Assert.That(
+            StaticMapPresentationOutputPathContract.TryResolveIntegrityAssetPath(
+                "opmap.ch01.district-edge_01",
+                out string alternatePath,
+                out string error),
+            Is.True,
+            error);
+        Assert.That(
+            alternatePath,
+            Is.EqualTo(
+                "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/ch01/district-edge_01/StaticMapPresentationSceneIntegrity.json"));
+        Assert.That(alternatePath, Is.Not.EqualTo(CurrentInput().IntegrityPath));
+        AssertInvalid(Create(integrityPath: StaticMapPresentationBaker.OutputRoot + "/Other.json"));
     }
 
     [Test]
@@ -159,7 +181,7 @@ public sealed class StaticMapPresentationBakeInputTests
             manifestPath:
                 "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/test/alternate/Manifest.asset",
             integrityPath:
-                "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/test/alternate/Integrity.json");
+                "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/test/alternate/StaticMapPresentationSceneIntegrity.json");
 
         Assert.That(alternate.TryValidate(out string error), Is.True, error);
         Assert.Throws<InvalidOperationException>(() =>

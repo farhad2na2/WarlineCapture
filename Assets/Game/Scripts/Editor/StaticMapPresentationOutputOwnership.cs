@@ -421,7 +421,7 @@ namespace Game.Editor
                 Path.IsPathRooted(assetPath) ||
                 assetPath.Split('/').Any(segment => string.Equals(segment, "..", StringComparison.Ordinal)) ||
                 (!string.Equals(assetPath, StaticMapPresentationBaker.ManifestPath, StringComparison.Ordinal) &&
-                 !string.Equals(assetPath, StaticMapPresentationSceneIntegrity.IntegrityAssetPath, StringComparison.Ordinal) &&
+                 !string.Equals(assetPath, StaticMapPresentationSceneIntegrity.CurrentIntegrityAssetPath, StringComparison.Ordinal) &&
                  !StaticMapPresentationOutputOwnership.IsOwnedScenePath(assetPath)))
             {
                 throw new InvalidOperationException(
@@ -457,8 +457,9 @@ namespace Game.Editor
 
     internal sealed class StaticMapPresentationSceneIntegrity
     {
-        internal const string IntegrityAssetPath =
-            StaticMapPresentationBaker.OutputRoot + "/StaticMapPresentationSceneIntegrity.json";
+        internal static string CurrentIntegrityAssetPath =>
+            StaticMapPresentationOutputPathContract.RequireIntegrityAssetPath(
+                StaticMapPresentationBaker.CurrentOperationMapId);
 
         private const int CurrentSchemaVersion = 1;
 
@@ -491,6 +492,8 @@ namespace Game.Editor
 
         internal static bool TryLoadAndValidate(
             string projectRoot,
+            string operationMapId,
+            string integrityAssetPath,
             string expectedContentHash,
             IEnumerable<string> expectedScenePaths,
             out StaticMapPresentationSceneIntegrity integrity,
@@ -499,6 +502,15 @@ namespace Game.Editor
             integrity = null;
             if (string.IsNullOrWhiteSpace(projectRoot))
                 throw new ArgumentException("Project root is required.", nameof(projectRoot));
+            if (!StaticMapPresentationOutputPathContract.TryResolveIntegrityAssetPath(
+                    operationMapId,
+                    out string expectedIntegrityAssetPath,
+                    out _) ||
+                !string.Equals(integrityAssetPath, expectedIntegrityAssetPath, StringComparison.Ordinal))
+            {
+                rejectionReason = "integrity-ledger-owner-changed";
+                return false;
+            }
             if (string.IsNullOrWhiteSpace(expectedContentHash))
             {
                 rejectionReason = "integrity-content-hash-missing";
@@ -506,7 +518,7 @@ namespace Game.Editor
             }
 
             string[] expected = RequireScenePaths(expectedScenePaths);
-            string integrityFilePath = ResolveProjectPath(projectRoot, IntegrityAssetPath);
+            string integrityFilePath = ResolveProjectPath(projectRoot, integrityAssetPath);
             if (!File.Exists(integrityFilePath))
             {
                 rejectionReason = "integrity-ledger-missing";
@@ -577,11 +589,22 @@ namespace Game.Editor
 
         internal static void Write(
             string projectRoot,
+            string operationMapId,
+            string integrityAssetPath,
             string contentHash,
             IEnumerable<string> scenePaths)
         {
             if (string.IsNullOrWhiteSpace(projectRoot))
                 throw new ArgumentException("Project root is required.", nameof(projectRoot));
+            if (!StaticMapPresentationOutputPathContract.TryResolveIntegrityAssetPath(
+                    operationMapId,
+                    out string expectedIntegrityAssetPath,
+                    out string ownershipError) ||
+                !string.Equals(integrityAssetPath, expectedIntegrityAssetPath, StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException(
+                    ownershipError ?? "Integrity ledger path does not match its operation-map owner.");
+            }
             if (string.IsNullOrWhiteSpace(contentHash))
                 throw new ArgumentException("Content hash is required.", nameof(contentHash));
 
@@ -609,7 +632,7 @@ namespace Game.Editor
                 contentHash = contentHash,
                 scenes = entries
             };
-            string destinationPath = ResolveProjectPath(projectRoot, IntegrityAssetPath);
+            string destinationPath = ResolveProjectPath(projectRoot, integrityAssetPath);
             string directory = Path.GetDirectoryName(destinationPath);
             if (!string.IsNullOrEmpty(directory))
                 Directory.CreateDirectory(directory);

@@ -28,7 +28,7 @@
             "reportSchemaVersion": 1,
             "result": "NeedsDecision",
             "evidencePath": "Design/AgentReports/2026-07-15_opmap-004_phase0_ownership_baseline.json",
-            "evidenceSha256": "3c31bcbc77ac2a541c6973cb2e63491a63faed313897abea5b50fddd77ade133"
+            "evidenceSha256": "682fd3dd59badaa993a57e1d79761512351ff20dc10d43ab8296659dcc805993"
         }
     ],
     "directInputHashes": [
@@ -102,7 +102,7 @@
         },
         {
             "path": "Assets/Game/Scripts/Systems/RtsSelectionRuntimeCameraSystemHelper.cs",
-            "sha256": "012ed914ad46e349620422de90799acf3fb670b4a073753c1a3fcc99dd8f2e67"
+            "sha256": "a98f7b91f086e460b5f6bd7009adbf971949d1bf6c2aa0d5cb6865a9a03aff71"
         },
         {
             "path": "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs",
@@ -114,7 +114,7 @@
         },
         {
             "path": "Assets/Game/Scripts/Systems/TacticalFollowCameraModeSystemHelper.cs",
-            "sha256": "d51a65befab8d93232ec33d0cf19545960457970ef86a3bc6dd9008b56e3956c"
+            "sha256": "5c9e9c980886996111fafcad86f20ddb225931e33cce9c5700971031a1f93371"
         },
         {
             "path": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs",
@@ -150,11 +150,11 @@
         },
         {
             "path": "Design/AgentReports/2026-07-15_opmap-004_phase0_ownership_baseline.json",
-            "sha256": "3c31bcbc77ac2a541c6973cb2e63491a63faed313897abea5b50fddd77ade133"
+            "sha256": "682fd3dd59badaa993a57e1d79761512351ff20dc10d43ab8296659dcc805993"
         },
         {
             "path": "Design/Architecture/operation_map_scene_split_and_generator_tracker.md",
-            "sha256": "5db70a8426f687f520c57da2487895c764e77c32ac56fbebe78bdb162a3c032f"
+            "sha256": "de77a553cc83b0c2fa0a77f717e941191f6136e767e2202627d53e96f989c00f"
         }
     ],
     "presenceFindings": [

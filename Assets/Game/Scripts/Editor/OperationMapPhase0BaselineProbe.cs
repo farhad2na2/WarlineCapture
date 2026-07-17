@@ -973,6 +973,8 @@ namespace Game.Editor
             string[] ledgerPaths = ledger.scenes.Select(entry => entry?.scenePath).ToArray();
             if (!StaticMapPresentationSceneIntegrity.TryLoadAndValidate(
                     projectRoot,
+                    manifest.OperationMapId,
+                    IntegrityPath,
                     manifest.ContentHash,
                     manifestPaths,
                     out _,

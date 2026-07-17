@@ -122,7 +122,7 @@ namespace Game.Editor
                 "Map",
                 OutputRoot,
                 ManifestPath,
-                StaticMapPresentationSceneIntegrity.IntegrityAssetPath,
+                StaticMapPresentationSceneIntegrity.CurrentIntegrityAssetPath,
                 ChunkSize);
         }
 
@@ -197,7 +197,7 @@ namespace Game.Editor
             using StaticMapPresentationBakeTransaction transaction =
                 StaticMapPresentationBakeTransaction.Begin(
                     projectRoot,
-                    new[] { ManifestPath, StaticMapPresentationSceneIntegrity.IntegrityAssetPath });
+                    new[] { ManifestPath, StaticMapPresentationSceneIntegrity.CurrentIntegrityAssetPath });
             try
             {
                 manifest.EditorSetData(
@@ -212,10 +212,12 @@ namespace Game.Editor
                 AssetDatabase.SaveAssetIfDirty(manifest);
                 StaticMapPresentationSceneIntegrity.Write(
                     projectRoot,
+                    CurrentOperationMapId,
+                    StaticMapPresentationSceneIntegrity.CurrentIntegrityAssetPath,
                     contentHash,
                     expectedScenePaths);
                 AssetDatabase.ImportAsset(
-                    StaticMapPresentationSceneIntegrity.IntegrityAssetPath,
+                    StaticMapPresentationSceneIntegrity.CurrentIntegrityAssetPath,
                     ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ForceUpdate);
                 transaction.Commit();
             }
@@ -291,7 +293,7 @@ namespace Game.Editor
             IEnumerable<string> mutablePaths = sourcePaths
                 .Concat(targetPaths)
                 .Append(ManifestPath)
-                .Append(StaticMapPresentationSceneIntegrity.IntegrityAssetPath);
+                .Append(StaticMapPresentationSceneIntegrity.CurrentIntegrityAssetPath);
             using StaticMapPresentationBakeTransaction transaction =
                 StaticMapPresentationBakeTransaction.Begin(projectRoot, mutablePaths);
             int movedScenes = 0;
@@ -321,9 +323,14 @@ namespace Game.Editor
                     migratedChunks,
                     sources);
                 AssetDatabase.SaveAssetIfDirty(manifest);
-                StaticMapPresentationSceneIntegrity.Write(projectRoot, contentHash, targetPaths);
+                StaticMapPresentationSceneIntegrity.Write(
+                    projectRoot,
+                    CurrentOperationMapId,
+                    StaticMapPresentationSceneIntegrity.CurrentIntegrityAssetPath,
+                    contentHash,
+                    targetPaths);
                 AssetDatabase.ImportAsset(
-                    StaticMapPresentationSceneIntegrity.IntegrityAssetPath,
+                    StaticMapPresentationSceneIntegrity.CurrentIntegrityAssetPath,
                     ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ForceUpdate);
                 transaction.Commit();
             }
@@ -356,7 +363,7 @@ namespace Game.Editor
                 !string.Equals(input.ManifestPath, ManifestPath, StringComparison.Ordinal) ||
                 !string.Equals(
                     input.IntegrityPath,
-                    StaticMapPresentationSceneIntegrity.IntegrityAssetPath,
+                    StaticMapPresentationSceneIntegrity.CurrentIntegrityAssetPath,
                     StringComparison.Ordinal) ||
                 input.ChunkSize != ChunkSize)
             {
@@ -426,6 +433,8 @@ namespace Game.Editor
             string projectRoot = RequireProjectRoot();
             bool integrityReady = StaticMapPresentationSceneIntegrity.TryLoadAndValidate(
                 projectRoot,
+                input.OperationMapId,
+                input.IntegrityPath,
                 contentHash,
                 expectedScenePaths,
                 out StaticMapPresentationSceneIntegrity existingIntegrity,
@@ -487,7 +496,12 @@ namespace Game.Editor
                         PhysicalAssetExists,
                         AssetDatabase.DeleteAsset,
                         DeletePhysicalOwnedAsset);
-                    StaticMapPresentationSceneIntegrity.Write(projectRoot, contentHash, expectedScenePaths);
+                    StaticMapPresentationSceneIntegrity.Write(
+                        projectRoot,
+                        input.OperationMapId,
+                        input.IntegrityPath,
+                        contentHash,
+                        expectedScenePaths);
                     AssetDatabase.ImportAsset(
                         input.IntegrityPath,
                         ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ForceUpdate);

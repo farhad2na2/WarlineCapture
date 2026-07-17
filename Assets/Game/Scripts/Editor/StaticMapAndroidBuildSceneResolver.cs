@@ -69,8 +69,14 @@ namespace Game.Editor
                 () => StaticMapPresentationCanonicalSourceHash.Compute(
                     StaticMapPresentationBaker.CanonicalMatchScenePath),
                 (contentHash, scenePaths) =>
+                    StaticMapPresentationOutputPathContract.TryResolveIntegrityAssetPath(
+                        snapshot.OperationMapId,
+                        out string integrityAssetPath,
+                        out _) &&
                     StaticMapPresentationSceneIntegrity.TryLoadAndValidate(
                         projectRoot,
+                        snapshot.OperationMapId,
+                        integrityAssetPath,
                         contentHash,
                         scenePaths,
                         out _,

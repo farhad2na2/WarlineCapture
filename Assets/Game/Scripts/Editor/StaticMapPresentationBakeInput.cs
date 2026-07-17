@@ -56,6 +56,14 @@ namespace Game.Editor
                 return Fail("Manifest must be an asset owned by the output root.", out error);
             if (!IsOwnedOutputFile(IntegrityPath, OutputRoot, ".json"))
                 return Fail("Integrity ledger must be JSON owned by the output root.", out error);
+            if (!StaticMapPresentationOutputPathContract.TryResolveIntegrityAssetPath(
+                    OperationMapId,
+                    out string expectedIntegrityPath,
+                    out error) ||
+                !string.Equals(IntegrityPath, expectedIntegrityPath, StringComparison.Ordinal))
+            {
+                return Fail("Integrity ledger path must be derived from the operation-map id.", out error);
+            }
             if (string.Equals(ManifestPath, IntegrityPath, StringComparison.Ordinal))
                 return Fail("Manifest and integrity ledger paths must be distinct.", out error);
             if (!float.IsFinite(ChunkSize) || ChunkSize <= 0f)

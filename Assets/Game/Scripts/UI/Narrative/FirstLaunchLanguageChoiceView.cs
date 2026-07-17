@@ -15,10 +15,11 @@ namespace Game.UI.Runtime
         private Action<FirstLaunchNarrativeLanguage> selectionHandler;
         private bool bound;
 
+        public bool IsVisible => group != null && group.alpha > 0f && group.interactable;
+
         private void Awake()
         {
             EnsureBindings();
-            SetVisible(false);
         }
 
         private void OnDestroy()

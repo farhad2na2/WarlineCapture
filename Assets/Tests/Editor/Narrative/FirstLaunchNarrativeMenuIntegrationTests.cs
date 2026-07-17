@@ -21,12 +21,13 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
         {
             FirstLaunchNarrativeMenuIntegrationTests tests = new();
             tests.MenuScene_HasTopLevelNarrativeLayerAndExactConfigs();
+            tests.LanguageChoice_AwakeDoesNotOverrideCompositionVisibility();
             tests.FreshProfile_LanguageChoicePrecedesNarrativeAndPersistsPersian();
             tests.FreshProfile_SkipRequiresLiveConfirmationAndPublishesOneHandoff();
             tests.CompletedAndPendingProfiles_SelectCorrectStartupDisposition();
             tests.ReviewerMode_ProvidesNavigationWithoutMutatingCompletedProfile();
             tests.CommittedIdentity_SkipRoutesDirectlyAndPreservesSelection();
-            Debug.Log("[FirstLaunchNarrativeMenuIntegrationValidation] result=Passed tests=6");
+            Debug.Log("[FirstLaunchNarrativeMenuIntegrationValidation] result=Passed tests=7");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -34,6 +35,30 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
             Debug.LogException(exception);
             Debug.Log("[FirstLaunchNarrativeMenuIntegrationValidation] result=Failed");
             ValidationExit.Failed();
+        }
+    }
+
+    [Test]
+    public void LanguageChoice_AwakeDoesNotOverrideCompositionVisibility()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(
+            FirstLaunchNarrativePresentationPrefabBuilder.LanguageChoicePrefabPath);
+        GameObject instance = UnityEngine.Object.Instantiate(prefab);
+        try
+        {
+            FirstLaunchLanguageChoiceView languageView = instance.GetComponent<FirstLaunchLanguageChoiceView>();
+            Assert.NotNull(languageView);
+            Assert.IsFalse(languageView.IsVisible);
+
+            languageView.SetVisible(true);
+            languageView.SendMessage("Awake");
+
+            Assert.IsTrue(languageView.IsVisible,
+                "Awake must not hide a selector already shown by MenuBootstrap initialization.");
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(instance);
         }
     }
 

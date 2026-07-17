@@ -89,6 +89,7 @@ namespace Game.Composition
             {
                 view?.SetVisible(false);
                 languageChoiceView?.SetVisible(false);
+                LogStartupDisposition(FirstLaunchNarrativeStartupDisposition.EnterMenu);
                 return FirstLaunchNarrativeStartupDisposition.EnterMenu;
             }
 
@@ -97,6 +98,7 @@ namespace Game.Composition
                 view?.SetVisible(false);
                 languageChoiceView?.SetVisible(false);
                 shellComposition.RequestHandoff();
+                LogStartupDisposition(FirstLaunchNarrativeStartupDisposition.ResumeHandoff);
                 return FirstLaunchNarrativeStartupDisposition.ResumeHandoff;
             }
 
@@ -105,6 +107,7 @@ namespace Game.Composition
                 view?.SetVisible(false);
                 awaitingLanguage = true;
                 languageChoiceView.SetVisible(true);
+                LogStartupDisposition(FirstLaunchNarrativeStartupDisposition.AwaitingLanguage);
                 return FirstLaunchNarrativeStartupDisposition.AwaitingLanguage;
             }
 
@@ -117,9 +120,11 @@ namespace Game.Composition
                 profileComposition.CommitLanguage(language, true);
             }
 
-            return StartNarrative(language)
+            FirstLaunchNarrativeStartupDisposition disposition = StartNarrative(language)
                 ? FirstLaunchNarrativeStartupDisposition.Playing
                 : FirstLaunchNarrativeStartupDisposition.EnterMenu;
+            LogStartupDisposition(disposition);
+            return disposition;
         }
 
         public void InitializeShell(
@@ -305,6 +310,15 @@ namespace Game.Composition
             sequencePresentation.Start();
             reviewPresentation.Refresh(true);
             return true;
+        }
+
+        private void LogStartupDisposition(FirstLaunchNarrativeStartupDisposition disposition)
+        {
+            UnityEngine.Debug.Log(
+                $"[FirstLaunchStartup] fix=LanguageChoiceAwakeOrder_2026-07-17 disposition={disposition} " +
+                $"languageView={(languageChoiceView != null ? 1 : 0)} " +
+                $"languageVisible={(languageChoiceView != null && languageChoiceView.IsVisible ? 1 : 0)} " +
+                $"narrativeView={(view != null ? 1 : 0)}");
         }
 
         private void BindSequenceEvents()

@@ -218,6 +218,9 @@ namespace Game.Editor
             RectTransform root = CreateRect("FirstLaunchLanguageChoice", null);
             Stretch(root);
             CanvasGroup group = root.gameObject.AddComponent<CanvasGroup>();
+            group.alpha = 0f;
+            group.interactable = false;
+            group.blocksRaycasts = false;
             FirstLaunchLanguageChoiceView view = root.gameObject.AddComponent<FirstLaunchLanguageChoiceView>();
 
             Image dim = CreateImage("Dim", root, null, new Color(0.015f, 0.025f, 0.03f, 0.94f), true);

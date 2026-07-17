@@ -2,6 +2,8 @@
 
 Status: preparatory inventory for `AM-026`; not accepted and not counted complete.
 
+Audit source baseline: `fa2d9a595fb3545fb7ed7cc3b8f3e7d87268fb5c` on `main`.
+
 This inventory may be maintained while `AM-020` through `AM-025` close, but Phase 3 production changes remain gated by the accepted Phase 2 cache and lifecycle contract. It covers the currently implemented Canvas runtime surfaces and records the owner that initiates reads, the source/version contract, managed conversion or rebuild behavior, existing allocation coverage, and the task that owns remediation.
 
 ## Acceptance Contract
@@ -42,6 +44,35 @@ Every surface must satisfy all of these rules before `AM-026` can close:
 | `UI-018` | Mission Result | Missing executable projection | Shell route/popup lifecycle | `TryReadMissionResult` currently returns false; executable result projection is absent | No production read-model rebuild can be measured yet. This is an implementation gap, not a zero-allocation pass. | Not executable. | `AM-033`; add characterization before `AM-035` |
 | `UI-019` | Tooltip layer | Unresolved | Shell `TooltipLayer` only; no dedicated runtime projection owner found | No dedicated tooltip source/version contract found | No independent production tooltip read model or apply owner was found. The gap must be resolved or explicitly removed from the required surface set. | Missing. | `AM-026`, then route to `AM-027`/`AM-028`/`AM-033` |
 | `UI-020` | Diagnostics overlay | Active direct diagnostic helper when enabled; dormant ECS adapter | `MenuDiagnosticsView.Update()`; separate diagnostics gateway has no proven active caller | `UiDiagnosticsOverlayComponent`; no semantic version | Direct FPS/log polling can convert log text and update labels. The dormant ECS gateway must not be counted as the active path. Production measurements must keep diagnostics disabled or budget them separately. | Diagnostic helper coverage exists; not part of production open-surface acceptance while disabled. | `AM-026`, `AM-034`, `AM-035`, `AM-044` through `AM-047` |
+| `UI-021` | Safe-area and aspect-variant layout | Active view-local polling | `UISafeAreaView.Update()` and `UIAspectVariantView.Update()` | Screen safe area, screen size, and local `RectTransform` size; both views retain last-applied values | Both paths read every frame but return before layout mutation when size is unchanged. They are layout invalidation owners rather than ECS projections and must be measured separately from content rebuilds. | Missing unchanged-state and resolution/safe-area transition allocation coverage. | `AM-026`, `AM-028`, `AM-033`, `AM-034`, `AM-035` |
+| `UI-022` | Match loading-to-HUD intro curtain | Active command-driven transition | `UIShellView` loading/Match transition steps and `MatchIntroCurtainView` | `MatchIntroTransitionStateKind`, shell transition sequence, loading progress, and World-ready state | Curtain visibility/alpha is command-driven and has no view-local `Update()`. Transition allocations and stale-state recovery after interrupted loading are not characterized. | Match-entry behavior coverage exists; repeated transition and unchanged-HUD allocation coverage missing. | `AM-022`, `AM-023`, `AM-028`, `AM-033`, `AM-035` |
+| `UI-023` | Quick Custom setup | Active route/event-driven | `QuickCustomScreenView` and `QuickCustomScreenFlowUiSystemHelper` | Managed `UiQuickCustomGameConfig`; no ECS semantic version | Route bind reconstructs control labels/options and applies the complete config. User events update the managed config; no view-local polling loop exists. Bind cost, repeated route entry, localization, and unchanged open state are not separated. | Behavior tests exist; fully bound open-state allocation coverage missing. | `AM-026`, `AM-027`, `AM-028`, `AM-033`, `AM-035` |
+| `UI-024` | Campaign operations | Static route body; dynamic projection unresolved | `MenuOverlayRoutePresentation.InstallCampaignBody()` installs `CampaignOperationsScreenView` | No production source/version or binding owner found | The route installs a serialized view containing chapter, map, mission, and progress references, but no production projection binder was found. Static placeholder content must not count as an executable projection. | Missing executable characterization and open-state coverage. | `AM-026`, `AM-027`, `AM-028`, `AM-033`, `AM-035` |
+| `UI-025` | Mission briefing | Static route body; dynamic projection unresolved | `MenuOverlayRoutePresentation.InstallMissionBriefingBody()` installs `MissionBriefingScreenView` | No production mission/objective/reward version or binding owner found | The route installs serialized objective, intel, reward, progress, and deploy references, but no production data binder was found. This is an implementation gap, not a zero-allocation pass. | Existing view/route behavior does not prove executable projection or unchanged-state allocation. | `AM-026`, `AM-027`, `AM-028`, `AM-033`, `AM-035` |
+| `UI-026` | Operations dashboard | Static route body; dynamic projection unresolved | `MenuOverlayRoutePresentation.InstallOperationsBody()` installs `OperationsDashboardScreenView` | No production readiness, warning, day, or district-map version/binding owner found | Serialized dashboard references are installed without a production projection binder. Dynamic readiness, warning, and daily briefing behavior remain uncharacterized. | Missing executable characterization and open-state coverage. | `AM-026`, `AM-027`, `AM-028`, `AM-033`, `AM-035` |
+| `UI-027` | Command Exchange, Inbox, Events, Ranking, and Loadout/Squad Prep routes | Declared routes with fallback presentation | `CommanderProfileRouteLifecyclePresentation.InstallMenuRouteBody()` default branch | No dedicated route source/version contract | These five `UIRoute` values fall through to the Main Menu body. Until each route gains a dedicated executable surface or is removed from the route contract, it must remain an explicit implementation gap. | No dedicated route behavior or allocation coverage. | `AM-026`, `AM-033`, `AM-035` |
+| `UI-028` | Threat Alert, Pause, and Reward Unlock popup kinds | Declared/requestable; shell content installation unresolved | `UiShellFlowSystem`/request dispatch can carry the kinds, while `UIShellContentView.InstallPopup()` handles only Build Drawer, Settings, and Resource Exchange | Active popup state/sequence exists; no dedicated content projection contract found for these three kinds | Threat feedback may use direct HUD presentation, but no shell popup installation case was found. Pause and Reward Unlock likewise have no content installation branch. Reconcile each kind as direct presentation, dedicated popup, or obsolete contract. | Missing executable popup and open-state coverage. | `AM-026`, `AM-027`, `AM-028`, `AM-033`, `AM-035` |
+| `UI-029` | Match command wheel / special-command panel | Active event-driven | `CommandWheelPanelView` and match command input binding | Tactical command mode and runtime feedback; no independent projection version | Open/close is event-driven, toggles the wheel root, and applies/clears Special command feedback. No view-local polling exists, but repeated opening, selection changes while open, and teardown/rebind behavior are not allocation-characterized. | Command behavior coverage exists; fully open unchanged-state and lifecycle allocation coverage missing. | `AM-026`, `AM-028`, `AM-032`, `AM-035` |
+
+## Route And Popup Reconciliation
+
+This table prevents declared navigation contracts from being counted as implemented projection surfaces without an executable owner.
+
+| Contract | Current presentation classification | Inventory row |
+|---|---|---|
+| `Splash` | Dedicated splash/loading route | `UI-002`, `UI-022` |
+| `MainMenu` | Dedicated shell sections | `UI-001`, `UI-003` |
+| `Settings` | Dedicated screen and popup views | `UI-005`, `UI-016` |
+| `QuickCustomSetup` | Dedicated installed route body | `UI-023` |
+| `Match` | Dedicated Match HUD | `UI-006` through `UI-016`, `UI-022`, `UI-029` as applicable |
+| `Armory` | Dedicated installed route body | `UI-017` |
+| `CommandFeed` | Commander profile route body | `UI-004` |
+| `Campaign` | Dedicated static body; projection unresolved | `UI-024` |
+| `MissionBriefing` | Dedicated static body; projection unresolved | `UI-025` |
+| `Operations` | Dedicated static body; projection unresolved | `UI-026` |
+| `CommandExchange`, `Inbox`, `Events`, `Ranking`, `LoadoutSquadPrep` | Main Menu fallback; dedicated surface unresolved | `UI-027` |
+| `BuildDrawer`, `Settings`, `ResourceExchange` popup kinds | Explicit `UIShellContentView.InstallPopup()` cases | `UI-005`, `UI-013`, `UI-015`, `UI-016` |
+| `ThreatAlert`, `Pause`, `RewardUnlock` popup kinds | Declared/requestable; content installation unresolved | `UI-028` |
 
 ## Initial Priority Order
 

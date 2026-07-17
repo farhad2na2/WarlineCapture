@@ -1004,6 +1004,18 @@ namespace Game.Editor
             return value?.IndexOf(fragment, StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
+        public static int GetObviousQualityViolationCount()
+        {
+            Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            GameObject sceneRoot = FindSceneRoot(scene);
+            return CountLocalRoadClearanceIntersections(sceneRoot, false) +
+                   CountAuthoredRoadClearanceIntersections(sceneRoot, false) +
+                   CountDistrictCurationViolations(sceneRoot, false) +
+                   CountHighConfidenceTerrainStructurePenetrations(sceneRoot, false) +
+                   CountCrossModulePrimaryStructureOverlaps(sceneRoot, false) +
+                   CountAuthoredTransitionStructureOverlaps(sceneRoot, false);
+        }
+
         public static IReadOnlyList<string> ValidateRequiredAssets()
         {
             var missing = new List<string>();

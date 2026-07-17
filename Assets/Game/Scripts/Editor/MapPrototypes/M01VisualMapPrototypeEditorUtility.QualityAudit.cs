@@ -90,13 +90,6 @@ namespace Game.Editor
             new("aftermath_road", new Vector3(31f, 8f, -24f), new Vector3(4f, 1.5f, -3f), 40f)
         };
 
-        public static int GetObviousQualityViolationCount()
-        {
-            Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
-            GameObject sceneRoot = FindSceneRoot(scene);
-            return AuditObviousQuality(sceneRoot, false, null).ObviousViolationCount;
-        }
-
         public static void CaptureQualityAuditBatch()
         {
             Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);

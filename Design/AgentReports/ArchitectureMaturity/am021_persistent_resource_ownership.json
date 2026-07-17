@@ -48,8 +48,8 @@
   "artifactId": "AM-021",
   "baseline": {
     "branch": "main",
-    "commit": "d9da484cc057f60bb4a033da713d5b01583c546b",
-    "tree": "9e31965e9f1bc100759408aecaa6e7821bf21a94"
+    "commit": "18423c3b349c94997759e12bd81a204847133759",
+    "tree": "f1383e1db795ecbde92e32c5bf7e2de821642cb6"
   },
   "categories": {
     "eventSubscriptions": [
@@ -636,9 +636,9 @@
     "persistentNativeContainers": [
       {
         "creationMethods": [],
-        "creationOwner": "RuntimeGridStorageInitialization/DynamicBlockerInitSystem",
+        "creationOwner": "RuntimeGridPersistentStorageUtilitySystemHelper.EnsureStorage",
         "disposalMethods": [],
-        "disposalOwner": "DynamicBlockerInitSystem.OnDestroy",
+        "disposalOwner": "RuntimeGridPersistentStorageUtilitySystemHelper.DisposeStorage",
         "field": "Counts",
         "fieldType": "NativeArray<int>",
         "line": 464,
@@ -646,14 +646,14 @@
         "path": "Assets/Game/Scripts/Components/GridComponents.cs",
         "persistentAllocatorObserved": true,
         "protectedOwnerIds": [],
-        "status": "gap",
+        "status": "explicit",
         "teardownPath": []
       },
       {
         "creationMethods": [],
-        "creationOwner": "RuntimeGridStorageInitialization/DynamicBlockerInitSystem",
+        "creationOwner": "RuntimeGridPersistentStorageUtilitySystemHelper.EnsureStorage",
         "disposalMethods": [],
-        "disposalOwner": "DynamicBlockerInitSystem.OnDestroy",
+        "disposalOwner": "RuntimeGridPersistentStorageUtilitySystemHelper.DisposeStorage",
         "field": "Blocked",
         "fieldType": "NativeBitArray",
         "line": 465,
@@ -661,14 +661,14 @@
         "path": "Assets/Game/Scripts/Components/GridComponents.cs",
         "persistentAllocatorObserved": true,
         "protectedOwnerIds": [],
-        "status": "gap",
+        "status": "explicit",
         "teardownPath": []
       },
       {
         "creationMethods": [],
-        "creationOwner": "RuntimeGridStorageInitialization/DynamicBlockerInitSystem",
+        "creationOwner": "RuntimeGridPersistentStorageUtilitySystemHelper.EnsureStorage",
         "disposalMethods": [],
-        "disposalOwner": "DynamicBlockerInitSystem.OnDestroy",
+        "disposalOwner": "RuntimeGridPersistentStorageUtilitySystemHelper.DisposeStorage",
         "field": "FriendlyPassFactionIds",
         "fieldType": "NativeArray<byte>",
         "line": 466,
@@ -676,14 +676,14 @@
         "path": "Assets/Game/Scripts/Components/GridComponents.cs",
         "persistentAllocatorObserved": true,
         "protectedOwnerIds": [],
-        "status": "gap",
+        "status": "explicit",
         "teardownPath": []
       },
       {
         "creationMethods": [],
-        "creationOwner": "RuntimeGridStorageInitialization/DynamicBlockerInitSystem",
+        "creationOwner": "RuntimeGridPersistentStorageUtilitySystemHelper.EnsureStorage",
         "disposalMethods": [],
-        "disposalOwner": "DynamicBlockerInitSystem.OnDestroy",
+        "disposalOwner": "RuntimeGridPersistentStorageUtilitySystemHelper.DisposeStorage",
         "field": "Occupied",
         "fieldType": "NativeBitArray",
         "line": 477,
@@ -691,14 +691,14 @@
         "path": "Assets/Game/Scripts/Components/GridComponents.cs",
         "persistentAllocatorObserved": true,
         "protectedOwnerIds": [],
-        "status": "gap",
+        "status": "explicit",
         "teardownPath": []
       },
       {
         "creationMethods": [],
-        "creationOwner": "RuntimeGridStorageInitialization/RuntimeGridBootstrapStartupSystemHelper",
+        "creationOwner": "RuntimeGridPersistentStorageUtilitySystemHelper.EnsureStorage",
         "disposalMethods": [],
-        "disposalOwner": "DynamicBlockerInitSystem.OnDestroy",
+        "disposalOwner": "RuntimeGridPersistentStorageUtilitySystemHelper.DisposeStorage",
         "field": "Cells",
         "fieldType": "NativeList<int2>",
         "line": 471,
@@ -706,7 +706,7 @@
         "path": "Assets/Game/Scripts/Components/GridComponents.cs",
         "persistentAllocatorObserved": true,
         "protectedOwnerIds": [],
-        "status": "gap",
+        "status": "explicit",
         "teardownPath": []
       },
       {
@@ -5738,7 +5738,7 @@
           "OnCreate",
           "OnDestroy"
         ],
-        "line": 14,
+        "line": 13,
         "ownerType": "DynamicBlockerInitSystem",
         "path": "Assets/Game/Scripts/Systems/DynamicBlockerInitSystem.cs",
         "protectedOwnerIds": [],
@@ -13190,7 +13190,7 @@
   "schemaVersion": 1,
   "scope": {
     "productionFileCount": 1022,
-    "sourceManifestSha256": "c506c610ba2867a09813e16c72a706b8ffe069b6db12d1fa74491c5a56b2908b",
+    "sourceManifestSha256": "5ee2c4182608f21952085679a22e756b356df18d8b3dd940be8465c854a367f3",
     "sourceRoot": "Assets/Game/Scripts"
   },
   "sourceManifest": [
@@ -14556,7 +14556,7 @@
     },
     {
       "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
-      "sha256": "ad0708b5e19ed598e1fc00f9a4809b7f3e26b750e8dfbfae6f7e61b37d39a79f"
+      "sha256": "1f1bf286b49ed28c098ee75efde29d3c1dd57106d070b871475f8917879ad86e"
     },
     {
       "path": "Assets/Game/Scripts/ScenarioLab/TransportBoardingScenarioCatalog.cs",
@@ -15244,11 +15244,11 @@
     },
     {
       "path": "Assets/Game/Scripts/Systems/DynamicBlockerInitSystem.cs",
-      "sha256": "5113911427664a72a5c0c7736aa633a6e8c4439e92fda9d14e7798230974fb7d"
+      "sha256": "4057bb4daf87b169a11051ae31e1afe78e4e6f2cc16be34bcb590e3042370947"
     },
     {
       "path": "Assets/Game/Scripts/Systems/DynamicOccupancyRebuildSystem.cs",
-      "sha256": "4ab5a347080e10c9168d21cd7be512ccb995ca056d93c4a91ffe0b751d3a0ab5"
+      "sha256": "25da526174949c4c0d7c26f128449457924508f2b775f82a8f41f9960df3b88a"
     },
     {
       "path": "Assets/Game/Scripts/Systems/EngageTargetSyncSystem.cs",
@@ -15844,15 +15844,15 @@
     },
     {
       "path": "Assets/Game/Scripts/Systems/RuntimeGridBootstrapStartupSystemHelper.cs",
-      "sha256": "36ad0ae021aa56008691412dfafa879d3d78dfaee51297e45733c8b994168038"
+      "sha256": "0d3c056a829b48f8618edd8c1a32990e0b241895250b4320657dc7f70f4557e3"
     },
     {
       "path": "Assets/Game/Scripts/Systems/RuntimeGridDeduplicationSystem.cs",
-      "sha256": "8f6a8dd6e436e18cdffdfc078d1001c9508617796ac211470c5866731c8de115"
+      "sha256": "79b9a11d1f621bc6b3bb5643f4716ee9fcdf73a471cb357ffd978e0f42befa22"
     },
     {
-      "path": "Assets/Game/Scripts/Systems/RuntimeGridStorageInitialization.cs",
-      "sha256": "e454989fe175a54b479f683a027d52f270dd1c6aef1fa673728fad31fccdb8bb"
+      "path": "Assets/Game/Scripts/Systems/RuntimeGridPersistentStorageUtilitySystemHelper.cs",
+      "sha256": "2012a78fc1073e9949ee1e1635e99a9745e584a316f069e4a722ab5dd6429075"
     },
     {
       "path": "Assets/Game/Scripts/Systems/RuntimeRootSceneSystemHelper.cs",
@@ -17290,8 +17290,8 @@
       "persistentQueries": 454,
       "presentationRoots": 26
     },
-    "explicitOwnerCount": 548,
-    "gapCount": 5,
+    "explicitOwnerCount": 553,
+    "gapCount": 0,
     "protectedOwnerCount": 22,
     "totalResourceCount": 575
   }

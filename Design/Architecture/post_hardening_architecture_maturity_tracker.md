@@ -109,16 +109,16 @@ Release-only categories are reported separately and never averaged into a premat
 
 | Field | Status |
 |---|---|
-| Checklist complete | `21 / 86` (`24.4%`) |
-| Core Architecture Lane | `21 / 68` (`30.9%`); active |
+| Checklist complete | `22 / 86` (`25.6%`) |
+| Core Architecture Lane | `22 / 68` (`32.4%`); active |
 | Release Certification Lane | `0 / 18` (`0.0%`); deferred |
-| Program state | Core Architecture Lane active; Phase 1 accepted; Phase 2 persistent-resource ownership blocked on map handoff; audit-only AM-026 accepted in parallel; release work inactive |
+| Program state | Core Architecture Lane active; Phase 1 accepted; Phase 2 persistent-resource ownership accepted; AM-022 lifecycle recovery is dependency-ready; audit-only AM-026 accepted in parallel; release work inactive |
 | Current phase | Phase 2 - World Lifecycle And Dependency Hardening |
-| Current task | `AM-021` blocked; deterministic matrix covers `575` persistent resources with `548` explicit owners, `5` open ownership gaps, and `22` protected-owner rows. No Phase 3 production task is dispatchable until Phase 2 acceptance |
-| Parallel preparatory work | Audit-only `AM-026` is accepted with 29 surfaces and `AM-WP-001` through `AM-WP-023`; production tasks `AM-027` through `AM-035` remain gated. `AM-WP-007` is additionally blocked on mission/objective owner handoff and `AM-WP-009` preserves audio/FirstLaunch consumers as read-only dependencies. `AM-WP-024` through `AM-WP-027` define AM-022 through AM-025 but remain dependency-blocked behind AM-021 |
-| Blockers | AM-021 has `5` remaining split-owner grid-container gaps in the active map lane. Architecture will not edit those paths until the map owner hands them off. Source-growth is externally blocked by four separately owned FirstLaunch `*SystemHelper` paths, and integrated architecture CI is externally blocked by `FirstLaunchLanguageChoiceView`; final broad-contract acceptance also remains gated by separately owned operation-map, FirstLaunch/UI, and package-bound violations. Release-only certification remains intentionally deferred |
-| Latest validation | AM-026 inventory contract `7 / 7`; integrated architecture `145 / 146` with the sole failure in separately owned `FirstLaunchLanguageChoiceView`; `git diff --check` passed; no compiler run required because no production C# or Unity asset changed |
-| Latest evidence | `am026_ui_projection_inventory_acceptance.json` binds 29 unique surfaces, 23 bounded work packages, route/popup reconciliation, protected ownership scope, and implementation commit `0664ecb12`. AM-021 ownership evidence remains current but blocked on five map-owned rows |
+| Current task | `AM-022` ready; implement the accepted World lifecycle recovery matrix from `AM-WP-024` |
+| Parallel preparatory work | Audit-only `AM-026` is accepted with 29 surfaces and `AM-WP-001` through `AM-WP-023`; production tasks `AM-027` through `AM-035` remain gated. `AM-WP-007` is additionally blocked on mission/objective owner handoff and `AM-WP-009` preserves audio/FirstLaunch consumers as read-only dependencies. `AM-WP-024` through `AM-WP-027` define AM-022 through AM-025; AM-WP-024 is now dispatchable |
+| Blockers | Source-growth is externally blocked by four separately owned FirstLaunch `*SystemHelper` paths, and integrated architecture CI is externally blocked by `FirstLaunchLanguageChoiceView`; final broad-contract acceptance also remains gated by separately owned operation-map, FirstLaunch/UI, and package-bound violations. Release-only certification remains intentionally deferred |
+| Latest validation | AM-021 final: runtime-grid storage `4 / 4`, persistent lifecycle `8 / 8`, ownership generator `11 / 11`, Unity compiler errors `0`, canonical matrix `553` explicit / `0` gaps / `22` protected, and `git diff --check` passed. Integrated architecture is `146 / 147` with the sole failure in separately owned `FirstLaunchLanguageChoiceView` |
+| Latest evidence | `am021_persistent_resource_ownership_acceptance.json` binds Gameplay-Clone handoff `b2392edc1`, naming correction `18423c3b3`, canonical ownership reports, focused Unity/Python validation, and zero ownership gaps |
 | Core entry baseline | Phase 0 accepted by `AM-001` through `AM-008`; exact-identity assembly and bounded Editor Match evidence are current at `9a0aa14252e6559680328e520d26c16bfc7b444e`; the dashboard required gate is accepted; the entry rating and owned deltas are published in `entry_baseline_report.md` |
 | Release entry review | Deferred until `pre_release_performance_certification_backlog.md` activates |
 | Architecture rating | Evidence-backed Phase 0 entry rating `8.5 / 10`; planning baseline only, not a `9.5` claim |
@@ -236,7 +236,7 @@ Make runtime dependencies explicit and prove that caches and native resources ca
 - [x] `AM-018` Inventory production uses of global World lookup, mutable static caches, static event subscriptions, hidden singletons, and runtime object discovery.
 - [x] `AM-019` Define one standard World-bound query/entity cache contract covering positive lookup, negative lookup, invalidation, rebind, disposal, and destroyed-entity recovery.
 - [x] `AM-020` Move mutable runtime state that crosses World lifecycles into explicit World-owned systems, components, or lifecycle containers where practical.
-- [!] `AM-021` Give every persistent native container, query, event subscription, and presentation root an explicit creation and disposal owner. Blocked on the map owner resolving or handing off five split-owner grid containers; next action is to consume the requested `Gameplay-Clone` handoff commit and regenerate the deterministic ownership matrix.
+- [x] `AM-021` Give every persistent native container, query, event subscription, and presentation root an explicit creation and disposal owner.
 - [ ] `AM-022` Add tests for World destruction/recreation, domain reload, scene unload/reload, missing singleton recovery, and replaced command entities. Draft package: `Design/Architecture/WorkPackages/am_wp_024_world_lifecycle_recovery_matrix.md` (blocked until `AM-021` has zero ownership gaps).
 - [ ] `AM-023` Run at least 100 automated Menu-to-Match-to-Menu cycles without duplicate systems, stale entities, retained subscriptions, or presentation-root accumulation. Draft package: `Design/Architecture/WorkPackages/am_wp_025_menu_match_lifecycle_stress.md` (blocked on `AM-021` and `AM-022`).
 - [ ] `AM-024` Add native allocation and pool-count snapshots around lifecycle stress tests and prove no upward retained-memory trend after warmup. Draft package: `Design/Architecture/WorkPackages/am_wp_026_lifecycle_memory_pool_trend.md` (blocked on `AM-021` through `AM-023`).
@@ -812,3 +812,12 @@ Accepted AM-020 progress snapshot:
 - Validation: focused inventory contract `7 / 7` and `git diff --check` passed. Integrated architecture passed `145 / 146`; its sole failure is the separately owned `FirstLaunchLanguageChoiceView` source-responsibility guardrail. Compiler validation was not required because no production C# or Unity asset changed.
 - Evidence: `am026_ui_projection_inventory_acceptance.json` binds the inventory, CI test, package-set hash, source baseline, and implementation commit `0664ecb12`.
 - Scope preserved: operation-map, map generation, FirstLaunch, audio, UI visual-lock, scenes, prefabs, packages, `ProjectSettings`, and unrelated local work were not edited.
+
+### 2026-07-17 - AM-021 - Persistent-resource ownership accepted
+
+- Handoff: Gameplay-Clone commit `b2392edc1` consolidated the five runtime-grid containers under one creation, resize, and disposal owner. Architecture review corrected the non-ECS helper to the contract-compliant `RuntimeGridPersistentStorageUtilitySystemHelper` name in `18423c3b3` while preserving both `.meta` GUIDs.
+- Ownership result: the canonical deterministic matrix covers `575` resources with `553` explicit owners, `0` ownership gaps, and `22` separately owned/protected rows.
+- Lifecycle result: disposal clears component aliases, repeated teardown is idempotent, same-size ensure preserves state, resize replaces grid-sized storage, and resized storage clears pooled path cells.
+- Validation: runtime-grid storage `4 / 4`, persistent lifecycle `8 / 8`, and ownership generator `11 / 11` passed; Unity reported zero compiler errors. Integrated architecture passed `146 / 147`; its sole failure remains the separately owned `FirstLaunchLanguageChoiceView` guardrail. `git diff --check` passed.
+- Evidence: `am021_persistent_resource_ownership_acceptance.json`, canonical JSON/Markdown ownership reports, and the Gameplay-Clone handoff report bind the accepted implementation and validation identity.
+- Next action: dispatch `AM-022` using `AM-WP-024`; do not start the 100-cycle stress work until the recovery matrix passes.

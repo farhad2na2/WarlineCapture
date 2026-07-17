@@ -1,0 +1,69 @@
+{
+  "artifactId": "AM021-PERSISTENT-RESOURCE-OWNERSHIP-ACCEPTANCE",
+  "schemaVersion": 1,
+  "taskId": "AM-021",
+  "result": "Accepted",
+  "handoff": {
+    "commit": "b2392edc1",
+    "owner": "Gameplay-Clone",
+    "scope": "Consolidate the five split-owner runtime-grid persistent containers under one lifecycle owner."
+  },
+  "acceptedImplementation": {
+    "commit": "18423c3b349c94997759e12bd81a204847133759",
+    "tree": "f1383e1db795ecbde92e32c5bf7e2de821642cb6",
+    "namingDecision": "The non-ECS pure static owner uses the required UtilitySystemHelper suffix.",
+    "files": [
+      {
+        "path": "Assets/Game/Scripts/Systems/RuntimeGridPersistentStorageUtilitySystemHelper.cs",
+        "sha256": "2012a78fc1073e9949ee1e1635e99a9745e584a316f069e4a722ab5dd6429075"
+      },
+      {
+        "path": "Assets/Tests/Editor/RuntimeGridPersistentStorageUtilitySystemHelperTests.cs",
+        "sha256": "50dd2156526bca6b61f3d851a6c9748c2446eb2529dac23aa0e9eb5e239f799a"
+      },
+      {
+        "path": "Tools/CI/architecture_persistent_resource_ownership.py",
+        "sha256": "b5b9f6333d723c453352fd4e8b0ec198d0f6e795846ee7e2aee0f8cf6eb30208"
+      },
+      {
+        "path": "Tools/CI/tests/test_architecture_persistent_resource_ownership.py",
+        "sha256": "1c96b78d99ec75b53dc26c0a95ae4ecd545b99de52f177357674638cc6beafdf"
+      },
+      {
+        "path": "Design/AgentReports/2026-07-17_am021_runtime_grid_persistent_storage_ownership.md",
+        "sha256": "bd5d1e0a688babef7873a31fce9a87f4f88b334f2b2ea60f28713bfac1810098"
+      }
+    ]
+  },
+  "canonicalInventory": {
+    "persistentResourceCount": 575,
+    "explicitOwnerCount": 553,
+    "gapCount": 0,
+    "protectedOwnerCount": 22,
+    "json": {
+      "path": "Design/AgentReports/ArchitectureMaturity/am021_persistent_resource_ownership.json",
+      "sha256": "dd27aca1c6412246ed7849a5d9a0be8639f7f161c9df27ddae22e2d8c710e9b0"
+    },
+    "markdown": {
+      "path": "Design/AgentReports/ArchitectureMaturity/am021_persistent_resource_ownership.md",
+      "sha256": "801eab8ad37f874180b43bded2622f5295d62ed32a36f35b5bd3f0170484befb"
+    }
+  },
+  "validation": {
+    "runtimeGridPersistentStorageTests": "4 / 4 passed",
+    "persistentResourceOwnershipLifecycleTests": "8 / 8 passed",
+    "persistentResourceOwnershipPythonTests": "11 / 11 passed",
+    "integratedArchitectureTests": "146 / 147 passed; sole failure is separately owned FirstLaunchLanguageChoiceView",
+    "compilerErrors": 0,
+    "gitDiffCheck": "passed"
+  },
+  "ownershipContract": {
+    "creationResizeDisposalOwner": "RuntimeGridPersistentStorageUtilitySystemHelper",
+    "aliasClearingOnDispose": true,
+    "idempotentRepeatedTeardown": true,
+    "sameSizeEnsurePreservesState": true,
+    "resizeClearsPathPool": true,
+    "systemBaseAdded": false
+  },
+  "nextTask": "AM-022"
+}

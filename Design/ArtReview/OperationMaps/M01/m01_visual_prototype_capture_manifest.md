@@ -1,10 +1,10 @@
 # M01 Visual Prototype Capture Manifest
 
-- Generator: `M01VisualPrototype_2026-07-17_v19_roadside_incident`
+- Generator: `M01VisualPrototype_2026-07-17_v21_support_aware_terrain`
 - Seed: `26071501`
 - Unity: `6000.5.2f1`
 - Scene: `Assets/Game/Scenes/MapPrototypes/Chapter01/M01_VisualPrototype.unity`
-- Semantic fingerprint: `DDB7D7979FE62FF1176BDE93BEF7B1F932A911958560F8E5F483467996CBDC90`
+- Semantic fingerprint: `29ABF5963B8A3F6A1DAF10EA0064BADCC516662A451AC0CC842BBB9442BDE0A4`
 - Resolution: `1600x900`
 - Gameplay overview: `m01_gameplay_overview.png`
 - Old Market approach: `m01_old_market_approach.png`

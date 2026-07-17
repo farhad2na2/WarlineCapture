@@ -16,7 +16,7 @@ namespace Game.Editor
         public const string ScenePath = "Assets/Game/Scenes/MapPrototypes/Chapter01/M01_VisualPrototype.unity";
         public const string CaptureDirectory = "Design/ArtReview/OperationMaps/M01";
         public const int GenerationSeed = 26071501;
-        public const string GeneratorVersion = "M01VisualPrototype_2026-07-17_v19_roadside_incident";
+        public const string GeneratorVersion = "M01VisualPrototype_2026-07-17_v21_support_aware_terrain";
 
         private const int CaptureWidth = 1600;
         private const int CaptureHeight = 900;
@@ -144,8 +144,7 @@ namespace Game.Editor
         private static readonly LocalRoadSegmentDefinition[] LocalRoadSegments =
         {
             new("MarketExit", new Vector3(-14f, 0f, 9f), new Vector3(10.5f, 0f, 9.3f), false),
-            new("MarketToCompound_A", new Vector3(10.5f, 0f, 9.3f), new Vector3(22f, 0f, 18f), false),
-            new("MarketToCompound_B", new Vector3(22f, 0f, 18f), new Vector3(36f, 0f, 35f), false)
+            new("MarketToCompound", new Vector3(10.5f, 0f, 9.3f), new Vector3(19f, 0f, 28f), false)
         };
 
         private static readonly string[] AuthoredRoadClearanceObstacleNames =
@@ -154,6 +153,27 @@ namespace Game.Editor
             "BombedCornerRuin",
             "CivilianAidTent",
             "DamagedCivilianTent"
+        };
+
+        private static readonly string[] OldMarketBuildingSupportGroundNames =
+        {
+            "TownMarket_DemoAuthored_SM_Env_Ground_Hill_02 (4)",
+            "TownMarket_DemoAuthored_SM_Env_Ground_Hill_02 (5)",
+            "TownMarket_DemoAuthored_SM_Env_Ground_Hill_02 (6)",
+            "TownMarket_DemoAuthored_SM_Env_Ground_Hill_Flat_01 (2)",
+            "TownMarket_DemoAuthored_SM_Env_Ground_Hill_Flat_01 (3)",
+            "TownMarket_DemoAuthored_SM_Env_Ground_Hill_Flat_01 (4)",
+            "TownMarket_DemoAuthored_SM_Env_Ground_Hill_Flat_01 (5)",
+            "TownMarket_DemoAuthored_SM_Env_Ground_Hill_Flat_01 (6)",
+            "TownMarket_DemoAuthored_SM_Env_Ground_Hill_Flat_01 (7)",
+            "TownMarket_DemoAuthored_SM_Env_Ground_Hill_Flat_01 (8)",
+            "TownMarket_DemoAuthored_SM_Env_Ground_Hill_Flat_01 (9)"
+        };
+
+        private static readonly string[] UnsupportedUtilityGroundNames =
+        {
+            "BaseCommand_DemoAuthored_SM_Env_Ground_Hill_Flat_Square_01 (8)",
+            "BaseCommand_DemoAuthored_SM_Env_Ground_Hill_Flat_Square_01 (9)"
         };
 
         private static readonly DistrictCurationDefinition[] DistrictCurationDefinitions =
@@ -165,8 +185,8 @@ namespace Game.Editor
                 false),
             new(
                 "UtilityCompound_East_DemoAuthored",
-                new Vector2(22f, -29f),
-                new Vector2(101f, 72f),
+                new Vector2(2f, -29f),
+                new Vector2(81f, 72f),
                 true,
                 40f,
                 18f),
@@ -681,7 +701,7 @@ namespace Game.Editor
             for (int index = 0; index < transforms.Length; index++)
             {
                 string objectName = transforms[index].name;
-                if (ContainsName(objectName, "_Env_Ground_Hill_") ||
+                if (ContainsName(objectName, "_Env_Ground_") ||
                     ContainsName(objectName, "_Env_SandDunes_"))
                 {
                     return true;
@@ -689,6 +709,31 @@ namespace Game.Editor
             }
 
             return false;
+        }
+
+        private static bool IsExactOwnerName(string ownerName, string[] exactNames)
+        {
+            for (int index = 0; index < exactNames.Length; index++)
+            {
+                if (string.Equals(ownerName, exactNames[index], StringComparison.Ordinal))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static bool IsUnsupportedImportedGround(string moduleName, string ownerName)
+        {
+            return string.Equals(moduleName, "UtilityCompound_East_DemoAuthored", StringComparison.Ordinal) &&
+                   IsExactOwnerName(ownerName, UnsupportedUtilityGroundNames);
+        }
+
+        private static Material SelectImportedGroundMaterial(string moduleName, string ownerName, Palette palette)
+        {
+            bool oldMarketBuildingSupport =
+                string.Equals(moduleName, "OldMarket_West_DemoAuthored", StringComparison.Ordinal) &&
+                IsExactOwnerName(ownerName, OldMarketBuildingSupportGroundNames);
+            return oldMarketBuildingSupport ? palette.DistrictGround : palette.TransitionGround;
         }
 
         private static int OverrideRendererMaterials(Transform owner, Material material)
@@ -939,16 +984,10 @@ namespace Game.Editor
             Transform terrainRoot = CreateRoot("01_Terrain_And_RoadPlan", parent).transform;
             CreateBox("DesertGround", new Vector3(0f, -1.05f, 16f), new Vector3(1200f, 2f, 900f), palette.Sand, terrainRoot);
 
-            CreateIrregularSurface("CentralOperationGround", new Vector3(-8f, -0.065f, -18f), new Vector2(250f, 205f), palette.TransitionGround, terrainRoot);
-            CreateIrregularSurface("OldMarketOuterTransition", new Vector3(-62f, -0.045f, 17f), new Vector2(142f, 124f), palette.TransitionGround, terrainRoot);
-            CreateIrregularSurface("UtilityCompoundOuterTransition", new Vector3(62f, -0.045f, 19f), new Vector2(142f, 132f), palette.TransitionGround, terrainRoot);
-            CreateIrregularSurface("ResidentialOuterTransition", new Vector3(-4f, -0.045f, -70f), new Vector2(156f, 118f), palette.TransitionGround, terrainRoot);
-            CreateIrregularSurface("OldMarketUtilityGroundLink", new Vector3(15f, -0.035f, 14f), new Vector2(62f, 62f), palette.TransitionGround, terrainRoot);
-            CreateIrregularSurface("CivilianFrontageTransition", new Vector3(1f, -0.034f, -3f), new Vector2(60f, 38f), palette.TransitionGround, terrainRoot);
-            CreateIrregularSurface("OldMarketDistrictApron", new Vector3(-62f, -0.015f, 17f), new Vector2(118f, 102f), palette.DistrictGround, terrainRoot);
-            CreateIrregularSurface("UtilityCompoundApron", new Vector3(62f, -0.015f, 19f), new Vector2(112f, 108f), palette.DistrictGround, terrainRoot);
-            CreateIrregularSurface("ResidentialDistrictApron", new Vector3(-4f, -0.015f, -70f), new Vector2(130f, 94f), palette.DistrictGround, terrainRoot);
-            CreateIrregularSurface("CivilianFrontageApron", new Vector3(1f, -0.005f, -3f), new Vector2(50f, 30f), palette.DistrictGround, terrainRoot);
+            CreateIrregularSurface("CentralOperationGround", new Vector3(-8f, -0.065f, -18f), new Vector2(250f, 205f), palette.TransitionGround, terrainRoot, 2f);
+            CreateIrregularSurface("OldMarketUtilityGroundLink", new Vector3(7f, -0.035f, 14f), new Vector2(90f, 34f), palette.TransitionGround, terrainRoot, 6f);
+            CreateIrregularSurface("CivilianFrontageTransition", new Vector3(1f, -0.034f, -3f), new Vector2(68f, 30f), palette.TransitionGround, terrainRoot, -7f);
+            CreateIrregularSurface("CivilianFrontageApron", new Vector3(1f, -0.005f, -3f), new Vector2(56f, 24f), palette.DistrictGround, terrainRoot, 5f);
 
             CreateLocalRoadNetwork(terrainRoot, palette);
         }
@@ -990,7 +1029,7 @@ namespace Game.Editor
         {
             Transform modulesRoot = CreateRoot("02_DemoAuthored_DistrictModules", parent).transform;
             ApplyDistrictCuration(PlaceModule(TownMarketModulePath, "OldMarket_West_DemoAuthored", new Vector3(-68f, 0f, 12f), 0f, 0.82f, modulesRoot), palette);
-            ApplyDistrictCuration(PlaceModule(BaseCommandModulePath, "UtilityCompound_East_DemoAuthored", new Vector3(69f, 0f, 13f), 180f, 0.76f, modulesRoot), palette);
+            ApplyDistrictCuration(PlaceModule(BaseCommandModulePath, "UtilityCompound_East_DemoAuthored", new Vector3(49f, 0f, 13f), 180f, 0.76f, modulesRoot), palette);
             ApplyDistrictCuration(PlaceModule(SouthTownModulePath, "Residential_South_DemoAuthored", new Vector3(-5f, 0f, -68f), 0f, 0.58f, modulesRoot), palette);
         }
 
@@ -1005,6 +1044,7 @@ namespace Game.Editor
             int majorRoadExclusions = 0;
             int remoteRoadExclusions = 0;
             int roadTerrainExclusions = 0;
+            int unsupportedGroundExclusions = 0;
             int terrainMaterialOverrides = 0;
             int disabledRenderers = 0;
             for (int ownerIndex = 0; ownerIndex < compositionRoot.childCount; ownerIndex++)
@@ -1024,10 +1064,14 @@ namespace Game.Editor
                 bool majorRoadContent = string.Equals(category, "major-road", StringComparison.Ordinal);
                 bool remoteRoadContent = IsRemoteLongRoad(moduleObject.transform, bounds, category, definition);
                 bool roadTerrainContent = ContainsRoadTerrainObstacleName(owner) && IntersectsAnyLocalRoad(bounds, 3.2f);
-                if (!outsideEnvelope && !airfieldContent && !majorRoadContent && !remoteRoadContent && !roadTerrainContent)
+                bool unsupportedGround = IsUnsupportedImportedGround(moduleObject.name, owner.name);
+                if (!outsideEnvelope && !airfieldContent && !majorRoadContent && !remoteRoadContent && !roadTerrainContent && !unsupportedGround)
                 {
                     if (ContainsImportedGroundSurfaceName(owner))
-                        terrainMaterialOverrides += OverrideRendererMaterials(owner, palette.DistrictGround);
+                    {
+                        Material groundMaterial = SelectImportedGroundMaterial(moduleObject.name, owner.name, palette);
+                        terrainMaterialOverrides += OverrideRendererMaterials(owner, groundMaterial);
+                    }
                     continue;
                 }
 
@@ -1044,6 +1088,8 @@ namespace Game.Editor
                     remoteRoadExclusions++;
                 if (roadTerrainContent)
                     roadTerrainExclusions++;
+                if (unsupportedGround)
+                    unsupportedGroundExclusions++;
             }
 
             int terrainClearanceAdjustments = ApplyTerrainStructureClearance(moduleObject.transform);
@@ -1052,6 +1098,7 @@ namespace Game.Editor
                 $"[M01DistrictCuration] module={moduleObject.name} envelopeExclusions={envelopeExclusions} " +
                 $"airfieldExclusions={airfieldExclusions} majorRoadExclusions={majorRoadExclusions} " +
                 $"remoteRoadExclusions={remoteRoadExclusions} roadTerrainExclusions={roadTerrainExclusions} " +
+                $"unsupportedGroundExclusions={unsupportedGroundExclusions} " +
                 $"terrainMaterialOverrides={terrainMaterialOverrides} terrainClearanceAdjustments={terrainClearanceAdjustments} " +
                 $"disabledRenderers={disabledRenderers} " +
                 $"bounds={definition.Minimum}->{definition.Maximum}");
@@ -1549,13 +1596,15 @@ namespace Game.Editor
             Vector3 position,
             Vector2 size,
             Material material,
-            Transform parent)
+            Transform parent,
+            float yaw = 0f)
         {
             GameObject surface = Game.Runtime.RuntimeOperationMapSurfaceGeometrySystemHelper.CreateIrregularSurface(
                 name,
                 unchecked((uint)GenerationSeed),
                 parent);
             surface.transform.position = position;
+            surface.transform.rotation = Quaternion.Euler(0f, yaw, 0f);
             surface.transform.localScale = new Vector3(size.x, 1f, size.y);
             MeshRenderer renderer = surface.GetComponent<MeshRenderer>();
             if (renderer != null)

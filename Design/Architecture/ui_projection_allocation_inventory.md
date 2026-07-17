@@ -1,10 +1,10 @@
 # UI Projection Allocation Inventory
 
-Status: preparatory inventory for `AM-026`; not accepted and not counted complete.
+Status: acceptance candidate for `AM-026`; production remediation remains gated by the Phase 2 exit contract.
 
-Audit source baseline: `fa2d9a595fb3545fb7ed7cc3b8f3e7d87268fb5c` on `main`.
+Audit source baseline: `3678803e01b7b89299f301d2cf0168c5c8ca2439` on `main`. The non-protected UI, composition, and runtime-system paths covered by this inventory have no source delta from the original `fa2d9a595fb3545fb7ed7cc3b8f3e7d87268fb5c` audit baseline.
 
-This inventory may be maintained while `AM-020` through `AM-025` close, but Phase 3 production changes remain gated by the accepted Phase 2 cache and lifecycle contract. It covers the currently implemented Canvas runtime surfaces and records the owner that initiates reads, the source/version contract, managed conversion or rebuild behavior, existing allocation coverage, and the task that owns remediation.
+This inventory may be accepted independently while `AM-021` through `AM-025` close because it changes no production source and claims no runtime lifecycle behavior. Phase 3 production changes remain gated by the accepted Phase 2 cache and lifecycle contract. It covers the currently implemented Canvas runtime surfaces and records the owner that initiates reads, the source/version contract, managed conversion or rebuild behavior, existing allocation coverage, and the task that owns remediation.
 
 ## Acceptance Contract
 

@@ -404,6 +404,62 @@ public sealed class StaticMapPresentationOutputOwnershipTests
     }
 
     [Test]
+    public void MapBBakeMutationScope_CannotModifyOrDeleteMapAOutputs()
+    {
+        string projectRoot = CreateTemporaryProjectRoot();
+        string mapAScenePath = ProjectPath(projectRoot, SceneA);
+        string mapAMetaPath = mapAScenePath + ".meta";
+        string mapBScenePath = ProjectPath(projectRoot, AlternateSceneA);
+        try
+        {
+            WriteFile(mapAScenePath, "map-a-scene");
+            WriteFile(mapAMetaPath, "map-a-meta");
+            WriteFile(mapBScenePath, "map-b-scene");
+            WriteFile(mapBScenePath + ".meta", "map-b-meta");
+            byte[] expectedMapAScene = File.ReadAllBytes(mapAScenePath);
+            byte[] expectedMapAMeta = File.ReadAllBytes(mapAMetaPath);
+
+            StaticMapPresentationManifest mapBManifest = CreateManifest(
+                AlternateMapId,
+                AlternateSceneA);
+            try
+            {
+                using StaticMapPresentationBakeTransaction transaction =
+                    StaticMapPresentationBakeTransaction.Begin(
+                        projectRoot,
+                        AlternateMapId,
+                        AlternateOutputRoot,
+                        AlternateManifestPath,
+                        AlternateIntegrityPath,
+                        new[] { AlternateSceneA });
+                int deleted = StaticMapPresentationOutputOwnership.DeleteStaleSceneAssets(
+                    AlternateMapId,
+                    AlternateOutputRoot,
+                    mapBManifest,
+                    Array.Empty<string>(),
+                    _ => false,
+                    path => File.Exists(ProjectPath(projectRoot, path)),
+                    _ => throw new AssertionException("Synthetic files must use physical deletion."),
+                    path => DeletePhysicalScene(projectRoot, path));
+                Assert.That(deleted, Is.EqualTo(1));
+                transaction.Commit();
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(mapBManifest);
+            }
+
+            Assert.That(File.Exists(mapBScenePath), Is.False);
+            Assert.That(File.ReadAllBytes(mapAScenePath), Is.EqualTo(expectedMapAScene));
+            Assert.That(File.ReadAllBytes(mapAMetaPath), Is.EqualTo(expectedMapAMeta));
+        }
+        finally
+        {
+            DeleteTemporaryProjectRoot(projectRoot);
+        }
+    }
+
+    [Test]
     public void SceneIntegrity_RejectsModifiedGeneratedSceneContent()
     {
         string projectRoot = CreateTemporaryProjectRoot();
@@ -860,6 +916,17 @@ public sealed class StaticMapPresentationOutputOwnershipTests
     private static string ProjectPath(string projectRoot, string assetPath)
     {
         return Path.Combine(projectRoot, assetPath.Replace('/', Path.DirectorySeparatorChar));
+    }
+
+    private static bool DeletePhysicalScene(string projectRoot, string assetPath)
+    {
+        string physicalPath = ProjectPath(projectRoot, assetPath);
+        bool existed = File.Exists(physicalPath);
+        if (existed)
+            File.Delete(physicalPath);
+        if (File.Exists(physicalPath + ".meta"))
+            File.Delete(physicalPath + ".meta");
+        return existed;
     }
 
     private static void WriteFile(string path, string content)

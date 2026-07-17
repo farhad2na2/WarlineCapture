@@ -1,0 +1,67 @@
+{
+  "acceptanceTest": {
+    "path": "Tools/CI/tests/test_architecture_world_scoped_cache_acceptance.py",
+    "sha256": "ed54ca4b15ed36fe57efb7d876cae6a746b54b7bc7112b5b4ebfcc41c9c2f527"
+  },
+  "acceptedEvidence": {
+    "changedPaths": [
+      "Design/AgentReports/ArchitectureMaturity/Logs/am019_broad_architecture.log.gz",
+      "Design/AgentReports/ArchitectureMaturity/Logs/am019_query_cache_behavior.log.gz",
+      "Design/AgentReports/ArchitectureMaturity/Logs/am019_query_cache_performance.log.gz",
+      "Design/AgentReports/ArchitectureMaturity/am019_world_scoped_cache_contract_evidence.json",
+      "Tools/CI/tests/test_architecture_world_scoped_cache_evidence.py"
+    ],
+    "commit": "ea39268476bb4742edb131018c8c073efa4d34cf",
+    "tree": "b6f4d951945f47caab49bf91af4d527e13bce000",
+    "files": [
+      {
+        "path": "Design/AgentReports/ArchitectureMaturity/Logs/am019_broad_architecture.log.gz",
+        "sha256": "c5d4dc31bdba1ac8a3164e31143126efa1121732ec5886e3ae148f444c6c88ed"
+      },
+      {
+        "path": "Design/AgentReports/ArchitectureMaturity/Logs/am019_query_cache_behavior.log.gz",
+        "sha256": "bb9548c77dadf8685b4c51cbb3ba0b81efa33fdbc123cc365d8bb1a028bc6943"
+      },
+      {
+        "path": "Design/AgentReports/ArchitectureMaturity/Logs/am019_query_cache_performance.log.gz",
+        "sha256": "35b5e2e99a64abd17a48c547cb9ffe600572c7d6c6143532c5826d9b1d8ffb64"
+      },
+      {
+        "path": "Design/AgentReports/ArchitectureMaturity/am019_world_scoped_cache_contract_evidence.json",
+        "sha256": "3ceac70c56e73d13095e4d15514c83f6421b5f7d23bc6782d9a5473a9665f307"
+      },
+      {
+        "path": "Tools/CI/tests/test_architecture_world_scoped_cache_evidence.py",
+        "sha256": "9410b5db99addacd405084200180bbe2fd5c24a3c3e789b2179724af4b47c73e"
+      }
+    ]
+  },
+  "artifactId": "AM019-ACCEPTANCE-RECORD",
+  "result": "Accepted",
+  "schemaVersion": 1,
+  "scopeRule": "The accepted AM-019 evidence set is the five files hash-bound to acceptedEvidence.commit. The implementation is bound inside the evidence artifact to e733d7021eef7fb5b80fe3bd0774e5bcc5aed224. Separately owned map, operation-map, Build Drawer, FirstLaunch, audio, and UI visual-lock work is outside AM-019 scope.",
+  "sourceBaseline": {
+    "branch": "main",
+    "commit": "e733d7021eef7fb5b80fe3bd0774e5bcc5aed224",
+    "tree": "2e7049984ee379e41ffb59fe538bd1ffa1f7a797"
+  },
+  "taskId": "AM-019",
+  "validation": {
+    "acceptanceTests": 4,
+    "broadArchitectureTests": 1,
+    "compilerErrors": 0,
+    "focusedPythonTests": 24,
+    "independentRereview": "PASS",
+    "integratedArchitectureTests": 116,
+    "unityBehaviorTests": 11,
+    "unityPerformanceTests": 2,
+    "zeroAllocationPhases": 6
+  },
+  "preservedUnrelatedWork": [
+    "Assets/Game/Art/MapPrototypes/M01/Materials/M01_Asphalt.mat",
+    "Assets/Game/Art/MapPrototypes/M01/Materials/M01_RoadPaint_Amber.mat",
+    "Assets/Game/Prefabs/UI/Shell/Popups/SCN09_BuildDrawerPopup.prefab",
+    "Assets/Game/Scripts/Editor/BuildDrawerMobileLayoutPrefabSetup.cs",
+    "Assets/Game/Scripts/Editor/BuildDrawerMobileLayoutPrefabSetup.cs.meta"
+  ]
+}

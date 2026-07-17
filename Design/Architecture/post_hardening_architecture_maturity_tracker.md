@@ -109,15 +109,15 @@ Release-only categories are reported separately and never averaged into a premat
 
 | Field | Status |
 |---|---|
-| Checklist complete | `18 / 86` (`20.9%`) |
-| Core Architecture Lane | `18 / 68` (`26.5%`); active |
+| Checklist complete | `19 / 86` (`22.1%`) |
+| Core Architecture Lane | `19 / 68` (`27.9%`); active |
 | Release Certification Lane | `0 / 18` (`0.0%`); deferred |
-| Program state | Core Architecture Lane active; Phase 1 accepted; Phase 2 inventory accepted; release work inactive |
+| Program state | Core Architecture Lane active; Phase 1 accepted; Phase 2 inventory and World-scoped cache contract accepted; release work inactive |
 | Current phase | Phase 2 - World Lifecycle And Dependency Hardening |
-| Current task | `AM-019` ready, not yet claimed |
-| Blockers | None for `AM-019`; release-only device, thermal, cold/warm, and sustained certification remain intentionally deferred |
-| Latest validation | AM-018: focused Python `11 / 11`, integrated architecture CI `102 / 102`, Python syntax and deterministic regeneration passed; no AM-018 production C# changed, so Unity compilation was not required; independent rereview `PASS` |
-| Latest evidence | `am018_acceptance_record.json` and generated JSON/Markdown dependency-hazard inventory; post-operation-map refresh evidence commit `02e8fd5b7f670e0cfb076f2d6198f89e23fa769a` |
+| Current task | `AM-020` ready, not yet claimed |
+| Blockers | None for `AM-020`; release-only device, thermal, cold/warm, and sustained certification remain intentionally deferred |
+| Latest validation | AM-019: Unity lifecycle `11 / 11`, cache performance `2 / 2` across six zero-allocation phases, broad architecture `1 / 1`, zero compiler errors, focused Python `24 / 24`, acceptance `4 / 4`, integrated architecture CI `116 / 116`, and independent rereview `PASS` |
+| Latest evidence | `am019_acceptance_record.json` and `am019_world_scoped_cache_contract_evidence.json`; accepted evidence commit `ea39268476bb4742edb131018c8c073efa4d34cf`, implementation commit `e733d7021eef7fb5b80fe3bd0774e5bcc5aed224` |
 | Core entry baseline | Phase 0 accepted by `AM-001` through `AM-008`; exact-identity assembly and bounded Editor Match evidence are current at `9a0aa14252e6559680328e520d26c16bfc7b444e`; the dashboard required gate is accepted; the entry rating and owned deltas are published in `entry_baseline_report.md` |
 | Release entry review | Deferred until `pre_release_performance_certification_backlog.md` activates |
 | Architecture rating | Evidence-backed Phase 0 entry rating `8.5 / 10`; planning baseline only, not a `9.5` claim |
@@ -233,7 +233,7 @@ Reduce change risk in oversized systems without replacing the architecture or ch
 Make runtime dependencies explicit and prove that caches and native resources cannot outlive their owning World.
 
 - [x] `AM-018` Inventory production uses of global World lookup, mutable static caches, static event subscriptions, hidden singletons, and runtime object discovery.
-- [ ] `AM-019` Define one standard World-bound query/entity cache contract covering positive lookup, negative lookup, invalidation, rebind, disposal, and destroyed-entity recovery.
+- [x] `AM-019` Define one standard World-bound query/entity cache contract covering positive lookup, negative lookup, invalidation, rebind, disposal, and destroyed-entity recovery.
 - [ ] `AM-020` Move mutable runtime state that crosses World lifecycles into explicit World-owned systems, components, or lifecycle containers where practical.
 - [ ] `AM-021` Give every persistent native container, query, event subscription, and presentation root an explicit creation and disposal owner.
 - [ ] `AM-022` Add tests for World destruction/recreation, domain reload, scene unload/reload, missing singleton recovery, and replaced command entities.
@@ -698,3 +698,17 @@ The implementing agent works directly on `main`, owns the bounded substantive an
 - Independent review: the first pass rejected static-state undercounting, missing scene-root enumeration, incomplete tool/exclusion provenance, Baker misrouting, and missing AM-020 routing for HSL rows. All five findings were fixed; final rereview returned `PASS` with no blocker.
 - Exclusions preserved: operation-map, FirstLaunch, audio, UI visual-lock, gameplay/runtime behavior, scenes, prefabs, packages, and `ProjectSettings` were read only. The two live map material edits remained unstaged and are outside AM-018 scope.
 - Next task: `AM-019` defines one standard World-bound query/entity cache contract covering positive and negative lookup, invalidation, rebind, disposal, and destroyed-entity recovery.
+
+### 2026-07-17 - AM-019 - World-scoped query and entity cache contract accepted
+
+- Workflow path: direct commits to `main`; no branch, worktree, or PR workflow.
+- Accepted evidence commit: `ea39268476bb4742edb131018c8c073efa4d34cf`, tree `b6f4d951945f47caab49bf91af4d527e13bce000`; implementation commit `e733d7021eef7fb5b80fe3bd0774e5bcc5aed224`, tree `2e7049984ee379e41ffb59fe538bd1ffa1f7a797`; source baseline `57faa4226dcc9ef0dea9d915849509a85e7963e7`, tree `1130cd87a590e9753f840d10015b55d9e2f79627`.
+- Contract result: `WorldScopedComponentQueryCache<T>` now owns explicit World binding, positive and negative entity resolution, explicit invalidation, automatic rebind, idempotent terminal disposal, component-order-version structural invalidation, and destroyed or component-removed entity recovery without default-World lookup, static mutable state, or a new ECS update owner.
+- Fail-closed boundaries: positive cardinality changes re-resolve and retain `GetSingletonEntity` duplicate failure; enableable component singleton resolution is rejected with `NotSupportedException`; returned queries are borrowed cache-owned handles that callers cannot dispose or retain across invalidation, rebind, or disposal; dependent jobs must complete before those lifecycle operations.
+- Performance result: two governed production consumers and positive/negative singleton paths passed six `180`-warmup plus `300`-measurement phases with zero recurring managed allocation. The exact implementation capture recorded query P95 at `100 ns` or better and positive singleton P95 at `400 ns` on the validation host; these are evidence observations, not product frame ceilings.
+- Lifecycle result: `11 / 11` behavior cases cover read-only/read-write shape, World rebind, positive reuse, negative persistence plus invalidation, duplicate fail-closed behavior, entity destruction, component loss, enableable rejection, live-World disposal, and dead-World disposal.
+- Evidence integrity: `am019_world_scoped_cache_contract_evidence.json` binds the seven-file implementation diff, exact baseline/commit/tree ancestry, file hashes, three compressed Unity logs, result markers, zero-allocation lines, validation counts, exclusions, and independent-review closure. `am019_acceptance_record.json` binds the five-file evidence commit and acceptance authority.
+- Validation: focused Python `24 / 24`, acceptance `4 / 4`, integrated architecture CI `116 / 116`, Unity lifecycle `11 / 11`, cache performance `2 / 2`, broad architecture `1 / 1`, zero compiler errors, and `git diff --check` passed.
+- Independent review: the first pass rejected stale positive cardinality, enableable ambiguity, missing component-loss/dead-World tests, undefined borrowed-query ownership, and missing historical-evidence ancestry. All findings were fixed; final rereview returned `PASS` with no remaining architecture finding.
+- Exclusions preserved: operation-map and runtime-parity integrations were merged without modification. Live map materials, Build Drawer prefab/editor files, FirstLaunch, audio, UI visual-lock, scenes, packages, and `ProjectSettings` remained outside AM-019 scope and unstaged.
+- Next task: `AM-020` moves mutable runtime state that crosses World lifecycles into explicit World-owned systems, components, or lifecycle containers where practical.

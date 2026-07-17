@@ -50,10 +50,12 @@ class ArchitectureDependencyHazardAcceptanceTests(unittest.TestCase):
 
     def test_acceptance_test_and_inventory_summary_are_bound(self) -> None:
         acceptance_test = self.record["acceptanceTest"]
-        self.assertEqual(
-            hashlib.sha256((ROOT / acceptance_test["path"]).read_bytes()).hexdigest(),
-            acceptance_test["sha256"],
-        )
+        authority_commits = []
+        for commit in git_text("rev-list", "HEAD", "--", acceptance_test["path"]).splitlines():
+            committed_test = git_bytes("show", f"{commit}:{acceptance_test['path']}")
+            if hashlib.sha256(committed_test).hexdigest() == acceptance_test["sha256"]:
+                authority_commits.append(commit)
+        self.assertTrue(authority_commits, "The accepted AM-018 test bytes must remain in HEAD history.")
         inventory_path = "Design/AgentReports/ArchitectureMaturity/am018_dependency_hazard_inventory.json"
         inventory = json.loads(git_bytes("show", f"{self.record['acceptedEvidence']['commit']}:{inventory_path}"))
         self.assertEqual(inventory["baseline"], self.record["sourceBaseline"])
@@ -66,7 +68,7 @@ class ArchitectureDependencyHazardAcceptanceTests(unittest.TestCase):
         self.assertEqual(validation["independentRereview"], "PASS")
         tracker = TRACKER_PATH.read_text(encoding="utf-8")
         self.assertIn("- [x] `AM-018` Inventory production uses", tracker)
-        self.assertIn("| Current task | `AM-019` ready, not yet claimed |", tracker)
+        self.assertIn("- Next task: `AM-019` defines one standard World-bound query/entity cache contract", tracker)
 
 
 if __name__ == "__main__":

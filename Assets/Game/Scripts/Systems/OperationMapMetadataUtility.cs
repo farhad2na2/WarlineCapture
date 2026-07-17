@@ -5,7 +5,7 @@ using Unity.Mathematics;
 
 namespace Game.Runtime
 {
-    public static class OperationMapMetadataUtility
+    public static partial class OperationMapMetadataUtility
     {
         private const float MinimumProjectionExtent = 0.001f;
 
@@ -412,60 +412,6 @@ namespace Game.Runtime
 
         public static bool IsInsideNormalizedProjection(float2 normalized) =>
             math.all(normalized >= float2.zero) && math.all(normalized <= new float2(1f));
-
-        private static bool TryResolveActiveMetadata(
-            EntityManager entityManager,
-            out BlobAssetReference<OperationMapBlob> metadataBlob,
-            out bool hasActiveMap,
-            out string error)
-        {
-            metadataBlob = default;
-            hasActiveMap = false;
-
-            using EntityQuery rootQuery = entityManager.CreateEntityQuery(
-                ComponentType.ReadOnly<OperationMapRootComponent>());
-            int rootCount = rootQuery.CalculateEntityCount();
-            if (rootCount == 0)
-            {
-                error = null;
-                return false;
-            }
-
-            hasActiveMap = true;
-            if (rootCount != 1)
-            {
-                error = $"Expected exactly one operation-map root, found {rootCount}.";
-                return false;
-            }
-
-            Entity rootEntity = rootQuery.GetSingletonEntity();
-            if (!entityManager.HasComponent<ActiveOperationMapComponent>(rootEntity) ||
-                !entityManager.HasComponent<OperationMapMetadataComponent>(rootEntity))
-            {
-                error = "The operation-map root is missing active identity or metadata.";
-                return false;
-            }
-
-            ActiveOperationMapComponent active =
-                entityManager.GetComponentData<ActiveOperationMapComponent>(rootEntity);
-            OperationMapMetadataComponent metadata =
-                entityManager.GetComponentData<OperationMapMetadataComponent>(rootEntity);
-            if (!metadata.Blob.IsCreated || metadata.Generation != active.Generation)
-            {
-                error = "Active operation-map metadata is missing or belongs to a different generation.";
-                return false;
-            }
-
-            if (!metadata.Blob.Value.OperationMapId.Equals(active.OperationMapId))
-            {
-                error = "Active operation-map identity does not match its metadata blob.";
-                return false;
-            }
-
-            metadataBlob = metadata.Blob;
-            error = null;
-            return true;
-        }
 
         private static bool IsInside(float3 min, float3 max, float3 position) =>
             math.all(position >= min) && math.all(position <= max);

@@ -70,6 +70,21 @@ namespace Game.Runtime
             _instance.ClearAllInternal();
         }
 
+        public static void ReleaseAll()
+        {
+            UnitAttackImpactVfxView instance = _instance;
+            _instance = null;
+            if (object.ReferenceEquals(instance, null))
+                return;
+
+            instance._active.Clear();
+            instance._availableByPrefab.Clear();
+            if (Application.isPlaying)
+                Destroy(instance.gameObject);
+            else
+                DestroyImmediate(instance.gameObject);
+        }
+
         private static void EnsureInstance()
         {
             if (_instance != null)
@@ -79,6 +94,22 @@ namespace Game.Runtime
             if (Application.isPlaying)
                 DontDestroyOnLoad(root);
             _instance = root.AddComponent<UnitAttackImpactVfxView>();
+        }
+
+        private void OnDestroy()
+        {
+            if (!object.ReferenceEquals(_instance, this))
+                return;
+
+            _instance = null;
+            _active.Clear();
+            _availableByPrefab.Clear();
+        }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetBeforeSubsystemRegistration()
+        {
+            ReleaseAll();
         }
 
         private void Update()

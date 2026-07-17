@@ -12,18 +12,25 @@ namespace Game.Runtime
             {
                 try
                 {
-                    source.BuildingGameplayDisposalExecutionCompositionSystemHelper.Dispose(
-                        CreateSource(source, createPlacementCommandContext));
+                    source.BuildingProductionTransportPresentationSystemHelper.Dispose();
                 }
                 finally
                 {
                     try
                     {
-                        source.BuildingResourceHaulerBridgeCompositionSystemHelper.Dispose();
+                        source.BuildingGameplayDisposalExecutionCompositionSystemHelper.Dispose(
+                            CreateSource(source, createPlacementCommandContext));
                     }
                     finally
                     {
-                        source.FactionResourceCompositionSystemHelper.Dispose();
+                        try
+                        {
+                            source.BuildingResourceHaulerBridgeCompositionSystemHelper.Dispose();
+                        }
+                        finally
+                        {
+                            source.FactionResourceCompositionSystemHelper.Dispose();
+                        }
                     }
                 }
             };

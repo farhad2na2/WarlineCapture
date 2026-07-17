@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Game.Runtime
 {
-    internal sealed class RuntimeCityRAndDMapCompositionSystemHelper
+    internal sealed partial class RuntimeCityRAndDMapCompositionSystemHelper
     {
         private RuntimeCityRAndDMapView _view;
         private Material _roadMaterial;
@@ -245,7 +245,7 @@ namespace Game.Runtime
             if (IsGenerationActive)
                 CancelGeneration("disposed", clearGeneratedMap: false);
             DisposeGeneration();
-            ClearGeneratedRootChildren();
+            DestroyGeneratedRoot();
             _recovery.Reset();
             _view = null;
             _roadMaterial = null;
@@ -907,21 +907,6 @@ namespace Game.Runtime
         private static Quaternion GetCameraRotation(RuntimeOperationMapCameraPose pose)
         {
             return Quaternion.LookRotation((pose.Target - pose.Position).normalized, Vector3.up);
-        }
-
-        private void ClearGeneratedRootChildren()
-        {
-            if (_generatedRoot == null)
-                return;
-
-            for (int i = _generatedRoot.childCount - 1; i >= 0; i--)
-            {
-                GameObject child = _generatedRoot.GetChild(i).gameObject;
-                if (Application.isPlaying)
-                    UnityEngine.Object.Destroy(child);
-                else
-                    UnityEngine.Object.DestroyImmediate(child);
-            }
         }
 
         private void LogStageChange(RuntimeCityGenerationProgress progress, int frameCount)

@@ -6,7 +6,7 @@ using Game.Configs;
 
 namespace Game.Runtime
 {
-    internal sealed class BuildingPlacementStartupSystemHelper
+    internal sealed partial class BuildingPlacementStartupSystemHelper
     {
         private BuildingPlacementSystemConfig _config;
         private Camera _worldCamera;
@@ -95,7 +95,7 @@ namespace Game.Runtime
 
             previewSystem.Dispose();
             if (_buildingRoot != null)
-                destroyRuntimeObject?.Invoke(_buildingRoot.gameObject);
+                DestroyBuildingRoot(_buildingRoot.gameObject);
 
             _buildingRoot = null;
             _runtimeRoot = null;
@@ -116,15 +116,6 @@ namespace Game.Runtime
                 grid,
                 originCell,
                 footprintCells);
-        }
-
-        private void CreateBuildingRoot()
-        {
-            _buildingRoot = new GameObject("RuntimeBuildings").transform;
-            _buildingRoot.SetParent(_runtimeRoot, false);
-            _buildingRoot.localPosition = Vector3.zero;
-            _buildingRoot.localRotation = Quaternion.identity;
-            _buildingRoot.localScale = Vector3.one;
         }
 
         private void RebuildConfiguredSpawnableDefinitions(

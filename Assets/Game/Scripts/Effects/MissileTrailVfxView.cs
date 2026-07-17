@@ -44,6 +44,22 @@ namespace Game.Runtime
             _instance.ClearAllInternal();
         }
 
+        public static void ReleaseAll()
+        {
+            MissileTrailVfxView instance = _instance;
+            _instance = null;
+            if (!object.ReferenceEquals(instance, null))
+            {
+                instance._active.Clear();
+                instance._pool.Clear();
+                instance._releaseScratch.Clear();
+                DestroyRuntimeObject(instance.gameObject);
+            }
+
+            DestroyRuntimeMaterial(ref _smokeMaterial);
+            DestroyRuntimeMaterial(ref _coreMaterial);
+        }
+
         public static void Release(Entity projectile)
         {
             if (_instance == null)
@@ -61,6 +77,25 @@ namespace Game.Runtime
             if (Application.isPlaying)
                 DontDestroyOnLoad(root);
             _instance = root.AddComponent<MissileTrailVfxView>();
+        }
+
+        private void OnDestroy()
+        {
+            if (!object.ReferenceEquals(_instance, this))
+                return;
+
+            _instance = null;
+            _active.Clear();
+            _pool.Clear();
+            _releaseScratch.Clear();
+            DestroyRuntimeMaterial(ref _smokeMaterial);
+            DestroyRuntimeMaterial(ref _coreMaterial);
+        }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetBeforeSubsystemRegistration()
+        {
+            ReleaseAll();
         }
 
         private void SyncInternal(Entity projectile, Vector3 position, Vector3 direction)
@@ -306,6 +341,29 @@ namespace Game.Runtime
             if (material.HasProperty("_Color"))
                 material.SetColor("_Color", color);
             return material;
+        }
+
+        private static void DestroyRuntimeMaterial(ref Material material)
+        {
+            if (material == null)
+                return;
+
+            if (Application.isPlaying)
+                Destroy(material);
+            else
+                DestroyImmediate(material);
+            material = null;
+        }
+
+        private static void DestroyRuntimeObject(GameObject target)
+        {
+            if (target == null)
+                return;
+
+            if (Application.isPlaying)
+                Destroy(target);
+            else
+                DestroyImmediate(target);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Game.Runtime
 {
     using ProductionTransportMode = BuildingProductionQueueCompositionSystemHelper.ProductionTransportMode;
 
-    internal sealed class BuildingProductionTransportPresentationSystemHelper
+    internal sealed partial class BuildingProductionTransportPresentationSystemHelper
     {
         private const float ProductionTransportLaneSpacing = 12f;
         private const float RunwaySurfaceClearance = 0.03f;
@@ -1746,16 +1746,6 @@ namespace Game.Runtime
                     System.GC.GetAllocatedBytesForCurrentThread() - allocationProbeStartBytes);
             }
 #endif
-        }
-
-        private Transform EnsureRuntimeRoot()
-        {
-            if (_runtimeRoot != null)
-                return _runtimeRoot;
-
-            var root = new GameObject("RuntimeTransports");
-            _runtimeRoot = root.transform;
-            return _runtimeRoot;
         }
 
         private Stack<GameObject> GetProductionTransportPool(GameObject prefab)

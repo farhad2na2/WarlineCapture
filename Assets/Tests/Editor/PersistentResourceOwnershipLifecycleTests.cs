@@ -8,6 +8,8 @@ using Game.UI.Shell.Contracts.Ecs;
 using Game.UI.Shell.Ecs;
 using NUnit.Framework;
 using Unity.Entities;
+using Unity.Mathematics;
+using UnityEngine;
 
 public sealed class PersistentResourceOwnershipLifecycleTests
 {
@@ -145,6 +147,10 @@ public sealed class PersistentResourceOwnershipLifecycleTests
     {
         using World world = new(nameof(BuildingGameplayShutdown_DisposesResourceQueryCaches));
         var source = new BuildingGameplaySourceCompositionSystemHelper();
+        GameObject buildingRoot = new("AM021_RuntimeBuildings");
+        GameObject transportRoot = new("AM021_RuntimeTransports");
+        SetField(source.BuildingPlacementStartupSystemHelper, "_buildingRoot", buildingRoot.transform);
+        source.BuildingProductionTransportPresentationSystemHelper.SetRuntimeRoot(transportRoot.transform);
         FactionResourceCompositionSystemHelper factionResources = source.FactionResourceCompositionSystemHelper;
         BuildingResourceHaulerBridgeCompositionSystemHelper resourceHaulers =
             source.BuildingResourceHaulerBridgeCompositionSystemHelper;
@@ -164,6 +170,75 @@ public sealed class PersistentResourceOwnershipLifecycleTests
 
         Assert.Throws<ObjectDisposedException>(() => storageCache.Get(world.EntityManager));
         Assert.Throws<ObjectDisposedException>(() => moveOrderCache.Get(world.EntityManager));
+        Assert.IsTrue(buildingRoot == null, "Building gameplay shutdown must destroy its building presentation root.");
+        Assert.IsTrue(transportRoot == null, "Building gameplay shutdown must destroy its transport presentation root.");
+    }
+
+    [Test]
+    public void RuntimeCityShutdown_DestroysOwnedPresentationRoots()
+    {
+        GameObject runtimeRoot = new("AM021_RuntimeCity");
+        var visualSystem = new RuntimeCityVisualPresentationSystemHelper();
+        var mapSystem = new RuntimeCityRAndDMapCompositionSystemHelper();
+        GameObject generatedRoot = new("AM021_GeneratedRuntimeCity");
+        try
+        {
+            visualSystem.SetRuntimeRoot(runtimeRoot.transform);
+            visualSystem.EnsureCityVisualRoot();
+            Transform cityVisualRoot = runtimeRoot.transform.Find("RuntimeCityVisuals");
+            Assert.IsNotNull(cityVisualRoot);
+
+            SetField(mapSystem, "_generatedRoot", generatedRoot.transform);
+            visualSystem.Dispose();
+            mapSystem.Dispose();
+            visualSystem.Dispose();
+            mapSystem.Dispose();
+
+            Assert.IsTrue(cityVisualRoot == null, "Runtime-city shutdown must destroy the visual root.");
+            Assert.IsTrue(generatedRoot == null, "Runtime-city map shutdown must destroy the generated root.");
+        }
+        finally
+        {
+            if (runtimeRoot != null)
+                UnityEngine.Object.DestroyImmediate(runtimeRoot);
+            if (generatedRoot != null)
+                UnityEngine.Object.DestroyImmediate(generatedRoot);
+        }
+    }
+
+    [Test]
+    public void ProcessVfxRootDestruction_ReleasesStaticOwnership()
+    {
+        DestroyNamedObject("MissileTrailVfxView");
+        DestroyNamedObject("UnitAttackImpactVfxView");
+        GameObject particlePrefab = new("AM021_ParticlePrefab");
+        particlePrefab.AddComponent<ParticleSystem>();
+        try
+        {
+            MissileTrailVfxView.Sync(Entity.Null, float3.zero, new float3(0f, 0f, 1f));
+            UnitAttackImpactVfxView.Prewarm(particlePrefab, 1);
+            GameObject missileRoot = GameObject.Find("MissileTrailVfxView");
+            GameObject impactRoot = GameObject.Find("UnitAttackImpactVfxView");
+            Assert.IsNotNull(missileRoot);
+            Assert.IsNotNull(impactRoot);
+
+            MissileTrailVfxView.ReleaseAll();
+            UnitAttackImpactVfxView.ReleaseAll();
+
+            Assert.IsNull(ReadStaticField(typeof(MissileTrailVfxView), "_instance"));
+            Assert.IsNull(ReadStaticField(typeof(MissileTrailVfxView), "_smokeMaterial"));
+            Assert.IsNull(ReadStaticField(typeof(MissileTrailVfxView), "_coreMaterial"));
+            Assert.IsNull(ReadStaticField(typeof(UnitAttackImpactVfxView), "_instance"));
+            Assert.IsTrue(missileRoot == null);
+            Assert.IsTrue(impactRoot == null);
+        }
+        finally
+        {
+            DestroyNamedObject("MissileTrailVfxView");
+            DestroyNamedObject("UnitAttackImpactVfxView");
+            if (particlePrefab != null)
+                UnityEngine.Object.DestroyImmediate(particlePrefab);
+        }
     }
 
     private static void CreateShellBoundary(World world, UIRoute route)
@@ -192,5 +267,26 @@ public sealed class PersistentResourceOwnershipLifecycleTests
         FieldInfo field = owner.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
         Assert.IsNotNull(field, $"Missing query-cache owner field {owner.GetType().Name}.{fieldName}.");
         return (WorldScopedComponentQueryCache<T>)field.GetValue(owner);
+    }
+
+    private static object ReadStaticField(Type owner, string fieldName)
+    {
+        FieldInfo field = owner.GetField(fieldName, BindingFlags.Static | BindingFlags.NonPublic);
+        Assert.IsNotNull(field, $"Missing static ownership field {owner.Name}.{fieldName}.");
+        return field.GetValue(null);
+    }
+
+    private static void SetField(object owner, string fieldName, object value)
+    {
+        FieldInfo field = owner.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.IsNotNull(field, $"Missing lifecycle owner field {owner.GetType().Name}.{fieldName}.");
+        field.SetValue(owner, value);
+    }
+
+    private static void DestroyNamedObject(string objectName)
+    {
+        GameObject target = GameObject.Find(objectName);
+        if (target != null)
+            UnityEngine.Object.DestroyImmediate(target);
     }
 }

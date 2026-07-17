@@ -3,11 +3,11 @@ using Game.Components;
 
 namespace Game.Runtime
 {
-    internal sealed class RuntimeCityVisualPresentationSystemHelper
+    internal sealed partial class RuntimeCityVisualPresentationSystemHelper
     {
-        private RuntimeCitySurfaceIntegrationUtilitySystemHelper _surfaceIntegrationUtilitySystemHelper;
-        private Transform _runtimeRoot;
-        private Transform _cityVisualRoot;
+        RuntimeCitySurfaceIntegrationUtilitySystemHelper _surfaceIntegrationUtilitySystemHelper;
+        Transform _runtimeRoot;
+        Transform _cityVisualRoot;
 
         public void SetRuntimeRoot(Transform runtimeRoot)
         {
@@ -18,6 +18,7 @@ namespace Game.Runtime
         public void Dispose()
         {
             _surfaceIntegrationUtilitySystemHelper?.Clear();
+            DestroyRoot(_cityVisualRoot);
             _cityVisualRoot = null;
             _runtimeRoot = null;
         }
@@ -65,7 +66,7 @@ namespace Game.Runtime
             wrapper.transform.localScale = Vector3.one;
 
             GameObject visual;
-            Transform combinedMesh = FindDescendantByName(prefab.transform, "CombinedMesh");
+            var combinedMesh = FindDescendantByName(prefab.transform, "CombinedMesh");
             if (combinedMesh != null)
                 visual = UnityEngine.Object.Instantiate(combinedMesh.gameObject, wrapper.transform);
             else
@@ -101,12 +102,12 @@ namespace Game.Runtime
         private static bool TryGetLocalBounds(GameObject target, out Bounds bounds)
         {
             bounds = default;
-            Renderer[] renderers = target.GetComponentsInChildren<Renderer>(true);
+            var renderers = target.GetComponentsInChildren<Renderer>(true);
             bool hasBounds = false;
             Matrix4x4 worldToLocal = target.transform.worldToLocalMatrix;
             for (int i = 0; i < renderers.Length; i++)
             {
-                Renderer renderer = renderers[i];
+                var renderer = renderers[i];
                 Bounds rendererBounds = renderer.bounds;
                 Vector3 min = rendererBounds.min;
                 Vector3 max = rendererBounds.max;
@@ -141,11 +142,10 @@ namespace Game.Runtime
 
         private static void SetChildVisibleByName(Transform root, string targetName, bool visible)
         {
-            Transform child = FindDescendantByName(root, targetName);
+            var child = FindDescendantByName(root, targetName);
             if (child != null)
                 child.gameObject.SetActive(visible);
         }
-
         private static Transform FindDescendantByName(Transform root, string targetName)
         {
             if (root == null || string.IsNullOrEmpty(targetName))
@@ -155,7 +155,7 @@ namespace Game.Runtime
 
             for (int i = 0; i < root.childCount; i++)
             {
-                Transform found = FindDescendantByName(root.GetChild(i), targetName);
+                var found = FindDescendantByName(root.GetChild(i), targetName);
                 if (found != null)
                     return found;
             }

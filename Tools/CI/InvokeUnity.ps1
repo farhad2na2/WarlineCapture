@@ -106,6 +106,41 @@ function Find-UnityLoggedFailure {
     return $null
 }
 
+function Find-UnityLoggedSuccess {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string] $UnityLogFile
+    )
+
+    if (-not (Test-Path -LiteralPath $UnityLogFile -PathType Leaf)) {
+        return $null
+    }
+
+    try {
+        $logText = [System.IO.File]::ReadAllText($UnityLogFile)
+    } catch {
+        Write-Host "[UnityInvoke] WARN: Could not inspect Unity log for success markers: $($_.Exception.Message)"
+        return $null
+    }
+
+    $successPatterns = @(
+        'Test run completed\. Exiting with code 0 \(Ok\)\. Run completed\.',
+        'Exiting batchmode successfully now!',
+        'Application will terminate with return code 0'
+    )
+    foreach ($pattern in $successPatterns) {
+        $match = [System.Text.RegularExpressions.Regex]::Match(
+            $logText,
+            $pattern,
+            [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+        if ($match.Success) {
+            return $match.Value
+        }
+    }
+
+    return $null
+}
+
 Write-InvocationLog "[UnityInvoke] UnityExe: $resolvedUnityExe"
 Write-InvocationLog "[UnityInvoke] ProjectPath: $resolvedProjectPath"
 Write-InvocationLog "[UnityInvoke] LogFile: $resolvedLogFile"
@@ -168,14 +203,20 @@ while (-not $process.HasExited) {
 
 $process.WaitForExit()
 $exitCode = if ($timedOut) { 124 } else { $process.ExitCode }
-if ($null -eq $exitCode) {
-    Write-InvocationLog "[UnityInvoke] ERROR: Unity exited without a readable process exit code. Failing closed."
-    $exitCode = 1
-} elseif ($exitCode -eq 0) {
+if (-not $timedOut) {
     $loggedFailure = Find-UnityLoggedFailure -UnityLogFile $resolvedLogFile
     if (-not [string]::IsNullOrWhiteSpace($loggedFailure)) {
-        Write-InvocationLog "[UnityInvoke] ERROR: Unity reported a fatal log marker despite process exit code 0: $loggedFailure"
+        Write-InvocationLog "[UnityInvoke] ERROR: Unity reported a fatal log marker: $loggedFailure"
         $exitCode = 1
+    } elseif ($null -eq $exitCode) {
+        $loggedSuccess = Find-UnityLoggedSuccess -UnityLogFile $resolvedLogFile
+        if (-not [string]::IsNullOrWhiteSpace($loggedSuccess)) {
+            Write-InvocationLog "[UnityInvoke] WARN: Unity process exit code was unavailable; accepting explicit success marker: $loggedSuccess"
+            $exitCode = 0
+        } else {
+            Write-InvocationLog "[UnityInvoke] ERROR: Unity exited without a readable process exit code or explicit success marker. Failing closed."
+            $exitCode = 1
+        }
     }
 }
 Write-InvocationLog "[UnityInvoke] ExitCode: $exitCode"

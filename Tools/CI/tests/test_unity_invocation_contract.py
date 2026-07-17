@@ -25,14 +25,34 @@ class UnityInvocationContractTests(unittest.TestCase):
 
     def test_missing_exit_code_fails_closed(self):
         self.assertIn(
-            "if ($null -eq $exitCode)",
+            "elseif ($null -eq $exitCode)",
             self.source,
         )
         self.assertIn(
-            'Write-InvocationLog "[UnityInvoke] ERROR: Unity exited without a readable process exit code. Failing closed."',
+            'Write-InvocationLog "[UnityInvoke] ERROR: Unity exited without a readable process exit code or explicit success marker. Failing closed."',
             self.source,
         )
         self.assertIn("$exitCode = 1", self.source)
+
+    def test_missing_process_exit_accepts_only_explicit_unity_success(self):
+        self.assertIn("function Find-UnityLoggedSuccess", self.source)
+        self.assertIn(
+            "Test run completed\\. Exiting with code 0 \\(Ok\\)\\. Run completed\\.",
+            self.source,
+        )
+        self.assertIn("Exiting batchmode successfully now!", self.source)
+        self.assertIn(
+            "Application will terminate with return code 0",
+            self.source,
+        )
+        self.assertIn(
+            "$loggedSuccess = Find-UnityLoggedSuccess -UnityLogFile $resolvedLogFile",
+            self.source,
+        )
+        self.assertIn(
+            "accepting explicit success marker",
+            self.source,
+        )
 
     def test_zero_process_exit_is_overridden_by_explicit_unity_fatal_markers(self):
         self.assertIn("function Find-UnityLoggedFailure", self.source)

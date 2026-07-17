@@ -384,7 +384,10 @@ namespace Game.Editor
                 : string.Empty;
             float previousChunkSize = existingManifest != null ? existingManifest.ChunkSize : 0f;
             string[] previousOwnedScenePaths =
-                StaticMapPresentationOutputOwnership.CaptureOwnedScenePaths(existingManifest);
+                StaticMapPresentationOutputOwnership.CaptureOwnedScenePaths(
+                    existingManifest,
+                    input.OperationMapId,
+                    input.OutputRoot);
             string previousContentHash = existingManifest != null
                 ? ComputeContentHash(input.ChunkSize, existingManifest.Chunks, existingManifest.Sources)
                 : string.Empty;
@@ -490,7 +493,9 @@ namespace Game.Editor
                     }
 
                     staleScenesDeleted = StaticMapPresentationOutputOwnership.DeleteStaleSceneAssets(
-                        previousOwnedScenePaths,
+                        input.OperationMapId,
+                        input.OutputRoot,
+                        existingManifest,
                         expectedScenePaths,
                         AssetExists,
                         PhysicalAssetExists,

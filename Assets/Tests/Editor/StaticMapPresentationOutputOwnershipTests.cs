@@ -13,6 +13,11 @@ public sealed class StaticMapPresentationOutputOwnershipTests
     private const string SceneA = "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_n001_p002.unity";
     private const string SceneB = "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p000_p000.unity";
     private const string SceneC = "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p012_n014.unity";
+    private const string AlternateMapId = "opmap.test.alternate";
+    private const string AlternateOutputRoot =
+        "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/test/alternate";
+    private const string AlternateSceneA =
+        AlternateOutputRoot + "/Scenes/StaticMapPresentation_opmap_test_alternate_chunk_p000_p000.unity";
 
     [Test]
     public void ComputeStaleScenePaths_ReturnsOnlyPriorManifestOwnershipInOrdinalOrder()
@@ -99,6 +104,65 @@ public sealed class StaticMapPresentationOutputOwnershipTests
         Assert.That(deleted, Is.EqualTo(1));
         Assert.That(physicalDeleteCalls, Is.EqualTo(new[] { SceneA }));
         Assert.That(physicalFiles, Is.Empty);
+    }
+
+    [Test]
+    public void DeleteStaleSceneAssets_DeletesOnlyScenesOwnedByTheSuppliedMapManifest()
+    {
+        StaticMapPresentationManifest manifest = CreateManifest(
+            AlternateMapId,
+            AlternateSceneA);
+        HashSet<string> existing = new(StringComparer.Ordinal) { SceneA, AlternateSceneA };
+        List<string> deleted = new();
+        try
+        {
+            int deletedCount = StaticMapPresentationOutputOwnership.DeleteStaleSceneAssets(
+                AlternateMapId,
+                AlternateOutputRoot,
+                manifest,
+                Array.Empty<string>(),
+                existing.Contains,
+                _ => false,
+                path =>
+                {
+                    deleted.Add(path);
+                    return existing.Remove(path);
+                },
+                _ => false);
+
+            Assert.That(deletedCount, Is.EqualTo(1));
+            Assert.That(deleted, Is.EqualTo(new[] { AlternateSceneA }));
+            Assert.That(existing, Does.Contain(SceneA));
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(manifest);
+        }
+    }
+
+    [Test]
+    public void DeleteStaleSceneAssets_RejectsManifestOwnedByAnotherMap()
+    {
+        StaticMapPresentationManifest manifest = CreateManifest(
+            StaticMapPresentationBaker.CurrentOperationMapId,
+            SceneA);
+        try
+        {
+            Assert.Throws<InvalidOperationException>(() =>
+                StaticMapPresentationOutputOwnership.DeleteStaleSceneAssets(
+                    AlternateMapId,
+                    AlternateOutputRoot,
+                    manifest,
+                    Array.Empty<string>(),
+                    _ => true,
+                    _ => false,
+                    _ => throw new AssertionException("Cross-map deletion must not run."),
+                    _ => false));
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(manifest);
+        }
     }
 
     [Test]
@@ -639,6 +703,27 @@ public sealed class StaticMapPresentationOutputOwnershipTests
         string path = Path.Combine(Path.GetTempPath(), "WarlineCapture-Aph604-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(path);
         return path;
+    }
+
+    private static StaticMapPresentationManifest CreateManifest(
+        string operationMapId,
+        string scenePath)
+    {
+        StaticMapPresentationManifest manifest =
+            ScriptableObject.CreateInstance<StaticMapPresentationManifest>();
+        manifest.EditorSetData(
+            operationMapId,
+            "00000000000000000000000000000001",
+            StaticMapPresentationBaker.CanonicalMatchScenePath,
+            "canonical-hash",
+            StaticMapPresentationBaker.ChunkSize,
+            "content-hash",
+            new List<StaticMapPresentationChunkEntry>
+            {
+                new("chunk_p000_p000", scenePath, new Bounds(Vector3.zero, Vector3.one), 0, 1)
+            },
+            new List<StaticMapPresentationSourceEntry>());
+        return manifest;
     }
 
     private static string ProjectPath(string projectRoot, string assetPath)

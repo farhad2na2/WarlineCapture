@@ -11,15 +11,25 @@ namespace Game.Editor
 {
     internal static class StaticMapPresentationOutputOwnership
     {
-        private static string SceneFilePrefix =>
-            StaticMapPresentationBaker.CurrentSceneFilePrefix + "chunk_";
         private const string LegacySceneFilePrefix = "StaticMapPresentation_chunk_";
         private const string SceneExtension = ".unity";
 
         internal static string[] CaptureOwnedScenePaths(StaticMapPresentationManifest manifest)
         {
+            return CaptureOwnedScenePaths(
+                manifest,
+                StaticMapPresentationBaker.CurrentOperationMapId,
+                StaticMapPresentationBaker.OutputRoot);
+        }
+
+        internal static string[] CaptureOwnedScenePaths(
+            StaticMapPresentationManifest manifest,
+            string operationMapId,
+            string outputRoot)
+        {
             if (manifest == null)
                 return Array.Empty<string>();
+            RequireManifestOwner(manifest, operationMapId, outputRoot);
 
             string[] paths = new string[manifest.Chunks.Count];
             for (int i = 0; i < manifest.Chunks.Count; i++)
@@ -28,7 +38,11 @@ namespace Game.Editor
                 if (chunk == null)
                     throw new InvalidOperationException($"Static map presentation manifest contains a null chunk at index {i}.");
 
-                paths[i] = RequireOwnedScenePath(chunk.ScenePath, $"manifest chunk {i}");
+                paths[i] = RequireOwnedScenePath(
+                    operationMapId,
+                    outputRoot,
+                    chunk.ScenePath,
+                    $"manifest chunk {i}");
             }
 
             return paths
@@ -63,6 +77,44 @@ namespace Game.Editor
         }
 
         internal static int DeleteStaleSceneAssets(
+            string operationMapId,
+            string outputRoot,
+            StaticMapPresentationManifest previousManifest,
+            IEnumerable<string> expectedPaths,
+            Func<string, bool> databaseAssetExists,
+            Func<string, bool> physicalAssetExists,
+            Func<string, bool> deleteDatabaseAsset,
+            Func<string, bool> deletePhysicalAsset)
+        {
+            RequireDeleteDelegates(
+                databaseAssetExists,
+                physicalAssetExists,
+                deleteDatabaseAsset,
+                deletePhysicalAsset);
+            string[] previousOwnedPaths = CaptureOwnedScenePaths(
+                previousManifest,
+                operationMapId,
+                outputRoot);
+            HashSet<string> expected = BuildValidatedSet(
+                operationMapId,
+                outputRoot,
+                expectedPaths,
+                nameof(expectedPaths));
+            HashSet<string> previous = BuildValidatedSet(
+                operationMapId,
+                outputRoot,
+                previousOwnedPaths,
+                nameof(previousManifest));
+            previous.ExceptWith(expected);
+            return DeleteValidatedStaleSceneAssets(
+                previous.OrderBy(path => path, StringComparer.Ordinal).ToArray(),
+                databaseAssetExists,
+                physicalAssetExists,
+                deleteDatabaseAsset,
+                deletePhysicalAsset);
+        }
+
+        internal static int DeleteStaleSceneAssets(
             IEnumerable<string> previousOwnedPaths,
             IEnumerable<string> expectedPaths,
             Func<string, bool> databaseAssetExists,
@@ -70,18 +122,30 @@ namespace Game.Editor
             Func<string, bool> deleteDatabaseAsset,
             Func<string, bool> deletePhysicalAsset)
         {
-            if (databaseAssetExists == null)
-                throw new ArgumentNullException(nameof(databaseAssetExists));
-            if (physicalAssetExists == null)
-                throw new ArgumentNullException(nameof(physicalAssetExists));
-            if (deleteDatabaseAsset == null)
-                throw new ArgumentNullException(nameof(deleteDatabaseAsset));
-            if (deletePhysicalAsset == null)
-                throw new ArgumentNullException(nameof(deletePhysicalAsset));
+            RequireDeleteDelegates(
+                databaseAssetExists,
+                physicalAssetExists,
+                deleteDatabaseAsset,
+                deletePhysicalAsset);
 
             string[] stalePaths = ComputeStaleScenePaths(previousOwnedPaths, expectedPaths);
+            return DeleteValidatedStaleSceneAssets(
+                stalePaths,
+                databaseAssetExists,
+                physicalAssetExists,
+                deleteDatabaseAsset,
+                deletePhysicalAsset);
+        }
+
+        private static int DeleteValidatedStaleSceneAssets(
+            IReadOnlyList<string> stalePaths,
+            Func<string, bool> databaseAssetExists,
+            Func<string, bool> physicalAssetExists,
+            Func<string, bool> deleteDatabaseAsset,
+            Func<string, bool> deletePhysicalAsset)
+        {
             int deleted = 0;
-            for (int i = 0; i < stalePaths.Length; i++)
+            for (int i = 0; i < stalePaths.Count; i++)
             {
                 string path = stalePaths[i];
                 bool existedInDatabase = databaseAssetExists(path);
@@ -98,6 +162,22 @@ namespace Game.Editor
             }
 
             return deleted;
+        }
+
+        private static void RequireDeleteDelegates(
+            Func<string, bool> databaseAssetExists,
+            Func<string, bool> physicalAssetExists,
+            Func<string, bool> deleteDatabaseAsset,
+            Func<string, bool> deletePhysicalAsset)
+        {
+            if (databaseAssetExists == null)
+                throw new ArgumentNullException(nameof(databaseAssetExists));
+            if (physicalAssetExists == null)
+                throw new ArgumentNullException(nameof(physicalAssetExists));
+            if (deleteDatabaseAsset == null)
+                throw new ArgumentNullException(nameof(deleteDatabaseAsset));
+            if (deletePhysicalAsset == null)
+                throw new ArgumentNullException(nameof(deletePhysicalAsset));
         }
 
         internal static bool CanReuseExpectedScenes(
@@ -197,10 +277,29 @@ namespace Game.Editor
 
         internal static bool IsOwnedScenePath(string path)
         {
+            return IsOwnedScenePath(
+                StaticMapPresentationBaker.CurrentOperationMapId,
+                StaticMapPresentationBaker.OutputRoot,
+                path);
+        }
+
+        internal static bool IsOwnedScenePath(
+            string operationMapId,
+            string outputRoot,
+            string path)
+        {
             if (string.IsNullOrWhiteSpace(path) || path.IndexOf('\\') >= 0)
                 return false;
+            if (!StaticMapPresentationOutputPathContract.TryResolveOutputRoot(
+                    operationMapId,
+                    out string expectedOutputRoot,
+                    out _) ||
+                !string.Equals(outputRoot, expectedOutputRoot, StringComparison.Ordinal))
+            {
+                return false;
+            }
 
-            string folderPrefix = StaticMapPresentationBaker.SceneOutputFolder + "/";
+            string folderPrefix = outputRoot + "/Scenes/";
             if (!path.StartsWith(folderPrefix, StringComparison.Ordinal) ||
                 !path.EndsWith(SceneExtension, StringComparison.Ordinal))
             {
@@ -210,10 +309,13 @@ namespace Game.Editor
             string fileName = path.Substring(
                 folderPrefix.Length,
                 path.Length - folderPrefix.Length - SceneExtension.Length);
+            string sceneFilePrefix =
+                StaticMapPresentationOutputPathContract.RequireSceneFilePrefix(operationMapId) + "chunk_";
             string coordinates;
-            if (fileName.StartsWith(SceneFilePrefix, StringComparison.Ordinal))
-                coordinates = fileName.Substring(SceneFilePrefix.Length);
-            else if (fileName.StartsWith(LegacySceneFilePrefix, StringComparison.Ordinal))
+            if (fileName.StartsWith(sceneFilePrefix, StringComparison.Ordinal))
+                coordinates = fileName.Substring(sceneFilePrefix.Length);
+            else if (IsCurrentCompatibilityOwner(operationMapId, outputRoot) &&
+                     fileName.StartsWith(LegacySceneFilePrefix, StringComparison.Ordinal))
                 coordinates = fileName.Substring(LegacySceneFilePrefix.Length);
             else
                 return false;
@@ -228,6 +330,19 @@ namespace Game.Editor
 
         private static HashSet<string> BuildValidatedSet(IEnumerable<string> paths, string argumentName)
         {
+            return BuildValidatedSet(
+                StaticMapPresentationBaker.CurrentOperationMapId,
+                StaticMapPresentationBaker.OutputRoot,
+                paths,
+                argumentName);
+        }
+
+        private static HashSet<string> BuildValidatedSet(
+            string operationMapId,
+            string outputRoot,
+            IEnumerable<string> paths,
+            string argumentName)
+        {
             if (paths == null)
                 throw new ArgumentNullException(argumentName);
 
@@ -235,7 +350,11 @@ namespace Game.Editor
             int index = 0;
             foreach (string path in paths)
             {
-                result.Add(RequireOwnedScenePath(path, $"{argumentName}[{index}]"));
+                result.Add(RequireOwnedScenePath(
+                    operationMapId,
+                    outputRoot,
+                    path,
+                    $"{argumentName}[{index}]"));
                 index++;
             }
 
@@ -244,9 +363,44 @@ namespace Game.Editor
 
         private static string RequireOwnedScenePath(string path, string owner)
         {
-            if (!IsOwnedScenePath(path))
+            return RequireOwnedScenePath(
+                StaticMapPresentationBaker.CurrentOperationMapId,
+                StaticMapPresentationBaker.OutputRoot,
+                path,
+                owner);
+        }
+
+        private static string RequireOwnedScenePath(
+            string operationMapId,
+            string outputRoot,
+            string path,
+            string owner)
+        {
+            if (!IsOwnedScenePath(operationMapId, outputRoot, path))
                 throw new InvalidOperationException($"{owner} is not a valid static map presentation scene path: '{path ?? "<null>"}'.");
             return path;
+        }
+
+        private static void RequireManifestOwner(
+            StaticMapPresentationManifest manifest,
+            string operationMapId,
+            string outputRoot)
+        {
+            bool currentCompatibility = IsCurrentCompatibilityOwner(operationMapId, outputRoot);
+            bool ownerMatches = manifest.SchemaVersion == 1
+                ? currentCompatibility
+                : string.Equals(manifest.OperationMapId, operationMapId, StringComparison.Ordinal);
+            if (!ownerMatches)
+                throw new InvalidOperationException("Static map presentation manifest belongs to another operation map.");
+        }
+
+        private static bool IsCurrentCompatibilityOwner(string operationMapId, string outputRoot)
+        {
+            return string.Equals(
+                       operationMapId,
+                       StaticMapPresentationBaker.CurrentOperationMapId,
+                       StringComparison.Ordinal) &&
+                   string.Equals(outputRoot, StaticMapPresentationBaker.OutputRoot, StringComparison.Ordinal);
         }
 
         private static bool IsCoordinateToken(string token)
@@ -480,13 +634,19 @@ namespace Game.Editor
         }
 
         private readonly string projectRoot;
+        private readonly string operationMapId;
+        private readonly string outputRoot;
         private readonly Dictionary<string, string> expectedFileHashes;
 
         private StaticMapPresentationSceneIntegrity(
             string projectRoot,
+            string operationMapId,
+            string outputRoot,
             Dictionary<string, string> expectedFileHashes)
         {
             this.projectRoot = Path.GetFullPath(projectRoot);
+            this.operationMapId = operationMapId;
+            this.outputRoot = outputRoot;
             this.expectedFileHashes = expectedFileHashes;
         }
 
@@ -517,7 +677,11 @@ namespace Game.Editor
                 return false;
             }
 
-            string[] expected = RequireScenePaths(expectedScenePaths);
+            StaticMapPresentationOutputPathContract.TryResolveOutputRoot(
+                operationMapId,
+                out string outputRoot,
+                out _);
+            string[] expected = RequireScenePaths(operationMapId, outputRoot, expectedScenePaths);
             string integrityFilePath = ResolveProjectPath(projectRoot, integrityAssetPath);
             if (!File.Exists(integrityFilePath))
             {
@@ -553,7 +717,10 @@ namespace Game.Editor
             {
                 IntegrityEntry entry = entries[i];
                 if (entry == null ||
-                    !StaticMapPresentationOutputOwnership.IsOwnedScenePath(entry.scenePath) ||
+                    !StaticMapPresentationOutputOwnership.IsOwnedScenePath(
+                        operationMapId,
+                        outputRoot,
+                        entry.scenePath) ||
                     string.IsNullOrWhiteSpace(entry.fileHash) ||
                     string.IsNullOrWhiteSpace(entry.metaHash) ||
                     hashes.ContainsKey(entry.scenePath))
@@ -572,7 +739,11 @@ namespace Game.Editor
                 return false;
             }
 
-            StaticMapPresentationSceneIntegrity candidate = new(projectRoot, hashes);
+            StaticMapPresentationSceneIntegrity candidate = new(
+                projectRoot,
+                operationMapId,
+                outputRoot,
+                hashes);
             for (int i = 0; i < expected.Length; i++)
             {
                 if (!candidate.IsSceneFileValid(expected[i]))
@@ -608,7 +779,11 @@ namespace Game.Editor
             if (string.IsNullOrWhiteSpace(contentHash))
                 throw new ArgumentException("Content hash is required.", nameof(contentHash));
 
-            string[] paths = RequireScenePaths(scenePaths);
+            StaticMapPresentationOutputPathContract.TryResolveOutputRoot(
+                operationMapId,
+                out string outputRoot,
+                out _);
+            string[] paths = RequireScenePaths(operationMapId, outputRoot, scenePaths);
             IntegrityEntry[] entries = new IntegrityEntry[paths.Length];
             for (int i = 0; i < paths.Length; i++)
             {
@@ -654,7 +829,10 @@ namespace Game.Editor
 
         internal bool IsSceneFileValid(string scenePath)
         {
-            if (!StaticMapPresentationOutputOwnership.IsOwnedScenePath(scenePath) ||
+            if (!StaticMapPresentationOutputOwnership.IsOwnedScenePath(
+                    operationMapId,
+                    outputRoot,
+                    scenePath) ||
                 !expectedFileHashes.TryGetValue(scenePath, out string expectedHash))
             {
                 return false;
@@ -699,13 +877,19 @@ namespace Game.Editor
             return sceneHash + ":" + metaHash;
         }
 
-        private static string[] RequireScenePaths(IEnumerable<string> scenePaths)
+        private static string[] RequireScenePaths(
+            string operationMapId,
+            string outputRoot,
+            IEnumerable<string> scenePaths)
         {
             if (scenePaths == null)
                 throw new ArgumentNullException(nameof(scenePaths));
 
             string[] paths = scenePaths
-                .Select(path => StaticMapPresentationOutputOwnership.IsOwnedScenePath(path)
+                .Select(path => StaticMapPresentationOutputOwnership.IsOwnedScenePath(
+                        operationMapId,
+                        outputRoot,
+                        path)
                     ? path
                     : throw new InvalidOperationException($"Invalid static map presentation scene path: '{path ?? "<null>"}'."))
                 .Distinct(StringComparer.Ordinal)

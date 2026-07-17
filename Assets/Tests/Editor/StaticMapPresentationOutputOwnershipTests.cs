@@ -526,6 +526,83 @@ public sealed class StaticMapPresentationOutputOwnershipTests
     }
 
     [Test]
+    public void SceneIntegrity_TwoMapLedgersValidateIndependently()
+    {
+        string projectRoot = CreateTemporaryProjectRoot();
+        string mapAScenePath = ProjectPath(projectRoot, SceneA);
+        string mapBScenePath = ProjectPath(projectRoot, AlternateSceneA);
+        try
+        {
+            WriteFile(mapAScenePath, "map-a-scene");
+            WriteFile(mapAScenePath + ".meta", "map-a-meta");
+            WriteFile(mapBScenePath, "map-b-scene");
+            WriteFile(mapBScenePath + ".meta", "map-b-meta");
+            StaticMapPresentationSceneIntegrity.Write(
+                projectRoot,
+                StaticMapPresentationBaker.CurrentOperationMapId,
+                StaticMapPresentationSceneIntegrity.CurrentIntegrityAssetPath,
+                "map-a-content",
+                new[] { SceneA });
+            StaticMapPresentationSceneIntegrity.Write(
+                projectRoot,
+                AlternateMapId,
+                AlternateIntegrityPath,
+                "map-b-content",
+                new[] { AlternateSceneA });
+
+            Assert.That(
+                StaticMapPresentationSceneIntegrity.TryLoadAndValidate(
+                    projectRoot,
+                    StaticMapPresentationBaker.CurrentOperationMapId,
+                    StaticMapPresentationSceneIntegrity.CurrentIntegrityAssetPath,
+                    "map-a-content",
+                    new[] { SceneA },
+                    out _,
+                    out string mapAReason),
+                Is.True,
+                mapAReason);
+            Assert.That(
+                StaticMapPresentationSceneIntegrity.TryLoadAndValidate(
+                    projectRoot,
+                    AlternateMapId,
+                    AlternateIntegrityPath,
+                    "map-b-content",
+                    new[] { AlternateSceneA },
+                    out _,
+                    out string mapBReason),
+                Is.True,
+                mapBReason);
+
+            WriteFile(mapBScenePath, "map-b-corrupted");
+            Assert.That(
+                StaticMapPresentationSceneIntegrity.TryLoadAndValidate(
+                    projectRoot,
+                    StaticMapPresentationBaker.CurrentOperationMapId,
+                    StaticMapPresentationSceneIntegrity.CurrentIntegrityAssetPath,
+                    "map-a-content",
+                    new[] { SceneA },
+                    out _,
+                    out mapAReason),
+                Is.True,
+                mapAReason);
+            Assert.That(
+                StaticMapPresentationSceneIntegrity.TryLoadAndValidate(
+                    projectRoot,
+                    AlternateMapId,
+                    AlternateIntegrityPath,
+                    "map-b-content",
+                    new[] { AlternateSceneA },
+                    out _,
+                    out _),
+                Is.False);
+        }
+        finally
+        {
+            DeleteTemporaryProjectRoot(projectRoot);
+        }
+    }
+
+    [Test]
     public void SceneIntegrity_RejectsLedgerOwnedByAnotherOperationMap()
     {
         string projectRoot = CreateTemporaryProjectRoot();

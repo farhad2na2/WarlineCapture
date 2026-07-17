@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Game.Rendering;
 using NUnit.Framework;
 using UnityEditor;
@@ -15,6 +16,8 @@ public sealed class StaticMapPresentationStructuralValidationTests
     private const float BoundsTolerance = 0.005f;
     private const string ManifestPath =
         "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/StaticMapPresentationManifest.asset";
+    private const string CurrentMapId = "opmap.skirmish.desert_base_01";
+    private const string AlternateMapId = "opmap.test.alternate";
 
     [Test]
     public void Manifest_DefinesExactSourceChunkBijection()
@@ -22,7 +25,7 @@ public sealed class StaticMapPresentationStructuralValidationTests
         StaticMapPresentationManifest manifest = LoadManifest();
         ValidationFailures failures = new();
 
-        ValidateManifestBijection(manifest, failures);
+        ValidateManifestBijection(manifest, CurrentMapId, true, failures);
 
         failures.AssertNone("Static map presentation manifest bijection failed.");
     }
@@ -33,7 +36,7 @@ public sealed class StaticMapPresentationStructuralValidationTests
     {
         StaticMapPresentationManifest manifest = LoadManifest();
         ValidationFailures failures = new();
-        ValidateManifestBijection(manifest, failures);
+        ValidateManifestBijection(manifest, CurrentMapId, true, failures);
         failures.AssertNone("Static map presentation manifest must be valid before scene parity can run.");
 
         SceneSetup[] previousSetup = EditorSceneManager.GetSceneManagerSetup();
@@ -75,6 +78,52 @@ public sealed class StaticMapPresentationStructuralValidationTests
         failures.AssertNone("Static map presentation structural parity failed.");
     }
 
+    [Test]
+    public void SyntheticSecondMap_PreservesIndependentStructuralBijection()
+    {
+        StaticMapPresentationManifest current = LoadManifest();
+        StaticMapPresentationManifest alternate =
+            ScriptableObject.CreateInstance<StaticMapPresentationManifest>();
+        try
+        {
+            List<StaticMapPresentationChunkEntry> alternateChunks = current.Chunks
+                .Select(chunk => new StaticMapPresentationChunkEntry(
+                    chunk.ChunkId,
+                    chunk.ScenePath.Replace(
+                        "/opmap/skirmish/desert_base_01/",
+                        "/opmap/test/alternate/").Replace(
+                        "StaticMapPresentation_opmap_skirmish_desert_base_01_",
+                        "StaticMapPresentation_opmap_test_alternate_"),
+                    chunk.WorldBounds,
+                    chunk.SourceStartIndex,
+                    chunk.SourceCount))
+                .ToList();
+            alternate.EditorSetData(
+                AlternateMapId,
+                current.CanonicalSceneGuid,
+                current.CanonicalScenePath,
+                current.CanonicalSceneDependencyHash,
+                current.ChunkSize,
+                current.ContentHash,
+                alternateChunks,
+                current.Sources.ToList());
+
+            ValidationFailures failures = new();
+            ValidateManifestBijection(current, CurrentMapId, true, failures);
+            ValidateManifestBijection(alternate, AlternateMapId, false, failures);
+            failures.Require(
+                !current.Chunks.Select(chunk => chunk.ScenePath).Intersect(
+                    alternate.Chunks.Select(chunk => chunk.ScenePath),
+                    StringComparer.Ordinal).Any(),
+                "Synthetic map manifests must not share generated scene paths.");
+            failures.AssertNone("Static map presentation multi-map structure failed.");
+        }
+        finally
+        {
+            Object.DestroyImmediate(alternate);
+        }
+    }
+
     private static StaticMapPresentationManifest LoadManifest()
     {
         StaticMapPresentationManifest manifest =
@@ -85,11 +134,13 @@ public sealed class StaticMapPresentationStructuralValidationTests
 
     private static void ValidateManifestBijection(
         StaticMapPresentationManifest manifest,
+        string expectedOperationMapId,
+        bool requireSceneAssets,
         ValidationFailures failures)
     {
         failures.Require(manifest.SchemaVersion == StaticMapPresentationManifest.CurrentSchemaVersion,
             $"Manifest schema is {manifest.SchemaVersion}; expected {StaticMapPresentationManifest.CurrentSchemaVersion}.");
-        failures.Require(manifest.OperationMapId == "opmap.skirmish.desert_base_01",
+        failures.Require(manifest.OperationMapId == expectedOperationMapId,
             $"Manifest operation-map id is invalid: {manifest.OperationMapId}");
         failures.Require(!string.IsNullOrWhiteSpace(manifest.CanonicalSceneGuid),
             "Manifest canonical scene GUID is empty.");
@@ -117,8 +168,11 @@ public sealed class StaticMapPresentationStructuralValidationTests
             failures.Require(chunkIds.Add(chunk.ChunkId), $"{label}: duplicate chunk ID.");
             failures.Require(!string.IsNullOrWhiteSpace(chunk.ScenePath), $"{label}: scene path is empty.");
             failures.Require(scenePaths.Add(chunk.ScenePath), $"{label}: duplicate scene path {chunk.ScenePath}.");
-            failures.Require(AssetDatabase.LoadAssetAtPath<SceneAsset>(chunk.ScenePath) != null,
-                $"{label}: scene asset does not exist at {chunk.ScenePath}.");
+            if (requireSceneAssets)
+            {
+                failures.Require(AssetDatabase.LoadAssetAtPath<SceneAsset>(chunk.ScenePath) != null,
+                    $"{label}: scene asset does not exist at {chunk.ScenePath}.");
+            }
             failures.Require(chunk.SourceStartIndex == expectedStartIndex,
                 $"{label}: sourceStartIndex is {chunk.SourceStartIndex}; expected contiguous index {expectedStartIndex}.");
             failures.Require(chunk.SourceCount > 0, $"{label}: sourceCount must be positive.");

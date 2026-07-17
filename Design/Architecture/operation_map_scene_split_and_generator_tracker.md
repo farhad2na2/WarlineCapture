@@ -705,7 +705,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 38% (68/177 checklist items complete).
+Overall implementation progress: 39% (69/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -713,7 +713,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 |---|---|---:|---:|---:|---|
 | 0. Reproducible baseline and rollback | In progress / shared | 11 | 12 | 92% | Required by both directions before scene edits. |
 | 1. Operation-map and scenario data contracts | In progress | 11 | 12 | 92% | Typed identity, catalog resolution, complete spatial/navigation metadata, hashes, validation, and ownership chain are approved; the selected local-Addressables reference row remains. |
-| 2. Per-map static presentation ownership | In progress | 13 | 14 | 93% | Bake input, compatibility routing, schema-2 identity, deterministic map-owned output root, map-namespaced scene filenames, per-map integrity, stale cleanup, transaction rollback, generated-output hash exclusion, per-map no-op reuse, cross-map mutation isolation, selected-manifest wiring, and catalog-selected Android resolution are accepted; the final multi-map validation extension remains. |
+| 2. Per-map static presentation ownership | Complete | 14 | 14 | 100% | Per-map bake/output ownership, integrity, rollback, no-op reuse, wiring, Android resolution, and synthetic multi-map isolation are accepted while the shipped catalog remains one physical map. |
 | 2A. Local Addressables packaging foundation | Active / selected direction | 0 | 20 | 0% | Package only the single approved editor-authored map locally after Phase 2 ownership prerequisites pass. |
 | 3. Current-map compatibility registration | Complete / shared | 10 | 10 | 100% | Current identities/definition, authored behavior, schema-v1 read compatibility, runtime activation/teardown, deterministic presentation, and Android chunk resolution are accepted. |
 | 4. Non-destructive scene ownership split | In progress / shared priority | 10 | 14 | 71% | The staged scene has fail-closed spatial/content validation; the original Match route remains validated and revision `d5784dcfa` plus the rollback recipe freeze the pre-cutover recovery boundary. |
@@ -787,7 +787,7 @@ Exit criteria:
 - [x] Add a two-map test proving a bake of map B cannot modify or delete map A outputs. See `../AgentReports/2026-07-17_static_map_presentation_two_map_mutation_isolation.md`.
 - [x] Make scene wiring validate the selected map's manifest rather than one global manifest path. See `../AgentReports/2026-07-17_static_map_presentation_selected_manifest_wiring.md`.
 - [x] Make Android build resolution validate a catalog-selected manifest set and reject stale/unowned chunk scenes. See `../AgentReports/2026-07-17_static_map_android_catalog_manifest_resolution.md`.
-- [ ] Extend ownership, integrity, rollback, structural parity, build resolver, and no-op reuse tests for multiple maps.
+- [x] Extend ownership, integrity, rollback, structural parity, build resolver, and no-op reuse tests for multiple maps. See `../AgentReports/2026-07-17_static_map_presentation_multimap_validation_matrix.md`.
 
 Exit criteria:
 
@@ -1133,6 +1133,7 @@ Exit criteria:
 | 2026-07-17 | Static presentation two-map mutation isolation | `../AgentReports/2026-07-17_static_map_presentation_two_map_mutation_isolation.md`; ownership `55 / 55`; compile; `git diff --check` | Passed; Phase 2 isolation row complete | A committed synthetic map-B cleanup deletes only map-B files while map-A scene/meta bytes remain unchanged; no second physical map was produced. |
 | 2026-07-17 | Static presentation selected-manifest wiring | `../AgentReports/2026-07-17_static_map_presentation_selected_manifest_wiring.md`; wiring/path `16 / 16`; real wiring command; no scene diff; compile; `git diff --check` | Passed; Phase 2 wiring row complete | Wiring resolves the serialized selected map through its catalog and derives the map-owned manifest path instead of using the compatibility manifest constant. |
 | 2026-07-17 | Static map Android catalog manifest resolution | `../AgentReports/2026-07-17_static_map_android_catalog_manifest_resolution.md`; resolver `26 / 26`; current-project probe; compile; `git diff --check` | Passed; Phase 2 Android resolver row complete | Android build-scene resolution validates the serialized catalog's map-owned manifest set and rejects stale, duplicate, missing, or cross-owner chunks; the shipped catalog still contains one physical map. |
+| 2026-07-17 | Static presentation multi-map validation matrix | `../AgentReports/2026-07-17_static_map_presentation_multimap_validation_matrix.md`; ownership/integrity/no-op `56 / 56`; structural `1 / 1`; rollback integration `1 / 1`; Android resolver `26 / 26`; compile; `git diff --check` | Passed; Phase 2 complete | Synthetic second-owner coverage proves independent paths, ledgers, transactions, structure, build resolution, and reuse while no second physical map asset is produced. |
 
 ## Open Decisions
 

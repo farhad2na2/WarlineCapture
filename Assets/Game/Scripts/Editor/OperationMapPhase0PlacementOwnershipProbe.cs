@@ -51,7 +51,7 @@ namespace Game.Editor
         private const string ExpectedGeneratedAggregate =
             "574afec991fbc1a684531c9f727c20eb296271260e7a4e1c4a8c300a2b642e79";
         private const string ExpectedIdentityPayloadSha256 =
-            "76859d5eaadb49b9a05d494b34d7232ff6bbe6c0a710620f42996b513fb4317a";
+            "4ccc408e733c160579628da5dc89149465aa68693274499e23ddf7a7dadc09dd";
         private const string ResolvedState = "Resolved";
         private const string UnresolvedState = "Unresolved";
         private const string MixedOwnership = "Mixed";
@@ -895,11 +895,12 @@ namespace Game.Editor
             {
                 [BuildingAssetPath] = "26973214f433c44ebca01f302ecbe05789c84e573dc48eb8b2c21f241823464d",
                 [BuildingAssetPath + ".meta"] = "6d8bde44c602566dde36f229d334f1cb727c9b46d9ccadf5d7f785658c50f106",
-                [VehicleAssetPath] = "898199006ec1e8be4916554c07f4e9635c8e35e5ca52c7b035a7e10375c9cf30",
+                [VehicleAssetPath] = "4052c490406520d6959d1ac5b9c8490e6b77fb95d68fdbe817b5938e609b9b62",
                 [VehicleAssetPath + ".meta"] = "94ce2a975f2a211b8a01b40563ec100f81ee388baa71bb327a8ee1dec9b2f9d9",
-                [MatchScenePath] = "dca7c83b765ce40099ce4fd62a53cbee5bc306107f8a026abcb941a59bf53a46",
-                ["Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs"] = "4ab539902e867989d99fc934de572a1c4958881e81d8d812cab2b45b5d17024a",
-                ["Assets/Game/Scripts/Composition/MatchSceneView.cs"] = "657c90a2d0a4d6393395235b38ebd07e1157acc628b1a9267bf825f4c92d295b",
+                [MatchScenePath] = "182f3b4cb50f48e1a573e1e90ee0c13baf9d62fce46e35b1850ef72097db5d75",
+                ["Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs"] = "2644acea059c3ef460314ac98153a6aa9ab2e5b27b847e841066ff32c4a79f02",
+                ["Assets/Game/Scripts/Composition/MatchSceneView.cs"] = "1cfaf1b472523aa4af608ac7eac0fb4ce89cacec97ddbda7d4e3ccf65cd03847",
+                ["Assets/Game/Scripts/Composition/OperationMapSceneView.cs"] = "ffd2e4622da0275e51ba0ebaf53f9d790fd4e8ef381f99b6c27d0c76776be083",
                 ["Assets/Game/Scripts/Configs/MapBuildingPlacementConfig.cs"] = "a1d91971d5f3baebbbf85a8140780f9dd0af9f79dfce6b098e2b6d63d15cddaf",
                 ["Assets/Game/Scripts/Configs/MapVehiclePlacementConfig.cs"] = "513af70e6d5934735fa4767261be0814ae07a20c22a30abbe529583b4633fceb",
                 ["Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs"] = "3eca4ad45ed5f8f7a4303d8d7b5e1c7f8af26ada57220edcc5ea0edcb382d613",
@@ -908,7 +909,7 @@ namespace Game.Editor
                 ["Assets/Game/Scripts/Systems/MapVehiclePlacementClearanceSystemHelper.cs"] = "22d55b2424bf5b9c117ea22f338d838501a9c4ad68dc0d3005f8da2c5034c54a",
                 ["Assets/Game/Scripts/Systems/MapVehiclePlacementSpawnPrefabSystemHelper.cs"] = "ab22e1db28ec08d59f1db8b0f21a6e76682688ef1d9095b390ca45e43533b323",
                 [BaselineEvidencePath] = "d4d4674850766c5cd95e1bb5fbb6f26893e0bb019dbaf266a0c9897a3befc807",
-                [TrackerPath] = "157eb5ea9fb38e808538e30f134a153cb0663c98f0608b03ab4f622cf852a268"
+                [TrackerPath] = "abc642778dd19ee86eabb999ec513f126adc61087b0e5372a455762696d8600a"
             };
         }
 
@@ -948,6 +949,7 @@ namespace Game.Editor
             {
                 ["Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs"] = new(true, true, "Forwards both config and authoring-root bindings into managed gameplay startup."),
                 ["Assets/Game/Scripts/Composition/MatchSceneView.cs"] = new(true, true, "Owns the current serialized compatibility bindings and exposes them to Match bootstrap."),
+                ["Assets/Game/Scripts/Composition/OperationMapSceneView.cs"] = new(true, true, "Owns the extracted operation-map scene placement bindings for staged activation."),
                 ["Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs"] = new(true, true, "Constructs both placement runtime contexts and schedules their startup updates."),
                 ["Assets/Game/Scripts/Systems/ManagedGameplayStartupSystemHelper.cs"] = new(true, true, "Forwards both placement contracts into building gameplay composition."),
                 ["Assets/Game/Scripts/Systems/MapBuildingPlacementSpawnPrefabSystemHelper.cs"] = new(true, false, "Resolves authored hierarchy paths, spawns building runtime instances, and hides sources/root after spawn."),

@@ -12,7 +12,7 @@ namespace Game.Tests.Editor
     public sealed class OperationMapPhase0PlacementOwnershipProbeTests
     {
         private const string ReportPath =
-            "Design/AgentReports/2026-07-15_opmap-006_phase0_placement_ownership.json";
+            "Design/AgentReports/2026-07-17_operation_map_placement_ownership_refresh.json";
 
         [Test]
         public void ResolveReportOutputPath_EmptyPathUsesExternalDefault()

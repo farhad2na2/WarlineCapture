@@ -70,6 +70,42 @@ function ConvertTo-ProcessArgument {
     return '"' + ($Argument -replace '"', '\"') + '"'
 }
 
+function Find-UnityLoggedFailure {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string] $UnityLogFile
+    )
+
+    if (-not (Test-Path -LiteralPath $UnityLogFile -PathType Leaf)) {
+        return $null
+    }
+
+    try {
+        $logText = [System.IO.File]::ReadAllText($UnityLogFile)
+    } catch {
+        Write-Host "[UnityInvoke] WARN: Could not inspect Unity log for fatal markers: $($_.Exception.Message)"
+        return $null
+    }
+
+    $fatalPatterns = @(
+        'executeMethod method .+ threw exception\.',
+        'Application will terminate with return code [1-9][0-9]*',
+        'No valid Unity Editor license found\.',
+        'Aborting batchmode due to failure'
+    )
+    foreach ($pattern in $fatalPatterns) {
+        $match = [System.Text.RegularExpressions.Regex]::Match(
+            $logText,
+            $pattern,
+            [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+        if ($match.Success) {
+            return $match.Value
+        }
+    }
+
+    return $null
+}
+
 Write-InvocationLog "[UnityInvoke] UnityExe: $resolvedUnityExe"
 Write-InvocationLog "[UnityInvoke] ProjectPath: $resolvedProjectPath"
 Write-InvocationLog "[UnityInvoke] LogFile: $resolvedLogFile"
@@ -131,10 +167,16 @@ while (-not $process.HasExited) {
 }
 
 $process.WaitForExit()
-$process.Refresh()
-$exitCode = if ($timedOut) { 124 } elseif ($null -eq $process.ExitCode) { 1 } else { $process.ExitCode }
-if (-not $timedOut -and $null -eq $process.ExitCode) {
+$exitCode = if ($timedOut) { 124 } else { $process.ExitCode }
+if ($null -eq $exitCode) {
     Write-InvocationLog "[UnityInvoke] ERROR: Unity exited without a readable process exit code. Failing closed."
+    $exitCode = 1
+} elseif ($exitCode -eq 0) {
+    $loggedFailure = Find-UnityLoggedFailure -UnityLogFile $resolvedLogFile
+    if (-not [string]::IsNullOrWhiteSpace($loggedFailure)) {
+        Write-InvocationLog "[UnityInvoke] ERROR: Unity reported a fatal log marker despite process exit code 0: $loggedFailure"
+        $exitCode = 1
+    }
 }
 Write-InvocationLog "[UnityInvoke] ExitCode: $exitCode"
 if ($NoProcessExit) {

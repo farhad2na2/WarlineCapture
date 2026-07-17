@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &4317443006342707860
+--- !u!1 &1824310418590304218
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,56 +8,55 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7975451141957527032}
-  - component: {fileID: 2397244838860811868}
+  - component: {fileID: 5013094603245370133}
+  - component: {fileID: 4078408337013676632}
   m_Layer: 0
-  m_Name: M01_Entry_061_3_Parity
+  m_Name: M01_Entry_064_3_Parity
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &7975451141957527032
+--- !u!4 &5013094603245370133
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4317443006342707860}
+  m_GameObject: {fileID: 1824310418590304218}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 6988132467300063801}
+  - {fileID: 5485925559076281404}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2397244838860811868
+--- !u!114 &4078408337013676632
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4317443006342707860}
+  m_GameObject: {fileID: 1824310418590304218}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8c3c1b346ef24d7ea4a0cb6f65d6c1c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BuildingDefinitionAuthoring
-  config: {fileID: 11400000, guid: 243575a10c0a948d4a3ee14955fa160a, type: 2}
-  displayName: Guard Tower
-  description: Elevated defensive post for spotting threats and protecting the base
-    perimeter.
-  portraitSprite: {fileID: 21300000, guid: 35c0e33091ef48f6b4433d8fd639940d, type: 3}
-  portraitCardSprite: {fileID: 21300000, guid: 332bacdcb5664751ba6e71a692078234, type: 3}
-  portraitActionSprite: {fileID: 21300000, guid: 2ce20a70d9a94693ad6956aeb22f427d, type: 3}
+  config: {fileID: 11400000, guid: 75ca7d1a83b3b4d49b482952f8885d03, type: 2}
+  displayName: Water Tank
+  description: Water storage structure that supports base utilities and field operations.
+  portraitSprite: {fileID: 21300000, guid: 9fd2ed0fd02940e88ead470228d8a45e, type: 3}
+  portraitCardSprite: {fileID: 21300000, guid: f0f4275ad7f24c618ef4a9568a47df63, type: 3}
+  portraitActionSprite: {fileID: 21300000, guid: 2d4a1e7e07b3f4ee3b4a928e9c3039d8, type: 3}
   footprintCells: {x: 20, y: 10}
   maxHealth: 700
   role: 0
   canRequest: 1
-  price: 22000
-  materialsCost: 50
+  price: 14000
+  materialsCost: 30
   productionDurationSeconds: 30
   oilBarrelsPerDay: 0
   oilStorageCapacity: 0
@@ -72,14 +71,14 @@ MonoBehaviour:
   refugeeUpkeepPerCitizenPerDay: 0
   threatDetectionKind: 0
   threatDetectionRadiusCells: 0
-  canAttack: 1
+  canAttack: 0
   maxConcurrentAttacks: 1
-  attackRange: 100
-  attackCooldownSeconds: 0.3
-  attackDamage: 10
-  attackImpactPrefab: {fileID: 4211309594880850807, guid: bb48c0739f28e4c928e1733f7f54ca39, type: 3}
-  muzzleFlashPrefab: {fileID: 6487102725361823017, guid: c832329c4cbe94ca7870bed4da70360d, type: 3}
-  muzzleFlashHeightOffset: 5.5
+  attackRange: 0
+  attackCooldownSeconds: 1
+  attackDamage: 0
+  attackImpactPrefab: {fileID: 0}
+  muzzleFlashPrefab: {fileID: 0}
+  muzzleFlashHeightOffset: 0.95
   muzzleFlashForwardOffset: 0.5
   attackTraceColor: {r: 1, g: 0.62, b: 0.25, a: 1}
   attackTraceWidth: 0.14
@@ -87,13 +86,16 @@ MonoBehaviour:
   attackTraceDashDensity: 4
   attackTraceVisibleSeconds: 0.1
   attackTracerEveryNthShot: 3
-  productions: []
+  productions:
+  - spawnUnitPrefab: {fileID: 5616646512338707422, guid: fcc8f80798992470f8b8769d3bc4c41a, type: 3}
+  - spawnUnitPrefab: {fileID: 5616646512338707422, guid: ba129d3b5a0324b82a9046e6a52c1149, type: 3}
+  - spawnUnitPrefab: {fileID: 5616646512338707422, guid: e540888d7cd8a489f9472b3456bf2406, type: 3}
   isWall: 0
-  destroyedVisualPrefab: {fileID: 283292409005639657, guid: cf44f9c81375a40c3ac7bbc696a537bd, type: 3}
+  destroyedVisualPrefab: {fileID: 0}
   primarySpawnUnitPrefab: {fileID: 0}
   secondarySpawnUnitPrefab: {fileID: 0}
   tertiarySpawnUnitPrefab: {fileID: 0}
---- !u!1 &5631927949070516217
+--- !u!1 &7332413779195293253
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -101,9 +103,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6988132467300063801}
-  - component: {fileID: 5183034770364180314}
-  - component: {fileID: 2047191808863472956}
+  - component: {fileID: 5485925559076281404}
+  - component: {fileID: 2227619318715198761}
+  - component: {fileID: 707707761750703823}
   m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
@@ -111,36 +113,36 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &6988132467300063801
+--- !u!4 &5485925559076281404
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5631927949070516217}
+  m_GameObject: {fileID: 7332413779195293253}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.33, y: 0, z: -0.28}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 7975451141957527032}
+  m_Father: {fileID: 5013094603245370133}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &5183034770364180314
+--- !u!33 &2227619318715198761
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5631927949070516217}
-  m_Mesh: {fileID: 4300000, guid: 0c88ccb7989276f4a841b906a1cb6439, type: 3}
---- !u!23 &2047191808863472956
+  m_GameObject: {fileID: 7332413779195293253}
+  m_Mesh: {fileID: 4300000, guid: 752ad0307e893e6439eb7b163b9861d6, type: 3}
+--- !u!23 &707707761750703823
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5631927949070516217}
+  m_GameObject: {fileID: 7332413779195293253}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -159,7 +161,6 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 48843a2db7a47754f9c8d6ae390ebf4b, type: 2}
   - {fileID: 2100000, guid: 48843a2db7a47754f9c8d6ae390ebf4b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0

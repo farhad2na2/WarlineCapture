@@ -16,7 +16,7 @@ namespace Game.Editor
         public const string ScenePath = "Assets/Game/Scenes/MapPrototypes/Chapter01/M01_VisualPrototype.unity";
         public const string CaptureDirectory = "Design/ArtReview/OperationMaps/M01";
         public const int GenerationSeed = 26071501;
-        public const string GeneratorVersion = "M01VisualPrototype_2026-07-17_v21_support_aware_terrain";
+        public const string GeneratorVersion = "M01VisualPrototype_2026-07-17_v23_dense_district_core";
 
         private const int CaptureWidth = 1600;
         private const int CaptureHeight = 900;
@@ -49,6 +49,7 @@ namespace Game.Editor
             SouthTownModulePath,
             "Assets/Game/Prefabs/Environment/City/Clock_Tower_01.prefab",
             "Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Ruins_03.prefab",
+            "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_03.prefab",
             "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Cart_Stall_01.prefab",
             "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_ClothCover_Large_01.prefab",
             "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Tent_Refugee_01.prefab",
@@ -143,8 +144,8 @@ namespace Game.Editor
 
         private static readonly LocalRoadSegmentDefinition[] LocalRoadSegments =
         {
-            new("MarketExit", new Vector3(-14f, 0f, 9f), new Vector3(10.5f, 0f, 9.3f), false),
-            new("MarketToCompound", new Vector3(10.5f, 0f, 9.3f), new Vector3(19f, 0f, 28f), false)
+            new("MarketExit", new Vector3(-14f, 0f, 9f), new Vector3(-10.5f, 0f, 9.3f), true),
+            new("MarketToCompound", new Vector3(-10.5f, 0f, 9.3f), new Vector3(-7f, 0f, 28f), true)
         };
 
         private static readonly string[] AuthoredRoadClearanceObstacleNames =
@@ -153,6 +154,11 @@ namespace Game.Editor
             "BombedCornerRuin",
             "CivilianAidTent",
             "DamagedCivilianTent"
+        };
+
+        private static readonly string[] AuthoredTransitionStructureNames =
+        {
+            "ResidentialTransitionHouse"
         };
 
         private static readonly string[] OldMarketBuildingSupportGroundNames =
@@ -185,15 +191,15 @@ namespace Game.Editor
                 false),
             new(
                 "UtilityCompound_East_DemoAuthored",
-                new Vector2(2f, -29f),
-                new Vector2(81f, 72f),
+                new Vector2(-24f, -29f),
+                new Vector2(55f, 72f),
                 true,
                 40f,
                 18f),
             new(
                 "Residential_South_DemoAuthored",
-                new Vector2(-43f, -107f),
-                new Vector2(35f, -31f),
+                new Vector2(-43f, -93f),
+                new Vector2(35f, -17f),
                 false)
         };
 
@@ -292,6 +298,74 @@ namespace Game.Editor
             }
 
             Debug.Log($"[M01DistrictEdgeAnalysis] result=Passed candidates={candidateCount}");
+        }
+
+        public static void AnalyzeDistrictLayoutBatch()
+        {
+            Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            GameObject sceneRoot = FindSceneRoot(scene);
+            Transform modulesRoot = sceneRoot.transform.Find("_M01VisualGenerated/02_DemoAuthored_DistrictModules");
+            if (modulesRoot == null)
+                throw new InvalidOperationException("M01 district module root is missing.");
+
+            var moduleBounds = new List<CompositionBoundsRecord>(modulesRoot.childCount);
+            for (int moduleIndex = 0; moduleIndex < modulesRoot.childCount; moduleIndex++)
+            {
+                Transform module = modulesRoot.GetChild(moduleIndex);
+                Renderer[] renderers = module.GetComponentsInChildren<Renderer>(true);
+                bool assigned = false;
+                Bounds occupiedBounds = default;
+                int occupiedRendererCount = 0;
+                for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
+                {
+                    Renderer renderer = renderers[rendererIndex];
+                    if (renderer == null || !renderer.enabled || !renderer.gameObject.activeInHierarchy ||
+                        renderer.bounds.size.y < 1.2f)
+                    {
+                        continue;
+                    }
+
+                    if (!assigned)
+                    {
+                        occupiedBounds = renderer.bounds;
+                        assigned = true;
+                    }
+                    else
+                    {
+                        occupiedBounds.Encapsulate(renderer.bounds);
+                    }
+
+                    occupiedRendererCount++;
+                }
+
+                if (!assigned)
+                    continue;
+
+                moduleBounds.Add(new CompositionBoundsRecord(module, occupiedBounds));
+                Debug.Log(
+                    $"[M01DistrictLayout] module={module.name} position={module.position} " +
+                    $"occupiedCenter={occupiedBounds.center} occupiedSize={occupiedBounds.size} " +
+                    $"occupiedRenderers={occupiedRendererCount}");
+            }
+
+            for (int firstIndex = 0; firstIndex < moduleBounds.Count; firstIndex++)
+            {
+                CompositionBoundsRecord first = moduleBounds[firstIndex];
+                for (int secondIndex = firstIndex + 1; secondIndex < moduleBounds.Count; secondIndex++)
+                {
+                    CompositionBoundsRecord second = moduleBounds[secondIndex];
+                    float gapX = Mathf.Max(0f, Mathf.Max(first.Bounds.min.x, second.Bounds.min.x) -
+                        Mathf.Min(first.Bounds.max.x, second.Bounds.max.x));
+                    float gapZ = Mathf.Max(0f, Mathf.Max(first.Bounds.min.z, second.Bounds.min.z) -
+                        Mathf.Min(first.Bounds.max.z, second.Bounds.max.z));
+                    float planarGap = Mathf.Sqrt(gapX * gapX + gapZ * gapZ);
+                    Debug.Log(
+                        $"[M01DistrictLayoutPair] first={first.Owner.name} second={second.Owner.name} " +
+                        $"gapX={gapX:0.00} gapZ={gapZ:0.00} planarGap={planarGap:0.00}");
+                }
+            }
+
+            Debug.Log($"[M01DistrictLayoutAnalysis] result=Passed modules={moduleBounds.Count}");
         }
 
         public static void AnalyzeDistrictBuildingOrientationBatch()
@@ -985,7 +1059,7 @@ namespace Game.Editor
             CreateBox("DesertGround", new Vector3(0f, -1.05f, 16f), new Vector3(1200f, 2f, 900f), palette.Sand, terrainRoot);
 
             CreateIrregularSurface("CentralOperationGround", new Vector3(-8f, -0.065f, -18f), new Vector2(250f, 205f), palette.TransitionGround, terrainRoot, 2f);
-            CreateIrregularSurface("OldMarketUtilityGroundLink", new Vector3(7f, -0.035f, 14f), new Vector2(90f, 34f), palette.TransitionGround, terrainRoot, 6f);
+            CreateIrregularSurface("OldMarketUtilityGroundLink", new Vector3(-10f, -0.035f, 14f), new Vector2(56f, 28f), palette.TransitionGround, terrainRoot, 6f);
             CreateIrregularSurface("CivilianFrontageTransition", new Vector3(1f, -0.034f, -3f), new Vector2(68f, 30f), palette.TransitionGround, terrainRoot, -7f);
             CreateIrregularSurface("CivilianFrontageApron", new Vector3(1f, -0.005f, -3f), new Vector2(56f, 24f), palette.DistrictGround, terrainRoot, 5f);
 
@@ -1029,8 +1103,8 @@ namespace Game.Editor
         {
             Transform modulesRoot = CreateRoot("02_DemoAuthored_DistrictModules", parent).transform;
             ApplyDistrictCuration(PlaceModule(TownMarketModulePath, "OldMarket_West_DemoAuthored", new Vector3(-68f, 0f, 12f), 0f, 0.82f, modulesRoot), palette);
-            ApplyDistrictCuration(PlaceModule(BaseCommandModulePath, "UtilityCompound_East_DemoAuthored", new Vector3(49f, 0f, 13f), 180f, 0.76f, modulesRoot), palette);
-            ApplyDistrictCuration(PlaceModule(SouthTownModulePath, "Residential_South_DemoAuthored", new Vector3(-5f, 0f, -68f), 0f, 0.58f, modulesRoot), palette);
+            ApplyDistrictCuration(PlaceModule(BaseCommandModulePath, "UtilityCompound_East_DemoAuthored", new Vector3(23f, 0f, 13f), 180f, 0.76f, modulesRoot), palette);
+            ApplyDistrictCuration(PlaceModule(SouthTownModulePath, "Residential_South_DemoAuthored", new Vector3(-5f, 0f, -54f), 0f, 0.58f, modulesRoot), palette);
         }
 
         private static void ApplyDistrictCuration(GameObject moduleObject, Palette palette)
@@ -1209,6 +1283,147 @@ namespace Game.Editor
             return penetrationCount;
         }
 
+        private static int CountCrossModulePrimaryStructureOverlaps(GameObject sceneRoot, bool logDetails)
+        {
+            Transform modulesRoot = sceneRoot.transform.Find("_M01VisualGenerated/02_DemoAuthored_DistrictModules");
+            if (modulesRoot == null)
+                return 1;
+
+            var moduleStructures = new List<List<CompositionBoundsRecord>>(modulesRoot.childCount);
+            for (int moduleIndex = 0; moduleIndex < modulesRoot.childCount; moduleIndex++)
+            {
+                Transform module = modulesRoot.GetChild(moduleIndex);
+                Transform compositionRoot = FindDistrictCompositionRoot(module);
+                var structures = new List<CompositionBoundsRecord>();
+                for (int ownerIndex = 0; ownerIndex < compositionRoot.childCount; ownerIndex++)
+                {
+                    Transform owner = compositionRoot.GetChild(ownerIndex);
+                    if (!owner.gameObject.activeInHierarchy || !IsPrimaryStructureOwner(owner))
+                        continue;
+
+                    Renderer[] renderers = owner.GetComponentsInChildren<Renderer>(true);
+                    if (TryGetCombinedBounds(renderers, out Bounds bounds))
+                        structures.Add(new CompositionBoundsRecord(owner, bounds));
+                }
+
+                moduleStructures.Add(structures);
+            }
+
+            int overlapCount = 0;
+            for (int firstModuleIndex = 0; firstModuleIndex < moduleStructures.Count; firstModuleIndex++)
+            {
+                List<CompositionBoundsRecord> firstStructures = moduleStructures[firstModuleIndex];
+                for (int secondModuleIndex = firstModuleIndex + 1; secondModuleIndex < moduleStructures.Count; secondModuleIndex++)
+                {
+                    List<CompositionBoundsRecord> secondStructures = moduleStructures[secondModuleIndex];
+                    for (int firstIndex = 0; firstIndex < firstStructures.Count; firstIndex++)
+                    {
+                        CompositionBoundsRecord first = firstStructures[firstIndex];
+                        for (int secondIndex = 0; secondIndex < secondStructures.Count; secondIndex++)
+                        {
+                            CompositionBoundsRecord second = secondStructures[secondIndex];
+                            float overlapX = Mathf.Min(first.Bounds.max.x, second.Bounds.max.x) -
+                                             Mathf.Max(first.Bounds.min.x, second.Bounds.min.x);
+                            float overlapY = Mathf.Min(first.Bounds.max.y, second.Bounds.max.y) -
+                                             Mathf.Max(first.Bounds.min.y, second.Bounds.min.y);
+                            float overlapZ = Mathf.Min(first.Bounds.max.z, second.Bounds.max.z) -
+                                             Mathf.Max(first.Bounds.min.z, second.Bounds.min.z);
+                            if (overlapX < 0.75f || overlapY < 0.5f || overlapZ < 0.75f || overlapX * overlapZ < 1.5f)
+                                continue;
+
+                            overlapCount++;
+                            if (logDetails)
+                            {
+                                Debug.Log(
+                                    $"[M01CrossModuleStructureOverlap] first={first.Owner.name} second={second.Owner.name} " +
+                                    $"overlap=({overlapX:0.00},{overlapY:0.00},{overlapZ:0.00})");
+                            }
+                        }
+                    }
+                }
+            }
+
+            return overlapCount;
+        }
+
+        private static int CountAuthoredTransitionStructureOverlaps(GameObject sceneRoot, bool logDetails)
+        {
+            Transform modulesRoot = sceneRoot.transform.Find("_M01VisualGenerated/02_DemoAuthored_DistrictModules");
+            if (modulesRoot == null)
+                return 1;
+
+            var moduleStructures = new List<CompositionBoundsRecord>();
+            for (int moduleIndex = 0; moduleIndex < modulesRoot.childCount; moduleIndex++)
+            {
+                Transform compositionRoot = FindDistrictCompositionRoot(modulesRoot.GetChild(moduleIndex));
+                for (int ownerIndex = 0; ownerIndex < compositionRoot.childCount; ownerIndex++)
+                {
+                    Transform owner = compositionRoot.GetChild(ownerIndex);
+                    if (!owner.gameObject.activeInHierarchy || !IsPrimaryStructureOwner(owner))
+                        continue;
+
+                    Renderer[] renderers = owner.GetComponentsInChildren<Renderer>(true);
+                    if (TryGetCombinedBounds(renderers, out Bounds bounds))
+                        moduleStructures.Add(new CompositionBoundsRecord(owner, bounds));
+                }
+            }
+
+            var authoredStructures = new List<CompositionBoundsRecord>(AuthoredTransitionStructureNames.Length);
+            for (int nameIndex = 0; nameIndex < AuthoredTransitionStructureNames.Length; nameIndex++)
+            {
+                GameObject structureObject = GameObject.Find(AuthoredTransitionStructureNames[nameIndex]);
+                if (structureObject == null)
+                    return 1;
+
+                Renderer[] renderers = structureObject.GetComponentsInChildren<Renderer>(true);
+                if (TryGetCombinedBounds(renderers, out Bounds bounds))
+                    authoredStructures.Add(new CompositionBoundsRecord(structureObject.transform, bounds));
+            }
+
+            int overlapCount = 0;
+            for (int authoredIndex = 0; authoredIndex < authoredStructures.Count; authoredIndex++)
+            {
+                CompositionBoundsRecord authored = authoredStructures[authoredIndex];
+                for (int moduleIndex = 0; moduleIndex < moduleStructures.Count; moduleIndex++)
+                {
+                    if (HasMeaningfulStructureOverlap(authored.Bounds, moduleStructures[moduleIndex].Bounds))
+                    {
+                        overlapCount++;
+                        if (logDetails)
+                        {
+                            Debug.Log(
+                                $"[M01AuthoredTransitionOverlap] authored={authored.Owner.name} " +
+                                $"module={moduleStructures[moduleIndex].Owner.name}");
+                        }
+                    }
+                }
+
+                for (int secondAuthoredIndex = authoredIndex + 1; secondAuthoredIndex < authoredStructures.Count; secondAuthoredIndex++)
+                {
+                    if (!HasMeaningfulStructureOverlap(authored.Bounds, authoredStructures[secondAuthoredIndex].Bounds))
+                        continue;
+
+                    overlapCount++;
+                    if (logDetails)
+                    {
+                        Debug.Log(
+                            $"[M01AuthoredTransitionOverlap] authored={authored.Owner.name} " +
+                            $"other={authoredStructures[secondAuthoredIndex].Owner.name}");
+                    }
+                }
+            }
+
+            return overlapCount;
+        }
+
+        private static bool HasMeaningfulStructureOverlap(Bounds first, Bounds second)
+        {
+            float overlapX = Mathf.Min(first.max.x, second.max.x) - Mathf.Max(first.min.x, second.min.x);
+            float overlapY = Mathf.Min(first.max.y, second.max.y) - Mathf.Max(first.min.y, second.min.y);
+            float overlapZ = Mathf.Min(first.max.z, second.max.z) - Mathf.Max(first.min.z, second.min.z);
+            return overlapX >= 0.75f && overlapY >= 0.5f && overlapZ >= 0.75f && overlapX * overlapZ >= 1.5f;
+        }
+
         private static bool IsRemoteLongRoad(
             Transform module,
             Bounds bounds,
@@ -1301,6 +1516,8 @@ namespace Game.Editor
 
             PlacePrefab("Assets/Game/Prefabs/Environment/City/Clock_Tower_01.prefab", "OldMarketClockTower", new Vector3(-42f, 0f, 42f), 18f, 1.1f, root);
             PlacePrefab("Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_ArchwayBridge_01.prefab", "OldMarketArchway", new Vector3(-19f, 0f, 24f), 90f, 1.05f, root);
+            CreateIrregularSurface("ResidentialTransitionCourtyard", new Vector3(-23f, -0.01f, -30f), new Vector2(24f, 16f), palette.DistrictGround, root, -8f);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_03.prefab", "ResidentialTransitionHouse", new Vector3(-29f, 0f, -31f), 8f, 0.88f, root);
 
             string[] stalls =
             {
@@ -1472,6 +1689,14 @@ namespace Game.Editor
             int terrainStructurePenetrations = CountHighConfidenceTerrainStructurePenetrations(root, true);
             if (terrainStructurePenetrations != 0)
                 throw new InvalidOperationException($"M01 district curation left {terrainStructurePenetrations} high-confidence terrain/structure penetrations.");
+
+            int crossModuleStructureOverlaps = CountCrossModulePrimaryStructureOverlaps(root, true);
+            if (crossModuleStructureOverlaps != 0)
+                throw new InvalidOperationException($"M01 district placement left {crossModuleStructureOverlaps} cross-module primary-structure overlaps.");
+
+            int authoredTransitionOverlaps = CountAuthoredTransitionStructureOverlaps(root, true);
+            if (authoredTransitionOverlaps != 0)
+                throw new InvalidOperationException($"M01 transition composition left {authoredTransitionOverlaps} authored structure overlaps.");
         }
 
         private static void SimulateParticles()

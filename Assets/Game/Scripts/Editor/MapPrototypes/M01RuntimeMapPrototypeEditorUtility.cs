@@ -22,7 +22,7 @@ namespace Game.Editor
         public const string ConfigPath = "Assets/Game/Configs/MapPrototypes/M01_RuntimeCity_Config.asset";
         public const string VisualRecipePath = "Assets/Game/Configs/MapPrototypes/M01_RuntimeVisualRecipe.asset";
         private const string SourceConfigPath = "Assets/Game/Configs/Scene/Game_RuntimeCitySpawner_Config.asset";
-        private const string VisualRecipeVersion = "M01RuntimeVisualRecipe_2026-07-17_v21_support_aware_terrain";
+        private const string VisualRecipeVersion = "M01RuntimeVisualRecipe_2026-07-17_v23_dense_district_core";
         private const string DistrictSnapshotFolder = "Assets/Game/Prefabs/MapPrototypes/M01/RuntimeParity";
         private const int MaxDistrictSliceRenderers = 64;
         private const string PremiumLightingRigPath = "Assets/Game/Rendering/Prefabs/PremiumLightingRig.prefab";
@@ -41,6 +41,11 @@ namespace Game.Editor
         private const string RuntimeVisualManifestPath = "Logs/M01_RuntimeVisualManifest.txt";
         private const string EditorRendererPathReportPath = "Logs/M01_EditorRendererPaths.txt";
         private const string RuntimeRendererPathReportPath = "Logs/M01_RuntimeRendererPaths.txt";
+        private static readonly Vector3 AcceptedGameplayCameraPosition = new(-105f, 58f, -72f);
+        private static readonly Vector3 AcceptedGameplayCameraTarget = new(-24f, 1f, -8f);
+        private const float AcceptedGameplayCameraFieldOfView = 49f;
+        private static readonly Vector3 AcceptedTopDownCameraPosition = new(-10f, 260f, -18f);
+        private const float AcceptedTopDownCameraSize = 116f;
         private static readonly string[] M01HallPrefabPaths =
         {
             "Assets/Game/Prefabs/Environment/City/Hall_01.prefab",
@@ -592,9 +597,9 @@ namespace Game.Editor
                     0.45f),
                 new(
                     RuntimeOperationMapVisualStage.Horizon,
-                    new Vector3(-105f, 58f, -72f),
-                    new Vector3(-28f, 1f, -5f),
-                    50f,
+                    AcceptedGameplayCameraPosition,
+                    AcceptedGameplayCameraTarget,
+                    AcceptedGameplayCameraFieldOfView,
                     0.5f)
             };
         }
@@ -1569,10 +1574,10 @@ namespace Game.Editor
             float previousOrthographicSize = camera.orthographicSize;
             try
             {
-                cameraTransform.position = new Vector3(0f, 260f, -4f);
-                cameraTransform.rotation = new Quaternion(0.7016471f, 0f, 0f, 0.71252465f);
+                cameraTransform.position = AcceptedTopDownCameraPosition;
+                cameraTransform.rotation = Quaternion.LookRotation(Vector3.down, Vector3.forward);
                 camera.orthographic = true;
-                camera.orthographicSize = 116f;
+                camera.orthographicSize = AcceptedTopDownCameraSize;
                 CaptureCamera(camera, outputPath);
             }
             finally
@@ -2719,12 +2724,13 @@ namespace Game.Editor
             GameObject cameraObject = new("RuntimeGenerationCamera");
             cameraObject.tag = "MainCamera";
             cameraObject.transform.SetParent(parent, false);
-            cameraObject.transform.position = new Vector3(-105f, 58f, -72f);
-            Vector3 target = new(-28f, 1f, -5f);
-            cameraObject.transform.rotation = Quaternion.LookRotation((target - cameraObject.transform.position).normalized, Vector3.up);
+            cameraObject.transform.position = AcceptedGameplayCameraPosition;
+            cameraObject.transform.rotation = Quaternion.LookRotation(
+                (AcceptedGameplayCameraTarget - cameraObject.transform.position).normalized,
+                Vector3.up);
             Camera camera = cameraObject.AddComponent<Camera>();
             camera.clearFlags = CameraClearFlags.Skybox;
-            camera.fieldOfView = 50f;
+            camera.fieldOfView = AcceptedGameplayCameraFieldOfView;
             camera.nearClipPlane = 0.3f;
             camera.farClipPlane = 1200f;
             camera.allowHDR = true;

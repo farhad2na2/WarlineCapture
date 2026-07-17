@@ -453,6 +453,8 @@ namespace Game.Editor
                 out StaticMapPresentationSceneIntegrity existingIntegrity,
                 out string integrityRejectionReason);
             bool reusedScenes = StaticMapPresentationOutputOwnership.CanReuseExpectedScenes(
+                input.OperationMapId,
+                input.OutputRoot,
                 previousSchemaVersion,
                 previousCanonicalScenePath,
                 previousChunkSize,

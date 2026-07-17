@@ -219,6 +219,37 @@ namespace Game.Editor
             Func<string, bool> sceneIntegrityIsValid,
             out string rejectionReason)
         {
+            return CanReuseExpectedScenes(
+                StaticMapPresentationBaker.CurrentOperationMapId,
+                StaticMapPresentationBaker.OutputRoot,
+                previousSchemaVersion,
+                previousCanonicalScenePath,
+                previousChunkSize,
+                previousContentHash,
+                expectedCanonicalScenePath,
+                expectedChunkSize,
+                expectedContentHash,
+                previousOwnedPaths,
+                expectedPaths,
+                sceneIntegrityIsValid,
+                out rejectionReason);
+        }
+
+        internal static bool CanReuseExpectedScenes(
+            string operationMapId,
+            string outputRoot,
+            int previousSchemaVersion,
+            string previousCanonicalScenePath,
+            float previousChunkSize,
+            string previousContentHash,
+            string expectedCanonicalScenePath,
+            float expectedChunkSize,
+            string expectedContentHash,
+            IEnumerable<string> previousOwnedPaths,
+            IEnumerable<string> expectedPaths,
+            Func<string, bool> sceneIntegrityIsValid,
+            out string rejectionReason)
+        {
             if (previousSchemaVersion <= 0)
             {
                 rejectionReason = "manifest-missing";
@@ -250,10 +281,18 @@ namespace Game.Editor
                 return false;
             }
 
-            string[] owned = BuildValidatedSet(previousOwnedPaths, nameof(previousOwnedPaths))
+            string[] owned = BuildValidatedSet(
+                    operationMapId,
+                    outputRoot,
+                    previousOwnedPaths,
+                    nameof(previousOwnedPaths))
                 .OrderBy(path => path, StringComparer.Ordinal)
                 .ToArray();
-            string[] expected = BuildValidatedSet(expectedPaths, nameof(expectedPaths))
+            string[] expected = BuildValidatedSet(
+                    operationMapId,
+                    outputRoot,
+                    expectedPaths,
+                    nameof(expectedPaths))
                 .OrderBy(path => path, StringComparer.Ordinal)
                 .ToArray();
             if (!owned.SequenceEqual(expected, StringComparer.Ordinal))

@@ -257,6 +257,19 @@ public sealed class StaticMapPresentationOutputOwnershipTests
     }
 
     [Test]
+    public void IdenticalSecondBake_IsNoOpForEachMapOwner()
+    {
+        AssertIdenticalSecondBakeIsNoOp(
+            StaticMapPresentationBaker.CurrentOperationMapId,
+            StaticMapPresentationBaker.OutputRoot,
+            SceneA);
+        AssertIdenticalSecondBakeIsNoOp(
+            AlternateMapId,
+            AlternateOutputRoot,
+            AlternateSceneA);
+    }
+
+    [Test]
     public void BakeTransaction_RollsBackOverwritesDeletesAndNewFilesAfterFailure()
     {
         string projectRoot = CreateTemporaryProjectRoot();
@@ -795,6 +808,53 @@ public sealed class StaticMapPresentationOutputOwnershipTests
             },
             new List<StaticMapPresentationSourceEntry>());
         return manifest;
+    }
+
+    private static void AssertIdenticalSecondBakeIsNoOp(
+        string operationMapId,
+        string outputRoot,
+        string scenePath)
+    {
+        StaticMapPresentationManifest manifest = CreateManifest(operationMapId, scenePath);
+        try
+        {
+            string[] ownedPaths = StaticMapPresentationOutputOwnership.CaptureOwnedScenePaths(
+                manifest,
+                operationMapId,
+                outputRoot);
+            Assert.That(
+                StaticMapPresentationOutputOwnership.CanReuseExpectedScenes(
+                    operationMapId,
+                    outputRoot,
+                    manifest.SchemaVersion,
+                    manifest.CanonicalScenePath,
+                    manifest.ChunkSize,
+                    manifest.ContentHash,
+                    StaticMapPresentationBaker.CanonicalMatchScenePath,
+                    StaticMapPresentationBaker.ChunkSize,
+                    manifest.ContentHash,
+                    ownedPaths,
+                    new[] { scenePath },
+                    _ => true,
+                    out string rejectionReason),
+                Is.True,
+                rejectionReason);
+
+            int deleted = StaticMapPresentationOutputOwnership.DeleteStaleSceneAssets(
+                operationMapId,
+                outputRoot,
+                manifest,
+                new[] { scenePath },
+                _ => true,
+                _ => true,
+                _ => throw new AssertionException("An identical second bake must not delete a scene asset."),
+                _ => throw new AssertionException("An identical second bake must not delete a physical scene."));
+            Assert.That(deleted, Is.Zero);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(manifest);
+        }
     }
 
     private static string ProjectPath(string projectRoot, string assetPath)

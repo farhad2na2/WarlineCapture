@@ -705,7 +705,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 36% (64/177 checklist items complete).
+Overall implementation progress: 37% (65/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -713,7 +713,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 |---|---|---:|---:|---:|---|
 | 0. Reproducible baseline and rollback | In progress / shared | 11 | 12 | 92% | Required by both directions before scene edits. |
 | 1. Operation-map and scenario data contracts | In progress | 11 | 12 | 92% | Typed identity, catalog resolution, complete spatial/navigation metadata, hashes, validation, and ownership chain are approved; the selected local-Addressables reference row remains. |
-| 2. Per-map static presentation ownership | In progress | 9 | 14 | 64% | Bake input, compatibility routing, schema-2 identity, deterministic map-owned output root, map-namespaced scene filenames, per-map integrity, stale cleanup, transaction rollback, and generated-output hash exclusion are accepted; remaining no-op/wiring ownership stays fail-closed. |
+| 2. Per-map static presentation ownership | In progress | 10 | 14 | 71% | Bake input, compatibility routing, schema-2 identity, deterministic map-owned output root, map-namespaced scene filenames, per-map integrity, stale cleanup, transaction rollback, generated-output hash exclusion, and per-map no-op reuse are accepted; remaining isolation/wiring ownership stays fail-closed. |
 | 2A. Local Addressables packaging foundation | Active / selected direction | 0 | 20 | 0% | Package only the single approved editor-authored map locally after Phase 2 ownership prerequisites pass. |
 | 3. Current-map compatibility registration | Complete / shared | 10 | 10 | 100% | Current identities/definition, authored behavior, schema-v1 read compatibility, runtime activation/teardown, deterministic presentation, and Android chunk resolution are accepted. |
 | 4. Non-destructive scene ownership split | In progress / shared priority | 10 | 14 | 71% | The staged scene has fail-closed spatial/content validation; the original Match route remains validated and revision `d5784dcfa` plus the rollback recipe freeze the pre-cutover recovery boundary. |
@@ -783,7 +783,7 @@ Exit criteria:
 - [x] Restrict stale cleanup to paths owned by the same map id, manifest, and output-root contract. See `../AgentReports/2026-07-17_static_map_presentation_map_scoped_stale_cleanup.md`.
 - [x] Keep transaction journaling and rollback scoped to the active map's mutable files and `.meta` files. See `../AgentReports/2026-07-17_static_map_presentation_map_scoped_transaction.md`.
 - [x] Exclude every generated operation-map output root from canonical source dependency hashing. See `../AgentReports/2026-07-17_static_map_presentation_generated_output_hash_exclusion.md`.
-- [ ] Preserve zero-write/zero-delete behavior on an identical second bake for each map.
+- [x] Preserve zero-write/zero-delete behavior on an identical second bake for each map. See `../AgentReports/2026-07-17_static_map_presentation_per_map_noop_reuse.md`.
 - [ ] Add a two-map test proving a bake of map B cannot modify or delete map A outputs.
 - [ ] Make scene wiring validate the selected map's manifest rather than one global manifest path.
 - [ ] Make Android build resolution validate a catalog-selected manifest set and reject stale/unowned chunk scenes.
@@ -1129,6 +1129,7 @@ Exit criteria:
 | 2026-07-17 | Static presentation map-scoped stale cleanup | `../AgentReports/2026-07-17_static_map_presentation_map_scoped_stale_cleanup.md`; focused `58 / 58`; cross-map deletion negatives; canonical no-op bake; compile; `git diff --check` | Passed; Phase 2 cleanup row complete | Stale deletion now requires a matching map id, derived output root, and prior manifest. Map-B cleanup cannot delete map-A output, and the accepted 514-scene bake remained a zero-write/zero-delete no-op. |
 | 2026-07-17 | Static presentation map-scoped transaction | `../AgentReports/2026-07-17_static_map_presentation_map_scoped_transaction.md`; output/rollback `48 / 48`; alternate-map scene/meta rollback; canonical no-op bake; compile; `git diff --check` | Passed; Phase 2 transaction row complete | Journaling now accepts only the active map's explicit manifest, integrity ledger, and map-namespaced scenes, snapshots matching `.meta` files, and rejects foreign-map paths before mutation. |
 | 2026-07-17 | Static presentation generated-output hash exclusion | `../AgentReports/2026-07-17_static_map_presentation_generated_output_hash_exclusion.md`; output/hash `53 / 53`; current/alternate-map paths; canonical no-op bake; compile; `git diff --check` | Passed; Phase 2 hash-exclusion row complete | Canonical source traversal and hashing exclude all normalized paths under the generated static-presentation root, including arbitrary operation-map outputs, while traversal-like paths fail closed. |
+| 2026-07-17 | Static presentation per-map no-op reuse | `../AgentReports/2026-07-17_static_map_presentation_per_map_noop_reuse.md`; ownership `54 / 54`; Phase 0 evidence `157 / 157`; two canonical no-op bakes; generated-file SHA-256 comparison; architecture `22 / 26` with four unchanged upstream ratchet failures; compile; `git diff --check` | Passed; Phase 2 no-op row complete | Reuse validation is scoped to the active map owner; the approved map and a synthetic alternate owner both preserve zero-write/zero-delete behavior without producing another physical map. |
 
 ## Open Decisions
 

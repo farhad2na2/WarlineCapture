@@ -925,8 +925,8 @@ namespace Game.Editor
             AddSource(sources, "Assets/Game/Scripts/UI/Shell/Ecs/AssistantReadModelSystems.cs", "469b9fd5a3b0cc34fed42a8144286b3fcb8dc4083b412e20c40b25c4dab29fdd", "private static AssistantGoalReadModelElement ToGoal(", "AssistantObjectiveProjectionUtility.TryBuildAnchorFocus(");
             AddSource(sources, "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Actions.cs", "6e5e5c4b2e154ee8601abd03c496d56459921f82966921ec375baebe44e0d1b5", "private static AssistantCommandIntentKind ToAssistantCommandIntentKind(", "AssistantRecommendationKind.CameraFocus => AssistantCommandIntentKind.FocusCamera", "TargetId = recommendation.TargetId");
             AddSource(sources, Opmap002Path, "d4d4674850766c5cd95e1bb5fbb6f26893e0bb019dbaf266a0c9897a3befc807", "result=Passed chunks=514 sources=16542");
-            AddSource(sources, Opmap004Path, "fa70cc165217cb8e7daa15bbc0dcaebbc6804092847ed8ecd57c9c58829e17c4", "\"reportSchema\": \"warline.operation-map.phase0-ownership\"", "\"result\": \"NeedsDecision\"");
-            AddSource(sources, TrackerPath, "d3c40c3361d0f91ff82bbb07f285176e39c827a3b3416782f26f88fb1e0e7077", "Inventory minimap projection, camera clamp, initial camera, full-map bounds, and objective-focus sources.");
+            AddSource(sources, Opmap004Path, "224bb8aa72dee25f1d68057af95be1a05678e221be43f18e7ac27fd40ebe8e91", "\"reportSchema\": \"warline.operation-map.phase0-ownership\"", "\"result\": \"NeedsDecision\"");
+            AddSource(sources, TrackerPath, "05fe2475520e210114da2cdaf8beec1a2d7380e665225f5e69edb7a271bedd85", "Inventory minimap projection, camera clamp, initial camera, full-map bounds, and objective-focus sources.");
             return sources;
         }
 

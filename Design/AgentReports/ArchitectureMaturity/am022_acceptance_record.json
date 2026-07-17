@@ -1,0 +1,40 @@
+{
+  "artifactId": "AM022-ACCEPTANCE-RECORD",
+  "schemaVersion": 1,
+  "taskId": "AM-022",
+  "result": "Accepted",
+  "implementation": {
+    "commit": "0859b74d78d12b55eb01a9ef7ed33926da557495",
+    "tree": "d308a1bd37fa440d7d4ed1ff26c0f7c1d0818b97"
+  },
+  "acceptedEvidence": {
+    "path": "Design/AgentReports/ArchitectureMaturity/am022_world_lifecycle_recovery_evidence.json",
+    "sha256": "708a9c45b567841a57ff83a22489d34dd9f435b7af9a31dce587934009cd2777"
+  },
+  "acceptance": {
+    "editorRecoveryTests": 8,
+    "playModeRecoveryTests": 2,
+    "warmupOperations": 180,
+    "measuredOperations": 300,
+    "recoveredPathManagedAllocatedBytes": 0,
+    "compilerErrors": 0,
+    "persistentOwnershipGaps": 0,
+    "integratedArchitecturePassed": 146,
+    "integratedArchitectureExternalFailures": 1,
+    "externalFailureOwner": "FirstLaunchLanguageChoiceView"
+  },
+  "caseFamilies": {
+    "worldReplacement": "passed",
+    "missingSingletonRecovery": "passed",
+    "destroyedOrRemovedSingletonRecovery": "passed",
+    "duplicateAuthorityFailClosed": "passed",
+    "commandEntityReplacement": "passed",
+    "subsystemReset": "passed",
+    "sceneRootSubscriptionRecovery": "passed",
+    "duplicateSystemPrevention": "passed",
+    "integratedRecovery": "passed",
+    "recoveredSteadyStateAllocation": "passed"
+  },
+  "scope": "No production, operation-map, FirstLaunch, audio, UI visual-lock, scene, prefab, package, ProjectSettings, or release-certification source was changed by AM-022.",
+  "nextTask": "AM-023"
+}

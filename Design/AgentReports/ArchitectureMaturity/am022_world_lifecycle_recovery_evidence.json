@@ -2,7 +2,7 @@
   "artifactId": "AM022-WORLD-LIFECYCLE-RECOVERY-EVIDENCE",
   "schemaVersion": 1,
   "taskId": "AM-022",
-  "result": "InProgress",
+  "result": "Accepted",
   "sourceBaseline": {
     "commit": "92ae0ca575e2c9c78e663ae6f792855ccfe98ab3",
     "tree": "b541616e5987382eae120c8ea16832d26161218a"
@@ -14,10 +14,14 @@
     "gapCount": 0,
     "protectedOwnerCount": 22
   },
+  "acceptedImplementation": {
+    "commit": "0859b74d78d12b55eb01a9ef7ed33926da557495",
+    "tree": "d308a1bd37fa440d7d4ed1ff26c0f7c1d0818b97"
+  },
   "editorRecoverySlice": {
     "testFile": {
       "path": "Assets/Tests/Editor/WorldLifecycleRecoveryMatrixTests.cs",
-      "sha256": "004259ced3454132767b0ef2edb6bf8b5fd07e89d3feb55cff4a0f0c568ab985"
+      "sha256": "5dbd453f51d53e6f1f32a5ddbf0f3194847d86084661456baefd9bc79dc7037c"
     },
     "metaFile": {
       "path": "Assets/Tests/Editor/WorldLifecycleRecoveryMatrixTests.cs.meta",
@@ -31,10 +35,11 @@
       "monotonic Building Placement economy transaction identity",
       "idempotent subsystem reset and reinitialization",
       "duplicate-system prevention through exact unmanaged system handles",
-      "integrated World/cache/authority/command/system recovery"
+      "integrated World/cache/authority/command/system recovery",
+      "180 warmup plus 300 measured recovered-path zero-allocation proof"
     ],
     "validation": {
-      "passed": 7,
+      "passed": 8,
       "failed": 0,
       "skipped": 0,
       "compilerErrors": 0,
@@ -80,9 +85,28 @@
       }
     }
   },
-  "remainingSlices": [
-    "180 warmup plus 300 measured recovered-path zero-allocation proof and final integrated acceptance"
-  ],
+  "remainingSlices": [],
+  "finalAcceptance": {
+    "warmupOperations": 180,
+    "measuredOperations": 300,
+    "recoveredPathManagedAllocatedBytes": 0,
+    "editorTests": "8 / 8 passed",
+    "playModeTests": "2 / 2 passed",
+    "compilerErrors": 0,
+    "integratedArchitecture": "146 / 147 passed; sole failure is separately owned FirstLaunchLanguageChoiceView",
+    "finalEditorLog": {
+      "path": "Design/AgentReports/ArchitectureMaturity/Logs/am022_final_editor.log.gz",
+      "sha256": "3fd868b1803abb78b9c3f3efd2d3ea934d9c80f5915fbf79db5e65cff9491692"
+    },
+    "finalEditorResults": {
+      "path": "Design/AgentReports/ArchitectureMaturity/Logs/am022_final_editor.xml.gz",
+      "sha256": "ae5228c791bfc1bc957797abe3d02207aacd4e04bb47f80be281f2357adb811c"
+    },
+    "integratedArchitectureLog": {
+      "path": "Design/AgentReports/ArchitectureMaturity/Logs/am022_final_integrated.log.gz",
+      "sha256": "f2b083591dde487fd2e0a321176a437b3c49148e54182897609c66ed396d9c79"
+    }
+  },
   "scope": {
     "productionFilesChanged": 0,
     "protectedDomainsChanged": 0,

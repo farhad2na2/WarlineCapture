@@ -109,16 +109,16 @@ Release-only categories are reported separately and never averaged into a premat
 
 | Field | Status |
 |---|---|
-| Checklist complete | `22 / 86` (`25.6%`) |
-| Core Architecture Lane | `22 / 68` (`32.4%`); active |
+| Checklist complete | `23 / 86` (`26.7%`) |
+| Core Architecture Lane | `23 / 68` (`33.8%`); active |
 | Release Certification Lane | `0 / 18` (`0.0%`); deferred |
-| Program state | Core Architecture Lane active; Phase 1 accepted; Phase 2 persistent-resource ownership accepted; AM-022 lifecycle recovery is dependency-ready; audit-only AM-026 accepted in parallel; release work inactive |
+| Program state | Core Architecture Lane active; Phase 1 accepted; Phase 2 ownership and lifecycle recovery accepted; AM-023 transition stress is dependency-ready; audit-only AM-026 accepted in parallel; release work inactive |
 | Current phase | Phase 2 - World Lifecycle And Dependency Hardening |
-| Current task | `AM-022` in progress; Editor recovery matrix passes `7 / 7` and PlayMode recovery passes `2 / 2`; recovered-path allocation proof and final acceptance remain |
+| Current task | `AM-023` ready; run the accepted 100-cycle Menu -> Match -> Menu lifecycle stress package from `AM-WP-025` |
 | Parallel preparatory work | Audit-only `AM-026` is accepted with 29 surfaces and `AM-WP-001` through `AM-WP-023`; production tasks `AM-027` through `AM-035` remain gated. `AM-WP-007` is additionally blocked on mission/objective owner handoff and `AM-WP-009` preserves audio/FirstLaunch consumers as read-only dependencies. `AM-WP-024` through `AM-WP-027` define AM-022 through AM-025; AM-WP-024 is now dispatchable |
-| Blockers | Source-growth is externally blocked by four separately owned FirstLaunch `*SystemHelper` paths, and integrated architecture CI is externally blocked by `FirstLaunchLanguageChoiceView`; final broad-contract acceptance also remains gated by separately owned operation-map, FirstLaunch/UI, and package-bound violations. Release-only certification remains intentionally deferred |
-| Latest validation | AM-022 Editor recovery matrix `7 / 7` and PlayMode scene/root/subscription recovery `2 / 2` pass with Unity compiler errors `0`; the production Menu -> Match -> Menu case completes in the bounded PlayMode fixture. `git diff --check` passed |
-| Latest evidence | `am022_world_lifecycle_recovery_evidence.json` binds both AM-WP-024 test slices, source/meta identities, compressed Unity logs/results, and the remaining recovered-path allocation/final-acceptance slice |
+| Blockers | Source-growth remains externally blocked by four separately owned FirstLaunch `*SystemHelper` paths; final broad-contract acceptance also remains gated by separately owned operation-map, FirstLaunch/UI, and package-bound violations. Release-only certification remains intentionally deferred. The `FirstLaunchLanguageChoiceView` guardrail false positive is resolved |
+| Latest validation | AM-022 final: Editor recovery `8 / 8`, PlayMode recovery `2 / 2`, `180` warmup plus `300` measured recovered-path calls with `0` managed bytes, Unity compiler errors `0`, and `git diff --check` passed. After the accepted lifecycle-owner guardrail amendment, canonical integrated architecture passes `147 / 147` |
+| Latest evidence | `am022_acceptance_record.json` binds implementation `0859b74d7`, all ten case families, `am022_world_lifecycle_recovery_evidence.json`, compressed Editor/PlayMode/integrated logs, and zero-gap AM-021 authority |
 | Core entry baseline | Phase 0 accepted by `AM-001` through `AM-008`; exact-identity assembly and bounded Editor Match evidence are current at `9a0aa14252e6559680328e520d26c16bfc7b444e`; the dashboard required gate is accepted; the entry rating and owned deltas are published in `entry_baseline_report.md` |
 | Release entry review | Deferred until `pre_release_performance_certification_backlog.md` activates |
 | Architecture rating | Evidence-backed Phase 0 entry rating `8.5 / 10`; planning baseline only, not a `9.5` claim |
@@ -237,7 +237,7 @@ Make runtime dependencies explicit and prove that caches and native resources ca
 - [x] `AM-019` Define one standard World-bound query/entity cache contract covering positive lookup, negative lookup, invalidation, rebind, disposal, and destroyed-entity recovery.
 - [x] `AM-020` Move mutable runtime state that crosses World lifecycles into explicit World-owned systems, components, or lifecycle containers where practical.
 - [x] `AM-021` Give every persistent native container, query, event subscription, and presentation root an explicit creation and disposal owner.
-- [~] `AM-022` Add tests for World destruction/recreation, domain reload, scene unload/reload, missing singleton recovery, and replaced command entities. Active package: `Design/Architecture/WorkPackages/am_wp_024_world_lifecycle_recovery_matrix.md`; Editor recovery matrix passes `7 / 7` and PlayMode recovery passes `2 / 2`, with recovered-path allocation proof and final acceptance remaining.
+- [x] `AM-022` Add tests for World destruction/recreation, domain reload, scene unload/reload, missing singleton recovery, and replaced command entities.
 - [ ] `AM-023` Run at least 100 automated Menu-to-Match-to-Menu cycles without duplicate systems, stale entities, retained subscriptions, or presentation-root accumulation. Draft package: `Design/Architecture/WorkPackages/am_wp_025_menu_match_lifecycle_stress.md` (blocked on `AM-021` and `AM-022`).
 - [ ] `AM-024` Add native allocation and pool-count snapshots around lifecycle stress tests and prove no upward retained-memory trend after warmup. Draft package: `Design/Architecture/WorkPackages/am_wp_026_lifecycle_memory_pool_trend.md` (blocked on `AM-021` through `AM-023`).
 - [ ] `AM-025` Run the full architecture, lifecycle, compiler, and focused allocation suites and publish the Phase 2 ownership delta. Draft package: `Design/Architecture/WorkPackages/am_wp_027_phase2_exit_acceptance.md` (blocked on `AM-021` through `AM-024`).
@@ -838,3 +838,14 @@ Accepted AM-020 progress snapshot:
 - Subscription result: repeated RuntimeLogBuffer subsystem reset clears initialization and retained entries; repeated initialization rebinds one process owner without stale retained state.
 - Validation: Unity 6000.5.2f1 PlayMode passed `2 / 2` in `14.1283987` seconds with zero compiler errors; `git diff --check` passed. Compressed log and NUnit XML are hash-bound in the AM-022 evidence.
 - Remaining: `180 + 300` recovered-path zero-allocation proof, integrated architecture validation, and final AM-022 acceptance. AM-023 remains gated.
+
+### 2026-07-17 - AM-022 - Lifecycle recovery accepted
+
+- Implementation identity: `0859b74d78d12b55eb01a9ef7ed33926da557495`, tree `d308a1bd37fa440d7d4ed1ff26c0f7c1d0818b97`.
+- Recovery result: all ten AM-WP-024 case families pass across the `8 / 8` Editor matrix and `2 / 2` PlayMode matrix, including the production Menu -> Match -> Menu lifecycle transition.
+- Allocation result: after `180` warmup operations, `300` recovered-World cache/runtime-state reads allocate exactly `0` recurring production-owned managed bytes.
+- Validation: Unity 6000.5.2f1 reports zero compiler errors; focused Editor and PlayMode suites pass; integrated architecture passes `146 / 147` with the sole failure in separately owned `FirstLaunchLanguageChoiceView`; `git diff --check` passes.
+- Follow-up resolution: the lifecycle-owner guardrail amendment at `4eb6895ec095ff3ff80d5098e4583f4bf5247668`, accepted by `97b94e1e2`, removes the false positive without allowlisting the view; canonical integrated architecture now passes `147 / 147`.
+- Evidence: `am022_acceptance_record.json` and `am022_world_lifecycle_recovery_evidence.json` bind implementation identity, test sources, all compressed logs/results, AM-021 authority, measured windows, and external-failure ownership.
+- Scope preserved: no production, operation-map, FirstLaunch, audio, UI visual-lock, scene, prefab, package, `ProjectSettings`, or release-certification source changed.
+- Next action: dispatch AM-023 from `AM-WP-025`; AM-024 remains gated until the 100-cycle transition stress passes.

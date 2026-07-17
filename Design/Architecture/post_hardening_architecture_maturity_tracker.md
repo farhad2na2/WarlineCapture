@@ -115,7 +115,7 @@ Release-only categories are reported separately and never averaged into a premat
 | Program state | Core Architecture Lane active; Phase 1 accepted; Phase 2 persistent-resource ownership in progress; release work inactive |
 | Current phase | Phase 2 - World Lifecycle And Dependency Hardening |
 | Current task | `AM-021` ready; inventory every persistent native container, query, subscription, and presentation root and assign one creation/disposal owner |
-| Parallel preparatory work | `AM-026` remains dependency-blocked and receives no completion credit; `ui_projection_allocation_inventory.md` now inventories 20 surfaces and draft `AM-WP-001` bounds the future Resource Exchange managed-projection cache |
+| Parallel preparatory work | `AM-026` remains dependency-blocked and receives no completion credit; `ui_projection_allocation_inventory.md` inventories 20 surfaces, draft `AM-WP-001` bounds Resource Exchange caching, and draft `AM-WP-002` bounds Build Drawer projection consolidation |
 | Blockers | None for the Core Architecture Lane. Separately owned operation-map and FirstLaunch work remains outside architecture scope. Release-only certification remains intentionally deferred |
 | Latest validation | AM-020: World lifecycle behavior `18 / 18`, governed cache performance `4 / 4` across ten zero-allocation phases, alert/audio behavior `9 / 9`, source-growth `17 / 17`, broad architecture `1 / 1`, integrated architecture CI `125 / 125`, zero compiler errors in current-source Unity validation, `git diff --check`, and independent rereview PASS |
 | Latest evidence | `am020_acceptance_record.json` and `am020_world_owned_runtime_state_evidence.json`; evidence commit `0c7d9e085`, implementation commits `f993c3084` and `eab79c2f0` |

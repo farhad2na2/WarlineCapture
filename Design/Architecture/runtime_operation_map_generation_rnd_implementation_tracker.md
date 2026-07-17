@@ -210,8 +210,8 @@ Progress is intentionally approximate. The stage and exact work counts are autho
 
 The earlier checkmarks in this phase described changes to the rejected algorithmic map, not improvements to an editor-parity result. They are rescinded for this milestone.
 
-- [ ] Record every visual issue still present in the editor/runtime parity pair.
-- [ ] Classify each issue as a reusable replay rule, M01 authored constraint, palette problem, or presentation problem.
+- [~] Record every visual issue still present in the editor/runtime parity pair. The R71 internal audit below records the currently visible debt; project-owner review may add or reprioritize issues.
+- [~] Classify each issue as a reusable replay rule, M01 authored constraint, palette problem, or presentation problem. R71 classifications are recorded below and remain provisional until owner review.
 - [x] Guarantee a continuous, visibly readable ground surface beneath the full playable composition and camera footprint.
 - [~] Reject or relocate large rocks, dunes, hills, and other terrain dressing that intersects structures or primary roads. R64 clears every local-road intersection and lowers 11 high-confidence rock/building penetrations; the broader intentional rock-foundation contact set remains a visual-review item.
 - [~] Add coherent district aprons, road shoulders, and terrain transitions so modules do not read as disconnected islands. R71 retains the support-aware terrain cleanup and compact district placement, adds three road-facing civilian houses with bounded courtyards, and clears penetrating rocks and oversized vegetation across their continuous frontage. The route is constrained to `3.2 m` width and `36 m` maximum segment length while hard road/structure and primary-structure overlap gates remain at zero. Owner review is still required before this composition is accepted.
@@ -233,6 +233,25 @@ The earlier checkmarks in this phase described changes to the rejected algorithm
 | Dark gaps between district aprons made connected areas read as uncovered ground | Presentation problem | Added lower transition aprons beneath the Old Market-to-compound and Old Market-aftermath links while retaining one horizon-scale foundation. |
 | Destroyed truck, crater, barriers, smoke, and ruin did not communicate the bounded M01 civilian-route incident | M01 story composition | Regrouped at the blocked route endpoint and retargeted the aftermath review camera. |
 | Remaining district-edge repetition, building orientation, dead-zone balance, horizon polish, and non-road terrain/structure clearance | Shared-source visual quality backlog | R64 removes imported major roads and the highest-confidence rock penetrations. Broader composition review remains open; no owner-acceptance checkbox is claimed. |
+
+#### R71 Current Visual-Issue Audit
+
+This audit is based on direct inspection of the matched editor/runtime perspective and top-down captures. It records visible debt rather than claiming owner acceptance or a Match-quality score.
+
+| Visible issue | Classification | Next acceptance evidence |
+|---|---|---|
+| The gameplay view is heavily weighted toward the dense, cropped Old Market foreground while the center and east read much more sparsely. | M01 authored composition and camera presentation | Owner feedback on whether to reduce foreground density, tighten the playable footprint, or reframe around the central route. |
+| The top-down footprint still reads as separate north-ruin, west-market, east-compound, and south-residential lobes connected by narrow seams. | M01 authored district composition | A revised top-down capture with a continuous settlement silhouette and intentional tactical open space rather than accidental gaps. |
+| The three new frontage houses reduce the seam but remain isolated objects instead of a convincing street wall or courtyard sequence. | M01 authored transition constraint | Matched perspective/top-down evidence showing repeated frontage rhythm, entrances, yards, and small-prop density without road overlap. |
+| Several inherited buildings expose side or rear elevations to the replacement circulation route. | Reusable orientation metadata plus M01 authored overrides | Per-building road-facing intent or explicit authored exceptions, validated without rotating complete imported modules destructively. |
+| The rectilinear utility compound has a cleaner, more military material and spacing language than the organic village modules around it. | Palette and M01 composition problem | Owner decision on whether it should remain a deliberate gameplay landmark or receive denser civilian edge integration. |
+| The narrow route no longer dominates, but its box/shoulder edges and endpoints remain more abrupt than the imported dirt-road language. | Reusable road-surface presentation rule | Close and overview captures showing gradual shoulder blending, grounded endpoints, and no new wide road slabs. |
+| Isolated rocks and props remain visible around the outer horizon and weaken the authored settlement boundary. | Presentation and horizon-closure rule | A gameplay capture with deliberate skyline closure and no floating-looking perimeter silhouettes. |
+| Most terrain and architecture occupy a narrow brown value range, reducing district and circulation readability. | Palette, lighting, and material hierarchy | Owner-approved color/value hierarchy that preserves the desert setting while separating road, ground, civilian, landmark, and damage regions. |
+| The bombing aftermath is not clearly readable from the final gameplay overview despite being present and staged during generation. | M01 story composition and final-camera presentation | Owner feedback from the aftermath camera plus a final overview where the incident reads without oversized effects. |
+| Broader intentional rock/foundation contacts remain beyond the high-confidence penetration gate. | Reusable terrain-clearance policy plus M01 visual review | Close inspection or renderer-bounds evidence distinguishing structural foundations from visible penetrations. |
+
+R71 remains the fixed owner-review baseline while this table is reviewed. No Android optimization or procedural-variation work starts from these classifications before visual direction is confirmed.
 
 **Exit:** Runtime M01 is visibly stronger than the original editor prototype and the improvements generalize to future runtime maps where appropriate.
 

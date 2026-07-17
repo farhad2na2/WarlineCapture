@@ -28,6 +28,17 @@ public sealed class StaticMapPresentationSceneWiringTests
 
             Assert.NotNull(manifest, "Generated static-map presentation manifest is missing.");
             Assert.AreSame(manifest, view.StaticMapPresentationManifest);
+            Assert.AreSame(
+                manifest,
+                StaticMapPresentationSceneWiring.LoadValidatedManifest(
+                    view.OperationMapCatalog,
+                    view.OperationMapId,
+                    scene.path));
+            Assert.Throws<InvalidOperationException>(() =>
+                StaticMapPresentationSceneWiring.LoadValidatedManifest(
+                    view.OperationMapCatalog,
+                    "opmap.skirmish.missing",
+                    scene.path));
             Assert.AreEqual(
                 StaticMapPresentationBaker.ManifestPath,
                 AssetDatabase.GetAssetPath(view.StaticMapPresentationManifest));
@@ -60,6 +71,13 @@ public sealed class StaticMapPresentationSceneWiringTests
                 "GameObject.Find(",
                 source,
                 $"{sourcePaths[index]} must use explicit serialized/composition ownership.");
+            if (sourcePaths[index].EndsWith("StaticMapPresentationSceneWiring.cs", StringComparison.Ordinal))
+            {
+                StringAssert.DoesNotContain(
+                    "StaticMapPresentationBaker.ManifestPath",
+                    source,
+                    "Scene wiring must resolve the selected map manifest instead of the compatibility path.");
+            }
         }
     }
 

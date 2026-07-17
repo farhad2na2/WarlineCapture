@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Game.Composition;
+using Game.Configs;
 using Game.Rendering;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -26,7 +27,10 @@ namespace Game.Editor
                     StaticMapPresentationBaker.CanonicalMatchScenePath,
                     OpenSceneMode.Single);
                 MatchSceneView view = FindSingleMatchSceneView(scene);
-                StaticMapPresentationManifest manifest = LoadValidatedManifest();
+                StaticMapPresentationManifest manifest = LoadValidatedManifest(
+                    view.OperationMapCatalog,
+                    view.OperationMapId,
+                    scene.path);
 
                 SerializedObject serializedView = new(view);
                 SerializedProperty manifestProperty = serializedView.FindProperty(ManifestFieldName);
@@ -45,7 +49,8 @@ namespace Game.Editor
                 AssetDatabase.SaveAssets();
                 Debug.Log(
                     $"[StaticMapPresentationSceneWiring] result=Passed scene={scene.path} " +
-                    $"manifest={StaticMapPresentationBaker.ManifestPath} chunks={manifest.Chunks.Count} " +
+                    $"operationMapId={view.OperationMapId} manifest={AssetDatabase.GetAssetPath(manifest)} " +
+                    $"chunks={manifest.Chunks.Count} " +
                     $"contentHash={manifest.ContentHash}");
             }
             finally
@@ -74,15 +79,38 @@ namespace Game.Editor
             return views[0];
         }
 
-        internal static StaticMapPresentationManifest LoadValidatedManifest()
+        internal static StaticMapPresentationManifest LoadValidatedManifest(
+            OperationMapCatalogConfig catalog,
+            string operationMapId,
+            string canonicalScenePath)
         {
+            if (catalog == null)
+                throw new InvalidOperationException("Selected operation-map catalog is missing.");
+            if (!catalog.TryValidate(out string catalogError))
+            {
+                throw new InvalidOperationException(
+                    $"Selected operation-map catalog is invalid: {catalogError}.");
+            }
+            if (!catalog.TryResolve(operationMapId, out OperationMapDefinition definition))
+            {
+                throw new InvalidOperationException(
+                    $"Selected operation-map id '{operationMapId ?? "<null>"}' is not present in the catalog.");
+            }
+            if (!StaticMapPresentationOutputPathContract.TryResolveManifestAssetPath(
+                    definition.OperationMapId,
+                    out string manifestPath,
+                    out string pathError))
+            {
+                throw new InvalidOperationException(pathError);
+            }
+
             StaticMapPresentationManifest manifest =
                 AssetDatabase.LoadAssetAtPath<StaticMapPresentationManifest>(
-                    StaticMapPresentationBaker.ManifestPath);
+                    manifestPath);
             if (manifest == null)
             {
                 throw new InvalidOperationException(
-                    $"Missing static map presentation manifest at {StaticMapPresentationBaker.ManifestPath}.");
+                    $"Missing static map presentation manifest for '{definition.OperationMapId}' at {manifestPath}.");
             }
             if (!StaticMapPresentationManifest.IsSchemaReadable(manifest.SchemaVersion))
             {
@@ -90,14 +118,16 @@ namespace Game.Editor
                     $"Static map presentation manifest schema is {manifest.SchemaVersion}; " +
                     $"expected {StaticMapPresentationManifest.CurrentSchemaVersion}.");
             }
-            if (!string.Equals(
-                    manifest.CanonicalScenePath,
-                    StaticMapPresentationBaker.CanonicalMatchScenePath,
-                    StringComparison.Ordinal))
+            if (!string.Equals(manifest.OperationMapId, definition.OperationMapId, StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException(
+                    $"Manifest owner is '{manifest.OperationMapId}'; expected '{definition.OperationMapId}'.");
+            }
+            if (!string.Equals(manifest.CanonicalScenePath, canonicalScenePath, StringComparison.Ordinal))
             {
                 throw new InvalidOperationException(
                     $"Manifest canonical scene is {manifest.CanonicalScenePath}; " +
-                    $"expected {StaticMapPresentationBaker.CanonicalMatchScenePath}.");
+                    $"expected {canonicalScenePath}.");
             }
             if (manifest.Chunks.Count == 0 || string.IsNullOrWhiteSpace(manifest.ContentHash))
                 throw new InvalidOperationException("Static map presentation manifest has no generated content.");

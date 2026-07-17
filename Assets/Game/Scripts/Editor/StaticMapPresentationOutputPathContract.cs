@@ -58,6 +58,20 @@ namespace Game.Editor
             return true;
         }
 
+        internal static bool TryResolveManifestAssetPath(
+            string operationMapId,
+            out string manifestAssetPath,
+            out string error)
+        {
+            manifestAssetPath = null;
+            if (!TryResolveOutputRoot(operationMapId, out string outputRoot, out error))
+                return false;
+
+            manifestAssetPath = outputRoot + "/StaticMapPresentationManifest.asset";
+            error = null;
+            return true;
+        }
+
         internal static string RequireIntegrityAssetPath(string operationMapId)
         {
             if (!TryResolveIntegrityAssetPath(operationMapId, out string path, out string error))

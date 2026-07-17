@@ -11,7 +11,9 @@ namespace Game.Editor
 {
     internal static class StaticMapPresentationOutputOwnership
     {
-        private const string SceneFilePrefix = "StaticMapPresentation_chunk_";
+        private static string SceneFilePrefix =>
+            StaticMapPresentationBaker.CurrentSceneFilePrefix + "chunk_";
+        private const string LegacySceneFilePrefix = "StaticMapPresentation_chunk_";
         private const string SceneExtension = ".unity";
 
         internal static string[] CaptureOwnedScenePaths(StaticMapPresentationManifest manifest)
@@ -198,14 +200,24 @@ namespace Game.Editor
             if (string.IsNullOrWhiteSpace(path) || path.IndexOf('\\') >= 0)
                 return false;
 
-            string prefix = StaticMapPresentationBaker.SceneOutputFolder + "/" + SceneFilePrefix;
-            if (!path.StartsWith(prefix, StringComparison.Ordinal) ||
+            string folderPrefix = StaticMapPresentationBaker.SceneOutputFolder + "/";
+            if (!path.StartsWith(folderPrefix, StringComparison.Ordinal) ||
                 !path.EndsWith(SceneExtension, StringComparison.Ordinal))
             {
                 return false;
             }
 
-            string coordinates = path.Substring(prefix.Length, path.Length - prefix.Length - SceneExtension.Length);
+            string fileName = path.Substring(
+                folderPrefix.Length,
+                path.Length - folderPrefix.Length - SceneExtension.Length);
+            string coordinates;
+            if (fileName.StartsWith(SceneFilePrefix, StringComparison.Ordinal))
+                coordinates = fileName.Substring(SceneFilePrefix.Length);
+            else if (fileName.StartsWith(LegacySceneFilePrefix, StringComparison.Ordinal))
+                coordinates = fileName.Substring(LegacySceneFilePrefix.Length);
+            else
+                return false;
+
             int separator = coordinates.IndexOf('_');
             if (separator <= 0 || separator != coordinates.LastIndexOf('_'))
                 return false;

@@ -12,9 +12,9 @@ public sealed class StaticMapAndroidBuildSceneResolverTests
 {
     private const string Match = "Assets/Game/Scenes/Match.unity";
     private const string Menu = "Assets/Game/Scenes/MainMenu.unity";
-    private const string ChunkA = "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_chunk_n001_p002.unity";
-    private const string ChunkB = "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_chunk_p000_p000.unity";
-    private const string StaleChunk = "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_chunk_p999_p999.unity";
+    private const string ChunkA = "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_n001_p002.unity";
+    private const string ChunkB = "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p000_p000.unity";
+    private const string StaleChunk = "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p999_p999.unity";
 
     public static void RunCurrentProjectValidation()
     {

@@ -739,7 +739,7 @@ namespace Game.Editor
                 [BaselineEvidencePath] =
                     "d4d4674850766c5cd95e1bb5fbb6f26893e0bb019dbaf266a0c9897a3befc807",
                 [TrackerPath] =
-                    "d7708240b0c303123a63b173464f285dd4388d4b49d96743dc631dcccabb183a"
+                    "5db70a8426f687f520c57da2487895c764e77c32ac56fbebe78bdb162a3c032f"
             };
         }
 

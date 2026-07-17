@@ -10,9 +10,9 @@ using UnityEngine;
 
 public sealed class StaticMapPresentationOutputOwnershipTests
 {
-    private const string SceneA = "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_chunk_n001_p002.unity";
-    private const string SceneB = "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_chunk_p000_p000.unity";
-    private const string SceneC = "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_chunk_p012_n014.unity";
+    private const string SceneA = "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_n001_p002.unity";
+    private const string SceneB = "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p000_p000.unity";
+    private const string SceneC = "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p012_n014.unity";
 
     [Test]
     public void ComputeStaleScenePaths_ReturnsOnlyPriorManifestOwnershipInOrdinalOrder()
@@ -25,10 +25,10 @@ public sealed class StaticMapPresentationOutputOwnershipTests
     }
 
     [TestCase("Assets/Game/Elsewhere/StaticMapPresentation_chunk_p000_p000.unity")]
-    [TestCase("Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/Nested/StaticMapPresentation_chunk_p000_p000.unity")]
-    [TestCase("Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_chunk_p000_p000.asset")]
-    [TestCase("Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/../StaticMapPresentation_chunk_p000_p000.unity")]
-    [TestCase("Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_chunk_x000_p000.unity")]
+    [TestCase("Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/Nested/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p000_p000.unity")]
+    [TestCase("Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p000_p000.asset")]
+    [TestCase("Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/../StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p000_p000.unity")]
+    [TestCase("Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_x000_p000.unity")]
     [TestCase("Assets\\Game\\GeneratedStaticMapPresentation\\Scenes\\StaticMapPresentation_chunk_p000_p000.unity")]
     public void InvalidOwnedPath_IsRejectedBeforeDeletion(string invalidPath)
     {
@@ -585,7 +585,7 @@ public sealed class StaticMapPresentationOutputOwnershipTests
 
     [TestCase("Assets/Game/GeneratedStaticMapPresentation", true)]
     [TestCase("Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/StaticMapPresentationManifest.asset", true)]
-    [TestCase("Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_chunk_p000_p000.unity", true)]
+    [TestCase("Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p000_p000.unity", true)]
     [TestCase("Assets/Game/GeneratedStaticMapPresentationSibling/asset.asset", false)]
     [TestCase("Assets/Game/Scenes/Match.unity", false)]
     public void CanonicalSourceHash_ExcludesOnlyGeneratedPresentationOutput(string path, bool expected)

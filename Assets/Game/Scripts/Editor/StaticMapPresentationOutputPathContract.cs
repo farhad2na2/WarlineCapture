@@ -15,10 +15,45 @@ namespace Game.Editor
             out string error)
         {
             outputRoot = null;
+            if (!TryResolveSegments(operationMapId, out string[] segments, out error))
+                return false;
+
+            outputRoot = $"{OperationMapsRoot}/{segments[0]}/{segments[1]}/{segments[2]}";
+            error = null;
+            return true;
+        }
+
+        internal static bool TryResolveSceneFilePrefix(
+            string operationMapId,
+            out string sceneFilePrefix,
+            out string error)
+        {
+            sceneFilePrefix = null;
+            if (!TryResolveSegments(operationMapId, out string[] segments, out error))
+                return false;
+
+            sceneFilePrefix = $"StaticMapPresentation_{string.Join("_", segments)}_";
+            error = null;
+            return true;
+        }
+
+        internal static string RequireSceneFilePrefix(string operationMapId)
+        {
+            if (!TryResolveSceneFilePrefix(operationMapId, out string prefix, out string error))
+                throw new ArgumentException(error, nameof(operationMapId));
+            return prefix;
+        }
+
+        private static bool TryResolveSegments(
+            string operationMapId,
+            out string[] segments,
+            out string error)
+        {
+            segments = null;
             if (string.IsNullOrWhiteSpace(operationMapId) || operationMapId.Length > 64)
                 return Fail("Operation-map id must contain 1 to 64 characters.", out error);
 
-            string[] segments = operationMapId.Split('.');
+            segments = operationMapId.Split('.');
             if (segments.Length != 3 || !string.Equals(segments[0], "opmap", StringComparison.Ordinal))
                 return Fail("Operation-map id must use opmap.<mode-or-chapter>.<slug>.", out error);
 
@@ -37,7 +72,6 @@ namespace Game.Editor
                 }
             }
 
-            outputRoot = $"{OperationMapsRoot}/{segments[0]}/{segments[1]}/{segments[2]}";
             error = null;
             return true;
         }

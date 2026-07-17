@@ -12,6 +12,7 @@ public sealed class StaticMapPresentationBakeInputTests
             var tests = new StaticMapPresentationBakeInputTests();
             tests.CurrentCompatibilityInputValidates();
             tests.SceneOutputFolderIsDerivedFromOwnedRoot();
+            tests.SceneFilePrefixIsDerivedFromOperationMapId();
             tests.EmptyOperationMapIdFails();
             tests.OperationMapIdDerivesUniqueOutputRoot();
             tests.OutputRootMustMatchOperationMapId();
@@ -21,7 +22,7 @@ public sealed class StaticMapPresentationBakeInputTests
             tests.InvalidChunkSizesFail();
             tests.CurrentCompatibilityFactoryMatchesLegacyConstants();
             tests.CompatibilityValidationRejectsAlternateOwnership();
-            Debug.Log("[StaticMapPresentationBakeInputValidation] result=Passed tests=11");
+            Debug.Log("[StaticMapPresentationBakeInputValidation] result=Passed tests=12");
         }
         catch (Exception exception)
         {
@@ -48,6 +49,25 @@ public sealed class StaticMapPresentationBakeInputTests
             CurrentInput().SceneOutputFolder,
             Is.EqualTo(
                 "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes"));
+    }
+
+    [Test]
+    public void SceneFilePrefixIsDerivedFromOperationMapId()
+    {
+        Assert.That(
+            CurrentInput().SceneFilePrefix,
+            Is.EqualTo("StaticMapPresentation_opmap_skirmish_desert_base_01_"));
+        Assert.That(
+            StaticMapPresentationOutputPathContract.TryResolveSceneFilePrefix(
+                "opmap.ch01.district-edge_01",
+                out string alternatePrefix,
+                out string error),
+            Is.True,
+            error);
+        Assert.That(
+            alternatePrefix,
+            Is.EqualTo("StaticMapPresentation_opmap_ch01_district-edge_01_"));
+        Assert.That(alternatePrefix, Is.Not.EqualTo(CurrentInput().SceneFilePrefix));
     }
 
     [Test]

@@ -27,6 +27,8 @@ namespace Game.Editor
         internal string SourceMapRootPath { get; }
         internal string OutputRoot { get; }
         internal string SceneOutputFolder => $"{OutputRoot}/Scenes";
+        internal string SceneFilePrefix =>
+            StaticMapPresentationOutputPathContract.RequireSceneFilePrefix(OperationMapId);
         internal string ManifestPath { get; }
         internal string IntegrityPath { get; }
         internal float ChunkSize { get; }

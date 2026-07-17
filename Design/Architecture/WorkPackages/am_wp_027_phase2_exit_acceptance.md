@@ -1,0 +1,103 @@
+# AM-WP-027 - Phase 2 Exit Acceptance
+
+Status: draft, dependency-blocked, and not dispatchable. Do not implement until `AM-021` through `AM-024` are accepted. `AM-025` then owns this evidence/validation package. Release-device, thermal, cold/warm, sustained, and APH-506 certification checks remain deferred and outside Core acceptance.
+
+Umbrella task: `AM-025`
+
+Evidence inputs: accepted AM-021 ownership authority and AM-022 through AM-024 acceptance records.
+
+## 1. Current Validation State And Risk
+
+- The canonical integrated architecture Python inventory currently contains 139 tests; the latest tracker state reports 138/139 because separately owned `FirstLaunchLanguageChoiceView` evidence fails.
+- Canonical source growth currently reports four separately owned FirstLaunch `*SystemHelper` blockers.
+- Five map-owned grid containers block AM-021 and therefore every Phase 2 exit task.
+- `ArchitectureHardeningCloseoutValidationRunner.RunFocusedValidation` is the full Unity architecture entrypoint. `RunJenkinsArchitectureValidation` runs only two suites and is not an AM-025 substitute.
+- `SceneLifecycleValidationRunner.Run` is a one-case request-queue smoke test, not lifecycle closeout. Generated-project/dotnet compilation is supporting evidence only; Unity compilation is canonical.
+- Existing operation-map, FirstLaunch/UI, and package-bound failures remain visible and cannot be silently excluded or converted into Core passes without owner resolution and accepted evidence.
+
+Risks are partial-suite acceptance, alias validators being treated as canonical, stale or dirty evidence, missing identity/hash binding, suppressed external failures, threshold weakening, and release-deferred checks contaminating Core status.
+
+## 2. Accepted Exit Ownership
+
+- AM-025 freezes the exact suite list, thresholds, governed sources, exclusions, environment, and baseline before capture.
+- Capture starts from a clean exact commit/tree after AM-021 through AM-024 acceptance. Every canonical Core suite must pass; external blockers remain blockers until their owner resolves them.
+- The Phase 2 ownership delta compares the Phase 0 lifecycle inventory and AM-018 hazard inventory against final AM-021 ownership, classifying every row as resolved, protected/deferred, or open. Open count must be zero.
+- Focused allocation suites retain their accepted 180-warmup/300-measurement, exactly-zero recurring production allocation gates.
+- Unity compilation with zero compiler errors is canonical. Python/evidence checks, deterministic regeneration, byte-identical projections, and `git diff --check` are mandatory.
+- One focused review verifies commands, logs, arithmetic, hashes, ownership delta, residual risks, exclusions, and acceptance decision before the record is published.
+
+No alias substitution, hidden skip, dirty capture, threshold relaxation, broad exclusion, release-lane activation, `SystemBase` migration, or production refactor is allowed in this evidence package.
+
+## 3. Canonical Suite And Identity Contract
+
+Required execution order:
+
+1. verify AM-021 zero-gap authority and accepted AM-022, AM-023, and AM-024 records;
+2. freeze policy and capture commit/tree/environment;
+3. run `python3 -m unittest discover -s Tools/CI/tests -p 'test_architecture*.py'`;
+4. run `python3 Tools/CI/architecture_persistent_resource_ownership.py --check` and byte-identical ownership/lifecycle regeneration;
+5. run canonical source-growth validation and require its 17-test pass marker;
+6. run `ArchitectureHardeningCloseoutValidationRunner.RunFocusedValidation` and require its 23-suite pass marker;
+7. run accepted lifecycle/recovery/stress/memory suites and governed focused allocation suites;
+8. run final Unity compile and require successful exit plus `compilerErrors: 0`;
+9. run evidence validators, Python syntax, and `git diff --check`;
+10. publish ownership delta, focused review closure, acceptance record, and Progress Snapshot.
+
+Every artifact records schema/task/result, baseline/capture/evidence commit and tree, ancestry, source/tool/test manifests with SHA-256 hashes, exact commands, environment, pass markers/counts, exclusions, residual risks, and review result. Missing or mismatched identity fails closed.
+
+## 4. Exact File Allowlist
+
+Allowed evidence/tool files:
+
+- `Design/AgentReports/ArchitectureMaturity/am025_phase2_exit_policy.json`
+- `Design/AgentReports/ArchitectureMaturity/am025_phase2_ownership_delta.json`
+- `Design/AgentReports/ArchitectureMaturity/am025_phase2_ownership_delta.md`
+- `Design/AgentReports/ArchitectureMaturity/am025_phase2_exit_evidence.json`
+- `Design/AgentReports/ArchitectureMaturity/am025_acceptance_record.json`
+- bounded `Design/AgentReports/ArchitectureMaturity/Logs/am025_*.log.gz`
+- `Tools/CI/tests/test_architecture_phase2_exit_evidence.py`
+- `Tools/CI/tests/test_architecture_phase2_acceptance.py`
+- one narrow AM-025 evidence generator/runner under `Tools/CI/` if required
+- existing architecture evidence generators only for an explicitly reviewed AM-025 schema extension
+- AM-025 validation/evidence/Progress Snapshot records in this tracker
+
+Read-only dependencies: all canonical validators/tests, accepted AM-021 through AM-024 evidence, Phase 0/AM-018 inventories, source-growth authority, ownership registry, and Unity project sources/configuration.
+
+Production files are not allowlisted. Any failing production or protected owner must be resolved in its own reviewed package before recapture.
+
+Hard exclusions: operation-map/static-map, FirstLaunch, audio, UI visual-lock, gameplay implementation, scenes, prefabs, packages, `ProjectSettings`, release/device/thermal/cold-warm/sustained work, APK/build artifacts, and the unrelated Arabic font asset.
+
+## 5. Evidence And Ownership Delta Matrix
+
+The exit bundle must prove:
+
+1. AM-021 final ownership totals and zero open rows, with protected/deferred rows explicitly named;
+2. AM-022 ten-case World lifecycle recovery acceptance;
+3. AM-023 100-cycle production transition acceptance and bounded snapshots;
+4. AM-024 memory/pool structural plateau and per-phase trend acceptance;
+5. integrated Python architecture, persistent-resource check, source-growth, full Unity architecture, lifecycle, and focused allocation results;
+6. Unity compile result and exact zero-error marker;
+7. Phase 0/AM-018-to-AM-021 row-by-row ownership delta with no missing/duplicate row;
+8. protected-path diff audit and deferred-release exclusion audit;
+9. deterministic regeneration and exact file/tool/source hash verification;
+10. focused review findings, resolutions, rereview result, residual risks, and next dependency-ready task.
+
+Logs remain compressed and bounded; stdout contains summaries and first-failure context only.
+
+## 6. Acceptance And Blocked Rules
+
+AM-025 passes only when every prerequisite is accepted, ownership gaps are zero, capture identity is clean and exact, ancestry/hashes resolve, all canonical Core suites pass, compiler errors are zero, governed recurring allocations are exactly zero, lifecycle counts and retained trends pass, deterministic outputs match, protected paths are absent from the owned diff, and focused review has no unresolved finding.
+
+AM-025 remains unchecked if any prerequisite, counter, suite, marker, hash, log, review, or ownership row is missing; if an external Core failure remains; or if a release-deferred failure is improperly mixed into Core arithmetic. The tracker records exact failing suite/owner/evidence and next action. Thresholds, samples, suites, and failures are never suppressed or reclassified merely to close Phase 2.
+
+On acceptance, update overall/Core percentages by exactly one checklist item, set Phase 2 accepted, route the next task to AM-026, retain Release Certification at 0/18 deferred, and publish the final Phase 2 ownership delta and evidence identity.
+
+## 7. Maximum Slices And Rollback
+
+At most three independently stable commits after AM-024 acceptance:
+
+1. frozen exit policy, deterministic ownership-delta/evidence generator, and focused tests;
+2. canonical suite capture, bounded logs, and draft evidence;
+3. evidence validation, focused review closure, acceptance record, tracker update, commit, and push.
+
+Reject or roll back AM-025-owned evidence/tooling if it omits counters, uses aliases/partial suites, accepts dirty/stale identity, hides skips/failures, weakens thresholds, emits unbounded output, includes protected files, activates release certification, or reports acceptance with any unresolved finding. Never revert separately owned production work.

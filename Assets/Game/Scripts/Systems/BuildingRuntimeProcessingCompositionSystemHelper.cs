@@ -1116,26 +1116,28 @@ namespace Game.Runtime
 
         private void PublishFactionProductionSpawnPointsReadModel(
             EntityManager em,
-            Entity boundaryEntity,
-            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
+            Entity boundary,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> items)
         {
             DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> buffer =
-                EnsureBoundaryBuffer<BuildingFactionProductionSpawnPointReadModel>(em, boundaryEntity);
+                EnsureBoundaryBuffer<BuildingFactionProductionSpawnPointReadModel>(em, boundary);
             buffer.Clear();
 
             if (!TryGetGridConfig(em, out GridConfig grid))
                 return;
 
-            if (runtimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
+            if (items is Dictionary<int, RuntimeBuildingEntity> map)
             {
-                foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in runtimeBuildingMap)
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in map)
                     PublishFactionProductionSpawnPointsForBuilding(buffer, grid, entry.Value);
             }
             else
             {
-                foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in runtimeBuildings)
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in items)
                     PublishFactionProductionSpawnPointsForBuilding(buffer, grid, entry.Value);
             }
+
+            OperationMapHelipadReadModelUtility.Bind(em, buffer, in grid);
         }
 
         private void PublishFactionProductionSpawnPointsForBuilding(

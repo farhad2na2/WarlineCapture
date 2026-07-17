@@ -10,7 +10,7 @@
         "directInputs": 31,
         "needsDecision": 4
     },
-    "identityPayloadSha256": "6505e9a214e232dbe718803d4560a4cddb7f59629a6ae3ca883426f74f5340f7",
+    "identityPayloadSha256": "f5059ddbc83e7d758fbefc9c960e41535e1c045f949ea31f3c75719f3b0a33a5",
     "acceptedEvidence": [
         {
             "task": "opmap-002",
@@ -93,7 +93,7 @@
         },
         {
             "path": "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
-            "sha256": "ada268bdeec4ffeb61d0c7805e14405bebc52023a0def7190bdbc2fe4790ea10"
+            "sha256": "5d5f43c00eab1a8646d68be885e5c7b583c8e4785e0ec16449ac19e503541efc"
         },
         {
             "path": "Assets/Game/Scripts/Systems/BuildingRuntimeSurfaceOverlaySystem.cs",

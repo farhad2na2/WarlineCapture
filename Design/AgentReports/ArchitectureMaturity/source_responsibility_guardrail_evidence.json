@@ -29,6 +29,15 @@
     "commit": "3950afd2288e8c7d326a33dca60124b02292bbda",
     "tree": "16e471ecbef3b764d5c661a5cb4b5575ef1d8258"
   },
+  "contractAmendmentEvidence": {
+    "commit": "4eb6895ec095ff3ff80d5098e4583f4bf5247668",
+    "tree": "b63505ce80372e6a590261f40342a8b68c8f6b9d",
+    "changePaths": [
+      "Design/Architecture/post_hardening_source_responsibility_guardrails.json",
+      "Tools/CI/tests/test_architecture_source_responsibility_guardrail_evidence.py"
+    ],
+    "reason": "Require high-signal popup lifecycle anchors so ordinary bounded Unity UI views are not classified as replacement popup lifecycle owners."
+  },
   "implementationChangePaths": [
     "Assets/Game/Scripts/Editor/Aph501AndroidMainMenuTexturePolicy.cs",
     "Assets/Game/Scripts/Editor/Aph501AndroidSupportingUiTexturePolicy.cs",
@@ -46,7 +55,7 @@
   ],
   "contract": {
     "path": "Design/Architecture/post_hardening_source_responsibility_guardrails.json",
-    "sha256": "62cb60373d2c229853db02d94139aa153a28ed85bc5d95216caefd0f9a4dcbe0",
+    "sha256": "8e9d029927b6b95f0dba4db8e6c66902e6f4913962be2f0ab930507b2c18a6c4",
     "guardedSourceCount": 2,
     "growthAuthorizationCount": 4
   },
@@ -82,6 +91,6 @@
   },
   "validatorAuthority": {
     "path": "Tools/CI/tests/test_architecture_source_responsibility_guardrail_evidence.py",
-    "sha256": "6386d3d27681a6b86324360077c681ae852c7722c2eb39439030e0d6faa12516"
+    "sha256": "998261891046656c141fc91ce770a9e67642670c2c938acb98673e8d29ca749d"
   }
 }

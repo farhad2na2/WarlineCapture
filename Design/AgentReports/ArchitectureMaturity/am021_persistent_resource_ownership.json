@@ -48,8 +48,8 @@
   "artifactId": "AM-021",
   "baseline": {
     "branch": "main",
-    "commit": "7b1f4835b7db2f5a7ed5d094f235e26472f5a9c5",
-    "tree": "c10cbfc5e10f2d98a25e1ccde23ca9880643598d"
+    "commit": "e1c66f1b069e3793f7042cd4af66603e5afd3fe9",
+    "tree": "54b4fe9e9d5b78cb525c39477821190a66507600"
   },
   "categories": {
     "eventSubscriptions": [
@@ -5320,21 +5320,26 @@
       {
         "assignmentMethods": [],
         "creationOwner": "BuildingResourceHaulerBridgeCompositionSystemHelper",
-        "disposalOwner": "unassigned",
-        "disposeMethods": [],
+        "disposalOwner": "BuildingResourceHaulerBridgeCompositionSystemHelper",
+        "disposeMethods": [
+          "Dispose"
+        ],
         "field": "_moveOrderQueueQueryCache",
         "fieldType": "WorldScopedComponentQueryCache<UnitMoveOrderQueueComponent>",
         "invalidateMethods": [],
         "lifecycleDisposition": "classification-required",
-        "lifecycleKind": "unassigned-cache",
+        "lifecycleKind": "owner-disposed-cache",
         "lifecycleMethods": [],
         "line": 21,
         "ownerType": "BuildingResourceHaulerBridgeCompositionSystemHelper",
         "path": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
         "protectedOwnerIds": [],
         "resetMethods": [],
-        "status": "gap",
-        "teardownPath": []
+        "status": "explicit",
+        "teardownPath": [
+          "Dispose",
+          "Dispose->Dispose"
+        ]
       },
       {
         "assignmentMethods": [
@@ -5968,21 +5973,26 @@
       {
         "assignmentMethods": [],
         "creationOwner": "FactionResourceCompositionSystemHelper",
-        "disposalOwner": "unassigned",
-        "disposeMethods": [],
+        "disposalOwner": "FactionResourceCompositionSystemHelper",
+        "disposeMethods": [
+          "Dispose"
+        ],
         "field": "_storageQueryCache",
         "fieldType": "WorldScopedComponentQueryCache<BuildingResourceStorageComponent>",
         "invalidateMethods": [],
         "lifecycleDisposition": "classification-required",
-        "lifecycleKind": "unassigned-cache",
+        "lifecycleKind": "owner-disposed-cache",
         "lifecycleMethods": [],
         "line": 10,
         "ownerType": "FactionResourceCompositionSystemHelper",
         "path": "Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs",
         "protectedOwnerIds": [],
         "resetMethods": [],
-        "status": "gap",
-        "teardownPath": []
+        "status": "explicit",
+        "teardownPath": [
+          "Dispose",
+          "Dispose->Dispose"
+        ]
       },
       {
         "assignmentMethods": [
@@ -8016,21 +8026,26 @@
       {
         "assignmentMethods": [],
         "creationOwner": "RtsSelectionRuntimeCameraSystemHelper",
-        "disposalOwner": "unassigned",
-        "disposeMethods": [],
+        "disposalOwner": "RtsSelectionRuntimeCameraSystemHelper",
+        "disposeMethods": [
+          "Dispose"
+        ],
         "field": "_tacticalFollowStateQueries",
         "fieldType": "TacticalFollowCameraStateQueryCache",
         "invalidateMethods": [],
         "lifecycleDisposition": "classification-required",
-        "lifecycleKind": "unassigned-cache",
+        "lifecycleKind": "owner-disposed-cache",
         "lifecycleMethods": [],
         "line": 16,
         "ownerType": "RtsSelectionRuntimeCameraSystemHelper",
         "path": "Assets/Game/Scripts/Systems/RtsSelectionRuntimeCameraSystemHelper.cs",
         "protectedOwnerIds": [],
         "resetMethods": [],
-        "status": "gap",
-        "teardownPath": []
+        "status": "explicit",
+        "teardownPath": [
+          "Dispose",
+          "Dispose->Dispose"
+        ]
       },
       {
         "assignmentMethods": [
@@ -8623,21 +8638,26 @@
       {
         "assignmentMethods": [],
         "creationOwner": "SelectionUiCameraSystemHelper",
-        "disposalOwner": "unassigned",
-        "disposeMethods": [],
+        "disposalOwner": "SelectionUiCameraSystemHelper",
+        "disposeMethods": [
+          "Dispose"
+        ],
         "field": "_tacticalFollowCameraStateQueryCache",
         "fieldType": "TacticalFollowCameraStateQueryCache",
         "invalidateMethods": [],
         "lifecycleDisposition": "classification-required",
-        "lifecycleKind": "unassigned-cache",
+        "lifecycleKind": "owner-disposed-cache",
         "lifecycleMethods": [],
         "line": 25,
         "ownerType": "SelectionUiCameraSystemHelper",
         "path": "Assets/Game/Scripts/Systems/SelectionUiCameraSystemHelper.cs",
         "protectedOwnerIds": [],
         "resetMethods": [],
-        "status": "gap",
-        "teardownPath": []
+        "status": "explicit",
+        "teardownPath": [
+          "Dispose",
+          "Dispose->Dispose"
+        ]
       },
       {
         "assignmentMethods": [
@@ -8781,211 +8801,288 @@
       },
       {
         "assignmentMethods": [
-          "EnsureSingletonQueries"
+          "EnsureSingletonQueries",
+          "ReleaseSingletonQueries"
         ],
         "creationOwner": "TacticalFollowCameraModeSystemHelper",
-        "disposalOwner": "creating World",
-        "disposeMethods": [],
+        "disposalOwner": "TacticalFollowCameraModeSystemHelper",
+        "disposeMethods": [
+          "ReleaseSingletonQueries"
+        ],
         "field": "_targetQuery",
         "fieldType": "EntityQuery",
         "invalidateMethods": [],
         "lifecycleDisposition": "classification-required",
-        "lifecycleKind": "world-owned-borrowed-handle",
+        "lifecycleKind": "owner-disposed-cache",
         "lifecycleMethods": [],
         "line": 50,
         "ownerType": "TacticalFollowCameraModeSystemHelper",
         "path": "Assets/Game/Scripts/Systems/TacticalFollowCameraModeSystemHelper.cs",
         "protectedOwnerIds": [],
-        "resetMethods": [],
+        "resetMethods": [
+          "ReleaseSingletonQueries"
+        ],
         "status": "explicit",
-        "teardownPath": []
+        "teardownPath": [
+          "Dispose->ReleaseSingletonQueries"
+        ]
       },
       {
         "assignmentMethods": [
-          "EnsureSingletonQueries"
+          "EnsureSingletonQueries",
+          "ReleaseSingletonQueries"
         ],
         "creationOwner": "TacticalFollowCameraModeSystemHelper",
-        "disposalOwner": "creating World",
-        "disposeMethods": [],
+        "disposalOwner": "TacticalFollowCameraModeSystemHelper",
+        "disposeMethods": [
+          "ReleaseSingletonQueries"
+        ],
         "field": "_poseQuery",
         "fieldType": "EntityQuery",
         "invalidateMethods": [],
         "lifecycleDisposition": "classification-required",
-        "lifecycleKind": "world-owned-borrowed-handle",
+        "lifecycleKind": "owner-disposed-cache",
         "lifecycleMethods": [],
         "line": 51,
         "ownerType": "TacticalFollowCameraModeSystemHelper",
         "path": "Assets/Game/Scripts/Systems/TacticalFollowCameraModeSystemHelper.cs",
         "protectedOwnerIds": [],
-        "resetMethods": [],
+        "resetMethods": [
+          "ReleaseSingletonQueries"
+        ],
         "status": "explicit",
-        "teardownPath": []
+        "teardownPath": [
+          "Dispose->ReleaseSingletonQueries"
+        ]
       },
       {
         "assignmentMethods": [
-          "EnsureSingletonQueries"
+          "EnsureSingletonQueries",
+          "ReleaseSingletonQueries"
         ],
         "creationOwner": "TacticalFollowCameraModeSystemHelper",
-        "disposalOwner": "creating World",
-        "disposeMethods": [],
+        "disposalOwner": "TacticalFollowCameraModeSystemHelper",
+        "disposeMethods": [
+          "ReleaseSingletonQueries"
+        ],
         "field": "_requestQueueQuery",
         "fieldType": "EntityQuery",
         "invalidateMethods": [],
         "lifecycleDisposition": "classification-required",
-        "lifecycleKind": "world-owned-borrowed-handle",
+        "lifecycleKind": "owner-disposed-cache",
         "lifecycleMethods": [],
         "line": 52,
         "ownerType": "TacticalFollowCameraModeSystemHelper",
         "path": "Assets/Game/Scripts/Systems/TacticalFollowCameraModeSystemHelper.cs",
         "protectedOwnerIds": [],
-        "resetMethods": [],
+        "resetMethods": [
+          "ReleaseSingletonQueries"
+        ],
         "status": "explicit",
-        "teardownPath": []
+        "teardownPath": [
+          "Dispose->ReleaseSingletonQueries"
+        ]
       },
       {
         "assignmentMethods": [
-          "EnsureSingletonQueries"
+          "EnsureSingletonQueries",
+          "ReleaseSingletonQueries"
         ],
         "creationOwner": "TacticalFollowCameraModeSystemHelper",
-        "disposalOwner": "creating World",
-        "disposeMethods": [],
+        "disposalOwner": "TacticalFollowCameraModeSystemHelper",
+        "disposeMethods": [
+          "ReleaseSingletonQueries"
+        ],
         "field": "_modeQuery",
         "fieldType": "EntityQuery",
         "invalidateMethods": [],
         "lifecycleDisposition": "classification-required",
-        "lifecycleKind": "world-owned-borrowed-handle",
+        "lifecycleKind": "owner-disposed-cache",
         "lifecycleMethods": [],
         "line": 53,
         "ownerType": "TacticalFollowCameraModeSystemHelper",
         "path": "Assets/Game/Scripts/Systems/TacticalFollowCameraModeSystemHelper.cs",
         "protectedOwnerIds": [],
-        "resetMethods": [],
+        "resetMethods": [
+          "ReleaseSingletonQueries"
+        ],
         "status": "explicit",
-        "teardownPath": []
+        "teardownPath": [
+          "Dispose->ReleaseSingletonQueries"
+        ]
       },
       {
         "assignmentMethods": [
-          "EnsureSingletonQueries"
+          "EnsureSingletonQueries",
+          "ReleaseSingletonQueries"
         ],
         "creationOwner": "TacticalFollowCameraModeSystemHelper",
-        "disposalOwner": "creating World",
-        "disposeMethods": [],
+        "disposalOwner": "TacticalFollowCameraModeSystemHelper",
+        "disposeMethods": [
+          "ReleaseSingletonQueries"
+        ],
         "field": "_uiReadModelQuery",
         "fieldType": "EntityQuery",
         "invalidateMethods": [],
         "lifecycleDisposition": "classification-required",
-        "lifecycleKind": "world-owned-borrowed-handle",
+        "lifecycleKind": "owner-disposed-cache",
         "lifecycleMethods": [],
         "line": 54,
         "ownerType": "TacticalFollowCameraModeSystemHelper",
         "path": "Assets/Game/Scripts/Systems/TacticalFollowCameraModeSystemHelper.cs",
         "protectedOwnerIds": [],
-        "resetMethods": [],
+        "resetMethods": [
+          "ReleaseSingletonQueries"
+        ],
         "status": "explicit",
-        "teardownPath": []
+        "teardownPath": [
+          "Dispose->ReleaseSingletonQueries"
+        ]
       },
       {
         "assignmentMethods": [],
         "creationOwner": "TacticalFollowCameraModeSystemHelper",
-        "disposalOwner": "unassigned",
-        "disposeMethods": [],
+        "disposalOwner": "TacticalFollowCameraModeSystemHelper",
+        "disposeMethods": [
+          "Dispose"
+        ],
         "field": "_stateQueryCache",
         "fieldType": "TacticalFollowCameraStateQueryCache",
         "invalidateMethods": [],
         "lifecycleDisposition": "classification-required",
-        "lifecycleKind": "unassigned-cache",
+        "lifecycleKind": "owner-disposed-cache",
         "lifecycleMethods": [],
         "line": 55,
         "ownerType": "TacticalFollowCameraModeSystemHelper",
         "path": "Assets/Game/Scripts/Systems/TacticalFollowCameraModeSystemHelper.cs",
         "protectedOwnerIds": [],
         "resetMethods": [],
-        "status": "gap",
-        "teardownPath": []
+        "status": "explicit",
+        "teardownPath": [
+          "Dispose",
+          "Dispose->Dispose",
+          "Dispose->ReleaseSingletonQueries->Dispose"
+        ]
       },
       {
         "assignmentMethods": [
-          "EnsureQueries"
+          "EnsureQueries",
+          "ReleaseQueries"
         ],
         "creationOwner": "TacticalFollowCameraStateQueryCache",
-        "disposalOwner": "creating World",
-        "disposeMethods": [],
+        "disposalOwner": "TacticalFollowCameraStateQueryCache",
+        "disposeMethods": [
+          "ReleaseQueries"
+        ],
         "field": "_modeQuery",
         "fieldType": "EntityQuery",
         "invalidateMethods": [],
-        "lifecycleDisposition": "classification-required",
-        "lifecycleKind": "world-owned-borrowed-handle",
-        "lifecycleMethods": [],
-        "line": 10,
-        "ownerType": "TacticalFollowCameraStateQueryCache",
-        "path": "Assets/Game/Scripts/Systems/TacticalFollowCameraStateQueryCache.cs",
-        "protectedOwnerIds": [],
-        "resetMethods": [],
-        "status": "explicit",
-        "teardownPath": []
-      },
-      {
-        "assignmentMethods": [
-          "EnsureQueries"
+        "lifecycleDisposition": "explicit-dispose",
+        "lifecycleKind": "owner-disposed-cache",
+        "lifecycleMethods": [
+          "Dispose"
         ],
-        "creationOwner": "TacticalFollowCameraStateQueryCache",
-        "disposalOwner": "creating World",
-        "disposeMethods": [],
-        "field": "_poseQuery",
-        "fieldType": "EntityQuery",
-        "invalidateMethods": [],
-        "lifecycleDisposition": "classification-required",
-        "lifecycleKind": "world-owned-borrowed-handle",
-        "lifecycleMethods": [],
         "line": 11,
         "ownerType": "TacticalFollowCameraStateQueryCache",
         "path": "Assets/Game/Scripts/Systems/TacticalFollowCameraStateQueryCache.cs",
         "protectedOwnerIds": [],
-        "resetMethods": [],
+        "resetMethods": [
+          "ReleaseQueries"
+        ],
         "status": "explicit",
-        "teardownPath": []
+        "teardownPath": [
+          "Dispose->ReleaseQueries"
+        ]
       },
       {
         "assignmentMethods": [
-          "EnsureQueries"
+          "EnsureQueries",
+          "ReleaseQueries"
         ],
         "creationOwner": "TacticalFollowCameraStateQueryCache",
-        "disposalOwner": "creating World",
-        "disposeMethods": [],
-        "field": "_followableSelectedUnitQuery",
+        "disposalOwner": "TacticalFollowCameraStateQueryCache",
+        "disposeMethods": [
+          "ReleaseQueries"
+        ],
+        "field": "_poseQuery",
         "fieldType": "EntityQuery",
         "invalidateMethods": [],
-        "lifecycleDisposition": "classification-required",
-        "lifecycleKind": "world-owned-borrowed-handle",
-        "lifecycleMethods": [],
+        "lifecycleDisposition": "explicit-dispose",
+        "lifecycleKind": "owner-disposed-cache",
+        "lifecycleMethods": [
+          "Dispose"
+        ],
         "line": 12,
         "ownerType": "TacticalFollowCameraStateQueryCache",
         "path": "Assets/Game/Scripts/Systems/TacticalFollowCameraStateQueryCache.cs",
         "protectedOwnerIds": [],
-        "resetMethods": [],
+        "resetMethods": [
+          "ReleaseQueries"
+        ],
         "status": "explicit",
-        "teardownPath": []
+        "teardownPath": [
+          "Dispose->ReleaseQueries"
+        ]
       },
       {
         "assignmentMethods": [
-          "EnsureQueries"
+          "EnsureQueries",
+          "ReleaseQueries"
         ],
         "creationOwner": "TacticalFollowCameraStateQueryCache",
-        "disposalOwner": "creating World",
-        "disposeMethods": [],
-        "field": "_focusedUnitReadModelQuery",
+        "disposalOwner": "TacticalFollowCameraStateQueryCache",
+        "disposeMethods": [
+          "ReleaseQueries"
+        ],
+        "field": "_followableSelectedUnitQuery",
         "fieldType": "EntityQuery",
         "invalidateMethods": [],
-        "lifecycleDisposition": "classification-required",
-        "lifecycleKind": "world-owned-borrowed-handle",
-        "lifecycleMethods": [],
+        "lifecycleDisposition": "explicit-dispose",
+        "lifecycleKind": "owner-disposed-cache",
+        "lifecycleMethods": [
+          "Dispose"
+        ],
         "line": 13,
         "ownerType": "TacticalFollowCameraStateQueryCache",
         "path": "Assets/Game/Scripts/Systems/TacticalFollowCameraStateQueryCache.cs",
         "protectedOwnerIds": [],
-        "resetMethods": [],
+        "resetMethods": [
+          "ReleaseQueries"
+        ],
         "status": "explicit",
-        "teardownPath": []
+        "teardownPath": [
+          "Dispose->ReleaseQueries"
+        ]
+      },
+      {
+        "assignmentMethods": [
+          "EnsureQueries",
+          "ReleaseQueries"
+        ],
+        "creationOwner": "TacticalFollowCameraStateQueryCache",
+        "disposalOwner": "TacticalFollowCameraStateQueryCache",
+        "disposeMethods": [
+          "ReleaseQueries"
+        ],
+        "field": "_focusedUnitReadModelQuery",
+        "fieldType": "EntityQuery",
+        "invalidateMethods": [],
+        "lifecycleDisposition": "explicit-dispose",
+        "lifecycleKind": "owner-disposed-cache",
+        "lifecycleMethods": [
+          "Dispose"
+        ],
+        "line": 14,
+        "ownerType": "TacticalFollowCameraStateQueryCache",
+        "path": "Assets/Game/Scripts/Systems/TacticalFollowCameraStateQueryCache.cs",
+        "protectedOwnerIds": [],
+        "resetMethods": [
+          "ReleaseQueries"
+        ],
+        "status": "explicit",
+        "teardownPath": [
+          "Dispose->ReleaseQueries"
+        ]
       },
       {
         "assignmentMethods": [
@@ -13152,8 +13249,8 @@
   },
   "schemaVersion": 1,
   "scope": {
-    "productionFileCount": 1006,
-    "sourceManifestSha256": "c2f3686f220c57a1a2f3c71dea09c02cf8e0f5a97e8e0ffad16e3d400de86916",
+    "productionFileCount": 1013,
+    "sourceManifestSha256": "5f184bbb228f6c766b4364022c8521693896da388943bfa15686c7a00321f1cc",
     "sourceRoot": "Assets/Game/Scripts"
   },
   "sourceManifest": [
@@ -14662,8 +14759,12 @@
       "sha256": "7d9f7c3e1a2904f84ac4b9b04bbc99e91ec2ff5713267b29b8fd9329ff34c8ed"
     },
     {
+      "path": "Assets/Game/Scripts/Systems/BuildingGameplayDisposalCompositionSystemHelper.Lifecycle.cs",
+      "sha256": "274da10a5c907a04f9a3902416a2a5cce304f7666435837e618d26f1750fdfe1"
+    },
+    {
       "path": "Assets/Game/Scripts/Systems/BuildingGameplayDisposalCompositionSystemHelper.cs",
-      "sha256": "7790e5b25506c1309b1845976b3889d01f16bb6c0a1db41731c54613d63e5960"
+      "sha256": "fa847d405db9bb2fff9bb11a5a20d299bc104906000205385c854c7f1b4a3dbe"
     },
     {
       "path": "Assets/Game/Scripts/Systems/BuildingGameplayDisposalExecutionCompositionSystemHelper.cs",
@@ -14866,8 +14967,12 @@
       "sha256": "ec3009e3fa57c66d391d6a557845d989991dc85e9ec6d4f48325278c3c0a6d50"
     },
     {
+      "path": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.Lifecycle.cs",
+      "sha256": "d70584c0c2d150c4ba6f60f1de4422ea2ed9e735348eb14f69f5cb6b630de8a3"
+    },
+    {
       "path": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
-      "sha256": "fc4f7838af89987d1cba5c2ba0ed22b1fe41c0cb5710e768e58d5dec94933a1f"
+      "sha256": "a9db1c4fdf3817720893cbc78c57ee32fd4aa4ef5d17da396b4362fb0a69e0d6"
     },
     {
       "path": "Assets/Game/Scripts/Systems/BuildingResourceHaulerTransferEcsSystem.cs",
@@ -15198,8 +15303,12 @@
       "sha256": "3ad8db72317e746e41965695abcc828f0355b18dd52d7cc2690c6e2cee96b99a"
     },
     {
+      "path": "Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.Lifecycle.cs",
+      "sha256": "f5a67a92258ec524bc80677735b40a11f89c2749b6126477381d176f90ce80d7"
+    },
+    {
       "path": "Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs",
-      "sha256": "eb84f8ac622a320c64d2295be1edb554759507d307f0fa75f8d8f713abf0001e"
+      "sha256": "6dce1c80738189ea65611fdd13f499f6ca80a2c95c0c4ee16fa108c94a2eb607"
     },
     {
       "path": "Assets/Game/Scripts/Systems/FactionTacticalMaterialsStartupSystemHelper.cs",
@@ -15726,8 +15835,12 @@
       "sha256": "eca35f6034be6ebd9f82c87fa34f77027bb776d98c4e94d4119961b6d3f5dc05"
     },
     {
+      "path": "Assets/Game/Scripts/Systems/RtsSelectionRuntimeCameraSystemHelper.Lifecycle.cs",
+      "sha256": "b2624032642c7e77525da3bef53c12d0bf98c89a4774903b774812be0cf1f198"
+    },
+    {
       "path": "Assets/Game/Scripts/Systems/RtsSelectionRuntimeCameraSystemHelper.cs",
-      "sha256": "012ed914ad46e349620422de90799acf3fb670b4a073753c1a3fcc99dd8f2e67"
+      "sha256": "a98f7b91f086e460b5f6bd7009adbf971949d1bf6c2aa0d5cb6865a9a03aff71"
     },
     {
       "path": "Assets/Game/Scripts/Systems/RtsSelectionRuntimeInputCompositionSystemHelper.cs",
@@ -15802,8 +15915,12 @@
       "sha256": "3a4c3143814947b8802db4b8cf480a27e2699f26277566e2e389032b13541d0c"
     },
     {
+      "path": "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.Lifecycle.cs",
+      "sha256": "c949edd914bb81841057d4a2ccf4a8bc9b684e317b0ccb81bed15638e5197cfa"
+    },
+    {
       "path": "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs",
-      "sha256": "494990078036a70380a43336ca3ccb4c134fb742ee9763915b8661afed4e2475"
+      "sha256": "8c0cc6a52b23135ce3020913ab8fb8f88a96202d75ccf511d0fcdc56ea1a6dce"
     },
     {
       "path": "Assets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs",
@@ -15838,8 +15955,12 @@
       "sha256": "ce214299a2073a8cc492e674b6ffd190854e4fe8c3f7ec63d78a168616b475ac"
     },
     {
+      "path": "Assets/Game/Scripts/Systems/SelectionUiCameraSystemHelper.Lifecycle.cs",
+      "sha256": "4b52958f08c954fb7ebbda034c0025f28e61d12888033111f3d59b4f95285e61"
+    },
+    {
       "path": "Assets/Game/Scripts/Systems/SelectionUiCameraSystemHelper.cs",
-      "sha256": "b29cb770bc55d6d855f03bc3c496532150984b32f9e3e9ce0187c5e6d645fd97"
+      "sha256": "55f7b755d32dc251b68b72a41fe610c1fd46fe9e9904d4f739ef5d493cae0a8c"
     },
     {
       "path": "Assets/Game/Scripts/Systems/SelectionUiCommandUiSystemHelper.cs",
@@ -15882,12 +16003,16 @@
       "sha256": "2235ad4007fa88511663760b76d91f3e3f697995d40080c44b108052bf07c0a4"
     },
     {
+      "path": "Assets/Game/Scripts/Systems/TacticalFollowCameraModeSystemHelper.Lifecycle.cs",
+      "sha256": "a038cd6da7c194c7ecad58bee202102db73d36736d0b135dc60822062b65654b"
+    },
+    {
       "path": "Assets/Game/Scripts/Systems/TacticalFollowCameraModeSystemHelper.cs",
-      "sha256": "d51a65befab8d93232ec33d0cf19545960457970ef86a3bc6dd9008b56e3956c"
+      "sha256": "5c9e9c980886996111fafcad86f20ddb225931e33cce9c5700971031a1f93371"
     },
     {
       "path": "Assets/Game/Scripts/Systems/TacticalFollowCameraStateQueryCache.cs",
-      "sha256": "51bec62f2b40e24772c2e33816982b36a0794d1c120dcb1e1fe31198300a6af5"
+      "sha256": "054d36b58fcaa66d2679acf0d0b57b16511f4df1294d96bd990d2bf5a63cdafa"
     },
     {
       "path": "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs",
@@ -17189,8 +17314,8 @@
       "persistentQueries": 454,
       "presentationRoots": 26
     },
-    "explicitOwnerCount": 537,
-    "gapCount": 21,
+    "explicitOwnerCount": 542,
+    "gapCount": 16,
     "protectedOwnerCount": 22,
     "totalResourceCount": 580
   }

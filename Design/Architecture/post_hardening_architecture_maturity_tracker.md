@@ -114,11 +114,11 @@ Release-only categories are reported separately and never averaged into a premat
 | Release Certification Lane | `0 / 18` (`0.0%`); deferred |
 | Program state | Core Architecture Lane active; Phase 1 accepted; Phase 2 persistent-resource ownership in progress; release work inactive |
 | Current phase | Phase 2 - World Lifecycle And Dependency Hardening |
-| Current task | `AM-021` in progress; deterministic matrix covers `580` persistent resources with `537` explicit owners, `21` open ownership gaps, and `22` protected-owner rows |
+| Current task | `AM-021` in progress; deterministic matrix covers `580` persistent resources with `542` explicit owners, `16` open ownership gaps, and `22` protected-owner rows |
 | Parallel preparatory work | `AM-026` remains dependency-blocked and receives no completion credit; `ui_projection_allocation_inventory.md` inventories 20 surfaces, draft `AM-WP-001` bounds Resource Exchange caching, and draft `AM-WP-002` bounds Build Drawer projection consolidation |
-| Blockers | No external Core Architecture Lane blocker. AM-021 has `21` recorded ownership gaps: five split-owner grid containers, five Scenario Lab containers, five managed query-cache owners, and six presentation roots. Separately owned operation-map and FirstLaunch work remains outside architecture scope. Release-only certification remains intentionally deferred |
-| Latest validation | AM-021 UI lifecycle slice: focused lifecycle `2 / 2`, source-growth `17 / 17`, ownership generator `10 / 10`, integrated architecture CI `139 / 139`, zero compiler errors, deterministic regeneration/check, and `git diff --check` |
-| Latest evidence | `am021_persistent_resource_ownership.json` and Markdown projection at rebased implementation commit `7b1f4835b`; AM-021 remains in progress and receives no checklist credit yet |
+| Blockers | AM-021 implementation is not blocked and has `16` recorded ownership gaps: five split-owner grid containers, five Scenario Lab containers, and six presentation roots. Final broad-contract acceptance is gated by seven separately owned operation-map, FirstLaunch/UI, and package-bound violations; architecture preserves those active paths. Release-only certification remains intentionally deferred |
+| Latest validation | AM-021 query lifecycle slice: focused lifecycle `5 / 5`, World-rebind `1 / 1`, source-growth `17 / 17`, ownership generator `10 / 10`, integrated architecture CI `139 / 139`, zero compiler errors, deterministic pinned-baseline regeneration/check, and `git diff --check`; broad contract `52 / 59` with seven separately owned failures recorded above |
+| Latest evidence | `am021_persistent_resource_ownership.json` and Markdown projection at rebased query-lifecycle implementation commit `e1c66f1b0`; AM-021 remains in progress and receives no checklist credit yet |
 | Core entry baseline | Phase 0 accepted by `AM-001` through `AM-008`; exact-identity assembly and bounded Editor Match evidence are current at `9a0aa14252e6559680328e520d26c16bfc7b444e`; the dashboard required gate is accepted; the entry rating and owned deltas are published in `entry_baseline_report.md` |
 | Release entry review | Deferred until `pre_release_performance_certification_backlog.md` activates |
 | Architecture rating | Evidence-backed Phase 0 entry rating `8.5 / 10`; planning baseline only, not a `9.5` claim |
@@ -759,3 +759,15 @@ Accepted AM-020 progress snapshot:
 - Remaining ownership gaps: five split-owner grid containers, five Scenario Lab containers, two building-resource query caches, three tactical-follow query-cache owner fields, and six presentation roots. The matrix records each exact path, owner, and missing disposal boundary.
 - Exclusions preserved: operation-map, active map-generation work, FirstLaunch, audio-owned behavior, UI visual-lock assets, scenes, prefabs, packages, and `ProjectSettings` were not edited by this slice. The map-owned grid rows remain serialized behind the active map lane.
 - Next action: resolve the non-map query-cache and presentation-root gaps, then coordinate the five grid-container ownership changes only after the map lane releases those paths.
+
+### 2026-07-17 - AM-021 - Persistent query-cache lifecycle slice
+
+- Workflow path: direct commits to `main`; no branch, worktree, or PR workflow.
+- Implementation identity: rebased commit `e1c66f1b069e3793f7042cd4af66603e5afd3fe9`, tree `54b4fe9e9d5b78cb525c39477821190a66507600`. AM-021 remains in progress and receives no checklist credit from this partial slice.
+- Ownership result: explicit ownership increased from `537` to `542` and open gaps fell from `21` to `16`. Building gameplay shutdown now owns the faction-storage and hauler move-order caches; selection gameplay shutdown owns all three tactical-follow state caches plus the tactical mode's five direct singleton queries.
+- Lifecycle result: every affected cache releases live queries before World replacement, supports idempotent terminal disposal, and rejects post-disposal reuse. Building shutdown uses nested `finally` blocks so both cache owners are released even if another presentation cleanup fails.
+- Growth result: lifecycle behavior moved into bounded feature-specific partial files. All pre-existing governed owners remain at or below their accepted line and byte ceilings; no growth exception, broad coordinator, static registry, `SystemBase`, or new ECS update owner was introduced.
+- Validation: focused ownership lifecycle `5 / 5`, tactical-follow World-rebind `1 / 1`, source-growth `17 / 17`, ownership generator `10 / 10`, and integrated architecture CI `139 / 139` passed. Unity and generated-project compilation reported zero errors; deterministic pinned-baseline regeneration/check and `git diff --check` passed.
+- Integrated-baseline note: the broad architecture contract passed `52 / 59`; its seven failures are confined to separately owned operation-map, FirstLaunch/UI, and package-bound paths. Those paths were preserved and not staged with AM-021.
+- Exclusions preserved: operation-map, map generation, Scenario Lab, FirstLaunch, audio, UI visual-lock, scenes, prefabs, packages, and `ProjectSettings` were not edited by this slice.
+- Next action: resolve the six non-map presentation-root gaps while the five grid-container and five Scenario Lab rows remain serialized with map ownership.

@@ -26,7 +26,7 @@ namespace Game.Runtime
             state.Dependency.Complete();
             using NativeArray<Entity> gridEntities = _gridQuery.ToEntityArray(Allocator.Temp);
             for (int index = 0; index < gridEntities.Length; index++)
-                RuntimeGridPersistentStorageUtility.DisposeStorage(state.EntityManager, gridEntities[index]);
+                RuntimeGridPersistentStorageUtilitySystemHelper.DisposeStorage(state.EntityManager, gridEntities[index]);
         }
 
         public void OnUpdate(ref SystemState state)
@@ -59,14 +59,14 @@ namespace Game.Runtime
                 ecb.Playback(state.EntityManager);
             ecb.Dispose();
 
-            if (RuntimeGridPersistentStorageUtility.IsStorageValid(
+            if (RuntimeGridPersistentStorageUtilitySystemHelper.IsStorageValid(
                     state.EntityManager,
                     gridEntity,
                     gridSize))
                 return;
 
             state.Dependency.Complete();
-            RuntimeGridPersistentStorageUtility.EnsureStorage(
+            RuntimeGridPersistentStorageUtilitySystemHelper.EnsureStorage(
                 state.EntityManager,
                 gridEntity,
                 gridSize);

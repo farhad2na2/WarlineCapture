@@ -4,7 +4,7 @@ using NUnit.Framework;
 using Unity.Entities;
 using Unity.Mathematics;
 
-public sealed class RuntimeGridPersistentStorageUtilityTests
+public sealed class RuntimeGridPersistentStorageUtilitySystemHelperTests
 {
     private World _world;
     private Entity _grid;
@@ -12,7 +12,7 @@ public sealed class RuntimeGridPersistentStorageUtilityTests
     [SetUp]
     public void SetUp()
     {
-        _world = new World(nameof(RuntimeGridPersistentStorageUtilityTests));
+        _world = new World(nameof(RuntimeGridPersistentStorageUtilitySystemHelperTests));
         _grid = _world.EntityManager.CreateEntity(
             typeof(DynamicBlockerComponent),
             typeof(DynamicOccupancyComponent),
@@ -24,14 +24,14 @@ public sealed class RuntimeGridPersistentStorageUtilityTests
     {
         if (_world == null || !_world.IsCreated)
             return;
-        RuntimeGridPersistentStorageUtility.DisposeStorage(_world.EntityManager, _grid);
+        RuntimeGridPersistentStorageUtilitySystemHelper.DisposeStorage(_world.EntityManager, _grid);
         _world.Dispose();
     }
 
     [Test]
     public void EnsureStorage_CreatesEveryContainerWithExpectedInitialization()
     {
-        RuntimeGridPersistentStorageUtility.EnsureStorage(_world.EntityManager, _grid, 8);
+        RuntimeGridPersistentStorageUtilitySystemHelper.EnsureStorage(_world.EntityManager, _grid, 8);
 
         DynamicBlockerComponent blocker = _world.EntityManager.GetComponentData<DynamicBlockerComponent>(_grid);
         DynamicOccupancyComponent occupancy = _world.EntityManager.GetComponentData<DynamicOccupancyComponent>(_grid);
@@ -55,7 +55,7 @@ public sealed class RuntimeGridPersistentStorageUtilityTests
     [Test]
     public void EnsureStorage_SameSizePreservesLiveContainerContents()
     {
-        RuntimeGridPersistentStorageUtility.EnsureStorage(_world.EntityManager, _grid, 8);
+        RuntimeGridPersistentStorageUtilitySystemHelper.EnsureStorage(_world.EntityManager, _grid, 8);
         DynamicBlockerComponent blocker = _world.EntityManager.GetComponentData<DynamicBlockerComponent>(_grid);
         DynamicOccupancyComponent occupancy = _world.EntityManager.GetComponentData<DynamicOccupancyComponent>(_grid);
         PathPoolComponent pathPool = _world.EntityManager.GetComponentData<PathPoolComponent>(_grid);
@@ -64,7 +64,7 @@ public sealed class RuntimeGridPersistentStorageUtilityTests
         occupancy.Occupied.Set(4, true);
         pathPool.Cells.Add(new int2(5, 6));
 
-        RuntimeGridPersistentStorageUtility.EnsureStorage(_world.EntityManager, _grid, 8);
+        RuntimeGridPersistentStorageUtilitySystemHelper.EnsureStorage(_world.EntityManager, _grid, 8);
 
         blocker = _world.EntityManager.GetComponentData<DynamicBlockerComponent>(_grid);
         occupancy = _world.EntityManager.GetComponentData<DynamicOccupancyComponent>(_grid);
@@ -79,11 +79,11 @@ public sealed class RuntimeGridPersistentStorageUtilityTests
     [Test]
     public void EnsureStorage_ResizeReplacesGridStorageAndClearsPathPool()
     {
-        RuntimeGridPersistentStorageUtility.EnsureStorage(_world.EntityManager, _grid, 8);
+        RuntimeGridPersistentStorageUtilitySystemHelper.EnsureStorage(_world.EntityManager, _grid, 8);
         PathPoolComponent pathPool = _world.EntityManager.GetComponentData<PathPoolComponent>(_grid);
         pathPool.Cells.Add(new int2(5, 6));
 
-        RuntimeGridPersistentStorageUtility.EnsureStorage(_world.EntityManager, _grid, 12);
+        RuntimeGridPersistentStorageUtilitySystemHelper.EnsureStorage(_world.EntityManager, _grid, 12);
 
         DynamicBlockerComponent blocker = _world.EntityManager.GetComponentData<DynamicBlockerComponent>(_grid);
         DynamicOccupancyComponent occupancy = _world.EntityManager.GetComponentData<DynamicOccupancyComponent>(_grid);
@@ -98,10 +98,10 @@ public sealed class RuntimeGridPersistentStorageUtilityTests
     [Test]
     public void DisposeStorage_IsIdempotentAndClearsComponentAliases()
     {
-        RuntimeGridPersistentStorageUtility.EnsureStorage(_world.EntityManager, _grid, 8);
+        RuntimeGridPersistentStorageUtilitySystemHelper.EnsureStorage(_world.EntityManager, _grid, 8);
 
-        RuntimeGridPersistentStorageUtility.DisposeStorage(_world.EntityManager, _grid);
-        RuntimeGridPersistentStorageUtility.DisposeStorage(_world.EntityManager, _grid);
+        RuntimeGridPersistentStorageUtilitySystemHelper.DisposeStorage(_world.EntityManager, _grid);
+        RuntimeGridPersistentStorageUtilitySystemHelper.DisposeStorage(_world.EntityManager, _grid);
 
         DynamicBlockerComponent blocker = _world.EntityManager.GetComponentData<DynamicBlockerComponent>(_grid);
         DynamicOccupancyComponent occupancy = _world.EntityManager.GetComponentData<DynamicOccupancyComponent>(_grid);

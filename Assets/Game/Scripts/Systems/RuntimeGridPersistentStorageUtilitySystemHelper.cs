@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Game.Runtime
 {
-    internal static class RuntimeGridPersistentStorageUtility
+    internal static class RuntimeGridPersistentStorageUtilitySystemHelper
     {
         public static void InitializeCells(
             DynamicBuffer<GridWalkable> walkable,

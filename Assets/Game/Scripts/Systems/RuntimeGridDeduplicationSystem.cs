@@ -63,7 +63,7 @@ namespace Game.Runtime
             for (int i = 0; i < runtimeGridEntities.Length; i++)
             {
                 Entity entity = runtimeGridEntities[i];
-                RuntimeGridPersistentStorageUtility.DisposeStorage(em, entity);
+                RuntimeGridPersistentStorageUtilitySystemHelper.DisposeStorage(em, entity);
                 em.DestroyEntity(entity);
             }
         }

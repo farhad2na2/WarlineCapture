@@ -51,28 +51,28 @@ PERSISTENT_NATIVE_RE = re.compile(
 )
 EXTERNAL_NATIVE_OWNERS = {
     ("Assets/Game/Scripts/Components/GridComponents.cs", "DynamicBlockerComponent", "Counts"): (
-        "RuntimeGridPersistentStorageUtility.EnsureStorage",
-        "RuntimeGridPersistentStorageUtility.DisposeStorage",
+        "RuntimeGridPersistentStorageUtilitySystemHelper.EnsureStorage",
+        "RuntimeGridPersistentStorageUtilitySystemHelper.DisposeStorage",
         True,
     ),
     ("Assets/Game/Scripts/Components/GridComponents.cs", "DynamicBlockerComponent", "Blocked"): (
-        "RuntimeGridPersistentStorageUtility.EnsureStorage",
-        "RuntimeGridPersistentStorageUtility.DisposeStorage",
+        "RuntimeGridPersistentStorageUtilitySystemHelper.EnsureStorage",
+        "RuntimeGridPersistentStorageUtilitySystemHelper.DisposeStorage",
         True,
     ),
     ("Assets/Game/Scripts/Components/GridComponents.cs", "DynamicBlockerComponent", "FriendlyPassFactionIds"): (
-        "RuntimeGridPersistentStorageUtility.EnsureStorage",
-        "RuntimeGridPersistentStorageUtility.DisposeStorage",
+        "RuntimeGridPersistentStorageUtilitySystemHelper.EnsureStorage",
+        "RuntimeGridPersistentStorageUtilitySystemHelper.DisposeStorage",
         True,
     ),
     ("Assets/Game/Scripts/Components/GridComponents.cs", "DynamicOccupancyComponent", "Occupied"): (
-        "RuntimeGridPersistentStorageUtility.EnsureStorage",
-        "RuntimeGridPersistentStorageUtility.DisposeStorage",
+        "RuntimeGridPersistentStorageUtilitySystemHelper.EnsureStorage",
+        "RuntimeGridPersistentStorageUtilitySystemHelper.DisposeStorage",
         True,
     ),
     ("Assets/Game/Scripts/Components/GridComponents.cs", "PathPoolComponent", "Cells"): (
-        "RuntimeGridPersistentStorageUtility.EnsureStorage",
-        "RuntimeGridPersistentStorageUtility.DisposeStorage",
+        "RuntimeGridPersistentStorageUtilitySystemHelper.EnsureStorage",
+        "RuntimeGridPersistentStorageUtilitySystemHelper.DisposeStorage",
         True,
     ),
     ("Assets/Game/Scripts/Systems/UnitPathfindingSystem.cs", "UnitPathfindingSystem", "_pendingPathStream"): (

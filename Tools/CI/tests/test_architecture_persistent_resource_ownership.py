@@ -68,12 +68,12 @@ class PersistentResourceOwnershipTests(unittest.TestCase):
             row = rows[key]
             self.assertEqual("explicit", row["status"], key)
             self.assertEqual(
-                "RuntimeGridPersistentStorageUtility.EnsureStorage",
+                "RuntimeGridPersistentStorageUtilitySystemHelper.EnsureStorage",
                 row["creationOwner"],
                 key,
             )
             self.assertEqual(
-                "RuntimeGridPersistentStorageUtility.DisposeStorage",
+                "RuntimeGridPersistentStorageUtilitySystemHelper.DisposeStorage",
                 row["disposalOwner"],
                 key,
             )

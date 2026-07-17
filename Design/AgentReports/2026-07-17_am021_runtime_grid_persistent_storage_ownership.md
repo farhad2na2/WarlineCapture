@@ -6,17 +6,17 @@ The five split-owner persistent grid containers now have one explicit lifecycle 
 
 | Container | Creation / resize owner | Disposal owner |
 |---|---|---|
-| `DynamicBlockerComponent.Counts` | `RuntimeGridPersistentStorageUtility.EnsureStorage` | `RuntimeGridPersistentStorageUtility.DisposeStorage` |
-| `DynamicBlockerComponent.Blocked` | `RuntimeGridPersistentStorageUtility.EnsureStorage` | `RuntimeGridPersistentStorageUtility.DisposeStorage` |
-| `DynamicBlockerComponent.FriendlyPassFactionIds` | `RuntimeGridPersistentStorageUtility.EnsureStorage` | `RuntimeGridPersistentStorageUtility.DisposeStorage` |
-| `DynamicOccupancyComponent.Occupied` | `RuntimeGridPersistentStorageUtility.EnsureStorage` | `RuntimeGridPersistentStorageUtility.DisposeStorage` |
-| `PathPoolComponent.Cells` | `RuntimeGridPersistentStorageUtility.EnsureStorage` | `RuntimeGridPersistentStorageUtility.DisposeStorage` |
+| `DynamicBlockerComponent.Counts` | `RuntimeGridPersistentStorageUtilitySystemHelper.EnsureStorage` | `RuntimeGridPersistentStorageUtilitySystemHelper.DisposeStorage` |
+| `DynamicBlockerComponent.Blocked` | `RuntimeGridPersistentStorageUtilitySystemHelper.EnsureStorage` | `RuntimeGridPersistentStorageUtilitySystemHelper.DisposeStorage` |
+| `DynamicBlockerComponent.FriendlyPassFactionIds` | `RuntimeGridPersistentStorageUtilitySystemHelper.EnsureStorage` | `RuntimeGridPersistentStorageUtilitySystemHelper.DisposeStorage` |
+| `DynamicOccupancyComponent.Occupied` | `RuntimeGridPersistentStorageUtilitySystemHelper.EnsureStorage` | `RuntimeGridPersistentStorageUtilitySystemHelper.DisposeStorage` |
+| `PathPoolComponent.Cells` | `RuntimeGridPersistentStorageUtilitySystemHelper.EnsureStorage` | `RuntimeGridPersistentStorageUtilitySystemHelper.DisposeStorage` |
 
 Runtime initialization, bootstrap, duplicate-grid teardown, scenario-lab setup/teardown, and system shutdown delegate to that owner. Disposal clears component-held aliases, so repeated teardown cannot double-dispose. Same-size ensure preserves live state; resize replaces grid-sized storage and clears pooled path cells.
 
 ## Validation
 
-- `RuntimeGridPersistentStorageUtilityTests`: 4/4 passed.
+- `RuntimeGridPersistentStorageUtilitySystemHelperTests`: 4/4 passed.
 - `PersistentResourceOwnershipLifecycleTests`: 8/8 passed.
 - `DynamicOccupancyRebuildSystemTests`: 2/2 passed.
 - `RuntimeGridDeduplicationSystemTests`: 5/5 passed.

@@ -898,7 +898,7 @@ namespace Game.Runtime
                 typeof(PathPoolComponent));
             em.SetName(gridEntity, "BattleScenarioLabRuntimeGrid");
             em.SetComponentData(gridEntity, new GridConfig { Width = width, Height = height, CellSize = 1f, Origin = float3.zero });
-            RuntimeGridPersistentStorageUtility.EnsureStorage(em, gridEntity, gridSize);
+            RuntimeGridPersistentStorageUtilitySystemHelper.EnsureStorage(em, gridEntity, gridSize);
 
             em.AddBuffer<GridWalkable>(gridEntity);
             em.AddBuffer<GridRoad>(gridEntity);
@@ -968,7 +968,7 @@ namespace Game.Runtime
                 if (!em.Exists(grid))
                     continue;
 
-                RuntimeGridPersistentStorageUtility.DisposeStorage(em, grid);
+                RuntimeGridPersistentStorageUtilitySystemHelper.DisposeStorage(em, grid);
             }
 
         }

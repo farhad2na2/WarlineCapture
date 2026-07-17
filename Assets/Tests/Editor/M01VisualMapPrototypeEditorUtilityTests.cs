@@ -30,6 +30,8 @@ public sealed class M01VisualMapPrototypeEditorUtilityTests
             passed++;
             tests.GeneratedScene_HasOwnedRootsAnchorsAndReferenceDensity();
             passed++;
+            tests.LocalRoadPlan_IsNarrowConnectedAndNonBranching();
+            passed++;
             tests.ReviewCaptureSet_IsCompleteAndReadable();
             passed++;
 
@@ -70,6 +72,15 @@ public sealed class M01VisualMapPrototypeEditorUtilityTests
             root.transform,
             $"GENERATOR_{M01VisualMapPrototypeEditorUtility.GeneratorVersion}_SEED_{M01VisualMapPrototypeEditorUtility.GenerationSeed}"));
         Assert.GreaterOrEqual(root.GetComponentsInChildren<Renderer>(true).Length, 900);
+    }
+
+    [Test]
+    public void LocalRoadPlan_IsNarrowConnectedAndNonBranching()
+    {
+        Assert.AreEqual(
+            0,
+            M01VisualMapPrototypeEditorUtility.GetLocalRoadPolicyViolationCount(),
+            "M01 must retain one bounded, connected, non-self-intersecting local route instead of an autobahn or cross.");
     }
 
     [Test]

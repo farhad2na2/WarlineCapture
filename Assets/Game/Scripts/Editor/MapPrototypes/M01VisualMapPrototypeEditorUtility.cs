@@ -174,7 +174,11 @@ namespace Game.Editor
         };
 
         private const float LocalRoadWidth = 3.2f;
+        private const float MinimumLocalRoadLength = 2f;
         private const float MaximumLocalRoadLength = 36f;
+        private const float MaximumLocalRoadTotalLength = 90f;
+        private const int MaximumLocalRoadSegmentCount = 4;
+        private const float LocalRoadEndpointTolerance = 0.05f;
 
         private static readonly TerrainClearanceZone[] FrontageTerrainClearanceZones =
         {
@@ -1857,37 +1861,6 @@ namespace Game.Editor
             int authoredTransitionOverlaps = CountAuthoredTransitionStructureOverlaps(root, true);
             if (authoredTransitionOverlaps != 0)
                 throw new InvalidOperationException($"M01 transition composition left {authoredTransitionOverlaps} authored structure overlaps.");
-        }
-
-        private static int CountLocalRoadPolicyViolations(bool logDetails)
-        {
-            int violationCount = 0;
-            for (int segmentIndex = 0; segmentIndex < LocalRoadSegments.Length; segmentIndex++)
-            {
-                LocalRoadSegmentDefinition segment = LocalRoadSegments[segmentIndex];
-                float width = segment.Dusty ? LocalRoadWidth : 4.2f;
-                float length = Vector3.Distance(segment.Start, segment.End);
-                if (width <= LocalRoadWidth + 0.001f && length <= MaximumLocalRoadLength)
-                    continue;
-
-                violationCount++;
-                if (logDetails)
-                {
-                    Debug.Log(
-                        $"[M01LocalRoadPolicyViolation] road={segment.Name} width={width:0.00} " +
-                        $"length={length:0.00} maximumWidth={LocalRoadWidth:0.00} maximumLength={MaximumLocalRoadLength:0.00}");
-                }
-            }
-
-            if (logDetails)
-            {
-                Debug.Log(
-                    $"[M01LocalRoadPolicy] result={(violationCount == 0 ? "Passed" : "Failed")} " +
-                    $"segments={LocalRoadSegments.Length} maximumWidth={LocalRoadWidth:0.00} " +
-                    $"maximumLength={MaximumLocalRoadLength:0.00} violations={violationCount}");
-            }
-
-            return violationCount;
         }
 
         private static void SimulateParticles()

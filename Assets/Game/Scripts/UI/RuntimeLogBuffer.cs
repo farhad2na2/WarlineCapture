@@ -23,6 +23,16 @@ namespace Game.UI.Runtime
         private static readonly Queue<Entry> Entries = new(Capacity);
         private static bool _initialized;
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetBeforeSubsystemRegistration()
+        {
+            if (_initialized)
+                Application.logMessageReceived -= HandleLogMessage;
+
+            Entries.Clear();
+            _initialized = false;
+        }
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void InitializeBeforeSceneLoad()
         {

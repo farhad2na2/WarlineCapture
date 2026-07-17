@@ -168,6 +168,8 @@ namespace Game.Composition
             matchLoadQueuedForCurrentRoute = false;
             staticMapPresentationStreamer.Unbind();
             streamedMatchView = null;
+            if (view != null && view.ContentSystem != null)
+                view.ContentSystem.BindGameplayRuntimeDependencies(null);
             ClearBoundMatchRuntimeUi();
             autoStartMatchSubmitted = false;
             firstLaunchNarrative.Shutdown();

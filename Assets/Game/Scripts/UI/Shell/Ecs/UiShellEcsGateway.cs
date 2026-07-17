@@ -78,18 +78,7 @@ namespace Game.UI.Shell.Ecs
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         public static void RegisterAsRuntimeGateway()
         {
-            cachedWorld = null;
-            boundaryQuery = default;
-            focusedSelectionQuery = default;
-            selectionInputQuery = default;
-            hasBoundaryQuery = false;
-            hasFocusedSelectionQuery = false;
-            hasSelectionInputQuery = false;
-            hasSelectedUnitsQuery = false;
-            hasMinimapMarkerQuery = false;
-            hasGridConfigQuery = false;
-            hasResourceStorageQuery = false;
-            hasAssistantMatchStartQuery = false;
+            ResetWorldBoundQueries(null);
             hasCachedDiagnosticsLogText = false;
             hasCachedMatchHudHeader = false;
             cachedMatchHudHeaderWorld = null;
@@ -129,7 +118,6 @@ namespace Game.UI.Shell.Ecs
             cachedDiagnosticsLogText = string.Empty;
             UiShellRuntimeGateway.Register(Shared);
         }
-
 
         public static bool TryEnqueueRouteRequest(UiShellRouteIntent intent, UIRoute route, bool pushHistory) =>
             UiShellRouteAdapter.TryEnqueueRouteRequest(intent, route, pushHistory);
@@ -222,17 +210,7 @@ namespace Game.UI.Shell.Ecs
                 return false;
 
             if (cachedWorld != world)
-            {
-                cachedWorld = world;
-                hasBoundaryQuery = false;
-                hasFocusedSelectionQuery = false;
-                hasSelectionInputQuery = false;
-                hasSelectedUnitsQuery = false;
-                hasMinimapMarkerQuery = false;
-                hasGridConfigQuery = false;
-                hasResourceStorageQuery = false;
-                hasAssistantMatchStartQuery = false;
-            }
+                ResetWorldBoundQueries(world);
 
             if (!hasBoundaryQuery)
             {

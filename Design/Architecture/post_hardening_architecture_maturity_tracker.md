@@ -114,7 +114,7 @@ Release-only categories are reported separately and never averaged into a premat
 | Release Certification Lane | `0 / 18` (`0.0%`); deferred |
 | Program state | Core Architecture Lane active; Phase 1 accepted; Phase 2 persistent-resource ownership in progress; release work inactive |
 | Current phase | Phase 2 - World Lifecycle And Dependency Hardening |
-| Current task | `AM-021` ready; inventory every persistent native container, query, subscription, and presentation root and assign one creation/disposal owner |
+| Current task | `AM-021` in progress; inventory every persistent native container, query, subscription, and presentation root and assign one creation/disposal owner |
 | Parallel preparatory work | `AM-026` remains dependency-blocked and receives no completion credit; `ui_projection_allocation_inventory.md` inventories 20 surfaces, draft `AM-WP-001` bounds Resource Exchange caching, and draft `AM-WP-002` bounds Build Drawer projection consolidation |
 | Blockers | None for the Core Architecture Lane. Separately owned operation-map and FirstLaunch work remains outside architecture scope. Release-only certification remains intentionally deferred |
 | Latest validation | AM-020: World lifecycle behavior `18 / 18`, governed cache performance `4 / 4` across ten zero-allocation phases, alert/audio behavior `9 / 9`, source-growth `17 / 17`, broad architecture `1 / 1`, integrated architecture CI `125 / 125`, zero compiler errors in current-source Unity validation, `git diff --check`, and independent rereview PASS |
@@ -236,7 +236,7 @@ Make runtime dependencies explicit and prove that caches and native resources ca
 - [x] `AM-018` Inventory production uses of global World lookup, mutable static caches, static event subscriptions, hidden singletons, and runtime object discovery.
 - [x] `AM-019` Define one standard World-bound query/entity cache contract covering positive lookup, negative lookup, invalidation, rebind, disposal, and destroyed-entity recovery.
 - [x] `AM-020` Move mutable runtime state that crosses World lifecycles into explicit World-owned systems, components, or lifecycle containers where practical.
-- [ ] `AM-021` Give every persistent native container, query, event subscription, and presentation root an explicit creation and disposal owner.
+- [~] `AM-021` Give every persistent native container, query, event subscription, and presentation root an explicit creation and disposal owner.
 - [ ] `AM-022` Add tests for World destruction/recreation, domain reload, scene unload/reload, missing singleton recovery, and replaced command entities.
 - [ ] `AM-023` Run at least 100 automated Menu-to-Match-to-Menu cycles without duplicate systems, stale entities, retained subscriptions, or presentation-root accumulation.
 - [ ] `AM-024` Add native allocation and pool-count snapshots around lifecycle stress tests and prove no upward retained-memory trend after warmup.

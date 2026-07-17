@@ -26,15 +26,7 @@ namespace Game.UI.Shell.Ecs
                 return false;
 
             if (cachedWorld != world)
-            {
-                cachedWorld = world;
-                hasBoundaryQuery = false;
-                hasFocusedSelectionQuery = false;
-                hasSelectionInputQuery = false;
-                hasSelectedUnitsQuery = false;
-                hasMinimapMarkerQuery = false;
-                hasGridConfigQuery = false;
-            }
+                ResetWorldBoundQueries(world);
 
             if (!hasFocusedSelectionQuery)
             {

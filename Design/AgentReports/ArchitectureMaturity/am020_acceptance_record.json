@@ -1,0 +1,38 @@
+{
+  "artifactId": "AM020-ACCEPTANCE-RECORD",
+  "schemaVersion": 1,
+  "taskId": "AM-020",
+  "result": "Accepted",
+  "sourceBaseline": {
+    "branch": "main",
+    "commit": "eab79c2f0",
+    "tree": "87845d4fa57f3b44623f1ee1d4d96f338461e91c"
+  },
+  "acceptedEvidence": {
+    "commit": "0c7d9e085",
+    "tree": "6890951fbbcf62757a399d13acc5b267f4f43481",
+    "files": [
+      {"path": "Design/AgentReports/ArchitectureMaturity/Logs/am020_alert_audio_behavior.log.gz", "sha256": "99d9daefffee45171389cf2fe689a9d627aba75e012c9f82c9664c47ea18f9d4"},
+      {"path": "Design/AgentReports/ArchitectureMaturity/Logs/am020_source_growth.log.gz", "sha256": "cd84036180229dbf4b4675c060d07ea83b52fdd1a49fd1beb1a72ed42c095ce3"},
+      {"path": "Design/AgentReports/ArchitectureMaturity/Logs/am020_world_owned_state_behavior.log.gz", "sha256": "20c53abd3964bf90ebd1cd09b16bc7febf5a6c6107fd9fa63c38df7327ce1539"},
+      {"path": "Design/AgentReports/ArchitectureMaturity/Logs/am020_world_owned_state_broad_architecture.log.gz", "sha256": "96ac07a7ed3bbe45d1bff87d565126b92492b69df4022a29ed5d7c6f7fbf8642"},
+      {"path": "Design/AgentReports/ArchitectureMaturity/Logs/am020_world_owned_state_performance.log.gz", "sha256": "4f05862c67f4b7295b53888086d8319f5eade5f7f402876bfd244a30cf994744"},
+      {"path": "Design/AgentReports/ArchitectureMaturity/Logs/am020_world_owned_state_python.log.gz", "sha256": "6af1133292f90b75e5c27ac4c7d2d6e69f24544bad9aa457e1d6c6eda8bb69d7"},
+      {"path": "Design/AgentReports/ArchitectureMaturity/am020_world_owned_runtime_state_evidence.json", "sha256": "a78dbd1c1520e361fa06e9b916980d09a0fc5147e75b77cc5ee3084a62058919"},
+      {"path": "Tools/CI/tests/test_architecture_world_owned_runtime_state_evidence.py", "sha256": "243d7a48b9eef89ea6fe5113a076bbccba87a6ab297257eb865174139b9f8c78"}
+    ]
+  },
+  "validation": {
+    "worldLifecycleBehaviorTests": 18,
+    "worldCachePerformanceTests": 4,
+    "zeroAllocationPhases": 10,
+    "alertAudioBehaviorTests": 9,
+    "sourceGrowthTests": 17,
+    "broadArchitectureTests": 1,
+    "integratedArchitectureTestsBeforeAcceptance": 125,
+    "compilerErrors": 0,
+    "independentRereview": "PASS"
+  },
+  "scopeRule": "AM-020 accepts the implementation history from f993c3084 through eab79c2f0 and the eight-file evidence set hash-bound to 0c7d9e085. Operation-map, static-map, FirstLaunch, unrelated audio, UI visual-lock, scenes, prefabs, packages, and ProjectSettings remain outside AM-020.",
+  "nextTask": "AM-021"
+}

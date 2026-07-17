@@ -109,16 +109,16 @@ Release-only categories are reported separately and never averaged into a premat
 
 | Field | Status |
 |---|---|
-| Checklist complete | `19 / 86` (`22.1%`) |
-| Core Architecture Lane | `19 / 68` (`27.9%`); active |
+| Checklist complete | `20 / 86` (`23.3%`) |
+| Core Architecture Lane | `20 / 68` (`29.4%`); active |
 | Release Certification Lane | `0 / 18` (`0.0%`); deferred |
-| Program state | Core Architecture Lane active; Phase 1 accepted; Phase 2 World-owned runtime-state migration in progress; release work inactive |
+| Program state | Core Architecture Lane active; Phase 1 accepted; Phase 2 persistent-resource ownership in progress; release work inactive |
 | Current phase | Phase 2 - World Lifecycle And Dependency Hardening |
-| Current task | `AM-020` in progress; operation-map refresh is current and non-blocking, source-growth follow-up is implemented, and final focused validation/evidence binding is active |
+| Current task | `AM-021` ready; inventory every persistent native container, query, subscription, and presentation root and assign one creation/disposal owner |
 | Parallel preparatory work | `AM-026` remains dependency-blocked and receives no completion credit; `ui_projection_allocation_inventory.md` now inventories 20 surfaces and draft `AM-WP-001` bounds the future Resource Exchange managed-projection cache |
-| Blockers | None for the Core Architecture Lane. The operation-map refresh passed repeatability, focused tests, naming checks, and compiler checks; its two long-term configuration decisions remain in the separately owned map roadmap and do not block `AM-020`. Release-only certification remains intentionally deferred |
-| Latest validation | AM-020 implementation: Unity behavior `18 / 18`, governed cache/state performance `4 / 4` across ten zero-allocation phases, broad architecture `1 / 1`, serial Runtime/Composition/Editor-test builds with zero compiler errors, integrated architecture CI `121 / 121`, focused architecture guards `14 / 14`, and independent architecture rereview passed with no code finding |
-| Latest evidence | `am019_acceptance_record.json` and `am019_world_scoped_cache_contract_evidence.json`; accepted evidence commit `ea39268476bb4742edb131018c8c073efa4d34cf`, implementation commit `e733d7021eef7fb5b80fe3bd0774e5bcc5aed224` |
+| Blockers | None for the Core Architecture Lane. Separately owned operation-map and FirstLaunch work remains outside architecture scope. Release-only certification remains intentionally deferred |
+| Latest validation | AM-020: World lifecycle behavior `18 / 18`, governed cache performance `4 / 4` across ten zero-allocation phases, alert/audio behavior `9 / 9`, source-growth `17 / 17`, broad architecture `1 / 1`, integrated architecture CI `125 / 125`, zero compiler errors in current-source Unity validation, `git diff --check`, and independent rereview PASS |
+| Latest evidence | `am020_acceptance_record.json` and `am020_world_owned_runtime_state_evidence.json`; evidence commit `0c7d9e085`, implementation commits `f993c3084` and `eab79c2f0` |
 | Core entry baseline | Phase 0 accepted by `AM-001` through `AM-008`; exact-identity assembly and bounded Editor Match evidence are current at `9a0aa14252e6559680328e520d26c16bfc7b444e`; the dashboard required gate is accepted; the entry rating and owned deltas are published in `entry_baseline_report.md` |
 | Release entry review | Deferred until `pre_release_performance_certification_backlog.md` activates |
 | Architecture rating | Evidence-backed Phase 0 entry rating `8.5 / 10`; planning baseline only, not a `9.5` claim |
@@ -235,7 +235,7 @@ Make runtime dependencies explicit and prove that caches and native resources ca
 
 - [x] `AM-018` Inventory production uses of global World lookup, mutable static caches, static event subscriptions, hidden singletons, and runtime object discovery.
 - [x] `AM-019` Define one standard World-bound query/entity cache contract covering positive lookup, negative lookup, invalidation, rebind, disposal, and destroyed-entity recovery.
-- [~] `AM-020` Move mutable runtime state that crosses World lifecycles into explicit World-owned systems, components, or lifecycle containers where practical.
+- [x] `AM-020` Move mutable runtime state that crosses World lifecycles into explicit World-owned systems, components, or lifecycle containers where practical.
 - [ ] `AM-021` Give every persistent native container, query, event subscription, and presentation root an explicit creation and disposal owner.
 - [ ] `AM-022` Add tests for World destruction/recreation, domain reload, scene unload/reload, missing singleton recovery, and replaced command entities.
 - [ ] `AM-023` Run at least 100 automated Menu-to-Match-to-Menu cycles without duplicate systems, stale entities, retained subscriptions, or presentation-root accumulation.
@@ -726,3 +726,25 @@ Accepted AM-019 progress snapshot:
 | Checklist complete | `19 / 86` (`22.1%`) |
 | Core Architecture Lane | `19 / 68` (`27.9%`); active |
 | Current task | `AM-020` ready, not yet claimed |
+
+### 2026-07-17 - AM-020 - World-owned runtime-state migration accepted
+
+- Workflow path: direct commits to `main`; no branch, worktree, or PR workflow.
+- Accepted implementation: initial World-owned state migration `f993c3084`, final responsibility/source-growth follow-up `eab79c2f0`, final tree `87845d4fa57f3b44623f1ee1d4d96f338461e91c`; evidence commit `0c7d9e085`, tree `6890951fbbcf62757a399d13acc5b267f4f43481`.
+- Ownership result: the threat-warning mailbox is an ECS component in the active World; the unmanaged detection `ISystem` owns writes; `ThreatWarningPresentationState` owns the presentation query cache and disposal; Match Intro and Match bootstrap use explicit supplied World bindings without recurring default-World discovery.
+- Responsibility result: threat-warning audio resolution moved out of detection into a bounded event utility, and threat presentation/cache ownership moved out of the runtime update coordinator. Governed oversized files remain within their exact source-growth ceilings without a replacement oversized helper.
+- Lifecycle result: isolated Worlds, World recreation, idempotent reset/disposal, missing or duplicate singleton failure, explicit Match Intro binding, missing-boundary recovery, rebind, and duplicate-boundary failure are covered by `18 / 18` focused cases.
+- Performance result: three governed cache consumers, positive/negative singleton lookup, threat state, and Match Intro state passed ten `180`-warmup plus `300`-measurement phases with exactly zero recurring managed bytes.
+- Validation: World lifecycle behavior `18 / 18`, cache performance `4 / 4`, alert/audio behavior `9 / 9`, source-growth `17 / 17`, broad architecture `1 / 1`, integrated architecture `125 / 125`, current-source Unity compilation with zero compiler errors, and `git diff --check` passed.
+- Independent review: the final extraction review found one stale reflective allocation fixture. The fixture and Python guard were migrated to `ThreatWarningPresentationState._queryCache`; rereview returned `PASS` with no remaining blocker.
+- Evidence integrity: `am020_world_owned_runtime_state_evidence.json` hash-binds the implementation history, final files, six compressed validation logs, ownership contract, and review closure. `am020_acceptance_record.json` binds the eight-file evidence commit and routes the next dependency-ready work to `AM-021`.
+- Exclusions preserved: operation-map, static-map, FirstLaunch, unrelated audio, UI visual-lock, scenes, prefabs, packages, and `ProjectSettings` remained outside AM-020 staging. Concurrent FirstLaunch art was explicitly left unstaged.
+- Next task: `AM-021` assigns explicit creation and disposal ownership to every persistent native container, query, event subscription, and presentation root.
+
+Accepted AM-020 progress snapshot:
+
+| Field | Accepted value |
+|---|---|
+| Checklist complete | `20 / 86` (`23.3%`) |
+| Core Architecture Lane | `20 / 68` (`29.4%`); active |
+| Current task | `AM-021` ready |

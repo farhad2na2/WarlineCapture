@@ -1,0 +1,21 @@
+{
+  "scenario": "surface-open-fully-bound-unchanged",
+  "warmupFrames": 180,
+  "measuredFrames": 300,
+  "instrumentationControlSamples": 300,
+  "instrumentationControlAllocatedBytes": 0,
+  "focusedUiRecurringAllocatedBytes": 0,
+  "maximumFrameAllocatedBytes": 0,
+  "measurementWindowAllocatedBytes": 0,
+  "harnessAllocatedBytes": 0,
+  "gatewayReadCount": 480,
+  "measuredGatewayReadCount": 300,
+  "contentVersionBefore": 1,
+  "contentVersionAfter": 1,
+  "remainedFullyBound": true,
+  "totalMs": 0.0609,
+  "averageFrameMs": 0.000203,
+  "p95FrameMs": 0.0002,
+  "p99FrameMs": 0.0003,
+  "maxFrameMs": 0.0059
+}

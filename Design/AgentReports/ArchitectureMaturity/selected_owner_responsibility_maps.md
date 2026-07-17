@@ -6,7 +6,7 @@ Artifact: `am010-selected-owner-responsibility-maps-v1`
 
 ## Evidence Binding
 
-- Authoritative JSON SHA-256: `6fbcd47268df386f479703a9f95a06cf7437128e6e075fbc56216d9f8971e59c`
+- Authoritative JSON SHA-256: `abd23c05eab51663f1a63ec020699694ad0db0ba282120c241ff8cba80627d08`
 - Source baseline: `ab955a7721fd0616b627daab508632d023e047d8` / tree `a40d19b327a33bc2aca8e126dcdc61616ccee458` on `main`
 - AM-009 ranking: `Design/AgentReports/ArchitectureMaturity/owner_risk_ranking.json` / SHA-256 `ec381d90aa68ca4adc4387de344085f9ba0c0aabe7a1afb190155e381c803847`
 - Freshness-bound evidence files: `15`

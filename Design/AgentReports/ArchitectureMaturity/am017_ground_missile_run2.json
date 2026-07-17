@@ -1,0 +1,15 @@
+{
+  "warmupScenarios": 16,
+  "measuredScenarios": 64,
+  "averageFrames": 27,
+  "maxFrames": 27,
+  "averageTotalMs": 1.094,
+  "p95TotalMs": 1.163,
+  "p99TotalMs": 1.183,
+  "maxTotalMs": 1.196,
+  "averageOrderMs": 0.099,
+  "p95OrderMs": 0.11,
+  "averageSimulationMs": 0.995,
+  "p95SimulationMs": 1.04,
+  "allocatedBytesCurrentThread": 0
+}

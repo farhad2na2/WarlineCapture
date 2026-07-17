@@ -1,0 +1,281 @@
+{
+  "artifactId": "AM017-PHASE1-EXIT-EVIDENCE",
+  "schemaVersion": 1,
+  "taskId": "AM-017",
+  "result": "Passed",
+  "sourceBaseline": {
+    "commit": "b8cb6ef87ed1a640d905bd686aa1fae619e34920",
+    "tree": "08aa8808ef7907c70038d16c9972ffff98ac10e4"
+  },
+  "focusedCaptureCommit": "9d4feba92e19945d96410b25250be09ffefd041b",
+  "focusedCaptureTree": "ed0c082528a3e20894f3af4a1d7ff42bbe09d5c4",
+  "canonicalCaptureCommit": "cd6e764bd878c6d7cedcbaa3c5034f0f105825b6",
+  "canonicalCaptureTree": "6842cfb589a1e7cc05158356f3187a7b1d58954b",
+  "environmentIdentitySha256": "1750156ad389d4f28a392531d19339a96140da898d5c2dfd1920c38d6486239e",
+  "environmentIdentity": {
+    "path": "Design/AgentReports/ArchitectureMaturity/entry_environment.json",
+    "sha256": "1750156ad389d4f28a392531d19339a96140da898d5c2dfd1920c38d6486239e"
+  },
+  "captureContexts": {
+    "focused": {
+      "exactCommit": "9d4feba92e19945d96410b25250be09ffefd041b",
+      "tree": "ed0c082528a3e20894f3af4a1d7ff42bbe09d5c4",
+      "environmentIdentitySha256": "1750156ad389d4f28a392531d19339a96140da898d5c2dfd1920c38d6486239e",
+      "dirty": false,
+      "qualityName": "Mobile",
+      "resolutionWidth": 640,
+      "resolutionHeight": 480,
+      "instrumentationState": "Stopwatch timing and GC.GetAllocatedBytesForCurrentThread; Unity Profiler disabled; deep profiling disabled"
+    },
+    "canonical": {
+      "exactCommit": "cd6e764bd878c6d7cedcbaa3c5034f0f105825b6",
+      "tree": "6842cfb589a1e7cc05158356f3187a7b1d58954b",
+      "environmentIdentitySha256": "1750156ad389d4f28a392531d19339a96140da898d5c2dfd1920c38d6486239e",
+      "dirty": false,
+      "qualityName": "Mobile",
+      "resolutionWidth": 640,
+      "resolutionHeight": 480,
+      "launchArguments": ["-warlineAutoStartMatch"],
+      "frameInstrumentationState": "frameSampler=stopwatch profilerEnabled=false deepProfiling=false instrumentationOffControl=not-required-stopwatch-only",
+      "gcInstrumentationState": "Unity Profiler binary log; allocation callstacks enabled; Scripts and Memory categories enabled; deep profiling disabled; capture logging suppressed"
+    }
+  },
+  "policy": {
+    "path": "Design/AgentReports/ArchitectureMaturity/phase1_exit_capture_policy.json",
+    "sha256": "85c79156daac5038998095384539c27cffc7fd8034172ca934cd8f7ff363cd71"
+  },
+  "focusedCaptureManifest": {
+    "path": "Design/AgentReports/ArchitectureMaturity/am017_focused_capture_manifest.json",
+    "sha256": "29940c02180d111a5b6a5a5fc170db83b43bd17536cd5c3d407b69b56803af69"
+  },
+  "canonicalFrame": {
+    "selectionRule": "median-by-average-total-ms-then-p95-total-ms",
+    "selectedRun": 3,
+    "relativeP95CeilingMs": 5.14,
+    "absoluteP95CeilingMs": 20.0,
+    "allocatedBytesCeiling": 0,
+    "runs": [
+      {
+        "run": 1,
+        "path": "Design/AgentReports/ArchitectureMaturity/am017_match_frame_run1.json",
+        "sha256": "e851eb88c776b57ee00632a2b5f32da975831426961581c48eda7240162a548e",
+        "averageFrameMs": 4.826,
+        "p95FrameMs": 7.704
+      },
+      {
+        "run": 2,
+        "path": "Design/AgentReports/ArchitectureMaturity/am017_match_frame_run2.json",
+        "sha256": "3d65aed47ad8fdf1a6e59aef72aa289e51f450279b30f608af724d62ae706511",
+        "averageFrameMs": 2.716,
+        "p95FrameMs": 4.122
+      },
+      {
+        "run": 3,
+        "path": "Design/AgentReports/ArchitectureMaturity/am017_match_frame_run3.json",
+        "sha256": "e79ebcb2f033d59497678430c296e44cc0b55e806740927f68974e173d8bf933",
+        "averageFrameMs": 2.777,
+        "p95FrameMs": 4.121
+      }
+    ],
+    "publishedJson": {
+      "path": "Design/AgentReports/performance_regression_match_baseline.json",
+      "sha256": "e79ebcb2f033d59497678430c296e44cc0b55e806740927f68974e173d8bf933"
+    },
+    "publishedMarkdown": {
+      "path": "Design/AgentReports/performance_regression_match_baseline.md",
+      "sha256": "022af755973e53dc119a88ce09a63130dee6e8a31efe357b115306c5d9027883"
+    }
+  },
+  "canonicalGc": {
+    "path": "Design/AgentReports/2026-06-11_perf_match-gc-callstack-capture.md",
+    "sha256": "82fde901c3feb51f7e8dcf2abdabb283024064f1c6e33900ff414de510a8d948",
+    "warmupFrames": 180,
+    "measuredFrames": 300,
+    "playerRelevantAllocatedBytes": 262,
+    "playerRelevantAllocatedBytesCeiling": 1024,
+    "totalGcAllocSamples": 646,
+    "totalGcAllocBytes": 34666,
+    "playerRelevantSamples": 10,
+    "excludedSamples": 636,
+    "excludedBytes": 34404,
+    "rawResolvedSamples": 623,
+    "rawResolvedBytes": 34120,
+    "rawUnresolvedSamples": 23,
+    "rawUnresolvedBytes": 546,
+    "classificationValidation": {
+      "logPath": "Design/AgentReports/ArchitectureMaturity/Logs/am017_gc_classification.log.gz",
+      "gzipSha256": "40340365f5fb1eb83f3be06a5ab9aba1c4bc2004e595899a2fd2949b56de3a71",
+      "rawLogSha256": "c4da7a61c33c7c68270713de432f8ce618bf35a22090016191f7a268e2bee2d8",
+      "resultMarker": "[MatchGcAllocationAttributionValidation] result=Passed tests=41",
+      "tests": 41
+    },
+    "result": "Passed"
+  },
+  "laneSummary": {
+    "path": "Design/AgentReports/ArchitectureMaturity/am017_match_performance_lane_summary.json",
+    "sha256": "7f32090f4861d7702135f11f1a28f7537fbe198d32af4065708f94c3482b934d"
+  },
+  "focusedPerformance": {
+    "groundMissile": {
+      "selectionRule": "median-by-average-total-ms-then-p95-total-ms",
+      "selectedRun": 2,
+      "averageTotalMsCeiling": 1.6425,
+      "p95TotalMsCeiling": 1.72,
+      "runs": [
+        {"run": 1, "path": "Design/AgentReports/ArchitectureMaturity/am017_ground_missile_run1.json", "sha256": "562a9d9396cdb8494b66fd24075c734a36328ae5132f3410fd0a10f33b6217d3", "logPath": "Design/AgentReports/ArchitectureMaturity/Logs/am017_ground_missile_run1.log.gz", "gzipSha256": "4517abff292f61d8446235ad4df52019db15aad8cb1212fe88858769f1332dc4", "rawLogSha256": "eeb1c452c5fa24f27832b42c462d209d64139ea474e7228741745c4a7ae836a1", "resultMarker": "[GroundMissileAttackPerformanceValidation] result=Passed"},
+        {"run": 2, "path": "Design/AgentReports/ArchitectureMaturity/am017_ground_missile_run2.json", "sha256": "744e47a15f8f565240d6a9a7b1965139c6a0f2bfeb371bce2e89b0aeece07d0d", "logPath": "Design/AgentReports/ArchitectureMaturity/Logs/am017_ground_missile_run2.log.gz", "gzipSha256": "a754bd76ed2aed0ee5b5b3ce267fa6e2d3311838431af4fc409c5e37e870a8b0", "rawLogSha256": "f1f23de3a4c0c200bd9cb6efb06f1fa11e9dad8407c9f03aa81b27acfcb3df24", "resultMarker": "[GroundMissileAttackPerformanceValidation] result=Passed"},
+        {"run": 3, "path": "Design/AgentReports/ArchitectureMaturity/am017_ground_missile_run3.json", "sha256": "e8f64eae6e339ee359f614e8d014afd7c362d386081164884b283eccc626f8c3", "logPath": "Design/AgentReports/ArchitectureMaturity/Logs/am017_ground_missile_run3.log.gz", "gzipSha256": "ae45c3a09c0d6213222692096468308c87902b35764c32dc4b568cd8916ff82e", "rawLogSha256": "5b0e9062cbe60117ebe0742db97a2157b8c8c1bfde929623d944bb0453f4c182", "resultMarker": "[GroundMissileAttackPerformanceValidation] result=Passed"}
+      ]
+    },
+    "transportBoarding": {
+      "path": "Design/AgentReports/ArchitectureMaturity/am017_transport_boarding.json",
+      "sha256": "8b5804d174a070fae989ccfea3166141e622120393d1415ce4aadf9bace0317a",
+      "logPath": "Design/AgentReports/ArchitectureMaturity/Logs/am017_transport_performance.log.gz",
+      "gzipSha256": "e6ca7424a165932436ecfad4f728e75f139838e86b767f01f1a9dfe7ccc4cf91",
+      "rawLogSha256": "0153aa606e16a1126e8175f6851524b4dd7daef70ee63b18dd9a7e833a6539dc",
+      "resultMarker": "[TransportBoardingPerformanceValidation] result=Passed",
+      "averageTotalMsCeiling": 1.75,
+      "p95TotalMsCeiling": 1.88
+    },
+    "resourceExchangeBackend": {
+      "path": "Design/AgentReports/ArchitectureMaturity/am017_resource_exchange_backend.json",
+      "sha256": "440c2c548f9d990171d8a07a79b1b1048a1691dba518974ef59c05ef4e1ee206",
+      "logPath": "Design/AgentReports/ArchitectureMaturity/Logs/am017_resource_exchange_backend_performance.log.gz",
+      "gzipSha256": "85d66ead98bb0ec503cd3ef3c44b3d75a99a9565c7e3606a32306b721e4ca015",
+      "rawLogSha256": "057534a2bfc36888538b5500727d51dcc045c3c23d9b0528dfe17947add43fdc",
+      "resultMarker": "[ResourceExchangeSteadyStatePerformanceValidation] result=Passed tests=1",
+      "p95MsCeiling": 10.0,
+      "p99MsCeiling": 20.0
+    },
+    "resourceExchangeGc": {
+      "path": "Design/AgentReports/ArchitectureMaturity/am017_resource_exchange_gc.json",
+      "sha256": "ba5e961ccab42449fb669041b8bddac9b32fe9680bd012797fc86d43b0beb2aa",
+      "logPath": "Design/AgentReports/ArchitectureMaturity/Logs/am017_resource_exchange_gc.log.gz",
+      "gzipSha256": "da7a82c733fa4830db5da375a244021fe30c33ade0054adca879c06c4f2ff9b0",
+      "rawLogSha256": "f79e0d065a7ebe3f038c6086f2042e13144c3d816c821c043d9b806ee9e202a0",
+      "resultMarker": "[ResourceExchangeGcAllocationValidation] result=Passed tests=2"
+    },
+    "resourceExchangeShellUnchanged": {
+      "path": "Design/AgentReports/ArchitectureMaturity/am017_resource_exchange_shell_unchanged.json",
+      "sha256": "8712794ce2a363388313f97fdf8192a4202de4ad44e99174d97a609c60772c46",
+      "logPath": "Design/AgentReports/ArchitectureMaturity/Logs/am017_resource_exchange_shell_performance.log.gz",
+      "gzipSha256": "5fdbfb20b0771476602b72336bbdc8321be312e959270de1133abcb5d0cee112",
+      "rawLogSha256": "a61fb48a633cdbf3c294d40def65a1ec12aecf2f5d2a22f5a7684f8eaca5ad3d",
+      "resultMarker": "[ResourceExchangeShellPopupPerformanceValidation] result=Passed tests=2",
+      "p95MsCeiling": 20.0
+    },
+    "resourceExchangeShellTransitions": {
+      "path": "Design/AgentReports/ArchitectureMaturity/am017_resource_exchange_shell_transitions.json",
+      "sha256": "079d931a9f95f3370ef01c9e2deada420e437c8a93e9d210fd688771c8695191",
+      "logPath": "Design/AgentReports/ArchitectureMaturity/Logs/am017_resource_exchange_shell_performance.log.gz",
+      "gzipSha256": "5fdbfb20b0771476602b72336bbdc8321be312e959270de1133abcb5d0cee112",
+      "rawLogSha256": "a61fb48a633cdbf3c294d40def65a1ec12aecf2f5d2a22f5a7684f8eaca5ad3d",
+      "resultMarker": "[ResourceExchangeShellPopupPerformanceValidation] result=Passed tests=2",
+      "openP95MsCeiling": 20.0,
+      "closeP95MsCeiling": 20.0
+    },
+    "worldScopedQueryCache": {
+      "path": "Design/AgentReports/ArchitectureMaturity/am017_query_cache_performance.json",
+      "sha256": "fcd334f362fd0180d6c433e347f3dc99cb2065b19ab0e56d849bbd48114d89e2",
+      "logPath": "Design/AgentReports/ArchitectureMaturity/Logs/am017_query_cache_performance.log.gz",
+      "gzipSha256": "24081e7645b3bd7b9ddf9714283fbf0dc8d84f300758d28cd2a68ea0754be391",
+      "rawLogSha256": "7bbaa7ca2fcbce3de85b96a64c0ddd650e02ada315373eed46f62c35849cb328",
+      "resultMarker": "[WorldScopedComponentQueryCachePerformanceValidation] result=Passed tests=1 combinations=2 phases=4"
+    }
+  },
+  "governedSources": [
+    {"path": "Assets/Game/Scripts/Editor/MatchRuntimeShellSmokeValidation.cs", "sha256": "cccf6eedf3f8204d4a5b2a4f186fe48871f24e3780ff59b457af394b0c672af5", "captureContext": "canonical"},
+    {"path": "Assets/Game/Scripts/Editor/MatchGcAllocationCallstackCapture.cs", "sha256": "d58d7fe81bf924862bdca784907e1513575f909159a37fdf719aaf02ce003bad", "captureContext": "canonical"},
+    {"path": "Assets/Tests/Editor/GroundMissileAttackPerformanceValidation.cs", "sha256": "e8a1a011f7c8c2a46ec1ca0dd4db76f88eae9a5df42acb1e801be0d778c8cd7b", "captureContext": "focused"},
+    {"path": "Assets/Tests/Editor/TransportBoardingPerformanceValidation.cs", "sha256": "a3b6ea8bba5ae0cb3cf5b69bd17cd5823a55bc203cf62a25e12d2b2eb4977039", "captureContext": "focused"},
+    {"path": "Assets/Tests/Editor/ResourceExchangeShellPopupPerformanceValidation.cs", "sha256": "18bf91574e794d49a86e08fc3939a2d7db874cc2f832c141fc78e0222c204928", "captureContext": "focused"},
+    {"path": "Assets/Tests/Editor/WorldScopedComponentQueryCachePerformanceValidation.cs", "sha256": "ca01b8ae4bda86d55c9defbaf3a47e6bf363ec04c0552ccfb5115f5babb26590", "captureContext": "focused"},
+    {"path": "Assets/Tests/Editor/ResourceExchangeSteadyStatePerformanceValidation.cs", "sha256": "442c56d69d681e4213dcaf7b388c61dccbaac9a39c6ee2396398dbefafb6d7e9", "captureContext": "focused"},
+    {"path": "Assets/Tests/Editor/ResourceExchangeGcAllocationValidationTests.cs", "sha256": "f124be956cb27da157e8528914a42baaf4f7b040ed04ee1f642ccfb70817f784", "captureContext": "focused"},
+    {"path": "Assets/Tests/Editor/MatchGcAllocationCallstackCaptureTests.cs", "sha256": "54a25ebf21701984faddb973aad8915da1c27a53c2557da6b91409f88c4b8a31", "captureContext": "canonical"},
+    {"path": "Assets/Tests/Editor/UnitTransportBoardingCapacityRulesTests.cs", "sha256": "cc287c631535d1bc8ab7104c64bcfb46f72f20e27bfc6e79f315e2de1b5d8c9c", "captureContext": "focused"},
+    {"path": "Assets/Tests/Editor/UnitTransportValidationTests.cs", "sha256": "fb857bbc6a6c191f2ec459b0cdcee0ce6bd4a853c2b02585dbc1c61c22b05f67", "captureContext": "focused"},
+    {"path": "Assets/Tests/Editor/WorldScopedComponentQueryCacheTests.cs", "sha256": "dbcb56050a1122df7e9c313324e548eeee70460b50f17631f650deb77ea24170", "captureContext": "focused"},
+    {"path": "Assets/Tests/Editor/FactionResourceCompositionSystemHelperTests.cs", "sha256": "51ee08d63be2361d9c1f960d16a1dec49259ecf3b0d13aa51b05f47813547fac", "captureContext": "focused"},
+    {"path": "Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs", "sha256": "07166799e524fb4919fda694e874d986d16909fbffd281b536f430df1b5c9311", "captureContext": "focused"},
+    {"path": "Assets/Tests/Editor/ResourceExchangeHeaderRoutingTests.cs", "sha256": "17014df7fc6d1140162b6a82e0a813a5910dcb5878d842062ae21ae74a0e5e25", "captureContext": "focused"},
+    {"path": "Assets/Tests/Editor/UIShellCurrentContentLoadTests.cs", "sha256": "6f0441cc12bd091737f9851099fd6517ce2f1ad478eafed10dde2f1824953db6", "captureContext": "focused"},
+    {"path": "Assets/Tests/Editor/SettingsPopupValidationTests.cs", "sha256": "a2a552c34808c5e8b2affa6d585282754a6fa0dbf6940b8bcaba2c1324f9444d", "captureContext": "focused"},
+    {"path": "Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs", "sha256": "f41bb1f91b55f3aaee0a6c5cfe99e55a51a9c546815cde60ee435490aa45201d", "captureContext": "focused"},
+    {"path": "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs", "sha256": "89eb3719a6fc681870516e9e35260f8f86e319a905663652b11ee50050b6ac97", "captureContext": "focused"}
+  ],
+  "behaviorValidation": [
+    {"suite": "transport-capacity-rules", "tests": 6, "failures": 0, "logPath": "Design/AgentReports/ArchitectureMaturity/Logs/am017_transport_capacity_rules.log.gz", "gzipSha256": "c4f43c67710a23c33c5e6b3a821c56dc2b1b5a131d88fa7fcc27cb80ea3eae3a", "rawLogSha256": "9ce9fe84a8b3f34019dd28b1459e0f8e6299cbbd622af471b39661d59ca8709b", "resultMarker": "[TransportBoardingCapacityRules] result=Passed tests=6"},
+    {"suite": "transport-behavior", "tests": 88, "failures": 0, "logPath": "Design/AgentReports/ArchitectureMaturity/Logs/am017_transport_behavior.log.gz", "gzipSha256": "6dcb86cb72a90c8826e546ac13b1f5e02c571cdf8077d8e0e28069c1be419e6b", "rawLogSha256": "a41bddd5e4b4fe8e7fe577a5f4f39c5a43da3dbced5b7c725e6b7660bf166b3d", "resultMarker": "[UnitTransportValidation] result=Passed tests=88"},
+    {"suite": "query-cache-behavior", "tests": 3, "failures": 0, "logPath": "Design/AgentReports/ArchitectureMaturity/Logs/am017_query_cache_behavior.log.gz", "gzipSha256": "717ea85495ced55e7397d20781f2914353792aa376ab476d423d904918a72298", "rawLogSha256": "a4f766c022115c0c396a5f315d7a1077425f3bc34c22a31fc347b5f9855a2f72", "resultMarker": "[WorldScopedComponentQueryCache] result=Passed tests=3"},
+    {"suite": "faction-resource", "tests": 13, "failures": 0, "logPath": "Design/AgentReports/ArchitectureMaturity/Logs/am017_faction_resource.log.gz", "gzipSha256": "4efa3cf370850c2150be2b778180a7048179b1be3e09bbb5a52dc0566e04234e", "rawLogSha256": "d0e37485452e82cf0ad3d9681b0913c1a77f7c61e17a278630c85516a483ffea", "resultMarker": "[FactionResourceFocusedValidation] result=Passed tests=13"},
+    {"suite": "building-resource", "tests": 52, "failures": 0, "logPath": "Design/AgentReports/ArchitectureMaturity/Logs/am017_building_resource.log.gz", "gzipSha256": "de23d6ec06901d6e9d857baed667906966df7ee7e15b6897d0245a4987d10c1c", "rawLogSha256": "dccdb37620ce8311c0096b79f7c4aa46e837997b137b0033f30e99b78c4c828f", "resultMarker": "[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=52"},
+    {"suite": "resource-exchange", "tests": 10, "failures": 0, "logPath": "Design/AgentReports/ArchitectureMaturity/Logs/am017_resource_exchange.log.gz", "gzipSha256": "67bfd955bd4866981bb2457dd0dca9c84a136b3033eb1f911434eb008653df8c", "rawLogSha256": "d7515306e4ae981de853c2b2c19a257f36ba7e6cfce4c8509ac17d55924b02c3", "resultMarker": "[ResourceExchangeHeaderRoutingValidation] result=Passed tests=10"},
+    {"suite": "ui-shell", "tests": 14, "failures": 0, "logPath": "Design/AgentReports/ArchitectureMaturity/Logs/am017_ui_shell.log.gz", "gzipSha256": "20dedf0527bcedbd63bdc1747f1344eb8bcbe4b51e5a07d82cf49732349f8ee4", "rawLogSha256": "5d33208820878e366a8087f8b895dde0fc4b4ec4325ee19b81340a84472a431d", "resultMarker": "[UIShellCurrentContentLoadValidation] result=Passed tests=14"},
+    {"suite": "settings", "tests": 8, "failures": 0, "logPath": "Design/AgentReports/ArchitectureMaturity/Logs/am017_settings.log.gz", "gzipSha256": "e409a3d4959f3727838a34631a7879d9b518ec1c34d2d1a5066287c10702626d", "rawLogSha256": "5afc45481395526234620c4d6d40b49386d871561f47c936b362792074128d90", "resultMarker": "[SettingsPopupValidation] result=Passed tests=8"},
+    {"suite": "source-growth", "tests": 17, "failures": 0, "logPath": "Design/AgentReports/ArchitectureMaturity/Logs/am017_source_growth.log.gz", "gzipSha256": "8d4c9aed1d376f87a1b8bdcbd8d2dbd91702f1f2f45d6f9956c6e0382d5303d5", "rawLogSha256": "7c1575ecaf113c09975b295f2aa431910afe816367bc5c68872ec6dc59caf846", "resultMarker": "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17"},
+    {"suite": "broad-architecture", "tests": 1, "failures": 0, "logPath": "Design/AgentReports/ArchitectureMaturity/Logs/am017_broad_architecture.log.gz", "gzipSha256": "2705d6293de30c69f617b2f9e4c2d3966495cc4af67aff0add594076b7247d88", "rawLogSha256": "31cf5ce4d38017761390034de032fe999c840e97867b03ed9f7e63fd768e61fe", "resultMarker": "[ScriptBroadShellValidation] result=Passed tests=1"}
+  ],
+  "ownedPaths": [
+    "Assets/Game/Scripts/Editor/MatchGcAllocationCallstackCapture.cs",
+    "Assets/Game/Scripts/Editor/MatchRuntimeShellSmokeValidation.cs",
+    "Assets/Tests/Editor/ResourceExchangeShellPopupPerformanceValidation.cs",
+    "Assets/Tests/Editor/ResourceExchangeShellPopupPerformanceValidation.cs.meta",
+    "Assets/Tests/Editor/TransportBoardingPerformanceValidation.cs",
+    "Assets/Tests/Editor/WorldScopedComponentQueryCachePerformanceValidation.cs",
+    "Assets/Tests/Editor/WorldScopedComponentQueryCachePerformanceValidation.cs.meta",
+    "Design/AgentReports/2026-06-11_perf_match-gc-callstack-capture.md",
+    "Design/AgentReports/ArchitectureMaturity/Logs/am017_broad_architecture.log.gz",
+    "Design/AgentReports/ArchitectureMaturity/Logs/am017_building_resource.log.gz",
+    "Design/AgentReports/ArchitectureMaturity/Logs/am017_faction_resource.log.gz",
+    "Design/AgentReports/ArchitectureMaturity/Logs/am017_gc_classification.log.gz",
+    "Design/AgentReports/ArchitectureMaturity/Logs/am017_ground_missile_run1.log.gz",
+    "Design/AgentReports/ArchitectureMaturity/Logs/am017_ground_missile_run2.log.gz",
+    "Design/AgentReports/ArchitectureMaturity/Logs/am017_ground_missile_run3.log.gz",
+    "Design/AgentReports/ArchitectureMaturity/Logs/am017_query_cache_behavior.log.gz",
+    "Design/AgentReports/ArchitectureMaturity/Logs/am017_query_cache_performance.log.gz",
+    "Design/AgentReports/ArchitectureMaturity/Logs/am017_resource_exchange.log.gz",
+    "Design/AgentReports/ArchitectureMaturity/Logs/am017_resource_exchange_backend_performance.log.gz",
+    "Design/AgentReports/ArchitectureMaturity/Logs/am017_resource_exchange_gc.log.gz",
+    "Design/AgentReports/ArchitectureMaturity/Logs/am017_resource_exchange_shell_performance.log.gz",
+    "Design/AgentReports/ArchitectureMaturity/Logs/am017_settings.log.gz",
+    "Design/AgentReports/ArchitectureMaturity/Logs/am017_source_growth.log.gz",
+    "Design/AgentReports/ArchitectureMaturity/Logs/am017_transport_behavior.log.gz",
+    "Design/AgentReports/ArchitectureMaturity/Logs/am017_transport_capacity_rules.log.gz",
+    "Design/AgentReports/ArchitectureMaturity/Logs/am017_transport_performance.log.gz",
+    "Design/AgentReports/ArchitectureMaturity/Logs/am017_ui_shell.log.gz",
+    "Design/AgentReports/ArchitectureMaturity/am017_ground_missile_run1.json",
+    "Design/AgentReports/ArchitectureMaturity/am017_ground_missile_run2.json",
+    "Design/AgentReports/ArchitectureMaturity/am017_ground_missile_run3.json",
+    "Design/AgentReports/ArchitectureMaturity/am017_focused_capture_manifest.json",
+    "Design/AgentReports/ArchitectureMaturity/am017_match_frame_run1.json",
+    "Design/AgentReports/ArchitectureMaturity/am017_match_frame_run2.json",
+    "Design/AgentReports/ArchitectureMaturity/am017_match_frame_run3.json",
+    "Design/AgentReports/ArchitectureMaturity/am017_match_performance_lane_summary.json",
+    "Design/AgentReports/ArchitectureMaturity/am017_phase1_exit_evidence.json",
+    "Design/AgentReports/ArchitectureMaturity/am017_query_cache_performance.json",
+    "Design/AgentReports/ArchitectureMaturity/am017_resource_exchange_backend.json",
+    "Design/AgentReports/ArchitectureMaturity/am017_resource_exchange_gc.json",
+    "Design/AgentReports/ArchitectureMaturity/am017_resource_exchange_shell_transitions.json",
+    "Design/AgentReports/ArchitectureMaturity/am017_resource_exchange_shell_unchanged.json",
+    "Design/AgentReports/ArchitectureMaturity/am017_transport_boarding.json",
+    "Design/AgentReports/ArchitectureMaturity/phase1_exit_capture_policy.json",
+    "Design/AgentReports/ArchitectureMaturity/selected_owner_responsibility_maps.json",
+    "Design/AgentReports/ArchitectureMaturity/selected_owner_responsibility_maps.md",
+    "Design/AgentReports/performance_regression_match_baseline.json",
+    "Design/AgentReports/performance_regression_match_baseline.md",
+    "Design/Architecture/post_hardening_architecture_maturity_tracker.md",
+    "Tools/CI/tests/test_architecture_phase1_exit_capture_policy.py",
+    "Tools/CI/tests/test_architecture_phase1_exit_evidence.py"
+  ],
+  "validation": {
+    "compilerErrors": 0,
+    "canonicalFrameRuns": 3,
+    "canonicalGcRuns": 1,
+    "focusedPerformanceSuites": 7,
+    "behaviorTests": 212,
+    "behaviorFailures": 0,
+    "gcClassificationTests": 41,
+    "unityAcceptanceTests": 253
+  }
+}

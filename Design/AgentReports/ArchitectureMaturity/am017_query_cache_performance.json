@@ -1,0 +1,49 @@
+{
+  "source": "WorldScopedComponentQueryCachePerformanceValidation.RunBatchValidation",
+  "captureCommit": "9d4feba92e19945d96410b25250be09ffefd041b",
+  "result": "Passed",
+  "tests": 1,
+  "combinations": 2,
+  "phases": 4,
+  "warmupOperationsPerPhase": 180,
+  "measuredOperationsPerPhase": 300,
+  "allocatedBytesCeiling": 0,
+  "measurements": [
+    {
+      "consumer": "FactionResourceCompositionSystemHelper",
+      "component": "BuildingResourceStorageComponent",
+      "access": "ReadWrite",
+      "phase": "initial-world",
+      "averageNs": 37.667,
+      "p95Ns": 100,
+      "allocatedBytes": 0
+    },
+    {
+      "consumer": "FactionResourceCompositionSystemHelper",
+      "component": "BuildingResourceStorageComponent",
+      "access": "ReadWrite",
+      "phase": "rebound-world",
+      "averageNs": 32.333,
+      "p95Ns": 100,
+      "allocatedBytes": 0
+    },
+    {
+      "consumer": "BuildingResourceHaulerBridgeCompositionSystemHelper",
+      "component": "UnitMoveOrderQueueComponent",
+      "access": "ReadOnly",
+      "phase": "initial-world",
+      "averageNs": 36.333,
+      "p95Ns": 100,
+      "allocatedBytes": 0
+    },
+    {
+      "consumer": "BuildingResourceHaulerBridgeCompositionSystemHelper",
+      "component": "UnitMoveOrderQueueComponent",
+      "access": "ReadOnly",
+      "phase": "rebound-world",
+      "averageNs": 30,
+      "p95Ns": 100,
+      "allocatedBytes": 0
+    }
+  ]
+}

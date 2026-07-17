@@ -1,0 +1,13 @@
+{
+  "source": "ResourceExchangeGcAllocationValidation.RunBatchValidation",
+  "captureCommit": "9d4feba92e19945d96410b25250be09ffefd041b",
+  "result": "Passed",
+  "tests": 2,
+  "warmupFrames": 64,
+  "measuredFrames": 512,
+  "allocatedBytesCeiling": 0,
+  "queueTickAndValidationAllocatedBytes": 0,
+  "productionUpdateAllocatedBytes": 0,
+  "measurementWindowAllocatedBytes": 0,
+  "harnessAllocatedBytes": 0
+}

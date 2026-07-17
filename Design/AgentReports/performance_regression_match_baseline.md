@@ -2,20 +2,24 @@
 
 Source: `Game.Editor.MatchRuntimeShellSmokeValidation.RunPerformanceRegressionBaseline`.
 
-- Exact commit: `9a0aa14252e6559680328e520d26c16bfc7b444e`
+- Exact commit: `cd6e764bd878c6d7cedcbaa3c5034f0f105825b6`
 - Environment identity SHA-256: `1750156ad389d4f28a392531d19339a96140da898d5c2dfd1920c38d6486239e`
 - Dirty at capture start: `false`
+- Quality: `Mobile` (index `1`)
+- Resolution: `640x480`
+- Instrumentation: `frameSampler=stopwatch profilerEnabled=false deepProfiling=false instrumentationOffControl=not-required-stopwatch-only`
+- Target frame rate: `-1`; vSync count: `0`
 
 | Metric | Value |
 |---|---:|
 | Observation seconds | 4.00 |
-| Frame count | 1426 |
-| Average frame ms | 2.81 |
-| P95 frame ms | 4.11 |
+| Frame count | 1442 |
+| Average frame ms | 2.78 |
+| P95 frame ms | 4.12 |
 | Editor P95 frame budget ms | 20.00 |
 | Editor P95 frame budget passed | yes |
-| P99 frame ms | 4.62 |
-| Max frame ms | 14.43 |
+| P99 frame ms | 4.50 |
+| Max frame ms | 14.32 |
 | Current-thread allocated bytes | 0 |
 | Current-thread allocation budget bytes | 0 |
 | Units | 733 |

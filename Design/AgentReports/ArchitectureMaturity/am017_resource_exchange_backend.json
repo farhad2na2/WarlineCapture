@@ -1,0 +1,13 @@
+{
+  "warmupFrames": 64,
+  "measuredFrames": 240,
+  "activeQueueItems": 4,
+  "visualRequestCount": 12,
+  "vfxMarkerCount": 12,
+  "totalMs": 3.208,
+  "averageMs": 0.013,
+  "p95Ms": 0.013,
+  "p99Ms": 0.014,
+  "maxMs": 0.015,
+  "allocatedBytesCurrentThread": 0
+}

@@ -206,7 +206,10 @@ namespace Game.Configs
                 !TryValidateRequiredReference(vehiclePlacementsReference, "vehicle placements", out error))
                 return false;
 
-            if (optionalHeavyMetadataReference != null && !optionalHeavyMetadataReference.RuntimeKeyIsValid())
+            if (optionalHeavyMetadataReference != null &&
+                !string.IsNullOrEmpty(optionalHeavyMetadataReference.AssetGUID) &&
+                (!IsValidAssetGuid(optionalHeavyMetadataReference.AssetGUID) ||
+                 !optionalHeavyMetadataReference.RuntimeKeyIsValid()))
             {
                 error = "Optional heavy metadata reference is present but invalid.";
                 return false;
@@ -221,13 +224,31 @@ namespace Game.Configs
             string role,
             out string error)
         {
-            if (reference == null || !reference.RuntimeKeyIsValid())
+            if (reference == null ||
+                !IsValidAssetGuid(reference.AssetGUID) ||
+                !reference.RuntimeKeyIsValid())
             {
                 error = $"Operation-map {role} reference is missing or invalid.";
                 return false;
             }
 
             error = null;
+            return true;
+        }
+
+        private static bool IsValidAssetGuid(string value)
+        {
+            if (value == null || value.Length != 32)
+                return false;
+
+            for (int index = 0; index < value.Length; index++)
+            {
+                char character = value[index];
+                if (!((character >= '0' && character <= '9') ||
+                      (character >= 'a' && character <= 'f')))
+                    return false;
+            }
+
             return true;
         }
 

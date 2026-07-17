@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Game.Configs;
 using Game.Rendering;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
@@ -62,31 +63,63 @@ namespace Game.Editor
                 AddressPrefix + "definition");
             SetOperationMapLabels(settings, definitionEntry, DefinitionRoleLabel, null);
 
+            AddressableAssetEntry sourceSceneEntry = MoveEntry(
+                settings,
+                core,
+                SourceScenePath,
+                AddressPrefix + "source-scene");
             SetOperationMapLabels(
                 settings,
-                MoveEntry(settings, core, SourceScenePath, AddressPrefix + "source-scene"),
+                sourceSceneEntry,
                 SourceSceneRoleLabel,
                 null);
+            AddressableAssetEntry mapSurfaceEntry = MoveEntry(
+                settings,
+                core,
+                MapSurfacePath,
+                AddressPrefix + "map-surface");
             SetOperationMapLabels(
                 settings,
-                MoveEntry(settings, core, MapSurfacePath, AddressPrefix + "map-surface"),
+                mapSurfaceEntry,
                 MetadataRoleLabel,
                 null);
+            AddressableAssetEntry manifestEntry = MoveEntry(
+                settings,
+                core,
+                ManifestPath,
+                AddressPrefix + "static-manifest");
             SetOperationMapLabels(
                 settings,
-                MoveEntry(settings, core, ManifestPath, AddressPrefix + "static-manifest"),
+                manifestEntry,
                 MetadataRoleLabel,
                 null);
+            AddressableAssetEntry buildingPlacementsEntry = MoveEntry(
+                settings,
+                core,
+                BuildingPlacementsPath,
+                AddressPrefix + "building-placements");
             SetOperationMapLabels(
                 settings,
-                MoveEntry(settings, core, BuildingPlacementsPath, AddressPrefix + "building-placements"),
+                buildingPlacementsEntry,
                 MetadataRoleLabel,
                 null);
+            AddressableAssetEntry vehiclePlacementsEntry = MoveEntry(
+                settings,
+                core,
+                VehiclePlacementsPath,
+                AddressPrefix + "vehicle-placements");
             SetOperationMapLabels(
                 settings,
-                MoveEntry(settings, core, VehiclePlacementsPath, AddressPrefix + "vehicle-placements"),
+                vehiclePlacementsEntry,
                 MetadataRoleLabel,
                 null);
+
+            AssignDefinitionReferences(
+                sourceSceneEntry,
+                mapSurfaceEntry,
+                manifestEntry,
+                buildingPlacementsEntry,
+                vehiclePlacementsEntry);
 
             StaticMapPresentationManifest manifest =
                 AssetDatabase.LoadAssetAtPath<StaticMapPresentationManifest>(ManifestPath);
@@ -109,6 +142,41 @@ namespace Game.Editor
 
             AssetDatabase.SaveAssets();
             Debug.Log("[OperationMapAddressablesLayoutBuilder] Configured one-map local group topology.");
+        }
+
+        private static void AssignDefinitionReferences(
+            AddressableAssetEntry sourceScene,
+            AddressableAssetEntry mapSurface,
+            AddressableAssetEntry manifest,
+            AddressableAssetEntry buildingPlacements,
+            AddressableAssetEntry vehiclePlacements)
+        {
+            OperationMapDefinition definition =
+                AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(DefinitionPath);
+            if (definition == null)
+                throw new InvalidOperationException($"Operation-map definition is missing: {DefinitionPath}");
+
+            SerializedObject serializedDefinition = new(definition);
+            SetAssetReferenceGuid(serializedDefinition, "sourceSceneReference", sourceScene.guid);
+            SetAssetReferenceGuid(serializedDefinition, "mapSurfaceDataReference", mapSurface.guid);
+            SetAssetReferenceGuid(serializedDefinition, "staticPresentationManifestReference", manifest.guid);
+            SetAssetReferenceGuid(serializedDefinition, "buildingPlacementsReference", buildingPlacements.guid);
+            SetAssetReferenceGuid(serializedDefinition, "vehiclePlacementsReference", vehiclePlacements.guid);
+            if (serializedDefinition.ApplyModifiedPropertiesWithoutUndo())
+                EditorUtility.SetDirty(definition);
+        }
+
+        private static void SetAssetReferenceGuid(
+            SerializedObject serializedDefinition,
+            string fieldName,
+            string guid)
+        {
+            SerializedProperty reference = serializedDefinition.FindProperty(fieldName);
+            SerializedProperty assetGuid = reference?.FindPropertyRelative("m_AssetGUID");
+            if (assetGuid == null)
+                throw new InvalidOperationException($"Operation-map definition field is missing: {fieldName}");
+
+            assetGuid.stringValue = guid;
         }
 
         private static AddressableAssetGroup EnsureGroup(

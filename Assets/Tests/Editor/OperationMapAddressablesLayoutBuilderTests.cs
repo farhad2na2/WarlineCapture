@@ -1,9 +1,12 @@
+using Game.Configs;
 using Game.Editor;
 using System.Collections.Generic;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings;
 using UnityEditor.AddressableAssets.Settings.GroupSchemas;
+using UnityEngine.AddressableAssets;
 
 public sealed class OperationMapAddressablesLayoutBuilderTests
 {
@@ -76,6 +79,28 @@ public sealed class OperationMapAddressablesLayoutBuilderTests
         }
     }
 
+    [Test]
+    public void CurrentDefinition_ReferencesConfiguredHeavyAssetsByGuid()
+    {
+        OperationMapDefinition definition = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
+            OperationMapAddressablesLayoutBuilder.DefinitionPath);
+        Assert.That(definition, Is.Not.Null);
+
+        AssertReference(definition.SourceSceneReference, OperationMapAddressablesLayoutBuilder.SourceScenePath);
+        AssertReference(definition.MapSurfaceDataReference, OperationMapAddressablesLayoutBuilder.MapSurfacePath);
+        AssertReference(
+            definition.StaticPresentationManifestReference,
+            OperationMapAddressablesLayoutBuilder.ManifestPath);
+        AssertReference(
+            definition.BuildingPlacementsReference,
+            OperationMapAddressablesLayoutBuilder.BuildingPlacementsPath);
+        AssertReference(
+            definition.VehiclePlacementsReference,
+            OperationMapAddressablesLayoutBuilder.VehiclePlacementsPath);
+        Assert.That(definition.OptionalHeavyMetadataReference.RuntimeKeyIsValid(), Is.False);
+        Assert.That(definition.MinimapRasterReference.RuntimeKeyIsValid(), Is.False);
+    }
+
     private static void AssertOperationMapLabels(
         AddressableAssetEntry entry,
         string expectedRole,
@@ -130,5 +155,11 @@ public sealed class OperationMapAddressablesLayoutBuilderTests
         Assert.That(entry, Is.Not.Null, assetPath);
         Assert.That(entry.parentGroup, Is.SameAs(expectedGroup));
         Assert.That(entry.address, Is.EqualTo(expectedAddress));
+    }
+
+    private static void AssertReference(AssetReference reference, string expectedPath)
+    {
+        Assert.That(reference, Is.Not.Null, expectedPath);
+        Assert.That(reference.AssetGUID, Is.EqualTo(AssetDatabase.AssetPathToGUID(expectedPath)));
     }
 }

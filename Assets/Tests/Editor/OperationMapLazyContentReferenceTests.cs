@@ -58,12 +58,28 @@ public sealed class OperationMapLazyContentReferenceTests
     public void LocalContentReferences_InvalidOptionalMetadata_FailsClosed()
     {
         OperationMapDefinition definition = CreateDefinitionWithValidReferences();
-        Set(definition, "optionalHeavyMetadataReference", new AssetReference(string.Empty));
+        Set(definition, "optionalHeavyMetadataReference", new AssetReference("invalid"));
 
         try
         {
             Assert.That(definition.TryValidateLocalContentReferences(out string error), Is.False);
             StringAssert.Contains("Optional heavy metadata", error);
+        }
+        finally
+        {
+            Object.DestroyImmediate(definition);
+        }
+    }
+
+    [Test]
+    public void LocalContentReferences_EmptyOptionalMetadata_IsAllowed()
+    {
+        OperationMapDefinition definition = CreateDefinitionWithValidReferences();
+        Set(definition, "optionalHeavyMetadataReference", new AssetReference(string.Empty));
+
+        try
+        {
+            Assert.That(definition.TryValidateLocalContentReferences(out string error), Is.True, error);
         }
         finally
         {

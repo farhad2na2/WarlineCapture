@@ -806,6 +806,7 @@ Exit criteria:
 - [x] Create one local Core group per approved operation map using stable map-pack identity and local Build/Load paths. See `../AgentReports/2026-07-17_operation_map_local_addressables_group_topology.md`.
 - [x] Create one local Presentation group per approved operation map using stable map-pack identity and local Build/Load paths. See `../AgentReports/2026-07-17_operation_map_local_addressables_group_topology.md`.
 - [ ] Assign and validate every required stable address without using direct scene paths in gameplay/composition policy.
+  - Progress: source scene, map surface, static manifest, and compatibility placement addresses are now written back as GUID-only lazy definition references. The row remains open pending the real map-owned minimap raster and strict complete-package validation. See `../AgentReports/2026-07-17_operation_map_definition_address_binding.md`.
 - [x] Assign and validate exactly one map-pack label and one role label per operation-map entry. See `../AgentReports/2026-07-17_operation_map_local_addresses_labels_partitions.md`.
 - [x] Partition presentation chunk scenes by deterministic region labels, targeting 16 to 32 chunks per bundle pending measured acceptance. Current deterministic five-by-five regions cap at 25 chunks; see `../AgentReports/2026-07-17_operation_map_local_addresses_labels_partitions.md`.
 - [x] Configure LZ4, CRC/cache policy, hash-derived bundle naming, and explicit content build settings for operation-map groups. See `../AgentReports/2026-07-17_operation_map_addressables_layout_validator.md`.

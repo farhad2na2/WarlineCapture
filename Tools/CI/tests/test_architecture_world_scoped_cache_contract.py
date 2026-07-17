@@ -74,7 +74,8 @@ class ArchitectureWorldScopedCacheContractTests(unittest.TestCase):
         performance = PERFORMANCE_TEST_PATH.read_text(encoding="utf-8")
         self.assertIn("SingletonLookupPaths_ReuseWithZeroRecurringManagedAllocation", performance)
         self.assertIn("singleton lookup must allocate zero recurring managed bytes", performance)
-        self.assertIn("result=Passed tests=2", performance)
+        self.assertIn("result=Passed tests=4", performance)
+        self.assertIn("GovernedCaches_ReuseAndRebindWithZeroRecurringManagedAllocation", performance)
 
     def test_design_contract_freezes_domain_and_follow_up_boundaries(self) -> None:
         contract = CONTRACT_PATH.read_text(encoding="utf-8")

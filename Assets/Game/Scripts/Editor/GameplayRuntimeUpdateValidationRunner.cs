@@ -45,9 +45,10 @@ namespace Game.Editor
             bool gameplayStartPending = false;
 
             helper.Update(
+                runtimeWorld: null,
                 gameplayInitialized: false,
-                runtimeState,
-                performanceDiagnostics,
+                runtimeGameplayStateSystem: runtimeState,
+                performanceDiagnosticsSystem: performanceDiagnostics,
                 roadBuildRuntimeUpdate: null,
                 buildingRuntimeUpdate: null,
                 buildingRuntimeUpdateContext: default,

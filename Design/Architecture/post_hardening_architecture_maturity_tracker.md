@@ -112,11 +112,11 @@ Release-only categories are reported separately and never averaged into a premat
 | Checklist complete | `19 / 86` (`22.1%`) |
 | Core Architecture Lane | `19 / 68` (`27.9%`); active |
 | Release Certification Lane | `0 / 18` (`0.0%`); deferred |
-| Program state | Core Architecture Lane active; Phase 1 accepted; Phase 2 inventory and World-scoped cache contract accepted; release work inactive |
+| Program state | Core Architecture Lane active; Phase 1 accepted; Phase 2 World-owned runtime-state migration in progress; release work inactive |
 | Current phase | Phase 2 - World Lifecycle And Dependency Hardening |
-| Current task | `AM-020` ready, not yet claimed |
-| Blockers | None for `AM-020`; release-only device, thermal, cold/warm, and sustained certification remain intentionally deferred |
-| Latest validation | AM-019: Unity lifecycle `11 / 11`, cache performance `2 / 2` across six zero-allocation phases, broad architecture `1 / 1`, zero compiler errors, focused Python `24 / 24`, acceptance `4 / 4`, integrated architecture CI `116 / 116`, and independent rereview `PASS` |
+| Current task | `AM-020` in progress; architecture implementation and rereview passed, awaiting separately owned operation-map input-hash refresh |
+| Blockers | Operation-map owner must refresh the placement-ownership probe hashes for `MatchBootstrapCompositionSystemHelper.cs` and `MatchSceneView.cs`, then rerun that probe; architecture scope must not edit the operation-map authority. Release-only certification remains intentionally deferred |
+| Latest validation | AM-020 implementation: Unity behavior `18 / 18`, governed cache/state performance `4 / 4` across ten zero-allocation phases, broad architecture `1 / 1`, serial Runtime/Composition/Editor-test builds with zero compiler errors, integrated architecture CI `121 / 121`, focused architecture guards `14 / 14`, and independent architecture rereview passed with no code finding |
 | Latest evidence | `am019_acceptance_record.json` and `am019_world_scoped_cache_contract_evidence.json`; accepted evidence commit `ea39268476bb4742edb131018c8c073efa4d34cf`, implementation commit `e733d7021eef7fb5b80fe3bd0774e5bcc5aed224` |
 | Core entry baseline | Phase 0 accepted by `AM-001` through `AM-008`; exact-identity assembly and bounded Editor Match evidence are current at `9a0aa14252e6559680328e520d26c16bfc7b444e`; the dashboard required gate is accepted; the entry rating and owned deltas are published in `entry_baseline_report.md` |
 | Release entry review | Deferred until `pre_release_performance_certification_backlog.md` activates |
@@ -234,7 +234,7 @@ Make runtime dependencies explicit and prove that caches and native resources ca
 
 - [x] `AM-018` Inventory production uses of global World lookup, mutable static caches, static event subscriptions, hidden singletons, and runtime object discovery.
 - [x] `AM-019` Define one standard World-bound query/entity cache contract covering positive lookup, negative lookup, invalidation, rebind, disposal, and destroyed-entity recovery.
-- [ ] `AM-020` Move mutable runtime state that crosses World lifecycles into explicit World-owned systems, components, or lifecycle containers where practical.
+- [~] `AM-020` Move mutable runtime state that crosses World lifecycles into explicit World-owned systems, components, or lifecycle containers where practical.
 - [ ] `AM-021` Give every persistent native container, query, event subscription, and presentation root an explicit creation and disposal owner.
 - [ ] `AM-022` Add tests for World destruction/recreation, domain reload, scene unload/reload, missing singleton recovery, and replaced command entities.
 - [ ] `AM-023` Run at least 100 automated Menu-to-Match-to-Menu cycles without duplicate systems, stale entities, retained subscriptions, or presentation-root accumulation.
@@ -712,3 +712,11 @@ The implementing agent works directly on `main`, owns the bounded substantive an
 - Independent review: the first pass rejected stale positive cardinality, enableable ambiguity, missing component-loss/dead-World tests, undefined borrowed-query ownership, and missing historical-evidence ancestry. All findings were fixed; final rereview returned `PASS` with no remaining architecture finding.
 - Exclusions preserved: operation-map and runtime-parity integrations were merged without modification. Live map materials, Build Drawer prefab/editor files, FirstLaunch, audio, UI visual-lock, scenes, packages, and `ProjectSettings` remained outside AM-019 scope and unstaged.
 - Next task: `AM-020` moves mutable runtime state that crosses World lifecycles into explicit World-owned systems, components, or lifecycle containers where practical.
+
+Accepted AM-019 progress snapshot:
+
+| Field | Accepted value |
+|---|---|
+| Checklist complete | `19 / 86` (`22.1%`) |
+| Core Architecture Lane | `19 / 68` (`27.9%`); active |
+| Current task | `AM-020` ready, not yet claimed |

@@ -24,6 +24,7 @@ namespace Game.Runtime
         private EntityQuery _sensorQuery;
         private EntityQuery _targetQuery;
         private EntityQuery _gridQuery;
+        private EntityQuery _warningStateQuery;
         private EntityTypeHandle _entityType;
         private ComponentTypeHandle<ThreatDetector> _detectorType;
         private ComponentTypeHandle<Faction> _factionType;
@@ -54,6 +55,8 @@ namespace Game.Runtime
                 ComponentType.ReadOnly<UnitGrid>(),
                 ComponentType.ReadOnly<UnitHealth>());
             _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
+            _warningStateQuery = state.GetEntityQuery(ComponentType.ReadWrite<ThreatWarningRuntimeStateComponent>());
+            ThreatWarningRuntimeState.EnsureSingleton(state.EntityManager, _warningStateQuery);
             _entityType = state.GetEntityTypeHandle();
             _detectorType = state.GetComponentTypeHandle<ThreatDetector>(true);
             _factionType = state.GetComponentTypeHandle<Faction>(true);
@@ -86,7 +89,7 @@ namespace Game.Runtime
             {
                 _nextScanTime = 0d;
                 ClearPreviousThreats();
-                ThreatWarningRuntimeState.Reset();
+                ThreatWarningRuntimeState.Reset(state.EntityManager, _warningStateQuery);
                 return;
             }
 
@@ -150,6 +153,8 @@ namespace Game.Runtime
                 float etaSeconds = scan.BestGroundEtaSeconds == float.MaxValue ? 0f : scan.BestGroundEtaSeconds;
                 int threatCount = currentGroundThreatList.Length;
                 ThreatWarningRuntimeState.RequestWarning(
+                    state.EntityManager,
+                    _warningStateQuery,
                     ThreatWarningType.Ground,
                     etaSeconds,
                     threatCount);
@@ -165,6 +170,8 @@ namespace Game.Runtime
                 float etaSeconds = scan.BestAirEtaSeconds == float.MaxValue ? 0f : scan.BestAirEtaSeconds;
                 int threatCount = currentAirThreatList.Length;
                 ThreatWarningRuntimeState.RequestWarning(
+                    state.EntityManager,
+                    _warningStateQuery,
                     ThreatWarningType.Air,
                     etaSeconds,
                     threatCount);

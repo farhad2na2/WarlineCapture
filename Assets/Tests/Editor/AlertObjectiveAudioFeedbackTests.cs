@@ -114,13 +114,16 @@ public sealed class AlertObjectiveAudioFeedbackTests
         try
         {
             RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
-            ThreatWarningRuntimeState.Reset();
+            ThreatWarningRuntimeState.Reset(em);
 
             world.SetTime(new TimeData(0.1d, 0.1f));
             system.Update(world.Unmanaged);
 
-            Assert.IsTrue(ThreatWarningRuntimeState.HasPendingWarning);
-            Assert.AreEqual(ThreatWarningType.Air, ThreatWarningRuntimeState.PendingType);
+            Assert.IsTrue(ThreatWarningRuntimeState.TryRead(
+                em,
+                out ThreatWarningRuntimeStateComponent warningState));
+            Assert.AreEqual(1, warningState.HasPendingWarning);
+            Assert.AreEqual(ThreatWarningType.Air, warningState.PendingType);
 
             DynamicBuffer<AudioPlaybackRequestElement> requests = GetAudioRequests(em);
             Assert.AreEqual(1, requests.Length);
@@ -133,7 +136,7 @@ public sealed class AlertObjectiveAudioFeedbackTests
         finally
         {
             InitialUnitsRuntimeState.PlayRequested = false;
-            ThreatWarningRuntimeState.Reset();
+            ThreatWarningRuntimeState.Reset(em);
         }
     }
 

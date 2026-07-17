@@ -205,7 +205,7 @@ namespace Game.Composition
 
             try
             {
-                matchBootstrapSystem.Awake(this, transform, gameObject.layer);
+                matchBootstrapSystem.Awake(world, this, transform, gameObject.layer);
                 matchRuntimeBound = true;
                 error = null;
                 return true;

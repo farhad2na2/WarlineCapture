@@ -33,6 +33,7 @@ namespace Game.Composition
         private readonly IGameTextResolver gameTextResolver = new GameTextResolverAdapter();
         private bool fallbackPerformanceDiagnosticsInitialized;
         private bool _staticMapBatchingInitialized;
+        private World _runtimeWorld;
         private MatchSceneView sceneView;
 
         public MatchSceneView SceneView => sceneView;
@@ -151,11 +152,13 @@ namespace Game.Composition
         public float GameplayStartProgress01 => gameplayStartupSystem.GameplayStartProgress01;
         public string GameplayStartStatus => gameplayStartupSystem.GameplayStartStatus;
 
-        public void Awake(MatchSceneView view, Transform ownerTransform, int ownerLayer)
+        public void Awake(World runtimeWorld, MatchSceneView view, Transform ownerTransform, int ownerLayer)
         {
             Initialize(view);
             _performanceDiagnosticsSystem = ResolvePerformanceDiagnosticsSystemHelper();
-            _runtimeCameraReferenceSystem = ResolveRuntimeCameraReferenceSystem(World.DefaultGameObjectInjectionWorld);
+            _runtimeWorld = runtimeWorld;
+            matchIntroStateQuery.Bind(runtimeWorld);
+            _runtimeCameraReferenceSystem = ResolveRuntimeCameraReferenceSystem(_runtimeWorld);
 
             ResolveRuntimeRootSceneSystemHelper()?.Ensure(
                 ownerTransform,
@@ -321,6 +324,7 @@ namespace Game.Composition
             _managedRuntimeInitialized = false;
             _visualQualitySettingsInitialized = false;
             _staticMapBatchingInitialized = false;
+            _runtimeWorld = null;
         }
 
 
@@ -545,6 +549,7 @@ namespace Game.Composition
             ref bool gameplayStartPending)
         {
             gameplayRuntimeUpdateSystem.Update(
+                _runtimeWorld,
                 gameplayInitialized,
                 runtimeGameplayStateSystem,
                 performanceDiagnosticsSystem,
@@ -800,7 +805,7 @@ namespace Game.Composition
             _citizenPopulationReadModel = managedSystems.CitizenPopulationComposition?.ReadModel;
             _citizenPopulationEventSystem = managedSystems.CitizenPopulationComposition?.EventSystem;
             _buildingRuntimeBoundaryEntity = MatchBuildingRuntimeBootstrapStartupSystemHelper.Ensure(_buildingRuntimeBoundaryEntity);
-            ResolveRuntimeCameraReferenceSystem(World.DefaultGameObjectInjectionWorld)?.SetWorldCamera(WorldCamera);
+            ResolveRuntimeCameraReferenceSystem(_runtimeWorld)?.SetWorldCamera(WorldCamera);
             _managedRuntimeInitialized = true;
             if (MainMenu != null)
             {
@@ -843,7 +848,7 @@ namespace Game.Composition
             if (_visualQualitySettingsInitialized)
                 return;
 
-            VisualQualitySettingsSystem visualQualitySettingsSystem = ResolveVisualQualitySettingsSystem(World.DefaultGameObjectInjectionWorld);
+            VisualQualitySettingsSystem visualQualitySettingsSystem = ResolveVisualQualitySettingsSystem(_runtimeWorld);
             if (visualQualitySettingsSystem == null)
                 return;
 

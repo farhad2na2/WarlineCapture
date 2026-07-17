@@ -95,7 +95,6 @@ namespace Game.Runtime
             float fixedDeltaTime,
             float maxDurationSeconds)
         {
-            ThreatWarningRuntimeState.Reset();
             using World world = new($"BattleScenarioLab_{variant.VariantId}");
             EntityManager em = world.EntityManager;
             CreateGrid(em);
@@ -104,6 +103,7 @@ namespace Game.Runtime
             Entity drone = CreateIncomingDroneThreat(em, DroneOutsideCell);
 
             SystemHandle warningSystem = world.CreateSystem<ThreatDetectionWarningSystem>();
+            using EntityQuery warningStateQuery = ThreatWarningRuntimeState.CreateQuery(em, readOnly: true);
 
             bool outOfRangeTickObserved = false;
             BattleScenarioMetrics metrics = BattleScenarioFixedStepRunner.RunVariant(
@@ -121,16 +121,21 @@ namespace Game.Runtime
 
                     UpdateIfHasWork(world, warningSystem);
 
-                    if (state.Frame == 0 && !ThreatWarningRuntimeState.HasPendingWarning)
+                    bool hasWarningState = ThreatWarningRuntimeState.TryRead(
+                        em,
+                        warningStateQuery,
+                        out ThreatWarningRuntimeStateComponent warningState);
+                    bool hasPendingWarning = hasWarningState && warningState.HasPendingWarning != 0;
+                    if (state.Frame == 0 && !hasPendingWarning)
                     {
                         outOfRangeTickObserved = true;
                         metrics.TrackingStarted = true;
                         metrics.TrackingStartTimeSeconds = state.TimeSeconds;
                     }
 
-                    if (ThreatWarningRuntimeState.HasPendingWarning)
+                    if (hasPendingWarning)
                     {
-                        CaptureWarningMetrics(metrics, state);
+                        CaptureWarningMetrics(metrics, state, warningState);
                         metrics.Intercepted = outOfRangeTickObserved;
                         metrics.InterceptTimeSeconds = state.TimeSeconds;
                         metrics.FailureReason = metrics.Intercepted
@@ -143,7 +148,6 @@ namespace Game.Runtime
 
                     return BattleScenarioStepOutcome.Continue;
                 });
-            ThreatWarningRuntimeState.Reset();
             return metrics;
         }
 
@@ -239,19 +243,20 @@ namespace Game.Runtime
 
         private static void CaptureWarningMetrics(
             BattleScenarioMetrics metrics,
-            BattleScenarioFixedStepState state)
+            BattleScenarioFixedStepState state,
+            ThreatWarningRuntimeStateComponent warningState)
         {
             int cellDistance = math.max(
                 math.abs(DroneDetectedCell.x - SensorCell.x),
                 math.abs(DroneDetectedCell.y - SensorCell.y));
             metrics.Detected = true;
             metrics.DetectionTimeSeconds = state.TimeSeconds;
-            metrics.Locked = ThreatWarningRuntimeState.PendingType == ThreatWarningType.Air;
+            metrics.Locked = warningState.PendingType == ThreatWarningType.Air;
             metrics.LockTimeSeconds = state.TimeSeconds;
-            metrics.InterceptorLaunched = ThreatWarningRuntimeState.PendingThreatCount == 1;
+            metrics.InterceptorLaunched = warningState.PendingThreatCount == 1;
             metrics.LaunchTimeSeconds = state.TimeSeconds;
             metrics.IncomingThreatDistanceAtDetection = cellDistance;
-            metrics.InterceptDistanceFromDefendedTarget = ThreatWarningRuntimeState.PendingEtaSeconds;
+            metrics.InterceptDistanceFromDefendedTarget = warningState.PendingEtaSeconds;
             metrics.LauncherEffectiveRange = DetectorRadiusCells;
         }
 

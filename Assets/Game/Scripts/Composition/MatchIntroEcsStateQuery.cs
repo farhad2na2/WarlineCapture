@@ -7,50 +7,66 @@ namespace Game.Composition
 {
     internal sealed class MatchIntroEcsStateQuery : IMatchIntroStateQuery
     {
-        private World cachedWorld;
-        private EntityQuery query;
-        private bool hasQuery;
+        private enum ReadResult : byte
+        {
+            Missing = 0,
+            Found = 1,
+            Invalid = 2
+        }
+
+        private readonly WorldScopedComponentQueryCache<MatchIntroTransitionComponent> _queryCache = new(readOnly: true);
+        private World _world;
+
+        public void Bind(World world)
+        {
+            if (_world == world)
+                return;
+
+            _queryCache.Invalidate();
+            _world = world;
+        }
 
         public bool IsGameplayInputLocked()
         {
-            return TryReadState(out MatchIntroTransitionComponent state) && state.InputLocked != 0;
+            ReadResult result = TryReadState(out MatchIntroTransitionComponent state);
+            return result == ReadResult.Invalid || result == ReadResult.Found && state.InputLocked != 0;
         }
 
         public bool IsIntroComplete()
         {
-            return !TryReadState(out MatchIntroTransitionComponent state) ||
+            ReadResult result = TryReadState(out MatchIntroTransitionComponent state);
+            return result == ReadResult.Missing ||
+                   result == ReadResult.Found &&
                    state.State == MatchIntroTransitionStateKind.Complete &&
                    state.InputLocked == 0;
         }
 
         public void Reset()
         {
-            cachedWorld = null;
-            query = default;
-            hasQuery = false;
+            _queryCache.Invalidate();
+            _world = null;
         }
 
-        private bool TryReadState(out MatchIntroTransitionComponent state)
+        private ReadResult TryReadState(out MatchIntroTransitionComponent state)
         {
             state = default;
-            World world = World.DefaultGameObjectInjectionWorld;
-            if (world == null || !world.IsCreated)
-                return false;
+            if (_world == null || !_world.IsCreated)
+                return ReadResult.Invalid;
 
-            if (cachedWorld != world || !hasQuery)
-            {
-                cachedWorld = world;
-                query = world.EntityManager.CreateEntityQuery(
-                    ComponentType.ReadOnly<UiShellStateComponent>(),
-                    ComponentType.ReadOnly<MatchIntroTransitionComponent>());
-                hasQuery = true;
-            }
+            EntityManager entityManager = _world.EntityManager;
+            EntityQuery query = _queryCache.Get(entityManager);
+            int boundaryCount = query.CalculateEntityCount();
+            if (boundaryCount == 0)
+                return ReadResult.Missing;
+            if (boundaryCount != 1)
+                return ReadResult.Invalid;
 
-            if (query.IsEmptyIgnoreFilter)
-                return false;
+            Entity entity = query.GetSingletonEntity();
+            if (!entityManager.HasComponent<UiShellStateComponent>(entity))
+                return ReadResult.Invalid;
 
-            state = world.EntityManager.GetComponentData<MatchIntroTransitionComponent>(query.GetSingletonEntity());
-            return true;
+            state = entityManager.GetComponentData<MatchIntroTransitionComponent>(entity);
+            return ReadResult.Found;
         }
     }
 }

@@ -3,8 +3,11 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
+using Game.Composition;
 using Game.Components;
 using Game.Runtime;
+using Game.UI.Contracts;
+using Game.UI.Shell.Contracts.Ecs;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
@@ -13,7 +16,7 @@ using Debug = UnityEngine.Debug;
 
 public sealed class WorldScopedComponentQueryCachePerformanceValidation
 {
-    private const int GovernedCombinationCount = 2;
+    private const int GovernedCombinationCount = 3;
     private const int WarmupOperations = 180;
     private const int MeasuredOperations = 300;
 
@@ -24,8 +27,10 @@ public sealed class WorldScopedComponentQueryCachePerformanceValidation
             var tests = new WorldScopedComponentQueryCachePerformanceValidation();
             tests.GovernedCaches_ReuseAndRebindWithZeroRecurringManagedAllocation();
             tests.SingletonLookupPaths_ReuseWithZeroRecurringManagedAllocation();
+            tests.ThreatWarningStateWarmAccess_AllocatesZeroManagedBytes();
+            tests.MatchIntroStateWarmAccess_AllocatesZeroManagedBytes();
             Debug.Log(
-                $"[WorldScopedComponentQueryCachePerformanceValidation] result=Passed tests=2 combinations={GovernedCombinationCount} phases={GovernedCombinationCount * 2 + 2}");
+                $"[WorldScopedComponentQueryCachePerformanceValidation] result=Passed tests=4 combinations={GovernedCombinationCount} phases={GovernedCombinationCount * 2 + 4}");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -67,6 +72,19 @@ public sealed class WorldScopedComponentQueryCachePerformanceValidation
             nameof(UnitMoveOrderQueueComponent),
             readOnly: true,
             moveOrderCache);
+
+        var gameplayConsumer = new GameplayRuntimeUpdateCompositionSystemHelper();
+        WorldScopedComponentQueryCache<ThreatWarningRuntimeStateComponent> warningStateCache =
+            GetConfiguredCache<ThreatWarningRuntimeStateComponent>(
+                gameplayConsumer,
+                "_threatWarningStateQueryCache",
+                expectedReadOnly: false);
+        ValidateCombination(
+            nameof(GameplayRuntimeUpdateCompositionSystemHelper),
+            nameof(ThreatWarningRuntimeStateComponent),
+            readOnly: false,
+            warningStateCache);
+        gameplayConsumer.Dispose();
     }
 
     [Test]
@@ -92,6 +110,80 @@ public sealed class WorldScopedComponentQueryCachePerformanceValidation
             expectedEntity: Entity.Null);
     }
 
+    [Test]
+    public void ThreatWarningStateWarmAccess_AllocatesZeroManagedBytes()
+    {
+        using World world = new(nameof(ThreatWarningStateWarmAccess_AllocatesZeroManagedBytes));
+        EntityManager entityManager = world.EntityManager;
+        entityManager.CreateEntity(typeof(ThreatWarningRuntimeStateComponent));
+        using EntityQuery query = ThreatWarningRuntimeState.CreateQuery(entityManager, readOnly: false);
+
+        for (int operation = 0; operation < WarmupOperations; operation++)
+            Assert.IsTrue(ThreatWarningRuntimeState.TryRead(entityManager, query, out _));
+
+        bool operationsPassed = true;
+        long allocationStart = GC.GetAllocatedBytesForCurrentThread();
+        for (int operation = 0; operation < MeasuredOperations; operation++)
+        {
+            operationsPassed &= ThreatWarningRuntimeState.RequestWarning(
+                entityManager,
+                query,
+                ThreatWarningType.Ground,
+                etaSeconds: operation,
+                threatCount: 1);
+            operationsPassed &= ThreatWarningRuntimeState.TryRead(entityManager, query, out _);
+            operationsPassed &= ThreatWarningRuntimeState.ClearPendingWarning(entityManager, query);
+        }
+
+        long allocatedBytes = GC.GetAllocatedBytesForCurrentThread() - allocationStart;
+        Assert.IsTrue(operationsPassed, "Every measured threat-warning operation must succeed.");
+        Assert.AreEqual(0L, allocatedBytes, "Warm World-owned threat-warning access must allocate zero managed bytes.");
+        Debug.Log(
+            $"[WorldScopedComponentQueryCachePerformanceValidation] phase=threat-warning-state " +
+            $"warmupOperations={WarmupOperations} measuredOperations={MeasuredOperations} allocatedBytes={allocatedBytes}");
+    }
+
+    [Test]
+    public void MatchIntroStateWarmAccess_AllocatesZeroManagedBytes()
+    {
+        using World world = new(nameof(MatchIntroStateWarmAccess_AllocatesZeroManagedBytes));
+        EntityManager entityManager = world.EntityManager;
+        Entity boundary = entityManager.CreateEntity(
+            typeof(UiShellStateComponent),
+            typeof(MatchIntroTransitionComponent));
+        entityManager.SetComponentData(boundary, new MatchIntroTransitionComponent
+        {
+            State = MatchIntroTransitionStateKind.Complete,
+            InputLocked = 0
+        });
+        MatchIntroEcsStateQuery query = new();
+        query.Bind(world);
+
+        for (int operation = 0; operation < WarmupOperations; operation++)
+        {
+            Assert.IsFalse(query.IsGameplayInputLocked());
+            Assert.IsTrue(query.IsIntroComplete());
+        }
+
+        bool observedLocked = false;
+        bool observedIncomplete = false;
+        long allocationStart = GC.GetAllocatedBytesForCurrentThread();
+        for (int operation = 0; operation < MeasuredOperations; operation++)
+        {
+            observedLocked |= query.IsGameplayInputLocked();
+            observedIncomplete |= !query.IsIntroComplete();
+        }
+
+        long allocatedBytes = GC.GetAllocatedBytesForCurrentThread() - allocationStart;
+        query.Reset();
+        Assert.IsFalse(observedLocked, "The complete intro state must remain unlocked.");
+        Assert.IsFalse(observedIncomplete, "The complete intro state must remain complete.");
+        Assert.AreEqual(0L, allocatedBytes, "Warm explicit-World match-intro reads must allocate zero managed bytes.");
+        Debug.Log(
+            $"[WorldScopedComponentQueryCachePerformanceValidation] phase=match-intro-state " +
+            $"warmupOperations={WarmupOperations} measuredOperations={MeasuredOperations} allocatedBytes={allocatedBytes}");
+    }
+
     private static void AssertGovernedConsumerMatrix()
     {
         Type cacheTypeDefinition = typeof(WorldScopedComponentQueryCache<>);
@@ -99,6 +191,7 @@ public sealed class WorldScopedComponentQueryCachePerformanceValidation
         int governedCount = 0;
         int storageCount = 0;
         int moveOrderCount = 0;
+        int warningStateCount = 0;
         int unexpectedCount = 0;
 
         foreach (Type runtimeType in runtimeTypes)
@@ -129,6 +222,12 @@ public sealed class WorldScopedComponentQueryCachePerformanceValidation
                 {
                     moveOrderCount++;
                 }
+                else if (runtimeType == typeof(GameplayRuntimeUpdateCompositionSystemHelper) &&
+                         field.Name == "_threatWarningStateQueryCache" &&
+                         componentType == typeof(ThreatWarningRuntimeStateComponent))
+                {
+                    warningStateCount++;
+                }
                 else
                 {
                     unexpectedCount++;
@@ -142,6 +241,7 @@ public sealed class WorldScopedComponentQueryCachePerformanceValidation
             "Every runtime WorldScopedComponentQueryCache consumer must be explicitly covered by this validation.");
         Assert.AreEqual(1, storageCount, "The resource-storage cache consumer must exist exactly once.");
         Assert.AreEqual(1, moveOrderCount, "The move-order cache consumer must exist exactly once.");
+        Assert.AreEqual(1, warningStateCount, "The threat-warning cache consumer must exist exactly once.");
         Assert.AreEqual(0, unexpectedCount, "An undeclared WorldScopedComponentQueryCache consumer was found.");
     }
 

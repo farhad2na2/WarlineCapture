@@ -38,8 +38,10 @@ namespace Game.Runtime
         private EntityQuery _initialSpawnInitializedQuery;
         private EntityQuery _initialSpawnProgressQuery;
         private bool _hasInitialSpawnQueries;
+        private WorldScopedComponentQueryCache<ThreatWarningRuntimeStateComponent> _threatWarningStateQueryCache = new(readOnly: false);
 
         public void Update(
+            World runtimeWorld,
             bool gameplayInitialized,
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
             PerformanceDiagnosticsSystemHelper performanceDiagnosticsSystem,
@@ -189,7 +191,7 @@ namespace Game.Runtime
 #endif
             using (MainMenuMarker.Auto())
             {
-                PresentPendingThreatWarning(mainMenu, Time.unscaledTime, simulationActive);
+                PresentPendingThreatWarning(runtimeWorld, mainMenu, Time.unscaledTime, simulationActive);
                 mainMenu?.Update();
             }
             hadSlowStep |= performanceDiagnosticsSystem.EndStep("MainMenu", stepStart);
@@ -203,6 +205,7 @@ namespace Game.Runtime
                     _loadingGateStartedFrame = UnityEngine.Time.frameCount;
 
                 if (gameplayStartPending && IsGameplayStartComplete(
+                        runtimeWorld,
                         gameplayInitialized,
                         runtimeGameplayStateSystem,
                         buildingRuntimeUpdateContext,
@@ -229,6 +232,7 @@ namespace Game.Runtime
                 else if (gameplayStartPending)
                 {
                     LogLoadingGateIfDue(
+                        runtimeWorld,
                         gameplayInitialized,
                         runtimeGameplayStateSystem,
                         runtimeCity,
@@ -252,23 +256,35 @@ namespace Game.Runtime
             }
         }
 
-        private static void PresentPendingThreatWarning(IMatchRuntimeUi mainMenu, float now, bool simulationActive)
+        private void PresentPendingThreatWarning(
+            World runtimeWorld,
+            IMatchRuntimeUi mainMenu,
+            float now,
+            bool simulationActive)
         {
             if (!simulationActive)
-            {
-                ThreatWarningRuntimeState.Reset();
                 return;
-            }
 
-            if (mainMenu == null || !ThreatWarningRuntimeState.HasPendingWarning)
+            if (runtimeWorld == null || !runtimeWorld.IsCreated)
+                return;
+
+            EntityManager entityManager = runtimeWorld.EntityManager;
+            EntityQuery warningStateQuery = _threatWarningStateQueryCache.Get(entityManager);
+
+            if (mainMenu == null ||
+                !ThreatWarningRuntimeState.TryRead(
+                    entityManager,
+                    warningStateQuery,
+                    out ThreatWarningRuntimeStateComponent warningState) ||
+                warningState.HasPendingWarning == 0)
                 return;
 
             string title = BuildThreatWarningTitle(
-                ThreatWarningRuntimeState.PendingType,
-                ThreatWarningRuntimeState.PendingEtaSeconds,
-                ThreatWarningRuntimeState.PendingThreatCount);
+                warningState.PendingType,
+                warningState.PendingEtaSeconds,
+                warningState.PendingThreatCount);
             if (mainMenu.TryShowMatchHudThreatWarning(title, now + ThreatWarningVisibleSeconds))
-                ThreatWarningRuntimeState.ClearPendingWarning();
+                ThreatWarningRuntimeState.ClearPendingWarning(entityManager, warningStateQuery);
         }
 
         private static string BuildThreatWarningTitle(ThreatWarningType type, float etaSeconds, int threatCount)
@@ -291,6 +307,9 @@ namespace Game.Runtime
 
         public void Dispose()
         {
+            _threatWarningStateQueryCache.Dispose();
+            _threatWarningStateQueryCache = new WorldScopedComponentQueryCache<ThreatWarningRuntimeStateComponent>(readOnly: false);
+
             if (!_hasInitialSpawnQueries)
                 return;
 
@@ -344,6 +363,7 @@ namespace Game.Runtime
         }
 
         private bool IsGameplayStartComplete(
+            World runtimeWorld,
             bool gameplayInitialized,
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
             BuildingRuntimeUpdateCompositionSystemHelper.Context buildingRuntimeUpdateContext,
@@ -362,11 +382,10 @@ namespace Game.Runtime
             if (runtimeDecorations != null && !runtimeDecorations.HasSpawned)
                 return false;
 
-            Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
-            if (world == null || !world.IsCreated)
+            if (runtimeWorld == null || !runtimeWorld.IsCreated)
                 return false;
 
-            EnsureInitialSpawnQueries(world.EntityManager);
+            EnsureInitialSpawnQueries(runtimeWorld.EntityManager);
 
             int totalConfigCount = _initialSpawnConfigQuery.CalculateEntityCount();
             int initializedConfigCount = _initialSpawnInitializedQuery.CalculateEntityCount();
@@ -395,6 +414,7 @@ namespace Game.Runtime
         }
 
         private void LogLoadingGateIfDue(
+            World runtimeWorld,
             bool gameplayInitialized,
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
             RuntimeCityCompositionSystemHelper runtimeCity,
@@ -418,7 +438,7 @@ namespace Game.Runtime
                 ? "null"
                 : $"spawned={(runtimeDecorations.HasSpawned ? 1 : 0)}";
 
-            GetInitialSpawnCounts(out int spawnConfigs, out int spawnInitialized, out int spawnProgress);
+            GetInitialSpawnCounts(runtimeWorld, out int spawnConfigs, out int spawnInitialized, out int spawnProgress);
 
             Debug.Log(
                 $"[LoadingGate] waiting frame={UnityEngine.Time.frameCount} gameplayInitialized={(gameplayInitialized ? 1 : 0)} " +
@@ -427,6 +447,7 @@ namespace Game.Runtime
         }
 
         private void GetInitialSpawnCounts(
+            World runtimeWorld,
             out int configCount,
             out int initializedCount,
             out int progressCount)
@@ -435,11 +456,10 @@ namespace Game.Runtime
             initializedCount = 0;
             progressCount = 0;
 
-            Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
-            if (world == null || !world.IsCreated)
+            if (runtimeWorld == null || !runtimeWorld.IsCreated)
                 return;
 
-            EnsureInitialSpawnQueries(world.EntityManager);
+            EnsureInitialSpawnQueries(runtimeWorld.EntityManager);
 
             configCount = _initialSpawnConfigQuery.CalculateEntityCount();
             initializedCount = _initialSpawnInitializedQuery.CalculateEntityCount();

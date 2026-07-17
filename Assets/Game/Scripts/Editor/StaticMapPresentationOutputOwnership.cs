@@ -443,10 +443,32 @@ namespace Game.Editor
             string projectRoot,
             IEnumerable<string> mutableAssetPaths)
         {
+            return Begin(
+                projectRoot,
+                StaticMapPresentationBaker.CurrentOperationMapId,
+                StaticMapPresentationBaker.OutputRoot,
+                StaticMapPresentationBaker.ManifestPath,
+                StaticMapPresentationSceneIntegrity.CurrentIntegrityAssetPath,
+                mutableAssetPaths);
+        }
+
+        internal static StaticMapPresentationBakeTransaction Begin(
+            string projectRoot,
+            string operationMapId,
+            string outputRoot,
+            string manifestPath,
+            string integrityPath,
+            IEnumerable<string> mutableAssetPaths)
+        {
             if (string.IsNullOrWhiteSpace(projectRoot))
                 throw new ArgumentException("Project root is required.", nameof(projectRoot));
             if (mutableAssetPaths == null)
                 throw new ArgumentNullException(nameof(mutableAssetPaths));
+            RequireTransactionOwner(
+                operationMapId,
+                outputRoot,
+                manifestPath,
+                integrityPath);
 
             string normalizedProjectRoot = Path.GetFullPath(projectRoot);
             string backupRoot = Path.Combine(
@@ -460,7 +482,12 @@ namespace Game.Editor
             try
             {
                 string[] assetPaths = mutableAssetPaths
-                    .Select(RequireMutableAssetPath)
+                    .Select(path => RequireMutableAssetPath(
+                        operationMapId,
+                        outputRoot,
+                        manifestPath,
+                        integrityPath,
+                        path))
                     .Distinct(StringComparer.Ordinal)
                     .OrderBy(path => path, StringComparer.Ordinal)
                     .ToArray();
@@ -568,21 +595,67 @@ namespace Game.Editor
             });
         }
 
-        private static string RequireMutableAssetPath(string assetPath)
+        private static string RequireMutableAssetPath(
+            string operationMapId,
+            string outputRoot,
+            string manifestPath,
+            string integrityPath,
+            string assetPath)
         {
             if (string.IsNullOrWhiteSpace(assetPath) ||
                 assetPath.IndexOf('\\') >= 0 ||
                 Path.IsPathRooted(assetPath) ||
                 assetPath.Split('/').Any(segment => string.Equals(segment, "..", StringComparison.Ordinal)) ||
-                (!string.Equals(assetPath, StaticMapPresentationBaker.ManifestPath, StringComparison.Ordinal) &&
-                 !string.Equals(assetPath, StaticMapPresentationSceneIntegrity.CurrentIntegrityAssetPath, StringComparison.Ordinal) &&
-                 !StaticMapPresentationOutputOwnership.IsOwnedScenePath(assetPath)))
+                (!string.Equals(assetPath, manifestPath, StringComparison.Ordinal) &&
+                 !string.Equals(assetPath, integrityPath, StringComparison.Ordinal) &&
+                 !StaticMapPresentationOutputOwnership.IsOwnedScenePath(
+                     operationMapId,
+                     outputRoot,
+                     assetPath)))
             {
                 throw new InvalidOperationException(
                     $"Refusing to journal a path outside static map presentation ownership: '{assetPath ?? "<null>"}'.");
             }
 
             return assetPath;
+        }
+
+        private static void RequireTransactionOwner(
+            string operationMapId,
+            string outputRoot,
+            string manifestPath,
+            string integrityPath)
+        {
+            if (!StaticMapPresentationOutputPathContract.TryResolveOutputRoot(
+                    operationMapId,
+                    out string expectedOutputRoot,
+                    out string ownershipError) ||
+                !string.Equals(outputRoot, expectedOutputRoot, StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException(
+                    ownershipError ?? "Transaction output root does not match its operation-map owner.");
+            }
+
+            if (!IsOwnedFile(manifestPath, outputRoot, ".asset"))
+                throw new InvalidOperationException("Transaction manifest is outside its operation-map output root.");
+            if (!StaticMapPresentationOutputPathContract.TryResolveIntegrityAssetPath(
+                    operationMapId,
+                    out string expectedIntegrityPath,
+                    out _) ||
+                !string.Equals(integrityPath, expectedIntegrityPath, StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException("Transaction integrity ledger does not match its operation-map owner.");
+            }
+        }
+
+        private static bool IsOwnedFile(string path, string outputRoot, string extension)
+        {
+            return !string.IsNullOrWhiteSpace(path) &&
+                   path.IndexOf('\\') < 0 &&
+                   !Path.IsPathRooted(path) &&
+                   !path.Split('/').Any(segment => string.Equals(segment, "..", StringComparison.Ordinal)) &&
+                   path.StartsWith(outputRoot + "/", StringComparison.Ordinal) &&
+                   path.EndsWith(extension, StringComparison.OrdinalIgnoreCase);
         }
 
         private static string ResolveProjectPath(string projectRoot, string relativePath)

@@ -18,6 +18,10 @@ public sealed class StaticMapPresentationOutputOwnershipTests
         "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/test/alternate";
     private const string AlternateSceneA =
         AlternateOutputRoot + "/Scenes/StaticMapPresentation_opmap_test_alternate_chunk_p000_p000.unity";
+    private const string AlternateManifestPath =
+        AlternateOutputRoot + "/StaticMapPresentationManifest.asset";
+    private const string AlternateIntegrityPath =
+        AlternateOutputRoot + "/StaticMapPresentationSceneIntegrity.json";
 
     [Test]
     public void ComputeStaleScenePaths_ReturnsOnlyPriorManifestOwnershipInOrdinalOrder()
@@ -324,6 +328,61 @@ public sealed class StaticMapPresentationOutputOwnershipTests
             }
 
             Assert.That(File.ReadAllText(manifestPath), Is.EqualTo("after"));
+        }
+        finally
+        {
+            DeleteTemporaryProjectRoot(projectRoot);
+        }
+    }
+
+    [Test]
+    public void BakeTransaction_ScopedOwnerRejectsForeignMapMutablePath()
+    {
+        string projectRoot = CreateTemporaryProjectRoot();
+        try
+        {
+            Assert.Throws<InvalidOperationException>(() =>
+                StaticMapPresentationBakeTransaction.Begin(
+                    projectRoot,
+                    AlternateMapId,
+                    AlternateOutputRoot,
+                    AlternateManifestPath,
+                    AlternateIntegrityPath,
+                    new[] { SceneA }));
+        }
+        finally
+        {
+            DeleteTemporaryProjectRoot(projectRoot);
+        }
+    }
+
+    [Test]
+    public void BakeTransaction_ScopedOwnerRestoresAlternateMapSceneAndMeta()
+    {
+        string projectRoot = CreateTemporaryProjectRoot();
+        string scenePath = ProjectPath(projectRoot, AlternateSceneA);
+        try
+        {
+            WriteFile(scenePath, "alternate-scene-before");
+            WriteFile(scenePath + ".meta", "alternate-meta-before");
+
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                using StaticMapPresentationBakeTransaction transaction =
+                    StaticMapPresentationBakeTransaction.Begin(
+                        projectRoot,
+                        AlternateMapId,
+                        AlternateOutputRoot,
+                        AlternateManifestPath,
+                        AlternateIntegrityPath,
+                        new[] { AlternateSceneA });
+                WriteFile(scenePath, "alternate-scene-after");
+                File.Delete(scenePath + ".meta");
+                throw new InvalidOperationException("simulated alternate-map bake failure");
+            });
+
+            Assert.That(File.ReadAllText(scenePath), Is.EqualTo("alternate-scene-before"));
+            Assert.That(File.ReadAllText(scenePath + ".meta"), Is.EqualTo("alternate-meta-before"));
         }
         finally
         {

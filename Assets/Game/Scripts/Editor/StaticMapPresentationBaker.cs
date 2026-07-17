@@ -197,6 +197,10 @@ namespace Game.Editor
             using StaticMapPresentationBakeTransaction transaction =
                 StaticMapPresentationBakeTransaction.Begin(
                     projectRoot,
+                    CurrentOperationMapId,
+                    OutputRoot,
+                    ManifestPath,
+                    StaticMapPresentationSceneIntegrity.CurrentIntegrityAssetPath,
                     new[] { ManifestPath, StaticMapPresentationSceneIntegrity.CurrentIntegrityAssetPath });
             try
             {
@@ -295,7 +299,13 @@ namespace Game.Editor
                 .Append(ManifestPath)
                 .Append(StaticMapPresentationSceneIntegrity.CurrentIntegrityAssetPath);
             using StaticMapPresentationBakeTransaction transaction =
-                StaticMapPresentationBakeTransaction.Begin(projectRoot, mutablePaths);
+                StaticMapPresentationBakeTransaction.Begin(
+                    projectRoot,
+                    CurrentOperationMapId,
+                    OutputRoot,
+                    ManifestPath,
+                    StaticMapPresentationSceneIntegrity.CurrentIntegrityAssetPath,
+                    mutablePaths);
             int movedScenes = 0;
             try
             {
@@ -468,7 +478,13 @@ namespace Game.Editor
                     .Append(input.ManifestPath)
                     .Append(input.IntegrityPath);
             using StaticMapPresentationBakeTransaction transaction =
-                StaticMapPresentationBakeTransaction.Begin(projectRoot, mutableAssetPaths);
+                StaticMapPresentationBakeTransaction.Begin(
+                    projectRoot,
+                    input.OperationMapId,
+                    input.OutputRoot,
+                    input.ManifestPath,
+                    input.IntegrityPath,
+                    mutableAssetPaths);
             try
             {
                 if (!reusedScenes)

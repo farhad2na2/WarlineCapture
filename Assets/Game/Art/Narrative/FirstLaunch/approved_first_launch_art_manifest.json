@@ -12,22 +12,22 @@
       "approvedRevision": "R1",
       "approvedOn": "2026-07-11",
       "sourceMaster": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P01_FinalCandidate_R1.png",
-      "sourceMasterSha256": "b219dfbb9813718ab70655b97417e54f2fddf1e3dd7a885fe934abfe0d81abc2",
+      "sourceMasterSha256": "922896cd2405b6551439f375a6bf3139edfbbd87f4976da14b2a89a5f928b45e",
       "runtime16x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P01.png",
-      "runtime16x9Sha256": "5e39d25fb4fbef522877fd0d78a99f6bfb3f30e71ed31ef2a6959f9b0256fea3",
+      "runtime16x9Sha256": "f25ddf14c137c90e8c2b374976cd211c4381a4c1710267baea5be6bed8200d63",
       "runtime20x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P01.png",
-      "runtime20x9Sha256": "7e563fc306403169cbc203343cb79486752f90324117aac4078b5e809234b42c"
+      "runtime20x9Sha256": "5476eb00668fb3e7031de2fbfe89d0df74f1c0f3cf64bb105fac878f3b32241a"
     },
     {
       "panelId": "FL-P02",
       "approvedRevision": "R1",
       "approvedOn": "2026-07-11",
       "sourceMaster": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P02_FinalCandidate_R1.png",
-      "sourceMasterSha256": "604d9b1c04cc49a41555ac6bd8cdd6435bb4a9cd5574d65bedc0b854cbf7aac4",
+      "sourceMasterSha256": "aa369e99733cbb7b11b4d34834799f7ace8621969492b2271b8465fb9a5b608a",
       "runtime16x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P02.png",
-      "runtime16x9Sha256": "d73009810448493b8495ebe4e2e260dbf3634886fb7d3d6bf00516dee87ef7a1",
+      "runtime16x9Sha256": "34b1796c2a25a103225e52ece28c8ecbf479369f70596baff0db584621337a20",
       "runtime20x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P02.png",
-      "runtime20x9Sha256": "7864ef9c457bf5bab4af5fecbbd42b0464b651887b969f9d28f7e40db9221ad0"
+      "runtime20x9Sha256": "37b6f817cad6009b10fc469ad469f82962bfe4f9ab3ef5df827e60810095a97f"
     },
     {
       "panelId": "FL-P03",

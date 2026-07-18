@@ -142,13 +142,21 @@ namespace Game.Editor
             {
                 StaticMapPresentationChunkEntry chunk = manifest.Chunks[index];
                 string partitionLabel = BuildPartitionLabel(chunk, manifest.ChunkSize);
+                if (!OperationMapContentAddressContract.TryBuildPresentationChunkAddress(
+                        manifest.OperationMapId,
+                        chunk.ChunkId,
+                        out string chunkAddress,
+                        out string addressError))
+                {
+                    throw new InvalidOperationException(addressError);
+                }
                 SetOperationMapLabels(
                     settings,
                     MoveEntry(
                         settings,
                         presentation,
                         chunk.ScenePath,
-                        AddressPrefix + "presentation/" + chunk.ChunkId),
+                        chunkAddress),
                     PresentationRoleLabel,
                     partitionLabel);
             }

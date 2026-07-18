@@ -8,15 +8,15 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 |---|---:|
 | Baseline rows | 863 |
 | Hazard rows | 352 |
-| Resolved | 1053 |
+| Resolved | 1057 |
 | Protected/deferred | 36 |
-| Open | 126 |
+| Open | 122 |
 | New after baseline | 26 |
 | Historical intake rows | 575 |
-| Reviewed non-debt rows | 449 |
-| Genuine-debt rows | 126 |
+| Reviewed non-debt rows | 453 |
+| Genuine-debt rows | 122 |
 | Unclassified rows | 0 |
-| Unique debt items | 50 |
+| Unique debt items | 48 |
 
 ## Open Rows
 
@@ -100,8 +100,6 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/AndroidPerformanceRecorder.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-008 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-CLR-003 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-CLR-003 |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-CLR-004 |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-CLR-004 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/MainMenuNavigationView.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-009 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-010 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-010 |
@@ -113,14 +111,14 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/CommanderProfileRouteLifecyclePresentation.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-013 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/AssistantSettingsPersistenceSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-014 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-IRC-002 |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-CLR-005 |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-CLR-005 |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-CLR-005 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-CLR-004 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-CLR-004 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-CLR-004 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-IRC-002 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-IRC-002 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-015 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-015 |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-CLR-005 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-CLR-004 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-015 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildPlacementReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-016 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiDiagnosticsReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-IRC-003 |
@@ -138,10 +136,8 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 | AM-018 | runtimeObjectDiscovery | Assets/Game/Scripts/Environment/RuntimeCityAlgorithmicAftermathPresentationSystemHelper.cs | AM-018 classification.runtimeObjectDiscovery | AM025-DISCOVERY-003 |
 | AM-007 | staticCaches | Assets/Game/Scripts/Configs/GameText.cs | AM-007 policy.candidateSemantics | AM025-STATIC-001 |
 | AM-007 | staticCaches | Assets/Game/Scripts/Configs/GameText.cs | AM-007 policy.candidateSemantics | AM025-STATIC-001 |
-| AM-007 | staticCaches | Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs | AM-007 policy.candidateSemantics | AM025-STATIC-002 |
-| AM-007 | staticCaches | Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs | AM-007 policy.candidateSemantics | AM025-STATIC-002 |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-007 policy.candidateSemantics | AM025-STATIC-003 |
-| AM-007 | staticCaches | Assets/Game/Scripts/Utilities/UnitTransportVisualUtility.cs | AM-007 policy.candidateSemantics | AM025-STATIC-004 |
+| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-007 policy.candidateSemantics | AM025-STATIC-002 |
+| AM-007 | staticCaches | Assets/Game/Scripts/Utilities/UnitTransportVisualUtility.cs | AM-007 policy.candidateSemantics | AM025-STATIC-003 |
 | AM-007 | worlds | Assets/Game/Scripts/Authorings/GridAuthoring.cs | AM-007 policy.candidateSemantics | AM025-WORLD-001 |
 | AM-007 | worlds | Assets/Game/Scripts/Composition/MapSurfaceRuntimeBootstrapSceneSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-002 |
 | AM-007 | worlds | Assets/Game/Scripts/Environment/RuntimeCityReadinessQueryCompositionSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-003 |

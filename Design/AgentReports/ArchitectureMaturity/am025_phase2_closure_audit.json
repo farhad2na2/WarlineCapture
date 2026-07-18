@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 441,
+    "resolvedNonDebtRowCount": 445,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 449,
-    "genuineDebtRowCount": 126,
-    "uniqueDebtItemCount": 50,
+    "reviewedNonDebtRowCount": 453,
+    "genuineDebtRowCount": 122,
+    "uniqueDebtItemCount": 48,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -48,16 +48,16 @@
     {
       "sourceArtifact": "AM-007",
       "historicalOpenRowCount": 314,
-      "projectedResolvedNonDebtRowCount": 293,
+      "projectedResolvedNonDebtRowCount": 295,
       "projectedProtectedDeferredRowCount": 7,
-      "projectedGenuineDebtRowCount": 14
+      "projectedGenuineDebtRowCount": 12
     },
     {
       "sourceArtifact": "AM-018",
       "historicalOpenRowCount": 261,
-      "projectedResolvedNonDebtRowCount": 148,
+      "projectedResolvedNonDebtRowCount": 150,
       "projectedProtectedDeferredRowCount": 1,
-      "projectedGenuineDebtRowCount": 112
+      "projectedGenuineDebtRowCount": 110
     }
   ],
   "genuineDebtLanes": [
@@ -68,7 +68,7 @@
     },
     {
       "id": "mutable-static-state",
-      "projectedRows": 100
+      "projectedRows": 96
     },
     {
       "id": "pool-and-lifecycle-cache",
@@ -135,10 +135,22 @@
       "authority": ["Design/AgentReports/ArchitectureMaturity/am021_persistent_resource_ownership.json"]
     },
     {
+      "id": "am007-static-runtime-gameplay-state-owned",
+      "decision": "resolved",
+      "reasonCode": "tested-world-rebinding-runtime-gameplay-state-cache",
+      "expectedCount": 2,
+      "match": {
+        "sourceArtifact": "AM-007",
+        "sourceCategory": "staticCaches",
+        "sourcePath": "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs"
+      },
+      "authority": ["Assets/Tests/Editor/RuntimeGameplayStateSystemTests.cs"]
+    },
+    {
       "id": "am007-static-debt",
       "decision": "genuine-debt",
       "reasonCode": "static-lifecycle-unproven",
-      "expectedCount": 6,
+      "expectedCount": 4,
       "debtIdPrefix": "AM025-STATIC",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",
@@ -577,10 +589,23 @@
       "authority": ["Design/AgentReports/ArchitectureMaturity/am021_presentation_root_lifecycle_evidence.json", "Design/AgentReports/ArchitectureMaturity/am022_world_lifecycle_recovery_evidence.json"]
     },
     {
+      "id": "am018-static-clr-runtime-gameplay-state-owned",
+      "decision": "resolved",
+      "reasonCode": "tested-world-rebinding-runtime-gameplay-state-cache",
+      "expectedCount": 2,
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "CLR",
+        "sourcePath": "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs"
+      },
+      "authority": ["Assets/Tests/Editor/RuntimeGameplayStateSystemTests.cs"]
+    },
+    {
       "id": "am018-static-clr-debt",
       "decision": "genuine-debt",
       "reasonCode": "static-cache-lifecycle-unproven",
-      "expectedCount": 10,
+      "expectedCount": 8,
       "debtIdPrefix": "AM025-STATIC-CLR",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

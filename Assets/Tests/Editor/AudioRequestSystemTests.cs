@@ -19,6 +19,8 @@ public sealed class AudioRequestSystemTests
         {
             RunCase(test => test.EnsureAudioEntity_CreatesRequestStateAndBuffers());
             passed++;
+            RunCase(test => test.EnsureAudioEntity_KeepsWorldsIndependent());
+            passed++;
             RunCase(test => test.ProcessPendingRequests_AcceptsFirstRequestAndSkipsCooldownDuplicate());
             passed++;
             RunCase(test => test.ProcessPendingRequests_MarksMissingEvent());
@@ -86,6 +88,31 @@ public sealed class AudioRequestSystemTests
         Assert.AreEqual(1f, settings.MasterVolume);
         Assert.AreEqual(0.75f, settings.MusicVolume);
         Assert.AreEqual(1, settings.MusicMuted);
+    }
+
+    [Test]
+    public void EnsureAudioEntity_KeepsWorldsIndependent()
+    {
+        using var otherWorld = new World("AudioRequestSystemTests_Other");
+        Entity firstAudioEntity = AudioEventRequestSystem.EnsureAudioEntity(_entityManager);
+        Entity otherAudioEntity = AudioEventRequestSystem.EnsureAudioEntity(otherWorld.EntityManager);
+
+        AudioEventRequestSystem.EnqueueOneShot(
+            _entityManager,
+            new FixedString64Bytes(AudioEventIds.UIButtonPrimaryClick),
+            AudioEventIds.UIButtonPrimaryClickHash,
+            new FixedString32Bytes("UI"),
+            AudioPlaybackPriority.Medium,
+            requestedAt: 1f);
+
+        Assert.AreEqual(
+            1,
+            _entityManager.GetBuffer<AudioPlaybackRequestElement>(firstAudioEntity).Length);
+        Assert.AreEqual(
+            0,
+            otherWorld.EntityManager.GetBuffer<AudioPlaybackRequestElement>(otherAudioEntity).Length);
+        Assert.AreEqual(firstAudioEntity, AudioEventRequestSystem.EnsureAudioEntity(_entityManager));
+        Assert.AreEqual(otherAudioEntity, AudioEventRequestSystem.EnsureAudioEntity(otherWorld.EntityManager));
     }
 
     [Test]

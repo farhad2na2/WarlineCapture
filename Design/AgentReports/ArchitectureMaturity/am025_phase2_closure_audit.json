@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 548,
-    "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 556,
-    "genuineDebtRowCount": 19,
-    "uniqueDebtItemCount": 17,
+    "resolvedNonDebtRowCount": 553,
+    "protectedDeferredRowCount": 6,
+    "reviewedNonDebtRowCount": 559,
+    "genuineDebtRowCount": 16,
+    "uniqueDebtItemCount": 15,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -48,16 +48,16 @@
     {
       "sourceArtifact": "AM-007",
       "historicalOpenRowCount": 314,
-      "projectedResolvedNonDebtRowCount": 299,
-      "projectedProtectedDeferredRowCount": 7,
-      "projectedGenuineDebtRowCount": 8
+      "projectedResolvedNonDebtRowCount": 303,
+      "projectedProtectedDeferredRowCount": 5,
+      "projectedGenuineDebtRowCount": 6
     },
     {
       "sourceArtifact": "AM-018",
       "historicalOpenRowCount": 261,
-      "projectedResolvedNonDebtRowCount": 220,
+      "projectedResolvedNonDebtRowCount": 250,
       "projectedProtectedDeferredRowCount": 1,
-      "projectedGenuineDebtRowCount": 40
+      "projectedGenuineDebtRowCount": 10
     }
   ],
   "genuineDebtLanes": [
@@ -126,13 +126,12 @@
       "authority": ["Design/AgentReports/ArchitectureMaturity/am021_presentation_root_lifecycle_evidence.json", "Design/AgentReports/ArchitectureMaturity/am024_lifecycle_memory_pool_trend_evidence.json"]
     },
     {
-      "id": "am007-static-audio-protected",
-      "decision": "protected-deferred",
-      "reasonCode": "protected-owner",
+      "id": "am007-static-audio-retired",
+      "decision": "resolved",
+      "reasonCode": "exact-static-cache-identities-retired",
       "expectedCount": 2,
-      "protectedOwnerIds": ["audio"],
       "match": {"sourceArtifact": "AM-007", "sourceCategory": "staticCaches", "sourcePath": "Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs"},
-      "authority": ["Design/AgentReports/ArchitectureMaturity/am021_persistent_resource_ownership.json"]
+      "authority": ["Assets/Tests/Editor/AudioRequestSystemTests.cs"]
     },
     {
       "id": "am007-static-runtime-gameplay-state-owned",
@@ -561,10 +560,22 @@
       "authority": ["Assets/Tests/Editor/SelectionOrderMarkerPresentationSystemHelperTests.cs"]
     },
     {
+      "id": "am007-world-audio-request-owned",
+      "decision": "resolved",
+      "reasonCode": "ecs-singleton-owned-per-world",
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-007",
+        "sourceCategory": "worlds",
+        "sourcePath": "Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs"
+      },
+      "authority": ["Assets/Tests/Editor/AudioRequestSystemTests.cs"]
+    },
+    {
       "id": "am007-world-debt",
       "decision": "genuine-debt",
       "reasonCode": "world-owner-unproven",
-      "expectedCount": 5,
+      "expectedCount": 4,
       "debtIdPrefix": "AM025-WORLD",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",
@@ -688,20 +699,17 @@
       "authority": ["Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs", "Assets/Tests/Editor/BuildDrawerCatalogQueryUiSystemHelperTests.cs"]
     },
     {
-      "id": "am018-static-clr-debt",
-      "decision": "genuine-debt",
-      "reasonCode": "static-cache-lifecycle-unproven",
+      "id": "am018-static-clr-audio-retired",
+      "decision": "resolved",
+      "reasonCode": "exact-static-cache-identities-retired",
       "expectedCount": 2,
-      "debtIdPrefix": "AM025-STATIC-CLR",
-      "ownerDomain": "architecture-core",
-      "workPackageId": "AM-WP-028",
       "match": {
         "sourceArtifact": "AM-018",
         "sourceCategory": "mutableStaticCaches",
         "disposition": "CLR",
-        "sourcePath": ["Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs", "Assets/Game/Scripts/Rendering/TerrainLodHeightSwitch.cs", "Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs", "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs", "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs"]
+        "sourcePath": "Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs"
       },
-      "authority": ["Design/Architecture/WorkPackages/am_wp_028_phase2_debt_reconciliation.md"]
+      "authority": ["Assets/Tests/Editor/AudioRequestSystemTests.cs", "Assets/Tests/Editor/AudioPerformanceValidationTests.cs"]
     },
     {
       "id": "am018-static-clr-owned",

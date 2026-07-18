@@ -11,9 +11,6 @@ namespace Game.Runtime
         public const int MaxTerminalRequestHistory = 256;
         public const int MaxResultHistory = 256;
 
-        private static World s_CachedAudioWorld;
-        private static Entity s_CachedAudioEntity;
-
         public void OnCreate(ref SystemState state)
         {
             EnsureAudioEntity(state.EntityManager);
@@ -26,25 +23,12 @@ namespace Game.Runtime
 
         public static Entity EnsureAudioEntity(EntityManager em)
         {
-            World world = em.World;
-            if (world != null &&
-                world.IsCreated &&
-                s_CachedAudioWorld == world &&
-                s_CachedAudioEntity != Entity.Null &&
-                em.Exists(s_CachedAudioEntity) &&
-                em.HasComponent<AudioPlaybackRequestQueueComponent>(s_CachedAudioEntity))
-            {
-                EnsureAudioStorage(em, s_CachedAudioEntity);
-                return s_CachedAudioEntity;
-            }
-
             using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<AudioPlaybackRequestQueueComponent>());
             if (!query.IsEmptyIgnoreFilter)
             {
-                s_CachedAudioWorld = world;
-                s_CachedAudioEntity = query.GetSingletonEntity();
-                EnsureAudioStorage(em, s_CachedAudioEntity);
-                return s_CachedAudioEntity;
+                Entity existingEntity = query.GetSingletonEntity();
+                EnsureAudioStorage(em, existingEntity);
+                return existingEntity;
             }
 
             Entity entity = em.CreateEntity(
@@ -63,8 +47,6 @@ namespace Game.Runtime
             em.AddBuffer<AudioPlaybackRequestElement>(entity);
             em.AddBuffer<AudioPlaybackResultElement>(entity);
             em.AddBuffer<AudioCooldownStateElement>(entity);
-            s_CachedAudioWorld = world;
-            s_CachedAudioEntity = entity;
             return entity;
         }
 

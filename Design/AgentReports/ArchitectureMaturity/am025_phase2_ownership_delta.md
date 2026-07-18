@@ -8,15 +8,15 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 |---|---:|
 | Baseline rows | 863 |
 | Hazard rows | 352 |
-| Resolved | 1160 |
-| Protected/deferred | 36 |
-| Open | 19 |
+| Resolved | 1165 |
+| Protected/deferred | 34 |
+| Open | 16 |
 | New after baseline | 26 |
 | Historical intake rows | 575 |
-| Reviewed non-debt rows | 556 |
-| Genuine-debt rows | 19 |
+| Reviewed non-debt rows | 559 |
+| Genuine-debt rows | 16 |
 | Unclassified rows | 0 |
-| Unique debt items | 17 |
+| Unique debt items | 15 |
 
 ## Open Rows
 
@@ -28,8 +28,6 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 | AM-018 | globalWorldLookups | Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs | AM-018 classification.globalWorldLookups | AM025-GLOBAL-WORLD-004 |
 | AM-018 | globalWorldLookups | Assets/Game/Scripts/Systems/SelectionBuildingInteractionCompositionSystemHelper.cs | AM-018 classification.globalWorldLookups | AM025-GLOBAL-WORLD-005 |
 | AM-018 | globalWorldLookups | Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs | AM-018 classification.globalWorldLookups | AM025-GLOBAL-WORLD-006 |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-CLR-001 |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-CLR-001 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/MatchHudMinimapProjectionUiSystemHelper.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-IRC-001 |
 | AM-007 | presentationPools | Assets/Game/Scripts/Systems/RoadPreviewPresentationSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-POOL-001 |
@@ -40,4 +38,3 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 | AM-007 | worlds | Assets/Game/Scripts/Composition/MapSurfaceRuntimeBootstrapSceneSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-002 |
 | AM-007 | worlds | Assets/Game/Scripts/Environment/RuntimeCityReadinessQueryCompositionSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-003 |
 | AM-007 | worlds | Assets/Game/Scripts/Environment/RuntimeCityRoadBuildBridgeCompositionSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-004 |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs | AM-007 policy.candidateSemantics | AM025-WORLD-005 |

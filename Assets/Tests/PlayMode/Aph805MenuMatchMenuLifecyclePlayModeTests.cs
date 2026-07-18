@@ -14,6 +14,7 @@ public sealed class Aph805MenuMatchMenuLifecyclePlayModeTests
 {
     internal const string MenuSceneName = "Menu";
     internal const string MatchSceneName = "Match";
+    internal const string OperationMapSceneName = "opmap_skirmish_desert_base_01";
     internal const float LifecycleTimeoutSeconds = 180f;
     internal const float OperationMapLoadTimeoutSeconds = 30f;
 
@@ -30,6 +31,19 @@ public sealed class Aph805MenuMatchMenuLifecyclePlayModeTests
     {
         var context = new TransitionContext();
         yield return PrepareStableMenu(context);
+        yield return EnterStableMatch(context);
+        yield return ReturnToStableMenu(context);
+    }
+
+    [UnityTest]
+    public IEnumerator TwoSequentialMatches_ReleaseMapStateBeforeTheNextLoad()
+    {
+        var context = new TransitionContext();
+        yield return PrepareStableMenu(context);
+
+        yield return EnterStableMatch(context);
+        yield return ReturnToStableMenu(context);
+
         yield return EnterStableMatch(context);
         yield return ReturnToStableMenu(context);
     }
@@ -81,6 +95,10 @@ public sealed class Aph805MenuMatchMenuLifecyclePlayModeTests
         Debug.Log("[Aph805Lifecycle] stage=MatchSceneViewResolved");
         yield return WaitForOperationMapContent(context.Match);
         Debug.Log("[Aph805Lifecycle] stage=OperationMapContentReady");
+        Assert.That(
+            SceneManager.GetSceneByName(OperationMapSceneName).isLoaded,
+            Is.True,
+            "The selected operation-map source scene was not loaded additively.");
         AssertMatchSerializedReferences(context.Match);
         Assert.That(World.DefaultGameObjectInjectionWorld, Is.SameAs(context.World));
         Assert.That(context.World.IsCreated, Is.True);
@@ -124,6 +142,10 @@ public sealed class Aph805MenuMatchMenuLifecyclePlayModeTests
             "Menu shell route did not reach its stable idle checkpoint.");
 
         Assert.That(SceneManager.GetSceneByName(MenuSceneName).isLoaded, Is.True);
+        Assert.That(
+            SceneManager.GetSceneByName(OperationMapSceneName).isLoaded,
+            Is.False,
+            "The operation-map source scene remained loaded after Match teardown.");
         Assert.That(FindInLoadedScene<MatchSceneView>(MatchSceneName), Is.Null);
         Assert.That(World.DefaultGameObjectInjectionWorld, Is.SameAs(context.World));
         Assert.That(context.World.IsCreated, Is.True);

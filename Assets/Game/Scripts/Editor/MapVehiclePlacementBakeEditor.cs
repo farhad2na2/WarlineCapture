@@ -20,6 +20,8 @@ namespace Game.Editor
         private const string ConfigAssetPath = "Assets/Game/Configs/Scene/Match_MapVehiclePlacement_Config.asset";
         private const string VehiclesPrefabRoot = "Assets/Game/Prefabs/Vehicles";
         private const string ReportPath = "/private/tmp/map-vehicle-placement-bake-report.json";
+        private const string OperationMapReportPath =
+            "/private/tmp/operation-map-vehicle-placement-bake-report.json";
         private const string RuntimeVehicleCategoryPrefix = "Unit_Veh_";
         private const string AuthoringVehicleGroupPrefix = "MapVehicle_";
 
@@ -150,6 +152,115 @@ namespace Game.Editor
                 report.errors.Add(ex.Message);
                 File.WriteAllText(ReportPath, JsonUtility.ToJson(report, true));
                 Debug.LogError($"[MapVehiclePlacement] bake failed: {ex.Message}. Report: {ReportPath}");
+                throw;
+            }
+        }
+
+        internal static void BakeOperationMapVehiclePlacements(
+            Scene scene,
+            OperationMapSceneView operationMapSceneView)
+        {
+            BakeReport report = new();
+            try
+            {
+                if (!scene.IsValid() || !scene.isLoaded || operationMapSceneView == null ||
+                    operationMapSceneView.MapRoot == null || operationMapSceneView.VehiclePlacements == null)
+                {
+                    throw new InvalidOperationException("Operation-map vehicle placement bindings are incomplete.");
+                }
+
+                Transform vehiclesRoot = operationMapSceneView.MapRoot.Find("Vehicles");
+                if (vehiclesRoot == null)
+                    throw new InvalidOperationException("Map/Vehicles root not found in operation-map scene.");
+
+                Bounds? faction1 = TryGetObjectBounds(FindInScene(scene, "Faction1"));
+                Bounds? faction2 = TryGetObjectBounds(FindInScene(scene, "Faction2"));
+                if (!faction1.HasValue)
+                    report.warnings.Add("Faction1 volume not found; player-faction vehicles will not be assigned.");
+                if (!faction2.HasValue)
+                    report.warnings.Add("Faction2 volume not found; enemy-faction vehicles will not be assigned.");
+
+                List<MapVehiclePlacementConfigEntry> placements = new();
+                HashSet<string> categories = new(StringComparer.Ordinal);
+                Dictionary<string, byte> existingFactions = new(StringComparer.Ordinal);
+                for (int i = 0; i < operationMapSceneView.VehiclePlacements.Placements.Count; i++)
+                {
+                    MapVehiclePlacementConfigEntry entry =
+                        operationMapSceneView.VehiclePlacements.Placements[i];
+                    existingFactions[entry.SourcePath] = entry.FactionId;
+                }
+                for (int i = 0; i < vehiclesRoot.childCount; i++)
+                {
+                    Transform categoryRoot = vehiclesRoot.GetChild(i);
+                    string categoryName = ResolveVehicleCategoryName(categoryRoot.name);
+                    if (string.IsNullOrEmpty(categoryName))
+                    {
+                        report.skippedFolderCount++;
+                        report.skippedFolders.Add(GetHierarchyPath(categoryRoot));
+                        continue;
+                    }
+
+                    GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(
+                        $"{VehiclesPrefabRoot}/{categoryName}.prefab");
+                    if (prefab == null)
+                    {
+                        report.missingPrefabCount++;
+                        report.missingPrefabs.Add($"{VehiclesPrefabRoot}/{categoryName}.prefab");
+                        continue;
+                    }
+
+                    categories.Add(categoryName);
+                    if (categoryRoot.childCount == 0)
+                    {
+                        report.emptyCategoryCount++;
+                        report.emptyCategories.Add(categoryName);
+                        report.warnings.Add($"Vehicle category has no authored placements: {categoryName}");
+                        continue;
+                    }
+
+                    for (int childIndex = 0; childIndex < categoryRoot.childCount; childIndex++)
+                    {
+                        Transform placementRoot = categoryRoot.GetChild(childIndex);
+                        string sourcePath = GetHierarchyPath(placementRoot);
+                        Vector3 center = ResolvePlacementCenter(prefab, placementRoot);
+                        byte factionId = ResolveFactionId(center, faction1, faction2, placementRoot, report);
+                        if (!faction1.HasValue && !faction2.HasValue &&
+                            existingFactions.TryGetValue(sourcePath, out byte existingFactionId))
+                        {
+                            factionId = existingFactionId;
+                        }
+                        placements.Add(new MapVehiclePlacementConfigEntry(
+                            sourcePath,
+                            categoryName,
+                            prefab,
+                            factionId,
+                            center,
+                            placementRoot.position,
+                            placementRoot.eulerAngles,
+                            placementRoot.lossyScale));
+
+                        if (factionId == 1) report.faction1Count++;
+                        else if (factionId == 2) report.faction2Count++;
+                        else report.faction0Count++;
+                    }
+                }
+
+                if (report.errors.Count > 0)
+                    throw new InvalidOperationException(string.Join(Environment.NewLine, report.errors));
+
+                operationMapSceneView.VehiclePlacements.EditorSetPlacements(placements);
+                report.placementCount = placements.Count;
+                report.categories.AddRange(categories);
+                File.WriteAllText(OperationMapReportPath, JsonUtility.ToJson(report, true));
+                AssetDatabase.SaveAssetIfDirty(operationMapSceneView.VehiclePlacements);
+                Debug.Log(
+                    $"[OperationMapVehiclePlacement] baked {placements.Count} placements. " +
+                    $"Report: {OperationMapReportPath}");
+            }
+            catch (Exception ex)
+            {
+                report.errors.Add(ex.Message);
+                File.WriteAllText(OperationMapReportPath, JsonUtility.ToJson(report, true));
                 throw;
             }
         }

@@ -52,7 +52,7 @@ public sealed class OperationMapAddressablesLayoutBuilderTests
         Assert.That(shared.entries.Count, Is.EqualTo(expectedShared.Length));
         Assert.That(shared.entries, Is.Not.Empty);
         Assert.That(core.entries.Count, Is.EqualTo(6));
-        Assert.That(presentation.entries.Count, Is.EqualTo(514));
+        Assert.That(presentation.entries.Count, Is.EqualTo(manifest.Chunks.Count));
 
         AssertEntry(settings, OperationMapAddressablesLayoutBuilder.CatalogPath, catalog, "operation-map/catalog");
         AssertEntry(

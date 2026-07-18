@@ -567,9 +567,7 @@ namespace Game.Editor
                     }
 
                     staleScenesDeleted = StaticMapPresentationOutputOwnership.DeleteStaleSceneAssets(
-                        input.OperationMapId,
-                        input.OutputRoot,
-                        existingManifest,
+                        previousOwnedScenePaths,
                         expectedScenePaths,
                         AssetExists,
                         PhysicalAssetExists,

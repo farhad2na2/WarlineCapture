@@ -82,15 +82,6 @@ MonoBehaviour:
     worldPosition: {x: 1009.9, y: 0.5, z: 390.79996}
     worldEulerAngles: {x: -0, y: 90, z: -0}
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-  - sourcePath: Map/Vehicles/MapVehicle_Jet_01/SM_Veh_Jet_01
-    category: Unit_Veh_Jet_01
-    vehiclePrefab: {fileID: 5616646512338707422, guid: bff0a8791ec564632b7bddbe3e544ac4, type: 3}
-    vehicleSourceKey: unit_veh_jet_01
-    factionId: 1
-    worldCenter: {x: 960.6901, y: 2.801738, z: 356.2742}
-    worldPosition: {x: 960.6901, y: 2.1808815, z: 356.54993}
-    worldEulerAngles: {x: -0, y: 179.99985, z: -0}
-    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
   - sourcePath: Map/Vehicles/MapVehicle_Jet_01/SM_Veh_Jet_01 (1)
     category: Unit_Veh_Jet_01
     vehiclePrefab: {fileID: 5616646512338707422, guid: bff0a8791ec564632b7bddbe3e544ac4, type: 3}
@@ -146,26 +137,6 @@ MonoBehaviour:
     worldCenter: {x: 883.24005, y: 2.3786783, z: 364.56778}
     worldPosition: {x: 883.24, y: 1.0320015, z: 364.5609}
     worldEulerAngles: {x: -0, y: 0.0001229434, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-  - sourcePath: Map/Vehicles/MapVehicle_Light_Armored_Car/SM_Veh_Light_Armored_Car_01
-      (1)
-    category: Unit_Veh_Light_Armored_Car
-    vehiclePrefab: {fileID: 8969431421773950753, guid: 4d17399a465c144abb394cfee95e63d8, type: 3}
-    vehicleSourceKey: unit_veh_light_armored_car
-    factionId: 0
-    worldCenter: {x: 1312.9813, y: 3.927527, z: 523.9057}
-    worldPosition: {x: 1312.9656, y: 3.0548458, z: 523.90894}
-    worldEulerAngles: {x: -0, y: 101.68428, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-  - sourcePath: Map/Vehicles/MapVehicle_Light_Armored_Car/SM_Veh_Light_Armored_Car_01
-      (2)
-    category: Unit_Veh_Light_Armored_Car
-    vehiclePrefab: {fileID: 8969431421773950753, guid: 4d17399a465c144abb394cfee95e63d8, type: 3}
-    vehicleSourceKey: unit_veh_light_armored_car
-    factionId: 0
-    worldCenter: {x: 1312.3815, y: 3.927527, z: 519.8906}
-    worldPosition: {x: 1312.3655, y: 3.0548458, z: 519.8889}
-    worldEulerAngles: {x: -0, y: 83.89792, z: -0}
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
   - sourcePath: Map/Vehicles/MapVehicle_Plane_Transport/SM_Veh_TransportPlane_01
     category: Unit_Veh_Plane_Transport
@@ -230,42 +201,6 @@ MonoBehaviour:
     worldPosition: {x: 840.3336, y: 1.0320015, z: 372.8972}
     worldEulerAngles: {x: -0, y: 90, z: -0}
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-  - sourcePath: Map/Vehicles/MapVehicle_Tank_USA/SM_Veh_Tank_USA_01
-    category: Unit_Veh_Tank_USA
-    vehiclePrefab: {fileID: 8969431421773950753, guid: d08c88d57a5f34f80a264cbfd1e2da4b, type: 3}
-    vehicleSourceKey: unit_veh_tank_usa
-    factionId: 0
-    worldCenter: {x: 1303.4946, y: 5.2186975, z: 516.66284}
-    worldPosition: {x: 1302.4255, y: 3.0548458, z: 516.66284}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-  - sourcePath: Map/Vehicles/MapVehicle_Tank_USA/SM_Veh_Tank_USA_01 (1)
-    category: Unit_Veh_Tank_USA
-    vehiclePrefab: {fileID: 8969431421773950753, guid: d08c88d57a5f34f80a264cbfd1e2da4b, type: 3}
-    vehicleSourceKey: unit_veh_tank_usa
-    factionId: 0
-    worldCenter: {x: 1303.4362, y: 5.2186975, z: 521.1607}
-    worldPosition: {x: 1302.4255, y: 3.0548458, z: 521.379}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-  - sourcePath: Map/Vehicles/MapVehicle_Tank_USA/SM_Veh_Tank_USA_01 (2)
-    category: Unit_Veh_Tank_USA
-    vehiclePrefab: {fileID: 8969431421773950753, guid: d08c88d57a5f34f80a264cbfd1e2da4b, type: 3}
-    vehicleSourceKey: unit_veh_tank_usa
-    factionId: 0
-    worldCenter: {x: 1303.3926, y: 5.2186975, z: 526.3665}
-    worldPosition: {x: 1302.4255, y: 3.0548458, z: 526.359}
-    worldEulerAngles: {x: -0, y: 82.77784, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-  - sourcePath: Map/Vehicles/MapVehicle_Tank_USA/SM_Veh_Tank_USA_01 (3)
-    category: Unit_Veh_Tank_USA
-    vehiclePrefab: {fileID: 8969431421773950753, guid: d08c88d57a5f34f80a264cbfd1e2da4b, type: 3}
-    vehicleSourceKey: unit_veh_tank_usa
-    factionId: 0
-    worldCenter: {x: 1324.884, y: 5.2186975, z: 532.6501}
-    worldPosition: {x: 1324.8555, y: 3.0548458, z: 533.239}
-    worldEulerAngles: {x: -0, y: 151.71881, z: -0}
-    worldScale: {x: 1.0000006, y: 1, z: 1.0000006}
   - sourcePath: Map/Vehicles/MapVehicle_APC_Heavy/SM_Veh_APC_Heavy_01
     category: Unit_Veh_APC_Heavy
     vehiclePrefab: {fileID: 8969431421773950753, guid: 12aa3f1b102194c0f87c119f847ebaf7, type: 3}

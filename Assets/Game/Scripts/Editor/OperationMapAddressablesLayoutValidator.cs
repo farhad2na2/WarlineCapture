@@ -32,10 +32,16 @@ namespace Game.Editor
                     out error);
             }
 
+            StaticMapPresentationManifest manifest =
+                AssetDatabase.LoadAssetAtPath<StaticMapPresentationManifest>(
+                    OperationMapAddressablesLayoutBuilder.ManifestPath);
+            if (manifest == null || manifest.Chunks.Count == 0)
+                return Fail("Static presentation manifest is missing or empty.", out error);
+
             if (!TryRequireGroup(settings, OperationMapAddressablesLayoutBuilder.CatalogGroupName, 2, false, out AddressableAssetGroup catalog, out error) ||
                 !TryRequireGroup(settings, OperationMapAddressablesLayoutBuilder.SharedGroupName, -1, true, out AddressableAssetGroup shared, out error) ||
                 !TryRequireGroup(settings, OperationMapAddressablesLayoutBuilder.CoreGroupName, 6, false, out AddressableAssetGroup core, out error) ||
-                !TryRequireGroup(settings, OperationMapAddressablesLayoutBuilder.PresentationGroupName, 514, true, out AddressableAssetGroup presentation, out error))
+                !TryRequireGroup(settings, OperationMapAddressablesLayoutBuilder.PresentationGroupName, manifest.Chunks.Count, true, out AddressableAssetGroup presentation, out error))
                 return false;
 
             HashSet<AddressableAssetGroup> ownedGroups = new() { catalog, shared, core, presentation };
@@ -114,9 +120,7 @@ namespace Game.Editor
             if (settings.FindAssetEntry(subSceneGuid) != null)
                 return Fail("The Entities subscene must remain a source-scene dependency, not a direct entry.", out error);
 
-            StaticMapPresentationManifest manifest =
-                AssetDatabase.LoadAssetAtPath<StaticMapPresentationManifest>(OperationMapAddressablesLayoutBuilder.ManifestPath);
-            if (manifest == null || manifest.Chunks.Count != presentation.entries.Count)
+            if (manifest.Chunks.Count != presentation.entries.Count)
                 return Fail("Presentation entries must exactly match the current manifest.", out error);
 
             string[] sharedDependencies =

@@ -151,9 +151,11 @@ namespace Game.Editor
                 AssetDatabase.LoadAssetAtPath<StaticMapPresentationManifest>(ManifestPath);
             if (manifest == null || manifest.Chunks.Count == 0)
                 throw new InvalidOperationException("Static presentation manifest is missing or empty.");
+            var acceptedPresentationGuids = new HashSet<string>(StringComparer.Ordinal);
             for (int index = 0; index < manifest.Chunks.Count; index++)
             {
                 StaticMapPresentationChunkEntry chunk = manifest.Chunks[index];
+                acceptedPresentationGuids.Add(AssetDatabase.AssetPathToGUID(chunk.ScenePath));
                 string partitionLabel = BuildPartitionLabel(chunk, manifest.ChunkSize);
                 if (!OperationMapContentAddressContract.TryBuildPresentationChunkAddress(
                         manifest.OperationMapId,
@@ -173,6 +175,12 @@ namespace Game.Editor
                     PresentationRoleLabel,
                     partitionLabel);
             }
+
+            AddressableAssetEntry[] stalePresentationEntries = presentation.entries
+                .Where(entry => !acceptedPresentationGuids.Contains(entry.guid))
+                .ToArray();
+            for (int index = 0; index < stalePresentationEntries.Length; index++)
+                settings.RemoveAssetEntry(stalePresentationEntries[index].guid, false);
 
             ConfigureSharedDependencies(settings, shared, manifest);
 

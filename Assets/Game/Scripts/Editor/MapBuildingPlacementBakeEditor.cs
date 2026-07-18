@@ -19,6 +19,8 @@ namespace Game.Editor
         private const string ConfigAssetPath = "Assets/Game/Configs/Scene/Match_MapBuildingPlacement_Config.asset";
         private const string BuildingsPrefabRoot = "Assets/Game/Prefabs/Buildings";
         private const string ReportPath = "/private/tmp/warline-map-building-placement-bake-report.json";
+        private const string OperationMapReportPath =
+            "/private/tmp/warline-operation-map-building-placement-bake-report.json";
 
         [Serializable]
         private sealed class BakeReport
@@ -46,66 +48,9 @@ namespace Game.Editor
                 if (map == null)
                     throw new InvalidOperationException("Map object not found in Match scene.");
 
-                Transform buildingsRoot = map.transform.Find("Buildings");
-                if (buildingsRoot == null)
-                    throw new InvalidOperationException("Map/Buildings root not found in Match scene.");
-
                 MatchSceneView matchSceneView = FindComponentInScene<MatchSceneView>(scene);
                 if (matchSceneView == null)
                     throw new InvalidOperationException("MatchSceneView not found in Match scene.");
-
-                Bounds? faction1 = TryGetObjectBounds(FindInScene(scene, "Faction1"));
-                Bounds? faction2 = TryGetObjectBounds(FindInScene(scene, "Faction2"));
-                if (!faction1.HasValue)
-                    report.warnings.Add("Faction1 volume not found; player-faction buildings will not be assigned.");
-                if (!faction2.HasValue)
-                    report.warnings.Add("Faction2 volume not found; enemy-faction buildings will not be assigned.");
-
-                List<MapBuildingPlacementConfigEntry> placements = new();
-                HashSet<string> categories = new(StringComparer.Ordinal);
-                for (int i = 0; i < buildingsRoot.childCount; i++)
-                {
-                    Transform categoryRoot = buildingsRoot.GetChild(i);
-                    GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{BuildingsPrefabRoot}/{categoryRoot.name}.prefab");
-                    if (prefab == null)
-                    {
-                        report.warnings.Add($"Skipped category without matching building prefab: {categoryRoot.name}");
-                        continue;
-                    }
-
-                    categories.Add(categoryRoot.name);
-                    for (int childIndex = 0; childIndex < categoryRoot.childCount; childIndex++)
-                    {
-                        Transform placementRoot = categoryRoot.GetChild(childIndex);
-                        Bounds? placementBounds = TryGetObjectBounds(placementRoot.gameObject);
-                        Vector3 center = placementBounds is { } bounds
-                            ? bounds.center
-                            : placementRoot.position;
-                        byte factionId = ResolveFactionId(center, placementBounds, faction1, faction2, placementRoot, report);
-                        bool rotateVertical = IsVerticalRotation(placementRoot.eulerAngles.y);
-                        placements.Add(new MapBuildingPlacementConfigEntry(
-                            GetHierarchyPath(placementRoot),
-                            categoryRoot.name,
-                            prefab,
-                            factionId,
-                            center,
-                            placementRoot.position,
-                            placementRoot.eulerAngles,
-                            placementRoot.lossyScale,
-                            placementRoot.eulerAngles.y,
-                            rotateVertical));
-
-                        if (factionId == 1)
-                            report.faction1Count++;
-                        else if (factionId == 2)
-                            report.faction2Count++;
-                        else
-                            report.faction0Count++;
-                    }
-                }
-
-                if (report.errors.Count > 0)
-                    throw new InvalidOperationException(string.Join(Environment.NewLine, report.errors));
 
                 MapBuildingPlacementConfig config = AssetDatabase.LoadAssetAtPath<MapBuildingPlacementConfig>(ConfigAssetPath);
                 if (config == null)
@@ -114,16 +59,14 @@ namespace Game.Editor
                     AssetDatabase.CreateAsset(config, ConfigAssetPath);
                 }
 
-                config.EditorSetPlacements(placements);
+                Transform buildingsRoot = BakePlacements(scene, map.transform, config, report);
                 AssignMatchSceneViewReferences(matchSceneView, config, buildingsRoot);
-                report.placementCount = placements.Count;
-                report.categories.AddRange(categories);
                 File.WriteAllText(ReportPath, JsonUtility.ToJson(report, true));
 
                 AssetDatabase.SaveAssets();
                 EditorSceneManager.MarkSceneDirty(scene);
                 EditorSceneManager.SaveScene(scene);
-                Debug.Log($"[MapBuildingPlacement] baked {placements.Count} placements to {ConfigAssetPath}. Report: {ReportPath}");
+                Debug.Log($"[MapBuildingPlacement] baked {report.placementCount} placements to {ConfigAssetPath}. Report: {ReportPath}");
             }
             catch (Exception ex)
             {
@@ -132,6 +75,114 @@ namespace Game.Editor
                 Debug.LogError($"[MapBuildingPlacement] bake failed: {ex.Message}. Report: {ReportPath}");
                 throw;
             }
+        }
+
+        internal static void BakeOperationMapBuildingPlacements(
+            Scene scene,
+            OperationMapSceneView operationMapSceneView)
+        {
+            if (!scene.IsValid() || !scene.isLoaded)
+                throw new InvalidOperationException("Operation-map scene must be loaded before placement baking.");
+            if (operationMapSceneView == null || operationMapSceneView.MapRoot == null ||
+                operationMapSceneView.BuildingPlacements == null)
+            {
+                throw new InvalidOperationException("Operation-map building placement bindings are incomplete.");
+            }
+
+            BakeReport report = new();
+            try
+            {
+                BakePlacements(
+                    scene,
+                    operationMapSceneView.MapRoot,
+                    operationMapSceneView.BuildingPlacements,
+                    report);
+                File.WriteAllText(OperationMapReportPath, JsonUtility.ToJson(report, true));
+                AssetDatabase.SaveAssetIfDirty(operationMapSceneView.BuildingPlacements);
+                Debug.Log(
+                    $"[OperationMapBuildingPlacement] baked {report.placementCount} placements. " +
+                    $"Report: {OperationMapReportPath}");
+            }
+            catch (Exception ex)
+            {
+                report.errors.Add(ex.Message);
+                File.WriteAllText(OperationMapReportPath, JsonUtility.ToJson(report, true));
+                throw;
+            }
+        }
+
+        private static Transform BakePlacements(
+            Scene scene,
+            Transform map,
+            MapBuildingPlacementConfig config,
+            BakeReport report)
+        {
+            Transform buildingsRoot = map.Find("Buildings");
+            if (buildingsRoot == null)
+                throw new InvalidOperationException("Map/Buildings root not found.");
+
+            Bounds? faction1 = TryGetObjectBounds(FindInScene(scene, "Faction1"));
+            Bounds? faction2 = TryGetObjectBounds(FindInScene(scene, "Faction2"));
+            if (!faction1.HasValue)
+                report.warnings.Add("Faction1 volume not found; player-faction buildings will not be assigned.");
+            if (!faction2.HasValue)
+                report.warnings.Add("Faction2 volume not found; enemy-faction buildings will not be assigned.");
+
+            List<MapBuildingPlacementConfigEntry> placements = new();
+            HashSet<string> categories = new(StringComparer.Ordinal);
+            Dictionary<string, byte> existingFactions = new(StringComparer.Ordinal);
+            for (int i = 0; i < config.Placements.Count; i++)
+                existingFactions[config.Placements[i].SourcePath] = config.Placements[i].FactionId;
+            for (int i = 0; i < buildingsRoot.childCount; i++)
+            {
+                Transform categoryRoot = buildingsRoot.GetChild(i);
+                GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(
+                    $"{BuildingsPrefabRoot}/{categoryRoot.name}.prefab");
+                if (prefab == null)
+                {
+                    report.warnings.Add($"Skipped category without matching building prefab: {categoryRoot.name}");
+                    continue;
+                }
+
+                categories.Add(categoryRoot.name);
+                for (int childIndex = 0; childIndex < categoryRoot.childCount; childIndex++)
+                {
+                    Transform placementRoot = categoryRoot.GetChild(childIndex);
+                    string sourcePath = GetHierarchyPath(placementRoot);
+                    Bounds? placementBounds = TryGetObjectBounds(placementRoot.gameObject);
+                    Vector3 center = placementBounds is { } bounds ? bounds.center : placementRoot.position;
+                    byte factionId = ResolveFactionId(
+                        center, placementBounds, faction1, faction2, placementRoot, report);
+                    if (!faction1.HasValue && !faction2.HasValue &&
+                        existingFactions.TryGetValue(sourcePath, out byte existingFactionId))
+                    {
+                        factionId = existingFactionId;
+                    }
+                    placements.Add(new MapBuildingPlacementConfigEntry(
+                        sourcePath,
+                        categoryRoot.name,
+                        prefab,
+                        factionId,
+                        center,
+                        placementRoot.position,
+                        placementRoot.eulerAngles,
+                        placementRoot.lossyScale,
+                        placementRoot.eulerAngles.y,
+                        IsVerticalRotation(placementRoot.eulerAngles.y)));
+
+                    if (factionId == 1) report.faction1Count++;
+                    else if (factionId == 2) report.faction2Count++;
+                    else report.faction0Count++;
+                }
+            }
+
+            if (report.errors.Count > 0)
+                throw new InvalidOperationException(string.Join(Environment.NewLine, report.errors));
+
+            config.EditorSetPlacements(placements);
+            report.placementCount = placements.Count;
+            report.categories.AddRange(categories);
+            return buildingsRoot;
         }
 
         private static byte ResolveFactionId(

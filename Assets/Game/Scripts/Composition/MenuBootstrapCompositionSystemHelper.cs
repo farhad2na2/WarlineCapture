@@ -404,6 +404,12 @@ namespace Game.Composition
             bool isMatchRoute,
             MatchSceneView matchScene)
         {
+            if (isMatchRoute && !matchScene.OperationMapContentReady)
+            {
+                staticMapPresentationStreamer.Update();
+                return;
+            }
+
             if (isMatchRoute && streamedMatchView != matchScene)
             {
                 if (!staticMapPresentationStreamer.Bind(

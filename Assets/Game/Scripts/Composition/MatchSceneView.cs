@@ -22,6 +22,9 @@ namespace Game.Composition
         private AudioListener menuAudioListener;
         private bool matchRuntimeBound;
         private OperationMapRuntimeBootstrapSceneSystemHelper operationMapRuntimeBootstrapSystem;
+        private OperationMapSceneLoadingSceneSystemHelper operationMapSceneLoadingSystem;
+        private OperationMapSceneView activeOperationMapSceneView;
+        private bool operationMapLoadFailureReported;
 
         [Header("Scene Refs")]
         [SerializeField] private Camera worldCamera;
@@ -66,16 +69,41 @@ namespace Game.Composition
         public Volume GlobalVolume => globalVolume;
         public VisualQualityProfileAsset VisualQualityProfile => visualQualityProfile;
         public StaticMapPresentationManifest StaticMapPresentationManifest => staticMapPresentationManifest;
-        public CombinedMeshBaker DecorationCombinedMeshBaker => decorationCombinedMeshBaker;
-        public Transform DecorationRoot => decorationRoot != null ? decorationRoot : (decorationCombinedMeshBaker != null ? decorationCombinedMeshBaker.transform : null);
-        public Transform MapBuildingAuthoringRoot => mapBuildingAuthoringRoot;
-        public Transform MapVehicleAuthoringRoot => mapVehicleAuthoringRoot;
-        public MapSurfaceAuthoring MapSurfaceAuthoring => mapSurfaceAuthoring;
+        public CombinedMeshBaker DecorationCombinedMeshBaker =>
+            activeOperationMapSceneView != null
+                ? activeOperationMapSceneView.DecorationCombinedMeshBaker
+                : decorationCombinedMeshBaker;
+        public Transform DecorationRoot =>
+            activeOperationMapSceneView != null
+                ? activeOperationMapSceneView.DecorationRoot
+                : decorationRoot != null
+                    ? decorationRoot
+                    : decorationCombinedMeshBaker != null
+                        ? decorationCombinedMeshBaker.transform
+                        : null;
+        public Transform MapBuildingAuthoringRoot =>
+            activeOperationMapSceneView != null
+                ? activeOperationMapSceneView.BuildingAuthoringRoot
+                : mapBuildingAuthoringRoot;
+        public Transform MapVehicleAuthoringRoot =>
+            activeOperationMapSceneView != null
+                ? activeOperationMapSceneView.VehicleAuthoringRoot
+                : mapVehicleAuthoringRoot;
+        public MapSurfaceAuthoring MapSurfaceAuthoring =>
+            activeOperationMapSceneView != null
+                ? activeOperationMapSceneView.MapSurfaceAuthoring
+                : mapSurfaceAuthoring;
         public RTSSelectionSystemConfig RtsSelectionConfig => rtsSelectionConfig;
         public RoadBuildSystemConfig RoadBuildConfig => roadBuildConfig;
         public BuildingPlacementSystemConfig BuildingPlacementConfig => buildingPlacementConfig;
-        public MapBuildingPlacementConfig MapBuildingPlacementConfig => mapBuildingPlacementConfig;
-        public MapVehiclePlacementConfig MapVehiclePlacementConfig => mapVehiclePlacementConfig;
+        public MapBuildingPlacementConfig MapBuildingPlacementConfig =>
+            activeOperationMapSceneView != null
+                ? activeOperationMapSceneView.BuildingPlacements
+                : mapBuildingPlacementConfig;
+        public MapVehiclePlacementConfig MapVehiclePlacementConfig =>
+            activeOperationMapSceneView != null
+                ? activeOperationMapSceneView.VehiclePlacements
+                : mapVehiclePlacementConfig;
         public UnitAttackTraceSystemConfig UnitAttackTraceConfig => unitAttackTraceConfig;
         public RuntimeCitySpawnerSystemConfig RuntimeCitySpawnerConfig => runtimeCitySpawnerConfig;
         public RuntimeDecorationSpawnerSystemConfig RuntimeDecorationSpawnerConfig => runtimeDecorationSpawnerConfig;
@@ -93,6 +121,8 @@ namespace Game.Composition
         public string OperationMapId => operationMapId;
         public string ScenarioId => scenarioId;
         public string MissionId => missionId;
+        public bool OperationMapContentReady =>
+            operationMapSceneLoadingSystem == null || operationMapSceneLoadingSystem.IsReady;
 
         internal MatchBootstrapCompositionSystemHelper MatchBootstrap => matchBootstrapSystem;
         public bool GameplayStartRequested => matchBootstrapSystem.GameplayStartRequested;
@@ -130,7 +160,11 @@ namespace Game.Composition
             }
 
             if (!matchRuntimeBound)
-                return;
+            {
+                UpdateOperationMapSourceSceneLoad();
+                if (!matchRuntimeBound)
+                    return;
+            }
 
             matchBootstrapSystem.Update();
         }
@@ -186,6 +220,12 @@ namespace Game.Composition
             if (matchRuntimeBound)
                 return;
 
+            if (!HasCompatibilityMapReferences())
+            {
+                EnsureOperationMapSourceSceneLoad();
+                return;
+            }
+
             if (!TryBindMatchRuntime(
                     World.DefaultGameObjectInjectionWorld,
                     out string operationMapError))
@@ -220,7 +260,10 @@ namespace Game.Composition
         private void ShutdownMatchRuntimeBound()
         {
             if (!matchRuntimeBound)
+            {
+                DisposeOperationMapSourceSceneLoad();
                 return;
+            }
 
             GpuAnimationTeardownFence.TryFlushPendingStructuralChanges(World.DefaultGameObjectInjectionWorld);
             try
@@ -231,6 +274,7 @@ namespace Game.Composition
             {
                 DisposeOperationMapMetadataBootstrap();
                 matchRuntimeBound = false;
+                DisposeOperationMapSourceSceneLoad();
             }
         }
 
@@ -285,6 +329,80 @@ namespace Game.Composition
         {
             operationMapRuntimeBootstrapSystem?.Dispose();
             operationMapRuntimeBootstrapSystem = null;
+        }
+
+        private bool HasCompatibilityMapReferences()
+        {
+            return mapSurfaceAuthoring != null &&
+                mapBuildingAuthoringRoot != null &&
+                mapVehicleAuthoringRoot != null &&
+                mapBuildingPlacementConfig != null &&
+                mapVehiclePlacementConfig != null;
+        }
+
+        private void EnsureOperationMapSourceSceneLoad()
+        {
+            if (operationMapSceneLoadingSystem != null)
+                return;
+
+            if (operationMapCatalog == null ||
+                !operationMapCatalog.TryResolve(operationMapId, out OperationMapDefinition definition))
+            {
+                ReportOperationMapLoadFailure(
+                    $"Operation-map id '{operationMapId ?? "<null>"}' is not present in the catalog.");
+                return;
+            }
+
+            operationMapSceneLoadingSystem = new OperationMapSceneLoadingSceneSystemHelper();
+            if (!operationMapSceneLoadingSystem.TryStart(definition, out string error))
+            {
+                operationMapSceneLoadingSystem.Dispose();
+                operationMapSceneLoadingSystem = null;
+                ReportOperationMapLoadFailure(error);
+            }
+        }
+
+        private void UpdateOperationMapSourceSceneLoad()
+        {
+            if (operationMapLoadFailureReported)
+                return;
+
+            if (operationMapSceneLoadingSystem == null)
+            {
+                EnsureOperationMapSourceSceneLoad();
+                return;
+            }
+
+            operationMapSceneLoadingSystem.Update();
+            if (operationMapSceneLoadingSystem.HasFailed)
+            {
+                ReportOperationMapLoadFailure(operationMapSceneLoadingSystem.Failure);
+                return;
+            }
+
+            if (!operationMapSceneLoadingSystem.IsReady)
+                return;
+
+            activeOperationMapSceneView = operationMapSceneLoadingSystem.SceneView;
+            if (!TryBindMatchRuntime(World.DefaultGameObjectInjectionWorld, out string error))
+                ReportOperationMapLoadFailure(error);
+        }
+
+        private void DisposeOperationMapSourceSceneLoad()
+        {
+            activeOperationMapSceneView = null;
+            operationMapSceneLoadingSystem?.Dispose();
+            operationMapSceneLoadingSystem = null;
+            operationMapLoadFailureReported = false;
+        }
+
+        private void ReportOperationMapLoadFailure(string error)
+        {
+            if (operationMapLoadFailureReported)
+                return;
+
+            operationMapLoadFailureReported = true;
+            Debug.LogError($"[OperationMapSourceScene] {error}");
         }
 
         private void ApplyAudioListenerAuthority()

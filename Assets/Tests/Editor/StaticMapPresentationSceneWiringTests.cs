@@ -13,7 +13,7 @@ using UnityEngine.SceneManagement;
 public sealed class StaticMapPresentationSceneWiringTests
 {
     [Test]
-    public void MatchScene_SerializesTheGeneratedPresentationManifest()
+    public void MatchScene_ResolvesTheGeneratedPresentationManifestFromTheSelectedMap()
     {
         SceneSetup[] previousSetup = EditorSceneManager.GetSceneManagerSetup();
         try
@@ -25,25 +25,34 @@ public sealed class StaticMapPresentationSceneWiringTests
             StaticMapPresentationManifest manifest =
                 AssetDatabase.LoadAssetAtPath<StaticMapPresentationManifest>(
                     StaticMapPresentationBaker.ManifestPath);
+            Assert.That(
+                view.OperationMapCatalog.TryResolve(
+                    view.OperationMapId,
+                    out Game.Configs.OperationMapDefinition definition),
+                Is.True);
+            string sourceScenePath = AssetDatabase.GUIDToAssetPath(
+                definition.SourceSceneReference.AssetGUID);
 
             Assert.NotNull(manifest, "Generated static-map presentation manifest is missing.");
-            Assert.AreSame(manifest, view.StaticMapPresentationManifest);
+            Assert.IsNull(
+                view.StaticMapPresentationManifest,
+                "Thin Match shell must not serialize a map-owned manifest directly.");
             Assert.AreSame(
                 manifest,
                 StaticMapPresentationSceneWiring.LoadValidatedManifest(
                     view.OperationMapCatalog,
                     view.OperationMapId,
-                    scene.path));
+                    sourceScenePath));
             Assert.Throws<InvalidOperationException>(() =>
                 StaticMapPresentationSceneWiring.LoadValidatedManifest(
                     view.OperationMapCatalog,
                     "opmap.skirmish.missing",
-                    scene.path));
+                    sourceScenePath));
             Assert.AreEqual(
                 StaticMapPresentationBaker.ManifestPath,
-                AssetDatabase.GetAssetPath(view.StaticMapPresentationManifest));
+                AssetDatabase.GetAssetPath(manifest));
             Assert.AreEqual(StaticMapPresentationManifest.CurrentSchemaVersion, manifest.SchemaVersion);
-            Assert.AreEqual(StaticMapPresentationBaker.CanonicalMatchScenePath, manifest.CanonicalScenePath);
+            Assert.AreEqual(sourceScenePath, manifest.CanonicalScenePath);
             Assert.That(manifest.Chunks.Count, Is.GreaterThan(0));
             Assert.NotNull(view.WorldCamera, "MatchSceneView must serialize the camera used for chunk residency.");
         }
@@ -97,11 +106,17 @@ public sealed class StaticMapPresentationSceneWiringTests
         Assert.That(startUpdateIndex, Is.GreaterThan(startGateIndex));
 
         const string drainGate = "if (!staticMapPresentationStreamer.DrainComplete)";
+        const string contentUnloadGate = "!streamedMatchView.OperationMapContentUnloadComplete";
+        const string contentUnloadCall = "streamedMatchView.TryBeginOperationMapContentUnload";
         const string unloadCall = "sceneLifecycleSceneSystemHelper.QueueUnloadMatch(entityManager);";
         int drainGateIndex = source.IndexOf(drainGate, StringComparison.Ordinal);
+        int contentUnloadGateIndex = source.IndexOf(contentUnloadGate, StringComparison.Ordinal);
+        int contentUnloadCallIndex = source.IndexOf(contentUnloadCall, StringComparison.Ordinal);
         int unloadCallIndex = source.IndexOf(unloadCall, StringComparison.Ordinal);
         Assert.That(drainGateIndex, Is.GreaterThanOrEqualTo(0));
-        Assert.That(unloadCallIndex, Is.GreaterThan(drainGateIndex));
+        Assert.That(contentUnloadGateIndex, Is.GreaterThan(drainGateIndex));
+        Assert.That(contentUnloadCallIndex, Is.GreaterThan(contentUnloadGateIndex));
+        Assert.That(unloadCallIndex, Is.GreaterThan(contentUnloadCallIndex));
         Assert.AreEqual(1, CountOccurrences(source, unloadCall));
         StringAssert.Contains("else if (staticMapPresentationStreamer.IsDraining)", source);
         StringAssert.Contains("!staticMapPresentationStreamer.IsDraining", source);

@@ -371,6 +371,41 @@ namespace Game.Composition
                         return;
                     }
 
+                    if (streamedMatchView != null &&
+                        !streamedMatchView.OperationMapContentUnloadComplete)
+                    {
+                        if (!string.IsNullOrEmpty(streamedMatchView.OperationMapContentFailure))
+                        {
+                            SetLoading(
+                                entityManager,
+                                boundary,
+                                0f,
+                                false,
+                                $"Map unload failed: {streamedMatchView.OperationMapContentFailure}");
+                            return;
+                        }
+
+                        if (!streamedMatchView.OperationMapContentUnloading &&
+                            !streamedMatchView.TryBeginOperationMapContentUnload(out string unloadError))
+                        {
+                            SetLoading(
+                                entityManager,
+                                boundary,
+                                0f,
+                                false,
+                                $"Map unload failed: {unloadError}");
+                            return;
+                        }
+
+                        SetLoading(
+                            entityManager,
+                            boundary,
+                            Mathf.Clamp01(streamedMatchView.OperationMapContentProgress01),
+                            false,
+                            "Unloading operation map");
+                        return;
+                    }
+
                     sceneLifecycleSceneSystemHelper.QueueUnloadMatch(entityManager);
                 }
 

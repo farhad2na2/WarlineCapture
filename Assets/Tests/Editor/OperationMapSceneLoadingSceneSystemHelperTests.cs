@@ -31,6 +31,8 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
             Run(nameof(AbortReadyLoadReleasesExactlyOnce), test => test.AbortReadyLoadReleasesExactlyOnce(), ref passed);
             Run(nameof(FailedLoadCanResetAndRetry), test => test.FailedLoadCanResetAndRetry(), ref passed);
             Run(nameof(ReadyLoadCanResetBeforeSequentialLoad), test => test.ReadyLoadCanResetBeforeSequentialLoad(), ref passed);
+            Run(nameof(UnloadWaitsForCompletionBeforeReleasingHandles), test => test.UnloadWaitsForCompletionBeforeReleasingHandles(), ref passed);
+            Run(nameof(UnloadFailureReleasesHandlesAndRetainsFailure), test => test.UnloadFailureReleasesHandlesAndRetainsFailure(), ref passed);
             Debug.Log($"[OperationMapSceneLoadingValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
         }
@@ -328,6 +330,88 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
         UnityEngine.Object.DestroyImmediate(secondManifestOperation.LoadedManifest);
     }
 
+    [Test]
+    public void UnloadWaitsForCompletionBeforeReleasingHandles()
+    {
+        Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Additive);
+        var sceneOperation = new FakeSceneOperation
+        {
+            Done = true,
+            Success = true,
+            LoadedScene = scene,
+            Progress = 1f,
+            UnloadSuccess = true
+        };
+        var manifestOperation = new FakeManifestOperation
+        {
+            Done = true,
+            Success = true,
+            LoadedManifest = CreateMatchingManifest(scene),
+            Progress = 1f
+        };
+        var helper = CreateHelper(sceneOperation, manifestOperation);
+
+        Assert.That(helper.TryStart(LoadDefinition(), out string error), Is.True, error);
+        helper.Update();
+        Assert.That(helper.TryBeginUnload(out error), Is.True, error);
+        helper.Update();
+
+        Assert.That(helper.IsUnloading, Is.True);
+        Assert.That(helper.UnloadComplete, Is.False);
+        Assert.That(sceneOperation.DisposeCount, Is.Zero);
+        Assert.That(manifestOperation.DisposeCount, Is.Zero);
+
+        sceneOperation.UnloadDoneState = true;
+        helper.Update();
+
+        Assert.That(helper.IsUnloading, Is.False);
+        Assert.That(helper.UnloadComplete, Is.True);
+        Assert.That(helper.Progress01, Is.EqualTo(1f));
+        Assert.That(sceneOperation.DisposeCount, Is.EqualTo(1));
+        Assert.That(manifestOperation.DisposeCount, Is.EqualTo(1));
+        helper.Dispose();
+        Assert.That(sceneOperation.DisposeCount, Is.EqualTo(1));
+        Assert.That(manifestOperation.DisposeCount, Is.EqualTo(1));
+        UnityEngine.Object.DestroyImmediate(manifestOperation.LoadedManifest);
+    }
+
+    [Test]
+    public void UnloadFailureReleasesHandlesAndRetainsFailure()
+    {
+        Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Additive);
+        var sceneOperation = new FakeSceneOperation
+        {
+            Done = true,
+            Success = true,
+            LoadedScene = scene,
+            Progress = 1f,
+            UnloadDoneState = true,
+            UnloadFailureMessage = "source unload failed"
+        };
+        var manifestOperation = new FakeManifestOperation
+        {
+            Done = true,
+            Success = true,
+            LoadedManifest = CreateMatchingManifest(scene),
+            Progress = 1f
+        };
+        var helper = CreateHelper(sceneOperation, manifestOperation);
+
+        Assert.That(helper.TryStart(LoadDefinition(), out string error), Is.True, error);
+        helper.Update();
+        Assert.That(helper.TryBeginUnload(out error), Is.True, error);
+        helper.Update();
+
+        Assert.That(helper.HasFailed, Is.True);
+        Assert.That(helper.Failure, Is.EqualTo("source unload failed"));
+        Assert.That(helper.UnloadComplete, Is.False);
+        Assert.That(sceneOperation.DisposeCount, Is.EqualTo(1));
+        Assert.That(manifestOperation.DisposeCount, Is.EqualTo(1));
+        helper.Dispose();
+        Assert.That(helper.Failure, Is.EqualTo("source unload failed"));
+        UnityEngine.Object.DestroyImmediate(manifestOperation.LoadedManifest);
+    }
+
     private static OperationMapSceneLoadingSceneSystemHelper CreateHelper(
         FakeSceneOperation sceneOperation,
         FakeManifestOperation manifestOperation) =>
@@ -438,12 +522,30 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
         public Scene LoadedScene;
         public string FailureMessage;
         public int DisposeCount;
+        public bool UnloadDoneState;
+        public bool UnloadSuccess;
+        public float UnloadProgress;
+        public string UnloadFailureMessage;
+        public int BeginUnloadCount;
 
         public bool IsDone => Done;
         public bool Succeeded => Success;
         public float Progress01 => Progress;
         public Scene Scene => LoadedScene;
         public string Failure => FailureMessage;
+        public bool UnloadStarted { get; private set; }
+        public bool UnloadDone => UnloadStarted && UnloadDoneState;
+        public bool UnloadSucceeded => UnloadDone && UnloadSuccess;
+        public float UnloadProgress01 => UnloadProgress;
+        public string UnloadFailure => UnloadFailureMessage;
+
+        public bool TryBeginUnload(out string error)
+        {
+            BeginUnloadCount++;
+            UnloadStarted = true;
+            error = null;
+            return true;
+        }
 
         public void Dispose()
         {

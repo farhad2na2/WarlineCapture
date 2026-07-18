@@ -15,6 +15,12 @@ namespace Game.Composition
         float Progress01 { get; }
         Scene Scene { get; }
         string Failure { get; }
+        bool UnloadStarted { get; }
+        bool UnloadDone { get; }
+        bool UnloadSucceeded { get; }
+        float UnloadProgress01 { get; }
+        string UnloadFailure { get; }
+        bool TryBeginUnload(out string error);
     }
 
     internal interface IOperationMapSourceSceneApi
@@ -95,6 +101,7 @@ namespace Game.Composition
         IOperationMapSourceSceneOperation
     {
         private AsyncOperationHandle<SceneInstance> handle;
+        private AsyncOperationHandle<SceneInstance> unloadHandle;
         private bool disposed;
 
         public OperationMapAddressablesSourceSceneOperation(
@@ -111,6 +118,53 @@ namespace Game.Composition
         public string Failure => handle.IsValid()
             ? handle.OperationException?.Message
             : "Operation-map source-scene handle is invalid.";
+        public bool UnloadStarted { get; private set; }
+        public bool UnloadDone => UnloadStarted && unloadHandle.IsValid() && unloadHandle.IsDone;
+        public bool UnloadSucceeded =>
+            UnloadDone && unloadHandle.Status == AsyncOperationStatus.Succeeded;
+        public float UnloadProgress01 =>
+            UnloadStarted && unloadHandle.IsValid() ? unloadHandle.PercentComplete : 0f;
+        public string UnloadFailure => unloadHandle.IsValid()
+            ? unloadHandle.OperationException?.Message
+            : "Operation-map source-scene unload handle is invalid.";
+
+        public bool TryBeginUnload(out string error)
+        {
+            if (disposed)
+            {
+                error = "Operation-map source-scene operation is disposed.";
+                return false;
+            }
+            if (UnloadStarted)
+            {
+                error = null;
+                return true;
+            }
+            if (!handle.IsValid() || !handle.IsDone || handle.Status != AsyncOperationStatus.Succeeded)
+            {
+                error = "Operation-map source scene must finish loading before unload begins.";
+                return false;
+            }
+
+            try
+            {
+                unloadHandle = Addressables.UnloadSceneAsync(handle, autoReleaseHandle: false);
+                if (!unloadHandle.IsValid())
+                {
+                    error = "Operation-map source-scene unload did not return a valid operation.";
+                    return false;
+                }
+
+                UnloadStarted = true;
+                error = null;
+                return true;
+            }
+            catch (Exception exception)
+            {
+                error = $"Operation-map source-scene unload did not start: {exception.Message}";
+                return false;
+            }
+        }
 
         public void Dispose()
         {
@@ -118,13 +172,20 @@ namespace Game.Composition
                 return;
 
             disposed = true;
-            if (!handle.IsValid())
+            if (UnloadStarted)
+            {
+                if (unloadHandle.IsValid())
+                    Addressables.Release(unloadHandle);
+                unloadHandle = default;
+                handle = default;
                 return;
+            }
 
-            if (handle.IsDone && handle.Status == AsyncOperationStatus.Succeeded)
+            if (handle.IsValid() && handle.IsDone && handle.Status == AsyncOperationStatus.Succeeded)
                 Addressables.UnloadSceneAsync(handle, autoReleaseHandle: true);
-            else
+            else if (handle.IsValid())
                 Addressables.Release(handle);
+            handle = default;
         }
     }
 
@@ -138,6 +199,7 @@ namespace Game.Composition
         private string expectedOperationMapId;
         private string expectedSourceSceneGuid;
         private bool disposed;
+        private bool unloading;
 
         public OperationMapSceneLoadingSceneSystemHelper(
             IOperationMapSourceSceneApi sceneApi = null,
@@ -159,6 +221,8 @@ namespace Game.Composition
         public string Failure { get; private set; }
         public OperationMapSceneView SceneView { get; private set; }
         public StaticMapPresentationManifest Manifest { get; private set; }
+        public bool IsUnloading => unloading && !UnloadComplete && !HasFailed;
+        public bool UnloadComplete { get; private set; }
 
         public bool TryStart(OperationMapDefinition definition, out string error)
         {
@@ -225,7 +289,15 @@ namespace Game.Composition
 
         public void Update()
         {
-            if (disposed || sceneOperation == null || IsReady || HasFailed)
+            if (disposed || sceneOperation == null || HasFailed)
+                return;
+
+            if (unloading)
+            {
+                UpdateUnload();
+                return;
+            }
+            if (IsReady)
                 return;
 
             Progress01 = (sceneOperation.Progress01 + manifestOperation.Progress01) * 0.5f;
@@ -269,6 +341,37 @@ namespace Game.Composition
             Manifest = manifestOperation.Manifest;
             Progress01 = 1f;
             IsReady = true;
+        }
+
+        public bool TryBeginUnload(out string error)
+        {
+            if (disposed)
+            {
+                error = "Operation-map source-scene loader is disposed.";
+                return false;
+            }
+            if (HasFailed)
+            {
+                error = Failure;
+                return false;
+            }
+            if (UnloadComplete || unloading)
+            {
+                error = null;
+                return true;
+            }
+            if (!IsReady || sceneOperation == null)
+            {
+                error = "Operation-map source scene must be ready before unload begins.";
+                return false;
+            }
+            if (!sceneOperation.TryBeginUnload(out error))
+                return false;
+
+            unloading = true;
+            IsReady = false;
+            Progress01 = 0f;
+            return true;
         }
 
         public void Abort(string failure)
@@ -317,6 +420,29 @@ namespace Game.Composition
             Failure = null;
             expectedOperationMapId = null;
             expectedSourceSceneGuid = null;
+            unloading = false;
+            UnloadComplete = false;
+        }
+
+        private void UpdateUnload()
+        {
+            Progress01 = sceneOperation.UnloadProgress01;
+            if (!sceneOperation.UnloadDone)
+                return;
+            if (!sceneOperation.UnloadSucceeded)
+            {
+                Fail(string.IsNullOrWhiteSpace(sceneOperation.UnloadFailure)
+                    ? "Operation-map source-scene unload failed."
+                    : sceneOperation.UnloadFailure);
+                return;
+            }
+
+            ReleaseOperations();
+            SceneView = null;
+            Manifest = null;
+            unloading = false;
+            UnloadComplete = true;
+            Progress01 = 1f;
         }
 
         private void Fail(string error)
@@ -328,6 +454,7 @@ namespace Game.Composition
             SceneView = null;
             Manifest = null;
             IsReady = false;
+            unloading = false;
             Progress01 = 0f;
         }
 

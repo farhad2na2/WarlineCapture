@@ -144,6 +144,10 @@ namespace Game.Composition
             operationMapSceneLoadingSystem?.Progress01 ?? 0f;
         internal string OperationMapContentFailure =>
             operationMapSceneLoadingSystem?.Failure;
+        internal bool OperationMapContentUnloading =>
+            operationMapSceneLoadingSystem != null && operationMapSceneLoadingSystem.IsUnloading;
+        internal bool OperationMapContentUnloadComplete =>
+            operationMapSceneLoadingSystem == null || operationMapSceneLoadingSystem.UnloadComplete;
         internal bool OperationMapReadinessPublicationAvailable =>
             activeOperationMapSceneView != null && operationMapRuntimeBootstrapSystem != null;
 
@@ -280,11 +284,12 @@ namespace Game.Composition
             }
         }
 
-        private void ShutdownMatchRuntimeBound()
+        private void ShutdownMatchRuntimeBound(bool disposeSourceSceneLoad = true)
         {
             if (!matchRuntimeBound)
             {
-                DisposeOperationMapSourceSceneLoad();
+                if (disposeSourceSceneLoad)
+                    DisposeOperationMapSourceSceneLoad();
                 return;
             }
 
@@ -297,8 +302,23 @@ namespace Game.Composition
             {
                 DisposeOperationMapMetadataBootstrap();
                 matchRuntimeBound = false;
-                DisposeOperationMapSourceSceneLoad();
+                if (disposeSourceSceneLoad)
+                    DisposeOperationMapSourceSceneLoad();
             }
+        }
+
+        internal bool TryBeginOperationMapContentUnload(out string error)
+        {
+            if (operationMapSceneLoadingSystem == null ||
+                operationMapSceneLoadingSystem.UnloadComplete)
+            {
+                error = null;
+                return true;
+            }
+
+            ShutdownMatchRuntimeBound(disposeSourceSceneLoad: false);
+            activeOperationMapSceneView = null;
+            return operationMapSceneLoadingSystem.TryBeginUnload(out error);
         }
 
         internal bool TryPublishCompatibilityOperationMapMetadata(World world, out string error)
@@ -495,6 +515,12 @@ namespace Game.Composition
             if (operationMapSceneLoadingSystem == null)
             {
                 EnsureOperationMapSourceSceneLoad();
+                return;
+            }
+
+            if (operationMapSceneLoadingSystem.IsUnloading)
+            {
+                operationMapSceneLoadingSystem.Update();
                 return;
             }
 

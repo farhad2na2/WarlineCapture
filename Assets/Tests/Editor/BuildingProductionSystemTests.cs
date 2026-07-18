@@ -147,6 +147,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             tests.BuildingUiCommandEntityCache_RecoversDestroyedEntitiesAndRepairsBuffers();
             tests.BuildingRuntimeState_ProcessesQueuedUiProductionCommand();
             tests.BuildingRuntimeState_ProcessesQueuedCampItemCommand();
+            tests.BuildingRuntimeState_RebindsBoundaryAfterWorldReplacement();
             tests.CountRuntimeProducedUnitsForFaction_UsesProducedUnitReadModel();
             tests.BuildingRuntimeState_ProductionSummaryUsesProducedUnitReadModel();
             tests.BuildingRuntimeState_FactionSummarySignatureUsesEcsResourceStorage();
@@ -159,7 +160,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             tests.BuildingSpawnCompositionSystemHelper_UsesBoundarySpawnPointWithoutManagedSlotArray();
             tests.BuildingSpawnCompositionSystemHelper_UsesBoundarySpawnPointForOverrideHelicopterSlot();
             tests.BuildingSpawnCompositionSystemHelper_UsesBoundarySpawnPointForAutomaticHelicopterSpawn();
-            Debug.Log("[BuildingProductionRequestValidation] result=Passed tests=30");
+            Debug.Log("[BuildingProductionRequestValidation] result=Passed tests=31");
             ValidationExit.Passed();
         }
         catch (Exception ex)
@@ -2384,6 +2385,51 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     }
 
     [Test]
+    public void BuildingRuntimeState_RebindsBoundaryAfterWorldReplacement()
+    {
+        var boundarySystem = new BuildingRuntimeProcessingCompositionSystemHelper();
+        GameObject unitPrefab = new("Building Runtime Boundary Rebind Unit");
+        try
+        {
+            using (World firstWorld = new("BuildingRuntimeBoundaryRebind.First"))
+            {
+                Entity firstBoundary = firstWorld.EntityManager.CreateEntity(typeof(BuildingRuntimeStateTag));
+                using EntityQuery firstBoundaryQuery = firstWorld.EntityManager.CreateEntityQuery(
+                    ComponentType.ReadOnly<BuildingRuntimeStateTag>());
+                UpdateEmptyBuildingRuntimeBoundary(
+                    boundarySystem,
+                    firstWorld.EntityManager,
+                    firstBoundaryQuery,
+                    unitPrefab,
+                    now: 10f);
+
+                Assert.IsTrue(firstWorld.EntityManager.HasBuffer<BuildingFactionResourceSellRequest>(firstBoundary));
+            }
+
+            using (World secondWorld = new("BuildingRuntimeBoundaryRebind.Second"))
+            {
+                Entity staleIdentityDecoy = secondWorld.EntityManager.CreateEntity();
+                Entity secondBoundary = secondWorld.EntityManager.CreateEntity(typeof(BuildingRuntimeStateTag));
+                using EntityQuery secondBoundaryQuery = secondWorld.EntityManager.CreateEntityQuery(
+                    ComponentType.ReadOnly<BuildingRuntimeStateTag>());
+                UpdateEmptyBuildingRuntimeBoundary(
+                    boundarySystem,
+                    secondWorld.EntityManager,
+                    secondBoundaryQuery,
+                    unitPrefab,
+                    now: 20f);
+
+                Assert.IsFalse(secondWorld.EntityManager.HasBuffer<BuildingFactionResourceSellRequest>(staleIdentityDecoy));
+                Assert.IsTrue(secondWorld.EntityManager.HasBuffer<BuildingFactionResourceSellRequest>(secondBoundary));
+            }
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
     public void CountRuntimeProducedUnitsForFaction_UsesProducedUnitReadModel()
     {
         using World world = new("CountRuntimeProducedUnitsForFaction_UsesProducedUnitReadModel");
@@ -3429,6 +3475,43 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             (_, _) => 0,
             (_, _) => 0,
             evaluateConstructionResources: evaluateConstructionResources);
+    }
+
+    private static void UpdateEmptyBuildingRuntimeBoundary(
+        BuildingRuntimeProcessingCompositionSystemHelper boundarySystem,
+        EntityManager entityManager,
+        EntityQuery boundaryQuery,
+        GameObject unitPrefab,
+        float now)
+    {
+        Dictionary<int, RuntimeBuildingEntity> runtimeBuildings = new();
+        var requestSystem = new BuildingProductionRequestSystemHelper();
+        var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
+        var runtimeQuerySystem = new BuildingRuntimeReadModelCompositionSystemHelper();
+        BuildingProductionRequestSystemHelper.Context productionContext = CreateProducerSelectionContext(
+            runtimeBuildings,
+            productionSystem,
+            unitPrefab,
+            entityManager);
+        BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext = CreateRuntimeQueryContext(
+            runtimeBuildings,
+            entityManager,
+            productionSystem);
+
+        boundarySystem.Update(
+            new BuildingDefinitionPrefabSystemHelper(),
+            new BuildingRuntimeSpawnCompositionSystemHelper(),
+            default,
+            requestSystem,
+            productionContext,
+            runtimeQuerySystem,
+            runtimeQueryContext,
+            new FactionResourceCompositionSystemHelper(),
+            entityManager,
+            boundaryQuery,
+            runtimeBuildings,
+            now,
+            frameCount: 1);
     }
 
     private static BuildingProductionRequestSystemHelper.Context CreateProducerSelectionContext(

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Game.Authoring;
 using Game.Composition;
 using Game.Configs;
+using Game.Runtime;
 using Unity.Scenes;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -81,6 +82,10 @@ namespace Game.Editor
                 OperationMapSceneView view = views[0];
                 if (!string.Equals(view.gameObject.name, ViewRootName, StringComparison.Ordinal) ||
                     !string.Equals(view.OperationMapId, OperationMapId, StringComparison.Ordinal) ||
+                    !string.Equals(view.DecorationRoot.name, "Decorations", StringComparison.Ordinal) ||
+                    !string.Equals(view.BuildingAuthoringRoot.name, "Buildings", StringComparison.Ordinal) ||
+                    !string.Equals(view.VehicleAuthoringRoot.name, "Vehicles", StringComparison.Ordinal) ||
+                    view.DecorationCombinedMeshBaker.transform != view.DecorationRoot ||
                     AssetDatabase.GetAssetPath(view.Definition) !=
                     OperationMapCurrentStagedDefinitionBuilder.DefinitionPath ||
                     AssetDatabase.GetAssetPath(view.BuildingPlacements) !=
@@ -111,6 +116,12 @@ namespace Game.Editor
         private static void Bind(OperationMapSceneView view, Scene scene)
         {
             GameObject map = FindRequiredRoot(scene, "Map");
+            Transform decorations = FindRequiredRoot(scene, "Decorations").transform;
+            Transform buildingsRoot = FindRequiredChild(map.transform, "Buildings");
+            Transform vehiclesRoot = FindRequiredChild(map.transform, "Vehicles");
+            CombinedMeshBaker combinedMeshBaker = decorations.GetComponent<CombinedMeshBaker>();
+            if (combinedMeshBaker == null)
+                throw new InvalidOperationException("Staged operation map decorations require CombinedMeshBaker.");
             MapSurfaceAuthoring surface = FindSingleComponent<MapSurfaceAuthoring>(scene);
             SubScene subScene = FindSingleComponent<SubScene>(scene);
             OperationMapDefinition definition = LoadRequired<OperationMapDefinition>(
@@ -124,6 +135,10 @@ namespace Game.Editor
             serialized.FindProperty("operationMapId").stringValue = OperationMapId;
             serialized.FindProperty("definition").objectReferenceValue = definition;
             serialized.FindProperty("mapRoot").objectReferenceValue = map.transform;
+            serialized.FindProperty("decorationCombinedMeshBaker").objectReferenceValue = combinedMeshBaker;
+            serialized.FindProperty("decorationRoot").objectReferenceValue = decorations;
+            serialized.FindProperty("buildingAuthoringRoot").objectReferenceValue = buildingsRoot;
+            serialized.FindProperty("vehicleAuthoringRoot").objectReferenceValue = vehiclesRoot;
             serialized.FindProperty("mapSurfaceAuthoring").objectReferenceValue = surface;
             serialized.FindProperty("buildingPlacements").objectReferenceValue = buildings;
             serialized.FindProperty("vehiclePlacements").objectReferenceValue = vehicles;
@@ -185,6 +200,15 @@ namespace Game.Editor
                     return root;
             }
             throw new InvalidOperationException($"Staged operation map has no '{name}' root.");
+        }
+
+        private static Transform FindRequiredChild(Transform parent, string name)
+        {
+            Transform child = parent.Find(name);
+            return child != null
+                ? child
+                : throw new InvalidOperationException(
+                    $"Staged operation map root has no direct '{name}' child.");
         }
 
         private static T LoadRequired<T>(string path) where T : UnityEngine.Object

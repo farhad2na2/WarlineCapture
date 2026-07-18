@@ -48,8 +48,8 @@
   "artifactId": "AM-021",
   "baseline": {
     "branch": "main",
-    "commit": "18423c3b349c94997759e12bd81a204847133759",
-    "tree": "f1383e1db795ecbde92e32c5bf7e2de821642cb6"
+    "commit": "13f9c207b35361e74e42638c370f3b1ebf6b7b07",
+    "tree": "d0214a423fbd367360623dcf9199ee52e2ec4e59"
   },
   "categories": {
     "eventSubscriptions": [
@@ -8475,7 +8475,7 @@
         "lifecycleDisposition": "classification-required",
         "lifecycleKind": "world-owned-borrowed-handle",
         "lifecycleMethods": [],
-        "line": 96,
+        "line": 110,
         "ownerType": "SelectionHudFeedbackUiSystemHelper",
         "path": "Assets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs",
         "protectedOwnerIds": [],
@@ -8496,7 +8496,7 @@
         "lifecycleDisposition": "classification-required",
         "lifecycleKind": "world-owned-borrowed-handle",
         "lifecycleMethods": [],
-        "line": 98,
+        "line": 112,
         "ownerType": "SelectionHudFeedbackUiSystemHelper",
         "path": "Assets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs",
         "protectedOwnerIds": [],
@@ -13189,8 +13189,8 @@
   },
   "schemaVersion": 1,
   "scope": {
-    "productionFileCount": 1022,
-    "sourceManifestSha256": "5ee2c4182608f21952085679a22e756b356df18d8b3dd940be8465c854a367f3",
+    "productionFileCount": 1026,
+    "sourceManifestSha256": "903f19ccba395d9627e0a55b502389bc1e64da7c9fb9e30143a3cb2d901c7e77",
     "sourceRoot": "Assets/Game/Scripts"
   },
   "sourceManifest": [
@@ -13268,7 +13268,7 @@
     },
     {
       "path": "Assets/Game/Scripts/Authorings/UnitGridAuthoring.cs",
-      "sha256": "179c0f0b16083f97f07323bc6e2c2caef40b545c576e597afe97a9354bbc90d9"
+      "sha256": "9629893abfa7738b571d8b48aeccd6c2ff07c801bb974eec19e963af4d5dd5c7"
     },
     {
       "path": "Assets/Game/Scripts/Authorings/UnitHealthBarAuthoring.cs",
@@ -13288,7 +13288,7 @@
     },
     {
       "path": "Assets/Game/Scripts/Balance/BalanceMetrics.cs",
-      "sha256": "591daa5ee3d29719631a6febbd972eebbd8be34bbbdc0e7eceb98e60a56f508f"
+      "sha256": "3cdd6625ed4065ceaed6ededf4f06f7fa979afaf874c146c4dda62bd280bfdfe"
     },
     {
       "path": "Assets/Game/Scripts/Balance/BalanceOutcomeClassifier.cs",
@@ -13300,7 +13300,7 @@
     },
     {
       "path": "Assets/Game/Scripts/Balance/BalanceReportWriter.cs",
-      "sha256": "7132e3101e3f6e9f0ea6ac6f7a88302cbd9408bbe23f5cb352b054666edc1eaa"
+      "sha256": "c9f3249f746184c0c8c9fbfe6845a35904796e941312fe681aa41ede7ae4ec6d"
     },
     {
       "path": "Assets/Game/Scripts/Balance/GameRuntimeStats.cs",
@@ -13440,7 +13440,7 @@
     },
     {
       "path": "Assets/Game/Scripts/Components/ResourceExchangeComponents.cs",
-      "sha256": "94adff254421eab991c343e7c5da7a180244e9c0e4e83cfbeef2cff7e1b88b50"
+      "sha256": "259d5b016095c2c264694a04341d1e4cf165d16fb347ea8e74c56f43d9a0452e"
     },
     {
       "path": "Assets/Game/Scripts/Components/RtsCameraRequestComponents.cs",
@@ -13552,7 +13552,7 @@
     },
     {
       "path": "Assets/Game/Scripts/Composition/BuildingDefinitionAuthoringMetadataPrefabSystemHelper.cs",
-      "sha256": "33c3bf6e0454527b16072ca3639f85a24f1861172e49fd23f79edc9b4cefe714"
+      "sha256": "293664568cef11cce9ec59f47302d056d2a2e0feb7f34a1fb00be4bf2dac52e3"
     },
     {
       "path": "Assets/Game/Scripts/Composition/BuildingProductionUnitMetadataPrefabSystemHelper.cs",
@@ -13624,7 +13624,7 @@
     },
     {
       "path": "Assets/Game/Scripts/Composition/MatchSceneView.cs",
-      "sha256": "1cfaf1b472523aa4af608ac7eac0fb4ce89cacec97ddbda7d4e3ccf65cd03847"
+      "sha256": "8c526913a2db9363b2a9e073dcd1a1dcca4a34238e11d702abece291ed7b898e"
     },
     {
       "path": "Assets/Game/Scripts/Composition/MatchStartSceneSystemHelper.cs",
@@ -13636,7 +13636,7 @@
     },
     {
       "path": "Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs",
-      "sha256": "9871bc9679c900762bb987a136a726940d2c4dae33cb7db79007e768411eefba"
+      "sha256": "0fd3922e79766649c6dba9082716ac56f2df0190df4d493d8a04ffc6f5734977"
     },
     {
       "path": "Assets/Game/Scripts/Composition/MenuBootstrapLoadingUtilities.cs",
@@ -13704,11 +13704,19 @@
     },
     {
       "path": "Assets/Game/Scripts/Composition/OperationMapRuntimeBootstrapSceneSystemHelper.cs",
-      "sha256": "3bf2a17f23799f24b545c06c701dd51b6152a763c8fa747a1728c7a30f53523a"
+      "sha256": "7d3fd8af315641a8998d41c90c21e26f038151981b709170afe11a8436a15645"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/OperationMapSceneLoadingSceneSystemHelper.cs",
+      "sha256": "8de3e7f9a3519146696247d5d47103461a643f3cbbcb2fb002dfc1dac44e3910"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/OperationMapSceneReferenceSceneSystemHelper.cs",
+      "sha256": "7b7de2a93267894d0fe3f0cf63fc25c84813f1202c96c4aaa21e4f9b61d646e1"
     },
     {
       "path": "Assets/Game/Scripts/Composition/OperationMapSceneView.cs",
-      "sha256": "ffd2e4622da0275e51ba0ebaf53f9d790fd4e8ef381f99b6c27d0c76776be083"
+      "sha256": "cf9e0ccd2e480643bade44e933df2fe3b7369a06d93b9d9e2b08e82363ab2908"
     },
     {
       "path": "Assets/Game/Scripts/Composition/PerformanceDiagnosticsReferenceDiagnosticsSystemHelper.cs",
@@ -13717,6 +13725,10 @@
     {
       "path": "Assets/Game/Scripts/Composition/SelectionPortraitSpriteResolverUiSystemHelper.cs",
       "sha256": "4be2209456b720e458c917316c4465f0099efc36697ddcfff75b80c2a2620ac4"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/StaticMapPresentationAddressablesSceneApi.cs",
+      "sha256": "39509998cf9037ad76957234822f8f57a099e980b8fd60843c298230d5b141fc"
     },
     {
       "path": "Assets/Game/Scripts/Composition/StaticMapPresentationDetachedOperation.cs",
@@ -13728,19 +13740,19 @@
     },
     {
       "path": "Assets/Game/Scripts/Composition/StaticMapPresentationSceneApi.cs",
-      "sha256": "945603d98b97c970067afec2eb863f933e01a67949a15911220bdc1a56b969cb"
+      "sha256": "b893272b0085b73cfbfb5095751ccf2a8154563a79dcbcdbd1f486e8f64bcbb9"
     },
     {
       "path": "Assets/Game/Scripts/Composition/StaticMapPresentationStreamer.cs",
-      "sha256": "5732b2574f4c66280b9c62ab9a26d9a8d7f69541954c7bffbf1e494f631eddc0"
+      "sha256": "7bceacd52a2d5ad299c0ad6a4f2f0e701c1824e35f11dc44538ce605eeb92257"
     },
     {
       "path": "Assets/Game/Scripts/Composition/UiCatalogAuthoringMetadataUiSystemHelper.cs",
-      "sha256": "9362c050c3d0de5b89001555993a49073cdfb609eb4b5921621d1c6241dcd9ac"
+      "sha256": "3cdef0d4792895e92d76e9ef743bbcf2602775688735bc9aca058ae6a1e827e2"
     },
     {
       "path": "Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs",
-      "sha256": "5540b75b63f87f3a79372365e99237ed14bdbe49aca94c83e95c19dc764bc714"
+      "sha256": "9d7895b26f153cf0b7a0574ae02ba1c3687f990c0a7d2cb76a3e45066b937c39"
     },
     {
       "path": "Assets/Game/Scripts/Composition/UnitRenderingMetadataAuthoringSystem.cs",
@@ -13804,7 +13816,7 @@
     },
     {
       "path": "Assets/Game/Scripts/Configs/GameplayConfigModels.cs",
-      "sha256": "e47829e9e04d9d1a887748eddfadd0d5906c67fb22d288c65a64dec85e59aac4"
+      "sha256": "ad89ed00950124312ab6590582e1c423bacde7060129033349ce93123e8206c8"
     },
     {
       "path": "Assets/Game/Scripts/Configs/GroundMissileLauncherConfig.cs",
@@ -13851,12 +13863,16 @@
       "sha256": "be48c7c980385fbd719939ec971c2b1c605f1474fd7ef7d90a2da01408db1dbc"
     },
     {
+      "path": "Assets/Game/Scripts/Configs/OperationMapContentAddressContract.cs",
+      "sha256": "7b5c7a695f368e16912aa1fc4f0040b99802171325334e8ecc354841003b846b"
+    },
+    {
       "path": "Assets/Game/Scripts/Configs/OperationMapContractValidation.cs",
       "sha256": "d17734a640c56b43c2513fecac1331852db7e23cf0c9858aad9948db9713d2a6"
     },
     {
       "path": "Assets/Game/Scripts/Configs/OperationMapDefinition.cs",
-      "sha256": "df323589bf6623865567183788f48f95273d4573667e282794d5f78435753e2a"
+      "sha256": "26837ec51e382a5c7f197934d75f8fdcca29aee3ccdca10e2208f81031e05473"
     },
     {
       "path": "Assets/Game/Scripts/Configs/Prefabs/BuildingDefinitionAuthoringPrefabConfigAsset.cs",
@@ -13880,11 +13896,11 @@
     },
     {
       "path": "Assets/Game/Scripts/Configs/ResourceExchangeConfigModels.cs",
-      "sha256": "814ee408396b7819fa3c15bb2967464069e313064a0069f85978ddade2c7bcff"
+      "sha256": "cd7d078757bb3ae8cd511fec7eed585a33c12927681413e8433c08e1b38dd3ea"
     },
     {
       "path": "Assets/Game/Scripts/Configs/ResourceExchangeMaterialsBalanceModel.cs",
-      "sha256": "a4203073978eb5fcd176cf3677dafe0496593faa38fff36146b807de033c3ebf"
+      "sha256": "6b08cc35fd7493089bd23f946c24fa6d197f47442bfb773002ee755aefa41dda"
     },
     {
       "path": "Assets/Game/Scripts/Configs/RuntimeOperationMapVisualRecipe.cs",
@@ -14296,7 +14312,7 @@
     },
     {
       "path": "Assets/Game/Scripts/Rendering/Systems/UnitHelicopterBladeSpinSystem.cs",
-      "sha256": "762884a189722107473099c679b6fa8ba7b6c815bba8638b2238364f63aec9bc"
+      "sha256": "1a4e61ff0c51f22cde26c6c21b80806cf67929557a5354f7362857500af1bd6f"
     },
     {
       "path": "Assets/Game/Scripts/Rendering/Systems/UnitMassRenderSettingsSystem.cs",
@@ -14576,7 +14592,7 @@
     },
     {
       "path": "Assets/Game/Scripts/Systems/AIBuildPlanningPolicySystemHelper.cs",
-      "sha256": "440b9faade6cbc8362ee6781e8f582202968db6eed93664c0fd677d8509f761e"
+      "sha256": "ba66ddaea721f11fee4c051ca3718d060edf7e0063e8e504a0c2ca8746a2558e"
     },
     {
       "path": "Assets/Game/Scripts/Systems/AIBuildPlanningReadSystemHelper.cs",
@@ -14660,7 +14676,7 @@
     },
     {
       "path": "Assets/Game/Scripts/Systems/BuildingCampItemCommandPolicySystemHelper.cs",
-      "sha256": "77256a37811fa12fcb8413362b664120371de1dba294e480b5640d4a6bd95752"
+      "sha256": "e87e40ec38249770deb17903c8c5fe9f445defc246efce285ef33c89a32e9591"
     },
     {
       "path": "Assets/Game/Scripts/Systems/BuildingCitizenPopulationCompositionSystemHelper.cs",
@@ -14792,7 +14808,7 @@
     },
     {
       "path": "Assets/Game/Scripts/Systems/BuildingPlacementConstructionTransaction.cs",
-      "sha256": "4de9f68a22b28184d3f674b40d6b8cc9cac6e6b70aca24fc91011be9ccd43551"
+      "sha256": "7c0c9b72aace6a5f5316f78040286e4977f2f6e99d48809e3438551be90f826c"
     },
     {
       "path": "Assets/Game/Scripts/Systems/BuildingPlacementContextCompositionSystemHelper.cs",
@@ -14828,7 +14844,7 @@
     },
     {
       "path": "Assets/Game/Scripts/Systems/BuildingPlacementLifecycleCompositionSystemHelper.cs",
-      "sha256": "838b1111284e504b0188c7b7e14b8e3bb6aecf0e5c3fe58ce9b80f04bad4bbac"
+      "sha256": "df114be2a59d383c61bf729d8cd8b0a1022b617146889cf8c1b0985f8296a685"
     },
     {
       "path": "Assets/Game/Scripts/Systems/BuildingPlacementPreviewPresentationSystemHelper.cs",
@@ -14892,11 +14908,11 @@
     },
     {
       "path": "Assets/Game/Scripts/Systems/BuildingProductionCompositionSystemHelper.cs",
-      "sha256": "07cee01cc1c5b01d69ea2736bca133093960982e703c1b67a37545b17eb715ef"
+      "sha256": "89ab0a6721967217ac77637c11aa971da615a90b21b815c1f752af19ebca415e"
     },
     {
       "path": "Assets/Game/Scripts/Systems/BuildingProductionContextCompositionSystemHelper.cs",
-      "sha256": "206a3040c82a6249cd06ca59352667a0f122f90d48254e9c7f0c1db592d438eb"
+      "sha256": "4b6abc2fae99976e113b7b6789a5b75e75afd5238dd444bf1012a1f1f7958f35"
     },
     {
       "path": "Assets/Game/Scripts/Systems/BuildingProductionEntriesUiSystemHelper.cs",
@@ -14908,7 +14924,7 @@
     },
     {
       "path": "Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.cs",
-      "sha256": "b240e5c2b5da16df2478dab1471bebb7ffe952771913e8abee83cfbd84f348f0"
+      "sha256": "b74125e4054d92eb0c5937c1b917f78f75afcd52dbabdcd43829440c4c065907"
     },
     {
       "path": "Assets/Game/Scripts/Systems/BuildingProductionRuntimeTickCompositionSystemHelper.cs",
@@ -15008,7 +15024,7 @@
     },
     {
       "path": "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
-      "sha256": "5d5f43c00eab1a8646d68be885e5c7b583c8e4785e0ec16449ac19e503541efc"
+      "sha256": "63229fc10b74b42c6a21a1409529a70bd7d00bfe06c76d1810fb8d5a6402002e"
     },
     {
       "path": "Assets/Game/Scripts/Systems/BuildingRuntimePublishCompositionSystemHelper.cs",
@@ -15428,7 +15444,7 @@
     },
     {
       "path": "Assets/Game/Scripts/Systems/MaterialsScenarioRecoveryStartupSystemHelper.cs",
-      "sha256": "4197b62e19b54c5c0bdcb5475934393cddcf2e71d75e5339655d2bb08a3c0cf4"
+      "sha256": "67c97e3919f9810084952a66419d4f2f6e032ec94deea51688445d639eb4b4f9"
     },
     {
       "path": "Assets/Game/Scripts/Systems/MissileFlightAudioSystem.cs",
@@ -15508,7 +15524,7 @@
     },
     {
       "path": "Assets/Game/Scripts/Systems/ResourceExchangeAIRecoverySystem.cs",
-      "sha256": "a4bacc58f8e8d8d2411b526e08aeb2b40e40c2d78cc03c42adc6a21a3453c132"
+      "sha256": "a0f2aea0d07650f2853538b25b21d6eaa1ab17aa66219258836032fb16313dff"
     },
     {
       "path": "Assets/Game/Scripts/Systems/ResourceExchangeAIStartupProjectionSystemHelper.cs",
@@ -15516,7 +15532,7 @@
     },
     {
       "path": "Assets/Game/Scripts/Systems/ResourceExchangeAriaTextUtility.cs",
-      "sha256": "b1fd16501699a61899ec26d5ceb1307abfcd4daff5cf58b078c5df18cb5598ba"
+      "sha256": "33641e5e11b482d6a30e58d9fb235d792e53be9369c630956cac8e80ebc19de7"
     },
     {
       "path": "Assets/Game/Scripts/Systems/ResourceExchangePhysicalStorageCandidateQuerySystemHelper.cs",
@@ -15536,7 +15552,7 @@
     },
     {
       "path": "Assets/Game/Scripts/Systems/ResourceExchangeQueueCompletionSystemHelper.cs",
-      "sha256": "1f568cd1debc42d9b2525910d860c06ed59ffc4293cee3e976796beb8314b79e"
+      "sha256": "d64bda162b168f447ceb0b8cfcc76dec1b367b8c5c0f98886beb756a77af2125"
     },
     {
       "path": "Assets/Game/Scripts/Systems/ResourceExchangeQueueTickSystem.cs",
@@ -15544,15 +15560,15 @@
     },
     {
       "path": "Assets/Game/Scripts/Systems/ResourceExchangeRequestQueueSystemHelper.cs",
-      "sha256": "6693940a75e41151bfad100058bf9b4dd1d6d999d34851876ae33431142219b7"
+      "sha256": "d2d91a6bfaf878c76a8af5cc19b8faf8a2be1cac02feba7e2913bdeb9ec63587"
     },
     {
       "path": "Assets/Game/Scripts/Systems/ResourceExchangeRequestValidationSystem.cs",
-      "sha256": "9f1832f80b0e52e605cc47bbf37d6c9b5df4589d549aaaf21f92a5c554fcd4ec"
+      "sha256": "39d0d7d2ad40106024491a229eb713c145cab53cc81b25825d0186c02452ec36"
     },
     {
       "path": "Assets/Game/Scripts/Systems/ResourceExchangeResourceUtilitySystemHelper.cs",
-      "sha256": "def80304c02192d2ca36db895aab45f1b1e23a4ee92371d8f701872dd6428c71"
+      "sha256": "981c886919822709cd8c91ab399f0a88024b97f3012afb2374f332896803f5ba"
     },
     {
       "path": "Assets/Game/Scripts/Systems/ResourceExchangeRushPolicySystemHelper.cs",
@@ -15564,7 +15580,7 @@
     },
     {
       "path": "Assets/Game/Scripts/Systems/ResourceExchangeToastTextUtility.cs",
-      "sha256": "923dfda66d7bb1bbcf8c635469b825e9c9a258f6c286ad2c556d1a8c6f01e905"
+      "sha256": "1d97c4761153fa250af992e045b159408a92c0b90a44e764218921c2e44a460e"
     },
     {
       "path": "Assets/Game/Scripts/Systems/ResourceExchangeVisualCueSystem.cs",
@@ -15836,7 +15852,7 @@
     },
     {
       "path": "Assets/Game/Scripts/Systems/RuntimeFactionResourceSystemHelper.cs",
-      "sha256": "e0936aaada006f7fcfa2ea6e16d183836a6639f82477388409b670ae9557ed06"
+      "sha256": "d7e9b088360dfe7909eb5ca9e3fef616bc326e6dd2e86e9443cc57495687c305"
     },
     {
       "path": "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs",
@@ -15892,11 +15908,11 @@
     },
     {
       "path": "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs",
-      "sha256": "8c0cc6a52b23135ce3020913ab8fb8f88a96202d75ccf511d0fcdc56ea1a6dce"
+      "sha256": "83728928e584b9bb4428ba7133c865f89a6dcb07dc7084013d955833dee8ec97"
     },
     {
       "path": "Assets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs",
-      "sha256": "6b0642b57c63828140fc92fe618408835f9a95196261f4fc7536f3cdc4201dac"
+      "sha256": "7ff80b5d385051bce3e6e376f58f17d8116335afbdf1bd483e77161c740ce258"
     },
     {
       "path": "Assets/Game/Scripts/Systems/SelectionMarkerVisibilitySystem.cs",
@@ -15916,7 +15932,7 @@
     },
     {
       "path": "Assets/Game/Scripts/Systems/SelectionRuntimeDiagnosticsSystemHelper.cs",
-      "sha256": "aea4c47cc02797aaaa64623dff50d1319175ccbc5079fb3f4acc2ffe0ac083c7"
+      "sha256": "f1c1061a4ddc28b0f9e4f19ba28d5af4eb5e531328e16cc1f0c3bb8f47c518fd"
     },
     {
       "path": "Assets/Game/Scripts/Systems/SelectionScreenMarkerUiSystemHelper.cs",
@@ -15956,7 +15972,7 @@
     },
     {
       "path": "Assets/Game/Scripts/Systems/TacticalFollowAttackCinematicCameraSystemHelper.cs",
-      "sha256": "9aca6a836feff1ea1105d86eaf788fe4883c536fa62a23bd32631b66d76d6547"
+      "sha256": "33e72362251bbc0095de95ac865c7ba5ff9afb030e2c7c23cb67f1e0fcb7f582"
     },
     {
       "path": "Assets/Game/Scripts/Systems/TacticalFollowAttackCinematicHelper.cs",
@@ -16568,7 +16584,7 @@
     },
     {
       "path": "Assets/Game/Scripts/UI/Contracts/UiCatalogMetadata.cs",
-      "sha256": "ad52586238e2c512d7d2290189e5652ce0b9849f0fc7a51ac50ba041d8c9801b"
+      "sha256": "5680ec84aa560a5eb134925667c619bbee4f746396e3bdc3fd4d182c0e222e9a"
     },
     {
       "path": "Assets/Game/Scripts/UI/Contracts/UiMatchHudResourceValuesModel.cs",
@@ -16576,11 +16592,11 @@
     },
     {
       "path": "Assets/Game/Scripts/UI/Contracts/UiRuntimeContracts.cs",
-      "sha256": "030176b05fd1633977ed0cd5f073302fe560023c2bbf4bc94fdb00cd894a7f47"
+      "sha256": "2f56c34e2ed895db94ed67d9f4b9ac52783c3ba8abb6e252a32bca754837c403"
     },
     {
       "path": "Assets/Game/Scripts/UI/Contracts/UiShellComponents.cs",
-      "sha256": "b57b12f7f40e580bbad9d781b9d21a0e7d64246ec6de84b0a436f0f329126b24"
+      "sha256": "987bca12b71eed701c18c6e0f6636c9377b2ad373224cc022c0f90113d250220"
     },
     {
       "path": "Assets/Game/Scripts/UI/Contracts/UiShellRuntimeGateway.cs",
@@ -16592,7 +16608,7 @@
     },
     {
       "path": "Assets/Game/Scripts/UI/MainMenuPlayUI.cs",
-      "sha256": "610a2b1f546e712fd28526e7645162585758a4f51fc983aff12d0b5ba8842a2f"
+      "sha256": "0250ca6e2836807292494b8ce18c8718fa572c60a7fff96a2e69e987404c482a"
     },
     {
       "path": "Assets/Game/Scripts/UI/MenuDiagnosticsUiSystemHelper.cs",
@@ -16736,15 +16752,15 @@
     },
     {
       "path": "Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogPresentationSystemHelper.cs",
-      "sha256": "d4747807ac6038fe7370c6110f5a907c658af076b62d0fddc6f80e760f81a6e7"
+      "sha256": "6222fe7ec6ae0f56a172852c9b4299e7b582a8ecc3a6e8aea836d62f468ff3d2"
     },
     {
       "path": "Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogQueryUiSystemHelper.cs",
-      "sha256": "7fd9fa81af0a26fe2a46d8666e4cba30b802a1fe55452a62fffdaaddff8d2546"
+      "sha256": "f19f8c42f781908438461192f9c58945c0a2e4de89d5aabd0370eaae4d4d7fd8"
     },
     {
       "path": "Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogRuntimeView.cs",
-      "sha256": "636f777516e2438dfad4edcf65ece831fd0cfab251a4e2994a009017bdc6f3a8"
+      "sha256": "7b14a02a5d59a3a00a38e4cb9cc2e4c77b94d7fb2ce563ff0a81136424f4ac30"
     },
     {
       "path": "Assets/Game/Scripts/UI/Screens/BuildDrawerInstructionSeverity.cs",
@@ -16752,7 +16768,7 @@
     },
     {
       "path": "Assets/Game/Scripts/UI/Screens/BuildDrawerItemView.cs",
-      "sha256": "5e30f61b651e76b2048787f433311b466e06af95c2e5f234acfb8450f5881402"
+      "sha256": "b24b6b1d0c01e87f31fee20656868e791552ce06e5488e7e72382bce4d8aa939"
     },
     {
       "path": "Assets/Game/Scripts/UI/Screens/BuildDrawerPanelView.cs",
@@ -16772,11 +16788,11 @@
     },
     {
       "path": "Assets/Game/Scripts/UI/Screens/BuildDrawerView.cs",
-      "sha256": "e39d5d15b513dd0bcba98705628799f161227a1b7bc79e676def7916c5a37663"
+      "sha256": "09712ade29e6510e4472e89084139adc35aa365f3c2be4191f1ab76e4980840a"
     },
     {
       "path": "Assets/Game/Scripts/UI/Screens/BuildPlacementConfirmationBarView.cs",
-      "sha256": "b2a01e11d568b1194d4b72116ba5fffba306ae04b1095efd7f0dfe59166c905b"
+      "sha256": "a6a8e7860ca048f86df5cdb1d8c5cfba1f09fe55fdc348bd4f45483dc4be818b"
     },
     {
       "path": "Assets/Game/Scripts/UI/Screens/CampaignOperationsScreenView.cs",
@@ -16832,7 +16848,7 @@
     },
     {
       "path": "Assets/Game/Scripts/UI/Screens/MatchHudHeaderReferenceUiSystemHelper.cs",
-      "sha256": "828448f3611d948e13ca70a44c3c3d45561185c6c6e2c359b505552bceca08b9"
+      "sha256": "18350dd696c981fbaa1a6cb2e5f2e0fe576f39e691a7942b843067431f215107"
     },
     {
       "path": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs",
@@ -16848,7 +16864,7 @@
     },
     {
       "path": "Assets/Game/Scripts/UI/Screens/MatchHudResourceHeaderPresentation.cs",
-      "sha256": "e5910238dce7c5055c142288c369191a2dc66557236032fc46a7d9d09e987a88"
+      "sha256": "9f6e548d3e47f97f7c46240e06839dc638dca36873f1ca5506759b810e922658"
     },
     {
       "path": "Assets/Game/Scripts/UI/Screens/MatchHudRightQuickRailView.cs",
@@ -16896,7 +16912,7 @@
     },
     {
       "path": "Assets/Game/Scripts/UI/Screens/ResourceExchangePopupView.cs",
-      "sha256": "ab90619e45b9bf20937e1fa2d96eb20d9964f4d8d912d94e3468766e967d52ba"
+      "sha256": "01a52ff95db3daa947339740b4bcfdf4c8470dd182aa7358c841a5e72b370557"
     },
     {
       "path": "Assets/Game/Scripts/UI/Screens/ResourceExchangeQueueItemView.cs",
@@ -17000,7 +17016,7 @@
     },
     {
       "path": "Assets/Game/Scripts/UI/Shell/Ecs/Contracts/UiShellEcsComponents.cs",
-      "sha256": "75d495a17ead09fdf959234bf0c403c1539d69bdfef48b23c62e3c46efc51cda"
+      "sha256": "4dc71d8efc5571316cded468938be9dce15b67ed8b436ca7933be8a816663997"
     },
     {
       "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestDispatchSystemHelper.cs",
@@ -17024,11 +17040,11 @@
     },
     {
       "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerProjectionSystemHelper.cs",
-      "sha256": "846248771b7bc694f3a704d3673e15273d10dbe9c22734b6477490bc612054c4"
+      "sha256": "48e6447f1cf0abcb5328a8113262b63cd407631ac016aa1546f458d68bb4d3f8"
     },
     {
       "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs",
-      "sha256": "bbb37c74a1bd148227a4bed8461900bc859e462a33018fa9b40993e732f1f49d"
+      "sha256": "655671c35790d1bf1ad5a4e1d25e50af87fc16a17db0f032ddc6224d511c2f79"
     },
     {
       "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildPlacementReadModelSystem.cs",
@@ -17040,7 +17056,7 @@
     },
     {
       "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiMatchHudResourceReadModelSystem.cs",
-      "sha256": "de10f02f05b1fcb4975a66ed56ab97dd85f1dd13a60b3cc8f3b4989bf188d0b6"
+      "sha256": "7532f135c9c9ec1a018437ea37dc77e0d33c8723eb6c49848867abf46534c59d"
     },
     {
       "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeProjectionFingerprintUtilitySystemHelper.cs",
@@ -17048,15 +17064,15 @@
     },
     {
       "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeProjectionSystemHelper.cs",
-      "sha256": "7a469883bc6ba357b5295472c482af3fad9822e371c3f811591db2645af7682c"
+      "sha256": "875633cd2401f993f89c843996ce80b5a4fbbfebb595f33289cbe36066d595e6"
     },
     {
       "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeReadModelSystem.cs",
-      "sha256": "bacd6626616a7ddb9a26287a94fe40165828ca6d930b5684de31e6bd135d0fd6"
+      "sha256": "d593fe3dabfa1dbb9e40dade6c88d081214e8acb2883fbe1eb37405032d23f31"
     },
     {
       "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeTextProjectionUtilitySystemHelper.cs",
-      "sha256": "810a4828b8b3556e4f23877f77c7cd6fdba7da49f4f52efc1757f7534a53caaa"
+      "sha256": "38b77eb2a02cca716e32c8eb6ed7bd0f4b2f97935f17e266ab53ca49588ee1fb"
     },
     {
       "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellArmoryCategorySystem.cs",
@@ -17084,23 +17100,23 @@
     },
     {
       "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.CommandHeader.cs",
-      "sha256": "12713653c802fb521af1de2d01385a00867b400c8e2d066fcc18abc8d1178f88"
+      "sha256": "7436649aaf617cebb8e5ec14d072464398d33c008c113175529f72baebea35a2"
     },
     {
       "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Core.cs",
-      "sha256": "acb2ffd856c3fe4cb2f6f0025b4d82731efc33a6e4124e8790a0fb01793d5067"
+      "sha256": "68263b783218ddf9d097cd98e9850976cb4fbfc99da9645fa46f9ae203254401"
     },
     {
       "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.DefaultState.cs",
-      "sha256": "21aee1aed60113ff837327e75c36fd107d8531d96cde0f29a3ea08ebcf4888c8"
+      "sha256": "1b6f1fdfe5aa705840413ace3a8bfb7da70a3f022d83ff9e17b821046d04a21e"
     },
     {
       "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.MinimapBuild.cs",
-      "sha256": "b741c6108ee3126ced6f0802d8baba72e2c8e58bde7030e4ad88b869d6106036"
+      "sha256": "2977ec57fd435881d9b5a5cdeec5eb36858821b2aba9c98c13d3eadb2b8f3020"
     },
     {
       "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Presentation.cs",
-      "sha256": "84a52e87d3b0f3cd85cb4b1fde2cd3378cb1e526653e258302b0f2ebca5a39ac"
+      "sha256": "5e9e430a9fac44cb18bc7a6435e5e29c9ffd763fd4d8214f6a58910f35b145f0"
     },
     {
       "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.ResourceValues.cs",
@@ -17136,7 +17152,7 @@
     },
     {
       "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellStateSystem.cs",
-      "sha256": "7f8da5f306b2e1ccc5c411037cc138e49178e2d49724830bb35efd48fd36c42f"
+      "sha256": "0c49e9bcead25de1abf438a5e211680cacb56f03bdbe8f659e1e12f65b34e27c"
     },
     {
       "path": "Assets/Game/Scripts/UI/Shell/MatchIntroCurtainView.cs",

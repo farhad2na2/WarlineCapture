@@ -93,6 +93,7 @@ Completed remediation:
 - `BuildingGameplayEcsQueryCompositionSystemHelper`: the shared building query set was cleared as non-debt after focused validation reused one helper across two Worlds and proved the replacement match reported only its own building boundary and selected units.
 - Resource integration audit: exchange feedback history is bounded to the newest 32 messages; AI and player construction spend tactical materials while legacy credits remain unchanged; Build Drawer and resource helpers remain within their existing size contracts. Focused Unity validation and the combined architecture suite pass.
 - `RuntimeGameplayStateSystem` static cache fields are cleared as non-debt in both historical inventories because focused replacement-World validation proves stale entity and World identities are rejected. Its separate global default-World lookup remains genuine debt and is not covered by this closure.
+- AM-021 ownership snapshot refresh: the canonical inventory is rebound to current source with the same `575` resources, `553` explicit owners, `22` protected owners, and zero gaps. The refreshed map source manifest and shifted line metadata do not change any ownership decision.
 
 ## 5. Scope Safety
 

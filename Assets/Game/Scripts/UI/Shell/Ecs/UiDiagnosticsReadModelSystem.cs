@@ -91,7 +91,7 @@ namespace Game.UI.Shell.Ecs
         private const int MaxVisibleLogEntries = 50;
         private static readonly Queue<RuntimeLogEntry> RuntimeLogEntries = new(MaxVisibleLogEntries);
         private static readonly StringBuilder RuntimeLogBuilder = new(8192);
-        private static bool subscribed;
+        private static int subscriptionCount;
         private static int version;
 
         public static int Version => version;
@@ -108,22 +108,30 @@ namespace Game.UI.Shell.Ecs
             }
         }
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetRuntimeLogState()
+        {
+            Application.logMessageReceived -= HandleRuntimeLogMessage;
+            subscriptionCount = 0;
+            RuntimeLogEntries.Clear();
+            RuntimeLogBuilder.Clear();
+            version = 0;
+        }
+
         public static void EnsureSubscribed()
         {
-            if (subscribed)
-                return;
-
-            Application.logMessageReceived += HandleRuntimeLogMessage;
-            subscribed = true;
+            if (subscriptionCount++ == 0)
+                Application.logMessageReceived += HandleRuntimeLogMessage;
         }
 
         public static void ReleaseSubscription()
         {
-            if (!subscribed)
+            if (subscriptionCount <= 0)
                 return;
 
-            Application.logMessageReceived -= HandleRuntimeLogMessage;
-            subscribed = false;
+            subscriptionCount--;
+            if (subscriptionCount == 0)
+                Application.logMessageReceived -= HandleRuntimeLogMessage;
         }
 
         public static FixedString4096Bytes BuildLogText()

@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 475,
+    "resolvedNonDebtRowCount": 478,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 483,
-    "genuineDebtRowCount": 92,
-    "uniqueDebtItemCount": 37,
+    "reviewedNonDebtRowCount": 486,
+    "genuineDebtRowCount": 89,
+    "uniqueDebtItemCount": 35,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -676,10 +676,25 @@
       "authority": ["Assets/Tests/Editor/UnitTransportValidationTests.cs", "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs"]
     },
     {
+      "id": "am018-static-irc-ui-diagnostics-buffer-application-owned",
+      "decision": "resolved",
+      "reasonCode": "bounded-application-log-buffer-with-counted-owners-and-reset",
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "IRC",
+        "sourcePath": "Assets/Game/Scripts/UI/Shell/Ecs/UiDiagnosticsReadModelSystem.cs"
+      },
+      "authority": [
+        "Assets/Tests/Editor/UiDiagnosticsRuntimeLogBufferTests.cs"
+      ]
+    },
+    {
       "id": "am018-static-irc-debt",
       "decision": "genuine-debt",
       "reasonCode": "readonly-reference-mutability-unproven",
-      "expectedCount": 5,
+      "expectedCount": 4,
       "debtIdPrefix": "AM025-STATIC-IRC",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",
@@ -855,10 +870,25 @@
       ]
     },
     {
+      "id": "am018-static-msl-ui-diagnostics-buffer-application-owned",
+      "decision": "resolved",
+      "reasonCode": "bounded-application-log-buffer-with-counted-owners-and-reset",
+      "expectedCount": 2,
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "MSL",
+        "sourcePath": "Assets/Game/Scripts/UI/Shell/Ecs/UiDiagnosticsReadModelSystem.cs"
+      },
+      "authority": [
+        "Assets/Tests/Editor/UiDiagnosticsRuntimeLogBufferTests.cs"
+      ]
+    },
+    {
       "id": "am018-static-msl-debt",
       "decision": "genuine-debt",
       "reasonCode": "mutable-static-lifecycle-unproven",
-      "expectedCount": 57,
+      "expectedCount": 55,
       "debtIdPrefix": "AM025-STATIC-MSL",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

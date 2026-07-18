@@ -114,6 +114,10 @@ public sealed class ArchitectureMenuMatchLifecycleStressPlayModeTests
         Assert.That(snapshot.MatchHudCount, Is.Zero, snapshot.ToCompactString());
         Assert.That(snapshot.EnabledAudioListenerCount, Is.EqualTo(1), snapshot.ToCompactString());
         Assert.That(snapshot.MissileTrailRootCount, Is.Zero, snapshot.ToCompactString());
+        Assert.That(snapshot.AudioRuntimeViewCount, Is.EqualTo(1), snapshot.ToCompactString());
+        Assert.That(snapshot.PathPoolOwnerCount, Is.Zero, snapshot.ToCompactString());
+        Assert.That(snapshot.PathPoolLength, Is.Zero, snapshot.ToCompactString());
+        Assert.That(snapshot.PathPoolCapacity, Is.Zero, snapshot.ToCompactString());
         Assert.That(snapshot.ShellFlowSystemHandle, Is.Not.EqualTo(Unity.Entities.SystemHandle.Null), snapshot.ToCompactString());
         Assert.That(snapshot.ActionRequestSystemHandle, Is.Not.EqualTo(Unity.Entities.SystemHandle.Null), snapshot.ToCompactString());
     }
@@ -130,6 +134,8 @@ public sealed class ArchitectureMenuMatchLifecycleStressPlayModeTests
         Assert.That(snapshot.MatchViewCount, Is.EqualTo(1), snapshot.ToCompactString());
         Assert.That(snapshot.MatchHudCount, Is.EqualTo(1), snapshot.ToCompactString());
         Assert.That(snapshot.EnabledAudioListenerCount, Is.EqualTo(1), snapshot.ToCompactString());
+        Assert.That(snapshot.AudioRuntimeViewCount, Is.EqualTo(1), snapshot.ToCompactString());
+        Assert.That(snapshot.PathPoolOwnerCount, Is.EqualTo(1), snapshot.ToCompactString());
         Assert.That(snapshot.ShellFlowSystemHandle, Is.Not.EqualTo(Unity.Entities.SystemHandle.Null), snapshot.ToCompactString());
         Assert.That(snapshot.ActionRequestSystemHandle, Is.Not.EqualTo(Unity.Entities.SystemHandle.Null), snapshot.ToCompactString());
     }
@@ -154,5 +160,15 @@ public sealed class ArchitectureMenuMatchLifecycleStressPlayModeTests
         Assert.That(actual.MatchHudCount, Is.EqualTo(expected.MatchHudCount), message);
         Assert.That(actual.EnabledAudioListenerCount, Is.EqualTo(expected.EnabledAudioListenerCount), message);
         Assert.That(actual.MissileTrailRootCount, Is.EqualTo(expected.MissileTrailRootCount), message);
+        Assert.That(actual.AudioRuntimeViewCount, Is.EqualTo(expected.AudioRuntimeViewCount), message);
+        Assert.That(actual.AudioPoolSize, Is.EqualTo(expected.AudioPoolSize), message);
+        Assert.That(actual.ActiveAudioSourceCount, Is.EqualTo(expected.ActiveAudioSourceCount), message);
+        Assert.That(actual.PathPoolOwnerCount, Is.EqualTo(expected.PathPoolOwnerCount), message);
+        Assert.That(actual.PathPoolLength, Is.EqualTo(expected.PathPoolLength), message);
+        Assert.That(actual.PathPoolCapacity, Is.EqualTo(expected.PathPoolCapacity), message);
+        Assert.That(actual.MissileTrailCreatedCount, Is.EqualTo(expected.MissileTrailCreatedCount), message);
+        Assert.That(actual.MissileTrailActiveCount, Is.EqualTo(expected.MissileTrailActiveCount), message);
+        Assert.That(actual.ImpactVfxCreatedCount, Is.EqualTo(expected.ImpactVfxCreatedCount), message);
+        Assert.That(actual.ImpactVfxActiveCount, Is.EqualTo(expected.ImpactVfxActiveCount), message);
     }
 }

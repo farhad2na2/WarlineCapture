@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using Game.Components;
 using Game.Composition;
+using Game.Runtime;
 using Game.UI.Runtime;
 using Game.UI.Shell.Ecs;
 using Unity.Entities;
 using UnityEngine;
+using UnityEngine.Profiling;
 using UnityEngine.SceneManagement;
 
 internal enum ArchitectureLifecycleCheckpointPhase : byte
@@ -32,7 +34,21 @@ internal readonly struct ArchitectureMenuMatchLifecycleSnapshot
         int matchViewCount,
         int matchHudCount,
         int enabledAudioListenerCount,
-        int missileTrailRootCount)
+        int missileTrailRootCount,
+        int audioRuntimeViewCount,
+        int audioPoolSize,
+        int activeAudioSourceCount,
+        int pathPoolOwnerCount,
+        int pathPoolLength,
+        int pathPoolCapacity,
+        int missileTrailCreatedCount,
+        int missileTrailActiveCount,
+        int impactVfxCreatedCount,
+        int impactVfxActiveCount,
+        long totalAllocatedMemoryBytes,
+        long totalReservedMemoryBytes,
+        long monoUsedMemoryBytes,
+        long monoHeapMemoryBytes)
     {
         Cycle = cycle;
         Phase = phase;
@@ -50,6 +66,20 @@ internal readonly struct ArchitectureMenuMatchLifecycleSnapshot
         MatchHudCount = matchHudCount;
         EnabledAudioListenerCount = enabledAudioListenerCount;
         MissileTrailRootCount = missileTrailRootCount;
+        AudioRuntimeViewCount = audioRuntimeViewCount;
+        AudioPoolSize = audioPoolSize;
+        ActiveAudioSourceCount = activeAudioSourceCount;
+        PathPoolOwnerCount = pathPoolOwnerCount;
+        PathPoolLength = pathPoolLength;
+        PathPoolCapacity = pathPoolCapacity;
+        MissileTrailCreatedCount = missileTrailCreatedCount;
+        MissileTrailActiveCount = missileTrailActiveCount;
+        ImpactVfxCreatedCount = impactVfxCreatedCount;
+        ImpactVfxActiveCount = impactVfxActiveCount;
+        TotalAllocatedMemoryBytes = totalAllocatedMemoryBytes;
+        TotalReservedMemoryBytes = totalReservedMemoryBytes;
+        MonoUsedMemoryBytes = monoUsedMemoryBytes;
+        MonoHeapMemoryBytes = monoHeapMemoryBytes;
     }
 
     public int Cycle { get; }
@@ -68,6 +98,20 @@ internal readonly struct ArchitectureMenuMatchLifecycleSnapshot
     public int MatchHudCount { get; }
     public int EnabledAudioListenerCount { get; }
     public int MissileTrailRootCount { get; }
+    public int AudioRuntimeViewCount { get; }
+    public int AudioPoolSize { get; }
+    public int ActiveAudioSourceCount { get; }
+    public int PathPoolOwnerCount { get; }
+    public int PathPoolLength { get; }
+    public int PathPoolCapacity { get; }
+    public int MissileTrailCreatedCount { get; }
+    public int MissileTrailActiveCount { get; }
+    public int ImpactVfxCreatedCount { get; }
+    public int ImpactVfxActiveCount { get; }
+    public long TotalAllocatedMemoryBytes { get; }
+    public long TotalReservedMemoryBytes { get; }
+    public long MonoUsedMemoryBytes { get; }
+    public long MonoHeapMemoryBytes { get; }
 
     public string ToCompactString()
     {
@@ -76,7 +120,11 @@ internal readonly struct ArchitectureMenuMatchLifecycleSnapshot
                $"shellFlow={ShellFlowSystemHandle} actions={ActionRequestSystemHandle} " +
                $"lifecycle={LifecycleRootCount} map={OperationMapRootCount} menu={MenuViewCount} " +
                $"match={MatchViewCount} hud={MatchHudCount} listeners={EnabledAudioListenerCount} " +
-               $"missileVfx={MissileTrailRootCount}";
+               $"missileVfx={MissileTrailRootCount} audioViews={AudioRuntimeViewCount} " +
+               $"audioPool={AudioPoolSize} audioActive={ActiveAudioSourceCount} pathPool={PathPoolLength}/{PathPoolCapacity} " +
+               $"trails={MissileTrailActiveCount}/{MissileTrailCreatedCount} impacts={ImpactVfxActiveCount}/{ImpactVfxCreatedCount} " +
+               $"allocated={TotalAllocatedMemoryBytes} " +
+               $"reserved={TotalReservedMemoryBytes} monoUsed={MonoUsedMemoryBytes} monoHeap={MonoHeapMemoryBytes}";
     }
 }
 
@@ -88,11 +136,15 @@ internal sealed class ArchitectureMenuMatchLifecycleSnapshotCollector : IDisposa
     private readonly UIShellContentView shellContent;
     private readonly EntityQuery lifecycleRootQuery;
     private readonly EntityQuery operationMapRootQuery;
+    private readonly EntityQuery pathPoolQuery;
     private readonly List<GameObject> sceneRoots = new(64);
     private readonly List<MenuBootstrapView> menuViews = new(2);
     private readonly List<MatchSceneView> matchViews = new(2);
     private readonly List<MatchHudFooterContentView> matchHudViews = new(2);
     private readonly List<AudioListener> audioListeners = new(2);
+    private readonly List<AudioPlaybackPresentationRuntimeView> audioRuntimeViews = new(2);
+    private readonly List<MissileTrailVfxView> missileTrailViews = new(2);
+    private readonly List<UnitAttackImpactVfxView> impactVfxViews = new(2);
     private bool disposed;
 
     public ArchitectureMenuMatchLifecycleSnapshotCollector(World world, UIShellContentView shellContent)
@@ -108,6 +160,8 @@ internal sealed class ArchitectureMenuMatchLifecycleSnapshotCollector : IDisposa
             ComponentType.ReadOnly<SceneLifecycleRootComponent>());
         operationMapRootQuery = world.EntityManager.CreateEntityQuery(
             ComponentType.ReadOnly<OperationMapRootComponent>());
+        pathPoolQuery = world.EntityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<PathPoolComponent>());
     }
 
     public ArchitectureMenuMatchLifecycleSnapshot Capture(
@@ -126,6 +180,13 @@ internal sealed class ArchitectureMenuMatchLifecycleSnapshotCollector : IDisposa
         int matchHudCount = 0;
         int enabledAudioListenerCount = 0;
         int missileTrailRootCount = 0;
+        int audioRuntimeViewCount = 0;
+        int audioPoolSize = 0;
+        int activeAudioSourceCount = 0;
+        int missileTrailCreatedCount = 0;
+        int missileTrailActiveCount = 0;
+        int impactVfxCreatedCount = 0;
+        int impactVfxActiveCount = 0;
 
         for (int sceneIndex = 0; sceneIndex < SceneManager.sceneCount; sceneIndex++)
         {
@@ -153,10 +214,38 @@ internal sealed class ArchitectureMenuMatchLifecycleSnapshotCollector : IDisposa
                     if (listener != null && listener.enabled && listener.gameObject.activeInHierarchy)
                         enabledAudioListenerCount++;
                 }
+
+                audioRuntimeViews.Clear();
+                root.GetComponentsInChildren(true, audioRuntimeViews);
+                audioRuntimeViewCount += audioRuntimeViews.Count;
+                for (int audioIndex = 0; audioIndex < audioRuntimeViews.Count; audioIndex++)
+                {
+                    AudioPlaybackPresentationRuntimeView audioRuntime = audioRuntimeViews[audioIndex];
+                    if (audioRuntime == null)
+                        continue;
+
+                    audioPoolSize += audioRuntime.PoolSize;
+                    activeAudioSourceCount += audioRuntime.ActiveSourceCount;
+                }
+
+                CountPoolChildren(root, missileTrailViews, ref missileTrailCreatedCount, ref missileTrailActiveCount);
+                CountPoolChildren(root, impactVfxViews, ref impactVfxCreatedCount, ref impactVfxActiveCount);
             }
         }
 
         matchHudCount = CountComponents(shellContent.gameObject, matchHudViews);
+        int pathPoolOwnerCount = pathPoolQuery.CalculateEntityCount();
+        int pathPoolLength = 0;
+        int pathPoolCapacity = 0;
+        if (pathPoolOwnerCount == 1)
+        {
+            PathPoolComponent pathPool = pathPoolQuery.GetSingleton<PathPoolComponent>();
+            if (pathPool.Cells.IsCreated)
+            {
+                pathPoolLength = pathPool.Cells.Length;
+                pathPoolCapacity = pathPool.Cells.Capacity;
+            }
+        }
 
         return new ArchitectureMenuMatchLifecycleSnapshot(
             cycle,
@@ -174,7 +263,21 @@ internal sealed class ArchitectureMenuMatchLifecycleSnapshotCollector : IDisposa
             matchViewCount,
             matchHudCount,
             enabledAudioListenerCount,
-            missileTrailRootCount);
+            missileTrailRootCount,
+            audioRuntimeViewCount,
+            audioPoolSize,
+            activeAudioSourceCount,
+            pathPoolOwnerCount,
+            pathPoolLength,
+            pathPoolCapacity,
+            missileTrailCreatedCount,
+            missileTrailActiveCount,
+            impactVfxCreatedCount,
+            impactVfxActiveCount,
+            Profiler.GetTotalAllocatedMemoryLong(),
+            Profiler.GetTotalReservedMemoryLong(),
+            Profiler.GetMonoUsedSizeLong(),
+            Profiler.GetMonoHeapSizeLong());
     }
 
     public void Dispose()
@@ -185,6 +288,7 @@ internal sealed class ArchitectureMenuMatchLifecycleSnapshotCollector : IDisposa
         disposed = true;
         lifecycleRootQuery.Dispose();
         operationMapRootQuery.Dispose();
+        pathPoolQuery.Dispose();
     }
 
     private static int CountComponents<T>(GameObject root, List<T> buffer) where T : Component
@@ -192,5 +296,25 @@ internal sealed class ArchitectureMenuMatchLifecycleSnapshotCollector : IDisposa
         buffer.Clear();
         root.GetComponentsInChildren(true, buffer);
         return buffer.Count;
+    }
+
+    private static void CountPoolChildren<T>(
+        GameObject root,
+        List<T> buffer,
+        ref int createdCount,
+        ref int activeCount) where T : Component
+    {
+        buffer.Clear();
+        root.GetComponentsInChildren(true, buffer);
+        for (int viewIndex = 0; viewIndex < buffer.Count; viewIndex++)
+        {
+            Transform poolRoot = buffer[viewIndex].transform;
+            createdCount += poolRoot.childCount;
+            for (int childIndex = 0; childIndex < poolRoot.childCount; childIndex++)
+            {
+                if (poolRoot.GetChild(childIndex).gameObject.activeSelf)
+                    activeCount++;
+            }
+        }
     }
 }

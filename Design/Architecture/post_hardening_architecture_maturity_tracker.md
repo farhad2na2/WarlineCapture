@@ -112,12 +112,12 @@ Release-only categories are reported separately and never averaged into a premat
 | Checklist complete | `24 / 86` (`27.9%`) |
 | Core Architecture Lane | `24 / 68` (`35.3%`); active |
 | Release Certification Lane | `0 / 18` (`0.0%`); deferred |
-| Program state | Core Architecture Lane active; Phase 1 accepted; Phase 2 ownership, lifecycle recovery, and bounded transition stress accepted; AM-024 memory/pool trend is dependency-ready; audit-only AM-026 accepted in parallel; release work inactive |
+| Program state | Core Architecture Lane active; Phase 1 accepted; Phase 2 ownership, lifecycle recovery, and bounded transition stress accepted; AM-024 bounded memory/pool trend is active; audit-only AM-026 accepted in parallel; release work inactive |
 | Current phase | Phase 2 - World Lifecycle And Dependency Hardening |
-| Current task | `AM-024` ready; add retained native allocation and owner-approved pool-count trend evidence using `AM-WP-026` |
+| Current task | `AM-024` active; run one warm-up plus five measured lifecycle cycles with authoritative structural/pool plateau and separately reported supporting Editor memory trends using `AM-WP-026` |
 | Parallel preparatory work | Audit-only `AM-026` is accepted with 29 surfaces and `AM-WP-001` through `AM-WP-023`; production tasks `AM-027` through `AM-035` remain gated. `AM-WP-007` is additionally blocked on mission/objective owner handoff and `AM-WP-009` preserves audio/FirstLaunch consumers as read-only dependencies. `AM-WP-024` through `AM-WP-027` define AM-022 through AM-025; `AM-WP-026` is now dispatchable |
 | Blockers | Source-growth remains externally blocked by four separately owned FirstLaunch `*SystemHelper` paths; final broad-contract acceptance also remains gated by separately owned operation-map, FirstLaunch/UI, and package-bound violations. Release-only certification remains intentionally deferred. The `FirstLaunchLanguageChoiceView` guardrail false positive is resolved |
-| Latest validation | AM-023 final: PlayMode passed `1 / 1` after one warm-up plus 10 measured production transitions in `188.706` seconds, static contract passed `5 / 5`, canonical integrated architecture passed `152 / 152`, Unity compiler errors were `0`, and `git diff --check` passed |
+| Latest validation | AM-023 final remains green: PlayMode passed `1 / 1` after one warm-up plus 10 measured production transitions in `188.706` seconds, static contract passed `5 / 5`, canonical integrated architecture passed `152 / 152`, Unity compiler errors were `0`, and `git diff --check` passed; AM-024 implementation is in progress |
 | Latest evidence | `am023_acceptance_record.json` binds implementation `1a2e4a992`, stable Menu/Match baseline plus cycle 5/10 snapshots, the destroyed-view lifecycle fix, compressed PlayMode/static/integrated logs, and deferred 100-cycle extended stress |
 | Core entry baseline | Phase 0 accepted by `AM-001` through `AM-008`; exact-identity assembly and bounded Editor Match evidence are current at `9a0aa14252e6559680328e520d26c16bfc7b444e`; the dashboard required gate is accepted; the entry rating and owned deltas are published in `entry_baseline_report.md` |
 | Release entry review | Deferred until `pre_release_performance_certification_backlog.md` activates |
@@ -239,7 +239,7 @@ Make runtime dependencies explicit and prove that caches and native resources ca
 - [x] `AM-021` Give every persistent native container, query, event subscription, and presentation root an explicit creation and disposal owner.
 - [x] `AM-022` Add tests for World destruction/recreation, domain reload, scene unload/reload, missing singleton recovery, and replaced command entities.
 - [x] `AM-023` Run one warm-up plus 10 measured automated Menu-to-Match-to-Menu cycles without duplicate systems, stale entities, retained subscriptions, or presentation-root accumulation.
-- [ ] `AM-024` Add native allocation and pool-count snapshots around lifecycle stress tests and prove no upward retained-memory trend after warmup. Active package: `Design/Architecture/WorkPackages/am_wp_026_lifecycle_memory_pool_trend.md`.
+- [ ] `AM-024` Add native allocation and pool-count snapshots around lifecycle stress tests, prove no upward structural retained-owner/pool trend after warmup, and report supporting Editor memory trends without treating unforced-GC totals as leak verdicts. Active package: `Design/Architecture/WorkPackages/am_wp_026_lifecycle_memory_pool_trend.md`.
 - [ ] `AM-025` Run the full architecture, lifecycle, compiler, and focused allocation suites and publish the Phase 2 ownership delta. Draft package: `Design/Architecture/WorkPackages/am_wp_027_phase2_exit_acceptance.md` (blocked on `AM-021` through `AM-024`).
 
 ### Phase 2 Exit Gate

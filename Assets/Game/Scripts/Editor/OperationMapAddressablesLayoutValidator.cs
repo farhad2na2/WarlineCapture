@@ -23,8 +23,14 @@ namespace Game.Editor
             AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;
             if (settings == null)
                 return Fail("Addressables settings are missing.", out error);
-            if (settings.BuildRemoteCatalog || settings.UniqueBundleIds)
-                return Fail("The local milestone forbids a remote catalog and unique bundle ids.", out error);
+            if (settings.BuildRemoteCatalog ||
+                !settings.DisableCatalogUpdateOnStartup ||
+                settings.UniqueBundleIds)
+            {
+                return Fail(
+                    "The local milestone forbids a remote catalog, startup catalog updates, and unique bundle ids.",
+                    out error);
+            }
 
             if (!TryRequireGroup(settings, OperationMapAddressablesLayoutBuilder.CatalogGroupName, 2, false, out AddressableAssetGroup catalog, out error) ||
                 !TryRequireGroup(settings, OperationMapAddressablesLayoutBuilder.SharedGroupName, -1, true, out AddressableAssetGroup shared, out error) ||

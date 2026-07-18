@@ -391,12 +391,69 @@ namespace Game.Editor
             if (string.IsNullOrEmpty(settingsPath) || !File.Exists(settingsPath))
                 throw new InvalidOperationException("Addressables content build did not produce settings.json.");
 
+            if (!TryValidateRuntimeSettings(File.ReadAllText(settingsPath), out string error))
+                throw new InvalidOperationException(error);
+
             string outputDirectory = Path.GetDirectoryName(Path.GetFullPath(settingsPath));
             string catalogPath = Path.Combine(outputDirectory, "catalog.bin");
             string hashPath = Path.Combine(outputDirectory, "catalog.hash");
             if (!File.Exists(catalogPath) || !File.Exists(hashPath))
                 throw new InvalidOperationException(
                     "Addressables content build did not produce the local catalog and hash.");
+        }
+
+        internal static bool TryValidateRuntimeSettings(string json, out string error)
+        {
+            if (string.IsNullOrWhiteSpace(json))
+                return FailRuntimeSettings("Addressables runtime settings are empty.", out error);
+
+            OperationMapAddressablesRuntimeSettingsRecord settings;
+            try
+            {
+                settings = JsonUtility.FromJson<OperationMapAddressablesRuntimeSettingsRecord>(json);
+            }
+            catch (Exception exception)
+            {
+                return FailRuntimeSettings(
+                    $"Addressables runtime settings are invalid: {exception.Message}",
+                    out error);
+            }
+
+            if (settings == null || !settings.m_DisableCatalogUpdateOnStart)
+            {
+                return FailRuntimeSettings(
+                    "Local operation-map content must disable startup catalog updates.",
+                    out error);
+            }
+
+            if (settings.m_CatalogLocations == null || settings.m_CatalogLocations.Length != 1)
+            {
+                return FailRuntimeSettings(
+                    "Local operation-map content requires exactly one built-in catalog location.",
+                    out error);
+            }
+
+            string internalId = settings.m_CatalogLocations[0]?.m_InternalId;
+            if (string.IsNullOrEmpty(internalId) ||
+                !internalId.StartsWith(
+                    "{UnityEngine.AddressableAssets.Addressables.RuntimePath}/",
+                    StringComparison.Ordinal) ||
+                Uri.TryCreate(internalId, UriKind.Absolute, out Uri remoteUri) &&
+                (remoteUri.Scheme == Uri.UriSchemeHttp || remoteUri.Scheme == Uri.UriSchemeHttps))
+            {
+                return FailRuntimeSettings(
+                    "Operation-map catalog location must resolve from Addressables.RuntimePath.",
+                    out error);
+            }
+
+            error = null;
+            return true;
+        }
+
+        private static bool FailRuntimeSettings(string message, out string error)
+        {
+            error = message;
+            return false;
         }
 
         internal static bool Publish(string path, string content)
@@ -429,6 +486,19 @@ namespace Game.Editor
         private static void AppendSeparator(StringBuilder json, int index)
         {
             json.Append(index == 0 ? "\n" : ",\n");
+        }
+
+        [Serializable]
+        private sealed class OperationMapAddressablesRuntimeSettingsRecord
+        {
+            public bool m_DisableCatalogUpdateOnStart;
+            public OperationMapAddressablesCatalogLocationRecord[] m_CatalogLocations;
+        }
+
+        [Serializable]
+        private sealed class OperationMapAddressablesCatalogLocationRecord
+        {
+            public string m_InternalId;
         }
 
         private static void AppendArrayEnd(StringBuilder json, int count)

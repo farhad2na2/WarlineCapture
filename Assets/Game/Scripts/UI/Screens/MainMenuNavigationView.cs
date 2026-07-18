@@ -14,6 +14,12 @@ namespace Game.UI.Runtime
 
         private static MainMenuNavigationTabId activeTab = DefaultSelectedTab;
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetActiveTab()
+        {
+            activeTab = DefaultSelectedTab;
+        }
+
         private readonly List<TabBinding> bindings = new();
         private Sprite selectedFrameSprite;
         private Sprite inactiveFrameSprite;

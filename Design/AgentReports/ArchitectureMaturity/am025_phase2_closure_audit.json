@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 472,
+    "resolvedNonDebtRowCount": 473,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 480,
-    "genuineDebtRowCount": 95,
-    "uniqueDebtItemCount": 40,
+    "reviewedNonDebtRowCount": 481,
+    "genuineDebtRowCount": 94,
+    "uniqueDebtItemCount": 39,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -810,10 +810,25 @@
       ]
     },
     {
+      "id": "am018-static-msl-main-menu-tab-session-reset",
+      "decision": "resolved",
+      "reasonCode": "application-ui-state-with-tested-subsystem-reset",
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "MSL",
+        "sourcePath": "Assets/Game/Scripts/UI/Screens/MainMenuNavigationView.cs"
+      },
+      "authority": [
+        "Assets/Tests/Editor/MainMenuNavigationViewTests.cs"
+      ]
+    },
+    {
       "id": "am018-static-msl-debt",
       "decision": "genuine-debt",
       "reasonCode": "mutable-static-lifecycle-unproven",
-      "expectedCount": 60,
+      "expectedCount": 59,
       "debtIdPrefix": "AM025-STATIC-MSL",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

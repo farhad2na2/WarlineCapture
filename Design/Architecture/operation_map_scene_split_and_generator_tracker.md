@@ -707,7 +707,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 58% (103/177 checklist items complete).
+Overall implementation progress: 59% (104/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -724,7 +724,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 | 7. M01 operation-map slice | Later / shared contracts only | 0 | 10 | 0% | Map-neutral ids/anchors may proceed; physical rollout remains gated. |
 | 8. Editor-time texture/mask generator | Later / editor direction only | 0 | 12 | 0% | Implement only if the editor-authored map direction is selected. |
 | 9. Mission and Skirmish scenario rollout | In progress / single-map scenario data | 1 | 10 | 10% | The standard Skirmish scenario now resolves the approved physical map and its typed faction deployment anchors without duplicating map content. Feature, objective, force, reward, and UI data remain open. |
-| 10. Full validation and all-bundled rollout | Shared validation subset only | 0 | 21 | 0% | Run shared parity/performance gates; Addressables/build-layout gates are later. |
+| 10. Full validation and all-bundled rollout | Shared validation subset active | 1 | 21 | 5% | Operation-map config, lifecycle, helper, scenario, catalog, and probe coverage is accepted; broader architecture, runtime, performance, build-layout, and device gates remain. |
 | 11. Deferred remote content migration | Later / remote delivery | 0 | 16 | 0% | Remote delivery remains independently gated. |
 
 ## Phase 0: Reproducible Baseline And Rollback
@@ -991,7 +991,7 @@ Exit criteria:
 - [ ] Run `git diff --check` and scoped asset/meta integrity checks.
 - [ ] Run `ScriptArchitectureAlignmentContractTests.RunAssemblyBoundaryValidation`/`RunBroadShellValidation`, `NonEcsSystemConversionArchitectureTests.RunFocusedValidation`, `EcsBurstHotPathArchitectureTests` focused/type-handle/non-Burst classification runners, and `ProductionSourceGrowthArchitectureTests.RunFocusedValidation`.
 - [ ] Run compile validation with zero new errors.
-- [ ] Run `OperationMapConfigValidationTests`, operation-map lifecycle/helper tests, and operation-map scenario/catalog/config validation.
+- [x] Run `OperationMapConfigValidationTests`, operation-map lifecycle/helper tests, and operation-map scenario/catalog/config validation.
 - [ ] Run current and multi-map static presentation ownership, integrity, rollback, structural, no-op, and stale-cleanup tests.
 - [ ] Run scene-reference validation for the shell, current map, subscenes, manifests, configs, and M01 only when allowed.
 - [ ] Run original current-map launch before extraction and compatibility launch after each migration phase.
@@ -1163,6 +1163,7 @@ Exit criteria:
 | 2026-07-18 | Sequential local-Addressables Match lifecycle | `../AgentReports/2026-07-18_operation_map_sequential_lifecycle.md`; production lifecycle PlayMode `2 / 2`; runtime bootstrap `12 / 12`; compile; `git diff --check` | Passed; Phase 5 ordered teardown and state-clearing rows accepted | Two consecutive menu-to-Match-to-menu cycles reuse the same World, load and unload the extracted operation-map source scene each time, remove the operation-map ECS root between cycles, and republish exactly one clean root on the later load. |
 | 2026-07-18 | Typed operation-map load failures and Phase 5 closure | `../AgentReports/2026-07-18_operation_map_typed_failures.md`; loader `12 / 12`; Match/bootstrap `14 / 14`; production lifecycle `2 / 2`; architecture/naming `9 / 9`; runtime/tests dotnet compile; `git diff --check` | Passed; Phase 5 complete | The existing `OperationMapLoadResultCode` contract now reaches the active loader and Match boundary without replacing detailed diagnostics. Missing/invalid ids fail before Addressables work, stale identity fails closed, and the complete valid/failure/teardown/retry/sequential matrix is accepted. |
 | 2026-07-18 | Current-map standard Skirmish scenario setup | `../AgentReports/2026-07-18_operation_map_current_skirmish_scenario.md`; committed scenario `1 / 1`; operation-map contract `10 / 10`; Unity compile; `git diff --check` | Passed; first Phase 9 row accepted | Added one scenario-data asset that resolves `scenario.skirmish.desert_base_standard` to `opmap.skirmish.desert_base_01` and requires the two existing typed deployment anchors. No physical or generated map content was copied. |
+| 2026-07-18 | Split-aware probes, manifest refresh, and operation-map contract validation | `../AgentReports/2026-07-18_operation_map_probe_manifest_refresh.md`; camera/minimap probe `33 / 33`; baseline probe `8 / 8`; complete operation-map suite `382 / 383` before the sole scene-setup assertion correction; editor and test compile; deterministic bake; `git diff --check` | Passed; first Phase 10 row accepted | Phase 0 evidence now follows the thin shell and extracted map owners. The refreshed manifest matches the canonical map dependency hash and reused all 514 chunks without rewrites. The only complete-suite failure was the subsequently corrected semantic scene-restoration assertion; its full class passes at final code. |
 
 ## Open Decisions
 

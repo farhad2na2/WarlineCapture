@@ -38,11 +38,11 @@
         },
         {
             "path": "Assets/Game/Scenes/Match.unity",
-            "sha256": "182f3b4cb50f48e1a573e1e90ee0c13baf9d62fce46e35b1850ef72097db5d75"
+            "sha256": "c9f024a6ae62c70d3436e227adaba4807b778a00e4ee7aed0bec8caa5253342f"
         },
         {
-            "path": "Assets/Game/Scenes/Match/MatchSubScene.unity",
-            "sha256": "bcc255f3fb140a0d91687b45b679b47fb60f01f5cfa8690bac3032ec642dadd8"
+            "path": "Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01_subscene.unity",
+            "sha256": "eff3ce6992d234c7438a321f0f9f552c2abebcc0a4738445014bc8f86579965d"
         },
         {
             "path": "Assets/Game/Scripts/Authorings/GridAuthoring.cs",
@@ -154,7 +154,7 @@
         },
         {
             "path": "Design/Architecture/operation_map_scene_split_and_generator_tracker.md",
-            "sha256": "35bbf25079a79335728b4a5ab7fd53a6d4b81c238f597982ffe3d37c69b0bbb7"
+            "sha256": "e67b434f55039987c578a9af2074c9f0ef690447f7215c274d0bb54987e1e117"
         }
     ],
     "presenceFindings": [
@@ -228,13 +228,13 @@
             "decisionOwner": ""
         },
         {
-            "stableIdentity": "Assets/Game/Scenes/Match/MatchSubScene.unity::Grid[0]",
+            "stableIdentity": "Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01_subscene.unity::Grid[0]",
             "subject": "Grid bounds authoring source",
             "currentAuthority": "Operation-map subscene",
             "currentType": "Game.Authoring.GridAuthoring",
             "classification": "MapOwned",
             "evidencePaths": [
-                "Assets/Game/Scenes/Match/MatchSubScene.unity",
+                "Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01_subscene.unity",
                 "Design/AgentReports/2026-07-15_opmap-004_phase0_ownership_baseline.json"
             ],
             "rationale": "opmap-004 already identifies this exact map-owned grid root; this probe follows its runtime projection instead of rescanning ownership.",

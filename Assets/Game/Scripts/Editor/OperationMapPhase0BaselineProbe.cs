@@ -30,7 +30,9 @@ namespace Game.Editor
             "/private/tmp/warline-operation-map-phase0-baseline.json";
 
         private const string MatchScenePath = "Assets/Game/Scenes/Match.unity";
-        private const string MatchSubScenePath = "Assets/Game/Scenes/Match/MatchSubScene.unity";
+        private const string MatchSubScenePath = "Assets/Game/Scenes/Match/MatchRuntimeSubScene.unity";
+        private const string CanonicalMapScenePath =
+            "Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01.unity";
         private const string ManifestPath =
             "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/StaticMapPresentationManifest.asset";
         private const string IntegrityPath =
@@ -345,7 +347,7 @@ namespace Game.Editor
                 reference.elementCount >= 0 &&
                 reference.targets != null &&
                 reference.targets.Count == reference.elementCount &&
-                (reference.isCollection || reference.elementCount == 1) &&
+                (reference.isCollection || reference.elementCount <= 1) &&
                 reference.targets.All(IsObjectIdentityComplete));
         }
 
@@ -357,7 +359,7 @@ namespace Game.Editor
                        manifest.operationMapId,
                        StaticMapPresentationBaker.CurrentOperationMapId,
                        StringComparison.Ordinal) &&
-                   string.Equals(manifest.canonicalScenePath, MatchScenePath, StringComparison.Ordinal) &&
+                   string.Equals(manifest.canonicalScenePath, CanonicalMapScenePath, StringComparison.Ordinal) &&
                    !string.IsNullOrWhiteSpace(manifest.canonicalSceneGuid) &&
                    IsHash128(manifest.canonicalSceneDependencyHash) &&
                    string.Equals(
@@ -556,12 +558,15 @@ namespace Game.Editor
         {
             RequireAsset(MatchScenePath);
             RequireAsset(MatchSubScenePath);
+            RequireAsset(CanonicalMapScenePath);
             RequireFile(projectRoot, ManifestPath);
             RequireFile(projectRoot, IntegrityPath);
 
             Scene matchScene = OpenSceneForInspection(MatchScenePath);
             Scene subScene = OpenSceneForInspection(MatchSubScenePath);
+            Scene canonicalMapScene = OpenSceneForInspection(CanonicalMapScenePath);
             MatchSceneView matchSceneView = RequireSingleMatchSceneView(matchScene);
+            OperationMapSceneView operationMapSceneView = RequireSingleOperationMapSceneView(canonicalMapScene);
             SubSceneReferenceReport subSceneReference = RequireSubSceneReference(matchScene);
             RequireEqual(MatchSubScenePath, subSceneReference.sceneAssetPath, "Match subscene asset path");
 
@@ -569,14 +574,22 @@ namespace Game.Editor
                 AssetDatabase.LoadAssetAtPath<StaticMapPresentationManifest>(ManifestPath);
             if (manifest == null)
                 throw new InvalidOperationException($"Static presentation manifest is missing: {ManifestPath}");
-            if (matchSceneView.StaticMapPresentationManifest != manifest)
-                throw new InvalidOperationException("MatchSceneView does not reference the canonical static presentation manifest.");
+            if (matchSceneView.StaticMapPresentationManifest != null)
+                throw new InvalidOperationException("MatchSceneView retains a direct operation-map presentation manifest reference.");
 
             ManifestReport manifestReport = BuildManifestReport(projectRoot, manifest);
             GeneratedOutputsReport generatedOutputs = BuildGeneratedOutputsReport(projectRoot, manifest);
-            PlacementReport buildingPlacements = BuildBuildingPlacementReport(matchScene, matchSceneView);
-            PlacementReport vehiclePlacements = BuildVehiclePlacementReport(matchScene, matchSceneView);
-            MapDataReport mapData = BuildMapDataReport(matchSceneView);
+            PlacementReport buildingPlacements = BuildBuildingPlacementReport(
+                canonicalMapScene,
+                operationMapSceneView.BuildingPlacements,
+                operationMapSceneView.BuildingAuthoringRoot);
+            PlacementReport vehiclePlacements = BuildVehiclePlacementReport(
+                canonicalMapScene,
+                operationMapSceneView.VehiclePlacements,
+                operationMapSceneView.VehicleAuthoringRoot);
+            MapDataReport mapData = BuildMapDataReport(
+                operationMapSceneView.MapSurfaceAuthoring,
+                operationMapSceneView.GridAuthoringConfig);
 
             return new BaselineReport
             {
@@ -783,20 +796,15 @@ namespace Game.Editor
                     {
                         SerializedProperty element = property.GetArrayElementAtIndex(elementIndex);
                         Object target = element.objectReferenceValue;
-                        if (target == null)
-                        {
-                            throw new InvalidOperationException(
-                                $"MatchSceneView reference is missing: {field.Name}[{elementIndex}]");
-                        }
-                        targets.Add(BuildObjectIdentity(target));
+                        if (target != null)
+                            targets.Add(BuildObjectIdentity(target));
                     }
                 }
                 else
                 {
                     Object target = property.objectReferenceValue;
-                    if (target == null)
-                        throw new InvalidOperationException($"MatchSceneView reference is missing: {field.Name}");
-                    targets.Add(BuildObjectIdentity(target));
+                    if (target != null)
+                        targets.Add(BuildObjectIdentity(target));
                 }
 
                 reports.Add(new SerializedObjectReferenceFieldReport
@@ -874,14 +882,14 @@ namespace Game.Editor
         {
             if (manifest.SchemaVersion != StaticMapPresentationManifest.CurrentSchemaVersion)
                 throw new InvalidOperationException($"Unsupported manifest schema: {manifest.SchemaVersion}");
-            RequireEqual(MatchScenePath, manifest.CanonicalScenePath, "Manifest canonical scene path");
+            RequireEqual(CanonicalMapScenePath, manifest.CanonicalScenePath, "Manifest canonical scene path");
             if (manifest.ChunkSize <= 0f || manifest.Chunks == null || manifest.Chunks.Count == 0 ||
                 manifest.Sources == null || manifest.Sources.Count == 0)
             {
                 throw new InvalidOperationException("Static presentation manifest shape is incomplete.");
             }
 
-            string computedCanonicalHash = StaticMapPresentationCanonicalSourceHash.Compute(MatchScenePath);
+            string computedCanonicalHash = StaticMapPresentationCanonicalSourceHash.Compute(CanonicalMapScenePath);
             RequireEqual(
                 manifest.CanonicalSceneDependencyHash,
                 computedCanonicalHash,
@@ -1072,11 +1080,13 @@ namespace Game.Editor
             return reports;
         }
 
-        private static PlacementReport BuildBuildingPlacementReport(Scene scene, MatchSceneView view)
+        private static PlacementReport BuildBuildingPlacementReport(
+            Scene scene,
+            MapBuildingPlacementConfig config,
+            Transform authoringRoot)
         {
-            MapBuildingPlacementConfig config = view.MapBuildingPlacementConfig;
             if (config == null || config.Placements == null || config.Placements.Count == 0)
-                throw new InvalidOperationException("Match building placement config is missing or empty.");
+                throw new InvalidOperationException("Operation-map building placement config is missing or empty.");
 
             Dictionary<string, int> scenePaths = BuildNamePathCounts(scene);
             var entries = new List<PlacementEntryReport>(config.Placements.Count);
@@ -1118,15 +1128,17 @@ namespace Game.Editor
                 config,
                 config.SpawnOnMatchStart,
                 config.HideAuthoringVisualsAfterSpawn,
-                view.MapBuildingAuthoringRoot,
+                authoringRoot,
                 entries);
         }
 
-        private static PlacementReport BuildVehiclePlacementReport(Scene scene, MatchSceneView view)
+        private static PlacementReport BuildVehiclePlacementReport(
+            Scene scene,
+            MapVehiclePlacementConfig config,
+            Transform authoringRoot)
         {
-            MapVehiclePlacementConfig config = view.MapVehiclePlacementConfig;
             if (config == null || config.Placements == null || config.Placements.Count == 0)
-                throw new InvalidOperationException("Match vehicle placement config is missing or empty.");
+                throw new InvalidOperationException("Operation-map vehicle placement config is missing or empty.");
 
             Dictionary<string, int> scenePaths = BuildNamePathCounts(scene);
             var entries = new List<PlacementEntryReport>(config.Placements.Count);
@@ -1166,7 +1178,7 @@ namespace Game.Editor
                 config,
                 config.SpawnOnMatchStart,
                 config.HideAuthoringVisualsAfterSpawn,
-                view.MapVehicleAuthoringRoot,
+                authoringRoot,
                 entries);
         }
 
@@ -1198,16 +1210,17 @@ namespace Game.Editor
             };
         }
 
-        private static MapDataReport BuildMapDataReport(MatchSceneView view)
+        private static MapDataReport BuildMapDataReport(
+            MapSurfaceAuthoring authoring,
+            GridAuthoringConfig runtimeGrid)
         {
-            MapSurfaceAuthoring authoring = view.MapSurfaceAuthoring;
             if (authoring == null || authoring.BakedSurfaceData == null || authoring.GridConfig == null)
-                throw new InvalidOperationException("Match map-surface authoring references are incomplete.");
+                throw new InvalidOperationException("Operation-map surface authoring references are incomplete.");
 
             MapSurfaceDataAsset surface = authoring.BakedSurfaceData;
             GridAuthoringConfig grid = authoring.GridConfig;
-            if (view.RuntimeGridConfig == null || view.RuntimeGridConfig != grid)
-                throw new InvalidOperationException("Match runtime grid and map-surface grid references are inconsistent.");
+            if (runtimeGrid == null || runtimeGrid != grid)
+                throw new InvalidOperationException("Operation-map grid and map-surface grid references are inconsistent.");
             if (grid.Width <= 0 || grid.Height <= 0 || grid.CellSize <= 0f ||
                 surface.Dimensions.x <= 0 || surface.Dimensions.y <= 0 || surface.CellSize <= 0f)
             {
@@ -1436,6 +1449,16 @@ namespace Game.Editor
                 .ToArray();
             if (views.Length != 1)
                 throw new InvalidOperationException($"Expected one MatchSceneView; found {views.Length}.");
+            return views[0];
+        }
+
+        private static OperationMapSceneView RequireSingleOperationMapSceneView(Scene scene)
+        {
+            OperationMapSceneView[] views = scene.GetRootGameObjects()
+                .SelectMany(root => root.GetComponentsInChildren<OperationMapSceneView>(true))
+                .ToArray();
+            if (views.Length != 1)
+                throw new InvalidOperationException($"Expected one OperationMapSceneView; found {views.Length}.");
             return views[0];
         }
 

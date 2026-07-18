@@ -12,7 +12,9 @@ using UnityEngine;
 public sealed class OperationMapPhase0BaselineProbeTests
 {
     private const string MatchScenePath = "Assets/Game/Scenes/Match.unity";
-    private const string MatchSubScenePath = "Assets/Game/Scenes/Match/MatchSubScene.unity";
+    private const string MatchSubScenePath = "Assets/Game/Scenes/Match/MatchRuntimeSubScene.unity";
+    private const string CanonicalMapScenePath =
+        "Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01.unity";
     private const string ManifestPath =
         "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/StaticMapPresentationManifest.asset";
     private const string IntegrityPath =
@@ -300,6 +302,7 @@ public sealed class OperationMapPhase0BaselineProbeTests
         {
             MatchScenePath,
             MatchSubScenePath,
+            CanonicalMapScenePath,
             ManifestPath,
             IntegrityPath
         };
@@ -324,7 +327,7 @@ public sealed class OperationMapPhase0BaselineProbeTests
                 trackedProbeInputs.Select(path => OperationMapPhase0BaselineProbe.ComputeSha256(
                     File.ReadAllBytes(Path.Combine(projectRoot, path)))),
                 Is.EqualTo(beforeHashes));
-            Assert.That(EditorSceneManager.GetSceneManagerSetup(), Is.EqualTo(setupBefore));
+            AssertSceneSetupEquivalent(setupBefore, EditorSceneManager.GetSceneManagerSetup());
         }
         finally
         {
@@ -333,6 +336,18 @@ public sealed class OperationMapPhase0BaselineProbeTests
                 previousOverride);
             if (File.Exists(outputPath))
                 File.Delete(outputPath);
+        }
+    }
+
+    private static void AssertSceneSetupEquivalent(SceneSetup[] expected, SceneSetup[] actual)
+    {
+        Assert.That(actual, Has.Length.EqualTo(expected.Length));
+        for (int i = 0; i < expected.Length; i++)
+        {
+            Assert.That(actual[i].path, Is.EqualTo(expected[i].path), $"Scene path drifted at index {i}.");
+            Assert.That(actual[i].isLoaded, Is.EqualTo(expected[i].isLoaded), $"Loaded state drifted at index {i}.");
+            Assert.That(actual[i].isActive, Is.EqualTo(expected[i].isActive), $"Active state drifted at index {i}.");
+            Assert.That(actual[i].isSubScene, Is.EqualTo(expected[i].isSubScene), $"SubScene state drifted at index {i}.");
         }
     }
 
@@ -395,7 +410,7 @@ public sealed class OperationMapPhase0BaselineProbeTests
                 asset = asset,
                 schemaVersion = StaticMapPresentationManifest.CurrentSchemaVersion,
                 operationMapId = StaticMapPresentationBaker.CurrentOperationMapId,
-                canonicalScenePath = MatchScenePath,
+                canonicalScenePath = CanonicalMapScenePath,
                 canonicalSceneGuid = matchGuid,
                 canonicalSceneDependencyHash = hash128,
                 computedCanonicalSceneDependencyHash = hash128,

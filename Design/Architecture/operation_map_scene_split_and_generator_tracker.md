@@ -707,7 +707,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 60% (106/177 checklist items complete).
+Overall implementation progress: 60% (107/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -724,7 +724,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 | 7. M01 operation-map slice | Later / shared contracts only | 0 | 10 | 0% | Map-neutral ids/anchors may proceed; physical rollout remains gated. |
 | 8. Editor-time texture/mask generator | Later / editor direction only | 0 | 12 | 0% | Implement only if the editor-authored map direction is selected. |
 | 9. Mission and Skirmish scenario rollout | In progress / single-map scenario data | 1 | 10 | 10% | The standard Skirmish scenario now resolves the approved physical map and its typed faction deployment anchors without duplicating map content. Feature, objective, force, reward, and UI data remain open. |
-| 10. Full validation and all-bundled rollout | Shared validation subset active | 3 | 21 | 14% | Operation-map config/lifecycle coverage, scoped diff/asset-meta integrity, and zero-error editor/test compile are accepted; broader architecture, runtime, performance, build-layout, and device gates remain. |
+| 10. Full validation and all-bundled rollout | Shared validation subset active | 4 | 21 | 19% | Operation-map config coverage, scoped static/compile gates, and real load/teardown/retry/sequential lifecycle are accepted; broader architecture, memory, performance, build-layout, and device gates remain. |
 | 11. Deferred remote content migration | Later / remote delivery | 0 | 16 | 0% | Remote delivery remains independently gated. |
 
 ## Phase 0: Reproducible Baseline And Rollback
@@ -995,7 +995,7 @@ Exit criteria:
 - [ ] Run current and multi-map static presentation ownership, integrity, rollback, structural, no-op, and stale-cleanup tests.
 - [ ] Run scene-reference validation for the shell, current map, subscenes, manifests, configs, and M01 only when allowed.
 - [ ] Run original current-map launch before extraction and compatibility launch after each migration phase.
-- [ ] Run extracted-current-map load, gameplay, teardown, retry, and sequential reload validation.
+- [x] Run extracted-current-map load, gameplay, teardown, retry, and sequential reload validation.
 - [ ] Run camera bounds, initial camera, minimap, objective, and ARIA anchor validation.
 - [ ] Run movement, surface grounding, aircraft clearance, runway/helipad, blockers, and building placement validation.
 - [ ] Run map-authored building/vehicle/aircraft conversion and source-hiding regression validation.
@@ -1165,6 +1165,7 @@ Exit criteria:
 | 2026-07-18 | Current-map standard Skirmish scenario setup | `../AgentReports/2026-07-18_operation_map_current_skirmish_scenario.md`; committed scenario `1 / 1`; operation-map contract `10 / 10`; Unity compile; `git diff --check` | Passed; first Phase 9 row accepted | Added one scenario-data asset that resolves `scenario.skirmish.desert_base_standard` to `opmap.skirmish.desert_base_01` and requires the two existing typed deployment anchors. No physical or generated map content was copied. |
 | 2026-07-18 | Split-aware probes, manifest refresh, and operation-map contract validation | `../AgentReports/2026-07-18_operation_map_probe_manifest_refresh.md`; camera/minimap probe `33 / 33`; baseline probe `8 / 8`; complete operation-map suite `382 / 383` before the sole scene-setup assertion correction; editor and test compile; deterministic bake; `git diff --check` | Passed; first Phase 10 row accepted | Phase 0 evidence now follows the thin shell and extracted map owners. The refreshed manifest matches the canonical map dependency hash and reused all 514 chunks without rewrites. The only complete-suite failure was the subsequently corrected semantic scene-restoration assertion; its full class passes at final code. |
 | 2026-07-18 | Phase 10 static integrity and compile gates | `../AgentReports/2026-07-18_operation_map_phase10_static_gates.md`; `git diff --check`; scoped tracked asset/meta verification; `Game.Editor.csproj`; `Game.Tests.Editor.csproj` | Passed; two Phase 10 rows accepted | The operation-map slice is whitespace-clean, every changed Unity asset retains tracked metadata, and both affected editor assemblies compile with zero errors. Runtime, device, performance, package, and Android acceptance remain open. |
+| 2026-07-18 | Extracted-map runtime lifecycle acceptance | `../AgentReports/2026-07-18_operation_map_runtime_lifecycle_acceptance.md`; loader helper `12 / 12`; lifecycle PlayMode `2 / 2`; zero C# compiler errors | Passed; one Phase 10 row accepted | Real local map load, teardown, failure, retry, and two sequential Match cycles are accepted on latest main. Persistent-allocation leak-detection noise remains assigned to the separate memory-trend gate. |
 
 ## Open Decisions
 

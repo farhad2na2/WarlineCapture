@@ -724,7 +724,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 | 7. M01 operation-map slice | Later / shared contracts only | 0 | 10 | 0% | Map-neutral ids/anchors may proceed; physical rollout remains gated. |
 | 8. Editor-time texture/mask generator | Later / editor direction only | 0 | 12 | 0% | Implement only if the editor-authored map direction is selected. |
 | 9. Mission and Skirmish scenario rollout | In progress / single-map scenario data | 1 | 10 | 10% | The standard Skirmish scenario now resolves the approved physical map and its typed faction deployment anchors without duplicating map content. Feature, objective, force, reward, and UI data remain open. |
-| 10. Full validation and all-bundled rollout | Shared validation subset active | 10 | 21 | 48% | Launch parity, config/lifecycle/static-presentation, scene-reference, spatial-behavior, map-conversion, and exact one-map package membership plus scoped static/compile gates are accepted; architecture, memory, performance, release-artifact, and device gates remain. |
+| 10. Full validation and all-bundled rollout | Shared validation subset active | 10 | 21 | 48% | Launch parity, config/lifecycle/static-presentation, scene-reference, spatial-behavior, map-conversion, and exact package membership are accepted; architecture, controlled package comparison, memory, performance, final release-artifact, and device gates remain. |
 | 11. Deferred remote content migration | Later / remote delivery | 0 | 16 | 0% | Remote delivery remains independently gated. |
 
 ## Phase 0: Reproducible Baseline And Rollback
@@ -1002,7 +1002,7 @@ Exit criteria:
 - [ ] Run editor generator deterministic/no-op and connectivity validation.
 - [ ] Run Editor performance comparison for load time, frame time, draw, triangles, memory, and GC.
 - [ ] Produce the clean one-map release artifact and record exact APK/AAB, installed-size, Entities stream/archive, static-presentation, combined-mesh, shared-dependency, and aggregate cost; defer representative two-map and portfolio artifacts.
-- [ ] Replace the provisional `80-110 MB` compressed per-map planning range with an accepted measured budget before approving broader map production.
+- [ ] Replace the provisional `80-110 MB` compressed per-map planning range with an accepted measured budget before approving broader map production. The current local APK is measured, but the approximately 382 MB Jenkins artifact is not a comparable local baseline; see `../AgentReports/2026-07-18_operation_map_android_package_measurement.md`.
 - [ ] Validate the single approved operation map from real local Addressables bundles, including stable identity, offline launch, content-version mismatch, load failure unwind, teardown, and sequential reload.
 - [ ] Run Android build-scene inclusion, APK/installed size, startup, memory, sustained FPS, and thermal validation.
 - [x] Verify every catalog-approved local operation map and only those maps are packaged; no unapproved map, stale generated scene, foreign-owned chunk, or remote dependency is included. See `../AgentReports/2026-07-18_operation_map_addressables_duplicate_closure.md`.
@@ -1172,6 +1172,7 @@ Exit criteria:
 | 2026-07-18 | Map conversion and source-hiding acceptance | `../AgentReports/2026-07-18_operation_map_conversion_source_hiding_acceptance.md`; focused EditMode matrix `103 / 103`; zero C# compiler errors | Passed; one Phase 10 row accepted | Extracted-scene placement parity, map-authored building/vehicle/aircraft conversion, source hiding, and runway alignment are accepted. The runway regression now resolves markers from the extracted map rather than the thin shell. |
 | 2026-07-18 | Launch-parity acceptance | `../AgentReports/2026-07-18_operation_map_launch_parity_acceptance.md`; preserved pre-extraction and shell-cutover launch evidence; final PlayMode lifecycle `2 / 2`; zero C# compiler errors | Passed; one Phase 10 row accepted | Compatibility activation, extracted-map cutover, and current sequential lifecycle form an accepted launch-parity chain. Android hardware launch remains separate. |
 | 2026-07-18 | Addressables duplicate and package-membership closure | `../AgentReports/2026-07-18_operation_map_addressables_duplicate_closure.md`; focused `12 / 12`; Unity Analyze; fresh Build Layout; real content build; deterministic no-op layout; zero C# compiler errors | Passed; one Phase 2A and one Phase 10 row accepted | The one-map closure is 148,222,351 bytes with 100 partitions, 1,460 stable addresses, zero project-owned duplicate GUIDs, and five explicitly accepted package-owned duplicate rows. |
+| 2026-07-18 | Android package measurement | `../AgentReports/2026-07-18_operation_map_android_package_measurement.md`; APK build success; artifact SHA-256; ZIP integrity | Measurement captured; Phase 10 budget row remains open | The current local APK is 479,081,838 bytes. The approximately 382 MB Jenkins artifact is not a comparable local baseline, so no per-map APK delta is accepted without a controlled same-pipeline comparison. |
 
 ## Open Decisions
 

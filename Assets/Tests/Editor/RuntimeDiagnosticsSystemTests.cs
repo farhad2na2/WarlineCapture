@@ -18,7 +18,8 @@ public sealed class RuntimeDiagnosticsSystemTests
             RunCase(test => test.ReadDiagnosticsState_MirrorsLegacyStateIntoEcsSingleton());
             RunCase(test => test.ReadDiagnosticsState_DoesNotOverwriteEcsWhenLegacyIsUnchanged());
             RunCase(test => test.ReadDiagnosticsState_FollowsReplacementWorld());
-            UnityEngine.Debug.Log("[RuntimeDiagnosticsValidation] result=Passed tests=5");
+            RunCase(test => test.SelectionDiagnostics_UseProvidedMatchWorld());
+            UnityEngine.Debug.Log("[RuntimeDiagnosticsValidation] result=Passed tests=6");
         }
         catch (System.Exception exception)
         {
@@ -145,6 +146,41 @@ public sealed class RuntimeDiagnosticsSystemTests
         using EntityQuery stateQuery = _world.EntityManager.CreateEntityQuery(
             ComponentType.ReadOnly<RuntimeDiagnosticsStateComponent>());
         Assert.AreEqual(1, stateQuery.CalculateEntityCount());
+    }
+
+    [Test]
+    public void SelectionDiagnostics_UseProvidedMatchWorld()
+    {
+        var selectionDiagnostics = new SelectionRuntimeDiagnosticsSystemHelper();
+        Entity firstState = _world.EntityManager.CreateEntity(typeof(RuntimeDiagnosticsStateComponent));
+        _world.EntityManager.SetComponentData(firstState, new RuntimeDiagnosticsStateComponent
+        {
+            TransportBoardingDiagnostics = 1
+        });
+        selectionDiagnostics.EnqueueSelectionDiagnostic(_world.EntityManager, "first match");
+
+        using World replacementWorld = new("RuntimeDiagnosticsSystemTests-SelectionReplacement");
+        Entity replacementState = replacementWorld.EntityManager.CreateEntity(typeof(RuntimeDiagnosticsStateComponent));
+        replacementWorld.EntityManager.SetComponentData(replacementState, new RuntimeDiagnosticsStateComponent
+        {
+            TransportBoardingDiagnostics = 1
+        });
+        selectionDiagnostics.EnqueueSelectionDiagnostic(replacementWorld.EntityManager, "replacement match");
+
+        AssertDiagnosticMessage(_world.EntityManager, "[Selection] first match");
+        AssertDiagnosticMessage(replacementWorld.EntityManager, "[Selection] replacement match");
+    }
+
+    private static void AssertDiagnosticMessage(EntityManager entityManager, string expected)
+    {
+        using EntityQuery query = entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<TransportBoardingDiagnosticLogQueueComponent>(),
+            ComponentType.ReadOnly<TransportBoardingDiagnosticLogComponent>());
+        Assert.AreEqual(1, query.CalculateEntityCount());
+        DynamicBuffer<TransportBoardingDiagnosticLogComponent> messages =
+            entityManager.GetBuffer<TransportBoardingDiagnosticLogComponent>(query.GetSingletonEntity());
+        Assert.AreEqual(1, messages.Length);
+        Assert.AreEqual(expected, messages[0].Message.ToString());
     }
 
     private RuntimeDiagnosticsSystem ResolveDiagnosticsSystem()

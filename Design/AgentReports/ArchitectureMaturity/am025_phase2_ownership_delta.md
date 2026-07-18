@@ -8,15 +8,15 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 |---|---:|
 | Baseline rows | 863 |
 | Hazard rows | 352 |
-| Resolved | 1045 |
+| Resolved | 1046 |
 | Protected/deferred | 36 |
-| Open | 134 |
+| Open | 133 |
 | New after baseline | 26 |
 | Historical intake rows | 575 |
-| Reviewed non-debt rows | 441 |
-| Genuine-debt rows | 134 |
+| Reviewed non-debt rows | 442 |
+| Genuine-debt rows | 133 |
 | Unclassified rows | 0 |
-| Unique debt items | 58 |
+| Unique debt items | 57 |
 
 ## Open Rows
 
@@ -155,4 +155,3 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 | AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-011 |
 | AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-012 |
 | AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-013 |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionRuntimeDiagnosticsSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-014 |

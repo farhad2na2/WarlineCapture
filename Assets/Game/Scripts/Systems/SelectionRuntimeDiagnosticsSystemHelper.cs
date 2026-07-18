@@ -159,9 +159,9 @@ namespace Game.Runtime
         private static EditorSelectionAllocationProbeCounter editorSelectionCameraProbe;
 #endif
 
-        public void EnqueueSelectionDiagnostic(string message)
+        public void EnqueueSelectionDiagnostic(EntityManager em, string message)
         {
-            EnqueueSelectionDiagnosticMessage(message);
+            EnqueueSelectionDiagnosticMessage(em, message);
         }
 
 #if UNITY_EDITOR
@@ -224,29 +224,27 @@ namespace Game.Runtime
         }
 #endif
 
-        public static void EnqueueSelectionDiagnosticMessage(string message)
+        public static void EnqueueSelectionDiagnosticMessage(EntityManager em, string message)
         {
-            World world = World.DefaultGameObjectInjectionWorld;
-            if (world == null || !world.IsCreated)
+            if (em.World == null || !em.World.IsCreated)
                 return;
 
-            EntityManager em = world.EntityManager;
             if (ShouldQueueTransportBoardingDiagnostics(em))
                 EnqueueTransportBoardingDiagnostic(em, $"[Selection] {message}");
         }
 
-        public void LogSelectionClickDiagnostic(string message)
+        public void LogSelectionClickDiagnostic(EntityManager em, string message)
         {
-            LogSelectionClickDiagnosticMessage(message);
+            LogSelectionClickDiagnosticMessage(em, message);
         }
 
-        public static void LogSelectionClickDiagnosticMessage(string message)
+        public static void LogSelectionClickDiagnosticMessage(EntityManager em, string message)
         {
             if (!EnableSelectionClickDiagnostics)
                 return;
 
             Debug.Log($"{SelectionClickPrefix} {message}");
-            EnqueueSelectionDiagnosticMessage(message);
+            EnqueueSelectionDiagnosticMessage(em, message);
         }
 
         [System.Diagnostics.Conditional("WARLINE_SELECTION_CLICK_DIAGNOSTICS")]

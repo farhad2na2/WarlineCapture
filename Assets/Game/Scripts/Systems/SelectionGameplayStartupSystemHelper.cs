@@ -1439,18 +1439,24 @@ namespace Game.Runtime
 
             void EnqueueSelectionDiagnostic(string message)
             {
+                if (!TryGetDefaultEntityManager(out EntityManager em))
+                    return;
+
                 if (selectionRuntimeDiagnosticsSystem != null)
-                    selectionRuntimeDiagnosticsSystem.EnqueueSelectionDiagnostic(message);
+                    selectionRuntimeDiagnosticsSystem.EnqueueSelectionDiagnostic(em, message);
                 else
-                    SelectionRuntimeDiagnosticsSystemHelper.EnqueueSelectionDiagnosticMessage(message);
+                    SelectionRuntimeDiagnosticsSystemHelper.EnqueueSelectionDiagnosticMessage(em, message);
             }
 
             void LogSelectionClickDiagnostic(string message)
             {
+                if (!TryGetDefaultEntityManager(out EntityManager em))
+                    return;
+
                 if (selectionRuntimeDiagnosticsSystem != null)
-                    selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic(message);
+                    selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic(em, message);
                 else
-                    SelectionRuntimeDiagnosticsSystemHelper.LogSelectionClickDiagnosticMessage(message);
+                    SelectionRuntimeDiagnosticsSystemHelper.LogSelectionClickDiagnosticMessage(em, message);
             }
 
             Sprite ResolveActiveSquadTrayPortraitSprite()

@@ -3,6 +3,7 @@ using Game.Rendering;
 using Game.Runtime;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System;
+using System.Reflection;
 using Unity.Core;
 using NUnit.Framework;
 using Unity.Collections;
@@ -40,6 +41,7 @@ public sealed class VehicleVisualAdornmentsSystemTests
             tests.UnitSelectionMarkerSystemOutlinesReferencedAirVehicleVisualRoot();
             tests.UnitSelectionMarkerSystemSuppressesHelicopterBladeOutlineSourcesByBakedBladeReference();
             tests.UnitSelectionMarkerSystemCreatesSafeSelectionVolumeForGpuAnimatedCharacterWithoutBindPoseOverlay();
+            tests.UnitSelectionOutlineGraphicsResourcesAreReleasedWithTheirWorld();
             tests.UnitSelectionMarkerSystemHidesMarkersForTransportedCharactersButKeepsCulledSelectedCharactersVisible();
             tests.SelectionMarkerVisibilitySystemTogglesVisualChildScaleFromSelectionState();
             tests.UnitFactionTintTargetBackfillIgnoresSelectionObjectOutlines();
@@ -48,7 +50,7 @@ public sealed class VehicleVisualAdornmentsSystemTests
             tests.UnitRuntimeHealthBarSystemRetainsAndHidesBarsForTransportedOrImpostorOnlyCharacters();
             tests.UnitDestroyedVisualSystemInitializesAliveAndDestroyedChildScales();
             tests.UnitHealthBarSystemExpiresRecentDamageVisibilityWithEcb();
-            Debug.Log("[VehicleVisualAdornmentsFocusedValidation] result=Passed tests=20");
+            Debug.Log("[VehicleVisualAdornmentsFocusedValidation] result=Passed tests=21");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -493,6 +495,51 @@ public sealed class VehicleVisualAdornmentsSystemTests
         Assert.IsTrue(em.Exists(marker));
         Assert.IsTrue(em.HasBuffer<SelectionObjectOutlineInstanceElement>(marker));
         AssertSafeGpuAnimatedSelectionVolume(em, character, renderer);
+    }
+
+    [Test]
+    public void UnitSelectionOutlineGraphicsResourcesAreReleasedWithTheirWorld()
+    {
+        World world = new(nameof(UnitSelectionOutlineGraphicsResourcesAreReleasedWithTheirWorld));
+        Material runtimeMaterial = null;
+        try
+        {
+            EntityManager em = world.EntityManager;
+            Entity markerPrefab = CreateVisualPrefab(em);
+            Entity vehicle = CreateVehicle(em, health: 100);
+            CreateRenderableChild(em, vehicle, "VehicleBody", 1f);
+            em.AddComponentData(vehicle, new UnitSelectionMarkerPrefabReference { Prefab = markerPrefab });
+            em.AddComponent<SelectedUnitTag>(vehicle);
+
+            SystemHandle markerSystem = world.CreateSystem<UnitSelectionMarkerSystem>();
+            UnitSelectionObjectOutlinePresentationSystem outlineSystem =
+                world.GetOrCreateSystemManaged<UnitSelectionObjectOutlinePresentationSystem>();
+            markerSystem.Update(world.Unmanaged);
+            outlineSystem.Update();
+
+            FieldInfo materialField = typeof(UnitSelectionObjectOutlinePresentationSystem).GetField(
+                "_vehicleSelectionObjectOutlineMaterial",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.IsNotNull(materialField);
+            runtimeMaterial = materialField.GetValue(outlineSystem) as Material;
+            Assert.IsNotNull(runtimeMaterial, "The selected vehicle should create a World-owned outline material.");
+
+            FieldInfo[] staticFields = typeof(UnitSelectionObjectOutlinePresentationSystem).GetFields(
+                BindingFlags.Static | BindingFlags.NonPublic);
+            for (int i = 0; i < staticFields.Length; i++)
+            {
+                Assert.IsFalse(
+                    typeof(UnityEngine.Object).IsAssignableFrom(staticFields[i].FieldType),
+                    $"Selection outline graphics resources must be owned by the World, not static field {staticFields[i].Name}.");
+            }
+        }
+        finally
+        {
+            if (world.IsCreated)
+                world.Dispose();
+        }
+
+        Assert.IsTrue(runtimeMaterial == null, "Disposing the World must destroy its selection outline material.");
     }
 
     [Test]

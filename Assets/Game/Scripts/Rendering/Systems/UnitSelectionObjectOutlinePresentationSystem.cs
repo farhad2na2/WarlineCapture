@@ -39,10 +39,10 @@ namespace Game.Rendering
         private const string ScanSpeedProperty = "_ScanSpeed";
         private static readonly Color SelectionObjectOutlineBaseColor = new(0.02f, 0.9f, 1f, 0.9f);
         private static readonly Color SelectionObjectOutlineEmissionColor = new(0.05f, 1f, 1f, 1f);
-        private static Material _characterSelectionObjectOutlineMaterial;
-        private static Material _vehicleSelectionObjectOutlineMaterial;
-        private static Material _characterSelectionVolumeMaterial;
-        private static Mesh _characterSelectionVolumeMesh;
+        private Material _characterSelectionObjectOutlineMaterial;
+        private Material _vehicleSelectionObjectOutlineMaterial;
+        private Material _characterSelectionVolumeMaterial;
+        private Mesh _characterSelectionVolumeMesh;
         private EntityQuery _unitRenderEntityQuery;
 
         protected override void OnCreate()
@@ -64,6 +64,18 @@ namespace Game.Rendering
                 },
                 Options = EntityQueryOptions.IncludeDisabledEntities
             });
+        }
+
+        protected override void OnDestroy()
+        {
+            DestroyRuntimeObject(_characterSelectionObjectOutlineMaterial);
+            DestroyRuntimeObject(_vehicleSelectionObjectOutlineMaterial);
+            DestroyRuntimeObject(_characterSelectionVolumeMaterial);
+            DestroyRuntimeObject(_characterSelectionVolumeMesh);
+            _characterSelectionObjectOutlineMaterial = null;
+            _vehicleSelectionObjectOutlineMaterial = null;
+            _characterSelectionVolumeMaterial = null;
+            _characterSelectionVolumeMesh = null;
         }
 
         protected override void OnUpdate()
@@ -101,7 +113,7 @@ namespace Game.Rendering
             }
         }
 
-        private static void EnsureSelectionObjectOutlines(
+        private void EnsureSelectionObjectOutlines(
             EntityManager em,
             Entity unit,
             Entity marker,
@@ -487,7 +499,7 @@ namespace Game.Rendering
             return false;
         }
 
-        private static void CreateSelectionObjectOutlineForSource(
+        private void CreateSelectionObjectOutlineForSource(
             EntityManager em,
             Entity unit,
             Entity marker,
@@ -594,7 +606,7 @@ namespace Game.Rendering
             em.GetBuffer<SelectionObjectOutlineInstanceElement>(marker).Add(new SelectionObjectOutlineInstanceElement { Value = outline });
         }
 
-        private static void CreateGpuAnimatedCharacterSelectionVolume(EntityManager em, Entity unit, Entity marker, Entity source)
+        private void CreateGpuAnimatedCharacterSelectionVolume(EntityManager em, Entity unit, Entity marker, Entity source)
         {
             Material material = GetCharacterSelectionVolumeMaterial();
             Mesh mesh = GetCharacterSelectionVolumeMesh();
@@ -694,7 +706,7 @@ namespace Game.Rendering
                 false);
         }
 
-        private static Material GetSelectionObjectOutlineMaterial(bool usesVehicleMarker)
+        private Material GetSelectionObjectOutlineMaterial(bool usesVehicleMarker)
         {
             if (usesVehicleMarker)
             {
@@ -708,7 +720,7 @@ namespace Game.Rendering
             return _characterSelectionObjectOutlineMaterial;
         }
 
-        private static Material GetCharacterSelectionVolumeMaterial()
+        private Material GetCharacterSelectionVolumeMaterial()
         {
             if (_characterSelectionVolumeMaterial != null)
                 return _characterSelectionVolumeMaterial;
@@ -778,7 +790,7 @@ namespace Game.Rendering
                 material.SetFloat(property, value);
         }
 
-        private static Mesh GetCharacterSelectionVolumeMesh()
+        private Mesh GetCharacterSelectionVolumeMesh()
         {
             if (_characterSelectionVolumeMesh != null)
                 return _characterSelectionVolumeMesh;
@@ -803,6 +815,17 @@ namespace Game.Rendering
             _characterSelectionVolumeMesh.RecalculateNormals();
             _characterSelectionVolumeMesh.RecalculateBounds();
             return _characterSelectionVolumeMesh;
+        }
+
+        private static void DestroyRuntimeObject(UnityEngine.Object target)
+        {
+            if (target == null)
+                return;
+
+            if (Application.isPlaying)
+                UnityEngine.Object.Destroy(target);
+            else
+                UnityEngine.Object.DestroyImmediate(target);
         }
 
         private static void AddFlatArc(

@@ -12,12 +12,12 @@ Bounded read-only audits reviewed the AM-025 intake as:
 |---|---:|
 | Historical intake rows | 575 |
 | Reviewed non-debt rows | 457 |
-| Remaining genuine-debt rows | 118 |
+| Remaining genuine-debt rows | 114 |
 | Remaining unique debt items | 46 |
 | Projected unclassified rows | 0 |
 | Source-growth blockers | 5 |
 
-The row-bound evidence now records `457` non-debt rows and `118` remaining genuine-debt rows, grouped into `46` unique file/rule remediation items. It remains non-accepting because every genuine-debt item must be closed before Phase 2 can pass.
+The row-bound evidence now records `461` non-debt rows and `114` remaining genuine-debt rows, grouped into `45` unique file/rule remediation items. It remains non-accepting because every genuine-debt item must be closed before Phase 2 can pass.
 
 ## 2. Required Row Authority
 

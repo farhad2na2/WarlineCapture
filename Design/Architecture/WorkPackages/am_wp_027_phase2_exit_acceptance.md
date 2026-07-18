@@ -1,6 +1,6 @@
 # AM-WP-027 - Phase 2 Exit Acceptance
 
-Status: draft, dependency-blocked, and not dispatchable. Do not implement until `AM-021` through `AM-024` are accepted. `AM-025` then owns this evidence/validation package. Release-device, thermal, cold/warm, sustained, and APH-506 certification checks remain deferred and outside Core acceptance.
+Status: active, dependency-ready, and dispatchable. `AM-021` through `AM-024` are accepted, and `AM-025` owns this evidence/validation package. Release-device, thermal, cold/warm, sustained, and APH-506 certification checks remain deferred and outside Core acceptance.
 
 Umbrella task: `AM-025`
 
@@ -8,12 +8,12 @@ Evidence inputs: accepted AM-021 ownership authority and AM-022 through AM-024 a
 
 ## 1. Current Validation State And Risk
 
-- The canonical integrated architecture Python inventory currently contains 139 tests; the latest tracker state reports 138/139 because separately owned `FirstLaunchLanguageChoiceView` evidence fails.
+- The canonical integrated architecture Python inventory currently contains 157 tests and the latest accepted AM-024 run passes `157 / 157`; the former `FirstLaunchLanguageChoiceView` false positive is resolved.
 - Canonical source growth currently reports four separately owned FirstLaunch `*SystemHelper` blockers.
-- Five map-owned grid containers block AM-021 and therefore every Phase 2 exit task.
+- AM-021 is accepted at 575 persistent resources: 553 explicit owners, 22 protected owners, and zero ownership gaps.
 - `ArchitectureHardeningCloseoutValidationRunner.RunFocusedValidation` is the full Unity architecture entrypoint. `RunJenkinsArchitectureValidation` runs only two suites and is not an AM-025 substitute.
 - `SceneLifecycleValidationRunner.Run` is a one-case request-queue smoke test, not lifecycle closeout. Generated-project/dotnet compilation is supporting evidence only; Unity compilation is canonical.
-- Existing operation-map, FirstLaunch/UI, and package-bound failures remain visible and cannot be silently excluded or converted into Core passes without owner resolution and accepted evidence.
+- Current operation-map, FirstLaunch/UI, and package-bound broad-contract failures remain visible external blockers to AM-025 acceptance; they are not retroactive blockers to accepted AM-021 through AM-024 evidence and cannot be silently excluded or converted into Core passes without owner resolution and accepted evidence.
 
 Risks are partial-suite acceptance, alias validators being treated as canonical, stale or dirty evidence, missing identity/hash binding, suppressed external failures, threshold weakening, and release-deferred checks contaminating Core status.
 
@@ -34,7 +34,7 @@ Required execution order:
 
 1. verify AM-021 zero-gap authority and accepted AM-022, AM-023, and AM-024 records;
 2. freeze policy and capture commit/tree/environment;
-3. run `python3 -m unittest discover -s Tools/CI/tests -p 'test_architecture*.py'`;
+3. run `python3 -m unittest discover -s Tools/CI/tests -p 'test_architecture_*.py'`;
 4. run `python3 Tools/CI/architecture_persistent_resource_ownership.py --check` and byte-identical ownership/lifecycle regeneration;
 5. run canonical source-growth validation and require its 17-test pass marker;
 6. run `ArchitectureHardeningCloseoutValidationRunner.RunFocusedValidation` and require its 23-suite pass marker;
@@ -73,8 +73,8 @@ The exit bundle must prove:
 
 1. AM-021 final ownership totals and zero open rows, with protected/deferred rows explicitly named;
 2. AM-022 ten-case World lifecycle recovery acceptance;
-3. AM-023 100-cycle production transition acceptance and bounded snapshots;
-4. AM-024 memory/pool structural plateau and per-phase trend acceptance;
+3. AM-023 one-warm-up plus 10-measured production transition acceptance and bounded snapshots; the former 100-cycle stress remains deferred;
+4. AM-024 one-warm-up plus five-measured structural-owner and governed-pool plateau; every exceeded Editor memory investigation ceiling and the deferred extended/release follow-up remain explicit, and raw Editor memory totals are not described as passed;
 5. integrated Python architecture, persistent-resource check, source-growth, full Unity architecture, lifecycle, and focused allocation results;
 6. Unity compile result and exact zero-error marker;
 7. Phase 0/AM-018-to-AM-021 row-by-row ownership delta with no missing/duplicate row;
@@ -90,7 +90,7 @@ AM-025 passes only when every prerequisite is accepted, ownership gaps are zero,
 
 AM-025 remains unchecked if any prerequisite, counter, suite, marker, hash, log, review, or ownership row is missing; if an external Core failure remains; or if a release-deferred failure is improperly mixed into Core arithmetic. The tracker records exact failing suite/owner/evidence and next action. Thresholds, samples, suites, and failures are never suppressed or reclassified merely to close Phase 2.
 
-On acceptance, update overall/Core percentages by exactly one checklist item, set Phase 2 accepted, route the next task to AM-026, retain Release Certification at 0/18 deferred, and publish the final Phase 2 ownership delta and evidence identity.
+On acceptance, update overall progress to `26 / 86` (`30.2%`) and Core progress to `26 / 68` (`38.2%`), set Phase 2 accepted, route the next task to AM-027 because audit-only AM-026 is already accepted, retain Release Certification at `0 / 18` deferred, and publish the final Phase 2 ownership delta and evidence identity.
 
 ## 7. Maximum Slices And Rollback
 

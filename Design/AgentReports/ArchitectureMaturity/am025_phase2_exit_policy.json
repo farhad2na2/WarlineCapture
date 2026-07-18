@@ -1,0 +1,137 @@
+{
+  "artifactId": "AM025-PHASE2-EXIT-POLICY",
+  "schemaVersion": 1,
+  "taskId": "AM-025",
+  "status": "FrozenForCapture",
+  "baseline": {
+    "commit": "2fb9947b9f4cb939c60e446ec6e1f25ebec48216",
+    "tree": "9ab2a4173cba0ab10376c00cc14695328b37b040",
+    "branch": "main",
+    "cleanRequired": true
+  },
+  "prerequisites": [
+    {
+      "taskId": "AM-021",
+      "path": "Design/AgentReports/ArchitectureMaturity/am021_persistent_resource_ownership_acceptance.json",
+      "sha256": "358a94b25e6467278889805cdec745bc4be64717cd8a8fa15750f15f2253b766",
+      "acceptedResult": "Accepted"
+    },
+    {
+      "taskId": "AM-022",
+      "path": "Design/AgentReports/ArchitectureMaturity/am022_acceptance_record.json",
+      "sha256": "ed0de1e74f54a9efdd50886e4fc904d8229f54979ebe6e7f4f1da20be9b2ceff",
+      "acceptedResult": "Accepted"
+    },
+    {
+      "taskId": "AM-023",
+      "path": "Design/AgentReports/ArchitectureMaturity/am023_acceptance_record.json",
+      "sha256": "702e9b98a133c655e20f3fd51028662c8d7960f26b67a50f56c1fc7aba585031",
+      "acceptedResult": "Accepted"
+    },
+    {
+      "taskId": "AM-024",
+      "path": "Design/AgentReports/ArchitectureMaturity/am024_acceptance_record.json",
+      "sha256": "e1f46d8551274461247b444affbb1279a41e36271b1ab555b58c02cbc7da3bf8",
+      "acceptedResult": "AcceptedWithReportedEditorMemoryFollowUp"
+    }
+  ],
+  "canonicalCoreSuites": [
+    {
+      "id": "integrated-architecture",
+      "command": "python3 -m unittest discover -s Tools/CI/tests -p 'test_architecture_*.py'",
+      "requiredPassed": 157,
+      "requiredFailed": 0
+    },
+    {
+      "id": "persistent-resource-ownership",
+      "command": "python3 Tools/CI/architecture_persistent_resource_ownership.py --check",
+      "requiredGapCount": 0,
+      "deterministicProjectionRequired": true
+    },
+    {
+      "id": "production-source-growth",
+      "executeMethod": "ProductionSourceGrowthArchitectureTests.RunFocusedValidation",
+      "requiredMarker": "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17",
+      "requiredFailed": 0
+    },
+    {
+      "id": "architecture-hardening-closeout",
+      "executeMethod": "ArchitectureHardeningCloseoutValidationRunner.RunFocusedValidation",
+      "requiredMarker": "[ArchitectureHardeningCloseoutValidation] result=Passed suites=23",
+      "requiredFailed": 0
+    },
+    {
+      "id": "world-lifecycle-recovery",
+      "acceptedEvidence": "Design/AgentReports/ArchitectureMaturity/am022_acceptance_record.json",
+      "editorCases": 8,
+      "playModeCases": 2,
+      "recurringAllocatedBytes": 0
+    },
+    {
+      "id": "menu-match-lifecycle-stress",
+      "acceptedEvidence": "Design/AgentReports/ArchitectureMaturity/am023_acceptance_record.json",
+      "warmupCycles": 1,
+      "measuredCycles": 10,
+      "extendedHundredCycleStressDeferred": true
+    },
+    {
+      "id": "lifecycle-memory-pool-trend",
+      "acceptedEvidence": "Design/AgentReports/ArchitectureMaturity/am024_acceptance_record.json",
+      "warmupCycles": 1,
+      "measuredCycles": 5,
+      "structuralOwnerGrowth": 0,
+      "governedPoolGrowth": 0,
+      "editorMemoryCeilingsReportedNotPassed": true
+    },
+    {
+      "id": "unity-compile",
+      "requiredCompilerErrors": 0
+    }
+  ],
+  "ownershipDelta": {
+    "phase0Path": "Design/AgentReports/ArchitectureMaturity/lifecycle_inventory.json",
+    "phase0Rows": 863,
+    "am018Path": "Design/AgentReports/ArchitectureMaturity/am018_dependency_hazard_inventory.json",
+    "am018Rows": 352,
+    "am021Path": "Design/AgentReports/ArchitectureMaturity/am021_persistent_resource_ownership.json",
+    "am021Rows": 575,
+    "am021ExplicitOwners": 553,
+    "am021ProtectedOwners": 22,
+    "am021GapCount": 0,
+    "sourceKeyIncludesLineNumber": false,
+    "requiredClassifications": [
+      "resolved",
+      "protected-deferred",
+      "open"
+    ],
+    "requiredOpenCount": 0,
+    "unmatchedFinalClassification": "new-after-baseline"
+  },
+  "currentExternalExitBlockers": {
+    "sourceGrowthFirstLaunchSystemHelperPaths": 4,
+    "broadContractDomains": [
+      "operation-map",
+      "FirstLaunch/UI",
+      "package-bound"
+    ],
+    "rule": "AM-025 remains unchecked until the current canonical run resolves or an accepted owner authority closes every Core blocker."
+  },
+  "releaseLane": {
+    "status": "Deferred",
+    "activated": false,
+    "excluded": [
+      "Android device",
+      "thermal",
+      "cold/warm launch",
+      "sustained gameplay",
+      "graphics-memory certification",
+      "APK/build artifacts"
+    ]
+  },
+  "acceptanceProgress": {
+    "overall": "26 / 86 (30.2%)",
+    "core": "26 / 68 (38.2%)",
+    "release": "0 / 18 (0.0%); deferred",
+    "nextTask": "AM-027"
+  }
+}

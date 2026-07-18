@@ -133,6 +133,75 @@ public sealed class OperationMapRuntimeBootstrapSceneSystemHelperTests
     }
 
     [Test]
+    public void UpdateReadiness_PublishesProgressAndCompletesOneGeneration()
+    {
+        using World world = new("OperationMapRuntimeBootstrapReadiness");
+        OperationMapDefinition definition = CreateValidDefinition();
+        using OperationMapRuntimeBootstrapSceneSystemHelper bootstrap = new(world);
+        try
+        {
+            FixedString64Bytes scenarioId = new("scenario.skirmish.desert_base_standard");
+            FixedString64Bytes missionId = new("skirmish");
+            OperationMapReadinessFlags initial = OperationMapReadinessFlags.SourceContent |
+                                                 OperationMapReadinessFlags.Metadata |
+                                                 OperationMapReadinessFlags.PresentationManifest;
+            OperationMapReadinessFlags required = initial |
+                                                  OperationMapReadinessFlags.SubScene |
+                                                  OperationMapReadinessFlags.MapSurface |
+                                                  OperationMapReadinessFlags.AuthoredConversion |
+                                                  OperationMapReadinessFlags.RequiredPresentationPreload;
+            Assert.That(bootstrap.TryPublish(
+                definition,
+                in scenarioId,
+                in missionId,
+                1,
+                initial,
+                required,
+                out Entity root,
+                out string publishError), Is.True, publishError);
+
+            OperationMapReadinessFlags preloaded = required &
+                ~OperationMapReadinessFlags.RequiredPresentationPreload;
+            Assert.That(bootstrap.TryUpdateReadiness(
+                1,
+                preloaded,
+                OperationMapReadinessFlags.None,
+                out string progressError), Is.True, progressError);
+            OperationMapLoadStateComponent loading =
+                world.EntityManager.GetComponentData<OperationMapLoadStateComponent>(root);
+            Assert.That(loading.Status, Is.EqualTo(OperationMapLoadStatusKind.PreloadingPresentation));
+            Assert.That(loading.Progress01, Is.EqualTo(6f / 7f).Within(0.001f));
+            Assert.That(loading.IsBusy, Is.EqualTo(1));
+
+            Assert.That(bootstrap.TryUpdateReadiness(
+                1,
+                required,
+                OperationMapReadinessFlags.None,
+                out string readyError), Is.True, readyError);
+            OperationMapReadinessComponent readiness =
+                world.EntityManager.GetComponentData<OperationMapReadinessComponent>(root);
+            OperationMapLoadStateComponent ready =
+                world.EntityManager.GetComponentData<OperationMapLoadStateComponent>(root);
+            Assert.That(readiness.ReadyFlags, Is.EqualTo(required));
+            Assert.That(readiness.FailedFlags, Is.EqualTo(OperationMapReadinessFlags.None));
+            Assert.That(ready.Status, Is.EqualTo(OperationMapLoadStatusKind.Ready));
+            Assert.That(ready.Progress01, Is.EqualTo(1f));
+            Assert.That(ready.IsBusy, Is.Zero);
+
+            Assert.That(bootstrap.TryUpdateReadiness(
+                2,
+                required,
+                OperationMapReadinessFlags.None,
+                out string generationError), Is.False);
+            StringAssert.Contains("generation", generationError);
+        }
+        finally
+        {
+            Object.DestroyImmediate(definition);
+        }
+    }
+
+    [Test]
     public void Publish_RejectsInvalidOrNonMonotonicGenerationWithoutChangingCurrentState()
     {
         using World world = new("OperationMapRuntimeBootstrapGeneration");

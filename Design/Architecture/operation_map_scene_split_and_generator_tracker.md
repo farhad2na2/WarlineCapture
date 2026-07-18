@@ -707,7 +707,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 49% (86/177 checklist items complete).
+Overall implementation progress: 54% (96/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -718,8 +718,8 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 | 2. Per-map static presentation ownership | Complete | 14 | 14 | 100% | Per-map bake/output ownership, integrity, rollback, no-op reuse, wiring, Android resolution, and synthetic multi-map isolation are accepted while the shipped catalog remains one physical map. |
 | 2A. Local Addressables packaging foundation | Active / selected direction | 16 | 20 | 80% | Source and presentation handles load from real local Addressables. Bounded shared shards reduced the closure from 603 MB to 258 MB and the APK from 938 MiB to 609 MiB; thin-shell cutover and final package acceptance remain open. |
 | 3. Current-map compatibility registration | Complete / shared | 10 | 10 | 100% | Current identities/definition, authored behavior, schema-v1 read compatibility, runtime activation/teardown, deterministic presentation, and Android chunk resolution are accepted. |
-| 4. Non-destructive scene ownership split | In progress / shared priority | 10 | 14 | 71% | The staged scene and its static-presentation source view have fail-closed validation; the original Match route remains validated and revision `d5784dcfa` plus the rollback recipe freeze the pre-cutover recovery boundary. |
-| 5. Runtime selection, loading, and teardown | In progress | 2 | 14 | 14% | Catalog preflight plus pure readiness/failure/teardown data contracts are bound; concrete local Addressables loading follows Phase 2A. |
+| 4. Non-destructive scene ownership split | Complete | 14 | 14 | 100% | The extracted map owns its source, subscene, placements, metadata, and 514-chunk presentation set. `Match.unity` is now a thin six-root shell with one small shared runtime subscene. |
+| 5. Runtime selection, loading, and teardown | In progress | 8 | 14 | 57% | Real local Addressables source/manifest loading, Entities subscene readiness, exact scene-view resolution, ECS publication, presentation binding, and gameplay gating pass in the Editor lifecycle. Deterministic failure unwind, full teardown ownership, retries, sequential switching, and Android device launch remain open. |
 | 6. Metadata, camera, minimap, and movement binding | In progress / shared | 10 | 12 | 83% | Scenario-required anchors validate against map metadata; camera bounds/poses, ARIA Show Me, minimap projection, startup grid domain, authoritative surface payload, current faction deployment anchors, and current runway/helipad records are authored from accepted sources. Active-map spawn and aircraft consumers are accepted. |
 | 7. M01 operation-map slice | Later / shared contracts only | 0 | 10 | 0% | Map-neutral ids/anchors may proceed; physical rollout remains gated. |
 | 8. Editor-time texture/mask generator | Later / editor direction only | 0 | 12 | 0% | Implement only if the editor-authored map direction is selected. |
@@ -862,10 +862,10 @@ Exit criteria:
 - [x] Assign or create the map-owned subscene without breaking the original `MatchSubScene` compatibility path. See `../AgentReports/2026-07-16_current_operation_map_subscene_staging.md`.
 - [x] Generate map-specific building and vehicle placement configs from the staged scene rather than reusing stale hierarchy assumptions blindly. See `../AgentReports/2026-07-16_current_operation_map_placement_staging.md`.
 - [x] Bind map surface, grid, blockers, lightmaps/probes, runways, helipads, bounds, and metadata from the staged scene. See `../AgentReports/2026-07-16_current_operation_map_spatial_binding_validation.md`.
-- [ ] Bake a map-specific presentation manifest/chunk set from the staged operation-map scene.
-- [ ] Validate source GlobalObjectIds, hierarchy paths, authored conversion counts, canonical renderer suppression, and entity parity.
-- [ ] Remove map roots and map-specific references from `Match.unity` only in the atomic cutover commit after staged parity passes.
-- [ ] Validate the stripped `Match.unity` remains a functional runtime shell and the extracted scene contains no shell bootstrap/HUD policy.
+- [x] Bake a map-specific presentation manifest/chunk set from the staged operation-map scene. See `../AgentReports/2026-07-18_operation_map_match_shell_cutover.md`.
+- [x] Validate source GlobalObjectIds, hierarchy paths, authored conversion counts, canonical renderer suppression, and entity parity. See the same cutover report.
+- [x] Remove map roots and map-specific references from `Match.unity` only in the atomic cutover commit after staged parity passes. See the same cutover report.
+- [x] Validate the stripped `Match.unity` remains a functional runtime shell and the extracted scene contains no shell bootstrap/HUD policy. See the same cutover report.
 - [x] Keep a revertable checkpoint that restores the original scene, configs, subscene reference, manifest binding, and build settings. Revision `d5784dcfa` and `operation_map_scene_split_rollback_recipe.md` are bound in `../AgentReports/2026-07-16_current_operation_map_compatibility_checkpoint.md`.
 
 Exit criteria:
@@ -876,16 +876,16 @@ Exit criteria:
 
 ## Phase 5: Runtime Selection, Loading, And Teardown
 
-**Execution: `Shared contract now` only.** Define readiness, ownership, failure-unwind, and teardown contracts. Every concrete Addressables or runtime-scene loading/unloading implementation is `Later - delivery`.
+**Execution: active for the selected local-Addressables direction.** Readiness and ownership remain delivery-neutral where practical; the concrete one-map loader now uses retained local Addressables handles through the existing composition lifecycle.
 
 - [x] Add the planned operation-map root/queue/state/active/bounds/metadata/readiness ECS components and request/result buffers, carrying mission, scenario, and operation-map ids as bounded fixed strings. See `../AgentReports/2026-07-16_operation_map_ecs_lifecycle_contract.md`.
 - [x] Resolve the operation-map catalog entry before beginning the match load transition. The current compatibility composition now fails closed before runtime bootstrap; concrete map loading remains deferred. See `../AgentReports/2026-07-16_operation_map_catalog_preflight_binding.md`.
-- [ ] Load the selected canonical operation-map scene additively through `OperationMapSceneLoadingSceneSystemHelper`, called by the existing composition lifecycle with no new update-loop `MonoBehaviour`.
-- [ ] Load and await the selected map's optional ECS subscene through the accepted Entities scene path.
-- [ ] Resolve exactly one `OperationMapSceneView` through `OperationMapSceneReferenceSceneSystemHelper` only after scene load succeeds.
-- [ ] Use `OperationMapRuntimeBootstrapSceneSystemHelper` to publish active ids, bounds, one small immutable `OperationMapBlob`, and readiness while reusing the existing `MapSurfaceBlob` owner.
-- [ ] Bind the existing static presentation streamer to the selected manifest and world camera.
-- [ ] Gate `BeginGameplay` on source scene, subscene, metadata, authored conversion, and required presentation preload readiness.
+- [x] Load the selected canonical operation-map scene additively through `OperationMapSceneLoadingSceneSystemHelper`, called by the existing composition lifecycle with no new update-loop `MonoBehaviour`. See `../AgentReports/2026-07-18_operation_map_match_shell_cutover.md`.
+- [x] Load and await the selected map's optional ECS subscene through the accepted Entities scene path. See the same cutover report.
+- [x] Resolve exactly one `OperationMapSceneView` through `OperationMapSceneReferenceSceneSystemHelper` only after scene load succeeds. See the same cutover report.
+- [x] Use `OperationMapRuntimeBootstrapSceneSystemHelper` to publish active ids, bounds, one small immutable `OperationMapBlob`, and readiness while reusing the existing `MapSurfaceBlob` owner. See the same cutover report.
+- [x] Bind the existing static presentation streamer to the selected manifest and world camera. See the same cutover report.
+- [x] Gate `BeginGameplay` on source scene, subscene, metadata, authored conversion, and required presentation preload readiness. See the same cutover report.
 - [ ] On exit/switch, stop map gameplay, drain presentation chunks, and then unload map/subscene content in a deterministic order.
 - [ ] Restore canonical renderer ownership correctly on failure, teardown, or compatibility fallback.
 - [ ] Clear map-specific ECS entities, singleton/buffer data, cached anchors, and scene references before a later map loads.
@@ -1156,6 +1156,7 @@ Exit criteria:
 | 2026-07-18 | Bounded shared dependency bundles | `../AgentReports/2026-07-18_operation_map_shared_dependency_bundles.md`; layout/validator/report `9 / 9`; naming `1 / 1`; byte-identical second layout; real content build; Android APK; compile; `git diff --check` | Reduction accepted; final package gate remains open | Promoted 124 dependencies reused by at least eight partitions into 24 deterministic shared shards. Addressables closure fell from 603,274,171 to 258,360,913 bytes and APK size from about 938 MiB to about 609 MiB while preserving 100 presentation partitions. |
 | 2026-07-17 | Static presentation staged-source preflight | `../AgentReports/2026-07-17_static_map_presentation_staged_source_preflight.md`; source/input `15 / 15`; editor assembly compile; `git diff --check` | Passed; Phase 4 staged bake remains open | The baker now resolves either the live `MatchSceneView` or the extracted `OperationMapSceneView` through exact, fail-closed ownership. No bake, manifest, chunk, scene, Addressables, or map asset changed. |
 | 2026-07-18 | Map-owned grid config scene binding | `../AgentReports/2026-07-18_operation_map_grid_config_scene_ownership.md`; staged scene `11 / 11`; compile; applicable architecture/naming checks; `git diff --check` | Passed; thin-shell prerequisite | The loaded `OperationMapSceneView` now supplies the authored grid config and blocked cells, allowing the atomic cutover to clear the compatibility `runtimeGridConfig` reference without losing navigation data. |
+| 2026-07-18 | Thin Match shell and real local map lifecycle | `../AgentReports/2026-07-18_operation_map_match_shell_cutover.md`; readiness `12 / 12`; shell/subscene ownership `20 / 20`; Android resolver `26 / 26`; lifecycle PlayMode `1 / 1`; architecture `9 / 9`; deterministic bake; APK integrity | Passed; Phase 4 complete and Phase 5 load/readiness rows accepted | Extracted map content loads additively from local Addressables. `Match.unity` is a 20,275-byte six-root shell, shared prefab-registry authoring lives in a 9,379-byte shell-owned subscene, all seven readiness flags gate gameplay, and the valid APK is 589,097,020 bytes. Device launch, package-size acceptance, and full teardown/sequential-map evidence remain open. |
 
 ## Open Decisions
 

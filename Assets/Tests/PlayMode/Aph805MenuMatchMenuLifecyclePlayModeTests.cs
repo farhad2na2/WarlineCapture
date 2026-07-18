@@ -15,6 +15,7 @@ public sealed class Aph805MenuMatchMenuLifecyclePlayModeTests
     internal const string MenuSceneName = "Menu";
     internal const string MatchSceneName = "Match";
     internal const float LifecycleTimeoutSeconds = 180f;
+    internal const float OperationMapLoadTimeoutSeconds = 30f;
 
     internal sealed class TransitionContext
     {
@@ -71,11 +72,15 @@ public sealed class Aph805MenuMatchMenuLifecyclePlayModeTests
         yield return WaitUntil(
             () => SceneManager.GetSceneByName(MatchSceneName).isLoaded,
             "The production Menu composition did not load Match additively.");
+        Debug.Log("[Aph805Lifecycle] stage=MatchSceneLoaded");
         yield return WaitUntil(
             () => FindInLoadedScene<MatchSceneView>(MatchSceneName) != null,
             "MatchSceneView did not become available after Match loaded.");
 
         context.Match = FindInLoadedScene<MatchSceneView>(MatchSceneName);
+        Debug.Log("[Aph805Lifecycle] stage=MatchSceneViewResolved");
+        yield return WaitForOperationMapContent(context.Match);
+        Debug.Log("[Aph805Lifecycle] stage=OperationMapContentReady");
         AssertMatchSerializedReferences(context.Match);
         Assert.That(World.DefaultGameObjectInjectionWorld, Is.SameAs(context.World));
         Assert.That(context.World.IsCreated, Is.True);
@@ -83,19 +88,19 @@ public sealed class Aph805MenuMatchMenuLifecyclePlayModeTests
         yield return WaitUntil(
             () => CountOperationMapRoots(context.World) == 1,
             "Match composition did not publish exactly one active compatibility operation map.");
+        Debug.Log("[Aph805Lifecycle] stage=OperationMapRootPublished");
         AssertActiveCompatibilityMap(context.World);
 
-        yield return WaitUntil(
-            () => context.Match.MatchBootstrap.SelectionUiCommand != null &&
-                  context.Match.MatchBootstrap.SelectionUiReadModel != null &&
-                  context.Match.MatchBootstrap.MainMenu != null,
-            "Match composition did not create the runtime UI dependencies.");
+        yield return WaitForRuntimeUiDependencies(context.Match);
+        Debug.Log("[Aph805Lifecycle] stage=RuntimeUiDependenciesReady");
         yield return WaitUntil(
             () => IsMatchUiBound(context.Menu.ContentSystem, context.Match.MatchBootstrap),
             "Menu composition did not bind Match runtime dependencies into the installed HUD.");
+        Debug.Log("[Aph805Lifecycle] stage=MatchUiBound");
         yield return WaitUntil(
             () => IsStableShellState(UIRoute.Match, UiShellMode.MatchHud, UiShellTransitionPhase.MatchHudReady),
             "Match shell route did not reach its stable idle checkpoint.");
+        Debug.Log("[Aph805Lifecycle] stage=MatchStable");
 
         context.MatchBootstrap = context.Match.MatchBootstrap;
     }
@@ -162,7 +167,11 @@ public sealed class Aph805MenuMatchMenuLifecyclePlayModeTests
         Assert.That(match.WorldCamera, Is.Not.Null);
         Assert.That(match.DirectionalLight, Is.Not.Null);
         Assert.That(ReadPrivateField(match, "globalVolume"), Is.Not.Null);
-        Assert.That(ReadPrivateField(match, "staticMapPresentationManifest"), Is.Not.Null);
+        Assert.That(ReadPrivateField(match, "staticMapPresentationManifest"), Is.Null);
+        Assert.That(match.StaticMapPresentationManifest, Is.Not.Null);
+        Assert.That(match.MapSurfaceAuthoring, Is.Not.Null);
+        Assert.That(match.MapBuildingPlacementConfig, Is.Not.Null);
+        Assert.That(match.MapVehiclePlacementConfig, Is.Not.Null);
         Assert.That(match.RtsSelectionConfig, Is.Not.Null);
         Assert.That(match.BuildingPlacementConfig, Is.Not.Null);
         Assert.That(match.RuntimeGridConfig, Is.Not.Null);
@@ -287,5 +296,72 @@ public sealed class Aph805MenuMatchMenuLifecyclePlayModeTests
                 Assert.Fail(failureMessage);
             yield return null;
         }
+    }
+
+    private static IEnumerator WaitForOperationMapContent(MatchSceneView match)
+    {
+        float deadline = Time.realtimeSinceStartup + OperationMapLoadTimeoutSeconds;
+        while (!match.OperationMapContentReady)
+        {
+            if (!string.IsNullOrEmpty(match.OperationMapContentFailure))
+                Assert.Fail($"Addressable operation-map content failed: {match.OperationMapContentFailure}");
+            if (Time.realtimeSinceStartup >= deadline)
+            {
+                Assert.Fail(
+                    "Addressable operation-map content did not become ready. " +
+                    $"sourceComplete={match.OperationMapSourceSceneLoadComplete} " +
+                    $"manifestComplete={match.OperationMapPresentationManifestLoadComplete} " +
+                    $"progress={match.OperationMapContentProgress01:0.000}");
+            }
+            yield return null;
+        }
+    }
+
+    private static IEnumerator WaitForRuntimeUiDependencies(MatchSceneView match)
+    {
+        float deadline = Time.realtimeSinceStartup + OperationMapLoadTimeoutSeconds;
+        while (match.MatchBootstrap.SelectionUiCommand == null ||
+               match.MatchBootstrap.SelectionUiReadModel == null ||
+               match.MatchBootstrap.MainMenu == null)
+        {
+            if (match.GameplayStartFailed)
+                Assert.Fail($"Match gameplay startup failed: {match.GameplayStartFailureMessage}");
+            if (Time.realtimeSinceStartup >= deadline)
+            {
+                Assert.Fail(
+                    "Match composition did not create the runtime UI dependencies. " +
+                    $"requested={match.GameplayStartRequested} " +
+                    $"complete={match.GameplayStartComplete} " +
+                    $"progress={match.GameplayStartProgress01:0.000} " +
+                    $"status={match.GameplayStartStatus} " +
+                    $"matchStart={ReadMatchStartProgress()} " +
+                    $"unitRegistryReady={IsUnitPrefabRegistryReady()}");
+            }
+            yield return null;
+        }
+    }
+
+    private static string ReadMatchStartProgress()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return "world-missing";
+        using EntityQuery query = world.EntityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<MatchStartProgressComponent>());
+        if (query.CalculateEntityCount() != 1)
+            return $"count-{query.CalculateEntityCount()}";
+        MatchStartProgressComponent progress = query.GetSingleton<MatchStartProgressComponent>();
+        return $"{progress.Progress01:0.000}:{progress.Status}";
+    }
+
+    private static bool IsUnitPrefabRegistryReady()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return false;
+        using EntityQuery query = world.EntityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<UnitPrefabRegistryTag>(),
+            ComponentType.ReadOnly<UnitPrefabRegistryEntry>());
+        return !query.IsEmptyIgnoreFilter;
     }
 }

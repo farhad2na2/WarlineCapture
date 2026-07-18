@@ -119,7 +119,6 @@ namespace Game.Editor
             var chunks = new List<string>();
             var manifestSet = new HashSet<string>(StringComparer.Ordinal);
             var operationMapIds = new HashSet<string>(StringComparer.Ordinal);
-            var canonicalScenes = new HashSet<string>(StringComparer.Ordinal);
             for (int manifestIndex = 0; manifestIndex < manifests.Count; manifestIndex++)
             {
                 StaticMapAndroidBuildManifestSnapshot manifest = manifests[manifestIndex];
@@ -131,7 +130,6 @@ namespace Game.Editor
                     computeCanonicalDependencyHash,
                     integrityMatches,
                     operationMapIds,
-                    canonicalScenes,
                     manifestSet,
                     chunks);
             }
@@ -156,12 +154,6 @@ namespace Game.Editor
 
                 if (included.Add(path))
                     result.Add(path);
-            }
-
-            foreach (string canonicalScene in canonicalScenes)
-            {
-                if (!included.Contains(canonicalScene) || !sceneExists(canonicalScene))
-                    throw new InvalidOperationException($"Enabled canonical map base scene is missing: {canonicalScene}");
             }
 
             // Validated presentation scenes are delivered by the local Addressables build.
@@ -235,7 +227,6 @@ namespace Game.Editor
             Func<string, string> computeCanonicalDependencyHash,
             Func<string, string, IReadOnlyList<string>, bool> integrityMatches,
             HashSet<string> operationMapIds,
-            HashSet<string> canonicalScenes,
             HashSet<string> manifestSet,
             List<string> chunks)
         {
@@ -255,7 +246,9 @@ namespace Game.Editor
                 : manifest.OperationMapId;
             if (!operationMapIds.Add(operationMapId))
                 throw new InvalidOperationException($"Catalog-selected manifest set contains duplicate map id: {operationMapId}");
-            canonicalScenes.Add(manifest.CanonicalScenePath);
+            if (!sceneExists(manifest.CanonicalScenePath))
+                throw new InvalidOperationException(
+                    $"Canonical operation-map source scene is missing: {manifest.CanonicalScenePath}");
             if (string.IsNullOrWhiteSpace(manifest.ContentHash))
                 throw new InvalidOperationException("Static map presentation manifest content hash is missing.");
             if (string.IsNullOrWhiteSpace(manifest.CanonicalSceneDependencyHash))

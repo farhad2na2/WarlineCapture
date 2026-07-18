@@ -82,6 +82,14 @@ public sealed class StaticMapAndroidBuildSceneResolverTests
             Resolve(new[] { Menu, Match }, snapshot));
     }
 
+    [Test]
+    public void Resolve_AcceptsAddressableCanonicalSceneOutsideBuildSettings()
+    {
+        CollectionAssert.AreEqual(
+            new[] { Menu },
+            Resolve(new[] { Menu }, Snapshot(ChunkA, ChunkB)));
+    }
+
     [TestCase("missing")]
     [TestCase("schema")]
     [TestCase("empty")]
@@ -94,7 +102,6 @@ public sealed class StaticMapAndroidBuildSceneResolverTests
     [TestCase("invalidChunk")]
     [TestCase("nonOwnedChunk")]
     [TestCase("missingChunk")]
-    [TestCase("missingMatch")]
     [TestCase("missingMatchFile")]
     [TestCase("missingBaseScene")]
     [TestCase("staleEnabled")]
@@ -112,7 +119,10 @@ public sealed class StaticMapAndroidBuildSceneResolverTests
             case "missing": snapshot = null; break;
             case "schema": snapshot = SnapshotWith(schemaVersion: StaticMapPresentationManifest.CurrentSchemaVersion + 1); break;
             case "empty": snapshot = SnapshotWith(chunks: Array.Empty<string>()); break;
-            case "canonical": snapshot = SnapshotWith(canonical: "Assets/Game/Scenes/UnselectedMap.unity"); break;
+            case "canonical":
+                snapshot = SnapshotWith(canonical: "Assets/Game/Scenes/UnselectedMap.unity");
+                exists = path => path != snapshot.CanonicalScenePath;
+                break;
             case "contentHash": snapshot = SnapshotWith(contentHash: " "); break;
             case "canonicalDependencyHash": snapshot = SnapshotWith(canonicalDependencyHash: " "); break;
             case "staleCanonicalDependency": computeCanonicalDependencyHash = () => "actual-canonical-dependency-hash"; break;
@@ -121,7 +131,6 @@ public sealed class StaticMapAndroidBuildSceneResolverTests
             case "invalidChunk": snapshot = Snapshot(ChunkA, "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/invalid.unity"); break;
             case "nonOwnedChunk": snapshot = Snapshot(ChunkA, "Assets/Game/Scenes/Other.unity"); break;
             case "missingChunk": exists = path => path != ChunkB; break;
-            case "missingMatch": enabled = new[] { Menu }; break;
             case "missingMatchFile": exists = path => path != Match; break;
             case "missingBaseScene": exists = path => path != Menu; break;
             case "staleEnabled": enabled = new[] { Menu, Match, StaleChunk }; break;

@@ -80,10 +80,12 @@ namespace Game.Editor
                 return false;
             }
 
-            if (!TryValidateSubSceneReference(
-                    OperationMapCurrentCompatibilitySceneStager.SourceScenePath,
-                    SourceSubScenePath,
-                    out error) ||
+            bool hasThinMatchShell = OperationMapCurrentMatchShellCutover.TryValidateThinShell(out _);
+            if ((!hasThinMatchShell &&
+                 !TryValidateSubSceneReference(
+                     OperationMapCurrentCompatibilitySceneStager.SourceScenePath,
+                     SourceSubScenePath,
+                     out error)) ||
                 !TryValidateSubSceneReference(
                     OperationMapCurrentCompatibilitySceneStager.DestinationScenePath,
                     DestinationSubScenePath,

@@ -163,7 +163,7 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
         {
             Done = true,
             Success = true,
-            LoadedManifest = LoadConfiguredManifest(),
+            LoadedManifest = CreateMismatchedManifest(),
             Progress = 1f
         };
         var helper = CreateHelper(sceneOperation, manifestOperation);
@@ -175,6 +175,7 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
         Assert.That(helper.Failure, Does.Contain("does not match"));
         Assert.That(sceneOperation.DisposeCount, Is.EqualTo(1));
         Assert.That(manifestOperation.DisposeCount, Is.EqualTo(1));
+        UnityEngine.Object.DestroyImmediate(manifestOperation.LoadedManifest);
     }
 
     [Test]
@@ -228,6 +229,24 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
             definition.OperationMapId,
             definition.SourceSceneReference.AssetGUID,
             scene.path,
+            source.CanonicalSceneDependencyHash,
+            source.ChunkSize,
+            source.ContentHash,
+            new List<StaticMapPresentationChunkEntry>(source.Chunks),
+            new List<StaticMapPresentationSourceEntry>(source.Sources));
+        return manifest;
+    }
+
+    private static StaticMapPresentationManifest CreateMismatchedManifest()
+    {
+        OperationMapDefinition definition = LoadDefinition();
+        StaticMapPresentationManifest source = LoadConfiguredManifest();
+        StaticMapPresentationManifest manifest = UnityEngine.Object.Instantiate(source);
+        const string mismatchedScenePath = "Assets/Game/Scenes/Match.unity";
+        manifest.EditorSetData(
+            definition.OperationMapId,
+            AssetDatabase.AssetPathToGUID(mismatchedScenePath),
+            mismatchedScenePath,
             source.CanonicalSceneDependencyHash,
             source.ChunkSize,
             source.ContentHash,

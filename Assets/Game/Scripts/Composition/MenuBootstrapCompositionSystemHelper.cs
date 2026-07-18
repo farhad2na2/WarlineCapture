@@ -437,6 +437,14 @@ namespace Game.Composition
             }
 
             staticMapPresentationStreamer.Update();
+            if (matchScene.OperationMapReadinessPublicationAvailable &&
+                !matchScene.TryPublishOperationMapReadiness(
+                    staticMapPresentationStreamer.PreloadComplete,
+                    staticMapPresentationStreamer.Failed,
+                    out string readinessError))
+            {
+                Debug.LogError($"[OperationMapReadiness] {readinessError}");
+            }
         }
 
         private bool CanAdvanceMatchStart(UiShellStateComponent shellState)

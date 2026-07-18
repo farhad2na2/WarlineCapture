@@ -153,6 +153,8 @@ namespace Game.Composition
         public bool IsLoading => sceneOperation != null && !IsReady && !HasFailed;
         public bool IsReady { get; private set; }
         public bool HasFailed => !string.IsNullOrEmpty(Failure);
+        public bool SourceSceneOperationComplete => sceneOperation != null && sceneOperation.IsDone;
+        public bool PresentationManifestOperationComplete => manifestOperation != null && manifestOperation.IsDone;
         public float Progress01 { get; private set; }
         public string Failure { get; private set; }
         public OperationMapSceneView SceneView { get; private set; }

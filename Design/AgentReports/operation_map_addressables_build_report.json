@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "buildResultHash": "fe8347738b78a173d6f668143502b2c6",
+  "buildResultHash": "e171022c18446350c0ad8bc7874668a6",
   "buildTarget": "Android",
-  "aggregateBundleBytes": 258360913,
+  "aggregateBundleBytes": 258354315,
   "maps": [
-    { "mapId": "opmap.skirmish.desert_base_01", "bundleCount": 129, "bundleBytes": 258360913 }
+    { "mapId": "opmap.skirmish.desert_base_01", "bundleCount": 129, "bundleBytes": 258354315 }
   ],
   "partitions": [
     { "label": "operation-map-partition-skirmish-desert-base-01-region-n001-p002", "entryCount": 1, "bundleCount": 1 },

@@ -5,6 +5,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
 using Game.Composition;
+using Game.Authoring;
 
 public sealed class OperationMapCurrentCompatibilitySceneStagerTests
 {
@@ -95,6 +96,55 @@ public sealed class OperationMapCurrentCompatibilitySceneStagerTests
         {
             EditorSceneManager.CloseScene(scene, removeScene: true);
         }
+    }
+
+    [TestCase("MatchSubScene")]
+    [TestCase("Map")]
+    [TestCase("Faction1")]
+    public void MatchShellCutoverClassifiesMapRoots(string rootName)
+    {
+        Assert.That(OperationMapCurrentMatchShellCutover.IsMapRootName(rootName), Is.True);
+    }
+
+    [TestCase("Bootstrap")]
+    [TestCase("Main Camera")]
+    [TestCase("Global Volume")]
+    [TestCase("MatchRuntimeSubScene")]
+    public void MatchShellCutoverRejectsShellRootsAsMapOwnership(string rootName)
+    {
+        Assert.That(OperationMapCurrentMatchShellCutover.IsMapRootName(rootName), Is.False);
+    }
+
+    [Test]
+    public void MatchRuntimeSubSceneContainsOnlySharedUnitRegistryAuthoring()
+    {
+        Assert.That(
+            AssetDatabase.LoadAssetAtPath<SceneAsset>(
+                OperationMapCurrentMatchShellCutover.MatchRuntimeSubScenePath),
+            Is.Not.Null);
+        Scene scene = EditorSceneManager.OpenScene(
+            OperationMapCurrentMatchShellCutover.MatchRuntimeSubScenePath,
+            OpenSceneMode.Additive);
+        try
+        {
+            var roots = scene.GetRootGameObjects();
+            Assert.That(roots, Has.Length.EqualTo(1));
+            Assert.That(roots[0].name, Is.EqualTo("UnitPrefabRegistryAuthoring"));
+            Assert.That(roots[0].GetComponent<UnitPrefabRegistryAuthoring>(), Is.Not.Null);
+        }
+        finally
+        {
+            EditorSceneManager.CloseScene(scene, removeScene: true);
+        }
+    }
+
+    [Test]
+    public void MatchSceneContainsOnlyValidatedShellOwnershipAfterCutover()
+    {
+        Assert.That(
+            OperationMapCurrentMatchShellCutover.TryValidateThinShell(out string error),
+            Is.True,
+            error);
     }
 
     [Test]

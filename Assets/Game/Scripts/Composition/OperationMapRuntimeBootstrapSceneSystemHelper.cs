@@ -56,6 +56,83 @@ namespace Game.Composition
                 out error);
         }
 
+        public bool TryUpdateReadiness(
+            int generation,
+            OperationMapReadinessFlags readyFlags,
+            OperationMapReadinessFlags failedFlags,
+            out string error)
+        {
+            if (disposed)
+            {
+                error = "Operation-map metadata bootstrap is disposed.";
+                return false;
+            }
+
+            if (generation <= 0 || (readyFlags & failedFlags) != 0)
+            {
+                error = "Operation-map readiness requires a positive generation and non-overlapping ready/failed flags.";
+                return false;
+            }
+
+            if (!TryGetLiveEntityManager(out EntityManager entityManager))
+            {
+                error = "Operation-map readiness requires a live ECS World.";
+                return false;
+            }
+            if (!TryResolveSingleRoot(entityManager, out Entity rootEntity, out error))
+                return false;
+            if (rootEntity == Entity.Null)
+            {
+                error = "Operation-map readiness requires one published root.";
+                return false;
+            }
+
+            ActiveOperationMapComponent active =
+                entityManager.GetComponentData<ActiveOperationMapComponent>(rootEntity);
+            OperationMapReadinessComponent readiness =
+                entityManager.GetComponentData<OperationMapReadinessComponent>(rootEntity);
+            if (active.Generation != generation || readiness.Generation != generation)
+            {
+                error = "Operation-map readiness generation does not match the active map.";
+                return false;
+            }
+
+            OperationMapReadinessFlags allowedFlags = readiness.RequiredFlags;
+            if ((readyFlags & ~allowedFlags) != 0 || (failedFlags & ~allowedFlags) != 0)
+            {
+                error = "Operation-map readiness contains flags outside the active requirement set.";
+                return false;
+            }
+
+            if (readiness.ReadyFlags == readyFlags && readiness.FailedFlags == failedFlags)
+            {
+                error = null;
+                return true;
+            }
+
+            readiness.ReadyFlags = readyFlags;
+            readiness.FailedFlags = failedFlags;
+            entityManager.SetComponentData(rootEntity, readiness);
+
+            bool complete = HasRequiredReadiness(readyFlags, readiness.RequiredFlags);
+            OperationMapLoadStateComponent state =
+                entityManager.GetComponentData<OperationMapLoadStateComponent>(rootEntity);
+            state.Generation = generation;
+            state.Progress01 = CalculateReadinessProgress(readyFlags, readiness.RequiredFlags);
+            state.Status = failedFlags != OperationMapReadinessFlags.None
+                ? OperationMapLoadStatusKind.Failed
+                : complete
+                    ? OperationMapLoadStatusKind.Ready
+                    : (readyFlags & OperationMapReadinessFlags.SubScene) == 0
+                        ? OperationMapLoadStatusKind.LoadingSubScene
+                        : OperationMapLoadStatusKind.PreloadingPresentation;
+            state.Readiness = readyFlags;
+            state.IsBusy = complete || failedFlags != OperationMapReadinessFlags.None ? (byte)0 : (byte)1;
+            entityManager.SetComponentData(rootEntity, state);
+            error = null;
+            return true;
+        }
+
         public bool TryPublish(
             OperationMapDefinition definition,
             in FixedString64Bytes scenarioId,
@@ -289,6 +366,29 @@ namespace Game.Composition
             OperationMapReadinessFlags readyFlags,
             OperationMapReadinessFlags requiredFlags) =>
             (readyFlags & requiredFlags) == requiredFlags;
+
+        private static float CalculateReadinessProgress(
+            OperationMapReadinessFlags readyFlags,
+            OperationMapReadinessFlags requiredFlags)
+        {
+            int readyCount = 0;
+            int requiredCount = 0;
+            ushort ready = (ushort)(readyFlags & requiredFlags);
+            ushort required = (ushort)requiredFlags;
+            while (required != 0)
+            {
+                if ((required & 1) != 0)
+                {
+                    requiredCount++;
+                    if ((ready & 1) != 0)
+                        readyCount++;
+                }
+                required >>= 1;
+                ready >>= 1;
+            }
+
+            return requiredCount == 0 ? 1f : (float)readyCount / requiredCount;
+        }
 
         private static float3 ToFloat3(UnityEngine.Vector3 value) => new(value.x, value.y, value.z);
     }

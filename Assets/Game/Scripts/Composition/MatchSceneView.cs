@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using Unity.Entities;
+using Unity.Scenes;
 using Game.Components;
 using Game.Configs;
 using Game.Authoring;
@@ -25,6 +26,10 @@ namespace Game.Composition
         private OperationMapSceneLoadingSceneSystemHelper operationMapSceneLoadingSystem;
         private OperationMapSceneView activeOperationMapSceneView;
         private bool operationMapLoadFailureReported;
+        private bool operationMapReadinessPublished;
+        private OperationMapReadinessFlags publishedOperationMapReadyFlags;
+        private OperationMapReadinessFlags publishedOperationMapFailedFlags;
+        private Entity loadedOperationMapSubSceneEntity;
 
         [Header("Scene Refs")]
         [SerializeField] private Camera worldCamera;
@@ -129,6 +134,18 @@ namespace Game.Composition
         public string MissionId => missionId;
         public bool OperationMapContentReady =>
             operationMapSceneLoadingSystem == null || operationMapSceneLoadingSystem.IsReady;
+        internal bool OperationMapSourceSceneLoadComplete =>
+            operationMapSceneLoadingSystem != null &&
+            operationMapSceneLoadingSystem.SourceSceneOperationComplete;
+        internal bool OperationMapPresentationManifestLoadComplete =>
+            operationMapSceneLoadingSystem != null &&
+            operationMapSceneLoadingSystem.PresentationManifestOperationComplete;
+        internal float OperationMapContentProgress01 =>
+            operationMapSceneLoadingSystem?.Progress01 ?? 0f;
+        internal string OperationMapContentFailure =>
+            operationMapSceneLoadingSystem?.Failure;
+        internal bool OperationMapReadinessPublicationAvailable =>
+            activeOperationMapSceneView != null && operationMapRuntimeBootstrapSystem != null;
 
         internal MatchBootstrapCompositionSystemHelper MatchBootstrap => matchBootstrapSystem;
         public bool GameplayStartRequested => matchBootstrapSystem.GameplayStartRequested;
@@ -363,6 +380,80 @@ namespace Game.Composition
         {
             operationMapRuntimeBootstrapSystem?.Dispose();
             operationMapRuntimeBootstrapSystem = null;
+            operationMapReadinessPublished = false;
+            publishedOperationMapReadyFlags = OperationMapReadinessFlags.None;
+            publishedOperationMapFailedFlags = OperationMapReadinessFlags.None;
+            loadedOperationMapSubSceneEntity = Entity.Null;
+        }
+
+        internal bool TryPublishOperationMapReadiness(
+            bool presentationPreloadReady,
+            bool presentationPreloadFailed,
+            out string error)
+        {
+            if (activeOperationMapSceneView == null || operationMapRuntimeBootstrapSystem == null)
+            {
+                error = "Operation-map readiness requires a loaded view and published metadata.";
+                return false;
+            }
+
+            ResolveInitialOperationMapReadiness(
+                true,
+                out OperationMapReadinessFlags readyFlags,
+                out _);
+            if (IsOperationMapSubSceneReady())
+            {
+                readyFlags |= OperationMapReadinessFlags.SubScene |
+                              OperationMapReadinessFlags.AuthoredConversion;
+            }
+            if (activeOperationMapSceneView.MapSurfaceAuthoring.BakedSurfaceData != null)
+                readyFlags |= OperationMapReadinessFlags.MapSurface;
+            if (presentationPreloadReady)
+                readyFlags |= OperationMapReadinessFlags.RequiredPresentationPreload;
+
+            OperationMapReadinessFlags failedFlags = presentationPreloadFailed
+                ? OperationMapReadinessFlags.RequiredPresentationPreload
+                : OperationMapReadinessFlags.None;
+            if (operationMapReadinessPublished &&
+                publishedOperationMapReadyFlags == readyFlags &&
+                publishedOperationMapFailedFlags == failedFlags)
+            {
+                error = null;
+                return true;
+            }
+
+            if (!operationMapRuntimeBootstrapSystem.TryUpdateReadiness(
+                    1,
+                    readyFlags,
+                    failedFlags,
+                    out error))
+                return false;
+
+            operationMapReadinessPublished = true;
+            publishedOperationMapReadyFlags = readyFlags;
+            publishedOperationMapFailedFlags = failedFlags;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.Log($"[OperationMapReadiness] ready={readyFlags} failed={failedFlags}");
+#endif
+            return true;
+        }
+
+        private bool IsOperationMapSubSceneReady()
+        {
+            World world = World.DefaultGameObjectInjectionWorld;
+            if (world == null || !world.IsCreated)
+                return false;
+
+            if (loadedOperationMapSubSceneEntity == Entity.Null ||
+                !world.EntityManager.Exists(loadedOperationMapSubSceneEntity))
+            {
+                loadedOperationMapSubSceneEntity = SceneSystem.GetSceneEntity(
+                    world.Unmanaged,
+                    activeOperationMapSceneView.MapSubScene.SceneGUID);
+            }
+
+            return loadedOperationMapSubSceneEntity != Entity.Null &&
+                   SceneSystem.IsSceneLoaded(world.Unmanaged, loadedOperationMapSubSceneEntity);
         }
 
         private bool HasCompatibilityMapReferences()

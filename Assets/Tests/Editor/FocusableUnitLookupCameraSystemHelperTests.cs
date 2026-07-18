@@ -20,7 +20,8 @@ public sealed class FocusableUnitLookupCameraSystemHelperTests
             RunCase(test => test.ScreenDistanceFallback_SkipsActiveTransitAirUnits());
             RunCase(test => test.ScreenDistanceFallback_UsesVisualHitboxForLargeAircraft());
             RunCase(test => test.GridLookup_UsesAirSelectionHitboxPaddingForLargeMapAircraft());
-            UnityEngine.Debug.Log("[FocusableUnitLookupFocusedValidation] result=Passed tests=4");
+            RunCase(test => test.GridLookup_RebindsAfterWorldReplacement());
+            UnityEngine.Debug.Log("[FocusableUnitLookupFocusedValidation] result=Passed tests=5");
         }
         catch (System.Exception ex)
         {
@@ -232,6 +233,72 @@ public sealed class FocusableUnitLookupCameraSystemHelperTests
                 new Vector2(screen.x, screen.y),
                 out Entity focused));
             Assert.AreEqual(aircraft, focused);
+        }
+        finally
+        {
+            Object.DestroyImmediate(cameraObject);
+        }
+    }
+
+    [Test]
+    public void GridLookup_RebindsAfterWorldReplacement()
+    {
+        GameObject cameraObject = new("FocusableUnitReplacementWorldCamera");
+        Camera camera = cameraObject.AddComponent<Camera>();
+        camera.orthographic = true;
+        camera.orthographicSize = 16f;
+        camera.pixelRect = new Rect(0f, 0f, 100f, 100f);
+        camera.transform.position = new Vector3(0f, 0f, -10f);
+        var lookup = new FocusableUnitLookupCameraSystemHelper();
+
+        try
+        {
+            CreateGrid(32, 32);
+            CreateFocusableUnit(new int2(4, 4), new int2(1, 1));
+            Assert.IsTrue(lookup.TryGetClickedUnitEntity(
+                _entityManager,
+                camera,
+                new int2(4, 4),
+                new Vector2(50f, 50f),
+                out _));
+
+            _world.Dispose();
+            _world = new World("FocusableUnitLookupCameraSystemHelperTests-Replacement");
+            _entityManager = _world.EntityManager;
+            CreateGrid(32, 32);
+            Entity replacement = CreateFocusableUnit(new int2(12, 8), new int2(1, 1));
+
+            Assert.IsFalse(lookup.TryGetClickedUnitEntity(
+                _entityManager,
+                camera,
+                new int2(4, 4),
+                new Vector2(50f, 50f),
+                out _));
+            Assert.IsTrue(lookup.TryGetClickedUnitEntity(
+                _entityManager,
+                camera,
+                new int2(12, 8),
+                new Vector2(50f, 50f),
+                out Entity focused));
+            Assert.AreEqual(replacement, focused);
+
+            _entityManager.SetComponentData(replacement, new UnitGrid { Cell = new int2(14, 8) });
+            _entityManager.SetComponentData(
+                replacement,
+                new LocalToWorld { Value = float4x4.Translate(new float3(14f, 0f, 8f)) });
+            Assert.IsFalse(lookup.TryGetClickedUnitEntity(
+                _entityManager,
+                camera,
+                new int2(12, 8),
+                new Vector2(50f, 50f),
+                out _));
+            Assert.IsTrue(lookup.TryGetClickedUnitEntity(
+                _entityManager,
+                camera,
+                new int2(14, 8),
+                new Vector2(50f, 50f),
+                out focused));
+            Assert.AreEqual(replacement, focused);
         }
         finally
         {

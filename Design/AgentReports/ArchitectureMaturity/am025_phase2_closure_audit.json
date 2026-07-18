@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 420,
+    "resolvedNonDebtRowCount": 421,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 428,
-    "genuineDebtRowCount": 147,
-    "uniqueDebtItemCount": 71,
+    "reviewedNonDebtRowCount": 429,
+    "genuineDebtRowCount": 146,
+    "uniqueDebtItemCount": 70,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -48,9 +48,9 @@
     {
       "sourceArtifact": "AM-007",
       "historicalOpenRowCount": 314,
-      "projectedResolvedNonDebtRowCount": 272,
+      "projectedResolvedNonDebtRowCount": 273,
       "projectedProtectedDeferredRowCount": 7,
-      "projectedGenuineDebtRowCount": 35
+      "projectedGenuineDebtRowCount": 34
     },
     {
       "sourceArtifact": "AM-018",
@@ -76,7 +76,7 @@
     },
     {
       "id": "world-owner-candidates",
-      "projectedRows": 27,
+      "projectedRows": 26,
       "note": "Lifecycle rows; may overlap hazard remediation and cannot be treated as 33 independent production defects."
     }
   ],
@@ -260,10 +260,22 @@
       "authority": ["Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs"]
     },
     {
+      "id": "am007-world-focusable-unit-lookup-owned",
+      "decision": "resolved",
+      "reasonCode": "tested-world-rebinding-selection-lookup",
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-007",
+        "sourceCategory": "worlds",
+        "sourcePath": "Assets/Game/Scripts/Systems/FocusableUnitLookupCameraSystemHelper.cs"
+      },
+      "authority": ["Assets/Tests/Editor/FocusableUnitLookupCameraSystemHelperTests.cs"]
+    },
+    {
       "id": "am007-world-debt",
       "decision": "genuine-debt",
       "reasonCode": "world-owner-unproven",
-      "expectedCount": 27,
+      "expectedCount": 26,
       "debtIdPrefix": "AM025-WORLD",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

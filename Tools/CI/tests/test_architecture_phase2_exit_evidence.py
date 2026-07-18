@@ -79,6 +79,40 @@ def ownership_fixture():
     )
 
 
+def closure_fixture():
+    return {
+        "artifactId": "AM025-PHASE2-CLOSURE-AUDIT",
+        "schemaVersion": 1,
+        "projection": {
+            "historicalIntakeRowCount": 2,
+            "reviewedRowCount": 2,
+            "resolvedNonDebtRowCount": 1,
+            "protectedDeferredRowCount": 0,
+            "genuineDebtRowCount": 1,
+            "uniqueDebtItemCount": 1,
+            "unclassifiedRowCount": 0,
+        },
+        "reviewRules": [{
+            "id": "baseline-debt",
+            "decision": "genuine-debt",
+            "reasonCode": "fixture-debt",
+            "expectedCount": 1,
+            "debtIdPrefix": "FIXTURE-DEBT",
+            "ownerDomain": "fixture",
+            "workPackageId": "FIXTURE-WP",
+            "match": {"sourceArtifact": "AM-007", "sourceCategory": "staticCaches"},
+            "authority": ["fixture-authority.json"],
+        }, {
+            "id": "hazard-resolved",
+            "decision": "resolved",
+            "reasonCode": "fixture-resolved",
+            "expectedCount": 1,
+            "match": {"sourceArtifact": "AM-018", "sourceCategory": "mutableStaticCaches"},
+            "authority": ["fixture-authority.json"],
+        }],
+    }
+
+
 class Phase2OwnershipDeltaTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
@@ -97,6 +131,20 @@ class Phase2OwnershipDeltaTests(unittest.TestCase):
 
     def report(self):
         return delta.build_report(self.lifecycle, self.hazards, self.ownership)
+
+    def reviewed_report(self, closure=None):
+        closure_path = self.write("closure.json", closure or closure_fixture())
+        self.write("fixture-authority.json", {"accepted": True})
+        source = self.root / "Assets/B.cs"
+        source.parent.mkdir(parents=True, exist_ok=True)
+        source.write_text("static cache fixture\n", encoding="utf-8")
+        return delta.build_report(
+            self.lifecycle,
+            self.hazards,
+            self.ownership,
+            closure_audit_path=closure_path,
+            source_root=self.root,
+        )
 
     def test_rows_are_unique_and_classified_exactly_once(self):
         report = self.report()
@@ -204,6 +252,40 @@ class Phase2OwnershipDeltaTests(unittest.TestCase):
         self.assertEqual(1, checked.returncode)
         self.assertIn("stale or missing", checked.stdout)
 
+    def test_row_bound_review_classifies_every_historical_open_row(self):
+        report = self.reviewed_report()
+        review = report["summary"]["review"]
+        self.assertEqual(2, review["historicalInitialOpenRowCount"])
+        self.assertEqual(1, review["resolvedNonDebtRowCount"])
+        self.assertEqual(1, review["genuineDebtRowCount"])
+        self.assertEqual(0, review["unclassifiedRowCount"])
+        debt = next(row for row in report["baselineClassifications"] if row["classification"] == "open")
+        self.assertEqual("genuine-debt", debt["reviewDecision"])
+        self.assertEqual("FIXTURE-DEBT-001", debt["debtId"])
+        self.assertEqual(hashlib.sha256((self.root / "Assets/B.cs").read_bytes()).hexdigest(), debt["currentSourceSha256"])
+        self.assertEqual(
+            hashlib.sha256((self.root / "fixture-authority.json").read_bytes()).hexdigest(),
+            debt["reviewAuthority"][0]["sha256"],
+        )
+
+    def test_review_rule_count_drift_fails_closed(self):
+        closure = closure_fixture()
+        closure["reviewRules"][0]["expectedCount"] = 2
+        with self.assertRaises(delta.DeltaError):
+            self.reviewed_report(closure)
+
+    def test_unclassified_review_row_fails_closed(self):
+        closure = closure_fixture()
+        closure["reviewRules"] = closure["reviewRules"][:1]
+        with self.assertRaises(delta.DeltaError):
+            self.reviewed_report(closure)
+
+    def test_missing_review_authority_fails_closed(self):
+        closure = closure_fixture()
+        closure["reviewRules"][0]["authority"] = ["missing-authority.json"]
+        with self.assertRaises(delta.DeltaError):
+            self.reviewed_report(closure)
+
 
 class Phase2ClosureAuditContractTests(unittest.TestCase):
     @classmethod
@@ -212,6 +294,8 @@ class Phase2ClosureAuditContractTests(unittest.TestCase):
         cls.audit_path = ROOT / "Design/AgentReports/ArchitectureMaturity/am025_phase2_closure_audit.json"
         cls.policy = json.loads(cls.policy_path.read_text(encoding="utf-8"))
         cls.audit = json.loads(cls.audit_path.read_text(encoding="utf-8"))
+        cls.delta_path = ROOT / "Design/AgentReports/ArchitectureMaturity/am025_phase2_ownership_delta.json"
+        cls.delta = json.loads(cls.delta_path.read_text(encoding="utf-8"))
 
     def test_distinct_575_populations_and_projection_arithmetic(self):
         terminology = self.audit["terminology"]
@@ -228,6 +312,7 @@ class Phase2ClosureAuditContractTests(unittest.TestCase):
         )
         self.assertEqual(407, projection["reviewedNonDebtRowCount"])
         self.assertEqual(168, projection["genuineDebtRowCount"])
+        self.assertEqual(80, projection["uniqueDebtItemCount"])
         self.assertEqual(0, projection["unclassifiedRowCount"])
         self.assertFalse(projection["acceptanceCreditGranted"])
 
@@ -260,10 +345,54 @@ class Phase2ClosureAuditContractTests(unittest.TestCase):
         package = (ROOT / "Design/Architecture/WorkPackages/am_wp_028_phase2_debt_reconciliation.md").read_text(
             encoding="utf-8"
         )
-        self.assertIn("projected `407` non-debt and `168` genuine-debt", tracker)
-        self.assertIn("planning projection", package)
+        self.assertIn("producing `407` non-debt and `168` genuine-debt", tracker)
+        self.assertIn("`80` unique file/rule items", tracker)
+        self.assertIn("row-bound draft evidence", package)
+        self.assertIn("remains non-accepting", package)
         self.assertIn("acceptanceCreditGranted", json.dumps(self.audit, sort_keys=True))
         self.assertIn("requiredGenuineDebtCountForAcceptance", json.dumps(self.policy, sort_keys=True))
+
+    def test_production_delta_has_one_hash_bound_decision_per_intake_row(self):
+        self.assertEqual(2, self.delta["schemaVersion"])
+        review = self.delta["summary"]["review"]
+        self.assertEqual(575, review["historicalInitialOpenRowCount"])
+        self.assertEqual(575, review["reviewedRowCount"])
+        self.assertEqual(399, review["resolvedNonDebtRowCount"])
+        self.assertEqual(8, review["protectedDeferredRowCount"])
+        self.assertEqual(168, review["genuineDebtRowCount"])
+        self.assertEqual(80, review["uniqueDebtItemCount"])
+        self.assertEqual(0, review["unclassifiedRowCount"])
+        reviewed = [
+            row for row in self.delta["baselineClassifications"] + self.delta["hazardClassifications"]
+            if "reviewDecision" in row
+        ]
+        self.assertEqual(575, len(reviewed))
+        self.assertEqual(575, len({(row["sourceArtifact"], row["sourceKey"]) for row in reviewed}))
+        debt_rows = [row for row in reviewed if row["reviewDecision"] == "genuine-debt"]
+        self.assertEqual(168, len(debt_rows))
+        for row in debt_rows:
+            source = ROOT / row["sourcePath"]
+            self.assertEqual(row["currentSourceSha256"], hashlib.sha256(source.read_bytes()).hexdigest())
+        for row in reviewed:
+            self.assertTrue(row["reviewAuthority"])
+            for authority in row["reviewAuthority"]:
+                source = ROOT / authority["path"]
+                self.assertEqual(authority["sha256"], hashlib.sha256(source.read_bytes()).hexdigest())
+
+    def test_production_delta_regenerates_byte_identically(self):
+        command = [
+            sys.executable,
+            str(ROOT / "Tools/CI/architecture_phase2_ownership_delta.py"),
+            "--lifecycle", "Design/AgentReports/ArchitectureMaturity/lifecycle_inventory.json",
+            "--hazards", "Design/AgentReports/ArchitectureMaturity/am018_dependency_hazard_inventory.json",
+            "--ownership", "Design/AgentReports/ArchitectureMaturity/am021_persistent_resource_ownership.json",
+            "--closure-audit", "Design/AgentReports/ArchitectureMaturity/am025_phase2_closure_audit.json",
+            "--source-root", ".",
+            "--json-output", "Design/AgentReports/ArchitectureMaturity/am025_phase2_ownership_delta.json",
+            "--markdown-output", "Design/AgentReports/ArchitectureMaturity/am025_phase2_ownership_delta.md",
+            "--check",
+        ]
+        subprocess.run(command, cwd=ROOT, check=True, capture_output=True, text=True)
 
 
 if __name__ == "__main__":

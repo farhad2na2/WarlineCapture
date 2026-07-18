@@ -8,587 +8,185 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 |---|---:|
 | Baseline rows | 863 |
 | Hazard rows | 352 |
-| Resolved | 612 |
-| Protected/deferred | 28 |
-| Open | 575 |
+| Resolved | 1011 |
+| Protected/deferred | 36 |
+| Open | 168 |
 | New after baseline | 26 |
+| Historical intake rows | 575 |
+| Reviewed non-debt rows | 407 |
+| Genuine-debt rows | 168 |
+| Unclassified rows | 0 |
+| Unique debt items | 80 |
 
 ## Open Rows
 
-| Source | Category | Path | Authority |
-|---|---|---|---|
-| AM-018 | globalWorldLookups | Assets/Game/Scripts/Composition/MatchIntroEcsStateQuery.cs | AM-018 classification.globalWorldLookups |
-| AM-018 | globalWorldLookups | Assets/Game/Scripts/Environment/RuntimeCityReadinessQueryCompositionSystemHelper.cs | AM-018 classification.globalWorldLookups |
-| AM-018 | globalWorldLookups | Assets/Game/Scripts/Environment/RuntimeCityRoadBuildBridgeCompositionSystemHelper.cs | AM-018 classification.globalWorldLookups |
-| AM-018 | globalWorldLookups | Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.cs | AM-018 classification.globalWorldLookups |
-| AM-018 | globalWorldLookups | Assets/Game/Scripts/Systems/RtsSelectionInputStateCompositionSystemHelper.cs | AM-018 classification.globalWorldLookups |
-| AM-018 | globalWorldLookups | Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs | AM-018 classification.globalWorldLookups |
-| AM-018 | globalWorldLookups | Assets/Game/Scripts/Systems/SelectionBuildingInteractionCompositionSystemHelper.cs | AM-018 classification.globalWorldLookups |
-| AM-018 | globalWorldLookups | Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs | AM-018 classification.globalWorldLookups |
-| AM-018 | globalWorldLookups | Assets/Game/Scripts/Systems/UnitPathfindingPendingStateStore.cs | AM-018 classification.globalWorldLookups |
-| AM-018 | hiddenSingletons | Assets/Game/Scripts/Effects/MissileTrailVfxView.cs | AM-018 classification.hiddenSingletons |
-| AM-018 | hiddenSingletons | Assets/Game/Scripts/Effects/UnitAttackImpactVfxView.cs | AM-018 classification.hiddenSingletons |
-| AM-018 | hiddenSingletons | Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs | AM-018 classification.hiddenSingletons |
-| AM-018 | hiddenSingletons | Assets/Game/Scripts/UI/Screens/ResourceExchangePopupRuntimeView.cs | AM-018 classification.hiddenSingletons |
-| AM-018 | hiddenSingletons | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.hiddenSingletons |
-| AM-018 | hiddenSingletons | Assets/Game/Scripts/UI/Shell/UiShellRuntimeGateway.cs | AM-018 classification.hiddenSingletons |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Balance/GameRuntimeStats.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Balance/GameRuntimeStats.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Balance/GameRuntimeStats.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Balance/GameRuntimeStats.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Balance/GameRuntimeStats.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Balance/GameRuntimeStats.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Balance/GameRuntimeStats.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Balance/GameRuntimeStats.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Balance/GameRuntimeStats.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Balance/GameRuntimeStats.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Balance/GameRuntimeStats.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Balance/GameRuntimeStats.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Configs/GameText.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Configs/GameText.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Configs/GameText.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Effects/MissileTrailVfxView.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Effects/MissileTrailVfxView.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Effects/MissileTrailVfxView.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Effects/UnitAttackImpactVfxView.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Environment/RuntimeCityBuildingPlotUtilitySystemHelper.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Environment/RuntimeCityChainUtilitySystemHelper.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Environment/RuntimeCityLandmarkOffsetUtilitySystemHelper.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Environment/RuntimeCityLandmarkOffsetUtilitySystemHelper.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Environment/RuntimeCityLandmarkOffsetUtilitySystemHelper.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Environment/RuntimeCityLandmarkOffsetUtilitySystemHelper.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Environment/RuntimeCityLandmarkOffsetUtilitySystemHelper.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Environment/RuntimeCityRoadLayoutUtilitySystemHelper.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Environment/RuntimeCityRoadVisualPrototypeSystemHelper.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/Systems/UnitHelicopterBladeSpinSystem.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/Systems/UnitSelectionObjectOutlinePresentationSystem.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/Systems/UnitSelectionObjectOutlinePresentationSystem.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/Systems/UnitSelectionObjectOutlinePresentationSystem.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/Systems/UnitSelectionObjectOutlinePresentationSystem.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/TerrainLodHeightSwitch.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/UnitAttackTracePresentationSystemHelper.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/UnitAttackTracePresentationSystemHelper.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/UnitAttackTracePresentationSystemHelper.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/UnitImpostorPresentationSystemHelper.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/UnitImpostorPresentationSystemHelper.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/UnitImpostorPresentationSystemHelper.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/ScenarioLab/TransportBoardingScenarioCatalog.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/AndroidPerformanceRecorder.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/BuildingProductionTransportPresentationSystemHelper.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/GameplayRuntimeUpdateDebugFlags.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/GameplayRuntimeUpdateDebugFlags.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/GameplayRuntimeUpdateDebugFlags.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/GameplayRuntimeUpdateDebugFlags.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/GameplayRuntimeUpdateDebugFlags.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/GameplayRuntimeUpdateDebugFlags.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/GameplayRuntimeUpdateDebugFlags.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/GameplayRuntimeUpdateDebugFlags.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/GameplayRuntimeUpdateDebugFlags.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/GameplayRuntimeUpdateDebugFlags.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/GameplayRuntimeUpdateDebugFlags.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/GameplayRuntimeUpdateDebugFlags.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/GameplayRuntimeUpdateDebugFlags.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/Pathfinding/PathfindBatchJob.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/PerformanceDiagnosticsSystemHelper.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/PerformanceDiagnosticsSystemHelper.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/PerformanceDiagnosticsSystemHelper.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/PerformanceDiagnosticsSystemHelper.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/PerformanceDiagnosticsSystemHelper.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/PerformanceDiagnosticsSystemHelper.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/ResourceExchangePresentationAnchorUtility.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/TacticalFollowAttackCinematicCameraSystemHelper.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/ThreatWarningRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/ThreatWarningRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/ThreatWarningRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/ThreatWarningRuntimeState.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/UnitHierarchicalPathPlanner.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Components/MatchHudSquadTrayView.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Contracts/MatchHudSelectionPanelModels.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/DiagnosticsFpsText.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/RuntimeLogBuffer.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/RuntimeLogBuffer.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/MainMenuNavigationView.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/MatchHudMinimapProjectionUiSystemHelper.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/QuickCustomScreenView.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/QuickCustomScreenView.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/QuickCustomScreenView.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/QuickCustomScreenView.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/QuickCustomScreenView.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/QuickCustomScreenView.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/QuickCustomScreenView.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/QuickCustomScreenView.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/QuickCustomScreenView.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/ResourceExchangePopupRuntimeView.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Settings/SettingsPanelView.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Settings/SettingsPanelView.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Settings/SettingsPanelView.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Settings/SettingsPanelView.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Settings/SettingsPanelView.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Settings/SettingsPanelView.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Settings/SettingsScreenView.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Settings/SettingsScreenView.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Settings/SettingsScreenView.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Settings/SettingsScreenView.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Settings/SettingsService.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Settings/SettingsService.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Settings/SettingsService.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Settings/SettingsService.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/CommanderProfileRouteLifecyclePresentation.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/CommanderProfileRouteLifecyclePresentation.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/CommanderProfileRouteLifecyclePresentation.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/AssistantSettingsPersistenceSystem.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildPlacementReadModelSystem.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiDiagnosticsReadModelSystem.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiDiagnosticsReadModelSystem.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiDiagnosticsReadModelSystem.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/UIShellLoadingProgressView.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/UiShellRuntimeGateway.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Utilities/InitialFactionBaseLayoutPlanner.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Utilities/InitialFactionBaseLayoutPlanner.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Utilities/UnitTransportVisualUtility.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Utilities/UnitTransportVisualUtility.cs | AM-018 classification.mutableStaticCaches |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Utilities/UnitTransportVisualUtility.cs | AM-018 classification.mutableStaticCaches |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Rendering/Systems/UnitMassRenderSettingsSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetBandSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetBandSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetBandSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetBandSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetBandSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetBandSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetBandSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetSnapshotSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetSnapshotSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetSnapshotSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetSnapshotSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetSortSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/AICombatOrderSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/AICombatOrderSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/AICombatOrderSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/AIEconomySystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/AIFactionControlSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/AISquadSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/AISquadSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/AISquadSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/AITargetingSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/FocusableUnitLookupCameraSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/MapSurfaceDiagnosticsSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/MapSurfaceDiagnosticsSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/MapSurfaceDiagnosticsSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/Pathfinding/PathfindBatchJob.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/Pathfinding/PathfindBatchJob.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/Pathfinding/PathfindBatchJob.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/Pathfinding/PathfindBatchJob.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/Pathfinding/PathfindBatchJob.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/UnitAttackSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/UnitEngagedMovementSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/UnitEngagedMovementSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/UnitPathfindingScheduler.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/UnitScanOrderExecutionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/UnitScanOrderExecutionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/UnitSpatialIndexQuery.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/UnitSpatialIndexQuery.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/UnitSpatialIndexQuery.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/UnitSpatialIndexQuery.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | nativeContainers | Assets/Game/Scripts/Systems/VisibleUnitSelectionCandidateSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | presentationPools | Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | presentationPools | Assets/Game/Scripts/Effects/MissileTrailVfxView.cs | AM-007 policy.candidateSemantics |
-| AM-007 | presentationPools | Assets/Game/Scripts/Effects/UnitAttackImpactVfxView.cs | AM-007 policy.candidateSemantics |
-| AM-007 | presentationPools | Assets/Game/Scripts/Effects/UnitAttackImpactVfxView.cs | AM-007 policy.candidateSemantics |
-| AM-007 | presentationPools | Assets/Game/Scripts/Systems/BuildingPlacementVisualPresentationSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | presentationPools | Assets/Game/Scripts/Systems/BuildingProductionTransportPresentationSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | presentationPools | Assets/Game/Scripts/Systems/BuildingProductionTransportPresentationSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | presentationPools | Assets/Game/Scripts/Systems/BuildingProductionTransportPresentationSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | presentationPools | Assets/Game/Scripts/Systems/BuildingProductionTransportPresentationSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | presentationPools | Assets/Game/Scripts/Systems/BuildingProductionTransportPresentationSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | presentationPools | Assets/Game/Scripts/Systems/BuildingProductionTransportPresentationSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | presentationPools | Assets/Game/Scripts/Systems/BuildingProductionTransportPresentationSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | presentationPools | Assets/Game/Scripts/Systems/ResourceExchangeVisualPresentationSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | presentationPools | Assets/Game/Scripts/Systems/RoadPreviewPresentationSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | presentationPools | Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Composition/MatchIntroEcsStateQuery.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitMassRenderSettingsSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitMassRenderSettingsSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitMassRenderSettingsSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetAnimationReadinessSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetAnimationReadinessSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetLodReferenceSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetLodReferenceSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetLodReferenceSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetLodReferenceSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetLodReferenceSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetReadinessSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetRenderSafetySystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetRenderSafetySystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetRenderSafetySystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetRenderSafetySystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetRenderableQuerySystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetRenderableQuerySystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetRenderableQuerySystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetRenderableQuerySystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetVisibilityApplySystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetVisibilityApplySystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetVisibilityApplySystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetVisibilityApplySystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Systems/BuildingDefenseAttackSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Systems/BuildingDefenseAttackSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Systems/BuildingDefenseAttackSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Systems/BuildingDefenseAttackSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Systems/BuildingDefenseAttackSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Systems/BuildingDefenseAttackSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Systems/BuildingDefenseAttackSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Systems/BuildingDefenseAttackSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Systems/BuildingResourceStorageQueryCache.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Systems/BuildingRuntimePublishCompositionSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Systems/EngageTargetValidateSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Systems/UnitDestroyedVisualSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Systems/UnitMoveOrderQueueQueryCache.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Systems/UnitPathLiveUnitSnapshot.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Systems/UnitPathRequestCollection.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Systems/UnitPathRequestCollection.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Systems/UnitPathfindingApply.cs | AM-007 policy.candidateSemantics |
-| AM-007 | queryCaches | Assets/Game/Scripts/Systems/UnitScanOrderExecutionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-018 | runtimeObjectDiscovery | Assets/Game/Scripts/Composition/MatchSceneReferenceSceneSystemHelper.cs | AM-018 classification.runtimeObjectDiscovery |
-| AM-018 | runtimeObjectDiscovery | Assets/Game/Scripts/Composition/MatchSceneView.cs | AM-018 classification.runtimeObjectDiscovery |
-| AM-018 | runtimeObjectDiscovery | Assets/Game/Scripts/Composition/PerformanceDiagnosticsReferenceDiagnosticsSystemHelper.cs | AM-018 classification.runtimeObjectDiscovery |
-| AM-018 | runtimeObjectDiscovery | Assets/Game/Scripts/Environment/RuntimeCityAlgorithmicAftermathPresentationSystemHelper.cs | AM-018 classification.runtimeObjectDiscovery |
-| AM-018 | runtimeObjectDiscovery | Assets/Game/Scripts/Environment/RuntimeCityAlgorithmicAftermathPresentationSystemHelper.cs | AM-018 classification.runtimeObjectDiscovery |
-| AM-007 | staticCaches | Assets/Game/Scripts/Configs/GameText.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/Configs/GameText.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
-| AM-007 | staticCaches | Assets/Game/Scripts/Utilities/UnitTransportVisualUtility.cs | AM-007 policy.candidateSemantics |
-| AM-018 | staticEventSubscriptions | Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs | AM-018 classification.staticEventSubscriptions |
-| AM-018 | staticEventSubscriptions | Assets/Game/Scripts/UI/MenuDiagnosticsUiSystemHelper.cs | AM-018 classification.staticEventSubscriptions |
-| AM-018 | staticEventSubscriptions | Assets/Game/Scripts/UI/RuntimeLogBuffer.cs | AM-018 classification.staticEventSubscriptions |
-| AM-018 | staticEventSubscriptions | Assets/Game/Scripts/UI/Shell/Ecs/AssistantSettingsPersistenceSystem.cs | AM-018 classification.staticEventSubscriptions |
-| AM-018 | staticEventSubscriptions | Assets/Game/Scripts/UI/Shell/Ecs/UiDiagnosticsReadModelSystem.cs | AM-018 classification.staticEventSubscriptions |
-| AM-007 | subscriptions | Assets/Game/Scripts/Balance/BalanceMetrics.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Environment/RuntimeCityRoadLayoutUtilitySystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Rendering/StaticMapChunkBatchingPresentationSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Rendering/UnitImpostorPresentationSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/AIEconomySystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/AIEconomySystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/AISquadSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/AirMissileLauncherSystems.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/AndroidPerformanceRecorder.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/AttackOrderCommandSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/BuildingResourceProductionEcsSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/BuildingResourceProductionEcsSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/BuildingSurfacePlacementUtilitySystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/ResourceExchangePhysicalStorageUtilitySystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/ResourceExchangePhysicalStorageUtilitySystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/UnitAttackSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/UnitAttackSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/UnitGridMovementSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/UnitGridMovementSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/UnitMoveVisualStateSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/UnitPathValidationMetrics.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/UnitPathValidationMetrics.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/UnitPathValidationMetrics.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/UnitPathValidationMetrics.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/UnitPathValidationMetrics.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/UnitPathValidationMetrics.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/Systems/UnitPathValidationMetrics.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/UI/Screens/MatchHudMinimapView.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/UI/Screens/MatchHudMinimapView.cs | AM-007 policy.candidateSemantics |
-| AM-007 | subscriptions | Assets/Game/Scripts/UI/Shell/UIAccessibilityApplier.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Audio/Runtime/AudioGameplayStateQueryCache.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Authorings/GridAuthoring.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Composition/GameplayFeatureStartupCompositionSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Composition/MapSurfaceRuntimeBootstrapSceneSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Composition/MatchBuildingRuntimeBootstrapStartupSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Composition/MatchHudMinimapDataSourceAdapter.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Composition/MatchIntroEcsStateQuery.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Composition/MatchSceneView.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Composition/MatchStartSceneSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Composition/OperationMapRuntimeBootstrapSceneSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Environment/RuntimeCityRAndDMapView.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Environment/RuntimeCityReadinessQueryCompositionSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Environment/RuntimeCityRoadBuildBridgeCompositionSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Environment/RuntimeDecorationSpawnerPresentationSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Environment/RuntimeGridBlockerPresentationSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Rendering/UnitAttackTracePresentationSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Rendering/UnitImpostorPresentationSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/RuntimeState/RuntimeBuildingEntityLink.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/AIStartupSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/BuildingCitizenPopulationCompositionSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/BuildingEntityManagerAccessSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/BuildingFactionAIOilAllocationInputSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/BuildingGameplayDisposalExecutionCompositionSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/BuildingGameplayEcsQueryCompositionSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/BuildingGameplaySourceCompositionSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/BuildingPlacementCommandEntityCache.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/BuildingProductionCommandEntityCache.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/BuildingProductionTransportPresentationSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/BuildingResourceStorageQueryCache.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/CitizenPopulationCompositionSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/CitizenPopulationEcsProjectionCompositionSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/FactionFuelLogisticsTelemetryBridgeCompositionSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/FocusableUnitLookupCameraSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/FocusedUnitLifecycleCompositionSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/FocusedUnitUiReadModelUiSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/ManagedGameplayStartupSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/MatchHudSquadTraySelectionUiSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/MatchStartRequestStartupSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/PerformanceDiagnosticsSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/RoadBuildCommandEntityCache.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/RoadBuildCompositionSourceCompositionSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/RoadBuildEcsCompositionSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/RtsSelectionInputStateCompositionSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandCompositionSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/RuntimeDiagnosticsSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/SceneLifecycleSceneSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectedUnitOrderSnapshotCompositionSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionBuildingInteractionCompositionSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionRuntimeDiagnosticsSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionUiCameraSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionUiCommandUiSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionUiReadModelUiSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/TacticalFollowCameraModeSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/TacticalFollowCameraStateQueryCache.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/UnitMoveOrderQueueQueryCache.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/UnitPathfindingPendingStateStore.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/VisibleUnitSelectionCameraSystemHelper.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/UI/Shell/Ecs/AssistantSettingsPersistenceSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/UI/Shell/Ecs/UiAudioEventBridgeSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/UI/Shell/Ecs/UiAudioSettingsProjectionSystem.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.CommandHeader.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.MinimapBuild.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Selection.cs | AM-007 policy.candidateSemantics |
-| AM-007 | worlds | Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs | AM-007 policy.candidateSemantics |
+| Source | Category | Path | Authority | Debt ID |
+|---|---|---|---|---|
+| AM-018 | globalWorldLookups | Assets/Game/Scripts/Environment/RuntimeCityReadinessQueryCompositionSystemHelper.cs | AM-018 classification.globalWorldLookups | AM025-GLOBAL-WORLD-001 |
+| AM-018 | globalWorldLookups | Assets/Game/Scripts/Environment/RuntimeCityRoadBuildBridgeCompositionSystemHelper.cs | AM-018 classification.globalWorldLookups | AM025-GLOBAL-WORLD-002 |
+| AM-018 | globalWorldLookups | Assets/Game/Scripts/Systems/RtsSelectionInputStateCompositionSystemHelper.cs | AM-018 classification.globalWorldLookups | AM025-GLOBAL-WORLD-003 |
+| AM-018 | globalWorldLookups | Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs | AM-018 classification.globalWorldLookups | AM025-GLOBAL-WORLD-004 |
+| AM-018 | globalWorldLookups | Assets/Game/Scripts/Systems/SelectionBuildingInteractionCompositionSystemHelper.cs | AM-018 classification.globalWorldLookups | AM025-GLOBAL-WORLD-005 |
+| AM-018 | globalWorldLookups | Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs | AM-018 classification.globalWorldLookups | AM025-GLOBAL-WORLD-006 |
+| AM-018 | globalWorldLookups | Assets/Game/Scripts/Systems/UnitPathfindingPendingStateStore.cs | AM-018 classification.globalWorldLookups | AM025-GLOBAL-WORLD-007 |
+| AM-018 | hiddenSingletons | Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs | AM-018 classification.hiddenSingletons | AM025-SINGLETON-001 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Balance/GameRuntimeStats.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Balance/GameRuntimeStats.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Balance/GameRuntimeStats.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Balance/GameRuntimeStats.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Balance/GameRuntimeStats.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Balance/GameRuntimeStats.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Balance/GameRuntimeStats.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Balance/GameRuntimeStats.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Balance/GameRuntimeStats.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Balance/GameRuntimeStats.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Balance/GameRuntimeStats.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Balance/GameRuntimeStats.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-002 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Configs/GameText.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-003 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-CLR-001 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-004 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-004 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-004 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-004 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-004 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-004 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-004 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-004 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-004 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-004 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-004 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-004 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-004 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-004 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-004 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-004 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-004 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-004 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/Systems/UnitHelicopterBladeSpinSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-005 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/Systems/UnitSelectionObjectOutlinePresentationSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-006 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/Systems/UnitSelectionObjectOutlinePresentationSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-006 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/Systems/UnitSelectionObjectOutlinePresentationSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-006 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/Systems/UnitSelectionObjectOutlinePresentationSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-006 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Rendering/TerrainLodHeightSwitch.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-CLR-002 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-007 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-007 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-007 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-007 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-007 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-007 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-007 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-007 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-007 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-007 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-007 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-007 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-007 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-008 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-008 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-008 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-008 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-008 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-008 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-008 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-008 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-008 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-008 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-008 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-008 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-008 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-008 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-008 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-008 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/AndroidPerformanceRecorder.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-009 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-CLR-003 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-CLR-003 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/GameplayRuntimeUpdateDebugFlags.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-010 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/GameplayRuntimeUpdateDebugFlags.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-010 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/GameplayRuntimeUpdateDebugFlags.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-010 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/GameplayRuntimeUpdateDebugFlags.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-010 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/GameplayRuntimeUpdateDebugFlags.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-010 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/GameplayRuntimeUpdateDebugFlags.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-010 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/GameplayRuntimeUpdateDebugFlags.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-010 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/GameplayRuntimeUpdateDebugFlags.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-010 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/GameplayRuntimeUpdateDebugFlags.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-010 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/GameplayRuntimeUpdateDebugFlags.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-010 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/GameplayRuntimeUpdateDebugFlags.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-010 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/GameplayRuntimeUpdateDebugFlags.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-010 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/GameplayRuntimeUpdateDebugFlags.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-010 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-CLR-004 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-CLR-004 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/TacticalFollowAttackCinematicCameraSystemHelper.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-IRC-001 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/MainMenuNavigationView.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-011 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-012 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-012 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-013 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/MatchHudMinimapProjectionUiSystemHelper.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-IRC-002 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/ResourceExchangePopupRuntimeView.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-014 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/CommanderProfileRouteLifecyclePresentation.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-015 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/CommanderProfileRouteLifecyclePresentation.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-015 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/CommanderProfileRouteLifecyclePresentation.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-015 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/AssistantSettingsPersistenceSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-016 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-IRC-003 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-CLR-005 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-CLR-005 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-CLR-005 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-IRC-003 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-IRC-003 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-017 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-017 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-CLR-005 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-017 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildPlacementReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-018 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiDiagnosticsReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-IRC-004 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiDiagnosticsReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-019 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiDiagnosticsReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-019 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/UiShellRuntimeGateway.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-020 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Utilities/UnitTransportVisualUtility.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-IRC-005 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Utilities/UnitTransportVisualUtility.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-IRC-005 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/Utilities/UnitTransportVisualUtility.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-IRC-005 |
+| AM-007 | presentationPools | Assets/Game/Scripts/Systems/RoadPreviewPresentationSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-POOL-001 |
+| AM-007 | presentationPools | Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-POOL-002 |
+| AM-018 | runtimeObjectDiscovery | Assets/Game/Scripts/Composition/MatchSceneReferenceSceneSystemHelper.cs | AM-018 classification.runtimeObjectDiscovery | AM025-DISCOVERY-001 |
+| AM-018 | runtimeObjectDiscovery | Assets/Game/Scripts/Composition/PerformanceDiagnosticsReferenceDiagnosticsSystemHelper.cs | AM-018 classification.runtimeObjectDiscovery | AM025-DISCOVERY-002 |
+| AM-018 | runtimeObjectDiscovery | Assets/Game/Scripts/Environment/RuntimeCityAlgorithmicAftermathPresentationSystemHelper.cs | AM-018 classification.runtimeObjectDiscovery | AM025-DISCOVERY-003 |
+| AM-018 | runtimeObjectDiscovery | Assets/Game/Scripts/Environment/RuntimeCityAlgorithmicAftermathPresentationSystemHelper.cs | AM-018 classification.runtimeObjectDiscovery | AM025-DISCOVERY-003 |
+| AM-007 | staticCaches | Assets/Game/Scripts/Configs/GameText.cs | AM-007 policy.candidateSemantics | AM025-STATIC-001 |
+| AM-007 | staticCaches | Assets/Game/Scripts/Configs/GameText.cs | AM-007 policy.candidateSemantics | AM025-STATIC-001 |
+| AM-007 | staticCaches | Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs | AM-007 policy.candidateSemantics | AM025-STATIC-002 |
+| AM-007 | staticCaches | Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs | AM-007 policy.candidateSemantics | AM025-STATIC-002 |
+| AM-007 | staticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-007 policy.candidateSemantics | AM025-STATIC-003 |
+| AM-007 | staticCaches | Assets/Game/Scripts/Utilities/UnitTransportVisualUtility.cs | AM-007 policy.candidateSemantics | AM025-STATIC-004 |
+| AM-007 | worlds | Assets/Game/Scripts/Authorings/GridAuthoring.cs | AM-007 policy.candidateSemantics | AM025-WORLD-001 |
+| AM-007 | worlds | Assets/Game/Scripts/Composition/MapSurfaceRuntimeBootstrapSceneSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-002 |
+| AM-007 | worlds | Assets/Game/Scripts/Environment/RuntimeCityReadinessQueryCompositionSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-003 |
+| AM-007 | worlds | Assets/Game/Scripts/Environment/RuntimeCityRoadBuildBridgeCompositionSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-004 |
+| AM-007 | worlds | Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs | AM-007 policy.candidateSemantics | AM025-WORLD-005 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs | AM-007 policy.candidateSemantics | AM025-WORLD-006 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/BuildingFactionAIOilAllocationInputSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-007 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/BuildingGameplayEcsQueryCompositionSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-008 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/BuildingProductionCommandEntityCache.cs | AM-007 policy.candidateSemantics | AM025-WORLD-009 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-010 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/FactionFuelLogisticsTelemetryBridgeCompositionSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-011 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/FocusableUnitLookupCameraSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-012 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/FocusedUnitLifecycleCompositionSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-013 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/FocusedUnitUiReadModelUiSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-014 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-015 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/MatchHudSquadTraySelectionUiSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-016 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/MatchStartRequestStartupSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-017 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/PerformanceDiagnosticsSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-018 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/RtsSelectionInputStateCompositionSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-019 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandCompositionSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-020 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/RuntimeDiagnosticsSystem.cs | AM-007 policy.candidateSemantics | AM025-WORLD-021 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs | AM-007 policy.candidateSemantics | AM025-WORLD-022 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/SceneLifecycleSceneSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-023 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectedUnitOrderSnapshotCompositionSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-024 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionBuildingInteractionCompositionSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-025 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-026 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-027 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-028 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionRuntimeDiagnosticsSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-029 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/TacticalFollowCameraModeSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-030 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/TacticalFollowCameraStateQueryCache.cs | AM-007 policy.candidateSemantics | AM025-WORLD-031 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/UnitPathfindingPendingStateStore.cs | AM-007 policy.candidateSemantics | AM025-WORLD-032 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/VisibleUnitSelectionCameraSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-033 |

@@ -13,10 +13,11 @@ Bounded read-only audits reviewed the AM-025 intake as:
 | Historical intake rows | 575 |
 | Projected reviewed non-debt rows | 407 |
 | Projected genuine-debt rows | 168 |
+| Projected unique debt items | 80 |
 | Projected unclassified rows | 0 |
 | Source-growth blockers | 5 |
 
-The `407 / 168` split is a planning projection until the row-bound authority artifact is generated, validated, and hash-bound. It is not acceptance evidence and cannot reduce the gate by assertion.
+The `407 / 168` split is now expanded into row-bound draft evidence. It remains non-accepting because all `168` genuine-debt rows, grouped into `80` unique file/rule remediation items, must be closed before Phase 2 can pass.
 
 ## 2. Required Row Authority
 
@@ -74,4 +75,3 @@ AM-025 remains unchecked until:
 - genuine-debt and unclassified counts are zero;
 - all five source-growth blockers are closed by accepted owner action;
 - the canonical AM-WP-027 suite passes without exclusions or threshold relaxation.
-

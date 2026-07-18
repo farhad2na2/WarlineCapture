@@ -11,9 +11,10 @@ from pathlib import Path, PurePosixPath
 from typing import Any, Iterable
 
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 ARTIFACT_ID = "AM-025-OWNERSHIP-DELTA"
 CLASSIFICATIONS = ("resolved", "protected-deferred", "open")
+REVIEW_DECISIONS = ("resolved", "protected-deferred", "genuine-debt")
 
 BASELINE_FINAL_CATEGORIES = {
     "nativeContainers": ("persistentNativeContainers", ("path", "ownerType", "field")),
@@ -76,6 +77,14 @@ def make_key(row: dict[str, Any], fields: Iterable[str], context: str) -> str:
     return "\0".join(key_part(row, field, context) for field in fields)
 
 
+def stable_identity(row: dict[str, Any], fields: Iterable[str], context: str) -> dict[str, str]:
+    return {
+        field: key_part(row, field, context)
+        for field in fields
+        if not field.startswith("<")
+    }
+
+
 def hazard_key(category: str, row: dict[str, Any], context: str) -> str:
     common = ("path", "ownerType", "memberName", "symbol")
     if category in HAZARD_FIELD_CATEGORIES:
@@ -96,6 +105,19 @@ def load_artifact(path: Path, expected_id: str) -> dict[str, Any]:
         raise DeltaError(f"{path} must have artifactId {expected_id!r}")
     if not isinstance(data.get("categories"), dict):
         raise DeltaError(f"{path} is missing categories")
+    return data
+
+
+def load_closure_audit(path: Path) -> dict[str, Any]:
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise DeltaError(f"cannot read {path}: {exc}") from exc
+    if data.get("artifactId") != "AM025-PHASE2-CLOSURE-AUDIT":
+        raise DeltaError(f"{path} must have artifactId 'AM025-PHASE2-CLOSURE-AUDIT'")
+    rules = data.get("reviewRules")
+    if not isinstance(rules, list) or not rules:
+        raise DeltaError(f"{path} is missing reviewRules")
     return data
 
 
@@ -190,6 +212,7 @@ def baseline_rows(
                 "sourceArtifact": "AM-007",
                 "sourceCategory": category,
                 "sourceKey": source_key,
+                "sourceIdentity": stable_identity(row, fields, context),
                 "sourceLine": row.get("line"),
                 "sourcePath": normalized_path(required_text(row, "path", context)),
             }
@@ -272,10 +295,171 @@ def hazard_rows(hazards: dict[str, Any]) -> list[dict[str, Any]]:
                 "sourceArtifact": "AM-018",
                 "sourceCategory": category,
                 "sourceKey": source_key,
+                "sourceIdentity": stable_identity(
+                    row,
+                    ("path", "ownerType", "memberName", "symbol")
+                    if category in HAZARD_FIELD_CATEGORIES
+                    else ("path", "ownerType", "memberName", "symbol", "accessKind"),
+                    context,
+                ),
                 "sourceLine": row.get("line"),
                 "sourcePath": normalized_path(required_text(row, "path", context)),
             })
     return sorted(result, key=lambda row: row["sourceKey"])
+
+
+def rule_value_matches(actual: Any, expected: Any) -> bool:
+    if isinstance(expected, list):
+        return actual in expected
+    return actual == expected
+
+
+def review_rule_matches(row: dict[str, Any], rule: dict[str, Any]) -> bool:
+    match = rule.get("match")
+    if not isinstance(match, dict) or not match:
+        raise DeltaError(f"review rule {rule.get('id')!r} has no match fields")
+    identity = row.get("sourceIdentity", {})
+    for field, expected in match.items():
+        actual = identity.get(field) if field in identity else row.get(field)
+        if not rule_value_matches(actual, expected):
+            return False
+    return True
+
+
+def current_source_hash(root: Path, source_path: str) -> str:
+    path = root / source_path
+    if not path.is_file():
+        raise DeltaError(f"reviewed source does not exist: {source_path}")
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def authority_descriptors(root: Path, authority: list[str]) -> list[dict[str, str]]:
+    descriptors = []
+    for value in sorted(set(authority)):
+        path = root / value
+        if not path.is_file():
+            raise DeltaError(f"review authority does not exist: {value}")
+        descriptors.append({
+            "path": normalized_path(value),
+            "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+        })
+    return descriptors
+
+
+def apply_review_rules(
+    baseline: list[dict[str, Any]],
+    hazards: list[dict[str, Any]],
+    audit: dict[str, Any],
+    source_root: Path,
+) -> dict[str, Any]:
+    intake = sorted(
+        [row for row in baseline + hazards if row["classification"] == "open"],
+        key=lambda row: (row["sourceArtifact"], row["sourceKey"]),
+    )
+    unassigned = {f"{row['sourceArtifact']}\0{row['sourceKey']}": row for row in intake}
+    rule_ids: set[str] = set()
+    debt_ids: set[str] = set()
+
+    for rule_position, rule in enumerate(audit["reviewRules"]):
+        context = f"reviewRules[{rule_position}]"
+        rule_id = required_text(rule, "id", context)
+        if rule_id in rule_ids:
+            raise DeltaError(f"duplicate review rule id: {rule_id}")
+        rule_ids.add(rule_id)
+        decision = required_text(rule, "decision", context)
+        if decision not in REVIEW_DECISIONS:
+            raise DeltaError(f"{context} has unsupported decision {decision!r}")
+        reason_code = required_text(rule, "reasonCode", context)
+        authority = rule.get("authority")
+        if not isinstance(authority, list) or not authority or any(
+            not isinstance(value, str) or not value.strip() for value in authority
+        ):
+            raise DeltaError(f"{context} must name authority paths")
+        expected_count = rule.get("expectedCount")
+        if not isinstance(expected_count, int) or expected_count < 1:
+            raise DeltaError(f"{context} has invalid expectedCount")
+        matched = sorted(
+            [row for row in unassigned.values() if review_rule_matches(row, rule)],
+            key=lambda row: (row["sourceArtifact"], row["sourceKey"]),
+        )
+        if len(matched) != expected_count:
+            raise DeltaError(
+                f"review rule {rule_id!r} expected {expected_count} rows but matched {len(matched)}"
+            )
+        protected = rule.get("protectedOwnerIds", [])
+        if decision == "protected-deferred":
+            if not isinstance(protected, list) or not protected or any(
+                not isinstance(value, str) or not value for value in protected
+            ):
+                raise DeltaError(f"{context} must name protectedOwnerIds")
+        elif protected:
+            raise DeltaError(f"{context} names protectedOwnerIds for {decision}")
+        debt_prefix = rule.get("debtIdPrefix")
+        owner_domain = rule.get("ownerDomain")
+        work_package = rule.get("workPackageId")
+        if decision == "genuine-debt":
+            if not all(isinstance(value, str) and value for value in (debt_prefix, owner_domain, work_package)):
+                raise DeltaError(f"{context} must name debtIdPrefix, ownerDomain, and workPackageId")
+
+        debt_id_by_group: dict[str, str] = {}
+        if decision == "genuine-debt":
+            debt_group_field = rule.get("debtGroupBy", "sourcePath")
+            if not isinstance(debt_group_field, str) or not debt_group_field:
+                raise DeltaError(f"{context} has invalid debtGroupBy")
+            groups = sorted({
+                str(row.get(debt_group_field, row.get("sourceIdentity", {}).get(debt_group_field, "")))
+                for row in matched
+            })
+            if "" in groups:
+                raise DeltaError(f"{context} cannot group debt by {debt_group_field!r}")
+            debt_id_by_group = {
+                group: f"{debt_prefix}-{position:03d}"
+                for position, group in enumerate(groups, start=1)
+            }
+            duplicate_debt_ids = debt_ids.intersection(debt_id_by_group.values())
+            if duplicate_debt_ids:
+                raise DeltaError(
+                    f"{context} generates duplicate debt ids: {sorted(duplicate_debt_ids)!r}"
+                )
+            debt_ids.update(debt_id_by_group.values())
+
+        reviewed_authority = authority_descriptors(source_root, authority)
+
+        for row in matched:
+            row["reviewDecision"] = decision
+            row["reviewRuleId"] = rule_id
+            row["reviewReasonCode"] = reason_code
+            row["reviewAuthority"] = reviewed_authority
+            if decision == "resolved":
+                row["classification"] = "resolved"
+            elif decision == "protected-deferred":
+                row["classification"] = "protected-deferred"
+                row["protectedOwnerIds"] = sorted(set(protected))
+            else:
+                debt_group_field = rule.get("debtGroupBy", "sourcePath")
+                debt_group = str(row.get(debt_group_field, row.get("sourceIdentity", {}).get(debt_group_field, "")))
+                debt_id = debt_id_by_group[debt_group]
+                row["classification"] = "open"
+                row["debtId"] = debt_id
+                row["ownerDomain"] = owner_domain
+                row["workPackageId"] = work_package
+                row["currentSourceSha256"] = current_source_hash(source_root, row["sourcePath"])
+            unassigned.pop(f"{row['sourceArtifact']}\0{row['sourceKey']}")
+
+    if unassigned:
+        first = next(iter(sorted(unassigned)))
+        raise DeltaError(f"closure audit leaves {len(unassigned)} intake rows unclassified; first={first!r}")
+
+    decisions = {name: sum(row.get("reviewDecision") == name for row in intake) for name in REVIEW_DECISIONS}
+    return {
+        "genuineDebtRowCount": decisions["genuine-debt"],
+        "historicalInitialOpenRowCount": len(intake),
+        "protectedDeferredRowCount": decisions["protected-deferred"],
+        "resolvedNonDebtRowCount": decisions["resolved"],
+        "reviewedRowCount": sum(decisions.values()),
+        "unclassifiedRowCount": len(unassigned),
+        "uniqueDebtItemCount": len(debt_ids),
+    }
 
 
 def unmatched_final_rows(
@@ -301,7 +485,13 @@ def unmatched_final_rows(
     return sorted(result, key=lambda row: (row["finalCategory"], row["finalKey"]))
 
 
-def build_report(lifecycle_path: Path, hazards_path: Path, ownership_path: Path) -> dict[str, Any]:
+def build_report(
+    lifecycle_path: Path,
+    hazards_path: Path,
+    ownership_path: Path,
+    closure_audit_path: Path | None = None,
+    source_root: Path | None = None,
+) -> dict[str, Any]:
     lifecycle = load_artifact(lifecycle_path, "AM-007")
     hazards = load_artifact(hazards_path, "AM-018")
     ownership = load_artifact(ownership_path, "AM-021")
@@ -309,18 +499,52 @@ def build_report(lifecycle_path: Path, hazards_path: Path, ownership_path: Path)
     matched: set[tuple[str, str]] = set()
     baseline = baseline_rows(lifecycle, indexes, matched)
     hazard = hazard_rows(hazards)
+    historical_counts = {
+        name: sum(row["classification"] == name for row in baseline + hazard)
+        for name in CLASSIFICATIONS
+    }
+    review_summary = None
+    audit = None
+    if closure_audit_path is not None:
+        audit = load_closure_audit(closure_audit_path)
+        review_summary = apply_review_rules(
+            baseline,
+            hazard,
+            audit,
+            source_root.resolve() if source_root is not None else Path.cwd().resolve(),
+        )
+        projection = audit.get("projection")
+        if not isinstance(projection, dict):
+            raise DeltaError("closure audit is missing projection")
+        expected = {
+            "genuineDebtRowCount": projection.get("genuineDebtRowCount"),
+            "historicalInitialOpenRowCount": projection.get("historicalIntakeRowCount"),
+            "protectedDeferredRowCount": projection.get("protectedDeferredRowCount"),
+            "resolvedNonDebtRowCount": projection.get("resolvedNonDebtRowCount"),
+            "reviewedRowCount": projection.get("reviewedRowCount"),
+            "unclassifiedRowCount": projection.get("unclassifiedRowCount"),
+            "uniqueDebtItemCount": projection.get("uniqueDebtItemCount"),
+        }
+        for field, value in expected.items():
+            if review_summary[field] != value:
+                raise DeltaError(
+                    f"closure audit projection mismatch for {field}: expected {value}, got {review_summary[field]}"
+                )
     classifications = baseline + hazard
     counts = {name: sum(row["classification"] == name for row in classifications) for name in CLASSIFICATIONS}
     unmatched = unmatched_final_rows(ownership, matched)
+    inputs = [
+        artifact_descriptor(lifecycle_path, lifecycle),
+        artifact_descriptor(hazards_path, hazards),
+        artifact_descriptor(ownership_path, ownership),
+    ]
+    if closure_audit_path is not None and audit is not None:
+        inputs.append(artifact_descriptor(closure_audit_path, audit))
     return {
         "artifactId": ARTIFACT_ID,
         "baselineClassifications": baseline,
         "hazardClassifications": hazard,
-        "inputs": [
-            artifact_descriptor(lifecycle_path, lifecycle),
-            artifact_descriptor(hazards_path, hazards),
-            artifact_descriptor(ownership_path, ownership),
-        ],
+        "inputs": inputs,
         "newAfterBaseline": unmatched,
         "schemaVersion": SCHEMA_VERSION,
         "summary": {
@@ -329,8 +553,10 @@ def build_report(lifecycle_path: Path, hazards_path: Path, ownership_path: Path)
             "classifiedRowCount": len(classifications),
             "finalResourceCount": sum(len(rows) for rows in ownership["categories"].values()),
             "hazardRowCount": len(hazard),
+            "historicalClassificationCounts": historical_counts,
             "newAfterBaselineCount": len(unmatched),
             "openCount": counts["open"],
+            "review": review_summary,
         },
     }
 
@@ -357,21 +583,38 @@ def render_markdown(report: dict[str, Any]) -> str:
         f"| Protected/deferred | {counts['protected-deferred']} |",
         f"| Open | {counts['open']} |",
         f"| New after baseline | {summary['newAfterBaselineCount']} |",
+    ]
+    review = summary.get("review")
+    if review is not None:
+        lines.extend([
+            f"| Historical intake rows | {review['historicalInitialOpenRowCount']} |",
+            f"| Reviewed non-debt rows | {review['resolvedNonDebtRowCount'] + review['protectedDeferredRowCount']} |",
+            f"| Genuine-debt rows | {review['genuineDebtRowCount']} |",
+            f"| Unclassified rows | {review['unclassifiedRowCount']} |",
+            f"| Unique debt items | {review['uniqueDebtItemCount']} |",
+        ])
+    lines.extend([
         "",
         "## Open Rows",
         "",
-        "| Source | Category | Path | Authority |",
-        "|---|---|---|---|",
-    ]
+        "| Source | Category | Path | Authority | Debt ID |",
+        "|---|---|---|---|---|",
+    ])
     open_rows = [
         *[row for row in report["baselineClassifications"] if row["classification"] == "open"],
         *[row for row in report["hazardClassifications"] if row["classification"] == "open"],
     ]
     for row in sorted(open_rows, key=lambda item: item["sourceKey"]):
-        values = (row["sourceArtifact"], row["sourceCategory"], row["sourcePath"], row["authority"])
+        values = (
+            row["sourceArtifact"],
+            row["sourceCategory"],
+            row["sourcePath"],
+            row["authority"],
+            row.get("debtId", "-"),
+        )
         lines.append("| " + " | ".join(value.replace("|", "\\|") for value in values) + " |")
     if not open_rows:
-        lines.append("| - | - | - | None |")
+        lines.append("| - | - | - | None | - |")
     return "\n".join(lines) + "\n"
 
 
@@ -391,6 +634,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--lifecycle", type=Path, required=True)
     parser.add_argument("--hazards", type=Path, required=True)
     parser.add_argument("--ownership", type=Path, required=True)
+    parser.add_argument("--closure-audit", type=Path)
+    parser.add_argument("--source-root", type=Path, default=Path("."))
     parser.add_argument("--json-output", type=Path, required=True)
     parser.add_argument("--markdown-output", type=Path, required=True)
     parser.add_argument("--check", action="store_true")
@@ -400,7 +645,13 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     try:
-        report = build_report(args.lifecycle, args.hazards, args.ownership)
+        report = build_report(
+            args.lifecycle,
+            args.hazards,
+            args.ownership,
+            closure_audit_path=args.closure_audit,
+            source_root=args.source_root,
+        )
         write_or_check(args.json_output, json_bytes(report), args.check)
         write_or_check(args.markdown_output, render_markdown(report).encode("utf-8"), args.check)
     except DeltaError as exc:

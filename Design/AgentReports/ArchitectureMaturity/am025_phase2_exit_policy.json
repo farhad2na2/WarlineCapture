@@ -40,8 +40,8 @@
       "id": "integrated-architecture",
       "command": "python3 -m unittest discover -s Tools/CI/tests -p 'test_architecture_*.py'",
       "baselinePassed": 157,
-      "am025Added": 13,
-      "requiredPassed": 170,
+      "am025Added": 19,
+      "requiredPassed": 176,
       "requiredFailed": 0
     },
     {
@@ -110,8 +110,9 @@
     "projectedReviewedRowCount": 575,
     "projectedReviewedNonDebtRowCount": 407,
     "projectedGenuineDebtRowCount": 168,
+    "projectedUniqueDebtItemCount": 80,
     "projectedUnclassifiedRowCount": 0,
-    "projectionStatus": "PendingRowBoundAuthorityEvidence",
+    "projectionStatus": "RowBoundAuthorityEvidenceGenerated",
     "requiredGenuineDebtCountForAcceptance": 0,
     "requiredUnclassifiedCountForAcceptance": 0,
     "unmatchedFinalClassification": "new-after-baseline"

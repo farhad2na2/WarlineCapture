@@ -50,6 +50,7 @@ Every artifact records schema/task/result, baseline/capture/evidence commit and 
 Allowed evidence/tool files:
 
 - `Design/AgentReports/ArchitectureMaturity/am025_phase2_exit_policy.json`
+- `Design/AgentReports/ArchitectureMaturity/am025_phase2_ownership_delta_intake.json`
 - `Design/AgentReports/ArchitectureMaturity/am025_phase2_ownership_delta.json`
 - `Design/AgentReports/ArchitectureMaturity/am025_phase2_ownership_delta.md`
 - `Design/AgentReports/ArchitectureMaturity/am025_phase2_closure_audit.json`

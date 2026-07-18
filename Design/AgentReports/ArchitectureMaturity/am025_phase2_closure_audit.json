@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 468,
+    "resolvedNonDebtRowCount": 469,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 476,
-    "genuineDebtRowCount": 99,
-    "uniqueDebtItemCount": 42,
+    "reviewedNonDebtRowCount": 477,
+    "genuineDebtRowCount": 98,
+    "uniqueDebtItemCount": 41,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -780,10 +780,25 @@
       ]
     },
     {
+      "id": "am018-static-msl-assistant-settings-subscription-reset",
+      "decision": "resolved",
+      "reasonCode": "application-event-count-with-tested-subsystem-reset",
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "MSL",
+        "sourcePath": "Assets/Game/Scripts/UI/Shell/Ecs/AssistantSettingsPersistenceSystem.cs"
+      },
+      "authority": [
+        "Assets/Tests/Editor/AssistantSettingsPersistenceSystemTests.cs"
+      ]
+    },
+    {
       "id": "am018-static-msl-debt",
       "decision": "genuine-debt",
       "reasonCode": "mutable-static-lifecycle-unproven",
-      "expectedCount": 64,
+      "expectedCount": 63,
       "debtIdPrefix": "AM025-STATIC-MSL",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

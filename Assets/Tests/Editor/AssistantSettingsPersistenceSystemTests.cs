@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using Game.Components;
 using Game.UI.Runtime;
 using Game.UI.Shell.Contracts.Ecs;
@@ -23,6 +24,8 @@ public sealed class AssistantSettingsPersistenceSystemTests
             RunCase(test => test.AssistantSettingsPersistenceSystemHelper_AppliesSettingsToShellBoundary());
             passed++;
             RunCase(test => test.SettingsServiceApplyRuntime_UpdatesDefaultWorldAssistantSettings());
+            passed++;
+            RunCase(test => test.SubsystemReset_RebindsAssistantSettingsInReplacementWorld());
             passed++;
 
             Debug.Log($"[AssistantSettingsPersistenceValidation] result=Passed tests={passed}");
@@ -65,6 +68,37 @@ public sealed class AssistantSettingsPersistenceSystemTests
         if (World.DefaultGameObjectInjectionWorld == _world)
             World.DefaultGameObjectInjectionWorld = _previousWorld;
         _world?.Dispose();
+    }
+
+    [Test]
+    public void SubsystemReset_RebindsAssistantSettingsInReplacementWorld()
+    {
+        _world.CreateSystem<AssistantSettingsPersistenceSystem>();
+
+        InvokeStaticReset(typeof(SettingsService), "ResetRuntimeAppliedSubscribers");
+        InvokeStaticReset(typeof(AssistantSettingsPersistenceSystem), "ResetRuntimeAppliedBridge");
+
+        _world.Dispose();
+        _world = new World("AssistantSettingsReplacementWorld");
+        World.DefaultGameObjectInjectionWorld = _world;
+        _entityManager = _world.EntityManager;
+        _world.CreateSystem<AssistantSettingsPersistenceSystem>();
+        Entity boundary = _entityManager.CreateEntity(typeof(UiShellStateComponent));
+
+        UISettingsModel model = SettingsService.Defaults;
+        model.Assistant.AssistanceLevel = UIAssistanceLevel.Minimal;
+        SettingsService.ApplyRuntime(model);
+
+        Assert.AreEqual(
+            AssistantGuidanceLevel.Minimal,
+            _entityManager.GetComponentData<AssistantSettingsComponent>(boundary).GuidanceLevel);
+    }
+
+    private static void InvokeStaticReset(Type type, string methodName)
+    {
+        MethodInfo method = type.GetMethod(methodName, BindingFlags.Static | BindingFlags.NonPublic);
+        Assert.NotNull(method, $"{type.Name}.{methodName} must remain available for subsystem reset.");
+        method.Invoke(null, null);
     }
 
     [Test]

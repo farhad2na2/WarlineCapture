@@ -3,6 +3,7 @@ using Game.UI.Runtime;
 using Game.UI.Shell.Contracts.Ecs;
 using Unity.Collections;
 using Unity.Entities;
+using UnityEngine;
 
 namespace Game.UI.Shell.Ecs
 {
@@ -10,6 +11,12 @@ namespace Game.UI.Shell.Ecs
     public partial struct AssistantSettingsPersistenceSystem : ISystem
     {
         private static int s_SubscriptionCount;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetRuntimeAppliedBridge()
+        {
+            s_SubscriptionCount = 0;
+        }
 
         public void OnCreate(ref SystemState state)
         {

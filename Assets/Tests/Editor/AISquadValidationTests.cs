@@ -14,7 +14,7 @@ public sealed class AISquadValidationTests
     {
         try
         {
-            InitialUnitsRuntimeState.VerboseAILogs = true;
+            RuntimeGameplayStateTestHelper.SetVerboseAILogs(true);
             AssertGroupsIdleAIControlledUnitsIntoSquad(assertDiagnosticLog: false);
             UnityEngine.Debug.Log("[AISquadFocusedValidation] result=Passed tests=1");
         }
@@ -27,21 +27,21 @@ public sealed class AISquadValidationTests
         finally
         {
             RuntimeGameplayStateTestHelper.SetPlayRequested(false);
-            InitialUnitsRuntimeState.VerboseAILogs = false;
+            RuntimeGameplayStateTestHelper.SetVerboseAILogs(false);
         }
     }
 
     [SetUp]
     public void SetUp()
     {
-        InitialUnitsRuntimeState.VerboseAILogs = true;
+        RuntimeGameplayStateTestHelper.SetVerboseAILogs(true);
     }
 
     [TearDown]
     public void TearDown()
     {
         RuntimeGameplayStateTestHelper.SetPlayRequested(false);
-        InitialUnitsRuntimeState.VerboseAILogs = false;
+        RuntimeGameplayStateTestHelper.SetVerboseAILogs(false);
     }
 
     [Test]

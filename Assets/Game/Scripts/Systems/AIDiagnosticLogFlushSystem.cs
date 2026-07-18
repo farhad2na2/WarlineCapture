@@ -43,8 +43,7 @@ namespace Game.Runtime
 
         private bool ShouldFlushDiagnostics(ref SystemState state)
         {
-            return InitialUnitsRuntimeState.VerboseAILogs ||
-                SystemAPI.HasSingleton<RuntimeDiagnosticsStateComponent>() &&
+            return SystemAPI.HasSingleton<RuntimeDiagnosticsStateComponent>() &&
                 SystemAPI.GetSingleton<RuntimeDiagnosticsStateComponent>().VerboseAILogs != 0;
         }
     }

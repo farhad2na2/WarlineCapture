@@ -121,9 +121,6 @@ namespace Game.Runtime
 
         private static bool ShouldQueueDiagnostics(EntityQuery runtimeDiagnosticsQuery)
         {
-            if (InitialUnitsRuntimeState.VerboseAILogs)
-                return true;
-
             return runtimeDiagnosticsQuery.CalculateEntityCount() == 1 &&
                 runtimeDiagnosticsQuery.GetSingleton<RuntimeDiagnosticsStateComponent>().VerboseAILogs != 0;
         }

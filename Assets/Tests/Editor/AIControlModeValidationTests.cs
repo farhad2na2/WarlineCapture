@@ -40,7 +40,7 @@ public sealed class AIControlModeValidationTests
     [SetUp]
     public void SetUp()
     {
-        InitialUnitsRuntimeState.VerboseAILogs = true;
+        RuntimeGameplayStateTestHelper.SetVerboseAILogs(true);
     }
 
     [TearDown]
@@ -48,7 +48,7 @@ public sealed class AIControlModeValidationTests
     {
         RuntimeGameplayStateTestHelper.SetPlayRequested(false);
         RuntimeGameplayStateTestHelper.SetPlayerAutoModeEnabled(false);
-        InitialUnitsRuntimeState.VerboseAILogs = false;
+        RuntimeGameplayStateTestHelper.SetVerboseAILogs(false);
     }
 
     [Test]

@@ -8,15 +8,15 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 |---|---:|
 | Baseline rows | 863 |
 | Hazard rows | 352 |
-| Resolved | 1156 |
+| Resolved | 1159 |
 | Protected/deferred | 36 |
-| Open | 23 |
+| Open | 20 |
 | New after baseline | 26 |
 | Historical intake rows | 575 |
-| Reviewed non-debt rows | 552 |
-| Genuine-debt rows | 23 |
+| Reviewed non-debt rows | 555 |
+| Genuine-debt rows | 20 |
 | Unclassified rows | 0 |
-| Unique debt items | 19 |
+| Unique debt items | 18 |
 
 ## Open Rows
 
@@ -29,12 +29,9 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 | AM-018 | globalWorldLookups | Assets/Game/Scripts/Systems/SelectionBuildingInteractionCompositionSystemHelper.cs | AM-018 classification.globalWorldLookups | AM025-GLOBAL-WORLD-005 |
 | AM-018 | globalWorldLookups | Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs | AM-018 classification.globalWorldLookups | AM025-GLOBAL-WORLD-006 |
 | AM-018 | globalWorldLookups | Assets/Game/Scripts/Systems/UnitPathfindingPendingStateStore.cs | AM-018 classification.globalWorldLookups | AM025-GLOBAL-WORLD-007 |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-CLR-001 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-CLR-001 |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-002 |
+| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/MatchHudMinimapProjectionUiSystemHelper.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-IRC-001 |
 | AM-007 | presentationPools | Assets/Game/Scripts/Systems/RoadPreviewPresentationSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-POOL-001 |
 | AM-007 | presentationPools | Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-POOL-002 |

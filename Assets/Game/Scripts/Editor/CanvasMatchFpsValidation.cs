@@ -110,7 +110,7 @@ namespace Game.Editor
                 sampleFrames = ResolvePositiveInt("WARLINE_CANVAS_MATCH_FPS_SAMPLE_FRAMES", 240);
                 variant = Environment.GetEnvironmentVariable("WARLINE_CANVAS_MATCH_FPS_VARIANT") ?? "Normal";
                 GameplayRuntimeUpdateDebugFlags.Reset();
-                InitialUnitsRuntimeState.BuildingRuntimeSliceDiagnostics = false;
+                SetBuildingRuntimeSliceDiagnostics(false);
                 buildingSliceDiagnosticsEnabled = false;
                 rawProfilerCaptureEnabled = ResolveBool("WARLINE_CANVAS_MATCH_FPS_CAPTURE_RAW");
                 rawProfilerCaptureStarted = false;
@@ -456,7 +456,7 @@ namespace Game.Editor
             GameplayRuntimeUpdateDebugFlags.DisableBuildingDestroyedRuntime = disableBuildingDestroyed;
             GameplayRuntimeUpdateDebugFlags.DisableBuildingDoorRuntime = disableBuildingDoor;
             GameplayRuntimeUpdateDebugFlags.DisableBuildingMarkerRuntime = disableBuildingMarker;
-            InitialUnitsRuntimeState.BuildingRuntimeSliceDiagnostics = buildingSliceDiagnosticsEnabled;
+            SetBuildingRuntimeSliceDiagnostics(buildingSliceDiagnosticsEnabled);
 
             if (hideCanvas && bootstrap.UiCanvas != null && bootstrap.UiCanvas.gameObject.activeSelf)
                 bootstrap.UiCanvas.gameObject.SetActive(false);
@@ -510,6 +510,12 @@ namespace Game.Editor
             serialized.ApplyModifiedPropertiesWithoutUndo();
         }
 
+        private static void SetBuildingRuntimeSliceDiagnostics(bool enabled)
+        {
+            var diagnostics = new RuntimeDiagnosticsSystem();
+            diagnostics.BuildingRuntimeSliceDiagnostics = enabled;
+        }
+
         private static void Complete(bool success, string message)
         {
             if (completed)
@@ -520,7 +526,7 @@ namespace Game.Editor
             StopRawProfilerCapture();
             DisposeMarkerRecorders();
             GameplayRuntimeUpdateDebugFlags.Reset();
-            InitialUnitsRuntimeState.BuildingRuntimeSliceDiagnostics = false;
+            SetBuildingRuntimeSliceDiagnostics(false);
             buildingSliceDiagnosticsEnabled = false;
             if (success)
                 Debug.Log($"[CanvasMatchFpsValidation] result=Passed {message}");

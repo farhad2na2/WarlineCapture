@@ -34,7 +34,7 @@ public sealed class AIProductionValidationTests
     {
         try
         {
-            InitialUnitsRuntimeState.VerboseAILogs = true;
+            RuntimeGameplayStateTestHelper.SetVerboseAILogs(true);
             AssertQueuesAndProcessesAcceptedRequestFromBoundary();
             AssertVehicleProductionWaitsForUsableFuelOrExpectedProduction();
             UnityEngine.Debug.Log("[AIProductionFocusedValidation] result=Passed tests=2");
@@ -48,21 +48,21 @@ public sealed class AIProductionValidationTests
         finally
         {
             RuntimeGameplayStateTestHelper.SetPlayRequested(false);
-            InitialUnitsRuntimeState.VerboseAILogs = false;
+            RuntimeGameplayStateTestHelper.SetVerboseAILogs(false);
         }
     }
 
     [SetUp]
     public void SetUp()
     {
-        InitialUnitsRuntimeState.VerboseAILogs = true;
+        RuntimeGameplayStateTestHelper.SetVerboseAILogs(true);
     }
 
     [TearDown]
     public void TearDown()
     {
         RuntimeGameplayStateTestHelper.SetPlayRequested(false);
-        InitialUnitsRuntimeState.VerboseAILogs = false;
+        RuntimeGameplayStateTestHelper.SetVerboseAILogs(false);
 
         if (_buildingGameplayInitialized)
             _buildingGameplay.Dispose?.Invoke();

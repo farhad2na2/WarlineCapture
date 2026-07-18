@@ -6,9 +6,6 @@ namespace Game.Runtime
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     public partial struct RuntimeDiagnosticsSystem : ISystem
     {
-        private bool _hasCachedLegacyState;
-        private RuntimeDiagnosticsStateComponent _lastLegacyState;
-
 #if UNITY_EDITOR
         public readonly struct EditorBuildingVisualAllocationProbeSnapshot
         {
@@ -426,7 +423,7 @@ namespace Game.Runtime
             });
         }
 
-        public bool ShouldLogAI => InitialUnitsRuntimeState.VerboseAILogs;
+        public bool ShouldLogAI => ReadDiagnosticsState().VerboseAILogs != 0;
 
         public bool TransportBoardingDiagnostics
         {
@@ -438,7 +435,7 @@ namespace Game.Runtime
             });
         }
 
-        public bool ShouldLogTransportBoarding => InitialUnitsRuntimeState.TransportBoardingDiagnostics;
+        public bool ShouldLogTransportBoarding => ReadDiagnosticsState().TransportBoardingDiagnostics != 0;
 
         public bool BuildingRuntimeSliceDiagnostics
         {
@@ -450,7 +447,7 @@ namespace Game.Runtime
             });
         }
 
-        public bool ShouldLogBuildingRuntimeSlices => InitialUnitsRuntimeState.BuildingRuntimeSliceDiagnostics;
+        public bool ShouldLogBuildingRuntimeSlices => ReadDiagnosticsState().BuildingRuntimeSliceDiagnostics != 0;
 
         public void OnCreate(ref SystemState state)
         {
@@ -619,29 +616,17 @@ namespace Game.Runtime
 
         public RuntimeDiagnosticsStateComponent ReadDiagnosticsState()
         {
-            RuntimeDiagnosticsStateComponent state = LegacyDiagnosticsState();
-            if (TryGetDiagnosticsEntity(out EntityManager entityManager, out Entity entity))
-            {
-                if (!_hasCachedLegacyState || !DiagnosticsStateEquals(state, _lastLegacyState))
-                {
-                    entityManager.SetComponentData(entity, state);
-                    CacheLegacyState(state);
-                    return state;
-                }
-
-                return entityManager.GetComponentData<RuntimeDiagnosticsStateComponent>(entity);
-            }
-
-            return state;
+            return TryGetDiagnosticsEntity(out EntityManager entityManager, out Entity entity)
+                ? entityManager.GetComponentData<RuntimeDiagnosticsStateComponent>(entity)
+                : default;
         }
 
         private void WriteDiagnosticsState(System.Func<RuntimeDiagnosticsStateComponent, RuntimeDiagnosticsStateComponent> mutate)
         {
-            RuntimeDiagnosticsStateComponent state = mutate(LegacyDiagnosticsState());
-            ApplyLegacyDiagnosticsState(state);
-            CacheLegacyState(state);
-            if (TryGetDiagnosticsEntity(out EntityManager entityManager, out Entity entity))
-                entityManager.SetComponentData(entity, state);
+            if (!TryGetDiagnosticsEntity(out EntityManager entityManager, out Entity entity))
+                return;
+            RuntimeDiagnosticsStateComponent state = entityManager.GetComponentData<RuntimeDiagnosticsStateComponent>(entity);
+            entityManager.SetComponentData(entity, mutate(state));
         }
 
         private static bool TryGetDiagnosticsEntity(out EntityManager entityManager, out Entity entity)
@@ -664,7 +649,6 @@ namespace Game.Runtime
 
             entity = entityManager.CreateEntity(typeof(RuntimeDiagnosticsStateComponent));
             entityManager.SetName(entity, "RuntimeDiagnosticsState");
-            entityManager.SetComponentData(entity, LegacyDiagnosticsState());
             return true;
         }
 
@@ -679,39 +663,10 @@ namespace Game.Runtime
             return true;
         }
 
-        private void CacheLegacyState(RuntimeDiagnosticsStateComponent state)
-        {
-            _lastLegacyState = state;
-            _hasCachedLegacyState = true;
-        }
-
-        private static RuntimeDiagnosticsStateComponent LegacyDiagnosticsState()
-        {
-            return new RuntimeDiagnosticsStateComponent
-            {
-                VerboseAILogs = ToByte(InitialUnitsRuntimeState.VerboseAILogs),
-                TransportBoardingDiagnostics = ToByte(InitialUnitsRuntimeState.TransportBoardingDiagnostics),
-                BuildingRuntimeSliceDiagnostics = ToByte(InitialUnitsRuntimeState.BuildingRuntimeSliceDiagnostics)
-            };
-        }
-
-        private static void ApplyLegacyDiagnosticsState(RuntimeDiagnosticsStateComponent state)
-        {
-            InitialUnitsRuntimeState.VerboseAILogs = state.VerboseAILogs != 0;
-            InitialUnitsRuntimeState.TransportBoardingDiagnostics = state.TransportBoardingDiagnostics != 0;
-            InitialUnitsRuntimeState.BuildingRuntimeSliceDiagnostics = state.BuildingRuntimeSliceDiagnostics != 0;
-        }
-
         private static byte ToByte(bool value)
         {
             return value ? (byte)1 : (byte)0;
         }
 
-        private static bool DiagnosticsStateEquals(RuntimeDiagnosticsStateComponent left, RuntimeDiagnosticsStateComponent right)
-        {
-            return left.VerboseAILogs == right.VerboseAILogs &&
-                left.TransportBoardingDiagnostics == right.TransportBoardingDiagnostics &&
-                left.BuildingRuntimeSliceDiagnostics == right.BuildingRuntimeSliceDiagnostics;
-        }
     }
 }

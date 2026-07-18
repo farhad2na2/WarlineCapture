@@ -7,6 +7,18 @@ using Unity.Entities;
 
 internal static class RuntimeGameplayStateTestHelper
 {
+    public static void SetVerboseAILogs(bool enabled)
+    {
+        var diagnostics = new RuntimeDiagnosticsSystem();
+        diagnostics.VerboseAILogs = enabled;
+    }
+
+    public static void SetTransportBoardingDiagnostics(bool enabled)
+    {
+        var diagnostics = new RuntimeDiagnosticsSystem();
+        diagnostics.TransportBoardingDiagnostics = enabled;
+    }
+
     public static void SetPlayRequested(EntityManager entityManager, bool playRequested)
     {
         Entity entity = GetOrCreateRuntimeStateEntity(entityManager);

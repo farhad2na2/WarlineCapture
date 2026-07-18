@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 544,
+    "resolvedNonDebtRowCount": 547,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 552,
-    "genuineDebtRowCount": 23,
-    "uniqueDebtItemCount": 19,
+    "reviewedNonDebtRowCount": 555,
+    "genuineDebtRowCount": 20,
+    "uniqueDebtItemCount": 18,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -55,9 +55,9 @@
     {
       "sourceArtifact": "AM-018",
       "historicalOpenRowCount": 261,
-      "projectedResolvedNonDebtRowCount": 216,
+      "projectedResolvedNonDebtRowCount": 219,
       "projectedProtectedDeferredRowCount": 1,
-      "projectedGenuineDebtRowCount": 44
+      "projectedGenuineDebtRowCount": 41
     }
   ],
   "genuineDebtLanes": [
@@ -1070,10 +1070,30 @@
       ]
     },
     {
+      "id": "am018-static-msl-initial-unit-diagnostics-world-owned",
+      "decision": "resolved",
+      "reasonCode": "ecs-world-owned-diagnostics-state",
+      "expectedCount": 3,
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "MSL",
+        "sourcePath": "Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs",
+        "symbol": [
+          "VerboseAILogs",
+          "TransportBoardingDiagnostics",
+          "BuildingRuntimeSliceDiagnostics"
+        ]
+      },
+      "authority": [
+        "Assets/Tests/Editor/RuntimeDiagnosticsSystemTests.cs"
+      ]
+    },
+    {
       "id": "am018-static-msl-debt",
       "decision": "genuine-debt",
       "reasonCode": "mutable-static-lifecycle-unproven",
-      "expectedCount": 4,
+      "expectedCount": 1,
       "debtIdPrefix": "AM025-STATIC-MSL",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

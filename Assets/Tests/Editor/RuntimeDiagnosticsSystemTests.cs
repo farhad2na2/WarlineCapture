@@ -13,10 +13,10 @@ public sealed class RuntimeDiagnosticsSystemTests
     {
         try
         {
-            RunCase(test => test.SettingVerboseAILogs_WritesLegacyAndEcsSingleton());
-            RunCase(test => test.SettingTransportBoardingDiagnostics_WritesLegacyAndEcsSingleton());
-            RunCase(test => test.ReadDiagnosticsState_MirrorsLegacyStateIntoEcsSingleton());
-            RunCase(test => test.ReadDiagnosticsState_DoesNotOverwriteEcsWhenLegacyIsUnchanged());
+            RunCase(test => test.SettingVerboseAILogs_WritesEcsSingleton());
+            RunCase(test => test.SettingTransportBoardingDiagnostics_WritesEcsSingleton());
+            RunCase(test => test.ReadDiagnosticsState_ReturnsFacadeWrites());
+            RunCase(test => test.ReadDiagnosticsState_ReturnsExternalEcsChange());
             RunCase(test => test.ReadDiagnosticsState_FollowsReplacementWorld());
             RunCase(test => test.SelectionDiagnostics_UseProvidedMatchWorld());
             UnityEngine.Debug.Log("[RuntimeDiagnosticsValidation] result=Passed tests=6");
@@ -49,49 +49,49 @@ public sealed class RuntimeDiagnosticsSystemTests
         _previousWorld = World.DefaultGameObjectInjectionWorld;
         _world = new World("RuntimeDiagnosticsSystemTests");
         World.DefaultGameObjectInjectionWorld = _world;
-        InitialUnitsRuntimeState.VerboseAILogs = false;
-        InitialUnitsRuntimeState.TransportBoardingDiagnostics = false;
+        RuntimeGameplayStateTestHelper.SetVerboseAILogs(false);
+        RuntimeGameplayStateTestHelper.SetTransportBoardingDiagnostics(false);
     }
 
     [TearDown]
     public void TearDown()
     {
-        InitialUnitsRuntimeState.VerboseAILogs = false;
-        InitialUnitsRuntimeState.TransportBoardingDiagnostics = false;
+        RuntimeGameplayStateTestHelper.SetVerboseAILogs(false);
+        RuntimeGameplayStateTestHelper.SetTransportBoardingDiagnostics(false);
         if (World.DefaultGameObjectInjectionWorld == _world)
             World.DefaultGameObjectInjectionWorld = _previousWorld;
         _world?.Dispose();
     }
 
     [Test]
-    public void SettingVerboseAILogs_WritesLegacyAndEcsSingleton()
+    public void SettingVerboseAILogs_WritesEcsSingleton()
     {
         RuntimeDiagnosticsSystem diagnosticsSystem = ResolveDiagnosticsSystem();
 
         diagnosticsSystem.VerboseAILogs = true;
 
-        Assert.IsTrue(InitialUnitsRuntimeState.VerboseAILogs);
+        Assert.IsTrue(new RuntimeDiagnosticsSystem().VerboseAILogs);
         RuntimeDiagnosticsStateComponent state = ReadSingleton<RuntimeDiagnosticsStateComponent>();
         Assert.AreEqual(1, state.VerboseAILogs);
     }
 
     [Test]
-    public void SettingTransportBoardingDiagnostics_WritesLegacyAndEcsSingleton()
+    public void SettingTransportBoardingDiagnostics_WritesEcsSingleton()
     {
         RuntimeDiagnosticsSystem diagnosticsSystem = ResolveDiagnosticsSystem();
 
         diagnosticsSystem.TransportBoardingDiagnostics = true;
 
-        Assert.IsTrue(InitialUnitsRuntimeState.TransportBoardingDiagnostics);
+        Assert.IsTrue(new RuntimeDiagnosticsSystem().TransportBoardingDiagnostics);
         RuntimeDiagnosticsStateComponent state = ReadSingleton<RuntimeDiagnosticsStateComponent>();
         Assert.AreEqual(1, state.TransportBoardingDiagnostics);
     }
 
     [Test]
-    public void ReadDiagnosticsState_MirrorsLegacyStateIntoEcsSingleton()
+    public void ReadDiagnosticsState_ReturnsFacadeWrites()
     {
-        InitialUnitsRuntimeState.VerboseAILogs = true;
-        InitialUnitsRuntimeState.TransportBoardingDiagnostics = true;
+        RuntimeGameplayStateTestHelper.SetVerboseAILogs(true);
+        RuntimeGameplayStateTestHelper.SetTransportBoardingDiagnostics(true);
         RuntimeDiagnosticsSystem diagnosticsSystem = ResolveDiagnosticsSystem();
 
         RuntimeDiagnosticsStateComponent state = diagnosticsSystem.ReadDiagnosticsState();
@@ -104,7 +104,7 @@ public sealed class RuntimeDiagnosticsSystemTests
     }
 
     [Test]
-    public void ReadDiagnosticsState_DoesNotOverwriteEcsWhenLegacyIsUnchanged()
+    public void ReadDiagnosticsState_ReturnsExternalEcsChange()
     {
         RuntimeDiagnosticsSystem diagnosticsSystem = ResolveDiagnosticsSystem();
         diagnosticsSystem.VerboseAILogs = true;
@@ -122,8 +122,8 @@ public sealed class RuntimeDiagnosticsSystemTests
 
         Assert.AreEqual(0, reread.VerboseAILogs);
         Assert.AreEqual(0, reread.TransportBoardingDiagnostics);
-        Assert.IsTrue(InitialUnitsRuntimeState.VerboseAILogs);
-        Assert.IsTrue(InitialUnitsRuntimeState.TransportBoardingDiagnostics);
+        Assert.IsFalse(new RuntimeDiagnosticsSystem().VerboseAILogs);
+        Assert.IsFalse(new RuntimeDiagnosticsSystem().TransportBoardingDiagnostics);
     }
 
     [Test]
@@ -136,8 +136,8 @@ public sealed class RuntimeDiagnosticsSystemTests
         _world.Dispose();
         _world = new World("RuntimeDiagnosticsSystemTests-Replacement");
         World.DefaultGameObjectInjectionWorld = _world;
-        InitialUnitsRuntimeState.VerboseAILogs = false;
-        InitialUnitsRuntimeState.TransportBoardingDiagnostics = false;
+        RuntimeGameplayStateTestHelper.SetVerboseAILogs(false);
+        RuntimeGameplayStateTestHelper.SetTransportBoardingDiagnostics(false);
 
         RuntimeDiagnosticsStateComponent replacementState = diagnosticsSystem.ReadDiagnosticsState();
 
@@ -152,7 +152,7 @@ public sealed class RuntimeDiagnosticsSystemTests
     public void SelectionDiagnostics_UseProvidedMatchWorld()
     {
         var selectionDiagnostics = new SelectionRuntimeDiagnosticsSystemHelper();
-        Entity firstState = _world.EntityManager.CreateEntity(typeof(RuntimeDiagnosticsStateComponent));
+        Entity firstState = ReadSingletonEntity<RuntimeDiagnosticsStateComponent>();
         _world.EntityManager.SetComponentData(firstState, new RuntimeDiagnosticsStateComponent
         {
             TransportBoardingDiagnostics = 1

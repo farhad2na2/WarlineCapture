@@ -14,7 +14,7 @@ public sealed class AICombatOrderValidationTests
     {
         try
         {
-            InitialUnitsRuntimeState.VerboseAILogs = true;
+            RuntimeGameplayStateTestHelper.SetVerboseAILogs(true);
             AssertIssuesCommandedEngageOrdersToSquadMembers(assertDiagnosticLog: false);
             AssertDoesNotIssueOrdersForManualPlayerFaction(assertUnexpectedLogs: false);
             AssertDoesNotIssueOrdersWhileSimulationInactive();
@@ -30,14 +30,14 @@ public sealed class AICombatOrderValidationTests
         {
             RuntimeGameplayStateTestHelper.SetPlayRequested(false);
             RuntimeGameplayStateTestHelper.SetSimulationActive(false);
-            InitialUnitsRuntimeState.VerboseAILogs = false;
+            RuntimeGameplayStateTestHelper.SetVerboseAILogs(false);
         }
     }
 
     [SetUp]
     public void SetUp()
     {
-        InitialUnitsRuntimeState.VerboseAILogs = true;
+        RuntimeGameplayStateTestHelper.SetVerboseAILogs(true);
     }
 
     [TearDown]
@@ -45,7 +45,7 @@ public sealed class AICombatOrderValidationTests
     {
         RuntimeGameplayStateTestHelper.SetPlayRequested(false);
         RuntimeGameplayStateTestHelper.SetSimulationActive(false);
-        InitialUnitsRuntimeState.VerboseAILogs = false;
+        RuntimeGameplayStateTestHelper.SetVerboseAILogs(false);
     }
 
     [Test]

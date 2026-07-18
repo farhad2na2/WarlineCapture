@@ -14,7 +14,7 @@ public sealed class AITargetingValidationTests
     {
         try
         {
-            InitialUnitsRuntimeState.VerboseAILogs = true;
+            RuntimeGameplayStateTestHelper.SetVerboseAILogs(true);
             AssertHighestScoredEnemyTargetToSquad(assertDiagnosticLog: false);
             AssertEconomyPriorityPrefersResourceHauler(assertDiagnosticLog: false);
             AssertProductionPriorityPrefersEnemyBuilding(assertDiagnosticLog: false);
@@ -30,21 +30,21 @@ public sealed class AITargetingValidationTests
         finally
         {
             RuntimeGameplayStateTestHelper.SetPlayRequested(false);
-            InitialUnitsRuntimeState.VerboseAILogs = false;
+            RuntimeGameplayStateTestHelper.SetVerboseAILogs(false);
         }
     }
 
     [SetUp]
     public void SetUp()
     {
-        InitialUnitsRuntimeState.VerboseAILogs = true;
+        RuntimeGameplayStateTestHelper.SetVerboseAILogs(true);
     }
 
     [TearDown]
     public void TearDown()
     {
         RuntimeGameplayStateTestHelper.SetPlayRequested(false);
-        InitialUnitsRuntimeState.VerboseAILogs = false;
+        RuntimeGameplayStateTestHelper.SetVerboseAILogs(false);
     }
 
     [Test]

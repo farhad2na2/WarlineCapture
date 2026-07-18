@@ -7,8 +7,8 @@ using UnityEngine.UI;
 public sealed class MainMenuPersistentResourcesPrefabTests
 {
     private const string PrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN02_MainMenuContent.prefab";
-    private const string CreditsIconPath = "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_resource_crate_icon.png";
-    private const string CommandIconPath = "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_resource_energy_icon.png";
+    private const string CreditsIconPath = "Assets/Game/Art/UI/Generated/MainMenu/PersistentResources/mainmenu_resource_credits_coins.png";
+    private const string CommandIconPath = "Assets/Game/Art/UI/Generated/MainMenu/PersistentResources/mainmenu_resource_command_token.png";
 
     [Test]
     public void HeaderShowsOnlyCreditsAndCommandWithCanonicalIcons()
@@ -45,6 +45,8 @@ public sealed class MainMenuPersistentResourcesPrefabTests
         Assert.That(label.rectTransform.anchoredPosition, Is.EqualTo(new Vector2(150f, -20f)));
         Assert.That(frame.Find("Value").GetComponent<RectTransform>().anchoredPosition,
             Is.EqualTo(new Vector2(150f, -58f)));
+        Assert.That(icon.rectTransform.anchoredPosition, Is.EqualTo(new Vector2(-235f, 0f)));
+        Assert.That(icon.rectTransform.sizeDelta, Is.EqualTo(new Vector2(112f, 112f)));
         Assert.That(icon.sprite, Is.EqualTo(expectedIcon));
         Assert.That(icon.preserveAspect, Is.True);
     }

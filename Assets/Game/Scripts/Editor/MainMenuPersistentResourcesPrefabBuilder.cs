@@ -9,12 +9,16 @@ namespace Game.Editor
     public static class MainMenuPersistentResourcesPrefabBuilder
     {
         private const string PrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN02_MainMenuContent.prefab";
-        private const string CreditsIconPath = "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_resource_crate_icon.png";
-        private const string CommandIconPath = "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_resource_energy_icon.png";
+        private const string CreditsIconPath = "Assets/Game/Art/UI/Generated/MainMenu/PersistentResources/mainmenu_resource_credits_coins.png";
+        private const string CommandIconPath = "Assets/Game/Art/UI/Generated/MainMenu/PersistentResources/mainmenu_resource_command_token.png";
 
         [MenuItem("Game/UI/Rebuild Main Menu Persistent Resources")]
         public static void Rebuild()
         {
+            ConfigureIconImporter(CreditsIconPath);
+            ConfigureIconImporter(CommandIconPath);
+            AssetDatabase.Refresh();
+
             GameObject root = PrefabUtility.LoadPrefabContents(PrefabPath);
             try
             {
@@ -40,6 +44,21 @@ namespace Game.Editor
             {
                 PrefabUtility.UnloadPrefabContents(root);
             }
+        }
+
+        private static void ConfigureIconImporter(string path)
+        {
+            AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceSynchronousImport);
+            if (AssetImporter.GetAtPath(path) is not TextureImporter importer)
+                throw new InvalidOperationException($"Could not load texture importer for {path}.");
+
+            importer.textureType = TextureImporterType.Sprite;
+            importer.spriteImportMode = SpriteImportMode.Single;
+            importer.alphaIsTransparency = true;
+            importer.mipmapEnabled = false;
+            importer.maxTextureSize = 256;
+            importer.textureCompression = TextureImporterCompression.Compressed;
+            importer.SaveAndReimport();
         }
 
         private static void ConfigurePanel(
@@ -75,6 +94,9 @@ namespace Game.Editor
             valueRect.anchoredPosition = new Vector2(150f, -58f);
             valueRect.sizeDelta = new Vector2(330f, 76f);
 
+            RectTransform iconRect = icon.rectTransform;
+            iconRect.anchoredPosition = new Vector2(-235f, 0f);
+            iconRect.sizeDelta = new Vector2(112f, 112f);
             icon.sprite = iconSprite;
             icon.preserveAspect = true;
         }

@@ -109,16 +109,16 @@ Release-only categories are reported separately and never averaged into a premat
 
 | Field | Status |
 |---|---|
-| Checklist complete | `24 / 86` (`27.9%`) |
-| Core Architecture Lane | `24 / 68` (`35.3%`); active |
+| Checklist complete | `25 / 86` (`29.1%`) |
+| Core Architecture Lane | `25 / 68` (`36.8%`); active |
 | Release Certification Lane | `0 / 18` (`0.0%`); deferred |
-| Program state | Core Architecture Lane active; Phase 1 accepted; Phase 2 ownership, lifecycle recovery, and bounded transition stress accepted; AM-024 bounded memory/pool trend is active; audit-only AM-026 accepted in parallel; release work inactive |
+| Program state | Core Architecture Lane active; Phase 1 accepted; Phase 2 ownership, lifecycle recovery, bounded transition stress, and structural/pool trend accepted; AM-025 Phase 2 exit is dependency-ready; audit-only AM-026 accepted in parallel; release work inactive |
 | Current phase | Phase 2 - World Lifecycle And Dependency Hardening |
-| Current task | `AM-024` active; run one warm-up plus five measured lifecycle cycles with authoritative structural/pool plateau and separately reported supporting Editor memory trends using `AM-WP-026` |
+| Current task | `AM-025` ready; run the Phase 2 compiler, architecture, lifecycle, and allocation acceptance matrix and publish the ownership delta using `AM-WP-027` |
 | Parallel preparatory work | Audit-only `AM-026` is accepted with 29 surfaces and `AM-WP-001` through `AM-WP-023`; production tasks `AM-027` through `AM-035` remain gated. `AM-WP-007` is additionally blocked on mission/objective owner handoff and `AM-WP-009` preserves audio/FirstLaunch consumers as read-only dependencies. `AM-WP-024` through `AM-WP-027` define AM-022 through AM-025; `AM-WP-026` is now dispatchable |
 | Blockers | Source-growth remains externally blocked by four separately owned FirstLaunch `*SystemHelper` paths; final broad-contract acceptance also remains gated by separately owned operation-map, FirstLaunch/UI, and package-bound violations. Release-only certification remains intentionally deferred. The `FirstLaunchLanguageChoiceView` guardrail false positive is resolved |
-| Latest validation | AM-023 final remains green: PlayMode passed `1 / 1` after one warm-up plus 10 measured production transitions in `188.706` seconds, static contract passed `5 / 5`, canonical integrated architecture passed `152 / 152`, Unity compiler errors were `0`, and `git diff --check` passed; AM-024 implementation is in progress |
-| Latest evidence | `am023_acceptance_record.json` binds implementation `1a2e4a992`, stable Menu/Match baseline plus cycle 5/10 snapshots, the destroyed-view lifecycle fix, compressed PlayMode/static/integrated logs, and deferred 100-cycle extended stress |
+| Latest validation | AM-024 final: PlayMode passed `8 / 8` after one warm-up plus five measured production transitions in `82.171` seconds, static contract passed `5 / 5`, integrated architecture passed `157 / 157`, Unity compiler errors were `0`, and `git diff --check` passed |
+| Latest evidence | `am024_lifecycle_memory_pool_trend_evidence.json` binds implementation `233e575b7`, exact structural/audio/path/VFX plateaus, all reported Editor memory-ceiling crossings, compressed PlayMode/static/integrated/compiler logs, and the deferred extended/release memory trend |
 | Core entry baseline | Phase 0 accepted by `AM-001` through `AM-008`; exact-identity assembly and bounded Editor Match evidence are current at `9a0aa14252e6559680328e520d26c16bfc7b444e`; the dashboard required gate is accepted; the entry rating and owned deltas are published in `entry_baseline_report.md` |
 | Release entry review | Deferred until `pre_release_performance_certification_backlog.md` activates |
 | Architecture rating | Evidence-backed Phase 0 entry rating `8.5 / 10`; planning baseline only, not a `9.5` claim |
@@ -239,7 +239,7 @@ Make runtime dependencies explicit and prove that caches and native resources ca
 - [x] `AM-021` Give every persistent native container, query, event subscription, and presentation root an explicit creation and disposal owner.
 - [x] `AM-022` Add tests for World destruction/recreation, domain reload, scene unload/reload, missing singleton recovery, and replaced command entities.
 - [x] `AM-023` Run one warm-up plus 10 measured automated Menu-to-Match-to-Menu cycles without duplicate systems, stale entities, retained subscriptions, or presentation-root accumulation.
-- [ ] `AM-024` Add native allocation and pool-count snapshots around lifecycle stress tests, prove no upward structural retained-owner/pool trend after warmup, and report supporting Editor memory trends without treating unforced-GC totals as leak verdicts. Active package: `Design/Architecture/WorkPackages/am_wp_026_lifecycle_memory_pool_trend.md`.
+- [x] `AM-024` Add native allocation and pool-count snapshots around lifecycle stress tests, prove no upward structural retained-owner/pool trend after warmup, and report supporting Editor memory trends without treating unforced-GC totals as leak verdicts. Accepted package: `Design/Architecture/WorkPackages/am_wp_026_lifecycle_memory_pool_trend.md`.
 - [ ] `AM-025` Run the full architecture, lifecycle, compiler, and focused allocation suites and publish the Phase 2 ownership delta. Draft package: `Design/Architecture/WorkPackages/am_wp_027_phase2_exit_acceptance.md` (blocked on `AM-021` through `AM-024`).
 
 ### Phase 2 Exit Gate
@@ -861,3 +861,14 @@ Accepted AM-020 progress snapshot:
 - Evidence: `am023_menu_match_lifecycle_stress_evidence.json`, `am023_acceptance_record.json`, and compressed PlayMode/static/integrated logs bind the exact implementation, snapshots, source hashes, and validation results.
 - Scope preserved: no operation-map, FirstLaunch, audio, UI visual-lock, scene, prefab, package, `ProjectSettings`, or release-certification file changed.
 - Next action: dispatch AM-024 from `AM-WP-026` for retained native allocation and approved pool-count trend evidence.
+
+### 2026-07-18 - AM-024 - Lifecycle memory and pool trend accepted
+
+- Implementation identity: `233e575b73bb09f8adc48105382ef72d9aa574a9`, tree `b52a34383aba2224fb3b2c466af71afed11de233`.
+- Bounded result: one warm-up plus five measured production Menu -> Match -> Menu cycles completed in `82.170742` seconds; the former three-warm-up/twelve-measured trend remains deferred.
+- Structural result: Menu stayed at `494` entities with zero Match/map/HUD/path-pool owners; Match stayed at `2027` entities with one map/HUD/path-pool owner and path-pool capacity `1024`. Audio stayed at pool size `8` with one active persistent shell source in both phases. Combat VFX active/created counts stayed `0/0`.
+- System result: World sequence, managed system count `69`, `UiShellFlowSystem`, and `UiActionRequestSystem` handles remained stable at every checkpoint.
+- Memory result: every Editor investigation ceiling was exceeded and is recorded exactly in evidence. These totals include scene/asset/test-runner retention without forced collection; they are supporting signals and remain a release-lane investigation, not a contradiction of the zero-growth structural owner/pool evidence.
+- Validation: Unity 6000.5.2f1 PlayMode passed `8 / 8`; focused static contract passed `5 / 5`; integrated architecture passed `157 / 157`; post-rebase compilation reported zero compiler errors; `git diff --check` passed.
+- Scope preserved: no production, operation-map, FirstLaunch, audio, UI visual-lock, scene, prefab, package, `ProjectSettings`, or release-certification source changed.
+- Next action: dispatch AM-025 from `AM-WP-027` for Phase 2 exit acceptance and ownership delta publication.

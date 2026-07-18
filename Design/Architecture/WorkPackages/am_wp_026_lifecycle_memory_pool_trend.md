@@ -1,6 +1,6 @@
 # AM-WP-026 - Lifecycle Memory And Pool Trend
 
-Status: active and dispatchable. `AM-021` through `AM-023` are accepted and the lifecycle snapshot schema is stable. This is an early-development Editor/PlayMode package; it contains no Android, thermal, cold/warm launch, sustained gameplay, graphics-memory, or release certification work.
+Status: accepted by `AM-024`. `AM-021` through `AM-023` were accepted and the lifecycle snapshot schema was stable. This early-development Editor/PlayMode package activated no Android, thermal, cold/warm launch, sustained gameplay, graphics-memory, or release certification work.
 
 Umbrella task: `AM-024`
 

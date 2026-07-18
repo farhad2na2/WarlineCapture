@@ -1,0 +1,176 @@
+{
+  "artifactId": "AM024-LIFECYCLE-MEMORY-POOL-TREND-EVIDENCE",
+  "schemaVersion": 1,
+  "taskId": "AM-024",
+  "result": "AcceptedWithReportedEditorMemoryFollowUp",
+  "implementation": {
+    "commit": "233e575b73bb09f8adc48105382ef72d9aa574a9",
+    "tree": "b52a34383aba2224fb3b2c466af71afed11de233"
+  },
+  "scope": {
+    "warmupCycles": 1,
+    "measuredCycles": 5,
+    "extendedThreeWarmupTwelveMeasuredTrendDeferred": true,
+    "forcedGarbageCollection": false,
+    "releaseCertificationActivated": false,
+    "protectedDomainFilesChanged": 0
+  },
+  "authoritativeStructuralPlateau": {
+    "menu": {
+      "cycles": [1, 5],
+      "worldSequence": 0,
+      "loadedScenes": 1,
+      "sceneRoots": 1,
+      "entities": 494,
+      "managedSystems": 69,
+      "lifecycleRoots": 1,
+      "operationMapRoots": 0,
+      "menuViews": 1,
+      "matchViews": 0,
+      "matchHudViews": 0,
+      "enabledAudioListeners": 1,
+      "audioRuntimeViews": 1,
+      "audioPoolSize": 8,
+      "activeAudioSources": 1,
+      "pathPoolOwners": 0,
+      "pathPoolLength": 0,
+      "pathPoolCapacity": 0,
+      "missileTrailActiveCreated": "0/0",
+      "impactVfxActiveCreated": "0/0"
+    },
+    "match": {
+      "cycles": [1, 5],
+      "worldSequence": 0,
+      "loadedScenes": 2,
+      "sceneRoots": 17,
+      "entities": 2027,
+      "managedSystems": 69,
+      "lifecycleRoots": 1,
+      "operationMapRoots": 1,
+      "menuViews": 1,
+      "matchViews": 1,
+      "matchHudViews": 1,
+      "enabledAudioListeners": 1,
+      "audioRuntimeViews": 1,
+      "audioPoolSize": 8,
+      "activeAudioSources": 1,
+      "pathPoolOwners": 1,
+      "pathPoolLength": 0,
+      "pathPoolCapacity": 1024,
+      "missileTrailActiveCreated": "0/0",
+      "impactVfxActiveCreated": "0/0"
+    },
+    "criticalUnmanagedSystems": {
+      "UiShellFlowSystem": "same non-null SystemHandle at every checkpoint",
+      "UiActionRequestSystem": "same non-null SystemHandle at every checkpoint"
+    }
+  },
+  "supportingEditorMemoryTrend": {
+    "authority": "Diagnostic only. Unity Editor scene, asset, and test-runner retention is included and no forced collection is permitted.",
+    "match": {
+      "monoUsedMedianDeltaBytes": 137359360,
+      "monoUsedMedianCeilingBytes": 1048576,
+      "monoUsedSlopeBytesPerCycle": 58380800,
+      "monoUsedSlopeCeilingBytesPerCycle": 65536,
+      "allocatedMedianDeltaBytes": 40795276,
+      "allocatedMedianCeilingBytes": 4194304,
+      "allocatedSlopeBytesPerCycle": 13440241,
+      "allocatedSlopeCeilingBytesPerCycle": 262144,
+      "reservedMedianDeltaBytes": 37433716,
+      "reservedMedianCeilingBytes": 8388608,
+      "ceilingStatus": "exceeded and retained for release-lane investigation"
+    },
+    "menu": {
+      "monoUsedMedianDeltaBytes": 138309632,
+      "monoUsedMedianCeilingBytes": 1048576,
+      "monoUsedSlopeBytesPerCycle": 58648576,
+      "monoUsedSlopeCeilingBytesPerCycle": 65536,
+      "allocatedMedianDeltaBytes": 41309190,
+      "allocatedMedianCeilingBytes": 4194304,
+      "allocatedSlopeBytesPerCycle": 13828798,
+      "allocatedSlopeCeilingBytesPerCycle": 262144,
+      "reservedMedianDeltaBytes": 11348348,
+      "reservedMedianCeilingBytes": 8388608,
+      "ceilingStatus": "exceeded and retained for release-lane investigation"
+    }
+  },
+  "poolCoverage": {
+    "measuredWithoutOwnerChanges": [
+      "audio runtime pool size and active sources",
+      "ECS PathPoolComponent owner, length, and capacity",
+      "missile-trail VFX created and active children",
+      "impact VFX created and active children"
+    ],
+    "explicitlyUnavailableWithoutOwnerChanges": [
+      "production transport internal pools",
+      "building placement per-definition pool occupancy",
+      "Resource Exchange live helper instance counters",
+      "selection marker and road preview internal pools"
+    ]
+  },
+  "sources": [
+    {
+      "path": "Assets/Tests/PlayMode/ArchitectureMenuMatchLifecycleSnapshotCollector.cs",
+      "sha256": "ee1efaf6417a959ea300e663e030438d6022751fa4098b15c03bae7e8ae1a45d"
+    },
+    {
+      "path": "Assets/Tests/PlayMode/ArchitectureLifecycleMemoryPoolTrendPlayModeTests.cs",
+      "sha256": "a6e18e471a02987e3a1cde282c059b7449e0dfe576eacdea3e7166c7ba6d5926"
+    },
+    {
+      "path": "Assets/Tests/PlayMode/ArchitectureLifecycleMemoryTrendUtilitySystemHelper.cs",
+      "sha256": "32bacecc61d6c963a42307cf4d1cf1a2c8d2583e69fa44533d28e8dc93aa5caa"
+    },
+    {
+      "path": "Assets/Tests/PlayMode/ArchitectureLifecycleMemoryTrendUtilitySystemHelperTests.cs",
+      "sha256": "83bbd86e12df1e7c935f57cfb796a2c9aa7ca1e42ec6c073602affd9c21bdcd3"
+    },
+    {
+      "path": "Tools/CI/tests/test_architecture_lifecycle_memory_pool_trend.py",
+      "sha256": "377eabb7d035126a9d5eedf8f2ed6440a24a33871a224b98b2a32b91f0db8b36"
+    },
+    {
+      "path": "Design/Architecture/WorkPackages/am_wp_026_lifecycle_memory_pool_trend.md",
+      "sha256": "dfb97d13528bccb64218551a427126859014d1782af9b230fce7e11ea8de8ec8"
+    }
+  ],
+  "validation": {
+    "unityVersion": "6000.5.2f1",
+    "playMode": {
+      "result": "8 / 8 passed",
+      "durationSeconds": 82.170742,
+      "compilerErrors": 0,
+      "log": {
+        "path": "Design/AgentReports/ArchitectureMaturity/Logs/am024_lifecycle_memory_pool_playmode.log.gz",
+        "sha256": "3dbe927bc0173b2e1f27a6485839580f07500c5c48d6e185e5846e9b77a9a09a"
+      },
+      "results": {
+        "path": "Design/AgentReports/ArchitectureMaturity/Logs/am024_lifecycle_memory_pool_playmode.xml.gz",
+        "sha256": "990a867482d877c746858fa3784c6b23947b764b35ba632c1d997bfacceecf6a"
+      }
+    },
+    "postRebaseCompile": {
+      "result": "passed with zero compiler errors",
+      "log": {
+        "path": "Design/AgentReports/ArchitectureMaturity/Logs/am024_post_rebase_compile.log.gz",
+        "sha256": "98895d7cab76e5afc374cd4e795fb9cb5dc63c3afd65abd758a698a1350c6a32"
+      }
+    },
+    "staticContract": {
+      "result": "5 / 5 passed",
+      "log": {
+        "path": "Design/AgentReports/ArchitectureMaturity/Logs/am024_static_contract.log.gz",
+        "sha256": "cbb733c85a766c7678c2b58e05c3b71bdb3b479e6a86dcbcb18e62c50db2ffe1"
+      }
+    },
+    "integratedArchitecture": {
+      "result": "157 / 157 passed across 12 architecture test modules",
+      "log": {
+        "path": "Design/AgentReports/ArchitectureMaturity/Logs/am024_integrated_architecture.log.gz",
+        "sha256": "c30f7c250afefb1acba5d554395e2fd785d0c4452688e3049cd3ce7190d4d873"
+      }
+    },
+    "diffCheck": "passed"
+  },
+  "nextTask": "AM-025"
+}

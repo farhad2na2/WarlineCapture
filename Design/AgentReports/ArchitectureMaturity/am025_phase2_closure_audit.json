@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 423,
+    "resolvedNonDebtRowCount": 424,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 431,
-    "genuineDebtRowCount": 144,
-    "uniqueDebtItemCount": 68,
+    "reviewedNonDebtRowCount": 432,
+    "genuineDebtRowCount": 143,
+    "uniqueDebtItemCount": 67,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -48,9 +48,9 @@
     {
       "sourceArtifact": "AM-007",
       "historicalOpenRowCount": 314,
-      "projectedResolvedNonDebtRowCount": 275,
+      "projectedResolvedNonDebtRowCount": 276,
       "projectedProtectedDeferredRowCount": 7,
-      "projectedGenuineDebtRowCount": 32
+      "projectedGenuineDebtRowCount": 31
     },
     {
       "sourceArtifact": "AM-018",
@@ -76,7 +76,7 @@
     },
     {
       "id": "world-owner-candidates",
-      "projectedRows": 24,
+      "projectedRows": 23,
       "note": "Lifecycle rows; may overlap hazard remediation and cannot be treated as 33 independent production defects."
     }
   ],
@@ -296,10 +296,22 @@
       "authority": ["Assets/Tests/Editor/TacticalFollowCameraModeCommandSystemHelperTests.cs"]
     },
     {
+      "id": "am007-world-pathfinding-pending-state-reader-owned",
+      "decision": "resolved",
+      "reasonCode": "tested-world-rebinding-pathfinding-pending-state",
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-007",
+        "sourceCategory": "worlds",
+        "sourcePath": "Assets/Game/Scripts/Systems/UnitPathfindingPendingStateStore.cs"
+      },
+      "authority": ["Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"]
+    },
+    {
       "id": "am007-world-debt",
       "decision": "genuine-debt",
       "reasonCode": "world-owner-unproven",
-      "expectedCount": 24,
+      "expectedCount": 23,
       "debtIdPrefix": "AM025-WORLD",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

@@ -13,6 +13,68 @@ using UnityEngine;
 
 public sealed class PersistentResourceOwnershipLifecycleTests
 {
+    public static void RunPathfindingPendingStateWorldReplacementValidation()
+    {
+        try
+        {
+            new PersistentResourceOwnershipLifecycleTests()
+                .PathfindingPendingStateReader_FollowsReplacementWorld();
+            Debug.Log("[PathfindingPendingStateWorldReplacementValidation] result=Passed tests=1");
+            ValidationExit.Passed();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[PathfindingPendingStateWorldReplacementValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
+    [Test]
+    public void PathfindingPendingStateReader_FollowsReplacementWorld()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        var firstWorld = new World(nameof(PathfindingPendingStateReader_FollowsReplacementWorld) + "_First");
+        var replacementWorld = new World(nameof(PathfindingPendingStateReader_FollowsReplacementWorld) + "_Replacement");
+        var reader = new UnitPathfindingPendingStateReader();
+        try
+        {
+            Entity firstState = firstWorld.EntityManager.CreateEntity(
+                typeof(UnitPathfindingPendingStateComponent));
+            firstWorld.EntityManager.SetComponentData(firstState, new UnitPathfindingPendingStateComponent
+            {
+                HasPendingPathJob = 1
+            });
+            World.DefaultGameObjectInjectionWorld = firstWorld;
+            Assert.IsTrue(reader.HasPendingPathJob());
+
+            firstWorld.Dispose();
+            Entity replacementState = replacementWorld.EntityManager.CreateEntity(
+                typeof(UnitPathfindingPendingStateComponent));
+            replacementWorld.EntityManager.SetComponentData(replacementState, new UnitPathfindingPendingStateComponent
+            {
+                HasPendingPathJob = 0
+            });
+            World.DefaultGameObjectInjectionWorld = replacementWorld;
+            Assert.IsFalse(reader.HasPendingPathJob());
+
+            replacementWorld.EntityManager.SetComponentData(replacementState, new UnitPathfindingPendingStateComponent
+            {
+                HasPendingPathJob = 1
+            });
+            Assert.IsTrue(reader.HasPendingPathJob());
+        }
+        finally
+        {
+            reader.Dispose();
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+            if (firstWorld.IsCreated)
+                firstWorld.Dispose();
+            if (replacementWorld.IsCreated)
+                replacementWorld.Dispose();
+        }
+    }
+
     [Test]
     public void RuntimeLogBuffer_SubsystemResetClearsStateAndAllowsReinitialization()
     {

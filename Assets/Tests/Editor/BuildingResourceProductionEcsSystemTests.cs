@@ -38,6 +38,7 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.AutomaticFuelLogisticsRoute_AICriticalFuelPressurePreventsLogisticsDeadlock();
             tests.AutomaticFuelLogisticsRoute_AIUnreachableMaterialsDemandDoesNotOverrideFuel();
             tests.AutomaticFuelLogisticsAIInput_UsesCanonicalPlanMaterialsAndFuelSummary();
+            tests.AutomaticFuelLogisticsAIInput_RebindsAfterWorldReplacement();
             tests.AutomaticFuelLogisticsAIInput_ResolvesOncePerFactionPerScan();
             tests.AutomaticFuelLogisticsRoute_PairsTankerWithFactionRefineryAndFuelStorage();
             tests.AutomaticFuelLogisticsSignature_ChangesOnlyWhenRelevantStateChanges();
@@ -67,7 +68,7 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.AutomaticFuelLogisticsTanker_FullFuelStorageSetsTypedIdleReason();
             tests.AutomaticFuelLogisticsTanker_NoRouteSetsTypedIdleReason();
             tests.AutomaticFuelLogisticsTanker_NoAvailableTankerDoesNotReserveFuel();
-            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=52");
+            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=53");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -1379,6 +1380,109 @@ public sealed class BuildingResourceProductionEcsSystemTests
         long allocated = System.GC.GetAllocatedBytesForCurrentThread() - before;
         Assert.IsTrue(resolvedAll);
         Assert.AreEqual(0L, allocated, $"AI Oil allocation input reads allocated {allocated} managed bytes.");
+    }
+
+    [Test]
+    public void AutomaticFuelLogisticsAIInput_RebindsAfterWorldReplacement()
+    {
+        var queries = new BuildingGameplayEcsQueryCompositionSystemHelper();
+
+        using (var firstWorld = new World("AutomaticFuelLogisticsAIInput_FirstWorld"))
+        {
+            CreateFactionAIOilInputState(
+                firstWorld.EntityManager,
+                materialsCost: 80,
+                availableMaterials: 25,
+                materialsCapacity: 200,
+                storedFuelBarrels: 12f,
+                fuelStorageCapacity: 240);
+
+            Assert.IsTrue(queries.TryResolveFactionAIOilAllocationInput(firstWorld.EntityManager, 2, out var first));
+            Assert.AreEqual(80, first.PlannedMaterialsCost);
+            Assert.AreEqual(25, first.AvailableMaterials);
+            Assert.AreEqual(12f, first.StoredFuelBarrels, 0.001f);
+        }
+
+        using (var secondWorld = new World("AutomaticFuelLogisticsAIInput_SecondWorld"))
+        {
+            CreateFactionAIOilInputState(
+                secondWorld.EntityManager,
+                materialsCost: 120,
+                availableMaterials: 65,
+                materialsCapacity: 300,
+                storedFuelBarrels: 33f,
+                fuelStorageCapacity: 400);
+
+            Assert.IsTrue(queries.TryResolveFactionAIOilAllocationInput(secondWorld.EntityManager, 2, out var second));
+            Assert.AreEqual(120, second.PlannedMaterialsCost);
+            Assert.AreEqual(65, second.AvailableMaterials);
+            Assert.AreEqual(300, second.MaterialsCapacity);
+            Assert.AreEqual(33f, second.StoredFuelBarrels, 0.001f);
+            Assert.AreEqual(400, second.FuelStorageCapacity);
+        }
+    }
+
+    private static void CreateFactionAIOilInputState(
+        EntityManager em,
+        int materialsCost,
+        int availableMaterials,
+        int materialsCapacity,
+        float storedFuelBarrels,
+        int fuelStorageCapacity)
+    {
+        const byte factionId = 2;
+        Entity boundary = em.CreateEntity(typeof(BuildingRuntimeStateTag));
+        em.AddBuffer<BuildingConfiguredSpawnableReadModel>(boundary).Add(
+            new BuildingConfiguredSpawnableReadModel
+            {
+                BuildingId = new FixedString128Bytes("building_ammunition_depot"),
+                DisplayName = new FixedString128Bytes("Field Fabrication Depot"),
+                Price = 900,
+                MaterialsCost = materialsCost,
+                CanRequest = 1
+            });
+        em.AddBuffer<BuildingRuntimeOwnedBuildingSummary>(boundary);
+        em.AddBuffer<BuildingRuntimeSpawnRequest>(boundary);
+        em.AddBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary).Add(
+            new BuildingRuntimeFactionUsableFuelSummary
+            {
+                FactionId = factionId,
+                StoredFuelBarrels = storedFuelBarrels,
+                FuelStorageCapacity = fuelStorageCapacity
+            });
+
+        Entity economyEntity = em.CreateEntity(
+            typeof(FactionEconomy),
+            typeof(FactionTacticalMaterialsComponent));
+        em.SetComponentData(economyEntity, new FactionEconomy
+        {
+            FactionId = factionId,
+            Money = 1000
+        });
+        em.SetComponentData(economyEntity, new FactionTacticalMaterialsComponent
+        {
+            FactionId = factionId,
+            Current = availableMaterials,
+            Capacity = materialsCapacity
+        });
+
+        Entity planEntity = em.CreateEntity(typeof(AIBuildPlan));
+        em.SetComponentData(planEntity, new AIBuildPlan
+        {
+            FactionId = factionId,
+            Enabled = 1
+        });
+        em.AddBuffer<AIBuildPlanEntry>(planEntity).Add(new AIBuildPlanEntry
+        {
+            BuildingId = new FixedString64Bytes("Building_Ammunition_Depot")
+        });
+
+        Entity controlEntity = em.CreateEntity(typeof(FactionControlConfigTag));
+        em.AddBuffer<FactionControlEntry>(controlEntity).Add(new FactionControlEntry
+        {
+            FactionId = factionId,
+            AIControlled = 1
+        });
     }
 
     [Test]

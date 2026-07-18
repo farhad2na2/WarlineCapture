@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 417,
+    "resolvedNonDebtRowCount": 418,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 425,
-    "genuineDebtRowCount": 150,
-    "uniqueDebtItemCount": 74,
+    "reviewedNonDebtRowCount": 426,
+    "genuineDebtRowCount": 149,
+    "uniqueDebtItemCount": 73,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -48,9 +48,9 @@
     {
       "sourceArtifact": "AM-007",
       "historicalOpenRowCount": 314,
-      "projectedResolvedNonDebtRowCount": 269,
+      "projectedResolvedNonDebtRowCount": 270,
       "projectedProtectedDeferredRowCount": 7,
-      "projectedGenuineDebtRowCount": 38
+      "projectedGenuineDebtRowCount": 37
     },
     {
       "sourceArtifact": "AM-018",
@@ -76,7 +76,7 @@
     },
     {
       "id": "world-owner-candidates",
-      "projectedRows": 30,
+      "projectedRows": 29,
       "note": "Lifecycle rows; may overlap hazard remediation and cannot be treated as 33 independent production defects."
     }
   ],
@@ -224,10 +224,22 @@
       "authority": ["Assets/Game/Scripts/Editor/MatchStartRequestValidationRunner.cs"]
     },
     {
+      "id": "am007-world-building-ai-oil-query-owned",
+      "decision": "resolved",
+      "reasonCode": "tested-world-rebinding-query-boundary",
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-007",
+        "sourceCategory": "worlds",
+        "sourcePath": "Assets/Game/Scripts/Systems/BuildingFactionAIOilAllocationInputSystemHelper.cs"
+      },
+      "authority": ["Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs"]
+    },
+    {
       "id": "am007-world-debt",
       "decision": "genuine-debt",
       "reasonCode": "world-owner-unproven",
-      "expectedCount": 30,
+      "expectedCount": 29,
       "debtIdPrefix": "AM025-WORLD",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

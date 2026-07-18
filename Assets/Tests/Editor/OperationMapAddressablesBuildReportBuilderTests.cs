@@ -8,6 +8,40 @@ using UnityEditor.AddressableAssets.Build.Layout;
 public sealed class OperationMapAddressablesBuildReportBuilderTests
 {
     [Test]
+    public void RuntimeSettings_AcceptBuiltInCatalogWithUpdatesDisabled()
+    {
+        const string json =
+            "{\"m_DisableCatalogUpdateOnStart\":true," +
+            "\"m_CatalogLocations\":[{\"m_InternalId\":" +
+            "\"{UnityEngine.AddressableAssets.Addressables.RuntimePath}/catalog.bin\"}]}";
+
+        Assert.That(
+            OperationMapAddressablesBuildReportBuilder.TryValidateRuntimeSettings(
+                json,
+                out string error),
+            Is.True,
+            error);
+    }
+
+    [TestCase(false, "{UnityEngine.AddressableAssets.Addressables.RuntimePath}/catalog.bin")]
+    [TestCase(true, "https://content.example/catalog.bin")]
+    public void RuntimeSettings_RejectCatalogUpdateOrRemoteLocation(
+        bool disableUpdates,
+        string internalId)
+    {
+        string json =
+            $"{{\"m_DisableCatalogUpdateOnStart\":{disableUpdates.ToString().ToLowerInvariant()}," +
+            $"\"m_CatalogLocations\":[{{\"m_InternalId\":\"{internalId}\"}}]}}";
+
+        Assert.That(
+            OperationMapAddressablesBuildReportBuilder.TryValidateRuntimeSettings(
+                json,
+                out string error),
+            Is.False);
+        Assert.That(error, Is.Not.Empty);
+    }
+
+    [Test]
     public void Create_AttributesBundleClosurePartitionsEntitiesAndDuplicates()
     {
         BuildLayout layout = CreateLayout(reverseAssets: false);

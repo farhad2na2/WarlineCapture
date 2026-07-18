@@ -22,6 +22,9 @@ public sealed class OperationMapAddressablesLayoutBuilderTests
     {
         AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;
         Assert.That(settings, Is.Not.Null);
+        Assert.That(settings.BuildRemoteCatalog, Is.False);
+        Assert.That(settings.DisableCatalogUpdateOnStartup, Is.True);
+        Assert.That(settings.UniqueBundleIds, Is.False);
 
         AddressableAssetGroup catalog = RequireGroup(
             settings,

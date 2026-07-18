@@ -60,6 +60,10 @@ namespace Game.Editor
             if (settings == null)
                 throw new InvalidOperationException("Addressables settings are required.");
 
+            settings.BuildRemoteCatalog = false;
+            settings.DisableCatalogUpdateOnStartup = true;
+            settings.UniqueBundleIds = false;
+
             AddressableAssetGroup catalog = EnsureGroup(settings, CatalogGroupName, false);
             AddressableAssetGroup shared = EnsureGroup(settings, SharedGroupName, true);
             AddressableAssetGroup core = EnsureGroup(settings, CoreGroupName, false);

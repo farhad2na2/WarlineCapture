@@ -14,6 +14,24 @@ using UnityEngine;
 
 public sealed class PersistentResourceOwnershipLifecycleTests
 {
+    public static void RunUiGatewayLifecycleValidation()
+    {
+        try
+        {
+            var tests = new PersistentResourceOwnershipLifecycleTests();
+            tests.UiGateway_SubsystemRegistrationReplacesStaleGateway();
+            tests.UiGateway_WorldReplacementRebindsWithoutRetainingPreviousQueries();
+            Debug.Log("[UiGatewayLifecycleValidation] result=Passed tests=2");
+            ValidationExit.Passed();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[UiGatewayLifecycleValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
     public static void RunScenarioLabWorldOwnershipValidation()
     {
         try
@@ -351,6 +369,30 @@ public sealed class PersistentResourceOwnershipLifecycleTests
         finally
         {
             reset.Invoke(null, null);
+        }
+    }
+
+    [Test]
+    public void UiGateway_SubsystemRegistrationReplacesStaleGateway()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        using World world = new(nameof(UiGateway_SubsystemRegistrationReplacesStaleGateway));
+        try
+        {
+            CreateShellBoundary(world, UIRoute.MainMenu);
+            World.DefaultGameObjectInjectionWorld = world;
+            UiShellRuntimeGateway.Register(null);
+            Assert.IsFalse(UiShellRuntimeGateway.TryReadShellState(out _));
+
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+
+            Assert.IsTrue(UiShellRuntimeGateway.TryReadShellState(out UiShellStateModel state));
+            Assert.AreEqual(UIRoute.MainMenu, state.ActiveRoute);
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
         }
     }
 

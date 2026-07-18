@@ -11,13 +11,13 @@ Bounded read-only audits reviewed the AM-025 intake as:
 | Measure | Count |
 |---|---:|
 | Historical intake rows | 575 |
-| Reviewed non-debt rows | 510 |
-| Remaining genuine-debt rows | 65 |
-| Remaining unique debt items | 30 |
+| Reviewed non-debt rows | 511 |
+| Remaining genuine-debt rows | 64 |
+| Remaining unique debt items | 29 |
 | Projected unclassified rows | 0 |
 | Source-growth blockers | 5 |
 
-The row-bound evidence now records `510` non-debt rows and `65` remaining genuine-debt rows, grouped into `30` unique file/rule remediation items. It remains non-accepting because every genuine-debt item must be closed before Phase 2 can pass.
+The row-bound evidence now records `511` non-debt rows and `64` remaining genuine-debt rows, grouped into `29` unique file/rule remediation items. It remains non-accepting because every genuine-debt item must be closed before Phase 2 can pass.
 
 ## 2. Required Row Authority
 
@@ -61,6 +61,7 @@ Current external-gate note: the canonical Unity source-growth run now reports th
 
 Completed remediation:
 
+- `UiShellRuntimeGateway`: the application gateway is replaced during Unity subsystem registration, and its ECS adapter already rebinds queries when the default World changes. Focused validation proves a stale registration is replaced and a later match cannot retain queries from the previous World.
 - `GameText`: text and audio mappings are now built privately and published as one immutable application-session snapshot. Readers cannot observe a half-rebuilt catalog, replacement initialization drops stale mappings, subsystem reset returns to an uninitialized empty snapshot, and two mutable dictionary exceptions are removed from the architecture guard.
 - `TerrainLodHeightSwitch`: the unused component, its process-wide camera scratch array, and its dormant per-frame update loop are removed after confirming there are no production, scene, prefab, asset, or test references.
 - `InitialUnitsRuntimeState.WorldCamera`: the unused process-wide camera reference and reset line are removed. The live match camera remains owned by `RuntimeCameraReferenceSystem`, whose focused tests cover storage, lookup, and cleanup.

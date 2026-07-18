@@ -8,15 +8,15 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 |---|---:|
 | Baseline rows | 863 |
 | Hazard rows | 352 |
-| Resolved | 1114 |
+| Resolved | 1115 |
 | Protected/deferred | 36 |
-| Open | 65 |
+| Open | 64 |
 | New after baseline | 26 |
 | Historical intake rows | 575 |
-| Reviewed non-debt rows | 510 |
-| Genuine-debt rows | 65 |
+| Reviewed non-debt rows | 511 |
+| Genuine-debt rows | 64 |
 | Unclassified rows | 0 |
-| Unique debt items | 30 |
+| Unique debt items | 29 |
 
 ## Open Rows
 
@@ -74,7 +74,6 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-CLR-002 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-005 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/Ecs/UiBuildPlacementReadModelSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-006 |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Shell/UiShellRuntimeGateway.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-007 |
 | AM-007 | presentationPools | Assets/Game/Scripts/Systems/RoadPreviewPresentationSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-POOL-001 |
 | AM-007 | presentationPools | Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-POOL-002 |
 | AM-018 | runtimeObjectDiscovery | Assets/Game/Scripts/Composition/MatchSceneReferenceSceneSystemHelper.cs | AM-018 classification.runtimeObjectDiscovery | AM025-DISCOVERY-001 |

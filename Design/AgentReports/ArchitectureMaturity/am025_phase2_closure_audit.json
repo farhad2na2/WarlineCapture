@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 502,
+    "resolvedNonDebtRowCount": 503,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 510,
-    "genuineDebtRowCount": 65,
-    "uniqueDebtItemCount": 30,
+    "reviewedNonDebtRowCount": 511,
+    "genuineDebtRowCount": 64,
+    "uniqueDebtItemCount": 29,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -55,9 +55,9 @@
     {
       "sourceArtifact": "AM-018",
       "historicalOpenRowCount": 261,
-      "projectedResolvedNonDebtRowCount": 175,
+      "projectedResolvedNonDebtRowCount": 176,
       "projectedProtectedDeferredRowCount": 1,
-      "projectedGenuineDebtRowCount": 85
+      "projectedGenuineDebtRowCount": 84
     }
   ],
   "genuineDebtLanes": [
@@ -68,7 +68,7 @@
     },
     {
       "id": "mutable-static-state",
-      "projectedRows": 69
+      "projectedRows": 68
     },
     {
       "id": "pool-and-lifecycle-cache",
@@ -983,10 +983,26 @@
       ]
     },
     {
+      "id": "am018-static-msl-ui-shell-runtime-gateway-application-owned",
+      "decision": "resolved",
+      "reasonCode": "subsystem-registered-application-gateway-with-world-rebinding",
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "MSL",
+        "sourcePath": "Assets/Game/Scripts/UI/Shell/UiShellRuntimeGateway.cs",
+        "symbol": "current"
+      },
+      "authority": [
+        "Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"
+      ]
+    },
+    {
       "id": "am018-static-msl-debt",
       "decision": "genuine-debt",
       "reasonCode": "mutable-static-lifecycle-unproven",
-      "expectedCount": 35,
+      "expectedCount": 34,
       "debtIdPrefix": "AM025-STATIC-MSL",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

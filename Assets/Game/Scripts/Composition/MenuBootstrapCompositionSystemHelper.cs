@@ -19,7 +19,7 @@ namespace Game.Composition
         private const string AutoStartMatchEnvironmentVariable = "WARLINE_AUTO_START_MATCH";
         private const string AutoStartMatchCommandLineArg = "-warlineAutoStartMatch";
 
-        private static World startupRuntimeSettingsWorld;
+        private World startupRuntimeSettingsWorld;
 
         private readonly SceneLifecycleSceneSystemHelper sceneLifecycleSceneSystemHelper = new();
         private readonly MatchStartSceneSystemHelper matchStartSystem = new();
@@ -154,6 +154,8 @@ namespace Game.Composition
 
         public void Shutdown(MenuBootstrapView view)
         {
+            startupRuntimeSettingsWorld = null;
+
             if (view != null && view.UiCanvas != null && view.UiCanvas.transform.localScale != Vector3.one)
                 view.UiCanvas.transform.localScale = Vector3.one;
 
@@ -190,18 +192,11 @@ namespace Game.Composition
             diagnosticsInitialized = true;
         }
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetStartupRuntimeSettingsApplication()
-        {
-            startupRuntimeSettingsWorld = null;
-        }
-
         internal static void ResetStartupRuntimeSettingsApplicationForTests()
         {
-            ResetStartupRuntimeSettingsApplication();
         }
 
-        private static bool TryApplyStartupRuntimeSettings()
+        private bool TryApplyStartupRuntimeSettings()
         {
             World world = World.DefaultGameObjectInjectionWorld;
             if (world == null || !world.IsCreated)

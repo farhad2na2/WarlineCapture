@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 503,
+    "resolvedNonDebtRowCount": 504,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 511,
-    "genuineDebtRowCount": 64,
-    "uniqueDebtItemCount": 29,
+    "reviewedNonDebtRowCount": 512,
+    "genuineDebtRowCount": 63,
+    "uniqueDebtItemCount": 28,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -55,9 +55,9 @@
     {
       "sourceArtifact": "AM-018",
       "historicalOpenRowCount": 261,
-      "projectedResolvedNonDebtRowCount": 176,
+      "projectedResolvedNonDebtRowCount": 177,
       "projectedProtectedDeferredRowCount": 1,
-      "projectedGenuineDebtRowCount": 84
+      "projectedGenuineDebtRowCount": 83
     }
   ],
   "genuineDebtLanes": [
@@ -68,7 +68,7 @@
     },
     {
       "id": "mutable-static-state",
-      "projectedRows": 68
+      "projectedRows": 67
     },
     {
       "id": "pool-and-lifecycle-cache",
@@ -983,6 +983,22 @@
       ]
     },
     {
+      "id": "am018-static-msl-menu-startup-settings-world-instance-owned",
+      "decision": "resolved",
+      "reasonCode": "menu-instance-owned-world-marker-with-shutdown-release",
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "MSL",
+        "sourcePath": "Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs",
+        "symbol": "startupRuntimeSettingsWorld"
+      },
+      "authority": [
+        "Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"
+      ]
+    },
+    {
       "id": "am018-static-msl-ui-shell-runtime-gateway-application-owned",
       "decision": "resolved",
       "reasonCode": "subsystem-registered-application-gateway-with-world-rebinding",
@@ -1002,7 +1018,7 @@
       "id": "am018-static-msl-debt",
       "decision": "genuine-debt",
       "reasonCode": "mutable-static-lifecycle-unproven",
-      "expectedCount": 34,
+      "expectedCount": 33,
       "debtIdPrefix": "AM025-STATIC-MSL",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

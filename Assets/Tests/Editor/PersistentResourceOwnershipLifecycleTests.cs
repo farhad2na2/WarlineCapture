@@ -14,6 +14,24 @@ using UnityEngine;
 
 public sealed class PersistentResourceOwnershipLifecycleTests
 {
+    public static void RunMenuStartupRuntimeSettingsOwnershipValidation()
+    {
+        try
+        {
+            var tests = new PersistentResourceOwnershipLifecycleTests();
+            tests.MenuStartupRuntimeSettingsWorld_IsOwnedByEachMenuComposition();
+            tests.MenuStartupRuntimeSettingsWorld_IsReleasedDuringShutdown();
+            Debug.Log("[MenuStartupRuntimeSettingsOwnershipValidation] result=Passed tests=2");
+            ValidationExit.Passed();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[MenuStartupRuntimeSettingsOwnershipValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
     public static void RunUiGatewayLifecycleValidation()
     {
         try
@@ -394,6 +412,41 @@ public sealed class PersistentResourceOwnershipLifecycleTests
             World.DefaultGameObjectInjectionWorld = previousWorld;
             UiShellEcsGateway.RegisterAsRuntimeGateway();
         }
+    }
+
+    [Test]
+    public void MenuStartupRuntimeSettingsWorld_IsOwnedByEachMenuComposition()
+    {
+        FieldInfo field = typeof(Game.Composition.MenuBootstrapCompositionSystemHelper).GetField(
+            "startupRuntimeSettingsWorld",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.NotNull(field);
+        Assert.IsFalse(field.IsStatic);
+
+        using World world = new(nameof(MenuStartupRuntimeSettingsWorld_IsOwnedByEachMenuComposition));
+        var first = new Game.Composition.MenuBootstrapCompositionSystemHelper();
+        var second = new Game.Composition.MenuBootstrapCompositionSystemHelper();
+        field.SetValue(first, world);
+
+        Assert.AreSame(world, field.GetValue(first));
+        Assert.IsNull(field.GetValue(second));
+    }
+
+    [Test]
+    public void MenuStartupRuntimeSettingsWorld_IsReleasedDuringShutdown()
+    {
+        FieldInfo field = typeof(Game.Composition.MenuBootstrapCompositionSystemHelper).GetField(
+            "startupRuntimeSettingsWorld",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.NotNull(field);
+
+        using World world = new(nameof(MenuStartupRuntimeSettingsWorld_IsReleasedDuringShutdown));
+        var composition = new Game.Composition.MenuBootstrapCompositionSystemHelper();
+        field.SetValue(composition, world);
+
+        composition.Shutdown(null);
+
+        Assert.IsNull(field.GetValue(composition));
     }
 
     [Test]

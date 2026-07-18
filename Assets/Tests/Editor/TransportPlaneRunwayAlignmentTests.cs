@@ -1,5 +1,6 @@
 using Game.Configs;
 using Game.Components;
+using Game.Editor;
 using Game.Runtime;
 using NUnit.Framework;
 using UnityEditor;
@@ -14,7 +15,7 @@ namespace Game.Tests.Editor
         private const string TransportPlanePrefabPath = "Assets/Game/Prefabs/Vehicles/Unit_Veh_Plane_Transport.prefab";
         private const string MapVehiclePlacementConfigPath = "Assets/Game/Configs/Scene/Match_MapVehiclePlacement_Config.asset";
         private const string MapBuildingPlacementConfigPath = "Assets/Game/Configs/Scene/Match_MapBuildingPlacement_Config.asset";
-        private const string MatchScenePath = "Assets/Game/Scenes/Match.unity";
+        private const string OperationMapScenePath = OperationMapCurrentCompatibilitySceneStager.DestinationScenePath;
         private const float RootCenterTolerance = 0.25f;
         private const float RunwayCenterlineTolerance = 0.35f;
 
@@ -81,10 +82,10 @@ namespace Game.Tests.Editor
                 AssetDatabase.LoadAssetAtPath<MapBuildingPlacementConfig>(MapBuildingPlacementConfigPath);
             Assert.IsNotNull(config, $"Missing map building placement config at {MapBuildingPlacementConfigPath}.");
 
-            Scene scene = SceneManager.GetSceneByPath(MatchScenePath);
+            Scene scene = SceneManager.GetSceneByPath(OperationMapScenePath);
             bool openedSceneForTest = !scene.IsValid() || !scene.isLoaded;
             if (openedSceneForTest)
-                scene = EditorSceneManager.OpenScene(MatchScenePath, OpenSceneMode.Additive);
+                scene = EditorSceneManager.OpenScene(OperationMapScenePath, OpenSceneMode.Additive);
 
             int checkedAirports = 0;
             try

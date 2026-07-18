@@ -23,7 +23,7 @@ public sealed class StaticMapPresentationBakeInputTests
             tests.InvalidChunkSizesFail();
             tests.CurrentCompatibilityFactoryMatchesLegacyConstants();
             tests.CurrentStagedFactoryMatchesMapOwnedConstants();
-            tests.CurrentSourceSceneViewsValidate();
+            tests.ThinShellCompatibilitySourceIsRejectedAndStagedSourceValidates();
             tests.CompatibilityValidationRejectsAlternateOwnership();
             Debug.Log("[StaticMapPresentationBakeInputValidation] result=Passed tests=15");
         }
@@ -190,9 +190,9 @@ public sealed class StaticMapPresentationBakeInputTests
     }
 
     [Test]
-    public void CurrentSourceSceneViewsValidate()
+    public void ThinShellCompatibilitySourceIsRejectedAndStagedSourceValidates()
     {
-        Assert.DoesNotThrow(() => StaticMapPresentationBaker.ValidateSourceSceneView(
+        Assert.Throws<InvalidOperationException>(() => StaticMapPresentationBaker.ValidateSourceSceneView(
             StaticMapPresentationBaker.CreateCurrentCompatibilityInput()));
         Assert.DoesNotThrow(() => StaticMapPresentationBaker.ValidateSourceSceneView(
             StaticMapPresentationBaker.CreateCurrentStagedInput()));

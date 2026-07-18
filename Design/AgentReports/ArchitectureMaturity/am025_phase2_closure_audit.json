@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 498,
+    "resolvedNonDebtRowCount": 499,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 506,
-    "genuineDebtRowCount": 69,
-    "uniqueDebtItemCount": 33,
+    "reviewedNonDebtRowCount": 507,
+    "genuineDebtRowCount": 68,
+    "uniqueDebtItemCount": 32,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -55,9 +55,9 @@
     {
       "sourceArtifact": "AM-018",
       "historicalOpenRowCount": 261,
-      "projectedResolvedNonDebtRowCount": 173,
+      "projectedResolvedNonDebtRowCount": 174,
       "projectedProtectedDeferredRowCount": 1,
-      "projectedGenuineDebtRowCount": 87
+      "projectedGenuineDebtRowCount": 86
     }
   ],
   "genuineDebtLanes": [
@@ -68,7 +68,7 @@
     },
     {
       "id": "mutable-static-state",
-      "projectedRows": 73
+      "projectedRows": 72
     },
     {
       "id": "pool-and-lifecycle-cache",
@@ -642,10 +642,26 @@
       ]
     },
     {
+      "id": "am018-static-clr-unused-terrain-lod-switch-retired",
+      "decision": "resolved",
+      "reasonCode": "unreferenced-runtime-loop-and-static-camera-cache-retired",
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "CLR",
+        "sourcePath": "Assets/Game/Scripts/Rendering/TerrainLodHeightSwitch.cs"
+      },
+      "authority": [
+        "Assets/Tests/Editor/Aph808MissingSerializedReferenceValidatorTests.cs",
+        "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs"
+      ]
+    },
+    {
       "id": "am018-static-clr-debt",
       "decision": "genuine-debt",
       "reasonCode": "static-cache-lifecycle-unproven",
-      "expectedCount": 7,
+      "expectedCount": 6,
       "debtIdPrefix": "AM025-STATIC-CLR",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

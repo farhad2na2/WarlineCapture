@@ -1,5 +1,6 @@
 using System;
 using Game.Configs;
+using Game.Rendering;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceProviders;
@@ -21,6 +22,20 @@ namespace Game.Composition
         IOperationMapSourceSceneOperation LoadAdditive(object runtimeKey);
     }
 
+    internal interface IOperationMapPresentationManifestOperation : IDisposable
+    {
+        bool IsDone { get; }
+        bool Succeeded { get; }
+        float Progress01 { get; }
+        StaticMapPresentationManifest Manifest { get; }
+        string Failure { get; }
+    }
+
+    internal interface IOperationMapPresentationManifestApi
+    {
+        IOperationMapPresentationManifestOperation Load(object runtimeKey);
+    }
+
     internal sealed class OperationMapAddressablesSourceSceneApi : IOperationMapSourceSceneApi
     {
         public IOperationMapSourceSceneOperation LoadAdditive(object runtimeKey)
@@ -30,6 +45,49 @@ namespace Game.Composition
                 LoadSceneMode.Additive,
                 activateOnLoad: true);
             return new OperationMapAddressablesSourceSceneOperation(handle);
+        }
+    }
+
+    internal sealed class OperationMapAddressablesPresentationManifestApi :
+        IOperationMapPresentationManifestApi
+    {
+        public IOperationMapPresentationManifestOperation Load(object runtimeKey)
+        {
+            AsyncOperationHandle<StaticMapPresentationManifest> handle =
+                Addressables.LoadAssetAsync<StaticMapPresentationManifest>(runtimeKey);
+            return new OperationMapAddressablesPresentationManifestOperation(handle);
+        }
+    }
+
+    internal sealed class OperationMapAddressablesPresentationManifestOperation :
+        IOperationMapPresentationManifestOperation
+    {
+        private AsyncOperationHandle<StaticMapPresentationManifest> handle;
+        private bool disposed;
+
+        public OperationMapAddressablesPresentationManifestOperation(
+            AsyncOperationHandle<StaticMapPresentationManifest> handle)
+        {
+            this.handle = handle;
+        }
+
+        public bool IsDone => handle.IsValid() && handle.IsDone;
+        public bool Succeeded =>
+            handle.IsValid() && handle.Status == AsyncOperationStatus.Succeeded;
+        public float Progress01 => handle.IsValid() ? handle.PercentComplete : 0f;
+        public StaticMapPresentationManifest Manifest => Succeeded ? handle.Result : null;
+        public string Failure => handle.IsValid()
+            ? handle.OperationException?.Message
+            : "Operation-map presentation-manifest handle is invalid.";
+
+        public void Dispose()
+        {
+            if (disposed)
+                return;
+
+            disposed = true;
+            if (handle.IsValid())
+                Addressables.Release(handle);
         }
     }
 
@@ -73,25 +131,32 @@ namespace Game.Composition
     internal sealed class OperationMapSceneLoadingSceneSystemHelper : IDisposable
     {
         private readonly IOperationMapSourceSceneApi sceneApi;
+        private readonly IOperationMapPresentationManifestApi manifestApi;
         private readonly OperationMapSceneReferenceSceneSystemHelper sceneReference;
-        private IOperationMapSourceSceneOperation operation;
+        private IOperationMapSourceSceneOperation sceneOperation;
+        private IOperationMapPresentationManifestOperation manifestOperation;
         private string expectedOperationMapId;
+        private string expectedSourceSceneGuid;
         private bool disposed;
 
         public OperationMapSceneLoadingSceneSystemHelper(
             IOperationMapSourceSceneApi sceneApi = null,
+            IOperationMapPresentationManifestApi manifestApi = null,
             OperationMapSceneReferenceSceneSystemHelper sceneReference = null)
         {
             this.sceneApi = sceneApi ?? new OperationMapAddressablesSourceSceneApi();
+            this.manifestApi = manifestApi ??
+                new OperationMapAddressablesPresentationManifestApi();
             this.sceneReference = sceneReference ?? new OperationMapSceneReferenceSceneSystemHelper();
         }
 
-        public bool IsLoading => operation != null && !IsReady && !HasFailed;
+        public bool IsLoading => sceneOperation != null && !IsReady && !HasFailed;
         public bool IsReady { get; private set; }
         public bool HasFailed => !string.IsNullOrEmpty(Failure);
         public float Progress01 { get; private set; }
         public string Failure { get; private set; }
         public OperationMapSceneView SceneView { get; private set; }
+        public StaticMapPresentationManifest Manifest { get; private set; }
 
         public bool TryStart(OperationMapDefinition definition, out string error)
         {
@@ -101,7 +166,7 @@ namespace Game.Composition
                 return false;
             }
 
-            if (operation != null)
+            if (sceneOperation != null)
             {
                 error = "Operation-map source-scene loader already owns an operation.";
                 return false;
@@ -123,23 +188,34 @@ namespace Game.Composition
                 return false;
             }
 
+            AssetReference manifestReference = definition.StaticPresentationManifestReference;
+            if (manifestReference == null || !manifestReference.RuntimeKeyIsValid())
+            {
+                error = "Operation-map presentation-manifest reference is missing or invalid.";
+                return false;
+            }
+
             try
             {
-                operation = sceneApi.LoadAdditive(sourceReference.RuntimeKey);
+                sceneOperation = sceneApi.LoadAdditive(sourceReference.RuntimeKey);
+                manifestOperation = manifestApi.Load(manifestReference.RuntimeKey);
             }
             catch (Exception exception)
             {
+                ReleaseOperations();
                 error = $"Operation-map source-scene load did not start: {exception.Message}";
                 return false;
             }
 
-            if (operation == null)
+            if (sceneOperation == null || manifestOperation == null)
             {
-                error = "Operation-map source-scene load did not return an operation.";
+                ReleaseOperations();
+                error = "Operation-map source-scene or presentation-manifest load did not return an operation.";
                 return false;
             }
 
             expectedOperationMapId = definition.OperationMapId;
+            expectedSourceSceneGuid = sourceReference.AssetGUID;
             Progress01 = 0f;
             error = null;
             return true;
@@ -147,33 +223,48 @@ namespace Game.Composition
 
         public void Update()
         {
-            if (disposed || operation == null || IsReady || HasFailed)
+            if (disposed || sceneOperation == null || IsReady || HasFailed)
                 return;
 
-            Progress01 = operation.Progress01;
-            if (!operation.IsDone)
-                return;
-
-            if (!operation.Succeeded)
+            Progress01 = (sceneOperation.Progress01 + manifestOperation.Progress01) * 0.5f;
+            if (sceneOperation.IsDone && !sceneOperation.Succeeded)
             {
-                Fail(string.IsNullOrWhiteSpace(operation.Failure)
+                Fail(string.IsNullOrWhiteSpace(sceneOperation.Failure)
                     ? "Operation-map source-scene load failed."
-                    : operation.Failure);
+                    : sceneOperation.Failure);
                 return;
             }
 
+            if (manifestOperation.IsDone && !manifestOperation.Succeeded)
+            {
+                Fail(string.IsNullOrWhiteSpace(manifestOperation.Failure)
+                    ? "Operation-map presentation-manifest load failed."
+                    : manifestOperation.Failure);
+                return;
+            }
+
+            if (!sceneOperation.IsDone || !manifestOperation.IsDone)
+                return;
+
             if (!sceneReference.TryGetLoadedSceneView(
-                    operation.Scene,
+                    sceneOperation.Scene,
                     expectedOperationMapId,
                     out OperationMapSceneView view,
                     out string error) ||
-                !view.TryValidate(out error))
+                !view.TryValidate(out error) ||
+                !TryValidateManifest(
+                    manifestOperation.Manifest,
+                    sceneOperation.Scene,
+                    expectedOperationMapId,
+                    expectedSourceSceneGuid,
+                    out error))
             {
                 Fail(error);
                 return;
             }
 
             SceneView = view;
+            Manifest = manifestOperation.Manifest;
             Progress01 = 1f;
             IsReady = true;
         }
@@ -184,9 +275,9 @@ namespace Game.Composition
                 return;
 
             disposed = true;
-            operation?.Dispose();
-            operation = null;
+            ReleaseOperations();
             SceneView = null;
+            Manifest = null;
             IsReady = false;
             Progress01 = 0f;
         }
@@ -196,11 +287,59 @@ namespace Game.Composition
             Failure = string.IsNullOrWhiteSpace(error)
                 ? "Operation-map source-scene load failed."
                 : error;
-            operation.Dispose();
-            operation = null;
+            ReleaseOperations();
             SceneView = null;
+            Manifest = null;
             IsReady = false;
             Progress01 = 0f;
+        }
+
+        private void ReleaseOperations()
+        {
+            sceneOperation?.Dispose();
+            sceneOperation = null;
+            manifestOperation?.Dispose();
+            manifestOperation = null;
+        }
+
+        private static bool TryValidateManifest(
+            StaticMapPresentationManifest manifest,
+            Scene scene,
+            string operationMapId,
+            string sourceSceneGuid,
+            out string error)
+        {
+            if (manifest == null ||
+                !StaticMapPresentationManifest.HasRequiredIdentity(
+                    manifest.SchemaVersion,
+                    manifest.OperationMapId,
+                    manifest.CanonicalSceneGuid,
+                    manifest.CanonicalScenePath))
+            {
+                error = "Operation-map presentation manifest identity is missing or unsupported.";
+                return false;
+            }
+
+            if (!string.Equals(manifest.OperationMapId, operationMapId, StringComparison.Ordinal) ||
+                !string.Equals(manifest.CanonicalSceneGuid, sourceSceneGuid, StringComparison.Ordinal) ||
+                !string.Equals(manifest.CanonicalScenePath, scene.path, StringComparison.Ordinal))
+            {
+                error = "Operation-map presentation manifest does not match the loaded source scene.";
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(manifest.ContentHash) ||
+                string.IsNullOrWhiteSpace(manifest.CanonicalSceneDependencyHash) ||
+                manifest.ChunkSize <= 0f ||
+                manifest.Chunks == null || manifest.Chunks.Count == 0 ||
+                manifest.Sources == null || manifest.Sources.Count == 0)
+            {
+                error = "Operation-map presentation manifest content is incomplete.";
+                return false;
+            }
+
+            error = null;
+            return true;
         }
     }
 }

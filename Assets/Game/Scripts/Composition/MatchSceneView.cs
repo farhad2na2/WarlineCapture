@@ -68,7 +68,10 @@ namespace Game.Composition
         public Light DirectionalLight => directionalLight;
         public Volume GlobalVolume => globalVolume;
         public VisualQualityProfileAsset VisualQualityProfile => visualQualityProfile;
-        public StaticMapPresentationManifest StaticMapPresentationManifest => staticMapPresentationManifest;
+        public StaticMapPresentationManifest StaticMapPresentationManifest =>
+            operationMapSceneLoadingSystem != null && operationMapSceneLoadingSystem.IsReady
+                ? operationMapSceneLoadingSystem.Manifest
+                : staticMapPresentationManifest;
         public CombinedMeshBaker DecorationCombinedMeshBaker =>
             activeOperationMapSceneView != null
                 ? activeOperationMapSceneView.DecorationCombinedMeshBaker

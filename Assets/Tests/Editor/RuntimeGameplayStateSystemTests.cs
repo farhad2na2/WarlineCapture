@@ -21,7 +21,8 @@ public sealed class RuntimeGameplayStateSystemTests
             RunCase(test => test.ResetForGameplayStart_RequestsPlayWithoutActivatingSimulation());
             RunCase(test => test.ReadGameplayState_DoesNotOverwriteEcsWhenLegacyIsUnchanged());
             RunCase(test => test.ReadGameplayState_MirrorsLaterLegacyChangeOnceDetected());
-            UnityEngine.Debug.Log("[RuntimeGameplayStateValidation] result=Passed tests=7");
+            RunCase(test => test.ReadGameplayState_RebindsAfterWorldReplacement());
+            UnityEngine.Debug.Log("[RuntimeGameplayStateValidation] result=Passed tests=8");
             ValidationExit.Passed();
         }
         catch (System.Exception exception)
@@ -188,6 +189,28 @@ public sealed class RuntimeGameplayStateSystemTests
         Assert.AreEqual(1, reread.BuildModeActive);
         RuntimeGameplayStateComponent singleton = ReadSingleton<RuntimeGameplayStateComponent>();
         Assert.AreEqual(1, singleton.BuildModeActive);
+    }
+
+    [Test]
+    public void ReadGameplayState_RebindsAfterWorldReplacement()
+    {
+        var runtimeState = new RuntimeGameplayStateSystem();
+        runtimeState.PlayRequested = true;
+        Assert.AreEqual(1, ReadSingleton<RuntimeGameplayStateComponent>().PlayRequested);
+
+        _world.Dispose();
+        _world = new World("RuntimeGameplayStateSystemTests-Replacement");
+        World.DefaultGameObjectInjectionWorld = _world;
+        ResetLegacyState();
+
+        RuntimeGameplayStateComponent replacementState = runtimeState.ReadGameplayState();
+
+        Assert.AreEqual(0, replacementState.PlayRequested);
+        Assert.AreEqual(0, replacementState.BuildModeActive);
+        Assert.AreEqual(0, replacementState.FullscreenMapOpen);
+        using EntityQuery stateQuery = _world.EntityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<RuntimeGameplayStateComponent>());
+        Assert.AreEqual(1, stateQuery.CalculateEntityCount());
     }
 
     private T ReadSingleton<T>() where T : unmanaged, IComponentData

@@ -385,50 +385,33 @@ namespace Game.UI.Runtime
 
         private void BindMatchHudResourceSlots(MatchHudHeaderReferenceUiSystemHelper references)
         {
-            if (references.ResourceStrip == null || references.FuelSlot == null)
+            if (references.ResourceStrip == null ||
+                references.MaterialsSlot == null ||
+                references.OilSlot == null ||
+                references.FuelSlot == null)
                 return;
-
-            if (references.OilSlot == null)
-            {
-                Transform oilSlot = CreateOilResourceSlot(references.ResourceStrip, references.FuelSlot.Root);
-                references.CacheOilSlot(oilSlot);
-            }
 
             ArrangeMatchHudResourceSlots(references);
             BindMatchHudResourceExchangeButtons(references);
             _matchHudResourceHeaderPresentation.Bind(
                 references.OilSlot.Root.gameObject,
+                references.MaterialsSlot.Label,
+                references.MaterialsSlot.Value,
                 references.OilSlot.Label,
                 references.OilSlot.Value,
                 references.FuelSlot.Label,
                 references.FuelSlot.Value,
+                references.CivilianRiskSlot?.Label,
+                references.CivilianRiskSlot?.Value,
                 Time.unscaledTime);
-            TMP_Text materialsLabel = references.SupplySlot?.Label;
-            if (materialsLabel != null)
-            {
-                materialsLabel.enableAutoSizing = true;
-                materialsLabel.fontSizeMin = Mathf.Min(18f, materialsLabel.fontSize);
-                materialsLabel.fontSizeMax = materialsLabel.fontSize;
-                materialsLabel.textWrappingMode = TextWrappingModes.NoWrap;
-                materialsLabel.text = _gameTextResolver.Get("resource.materials.label", "Materials");
-            }
-        }
-
-        private static Transform CreateOilResourceSlot(Transform resourceStrip, Transform fuelSlot)
-        {
-            GameObject oilSlot = UnityEngine.Object.Instantiate(fuelSlot.gameObject, resourceStrip);
-            oilSlot.name = "OilSlot";
-            oilSlot.transform.SetSiblingIndex(fuelSlot.GetSiblingIndex());
-            return oilSlot.transform;
         }
 
         private static void ArrangeMatchHudResourceSlots(MatchHudHeaderReferenceUiSystemHelper references)
         {
-            SetResourceSlotLayout(references.CreditsSlot?.Root, -640f);
-            SetResourceSlotLayout(references.OilSlot?.Root, -320f);
-            SetResourceSlotLayout(references.FuelSlot?.Root, 0f);
-            SetResourceSlotLayout(references.SupplySlot?.Root, 320f);
-            SetResourceSlotLayout(references.CivilianRiskSlot?.Root, 640f);
+            SetResourceSlotLayout(references.MaterialsSlot?.Root, -480f);
+            SetResourceSlotLayout(references.OilSlot?.Root, -160f);
+            SetResourceSlotLayout(references.FuelSlot?.Root, 160f);
+            SetResourceSlotLayout(references.CivilianRiskSlot?.Root, 480f);
         }
 
         private static void SetResourceSlotLayout(Transform slot, float x)
@@ -454,10 +437,9 @@ namespace Game.UI.Runtime
         private void BindMatchHudResourceExchangeButtons(MatchHudHeaderReferenceUiSystemHelper references)
         {
             UnbindMatchHudResourceExchangeButtons();
-            BindMatchHudResourceExchangeButton(references.CreditsSlot?.Root);
+            BindMatchHudResourceExchangeButton(references.MaterialsSlot?.Root);
             BindMatchHudResourceExchangeButton(references.OilSlot?.Root);
             BindMatchHudResourceExchangeButton(references.FuelSlot?.Root);
-            BindMatchHudResourceExchangeButton(references.SupplySlot?.Root);
         }
 
         private void BindMatchHudResourceExchangeButton(Transform slot)

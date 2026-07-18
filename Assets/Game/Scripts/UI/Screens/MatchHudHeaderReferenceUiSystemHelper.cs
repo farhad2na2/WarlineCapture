@@ -9,19 +9,17 @@ namespace Game.UI.Runtime
         private const string ResourceStripName = "ResourceStrip";
         private const string ThreatJumpPanelName = "ThreatJumpPanel";
         private const string ThreatTitleName = "Title";
-        private const string CreditsSlotName = "CreditsSlot";
+        private const string MaterialsSlotName = "MaterialsSlot";
         private const string OilSlotName = "OilSlot";
         private const string FuelSlotName = "FuelSlot";
-        private const string SupplySlotName = "SupplySlot";
         private const string CivilianRiskSlotName = "CivilianRiskSlot";
 
         public Transform ResourceStrip { get; private set; }
         public Transform ThreatJumpPanel { get; private set; }
         public TMP_Text ThreatTitle { get; private set; }
-        public ResourceSlotReference CreditsSlot { get; private set; }
+        public ResourceSlotReference MaterialsSlot { get; private set; }
         public ResourceSlotReference OilSlot { get; private set; }
         public ResourceSlotReference FuelSlot { get; private set; }
-        public ResourceSlotReference SupplySlot { get; private set; }
         public ResourceSlotReference CivilianRiskSlot { get; private set; }
 
         public static MatchHudHeaderReferenceUiSystemHelper Create(Transform contentRoot)
@@ -35,11 +33,6 @@ namespace Game.UI.Runtime
             }
 
             return references;
-        }
-
-        public void CacheOilSlot(Transform oilSlot)
-        {
-            OilSlot = oilSlot != null ? new ResourceSlotReference(oilSlot) : null;
         }
 
         private Transform CacheDirectHeaderChildren(Transform headerRoot)
@@ -76,17 +69,14 @@ namespace Game.UI.Runtime
                 Transform child = resourceStrip.GetChild(i);
                 switch (child.name)
                 {
-                    case CreditsSlotName when CreditsSlot == null:
-                        CreditsSlot = new ResourceSlotReference(child);
+                    case MaterialsSlotName when MaterialsSlot == null:
+                        MaterialsSlot = new ResourceSlotReference(child);
                         break;
                     case OilSlotName when OilSlot == null:
-                        CacheOilSlot(child);
+                        OilSlot = new ResourceSlotReference(child);
                         break;
                     case FuelSlotName when FuelSlot == null:
                         FuelSlot = new ResourceSlotReference(child);
-                        break;
-                    case SupplySlotName when SupplySlot == null:
-                        SupplySlot = new ResourceSlotReference(child);
                         break;
                     case CivilianRiskSlotName when CivilianRiskSlot == null:
                         CivilianRiskSlot = new ResourceSlotReference(child);

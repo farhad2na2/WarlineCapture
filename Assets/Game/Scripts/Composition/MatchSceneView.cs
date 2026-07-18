@@ -26,6 +26,8 @@ namespace Game.Composition
         private OperationMapSceneLoadingSceneSystemHelper operationMapSceneLoadingSystem;
         private OperationMapSceneView activeOperationMapSceneView;
         private bool operationMapLoadFailureReported;
+        private OperationMapLoadResultCode operationMapLoadFailureCode;
+        private string operationMapLoadFailure;
         private bool operationMapReadinessPublished;
         private OperationMapReadinessFlags publishedOperationMapReadyFlags;
         private OperationMapReadinessFlags publishedOperationMapFailedFlags;
@@ -143,7 +145,15 @@ namespace Game.Composition
         internal float OperationMapContentProgress01 =>
             operationMapSceneLoadingSystem?.Progress01 ?? 0f;
         internal string OperationMapContentFailure =>
-            operationMapSceneLoadingSystem?.Failure;
+            operationMapSceneLoadingSystem != null &&
+            !string.IsNullOrEmpty(operationMapSceneLoadingSystem.Failure)
+                ? operationMapSceneLoadingSystem.Failure
+                : operationMapLoadFailure;
+        internal OperationMapLoadResultCode OperationMapContentFailureCode =>
+            operationMapSceneLoadingSystem != null &&
+            operationMapSceneLoadingSystem.FailureCode != OperationMapLoadResultCode.None
+                ? operationMapSceneLoadingSystem.FailureCode
+                : operationMapLoadFailureCode;
         internal bool OperationMapContentUnloading =>
             operationMapSceneLoadingSystem != null && operationMapSceneLoadingSystem.IsUnloading;
         internal bool OperationMapContentUnloadComplete =>
@@ -494,6 +504,9 @@ namespace Game.Composition
                 !operationMapCatalog.TryResolve(operationMapId, out OperationMapDefinition definition))
             {
                 ReportOperationMapLoadFailure(
+                    OperationMapIdentityRules.IsValidOperationMapId(operationMapId)
+                        ? OperationMapLoadResultCode.MissingDefinition
+                        : OperationMapLoadResultCode.InvalidOperationMapId,
                     $"Operation-map id '{operationMapId ?? "<null>"}' is not present in the catalog.");
                 return;
             }
@@ -501,9 +514,10 @@ namespace Game.Composition
             operationMapSceneLoadingSystem = new OperationMapSceneLoadingSceneSystemHelper();
             if (!operationMapSceneLoadingSystem.TryStart(definition, out string error))
             {
+                OperationMapLoadResultCode failureCode = operationMapSceneLoadingSystem.FailureCode;
                 operationMapSceneLoadingSystem.Dispose();
                 operationMapSceneLoadingSystem = null;
-                ReportOperationMapLoadFailure(error);
+                ReportOperationMapLoadFailure(failureCode, error);
             }
         }
 
@@ -527,7 +541,9 @@ namespace Game.Composition
             operationMapSceneLoadingSystem.Update();
             if (operationMapSceneLoadingSystem.HasFailed)
             {
-                ReportOperationMapLoadFailure(operationMapSceneLoadingSystem.Failure);
+                ReportOperationMapLoadFailure(
+                    operationMapSceneLoadingSystem.FailureCode,
+                    operationMapSceneLoadingSystem.Failure);
                 return;
             }
 
@@ -536,7 +552,7 @@ namespace Game.Composition
 
             activeOperationMapSceneView = operationMapSceneLoadingSystem.SceneView;
             if (!TryBindMatchRuntime(World.DefaultGameObjectInjectionWorld, out string error))
-                ReportOperationMapLoadFailure(error);
+                ReportOperationMapLoadFailure(OperationMapLoadResultCode.MetadataBindFailed, error);
         }
 
         private void DisposeOperationMapSourceSceneLoad()
@@ -545,18 +561,24 @@ namespace Game.Composition
             operationMapSceneLoadingSystem?.Dispose();
             operationMapSceneLoadingSystem = null;
             operationMapLoadFailureReported = false;
+            operationMapLoadFailureCode = OperationMapLoadResultCode.None;
+            operationMapLoadFailure = null;
         }
 
-        private void ReportOperationMapLoadFailure(string error)
+        private void ReportOperationMapLoadFailure(
+            OperationMapLoadResultCode failureCode,
+            string error)
         {
             if (operationMapLoadFailureReported)
                 return;
 
             DisposeOperationMapMetadataBootstrap();
             activeOperationMapSceneView = null;
-            operationMapSceneLoadingSystem?.Abort(error);
+            operationMapSceneLoadingSystem?.Abort(error, failureCode);
+            operationMapLoadFailureCode = failureCode;
+            operationMapLoadFailure = error;
             operationMapLoadFailureReported = true;
-            Debug.LogError($"[OperationMapSourceScene] {error}");
+            Debug.LogError($"[OperationMapSourceScene] code={failureCode} error={error}");
         }
 
         private void ApplyAudioListenerAuthority()

@@ -6,6 +6,7 @@ using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
+using UnityEngine.TestTools;
 
 public sealed class OperationMapRuntimeBootstrapSceneSystemHelperTests
 {
@@ -448,6 +449,46 @@ public sealed class OperationMapRuntimeBootstrapSceneSystemHelperTests
         finally
         {
             view.DisposeOperationMapMetadataBootstrap();
+            Object.DestroyImmediate(owner);
+            Object.DestroyImmediate(catalog);
+            Object.DestroyImmediate(definition);
+        }
+    }
+
+    [TestCase(
+        "opmap.skirmish.missing",
+        OperationMapLoadResultCode.MissingDefinition)]
+    [TestCase(
+        "invalid operation map id",
+        OperationMapLoadResultCode.InvalidOperationMapId)]
+    public void MatchSourceLoad_MissingOrInvalidIdPublishesTypedFailure(
+        string operationMapId,
+        OperationMapLoadResultCode expectedCode)
+    {
+        OperationMapDefinition definition = CreateValidDefinition();
+        OperationMapCatalogConfig catalog = ScriptableObject.CreateInstance<OperationMapCatalogConfig>();
+        SetCatalogDefinitions(catalog, new[] { definition });
+        GameObject owner = new("OperationMapTypedFailureMatchView");
+        MatchSceneView view = owner.AddComponent<MatchSceneView>();
+        Set(view, "operationMapCatalog", catalog);
+        Set(view, "operationMapId", operationMapId);
+        try
+        {
+            MethodInfo ensureLoad = typeof(MatchSceneView).GetMethod(
+                "EnsureOperationMapSourceSceneLoad",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.That(ensureLoad, Is.Not.Null);
+            LogAssert.Expect(
+                LogType.Error,
+                $"[OperationMapSourceScene] code={expectedCode} error=Operation-map id '{operationMapId}' is not present in the catalog.");
+
+            ensureLoad.Invoke(view, null);
+
+            Assert.That(view.OperationMapContentFailureCode, Is.EqualTo(expectedCode));
+            Assert.That(view.OperationMapContentFailure, Does.Contain("not present in the catalog"));
+        }
+        finally
+        {
             Object.DestroyImmediate(owner);
             Object.DestroyImmediate(catalog);
             Object.DestroyImmediate(definition);

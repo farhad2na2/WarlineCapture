@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Game.Components;
 using Game.Composition;
 using Game.Configs;
 using Game.Rendering;
@@ -60,6 +61,7 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
 
         Assert.That(helper.TryStart(null, out string error), Is.False);
         Assert.That(error, Does.Contain("required"));
+        Assert.That(helper.FailureCode, Is.EqualTo(OperationMapLoadResultCode.MissingDefinition));
     }
 
     [Test]
@@ -127,6 +129,7 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
 
         Assert.That(helper.HasFailed, Is.True);
         Assert.That(helper.Failure, Does.Contain("catalog load failed"));
+        Assert.That(helper.FailureCode, Is.EqualTo(OperationMapLoadResultCode.SourceLoadFailed));
         Assert.That(operation.DisposeCount, Is.EqualTo(1));
         Assert.That(manifestOperation.DisposeCount, Is.EqualTo(1));
     }
@@ -149,6 +152,9 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
 
         Assert.That(helper.HasFailed, Is.True);
         Assert.That(helper.Failure, Does.Contain("manifest load failed"));
+        Assert.That(
+            helper.FailureCode,
+            Is.EqualTo(OperationMapLoadResultCode.PresentationPreloadFailed));
         Assert.That(sceneOperation.DisposeCount, Is.EqualTo(1));
         Assert.That(manifestOperation.DisposeCount, Is.EqualTo(1));
     }
@@ -178,6 +184,7 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
 
         Assert.That(helper.HasFailed, Is.True);
         Assert.That(helper.Failure, Does.Contain("does not match"));
+        Assert.That(helper.FailureCode, Is.EqualTo(OperationMapLoadResultCode.StaleContent));
         Assert.That(sceneOperation.DisposeCount, Is.EqualTo(1));
         Assert.That(manifestOperation.DisposeCount, Is.EqualTo(1));
         UnityEngine.Object.DestroyImmediate(manifestOperation.LoadedManifest);
@@ -225,6 +232,7 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
 
         Assert.That(helper.HasFailed, Is.True);
         Assert.That(helper.Failure, Is.EqualTo("metadata bind failed"));
+        Assert.That(helper.FailureCode, Is.EqualTo(OperationMapLoadResultCode.Interrupted));
         Assert.That(helper.SceneView, Is.Null);
         Assert.That(helper.Manifest, Is.Null);
         Assert.That(sceneOperation.DisposeCount, Is.EqualTo(1));
@@ -404,6 +412,7 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
 
         Assert.That(helper.HasFailed, Is.True);
         Assert.That(helper.Failure, Is.EqualTo("source unload failed"));
+        Assert.That(helper.FailureCode, Is.EqualTo(OperationMapLoadResultCode.SourceUnloadFailed));
         Assert.That(helper.UnloadComplete, Is.False);
         Assert.That(sceneOperation.DisposeCount, Is.EqualTo(1));
         Assert.That(manifestOperation.DisposeCount, Is.EqualTo(1));

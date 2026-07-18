@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
 using Game.Components;
@@ -7,10 +7,6 @@ namespace Game.Runtime
 {
     public static class UnitTransportVisualUtility
     {
-        private static readonly List<Entity> VisualEntities = new();
-        private static readonly HashSet<Entity> VisitedEntities = new();
-        private static readonly List<UnitTransportHiddenVisualScale> RestoreEntries = new();
-
         public static void SetPassengerVisible(EntityManager em, Entity entity, bool visible)
         {
             if (!em.Exists(entity))
@@ -46,26 +42,24 @@ namespace Game.Runtime
             DynamicBuffer<UnitTransportHiddenVisualScale> hiddenScales = em.GetBuffer<UnitTransportHiddenVisualScale>(entity);
             hiddenScales.Clear();
 
-            VisualEntities.Clear();
-            VisitedEntities.Clear();
-            CollectVisualTree(em, entity, VisualEntities, VisitedEntities);
+            using var visualEntities = new NativeList<Entity>(16, Allocator.Temp);
+            CollectVisualTree(em, entity, visualEntities);
 
             if (em.HasComponent<UnitDestroyedVisualReference>(entity))
             {
                 UnitDestroyedVisualReference visualRef = em.GetComponentData<UnitDestroyedVisualReference>(entity);
-                CollectVisualTree(em, visualRef.AliveVisual, VisualEntities, VisitedEntities);
-                CollectVisualTree(em, visualRef.DestroyedVisual, VisualEntities, VisitedEntities);
+                CollectVisualTree(em, visualRef.AliveVisual, visualEntities);
+                CollectVisualTree(em, visualRef.DestroyedVisual, visualEntities);
             }
 
             if (em.HasComponent<UnitModelInstanceReference>(entity))
             {
                 UnitModelInstanceReference model = em.GetComponentData<UnitModelInstanceReference>(entity);
-                CollectVisualTree(em, model.Instance, VisualEntities, VisitedEntities);
+                CollectVisualTree(em, model.Instance, visualEntities);
             }
-
-            for (int i = 0; i < VisualEntities.Count; i++)
+            for (int i = 0; i < visualEntities.Length; i++)
             {
-                Entity visual = VisualEntities[i];
+                Entity visual = visualEntities[i];
                 if (!em.Exists(visual))
                     continue;
 
@@ -97,9 +91,6 @@ namespace Game.Runtime
                         em.AddComponent<Disabled>(visual);
                 }
             }
-
-            VisualEntities.Clear();
-            VisitedEntities.Clear();
         }
 
         private static void RestoreStoredVisuals(EntityManager em, Entity entity)
@@ -108,15 +99,12 @@ namespace Game.Runtime
                 return;
 
             DynamicBuffer<UnitTransportHiddenVisualScale> hiddenScales = em.GetBuffer<UnitTransportHiddenVisualScale>(entity);
-            RestoreEntries.Clear();
-            for (int i = 0; i < hiddenScales.Length; i++)
-                RestoreEntries.Add(hiddenScales[i]);
-
+            using NativeArray<UnitTransportHiddenVisualScale> restoreEntries = hiddenScales.ToNativeArray(Allocator.Temp);
             hiddenScales.Clear();
 
-            for (int i = 0; i < RestoreEntries.Count; i++)
+            for (int i = 0; i < restoreEntries.Length; i++)
             {
-                UnitTransportHiddenVisualScale hidden = RestoreEntries[i];
+                UnitTransportHiddenVisualScale hidden = restoreEntries[i];
                 if (!em.Exists(hidden.Visual))
                     continue;
 
@@ -131,7 +119,6 @@ namespace Game.Runtime
                 }
             }
 
-            RestoreEntries.Clear();
         }
 
         private static void ApplyKnownVisualReferences(EntityManager em, Entity entity, bool visible)
@@ -151,9 +138,9 @@ namespace Game.Runtime
             }
         }
 
-        private static void CollectVisualTree(EntityManager em, Entity root, List<Entity> results, HashSet<Entity> visited)
+        private static void CollectVisualTree(EntityManager em, Entity root, NativeList<Entity> results)
         {
-            if (root == Entity.Null || !em.Exists(root) || !visited.Add(root))
+            if (root == Entity.Null || !em.Exists(root) || Contains(results, root))
                 return;
 
             results.Add(root);
@@ -162,7 +149,18 @@ namespace Game.Runtime
 
             DynamicBuffer<Child> children = em.GetBuffer<Child>(root);
             for (int i = 0; i < children.Length; i++)
-                CollectVisualTree(em, children[i].Value, results, visited);
+                CollectVisualTree(em, children[i].Value, results);
+        }
+
+        private static bool Contains(NativeList<Entity> entities, Entity entity)
+        {
+            for (int i = 0; i < entities.Length; i++)
+            {
+                if (entities[i] == entity)
+                    return true;
+            }
+
+            return false;
         }
     }
 }

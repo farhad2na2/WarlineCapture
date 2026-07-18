@@ -234,9 +234,6 @@ public sealed class ScriptArchitectureAlignmentContractTests
         "Assets/Game/Scripts/Systems/BuildingProductionTransportPresentationSystemHelper.cs|EmptyTransformList",
         "Assets/Game/Scripts/Configs/GameText.cs|AudioEventIds",
         "Assets/Game/Scripts/Configs/GameText.cs|Entries",
-        "Assets/Game/Scripts/Utilities/UnitTransportVisualUtility.cs|RestoreEntries",
-        "Assets/Game/Scripts/Utilities/UnitTransportVisualUtility.cs|VisitedEntities",
-        "Assets/Game/Scripts/Utilities/UnitTransportVisualUtility.cs|VisualEntities",
     };
 
     private static readonly string[] RuntimeInstantiateOwnershipScanRoots =
@@ -389,6 +386,23 @@ public sealed class ScriptArchitectureAlignmentContractTests
         {
             Debug.LogException(exception);
             Debug.LogError("[ScriptBroadShellValidation] result=Failed");
+            ValidationExit.Exit(1);
+        }
+    }
+
+    public static void RunStaticGameplayRegistryValidation()
+    {
+        try
+        {
+            var tests = new ScriptArchitectureAlignmentContractTests();
+            tests.RuntimeGameplayLogicMustNotAddStaticMutableRegistries();
+            Debug.Log("[StaticGameplayRegistryValidation] result=Passed tests=1");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[StaticGameplayRegistryValidation] result=Failed");
             ValidationExit.Exit(1);
         }
     }

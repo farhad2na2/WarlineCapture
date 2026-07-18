@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Core;
@@ -23,6 +24,22 @@ public sealed class UnitTransportValidationTests
     private NativeBitArray _occupied;
     private NativeArray<byte> _friendlyPassFactionIds;
     private NativeList<int2> _pathPool;
+
+    public static void RunVisualScratchOwnershipValidation()
+    {
+        try
+        {
+            RunTest(test => test.PassengerVisualScratch_IsCallOwnedAndWorldIsolated());
+            Debug.Log("[UnitTransportVisualScratchValidation] result=Passed tests=1");
+            ValidationExit.Passed();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[UnitTransportVisualScratchValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
 
     public static void RunBatchValidation()
     {
@@ -125,6 +142,46 @@ public sealed class UnitTransportValidationTests
             Debug.LogError("[UnitTransportValidation] result=Failed");
             ValidationExit.Failed();
         }
+    }
+
+    [Test]
+    public void PassengerVisualScratch_IsCallOwnedAndWorldIsolated()
+    {
+        Assert.IsNull(typeof(UnitTransportVisualUtility).GetField(
+            "VisualEntities",
+            BindingFlags.Static | BindingFlags.NonPublic));
+        Assert.IsNull(typeof(UnitTransportVisualUtility).GetField(
+            "VisitedEntities",
+            BindingFlags.Static | BindingFlags.NonPublic));
+        Assert.IsNull(typeof(UnitTransportVisualUtility).GetField(
+            "RestoreEntries",
+            BindingFlags.Static | BindingFlags.NonPublic));
+
+        using var firstWorld = new World("UnitTransportVisualScratch-First");
+        using var secondWorld = new World("UnitTransportVisualScratch-Second");
+        Entity firstPassenger = CreateVisualScratchPassenger(firstWorld.EntityManager, 2f);
+        Entity secondPassenger = CreateVisualScratchPassenger(secondWorld.EntityManager, 3f);
+
+        UnitTransportVisualUtility.SetPassengerVisible(firstWorld.EntityManager, firstPassenger, false);
+        UnitTransportVisualUtility.SetPassengerVisible(secondWorld.EntityManager, secondPassenger, false);
+        UnitTransportVisualUtility.SetPassengerVisible(firstWorld.EntityManager, firstPassenger, true);
+
+        Assert.AreEqual(2f, firstWorld.EntityManager.GetComponentData<LocalTransform>(firstPassenger).Scale);
+        Assert.AreEqual(0f, secondWorld.EntityManager.GetComponentData<LocalTransform>(secondPassenger).Scale);
+
+        UnitTransportVisualUtility.SetPassengerVisible(secondWorld.EntityManager, secondPassenger, true);
+
+        Assert.AreEqual(3f, secondWorld.EntityManager.GetComponentData<LocalTransform>(secondPassenger).Scale);
+        Assert.AreEqual(0, firstWorld.EntityManager.GetBuffer<UnitTransportHiddenVisualScale>(firstPassenger).Length);
+        Assert.AreEqual(0, secondWorld.EntityManager.GetBuffer<UnitTransportHiddenVisualScale>(secondPassenger).Length);
+    }
+
+    private static Entity CreateVisualScratchPassenger(EntityManager em, float scale)
+    {
+        Entity passenger = em.CreateEntity(typeof(LocalTransform));
+        em.SetComponentData(passenger, LocalTransform.FromPositionRotationScale(float3.zero, quaternion.identity, scale));
+        em.AddBuffer<UnitTransportHiddenVisualScale>(passenger);
+        return passenger;
     }
 
     public static void RunBoardMoveValidation()

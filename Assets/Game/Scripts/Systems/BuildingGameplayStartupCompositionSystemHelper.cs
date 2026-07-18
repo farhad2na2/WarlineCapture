@@ -17,7 +17,10 @@ namespace Game.Runtime
             childSystems.RuntimeFactionResourceSystemHelper.SetInitialDollars(
                 BuildingStartupConfigProjectionSystem.ResolveInitialDollars(buildingPlacementConfig));
             if (childSystems.BuildingEntityManagerAccessSystem.TryGetEntityManager(out Unity.Entities.EntityManager entityManager))
+            {
                 childSystems.RuntimeFactionResourceSystemHelper.Configure(entityManager);
+                childSystems.UnitPathfindingPendingStateReader.Bind(entityManager);
+            }
             childSystems.BuildingConstructionResourceTransactionSystemHelper.Reset();
             childSystems.BuildingGameplayDependencyCompositionSystemHelper.SetStartupDependencies(
                 null,

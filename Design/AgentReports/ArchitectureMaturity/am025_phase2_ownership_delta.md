@@ -8,15 +8,15 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 |---|---:|
 | Baseline rows | 863 |
 | Hazard rows | 352 |
-| Resolved | 1159 |
+| Resolved | 1160 |
 | Protected/deferred | 36 |
-| Open | 20 |
+| Open | 19 |
 | New after baseline | 26 |
 | Historical intake rows | 575 |
-| Reviewed non-debt rows | 555 |
-| Genuine-debt rows | 20 |
+| Reviewed non-debt rows | 556 |
+| Genuine-debt rows | 19 |
 | Unclassified rows | 0 |
-| Unique debt items | 18 |
+| Unique debt items | 17 |
 
 ## Open Rows
 
@@ -28,7 +28,6 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 | AM-018 | globalWorldLookups | Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs | AM-018 classification.globalWorldLookups | AM025-GLOBAL-WORLD-004 |
 | AM-018 | globalWorldLookups | Assets/Game/Scripts/Systems/SelectionBuildingInteractionCompositionSystemHelper.cs | AM-018 classification.globalWorldLookups | AM025-GLOBAL-WORLD-005 |
 | AM-018 | globalWorldLookups | Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs | AM-018 classification.globalWorldLookups | AM025-GLOBAL-WORLD-006 |
-| AM-018 | globalWorldLookups | Assets/Game/Scripts/Systems/UnitPathfindingPendingStateStore.cs | AM-018 classification.globalWorldLookups | AM025-GLOBAL-WORLD-007 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-CLR-001 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-CLR-001 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |

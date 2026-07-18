@@ -52,79 +52,41 @@ namespace Game.Runtime
         private World _world;
         private bool _hasQuery;
 
+        public void Bind(EntityManager entityManager)
+        {
+            World world = entityManager.World;
+            if (_hasQuery && _world == world && IsQueryWorldAlive())
+                return;
+
+            Dispose();
+            _query = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<UnitPathfindingPendingStateComponent>());
+            _world = world;
+            _hasQuery = true;
+        }
+
         public bool HasPendingPathJob()
         {
-            if (!TryEnsureQuery())
+            if (!_hasQuery || !IsQueryWorldAlive() || _query.IsEmptyIgnoreFilter)
                 return false;
 
-            try
-            {
-                if (_query.IsEmptyIgnoreFilter)
-                    return false;
-
-                return _query.GetSingleton<UnitPathfindingPendingStateComponent>().HasPendingPathJob != 0;
-            }
-            catch (System.NullReferenceException)
-            {
-                ClearQueryState();
-                return false;
-            }
-            catch (System.InvalidOperationException)
-            {
-                ClearQueryState();
-                return false;
-            }
+            return _query.GetSingleton<UnitPathfindingPendingStateComponent>().HasPendingPathJob != 0;
         }
 
         public void Dispose()
         {
-            if (!_hasQuery)
-                return;
-
-            try
-            {
-                if (IsQueryWorldAlive())
-                    _query.Dispose();
-            }
-            catch (System.NullReferenceException)
-            {
-            }
-            catch (System.InvalidOperationException)
-            {
-            }
-            finally
-            {
-                ClearQueryState();
-            }
-        }
-
-        private bool TryEnsureQuery()
-        {
             if (_hasQuery && IsQueryWorldAlive())
-                return true;
+                _query.Dispose();
 
-            ClearQueryState();
-
-            World world = World.DefaultGameObjectInjectionWorld;
-            if (world == null || !world.IsCreated)
-                return false;
-
-            _query = world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<UnitPathfindingPendingStateComponent>());
-            _world = world;
-            _hasQuery = true;
-            return true;
+            _query = default;
+            _world = null;
+            _hasQuery = false;
         }
 
         private bool IsQueryWorldAlive()
         {
             return _world != null && _world.IsCreated;
         }
-
-        private void ClearQueryState()
-        {
-            _query = default;
-            _world = null;
-            _hasQuery = false;
-        }
     }
+
 }

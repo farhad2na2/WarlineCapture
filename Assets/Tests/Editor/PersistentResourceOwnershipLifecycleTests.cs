@@ -321,6 +321,7 @@ public sealed class PersistentResourceOwnershipLifecycleTests
                 HasPendingPathJob = 1
             });
             World.DefaultGameObjectInjectionWorld = firstWorld;
+            reader.Bind(firstWorld.EntityManager);
             Assert.IsTrue(reader.HasPendingPathJob());
 
             firstWorld.Dispose();
@@ -331,6 +332,7 @@ public sealed class PersistentResourceOwnershipLifecycleTests
                 HasPendingPathJob = 0
             });
             World.DefaultGameObjectInjectionWorld = replacementWorld;
+            reader.Bind(replacementWorld.EntityManager);
             Assert.IsFalse(reader.HasPendingPathJob());
 
             replacementWorld.EntityManager.SetComponentData(replacementState, new UnitPathfindingPendingStateComponent

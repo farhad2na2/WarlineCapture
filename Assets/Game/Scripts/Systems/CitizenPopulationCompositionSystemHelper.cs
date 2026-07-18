@@ -119,6 +119,8 @@ namespace Game.Runtime
             result.PopulationEnabled = populationEnabled;
             result.RuntimeUpdateSystem.Bind(result);
             result.EcsProjection.ResolveEntityManager();
+            if (result.EcsProjection.HasWorld)
+                result.UnitPathfindingPendingStateReader.Bind(result.EcsProjection.EntityManager);
             result.VisibleUnitSystem.ClearVisibleCitizens(result.State, result.EcsProjection);
             result.State.Reset();
             CitizenPopulationReadModelCompositionSystemHelper.Reset(result.ReadModel, ref result.ReadModelState);

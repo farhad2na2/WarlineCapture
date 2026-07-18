@@ -39,6 +39,7 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.AutomaticFuelLogisticsRoute_AIUnreachableMaterialsDemandDoesNotOverrideFuel();
             tests.AutomaticFuelLogisticsAIInput_UsesCanonicalPlanMaterialsAndFuelSummary();
             tests.AutomaticFuelLogisticsAIInput_RebindsAfterWorldReplacement();
+            tests.FuelLogisticsTelemetry_RebindsAfterWorldReplacement();
             tests.AutomaticFuelLogisticsAIInput_ResolvesOncePerFactionPerScan();
             tests.AutomaticFuelLogisticsRoute_PairsTankerWithFactionRefineryAndFuelStorage();
             tests.AutomaticFuelLogisticsSignature_ChangesOnlyWhenRelevantStateChanges();
@@ -68,7 +69,7 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.AutomaticFuelLogisticsTanker_FullFuelStorageSetsTypedIdleReason();
             tests.AutomaticFuelLogisticsTanker_NoRouteSetsTypedIdleReason();
             tests.AutomaticFuelLogisticsTanker_NoAvailableTankerDoesNotReserveFuel();
-            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=53");
+            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=54");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -1483,6 +1484,44 @@ public sealed class BuildingResourceProductionEcsSystemTests
             FactionId = factionId,
             AIControlled = 1
         });
+    }
+
+    [Test]
+    public void FuelLogisticsTelemetry_RebindsAfterWorldReplacement()
+    {
+        var telemetryBridge = new FactionFuelLogisticsTelemetryBridgeCompositionSystemHelper();
+
+        using (var firstWorld = new World("FuelLogisticsTelemetry_FirstWorld"))
+        {
+            EntityManager em = firstWorld.EntityManager;
+            Entity telemetryEntity = CreateFuelLogisticsTelemetryEntity(em, 1);
+            Entity tray = CreateFuelLogisticsHauler(em, "Unit_Veh_Truck_Tray", 1, new int2(2, 2));
+            telemetryBridge.RecordRouteAssignment(
+                em,
+                tray,
+                ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil,
+                isReassignment: false);
+            Assert.AreEqual(
+                1,
+                em.GetComponentData<FactionFuelLogisticsTelemetryComponent>(telemetryEntity)
+                    .TrayRouteAssignmentCount);
+        }
+
+        using (var secondWorld = new World("FuelLogisticsTelemetry_SecondWorld"))
+        {
+            EntityManager em = secondWorld.EntityManager;
+            Entity telemetryEntity = CreateFuelLogisticsTelemetryEntity(em, 1);
+            Entity tray = CreateFuelLogisticsHauler(em, "Unit_Veh_Truck_Tray", 1, new int2(4, 4));
+            telemetryBridge.RecordRouteAssignment(
+                em,
+                tray,
+                ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil,
+                isReassignment: false);
+            FactionFuelLogisticsTelemetryComponent telemetry =
+                em.GetComponentData<FactionFuelLogisticsTelemetryComponent>(telemetryEntity);
+            Assert.AreEqual(1, telemetry.TrayRouteAssignmentCount);
+            Assert.AreEqual(0, telemetry.TrayRouteReassignmentCount);
+        }
     }
 
     [Test]

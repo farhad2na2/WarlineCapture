@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 419,
+    "resolvedNonDebtRowCount": 420,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 427,
-    "genuineDebtRowCount": 148,
-    "uniqueDebtItemCount": 72,
+    "reviewedNonDebtRowCount": 428,
+    "genuineDebtRowCount": 147,
+    "uniqueDebtItemCount": 71,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -48,9 +48,9 @@
     {
       "sourceArtifact": "AM-007",
       "historicalOpenRowCount": 314,
-      "projectedResolvedNonDebtRowCount": 271,
+      "projectedResolvedNonDebtRowCount": 272,
       "projectedProtectedDeferredRowCount": 7,
-      "projectedGenuineDebtRowCount": 36
+      "projectedGenuineDebtRowCount": 35
     },
     {
       "sourceArtifact": "AM-018",
@@ -76,7 +76,7 @@
     },
     {
       "id": "world-owner-candidates",
-      "projectedRows": 28,
+      "projectedRows": 27,
       "note": "Lifecycle rows; may overlap hazard remediation and cannot be treated as 33 independent production defects."
     }
   ],
@@ -248,10 +248,22 @@
       "authority": ["Assets/Tests/Editor/PerformanceDiagnosticsSystemAllocationTests.cs"]
     },
     {
+      "id": "am007-world-fuel-logistics-telemetry-query-owned",
+      "decision": "resolved",
+      "reasonCode": "tested-world-rebinding-telemetry-query",
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-007",
+        "sourceCategory": "worlds",
+        "sourcePath": "Assets/Game/Scripts/Systems/FactionFuelLogisticsTelemetryBridgeCompositionSystemHelper.cs"
+      },
+      "authority": ["Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs"]
+    },
+    {
       "id": "am007-world-debt",
       "decision": "genuine-debt",
       "reasonCode": "world-owner-unproven",
-      "expectedCount": 28,
+      "expectedCount": 27,
       "debtIdPrefix": "AM025-WORLD",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

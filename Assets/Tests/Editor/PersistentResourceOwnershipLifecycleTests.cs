@@ -30,6 +30,58 @@ public sealed class PersistentResourceOwnershipLifecycleTests
         }
     }
 
+    public static void RunSceneLifecycleWorldReplacementValidation()
+    {
+        try
+        {
+            new PersistentResourceOwnershipLifecycleTests()
+                .SceneLifecycleQueue_RebindsAfterWorldReplacement();
+            Debug.Log("[SceneLifecycleWorldReplacementValidation] result=Passed tests=1");
+            ValidationExit.Passed();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[SceneLifecycleWorldReplacementValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
+    [Test]
+    public void SceneLifecycleQueue_RebindsAfterWorldReplacement()
+    {
+        var helper = new SceneLifecycleSceneSystemHelper();
+        var firstWorld = new World(nameof(SceneLifecycleQueue_RebindsAfterWorldReplacement) + "_First");
+        var replacementWorld = new World(nameof(SceneLifecycleQueue_RebindsAfterWorldReplacement) + "_Replacement");
+        try
+        {
+            Entity firstRoot = helper.EnsureLifecycleEntity(firstWorld.EntityManager);
+            Assert.IsTrue(helper.QueueLoadMatch(firstWorld.EntityManager));
+            Assert.AreEqual(
+                1,
+                firstWorld.EntityManager.GetBuffer<SceneLifecycleRequestElement>(firstRoot).Length);
+
+            firstWorld.Dispose();
+            Entity replacementRoot = helper.EnsureLifecycleEntity(replacementWorld.EntityManager);
+
+            Assert.IsTrue(replacementWorld.EntityManager.Exists(replacementRoot));
+            Assert.AreEqual(
+                0,
+                replacementWorld.EntityManager.GetBuffer<SceneLifecycleRequestElement>(replacementRoot).Length);
+            Assert.IsTrue(helper.QueueLoadMatch(replacementWorld.EntityManager));
+            Assert.AreEqual(
+                1,
+                replacementWorld.EntityManager.GetBuffer<SceneLifecycleRequestElement>(replacementRoot).Length);
+        }
+        finally
+        {
+            if (firstWorld.IsCreated)
+                firstWorld.Dispose();
+            if (replacementWorld.IsCreated)
+                replacementWorld.Dispose();
+        }
+    }
+
     [Test]
     public void PathfindingPendingStateReader_FollowsReplacementWorld()
     {

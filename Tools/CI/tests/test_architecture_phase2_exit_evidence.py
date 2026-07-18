@@ -310,9 +310,9 @@ class Phase2ClosureAuditContractTests(unittest.TestCase):
             + projection["protectedDeferredRowCount"]
             + projection["genuineDebtRowCount"],
         )
-        self.assertEqual(433, projection["reviewedNonDebtRowCount"])
-        self.assertEqual(142, projection["genuineDebtRowCount"])
-        self.assertEqual(66, projection["uniqueDebtItemCount"])
+        self.assertEqual(434, projection["reviewedNonDebtRowCount"])
+        self.assertEqual(141, projection["genuineDebtRowCount"])
+        self.assertEqual(65, projection["uniqueDebtItemCount"])
         self.assertEqual(0, projection["unclassifiedRowCount"])
         self.assertFalse(projection["acceptanceCreditGranted"])
 
@@ -345,9 +345,9 @@ class Phase2ClosureAuditContractTests(unittest.TestCase):
         package = (ROOT / "Design/Architecture/WorkPackages/am_wp_028_phase2_debt_reconciliation.md").read_text(
             encoding="utf-8"
         )
-        self.assertIn("`433` non-debt and `142` genuine-debt", tracker)
-        self.assertIn("`66` unique file/rule items", tracker)
-        self.assertIn("`142` remaining genuine-debt rows", package)
+        self.assertIn("`434` non-debt and `141` genuine-debt", tracker)
+        self.assertIn("`65` unique file/rule items", tracker)
+        self.assertIn("`141` remaining genuine-debt rows", package)
         self.assertIn("remains non-accepting", package)
         self.assertIn("acceptanceCreditGranted", json.dumps(self.audit, sort_keys=True))
         self.assertIn("requiredGenuineDebtCountForAcceptance", json.dumps(self.policy, sort_keys=True))
@@ -357,10 +357,10 @@ class Phase2ClosureAuditContractTests(unittest.TestCase):
         review = self.delta["summary"]["review"]
         self.assertEqual(575, review["historicalInitialOpenRowCount"])
         self.assertEqual(575, review["reviewedRowCount"])
-        self.assertEqual(425, review["resolvedNonDebtRowCount"])
+        self.assertEqual(426, review["resolvedNonDebtRowCount"])
         self.assertEqual(8, review["protectedDeferredRowCount"])
-        self.assertEqual(142, review["genuineDebtRowCount"])
-        self.assertEqual(66, review["uniqueDebtItemCount"])
+        self.assertEqual(141, review["genuineDebtRowCount"])
+        self.assertEqual(65, review["uniqueDebtItemCount"])
         self.assertEqual(0, review["unclassifiedRowCount"])
         reviewed = [
             row for row in self.delta["baselineClassifications"] + self.delta["hazardClassifications"]
@@ -369,7 +369,7 @@ class Phase2ClosureAuditContractTests(unittest.TestCase):
         self.assertEqual(575, len(reviewed))
         self.assertEqual(575, len({(row["sourceArtifact"], row["sourceKey"]) for row in reviewed}))
         debt_rows = [row for row in reviewed if row["reviewDecision"] == "genuine-debt"]
-        self.assertEqual(142, len(debt_rows))
+        self.assertEqual(141, len(debt_rows))
         for row in debt_rows:
             source = ROOT / row["sourcePath"]
             self.assertEqual(row["currentSourceSha256"], hashlib.sha256(source.read_bytes()).hexdigest())

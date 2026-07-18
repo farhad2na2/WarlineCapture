@@ -8,8 +8,8 @@ Evidence inputs: accepted AM-021 ownership authority and AM-022 through AM-024 a
 
 ## 1. Current Validation State And Risk
 
-- The canonical integrated architecture Python inventory currently contains 157 tests and the latest accepted AM-024 run passes `157 / 157`; the former `FirstLaunchLanguageChoiceView` false positive is resolved.
-- Canonical source growth currently reports four separately owned FirstLaunch `*SystemHelper` blockers.
+- The accepted AM-024 integrated baseline passes `157 / 157`; the current AM-025 contract inventory passes `170 / 170` after adding fail-closed closure-audit and blocker-binding checks.
+- Canonical source growth currently reports five separately owned blockers: four FirstLaunch `*SystemHelper` paths and the operation-map-owned runtime-grid storage helper.
 - AM-021 is accepted at 575 persistent resources: 553 explicit owners, 22 protected owners, and zero ownership gaps.
 - `ArchitectureHardeningCloseoutValidationRunner.RunFocusedValidation` is the full Unity architecture entrypoint. `RunJenkinsArchitectureValidation` runs only two suites and is not an AM-025 substitute.
 - `SceneLifecycleValidationRunner.Run` is a one-case request-queue smoke test, not lifecycle closeout. Generated-project/dotnet compilation is supporting evidence only; Unity compilation is canonical.
@@ -21,7 +21,7 @@ Risks are partial-suite acceptance, alias validators being treated as canonical,
 
 - AM-025 freezes the exact suite list, thresholds, governed sources, exclusions, environment, and baseline before capture.
 - Capture starts from a clean exact commit/tree after AM-021 through AM-024 acceptance. Every canonical Core suite must pass; external blockers remain blockers until their owner resolves them.
-- The Phase 2 ownership delta compares the Phase 0 lifecycle inventory and AM-018 hazard inventory against final AM-021 ownership, classifying every row as resolved, protected/deferred, or open. Open count must be zero.
+- The Phase 2 ownership delta compares the Phase 0 lifecycle inventory and AM-018 hazard inventory against final AM-021 ownership. It preserves `575` historical intake rows separately from the unrelated AM-021 total of `575` owned persistent resources. Every intake row requires one row-bound decision; reviewed genuine debt and unclassified counts must both reach zero.
 - Focused allocation suites retain their accepted 180-warmup/300-measurement, exactly-zero recurring production allocation gates.
 - Unity compilation with zero compiler errors is canonical. Python/evidence checks, deterministic regeneration, byte-identical projections, and `git diff --check` are mandatory.
 - One focused review verifies commands, logs, arithmetic, hashes, ownership delta, residual risks, exclusions, and acceptance decision before the record is published.
@@ -52,6 +52,7 @@ Allowed evidence/tool files:
 - `Design/AgentReports/ArchitectureMaturity/am025_phase2_exit_policy.json`
 - `Design/AgentReports/ArchitectureMaturity/am025_phase2_ownership_delta.json`
 - `Design/AgentReports/ArchitectureMaturity/am025_phase2_ownership_delta.md`
+- `Design/AgentReports/ArchitectureMaturity/am025_phase2_closure_audit.json`
 - `Design/AgentReports/ArchitectureMaturity/am025_phase2_exit_evidence.json`
 - `Design/AgentReports/ArchitectureMaturity/am025_acceptance_record.json`
 - bounded `Design/AgentReports/ArchitectureMaturity/Logs/am025_*.log.gz`
@@ -73,7 +74,7 @@ Hard exclusions: operation-map/static-map, FirstLaunch, audio, UI visual-lock, g
 
 The exit bundle must prove:
 
-1. AM-021 final ownership totals and zero open rows, with protected/deferred rows explicitly named;
+1. AM-021 final ownership totals (`575` resources, `553` explicit, `22` protected, zero ownership gaps) and the separate AM-025 audit intake/remediation totals, with protected/deferred rows explicitly named;
 2. AM-022 ten-case World lifecycle recovery acceptance;
 3. AM-023 one-warm-up plus 10-measured production transition acceptance and bounded snapshots; the former 100-cycle stress remains deferred;
 4. AM-024 one-warm-up plus five-measured structural-owner and governed-pool plateau; every exceeded Editor memory investigation ceiling and the deferred extended/release follow-up remain explicit, and raw Editor memory totals are not described as passed;
@@ -88,7 +89,7 @@ Logs remain compressed and bounded; stdout contains summaries and first-failure 
 
 ## 6. Acceptance And Blocked Rules
 
-AM-025 passes only when every prerequisite is accepted, ownership gaps are zero, capture identity is clean and exact, ancestry/hashes resolve, all canonical Core suites pass, compiler errors are zero, governed recurring allocations are exactly zero, lifecycle counts and retained trends pass, deterministic outputs match, protected paths are absent from the owned diff, and focused review has no unresolved finding.
+AM-025 passes only when every prerequisite is accepted, AM-021 ownership gaps are zero, all `575` audit-intake rows have row-bound authority, genuine debt and unclassified counts are zero, all five source-growth blockers are closed by their owners, capture identity is clean and exact, ancestry/hashes resolve, all canonical Core suites pass, compiler errors are zero, governed recurring allocations are exactly zero, lifecycle counts and retained trends pass, deterministic outputs match, protected paths are absent from the owned diff, and focused review has no unresolved finding.
 
 AM-025 remains unchecked if any prerequisite, counter, suite, marker, hash, log, review, or ownership row is missing; if an external Core failure remains; or if a release-deferred failure is improperly mixed into Core arithmetic. The tracker records exact failing suite/owner/evidence and next action. Thresholds, samples, suites, and failures are never suppressed or reclassified merely to close Phase 2.
 

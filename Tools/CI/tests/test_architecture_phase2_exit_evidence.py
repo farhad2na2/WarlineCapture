@@ -1,4 +1,5 @@
 import copy
+import hashlib
 import json
 import subprocess
 import sys
@@ -202,6 +203,67 @@ class Phase2OwnershipDeltaTests(unittest.TestCase):
         checked = subprocess.run([*command, "--check"], capture_output=True, text=True)
         self.assertEqual(1, checked.returncode)
         self.assertIn("stale or missing", checked.stdout)
+
+
+class Phase2ClosureAuditContractTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.policy_path = ROOT / "Design/AgentReports/ArchitectureMaturity/am025_phase2_exit_policy.json"
+        cls.audit_path = ROOT / "Design/AgentReports/ArchitectureMaturity/am025_phase2_closure_audit.json"
+        cls.policy = json.loads(cls.policy_path.read_text(encoding="utf-8"))
+        cls.audit = json.loads(cls.audit_path.read_text(encoding="utf-8"))
+
+    def test_distinct_575_populations_and_projection_arithmetic(self):
+        terminology = self.audit["terminology"]
+        projection = self.audit["projection"]
+        self.assertEqual(575, terminology["am021PersistentResourceCount"])
+        self.assertEqual(0, terminology["am021OwnershipGapCount"])
+        self.assertEqual(575, terminology["am025HistoricalIntakeRowCount"])
+        self.assertEqual(575, projection["reviewedRowCount"])
+        self.assertEqual(
+            projection["reviewedRowCount"],
+            projection["resolvedNonDebtRowCount"]
+            + projection["protectedDeferredRowCount"]
+            + projection["genuineDebtRowCount"],
+        )
+        self.assertEqual(407, projection["reviewedNonDebtRowCount"])
+        self.assertEqual(168, projection["genuineDebtRowCount"])
+        self.assertEqual(0, projection["unclassifiedRowCount"])
+        self.assertFalse(projection["acceptanceCreditGranted"])
+
+    def test_audit_inputs_are_hash_bound(self):
+        for item in self.audit["inputs"]:
+            path = ROOT / item["path"]
+            self.assertTrue(path.is_file(), item["path"])
+            self.assertEqual(item["sha256"], hashlib.sha256(path.read_bytes()).hexdigest(), item["path"])
+
+    def test_policy_lists_all_five_live_source_growth_blockers(self):
+        blockers = self.policy["currentExternalExitBlockers"]
+        rows = blockers["sourceGrowthBlockers"]
+        self.assertEqual(5, blockers["sourceGrowthUnresolvedBlockerCount"])
+        self.assertEqual(5, len(rows))
+        self.assertEqual(5, len({row["path"] for row in rows}))
+        for row in rows:
+            path = ROOT / row["path"]
+            raw = path.read_bytes()
+            self.assertEqual(row["sha256"], hashlib.sha256(raw).hexdigest(), row["path"])
+            text = raw.decode("utf-8")
+            self.assertEqual(row["lines"], len(text.splitlines()), row["path"])
+            self.assertEqual(row["bytes"], len(raw), row["path"])
+            self.assertEqual("blocked-owner-action", row["status"])
+        self.assertEqual(0, blockers["requiredUnresolvedSourceGrowthBlockerCountForAcceptance"])
+
+    def test_documents_keep_projection_non_accepting(self):
+        tracker = (ROOT / "Design/Architecture/post_hardening_architecture_maturity_tracker.md").read_text(
+            encoding="utf-8"
+        )
+        package = (ROOT / "Design/Architecture/WorkPackages/am_wp_028_phase2_debt_reconciliation.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("projected `407` non-debt and `168` genuine-debt", tracker)
+        self.assertIn("planning projection", package)
+        self.assertIn("acceptanceCreditGranted", json.dumps(self.audit, sort_keys=True))
+        self.assertIn("requiredGenuineDebtCountForAcceptance", json.dumps(self.policy, sort_keys=True))
 
 
 if __name__ == "__main__":

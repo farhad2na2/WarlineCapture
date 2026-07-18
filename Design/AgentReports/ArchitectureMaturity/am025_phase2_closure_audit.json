@@ -1,0 +1,88 @@
+{
+  "artifactId": "AM025-PHASE2-CLOSURE-AUDIT",
+  "schemaVersion": 1,
+  "taskId": "AM-025",
+  "result": "ProjectedPendingRowBoundAuthorityEvidence",
+  "capture": {
+    "commit": "f418851175dfee368f44823a93d125308a09458c",
+    "tree": "e086ee0545fecc26553cca7500abb55ddd5ca264",
+    "branch": "main",
+    "clean": true
+  },
+  "inputs": [
+    {
+      "path": "Design/AgentReports/ArchitectureMaturity/am025_phase2_ownership_delta.json",
+      "sha256": "6da10d56f8c66cee14c75e3fd55d2683f76a93f267c0140defd9e667257363e1"
+    },
+    {
+      "path": "Design/AgentReports/ArchitectureMaturity/lifecycle_inventory.json",
+      "sha256": "966243512afcd4a48173a30ca3cec60a342685a7a00cff5fe68c4c004a4a86d8"
+    },
+    {
+      "path": "Design/AgentReports/ArchitectureMaturity/am018_dependency_hazard_inventory.json",
+      "sha256": "13f6066d269243438186c70ef09fc516bfbb7b7ad4e7acd173d8bd6a010c3d60"
+    },
+    {
+      "path": "Design/AgentReports/ArchitectureMaturity/am021_persistent_resource_ownership.json",
+      "sha256": "dd27aca1c6412246ed7849a5d9a0be8639f7f161c9df27ddae22e2d8c710e9b0"
+    }
+  ],
+  "terminology": {
+    "am021PersistentResourceCount": 575,
+    "am021OwnershipGapCount": 0,
+    "am025HistoricalIntakeRowCount": 575,
+    "note": "The two counts both equal 575 but describe different populations and must never be combined."
+  },
+  "projection": {
+    "historicalIntakeRowCount": 575,
+    "reviewedRowCount": 575,
+    "resolvedNonDebtRowCount": 399,
+    "protectedDeferredRowCount": 8,
+    "reviewedNonDebtRowCount": 407,
+    "genuineDebtRowCount": 168,
+    "unclassifiedRowCount": 0,
+    "acceptanceCreditGranted": false
+  },
+  "sourceBreakdown": [
+    {
+      "sourceArtifact": "AM-007",
+      "historicalOpenRowCount": 314,
+      "projectedResolvedNonDebtRowCount": 266,
+      "projectedProtectedDeferredRowCount": 7,
+      "projectedGenuineDebtRowCount": 41
+    },
+    {
+      "sourceArtifact": "AM-018",
+      "historicalOpenRowCount": 261,
+      "projectedResolvedNonDebtRowCount": 133,
+      "projectedProtectedDeferredRowCount": 1,
+      "projectedGenuineDebtRowCount": 127
+    }
+  ],
+  "genuineDebtLanes": [
+    {
+      "id": "world-singleton-discovery",
+      "projectedRows": 12,
+      "note": "Hazard rows; overlaps with World-owner lifecycle candidates are reconciled before unique debt-item counting."
+    },
+    {
+      "id": "mutable-static-state",
+      "projectedRows": 115
+    },
+    {
+      "id": "pool-and-lifecycle-cache",
+      "projectedRows": 8
+    },
+    {
+      "id": "world-owner-candidates",
+      "projectedRows": 33,
+      "note": "Lifecycle rows; may overlap hazard remediation and cannot be treated as 33 independent production defects."
+    }
+  ],
+  "sourceGrowth": {
+    "unresolvedBlockerCount": 5,
+    "firstLaunchBlockerCount": 4,
+    "operationMapBlockerCount": 1
+  },
+  "acceptanceRule": "This artifact records a reviewed planning projection only. AM-025 remains unchecked until a generator emits one hash-bound decision per historical intake row, genuine debt and unclassified counts reach zero, and all five source-growth blockers close."
+}

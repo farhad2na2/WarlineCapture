@@ -1,6 +1,6 @@
 {
   "artifactId": "AM025-PHASE2-EXIT-POLICY",
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "taskId": "AM-025",
   "status": "FrozenForCapture",
   "baseline": {
@@ -40,8 +40,8 @@
       "id": "integrated-architecture",
       "command": "python3 -m unittest discover -s Tools/CI/tests -p 'test_architecture_*.py'",
       "baselinePassed": 157,
-      "am025Added": 9,
-      "requiredPassed": 166,
+      "am025Added": 13,
+      "requiredPassed": 170,
       "requiredFailed": 0
     },
     {
@@ -106,11 +106,72 @@
       "protected-deferred",
       "open"
     ],
-    "requiredOpenCount": 0,
+    "historicalInitialOpenRowCount": 575,
+    "projectedReviewedRowCount": 575,
+    "projectedReviewedNonDebtRowCount": 407,
+    "projectedGenuineDebtRowCount": 168,
+    "projectedUnclassifiedRowCount": 0,
+    "projectionStatus": "PendingRowBoundAuthorityEvidence",
+    "requiredGenuineDebtCountForAcceptance": 0,
+    "requiredUnclassifiedCountForAcceptance": 0,
     "unmatchedFinalClassification": "new-after-baseline"
   },
   "currentExternalExitBlockers": {
-    "sourceGrowthFirstLaunchSystemHelperPaths": 4,
+    "sourceGrowthUnresolvedBlockerCount": 5,
+    "sourceGrowthBlockers": [
+      {
+        "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeLocaleTextUtilitySystemHelper.cs",
+        "sha256": "bb0382274483ff5f2fabb27e12c537bd7c5095dbf271a3d44c10a5782165dfae",
+        "lines": 61,
+        "bytes": 2058,
+        "violation": "missing-system-helper-authorization",
+        "ownerDomain": "first-launch",
+        "status": "blocked-owner-action"
+      },
+      {
+        "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativePortraitVoiceSelectionPresentationSystemHelper.cs",
+        "sha256": "40157a1f83793465e3650d23d71a84c72430949b633a2c8a1eb1d339efc6ea5d",
+        "lines": 73,
+        "bytes": 2450,
+        "ceilingLines": 60,
+        "ceilingBytes": 2102,
+        "violation": "system-helper-ceiling-exceeded",
+        "ownerDomain": "first-launch",
+        "status": "blocked-owner-action"
+      },
+      {
+        "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeProfileCompositionSystemHelper.cs",
+        "sha256": "9d3064af25346b59810cd76a8ec954fb1833384b086fb3f5b033d69144ec3162",
+        "lines": 163,
+        "bytes": 6425,
+        "ceilingLines": 135,
+        "ceilingBytes": 5172,
+        "violation": "system-helper-ceiling-exceeded",
+        "ownerDomain": "first-launch",
+        "status": "blocked-owner-action"
+      },
+      {
+        "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeSequencePresentationSystemHelper.cs",
+        "sha256": "1da7e3b63eaadef62d62ada5ff4d617395ae6fb9173356a5599b96639c746d9d",
+        "lines": 516,
+        "bytes": 22430,
+        "ceilingLines": 487,
+        "ceilingBytes": 21062,
+        "violation": "system-helper-and-over-500-ceilings-exceeded",
+        "ownerDomain": "first-launch",
+        "status": "blocked-owner-action"
+      },
+      {
+        "path": "Assets/Game/Scripts/Systems/RuntimeGridPersistentStorageUtilitySystemHelper.cs",
+        "sha256": "2012a78fc1073e9949ee1e1635e99a9745e584a316f069e4a722ab5dd6429075",
+        "lines": 199,
+        "bytes": 8699,
+        "violation": "missing-system-helper-authorization",
+        "ownerDomain": "operation-map",
+        "status": "blocked-owner-action"
+      }
+    ],
+    "requiredUnresolvedSourceGrowthBlockerCountForAcceptance": 0,
     "broadContractDomains": [
       "operation-map",
       "FirstLaunch/UI",

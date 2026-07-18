@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 466,
+    "resolvedNonDebtRowCount": 468,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 474,
-    "genuineDebtRowCount": 101,
-    "uniqueDebtItemCount": 43,
+    "reviewedNonDebtRowCount": 476,
+    "genuineDebtRowCount": 99,
+    "uniqueDebtItemCount": 42,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -765,10 +765,25 @@
       "authority": ["Assets/Tests/Editor/GameRuntimeStatsTests.cs", "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs"]
     },
     {
+      "id": "am018-static-msl-match-hud-assistant-diagnostics-owned",
+      "decision": "resolved",
+      "reasonCode": "hud-instance-owned-diagnostic-state",
+      "expectedCount": 2,
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "MSL",
+        "sourcePath": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.cs"
+      },
+      "authority": [
+        "Assets/Tests/Editor/MatchHudAssistantUiSystemHelperTests.cs"
+      ]
+    },
+    {
       "id": "am018-static-msl-debt",
       "decision": "genuine-debt",
       "reasonCode": "mutable-static-lifecycle-unproven",
-      "expectedCount": 66,
+      "expectedCount": 64,
       "debtIdPrefix": "AM025-STATIC-MSL",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

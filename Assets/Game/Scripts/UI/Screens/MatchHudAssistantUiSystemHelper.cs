@@ -9,8 +9,8 @@ namespace Game.UI.Runtime
 {
     internal sealed class MatchHudAssistantUiSystemHelper
     {
-        private static bool s_loggedMissingButton;
-        private static bool s_loggedInvalidButton;
+        private bool _loggedMissingButton;
+        private bool _loggedInvalidButton;
 
         private RectTransform _buttonRoot;
         private Button _button;
@@ -289,22 +289,22 @@ namespace Game.UI.Runtime
             ClearSelectedButton();
         }
 
-        private static void LogMissingButton()
+        private void LogMissingButton()
         {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            if (s_loggedMissingButton)
+            if (_loggedMissingButton)
                 return;
-            s_loggedMissingButton = true;
+            _loggedMissingButton = true;
             Debug.LogError("[ARIA] Match HUD prefab is missing HeaderContent/AriaAssistantButton; runtime button creation is disabled.");
 #endif
         }
 
-        private static void LogInvalidButton()
+        private void LogInvalidButton()
         {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            if (s_loggedInvalidButton)
+            if (_loggedInvalidButton)
                 return;
-            s_loggedInvalidButton = true;
+            _loggedInvalidButton = true;
             Debug.LogError("[ARIA] HeaderContent/AriaAssistantButton must contain a Button plus TMP State and AlertCue children.");
 #endif
         }

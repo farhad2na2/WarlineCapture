@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
 using NUnit.Framework;
@@ -41,6 +42,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             passed++;
             RunCase(test => test.BindMatchHudAssistant_CloseEscapeAndStopHaveSeparateSemantics());
             passed++;
+            RunCase(test => test.DiagnosticSuppressionState_IsOwnedByEachHudInstance());
+            passed++;
 
             Debug.Log($"[MatchHudAssistantUiValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -49,6 +52,23 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         {
             Debug.LogException(exception);
             Debug.LogError($"[MatchHudAssistantUiValidation] result=Failed passed={passed}");
+            ValidationExit.Exit(1);
+        }
+    }
+
+    public static void RunDiagnosticOwnershipValidation()
+    {
+        MatchHudAssistantUiSystemHelperTests tests = new();
+        try
+        {
+            tests.DiagnosticSuppressionState_IsOwnedByEachHudInstance();
+            Debug.Log("[MatchHudAssistantDiagnosticOwnershipValidation] result=Passed");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[MatchHudAssistantDiagnosticOwnershipValidation] result=Failed");
             ValidationExit.Exit(1);
         }
     }
@@ -86,6 +106,23 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         if (_openedScene)
             EditorSceneManager.NewScene(NewSceneSetup.EmptyScene);
         _openedScene = false;
+    }
+
+    [Test]
+    public void DiagnosticSuppressionState_IsOwnedByEachHudInstance()
+    {
+        Type helperType = typeof(MatchHudAssistantUiSystemHelper);
+        FieldInfo missingButton = helperType.GetField(
+            "_loggedMissingButton",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        FieldInfo invalidButton = helperType.GetField(
+            "_loggedInvalidButton",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+
+        Assert.NotNull(missingButton);
+        Assert.NotNull(invalidButton);
+        Assert.IsFalse(missingButton.IsStatic);
+        Assert.IsFalse(invalidButton.IsStatic);
     }
 
     [Test]

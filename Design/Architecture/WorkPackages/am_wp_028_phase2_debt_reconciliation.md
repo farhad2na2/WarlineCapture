@@ -11,13 +11,13 @@ Bounded read-only audits reviewed the AM-025 intake as:
 | Measure | Count |
 |---|---:|
 | Historical intake rows | 575 |
-| Reviewed non-debt rows | 474 |
-| Remaining genuine-debt rows | 101 |
-| Remaining unique debt items | 43 |
+| Reviewed non-debt rows | 476 |
+| Remaining genuine-debt rows | 99 |
+| Remaining unique debt items | 42 |
 | Projected unclassified rows | 0 |
 | Source-growth blockers | 5 |
 
-The row-bound evidence now records `474` non-debt rows and `101` remaining genuine-debt rows, grouped into `43` unique file/rule remediation items. It remains non-accepting because every genuine-debt item must be closed before Phase 2 can pass.
+The row-bound evidence now records `476` non-debt rows and `99` remaining genuine-debt rows, grouped into `42` unique file/rule remediation items. It remains non-accepting because every genuine-debt item must be closed before Phase 2 can pass.
 
 ## 2. Required Row Authority
 
@@ -61,6 +61,7 @@ Current external-gate note: the canonical Unity source-growth run now reports th
 
 Completed remediation:
 
+- `MatchHudAssistantUiSystemHelper`: missing/invalid hierarchy diagnostic suppression now belongs to each HUD instance, so one disposed match cannot suppress diagnostics in a later match. Focused validation prevents the two flags from returning to process-wide state.
 - `AM025-STATIC-MSL-005`: helicopter diagnostic one-shot state now belongs to each unmanaged ECS system instance instead of the process. Focused validation proves two active Worlds do not suppress each other's diagnostic and preserves all blade-spin behavior.
 - `AM025-WORLD-031`: the tactical camera query cache was cleared as non-debt after focused validation proved idempotent disposal, rejection after disposal, and disposal of all three owners during selection shutdown.
 - `AM025-WORLD-009`: the building command cache was cleared as non-debt after focused validation proved World rebinding, destroyed-entity recovery, buffer repair, and zero warm repeated-read allocation.

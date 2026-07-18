@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 402,
+    "resolvedNonDebtRowCount": 403,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 410,
-    "genuineDebtRowCount": 165,
-    "uniqueDebtItemCount": 77,
+    "reviewedNonDebtRowCount": 411,
+    "genuineDebtRowCount": 164,
+    "uniqueDebtItemCount": 76,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -55,9 +55,9 @@
     {
       "sourceArtifact": "AM-018",
       "historicalOpenRowCount": 261,
-      "projectedResolvedNonDebtRowCount": 134,
+      "projectedResolvedNonDebtRowCount": 135,
       "projectedProtectedDeferredRowCount": 1,
-      "projectedGenuineDebtRowCount": 126
+      "projectedGenuineDebtRowCount": 125
     }
   ],
   "genuineDebtLanes": [
@@ -68,7 +68,7 @@
     },
     {
       "id": "mutable-static-state",
-      "projectedRows": 114
+      "projectedRows": 113
     },
     {
       "id": "pool-and-lifecycle-cache",
@@ -301,10 +301,23 @@
       "authority": ["Design/AgentReports/ArchitectureMaturity/am021_persistent_resource_ownership.json", "Design/AgentReports/ArchitectureMaturity/am022_world_lifecycle_recovery_evidence.json"]
     },
     {
+      "id": "am018-static-irc-tactical-cinematic-obstruction-owned",
+      "decision": "resolved",
+      "reasonCode": "stateless-obstruction-query",
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "IRC",
+        "sourcePath": "Assets/Game/Scripts/Systems/TacticalFollowAttackCinematicCameraSystemHelper.cs"
+      },
+      "authority": ["Assets/Tests/Editor/TacticalFollowAttackCinematicHelperTests.cs"]
+    },
+    {
       "id": "am018-static-irc-debt",
       "decision": "genuine-debt",
       "reasonCode": "readonly-reference-mutability-unproven",
-      "expectedCount": 9,
+      "expectedCount": 8,
       "debtIdPrefix": "AM025-STATIC-IRC",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

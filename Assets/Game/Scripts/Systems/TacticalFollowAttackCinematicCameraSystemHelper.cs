@@ -9,9 +9,6 @@ namespace Game.Runtime
         private const float ObstructionProbeRadius = 0.55f;
         private const float CameraNearPadding = 0.85f;
         private const float TargetNearPadding = 2.25f;
-        private const int MaxObstructionHits = 8;
-
-        private static readonly RaycastHit[] ObstructionHits = new RaycastHit[MaxObstructionHits];
 
         public static TacticalFollowAttackCinematicHelper.Shot EvaluateShotWithObstructionFallback(
             TacticalFollowAttackCinematicPhase phase,
@@ -48,22 +45,14 @@ namespace Game.Runtime
 
             float3 direction = delta / distance;
             Vector3 origin = (Vector3)(shot.CameraPosition + direction * CameraNearPadding);
-            int hitCount = Physics.SphereCastNonAlloc(
+            return Physics.SphereCast(
                 origin,
                 ObstructionProbeRadius,
                 (Vector3)direction,
-                ObstructionHits,
+                out _,
                 probeDistance,
                 Physics.DefaultRaycastLayers,
                 QueryTriggerInteraction.Ignore);
-
-            for (int i = 0; i < hitCount; i++)
-            {
-                if (ObstructionHits[i].collider != null)
-                    return true;
-            }
-
-            return false;
         }
     }
 }

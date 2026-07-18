@@ -3,6 +3,7 @@ using Game.Runtime;
 
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System;
+using System.Reflection;
 using NUnit.Framework;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -42,6 +43,8 @@ public sealed class TacticalFollowAttackCinematicHelperTests
             RunCase(test => test.FallbackShots_ProvideDistinctSafeCandidates());
             passed++;
             RunCase(test => test.ObstructionFallback_UsesAlternateShotWhenPrimaryLineBlocked());
+            passed++;
+            RunCase(test => test.ObstructionFallback_DoesNotKeepSharedRaycastState());
             passed++;
             RunCase(test => test.BuildPose_UsesSnapDampingOnlyForPhaseEntry());
             passed++;
@@ -463,6 +466,20 @@ public sealed class TacticalFollowAttackCinematicHelperTests
         finally
         {
             UnityEngine.Object.DestroyImmediate(blocker);
+        }
+    }
+
+    [Test]
+    public void ObstructionFallback_DoesNotKeepSharedRaycastState()
+    {
+        FieldInfo[] fields = typeof(TacticalFollowAttackCinematicCameraSystemHelper).GetFields(
+            BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+
+        foreach (FieldInfo field in fields)
+        {
+            Assert.IsTrue(
+                field.IsLiteral,
+                $"Obstruction checks must not keep shared runtime state: {field.Name}");
         }
     }
 

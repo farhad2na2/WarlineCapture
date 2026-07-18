@@ -57,13 +57,15 @@ Allowed evidence/tool files:
 - bounded `Design/AgentReports/ArchitectureMaturity/Logs/am025_*.log.gz`
 - `Tools/CI/tests/test_architecture_phase2_exit_evidence.py`
 - `Tools/CI/tests/test_architecture_phase2_acceptance.py`
+- `Design/AgentReports/ArchitectureMaturity/am025_source_growth_validator_schema_amendment.json`
+- `Tools/CI/tests/test_architecture_source_responsibility_guardrail_evidence.py` only for the reviewed immutable validator-amendment binding required after a canonical validator schema correction
 - one narrow AM-025 evidence generator/runner under `Tools/CI/` if required
 - existing architecture evidence generators only for an explicitly reviewed AM-025 schema extension
 - AM-025 validation/evidence/Progress Snapshot records in this tracker
 
 Read-only dependencies: all canonical validators/tests, accepted AM-021 through AM-024 evidence, Phase 0/AM-018 inventories, source-growth authority, ownership registry, and Unity project sources/configuration.
 
-Production files are not allowlisted. Any failing production or protected owner must be resolved in its own reviewed package before recapture.
+Production files are not allowlisted. `Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs` is allowlisted only for the reviewed `genericLifecycleAnchorSymbols` schema/DTO/comparison correction that exposes current blockers; it may not change source ceilings or approve exceptions. Any failing production or protected owner must be resolved in its own reviewed package before recapture.
 
 Hard exclusions: operation-map/static-map, FirstLaunch, audio, UI visual-lock, gameplay implementation, scenes, prefabs, packages, `ProjectSettings`, release/device/thermal/cold-warm/sustained work, APK/build artifacts, and the unrelated Arabic font asset.
 

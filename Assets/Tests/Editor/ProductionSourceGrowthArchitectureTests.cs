@@ -890,6 +890,12 @@ public sealed class ProductionSourceGrowthArchitectureTests
             int currentLifecycleOccurrences = CountTotalOccurrences(
                 candidateContent,
                 contract.ReplacementOwnerBoundary.ManagedLifecycleSymbols);
+            int currentGenericLifecycleMatches = CountContainedSymbols(
+                candidateContent,
+                contract.ReplacementOwnerBoundary.GenericLifecycleAnchorSymbols);
+            int currentGenericLifecycleOccurrences = CountTotalOccurrences(
+                candidateContent,
+                contract.ReplacementOwnerBoundary.GenericLifecycleAnchorSymbols);
             int currentDomainOccurrences = CountOccurrences(
                 candidateContent,
                 contract.ReplacementOwnerBoundary.DomainSymbol);
@@ -897,12 +903,14 @@ public sealed class ProductionSourceGrowthArchitectureTests
                 candidateContent.Contains(contract.ReplacementOwnerBoundary.DomainSymbol, StringComparison.Ordinal) &&
                 currentLifecycleMatches >= contract.ReplacementOwnerBoundary.ManagedLifecycleMatchThreshold;
             bool currentGenericOwner =
-                currentLifecycleMatches >= contract.ReplacementOwnerBoundary.GenericLifecycleMatchThreshold;
+                currentGenericLifecycleMatches >= contract.ReplacementOwnerBoundary.GenericLifecycleMatchThreshold;
             if ((!currentDomainOwner && !currentGenericOwner) || allowedReplacementOwners.Contains(candidate.Path))
                 continue;
 
             int baselineLifecycleMatches = 0;
             int baselineLifecycleOccurrences = 0;
+            int baselineGenericLifecycleMatches = 0;
+            int baselineGenericLifecycleOccurrences = 0;
             int baselineDomainOccurrences = 0;
             bool baselineDomainOwner = false;
             bool baselineGenericOwner = false;
@@ -919,6 +927,12 @@ public sealed class ProductionSourceGrowthArchitectureTests
                 baselineLifecycleOccurrences = CountTotalOccurrences(
                     baselineContent,
                     contract.ReplacementOwnerBoundary.ManagedLifecycleSymbols);
+                baselineGenericLifecycleMatches = CountContainedSymbols(
+                    baselineContent,
+                    contract.ReplacementOwnerBoundary.GenericLifecycleAnchorSymbols);
+                baselineGenericLifecycleOccurrences = CountTotalOccurrences(
+                    baselineContent,
+                    contract.ReplacementOwnerBoundary.GenericLifecycleAnchorSymbols);
                 baselineDomainOccurrences = CountOccurrences(
                     baselineContent,
                     contract.ReplacementOwnerBoundary.DomainSymbol);
@@ -928,7 +942,7 @@ public sealed class ProductionSourceGrowthArchitectureTests
                         StringComparison.Ordinal) &&
                     baselineLifecycleMatches >= contract.ReplacementOwnerBoundary.ManagedLifecycleMatchThreshold;
                 baselineGenericOwner =
-                    baselineLifecycleMatches >= contract.ReplacementOwnerBoundary.GenericLifecycleMatchThreshold;
+                    baselineGenericLifecycleMatches >= contract.ReplacementOwnerBoundary.GenericLifecycleMatchThreshold;
             }
 
             bool grewDomainOwnership = currentDomainOwner &&
@@ -937,8 +951,8 @@ public sealed class ProductionSourceGrowthArchitectureTests
                  currentDomainOccurrences > baselineDomainOccurrences);
             bool grewGenericOwnership = currentGenericOwner &&
                 (!baselineGenericOwner ||
-                 currentLifecycleMatches > baselineLifecycleMatches ||
-                 currentLifecycleOccurrences > baselineLifecycleOccurrences ||
+                 currentGenericLifecycleMatches > baselineGenericLifecycleMatches ||
+                 currentGenericLifecycleOccurrences > baselineGenericLifecycleOccurrences ||
                  candidate.LineCount > baselineSource.LineCount ||
                  candidate.ByteCount > baselineSource.ByteCount);
             if (grewDomainOwnership || grewGenericOwnership)
@@ -947,6 +961,8 @@ public sealed class ProductionSourceGrowthArchitectureTests
                     $"replacement owner {candidate.Path} grew managed lifecycle ownership " +
                     $"(symbols {baselineLifecycleMatches}->{currentLifecycleMatches}, " +
                     $"occurrences {baselineLifecycleOccurrences}->{currentLifecycleOccurrences}, " +
+                    $"genericSymbols {baselineGenericLifecycleMatches}->{currentGenericLifecycleMatches}, " +
+                    $"genericOccurrences {baselineGenericLifecycleOccurrences}->{currentGenericLifecycleOccurrences}, " +
                     $"domain {baselineDomainOccurrences}->{currentDomainOccurrences}, " +
                     $"lines {baselineSource.LineCount}->{candidate.LineCount}, " +
                     $"bytes {baselineSource.ByteCount}->{candidate.ByteCount})");
@@ -1058,6 +1074,7 @@ public sealed class ProductionSourceGrowthArchitectureTests
             "managedLifecycleSymbols",
             "managedLifecycleMatchThreshold",
             "genericLifecycleMatchThreshold",
+            "genericLifecycleAnchorSymbols",
             "allowedOwnerPaths");
         JsonElement growthAuthorizations = root.GetProperty("growthAuthorizations");
         Require(
@@ -1236,6 +1253,19 @@ public sealed class ProductionSourceGrowthArchitectureTests
             },
             boundary.Root,
             "managedLifecycleSymbols");
+        RequireExactSequence(
+            boundary.GenericLifecycleAnchorSymbols,
+            new[]
+            {
+                "UnityAction",
+                "UIPopupMotionView",
+                "UIShellRegionId.PopupLayer",
+                "DestroyRegionObject",
+                "InstallRoot(",
+                "BindResourceExchangePopup"
+            },
+            boundary.Root,
+            "genericLifecycleAnchorSymbols");
         RequireExactSequence(
             boundary.AllowedOwnerPaths,
             Array.Empty<string>(),
@@ -2065,6 +2095,9 @@ public sealed class ProductionSourceGrowthArchitectureTests
 
         [JsonPropertyName("genericLifecycleMatchThreshold")]
         public int GenericLifecycleMatchThreshold { get; set; }
+
+        [JsonPropertyName("genericLifecycleAnchorSymbols")]
+        public List<string> GenericLifecycleAnchorSymbols { get; set; }
 
         [JsonPropertyName("allowedOwnerPaths")]
         public List<string> AllowedOwnerPaths { get; set; }

@@ -85,7 +85,8 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.BoardCommandResult_PreservesAcceptedTargetTransportEntity());
             RunCase(test => test.TransportFirstBoarding_PreservesSelectedTransportAfterSuccess());
             RunCase(test => test.AttackTargetLookup_CompletesSelectionMarkerTransformWriteBeforeRuntimeBuildingRead());
-            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=60");
+            RunCase(test => test.AttackTargetLookup_RebindsAfterWorldReplacement());
+            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=61");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -3285,6 +3286,53 @@ public sealed class RtsSelectionInputSystemTests
 
             Assert.IsTrue(hit);
             Assert.AreEqual(building, selectedTarget);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(cameraObject);
+        }
+    }
+
+    [Test]
+    public void AttackTargetLookup_RebindsAfterWorldReplacement()
+    {
+        EntityManager firstEntityManager = _testWorld.EntityManager;
+        CreateGridConfig(firstEntityManager);
+        Entity firstBuilding = CreateRuntimeBuildingCombatTarget(firstEntityManager);
+
+        GameObject cameraObject = new("RtsSelectionInputSystemTests_WorldReplacementCamera");
+        Camera camera = cameraObject.AddComponent<Camera>();
+        try
+        {
+            camera.orthographic = true;
+            camera.orthographicSize = 24f;
+            camera.pixelRect = new Rect(0f, 0f, 800f, 600f);
+            camera.transform.position = new Vector3(16f, 50f, 16f);
+            camera.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+            Vector3 screen = camera.WorldToScreenPoint(new Vector3(11.5f, 0f, 11.5f));
+            var pointerSystem = new RtsSelectionPointerTargetCommandCompositionSystemHelper();
+            var context = CreatePointerTargetContext(camera);
+
+            Assert.IsTrue(pointerSystem.TryGetClickedAttackTargetEntity(
+                context,
+                new Vector2(screen.x, screen.y),
+                firstEntityManager,
+                out Entity selectedFirstBuilding));
+            Assert.AreEqual(firstBuilding, selectedFirstBuilding);
+
+            using World replacementWorld = new("RtsSelectionInputSystemTests_WorldReplacement");
+            EntityManager replacementEntityManager = replacementWorld.EntityManager;
+            CreateGridConfig(replacementEntityManager);
+            replacementEntityManager.CreateEntity();
+            Entity replacementBuilding = CreateRuntimeBuildingCombatTarget(replacementEntityManager);
+
+            Assert.AreNotEqual(firstBuilding, replacementBuilding);
+            Assert.IsTrue(pointerSystem.TryGetClickedAttackTargetEntity(
+                context,
+                new Vector2(screen.x, screen.y),
+                replacementEntityManager,
+                out Entity selectedReplacementBuilding));
+            Assert.AreEqual(replacementBuilding, selectedReplacementBuilding);
         }
         finally
         {

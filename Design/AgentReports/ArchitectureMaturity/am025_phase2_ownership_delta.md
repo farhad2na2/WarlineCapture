@@ -8,15 +8,15 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 |---|---:|
 | Baseline rows | 863 |
 | Hazard rows | 352 |
-| Resolved | 1028 |
+| Resolved | 1029 |
 | Protected/deferred | 36 |
-| Open | 151 |
+| Open | 150 |
 | New after baseline | 26 |
 | Historical intake rows | 575 |
-| Reviewed non-debt rows | 424 |
-| Genuine-debt rows | 151 |
+| Reviewed non-debt rows | 425 |
+| Genuine-debt rows | 150 |
 | Unclassified rows | 0 |
-| Unique debt items | 75 |
+| Unique debt items | 74 |
 
 ## Open Rows
 
@@ -157,19 +157,18 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 | AM-007 | worlds | Assets/Game/Scripts/Systems/FocusedUnitUiReadModelUiSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-013 |
 | AM-007 | worlds | Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-014 |
 | AM-007 | worlds | Assets/Game/Scripts/Systems/MatchHudSquadTraySelectionUiSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-015 |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/MatchStartRequestStartupSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-016 |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/PerformanceDiagnosticsSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-017 |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/RtsSelectionInputStateCompositionSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-018 |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandCompositionSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-019 |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/RuntimeDiagnosticsSystem.cs | AM-007 policy.candidateSemantics | AM025-WORLD-020 |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs | AM-007 policy.candidateSemantics | AM025-WORLD-021 |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/SceneLifecycleSceneSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-022 |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectedUnitOrderSnapshotCompositionSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-023 |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionBuildingInteractionCompositionSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-024 |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-025 |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-026 |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-027 |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionRuntimeDiagnosticsSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-028 |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/TacticalFollowCameraModeSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-029 |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/UnitPathfindingPendingStateStore.cs | AM-007 policy.candidateSemantics | AM025-WORLD-030 |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/VisibleUnitSelectionCameraSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-031 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/PerformanceDiagnosticsSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-016 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/RtsSelectionInputStateCompositionSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-017 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandCompositionSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-018 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/RuntimeDiagnosticsSystem.cs | AM-007 policy.candidateSemantics | AM025-WORLD-019 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs | AM-007 policy.candidateSemantics | AM025-WORLD-020 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/SceneLifecycleSceneSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-021 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectedUnitOrderSnapshotCompositionSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-022 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionBuildingInteractionCompositionSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-023 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-024 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-025 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-026 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionRuntimeDiagnosticsSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-027 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/TacticalFollowCameraModeSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-028 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/UnitPathfindingPendingStateStore.cs | AM-007 policy.candidateSemantics | AM025-WORLD-029 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/VisibleUnitSelectionCameraSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-030 |

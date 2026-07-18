@@ -11,13 +11,13 @@ Bounded read-only audits reviewed the AM-025 intake as:
 | Measure | Count |
 |---|---:|
 | Historical intake rows | 575 |
-| Reviewed non-debt rows | 424 |
-| Remaining genuine-debt rows | 151 |
-| Remaining unique debt items | 75 |
+| Reviewed non-debt rows | 425 |
+| Remaining genuine-debt rows | 150 |
+| Remaining unique debt items | 74 |
 | Projected unclassified rows | 0 |
 | Source-growth blockers | 5 |
 
-The row-bound evidence now records `424` non-debt rows and `151` remaining genuine-debt rows, grouped into `75` unique file/rule remediation items. It remains non-accepting because every genuine-debt item must be closed before Phase 2 can pass.
+The row-bound evidence now records `425` non-debt rows and `150` remaining genuine-debt rows, grouped into `74` unique file/rule remediation items. It remains non-accepting because every genuine-debt item must be closed before Phase 2 can pass.
 
 ## 2. Required Row Authority
 
@@ -52,7 +52,7 @@ Production remediation is serialized after row-bound evidence and occurs in sepa
 | World lookup, hidden singleton, and runtime discovery | 12 hazard rows plus overlapping World-owner candidates | Architecture may change unprotected composition/runtime paths; audio and operation-map rows require owner handoff. |
 | Mutable static state and caches | 100 hazard rows plus overlapping lifecycle candidates | Split immutable tables, tested subsystem-reset state, World-owned state, UI presentation caches, debug-only state, and genuine gameplay authority before edits. |
 | Pools and lifecycle caches | 8 lifecycle rows | Add exact teardown/test authority or repair disposal; do not infer closure from a method name. |
-| World-owner candidates | 33 lifecycle rows after exact boundary/protected classifications | Reconcile overlaps with the hazard lane and avoid double-counting one production defect as multiple remediation items. |
+| World-owner candidates | 30 lifecycle rows after exact boundary/protected classifications | Reconcile overlaps with the hazard lane and avoid double-counting one production defect as multiple remediation items. |
 | Source growth | 5 helper paths | Four FirstLaunch paths and one operation-map path remain owner-controlled; shrink, consolidate, or publish superseding exact authority. |
 
 Row count and unique debt-item count are reported separately because multiple lexical rows can map to one production fix.
@@ -64,6 +64,7 @@ Completed remediation:
 - `AM025-WORLD-009`: the building command cache was cleared as non-debt after focused validation proved World rebinding, destroyed-entity recovery, buffer repair, and zero warm repeated-read allocation.
 - `AM025-STATIC-IRC-001`: tactical attack-camera obstruction checks no longer keep a process-wide hit buffer. Focused validation proves the fallback shot still avoids blocked views and the helper retains no shared runtime state.
 - `AM025-STATIC-MSL-009`: the 13 gameplay-update switches are bounded Editor performance-test state, not shipping gameplay authority. Focused validation proves only Editor code can change them and the capture resets every switch before setup and during completion.
+- `AM025-WORLD-016`: the match-start request cache was cleared as non-debt after focused validation reused one helper across two disposed and recreated Worlds, proving each World receives its own independent request boundary.
 
 ## 5. Scope Safety
 

@@ -13,35 +13,11 @@ namespace Game.Editor
         {
             try
             {
-                using World world = new("MatchStartRequestValidationRunner");
-                EntityManager em = world.EntityManager;
                 var system = new MatchStartRequestStartupSystemHelper();
+                ValidateWorld(system, "FirstWorld");
+                ValidateWorld(system, "SecondWorld");
 
-                Require(system.QueueStartAfterMatchLoaded(em), "Initial match start request was not queued.");
-
-                using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<MatchStartStateComponent>());
-                Require(query.CalculateEntityCount() == 1, "Expected one match start boundary entity.");
-
-                Entity boundary = query.GetSingletonEntity();
-                Require(em.HasComponent<MatchStartQueueComponent>(boundary), "Boundary is missing queue component.");
-                Require(em.HasBuffer<MatchStartRequestElement>(boundary), "Boundary is missing request buffer.");
-                Require(em.HasBuffer<MatchStartResultElement>(boundary), "Boundary is missing result buffer.");
-                Require(em.HasComponent<MatchStartProgressComponent>(boundary), "Boundary is missing progress component.");
-
-                MatchStartQueueComponent queue = em.GetComponentData<MatchStartQueueComponent>(boundary);
-                DynamicBuffer<MatchStartRequestElement> requests = em.GetBuffer<MatchStartRequestElement>(boundary);
-                Require(queue.LastRequestId == 1, "Initial request id was not recorded.");
-                Require(requests.Length == 1, "Initial request buffer length was not one.");
-                Require(requests[0].RequestId == 1, "Initial request id does not match queue id.");
-                Require(requests[0].RequireMatchLoaded == 1, "Initial request did not require match loaded.");
-
-                Require(system.QueueStartAfterMatchLoaded(em), "Idempotent match start request returned false.");
-                queue = em.GetComponentData<MatchStartQueueComponent>(boundary);
-                requests = em.GetBuffer<MatchStartRequestElement>(boundary);
-                Require(queue.LastRequestId == 1, "Idempotent request unexpectedly advanced request id.");
-                Require(requests.Length == 1, "Idempotent request unexpectedly appended another request.");
-
-                Debug.Log("[MatchStartRequestValidation] result=Passed tests=1");
+                Debug.Log("[MatchStartRequestValidation] result=Passed tests=2");
                 Exit(0);
             }
             catch (Exception ex)
@@ -50,6 +26,36 @@ namespace Game.Editor
                 Debug.LogError("[MatchStartRequestValidation] result=Failed");
                 Exit(1);
             }
+        }
+
+        private static void ValidateWorld(MatchStartRequestStartupSystemHelper system, string worldName)
+        {
+            using World world = new($"MatchStartRequestValidationRunner-{worldName}");
+            EntityManager em = world.EntityManager;
+
+            Require(system.QueueStartAfterMatchLoaded(em), $"{worldName}: initial match start request was not queued.");
+
+            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<MatchStartStateComponent>());
+            Require(query.CalculateEntityCount() == 1, $"{worldName}: expected one match start boundary entity.");
+
+            Entity boundary = query.GetSingletonEntity();
+            Require(em.HasComponent<MatchStartQueueComponent>(boundary), $"{worldName}: boundary is missing queue component.");
+            Require(em.HasBuffer<MatchStartRequestElement>(boundary), $"{worldName}: boundary is missing request buffer.");
+            Require(em.HasBuffer<MatchStartResultElement>(boundary), $"{worldName}: boundary is missing result buffer.");
+            Require(em.HasComponent<MatchStartProgressComponent>(boundary), $"{worldName}: boundary is missing progress component.");
+
+            MatchStartQueueComponent queue = em.GetComponentData<MatchStartQueueComponent>(boundary);
+            DynamicBuffer<MatchStartRequestElement> requests = em.GetBuffer<MatchStartRequestElement>(boundary);
+            Require(queue.LastRequestId == 1, $"{worldName}: initial request id was not recorded.");
+            Require(requests.Length == 1, $"{worldName}: initial request buffer length was not one.");
+            Require(requests[0].RequestId == 1, $"{worldName}: initial request id does not match queue id.");
+            Require(requests[0].RequireMatchLoaded == 1, $"{worldName}: initial request did not require match loaded.");
+
+            Require(system.QueueStartAfterMatchLoaded(em), $"{worldName}: idempotent match start request returned false.");
+            queue = em.GetComponentData<MatchStartQueueComponent>(boundary);
+            requests = em.GetBuffer<MatchStartRequestElement>(boundary);
+            Require(queue.LastRequestId == 1, $"{worldName}: idempotent request unexpectedly advanced request id.");
+            Require(requests.Length == 1, $"{worldName}: idempotent request unexpectedly appended another request.");
         }
 
         private static void Require(bool condition, string message)

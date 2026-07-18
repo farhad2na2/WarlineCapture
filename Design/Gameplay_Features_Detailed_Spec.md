@@ -639,7 +639,7 @@ Current implementation note:
 Current progression implementation note:
 
 - `ProgressionService` provides the first fixed commander XP table from level 1-10, derives commander level from total XP, preserves a higher saved level if present, and accumulates account result stats from `MissionResultData`.
-- `RewardTrackService` provides the first fixed commander-level reward track, including milestone eligibility, persisted claimed-node ids, duplicate/locked claim protection, and grants for credits, materials, rush tickets, command authority, and cosmetics.
+- `RewardTrackService` provides the first fixed commander-level reward track, including milestone eligibility, persisted claimed-node ids, duplicate/locked claim protection, and grants for Credits, Rush Tickets, Command, and cosmetics. It never grants match Materials, Fuel, or Oil to the account.
 - `MissionHistoryService` archives recent local mission results into saved profile data, ordered newest-first and capped for a lightweight Profile History surface.
 - `CommanderProfileScreenController` binds saved profile state into `SCN-03 Commander Profile`, including wallet counters, commander level/XP progress, unlock counts, win/loss history, account combat totals, saved recent mission report data, reward-track eligibility, claimable reward-track row buttons with modal detail/claim feedback, local tab content, and a first-claim CTA.
 

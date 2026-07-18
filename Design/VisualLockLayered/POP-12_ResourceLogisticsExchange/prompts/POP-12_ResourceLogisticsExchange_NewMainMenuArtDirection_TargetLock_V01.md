@@ -39,6 +39,6 @@ Text to render clearly: RESOURCE EXCHANGE, EXPORT, IMPORT, EXPORT OIL, EXPORT MA
 
 Layering constraints for future extraction: no text baked into reusable frames; no icons baked into panel/card backgrounds; no progress fills baked into queue row backgrounds; no lock/check/warning badges baked into card frames; button icons, resource icons, progress bars, and badges should be visually separable.
 
-Composition/framing: all popup corners fully visible, no clipped cards, no stretched borders, no touching card frames, no tiny unreadable text, no random placeholder labels, no extra currencies beyond Credits, Materials, Oil, Fuel, and Rush Tickets.
+Composition/framing: all popup corners fully visible, no clipped cards, no stretched borders, no touching card frames, no tiny unreadable text, no random placeholder labels, and no resources beyond match Materials, Oil, Fuel, plus an optional Rush Ticket inventory count. Do not show Credits or Command in this in-match popup.
 
 Avoid: old green/blue UI direction, flat web dashboard styling, store/shop language, fantasy coins for every resource, transparent background, green-screen background, layer sheet, watermark, screenshot crop, illegible pseudo text, duplicate close buttons, baked progress or icons in background art.

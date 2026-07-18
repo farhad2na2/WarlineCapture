@@ -52,7 +52,7 @@ The generated pack contains separate source groups for battlefield art, HUD fram
 The target asks for a AAA mobile RTS match HUD with:
 
 - active 3D battlefield background with no isometric or two-map split
-- top resource/status strip with Credits, Fuel, Supply, Civilian Risk, pause, and settings
+- top match resource/status strip with Materials, Fuel, Oil, Civilian Risk status, pause, and settings. Do not show persistent Credits or Command in the match HUD.
 - objective panel for capture/clear/protect goals
 - selected squad panel with role, health, ability chips, and rule feedback
 - bottom squad tray using four quick-select roster cards. Current implementation ids are `Squad_Rifle`, `Squad_APC`, `Squad_Tank`, and `Squad_Helicopter`; these are active controllable group slots, not command buttons. M01 enables only Rifle Squad and keeps the other visible cards disabled/neutral if the layout shows them.

@@ -72,7 +72,7 @@ All player-facing unit, building, ability, and support upgrades use four tiers:
 | 3 | Advanced Upgrade | Mid-progression role reinforcement. |
 | 4 | Elite Upgrade | Late-progression specialization with higher cost and stronger identity. |
 
-Upgrade currencies are `Credits`, `Materials`, and item-specific `BlueprintParts`. Store bundles may grant resources or parts, but upgrade application always happens through the upgrade/progression system. Store purchases never upgrade an item directly inside active combat.
+Permanent upgrades use persistent `Credits` and item-specific `BlueprintParts`. Match Materials never fund account upgrades. Store bundles may grant Credits or parts, but upgrade application always happens through the upgrade/progression system. Store purchases never upgrade an item directly inside active combat.
 
 ## Unit Families
 

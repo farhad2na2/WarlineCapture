@@ -34,7 +34,7 @@ Previous monetization-adjacent VisualLock references were archived under `Design
 | `Images/StarterPack_Recon_CommandCard.png` | Starter pack visual for Recon Starter Pack. |
 | `Images/StarterPack_BaseBuilder_CommandCard.png` | Starter pack visual for Base Builder Pack. |
 | `Images/StarterPack_OperationFounder_CommandCard.png` | Starter pack visual for Operation Founder Pack. |
-| `Images/ShopItem_CommandAuthority_Icon.png` | Command Authority resource item icon. |
+| `Images/ShopItem_CommandAuthority_Icon.png` | Command resource item icon; filename remains a legacy compatibility name. |
 | `Images/ShopItem_IntelDossier_Icon.png` | Operation intel item icon. |
 | `Images/ShopItem_AidConvoy_Icon.png` | Operation supply item icon. |
 | `Images/ShopItem_NightOpsCards_Icon.png` | Cosmetic squad card item icon. |
@@ -79,11 +79,11 @@ Scene/backdrop: Dark command-base exchange interface inside a mobile military RT
 
 UI layout:
 - Full-screen futuristic military HUD frame.
-- Top header bar: back arrow, title "COMMAND EXCHANGE", resource counters for Credits, Supplies, Command, small restore icon button.
+- Top header bar: back arrow, title "COMMAND EXCHANGE", persistent resource counters for Credits and Command, small restore icon button.
 - Left vertical category rail with "FEATURED" selected in olive/gold, then "STARTER PACKS", "RESOURCES", "ARMORY", "COSMETICS", "OPERATIONS".
 - Large featured offer card with "RECON STARTER PACK", tactical supply case art, listed rewards, timer "72H", and primary gold purchase button "$4.99".
 - Starter pack row with three cards: Recon Starter Pack, Base Builder Pack, Operation Founder Pack.
-- Item grid with compact cards: Command Authority, Intel Dossier, Aid Convoy, Night Ops Cards.
+- Item grid with compact cards: Command, Intel Dossier item, Aid Convoy, Night Ops Cards.
 - Bottom legal/status line for restore purchases and transparent contents.
 
 Style requirements:

@@ -8,7 +8,7 @@ Primary request: Create a polished landscape game UI target-lock mockup for the 
 
 Scene/backdrop: top-down command table map with vehicles, crates, compass, binoculars, warm daylight, slightly darkened behind panels.
 
-Layout: 16:9 full screen. Persistent top header same style as main menu: left Warline Capture logo lockup, right resource strip with credits, fuel, supply, civilian risk, mail/settings/menu icons. Main content below header.
+Layout: 16:9 full screen. Persistent top header same style as main menu: left Warline Capture logo lockup, right resource strip with Credits and Command only, then mail/settings/menu icons. Do not show match Materials, Fuel, Oil, Supply, or Civilian Risk in this account header. Main content below header.
 
 Left area: vertical navigation tabs with large readable labels: OVERVIEW selected, STATS, BADGES, HISTORY, UPGRADES, plus a BACK button near the top. Middle area: large commander portrait panel and identity card with FIELD COMMANDER, COL. ALEX MORGAN, VICTORY IS PLANNED, LEVEL 38. Below it: overview stats cards for VICTORIES, MISSIONS, CIVILIANS, UNITS LOST and an account snapshot panel with readiness/operations/skirmish rows. Right area: commander reward track with XP progress and level nodes, plus recent history panel. Bottom footer: clean action buttons OPEN ARMORY, DETAIL, REPLAY.
 

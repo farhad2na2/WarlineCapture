@@ -26,7 +26,7 @@ The game combines:
 - Unit production: infantry, contractors, civilians, APCs, tanks, missile launchers, drones, helicopters, jets, and transport aircraft.
 - Tactical combat: units can move on a grid, auto-engage, receive commanded attack orders, breach base walls/gates, and fight buildings or units.
 - Logistics and transport: APCs and transport helicopters can carry soldiers; helicopters can land for pickup and rope-drop passengers; transport planes support runway-based delivery.
-- Economy: AI factions own money, oil, and fuel, sell stored resources, and spend money on buildings and units.
+- Economy: factions own match Materials, Oil, and Fuel. Oil feeds Materials fabrication or Fuel refining; construction/production spends Materials and mobility spends authored Fuel. Legacy AI Money fields are migration debt, not target player-facing economy.
 - AI control: AI builds, produces, forms squads, selects targets, issues attack orders, and can be adjusted through difficulty and behavior settings.
 - Threat warning: radar/satellite systems detect approaching ground or air threats and trigger tactical warnings.
 
@@ -180,7 +180,7 @@ Player Auto AI config:
 Runtime AI dropdowns:
 
 - Difficulty: Easy, Normal, Hard, Brutal
-- Starting Credits (tactical Money): Low, Normal, High
+- Starting Materials: Low, Normal, High (currently backed by a legacy tactical Money setting until runtime migration)
 - Income Multiplier: 0.75x, 1x, 1.25x, 1.5x, 2x
 - Build Speed: Slow, Normal, Fast
 - Unit Production Speed: Slow, Normal, Fast
@@ -200,7 +200,7 @@ Implemented difficulty math for enemy AI:
 | Normal | baseline |
 | Hard | money x1.25, income x1.2, intervals x0.85, larger squads, more active squads |
 | Brutal | money x1.6, income x1.5, intervals x0.65, much larger squads, more active squads |
-| Starting Credits Low/High | additional x0.75 or x1.5 tactical Money multiplier |
+| Starting Materials Low/High | additional x0.75 or x1.5 starting Materials multiplier after migration; legacy runtime currently applies this to tactical Money |
 | Speed Slow/Fast | build/production intervals x1.35 or x0.7 |
 | Expansion Off | disables enemy building expansion |
 | Expansion Slow/Fast | build interval x1.4 or x0.75 |

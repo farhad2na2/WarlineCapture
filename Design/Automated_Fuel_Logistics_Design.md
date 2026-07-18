@@ -77,7 +77,6 @@ Rules:
 | Refinery output Fuel | Fuel produced by conversion but not yet delivered to storage. | No | Refinery output buffer. |
 | Fuel in transit | Fuel carried by `Unit_Veh_Truck_Tanker`. | No | Tanker cargo component. |
 | Stored usable Fuel | Fuel delivered to `Building_Fuel_Bladder`, base fuel storage, or equivalent faction storage. | Yes | Faction fuel storage summary. |
-| Account Fuel | Persistent reward/resource outside a tactical match. | Not the match header unless explicitly mapped. | Economy/reward systems. |
 
 Important rule: Fuel becomes the shared match header pool only when it is delivered into faction fuel storage. Refineries produce Fuel, but their output is a local buffer until a tanker moves it to storage. This keeps Fuel Bladders meaningful and keeps logistics trucks tactically relevant.
 
@@ -229,5 +228,5 @@ No new manager/controller/facade pattern should be introduced for this feature. 
 
 - Should Fuel Bladder range matter in the first implementation, or only capacity? Recommendation: capacity first, operational radius later.
 - Should active ground vehicles consume Fuel continuously, per grid segment, or per accepted command? Recommendation: aggregate per movement tick by vehicle class, with stable fixed-point counters.
-- Should tactical match Fuel ever bank into account Fuel at match end? Recommendation: only through authored reward configs, not automatic leftover banking.
+- Match Fuel never banks into an account resource. Remaining Fuel is discarded at match end; authored mission rewards use Credits, Command, XP, unlocks, or inventory items.
 - Should enemy factions use the same automated logistics rules in the first slice? Recommendation: support the data model for all factions, but validate player-faction behavior first.

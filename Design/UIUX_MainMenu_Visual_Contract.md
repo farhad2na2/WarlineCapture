@@ -41,8 +41,9 @@ On the first post-M01 reveal, `Continue Campaign` and M02 are dominant. Commande
 
 - `WARLINE CAPTURE`
 - `Credits`
-- `Supplies`
 - `Command`
+
+The previous third `Supplies` chip is retired. The header must not display Materials, Fuel, Oil, Supply, or any match-scoped balance. Existing three-chip target art may reuse the freed width for spacing/profile status or leave the third slot absent; it must not invent another currency.
 - `Campaign`
 - `Operations`
 - `Skirmish`

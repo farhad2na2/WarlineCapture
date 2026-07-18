@@ -18,14 +18,14 @@ Oil Pump -> tray truck -> Oil Refinery -> Fuel -> vehicle and aircraft mobility
 
 Oil is therefore not only a fuel precursor. It is the shared industrial input that forces a meaningful decision between mobility and battlefield expansion.
 
-The Resource Exchange remains available in enabled matches, but importing Materials must be a slow and expensive recovery option. Building and supplying local fabrication is the normal, efficient strategy.
+The Resource Exchange remains available in enabled matches, but exchanging another match resource for Materials must be a slow, lossy recovery option. Building and supplying local fabrication is the normal, efficient strategy.
 
 ## Related Source Documents
 
 - `Economy_Reward_Design.md` owns canonical resource names, lifecycle rules, account/tactical boundaries, rewards, sinks, and conversion guardrails.
 - `Field_Logistics_Oil_Fuel_Design.md` owns Oil extraction, physical Oil storage, tray-truck delivery, refinery conversion, Fuel storage, and vehicle Fuel use.
 - `Automated_Fuel_Logistics_Design.md` owns autonomous hauler assignment, reservations, route stability, and usable Fuel rules.
-- `Resource_Logistics_Exchange_Design.md` owns timed import/export jobs. Its Materials import route is emergency recovery and must remain less efficient than local fabrication.
+- `Resource_Logistics_Exchange_Design.md` owns timed match-resource redistribution jobs. Its Materials recovery routes are emergency options and must remain less efficient than local fabrication.
 - `GAME_DESIGN_REFERENCE.md` owns the current building catalog and compatibility identifiers.
 - `Combat_Catalog_And_Upgrade_Design.md` owns building unlock and upgrade-track identities.
 - `Match_HUD_And_Gameplay_Implementation_Spec.md` owns Match HUD resource presentation and Build Drawer behavior.
@@ -57,7 +57,7 @@ The player operates a field industrial chain under pressure:
 1. Secure or build Oil production.
 2. Protect tray trucks and connected routes.
 3. Decide whether delivered Oil should become Fuel or Materials.
-4. Build and supply a Field Fabrication Depot to reduce dependence on expensive imports.
+4. Build and supply a Field Fabrication Depot to reduce dependence on expensive emergency exchange.
 5. Spend Materials on structures, repairs, and infrastructure that change the battle.
 6. Use the Exchange only when local production is unavailable, destroyed, or too slow for an emergency.
 
@@ -71,7 +71,7 @@ Oil feeds both Fuel and Materials production. The player cannot maximize mobilit
 
 ### Local Production Is Best
 
-Steady local fabrication must have the best effective Materials cost. Exchange import adds a markup, queue delay, and availability constraints. It prevents deadlocks but does not replace infrastructure.
+Steady local fabrication must have the best effective Materials rate. Any authored match-resource exchange adds conversion loss, queue delay, and availability constraints. It prevents deadlocks but does not replace infrastructure.
 
 ### Physical Input, Faction-Level Output
 
@@ -91,31 +91,31 @@ The feature extends the current ECS resource, building, logistics, UI-shell, and
 
 There must be exactly one authoritative tactical Materials value per faction.
 
-- Building placement, repair, fabrication output, rewards granted into the match, HUD display, AI affordability, and Resource Exchange import/export all read or mutate the same ECS-owned value.
+- Building placement, repair, fabrication output, scenario grants, HUD display, AI affordability, and Resource Exchange all read or mutate the same ECS-owned value.
 - The current Exchange-specific wallet must not remain a second authoritative Materials store.
 - Migration must not use steady-state dual writes or periodic reconciliation.
-- Persistent profile Materials and active-match tactical Materials remain distinct lifetimes. Scenario startup explicitly seeds the tactical value from authored match rules or an approved profile projection.
+- Materials exist only inside the active match. Scenario startup seeds the value from authored match or Skirmish rules.
 
 V1 lifetime policy is locked as follows:
 
-- `PlayerProfileSaveData.materials` is persistent account/progression state. Active-match simulation does not read or mutate it directly.
-- `FactionTacticalMaterialsComponent` is match-scoped. Scenario startup seeds it from authored match rules; V1 does not automatically withdraw profile Materials.
-- Unspent tactical Materials are discarded when the match ends. Mission rewards grant persistent profile Materials through the existing typed reward/save path, not by copying the remaining tactical balance.
-- A future mode may opt into profile-funded deployment only through an explicit launch reservation/result and match-settlement transaction. It must define withdrawal, cancellation refund, victory/defeat settlement, overflow, and duplicate-result behavior before implementation.
+- `PlayerProfileSaveData.materials` is a deprecated persistence field and must not be presented or used as an account currency. Save migration may retain it only until a reviewed conversion/removal path is implemented.
+- `FactionTacticalMaterialsComponent` is match-scoped and authoritative. Scenario startup seeds it from authored match rules.
+- Unspent Materials are discarded when the match ends. Mission results never bank or reward Materials.
+- Profile-funded Materials deployment is not allowed. Starting Materials are always authored scenario/Skirmish configuration.
 - `PlayerProfileSaveData.rushTickets` is the persistent Rush Ticket owner. A Rush-enabled match receives an explicit scenario-approved tactical allowance projected once into the Exchange boundary. Rush spending never writes the profile during simulation; an approved future persistent-spend flow must reserve tickets before launch and settle exactly once after the match.
-- Tactical Materials and Rush Ticket telemetry may update match results, but telemetry counters are not currency settlement and cannot mutate profile balances.
+- Materials and Rush Ticket telemetry may update match results, but telemetry counters are not currency settlement and cannot mutate profile balances.
 
 Oil and Fuel continue to use their existing physical building storage and faction summary contracts. The fabrication feature must not mirror Oil or Fuel into a new wallet.
 
-Tactical Credits must likewise converge on the ECS faction economy. The current managed player-dollar field, AI `FactionEconomy.Money`, and Exchange Credits field are implementation debt, not three valid economies. The implementation tracker requires a single authoritative Credits mutation path before Credits + Materials construction ships.
+Tactical Credits/Money are removed from the target player-facing economy. The current managed player-dollar field, AI `FactionEconomy.Money`, build prices, and Exchange Credits field are migration debt. Match costs must converge on Materials and, where mobility is involved, Fuel; persistent Credits are account-only.
 
 ### Materials Capacity
 
 Tactical Materials have an authored faction capacity.
 
 - Fabrication stops before overflow.
-- Exchange import validates capacity before accepting or completing a job.
-- Mission rewards follow their authored overflow policy.
+- Exchange output validates capacity before accepting or completing a job.
+- Scenario grants follow their authored overflow policy.
 - Capacity can later be increased by upgrades or logistics structures, but V1 may use a scenario-configured fixed capacity.
 
 ## Core Runtime Loop
@@ -169,7 +169,7 @@ Materials need visible tactical uses when local production launches.
 
 ### V1 Required Sink
 
-Player-built battlefield structures require both Credits and Materials. Each build definition receives an authored Materials cost in addition to its current Credits price.
+Player-built battlefield structures require Materials. Existing tactical Credits prices are deprecated and must migrate to authored Materials costs.
 
 - Map-authored structures do not retroactively spend resources.
 - A placement request is accepted only when both costs are affordable.
@@ -189,7 +189,7 @@ Materials should not automatically become a cost on every infantry or vehicle un
 
 ## Exchange Relationship
 
-The `Credits -> Materials` Exchange route is an emergency recovery route, not the core source.
+An authored lossy conversion from surplus match Oil or Fuel into Materials may be used as an emergency recovery route, but it is not the core source.
 
 It is appropriate when:
 
@@ -208,25 +208,25 @@ It must be worse than local fabrication through all of the following:
 
 Balance guardrail:
 
-- The effective Credit cost of imported Materials should start at least 1.5x to 2.0x the modeled local opportunity cost.
+- The effective Oil/Fuel cost of exchanged Materials should start at least 1.5x to 2.0x the modeled local opportunity cost.
 - Local opportunity cost includes the value of consumed Oil, conversion time, depot investment, and logistics risk.
 - Exact values are config-driven and must be validated by the balance harness.
-- `Materials -> Credits -> Materials` and `Oil -> Materials -> Credits` loops must never produce profit. A complete round trip should retain no more than 85% of input value before time costs.
+- `Oil -> Materials -> Oil` and `Fuel -> Materials -> Fuel` loops must never produce profit. A complete round trip should retain no more than 85% of input value before time costs.
 
-Exchange import remains valuable because it restores agency. It should feel expensive, not punitive or useless.
+Emergency exchange remains valuable because it restores agency. It should feel expensive, not punitive or useless.
 
 ## Pacing And Balance Targets
 
 Initial tuning targets, subject to simulation and playtest:
 
 - One continuously supplied standard depot should produce enough Materials for one medium defensive structure every 2 to 3 minutes.
-- A player who invests in Oil extraction and protects logistics should sustain construction more cheaply than a player who repeatedly imports.
+- A player who invests in Oil extraction and protects logistics should sustain construction more cheaply than a player who repeatedly uses emergency exchange.
 - A player should not be able to run unrestricted aircraft, vehicle movement, and rapid construction from one low-output Oil source.
 - The starting Materials reserve should teach at least one construction action before scarcity becomes relevant.
 - Material-enabled scenarios should seed a depot or guarantee an attainable recovery route.
 - Destroying a depot or its Oil route should cause a meaningful temporary slowdown, not an unrecoverable loss.
 
-The final Oil input, Materials output, cycle duration, capacity, build costs, and import markup are authored data. Runtime systems must not hard-code balance values.
+The final Oil input, Materials output, cycle duration, capacity, build costs, and exchange loss are authored data. Runtime systems must not hard-code balance values.
 
 ## Building States And Player Feedback
 
@@ -264,7 +264,7 @@ Show:
 
 ### Build Drawer
 
-Show Credits and Materials costs together. A disabled build command exposes the exact missing resource without replacing the current HUD language.
+Show Materials cost, plus Fuel only for an authored mobility-dependent action. A disabled build command exposes the exact missing resource.
 
 ## AI Design
 
@@ -276,7 +276,7 @@ AI should:
 - reserve enough Materials for planned construction;
 - choose between refinery and fabrication capacity based on Fuel pressure and build plans;
 - protect or target Oil routes and fabrication infrastructure;
-- use Exchange import only when the scenario enables it and local recovery is too slow;
+- use Resource Exchange only when the scenario enables it and local recovery is too slow;
 - avoid repeatedly switching Oil destinations because of small score changes.
 
 AI must consume the same canonical resource components and authored costs as the player. It must not use hidden Materials or bypass conversion unless a scenario explicitly defines a handicap.
@@ -288,7 +288,7 @@ A Materials-enabled scenario must provide at least one valid recovery path:
 - starting tactical Materials;
 - a seeded Field Fabrication Depot and reachable Oil source;
 - the ability to build/rebuild the chain from available resources; or
-- an enabled expensive Exchange import route.
+- an enabled expensive Materials exchange route.
 
 Validation rejects a scenario where all required construction can deadlock permanently after an expected loss.
 
@@ -330,12 +330,12 @@ Track per faction and scenario:
 - Oil delivered to refineries;
 - Oil delivered to fabrication depots;
 - Fuel produced and spent;
-- Materials fabricated, imported, rewarded, exported, and spent;
+- Materials fabricated, scenario-granted, exchanged, and spent;
 - depot active time and blocked time by reason;
 - build requests rejected for insufficient Materials;
 - tray route assignments, reassignments, and failures;
 - depot and logistics losses;
-- Exchange import frequency and effective markup.
+- Materials exchange frequency and effective loss.
 
 The data should answer whether local production is desirable, whether Oil creates a real tradeoff, and whether the Exchange is recovery rather than the optimal economy.
 
@@ -347,9 +347,9 @@ Included:
 - physical Oil input delivered by existing tray trucks;
 - Oil-to-Materials conversion;
 - one canonical tactical Materials inventory;
-- Credits + Materials building costs;
+- Materials-based building costs;
 - live HUD, Build Drawer, and selected-depot state;
-- expensive timed Materials import fallback;
+- expensive timed Materials exchange fallback;
 - deterministic routing and reservations;
 - tests, balance telemetry, architecture gates, and performance evidence.
 
@@ -359,7 +359,7 @@ Deferred:
 - detailed player allocation sliders;
 - multiple fabrication recipes;
 - ammunition as a separate resource;
-- account-wide passive Materials production;
+- any account-wide Materials balance or production (removed from the economy, not deferred);
 - depot interior/art replacement;
 - broad upgrade-tree expansion.
 
@@ -368,9 +368,9 @@ Deferred:
 - The player can identify why the Field Fabrication Depot exists and what it consumes and produces.
 - A tray truck can supply either a refinery or a depot without oscillation or broken reservations.
 - A supplied depot converts Oil into the one canonical tactical Materials value.
-- Building placement spends Credits and Materials exactly once and shows typed affordability feedback.
+- Building placement spends Materials exactly once and shows typed affordability feedback.
 - The Match header shows live Materials rather than a placeholder Supply number.
-- Local fabrication is measurably cheaper than Exchange import.
+- Local fabrication is measurably cheaper than Materials exchange.
 - No conversion or exchange loop creates profitable arbitrage.
 - A valid scenario cannot permanently deadlock the player without an authored recovery path.
 - AI and player use the same resource ownership and cost data.

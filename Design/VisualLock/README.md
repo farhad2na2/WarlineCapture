@@ -10,7 +10,7 @@ Rules:
 
 - New targets must be mobile landscape and built for the command-base / 3D operation-map direction.
 - Gameplay-facing images must show actual 3D operation-map context, runtime-style units/buildings, metadata-backed minimap/planning content, or config-backed roster content.
-- Player-facing text must use Campaign, Operations, Skirmish, Campaign stars, Credits, Supplies, and Command unless a specific doc says otherwise.
+- Player-facing persistent economy text uses Credits and Command. Match economy text uses Materials, Fuel, and Oil. Campaign stars remain progression, not currency.
 - Do not add old 2D/isometric, strategic/tactical split, or legacy Saga/Quick Custom visual targets here.
 
 Legacy visual targets were moved to:

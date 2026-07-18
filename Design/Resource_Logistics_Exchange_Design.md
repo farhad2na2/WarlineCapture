@@ -5,7 +5,7 @@ Status: Design source of truth
 
 ## Purpose
 
-This document defines the timed in-match resource exchange system proposed for WarlineCapture. The feature lets the player export surplus tactical resources for Credits or import tactical resources by spending Credits, while presenting the transaction as a military logistics operation: trucks, storage, transport plane arrival/departure, queue progress, and final wallet updates.
+This document defines the timed in-match resource exchange system proposed for WarlineCapture. The feature lets the player redistribute surplus match Materials, Fuel, and Oil through lossy authored conversions while presenting the transaction as a military logistics operation: trucks, storage, transport plane arrival/departure, queue progress, and final resource updates. It never reads or mutates persistent Credits or Command.
 
 The system should feel like a AAA mobile RTS logistics layer, not an instant shop conversion. The player is ordering a field exchange through command logistics. The UI is a popup similar to the Build Drawer, and the world feedback reinforces that resources are physically moving through the operation map.
 
@@ -14,7 +14,7 @@ The system should feel like a AAA mobile RTS logistics layer, not an instant sho
 - `Economy_Reward_Design.md` owns canonical resource names, reward types, lifecycle rules, store boundaries, and conversion guardrails.
 - `Field_Logistics_Oil_Fuel_Design.md` owns tactical Oil/Fuel extraction, refinery, storage, tray truck, and tanker truck rules.
 - `Automated_Fuel_Logistics_Design.md` owns autonomous Oil -> Fuel logistics and usable faction Fuel rules.
-- `Field_Fabrication_Materials_Design.md` owns local Oil -> Materials production, canonical tactical Materials ownership, and the rule that local fabrication is more efficient than Materials import.
+- `Field_Fabrication_Materials_Design.md` owns local Oil -> Materials production, canonical tactical Materials ownership, and the rule that local fabrication is more efficient than exchanged Materials.
 - `Match_HUD_And_Gameplay_Implementation_Spec.md` owns `SCN-08` header/resource bar behavior and match-owned popups.
 - `SCN09_Build_Placement_Mode_Implementation_Spec.md` owns the existing build placement confirmation pattern that this popup should visually align with.
 - `UIUX_Target_To_Canvas_Workflow_Guide.md` and `UI_Screen_Reference_To_Icons_Panels_GreenKey_Workflow.md` own target-to-layered-Canvas and green-key asset workflows.
@@ -46,8 +46,7 @@ Do not call this feature `Store`, `Command Exchange`, or `Shop` in match UI. Sto
 
 The player is a field commander authorizing a logistics exchange:
 
-- Export surplus Oil, Materials, or Fuel to command logistics and receive Credits.
-- Import Materials or Fuel by spending Credits.
+- Exchange one surplus match resource for another when normal production infrastructure is unavailable or too slow.
 - See the transaction as a timed operation with a queue item, truck/plane feedback, progress, and clear completion.
 - Rush eligible exchange jobs with Rush Tickets.
 
@@ -72,12 +71,12 @@ Resource Header
 3. Output resources are granted only when the queue item completes.
 4. The conversion rate is never 1:1 by default. Every recipe has authored rate, time, capacity, and loss/fee values.
 5. World truck/plane feedback is presentation only. ECS queue data is the source of truth.
-6. Rush uses Rush Tickets only. Rush does not use Credits, Command Authority, Fuel, or Materials.
-7. Command Authority, Intel, Rush Tickets, Campaign Stars, and Operation metric deltas cannot be freely converted.
-8. Paid or account-store resources must not be injected into an active match unless an authored scenario explicitly grants them through match setup.
+6. Rush uses an explicitly projected scenario Rush Ticket allowance only. Rush does not spend the persistent wallet during simulation.
+7. Credits, Command, Operation metrics, Campaign Stars, and account inventory cannot be converted by this feature.
+8. Paid or account-store resources must never be injected into an active match.
 9. All resource deltas must become economy events for balancing and telemetry.
 10. UI must expose exact affordability, queue, timer, storage, cap, and disabled reasons. No silent failure.
-11. `Credits -> Materials` is emergency recovery. Local Field Fabrication Depot production is the normal sustained source and must have the better effective rate.
+11. Lossy match-resource exchange is emergency recovery. Local Oil-to-Materials fabrication and Oil-to-Fuel refining are the normal sustained sources and must have better effective rates.
 12. Exchange, fabrication, construction, HUD, and AI must use one canonical faction tactical Materials value; the Exchange must not own a parallel Materials wallet.
 
 ## Scenario Gate Rules
@@ -98,15 +97,13 @@ Resource Exchange is an authored scenario feature, not a default FTUE mechanic.
 
 | Route | Player Copy | Allowed | Input Timing | Output Timing | Notes |
 |---|---|---:|---|---|---|
-| `Oil -> Credits` | Export Oil | Yes when Oil logistics is active. | Reserve/spend Oil at confirm. | Credits on completion. | Strong fiction fit. Requires active tactical Oil pool or storage. |
-| `Materials -> Credits` | Export Materials | Yes when Materials are active in the match. | Spend Materials at confirm. | Credits on completion. | Useful for surplus construction stock. Rate should be worse than mission rewards. |
-| `Fuel -> Credits` | Export Fuel | Optional, inefficient. | Spend Fuel at confirm. | Credits on completion. | Should warn that mobility readiness is reduced. |
-| `Credits -> Materials` | Import Materials | Yes when build/repair economy is active. | Spend Credits at confirm. | Materials on completion. | Expensive emergency recovery route. Local Field Fabrication Depot production is the efficient sustained source. |
-| `Credits -> Fuel` | Import Fuel | Yes when Fuel logistics is active. | Spend Credits at confirm. | Fuel on completion. | Important for vehicles, aircraft, and emergency logistics. |
-| `Credits -> Oil` | Import Oil | Normally no. | N/A | N/A | Prefer Oil extraction through pumps. If needed later, call it `Import Crude` and gate it to authored logistics missions. |
-| `Credits -> Intel` | Buy Intel | No for this feature. | N/A | N/A | Intel reveal belongs to scouting, rewards, Operations, or Store dossier products. |
-| `Intel -> Credits` | Sell Intel | No. | N/A | N/A | Intel is information value, not a commodity. |
-| `Command Authority -> Any` | Command purchase | No in match. | N/A | N/A | Account Command Exchange only. |
+| `Fuel -> Materials` | Exchange Fuel for Materials | Optional emergency route. | Reserve/spend Fuel at confirm. | Materials on completion. | Warn that mobility reserve is reduced. Must be less efficient than local Oil fabrication. |
+| `Materials -> Fuel` | Exchange Materials for Fuel | Optional emergency route. | Reserve/spend Materials at confirm. | Fuel on completion. | Warn that construction reserve is reduced. Must be less efficient than local refining. |
+| `Oil -> Materials` | Emergency Fabrication Shipment | Optional when local fabrication is unavailable. | Reserve/spend Oil at confirm. | Materials on completion. | Slower and less efficient than a functioning Field Fabrication Depot. |
+| `Oil -> Fuel` | Emergency Refinery Shipment | Optional when local refining is unavailable. | Reserve/spend Oil at confirm. | Fuel on completion. | Slower and less efficient than a functioning refinery chain. |
+| `Materials -> Oil` | Import Crude for Materials | Normally disabled. | Reserve/spend Materials at confirm. | Oil on completion. | Authored logistics scenarios only. |
+| `Fuel -> Oil` | Recover Crude for Fuel | Normally disabled. | Reserve/spend Fuel at confirm. | Oil on completion. | Authored logistics scenarios only. |
+| `Credits` or `Command -> Any` | Account purchase | No in match. | N/A | N/A | Persistent currencies never enter Resource Exchange. |
 | `Rush Tickets -> Time` | Rush queue | Yes. | Spend tickets at rush confirm. | Time reduction immediately. | Rush only affects eligible exchange queue timers. |
 
 ## Economy Model
@@ -115,11 +112,11 @@ Each recipe should be authored as data:
 
 | Field | Purpose |
 |---|---|
-| `recipeId` | Stable id, for example `exchange.export_oil_credits.standard`. |
-| `displayName` | UI title, for example `Export Oil`. |
-| `routeType` | `Export` or `Import`. |
-| `inputResource` | `Credits`, `Materials`, `Oil`, or `Fuel`. |
-| `outputResource` | `Credits`, `Materials`, or `Fuel`. |
+| `recipeId` | Stable id, for example `exchange.fuel_to_materials.emergency`. |
+| `displayName` | UI title, for example `Exchange Fuel for Materials`. |
+| `routeType` | `Exchange`. Legacy `Export`/`Import` values require migration. |
+| `inputResource` | `Materials`, `Oil`, or `Fuel`. |
+| `outputResource` | `Materials`, `Oil`, or `Fuel`, and never the same value as input. |
 | `inputAmountMin` | Minimum amount allowed. |
 | `inputAmountMax` | Maximum amount per exchange. |
 | `inputStep` | Stepper increment. |
@@ -137,14 +134,14 @@ Each recipe should be authored as data:
 
 Balance recommendation:
 
-- Keep export rates clearly below mission reward value to avoid farming.
-- Keep Materials import at least 1.5x to 2.0x the modeled local fabrication opportunity cost for initial tuning, then validate through the balance harness.
-- Keep Fuel import expensive enough that players still care about building Oil/Fuel infrastructure.
+- Keep every exchange route lossy enough to prevent farming or circular arbitrage.
+- Keep exchanged Materials at least 1.5x to 2.0x the modeled local fabrication opportunity cost for initial tuning, then validate through the balance harness.
+- Keep exchanged Fuel expensive enough that players still care about building Oil/Fuel infrastructure.
 - Use queue time as a pressure lever, not as a punishment.
-- Use storage caps to avoid overfilling imported Fuel/Materials.
+- Use storage caps to avoid overfilling exchanged Fuel/Materials.
 - Limit simultaneous exchange jobs per faction to a small number for readability and performance.
-- Config validation should reject unsafe economy data before runtime: single exchange amounts above 100,000, per-recipe output rates above 5x, queue base duration below 1 second, per-job rush caps above 10 tickets, and any paired Credits export/import loop that retains more than 85% of the original resource after fees.
-- Balance validation must also reject profitable `Oil -> Materials -> Credits` loops and any recipe set where repeated Materials import is cheaper than sustained local fabrication after modeled infrastructure and logistics cost.
+- Config validation should reject unsafe economy data before runtime: single exchange amounts above 100,000, per-recipe output rates above 5x, queue base duration below 1 second, per-job rush caps above 10 tickets, and any paired exchange loop that retains more than 85% of the original modeled value after loss.
+- Balance validation must reject profitable or lossless `Oil <-> Materials`, `Oil <-> Fuel`, and `Materials <-> Fuel` loops and any recipe set where repeated exchange is cheaper than sustained local production after modeled infrastructure and logistics cost.
 
 ## Queue Rules
 
@@ -164,7 +161,7 @@ Recommended queue policy:
 - Spend/reserve input at confirmation.
 - Refund 100% if the job is cancelled before the transport presentation starts.
 - Refund partial amount or no refund after the presentation starts, based on recipe.
-- If storage becomes full before an import completes, pause as `BlockedStorageFull` instead of losing output.
+- If storage becomes full before an exchange completes, pause as `BlockedStorageFull` instead of losing output.
 - If the mission ends before completion, apply the mission-defined rule: complete instantly, cancel/refund, or discard tactical-only exchange. Campaign tutorial missions should avoid ambiguous pending exchanges.
 
 ## UI Design
@@ -228,23 +225,23 @@ Queue item behavior:
 
 World presentation should reinforce the exchange but must not own economy state.
 
-Export presentation:
+Outbound presentation:
 
 ```text
 Storage / base source
   -> trucks move source resource toward logistics plane or depot
   -> transport plane lands or loads
   -> plane takes off
-  -> Credits are granted on queue completion
+  -> input remains reserved while the exchange is in progress
 ```
 
-Import presentation:
+Inbound presentation:
 
 ```text
-Credits spend confirmation
-  -> optional header credit-drain/flyout
+Match-resource spend confirmation
+  -> input resource delta/flyout
   -> transport plane lands
-  -> trucks unload Fuel or Materials to storage
+  -> trucks unload the authored Materials, Fuel, or Oil output to storage
   -> output resource is granted on queue completion
 ```
 
@@ -265,7 +262,7 @@ Gameplay state belongs in ECS:
 - UI writes typed exchange request components/buffers.
 - ECS validation accepts/rejects requests with typed reason codes.
 - ECS queue tick advances timers.
-- ECS completion applies wallet/resource deltas exactly once.
+- ECS completion applies match-resource deltas exactly once.
 - ECS result buffers feed UI and feedback.
 - Managed UI views only display state and submit typed requests.
 - Managed world presentation only consumes ECS visual requests/read models.
@@ -286,7 +283,7 @@ Use existing naming conventions. Exact names can change during implementation if
 | Faction summary | `ResourceExchangeSummaryComponent` | Queue count, active count, version. |
 | Visual cue request | `ResourceExchangeVisualRequestComponent` | Presentation consumes and clears. |
 | Disabled reason | `ResourceExchangeReason` | Enum, not strings. |
-| Recipe route | `ResourceExchangeRouteType` | `Export` / `Import`. |
+| Recipe route | `ResourceExchangeRouteType` | `Exchange`; legacy `Export` / `Import` values require migration. |
 | Queue state | `ResourceExchangeQueueState` | `Pending`, `InProgress`, etc. |
 
 ## Suggested ECS Systems
@@ -298,7 +295,7 @@ Prefer unmanaged `ISystem` and Burst-compatible data paths:
 | `ResourceExchangeConfigProjectionSystem` | Project recipe config/scenario availability into ECS. | `ISystem` if data-only; managed edge only if reading ScriptableObjects at startup. |
 | `ResourceExchangeRequestValidationSystem` | Validate requests, affordability, caps, and queue capacity. | `ISystem`, Burst when possible. |
 | `ResourceExchangeQueueTickSystem` | Advance timers and queue state. | `ISystem`, Burst-compatible. |
-| `ResourceExchangeCompletionSystem` | Apply output deltas and economy events once. | `ISystem`, Burst-compatible when wallet data is ECS. |
+| `ResourceExchangeCompletionSystem` | Apply output deltas and economy events once. | `ISystem`, Burst-compatible with faction match-resource data. |
 | `ResourceExchangeCancelSystem` | Cancel/refund by policy. | `ISystem`. |
 | `ResourceExchangeRushSystem` | Spend Rush Tickets and reduce time. | `ISystem`. |
 | `ResourceExchangeReadModelSystem` | Publish versioned UI read model. | `ISystem` when possible. |
@@ -316,14 +313,13 @@ Minimum reason ids:
 |---|---|
 | `ExchangeUnavailable` | Mission/preset does not allow exchange. |
 | `RecipeLocked` | Recipe exists but is not unlocked for this scenario. |
-| `InsufficientCredits` | Not enough Credits. |
 | `InsufficientMaterials` | Not enough Materials. |
 | `InsufficientOil` | Not enough Oil. |
 | `InsufficientFuel` | Not enough Fuel. |
 | `InputBelowMinimum` | Amount is too small. |
 | `InputAboveMaximum` | Amount exceeds recipe cap. |
 | `QueueFull` | No exchange queue slot available. |
-| `StorageFull` | Import output cannot fit. |
+| `StorageFull` | Exchange output cannot fit. |
 | `StorageMissing` | Required storage does not exist. |
 | `TransportUnavailable` | Required logistics anchor or transport presentation is unavailable. |
 | `RushUnavailable` | Queue item cannot be rushed. |
@@ -360,11 +356,11 @@ Audio must be config-driven through `Audio_Config_Driven_Implementation_Spec.md`
 ## Acceptance Criteria
 
 - The popup opens from the match resource header only when enabled.
-- Export and import recipes come from data, not hard-coded UI.
+- Exchange recipes come from data, not hard-coded UI.
 - Input resources are spent/reserved at confirmation.
 - Output resources grant once on completion.
 - Rush consumes Rush Tickets and reduces time without bypassing non-rushable queue rules.
-- Command Authority, Intel, and Rush Tickets are not freely convertible.
+- Credits, Command, Operation metrics, and account inventory are not convertible.
 - World presentation is optional and non-authoritative.
 - UI uses the Build Popup visual language and separated live text/icons/progress layers.
 - ECS systems own validation, queue, completion, refund, and results.

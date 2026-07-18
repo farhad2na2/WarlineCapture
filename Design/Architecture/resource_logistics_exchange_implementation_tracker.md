@@ -1,12 +1,14 @@
 # Resource Logistics Exchange Implementation Tracker
 
 Date: 2026-07-09
-Status: Complete
+Status: Complete for the 2026-07-09 implementation baseline; economy-scope migration reopened by the 2026-07-18 design decision
 Design source: `../Resource_Logistics_Exchange_Design.md`
 
 ## Objective
 
-Implement the timed Resource Logistics Exchange without drifting from WarlineCapture's ECS/SOLID architecture. The feature lets players open a Build-Popup-style match popup from the resource header, queue import/export logistics jobs, rush eligible jobs with Rush Tickets, and receive optional world truck/transport-plane presentation while ECS remains the source of truth for resources, timers, results, and economy events.
+Implement the timed Resource Logistics Exchange without drifting from WarlineCapture's ECS/SOLID architecture. The feature lets players open a Build-Popup-style match popup from the resource header, queue lossy match-resource redistribution jobs, rush eligible jobs with a scenario-approved Rush Ticket allowance, and receive optional world truck/transport-plane presentation while ECS remains the source of truth for resources, timers, results, and economy events.
+
+2026-07-18 migration note: the completed evidence below describes the shipped Credits import/export baseline and remains historical implementation evidence. The current design permits only Materials/Fuel/Oil exchange and forbids persistent Credits/Command access during a match. Follow-up implementation must migrate recipes, resource enums, wallet data, reason codes, UI copy, tests, and configs without rewriting the historical completion record.
 
 ## Architecture Contract
 
@@ -17,7 +19,7 @@ Implement the timed Resource Logistics Exchange without drifting from WarlineCap
 - World plane/truck presentation is non-authoritative. It consumes ECS visual cue data and must not control exchange completion.
 - Hot paths must avoid LINQ, per-frame string formatting, broad scene searches, instantiate/destroy churn, and recurring managed allocation.
 - Use typed reason codes, resource enums, queue states, versioned read models, and economy events.
-- Keep resource names aligned with `../Economy_Reward_Design.md`: Credits, Materials, Fuel, Intel, Command Authority, Rush Tickets, and tactical Oil.
+- Keep resource names aligned with `../Economy_Reward_Design.md`: match Materials, Fuel, and Oil only. Credits and Command are persistent and prohibited from this in-match feature; Rush Tickets are inventory projected only through explicit scenario allowance.
 - Keep Oil/Fuel logistics aligned with `../Field_Logistics_Oil_Fuel_Design.md` and `../Automated_Fuel_Logistics_Design.md`.
 - Keep popup visuals aligned with `../Match_HUD_And_Gameplay_Implementation_Spec.md`, `../SCN09_Build_Placement_Mode_Implementation_Spec.md`, and active VisualLockLayered workflows.
 

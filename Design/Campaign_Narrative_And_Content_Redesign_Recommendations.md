@@ -197,7 +197,7 @@ The main story should not require hidden grinding.
 - Each mission first-clear grants a story beat that advances the central question.
 - Optional objectives can grant supporting evidence, character context, or alternative interpretations.
 - Three-star mastery must not be required to understand the main ending.
-- Store purchases, Rush Tickets, Command Authority, or premium resources must never reveal story-critical evidence.
+- Store purchases, Rush Tickets, Command, or premium resources must never reveal story-critical evidence.
 - Operations mode may provide supplemental evidence and district context, but Campaign completion must remain sufficient for the canonical conclusion.
 - A Story Archive should provide chapter recap, recovered fragments, key characters, and replayable narrative sequences.
 

@@ -128,7 +128,7 @@ No mission should be accepted as design-ready without all fields above.
 |---|---|---|---|---|---|---|
 | Patrol Intercept | Detect and stop a mobile threat. | Destroy patrol, reach location, prevent escape. | Finish under time, low losses, no civilian panic. | Hidden Cell, Swarm Militia. | CommanderXP, Credits, Intel. | Time to first contact, path clarity, loss rate. |
 | Civilian Evacuation | Protect civilians while moving units. | Extract civilians/unit, survive duration, defend route. | Civilian survival, no vehicle loss, fast extraction. | Hidden Cell, Air Assault. | CommanderXP, Fuel, OperationTrust. | Civilian risk, route readability, transport timing. |
-| Convoy Defense | Escort or protect a moving asset. | Defend convoy, destroy attackers, reach endpoint. | Convoy health, no breach, finish under time. | Armored Column, Air Assault. | Credits, Materials, Fuel. | Attack cadence, convoy speed, warning lead time. |
+| Convoy Defense | Escort or protect a moving asset. | Defend convoy, destroy attackers, reach endpoint. | Convoy health, no breach, finish under time. | Armored Column, Air Assault. | Credits, CommanderXP, authored unlocks/items. | Attack cadence, convoy speed, warning lead time. |
 | District Raid | Strike a suspected enemy node. | Destroy target building, capture intel, extract. | High intel confidence, low collateral, low losses. | Hidden Cell, Defensive Garrison. | Intel, BlueprintParts, OperationSecurity. | Intel gate, collateral risk, target durability. |
 | Base Defense | Build and hold a defensive line. | Survive duration, prevent base breach, protect civilians. | Build radar, no breach, low casualties. | Armored Column, Air Assault, Swarm Militia. | Materials, BuildingUnlock, RushTicket. | Build timing, first attack timing, resource float. |
 | Breach Assault | Break a fortified position. | Breach wall/gate, destroy core, hold captured area. | Use breach route, vehicle survives, fast clear. | Defensive Garrison, Armored Column. | UnitUnlock, GearModule, Credits. | Fortification health, combined-arms pacing, losses. |
@@ -181,7 +181,7 @@ Civilian safety and district recovery should be the emotional and strategic pres
 | Civilian casualties | OperationTrust down, Heat up, future mission risk increases. |
 | Collateral damage | OperationInfrastructure down, repair cost up, trust penalty. |
 | Base breach prevented | Security up, enemy influence down. |
-| Intel captured | Wallet Intel grant or OperationIntel confidence delta. |
+| Intel captured | OperationIntel confidence delta or a named Intel Dossier inventory item. |
 | Raid with low confidence | Higher collateral/trust risk and possible failed target result. |
 | Repair completed | OperationInfrastructure up and district income/readiness improves. |
 
@@ -193,10 +193,10 @@ Avoid exposing every resource and reward type in Chapter 1.
 
 | Progression Band | Exposed Resources/Rewards |
 |---|---|
-| Chapter 1 onboarding | CommanderXP, Credits, Materials, Fuel, first UnitUnlock or BuildingUnlock. |
+| Chapter 1 onboarding | CommanderXP, Credits, first UnitUnlock or BuildingUnlock. Match Materials/Fuel/Oil are scenario grants, not account rewards. |
 | Chapter 1 late | Intel, SupportAbilityUnlock, BlueprintParts. |
 | Operation intro | OperationTrust, OperationSecurity, OperationIntel, OperationInfrastructure, OperationSupply. |
-| Profile/store layer | Command Authority, Rush Tickets, Cosmetics, fixed-content bundles. |
+| Profile/store layer | Command, Rush Tickets, Cosmetics, fixed-content bundles. |
 | Season/events | Extra fixed claim nodes, event cosmetics, capped bundles. |
 
 ## Chapter 1 Teaching Arc

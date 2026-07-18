@@ -2,6 +2,8 @@
 
 Status: draft, dependency-blocked, and not dispatchable. Do not implement until Phase 2 (`AM-020` through `AM-025`) is accepted, `AM-026` proves the authoritative Main Menu resource source and active binding seam, `AM-027` accepts projection identity, `AM-028` accepts lifecycle ownership, and `AM-033` dispatches this package.
 
+2026-07-18 economy decision: the accepted future persistent header contains Credits and Command only. `SuppliesText` is a legacy UI/component field to remove or migrate; it must not be rebound to match Materials, Fuel, Oil, or another invented account currency.
+
 Umbrella task: `AM-033`
 
 Inventory source: `Design/Architecture/ui_projection_allocation_inventory.md`, row `UI-003`.
@@ -19,7 +21,7 @@ Risks are activating a dormant adapter without an authoritative meta-economy own
 
 - `AM-026` names one authoritative source and proves one active binding seam before implementation begins.
 - If the header is intentionally static, remove or quarantine the dormant dynamic adapter and keep one canonical static-default owner.
-- If the header is dynamic, one projection owner publishes Credits, Supplies, and Command with a semantic version derived from the authoritative source.
+- If the header is dynamic, one projection owner publishes Credits and Command with a semantic version derived from the authoritative source.
 - Managed string construction and TMP application occur only after the semantic identity changes; equal values perform no conversion or UI write.
 - Route install applies once; profile/session replacement, sign-in/out, localization, root replacement, and explicit refresh invalidate exactly once.
 - Duplicated defaults collapse to one canonical owner without changing displayed values.
@@ -31,7 +33,7 @@ No new `SystemBase`, polling, mutable static progression authority, default-Worl
 
 Minimum identity if dynamic:
 
-- Credits, Supplies, and Command values;
+- Credits and Command values;
 - authoritative profile/progression/session source generation;
 - active profile/account identity;
 - localization/formatting generation;
@@ -94,7 +96,7 @@ Required before edits:
 
 1. prove visible header source, binding owner, and whether each field is static, placeholder, or live;
 2. route install/re-entry, profile/session replacement, sign-in/out where applicable, root replacement, and subsystem registration;
-3. Credits, Supplies, and Command independently and together;
+3. Credits and Command independently and together, plus removal/non-visibility of the legacy Supplies field;
 4. equal values, changed values, source-generation-only change, missing source, and malformed/default source;
 5. localization/formatting change and large/zero values;
 6. dormant adapter retained, activated, or removed, with explicit rationale and call graph;

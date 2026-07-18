@@ -30,7 +30,7 @@ Required layer groups:
 - confirm button frame and disabled confirm button frame
 - queue panel frame, queue row frame, progress bar frame, progress fill
 - Rush All and Clear Completed button frames and icons
-- resource icons: Credits, Materials, Oil, Fuel, Rush Tickets
+- match resource icons: Materials, Oil, Fuel; optional Rush Ticket inventory icon. Credits and Command do not appear in the in-match Resource Exchange.
 - warning, lock, information, transport plane, truck, timer, cancel, and completion icons
 
 All icons, progress bars, locks, warnings, and text must remain separate from background frames.

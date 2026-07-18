@@ -117,7 +117,7 @@ Update these UI targets and screen docs:
 
 | UI Surface | Required Update |
 |---|---|
-| `SCN-02 Main Menu` | Replace the old teal/cyan mode-select target with the command-base style. Left rail should read Campaign, Operations, Skirmish, Store, Commander, Settings. Top resources should read Credits, Supplies, Command. Primary CTA should read Deploy Operation. |
+| `SCN-02 Main Menu` | Replace the old teal/cyan mode-select target with the command-base style. Left rail should read Campaign, Operations, Skirmish, Store, Commander, Settings. The persistent header shows Credits and Command only. Primary CTA should read Deploy Operation. |
 | `SCN-05 Saga/Campaign Map` | Stop presenting a separate strategic map as the product truth. Present campaign nodes as operations selected from a command-table or world overlay that launches the same 3D operation-map model. |
 | `SCN-06 Mission Briefing` | Use 3D operation preview, deployment-zone overlay, intel confidence, civilian-risk indicators, target cell description, and prefab-backed unit/building names. |
 | `SCN-07 Loadout/Squad Prep` | Show available units and supports from `Assets/Game/Configs/Prefabs`, with role tags and descriptions from config data. |

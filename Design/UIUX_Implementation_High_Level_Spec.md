@@ -248,7 +248,7 @@ Map current runtime settings into player-facing controls:
 - Enemy Type
 - Enemy Count
 - Difficulty
-- Starting Credits (tactical Money)
+- Starting Materials (the legacy tactical Money field is temporary migration debt)
 - Income Multiplier
 - Build Speed
 - Unit Production Speed

@@ -28,23 +28,22 @@ Automation rule:
 
 - `Automated_Fuel_Logistics_Design.md` supersedes manual logistics micro for the normal match economy. Oil trucks and tanker trucks should work autonomously; Fuel becomes the shared header pool only after tanker delivery into Fuel Bladder/base storage.
 - `Field_Fabrication_Materials_Design.md` extends tray-truck Oil logistics with a second valid consumer. Delivered Oil may feed either a Refinery for Fuel or a Field Fabrication Depot for Materials. It owns the Materials branch, canonical tactical Materials rules, and related building costs.
-- `Resource_Logistics_Exchange_Design.md` owns the optional timed import/export popup opened from the match resource header. It can export surplus Oil/Materials/Fuel or import Materials/Fuel through authored exchange recipes, but it must not replace the normal Oil Pump -> Refinery -> Fuel storage loop.
+- `Resource_Logistics_Exchange_Design.md` owns the optional timed match-resource redistribution popup opened from the match resource header. It can convert authored amounts among Oil, Materials, and Fuel with loss and queue time, but it must not replace the normal production loops or touch persistent Credits/Command.
 
 ## Resource Positioning
 
 | Resource | Layer | Meaning | Where Shown |
 |---|---|---|---|
-| `Credits` | Account + tactical display label | Money/spendable currency. | Main Menu, Build Drawer, Mission Result, Store, Operation. |
-| `Materials` | Account + tactical construction layer | Construction, repair, infrastructure, and upgrade stock. Tactical Materials can be fabricated locally from delivered Oil. | Match header, Main Menu, Build Drawer, Operation, rewards. |
-| `Command` / `Command Authority` | Account authority layer | Premium/authority resource for strong actions, convenience, cosmetics, or controlled unlocks. | Main Menu, Store, Commander Profile. |
+| `Credits` | Persistent account layer | Regular earned progression currency; never an active-match resource. | Main Menu, Mission Result, Store, Commander Profile, Operation. |
+| `Command` | Persistent account layer | Rare optional/premium currency for convenience and cosmetics; never an active-match resource. | Main Menu, Store, Commander Profile. |
+| `Materials` | Match construction layer | Construction and repair stock fabricated locally from delivered Oil or seeded by scenario rules. | Match header, Build Drawer, placement and building panels. |
 | `Oil` | Tactical match raw resource | Raw extracted resource from oil deposits. | Only in missions where extraction/refining matters. |
-| `Fuel` | Tactical + account logistics resource | Processed mobility resource for vehicles, air, deployment, extraction, or readiness. | Battle HUD/Build Drawer in fuel missions; rewards/account only through authored grants. |
+| `Fuel` | Match logistics resource | Processed mobility resource for vehicles, aircraft, tactical support, and extraction inside the match. | Match HUD and relevant unit/building panels. |
 
 Main Menu rule:
 
-- Main Menu shows compact top-level resources: Credits, Supplies, Command.
-- Oil is never a main menu resource.
-- Fuel is not shown in the main menu top strip unless a future top-level economy review explicitly adds it.
+- Main Menu shows exactly two persistent resources: Credits and Command.
+- Materials, Fuel, and Oil are never main-menu resources.
 - Resource Exchange is a match logistics feature, not a Main Menu store feature.
 
 Match rule:
@@ -101,7 +100,7 @@ Build Drawer tab behavior:
 |---|---|
 | Buildings | Contains Oil Pump, Oil Refinery, Large Oil Refinery, Fuel Bladder/Fuel Depot, and Field Fabrication Depot when the mission allows the corresponding logistics. Buildings require map placement. |
 | Vehicles | Vehicles may cost Fuel or require Fuel production/storage. Tanker and oil trucks appear here when logistics is enabled. Vehicles spawn from valid base/vehicle bay/rally locations. |
-| Soldiers | Usually do not cost Fuel. Specialist support squads may require Credits/Supplies but should not consume Oil directly. |
+| Soldiers | Usually cost Materials and do not cost Fuel. Specialist support squads may use authored Materials/Fuel costs but never persistent Credits or Command. |
 
 UI rule:
 
@@ -112,8 +111,7 @@ UI rule:
 
 When a mission uses fuel logistics, the Battle HUD should show:
 
-- tactical Credits/Money
-- tactical Materials current/capacity when fabrication or Materials construction is active
+- Materials current/capacity when fabrication or construction is active
 - Fuel
 - Oil only if raw extraction is active and player needs to understand the conversion chain
 - build capacity / population if relevant
@@ -138,16 +136,9 @@ Players acquire tactical Oil/Fuel through:
 
 Players acquire tactical Materials through a supplied Field Fabrication Depot, authored tactical grants, or an enabled expensive Resource Exchange recovery job. Local Oil-to-Materials conversion is the normal sustained source.
 
-Players acquire account-level Fuel only through authored rewards:
+Materials, Fuel, and Oil are match-only. They are not granted to an account wallet, sold in the store, or banked after match end.
 
-- Mission Result `RewardConfig`
-- Operation rewards
-- event/season/profile rewards
-- capped store bundles if monetization allows it
-
-Tactical Oil is not sold in the store and is not banked directly after match end.
-
-Players may export or import tactical resources through `Resource_Logistics_Exchange_Design.md` only when the active mission, Skirmish preset, or Operation event enables Resource Exchange. Those exchange jobs are timed queue actions with authored rates, fees, caps, and completion rules; they are not instant free conversion.
+Players may redistribute match resources through `Resource_Logistics_Exchange_Design.md` only when the active mission, Skirmish preset, or Operation event enables Resource Exchange. Those jobs are timed queue actions with authored rates, loss, caps, and completion rules; they are not instant free conversion.
 
 ## Spending And Conversion Rules
 
@@ -159,21 +150,21 @@ Players may export or import tactical resources through `Resource_Logistics_Exch
 | Field Fabrication Depot | Converts delivered tactical Oil into faction tactical Materials. |
 | Fuel Bladder / Depot | Raises storage or enables local refuel. |
 | Tanker Truck | Automatically moves Fuel to storage or refuel endpoints; does not create Fuel by itself. |
-| Vehicle production | May spend Credits + Fuel, depending on unit. |
-| Air production/support | May spend Fuel and/or Command depending on mission rules. |
-| Building placement/repair | Spends authored Credits + Materials when the Materials economy is active. |
-| Match result | May grant account Fuel through `RewardConfig`; never auto-banks all tactical Fuel unless the mission explicitly rewards it. |
+| Vehicle production | Spends authored Materials and may spend Fuel, depending on unit. |
+| Air production/support | Spends authored Materials and/or Fuel. Persistent Command is never spent in active combat. |
+| Building placement/repair | Spends authored Materials. |
+| Match result | Discards remaining Materials, Fuel, and Oil; grants only authored persistent rewards/items. |
 
 ## Mission Usage
 
 | Mission Type | Oil/Fuel Use |
 |---|---|
 | M01 tutorial | No Oil/Fuel. |
-| Early build tutorial | Usually no Oil/Fuel; introduce Build with Credits/Supplies first. |
+| Early build tutorial | Usually no Oil/Fuel; introduce construction with starting Materials first. |
 | Vehicle/air tutorial | Introduce Fuel as a production/deployment requirement. |
 | Base-building Skirmish | Fuel economy can be enabled through setup/preset. |
 | Logistics objective | Oil/Fuel is central: capture, protect, convoy, refinery, depot, or sabotage. |
-| Operations events | Fuel can be an account/logistics cost or reward, not raw Oil. |
+| Operations events | Use Operation metrics, supplies, or persistent Credits; match Fuel and Oil do not leave the battlefield economy. |
 
 ## AI And Balance Rules
 
@@ -217,8 +208,8 @@ Implementation should prove:
 - Vehicle rows can require Fuel and show `InsufficientFuel` when short.
 - Tactical Oil converts to Fuel only through refinery/production gameplay.
 - Tactical Oil converts to Materials only through Field Fabrication Depot gameplay.
-- Local Materials fabrication is more efficient than Resource Exchange import.
+- Local Materials fabrication is more efficient than Resource Exchange recovery.
 - Fuel storage/capacity affects production or refuel rules when active.
 - M01 has no Oil/Fuel HUD or build dependency.
-- Main Menu top strip remains Credits, Supplies, Command.
-- Tactical Oil is not banked into account wallet at match end unless authored by result rewards.
+- Main Menu top strip remains Credits and Command.
+- Materials, Fuel, and Oil are never banked into the account wallet.

@@ -34,7 +34,7 @@ All states use the same shell:
 - Mission snapshot: 3D operation image or fallback environment art.
 - Star/objective panel: star row, required objectives, optional goals, and failed/complete states.
 - Performance stats: enemies defeated, units lost, civilians saved/harmed, resources spent, buildings captured/destroyed, oil/fuel recovered when relevant.
-- Rewards panel: commander XP, Credits, Supplies, Fuel, Intel, unlocks, and explicit zero/reduced reward rows.
+- Rewards panel: Commander XP, Credits, Command where explicitly authored, unlocks/items, and explicit zero/reduced reward rows. Match Materials, Fuel, and Oil are never banked as mission-result rewards.
 - Consequence panel: Civilian Safety, District Trust, Hostile Influence, Infrastructure, and mode-specific deltas.
 - Narrative beat: one concise outcome, character response, and evidence/reveal row when authored. It must distinguish mandatory story progress from optional evidence.
 - Bottom action bar: retry/replay, loadout/settings route if applicable, continue/return primary CTA.

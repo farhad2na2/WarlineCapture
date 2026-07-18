@@ -55,7 +55,7 @@ Existing supporting tests:
 
 | File | Balance-Relevant Coverage |
 |---|---|
-| `Assets/Tests/Editor/AISettingsValidationTests.cs` | Difficulty, starting Credits/tactical Money, income, build speed, production speed, and AI cadence mapping. |
+| `Assets/Tests/Editor/AISettingsValidationTests.cs` | Difficulty, starting Materials/Fuel/Oil, income/production rates, build speed, production speed, and AI cadence mapping. Legacy tactical Money fields remain migration coverage only. |
 | `Assets/Tests/Editor/GameRuntimeStatsTests.cs` | Resource, production, build, and casualty counter correctness. |
 | `Assets/Tests/Editor/AIEconomyValidationTests.cs` | Existing tactical economy behavior. |
 | `Assets/Tests/Editor/AIEndToEndValidationTests.cs` | AI economy/build/production/squad/targeting/combat vertical slice. |
@@ -95,7 +95,7 @@ Normal build validation should exclude long-running balance probes. It may run s
 | Test | Reads | Required Behavior |
 |---|---|---|
 | `EconomyRewardDesign_CanonicalRewardTypesMatchRewardEnum` | `RewardType` enum and economy doc. | All code reward types map to `Economy_Reward_Design.md`. |
-| `StoreCatalog_ItemsMapToCanonicalRewardTypes` | Store catalog config. | Every product content line maps to Credits, Materials, Fuel, Intel, Command Authority, Rush Tickets, BlueprintParts, GearModule, Cosmetic, UnitUnlock, BuildingUnlock, SupportAbilityUnlock, or OperationSupply. |
+| `StoreCatalog_ItemsMapToCanonicalRewardTypes` | Store catalog config. | Every product content line maps to Credits, Command, Rush Tickets, BlueprintParts, GearModule, Cosmetic, UnitUnlock, BuildingUnlock, SupportAbilityUnlock, or OperationSupply. No product grants match Materials/Fuel/Oil. |
 | `ChapterOneCatalog_RewardConfigsHaveValidIdsAmountsTargetsAndFallbacks` | Chapter 1 mission reward configs. | Implemented first mission-reward sanity gate: unique reward ids, positive amounts, required target ids, and first-clear duplicate fallbacks. |
 | `OperationActionConfig_ResourceCostsAndMetricDeltasAreValid` | Operation action configs. | Costs are nonnegative; metric deltas target valid Operation metrics. |
 | `MissionRewardPreviewAndGrantUseSameRewardConfig` | Mission configs and result flow. | Briefing previews and result grants reference the same `RewardConfig`. |
@@ -140,7 +140,7 @@ Balance reports should grow toward this common payload. Add fields gradually as 
 | Match duration | Simulation runner or sampled duration. |
 | Time to first attack, production, base breach | Encounter/AI/combat events. |
 | Resource income, spend, float | Tactical economy and wallet/economy events. |
-| Credits, Materials, Fuel, Intel, Command Authority, Rush Tickets deltas | Economy events from `Economy_Reward_Design.md`. |
+| Persistent Credits/Command, match Materials/Fuel/Oil, Rush Ticket inventory, and Operation metric deltas | Economy events from `Economy_Reward_Design.md`, grouped by ownership scope. |
 | Reward grants | `RewardGrantResult`. |
 | Store grants and spends | `StoreCatalogItem`, `PurchaseGrant`, economy events. |
 | Unit count and army value | Roster/combat systems. |
@@ -171,7 +171,7 @@ The current `BalanceOutcomeClassifier` uses match duration, economy activity, an
 1. Keep `QuickCustom_Default_Medium` working before adding new probes.
 2. Add or maintain short balance harness tests in `Assets/Tests/Editor/Balance` without `[Explicit]`; keep `[Category("Balance")]`.
 3. Keep long report-producing tests `[Explicit] [Category("Balance")]`.
-4. Extend `BalanceMetrics` with canonical economy fields from `Economy_Reward_Design.md`: Credits, Materials, Fuel, Intel, Command Authority, Rush Tickets, reward grants, store spends, and Operation metric deltas.
+4. Extend `BalanceMetrics` with scoped canonical fields from `Economy_Reward_Design.md`: persistent Credits/Command, match Materials/Fuel/Oil, Rush Ticket inventory, reward grants, store spends, and Operation metric deltas.
 5. Add `BalanceProbeDefinition` and `BalanceSimulationRunner` only after a second probe needs shared scenario/run logic.
 6. Add CSV output after JSON/Markdown are stable.
 7. Add baseline snapshots only for reviewed values. Generated probe reports stay outside `Assets`.

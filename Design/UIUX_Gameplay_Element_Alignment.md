@@ -89,7 +89,7 @@ These rules apply to visible UI elements even when they are not clickable.
 | App shell frame | Establish safe mobile landscape route shell. | Current route, safe area. | Decorative chrome only; no raycasts unless it owns modal blocking. |
 | Screen title | Confirm current screen/mode/popup. | Route id, localized string key. | Must match route and never be baked into background art. |
 | Header profile block | Show account identity and progression. | `PlayerProfileState`, `CommanderProgression`. | Shows default profile only if save data is missing. |
-| Resource strip | Show wallet/match/operation resources. | `ResourceWallet`, canonical resource definitions, `FactionResources`, `OperationState.ResourceState`. | Main Menu uses Credits, Supplies, and Command. Runtime/economy internals may map these to existing wallet fields until configs are renamed. |
+| Resource strip | Show only resources owned by the current scope. | Persistent Credits/Command wallet, match `FactionResources`, and Operation metrics. | Main Menu uses Credits and Command only. Match uses Materials, Fuel, and Oil. Never show identically named persistent and match balances. |
 | Mode card image | Preview route gameplay fantasy. | `GameModeDefinition`, art id. | Gameplay-facing art follows 3D command-base / 3D operation-map direction. |
 | Mission/key art image | Preview scenario content. | `MissionConfig.OperationMapId`, `ScenarioSetup.OperationMapId`, planning camera/key-art id. | Replaceable per mission; no baked objectives/rewards text. Art may show the 3D town/base context, but interactive buildings/objectives must remain runtime/state data. |
 | Objective row | Explain active requirement. | `ObjectiveConfig` or `ObjectiveRuntimeState`. | Required, bonus, complete, and failed states must be visually distinct. |
@@ -122,7 +122,7 @@ Every listed element must be data-bound, explicitly decorative, authored empty s
 | Surface | Required Visible Elements | Required Data Alignment |
 |---|---|---|
 | SCN-01 Splash | Logo/emblem, loading progress bar, status text, tip text, background/key art. | Brand asset, loading progress, loading tips, next route. |
-| SCN-02 Main Menu | Profile block, level badge, resource strip, mode card images/titles/subtitles, side-nav icons, notification badges, footer/status strip. | Profile, Credits, Supplies, Command, mode definitions, unread counts, live event state, social feed state. |
+| SCN-02 Main Menu | Profile block, level badge, resource strip, mode card images/titles/subtitles, side-nav icons, notification badges, footer/status strip. | Profile, Credits, Command, mode definitions, unread counts, live event state, social feed state. |
 | SCN-03 Commander Profile | Portrait, name, alliance line, level badge, XP bar, tab row, stat tiles, reward track nodes, badges/locks. | Profile, progression, account stats, unlock state, reward track state. |
 | SCN-04 Settings | Category tabs, setting rows, sliders, toggles, dropdowns, segmented controls, reset/apply/footer states. | Settings models, platform capability, accessibility model, localization state. |
 | SCN-05 Campaign Map | Chapter selectors, operation/map viewport, route line, mission nodes, node stars, selected/locked badges, difficulty selector, chapter rewards counter. | Campaign progress, chapter config, mission node configs, mission ids, scenario setup ids, operation map ids, star counts, difficulty unlocks, reward thresholds. |
@@ -201,7 +201,7 @@ These controls exist in the current practical UI and must remain deliberately ha
 | Chat/Social | Social/status feed and system feed. | Opens `SCN-18 Command Feed`. | Local system feed, social provider integration state. | `DesignedUnavailable` shows local system feed entries only. |
 | Commander shortcut | Fast profile access. | Route to SCN-03. | `PlayerProfileState`. | Same as Profile. |
 
-Alignment note: the Main Menu resource strip is `Credits`, `Supplies`, and `Command`.
+Alignment note: the Main Menu resource strip is exactly `Credits` and `Command`. Match `Materials`, `Fuel`, and `Oil` never appear in this persistent header.
 
 ## SCN-03 Commander Profile
 
@@ -312,7 +312,7 @@ Implementation source of truth: `Match_HUD_And_Gameplay_Implementation_Spec.md` 
 | District region | Inspect district state/actions. | Route/open SCN-12. | `DistrictState`. | Enabled for known districts. |
 | Active warning row | Inspect or launch urgent event. | Opens warning detail, briefing, or match route. | `OperationEvent`, pending mission. | Enabled for actionable events. |
 | Intel Report | Open intel archive. | Route/modal for intel archive. | `IntelArchive`, evidence items. | Enabled once Operation state exists; may show empty state. |
-| Black Market | Open Operation supply exchange. | Route to Command Exchange Operation category. | Operation supplies, Credits, Materials, Fuel, Intel, Command Authority, catalog. | `DesignedUnavailable` shows fixed Operation supply catalog with purchase buttons disabled. |
+| Black Market | Open Operation supply exchange. | Route to Command Exchange Operation category. | Operation supplies, persistent Credits/Command, Operation metrics, catalog. | `DesignedUnavailable` shows the fixed Operation supply catalog with purchase buttons disabled. Match Materials, Fuel, and Oil never appear as account store balances. |
 | Armory | Open loadout/upgrades support. | Route `SCN-19 Armory`. | `PlayerInventory`, upgrade configs, Gear Modules, BlueprintParts. | Opens the Armory screen; upgrade CTAs stay disabled until service, inventory, and validation requirements are satisfied. |
 | Command Log | Inspect operation history. | Opens history/log route. | Operation event history. | Enabled when logs exist; otherwise empty state. |
 | End Day | Resolve operation simulation. | Runs `OperationSimulationService.EndDay`, saves, opens POP-06. | `OperationState`, district events. | Enabled only when no blocking required action is unresolved. |

@@ -103,7 +103,7 @@ Feedback/VFX rows should be checked against `Design/Visual_Feedback_VFX_Recommen
 
 Required:
 
-- resource icons for Credits, Supplies, Command, and any retained internal economy resources such as Materials, Fuel, Intel, Command Authority, and Rush Tickets
+- distinct persistent resource icons for Credits and Command; distinct match resource icons for Materials, Fuel, and Oil; progression/inventory icons for Rush Tickets, Campaign stars, XP, unlocks, and Operation supplies
 - reward icon/tile treatments for CommanderXP, unlocks, BlueprintParts, GearModule, Cosmetic, OperationSupply, CampaignStars, and Operation district metrics. Existing runtime ids may still store CampaignStars as `SagaStars` until migration.
 - product card art for 25 monetization catalog entries
 

@@ -45,7 +45,7 @@ WarlineCapture already has a substantial real-time tactical foundation, but the 
 - Building placement and base construction.
 - Road building.
 - Unit production from buildings.
-- Faction resources: tactical money, oil, and fuel. Player-facing UI maps tactical money to Credits and keeps Fuel as the shared mobility resource. Automated Oil -> Fuel logistics, usable stored Fuel, and vehicle mobility spending are governed by `Design/Automated_Fuel_Logistics_Design.md`.
+- Faction match resources: Materials, Oil, and Fuel. Tactical Money/Credits are deprecated; construction and production costs migrate to Materials, with Fuel used for authored mobility costs. Automated Oil -> Fuel logistics, usable stored Fuel, and vehicle mobility spending are governed by `Design/Automated_Fuel_Logistics_Design.md`.
 - Civilian population and housing/resource stats.
 - Combat against units and buildings.
 - Base breach through walls/gates.
@@ -257,7 +257,7 @@ Examples:
 Reward types:
 
 - Commander XP.
-- Credits, Materials, Fuel, Intel, Command Authority, and Rush Tickets.
+- persistent Credits and Command; Rush Tickets and named Operation supplies remain inventory items, while Materials, Fuel, and Oil are match-only.
 - Unit unlock.
 - Building unlock.
 - Support ability unlock.

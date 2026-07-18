@@ -109,9 +109,9 @@ Command has failed during a coordinated attack. The player answers ARIA's emerge
 | Mission | Primary Unlock Or Progression |
 |---|---|
 | M01 First Contact | CommanderXP and Credits; unlock Mission 2. |
-| M02 Establish The Base | Credits, Materials, `Building_Barrack` unlock, unlock Mission 3. |
-| M03 Radar Warning | Materials, `Building_GuardTower` unlock, `ability.radar_ping` support unlock, unlock Mission 4. |
-| M04 Airlift | Fuel, `upgrade.air.transport_aircraft` BlueprintParts, `ability.evacuation_corridor` support unlock, unlock Mission 5. |
+| M02 Establish The Base | Credits, `Building_Barrack` unlock, unlock Mission 3. |
+| M03 Radar Warning | Credits, `Building_GuardTower` unlock, `ability.radar_ping` support unlock, unlock Mission 4. |
+| M04 Airlift | Credits, `upgrade.air.transport_aircraft` BlueprintParts, `ability.evacuation_corridor` support unlock, unlock Mission 5. |
 | M05 Breach Assault | Chapter completion reward, `Unit_Chr_Ghillie_Male_01` unlock, `upgrade.vehicle.apc_armor` BlueprintParts, chapter reward threshold. |
 
 ## Level Library
@@ -145,9 +145,9 @@ Static background art must not include baked soldiers, vehicles, aircraft, playe
 | Mission | OperationMap | Archetype | Threat Family | Teaching Goal | Required Objective | Star Goals | Rewards | Balance Band |
 |---|---|---|---|---|---|---|---|---|
 | M01 First Contact | `opmap.ch01.district_edge_01` | Patrol Intercept | Tutorial Cell | Select, move, attack, read objective. | Destroy hostile patrol. | Complete mission; no own unit loss; finish under 4:00. | CommanderXP, Credits. | Tutorial |
-| M02 Establish The Base | `opmap.ch01.forward_post_01` | Infrastructure Repair / Base Defense Lite | Tutorial Cell | Build, spend, produce. | Build forward barracks and produce squad. | Build under 5:00; keep civilians safe; no base breach. | CommanderXP, Credits, Materials. | Tutorial |
-| M03 Radar Warning | `opmap.ch01.convoy_approach_01` | Base Defense | Armored Column | Read warning, prepare defense, stop convoy. | Survive convoy attack and prevent core breach. | Build radar/guard tower; no civilian deaths; destroy convoy before base damage. | Materials, `Building_GuardTower`, `ability.radar_ping`. | Standard |
-| M04 Airlift | `opmap.ch01.landing_zone_01` | Airlift Extraction | Hidden Cell / Air Assault | Use transport and landing-zone safety. | Extract endangered squad/civilians or reinforce landing zone. | No aircraft loss; complete under 6:00; low civilian loss. | Fuel, `upgrade.air.transport_aircraft` BlueprintParts, `ability.evacuation_corridor`. | Standard |
+| M02 Establish The Base | `opmap.ch01.forward_post_01` | Infrastructure Repair / Base Defense Lite | Tutorial Cell | Build, spend, produce. | Build forward barracks and produce squad. | Build under 5:00; keep civilians safe; no base breach. | CommanderXP, Credits, `Building_Barrack`. | Tutorial |
+| M03 Radar Warning | `opmap.ch01.convoy_approach_01` | Base Defense | Armored Column | Read warning, prepare defense, stop convoy. | Survive convoy attack and prevent core breach. | Build radar/guard tower; no civilian deaths; destroy convoy before base damage. | CommanderXP, Credits, `Building_GuardTower`, `ability.radar_ping`. | Standard |
+| M04 Airlift | `opmap.ch01.landing_zone_01` | Airlift Extraction | Hidden Cell / Air Assault | Use transport and landing-zone safety. | Extract endangered squad/civilians or reinforce landing zone. | No aircraft loss; complete under 6:00; low civilian loss. | CommanderXP, Credits, `upgrade.air.transport_aircraft` BlueprintParts, `ability.evacuation_corridor`. | Standard |
 | M05 Breach Assault | `opmap.ch01.fortified_node_01` | Breach Assault | Defensive Garrison | Combined arms, breach route, fortified target. | Destroy fortified enemy core. | Use breach route; vehicle survives; complete under 9:00. | CommanderXP, Credits, `Unit_Chr_Ghillie_Male_01`, `upgrade.vehicle.apc_armor` BlueprintParts. | Standard |
 
 ## M01 Detailed Spec: First Contact
@@ -220,7 +220,7 @@ Implementation handoff: use `../M01_FirstContact_Production_Contract.md` for con
 | `reward.ch01.m01.credits.first_clear` | Credits | Small Credit grant. | First clear only. |
 | `reward.ch01.m01.credits.repeat` | Credits | Reduced replay grant. | Repeatable replay grant. |
 
-Do not grant Materials, Fuel, Intel, Command Authority, Rush Tickets, store items, Operation metrics, or unlocks in Mission 1 unless a reviewed economy pass changes this document.
+Do not grant match Materials, Fuel, Oil, Command, Rush Tickets, store items, Operation metrics, or unlocks in Mission 1 unless a reviewed economy pass changes this document.
 
 ### UI Surfaces
 
@@ -327,10 +327,9 @@ Do not grant Materials, Fuel, Intel, Command Authority, Rush Tickets, store item
 |---|---|---|---|
 | `reward.ch01.m02.commander_xp.first_clear` | CommanderXP | Small XP grant. | First clear only. |
 | `reward.ch01.m02.credits.first_clear` | Credits | Small Credit grant. | First clear only. |
-| `reward.ch01.m02.materials.first_clear` | Materials | Introductory Material grant. | First clear only. |
 | `reward.ch01.m02.production_unlock` | BuildingUnlock | `Building_Barrack`. | First clear only; duplicate converts to `BlueprintParts` for `upgrade.building.training_facilities`. |
 
-Do not grant Command Authority, Rush Tickets, store items, or direct Operation metric rewards.
+Do not grant match Materials/Fuel/Oil, Command, Rush Tickets, store items, or direct Operation metric rewards.
 
 ### UI Surfaces
 
@@ -438,12 +437,12 @@ Do not grant Command Authority, Rush Tickets, store items, or direct Operation m
 | RewardId | Reward Type | Amount / Item | Rule |
 |---|---|---|---|
 | `reward.ch01.m03.commander_xp.first_clear` | CommanderXP | Standard Chapter 1 XP grant. | First clear only. |
-| `reward.ch01.m03.materials.first_clear` | Materials | Defense/infrastructure Material grant. | First clear only. |
+| `reward.ch01.m03.credits.first_clear` | Credits | Standard Chapter 1 Credit grant. | First clear only. |
 | `reward.ch01.m03.guard_tower_unlock` | BuildingUnlock | `Building_GuardTower`. | First clear only; duplicate converts to `BlueprintParts` for `upgrade.building.base_defense`. |
 | `reward.ch01.m03.radar_ping_unlock` | SupportAbilityUnlock | `ability.radar_ping`. | First clear only; duplicate converts to `BlueprintParts` for `ability.radar_ping`. |
 | `reward.ch01.m03.credits.repeat` | Credits | Reduced replay grant. | Repeatable replay grant. |
 
-Do not grant Command Authority, Rush Tickets, store items, or direct Operation metric rewards.
+Do not grant match Materials/Fuel/Oil, Command, Rush Tickets, store items, or direct Operation metric rewards.
 
 ### UI Surfaces
 
@@ -552,18 +551,18 @@ Do not grant Command Authority, Rush Tickets, store items, or direct Operation m
 | RewardId | Reward Type | Amount / Item | Rule |
 |---|---|---|---|
 | `reward.ch01.m04.commander_xp.first_clear` | CommanderXP | Standard Chapter 1 XP grant. | First clear only. |
-| `reward.ch01.m04.fuel.first_clear` | Fuel | Introductory Fuel grant. | First clear only. |
+| `reward.ch01.m04.credits.first_clear` | Credits | Standard Chapter 1 Credit grant. | First clear only. |
 | `reward.ch01.m04.transport_parts` | BlueprintParts | `upgrade.air.transport_aircraft` x25. | First clear only; item-specific parts. |
 | `reward.ch01.m04.support_unlock` | SupportAbilityUnlock | `ability.evacuation_corridor`. | First clear only; duplicate fallback grants item-specific BlueprintParts. |
 
-Do not grant Command Authority, Rush Tickets, store items, or direct Operation metric rewards.
+Do not grant match Materials/Fuel/Oil, Command, Rush Tickets, store items, or direct Operation metric rewards.
 
 ### UI Surfaces
 
 | Surface | Purpose |
 |---|---|
 | SCN-05 Campaign Map | Shows Mission 4 locked until M03 victory. |
-| SCN-06 Mission Briefing | Shows landing zone, transport objective, Fuel reward. |
+| SCN-06 Mission Briefing | Shows landing zone, transport objective, starting match Fuel rule, and persistent Credits/unlock rewards. |
 | SCN-07 Loadout | Shows required/locked transport support if loadout is active by this phase. |
 | SCN-08 Battle HUD | Shows landing-zone objective, squad tray, transport status, minimap. |
 | SCN-10 Command Wheel | Shows Board/Extract/Rope Drop commands when relevant. |
@@ -591,7 +590,7 @@ Do not grant Command Authority, Rush Tickets, store items, or direct Operation m
 | Config sanity | Transport unit/support, extraction zone, objective ids, and reward ids exist. |
 | Objective test | Transport boarding/extraction completes objective and destroyed transport blocks completion. |
 | Star test | Transport-survival and under-time stars evaluate independently. |
-| Resource test | Required Fuel is available before launch and not injected mid-match through store flow. |
+| Resource test | Required starting match Fuel is seeded by scenario configuration and never injected through account/store flow. |
 | UI contract test | Transport command, landing-zone objective, and threat warning map to gameplay contracts. |
 | Balance probe | `Campaign_Chapter1_Mission4` writes transport timing, exposure window, Fuel spend, losses, and extraction result. |
 
@@ -668,7 +667,7 @@ Do not grant Command Authority, Rush Tickets, store items, or direct Operation m
 | `reward.ch01.m05.apc_armor_parts` | BlueprintParts | `upgrade.vehicle.apc_armor` x35. | First clear only; item-specific parts. |
 | `reward.ch01.m05.campaign_stars` | CampaignStars / legacy `SagaStars` storage | Best star result for mission/chapter thresholds. | Stored as best result, never spent. |
 
-Do not grant Command Authority, Rush Tickets, store items, or direct Operation metric rewards from the store path. Campaign stars come only from mission completion/star result.
+Do not grant Command, Rush Tickets, store items, or direct Operation metric rewards from the store path. Campaign stars come only from mission completion/star result.
 
 ### UI Surfaces
 

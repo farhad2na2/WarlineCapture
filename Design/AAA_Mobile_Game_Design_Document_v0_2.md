@@ -189,7 +189,7 @@ The reusable mission grammar remains in `Gameplay_North_Star_And_Content_Grammar
 - Campaign progress follows first-clear mission completion, not star totals alone.
 - Stars reward mastery and may unlock optional rewards, challenges, or cosmetic recognition.
 - Story-critical Protocol Fragments are guaranteed by chapter completion.
-- CommanderXP, Credits, Materials, Fuel, Intel, fixed unlocks, and blueprint parts follow the canonical economy documents.
+- CommanderXP, persistent Credits/Command, fixed unlocks, inventory items, and blueprint parts follow the canonical economy documents. Materials, Fuel, and Oil exist only inside a match.
 - Trust, Evidence, and Infrastructure reflect authored outcomes and drive epilogue emphasis.
 - Premium resources, purchases, advertisements, and Rush Tickets never reveal story, complete objectives, or erase mission consequences.
 - Returning players receive a clear `Continue Campaign` route and optional recap.

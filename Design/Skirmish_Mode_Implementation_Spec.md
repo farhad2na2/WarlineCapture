@@ -84,7 +84,7 @@ The first slice may use the M01/First Contact scenario fallback, but it must be 
 | Enemy Type | `QuickGameConfig.EnemyType` | Balanced, Military, Defensive, Air, Swarm, Random. Disable unimplemented behavior with a clear locked reason. |
 | Enemy Count | `QuickGameConfig.EnemyCount` | Stepper, clamp 1 to 3. |
 | Difficulty | `QuickGameConfig.Difficulty` | Easy, Normal, Hard, Brutal. |
-| Starting Credits | `QuickGameConfig.StartingMoney` | Player-facing label is Credits, not Money. |
+| Starting Materials | `QuickGameConfig.StartingMoney` temporarily maps the legacy field until it is renamed. | Player-facing label is Materials. Skirmish setup never seeds or spends persistent Credits. |
 | Income Multiplier | `QuickGameConfig.IncomeMultiplier` | Clamp 0.5 to 3.0. |
 | Build Speed | `QuickGameConfig.BuildSpeed` | Slow, Normal, Fast. |
 | Unit Production Speed | `QuickGameConfig.UnitProductionSpeed` | Slow, Normal, Fast. |
@@ -203,7 +203,7 @@ Required screen regions:
 
 | Region | Content |
 |---|---|
-| Top header | Back, title `SKIRMISH`, Credits/Supplies/Command resource strip, Settings shortcut. |
+| Top header | Back, title `SKIRMISH`, persistent Credits/Command resource strip, Settings shortcut. Starting match Materials/Fuel/Oil belong in setup controls, not the account header. |
 | Left preset rail | Preset cards with lock/readiness state and compact objective type. |
 | Center operation preview | 3D operation-map preview image, selected preset name, objective, map seed, civilian-risk/intel-confidence badges. |
 | Right rule panel | Enemy, difficulty, economy, aggression, objective, fog/intel, starting resources. |
@@ -256,7 +256,7 @@ First slice:
 
 - no Campaign stars
 - no Operations district mutation
-- optional small repeatable Credits/Supplies reward if economy design allows it
+- optional small repeatable persistent Credits reward if economy design allows it
 - result report focused on time, enemy defeated, casualties, civilian safety, buildings lost, and AI pressure
 
 ## Implementation Milestones

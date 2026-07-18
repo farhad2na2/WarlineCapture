@@ -3,6 +3,8 @@
 Status: planning only; do not rebuild prefabs for this pass.
 Updated: 2026-06-09
 
+2026-07-18 economy decision: Build Drawer affordability uses match Materials and authored Fuel costs only. Legacy Credits/Supplies labels and fields are migration debt; persistent Credits/Command must never be read or spent by this match popup.
+
 ## Scope
 
 This document tracks the data/config binding needed for `Canvas (Environment) / SCN09_BuildDrawerPopup`.
@@ -202,7 +204,7 @@ Current placeholder labels include credits, supplies, time, placement, footprint
 Required bindings:
 
 - Credits from `Price` / current player credits.
-- Supplies/materials/fuel only if the economy source of truth has those costs for build drawer entries.
+- Materials and authored Fuel costs only. Legacy Supplies/Credits presentation must be removed rather than remapped to persistent currency.
 - Time from production/build time source.
 - Requirements from producer/unlock/runway/queue/resource validation.
 

@@ -28,7 +28,7 @@ The shop should support the three-mode product:
 - Operations: OperationSupply drops, armory stock, Black Market rotations, and resource-backed district recovery support.
 - Skirmish: cosmetic themes, map presets, no progression-pressure monetization.
 
-Campaign monetization never sells campaign stars. Chapter reward bundles mean fixed resource, BlueprintParts, GearModule, Cosmetic, Supplies, or Command bundles tied to chapter progress.
+Campaign monetization never sells campaign stars. Chapter reward bundles mean fixed Credits/Command, BlueprintParts, GearModule, Cosmetic, OperationSupply, or other named inventory bundles tied to chapter progress.
 
 ## Design Principles
 
@@ -53,12 +53,11 @@ Campaign monetization never sells campaign stars. Chapter reward bundles mean fi
 
 | Resource | Role | Earned From | Purchased? | Notes |
 |---|---|---|---|---|
-| Credits | Main spendable resource for buildings, unit production support, common upgrades | Missions, Operation actions, daily reports | Yes, in capped bundles | Maps to tactical Money where the UI needs a player-facing label. |
-| Materials | Construction and repair economy | Build objectives, Operation repair, chapter rewards | Yes, in capped bundles | Used for base and district recovery, not instant wins. |
-| Fuel | Tactical and strategic mobility resource | Refineries, fuel objectives, Operation logistics, mission rewards | Yes, in capped bundles | Used for deploy costs, vehicle/air support, extraction, and readiness; never injected into an active match. |
-| Command Authority | Premium command resource | Profile level milestones, events, purchases | Yes | Used for cosmetics, fixed-content bundles, rush tickets. |
-| Intel | Limited tactical intel access | Mission rewards, Operation scans, evidence rewards, star-threshold rewards, store bundles | Limited | Reveals mission intel and evidence details, does not reveal hidden win states. |
+| Credits | Regular account progression currency | Missions, Operation actions, daily reports | Yes, in capped bundles | Used for permanent upgrades, unlocks, standard account items, and authored Operation actions; never active-match construction. |
+| Command | Rare optional/premium account currency | Major profile milestones, limited events, season rewards, purchases | Yes | Used for cosmetics, fixed-content bundles, and Rush Tickets; never active-match power. |
 | Rush Tickets | Time/completion accelerators | Events, starter packs, paid bundles | Yes | Only for production queues and Operation timers where design permits. |
+
+Materials, Fuel, and Oil are match-only resources and are not wallet resources or monetized products. OperationIntel is a mode metric; Intel Dossiers are named inventory items rather than wallet currency.
 
 Detailed acquisition, loss, spend, conversion, and balancing rules for all wallet resources and reward types live in `Design/Economy_Reward_Design.md`.
 
@@ -69,7 +68,7 @@ Automated balance harness tests, opt-in gameplay/economy probes, and report expe
 | Type | Safe Use | Avoid |
 |---|---|---|
 | Starter packs | Early resources, cosmetic commander frame, small roster unlock, transparent value | Overpowered units that trivialize Chapter 1 |
-| Resource bundles | Credits, Materials, Fuel, Intel, Command Authority, and Rush Tickets with caps and daily purchase limits | Infinite tactical resource injection during live matches |
+| Resource bundles | Credits, Command, and Rush Tickets with caps and daily purchase limits | Any Materials, Fuel, Oil, or other active-match resource injection |
 | Cosmetic skins | Commander frames, unit card skins, squad banners, base HUD themes | Camouflage that affects readability or combat stats |
 | Operation supplies | Aid drops, Repair Convoys, Intel Dossiers, Readiness Boosts as `OperationSupply` grants | Removing district consequences completely or granting OperationTrust, OperationSecurity, OperationIntel, or OperationInfrastructure directly |
 | Armory bundles | Gear modules, support ability parts, upgrade materials | Selling exclusive combat-only power with no earn path |
@@ -80,7 +79,8 @@ Automated balance harness tests, opt-in gameplay/economy probes, and report expe
 All monetized products must map to canonical reward types in `Design/Economy_Reward_Design.md`.
 
 - Store products are catalog entries that grant through `RewardConfig` and `RewardService`; store UI does not write wallet, inventory, progression, or Operation state directly.
-- Store purchases can grant Credits, Materials, Fuel, Intel, Command Authority, Rush Tickets, BlueprintParts, GearModule, Cosmetic, UnitUnlock, BuildingUnlock, SupportAbilityUnlock, and OperationSupply.
+- Store purchases can grant Credits, Command, Rush Tickets, BlueprintParts, GearModule, Cosmetic, UnitUnlock, BuildingUnlock, SupportAbilityUnlock, and OperationSupply.
+- Store purchases cannot grant Materials, Fuel, Oil, or mutate an active match.
 - Store purchases cannot directly grant CampaignStars / legacy `SagaStars`, `OperationTrust`, `OperationSecurity`, `OperationIntel`, or `OperationInfrastructure`.
 - Operation supplies bought in the Store create district value only after the player spends them through authored Operation actions.
 - Duplicate unlocks, gear, and cosmetics use explicit fallback rewards from the economy design.
@@ -108,7 +108,6 @@ Reached from SCN-11 `BLACK MARKET`. This should be an Operation-flavored store c
 Safe items:
 
 - Intel dossier packs.
-- Materials for authored repair actions.
 - Aid Convoy and Repair Convoy `OperationSupply` grants.
 - Armory stock refresh ticket.
 - Cosmetic district map markers.
@@ -142,7 +141,7 @@ Detailed contents are in `Monetization_Store_Catalog.md`.
 
 The Commander Profile visual lock already includes `REWARD TRACK / SEASON 7`. This should become a season track with:
 
-- Free lane: Command Authority, Credits, cosmetic badges, fixed resource bundles, CommanderXP.
+- Free lane: Command, Credits, cosmetic badges, fixed account bundles, CommanderXP.
 - Premium lane: extra cosmetics, fixed armory bundles, operation supplies, commander frame.
 - No hidden random rewards.
 - No paid-only unit that has no gameplay earn path.
@@ -159,11 +158,11 @@ Use familiar mobile price anchors while keeping the first implementation conserv
 
 | Tier | Price | Use |
 |---|---:|---|
-| Entry | `$0.99` to `$1.99` | First purchase, small Command Authority bundles |
+| Entry | `$0.99` to `$1.99` | First purchase, small Command bundles |
 | Starter | `$4.99` | Primary starter pack |
 | Core | `$9.99` | Season pass, strong bundles |
 | Premium | `$19.99` | Operation Founder, pass plus fixed season claim nodes |
-| Whale-safe cap | `$49.99` | Large Command Authority/resource pack with strict purchase and economy caps |
+| Whale-safe cap | `$49.99` | Large Command/account pack with strict purchase and economy caps |
 
 First implementation ships the designed Command Exchange catalog with purchase CTAs in `DesignedUnavailable` state. Release purchase activation requires profile persistence, RewardService, wallet, receipt validation, and platform product ids.
 

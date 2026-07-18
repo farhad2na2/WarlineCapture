@@ -1,12 +1,14 @@
 # Field Fabrication And Materials Implementation Tracker
 
 Date: 2026-07-12
-Status: Complete
+Status: Complete for the 2026-07-12 implementation baseline; economy-scope migration reopened by the 2026-07-18 design decision
 Design source: `../Field_Fabrication_Materials_Design.md`
 
 ## Objective
 
-Turn the currently nonfunctional `Building_Ammunition_Depot` into the player-facing Field Fabrication Depot. Reuse the existing physical Oil and tray-truck logistics path, convert delivered Oil into one authoritative faction tactical Materials value, make battlefield construction spend Credits plus Materials, and retain the Resource Exchange as a deliberately expensive recovery option.
+Turn the currently nonfunctional `Building_Ammunition_Depot` into the player-facing Field Fabrication Depot. Reuse the existing physical Oil and tray-truck logistics path and convert delivered Oil into one authoritative faction match Materials value.
+
+2026-07-18 migration note: the completed evidence below describes the shipped Credits-plus-Materials baseline and remains historical implementation evidence. The current design removes tactical Credits, persistent Materials, and profile-funded Materials. Follow-up implementation must migrate battlefield costs to Materials, retire/deprecate profile Materials, and keep persistent Credits out of active-match simulation. Do not reinterpret old completed checklist rows as current economy intent.
 
 This tracker is the implementation and evidence authority. It does not redefine balance or player intent from the high-level design.
 

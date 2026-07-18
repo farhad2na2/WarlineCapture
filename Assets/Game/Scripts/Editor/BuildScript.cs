@@ -113,6 +113,7 @@ namespace Game.Editor
                 $"[BuildScript] Android cache mode: {(cleanBuildCache ? "clean" : "incremental")}");
 
             BuildReport report = ExecuteBuild(buildPlayerOptions);
+            OperationMapEntityScenePackageGate.Validate(outputPath);
             AndroidBuildReportGenerator.GenerateAndWriteReports(
                 report,
                 buildType,

@@ -27,6 +27,8 @@ namespace Game.Editor
             "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01.asset";
         public const string SourceScenePath =
             "Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01.unity";
+        public const string SourceSubScenePath =
+            "Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01_subscene.unity";
         public const string MapSurfacePath =
             "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset";
         public const string ManifestPath =

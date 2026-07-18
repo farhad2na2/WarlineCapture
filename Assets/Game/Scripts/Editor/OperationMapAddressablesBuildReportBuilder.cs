@@ -5,8 +5,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using UnityEditor;
+using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Build;
 using UnityEditor.AddressableAssets.Build.Layout;
+using UnityEditor.AddressableAssets.Build.AnalyzeRules;
 using UnityEditor.AddressableAssets.Settings;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -26,10 +28,22 @@ namespace Game.Editor
             if (!OperationMapAddressablesLayoutValidator.TryValidateCurrentLayout(true, out string error))
                 throw new InvalidOperationException(error);
 
+            AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;
+            if (settings == null)
+                throw new InvalidOperationException("Addressables settings are required.");
+
             bool previousGenerateBuildLayout = ProjectConfigData.GenerateBuildLayout;
             try
             {
                 ProjectConfigData.GenerateBuildLayout = true;
+                CheckBundleDupeDependencies duplicateRule = new();
+                List<AnalyzeRule.AnalyzeResult> analyzeResults = duplicateRule.RefreshAnalysis(settings);
+                int analyzeIssueCount = analyzeResults.Count(result =>
+                    result != null && result.severity != MessageType.None);
+                Debug.Log(
+                    $"[OperationMapAddressablesAnalyze] result=Passed " +
+                    $"rule=duplicate-bundle-dependencies issues={analyzeIssueCount}");
+
                 DateTime buildStartedUtc = DateTime.UtcNow;
                 AddressableAssetSettings.BuildPlayerContent(out AddressablesPlayerBuildResult result);
                 if (result == null || !string.IsNullOrEmpty(result.Error))
@@ -43,6 +57,8 @@ namespace Game.Editor
                 try
                 {
                     OperationMapAddressablesBuildReport report = Create(layout);
+                    if (!TryValidateDuplicateDependencies(report.DuplicateDependencies, out string duplicateError))
+                        throw new InvalidOperationException(duplicateError);
                     bool wroteReport = Publish(OutputPath, Serialize(report));
                     Debug.Log(
                         $"[OperationMapAddressablesBuildReport] result=Passed " +
@@ -110,6 +126,33 @@ namespace Game.Editor
                 requiredAddresses,
                 entitiesArtifacts,
                 duplicates);
+        }
+
+        internal static bool TryValidateDuplicateDependencies(
+            OperationMapAddressablesDuplicateDependencyReport[] duplicates,
+            out string error)
+        {
+            if (duplicates == null)
+            {
+                error = "Addressables duplicate-dependency evidence is missing.";
+                return false;
+            }
+
+            for (int index = 0; index < duplicates.Length; index++)
+            {
+                OperationMapAddressablesDuplicateDependencyReport duplicate = duplicates[index];
+                if (duplicate.AssetPath.StartsWith("Packages/", StringComparison.Ordinal))
+                    continue;
+
+                error =
+                    $"Unapproved duplicated operation-map dependency: " +
+                    $"guid={duplicate.AssetGuid} path={duplicate.AssetPath} " +
+                    $"bundles={duplicate.BundleCount} bytes={duplicate.DuplicateBytes}.";
+                return false;
+            }
+
+            error = null;
+            return true;
         }
 
         internal static string Serialize(OperationMapAddressablesBuildReport report)

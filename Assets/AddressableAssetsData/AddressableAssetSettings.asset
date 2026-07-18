@@ -243,6 +243,8 @@ MonoBehaviour:
     - operation-map-shared-shard-texture-06
     - operation-map-shared-shard-texture-00
     - operation-map-shared-shard-other-07
+    - operation-map-shared-shard-material-04
+    - operation-map-shared-shard-material-02
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: 11f3bcb7e92274cb9a2041ff8401d472, type: 2}

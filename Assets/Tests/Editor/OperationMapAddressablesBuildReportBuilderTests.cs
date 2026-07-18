@@ -53,6 +53,37 @@ public sealed class OperationMapAddressablesBuildReportBuilderTests
     }
 
     [Test]
+    public void DuplicateValidation_RejectsProjectOwnedDependency()
+    {
+        OperationMapAddressablesDuplicateDependencyReport[] duplicates =
+        {
+            new("project-guid", "Assets/Shared.asset", 2, 12)
+        };
+
+        Assert.IsFalse(
+            OperationMapAddressablesBuildReportBuilder.TryValidateDuplicateDependencies(
+                duplicates,
+                out string error));
+        StringAssert.Contains("project-guid", error);
+        StringAssert.Contains("Assets/Shared.asset", error);
+    }
+
+    [Test]
+    public void DuplicateValidation_AllowsPackageOwnedDependency()
+    {
+        OperationMapAddressablesDuplicateDependencyReport[] duplicates =
+        {
+            new("package-guid", "Packages/com.unity.render-pipelines.universal/Shaders/Lit.shader", 2, 12)
+        };
+
+        Assert.IsTrue(
+            OperationMapAddressablesBuildReportBuilder.TryValidateDuplicateDependencies(
+                duplicates,
+                out string error),
+            error);
+    }
+
+    [Test]
     public void Publish_DoesNotRewriteIdenticalContent()
     {
         string path = System.IO.Path.Combine(

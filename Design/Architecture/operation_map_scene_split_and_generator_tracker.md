@@ -707,7 +707,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 63% (112/177 checklist items complete).
+Overall implementation progress: 64% (114/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -716,7 +716,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 | 0. Reproducible baseline and rollback | In progress / shared | 11 | 12 | 92% | Required by both directions before scene edits. |
 | 1. Operation-map and scenario data contracts | Complete | 12 | 12 | 100% | Typed identity, catalog resolution, complete spatial/navigation metadata, hashes, lazy content references, validation, and ownership chain are approved. |
 | 2. Per-map static presentation ownership | Complete | 14 | 14 | 100% | Per-map bake/output ownership, integrity, rollback, no-op reuse, wiring, Android resolution, and synthetic multi-map isolation are accepted while the shipped catalog remains one physical map. |
-| 2A. Local Addressables packaging foundation | Active / selected direction | 16 | 20 | 80% | Source and presentation handles load from real local Addressables. Bounded shared shards reduced the closure from 603 MB to 258 MB and the APK from 938 MiB to 609 MiB; thin-shell cutover and final package acceptance remain open. |
+| 2A. Local Addressables packaging foundation | Active / selected direction | 17 | 20 | 85% | Source and presentation handles load from real local Addressables. Source/presentation-aware shared shards reduced the closure from 603 MB to 148 MB with zero project-owned duplicate GUIDs; Entities linkage and final package/device acceptance remain open. |
 | 3. Current-map compatibility registration | Complete / shared | 10 | 10 | 100% | Current identities/definition, authored behavior, schema-v1 read compatibility, runtime activation/teardown, deterministic presentation, and Android chunk resolution are accepted. |
 | 4. Non-destructive scene ownership split | Complete | 14 | 14 | 100% | The extracted map owns its source, subscene, placements, metadata, and 514-chunk presentation set. `Match.unity` is now a thin six-root shell with one small shared runtime subscene. |
 | 5. Runtime selection, loading, and teardown | Complete | 14 | 14 | 100% | Local Addressables loading/readiness, bounded typed failures, ordered teardown, renderer restoration, retry, and two sequential Match lifecycles pass. Each cycle clears the map ECS root and source scene before the next load while preserving the shared World. |
@@ -724,7 +724,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 | 7. M01 operation-map slice | Later / shared contracts only | 0 | 10 | 0% | Map-neutral ids/anchors may proceed; physical rollout remains gated. |
 | 8. Editor-time texture/mask generator | Later / editor direction only | 0 | 12 | 0% | Implement only if the editor-authored map direction is selected. |
 | 9. Mission and Skirmish scenario rollout | In progress / single-map scenario data | 1 | 10 | 10% | The standard Skirmish scenario now resolves the approved physical map and its typed faction deployment anchors without duplicating map content. Feature, objective, force, reward, and UI data remain open. |
-| 10. Full validation and all-bundled rollout | Shared validation subset active | 9 | 21 | 43% | Launch parity, config/lifecycle/static-presentation, scene-reference, spatial-behavior, and map-conversion coverage plus scoped static/compile gates are accepted; architecture, memory, performance, build-layout, and device gates remain. |
+| 10. Full validation and all-bundled rollout | Shared validation subset active | 10 | 21 | 48% | Launch parity, config/lifecycle/static-presentation, scene-reference, spatial-behavior, map-conversion, and exact one-map package membership plus scoped static/compile gates are accepted; architecture, memory, performance, release-artifact, and device gates remain. |
 | 11. Deferred remote content migration | Later / remote delivery | 0 | 16 | 0% | Remote delivery remains independently gated. |
 
 ## Phase 0: Reproducible Baseline And Rollback
@@ -818,7 +818,7 @@ Exit criteria:
 - [x] Add `StaticMapPresentationAddressablesSceneApi` so local presentation chunks use stable addresses and retained handles through the existing bounded streamer. See `../AgentReports/2026-07-18_static_map_presentation_addressables_scene_api.md`, `../AgentReports/2026-07-18_static_map_presentation_manifest_scene_api_binding.md`, and `../AgentReports/2026-07-18_static_map_addressables_production_activation.md`.
 - [x] Add focused fake-operation and PlayMode tests for source/chunk handle ownership, duplicate requests, failed-handle release, drain ordering, and sequential maps. See the same activation report.
 - [ ] Prove that an Addressable source scene resolves its expected Entities subscene stream/content archive in Editor and Android without hand-addressing generated files.
-- [ ] Run Addressables Analyze and Build Layout checks and fail on unapproved cross-map duplicate dependency bytes/GUIDs.
+- [x] Run Addressables Analyze and Build Layout checks and fail on unapproved cross-map duplicate dependency bytes/GUIDs. See `../AgentReports/2026-07-18_operation_map_addressables_duplicate_closure.md`.
 - [ ] Produce the clean one-map local artifact with APK/AAB, installed-size, bundle, Entities, memory, and load-time deltas; defer two-map and portfolio artifacts until another physical map is approved.
 - [ ] Validate the single approved physical map launches offline from real local bundles on Editor and Android with no remote catalog, download query, network call, or remote helper implementation.
 
@@ -1005,7 +1005,7 @@ Exit criteria:
 - [ ] Replace the provisional `80-110 MB` compressed per-map planning range with an accepted measured budget before approving broader map production.
 - [ ] Validate the single approved operation map from real local Addressables bundles, including stable identity, offline launch, content-version mismatch, load failure unwind, teardown, and sequential reload.
 - [ ] Run Android build-scene inclusion, APK/installed size, startup, memory, sustained FPS, and thermal validation.
-- [ ] Verify every catalog-approved local operation map and only those maps are packaged; no unapproved map, stale generated scene, foreign-owned chunk, or remote dependency is included.
+- [x] Verify every catalog-approved local operation map and only those maps are packaged; no unapproved map, stale generated scene, foreign-owned chunk, or remote dependency is included. See `../AgentReports/2026-07-18_operation_map_addressables_duplicate_closure.md`.
 - [ ] Capture accepted screenshots for top-down, oblique, low-ground, minimap, bounds, and map transition states.
 - [ ] Update `README.md`, `Design/README.md`, this percentage table, and exact command/log evidence.
 - [ ] For every stable slice, use the serial direct-main workflow, provide commit-bound validation evidence, self-review the complete diff, and keep scene extraction and shell cutover in independently revertable commits.
@@ -1171,6 +1171,7 @@ Exit criteria:
 | 2026-07-18 | Spatial-behavior acceptance | `../AgentReports/2026-07-18_operation_map_spatial_behavior_acceptance.md`; focused EditMode matrix `93 / 93`; zero C# compiler errors | Passed; one Phase 10 row accepted | Surface/grounding, aircraft clearance, runway/helipad records, grid/blockers, and building placement are accepted. Device performance and map-authored conversion/source hiding remain separate gates. |
 | 2026-07-18 | Map conversion and source-hiding acceptance | `../AgentReports/2026-07-18_operation_map_conversion_source_hiding_acceptance.md`; focused EditMode matrix `103 / 103`; zero C# compiler errors | Passed; one Phase 10 row accepted | Extracted-scene placement parity, map-authored building/vehicle/aircraft conversion, source hiding, and runway alignment are accepted. The runway regression now resolves markers from the extracted map rather than the thin shell. |
 | 2026-07-18 | Launch-parity acceptance | `../AgentReports/2026-07-18_operation_map_launch_parity_acceptance.md`; preserved pre-extraction and shell-cutover launch evidence; final PlayMode lifecycle `2 / 2`; zero C# compiler errors | Passed; one Phase 10 row accepted | Compatibility activation, extracted-map cutover, and current sequential lifecycle form an accepted launch-parity chain. Android hardware launch remains separate. |
+| 2026-07-18 | Addressables duplicate and package-membership closure | `../AgentReports/2026-07-18_operation_map_addressables_duplicate_closure.md`; focused `12 / 12`; Unity Analyze; fresh Build Layout; real content build; deterministic no-op layout; zero C# compiler errors | Passed; one Phase 2A and one Phase 10 row accepted | The one-map closure is 148,222,351 bytes with 100 partitions, 1,460 stable addresses, zero project-owned duplicate GUIDs, and five explicitly accepted package-owned duplicate rows. |
 
 ## Open Decisions
 

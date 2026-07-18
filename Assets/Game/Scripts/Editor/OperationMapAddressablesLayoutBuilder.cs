@@ -47,7 +47,7 @@ namespace Game.Editor
         public const string MinimapRasterRoleLabel = "operation-map-role-minimap-raster";
         public const string SharedDependencyRoleLabel = "operation-map-role-shared-dependency";
         public const string SharedShardLabelPrefix = "operation-map-shared-shard-";
-        public const int SharedDependencyPartitionThreshold = 8;
+        public const int SharedDependencyPartitionThreshold = 2;
         public const int SharedDependencyShardCount = 8;
 
         [MenuItem("Game/Operation Maps/Configure Local Addressables Groups")]
@@ -184,24 +184,12 @@ namespace Game.Editor
                 throw new ArgumentNullException(nameof(manifest));
 
             var usage = new Dictionary<string, HashSet<string>>(StringComparer.Ordinal);
+            AddDependencyUsage(usage, SourceScenePath, "operation-map-core-source");
             for (int index = 0; index < manifest.Chunks.Count; index++)
             {
                 StaticMapPresentationChunkEntry chunk = manifest.Chunks[index];
                 string partition = BuildPartitionLabel(chunk, manifest.ChunkSize);
-                string[] dependencies = AssetDatabase.GetDependencies(chunk.ScenePath, true);
-                for (int dependencyIndex = 0; dependencyIndex < dependencies.Length; dependencyIndex++)
-                {
-                    string path = dependencies[dependencyIndex];
-                    if (!IsShareableDependencyPath(path))
-                        continue;
-
-                    if (!usage.TryGetValue(path, out HashSet<string> partitions))
-                    {
-                        partitions = new HashSet<string>(StringComparer.Ordinal);
-                        usage.Add(path, partitions);
-                    }
-                    partitions.Add(partition);
-                }
+                AddDependencyUsage(usage, chunk.ScenePath, partition);
             }
 
             return usage
@@ -219,6 +207,27 @@ namespace Game.Editor
                 })
                 .OrderBy(path => path, StringComparer.Ordinal)
                 .ToArray();
+        }
+
+        private static void AddDependencyUsage(
+            Dictionary<string, HashSet<string>> usage,
+            string ownerPath,
+            string partition)
+        {
+            string[] dependencies = AssetDatabase.GetDependencies(ownerPath, true);
+            for (int dependencyIndex = 0; dependencyIndex < dependencies.Length; dependencyIndex++)
+            {
+                string path = dependencies[dependencyIndex];
+                if (!IsShareableDependencyPath(path))
+                    continue;
+
+                if (!usage.TryGetValue(path, out HashSet<string> partitions))
+                {
+                    partitions = new HashSet<string>(StringComparer.Ordinal);
+                    usage.Add(path, partitions);
+                }
+                partitions.Add(partition);
+            }
         }
 
         internal static string BuildSharedShardLabel(string assetPath, string guid)

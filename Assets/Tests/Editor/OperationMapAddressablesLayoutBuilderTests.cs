@@ -12,6 +12,12 @@ using UnityEngine.AddressableAssets;
 public sealed class OperationMapAddressablesLayoutBuilderTests
 {
     [Test]
+    public void SharedDependencyThresholdCoversEveryCrossBundleDependency()
+    {
+        Assert.That(OperationMapAddressablesLayoutBuilder.SharedDependencyPartitionThreshold, Is.EqualTo(2));
+    }
+
+    [Test]
     public void CurrentLayout_UsesExactLocalOneMapGroupTopology()
     {
         AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;

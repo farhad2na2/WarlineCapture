@@ -48,8 +48,8 @@
   "artifactId": "AM-021",
   "baseline": {
     "branch": "main",
-    "commit": "13f9c207b35361e74e42638c370f3b1ebf6b7b07",
-    "tree": "d0214a423fbd367360623dcf9199ee52e2ec4e59"
+    "commit": "62127543deba044afdeaf958fa24a0fc664b142f",
+    "tree": "a31e08b14ec76abb90e1a17ceda2b9b22cf602a4"
   },
   "categories": {
     "eventSubscriptions": [
@@ -13190,7 +13190,7 @@
   "schemaVersion": 1,
   "scope": {
     "productionFileCount": 1026,
-    "sourceManifestSha256": "903f19ccba395d9627e0a55b502389bc1e64da7c9fb9e30143a3cb2d901c7e77",
+    "sourceManifestSha256": "3b7bbe6007703e21db5630d31d0776306860553e04fd4e6e772ac5ce9f1c8731",
     "sourceRoot": "Assets/Game/Scripts"
   },
   "sourceManifest": [
@@ -13812,7 +13812,7 @@
     },
     {
       "path": "Assets/Game/Scripts/Configs/GameText.cs",
-      "sha256": "00e09ea209669d5f6cd7877509d97167e3db627a28982ed87159489c13db63c5"
+      "sha256": "3fad4d73225967ee7d7b3862f5d1bcae022a26852fbd2835b1520df547aad6df"
     },
     {
       "path": "Assets/Game/Scripts/Configs/GameplayConfigModels.cs",

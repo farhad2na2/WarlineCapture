@@ -21,13 +21,14 @@ public sealed class SelectionStateCompositionSystemHelperTests
             RunCase(test => test.CacheSelectedMoveEntity_KeepsOnlyPlayerMoveUnits());
             RunCase(test => test.VisibleUnitSelection_IgnoresPlayerBuildingsWithoutUnitMove());
             RunCase(test => test.VisibleUnitSelection_UsesSourcePrefixBeforeMovementFallback());
+            RunCase(test => test.VisibleUnitSelection_RebindsAfterWorldReplacement());
             RunCase(test => test.VisibleUnitSelectionCandidateSystem_PublishesCandidateSnapshot());
             RunCase(test => test.FocusedUnitLifecycle_ClearCurrentSelection_RemovesSelectedTagsAndClearsCache());
             RunCase(test => test.FocusedUnitLifecycle_RefreshFocusedUnit_FocusesSingleSelectedPlayerUnit());
             RunCase(test => test.FocusedUnitLifecycle_RefreshFocusedUnit_RebindsAfterWorldReplacement());
             RunCase(test => test.FocusedUnitLifecycle_RejectsEnemyFocusWithoutClearingCurrentSelection());
             RunCase(test => test.FocusedUnitLifecycle_FocusAirUnitClearsAccidentalSelectionMoveThroughRequest());
-            UnityEngine.Debug.Log("[SelectionStateFocusedValidation] result=Passed tests=11");
+            UnityEngine.Debug.Log("[SelectionStateFocusedValidation] result=Passed tests=12");
         }
         catch (System.Exception ex)
         {
@@ -227,6 +228,52 @@ public sealed class SelectionStateCompositionSystemHelperTests
 
             Assert.AreEqual(1, soldierCount);
             Assert.AreEqual(sourceCharacterWithVehicleFallback, selected[0]);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(cameraObject);
+        }
+    }
+
+    [Test]
+    public void VisibleUnitSelection_RebindsAfterWorldReplacement()
+    {
+        GameObject cameraObject = new("VisibleUnitSelectionReplacementCamera");
+        Camera camera = cameraObject.AddComponent<Camera>();
+        camera.orthographic = true;
+        camera.orthographicSize = 5f;
+        camera.pixelRect = new Rect(0f, 0f, 100f, 100f);
+        camera.transform.position = new Vector3(0f, 0f, -10f);
+        var system = new VisibleUnitSelectionCameraSystemHelper();
+        var selected = new System.Collections.Generic.List<Entity>();
+        Rect screenRect = new(0f, 0f, 100f, 100f);
+        var lookup = new SelectionUiReadModelLookup();
+
+        try
+        {
+            Entity firstUnit = CreateVisibleEntity(hasMove: true, float3.zero);
+            Assert.AreEqual(1, system.CollectVisiblePlayerUnits(
+                _entityManager,
+                camera,
+                lookup,
+                screenRect,
+                VisibleUnitSelectionCameraSystemHelper.Filter.All,
+                selected));
+            Assert.AreEqual(firstUnit, selected[0]);
+
+            _world.Dispose();
+            _world = new World("SelectionStateCompositionSystemHelperTests-VisibleReplacement");
+            _entityManager = _world.EntityManager;
+            Entity replacementUnit = CreateVisibleEntity(hasMove: true, new float3(1f, 0f, 0f));
+
+            Assert.AreEqual(1, system.CollectVisiblePlayerUnits(
+                _entityManager,
+                camera,
+                lookup,
+                screenRect,
+                VisibleUnitSelectionCameraSystemHelper.Filter.All,
+                selected));
+            Assert.AreEqual(replacementUnit, selected[0]);
         }
         finally
         {

@@ -72,12 +72,42 @@ public sealed class SelectedUnitOrderSnapshotSystemTests
         Assert.IsFalse(_entityManager.HasComponent<UnitPathRequest>(selectedWithoutOrders));
     }
 
+    [Test]
+    public void PreservedOrders_AreClearedWhenWorldChanges()
+    {
+        SelectedUnitOrderSnapshotCompositionSystemHelper system = new();
+        Entity firstWorldUnit = _entityManager.CreateEntity(typeof(SelectedUnitTag));
+        _entityManager.AddComponentData(firstWorldUnit, new UnitTarget { Cell = new int2(3, 4) });
+        system.PreserveSelectedUnitOrders(_entityManager);
+        System.Reflection.FieldInfo preservedOrdersField = typeof(SelectedUnitOrderSnapshotCompositionSystemHelper).GetField(
+            "_preservedOrders",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        Assert.IsNotNull(preservedOrdersField);
+        var preservedOrders = (System.Collections.ICollection)preservedOrdersField.GetValue(system);
+        Assert.AreEqual(1, preservedOrders.Count);
+
+        using World replacementWorld = new("SelectedUnitOrderSnapshotSystemTests.Replacement");
+        EntityManager replacementEntityManager = replacementWorld.EntityManager;
+        Entity replacementUnit = replacementEntityManager.CreateEntity(typeof(SelectedUnitTag));
+        replacementEntityManager.AddComponentData(replacementUnit, new UnitTarget { Cell = new int2(8, 9) });
+
+        system.EnsureEntityQueries(replacementEntityManager);
+        Assert.AreEqual(0, preservedOrders.Count, "Binding a replacement World must discard orders saved by the previous match.");
+        system.RestorePreservedUnitOrders(replacementEntityManager);
+
+        Assert.AreEqual(
+            new int2(8, 9),
+            replacementEntityManager.GetComponentData<UnitTarget>(replacementUnit).Cell,
+            "Orders preserved in the previous match must not overwrite a replacement match entity.");
+    }
+
     public static void RunFocusedValidation()
     {
         try
         {
             RunCase(test => test.RestorePreservedUnitOrders_RestoresExistingComponentsAndRemovesNewOnes());
-            Debug.Log("[SelectedUnitOrderSnapshotFocusedValidation] result=Passed tests=1");
+            RunCase(test => test.PreservedOrders_AreClearedWhenWorldChanges());
+            Debug.Log("[SelectedUnitOrderSnapshotFocusedValidation] result=Passed tests=2");
         }
         catch (System.Exception ex)
         {

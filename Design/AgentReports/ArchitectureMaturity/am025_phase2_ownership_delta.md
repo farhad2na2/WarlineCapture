@@ -8,15 +8,15 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 |---|---:|
 | Baseline rows | 863 |
 | Hazard rows | 352 |
-| Resolved | 1044 |
+| Resolved | 1045 |
 | Protected/deferred | 36 |
-| Open | 135 |
+| Open | 134 |
 | New after baseline | 26 |
 | Historical intake rows | 575 |
-| Reviewed non-debt rows | 440 |
-| Genuine-debt rows | 135 |
+| Reviewed non-debt rows | 441 |
+| Genuine-debt rows | 134 |
 | Unclassified rows | 0 |
-| Unique debt items | 59 |
+| Unique debt items | 58 |
 
 ## Open Rows
 
@@ -151,9 +151,8 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 | AM-007 | worlds | Assets/Game/Scripts/Systems/FocusedUnitUiReadModelUiSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-007 |
 | AM-007 | worlds | Assets/Game/Scripts/Systems/MatchHudSquadTraySelectionUiSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-008 |
 | AM-007 | worlds | Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandCompositionSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-009 |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectedUnitOrderSnapshotCompositionSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-010 |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionBuildingInteractionCompositionSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-011 |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-012 |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-013 |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-014 |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionRuntimeDiagnosticsSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-015 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionBuildingInteractionCompositionSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-010 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-011 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-012 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-013 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionRuntimeDiagnosticsSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-014 |

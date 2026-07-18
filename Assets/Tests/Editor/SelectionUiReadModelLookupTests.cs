@@ -35,6 +35,8 @@ public sealed class SelectionUiReadModelLookupTests
             passed++;
             RunCase(test => test.FocusedUnitCommandStateVersion_ChangesOnlyWhenCommandStateChanges());
             passed++;
+            RunCase(test => test.FocusedUnitReadModel_RebindsAfterWorldReplacement());
+            passed++;
 
             Debug.Log($"[SelectionUiReadModelLookupValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -237,6 +239,34 @@ public sealed class SelectionUiReadModelLookupTests
         Assert.AreNotEqual(firstVersion, blocked.CommandStateVersion);
         Assert.AreEqual(0, blocked.CanHold);
         Assert.AreEqual((int)TacticalCommandReasonCode.CommandUnavailable, blocked.HoldDisabledReason);
+    }
+
+    [Test]
+    public void FocusedUnitReadModel_RebindsAfterWorldReplacement()
+    {
+        var readModelSystem = new FocusedUnitUiReadModelUiSystemHelper();
+        Assert.IsTrue(readModelSystem.TryRead(
+            _entityManager,
+            out FocusedUnitUiReadModelComponent firstModel,
+            out _));
+        firstModel.CommandStateVersion = 99u;
+        using EntityQuery firstQuery = _entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<FocusedUnitUiReadModelComponent>());
+        Entity firstEntity = firstQuery.GetSingletonEntity();
+        _entityManager.SetComponentData(firstEntity, firstModel);
+
+        using World replacementWorld = new(nameof(FocusedUnitReadModel_RebindsAfterWorldReplacement));
+        EntityManager replacementEntityManager = replacementWorld.EntityManager;
+        Assert.IsTrue(readModelSystem.TryRead(
+            replacementEntityManager,
+            out FocusedUnitUiReadModelComponent replacementModel,
+            out _));
+
+        Assert.AreEqual(0u, replacementModel.CommandStateVersion);
+        using EntityQuery replacementQuery = replacementEntityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<FocusedUnitUiReadModelComponent>());
+        Assert.AreEqual(1, replacementQuery.CalculateEntityCount());
+        Assert.AreEqual(99u, _entityManager.GetComponentData<FocusedUnitUiReadModelComponent>(firstEntity).CommandStateVersion);
     }
 
     private Entity CreatePoseEntity(float3 position)

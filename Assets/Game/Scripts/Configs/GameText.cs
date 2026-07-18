@@ -6,37 +6,34 @@ namespace Game.Configs
 {
     public static class GameText
     {
-        private static readonly Dictionary<string, string> Entries = new(StringComparer.Ordinal);
-        private static readonly Dictionary<string, string> AudioEventIds = new(StringComparer.Ordinal);
-        private static bool initialized;
+        private static GameTextCatalogSnapshot currentSnapshot = GameTextCatalogSnapshot.Uninitialized;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetRuntimeState()
         {
-            Entries.Clear();
-            AudioEventIds.Clear();
-            initialized = false;
+            currentSnapshot = GameTextCatalogSnapshot.Uninitialized;
         }
 
         public static void Init(GameStringsConfig config)
         {
-            Entries.Clear();
-            AudioEventIds.Clear();
-            initialized = true;
+            var entries = new Dictionary<string, string>(StringComparer.Ordinal);
+            var audioEventIds = new Dictionary<string, string>(StringComparer.Ordinal);
 
-            if (config == null || config.Entries == null)
-                return;
-
-            for (int i = 0; i < config.Entries.Count; i++)
+            if (config != null && config.Entries != null)
             {
-                GameStringConfigEntry entry = config.Entries[i];
-                if (entry == null || string.IsNullOrWhiteSpace(entry.Key))
-                    continue;
+                for (int i = 0; i < config.Entries.Count; i++)
+                {
+                    GameStringConfigEntry entry = config.Entries[i];
+                    if (entry == null || string.IsNullOrWhiteSpace(entry.Key))
+                        continue;
 
-                Entries[entry.Key] = entry.Value ?? string.Empty;
-                if (!string.IsNullOrWhiteSpace(entry.AudioEventId))
-                    AudioEventIds[entry.Key] = entry.AudioEventId;
+                    entries[entry.Key] = entry.Value ?? string.Empty;
+                    if (!string.IsNullOrWhiteSpace(entry.AudioEventId))
+                        audioEventIds[entry.Key] = entry.AudioEventId;
+                }
             }
+
+            currentSnapshot = GameTextCatalogSnapshot.Create(entries, audioEventIds);
         }
 
         public static string Get(string key, string fallback = "")
@@ -44,7 +41,8 @@ namespace Game.Configs
             if (string.IsNullOrWhiteSpace(key))
                 return fallback ?? string.Empty;
 
-            if (Entries.TryGetValue(key, out string value))
+            GameTextCatalogSnapshot snapshot = currentSnapshot;
+            if (snapshot.TryGet(key, out string value))
                 return value;
 
             return fallback ?? key;
@@ -58,7 +56,7 @@ namespace Game.Configs
                 return false;
             }
 
-            return Entries.TryGetValue(key, out value);
+            return currentSnapshot.TryGet(key, out value);
         }
 
         public static string GetAudioEventId(string key, string fallback = "")
@@ -66,7 +64,7 @@ namespace Game.Configs
             if (string.IsNullOrWhiteSpace(key))
                 return fallback ?? string.Empty;
 
-            return AudioEventIds.TryGetValue(key, out string value)
+            return currentSnapshot.TryGetAudioEventId(key, out string value)
                 ? value
                 : fallback ?? string.Empty;
         }
@@ -79,7 +77,7 @@ namespace Game.Configs
                 return false;
             }
 
-            return AudioEventIds.TryGetValue(key, out audioEventId);
+            return currentSnapshot.TryGetAudioEventId(key, out audioEventId);
         }
 
         public static string Format(string key, string fallback, params object[] args)
@@ -99,6 +97,57 @@ namespace Game.Configs
             }
         }
 
-        public static bool IsInitialized => initialized;
+        public static bool IsInitialized => currentSnapshot.IsInitialized;
+
+        private sealed class GameTextCatalogSnapshot
+        {
+            public static readonly GameTextCatalogSnapshot Uninitialized = new(
+                false,
+                new Dictionary<string, string>(StringComparer.Ordinal),
+                new Dictionary<string, string>(StringComparer.Ordinal));
+
+            private readonly Dictionary<string, string> _entries;
+            private readonly Dictionary<string, string> _audioEventIds;
+
+            private GameTextCatalogSnapshot(
+                bool isInitialized,
+                Dictionary<string, string> entries,
+                Dictionary<string, string> audioEventIds)
+            {
+                IsInitialized = isInitialized;
+                _entries = entries;
+                _audioEventIds = audioEventIds;
+            }
+
+            public bool IsInitialized { get; }
+
+            public static GameTextCatalogSnapshot Create(
+                Dictionary<string, string> entries,
+                Dictionary<string, string> audioEventIds)
+            {
+                return new GameTextCatalogSnapshot(
+                    true,
+                    entries,
+                    audioEventIds);
+            }
+
+            public bool TryGet(string key, out string value)
+            {
+                return TryGetValue(_entries, key, out value);
+            }
+
+            public bool TryGetAudioEventId(string key, out string value)
+            {
+                return TryGetValue(_audioEventIds, key, out value);
+            }
+
+            private static bool TryGetValue(
+                Dictionary<string, string> entries,
+                string key,
+                out string value)
+            {
+                return entries.TryGetValue(key, out value);
+            }
+        }
     }
 }

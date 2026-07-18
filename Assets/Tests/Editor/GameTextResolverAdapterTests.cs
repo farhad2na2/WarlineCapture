@@ -19,7 +19,10 @@ public sealed class GameTextResolverAdapterTests
             tests.Format_ReturnsFallbackWhenConfiguredFormatIsInvalid();
             tests.Format_FormatsFallbackWhenKeyIsMissing();
             tests.SubsystemRegistrationReset_ClearsPreviousTextAndAudioMappings();
-            Debug.Log("[GameTextResolverAdapterValidation] result=Passed tests=6");
+            tests.Init_ReplacesPreviousSnapshotWithoutRetainingEntries();
+            tests.InitNull_PublishesInitializedEmptySnapshot();
+            tests.PublishedCatalog_UsesNoStaticMutableDictionaries();
+            Debug.Log("[GameTextResolverAdapterValidation] result=Passed tests=9");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -111,6 +114,45 @@ public sealed class GameTextResolverAdapterTests
         Assert.AreEqual("New", GameText.Get("status.new"));
         Assert.AreEqual("ui.status.new", GameText.GetAudioEventId("status.new"));
         Assert.IsFalse(GameText.TryGet("status.old", out _));
+    }
+
+    [Test]
+    public void Init_ReplacesPreviousSnapshotWithoutRetainingEntries()
+    {
+        Configure("status.old", "Old", "ui.status.old");
+        Configure("status.new", "New", "ui.status.new");
+
+        Assert.IsFalse(GameText.TryGet("status.old", out _));
+        Assert.IsFalse(GameText.TryGetAudioEventId("status.old", out _));
+        Assert.AreEqual("New", GameText.Get("status.new"));
+        Assert.AreEqual("ui.status.new", GameText.GetAudioEventId("status.new"));
+    }
+
+    [Test]
+    public void InitNull_PublishesInitializedEmptySnapshot()
+    {
+        Configure("status.old", "Old", "ui.status.old");
+
+        GameText.Init(null);
+
+        Assert.IsTrue(GameText.IsInitialized);
+        Assert.IsFalse(GameText.TryGet("status.old", out _));
+        Assert.IsFalse(GameText.TryGetAudioEventId("status.old", out _));
+    }
+
+    [Test]
+    public void PublishedCatalog_UsesNoStaticMutableDictionaries()
+    {
+        FieldInfo[] fields = typeof(GameText).GetFields(
+            BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
+
+        Assert.AreEqual(1, fields.Length);
+        Assert.AreEqual("currentSnapshot", fields[0].Name);
+        StringAssert.DoesNotContain("Dictionary", fields[0].FieldType.FullName);
+
+        FieldInfo[] snapshotFields = fields[0].FieldType.GetFields(
+            BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+        Assert.IsTrue(Array.TrueForAll(snapshotFields, field => field.IsInitOnly));
     }
 
     private static void Configure(string key, string value, string audioEventId = null)

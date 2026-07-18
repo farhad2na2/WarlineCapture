@@ -64,6 +64,60 @@ public sealed class PersistentResourceOwnershipLifecycleTests
         }
     }
 
+    public static void RunSelectionInputStateWorldReplacementValidation()
+    {
+        try
+        {
+            new PersistentResourceOwnershipLifecycleTests()
+                .SelectionInputState_RebindsAfterWorldReplacement();
+            Debug.Log("[SelectionInputStateWorldReplacementValidation] result=Passed tests=1");
+            ValidationExit.Passed();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[SelectionInputStateWorldReplacementValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
+    [Test]
+    public void SelectionInputState_RebindsAfterWorldReplacement()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        var firstWorld = new World(nameof(SelectionInputState_RebindsAfterWorldReplacement) + "_First");
+        var replacementWorld = new World(nameof(SelectionInputState_RebindsAfterWorldReplacement) + "_Replacement");
+        var helper = new RtsSelectionInputStateCompositionSystemHelper();
+        try
+        {
+            World.DefaultGameObjectInjectionWorld = firstWorld;
+            Assert.IsTrue(helper.TryRead(out _, out RtsSelectionInputStateComponent firstState));
+            firstState.QueuedMoveOrderFrame = 41;
+            Assert.IsTrue(helper.TryWrite(firstState));
+            Assert.IsTrue(helper.TryRead(out _, out firstState));
+            Assert.AreEqual(41, firstState.QueuedMoveOrderFrame);
+
+            firstWorld.Dispose();
+            World.DefaultGameObjectInjectionWorld = replacementWorld;
+            Assert.IsTrue(helper.TryRead(out EntityManager replacementEntityManager, out RtsSelectionInputStateComponent replacementState));
+
+            Assert.AreEqual(-1, replacementState.QueuedMoveOrderFrame);
+            Assert.IsTrue(helper.TryGetPointerRequests(out _, out DynamicBuffer<RtsSelectionPointerRequestElement> pointerRequests));
+            Assert.AreEqual(0, pointerRequests.Length);
+            using EntityQuery stateQuery = replacementEntityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<RtsSelectionInputStateComponent>());
+            Assert.AreEqual(1, stateQuery.CalculateEntityCount());
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+            if (firstWorld.IsCreated)
+                firstWorld.Dispose();
+            if (replacementWorld.IsCreated)
+                replacementWorld.Dispose();
+        }
+    }
+
     [Test]
     public void GameplayStartupCounts_RebindAfterWorldReplacement()
     {

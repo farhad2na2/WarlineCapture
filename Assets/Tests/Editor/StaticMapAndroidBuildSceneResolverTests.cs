@@ -24,7 +24,7 @@ public sealed class StaticMapAndroidBuildSceneResolverTests
         try
         {
             var tests = new StaticMapAndroidBuildSceneResolverTests();
-            tests.ResolveForCurrentProject_IncludesEnabledBaseScenesThenEveryManifestChunkExactlyOnce();
+            tests.ResolveForCurrentProject_IncludesOnlyEnabledBaseScenesAfterValidatingManifestChunks();
             tests.BuildScript_UsesManifestResolverForBothAndroidBuildPipelinesOnly();
             tests.Resolve_CurrentSchemaWithoutMapIdentityFails();
             tests.Resolve_LegacySchemaOneWithoutMapIdentityRemainsReadable();
@@ -59,7 +59,7 @@ public sealed class StaticMapAndroidBuildSceneResolverTests
 
         string[] result = Resolve(new[] { Match }, snapshot);
 
-        CollectionAssert.AreEqual(new[] { Match, ChunkA, ChunkB }, result);
+        CollectionAssert.AreEqual(new[] { Match }, result);
     }
 
     [Test]
@@ -67,7 +67,7 @@ public sealed class StaticMapAndroidBuildSceneResolverTests
     {
         string[] result = Resolve(new[] { Menu, ChunkB, Match, Menu }, Snapshot(ChunkA, ChunkB));
 
-        CollectionAssert.AreEqual(new[] { Menu, Match, ChunkA, ChunkB }, result);
+        CollectionAssert.AreEqual(new[] { Menu, Match }, result);
     }
 
     [Test]
@@ -78,7 +78,7 @@ public sealed class StaticMapAndroidBuildSceneResolverTests
 
         Assert.That(StaticMapPresentationManifest.MinimumReadableSchemaVersion, Is.EqualTo(1));
         CollectionAssert.AreEqual(
-            new[] { Menu, Match, ChunkA, ChunkB },
+            new[] { Menu, Match },
             Resolve(new[] { Menu, Match }, snapshot));
     }
 
@@ -199,7 +199,7 @@ public sealed class StaticMapAndroidBuildSceneResolverTests
             });
 
         CollectionAssert.AreEqual(
-            new[] { Match, ChunkA, ChunkB, AlternateChunk },
+            new[] { Match },
             result);
         CollectionAssert.AreEqual(
             new[] { "opmap.skirmish.desert_base_01", AlternateMapId },
@@ -229,7 +229,7 @@ public sealed class StaticMapAndroidBuildSceneResolverTests
     }
 
     [Test]
-    public void ResolveForCurrentProject_IncludesEnabledBaseScenesThenEveryManifestChunkExactlyOnce()
+    public void ResolveForCurrentProject_IncludesOnlyEnabledBaseScenesAfterValidatingManifestChunks()
     {
         string[] enabledScenes = EditorBuildSettings.scenes
             .Where(scene => scene.enabled)
@@ -248,9 +248,10 @@ public sealed class StaticMapAndroidBuildSceneResolverTests
 
         string[] result = StaticMapAndroidBuildSceneResolver.ResolveForCurrentProject(enabledScenes);
 
-        CollectionAssert.AreEqual(expectedBaseScenes.Concat(expectedChunks).ToArray(), result);
+        CollectionAssert.AreEqual(expectedBaseScenes, result);
         Assert.AreEqual(result.Length, result.Distinct(StringComparer.Ordinal).Count());
         Assert.AreEqual(514, expectedChunks.Length, "The audited current-map manifest must include all generated chunks.");
+        Assert.That(result, Has.None.Matches<string>(StaticMapPresentationOutputOwnership.IsOwnedScenePath));
     }
 
     [Test]

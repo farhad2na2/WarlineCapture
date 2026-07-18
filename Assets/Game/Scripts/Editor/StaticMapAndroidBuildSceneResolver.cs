@@ -164,12 +164,7 @@ namespace Game.Editor
                     throw new InvalidOperationException($"Enabled canonical map base scene is missing: {canonicalScene}");
             }
 
-            for (int index = 0; index < chunks.Count; index++)
-            {
-                if (included.Add(chunks[index]))
-                    result.Add(chunks[index]);
-            }
-
+            // Validated presentation scenes are delivered by the local Addressables build.
             return result.ToArray();
         }
 

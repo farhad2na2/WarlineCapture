@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Game.Composition;
 using Game.Rendering;
 using NUnit.Framework;
@@ -11,6 +12,17 @@ using Object = UnityEngine.Object;
 public sealed class StaticMapPresentationStreamerTests
 {
     private readonly List<Object> _objects = new();
+
+    [Test]
+    public void DefaultConstructor_UsesRetainedAddressablesSceneApi()
+    {
+        StaticMapPresentationStreamer streamer = new();
+        FieldInfo field = typeof(StaticMapPresentationStreamer).GetField(
+            "_sceneApi",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.That(field, Is.Not.Null);
+        Assert.That(field.GetValue(streamer), Is.TypeOf<StaticMapPresentationAddressablesSceneApi>());
+    }
 
     [TearDown]
     public void TearDown()

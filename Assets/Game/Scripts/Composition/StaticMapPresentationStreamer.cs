@@ -58,7 +58,7 @@ namespace Game.Composition
             IStaticMapPresentationSceneApi sceneApi = null,
             bool? enabledOverride = null)
         {
-            _sceneApi = sceneApi ?? new StaticMapPresentationUnitySceneApi();
+            _sceneApi = sceneApi ?? new StaticMapPresentationAddressablesSceneApi();
             _enabled = enabledOverride ?? (sceneApi != null || Application.platform == RuntimePlatform.Android);
             Status = "Unbound";
         }

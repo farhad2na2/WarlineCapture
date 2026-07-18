@@ -2,7 +2,6 @@ using System;
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Game.Components;
 using Game.Configs;
 using Game.Runtime;
@@ -11,7 +10,7 @@ namespace Game.Composition
 {
     public sealed class MatchStartSceneSystemHelper
     {
-        private readonly MatchSceneReferenceSceneSystemHelper _matchSceneReferenceSystem = new();
+        private readonly MatchSceneReferenceCompositionSystemHelper _matchSceneReferenceSystem = new();
         private World _world;
         private Entity _matchStartEntity;
 
@@ -25,7 +24,7 @@ namespace Game.Composition
             DynamicBuffer<MatchStartRequestElement> requests = em.GetBuffer<MatchStartRequestElement>(entity);
             if (queue.IsStartPending != 0 ||
                 requests.Length > 0 ||
-                (queue.HasStarted != 0 && IsMatchLoaded()))
+                (queue.HasStarted != 0 && _matchSceneReferenceSystem.TryGet(em, out _)))
             {
                 return true;
             }
@@ -64,13 +63,13 @@ namespace Game.Composition
             if (queue.IsStartPending == 0 || queue.HasStarted != 0)
                 return;
 
-            if (!IsMatchLoaded())
+            if (!_matchSceneReferenceSystem.TryGet(em, out _))
             {
                 EnqueueResultIfStatusChanged(em, entity, ref queue, MatchStartStatusKind.WaitingForMatchLoaded, "Waiting for Match scene load before gameplay start.");
                 return;
             }
 
-            if (!TryStartLoadedMatch(out MatchStartStatusKind waitStatus, out string message, out float progress01))
+            if (!TryStartLoadedMatch(em, out MatchStartStatusKind waitStatus, out string message, out float progress01))
             {
                 SetProgress(em, entity, progress01, message);
                 if (waitStatus == MatchStartStatusKind.Failed)
@@ -144,16 +143,14 @@ namespace Game.Composition
             }
         }
 
-        private static bool IsMatchLoaded()
-        {
-            Scene scene = SceneManager.GetSceneByName(SceneLifecycleSceneSystemHelper.MatchSceneName);
-            return scene.IsValid() && scene.isLoaded;
-        }
-
-        private bool TryStartLoadedMatch(out MatchStartStatusKind waitStatus, out string message, out float progress01)
+        private bool TryStartLoadedMatch(
+            EntityManager entityManager,
+            out MatchStartStatusKind waitStatus,
+            out string message,
+            out float progress01)
         {
             progress01 = 0f;
-            if (!_matchSceneReferenceSystem.TryGetLoadedMatchSceneView(out MatchSceneView matchScene))
+            if (!_matchSceneReferenceSystem.TryGet(entityManager, out MatchSceneView matchScene))
             {
                 waitStatus = MatchStartStatusKind.WaitingForMatchLoaded;
                 message = "Loaded Match scene has no MatchSceneView.";
@@ -161,7 +158,7 @@ namespace Game.Composition
             }
 
             if (RequiresUnitPrefabRegistry(matchScene) &&
-                !IsUnitPrefabRegistryReady(World.DefaultGameObjectInjectionWorld))
+                !IsUnitPrefabRegistryReady(entityManager.World))
             {
                 waitStatus = MatchStartStatusKind.WaitingForRuntimeContent;
                 message = "Waiting for unit prefab registry";

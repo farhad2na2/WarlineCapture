@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 542,
+    "resolvedNonDebtRowCount": 543,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 550,
-    "genuineDebtRowCount": 25,
-    "uniqueDebtItemCount": 21,
+    "reviewedNonDebtRowCount": 551,
+    "genuineDebtRowCount": 24,
+    "uniqueDebtItemCount": 20,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -55,9 +55,9 @@
     {
       "sourceArtifact": "AM-018",
       "historicalOpenRowCount": 261,
-      "projectedResolvedNonDebtRowCount": 214,
+      "projectedResolvedNonDebtRowCount": 215,
       "projectedProtectedDeferredRowCount": 1,
-      "projectedGenuineDebtRowCount": 46
+      "projectedGenuineDebtRowCount": 45
     }
   ],
   "genuineDebtLanes": [
@@ -1090,10 +1090,24 @@
       "authority": ["Design/AgentReports/ArchitectureMaturity/am018_dependency_hazard_inventory.json"]
     },
     {
+      "id": "am018-discovery-match-scene-ecs-reference-owned",
+      "decision": "resolved",
+      "reasonCode": "ecs-composition-reference-owned",
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "runtimeObjectDiscovery",
+        "sourcePath": "Assets/Game/Scripts/Composition/MatchSceneReferenceSceneSystemHelper.cs"
+      },
+      "authority": [
+        "Assets/Tests/Editor/MatchSceneReferenceCompositionSystemHelperTests.cs"
+      ]
+    },
+    {
       "id": "am018-discovery-debt",
       "decision": "genuine-debt",
       "reasonCode": "runtime-object-discovery",
-      "expectedCount": 4,
+      "expectedCount": 3,
       "debtIdPrefix": "AM025-DISCOVERY",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

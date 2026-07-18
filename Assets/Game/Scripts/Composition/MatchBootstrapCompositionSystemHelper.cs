@@ -23,6 +23,7 @@ namespace Game.Composition
         private RuntimeRootSceneSystemHelper _runtimeRootSceneSystemHelper;
         private readonly GameplayFeatureStartupCompositionSystemHelper _gameplayFeatureStartupSystem = new();
         private readonly PerformanceDiagnosticsReferenceDiagnosticsSystemHelper _performanceDiagnosticsReferenceSystem = new();
+        private readonly MatchSceneReferenceCompositionSystemHelper _matchSceneReferenceSystem = new();
         private readonly MatchIntroEcsStateQuery matchIntroStateQuery = new();
 
         private readonly ManagedGameplayStartupSystemHelper managedGameplayStartupSystem = new();
@@ -156,6 +157,7 @@ namespace Game.Composition
             Initialize(view);
             _performanceDiagnosticsSystem = ResolvePerformanceDiagnosticsSystemHelper();
             this.runtimeWorld = runtimeWorld;
+            _matchSceneReferenceSystem.Register(runtimeWorld.EntityManager, view);
             matchIntroStateQuery.Bind(runtimeWorld);
             _runtimeCameraReferenceSystem = ResolveRuntimeCameraReferenceSystem(runtimeWorld);
 
@@ -348,8 +350,11 @@ namespace Game.Composition
         {
             ReleaseRuntimeSettingsChangeSubscription();
             _runtimeGameplayStateSystem.ResetForMatchShutdown();
+            if (runtimeWorld != null && runtimeWorld.IsCreated)
+                _matchSceneReferenceSystem.Clear(runtimeWorld.EntityManager, sceneView);
             matchIntroStateQuery.Reset();
             sceneView = null;
+            runtimeWorld = null;
         }
 
         public PerformanceDiagnosticsSystemHelper ResolvePerformanceDiagnosticsSystemHelper()

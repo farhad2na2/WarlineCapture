@@ -24,7 +24,7 @@ namespace Game.Composition
         private readonly SceneLifecycleSceneSystemHelper sceneLifecycleSceneSystemHelper = new();
         private readonly MatchStartSceneSystemHelper matchStartSystem = new();
         private readonly PerformanceDiagnosticsSystemHelper performanceDiagnosticsSystem = new();
-        private readonly MatchSceneReferenceSceneSystemHelper matchSceneReferenceSystem = new();
+        private readonly MatchSceneReferenceCompositionSystemHelper matchSceneReferenceSystem = new();
         private readonly QuickCustomGameConfigStore quickCustomGameConfigStore = new();
         private readonly MatchLaunchCommand matchLaunchCommand;
         private readonly IGameTextResolver gameTextResolver = new GameTextResolverAdapter();
@@ -141,7 +141,7 @@ namespace Game.Composition
             firstLaunchNarrative.ApplyShellState(entityManager, boundary);
 
             UiShellStateComponent shellState = entityManager.GetComponentData<UiShellStateComponent>(boundary);
-            UpdateStaticMapPresentation(shellState);
+            UpdateStaticMapPresentation(entityManager, shellState);
             if (CanAdvanceMatchStart(shellState))
                 matchStartSystem.Update(entityManager);
             if (shellState.CurrentMode == UiShellMode.MatchHud)
@@ -150,7 +150,7 @@ namespace Game.Composition
             ApplyUiPresentationMode(view.UiCamera, view.UiCanvas, shellState, entityManager);
             QueueDeferredMatchLoadAfterLoadingFeedback(entityManager, shellState);
             UpdateActualLoadingProgress(entityManager, boundary, shellState);
-            BindMatchRuntimeUi(view, shellState);
+            BindMatchRuntimeUi(entityManager, view, shellState);
         }
 
         public void Shutdown(MenuBootstrapView view)
@@ -413,9 +413,9 @@ namespace Game.Composition
             SetLoading(entityManager, boundary, 1f, IsMinimumLoadingWindowElapsed(), "Command shell ready");
         }
 
-        private void UpdateStaticMapPresentation(UiShellStateComponent shellState)
+        private void UpdateStaticMapPresentation(EntityManager entityManager, UiShellStateComponent shellState)
         {
-            if (!matchSceneReferenceSystem.TryGetLoadedMatchSceneView(out MatchSceneView matchScene))
+            if (!matchSceneReferenceSystem.TryGet(entityManager, out MatchSceneView matchScene))
             {
                 if (streamedMatchView != null)
                 {
@@ -587,7 +587,10 @@ namespace Game.Composition
                 Debug.LogError("[UiShellRoute] failed to submit deferred Match gameplay start request.");
         }
 
-        private void BindMatchRuntimeUi(MenuBootstrapView view, UiShellStateComponent shellState)
+        private void BindMatchRuntimeUi(
+            EntityManager entityManager,
+            MenuBootstrapView view,
+            UiShellStateComponent shellState)
         {
             if (shellState.ActiveRoute != UIRoute.Match)
             {
@@ -598,7 +601,7 @@ namespace Game.Composition
             if (view == null || view.ContentSystem == null)
                 return;
 
-            if (!matchSceneReferenceSystem.TryGetLoadedMatchSceneView(out MatchSceneView matchScene))
+            if (!matchSceneReferenceSystem.TryGet(entityManager, out MatchSceneView matchScene))
             {
                 return;
             }

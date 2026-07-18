@@ -1,6 +1,9 @@
-// Match scene references are resolved from the loaded Match scene by MatchSceneReferenceSceneSystemHelper.
+using Unity.Entities;
 
-using Game.Runtime;
 namespace Game.Composition
 {
+    public struct MatchSceneReferenceComponent : IComponentData
+    {
+        public UnityObjectRef<MatchSceneView> View;
+    }
 }

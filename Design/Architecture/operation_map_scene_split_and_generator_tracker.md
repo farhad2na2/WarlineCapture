@@ -707,7 +707,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 58% (102/177 checklist items complete).
+Overall implementation progress: 58% (103/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -720,10 +720,10 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 | 3. Current-map compatibility registration | Complete / shared | 10 | 10 | 100% | Current identities/definition, authored behavior, schema-v1 read compatibility, runtime activation/teardown, deterministic presentation, and Android chunk resolution are accepted. |
 | 4. Non-destructive scene ownership split | Complete | 14 | 14 | 100% | The extracted map owns its source, subscene, placements, metadata, and 514-chunk presentation set. `Match.unity` is now a thin six-root shell with one small shared runtime subscene. |
 | 5. Runtime selection, loading, and teardown | Complete | 14 | 14 | 100% | Local Addressables loading/readiness, bounded typed failures, ordered teardown, renderer restoration, retry, and two sequential Match lifecycles pass. Each cycle clears the map ECS root and source scene before the next load while preserving the shared World. |
-| 6. Metadata, camera, minimap, and movement binding | In progress / shared | 10 | 12 | 83% | Scenario-required anchors validate against map metadata; camera bounds/poses, ARIA Show Me, minimap projection, startup grid domain, authoritative surface payload, current faction deployment anchors, and current runway/helipad records are authored from accepted sources. Active-map spawn and aircraft consumers are accepted. |
+| 6. Metadata, camera, minimap, and movement binding | In progress / shared | 11 | 12 | 92% | Scenario-required anchors validate against map metadata; camera bounds/poses, ARIA Show Me, minimap projection, startup grid domain, authoritative surface payload, current faction deployment anchors, and current runway/helipad records are authored from accepted sources. Objective jump remains blocked on an accepted objective runtime writer and an authored objective anchor. |
 | 7. M01 operation-map slice | Later / shared contracts only | 0 | 10 | 0% | Map-neutral ids/anchors may proceed; physical rollout remains gated. |
 | 8. Editor-time texture/mask generator | Later / editor direction only | 0 | 12 | 0% | Implement only if the editor-authored map direction is selected. |
-| 9. Mission and Skirmish scenario rollout | Later / shared contracts only | 0 | 10 | 0% | Scenario-to-map identity may proceed; physical rollout remains later. |
+| 9. Mission and Skirmish scenario rollout | In progress / single-map scenario data | 1 | 10 | 10% | The standard Skirmish scenario now resolves the approved physical map and its typed faction deployment anchors without duplicating map content. Feature, objective, force, reward, and UI data remain open. |
 | 10. Full validation and all-bundled rollout | Shared validation subset only | 0 | 21 | 0% | Run shared parity/performance gates; Addressables/build-layout gates are later. |
 | 11. Deferred remote content migration | Later / remote delivery | 0 | 16 | 0% | Remote delivery remains independently gated. |
 
@@ -905,7 +905,7 @@ Exit criteria:
 - [x] Bind camera clamp bounds from active operation-map metadata. See `../AgentReports/2026-07-16_operation_map_camera_bounds_binding.md`.
 - [x] Bind planning, battle, and initial camera transforms from typed camera ids/anchors. See `../AgentReports/2026-07-16_operation_map_camera_pose_binding.md`.
 - [x] Bind minimap projection and cached raster data from the active map. See `../AgentReports/2026-07-16_operation_map_minimap_projection_binding.md`.
-- [ ] Bind objective focus/jump to typed operation-map anchor ids.
+- [ ] Bind objective focus/jump to typed operation-map anchor ids. Blocked until the mission-runtime owner publishes `MatchObjectiveRuntimeElement` data and the scenario owns an authored `Objective` anchor; do not duplicate the ARIA projection or invent a second objective writer while the M01 hold remains active.
 - [x] Bind ARIA `Show Me` and camera intents to typed operation-map anchors. See `../AgentReports/2026-07-16_operation_map_aria_objective_anchor_binding.md`.
 - [x] Bind friendly/hostile deployment and spawn anchors. Loader-neutral typed lookup and active-map precedence now resolve deterministic faction deployment anchors authored from the canonical faction volumes; focused integration verifies the committed metadata blob resolves both initial faction cells. See `../AgentReports/2026-07-17_operation_map_faction_spawn_anchor_foundation.md` and `../AgentReports/2026-07-17_operation_map_current_faction_spawn_and_build_manifest.md`.
 - [x] Bind runway and helipad anchors for taxi, takeoff, return, and landing behavior. Loader-neutral exact typed resolution, fail-closed validation, geometry semantics, deterministic current-map records, active-map runway publication, normalized helipad production-slot binding, compatibility restoration, and current-map aircraft consumer acceptance are implemented. Existing lifecycle regressions cover takeoff, return approach/go-around, landing, helipad occupancy, and initial spawn behavior. See `../AgentReports/2026-07-17_operation_map_infrastructure_anchor_foundation.md`, `../AgentReports/2026-07-17_operation_map_infrastructure_anchor_geometry_contract.md`, `../AgentReports/2026-07-17_operation_map_current_infrastructure_anchor_records.md`, `../AgentReports/2026-07-17_operation_map_runway_read_model_binding.md`, `../AgentReports/2026-07-17_operation_map_helipad_read_model_binding.md`, and `../AgentReports/2026-07-17_operation_map_current_aircraft_runtime_acceptance.md`.
@@ -968,7 +968,7 @@ Exit criteria:
 
 **Execution: scenario rollout may reuse the single approved physical map; producing another physical map is `Later - additional maps`.**
 
-- [ ] Add a Skirmish/sandbox `ScenarioSetup` for `opmap.skirmish.desert_base_01`.
+- [x] Add a Skirmish/sandbox `ScenarioSetup` for `opmap.skirmish.desert_base_01`. `ScenarioSetup_Skirmish_DesertBaseStandard` references the single approved physical map and requires its two typed faction deployment anchors without duplicating scenes, subscenes, placements, or presentation data. See `../AgentReports/2026-07-18_operation_map_current_skirmish_scenario.md`.
 - [ ] Gate build, scan, support, aircraft, fuel logistics, resource exchange, and fabrication per scenario.
 - [ ] Define objectives and star goals in scenario data, not scene branches.
 - [ ] Define starting units, buildings, and resources in scenario data.
@@ -1162,6 +1162,7 @@ Exit criteria:
 | 2026-07-18 | Canonical renderer restoration evidence | `../AgentReports/2026-07-18_operation_map_renderer_restoration.md`; ownership `11 / 11`; lifecycle wiring `4 / 4`; architecture/naming `9 / 9`; compile; `git diff --check` | Passed; Phase 5 renderer-restoration row accepted | Escalated macOS Unity validation used the documented licensing workaround. Original enabled states restore on teardown, failed reinitialization restores before legacy fallback, and Match teardown calls renderer restoration before source-scene unload. |
 | 2026-07-18 | Sequential local-Addressables Match lifecycle | `../AgentReports/2026-07-18_operation_map_sequential_lifecycle.md`; production lifecycle PlayMode `2 / 2`; runtime bootstrap `12 / 12`; compile; `git diff --check` | Passed; Phase 5 ordered teardown and state-clearing rows accepted | Two consecutive menu-to-Match-to-menu cycles reuse the same World, load and unload the extracted operation-map source scene each time, remove the operation-map ECS root between cycles, and republish exactly one clean root on the later load. |
 | 2026-07-18 | Typed operation-map load failures and Phase 5 closure | `../AgentReports/2026-07-18_operation_map_typed_failures.md`; loader `12 / 12`; Match/bootstrap `14 / 14`; production lifecycle `2 / 2`; architecture/naming `9 / 9`; runtime/tests dotnet compile; `git diff --check` | Passed; Phase 5 complete | The existing `OperationMapLoadResultCode` contract now reaches the active loader and Match boundary without replacing detailed diagnostics. Missing/invalid ids fail before Addressables work, stale identity fails closed, and the complete valid/failure/teardown/retry/sequential matrix is accepted. |
+| 2026-07-18 | Current-map standard Skirmish scenario setup | `../AgentReports/2026-07-18_operation_map_current_skirmish_scenario.md`; committed scenario `1 / 1`; operation-map contract `10 / 10`; Unity compile; `git diff --check` | Passed; first Phase 9 row accepted | Added one scenario-data asset that resolves `scenario.skirmish.desert_base_standard` to `opmap.skirmish.desert_base_01` and requires the two existing typed deployment anchors. No physical or generated map content was copied. |
 
 ## Open Decisions
 

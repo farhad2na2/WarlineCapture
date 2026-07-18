@@ -38,6 +38,10 @@ public sealed class ResourceExchangeToastSystemTests
                 nameof(ReasonTextUtility_MapsCommonTypedReasons),
                 test => test.ReasonTextUtility_MapsCommonTypedReasons(),
                 ref passed);
+            RunValidationStep(
+                nameof(ToastHistory_RetainsOnlyNewestEntries),
+                test => test.ToastHistory_RetainsOnlyNewestEntries(),
+                ref passed);
 
             Debug.Log($"[ResourceExchangeToastValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -203,6 +207,29 @@ public sealed class ResourceExchangeToastSystemTests
         Assert.AreEqual("Exchange queue is full.", ResourceExchangeToastTextUtility.ResolveReasonBody(ResourceExchangeReason.QueueFull).ToString());
         Assert.AreEqual("Output storage is full.", ResourceExchangeToastTextUtility.ResolveReasonBody(ResourceExchangeReason.StorageFull).ToString());
         Assert.AreEqual("Mission is ending.", ResourceExchangeToastTextUtility.ResolveReasonBody(ResourceExchangeReason.MissionEnding).ToString());
+    }
+
+    [Test]
+    public void ToastHistory_RetainsOnlyNewestEntries()
+    {
+        using World world = new(nameof(ToastHistory_RetainsOnlyNewestEntries));
+        Entity entity = world.EntityManager.CreateEntity();
+        DynamicBuffer<ResourceExchangeToastComponent> toasts =
+            world.EntityManager.AddBuffer<ResourceExchangeToastComponent>(entity);
+        var result = new ResourceExchangeResultComponent
+        {
+            FactionId = 1,
+            ResultKind = ResourceExchangeResultKind.RequestRejected,
+            Reason = ResourceExchangeReason.QueueFull
+        };
+
+        int appendedCount = ResourceExchangeToastTextUtility.MaxRetainedToastCount * 2;
+        for (int i = 0; i < appendedCount; i++)
+            Assert.IsTrue(ResourceExchangeToastTextUtility.TryAppendToast(toasts, true, result));
+
+        Assert.AreEqual(ResourceExchangeToastTextUtility.MaxRetainedToastCount, toasts.Length);
+        Assert.AreEqual(appendedCount - ResourceExchangeToastTextUtility.MaxRetainedToastCount + 1, toasts[0].SequenceId);
+        Assert.AreEqual(appendedCount, toasts[toasts.Length - 1].SequenceId);
     }
 
     private static Entity CreateExchangeEntity(

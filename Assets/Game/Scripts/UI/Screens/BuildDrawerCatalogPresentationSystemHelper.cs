@@ -342,7 +342,7 @@ namespace Game.UI.Runtime
                 model.TypeLabel,
                 model.Description,
                 FormatPrice(model.MaterialsCost),
-                FormatOptionalCost(model.FuelCost),
+                model.FuelCost > 0 ? FormatPrice(model.FuelCost) : "",
                 FormatDuration(model),
                 FormatRequirements(context.TextResolver, model));
             item.BindThumbnail(model.CardPortrait);
@@ -367,7 +367,7 @@ namespace Game.UI.Runtime
                 model.TypeLabel,
                 model.Description,
                 FormatPrice(model.MaterialsCost),
-                FormatOptionalCost(model.FuelCost),
+                model.FuelCost > 0 ? FormatPrice(model.FuelCost) : "",
                 FormatDuration(model),
                 FormatPlacement(model),
                 FormatRequirements(context.TextResolver, model),
@@ -404,31 +404,17 @@ namespace Game.UI.Runtime
             return false;
         }
 
-        private static string FormatPrice(int price)
-        {
-            return Mathf.Max(0, price).ToString(CultureInfo.InvariantCulture);
-        }
-
-        private static string FormatOptionalCost(int cost)
-        {
-            return cost > 0 ? FormatPrice(cost) : string.Empty;
-        }
+        private static string FormatPrice(int price) => Mathf.Max(0, price).ToString(CultureInfo.InvariantCulture);
 
         private static string FormatDuration(BuildDrawerCatalogItem model)
         {
-            if (model.ProductionDurationSeconds <= 0f)
-                return "-";
-
-            int seconds = Mathf.CeilToInt(model.ProductionDurationSeconds);
-            return $"{seconds / 60:00}:{seconds % 60:00}";
+            var seconds = Mathf.CeilToInt(model.ProductionDurationSeconds);
+            return model.ProductionDurationSeconds <= 0f ? "-" : $"{seconds / 60:00}:{seconds % 60:00}";
         }
 
-        private static string FormatPlacement(BuildDrawerCatalogItem model)
-        {
-            return model.Category == BuildDrawerCategory.Buildings
+        private static string FormatPlacement(BuildDrawerCatalogItem model) => model.Category == BuildDrawerCategory.Buildings
                 ? $"{model.FootprintCells.x}x{model.FootprintCells.y}"
                 : "-";
-        }
 
         private static string FormatRequirements(IGameTextResolver textResolver, BuildDrawerCatalogItem model)
         {

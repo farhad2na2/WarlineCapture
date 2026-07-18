@@ -11,15 +11,10 @@ namespace Game.Runtime
         private int _pendingInitialDollars;
         private bool _isConfigured;
 
-        public int CurrentDollars => TryGetControlledFactionEconomy(out FactionEconomy economy)
-            ? economy.Money
-            : 0;
+        public int CurrentDollars => TryGetControlledFactionEconomy(out FactionEconomy economy) ? economy.Money : 0;
 
-        public int CurrentMaterials => TryGetControlledFactionResources(
-            out _,
-            out FactionTacticalMaterialsComponent materials)
-                ? materials.Current
-                : 0;
+        public int CurrentMaterials => TryGetControlledFactionResources(out _, out FactionTacticalMaterialsComponent materials)
+            ? materials.Current : 0;
 
         public void SetInitialDollars(int dollars)
         {
@@ -45,37 +40,20 @@ namespace Game.Runtime
             if (amount == 0 || !TryGetControlledFactionEconomy(out FactionEconomy economy))
                 return;
 
-            economy.Money = economy.Money >= int.MaxValue - amount
-                ? int.MaxValue
-                : economy.Money + amount;
+            economy.Money = economy.Money >= int.MaxValue - amount ? int.MaxValue : economy.Money + amount;
             _entityManager.SetComponentData(_controlledFactionResourceEntity, economy);
         }
 
-        public bool TrySpendDollars(int amount)
-        {
-            amount = Mathf.Max(0, amount);
-            if (amount <= 0)
-                return true;
+        public bool TrySpendDollars(int amount) => amount <= 0 ||
+            TrySpendConstructionResources(amount, 0) == FactionConstructionResourceMutationResult.Applied;
 
-            return TrySpendConstructionResources(amount, 0) ==
-                   FactionConstructionResourceMutationResult.Applied;
-        }
-
-        public bool TrySpendMaterials(int amount)
-        {
-            amount = Mathf.Max(0, amount);
-            return amount == 0 ||
-                   TrySpendConstructionResources(0, amount) ==
-                   FactionConstructionResourceMutationResult.Applied;
-        }
+        public bool TrySpendMaterials(int amount) => amount <= 0 ||
+            TrySpendConstructionResources(0, amount) == FactionConstructionResourceMutationResult.Applied;
 
         public void RefundMaterials(int amount)
         {
-            amount = Mathf.Max(0, amount);
-            if (amount == 0)
-                return;
-
-            TryRestoreConstructionResources(0, amount);
+            if (amount > 0)
+                TryRestoreConstructionResources(0, amount);
         }
 
         public FactionConstructionResourceMutationResult TrySpendConstructionResources(
@@ -152,12 +130,8 @@ namespace Game.Runtime
             return _entityManager.HasComponent<FactionTacticalMaterialsComponent>(entity);
         }
 
-        public CitizenResourceCompositionSystemHelper.Context CreateCitizenResourceContext()
-        {
-            return new CitizenResourceCompositionSystemHelper.Context(
-                () => CurrentDollars,
-                SetDollars);
-        }
+        public CitizenResourceCompositionSystemHelper.Context CreateCitizenResourceContext() =>
+            new(() => CurrentDollars, SetDollars);
 
         private void SetDollars(int value)
         {
@@ -283,9 +257,6 @@ namespace Game.Runtime
             return materials.FactionId == economy.FactionId;
         }
 
-        private bool IsEntityManagerAvailable()
-        {
-            return _isConfigured && _entityManager.WorldUnmanaged.IsCreated;
-        }
+        private bool IsEntityManagerAvailable() => _isConfigured && _entityManager.WorldUnmanaged.IsCreated;
     }
 }

@@ -2,7 +2,6 @@ using System.Globalization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Game.Tactical.Contracts;
 using Game.UI.Contracts;
@@ -29,7 +28,8 @@ namespace Game.UI.Runtime
         [SerializeField] private Sprite goldActionButtonSprite;
         [SerializeField] private Sprite squareButtonSprite;
         [SerializeField] private Sprite instructionStripSprite;
-        [FormerlySerializedAs("creditsIconSprite"), SerializeField] private Sprite materialsIconSprite;
+        [UnityEngine.Serialization.FormerlySerializedAs("creditsIconSprite"), SerializeField]
+        private Sprite materialsIconSprite;
         [SerializeField] private Sprite timeIconSprite;
         [SerializeField] private Sprite cancelIconSprite;
         [SerializeField] private Sprite rotateIconSprite;
@@ -329,20 +329,13 @@ namespace Game.UI.Runtime
             status = rawStatus.Substring(separator + 1).Trim();
         }
 
-        private static string FormatCost(int cost)
-        {
-            return cost > 0
-                ? cost.ToString("N0", CultureInfo.InvariantCulture)
-                : "0";
-        }
+        private static string FormatCost(int cost) =>
+            cost > 0 ? cost.ToString("N0", CultureInfo.InvariantCulture) : "0";
 
         private static string FormatDuration(float seconds)
         {
-            if (seconds <= 0f)
-                return "00:00";
-
             int totalSeconds = Mathf.CeilToInt(seconds);
-            return $"{totalSeconds / 60:00}:{totalSeconds % 60:00}";
+            return seconds <= 0f ? "00:00" : $"{totalSeconds / 60:00}:{totalSeconds % 60:00}";
         }
 
         private static void SetText(TMP_Text text, string value)

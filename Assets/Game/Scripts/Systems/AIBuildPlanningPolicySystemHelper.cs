@@ -52,18 +52,15 @@ namespace Game.Runtime
                     break;
                 }
 
-                // Match construction consumes tactical materials only. Price remains serialized
-                // on legacy definitions for migration, but it is not an in-match currency.
-                int cost = 0;
                 int materialsCost = math.max(0, spawnable.MaterialsCost);
                 decision.Spawnable = spawnable;
-                decision.Cost = cost;
+                decision.Cost = 0;
                 decision.MaterialsCost = materialsCost;
                 FactionConstructionResourceMutationResult affordability =
                     FactionConstructionResourceUtilitySystemHelper.Evaluate(
                         economy,
                         materials,
-                        cost,
+                        0,
                         materialsCost);
                 if (affordability != FactionConstructionResourceMutationResult.Applied)
                 {

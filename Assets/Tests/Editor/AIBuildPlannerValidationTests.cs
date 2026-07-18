@@ -41,7 +41,7 @@ public sealed class AIBuildPlannerValidationTests
             var allocationTests = new AIBuildPlannerAllocationTests();
             allocationTests.SelectBuildDecision_WarmedNormalizedRequestPathDoesNotAllocateManagedMemory();
             allocationTests.SelectBuildDecision_WarmedOwnedSkipToPendingPathDoesNotAllocateManagedMemory();
-            allocationTests.SelectBuildDecision_UsesAuthoredMaterialsCostForAffordability();
+            allocationTests.SelectBuildDecision_UsesAuthoredMaterialsCostAndIgnoresLegacyPrice();
             allocationTests.MaterialsRecoveryNeed_PreservesFirstBlockedTimeAndRejectsImpossibleCapacity();
             allocationTests.MaterialsRecoveryNeed_ClearRemovesPublishedDemand();
             UnityEngine.Debug.Log("[AIBuildPlannerFocusedValidation] result=Passed tests=7");
@@ -170,12 +170,12 @@ public sealed class AIBuildPlannerValidationTests
         SystemHandle logFlushSystem = _world.CreateSystem<AIDiagnosticLogFlushSystem>();
 
         if (assertDiagnosticLog)
-            LogAssert.Expect(LogType.Log, new Regex(@"\[AIBuild\] faction=1 building=Tent_Regular cell=int2\(\d+, \d+\) cost=20000 materialsCost=40 result=Requested"));
+            LogAssert.Expect(LogType.Log, new Regex(@"\[AIBuild\] faction=1 building=Tent_Regular cell=int2\(\d+, \d+\) cost=0 materialsCost=40 result=Requested"));
         system.Update(_world.Unmanaged);
         logFlushSystem.Update(_world.Unmanaged);
         if (assertDiagnosticLog)
             LogAssert.NoUnexpectedReceived();
-        Assert.AreEqual(10000, em.GetComponentData<FactionEconomy>(economyEntity).Money);
+        Assert.AreEqual(30000, em.GetComponentData<FactionEconomy>(economyEntity).Money);
         Assert.AreEqual(60, em.GetComponentData<FactionTacticalMaterialsComponent>(economyEntity).Current);
 
         if (failPlacement)
@@ -198,7 +198,7 @@ public sealed class AIBuildPlannerValidationTests
         if (assertDiagnosticLog)
         {
             string result = failPlacement ? "Blocked" : "Placed";
-            LogAssert.Expect(LogType.Log, new Regex($@"\[AIBuild\] faction=1 building=Tent_Regular cell=int2\(\d+, \d+\) cost=20000 materialsCost=40 result={result}"));
+            LogAssert.Expect(LogType.Log, new Regex($@"\[AIBuild\] faction=1 building=Tent_Regular cell=int2\(\d+, \d+\) cost=0 materialsCost=40 result={result}"));
         }
         system.Update(_world.Unmanaged);
         logFlushSystem.Update(_world.Unmanaged);
@@ -207,7 +207,7 @@ public sealed class AIBuildPlannerValidationTests
 
         FactionEconomy economy = em.GetComponentData<FactionEconomy>(economyEntity);
         FactionTacticalMaterialsComponent materials = em.GetComponentData<FactionTacticalMaterialsComponent>(economyEntity);
-        Assert.AreEqual(failPlacement ? 30000 : 10000, economy.Money);
+        Assert.AreEqual(30000, economy.Money);
         Assert.AreEqual(failPlacement ? 100 : 60, materials.Current);
         Assert.AreEqual(failPlacement ? 0 : 40, materials.LifetimeSpent);
         RuntimeGameplayStateTestHelper.PublishBuildingRuntimeState(em, TickBuildingRuntime);

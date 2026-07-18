@@ -2,6 +2,7 @@ using System;
 using System.Reflection;
 using Game.Components;
 using Game.Runtime;
+using Game.Tactical.Contracts;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
 using Game.UI.Shell.Contracts.Ecs;
@@ -60,6 +61,23 @@ public sealed class PersistentResourceOwnershipLifecycleTests
         {
             Debug.LogException(exception);
             Debug.LogError("[SelectionBuildingInteractionWorldOwnershipValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
+    public static void RunSelectionHudFeedbackWorldOwnershipValidation()
+    {
+        try
+        {
+            new PersistentResourceOwnershipLifecycleTests()
+                .SelectionHudFeedbackState_RebindsAfterWorldReplacement();
+            Debug.Log("[SelectionHudFeedbackWorldOwnershipValidation] result=Passed tests=1");
+            ValidationExit.Passed();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[SelectionHudFeedbackWorldOwnershipValidation] result=Failed");
             ValidationExit.Failed();
         }
     }
@@ -508,6 +526,40 @@ public sealed class PersistentResourceOwnershipLifecycleTests
         ensureQueries.Invoke(helper, new object[] { replacementWorld.EntityManager });
         Assert.AreSame(replacementWorld, queryWorld.GetValue(helper));
         Assert.AreEqual(2, ((EntityQuery)gridConfigQuery.GetValue(helper)).CalculateEntityCount());
+    }
+
+    [Test]
+    public void SelectionHudFeedbackState_RebindsAfterWorldReplacement()
+    {
+        using World firstWorld = new(nameof(SelectionHudFeedbackState_RebindsAfterWorldReplacement) + "_First");
+        using World replacementWorld = new(nameof(SelectionHudFeedbackState_RebindsAfterWorldReplacement) + "_Replacement");
+        EntityManager firstEntityManager = firstWorld.EntityManager;
+        EntityManager replacementEntityManager = replacementWorld.EntityManager;
+        var helper = new SelectionHudFeedbackUiSystemHelper();
+        MethodInfo countSelected = typeof(SelectionHudFeedbackUiSystemHelper).GetMethod(
+            "CountSelectedTagsCached",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.IsNotNull(countSelected);
+
+        firstEntityManager.CreateEntity(typeof(SelectedUnitTag));
+        helper.QueueCommandMode(firstEntityManager, TacticalCommandMode.Move);
+        Assert.AreEqual(1, (int)countSelected.Invoke(helper, new object[] { firstEntityManager }));
+
+        replacementEntityManager.CreateEntity(typeof(SelectedUnitTag));
+        replacementEntityManager.CreateEntity(typeof(SelectedUnitTag));
+        helper.QueueCommandResult(
+            replacementEntityManager,
+            TacticalCommandResult.Success("Replacement match command."));
+        Assert.AreEqual(2, (int)countSelected.Invoke(helper, new object[] { replacementEntityManager }));
+
+        DynamicBuffer<SelectionHudFeedbackElement> firstFeedback = firstEntityManager.GetBuffer<SelectionHudFeedbackElement>(
+            helper.EnsureFeedbackQueue(firstEntityManager));
+        DynamicBuffer<SelectionHudFeedbackElement> replacementFeedback = replacementEntityManager.GetBuffer<SelectionHudFeedbackElement>(
+            helper.EnsureFeedbackQueue(replacementEntityManager));
+        Assert.AreEqual(1, firstFeedback.Length);
+        Assert.AreEqual(SelectionHudFeedbackKind.CommandMode, firstFeedback[0].Kind);
+        Assert.AreEqual(1, replacementFeedback.Length);
+        Assert.AreEqual(SelectionHudFeedbackKind.CommandResult, replacementFeedback[0].Kind);
     }
 
     [Test]

@@ -2022,7 +2022,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             {
                 DisplayName = "Requestable Airport",
                 Prefab = buildingPrefab,
-                CreditsCost = 4321
+                MaterialsCost = 4321
             };
             bool beganPlacement = false;
             int activePlacementCost = -1;
@@ -3318,12 +3318,12 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         var prefab = new GameObject("Field Fabricator");
         try
         {
-            const int creditsCost = 1234;
+            const int legacyCreditsCost = 1234;
             const int materialsCost = 5678;
             var definition = new BuildingDefinition
             {
                 Prefab = prefab,
-                CreditsCost = creditsCost,
+                CreditsCost = legacyCreditsCost,
                 MaterialsCost = materialsCost
             };
             var definitions = new Dictionary<GameObject, BuildingDefinition>
@@ -3354,7 +3354,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                 requestSystem.GetCampRequestFailure(context, prefab, price: 999999, out string requiredBuildingDisplayName);
 
             Assert.AreEqual(expectedFailure, failure);
-            Assert.AreEqual(creditsCost, evaluatedCreditsCost);
+            Assert.AreEqual(0, evaluatedCreditsCost);
             Assert.AreEqual(materialsCost, evaluatedMaterialsCost);
             Assert.IsEmpty(requiredBuildingDisplayName);
         }

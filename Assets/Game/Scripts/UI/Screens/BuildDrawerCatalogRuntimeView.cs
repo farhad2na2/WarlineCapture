@@ -108,15 +108,9 @@ namespace Game.UI.Runtime
                 Refresh();
         }
 
-        public void SelectCategoryForTests(BuildDrawerCategory category)
-        {
-            SelectCategory(category);
-        }
+        public void SelectCategoryForTests(BuildDrawerCategory category) => SelectCategory(category);
 
-        public void RefreshForTests()
-        {
-            Refresh();
-        }
+        public void RefreshForTests() => Refresh();
 
         public void ApplyQueueSnapshotForTests(IReadOnlyList<BuildingPendingProductionUiEntry> entries)
         {

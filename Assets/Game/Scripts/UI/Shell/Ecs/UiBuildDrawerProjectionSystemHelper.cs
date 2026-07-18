@@ -9,35 +9,20 @@ namespace Game.UI.Shell.Ecs
 {
     internal static class UiBuildDrawerProjectionSystemHelper
     {
-        internal static FixedString32Bytes ToFixed32(string value)
-        {
-            return new FixedString32Bytes(Trim(value, 28));
-        }
+        internal static FixedString32Bytes ToFixed32(string value) => new(Trim(value, 28));
 
-        internal static FixedString64Bytes ToFixed64(string value)
-        {
-            return new FixedString64Bytes(Trim(value, 60));
-        }
+        internal static FixedString64Bytes ToFixed64(string value) => new(Trim(value, 60));
 
-        internal static FixedString128Bytes ToFixed128(string value)
-        {
-            return new FixedString128Bytes(Trim(value, 120));
-        }
+        internal static FixedString128Bytes ToFixed128(string value) => new(Trim(value, 120));
 
-        internal static string FormatCost(int cost)
-        {
-            return Mathf.Max(0, cost).ToString("N0", CultureInfo.InvariantCulture);
-        }
+        internal static string FormatCost(int cost) =>
+            Mathf.Max(0, cost).ToString("N0", CultureInfo.InvariantCulture);
 
-        internal static string FormatMaterialsCost(int materialsCost)
-        {
-            return materialsCost > 0 ? FormatCost(materialsCost) : string.Empty;
-        }
+        internal static string FormatMaterialsCost(int materialsCost) =>
+            materialsCost > 0 ? FormatCost(materialsCost) : string.Empty;
 
-        internal static string FormatFuelCost(int fuelCost)
-        {
-            return fuelCost > 0 ? FormatCost(fuelCost) : string.Empty;
-        }
+        internal static string FormatFuelCost(int fuelCost) =>
+            fuelCost > 0 ? FormatCost(fuelCost) : string.Empty;
 
         internal static string FormatDuration(BuildDrawerCatalogItem item)
         {

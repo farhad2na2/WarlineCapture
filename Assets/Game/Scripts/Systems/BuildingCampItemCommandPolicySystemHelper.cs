@@ -23,12 +23,10 @@ namespace Game.Runtime
             };
         }
 
-        public static string ResolveRequestId(GameObject prefab)
-        {
-            return prefab != null
+        public static string ResolveRequestId(GameObject prefab) =>
+            prefab != null
                 ? BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(prefab.name)
                 : string.Empty;
-        }
 
         public static int ResolveResultPrice(
             BuildingProductionRequestSystemHelper.Context context,

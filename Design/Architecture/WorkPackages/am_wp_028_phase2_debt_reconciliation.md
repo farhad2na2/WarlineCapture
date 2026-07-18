@@ -11,13 +11,13 @@ Bounded read-only audits reviewed the AM-025 intake as:
 | Measure | Count |
 |---|---:|
 | Historical intake rows | 575 |
-| Reviewed non-debt rows | 448 |
-| Remaining genuine-debt rows | 127 |
-| Remaining unique debt items | 51 |
+| Reviewed non-debt rows | 449 |
+| Remaining genuine-debt rows | 126 |
+| Remaining unique debt items | 50 |
 | Projected unclassified rows | 0 |
 | Source-growth blockers | 5 |
 
-The row-bound evidence now records `448` non-debt rows and `127` remaining genuine-debt rows, grouped into `51` unique file/rule remediation items. It remains non-accepting because every genuine-debt item must be closed before Phase 2 can pass.
+The row-bound evidence now records `449` non-debt rows and `126` remaining genuine-debt rows, grouped into `50` unique file/rule remediation items. It remains non-accepting because every genuine-debt item must be closed before Phase 2 can pass.
 
 ## 2. Required Row Authority
 
@@ -57,6 +57,8 @@ Production remediation is serialized after row-bound evidence and occurs in sepa
 
 Row count and unique debt-item count are reported separately because multiple lexical rows can map to one production fix.
 
+Current external-gate note: the canonical Unity source-growth run now reports the five closure-policy blockers plus three newly integrated operation-map helpers. The resource audit returned all four resource-owned helpers to their existing approved limits; no new exception or larger ceiling was added.
+
 Completed remediation:
 
 - `AM025-STATIC-MSL-005`: helicopter diagnostic one-shot state now belongs to each unmanaged ECS system instance instead of the process. Focused validation proves two active Worlds do not suppress each other's diagnostic and preserves all blade-spin behavior.
@@ -87,7 +89,9 @@ Completed remediation:
 - `SelectionBuildingInteractionCompositionSystemHelper`: the building-selection query owner was cleared as non-debt after focused validation reused one helper across two Worlds and proved its grid query switched from the first match to the replacement match.
 - `FocusedUnitUiReadModelUiSystemHelper`: the selected-unit details query owner was cleared as non-debt after focused validation reused one helper across two Worlds and proved the replacement match received a fresh read model without changing the previous match's data.
 - `MatchHudSquadTraySelectionUiSystemHelper`: the squad-tray query owner was cleared as non-debt after focused validation reused one helper across two Worlds and proved a tray selection affected only the replacement match while leaving the previous match unchanged.
+- `SelectionHudFeedbackUiSystemHelper`: the command-feedback and selected-count query owners were cleared as non-debt after focused validation reused one helper across two Worlds and proved each match retained only its own feedback queue and selected-unit count.
 - `BuildingGameplayEcsQueryCompositionSystemHelper`: the shared building query set was cleared as non-debt after focused validation reused one helper across two Worlds and proved the replacement match reported only its own building boundary and selected units.
+- Resource integration audit: exchange feedback history is bounded to the newest 32 messages; AI and player construction spend tactical materials while legacy credits remain unchanged; Build Drawer and resource helpers remain within their existing size contracts. Focused Unity validation and the combined architecture suite pass.
 
 ## 5. Scope Safety
 

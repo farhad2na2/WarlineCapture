@@ -6,6 +6,8 @@ namespace Game.Runtime
 {
     public static class ResourceExchangeToastTextUtility
     {
+        public const int MaxRetainedToastCount = 32;
+
         public static bool TryAppendToast(
             DynamicBuffer<ResourceExchangeToastComponent> toasts,
             bool emitToasts,
@@ -14,11 +16,23 @@ namespace Game.Runtime
             if (!emitToasts)
                 return false;
 
-            if (!TryCreateToast(result, toasts.Length + 1, out ResourceExchangeToastComponent toast))
+            int sequenceId = toasts.Length > 0
+                ? NextSequenceId(toasts[toasts.Length - 1].SequenceId)
+                : 1;
+            if (!TryCreateToast(result, sequenceId, out ResourceExchangeToastComponent toast))
                 return false;
+
+            int overflowCount = toasts.Length - MaxRetainedToastCount + 1;
+            if (overflowCount > 0)
+                toasts.RemoveRange(0, overflowCount);
 
             toasts.Add(toast);
             return true;
+        }
+
+        private static int NextSequenceId(int current)
+        {
+            return current < int.MaxValue ? current + 1 : 1;
         }
 
         public static bool TryCreateToast(

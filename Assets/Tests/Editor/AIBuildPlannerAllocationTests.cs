@@ -101,7 +101,7 @@ public sealed class AIBuildPlannerAllocationTests
         Assert.AreEqual(AIBuildPlannerSystem.BuildDecisionResult.Request, decision.Result);
         Assert.AreEqual(1, decision.EntryIndex);
         Assert.AreEqual(new FixedString128Bytes("barracks"), decision.BuildingId);
-        Assert.AreEqual(250, decision.Cost);
+        Assert.AreEqual(0, decision.Cost);
         Assert.AreEqual(75, decision.MaterialsCost);
         Assert.AreEqual(new int2(34, 30), decision.PreferredOrigin);
         Assert.AreEqual(
@@ -194,9 +194,9 @@ public sealed class AIBuildPlannerAllocationTests
     }
 
     [Test]
-    public void SelectBuildDecision_UsesAuthoredMaterialsCostForAffordability()
+    public void SelectBuildDecision_UsesAuthoredMaterialsCostAndIgnoresLegacyPrice()
     {
-        using World world = new(nameof(SelectBuildDecision_UsesAuthoredMaterialsCostForAffordability));
+        using World world = new(nameof(SelectBuildDecision_UsesAuthoredMaterialsCostAndIgnoresLegacyPrice));
         EntityManager entityManager = world.EntityManager;
         Entity planEntity = entityManager.CreateEntity(typeof(AIBuildPlanEntry));
         Entity boundaryEntity = CreateBoundaryEntity(entityManager);
@@ -252,9 +252,7 @@ public sealed class AIBuildPlannerAllocationTests
 
         Assert.AreEqual(AIBuildPlannerSystem.BuildDecisionResult.InsufficientMaterials, materialsDecision.Result);
         Assert.AreEqual(80, materialsDecision.MaterialsCost);
-        Assert.AreEqual(
-            AIBuildPlannerSystem.BuildDecisionResult.InsufficientCreditsAndMaterials,
-            combinedDecision.Result);
+        Assert.AreEqual(AIBuildPlannerSystem.BuildDecisionResult.InsufficientMaterials, combinedDecision.Result);
     }
 
     [Test]

@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 434,
+    "resolvedNonDebtRowCount": 435,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 442,
-    "genuineDebtRowCount": 133,
-    "uniqueDebtItemCount": 57,
+    "reviewedNonDebtRowCount": 443,
+    "genuineDebtRowCount": 132,
+    "uniqueDebtItemCount": 56,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -48,9 +48,9 @@
     {
       "sourceArtifact": "AM-007",
       "historicalOpenRowCount": 314,
-      "projectedResolvedNonDebtRowCount": 286,
+      "projectedResolvedNonDebtRowCount": 287,
       "projectedProtectedDeferredRowCount": 7,
-      "projectedGenuineDebtRowCount": 21
+      "projectedGenuineDebtRowCount": 20
     },
     {
       "sourceArtifact": "AM-018",
@@ -76,7 +76,7 @@
     },
     {
       "id": "world-owner-candidates",
-      "projectedRows": 13,
+      "projectedRows": 12,
       "note": "Lifecycle rows; may overlap hazard remediation and cannot be treated as 33 independent production defects."
     }
   ],
@@ -428,10 +428,22 @@
       "authority": ["Assets/Tests/Editor/RuntimeDiagnosticsSystemTests.cs"]
     },
     {
+      "id": "am007-world-scenario-lab-action-boundary-owned",
+      "decision": "resolved",
+      "reasonCode": "no-retained-world-or-query-owner",
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-007",
+        "sourceCategory": "worlds",
+        "sourcePath": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs"
+      },
+      "authority": ["Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"]
+    },
+    {
       "id": "am007-world-debt",
       "decision": "genuine-debt",
       "reasonCode": "world-owner-unproven",
-      "expectedCount": 13,
+      "expectedCount": 12,
       "debtIdPrefix": "AM025-WORLD",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

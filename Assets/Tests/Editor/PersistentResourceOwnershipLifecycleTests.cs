@@ -13,6 +13,23 @@ using UnityEngine;
 
 public sealed class PersistentResourceOwnershipLifecycleTests
 {
+    public static void RunScenarioLabWorldOwnershipValidation()
+    {
+        try
+        {
+            new PersistentResourceOwnershipLifecycleTests()
+                .ScenarioLabPlayback_DoesNotRetainWorldOrQueryOwners();
+            Debug.Log("[ScenarioLabWorldOwnershipValidation] result=Passed tests=1");
+            ValidationExit.Passed();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[ScenarioLabWorldOwnershipValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
     public static void RunPathfindingPendingStateWorldReplacementValidation()
     {
         try
@@ -492,6 +509,23 @@ public sealed class PersistentResourceOwnershipLifecycleTests
                     removedMirrorFields[i],
                     BindingFlags.Instance | BindingFlags.NonPublic),
                 $"Scenario Lab must not mirror ECS-owned native container {removedMirrorFields[i]}.");
+        }
+    }
+
+    [Test]
+    public void ScenarioLabPlayback_DoesNotRetainWorldOrQueryOwners()
+    {
+        FieldInfo[] fields = typeof(BattleScenarioLabVisualPlayback).GetFields(
+            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+        for (int i = 0; i < fields.Length; i++)
+        {
+            Type fieldType = fields[i].FieldType;
+            Assert.IsFalse(
+                fieldType == typeof(World) ||
+                fieldType == typeof(EntityManager) ||
+                fieldType == typeof(EntityQuery),
+                $"Scenario Lab playback must resolve the active World at the action boundary instead of retaining {fields[i].Name}.");
         }
     }
 

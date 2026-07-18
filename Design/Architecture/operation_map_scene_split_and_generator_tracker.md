@@ -239,7 +239,7 @@ Use these exact logical groups. `<slug>` is the sanitized operation-map id suffi
 | Group | Initial Build/Load path | Bundle mode | Contents |
 |---|---|---|---|
 | `Operation Maps - Catalog` | Local / Local | Pack Together | Small `OperationMapCatalogConfig` and small definition/config records only. No map manifest, scene chunks, textures, or surface payloads. |
-| `Operation Maps - Shared` | Local / Local | Pack Together by asset role when necessary | Shared binary art used by multiple maps. Assets enter this group only after dependency analysis proves reuse. |
+| `Operation Maps - Shared` | Local / Local | Pack Together By Label using bounded type/GUID shards | Shared binary art used by multiple maps or many independently streamable partitions. Assets enter this group only after dependency analysis proves reuse. |
 | `Operation Map - Local - <slug> - Core` | Local / Local | Pack Together | One map's source scene, definition, surface data, static manifest, minimap raster, placement configs, and map-exclusive core dependencies. Unity may place scene and non-scene assets in separate bundles. |
 | `Operation Map - Local - <slug> - Presentation` | Local / Local | Pack Together By Label | Map-specific streamable presentation chunk scenes partitioned into deterministic regions. |
 
@@ -250,8 +250,9 @@ Required labels are:
 - `operation-map`
 - `operation-map-local` for the initial milestone
 - one `operation-map-pack-<slug>` label per map
-- one role label from `operation-map-role-definition`, `operation-map-role-source-scene`, `operation-map-role-metadata`, `operation-map-role-presentation`, or `operation-map-role-entities`
+- one role label from `operation-map-role-definition`, `operation-map-role-source-scene`, `operation-map-role-metadata`, `operation-map-role-presentation`, `operation-map-role-shared-dependency`, or `operation-map-role-entities`
 - one `operation-map-partition-<slug>-<region-id>` label on each presentation chunk scene
+- one deterministic `operation-map-shared-shard-<type>-<bucket>` label on each promoted shared dependency
 
 Every Addressables entry has one stable address, one pack label, and one role label. Presentation chunks additionally have exactly one partition label. Editor validation rejects missing, duplicate, foreign-map, or multiple-partition labels.
 
@@ -267,11 +268,12 @@ Every Addressables entry has one stable address, one pack label, and one role la
 
 ### Shared Dependency And Duplication Rules
 
-- A shared mesh, material, texture, shader, animation clip, audio clip, or prefab is assigned to `Operation Maps - Shared` only when at least two map groups depend on the same GUID and explicit sharing reduces measured duplication.
+- A shared mesh, material, texture, shader, animation clip, audio clip, or prefab is assigned to `Operation Maps - Shared` only when measured evidence shows reuse by multiple map groups or at least eight independently streamable presentation partitions. The threshold is fixed until new package/load evidence approves a change.
 - Map-generated assets such as combined meshes, map surface data, minimap rasters, probes/lightmaps, manifests, integrity ledgers, and presentation chunks remain map-owned even if filenames are similar.
 - A shared binary asset GUID may not be copied into a map-owned generated folder. Maps reference the canonical asset and preserve its `.meta` GUID.
 - Addressables Analyze and Build Layout inspection are mandatory. CI reports duplicated dependency bytes by GUID and fails when an unapproved shared dependency is duplicated across operation-map bundles.
 - Sharing must not create a global bundle so large that loading one map retains unrelated maps. If an asset family is large and only conditionally shared, split it by stable role/family rather than creating one universal content bundle.
+- The initial one-map layout shards promoted dependencies by stable asset type and GUID prefix. Shard assignment must be deterministic, idempotent, and independently validated; changing shard count or threshold requires a new Build Layout and Android package comparison.
 
 ### Local Load, Activation, And Release Lifecycle
 
@@ -714,7 +716,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 | 0. Reproducible baseline and rollback | In progress / shared | 11 | 12 | 92% | Required by both directions before scene edits. |
 | 1. Operation-map and scenario data contracts | Complete | 12 | 12 | 100% | Typed identity, catalog resolution, complete spatial/navigation metadata, hashes, lazy content references, validation, and ownership chain are approved. |
 | 2. Per-map static presentation ownership | Complete | 14 | 14 | 100% | Per-map bake/output ownership, integrity, rollback, no-op reuse, wiring, Android resolution, and synthetic multi-map isolation are accepted while the shipped catalog remains one physical map. |
-| 2A. Local Addressables packaging foundation | Active / selected direction | 16 | 20 | 80% | Source and presentation handles now load from real local Addressables with deterministic release and Android evidence. The measured 603 MB closure, 938 MiB APK, and 3.22 GB attributed duplicate bytes remain unresolved package-budget failures. |
+| 2A. Local Addressables packaging foundation | Active / selected direction | 16 | 20 | 80% | Source and presentation handles load from real local Addressables. Bounded shared shards reduced the closure from 603 MB to 258 MB and the APK from 938 MiB to 609 MiB; thin-shell cutover and final package acceptance remain open. |
 | 3. Current-map compatibility registration | Complete / shared | 10 | 10 | 100% | Current identities/definition, authored behavior, schema-v1 read compatibility, runtime activation/teardown, deterministic presentation, and Android chunk resolution are accepted. |
 | 4. Non-destructive scene ownership split | In progress / shared priority | 10 | 14 | 71% | The staged scene and its static-presentation source view have fail-closed validation; the original Match route remains validated and revision `d5784dcfa` plus the rollback recipe freeze the pre-cutover recovery boundary. |
 | 5. Runtime selection, loading, and teardown | In progress | 2 | 14 | 14% | Catalog preflight plus pure readiness/failure/teardown data contracts are bound; concrete local Addressables loading follows Phase 2A. |
@@ -1151,6 +1153,7 @@ Exit criteria:
 | 2026-07-18 | Static-presentation retained-handle Addressables scene API | `../AgentReports/2026-07-18_static_map_presentation_addressables_scene_api.md`; focused `4 / 4`; compile; `git diff --check` | Passed; inactive until streamer integration | Added per-path retained load/unload ownership, fail-closed manifest replacement, and bounded retry behavior. The active streamer remains unchanged pending lifecycle and Android validation. |
 | 2026-07-18 | Static-presentation manifest scene-API binding | `../AgentReports/2026-07-18_static_map_presentation_manifest_scene_api_binding.md`; streamer/API `33 / 33`; compile; `git diff --check` | Passed; production API switch remains open | The streamer now binds manifest-aware scene APIs before chunk work and fails closed on address binding errors. The existing Unity scene API remains the production default. |
 | 2026-07-18 | Static-presentation Addressables production activation | `../AgentReports/2026-07-18_static_map_addressables_production_activation.md`; streamer/API `34 / 34`; real PlayMode `1 / 1`; Android resolver `26 / 26`; Android APK; compile; `git diff --check` | Runtime passed; package budget failed; Phase 2A `16 / 20` | Production streaming uses retained local Addressables handles and Android excludes presentation chunks from player scenes after validating them. The 938 MiB APK and 603,274,171-byte Addressables closure remain unaccepted until dependency packing and thin-shell cutover remove duplicate map assets. |
+| 2026-07-18 | Bounded shared dependency bundles | `../AgentReports/2026-07-18_operation_map_shared_dependency_bundles.md`; layout/validator/report `9 / 9`; naming `1 / 1`; byte-identical second layout; real content build; Android APK; compile; `git diff --check` | Reduction accepted; final package gate remains open | Promoted 124 dependencies reused by at least eight partitions into 24 deterministic shared shards. Addressables closure fell from 603,274,171 to 258,360,913 bytes and APK size from about 938 MiB to about 609 MiB while preserving 100 presentation partitions. |
 | 2026-07-17 | Static presentation staged-source preflight | `../AgentReports/2026-07-17_static_map_presentation_staged_source_preflight.md`; source/input `15 / 15`; editor assembly compile; `git diff --check` | Passed; Phase 4 staged bake remains open | The baker now resolves either the live `MatchSceneView` or the extracted `OperationMapSceneView` through exact, fail-closed ownership. No bake, manifest, chunk, scene, Addressables, or map asset changed. |
 
 ## Open Decisions

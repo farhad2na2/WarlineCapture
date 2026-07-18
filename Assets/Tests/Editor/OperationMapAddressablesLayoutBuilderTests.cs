@@ -1,6 +1,7 @@
 using Game.Configs;
 using Game.Editor;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
@@ -23,7 +24,7 @@ public sealed class OperationMapAddressablesLayoutBuilderTests
         AddressableAssetGroup shared = RequireGroup(
             settings,
             OperationMapAddressablesLayoutBuilder.SharedGroupName,
-            BundledAssetGroupSchema.BundlePackingMode.PackTogether);
+            BundledAssetGroupSchema.BundlePackingMode.PackTogetherByLabel);
         AddressableAssetGroup core = RequireGroup(
             settings,
             OperationMapAddressablesLayoutBuilder.CoreGroupName,
@@ -34,7 +35,13 @@ public sealed class OperationMapAddressablesLayoutBuilderTests
             BundledAssetGroupSchema.BundlePackingMode.PackTogetherByLabel);
 
         Assert.That(catalog.entries.Count, Is.EqualTo(2));
-        Assert.That(shared.entries, Is.Empty);
+        Game.Rendering.StaticMapPresentationManifest manifest = AssetDatabase.LoadAssetAtPath<Game.Rendering.StaticMapPresentationManifest>(
+            OperationMapAddressablesLayoutBuilder.ManifestPath);
+        string[] expectedShared = OperationMapAddressablesLayoutBuilder.CollectSharedDependencyPaths(
+            settings,
+            manifest);
+        Assert.That(shared.entries.Count, Is.EqualTo(expectedShared.Length));
+        Assert.That(shared.entries, Is.Not.Empty);
         Assert.That(core.entries.Count, Is.EqualTo(6));
         Assert.That(presentation.entries.Count, Is.EqualTo(514));
 
@@ -69,6 +76,18 @@ public sealed class OperationMapAddressablesLayoutBuilderTests
         foreach (KeyValuePair<string, int> partition in partitionCounts)
             Assert.That(partition.Value, Is.InRange(1, 25), partition.Key);
 
+        foreach (AddressableAssetEntry entry in shared.entries)
+        {
+            Assert.That(entry.address, Does.StartWith("operation-map/shared/"));
+            AssertOperationMapLabels(entry, OperationMapAddressablesLayoutBuilder.SharedDependencyRoleLabel, false);
+            string path = AssetDatabase.GUIDToAssetPath(entry.guid);
+            string expectedShard = OperationMapAddressablesLayoutBuilder.BuildSharedShardLabel(path, entry.guid);
+            Assert.That(entry.labels, Does.Contain(expectedShard));
+            Assert.That(entry.labels.Count(label => label.StartsWith(
+                OperationMapAddressablesLayoutBuilder.SharedShardLabelPrefix,
+                System.StringComparison.Ordinal)), Is.EqualTo(1));
+        }
+
         AssertOperationMapLabels(settings.FindAssetEntry(UnityEditor.AssetDatabase.AssetPathToGUID(OperationMapAddressablesLayoutBuilder.CatalogPath)), OperationMapAddressablesLayoutBuilder.MetadataRoleLabel, false);
         AssertOperationMapLabels(settings.FindAssetEntry(UnityEditor.AssetDatabase.AssetPathToGUID(OperationMapAddressablesLayoutBuilder.DefinitionPath)), OperationMapAddressablesLayoutBuilder.DefinitionRoleLabel, false);
         foreach (AddressableAssetEntry entry in core.entries)
@@ -80,6 +99,20 @@ public sealed class OperationMapAddressablesLayoutBuilderTests
                     : OperationMapAddressablesLayoutBuilder.MetadataRoleLabel;
             AssertOperationMapLabels(entry, role, false);
         }
+    }
+
+    [Test]
+    public void SharedShardLabel_IsDeterministicAndBounded()
+    {
+        string first = OperationMapAddressablesLayoutBuilder.BuildSharedShardLabel(
+            "Assets/Textures/Map.png",
+            "7f000000000000000000000000000000");
+        string second = OperationMapAddressablesLayoutBuilder.BuildSharedShardLabel(
+            "Assets/Textures/Map.png",
+            "7f000000000000000000000000000000");
+
+        Assert.That(first, Is.EqualTo(second));
+        Assert.That(first, Is.EqualTo("operation-map-shared-shard-texture-07"));
     }
 
     [Test]

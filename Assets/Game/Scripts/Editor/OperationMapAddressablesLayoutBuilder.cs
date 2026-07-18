@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
 using Game.Configs;
 using Game.Rendering;
 using UnityEditor;
@@ -42,6 +45,10 @@ namespace Game.Editor
         public const string MetadataRoleLabel = "operation-map-role-metadata";
         public const string PresentationRoleLabel = "operation-map-role-presentation";
         public const string MinimapRasterRoleLabel = "operation-map-role-minimap-raster";
+        public const string SharedDependencyRoleLabel = "operation-map-role-shared-dependency";
+        public const string SharedShardLabelPrefix = "operation-map-shared-shard-";
+        public const int SharedDependencyPartitionThreshold = 8;
+        public const int SharedDependencyShardCount = 8;
 
         [MenuItem("Game/Operation Maps/Configure Local Addressables Groups")]
         public static void Run()
@@ -52,7 +59,7 @@ namespace Game.Editor
                 throw new InvalidOperationException("Addressables settings are required.");
 
             AddressableAssetGroup catalog = EnsureGroup(settings, CatalogGroupName, false);
-            EnsureGroup(settings, SharedGroupName, false);
+            AddressableAssetGroup shared = EnsureGroup(settings, SharedGroupName, true);
             AddressableAssetGroup core = EnsureGroup(settings, CoreGroupName, false);
             AddressableAssetGroup presentation = EnsureGroup(settings, PresentationGroupName, true);
 
@@ -161,8 +168,130 @@ namespace Game.Editor
                     partitionLabel);
             }
 
+            ConfigureSharedDependencies(settings, shared, manifest);
+
             AssetDatabase.SaveAssets();
             Debug.Log("[OperationMapAddressablesLayoutBuilder] Configured one-map local group topology.");
+        }
+
+        internal static string[] CollectSharedDependencyPaths(
+            AddressableAssetSettings settings,
+            StaticMapPresentationManifest manifest)
+        {
+            if (settings == null)
+                throw new ArgumentNullException(nameof(settings));
+            if (manifest == null)
+                throw new ArgumentNullException(nameof(manifest));
+
+            var usage = new Dictionary<string, HashSet<string>>(StringComparer.Ordinal);
+            for (int index = 0; index < manifest.Chunks.Count; index++)
+            {
+                StaticMapPresentationChunkEntry chunk = manifest.Chunks[index];
+                string partition = BuildPartitionLabel(chunk, manifest.ChunkSize);
+                string[] dependencies = AssetDatabase.GetDependencies(chunk.ScenePath, true);
+                for (int dependencyIndex = 0; dependencyIndex < dependencies.Length; dependencyIndex++)
+                {
+                    string path = dependencies[dependencyIndex];
+                    if (!IsShareableDependencyPath(path))
+                        continue;
+
+                    if (!usage.TryGetValue(path, out HashSet<string> partitions))
+                    {
+                        partitions = new HashSet<string>(StringComparer.Ordinal);
+                        usage.Add(path, partitions);
+                    }
+                    partitions.Add(partition);
+                }
+            }
+
+            return usage
+                .Where(pair => pair.Value.Count >= SharedDependencyPartitionThreshold)
+                .Select(pair => pair.Key)
+                .Where(path =>
+                {
+                    string guid = AssetDatabase.AssetPathToGUID(path);
+                    AddressableAssetEntry entry = settings.FindAssetEntry(guid);
+                    return !string.IsNullOrEmpty(guid) &&
+                           (entry == null || string.Equals(
+                               entry.parentGroup?.Name,
+                               SharedGroupName,
+                               StringComparison.Ordinal));
+                })
+                .OrderBy(path => path, StringComparer.Ordinal)
+                .ToArray();
+        }
+
+        internal static string BuildSharedShardLabel(string assetPath, string guid)
+        {
+            if (string.IsNullOrWhiteSpace(assetPath) || string.IsNullOrWhiteSpace(guid))
+                throw new ArgumentException("Shared dependency path and GUID are required.");
+
+            string extension = Path.GetExtension(assetPath).ToLowerInvariant();
+            string kind = extension switch
+            {
+                ".png" or ".jpg" or ".jpeg" or ".tga" or ".psd" or ".exr" or ".tif" or ".tiff" => "texture",
+                ".mat" => "material",
+                ".fbx" or ".obj" or ".blend" => "mesh",
+                ".prefab" => "prefab",
+                _ => "other"
+            };
+            int prefixLength = Math.Min(2, guid.Length);
+            if (!int.TryParse(
+                    guid.Substring(0, prefixLength),
+                    NumberStyles.HexNumber,
+                    CultureInfo.InvariantCulture,
+                    out int hashPrefix))
+                throw new InvalidOperationException($"Shared dependency GUID is invalid: {guid}");
+
+            int shard = hashPrefix % SharedDependencyShardCount;
+            return $"{SharedShardLabelPrefix}{kind}-{shard:D2}";
+        }
+
+        private static void ConfigureSharedDependencies(
+            AddressableAssetSettings settings,
+            AddressableAssetGroup shared,
+            StaticMapPresentationManifest manifest)
+        {
+            string[] paths = CollectSharedDependencyPaths(settings, manifest);
+            var acceptedGuids = new HashSet<string>(StringComparer.Ordinal);
+            for (int index = 0; index < paths.Length; index++)
+            {
+                string path = paths[index];
+                string guid = AssetDatabase.AssetPathToGUID(path);
+                acceptedGuids.Add(guid);
+                AddressableAssetEntry entry = MoveEntry(
+                    settings,
+                    shared,
+                    path,
+                    "operation-map/shared/" + guid);
+                SetOperationMapLabels(
+                    settings,
+                    entry,
+                    SharedDependencyRoleLabel,
+                    BuildSharedShardLabel(path, guid));
+            }
+
+            AddressableAssetEntry[] stale = shared.entries
+                .Where(entry =>
+                    entry.labels.Contains(SharedDependencyRoleLabel) &&
+                    !acceptedGuids.Contains(entry.guid))
+                .ToArray();
+            for (int index = 0; index < stale.Length; index++)
+                settings.RemoveAssetEntry(stale[index].guid, false);
+        }
+
+        private static bool IsShareableDependencyPath(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path) ||
+                !path.StartsWith("Assets/", StringComparison.Ordinal) ||
+                StaticMapPresentationCanonicalSourceHash.IsGeneratedOutputPath(path))
+                return false;
+
+            string extension = Path.GetExtension(path);
+            return !string.Equals(extension, ".unity", StringComparison.OrdinalIgnoreCase) &&
+                   !string.Equals(extension, ".cs", StringComparison.OrdinalIgnoreCase) &&
+                   !string.Equals(extension, ".asmdef", StringComparison.OrdinalIgnoreCase) &&
+                   !string.Equals(extension, ".dll", StringComparison.OrdinalIgnoreCase);
         }
 
         private static void AssignDefinitionReferences(

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Game.Configs;
 using Game.Rendering;
 using UnityEditor;
@@ -26,7 +27,7 @@ namespace Game.Editor
                 return Fail("The local milestone forbids a remote catalog and unique bundle ids.", out error);
 
             if (!TryRequireGroup(settings, OperationMapAddressablesLayoutBuilder.CatalogGroupName, 2, false, out AddressableAssetGroup catalog, out error) ||
-                !TryRequireGroup(settings, OperationMapAddressablesLayoutBuilder.SharedGroupName, 0, false, out AddressableAssetGroup shared, out error) ||
+                !TryRequireGroup(settings, OperationMapAddressablesLayoutBuilder.SharedGroupName, -1, true, out AddressableAssetGroup shared, out error) ||
                 !TryRequireGroup(settings, OperationMapAddressablesLayoutBuilder.CoreGroupName, 6, false, out AddressableAssetGroup core, out error) ||
                 !TryRequireGroup(settings, OperationMapAddressablesLayoutBuilder.PresentationGroupName, 514, true, out AddressableAssetGroup presentation, out error))
                 return false;
@@ -112,6 +113,32 @@ namespace Game.Editor
             if (manifest == null || manifest.Chunks.Count != presentation.entries.Count)
                 return Fail("Presentation entries must exactly match the current manifest.", out error);
 
+            string[] sharedDependencies =
+                OperationMapAddressablesLayoutBuilder.CollectSharedDependencyPaths(settings, manifest);
+            if (shared.entries.Count != sharedDependencies.Length)
+                return Fail("Shared dependency membership drifted from measured partition reuse.", out error);
+            for (int index = 0; index < sharedDependencies.Length; index++)
+            {
+                string path = sharedDependencies[index];
+                string guid = AssetDatabase.AssetPathToGUID(path);
+                if (!TryRequireEntry(
+                        settings,
+                        shared,
+                        path,
+                        "operation-map/shared/" + guid,
+                        OperationMapAddressablesLayoutBuilder.SharedDependencyRoleLabel,
+                        false,
+                        out error))
+                    return false;
+
+                AddressableAssetEntry entry = settings.FindAssetEntry(guid);
+                string expectedShard = OperationMapAddressablesLayoutBuilder.BuildSharedShardLabel(path, guid);
+                int shardLabelCount = entry.labels.Count(label =>
+                    label.StartsWith(OperationMapAddressablesLayoutBuilder.SharedShardLabelPrefix, StringComparison.Ordinal));
+                if (shardLabelCount != 1 || !entry.labels.Contains(expectedShard))
+                    return Fail($"Shared dependency shard drifted: {path}.", out error);
+            }
+
             Dictionary<string, int> partitions = new(StringComparer.Ordinal);
             for (int index = 0; index < manifest.Chunks.Count; index++)
             {
@@ -155,7 +182,7 @@ namespace Game.Editor
             out string error)
         {
             group = settings.FindGroup(groupName);
-            if (group == null || group.entries.Count != entryCount)
+            if (group == null || (entryCount >= 0 && group.entries.Count != entryCount))
                 return Fail($"Group '{groupName}' must contain exactly {entryCount} entries.", out error);
             BundledAssetGroupSchema schema = group.GetSchema<BundledAssetGroupSchema>();
             if (schema == null ||

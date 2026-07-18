@@ -218,6 +218,31 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p018-p002
     - operation-map-partition-skirmish-desert-base-01-region-p019-p007
     - operation-map-role-minimap-raster
+    - operation-map-role-shared-dependency
+    - operation-map-shared-shard-material-01
+    - operation-map-shared-shard-material-07
+    - operation-map-shared-shard-other-04
+    - operation-map-shared-shard-texture-03
+    - operation-map-shared-shard-texture-01
+    - operation-map-shared-shard-texture-07
+    - operation-map-shared-shard-texture-05
+    - operation-map-shared-shard-texture-02
+    - operation-map-shared-shard-material-00
+    - operation-map-shared-shard-material-06
+    - operation-map-shared-shard-material-05
+    - operation-map-shared-shard-material-03
+    - operation-map-shared-shard-mesh-03
+    - operation-map-shared-shard-mesh-07
+    - operation-map-shared-shard-mesh-01
+    - operation-map-shared-shard-mesh-00
+    - operation-map-shared-shard-mesh-05
+    - operation-map-shared-shard-mesh-06
+    - operation-map-shared-shard-mesh-02
+    - operation-map-shared-shard-mesh-04
+    - operation-map-shared-shard-texture-04
+    - operation-map-shared-shard-texture-06
+    - operation-map-shared-shard-texture-00
+    - operation-map-shared-shard-other-07
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: 11f3bcb7e92274cb9a2041ff8401d472, type: 2}

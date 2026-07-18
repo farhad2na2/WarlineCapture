@@ -47,6 +47,55 @@ public sealed class PersistentResourceOwnershipLifecycleTests
         }
     }
 
+    public static void RunGameplayStartupCountsWorldReplacementValidation()
+    {
+        try
+        {
+            new PersistentResourceOwnershipLifecycleTests()
+                .GameplayStartupCounts_RebindAfterWorldReplacement();
+            Debug.Log("[GameplayStartupCountsWorldReplacementValidation] result=Passed tests=1");
+            ValidationExit.Passed();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[GameplayStartupCountsWorldReplacementValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
+    [Test]
+    public void GameplayStartupCounts_RebindAfterWorldReplacement()
+    {
+        var helper = new GameplayRuntimeUpdateCompositionSystemHelper();
+        var firstWorld = new World(nameof(GameplayStartupCounts_RebindAfterWorldReplacement) + "_First");
+        var replacementWorld = new World(nameof(GameplayStartupCounts_RebindAfterWorldReplacement) + "_Replacement");
+        MethodInfo getCounts = typeof(GameplayRuntimeUpdateCompositionSystemHelper).GetMethod(
+            "GetInitialSpawnCounts",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.IsNotNull(getCounts);
+        try
+        {
+            firstWorld.EntityManager.CreateEntity(typeof(InitialUnitsSpawnConfig));
+            AssertCounts(helper, getCounts, firstWorld, expectedConfig: 1, expectedInitialized: 0, expectedProgress: 0);
+
+            firstWorld.Dispose();
+            replacementWorld.EntityManager.CreateEntity(
+                typeof(InitialUnitsSpawnConfig),
+                typeof(InitialUnitsSpawnInitialized),
+                typeof(InitialUnitsSpawnProgress));
+            AssertCounts(helper, getCounts, replacementWorld, expectedConfig: 1, expectedInitialized: 1, expectedProgress: 1);
+        }
+        finally
+        {
+            helper.Dispose();
+            if (firstWorld.IsCreated)
+                firstWorld.Dispose();
+            if (replacementWorld.IsCreated)
+                replacementWorld.Dispose();
+        }
+    }
+
     [Test]
     public void SceneLifecycleQueue_RebindsAfterWorldReplacement()
     {
@@ -80,6 +129,21 @@ public sealed class PersistentResourceOwnershipLifecycleTests
             if (replacementWorld.IsCreated)
                 replacementWorld.Dispose();
         }
+    }
+
+    private static void AssertCounts(
+        GameplayRuntimeUpdateCompositionSystemHelper helper,
+        MethodInfo getCounts,
+        World world,
+        int expectedConfig,
+        int expectedInitialized,
+        int expectedProgress)
+    {
+        object[] arguments = { world, 0, 0, 0 };
+        getCounts.Invoke(helper, arguments);
+        Assert.AreEqual(expectedConfig, (int)arguments[1]);
+        Assert.AreEqual(expectedInitialized, (int)arguments[2]);
+        Assert.AreEqual(expectedProgress, (int)arguments[3]);
     }
 
     [Test]

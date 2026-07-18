@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 427,
+    "resolvedNonDebtRowCount": 428,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 435,
-    "genuineDebtRowCount": 140,
-    "uniqueDebtItemCount": 64,
+    "reviewedNonDebtRowCount": 436,
+    "genuineDebtRowCount": 139,
+    "uniqueDebtItemCount": 63,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -48,9 +48,9 @@
     {
       "sourceArtifact": "AM-007",
       "historicalOpenRowCount": 314,
-      "projectedResolvedNonDebtRowCount": 279,
+      "projectedResolvedNonDebtRowCount": 280,
       "projectedProtectedDeferredRowCount": 7,
-      "projectedGenuineDebtRowCount": 28
+      "projectedGenuineDebtRowCount": 27
     },
     {
       "sourceArtifact": "AM-018",
@@ -76,7 +76,7 @@
     },
     {
       "id": "world-owner-candidates",
-      "projectedRows": 20,
+      "projectedRows": 19,
       "note": "Lifecycle rows; may overlap hazard remediation and cannot be treated as 33 independent production defects."
     }
   ],
@@ -344,10 +344,22 @@
       "authority": ["Assets/Tests/Editor/RuntimeDiagnosticsSystemTests.cs"]
     },
     {
+      "id": "am007-world-gameplay-startup-counts-owned",
+      "decision": "resolved",
+      "reasonCode": "tested-world-rebinding-gameplay-startup-counts",
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-007",
+        "sourceCategory": "worlds",
+        "sourcePath": "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.cs"
+      },
+      "authority": ["Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"]
+    },
+    {
       "id": "am007-world-debt",
       "decision": "genuine-debt",
       "reasonCode": "world-owner-unproven",
-      "expectedCount": 20,
+      "expectedCount": 19,
       "debtIdPrefix": "AM025-WORLD",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

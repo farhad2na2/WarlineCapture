@@ -1,0 +1,40 @@
+{
+  "artifactId": "AM025-SOURCE-GROWTH-VALIDATOR-SCHEMA-AMENDMENT",
+  "schemaVersion": 1,
+  "taskId": "AM-025",
+  "result": "AcceptedValidatorCorrectionBlockedExternalSourceGrowth",
+  "implementation": {
+    "commit": "0cedc3b73bd871879a47cc4e23ba17ec69330ae3",
+    "tree": "f4a84ab0e87b9e0d4b15f47107bab3b65ac553b5"
+  },
+  "validator": {
+    "path": "Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs",
+    "previousSha256": "f41bb1f91b55f3aaee0a6c5cfe99e55a51a9c546815cde60ee435490aa45201d",
+    "currentSha256": "291477f37e9821d7406ecf850aeb717b7262a89052c9340a4be24c4381bbef7e",
+    "change": "Deserialize, validate, and use genericLifecycleAnchorSymbols for current and baseline generic-owner comparisons instead of the broader managed-lifecycle symbol list.",
+    "sourceCeilingsChanged": false,
+    "approvedExceptionsAdded": 0,
+    "compilerErrors": 0
+  },
+  "validatorAuthority": {
+    "path": "Tools/CI/tests/test_architecture_source_responsibility_guardrail_evidence.py",
+    "previousSha256": "998261891046656c141fc91ce770a9e67642670c2c938acb98673e8d29ca749d",
+    "currentSha256": "badfcbea506123616aaaaf7bb706f611d8bd194a7c44783f90e7624f09966324"
+  },
+  "canonicalResult": {
+    "status": "BlockedExternal",
+    "resultMarker": "[ProductionSourceGrowthArchitectureValidation] result=Failed",
+    "blockedPaths": [
+      "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeLocaleTextUtilitySystemHelper.cs",
+      "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativePortraitVoiceSelectionPresentationSystemHelper.cs",
+      "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeProfileCompositionSystemHelper.cs",
+      "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeSequencePresentationSystemHelper.cs",
+      "Assets/Game/Scripts/Systems/RuntimeGridPersistentStorageUtilitySystemHelper.cs"
+    ],
+    "log": {
+      "path": "Design/AgentReports/ArchitectureMaturity/Logs/am025_source_growth_blocked.log.gz",
+      "sha256": "2940fff9b705050540030dede8ca92ce988ec977c1708d56b02b8d565b104fa7"
+    }
+  },
+  "acceptanceRule": "This amendment accepts only the validator schema and comparison correction. AM-025 and the 17-check source-growth gate remain blocked until every listed path has accepted owner authority or is refactored within its owning package."
+}

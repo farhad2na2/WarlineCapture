@@ -39,7 +39,9 @@
     {
       "id": "integrated-architecture",
       "command": "python3 -m unittest discover -s Tools/CI/tests -p 'test_architecture_*.py'",
-      "requiredPassed": 157,
+      "baselinePassed": 157,
+      "am025Added": 9,
+      "requiredPassed": 166,
       "requiredFailed": 0
     },
     {

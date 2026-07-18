@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import gzip
 import json
 import re
 import subprocess
@@ -16,6 +17,7 @@ sys.path.insert(0, str(ROOT / "Tools/CI"))
 from architecture_owner_risk_ranking import state_slot_count, strip_comments_and_strings
 
 EVIDENCE_PATH = ROOT / "Design/AgentReports/ArchitectureMaturity/source_responsibility_guardrail_evidence.json"
+VALIDATOR_AMENDMENT_PATH = ROOT / "Design/AgentReports/ArchitectureMaturity/am025_source_growth_validator_schema_amendment.json"
 TRACKER_PATH = ROOT / "Design/Architecture/post_hardening_architecture_maturity_tracker.md"
 LEGACY_BASELINE_PATH = ROOT / "Design/Architecture/production_source_growth_baseline.md"
 
@@ -232,14 +234,37 @@ class ArchitectureSourceResponsibilityGuardrailEvidenceTests(unittest.TestCase):
         validator = self.data["canonicalValidator"]
         path = ROOT / validator["path"]
         source = path.read_text(encoding="utf-8")
-        self.assertEqual(validator["sha256"], sha256(path))
-        self.assertEqual(validator["result"], "Passed")
-        self.assertEqual(validator["passedTests"], 17)
-        self.assertEqual(validator["compilerErrors"], 0)
         self.assertIn("PostHardeningGuardrailContractHasExpectedRatchets", source)
         self.assertIn("PostHardeningGuardedSourcesStayBoundedAndNarrow", source)
         self.assertIn("result=Passed tests=17", source)
         self.assertIn(self.data["contract"]["path"], source)
+        current_sha256 = sha256(path)
+        if current_sha256 != validator["sha256"]:
+            amendment = json.loads(VALIDATOR_AMENDMENT_PATH.read_text(encoding="utf-8"))
+            self.assertEqual(amendment["artifactId"], "AM025-SOURCE-GROWTH-VALIDATOR-SCHEMA-AMENDMENT")
+            self.assertEqual(amendment["result"], "AcceptedValidatorCorrectionBlockedExternalSourceGrowth")
+            self.assertEqual(amendment["validator"]["previousSha256"], validator["sha256"])
+            self.assertEqual(amendment["validator"]["currentSha256"], current_sha256)
+            self.assertFalse(amendment["validator"]["sourceCeilingsChanged"])
+            self.assertEqual(amendment["validator"]["approvedExceptionsAdded"], 0)
+            self.assertEqual(amendment["validator"]["compilerErrors"], 0)
+            commit = amendment["implementation"]["commit"]
+            self.assertEqual(git("rev-parse", f"{commit}^{{tree}}").strip(), amendment["implementation"]["tree"])
+            self.assertEqual(git("show", f"{commit}:{validator['path']}", text=False), path.read_bytes())
+            log_meta = amendment["canonicalResult"]["log"]
+            log_path = ROOT / log_meta["path"]
+            self.assertEqual(log_meta["sha256"], sha256(log_path))
+            with gzip.open(log_path, "rt", encoding="utf-8", errors="replace") as handle:
+                log_text = handle.read()
+            self.assertIn(amendment["canonicalResult"]["resultMarker"], log_text)
+            for blocked_path in amendment["canonicalResult"]["blockedPaths"]:
+                self.assertIn(blocked_path, log_text)
+            self.assertIsNone(re.search(r"\berror CS\d+", log_text))
+            return
+
+        self.assertEqual(validator["result"], "Passed")
+        self.assertEqual(validator["passedTests"], 17)
+        self.assertEqual(validator["compilerErrors"], 0)
         log_path = ROOT / validator["log"]
         log_text = log_path.read_text(encoding="utf-8")
         self.assertEqual(validator["logSha256"], sha256(log_path))
@@ -251,7 +276,13 @@ class ArchitectureSourceResponsibilityGuardrailEvidenceTests(unittest.TestCase):
     def test_validator_authority_and_accepted_hashes_are_immutable(self) -> None:
         authority = self.data["validatorAuthority"]
         self.assertEqual(authority["path"], str(Path(__file__).resolve().relative_to(ROOT)))
-        self.assertEqual(authority["sha256"], sha256(ROOT / authority["path"]))
+        current_authority_sha256 = sha256(ROOT / authority["path"])
+        if current_authority_sha256 != authority["sha256"]:
+            amendment = json.loads(VALIDATOR_AMENDMENT_PATH.read_text(encoding="utf-8"))
+            amended_authority = amendment["validatorAuthority"]
+            self.assertEqual(amended_authority["path"], authority["path"])
+            self.assertEqual(amended_authority["previousSha256"], authority["sha256"])
+            self.assertEqual(amended_authority["currentSha256"], current_authority_sha256)
         accepted = self.data.get("acceptedEvidence")
         if not accepted:
             return

@@ -18,17 +18,11 @@ namespace Game.UI.Shell.Ecs
             DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
             DynamicBuffer<UiShellPopupRequestComponent> popupRequests,
             DynamicBuffer<UiShellRouteRequestComponent> routeRequests,
-            DynamicBuffer<UiBuildCatalogRequestComponent> buildCatalogRequests,
-            DynamicBuffer<UiBuildProductionRequestComponent> buildProductionRequests,
-            DynamicBuffer<UiBuildPrimaryRequestComponent> buildPrimaryRequests,
-            DynamicBuffer<BuildingUiPlacementCommandRequestElement> placementRequests,
             ref UiDiagnosticsOverlayComponent diagnosticsOverlay,
             ref UiMatchHudPassengerDrawerStateComponent passengerDrawerState,
             ref UiMatchHudSquadTrayStateComponent squadTrayState,
-            ref UiBuildDrawerStateComponent buildDrawerState,
             ref UiResourceExchangeStateComponent resourceExchangeState,
             bool hasResourceExchangeState,
-            ref BuildingUiPlacementCommandQueueComponent placementQueue,
             bool canOpenResourceExchange,
             EntityManager entityManager,
             Entity resourceExchangeRequestEntity,
@@ -71,24 +65,6 @@ namespace Game.UI.Shell.Ecs
                     CaptureUiClickSequence(ref inputState, commandRequests, frame);
                     EnqueuePopup(popupRequests, UiShellPopupKind.BuildDrawer, UiShellPopupIntent.Hide, request.PayloadId);
                     EnqueueSelectionIntent(ref queue, commandRequests, RtsSelectionCommandIntentKind.CancelActiveCommandMode, frame);
-                    break;
-                case UiActionKind.BuildCatalogItem:
-                    CaptureUiClickSequence(ref inputState, commandRequests, frame);
-                    queue.LastRequestId++;
-                    buildDrawerState.SelectedCatalogSlot = request.PayloadId;
-                    buildCatalogRequests.Add(new UiBuildCatalogRequestComponent
-                    {
-                        CatalogSlot = request.PayloadId,
-                        RequestId = queue.LastRequestId
-                    });
-                    break;
-                case UiActionKind.BuildDrawerTab:
-                    CaptureUiClickSequence(ref inputState, commandRequests, frame);
-                    if (TryResolveBuildDrawerCategory(request.PayloadId, out BuildDrawerCategory category))
-                    {
-                        buildDrawerState.ActiveCategory = category;
-                        buildDrawerState.SelectedCatalogSlot = 0;
-                    }
                     break;
                 case UiActionKind.ResourceExchangeTab:
                     CaptureUiClickSequence(ref inputState, commandRequests, frame);
@@ -188,54 +164,6 @@ namespace Game.UI.Shell.Ecs
                             resourceExchangeRuntimeState.FactionId,
                             frame);
                     }
-                    break;
-                case UiActionKind.BuildDrawerPrimaryBuild:
-                    CaptureUiClickSequence(ref inputState, commandRequests, frame);
-                    queue.LastRequestId++;
-                    buildPrimaryRequests.Add(new UiBuildPrimaryRequestComponent
-                    {
-                        RequestId = queue.LastRequestId
-                    });
-                    break;
-                case UiActionKind.BuildProductionRush:
-                    CaptureUiClickSequence(ref inputState, commandRequests, frame);
-                    EnqueueBuildProductionRequest(ref queue, buildProductionRequests, UiBuildProductionActionKind.Rush, 0);
-                    break;
-                case UiActionKind.BuildProductionClear:
-                    CaptureUiClickSequence(ref inputState, commandRequests, frame);
-                    EnqueueBuildProductionRequest(ref queue, buildProductionRequests, UiBuildProductionActionKind.Clear, 0);
-                    break;
-                case UiActionKind.BuildProductionCancelActive:
-                    CaptureUiClickSequence(ref inputState, commandRequests, frame);
-                    EnqueueBuildProductionRequest(ref queue, buildProductionRequests, UiBuildProductionActionKind.CancelActive, 0);
-                    break;
-                case UiActionKind.BuildProductionCancelQueued:
-                    CaptureUiClickSequence(ref inputState, commandRequests, frame);
-                    EnqueueBuildProductionRequest(ref queue, buildProductionRequests, UiBuildProductionActionKind.CancelQueued, request.PayloadId);
-                    break;
-                case UiActionKind.BuildPlacementConfirm:
-                    CaptureUiClickSequence(ref inputState, commandRequests, frame);
-                    EnqueueBuildPlacementRequest(
-                        ref placementQueue,
-                        placementRequests,
-                        BuildingUiPlacementCommandRequestElement.KindConfirmPlacement,
-                        true);
-                    break;
-                case UiActionKind.BuildPlacementCancel:
-                    CaptureUiClickSequence(ref inputState, commandRequests, frame);
-                    EnqueueBuildPlacementRequest(
-                        ref placementQueue,
-                        placementRequests,
-                        BuildingUiPlacementCommandRequestElement.KindCancelPlacement,
-                        true);
-                    break;
-                case UiActionKind.BuildPlacementRotate:
-                    CaptureUiClickSequence(ref inputState, commandRequests, frame);
-                    EnqueueBuildPlacementRequest(
-                        ref placementQueue,
-                        placementRequests,
-                        BuildingUiPlacementCommandRequestElement.KindRotatePlacement,
-                        false);
                     break;
                 case UiActionKind.Select:
                     CaptureUiClickSequence(ref inputState, commandRequests, frame);
@@ -379,53 +307,6 @@ namespace Game.UI.Shell.Ecs
             });
         }
 
-        private static void EnqueueBuildProductionRequest(
-            ref RtsSelectionInputRequestQueueComponent queue,
-            DynamicBuffer<UiBuildProductionRequestComponent> buildProductionRequests,
-            UiBuildProductionActionKind actionKind,
-            int queueSlot)
-        {
-            queue.LastRequestId++;
-            buildProductionRequests.Add(new UiBuildProductionRequestComponent
-            {
-                ActionKind = actionKind,
-                QueueSlot = queueSlot,
-                RequestId = queue.LastRequestId
-            });
-        }
-
-        private static void EnqueueBuildPlacementRequest(
-            ref BuildingUiPlacementCommandQueueComponent queue,
-            DynamicBuffer<BuildingUiPlacementCommandRequestElement> placementRequests,
-            byte requestKind,
-            bool clearBuildingSelection)
-        {
-            queue.LastRequestId++;
-            placementRequests.Add(new BuildingUiPlacementCommandRequestElement
-            {
-                RequestId = queue.LastRequestId,
-                BuildingId = default,
-                RequestKind = requestKind,
-                ClearBuildingSelection = clearBuildingSelection ? (byte)1 : (byte)0
-            });
-        }
-
-        internal static bool HasBuildPlacementAction(DynamicBuffer<UiActionRequestComponent> actionRequests)
-        {
-            for (int i = 0; i < actionRequests.Length; i++)
-            {
-                if (actionRequests[i].Kind is
-                    UiActionKind.BuildPlacementConfirm or
-                    UiActionKind.BuildPlacementCancel or
-                    UiActionKind.BuildPlacementRotate)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         private static MatchHudSquadTraySlot ToSquadTraySlot(UiActionKind kind)
         {
             return kind switch
@@ -437,19 +318,6 @@ namespace Game.UI.Shell.Ecs
                 UiActionKind.SquadSlot5 => MatchHudSquadTraySlot.Transport,
                 _ => MatchHudSquadTraySlot.None
             };
-        }
-
-        private static bool TryResolveBuildDrawerCategory(int payloadId, out BuildDrawerCategory category)
-        {
-            if (payloadId >= (int)BuildDrawerCategory.Buildings &&
-                payloadId <= (int)BuildDrawerCategory.Soldiers)
-            {
-                category = (BuildDrawerCategory)payloadId;
-                return true;
-            }
-
-            category = BuildDrawerCategory.Buildings;
-            return false;
         }
 
         private static bool TryResolveResourceExchangeTab(int payloadId, out UiResourceExchangeTab tab)

@@ -4,18 +4,6 @@ using Game.Runtime;
 
 public sealed class QuickCustomBalanceProbeTests
 {
-    [SetUp]
-    public void SetUp()
-    {
-        AISettingsRuntimeState.ResetDefaults();
-    }
-
-    [TearDown]
-    public void TearDown()
-    {
-        AISettingsRuntimeState.ResetDefaults();
-    }
-
     [Test]
     [Explicit("Opt-in balance probe. Produces a report and is intentionally excluded from normal Jenkins/build validation.")]
     [Category("Balance")]

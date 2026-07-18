@@ -38,18 +38,6 @@ namespace Game.Runtime
         public Result Initialize(
             IReadOnlyList<AIControllerConfig> aiControllerConfigs,
             AIPlanEntryStartupConfig planEntryConfig,
-            TryResolveFactionSpawnCell resolveFactionSpawnCell)
-        {
-            return Initialize(
-                aiControllerConfigs,
-                planEntryConfig,
-                resolveFactionSpawnCell,
-                AISettingsRuntimeState.CurrentSnapshot);
-        }
-
-        public Result Initialize(
-            IReadOnlyList<AIControllerConfig> aiControllerConfigs,
-            AIPlanEntryStartupConfig planEntryConfig,
             TryResolveFactionSpawnCell resolveFactionSpawnCell,
             AISettingsSnapshot aiSettings)
         {
@@ -147,11 +135,6 @@ namespace Game.Runtime
                     config.Role,
                     factionId));
             }
-        }
-
-        public void LogConfigValidation(IReadOnlyList<AIControllerConfig> aiControllerConfigs)
-        {
-            LogConfigValidation(aiControllerConfigs, AISettingsRuntimeState.CurrentSnapshot);
         }
 
         public void LogConfigValidation(

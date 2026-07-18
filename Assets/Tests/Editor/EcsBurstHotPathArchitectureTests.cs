@@ -1,10 +1,12 @@
 using Game.Rendering;
+using Game.UI.Runtime;
 using Game.UI.Shell.Ecs;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
 using UnityEditor;
@@ -130,8 +132,6 @@ public sealed class EcsBurstHotPathArchitectureTests
         ["Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs"] = "UI shell command boundary; consumes low-cardinality UI action requests.",
         ["Assets/Game/Scripts/UI/Shell/Ecs/UiAudioEventBridgeSystem.cs"] = "UI audio event lifecycle boundary; its disabled empty tick accompanies managed gateway event subscription and default-world routing in OnCreate/OnDestroy.",
         ["Assets/Game/Scripts/UI/Shell/Ecs/UiAudioSettingsProjectionSystem.cs"] = "UI audio settings lifecycle boundary; its disabled empty tick accompanies managed settings event subscription, AudioListener volume, and default-world projection, while composition owns startup application.",
-        ["Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs"] = "UI shell read-model boundary; projects ECS build catalog data for managed UI views.",
-        ["Assets/Game/Scripts/UI/Shell/Ecs/UiBuildPlacementReadModelSystem.cs"] = "UI shell read-model boundary; projects build placement state for managed UI views.",
         ["Assets/Game/Scripts/UI/Shell/Ecs/UiDiagnosticsReadModelSystem.cs"] = "UI shell diagnostics boundary; projects runtime diagnostics into UI read models.",
         ["Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeReadModelSystem.cs"] = "resource exchange UI read-model boundary; performs managed string formatting and truncation while projecting queue and recipe state for popup views.",
         ["Assets/Game/Scripts/UI/Shell/Ecs/UiShellArmoryCategorySystem.cs"] = "UI shell state boundary; single boundary entity command consumption stays managed.",
@@ -232,7 +232,8 @@ public sealed class EcsBurstHotPathArchitectureTests
             tests.BurstCompileCoverageMustNotDecrease();
             tests.SystemStateTypeHandlesMustBeCreatedOnlyDuringInitialization();
             tests.UnitRenderBudgetPureEcsSystemsMustNotUseUnityObjectApis();
-            Debug.Log("[EcsBurstHotPathArchitectureValidation] result=Passed tests=10");
+            tests.ObsoleteBuildUiEcsPathMustNotReturn();
+            Debug.Log("[EcsBurstHotPathArchitectureValidation] result=Passed tests=11");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -241,6 +242,41 @@ public sealed class EcsBurstHotPathArchitectureTests
             Debug.LogError("[EcsBurstHotPathArchitectureValidation] result=Failed");
             ValidationExit.Exit(1);
         }
+    }
+
+    [Test]
+    public void ObsoleteBuildUiEcsPathMustNotReturn()
+    {
+        string[] removedPaths =
+        {
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildPlacementReadModelSystem.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerProjectionSystemHelper.cs"
+        };
+
+        foreach (string path in removedPaths)
+            Assert.IsFalse(File.Exists(path), $"Obsolete build UI ECS path returned: {path}");
+
+        foreach (string sourcePath in Directory.GetFiles(GameScriptsRoot, "*.cs", SearchOption.AllDirectories))
+        {
+            string source = File.ReadAllText(sourcePath);
+            StringAssert.DoesNotContain("UiBuildDrawerReadModelSource", source, sourcePath);
+            StringAssert.DoesNotContain("UiBuildPlacementReadModelSource", source, sourcePath);
+        }
+
+        AssertNoMutableStaticFields(typeof(BuildDrawerCatalogRuntimeView));
+        AssertNoMutableStaticFields(typeof(BuildPlacementConfirmationBarView));
+    }
+
+    private static void AssertNoMutableStaticFields(Type viewType)
+    {
+        FieldInfo[] mutableStaticFields = viewType
+            .GetFields(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
+            .Where(field => !field.IsLiteral && !field.IsInitOnly)
+            .ToArray();
+        Assert.IsEmpty(
+            mutableStaticFields,
+            $"{viewType.Name} must keep build UI ownership on each Canvas view instance.");
     }
 
     public static void RunTypeHandleValidation()
@@ -256,6 +292,22 @@ public sealed class EcsBurstHotPathArchitectureTests
         {
             Debug.LogException(exception);
             Debug.LogError("[EcsTypeHandleArchitectureValidation] result=Failed");
+            ValidationExit.Exit(1);
+        }
+    }
+
+    public static void RunObsoleteBuildUiEcsPathValidation()
+    {
+        try
+        {
+            new EcsBurstHotPathArchitectureTests().ObsoleteBuildUiEcsPathMustNotReturn();
+            Debug.Log("[ObsoleteBuildUiEcsPathValidation] result=Passed tests=1");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[ObsoleteBuildUiEcsPathValidation] result=Failed");
             ValidationExit.Exit(1);
         }
     }

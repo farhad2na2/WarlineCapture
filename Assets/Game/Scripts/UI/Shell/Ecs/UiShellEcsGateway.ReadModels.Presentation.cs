@@ -159,7 +159,7 @@ namespace Game.UI.Shell.Ecs
 
         private static Sprite ResolveBuildDrawerSprite(FixedString64Bytes spriteKey)
         {
-            return UiBuildDrawerReadModelSource.ResolveSprite(spriteKey.ToString());
+            return null;
         }
 
 

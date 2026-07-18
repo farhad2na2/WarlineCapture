@@ -284,9 +284,6 @@ public sealed class UiShellAudioRoutePopupTests
             ActiveRoute = UIRoute.Match
         });
         _world.EntityManager.AddBuffer<UiActionRequestComponent>(boundary);
-        _world.EntityManager.AddBuffer<UiBuildCatalogRequestComponent>(boundary);
-        _world.EntityManager.AddBuffer<UiBuildProductionRequestComponent>(boundary);
-        _world.EntityManager.AddBuffer<UiBuildPrimaryRequestComponent>(boundary);
         _world.EntityManager.AddBuffer<UiShellPopupRequestComponent>(boundary);
         _world.EntityManager.AddBuffer<UiShellRouteRequestComponent>(boundary);
         return boundary;

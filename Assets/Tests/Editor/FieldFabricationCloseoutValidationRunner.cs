@@ -13,7 +13,6 @@ public static class FieldFabricationCloseoutValidationRunner
             RunSuite(BuildingResourceProductionEcsSystemTests.RunFocusedValidation);
             RunSuite(BuildingMaterialsCostConfigProjectionTests.RunFocusedValidation);
             RunSuite(BuildingPlacementConstructionTransactionTests.RunFocusedValidation);
-            RunSuite(UiBuildDrawerDualCostReadModelTests.RunFocusedValidation);
             RunSuite(BuildDrawerCatalogQueryUiSystemHelperTests.RunFocusedValidation);
             RunSuite(ResourceExchangeHeaderRoutingTests.RunFocusedValidation);
             RunSuite(ResourceExchangeRequestValidationSystemTests.RunFocusedValidation);
@@ -25,7 +24,7 @@ public static class FieldFabricationCloseoutValidationRunner
             RunSuite(AIEndToEndValidationTests.RunFocusedValidation);
             RunSuite(InitialUnitsSpawnFocusedTests.RunResourceBuildingSourceKeyBatchValidation);
             RunSuite(InitialUnitsSpawnFocusedTests.RunSpawnProgressCompletionBatchValidation);
-            Debug.Log("[FieldFabricationCloseoutValidation] result=Passed suites=17");
+            Debug.Log("[FieldFabricationCloseoutValidation] result=Passed suites=16");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)

@@ -253,12 +253,15 @@ namespace Game.Composition
 
     internal sealed class QuickCustomGameConfigStore : IQuickCustomGameConfigStore
     {
-        public UiQuickCustomGameConfig Current => ToUiConfig(QuickGameConfig.FromAISettingsSnapshot(AISettingsRuntimeState.CurrentSnapshot));
+        private AISettingsSnapshot currentSnapshot = AISettingsSnapshot.Defaults;
+
+        public UiQuickCustomGameConfig Current => ToUiConfig(QuickGameConfig.FromAISettingsSnapshot(currentSnapshot));
         public UiQuickCustomGameConfig Defaults => ToUiConfig(QuickGameConfig.Defaults);
+        internal AISettingsSnapshot CurrentSnapshot => currentSnapshot;
 
         public void Apply(UiQuickCustomGameConfig config)
         {
-            AISettingsRuntimeState.ApplySnapshot(ToRuntimeConfig(config).ToAISettingsSnapshot());
+            currentSnapshot = ToRuntimeConfig(config).ToAISettingsSnapshot();
         }
 
         private static UiQuickCustomGameConfig ToUiConfig(QuickGameConfig config)
@@ -316,6 +319,12 @@ namespace Game.Composition
     {
         private readonly SceneLifecycleSceneSystemHelper sceneLifecycleSceneSystemHelper = new();
         private readonly MatchStartRequestStartupSystemHelper matchStartRequestSystem = new();
+        private readonly QuickCustomGameConfigStore configStore;
+
+        public MatchLaunchCommand(QuickCustomGameConfigStore configStore)
+        {
+            this.configStore = configStore;
+        }
 
         public void LaunchMatch(Component source)
         {
@@ -338,6 +347,8 @@ namespace Game.Composition
             EntityManager entityManager = world.EntityManager;
             bool loadQueued = sceneLifecycleSceneSystemHelper.QueueLoadMatch(entityManager);
             bool startQueued = matchStartRequestSystem.QueueStartAfterMatchLoaded(entityManager);
+            if (startQueued && configStore != null)
+                MatchAISettingsStartupProjection.Project(entityManager, configStore.CurrentSnapshot);
             if (!loadQueued || !startQueued)
                 Debug.LogError($"[GameLaunch] Failed to queue Match start. loadQueued={(loadQueued ? 1 : 0)} startQueued={(startQueued ? 1 : 0)}");
         }

@@ -54,9 +54,6 @@ namespace Game.UI.Shell.Ecs
                 EnsureUiResourceExchangeQueueRowBuffer(ref state, existingBoundary);
                 EnsureBuildPlacementConfirmationBarComponent(ref state, existingBoundary);
                 EnsureUiActionRequestBuffer(ref state, existingBoundary);
-                EnsureUiBuildCatalogRequestBuffer(ref state, existingBoundary);
-                EnsureUiBuildProductionRequestBuffer(ref state, existingBoundary);
-                EnsureUiBuildPrimaryRequestBuffer(ref state, existingBoundary);
                 EnsureUiShellArmoryCategoryRequestBuffer(ref state, existingBoundary);
                 EnsureUiShellRouteRequestBuffer(ref state, existingBoundary);
                 EnsureUiShellRouteHistoryBuffer(ref state, existingBoundary);
@@ -135,9 +132,6 @@ namespace Game.UI.Shell.Ecs
             SeedResourceExchangeQueue(exchangeQueue);
             state.EntityManager.AddBuffer<UiShellArmoryCategoryRequestComponent>(boundary);
             state.EntityManager.AddBuffer<UiActionRequestComponent>(boundary);
-            state.EntityManager.AddBuffer<UiBuildCatalogRequestComponent>(boundary);
-            state.EntityManager.AddBuffer<UiBuildProductionRequestComponent>(boundary);
-            state.EntityManager.AddBuffer<UiBuildPrimaryRequestComponent>(boundary);
             state.EntityManager.AddBuffer<UiShellRouteRequestComponent>(boundary);
             state.EntityManager.AddBuffer<UiShellRouteHistoryComponent>(boundary);
             state.EntityManager.AddBuffer<UiShellPopupRequestComponent>(boundary);
@@ -387,30 +381,6 @@ namespace Game.UI.Shell.Ecs
                 return;
 
             state.EntityManager.AddBuffer<UiActionRequestComponent>(boundary);
-        }
-
-        private static void EnsureUiBuildCatalogRequestBuffer(ref SystemState state, Entity boundary)
-        {
-            if (state.EntityManager.HasBuffer<UiBuildCatalogRequestComponent>(boundary))
-                return;
-
-            state.EntityManager.AddBuffer<UiBuildCatalogRequestComponent>(boundary);
-        }
-
-        private static void EnsureUiBuildProductionRequestBuffer(ref SystemState state, Entity boundary)
-        {
-            if (state.EntityManager.HasBuffer<UiBuildProductionRequestComponent>(boundary))
-                return;
-
-            state.EntityManager.AddBuffer<UiBuildProductionRequestComponent>(boundary);
-        }
-
-        private static void EnsureUiBuildPrimaryRequestBuffer(ref SystemState state, Entity boundary)
-        {
-            if (state.EntityManager.HasBuffer<UiBuildPrimaryRequestComponent>(boundary))
-                return;
-
-            state.EntityManager.AddBuffer<UiBuildPrimaryRequestComponent>(boundary);
         }
 
         private static void EnsureUiShellArmoryCategoryRequestBuffer(ref SystemState state, Entity boundary)

@@ -136,9 +136,6 @@ public sealed class ResourceExchangeUiActionRequestSystemTests
         em.AddBuffer<UiActionRequestComponent>(boundary);
         em.AddBuffer<UiShellPopupRequestComponent>(boundary);
         em.AddBuffer<UiShellRouteRequestComponent>(boundary);
-        em.AddBuffer<UiBuildCatalogRequestComponent>(boundary);
-        em.AddBuffer<UiBuildProductionRequestComponent>(boundary);
-        em.AddBuffer<UiBuildPrimaryRequestComponent>(boundary);
         return boundary;
     }
 

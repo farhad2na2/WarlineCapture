@@ -26,7 +26,7 @@ namespace Game.Composition
         private readonly PerformanceDiagnosticsSystemHelper performanceDiagnosticsSystem = new();
         private readonly MatchSceneReferenceSceneSystemHelper matchSceneReferenceSystem = new();
         private readonly QuickCustomGameConfigStore quickCustomGameConfigStore = new();
-        private readonly MatchLaunchCommand matchLaunchCommand = new();
+        private readonly MatchLaunchCommand matchLaunchCommand;
         private readonly IGameTextResolver gameTextResolver = new GameTextResolverAdapter();
         private readonly StaticMapPresentationStreamer staticMapPresentationStreamer;
         private readonly FirstLaunchNarrativeCompositionSystemHelper firstLaunchNarrative = new();
@@ -79,6 +79,7 @@ namespace Game.Composition
         internal MenuBootstrapCompositionSystemHelper(StaticMapPresentationStreamer presentationStreamer)
         {
             staticMapPresentationStreamer = presentationStreamer;
+            matchLaunchCommand = new MatchLaunchCommand(quickCustomGameConfigStore);
         }
 
         public void Initialize(MenuBootstrapView view)
@@ -576,7 +577,12 @@ namespace Game.Composition
             Debug.Log("[UiShellRoute] submitted deferred Match scene load request after loading feedback.");
 
             if (matchStartSystem.QueueStartAfterMatchLoaded(entityManager))
+            {
+                MatchAISettingsStartupProjection.Project(
+                    entityManager,
+                    quickCustomGameConfigStore.CurrentSnapshot);
                 Debug.Log("[UiShellRoute] submitted deferred Match gameplay start request.");
+            }
             else
                 Debug.LogError("[UiShellRoute] failed to submit deferred Match gameplay start request.");
         }

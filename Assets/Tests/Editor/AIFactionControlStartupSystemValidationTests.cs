@@ -28,29 +28,7 @@ public sealed class AIFactionControlStartupSystemValidationTests
     private static void RunCase(System.Action<AIFactionControlStartupSystemValidationTests> testCase)
     {
         var tests = new AIFactionControlStartupSystemValidationTests();
-        tests.SetUp();
-        try
-        {
-            testCase(tests);
-        }
-        finally
-        {
-            tests.TearDown();
-        }
-    }
-
-    [SetUp]
-    public void SetUp()
-    {
-        AISettingsRuntimeState.ResetDefaults();
-        AISettingsRuntimeState.PlayerAutoAIEnabled = true;
-        AISettingsRuntimeState.EnemyAICount = 1;
-    }
-
-    [TearDown]
-    public void TearDown()
-    {
-        AISettingsRuntimeState.ResetDefaults();
+        testCase(tests);
     }
 
     [Test]
@@ -64,12 +42,11 @@ public sealed class AIFactionControlStartupSystemValidationTests
         AIFactionControlStartupSystem.Result result = system.Initialize(
             world.EntityManager,
             new[] { ToStartupEntry(enemy), ToStartupEntry(playerAuto) },
-            AISettingsRuntimeState.CurrentSnapshot);
+            CreateSettings(playerAutoEnabled: true));
 
         DynamicBuffer<FactionControlEntry> entries = GetFactionControlEntries(world.EntityManager);
         Assert.IsTrue(result.HasPlayerAutoMode);
         Assert.IsTrue(result.PlayerAutoModeEnabled);
-        Assert.IsTrue(AISettingsRuntimeState.PlayerAutoAIEnabled);
         Assert.IsTrue(ContainsFactionControl(entries, FactionIdentity.PlayerFactionId, true, true));
         Assert.IsTrue(ContainsFactionControl(entries, FactionIdentity.EnemyFactionId, true, false));
     }
@@ -83,7 +60,7 @@ public sealed class AIFactionControlStartupSystemValidationTests
         AIFactionControlStartupSystem.Result result = system.Initialize(
             world.EntityManager,
             System.Array.Empty<AIFactionControlStartupEntry>(),
-            AISettingsRuntimeState.CurrentSnapshot);
+            AISettingsSnapshot.Defaults);
 
         DynamicBuffer<FactionControlEntry> entries = GetFactionControlEntries(world.EntityManager);
         Assert.IsTrue(result.HasPlayerAutoMode);
@@ -102,7 +79,7 @@ public sealed class AIFactionControlStartupSystemValidationTests
         Entity configEntity = em.CreateEntity(typeof(FactionControlConfigTag));
 
         AIFactionControlStartupSystem system = new();
-        system.Initialize(em, new[] { ToStartupEntry(enemy) }, AISettingsRuntimeState.CurrentSnapshot);
+        system.Initialize(em, new[] { ToStartupEntry(enemy) }, AISettingsSnapshot.Defaults);
 
         Assert.IsTrue(em.HasBuffer<FactionControlEntry>(configEntity));
         DynamicBuffer<FactionControlEntry> entries = em.GetBuffer<FactionControlEntry>(configEntity);
@@ -116,6 +93,13 @@ public sealed class AIFactionControlStartupSystemValidationTests
         AIControllerConfig config = AssetDatabase.LoadAssetAtPath<AIControllerConfig>(path);
         Assert.NotNull(config, $"Missing AI config asset at {path}");
         return config;
+    }
+
+    private static AISettingsSnapshot CreateSettings(bool playerAutoEnabled)
+    {
+        AISettingsSnapshot snapshot = AISettingsSnapshot.Defaults;
+        snapshot.PlayerAutoAIEnabled = playerAutoEnabled;
+        return snapshot;
     }
 
     private static AIFactionControlStartupEntry ToStartupEntry(AIControllerConfig config)

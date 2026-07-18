@@ -17,16 +17,8 @@ public sealed class AIStartupSystemValidationTests
         try
         {
             var tests = new AIStartupSystemValidationTests();
-            tests.SetUp();
-            try
-            {
-                tests.Initialize_ProjectsSceneAIConfigsIntoEcsStartupData();
-                Debug.Log("[AIStartupSystemFocusedValidation] result=Passed tests=1");
-            }
-            finally
-            {
-                tests.TearDown();
-            }
+            tests.Initialize_ProjectsSceneAIConfigsIntoEcsStartupData();
+            Debug.Log("[AIStartupSystemFocusedValidation] result=Passed tests=1");
         }
         catch (Exception exception)
         {
@@ -34,20 +26,6 @@ public sealed class AIStartupSystemValidationTests
             Debug.LogException(exception);
             throw;
         }
-    }
-
-    [SetUp]
-    public void SetUp()
-    {
-        AISettingsRuntimeState.ResetDefaults();
-        AISettingsRuntimeState.PlayerAutoAIEnabled = true;
-        AISettingsRuntimeState.EnemyAICount = 1;
-    }
-
-    [TearDown]
-    public void TearDown()
-    {
-        AISettingsRuntimeState.ResetDefaults();
     }
 
     [Test]
@@ -60,8 +38,6 @@ public sealed class AIStartupSystemValidationTests
         AISettingsSnapshot aiSettings = AISettingsSnapshot.Defaults;
         aiSettings.PlayerAutoAIEnabled = true;
         aiSettings.EnemyAICount = 1;
-        AISettingsRuntimeState.ResetDefaults();
-
         var system = new AIStartupSystem();
         AIStartupSystem.Result result = system.Initialize(
             world.EntityManager,

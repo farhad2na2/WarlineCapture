@@ -11,13 +11,13 @@ Bounded read-only audits reviewed the AM-025 intake as:
 | Measure | Count |
 |---|---:|
 | Historical intake rows | 575 |
-| Reviewed non-debt rows | 512 |
-| Remaining genuine-debt rows | 63 |
-| Remaining unique debt items | 28 |
+| Reviewed non-debt rows | 538 |
+| Remaining genuine-debt rows | 37 |
+| Remaining unique debt items | 21 |
 | Projected unclassified rows | 0 |
 | Source-growth blockers | 5 |
 
-The row-bound evidence now records `512` non-debt rows and `63` remaining genuine-debt rows, grouped into `28` unique file/rule remediation items. It remains non-accepting because every genuine-debt item must be closed before Phase 2 can pass.
+The row-bound evidence now records `538` non-debt rows and `37` remaining genuine-debt rows, grouped into `21` unique file/rule remediation items. It remains non-accepting because every genuine-debt item must be closed before Phase 2 can pass.
 
 ## 2. Required Row Authority
 
@@ -61,6 +61,8 @@ Current external-gate note: the canonical Unity source-growth run now reports th
 
 Completed remediation:
 
+- `AISettingsRuntimeState`: quick-game AI settings now belong to the active menu config store, cross the existing match-start boundary as ECS data, and are consumed once by match startup. Focused two-World validation proves settings cannot leak between menu instances or matches, and AI startup requires an explicit snapshot.
+- Obsolete build UI ECS path: the duplicate static build-drawer/placement read-model sources, projection helper, orphaned request buffers, and unused action dispatch are removed. The active Canvas drawer and placement views remain authoritative; focused guards prove the duplicate path cannot return and preserve materials/fuel presentation checks.
 - `MenuBootstrapCompositionSystemHelper`: the startup-settings World marker now belongs to the active menu composition and is released during menu shutdown. Focused validation proves two menu instances cannot share the marker and a closed menu retains no World.
 - `UiShellRuntimeGateway`: the application gateway is replaced during Unity subsystem registration, and its ECS adapter already rebinds queries when the default World changes. Focused validation proves a stale registration is replaced and a later match cannot retain queries from the previous World.
 - `GameText`: text and audio mappings are now built privately and published as one immutable application-session snapshot. Readers cannot observe a half-rebuilt catalog, replacement initialization drops stale mappings, subsystem reset returns to an uninitialized empty snapshot, and two mutable dictionary exceptions are removed from the architecture guard.

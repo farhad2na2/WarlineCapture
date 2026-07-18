@@ -131,6 +131,7 @@ namespace Game.Composition
             gameplayStartRequested = false;
             gameplayStartComplete = false;
             gameplayStartStep = GameplayStartStep.Idle;
+            pendingAiSettingsSnapshot = AISettingsSnapshot.Defaults;
             gameplayStartProgress01 = 0f;
             gameplayStartStatus = "Waiting for match scene";
         }
@@ -160,7 +161,13 @@ namespace Game.Composition
 
                 case GameplayStartStep.ResetStats:
                     SetProgress(0.10f, "Resetting match state");
-                    pendingAiSettingsSnapshot = AISettingsRuntimeState.CurrentSnapshot;
+                    pendingAiSettingsSnapshot = AISettingsSnapshot.Defaults;
+                    if (world != null && world.IsCreated)
+                    {
+                        MatchAISettingsStartupProjection.TryConsume(
+                            world.EntityManager,
+                            out pendingAiSettingsSnapshot);
+                    }
                     FactionVisualSystem.ProjectConfig(
                         world,
                         sceneView != null ? sceneView.FactionVisualConfig : null);

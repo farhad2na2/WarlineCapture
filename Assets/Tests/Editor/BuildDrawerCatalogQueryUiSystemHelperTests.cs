@@ -360,10 +360,18 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
 
         TMP_Text detailNameText = GetSerializedReference<TMP_Text>(new SerializedObject(view), "nameText");
         TMP_Text actionLabelText = GetSerializedReference<TMP_Text>(new SerializedObject(view), "primaryActionLabelText");
+        TMP_Text materialsCostText = GetSerializedReference<TMP_Text>(new SerializedObject(view), "materialsCostText");
+        TMP_Text fuelCostText = GetSerializedReference<TMP_Text>(new SerializedObject(view), "fuelCostText");
         Assert.NotNull(detailNameText, "Build drawer detail panel must serialize the selected item name text.");
         Assert.NotNull(actionLabelText, "Build drawer detail panel must serialize the primary action label text.");
+        Assert.NotNull(materialsCostText, "Build drawer detail panel must serialize its materials cost text.");
+        Assert.NotNull(fuelCostText, "Build drawer detail panel must serialize its fuel cost text.");
         Assert.AreEqual(_results[0].DisplayName, detailNameText.text);
         Assert.AreEqual("PRODUCE", actionLabelText.text);
+        Assert.AreEqual(_results[0].MaterialsCost.ToString("N0"), materialsCostText.text);
+        Assert.AreEqual(
+            _results[0].FuelCost > 0 ? _results[0].FuelCost.ToString("N0") : string.Empty,
+            fuelCostText.text);
         Assert.IsTrue(view.PrimaryActionButton != null && view.PrimaryActionButton.interactable);
         if (view.BuildButton != null && view.OrderButton != null)
         {

@@ -178,9 +178,6 @@ public sealed class SettingsPopupValidationTests
         entityManager.AddBuffer<UiActionRequestComponent>(boundary);
         entityManager.AddBuffer<UiShellPopupRequestComponent>(boundary);
         entityManager.AddBuffer<UiShellRouteRequestComponent>(boundary);
-        entityManager.AddBuffer<UiBuildCatalogRequestComponent>(boundary);
-        entityManager.AddBuffer<UiBuildProductionRequestComponent>(boundary);
-        entityManager.AddBuffer<UiBuildPrimaryRequestComponent>(boundary);
 
         Entity selectionInput = entityManager.CreateEntity(
             typeof(RtsSelectionInputStateComponent),

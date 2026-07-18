@@ -329,24 +329,6 @@ namespace Game.UI.Shell.Contracts.Ecs
         public int PayloadId;
     }
 
-    public struct UiBuildCatalogRequestComponent : IBufferElementData
-    {
-        public int CatalogSlot;
-        public int RequestId;
-    }
-
-    public struct UiBuildProductionRequestComponent : IBufferElementData
-    {
-        public UiBuildProductionActionKind ActionKind;
-        public int QueueSlot;
-        public int RequestId;
-    }
-
-    public struct UiBuildPrimaryRequestComponent : IBufferElementData
-    {
-        public int RequestId;
-    }
-
     public struct UiShellRouteRequestComponent : IBufferElementData
     {
         public UIRoute Route;

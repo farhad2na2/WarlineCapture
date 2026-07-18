@@ -14,7 +14,6 @@ namespace Game.UI.Shell.Ecs
     {
         private EntityQuery boundaryQuery;
         private EntityQuery selectionInputQuery;
-        private EntityQuery buildingPlacementCommandQuery;
         private EntityQuery resourceExchangeRequestQuery;
 
         public void OnCreate(ref SystemState state)
@@ -25,19 +24,12 @@ namespace Game.UI.Shell.Ecs
                 ComponentType.ReadWrite<UiDiagnosticsOverlayComponent>(),
                 ComponentType.ReadWrite<UiMatchHudPassengerDrawerStateComponent>(),
                 ComponentType.ReadWrite<UiMatchHudSquadTrayStateComponent>(),
-                ComponentType.ReadWrite<UiBuildDrawerStateComponent>(),
-                ComponentType.ReadWrite<UiBuildCatalogRequestComponent>(),
-                ComponentType.ReadWrite<UiBuildProductionRequestComponent>(),
-                ComponentType.ReadWrite<UiBuildPrimaryRequestComponent>(),
                 ComponentType.ReadWrite<UiShellPopupRequestComponent>(),
                 ComponentType.ReadWrite<UiShellRouteRequestComponent>());
             selectionInputQuery = state.GetEntityQuery(
                 ComponentType.ReadWrite<RtsSelectionInputStateComponent>(),
                 ComponentType.ReadWrite<RtsSelectionInputRequestQueueComponent>(),
                 ComponentType.ReadWrite<RtsSelectionCommandIntentRequestElement>());
-            buildingPlacementCommandQuery = state.GetEntityQuery(
-                ComponentType.ReadWrite<BuildingUiPlacementCommandQueueComponent>(),
-                ComponentType.ReadWrite<BuildingUiPlacementCommandRequestElement>());
             resourceExchangeRequestQuery = state.GetEntityQuery(
                 ComponentType.ReadOnly<ResourceExchangeEnabledComponent>(),
                 ComponentType.ReadWrite<ResourceExchangeRequestQueueComponent>(),
@@ -56,14 +48,6 @@ namespace Game.UI.Shell.Ecs
             if (actionRequests.Length == 0)
                 return;
 
-            bool needsPlacementCommandQueue = UiActionRequestDispatchSystemHelper.HasBuildPlacementAction(actionRequests);
-            Entity placementCommand = Entity.Null;
-            if (needsPlacementCommandQueue &&
-                !TryResolveBuildingPlacementCommandEntity(ref state, out placementCommand))
-            {
-                return;
-            }
-
             Game.Runtime.AudioEventRequestSystem.EnsureAudioEntity(state.EntityManager);
 
             actionRequests = state.EntityManager.GetBuffer<UiActionRequestComponent>(boundary);
@@ -73,18 +57,10 @@ namespace Game.UI.Shell.Ecs
                 state.EntityManager.GetBuffer<UiShellPopupRequestComponent>(boundary);
             DynamicBuffer<UiShellRouteRequestComponent> routeRequests =
                 state.EntityManager.GetBuffer<UiShellRouteRequestComponent>(boundary);
-            DynamicBuffer<UiBuildCatalogRequestComponent> buildCatalogRequests =
-                state.EntityManager.GetBuffer<UiBuildCatalogRequestComponent>(boundary);
-            DynamicBuffer<UiBuildProductionRequestComponent> buildProductionRequests =
-                state.EntityManager.GetBuffer<UiBuildProductionRequestComponent>(boundary);
-            DynamicBuffer<UiBuildPrimaryRequestComponent> buildPrimaryRequests =
-                state.EntityManager.GetBuffer<UiBuildPrimaryRequestComponent>(boundary);
             UiMatchHudPassengerDrawerStateComponent passengerDrawerState =
                 state.EntityManager.GetComponentData<UiMatchHudPassengerDrawerStateComponent>(boundary);
             UiMatchHudSquadTrayStateComponent squadTrayState =
                 state.EntityManager.GetComponentData<UiMatchHudSquadTrayStateComponent>(boundary);
-            UiBuildDrawerStateComponent buildDrawerState =
-                state.EntityManager.GetComponentData<UiBuildDrawerStateComponent>(boundary);
             bool hasResourceExchangeState =
                 state.EntityManager.HasComponent<UiResourceExchangeStateComponent>(boundary);
             UiResourceExchangeStateComponent resourceExchangeState = hasResourceExchangeState
@@ -114,13 +90,6 @@ namespace Game.UI.Shell.Ecs
                     resourceExchangeRuntimeState,
                     state.EntityManager,
                     resourceExchangeRequestEntity);
-            DynamicBuffer<BuildingUiPlacementCommandRequestElement> placementRequests = default;
-            BuildingUiPlacementCommandQueueComponent placementQueue = default;
-            if (needsPlacementCommandQueue)
-            {
-                placementRequests = state.EntityManager.GetBuffer<BuildingUiPlacementCommandRequestElement>(placementCommand);
-                placementQueue = state.EntityManager.GetComponentData<BuildingUiPlacementCommandQueueComponent>(placementCommand);
-            }
             int frame = UnityEngine.Time.frameCount;
 
             for (int i = 0; i < actionRequests.Length; i++)
@@ -132,17 +101,11 @@ namespace Game.UI.Shell.Ecs
                     commandRequests,
                     popupRequests,
                     routeRequests,
-                    buildCatalogRequests,
-                    buildProductionRequests,
-                    buildPrimaryRequests,
-                    placementRequests,
                     ref diagnosticsOverlay,
                     ref passengerDrawerState,
                     ref squadTrayState,
-                    ref buildDrawerState,
                     ref resourceExchangeState,
                     hasResourceExchangeState,
-                    ref placementQueue,
                     canOpenResourceExchange,
                     state.EntityManager,
                     resourceExchangeRequestEntity,
@@ -155,14 +118,11 @@ namespace Game.UI.Shell.Ecs
             actionRequests.Clear();
             state.EntityManager.SetComponentData(boundary, passengerDrawerState);
             state.EntityManager.SetComponentData(boundary, squadTrayState);
-            state.EntityManager.SetComponentData(boundary, buildDrawerState);
             if (hasResourceExchangeState)
                 state.EntityManager.SetComponentData(boundary, resourceExchangeState);
             state.EntityManager.SetComponentData(boundary, diagnosticsOverlay);
             state.EntityManager.SetComponentData(selectionInput, inputState);
             state.EntityManager.SetComponentData(selectionInput, queue);
-            if (needsPlacementCommandQueue)
-                state.EntityManager.SetComponentData(placementCommand, placementQueue);
         }
 
         private bool TryResolveSelectionInputEntity(ref SystemState state, out Entity entity)
@@ -194,34 +154,6 @@ namespace Game.UI.Shell.Ecs
                 state.EntityManager.AddBuffer<RtsSelectionCommandIntentRequestElement>(entity);
             if (!state.EntityManager.HasBuffer<RtsSelectionCommandResultElement>(entity))
                 state.EntityManager.AddBuffer<RtsSelectionCommandResultElement>(entity);
-        }
-
-        private bool TryResolveBuildingPlacementCommandEntity(ref SystemState state, out Entity entity)
-        {
-            entity = Entity.Null;
-            if (!buildingPlacementCommandQuery.IsEmptyIgnoreFilter)
-            {
-                entity = ResolveFirstEntity(buildingPlacementCommandQuery);
-                EnsureBuildingPlacementCommandBuffers(ref state, entity);
-                return true;
-            }
-
-            entity = state.EntityManager.CreateEntity(typeof(BuildingUiPlacementCommandQueueComponent));
-            state.EntityManager.SetName(entity, "BuildingUiPlacementCommands");
-            state.EntityManager.SetComponentData(entity, new BuildingUiPlacementCommandQueueComponent
-            {
-                LastRequestId = 0
-            });
-            EnsureBuildingPlacementCommandBuffers(ref state, entity);
-            return false;
-        }
-
-        private static void EnsureBuildingPlacementCommandBuffers(ref SystemState state, Entity entity)
-        {
-            if (!state.EntityManager.HasBuffer<BuildingUiPlacementCommandRequestElement>(entity))
-                state.EntityManager.AddBuffer<BuildingUiPlacementCommandRequestElement>(entity);
-            if (!state.EntityManager.HasBuffer<BuildingUiPlacementCommandResultElement>(entity))
-                state.EntityManager.AddBuffer<BuildingUiPlacementCommandResultElement>(entity);
         }
 
         private static Entity ResolveFirstEntity(EntityQuery query)

@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 504,
+    "resolvedNonDebtRowCount": 530,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 512,
-    "genuineDebtRowCount": 63,
-    "uniqueDebtItemCount": 28,
+    "reviewedNonDebtRowCount": 538,
+    "genuineDebtRowCount": 37,
+    "uniqueDebtItemCount": 21,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -48,16 +48,16 @@
     {
       "sourceArtifact": "AM-007",
       "historicalOpenRowCount": 314,
-      "projectedResolvedNonDebtRowCount": 298,
+      "projectedResolvedNonDebtRowCount": 299,
       "projectedProtectedDeferredRowCount": 7,
-      "projectedGenuineDebtRowCount": 9
+      "projectedGenuineDebtRowCount": 8
     },
     {
       "sourceArtifact": "AM-018",
       "historicalOpenRowCount": 261,
-      "projectedResolvedNonDebtRowCount": 177,
+      "projectedResolvedNonDebtRowCount": 202,
       "projectedProtectedDeferredRowCount": 1,
-      "projectedGenuineDebtRowCount": 83
+      "projectedGenuineDebtRowCount": 58
     }
   ],
   "genuineDebtLanes": [
@@ -68,7 +68,7 @@
     },
     {
       "id": "mutable-static-state",
-      "projectedRows": 67
+      "projectedRows": 43
     },
     {
       "id": "pool-and-lifecycle-cache",
@@ -175,19 +175,16 @@
       ]
     },
     {
-      "id": "am007-static-debt",
-      "decision": "genuine-debt",
-      "reasonCode": "static-lifecycle-unproven",
+      "id": "am007-static-obsolete-build-drawer-ecs-retired",
+      "decision": "resolved",
+      "reasonCode": "obsolete-duplicate-build-ui-ecs-path-retired",
       "expectedCount": 1,
-      "debtIdPrefix": "AM025-STATIC",
-      "ownerDomain": "architecture-core",
-      "workPackageId": "AM-WP-028",
       "match": {
         "sourceArtifact": "AM-007",
         "sourceCategory": "staticCaches",
-        "sourcePath": ["Assets/Game/Scripts/Configs/GameText.cs", "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs", "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs", "Assets/Game/Scripts/Utilities/UnitTransportVisualUtility.cs"]
+        "sourcePath": "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs"
       },
-      "authority": ["Design/Architecture/WorkPackages/am_wp_028_phase2_debt_reconciliation.md"]
+      "authority": ["Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs", "Assets/Tests/Editor/BuildDrawerCatalogQueryUiSystemHelperTests.cs"]
     },
     {
       "id": "am007-static-owned",
@@ -610,15 +607,12 @@
       "authority": ["Design/Architecture/world_scoped_query_entity_cache_contract.md"]
     },
     {
-      "id": "am018-singleton-debt",
-      "decision": "genuine-debt",
-      "reasonCode": "mutable-process-singleton",
+      "id": "am018-singleton-ai-settings-world-handoff-owned",
+      "decision": "resolved",
+      "reasonCode": "menu-owned-settings-with-world-owned-match-handoff",
       "expectedCount": 1,
-      "debtIdPrefix": "AM025-SINGLETON",
-      "ownerDomain": "architecture-core",
-      "workPackageId": "AM-WP-028",
       "match": {"sourceArtifact": "AM-018", "sourceCategory": "hiddenSingletons", "sourcePath": "Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs"},
-      "authority": ["Design/Architecture/WorkPackages/am_wp_028_phase2_debt_reconciliation.md"]
+      "authority": ["Assets/Tests/Editor/AISettingsOwnershipTests.cs", "Assets/Tests/Editor/AIStartupSystemValidationTests.cs"]
     },
     {
       "id": "am018-singleton-owned",
@@ -674,10 +668,18 @@
       ]
     },
     {
+      "id": "am018-static-clr-obsolete-build-drawer-ecs-retired",
+      "decision": "resolved",
+      "reasonCode": "obsolete-duplicate-build-ui-ecs-path-retired",
+      "expectedCount": 4,
+      "match": {"sourceArtifact": "AM-018", "sourceCategory": "mutableStaticCaches", "disposition": "CLR", "sourcePath": "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs"},
+      "authority": ["Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs", "Assets/Tests/Editor/BuildDrawerCatalogQueryUiSystemHelperTests.cs"]
+    },
+    {
       "id": "am018-static-clr-debt",
       "decision": "genuine-debt",
       "reasonCode": "static-cache-lifecycle-unproven",
-      "expectedCount": 6,
+      "expectedCount": 2,
       "debtIdPrefix": "AM025-STATIC-CLR",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",
@@ -739,10 +741,18 @@
       ]
     },
     {
+      "id": "am018-static-irc-obsolete-build-drawer-ecs-retired",
+      "decision": "resolved",
+      "reasonCode": "obsolete-duplicate-build-ui-ecs-path-retired",
+      "expectedCount": 3,
+      "match": {"sourceArtifact": "AM-018", "sourceCategory": "mutableStaticCaches", "disposition": "IRC", "sourcePath": "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs"},
+      "authority": ["Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs", "Assets/Tests/Editor/BuildDrawerCatalogQueryUiSystemHelperTests.cs"]
+    },
+    {
       "id": "am018-static-irc-debt",
       "decision": "genuine-debt",
       "reasonCode": "readonly-reference-mutability-unproven",
-      "expectedCount": 4,
+      "expectedCount": 1,
       "debtIdPrefix": "AM025-STATIC-IRC",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",
@@ -1015,10 +1025,26 @@
       ]
     },
     {
+      "id": "am018-static-msl-ai-settings-world-handoff-owned",
+      "decision": "resolved",
+      "reasonCode": "menu-owned-settings-with-world-owned-match-handoff",
+      "expectedCount": 13,
+      "match": {"sourceArtifact": "AM-018", "sourceCategory": "mutableStaticCaches", "disposition": "MSL", "sourcePath": "Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs"},
+      "authority": ["Assets/Tests/Editor/AISettingsOwnershipTests.cs", "Assets/Tests/Editor/AISettingsValidationTests.cs", "Assets/Tests/Editor/AIStartupSystemValidationTests.cs"]
+    },
+    {
+      "id": "am018-static-msl-obsolete-build-ui-ecs-retired",
+      "decision": "resolved",
+      "reasonCode": "obsolete-duplicate-build-ui-ecs-path-retired",
+      "expectedCount": 4,
+      "match": {"sourceArtifact": "AM-018", "sourceCategory": "mutableStaticCaches", "disposition": "MSL", "sourcePath": ["Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs", "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildPlacementReadModelSystem.cs"]},
+      "authority": ["Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs", "Assets/Tests/Editor/BuildDrawerCatalogQueryUiSystemHelperTests.cs"]
+    },
+    {
       "id": "am018-static-msl-debt",
       "decision": "genuine-debt",
       "reasonCode": "mutable-static-lifecycle-unproven",
-      "expectedCount": 33,
+      "expectedCount": 16,
       "debtIdPrefix": "AM025-STATIC-MSL",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

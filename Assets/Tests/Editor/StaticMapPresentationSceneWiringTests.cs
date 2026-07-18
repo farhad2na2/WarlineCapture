@@ -122,6 +122,37 @@ public sealed class StaticMapPresentationSceneWiringTests
         StringAssert.Contains("!staticMapPresentationStreamer.IsDraining", source);
     }
 
+    [Test]
+    public void MatchTeardown_RestoresCanonicalRenderersBeforeSourceSceneUnload()
+    {
+        string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+        string matchSceneViewSource = File.ReadAllText(Path.Combine(
+            projectRoot,
+            "Assets/Game/Scripts/Composition/MatchSceneView.cs"));
+        string bootstrapSource = File.ReadAllText(Path.Combine(
+            projectRoot,
+            "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs"));
+
+        int shutdownIndex = matchSceneViewSource.IndexOf(
+            "ShutdownMatchRuntimeBound(disposeSourceSceneLoad: false)",
+            StringComparison.Ordinal);
+        int sourceUnloadIndex = matchSceneViewSource.IndexOf(
+            "operationMapSceneLoadingSystem.TryBeginUnload",
+            StringComparison.Ordinal);
+        int bootstrapDestroyIndex = bootstrapSource.IndexOf(
+            "public void OnDestroy()",
+            StringComparison.Ordinal);
+        int restoreIndex = bootstrapSource.IndexOf(
+            "mapVisuals.Dispose()",
+            bootstrapDestroyIndex,
+            StringComparison.Ordinal);
+
+        Assert.That(shutdownIndex, Is.GreaterThanOrEqualTo(0));
+        Assert.That(sourceUnloadIndex, Is.GreaterThan(shutdownIndex));
+        Assert.That(bootstrapDestroyIndex, Is.GreaterThanOrEqualTo(0));
+        Assert.That(restoreIndex, Is.GreaterThan(bootstrapDestroyIndex));
+    }
+
     private static MatchSceneView FindSingleView(Scene scene)
     {
         List<MatchSceneView> views = new();

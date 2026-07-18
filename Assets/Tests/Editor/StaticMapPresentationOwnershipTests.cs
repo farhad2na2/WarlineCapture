@@ -39,6 +39,48 @@ public sealed class StaticMapPresentationOwnershipTests
     }
 
     [Test]
+    public void Dispose_RestoresCanonicalRendererOwnership()
+    {
+        Transform root = CreateRoot();
+        MeshRenderer renderer = CreateRenderer(root, "Owned");
+        StaticMapPresentationManifest manifest = CreateManifest(root, renderer);
+        StaticMapPresentationOwnership ownership = new();
+
+        ownership.Initialize(RuntimePlatform.Android, manifest, root, null, null, null);
+        Assert.That(renderer.enabled, Is.False);
+
+        ownership.Dispose();
+
+        Assert.That(renderer.enabled, Is.True);
+        Assert.That(ownership.UsingPresentation, Is.False);
+        Assert.That(ownership.UsingLegacyFallback, Is.False);
+        Assert.That(ownership.SuppressedRendererCount, Is.Zero);
+    }
+
+    [Test]
+    public void FailedReinitialize_RestoresCanonicalRendererBeforeLegacyFallback()
+    {
+        Transform root = CreateRoot();
+        MeshRenderer renderer = CreateRenderer(root, "Owned");
+        StaticMapPresentationManifest validManifest = CreateManifest(root, renderer);
+        StaticMapPresentationManifest invalidManifest = CreateManifest(
+            root,
+            renderer,
+            AdditionalSource("Missing[99]", renderer));
+        StaticMapPresentationOwnership ownership = new();
+
+        ownership.Initialize(RuntimePlatform.Android, validManifest, root, null, null, null);
+        Assert.That(renderer.enabled, Is.False);
+
+        ownership.Initialize(RuntimePlatform.Android, invalidManifest, root, null, null, null);
+
+        Assert.That(renderer.enabled, Is.True);
+        Assert.That(ownership.UsingPresentation, Is.False);
+        Assert.That(ownership.UsingLegacyFallback, Is.True);
+        Assert.That(ownership.Failure, Does.Contain("canonical renderer"));
+    }
+
+    [Test]
     public void InvalidManifest_IsAllOrNothingAndUsesLegacyFallback()
     {
         Transform root = CreateRoot();

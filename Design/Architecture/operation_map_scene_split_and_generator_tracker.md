@@ -707,7 +707,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 54% (96/177 checklist items complete).
+Overall implementation progress: 55% (97/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -719,7 +719,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 | 2A. Local Addressables packaging foundation | Active / selected direction | 16 | 20 | 80% | Source and presentation handles load from real local Addressables. Bounded shared shards reduced the closure from 603 MB to 258 MB and the APK from 938 MiB to 609 MiB; thin-shell cutover and final package acceptance remain open. |
 | 3. Current-map compatibility registration | Complete / shared | 10 | 10 | 100% | Current identities/definition, authored behavior, schema-v1 read compatibility, runtime activation/teardown, deterministic presentation, and Android chunk resolution are accepted. |
 | 4. Non-destructive scene ownership split | Complete | 14 | 14 | 100% | The extracted map owns its source, subscene, placements, metadata, and 514-chunk presentation set. `Match.unity` is now a thin six-root shell with one small shared runtime subscene. |
-| 5. Runtime selection, loading, and teardown | In progress | 8 | 14 | 57% | Real local Addressables source/manifest loading, Entities subscene readiness, exact scene-view resolution, ECS publication, presentation binding, and gameplay gating pass in the Editor lifecycle. Late bind failure now releases retained source/manifest handles, and the loader supports explicit reset/retry/sequential ownership; full drain/unload polling, integrated switching, and Android device launch remain open. |
+| 5. Runtime selection, loading, and teardown | In progress | 9 | 14 | 64% | Real local Addressables loading/readiness and normal-exit drain/unload polling pass in the Editor lifecycle. Canonical renderers restore before source-scene unload and failed presentation binding falls back without leaving renderers suppressed. Integrated switching, typed reason codes, full state-clearing evidence, and Android device launch remain open. |
 | 6. Metadata, camera, minimap, and movement binding | In progress / shared | 10 | 12 | 83% | Scenario-required anchors validate against map metadata; camera bounds/poses, ARIA Show Me, minimap projection, startup grid domain, authoritative surface payload, current faction deployment anchors, and current runway/helipad records are authored from accepted sources. Active-map spawn and aircraft consumers are accepted. |
 | 7. M01 operation-map slice | Later / shared contracts only | 0 | 10 | 0% | Map-neutral ids/anchors may proceed; physical rollout remains gated. |
 | 8. Editor-time texture/mask generator | Later / editor direction only | 0 | 12 | 0% | Implement only if the editor-authored map direction is selected. |
@@ -887,7 +887,7 @@ Exit criteria:
 - [x] Bind the existing static presentation streamer to the selected manifest and world camera. See the same cutover report.
 - [x] Gate `BeginGameplay` on source scene, subscene, metadata, authored conversion, and required presentation preload readiness. See the same cutover report.
 - [ ] On exit/switch, stop map gameplay, drain presentation chunks, and then unload map/subscene content in a deterministic order.
-- [ ] Restore canonical renderer ownership correctly on failure, teardown, or compatibility fallback.
+- [x] Restore canonical renderer ownership correctly on failure, teardown, or compatibility fallback. Ownership validation is all-or-nothing, failed reinitialization restores the original renderer state before legacy fallback, and Match teardown disposes ownership before source-scene unload. See `../AgentReports/2026-07-18_operation_map_renderer_restoration.md`.
 - [ ] Clear map-specific ECS entities, singleton/buffer data, cached anchors, and scene references before a later map loads.
 - [ ] Reject missing/stale map ids with typed reason codes; do not silently load the current map in production.
 - [ ] Add tests for valid load, missing id, stale manifest, interrupted load, teardown, retry, and sequential map switching.
@@ -1159,6 +1159,7 @@ Exit criteria:
 | 2026-07-18 | Thin Match shell and real local map lifecycle | `../AgentReports/2026-07-18_operation_map_match_shell_cutover.md`; readiness `12 / 12`; shell/subscene ownership `20 / 20`; Android resolver `26 / 26`; lifecycle PlayMode `1 / 1`; architecture `9 / 9`; deterministic bake; APK integrity | Passed; Phase 4 complete and Phase 5 load/readiness rows accepted | Extracted map content loads additively from local Addressables. `Match.unity` is a 20,275-byte six-root shell, shared prefab-registry authoring lives in a 9,379-byte shell-owned subscene, all seven readiness flags gate gameplay, and the valid APK is 589,097,020 bytes. Device launch, package-size acceptance, and full teardown/sequential-map evidence remain open. |
 | 2026-07-18 | Loader abort, reset, retry, and sequential ownership | `../AgentReports/2026-07-18_operation_map_loader_failure_unwind.md`; loader `10 / 10`; architecture `9 / 9`; compile; `git diff --check` | Passed; Phase 5 groundwork, no checklist closure | Late metadata/bind failure now aborts and releases retained scene/manifest operations immediately. Explicit reset is the sole path that clears terminal diagnostics and permits retry or a later sequential load. Presentation drain ordering and asynchronous source-unload completion remain open. |
 | 2026-07-18 | Awaited operation-map teardown on normal menu exit | `../AgentReports/2026-07-18_operation_map_awaited_teardown.md`; loader `12 / 12`; presentation/wiring `33 / 33`; menu-match-menu PlayMode `1 / 1`; compile; `git diff --check` | Passed with Unity licensing blocker on the final architecture rerun; Phase 5 groundwork, no checklist closure | Normal exit now drains presentation first, stops gameplay and clears runtime ownership, awaits the retained Addressables source-scene unload, releases load/unload/manifest handles, and only then unloads the Match shell. Sequential switching and the combined exit/switch acceptance row remain open. |
+| 2026-07-18 | Canonical renderer restoration evidence | `../AgentReports/2026-07-18_operation_map_renderer_restoration.md`; ownership `11 / 11`; lifecycle wiring `4 / 4`; architecture/naming `9 / 9`; compile; `git diff --check` | Passed; Phase 5 renderer-restoration row accepted | Escalated macOS Unity validation used the documented licensing workaround. Original enabled states restore on teardown, failed reinitialization restores before legacy fallback, and Match teardown calls renderer restoration before source-scene unload. |
 
 ## Open Decisions
 

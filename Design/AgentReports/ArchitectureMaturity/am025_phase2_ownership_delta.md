@@ -8,15 +8,15 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 |---|---:|
 | Baseline rows | 863 |
 | Hazard rows | 352 |
-| Resolved | 1155 |
+| Resolved | 1156 |
 | Protected/deferred | 36 |
-| Open | 24 |
+| Open | 23 |
 | New after baseline | 26 |
 | Historical intake rows | 575 |
-| Reviewed non-debt rows | 551 |
-| Genuine-debt rows | 24 |
+| Reviewed non-debt rows | 552 |
+| Genuine-debt rows | 23 |
 | Unclassified rows | 0 |
-| Unique debt items | 20 |
+| Unique debt items | 19 |
 
 ## Open Rows
 
@@ -38,9 +38,8 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/MatchHudMinimapProjectionUiSystemHelper.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-IRC-001 |
 | AM-007 | presentationPools | Assets/Game/Scripts/Systems/RoadPreviewPresentationSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-POOL-001 |
 | AM-007 | presentationPools | Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-POOL-002 |
-| AM-018 | runtimeObjectDiscovery | Assets/Game/Scripts/Composition/PerformanceDiagnosticsReferenceDiagnosticsSystemHelper.cs | AM-018 classification.runtimeObjectDiscovery | AM025-DISCOVERY-001 |
-| AM-018 | runtimeObjectDiscovery | Assets/Game/Scripts/Environment/RuntimeCityAlgorithmicAftermathPresentationSystemHelper.cs | AM-018 classification.runtimeObjectDiscovery | AM025-DISCOVERY-002 |
-| AM-018 | runtimeObjectDiscovery | Assets/Game/Scripts/Environment/RuntimeCityAlgorithmicAftermathPresentationSystemHelper.cs | AM-018 classification.runtimeObjectDiscovery | AM025-DISCOVERY-002 |
+| AM-018 | runtimeObjectDiscovery | Assets/Game/Scripts/Environment/RuntimeCityAlgorithmicAftermathPresentationSystemHelper.cs | AM-018 classification.runtimeObjectDiscovery | AM025-DISCOVERY-001 |
+| AM-018 | runtimeObjectDiscovery | Assets/Game/Scripts/Environment/RuntimeCityAlgorithmicAftermathPresentationSystemHelper.cs | AM-018 classification.runtimeObjectDiscovery | AM025-DISCOVERY-001 |
 | AM-007 | worlds | Assets/Game/Scripts/Authorings/GridAuthoring.cs | AM-007 policy.candidateSemantics | AM025-WORLD-001 |
 | AM-007 | worlds | Assets/Game/Scripts/Composition/MapSurfaceRuntimeBootstrapSceneSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-002 |
 | AM-007 | worlds | Assets/Game/Scripts/Environment/RuntimeCityReadinessQueryCompositionSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-003 |

@@ -6,9 +6,7 @@ using Game.Components;
 using System;
 using System.Reflection;
 using NUnit.Framework;
-using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Unity.Entities;
 
 public sealed class PerformanceDiagnosticsSystemHelperAllocationTests
@@ -27,12 +25,12 @@ public sealed class PerformanceDiagnosticsSystemHelperAllocationTests
                 test => test.DefaultInitializationSkipsBroadProfilerMarkerRecorders(),
                 ref passed);
             RunValidationStep(
-                nameof(ReferenceResolverSkipsUninitializedMenuDiagnostics),
-                test => test.ReferenceResolverSkipsUninitializedMenuDiagnostics(),
+                nameof(ReferenceResolverReturnsFalseBeforeRegistration),
+                test => test.ReferenceResolverReturnsFalseBeforeRegistration(),
                 ref passed);
             RunValidationStep(
-                nameof(ReferenceResolverReturnsInitializedMenuDiagnostics),
-                test => test.ReferenceResolverReturnsInitializedMenuDiagnostics(),
+                nameof(ReferenceResolverKeepsWorldsAndReplacementOwnersIsolated),
+                test => test.ReferenceResolverKeepsWorldsAndReplacementOwnersIsolated(),
                 ref passed);
             RunValidationStep(
                 nameof(CapturePolicySuppressesAndRestoresDiagnosticLogging),
@@ -108,37 +106,42 @@ public sealed class PerformanceDiagnosticsSystemHelperAllocationTests
     }
 
     [Test]
-    public void ReferenceResolverSkipsUninitializedMenuDiagnostics()
+    public void ReferenceResolverReturnsFalseBeforeRegistration()
     {
-        Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene);
-        GameObject root = new("MenuBootstrap");
-        root.AddComponent<MenuBootstrapView>();
+        using World world = new("PerformanceDiagnosticsReference-Empty");
+        PerformanceDiagnosticsReferenceCompositionSystemHelper referenceSystem = new();
 
-        PerformanceDiagnosticsReferenceDiagnosticsSystemHelper referenceSystem = new();
-
-        Assert.IsFalse(referenceSystem.TryGet(scene, out PerformanceDiagnosticsSystemHelper diagnostics));
+        Assert.IsFalse(referenceSystem.TryGet(world.EntityManager, out PerformanceDiagnosticsSystemHelper diagnostics));
         Assert.IsNull(diagnostics);
     }
 
     [Test]
-    public void ReferenceResolverReturnsInitializedMenuDiagnostics()
+    public void ReferenceResolverKeepsWorldsAndReplacementOwnersIsolated()
     {
-        Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene);
-        GameObject root = new("MenuBootstrap");
-        MenuBootstrapView view = root.AddComponent<MenuBootstrapView>();
-
-        InvokeLifecycle(view, "Awake");
+        using World firstWorld = new("PerformanceDiagnosticsReference-First");
+        using World secondWorld = new("PerformanceDiagnosticsReference-Second");
+        PerformanceDiagnosticsSystemHelper first = new();
+        PerformanceDiagnosticsSystemHelper replacement = new();
+        PerformanceDiagnosticsSystemHelper second = new();
+        PerformanceDiagnosticsReferenceCompositionSystemHelper firstReferences = new();
+        PerformanceDiagnosticsReferenceCompositionSystemHelper secondReferences = new();
         try
         {
-            Assert.IsTrue(view.IsPerformanceDiagnosticsInitialized);
-            PerformanceDiagnosticsReferenceDiagnosticsSystemHelper referenceSystem = new();
+            firstReferences.Register(firstWorld.EntityManager, first);
+            secondReferences.Register(secondWorld.EntityManager, second);
+            firstReferences.Register(firstWorld.EntityManager, replacement);
+            firstReferences.Clear(firstWorld.EntityManager, first);
 
-            Assert.IsTrue(referenceSystem.TryGet(scene, out PerformanceDiagnosticsSystemHelper diagnostics));
-            Assert.AreSame(view.PerformanceDiagnostics, diagnostics);
+            Assert.IsTrue(firstReferences.TryGet(firstWorld.EntityManager, out PerformanceDiagnosticsSystemHelper resolvedFirst));
+            Assert.IsTrue(secondReferences.TryGet(secondWorld.EntityManager, out PerformanceDiagnosticsSystemHelper resolvedSecond));
+            Assert.AreSame(replacement, resolvedFirst);
+            Assert.AreSame(second, resolvedSecond);
         }
         finally
         {
-            InvokeLifecycle(view, "OnDisable");
+            first.Dispose();
+            replacement.Dispose();
+            second.Dispose();
         }
     }
 
@@ -232,22 +235,8 @@ public sealed class PerformanceDiagnosticsSystemHelperAllocationTests
         ref int passed)
     {
         var tests = new PerformanceDiagnosticsSystemHelperAllocationTests();
-        try
-        {
-            action(tests);
-            passed++;
-        }
-        finally
-        {
-            EditorSceneManager.NewScene(NewSceneSetup.EmptyScene);
-        }
-    }
-
-    private static void InvokeLifecycle(MenuBootstrapView view, string methodName)
-    {
-        typeof(MenuBootstrapView)
-            .GetMethod(methodName, BindingFlags.Instance | BindingFlags.NonPublic)
-            ?.Invoke(view, null);
+        action(tests);
+        passed++;
     }
 }
 #endif

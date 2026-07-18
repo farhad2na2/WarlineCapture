@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 543,
+    "resolvedNonDebtRowCount": 544,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 551,
-    "genuineDebtRowCount": 24,
-    "uniqueDebtItemCount": 20,
+    "reviewedNonDebtRowCount": 552,
+    "genuineDebtRowCount": 23,
+    "uniqueDebtItemCount": 19,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -55,9 +55,9 @@
     {
       "sourceArtifact": "AM-018",
       "historicalOpenRowCount": 261,
-      "projectedResolvedNonDebtRowCount": 215,
+      "projectedResolvedNonDebtRowCount": 216,
       "projectedProtectedDeferredRowCount": 1,
-      "projectedGenuineDebtRowCount": 45
+      "projectedGenuineDebtRowCount": 44
     }
   ],
   "genuineDebtLanes": [
@@ -1104,10 +1104,24 @@
       ]
     },
     {
+      "id": "am018-discovery-performance-diagnostics-ecs-reference-owned",
+      "decision": "resolved",
+      "reasonCode": "ecs-composition-reference-owned",
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "runtimeObjectDiscovery",
+        "sourcePath": "Assets/Game/Scripts/Composition/PerformanceDiagnosticsReferenceDiagnosticsSystemHelper.cs"
+      },
+      "authority": [
+        "Assets/Tests/Editor/PerformanceDiagnosticsSystemAllocationTests.cs"
+      ]
+    },
+    {
       "id": "am018-discovery-debt",
       "decision": "genuine-debt",
       "reasonCode": "runtime-object-discovery",
-      "expectedCount": 3,
+      "expectedCount": 2,
       "debtIdPrefix": "AM025-DISCOVERY",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

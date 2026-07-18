@@ -20,10 +20,12 @@ namespace Game.Composition
         private const string AutoStartMatchCommandLineArg = "-warlineAutoStartMatch";
 
         private World startupRuntimeSettingsWorld;
+        private World performanceDiagnosticsReferenceWorld;
 
         private readonly SceneLifecycleSceneSystemHelper sceneLifecycleSceneSystemHelper = new();
         private readonly MatchStartSceneSystemHelper matchStartSystem = new();
         private readonly PerformanceDiagnosticsSystemHelper performanceDiagnosticsSystem = new();
+        private readonly PerformanceDiagnosticsReferenceCompositionSystemHelper performanceDiagnosticsReferenceSystem = new();
         private readonly MatchSceneReferenceCompositionSystemHelper matchSceneReferenceSystem = new();
         private readonly QuickCustomGameConfigStore quickCustomGameConfigStore = new();
         private readonly MatchLaunchCommand matchLaunchCommand;
@@ -133,6 +135,9 @@ namespace Game.Composition
             if (!TryGetWorldEntityManager(out EntityManager entityManager))
                 return;
 
+            performanceDiagnosticsReferenceSystem.Register(entityManager, performanceDiagnosticsSystem);
+            performanceDiagnosticsReferenceWorld = entityManager.World;
+
             sceneLifecycleSceneSystemHelper.Update(entityManager);
 
             if (!TryGetBoundary(entityManager, out Entity boundary))
@@ -156,6 +161,13 @@ namespace Game.Composition
         public void Shutdown(MenuBootstrapView view)
         {
             startupRuntimeSettingsWorld = null;
+            if (performanceDiagnosticsReferenceWorld != null && performanceDiagnosticsReferenceWorld.IsCreated)
+            {
+                performanceDiagnosticsReferenceSystem.Clear(
+                    performanceDiagnosticsReferenceWorld.EntityManager,
+                    performanceDiagnosticsSystem);
+            }
+            performanceDiagnosticsReferenceWorld = null;
 
             if (view != null && view.UiCanvas != null && view.UiCanvas.transform.localScale != Vector3.one)
                 view.UiCanvas.transform.localScale = Vector3.one;

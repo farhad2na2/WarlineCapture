@@ -22,7 +22,7 @@ namespace Game.Composition
         private readonly GameplaySceneBindingSceneSystemHelper _gameplaySceneBindingSystem = new();
         private RuntimeRootSceneSystemHelper _runtimeRootSceneSystemHelper;
         private readonly GameplayFeatureStartupCompositionSystemHelper _gameplayFeatureStartupSystem = new();
-        private readonly PerformanceDiagnosticsReferenceDiagnosticsSystemHelper _performanceDiagnosticsReferenceSystem = new();
+        private readonly PerformanceDiagnosticsReferenceCompositionSystemHelper _performanceDiagnosticsReferenceSystem = new();
         private readonly MatchSceneReferenceCompositionSystemHelper _matchSceneReferenceSystem = new();
         private readonly MatchIntroEcsStateQuery matchIntroStateQuery = new();
 
@@ -155,8 +155,8 @@ namespace Game.Composition
         public void Awake(World runtimeWorld, MatchSceneView view, Transform ownerTransform, int ownerLayer)
         {
             Initialize(view);
-            _performanceDiagnosticsSystem = ResolvePerformanceDiagnosticsSystemHelper();
             this.runtimeWorld = runtimeWorld;
+            _performanceDiagnosticsSystem = ResolvePerformanceDiagnosticsSystemHelper(runtimeWorld.EntityManager);
             _matchSceneReferenceSystem.Register(runtimeWorld.EntityManager, view);
             matchIntroStateQuery.Bind(runtimeWorld);
             _runtimeCameraReferenceSystem = ResolveRuntimeCameraReferenceSystem(runtimeWorld);
@@ -357,9 +357,9 @@ namespace Game.Composition
             runtimeWorld = null;
         }
 
-        public PerformanceDiagnosticsSystemHelper ResolvePerformanceDiagnosticsSystemHelper()
+        public PerformanceDiagnosticsSystemHelper ResolvePerformanceDiagnosticsSystemHelper(EntityManager entityManager)
         {
-            if (_performanceDiagnosticsReferenceSystem.TryGet(out PerformanceDiagnosticsSystemHelper persistentDiagnostics))
+            if (_performanceDiagnosticsReferenceSystem.TryGet(entityManager, out PerformanceDiagnosticsSystemHelper persistentDiagnostics))
                 return persistentDiagnostics;
 
             if (!fallbackPerformanceDiagnosticsInitialized)

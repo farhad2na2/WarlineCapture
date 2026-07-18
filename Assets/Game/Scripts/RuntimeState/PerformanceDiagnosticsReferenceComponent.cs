@@ -1,5 +1,9 @@
-// Performance diagnostics references are resolved from the loaded Menu scene by PerformanceDiagnosticsReferenceDiagnosticsSystemHelper.
+using Unity.Entities;
 
 namespace Game.Runtime
 {
+    public sealed class PerformanceDiagnosticsReferenceComponent : IComponentData
+    {
+        public PerformanceDiagnosticsSystemHelper Diagnostics;
+    }
 }

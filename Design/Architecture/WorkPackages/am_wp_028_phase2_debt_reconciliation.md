@@ -11,13 +11,13 @@ Bounded read-only audits reviewed the AM-025 intake as:
 | Measure | Count |
 |---|---:|
 | Historical intake rows | 575 |
-| Reviewed non-debt rows | 551 |
-| Remaining genuine-debt rows | 24 |
-| Remaining unique debt items | 20 |
+| Reviewed non-debt rows | 552 |
+| Remaining genuine-debt rows | 23 |
+| Remaining unique debt items | 19 |
 | Projected unclassified rows | 0 |
 | Source-growth blockers | 5 |
 
-The row-bound evidence now records `551` non-debt rows and `24` remaining genuine-debt rows, grouped into `20` unique file/rule remediation items. It remains non-accepting because every genuine-debt item must be closed before Phase 2 can pass.
+The row-bound evidence now records `552` non-debt rows and `23` remaining genuine-debt rows, grouped into `19` unique file/rule remediation items. It remains non-accepting because every genuine-debt item must be closed before Phase 2 can pass.
 
 ## 2. Required Row Authority
 
@@ -61,6 +61,7 @@ Current external-gate note: the canonical Unity source-growth run now reports th
 
 Completed remediation:
 
+- Performance-diagnostics reference: the menu publishes its initialized diagnostics instance through the active World, match startup resolves it directly, and menu shutdown clears only its matching owner. The former Menu-scene root scan is removed while the match-owned fallback remains available.
 - Match-scene reference: match startup now registers its `MatchSceneView` once in the active World, menu and match-start composition read that exact reference, and shutdown clears only its matching owner. The former repeated root-object scene scan and its scene-manager dependency are removed.
 - `InitialUnitsRuntimeState` gameplay and camera mirror: play, simulation, selection, build, fullscreen-map, pointer suppression, auto-mode, zoom, and initial-camera-focus state now live only in the match World's ECS components. Match startup, camera focus publication/consumption, shutdown, and test fixtures use that owner directly. The three diagnostic switches remain separately tracked for later cleanup.
 - `AISettingsRuntimeState`: quick-game AI settings now belong to the active menu config store, cross the existing match-start boundary as ECS data, and are consumed once by match startup. Focused two-World validation proves settings cannot leak between menu instances or matches, and AI startup requires an explicit snapshot.

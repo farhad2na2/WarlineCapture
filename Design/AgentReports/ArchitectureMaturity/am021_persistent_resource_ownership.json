@@ -48,8 +48,8 @@
   "artifactId": "AM-021",
   "baseline": {
     "branch": "main",
-    "commit": "62127543deba044afdeaf958fa24a0fc664b142f",
-    "tree": "a31e08b14ec76abb90e1a17ceda2b9b22cf602a4"
+    "commit": "2107ff75bcf46390a65c86d6c6d5fc3ac9b58ee4",
+    "tree": "4cbfbfa66997c1ea726af9f136a6354ebae1c97b"
   },
   "categories": {
     "eventSubscriptions": [
@@ -13190,7 +13190,7 @@
   "schemaVersion": 1,
   "scope": {
     "productionFileCount": 1026,
-    "sourceManifestSha256": "3b7bbe6007703e21db5630d31d0776306860553e04fd4e6e772ac5ce9f1c8731",
+    "sourceManifestSha256": "f44fd78fda39e040061781bd2084821b93173dd0fdac905f0eb22c3e144cadb7",
     "sourceRoot": "Assets/Game/Scripts"
   },
   "sourceManifest": [
@@ -17296,7 +17296,7 @@
     },
     {
       "path": "Assets/Game/Scripts/Utilities/UnitTransportVisualUtility.cs",
-      "sha256": "09fc5d08381bed918d961d5ac63415963c83cdf1636de34dd7d561a3a5cc0b74"
+      "sha256": "c2074e9c153cdb63440f442c1767b6353d93dc00441a58b0f5986d98a6251a39"
     }
   ],
   "summary": {

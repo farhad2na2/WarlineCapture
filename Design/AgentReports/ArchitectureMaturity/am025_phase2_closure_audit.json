@@ -24,7 +24,7 @@
     },
     {
       "path": "Design/AgentReports/ArchitectureMaturity/am021_persistent_resource_ownership.json",
-      "sha256": "bc223944b3a47a5b5e31cf2aba0b354ef49042cf591581889c211456fa94747b"
+      "sha256": "4895e04bb0a70e165658205bc98798dff1806ca47f52353bb44fba44906ffbb6"
     }
   ],
   "terminology": {
@@ -36,10 +36,10 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 448,
+    "resolvedNonDebtRowCount": 449,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 456,
-    "genuineDebtRowCount": 119,
+    "reviewedNonDebtRowCount": 457,
+    "genuineDebtRowCount": 118,
     "uniqueDebtItemCount": 46,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
@@ -48,16 +48,16 @@
     {
       "sourceArtifact": "AM-007",
       "historicalOpenRowCount": 314,
-      "projectedResolvedNonDebtRowCount": 297,
+      "projectedResolvedNonDebtRowCount": 296,
       "projectedProtectedDeferredRowCount": 7,
-      "projectedGenuineDebtRowCount": 10
+      "projectedGenuineDebtRowCount": 11
     },
     {
       "sourceArtifact": "AM-018",
       "historicalOpenRowCount": 261,
-      "projectedResolvedNonDebtRowCount": 151,
+      "projectedResolvedNonDebtRowCount": 153,
       "projectedProtectedDeferredRowCount": 1,
-      "projectedGenuineDebtRowCount": 109
+      "projectedGenuineDebtRowCount": 107
     }
   ],
   "genuineDebtLanes": [
@@ -68,7 +68,7 @@
     },
     {
       "id": "mutable-static-state",
-      "projectedRows": 95
+      "projectedRows": 93
     },
     {
       "id": "pool-and-lifecycle-cache",
@@ -147,22 +147,22 @@
       "authority": ["Assets/Tests/Editor/RuntimeGameplayStateSystemTests.cs"]
     },
     {
-      "id": "am007-static-game-text-owned",
+      "id": "am007-static-unit-transport-visual-owned",
       "decision": "resolved",
-      "reasonCode": "subsystem-registration-reset-tested",
-      "expectedCount": 2,
+      "reasonCode": "call-owned-temporary-native-scratch-tested",
+      "expectedCount": 1,
       "match": {
         "sourceArtifact": "AM-007",
         "sourceCategory": "staticCaches",
-        "sourcePath": "Assets/Game/Scripts/Configs/GameText.cs"
+        "sourcePath": "Assets/Game/Scripts/Utilities/UnitTransportVisualUtility.cs"
       },
-      "authority": ["Assets/Tests/Editor/GameTextResolverAdapterTests.cs"]
+      "authority": ["Assets/Tests/Editor/UnitTransportValidationTests.cs", "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs"]
     },
     {
       "id": "am007-static-debt",
       "decision": "genuine-debt",
       "reasonCode": "static-lifecycle-unproven",
-      "expectedCount": 2,
+      "expectedCount": 3,
       "debtIdPrefix": "AM025-STATIC",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",
@@ -651,10 +651,23 @@
       "authority": ["Assets/Tests/Editor/TacticalFollowAttackCinematicHelperTests.cs"]
     },
     {
+      "id": "am018-static-irc-unit-transport-visual-owned",
+      "decision": "resolved",
+      "reasonCode": "call-owned-temporary-native-scratch-tested",
+      "expectedCount": 3,
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "IRC",
+        "sourcePath": "Assets/Game/Scripts/Utilities/UnitTransportVisualUtility.cs"
+      },
+      "authority": ["Assets/Tests/Editor/UnitTransportValidationTests.cs", "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs"]
+    },
+    {
       "id": "am018-static-irc-debt",
       "decision": "genuine-debt",
       "reasonCode": "readonly-reference-mutability-unproven",
-      "expectedCount": 8,
+      "expectedCount": 5,
       "debtIdPrefix": "AM025-STATIC-IRC",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",
@@ -714,23 +727,10 @@
       "authority": ["Assets/Tests/Editor/BuildingDefenseAttackSystemTests.cs"]
     },
     {
-      "id": "am018-static-msl-game-text-owned",
-      "decision": "resolved",
-      "reasonCode": "subsystem-registration-reset-tested",
-      "expectedCount": 1,
-      "match": {
-        "sourceArtifact": "AM-018",
-        "sourceCategory": "mutableStaticCaches",
-        "disposition": "MSL",
-        "sourcePath": "Assets/Game/Scripts/Configs/GameText.cs"
-      },
-      "authority": ["Assets/Tests/Editor/GameTextResolverAdapterTests.cs"]
-    },
-    {
       "id": "am018-static-msl-debt",
       "decision": "genuine-debt",
       "reasonCode": "mutable-static-lifecycle-unproven",
-      "expectedCount": 81,
+      "expectedCount": 82,
       "debtIdPrefix": "AM025-STATIC-MSL",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

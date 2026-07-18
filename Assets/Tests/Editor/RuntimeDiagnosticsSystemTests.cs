@@ -17,7 +17,8 @@ public sealed class RuntimeDiagnosticsSystemTests
             RunCase(test => test.SettingTransportBoardingDiagnostics_WritesLegacyAndEcsSingleton());
             RunCase(test => test.ReadDiagnosticsState_MirrorsLegacyStateIntoEcsSingleton());
             RunCase(test => test.ReadDiagnosticsState_DoesNotOverwriteEcsWhenLegacyIsUnchanged());
-            UnityEngine.Debug.Log("[RuntimeDiagnosticsValidation] result=Passed tests=4");
+            RunCase(test => test.ReadDiagnosticsState_FollowsReplacementWorld());
+            UnityEngine.Debug.Log("[RuntimeDiagnosticsValidation] result=Passed tests=5");
         }
         catch (System.Exception exception)
         {
@@ -122,6 +123,28 @@ public sealed class RuntimeDiagnosticsSystemTests
         Assert.AreEqual(0, reread.TransportBoardingDiagnostics);
         Assert.IsTrue(InitialUnitsRuntimeState.VerboseAILogs);
         Assert.IsTrue(InitialUnitsRuntimeState.TransportBoardingDiagnostics);
+    }
+
+    [Test]
+    public void ReadDiagnosticsState_FollowsReplacementWorld()
+    {
+        RuntimeDiagnosticsSystem diagnosticsSystem = ResolveDiagnosticsSystem();
+        diagnosticsSystem.VerboseAILogs = true;
+        Assert.AreEqual(1, ReadSingleton<RuntimeDiagnosticsStateComponent>().VerboseAILogs);
+
+        _world.Dispose();
+        _world = new World("RuntimeDiagnosticsSystemTests-Replacement");
+        World.DefaultGameObjectInjectionWorld = _world;
+        InitialUnitsRuntimeState.VerboseAILogs = false;
+        InitialUnitsRuntimeState.TransportBoardingDiagnostics = false;
+
+        RuntimeDiagnosticsStateComponent replacementState = diagnosticsSystem.ReadDiagnosticsState();
+
+        Assert.AreEqual(0, replacementState.VerboseAILogs);
+        Assert.AreEqual(0, replacementState.TransportBoardingDiagnostics);
+        using EntityQuery stateQuery = _world.EntityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<RuntimeDiagnosticsStateComponent>());
+        Assert.AreEqual(1, stateQuery.CalculateEntityCount());
     }
 
     private RuntimeDiagnosticsSystem ResolveDiagnosticsSystem()

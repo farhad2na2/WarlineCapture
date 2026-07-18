@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 399,
+    "resolvedNonDebtRowCount": 400,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 407,
-    "genuineDebtRowCount": 168,
-    "uniqueDebtItemCount": 80,
+    "reviewedNonDebtRowCount": 408,
+    "genuineDebtRowCount": 167,
+    "uniqueDebtItemCount": 79,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -55,9 +55,9 @@
     {
       "sourceArtifact": "AM-018",
       "historicalOpenRowCount": 261,
-      "projectedResolvedNonDebtRowCount": 133,
+      "projectedResolvedNonDebtRowCount": 134,
       "projectedProtectedDeferredRowCount": 1,
-      "projectedGenuineDebtRowCount": 127
+      "projectedGenuineDebtRowCount": 126
     }
   ],
   "genuineDebtLanes": [
@@ -68,7 +68,7 @@
     },
     {
       "id": "mutable-static-state",
-      "projectedRows": 115
+      "projectedRows": 114
     },
     {
       "id": "pool-and-lifecycle-cache",
@@ -314,10 +314,23 @@
       "authority": ["Design/AgentReports/ArchitectureMaturity/am020_world_owned_runtime_state_evidence.json", "Design/AgentReports/ArchitectureMaturity/am022_world_lifecycle_recovery_evidence.json"]
     },
     {
+      "id": "am018-static-msl-helicopter-diagnostic-owned",
+      "decision": "resolved",
+      "reasonCode": "world-owned-diagnostic-state",
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "MSL",
+        "sourcePath": "Assets/Game/Scripts/Rendering/Systems/UnitHelicopterBladeSpinSystem.cs"
+      },
+      "authority": ["Assets/Tests/Editor/UnitHelicopterBladeSpinSystemTests.cs"]
+    },
+    {
       "id": "am018-static-msl-debt",
       "decision": "genuine-debt",
       "reasonCode": "mutable-static-lifecycle-unproven",
-      "expectedCount": 96,
+      "expectedCount": 95,
       "debtIdPrefix": "AM025-STATIC-MSL",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",
@@ -353,5 +366,5 @@
       "authority": ["Design/AgentReports/ArchitectureMaturity/am021_persistent_resource_ownership.json", "Design/AgentReports/ArchitectureMaturity/am022_world_lifecycle_recovery_evidence.json"]
     }
   ],
-  "acceptanceRule": "This artifact records a reviewed planning projection only. AM-025 remains unchecked until a generator emits one hash-bound decision per historical intake row, genuine debt and unclassified counts reach zero, and all five source-growth blockers close."
+  "acceptanceRule": "This artifact records row-bound evidence but does not grant acceptance. AM-025 remains unchecked until genuine debt and unclassified counts reach zero and all five source-growth blockers close."
 }

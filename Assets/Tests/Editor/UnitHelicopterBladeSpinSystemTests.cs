@@ -23,10 +23,11 @@ public sealed class UnitHelicopterBladeSpinSystemTests
             tests.AirborneAirUnitRotatesLodBladeDescendants();
             tests.LandedAirUnitDoesNotRotateBakedBladeReference();
             tests.GroundedReturningAirUnitDoesNotRotateBakedBladeReference();
+            tests.DiagnosticLogStateIsOwnedByEachWorld();
             tests.HelicopterPrefabsDoNotUseCompanionBladeSpinner();
             tests.HelicopterUnitPrefabsExposeBakedBladeTransforms();
             tests.FactionVisualSystemProjectsConfiguredFactionVisualColorsToEcs();
-            Debug.Log("[UnitHelicopterBladeSpinFocusedValidation] result=Passed tests=8");
+            Debug.Log("[UnitHelicopterBladeSpinFocusedValidation] result=Passed tests=9");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -219,6 +220,33 @@ public sealed class UnitHelicopterBladeSpinSystemTests
     }
 
     [Test]
+    public void DiagnosticLogStateIsOwnedByEachWorld()
+    {
+        using var firstWorld = CreateDiagnosticWorld(nameof(DiagnosticLogStateIsOwnedByEachWorld) + ".First", out SystemHandle firstSystem);
+        using var secondWorld = CreateDiagnosticWorld(nameof(DiagnosticLogStateIsOwnedByEachWorld) + ".Second", out SystemHandle secondSystem);
+
+        int diagnosticCount = 0;
+        void CountDiagnostic(string message, string _, LogType __)
+        {
+            if (message.Contains("[HeliBladeDiag]", System.StringComparison.Ordinal))
+                diagnosticCount++;
+        }
+
+        Application.logMessageReceived += CountDiagnostic;
+        try
+        {
+            firstSystem.Update(firstWorld.Unmanaged);
+            secondSystem.Update(secondWorld.Unmanaged);
+        }
+        finally
+        {
+            Application.logMessageReceived -= CountDiagnostic;
+        }
+
+        Assert.AreEqual(2, diagnosticCount, "Each ECS World must own its diagnostic one-shot state.");
+    }
+
+    [Test]
     public void HelicopterPrefabsDoNotUseCompanionBladeSpinner()
     {
         string[] prefabPaths =
@@ -300,6 +328,29 @@ public sealed class UnitHelicopterBladeSpinSystemTests
                (name.EndsWith("_X", System.StringComparison.Ordinal) ||
                 name.EndsWith("_Y", System.StringComparison.Ordinal) ||
                 name.EndsWith("_Z", System.StringComparison.Ordinal));
+    }
+
+    private static World CreateDiagnosticWorld(string name, out SystemHandle system)
+    {
+        var world = new World(name);
+        EntityManager em = world.EntityManager;
+        Entity diagnostics = em.CreateEntity(typeof(RuntimeDiagnosticsStateComponent));
+        em.SetComponentData(diagnostics, new RuntimeDiagnosticsStateComponent { VerboseAILogs = 1 });
+
+        Entity helicopter = em.CreateEntity(typeof(UnitAirMovement), typeof(LocalTransform), typeof(UnitAirComponent));
+        em.SetComponentData(helicopter, LocalTransform.Identity);
+        em.SetComponentData(helicopter, new UnitAirComponent { HomeInitialized = 1 });
+        Entity blade = em.CreateEntity(typeof(LocalTransform));
+        em.SetComponentData(blade, LocalTransform.Identity);
+        em.AddBuffer<UnitHelicopterBladeReference>(helicopter).Add(new UnitHelicopterBladeReference
+        {
+            Blade = blade,
+            Axis = 1
+        });
+
+        system = world.CreateSystem<UnitHelicopterBladeSpinSystem>();
+        world.SetTime(new TimeData(1d, 0.25f));
+        return world;
     }
 }
 #endif

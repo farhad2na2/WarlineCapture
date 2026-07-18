@@ -15,7 +15,7 @@ namespace Game.Rendering
     public partial struct UnitHelicopterBladeSpinSystem : ISystem
     {
         private const float FlyingHeightEpsilon = 0.25f;
-        private static bool s_DiagnosticLogged;
+        private bool _diagnosticLogged;
         private BufferLookup<UnitHelicopterBladeReference> _bladeLookup;
         private BufferLookup<Child> _childLookup;
         private ComponentLookup<UnitModelInstanceReference> _modelLookup;
@@ -32,7 +32,7 @@ namespace Game.Rendering
 
         public void OnCreate(ref SystemState state)
         {
-            s_DiagnosticLogged = false;
+            _diagnosticLogged = false;
             _airMovementQuery = state.GetEntityQuery(ComponentType.ReadOnly<UnitAirMovement>());
             _bladeLookup = state.GetBufferLookup<UnitHelicopterBladeReference>(true);
             _childLookup = state.GetBufferLookup<Child>(true);
@@ -90,10 +90,10 @@ namespace Game.Rendering
                 if (!shouldSpin)
                 {
                     if (shouldLogDiagnostics &&
-                        !s_DiagnosticLogged &&
+                        !_diagnosticLogged &&
                         IsHelicopterDiagnosticCandidate(em, _childLookup, entity, _bladeLookup, _detailLookup, _modelLookup, _midLookup, _lowLookup, _sourceLookup))
                     {
-                        s_DiagnosticLogged = true;
+                        _diagnosticLogged = true;
                         LogHelicopterBladeDiagnostic(
                             em,
                             _childLookup,
@@ -148,10 +148,10 @@ namespace Game.Rendering
                     RotateBladeDescendants(em, _childLookup, _lowLookup[entity].Instance, radians, rotatedBlades);
 
                 if (shouldLogDiagnostics &&
-                    !s_DiagnosticLogged &&
+                    !_diagnosticLogged &&
                     IsHelicopterDiagnosticCandidate(em, _childLookup, entity, _bladeLookup, _detailLookup, _modelLookup, _midLookup, _lowLookup, _sourceLookup))
                 {
-                    s_DiagnosticLogged = true;
+                    _diagnosticLogged = true;
                     LogHelicopterBladeDiagnostic(
                         em,
                         _childLookup,
@@ -175,7 +175,7 @@ namespace Game.Rendering
                 }
             }
 
-            if (shouldLogDiagnostics && !s_DiagnosticLogged)
+            if (shouldLogDiagnostics && !_diagnosticLogged)
             {
                 foreach (var (sourceKey, entity) in SystemAPI
                              .Query<RefRO<UnitSourcePrefabKey>>()
@@ -186,7 +186,7 @@ namespace Game.Rendering
                     if (!sourceKey.ValueRO.Value.ToString().Contains("Helicopter", System.StringComparison.OrdinalIgnoreCase))
                         continue;
 
-                    s_DiagnosticLogged = true;
+                    _diagnosticLogged = true;
                     LogHelicopterBladeDiagnostic(
                         em,
                         _childLookup,

@@ -11,13 +11,13 @@ Bounded read-only audits reviewed the AM-025 intake as:
 | Measure | Count |
 |---|---:|
 | Historical intake rows | 575 |
-| Projected reviewed non-debt rows | 407 |
-| Projected genuine-debt rows | 168 |
-| Projected unique debt items | 80 |
+| Reviewed non-debt rows | 408 |
+| Remaining genuine-debt rows | 167 |
+| Remaining unique debt items | 79 |
 | Projected unclassified rows | 0 |
 | Source-growth blockers | 5 |
 
-The `407 / 168` split is now expanded into row-bound draft evidence. It remains non-accepting because all `168` genuine-debt rows, grouped into `80` unique file/rule remediation items, must be closed before Phase 2 can pass.
+The row-bound evidence now records `408` non-debt rows and `167` remaining genuine-debt rows, grouped into `79` unique file/rule remediation items. It remains non-accepting because every genuine-debt item must be closed before Phase 2 can pass.
 
 ## 2. Required Row Authority
 
@@ -56,6 +56,10 @@ Production remediation is serialized after row-bound evidence and occurs in sepa
 | Source growth | 5 helper paths | Four FirstLaunch paths and one operation-map path remain owner-controlled; shrink, consolidate, or publish superseding exact authority. |
 
 Row count and unique debt-item count are reported separately because multiple lexical rows can map to one production fix.
+
+Completed remediation:
+
+- `AM025-STATIC-MSL-005`: helicopter diagnostic one-shot state now belongs to each unmanaged ECS system instance instead of the process. Focused validation proves two active Worlds do not suppress each other's diagnostic and preserves all blade-spin behavior.
 
 ## 5. Scope Safety
 

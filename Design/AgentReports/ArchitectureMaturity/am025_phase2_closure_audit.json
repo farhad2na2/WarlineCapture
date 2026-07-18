@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 474,
+    "resolvedNonDebtRowCount": 475,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 482,
-    "genuineDebtRowCount": 93,
-    "uniqueDebtItemCount": 38,
+    "reviewedNonDebtRowCount": 483,
+    "genuineDebtRowCount": 92,
+    "uniqueDebtItemCount": 37,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -840,10 +840,25 @@
       ]
     },
     {
+      "id": "am018-static-msl-android-launch-clock-application-owned",
+      "decision": "resolved",
+      "reasonCode": "application-epoch-with-tested-subsystem-reset",
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "MSL",
+        "sourcePath": "Assets/Game/Scripts/Systems/AndroidPerformanceRecorder.cs"
+      },
+      "authority": [
+        "Assets/Tests/Editor/AndroidPerformanceRecorderTests.cs"
+      ]
+    },
+    {
       "id": "am018-static-msl-debt",
       "decision": "genuine-debt",
       "reasonCode": "mutable-static-lifecycle-unproven",
-      "expectedCount": 58,
+      "expectedCount": 57,
       "debtIdPrefix": "AM025-STATIC-MSL",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

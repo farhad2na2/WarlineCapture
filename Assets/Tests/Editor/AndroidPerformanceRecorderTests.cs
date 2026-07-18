@@ -10,7 +10,7 @@ using UnityEngine;
 
 public sealed class AndroidPerformanceRecorderTests
 {
-    private const string PassMarker = "[AndroidPerformanceRecorderValidation] result=Passed tests=16";
+    private const string PassMarker = "[AndroidPerformanceRecorderValidation] result=Passed tests=17";
     private delegate void CaptureReleaseMetrics(long batches, long setPassCalls, long triangles, long vertices);
 
     public static void RunFocusedValidation()
@@ -34,6 +34,7 @@ public sealed class AndroidPerformanceRecorderTests
             tests.ReleaseValidationFailsWhenRequiredCountersAreUnavailable();
             tests.PercentileMatchesEvidenceGateRounding();
             tests.PercentileIgnoresUnusedCapacityAndHandlesZeroSamples();
+            tests.LaunchClock_SubsystemResetRestoresApplicationEpoch();
             Debug.Log(PassMarker);
         }
         catch (Exception exception)
@@ -42,6 +43,34 @@ public sealed class AndroidPerformanceRecorderTests
             Debug.LogError("[AndroidPerformanceRecorderValidation] result=Failed");
             throw;
         }
+    }
+
+    public static void RunLaunchClockLifecycleValidation()
+    {
+        new AndroidPerformanceRecorderTests().LaunchClock_SubsystemResetRestoresApplicationEpoch();
+        Debug.Log("[AndroidPerformanceLaunchClockValidation] result=Passed");
+    }
+
+    [Test]
+    public void LaunchClock_SubsystemResetRestoresApplicationEpoch()
+    {
+        Type recorderType = typeof(AndroidPerformanceRecorder);
+        FieldInfo launchClock = recorderType.GetField(
+            "s_LaunchRealtimeSeconds",
+            BindingFlags.Static | BindingFlags.NonPublic);
+        MethodInfo reset = recorderType.GetMethod(
+            "ResetLaunchClock",
+            BindingFlags.Static | BindingFlags.NonPublic);
+        Assert.NotNull(launchClock);
+        Assert.NotNull(reset);
+
+        launchClock.SetValue(null, -1d);
+        double beforeReset = Time.realtimeSinceStartupAsDouble;
+        reset.Invoke(null, null);
+        double resetValue = (double)launchClock.GetValue(null);
+
+        Assert.GreaterOrEqual(resetValue, beforeReset);
+        Assert.LessOrEqual(resetValue, Time.realtimeSinceStartupAsDouble);
     }
 
     [Test]

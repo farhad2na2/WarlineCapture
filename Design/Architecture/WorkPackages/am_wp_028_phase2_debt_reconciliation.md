@@ -11,13 +11,13 @@ Bounded read-only audits reviewed the AM-025 intake as:
 | Measure | Count |
 |---|---:|
 | Historical intake rows | 575 |
-| Reviewed non-debt rows | 482 |
-| Remaining genuine-debt rows | 93 |
-| Remaining unique debt items | 38 |
+| Reviewed non-debt rows | 483 |
+| Remaining genuine-debt rows | 92 |
+| Remaining unique debt items | 37 |
 | Projected unclassified rows | 0 |
 | Source-growth blockers | 5 |
 
-The row-bound evidence now records `482` non-debt rows and `93` remaining genuine-debt rows, grouped into `38` unique file/rule remediation items. It remains non-accepting because every genuine-debt item must be closed before Phase 2 can pass.
+The row-bound evidence now records `483` non-debt rows and `92` remaining genuine-debt rows, grouped into `37` unique file/rule remediation items. It remains non-accepting because every genuine-debt item must be closed before Phase 2 can pass.
 
 ## 2. Required Row Authority
 
@@ -61,6 +61,7 @@ Current external-gate note: the canonical Unity source-growth run now reports th
 
 Completed remediation:
 
+- `AndroidPerformanceRecorder`: the process launch timestamp remains correctly application-owned, and focused subsystem-reset validation now proves a new session replaces stale clock state. No release capture or long device certification was activated.
 - `ResourceExchangePopupRuntimeView`: the allocation-free active-popup stack now resets for a new play session and unregisters destroyed views. Focused validation preserves overlapping-popup fallback while preventing stale popup references after reload.
 - `MainMenuNavigationView`: the selected tab remains stable while menu views are rebuilt in one session, but subsystem registration now restores the default tab for a new play session. Focused validation covers both behaviors.
 - `CommanderProfileRouteLifecyclePresentation`: each shell now finds and owns its commander background only during route changes. It no longer retains scene objects globally, so independent shells cannot replace or leak each other's background.

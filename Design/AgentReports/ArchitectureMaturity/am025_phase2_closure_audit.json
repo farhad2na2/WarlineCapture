@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 403,
+    "resolvedNonDebtRowCount": 416,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 411,
-    "genuineDebtRowCount": 164,
-    "uniqueDebtItemCount": 76,
+    "reviewedNonDebtRowCount": 424,
+    "genuineDebtRowCount": 151,
+    "uniqueDebtItemCount": 75,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -55,9 +55,9 @@
     {
       "sourceArtifact": "AM-018",
       "historicalOpenRowCount": 261,
-      "projectedResolvedNonDebtRowCount": 135,
+      "projectedResolvedNonDebtRowCount": 148,
       "projectedProtectedDeferredRowCount": 1,
-      "projectedGenuineDebtRowCount": 125
+      "projectedGenuineDebtRowCount": 112
     }
   ],
   "genuineDebtLanes": [
@@ -68,7 +68,7 @@
     },
     {
       "id": "mutable-static-state",
-      "projectedRows": 113
+      "projectedRows": 100
     },
     {
       "id": "pool-and-lifecycle-cache",
@@ -364,10 +364,23 @@
       "authority": ["Assets/Tests/Editor/UnitHelicopterBladeSpinSystemTests.cs"]
     },
     {
+      "id": "am018-static-msl-gameplay-debug-flags-bounded",
+      "decision": "resolved",
+      "reasonCode": "editor-only-debug-state-with-tested-reset",
+      "expectedCount": 13,
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "MSL",
+        "sourcePath": "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateDebugFlags.cs"
+      },
+      "authority": ["Assets/Tests/Editor/BuildingDefenseAttackSystemTests.cs"]
+    },
+    {
       "id": "am018-static-msl-debt",
       "decision": "genuine-debt",
       "reasonCode": "mutable-static-lifecycle-unproven",
-      "expectedCount": 95,
+      "expectedCount": 82,
       "debtIdPrefix": "AM025-STATIC-MSL",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

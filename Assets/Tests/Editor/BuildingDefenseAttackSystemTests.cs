@@ -51,6 +51,8 @@ public sealed class BuildingDefenseAttackSystemTests
             passed++;
             tests.BuildingDefenseSource_DefinesStableZeroAllocationPhaseMarkers();
             passed++;
+            tests.GameplayRuntimeUpdateDebugFlags_AreEditorOwnedAndResetAtCaptureBoundaries();
+            passed++;
 
             Debug.Log($"[BuildingDefenseAttackSystemValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -644,6 +646,87 @@ public sealed class BuildingDefenseAttackSystemTests
             "Effect timing must cover both immediate shot effects and deferred ECB playback.");
         StringAssert.DoesNotContain("Profiler.BeginSample", source);
         StringAssert.DoesNotContain("new ProfilerMarker", source);
+    }
+
+    [Test]
+    public void GameplayRuntimeUpdateDebugFlags_AreEditorOwnedAndResetAtCaptureBoundaries()
+    {
+        string[] propertyNames =
+        {
+            nameof(GameplayRuntimeUpdateDebugFlags.DisableBuildingPlacementRuntime),
+            nameof(GameplayRuntimeUpdateDebugFlags.DisableSelectionRuntime),
+            nameof(GameplayRuntimeUpdateDebugFlags.DisableUnitMotionAudioRuntime),
+            nameof(GameplayRuntimeUpdateDebugFlags.DisableBuildingBoundaryRuntime),
+            nameof(GameplayRuntimeUpdateDebugFlags.DisableBuildingProductionRuntime),
+            nameof(GameplayRuntimeUpdateDebugFlags.DisableBuildingResourceRuntime),
+            nameof(GameplayRuntimeUpdateDebugFlags.DisableBuildingResourceHaulerRuntime),
+            nameof(GameplayRuntimeUpdateDebugFlags.DisableBuildingVisualRuntime),
+            nameof(GameplayRuntimeUpdateDebugFlags.DisableBuildingInputRuntime),
+            nameof(GameplayRuntimeUpdateDebugFlags.DisableBuildingReservationCleanupRuntime),
+            nameof(GameplayRuntimeUpdateDebugFlags.DisableBuildingDestroyedRuntime),
+            nameof(GameplayRuntimeUpdateDebugFlags.DisableBuildingDoorRuntime),
+            nameof(GameplayRuntimeUpdateDebugFlags.DisableBuildingMarkerRuntime)
+        };
+
+        string scriptsRoot = Path.Combine(Application.dataPath, "Game", "Scripts");
+        foreach (string sourcePath in Directory.GetFiles(scriptsRoot, "*.cs", SearchOption.AllDirectories))
+        {
+            string source = File.ReadAllText(sourcePath);
+            foreach (string propertyName in propertyNames)
+            {
+                if (!source.Contains($"GameplayRuntimeUpdateDebugFlags.{propertyName} =", StringComparison.Ordinal))
+                    continue;
+
+                string normalizedPath = sourcePath.Replace('\\', '/');
+                StringAssert.Contains(
+                    "/Editor/",
+                    normalizedPath,
+                    $"Only Editor validation may change {propertyName}.");
+            }
+        }
+
+        string captureSource = ReadCanvasMatchFpsValidationSource();
+        Assert.AreEqual(
+            2,
+            CountOccurrences(captureSource, "GameplayRuntimeUpdateDebugFlags.Reset();"),
+            "Canvas Match capture must reset overrides before setup and during completion.");
+
+        try
+        {
+            GameplayRuntimeUpdateDebugFlags.DisableBuildingPlacementRuntime = true;
+            GameplayRuntimeUpdateDebugFlags.DisableSelectionRuntime = true;
+            GameplayRuntimeUpdateDebugFlags.DisableUnitMotionAudioRuntime = true;
+            GameplayRuntimeUpdateDebugFlags.DisableBuildingBoundaryRuntime = true;
+            GameplayRuntimeUpdateDebugFlags.DisableBuildingProductionRuntime = true;
+            GameplayRuntimeUpdateDebugFlags.DisableBuildingResourceRuntime = true;
+            GameplayRuntimeUpdateDebugFlags.DisableBuildingResourceHaulerRuntime = true;
+            GameplayRuntimeUpdateDebugFlags.DisableBuildingVisualRuntime = true;
+            GameplayRuntimeUpdateDebugFlags.DisableBuildingInputRuntime = true;
+            GameplayRuntimeUpdateDebugFlags.DisableBuildingReservationCleanupRuntime = true;
+            GameplayRuntimeUpdateDebugFlags.DisableBuildingDestroyedRuntime = true;
+            GameplayRuntimeUpdateDebugFlags.DisableBuildingDoorRuntime = true;
+            GameplayRuntimeUpdateDebugFlags.DisableBuildingMarkerRuntime = true;
+
+            GameplayRuntimeUpdateDebugFlags.Reset();
+
+            Assert.IsFalse(GameplayRuntimeUpdateDebugFlags.DisableBuildingPlacementRuntime);
+            Assert.IsFalse(GameplayRuntimeUpdateDebugFlags.DisableSelectionRuntime);
+            Assert.IsFalse(GameplayRuntimeUpdateDebugFlags.DisableUnitMotionAudioRuntime);
+            Assert.IsFalse(GameplayRuntimeUpdateDebugFlags.DisableBuildingBoundaryRuntime);
+            Assert.IsFalse(GameplayRuntimeUpdateDebugFlags.DisableBuildingProductionRuntime);
+            Assert.IsFalse(GameplayRuntimeUpdateDebugFlags.DisableBuildingResourceRuntime);
+            Assert.IsFalse(GameplayRuntimeUpdateDebugFlags.DisableBuildingResourceHaulerRuntime);
+            Assert.IsFalse(GameplayRuntimeUpdateDebugFlags.DisableBuildingVisualRuntime);
+            Assert.IsFalse(GameplayRuntimeUpdateDebugFlags.DisableBuildingInputRuntime);
+            Assert.IsFalse(GameplayRuntimeUpdateDebugFlags.DisableBuildingReservationCleanupRuntime);
+            Assert.IsFalse(GameplayRuntimeUpdateDebugFlags.DisableBuildingDestroyedRuntime);
+            Assert.IsFalse(GameplayRuntimeUpdateDebugFlags.DisableBuildingDoorRuntime);
+            Assert.IsFalse(GameplayRuntimeUpdateDebugFlags.DisableBuildingMarkerRuntime);
+        }
+        finally
+        {
+            GameplayRuntimeUpdateDebugFlags.Reset();
+        }
     }
 
     private static string ReadBuildingDefenseSource()

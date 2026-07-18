@@ -296,10 +296,9 @@ public sealed class UiShellEcsGatewayResourceHeaderTests
             Assert.IsTrue(UiShellEcsGateway.TryReadMatchHudHeader(out UiMatchHudHeaderModel first));
             Assert.AreEqual("ATTACK ORDER", first.OrderText);
             Assert.AreEqual("ALPHA SQUAD", first.SquadText);
-            Assert.AreEqual("12,450", first.CreditsText);
             Assert.AreEqual("2", first.OilText);
             Assert.AreEqual("15", first.FuelText);
-            Assert.AreEqual("78/100", first.SupplyText);
+            Assert.AreEqual("78/100", first.MaterialsText);
             Assert.AreEqual("LOW", first.CivilianRiskText);
 
             summaries = em.GetBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary);
@@ -322,9 +321,8 @@ public sealed class UiShellEcsGatewayResourceHeaderTests
             Assert.AreEqual("16", changed.FuelText);
             Assert.AreSame(first.OrderText, changed.OrderText);
             Assert.AreSame(first.SquadText, changed.SquadText);
-            Assert.AreSame(first.CreditsText, changed.CreditsText);
             Assert.AreSame(first.OilText, changed.OilText);
-            Assert.AreSame(first.SupplyText, changed.SupplyText);
+            Assert.AreSame(first.MaterialsText, changed.MaterialsText);
             Assert.AreSame(first.CivilianRiskText, changed.CivilianRiskText);
             Assert.AreNotSame(first.FuelText, changed.FuelText);
         }
@@ -507,9 +505,8 @@ public sealed class UiShellEcsGatewayResourceHeaderTests
             ResourceVersion = resourceVersion,
             OrderText = new FixedString32Bytes("ATTACK ORDER"),
             SquadText = new FixedString32Bytes("ALPHA SQUAD"),
-            CreditsText = new FixedString32Bytes("12,450"),
             FuelText = new FixedString32Bytes("FALLBACK FUEL"),
-            SupplyText = new FixedString32Bytes("78/100"),
+            MaterialsText = new FixedString32Bytes("78/100"),
             CivilianRiskText = new FixedString32Bytes("LOW")
         };
     }
@@ -520,10 +517,9 @@ public sealed class UiShellEcsGatewayResourceHeaderTests
     {
         Assert.AreSame(expected.OrderText, actual.OrderText);
         Assert.AreSame(expected.SquadText, actual.SquadText);
-        Assert.AreSame(expected.CreditsText, actual.CreditsText);
         Assert.AreSame(expected.OilText, actual.OilText);
         Assert.AreSame(expected.FuelText, actual.FuelText);
-        Assert.AreSame(expected.SupplyText, actual.SupplyText);
+        Assert.AreSame(expected.MaterialsText, actual.MaterialsText);
         Assert.AreSame(expected.CivilianRiskText, actual.CivilianRiskText);
     }
 }

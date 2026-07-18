@@ -10,37 +10,19 @@ namespace Game.Configs
     {
         [SerializeField] private List<ResourceExchangeRecipeConfigEntry> recipes = new();
         [SerializeField] private List<ResourceExchangeScenarioGateConfigEntry> scenarioGates = new();
-        [SerializeField] private ResourceExchangeMaterialsBalanceConfig materialsBalance = new();
 
         public IReadOnlyList<ResourceExchangeRecipeConfigEntry> Recipes => recipes;
         public IReadOnlyList<ResourceExchangeScenarioGateConfigEntry> ScenarioGates => scenarioGates;
-        public ResourceExchangeMaterialsBalanceConfig MaterialsBalance => materialsBalance;
-    }
-
-    [Serializable]
-    public sealed class ResourceExchangeMaterialsBalanceConfig
-    {
-        [SerializeField, Min(0.01f)] private float oilOpportunityCreditsPerBarrel = 5f;
-        [SerializeField, Min(1)] private int depotAmortizationCycles = 300;
-        [SerializeField, Min(0f)] private float logisticsCreditsPerMaterial = 2f;
-        [SerializeField, Min(1f)] private float minimumImportMarkup = 1.5f;
-        [SerializeField, Min(1f)] private float maximumImportMarkup = 2f;
-
-        public float OilOpportunityCreditsPerBarrel => Mathf.Max(0f, oilOpportunityCreditsPerBarrel);
-        public int DepotAmortizationCycles => Mathf.Max(1, depotAmortizationCycles);
-        public float LogisticsCreditsPerMaterial => Mathf.Max(0f, logisticsCreditsPerMaterial);
-        public float MinimumImportMarkup => Mathf.Max(1f, minimumImportMarkup);
-        public float MaximumImportMarkup => Mathf.Max(MinimumImportMarkup, maximumImportMarkup);
     }
 
     [Serializable]
     public sealed class ResourceExchangeRecipeConfigEntry
     {
-        [SerializeField] private string recipeId = "exchange.export_oil_credits.standard";
-        [SerializeField] private string displayName = "Export Oil";
+        [SerializeField] private string recipeId = "exchange.convert_oil_materials.emergency";
+        [SerializeField] private string displayName = "Convert Oil to Materials";
         [SerializeField] private ResourceExchangeRouteType routeType = ResourceExchangeRouteType.Export;
         [SerializeField] private ResourceExchangeResourceKind inputResource = ResourceExchangeResourceKind.Oil;
-        [SerializeField] private ResourceExchangeResourceKind outputResource = ResourceExchangeResourceKind.Credits;
+        [SerializeField] private ResourceExchangeResourceKind outputResource = ResourceExchangeResourceKind.Materials;
         [SerializeField, Min(1)] private int inputAmountMin = 100;
         [SerializeField, Min(1)] private int inputAmountMax = 1000;
         [SerializeField, Min(1)] private int inputStep = 100;
@@ -360,8 +342,7 @@ namespace Game.Configs
 
         public static bool IsValidResourceKind(ResourceExchangeResourceKind resourceKind)
         {
-            return resourceKind == ResourceExchangeResourceKind.Credits ||
-                   resourceKind == ResourceExchangeResourceKind.Materials ||
+            return resourceKind == ResourceExchangeResourceKind.Materials ||
                    resourceKind == ResourceExchangeResourceKind.Oil ||
                    resourceKind == ResourceExchangeResourceKind.Fuel ||
                    resourceKind == ResourceExchangeResourceKind.RushTickets;
@@ -369,8 +350,7 @@ namespace Game.Configs
 
         private static bool IsRecipeResource(ResourceExchangeResourceKind resourceKind)
         {
-            return resourceKind == ResourceExchangeResourceKind.Credits ||
-                   resourceKind == ResourceExchangeResourceKind.Materials ||
+            return resourceKind == ResourceExchangeResourceKind.Materials ||
                    resourceKind == ResourceExchangeResourceKind.Oil ||
                    resourceKind == ResourceExchangeResourceKind.Fuel;
         }
@@ -386,17 +366,10 @@ namespace Game.Configs
             ResourceExchangeResourceKind inputResource,
             ResourceExchangeResourceKind outputResource)
         {
-            if (routeType == ResourceExchangeRouteType.Export)
-            {
-                return outputResource == ResourceExchangeResourceKind.Credits &&
-                       (inputResource == ResourceExchangeResourceKind.Oil ||
-                        inputResource == ResourceExchangeResourceKind.Materials ||
-                        inputResource == ResourceExchangeResourceKind.Fuel);
-            }
-
-            return inputResource == ResourceExchangeResourceKind.Credits &&
-                   (outputResource == ResourceExchangeResourceKind.Materials ||
-                    outputResource == ResourceExchangeResourceKind.Fuel);
+            return IsValidRoute(routeType) &&
+                   IsRecipeResource(inputResource) &&
+                   IsRecipeResource(outputResource) &&
+                   inputResource != outputResource;
         }
 
         private static ResourceExchangeReason ValidateRoundTripFarmingRisk(
@@ -405,25 +378,21 @@ namespace Game.Configs
             for (int i = 0; i < recipes.Count; i++)
             {
                 ResourceExchangeRecipeConfigEntry exportRecipe = recipes[i];
-                if (exportRecipe.RouteType != ResourceExchangeRouteType.Export ||
-                    exportRecipe.OutputResource != ResourceExchangeResourceKind.Credits)
-                {
-                    continue;
-                }
-
                 for (int j = 0; j < recipes.Count; j++)
                 {
-                    ResourceExchangeRecipeConfigEntry importRecipe = recipes[j];
-                    if (importRecipe.RouteType != ResourceExchangeRouteType.Import ||
-                        importRecipe.InputResource != ResourceExchangeResourceKind.Credits ||
-                        importRecipe.OutputResource != exportRecipe.InputResource)
+                    if (i == j)
+                        continue;
+
+                    ResourceExchangeRecipeConfigEntry reverseRecipe = recipes[j];
+                    if (reverseRecipe.InputResource != exportRecipe.OutputResource ||
+                        reverseRecipe.OutputResource != exportRecipe.InputResource)
                     {
                         continue;
                     }
 
                     float roundTripRetention =
                         EffectiveOutputPerInput(exportRecipe) *
-                        EffectiveOutputPerInput(importRecipe);
+                        EffectiveOutputPerInput(reverseRecipe);
 
                     if (roundTripRetention > MaximumRoundTripResourceRetention)
                         return ResourceExchangeReason.InvalidRate;

@@ -139,7 +139,7 @@ MonoBehaviour:
   goldActionButtonSprite: {fileID: 21300000, guid: 90bd6048af154044902aa0a3e9154ba4, type: 3}
   squareButtonSprite: {fileID: 21300000, guid: 820d8eb3ea8641b38d0d7b6abd53010e, type: 3}
   instructionStripSprite: {fileID: 21300000, guid: 3c9b2fbb766544afb73729fdd2ccfea0, type: 3}
-  creditsIconSprite: {fileID: 21300000, guid: 746140d117f54c31a42e53da0d68c847, type: 3}
+  materialsIconSprite: {fileID: 21300000, guid: 14c986cfa88494fd69b141dab45ee020, type: 3}
   timeIconSprite: {fileID: 21300000, guid: d3664f6a549ab40dd8c4a0205dccad56, type: 3}
   cancelIconSprite: {fileID: 21300000, guid: 19ee755e59f4438b8cc7e38b857e1852, type: 3}
   rotateIconSprite: {fileID: 21300000, guid: 4ee659a34a8849d08fedbcdcacb76265, type: 3}
@@ -1380,7 +1380,7 @@ GameObject:
   - component: {fileID: 2182916611971846671}
   - component: {fileID: 6630030480988386604}
   m_Layer: 0
-  m_Name: CreditsIcon
+  m_Name: MaterialsIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

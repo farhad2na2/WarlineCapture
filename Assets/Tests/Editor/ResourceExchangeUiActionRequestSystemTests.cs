@@ -81,7 +81,7 @@ public sealed class ResourceExchangeUiActionRequestSystemTests
             em.GetBuffer<ResourceExchangeRequestComponent>(exchange);
         Assert.AreEqual(1, requests.Length);
         Assert.AreEqual(ResourceExchangeRequestKind.Start, requests[0].RequestKind);
-        Assert.AreEqual(new FixedString128Bytes("exchange.export_oil_credits.standard"), requests[0].RecipeId);
+        Assert.AreEqual(new FixedString128Bytes("exchange.convert_oil_materials.test"), requests[0].RecipeId);
         Assert.AreEqual(200, requests[0].InputAmount);
         Assert.AreEqual(1, requests[0].FactionId);
     }
@@ -184,11 +184,11 @@ public sealed class ResourceExchangeUiActionRequestSystemTests
     {
         return new ResourceExchangeRecipeComponent
         {
-            RecipeId = new FixedString128Bytes("exchange.export_oil_credits.standard"),
+            RecipeId = new FixedString128Bytes("exchange.convert_oil_materials.test"),
             DisplayName = new FixedString128Bytes("Export Oil"),
             RouteType = ResourceExchangeRouteType.Export,
             InputResource = ResourceExchangeResourceKind.Oil,
-            OutputResource = ResourceExchangeResourceKind.Credits,
+            OutputResource = ResourceExchangeResourceKind.Oil,
             InputAmountMin = 100,
             InputAmountMax = 300,
             InputStep = 100,

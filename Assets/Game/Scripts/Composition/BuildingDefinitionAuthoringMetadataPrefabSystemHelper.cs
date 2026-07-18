@@ -81,7 +81,7 @@ namespace Game.Composition
                 Description = authoring.ConfiguredDescription,
                 FootprintCells = authoring.GetConfiguredFootprintCells(),
                 CanRequest = authoring.CanRequest,
-                Price = authoring.Price
+                Price = authoring.MaterialsCost
             };
             return true;
         }

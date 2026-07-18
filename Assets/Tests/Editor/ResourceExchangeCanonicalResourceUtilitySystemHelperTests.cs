@@ -6,26 +6,26 @@ using NUnit.Framework;
 public sealed class ResourceExchangeCanonicalResourceUtilitySystemHelperTests
 {
     [Test]
-    public void Credits_UseFactionEconomyWithoutMutatingRushWallet()
+    public void PhysicalResources_CannotMutateDetachedEconomyOrWalletCounters()
     {
         FactionEconomy economy = new FactionEconomy { FactionId = 1, Money = 1000 };
         FactionTacticalMaterialsComponent materials = Materials(current: 50, capacity: 100);
         ResourceExchangeWalletComponent wallet = new ResourceExchangeWalletComponent { FactionId = 1 };
 
-        Assert.IsTrue(ResourceExchangeResourceUtilitySystemHelper.TrySpend(
+        Assert.IsFalse(ResourceExchangeResourceUtilitySystemHelper.TrySpend(
             ref economy,
             ref materials,
             ref wallet,
-            ResourceExchangeResourceKind.Credits,
+            ResourceExchangeResourceKind.Oil,
             250));
-        Assert.IsTrue(ResourceExchangeResourceUtilitySystemHelper.TryGrantImport(
+        Assert.IsFalse(ResourceExchangeResourceUtilitySystemHelper.TryGrantImport(
             ref economy,
             ref materials,
             ref wallet,
-            ResourceExchangeResourceKind.Credits,
+            ResourceExchangeResourceKind.Oil,
             40));
 
-        Assert.AreEqual(790, economy.Money);
+        Assert.AreEqual(1000, economy.Money);
         Assert.AreEqual(0u, wallet.Version);
     }
 
@@ -145,13 +145,13 @@ public sealed class ResourceExchangeCanonicalResourceUtilitySystemHelperTests
                 ref economy,
                 ref materials,
                 ref wallet,
-                ResourceExchangeResourceKind.Credits,
+                ResourceExchangeResourceKind.Materials,
                 1);
-            ResourceExchangeResourceUtilitySystemHelper.TryGrantImport(
+            ResourceExchangeResourceUtilitySystemHelper.TryRefundReservedInput(
                 ref economy,
                 ref materials,
                 ref wallet,
-                ResourceExchangeResourceKind.Credits,
+                ResourceExchangeResourceKind.Materials,
                 1);
         }
 
@@ -162,13 +162,13 @@ public sealed class ResourceExchangeCanonicalResourceUtilitySystemHelperTests
                 ref economy,
                 ref materials,
                 ref wallet,
-                ResourceExchangeResourceKind.Credits,
+                ResourceExchangeResourceKind.Materials,
                 1);
-            ResourceExchangeResourceUtilitySystemHelper.TryGrantImport(
+            ResourceExchangeResourceUtilitySystemHelper.TryRefundReservedInput(
                 ref economy,
                 ref materials,
                 ref wallet,
-                ResourceExchangeResourceKind.Credits,
+                ResourceExchangeResourceKind.Materials,
                 1);
         }
 

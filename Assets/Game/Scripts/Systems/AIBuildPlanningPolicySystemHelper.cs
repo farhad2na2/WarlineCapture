@@ -52,7 +52,9 @@ namespace Game.Runtime
                     break;
                 }
 
-                int cost = math.max(0, spawnable.Price);
+                // Match construction consumes tactical materials only. Price remains serialized
+                // on legacy definitions for migration, but it is not an in-match currency.
+                int cost = 0;
                 int materialsCost = math.max(0, spawnable.MaterialsCost);
                 decision.Spawnable = spawnable;
                 decision.Cost = cost;

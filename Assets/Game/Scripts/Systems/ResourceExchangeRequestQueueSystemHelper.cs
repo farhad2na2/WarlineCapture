@@ -63,8 +63,6 @@ namespace Game.Runtime
         {
             switch (resourceKind)
             {
-                case ResourceExchangeResourceKind.Credits:
-                    return ResourceExchangeReason.InsufficientCredits;
                 case ResourceExchangeResourceKind.Materials:
                     return ResourceExchangeReason.InsufficientMaterials;
                 case ResourceExchangeResourceKind.Oil:

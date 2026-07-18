@@ -751,7 +751,7 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
         var runtimeBuildings = new Dictionary<int, RuntimeBuildingEntity> { { producer.Id, producer } };
         var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         var requestSystem = new BuildingProductionRequestSystemHelper();
-        int dollars = 100000;
+        int materials = 100000;
         BuildingProductionRequestSystemHelper.Context requestContext = CreateProductionRequestContext(
             runtimeBuildings,
             requestSystem,
@@ -761,10 +761,10 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
             _ => false,
             amount =>
             {
-                if (dollars < amount)
+                if (materials < amount)
                     return false;
 
-                dollars -= amount;
+                materials -= amount;
                 return true;
             },
             _ => { },
@@ -791,7 +791,7 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
         Assert.AreEqual(1, producer.PendingProductions.Count);
         Assert.AreSame(vehicle, producer.PendingProductions[0].Prefab);
         Assert.AreEqual(0, producer.PendingProductions[0].ProductionIndex);
-        Assert.AreEqual(100000 - 5678, dollars);
+        Assert.AreEqual(100000 - 5678, materials);
         Assert.IsTrue(view.ActiveItemView.gameObject.activeSelf, "Queue should refresh immediately after production starts.");
         Assert.AreEqual("Requestable Vehicle", GetQueueText(view.ActiveItemView, "nameText"));
         Assert.IsFalse(view.QueuedItemTemplate.gameObject.activeSelf, "One pending production should only show the active queue row.");
@@ -1368,7 +1368,7 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
         IReadOnlyList<GameObject> unitPrefabs,
         IReadOnlyDictionary<GameObject, BuildingDefinition> configuredDefinitionsByPrefab,
         BuildingProductionRequestSystemHelper.BeginPlacementForConfiguredSpawnableDelegate beginPlacement,
-        BuildingProductionRequestSystemHelper.TrySpendDollarsDelegate trySpendDollars,
+        BuildingProductionRequestSystemHelper.TrySpendMaterialsDelegate trySpendMaterials,
         BuildingProductionRequestSystemHelper.SetActivePlacementCostDelegate setActivePlacementCost,
         EntityManager entityManager = default)
     {
@@ -1403,7 +1403,7 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
             BuildingDefinitionPrefabSystemHelper.GetProductionPrefab,
             null,
             beginPlacement,
-            trySpendDollars,
+            trySpendMaterials,
             _ => { },
             setActivePlacementCost,
             (building, productionIndex, spawnUnitPrefab) => productionSystem.TryQueuePlayerUnitFromBuilding(

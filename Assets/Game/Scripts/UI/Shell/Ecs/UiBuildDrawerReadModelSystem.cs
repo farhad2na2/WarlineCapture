@@ -70,7 +70,7 @@ namespace Game.UI.Shell.Ecs
             if (buildingUiCommand == null || !TryGetCatalogItem(category, selectedSlot, out BuildDrawerCatalogItem item))
                 return;
 
-            buildingUiCommand.TryRequestCampItem(item.Prefab, item.Price, out _, false);
+            buildingUiCommand.TryRequestCampItem(item.Prefab, item.MaterialsCost, out _, false);
         }
 
         public static void ProcessProductionRequest(UiBuildProductionActionKind actionKind, int queueSlot)
@@ -183,8 +183,8 @@ namespace Game.UI.Shell.Ecs
                     ThumbnailSpriteKey = ToSpriteKey(item.CardPortrait),
                     Title = ToFixed64(item.DisplayName),
                     Role = ToFixed32(item.TypeLabel),
-                    CreditsText = ToFixed32(FormatCost(item.Price)),
-                    SuppliesText = ToFixed32(FormatMaterialsCost(item.MaterialsCost)),
+                    MaterialsText = ToFixed32(FormatMaterialsCost(item.MaterialsCost)),
+                    FuelText = ToFixed32(FormatFuelCost(item.FuelCost)),
                     TimeText = ToFixed32(FormatDuration(item))
                 });
             }
@@ -219,8 +219,8 @@ namespace Game.UI.Shell.Ecs
                 RequirementsText = ToFixed64(FormatRequirements(item)),
                 PlacementText = ToFixed64(FormatPlacement(item)),
                 ProductionTimeText = ToFixed32(FormatDuration(item)),
-                CreditsCostText = ToFixed32(FormatCost(item.Price)),
-                SuppliesCostText = ToFixed32(FormatMaterialsCost(item.MaterialsCost)),
+                MaterialsCostText = ToFixed32(FormatMaterialsCost(item.MaterialsCost)),
+                FuelCostText = ToFixed32(FormatFuelCost(item.FuelCost)),
                 InstructionText = ToFixed128(instruction),
                 ProductionTitle = ToFixed32(GameText.Get("build.drawer.production.title", "PRODUCTION")),
                 ProductionCountText = ToFixed32(PendingProductions.Count.ToString(CultureInfo.InvariantCulture)),
@@ -243,8 +243,8 @@ namespace Game.UI.Shell.Ecs
                 RequirementsText = default,
                 PlacementText = default,
                 ProductionTimeText = default,
-                CreditsCostText = default,
-                SuppliesCostText = default,
+                MaterialsCostText = default,
+                FuelCostText = default,
                 InstructionText = ToFixed128(FormatEmptyCategoryInstruction(category)),
                 ProductionTitle = ToFixed32(GameText.Get("build.drawer.production.title", "PRODUCTION")),
                 ProductionCountText = ToFixed32(PendingProductions.Count.ToString(CultureInfo.InvariantCulture)),
@@ -332,7 +332,7 @@ namespace Game.UI.Shell.Ecs
         {
             requiredBuildingDisplayName = string.Empty;
             return buildingUiCommand != null
-                ? buildingUiCommand.GetCampRequestFailure(item.Prefab, item.Price, out requiredBuildingDisplayName)
+                ? buildingUiCommand.GetCampRequestFailure(item.Prefab, item.MaterialsCost, out requiredBuildingDisplayName)
                 : BuildingUiCommandFailure.InvalidSelection;
         }
 

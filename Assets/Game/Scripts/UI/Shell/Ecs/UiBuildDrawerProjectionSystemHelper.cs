@@ -34,6 +34,11 @@ namespace Game.UI.Shell.Ecs
             return materialsCost > 0 ? FormatCost(materialsCost) : string.Empty;
         }
 
+        internal static string FormatFuelCost(int fuelCost)
+        {
+            return fuelCost > 0 ? FormatCost(fuelCost) : string.Empty;
+        }
+
         internal static string FormatDuration(BuildDrawerCatalogItem item)
         {
             if (item.ProductionDurationSeconds <= 0f)

@@ -77,6 +77,19 @@ namespace Game.Runtime
                     _storageQuery,
                     physicalReservations,
                     usePhysicalStorage);
+
+                if (!state.EntityManager.HasBuffer<ResourceExchangeToastComponent>(exchangeEntity))
+                    continue;
+
+                DynamicBuffer<ResourceExchangeToastComponent> toasts =
+                    state.EntityManager.GetBuffer<ResourceExchangeToastComponent>(exchangeEntity);
+                for (int i = 0; i < results.Length; i++)
+                {
+                    ResourceExchangeToastTextUtility.TryAppendToast(
+                        toasts,
+                        true,
+                        results[i]);
+                }
             }
         }
 
@@ -971,7 +984,7 @@ namespace Game.Runtime
             in ResourceExchangeRecipeComponent recipe,
             int outputAmount)
         {
-            if (recipe.RequiresStorage == 0 || recipe.OutputResource == ResourceExchangeResourceKind.Credits)
+            if (recipe.RequiresStorage == 0)
                 return ResourceExchangeReason.None;
 
             int capacity = ResourceExchangeResourceUtilitySystemHelper.GetCapacity(

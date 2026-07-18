@@ -15,7 +15,6 @@ namespace Game.UI.Runtime
         [Header("Header")]
         [SerializeField] private TMP_Text titleText;
         [SerializeField] private TMP_Text queueCapacityText;
-        [SerializeField] private TMP_Text creditsText;
         [SerializeField] private TMP_Text materialsText;
         [SerializeField] private TMP_Text oilText;
         [SerializeField] private TMP_Text fuelText;
@@ -120,7 +119,6 @@ namespace Game.UI.Runtime
 
         public void ApplyHeader(
             string queueCapacity,
-            string credits,
             string materials,
             string oil,
             string fuel,
@@ -128,7 +126,6 @@ namespace Game.UI.Runtime
         {
             SetText(titleText, "RESOURCE EXCHANGE");
             SetText(queueCapacityText, queueCapacity);
-            SetText(creditsText, credits);
             SetText(materialsText, materials);
             SetText(oilText, oil);
             SetText(fuelText, fuel);
@@ -178,7 +175,6 @@ namespace Game.UI.Runtime
         {
             ApplyHeader(
                 model.QueueCapacityText,
-                model.CreditsText,
                 model.MaterialsText,
                 model.OilText,
                 model.FuelText,

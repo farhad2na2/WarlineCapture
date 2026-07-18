@@ -31,19 +31,19 @@ namespace Game.Composition
         public float ActivePlacementDurationSeconds => boundary != null ? boundary.ActivePlacementDurationSeconds(context) : 0f;
         public int MaxQueuedUnitProductions => boundary != null ? boundary.MaxQueuedUnitProductions(context) : 25;
 
-        public BuildingUiCommandFailure GetCampRequestFailure(GameObject prefab, int price, out string requiredBuildingDisplayName)
+        public BuildingUiCommandFailure GetCampRequestFailure(GameObject prefab, int materialsCost, out string requiredBuildingDisplayName)
         {
             requiredBuildingDisplayName = string.Empty;
             return boundary != null
-                ? Map(boundary.GetCampRequestFailure(context, prefab, price, out requiredBuildingDisplayName))
+                ? Map(boundary.GetCampRequestFailure(context, prefab, materialsCost, out requiredBuildingDisplayName))
                 : BuildingUiCommandFailure.InvalidSelection;
         }
 
-        public BuildingUiCommandFailure TryRequestCampItem(GameObject prefab, int price, out string requiredBuildingDisplayName, bool focusProducerOnSuccess)
+        public BuildingUiCommandFailure TryRequestCampItem(GameObject prefab, int materialsCost, out string requiredBuildingDisplayName, bool focusProducerOnSuccess)
         {
             requiredBuildingDisplayName = string.Empty;
             return boundary != null
-                ? Map(boundary.TryRequestCampItem(context, prefab, price, out requiredBuildingDisplayName, focusProducerOnSuccess))
+                ? Map(boundary.TryRequestCampItem(context, prefab, materialsCost, out requiredBuildingDisplayName, focusProducerOnSuccess))
                 : BuildingUiCommandFailure.InvalidSelection;
         }
 

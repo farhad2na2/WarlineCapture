@@ -458,7 +458,7 @@ public sealed class MaterialsScenarioRecoveryStartupSystemHelperTests
             new(
                 "exchange.import_materials.test",
                 ResourceExchangeRouteType.Import,
-                ResourceExchangeResourceKind.Credits,
+                ResourceExchangeResourceKind.Oil,
                 ResourceExchangeResourceKind.Materials,
                 inputAmountMin: 1800,
                 inputAmountMax: 1800,

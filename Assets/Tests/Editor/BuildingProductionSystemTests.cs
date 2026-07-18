@@ -2144,21 +2144,21 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             {
                 [producer.Id] = producer
             };
-            int dollars = 10000;
+            int materials = 10000;
             BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
                 runtimeBuildings,
                 productionSystem,
                 unitPrefab,
                 world.EntityManager,
-                trySpendDollars: amount =>
+                trySpendMaterials: amount =>
                 {
-                    if (dollars < amount)
+                    if (materials < amount)
                         return false;
 
-                    dollars -= amount;
+                    materials -= amount;
                     return true;
                 },
-                refundDollars: amount => dollars += amount);
+                refundMaterials: amount => materials += amount);
 
             int requestId = requestSystem.EnqueueCampItemRequest(
                 world.EntityManager,
@@ -2175,7 +2175,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             Assert.AreEqual(BuildingUiCampItemCommandResultElement.ProductionQueueFull, result.ResultCode);
             Assert.AreEqual((int)TacticalCommandReasonCode.CommandUnavailable, result.ReasonCode);
             Assert.AreEqual("Soldier Tent", result.RequiredBuildingDisplayName.ToString());
-            Assert.AreEqual(10000, dollars);
+            Assert.AreEqual(10000, materials);
             Assert.AreEqual(0, producer.PendingProductions.Count);
         }
         finally
@@ -2204,21 +2204,21 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             {
                 [producer.Id] = producer
             };
-            int dollars = 10000;
+            int materials = 10000;
             BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
                 runtimeBuildings,
                 productionSystem,
                 unitPrefab,
                 world.EntityManager,
-                trySpendDollars: amount =>
+                trySpendMaterials: amount =>
                 {
-                    if (dollars < amount)
+                    if (materials < amount)
                         return false;
 
-                    dollars -= amount;
+                    materials -= amount;
                     return true;
                 },
-                refundDollars: amount => dollars += amount,
+                refundMaterials: amount => materials += amount,
                 maxQueuedUnitProductions: 1);
 
             int requestId = requestSystem.EnqueueCampItemRequest(
@@ -2234,7 +2234,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                 out BuildingUiCampItemCommandResultElement result));
             Assert.AreEqual(0, result.Accepted);
             Assert.AreEqual(BuildingUiCampItemCommandResultElement.GlobalProductionQueueFull, result.ResultCode);
-            Assert.AreEqual(10000, dollars);
+            Assert.AreEqual(10000, materials);
             Assert.AreEqual(1, producer.PendingProductions.Count);
         }
         finally
@@ -3433,8 +3433,8 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         IReadOnlyList<GameObject> unitPrefabs,
         IReadOnlyDictionary<string, GameObject> unitPrefabsByKey,
         BuildingProductionRequestSystemHelper.BeginPlacementForConfiguredSpawnableDelegate beginPlacement,
-        BuildingProductionRequestSystemHelper.TrySpendDollarsDelegate trySpendDollars,
-        BuildingProductionRequestSystemHelper.RefundDollarsDelegate refundDollars,
+        BuildingProductionRequestSystemHelper.TrySpendMaterialsDelegate trySpendMaterials,
+        BuildingProductionRequestSystemHelper.RefundMaterialsDelegate refundMaterials,
         BuildingProductionRequestSystemHelper.SetActivePlacementCostDelegate setActivePlacementCost,
         BuildingProductionRequestSystemHelper.EvaluateConstructionResourcesDelegate evaluateConstructionResources = null)
     {
@@ -3460,8 +3460,8 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             BuildingDefinitionPrefabSystemHelper.GetProductionPrefab,
             null,
             beginPlacement,
-            trySpendDollars,
-            refundDollars,
+            trySpendMaterials,
+            refundMaterials,
             setActivePlacementCost,
             null,
             _ => { },
@@ -3520,8 +3520,8 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         GameObject unitPrefab,
         EntityManager entityManager = default,
         BuildingProductionRequestSystemHelper.TryQueuePlayerUnitDelegate tryQueuePlayerUnit = null,
-        BuildingProductionRequestSystemHelper.TrySpendDollarsDelegate trySpendDollars = null,
-        BuildingProductionRequestSystemHelper.RefundDollarsDelegate refundDollars = null,
+        BuildingProductionRequestSystemHelper.TrySpendMaterialsDelegate trySpendMaterials = null,
+        BuildingProductionRequestSystemHelper.RefundMaterialsDelegate refundMaterials = null,
         int maxQueuedUnitProductions = 25)
     {
         var unitPrefabs = new List<GameObject> { unitPrefab };
@@ -3546,8 +3546,8 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             BuildingDefinitionPrefabSystemHelper.GetProductionPrefab,
             null,
             null,
-            trySpendDollars ?? (_ => true),
-            refundDollars ?? (_ => { }),
+            trySpendMaterials ?? (_ => true),
+            refundMaterials ?? (_ => { }),
             _ => { },
             tryQueuePlayerUnit ?? ((building, productionIndex, spawnUnitPrefab) => productionSystem.TryQueuePlayerUnitFromBuilding(
                 queueContext,

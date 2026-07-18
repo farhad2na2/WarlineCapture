@@ -319,7 +319,7 @@ public sealed class ResourceExchangeGcAllocationValidationTests
             DisplayName = new FixedString64Bytes("Export Oil"),
             RouteType = ResourceExchangeRouteType.Export,
             InputResource = ResourceExchangeResourceKind.Oil,
-            OutputResource = ResourceExchangeResourceKind.Credits,
+            OutputResource = ResourceExchangeResourceKind.Oil,
             InputAmountMin = 100,
             InputAmountMax = 500,
             InputStep = 100,
@@ -349,16 +349,16 @@ public sealed class ResourceExchangeGcAllocationValidationTests
             1,
             factionId,
             ResourceExchangeResourceKind.Oil,
-            ResourceExchangeResourceKind.Credits,
+            ResourceExchangeResourceKind.Oil,
             100,
             42);
         Assert.IsTrue(ResourceExchangePhysicalStorageTestHelper.TryReserve(em, entity, oilExport, out _));
         queue.Add(oilExport);
-        queue.Add(CreateQueueItem(2, factionId, ResourceExchangeResourceKind.Materials, ResourceExchangeResourceKind.Credits, 120, 50));
+        queue.Add(CreateQueueItem(2, factionId, ResourceExchangeResourceKind.Materials, ResourceExchangeResourceKind.Oil, 120, 50));
         ResourceExchangeQueueComponent fuelImport = CreateQueueItem(
             3,
             factionId,
-            ResourceExchangeResourceKind.Credits,
+            ResourceExchangeResourceKind.Oil,
             ResourceExchangeResourceKind.Fuel,
             180,
             60);

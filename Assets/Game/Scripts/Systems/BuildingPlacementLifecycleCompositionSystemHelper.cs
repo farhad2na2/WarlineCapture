@@ -152,7 +152,7 @@ namespace Game.Runtime
         }
 
         public PlacementState ActivePlacement { get; private set; }
-        public int ActivePlacementCost => Mathf.Max(0, ActivePlacement?.Definition?.CreditsCost ?? 0);
+        public int ActivePlacementCost => Mathf.Max(0, ActivePlacement?.Definition?.MaterialsCost ?? 0);
         public bool HasPendingBuildingPlacement => ActivePlacement != null;
         public bool CanConfirmBuildingPlacement => ActivePlacement != null && ActivePlacement.IsValid;
         private readonly BuildingPlacementConstructionTransaction _transaction = new();

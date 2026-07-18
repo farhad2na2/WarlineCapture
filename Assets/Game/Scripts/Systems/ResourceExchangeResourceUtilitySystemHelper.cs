@@ -13,8 +13,6 @@ namespace Game.Runtime
         {
             switch (resourceKind)
             {
-                case ResourceExchangeResourceKind.Credits:
-                    return economy.Money;
                 case ResourceExchangeResourceKind.Materials:
                     return materials.Current;
                 case ResourceExchangeResourceKind.RushTickets:
@@ -50,11 +48,6 @@ namespace Game.Runtime
 
             switch (resourceKind)
             {
-                case ResourceExchangeResourceKind.Credits:
-                    if (economy.Money < amount)
-                        return false;
-                    economy.Money -= amount;
-                    return true;
                 case ResourceExchangeResourceKind.Materials:
                     return FactionTacticalMaterialsUtilitySystemHelper.TrySpend(
                                ref materials,
@@ -84,9 +77,6 @@ namespace Game.Runtime
 
             switch (resourceKind)
             {
-                case ResourceExchangeResourceKind.Credits:
-                    economy.Money = SaturatingAdd(economy.Money, amount);
-                    return true;
                 case ResourceExchangeResourceKind.Materials:
                     return FactionTacticalMaterialsUtilitySystemHelper.TryGrant(
                                ref materials,

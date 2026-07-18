@@ -61,6 +61,23 @@ namespace Game.Runtime
                    FactionConstructionResourceMutationResult.Applied;
         }
 
+        public bool TrySpendMaterials(int amount)
+        {
+            amount = Mathf.Max(0, amount);
+            return amount == 0 ||
+                   TrySpendConstructionResources(0, amount) ==
+                   FactionConstructionResourceMutationResult.Applied;
+        }
+
+        public void RefundMaterials(int amount)
+        {
+            amount = Mathf.Max(0, amount);
+            if (amount == 0)
+                return;
+
+            TryRestoreConstructionResources(0, amount);
+        }
+
         public FactionConstructionResourceMutationResult TrySpendConstructionResources(
             int creditsCost,
             int materialsCost)

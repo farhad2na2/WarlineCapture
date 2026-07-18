@@ -31,14 +31,14 @@ namespace Game.Runtime
                 source.BuildingVisualSystem,
                 source.BuildingSpawnCompositionSystemHelper,
                 spawnContext,
-                source.RuntimeFactionResourceSystemHelper.CurrentDollars,
+                source.RuntimeFactionResourceSystemHelper.CurrentMaterials,
                 source.BuildingPlacementStartupSystemHelper.MaxQueuedUnitProductions,
                 prefab => EnqueueAndProcessBeginPlacementForConfiguredSpawnable(
                     source,
                     createPlacementCommandContext(source, interactionContext, markerPropertyBlock),
                     prefab),
-                source.RuntimeFactionResourceSystemHelper.TrySpendDollars,
-                source.RuntimeFactionResourceSystemHelper.AddDollars,
+                source.RuntimeFactionResourceSystemHelper.TrySpendMaterials,
+                source.RuntimeFactionResourceSystemHelper.RefundMaterials,
                 cost => source.BuildingPlacementCommandRequestCompositionSystemHelper.SetActivePlacementCost(
                     createPlacementCommandContext(source, interactionContext, markerPropertyBlock),
                     cost),

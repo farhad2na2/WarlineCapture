@@ -301,13 +301,11 @@ namespace Game.UI.Contracts
     public readonly struct UiShellMainMenuResourcesModel
     {
         public readonly string CreditsText;
-        public readonly string SuppliesText;
         public readonly string CommandText;
 
-        public UiShellMainMenuResourcesModel(string creditsText, string suppliesText, string commandText)
+        public UiShellMainMenuResourcesModel(string creditsText, string commandText)
         {
             CreditsText = creditsText;
-            SuppliesText = suppliesText;
             CommandText = commandText;
         }
     }
@@ -419,8 +417,8 @@ namespace Game.UI.Contracts
         public readonly Sprite ThumbnailSprite;
         public readonly string Title;
         public readonly string Role;
-        public readonly string CreditsText;
-        public readonly string SuppliesText;
+        public readonly string MaterialsText;
+        public readonly string FuelText;
         public readonly string TimeText;
 
         public UiBuildDrawerCatalogItemModel(
@@ -428,10 +426,10 @@ namespace Game.UI.Contracts
             bool enabled,
             string title,
             string role,
-            string creditsText,
-            string suppliesText,
+            string materialsText,
+            string fuelText,
             string timeText)
-            : this(visible, enabled, false, BuildingUiCommandFailure.None, null, title, role, creditsText, suppliesText, timeText)
+            : this(visible, enabled, false, BuildingUiCommandFailure.None, null, title, role, materialsText, fuelText, timeText)
         {
         }
 
@@ -441,10 +439,10 @@ namespace Game.UI.Contracts
             bool selected,
             string title,
             string role,
-            string creditsText,
-            string suppliesText,
+            string materialsText,
+            string fuelText,
             string timeText)
-            : this(visible, enabled, selected, BuildingUiCommandFailure.None, null, title, role, creditsText, suppliesText, timeText)
+            : this(visible, enabled, selected, BuildingUiCommandFailure.None, null, title, role, materialsText, fuelText, timeText)
         {
         }
 
@@ -455,10 +453,10 @@ namespace Game.UI.Contracts
             Sprite thumbnailSprite,
             string title,
             string role,
-            string creditsText,
-            string suppliesText,
+            string materialsText,
+            string fuelText,
             string timeText)
-            : this(visible, enabled, selected, BuildingUiCommandFailure.None, thumbnailSprite, title, role, creditsText, suppliesText, timeText)
+            : this(visible, enabled, selected, BuildingUiCommandFailure.None, thumbnailSprite, title, role, materialsText, fuelText, timeText)
         {
         }
 
@@ -470,8 +468,8 @@ namespace Game.UI.Contracts
             Sprite thumbnailSprite,
             string title,
             string role,
-            string creditsText,
-            string suppliesText,
+            string materialsText,
+            string fuelText,
             string timeText)
         {
             Visible = visible;
@@ -481,8 +479,8 @@ namespace Game.UI.Contracts
             ThumbnailSprite = thumbnailSprite;
             Title = title;
             Role = role;
-            CreditsText = creditsText;
-            SuppliesText = suppliesText;
+            MaterialsText = materialsText;
+            FuelText = fuelText;
             TimeText = timeText;
         }
     }
@@ -571,8 +569,8 @@ namespace Game.UI.Contracts
         public readonly string RequirementsText;
         public readonly string PlacementText;
         public readonly string ProductionTimeText;
-        public readonly string CreditsCostText;
-        public readonly string SuppliesCostText;
+        public readonly string MaterialsCostText;
+        public readonly string FuelCostText;
         public readonly string InstructionText;
         public readonly string ProductionTitle;
         public readonly string ProductionCountText;
@@ -608,8 +606,8 @@ namespace Game.UI.Contracts
             string requirementsText,
             string placementText,
             string productionTimeText,
-            string creditsCostText,
-            string suppliesCostText,
+            string materialsCostText,
+            string fuelCostText,
             string instructionText,
             string productionTitle,
             string productionCountText,
@@ -637,8 +635,8 @@ namespace Game.UI.Contracts
                 requirementsText,
                 placementText,
                 productionTimeText,
-                creditsCostText,
-                suppliesCostText,
+                materialsCostText,
+                fuelCostText,
                 instructionText,
                 productionTitle,
                 productionCountText,
@@ -676,8 +674,8 @@ namespace Game.UI.Contracts
             string requirementsText,
             string placementText,
             string productionTimeText,
-            string creditsCostText,
-            string suppliesCostText,
+            string materialsCostText,
+            string fuelCostText,
             string instructionText,
             string productionTitle,
             string productionCountText,
@@ -711,8 +709,8 @@ namespace Game.UI.Contracts
                 requirementsText,
                 placementText,
                 productionTimeText,
-                creditsCostText,
-                suppliesCostText,
+                materialsCostText,
+                fuelCostText,
                 instructionText,
                 productionTitle,
                 productionCountText,
@@ -750,8 +748,8 @@ namespace Game.UI.Contracts
             string requirementsText,
             string placementText,
             string productionTimeText,
-            string creditsCostText,
-            string suppliesCostText,
+            string materialsCostText,
+            string fuelCostText,
             string instructionText,
             string productionTitle,
             string productionCountText,
@@ -786,8 +784,8 @@ namespace Game.UI.Contracts
             RequirementsText = requirementsText;
             PlacementText = placementText;
             ProductionTimeText = productionTimeText;
-            CreditsCostText = creditsCostText;
-            SuppliesCostText = suppliesCostText;
+            MaterialsCostText = materialsCostText;
+            FuelCostText = fuelCostText;
             InstructionText = instructionText;
             ProductionTitle = productionTitle;
             ProductionCountText = productionCountText;
@@ -1047,7 +1045,6 @@ namespace Game.UI.Contracts
         public readonly int CompletedCount;
         public readonly int MaxQueueItems;
         public readonly string QueueCapacityText;
-        public readonly string CreditsText;
         public readonly string MaterialsText;
         public readonly string OilText;
         public readonly string FuelText;
@@ -1081,7 +1078,6 @@ namespace Game.UI.Contracts
             int completedCount,
             int maxQueueItems,
             string queueCapacityText,
-            string creditsText,
             string materialsText,
             string oilText,
             string fuelText,
@@ -1114,7 +1110,6 @@ namespace Game.UI.Contracts
             CompletedCount = completedCount;
             MaxQueueItems = maxQueueItems;
             QueueCapacityText = queueCapacityText;
-            CreditsText = creditsText;
             MaterialsText = materialsText;
             OilText = oilText;
             FuelText = fuelText;
@@ -1150,7 +1145,6 @@ namespace Game.UI.Contracts
                 0,
                 0,
                 "0/0",
-                string.Empty,
                 string.Empty,
                 string.Empty,
                 string.Empty,
@@ -1205,17 +1199,15 @@ namespace Game.UI.Contracts
     {
         public readonly string OrderText;
         public readonly string SquadText;
-        public readonly string CreditsText;
         public readonly string OilText;
         public readonly string FuelText;
-        public readonly string SupplyText;
+        public readonly string MaterialsText;
         public readonly string CivilianRiskText;
         public readonly bool ShowOil;
 
         public UiMatchHudHeaderModel(
             string orderText,
             string squadText,
-            string creditsText,
             string fuelText,
             string supplyText,
             string civilianRiskText,
@@ -1224,16 +1216,15 @@ namespace Game.UI.Contracts
         {
             OrderText = orderText;
             SquadText = squadText;
-            CreditsText = creditsText;
             OilText = oilText;
             FuelText = fuelText;
-            SupplyText = supplyText;
+            MaterialsText = supplyText;
             CivilianRiskText = civilianRiskText;
             ShowOil = showOil;
         }
 
         public static UiMatchHudHeaderModel Default =>
-            new("MOVE ORDER", "RIFLE SQUAD", "0", "2,860", "0/0", "MED", "0");
+            new("MOVE ORDER", "RIFLE SQUAD", "2,860", "0/0", "MED", "0");
     }
 
     public enum UiMatchHudObjectiveIconKind : byte

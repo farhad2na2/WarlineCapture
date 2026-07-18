@@ -11,6 +11,7 @@ namespace Game.Editor
     {
         private const string PrefabPath = "Assets/Game/Prefabs/UI/Shell/Popups/POP12_ResourceExchangePopup.prefab";
         private const string SpriteRoot = "Assets/Game/Art/UI/Generated/ResourceExchange/LayeredOneGo/";
+        private const string ResourceIconRoot = CanonicalUiResourceIconPaths.Root;
         private const string BoldFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Bold SDF.asset";
         private const string MediumFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium SDF.asset";
         private const string LightFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Light SDF.asset";
@@ -66,7 +67,8 @@ namespace Game.Editor
                     continue;
 
                 string path = AssetDatabase.GetAssetPath(sprite);
-                if (!path.StartsWith(SpriteRoot, System.StringComparison.Ordinal))
+                if (!path.StartsWith(SpriteRoot, System.StringComparison.Ordinal) &&
+                    !path.StartsWith(ResourceIconRoot, System.StringComparison.Ordinal))
                     throw new System.InvalidOperationException($"Resource Exchange image {images[i].name} uses non-POP12 sprite {path}.");
             }
 
@@ -106,7 +108,6 @@ namespace Game.Editor
                 SetObject(serialized, "closeButton", header.CloseButton);
                 SetObject(serialized, "titleText", header.TitleText);
                 SetObject(serialized, "queueCapacityText", header.QueueCapacityText);
-                SetObject(serialized, "creditsText", header.CreditsText);
                 SetObject(serialized, "materialsText", header.MaterialsText);
                 SetObject(serialized, "oilText", header.OilText);
                 SetObject(serialized, "fuelText", header.FuelText);
@@ -153,19 +154,19 @@ namespace Game.Editor
                 SetObject(runtimeSerialized, "view", popupView);
                 runtimeSerialized.ApplyModifiedPropertiesWithoutUndo();
 
-                cards[0].Bind("EXPORT OIL", "100 OIL", "46 CREDITS", "00:30", string.Empty, sprites.Thumbnails[0], true, true, false, false, sprites.CardDefault, sprites.CardSelected, sprites.CardLocked);
-                cards[1].Bind("EXPORT MATERIALS", "75 MATERIALS", "90 CREDITS", "00:40", string.Empty, sprites.Thumbnails[1], false, true, false, false, sprites.CardDefault, sprites.CardSelected, sprites.CardLocked);
-                cards[2].Bind("EXPORT FUEL", "50 FUEL", "80 CREDITS", "00:35", string.Empty, sprites.Thumbnails[2], false, true, false, false, sprites.CardDefault, sprites.CardSelected, sprites.CardLocked);
-                cards[3].Bind("IMPORT MATERIALS", "150 CREDITS", "60 MATERIALS", "00:45", string.Empty, sprites.Thumbnails[3], false, true, false, false, sprites.CardDefault, sprites.CardSelected, sprites.CardLocked);
-                cards[4].Bind("IMPORT FUEL", "120 CREDITS", "50 FUEL", "00:30", string.Empty, sprites.Thumbnails[4], false, true, false, false, sprites.CardDefault, sprites.CardSelected, sprites.CardLocked);
-                cards[5].Bind("IMPORT OIL", "LOCKED", "SCENARIO GATED", "--:--", "LOCKED", sprites.Thumbnails[5], false, false, true, true, sprites.CardDefault, sprites.CardSelected, sprites.CardLocked);
-                queue.Rows[0].Bind("1", "Export Oil", "100 OIL", "46 CREDITS", "00:11", "65%", "IN PROGRESS", 0.65f, sprites.Thumbnails[0], true, true, false, false);
-                queue.Rows[1].Bind("2", "Import Fuel", "120 CREDITS", "50 FUEL", "00:30", "0%", "QUEUED", 0f, sprites.Thumbnails[4], false, true, false, false);
-                queue.Rows[2].Bind("3", "Export Materials", "75 MATERIALS", "90 CREDITS", "00:40", "0%", "QUEUED", 0f, sprites.Thumbnails[1], false, true, false, false);
-                queue.Rows[3].Bind("4", "Import Materials", "150 CREDITS", "60 MATERIALS", "DONE", "100%", "COMPLETE", 1f, sprites.Thumbnails[3], false, false, true, false);
-                popupView.ApplyHeader("4/6", "2,400", "180", "620", "310", "7");
+                cards[0].Bind("OIL TO MATERIALS", "100 OIL", "300 MATERIALS", "00:45", string.Empty, sprites.Thumbnails[0], true, true, false, false, sprites.CardDefault, sprites.CardSelected, sprites.CardLocked);
+                cards[1].Bind("MATERIALS TO OIL", "100 MATERIALS", "15 OIL", "00:45", string.Empty, sprites.Thumbnails[1], false, true, false, false, sprites.CardDefault, sprites.CardSelected, sprites.CardLocked);
+                cards[2].Bind("OIL TO FUEL", "100 OIL", "33 FUEL", "00:45", string.Empty, sprites.Thumbnails[2], false, true, false, false, sprites.CardDefault, sprites.CardSelected, sprites.CardLocked);
+                cards[3].Bind("FUEL TO OIL", "100 FUEL", "120 OIL", "01:30", string.Empty, sprites.Thumbnails[3], false, true, false, false, sprites.CardDefault, sprites.CardSelected, sprites.CardLocked);
+                cards[4].Bind("FUEL TO MATERIALS", "100 FUEL", "180 MATERIALS", "01:30", string.Empty, sprites.Thumbnails[4], false, true, false, false, sprites.CardDefault, sprites.CardSelected, sprites.CardLocked);
+                cards[5].Bind("SCENARIO ROUTE", "LOCKED", "SCENARIO GATED", "--:--", "LOCKED", sprites.Thumbnails[5], false, false, true, true, sprites.CardDefault, sprites.CardSelected, sprites.CardLocked);
+                queue.Rows[0].Bind("1", "Oil to Materials", "100 OIL", "300 MATERIALS", "00:11", "65%", "IN PROGRESS", 0.65f, sprites.Thumbnails[0], true, true, false, false);
+                queue.Rows[1].Bind("2", "Fuel to Oil", "100 FUEL", "120 OIL", "01:30", "0%", "QUEUED", 0f, sprites.Thumbnails[3], false, true, false, false);
+                queue.Rows[2].Bind("3", "Materials to Oil", "100 MATERIALS", "15 OIL", "00:45", "0%", "QUEUED", 0f, sprites.Thumbnails[1], false, true, false, false);
+                queue.Rows[3].Bind("4", "Fuel to Materials", "100 FUEL", "180 MATERIALS", "DONE", "100%", "COMPLETE", 1f, sprites.Thumbnails[4], false, false, true, false);
+                popupView.ApplyHeader("4/6", "180", "620", "310", "7");
                 popupView.ApplyTabs(true, 3, 3);
-                popupView.ApplyDetail("Export Oil", "EXPORT", "1 OIL -> 0.47 CREDITS", "100", "100 OIL", "46 CREDITS", "00:30", "Requires Oil Pump", "Confirm to start a timed logistics exchange.", true, false, sprites.Thumbnails[0]);
+                popupView.ApplyDetail("Oil to Materials", "CONVERT", "1 OIL -> 3 MATERIALS", "100", "100 OIL", "300 MATERIALS", "00:45", "Requires Oil storage", "Confirm to start a timed logistics exchange.", true, false, sprites.Thumbnails[0]);
                 popupView.ApplyQueueControls(true, true);
 
                 return PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
@@ -191,19 +192,18 @@ namespace Game.Editor
             SetRect(title.rectTransform, new Vector2(0f, 0f), new Vector2(0.45f, 1f), Vector2.zero, new Vector2(112f, 0f), new Vector2(0f, 0f));
 
             TMP_Text queue = CreateChip(header, "QueueCapacity", "4/6", sprites.CounterChip, new Vector2(0.46f, 0.18f), new Vector2(0.535f, 0.82f));
-            TMP_Text credits = CreateResourceChip(header, "Credits", sprites.CreditsIcon, "2,400", new Vector2(0.55f, 0.18f), new Vector2(0.64f, 0.82f));
-            TMP_Text materials = CreateResourceChip(header, "Materials", sprites.MaterialsIcon, "180", new Vector2(0.645f, 0.18f), new Vector2(0.735f, 0.82f));
-            TMP_Text oil = CreateResourceChip(header, "Oil", sprites.OilIcon, "620", new Vector2(0.74f, 0.18f), new Vector2(0.81f, 0.82f));
-            TMP_Text fuel = CreateResourceChip(header, "Fuel", sprites.FuelIcon, "310", new Vector2(0.815f, 0.18f), new Vector2(0.885f, 0.82f));
+            TMP_Text materials = CreateResourceChip(header, "Materials", sprites.MaterialsIcon, "180", new Vector2(0.55f, 0.18f), new Vector2(0.66f, 0.82f));
+            TMP_Text oil = CreateResourceChip(header, "Oil", sprites.OilIcon, "620", new Vector2(0.665f, 0.18f), new Vector2(0.755f, 0.82f));
+            TMP_Text fuel = CreateResourceChip(header, "Fuel", sprites.FuelIcon, "310", new Vector2(0.76f, 0.18f), new Vector2(0.845f, 0.82f));
             TMP_Text rush = CreateResourceChip(header, "RushTickets", sprites.RushTicketIcon, "7", new Vector2(0.89f, 0.18f), new Vector2(0.945f, 0.82f));
             Button close = CreateIconButton("CloseButton", header, sprites.CloseButtonFrame, sprites.CloseIcon, new Vector2(0.955f, 0.06f), new Vector2(0.995f, 0.94f));
-            return new HeaderRefs(title, queue, credits, materials, oil, fuel, rush, close);
+            return new HeaderRefs(title, queue, materials, oil, fuel, rush, close);
         }
 
         private static TabRefs CreateTabs(RectTransform panel, Sprites sprites)
         {
-            Button export = CreateTextButton("ExportTab", panel, "EXPORT", sprites.TabSelected, null, new Vector2(0.025f, 0.825f), new Vector2(0.235f, 0.885f), 26f, out TMP_Text exportLabel);
-            Button import = CreateTextButton("ImportTab", panel, "IMPORT", sprites.TabDefault, null, new Vector2(0.25f, 0.825f), new Vector2(0.46f, 0.885f), 26f, out TMP_Text importLabel);
+            Button export = CreateTextButton("ExportTab", panel, "CONVERT", sprites.TabSelected, null, new Vector2(0.025f, 0.825f), new Vector2(0.235f, 0.885f), 26f, out TMP_Text exportLabel);
+            Button import = CreateTextButton("ImportTab", panel, "RECOVERY", sprites.TabDefault, null, new Vector2(0.25f, 0.825f), new Vector2(0.46f, 0.885f), 26f, out TMP_Text importLabel);
             TMP_Text exportCount = CreateText("Count", export.transform, "3", 16f, mediumFont, TextAlignmentOptions.Center, PaleText);
             SetRect(exportCount.rectTransform, new Vector2(0.82f, 0.15f), new Vector2(0.96f, 0.85f), Vector2.zero, Vector2.zero);
             TMP_Text importCount = CreateText("Count", import.transform, "3", 16f, mediumFont, TextAlignmentOptions.Center, PaleText);
@@ -247,7 +247,7 @@ namespace Game.Editor
             SetRect(title.rectTransform, new Vector2(0.05f, 0.79f), new Vector2(0.95f, 0.98f), Vector2.zero, Vector2.zero);
             TMP_Text input = CreateText("Input", root.transform, "100 OIL", 16f, mediumFont, TextAlignmentOptions.Left, PaleText);
             SetRect(input.rectTransform, new Vector2(0.08f, 0.19f), new Vector2(0.48f, 0.35f), Vector2.zero, Vector2.zero);
-            TMP_Text output = CreateText("Output", root.transform, "46 CREDITS", 16f, mediumFont, TextAlignmentOptions.Left, GoldText);
+            TMP_Text output = CreateText("Output", root.transform, "300 MATERIALS", 16f, mediumFont, TextAlignmentOptions.Left, GoldText);
             SetRect(output.rectTransform, new Vector2(0.50f, 0.19f), new Vector2(0.92f, 0.35f), Vector2.zero, Vector2.zero);
             TMP_Text duration = CreateText("Duration", root.transform, "00:30", 15f, mediumFont, TextAlignmentOptions.Left, PaleText);
             SetRect(duration.rectTransform, new Vector2(0.08f, 0.05f), new Vector2(0.44f, 0.18f), Vector2.zero, Vector2.zero);
@@ -303,9 +303,9 @@ namespace Game.Editor
             TMP_Text name = CreateText("Name", detail, "EXPORT OIL", 28f, boldFont, TextAlignmentOptions.Left, GoldText);
             SetRect(name.rectTransform, new Vector2(0.50f, 0.82f), new Vector2(0.96f, 0.93f), Vector2.zero, Vector2.zero);
             TMP_Text route = DetailLine("Route", detail, "ROUTE", "EXPORT", 0.74f);
-            TMP_Text rate = DetailLine("Rate", detail, "RATE", "1 OIL -> 0.47 CREDITS", 0.65f);
+            TMP_Text rate = DetailLine("Rate", detail, "RATE", "1 OIL -> 3 MATERIALS", 0.65f);
             TMP_Text input = DetailLine("Input", detail, "INPUT", "100 OIL", 0.56f);
-            TMP_Text output = DetailLine("Output", detail, "OUTPUT", "46 CREDITS", 0.47f);
+            TMP_Text output = DetailLine("Output", detail, "OUTPUT", "300 MATERIALS", 0.47f);
             TMP_Text duration = DetailLine("Duration", detail, "TIME", "00:30", 0.38f);
             TMP_Text requirements = DetailLine("Requirements", detail, "REQUIRES", "Oil Pump", 0.29f);
 
@@ -380,7 +380,7 @@ namespace Game.Editor
             SetRect(displayName.rectTransform, new Vector2(0.15f, 0.42f), new Vector2(0.42f, 0.95f), Vector2.zero, Vector2.zero);
             TMP_Text input = CreateText("Input", root.transform, "100 OIL", 12f, lightFont, TextAlignmentOptions.Left, MutedText);
             SetRect(input.rectTransform, new Vector2(0.15f, 0.05f), new Vector2(0.31f, 0.45f), Vector2.zero, Vector2.zero);
-            TMP_Text output = CreateText("Output", root.transform, "46 CREDITS", 12f, lightFont, TextAlignmentOptions.Left, GoldText);
+            TMP_Text output = CreateText("Output", root.transform, "300 MATERIALS", 12f, lightFont, TextAlignmentOptions.Left, GoldText);
             SetRect(output.rectTransform, new Vector2(0.31f, 0.05f), new Vector2(0.50f, 0.45f), Vector2.zero, Vector2.zero);
             Image track = CreateImage("ProgressTrack", root.transform, sprites.ProgressTrackFrame, Color.white, false, Image.Type.Sliced);
             SetRect(track.rectTransform, new Vector2(0.45f, 0.20f), new Vector2(0.70f, 0.52f), Vector2.zero, Vector2.zero);
@@ -595,6 +595,15 @@ namespace Game.Editor
             return sprite;
         }
 
+        private static Sprite LoadResourceSprite(string fileName)
+        {
+            string path = ResourceIconRoot + fileName;
+            Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+            if (sprite == null)
+                Debug.LogError($"[ResourceExchangePopupPrefabBuilder] Missing canonical resource sprite {path}");
+            return sprite;
+        }
+
         private static Sprites LoadSprites()
         {
             return new Sprites
@@ -622,11 +631,10 @@ namespace Game.Editor
                 SmallCounterChip = LoadSprite("pop12_chrome_22_small_counter_chip_frame.png"),
                 LogisticsTruckIcon = LoadSprite("pop12_icon_01_logistics_exchange_truck.png"),
                 CloseIcon = LoadSprite("pop12_icon_02_close_x.png"),
-                CreditsIcon = LoadSprite("pop12_icon_03_credits_star_coin.png"),
-                MaterialsIcon = LoadSprite("pop12_icon_04_materials_crate.png"),
-                OilIcon = LoadSprite("pop12_icon_05_oil_droplet.png"),
-                FuelIcon = LoadSprite("pop12_icon_06_fuel_jerrycan.png"),
-                RushTicketIcon = LoadSprite("pop12_icon_07_rush_ticket.png"),
+                MaterialsIcon = LoadResourceSprite("resource_materials.png"),
+                OilIcon = LoadResourceSprite("resource_oil.png"),
+                FuelIcon = LoadResourceSprite("resource_fuel.png"),
+                RushTicketIcon = LoadResourceSprite("resource_rush.png"),
                 RushLightningIcon = LoadSprite("pop12_icon_08_rush_lightning.png"),
                 TimerIcon = LoadSprite("pop12_icon_09_timer_clock.png"),
                 InfoIcon = LoadSprite("pop12_icon_10_info_circle.png"),
@@ -705,18 +713,16 @@ namespace Game.Editor
         {
             public readonly TMP_Text TitleText;
             public readonly TMP_Text QueueCapacityText;
-            public readonly TMP_Text CreditsText;
             public readonly TMP_Text MaterialsText;
             public readonly TMP_Text OilText;
             public readonly TMP_Text FuelText;
             public readonly TMP_Text RushTicketsText;
             public readonly Button CloseButton;
 
-            public HeaderRefs(TMP_Text titleText, TMP_Text queueCapacityText, TMP_Text creditsText, TMP_Text materialsText, TMP_Text oilText, TMP_Text fuelText, TMP_Text rushTicketsText, Button closeButton)
+            public HeaderRefs(TMP_Text titleText, TMP_Text queueCapacityText, TMP_Text materialsText, TMP_Text oilText, TMP_Text fuelText, TMP_Text rushTicketsText, Button closeButton)
             {
                 TitleText = titleText;
                 QueueCapacityText = queueCapacityText;
-                CreditsText = creditsText;
                 MaterialsText = materialsText;
                 OilText = oilText;
                 FuelText = fuelText;
@@ -824,7 +830,6 @@ namespace Game.Editor
             public Sprite SmallCounterChip;
             public Sprite LogisticsTruckIcon;
             public Sprite CloseIcon;
-            public Sprite CreditsIcon;
             public Sprite MaterialsIcon;
             public Sprite OilIcon;
             public Sprite FuelIcon;

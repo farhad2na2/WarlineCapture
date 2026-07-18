@@ -98,7 +98,6 @@ namespace Game.UI.Shell.Ecs
                 entityManager.GetComponentData<UiShellMainMenuResourcesComponent>(boundary);
             resources = new UiShellMainMenuResourcesModel(
                 component.CreditsText.ToString(),
-                component.SuppliesText.ToString(),
                 component.CommandText.ToString());
             return true;
         }

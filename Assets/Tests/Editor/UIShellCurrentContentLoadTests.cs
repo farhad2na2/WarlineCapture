@@ -1048,7 +1048,7 @@ public sealed class UIShellCurrentContentLoadTests
         AssertSerializedReference(serialized, "goldActionButtonSprite");
         AssertSerializedReference(serialized, "squareButtonSprite");
         AssertSerializedReference(serialized, "instructionStripSprite");
-        AssertSerializedReference(serialized, "creditsIconSprite");
+        AssertSerializedReference(serialized, "materialsIconSprite");
         AssertSerializedReference(serialized, "timeIconSprite");
         AssertSerializedReference(serialized, "cancelIconSprite");
         AssertSerializedReference(serialized, "rotateIconSprite");

@@ -170,7 +170,6 @@ namespace Game.UI.Shell.Ecs
             uiState.MaxQueueItems = enabled.MaxQueueItems;
             uiState.QueueCapacityText = Text.ToFixed32(
                 $"{summary.ActiveCount}/{math.max(0, enabled.MaxQueueItems)}");
-            uiState.CreditsText = Text.ToFixed32(economy.Money.ToString(CultureInfo.InvariantCulture));
             uiState.MaterialsText = Text.ToFixed32(materials.Current.ToString(CultureInfo.InvariantCulture));
             uiState.OilText = Text.ToFixed32(ResourceExchangeResourceUtilitySystemHelper.GetAmount(
                 economy, materials, wallet, physicalResources,

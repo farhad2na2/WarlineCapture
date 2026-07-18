@@ -52,7 +52,7 @@ public sealed class ResourceExchangeRequestValidationSystemTests
         int requestId = ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
             em,
             exchange,
-            new FixedString128Bytes("exchange.export_oil_credits.standard"),
+            new FixedString128Bytes("exchange.convert_oil_materials.test"),
             200,
             1,
             42);
@@ -104,7 +104,7 @@ public sealed class ResourceExchangeRequestValidationSystemTests
         AddRecipe(em, exportExchange, ExportOilRecipe());
         AddRecipe(em, importExchange, ImportFuelRecipe());
 
-        FixedString128Bytes exportRecipeId = new("exchange.export_oil_credits.standard");
+        FixedString128Bytes exportRecipeId = new("exchange.convert_oil_materials.test");
         FixedString128Bytes importRecipeId = new("exchange.import_fuel_credits.standard");
         int firstExportRequest = ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
             em,
@@ -193,8 +193,8 @@ public sealed class ResourceExchangeRequestValidationSystemTests
         DynamicBuffer<ResourceExchangeEconomyEventComponent> importEvents =
             em.GetBuffer<ResourceExchangeEconomyEventComponent>(importExchange);
         Assert.AreEqual(2, importEvents.Length);
-        AssertEconomyEvent(importEvents[0], 1, 2, importRecipeId, ResourceExchangeResourceKind.Credits, -100);
-        AssertEconomyEvent(importEvents[1], 2, 2, importRecipeId, ResourceExchangeResourceKind.Credits, -300);
+        AssertEconomyEvent(importEvents[0], 1, 2, importRecipeId, ResourceExchangeResourceKind.Oil, -100);
+        AssertEconomyEvent(importEvents[1], 2, 2, importRecipeId, ResourceExchangeResourceKind.Oil, -300);
 
         ResourceExchangeSummaryComponent exportSummary =
             em.GetComponentData<ResourceExchangeSummaryComponent>(exportExchange);
@@ -218,7 +218,7 @@ public sealed class ResourceExchangeRequestValidationSystemTests
         int requestId = ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
             em,
             exchange,
-            new FixedString128Bytes("exchange.export_oil_credits.standard"),
+            new FixedString128Bytes("exchange.convert_oil_materials.test"),
             200,
             1,
             0);
@@ -244,7 +244,7 @@ public sealed class ResourceExchangeRequestValidationSystemTests
         int requestId = ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
             em,
             exchange,
-            new FixedString128Bytes("exchange.export_oil_credits.standard"),
+            new FixedString128Bytes("exchange.convert_oil_materials.test"),
             200,
             1,
             0);
@@ -278,14 +278,14 @@ public sealed class ResourceExchangeRequestValidationSystemTests
         int lockedRequest = ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
             em,
             exchange,
-            new FixedString128Bytes("exchange.export_oil_credits.standard"),
+            new FixedString128Bytes("exchange.convert_oil_materials.test"),
             200,
             1,
             0);
         int stepRequest = ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
             em,
             exchange,
-            new FixedString128Bytes("exchange.export_oil_credits.standard"),
+            new FixedString128Bytes("exchange.convert_oil_materials.test"),
             250,
             1,
             0);
@@ -310,7 +310,7 @@ public sealed class ResourceExchangeRequestValidationSystemTests
         int insufficient = ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
             em,
             exchange,
-            new FixedString128Bytes("exchange.export_oil_credits.standard"),
+            new FixedString128Bytes("exchange.convert_oil_materials.test"),
             200,
             1,
             0);
@@ -361,7 +361,7 @@ public sealed class ResourceExchangeRequestValidationSystemTests
         int queueFull = ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
             em,
             exchange,
-            new FixedString128Bytes("exchange.export_oil_credits.standard"),
+            new FixedString128Bytes("exchange.convert_oil_materials.test"),
             100,
             1,
             0);
@@ -611,11 +611,11 @@ public sealed class ResourceExchangeRequestValidationSystemTests
     {
         return new ResourceExchangeRecipeComponent
         {
-            RecipeId = new FixedString128Bytes("exchange.export_oil_credits.standard"),
+            RecipeId = new FixedString128Bytes("exchange.convert_oil_materials.test"),
             DisplayName = new FixedString128Bytes("Export Oil"),
             RouteType = ResourceExchangeRouteType.Export,
             InputResource = ResourceExchangeResourceKind.Oil,
-            OutputResource = ResourceExchangeResourceKind.Credits,
+            OutputResource = ResourceExchangeResourceKind.Oil,
             InputAmountMin = 100,
             InputAmountMax = 1000,
             InputStep = 100,
@@ -635,7 +635,7 @@ public sealed class ResourceExchangeRequestValidationSystemTests
             RecipeId = new FixedString128Bytes("exchange.import_fuel_credits.standard"),
             DisplayName = new FixedString128Bytes("Import Fuel"),
             RouteType = ResourceExchangeRouteType.Import,
-            InputResource = ResourceExchangeResourceKind.Credits,
+            InputResource = ResourceExchangeResourceKind.Oil,
             OutputResource = ResourceExchangeResourceKind.Fuel,
             InputAmountMin = 100,
             InputAmountMax = 1000,

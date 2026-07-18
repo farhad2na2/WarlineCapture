@@ -49,8 +49,8 @@ namespace Game.Runtime
 
         public delegate GameObject GetProductionPrefabDelegate(BuildingDefinition definition, int index);
         public delegate bool BeginPlacementForConfiguredSpawnableDelegate(GameObject prefab);
-        public delegate bool TrySpendDollarsDelegate(int amount);
-        public delegate void RefundDollarsDelegate(int amount);
+        public delegate bool TrySpendMaterialsDelegate(int amount);
+        public delegate void RefundMaterialsDelegate(int amount);
         public delegate void SetActivePlacementCostDelegate(int cost);
         public delegate bool TryQueuePlayerUnitDelegate(RuntimeBuildingEntity building, int productionIndex, GameObject spawnUnitPrefab);
         public delegate void SelectRuntimeBuildingDelegate(int buildingId);
@@ -79,7 +79,7 @@ namespace Game.Runtime
             public readonly IReadOnlyDictionary<GameObject, BuildingDefinition> ConfiguredDefinitionsByPrefab;
             public readonly IReadOnlyList<GameObject> UnitSpawnPrefabs;
             public readonly IReadOnlyDictionary<string, GameObject> UnitSpawnPrefabsByKey;
-            public readonly int ResourceDollars;
+            public readonly int ResourceMaterials;
             public readonly int MaxQueuedUnitProductions;
             public readonly BuildingProductionQueueCompositionSystemHelper ProductionSystem;
             public readonly BuildingProductionQueueCompositionSystemHelper.QueueContext ProductionQueueContext;
@@ -87,8 +87,8 @@ namespace Game.Runtime
             public readonly GetProductionPrefabDelegate GetProductionPrefab;
             public readonly BuildingProductionQueueCompositionSystemHelper.TryGetPrefabLocalBoundsDelegate TryGetPrefabLocalBounds;
             public readonly BeginPlacementForConfiguredSpawnableDelegate BeginPlacementForConfiguredSpawnable;
-            public readonly TrySpendDollarsDelegate TrySpendDollars;
-            public readonly RefundDollarsDelegate RefundDollars;
+            public readonly TrySpendMaterialsDelegate TrySpendMaterials;
+            public readonly RefundMaterialsDelegate RefundMaterials;
             public readonly SetActivePlacementCostDelegate SetActivePlacementCost;
             public readonly TryQueuePlayerUnitDelegate TryQueuePlayerUnit;
             public readonly SelectRuntimeBuildingDelegate SelectRuntimeBuilding;
@@ -111,7 +111,7 @@ namespace Game.Runtime
                 IReadOnlyDictionary<GameObject, BuildingDefinition> configuredDefinitionsByPrefab,
                 IReadOnlyList<GameObject> unitSpawnPrefabs,
                 IReadOnlyDictionary<string, GameObject> unitSpawnPrefabsByKey,
-                int resourceDollars,
+                int resourceMaterials,
                 int maxQueuedUnitProductions,
                 BuildingProductionQueueCompositionSystemHelper productionSystem,
                 BuildingProductionQueueCompositionSystemHelper.QueueContext productionQueueContext,
@@ -119,8 +119,8 @@ namespace Game.Runtime
                 GetProductionPrefabDelegate getProductionPrefab,
                 BuildingProductionQueueCompositionSystemHelper.TryGetPrefabLocalBoundsDelegate tryGetPrefabLocalBounds,
                 BeginPlacementForConfiguredSpawnableDelegate beginPlacementForConfiguredSpawnable,
-                TrySpendDollarsDelegate trySpendDollars,
-                RefundDollarsDelegate refundDollars,
+                TrySpendMaterialsDelegate trySpendMaterials,
+                RefundMaterialsDelegate refundMaterials,
                 SetActivePlacementCostDelegate setActivePlacementCost,
                 TryQueuePlayerUnitDelegate tryQueuePlayerUnit,
                 SelectRuntimeBuildingDelegate selectRuntimeBuilding,
@@ -142,7 +142,7 @@ namespace Game.Runtime
                 ConfiguredDefinitionsByPrefab = configuredDefinitionsByPrefab;
                 UnitSpawnPrefabs = unitSpawnPrefabs;
                 UnitSpawnPrefabsByKey = unitSpawnPrefabsByKey;
-                ResourceDollars = resourceDollars;
+                ResourceMaterials = resourceMaterials;
                 MaxQueuedUnitProductions = Mathf.Max(0, maxQueuedUnitProductions);
                 ProductionSystem = productionSystem;
                 ProductionQueueContext = productionQueueContext;
@@ -150,8 +150,8 @@ namespace Game.Runtime
                 GetProductionPrefab = getProductionPrefab;
                 TryGetPrefabLocalBounds = tryGetPrefabLocalBounds;
                 BeginPlacementForConfiguredSpawnable = beginPlacementForConfiguredSpawnable;
-                TrySpendDollars = trySpendDollars;
-                RefundDollars = refundDollars;
+                TrySpendMaterials = trySpendMaterials;
+                RefundMaterials = refundMaterials;
                 SetActivePlacementCost = setActivePlacementCost;
                 TryQueuePlayerUnit = tryQueuePlayerUnit;
                 SelectRuntimeBuilding = selectRuntimeBuilding;
@@ -499,18 +499,17 @@ namespace Game.Runtime
             if (context.ConfiguredDefinitionsByPrefab != null &&
                 context.ConfiguredDefinitionsByPrefab.TryGetValue(prefab, out BuildingDefinition buildingDefinition))
             {
-                int creditsCost = Mathf.Max(0, buildingDefinition?.CreditsCost ?? 0);
                 int materialsCost = Mathf.Max(0, buildingDefinition?.MaterialsCost ?? 0);
                 if (context.EvaluateConstructionResources == null)
-                    return context.ResourceDollars < creditsCost ? CampRequestFailure.InsufficientCredits : CampRequestFailure.None;
+                    return context.ResourceMaterials < materialsCost ? CampRequestFailure.InsufficientMaterials : CampRequestFailure.None;
 
                 return BuildingCampItemCommandPolicySystemHelper.MapConstructionResourceFailure(
-                    context.EvaluateConstructionResources(creditsCost, materialsCost));
+                    context.EvaluateConstructionResources(0, materialsCost));
             }
 
             int normalizedPrice = Mathf.Max(0, price);
-            if (context.ResourceDollars < normalizedPrice)
-                return CampRequestFailure.NotEnoughMoney;
+            if (context.ResourceMaterials < normalizedPrice)
+                return CampRequestFailure.InsufficientMaterials;
 
             if (!TryFindFirstFriendlyProducerBuilding(context, prefab, requireQueueCapacity: false, out _, out _, out string producerDisplayName))
             {
@@ -563,14 +562,14 @@ namespace Game.Runtime
                 return CampRequestFailure.MissingProducerBuilding;
             }
 
-            if (context.TrySpendDollars == null || !context.TrySpendDollars(price))
-                return CampRequestFailure.NotEnoughMoney;
+            if (context.TrySpendMaterials == null || !context.TrySpendMaterials(price))
+                return CampRequestFailure.InsufficientMaterials;
 
             if (context.RuntimeBuildings == null ||
                 !context.RuntimeBuildings.TryGetValue(producerBuildingId, out RuntimeBuildingEntity producerBuilding) ||
                 producerBuilding == null)
             {
-                context.RefundDollars?.Invoke(Mathf.Max(0, price));
+                context.RefundMaterials?.Invoke(Mathf.Max(0, price));
                 return CampRequestFailure.InvalidSelection;
             }
 
@@ -579,7 +578,7 @@ namespace Game.Runtime
 
             if (!TryCreateUnitFromBuilding(context, producerBuildingId, productionIndex, frameCount, frameCount, out byte resultCode))
             {
-                context.RefundDollars?.Invoke(Mathf.Max(0, price));
+                context.RefundMaterials?.Invoke(Mathf.Max(0, price));
                 return resultCode switch
                 {
                     BuildingUiProductionCommandResultElement.GlobalQueueFull => CampRequestFailure.GlobalProductionQueueFull,

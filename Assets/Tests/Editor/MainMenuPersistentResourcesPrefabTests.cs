@@ -7,8 +7,8 @@ using UnityEngine.UI;
 public sealed class MainMenuPersistentResourcesPrefabTests
 {
     private const string PrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN02_MainMenuContent.prefab";
-    private const string CreditsIconPath = "Assets/Game/Art/UI/Generated/MainMenu/PersistentResources/mainmenu_resource_credits_coins.png";
-    private const string CommandIconPath = "Assets/Game/Art/UI/Generated/MainMenu/PersistentResources/mainmenu_resource_command_token.png";
+    private const string CreditsIconPath = "Assets/Game/Art/UI/Resources/resource_credits.png";
+    private const string CommandIconPath = "Assets/Game/Art/UI/Resources/resource_command.png";
 
     [Test]
     public void HeaderShowsOnlyCreditsAndCommandWithCanonicalIcons()

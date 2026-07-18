@@ -125,7 +125,6 @@ namespace Game.Runtime
             builder.AppendLine($"- Output amount planned: `{metrics.ResourceExchangeOutputAmount}`");
             builder.AppendLine($"- Total duration seconds: `{metrics.ResourceExchangeDurationSeconds:0.##}`");
             builder.AppendLine($"- Completion rate: `{metrics.ResourceExchangeCompletionRatePercent:0.##}%`");
-            builder.AppendLine($"- Credits delta: `{metrics.ResourceExchangeCreditsDelta}`");
             builder.AppendLine($"- Materials delta: `{metrics.ResourceExchangeMaterialsDelta}`");
             builder.AppendLine($"- Oil delta: `{metrics.ResourceExchangeOilDelta}`");
             builder.AppendLine($"- Fuel delta: `{metrics.ResourceExchangeFuelDelta}`");

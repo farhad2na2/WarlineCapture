@@ -61,8 +61,6 @@ namespace Game.Runtime
                     return new FixedString128Bytes("Resource Exchange is unavailable.");
                 case ResourceExchangeReason.RecipeLocked:
                     return new FixedString128Bytes("Exchange route is locked.");
-                case ResourceExchangeReason.InsufficientCredits:
-                    return new FixedString128Bytes("Not enough Credits.");
                 case ResourceExchangeReason.InsufficientMaterials:
                     return new FixedString128Bytes("Not enough Materials.");
                 case ResourceExchangeReason.InsufficientOil:

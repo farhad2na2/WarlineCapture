@@ -47,7 +47,7 @@ namespace Game.Composition
                 authoring.ConfiguredDisplayName,
                 authoring.ConfiguredDescription,
                 authoring.CanRequest,
-                authoring.Price,
+                authoring.MaterialsCost,
                 authoring.ProductionDurationSeconds,
                 authoring.GetConfiguredFootprintCells(),
                 authoring.PortraitSprite,

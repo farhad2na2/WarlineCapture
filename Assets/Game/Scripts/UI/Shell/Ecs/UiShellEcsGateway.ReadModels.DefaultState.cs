@@ -64,8 +64,8 @@ namespace Game.UI.Shell.Ecs
                     RequirementsText = new FixedString64Bytes("HQ LEVEL 1"),
                     PlacementText = new FixedString64Bytes("VALID GROUND"),
                     ProductionTimeText = new FixedString32Bytes("00:18"),
-                    CreditsCostText = new FixedString32Bytes("420"),
-                    SuppliesCostText = new FixedString32Bytes("80"),
+                    MaterialsCostText = new FixedString32Bytes("80"),
+                    FuelCostText = default,
                     InstructionText = new FixedString128Bytes("Tap a valid footprint to place the structure."),
                     ProductionTitle = new FixedString32Bytes("QUEUE"),
                     ProductionCountText = new FixedString32Bytes("2/3"),
@@ -108,8 +108,8 @@ namespace Game.UI.Shell.Ecs
                     Category = BuildDrawerCategory.Buildings,
                     Title = new FixedString64Bytes("GUARD TOWER"),
                     Role = new FixedString32Bytes("DEFENSE"),
-                    CreditsText = new FixedString32Bytes("420"),
-                    SuppliesText = new FixedString32Bytes("80"),
+                    MaterialsText = new FixedString32Bytes("80"),
+                    FuelText = default,
                     TimeText = new FixedString32Bytes("00:18")
                 });
                 catalog.Add(new UiBuildDrawerCatalogItemComponent
@@ -120,8 +120,8 @@ namespace Game.UI.Shell.Ecs
                     Category = BuildDrawerCategory.Buildings,
                     Title = new FixedString64Bytes("BARRACKS"),
                     Role = new FixedString32Bytes("INFANTRY"),
-                    CreditsText = new FixedString32Bytes("900"),
-                    SuppliesText = new FixedString32Bytes("120"),
+                    MaterialsText = new FixedString32Bytes("120"),
+                    FuelText = default,
                     TimeText = new FixedString32Bytes("00:30")
                 });
             }
@@ -158,7 +158,6 @@ namespace Game.UI.Shell.Ecs
                     ActiveTab = UiResourceExchangeTab.Export,
                     SelectedRecipeSlot = 0,
                     QueueCapacityText = new FixedString32Bytes("0/0"),
-                    CreditsText = new FixedString32Bytes("0"),
                     MaterialsText = new FixedString32Bytes("0"),
                     OilText = new FixedString32Bytes("0"),
                     FuelText = new FixedString32Bytes("0"),
@@ -224,7 +223,6 @@ namespace Game.UI.Shell.Ecs
             entityManager.AddComponentData(boundary, new UiShellMainMenuResourcesComponent
             {
                 CreditsText = new FixedString32Bytes("12,450"),
-                SuppliesText = new FixedString32Bytes("1,280"),
                 CommandText = new FixedString32Bytes("78/100")
             });
         }
@@ -238,9 +236,8 @@ namespace Game.UI.Shell.Ecs
             {
                 OrderText = new FixedString32Bytes("MOVE ORDER"),
                 SquadText = new FixedString32Bytes("RIFLE SQUAD"),
-                CreditsText = new FixedString32Bytes("0"),
                 FuelText = new FixedString32Bytes("2,860"),
-                SupplyText = new FixedString32Bytes("0/0"),
+                MaterialsText = new FixedString32Bytes("0/0"),
                 CivilianRiskText = new FixedString32Bytes("MED")
             });
         }

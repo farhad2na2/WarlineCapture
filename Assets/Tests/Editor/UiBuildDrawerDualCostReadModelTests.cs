@@ -21,8 +21,8 @@ public sealed class UiBuildDrawerDualCostReadModelTests
     {
         try
         {
-            RunCase(test => test.WriteReadModel_BuildingDisplaysGroupedCreditsAndMaterials());
-            RunCase(test => test.WriteReadModel_UnitRetainsGroupedCreditsAndEmptyMaterials());
+            RunCase(test => test.WriteReadModel_BuildingDisplaysGroupedMaterialsAndEmptyFuel());
+            RunCase(test => test.WriteReadModel_UnitDisplaysGroupedMaterialsAndEmptyFuel());
             RunCase(test => test.WriteReadModel_AvailableBuildingEnablesCatalogAndSelectedDetail());
             RunCase(test => test.WriteReadModel_InsufficientCreditsDisablesCatalogAndSelectedDetail());
             RunCase(test => test.WriteReadModel_InsufficientMaterialsDisablesCatalogAndSelectedDetail());
@@ -65,7 +65,7 @@ public sealed class UiBuildDrawerDualCostReadModelTests
     }
 
     [Test]
-    public void WriteReadModel_BuildingDisplaysGroupedCreditsAndMaterials()
+    public void WriteReadModel_BuildingDisplaysGroupedMaterialsAndEmptyFuel()
     {
         BuildingPlacementSystemConfig buildings = CreateAsset<BuildingPlacementSystemConfig>();
         GameObject building = CreateBuilding("Field Fabricator", 1234, 5678);
@@ -76,8 +76,8 @@ public sealed class UiBuildDrawerDualCostReadModelTests
         query.Collect(null, buildings, BuildDrawerCategory.Buildings, items);
 
         Assert.AreEqual(1, items.Count);
-        Assert.AreEqual(1234, items[0].Price);
         Assert.AreEqual(5678, items[0].MaterialsCost);
+        Assert.Zero(items[0].FuelCost);
 
         UiBuildDrawerReadModelSource.Configure(
             null,
@@ -87,7 +87,7 @@ public sealed class UiBuildDrawerDualCostReadModelTests
             Game.Composition.UiCatalogAuthoringMetadataUiSystemHelper.TryGetBuildingMetadata,
             Game.Composition.UiCatalogAuthoringMetadataUiSystemHelper.TryGetUnitMetadata);
 
-        using World world = new(nameof(WriteReadModel_BuildingDisplaysGroupedCreditsAndMaterials));
+        using World world = new(nameof(WriteReadModel_BuildingDisplaysGroupedMaterialsAndEmptyFuel));
         EntityManager entityManager = world.EntityManager;
         Entity boundary = CreateBoundary(entityManager);
         UiBuildDrawerStateComponent state = new() { ActiveCategory = BuildDrawerCategory.Buildings };
@@ -104,14 +104,14 @@ public sealed class UiBuildDrawerDualCostReadModelTests
         UiBuildDrawerDetailComponent detail =
             entityManager.GetComponentData<UiBuildDrawerDetailComponent>(boundary);
         Assert.AreEqual(1, catalog.Length);
-        Assert.AreEqual("1,234", catalog[0].CreditsText.ToString());
-        Assert.AreEqual("5,678", catalog[0].SuppliesText.ToString());
-        Assert.AreEqual("1,234", detail.CreditsCostText.ToString());
-        Assert.AreEqual("5,678", detail.SuppliesCostText.ToString());
+        Assert.AreEqual("5,678", catalog[0].MaterialsText.ToString());
+        Assert.IsEmpty(catalog[0].FuelText.ToString());
+        Assert.AreEqual("5,678", detail.MaterialsCostText.ToString());
+        Assert.IsEmpty(detail.FuelCostText.ToString());
     }
 
     [Test]
-    public void WriteReadModel_UnitRetainsGroupedCreditsAndEmptyMaterials()
+    public void WriteReadModel_UnitDisplaysGroupedMaterialsAndEmptyFuel()
     {
         UnitPrefabRegistryAuthoringConfig units = CreateAsset<UnitPrefabRegistryAuthoringConfig>();
         GameObject unit = CreateUnit("Field Contractor", 5678);
@@ -122,8 +122,8 @@ public sealed class UiBuildDrawerDualCostReadModelTests
         query.Collect(units, null, BuildDrawerCategory.Soldiers, items);
 
         Assert.AreEqual(1, items.Count);
-        Assert.AreEqual(5678, items[0].Price);
-        Assert.Zero(items[0].MaterialsCost);
+        Assert.AreEqual(12, items[0].MaterialsCost);
+        Assert.Zero(items[0].FuelCost);
 
         UiBuildDrawerReadModelSource.Configure(
             units,
@@ -133,7 +133,7 @@ public sealed class UiBuildDrawerDualCostReadModelTests
             Game.Composition.UiCatalogAuthoringMetadataUiSystemHelper.TryGetBuildingMetadata,
             Game.Composition.UiCatalogAuthoringMetadataUiSystemHelper.TryGetUnitMetadata);
 
-        using World world = new(nameof(WriteReadModel_UnitRetainsGroupedCreditsAndEmptyMaterials));
+        using World world = new(nameof(WriteReadModel_UnitDisplaysGroupedMaterialsAndEmptyFuel));
         EntityManager entityManager = world.EntityManager;
         Entity boundary = CreateBoundary(entityManager);
         UiBuildDrawerStateComponent state = new() { ActiveCategory = BuildDrawerCategory.Soldiers };
@@ -150,10 +150,10 @@ public sealed class UiBuildDrawerDualCostReadModelTests
         UiBuildDrawerDetailComponent detail =
             entityManager.GetComponentData<UiBuildDrawerDetailComponent>(boundary);
         Assert.AreEqual(1, catalog.Length);
-        Assert.AreEqual("5,678", catalog[0].CreditsText.ToString());
-        Assert.IsEmpty(catalog[0].SuppliesText.ToString());
-        Assert.AreEqual("5,678", detail.CreditsCostText.ToString());
-        Assert.IsEmpty(detail.SuppliesCostText.ToString());
+        Assert.AreEqual("12", catalog[0].MaterialsText.ToString());
+        Assert.IsEmpty(catalog[0].FuelText.ToString());
+        Assert.AreEqual("12", detail.MaterialsCostText.ToString());
+        Assert.IsEmpty(detail.FuelCostText.ToString());
     }
 
     [Test]

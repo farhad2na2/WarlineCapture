@@ -135,7 +135,7 @@ public sealed class BuildingPlacementProductionPlayModeTests
         BuildingProductionQueueCompositionSystemHelper productionSystem,
         EntityManager em,
         BuildingProductionRequestSystemHelper.BeginPlacementForConfiguredSpawnableDelegate beginPlacement,
-        BuildingProductionRequestSystemHelper.TrySpendDollarsDelegate trySpendDollars,
+        BuildingProductionRequestSystemHelper.TrySpendMaterialsDelegate trySpendMaterials,
         BuildingProductionRequestSystemHelper.SetActivePlacementCostDelegate setActivePlacementCost,
         BuildingProductionRequestSystemHelper.SelectRuntimeBuildingDelegate selectRuntimeBuilding)
     {
@@ -162,7 +162,7 @@ public sealed class BuildingPlacementProductionPlayModeTests
             BuildingDefinitionPrefabSystemHelper.GetProductionPrefab,
             null,
             beginPlacement,
-            trySpendDollars,
+            trySpendMaterials,
             _ => { },
             setActivePlacementCost,
             (building, productionIndex, spawnUnitPrefab) => productionSystem.TryQueuePlayerUnitFromBuilding(

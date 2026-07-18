@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Game.UI.Contracts;
 
@@ -28,8 +29,8 @@ namespace Game.UI.Runtime
         [SerializeField] private TMP_Text nameText;
         [SerializeField] private TMP_Text roleText;
         [SerializeField] private TMP_Text descriptionText;
-        [SerializeField] private TMP_Text creditsCostText;
-        [SerializeField] private TMP_Text suppliesCostText;
+        [FormerlySerializedAs("creditsCostText"), SerializeField] private TMP_Text materialsCostText;
+        [FormerlySerializedAs("suppliesCostText"), SerializeField] private TMP_Text fuelCostText;
         [SerializeField] private TMP_Text productionTimeText;
         [SerializeField] private TMP_Text placementText;
         [SerializeField] private TMP_Text requirementsText;
@@ -117,8 +118,8 @@ namespace Game.UI.Runtime
             string displayName,
             string role,
             string description,
-            string creditsCost,
-            string suppliesCost,
+            string materialsCost,
+            string fuelCost,
             string productionTime,
             string placement,
             string requirements,
@@ -130,8 +131,8 @@ namespace Game.UI.Runtime
             SetText(nameText, displayName);
             SetText(roleText, role);
             SetText(descriptionText, description);
-            SetText(creditsCostText, creditsCost);
-            SetText(suppliesCostText, suppliesCost);
+            SetCost(materialsCostText, materialsCost);
+            SetCost(fuelCostText, fuelCost);
             SetText(productionTimeText, productionTime);
             SetText(placementText, placement);
             SetText(requirementsText, requirements);
@@ -203,6 +204,18 @@ namespace Game.UI.Runtime
         {
             if (text != null)
                 text.text = value ?? string.Empty;
+        }
+
+        private static void SetCost(TMP_Text text, string value)
+        {
+            if (text == null)
+                return;
+
+            bool visible = !string.IsNullOrWhiteSpace(value);
+            text.text = visible ? value : string.Empty;
+            Transform costGroup = text.transform.parent;
+            if (costGroup != null)
+                costGroup.gameObject.SetActive(visible);
         }
 
         private static void SetImage(Image image, Sprite sprite)

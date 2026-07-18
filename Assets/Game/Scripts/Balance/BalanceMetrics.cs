@@ -52,7 +52,6 @@ namespace Game.Runtime
         public int ResourceExchangeOutputAmount;
         public float ResourceExchangeDurationSeconds;
         public float ResourceExchangeCompletionRatePercent;
-        public int ResourceExchangeCreditsDelta;
         public int ResourceExchangeMaterialsDelta;
         public int ResourceExchangeOilDelta;
         public int ResourceExchangeFuelDelta;
@@ -204,7 +203,6 @@ namespace Game.Runtime
             ResourceExchangeCancelledCount = 0;
             ResourceExchangeBlockedCount = 0;
             ResourceExchangeRushCount = 0;
-            ResourceExchangeCreditsDelta = 0;
             ResourceExchangeMaterialsDelta = 0;
             ResourceExchangeOilDelta = 0;
             ResourceExchangeFuelDelta = 0;
@@ -312,9 +310,6 @@ namespace Game.Runtime
         {
             switch (resourceKind)
             {
-                case ResourceExchangeResourceKind.Credits:
-                    ResourceExchangeCreditsDelta += amount;
-                    return;
                 case ResourceExchangeResourceKind.Materials:
                     ResourceExchangeMaterialsDelta += amount;
                     return;

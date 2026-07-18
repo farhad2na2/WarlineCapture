@@ -139,7 +139,7 @@ namespace Game.UI.Runtime
 
         private void ApplyHeaderText(in UiMatchHudHeaderModel header, bool resourceValuesApplied)
         {
-            SetTextIfChanged(_materialsSlotValue, header.SupplyText, ref _lastMaterialsText);
+            SetTextIfChanged(_materialsSlotValue, header.MaterialsText, ref _lastMaterialsText);
             SetTextIfChanged(_civilianRiskSlotValue, header.CivilianRiskText, ref _lastCivilianRiskText);
 
             if (!resourceValuesApplied && header.ShowOil)

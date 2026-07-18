@@ -424,7 +424,7 @@ public sealed class ResourceExchangeVisualPresentationSystemHelperTests
             RecipeId = new FixedString128Bytes("exchange.presentation.test"),
             RouteType = ResourceExchangeRouteType.Export,
             InputResource = ResourceExchangeResourceKind.Oil,
-            OutputResource = ResourceExchangeResourceKind.Credits,
+            OutputResource = ResourceExchangeResourceKind.Oil,
             InputAmount = 100,
             OutputAmount = 75,
             RequestedAnchorKind = ResourceExchangePresentationAnchorKind.RunwayLandingZone,

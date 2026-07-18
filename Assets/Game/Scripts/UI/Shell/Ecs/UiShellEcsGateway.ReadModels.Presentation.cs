@@ -79,8 +79,8 @@ namespace Game.UI.Shell.Ecs
                 ResolveBuildDrawerSprite(item.ThumbnailSpriteKey),
                 item.Title.ToString(),
                 item.Role.ToString(),
-                item.CreditsText.ToString(),
-                item.SuppliesText.ToString(),
+                item.MaterialsText.ToString(),
+                item.FuelText.ToString(),
                 item.TimeText.ToString());
         }
 

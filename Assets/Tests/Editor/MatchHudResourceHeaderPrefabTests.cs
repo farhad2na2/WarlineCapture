@@ -8,9 +8,9 @@ using UnityEngine.UI;
 public sealed class MatchHudResourceHeaderPrefabTests
 {
     private const string PrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab";
-    private const string MaterialsIconPath = "Assets/Game/Art/UI/Generated/ResourceExchange/LayeredOneGo/pop12_icon_04_materials_crate.png";
-    private const string OilIconPath = "Assets/Game/Art/UI/Generated/MatchHUD/Icons/matchhud_resource_oil_barrels.png";
-    private const string FuelIconPath = "Assets/Game/Art/UI/Generated/ResourceExchange/LayeredOneGo/pop12_icon_06_fuel_jerrycan.png";
+    private const string MaterialsIconPath = "Assets/Game/Art/UI/Resources/resource_materials.png";
+    private const string OilIconPath = "Assets/Game/Art/UI/Resources/resource_oil.png";
+    private const string FuelIconPath = "Assets/Game/Art/UI/Resources/resource_fuel.png";
 
     [Test]
     public void MatchHudHeaderUsesCanonicalMatchResourcesAndIcons()

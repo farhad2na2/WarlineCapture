@@ -132,7 +132,7 @@ namespace Game.Runtime
                                 startupState.GameModeId,
                                 control.AIControlled != 0,
                                 materialsCapacity,
-                                startingCredits)));
+                                initialConfig.InitialOil)));
                 if (!factionResult.IsValid)
                 {
                     return MaterialsScenarioRecoveryPolicyUtilitySystemHelper.Invalid(
@@ -427,7 +427,7 @@ namespace Game.Runtime
             in FixedString64Bytes scenarioTag,
             bool isAIControlled,
             int materialsCapacity,
-            int startingCredits)
+            int startingOil)
         {
             if (config == null ||
                 !ResourceExchangeStartupProjectionSystemHelper.TryResolveGate(config, scenarioTag, out ResourceExchangeScenarioGateConfigEntry gate) ||
@@ -444,7 +444,7 @@ namespace Game.Runtime
                 if (recipe != null &&
                     string.Equals(recipe.MissionTag, scenarioTag.ToString(), StringComparison.Ordinal) &&
                     recipe.RouteType == ResourceExchangeRouteType.Import &&
-                    recipe.InputResource == ResourceExchangeResourceKind.Credits &&
+                    recipe.InputResource == ResourceExchangeResourceKind.Oil &&
                     recipe.OutputResource == ResourceExchangeResourceKind.Materials &&
                     ResourceExchangeRecipeConfigValidator.ValidateRecipe(recipe) == ResourceExchangeReason.None)
                 {
@@ -452,7 +452,7 @@ namespace Game.Runtime
                         recipe.InputAmountMin *
                         Math.Max(0f, recipe.OutputPerInput) *
                         (1f - recipe.FeePercent));
-                    if (recipe.InputAmountMin <= startingCredits &&
+                    if (recipe.InputAmountMin <= startingOil &&
                         output > 0 &&
                         output <= materialsCapacity)
                     {

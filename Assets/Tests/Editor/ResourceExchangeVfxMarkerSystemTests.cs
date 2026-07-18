@@ -89,7 +89,7 @@ public sealed class ResourceExchangeVfxMarkerSystemTests
         AddDefaultAnchors(em, exchange);
         em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Add(CreateQueueItem(
             routeType: ResourceExchangeRouteType.Import,
-            inputResource: ResourceExchangeResourceKind.Credits,
+            inputResource: ResourceExchangeResourceKind.Oil,
             outputResource: ResourceExchangeResourceKind.Fuel,
             remainingSeconds: 20f));
 
@@ -237,7 +237,7 @@ public sealed class ResourceExchangeVfxMarkerSystemTests
         ResourceExchangeQueueState state = ResourceExchangeQueueState.InProgress,
         ResourceExchangeRouteType routeType = ResourceExchangeRouteType.Export,
         ResourceExchangeResourceKind inputResource = ResourceExchangeResourceKind.Oil,
-        ResourceExchangeResourceKind outputResource = ResourceExchangeResourceKind.Credits,
+        ResourceExchangeResourceKind outputResource = ResourceExchangeResourceKind.Oil,
         float durationSeconds = 100f,
         float remainingSeconds = 20f)
     {

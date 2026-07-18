@@ -59,7 +59,6 @@ namespace Game.Runtime
                 return false;
             }
 
-            int creditsCost = Mathf.Max(0, placement.Definition?.CreditsCost ?? 0);
             int materialsCost = Mathf.Max(0, placement.Definition?.MaterialsCost ?? 0);
             if (context.TryReserveCost == null)
             {
@@ -68,7 +67,7 @@ namespace Game.Runtime
             }
 
             FactionConstructionResourceMutationResult reserveResult =
-                context.TryReserveCost(transactionId, creditsCost, materialsCost);
+                context.TryReserveCost(transactionId, 0, materialsCost);
             if (reserveResult != FactionConstructionResourceMutationResult.Applied)
             {
                 failureReason = ToFailureReason(reserveResult);

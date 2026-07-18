@@ -240,19 +240,19 @@ public sealed class ResourceExchangeSteadyStatePerformanceValidation
         vfxMarkers.EnsureCapacity(ActiveQueueItems * 4);
         anchors.EnsureCapacity(4);
 
-        recipes.Add(CreateRecipe("exchange.performance.export_oil", ResourceExchangeRouteType.Export, ResourceExchangeResourceKind.Oil, ResourceExchangeResourceKind.Credits));
-        recipes.Add(CreateRecipe("exchange.performance.export_materials", ResourceExchangeRouteType.Export, ResourceExchangeResourceKind.Materials, ResourceExchangeResourceKind.Credits));
-        recipes.Add(CreateRecipe("exchange.performance.import_fuel", ResourceExchangeRouteType.Import, ResourceExchangeResourceKind.Credits, ResourceExchangeResourceKind.Fuel));
-        recipes.Add(CreateRecipe("exchange.performance.import_materials", ResourceExchangeRouteType.Import, ResourceExchangeResourceKind.Credits, ResourceExchangeResourceKind.Materials));
+        recipes.Add(CreateRecipe("exchange.performance.export_oil", ResourceExchangeRouteType.Export, ResourceExchangeResourceKind.Oil, ResourceExchangeResourceKind.Oil));
+        recipes.Add(CreateRecipe("exchange.performance.export_materials", ResourceExchangeRouteType.Export, ResourceExchangeResourceKind.Materials, ResourceExchangeResourceKind.Oil));
+        recipes.Add(CreateRecipe("exchange.performance.import_fuel", ResourceExchangeRouteType.Import, ResourceExchangeResourceKind.Oil, ResourceExchangeResourceKind.Fuel));
+        recipes.Add(CreateRecipe("exchange.performance.import_materials", ResourceExchangeRouteType.Import, ResourceExchangeResourceKind.Oil, ResourceExchangeResourceKind.Materials));
 
-        ResourceExchangeQueueComponent oilExport = CreateQueueItem(1, "exchange.performance.export_oil", ResourceExchangeRouteType.Export, ResourceExchangeResourceKind.Oil, ResourceExchangeResourceKind.Credits, 400, 170);
+        ResourceExchangeQueueComponent oilExport = CreateQueueItem(1, "exchange.performance.export_oil", ResourceExchangeRouteType.Export, ResourceExchangeResourceKind.Oil, ResourceExchangeResourceKind.Oil, 400, 170);
         Assert.IsTrue(ResourceExchangePhysicalStorageTestHelper.TryReserve(em, entity, oilExport, out _));
         queue.Add(oilExport);
-        queue.Add(CreateQueueItem(2, "exchange.performance.export_materials", ResourceExchangeRouteType.Export, ResourceExchangeResourceKind.Materials, ResourceExchangeResourceKind.Credits, 300, 125));
-        ResourceExchangeQueueComponent fuelImport = CreateQueueItem(3, "exchange.performance.import_fuel", ResourceExchangeRouteType.Import, ResourceExchangeResourceKind.Credits, ResourceExchangeResourceKind.Fuel, 500, 160);
+        queue.Add(CreateQueueItem(2, "exchange.performance.export_materials", ResourceExchangeRouteType.Export, ResourceExchangeResourceKind.Materials, ResourceExchangeResourceKind.Oil, 300, 125));
+        ResourceExchangeQueueComponent fuelImport = CreateQueueItem(3, "exchange.performance.import_fuel", ResourceExchangeRouteType.Import, ResourceExchangeResourceKind.Oil, ResourceExchangeResourceKind.Fuel, 500, 160);
         Assert.IsTrue(ResourceExchangePhysicalStorageTestHelper.TryReserve(em, entity, fuelImport, out _));
         queue.Add(fuelImport);
-        queue.Add(CreateQueueItem(4, "exchange.performance.import_materials", ResourceExchangeRouteType.Import, ResourceExchangeResourceKind.Credits, ResourceExchangeResourceKind.Materials, 450, 180));
+        queue.Add(CreateQueueItem(4, "exchange.performance.import_materials", ResourceExchangeRouteType.Import, ResourceExchangeResourceKind.Oil, ResourceExchangeResourceKind.Materials, 450, 180));
 
         anchors.Add(CreateAnchor(ResourceExchangePresentationAnchorKind.BaseDepot, "base_depot", new float3(0f, 0f, 0f)));
         anchors.Add(CreateAnchor(ResourceExchangePresentationAnchorKind.RunwayLandingZone, "runway", new float3(18f, 0f, 4f)));

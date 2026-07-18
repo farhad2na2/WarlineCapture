@@ -257,20 +257,15 @@ namespace Game.UI.Shell.Ecs
                         cachedMatchHudHeaderComponent.SquadText,
                         cachedMatchHudHeader.SquadText,
                         canReuseCachedProjection),
-                    ResolveMatchHudHeaderText(
-                        component.CreditsText,
-                        cachedMatchHudHeaderComponent.CreditsText,
-                        cachedMatchHudHeader.CreditsText,
-                        canReuseCachedProjection),
                     ResolveCompactResourceText(
                         resourceFuel,
                         cachedMatchHudHeaderFuel,
                         cachedMatchHudHeader.FuelText,
                         canReuseCachedProjection),
                     ResolveMatchHudHeaderText(
-                        component.SupplyText,
-                        cachedMatchHudHeaderComponent.SupplyText,
-                        cachedMatchHudHeader.SupplyText,
+                        component.MaterialsText,
+                        cachedMatchHudHeaderComponent.MaterialsText,
+                        cachedMatchHudHeader.MaterialsText,
                         canReuseCachedProjection),
                     ResolveMatchHudHeaderText(
                         component.CivilianRiskText,
@@ -302,9 +297,8 @@ namespace Game.UI.Shell.Ecs
                 header = new UiMatchHudHeaderModel(
                     component.OrderText.ToString(),
                     component.SquadText.ToString(),
-                    component.CreditsText.ToString(),
                     fuelText,
-                    component.SupplyText.ToString(),
+                    component.MaterialsText.ToString(),
                     component.CivilianRiskText.ToString(),
                     oilText,
                     showOil);
@@ -409,8 +403,7 @@ namespace Game.UI.Shell.Ecs
         {
             return left.OrderText.Equals(right.OrderText) &&
                    left.SquadText.Equals(right.SquadText) &&
-                   left.CreditsText.Equals(right.CreditsText) &&
-                   left.SupplyText.Equals(right.SupplyText) &&
+                   left.MaterialsText.Equals(right.MaterialsText) &&
                    left.CivilianRiskText.Equals(right.CivilianRiskText);
         }
 

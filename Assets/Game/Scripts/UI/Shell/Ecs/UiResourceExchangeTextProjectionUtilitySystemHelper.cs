@@ -79,8 +79,6 @@ namespace Game.UI.Shell.Ecs
                     return "Exchange unavailable";
                 case ResourceExchangeReason.RecipeLocked:
                     return "Route locked";
-                case ResourceExchangeReason.InsufficientCredits:
-                    return "Insufficient Credits";
                 case ResourceExchangeReason.InsufficientMaterials:
                     return "Insufficient Materials";
                 case ResourceExchangeReason.InsufficientOil:
@@ -132,8 +130,6 @@ namespace Game.UI.Shell.Ecs
         {
             switch (resourceKind)
             {
-                case ResourceExchangeResourceKind.Credits:
-                    return "CREDITS";
                 case ResourceExchangeResourceKind.Materials:
                     return "MATERIALS";
                 case ResourceExchangeResourceKind.Oil:

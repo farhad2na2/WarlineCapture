@@ -13,7 +13,6 @@ namespace Game.UI.Shell.Ecs
     {
         private EntityQuery _boundaryQuery;
         private Entity _lastBoundary;
-        private int _lastCredits;
         private int _lastMaterials;
         private int _lastMaterialsCapacity;
         private uint _lastMaterialsVersion;
@@ -30,22 +29,17 @@ namespace Game.UI.Shell.Ecs
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            int credits = 0;
             int materials = 0;
             int materialsCapacity = 0;
             uint materialsVersion = 0u;
             bool foundPlayer = false;
 
-            foreach ((RefRO<FactionEconomy> economy, RefRO<FactionTacticalMaterialsComponent> tacticalMaterials)
-                     in SystemAPI.Query<RefRO<FactionEconomy>, RefRO<FactionTacticalMaterialsComponent>>())
+            foreach (RefRO<FactionTacticalMaterialsComponent> tacticalMaterials
+                     in SystemAPI.Query<RefRO<FactionTacticalMaterialsComponent>>())
             {
-                if (!FactionIdentity.IsPlayerControlled(economy.ValueRO.FactionId) ||
-                    tacticalMaterials.ValueRO.FactionId != economy.ValueRO.FactionId)
-                {
+                if (!FactionIdentity.IsPlayerControlled(tacticalMaterials.ValueRO.FactionId))
                     continue;
-                }
 
-                credits = math.max(0, economy.ValueRO.Money);
                 materials = math.max(0, tacticalMaterials.ValueRO.Current);
                 materialsCapacity = math.max(0, tacticalMaterials.ValueRO.Capacity);
                 materialsVersion = tacticalMaterials.ValueRO.Version;
@@ -59,7 +53,6 @@ namespace Game.UI.Shell.Ecs
             Entity boundary = _boundaryQuery.GetSingletonEntity();
             if (_hasProjected != 0 &&
                 _lastBoundary == boundary &&
-                _lastCredits == credits &&
                 _lastMaterials == materials &&
                 _lastMaterialsCapacity == materialsCapacity &&
                 _lastMaterialsVersion == materialsVersion)
@@ -70,12 +63,10 @@ namespace Game.UI.Shell.Ecs
             UiMatchHudHeaderComponent header =
                 state.EntityManager.GetComponentData<UiMatchHudHeaderComponent>(boundary);
             header.ResourceVersion = NextVersion(header.ResourceVersion);
-            header.CreditsText = FormatAmount(credits);
-            header.SupplyText = FormatMaterials(materials, materialsCapacity);
+            header.MaterialsText = FormatMaterials(materials, materialsCapacity);
             state.EntityManager.SetComponentData(boundary, header);
 
             _lastBoundary = boundary;
-            _lastCredits = credits;
             _lastMaterials = materials;
             _lastMaterialsCapacity = materialsCapacity;
             _lastMaterialsVersion = materialsVersion;
@@ -85,13 +76,6 @@ namespace Game.UI.Shell.Ecs
         private static uint NextVersion(uint version)
         {
             return version == uint.MaxValue ? 1u : version + 1u;
-        }
-
-        private static FixedString32Bytes FormatAmount(int value)
-        {
-            FixedString32Bytes text = default;
-            AppendGroupedAmount(ref text, value);
-            return text;
         }
 
         private static FixedString32Bytes FormatMaterials(int current, int capacity)

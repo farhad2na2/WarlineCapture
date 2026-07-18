@@ -24,6 +24,7 @@ namespace Game.Authoring
         [SerializeField, HideInInspector] private bool isAirUnit;
         [SerializeField, HideInInspector] private bool canRequest = true;
         [SerializeField, HideInInspector, Min(0)] private int price;
+        [SerializeField, HideInInspector, Min(0)] private int materialsCost;
         [SerializeField, HideInInspector, Min(0.01f)] private float productionDurationSeconds = 60f;
         [SerializeField, HideInInspector] private GameObject productionTransportPrefab;
         [SerializeField, HideInInspector] private bool isProductionTransportUnit;
@@ -120,6 +121,7 @@ namespace Game.Authoring
             isAirUnit = config.IsAirUnit;
             canRequest = config.CanRequest;
             price = config.Price;
+            materialsCost = config.MaterialsCost;
             productionDurationSeconds = config.ProductionDurationSeconds;
             productionTransportPrefab = config.ProductionTransportPrefab;
             isProductionTransportUnit = config.IsProductionTransportUnit;
@@ -209,6 +211,11 @@ namespace Game.Authoring
         public float RunwayTaxiSpeed => Mathf.Max(0.01f, config != null ? config.RunwayTaxiSpeed : runwayTaxiSpeed);
         public bool CanRequest => canRequest;
         public int Price => Mathf.Max(0, price);
+        public int MaterialsCost => Mathf.Max(0, config != null
+            ? config.MaterialsCost
+            : materialsCost > 0
+                ? materialsCost
+                : UnitGridAuthoringConfig.ResolveLegacyMaterialsCost(price));
         public bool ConfiguredAllowIdleWander => config != null ? config.AllowIdleWander : allowIdleWander;
         public float ConfiguredSpeed => Mathf.Max(0f, config != null ? config.Speed : speed);
         public float GroundFuelPerCell => Mathf.Max(0f, config != null ? config.GroundFuelPerCell : groundFuelPerCell);

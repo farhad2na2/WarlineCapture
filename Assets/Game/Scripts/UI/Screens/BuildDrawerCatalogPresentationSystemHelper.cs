@@ -341,8 +341,8 @@ namespace Game.UI.Runtime
                 model.DisplayName,
                 model.TypeLabel,
                 model.Description,
-                FormatPrice(model.Price),
-                string.Empty,
+                FormatPrice(model.MaterialsCost),
+                FormatOptionalCost(model.FuelCost),
                 FormatDuration(model),
                 FormatRequirements(context.TextResolver, model));
             item.BindThumbnail(model.CardPortrait);
@@ -366,8 +366,8 @@ namespace Game.UI.Runtime
                 model.DisplayName,
                 model.TypeLabel,
                 model.Description,
-                FormatPrice(model.Price),
-                string.Empty,
+                FormatPrice(model.MaterialsCost),
+                FormatOptionalCost(model.FuelCost),
                 FormatDuration(model),
                 FormatPlacement(model),
                 FormatRequirements(context.TextResolver, model),
@@ -407,6 +407,11 @@ namespace Game.UI.Runtime
         private static string FormatPrice(int price)
         {
             return Mathf.Max(0, price).ToString(CultureInfo.InvariantCulture);
+        }
+
+        private static string FormatOptionalCost(int cost)
+        {
+            return cost > 0 ? FormatPrice(cost) : string.Empty;
         }
 
         private static string FormatDuration(BuildDrawerCatalogItem model)

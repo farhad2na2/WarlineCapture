@@ -54,7 +54,7 @@ namespace Game.UI.Shell.Ecs
                     recipe.InputResource) < inputAmount)
                 return InsufficientReason(recipe.InputResource);
 
-            if (recipe.RequiresStorage != 0 && recipe.OutputResource != ResourceExchangeResourceKind.Credits)
+            if (recipe.RequiresStorage != 0)
             {
                 int capacity = ResourceExchangeResourceUtilitySystemHelper.GetCapacity(
                     materials,
@@ -214,8 +214,6 @@ namespace Game.UI.Shell.Ecs
                     return "Exchange unavailable";
                 case ResourceExchangeReason.RecipeLocked:
                     return "Route locked";
-                case ResourceExchangeReason.InsufficientCredits:
-                    return "Insufficient Credits";
                 case ResourceExchangeReason.InsufficientMaterials:
                     return "Insufficient Materials";
                 case ResourceExchangeReason.InsufficientOil:
@@ -267,8 +265,6 @@ namespace Game.UI.Shell.Ecs
         {
             switch (resourceKind)
             {
-                case ResourceExchangeResourceKind.Credits:
-                    return "CREDITS";
                 case ResourceExchangeResourceKind.Materials:
                     return "MATERIALS";
                 case ResourceExchangeResourceKind.Oil:
@@ -286,8 +282,6 @@ namespace Game.UI.Shell.Ecs
         {
             switch (resourceKind)
             {
-                case ResourceExchangeResourceKind.Credits:
-                    return ResourceExchangeReason.InsufficientCredits;
                 case ResourceExchangeResourceKind.Materials:
                     return ResourceExchangeReason.InsufficientMaterials;
                 case ResourceExchangeResourceKind.Oil:

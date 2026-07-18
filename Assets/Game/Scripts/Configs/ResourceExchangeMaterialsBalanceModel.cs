@@ -5,27 +5,21 @@ namespace Game.Configs
 {
     public readonly struct ResourceExchangeMaterialsBalanceResult
     {
-        public readonly float LocalCreditsPerMaterial;
-        public readonly float ImportCreditsPerMaterial;
-        public readonly float ImportMarkup;
+        public readonly float LocalMaterialsPerOil;
+        public readonly float ExchangeMaterialsPerOil;
+        public readonly float ExchangeEfficiency;
         public readonly float MaterialsRoundTripRetention;
-        public readonly float OilDirectExportCreditsPerBarrel;
-        public readonly float OilFabricateExportCreditsPerBarrel;
 
         public ResourceExchangeMaterialsBalanceResult(
-            float localCreditsPerMaterial,
-            float importCreditsPerMaterial,
-            float importMarkup,
-            float materialsRoundTripRetention,
-            float oilDirectExportCreditsPerBarrel,
-            float oilFabricateExportCreditsPerBarrel)
+            float localMaterialsPerOil,
+            float exchangeMaterialsPerOil,
+            float exchangeEfficiency,
+            float materialsRoundTripRetention)
         {
-            LocalCreditsPerMaterial = localCreditsPerMaterial;
-            ImportCreditsPerMaterial = importCreditsPerMaterial;
-            ImportMarkup = importMarkup;
+            LocalMaterialsPerOil = localMaterialsPerOil;
+            ExchangeMaterialsPerOil = exchangeMaterialsPerOil;
+            ExchangeEfficiency = exchangeEfficiency;
             MaterialsRoundTripRetention = materialsRoundTripRetention;
-            OilDirectExportCreditsPerBarrel = oilDirectExportCreditsPerBarrel;
-            OilFabricateExportCreditsPerBarrel = oilFabricateExportCreditsPerBarrel;
         }
     }
 
@@ -41,84 +35,57 @@ namespace Game.Configs
             if (exchangeConfig == null || depotConfig == null || string.IsNullOrWhiteSpace(scenarioTag))
                 return ResourceExchangeReason.InvalidRecipe;
 
-            ResourceExchangeMaterialsBalanceConfig balance = exchangeConfig.MaterialsBalance;
-            if (balance == null ||
-                !depotConfig.MaterialFabricationEnabled ||
+            if (!depotConfig.MaterialFabricationEnabled ||
                 depotConfig.MaterialFabricationOilConsumedPerCycle <= 0f ||
                 depotConfig.MaterialFabricationMaterialsOutputPerCycle <= 0)
             {
                 return ResourceExchangeReason.InvalidRate;
             }
 
-            ResourceExchangeRecipeConfigEntry importMaterials = null;
-            ResourceExchangeRecipeConfigEntry exportMaterials = null;
-            ResourceExchangeRecipeConfigEntry exportOil = null;
+            ResourceExchangeRecipeConfigEntry oilToMaterials = null;
+            ResourceExchangeRecipeConfigEntry materialsToOil = null;
             for (int i = 0; i < exchangeConfig.Recipes.Count; i++)
             {
                 ResourceExchangeRecipeConfigEntry recipe = exchangeConfig.Recipes[i];
                 if (recipe == null || !string.Equals(recipe.MissionTag, scenarioTag, System.StringComparison.Ordinal))
                     continue;
 
-                if (recipe.RouteType == ResourceExchangeRouteType.Import &&
-                    recipe.InputResource == ResourceExchangeResourceKind.Credits &&
+                if (recipe.InputResource == ResourceExchangeResourceKind.Oil &&
                     recipe.OutputResource == ResourceExchangeResourceKind.Materials)
                 {
-                    importMaterials = recipe;
+                    oilToMaterials = recipe;
                 }
-                else if (recipe.RouteType == ResourceExchangeRouteType.Export &&
-                         recipe.InputResource == ResourceExchangeResourceKind.Materials &&
-                         recipe.OutputResource == ResourceExchangeResourceKind.Credits)
+                else if (recipe.InputResource == ResourceExchangeResourceKind.Materials &&
+                         recipe.OutputResource == ResourceExchangeResourceKind.Oil)
                 {
-                    exportMaterials = recipe;
-                }
-                else if (recipe.RouteType == ResourceExchangeRouteType.Export &&
-                         recipe.InputResource == ResourceExchangeResourceKind.Oil &&
-                         recipe.OutputResource == ResourceExchangeResourceKind.Credits)
-                {
-                    exportOil = recipe;
+                    materialsToOil = recipe;
                 }
             }
 
-            if (importMaterials == null || exportMaterials == null || exportOil == null)
+            if (oilToMaterials == null || materialsToOil == null)
                 return ResourceExchangeReason.InvalidRecipe;
 
-            float materialsPerOil =
+            float localMaterialsPerOil =
                 depotConfig.MaterialFabricationMaterialsOutputPerCycle /
                 depotConfig.MaterialFabricationOilConsumedPerCycle;
-            float localOilCost =
-                balance.OilOpportunityCreditsPerBarrel /
-                materialsPerOil;
-            float depotCost =
-                depotConfig.Price /
-                (balance.DepotAmortizationCycles *
-                 (float)depotConfig.MaterialFabricationMaterialsOutputPerCycle);
-            float localCreditsPerMaterial =
-                localOilCost + depotCost + balance.LogisticsCreditsPerMaterial;
-            float importMaterialsPerCredit = EffectiveOutputPerInput(importMaterials);
-            if (localCreditsPerMaterial <= 0f || importMaterialsPerCredit <= 0f)
+            float exchangeMaterialsPerOil = EffectiveOutputPerInput(oilToMaterials);
+            float exchangeOilPerMaterial = EffectiveOutputPerInput(materialsToOil);
+            if (localMaterialsPerOil <= 0f || exchangeMaterialsPerOil <= 0f || exchangeOilPerMaterial <= 0f)
                 return ResourceExchangeReason.InvalidRate;
 
-            float importCreditsPerMaterial = 1f / importMaterialsPerCredit;
-            float importMarkup = importCreditsPerMaterial / localCreditsPerMaterial;
-            float materialsExportCredits = EffectiveOutputPerInput(exportMaterials);
-            float oilDirectExportCredits = EffectiveOutputPerInput(exportOil);
-            float materialsRoundTripRetention = materialsExportCredits * importMaterialsPerCredit;
-            float oilFabricateExportCredits = materialsPerOil * materialsExportCredits;
-
+            float exchangeEfficiency = exchangeMaterialsPerOil / localMaterialsPerOil;
+            float roundTripRetention = exchangeMaterialsPerOil * exchangeOilPerMaterial;
             result = new ResourceExchangeMaterialsBalanceResult(
-                localCreditsPerMaterial,
-                importCreditsPerMaterial,
-                importMarkup,
-                materialsRoundTripRetention,
-                oilDirectExportCredits,
-                oilFabricateExportCredits);
+                localMaterialsPerOil,
+                exchangeMaterialsPerOil,
+                exchangeEfficiency,
+                roundTripRetention);
 
-            if (importMarkup < balance.MinimumImportMarkup || importMarkup > balance.MaximumImportMarkup)
+            if (exchangeEfficiency >= 1f ||
+                roundTripRetention > ResourceExchangeRecipeConfigValidator.MaximumRoundTripResourceRetention)
+            {
                 return ResourceExchangeReason.InvalidRate;
-            if (materialsRoundTripRetention > ResourceExchangeRecipeConfigValidator.MaximumRoundTripResourceRetention)
-                return ResourceExchangeReason.InvalidRate;
-            if (oilFabricateExportCredits > oilDirectExportCredits)
-                return ResourceExchangeReason.InvalidRate;
+            }
 
             return ResourceExchangeReason.None;
         }

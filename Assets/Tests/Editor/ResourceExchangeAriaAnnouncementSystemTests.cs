@@ -56,7 +56,7 @@ public sealed class ResourceExchangeAriaAnnouncementSystemTests
         ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
             em,
             exchange,
-            new FixedString128Bytes("exchange.export_oil_credits.standard"),
+            new FixedString128Bytes("exchange.convert_oil_materials.test"),
             200,
             1,
             0);
@@ -88,7 +88,7 @@ public sealed class ResourceExchangeAriaAnnouncementSystemTests
         ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
             em,
             exchange,
-            new FixedString128Bytes("exchange.export_oil_credits.standard"),
+            new FixedString128Bytes("exchange.convert_oil_materials.test"),
             200,
             1,
             0);
@@ -116,7 +116,7 @@ public sealed class ResourceExchangeAriaAnnouncementSystemTests
         EntityManager em = world.EntityManager;
         Entity exchange = CreateExchangeEntity(em);
         em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Add(CreateQueueItem(
-            inputResource: ResourceExchangeResourceKind.Credits,
+            inputResource: ResourceExchangeResourceKind.Oil,
             reservedInputAmount: 0,
             outputAmount: 93,
             remainingSeconds: 0.1f));
@@ -144,7 +144,7 @@ public sealed class ResourceExchangeAriaAnnouncementSystemTests
         EntityManager em = world.EntityManager;
         Entity exchange = CreateExchangeEntity(em, fuel: 65, fuelCapacity: 100);
         ResourceExchangeQueueComponent item = CreateQueueItem(
-            inputResource: ResourceExchangeResourceKind.Credits,
+            inputResource: ResourceExchangeResourceKind.Oil,
             outputResource: ResourceExchangeResourceKind.Fuel,
             reservedInputAmount: 0,
             outputAmount: 25,
@@ -180,13 +180,13 @@ public sealed class ResourceExchangeAriaAnnouncementSystemTests
             ResourceExchangeResultKind.RequestAccepted,
             accepted: 1,
             queueItemId: 7,
-            recipeId: new FixedString128Bytes("exchange.export_oil_credits.standard"));
+            recipeId: new FixedString128Bytes("exchange.convert_oil_materials.test"));
         ResourceExchangeResultComponent complete = Result(
             ResourceExchangeReason.None,
             ResourceExchangeResultKind.QueueCompleted,
             accepted: 1,
             queueItemId: 7,
-            recipeId: new FixedString128Bytes("exchange.export_oil_credits.standard"));
+            recipeId: new FixedString128Bytes("exchange.convert_oil_materials.test"));
         ResourceExchangeResultComponent blocked = Result(ResourceExchangeReason.StorageMissing);
 
         Assert.AreEqual(
@@ -271,11 +271,11 @@ public sealed class ResourceExchangeAriaAnnouncementSystemTests
     {
         return new ResourceExchangeRecipeComponent
         {
-            RecipeId = new FixedString128Bytes("exchange.export_oil_credits.standard"),
+            RecipeId = new FixedString128Bytes("exchange.convert_oil_materials.test"),
             DisplayName = new FixedString128Bytes("Export Oil"),
             RouteType = ResourceExchangeRouteType.Export,
             InputResource = ResourceExchangeResourceKind.Oil,
-            OutputResource = ResourceExchangeResourceKind.Credits,
+            OutputResource = ResourceExchangeResourceKind.Oil,
             InputAmountMin = 100,
             InputAmountMax = 1000,
             InputStep = 100,
@@ -290,7 +290,7 @@ public sealed class ResourceExchangeAriaAnnouncementSystemTests
     private static ResourceExchangeQueueComponent CreateQueueItem(
         int queueItemId = 1,
         ResourceExchangeResourceKind inputResource = ResourceExchangeResourceKind.Oil,
-        ResourceExchangeResourceKind outputResource = ResourceExchangeResourceKind.Credits,
+        ResourceExchangeResourceKind outputResource = ResourceExchangeResourceKind.Oil,
         int reservedInputAmount = 100,
         int outputAmount = 100,
         float remainingSeconds = 30f)

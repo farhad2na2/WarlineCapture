@@ -22,11 +22,11 @@ namespace Game.Runtime
             public readonly BuildingVisualSystem VisualSystem;
             public readonly BuildingSpawnCompositionSystemHelper SpawnSystem;
             public readonly BuildingSpawnCompositionSystemHelper.Context SpawnContext;
-            public readonly int ResourceDollars;
+            public readonly int ResourceMaterials;
             public readonly int MaxQueuedUnitProductions;
             public readonly BuildingProductionRequestSystemHelper.BeginPlacementForConfiguredSpawnableDelegate BeginPlacementForConfiguredSpawnable;
-            public readonly BuildingProductionRequestSystemHelper.TrySpendDollarsDelegate TrySpendDollars;
-            public readonly BuildingProductionRequestSystemHelper.RefundDollarsDelegate RefundDollars;
+            public readonly BuildingProductionRequestSystemHelper.TrySpendMaterialsDelegate TrySpendMaterials;
+            public readonly BuildingProductionRequestSystemHelper.RefundMaterialsDelegate RefundMaterials;
             public readonly BuildingProductionRequestSystemHelper.SetActivePlacementCostDelegate SetActivePlacementCost;
             public readonly BuildingProductionRequestSystemHelper.TryQueuePlayerUnitDelegate TryQueuePlayerUnit;
             public readonly BuildingProductionRequestSystemHelper.SelectRuntimeBuildingDelegate SelectRuntimeBuilding;
@@ -66,11 +66,11 @@ namespace Game.Runtime
                 BuildingVisualSystem visualSystem,
                 BuildingSpawnCompositionSystemHelper spawnSystem,
                 BuildingSpawnCompositionSystemHelper.Context spawnContext,
-                int resourceDollars,
+                int resourceMaterials,
                 int maxQueuedUnitProductions,
                 BuildingProductionRequestSystemHelper.BeginPlacementForConfiguredSpawnableDelegate beginPlacementForConfiguredSpawnable,
-                BuildingProductionRequestSystemHelper.TrySpendDollarsDelegate trySpendDollars,
-                BuildingProductionRequestSystemHelper.RefundDollarsDelegate refundDollars,
+                BuildingProductionRequestSystemHelper.TrySpendMaterialsDelegate trySpendMaterials,
+                BuildingProductionRequestSystemHelper.RefundMaterialsDelegate refundMaterials,
                 BuildingProductionRequestSystemHelper.SetActivePlacementCostDelegate setActivePlacementCost,
                 BuildingProductionRequestSystemHelper.TryQueuePlayerUnitDelegate tryQueuePlayerUnit,
                 BuildingProductionRequestSystemHelper.SelectRuntimeBuildingDelegate selectRuntimeBuilding,
@@ -109,11 +109,11 @@ namespace Game.Runtime
                 VisualSystem = visualSystem;
                 SpawnSystem = spawnSystem;
                 SpawnContext = spawnContext;
-                ResourceDollars = resourceDollars;
+                ResourceMaterials = resourceMaterials;
                 MaxQueuedUnitProductions = Mathf.Max(0, maxQueuedUnitProductions);
                 BeginPlacementForConfiguredSpawnable = beginPlacementForConfiguredSpawnable;
-                TrySpendDollars = trySpendDollars;
-                RefundDollars = refundDollars;
+                TrySpendMaterials = trySpendMaterials;
+                RefundMaterials = refundMaterials;
                 SetActivePlacementCost = setActivePlacementCost;
                 TryQueuePlayerUnit = tryQueuePlayerUnit;
                 SelectRuntimeBuilding = selectRuntimeBuilding;
@@ -155,11 +155,11 @@ namespace Game.Runtime
             BuildingVisualSystem visualSystem,
             BuildingSpawnCompositionSystemHelper spawnSystem,
             BuildingSpawnCompositionSystemHelper.Context spawnContext,
-            int resourceDollars,
+            int resourceMaterials,
             int maxQueuedUnitProductions,
             BuildingProductionRequestSystemHelper.BeginPlacementForConfiguredSpawnableDelegate beginPlacementForConfiguredSpawnable,
-            BuildingProductionRequestSystemHelper.TrySpendDollarsDelegate trySpendDollars,
-            BuildingProductionRequestSystemHelper.RefundDollarsDelegate refundDollars,
+            BuildingProductionRequestSystemHelper.TrySpendMaterialsDelegate trySpendMaterials,
+            BuildingProductionRequestSystemHelper.RefundMaterialsDelegate refundMaterials,
             BuildingProductionRequestSystemHelper.SetActivePlacementCostDelegate setActivePlacementCost,
             BuildingProductionRequestSystemHelper.TryQueuePlayerUnitDelegate tryQueuePlayerUnit,
             BuildingProductionRequestSystemHelper.SelectRuntimeBuildingDelegate selectRuntimeBuilding,
@@ -199,11 +199,11 @@ namespace Game.Runtime
                 visualSystem,
                 spawnSystem,
                 spawnContext,
-                resourceDollars,
+                resourceMaterials,
                 maxQueuedUnitProductions,
                 beginPlacementForConfiguredSpawnable,
-                trySpendDollars,
-                refundDollars,
+                trySpendMaterials,
+                refundMaterials,
                 setActivePlacementCost,
                 tryQueuePlayerUnit,
                 selectRuntimeBuilding,
@@ -291,7 +291,7 @@ namespace Game.Runtime
                 source.DefinitionSystem.ConfiguredDefinitionsByPrefab,
                 source.DefinitionSystem.ConfiguredUnitSpawnPrefabs,
                 source.DefinitionSystem.UnitSpawnPrefabsByKey,
-                source.ResourceDollars,
+                source.ResourceMaterials,
                 source.MaxQueuedUnitProductions,
                 source.ProductionSystem,
                 CreateProductionQueueContext(source),
@@ -299,8 +299,8 @@ namespace Game.Runtime
                 BuildingDefinitionPrefabSystemHelper.GetProductionPrefab,
                 BuildingDefinitionPrefabSystemHelper.TryGetPrefabLocalBounds,
                 source.BeginPlacementForConfiguredSpawnable,
-                source.TrySpendDollars,
-                source.RefundDollars,
+                source.TrySpendMaterials,
+                source.RefundMaterials,
                 source.SetActivePlacementCost,
                 source.TryQueuePlayerUnit,
                 source.SelectRuntimeBuilding,

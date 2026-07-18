@@ -74,7 +74,6 @@ namespace Game.UI.Shell.Contracts.Ecs
     public struct UiShellMainMenuResourcesComponent : IComponentData
     {
         public FixedString32Bytes CreditsText;
-        public FixedString32Bytes SuppliesText;
         public FixedString32Bytes CommandText;
     }
 
@@ -99,9 +98,8 @@ namespace Game.UI.Shell.Contracts.Ecs
         public uint ResourceVersion;
         public FixedString32Bytes OrderText;
         public FixedString32Bytes SquadText;
-        public FixedString32Bytes CreditsText;
         public FixedString32Bytes FuelText;
-        public FixedString32Bytes SupplyText;
+        public FixedString32Bytes MaterialsText;
         public FixedString32Bytes CivilianRiskText;
     }
 
@@ -162,8 +160,8 @@ namespace Game.UI.Shell.Contracts.Ecs
         public FixedString64Bytes RequirementsText;
         public FixedString64Bytes PlacementText;
         public FixedString32Bytes ProductionTimeText;
-        public FixedString32Bytes CreditsCostText;
-        public FixedString32Bytes SuppliesCostText;
+        public FixedString32Bytes MaterialsCostText;
+        public FixedString32Bytes FuelCostText;
         public FixedString128Bytes InstructionText;
         public FixedString32Bytes ProductionTitle;
         public FixedString32Bytes ProductionCountText;
@@ -204,8 +202,8 @@ namespace Game.UI.Shell.Contracts.Ecs
         public FixedString64Bytes ThumbnailSpriteKey;
         public FixedString64Bytes Title;
         public FixedString32Bytes Role;
-        public FixedString32Bytes CreditsText;
-        public FixedString32Bytes SuppliesText;
+        public FixedString32Bytes MaterialsText;
+        public FixedString32Bytes FuelText;
         public FixedString32Bytes TimeText;
     }
 
@@ -247,7 +245,6 @@ namespace Game.UI.Shell.Contracts.Ecs
         public int CompletedCount;
         public int MaxQueueItems;
         public FixedString32Bytes QueueCapacityText;
-        public FixedString32Bytes CreditsText;
         public FixedString32Bytes MaterialsText;
         public FixedString32Bytes OilText;
         public FixedString32Bytes FuelText;

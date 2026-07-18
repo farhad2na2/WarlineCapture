@@ -82,7 +82,7 @@ public sealed class UiResourceExchangeReadModelSystemTests
         UiResourceExchangeStateComponent state =
             em.GetComponentData<UiResourceExchangeStateComponent>(boundary);
         Assert.AreEqual(1, state.ExchangeEnabled);
-        Assert.AreEqual("1000", state.CreditsText.ToString());
+        Assert.AreEqual("1000", state.MaterialsText.ToString());
         Assert.AreEqual(1, em.GetBuffer<UiResourceExchangeRecipeCardComponent>(boundary).Length);
     }
 
@@ -126,9 +126,10 @@ public sealed class UiResourceExchangeReadModelSystemTests
             em.GetComponentData<UiResourceExchangeStateComponent>(boundary).Version,
             "An unchanged visible projection must not rewrite UI state.");
 
-        FactionEconomy economy = em.GetComponentData<FactionEconomy>(exchange);
-        economy.Money++;
-        em.SetComponentData(exchange, economy);
+        FactionTacticalMaterialsComponent materials =
+            em.GetComponentData<FactionTacticalMaterialsComponent>(exchange);
+        materials.Current++;
+        em.SetComponentData(exchange, materials);
         UpdateSystem(world, system);
 
         Assert.AreEqual(
@@ -150,7 +151,7 @@ public sealed class UiResourceExchangeReadModelSystemTests
         {
             QueueItemId = 7,
             FactionId = FactionIdentity.PlayerFactionId,
-            RecipeId = new FixedString128Bytes("exchange.export_oil_credits.standard"),
+            RecipeId = new FixedString128Bytes("exchange.convert_oil_materials.test"),
             State = ResourceExchangeQueueState.InProgress,
             DurationSeconds = 60f,
             RemainingSeconds = 30.6f
@@ -198,7 +199,7 @@ public sealed class UiResourceExchangeReadModelSystemTests
         queue.Add(new ResourceExchangeQueueComponent
         {
             QueueItemId = 7,
-            RecipeId = new FixedString128Bytes("exchange.export_oil_credits.standard"),
+            RecipeId = new FixedString128Bytes("exchange.convert_oil_materials.test"),
             State = ResourceExchangeQueueState.InProgress,
             DurationSeconds = 60f,
             RemainingSeconds = 30.6f
@@ -253,10 +254,6 @@ public sealed class UiResourceExchangeReadModelSystemTests
         sameVisibleResources.StoredOilBarrels = 400.9f;
         ulong sameVisibleOil = UiResourceExchangeProjectionFingerprintUtilitySystemHelper.Calculate(
             enabled, economy, materials, wallet, sameVisibleResources, summary, state, recipes, queue);
-        FactionEconomy changedEconomy = economy;
-        changedEconomy.Money++;
-        ulong changedCredits = UiResourceExchangeProjectionFingerprintUtilitySystemHelper.Calculate(
-            enabled, changedEconomy, materials, wallet, physicalResources, summary, state, recipes, queue);
         FactionTacticalMaterialsComponent changedMaterials = materials;
         changedMaterials.Current++;
         ulong changedMaterialAmount = UiResourceExchangeProjectionFingerprintUtilitySystemHelper.Calculate(
@@ -267,7 +264,6 @@ public sealed class UiResourceExchangeReadModelSystemTests
             enabled, economy, materials, wallet, changedPhysicalResources, summary, state, recipes, queue);
 
         Assert.AreEqual(initial, sameVisibleOil);
-        Assert.AreNotEqual(initial, changedCredits);
         Assert.AreNotEqual(initial, changedMaterialAmount);
         Assert.AreNotEqual(initial, changedOil);
     }
@@ -284,7 +280,7 @@ public sealed class UiResourceExchangeReadModelSystemTests
         queue.Add(new ResourceExchangeQueueComponent
         {
             QueueItemId = 7,
-            RecipeId = new FixedString128Bytes("exchange.export_oil_credits.standard"),
+            RecipeId = new FixedString128Bytes("exchange.convert_oil_materials.test"),
             State = ResourceExchangeQueueState.InProgress,
             DurationSeconds = 60f,
             RemainingSeconds = 30f
@@ -328,10 +324,10 @@ public sealed class UiResourceExchangeReadModelSystemTests
         {
             QueueItemId = 7,
             FactionId = 1,
-            RecipeId = new FixedString128Bytes("exchange.export_oil_credits.standard"),
+            RecipeId = new FixedString128Bytes("exchange.convert_oil_materials.test"),
             RouteType = ResourceExchangeRouteType.Export,
             InputResource = ResourceExchangeResourceKind.Oil,
-            OutputResource = ResourceExchangeResourceKind.Credits,
+            OutputResource = ResourceExchangeResourceKind.Materials,
             InputAmount = 100,
             ReservedInputAmount = 100,
             OutputAmount = 46,
@@ -375,7 +371,7 @@ public sealed class UiResourceExchangeReadModelSystemTests
         Assert.AreEqual(1, state.ExportRecipeCount);
         Assert.AreEqual(1, state.ImportRecipeCount);
         Assert.AreEqual("1/3", state.QueueCapacityText.ToString());
-        Assert.AreEqual("1000", state.CreditsText.ToString());
+        Assert.AreEqual("50", state.MaterialsText.ToString());
         Assert.AreEqual("400", state.OilText.ToString());
         Assert.AreEqual("2", state.RushTicketsText.ToString());
         Assert.AreEqual(1, state.RushAllEnabled);
@@ -383,17 +379,17 @@ public sealed class UiResourceExchangeReadModelSystemTests
         Assert.AreEqual(7u, state.Version);
 
         Assert.AreEqual(1, cards.Length);
-        Assert.AreEqual("Export Oil", cards[0].Title.ToString());
+        Assert.AreEqual("Convert Oil to Materials", cards[0].Title.ToString());
         Assert.AreEqual(1, cards[0].Selected);
         Assert.AreEqual(1, cards[0].Enabled);
         Assert.AreEqual("100 OIL", cards[0].InputText.ToString());
-        Assert.AreEqual("46 CREDITS", cards[0].OutputText.ToString());
+        Assert.AreEqual("46 MATERIALS", cards[0].OutputText.ToString());
 
-        Assert.AreEqual("Export Oil", detail.Name.ToString());
+        Assert.AreEqual("Convert Oil to Materials", detail.Name.ToString());
         Assert.AreEqual("EXPORT", detail.RouteText.ToString());
-        Assert.AreEqual("1 OIL -> 0.47 CREDITS", detail.RateText.ToString());
+        Assert.AreEqual("1 OIL -> 0.47 MATERIALS", detail.RateText.ToString());
         Assert.AreEqual("100 OIL", detail.InputCostText.ToString());
-        Assert.AreEqual("46 CREDITS", detail.OutputPreviewText.ToString());
+        Assert.AreEqual("46 MATERIALS", detail.OutputPreviewText.ToString());
         Assert.AreEqual("00:30", detail.DurationText.ToString());
         Assert.AreEqual(1, detail.ConfirmEnabled);
         Assert.AreEqual(0, detail.WarningVisible);
@@ -401,7 +397,7 @@ public sealed class UiResourceExchangeReadModelSystemTests
         Assert.AreEqual(1, rows.Length);
         Assert.AreEqual(7, rows[0].QueueItemId);
         Assert.AreEqual(UiResourceExchangeQueueState.InProgress, rows[0].State);
-        Assert.AreEqual("Export Oil", rows[0].Name.ToString());
+        Assert.AreEqual("Convert Oil to Materials", rows[0].Name.ToString());
         Assert.AreEqual("00:30", rows[0].TimeText.ToString());
         Assert.AreEqual("50%", rows[0].PercentText.ToString());
         Assert.AreEqual(0.5f, rows[0].Progress01);
@@ -513,7 +509,7 @@ public sealed class UiResourceExchangeReadModelSystemTests
         return entity;
     }
 
-    private static Entity CreateCompleteExchange(EntityManager em, byte factionId, int credits)
+    private static Entity CreateCompleteExchange(EntityManager em, byte factionId, int materials)
     {
         Entity entity = em.CreateEntity(
             typeof(ResourceExchangeEnabledComponent),
@@ -528,12 +524,12 @@ public sealed class UiResourceExchangeReadModelSystemTests
             MaxQueueItems = 3,
             ScenarioTag = new FixedString64Bytes("mission.active")
         });
-        em.SetComponentData(entity, new FactionEconomy { FactionId = factionId, Money = credits });
+        em.SetComponentData(entity, new FactionEconomy { FactionId = factionId, Money = 0 });
         em.SetComponentData(entity, new FactionTacticalMaterialsComponent
         {
             FactionId = factionId,
-            Current = 50,
-            Capacity = 200
+            Current = materials,
+            Capacity = 10000
         });
         em.SetComponentData(entity, new ResourceExchangeWalletComponent
         {
@@ -608,11 +604,11 @@ public sealed class UiResourceExchangeReadModelSystemTests
     {
         return new ResourceExchangeRecipeComponent
         {
-            RecipeId = new FixedString128Bytes("exchange.export_oil_credits.standard"),
-            DisplayName = new FixedString128Bytes("Export Oil"),
+            RecipeId = new FixedString128Bytes("exchange.convert_oil_materials.test"),
+            DisplayName = new FixedString128Bytes("Convert Oil to Materials"),
             RouteType = ResourceExchangeRouteType.Export,
             InputResource = ResourceExchangeResourceKind.Oil,
-            OutputResource = ResourceExchangeResourceKind.Credits,
+            OutputResource = ResourceExchangeResourceKind.Materials,
             InputAmountMin = 100,
             InputAmountMax = 1000,
             InputStep = 100,
@@ -633,7 +629,7 @@ public sealed class UiResourceExchangeReadModelSystemTests
             RecipeId = new FixedString128Bytes("exchange.import_fuel.standard"),
             DisplayName = new FixedString128Bytes("Import Fuel"),
             RouteType = ResourceExchangeRouteType.Import,
-            InputResource = ResourceExchangeResourceKind.Credits,
+            InputResource = ResourceExchangeResourceKind.Oil,
             OutputResource = ResourceExchangeResourceKind.Fuel,
             InputAmountMin = 100,
             InputAmountMax = 1000,

@@ -74,8 +74,8 @@ namespace Game.UI.Contracts
         float ActivePlacementDurationSeconds { get; }
         int MaxQueuedUnitProductions { get; }
 
-        BuildingUiCommandFailure GetCampRequestFailure(GameObject prefab, int price, out string requiredBuildingDisplayName);
-        BuildingUiCommandFailure TryRequestCampItem(GameObject prefab, int price, out string requiredBuildingDisplayName, bool focusProducerOnSuccess);
+        BuildingUiCommandFailure GetCampRequestFailure(GameObject prefab, int materialsCost, out string requiredBuildingDisplayName);
+        BuildingUiCommandFailure TryRequestCampItem(GameObject prefab, int materialsCost, out string requiredBuildingDisplayName, bool focusProducerOnSuccess);
         bool CancelProduction(int buildingId, int pendingProductionIndex);
         bool ConfirmBuildingPlacement();
         void CancelBuildingPlacement();

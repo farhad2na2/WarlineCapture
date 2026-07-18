@@ -26,7 +26,7 @@ namespace Game.Components
         None = 0,
         ExchangeUnavailable = 1,
         RecipeLocked = 2,
-        InsufficientCredits = 3,
+        LegacyInsufficientCredits = 3,
         InsufficientMaterials = 4,
         InsufficientOil = 5,
         InsufficientFuel = 6,
@@ -53,7 +53,7 @@ namespace Game.Components
 
     public enum ResourceExchangeResourceKind : byte
     {
-        Credits = 0,
+        Invalid = 0,
         Materials = 1,
         Oil = 2,
         Fuel = 3,

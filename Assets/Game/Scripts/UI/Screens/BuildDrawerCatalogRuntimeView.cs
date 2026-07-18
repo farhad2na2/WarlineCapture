@@ -215,7 +215,7 @@ namespace Game.UI.Runtime
 
             BuildingUiCommandFailure failure = _uiCommandSystem.TryRequestCampItem(
                 _selectedItem.Prefab,
-                _selectedItem.Price,
+                _selectedItem.MaterialsCost,
                 out string requiredBuildingDisplayName,
                 false);
             if (failure != BuildingUiCommandFailure.None)
@@ -340,7 +340,7 @@ namespace Game.UI.Runtime
 
             BuildingUiCommandFailure failure = _uiCommandSystem.GetCampRequestFailure(
                 _selectedItem.Prefab,
-                _selectedItem.Price,
+                _selectedItem.MaterialsCost,
                 out string requiredBuildingDisplayName);
             if (failure == BuildingUiCommandFailure.None)
             {
@@ -380,7 +380,7 @@ namespace Game.UI.Runtime
         {
             requiredBuildingDisplayName = string.Empty;
             return _uiCommandSystem != null
-                ? _uiCommandSystem.GetCampRequestFailure(item.Prefab, item.Price, out requiredBuildingDisplayName)
+                ? _uiCommandSystem.GetCampRequestFailure(item.Prefab, item.MaterialsCost, out requiredBuildingDisplayName)
                 : BuildingUiCommandFailure.InvalidSelection;
         }
 

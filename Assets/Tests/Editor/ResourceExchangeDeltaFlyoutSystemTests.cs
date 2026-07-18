@@ -56,7 +56,7 @@ public sealed class ResourceExchangeDeltaFlyoutSystemTests
         ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
             em,
             exchange,
-            new FixedString128Bytes("exchange.export_oil_credits.standard"),
+            new FixedString128Bytes("exchange.convert_oil_materials.test"),
             200,
             1,
             0);
@@ -83,7 +83,7 @@ public sealed class ResourceExchangeDeltaFlyoutSystemTests
         EntityManager em = world.EntityManager;
         Entity exchange = CreateExchangeEntity(em);
         em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Add(CreateQueueItem(
-            inputResource: ResourceExchangeResourceKind.Credits,
+            inputResource: ResourceExchangeResourceKind.Oil,
             reservedInputAmount: 0,
             outputAmount: 93,
             remainingSeconds: 0.1f));
@@ -99,7 +99,7 @@ public sealed class ResourceExchangeDeltaFlyoutSystemTests
             queueItemId: 1,
             ResourceExchangeDeltaFlyoutKind.OutputGranted,
             ResourceExchangeResultKind.QueueCompleted,
-            ResourceExchangeResourceKind.Credits,
+            ResourceExchangeResourceKind.Oil,
             93);
     }
 
@@ -191,7 +191,7 @@ public sealed class ResourceExchangeDeltaFlyoutSystemTests
             queueItemId: 1,
             ResourceExchangeDeltaFlyoutKind.OutputGranted,
             ResourceExchangeResultKind.QueueCompleted,
-            ResourceExchangeResourceKind.Credits,
+            ResourceExchangeResourceKind.Oil,
             93);
     }
 
@@ -255,11 +255,11 @@ public sealed class ResourceExchangeDeltaFlyoutSystemTests
     {
         return new ResourceExchangeRecipeComponent
         {
-            RecipeId = new FixedString128Bytes("exchange.export_oil_credits.standard"),
+            RecipeId = new FixedString128Bytes("exchange.convert_oil_materials.test"),
             DisplayName = new FixedString128Bytes("Export Oil"),
             RouteType = ResourceExchangeRouteType.Export,
             InputResource = ResourceExchangeResourceKind.Oil,
-            OutputResource = ResourceExchangeResourceKind.Credits,
+            OutputResource = ResourceExchangeResourceKind.Oil,
             InputAmountMin = 100,
             InputAmountMax = 1000,
             InputStep = 100,
@@ -295,7 +295,7 @@ public sealed class ResourceExchangeDeltaFlyoutSystemTests
             RecipeId = new FixedString128Bytes("exchange.rush.test"),
             RouteType = ResourceExchangeRouteType.Export,
             InputResource = inputResource,
-            OutputResource = ResourceExchangeResourceKind.Credits,
+            OutputResource = ResourceExchangeResourceKind.Oil,
             InputAmount = reservedInputAmount,
             ReservedInputAmount = reservedInputAmount,
             OutputAmount = outputAmount,

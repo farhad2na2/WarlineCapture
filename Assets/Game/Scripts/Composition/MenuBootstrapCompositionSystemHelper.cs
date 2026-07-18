@@ -912,7 +912,6 @@ namespace Game.Composition
                 entityManager.SetComponentData(boundary, new UiShellMainMenuResourcesComponent
                 {
                     CreditsText = new FixedString32Bytes("12,450"),
-                    SuppliesText = new FixedString32Bytes("1,280"),
                     CommandText = new FixedString32Bytes("78/100")
                 });
             }

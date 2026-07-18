@@ -108,14 +108,12 @@ public sealed class ResourceExchangeStartupProjectionSystemHelperTests
         BalanceReport report = JsonUtility.FromJson<BalanceReport>(File.ReadAllText(BalanceReportPath));
         Assert.NotNull(report);
         Assert.AreEqual("custom.skirmish.legacy", report.scenarioTag);
-        Assert.AreEqual(balance.LocalCreditsPerMaterial, report.localProduction.creditsPerMaterial, 0.001f);
-        Assert.AreEqual(balance.ImportCreditsPerMaterial, report.repeatedImports.creditsPerMaterial, 0.001f);
-        Assert.AreEqual(14.25f, report.mixedStrategy.creditsPerMaterial, 0.001f);
-        Assert.AreEqual(balance.ImportCreditsPerMaterial, report.destroyedDepotRecovery.creditsPerMaterial, 0.001f);
-        Assert.Less(report.localProduction.creditsPerMaterial, report.mixedStrategy.creditsPerMaterial);
-        Assert.Less(report.mixedStrategy.creditsPerMaterial, report.repeatedImports.creditsPerMaterial);
+        Assert.AreEqual(balance.LocalMaterialsPerOil, report.localMaterialsPerOil, 0.001f);
+        Assert.AreEqual(balance.ExchangeMaterialsPerOil, report.exchangeMaterialsPerOil, 0.001f);
+        Assert.AreEqual(balance.ExchangeEfficiency, report.exchangeEfficiency, 0.001f);
+        Assert.AreEqual(balance.MaterialsRoundTripRetention, report.materialsRoundTripRetention, 0.001f);
+        Assert.Less(report.exchangeMaterialsPerOil, report.localMaterialsPerOil);
         Assert.IsTrue(report.materialsRoundTripSafe);
-        Assert.IsTrue(report.oilFabricationExportSafe);
     }
 
     [Test]
@@ -155,16 +153,12 @@ public sealed class ResourceExchangeStartupProjectionSystemHelperTests
                 depotConfig,
                 "custom.skirmish.legacy",
                 out ResourceExchangeMaterialsBalanceResult balance));
-        Assert.AreEqual(10.5f, balance.LocalCreditsPerMaterial, 0.001f);
-        Assert.AreEqual(18f, balance.ImportCreditsPerMaterial, 0.001f);
-        Assert.GreaterOrEqual(balance.ImportMarkup, exchangeConfig.MaterialsBalance.MinimumImportMarkup);
-        Assert.LessOrEqual(balance.ImportMarkup, exchangeConfig.MaterialsBalance.MaximumImportMarkup);
+        Assert.AreEqual(5f, balance.LocalMaterialsPerOil, 0.001f);
+        Assert.AreEqual(3f, balance.ExchangeMaterialsPerOil, 0.001f);
+        Assert.AreEqual(0.6f, balance.ExchangeEfficiency, 0.001f);
         Assert.LessOrEqual(
             balance.MaterialsRoundTripRetention,
             ResourceExchangeRecipeConfigValidator.MaximumRoundTripResourceRetention);
-        Assert.LessOrEqual(
-            balance.OilFabricateExportCreditsPerBarrel,
-            balance.OilDirectExportCreditsPerBarrel);
     }
 
     [Test]
@@ -246,10 +240,18 @@ public sealed class ResourceExchangeStartupProjectionSystemHelperTests
         int requestId = ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
             em,
             player,
-            new FixedString128Bytes("exchange.import_materials.emergency"),
-            1800,
+            new FixedString128Bytes("exchange.convert_oil_materials.emergency"),
+            100,
             FactionIdentity.PlayerFactionId,
             0);
+        Entity oilStorage = em.CreateEntity(typeof(BuildingResourceStorageComponent));
+        em.SetComponentData(oilStorage, new BuildingResourceStorageComponent
+        {
+            RuntimeBuildingId = 1,
+            OwnerFactionId = FactionIdentity.PlayerFactionId,
+            StoredOilBarrels = 1000f,
+            OilStorageCapacity = 2000
+        });
         SystemHandle system = world.CreateSystem<ResourceExchangeRequestValidationSystem>();
         world.Unmanaged.GetUnsafeSystemRef<ResourceExchangeRequestValidationSystem>(system)
             .OnUpdate(ref world.Unmanaged.ResolveSystemStateRef(system));
@@ -463,7 +465,7 @@ public sealed class ResourceExchangeStartupProjectionSystemHelperTests
             new(
                 "exchange.import_materials.ai_test",
                 ResourceExchangeRouteType.Import,
-                ResourceExchangeResourceKind.Credits,
+                ResourceExchangeResourceKind.Oil,
                 ResourceExchangeResourceKind.Materials,
                 inputAmountMin: 1800,
                 inputAmountMax: 9000,
@@ -544,18 +546,11 @@ public sealed class ResourceExchangeStartupProjectionSystemHelperTests
     private sealed class BalanceReport
     {
         public string scenarioTag;
-        public BalanceStrategy localProduction;
-        public BalanceStrategy repeatedImports;
-        public BalanceStrategy mixedStrategy;
-        public BalanceStrategy destroyedDepotRecovery;
+        public float localMaterialsPerOil;
+        public float exchangeMaterialsPerOil;
+        public float exchangeEfficiency;
+        public float materialsRoundTripRetention;
         public bool materialsRoundTripSafe;
-        public bool oilFabricationExportSafe;
-    }
-
-    [Serializable]
-    private sealed class BalanceStrategy
-    {
-        public float creditsPerMaterial;
     }
 }
 #endif

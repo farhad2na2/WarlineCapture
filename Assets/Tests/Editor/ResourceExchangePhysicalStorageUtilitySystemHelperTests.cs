@@ -293,7 +293,7 @@ public sealed class ResourceExchangePhysicalStorageUtilitySystemHelperTests
             RecipeId = new FixedString128Bytes("OilExport"),
             Enabled = 1,
             InputResource = ResourceExchangeResourceKind.Oil,
-            OutputResource = ResourceExchangeResourceKind.Credits,
+            OutputResource = ResourceExchangeResourceKind.Oil,
             InputAmountMin = 10,
             InputAmountMax = 10,
             InputStep = 1,
@@ -344,7 +344,7 @@ public sealed class ResourceExchangePhysicalStorageUtilitySystemHelperTests
 
         queue.Add(QueueItem(
             queueItemId: 2,
-            inputResource: ResourceExchangeResourceKind.Credits,
+            inputResource: ResourceExchangeResourceKind.Oil,
             inputAmount: 10,
             outputResource: ResourceExchangeResourceKind.Fuel,
             outputAmount: 10));

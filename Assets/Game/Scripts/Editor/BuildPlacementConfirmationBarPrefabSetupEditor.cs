@@ -10,6 +10,7 @@ namespace Game.Editor
     {
         private const string PrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN08_BuildPlacementConfirmationBar.prefab";
         internal const string StatusChipSpritePath = "Assets/Game/Art/UI/Panels/scn08_status_segment_strip.png";
+        internal const string MaterialsIconSpritePath = CanonicalUiResourceIconPaths.Materials;
 
         [MenuItem("Game/UI/Setup Build Placement Confirmation Bar Prefab")]
         public static void Setup()
@@ -44,7 +45,10 @@ namespace Game.Editor
                 Sprite goldActionButton = GetSprite(serialized, "goldActionButtonSprite");
                 Sprite squareButton = GetSprite(serialized, "squareButtonSprite");
                 Sprite instructionStrip = GetSprite(serialized, "instructionStripSprite");
-                Sprite creditsIcon = GetSprite(serialized, "creditsIconSprite");
+                Sprite materialsIcon = AssetDatabase.LoadAssetAtPath<Sprite>(MaterialsIconSpritePath);
+                if (materialsIcon == null)
+                    throw new MissingReferenceException($"Missing materials icon at {MaterialsIconSpritePath}.");
+                SetObject(serialized, "materialsIconSprite", materialsIcon);
                 Sprite timeIcon = GetSprite(serialized, "timeIconSprite");
                 Sprite cancelIcon = GetSprite(serialized, "cancelIconSprite");
                 Sprite rotateIcon = GetSprite(serialized, "rotateIconSprite");
@@ -60,7 +64,7 @@ namespace Game.Editor
                 TMP_Text titleText = CreateText("Title", rootRect, new Vector2(0.07f, 0.67f), new Vector2(0.39f, 0.94f), 26, TextAlignmentOptions.Left, new Color(0.96f, 0.88f, 0.67f));
                 RectTransform statusChipRect = CreateImage("StatusChip", rootRect, new Vector2(0.405f, 0.68f), new Vector2(0.555f, 0.93f), statusChip, new Color(0.14f, 0.30f, 0.12f, 0.92f), false);
                 TMP_Text statusText = CreateText("Status", statusChipRect, new Vector2(0.08f, 0.12f), new Vector2(0.92f, 0.88f), 17, TextAlignmentOptions.Center, new Color(0.62f, 0.98f, 0.35f));
-                CreateImage("CreditsIcon", rootRect, new Vector2(0.60f, 0.70f), new Vector2(0.645f, 0.92f), creditsIcon, Color.white, false);
+                CreateImage("MaterialsIcon", rootRect, new Vector2(0.60f, 0.70f), new Vector2(0.645f, 0.92f), materialsIcon, Color.white, false);
                 TMP_Text costText = CreateText("Cost", rootRect, new Vector2(0.645f, 0.68f), new Vector2(0.735f, 0.94f), 22, TextAlignmentOptions.Left, Color.white);
                 CreateImage("TimeIcon", rootRect, new Vector2(0.77f, 0.70f), new Vector2(0.815f, 0.92f), timeIcon, Color.white, false);
                 TMP_Text durationText = CreateText("Duration", rootRect, new Vector2(0.815f, 0.68f), new Vector2(0.92f, 0.94f), 22, TextAlignmentOptions.Left, Color.white);

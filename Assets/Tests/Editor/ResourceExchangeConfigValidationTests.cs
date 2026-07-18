@@ -80,10 +80,10 @@ public sealed class ResourceExchangeConfigValidationTests
             ResourceExchangeReason.None,
             ResourceExchangeRecipeConfigValidator.ValidateRecipe(
                 new ResourceExchangeRecipeConfigEntry(
-                    "exchange.export_oil_credits.standard",
+                    "exchange.convert_oil_materials.test",
                     ResourceExchangeRouteType.Export,
                     ResourceExchangeResourceKind.Oil,
-                    ResourceExchangeResourceKind.Credits)));
+                    ResourceExchangeResourceKind.Oil)));
 
         Assert.AreEqual(
             ResourceExchangeReason.None,
@@ -91,7 +91,7 @@ public sealed class ResourceExchangeConfigValidationTests
                 new ResourceExchangeRecipeConfigEntry(
                     "exchange.import_fuel_credits.standard",
                     ResourceExchangeRouteType.Import,
-                    ResourceExchangeResourceKind.Credits,
+                    ResourceExchangeResourceKind.Oil,
                     ResourceExchangeResourceKind.Fuel)));
     }
 
@@ -101,15 +101,15 @@ public sealed class ResourceExchangeConfigValidationTests
         var recipes = new[]
         {
             new ResourceExchangeRecipeConfigEntry(
-                "exchange.export_oil_credits.standard",
+                "exchange.convert_oil_materials.test",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Oil,
-                ResourceExchangeResourceKind.Credits),
+                ResourceExchangeResourceKind.Oil),
             new ResourceExchangeRecipeConfigEntry(
-                "exchange.export_oil_credits.standard",
+                "exchange.convert_oil_materials.test",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Materials,
-                ResourceExchangeResourceKind.Credits)
+                ResourceExchangeResourceKind.Oil)
         };
 
         Assert.AreEqual(
@@ -126,7 +126,7 @@ public sealed class ResourceExchangeConfigValidationTests
                 string.Empty,
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Oil,
-                ResourceExchangeResourceKind.Credits,
+                ResourceExchangeResourceKind.Oil,
                 100,
                 1000,
                 100,
@@ -143,7 +143,7 @@ public sealed class ResourceExchangeConfigValidationTests
                 "exchange.invalid.amount",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Oil,
-                ResourceExchangeResourceKind.Credits,
+                ResourceExchangeResourceKind.Oil,
                 1000,
                 100,
                 100,
@@ -160,7 +160,7 @@ public sealed class ResourceExchangeConfigValidationTests
                 "exchange.invalid.step",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Oil,
-                ResourceExchangeResourceKind.Credits,
+                ResourceExchangeResourceKind.Oil,
                 100,
                 950,
                 200,
@@ -177,7 +177,7 @@ public sealed class ResourceExchangeConfigValidationTests
                 "exchange.invalid.rate",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Oil,
-                ResourceExchangeResourceKind.Credits,
+                ResourceExchangeResourceKind.Oil,
                 100,
                 1000,
                 100,
@@ -194,7 +194,7 @@ public sealed class ResourceExchangeConfigValidationTests
                 "exchange.invalid.duration",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Oil,
-                ResourceExchangeResourceKind.Credits,
+                ResourceExchangeResourceKind.Oil,
                 100,
                 1000,
                 100,
@@ -211,7 +211,7 @@ public sealed class ResourceExchangeConfigValidationTests
                 "exchange.invalid.rush",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Oil,
-                ResourceExchangeResourceKind.Credits,
+                ResourceExchangeResourceKind.Oil,
                 100,
                 1000,
                 100,
@@ -232,7 +232,7 @@ public sealed class ResourceExchangeConfigValidationTests
                 "exchange.invalid.amount_cap",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Oil,
-                ResourceExchangeResourceKind.Credits,
+                ResourceExchangeResourceKind.Oil,
                 100,
                 ResourceExchangeRecipeConfigValidator.MaximumInputAmountPerExchange + 100,
                 100,
@@ -249,7 +249,7 @@ public sealed class ResourceExchangeConfigValidationTests
                 "exchange.invalid.rate_cap",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Oil,
-                ResourceExchangeResourceKind.Credits,
+                ResourceExchangeResourceKind.Oil,
                 100,
                 1000,
                 100,
@@ -266,7 +266,7 @@ public sealed class ResourceExchangeConfigValidationTests
                 "exchange.invalid.fee_nan",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Oil,
-                ResourceExchangeResourceKind.Credits,
+                ResourceExchangeResourceKind.Oil,
                 100,
                 1000,
                 100,
@@ -283,7 +283,7 @@ public sealed class ResourceExchangeConfigValidationTests
                 "exchange.invalid.instant",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Oil,
-                ResourceExchangeResourceKind.Credits,
+                ResourceExchangeResourceKind.Oil,
                 100,
                 1000,
                 100,
@@ -300,7 +300,7 @@ public sealed class ResourceExchangeConfigValidationTests
                 "exchange.invalid.rush_cap",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Oil,
-                ResourceExchangeResourceKind.Credits,
+                ResourceExchangeResourceKind.Oil,
                 100,
                 1000,
                 100,
@@ -321,13 +321,13 @@ public sealed class ResourceExchangeConfigValidationTests
                 "exchange.export_fuel_credits.safe",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Fuel,
-                ResourceExchangeResourceKind.Credits,
+                ResourceExchangeResourceKind.Oil,
                 outputPerInput: 0.55f,
                 feePercent: 0.15f),
             new ResourceExchangeRecipeConfigEntry(
                 "exchange.import_fuel_credits.safe",
                 ResourceExchangeRouteType.Import,
-                ResourceExchangeResourceKind.Credits,
+                ResourceExchangeResourceKind.Oil,
                 ResourceExchangeResourceKind.Fuel,
                 outputPerInput: 0.5f,
                 feePercent: 0.15f)
@@ -343,13 +343,13 @@ public sealed class ResourceExchangeConfigValidationTests
                 "exchange.export_fuel_credits.farming",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Fuel,
-                ResourceExchangeResourceKind.Credits,
+                ResourceExchangeResourceKind.Oil,
                 outputPerInput: 1f,
                 feePercent: 0.05f),
             new ResourceExchangeRecipeConfigEntry(
                 "exchange.import_fuel_credits.farming",
                 ResourceExchangeRouteType.Import,
-                ResourceExchangeResourceKind.Credits,
+                ResourceExchangeResourceKind.Oil,
                 ResourceExchangeResourceKind.Fuel,
                 outputPerInput: 1f,
                 feePercent: 0.05f)
@@ -366,15 +366,15 @@ public sealed class ResourceExchangeConfigValidationTests
         var recipes = new[]
         {
             new ResourceExchangeRecipeConfigEntry(
-                "exchange.export_oil_credits.mission_active",
+                "exchange.convert_oil_materials.mission_active",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Oil,
-                ResourceExchangeResourceKind.Credits,
+                ResourceExchangeResourceKind.Oil,
                 missionTag: "mission.active"),
             new ResourceExchangeRecipeConfigEntry(
                 "exchange.import_fuel_credits.skirmish_quick",
                 ResourceExchangeRouteType.Import,
-                ResourceExchangeResourceKind.Credits,
+                ResourceExchangeResourceKind.Oil,
                 ResourceExchangeResourceKind.Fuel,
                 missionTag: "custom.skirmish.quick")
         };
@@ -414,10 +414,10 @@ public sealed class ResourceExchangeConfigValidationTests
         var blankRecipeGate = new[]
         {
             new ResourceExchangeRecipeConfigEntry(
-                "exchange.export_oil_credits.blank_gate",
+                "exchange.convert_oil_materials.blank_gate",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Oil,
-                ResourceExchangeResourceKind.Credits)
+                ResourceExchangeResourceKind.Oil)
         };
 
         Assert.AreEqual(
@@ -427,10 +427,10 @@ public sealed class ResourceExchangeConfigValidationTests
         var unknownRecipeGate = new[]
         {
             new ResourceExchangeRecipeConfigEntry(
-                "exchange.export_oil_credits.unknown_gate",
+                "exchange.convert_oil_materials.unknown_gate",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Oil,
-                ResourceExchangeResourceKind.Credits,
+                ResourceExchangeResourceKind.Oil,
                 missionTag: "mission.late")
         };
 
@@ -494,10 +494,10 @@ public sealed class ResourceExchangeConfigValidationTests
         var gatedRecipe = new[]
         {
             new ResourceExchangeRecipeConfigEntry(
-                "exchange.export_oil_credits.ai_enabled",
+                "exchange.convert_oil_materials.ai_enabled",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Oil,
-                ResourceExchangeResourceKind.Credits,
+                ResourceExchangeResourceKind.Oil,
                 missionTag: "mission.ai_exchange_enabled")
         };
 
@@ -530,7 +530,7 @@ public sealed class ResourceExchangeConfigValidationTests
                 new ResourceExchangeRecipeConfigEntry(
                     "exchange.import_oil_credits.invalid",
                     ResourceExchangeRouteType.Import,
-                    ResourceExchangeResourceKind.Credits,
+                    ResourceExchangeResourceKind.Oil,
                     ResourceExchangeResourceKind.Oil)));
 
         Assert.AreEqual(
@@ -540,7 +540,7 @@ public sealed class ResourceExchangeConfigValidationTests
                     "exchange.rush_to_credits.invalid",
                     ResourceExchangeRouteType.Export,
                     ResourceExchangeResourceKind.RushTickets,
-                    ResourceExchangeResourceKind.Credits)));
+                    ResourceExchangeResourceKind.Oil)));
     }
 
     private static void RunValidationStep(

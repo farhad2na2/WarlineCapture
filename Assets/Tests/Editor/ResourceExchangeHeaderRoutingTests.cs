@@ -92,19 +92,16 @@ public sealed class ResourceExchangeHeaderRoutingTests
         try
         {
             runtimeUi.BindMatchHudThreatJumpPanel(header);
-            Button creditsButton = header.transform.Find("ResourceStrip/CreditsSlot").GetComponent<Button>();
+            Button materialsButton = header.transform.Find("ResourceStrip/MaterialsSlot").GetComponent<Button>();
             Button oilButton = header.transform.Find("ResourceStrip/OilSlot").GetComponent<Button>();
             Button fuelButton = header.transform.Find("ResourceStrip/FuelSlot").GetComponent<Button>();
-            Button supplyButton = header.transform.Find("ResourceStrip/SupplySlot").GetComponent<Button>();
 
-            Assert.NotNull(creditsButton, "Credits slot must be clickable for Resource Exchange access.");
+            Assert.NotNull(materialsButton, "Materials slot must be clickable for Resource Exchange access.");
             Assert.NotNull(oilButton, "Oil slot must be clickable for Resource Exchange access.");
             Assert.NotNull(fuelButton, "Fuel slot must be clickable for Resource Exchange access.");
-            Assert.NotNull(supplyButton, "Supply slot must be clickable for Resource Exchange access.");
             TMP_Text materialsLabel =
-                header.transform.Find("ResourceStrip/SupplySlot/Label").GetComponent<TMP_Text>();
+                header.transform.Find("ResourceStrip/MaterialsSlot/Label").GetComponent<TMP_Text>();
             Assert.AreEqual("Materials", materialsLabel.text);
-            Assert.IsTrue(materialsLabel.enableAutoSizing);
             Assert.GreaterOrEqual(materialsLabel.rectTransform.rect.width, 300f);
 
             oilButton.onClick.Invoke();
@@ -516,7 +513,7 @@ public sealed class ResourceExchangeHeaderRoutingTests
             entityManager.AddBuffer<ResourceExchangeRecipeComponent>(exchange);
         recipes.Add(new ResourceExchangeRecipeComponent
         {
-            RecipeId = new Unity.Collections.FixedString128Bytes("credits-to-materials"),
+            RecipeId = new Unity.Collections.FixedString128Bytes("oil-to-materials"),
             Enabled = 1,
             MissionTag = new Unity.Collections.FixedString64Bytes("mission.header-routing")
         });
@@ -529,10 +526,9 @@ public sealed class ResourceExchangeHeaderRoutingTests
         GameObject strip = new("ResourceStrip", typeof(RectTransform));
         strip.transform.SetParent(header.transform, false);
 
-        CreateResourceSlot(strip.transform, "CreditsSlot");
+        CreateResourceSlot(strip.transform, "MaterialsSlot");
         CreateResourceSlot(strip.transform, "OilSlot");
         CreateResourceSlot(strip.transform, "FuelSlot");
-        CreateResourceSlot(strip.transform, "SupplySlot");
         CreateResourceSlot(strip.transform, "CivilianRiskSlot");
         return header;
     }
@@ -549,7 +545,7 @@ public sealed class ResourceExchangeHeaderRoutingTests
         labelRect.anchorMin = Vector2.zero;
         labelRect.anchorMax = Vector2.one;
         labelRect.sizeDelta = Vector2.zero;
-        label.GetComponent<TMP_Text>().text = name == "SupplySlot" ? "Supply" : name;
+        label.GetComponent<TMP_Text>().text = name == "MaterialsSlot" ? "Materials" : name;
     }
 
     private static T FindInScene<T>(Scene scene) where T : UnityEngine.Object

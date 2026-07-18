@@ -8,10 +8,10 @@ using Unity.Entities;
 public sealed class Aph807ResourceExchangeFlowPlayModeTests
 {
     [Test]
-    public void ProductionRequestGateway_ConfirmsExportAndSettlesCreditsExactlyOnce()
+    public void ProductionRequestGateway_ConfirmsConversionAndSettlesMaterialsExactlyOnce()
     {
         World previousWorld = World.DefaultGameObjectInjectionWorld;
-        using var world = new World(nameof(ProductionRequestGateway_ConfirmsExportAndSettlesCreditsExactlyOnce));
+        using var world = new World(nameof(ProductionRequestGateway_ConfirmsConversionAndSettlesMaterialsExactlyOnce));
         World.DefaultGameObjectInjectionWorld = world;
 
         try
@@ -22,7 +22,7 @@ public sealed class Aph807ResourceExchangeFlowPlayModeTests
             int requestId = ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
                 em,
                 exchange,
-                new FixedString128Bytes("exchange.export_oil_credits.standard"),
+                new FixedString128Bytes("exchange.convert_oil_materials.test"),
                 inputAmount: 200,
                 factionId: FactionIdentity.PlayerFactionId,
                 frameCount: 10);
@@ -53,7 +53,8 @@ public sealed class Aph807ResourceExchangeFlowPlayModeTests
             BuildingResourceStorageComponent settledStorage = GetStorage(em);
             Assert.AreEqual(300f, settledStorage.StoredOilBarrels, 0.001f);
             Assert.AreEqual(0f, settledStorage.ReservedOilOutboundBarrels, 0.001f);
-            Assert.AreEqual(100, em.GetComponentData<FactionEconomy>(exchange).Money);
+            Assert.AreEqual(100, em.GetComponentData<FactionTacticalMaterialsComponent>(exchange).Current);
+            Assert.AreEqual(0, em.GetComponentData<FactionEconomy>(exchange).Money);
             Assert.AreEqual(
                 ResourceExchangeQueueState.Completed,
                 em.GetBuffer<ResourceExchangeQueueComponent>(exchange)[0].State);
@@ -62,7 +63,7 @@ public sealed class Aph807ResourceExchangeFlowPlayModeTests
             queueTick.Update(world.Unmanaged);
             Assert.AreEqual(
                 100,
-                em.GetComponentData<FactionEconomy>(exchange).Money,
+                em.GetComponentData<FactionTacticalMaterialsComponent>(exchange).Current,
                 "A completed exchange must not apply its output twice.");
         }
         finally
@@ -106,11 +107,11 @@ public sealed class Aph807ResourceExchangeFlowPlayModeTests
         });
         em.AddBuffer<ResourceExchangeRecipeComponent>(exchange).Add(new ResourceExchangeRecipeComponent
         {
-            RecipeId = new FixedString128Bytes("exchange.export_oil_credits.standard"),
-            DisplayName = new FixedString128Bytes("Export Oil"),
+            RecipeId = new FixedString128Bytes("exchange.convert_oil_materials.test"),
+            DisplayName = new FixedString128Bytes("Convert Oil to Materials"),
             RouteType = ResourceExchangeRouteType.Export,
             InputResource = ResourceExchangeResourceKind.Oil,
-            OutputResource = ResourceExchangeResourceKind.Credits,
+            OutputResource = ResourceExchangeResourceKind.Materials,
             InputAmountMin = 100,
             InputAmountMax = 500,
             InputStep = 100,

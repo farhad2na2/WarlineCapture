@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3793672888460863764}
   m_Layer: 0
-  m_Name: CreditsTinyCost
+  m_Name: MaterialsTinyCost
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -278,7 +278,7 @@ GameObject:
   m_Component:
   - component: {fileID: 426796961347408371}
   m_Layer: 0
-  m_Name: SuppliesCost
+  m_Name: FuelCost
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4563,7 +4563,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8824470113651099120}
   m_Layer: 0
-  m_Name: CreditsCost
+  m_Name: MaterialsCost
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8951,8 +8951,8 @@ MonoBehaviour:
   nameText: {fileID: 6687624907053262612}
   roleText: {fileID: 5303555146183844461}
   descriptionText: {fileID: 0}
-  creditsCostText: {fileID: 8958608239723865369}
-  suppliesCostText: {fileID: 4128135663024736948}
+  materialsCostText: {fileID: 8958608239723865369}
+  fuelCostText: {fileID: 4128135663024736948}
   timeText: {fileID: 0}
   requirementsText: {fileID: 0}
   disabledOverlay: {fileID: 0}
@@ -9357,7 +9357,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a10327c97f74cb7429a01e53f09ae2aa, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 14c986cfa88494fd69b141dab45ee020, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -9948,8 +9948,8 @@ MonoBehaviour:
   nameText: {fileID: 6030163123476267040}
   roleText: {fileID: 5303555146183844461}
   descriptionText: {fileID: 3780550838095816822}
-  creditsCostText: {fileID: 102975984828922229}
-  suppliesCostText: {fileID: 4128135663024736948}
+  materialsCostText: {fileID: 102975984828922229}
+  fuelCostText: {fileID: 4128135663024736948}
   productionTimeText: {fileID: 7759102824305716547}
   placementText: {fileID: 4768099345764799021}
   requirementsText: {fileID: 3839310995282481432}
@@ -10348,7 +10348,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a10327c97f74cb7429a01e53f09ae2aa, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 14c986cfa88494fd69b141dab45ee020, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -10827,7 +10827,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: fd3d4d1eed54420448184b9e91caf049, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ddc22ad3231c14259aa9357db3749927, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -11956,7 +11956,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: fd3d4d1eed54420448184b9e91caf049, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ddc22ad3231c14259aa9357db3749927, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -13092,7 +13092,7 @@ GameObject:
   m_Component:
   - component: {fileID: 941096718305445433}
   m_Layer: 0
-  m_Name: SuppliesTinyCost
+  m_Name: FuelTinyCost
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

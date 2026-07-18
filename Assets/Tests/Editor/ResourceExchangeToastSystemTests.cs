@@ -60,7 +60,7 @@ public sealed class ResourceExchangeToastSystemTests
         ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
             em,
             exchange,
-            new FixedString128Bytes("exchange.export_oil_credits.standard"),
+            new FixedString128Bytes("exchange.convert_oil_materials.test"),
             200,
             1,
             0);
@@ -92,7 +92,7 @@ public sealed class ResourceExchangeToastSystemTests
         ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
             em,
             exchange,
-            new FixedString128Bytes("exchange.export_oil_credits.standard"),
+            new FixedString128Bytes("exchange.convert_oil_materials.test"),
             200,
             1,
             0);
@@ -120,7 +120,7 @@ public sealed class ResourceExchangeToastSystemTests
         EntityManager em = world.EntityManager;
         Entity exchange = CreateExchangeEntity(em);
         em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Add(CreateQueueItem(
-            inputResource: ResourceExchangeResourceKind.Credits,
+            inputResource: ResourceExchangeResourceKind.Oil,
             reservedInputAmount: 0,
             outputAmount: 93,
             remainingSeconds: 0.1f));
@@ -196,7 +196,6 @@ public sealed class ResourceExchangeToastSystemTests
     [Test]
     public void ReasonTextUtility_MapsCommonTypedReasons()
     {
-        Assert.AreEqual("Not enough Credits.", ResourceExchangeToastTextUtility.ResolveReasonBody(ResourceExchangeReason.InsufficientCredits).ToString());
         Assert.AreEqual("Not enough Materials.", ResourceExchangeToastTextUtility.ResolveReasonBody(ResourceExchangeReason.InsufficientMaterials).ToString());
         Assert.AreEqual("Not enough Oil.", ResourceExchangeToastTextUtility.ResolveReasonBody(ResourceExchangeReason.InsufficientOil).ToString());
         Assert.AreEqual("Not enough Fuel.", ResourceExchangeToastTextUtility.ResolveReasonBody(ResourceExchangeReason.InsufficientFuel).ToString());
@@ -267,11 +266,11 @@ public sealed class ResourceExchangeToastSystemTests
     {
         return new ResourceExchangeRecipeComponent
         {
-            RecipeId = new FixedString128Bytes("exchange.export_oil_credits.standard"),
-            DisplayName = new FixedString128Bytes("Export Oil"),
+            RecipeId = new FixedString128Bytes("exchange.convert_oil_materials.test"),
+            DisplayName = new FixedString128Bytes("Convert Oil to Materials"),
             RouteType = ResourceExchangeRouteType.Export,
             InputResource = ResourceExchangeResourceKind.Oil,
-            OutputResource = ResourceExchangeResourceKind.Credits,
+            OutputResource = ResourceExchangeResourceKind.Materials,
             InputAmountMin = 100,
             InputAmountMax = 1000,
             InputStep = 100,
@@ -307,7 +306,7 @@ public sealed class ResourceExchangeToastSystemTests
             RecipeId = new FixedString128Bytes("exchange.rush.test"),
             RouteType = ResourceExchangeRouteType.Export,
             InputResource = inputResource,
-            OutputResource = ResourceExchangeResourceKind.Credits,
+            OutputResource = ResourceExchangeResourceKind.Materials,
             InputAmount = reservedInputAmount,
             ReservedInputAmount = reservedInputAmount,
             OutputAmount = outputAmount,

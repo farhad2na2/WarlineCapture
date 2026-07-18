@@ -12,8 +12,8 @@ namespace Game.UI.Runtime
         public readonly string DisplayName;
         public readonly string TypeLabel;
         public readonly string Description;
-        public readonly int Price;
         public readonly int MaterialsCost;
+        public readonly int FuelCost;
         public readonly float ProductionDurationSeconds;
         public readonly Vector2Int FootprintCells;
         public readonly Sprite Portrait;
@@ -26,8 +26,8 @@ namespace Game.UI.Runtime
             string displayName,
             string typeLabel,
             string description,
-            int price,
             int materialsCost,
+            int fuelCost,
             float productionDurationSeconds,
             Vector2Int footprintCells,
             Sprite portrait,
@@ -39,8 +39,8 @@ namespace Game.UI.Runtime
             DisplayName = string.IsNullOrWhiteSpace(displayName) ? "Item" : displayName;
             TypeLabel = string.IsNullOrWhiteSpace(typeLabel) ? BuildDrawerCategoryFormatter.Format(category) : typeLabel;
             Description = description ?? string.Empty;
-            Price = Mathf.Max(0, price);
             MaterialsCost = Mathf.Max(0, materialsCost);
+            FuelCost = Mathf.Max(0, fuelCost);
             ProductionDurationSeconds = Mathf.Max(0f, productionDurationSeconds);
             FootprintCells = new Vector2Int(Mathf.Max(1, footprintCells.x), Mathf.Max(1, footprintCells.y));
             Portrait = portrait;
@@ -193,8 +193,8 @@ namespace Game.UI.Runtime
                 string.IsNullOrWhiteSpace(metadata.DisplayName) ? prefab.name : metadata.DisplayName,
                 ResolveBuildingTypeLabel(metadata),
                 ResolveBuildingDescription(metadata),
-                metadata.Price,
                 metadata.MaterialsCost,
+                0,
                 metadata.ProductionDurationSeconds,
                 metadata.FootprintCells,
                 metadata.Portrait,
@@ -277,7 +277,7 @@ namespace Game.UI.Runtime
                 ResolveUnitDisplayName(prefab, metadata),
                 ResolveUnitTypeLabel(prefab, metadata, isVehicle, isAir),
                 ResolveUnitDescription(prefab, metadata),
-                metadata.Price,
+                metadata.MaterialsCost,
                 0,
                 metadata.ProductionDurationSeconds,
                 metadata.FootprintCells,

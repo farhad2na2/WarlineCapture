@@ -20,7 +20,7 @@ public sealed class ResourceExchangeAIRecoverySystemTests
             RunValidationStep(nameof(AIRecoveryQueuesOneCanonicalRequest), test => test.AIRecoveryQueuesOneCanonicalRequest(), ref passed);
             RunValidationStep(nameof(PlayerControlTransitionStopsAIRecovery), test => test.PlayerControlTransitionStopsAIRecovery(), ref passed);
             RunValidationStep(nameof(OrphanRecoveryNeedDoesNotQueueImport), test => test.OrphanRecoveryNeedDoesNotQueueImport(), ref passed);
-            RunValidationStep(nameof(AIRecoveryValidationReservesCanonicalCredits), test => test.AIRecoveryValidationReservesCanonicalCredits(), ref passed);
+            RunValidationStep(nameof(AIRecoveryValidationReservesCanonicalOil), test => test.AIRecoveryValidationReservesCanonicalOil(), ref passed);
             RunValidationStep(nameof(WarmedLocalRecoveryPathAllocatesNoManagedMemory), test => test.WarmedLocalRecoveryPathAllocatesNoManagedMemory(), ref passed);
             Debug.Log($"[ResourceExchangeAIRecoveryValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -152,7 +152,7 @@ public sealed class ResourceExchangeAIRecoverySystemTests
     }
 
     [Test]
-    public void AIRecoveryValidationReservesCanonicalCredits()
+    public void AIRecoveryValidationReservesCanonicalOil()
     {
         using World world = CreateRecoveryWorld(allowAIExchange: true, aiControlled: true, out Entity exchange, out _);
         UpdateRecoverySystem(world);
@@ -160,7 +160,7 @@ public sealed class ResourceExchangeAIRecoverySystemTests
         validationSystem.Update(world.Unmanaged);
 
         EntityManager em = world.EntityManager;
-        Assert.AreEqual(3200, em.GetComponentData<FactionEconomy>(exchange).Money);
+        Assert.AreEqual(5000, em.GetComponentData<FactionEconomy>(exchange).Money);
         Assert.AreEqual(0, em.GetBuffer<ResourceExchangeRequestComponent>(exchange).Length);
         DynamicBuffer<ResourceExchangeQueueComponent> queue =
             em.GetBuffer<ResourceExchangeQueueComponent>(exchange);
@@ -168,7 +168,10 @@ public sealed class ResourceExchangeAIRecoverySystemTests
         Assert.AreEqual(ResourceExchangeQueueState.InProgress, queue[0].State);
         Assert.AreEqual(ResourceExchangeResourceKind.Materials, queue[0].OutputResource);
         Assert.AreEqual(100, queue[0].OutputAmount);
-        Assert.GreaterOrEqual(em.GetComponentData<FactionEconomy>(exchange).Money, 1000);
+        using EntityQuery storageQuery = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingResourceStorageComponent>());
+        BuildingResourceStorageComponent storage =
+            em.GetComponentData<BuildingResourceStorageComponent>(storageQuery.GetSingletonEntity());
+        Assert.AreEqual(1800f, storage.ReservedOilOutboundBarrels);
     }
 
     [Test]
@@ -268,6 +271,14 @@ public sealed class ResourceExchangeAIRecoverySystemTests
         em.AddBuffer<ResourceExchangeResultComponent>(exchange);
         em.AddBuffer<ResourceExchangeEconomyEventComponent>(exchange);
         em.AddBuffer<ResourceExchangePhysicalReservationComponent>(exchange);
+        Entity oilStorage = em.CreateEntity(typeof(BuildingResourceStorageComponent));
+        em.SetComponentData(oilStorage, new BuildingResourceStorageComponent
+        {
+            RuntimeBuildingId = 1,
+            OwnerFactionId = FactionIdentity.EnemyFactionId,
+            StoredOilBarrels = 9000f,
+            OilStorageCapacity = 10000
+        });
         return world;
     }
 
@@ -296,7 +307,7 @@ public sealed class ResourceExchangeAIRecoverySystemTests
         {
             RecipeId = new FixedString128Bytes("exchange.import_materials.emergency"),
             RouteType = ResourceExchangeRouteType.Import,
-            InputResource = ResourceExchangeResourceKind.Credits,
+            InputResource = ResourceExchangeResourceKind.Oil,
             OutputResource = ResourceExchangeResourceKind.Materials,
             InputAmountMin = 1800,
             InputAmountMax = 9000,

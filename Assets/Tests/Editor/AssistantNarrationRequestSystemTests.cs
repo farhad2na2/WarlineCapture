@@ -559,9 +559,8 @@ public sealed class AssistantNarrationRequestSystemTests
         {
             OrderText = new FixedString32Bytes("ORDER"),
             SquadText = new FixedString32Bytes("RIFLE SQUAD"),
-            CreditsText = new FixedString32Bytes("187,540"),
             FuelText = new FixedString32Bytes("9,750"),
-            SupplyText = new FixedString32Bytes("92/120"),
+            MaterialsText = new FixedString32Bytes("92/120"),
             CivilianRiskText = new FixedString32Bytes("MED")
         });
         _entityManager.SetComponentData(boundary, new AssistantSettingsComponent

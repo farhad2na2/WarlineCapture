@@ -611,7 +611,7 @@ namespace Game.Runtime
                 {
                     BuildingId = ResolveBoundaryId(entry.Prefab, entry.DisplayName),
                     DisplayName = ToFixedString128(entry.DisplayName),
-                    Price = Mathf.Max(0, definition.CreditsCost),
+                    Price = Mathf.Max(0, definition.MaterialsCost),
                     MaterialsCost = Mathf.Max(0, definition.MaterialsCost),
                     FootprintCells = new int2(
                         Mathf.Max(1, definition.FootprintCells.x),

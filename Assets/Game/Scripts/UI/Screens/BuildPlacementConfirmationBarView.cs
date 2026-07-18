@@ -2,6 +2,7 @@ using System.Globalization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Game.Tactical.Contracts;
 using Game.UI.Contracts;
@@ -28,7 +29,7 @@ namespace Game.UI.Runtime
         [SerializeField] private Sprite goldActionButtonSprite;
         [SerializeField] private Sprite squareButtonSprite;
         [SerializeField] private Sprite instructionStripSprite;
-        [SerializeField] private Sprite creditsIconSprite;
+        [FormerlySerializedAs("creditsIconSprite"), SerializeField] private Sprite materialsIconSprite;
         [SerializeField] private Sprite timeIconSprite;
         [SerializeField] private Sprite cancelIconSprite;
         [SerializeField] private Sprite rotateIconSprite;

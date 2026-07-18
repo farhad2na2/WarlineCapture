@@ -346,7 +346,7 @@ namespace Game.Runtime
                 ResourceExchangeRecipeComponent recipe = recipes[i];
                 if (recipe.Enabled == 0 ||
                     recipe.RouteType != ResourceExchangeRouteType.Import ||
-                    recipe.InputResource != ResourceExchangeResourceKind.Credits ||
+                    recipe.InputResource != ResourceExchangeResourceKind.Oil ||
                     recipe.OutputResource != ResourceExchangeResourceKind.Materials ||
                     !recipe.MissionTag.Equals(scenarioTag))
                 {
@@ -360,7 +360,7 @@ namespace Game.Runtime
                         out int candidateInput,
                         out _,
                         out float candidateDuration) ||
-                    (long)economy.Money < (long)need.RequiredCredits + candidateInput)
+                    candidateInput <= 0)
                 {
                     continue;
                 }

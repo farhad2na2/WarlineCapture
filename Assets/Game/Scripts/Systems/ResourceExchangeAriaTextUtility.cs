@@ -72,8 +72,7 @@ namespace Game.Runtime
 
         public static bool IsInsufficientResourceReason(ResourceExchangeReason reason)
         {
-            return reason == ResourceExchangeReason.InsufficientCredits ||
-                   reason == ResourceExchangeReason.InsufficientMaterials ||
+            return reason == ResourceExchangeReason.InsufficientMaterials ||
                    reason == ResourceExchangeReason.InsufficientOil ||
                    reason == ResourceExchangeReason.InsufficientFuel ||
                    reason == ResourceExchangeReason.InsufficientRushTickets;
@@ -156,8 +155,6 @@ namespace Game.Runtime
         {
             switch (reason)
             {
-                case ResourceExchangeReason.InsufficientCredits:
-                    return new FixedString128Bytes("Not enough Credits for this exchange.");
                 case ResourceExchangeReason.InsufficientMaterials:
                     return new FixedString128Bytes("Not enough Materials for this exchange.");
                 case ResourceExchangeReason.InsufficientOil:

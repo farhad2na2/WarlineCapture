@@ -63,7 +63,7 @@ public sealed class ResourceExchangeEconomyEventSystemTests
         ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
             em,
             exchange,
-            new FixedString128Bytes("exchange.export_oil_credits.standard"),
+            new FixedString128Bytes("exchange.convert_oil_materials.test"),
             200,
             1,
             0);
@@ -91,8 +91,8 @@ public sealed class ResourceExchangeEconomyEventSystemTests
             FactionId = 1
         });
         em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Add(CreateQueueItem(
-            inputResource: ResourceExchangeResourceKind.Credits,
-            outputResource: ResourceExchangeResourceKind.Credits,
+            inputResource: ResourceExchangeResourceKind.Oil,
+            outputResource: ResourceExchangeResourceKind.Oil,
             reservedInputAmount: 0,
             outputAmount: 75,
             remainingSeconds: 0.1f));
@@ -106,7 +106,7 @@ public sealed class ResourceExchangeEconomyEventSystemTests
             events[0],
             queueItemId: 1,
             ResourceExchangeResultKind.QueueCompleted,
-            ResourceExchangeResourceKind.Credits,
+            ResourceExchangeResourceKind.Oil,
             75);
     }
 
@@ -179,7 +179,7 @@ public sealed class ResourceExchangeEconomyEventSystemTests
             fuel: 930,
             fuelCapacity: 1000);
         ResourceExchangeQueueComponent item = CreateQueueItem(
-            inputResource: ResourceExchangeResourceKind.Credits,
+            inputResource: ResourceExchangeResourceKind.Oil,
             outputResource: ResourceExchangeResourceKind.Fuel,
             reservedInputAmount: 0,
             outputAmount: 50,
@@ -292,11 +292,11 @@ public sealed class ResourceExchangeEconomyEventSystemTests
     {
         return new ResourceExchangeRecipeComponent
         {
-            RecipeId = new FixedString128Bytes("exchange.export_oil_credits.standard"),
+            RecipeId = new FixedString128Bytes("exchange.convert_oil_materials.test"),
             DisplayName = new FixedString128Bytes("Export Oil"),
             RouteType = ResourceExchangeRouteType.Export,
             InputResource = ResourceExchangeResourceKind.Oil,
-            OutputResource = ResourceExchangeResourceKind.Credits,
+            OutputResource = ResourceExchangeResourceKind.Oil,
             InputAmountMin = 100,
             InputAmountMax = 1000,
             InputStep = 100,
@@ -313,7 +313,7 @@ public sealed class ResourceExchangeEconomyEventSystemTests
     private static ResourceExchangeQueueComponent CreateQueueItem(
         int queueItemId = 1,
         ResourceExchangeResourceKind inputResource = ResourceExchangeResourceKind.Oil,
-        ResourceExchangeResourceKind outputResource = ResourceExchangeResourceKind.Credits,
+        ResourceExchangeResourceKind outputResource = ResourceExchangeResourceKind.Oil,
         int reservedInputAmount = 200,
         int outputAmount = 75,
         float remainingSeconds = 1f,
@@ -323,7 +323,7 @@ public sealed class ResourceExchangeEconomyEventSystemTests
         {
             QueueItemId = queueItemId,
             FactionId = 1,
-            RecipeId = new FixedString128Bytes("exchange.export_oil_credits.standard"),
+            RecipeId = new FixedString128Bytes("exchange.convert_oil_materials.test"),
             InputResource = inputResource,
             OutputResource = outputResource,
             InputAmount = reservedInputAmount,
@@ -362,7 +362,7 @@ public sealed class ResourceExchangeEconomyEventSystemTests
         Assert.AreEqual(resultKind, economyEvent.ResultKind);
         Assert.AreEqual(resourceKind, economyEvent.ResourceKind);
         Assert.AreEqual(amount, economyEvent.Amount);
-        Assert.AreEqual(new FixedString128Bytes("exchange.export_oil_credits.standard"), economyEvent.RecipeId);
+        Assert.AreEqual(new FixedString128Bytes("exchange.convert_oil_materials.test"), economyEvent.RecipeId);
     }
 
     private static void RunValidationStep(

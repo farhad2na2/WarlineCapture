@@ -344,9 +344,6 @@ namespace Game.Runtime
                     item);
             }
 
-            if (item.OutputResource == ResourceExchangeResourceKind.Credits)
-                return ResourceExchangeReason.None;
-
             int capacity = ResourceExchangeResourceUtilitySystemHelper.GetCapacity(
                 materials,
                 wallet,

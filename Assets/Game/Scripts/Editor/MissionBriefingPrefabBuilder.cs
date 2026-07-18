@@ -30,7 +30,7 @@ namespace Game.Editor
         private const string IntelIconPath = "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_scan_radar.png";
         private const string VehicleIconPath = "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_12_vehicle.png";
         private const string AirIconPath = "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_icon_aircraft_helicopter.png";
-        private const string CreditsIconPath = "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_credits_coin.png";
+        private const string CreditsIconPath = CanonicalUiResourceIconPaths.Credits;
         private const string RankIconPath = "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_02_commander_rank_shield.png";
         private const string ActiveNodeSpritePath = "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_18_reward_node_active.png";
         private const string RouteSpritePath = "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_20_route_strip_frame.png";

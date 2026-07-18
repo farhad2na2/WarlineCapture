@@ -57,8 +57,8 @@ public sealed class ResourceExchangeQueueTickSystemTests
         Entity exchange = CreateExchangeEntity(em);
         DynamicBuffer<ResourceExchangeQueueComponent> queue = em.GetBuffer<ResourceExchangeQueueComponent>(exchange);
         queue.Add(CreateQueueItem(
-            inputResource: ResourceExchangeResourceKind.Credits,
-            outputResource: ResourceExchangeResourceKind.Credits,
+            inputResource: ResourceExchangeResourceKind.Oil,
+            outputResource: ResourceExchangeResourceKind.Oil,
             reservedInputAmount: 0,
             outputAmount: 93,
             remainingSeconds: 0.25f));
@@ -94,7 +94,7 @@ public sealed class ResourceExchangeQueueTickSystemTests
         Entity exchange = CreateExchangeEntity(em, fuel: 930, fuelCapacity: 1000);
         DynamicBuffer<ResourceExchangeQueueComponent> queue = em.GetBuffer<ResourceExchangeQueueComponent>(exchange);
         ResourceExchangeQueueComponent item = CreateQueueItem(
-            inputResource: ResourceExchangeResourceKind.Credits,
+            inputResource: ResourceExchangeResourceKind.Oil,
             outputResource: ResourceExchangeResourceKind.Fuel,
             reservedInputAmount: 0,
             outputAmount: 50,
@@ -137,7 +137,7 @@ public sealed class ResourceExchangeQueueTickSystemTests
         Entity exchange = CreateExchangeEntity(em, fuel: 930, fuelCapacity: 1000);
         DynamicBuffer<ResourceExchangeQueueComponent> queue = em.GetBuffer<ResourceExchangeQueueComponent>(exchange);
         ResourceExchangeQueueComponent item = CreateQueueItem(
-            inputResource: ResourceExchangeResourceKind.Credits,
+            inputResource: ResourceExchangeResourceKind.Oil,
             outputResource: ResourceExchangeResourceKind.Fuel,
             reservedInputAmount: 0,
             outputAmount: 50,
@@ -356,7 +356,7 @@ public sealed class ResourceExchangeQueueTickSystemTests
     private static ResourceExchangeQueueComponent CreateQueueItem(
         int queueItemId = 1,
         ResourceExchangeResourceKind inputResource = ResourceExchangeResourceKind.Oil,
-        ResourceExchangeResourceKind outputResource = ResourceExchangeResourceKind.Credits,
+        ResourceExchangeResourceKind outputResource = ResourceExchangeResourceKind.Oil,
         int reservedInputAmount = 200,
         int outputAmount = 93,
         float remainingSeconds = 1f,

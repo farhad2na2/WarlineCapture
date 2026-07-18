@@ -41,7 +41,7 @@ namespace Game.Runtime
                 context.ConfiguredDefinitionsByPrefab != null &&
                 context.ConfiguredDefinitionsByPrefab.TryGetValue(prefab, out BuildingDefinition definition))
             {
-                return Mathf.Max(0, definition?.CreditsCost ?? 0);
+                return Mathf.Max(0, definition?.MaterialsCost ?? 0);
             }
 
             return Mathf.Max(0, request.Price);

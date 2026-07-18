@@ -222,12 +222,12 @@ public sealed class BalanceHarnessContractTests
                 CreateExchangeEconomyEvent(
                     queueItemId: 1,
                     ResourceExchangeResultKind.QueueCompleted,
-                    ResourceExchangeResourceKind.Credits,
+                    ResourceExchangeResourceKind.Materials,
                     110),
                 CreateExchangeEconomyEvent(
                     queueItemId: 2,
                     ResourceExchangeResultKind.QueueStarted,
-                    ResourceExchangeResourceKind.Credits,
+                    ResourceExchangeResourceKind.Oil,
                     -300),
                 CreateExchangeEconomyEvent(
                     queueItemId: 2,
@@ -237,7 +237,7 @@ public sealed class BalanceHarnessContractTests
                 CreateExchangeEconomyEvent(
                     queueItemId: 2,
                     ResourceExchangeResultKind.QueueCancelled,
-                    ResourceExchangeResourceKind.Credits,
+                    ResourceExchangeResourceKind.Oil,
                     0),
                 CreateExchangeEconomyEvent(
                     queueItemId: 2,
@@ -257,8 +257,8 @@ public sealed class BalanceHarnessContractTests
         Assert.AreEqual(260, metrics.ResourceExchangeOutputAmount);
         Assert.AreEqual(90f, metrics.ResourceExchangeDurationSeconds);
         Assert.AreEqual(50f, metrics.ResourceExchangeCompletionRatePercent);
-        Assert.AreEqual(-190, metrics.ResourceExchangeCreditsDelta);
-        Assert.AreEqual(-200, metrics.ResourceExchangeOilDelta);
+        Assert.AreEqual(110, metrics.ResourceExchangeMaterialsDelta);
+        Assert.AreEqual(-500, metrics.ResourceExchangeOilDelta);
         Assert.AreEqual(0, metrics.ResourceExchangeFuelDelta);
         Assert.AreEqual(-2, metrics.ResourceExchangeRushTicketsDelta);
         Assert.AreEqual(-392, metrics.ResourceExchangeNetResourceDelta);
@@ -311,7 +311,7 @@ public sealed class BalanceHarnessContractTests
                     CreateExchangeEconomyEvent(
                         queueItemId: 1,
                         ResourceExchangeResultKind.QueueCompleted,
-                        ResourceExchangeResourceKind.Credits,
+                        ResourceExchangeResourceKind.Oil,
                         55)
                 });
 
@@ -322,7 +322,7 @@ public sealed class BalanceHarnessContractTests
             StringAssert.Contains("Source mode", markdown);
             StringAssert.Contains("Route summary", markdown);
             StringAssert.Contains("Completion rate", markdown);
-            StringAssert.Contains("Credits delta", markdown);
+            StringAssert.Contains("Materials delta", markdown);
             StringAssert.Contains("Oil delta", markdown);
             StringAssert.Contains("`Mission`", markdown);
             StringAssert.Contains("`Export:1`", markdown);
@@ -331,7 +331,7 @@ public sealed class BalanceHarnessContractTests
             StringAssert.Contains("ResourceExchangeSourceMode", json);
             StringAssert.Contains("ResourceExchangeRouteSummary", json);
             StringAssert.Contains("ResourceExchangeCompletionRatePercent", json);
-            StringAssert.Contains("ResourceExchangeCreditsDelta", json);
+            StringAssert.Contains("ResourceExchangeMaterialsDelta", json);
         }
         finally
         {
@@ -541,9 +541,9 @@ public sealed class BalanceHarnessContractTests
             RouteType = routeType,
             InputResource = routeType == ResourceExchangeRouteType.Export
                 ? ResourceExchangeResourceKind.Oil
-                : ResourceExchangeResourceKind.Credits,
+                : ResourceExchangeResourceKind.Oil,
             OutputResource = routeType == ResourceExchangeRouteType.Export
-                ? ResourceExchangeResourceKind.Credits
+                ? ResourceExchangeResourceKind.Oil
                 : ResourceExchangeResourceKind.Fuel,
             InputAmount = inputAmount,
             OutputAmount = outputAmount,

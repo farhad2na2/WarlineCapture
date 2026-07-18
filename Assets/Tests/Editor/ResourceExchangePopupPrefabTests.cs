@@ -12,6 +12,7 @@ public sealed class ResourceExchangePopupPrefabTests
 {
     private const string PrefabPath = "Assets/Game/Prefabs/UI/Shell/Popups/POP12_ResourceExchangePopup.prefab";
     private const string ApprovedSpriteRoot = "Assets/Game/Art/UI/Generated/ResourceExchange/LayeredOneGo/";
+    private const string CanonicalResourceSpriteRoot = "Assets/Game/Art/UI/Resources/";
 
     public static void RunFocusedValidation()
     {
@@ -136,7 +137,8 @@ public sealed class ResourceExchangePopupPrefabTests
 
             string path = AssetDatabase.GetAssetPath(sprite);
             Assert.IsTrue(
-                path.StartsWith(ApprovedSpriteRoot, System.StringComparison.Ordinal),
+                path.StartsWith(ApprovedSpriteRoot, System.StringComparison.Ordinal) ||
+                path.StartsWith(CanonicalResourceSpriteRoot, System.StringComparison.Ordinal),
                 $"{images[i].name} uses {path}; Resource Exchange popup must not use target screenshots or unrelated sprite folders.");
         }
     }
@@ -356,17 +358,17 @@ public sealed class ResourceExchangePopupPrefabTests
 
     private static UiResourceExchangeModel CreateRuntimeButtonModel()
     {
-        UiResourceExchangeRecipeCardModel recipe0 = new(true, true, true, false, false, 0, "export_oil", "EXPORT OIL", "100 OIL", "46 CREDITS", "00:30", string.Empty);
-        UiResourceExchangeRecipeCardModel recipe1 = new(true, true, false, false, false, 1, "export_materials", "EXPORT MATERIALS", "75 MATERIALS", "90 CREDITS", "00:40", string.Empty);
-        UiResourceExchangeRecipeCardModel recipe2 = new(true, true, false, false, false, 2, "export_fuel", "EXPORT FUEL", "50 FUEL", "80 CREDITS", "00:35", string.Empty);
-        UiResourceExchangeRecipeCardModel recipe3 = new(true, true, false, false, false, 3, "import_materials", "IMPORT MATERIALS", "150 CREDITS", "60 MATERIALS", "00:45", string.Empty);
-        UiResourceExchangeRecipeCardModel recipe4 = new(true, true, false, false, false, 4, "import_fuel", "IMPORT FUEL", "120 CREDITS", "50 FUEL", "00:30", string.Empty);
-        UiResourceExchangeRecipeCardModel recipe5 = new(true, false, false, true, true, 5, "import_oil", "IMPORT OIL", "LOCKED", "SCENARIO GATED", "--:--", "LOCKED");
-        UiResourceExchangeDetailModel detail = new("export_oil", "Export Oil", "EXPORT", "1 OIL -> 0.47 CREDITS", "100", "100 OIL", "46 CREDITS", "00:30", "Requires Oil Pump", "Confirm to start a timed logistics exchange.", true, false);
-        UiResourceExchangeQueueRowModel row0 = new(true, true, true, false, false, 401, 0, UiResourceExchangeQueueStateKind.InProgress, "1", "Export Oil", "100 OIL", "46 CREDITS", "00:11", "65%", "IN PROGRESS", 0.65f);
-        UiResourceExchangeQueueRowModel row1 = new(true, false, true, false, false, 402, 1, UiResourceExchangeQueueStateKind.Pending, "2", "Import Fuel", "120 CREDITS", "50 FUEL", "00:30", "0%", "QUEUED", 0f);
-        UiResourceExchangeQueueRowModel row2 = new(true, false, true, false, false, 403, 2, UiResourceExchangeQueueStateKind.Pending, "3", "Export Materials", "75 MATERIALS", "90 CREDITS", "00:40", "0%", "QUEUED", 0f);
-        UiResourceExchangeQueueRowModel row3 = new(true, false, false, true, false, 404, 3, UiResourceExchangeQueueStateKind.Completed, "4", "Import Materials", "150 CREDITS", "60 MATERIALS", "DONE", "100%", "COMPLETE", 1f);
+        UiResourceExchangeRecipeCardModel recipe0 = new(true, true, true, false, false, 0, "oil_materials", "OIL TO MATERIALS", "100 OIL", "300 MATERIALS", "00:45", string.Empty);
+        UiResourceExchangeRecipeCardModel recipe1 = new(true, true, false, false, false, 1, "materials_oil", "MATERIALS TO OIL", "100 MATERIALS", "15 OIL", "00:45", string.Empty);
+        UiResourceExchangeRecipeCardModel recipe2 = new(true, true, false, false, false, 2, "oil_fuel", "OIL TO FUEL", "100 OIL", "33 FUEL", "00:45", string.Empty);
+        UiResourceExchangeRecipeCardModel recipe3 = new(true, true, false, false, false, 3, "fuel_oil", "RECOVER OIL", "100 FUEL", "120 OIL", "01:30", string.Empty);
+        UiResourceExchangeRecipeCardModel recipe4 = new(true, true, false, false, false, 4, "fuel_materials", "RECOVER MATERIALS", "100 FUEL", "180 MATERIALS", "01:30", string.Empty);
+        UiResourceExchangeRecipeCardModel recipe5 = new(true, false, false, true, true, 5, "locked", "LOCKED ROUTE", "LOCKED", "SCENARIO GATED", "--:--", "LOCKED");
+        UiResourceExchangeDetailModel detail = new("oil_materials", "Convert Oil to Materials", "EXPORT", "1 OIL -> 3 MATERIALS", "100", "100 OIL", "300 MATERIALS", "00:45", "Requires storage", "Confirm to start a timed logistics exchange.", true, false);
+        UiResourceExchangeQueueRowModel row0 = new(true, true, true, false, false, 401, 0, UiResourceExchangeQueueStateKind.InProgress, "1", "Convert Oil to Materials", "100 OIL", "300 MATERIALS", "00:11", "65%", "IN PROGRESS", 0.65f);
+        UiResourceExchangeQueueRowModel row1 = new(true, false, true, false, false, 402, 1, UiResourceExchangeQueueStateKind.Pending, "2", "Convert Oil to Fuel", "100 OIL", "33 FUEL", "00:30", "0%", "QUEUED", 0f);
+        UiResourceExchangeQueueRowModel row2 = new(true, false, true, false, false, 403, 2, UiResourceExchangeQueueStateKind.Pending, "3", "Convert Materials to Oil", "100 MATERIALS", "15 OIL", "00:40", "0%", "QUEUED", 0f);
+        UiResourceExchangeQueueRowModel row3 = new(true, false, false, true, false, 404, 3, UiResourceExchangeQueueStateKind.Completed, "4", "Recover Materials", "100 FUEL", "180 MATERIALS", "DONE", "100%", "COMPLETE", 1f);
 
         return new UiResourceExchangeModel(
             10,
@@ -379,7 +381,6 @@ public sealed class ResourceExchangePopupPrefabTests
             1,
             6,
             "4/6",
-            "2,400",
             "180",
             "620",
             "310",

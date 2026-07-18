@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 439,
+    "resolvedNonDebtRowCount": 440,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 447,
-    "genuineDebtRowCount": 128,
-    "uniqueDebtItemCount": 52,
+    "reviewedNonDebtRowCount": 448,
+    "genuineDebtRowCount": 127,
+    "uniqueDebtItemCount": 51,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -48,9 +48,9 @@
     {
       "sourceArtifact": "AM-007",
       "historicalOpenRowCount": 314,
-      "projectedResolvedNonDebtRowCount": 291,
+      "projectedResolvedNonDebtRowCount": 292,
       "projectedProtectedDeferredRowCount": 7,
-      "projectedGenuineDebtRowCount": 16
+      "projectedGenuineDebtRowCount": 15
     },
     {
       "sourceArtifact": "AM-018",
@@ -63,7 +63,7 @@
   "genuineDebtLanes": [
     {
       "id": "world-singleton-discovery",
-      "projectedRows": 10,
+      "projectedRows": 9,
       "note": "Hazard rows; overlaps with World-owner lifecycle candidates are reconciled before unique debt-item counting."
     },
     {
@@ -488,10 +488,22 @@
       "authority": ["Assets/Tests/Editor/SelectionUiReadModelLookupTests.cs"]
     },
     {
+      "id": "am007-world-match-hud-squad-tray-selection-owned",
+      "decision": "resolved",
+      "reasonCode": "tested-world-rebinding-match-hud-squad-tray-selection",
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-007",
+        "sourceCategory": "worlds",
+        "sourcePath": "Assets/Game/Scripts/Systems/MatchHudSquadTraySelectionUiSystemHelper.cs"
+      },
+      "authority": ["Assets/Tests/Editor/MatchHudSquadTraySelectionSystemTests.cs"]
+    },
+    {
       "id": "am007-world-debt",
       "decision": "genuine-debt",
       "reasonCode": "world-owner-unproven",
-      "expectedCount": 8,
+      "expectedCount": 7,
       "debtIdPrefix": "AM025-WORLD",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

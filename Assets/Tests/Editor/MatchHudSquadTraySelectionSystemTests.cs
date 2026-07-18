@@ -29,7 +29,8 @@ public sealed class MatchHudSquadTraySelectionUiSystemHelperTests
             RunCase(test => test.SelectSoldiersSlot_SelectsClusterOfFourSoldiers());
             RunCase(test => test.SelectCombatVehiclesSlot_SelectsTwoGroundCombatVehiclesOnly());
             RunCase(test => test.SelectAircraftAndTransportSlots_SelectsExpectedUnitKinds());
-            UnityEngine.Debug.Log("[MatchHudSquadTraySelectionFocusedValidation] result=Passed tests=3");
+            RunCase(test => test.SelectSoldiersSlot_RebindsAfterWorldReplacement());
+            UnityEngine.Debug.Log("[MatchHudSquadTraySelectionFocusedValidation] result=Passed tests=4");
         }
         catch (Exception exception)
         {
@@ -140,6 +141,37 @@ public sealed class MatchHudSquadTraySelectionUiSystemHelperTests
         Assert.AreEqual(transport, _selectionState.FocusedUnit);
         Assert.AreEqual(transport, _lastHudSelection);
         Assert.AreEqual(MatchHudSquadTraySlot.Transport, _view.SelectedSlot);
+    }
+
+    [Test]
+    public void SelectSoldiersSlot_RebindsAfterWorldReplacement()
+    {
+        EntityManager firstEntityManager = _entityManager;
+        Entity firstSoldier = CreatePlayerUnit("Unit_Chr_Soldier_First", new float3(1f, 0f, 1f));
+        _system.SelectSlot(CreateContext(), _view, MatchHudSquadTraySlot.Soldiers);
+        Assert.IsTrue(firstEntityManager.HasComponent<SelectedUnitTag>(firstSoldier));
+
+        using World replacementWorld = new(nameof(SelectSoldiersSlot_RebindsAfterWorldReplacement));
+        try
+        {
+            _entityManager = replacementWorld.EntityManager;
+            _selectionState = new SelectionStateCompositionSystemHelper();
+            _focusedLifecycle = new FocusedUnitLifecycleCompositionSystemHelper();
+            _entityManager.CreateEntity();
+            Entity replacementSoldier = CreatePlayerUnit(
+                "Unit_Chr_Soldier_Replacement",
+                new float3(4f, 0f, 4f));
+
+            _system.SelectSlot(CreateContext(), _view, MatchHudSquadTraySlot.Soldiers);
+
+            Assert.IsTrue(_entityManager.HasComponent<SelectedUnitTag>(replacementSoldier));
+            Assert.AreEqual(1, SelectedEntities().Length);
+            Assert.IsTrue(firstEntityManager.HasComponent<SelectedUnitTag>(firstSoldier));
+        }
+        finally
+        {
+            _entityManager = firstEntityManager;
+        }
     }
 
     private MatchHudSquadTraySelectionUiSystemHelper.Context CreateContext()

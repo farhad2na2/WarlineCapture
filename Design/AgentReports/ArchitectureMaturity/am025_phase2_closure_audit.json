@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 422,
+    "resolvedNonDebtRowCount": 423,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 430,
-    "genuineDebtRowCount": 145,
-    "uniqueDebtItemCount": 69,
+    "reviewedNonDebtRowCount": 431,
+    "genuineDebtRowCount": 144,
+    "uniqueDebtItemCount": 68,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -48,9 +48,9 @@
     {
       "sourceArtifact": "AM-007",
       "historicalOpenRowCount": 314,
-      "projectedResolvedNonDebtRowCount": 274,
+      "projectedResolvedNonDebtRowCount": 275,
       "projectedProtectedDeferredRowCount": 7,
-      "projectedGenuineDebtRowCount": 33
+      "projectedGenuineDebtRowCount": 32
     },
     {
       "sourceArtifact": "AM-018",
@@ -76,7 +76,7 @@
     },
     {
       "id": "world-owner-candidates",
-      "projectedRows": 25,
+      "projectedRows": 24,
       "note": "Lifecycle rows; may overlap hazard remediation and cannot be treated as 33 independent production defects."
     }
   ],
@@ -284,10 +284,22 @@
       "authority": ["Assets/Tests/Editor/SelectionStateSystemTests.cs"]
     },
     {
+      "id": "am007-world-tactical-follow-camera-mode-owned",
+      "decision": "resolved",
+      "reasonCode": "tested-world-rebinding-follow-camera-state",
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-007",
+        "sourceCategory": "worlds",
+        "sourcePath": "Assets/Game/Scripts/Systems/TacticalFollowCameraModeSystemHelper.cs"
+      },
+      "authority": ["Assets/Tests/Editor/TacticalFollowCameraModeCommandSystemHelperTests.cs"]
+    },
+    {
       "id": "am007-world-debt",
       "decision": "genuine-debt",
       "reasonCode": "world-owner-unproven",
-      "expectedCount": 25,
+      "expectedCount": 24,
       "debtIdPrefix": "AM025-WORLD",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

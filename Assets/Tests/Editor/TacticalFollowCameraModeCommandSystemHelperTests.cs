@@ -113,6 +113,8 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
             passed++;
             RunCase(test => test.UnfollowedAirUnitAttackVfxDoesNotCreateImpactCutaway());
             passed++;
+            RunCase(test => test.SingletonQueries_RebindAfterWorldReplacement());
+            passed++;
             UnityEngine.Debug.Log($"[TacticalFollowCameraModeCommandValidation] result=Passed tests={passed}");
             ValidationExit.Passed();
         }
@@ -171,6 +173,30 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
         Assert.AreEqual((int)TacticalCommandReasonCode.NoSelection, readModel.ReasonCode);
         Assert.AreEqual((int)TacticalFollowCameraFeedbackCode.None, readModel.FeedbackCode);
         Assert.AreEqual(0, readModel.FeedbackSequence);
+    }
+
+    [Test]
+    public void SingletonQueries_RebindAfterWorldReplacement()
+    {
+        Assert.IsTrue(_system.TryReadMode(_em, out TacticalFollowCameraModeComponent firstMode));
+        Assert.AreEqual(0, firstMode.Enabled);
+
+        Entity firstModeEntity = GetModeEntity();
+        firstMode.Enabled = 1;
+        _em.SetComponentData(firstModeEntity, firstMode);
+
+        _world.Dispose();
+        _world = new World(nameof(SingletonQueries_RebindAfterWorldReplacement));
+        _em = _world.EntityManager;
+
+        Assert.IsTrue(_system.TryReadMode(_em, out TacticalFollowCameraModeComponent replacementMode));
+        Assert.AreEqual(0, replacementMode.Enabled);
+        using EntityQuery modeQuery = _em.CreateEntityQuery(
+            ComponentType.ReadOnly<TacticalFollowCameraModeComponent>());
+        Assert.AreEqual(1, modeQuery.CalculateEntityCount());
+        Assert.IsTrue(_system.TryReadUiReadModel(_em, out TacticalFollowCameraUiReadModelComponent readModel));
+        Assert.AreEqual(1, readModel.Visible);
+        Assert.AreEqual((int)TacticalCommandReasonCode.NoSelection, readModel.ReasonCode);
     }
 
     [Test]

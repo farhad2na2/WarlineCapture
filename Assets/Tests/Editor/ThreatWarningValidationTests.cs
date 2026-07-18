@@ -291,8 +291,8 @@ public sealed class ThreatWarningValidationTests
         }
         finally
         {
-            InitialUnitsRuntimeState.PlayRequested = false;
-            InitialUnitsRuntimeState.SimulationActive = false;
+            RuntimeGameplayStateTestHelper.SetPlayRequested(false);
+            RuntimeGameplayStateTestHelper.SetSimulationActive(false);
             ThreatWarningRuntimeState.Reset(em);
         }
     }
@@ -328,7 +328,7 @@ public sealed class ThreatWarningValidationTests
         }
         finally
         {
-            InitialUnitsRuntimeState.PlayRequested = false;
+            RuntimeGameplayStateTestHelper.SetPlayRequested(false);
             ThreatWarningRuntimeState.Reset(em);
         }
     }
@@ -357,7 +357,7 @@ public sealed class ThreatWarningValidationTests
         }
         finally
         {
-            InitialUnitsRuntimeState.PlayRequested = false;
+            RuntimeGameplayStateTestHelper.SetPlayRequested(false);
             ThreatWarningRuntimeState.Reset(em);
         }
     }
@@ -394,7 +394,7 @@ public sealed class ThreatWarningValidationTests
         }
         finally
         {
-            InitialUnitsRuntimeState.PlayRequested = false;
+            RuntimeGameplayStateTestHelper.SetPlayRequested(false);
             ThreatWarningRuntimeState.Reset(em);
         }
     }
@@ -424,7 +424,7 @@ public sealed class ThreatWarningValidationTests
         }
         finally
         {
-            InitialUnitsRuntimeState.PlayRequested = false;
+            RuntimeGameplayStateTestHelper.SetPlayRequested(false);
             ThreatWarningRuntimeState.Reset(em);
         }
     }
@@ -454,7 +454,7 @@ public sealed class ThreatWarningValidationTests
         }
         finally
         {
-            InitialUnitsRuntimeState.PlayRequested = false;
+            RuntimeGameplayStateTestHelper.SetPlayRequested(false);
             ThreatWarningRuntimeState.Reset(em);
         }
     }
@@ -486,7 +486,7 @@ public sealed class ThreatWarningValidationTests
         }
         finally
         {
-            InitialUnitsRuntimeState.PlayRequested = false;
+            RuntimeGameplayStateTestHelper.SetPlayRequested(false);
             ThreatWarningRuntimeState.Reset(em);
         }
     }
@@ -602,7 +602,7 @@ public sealed class ThreatWarningValidationTests
         }
         finally
         {
-            InitialUnitsRuntimeState.PlayRequested = false;
+            RuntimeGameplayStateTestHelper.SetPlayRequested(false);
             ThreatWarningRuntimeState.Reset(em);
             if (pathPool.IsCreated)
                 pathPool.Dispose();

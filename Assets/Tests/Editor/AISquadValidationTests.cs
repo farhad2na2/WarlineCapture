@@ -26,7 +26,7 @@ public sealed class AISquadValidationTests
         }
         finally
         {
-            InitialUnitsRuntimeState.PlayRequested = false;
+            RuntimeGameplayStateTestHelper.SetPlayRequested(false);
             InitialUnitsRuntimeState.VerboseAILogs = false;
         }
     }
@@ -40,7 +40,7 @@ public sealed class AISquadValidationTests
     [TearDown]
     public void TearDown()
     {
-        InitialUnitsRuntimeState.PlayRequested = false;
+        RuntimeGameplayStateTestHelper.SetPlayRequested(false);
         InitialUnitsRuntimeState.VerboseAILogs = false;
     }
 

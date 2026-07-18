@@ -347,7 +347,7 @@ namespace Game.Composition
         public void Shutdown()
         {
             ReleaseRuntimeSettingsChangeSubscription();
-            InitialUnitsRuntimeState.ResetSession();
+            _runtimeGameplayStateSystem.ResetForMatchShutdown();
             matchIntroStateQuery.Reset();
             sceneView = null;
         }

@@ -107,7 +107,8 @@ namespace Game.Runtime
                 ComponentType.ReadWrite<BuildingRuntimeSpawnRequest>());
 
             _runtimeGameplayStateQuery = state.GetEntityQuery(
-                ComponentType.ReadOnly<RuntimeGameplayStateComponent>());
+                ComponentType.ReadOnly<RuntimeGameplayStateComponent>(),
+                ComponentType.ReadWrite<RuntimeCameraFocusRequestComponent>());
 
             _gridContextQuery = state.GetEntityQuery(
                 ComponentType.ReadOnly<GridConfig>(),
@@ -262,6 +263,7 @@ namespace Game.Runtime
                                 state.EntityManager,
                                 boundaryEntity,
                                 entity,
+                                _runtimeGameplayStateQuery.GetSingletonEntity(),
                                 baseGrid,
                                 InitialBaseCoreRequestEntryIndex,
                                 ref _diagnosticLogWriter);
@@ -1500,6 +1502,7 @@ namespace Game.Runtime
             EntityManager em,
             Entity boundaryEntity,
             Entity configEntity,
+            Entity runtimeStateEntity,
             GridConfig grid,
             int initialBaseCoreRequestEntryIndex,
             ref InitialSpawnDiagnosticLogWriter diagnosticLogWriter)
@@ -1533,8 +1536,11 @@ namespace Game.Runtime
                         new Vector2Int(request.ActualOrigin.x, request.ActualOrigin.y),
                         new Vector2Int(request.ActualFootprint.x, request.ActualFootprint.y),
                         grid);
-                    InitialUnitsRuntimeState.InitialCameraFocusWorld = coreFocus;
-                    InitialUnitsRuntimeState.InitialCameraFocusRequested = true;
+                    em.SetComponentData(runtimeStateEntity, new RuntimeCameraFocusRequestComponent
+                    {
+                        Requested = 1,
+                        World = new float3(coreFocus.x, coreFocus.y, coreFocus.z)
+                    });
                 }
                 else if (request.Status == BuildingRuntimeSpawnRequest.Failed)
                 {

@@ -46,8 +46,8 @@ public sealed class AIControlModeValidationTests
     [TearDown]
     public void TearDown()
     {
-        InitialUnitsRuntimeState.PlayRequested = false;
-        InitialUnitsRuntimeState.PlayerAutoModeEnabled = false;
+        RuntimeGameplayStateTestHelper.SetPlayRequested(false);
+        RuntimeGameplayStateTestHelper.SetPlayerAutoModeEnabled(false);
         InitialUnitsRuntimeState.VerboseAILogs = false;
     }
 

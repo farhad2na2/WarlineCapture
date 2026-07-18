@@ -47,7 +47,7 @@ public sealed class AIProductionValidationTests
         }
         finally
         {
-            InitialUnitsRuntimeState.PlayRequested = false;
+            RuntimeGameplayStateTestHelper.SetPlayRequested(false);
             InitialUnitsRuntimeState.VerboseAILogs = false;
         }
     }
@@ -61,7 +61,7 @@ public sealed class AIProductionValidationTests
     [TearDown]
     public void TearDown()
     {
-        InitialUnitsRuntimeState.PlayRequested = false;
+        RuntimeGameplayStateTestHelper.SetPlayRequested(false);
         InitialUnitsRuntimeState.VerboseAILogs = false;
 
         if (_buildingGameplayInitialized)

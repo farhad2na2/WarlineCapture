@@ -602,7 +602,7 @@ public sealed class BaseBreachValidationTests
         NativeBitArray occupied = default;
         NativeArray<byte> friendlyPassFactionIds = default;
         NativeList<int2> pathPool = default;
-        bool previousPlayRequested = InitialUnitsRuntimeState.PlayRequested;
+        bool previousPlayRequested = RuntimeGameplayStateTestHelper.ReadGameplayState().PlayRequested != 0;
 
         try
         {
@@ -649,7 +649,7 @@ public sealed class BaseBreachValidationTests
         }
         finally
         {
-            InitialUnitsRuntimeState.PlayRequested = previousPlayRequested;
+            RuntimeGameplayStateTestHelper.SetPlayRequested(previousPlayRequested);
             World.DefaultGameObjectInjectionWorld = previousWorld;
             if (world.IsCreated)
                 world.Dispose();
@@ -686,7 +686,7 @@ public sealed class BaseBreachValidationTests
         Entity gridEntity = Entity.Null;
         GameObject runtimeRoot = null;
         BaseBreachBuildingGameplayFixture buildingPlacement = null;
-        bool previousPlayRequested = InitialUnitsRuntimeState.PlayRequested;
+        bool previousPlayRequested = RuntimeGameplayStateTestHelper.ReadGameplayState().PlayRequested != 0;
 
         try
         {
@@ -755,7 +755,7 @@ public sealed class BaseBreachValidationTests
         }
         finally
         {
-            InitialUnitsRuntimeState.PlayRequested = previousPlayRequested;
+            RuntimeGameplayStateTestHelper.SetPlayRequested(previousPlayRequested);
             buildingPlacement?.Dispose();
             if (runtimeRoot != null)
                 Object.DestroyImmediate(runtimeRoot);
@@ -809,7 +809,7 @@ public sealed class BaseBreachValidationTests
         Entity gridEntity = Entity.Null;
         GameObject runtimeRoot = null;
         BaseBreachBuildingGameplayFixture buildingPlacement = null;
-        bool previousPlayRequested = InitialUnitsRuntimeState.PlayRequested;
+        bool previousPlayRequested = RuntimeGameplayStateTestHelper.ReadGameplayState().PlayRequested != 0;
 
         try
         {
@@ -877,7 +877,7 @@ public sealed class BaseBreachValidationTests
         }
         finally
         {
-            InitialUnitsRuntimeState.PlayRequested = previousPlayRequested;
+            RuntimeGameplayStateTestHelper.SetPlayRequested(previousPlayRequested);
             buildingPlacement?.Dispose();
             if (runtimeRoot != null)
                 Object.DestroyImmediate(runtimeRoot);
@@ -1395,7 +1395,7 @@ public sealed class BaseBreachValidationTests
         }
         finally
         {
-            InitialUnitsRuntimeState.PlayRequested = false;
+            RuntimeGameplayStateTestHelper.SetPlayRequested(false);
             buildingPlacement?.Dispose();
             if (runtimeRoot != null)
                 Object.DestroyImmediate(runtimeRoot);

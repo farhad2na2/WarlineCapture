@@ -27,13 +27,4 @@ namespace Game.Components
         public float3 World;
     }
 
-    public struct RuntimeGameplayLegacyMirrorComponent : IComponentData
-    {
-        public byte HasGameplayState;
-        public byte HasCameraInput;
-        public byte HasCameraFocusRequest;
-        public RuntimeGameplayStateComponent GameplayState;
-        public RuntimeCameraInputComponent CameraInput;
-        public RuntimeCameraFocusRequestComponent CameraFocusRequest;
-    }
 }

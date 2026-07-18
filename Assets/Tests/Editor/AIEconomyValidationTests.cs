@@ -43,7 +43,7 @@ public sealed class AIEconomyValidationTests
     [TearDown]
     public void TearDown()
     {
-        InitialUnitsRuntimeState.PlayRequested = false;
+        RuntimeGameplayStateTestHelper.SetPlayRequested(false);
         InitialUnitsRuntimeState.VerboseAILogs = false;
     }
 

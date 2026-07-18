@@ -61,7 +61,7 @@ public sealed class AIEndToEndValidationTests
     [TearDown]
     public void TearDown()
     {
-        InitialUnitsRuntimeState.PlayRequested = false;
+        RuntimeGameplayStateTestHelper.SetPlayRequested(false);
         InitialUnitsRuntimeState.VerboseAILogs = false;
 
         if (_buildingGameplayInitialized)

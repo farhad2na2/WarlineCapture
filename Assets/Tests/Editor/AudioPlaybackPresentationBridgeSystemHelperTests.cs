@@ -282,8 +282,8 @@ public sealed class AudioPlaybackPresentationBridgeSystemHelperTests
         }
         finally
         {
-            InitialUnitsRuntimeState.PlayRequested = false;
-            InitialUnitsRuntimeState.SimulationActive = false;
+            RuntimeGameplayStateTestHelper.SetPlayRequested(false);
+            RuntimeGameplayStateTestHelper.SetSimulationActive(false);
         }
     }
 

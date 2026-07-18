@@ -313,13 +313,13 @@ public sealed class RoadBuildCommandCompositionSystemHelperTests
 
     private static void ResetRuntimeState()
     {
-        InitialUnitsRuntimeState.PlayRequested = false;
-        InitialUnitsRuntimeState.SelectionModeActive = false;
-        InitialUnitsRuntimeState.BuildModeActive = false;
-        InitialUnitsRuntimeState.FullscreenMapOpen = false;
-        InitialUnitsRuntimeState.FullscreenMapIsoMode = false;
-        InitialUnitsRuntimeState.SuppressNextWorldClick = false;
-        InitialUnitsRuntimeState.PlayerAutoModeEnabled = false;
+        RuntimeGameplayStateTestHelper.SetPlayRequested(false);
+        RuntimeGameplayStateTestHelper.SetSelectionModeActive(false);
+        RuntimeGameplayStateTestHelper.SetBuildModeActive(false);
+        RuntimeGameplayStateTestHelper.SetFullscreenMapOpen(false);
+        RuntimeGameplayStateTestHelper.SetFullscreenMapIsoMode(false);
+        RuntimeGameplayStateTestHelper.SetSuppressNextWorldClick(false);
+        RuntimeGameplayStateTestHelper.SetPlayerAutoModeEnabled(false);
     }
 
     private sealed class RoadBuildCommandTestState

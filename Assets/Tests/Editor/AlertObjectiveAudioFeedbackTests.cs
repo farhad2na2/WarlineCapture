@@ -135,7 +135,7 @@ public sealed class AlertObjectiveAudioFeedbackTests
         }
         finally
         {
-            InitialUnitsRuntimeState.PlayRequested = false;
+            RuntimeGameplayStateTestHelper.SetPlayRequested(false);
             ThreatWarningRuntimeState.Reset(em);
         }
     }

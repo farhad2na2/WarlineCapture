@@ -9,8 +9,6 @@ internal static class RuntimeGameplayStateTestHelper
 {
     public static void SetPlayRequested(EntityManager entityManager, bool playRequested)
     {
-        InitialUnitsRuntimeState.PlayRequested = playRequested;
-        InitialUnitsRuntimeState.SimulationActive = playRequested;
         Entity entity = GetOrCreateRuntimeStateEntity(entityManager);
         RuntimeGameplayStateComponent state = entityManager.GetComponentData<RuntimeGameplayStateComponent>(entity);
         state.PlayRequested = playRequested ? (byte)1 : (byte)0;
@@ -20,11 +18,77 @@ internal static class RuntimeGameplayStateTestHelper
 
     public static void SetSimulationActive(EntityManager entityManager, bool simulationActive)
     {
-        InitialUnitsRuntimeState.SimulationActive = simulationActive;
         Entity entity = GetOrCreateRuntimeStateEntity(entityManager);
         RuntimeGameplayStateComponent state = entityManager.GetComponentData<RuntimeGameplayStateComponent>(entity);
         state.SimulationActive = simulationActive ? (byte)1 : (byte)0;
         entityManager.SetComponentData(entity, state);
+    }
+
+    public static RuntimeGameplayStateComponent ReadGameplayState()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return default;
+
+        Entity entity = GetOrCreateRuntimeStateEntity(world.EntityManager);
+        return world.EntityManager.GetComponentData<RuntimeGameplayStateComponent>(entity);
+    }
+
+    public static void SetPlayRequested(bool playRequested)
+    {
+        WriteGameplayState(state =>
+        {
+            state.PlayRequested = playRequested ? (byte)1 : (byte)0;
+            return state;
+        });
+    }
+
+    public static void SetSimulationActive(bool simulationActive)
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world != null && world.IsCreated)
+            SetSimulationActive(world.EntityManager, simulationActive);
+    }
+
+    public static void SetSelectionModeActive(bool active)
+    {
+        WriteGameplayState(state => { state.SelectionModeActive = active ? (byte)1 : (byte)0; return state; });
+    }
+
+    public static void SetBuildModeActive(bool active)
+    {
+        WriteGameplayState(state => { state.BuildModeActive = active ? (byte)1 : (byte)0; return state; });
+    }
+
+    public static void SetFullscreenMapOpen(bool open)
+    {
+        WriteGameplayState(state => { state.FullscreenMapOpen = open ? (byte)1 : (byte)0; return state; });
+    }
+
+    public static void SetFullscreenMapIsoMode(bool active)
+    {
+        WriteGameplayState(state => { state.FullscreenMapIsoMode = active ? (byte)1 : (byte)0; return state; });
+    }
+
+    public static void SetSuppressNextWorldClick(bool suppress)
+    {
+        WriteGameplayState(state => { state.SuppressNextWorldClick = suppress ? (byte)1 : (byte)0; return state; });
+    }
+
+    public static void SetPlayerAutoModeEnabled(bool enabled)
+    {
+        WriteGameplayState(state => { state.PlayerAutoModeEnabled = enabled ? (byte)1 : (byte)0; return state; });
+    }
+
+    private static void WriteGameplayState(Func<RuntimeGameplayStateComponent, RuntimeGameplayStateComponent> mutate)
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return;
+
+        Entity entity = GetOrCreateRuntimeStateEntity(world.EntityManager);
+        RuntimeGameplayStateComponent state = world.EntityManager.GetComponentData<RuntimeGameplayStateComponent>(entity);
+        world.EntityManager.SetComponentData(entity, mutate(state));
     }
 
     public static void SetBuildingPlacement(EntityManager entityManager, Action tickBuildingRuntime)

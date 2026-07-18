@@ -14,14 +14,14 @@ public sealed class RuntimeGameplayStateSystemTests
     {
         try
         {
-            RunCase(test => test.SettingGameplayFlag_WritesLegacyAndEcsSingleton());
-            RunCase(test => test.SettingCameraInput_WritesLegacyAndEcsSingleton());
+            RunCase(test => test.SettingGameplayFlag_WritesEcsSingleton());
+            RunCase(test => test.SettingCameraInput_WritesEcsSingleton());
             RunCase(test => test.TryConsumeInitialCameraFocus_ReturnsWorldAndClearsRequest());
-            RunCase(test => test.ReadGameplayState_MirrorsLegacyStateIntoEcsSingleton());
+            RunCase(test => test.ReadGameplayState_ReturnsExternalEcsChange());
             RunCase(test => test.ResetForGameplayStart_RequestsPlayWithoutActivatingSimulation());
-            RunCase(test => test.ReadGameplayState_DoesNotOverwriteEcsWhenLegacyIsUnchanged());
-            RunCase(test => test.ReadGameplayState_MirrorsLaterLegacyChangeOnceDetected());
+            RunCase(test => test.ResetForMatchShutdown_ClearsGameplayCameraAndFocus());
             RunCase(test => test.ReadGameplayState_RebindsAfterWorldReplacement());
+            RunCase(test => test.SeparateWorlds_DoNotShareGameplayState());
             UnityEngine.Debug.Log("[RuntimeGameplayStateValidation] result=Passed tests=8");
             ValidationExit.Passed();
         }
@@ -53,32 +53,27 @@ public sealed class RuntimeGameplayStateSystemTests
         _previousWorld = World.DefaultGameObjectInjectionWorld;
         _world = new World("RuntimeGameplayStateSystemTests");
         World.DefaultGameObjectInjectionWorld = _world;
-        ResetLegacyState();
     }
 
     [TearDown]
     public void TearDown()
     {
-        ResetLegacyState();
         if (World.DefaultGameObjectInjectionWorld == _world)
             World.DefaultGameObjectInjectionWorld = _previousWorld;
         _world?.Dispose();
     }
 
     [Test]
-    public void SettingGameplayFlag_WritesLegacyAndEcsSingleton()
+    public void SettingGameplayFlag_WritesEcsSingleton()
     {
-        var runtimeState = new RuntimeGameplayStateSystem();
+        var runtimeState = new RuntimeGameplayStateSystem
+        {
+            SelectionModeActive = true,
+            SimulationActive = true,
+            SuppressNextWorldClick = true,
+            PlayerAutoModeEnabled = true
+        };
 
-        runtimeState.SelectionModeActive = true;
-        runtimeState.SimulationActive = true;
-        runtimeState.SuppressNextWorldClick = true;
-        runtimeState.PlayerAutoModeEnabled = true;
-
-        Assert.IsTrue(InitialUnitsRuntimeState.SelectionModeActive);
-        Assert.IsTrue(InitialUnitsRuntimeState.SimulationActive);
-        Assert.IsTrue(InitialUnitsRuntimeState.SuppressNextWorldClick);
-        Assert.IsTrue(InitialUnitsRuntimeState.PlayerAutoModeEnabled);
         RuntimeGameplayStateComponent state = ReadSingleton<RuntimeGameplayStateComponent>();
         Assert.AreEqual(1, state.SelectionModeActive);
         Assert.AreEqual(1, state.SimulationActive);
@@ -87,15 +82,14 @@ public sealed class RuntimeGameplayStateSystemTests
     }
 
     [Test]
-    public void SettingCameraInput_WritesLegacyAndEcsSingleton()
+    public void SettingCameraInput_WritesEcsSingleton()
     {
-        var runtimeState = new RuntimeGameplayStateSystem();
+        var runtimeState = new RuntimeGameplayStateSystem
+        {
+            ZoomInHeld = true,
+            ZoomOutHeld = true
+        };
 
-        runtimeState.ZoomInHeld = true;
-        runtimeState.ZoomOutHeld = true;
-
-        Assert.IsTrue(InitialUnitsRuntimeState.ZoomInHeld);
-        Assert.IsTrue(InitialUnitsRuntimeState.ZoomOutHeld);
         RuntimeCameraInputComponent input = ReadSingleton<RuntimeCameraInputComponent>();
         Assert.AreEqual(1, input.ZoomInHeld);
         Assert.AreEqual(1, input.ZoomOutHeld);
@@ -113,39 +107,34 @@ public sealed class RuntimeGameplayStateSystemTests
 
         Assert.IsTrue(consumed);
         Assert.AreEqual(focus, consumedFocus);
-        Assert.IsFalse(InitialUnitsRuntimeState.InitialCameraFocusRequested);
-        RuntimeCameraFocusRequestComponent request = ReadSingleton<RuntimeCameraFocusRequestComponent>();
-        Assert.AreEqual(0, request.Requested);
+        Assert.AreEqual(0, ReadSingleton<RuntimeCameraFocusRequestComponent>().Requested);
     }
 
     [Test]
-    public void ReadGameplayState_MirrorsLegacyStateIntoEcsSingleton()
+    public void ReadGameplayState_ReturnsExternalEcsChange()
     {
-        InitialUnitsRuntimeState.PlayRequested = true;
-        InitialUnitsRuntimeState.SimulationActive = true;
-        InitialUnitsRuntimeState.BuildModeActive = true;
-        InitialUnitsRuntimeState.PlayerAutoModeEnabled = true;
-        var runtimeState = new RuntimeGameplayStateSystem();
+        var runtimeState = new RuntimeGameplayStateSystem { PlayRequested = true };
+        Entity stateEntity = ReadSingletonEntity<RuntimeGameplayStateComponent>();
+        RuntimeGameplayStateComponent state = _world.EntityManager.GetComponentData<RuntimeGameplayStateComponent>(stateEntity);
+        state.BuildModeActive = 1;
+        _world.EntityManager.SetComponentData(stateEntity, state);
 
-        RuntimeGameplayStateComponent state = runtimeState.ReadGameplayState();
+        RuntimeGameplayStateComponent reread = runtimeState.ReadGameplayState();
 
-        Assert.AreEqual(1, state.PlayRequested);
-        Assert.AreEqual(1, state.SimulationActive);
-        Assert.AreEqual(1, state.BuildModeActive);
-        Assert.AreEqual(1, state.PlayerAutoModeEnabled);
-        RuntimeGameplayStateComponent singleton = ReadSingleton<RuntimeGameplayStateComponent>();
-        Assert.AreEqual(1, singleton.PlayRequested);
-        Assert.AreEqual(1, singleton.SimulationActive);
-        Assert.AreEqual(1, singleton.BuildModeActive);
-        Assert.AreEqual(1, singleton.PlayerAutoModeEnabled);
+        Assert.AreEqual(1, reread.PlayRequested);
+        Assert.AreEqual(1, reread.BuildModeActive);
     }
 
     [Test]
     public void ResetForGameplayStart_RequestsPlayWithoutActivatingSimulation()
     {
-        var runtimeState = new RuntimeGameplayStateSystem();
-        runtimeState.SimulationActive = true;
-        runtimeState.BuildModeActive = true;
+        var runtimeState = new RuntimeGameplayStateSystem
+        {
+            SimulationActive = true,
+            BuildModeActive = true,
+            ZoomInHeld = true,
+            InitialCameraFocusRequested = true
+        };
 
         runtimeState.ResetForGameplayStart();
 
@@ -153,64 +142,65 @@ public sealed class RuntimeGameplayStateSystemTests
         Assert.AreEqual(1, state.PlayRequested);
         Assert.AreEqual(0, state.SimulationActive);
         Assert.AreEqual(0, state.BuildModeActive);
-        Assert.IsTrue(InitialUnitsRuntimeState.PlayRequested);
-        Assert.IsFalse(InitialUnitsRuntimeState.SimulationActive);
+        Assert.AreEqual(1, state.SuppressNextWorldClick);
+        Assert.AreEqual(0, ReadSingleton<RuntimeCameraInputComponent>().ZoomInHeld);
+        Assert.AreEqual(0, ReadSingleton<RuntimeCameraFocusRequestComponent>().Requested);
     }
 
     [Test]
-    public void ReadGameplayState_DoesNotOverwriteEcsWhenLegacyIsUnchanged()
+    public void ResetForMatchShutdown_ClearsGameplayCameraAndFocus()
     {
-        var runtimeState = new RuntimeGameplayStateSystem();
-        runtimeState.PlayRequested = true;
-        RuntimeGameplayStateComponent state = runtimeState.ReadGameplayState();
-        Assert.AreEqual(1, state.PlayRequested);
+        var runtimeState = new RuntimeGameplayStateSystem
+        {
+            PlayRequested = true,
+            SimulationActive = true,
+            FullscreenMapOpen = true,
+            ZoomOutHeld = true,
+            InitialCameraFocusWorld = new Vector3(7f, 0f, 5f),
+            InitialCameraFocusRequested = true
+        };
 
-        Entity stateEntity = ReadSingletonEntity<RuntimeGameplayStateComponent>();
-        state.BuildModeActive = 1;
-        _world.EntityManager.SetComponentData(stateEntity, state);
+        runtimeState.ResetForMatchShutdown();
 
-        RuntimeGameplayStateComponent reread = runtimeState.ReadGameplayState();
-
-        Assert.AreEqual(1, reread.BuildModeActive);
-        Assert.IsFalse(InitialUnitsRuntimeState.BuildModeActive);
-    }
-
-    [Test]
-    public void ReadGameplayState_MirrorsLaterLegacyChangeOnceDetected()
-    {
-        var runtimeState = new RuntimeGameplayStateSystem();
-        RuntimeGameplayStateComponent state = runtimeState.ReadGameplayState();
-        Assert.AreEqual(0, state.BuildModeActive);
-
-        InitialUnitsRuntimeState.BuildModeActive = true;
-
-        RuntimeGameplayStateComponent reread = runtimeState.ReadGameplayState();
-
-        Assert.AreEqual(1, reread.BuildModeActive);
-        RuntimeGameplayStateComponent singleton = ReadSingleton<RuntimeGameplayStateComponent>();
-        Assert.AreEqual(1, singleton.BuildModeActive);
+        Assert.AreEqual(default(RuntimeGameplayStateComponent), ReadSingleton<RuntimeGameplayStateComponent>());
+        Assert.AreEqual(default(RuntimeCameraInputComponent), ReadSingleton<RuntimeCameraInputComponent>());
+        Assert.AreEqual(default(RuntimeCameraFocusRequestComponent), ReadSingleton<RuntimeCameraFocusRequestComponent>());
     }
 
     [Test]
     public void ReadGameplayState_RebindsAfterWorldReplacement()
     {
-        var runtimeState = new RuntimeGameplayStateSystem();
-        runtimeState.PlayRequested = true;
+        var runtimeState = new RuntimeGameplayStateSystem { PlayRequested = true };
         Assert.AreEqual(1, ReadSingleton<RuntimeGameplayStateComponent>().PlayRequested);
 
         _world.Dispose();
         _world = new World("RuntimeGameplayStateSystemTests-Replacement");
         World.DefaultGameObjectInjectionWorld = _world;
-        ResetLegacyState();
 
         RuntimeGameplayStateComponent replacementState = runtimeState.ReadGameplayState();
 
-        Assert.AreEqual(0, replacementState.PlayRequested);
-        Assert.AreEqual(0, replacementState.BuildModeActive);
-        Assert.AreEqual(0, replacementState.FullscreenMapOpen);
-        using EntityQuery stateQuery = _world.EntityManager.CreateEntityQuery(
-            ComponentType.ReadOnly<RuntimeGameplayStateComponent>());
-        Assert.AreEqual(1, stateQuery.CalculateEntityCount());
+        Assert.AreEqual(default(RuntimeGameplayStateComponent), replacementState);
+        Assert.AreEqual(1, CountSingletons<RuntimeGameplayStateComponent>());
+    }
+
+    [Test]
+    public void SeparateWorlds_DoNotShareGameplayState()
+    {
+        var runtimeState = new RuntimeGameplayStateSystem { PlayerAutoModeEnabled = true };
+        World firstWorld = _world;
+        _world = new World("RuntimeGameplayStateSystemTests-Independent");
+        World.DefaultGameObjectInjectionWorld = _world;
+
+        Assert.IsFalse(runtimeState.PlayerAutoModeEnabled);
+        runtimeState.BuildModeActive = true;
+
+        using (EntityQuery firstQuery = firstWorld.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<RuntimeGameplayStateComponent>()))
+        {
+            RuntimeGameplayStateComponent firstState = firstQuery.GetSingleton<RuntimeGameplayStateComponent>();
+            Assert.AreEqual(1, firstState.PlayerAutoModeEnabled);
+            Assert.AreEqual(0, firstState.BuildModeActive);
+        }
+        firstWorld.Dispose();
     }
 
     private T ReadSingleton<T>() where T : unmanaged, IComponentData
@@ -227,20 +217,10 @@ public sealed class RuntimeGameplayStateSystemTests
         return query.GetSingletonEntity();
     }
 
-    private static void ResetLegacyState()
+    private int CountSingletons<T>() where T : unmanaged, IComponentData
     {
-        InitialUnitsRuntimeState.PlayRequested = false;
-        InitialUnitsRuntimeState.SimulationActive = false;
-        InitialUnitsRuntimeState.InitialCameraFocusRequested = false;
-        InitialUnitsRuntimeState.InitialCameraFocusWorld = Vector3.zero;
-        InitialUnitsRuntimeState.SelectionModeActive = false;
-        InitialUnitsRuntimeState.BuildModeActive = false;
-        InitialUnitsRuntimeState.FullscreenMapOpen = false;
-        InitialUnitsRuntimeState.FullscreenMapIsoMode = false;
-        InitialUnitsRuntimeState.ZoomInHeld = false;
-        InitialUnitsRuntimeState.ZoomOutHeld = false;
-        InitialUnitsRuntimeState.SuppressNextWorldClick = false;
-        InitialUnitsRuntimeState.PlayerAutoModeEnabled = false;
+        using EntityQuery query = _world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<T>());
+        return query.CalculateEntityCount();
     }
 }
 #endif

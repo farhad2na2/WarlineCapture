@@ -769,7 +769,7 @@ public sealed class UnitMoveOrderSystemTests
     [Test]
     public void SelectedMoveOrderCommand_PreResolvedRequestPathfindsAndMovesSelectedUnit()
     {
-        bool previousPlayRequested = InitialUnitsRuntimeState.PlayRequested;
+        bool previousPlayRequested = RuntimeGameplayStateTestHelper.ReadGameplayState().PlayRequested != 0;
         try
         {
             RuntimeGameplayStateTestHelper.SetPlayRequested(_entityManager, true);
@@ -901,8 +901,8 @@ public sealed class UnitMoveOrderSystemTests
         }
         finally
         {
-            InitialUnitsRuntimeState.PlayRequested = previousPlayRequested;
-            InitialUnitsRuntimeState.SimulationActive = previousPlayRequested;
+            RuntimeGameplayStateTestHelper.SetPlayRequested(previousPlayRequested);
+            RuntimeGameplayStateTestHelper.SetSimulationActive(previousPlayRequested);
         }
     }
 

@@ -29,7 +29,7 @@ public sealed class AITargetingValidationTests
         }
         finally
         {
-            InitialUnitsRuntimeState.PlayRequested = false;
+            RuntimeGameplayStateTestHelper.SetPlayRequested(false);
             InitialUnitsRuntimeState.VerboseAILogs = false;
         }
     }
@@ -43,7 +43,7 @@ public sealed class AITargetingValidationTests
     [TearDown]
     public void TearDown()
     {
-        InitialUnitsRuntimeState.PlayRequested = false;
+        RuntimeGameplayStateTestHelper.SetPlayRequested(false);
         InitialUnitsRuntimeState.VerboseAILogs = false;
     }
 

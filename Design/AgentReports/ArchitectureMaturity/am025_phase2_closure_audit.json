@@ -36,10 +36,10 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 530,
+    "resolvedNonDebtRowCount": 542,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 538,
-    "genuineDebtRowCount": 37,
+    "reviewedNonDebtRowCount": 550,
+    "genuineDebtRowCount": 25,
     "uniqueDebtItemCount": 21,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
@@ -55,9 +55,9 @@
     {
       "sourceArtifact": "AM-018",
       "historicalOpenRowCount": 261,
-      "projectedResolvedNonDebtRowCount": 202,
+      "projectedResolvedNonDebtRowCount": 214,
       "projectedProtectedDeferredRowCount": 1,
-      "projectedGenuineDebtRowCount": 58
+      "projectedGenuineDebtRowCount": 46
     }
   ],
   "genuineDebtLanes": [
@@ -1041,10 +1041,39 @@
       "authority": ["Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs", "Assets/Tests/Editor/BuildDrawerCatalogQueryUiSystemHelperTests.cs"]
     },
     {
+      "id": "am018-static-msl-gameplay-camera-world-owned",
+      "decision": "resolved",
+      "reasonCode": "ecs-world-owned-gameplay-camera-state",
+      "expectedCount": 12,
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "MSL",
+        "sourcePath": "Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs",
+        "symbol": [
+          "PlayRequested",
+          "SimulationActive",
+          "InitialCameraFocusRequested",
+          "InitialCameraFocusWorld",
+          "SelectionModeActive",
+          "BuildModeActive",
+          "FullscreenMapOpen",
+          "FullscreenMapIsoMode",
+          "ZoomInHeld",
+          "ZoomOutHeld",
+          "SuppressNextWorldClick",
+          "PlayerAutoModeEnabled"
+        ]
+      },
+      "authority": [
+        "Assets/Tests/Editor/RuntimeGameplayStateSystemTests.cs"
+      ]
+    },
+    {
       "id": "am018-static-msl-debt",
       "decision": "genuine-debt",
       "reasonCode": "mutable-static-lifecycle-unproven",
-      "expectedCount": 16,
+      "expectedCount": 4,
       "debtIdPrefix": "AM025-STATIC-MSL",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

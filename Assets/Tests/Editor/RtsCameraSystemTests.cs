@@ -109,7 +109,6 @@ public sealed class RtsCameraSystemTests
         if (_cameraSystemWorld != null && _cameraSystemWorld.IsCreated)
             _cameraSystemWorld.Dispose();
         _cameraSystemWorld = null;
-        InitialUnitsRuntimeState.ResetSession();
     }
 
     [Test]

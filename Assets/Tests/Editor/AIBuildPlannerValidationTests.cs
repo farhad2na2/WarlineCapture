@@ -67,7 +67,7 @@ public sealed class AIBuildPlannerValidationTests
     [TearDown]
     public void TearDown()
     {
-        InitialUnitsRuntimeState.PlayRequested = false;
+        RuntimeGameplayStateTestHelper.SetPlayRequested(false);
         InitialUnitsRuntimeState.VerboseAILogs = false;
 
         if (_buildingGameplayInitialized)

@@ -326,8 +326,6 @@ namespace Game.Runtime
 
         private static void StopMatchGameplay(EntityManager em)
         {
-            InitialUnitsRuntimeState.ResetSession();
-
             using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<RuntimeGameplayStateComponent>());
             ComponentTypeHandle<RuntimeGameplayStateComponent> stateType = em.GetComponentTypeHandle<RuntimeGameplayStateComponent>(false);
             using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
@@ -369,21 +367,6 @@ namespace Game.Runtime
                     requests[i] = default;
             }
 
-            using EntityQuery mirrorQuery = em.CreateEntityQuery(ComponentType.ReadWrite<RuntimeGameplayLegacyMirrorComponent>());
-            ComponentTypeHandle<RuntimeGameplayLegacyMirrorComponent> mirrorType = em.GetComponentTypeHandle<RuntimeGameplayLegacyMirrorComponent>(false);
-            using NativeArray<ArchetypeChunk> mirrorChunks = mirrorQuery.ToArchetypeChunkArray(Allocator.Temp);
-            for (int chunkIndex = 0; chunkIndex < mirrorChunks.Length; chunkIndex++)
-            {
-                NativeArray<RuntimeGameplayLegacyMirrorComponent> mirrors = mirrorChunks[chunkIndex].GetNativeArray(ref mirrorType);
-                for (int i = 0; i < mirrors.Length; i++)
-                {
-                    RuntimeGameplayLegacyMirrorComponent mirror = mirrors[i];
-                    mirror.GameplayState = default;
-                    mirror.CameraInput = default;
-                    mirror.CameraFocusRequest = default;
-                    mirrors[i] = mirror;
-                }
-            }
         }
 
         private static string CreateCompletionMessage(SceneLifecycleRequestKind kind)

@@ -117,8 +117,6 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
             _world.Dispose();
 
         World.DefaultGameObjectInjectionWorld = _previousWorld;
-        InitialUnitsRuntimeState.SelectionModeActive = false;
-        InitialUnitsRuntimeState.SuppressNextWorldClick = false;
     }
 
     [Test]

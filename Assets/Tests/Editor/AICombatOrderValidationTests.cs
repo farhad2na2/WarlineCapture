@@ -28,8 +28,8 @@ public sealed class AICombatOrderValidationTests
         }
         finally
         {
-            InitialUnitsRuntimeState.PlayRequested = false;
-            InitialUnitsRuntimeState.SimulationActive = false;
+            RuntimeGameplayStateTestHelper.SetPlayRequested(false);
+            RuntimeGameplayStateTestHelper.SetSimulationActive(false);
             InitialUnitsRuntimeState.VerboseAILogs = false;
         }
     }
@@ -43,8 +43,8 @@ public sealed class AICombatOrderValidationTests
     [TearDown]
     public void TearDown()
     {
-        InitialUnitsRuntimeState.PlayRequested = false;
-        InitialUnitsRuntimeState.SimulationActive = false;
+        RuntimeGameplayStateTestHelper.SetPlayRequested(false);
+        RuntimeGameplayStateTestHelper.SetSimulationActive(false);
         InitialUnitsRuntimeState.VerboseAILogs = false;
     }
 

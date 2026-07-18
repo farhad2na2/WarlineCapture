@@ -8,13 +8,13 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 |---|---:|
 | Baseline rows | 863 |
 | Hazard rows | 352 |
-| Resolved | 1142 |
+| Resolved | 1154 |
 | Protected/deferred | 36 |
-| Open | 37 |
+| Open | 25 |
 | New after baseline | 26 |
 | Historical intake rows | 575 |
-| Reviewed non-debt rows | 538 |
-| Genuine-debt rows | 37 |
+| Reviewed non-debt rows | 550 |
+| Genuine-debt rows | 25 |
 | Unclassified rows | 0 |
 | Unique debt items | 21 |
 
@@ -29,18 +29,6 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 | AM-018 | globalWorldLookups | Assets/Game/Scripts/Systems/SelectionBuildingInteractionCompositionSystemHelper.cs | AM-018 classification.globalWorldLookups | AM025-GLOBAL-WORLD-005 |
 | AM-018 | globalWorldLookups | Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs | AM-018 classification.globalWorldLookups | AM025-GLOBAL-WORLD-006 |
 | AM-018 | globalWorldLookups | Assets/Game/Scripts/Systems/UnitPathfindingPendingStateStore.cs | AM-018 classification.globalWorldLookups | AM025-GLOBAL-WORLD-007 |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |

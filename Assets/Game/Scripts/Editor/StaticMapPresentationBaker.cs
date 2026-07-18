@@ -124,6 +124,12 @@ namespace Game.Editor
             Bake(CreateCurrentCompatibilityInput());
         }
 
+        [MenuItem("Game/Tools/Performance/Bake Current Staged Operation Map Presentation")]
+        public static void BakeCurrentStagedOperationMapPresentation()
+        {
+            Bake(CreateCurrentStagedInput());
+        }
+
         internal static StaticMapPresentationBakeInput CreateCurrentCompatibilityInput()
         {
             return new StaticMapPresentationBakeInput(

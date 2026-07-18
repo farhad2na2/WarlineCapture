@@ -18,6 +18,7 @@ namespace Game.Composition
         [SerializeField] private Transform buildingAuthoringRoot;
         [SerializeField] private Transform vehicleAuthoringRoot;
         [SerializeField] private MapSurfaceAuthoring mapSurfaceAuthoring;
+        [SerializeField] private GridAuthoringConfig gridAuthoringConfig;
         [SerializeField] private MapBuildingPlacementConfig buildingPlacements;
         [SerializeField] private MapVehiclePlacementConfig vehiclePlacements;
         [SerializeField] private SubScene mapSubScene;
@@ -30,6 +31,7 @@ namespace Game.Composition
         public Transform BuildingAuthoringRoot => buildingAuthoringRoot;
         public Transform VehicleAuthoringRoot => vehicleAuthoringRoot;
         public MapSurfaceAuthoring MapSurfaceAuthoring => mapSurfaceAuthoring;
+        public GridAuthoringConfig GridAuthoringConfig => gridAuthoringConfig;
         public MapBuildingPlacementConfig BuildingPlacements => buildingPlacements;
         public MapVehiclePlacementConfig VehiclePlacements => vehiclePlacements;
         public SubScene MapSubScene => mapSubScene;
@@ -46,6 +48,7 @@ namespace Game.Composition
             if (mapRoot == null || decorationCombinedMeshBaker == null ||
                 decorationRoot == null || buildingAuthoringRoot == null ||
                 vehicleAuthoringRoot == null || mapSurfaceAuthoring == null ||
+                gridAuthoringConfig == null ||
                 mapSubScene == null)
             {
                 error = "Operation-map view requires map-owned presentation, placement, surface, and subscene references.";

@@ -2,6 +2,8 @@ using Game.Editor;
 using NUnit.Framework;
 using System.Reflection;
 using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine.SceneManagement;
 using Game.Composition;
 
 public sealed class OperationMapCurrentCompatibilitySceneStagerTests
@@ -72,6 +74,27 @@ public sealed class OperationMapCurrentCompatibilitySceneStagerTests
             OperationMapCurrentCompatibilitySceneViewStager.TryValidate(out string error),
             Is.True,
             error);
+    }
+
+    [Test]
+    public void StagedSceneViewBindsTheMapOwnedGridConfig()
+    {
+        Scene scene = EditorSceneManager.OpenScene(
+            OperationMapCurrentCompatibilitySceneStager.DestinationScenePath,
+            OpenSceneMode.Additive);
+        try
+        {
+            OperationMapSceneView[] views = scene.GetRootGameObjects()[^1]
+                .GetComponentsInChildren<OperationMapSceneView>(true);
+            Assert.That(views, Has.Length.EqualTo(1));
+            Assert.That(
+                AssetDatabase.GetAssetPath(views[0].GridAuthoringConfig),
+                Is.EqualTo("Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset"));
+        }
+        finally
+        {
+            EditorSceneManager.CloseScene(scene, removeScene: true);
+        }
     }
 
     [Test]

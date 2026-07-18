@@ -16,6 +16,8 @@ namespace Game.Editor
     {
         private const string ViewRootName = "OperationMapSceneView";
         private const string OperationMapId = "opmap.skirmish.desert_base_01";
+        private const string GridConfigPath =
+            "Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset";
 
         [MenuItem("Tools/Warline Capture/Operation Maps/Bind Current Scene View")]
         public static void Stage()
@@ -92,6 +94,7 @@ namespace Game.Editor
                     OperationMapCurrentCompatibilityPlacementStager.DestinationBuildingConfigPath ||
                     AssetDatabase.GetAssetPath(view.VehiclePlacements) !=
                     OperationMapCurrentCompatibilityPlacementStager.DestinationVehicleConfigPath ||
+                    AssetDatabase.GetAssetPath(view.GridAuthoringConfig) != GridConfigPath ||
                     AssetDatabase.GetAssetPath(view.MapSubScene.SceneAsset) !=
                     OperationMapCurrentCompatibilitySubSceneStager.DestinationSubScenePath ||
                     !string.Equals(
@@ -123,6 +126,7 @@ namespace Game.Editor
             if (combinedMeshBaker == null)
                 throw new InvalidOperationException("Staged operation map decorations require CombinedMeshBaker.");
             MapSurfaceAuthoring surface = FindSingleComponent<MapSurfaceAuthoring>(scene);
+            GridAuthoringConfig gridConfig = LoadRequired<GridAuthoringConfig>(GridConfigPath);
             SubScene subScene = FindSingleComponent<SubScene>(scene);
             OperationMapDefinition definition = LoadRequired<OperationMapDefinition>(
                 OperationMapCurrentStagedDefinitionBuilder.DefinitionPath);
@@ -140,6 +144,7 @@ namespace Game.Editor
             serialized.FindProperty("buildingAuthoringRoot").objectReferenceValue = buildingsRoot;
             serialized.FindProperty("vehicleAuthoringRoot").objectReferenceValue = vehiclesRoot;
             serialized.FindProperty("mapSurfaceAuthoring").objectReferenceValue = surface;
+            serialized.FindProperty("gridAuthoringConfig").objectReferenceValue = gridConfig;
             serialized.FindProperty("buildingPlacements").objectReferenceValue = buildings;
             serialized.FindProperty("vehiclePlacements").objectReferenceValue = vehicles;
             serialized.FindProperty("mapSubScene").objectReferenceValue = subScene;

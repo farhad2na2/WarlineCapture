@@ -111,7 +111,10 @@ namespace Game.Composition
         public RuntimeCitySpawnerSystemConfig RuntimeCitySpawnerConfig => runtimeCitySpawnerConfig;
         public RuntimeDecorationSpawnerSystemConfig RuntimeDecorationSpawnerConfig => runtimeDecorationSpawnerConfig;
         public RuntimeGridBlockerSystemConfig RuntimeGridBlockerConfig => runtimeGridBlockerConfig;
-        public GridAuthoringConfig RuntimeGridConfig => runtimeGridConfig;
+        public GridAuthoringConfig RuntimeGridConfig =>
+            activeOperationMapSceneView != null
+                ? activeOperationMapSceneView.GridAuthoringConfig
+                : runtimeGridConfig;
         public IReadOnlyList<GridAuthoring> RuntimeGridDebugViews => runtimeGridDebugViews;
         public DayNightSystemConfig DayNightConfig => dayNightConfig;
         public FactionVisualSettingsConfig FactionVisualConfig => factionVisualConfig;

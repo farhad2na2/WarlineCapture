@@ -30,11 +30,13 @@ namespace Game.Editor
             try
             {
                 ProjectConfigData.GenerateBuildLayout = true;
+                DateTime buildStartedUtc = DateTime.UtcNow;
                 AddressableAssetSettings.BuildPlayerContent(out AddressablesPlayerBuildResult result);
                 if (result == null || !string.IsNullOrEmpty(result.Error))
                     throw new InvalidOperationException(result?.Error ?? "Addressables content build returned no result.");
 
-                string layoutPath = FindLatestBuildLayoutPath();
+                ValidateContentBuildOutput(result.OutputPath);
+                string layoutPath = FindLatestBuildLayoutPath(buildStartedUtc);
                 BuildLayout layout = BuildLayout.Open(layoutPath, true, true);
                 if (layout == null)
                     throw new InvalidOperationException($"Addressables Build Layout could not be read: {layoutPath}");
@@ -324,7 +326,7 @@ namespace Game.Editor
             return rows.OrderBy(row => row.AssetGuid, StringComparer.Ordinal).ToArray();
         }
 
-        private static string FindLatestBuildLayoutPath()
+        private static string FindLatestBuildLayoutPath(DateTime buildStartedUtc)
         {
             string directory = Addressables.BuildReportPath;
             string path = Directory.Exists(directory)
@@ -335,7 +337,23 @@ namespace Game.Editor
                 : null;
             if (string.IsNullOrEmpty(path))
                 throw new InvalidOperationException("Addressables content build did not produce a Build Layout report.");
+            if (File.GetLastWriteTimeUtc(path) < buildStartedUtc.AddSeconds(-2))
+                throw new InvalidOperationException(
+                    "Addressables content build did not produce a fresh Build Layout report.");
             return path;
+        }
+
+        private static void ValidateContentBuildOutput(string settingsPath)
+        {
+            if (string.IsNullOrEmpty(settingsPath) || !File.Exists(settingsPath))
+                throw new InvalidOperationException("Addressables content build did not produce settings.json.");
+
+            string outputDirectory = Path.GetDirectoryName(Path.GetFullPath(settingsPath));
+            string catalogPath = Path.Combine(outputDirectory, "catalog.bin");
+            string hashPath = Path.Combine(outputDirectory, "catalog.hash");
+            if (!File.Exists(catalogPath) || !File.Exists(hashPath))
+                throw new InvalidOperationException(
+                    "Addressables content build did not produce the local catalog and hash.");
         }
 
         internal static bool Publish(string path, string content)

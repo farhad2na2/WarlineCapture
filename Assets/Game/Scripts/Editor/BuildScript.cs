@@ -96,6 +96,9 @@ namespace Game.Editor
                 File.Delete(outputPath);
             }
 
+            ConfigureAndroidBuild(buildType == "AAB");
+            OperationMapAddressablesBuildReportBuilder.Run();
+
             var buildPlayerOptions = new BuildPlayerOptions
             {
                 scenes = StaticMapAndroidBuildSceneResolver.ResolveForCurrentProject(GetEnabledScenes()),
@@ -106,7 +109,6 @@ namespace Game.Editor
                 locationPathName = outputPath
             };
 
-            ConfigureAndroidBuild(buildType == "AAB");
             UnityEngine.Debug.Log(
                 $"[BuildScript] Android cache mode: {(cleanBuildCache ? "clean" : "incremental")}");
 
@@ -132,6 +134,7 @@ namespace Game.Editor
             SwitchBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
             ConfigureGradleUserHome();
             ConfigureAndroidBuild(false);
+            OperationMapAddressablesBuildReportBuilder.Run();
             using var burstAotScope = disableBurstAot
                 ? TryDisableBurstAotForAndroidBuild()
                 : null;

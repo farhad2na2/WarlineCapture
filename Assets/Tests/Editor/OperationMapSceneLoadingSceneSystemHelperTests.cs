@@ -28,6 +28,9 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
             Run(nameof(FailedManifestLoadReleasesBothExactlyOnce), test => test.FailedManifestLoadReleasesBothExactlyOnce(), ref passed);
             Run(nameof(MismatchedManifestFailsClosed), test => test.MismatchedManifestFailsClosed(), ref passed);
             Run(nameof(DisposePendingLoadReleasesExactlyOnce), test => test.DisposePendingLoadReleasesExactlyOnce(), ref passed);
+            Run(nameof(AbortReadyLoadReleasesExactlyOnce), test => test.AbortReadyLoadReleasesExactlyOnce(), ref passed);
+            Run(nameof(FailedLoadCanResetAndRetry), test => test.FailedLoadCanResetAndRetry(), ref passed);
+            Run(nameof(ReadyLoadCanResetBeforeSequentialLoad), test => test.ReadyLoadCanResetBeforeSequentialLoad(), ref passed);
             Debug.Log($"[OperationMapSceneLoadingValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
         }
@@ -193,12 +196,151 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
         Assert.That(manifestOperation.DisposeCount, Is.EqualTo(1));
     }
 
+    [Test]
+    public void AbortReadyLoadReleasesExactlyOnce()
+    {
+        Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Additive);
+        var sceneOperation = new FakeSceneOperation
+        {
+            Done = true,
+            Success = true,
+            LoadedScene = scene,
+            Progress = 1f
+        };
+        var manifestOperation = new FakeManifestOperation
+        {
+            Done = true,
+            Success = true,
+            LoadedManifest = CreateMatchingManifest(scene),
+            Progress = 1f
+        };
+        var helper = CreateHelper(sceneOperation, manifestOperation);
+
+        Assert.That(helper.TryStart(LoadDefinition(), out string error), Is.True, error);
+        helper.Update();
+        helper.Abort("metadata bind failed");
+        helper.Abort("duplicate abort");
+
+        Assert.That(helper.HasFailed, Is.True);
+        Assert.That(helper.Failure, Is.EqualTo("metadata bind failed"));
+        Assert.That(helper.SceneView, Is.Null);
+        Assert.That(helper.Manifest, Is.Null);
+        Assert.That(sceneOperation.DisposeCount, Is.EqualTo(1));
+        Assert.That(manifestOperation.DisposeCount, Is.EqualTo(1));
+        UnityEngine.Object.DestroyImmediate(manifestOperation.LoadedManifest);
+    }
+
+    [Test]
+    public void FailedLoadCanResetAndRetry()
+    {
+        Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Additive);
+        var failedSceneOperation = new FakeSceneOperation
+        {
+            Done = true,
+            FailureMessage = "source unavailable"
+        };
+        var failedManifestOperation = new FakeManifestOperation();
+        var readySceneOperation = new FakeSceneOperation
+        {
+            Done = true,
+            Success = true,
+            LoadedScene = scene,
+            Progress = 1f
+        };
+        var readyManifestOperation = new FakeManifestOperation
+        {
+            Done = true,
+            Success = true,
+            LoadedManifest = CreateMatchingManifest(scene),
+            Progress = 1f
+        };
+        var helper = CreateHelper(
+            new[] { failedSceneOperation, readySceneOperation },
+            new[] { failedManifestOperation, readyManifestOperation });
+
+        Assert.That(helper.TryStart(LoadDefinition(), out string error), Is.True, error);
+        helper.Update();
+        Assert.That(helper.HasFailed, Is.True);
+        Assert.That(helper.TryReset(out error), Is.True, error);
+        Assert.That(helper.TryStart(LoadDefinition(), out error), Is.True, error);
+        helper.Update();
+
+        Assert.That(helper.IsReady, Is.True);
+        Assert.That(helper.HasFailed, Is.False);
+        Assert.That(failedSceneOperation.DisposeCount, Is.EqualTo(1));
+        Assert.That(failedManifestOperation.DisposeCount, Is.EqualTo(1));
+        helper.Dispose();
+        Assert.That(readySceneOperation.DisposeCount, Is.EqualTo(1));
+        Assert.That(readyManifestOperation.DisposeCount, Is.EqualTo(1));
+        UnityEngine.Object.DestroyImmediate(readyManifestOperation.LoadedManifest);
+    }
+
+    [Test]
+    public void ReadyLoadCanResetBeforeSequentialLoad()
+    {
+        Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Additive);
+        var firstSceneOperation = new FakeSceneOperation
+        {
+            Done = true,
+            Success = true,
+            LoadedScene = scene,
+            Progress = 1f
+        };
+        var secondSceneOperation = new FakeSceneOperation
+        {
+            Done = true,
+            Success = true,
+            LoadedScene = scene,
+            Progress = 1f
+        };
+        var firstManifestOperation = new FakeManifestOperation
+        {
+            Done = true,
+            Success = true,
+            LoadedManifest = CreateMatchingManifest(scene),
+            Progress = 1f
+        };
+        var secondManifestOperation = new FakeManifestOperation
+        {
+            Done = true,
+            Success = true,
+            LoadedManifest = CreateMatchingManifest(scene),
+            Progress = 1f
+        };
+        var helper = CreateHelper(
+            new[] { firstSceneOperation, secondSceneOperation },
+            new[] { firstManifestOperation, secondManifestOperation });
+
+        Assert.That(helper.TryStart(LoadDefinition(), out string error), Is.True, error);
+        helper.Update();
+        Assert.That(helper.IsReady, Is.True);
+        Assert.That(helper.TryReset(out error), Is.True, error);
+        Assert.That(firstSceneOperation.DisposeCount, Is.EqualTo(1));
+        Assert.That(firstManifestOperation.DisposeCount, Is.EqualTo(1));
+        Assert.That(helper.TryStart(LoadDefinition(), out error), Is.True, error);
+        helper.Update();
+
+        Assert.That(helper.IsReady, Is.True);
+        helper.Dispose();
+        Assert.That(secondSceneOperation.DisposeCount, Is.EqualTo(1));
+        Assert.That(secondManifestOperation.DisposeCount, Is.EqualTo(1));
+        UnityEngine.Object.DestroyImmediate(firstManifestOperation.LoadedManifest);
+        UnityEngine.Object.DestroyImmediate(secondManifestOperation.LoadedManifest);
+    }
+
     private static OperationMapSceneLoadingSceneSystemHelper CreateHelper(
         FakeSceneOperation sceneOperation,
         FakeManifestOperation manifestOperation) =>
         new(
             new FakeSceneApi(sceneOperation),
             new FakeManifestApi(manifestOperation));
+
+    private static OperationMapSceneLoadingSceneSystemHelper CreateHelper(
+        FakeSceneOperation[] sceneOperations,
+        FakeManifestOperation[] manifestOperations) =>
+        new(
+            new FakeSceneApi(sceneOperations),
+            new FakeManifestApi(manifestOperations));
 
     private static OperationMapDefinition LoadDefinition()
     {
@@ -274,16 +416,17 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
 
     private sealed class FakeSceneApi : IOperationMapSourceSceneApi
     {
-        private readonly FakeSceneOperation operation;
+        private readonly FakeSceneOperation[] operations;
+        private int nextOperation;
 
-        public FakeSceneApi(FakeSceneOperation operation = null)
+        public FakeSceneApi(params FakeSceneOperation[] operations)
         {
-            this.operation = operation;
+            this.operations = operations;
         }
 
         public IOperationMapSourceSceneOperation LoadAdditive(object runtimeKey)
         {
-            return operation;
+            return nextOperation < operations.Length ? operations[nextOperation++] : null;
         }
     }
 
@@ -310,14 +453,16 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
 
     private sealed class FakeManifestApi : IOperationMapPresentationManifestApi
     {
-        private readonly FakeManifestOperation operation;
+        private readonly FakeManifestOperation[] operations;
+        private int nextOperation;
 
-        public FakeManifestApi(FakeManifestOperation operation)
+        public FakeManifestApi(params FakeManifestOperation[] operations)
         {
-            this.operation = operation;
+            this.operations = operations;
         }
 
-        public IOperationMapPresentationManifestOperation Load(object runtimeKey) => operation;
+        public IOperationMapPresentationManifestOperation Load(object runtimeKey) =>
+            nextOperation < operations.Length ? operations[nextOperation++] : null;
     }
 
     private sealed class FakeManifestOperation : IOperationMapPresentationManifestOperation

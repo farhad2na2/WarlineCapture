@@ -526,6 +526,9 @@ namespace Game.Composition
             if (operationMapLoadFailureReported)
                 return;
 
+            DisposeOperationMapMetadataBootstrap();
+            activeOperationMapSceneView = null;
+            operationMapSceneLoadingSystem?.Abort(error);
             operationMapLoadFailureReported = true;
             Debug.LogError($"[OperationMapSourceScene] {error}");
         }

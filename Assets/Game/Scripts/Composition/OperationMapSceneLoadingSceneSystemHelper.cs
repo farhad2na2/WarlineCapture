@@ -271,6 +271,30 @@ namespace Game.Composition
             IsReady = true;
         }
 
+        public void Abort(string failure)
+        {
+            if (disposed || HasFailed)
+                return;
+
+            Fail(string.IsNullOrWhiteSpace(failure)
+                ? "Operation-map source-scene load was aborted."
+                : failure);
+        }
+
+        public bool TryReset(out string error)
+        {
+            if (disposed)
+            {
+                error = "Operation-map source-scene loader is disposed.";
+                return false;
+            }
+
+            ReleaseOperations();
+            ResetResultState();
+            error = null;
+            return true;
+        }
+
         public void Dispose()
         {
             if (disposed)
@@ -282,6 +306,17 @@ namespace Game.Composition
             Manifest = null;
             IsReady = false;
             Progress01 = 0f;
+        }
+
+        private void ResetResultState()
+        {
+            SceneView = null;
+            Manifest = null;
+            IsReady = false;
+            Progress01 = 0f;
+            Failure = null;
+            expectedOperationMapId = null;
+            expectedSourceSceneGuid = null;
         }
 
         private void Fail(string error)

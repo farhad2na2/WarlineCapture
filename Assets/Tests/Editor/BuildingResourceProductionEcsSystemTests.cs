@@ -39,6 +39,7 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.AutomaticFuelLogisticsRoute_AIUnreachableMaterialsDemandDoesNotOverrideFuel();
             tests.AutomaticFuelLogisticsAIInput_UsesCanonicalPlanMaterialsAndFuelSummary();
             tests.AutomaticFuelLogisticsAIInput_RebindsAfterWorldReplacement();
+            tests.BuildingGameplayQueries_RebindAfterWorldReplacement();
             tests.FuelLogisticsTelemetry_RebindsAfterWorldReplacement();
             tests.AutomaticFuelLogisticsAIInput_ResolvesOncePerFactionPerScan();
             tests.AutomaticFuelLogisticsRoute_PairsTankerWithFactionRefineryAndFuelStorage();
@@ -69,7 +70,7 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.AutomaticFuelLogisticsTanker_FullFuelStorageSetsTypedIdleReason();
             tests.AutomaticFuelLogisticsTanker_NoRouteSetsTypedIdleReason();
             tests.AutomaticFuelLogisticsTanker_NoAvailableTankerDoesNotReserveFuel();
-            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=54");
+            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=55");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -1420,6 +1421,35 @@ public sealed class BuildingResourceProductionEcsSystemTests
             Assert.AreEqual(300, second.MaterialsCapacity);
             Assert.AreEqual(33f, second.StoredFuelBarrels, 0.001f);
             Assert.AreEqual(400, second.FuelStorageCapacity);
+        }
+    }
+
+    [Test]
+    public void BuildingGameplayQueries_RebindAfterWorldReplacement()
+    {
+        var queries = new BuildingGameplayEcsQueryCompositionSystemHelper();
+
+        using (var firstWorld = new World("BuildingGameplayQueries_FirstWorld"))
+        {
+            EntityManager em = firstWorld.EntityManager;
+            em.CreateEntity(typeof(BuildingRuntimeStateTag));
+            em.CreateEntity(typeof(SelectedUnitTag), typeof(UnitGrid), typeof(UnitMove));
+            queries.EnsureEntityQueries(em);
+
+            Assert.AreEqual(1, queries.BuildingRuntimeStateQuery.CalculateEntityCount());
+            Assert.AreEqual(1, queries.SelectedUnitsQuery.CalculateEntityCount());
+        }
+
+        using (var replacementWorld = new World("BuildingGameplayQueries_ReplacementWorld"))
+        {
+            EntityManager em = replacementWorld.EntityManager;
+            em.CreateEntity(typeof(BuildingRuntimeStateTag));
+            em.CreateEntity(typeof(SelectedUnitTag), typeof(UnitGrid), typeof(UnitMove));
+            em.CreateEntity(typeof(SelectedUnitTag), typeof(UnitGrid), typeof(UnitMove));
+            queries.EnsureEntityQueries(em);
+
+            Assert.AreEqual(1, queries.BuildingRuntimeStateQuery.CalculateEntityCount());
+            Assert.AreEqual(2, queries.SelectedUnitsQuery.CalculateEntityCount());
         }
     }
 

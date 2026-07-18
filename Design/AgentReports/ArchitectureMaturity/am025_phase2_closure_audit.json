@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 436,
+    "resolvedNonDebtRowCount": 437,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 444,
-    "genuineDebtRowCount": 131,
-    "uniqueDebtItemCount": 55,
+    "reviewedNonDebtRowCount": 445,
+    "genuineDebtRowCount": 130,
+    "uniqueDebtItemCount": 54,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -48,9 +48,9 @@
     {
       "sourceArtifact": "AM-007",
       "historicalOpenRowCount": 314,
-      "projectedResolvedNonDebtRowCount": 288,
+      "projectedResolvedNonDebtRowCount": 289,
       "projectedProtectedDeferredRowCount": 7,
-      "projectedGenuineDebtRowCount": 19
+      "projectedGenuineDebtRowCount": 18
     },
     {
       "sourceArtifact": "AM-018",
@@ -63,7 +63,7 @@
   "genuineDebtLanes": [
     {
       "id": "world-singleton-discovery",
-      "projectedRows": 11,
+      "projectedRows": 10,
       "note": "Hazard rows; overlaps with World-owner lifecycle candidates are reconciled before unique debt-item counting."
     },
     {
@@ -452,10 +452,22 @@
       "authority": ["Assets/Tests/Editor/RtsSelectionInputSystemTests.cs"]
     },
     {
+      "id": "am007-world-selection-startup-owned",
+      "decision": "resolved",
+      "reasonCode": "tested-world-rebinding-selection-startup-queries",
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-007",
+        "sourceCategory": "worlds",
+        "sourcePath": "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs"
+      },
+      "authority": ["Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"]
+    },
+    {
       "id": "am007-world-debt",
       "decision": "genuine-debt",
       "reasonCode": "world-owner-unproven",
-      "expectedCount": 11,
+      "expectedCount": 10,
       "debtIdPrefix": "AM025-WORLD",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

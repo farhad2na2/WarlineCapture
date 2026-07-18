@@ -30,6 +30,23 @@ public sealed class PersistentResourceOwnershipLifecycleTests
         }
     }
 
+    public static void RunSelectionStartupWorldOwnershipValidation()
+    {
+        try
+        {
+            new PersistentResourceOwnershipLifecycleTests()
+                .SelectionStartupQueries_RebindAfterWorldReplacement();
+            Debug.Log("[SelectionStartupWorldOwnershipValidation] result=Passed tests=1");
+            ValidationExit.Passed();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[SelectionStartupWorldOwnershipValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
     public static void RunPathfindingPendingStateWorldReplacementValidation()
     {
         try
@@ -389,6 +406,60 @@ public sealed class PersistentResourceOwnershipLifecycleTests
         Assert.Throws<ObjectDisposedException>(() => runtimeCache.HasValidPose(world.EntityManager));
         Assert.Throws<ObjectDisposedException>(() => selectionCache.HasValidPose(world.EntityManager));
         Assert.Throws<ObjectDisposedException>(() => modeCache.HasValidPose(world.EntityManager));
+    }
+
+    [Test]
+    public void SelectionStartupQueries_RebindAfterWorldReplacement()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        using World firstWorld = new(nameof(SelectionStartupQueries_RebindAfterWorldReplacement) + "_First");
+        using World replacementWorld = new(nameof(SelectionStartupQueries_RebindAfterWorldReplacement) + "_Replacement");
+        SelectionGameplayStartupSystemHelper.Result result = default;
+        try
+        {
+            World.DefaultGameObjectInjectionWorld = firstWorld;
+            var startup = new SelectionGameplayStartupSystemHelper();
+            result = startup.Initialize(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                default,
+                null,
+                default,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+
+            object closure = result.SelectionRuntimeUpdate.Target;
+            Assert.IsNotNull(closure);
+            MethodInfo ensureQueries = Array.Find(
+                closure.GetType().GetMethods(BindingFlags.Instance | BindingFlags.NonPublic),
+                method => method.Name.Contains("EnsureSelectionRuntimeEntityQueries", StringComparison.Ordinal));
+            FieldInfo queryWorld = closure.GetType().GetField(
+                "selectionRuntimeQueryWorld",
+                BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+            Assert.IsNotNull(ensureQueries);
+            Assert.IsNotNull(queryWorld);
+
+            ensureQueries.Invoke(closure, new object[] { firstWorld.EntityManager });
+            Assert.AreSame(firstWorld, queryWorld.GetValue(closure));
+
+            World.DefaultGameObjectInjectionWorld = replacementWorld;
+            ensureQueries.Invoke(closure, new object[] { replacementWorld.EntityManager });
+            Assert.AreSame(replacementWorld, queryWorld.GetValue(closure));
+        }
+        finally
+        {
+            result.DisposeSelection?.Invoke();
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
     }
 
     [Test]

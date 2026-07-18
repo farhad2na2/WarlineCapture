@@ -8,15 +8,15 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 |---|---:|
 | Baseline rows | 863 |
 | Hazard rows | 352 |
-| Resolved | 1048 |
+| Resolved | 1049 |
 | Protected/deferred | 36 |
-| Open | 131 |
+| Open | 130 |
 | New after baseline | 26 |
 | Historical intake rows | 575 |
-| Reviewed non-debt rows | 444 |
-| Genuine-debt rows | 131 |
+| Reviewed non-debt rows | 445 |
+| Genuine-debt rows | 130 |
 | Unclassified rows | 0 |
-| Unique debt items | 55 |
+| Unique debt items | 54 |
 
 ## Open Rows
 
@@ -150,6 +150,5 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 | AM-007 | worlds | Assets/Game/Scripts/Systems/FocusedUnitUiReadModelUiSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-006 |
 | AM-007 | worlds | Assets/Game/Scripts/Systems/MatchHudSquadTraySelectionUiSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-007 |
 | AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionBuildingInteractionCompositionSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-008 |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-009 |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-010 |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-011 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-009 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-010 |

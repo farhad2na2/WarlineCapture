@@ -95,6 +95,12 @@ namespace Game.Composition
                 Fail(error);
                 return false;
             }
+            if (_sceneApi is IStaticMapPresentationManifestBindingSceneApi manifestBinding &&
+                !manifestBinding.TryBindManifest(manifest, out error))
+            {
+                Fail(error);
+                return false;
+            }
             _camera = camera;
             if (!TryRefreshTargets(out error))
             {

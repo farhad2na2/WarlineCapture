@@ -25,7 +25,8 @@ namespace Game.Composition
     }
 
     internal sealed class StaticMapPresentationAddressablesSceneApi :
-        IStaticMapPresentationSceneApi
+        IStaticMapPresentationSceneApi,
+        IStaticMapPresentationManifestBindingSceneApi
     {
         private sealed class SceneState
         {
@@ -45,7 +46,7 @@ namespace Game.Composition
 
         internal int RetainedSceneCount => statesByPath.Count;
 
-        internal bool TryBindManifest(
+        public bool TryBindManifest(
             StaticMapPresentationManifest manifest,
             out string error)
         {

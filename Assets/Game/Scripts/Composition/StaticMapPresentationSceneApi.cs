@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Game.Rendering;
 
 namespace Game.Composition
 {
@@ -14,6 +15,11 @@ namespace Game.Composition
         bool IsLoaded(string scenePath);
         IStaticMapPresentationSceneOperation LoadAdditive(string scenePath);
         IStaticMapPresentationSceneOperation Unload(string scenePath);
+    }
+
+    internal interface IStaticMapPresentationManifestBindingSceneApi
+    {
+        bool TryBindManifest(StaticMapPresentationManifest manifest, out string error);
     }
 
     internal sealed class StaticMapPresentationUnitySceneApi : IStaticMapPresentationSceneApi

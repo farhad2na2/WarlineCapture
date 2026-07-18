@@ -45,6 +45,21 @@ public sealed class StaticMapPresentationStreamerTests
         Assert.That(streamer.PreloadComplete, Is.True);
         Assert.That(streamer.Progress01, Is.EqualTo(1f));
         Assert.That(streamer.Status, Is.EqualTo("Streaming"));
+        Assert.That(api.ManifestBindCount, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void Bind_ManifestSceneApiFailureFailsBeforeStartingChunkWork()
+    {
+        Camera camera = CreateTopDownCamera(16f, 16f);
+        FakeSceneApi api = new() { ManifestBindFailure = "manifest address binding failed" };
+        StaticMapPresentationStreamer streamer = new(api);
+
+        Assert.That(streamer.Bind(CreateGridManifest(0, 0, 0, 0), camera), Is.False);
+        Assert.That(streamer.Failed, Is.True);
+        Assert.That(streamer.Status, Does.Contain("manifest address binding failed"));
+        Assert.That(api.ManifestBindCount, Is.EqualTo(1));
+        Assert.That(api.Started, Is.Empty);
     }
 
     [Test]
@@ -661,7 +676,9 @@ public sealed class StaticMapPresentationStreamerTests
         Unload
     }
 
-    private sealed class FakeSceneApi : IStaticMapPresentationSceneApi
+    private sealed class FakeSceneApi :
+        IStaticMapPresentationSceneApi,
+        IStaticMapPresentationManifestBindingSceneApi
     {
         public readonly HashSet<string> Loaded = new(StringComparer.Ordinal);
         public readonly List<FakeSceneOperation> Started = new();
@@ -669,6 +686,15 @@ public sealed class StaticMapPresentationStreamerTests
         public int NullStartsRemaining { get; set; }
         public int ThrowStartsRemaining { get; set; }
         public int StartAttempts { get; private set; }
+        public int ManifestBindCount { get; private set; }
+        public string ManifestBindFailure { get; set; }
+
+        public bool TryBindManifest(StaticMapPresentationManifest manifest, out string error)
+        {
+            ManifestBindCount++;
+            error = ManifestBindFailure;
+            return string.IsNullOrEmpty(error);
+        }
 
         public bool IsLoaded(string scenePath) => Loaded.Contains(scenePath);
         public IStaticMapPresentationSceneOperation LoadAdditive(string scenePath) =>

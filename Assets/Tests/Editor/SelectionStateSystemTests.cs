@@ -24,9 +24,10 @@ public sealed class SelectionStateCompositionSystemHelperTests
             RunCase(test => test.VisibleUnitSelectionCandidateSystem_PublishesCandidateSnapshot());
             RunCase(test => test.FocusedUnitLifecycle_ClearCurrentSelection_RemovesSelectedTagsAndClearsCache());
             RunCase(test => test.FocusedUnitLifecycle_RefreshFocusedUnit_FocusesSingleSelectedPlayerUnit());
+            RunCase(test => test.FocusedUnitLifecycle_RefreshFocusedUnit_RebindsAfterWorldReplacement());
             RunCase(test => test.FocusedUnitLifecycle_RejectsEnemyFocusWithoutClearingCurrentSelection());
             RunCase(test => test.FocusedUnitLifecycle_FocusAirUnitClearsAccidentalSelectionMoveThroughRequest());
-            UnityEngine.Debug.Log("[SelectionStateFocusedValidation] result=Passed tests=10");
+            UnityEngine.Debug.Log("[SelectionStateFocusedValidation] result=Passed tests=11");
         }
         catch (System.Exception ex)
         {
@@ -321,6 +322,34 @@ public sealed class SelectionStateCompositionSystemHelperTests
         Assert.IsTrue(result);
         Assert.AreEqual(unit, selectionState.FocusedUnit);
         Assert.AreEqual(unit, applied);
+    }
+
+    [Test]
+    public void FocusedUnitLifecycle_RefreshFocusedUnit_RebindsAfterWorldReplacement()
+    {
+        var lifecycle = new FocusedUnitLifecycleCompositionSystemHelper();
+        var firstSelectionState = new SelectionStateCompositionSystemHelper();
+        Entity firstUnit = CreateMoveUnit(FactionIdentity.PlayerFactionId);
+        _entityManager.AddComponent<SelectedUnitTag>(firstUnit);
+
+        Assert.IsTrue(lifecycle.RefreshFocusedUnit(_entityManager, firstSelectionState, null));
+        Assert.AreEqual(firstUnit, firstSelectionState.FocusedUnit);
+
+        _world.Dispose();
+        _world = new World("SelectionStateCompositionSystemHelperTests-Replacement");
+        _entityManager = _world.EntityManager;
+
+        var replacementSelectionState = new SelectionStateCompositionSystemHelper();
+        Entity replacementUnit = CreateMoveUnit(FactionIdentity.PlayerFactionId);
+        _entityManager.AddComponent<SelectedUnitTag>(replacementUnit);
+        Entity applied = Entity.Null;
+
+        Assert.IsTrue(lifecycle.RefreshFocusedUnit(
+            _entityManager,
+            replacementSelectionState,
+            (_, entity) => applied = entity));
+        Assert.AreEqual(replacementUnit, replacementSelectionState.FocusedUnit);
+        Assert.AreEqual(replacementUnit, applied);
     }
 
     [Test]

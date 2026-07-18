@@ -90,6 +90,12 @@ namespace Game.Rendering
         private int _lastSourceFallbackQueryCount = -1;
         private float _nextSourceFallbackProbeAt;
         private TryGetUnitRenderingMetadataDelegate _tryGetUnitRenderingMetadata;
+        private readonly SharedPrefabPreviewCache _prefabPreviewCache;
+
+        public UnitImpostorPresentationSystemHelper(SharedPrefabPreviewCache prefabPreviewCache)
+        {
+            _prefabPreviewCache = prefabPreviewCache ?? throw new System.ArgumentNullException(nameof(prefabPreviewCache));
+        }
 
         public int LastDrawnCount { get; private set; }
         public int LastCulledCandidateCount { get; private set; }
@@ -662,7 +668,7 @@ namespace Game.Rendering
             Material[] materials = new Material[directionCount];
             for (int i = 0; i < directionCount; i++)
             {
-                if (!SharedPrefabPreviewCache.TryGetOrCreateDirectionalImpostor(prefab, i, directionCount, out RenderTexture texture) || texture == null)
+                if (!_prefabPreviewCache.TryGetOrCreateDirectionalImpostor(prefab, i, directionCount, out RenderTexture texture) || texture == null)
                 {
                     materials[i] = _fallbackMaterial;
                     continue;

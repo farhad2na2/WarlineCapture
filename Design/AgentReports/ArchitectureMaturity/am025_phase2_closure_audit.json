@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 478,
+    "resolvedNonDebtRowCount": 497,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 486,
-    "genuineDebtRowCount": 89,
-    "uniqueDebtItemCount": 35,
+    "reviewedNonDebtRowCount": 505,
+    "genuineDebtRowCount": 70,
+    "uniqueDebtItemCount": 33,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -55,9 +55,9 @@
     {
       "sourceArtifact": "AM-018",
       "historicalOpenRowCount": 261,
-      "projectedResolvedNonDebtRowCount": 153,
+      "projectedResolvedNonDebtRowCount": 172,
       "projectedProtectedDeferredRowCount": 1,
-      "projectedGenuineDebtRowCount": 107
+      "projectedGenuineDebtRowCount": 88
     }
   ],
   "genuineDebtLanes": [
@@ -68,7 +68,7 @@
     },
     {
       "id": "mutable-static-state",
-      "projectedRows": 93
+      "projectedRows": 74
     },
     {
       "id": "pool-and-lifecycle-cache",
@@ -626,10 +626,26 @@
       "authority": ["Assets/Tests/Editor/RuntimeGameplayStateSystemTests.cs"]
     },
     {
+      "id": "am018-static-clr-prefab-preview-match-owned",
+      "decision": "resolved",
+      "reasonCode": "match-owned-preview-cache-with-tested-disposal",
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "CLR",
+        "sourcePath": "Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs"
+      },
+      "authority": [
+        "Assets/Tests/Editor/SharedPrefabPreviewCacheTests.cs",
+        "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs"
+      ]
+    },
+    {
       "id": "am018-static-clr-debt",
       "decision": "genuine-debt",
       "reasonCode": "static-cache-lifecycle-unproven",
-      "expectedCount": 8,
+      "expectedCount": 7,
       "debtIdPrefix": "AM025-STATIC-CLR",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",
@@ -885,10 +901,26 @@
       ]
     },
     {
+      "id": "am018-static-msl-prefab-preview-match-owned",
+      "decision": "resolved",
+      "reasonCode": "match-owned-preview-state-with-tested-disposal",
+      "expectedCount": 18,
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "MSL",
+        "sourcePath": "Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs"
+      },
+      "authority": [
+        "Assets/Tests/Editor/SharedPrefabPreviewCacheTests.cs",
+        "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs"
+      ]
+    },
+    {
       "id": "am018-static-msl-debt",
       "decision": "genuine-debt",
       "reasonCode": "mutable-static-lifecycle-unproven",
-      "expectedCount": 55,
+      "expectedCount": 37,
       "debtIdPrefix": "AM025-STATIC-MSL",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

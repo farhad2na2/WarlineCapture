@@ -230,7 +230,6 @@ public sealed class ScriptArchitectureAlignmentContractTests
 
     private static readonly HashSet<string> StaticGameplayRegistryDebtAllowlist = new(StringComparer.Ordinal)
     {
-        "Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs|Cache",
         "Assets/Game/Scripts/Systems/BuildingProductionTransportPresentationSystemHelper.cs|EmptyTransformList",
         "Assets/Game/Scripts/Configs/GameText.cs|AudioEventIds",
         "Assets/Game/Scripts/Configs/GameText.cs|Entries",

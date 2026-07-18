@@ -31,6 +31,7 @@ namespace Game.Composition
         private readonly PerformanceDiagnosticsSystemHelper fallbackPerformanceDiagnosticsSystemHelper = new();
         private readonly StaticMapPresentationOwnership mapVisuals = new();
         private readonly IGameTextResolver gameTextResolver = new GameTextResolverAdapter();
+        private readonly SharedPrefabPreviewCache _prefabPreviewCache = new();
         private bool fallbackPerformanceDiagnosticsInitialized;
         private bool _staticMapBatchingInitialized;
         private World runtimeWorld;
@@ -626,7 +627,7 @@ namespace Game.Composition
             mapSurfaceRuntimeBootstrapSystem?.DisposeRuntimeSurface();
             runtimeCameraReferenceSystem?.ClearWorldCamera();
             ReleasePerformanceDiagnostics(performanceDiagnosticsSystem);
-            SharedPrefabPreviewCache.ReleaseAll();
+            _prefabPreviewCache.Dispose();
         }
 
         private void ReleasePerformanceDiagnostics(PerformanceDiagnosticsSystemHelper performanceDiagnosticsSystem)
@@ -697,9 +698,9 @@ namespace Game.Composition
             return new UnitAttackTracePresentationSystemHelper();
         }
 
-        private static UnitImpostorPresentationSystemHelper ResolveUnitImpostorPresentationSystemHelper()
+        private UnitImpostorPresentationSystemHelper ResolveUnitImpostorPresentationSystemHelper()
         {
-            return new UnitImpostorPresentationSystemHelper();
+            return new UnitImpostorPresentationSystemHelper(_prefabPreviewCache);
         }
 
         private static ISelectionRectangleView EnsureSelectionRectangleView(
@@ -826,8 +827,8 @@ namespace Game.Composition
                 UnitRenderingMetadataAuthoringSystem.TryGetUnitRenderingMetadata);
             UnitImpostors = unitImpostors;
 
-            SharedPrefabPreviewCache.ConfigureUnitRenderingMetadataResolver(UnitRenderingMetadataAuthoringSystem.TryGetUnitRenderingMetadata);
-            SharedPrefabPreviewCache.Init(PrefabPreviewCameraConfig);
+            _prefabPreviewCache.ConfigureUnitRenderingMetadataResolver(UnitRenderingMetadataAuthoringSystem.TryGetUnitRenderingMetadata);
+            _prefabPreviewCache.Init(PrefabPreviewCameraConfig);
         }
 
         private void EnsureUiRuntimeAdapters()

@@ -104,7 +104,7 @@ namespace Game.Editor
 
             EnsureOutputFolder();
             GameObject bakePrefab = ResolveBakePrefab(prefab);
-            SharedPrefabPreviewCache.ReleaseAll();
+            using SharedPrefabPreviewCache previewCache = new();
             string atlasPath = BuildAtlasPath(prefab);
             Texture2D atlas = new(Columns * TileSize, Rows * TileSize, TextureFormat.RGBA32, true)
             {
@@ -119,7 +119,7 @@ namespace Game.Editor
 
             for (int direction = 0; direction < DirectionCount; direction++)
             {
-                Texture2D tile = RenderDirection(bakePrefab, direction, DirectionCount);
+                Texture2D tile = RenderDirection(previewCache, bakePrefab, direction, DirectionCount);
                 if (tile == null)
                 {
                     Debug.LogError($"[ImpostorAtlasGen] Failed direction={direction} prefab={prefab.name} bakePrefab={bakePrefab.name}");
@@ -167,9 +167,13 @@ namespace Game.Editor
             return runtimePrefab;
         }
 
-        private static Texture2D RenderDirection(GameObject prefab, int directionIndex, int directionCount)
+        private static Texture2D RenderDirection(
+            SharedPrefabPreviewCache previewCache,
+            GameObject prefab,
+            int directionIndex,
+            int directionCount)
         {
-            if (!SharedPrefabPreviewCache.TryGetOrCreateDirectionalImpostor(prefab, directionIndex, directionCount, out RenderTexture sourceTexture) ||
+            if (!previewCache.TryGetOrCreateDirectionalImpostor(prefab, directionIndex, directionCount, out RenderTexture sourceTexture) ||
                 sourceTexture == null)
             {
                 return null;

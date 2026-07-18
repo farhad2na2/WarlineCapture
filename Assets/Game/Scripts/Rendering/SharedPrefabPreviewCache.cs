@@ -8,7 +8,7 @@ using Game.Configs;
 
 namespace Game.Rendering
 {
-    public static class SharedPrefabPreviewCache
+    public sealed class SharedPrefabPreviewCache : System.IDisposable
     {
         private const int PreviewVersion = 7;
         private static readonly Vector3 DefaultCharacterPreviewModelPosition = new(-2f, 0f, 0f);
@@ -64,60 +64,60 @@ namespace Game.Rendering
         private const int PreviewLayer = 30;
         private static readonly int SnivelerModelShownId = Shader.PropertyToID("_SnivelerModelShown");
         private static readonly int SnivelerRenderPixelId = Shader.PropertyToID("_SnivelerRenderPixel");
-        private static readonly Dictionary<PreviewKey, RenderTexture> Cache = new(new PreviewKeyComparer());
-        private static GameObject _previewRoot;
-        private static Camera _previewCamera;
-        private static GameObject _previewCameraObject;
-        private static PrefabPreviewCameraConfig _previewConfig;
-        private static int _revision;
-        private static Vector3 _characterPreviewModelPosition = DefaultCharacterPreviewModelPosition;
-        private static Quaternion _characterPreviewModelRotation = DefaultCharacterPreviewModelRotation;
-        private static Vector3 _characterPreviewCameraPosition = DefaultCharacterPreviewCameraPosition;
-        private static Quaternion _characterPreviewCameraRotation = DefaultCharacterPreviewCameraRotation;
-        private static Vector3 _vehiclePreviewModelPosition = DefaultVehiclePreviewModelPosition;
-        private static Quaternion _vehiclePreviewModelRotation = DefaultVehiclePreviewModelRotation;
-        private static Vector3 _vehiclePreviewCameraPosition = DefaultVehiclePreviewCameraPosition;
-        private static Quaternion _vehiclePreviewCameraRotation = DefaultVehiclePreviewCameraRotation;
-        private static Vector3 _buildingPreviewModelPosition = DefaultBuildingPreviewModelPosition;
-        private static Quaternion _buildingPreviewModelRotation = DefaultBuildingPreviewModelRotation;
-        private static Vector3 _buildingPreviewCameraPosition = DefaultBuildingPreviewCameraPosition;
-        private static Quaternion _buildingPreviewCameraRotation = DefaultBuildingPreviewCameraRotation;
-        private static TryGetUnitRenderingMetadataDelegate _tryGetUnitRenderingMetadata;
-        public static int Revision => _revision;
+        private readonly Dictionary<PreviewKey, RenderTexture> _cache = new(new PreviewKeyComparer());
+        private GameObject _previewRoot;
+        private Camera _previewCamera;
+        private GameObject _previewCameraObject;
+        private PrefabPreviewCameraConfig _previewConfig;
+        private int _revision;
+        private Vector3 _characterPreviewModelPosition = DefaultCharacterPreviewModelPosition;
+        private Quaternion _characterPreviewModelRotation = DefaultCharacterPreviewModelRotation;
+        private Vector3 _characterPreviewCameraPosition = DefaultCharacterPreviewCameraPosition;
+        private Quaternion _characterPreviewCameraRotation = DefaultCharacterPreviewCameraRotation;
+        private Vector3 _vehiclePreviewModelPosition = DefaultVehiclePreviewModelPosition;
+        private Quaternion _vehiclePreviewModelRotation = DefaultVehiclePreviewModelRotation;
+        private Vector3 _vehiclePreviewCameraPosition = DefaultVehiclePreviewCameraPosition;
+        private Quaternion _vehiclePreviewCameraRotation = DefaultVehiclePreviewCameraRotation;
+        private Vector3 _buildingPreviewModelPosition = DefaultBuildingPreviewModelPosition;
+        private Quaternion _buildingPreviewModelRotation = DefaultBuildingPreviewModelRotation;
+        private Vector3 _buildingPreviewCameraPosition = DefaultBuildingPreviewCameraPosition;
+        private Quaternion _buildingPreviewCameraRotation = DefaultBuildingPreviewCameraRotation;
+        private TryGetUnitRenderingMetadataDelegate _tryGetUnitRenderingMetadata;
+        public int Revision => _revision;
 
-        public static void RefreshConfig()
+        public void RefreshConfig()
         {
             if (_previewConfig != null)
                 ApplyPreviewConfig(_previewConfig);
         }
 
-        public static void Init(PrefabPreviewCameraConfig config)
+        public void Init(PrefabPreviewCameraConfig config)
         {
             _previewConfig = config;
             ApplyPreviewConfig(config);
         }
 
-        public static void ConfigureUnitRenderingMetadataResolver(TryGetUnitRenderingMetadataDelegate tryGetUnitRenderingMetadata)
+        public void ConfigureUnitRenderingMetadataResolver(TryGetUnitRenderingMetadataDelegate tryGetUnitRenderingMetadata)
         {
             _tryGetUnitRenderingMetadata = tryGetUnitRenderingMetadata;
         }
 
-        public static bool TryGetOrCreate(GameObject prefab, float distanceMultiplier, out RenderTexture texture)
+        public bool TryGetOrCreate(GameObject prefab, float distanceMultiplier, out RenderTexture texture)
         {
             return TryGetOrCreateInternal(prefab, distanceMultiplier, false, 0, 1, out texture);
         }
 
-        public static bool TryGetOrCreateImpostor(GameObject prefab, out RenderTexture texture)
+        public bool TryGetOrCreateImpostor(GameObject prefab, out RenderTexture texture)
         {
             return TryGetOrCreateInternal(prefab, 1f, true, 0, 1, out texture);
         }
 
-        public static bool TryGetOrCreateDirectionalImpostor(GameObject prefab, int directionIndex, int directionCount, out RenderTexture texture)
+        public bool TryGetOrCreateDirectionalImpostor(GameObject prefab, int directionIndex, int directionCount, out RenderTexture texture)
         {
             return TryGetOrCreateInternal(prefab, 1f, true, directionIndex, Mathf.Max(1, directionCount), out texture);
         }
 
-        private static bool TryGetOrCreateInternal(GameObject prefab, float distanceMultiplier, bool impostorMode, int directionIndex, int directionCount, out RenderTexture texture)
+        private bool TryGetOrCreateInternal(GameObject prefab, float distanceMultiplier, bool impostorMode, int directionIndex, int directionCount, out RenderTexture texture)
         {
             texture = null;
             if (prefab == null)
@@ -128,7 +128,7 @@ namespace Game.Rendering
             RefreshConfig();
 
             PreviewKey key = new(prefab, distanceMultiplier, impostorMode, directionIndex, directionCount);
-            if (Cache.TryGetValue(key, out texture) && texture != null)
+            if (_cache.TryGetValue(key, out texture) && texture != null)
                 return true;
 
             EnsureResources();
@@ -138,11 +138,11 @@ namespace Game.Rendering
             if (!TryCreatePreviewTexture(prefab, distanceMultiplier, impostorMode, directionIndex, directionCount, out texture))
                 return false;
 
-            Cache[key] = texture;
+            _cache[key] = texture;
             return true;
         }
 
-        private static void ApplyPreviewConfig(PrefabPreviewCameraConfig config)
+        private void ApplyPreviewConfig(PrefabPreviewCameraConfig config)
         {
             Vector3 nextModelPosition = DefaultCharacterPreviewModelPosition;
             Quaternion nextModelRotation = DefaultCharacterPreviewModelRotation;
@@ -202,9 +202,9 @@ namespace Game.Rendering
             ReleaseAll();
         }
 
-        public static void ReleaseAll()
+        public void ReleaseAll()
         {
-            foreach (RenderTexture texture in Cache.Values)
+            foreach (RenderTexture texture in _cache.Values)
             {
                 if (texture == null)
                     continue;
@@ -213,7 +213,7 @@ namespace Game.Rendering
                 DestroyPreviewObject(texture);
             }
 
-            Cache.Clear();
+            _cache.Clear();
 
             if (_previewCameraObject != null)
             {
@@ -229,6 +229,13 @@ namespace Game.Rendering
             }
         }
 
+        public void Dispose()
+        {
+            ReleaseAll();
+            _previewConfig = null;
+            _tryGetUnitRenderingMetadata = null;
+        }
+
         private static void DestroyPreviewObject(Object obj)
         {
             if (obj == null)
@@ -240,7 +247,7 @@ namespace Game.Rendering
                 DestroyImmediate(obj);
         }
 
-        private static void EnsureResources()
+        private void EnsureResources()
         {
             if (_previewRoot == null)
             {
@@ -268,7 +275,7 @@ namespace Game.Rendering
             }
         }
 
-        private static bool TryCreatePreviewTexture(GameObject prefab, float distanceMultiplier, bool impostorMode, int directionIndex, int directionCount, out RenderTexture texture)
+        private bool TryCreatePreviewTexture(GameObject prefab, float distanceMultiplier, bool impostorMode, int directionIndex, int directionCount, out RenderTexture texture)
         {
             texture = null;
 
@@ -409,7 +416,7 @@ namespace Game.Rendering
             return false;
         }
 
-        private static PreviewFraming BuildPreviewFraming(GameObject prefab, Transform previewRoot, Bounds bounds, float size, float distanceMultiplier, bool impostorMode)
+        private PreviewFraming BuildPreviewFraming(GameObject prefab, Transform previewRoot, Bounds bounds, float size, float distanceMultiplier, bool impostorMode)
         {
             if (impostorMode)
                 return BuildImpostorFraming(prefab, bounds);
@@ -428,7 +435,7 @@ namespace Game.Rendering
             return new PreviewFraming(focus - (rotation * Vector3.forward * distance), rotation);
         }
 
-        private static PreviewFraming BuildImpostorFraming(GameObject prefab, Bounds bounds)
+        private PreviewFraming BuildImpostorFraming(GameObject prefab, Bounds bounds)
         {
             if (IsCharacterPreview(prefab))
             {
@@ -451,7 +458,7 @@ namespace Game.Rendering
             return new PreviewFraming(focus - (rotation * Vector3.forward * distance), rotation);
         }
 
-        private static void ApplyImpostorPreviewPose(GameObject prefab, GameObject previewInstance, int directionIndex, int directionCount)
+        private void ApplyImpostorPreviewPose(GameObject prefab, GameObject previewInstance, int directionIndex, int directionCount)
         {
             if (prefab == null || previewInstance == null || !IsCharacterPreview(prefab))
                 return;
@@ -549,7 +556,7 @@ namespace Game.Rendering
             return prefab != null && prefab.name.StartsWith("Tent_", System.StringComparison.OrdinalIgnoreCase);
         }
 
-        private static void ApplyFixedPreviewPose(GameObject prefab, Transform previewRoot)
+        private void ApplyFixedPreviewPose(GameObject prefab, Transform previewRoot)
         {
             if (previewRoot == null)
                 return;
@@ -572,7 +579,7 @@ namespace Game.Rendering
             previewRoot.rotation = _buildingPreviewModelRotation;
         }
 
-        private static Vector3 FitCameraPositionToBounds(Bounds bounds, Vector3 baseCameraPosition, Quaternion cameraRotation, float distanceMultiplier)
+        private Vector3 FitCameraPositionToBounds(Bounds bounds, Vector3 baseCameraPosition, Quaternion cameraRotation, float distanceMultiplier)
         {
             float verticalHalfFovRadians = Mathf.Max(0.01f, _previewCamera != null ? _previewCamera.fieldOfView * 0.5f * Mathf.Deg2Rad : 12f * Mathf.Deg2Rad);
             float horizontalHalfFovRadians = Mathf.Atan(Mathf.Tan(verticalHalfFovRadians) * 1f);

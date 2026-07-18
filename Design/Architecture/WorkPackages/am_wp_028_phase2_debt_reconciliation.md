@@ -11,13 +11,13 @@ Bounded read-only audits reviewed the AM-025 intake as:
 | Measure | Count |
 |---|---:|
 | Historical intake rows | 575 |
-| Reviewed non-debt rows | 445 |
-| Remaining genuine-debt rows | 130 |
-| Remaining unique debt items | 54 |
+| Reviewed non-debt rows | 446 |
+| Remaining genuine-debt rows | 129 |
+| Remaining unique debt items | 53 |
 | Projected unclassified rows | 0 |
 | Source-growth blockers | 5 |
 
-The row-bound evidence now records `445` non-debt rows and `130` remaining genuine-debt rows, grouped into `54` unique file/rule remediation items. It remains non-accepting because every genuine-debt item must be closed before Phase 2 can pass.
+The row-bound evidence now records `446` non-debt rows and `129` remaining genuine-debt rows, grouped into `53` unique file/rule remediation items. It remains non-accepting because every genuine-debt item must be closed before Phase 2 can pass.
 
 ## 2. Required Row Authority
 
@@ -84,6 +84,7 @@ Completed remediation:
 - `BattleScenarioLabVisualPlayback`: the Scenario Lab playback candidate was cleared as non-debt after a focused guardrail proved the long-lived view has no retained World, EntityManager, or EntityQuery fields and resolves ECS state only at action boundaries.
 - `RtsSelectionPointerTargetCommandCompositionSystemHelper`: the pointer-target query cache was cleared as non-debt after focused validation reused one resolver across two Worlds and proved an attack tap selected only the replacement match's building.
 - `SelectionGameplayStartupSystemHelper`: the selection startup query owner was cleared as non-debt after focused validation initialized one runtime closure and proved its captured World switched from the first match to the replacement match.
+- `SelectionBuildingInteractionCompositionSystemHelper`: the building-selection query owner was cleared as non-debt after focused validation reused one helper across two Worlds and proved its grid query switched from the first match to the replacement match.
 - `BuildingGameplayEcsQueryCompositionSystemHelper`: the shared building query set was cleared as non-debt after focused validation reused one helper across two Worlds and proved the replacement match reported only its own building boundary and selected units.
 
 ## 5. Scope Safety

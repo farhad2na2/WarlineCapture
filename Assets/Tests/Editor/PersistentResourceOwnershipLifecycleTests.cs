@@ -47,6 +47,23 @@ public sealed class PersistentResourceOwnershipLifecycleTests
         }
     }
 
+    public static void RunSelectionBuildingInteractionWorldOwnershipValidation()
+    {
+        try
+        {
+            new PersistentResourceOwnershipLifecycleTests()
+                .SelectionBuildingInteractionQueries_RebindAfterWorldReplacement();
+            Debug.Log("[SelectionBuildingInteractionWorldOwnershipValidation] result=Passed tests=1");
+            ValidationExit.Passed();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[SelectionBuildingInteractionWorldOwnershipValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
     public static void RunPathfindingPendingStateWorldReplacementValidation()
     {
         try
@@ -460,6 +477,37 @@ public sealed class PersistentResourceOwnershipLifecycleTests
             result.DisposeSelection?.Invoke();
             World.DefaultGameObjectInjectionWorld = previousWorld;
         }
+    }
+
+    [Test]
+    public void SelectionBuildingInteractionQueries_RebindAfterWorldReplacement()
+    {
+        using World firstWorld = new(nameof(SelectionBuildingInteractionQueries_RebindAfterWorldReplacement) + "_First");
+        using World replacementWorld = new(nameof(SelectionBuildingInteractionQueries_RebindAfterWorldReplacement) + "_Replacement");
+        var helper = new SelectionBuildingInteractionCompositionSystemHelper();
+        MethodInfo ensureQueries = typeof(SelectionBuildingInteractionCompositionSystemHelper).GetMethod(
+            "EnsureEntityQueries",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        FieldInfo queryWorld = typeof(SelectionBuildingInteractionCompositionSystemHelper).GetField(
+            "_queryWorld",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        FieldInfo gridConfigQuery = typeof(SelectionBuildingInteractionCompositionSystemHelper).GetField(
+            "_gridConfigQuery",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.IsNotNull(ensureQueries);
+        Assert.IsNotNull(queryWorld);
+        Assert.IsNotNull(gridConfigQuery);
+
+        firstWorld.EntityManager.CreateEntity(typeof(GridConfig));
+        ensureQueries.Invoke(helper, new object[] { firstWorld.EntityManager });
+        Assert.AreSame(firstWorld, queryWorld.GetValue(helper));
+        Assert.AreEqual(1, ((EntityQuery)gridConfigQuery.GetValue(helper)).CalculateEntityCount());
+
+        replacementWorld.EntityManager.CreateEntity(typeof(GridConfig));
+        replacementWorld.EntityManager.CreateEntity(typeof(GridConfig));
+        ensureQueries.Invoke(helper, new object[] { replacementWorld.EntityManager });
+        Assert.AreSame(replacementWorld, queryWorld.GetValue(helper));
+        Assert.AreEqual(2, ((EntityQuery)gridConfigQuery.GetValue(helper)).CalculateEntityCount());
     }
 
     [Test]

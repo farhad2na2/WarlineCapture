@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 453,
+    "resolvedNonDebtRowCount": 454,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 461,
-    "genuineDebtRowCount": 114,
-    "uniqueDebtItemCount": 45,
+    "reviewedNonDebtRowCount": 462,
+    "genuineDebtRowCount": 113,
+    "uniqueDebtItemCount": 44,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -536,10 +536,22 @@
       "authority": ["Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"]
     },
     {
+      "id": "am007-world-selection-order-marker-owned",
+      "decision": "resolved",
+      "reasonCode": "tested-world-rebind-and-query-disposal-owner",
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-007",
+        "sourceCategory": "worlds",
+        "sourcePath": "Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs"
+      },
+      "authority": ["Assets/Tests/Editor/SelectionOrderMarkerPresentationSystemHelperTests.cs"]
+    },
+    {
       "id": "am007-world-debt",
       "decision": "genuine-debt",
       "reasonCode": "world-owner-unproven",
-      "expectedCount": 6,
+      "expectedCount": 5,
       "debtIdPrefix": "AM025-WORLD",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

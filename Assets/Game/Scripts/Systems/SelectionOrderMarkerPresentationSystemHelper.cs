@@ -16,6 +16,7 @@ namespace Game.Runtime
 
         private Unity.Entities.World _queryWorld;
         private EntityQuery _gridBlockerQuery;
+        private bool _hasEntityQueries;
         private GameObject _moveOrderMarker;
         private Renderer[] _moveOrderMarkerRenderers;
         private MaterialPropertyBlock _moveOrderMarkerPropertyBlock;
@@ -93,9 +94,10 @@ namespace Game.Runtime
         public void EnsureEntityQueries(EntityManager em)
         {
             Unity.Entities.World world = em.World;
-            if (_queryWorld == world && world != null && world.IsCreated)
+            if (_hasEntityQueries && _queryWorld == world && world != null && world.IsCreated)
                 return;
 
+            ReleaseEntityQueries();
             _queryWorld = world;
             _gridBlockerQuery = em.CreateEntityQuery(
                 ComponentType.ReadOnly<GridConfig>(),
@@ -104,6 +106,7 @@ namespace Game.Runtime
             _attackTargetPreviewQuery = em.CreateEntityQuery(
                 ComponentType.ReadOnly<Faction>(),
                 ComponentType.ReadOnly<LocalTransform>());
+            _hasEntityQueries = true;
         }
 
         public void Initialize(
@@ -165,6 +168,7 @@ namespace Game.Runtime
 
         public void Dispose()
         {
+            ReleaseEntityQueries();
             DestroyRuntimeObject(_moveOrderMarker);
             DestroyRuntimeObject(_attackOrderMarker);
             DestroyRuntimeObject(_attackTargetRingMarker);
@@ -196,6 +200,20 @@ namespace Game.Runtime
             _moveOrderMarkerHideTime = -1f;
             _attackOrderMarkerHideTime = -1f;
             _scanOrderMarkerHideTime = -1f;
+        }
+
+        private void ReleaseEntityQueries()
+        {
+            if (_hasEntityQueries && _queryWorld != null && _queryWorld.IsCreated)
+            {
+                _gridBlockerQuery.Dispose();
+                _attackTargetPreviewQuery.Dispose();
+            }
+
+            _queryWorld = null;
+            _gridBlockerQuery = default;
+            _attackTargetPreviewQuery = default;
+            _hasEntityQueries = false;
         }
 
         public void UpdateMoveOrderMarkerVisibility(System.Action<bool> setHudWorldMarkersVisible)

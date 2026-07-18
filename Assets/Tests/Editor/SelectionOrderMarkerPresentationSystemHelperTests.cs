@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using NUnit.Framework;
 using UnityEditor;
 using Unity.Entities;
@@ -50,7 +51,8 @@ public sealed class SelectionOrderMarkerPresentationSystemHelperTests
             RunCase(test => test.MoveMarkerPrefab_UsesCleanConnectedWaypointPieces());
             RunCase(test => test.SelectionHologramShader_DefinesDotsInstancingVariant());
             RunCase(test => test.GameplayPrefabs_DoNotContainForbiddenMarkerChildren());
-            UnityEngine.Debug.Log("[SelectionOrderMarkerFocusedValidation] result=Passed tests=15");
+            RunCase(test => test.EntityQueriesReleaseOnDisposeAndRebindAcrossWorlds());
+            UnityEngine.Debug.Log("[SelectionOrderMarkerFocusedValidation] result=Passed tests=16");
         }
         catch (System.Exception ex)
         {
@@ -63,6 +65,34 @@ public sealed class SelectionOrderMarkerPresentationSystemHelperTests
     private static void RunCase(System.Action<SelectionOrderMarkerPresentationSystemHelperTests> testCase)
     {
         testCase(new SelectionOrderMarkerPresentationSystemHelperTests());
+    }
+
+    [Test]
+    public void EntityQueriesReleaseOnDisposeAndRebindAcrossWorlds()
+    {
+        using var firstWorld = new World(nameof(EntityQueriesReleaseOnDisposeAndRebindAcrossWorlds) + "_First");
+        using var replacementWorld = new World(nameof(EntityQueriesReleaseOnDisposeAndRebindAcrossWorlds) + "_Replacement");
+        var markers = new SelectionOrderMarkerPresentationSystemHelper();
+
+        markers.EnsureEntityQueries(firstWorld.EntityManager);
+        Assert.AreSame(firstWorld, ReadPrivateField<World>(markers, "_queryWorld"));
+
+        markers.EnsureEntityQueries(replacementWorld.EntityManager);
+        Assert.AreSame(replacementWorld, ReadPrivateField<World>(markers, "_queryWorld"));
+
+        markers.Dispose();
+        markers.Dispose();
+        Assert.IsNull(ReadPrivateField<World>(markers, "_queryWorld"));
+        Assert.IsFalse(ReadPrivateField<bool>(markers, "_hasEntityQueries"));
+        Assert.AreEqual(default(EntityQuery), ReadPrivateField<EntityQuery>(markers, "_gridBlockerQuery"));
+        Assert.AreEqual(default(EntityQuery), ReadPrivateField<EntityQuery>(markers, "_attackTargetPreviewQuery"));
+    }
+
+    private static T ReadPrivateField<T>(object source, string fieldName)
+    {
+        FieldInfo field = source.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.IsNotNull(field, $"Missing private field {fieldName}.");
+        return (T)field.GetValue(source);
     }
 
     [Test]

@@ -18,7 +18,8 @@ public sealed class GameTextResolverAdapterTests
             tests.Format_FormatsConfiguredText();
             tests.Format_ReturnsFallbackWhenConfiguredFormatIsInvalid();
             tests.Format_FormatsFallbackWhenKeyIsMissing();
-            Debug.Log("[GameTextResolverAdapterValidation] result=Passed tests=5");
+            tests.SubsystemRegistrationReset_ClearsPreviousTextAndAudioMappings();
+            Debug.Log("[GameTextResolverAdapterValidation] result=Passed tests=6");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -29,14 +30,14 @@ public sealed class GameTextResolverAdapterTests
         }
         finally
         {
-            GameText.Init(null);
+            ResetRuntimeState();
         }
     }
 
     [TearDown]
     public void TearDown()
     {
-        GameText.Init(null);
+        ResetRuntimeState();
     }
 
     [Test]
@@ -92,7 +93,27 @@ public sealed class GameTextResolverAdapterTests
         Assert.AreEqual("Fallback Alpha", resolver.Format("unit.missing", "Fallback {0}", "Alpha"));
     }
 
-    private static void Configure(string key, string value)
+    [Test]
+    public void SubsystemRegistrationReset_ClearsPreviousTextAndAudioMappings()
+    {
+        Configure("status.old", "Old", "ui.status.old");
+        Assert.IsTrue(GameText.IsInitialized);
+        Assert.AreEqual("Old", GameText.Get("status.old"));
+        Assert.AreEqual("ui.status.old", GameText.GetAudioEventId("status.old"));
+
+        ResetRuntimeState();
+
+        Assert.IsFalse(GameText.IsInitialized);
+        Assert.IsFalse(GameText.TryGet("status.old", out _));
+        Assert.IsFalse(GameText.TryGetAudioEventId("status.old", out _));
+
+        Configure("status.new", "New", "ui.status.new");
+        Assert.AreEqual("New", GameText.Get("status.new"));
+        Assert.AreEqual("ui.status.new", GameText.GetAudioEventId("status.new"));
+        Assert.IsFalse(GameText.TryGet("status.old", out _));
+    }
+
+    private static void Configure(string key, string value, string audioEventId = null)
     {
         GameStringsConfig config = ScriptableObject.CreateInstance<GameStringsConfig>();
         try
@@ -100,6 +121,7 @@ public sealed class GameTextResolverAdapterTests
             var entry = new GameStringConfigEntry();
             SetPrivateField(entry, "key", key);
             SetPrivateField(entry, "value", value);
+            SetPrivateField(entry, "audioEventId", audioEventId);
             config.Entries.Add(entry);
             GameText.Init(config);
         }
@@ -107,6 +129,15 @@ public sealed class GameTextResolverAdapterTests
         {
             UnityEngine.Object.DestroyImmediate(config);
         }
+    }
+
+    private static void ResetRuntimeState()
+    {
+        MethodInfo method = typeof(GameText).GetMethod(
+            "ResetRuntimeState",
+            BindingFlags.Static | BindingFlags.NonPublic);
+        Assert.NotNull(method, "Expected GameText subsystem reset boundary.");
+        method.Invoke(null, null);
     }
 
     private static void SetPrivateField<T>(T target, string fieldName, object value)

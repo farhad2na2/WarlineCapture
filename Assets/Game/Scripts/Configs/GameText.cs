@@ -10,6 +10,14 @@ namespace Game.Configs
         private static readonly Dictionary<string, string> AudioEventIds = new(StringComparer.Ordinal);
         private static bool initialized;
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetRuntimeState()
+        {
+            Entries.Clear();
+            AudioEventIds.Clear();
+            initialized = false;
+        }
+
         public static void Init(GameStringsConfig config)
         {
             Entries.Clear();

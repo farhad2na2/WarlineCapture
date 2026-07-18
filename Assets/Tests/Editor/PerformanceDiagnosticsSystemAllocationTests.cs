@@ -1,6 +1,7 @@
 using Game.Rendering;
 using Game.Composition;
 using Game.Runtime;
+using Game.Components;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System;
 using System.Reflection;
@@ -8,6 +9,7 @@ using NUnit.Framework;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Unity.Entities;
 
 public sealed class PerformanceDiagnosticsSystemHelperAllocationTests
 {
@@ -35,6 +37,10 @@ public sealed class PerformanceDiagnosticsSystemHelperAllocationTests
             RunValidationStep(
                 nameof(CapturePolicySuppressesAndRestoresDiagnosticLogging),
                 test => test.CapturePolicySuppressesAndRestoresDiagnosticLogging(),
+                ref passed);
+            RunValidationStep(
+                nameof(RuntimeVisualCounts_FollowReplacementDefaultWorld),
+                test => test.RuntimeVisualCounts_FollowReplacementDefaultWorld(),
                 ref passed);
 
             UnityEngine.Debug.Log($"[PerformanceDiagnosticsAllocationValidation] result=Passed tests={passed}");
@@ -160,6 +166,57 @@ public sealed class PerformanceDiagnosticsSystemHelperAllocationTests
             PerformanceDiagnosticsCapturePolicy.SetSuppressLogging(false);
             Application.logMessageReceived -= OnLog;
         }
+    }
+
+    [Test]
+    public void RuntimeVisualCounts_FollowReplacementDefaultWorld()
+    {
+        World previousDefault = World.DefaultGameObjectInjectionWorld;
+        var diagnostics = new PerformanceDiagnosticsSystemHelper();
+        try
+        {
+            using (var firstWorld = new World("PerformanceDiagnostics_FirstWorld"))
+            {
+                World.DefaultGameObjectInjectionWorld = firstWorld;
+                EntityArchetype unitArchetype = firstWorld.EntityManager.CreateArchetype(
+                    typeof(UnitGrid),
+                    typeof(Faction));
+                for (int i = 0; i < 2; i++)
+                    firstWorld.EntityManager.CreateEntity(unitArchetype);
+                Assert.AreEqual(2, GetRuntimeUnitCount(diagnostics));
+            }
+
+            using (var secondWorld = new World("PerformanceDiagnostics_SecondWorld"))
+            {
+                World.DefaultGameObjectInjectionWorld = secondWorld;
+                EntityArchetype unitArchetype = secondWorld.EntityManager.CreateArchetype(
+                    typeof(UnitGrid),
+                    typeof(Faction));
+                for (int i = 0; i < 5; i++)
+                    secondWorld.EntityManager.CreateEntity(unitArchetype);
+                Assert.AreEqual(5, GetRuntimeUnitCount(diagnostics));
+            }
+
+            World.DefaultGameObjectInjectionWorld = null;
+            Assert.AreEqual(0, GetRuntimeUnitCount(diagnostics));
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld = previousDefault != null && previousDefault.IsCreated
+                ? previousDefault
+                : null;
+        }
+    }
+
+    private static int GetRuntimeUnitCount(PerformanceDiagnosticsSystemHelper diagnostics)
+    {
+        MethodInfo method = typeof(PerformanceDiagnosticsSystemHelper).GetMethod(
+            "GetRuntimeVisualCounts",
+            BindingFlags.NonPublic | BindingFlags.Instance);
+        Assert.IsNotNull(method);
+        object[] values = { 0, 0, 0, 0, 0 };
+        method.Invoke(diagnostics, values);
+        return (int)values[0];
     }
 
     private static long CountAllocatedBytes(System.Action action)

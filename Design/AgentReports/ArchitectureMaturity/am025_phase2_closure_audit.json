@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 418,
+    "resolvedNonDebtRowCount": 419,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 426,
-    "genuineDebtRowCount": 149,
-    "uniqueDebtItemCount": 73,
+    "reviewedNonDebtRowCount": 427,
+    "genuineDebtRowCount": 148,
+    "uniqueDebtItemCount": 72,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -48,9 +48,9 @@
     {
       "sourceArtifact": "AM-007",
       "historicalOpenRowCount": 314,
-      "projectedResolvedNonDebtRowCount": 270,
+      "projectedResolvedNonDebtRowCount": 271,
       "projectedProtectedDeferredRowCount": 7,
-      "projectedGenuineDebtRowCount": 37
+      "projectedGenuineDebtRowCount": 36
     },
     {
       "sourceArtifact": "AM-018",
@@ -76,7 +76,7 @@
     },
     {
       "id": "world-owner-candidates",
-      "projectedRows": 29,
+      "projectedRows": 28,
       "note": "Lifecycle rows; may overlap hazard remediation and cannot be treated as 33 independent production defects."
     }
   ],
@@ -236,10 +236,22 @@
       "authority": ["Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs"]
     },
     {
+      "id": "am007-world-performance-diagnostics-current-world",
+      "decision": "resolved",
+      "reasonCode": "tested-current-world-on-demand-query",
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-007",
+        "sourceCategory": "worlds",
+        "sourcePath": "Assets/Game/Scripts/Systems/PerformanceDiagnosticsSystemHelper.cs"
+      },
+      "authority": ["Assets/Tests/Editor/PerformanceDiagnosticsSystemAllocationTests.cs"]
+    },
+    {
       "id": "am007-world-debt",
       "decision": "genuine-debt",
       "reasonCode": "world-owner-unproven",
-      "expectedCount": 29,
+      "expectedCount": 28,
       "debtIdPrefix": "AM025-WORLD",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

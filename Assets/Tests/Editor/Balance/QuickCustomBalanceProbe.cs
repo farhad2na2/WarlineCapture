@@ -20,7 +20,6 @@ public static class QuickCustomBalanceProbe
     public static BalanceReportWriter.ReportPaths RunReport(BalanceProbeDefinition definition)
     {
         AISettingsRuntimeState.ResetDefaults();
-        GameRuntimeStats.Reset();
 
         QuickGameConfig config = definition.QuickGameConfig;
         AISettingsRuntimeState.ApplySnapshot(config.ToAISettingsSnapshot());

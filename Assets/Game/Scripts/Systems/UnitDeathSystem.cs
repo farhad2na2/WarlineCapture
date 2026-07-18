@@ -18,10 +18,6 @@ namespace Game.Runtime
         private EntityQuery _deathBeginQuery;
         private EntityQuery _finalizeQuery;
 
-        private struct GameStatsDeathRecordedTag : IComponentData
-        {
-        }
-
         private struct DeathBeginCandidate
         {
             public Entity Entity;
@@ -79,13 +75,6 @@ namespace Game.Runtime
                 Entity entity = candidate.Entity;
                 if (!em.Exists(entity) || em.HasComponent<UnitDeathAnimationComponent>(entity))
                     continue;
-
-                if (!em.HasComponent<GameStatsDeathRecordedTag>(entity))
-                {
-                    if (GameRuntimeStats.IsMilitarySoldierEntity(em, entity) && em.HasComponent<Faction>(entity))
-                        GameRuntimeStats.RecordMilitaryDeath(em.GetComponentData<Faction>(entity).Id);
-                    em.AddComponentData(entity, new GameStatsDeathRecordedTag());
-                }
 
                 StripActiveUnitState(em, entity);
                 if (TryBeginVehicleWreck(em, entity))

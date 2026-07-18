@@ -8,14 +8,12 @@ public sealed class QuickCustomBalanceProbeTests
     public void SetUp()
     {
         AISettingsRuntimeState.ResetDefaults();
-        GameRuntimeStats.Reset();
     }
 
     [TearDown]
     public void TearDown()
     {
         AISettingsRuntimeState.ResetDefaults();
-        GameRuntimeStats.Reset();
     }
 
     [Test]

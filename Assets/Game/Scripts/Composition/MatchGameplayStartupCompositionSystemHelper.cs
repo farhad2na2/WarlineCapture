@@ -160,9 +160,6 @@ namespace Game.Composition
 
                 case GameplayStartStep.ResetStats:
                     SetProgress(0.10f, "Resetting match state");
-                    GameRuntimeStats.ConfigureUnitPrefabClassifier(
-                        GameRuntimeStatsUnitPrefabClassifierPrefabSystemHelper.ClassifyUnitPrefab);
-                    GameRuntimeStats.Reset();
                     pendingAiSettingsSnapshot = AISettingsRuntimeState.CurrentSnapshot;
                     FactionVisualSystem.ProjectConfig(
                         world,

@@ -56,7 +56,7 @@ namespace Game.Runtime
                 source.BuildingGameplayDependencyCompositionSystemHelper.IsBuildDrawerOpen,
                 source.BuildingGameplayDependencyCompositionSystemHelper.SmoothMoveCameraGroundCenterTo,
                 building => BuildingRuntimeFocusPositionPresentationSystemHelper.Resolve(runtimeSource, building),
-                GameRuntimeStats.RecordUnitOrdered,
+                null,
                 Debug.LogWarning,
                 (factionId, unitId) => source.BuildingRuntimeReadModelCompositionSystemHelper.CountPendingProductionsForFaction(runtimeQueryContext, factionId, unitId),
                 (factionId, unitId) => source.BuildingRuntimeReadModelCompositionSystemHelper.CountRuntimeProducedUnitsForFaction(runtimeQueryContext, factionId, unitId),

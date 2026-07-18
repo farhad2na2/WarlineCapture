@@ -332,7 +332,7 @@ public sealed class ScriptArchitectureAlignmentContractTests
         {
             var tests = new ScriptArchitectureAlignmentContractTests();
             tests.UiAndCompositionAssembliesMustNotReferenceUnusedHeavyPackages();
-            tests.GameRuntimeStatsMustNotReadAuthoringComponents();
+            tests.GameRuntimeStatsMustRemainAnImmutableValue();
             tests.BuildingProductionQueueCompositionSystemHelperMustNotReadAuthoringComponents();
             tests.BuildingProductionRequestSystemHelperMustNotReadAuthoringComponents();
             tests.BuildingProductionTransportPresentationSystemHelperMustNotReadAuthoringComponents();
@@ -956,15 +956,13 @@ public sealed class ScriptArchitectureAlignmentContractTests
     }
 
     [Test]
-    public void GameRuntimeStatsMustNotReadAuthoringComponents()
+    public void GameRuntimeStatsMustRemainAnImmutableValue()
     {
         string statsPath = Path.Combine(GameScriptsRoot, "Balance/GameRuntimeStats.cs");
         string source = File.ReadAllText(statsPath);
 
-        Assert.IsFalse(
-            source.Contains("UnitGridAuthoring", StringComparison.Ordinal) ||
-            source.Contains("BuildingDefinitionAuthoring", StringComparison.Ordinal),
-            "`GameRuntimeStats` must not read authoring components. Composition can inject prefab classification through `ConfigureUnitPrefabClassifier`.");
+        Assert.IsTrue(source.Contains("public readonly struct GameRuntimeStats", StringComparison.Ordinal));
+        Assert.IsFalse(source.Contains(" static ", StringComparison.Ordinal));
     }
 
     [Test]

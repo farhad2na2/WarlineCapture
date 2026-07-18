@@ -105,7 +105,7 @@ namespace Game.Runtime
                 source.BuildingDefinitionPrefabSystemHelper,
                 source.BuildingPlacementSessionCompositionSystemHelper,
                 Debug.LogWarning,
-                GameRuntimeStats.RecordBuildingBuilt,
+                null,
                 source.BuildingGameplayDependencyCompositionSystemHelper.NotifyStaticMinimapChanged,
                 _ => source.BuildingSelectionRuntimeCompositionSystemHelper.ClearSelectedBuilding(createBuildingSelectionContext(source)),
                 source.BuildingGameplayDependencyCompositionSystemHelper.ClearCommandMode);

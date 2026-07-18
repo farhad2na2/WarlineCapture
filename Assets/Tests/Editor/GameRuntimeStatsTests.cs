@@ -1,99 +1,34 @@
 using NUnit.Framework;
-using Unity.Entities;
-using Unity.Mathematics;
-using UnityEngine;
-using Game.Components;
 using Game.Runtime;
 
 public sealed class GameRuntimeStatsTests
 {
-    [SetUp]
-    public void SetUp()
-    {
-        GameRuntimeStats.Reset();
-    }
-
-    [TearDown]
-    public void TearDown()
-    {
-        GameRuntimeStats.Reset();
-    }
-
     [Test]
-    public void Snapshot_AccumulatesResourceAndBuildStats()
+    public void ValuePreservesBalanceReportInputsWithoutGlobalState()
     {
-        GameRuntimeStats.RecordOilExtracted(2.75f);
-        GameRuntimeStats.RecordFuelProduced(1.25f);
-        GameRuntimeStats.RecordBuildingBuilt();
-        GameRuntimeStats.RecordBuildingBuilt();
+        var stats = new GameRuntimeStats(
+            oilExtracted: 1,
+            fuelProduced: 2,
+            vehiclesOrdered: 3,
+            soldiersOrdered: 4,
+            ammoOrdered: 5,
+            buildingsBuilt: 6,
+            matchElapsedSeconds: 7,
+            civiliansProtected: 8,
+            capturedOrDestroyedBuildings: 9,
+            ownSoldiersDead: 10,
+            enemySoldiersDead: 11);
 
-        GameRuntimeStats.Snapshot snapshot = GameRuntimeStats.GetSnapshot();
-
-        Assert.AreEqual(2, snapshot.OilExtracted);
-        Assert.AreEqual(1, snapshot.FuelProduced);
-        Assert.AreEqual(2, snapshot.BuildingsBuilt);
-    }
-
-    [Test]
-    public void Snapshot_AccumulatesMatchObjectiveStats()
-    {
-        GameRuntimeStats.RecordMatchElapsed(42.9f);
-        GameRuntimeStats.RecordMatchElapsed(17.2f);
-        GameRuntimeStats.RecordCiviliansProtected(3);
-        GameRuntimeStats.RecordCapturedOrDestroyedBuilding();
-        GameRuntimeStats.RecordCapturedOrDestroyedBuilding();
-
-        GameRuntimeStats.Snapshot snapshot = GameRuntimeStats.GetSnapshot();
-
-        Assert.AreEqual(60, snapshot.MatchElapsedSeconds);
-        Assert.AreEqual(3, snapshot.CiviliansProtected);
-        Assert.AreEqual(2, snapshot.CapturedOrDestroyedBuildings);
-    }
-
-    [Test]
-    public void RecordUnitOrdered_ClassifiesSoldiersVehiclesAndAmmo()
-    {
-        var soldier = new GameObject("Unit_Chr_Soldier_Test");
-        var vehicle = new GameObject("Unit_Veh_Truck_Test");
-        var ammo = new GameObject("Ammo_Crate_Test");
-
-        try
-        {
-            GameRuntimeStats.RecordUnitOrdered(soldier);
-            GameRuntimeStats.RecordUnitOrdered(vehicle);
-            GameRuntimeStats.RecordUnitOrdered(ammo);
-
-            GameRuntimeStats.Snapshot snapshot = GameRuntimeStats.GetSnapshot();
-
-            Assert.AreEqual(1, snapshot.SoldiersOrdered);
-            Assert.AreEqual(1, snapshot.VehiclesOrdered);
-            Assert.AreEqual(1, snapshot.AmmoOrdered);
-        }
-        finally
-        {
-            Object.DestroyImmediate(ammo);
-            Object.DestroyImmediate(vehicle);
-            Object.DestroyImmediate(soldier);
-        }
-    }
-
-    [Test]
-    public void IsMilitarySoldierEntity_RejectsCivilianAndVehicleFootprints()
-    {
-        using var world = new World("GameRuntimeStatsTests");
-        EntityManager em = world.EntityManager;
-
-        Entity soldier = em.CreateEntity(typeof(UnitFootprint));
-        em.SetComponentData(soldier, new UnitFootprint { Size = new int2(1, 1) });
-
-        Entity civilian = em.CreateEntity(typeof(UnitFootprint), typeof(CivilianUnitTag));
-        em.SetComponentData(civilian, new UnitFootprint { Size = new int2(1, 1) });
-
-        Entity vehicle = em.CreateEntity(typeof(UnitFootprint));
-        em.SetComponentData(vehicle, new UnitFootprint { Size = new int2(2, 1) });
-
-        Assert.IsTrue(GameRuntimeStats.IsMilitarySoldierEntity(em, soldier));
-        Assert.IsFalse(GameRuntimeStats.IsMilitarySoldierEntity(em, civilian));
-        Assert.IsFalse(GameRuntimeStats.IsMilitarySoldierEntity(em, vehicle));
+        Assert.AreEqual(1, stats.OilExtracted);
+        Assert.AreEqual(2, stats.FuelProduced);
+        Assert.AreEqual(3, stats.VehiclesOrdered);
+        Assert.AreEqual(4, stats.SoldiersOrdered);
+        Assert.AreEqual(5, stats.AmmoOrdered);
+        Assert.AreEqual(6, stats.BuildingsBuilt);
+        Assert.AreEqual(7, stats.MatchElapsedSeconds);
+        Assert.AreEqual(8, stats.CiviliansProtected);
+        Assert.AreEqual(9, stats.CapturedOrDestroyedBuildings);
+        Assert.AreEqual(10, stats.OwnSoldiersDead);
+        Assert.AreEqual(11, stats.EnemySoldiersDead);
     }
 }

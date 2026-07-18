@@ -101,7 +101,7 @@ public sealed class BalanceHarnessContractTests
             "quick_custom_test",
             config,
             sampledDurationSeconds: 10f * 60f,
-            new GameRuntimeStats.Snapshot());
+            new GameRuntimeStats());
 
         Assert.AreEqual("High", metrics.StartingCredits);
         Assert.AreEqual(BalanceOutcomeClassifier.Watch, metrics.EconomyActivityClassification);

@@ -104,7 +104,7 @@ namespace Game.Runtime
             string scenarioId,
             QuickGameConfig config,
             float sampledDurationSeconds,
-            GameRuntimeStats.Snapshot snapshot)
+            GameRuntimeStats snapshot)
         {
             return FromQuickGameConfig(
                 probeId,
@@ -123,7 +123,7 @@ namespace Game.Runtime
             string probeDescription,
             QuickGameConfig config,
             float sampledDurationSeconds,
-            GameRuntimeStats.Snapshot snapshot)
+            GameRuntimeStats snapshot)
         {
             var metrics = new BalanceMetrics
             {

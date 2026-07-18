@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 454,
+    "resolvedNonDebtRowCount": 466,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 462,
-    "genuineDebtRowCount": 113,
-    "uniqueDebtItemCount": 44,
+    "reviewedNonDebtRowCount": 474,
+    "genuineDebtRowCount": 101,
+    "uniqueDebtItemCount": 43,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -752,10 +752,23 @@
       "authority": ["Assets/Tests/Editor/VehicleVisualAdornmentsSystemTests.cs"]
     },
     {
+      "id": "am018-static-msl-runtime-stats-retired",
+      "decision": "resolved",
+      "reasonCode": "write-only-global-recorder-retired-to-immutable-report-value",
+      "expectedCount": 12,
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "MSL",
+        "sourcePath": "Assets/Game/Scripts/Balance/GameRuntimeStats.cs"
+      },
+      "authority": ["Assets/Tests/Editor/GameRuntimeStatsTests.cs", "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs"]
+    },
+    {
       "id": "am018-static-msl-debt",
       "decision": "genuine-debt",
       "reasonCode": "mutable-static-lifecycle-unproven",
-      "expectedCount": 78,
+      "expectedCount": 66,
       "debtIdPrefix": "AM025-STATIC-MSL",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

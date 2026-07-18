@@ -35,9 +35,9 @@ namespace Game.Runtime
             EnemySoldiersDead = Mathf.Max(0, enemySoldiersDead);
         }
 
-        public GameRuntimeStats.Snapshot ToSnapshot(int matchElapsedSeconds = 0)
+        public GameRuntimeStats ToSnapshot(int matchElapsedSeconds = 0)
         {
-            return new GameRuntimeStats.Snapshot(
+            return new GameRuntimeStats(
                 OilExtracted,
                 FuelProduced,
                 VehiclesOrdered,

@@ -7,9 +7,6 @@ namespace Game.UI.Runtime
     internal static class CommanderProfileRouteLifecyclePresentation
     {
         internal const string BackgroundScrimName = "CommanderBackgroundScrim";
-        private static UIShellContentView s_backgroundScrimOwner;
-        private static RectTransform s_backgroundScrimContentRoot;
-        private static GameObject s_backgroundScrim;
 
         internal static void InstallMainMenu(UIShellContentView contentView)
         {
@@ -91,41 +88,34 @@ namespace Game.UI.Runtime
             if (!contentView.TryGetRegionContentRoot(UIShellRegionId.MenuBackgroundRegion, out RectTransform contentRoot))
                 return;
 
-            if (s_backgroundScrimOwner != contentView ||
-                s_backgroundScrimContentRoot != contentRoot ||
-                (s_backgroundScrim != null && s_backgroundScrim.transform.parent != contentRoot))
-            {
-                s_backgroundScrimOwner = contentView;
-                s_backgroundScrimContentRoot = contentRoot;
-                s_backgroundScrim = null;
-            }
+            Transform existing = contentRoot.Find(BackgroundScrimName);
+            GameObject backgroundScrim = existing != null ? existing.gameObject : null;
 
             if (!visible)
             {
-                if (s_backgroundScrim != null)
+                if (backgroundScrim != null)
                 {
-                    UIShellContentView.DestroyRegionObject(s_backgroundScrim);
-                    s_backgroundScrim = null;
+                    UIShellContentView.DestroyRegionObject(backgroundScrim);
                     contentView.MarkContentChanged();
                 }
                 return;
             }
 
-            if (s_backgroundScrim == null)
+            if (backgroundScrim == null)
             {
-                s_backgroundScrim = new GameObject(
+                backgroundScrim = new GameObject(
                     BackgroundScrimName,
                     typeof(RectTransform),
                     typeof(CanvasRenderer),
                     typeof(Image));
-                s_backgroundScrim.transform.SetParent(contentRoot, false);
+                backgroundScrim.transform.SetParent(contentRoot, false);
             }
 
-            UIShellContentView.Stretch(s_backgroundScrim.GetComponent<RectTransform>());
-            Image image = s_backgroundScrim.GetComponent<Image>();
+            UIShellContentView.Stretch(backgroundScrim.GetComponent<RectTransform>());
+            Image image = backgroundScrim.GetComponent<Image>();
             image.color = new Color(0.015f, 0.018f, 0.014f, 0.34f);
             image.raycastTarget = false;
-            s_backgroundScrim.transform.SetAsLastSibling();
+            backgroundScrim.transform.SetAsLastSibling();
             contentView.MarkContentChanged();
         }
 

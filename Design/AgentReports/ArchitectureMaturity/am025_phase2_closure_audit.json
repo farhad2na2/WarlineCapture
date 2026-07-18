@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 469,
+    "resolvedNonDebtRowCount": 472,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 477,
-    "genuineDebtRowCount": 98,
-    "uniqueDebtItemCount": 41,
+    "reviewedNonDebtRowCount": 480,
+    "genuineDebtRowCount": 95,
+    "uniqueDebtItemCount": 40,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -795,10 +795,25 @@
       ]
     },
     {
+      "id": "am018-static-msl-commander-background-shell-owned",
+      "decision": "resolved",
+      "reasonCode": "shell-owned-route-time-presentation-object",
+      "expectedCount": 3,
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "MSL",
+        "sourcePath": "Assets/Game/Scripts/UI/Shell/CommanderProfileRouteLifecyclePresentation.cs"
+      },
+      "authority": [
+        "Assets/Tests/Editor/UIShellCurrentContentLoadTests.cs"
+      ]
+    },
+    {
       "id": "am018-static-msl-debt",
       "decision": "genuine-debt",
       "reasonCode": "mutable-static-lifecycle-unproven",
-      "expectedCount": 63,
+      "expectedCount": 60,
       "debtIdPrefix": "AM025-STATIC-MSL",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System;
+using System.Reflection;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -100,6 +101,28 @@ public sealed class UIShellCurrentContentLoadTests
         }
     }
 
+    public static void RunCommanderBackgroundOwnershipValidation()
+    {
+        UIShellCurrentContentLoadTests tests = new();
+        try
+        {
+            tests.CommanderBackgroundOwnership_DoesNotRetainSceneObjectsGlobally();
+            tests.MenuSceneShellInstallsCommanderProfileRouteWithoutReplacingHeader();
+            Debug.Log("[CommanderBackgroundOwnershipValidation] result=Passed");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[CommanderBackgroundOwnershipValidation] result=Failed");
+            ValidationExit.Exit(1);
+        }
+        finally
+        {
+            tests.TearDown();
+        }
+    }
+
     [TearDown]
     public void TearDown()
     {
@@ -192,6 +215,20 @@ public sealed class UIShellCurrentContentLoadTests
 
         AssertRegionIsEmpty(content.ShellView, UIShellRegionId.MiddleRegion);
         AssertRegionIsEmpty(content.ShellView, UIShellRegionId.LoadingLayer);
+    }
+
+    [Test]
+    public void CommanderBackgroundOwnership_DoesNotRetainSceneObjectsGlobally()
+    {
+        FieldInfo[] fields = typeof(CommanderProfileRouteLifecyclePresentation).GetFields(
+            BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
+
+        for (int i = 0; i < fields.Length; i++)
+        {
+            Assert.IsFalse(
+                typeof(UnityEngine.Object).IsAssignableFrom(fields[i].FieldType),
+                $"Commander route must not retain scene object field {fields[i].Name} globally.");
+        }
     }
 
     [Test]

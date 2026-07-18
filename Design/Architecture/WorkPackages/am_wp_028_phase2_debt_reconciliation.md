@@ -11,13 +11,13 @@ Bounded read-only audits reviewed the AM-025 intake as:
 | Measure | Count |
 |---|---:|
 | Historical intake rows | 575 |
-| Reviewed non-debt rows | 477 |
-| Remaining genuine-debt rows | 98 |
-| Remaining unique debt items | 41 |
+| Reviewed non-debt rows | 480 |
+| Remaining genuine-debt rows | 95 |
+| Remaining unique debt items | 40 |
 | Projected unclassified rows | 0 |
 | Source-growth blockers | 5 |
 
-The row-bound evidence now records `477` non-debt rows and `98` remaining genuine-debt rows, grouped into `41` unique file/rule remediation items. It remains non-accepting because every genuine-debt item must be closed before Phase 2 can pass.
+The row-bound evidence now records `480` non-debt rows and `95` remaining genuine-debt rows, grouped into `40` unique file/rule remediation items. It remains non-accepting because every genuine-debt item must be closed before Phase 2 can pass.
 
 ## 2. Required Row Authority
 
@@ -61,6 +61,7 @@ Current external-gate note: the canonical Unity source-growth run now reports th
 
 Completed remediation:
 
+- `CommanderProfileRouteLifecyclePresentation`: each shell now finds and owns its commander background only during route changes. It no longer retains scene objects globally, so independent shells cannot replace or leak each other's background.
 - `AssistantSettingsPersistenceSystem`: the application settings-event subscriber count now resets with Unity subsystem registration. Focused replacement-World validation proves assistant settings reconnect after a reload instead of being blocked by a stale count.
 - `MatchHudAssistantUiSystemHelper`: missing/invalid hierarchy diagnostic suppression now belongs to each HUD instance, so one disposed match cannot suppress diagnostics in a later match. Focused validation prevents the two flags from returning to process-wide state.
 - `AM025-STATIC-MSL-005`: helicopter diagnostic one-shot state now belongs to each unmanaged ECS system instance instead of the process. Focused validation proves two active Worlds do not suppress each other's diagnostic and preserves all blade-spin behavior.

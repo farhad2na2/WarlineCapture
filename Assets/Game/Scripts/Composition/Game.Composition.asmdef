@@ -24,6 +24,7 @@
         "Unity.Mathematics",
         "Unity.RenderPipelines.Core.Runtime",
         "Unity.RenderPipelines.Universal.Runtime",
+        "Unity.ResourceManager",
         "Unity.TextMeshPro",
         "Unity.Transforms",
         "UnityEngine.UI"

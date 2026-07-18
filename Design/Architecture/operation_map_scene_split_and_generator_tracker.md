@@ -707,7 +707,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 63% (111/177 checklist items complete).
+Overall implementation progress: 63% (112/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -724,7 +724,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 | 7. M01 operation-map slice | Later / shared contracts only | 0 | 10 | 0% | Map-neutral ids/anchors may proceed; physical rollout remains gated. |
 | 8. Editor-time texture/mask generator | Later / editor direction only | 0 | 12 | 0% | Implement only if the editor-authored map direction is selected. |
 | 9. Mission and Skirmish scenario rollout | In progress / single-map scenario data | 1 | 10 | 10% | The standard Skirmish scenario now resolves the approved physical map and its typed faction deployment anchors without duplicating map content. Feature, objective, force, reward, and UI data remain open. |
-| 10. Full validation and all-bundled rollout | Shared validation subset active | 8 | 21 | 38% | Config/lifecycle/static-presentation, scene-reference, spatial-behavior, and map-conversion coverage plus scoped static/compile gates are accepted; architecture, memory, performance, build-layout, and device gates remain. |
+| 10. Full validation and all-bundled rollout | Shared validation subset active | 9 | 21 | 43% | Launch parity, config/lifecycle/static-presentation, scene-reference, spatial-behavior, and map-conversion coverage plus scoped static/compile gates are accepted; architecture, memory, performance, build-layout, and device gates remain. |
 | 11. Deferred remote content migration | Later / remote delivery | 0 | 16 | 0% | Remote delivery remains independently gated. |
 
 ## Phase 0: Reproducible Baseline And Rollback
@@ -994,7 +994,7 @@ Exit criteria:
 - [x] Run `OperationMapConfigValidationTests`, operation-map lifecycle/helper tests, and operation-map scenario/catalog/config validation.
 - [x] Run current and multi-map static presentation ownership, integrity, rollback, structural, no-op, and stale-cleanup tests.
 - [x] Run scene-reference validation for the shell, current map, subscenes, manifests, configs, and M01 only when allowed.
-- [ ] Run original current-map launch before extraction and compatibility launch after each migration phase.
+- [x] Run original current-map launch before extraction and compatibility launch after each migration phase. See `../AgentReports/2026-07-18_operation_map_launch_parity_acceptance.md`.
 - [x] Run extracted-current-map load, gameplay, teardown, retry, and sequential reload validation.
 - [ ] Run camera bounds, initial camera, minimap, objective, and ARIA anchor validation.
 - [x] Run movement, surface grounding, aircraft clearance, runway/helipad, blockers, and building placement validation. See `../AgentReports/2026-07-18_operation_map_spatial_behavior_acceptance.md`.
@@ -1170,6 +1170,7 @@ Exit criteria:
 | 2026-07-18 | Scene-reference acceptance | `../AgentReports/2026-07-18_operation_map_scene_reference_acceptance.md`; combined EditMode gate `64 / 64`; zero C# compiler errors | Passed; one Phase 10 row accepted | Thin-shell, extracted-map, runtime/map subscene, manifest, catalog/config, local Addressables layout, and Android resolver references are accepted. M01 remains excluded under its documented hold. |
 | 2026-07-18 | Spatial-behavior acceptance | `../AgentReports/2026-07-18_operation_map_spatial_behavior_acceptance.md`; focused EditMode matrix `93 / 93`; zero C# compiler errors | Passed; one Phase 10 row accepted | Surface/grounding, aircraft clearance, runway/helipad records, grid/blockers, and building placement are accepted. Device performance and map-authored conversion/source hiding remain separate gates. |
 | 2026-07-18 | Map conversion and source-hiding acceptance | `../AgentReports/2026-07-18_operation_map_conversion_source_hiding_acceptance.md`; focused EditMode matrix `103 / 103`; zero C# compiler errors | Passed; one Phase 10 row accepted | Extracted-scene placement parity, map-authored building/vehicle/aircraft conversion, source hiding, and runway alignment are accepted. The runway regression now resolves markers from the extracted map rather than the thin shell. |
+| 2026-07-18 | Launch-parity acceptance | `../AgentReports/2026-07-18_operation_map_launch_parity_acceptance.md`; preserved pre-extraction and shell-cutover launch evidence; final PlayMode lifecycle `2 / 2`; zero C# compiler errors | Passed; one Phase 10 row accepted | Compatibility activation, extracted-map cutover, and current sequential lifecycle form an accepted launch-parity chain. Android hardware launch remains separate. |
 
 ## Open Decisions
 

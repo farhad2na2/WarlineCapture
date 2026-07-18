@@ -312,20 +312,48 @@ namespace Game.Composition
             operationMapRuntimeBootstrapSystem = new OperationMapRuntimeBootstrapSceneSystemHelper(world);
             var fixedScenarioId = new Unity.Collections.FixedString64Bytes(scenarioId);
             var fixedMissionId = new Unity.Collections.FixedString64Bytes(missionId);
+            ResolveInitialOperationMapReadiness(
+                activeOperationMapSceneView != null &&
+                operationMapSceneLoadingSystem != null &&
+                operationMapSceneLoadingSystem.IsReady,
+                out OperationMapReadinessFlags readyFlags,
+                out OperationMapReadinessFlags requiredFlags);
             if (operationMapRuntimeBootstrapSystem.TryPublish(
                     operationMapCatalog,
                     operationMapId,
                     in fixedScenarioId,
                     in fixedMissionId,
                     1,
-                    OperationMapReadinessFlags.Metadata,
-                    OperationMapReadinessFlags.Metadata,
+                    readyFlags,
+                    requiredFlags,
                     out _,
                     out error))
                 return true;
 
             DisposeOperationMapMetadataBootstrap();
             return false;
+        }
+
+        internal static void ResolveInitialOperationMapReadiness(
+            bool loadedOperationMap,
+            out OperationMapReadinessFlags readyFlags,
+            out OperationMapReadinessFlags requiredFlags)
+        {
+            if (!loadedOperationMap)
+            {
+                readyFlags = OperationMapReadinessFlags.Metadata;
+                requiredFlags = OperationMapReadinessFlags.Metadata;
+                return;
+            }
+
+            readyFlags = OperationMapReadinessFlags.SourceContent |
+                         OperationMapReadinessFlags.Metadata |
+                         OperationMapReadinessFlags.PresentationManifest;
+            requiredFlags = readyFlags |
+                            OperationMapReadinessFlags.SubScene |
+                            OperationMapReadinessFlags.MapSurface |
+                            OperationMapReadinessFlags.AuthoredConversion |
+                            OperationMapReadinessFlags.RequiredPresentationPreload;
         }
 
         internal void DisposeOperationMapMetadataBootstrap()

@@ -12,6 +12,31 @@ public sealed class OperationMapRuntimeBootstrapSceneSystemHelperTests
     private const string Hash = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 
     [Test]
+    public void MatchInitialReadiness_DistinguishesCompatibilityFromLoadedMap()
+    {
+        MatchSceneView.ResolveInitialOperationMapReadiness(
+            false,
+            out OperationMapReadinessFlags compatibilityReady,
+            out OperationMapReadinessFlags compatibilityRequired);
+        Assert.That(compatibilityReady, Is.EqualTo(OperationMapReadinessFlags.Metadata));
+        Assert.That(compatibilityRequired, Is.EqualTo(OperationMapReadinessFlags.Metadata));
+
+        MatchSceneView.ResolveInitialOperationMapReadiness(
+            true,
+            out OperationMapReadinessFlags loadedReady,
+            out OperationMapReadinessFlags loadedRequired);
+        Assert.That(loadedReady, Is.EqualTo(
+            OperationMapReadinessFlags.SourceContent |
+            OperationMapReadinessFlags.Metadata |
+            OperationMapReadinessFlags.PresentationManifest));
+        Assert.That((loadedRequired & loadedReady), Is.EqualTo(loadedReady));
+        Assert.That((loadedRequired & OperationMapReadinessFlags.SubScene), Is.Not.Zero);
+        Assert.That((loadedRequired & OperationMapReadinessFlags.MapSurface), Is.Not.Zero);
+        Assert.That((loadedRequired & OperationMapReadinessFlags.AuthoredConversion), Is.Not.Zero);
+        Assert.That((loadedRequired & OperationMapReadinessFlags.RequiredPresentationPreload), Is.Not.Zero);
+    }
+
+    [Test]
     public void CatalogPublish_ResolvesOnceAndPublishesSelectedDefinition()
     {
         using World world = new("OperationMapRuntimeBootstrapCatalog");

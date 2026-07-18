@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 473,
+    "resolvedNonDebtRowCount": 474,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 481,
-    "genuineDebtRowCount": 94,
-    "uniqueDebtItemCount": 39,
+    "reviewedNonDebtRowCount": 482,
+    "genuineDebtRowCount": 93,
+    "uniqueDebtItemCount": 38,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -825,10 +825,25 @@
       ]
     },
     {
+      "id": "am018-static-msl-resource-exchange-popup-session-reset",
+      "decision": "resolved",
+      "reasonCode": "presentation-stack-with-tested-reset-and-destroy-cleanup",
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "MSL",
+        "sourcePath": "Assets/Game/Scripts/UI/Screens/ResourceExchangePopupRuntimeView.cs"
+      },
+      "authority": [
+        "Assets/Tests/Editor/ResourceExchangePopupPrefabTests.cs"
+      ]
+    },
+    {
       "id": "am018-static-msl-debt",
       "decision": "genuine-debt",
       "reasonCode": "mutable-static-lifecycle-unproven",
-      "expectedCount": 59,
+      "expectedCount": 58,
       "debtIdPrefix": "AM025-STATIC-MSL",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

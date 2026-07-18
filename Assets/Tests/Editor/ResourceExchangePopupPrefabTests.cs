@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
 using NUnit.Framework;
@@ -47,6 +48,10 @@ public sealed class ResourceExchangePopupPrefabTests
                 nameof(ResourceExchangePopupRuntimeView_DisablingNewestOverlappingInstanceRefreshesPrevious),
                 test => test.ResourceExchangePopupRuntimeView_DisablingNewestOverlappingInstanceRefreshesPrevious(),
                 ref passed);
+            RunValidationStep(
+                nameof(ResourceExchangePopupRuntimeView_SubsystemResetClearsActiveViewChain),
+                test => test.ResourceExchangePopupRuntimeView_SubsystemResetClearsActiveViewChain(),
+                ref passed);
 
             Debug.Log($"[ResourceExchangePopupPrefabValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -58,10 +63,63 @@ public sealed class ResourceExchangePopupPrefabTests
         }
     }
 
+    public static void RunLifecycleValidation()
+    {
+        int passed = 0;
+        try
+        {
+            RunValidationStep(
+                nameof(ResourceExchangePopupRuntimeView_DisablingNewestOverlappingInstanceRefreshesPrevious),
+                test => test.ResourceExchangePopupRuntimeView_DisablingNewestOverlappingInstanceRefreshesPrevious(),
+                ref passed);
+            RunValidationStep(
+                nameof(ResourceExchangePopupRuntimeView_SubsystemResetClearsActiveViewChain),
+                test => test.ResourceExchangePopupRuntimeView_SubsystemResetClearsActiveViewChain(),
+                ref passed);
+            Debug.Log($"[ResourceExchangePopupLifecycleValidation] result=Passed tests={passed}");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError($"[ResourceExchangePopupLifecycleValidation] result=Failed passed={passed}");
+            ValidationExit.Exit(1);
+        }
+    }
+
     [TearDown]
     public void TearDown()
     {
         UiShellRuntimeGateway.Register(null);
+    }
+
+    [Test]
+    public void ResourceExchangePopupRuntimeView_SubsystemResetClearsActiveViewChain()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
+        Assert.NotNull(prefab);
+        GameObject instance = UnityEngine.Object.Instantiate(prefab);
+        ResourceExchangePopupRuntimeView runtimeView = instance.GetComponent<ResourceExchangePopupRuntimeView>();
+        Assert.NotNull(runtimeView);
+
+        try
+        {
+            instance.SetActive(true);
+            runtimeView.SendMessage("OnEnable");
+            Assert.IsTrue(ResourceExchangePopupRuntimeView.IsActiveViewForTests(runtimeView));
+
+            MethodInfo reset = typeof(ResourceExchangePopupRuntimeView).GetMethod(
+                "ResetActiveView",
+                BindingFlags.Static | BindingFlags.NonPublic);
+            Assert.NotNull(reset);
+            reset.Invoke(null, null);
+
+            Assert.IsFalse(ResourceExchangePopupRuntimeView.IsActiveViewForTests(runtimeView));
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(instance);
+        }
     }
 
     [Test]

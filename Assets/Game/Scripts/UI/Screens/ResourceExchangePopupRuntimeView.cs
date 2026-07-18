@@ -12,6 +12,12 @@ namespace Game.UI.Runtime
     {
         private static ResourceExchangePopupRuntimeView activeView;
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetActiveView()
+        {
+            activeView = null;
+        }
+
         [SerializeField] private ResourceExchangePopupView view;
 
         private readonly List<ButtonBinding> _bindings = new();
@@ -43,6 +49,12 @@ namespace Game.UI.Runtime
             ClearBindings();
             _hasAppliedVersion = false;
             _lastAppliedVersion = 0;
+        }
+
+        private void OnDestroy()
+        {
+            RemoveActiveView(this);
+            ClearBindings();
         }
 
         internal static void RefreshActiveView()

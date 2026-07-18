@@ -154,8 +154,9 @@ namespace Game.Composition
 
         public void Awake(World runtimeWorld, MatchSceneView view, Transform ownerTransform, int ownerLayer)
         {
-            Initialize(view);
             this.runtimeWorld = runtimeWorld;
+            _runtimeGameplayStateSystem.Bind(runtimeWorld.EntityManager);
+            Initialize(view);
             _performanceDiagnosticsSystem = ResolvePerformanceDiagnosticsSystemHelper(runtimeWorld.EntityManager);
             _matchSceneReferenceSystem.Register(runtimeWorld.EntityManager, view);
             matchIntroStateQuery.Bind(runtimeWorld);
@@ -405,6 +406,7 @@ namespace Game.Composition
             IMatchIntroStateQuery matchIntroStateQuery)
         {
             return managedGameplayStartupSystem.Initialize(
+                runtimeWorld.EntityManager,
                 dayNightConfig,
                 factionVisualConfig,
                 roadBuildConfig,

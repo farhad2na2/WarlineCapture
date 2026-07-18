@@ -66,7 +66,7 @@ public sealed class RuntimeGameplayStateSystemTests
     [Test]
     public void SettingGameplayFlag_WritesEcsSingleton()
     {
-        var runtimeState = new RuntimeGameplayStateSystem
+        var runtimeState = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager)
         {
             SelectionModeActive = true,
             SimulationActive = true,
@@ -84,7 +84,7 @@ public sealed class RuntimeGameplayStateSystemTests
     [Test]
     public void SettingCameraInput_WritesEcsSingleton()
     {
-        var runtimeState = new RuntimeGameplayStateSystem
+        var runtimeState = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager)
         {
             ZoomInHeld = true,
             ZoomOutHeld = true
@@ -98,7 +98,7 @@ public sealed class RuntimeGameplayStateSystemTests
     [Test]
     public void TryConsumeInitialCameraFocus_ReturnsWorldAndClearsRequest()
     {
-        var runtimeState = new RuntimeGameplayStateSystem();
+        var runtimeState = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager);
         Vector3 focus = new(3f, 0f, 9f);
         runtimeState.InitialCameraFocusWorld = focus;
         runtimeState.InitialCameraFocusRequested = true;
@@ -113,7 +113,7 @@ public sealed class RuntimeGameplayStateSystemTests
     [Test]
     public void ReadGameplayState_ReturnsExternalEcsChange()
     {
-        var runtimeState = new RuntimeGameplayStateSystem { PlayRequested = true };
+        var runtimeState = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager) { PlayRequested = true };
         Entity stateEntity = ReadSingletonEntity<RuntimeGameplayStateComponent>();
         RuntimeGameplayStateComponent state = _world.EntityManager.GetComponentData<RuntimeGameplayStateComponent>(stateEntity);
         state.BuildModeActive = 1;
@@ -128,7 +128,7 @@ public sealed class RuntimeGameplayStateSystemTests
     [Test]
     public void ResetForGameplayStart_RequestsPlayWithoutActivatingSimulation()
     {
-        var runtimeState = new RuntimeGameplayStateSystem
+        var runtimeState = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager)
         {
             SimulationActive = true,
             BuildModeActive = true,
@@ -150,7 +150,7 @@ public sealed class RuntimeGameplayStateSystemTests
     [Test]
     public void ResetForMatchShutdown_ClearsGameplayCameraAndFocus()
     {
-        var runtimeState = new RuntimeGameplayStateSystem
+        var runtimeState = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager)
         {
             PlayRequested = true,
             SimulationActive = true,
@@ -170,12 +170,13 @@ public sealed class RuntimeGameplayStateSystemTests
     [Test]
     public void ReadGameplayState_RebindsAfterWorldReplacement()
     {
-        var runtimeState = new RuntimeGameplayStateSystem { PlayRequested = true };
+        var runtimeState = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager) { PlayRequested = true };
         Assert.AreEqual(1, ReadSingleton<RuntimeGameplayStateComponent>().PlayRequested);
 
         _world.Dispose();
         _world = new World("RuntimeGameplayStateSystemTests-Replacement");
         World.DefaultGameObjectInjectionWorld = _world;
+        runtimeState.Bind(_world.EntityManager);
 
         RuntimeGameplayStateComponent replacementState = runtimeState.ReadGameplayState();
 
@@ -186,10 +187,11 @@ public sealed class RuntimeGameplayStateSystemTests
     [Test]
     public void SeparateWorlds_DoNotShareGameplayState()
     {
-        var runtimeState = new RuntimeGameplayStateSystem { PlayerAutoModeEnabled = true };
+        var runtimeState = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager) { PlayerAutoModeEnabled = true };
         World firstWorld = _world;
         _world = new World("RuntimeGameplayStateSystemTests-Independent");
         World.DefaultGameObjectInjectionWorld = _world;
+        runtimeState.Bind(_world.EntityManager);
 
         Assert.IsFalse(runtimeState.PlayerAutoModeEnabled);
         runtimeState.BuildModeActive = true;

@@ -8,9 +8,22 @@ namespace Game.Runtime
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     public partial struct RuntimeGameplayStateSystem : ISystem
     {
+        private EntityManager _entityManager;
+
+        public RuntimeGameplayStateSystem(EntityManager entityManager)
+        {
+            _entityManager = entityManager;
+        }
+
+        public void Bind(EntityManager entityManager)
+        {
+            _entityManager = entityManager;
+        }
+
         public void OnCreate(ref SystemState state)
         {
             // This is a disabled facade; callers access the World-owned state explicitly.
+            _entityManager = state.EntityManager;
             state.Enabled = false;
         }
 
@@ -158,36 +171,34 @@ namespace Game.Runtime
                 : default;
         }
 
-        private static void WriteGameplayState(System.Func<RuntimeGameplayStateComponent, RuntimeGameplayStateComponent> mutate)
+        private void WriteGameplayState(System.Func<RuntimeGameplayStateComponent, RuntimeGameplayStateComponent> mutate)
         {
             if (!TryGetStateEntity(out EntityManager entityManager, out Entity entity))
                 return;
             entityManager.SetComponentData(entity, mutate(entityManager.GetComponentData<RuntimeGameplayStateComponent>(entity)));
         }
 
-        private static void WriteCameraInput(System.Func<RuntimeCameraInputComponent, RuntimeCameraInputComponent> mutate)
+        private void WriteCameraInput(System.Func<RuntimeCameraInputComponent, RuntimeCameraInputComponent> mutate)
         {
             if (!TryGetStateEntity(out EntityManager entityManager, out Entity entity))
                 return;
             entityManager.SetComponentData(entity, mutate(entityManager.GetComponentData<RuntimeCameraInputComponent>(entity)));
         }
 
-        private static void WriteCameraFocusRequest(System.Func<RuntimeCameraFocusRequestComponent, RuntimeCameraFocusRequestComponent> mutate)
+        private void WriteCameraFocusRequest(System.Func<RuntimeCameraFocusRequestComponent, RuntimeCameraFocusRequestComponent> mutate)
         {
             if (!TryGetStateEntity(out EntityManager entityManager, out Entity entity))
                 return;
             entityManager.SetComponentData(entity, mutate(entityManager.GetComponentData<RuntimeCameraFocusRequestComponent>(entity)));
         }
 
-        private static bool TryGetStateEntity(out EntityManager entityManager, out Entity entity)
+        private bool TryGetStateEntity(out EntityManager entityManager, out Entity entity)
         {
-            entityManager = default;
+            entityManager = _entityManager;
             entity = Entity.Null;
-            World world = World.DefaultGameObjectInjectionWorld;
+            World world = entityManager.World;
             if (world == null || !world.IsCreated)
                 return false;
-
-            entityManager = world.EntityManager;
             using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<RuntimeGameplayStateComponent>());
             if (!query.IsEmptyIgnoreFilter)
             {

@@ -80,7 +80,7 @@ public sealed class RoadBuildCommandCompositionSystemHelperTests
         using World world = new("RoadBuildCommandEnterDefaultRuntimeStateTest");
         RoadBuildCommandTestState state = new();
         RoadBuildCommandCompositionSystemHelper.Context context = new(
-            new RuntimeGameplayStateSystem(),
+            new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager),
             state.SessionSystem,
             state.CommandContext.SessionContext,
             () => state.ClearRoadBuildDragStateCount++);

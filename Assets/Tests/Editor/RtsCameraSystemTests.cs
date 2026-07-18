@@ -343,7 +343,7 @@ public sealed class RtsCameraSystemTests
 
         try
         {
-            var runtime = new RuntimeGameplayStateSystem { PlayRequested = true };
+            var runtime = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager) { PlayRequested = true };
             RtsCameraSystem cameraSystem = world.GetOrCreateSystemManaged<RtsCameraSystem>();
             RtsCameraRequestSystem cameraRequestSystem = world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
             var runtimeCameraSystem = new RtsSelectionRuntimeCameraSystemHelper();
@@ -392,7 +392,7 @@ public sealed class RtsCameraSystemTests
 
         try
         {
-            var runtime = new RuntimeGameplayStateSystem { PlayRequested = true };
+            var runtime = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager) { PlayRequested = true };
             RtsCameraSystem cameraSystem = world.GetOrCreateSystemManaged<RtsCameraSystem>();
             RtsCameraRequestSystem cameraRequestSystem = world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
             var runtimeCameraSystem = new RtsSelectionRuntimeCameraSystemHelper();
@@ -478,7 +478,7 @@ public sealed class RtsCameraSystemTests
 
         try
         {
-            var runtime = new RuntimeGameplayStateSystem { PlayRequested = true, BuildModeActive = true };
+            var runtime = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager) { PlayRequested = true, BuildModeActive = true };
             RtsCameraSystem cameraSystem = world.GetOrCreateSystemManaged<RtsCameraSystem>();
             RtsCameraRequestSystem cameraRequestSystem = world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
             var runtimeCameraSystem = new RtsSelectionRuntimeCameraSystemHelper();
@@ -525,7 +525,7 @@ public sealed class RtsCameraSystemTests
 
         try
         {
-            var runtime = new RuntimeGameplayStateSystem { PlayRequested = true, FullscreenMapIsoMode = true };
+            var runtime = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager) { PlayRequested = true, FullscreenMapIsoMode = true };
             RtsCameraSystem cameraSystem = world.GetOrCreateSystemManaged<RtsCameraSystem>();
             RtsCameraRequestSystem cameraRequestSystem = world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
             var runtimeCameraSystem = new RtsSelectionRuntimeCameraSystemHelper();
@@ -573,7 +573,7 @@ public sealed class RtsCameraSystemTests
 
         try
         {
-            var runtime = new RuntimeGameplayStateSystem { PlayRequested = true };
+            var runtime = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager) { PlayRequested = true };
             RtsCameraSystem cameraSystem = world.GetOrCreateSystemManaged<RtsCameraSystem>();
             RtsCameraRequestSystem cameraRequestSystem = world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
             var runtimeCameraSystem = new RtsSelectionRuntimeCameraSystemHelper();
@@ -619,7 +619,7 @@ public sealed class RtsCameraSystemTests
 
         try
         {
-            var runtime = new RuntimeGameplayStateSystem { PlayRequested = true };
+            var runtime = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager) { PlayRequested = true };
             RtsCameraSystem cameraSystem = world.GetOrCreateSystemManaged<RtsCameraSystem>();
             RtsCameraRequestSystem cameraRequestSystem = world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
             var runtimeCameraSystem = new RtsSelectionRuntimeCameraSystemHelper();
@@ -665,7 +665,7 @@ public sealed class RtsCameraSystemTests
 
         try
         {
-            var runtime = new RuntimeGameplayStateSystem { PlayRequested = true };
+            var runtime = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager) { PlayRequested = true };
             RtsCameraSystem cameraSystem = world.GetOrCreateSystemManaged<RtsCameraSystem>();
             RtsCameraRequestSystem cameraRequestSystem = world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
             var runtimeCameraSystem = new RtsSelectionRuntimeCameraSystemHelper();
@@ -1153,7 +1153,7 @@ public sealed class RtsCameraSystemTests
 
         try
         {
-            var runtime = new RuntimeGameplayStateSystem { PlayRequested = true };
+            var runtime = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager) { PlayRequested = true };
             RtsCameraSystem cameraSystem = world.GetOrCreateSystemManaged<RtsCameraSystem>();
             RtsCameraRequestSystem cameraRequestSystem = world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
             var runtimeCameraSystem = new RtsSelectionRuntimeCameraSystemHelper();
@@ -1206,7 +1206,7 @@ public sealed class RtsCameraSystemTests
 
         try
         {
-            var runtime = new RuntimeGameplayStateSystem();
+            var runtime = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager);
             runtime.PlayRequested = true;
 
             RtsCameraSystem cameraSystem = world.GetOrCreateSystemManaged<RtsCameraSystem>();
@@ -1281,7 +1281,7 @@ public sealed class RtsCameraSystemTests
         {
             var matchIntro = new FakeMatchIntroStateQuery(isGameplayInputLocked: true, isIntroComplete: false);
 
-            var runtime = new RuntimeGameplayStateSystem();
+            var runtime = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager);
             runtime.PlayRequested = true;
 
             RtsCameraSystem cameraSystem = world.GetOrCreateSystemManaged<RtsCameraSystem>();

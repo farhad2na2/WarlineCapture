@@ -165,7 +165,7 @@ public sealed class BuildingPlacementConstructionTransactionTests
                 null,
                 null,
                 UnityEngine.Object.DestroyImmediate);
-            var runtimeState = new RuntimeGameplayStateSystem();
+            var runtimeState = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager);
             _lifecycle.Begin(
                 new BuildingDefinition
                 {

@@ -11,13 +11,13 @@ Bounded read-only audits reviewed the AM-025 intake as:
 | Measure | Count |
 |---|---:|
 | Historical intake rows | 575 |
-| Reviewed non-debt rows | 559 |
-| Remaining genuine-debt rows | 16 |
-| Remaining unique debt items | 15 |
+| Reviewed non-debt rows | 560 |
+| Remaining genuine-debt rows | 15 |
+| Remaining unique debt items | 14 |
 | Projected unclassified rows | 0 |
 | Source-growth blockers | 5 |
 
-The row-bound evidence now records `559` non-debt rows and `16` remaining genuine-debt rows, grouped into `15` unique file/rule remediation items. It remains non-accepting because every genuine-debt item must be closed before Phase 2 can pass.
+The row-bound evidence now records `560` non-debt rows and `15` remaining genuine-debt rows, grouped into `14` unique file/rule remediation items. It remains non-accepting because every genuine-debt item must be closed before Phase 2 can pass.
 
 ## 2. Required Row Authority
 
@@ -94,6 +94,7 @@ Completed remediation:
 - `TacticalFollowCameraModeSystemHelper`: the follow-camera singleton queries were cleared as non-debt after focused validation reused one helper across two Worlds and proved the replacement match started with fresh disabled mode and UI state.
 - `UnitPathfindingPendingStateStore`: building and citizen startup now bind the pending-path reader to their explicit ECS World. Focused replacement-World validation proves the same reader follows only the newly bound match and never searches for the process-wide default World.
 - `AudioEventRequestSystem`: the audio singleton and all request buffers remain owned by each ECS World, while the two process-wide entity/World cache fields are removed. Focused two-World validation proves requests cannot cross between matches, and the existing audio stress/pooling checks remain green.
+- `RuntimeGameplayStateSystem`: the active match and selection startup now supply their exact EntityManager. Gameplay, camera-input, and initial-focus state no longer discover the process-wide default World, and focused replacement-World checks require an explicit rebind.
 - `RuntimeGameplayStateSystem`: the cached state entity was cleared as non-debt after focused validation replaced the default World and proved the same facade created and read only the replacement match's fresh state.
 - `SceneLifecycleSceneSystemHelper`: the scene-transition queue cache was cleared as non-debt after focused validation replaced the World and proved the new match began with an empty queue and accepted only its own request.
 - `RuntimeDiagnosticsSystem`: the diagnostics World lookup was cleared as non-debt after focused validation replaced the default World and proved the same facade created and read only the replacement match's diagnostics state.
@@ -112,7 +113,7 @@ Completed remediation:
 - `SelectionHudFeedbackUiSystemHelper`: the command-feedback and selected-count query owners were cleared as non-debt after focused validation reused one helper across two Worlds and proved each match retained only its own feedback queue and selected-unit count.
 - `BuildingGameplayEcsQueryCompositionSystemHelper`: the shared building query set was cleared as non-debt after focused validation reused one helper across two Worlds and proved the replacement match reported only its own building boundary and selected units.
 - Resource integration audit: exchange feedback history is bounded to the newest 32 messages; AI and player construction spend tactical materials while legacy credits remain unchanged; Build Drawer and resource helpers remain within their existing size contracts. Focused Unity validation and the combined architecture suite pass.
-- `RuntimeGameplayStateSystem` static cache fields are cleared as non-debt in both historical inventories because focused replacement-World validation proves stale entity and World identities are rejected. Its separate global default-World lookup remains genuine debt and is not covered by this closure.
+- `RuntimeGameplayStateSystem` static cache fields and default-World lookup are cleared as non-debt. The facade retains only its explicitly supplied EntityManager, and focused replacement-World validation proves rebinding starts with fresh match state.
 - AM-021 ownership snapshot refresh: the canonical inventory is rebound to current source with the same `575` resources, `553` explicit owners, `22` protected owners, and zero gaps. The refreshed map source manifest and shifted line metadata do not change any ownership decision.
 - `GameText` partial hardening: Unity subsystem registration now clears localized text, audio-event mappings, and initialization state before a new play session. The shared static dictionaries remain tracked debt and receive no closure credit.
 - `UnitTransportVisualUtility`: passenger hide/restore traversal now uses call-owned temporary native memory instead of process-wide lists. Focused two-World validation proves each match restores only its own passenger, and the static-registry guard confirms all three shared fields and their allowlist exceptions are gone.

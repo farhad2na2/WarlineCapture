@@ -68,6 +68,7 @@ namespace Game.Runtime
         }
 
         public Result Initialize(
+            EntityManager entityManager,
             RTSSelectionSystemConfig rtsSelectionConfig,
             Camera worldCamera,
             Transform runtimeUiRoot,
@@ -88,7 +89,7 @@ namespace Game.Runtime
             IMatchIntroStateQuery resolvedMatchIntroStateQuery = matchIntroStateQuery ?? NullMatchIntroStateQuery.Instance;
             SelectionRuntimeDiagnosticsSystemHelper selectionRuntimeDiagnosticsSystem = ResolveSelectionRuntimeDiagnosticsSystem();
             SelectionRuntimeConfigStartupSystemHelper.State runtimeConfig = SelectionRuntimeConfigStartupSystemHelper.CreateStateFromConfig(rtsSelectionConfig, worldCamera);
-            var runtimeGameplayStateSystem = new RuntimeGameplayStateSystem();
+            var runtimeGameplayStateSystem = new RuntimeGameplayStateSystem(entityManager);
             var rtsSelectionInputSystem = new RtsSelectionInputCompositionSystemHelper();
             var rtsSelectionRuntimeInputSystem = new RtsSelectionRuntimeInputCompositionSystemHelper();
             RtsSelectionRuntimeCameraSystemHelper rtsSelectionRuntimeCameraSystem = ResolveRtsSelectionRuntimeCameraSystemHelper();

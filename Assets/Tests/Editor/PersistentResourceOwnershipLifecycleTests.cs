@@ -552,6 +552,7 @@ public sealed class PersistentResourceOwnershipLifecycleTests
             World.DefaultGameObjectInjectionWorld = firstWorld;
             var startup = new SelectionGameplayStartupSystemHelper();
             result = startup.Initialize(
+                firstWorld.EntityManager,
                 null,
                 null,
                 null,

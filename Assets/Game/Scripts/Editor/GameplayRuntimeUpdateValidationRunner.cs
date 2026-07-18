@@ -5,6 +5,7 @@ namespace Game.Editor
     using System;
     using System.IO;
     using UnityEditor;
+    using Unity.Entities;
     using UnityEngine;
 
     public static class GameplayRuntimeUpdateValidationRunner
@@ -40,7 +41,7 @@ namespace Game.Editor
                 throw new InvalidOperationException("GameplayRuntimeUpdateCompositionSystemHelper must not keep disabled ECS lifecycle methods.");
 
             var helper = new GameplayRuntimeUpdateCompositionSystemHelper();
-            var runtimeState = new RuntimeGameplayStateSystem();
+            var runtimeState = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager);
             var performanceDiagnostics = new PerformanceDiagnosticsSystemHelper();
             bool gameplayStartPending = false;
 

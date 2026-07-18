@@ -2777,7 +2777,7 @@ public sealed class RtsSelectionInputSystemTests
     public void RuntimeInput_ActiveWorldCommandClickDoesNotFallThroughToFocusSelection()
     {
         var inputSystem = new RtsSelectionInputCompositionSystemHelper();
-        var runtimeState = new RuntimeGameplayStateSystem
+        var runtimeState = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager)
         {
             PlayRequested = true,
             SelectionModeActive = false,
@@ -2855,7 +2855,7 @@ public sealed class RtsSelectionInputSystemTests
     public void RuntimeInput_MoveCommandModeAllowsCameraPanWhileTargeting()
     {
         var inputSystem = new RtsSelectionInputCompositionSystemHelper();
-        var runtimeState = new RuntimeGameplayStateSystem
+        var runtimeState = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager)
         {
             PlayRequested = true,
             SelectionModeActive = false,
@@ -2897,7 +2897,7 @@ public sealed class RtsSelectionInputSystemTests
     public void RuntimeInput_AttackCommandModeAllowsCameraPanWhileTargeting()
     {
         var inputSystem = new RtsSelectionInputCompositionSystemHelper();
-        var runtimeState = new RuntimeGameplayStateSystem
+        var runtimeState = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager)
         {
             PlayRequested = true,
             SelectionModeActive = false,
@@ -2939,7 +2939,7 @@ public sealed class RtsSelectionInputSystemTests
     public void RuntimeInput_ScanCommandModeAllowsCameraPanWhileTargeting()
     {
         var inputSystem = new RtsSelectionInputCompositionSystemHelper();
-        var runtimeState = new RuntimeGameplayStateSystem
+        var runtimeState = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager)
         {
             PlayRequested = true,
             SelectionModeActive = false,
@@ -2981,7 +2981,7 @@ public sealed class RtsSelectionInputSystemTests
     public void RuntimeInput_TacticalFollowPanLockStillAllowsScanCommandClick()
     {
         var inputSystem = new RtsSelectionInputCompositionSystemHelper();
-        var runtimeState = new RuntimeGameplayStateSystem
+        var runtimeState = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager)
         {
             PlayRequested = true,
             SelectionModeActive = false,
@@ -3032,7 +3032,7 @@ public sealed class RtsSelectionInputSystemTests
     public void RuntimeInput_ScanCommandModeIssuesScanWithoutFocusFallthrough()
     {
         var inputSystem = new RtsSelectionInputCompositionSystemHelper();
-        var runtimeState = new RuntimeGameplayStateSystem
+        var runtimeState = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager)
         {
             PlayRequested = true,
             SelectionModeActive = false,
@@ -3085,7 +3085,7 @@ public sealed class RtsSelectionInputSystemTests
     public void RuntimeInput_TransportFirstBoardModePansUnlessPassengerDragStarts()
     {
         var inputSystem = new RtsSelectionInputCompositionSystemHelper();
-        var runtimeState = new RuntimeGameplayStateSystem
+        var runtimeState = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager)
         {
             PlayRequested = true,
             SelectionModeActive = false,
@@ -3428,7 +3428,7 @@ public sealed class RtsSelectionInputSystemTests
     private static RtsSelectionPointerTargetCommandCompositionSystemHelper.Context CreatePointerTargetContext(Camera camera)
     {
         return new RtsSelectionPointerTargetCommandCompositionSystemHelper.Context(
-            runtimeGameplayStateSystem: new RuntimeGameplayStateSystem(),
+            runtimeGameplayStateSystem: new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager),
             inputSystem: null,
             selectionStateSystem: new SelectionStateCompositionSystemHelper(),
             focusedUnitLifecycleSystem: null,

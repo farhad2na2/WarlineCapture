@@ -5,6 +5,7 @@ using Game.Composition;
 using Game.Runtime;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using NUnit.Framework;
+using Unity.Entities;
 using UnityEngine;
 
 public sealed class MatchGameplayStartupCompositionSystemHelperTests
@@ -75,8 +76,9 @@ public sealed class MatchGameplayStartupCompositionSystemHelperTests
     [Test]
     public void Advance_CapturesFailureOnceAndDoesNotRetry()
     {
+        using var world = new World(nameof(Advance_CapturesFailureOnceAndDoesNotRetry));
         var helper = new MatchGameplayStartupCompositionSystemHelper();
-        var runtimeState = new RuntimeGameplayStateSystem();
+        var runtimeState = new RuntimeGameplayStateSystem(world.EntityManager);
         Exception reportedFailure = null;
         int initializeCalls = 0;
         helper.Bind(
@@ -110,11 +112,12 @@ public sealed class MatchGameplayStartupCompositionSystemHelperTests
     [Test]
     public void ResetForShutdown_PreservesTheExistingFailureLatch()
     {
+        using var world = new World(nameof(ResetForShutdown_PreservesTheExistingFailureLatch));
         var helper = new MatchGameplayStartupCompositionSystemHelper();
         int initializeCalls = 0;
         helper.Bind(
             null,
-            new RuntimeGameplayStateSystem(),
+            new RuntimeGameplayStateSystem(world.EntityManager),
             () =>
             {
                 initializeCalls++;

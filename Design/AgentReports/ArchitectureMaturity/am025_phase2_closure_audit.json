@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 553,
+    "resolvedNonDebtRowCount": 554,
     "protectedDeferredRowCount": 6,
-    "reviewedNonDebtRowCount": 559,
-    "genuineDebtRowCount": 16,
-    "uniqueDebtItemCount": 15,
+    "reviewedNonDebtRowCount": 560,
+    "genuineDebtRowCount": 15,
+    "uniqueDebtItemCount": 14,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -55,9 +55,9 @@
     {
       "sourceArtifact": "AM-018",
       "historicalOpenRowCount": 261,
-      "projectedResolvedNonDebtRowCount": 250,
+      "projectedResolvedNonDebtRowCount": 251,
       "projectedProtectedDeferredRowCount": 1,
-      "projectedGenuineDebtRowCount": 10
+      "projectedGenuineDebtRowCount": 9
     }
   ],
   "genuineDebtLanes": [
@@ -619,10 +619,22 @@
       "authority": ["Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"]
     },
     {
+      "id": "am018-world-runtime-gameplay-state-owned",
+      "decision": "resolved",
+      "reasonCode": "explicit-entity-manager-binding",
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "globalWorldLookups",
+        "sourcePath": "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs"
+      },
+      "authority": ["Assets/Tests/Editor/RuntimeGameplayStateSystemTests.cs", "Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"]
+    },
+    {
       "id": "am018-world-debt",
       "decision": "genuine-debt",
       "reasonCode": "global-world-service-location",
-      "expectedCount": 6,
+      "expectedCount": 5,
       "debtIdPrefix": "AM025-GLOBAL-WORLD",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

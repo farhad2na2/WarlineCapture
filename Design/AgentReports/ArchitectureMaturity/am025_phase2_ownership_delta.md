@@ -8,15 +8,15 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 |---|---:|
 | Baseline rows | 863 |
 | Hazard rows | 352 |
-| Resolved | 1165 |
+| Resolved | 1166 |
 | Protected/deferred | 34 |
-| Open | 16 |
+| Open | 15 |
 | New after baseline | 26 |
 | Historical intake rows | 575 |
-| Reviewed non-debt rows | 559 |
-| Genuine-debt rows | 16 |
+| Reviewed non-debt rows | 560 |
+| Genuine-debt rows | 15 |
 | Unclassified rows | 0 |
-| Unique debt items | 15 |
+| Unique debt items | 14 |
 
 ## Open Rows
 
@@ -25,9 +25,8 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 | AM-018 | globalWorldLookups | Assets/Game/Scripts/Environment/RuntimeCityReadinessQueryCompositionSystemHelper.cs | AM-018 classification.globalWorldLookups | AM025-GLOBAL-WORLD-001 |
 | AM-018 | globalWorldLookups | Assets/Game/Scripts/Environment/RuntimeCityRoadBuildBridgeCompositionSystemHelper.cs | AM-018 classification.globalWorldLookups | AM025-GLOBAL-WORLD-002 |
 | AM-018 | globalWorldLookups | Assets/Game/Scripts/Systems/RtsSelectionInputStateCompositionSystemHelper.cs | AM-018 classification.globalWorldLookups | AM025-GLOBAL-WORLD-003 |
-| AM-018 | globalWorldLookups | Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs | AM-018 classification.globalWorldLookups | AM025-GLOBAL-WORLD-004 |
-| AM-018 | globalWorldLookups | Assets/Game/Scripts/Systems/SelectionBuildingInteractionCompositionSystemHelper.cs | AM-018 classification.globalWorldLookups | AM025-GLOBAL-WORLD-005 |
-| AM-018 | globalWorldLookups | Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs | AM-018 classification.globalWorldLookups | AM025-GLOBAL-WORLD-006 |
+| AM-018 | globalWorldLookups | Assets/Game/Scripts/Systems/SelectionBuildingInteractionCompositionSystemHelper.cs | AM-018 classification.globalWorldLookups | AM025-GLOBAL-WORLD-004 |
+| AM-018 | globalWorldLookups | Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs | AM-018 classification.globalWorldLookups | AM025-GLOBAL-WORLD-005 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/MatchHudMinimapProjectionUiSystemHelper.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-IRC-001 |
 | AM-007 | presentationPools | Assets/Game/Scripts/Systems/RoadPreviewPresentationSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-POOL-001 |

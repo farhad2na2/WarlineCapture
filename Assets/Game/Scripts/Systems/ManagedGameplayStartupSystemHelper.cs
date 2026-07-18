@@ -132,6 +132,7 @@ namespace Game.Runtime
         }
 
         public Result Initialize(
+            EntityManager entityManager,
             DayNightSystemConfig dayNightConfig,
             FactionVisualSettingsConfig factionVisualConfig,
             RoadBuildSystemConfig roadBuildConfig,
@@ -252,6 +253,7 @@ namespace Game.Runtime
             }
 
             SelectionGameplayStartupSystemHelper.Result selection = _selectionGameplayStartupSystem.Initialize(
+                entityManager,
                 rtsSelectionConfig,
                 worldCamera,
                 runtimeUiRoot,

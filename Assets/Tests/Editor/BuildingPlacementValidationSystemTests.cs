@@ -647,7 +647,7 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
             isBuildModeActive: () => false,
             placementPreviewSystem: null,
             hasActiveBuilding: () => false,
-            runtimeGameplayStateSystem: new RuntimeGameplayStateSystem(),
+            runtimeGameplayStateSystem: new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager),
             getMainMenu: () => null,
             selectionClickSystem: null,
             selectionClickContext: default,
@@ -849,7 +849,7 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
         Func<int, bool> trySpendCost = null,
         BuildingDefinitionPrefabSystemHelper definitionSystem = null)
     {
-        var runtimeStateSystem = new RuntimeGameplayStateSystem();
+        var runtimeStateSystem = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager);
         lifecycleSystem = new BuildingPlacementLifecycleCompositionSystemHelper();
         var sessionSystem = new BuildingPlacementSessionCompositionSystemHelper();
         prefab = new GameObject("PlacementCommandTestPrefab");
@@ -935,7 +935,7 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
         Action<string> clearSelectedBuilding = null,
         Action clearCommandMode = null)
     {
-        var runtimeStateSystem = new RuntimeGameplayStateSystem();
+        var runtimeStateSystem = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager);
         var lifecycleSystem = new BuildingPlacementLifecycleCompositionSystemHelper();
         BuildingPlacementSessionCompositionSystemHelper.Context sessionContext = new(
             runtimeStateSystem,

@@ -8,15 +8,15 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 |---|---:|
 | Baseline rows | 863 |
 | Hazard rows | 352 |
-| Resolved | 1012 |
+| Resolved | 1013 |
 | Protected/deferred | 36 |
-| Open | 167 |
+| Open | 166 |
 | New after baseline | 26 |
 | Historical intake rows | 575 |
-| Reviewed non-debt rows | 408 |
-| Genuine-debt rows | 167 |
+| Reviewed non-debt rows | 409 |
+| Genuine-debt rows | 166 |
 | Unclassified rows | 0 |
-| Unique debt items | 79 |
+| Unique debt items | 78 |
 
 ## Open Rows
 
@@ -186,6 +186,5 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 | AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-028 |
 | AM-007 | worlds | Assets/Game/Scripts/Systems/SelectionRuntimeDiagnosticsSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-029 |
 | AM-007 | worlds | Assets/Game/Scripts/Systems/TacticalFollowCameraModeSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-030 |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/TacticalFollowCameraStateQueryCache.cs | AM-007 policy.candidateSemantics | AM025-WORLD-031 |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/UnitPathfindingPendingStateStore.cs | AM-007 policy.candidateSemantics | AM025-WORLD-032 |
-| AM-007 | worlds | Assets/Game/Scripts/Systems/VisibleUnitSelectionCameraSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-033 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/UnitPathfindingPendingStateStore.cs | AM-007 policy.candidateSemantics | AM025-WORLD-031 |
+| AM-007 | worlds | Assets/Game/Scripts/Systems/VisibleUnitSelectionCameraSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-WORLD-032 |

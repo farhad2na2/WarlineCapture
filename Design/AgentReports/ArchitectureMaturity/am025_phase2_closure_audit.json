@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 400,
+    "resolvedNonDebtRowCount": 401,
     "protectedDeferredRowCount": 8,
-    "reviewedNonDebtRowCount": 408,
-    "genuineDebtRowCount": 167,
-    "uniqueDebtItemCount": 79,
+    "reviewedNonDebtRowCount": 409,
+    "genuineDebtRowCount": 166,
+    "uniqueDebtItemCount": 78,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -48,9 +48,9 @@
     {
       "sourceArtifact": "AM-007",
       "historicalOpenRowCount": 314,
-      "projectedResolvedNonDebtRowCount": 266,
+      "projectedResolvedNonDebtRowCount": 267,
       "projectedProtectedDeferredRowCount": 7,
-      "projectedGenuineDebtRowCount": 41
+      "projectedGenuineDebtRowCount": 40
     },
     {
       "sourceArtifact": "AM-018",
@@ -76,7 +76,7 @@
     },
     {
       "id": "world-owner-candidates",
-      "projectedRows": 33,
+      "projectedRows": 32,
       "note": "Lifecycle rows; may overlap hazard remediation and cannot be treated as 33 independent production defects."
     }
   ],
@@ -188,10 +188,22 @@
       "authority": ["Design/AgentReports/ArchitectureMaturity/lifecycle_inventory.json"]
     },
     {
+      "id": "am007-world-tactical-camera-cache-owned",
+      "decision": "resolved",
+      "reasonCode": "tested-world-rebind-and-disposal-owner",
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-007",
+        "sourceCategory": "worlds",
+        "sourcePath": "Assets/Game/Scripts/Systems/TacticalFollowCameraStateQueryCache.cs"
+      },
+      "authority": ["Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"]
+    },
+    {
       "id": "am007-world-debt",
       "decision": "genuine-debt",
       "reasonCode": "world-owner-unproven",
-      "expectedCount": 33,
+      "expectedCount": 32,
       "debtIdPrefix": "AM025-WORLD",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

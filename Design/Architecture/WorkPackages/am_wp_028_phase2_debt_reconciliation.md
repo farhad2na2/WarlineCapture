@@ -11,13 +11,13 @@ Bounded read-only audits reviewed the AM-025 intake as:
 | Measure | Count |
 |---|---:|
 | Historical intake rows | 575 |
-| Reviewed non-debt rows | 505 |
-| Remaining genuine-debt rows | 70 |
+| Reviewed non-debt rows | 506 |
+| Remaining genuine-debt rows | 69 |
 | Remaining unique debt items | 33 |
 | Projected unclassified rows | 0 |
 | Source-growth blockers | 5 |
 
-The row-bound evidence now records `505` non-debt rows and `70` remaining genuine-debt rows, grouped into `33` unique file/rule remediation items. It remains non-accepting because every genuine-debt item must be closed before Phase 2 can pass.
+The row-bound evidence now records `506` non-debt rows and `69` remaining genuine-debt rows, grouped into `33` unique file/rule remediation items. It remains non-accepting because every genuine-debt item must be closed before Phase 2 can pass.
 
 ## 2. Required Row Authority
 
@@ -50,7 +50,7 @@ Production remediation is serialized after row-bound evidence and occurs in sepa
 | Lane | Projected debt | Ownership rule |
 |---|---:|---|
 | World lookup, hidden singleton, and runtime discovery | 12 hazard rows plus overlapping World-owner candidates | Architecture may change unprotected composition/runtime paths; audio and operation-map rows require owner handoff. |
-| Mutable static state and caches | 74 hazard rows plus overlapping lifecycle candidates | Split immutable tables, tested subsystem-reset state, World-owned state, UI presentation caches, debug-only state, and genuine gameplay authority before edits. |
+| Mutable static state and caches | 73 hazard rows plus overlapping lifecycle candidates | Split immutable tables, tested subsystem-reset state, World-owned state, UI presentation caches, debug-only state, and genuine gameplay authority before edits. |
 | Pools and lifecycle caches | 8 lifecycle rows | Add exact teardown/test authority or repair disposal; do not infer closure from a method name. |
 | World-owner candidates | 10 lifecycle rows after exact boundary/protected classifications | Reconcile overlaps with the hazard lane and avoid double-counting one production defect as multiple remediation items. |
 | Source growth | 5 helper paths | Four FirstLaunch paths and one operation-map path remain owner-controlled; shrink, consolidate, or publish superseding exact authority. |
@@ -61,6 +61,7 @@ Current external-gate note: the canonical Unity source-growth run now reports th
 
 Completed remediation:
 
+- `InitialUnitsRuntimeState.WorldCamera`: the unused process-wide camera reference and reset line are removed. The live match camera remains owned by `RuntimeCameraReferenceSystem`, whose focused tests cover storage, lookup, and cleanup.
 - `SharedPrefabPreviewCache`: preview textures, camera objects, framing state, configuration, and rendering metadata resolution now belong to the active match composition instead of the process. Match shutdown and Editor atlas generation dispose their own cache instances, focused validation proves independent ownership and cleanup, and the static-registry exception is removed. This closes 19 historical mutable-static rows.
 - `UiDiagnosticsRuntimeLogBuffer`: multiple Worlds now share one bounded application log subscription through an exact owner count, and the last World releases it. Subsystem reset clears retained messages and focused validation proves one World cannot unsubscribe another.
 - `AndroidPerformanceRecorder`: the process launch timestamp remains correctly application-owned, and focused subsystem-reset validation now proves a new session replaces stale clock state. No release capture or long device certification was activated.

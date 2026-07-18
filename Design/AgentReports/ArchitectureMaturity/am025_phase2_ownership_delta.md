@@ -8,13 +8,13 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 |---|---:|
 | Baseline rows | 863 |
 | Hazard rows | 352 |
-| Resolved | 1109 |
+| Resolved | 1110 |
 | Protected/deferred | 36 |
-| Open | 70 |
+| Open | 69 |
 | New after baseline | 26 |
 | Historical intake rows | 575 |
-| Reviewed non-debt rows | 505 |
-| Genuine-debt rows | 70 |
+| Reviewed non-debt rows | 506 |
+| Genuine-debt rows | 69 |
 | Unclassified rows | 0 |
 | Unique debt items | 33 |
 
@@ -46,7 +46,6 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-003 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-003 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-003 |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-004 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-004 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-004 |
 | AM-018 | mutableStaticCaches | Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-004 |

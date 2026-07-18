@@ -4,7 +4,6 @@ namespace Game.Runtime
     {
         public static bool PlayRequested;
         public static bool SimulationActive;
-        public static UnityEngine.Camera WorldCamera;
         public static bool InitialCameraFocusRequested;
         public static UnityEngine.Vector3 InitialCameraFocusWorld;
         public static bool SelectionModeActive;
@@ -31,7 +30,6 @@ namespace Game.Runtime
         {
             PlayRequested = false;
             SimulationActive = false;
-            WorldCamera = null;
             InitialCameraFocusRequested = false;
             InitialCameraFocusWorld = UnityEngine.Vector3.zero;
             SelectionModeActive = false;

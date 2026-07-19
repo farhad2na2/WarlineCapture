@@ -500,6 +500,7 @@ namespace Game.Editor
             string contentHash = ComputeContentHash(input.ChunkSize, chunkEntries, sourceEntries);
             string[] expectedScenePaths = chunkEntries.Select(chunk => chunk.ScenePath).ToArray();
             string projectRoot = RequireProjectRoot();
+            NormalizeOwnedSceneMetadata(projectRoot, expectedScenePaths, requireAll: false);
             bool integrityReady = StaticMapPresentationSceneIntegrity.TryLoadAndValidate(
                 projectRoot,
                 input.OperationMapId,
@@ -508,6 +509,24 @@ namespace Game.Editor
                 expectedScenePaths,
                 out StaticMapPresentationSceneIntegrity existingIntegrity,
                 out string integrityRejectionReason);
+            if (!integrityReady &&
+                StaticMapPresentationSceneIntegrity.TryRefreshMetadataHashes(
+                    projectRoot,
+                    input.OperationMapId,
+                    input.IntegrityPath,
+                    contentHash,
+                    expectedScenePaths,
+                    out _))
+            {
+                integrityReady = StaticMapPresentationSceneIntegrity.TryLoadAndValidate(
+                    projectRoot,
+                    input.OperationMapId,
+                    input.IntegrityPath,
+                    contentHash,
+                    expectedScenePaths,
+                    out existingIntegrity,
+                    out integrityRejectionReason);
+            }
             bool reusedScenes = StaticMapPresentationOutputOwnership.CanReuseExpectedScenes(
                 input.OperationMapId,
                 input.OutputRoot,
@@ -573,6 +592,7 @@ namespace Game.Editor
                         PhysicalAssetExists,
                         AssetDatabase.DeleteAsset,
                         DeletePhysicalOwnedAsset);
+                    NormalizeOwnedSceneMetadata(projectRoot, expectedScenePaths, requireAll: true);
                     StaticMapPresentationSceneIntegrity.Write(
                         projectRoot,
                         input.OperationMapId,
@@ -1180,6 +1200,32 @@ namespace Game.Editor
             if (File.Exists(physicalPath + ".meta"))
                 File.Delete(physicalPath + ".meta");
             return !File.Exists(physicalPath) && !File.Exists(physicalPath + ".meta");
+        }
+
+        private static void NormalizeOwnedSceneMetadata(
+            string projectRoot,
+            IReadOnlyList<string> scenePaths,
+            bool requireAll)
+        {
+            for (int i = 0; i < scenePaths.Count; i++)
+            {
+                string metadataPath = Path.Combine(projectRoot, scenePaths[i] + ".meta");
+                if (!File.Exists(metadataPath) && requireAll)
+                    throw new InvalidOperationException($"Generated scene metadata is missing: {scenePaths[i]}.meta");
+                if (!File.Exists(metadataPath))
+                    continue;
+
+                string content = File.ReadAllText(metadataPath);
+                string normalized = content
+                    .Replace("userData: \r\n", "userData:\r\n", StringComparison.Ordinal)
+                    .Replace("userData: \n", "userData:\n", StringComparison.Ordinal)
+                    .Replace("assetBundleName: \r\n", "assetBundleName:\r\n", StringComparison.Ordinal)
+                    .Replace("assetBundleName: \n", "assetBundleName:\n", StringComparison.Ordinal)
+                    .Replace("assetBundleVariant: \r\n", "assetBundleVariant:\r\n", StringComparison.Ordinal)
+                    .Replace("assetBundleVariant: \n", "assetBundleVariant:\n", StringComparison.Ordinal);
+                if (!string.Equals(content, normalized, StringComparison.Ordinal))
+                    File.WriteAllText(metadataPath, normalized);
+            }
         }
 
         private static string ResolveProjectAssetPath(string assetPath)

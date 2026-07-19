@@ -58,6 +58,14 @@ namespace Game.Configs
         public AssetReference BuildingPlacementsReference => buildingPlacementsReference;
         public AssetReference VehiclePlacementsReference => vehiclePlacementsReference;
 
+#if UNITY_EDITOR
+        public void EditorSetSurfaceMetadata(OperationMapSurfaceMetadataConfig value)
+        {
+            surfaceMetadata = value;
+            UnityEditor.EditorUtility.SetDirty(this);
+        }
+#endif
+
         public bool TryValidateIdentity(out string error)
         {
             if (!OperationMapIdentityRules.IsValidOperationMapId(operationMapId))

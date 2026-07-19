@@ -34,13 +34,13 @@ MonoBehaviour:
     authoredBlockedCellCount: 0
   surfaceMetadata:
     assetGuid: 12f517deb32ab49698acbfdaf7c3eac7
-    contentHash: aa08cb9115e8727bfdbc671a4a2cfd9334ef48134c00d58d7d29e350c45b752c
-    runtimeBlobHash: 8f661e49fcdbb96314ff03d48bbb3993
+    contentHash: c198ee42b6b166778f95024130a59df57fc532a17f9d6996b9dda53e85bfd833
+    runtimeBlobHash: c0260dec80831407dae424f0de126482
     surfaceCount: 2097152
     payloadVersion: 3
     payloadEncoding: 1
     minimumHeight: -6.9545445
-    maximumHeight: 40.375454
+    maximumHeight: 38.405453
   navigationMetadata:
     authoredSubSceneGuid: 8d5e3c3f2ef84b61a4d61472c40c9a11
     gridAuthoringLocalId: 146043441

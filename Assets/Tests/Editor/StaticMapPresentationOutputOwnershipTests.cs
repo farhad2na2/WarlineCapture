@@ -526,6 +526,66 @@ public sealed class StaticMapPresentationOutputOwnershipTests
     }
 
     [Test]
+    public void SceneIntegrity_MetadataRefresh_PreservesSceneContentGate()
+    {
+        string projectRoot = CreateTemporaryProjectRoot();
+        string sceneAPath = ProjectPath(projectRoot, SceneA);
+        string sceneBPath = ProjectPath(projectRoot, SceneB);
+        try
+        {
+            WriteFile(sceneAPath, "scene-a");
+            WriteFile(sceneAPath + ".meta", "scene-a-meta");
+            WriteFile(sceneBPath, "scene-b");
+            WriteFile(sceneBPath + ".meta", "scene-b-meta");
+            StaticMapPresentationSceneIntegrity.Write(
+                projectRoot,
+                StaticMapPresentationBaker.CurrentOperationMapId,
+                StaticMapPresentationSceneIntegrity.CurrentIntegrityAssetPath,
+                "content-hash",
+                new[] { SceneA, SceneB });
+
+            WriteFile(sceneAPath + ".meta", "scene-a-meta-normalized");
+            Assert.That(
+                StaticMapPresentationSceneIntegrity.TryRefreshMetadataHashes(
+                    projectRoot,
+                    StaticMapPresentationBaker.CurrentOperationMapId,
+                    StaticMapPresentationSceneIntegrity.CurrentIntegrityAssetPath,
+                    "content-hash",
+                    new[] { SceneA, SceneB },
+                    out string refreshReason),
+                Is.True,
+                refreshReason);
+            Assert.That(
+                StaticMapPresentationSceneIntegrity.TryLoadAndValidate(
+                    projectRoot,
+                    StaticMapPresentationBaker.CurrentOperationMapId,
+                    StaticMapPresentationSceneIntegrity.CurrentIntegrityAssetPath,
+                    "content-hash",
+                    new[] { SceneA, SceneB },
+                    out _,
+                    out string validationReason),
+                Is.True,
+                validationReason);
+
+            WriteFile(sceneBPath, "scene-b-corrupted");
+            Assert.That(
+                StaticMapPresentationSceneIntegrity.TryRefreshMetadataHashes(
+                    projectRoot,
+                    StaticMapPresentationBaker.CurrentOperationMapId,
+                    StaticMapPresentationSceneIntegrity.CurrentIntegrityAssetPath,
+                    "content-hash",
+                    new[] { SceneA, SceneB },
+                    out string changedReason),
+                Is.False);
+            Assert.That(changedReason, Is.EqualTo($"integrity-scene-content-changed:{SceneB}"));
+        }
+        finally
+        {
+            DeleteTemporaryProjectRoot(projectRoot);
+        }
+    }
+
+    [Test]
     public void SceneIntegrity_TwoMapLedgersValidateIndependently()
     {
         string projectRoot = CreateTemporaryProjectRoot();

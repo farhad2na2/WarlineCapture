@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 using Game.Authoring;
 using Game.Composition;
 using Game.Configs;
@@ -64,10 +67,16 @@ namespace Game.Editor
                 }
 
                 OperationMapDefinition definition = view.Definition;
-                if (!MatchesAssetGuid(surface.BakedSurfaceData, definition.SurfaceMetadata.AssetGuid) ||
+                OperationMapCatalogConfig catalog =
+                    AssetDatabase.LoadAssetAtPath<OperationMapCatalogConfig>(
+                        OperationMapAddressablesLayoutBuilder.CatalogPath);
+                if (catalog == null ||
+                    !catalog.TryResolve(view.OperationMapId, out OperationMapDefinition runtimeDefinition) ||
+                    !MatchesSurfaceMetadata(surface.BakedSurfaceData, definition.SurfaceMetadata) ||
+                    !MatchesSurfaceMetadata(surface.BakedSurfaceData, runtimeDefinition.SurfaceMetadata) ||
                     !MatchesAssetGuid(surface.GridConfig, definition.GridMetadata.AssetGuid))
                 {
-                    error = "Staged surface/grid references do not match operation-map metadata.";
+                    error = "Staged/runtime surface or grid references do not match operation-map metadata.";
                     return false;
                 }
 
@@ -171,6 +180,41 @@ namespace Game.Editor
                 AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(asset)),
                 expectedGuid,
                 StringComparison.Ordinal);
+
+        private static bool MatchesSurfaceMetadata(
+            MapSurfaceDataAsset surface,
+            OperationMapSurfaceMetadataConfig expected)
+        {
+            if (surface == null)
+                return false;
+
+            string assetPath = AssetDatabase.GetAssetPath(surface);
+            return string.Equals(
+                       AssetDatabase.AssetPathToGUID(assetPath),
+                       expected.AssetGuid,
+                       StringComparison.Ordinal) &&
+                   string.Equals(ComputeFileHash(assetPath), expected.ContentHash, StringComparison.Ordinal) &&
+                   string.Equals(
+                       surface.ComputeRuntimeBlobHash().ToString(),
+                       expected.RuntimeBlobHash,
+                       StringComparison.Ordinal) &&
+                   surface.SurfaceCount == expected.SurfaceCount &&
+                   surface.PayloadVersion == expected.PayloadVersion &&
+                   surface.PayloadEncoding == expected.PayloadEncoding;
+        }
+
+        private static string ComputeFileHash(string assetPath)
+        {
+            string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+            string physicalPath = Path.GetFullPath(Path.Combine(projectRoot, assetPath));
+            using SHA256 algorithm = SHA256.Create();
+            using FileStream stream = File.OpenRead(physicalPath);
+            byte[] hash = algorithm.ComputeHash(stream);
+            StringBuilder builder = new(hash.Length * 2);
+            for (int i = 0; i < hash.Length; i++)
+                builder.Append(hash[i].ToString("x2"));
+            return builder.ToString();
+        }
 
         private static bool TryFindSingle<T>(Scene scene, out T found, out string error) where T : Component
         {

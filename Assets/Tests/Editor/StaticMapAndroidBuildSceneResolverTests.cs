@@ -10,6 +10,8 @@ using UnityEngine;
 
 public sealed class StaticMapAndroidBuildSceneResolverTests
 {
+    private const int CurrentMapChunkCount = 501;
+
     private const string Match = "Assets/Game/Scenes/Match.unity";
     private const string Menu = "Assets/Game/Scenes/MainMenu.unity";
     private const string ChunkA = "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_n001_p002.unity";
@@ -259,7 +261,10 @@ public sealed class StaticMapAndroidBuildSceneResolverTests
 
         CollectionAssert.AreEqual(expectedBaseScenes, result);
         Assert.AreEqual(result.Length, result.Distinct(StringComparer.Ordinal).Count());
-        Assert.AreEqual(514, expectedChunks.Length, "The audited current-map manifest must include all generated chunks.");
+        Assert.AreEqual(
+            CurrentMapChunkCount,
+            expectedChunks.Length,
+            "The audited current-map manifest must include all generated chunks.");
         Assert.That(result, Has.None.Matches<string>(StaticMapPresentationOutputOwnership.IsOwnedScenePath));
     }
 

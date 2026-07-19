@@ -939,6 +939,104 @@ namespace Game.Editor
             }
         }
 
+        internal static bool TryRefreshMetadataHashes(
+            string projectRoot,
+            string operationMapId,
+            string integrityAssetPath,
+            string expectedContentHash,
+            IEnumerable<string> expectedScenePaths,
+            out string rejectionReason)
+        {
+            if (string.IsNullOrWhiteSpace(projectRoot))
+                throw new ArgumentException("Project root is required.", nameof(projectRoot));
+            if (!StaticMapPresentationOutputPathContract.TryResolveIntegrityAssetPath(
+                    operationMapId,
+                    out string expectedIntegrityAssetPath,
+                    out _) ||
+                !string.Equals(integrityAssetPath, expectedIntegrityAssetPath, StringComparison.Ordinal))
+            {
+                rejectionReason = "integrity-ledger-owner-changed";
+                return false;
+            }
+
+            StaticMapPresentationOutputPathContract.TryResolveOutputRoot(
+                operationMapId,
+                out string outputRoot,
+                out _);
+            string[] expected = RequireScenePaths(operationMapId, outputRoot, expectedScenePaths);
+            string integrityFilePath = ResolveProjectPath(projectRoot, integrityAssetPath);
+            if (!File.Exists(integrityFilePath))
+            {
+                rejectionReason = "integrity-ledger-missing";
+                return false;
+            }
+
+            IntegrityDocument document;
+            try
+            {
+                document = JsonUtility.FromJson<IntegrityDocument>(File.ReadAllText(integrityFilePath));
+            }
+            catch (Exception exception)
+            {
+                rejectionReason = $"integrity-ledger-unreadable:{exception.GetType().Name}";
+                return false;
+            }
+
+            if (document == null ||
+                document.schemaVersion != CurrentSchemaVersion ||
+                !string.Equals(document.contentHash, expectedContentHash, StringComparison.Ordinal))
+            {
+                rejectionReason = "integrity-ledger-contract-changed";
+                return false;
+            }
+
+            Dictionary<string, IntegrityEntry> entries = new(StringComparer.Ordinal);
+            IntegrityEntry[] documentEntries = document.scenes ?? Array.Empty<IntegrityEntry>();
+            for (int i = 0; i < documentEntries.Length; i++)
+            {
+                IntegrityEntry entry = documentEntries[i];
+                if (entry == null ||
+                    string.IsNullOrWhiteSpace(entry.scenePath) ||
+                    string.IsNullOrWhiteSpace(entry.fileHash) ||
+                    !entries.TryAdd(entry.scenePath, entry))
+                {
+                    rejectionReason = $"integrity-entry-invalid:{i}";
+                    return false;
+                }
+            }
+
+            if (!entries.Keys.OrderBy(path => path, StringComparer.Ordinal)
+                    .SequenceEqual(expected, StringComparer.Ordinal))
+            {
+                rejectionReason = "integrity-scene-set-changed";
+                return false;
+            }
+
+            for (int i = 0; i < expected.Length; i++)
+            {
+                string sceneFilePath = ResolveProjectPath(projectRoot, expected[i]);
+                string sceneMetaPath = sceneFilePath + ".meta";
+                if (!File.Exists(sceneFilePath) || !File.Exists(sceneMetaPath) ||
+                    !string.Equals(
+                        ComputeFileHash(sceneFilePath),
+                        entries[expected[i]].fileHash,
+                        StringComparison.Ordinal))
+                {
+                    rejectionReason = $"integrity-scene-content-changed:{expected[i]}";
+                    return false;
+                }
+            }
+
+            Write(
+                projectRoot,
+                operationMapId,
+                integrityAssetPath,
+                expectedContentHash,
+                expected);
+            rejectionReason = "none";
+            return true;
+        }
+
         internal bool IsSceneFileValid(string scenePath)
         {
             if (!StaticMapPresentationOutputOwnership.IsOwnedScenePath(

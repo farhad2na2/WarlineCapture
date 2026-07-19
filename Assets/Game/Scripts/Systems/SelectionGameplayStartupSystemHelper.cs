@@ -96,8 +96,8 @@ namespace Game.Runtime
             var rtsSelectionCommandResultFlushSystem = new RtsSelectionCommandResultFlushCompositionSystemHelper();
             var rtsSelectionFocusCommandSystem = new RtsSelectionFocusCommandCompositionSystemHelper();
             var rtsSelectionPointerTargetCommandSystem = new RtsSelectionPointerTargetCommandCompositionSystemHelper();
-            RtsCameraSystem rtsCameraSystem = ResolveRtsCameraSystem();
-            RtsCameraRequestSystem rtsCameraRequestSystem = ResolveRtsCameraRequestSystem();
+            RtsCameraSystem rtsCameraSystem = ResolveRtsCameraSystem(entityManager);
+            RtsCameraRequestSystem rtsCameraRequestSystem = ResolveRtsCameraRequestSystem(entityManager);
             var selectionUiCommand = new SelectionUiCommandUiSystemHelper(
                 rtsSelectionInputSystem,
                 IsMatchIntroGameplayInputLocked);
@@ -199,7 +199,11 @@ namespace Game.Runtime
             int pendingMaterialFabricationRequestId = 0;
 
             selectionUiCamera.Init(rtsSelectionConfig, worldCamera);
-            selectionBuildingInteraction.Init(selectionStateSystem, selectionScreenMarkers, worldCamera);
+            selectionBuildingInteraction.Init(
+                entityManager,
+                selectionStateSystem,
+                selectionScreenMarkers,
+                worldCamera);
             selectionHudFeedbackSystem.ResetViewCache();
             selectionOrderMarkerSystem.Initialize(
                 runtimeConfig.MoveOrderMarkerPrefab,
@@ -267,7 +271,7 @@ namespace Game.Runtime
 
             void RequestSelectedMaterialFabricationProduction(bool productionEnabled)
             {
-                if (!TryGetDefaultEntityManager(out EntityManager entityManager) ||
+                if (!TryGetEntityManager(out EntityManager entityManager) ||
                     buildingUiQueryContext.RuntimeBuildings == null ||
                     buildingUiQueryContext.GetActiveBuildingId == null)
                 {
@@ -389,7 +393,7 @@ namespace Game.Runtime
                             UnityEngine.Time.frameCount);
                     }
                     if (commandSummary.HasAttackTargetModeCommandRequests &&
-                        TryGetDefaultEntityManager(out EntityManager attackTargetModeEntityManager))
+                        TryGetEntityManager(out EntityManager attackTargetModeEntityManager))
                     {
                         Entity focusedUnit = focusedUnitLifecycleSystem.TryGetFocusedUnitEntity(
                             attackTargetModeEntityManager,
@@ -555,7 +559,7 @@ namespace Game.Runtime
             void FlushMaterialFabricationProductionResult()
             {
                 if (pendingMaterialFabricationRequestId <= 0 ||
-                    !TryGetDefaultEntityManager(out EntityManager entityManager) ||
+                    !TryGetEntityManager(out EntityManager entityManager) ||
                     !MaterialFabricationSystem.TryGetProductionResult(
                         entityManager,
                         pendingMaterialFabricationEntity,
@@ -646,7 +650,7 @@ namespace Game.Runtime
 
             bool ProcessTacticalFollowCameraRequests(bool forcePublishReadModel)
             {
-                if (!TryGetDefaultEntityManager(out EntityManager em))
+                if (!TryGetEntityManager(out EntityManager em))
                     return false;
 
                 if (!forcePublishReadModel && !tacticalFollowCameraModeSystem.HasPendingModeRequests(em))
@@ -678,7 +682,7 @@ namespace Game.Runtime
             void ApplyTacticalFollowCameraUiReadModel()
             {
                 if (matchHudSelectionPanelView == null ||
-                    !TryGetDefaultEntityManager(out EntityManager em) ||
+                    !TryGetEntityManager(out EntityManager em) ||
                     !tacticalFollowCameraModeSystem.TryReadUiReadModel(em, out TacticalFollowCameraUiReadModelComponent readModel))
                 {
                     return;
@@ -729,7 +733,7 @@ namespace Game.Runtime
 
             void EmitAriaVoice(string eventId, uint eventHash)
             {
-                if (!TryGetDefaultEntityManager(out EntityManager em))
+                if (!TryGetEntityManager(out EntityManager em))
                     return;
 
                 RtsSelectionCommandResultFlushCompositionSystemHelper.TryEmitAriaVoice(em, eventId, eventHash);
@@ -763,7 +767,7 @@ namespace Game.Runtime
 
             bool RefreshTacticalFollowCameraPose()
             {
-                if (!TryGetDefaultEntityManager(out EntityManager em))
+                if (!TryGetEntityManager(out EntityManager em))
                     return false;
 
                 return tacticalFollowCameraModeSystem.RefreshActiveTargetAndPose(em, GetTacticalFollowCameraContext());
@@ -800,7 +804,7 @@ namespace Game.Runtime
             {
                 if (rtsSelectionRuntimeCameraSystem == null ||
                     runtimeConfig.WorldCamera == null ||
-                    !TryGetDefaultEntityManager(out EntityManager em) ||
+                    !TryGetEntityManager(out EntityManager em) ||
                     !tacticalFollowCameraModeSystem.TryReadPose(em, out TacticalFollowCameraPoseComponent pose))
                 {
                     hasLastTacticalFollowPose = false;
@@ -980,7 +984,7 @@ namespace Game.Runtime
                         GetPointerTargetCommandContext(),
                         screenPosition),
                     selectionOrderMarkerSystem,
-                    TryGetDefaultEntityManager,
+                    TryGetEntityManager,
                     (Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint) =>
                         rtsSelectionPointerTargetCommandSystem.TryGetClickedCell(
                             GetPointerTargetCommandContext(),
@@ -1032,7 +1036,7 @@ namespace Game.Runtime
                     roadBuildReadState,
                     buildingPlacementInteractionSystem,
                     buildingPlacementInteractionContext,
-                    TryGetDefaultEntityManager,
+                    TryGetEntityManager,
                     resolvedMatchIntroStateQuery,
                     IsPointerOverGameplayUi,
                     pointerPosition => rtsSelectionInputSystem.UpdateLastKnownPointerPosition(pointerPosition),
@@ -1058,7 +1062,7 @@ namespace Game.Runtime
 
             RtsSelectionCommandResultFlushCompositionSystemHelper.Context CreateCommandResultFlushContext()
             {
-                if (TryGetDefaultEntityManager(out EntityManager em))
+                if (TryGetEntityManager(out EntityManager em))
                     EnsureRuntimeSelectionDependencies(em);
 
                 SelectionHudFeedbackUiSystemHelper.Context hudFeedbackContext = GetHudFeedbackContext();
@@ -1087,7 +1091,7 @@ namespace Game.Runtime
                     selectedTagQuery,
                     gridConfigQuery,
                     mapSurfaceQuery,
-                    TryGetDefaultEntityManager,
+                    TryGetEntityManager,
                     EnsureRuntimeSelectionDependencies,
                     ClearCurrentSelection,
                     mode => selectionHudFeedbackSystem.ApplyCommandMode(hudFeedbackContext, mode),
@@ -1163,7 +1167,7 @@ namespace Game.Runtime
                     buildingPlacementInteractionSystem,
                     buildingPlacementInteractionContext,
                     runtimeConfig.WorldCamera,
-                    TryGetDefaultEntityManager,
+                    TryGetEntityManager,
                     EnsureRuntimeSelectionDependencies,
                     ClearCurrentSelection,
                     QueueSelectionRectangleRequest,
@@ -1211,7 +1215,7 @@ namespace Game.Runtime
                     buildingPlacementInteractionSystem,
                     buildingPlacementInteractionContext,
                     runtimeConfig.WorldCamera,
-                    TryGetDefaultEntityManager,
+                    TryGetEntityManager,
                     TryGetPointerPosition,
                     () => explicitAttackTargetModeActive,
                     SetExplicitAttackTargetModeActive,
@@ -1251,7 +1255,7 @@ namespace Game.Runtime
             {
                 return new SelectionHudFeedbackUiSystemHelper.Context(
                     selectionUiReadModelLookup,
-                    TryGetDefaultEntityManager,
+                    TryGetEntityManager,
                     resolveSelectionPortraitSprite);
             }
 
@@ -1362,7 +1366,7 @@ namespace Game.Runtime
             {
                 return new MatchHudSquadTraySelectionUiSystemHelper.Context(
                     runtimeConfig.WorldCamera,
-                    TryGetDefaultEntityManager,
+                    TryGetEntityManager,
                     EnsureRuntimeSelectionDependencies,
                     ClearCurrentSelection,
                     () => buildingPlacementInteractionSystem?.ClearSelectedBuilding(
@@ -1411,14 +1415,12 @@ namespace Game.Runtime
                 mapSurfaceQuery = em.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
             }
 
-            bool TryGetDefaultEntityManager(out EntityManager em)
+            bool TryGetEntityManager(out EntityManager em)
             {
-                em = default;
-                Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
+                em = entityManager;
+                Unity.Entities.World world = em.World;
                 if (world == null || !world.IsCreated)
                     return false;
-
-                em = world.EntityManager;
                 return true;
             }
 
@@ -1442,7 +1444,7 @@ namespace Game.Runtime
 
             void EnqueueSelectionDiagnostic(string message)
             {
-                if (!TryGetDefaultEntityManager(out EntityManager em))
+                if (!TryGetEntityManager(out EntityManager em))
                     return;
 
                 if (selectionRuntimeDiagnosticsSystem != null)
@@ -1453,7 +1455,7 @@ namespace Game.Runtime
 
             void LogSelectionClickDiagnostic(string message)
             {
-                if (!TryGetDefaultEntityManager(out EntityManager em))
+                if (!TryGetEntityManager(out EntityManager em))
                     return;
 
                 if (selectionRuntimeDiagnosticsSystem != null)
@@ -1522,7 +1524,7 @@ namespace Game.Runtime
 
             void ProcessSelectionRectangleRequests()
             {
-                if (TryGetDefaultEntityManager(out EntityManager defaultEntityManager))
+                if (TryGetEntityManager(out EntityManager defaultEntityManager))
                     selectionHudFeedbackSystem.EnsureFeedbackQueue(defaultEntityManager);
 
                 if (!rtsSelectionInputSystem.TryGetPointerRequests(out EntityManager em, out DynamicBuffer<RtsSelectionPointerRequestElement> pointerRequests))
@@ -1602,17 +1604,17 @@ namespace Game.Runtime
             }
         }
 
-        private static RtsCameraRequestSystem ResolveRtsCameraRequestSystem()
+        private static RtsCameraRequestSystem ResolveRtsCameraRequestSystem(EntityManager entityManager)
         {
-            Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
+            Unity.Entities.World world = entityManager.World;
             return world != null && world.IsCreated
                 ? world.GetOrCreateSystemManaged<RtsCameraRequestSystem>()
                 : null;
         }
 
-        private static RtsCameraSystem ResolveRtsCameraSystem()
+        private static RtsCameraSystem ResolveRtsCameraSystem(EntityManager entityManager)
         {
-            Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
+            Unity.Entities.World world = entityManager.World;
             return world != null && world.IsCreated
                 ? world.GetOrCreateSystemManaged<RtsCameraSystem>()
                 : null;

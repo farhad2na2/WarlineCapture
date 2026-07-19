@@ -11,13 +11,13 @@ Bounded read-only audits reviewed the AM-025 intake as:
 | Measure | Count |
 |---|---:|
 | Historical intake rows | 575 |
-| Reviewed non-debt rows | 561 |
-| Remaining genuine-debt rows | 14 |
-| Remaining unique debt items | 13 |
+| Reviewed non-debt rows | 563 |
+| Remaining genuine-debt rows | 12 |
+| Remaining unique debt items | 11 |
 | Projected unclassified rows | 0 |
 | Source-growth blockers | 5 |
 
-The row-bound evidence now records `561` non-debt rows and `14` remaining genuine-debt rows, grouped into `13` unique file/rule remediation items. It remains non-accepting because every genuine-debt item must be closed before Phase 2 can pass.
+The row-bound evidence now records `563` non-debt rows and `12` remaining genuine-debt rows, grouped into `11` unique file/rule remediation items. It remains non-accepting because every genuine-debt item must be closed before Phase 2 can pass.
 
 ## 2. Required Row Authority
 
@@ -96,6 +96,7 @@ Completed remediation:
 - `AudioEventRequestSystem`: the audio singleton and all request buffers remain owned by each ECS World, while the two process-wide entity/World cache fields are removed. Focused two-World validation proves requests cannot cross between matches, and the existing audio stress/pooling checks remain green.
 - `RuntimeGameplayStateSystem`: the active match and selection startup now supply their exact EntityManager. Gameplay, camera-input, and initial-focus state no longer discover the process-wide default World, and focused replacement-World checks require an explicit rebind.
 - `RtsSelectionInputStateCompositionSystemHelper`: match startup creates one input owner from its EntityManager and shares it with selection gameplay and UI commands. Focused replacement-World validation requires an explicit rebind, and the complete move/attack/scan/boarding/camera/HUD command suite remains green.
+- Selection composition boundaries: building interaction, runtime query delegates, and managed RTS camera systems now use the EntityManager supplied to selection startup. The remaining selection default-World lookups are removed while the complete command suite remains green.
 - `RuntimeGameplayStateSystem`: the cached state entity was cleared as non-debt after focused validation replaced the default World and proved the same facade created and read only the replacement match's fresh state.
 - `SceneLifecycleSceneSystemHelper`: the scene-transition queue cache was cleared as non-debt after focused validation replaced the World and proved the new match began with an empty queue and accepted only its own request.
 - `RuntimeDiagnosticsSystem`: the diagnostics World lookup was cleared as non-debt after focused validation replaced the default World and proved the same facade created and read only the replacement match's diagnostics state.

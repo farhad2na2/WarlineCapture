@@ -3201,7 +3201,11 @@ public sealed class RtsSelectionInputSystemTests
         selectionState.SetFocusedUnit(selectedUnit);
         selectionState.CacheSelectedMoveEntity(em, selectedUnit);
         var buildingInteractionSystem = new SelectionBuildingInteractionCompositionSystemHelper();
-        buildingInteractionSystem.Init(selectionState, null, null);
+        buildingInteractionSystem.Init(
+            Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager,
+            selectionState,
+            null,
+            null);
 
         buildingInteractionSystem.ClearFocusedUnit();
 

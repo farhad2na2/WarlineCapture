@@ -17,16 +17,19 @@ namespace Game.Runtime
 
         private SelectionStateCompositionSystemHelper _selectionStateSystem;
         private SelectionScreenMarkerUiSystemHelper _screenMarkerHelper;
+        private EntityManager _entityManager;
         private Camera _worldCamera;
         private Unity.Entities.World _queryWorld;
         private EntityQuery _gridConfigQuery;
         private EntityQuery _mapSurfaceQuery;
 
         public void Init(
+            EntityManager entityManager,
             SelectionStateCompositionSystemHelper selectionStateSystem,
             SelectionScreenMarkerUiSystemHelper screenMarkerHelper,
             Camera worldCamera)
         {
+            _entityManager = entityManager;
             _selectionStateSystem = selectionStateSystem;
             _screenMarkerHelper = screenMarkerHelper;
             _worldCamera = worldCamera;
@@ -40,7 +43,7 @@ namespace Game.Runtime
 
         public void ClearFocusedUnit()
         {
-            if (!TryGetDefaultEntityManager(out EntityManager em))
+            if (!TryGetEntityManager(out EntityManager em))
             {
                 _focusedUnitLifecycleSystem.ClearFocusedUnit(SelectionState);
                 return;
@@ -65,7 +68,7 @@ namespace Game.Runtime
 
         public bool IsBoardablePlayerTransportClick(Vector2 screenPosition)
         {
-            if (!TryGetDefaultEntityManager(out EntityManager em))
+            if (!TryGetEntityManager(out EntityManager em))
                 return false;
 
             EnsureEntityQueries(em);
@@ -78,7 +81,7 @@ namespace Game.Runtime
 
         public bool TryRequestMoveOrderToBuilding(Vector2Int originCell, Vector2Int footprintCells)
         {
-            if (!TryGetDefaultEntityManager(out EntityManager em))
+            if (!TryGetEntityManager(out EntityManager em))
                 return false;
 
             bool issued = _buildingTargetMoveOrderSystem.TryRequestMoveOrderToBuilding(
@@ -173,14 +176,12 @@ namespace Game.Runtime
             return false;
         }
 
-        private static bool TryGetDefaultEntityManager(out EntityManager em)
+        private bool TryGetEntityManager(out EntityManager em)
         {
-            em = default;
-            Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
+            em = _entityManager;
+            Unity.Entities.World world = em.World;
             if (world == null || !world.IsCreated)
                 return false;
-
-            em = world.EntityManager;
             return true;
         }
     }

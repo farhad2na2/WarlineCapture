@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 555,
+    "resolvedNonDebtRowCount": 557,
     "protectedDeferredRowCount": 6,
-    "reviewedNonDebtRowCount": 561,
-    "genuineDebtRowCount": 14,
-    "uniqueDebtItemCount": 13,
+    "reviewedNonDebtRowCount": 563,
+    "genuineDebtRowCount": 12,
+    "uniqueDebtItemCount": 11,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -55,9 +55,9 @@
     {
       "sourceArtifact": "AM-018",
       "historicalOpenRowCount": 261,
-      "projectedResolvedNonDebtRowCount": 252,
+      "projectedResolvedNonDebtRowCount": 254,
       "projectedProtectedDeferredRowCount": 1,
-      "projectedGenuineDebtRowCount": 8
+      "projectedGenuineDebtRowCount": 6
     }
   ],
   "genuineDebtLanes": [
@@ -643,10 +643,34 @@
       "authority": ["Assets/Tests/Editor/RtsSelectionInputSystemTests.cs", "Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"]
     },
     {
+      "id": "am018-world-selection-building-interaction-owned",
+      "decision": "resolved",
+      "reasonCode": "explicit-selection-entity-manager-owner",
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "globalWorldLookups",
+        "sourcePath": "Assets/Game/Scripts/Systems/SelectionBuildingInteractionCompositionSystemHelper.cs"
+      },
+      "authority": ["Assets/Tests/Editor/RtsSelectionInputSystemTests.cs", "Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"]
+    },
+    {
+      "id": "am018-world-selection-startup-owned",
+      "decision": "resolved",
+      "reasonCode": "explicit-selection-startup-world-owner",
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "globalWorldLookups",
+        "sourcePath": "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs"
+      },
+      "authority": ["Assets/Tests/Editor/RtsSelectionInputSystemTests.cs", "Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"]
+    },
+    {
       "id": "am018-world-debt",
       "decision": "genuine-debt",
       "reasonCode": "global-world-service-location",
-      "expectedCount": 4,
+      "expectedCount": 2,
       "debtIdPrefix": "AM025-GLOBAL-WORLD",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",

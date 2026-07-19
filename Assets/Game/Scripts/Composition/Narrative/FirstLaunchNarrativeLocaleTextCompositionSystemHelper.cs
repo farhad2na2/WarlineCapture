@@ -5,12 +5,12 @@ using Game.UI.Contracts;
 
 namespace Game.Composition
 {
-    internal sealed class FirstLaunchNarrativeLocaleTextUtilitySystemHelper : IGameTextResolver
+    internal sealed class FirstLaunchNarrativeLocaleTextCompositionSystemHelper : IGameTextResolver
     {
         private readonly IGameTextResolver fallbackResolver;
         private readonly Dictionary<string, string> entries = new(StringComparer.Ordinal);
 
-        public FirstLaunchNarrativeLocaleTextUtilitySystemHelper(
+        public FirstLaunchNarrativeLocaleTextCompositionSystemHelper(
             IGameTextResolver fallback,
             NarrativeLocaleConfig locale)
         {

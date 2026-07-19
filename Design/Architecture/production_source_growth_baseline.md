@@ -2026,6 +2026,14 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
       "scope": "system-helper"
     },
     {
+      "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeLocaleTextCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-712",
+      "decisionId": "D-205",
+      "maxLines": 61,
+      "maxBytes": 2066,
+      "scope": "system-helper"
+    },
+    {
       "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeModelUtilitySystemHelper.cs",
       "trackerTaskId": "APH-712",
       "decisionId": "D-042",
@@ -2044,9 +2052,9 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
     {
       "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeProfileCompositionSystemHelper.cs",
       "trackerTaskId": "APH-712",
-      "decisionId": "D-041",
-      "maxLines": 135,
-      "maxBytes": 5172,
+      "decisionId": "D-207",
+      "maxLines": 163,
+      "maxBytes": 6425,
       "scope": "system-helper"
     },
     {
@@ -2076,9 +2084,9 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
     {
       "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeSequencePresentationSystemHelper.cs",
       "trackerTaskId": "APH-712",
-      "decisionId": "D-204",
-      "maxLines": 487,
-      "maxBytes": 21062,
+      "decisionId": "D-208",
+      "maxLines": 491,
+      "maxBytes": 21331,
       "scope": "system-helper"
     },
     {
@@ -2412,9 +2420,9 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
     {
       "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativePortraitVoiceSelectionPresentationSystemHelper.cs",
       "trackerTaskId": "APH-712",
-      "decisionId": "D-093",
-      "maxLines": 60,
-      "maxBytes": 2102,
+      "decisionId": "D-206",
+      "maxLines": 99,
+      "maxBytes": 3526,
       "scope": "system-helper"
     },
     {
@@ -2436,9 +2444,25 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
     {
       "path": "Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs",
       "trackerTaskId": "APH-710",
-      "decisionId": "D-097",
-      "maxLines": 390,
-      "maxBytes": 18337,
+      "decisionId": "D-209",
+      "maxLines": 393,
+      "maxBytes": 18334,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/MatchSceneReferenceCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-210",
+      "maxLines": 80,
+      "maxBytes": 2778,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/PerformanceDiagnosticsReferenceCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-211",
+      "maxLines": 84,
+      "maxBytes": 3102,
       "scope": "system-helper"
     },
     {

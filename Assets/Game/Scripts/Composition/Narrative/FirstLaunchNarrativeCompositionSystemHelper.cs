@@ -289,7 +289,7 @@ namespace Game.Composition
                 ? persianLocale
                 : null;
             IGameTextResolver resolver = locale != null
-                ? new FirstLaunchNarrativeLocaleTextUtilitySystemHelper(baseTextResolver, locale)
+                ? new FirstLaunchNarrativeLocaleTextCompositionSystemHelper(baseTextResolver, locale)
                 : baseTextResolver;
             if (!sequencePresentation.Initialize(
                     sequenceConfig,

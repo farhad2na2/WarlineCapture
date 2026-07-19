@@ -15,7 +15,7 @@ Bounded read-only audits reviewed the AM-025 intake as:
 | Remaining genuine-debt rows | 12 |
 | Remaining unique debt items | 11 |
 | Projected unclassified rows | 0 |
-| Source-growth blockers | 5 |
+| Source-growth blockers | 4 |
 
 The row-bound evidence now records `563` non-debt rows and `12` remaining genuine-debt rows, grouped into `11` unique file/rule remediation items. It remains non-accepting because every genuine-debt item must be closed before Phase 2 can pass.
 
@@ -53,11 +53,11 @@ Production remediation is serialized after row-bound evidence and occurs in sepa
 | Mutable static state and caches | 69 hazard rows plus overlapping lifecycle candidates | Split immutable tables, tested subsystem-reset state, World-owned state, UI presentation caches, debug-only state, and genuine gameplay authority before edits. |
 | Pools and lifecycle caches | 8 lifecycle rows | Add exact teardown/test authority or repair disposal; do not infer closure from a method name. |
 | World-owner candidates | 10 lifecycle rows after exact boundary/protected classifications | Reconcile overlaps with the hazard lane and avoid double-counting one production defect as multiple remediation items. |
-| Source growth | 5 helper paths | Four FirstLaunch paths and one operation-map path remain owner-controlled; shrink, consolidate, or publish superseding exact authority. |
+| Source growth | 4 helper paths | All remaining paths are operation-map owned and stay serialized behind the active map lane. |
 
 Row count and unique debt-item count are reported separately because multiple lexical rows can map to one production fix.
 
-Current external-gate note: the canonical Unity source-growth run now reports the five closure-policy blockers plus three newly integrated operation-map helpers. The resource audit returned all four resource-owned helpers to their existing approved limits; no new exception or larger ceiling was added.
+Current external-gate note: the canonical Unity source-growth run now reports only four operation-map helpers. FirstLaunch localized voice indexing moved from the sequence owner into the existing portrait/voice owner, the sequence returned below 500 lines, the locale text helper was renamed for its composition role, and all non-map helper limits are exact with no growth headroom.
 
 Completed remediation:
 

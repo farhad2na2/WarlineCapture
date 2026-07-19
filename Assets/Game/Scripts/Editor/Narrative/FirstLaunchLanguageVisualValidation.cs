@@ -51,7 +51,7 @@ namespace Game.Editor
                 {
                     NarrativeSequenceView view = instance.GetComponent<NarrativeSequenceView>();
                     NarrativeLocaleConfig locale = RequireAsset<NarrativeLocaleConfig>(FirstLaunchNarrativeConfigBuilder.PersianLocalePath);
-                    FirstLaunchNarrativeLocaleTextUtilitySystemHelper resolver = new(FallbackGameTextResolver.Instance, locale);
+                    FirstLaunchNarrativeLocaleTextCompositionSystemHelper resolver = new(FallbackGameTextResolver.Instance, locale);
                     view.ApplyLanguage(true, resolver);
                     view.SetVisible(true);
                     view.ApplyPanel(new NarrativePanelPresentationModel

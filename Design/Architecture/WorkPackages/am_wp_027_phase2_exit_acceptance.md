@@ -9,11 +9,11 @@ Evidence inputs: accepted AM-021 ownership authority and AM-022 through AM-024 a
 ## 1. Current Validation State And Risk
 
 - The accepted AM-024 integrated baseline passes `157 / 157`; the current AM-025 contract inventory passes `170 / 170` after adding fail-closed closure-audit and blocker-binding checks.
-- Canonical source growth currently reports five separately owned blockers: four FirstLaunch `*SystemHelper` paths and the operation-map-owned runtime-grid storage helper.
+- Canonical source growth now reports four operation-map-owned blockers. The four FirstLaunch blockers and three non-map composition blockers were resolved through bounded refactoring and exact no-headroom authority.
 - AM-021 is accepted at 575 persistent resources: 553 explicit owners, 22 protected owners, and zero ownership gaps.
 - `ArchitectureHardeningCloseoutValidationRunner.RunFocusedValidation` is the full Unity architecture entrypoint. `RunJenkinsArchitectureValidation` runs only two suites and is not an AM-025 substitute.
 - `SceneLifecycleValidationRunner.Run` is a one-case request-queue smoke test, not lifecycle closeout. Generated-project/dotnet compilation is supporting evidence only; Unity compilation is canonical.
-- Current operation-map, FirstLaunch/UI, and package-bound broad-contract failures remain visible external blockers to AM-025 acceptance; they are not retroactive blockers to accepted AM-021 through AM-024 evidence and cannot be silently excluded or converted into Core passes without owner resolution and accepted evidence.
+- Current operation-map and UI visual-lock broad-contract failures remain visible external blockers to AM-025 acceptance; they are not retroactive blockers to accepted AM-021 through AM-024 evidence and cannot be silently excluded or converted into Core passes without owner resolution and accepted evidence.
 
 Risks are partial-suite acceptance, alias validators being treated as canonical, stale or dirty evidence, missing identity/hash binding, suppressed external failures, threshold weakening, and release-deferred checks contaminating Core status.
 
@@ -90,7 +90,7 @@ Logs remain compressed and bounded; stdout contains summaries and first-failure 
 
 ## 6. Acceptance And Blocked Rules
 
-AM-025 passes only when every prerequisite is accepted, AM-021 ownership gaps are zero, all `575` audit-intake rows have row-bound authority, genuine debt and unclassified counts are zero, all five source-growth blockers are closed by their owners, capture identity is clean and exact, ancestry/hashes resolve, all canonical Core suites pass, compiler errors are zero, governed recurring allocations are exactly zero, lifecycle counts and retained trends pass, deterministic outputs match, protected paths are absent from the owned diff, and focused review has no unresolved finding.
+AM-025 passes only when every prerequisite is accepted, AM-021 ownership gaps are zero, all `575` audit-intake rows have row-bound authority, genuine debt and unclassified counts are zero, all four remaining operation-map source-growth blockers are closed by their owner, capture identity is clean and exact, ancestry/hashes resolve, all canonical Core suites pass, compiler errors are zero, governed recurring allocations are exactly zero, lifecycle counts and retained trends pass, deterministic outputs match, protected paths are absent from the owned diff, and focused review has no unresolved finding.
 
 AM-025 remains unchecked if any prerequisite, counter, suite, marker, hash, log, review, or ownership row is missing; if an external Core failure remains; or if a release-deferred failure is improperly mixed into Core arithmetic. The tracker records exact failing suite/owner/evidence and next action. Thresholds, samples, suites, and failures are never suppressed or reclassified merely to close Phase 2.
 

@@ -13,7 +13,6 @@ namespace Game.Composition
     {
         private readonly Dictionary<string, NarrativeStateRecord> states = new(StringComparer.Ordinal);
         private readonly Dictionary<NarrativeSpeakerId, NarrativeSpeakerRecord> speakers = new();
-        private readonly Dictionary<string, NarrativeLocaleVoiceRecord> localizedVoices = new(StringComparer.Ordinal);
         private readonly FirstLaunchNarrativeSequenceUtilitySystemHelper sequenceRuntime = new();
         private NarrativeSequenceConfig config;
         private NarrativePunctuationConfig punctuation;
@@ -61,10 +60,9 @@ namespace Game.Composition
             view = sequenceView;
             textResolver = resolver ?? FallbackGameTextResolver.Instance;
             settings = runtimeSettings;
-            portraitVoice.Reset(view?.CommanderIdentityView);
+            portraitVoice.Reset(view?.CommanderIdentityView, localeConfig);
             states.Clear();
             speakers.Clear();
-            localizedVoices.Clear();
             sequenceRuntime.Output -= HandleSequenceOutput;
 
             if (config == null || speakerCatalog == null || punctuation == null || view == null)
@@ -92,17 +90,6 @@ namespace Game.Composition
                 NarrativeSpeakerRecord speaker = speakerCatalog.Speakers[i];
                 if (speaker == null || !speakers.TryAdd(speaker.SpeakerId, speaker))
                     return false;
-            }
-            if (localeConfig != null)
-            {
-                IReadOnlyList<NarrativeLocaleVoiceRecord> localeVoices = localeConfig.Voices;
-                for (int i = 0; i < localeVoices.Count; i++)
-                {
-                    NarrativeLocaleVoiceRecord voice = localeVoices[i];
-                    if (voice == null || string.IsNullOrWhiteSpace(voice.LineId))
-                        continue;
-                    localizedVoices[voice.LineId] = voice;
-                }
             }
             if (!sequenceRuntime.Configure(config.EntryStateId, definitions))
                 return false;
@@ -368,22 +355,10 @@ namespace Game.Composition
             presentation.StartDialogue(
                 resolvedText,
                 speakerModel,
-                ResolveVoiceClip(line),
+                portraitVoice.ResolveVoiceClip(line),
                 Mathf.Max(0.1f, line.DeadlineSeconds - line.StartSeconds),
                 NarrativePunctuationUtilitySystemHelper.From(punctuation),
                 settings);
-        }
-
-        private AudioClip ResolveVoiceClip(NarrativeDialogueLineRecord line)
-        {
-            if (!localizedVoices.TryGetValue(line.LineId, out NarrativeLocaleVoiceRecord localized))
-                return portraitVoice.ResolveVoiceClip(line);
-
-            return portraitVoice.ResolveVoiceClip(
-                line.Speaker,
-                localized.VoiceClip,
-                localized.FemaleVoiceClip,
-                localized.NeutralVoiceClip);
         }
 
         private void HandleDialogueInput(NarrativeDialoguePhase phase)

@@ -458,6 +458,16 @@ Tools/CI/invoke_unity_macos.sh --timeout 300 --log /private/tmp/warline-firstlau
 - `git diff --check`: passed.
 - Final handoff: FirstLaunch architecture work is complete. Product-level M01 camera continuity and physical Android profiling remain governed by the narrative tracker and are not architecture-refactor blockers.
 
+### 2026-07-19 - Locale Ownership Follow-Up
+
+- Status: Complete; Persian FirstLaunch integration is aligned with the accepted architecture boundaries.
+- Localized voice indexing and fallback selection moved from `FirstLaunchNarrativeSequencePresentationSystemHelper` into the existing portrait/voice presentation owner.
+- The sequence presentation owner is `491` lines and remains below the production review threshold.
+- The locale text overlay was renamed to `FirstLaunchNarrativeLocaleTextCompositionSystemHelper`; its `.meta` GUID was preserved.
+- Profile language persistence remains in the established profile composition boundary.
+- Exact source limits have no unused headroom. Integrated FirstLaunch architecture and behavior passes `56 / 56`; Unity reports zero compiler errors.
+- The global source-growth check now reports only four separately owned operation-map files and no FirstLaunch failure.
+
 ## Handoff Rules
 
 Every agent continuing this tracker must:

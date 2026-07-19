@@ -199,6 +199,44 @@ public sealed class StaticMapPresentationOwnershipTests
     }
 
     [Test]
+    public void ContentIdenticalMaterialInstance_UsesPresentationOwnership()
+    {
+        Transform root = CreateRoot();
+        MeshRenderer renderer = CreateRenderer(root, "Owned");
+        StaticMapPresentationManifest manifest = CreateManifest(root, renderer);
+        Material clonedMaterial = new(renderer.sharedMaterial);
+        _objects.Add(clonedMaterial);
+        renderer.sharedMaterial = clonedMaterial;
+        StaticMapPresentationOwnership ownership = new();
+
+        ownership.Initialize(RuntimePlatform.Android, manifest, root, null, null, null);
+
+        Assert.That(ownership.UsingPresentation, Is.True);
+        Assert.That(ownership.UsingLegacyFallback, Is.False);
+        Assert.That(renderer.enabled, Is.False);
+    }
+
+    [Test]
+    public void ChangedMaterialInstance_UsesLegacyFallback()
+    {
+        Transform root = CreateRoot();
+        MeshRenderer renderer = CreateRenderer(root, "Owned");
+        StaticMapPresentationManifest manifest = CreateManifest(root, renderer);
+        Material changedMaterial = new(renderer.sharedMaterial);
+        changedMaterial.SetColor("_BaseColor", Color.red);
+        _objects.Add(changedMaterial);
+        renderer.sharedMaterial = changedMaterial;
+        StaticMapPresentationOwnership ownership = new();
+
+        ownership.Initialize(RuntimePlatform.Android, manifest, root, null, null, null);
+
+        Assert.That(ownership.UsingPresentation, Is.False);
+        Assert.That(ownership.UsingLegacyFallback, Is.True);
+        Assert.That(ownership.Failure, Does.Contain("material-0"));
+        Assert.That(renderer.enabled, Is.True);
+    }
+
+    [Test]
     public void PresentationSuppression_PreservesMeshFilterAndOverlayGeometry()
     {
         Transform root = CreateRoot();

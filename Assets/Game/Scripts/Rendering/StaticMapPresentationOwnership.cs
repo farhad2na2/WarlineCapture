@@ -259,12 +259,20 @@ namespace Game.Rendering
                 return Mismatch("material-count", out mismatch);
             for (int i = 0; i < _materials.Count; i++)
             {
-                if (_materials[i] != source.Materials[i].Material)
+                if (!MaterialsMatch(_materials[i], source.Materials[i].Material))
                     return Mismatch($"material-{i}", out mismatch);
             }
             return BoundsMatch(renderer.bounds, source.WorldBounds)
                 ? Pass(out mismatch)
                 : Mismatch("bounds", out mismatch);
+        }
+
+        private static bool MaterialsMatch(Material candidate, Material expected)
+        {
+            if (candidate == expected)
+                return true;
+            return candidate != null && expected != null &&
+                   candidate.ComputeCRC() == expected.ComputeCRC();
         }
 
         private string BuildHierarchyPath(Transform transform, Transform mapRoot)

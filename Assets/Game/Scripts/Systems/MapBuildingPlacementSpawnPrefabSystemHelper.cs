@@ -224,7 +224,7 @@ namespace Game.Runtime
             return true;
         }
 
-        private static GameObject CreateAuthoredMapVisualInstance(
+        internal static GameObject CreateAuthoredMapVisualInstance(
             Context context,
             MapBuildingPlacementConfigEntry placement,
             Transform parent)
@@ -232,11 +232,10 @@ namespace Game.Runtime
             if (placement == null || placement.BuildingPrefab == null)
                 return null;
 
-            if (!TryResolveAuthoringTransform(context.AuthoringBuildingsRoot, placement, out Transform source))
-            {
-                context.LogWarning?.Invoke($"[MapBuildingPlacement] skipped {placement.SourcePath}: could not resolve authored map visual.");
-                return null;
-            }
+            bool hasAuthoringVisual = TryResolveAuthoringTransform(
+                context.AuthoringBuildingsRoot,
+                placement,
+                out Transform source);
 
             GameObject wrapper = new GameObject($"{placement.BuildingPrefab.name}_MapVisualRoot");
             wrapper.transform.SetParent(parent, false);
@@ -244,14 +243,16 @@ namespace Game.Runtime
             wrapper.transform.localScale = placement.WorldScale;
             wrapper.AddComponent<MapAuthoredBuildingVisualComponent>();
 
-            GameObject visual = UnityEngine.Object.Instantiate(source.gameObject, wrapper.transform);
-            visual.name = source.name;
+            GameObject visual = hasAuthoringVisual
+                ? UnityEngine.Object.Instantiate(source.gameObject, wrapper.transform)
+                : UnityEngine.Object.Instantiate(placement.BuildingPrefab, wrapper.transform);
+            visual.name = hasAuthoringVisual ? source.name : placement.BuildingPrefab.name;
             visual.transform.localPosition = Vector3.zero;
             visual.transform.localRotation = Quaternion.identity;
             visual.transform.localScale = Vector3.one;
             visual.SetActive(true);
             TryAttachMapRunwayAnchor(context.AuthoringBuildingsRoot, placement, wrapper.transform, context.LogWarning);
-            if (context.Config.HideAuthoringVisualsAfterSpawn)
+            if (hasAuthoringVisual && context.Config.HideAuthoringVisualsAfterSpawn)
                 source.gameObject.SetActive(false);
 
             return wrapper;

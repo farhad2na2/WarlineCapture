@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Game.Components;
 using Game.Composition;
 using Game.Configs;
@@ -15,7 +16,7 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
     private const string DefinitionPath =
         "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01.asset";
     private const string ScenePath =
-        "Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01.unity";
+        "Assets/Game/GeneratedOperationMaps/RuntimeBinding/opmap.skirmish.desert_base_01/opmap_skirmish_desert_base_01_runtime.unity";
 
     public static void RunFocusedValidation()
     {
@@ -457,13 +458,16 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
     private static StaticMapPresentationManifest CreateMatchingManifest(Scene scene)
     {
         OperationMapDefinition definition = LoadDefinition();
+        OperationMapSceneView view = scene.GetRootGameObjects()
+            .SelectMany(root => root.GetComponentsInChildren<OperationMapSceneView>(true))
+            .Single();
         StaticMapPresentationManifest source = LoadConfiguredManifest();
         StaticMapPresentationManifest manifest =
             UnityEngine.Object.Instantiate(source);
         manifest.EditorSetData(
             definition.OperationMapId,
-            definition.SourceSceneReference.AssetGUID,
-            scene.path,
+            view.PresentationSourceSceneGuid,
+            view.PresentationSourceScenePath,
             source.CanonicalSceneDependencyHash,
             source.ChunkSize,
             source.ContentHash,

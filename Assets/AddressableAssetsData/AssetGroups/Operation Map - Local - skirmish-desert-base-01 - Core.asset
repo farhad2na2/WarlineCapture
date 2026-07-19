@@ -60,7 +60,7 @@ MonoBehaviour:
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-role-metadata
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: ca1f2d7f265d8495f8c815441d68fda0
+  - m_GUID: d755eb43b9cb04aa292e471ace113ecf
     m_Address: operation-map/opmap.skirmish.desert_base_01/source-scene
     m_ReadOnly: 0
     m_SerializedLabels:

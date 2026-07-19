@@ -61,6 +61,14 @@ public sealed class OperationMapAddressablesLayoutBuilderTests
             catalog,
             "operation-map/opmap.skirmish.desert_base_01/definition");
         AssertEntry(settings, OperationMapAddressablesLayoutBuilder.SourceScenePath, core, OperationMapAddressablesLayoutBuilder.AddressPrefix + "source-scene");
+        Assert.That(
+            settings.FindAssetEntry(AssetDatabase.AssetPathToGUID(
+                OperationMapAddressablesLayoutBuilder.AuthoringScenePath)),
+            Is.Null,
+            "The hand-authored scene must remain outside Addressables after runtime-binding cutover.");
+        Assert.That(
+            AssetDatabase.GetDependencies(OperationMapAddressablesLayoutBuilder.SourceScenePath, true),
+            Does.Not.Contain(OperationMapAddressablesLayoutBuilder.AuthoringScenePath));
         AssertEntry(settings, OperationMapAddressablesLayoutBuilder.MapSurfacePath, core, OperationMapAddressablesLayoutBuilder.AddressPrefix + "map-surface");
         AssertEntry(settings, OperationMapAddressablesLayoutBuilder.ManifestPath, core, OperationMapAddressablesLayoutBuilder.AddressPrefix + "static-manifest");
         AssertEntry(settings, OperationMapAddressablesLayoutBuilder.BuildingPlacementsPath, core, OperationMapAddressablesLayoutBuilder.AddressPrefix + "building-placements");

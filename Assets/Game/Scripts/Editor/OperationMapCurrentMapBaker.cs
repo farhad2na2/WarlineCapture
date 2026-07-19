@@ -75,8 +75,13 @@ namespace Game.Editor
                     "presentation-chunks",
                     StaticMapPresentationBaker.BakeCurrentStagedOperationMapPresentation);
                 CloseCurrentMapSceneIfLoaded();
+                RunStage(
+                    report,
+                    "runtime-definition",
+                    OperationMapAddressablesLayoutBuilder.PrepareRuntimeDefinition);
                 RunStage(report, "minimap-raster", OperationMapMinimapRasterBaker.Run);
                 RunStage(report, "spatial-bindings", OperationMapCurrentStagedSpatialBindingValidator.Run);
+                RunStage(report, "runtime-binding-scene", OperationMapRuntimeBindingSceneBuilder.Run);
                 RunStage(report, "addressables-layout", OperationMapAddressablesLayoutBuilder.Run);
                 RunStage(report, "local-addressables", OperationMapAddressablesBuildReportBuilder.Run);
 

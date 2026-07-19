@@ -25,8 +25,9 @@ namespace Game.Editor
             "Assets/Game/Configs/OperationMaps/OperationMapCatalog_Compatibility.asset";
         public const string DefinitionPath =
             "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01.asset";
-        public const string SourceScenePath =
+        public const string AuthoringScenePath =
             "Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01.unity";
+        public const string SourceScenePath = OperationMapRuntimeBindingSceneBuilder.OutputPath;
         public const string SourceSubScenePath =
             "Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01_subscene.unity";
         public const string MapSurfacePath =
@@ -55,6 +56,7 @@ namespace Game.Editor
         [MenuItem("Game/Operation Maps/Configure Local Addressables Groups")]
         public static void Run()
         {
+            PrepareRuntimeDefinition();
             AddressableAssetSettings settings =
                 AddressableAssetSettingsDefaultObject.GetSettings(false);
             if (settings == null)
@@ -88,6 +90,9 @@ namespace Game.Editor
                 sourceSceneEntry,
                 SourceSceneRoleLabel,
                 null);
+            string authoringSceneGuid = AssetDatabase.AssetPathToGUID(AuthoringScenePath);
+            if (!string.IsNullOrEmpty(authoringSceneGuid))
+                settings.RemoveAssetEntry(authoringSceneGuid, false);
             AddressableAssetEntry mapSurfaceEntry = MoveEntry(
                 settings,
                 core,
@@ -188,6 +193,40 @@ namespace Game.Editor
             Debug.Log("[OperationMapAddressablesLayoutBuilder] Configured one-map local group topology.");
         }
 
+        internal static void PrepareRuntimeDefinition()
+        {
+            OperationMapDefinition staged = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
+                OperationMapCurrentStagedDefinitionBuilder.DefinitionPath);
+            OperationMapDefinition runtime = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(DefinitionPath);
+            if (staged == null || runtime == null)
+                throw new InvalidOperationException("Staged and catalog operation-map definitions are required.");
+
+            string runtimeSceneGuid = AssetDatabase.AssetPathToGUID(SourceScenePath);
+            if (string.IsNullOrEmpty(runtimeSceneGuid))
+                throw new InvalidOperationException($"Runtime binding scene is missing: {SourceScenePath}");
+
+            OperationMapNavigationMetadataConfig navigation = staged.NavigationMetadata;
+            var serialized = new SerializedObject(runtime);
+            SerializedProperty serializedNavigation = serialized.FindProperty("navigationMetadata");
+            serializedNavigation.FindPropertyRelative("authoredSubSceneGuid").stringValue =
+                navigation.AuthoredSubSceneGuid;
+            serializedNavigation.FindPropertyRelative("gridAuthoringLocalId").longValue =
+                navigation.GridAuthoringLocalId;
+            serializedNavigation.FindPropertyRelative("staticGridBlockerCount").intValue =
+                navigation.StaticGridBlockerCount;
+            serializedNavigation.FindPropertyRelative("usesSurfaceMovementMetadata").boolValue =
+                navigation.UsesSurfaceMovementMetadata;
+            serializedNavigation.FindPropertyRelative("supportsDynamicBlockers").boolValue =
+                navigation.SupportsDynamicBlockers;
+            serializedNavigation.FindPropertyRelative("supportsDynamicOccupancy").boolValue =
+                navigation.SupportsDynamicOccupancy;
+            serialized.FindProperty("generatedMetadataHash").stringValue = staged.GeneratedMetadataHash;
+            SetAssetReferenceGuid(serialized, "sourceSceneReference", runtimeSceneGuid);
+            if (serialized.ApplyModifiedPropertiesWithoutUndo())
+                EditorUtility.SetDirty(runtime);
+            AssetDatabase.SaveAssets();
+        }
+
         internal static string[] CollectSharedDependencyPaths(
             AddressableAssetSettings settings,
             StaticMapPresentationManifest manifest)
@@ -198,7 +237,18 @@ namespace Game.Editor
                 throw new ArgumentNullException(nameof(manifest));
 
             var usage = new Dictionary<string, HashSet<string>>(StringComparer.Ordinal);
-            AddDependencyUsage(usage, SourceScenePath, "operation-map-core-source");
+            const string corePartition = "operation-map-core";
+            string[] coreOwnerPaths =
+            {
+                SourceScenePath,
+                MapSurfacePath,
+                ManifestPath,
+                BuildingPlacementsPath,
+                VehiclePlacementsPath,
+                MinimapRasterPath
+            };
+            for (int index = 0; index < coreOwnerPaths.Length; index++)
+                AddDependencyUsage(usage, coreOwnerPaths[index], corePartition);
             for (int index = 0; index < manifest.Chunks.Count; index++)
             {
                 StaticMapPresentationChunkEntry chunk = manifest.Chunks[index];

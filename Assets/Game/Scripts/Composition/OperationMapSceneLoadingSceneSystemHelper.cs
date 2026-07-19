@@ -157,6 +157,9 @@ namespace Game.Composition
                 }
 
                 UnloadStarted = true;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                UnityEngine.Debug.Log("[OperationMapSourceScene] stage=SceneUnloadStarted");
+#endif
                 error = null;
                 return true;
             }
@@ -340,7 +343,7 @@ namespace Game.Composition
             if (!TryValidateManifest(
                     manifestOperation.Manifest,
                     sceneOperation.Scene,
-                    expectedOperationMapId,
+                    view,
                     expectedSourceSceneGuid,
                     out error))
             {
@@ -459,6 +462,9 @@ namespace Game.Composition
             unloading = false;
             UnloadComplete = true;
             Progress01 = 1f;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            UnityEngine.Debug.Log("[OperationMapSourceScene] stage=AddressablesUnloadComplete");
+#endif
         }
 
         private bool RejectStart(OperationMapLoadResultCode failureCode, string error)
@@ -493,8 +499,8 @@ namespace Game.Composition
         private static bool TryValidateManifest(
             StaticMapPresentationManifest manifest,
             Scene scene,
-            string operationMapId,
-            string sourceSceneGuid,
+            OperationMapSceneView view,
+            string loadedSceneGuid,
             out string error)
         {
             if (manifest == null ||
@@ -508,11 +514,25 @@ namespace Game.Composition
                 return false;
             }
 
-            if (!string.Equals(manifest.OperationMapId, operationMapId, StringComparison.Ordinal) ||
-                !string.Equals(manifest.CanonicalSceneGuid, sourceSceneGuid, StringComparison.Ordinal) ||
-                !string.Equals(manifest.CanonicalScenePath, scene.path, StringComparison.Ordinal))
+            if (!string.Equals(view.Definition.SourceSceneReference.AssetGUID, loadedSceneGuid, StringComparison.Ordinal))
             {
-                error = "Operation-map presentation manifest does not match the loaded source scene.";
+                error = "Operation-map definition does not identify the loaded source scene.";
+                return false;
+            }
+
+            string presentationSourceGuid = view.CanonicalPresentationMode ==
+                OperationMapCanonicalPresentationMode.PresentationOnly
+                    ? view.PresentationSourceSceneGuid
+                    : loadedSceneGuid;
+            string presentationSourcePath = view.CanonicalPresentationMode ==
+                OperationMapCanonicalPresentationMode.PresentationOnly
+                    ? view.PresentationSourceScenePath
+                    : scene.path;
+            if (!string.Equals(manifest.OperationMapId, view.OperationMapId, StringComparison.Ordinal) ||
+                !string.Equals(manifest.CanonicalSceneGuid, presentationSourceGuid, StringComparison.Ordinal) ||
+                !string.Equals(manifest.CanonicalScenePath, presentationSourcePath, StringComparison.Ordinal))
+            {
+                error = "Operation-map presentation manifest does not match the declared authoring source.";
                 return false;
             }
 

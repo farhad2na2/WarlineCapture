@@ -14,7 +14,7 @@ public sealed class Aph805MenuMatchMenuLifecyclePlayModeTests
 {
     internal const string MenuSceneName = "Menu";
     internal const string MatchSceneName = "Match";
-    internal const string OperationMapSceneName = "opmap_skirmish_desert_base_01";
+    internal const string OperationMapSceneName = "opmap_skirmish_desert_base_01_runtime";
     internal const float LifecycleTimeoutSeconds = 180f;
     internal const float OperationMapLoadTimeoutSeconds = 30f;
 

@@ -22,6 +22,8 @@ public sealed class OperationMapRuntimeBindingSceneValidatorTests
             passed++;
             tests.PresentationOnlySceneRejectsAddedRenderer();
             passed++;
+            tests.PresentationOnlySceneRejectsMissingAuthoringSourceIdentity();
+            passed++;
             Debug.Log($"[OperationMapRuntimeBindingSceneValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
         }
@@ -92,6 +94,35 @@ public sealed class OperationMapRuntimeBindingSceneValidatorTests
                     out string error),
                 Is.False);
             Assert.That(error, Does.Contain("renderer"));
+        }
+        finally
+        {
+            EditorSceneManager.CloseScene(scene, true);
+        }
+    }
+
+    [Test]
+    public void PresentationOnlySceneRejectsMissingAuthoringSourceIdentity()
+    {
+        Scene scene = EditorSceneManager.OpenScene(
+            OperationMapRuntimeBindingSceneBuilder.OutputPath,
+            OpenSceneMode.Single);
+        try
+        {
+            OperationMapSceneView view = scene.GetRootGameObjects()
+                .SelectMany(root => root.GetComponentsInChildren<OperationMapSceneView>(true))
+                .Single();
+            var serializedView = new SerializedObject(view);
+            serializedView.FindProperty("presentationSourceSceneGuid").stringValue = string.Empty;
+            serializedView.ApplyModifiedPropertiesWithoutUndo();
+
+            Assert.That(
+                OperationMapRuntimeBindingSceneValidator.TryValidateLoadedScene(
+                    scene,
+                    StaticMapPresentationBaker.CurrentOperationMapId,
+                    out string error),
+                Is.False);
+            Assert.That(error, Does.Contain("presentation-source"));
         }
         finally
         {

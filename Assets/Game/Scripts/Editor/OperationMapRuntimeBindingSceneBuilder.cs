@@ -34,6 +34,7 @@ namespace Game.Editor
             Scene candidateScene = default;
             try
             {
+                OperationMapAddressablesLayoutBuilder.PrepareRuntimeDefinition();
                 authoringScene = EditorSceneManager.OpenScene(
                     StaticMapPresentationBaker.CurrentStagedOperationMapScenePath,
                     OpenSceneMode.Single);
@@ -156,6 +157,8 @@ namespace Game.Editor
             viewData.FindProperty("mapSubScene").objectReferenceValue = subScene;
             viewData.FindProperty("canonicalPresentationMode").enumValueIndex =
                 (int)OperationMapCanonicalPresentationMode.PresentationOnly;
+            viewData.FindProperty("presentationSourceSceneGuid").stringValue = input.PresentationSourceSceneGuid;
+            viewData.FindProperty("presentationSourceScenePath").stringValue = input.PresentationSourceScenePath;
             viewData.ApplyModifiedPropertiesWithoutUndo();
         }
 
@@ -205,6 +208,12 @@ namespace Game.Editor
 
             if (SceneManager.sceneCount == 1)
             {
+                if (string.IsNullOrEmpty(scene.path))
+                {
+                    EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+                    return;
+                }
+
                 Scene transitionScene = EditorSceneManager.NewScene(
                     NewSceneSetup.EmptyScene,
                     NewSceneMode.Additive);
@@ -376,11 +385,13 @@ namespace Game.Editor
             internal readonly float MaxVehicleSlopeDegrees;
             internal readonly int SourceRendererCount;
             internal readonly int SourceColliderCount;
+            internal readonly string PresentationSourceSceneGuid;
+            internal readonly string PresentationSourceScenePath;
 
             private BindingInput(OperationMapSceneView source)
             {
                 OperationMapId = source.OperationMapId;
-                DefinitionPath = AssetDatabase.GetAssetPath(source.Definition);
+                DefinitionPath = OperationMapAddressablesLayoutBuilder.DefinitionPath;
                 GridConfigPath = AssetDatabase.GetAssetPath(source.GridAuthoringConfig);
                 BuildingPlacementsPath = AssetDatabase.GetAssetPath(source.BuildingPlacements);
                 VehiclePlacementsPath = AssetDatabase.GetAssetPath(source.VehiclePlacements);
@@ -393,6 +404,8 @@ namespace Game.Editor
                 MaxVehicleSlopeDegrees = source.MapSurfaceAuthoring.MaxVehicleSlopeDegrees;
                 SourceRendererCount = source.MapRoot.GetComponentsInChildren<Renderer>(true).Length;
                 SourceColliderCount = source.MapRoot.GetComponentsInChildren<Collider>(true).Length;
+                PresentationSourceScenePath = source.gameObject.scene.path;
+                PresentationSourceSceneGuid = AssetDatabase.AssetPathToGUID(PresentationSourceScenePath);
             }
 
             internal static BindingInput Capture(OperationMapSceneView source) => new(source);

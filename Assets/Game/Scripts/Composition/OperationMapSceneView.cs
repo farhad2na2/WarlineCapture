@@ -24,6 +24,8 @@ namespace Game.Composition
         [SerializeField] private MapVehiclePlacementConfig vehiclePlacements;
         [SerializeField] private SubScene mapSubScene;
         [SerializeField] private OperationMapCanonicalPresentationMode canonicalPresentationMode;
+        [SerializeField] private string presentationSourceSceneGuid;
+        [SerializeField] private string presentationSourceScenePath;
 
         public string OperationMapId => operationMapId;
         public OperationMapDefinition Definition => definition;
@@ -38,6 +40,8 @@ namespace Game.Composition
         public MapVehiclePlacementConfig VehiclePlacements => vehiclePlacements;
         public SubScene MapSubScene => mapSubScene;
         public OperationMapCanonicalPresentationMode CanonicalPresentationMode => canonicalPresentationMode;
+        public string PresentationSourceSceneGuid => presentationSourceSceneGuid;
+        public string PresentationSourceScenePath => presentationSourceScenePath;
 
         public bool TryValidate(out string error)
         {
@@ -86,9 +90,11 @@ namespace Game.Composition
             }
 
             if (canonicalPresentationMode == OperationMapCanonicalPresentationMode.PresentationOnly &&
-                mapRoot.GetComponentInChildren<MeshRenderer>(true) != null)
+                (mapRoot.GetComponentInChildren<MeshRenderer>(true) != null ||
+                 string.IsNullOrWhiteSpace(presentationSourceSceneGuid) ||
+                 string.IsNullOrWhiteSpace(presentationSourceScenePath)))
             {
-                error = "Presentation-only operation-map roots cannot contain canonical renderers.";
+                error = "Presentation-only operation maps require renderer-free roots and explicit presentation-source identity.";
                 return false;
             }
 

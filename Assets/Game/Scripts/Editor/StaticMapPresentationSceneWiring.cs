@@ -30,7 +30,7 @@ namespace Game.Editor
                 StaticMapPresentationManifest manifest = LoadValidatedManifest(
                     view.OperationMapCatalog,
                     view.OperationMapId,
-                    scene.path);
+                    StaticMapPresentationBaker.CurrentStagedOperationMapScenePath);
 
                 SerializedObject serializedView = new(view);
                 SerializedProperty manifestProperty = serializedView.FindProperty(ManifestFieldName);

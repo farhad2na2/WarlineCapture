@@ -30,8 +30,8 @@ public sealed class StaticMapPresentationSceneWiringTests
                     view.OperationMapId,
                     out Game.Configs.OperationMapDefinition definition),
                 Is.True);
-            string sourceScenePath = AssetDatabase.GUIDToAssetPath(
-                definition.SourceSceneReference.AssetGUID);
+            string presentationSourceScenePath =
+                StaticMapPresentationBaker.CurrentStagedOperationMapScenePath;
 
             Assert.NotNull(manifest, "Generated static-map presentation manifest is missing.");
             Assert.IsNull(
@@ -42,17 +42,17 @@ public sealed class StaticMapPresentationSceneWiringTests
                 StaticMapPresentationSceneWiring.LoadValidatedManifest(
                     view.OperationMapCatalog,
                     view.OperationMapId,
-                    sourceScenePath));
+                    presentationSourceScenePath));
             Assert.Throws<InvalidOperationException>(() =>
                 StaticMapPresentationSceneWiring.LoadValidatedManifest(
                     view.OperationMapCatalog,
                     "opmap.skirmish.missing",
-                    sourceScenePath));
+                    presentationSourceScenePath));
             Assert.AreEqual(
                 StaticMapPresentationBaker.ManifestPath,
                 AssetDatabase.GetAssetPath(manifest));
             Assert.AreEqual(StaticMapPresentationManifest.CurrentSchemaVersion, manifest.SchemaVersion);
-            Assert.AreEqual(sourceScenePath, manifest.CanonicalScenePath);
+            Assert.AreEqual(presentationSourceScenePath, manifest.CanonicalScenePath);
             Assert.That(manifest.Chunks.Count, Is.GreaterThan(0));
             Assert.NotNull(view.WorldCamera, "MatchSceneView must serialize the camera used for chunk residency.");
         }

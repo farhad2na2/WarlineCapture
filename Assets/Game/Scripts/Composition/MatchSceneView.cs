@@ -32,6 +32,7 @@ namespace Game.Composition
         private OperationMapReadinessFlags publishedOperationMapReadyFlags;
         private OperationMapReadinessFlags publishedOperationMapFailedFlags;
         private Entity loadedOperationMapSubSceneEntity;
+        private bool operationMapSceneUnloadStartPending;
 
         [Header("Scene Refs")]
         [SerializeField] private Camera worldCamera;
@@ -159,9 +160,11 @@ namespace Game.Composition
                 ? operationMapSceneLoadingSystem.FailureCode
                 : operationMapLoadFailureCode;
         internal bool OperationMapContentUnloading =>
-            operationMapSceneLoadingSystem != null && operationMapSceneLoadingSystem.IsUnloading;
+            operationMapSceneUnloadStartPending ||
+            (operationMapSceneLoadingSystem != null && operationMapSceneLoadingSystem.IsUnloading);
         internal bool OperationMapContentUnloadComplete =>
-            operationMapSceneLoadingSystem == null || operationMapSceneLoadingSystem.UnloadComplete;
+            !operationMapSceneUnloadStartPending &&
+            (operationMapSceneLoadingSystem == null || operationMapSceneLoadingSystem.UnloadComplete);
         internal bool OperationMapReadinessPublicationAvailable =>
             activeOperationMapSceneView != null && operationMapRuntimeBootstrapSystem != null;
 
@@ -228,6 +231,9 @@ namespace Game.Composition
 
         private void LateUpdate()
         {
+            if (operationMapSceneUnloadStartPending)
+                BeginOperationMapSourceSceneUnload();
+
             if (!Application.isPlaying || !matchRuntimeBound)
                 return;
 
@@ -324,15 +330,30 @@ namespace Game.Composition
         internal bool TryBeginOperationMapContentUnload(out string error)
         {
             if (operationMapSceneLoadingSystem == null ||
-                operationMapSceneLoadingSystem.UnloadComplete)
+                operationMapSceneLoadingSystem.UnloadComplete ||
+                operationMapSceneUnloadStartPending)
             {
                 error = null;
                 return true;
             }
 
             ShutdownMatchRuntimeBound(disposeSourceSceneLoad: false);
+            Scene matchScene = gameObject.scene;
+            if (matchScene.IsValid() && matchScene.isLoaded)
+                SceneManager.SetActiveScene(matchScene);
             activeOperationMapSceneView = null;
-            return operationMapSceneLoadingSystem.TryBeginUnload(out error);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            Debug.Log("[OperationMapSourceScene] stage=SceneUnloadRequested");
+#endif
+            operationMapSceneUnloadStartPending = true;
+            error = null;
+            return true;
+        }
+
+        internal void UpdateOperationMapContentUnload()
+        {
+            if (OperationMapContentUnloading)
+                UpdateOperationMapSourceSceneLoad();
         }
 
         internal bool TryPublishCompatibilityOperationMapMetadata(World world, out string error)
@@ -536,6 +557,9 @@ namespace Game.Composition
                 return;
             }
 
+            if (operationMapSceneUnloadStartPending)
+                return;
+
             if (operationMapSceneLoadingSystem.IsUnloading)
             {
                 operationMapSceneLoadingSystem.Update();
@@ -562,11 +586,22 @@ namespace Game.Composition
         private void DisposeOperationMapSourceSceneLoad()
         {
             activeOperationMapSceneView = null;
+            operationMapSceneUnloadStartPending = false;
             operationMapSceneLoadingSystem?.Dispose();
             operationMapSceneLoadingSystem = null;
             operationMapLoadFailureReported = false;
             operationMapLoadFailureCode = OperationMapLoadResultCode.None;
             operationMapLoadFailure = null;
+        }
+
+        private void BeginOperationMapSourceSceneUnload()
+        {
+            operationMapSceneUnloadStartPending = false;
+            if (operationMapSceneLoadingSystem != null &&
+                !operationMapSceneLoadingSystem.TryBeginUnload(out string unloadError))
+            {
+                ReportOperationMapLoadFailure(OperationMapLoadResultCode.SourceUnloadFailed, unloadError);
+            }
         }
 
         private void ReportOperationMapLoadFailure(

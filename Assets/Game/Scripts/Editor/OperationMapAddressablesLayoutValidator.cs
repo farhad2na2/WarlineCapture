@@ -81,6 +81,17 @@ namespace Game.Editor
             if (requireMinimapRaster && !ContainsAddress(settings, MinimapRasterAddress))
                 return Fail($"Missing required address: {MinimapRasterAddress}.", out error);
 
+            string authoringSceneGuid = AssetDatabase.AssetPathToGUID(
+                OperationMapAddressablesLayoutBuilder.AuthoringScenePath);
+            if (settings.FindAssetEntry(authoringSceneGuid) != null)
+                return Fail("The hand-authored operation-map scene must not be addressable after runtime-binding cutover.", out error);
+            if (AssetDatabase.GetDependencies(
+                    OperationMapAddressablesLayoutBuilder.SourceScenePath,
+                    true).Contains(OperationMapAddressablesLayoutBuilder.AuthoringScenePath))
+            {
+                return Fail("The runtime binding scene must not depend on the hand-authored operation-map scene.", out error);
+            }
+
             OperationMapDefinition definition = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
                 OperationMapAddressablesLayoutBuilder.DefinitionPath);
             MapSurfaceDataAsset surface = AssetDatabase.LoadAssetAtPath<MapSurfaceDataAsset>(
@@ -114,6 +125,15 @@ namespace Game.Editor
 
             if (!definition.TryValidateLocalContentReferences(out error))
                 return false;
+            string runtimeSceneGuid = AssetDatabase.AssetPathToGUID(
+                OperationMapAddressablesLayoutBuilder.SourceScenePath);
+            if (!string.Equals(
+                    definition.SourceSceneReference.AssetGUID,
+                    runtimeSceneGuid,
+                    StringComparison.Ordinal))
+            {
+                return Fail("Operation-map definition does not reference the runtime binding scene.", out error);
+            }
 
             string subSceneGuid = AssetDatabase.AssetPathToGUID(
                 "Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01_subscene.unity");

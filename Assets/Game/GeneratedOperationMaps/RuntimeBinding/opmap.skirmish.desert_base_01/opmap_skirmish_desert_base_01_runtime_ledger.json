@@ -3,10 +3,10 @@
     "operationMapId": "opmap.skirmish.desert_base_01",
     "sourceSceneGuid": "ca1f2d7f265d8495f8c815441d68fda0",
     "sourceSceneHash": "95e7d6900a900e03a6114fb6cd72e50e4d33829c3fde92bb3513fc81e2c48e0b",
-    "inputHash": "8629d94f002eafb89c57f2923809870ace3b358f5fad2f1c235bba44c67ab536",
+    "inputHash": "cc3fc35e6f846edbde38bb86fbad4b957aac87b4cf786fd9842c05d27bff2a56",
     "strippedRendererCount": 47192,
     "strippedColliderCount": 0,
     "copiedPhysicsIdentities": [],
     "outputGameObjectCount": 7,
-    "outputHash": "d76262b42ced151629d2bba5b822eb07784c4e93374f821e12cb57e28e5dd9a9"
+    "outputHash": "e09c802527332b8824f475d484ebb05e458839a28931cd303d8eb3874734ed45"
 }

@@ -1,6 +1,7 @@
 using System;
 using Game.Composition;
 using Game.Rendering;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -51,6 +52,22 @@ namespace Game.Editor
             }
             if (!view.TryValidate(out error))
                 return false;
+            if (!string.Equals(
+                    view.PresentationSourceSceneGuid,
+                    AssetDatabase.AssetPathToGUID(OperationMapAddressablesLayoutBuilder.AuthoringScenePath),
+                    StringComparison.Ordinal) ||
+                !string.Equals(
+                    view.PresentationSourceScenePath,
+                    OperationMapAddressablesLayoutBuilder.AuthoringScenePath,
+                    StringComparison.Ordinal) ||
+                !string.Equals(
+                    AssetDatabase.GetAssetPath(view.Definition),
+                    OperationMapAddressablesLayoutBuilder.DefinitionPath,
+                    StringComparison.Ordinal))
+            {
+                error = "Runtime binding scene authoring-source or definition identity is invalid.";
+                return false;
+            }
             if (view.MapRoot.GetComponentsInChildren<Renderer>(true).Length != 0 ||
                 view.MapRoot.GetComponentsInChildren<Collider>(true).Length != 0 ||
                 view.MapRoot.GetComponentsInChildren<Rigidbody>(true).Length != 0 ||

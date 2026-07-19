@@ -382,6 +382,19 @@ namespace Game.Composition
                     if (streamedMatchView != null &&
                         !streamedMatchView.OperationMapContentUnloadComplete)
                     {
+                        if (!streamedMatchView.OperationMapContentUnloading &&
+                            !streamedMatchView.TryBeginOperationMapContentUnload(out string unloadError))
+                        {
+                            SetLoading(
+                                entityManager,
+                                boundary,
+                                0f,
+                                false,
+                                $"Map unload failed: {unloadError}");
+                            return;
+                        }
+
+                        streamedMatchView.UpdateOperationMapContentUnload();
                         if (!string.IsNullOrEmpty(streamedMatchView.OperationMapContentFailure))
                         {
                             SetLoading(
@@ -393,15 +406,10 @@ namespace Game.Composition
                             return;
                         }
 
-                        if (!streamedMatchView.OperationMapContentUnloading &&
-                            !streamedMatchView.TryBeginOperationMapContentUnload(out string unloadError))
+                        if (streamedMatchView.OperationMapContentUnloadComplete)
                         {
-                            SetLoading(
-                                entityManager,
-                                boundary,
-                                0f,
-                                false,
-                                $"Map unload failed: {unloadError}");
+                            sceneLifecycleSceneSystemHelper.QueueUnloadMatch(entityManager);
+                            SetLoading(entityManager, boundary, 1f, false, "Unloading match");
                             return;
                         }
 
@@ -431,6 +439,12 @@ namespace Game.Composition
             {
                 if (streamedMatchView != null)
                 {
+                    if (streamedMatchView.OperationMapContentUnloading)
+                    {
+                        staticMapPresentationStreamer.Update();
+                        return;
+                    }
+
                     staticMapPresentationStreamer.Unbind();
                     streamedMatchView = null;
                 }

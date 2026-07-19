@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &42276174
+--- !u!1 &366859331
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,7 +127,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 42276175}
+  - component: {fileID: 366859332}
   m_Layer: 0
   m_Name: Buildings
   m_TagString: Untagged
@@ -135,22 +135,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &42276175
+--- !u!4 &366859332
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 42276174}
+  m_GameObject: {fileID: 366859331}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 867762001}
+  m_Father: {fileID: 885841855}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &867762000
+--- !u!1 &885841854
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -158,7 +158,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 867762001}
+  - component: {fileID: 885841855}
   m_Layer: 0
   m_Name: RuntimeMapBindings
   m_TagString: Untagged
@@ -166,27 +166,27 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &867762001
+--- !u!4 &885841855
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 867762000}
+  m_GameObject: {fileID: 885841854}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 995593883}
-  - {fileID: 42276175}
-  - {fileID: 1991452344}
-  - {fileID: 1624468212}
-  - {fileID: 1600966901}
+  - {fileID: 1248308958}
+  - {fileID: 366859332}
+  - {fileID: 1203687974}
+  - {fileID: 2046876832}
+  - {fileID: 1024216361}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &995593882
+--- !u!1 &914319146
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -194,60 +194,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 995593883}
-  - component: {fileID: 995593884}
-  m_Layer: 0
-  m_Name: Decorations
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &995593883
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 995593882}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 867762001}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &995593884
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 995593882}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff37f00c6585b49f2b142f7c43215901, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Game.Runtime::Game.Runtime.CombinedMeshBaker
-  combineOnStart: 0
-  includeInactive: 1
-  disableSourceRenderers: 1
-  destroySourceObjectsAtRuntime: 0
-  combinedRootName: CombinedMesh
-  bakedAssetFolder: Assets/Game/GeneratedCombinedMeshes
-  _combinedRoot: {fileID: 0}
-  _bakedMeshes: []
---- !u!1 &1076428785
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1076428787}
-  - component: {fileID: 1076428786}
+  - component: {fileID: 914319148}
+  - component: {fileID: 914319147}
   m_Layer: 0
   m_Name: OperationMapSceneView
   m_TagString: Untagged
@@ -255,38 +203,40 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1076428786
+--- !u!114 &914319147
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1076428785}
+  m_GameObject: {fileID: 914319146}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e01c90502278473c988d8a5c33999a58, type: 3}
   m_Name:
   m_EditorClassIdentifier: Game.Composition::Game.Composition.OperationMapSceneView
   operationMapId: opmap.skirmish.desert_base_01
-  definition: {fileID: 11400000, guid: eb3c536bca25149cc966822bda0e9627, type: 2}
-  mapRoot: {fileID: 867762001}
-  decorationCombinedMeshBaker: {fileID: 995593884}
-  decorationRoot: {fileID: 995593883}
-  buildingAuthoringRoot: {fileID: 42276175}
-  vehicleAuthoringRoot: {fileID: 1991452344}
-  mapSurfaceAuthoring: {fileID: 1624468213}
+  definition: {fileID: 11400000, guid: 55e36a8d7e7a84e2b9893cee052b0e61, type: 2}
+  mapRoot: {fileID: 885841855}
+  decorationCombinedMeshBaker: {fileID: 1248308959}
+  decorationRoot: {fileID: 1248308958}
+  buildingAuthoringRoot: {fileID: 366859332}
+  vehicleAuthoringRoot: {fileID: 1203687974}
+  mapSurfaceAuthoring: {fileID: 2046876833}
   gridAuthoringConfig: {fileID: 11400000, guid: b201000000000000000000000000000b, type: 2}
   buildingPlacements: {fileID: 11400000, guid: a84d1564be130447197d5a5f2a7fe11d, type: 2}
   vehiclePlacements: {fileID: 11400000, guid: 819521cb66e1e4e90a46b49e04b15aec, type: 2}
-  mapSubScene: {fileID: 1600966902}
+  mapSubScene: {fileID: 1024216362}
   canonicalPresentationMode: 1
---- !u!4 &1076428787
+  presentationSourceSceneGuid: ca1f2d7f265d8495f8c815441d68fda0
+  presentationSourceScenePath: Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01.unity
+--- !u!4 &914319148
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1076428785}
+  m_GameObject: {fileID: 914319146}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -295,7 +245,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1600966900
+--- !u!1 &1024216360
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -303,8 +253,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1600966901}
-  - component: {fileID: 1600966902}
+  - component: {fileID: 1024216361}
+  - component: {fileID: 1024216362}
   m_Layer: 0
   m_Name: SubScene
   m_TagString: Untagged
@@ -312,28 +262,28 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1600966901
+--- !u!4 &1024216361
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1600966900}
+  m_GameObject: {fileID: 1024216360}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 867762001}
+  m_Father: {fileID: 885841855}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1600966902
+--- !u!114 &1024216362
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1600966900}
+  m_GameObject: {fileID: 1024216360}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 45a335734b1572644a6a5d09d87adc65, type: 3}
@@ -348,7 +298,7 @@ MonoBehaviour:
       y: 3964017128
       z: 1969443463
       w: 2368965574
---- !u!1 &1624468211
+--- !u!1 &1203687973
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -356,8 +306,91 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1624468212}
-  - component: {fileID: 1624468213}
+  - component: {fileID: 1203687974}
+  m_Layer: 0
+  m_Name: Vehicles
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1203687974
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1203687973}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 885841855}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1248308957
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1248308958}
+  - component: {fileID: 1248308959}
+  m_Layer: 0
+  m_Name: Decorations
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1248308958
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1248308957}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 885841855}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1248308959
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1248308957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff37f00c6585b49f2b142f7c43215901, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Game.Runtime::Game.Runtime.CombinedMeshBaker
+  combineOnStart: 0
+  includeInactive: 1
+  disableSourceRenderers: 1
+  destroySourceObjectsAtRuntime: 0
+  combinedRootName: CombinedMesh
+  bakedAssetFolder: Assets/Game/GeneratedCombinedMeshes
+  _combinedRoot: {fileID: 0}
+  _bakedMeshes: []
+--- !u!1 &2046876831
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2046876832}
+  - component: {fileID: 2046876833}
   m_Layer: 0
   m_Name: Surface
   m_TagString: Untagged
@@ -365,28 +398,28 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1624468212
+--- !u!4 &2046876832
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1624468211}
+  m_GameObject: {fileID: 2046876831}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 867762001}
+  m_Father: {fileID: 885841855}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1624468213
+--- !u!114 &2046876833
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1624468211}
+  m_GameObject: {fileID: 2046876831}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e4a11c9241684f579a0926616f8c708a, type: 3}
@@ -399,40 +432,9 @@ MonoBehaviour:
   maxBuildingSlopeDegrees: 8
   maxInfantrySlopeDegrees: 35
   maxVehicleSlopeDegrees: 22
---- !u!1 &1991452343
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1991452344}
-  m_Layer: 0
-  m_Name: Vehicles
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1991452344
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1991452343}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 867762001}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1076428787}
-  - {fileID: 867762001}
+  - {fileID: 914319148}
+  - {fileID: 885841855}

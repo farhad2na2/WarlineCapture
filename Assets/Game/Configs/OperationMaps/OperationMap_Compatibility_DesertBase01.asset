@@ -17,7 +17,7 @@ MonoBehaviour:
   contentVersion: 4
   sourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900
   contentHash: 2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c
-  generatedMetadataHash: 9890e683b74f17958496632223c76e7713770af180dc7d5191e4c8708fad3d05
+  generatedMetadataHash: 2089955094bb8a72f2f5e7ca1e05e67c78df049da9185a7d44eabce25d82dc69
   bounds:
     worldMin: {x: 0, y: -6.9545445, z: 0}
     worldMax: {x: 2048, y: 100, z: 1024}
@@ -42,7 +42,7 @@ MonoBehaviour:
     minimumHeight: -6.9545445
     maximumHeight: 38.405453
   navigationMetadata:
-    authoredSubSceneGuid: 8d5e3c3f2ef84b61a4d61472c40c9a11
+    authoredSubSceneGuid: d50925a18e9164ce782536576cb833d8
     gridAuthoringLocalId: 146043441
     staticGridBlockerCount: 0
     usesSurfaceMovementMetadata: 1
@@ -121,7 +121,7 @@ MonoBehaviour:
     factionId: 1
     laneIndex: 2
   sourceSceneReference:
-    m_AssetGUID: ca1f2d7f265d8495f8c815441d68fda0
+    m_AssetGUID: d755eb43b9cb04aa292e471ace113ecf
     m_SubObjectName:
     m_SubObjectType:
     m_SubObjectGUID:

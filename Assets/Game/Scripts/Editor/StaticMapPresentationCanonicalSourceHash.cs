@@ -142,6 +142,28 @@ namespace Game.Editor
             return Hash128.Compute(builder.ToString()).ToString();
         }
 
+        internal static string ComputeMapOwnedSourceSetHash(IEnumerable<string> stableSourceIdentities)
+        {
+            if (stableSourceIdentities == null)
+                throw new ArgumentNullException(nameof(stableSourceIdentities));
+
+            string[] identities = stableSourceIdentities
+                .Where(identity => !string.IsNullOrWhiteSpace(identity))
+                .OrderBy(identity => identity, StringComparer.Ordinal)
+                .ToArray();
+            if (identities.Length == 0)
+                throw new InvalidOperationException("At least one map-owned source identity is required.");
+
+            StringBuilder builder = new(identities.Sum(identity => identity.Length + 16));
+            for (int i = 0; i < identities.Length; i++)
+            {
+                string identity = identities[i];
+                builder.Append(identity.Length).Append(':').Append(identity).Append(';');
+            }
+
+            return Hash128.Compute(builder.ToString()).ToString();
+        }
+
         private static void AppendFileHash(StringBuilder builder, string path)
         {
             using SHA256 algorithm = SHA256.Create();

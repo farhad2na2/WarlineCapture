@@ -62,8 +62,7 @@ namespace Game.Editor
                         operationMapId,
                         outputRoot,
                         scenePath),
-                canonicalScenePath => StaticMapPresentationCanonicalSourceHash.Compute(
-                    canonicalScenePath),
+                StaticMapPresentationBaker.ComputeMapOwnedSourceHash,
                 (operationMapId, contentHash, scenePaths) =>
                     StaticMapPresentationOutputPathContract.TryResolveIntegrityAssetPath(
                         operationMapId,

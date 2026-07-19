@@ -797,6 +797,20 @@ public sealed class StaticMapPresentationOutputOwnershipTests
     }
 
     [Test]
+    public void MapOwnedSourceSetHash_IsOrderIndependentAndSensitiveToMapChanges()
+    {
+        string initial = StaticMapPresentationCanonicalSourceHash.ComputeMapOwnedSourceSetHash(
+            new[] { "map/source-b|dependency-b", "map/source-a|dependency-a" });
+        string reordered = StaticMapPresentationCanonicalSourceHash.ComputeMapOwnedSourceSetHash(
+            new[] { "map/source-a|dependency-a", "map/source-b|dependency-b" });
+        string mapChanged = StaticMapPresentationCanonicalSourceHash.ComputeMapOwnedSourceSetHash(
+            new[] { "map/source-a|dependency-a-v2", "map/source-b|dependency-b" });
+
+        Assert.That(reordered, Is.EqualTo(initial));
+        Assert.That(mapChanged, Is.Not.EqualTo(initial));
+    }
+
+    [Test]
     public void CanonicalSourceHash_NormalizesTextSourceAndMetaLineEndings()
     {
         string root = Path.Combine(Path.GetTempPath(), "WarlineCapture-Build110-Text-" + Guid.NewGuid().ToString("N"));

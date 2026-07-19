@@ -439,6 +439,38 @@ namespace Game.Editor
             }
         }
 
+        internal static string ComputeMapOwnedSourceHash(string sourceScenePath)
+        {
+            StaticMapPresentationBakeInput input = string.Equals(
+                sourceScenePath,
+                CanonicalMatchScenePath,
+                StringComparison.Ordinal)
+                ? CreateCurrentCompatibilityInput()
+                : CreateCurrentStagedInput();
+            if (!string.Equals(input.SourceScenePath, sourceScenePath, StringComparison.Ordinal))
+                throw new InvalidOperationException($"Unsupported static-presentation source scene: {sourceScenePath}");
+
+            ValidateSupportedInput(input);
+            Scene scene = SceneManager.GetSceneByPath(sourceScenePath);
+            bool openedForHash = !scene.IsValid() || !scene.isLoaded;
+            if (openedForHash)
+                scene = EditorSceneManager.OpenScene(sourceScenePath, OpenSceneMode.Additive);
+            try
+            {
+                BakeSourceContext sourceContext = ResolveSourceContext(scene, input);
+                BakeStats stats = new();
+                List<SourceDescriptor> sources = CollectSources(sourceContext, input.ChunkSize, stats);
+                if (sources.Count == 0)
+                    throw new InvalidOperationException("Static map presentation source hash found no compatible renderers.");
+                return ComputeMapOwnedSourceHash(sources);
+            }
+            finally
+            {
+                if (openedForHash && scene.IsValid() && scene.isLoaded)
+                    EditorSceneManager.CloseScene(scene, true);
+            }
+        }
+
         private static void BakeInternal(StaticMapPresentationBakeInput input)
         {
             EnsureAssetFolder(input.OutputRoot);
@@ -496,7 +528,7 @@ namespace Game.Editor
                     sourceEntries);
             }
 
-            string canonicalHash = StaticMapPresentationCanonicalSourceHash.Compute(input.SourceScenePath);
+            string canonicalHash = ComputeMapOwnedSourceHash(sources);
             string contentHash = ComputeContentHash(input.ChunkSize, chunkEntries, sourceEntries);
             string[] expectedScenePaths = chunkEntries.Select(chunk => chunk.ScenePath).ToArray();
             string projectRoot = RequireProjectRoot();
@@ -1052,6 +1084,12 @@ namespace Game.Editor
             builder.Append('|').Append(source.Renderer.sortingOrder);
             builder.Append('|').Append(source.Renderer.allowOcclusionWhenDynamic ? 1 : 0);
             return Hash128.Compute(builder.ToString()).ToString();
+        }
+
+        private static string ComputeMapOwnedSourceHash(List<SourceDescriptor> sources)
+        {
+            return StaticMapPresentationCanonicalSourceHash.ComputeMapOwnedSourceSetHash(
+                sources.Select(source => source.GlobalObjectId + "|" + source.DependencyHash));
         }
 
         internal static void AppendGameObjectLayerIdentity(StringBuilder builder, int layer)

@@ -49,7 +49,7 @@ public sealed class Aph807TransportBoardingFlowPlayModeTests
             CreateGrid(em, 18, 18);
             Entity transport = CreateTransport(em, new int2(8, 8));
             Entity passenger = CreateSelectedPassenger(em, new int2(13, 8));
-            var gateway = new RtsSelectionInputCompositionSystemHelper();
+            var gateway = new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager);
             SystemHandle commandSystem = world.CreateSystem<TransportBoardingCommandSystem>();
 
             Assert.IsTrue(gateway.QueueBoardTransportCommandRequest(transport, default, frame: 10));

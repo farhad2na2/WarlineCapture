@@ -40,7 +40,7 @@ public sealed class Aph806SelectionMoveAttackPlayModeTests
     public void SelectionMoveAttack_ProductionCommandGatewaysApplyDeterministicOrders()
     {
         EntityManager em = _world.EntityManager;
-        var inputGateway = new RtsSelectionInputCompositionSystemHelper();
+        var inputGateway = new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager);
         Entity attacker = CreateAttacker(em);
         Entity target = CreateTarget(em);
         _cameraObject = new GameObject("APH806 Selection Camera");

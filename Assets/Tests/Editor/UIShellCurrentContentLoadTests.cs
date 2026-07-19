@@ -572,7 +572,7 @@ public sealed class UIShellCurrentContentLoadTests
         MatchOverlayCommandControlsView controls = AssertMatchHudFooterView(matchFooter).CommandControls;
         Assert.NotNull(controls);
 
-        content.BindGameplayRuntimeDependencies(new SelectionUiCommandUiSystemHelper());
+        content.BindGameplayRuntimeDependencies(new SelectionUiCommandUiSystemHelper(new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager)));
         controls.MoveButton.onClick.Invoke();
 
         Assert.IsTrue(TryGetCommandRequests(out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests));
@@ -605,7 +605,7 @@ public sealed class UIShellCurrentContentLoadTests
 
         var feedback = new SelectionHudFeedbackUiSystemHelper();
         content.BindGameplayRuntimeDependencies(
-            new SelectionUiCommandUiSystemHelper(),
+            new SelectionUiCommandUiSystemHelper(new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager)),
             null,
             feedback.BindMatchHudSelectionPanel);
         Assert.IsFalse(selectedPanel.gameObject.activeSelf, "Runtime binding should start with the selection panel hidden.");
@@ -640,7 +640,7 @@ public sealed class UIShellCurrentContentLoadTests
             ScanReason = TacticalCommandReasonCode.ScanUnavailable
         };
         content.BindGameplayRuntimeDependencies(
-            new SelectionUiCommandUiSystemHelper(),
+            new SelectionUiCommandUiSystemHelper(new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager)),
             selectionUiReadModelSystem: readModel);
         content.RefreshMatchHudCommandControlState();
 
@@ -688,7 +688,7 @@ public sealed class UIShellCurrentContentLoadTests
         var feedback = new SelectionHudFeedbackUiSystemHelper();
         var mainMenuPlayUi = new MainMenuPlayUI();
         mainMenuPlayUi.ConfigureMatchHudRuntimeFeedbackSinkBinding(feedback.BindBattleHudRuntimeFeedback);
-        content.BindGameplayRuntimeDependencies(new SelectionUiCommandUiSystemHelper(), mainMenuPlayUi);
+        content.BindGameplayRuntimeDependencies(new SelectionUiCommandUiSystemHelper(new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager)), mainMenuPlayUi);
 
         feedback.ApplyCommandMode(_world.EntityManager, TacticalCommandMode.Move);
 
@@ -731,7 +731,7 @@ public sealed class UIShellCurrentContentLoadTests
             "Right quick rail Build button target graphic must have a non-zero rect after layout.");
 
         var mainMenu = new MainMenuPlayUI();
-        content.BindGameplayRuntimeDependencies(new SelectionUiCommandUiSystemHelper(), mainMenu);
+        content.BindGameplayRuntimeDependencies(new SelectionUiCommandUiSystemHelper(new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager)), mainMenu);
         Assert.AreNotEqual(
             quickRail.BuildButton.gameObject,
             EventSystem.current != null ? EventSystem.current.currentSelectedGameObject : null,
@@ -786,7 +786,7 @@ public sealed class UIShellCurrentContentLoadTests
         UIShellContentView content = FindInScene<UIShellContentView>(scene);
         Assert.NotNull(content, "Menu scene must contain the shell content binder.");
 
-        content.BindGameplayRuntimeDependencies(new SelectionUiCommandUiSystemHelper());
+        content.BindGameplayRuntimeDependencies(new SelectionUiCommandUiSystemHelper(new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager)));
         int beforeInstallVersion = content.ContentVersion;
 
         content.PrepareForCommandSequence(new[]
@@ -827,9 +827,9 @@ public sealed class UIShellCurrentContentLoadTests
         Assert.NotNull(controls);
 
         var staleInputSystem = new MatchOverlayCommandInputUiSystemHelper();
-        staleInputSystem.Bind(controls, new SelectionUiCommandUiSystemHelper());
+        staleInputSystem.Bind(controls, new SelectionUiCommandUiSystemHelper(new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager)));
         var currentInputSystem = new MatchOverlayCommandInputUiSystemHelper();
-        currentInputSystem.Bind(controls, new SelectionUiCommandUiSystemHelper());
+        currentInputSystem.Bind(controls, new SelectionUiCommandUiSystemHelper(new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager)));
 
         controls.MoveButton.onClick.Invoke();
 
@@ -1020,7 +1020,7 @@ public sealed class UIShellCurrentContentLoadTests
 
     private static bool TryGetCommandRequests(out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests)
     {
-        var inputState = new RtsSelectionInputCompositionSystemHelper();
+        var inputState = new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager);
         return inputState.TryGetCommandBuffers(
             out _,
             out requests,

@@ -843,7 +843,9 @@ namespace Game.Composition
             _matchRuntimeState ??= new MatchRuntimeStateAdapter(_runtimeGameplayStateSystem);
             _matchHudCameraControl = new MatchHudCameraControlAdapter(SelectionUiCamera);
             _matchHudMinimapDataSource ??= new MatchHudMinimapDataSourceAdapter();
-            _selectionRectangleState ??= new SelectionRectangleStateAdapter(_matchRuntimeState);
+            _selectionRectangleState ??= new SelectionRectangleStateAdapter(
+                _matchRuntimeState,
+                runtimeWorld.EntityManager);
         }
 
         private void InitializeVisualQualitySettingsIfNeeded()

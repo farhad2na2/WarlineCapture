@@ -90,7 +90,7 @@ namespace Game.Runtime
             SelectionRuntimeDiagnosticsSystemHelper selectionRuntimeDiagnosticsSystem = ResolveSelectionRuntimeDiagnosticsSystem();
             SelectionRuntimeConfigStartupSystemHelper.State runtimeConfig = SelectionRuntimeConfigStartupSystemHelper.CreateStateFromConfig(rtsSelectionConfig, worldCamera);
             var runtimeGameplayStateSystem = new RuntimeGameplayStateSystem(entityManager);
-            var rtsSelectionInputSystem = new RtsSelectionInputCompositionSystemHelper();
+            var rtsSelectionInputSystem = new RtsSelectionInputCompositionSystemHelper(entityManager);
             var rtsSelectionRuntimeInputSystem = new RtsSelectionRuntimeInputCompositionSystemHelper();
             RtsSelectionRuntimeCameraSystemHelper rtsSelectionRuntimeCameraSystem = ResolveRtsSelectionRuntimeCameraSystemHelper();
             var rtsSelectionCommandResultFlushSystem = new RtsSelectionCommandResultFlushCompositionSystemHelper();
@@ -98,7 +98,9 @@ namespace Game.Runtime
             var rtsSelectionPointerTargetCommandSystem = new RtsSelectionPointerTargetCommandCompositionSystemHelper();
             RtsCameraSystem rtsCameraSystem = ResolveRtsCameraSystem();
             RtsCameraRequestSystem rtsCameraRequestSystem = ResolveRtsCameraRequestSystem();
-            var selectionUiCommand = new SelectionUiCommandUiSystemHelper(IsMatchIntroGameplayInputLocked);
+            var selectionUiCommand = new SelectionUiCommandUiSystemHelper(
+                rtsSelectionInputSystem,
+                IsMatchIntroGameplayInputLocked);
             var selectionUiReadModel = new SelectionUiReadModelUiSystemHelper();
             var selectionUiCamera = new SelectionUiCameraSystemHelper(rtsCameraSystem, rtsCameraRequestSystem);
             var selectionScreenMarkers = new SelectionScreenMarkerUiSystemHelper();

@@ -46,7 +46,12 @@ namespace Game.Runtime
                 HasDeselectAllCommandRequests;
         }
 
-        private readonly RtsSelectionInputStateCompositionSystemHelper _inputStateSystem = new();
+        private readonly RtsSelectionInputStateCompositionSystemHelper _inputStateSystem;
+
+        public RtsSelectionInputCompositionSystemHelper(EntityManager entityManager)
+        {
+            _inputStateSystem = new RtsSelectionInputStateCompositionSystemHelper(entityManager);
+        }
 
         public Vector2 DragStart
         {

@@ -192,7 +192,7 @@ public sealed class PersistentResourceOwnershipLifecycleTests
         World previousWorld = World.DefaultGameObjectInjectionWorld;
         var firstWorld = new World(nameof(SelectionInputState_RebindsAfterWorldReplacement) + "_First");
         var replacementWorld = new World(nameof(SelectionInputState_RebindsAfterWorldReplacement) + "_Replacement");
-        var helper = new RtsSelectionInputStateCompositionSystemHelper();
+        var helper = new RtsSelectionInputStateCompositionSystemHelper(firstWorld.EntityManager);
         try
         {
             World.DefaultGameObjectInjectionWorld = firstWorld;
@@ -204,6 +204,7 @@ public sealed class PersistentResourceOwnershipLifecycleTests
 
             firstWorld.Dispose();
             World.DefaultGameObjectInjectionWorld = replacementWorld;
+            helper.Bind(replacementWorld.EntityManager);
             Assert.IsTrue(helper.TryRead(out EntityManager replacementEntityManager, out RtsSelectionInputStateComponent replacementState));
 
             Assert.AreEqual(-1, replacementState.QueuedMoveOrderFrame);

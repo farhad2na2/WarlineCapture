@@ -354,7 +354,7 @@ public sealed class RtsCameraSystemTests
                 Enabled = 1,
                 PanInputLocked = 1
             });
-            var context = CreateRuntimeCameraContext(runtime, new RtsSelectionInputCompositionSystemHelper(), cameraSystem, cameraRequestSystem, camera, TryGetDefaultEntityManager);
+            var context = CreateRuntimeCameraContext(runtime, new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager), cameraSystem, cameraRequestSystem, camera, TryGetDefaultEntityManager);
 
             Vector3 originalPosition = camera.transform.position;
 
@@ -402,7 +402,7 @@ public sealed class RtsCameraSystemTests
             world.EntityManager.SetComponentData(poseEntity, new TacticalFollowCameraPoseComponent { Valid = 1 });
             var context = CreateRuntimeCameraContext(
                 runtime,
-                new RtsSelectionInputCompositionSystemHelper(),
+                new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager),
                 cameraSystem,
                 cameraRequestSystem,
                 camera,
@@ -492,7 +492,7 @@ public sealed class RtsCameraSystemTests
                 Enabled = 1,
                 PanInputLocked = 1
             });
-            var context = CreateRuntimeCameraContext(runtime, new RtsSelectionInputCompositionSystemHelper(), cameraSystem, cameraRequestSystem, camera, TryGetDefaultEntityManager);
+            var context = CreateRuntimeCameraContext(runtime, new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager), cameraSystem, cameraRequestSystem, camera, TryGetDefaultEntityManager);
 
             Vector3 originalPosition = camera.transform.position;
             cameraSystem.SetDragging(true);
@@ -540,7 +540,7 @@ public sealed class RtsCameraSystemTests
                 Enabled = 1,
                 PanInputLocked = 1
             });
-            var context = CreateRuntimeCameraContext(runtime, new RtsSelectionInputCompositionSystemHelper(), cameraSystem, cameraRequestSystem, camera, TryGetDefaultEntityManager);
+            var context = CreateRuntimeCameraContext(runtime, new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager), cameraSystem, cameraRequestSystem, camera, TryGetDefaultEntityManager);
 
             Vector3 originalPosition = camera.transform.position;
             cameraSystem.SetDragging(true);
@@ -582,7 +582,7 @@ public sealed class RtsCameraSystemTests
             cameraSystem.SetSmoothFocusTarget(new Vector3(90f, 0f, 90f), resetVelocity: true);
             cameraSystem.BeginZoomTransition(false);
             CreateTacticalFollowPose(world.EntityManager, TacticalFollowCameraPoseSource.BaseTarget);
-            var context = CreateRuntimeCameraContext(runtime, new RtsSelectionInputCompositionSystemHelper(), cameraSystem, cameraRequestSystem, camera, TryGetDefaultEntityManager);
+            var context = CreateRuntimeCameraContext(runtime, new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager), cameraSystem, cameraRequestSystem, camera, TryGetDefaultEntityManager);
 
             Vector3 originalPosition = camera.transform.position;
             Quaternion originalRotation = camera.transform.rotation;
@@ -628,7 +628,7 @@ public sealed class RtsCameraSystemTests
             cameraSystem.SetSmoothFocusTarget(new Vector3(-90f, 0f, 90f), resetVelocity: true);
             cameraSystem.BeginZoomTransition(false);
             CreateTacticalFollowPose(world.EntityManager, TacticalFollowCameraPoseSource.RestoreDefault);
-            var context = CreateRuntimeCameraContext(runtime, new RtsSelectionInputCompositionSystemHelper(), cameraSystem, cameraRequestSystem, camera, TryGetDefaultEntityManager);
+            var context = CreateRuntimeCameraContext(runtime, new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager), cameraSystem, cameraRequestSystem, camera, TryGetDefaultEntityManager);
 
             Vector3 originalPosition = camera.transform.position;
             Quaternion originalRotation = camera.transform.rotation;
@@ -676,7 +676,7 @@ public sealed class RtsCameraSystemTests
             cameraRequestSystem.QueueUpdatePerspectiveMode(em, 100f, 70f, 20f, 50f, 0.1f, completeTransitionOnArrive: false);
             cameraRequestSystem.QueuePan(em, new Vector2(80f, -20f), 1f);
             CreateTacticalFollowPose(em, TacticalFollowCameraPoseSource.BaseTarget);
-            var context = CreateRuntimeCameraContext(runtime, new RtsSelectionInputCompositionSystemHelper(), cameraSystem, cameraRequestSystem, camera, TryGetDefaultEntityManager);
+            var context = CreateRuntimeCameraContext(runtime, new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager), cameraSystem, cameraRequestSystem, camera, TryGetDefaultEntityManager);
 
             Vector3 originalPosition = camera.transform.position;
             Quaternion originalRotation = camera.transform.rotation;
@@ -1165,7 +1165,7 @@ public sealed class RtsCameraSystemTests
 
             var context = CreateRuntimeCameraContext(
                 runtime,
-                new RtsSelectionInputCompositionSystemHelper(),
+                new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager),
                 cameraSystem,
                 cameraRequestSystem,
                 camera,
@@ -1217,7 +1217,7 @@ public sealed class RtsCameraSystemTests
 
             var context = new RtsSelectionRuntimeCameraSystemHelper.Context(
                 runtime,
-                new RtsSelectionInputCompositionSystemHelper(),
+                new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager),
                 cameraSystem,
                 cameraRequestSystem,
                 camera,
@@ -1292,7 +1292,7 @@ public sealed class RtsCameraSystemTests
 
             var context = new RtsSelectionRuntimeCameraSystemHelper.Context(
                 runtime,
-                new RtsSelectionInputCompositionSystemHelper(),
+                new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager),
                 cameraSystem,
                 cameraRequestSystem,
                 camera,

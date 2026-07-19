@@ -210,7 +210,7 @@ public sealed class MatchHudTransportPassengerDrawerTests
         World.DefaultGameObjectInjectionWorld = world;
         try
         {
-            var inputSystem = new RtsSelectionInputCompositionSystemHelper();
+            var inputSystem = new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager);
             Entity transport = new() { Index = 22, Version = 1 };
             Entity passenger = new() { Index = 23, Version = 1 };
 

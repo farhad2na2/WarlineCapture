@@ -180,11 +180,12 @@ namespace Game.Composition
     internal sealed class SelectionRectangleStateAdapter : ISelectionRectangleState
     {
         private readonly IMatchRuntimeState runtimeState;
-        private readonly RtsSelectionInputStateCompositionSystemHelper inputStateSystem = new();
+        private readonly RtsSelectionInputStateCompositionSystemHelper inputStateSystem;
 
-        public SelectionRectangleStateAdapter(IMatchRuntimeState runtimeState)
+        public SelectionRectangleStateAdapter(IMatchRuntimeState runtimeState, EntityManager entityManager)
         {
             this.runtimeState = runtimeState;
+            inputStateSystem = new RtsSelectionInputStateCompositionSystemHelper(entityManager);
         }
 
         public bool TryRead(out SelectionRectangleStateModel state)

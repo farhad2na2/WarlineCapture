@@ -5,8 +5,24 @@ namespace Game.Runtime
 {
     public sealed class RtsSelectionInputStateCompositionSystemHelper
     {
+        private EntityManager _entityManager;
         private Unity.Entities.World _world;
         private Entity _stateEntity;
+
+        public RtsSelectionInputStateCompositionSystemHelper(EntityManager entityManager)
+        {
+            Bind(entityManager);
+        }
+
+        public void Bind(EntityManager entityManager)
+        {
+            if (_world == entityManager.World)
+                return;
+
+            _entityManager = entityManager;
+            _world = entityManager.World;
+            _stateEntity = Entity.Null;
+        }
 
         public bool TryRead(out EntityManager em, out RtsSelectionInputStateComponent state)
         {
@@ -92,18 +108,17 @@ namespace Game.Runtime
             em = default;
             entity = Entity.Null;
 
-            Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
+            Unity.Entities.World world = _entityManager.World;
             if (world == null || !world.IsCreated)
                 return false;
 
-            em = world.EntityManager;
+            em = _entityManager;
             if (_world == world && _stateEntity != Entity.Null && em.Exists(_stateEntity))
             {
                 entity = _stateEntity;
                 return true;
             }
 
-            _world = world;
             using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<RtsSelectionInputStateComponent>());
             if (!query.IsEmptyIgnoreFilter)
             {

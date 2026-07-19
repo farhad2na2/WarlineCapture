@@ -7,12 +7,15 @@ namespace Game.Runtime
 {
     public sealed class SelectionUiCommandUiSystemHelper : ISelectionUiCommand
     {
-        private readonly RtsSelectionInputCompositionSystemHelper _inputSystem = new();
+        private readonly RtsSelectionInputCompositionSystemHelper _inputSystem;
         private readonly FocusedUnitUiReadModelUiSystemHelper _focusedUnitUiReadModelSystem = new();
         private readonly System.Func<bool> _isGameplayInputLocked;
 
-        public SelectionUiCommandUiSystemHelper(System.Func<bool> isGameplayInputLocked = null)
+        public SelectionUiCommandUiSystemHelper(
+            RtsSelectionInputCompositionSystemHelper inputSystem,
+            System.Func<bool> isGameplayInputLocked = null)
         {
+            _inputSystem = inputSystem ?? throw new System.ArgumentNullException(nameof(inputSystem));
             _isGameplayInputLocked = isGameplayInputLocked;
         }
 

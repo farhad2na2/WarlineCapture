@@ -155,7 +155,7 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
     {
         MatchOverlayCommandControlsView controls = LoadControls();
         var inputSystem = new MatchOverlayCommandInputUiSystemHelper();
-        inputSystem.Bind(controls, new SelectionUiCommandUiSystemHelper());
+        inputSystem.Bind(controls, new SelectionUiCommandUiSystemHelper(new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager)));
 
         AssertClickQueues(controls.SelectButton, RtsSelectionCommandIntentKind.EnterSelectionMode);
         AssertClickQueues(controls.MoveButton, RtsSelectionCommandIntentKind.EnterMoveTargetMode);
@@ -178,7 +178,7 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
         Assert.IsFalse(IsChildOfNamedTransform(boardButton.transform, "CommandButtons"), "BoardButton must no longer live in the selected-squad CommandButtons cluster.");
 
         var inputSystem = new MatchOverlayCommandInputUiSystemHelper();
-        var selectionUiCommand = new SelectionUiCommandUiSystemHelper();
+        var selectionUiCommand = new SelectionUiCommandUiSystemHelper(new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager));
         inputSystem.Bind(controls, selectionUiCommand);
         inputSystem.RefreshCommandControlState();
         Assert.IsTrue(boardButton.interactable, "BoardButton must stay clickable when no unit is selected so it can show selection-required feedback.");
@@ -205,7 +205,7 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
             Assert.NotNull(controls.BoardButton, "Footer section command controls must serialize BoardButton directly.");
 
             var inputSystem = new MatchOverlayCommandInputUiSystemHelper();
-            var selectionUiCommand = new SelectionUiCommandUiSystemHelper();
+            var selectionUiCommand = new SelectionUiCommandUiSystemHelper(new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager));
             inputSystem.Bind(controls, selectionUiCommand);
             ClearCommandRequests();
 
@@ -231,7 +231,7 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
         Assert.NotNull(selectionPanel, "SCN08_MatchHudContent must expose MatchHudSelectionPanelView.");
         Button cameraButton = GetSerializedCameraButton(selectionPanel);
 
-        var selectionUiCommand = new SelectionUiCommandUiSystemHelper();
+        var selectionUiCommand = new SelectionUiCommandUiSystemHelper(new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager));
         selectionPanel.BindCameraAction(() => selectionUiCommand.RequestToggleTacticalFollowCameraMode());
         ClearTacticalFollowCameraRequests();
 
@@ -463,7 +463,7 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
         Assert.NotNull(supportButton, "SCN08 Match HUD currently exposes SupportCommand as the legacy scan/support tab.");
 
         var inputSystem = new MatchOverlayCommandInputUiSystemHelper();
-        inputSystem.Bind(controls, new SelectionUiCommandUiSystemHelper());
+        inputSystem.Bind(controls, new SelectionUiCommandUiSystemHelper(new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager)));
 
         AssertClickQueues(supportButton, RtsSelectionCommandIntentKind.EnterScanTargetMode);
 
@@ -519,7 +519,7 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
             var inputSystem = new MatchOverlayCommandInputUiSystemHelper();
             inputSystem.Bind(
                 controls,
-                new SelectionUiCommandUiSystemHelper(),
+                new SelectionUiCommandUiSystemHelper(new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager)),
                 captureGameplayUiClick: mainMenu.CaptureGameplayUiClickSequence);
             ClearCommandRequests();
             moveButton.onClick.Invoke();
@@ -657,7 +657,7 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
 
     private bool TryGetCommandRequests(out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests)
     {
-        var inputState = new RtsSelectionInputCompositionSystemHelper();
+        var inputState = new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager);
         return inputState.TryGetCommandBuffers(
             out _,
             out requests,

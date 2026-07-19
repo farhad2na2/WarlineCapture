@@ -123,7 +123,7 @@ public sealed class ResourceExchangeStartupProjectionSystemHelperTests
         {
             EditorSceneManager.OpenScene(MatchScenePath, OpenSceneMode.Single);
             MatchSceneView sceneView =
-                UnityEngine.Object.FindFirstObjectByType<MatchSceneView>(FindObjectsInactive.Include);
+                UnityEngine.Object.FindAnyObjectByType<MatchSceneView>(FindObjectsInactive.Include);
             Assert.NotNull(sceneView);
             Assert.AreEqual(LoadExchangeConfig(), sceneView.ResourceExchangeConfig);
         }

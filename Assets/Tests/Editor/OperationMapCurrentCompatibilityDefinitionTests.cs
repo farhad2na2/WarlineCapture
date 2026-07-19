@@ -148,7 +148,7 @@ public sealed class OperationMapCurrentCompatibilityDefinitionTests
             Scene scene = EditorSceneManager.OpenScene(
                 OperationMapCompatibilityRuntimeBindingBuilder.MatchScenePath,
                 OpenSceneMode.Single);
-            MatchSceneView view = Object.FindFirstObjectByType<MatchSceneView>(
+            MatchSceneView view = Object.FindAnyObjectByType<MatchSceneView>(
                 FindObjectsInactive.Include);
             Assert.That(view, Is.Not.Null);
             Assert.That(view.gameObject.scene, Is.EqualTo(scene));

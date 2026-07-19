@@ -655,7 +655,15 @@ public sealed class StaticMapPresentationStreamerTests
                 $"source-{i}", $"root/source-{i}", "hash", item.Id, $"visual-{i}", bounds,
                 null, "mesh-guid", i, new List<StaticMapPresentationMaterialEntry>(), false));
         }
-        manifest.EditorSetData("Assets/Match.unity", "hash", 32f, "content", chunks, sources);
+        manifest.EditorSetData(
+            "opmap.skirmish.test",
+            "00000000000000000000000000000001",
+            "Assets/Match.unity",
+            "hash",
+            32f,
+            "content",
+            chunks,
+            sources);
         return manifest;
     }
 

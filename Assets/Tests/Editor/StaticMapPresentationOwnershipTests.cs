@@ -106,6 +106,8 @@ public sealed class StaticMapPresentationOwnershipTests
         MeshRenderer renderer = CreateRenderer(root, "Owned");
         StaticMapPresentationManifest manifest = CreateManifest(root, renderer);
         manifest.EditorSetData(
+            "opmap.skirmish.test",
+            "00000000000000000000000000000001",
             "Assets/Match.unity",
             "dependency",
             32f,
@@ -144,6 +146,8 @@ public sealed class StaticMapPresentationOwnershipTests
             false);
         StaticMapPresentationManifest manifest = CreateManifest(root, renderer);
         manifest.EditorSetData(
+            "opmap.skirmish.test",
+            "00000000000000000000000000000001",
             "Assets/Match.unity",
             "dependency",
             32f,
@@ -364,6 +368,8 @@ public sealed class StaticMapPresentationOwnershipTests
         StaticMapPresentationManifest manifest = ScriptableObject.CreateInstance<StaticMapPresentationManifest>();
         _objects.Add(manifest);
         manifest.EditorSetData(
+            "opmap.skirmish.test",
+            "00000000000000000000000000000001",
             "Assets/Match.unity",
             "dependency",
             32f,

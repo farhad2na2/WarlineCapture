@@ -1746,8 +1746,7 @@ namespace Game.Editor
             }
 
             Light[] sceneLights = UnityEngine.Object.FindObjectsByType<Light>(
-                FindObjectsInactive.Include,
-                FindObjectsSortMode.None);
+                FindObjectsInactive.Include);
             int lightCount = 0;
             Scene activeScene = SceneManager.GetActiveScene();
             for (int lightIndex = 0; lightIndex < sceneLights.Length; lightIndex++)

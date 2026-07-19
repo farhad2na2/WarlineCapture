@@ -1643,7 +1643,6 @@ public sealed class ProductionSourceGrowthArchitectureTests
 
     private static Dictionary<string, string> ExtractDetailedDecisionRows(string tracker)
     {
-        const string heading = "## Decision Log";
         MatchCollection headingMatches = Regex.Matches(
             tracker,
             "^## Decision Log\\r?$",

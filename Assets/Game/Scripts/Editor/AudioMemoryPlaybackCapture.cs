@@ -932,8 +932,7 @@ namespace Game.Editor
         private static bool TryGetSingleAudioRuntime(out AudioPlaybackPresentationRuntimeView runtime)
         {
             AudioPlaybackPresentationRuntimeView[] runtimes = UnityEngine.Object.FindObjectsByType<AudioPlaybackPresentationRuntimeView>(
-                FindObjectsInactive.Include,
-                FindObjectsSortMode.None);
+                FindObjectsInactive.Include);
             runtime = runtimes.Length == 1 ? runtimes[0] : null;
             return runtime != null;
         }
@@ -943,8 +942,7 @@ namespace Game.Editor
             if (!TryGetSingleAudioRuntime(out AudioPlaybackPresentationRuntimeView runtime))
             {
                 int count = UnityEngine.Object.FindObjectsByType<AudioPlaybackPresentationRuntimeView>(
-                    FindObjectsInactive.Include,
-                    FindObjectsSortMode.None).Length;
+                    FindObjectsInactive.Include).Length;
                 throw new InvalidOperationException($"Expected exactly one audio runtime view, found {count}.");
             }
 

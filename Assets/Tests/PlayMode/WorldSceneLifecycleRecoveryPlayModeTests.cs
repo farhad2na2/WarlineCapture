@@ -140,7 +140,7 @@ public sealed class WorldSceneLifecycleRecoveryPlayModeTests
     private static int CountNamedRoots(string objectName)
     {
         int count = 0;
-        GameObject[] roots = Object.FindObjectsByType<GameObject>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        GameObject[] roots = Object.FindObjectsByType<GameObject>(FindObjectsInactive.Include);
         for (int index = 0; index < roots.Length; index++)
         {
             if (roots[index].name == objectName && roots[index].transform.parent == null)

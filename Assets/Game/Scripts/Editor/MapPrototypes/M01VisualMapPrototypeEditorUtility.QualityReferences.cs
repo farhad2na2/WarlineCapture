@@ -43,7 +43,7 @@ namespace Game.Editor
         private static void CaptureQualityReference(string scenePath, string outputPath)
         {
             Scene scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
-            Camera[] cameras = Object.FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            Camera[] cameras = Object.FindObjectsByType<Camera>(FindObjectsInactive.Include);
             Camera camera = SelectReferenceCamera(cameras);
             if (camera == null)
                 throw new InvalidOperationException($"Quality-reference scene has no camera: {scenePath}");

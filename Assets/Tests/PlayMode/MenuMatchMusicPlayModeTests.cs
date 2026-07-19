@@ -54,7 +54,7 @@ public sealed class MenuMatchMusicPlayModeTests
         yield return WaitUntil(
             () =>
             {
-                runtimeView = Object.FindFirstObjectByType<AudioPlaybackPresentationRuntimeView>();
+                runtimeView = Object.FindAnyObjectByType<AudioPlaybackPresentationRuntimeView>();
                 musicSource = FindMusicSource(runtimeView, MenuMusicClipName);
                 return musicSource != null && musicSource.volume > 0.01f;
             },
@@ -95,7 +95,7 @@ public sealed class MenuMatchMusicPlayModeTests
         yield return WaitUntil(
             () =>
             {
-                runtimeView = Object.FindFirstObjectByType<AudioPlaybackPresentationRuntimeView>();
+                runtimeView = Object.FindAnyObjectByType<AudioPlaybackPresentationRuntimeView>();
                 menuSource = FindMusicSource(runtimeView, MenuMusicClipName);
                 return menuSource != null && menuSource.volume > 0.01f;
             },

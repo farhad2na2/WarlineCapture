@@ -176,6 +176,8 @@ public sealed class StaticMapPresentationOutputOwnershipTests
         try
         {
             manifest.EditorSetData(
+                StaticMapPresentationBaker.CurrentOperationMapId,
+                "00000000000000000000000000000001",
                 StaticMapPresentationBaker.CanonicalMatchScenePath,
                 "canonical-hash",
                 StaticMapPresentationBaker.ChunkSize,

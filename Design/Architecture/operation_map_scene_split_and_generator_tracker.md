@@ -707,7 +707,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 65% (115/177 checklist items complete).
+Overall implementation progress: 66% (116/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -723,7 +723,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 | 6. Metadata, camera, minimap, and movement binding | In progress / shared | 11 | 12 | 92% | Scenario-required anchors validate against map metadata; camera bounds/poses, ARIA Show Me, minimap projection, startup grid domain, authoritative surface payload, current faction deployment anchors, and current runway/helipad records are authored from accepted sources. Objective jump remains blocked on an accepted objective runtime writer and an authored objective anchor. |
 | 7. M01 operation-map slice | Later / shared contracts only | 0 | 10 | 0% | Map-neutral ids/anchors may proceed; physical rollout remains gated. |
 | 8. Editor-time texture/mask generator | Later / editor direction only | 0 | 12 | 0% | Implement only if the editor-authored map direction is selected. |
-| 9. Mission and Skirmish scenario rollout | In progress / single-map scenario data | 1 | 10 | 10% | The standard Skirmish scenario now resolves the approved physical map and its typed faction deployment anchors without duplicating map content. Feature, objective, force, reward, and UI data remain open. |
+| 9. Mission and Skirmish scenario rollout | In progress / single-map scenario data | 2 | 10 | 20% | The standard Skirmish scenario resolves the approved physical map, and active map/scenario/mission identity reaches the ECS UI read-model boundary. Feature, objective, force, and reward data remain open. |
 | 10. Full validation and all-bundled rollout | Shared validation subset active | 10 | 21 | 48% | Launch parity, config/lifecycle/static-presentation, scene-reference, spatial-behavior, map-conversion, and exact package membership are accepted; architecture, controlled package comparison, memory, performance, final release-artifact, and device gates remain. |
 | 11. Deferred remote content migration | Later / remote delivery | 0 | 16 | 0% | Remote delivery remains independently gated. |
 
@@ -1022,7 +1022,7 @@ Exit criteria:
 - [ ] Define starting units, buildings, and resources in scenario data.
 - [ ] Define enemy setup, AI profile ids, and encounter references in scenario data.
 - [ ] Define Campaign rewards, unlocks, and consequences in scenario data.
-- [ ] Publish UI read models for active mission/scenario/map identity.
+- [x] Publish UI read models for active mission/scenario/map identity. `UiMatchIdentityReadModelSystem` copies fixed-string ids from `ActiveOperationMapComponent` into the shell-owned `UiMatchIdentityReadModelComponent`, versions only real changes, clears identity after unload, and remains Burst/no-GC. See `../AgentReports/2026-07-19_operation_map_ui_identity_read_model.md`.
 - [ ] Validate objective/reward/feature references against operation-map anchors and catalogs.
 - [ ] Add one preserved-current-map Skirmish probe and sequential reload probe.
 - [ ] Add Campaign/M01 probes only after the M01 hold is released.
@@ -1229,6 +1229,7 @@ Exit criteria:
 | 2026-07-19 | Presentation-only runtime binding contract | `Game.Rendering`, `Game.Composition`, and `Game.Tests.Editor` compile with zero errors; focused ownership tests cover renderer-free activation and stray-renderer rejection; `git diff --check` | Foundation passed; generated-scene and Unity/device acceptance pending | Added explicit `OperationMapCanonicalPresentationMode` data. Existing scenes retain `SourceRenderersPresent`; future runtime binding scenes can select `PresentationOnly`, which activates manifest-backed presentation on Editor/Android only when the runtime map root contains no canonical renderer. No checklist item closes until the builder produces and validates the generated scene. |
 | 2026-07-19 | Lightweight runtime binding scene foundation | `../AgentReports/2026-07-19_operation_map_runtime_binding_scene_foundation.md`; focused Unity validation `3 / 3`; accepted schema-2 no-op hash comparison; `git diff --check` | Generated scene passed; package cutover and device acceptance pending; no checklist closure | Added the editor-only builder and structural validator, generated a 12,837-byte presentation-only scene, and proved ledger-backed byte-identical reuse for the scene and metadata. The ledger records 47,192 stripped renderers and zero copied managed-physics identities. Addressables still points at the hand-authored scene, so this slice does not yet claim package or memory improvement. |
 | 2026-07-19 | Lightweight runtime binding cutover and unload ownership correction | `../AgentReports/2026-07-19_operation_map_runtime_binding_cutover.md`; loader EditMode `12 / 12`; lifecycle PlayMode `2 / 2`; real local Addressables build; deterministic rebuild; editor/test compile; `git diff --check` | Editor cutover passed; Android package/performance acceptance remains open; no checklist closure | Addressables now packages the presentation-only runtime binding scene while the hand-authored scene remains the canonical bake source and is excluded from the package. Menu teardown retains its Match view owner until the Addressables scene unload is polled complete, preventing the previous permanent `0%` state and invalid-handle experiments. |
+| 2026-07-19 | Active operation-map UI identity read model | `../AgentReports/2026-07-19_operation_map_ui_identity_read_model.md`; focused EditMode `3 / 3`; naming `1 / 1`; Burst architecture `10 / 11` with one existing unrelated array-snapshot debt; zero managed allocation on 512 unchanged updates; compile; `git diff --check` | Passed; Phase 9 UI identity row accepted | A Burst `ISystem` now publishes operation-map, scenario, and mission ids from the canonical active-map ECS component to a dedicated shell-owned read model, updates only on identity changes, and clears the values after unload. |
 
 ## Open Decisions
 

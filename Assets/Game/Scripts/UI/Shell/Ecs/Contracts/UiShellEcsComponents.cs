@@ -103,6 +103,14 @@ namespace Game.UI.Shell.Contracts.Ecs
         public FixedString32Bytes CivilianRiskText;
     }
 
+    public struct UiMatchIdentityReadModelComponent : IComponentData
+    {
+        public FixedString64Bytes OperationMapId;
+        public FixedString64Bytes ScenarioId;
+        public FixedString64Bytes MissionId;
+        public uint Version;
+    }
+
     public struct UiMatchHudStatusSurfacesComponent : IComponentData
     {
         public FixedString32Bytes ObjectivesTitle;

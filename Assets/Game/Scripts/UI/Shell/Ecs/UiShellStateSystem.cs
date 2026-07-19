@@ -41,6 +41,7 @@ namespace Game.UI.Shell.Ecs
                 EnsureMatchHudPassengerDrawerStateComponent(ref state, existingBoundary);
                 EnsureMatchHudSquadTrayStateComponent(ref state, existingBoundary);
                 EnsureMatchHudHeaderComponent(ref state, existingBoundary);
+                EnsureMatchIdentityReadModelComponent(ref state, existingBoundary);
                 EnsureMatchHudStatusSurfacesComponent(ref state, existingBoundary);
                 EnsureMatchHudMinimapComponent(ref state, existingBoundary);
                 EnsureBuildDrawerStateComponent(ref state, existingBoundary);
@@ -110,6 +111,7 @@ namespace Game.UI.Shell.Ecs
                 SelectedSlot = MatchHudSquadTraySlot.None
             });
             state.EntityManager.AddComponentData(boundary, DefaultMatchHudHeader());
+            state.EntityManager.AddComponentData(boundary, new UiMatchIdentityReadModelComponent());
             state.EntityManager.AddComponentData(boundary, DefaultMatchHudStatusSurfaces());
             state.EntityManager.AddComponentData(boundary, DefaultMatchHudMinimap());
             state.EntityManager.AddComponentData(boundary, DefaultBuildDrawerState());
@@ -245,6 +247,14 @@ namespace Game.UI.Shell.Ecs
                 return;
 
             state.EntityManager.AddComponentData(boundary, DefaultMatchHudHeader());
+        }
+
+        private static void EnsureMatchIdentityReadModelComponent(ref SystemState state, Entity boundary)
+        {
+            if (state.EntityManager.HasComponent<UiMatchIdentityReadModelComponent>(boundary))
+                return;
+
+            state.EntityManager.AddComponentData(boundary, new UiMatchIdentityReadModelComponent());
         }
 
         private static void EnsureMatchHudStatusSurfacesComponent(ref SystemState state, Entity boundary)

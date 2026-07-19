@@ -8,15 +8,15 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 |---|---:|
 | Baseline rows | 863 |
 | Hazard rows | 352 |
-| Resolved | 1169 |
+| Resolved | 1172 |
 | Protected/deferred | 34 |
-| Open | 12 |
+| Open | 9 |
 | New after baseline | 26 |
 | Historical intake rows | 575 |
-| Reviewed non-debt rows | 563 |
-| Genuine-debt rows | 12 |
+| Reviewed non-debt rows | 566 |
+| Genuine-debt rows | 9 |
 | Unclassified rows | 0 |
-| Unique debt items | 11 |
+| Unique debt items | 8 |
 
 ## Open Rows
 
@@ -24,10 +24,7 @@ Generated deterministically from AM-007, AM-018, and AM-021. Line numbers are di
 |---|---|---|---|---|
 | AM-018 | globalWorldLookups | Assets/Game/Scripts/Environment/RuntimeCityReadinessQueryCompositionSystemHelper.cs | AM-018 classification.globalWorldLookups | AM025-GLOBAL-WORLD-001 |
 | AM-018 | globalWorldLookups | Assets/Game/Scripts/Environment/RuntimeCityRoadBuildBridgeCompositionSystemHelper.cs | AM-018 classification.globalWorldLookups | AM025-GLOBAL-WORLD-002 |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-MSL-001 |
-| AM-018 | mutableStaticCaches | Assets/Game/Scripts/UI/Screens/MatchHudMinimapProjectionUiSystemHelper.cs | AM-018 classification.mutableStaticCaches | AM025-STATIC-IRC-001 |
 | AM-007 | presentationPools | Assets/Game/Scripts/Systems/RoadPreviewPresentationSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-POOL-001 |
-| AM-007 | presentationPools | Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs | AM-007 policy.candidateSemantics | AM025-POOL-002 |
 | AM-018 | runtimeObjectDiscovery | Assets/Game/Scripts/Environment/RuntimeCityAlgorithmicAftermathPresentationSystemHelper.cs | AM-018 classification.runtimeObjectDiscovery | AM025-DISCOVERY-001 |
 | AM-018 | runtimeObjectDiscovery | Assets/Game/Scripts/Environment/RuntimeCityAlgorithmicAftermathPresentationSystemHelper.cs | AM-018 classification.runtimeObjectDiscovery | AM025-DISCOVERY-001 |
 | AM-007 | worlds | Assets/Game/Scripts/Authorings/GridAuthoring.cs | AM-007 policy.candidateSemantics | AM025-WORLD-001 |

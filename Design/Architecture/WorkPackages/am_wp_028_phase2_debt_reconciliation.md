@@ -11,13 +11,13 @@ Bounded read-only audits reviewed the AM-025 intake as:
 | Measure | Count |
 |---|---:|
 | Historical intake rows | 575 |
-| Reviewed non-debt rows | 563 |
-| Remaining genuine-debt rows | 12 |
-| Remaining unique debt items | 11 |
+| Reviewed non-debt rows | 566 |
+| Remaining genuine-debt rows | 9 |
+| Remaining unique debt items | 8 |
 | Projected unclassified rows | 0 |
 | Source-growth blockers | 4 |
 
-The row-bound evidence now records `563` non-debt rows and `12` remaining genuine-debt rows, grouped into `11` unique file/rule remediation items. It remains non-accepting because every genuine-debt item must be closed before Phase 2 can pass.
+The row-bound evidence now records `566` non-debt rows and `9` remaining genuine-debt rows, grouped into `8` unique file/rule remediation items. It remains non-accepting because every genuine-debt item must be closed before Phase 2 can pass.
 
 ## 2. Required Row Authority
 
@@ -119,6 +119,7 @@ Completed remediation:
 - AM-021 ownership snapshot refresh: the canonical inventory is rebound to current source with the same `575` resources, `553` explicit owners, `22` protected owners, and zero gaps. The refreshed map source manifest and shifted line metadata do not change any ownership decision.
 - `GameText` partial hardening: Unity subsystem registration now clears localized text, audio-event mappings, and initialization state before a new play session. The shared static dictionaries remain tracked debt and receive no closure credit.
 - `UnitTransportVisualUtility`: passenger hide/restore traversal now uses call-owned temporary native memory instead of process-wide lists. Focused two-World validation proves each match restores only its own passenger, and the static-registry guard confirms all three shared fields and their allowlist exceptions are gone.
+- Minimap UI lifecycle: marker images now remain owned by one minimap helper across view rebuilds and are destroyed only when that helper is disposed. The large raster buffer is instance-owned and released with the helper, while viewport corners are computed without a process-wide mutable array. Focused validation covers rebind reuse, disposal, independent buffers, and the absence of static array state.
 
 ## 5. Scope Safety
 

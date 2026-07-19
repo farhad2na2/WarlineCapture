@@ -4,8 +4,8 @@
   "taskId": "AM-025",
   "result": "RowBoundAuthorityRulesAcceptedForDraftDelta",
   "capture": {
-    "commit": "f418851175dfee368f44823a93d125308a09458c",
-    "tree": "e086ee0545fecc26553cca7500abb55ddd5ca264",
+    "commit": "e9dda1bf1be8811c56dfa18d8bc8d5ce2cb18c42",
+    "tree": "e81775cd5769ee05c0017f4d6313b10ef63114da",
     "branch": "main",
     "clean": true
   },
@@ -36,11 +36,11 @@
   "projection": {
     "historicalIntakeRowCount": 575,
     "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 557,
+    "resolvedNonDebtRowCount": 560,
     "protectedDeferredRowCount": 6,
-    "reviewedNonDebtRowCount": 563,
-    "genuineDebtRowCount": 12,
-    "uniqueDebtItemCount": 11,
+    "reviewedNonDebtRowCount": 566,
+    "genuineDebtRowCount": 9,
+    "uniqueDebtItemCount": 8,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
@@ -48,16 +48,16 @@
     {
       "sourceArtifact": "AM-007",
       "historicalOpenRowCount": 314,
-      "projectedResolvedNonDebtRowCount": 303,
+      "projectedResolvedNonDebtRowCount": 304,
       "projectedProtectedDeferredRowCount": 5,
-      "projectedGenuineDebtRowCount": 6
+      "projectedGenuineDebtRowCount": 5
     },
     {
       "sourceArtifact": "AM-018",
       "historicalOpenRowCount": 261,
-      "projectedResolvedNonDebtRowCount": 254,
+      "projectedResolvedNonDebtRowCount": 256,
       "projectedProtectedDeferredRowCount": 1,
-      "projectedGenuineDebtRowCount": 6
+      "projectedGenuineDebtRowCount": 4
     }
   ],
   "genuineDebtLanes": [
@@ -81,9 +81,9 @@
     }
   ],
   "sourceGrowth": {
-    "unresolvedBlockerCount": 5,
-    "firstLaunchBlockerCount": 4,
-    "operationMapBlockerCount": 1
+    "unresolvedBlockerCount": 4,
+    "firstLaunchBlockerCount": 0,
+    "operationMapBlockerCount": 4
   },
   "reviewRules": [
     {
@@ -106,16 +106,28 @@
       "id": "am007-pool-debt",
       "decision": "genuine-debt",
       "reasonCode": "pool-lifecycle-unproven",
-      "expectedCount": 2,
+      "expectedCount": 1,
       "debtIdPrefix": "AM025-POOL",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",
       "match": {
         "sourceArtifact": "AM-007",
         "sourceCategory": "presentationPools",
-        "sourcePath": ["Assets/Game/Scripts/Systems/RoadPreviewPresentationSystemHelper.cs", "Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs"]
+        "sourcePath": "Assets/Game/Scripts/Systems/RoadPreviewPresentationSystemHelper.cs"
       },
       "authority": ["Design/AgentReports/ArchitectureMaturity/am024_lifecycle_memory_pool_trend_evidence.json"]
+    },
+    {
+      "id": "am007-minimap-marker-pool-owned",
+      "decision": "resolved",
+      "reasonCode": "tested-view-rebind-and-dispose-owner",
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-007",
+        "sourceCategory": "presentationPools",
+        "sourcePath": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs"
+      },
+      "authority": ["Assets/Tests/Editor/MatchHudMinimapProjectionUiSystemHelperTests.cs"]
     },
     {
       "id": "am007-pool-owned",
@@ -817,20 +829,18 @@
       "authority": ["Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs", "Assets/Tests/Editor/BuildDrawerCatalogQueryUiSystemHelperTests.cs"]
     },
     {
-      "id": "am018-static-irc-debt",
-      "decision": "genuine-debt",
-      "reasonCode": "readonly-reference-mutability-unproven",
+      "id": "am018-static-irc-minimap-viewport-corners-retired",
+      "decision": "resolved",
+      "reasonCode": "mutable-static-array-retired",
       "expectedCount": 1,
-      "debtIdPrefix": "AM025-STATIC-IRC",
-      "ownerDomain": "architecture-core",
-      "workPackageId": "AM-WP-028",
       "match": {
         "sourceArtifact": "AM-018",
         "sourceCategory": "mutableStaticCaches",
         "disposition": "IRC",
-        "sourcePath": ["Assets/Game/Scripts/Systems/TacticalFollowAttackCinematicCameraSystemHelper.cs", "Assets/Game/Scripts/UI/Screens/MatchHudMinimapProjectionUiSystemHelper.cs", "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs", "Assets/Game/Scripts/UI/Shell/Ecs/UiDiagnosticsReadModelSystem.cs", "Assets/Game/Scripts/Utilities/UnitTransportVisualUtility.cs"]
+        "sourcePath": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapProjectionUiSystemHelper.cs",
+        "symbol": "ViewportCorners"
       },
-      "authority": ["Design/Architecture/WorkPackages/am_wp_028_phase2_debt_reconciliation.md"]
+      "authority": ["Assets/Tests/Editor/MatchHudMinimapProjectionUiSystemHelperTests.cs"]
     },
     {
       "id": "am018-static-irc-reviewed",
@@ -1158,15 +1168,18 @@
       ]
     },
     {
-      "id": "am018-static-msl-debt",
-      "decision": "genuine-debt",
-      "reasonCode": "mutable-static-lifecycle-unproven",
+      "id": "am018-static-msl-minimap-raster-buffer-instance-owned",
+      "decision": "resolved",
+      "reasonCode": "tested-instance-owned-raster-buffer",
       "expectedCount": 1,
-      "debtIdPrefix": "AM025-STATIC-MSL",
-      "ownerDomain": "architecture-core",
-      "workPackageId": "AM-WP-028",
-      "match": {"sourceArtifact": "AM-018", "sourceCategory": "mutableStaticCaches", "disposition": "MSL"},
-      "authority": ["Design/Architecture/WorkPackages/am_wp_028_phase2_debt_reconciliation.md"]
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "MSL",
+        "sourcePath": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs",
+        "symbol": "s_rasterBasePixels"
+      },
+      "authority": ["Assets/Tests/Editor/MatchHudMinimapProjectionUiSystemHelperTests.cs"]
     },
     {
       "id": "am018-discovery-audio-protected",

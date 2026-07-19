@@ -118,48 +118,33 @@
     "unmatchedFinalClassification": "new-after-baseline"
   },
   "currentExternalExitBlockers": {
-    "sourceGrowthUnresolvedBlockerCount": 5,
+    "sourceGrowthUnresolvedBlockerCount": 4,
     "sourceGrowthBlockers": [
       {
-        "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeLocaleTextUtilitySystemHelper.cs",
-        "sha256": "bb0382274483ff5f2fabb27e12c537bd7c5095dbf271a3d44c10a5782165dfae",
-        "lines": 61,
-        "bytes": 2058,
+        "path": "Assets/Game/Scripts/Composition/OperationMapRuntimeBootstrapSceneSystemHelper.cs",
+        "sha256": "7d3fd8af315641a8998d41c90c21e26f038151981b709170afe11a8436a15645",
+        "lines": 395,
+        "bytes": 15565,
         "violation": "missing-system-helper-authorization",
-        "ownerDomain": "first-launch",
+        "ownerDomain": "operation-map",
         "status": "blocked-owner-action"
       },
       {
-        "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativePortraitVoiceSelectionPresentationSystemHelper.cs",
-        "sha256": "40157a1f83793465e3650d23d71a84c72430949b633a2c8a1eb1d339efc6ea5d",
-        "lines": 73,
-        "bytes": 2450,
-        "ceilingLines": 60,
-        "ceilingBytes": 2102,
-        "violation": "system-helper-ceiling-exceeded",
-        "ownerDomain": "first-launch",
+        "path": "Assets/Game/Scripts/Composition/OperationMapSceneLoadingSceneSystemHelper.cs",
+        "sha256": "8de3e7f9a3519146696247d5d47103461a643f3cbbcb2fb002dfc1dac44e3910",
+        "lines": 533,
+        "bytes": 19685,
+        "violation": "missing-system-helper-authorization",
+        "ownerDomain": "operation-map",
         "status": "blocked-owner-action"
       },
       {
-        "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeProfileCompositionSystemHelper.cs",
-        "sha256": "9d3064af25346b59810cd76a8ec954fb1833384b086fb3f5b033d69144ec3162",
-        "lines": 163,
-        "bytes": 6425,
-        "ceilingLines": 135,
-        "ceilingBytes": 5172,
-        "violation": "system-helper-ceiling-exceeded",
-        "ownerDomain": "first-launch",
-        "status": "blocked-owner-action"
-      },
-      {
-        "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeSequencePresentationSystemHelper.cs",
-        "sha256": "1da7e3b63eaadef62d62ada5ff4d617395ae6fb9173356a5599b96639c746d9d",
-        "lines": 516,
-        "bytes": 22430,
-        "ceilingLines": 487,
-        "ceilingBytes": 21062,
-        "violation": "system-helper-and-over-500-ceilings-exceeded",
-        "ownerDomain": "first-launch",
+        "path": "Assets/Game/Scripts/Composition/OperationMapSceneReferenceSceneSystemHelper.cs",
+        "sha256": "7b7de2a93267894d0fe3f0cf63fc25c84813f1202c96c4aaa21e4f9b61d646e1",
+        "lines": 67,
+        "bytes": 2223,
+        "violation": "missing-system-helper-authorization",
+        "ownerDomain": "operation-map",
         "status": "blocked-owner-action"
       },
       {

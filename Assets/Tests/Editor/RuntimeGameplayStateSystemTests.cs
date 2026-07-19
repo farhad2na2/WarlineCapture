@@ -22,7 +22,8 @@ public sealed class RuntimeGameplayStateSystemTests
             RunCase(test => test.ResetForMatchShutdown_ClearsGameplayCameraAndFocus());
             RunCase(test => test.ReadGameplayState_RebindsAfterWorldReplacement());
             RunCase(test => test.SeparateWorlds_DoNotShareGameplayState());
-            UnityEngine.Debug.Log("[RuntimeGameplayStateValidation] result=Passed tests=8");
+            RunCase(test => test.DisposedWorld_ReadsDefaultAndIgnoresWrites());
+            UnityEngine.Debug.Log("[RuntimeGameplayStateValidation] result=Passed tests=9");
             ValidationExit.Passed();
         }
         catch (System.Exception exception)
@@ -203,6 +204,20 @@ public sealed class RuntimeGameplayStateSystemTests
             Assert.AreEqual(0, firstState.BuildModeActive);
         }
         firstWorld.Dispose();
+    }
+
+    [Test]
+    public void DisposedWorld_ReadsDefaultAndIgnoresWrites()
+    {
+        var runtimeState = new RuntimeGameplayStateSystem(_world.EntityManager) { PlayRequested = true };
+        World disposedWorld = _world;
+        World.DefaultGameObjectInjectionWorld = _previousWorld;
+        _world = null;
+        disposedWorld.Dispose();
+
+        Assert.DoesNotThrow(() => _ = runtimeState.PlayRequested);
+        Assert.IsFalse(runtimeState.PlayRequested);
+        Assert.DoesNotThrow(() => runtimeState.PlayRequested = true);
     }
 
     private T ReadSingleton<T>() where T : unmanaged, IComponentData

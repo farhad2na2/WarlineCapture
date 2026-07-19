@@ -8,22 +8,22 @@ namespace Game.Runtime
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     public partial struct RuntimeGameplayStateSystem : ISystem
     {
-        private EntityManager _entityManager;
+        private ulong _worldSequenceNumber;
 
         public RuntimeGameplayStateSystem(EntityManager entityManager)
         {
-            _entityManager = entityManager;
+            _worldSequenceNumber = entityManager.World.SequenceNumber;
         }
 
         public void Bind(EntityManager entityManager)
         {
-            _entityManager = entityManager;
+            _worldSequenceNumber = entityManager.World.SequenceNumber;
         }
 
         public void OnCreate(ref SystemState state)
         {
             // This is a disabled facade; callers access the World-owned state explicitly.
-            _entityManager = state.EntityManager;
+            _worldSequenceNumber = state.EntityManager.World.SequenceNumber;
             state.Enabled = false;
         }
 
@@ -194,11 +194,11 @@ namespace Game.Runtime
 
         private bool TryGetStateEntity(out EntityManager entityManager, out Entity entity)
         {
-            entityManager = _entityManager;
+            entityManager = default;
             entity = Entity.Null;
-            World world = entityManager.World;
-            if (world == null || !world.IsCreated)
+            if (!TryGetWorld(out World world))
                 return false;
+            entityManager = world.EntityManager;
             using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<RuntimeGameplayStateComponent>());
             if (!query.IsEmptyIgnoreFilter)
             {
@@ -213,6 +213,22 @@ namespace Game.Runtime
                 typeof(RuntimeCameraFocusRequestComponent));
             entityManager.SetName(entity, "RuntimeGameplayState");
             return true;
+        }
+
+        private bool TryGetWorld(out World world)
+        {
+            for (int i = 0; i < World.All.Count; i++)
+            {
+                World candidate = World.All[i];
+                if (candidate.IsCreated && candidate.SequenceNumber == _worldSequenceNumber)
+                {
+                    world = candidate;
+                    return true;
+                }
+            }
+
+            world = null;
+            return false;
         }
 
         private static void EnsureStateComponents(EntityManager entityManager, Entity entity)

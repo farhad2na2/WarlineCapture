@@ -68,4 +68,3 @@
 - `/private/tmp/opmap-perf-steady-logcat.txt`
 - `/private/tmp/opmap-perf-steady-gfxinfo.txt`
 - `/private/tmp/opmap-perf-match-40s-preview.png`
-

@@ -20,7 +20,7 @@ namespace Game.UI.Runtime
 
         [SerializeField] private ResourceExchangePopupView view;
 
-        private readonly List<ButtonBinding> _bindings = new();
+        private readonly List<(Button Button, UnityAction Action)> _bindings = new();
         private ResourceExchangePopupRuntimeView _previousActiveView;
         private uint _lastAppliedVersion;
         private bool _hasAppliedVersion;
@@ -76,10 +76,7 @@ namespace Game.UI.Runtime
             return ReferenceEquals(activeView, candidate);
         }
 
-        public void ConfigureForTests(ResourceExchangePopupView popupView)
-        {
-            view = popupView;
-        }
+        public void ConfigureForTests(ResourceExchangePopupView popupView) => view = popupView;
 
         public void RefreshNow(bool force = false)
         {
@@ -147,14 +144,14 @@ namespace Game.UI.Runtime
 
             button.onClick.RemoveListener(action);
             button.onClick.AddListener(action);
-            _bindings.Add(new ButtonBinding(button, action));
+            _bindings.Add((button, action));
         }
 
         private void ClearBindings()
         {
             for (int i = 0; i < _bindings.Count; i++)
             {
-                ButtonBinding binding = _bindings[i];
+                (Button Button, UnityAction Action) binding = _bindings[i];
                 if (binding.Button != null && binding.Action != null)
                     binding.Button.onClick.RemoveListener(binding.Action);
             }
@@ -207,18 +204,6 @@ namespace Game.UI.Runtime
                 UiResourceExchangeQueueRowModel rowModel = model.GetQueueRow(i);
                 Enqueue(kind, rowModel.QueueItemId);
                 return;
-            }
-        }
-
-        private readonly struct ButtonBinding
-        {
-            public readonly Button Button;
-            public readonly UnityAction Action;
-
-            public ButtonBinding(Button button, UnityAction action)
-            {
-                Button = button;
-                Action = action;
             }
         }
     }

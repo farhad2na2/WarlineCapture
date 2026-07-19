@@ -29,13 +29,7 @@ namespace Game.UI.Runtime
     {
         private const float MinLocalWindowHeight = 160f;
         private const float LocalWindowVisibleScale = 4.5f;
-        private static readonly Vector3[] ViewportCorners =
-        {
-            new(0f, 0f, 0f),
-            new(1f, 0f, 0f),
-            new(1f, 1f, 0f),
-            new(0f, 1f, 0f)
-        };
+        private const int ViewportCornerCount = 4;
 
         public static bool TryWorldToNormalized(MatchHudMinimapProjectionGrid grid, Vector3 worldPosition, out Vector2 normalized)
         {
@@ -92,9 +86,9 @@ namespace Game.UI.Runtime
             float maxX = float.NegativeInfinity;
             float maxY = float.NegativeInfinity;
             bool found = false;
-            for (int i = 0; i < ViewportCorners.Length; i++)
+            for (int i = 0; i < ViewportCornerCount; i++)
             {
-                if (!TryRaycastViewport(worldCamera, groundPlane, ViewportCorners[i], out Vector3 worldPoint) ||
+                if (!TryRaycastViewport(worldCamera, groundPlane, GetViewportCorner(i), out Vector3 worldPoint) ||
                     !TryWorldToNormalized(grid, worldPoint, out Vector2 normalized))
                 {
                     continue;
@@ -236,9 +230,9 @@ namespace Game.UI.Runtime
             float minZ = float.PositiveInfinity;
             float maxX = float.NegativeInfinity;
             float maxZ = float.NegativeInfinity;
-            for (int i = 0; i < ViewportCorners.Length; i++)
+            for (int i = 0; i < ViewportCornerCount; i++)
             {
-                if (!TryRaycastViewport(worldCamera, groundPlane, ViewportCorners[i], out Vector3 worldPoint))
+                if (!TryRaycastViewport(worldCamera, groundPlane, GetViewportCorner(i), out Vector3 worldPoint))
                     continue;
 
                 found = true;
@@ -286,9 +280,9 @@ namespace Game.UI.Runtime
             float minZ = float.PositiveInfinity;
             float maxX = float.NegativeInfinity;
             float maxZ = float.NegativeInfinity;
-            for (int i = 0; i < ViewportCorners.Length; i++)
+            for (int i = 0; i < ViewportCornerCount; i++)
             {
-                if (!TryRaycastViewport(worldCamera, groundPlane, ViewportCorners[i], out Vector3 worldPoint))
+                if (!TryRaycastViewport(worldCamera, groundPlane, GetViewportCorner(i), out Vector3 worldPoint))
                     continue;
 
                 found = true;
@@ -324,6 +318,17 @@ namespace Game.UI.Runtime
                 Mathf.Clamp01(normalizedCenter.x + normalizedWidth * 0.5f),
                 Mathf.Clamp01(normalizedCenter.y + normalizedHeight * 0.5f));
             return normalizedRect.width > 0f && normalizedRect.height > 0f;
+        }
+
+        private static Vector3 GetViewportCorner(int index)
+        {
+            return index switch
+            {
+                0 => new Vector3(0f, 0f, 0f),
+                1 => new Vector3(1f, 0f, 0f),
+                2 => new Vector3(1f, 1f, 0f),
+                _ => new Vector3(0f, 1f, 0f)
+            };
         }
 
         private static bool TryRaycastViewport(Camera camera, Plane groundPlane, Vector3 viewportPoint, out Vector3 point)

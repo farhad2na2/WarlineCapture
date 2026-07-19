@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Reflection;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -28,12 +29,15 @@ public sealed class MatchHudMinimapProjectionUiSystemHelperTests
             tests.NormalizedToWorldClampsOutOfRangeInput();
             tests.ViewportRectUsesMapPositionWhenViewportIsNotMapChild();
             tests.RebindingAfterDestroyedMapViewRecreatesMarkerPool();
+            tests.RebindingLiveViewReusesMarkerPoolUntilDispose();
+            tests.RasterBasePixelsAreInstanceOwnedUntilDispose();
+            tests.ProjectionHelperHasNoStaticArrayState();
             tests.ViewportDragUsesViewportParentSpaceWhenMapIsFramed();
             tests.ViewportDragCanStartFromVisibleOutlinePadding();
             tests.ViewportDragAddsRaycastTargetWhenViewportHasNoGraphic();
             tests.FullMapViewportDragRequestsCameraMoveThroughInputHelper();
             tests.FullMapProjectionExpandsToKeepCameraViewportInsideMap();
-            Debug.Log("[MatchHudMinimapProjectionFocusedValidation] result=Passed tests=18");
+            Debug.Log("[MatchHudMinimapProjectionFocusedValidation] result=Passed tests=21");
         }
         catch (System.Exception ex)
         {
@@ -523,6 +527,92 @@ public sealed class MatchHudMinimapProjectionUiSystemHelperTests
     }
 
     [Test]
+    public void RebindingLiveViewReusesMarkerPoolUntilDispose()
+    {
+        GameObject cameraObject = new("MinimapLiveRebindCamera");
+        Texture2D defaultTexture = new(4, 4, TextureFormat.RGBA32, false);
+        MatchHudMinimapInputUiSystemHelper inputSystem = null;
+        GameObject panel = null;
+        bool restoreLogAssertIgnore = false;
+        try
+        {
+            Camera camera = cameraObject.AddComponent<Camera>();
+            camera.orthographic = true;
+            camera.orthographicSize = 25f;
+            camera.aspect = 1f;
+            camera.transform.position = new Vector3(500f, 100f, 500f);
+            camera.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+
+            FakeMinimapDataSource dataSource = new(CreateGridModel(100, 100, 10f));
+            dataSource.Markers.Add(new MatchHudMinimapMarkerModel(
+                new Vector3(500f, 0f, 500f),
+                MatchHudMinimapMarkerAllegiance.Player));
+            panel = CreateMinimapPanel("MinimapPanel_LiveRebind", defaultTexture, out MatchHudMinimapView view, out _, out _);
+            inputSystem = new MatchHudMinimapInputUiSystemHelper();
+            if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null)
+            {
+                LogAssert.ignoreFailingMessages = true;
+                restoreLogAssertIgnore = true;
+            }
+
+            inputSystem.Bind(view, new FakeMatchRuntimeState(), new FakeMatchHudCameraControl(camera), dataSource);
+            Transform firstMarker = view.MapRect.Find("MinimapMarker");
+            Assert.NotNull(firstMarker);
+
+            inputSystem.Unbind();
+            Assert.IsFalse(firstMarker.gameObject.activeSelf);
+            inputSystem.Bind(view, new FakeMatchRuntimeState(), new FakeMatchHudCameraControl(camera), dataSource);
+
+            Assert.AreSame(firstMarker, view.MapRect.Find("MinimapMarker"));
+            Assert.AreEqual(1, CountChildrenNamed(view.MapRect, "MinimapMarker"));
+            inputSystem.Dispose();
+            inputSystem = null;
+            Assert.IsTrue(firstMarker == null);
+        }
+        finally
+        {
+            if (restoreLogAssertIgnore)
+                LogAssert.ignoreFailingMessages = false;
+            inputSystem?.Dispose();
+            Object.DestroyImmediate(defaultTexture);
+            Object.DestroyImmediate(cameraObject);
+            Object.DestroyImmediate(panel);
+        }
+    }
+
+    [Test]
+    public void RasterBasePixelsAreInstanceOwnedUntilDispose()
+    {
+        MethodInfo getPixels = typeof(MatchHudMinimapInputUiSystemHelper).GetMethod(
+            "GetOrCreateRasterBasePixels",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        FieldInfo pixelsField = typeof(MatchHudMinimapInputUiSystemHelper).GetField(
+            "_rasterBasePixels",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.NotNull(getPixels);
+        Assert.NotNull(pixelsField);
+
+        MatchHudMinimapInputUiSystemHelper first = new();
+        MatchHudMinimapInputUiSystemHelper second = new();
+        Color32[] firstPixels = (Color32[])getPixels.Invoke(first, null);
+        Assert.AreSame(firstPixels, getPixels.Invoke(first, null));
+        Assert.AreNotSame(firstPixels, getPixels.Invoke(second, null));
+
+        first.Dispose();
+        Assert.IsNull(pixelsField.GetValue(first));
+        second.Dispose();
+    }
+
+    [Test]
+    public void ProjectionHelperHasNoStaticArrayState()
+    {
+        FieldInfo[] fields = typeof(MatchHudMinimapProjectionUiSystemHelper).GetFields(
+            BindingFlags.Static | BindingFlags.NonPublic);
+        for (int i = 0; i < fields.Length; i++)
+            Assert.IsFalse(fields[i].FieldType.IsArray, fields[i].Name);
+    }
+
+    [Test]
     public void ViewportDragUsesViewportParentSpaceWhenMapIsFramed()
     {
         GameObject panel = new("MinimapPanel_ViewportDrag");
@@ -835,6 +925,18 @@ public sealed class MatchHudMinimapProjectionUiSystemHelperTests
         for (int i = 0; i < images.Length; i++)
         {
             if (images[i].gameObject.name == "MinimapMarker" && images[i].gameObject.activeSelf)
+                count++;
+        }
+
+        return count;
+    }
+
+    private static int CountChildrenNamed(Transform parent, string childName)
+    {
+        int count = 0;
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            if (parent.GetChild(i).name == childName)
                 count++;
         }
 

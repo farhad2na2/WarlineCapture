@@ -8,17 +8,7 @@ namespace Game.UI.Runtime
     [DisallowMultipleComponent]
     public sealed class MainMenuNavigationView : MonoBehaviour
     {
-        private const MainMenuNavigationTabId DefaultSelectedTab = MainMenuNavigationTabId.Leaderboards;
-
         [SerializeField] private MainMenuNavigationTabView[] tabs;
-
-        private static MainMenuNavigationTabId activeTab = DefaultSelectedTab;
-
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetActiveTab()
-        {
-            activeTab = DefaultSelectedTab;
-        }
 
         private readonly List<TabBinding> bindings = new();
         private Sprite selectedFrameSprite;
@@ -36,7 +26,7 @@ namespace Game.UI.Runtime
         private void OnEnable()
         {
             WireAll();
-            ApplyVisualState(activeTab);
+            ApplyVisualState(MainMenuNavigationSessionState.ActiveTab);
         }
 
         private void OnDisable()
@@ -103,7 +93,7 @@ namespace Game.UI.Runtime
 
         private void SelectNav(MainMenuNavigationTabId tabId)
         {
-            activeTab = tabId;
+            MainMenuNavigationSessionState.Select(tabId);
             ApplyVisualState(tabId);
         }
 

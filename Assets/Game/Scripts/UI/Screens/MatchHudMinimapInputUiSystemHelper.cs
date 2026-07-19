@@ -35,13 +35,11 @@ namespace Game.UI.Runtime
         private const float ViewportDragRefreshSeconds = 0.05f;
         private const float MarkerRefreshSeconds = 0.2f;
         private const int MinRasterFeatureCount = 24;
-        private static Color32[] s_rasterBasePixels;
-
         private MatchHudMinimapView _view;
         private IMatchRuntimeState _runtimeGameplayStateSystem;
         private IMatchHudCameraControl _selectionUiCameraSystem;
         private IMatchHudMinimapDataSource _minimapDataSource;
-        private readonly System.Collections.Generic.List<Image> _markerPool = new();
+        private readonly System.Collections.Generic.List<Image> _markerImagePool = new();
         private readonly System.Collections.Generic.List<MatchHudMinimapMarkerModel> _markerScratch = new();
         private readonly System.Collections.Generic.List<MatchHudMinimapRoadCellModel> _roadScratch = new();
         private readonly System.Collections.Generic.List<MatchHudMinimapSurfaceFeatureModel> _surfaceScratch = new();
@@ -52,6 +50,7 @@ namespace Game.UI.Runtime
         private Sprite _captureSprite;
         private Sprite _rasterSprite;
         private Color32[] _rasterPixels;
+        private Color32[] _rasterBasePixels;
         private readonly Vector3[] _mapWorldCorners = new Vector3[4];
         private readonly MatchHudMinimapProjectionGrid[] _rasterProjectionCandidates = new MatchHudMinimapProjectionGrid[4];
         private bool _staticMapDirty = true;
@@ -94,6 +93,7 @@ namespace Game.UI.Runtime
             if (_view == null)
                 return;
 
+            RebindMarkerPool();
             _view.FocusRequested += HandleFocusRequested;
             _view.ZoomHeldChanged += HandleZoomHeldChanged;
             _hasCapturedProjectionGrid = false;
@@ -140,7 +140,7 @@ namespace Game.UI.Runtime
             _runtimeGameplayStateSystem = null;
             _selectionUiCameraSystem = null;
             _minimapDataSource = null;
-            _markerPool.Clear();
+            DeactivateMarkerPool();
             _rawPointerWasPressedLastFrame = false;
             _rawViewportDragActive = false;
             _rawActiveTouchId = -1;
@@ -150,6 +150,7 @@ namespace Game.UI.Runtime
         public void Dispose()
         {
             Unbind();
+            ReleaseMarkerPool();
             ReleaseCaptureResources();
         }
 
@@ -537,9 +538,9 @@ namespace Game.UI.Runtime
                 markerIndex++;
             }
 
-            for (int i = markerIndex; i < _markerPool.Count; i++)
+            for (int i = markerIndex; i < _markerImagePool.Count; i++)
             {
-                Image marker = _markerPool[i];
+                Image marker = _markerImagePool[i];
                 if (marker == null)
                     continue;
 
@@ -591,7 +592,10 @@ namespace Game.UI.Runtime
 
         private Image EnsureMarker(int index)
         {
-            while (_markerPool.Count <= index)
+            if (index < _markerImagePool.Count && _markerImagePool[index] == null)
+                _markerImagePool.RemoveRange(index, _markerImagePool.Count - index);
+
+            while (_markerImagePool.Count <= index)
             {
                 RectTransform parent = _view != null && _view.MarkerRoot != null ? _view.MarkerRoot : _view != null ? _view.MapRect : null;
                 if (parent == null)
@@ -605,16 +609,55 @@ namespace Game.UI.Runtime
                 rect.pivot = new Vector2(0.5f, 0.5f);
                 Image image = markerObject.AddComponent<Image>();
                 image.raycastTarget = false;
-                _markerPool.Add(image);
+                _markerImagePool.Add(image);
             }
 
-            if (_markerPool[index] == null)
+            return _markerImagePool[index];
+        }
+
+        private void RebindMarkerPool()
+        {
+            RectTransform parent = _view != null && _view.MarkerRoot != null
+                ? _view.MarkerRoot
+                : _view != null ? _view.MapRect : null;
+            if (parent == null)
+                return;
+
+            for (int i = _markerImagePool.Count - 1; i >= 0; i--)
             {
-                _markerPool.RemoveRange(index, _markerPool.Count - index);
-                return EnsureMarker(index);
+                Image marker = _markerImagePool[i];
+                if (marker == null)
+                {
+                    _markerImagePool.RemoveAt(i);
+                    continue;
+                }
+
+                marker.transform.SetParent(parent, false);
+                marker.gameObject.layer = parent.gameObject.layer;
+                marker.gameObject.SetActive(false);
+            }
+        }
+
+        private void DeactivateMarkerPool()
+        {
+            for (int i = 0; i < _markerImagePool.Count; i++)
+            {
+                Image marker = _markerImagePool[i];
+                if (marker != null && marker.gameObject.activeSelf)
+                    marker.gameObject.SetActive(false);
+            }
+        }
+
+        private void ReleaseMarkerPool()
+        {
+            for (int i = 0; i < _markerImagePool.Count; i++)
+            {
+                Image marker = _markerImagePool[i];
+                if (marker != null)
+                    DestroyRuntimeObject(marker.gameObject);
             }
 
-            return _markerPool[index];
+            _markerImagePool.Clear();
         }
 
         private bool TryGetGrid(out MatchHudMinimapGridModel grid)
@@ -945,16 +988,16 @@ namespace Game.UI.Runtime
                 height);
         }
 
-        private static void DrawRasterBase(Color32[] pixels)
+        private void DrawRasterBase(Color32[] pixels)
         {
-            Color32[] basePixels = GetRasterBasePixels();
+            Color32[] basePixels = GetOrCreateRasterBasePixels();
             Array.Copy(basePixels, pixels, basePixels.Length);
         }
 
-        private static Color32[] GetRasterBasePixels()
+        private Color32[] GetOrCreateRasterBasePixels()
         {
-            if (s_rasterBasePixels != null && s_rasterBasePixels.Length == CaptureResolution * CaptureResolution)
-                return s_rasterBasePixels;
+            if (_rasterBasePixels != null && _rasterBasePixels.Length == CaptureResolution * CaptureResolution)
+                return _rasterBasePixels;
 
             Color32[] pixels = new Color32[CaptureResolution * CaptureResolution];
             for (int y = 0; y < CaptureResolution; y++)
@@ -969,8 +1012,8 @@ namespace Game.UI.Runtime
             }
 
             DrawRasterGrid(pixels);
-            s_rasterBasePixels = pixels;
-            return s_rasterBasePixels;
+            _rasterBasePixels = pixels;
+            return _rasterBasePixels;
         }
 
         private static Color32 LerpColor(Color32 a, Color32 b, float t, int offset)
@@ -1214,6 +1257,7 @@ namespace Game.UI.Runtime
             _captureSprite = null;
             _rasterSprite = null;
             _rasterPixels = null;
+            _rasterBasePixels = null;
             _captureCamera = null;
         }
 

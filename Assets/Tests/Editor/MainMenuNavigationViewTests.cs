@@ -25,15 +25,10 @@ public sealed class MainMenuNavigationViewTests
     [Test]
     public void ActiveTab_PersistsAcrossViewsAndResetsForNewSession()
     {
-        Type viewType = typeof(MainMenuNavigationView);
-        FieldInfo activeTab = viewType.GetField("activeTab", BindingFlags.Static | BindingFlags.NonPublic);
-        MethodInfo selectNav = viewType.GetMethod("SelectNav", BindingFlags.Instance | BindingFlags.NonPublic);
-        MethodInfo reset = viewType.GetMethod("ResetActiveTab", BindingFlags.Static | BindingFlags.NonPublic);
-        Assert.NotNull(activeTab);
+        MethodInfo selectNav = typeof(MainMenuNavigationView).GetMethod("SelectNav", BindingFlags.Instance | BindingFlags.NonPublic);
         Assert.NotNull(selectNav);
-        Assert.NotNull(reset);
 
-        reset.Invoke(null, null);
+        MainMenuNavigationSessionState.Reset();
         GameObject firstObject = new("MainMenuNavigationTestFirst");
         GameObject secondObject = new("MainMenuNavigationTestSecond");
         try
@@ -42,15 +37,15 @@ public sealed class MainMenuNavigationViewTests
             secondObject.AddComponent<MainMenuNavigationView>();
             selectNav.Invoke(first, new object[] { MainMenuNavigationTabId.Armory });
 
-            Assert.AreEqual(MainMenuNavigationTabId.Armory, activeTab.GetValue(null));
-            reset.Invoke(null, null);
-            Assert.AreEqual(MainMenuNavigationTabId.Leaderboards, activeTab.GetValue(null));
+            Assert.AreEqual(MainMenuNavigationTabId.Armory, MainMenuNavigationSessionState.ActiveTab);
+            MainMenuNavigationSessionState.Reset();
+            Assert.AreEqual(MainMenuNavigationTabId.Leaderboards, MainMenuNavigationSessionState.ActiveTab);
         }
         finally
         {
             UnityEngine.Object.DestroyImmediate(firstObject);
             UnityEngine.Object.DestroyImmediate(secondObject);
-            reset.Invoke(null, null);
+            MainMenuNavigationSessionState.Reset();
         }
     }
 }

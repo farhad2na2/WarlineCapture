@@ -707,7 +707,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 66% (116/177 checklist items complete).
+Overall implementation progress: 66% (117/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -723,7 +723,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 | 6. Metadata, camera, minimap, and movement binding | In progress / shared | 11 | 12 | 92% | Scenario-required anchors validate against map metadata; camera bounds/poses, ARIA Show Me, minimap projection, startup grid domain, authoritative surface payload, current faction deployment anchors, and current runway/helipad records are authored from accepted sources. Objective jump remains blocked on an accepted objective runtime writer and an authored objective anchor. |
 | 7. M01 operation-map slice | Later / shared contracts only | 0 | 10 | 0% | Map-neutral ids/anchors may proceed; physical rollout remains gated. |
 | 8. Editor-time texture/mask generator | Later / editor direction only | 0 | 12 | 0% | Implement only if the editor-authored map direction is selected. |
-| 9. Mission and Skirmish scenario rollout | In progress / single-map scenario data | 2 | 10 | 20% | The standard Skirmish scenario resolves the approved physical map, and active map/scenario/mission identity reaches the ECS UI read-model boundary. Feature, objective, force, and reward data remain open. |
+| 9. Mission and Skirmish scenario rollout | In progress / single-map scenario data | 3 | 10 | 30% | The standard Skirmish scenario resolves the approved physical map, active map/scenario/mission identity reaches the ECS UI read-model boundary, and the production lifecycle passes sequential reload. Feature, objective, force, and reward data remain open. |
 | 10. Full validation and all-bundled rollout | Shared validation subset active | 10 | 21 | 48% | Launch parity, config/lifecycle/static-presentation, scene-reference, spatial-behavior, map-conversion, and exact package membership are accepted; architecture, controlled package comparison, memory, performance, final release-artifact, and device gates remain. |
 | 11. Deferred remote content migration | Later / remote delivery | 0 | 16 | 0% | Remote delivery remains independently gated. |
 
@@ -1024,7 +1024,7 @@ Exit criteria:
 - [ ] Define Campaign rewards, unlocks, and consequences in scenario data.
 - [x] Publish UI read models for active mission/scenario/map identity. `UiMatchIdentityReadModelSystem` copies fixed-string ids from `ActiveOperationMapComponent` into the shell-owned `UiMatchIdentityReadModelComponent`, versions only real changes, clears identity after unload, and remains Burst/no-GC. See `../AgentReports/2026-07-19_operation_map_ui_identity_read_model.md`.
 - [ ] Validate objective/reward/feature references against operation-map anchors and catalogs.
-- [ ] Add one preserved-current-map Skirmish probe and sequential reload probe.
+- [x] Add one preserved-current-map Skirmish probe and sequential reload probe. The production Editor PlayMode lifecycle validates exact map/scenario/mission identity, complete Addressables teardown, ECS-root disposal, and a second successful match. See `../AgentReports/2026-07-19_operation_map_skirmish_lifecycle_acceptance.md`.
 - [ ] Add Campaign/M01 probes only after the M01 hold is released.
 
 Exit criteria:

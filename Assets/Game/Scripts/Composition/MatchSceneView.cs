@@ -79,6 +79,10 @@ namespace Game.Composition
             operationMapSceneLoadingSystem != null && operationMapSceneLoadingSystem.IsReady
                 ? operationMapSceneLoadingSystem.Manifest
                 : staticMapPresentationManifest;
+        public OperationMapCanonicalPresentationMode CanonicalPresentationMode =>
+            activeOperationMapSceneView != null
+                ? activeOperationMapSceneView.CanonicalPresentationMode
+                : OperationMapCanonicalPresentationMode.SourceRenderersPresent;
         public CombinedMeshBaker DecorationCombinedMeshBaker =>
             activeOperationMapSceneView != null
                 ? activeOperationMapSceneView.DecorationCombinedMeshBaker

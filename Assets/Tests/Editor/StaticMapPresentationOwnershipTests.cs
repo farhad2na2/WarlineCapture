@@ -283,6 +283,52 @@ public sealed class StaticMapPresentationOwnershipTests
         Assert.That(ownership.Failure, Is.Null);
     }
 
+    [Test]
+    public void PresentationOnly_UsesManifestWithoutCanonicalRenderers()
+    {
+        Transform authoringRoot = CreateRoot();
+        MeshRenderer source = CreateRenderer(authoringRoot, "Owned");
+        StaticMapPresentationManifest manifest = CreateManifest(authoringRoot, source);
+        Transform runtimeRoot = CreateRoot();
+        StaticMapPresentationOwnership ownership = new();
+
+        ownership.Initialize(
+            RuntimePlatform.OSXEditor,
+            manifest,
+            runtimeRoot,
+            null,
+            null,
+            null,
+            OperationMapCanonicalPresentationMode.PresentationOnly);
+
+        Assert.That(ownership.UsingPresentation, Is.True);
+        Assert.That(ownership.UsingLegacyFallback, Is.False);
+        Assert.That(ownership.SuppressedRendererCount, Is.Zero);
+    }
+
+    [Test]
+    public void PresentationOnly_WithCanonicalRendererFailsClosed()
+    {
+        Transform root = CreateRoot();
+        MeshRenderer renderer = CreateRenderer(root, "Owned");
+        StaticMapPresentationManifest manifest = CreateManifest(root, renderer);
+        StaticMapPresentationOwnership ownership = new();
+
+        ownership.Initialize(
+            RuntimePlatform.Android,
+            manifest,
+            root,
+            null,
+            null,
+            null,
+            OperationMapCanonicalPresentationMode.PresentationOnly);
+
+        Assert.That(ownership.UsingPresentation, Is.False);
+        Assert.That(ownership.UsingLegacyFallback, Is.True);
+        Assert.That(ownership.Failure, Does.Contain("contains canonical renderers"));
+        Assert.That(renderer.enabled, Is.True);
+    }
+
     private Transform CreateRoot()
     {
         GameObject root = new("Map");

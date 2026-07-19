@@ -925,7 +925,8 @@ namespace Game.Composition
             mapVisuals.Initialize(Application.platform, sceneView.StaticMapPresentationManifest, mapRoot,
                 MapBuildingAuthoringRoot,
                 MapVehicleAuthoringRoot,
-                DecorationRoot);
+                DecorationRoot,
+                sceneView.CanonicalPresentationMode);
             _staticMapBatchingInitialized = true;
         }
 

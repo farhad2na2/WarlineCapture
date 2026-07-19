@@ -37,19 +37,27 @@ namespace Game.Rendering
             Transform mapRoot,
             Transform mapBuildingAuthoringRoot,
             Transform mapVehicleAuthoringRoot,
-            Transform decorationRoot)
+            Transform decorationRoot,
+            OperationMapCanonicalPresentationMode canonicalPresentationMode =
+                OperationMapCanonicalPresentationMode.SourceRenderersPresent)
         {
             Dispose();
             string error = null;
-            if (platform == RuntimePlatform.Android &&
-                TrySuppressCanonicalRenderers(manifest, mapRoot, out error))
+            bool usePresentation = canonicalPresentationMode == OperationMapCanonicalPresentationMode.PresentationOnly
+                ? TryActivatePresentationOnly(manifest, mapRoot, out error)
+                : platform == RuntimePlatform.Android &&
+                  TrySuppressCanonicalRenderers(manifest, mapRoot, out error);
+            if (usePresentation)
             {
                 UsingPresentation = true;
                 Debug.Log($"[StaticMapPresentationOwnership] result=Presentation suppressed={_suppressed.Count}");
                 return;
             }
 
-            Failure = platform == RuntimePlatform.Android ? error : null;
+            Failure = platform == RuntimePlatform.Android ||
+                      canonicalPresentationMode == OperationMapCanonicalPresentationMode.PresentationOnly
+                ? error
+                : null;
             UsingLegacyFallback = true;
             _legacyBatching.Initialize(
                 mapRoot,
@@ -58,6 +66,28 @@ namespace Game.Rendering
                 decorationRoot);
             Debug.Log(
                 $"[StaticMapPresentationOwnership] result=LegacyFallback reason={Failure ?? "platform"}");
+        }
+
+        private static bool TryActivatePresentationOnly(
+            StaticMapPresentationManifest manifest,
+            Transform mapRoot,
+            out string error)
+        {
+            if (manifest == null || !StaticMapPresentationManifest.IsSchemaReadable(manifest.SchemaVersion))
+                return Fail("presentation manifest is missing or unsupported", out error);
+            if (!StaticMapPresentationManifest.HasRequiredIdentity(
+                    manifest.SchemaVersion,
+                    manifest.OperationMapId,
+                    manifest.CanonicalSceneGuid,
+                    manifest.CanonicalScenePath))
+            {
+                return Fail("presentation manifest identity is incomplete", out error);
+            }
+            if (mapRoot == null)
+                return Fail("presentation-only map root is missing", out error);
+            if (mapRoot.GetComponentInChildren<MeshRenderer>(true) != null)
+                return Fail("presentation-only map root contains canonical renderers", out error);
+            return ValidateManifestShape(manifest, out error);
         }
 
         public void Dispose()

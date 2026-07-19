@@ -1,6 +1,7 @@
 using System;
 using Game.Authoring;
 using Game.Configs;
+using Game.Rendering;
 using Game.Runtime;
 using Unity.Scenes;
 using UnityEngine;
@@ -22,6 +23,7 @@ namespace Game.Composition
         [SerializeField] private MapBuildingPlacementConfig buildingPlacements;
         [SerializeField] private MapVehiclePlacementConfig vehiclePlacements;
         [SerializeField] private SubScene mapSubScene;
+        [SerializeField] private OperationMapCanonicalPresentationMode canonicalPresentationMode;
 
         public string OperationMapId => operationMapId;
         public OperationMapDefinition Definition => definition;
@@ -35,6 +37,7 @@ namespace Game.Composition
         public MapBuildingPlacementConfig BuildingPlacements => buildingPlacements;
         public MapVehiclePlacementConfig VehiclePlacements => vehiclePlacements;
         public SubScene MapSubScene => mapSubScene;
+        public OperationMapCanonicalPresentationMode CanonicalPresentationMode => canonicalPresentationMode;
 
         public bool TryValidate(out string error)
         {
@@ -79,6 +82,13 @@ namespace Game.Composition
                 !vehicleAuthoringRoot.IsChildOf(mapRoot))
             {
                 error = "Operation-map presentation and placement roots must remain under the map root.";
+                return false;
+            }
+
+            if (canonicalPresentationMode == OperationMapCanonicalPresentationMode.PresentationOnly &&
+                mapRoot.GetComponentInChildren<MeshRenderer>(true) != null)
+            {
+                error = "Presentation-only operation-map roots cannot contain canonical renderers.";
                 return false;
             }
 

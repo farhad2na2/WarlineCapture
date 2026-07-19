@@ -822,6 +822,54 @@ Exit criteria:
 - [ ] Produce the clean one-map local artifact with APK/AAB, installed-size, bundle, Entities, memory, and load-time deltas; defer two-map and portfolio artifacts until another physical map is approved.
 - [ ] Validate the single approved physical map launches offline from real local bundles on Editor and Android with no remote catalog, download query, network call, or remote helper implementation.
 
+### Runtime Binding Scene Requirement
+
+The clean one-map artifact cannot be accepted while the 130 MB hand-authored source scene is also the
+long-lived runtime scene. The current scene contains approximately 40,403 prefab instances; its Core bundle
+is 86.5 MB packed and attributes approximately 112.1 MiB of serialized content to prefabs. Disabling source
+renderers prevents double drawing but does not release those GameObjects or their referenced assets.
+
+Implement the optimization as a deterministic editor output, not as runtime generation:
+
+- Keep `Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01.unity` as the sole
+  hand-edited authoring scene and canonical input for placement, surface, metadata, minimap, and static
+  presentation baking. It must not be in Build Settings or any Addressables group after cutover.
+- Add editor-only `OperationMapRuntimeBindingSceneBuilder` under `Game.Editor`. It produces one generated,
+  map-owned runtime binding scene beneath `Assets/Game/GeneratedOperationMaps/RuntimeBinding/<map-id>/`
+  from the accepted bake outputs. It must not modify the authoring scene.
+- Add editor-only `OperationMapRuntimeBindingSceneValidator` under `Game.Editor`. It owns structural,
+  dependency, source-hash, no-op, and package-membership validation. Do not introduce `*Manager`,
+  `*Controller`, `*Service`, `*Facade`, `*Utility`, or a new updating `MonoBehaviour`.
+- Keep the existing stable `operation-map/<map-id>/source-scene` address and
+  `OperationMapDefinition.SourceSceneReference`; after cutover they resolve the generated runtime binding
+  scene. Gameplay and composition policy must not know the editor authoring-scene path.
+- The runtime binding scene contains exactly one `OperationMapSceneView`, the map-owned SubScene reference,
+  map-surface/grid references, building and vehicle placement assets, typed empty runtime roots, and only
+  explicitly approved managed-physics objects required by world picking or non-ECS collision. It contains no
+  decorative prefab instances, canonical visual renderers, cameras, lighting, UI, or duplicated gameplay
+  systems.
+- Before copying any physics object, inventory its runtime consumer. Prefer the accepted surface/grid/blocker
+  metadata and ECS collision data. Copy only consumers that still require Unity Physics/PhysX GameObjects,
+  remove render components from those copies, and record their source stable identities.
+- Add serialized `OperationMapCanonicalPresentationMode` data with explicit
+  `SourceRenderersPresent` and `PresentationOnly` values. `PresentationOnly` must require zero canonical
+  visual renderers and must activate generated presentation directly; absence of source renderers is not a
+  legacy-fallback condition in that mode.
+- Extend the one-button map bake in this order: validate authoring scene, bake placements/surface/metadata,
+  bake static presentation, build runtime binding scene, validate deterministic outputs and dependency
+  containment, then build local Addressables. Failure must preserve the previous accepted binding scene and
+  package inputs.
+- Preserve the generated binding scene and `.meta` byte-for-byte on an identical second bake. Its ledger
+  records map id, authoring scene GUID/hash, accepted input hashes, output hash, copied physics identities,
+  stripped component counts, and builder schema version without machine paths or timestamps.
+- Fail the Addressables layout/build gate if the authoring scene is addressable, if the runtime binding scene
+  references an unapproved visual prefab/material/texture dependency, or if both scenes are packaged.
+- Validate authored placement parity, surface/grid/blocker parity, runway/helipad behavior, world picking,
+  building/vehicle conversion, static-presentation activation, failure unwind, teardown, and sequential reload.
+  Then repeat APK/AAB, installed-size, bundle, load-time, PSS, graphics-memory, FPS, draw, and GC measurements.
+- Rollback is one atomic catalog/reference change back to the accepted authoring source-scene GUID followed by
+  a clean Addressables rebuild; generated binding outputs can then be removed without touching authoring data.
+
 Exit criteria:
 
 - Every catalog-approved map is bundled locally but remains an independently addressable map pack.

@@ -38,14 +38,21 @@ namespace Game.Editor
             public readonly GameObject Prefab;
             public readonly float Width;
             public readonly float Depth;
+            public readonly float Height;
             public readonly float VisualScale;
 
-            public PrefabFootprint(GameObject prefab, float width, float depth, float visualScale)
+            public PrefabFootprint(
+                GameObject prefab,
+                float width,
+                float depth,
+                float height,
+                float visualScale)
             {
                 Prefab = prefab;
                 VisualScale = Mathf.Max(0.01f, visualScale);
                 Width = Mathf.Max(3f, width * VisualScale);
                 Depth = Mathf.Max(3f, depth * VisualScale);
+                Height = Mathf.Max(1f, height * VisualScale);
             }
         }
 
@@ -410,6 +417,7 @@ namespace Game.Editor
             public readonly List<PrefabFootprint> Houses = new();
             public readonly List<PrefabFootprint> Shops = new();
             public readonly List<PrefabFootprint> Other = new();
+            public readonly List<PrefabFootprint> CentralLandmarks = new();
             public readonly List<PrefabFootprint> Park = new();
             public readonly List<PrefabFootprint> Fountains = new();
         }
@@ -571,18 +579,24 @@ namespace Game.Editor
         {
             private const float BuildingClearance = 0.35f;
             private const float RoadVisualHalfExtent = 9f;
+            private const float DirtRoadVisualHalfExtent = RoadGridSize * 0.5f;
             private const float OccupancyCellSize = 12f;
 
             private readonly HashSet<Vector2Int> _roadCells;
+            private readonly HashSet<Vector2Int> _dirtRoadCells;
             private readonly Vector3 _roadOrigin;
             private readonly List<Rect> _occupiedBounds = new();
             private readonly Dictionary<Vector2Int, List<int>> _occupiedByCell = new();
 
             public int ReservedCount => _occupiedBounds.Count;
 
-            public BuildingPlacementContext(HashSet<Vector2Int> roadCells, Vector3 roadOrigin)
+            public BuildingPlacementContext(
+                HashSet<Vector2Int> roadCells,
+                Vector3 roadOrigin,
+                HashSet<Vector2Int> dirtRoadCells = null)
             {
                 _roadCells = roadCells ?? new HashSet<Vector2Int>();
+                _dirtRoadCells = dirtRoadCells ?? new HashSet<Vector2Int>();
                 _roadOrigin = roadOrigin;
             }
 
@@ -655,13 +669,19 @@ namespace Game.Editor
                         if (!_roadCells.Contains(new Vector2Int(column, row)))
                             continue;
 
-                        float roadX = _roadOrigin.x + column * RoadGridSize;
-                        float roadZ = _roadOrigin.z + row * RoadGridSize;
+                        var roadCell = new Vector2Int(column, row);
+                        bool dirtRoad = _dirtRoadCells.Contains(roadCell);
+                        float roadHalfExtent = dirtRoad
+                            ? DirtRoadVisualHalfExtent
+                            : RoadVisualHalfExtent;
+                        float centerOffset = dirtRoad ? RoadGridSize * 0.5f : 0f;
+                        float roadX = _roadOrigin.x + column * RoadGridSize + centerOffset;
+                        float roadZ = _roadOrigin.z + row * RoadGridSize + centerOffset;
                         var roadBounds = new Rect(
-                            roadX - RoadVisualHalfExtent,
-                            roadZ - RoadVisualHalfExtent,
-                            RoadVisualHalfExtent * 2f,
-                            RoadVisualHalfExtent * 2f);
+                            roadX - roadHalfExtent,
+                            roadZ - roadHalfExtent,
+                            roadHalfExtent * 2f,
+                            roadHalfExtent * 2f);
                         if (roadBounds.Overlaps(candidate, true))
                             return true;
                     }
@@ -708,14 +728,30 @@ namespace Game.Editor
             Fringe
         }
 
+        private enum FrontageSnapEdge
+        {
+            None,
+            MinimumX,
+            MaximumX,
+            MinimumZ,
+            MaximumZ
+        }
+
         private const float RoadGridSize = 10f;
         private const float WestCityExpansion = 512f;
         private const float SouthCityExpansion = 128f;
         private const float NorthCityExpansion = 128f;
         private const int RoadChunkSize = 16;
         private const float BuildingVisualScale = 0.82f;
-        private const float SidewalkBuildingRoadSetback = 2.75f;
+        private const float CivicHallVisualScale = 2.75f;
+        private const float CentralHallVisualScale = 2.35f;
+        private const float CentralClockTowerVisualScale = 3.25f;
+        private const float CentralTowerVisualScale = 2.85f;
+        private const float CentralLargeBuildingVisualScale = 2.5f;
+        private const float SidewalkBuildingRoadSetback = 0f;
         private const float DirtBuildingRoadSetback = 0.45f;
+        private const int BoulevardLaneSeparationCells = 1;
+        private const float BoulevardCenterStripWidth = 1.35f;
         private const string RoadBuildConfigGuid = "b2010000000000000000000000000003";
         private const string DirtRoadEndGuid = "16612f70af20e42ab9a6a65e4043907f";
         private const string DirtRoadStraightGuid = "ad3b72115e0cd44f099f64f43f090d1c";
@@ -807,6 +843,9 @@ namespace Game.Editor
         private const string StreetLightPrefabPath =
             "Assets/PolygonMilitary/Prefabs/Environment/SM_Env_Road_Lights_01.prefab";
 
+        private const string BoulevardMedianTreePrefabPath =
+            "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_01.prefab";
+
         private const string GrassPrefabPath =
             "Assets/Game/Prefabs/Environment/Decorations/SM_Env_Grass_04.prefab";
 
@@ -859,7 +898,7 @@ namespace Game.Editor
                 mapCenter.x - 130f,
                 mapCenter.z - 95f,
                 260f,
-                190f);
+                240f);
             ProtectedAreaMap protectedAreas = BuildProtectedAreaMap();
             var cityFootprint = new CityFootprint(
                 new Vector2(cityCenter.x, cityCenter.z),
@@ -889,23 +928,27 @@ namespace Game.Editor
                 cityFootprint,
                 Mathf.FloorToInt(cityWidth / RoadGridSize) - 1,
                 Mathf.FloorToInt(cityDepth / RoadGridSize) - 1);
-            int authoredCoreRenderers = BakeCivicBazaarCore(
-                generatedRoot,
-                view,
-                config,
-                mapCenter,
-                terrainMap,
-                surface);
             RoadBakeResult roadResult = BakeRoadNetwork(
                 generatedRoot,
                 cityOrigin,
                 cityWidth,
                 cityDepth,
                 authoredCoreBounds,
+                new Vector2(mapCenter.x, mapCenter.z),
                 cityFootprint,
                 terrainMap,
                 config.RandomSeed,
                 surface);
+            int authoredCoreRenderers = BakeCivicBazaarCore(
+                generatedRoot,
+                view,
+                config,
+                mapCenter,
+                terrainMap,
+                surface,
+                roadResult.RoadCells,
+                roadResult.DirtRoadCells,
+                cityOrigin);
             BuildingBakeResult buildingResult = BakeDenseDistricts(
                 generatedRoot,
                 view,
@@ -917,6 +960,7 @@ namespace Game.Editor
                 roadResult.StreetRows,
                 roadResult.RoadCells,
                 roadResult.DirtRoadCells,
+                roadResult.BoulevardRoadCells,
                 authoredCoreBounds,
                 cityFootprint,
                 terrainMap,
@@ -954,6 +998,8 @@ namespace Game.Editor
                 authoredCoreBounds,
                 roadResult.RoadCells,
                 roadResult.DirtRoadCells,
+                roadResult.BoulevardRoadCells,
+                roadResult.BoulevardMedianCells,
                 authoredGradeElevation,
                 config.RandomSeed);
             Debug.Log(
@@ -967,6 +1013,8 @@ namespace Game.Editor
                 $"courtyardGroundPatchesRemoved={urbanDetails.CourtyardGroundPatchesRemoved} " +
                 $"powerPoles={urbanDetails.PowerPoles} powerLines={urbanDetails.PowerLines} " +
                 $"streetLights={urbanDetails.StreetLights} " +
+                $"boulevardMedianTrees={urbanDetails.BoulevardMedianTrees} " +
+                $"boulevardMedianLights={urbanDetails.BoulevardMedianLights} " +
                 $"grassPatches={urbanDetails.GrassPatches} " +
                 $"mainStreetBushes={urbanDetails.MainStreetBushes}");
 
@@ -1390,6 +1438,21 @@ namespace Game.Editor
                     1920,
                     1080,
                     Path.Combine(outputFolder, "dense_city_bazaar_street_level.png"));
+                if (TryFindSidewalkFrontageProofView(
+                        view.GeneratedRoot,
+                        center,
+                        out Vector3 frontageCamera,
+                        out Vector3 frontageTarget))
+                {
+                    Capture(
+                        frontageCamera,
+                        frontageTarget,
+                        orthographic: false,
+                        orthographicSize: 0f,
+                        1920,
+                        1080,
+                        Path.Combine(outputFolder, "dense_city_sidewalk_frontage_snap.png"));
+                }
                 if (TryFindCourtyardProofView(
                         view.GeneratedRoot,
                         out Vector3 courtyardCamera,
@@ -1446,6 +1509,20 @@ namespace Game.Editor
                         1080,
                         Path.Combine(outputFolder, "dense_city_roadside_landscaping.png"));
                 }
+                if (TryFindBoulevardMedianProofView(
+                        view.GeneratedRoot,
+                        out Vector3 boulevardCamera,
+                        out Vector3 boulevardTarget))
+                {
+                    Capture(
+                        boulevardCamera,
+                        boulevardTarget,
+                        orthographic: false,
+                        orthographicSize: 0f,
+                        1920,
+                        1080,
+                        Path.Combine(outputFolder, "dense_city_asphalt_boulevard_median.png"));
+                }
             }
             finally
             {
@@ -1454,6 +1531,57 @@ namespace Game.Editor
             }
             AssetDatabase.Refresh();
             Debug.Log($"[DenseCityVisualProof] result=Captured output={outputFolder}", view);
+        }
+
+        private static bool TryFindSidewalkFrontageProofView(
+            Transform generatedRoot,
+            Vector3 civicCenter,
+            out Vector3 cameraPosition,
+            out Vector3 target)
+        {
+            Transform selected = null;
+            Bounds selectedBounds = default;
+            float bestDistance = float.PositiveInfinity;
+            Transform[] transforms = generatedRoot.GetComponentsInChildren<Transform>(true);
+            for (int index = 0; index < transforms.Length; index++)
+            {
+                Transform candidate = transforms[index];
+                if (candidate == null ||
+                    candidate.name.IndexOf("_SidewalkFrontage_", StringComparison.Ordinal) < 0 ||
+                    !TryGetWorldBounds(candidate, out Bounds bounds))
+                {
+                    continue;
+                }
+
+                Vector2 candidatePosition = new(bounds.center.x, bounds.center.z);
+                Vector2 centerPosition = new(civicCenter.x, civicCenter.z);
+                float distance = Vector2.Distance(candidatePosition, centerPosition);
+                if (distance < bestDistance)
+                {
+                    selected = candidate;
+                    selectedBounds = bounds;
+                    bestDistance = distance;
+                }
+            }
+
+            if (selected == null)
+            {
+                cameraPosition = default;
+                target = default;
+                return false;
+            }
+
+            Vector3 roadSide = selected.name.EndsWith("MinimumX", StringComparison.Ordinal)
+                ? Vector3.left
+                : selected.name.EndsWith("MaximumX", StringComparison.Ordinal)
+                    ? Vector3.right
+                    : selected.name.EndsWith("MinimumZ", StringComparison.Ordinal)
+                        ? Vector3.back
+                        : Vector3.forward;
+            Vector3 alongFrontage = Vector3.Cross(Vector3.up, roadSide).normalized;
+            target = selectedBounds.center + Vector3.up * Mathf.Min(2f, selectedBounds.extents.y * 0.25f);
+            cameraPosition = target + roadSide * 22f + alongFrontage * 12f + Vector3.up * 11f;
+            return true;
         }
 
         private static bool TryFindCourtyardProofView(
@@ -1603,6 +1731,38 @@ namespace Game.Editor
             return false;
         }
 
+        private static bool TryFindBoulevardMedianProofView(
+            Transform generatedRoot,
+            out Vector3 cameraPosition,
+            out Vector3 target)
+        {
+            Transform[] transforms = generatedRoot.GetComponentsInChildren<Transform>(true);
+            for (int index = 0; index < transforms.Length; index++)
+            {
+                Transform candidate = transforms[index];
+                if (candidate == null ||
+                    !candidate.name.StartsWith("SM_Env_Road_Lights_01_BoulevardMedianLight_", StringComparison.Ordinal) ||
+                    !TryGetWorldBounds(candidate, out Bounds bounds))
+                {
+                    continue;
+                }
+
+                Vector3 corridorDirection = candidate.right;
+                corridorDirection.y = 0f;
+                if (corridorDirection.sqrMagnitude < 0.1f)
+                    corridorDirection = Vector3.right;
+                corridorDirection.Normalize();
+                Vector3 acrossCorridor = Vector3.Cross(Vector3.up, corridorDirection).normalized;
+                target = bounds.center + corridorDirection * 10f - Vector3.up * 1.5f;
+                cameraPosition = target - corridorDirection * 30f + acrossCorridor * 23f + Vector3.up * 16f;
+                return true;
+            }
+
+            cameraPosition = default;
+            target = default;
+            return false;
+        }
+
         private static void Capture(
             Vector3 cameraPosition,
             Vector3 target,
@@ -1671,6 +1831,8 @@ namespace Game.Editor
             public readonly List<int> StreetRows;
             public readonly HashSet<Vector2Int> DirtRoadCells;
             public readonly HashSet<Vector2Int> RoadCells;
+            public readonly HashSet<Vector2Int> BoulevardRoadCells;
+            public readonly List<BoulevardMedianCell> BoulevardMedianCells;
 
             public RoadBakeResult(
                 int tileCount,
@@ -1678,7 +1840,9 @@ namespace Game.Editor
                 List<int> streetColumns,
                 List<int> streetRows,
                 HashSet<Vector2Int> dirtRoadCells,
-                HashSet<Vector2Int> roadCells)
+                HashSet<Vector2Int> roadCells,
+                HashSet<Vector2Int> boulevardRoadCells,
+                List<BoulevardMedianCell> boulevardMedianCells)
             {
                 TileCount = tileCount;
                 ChunkCount = chunkCount;
@@ -1686,18 +1850,80 @@ namespace Game.Editor
                 StreetRows = streetRows;
                 DirtRoadCells = dirtRoadCells;
                 RoadCells = roadCells;
+                BoulevardRoadCells = boulevardRoadCells;
+                BoulevardMedianCells = boulevardMedianCells;
             }
+        }
+
+        private readonly struct BoulevardCorridor
+        {
+            public readonly bool Horizontal;
+            public readonly int FirstLaneCoordinate;
+            public readonly int SecondLaneCoordinate;
+
+            public BoulevardCorridor(bool horizontal, int firstLaneCoordinate)
+            {
+                Horizontal = horizontal;
+                FirstLaneCoordinate = firstLaneCoordinate;
+                SecondLaneCoordinate = firstLaneCoordinate + BoulevardLaneSeparationCells;
+            }
+        }
+
+        private readonly struct BoulevardMedianCell
+        {
+            public readonly Vector2Int FirstLaneCell;
+            public readonly Vector2Int SecondLaneCell;
+            public readonly bool Horizontal;
+
+            public BoulevardMedianCell(
+                Vector2Int firstLaneCell,
+                Vector2Int secondLaneCell,
+                bool horizontal)
+            {
+                FirstLaneCell = firstLaneCell;
+                SecondLaneCell = secondLaneCell;
+                Horizontal = horizontal;
+            }
+
+            public Vector2 WorldCenter(Vector3 mapOrigin) =>
+                (RoadCellWorldCenter(FirstLaneCell, mapOrigin) +
+                 RoadCellWorldCenter(SecondLaneCell, mapOrigin)) * 0.5f;
         }
 
         private readonly struct BuildingBakeResult
         {
             public readonly int BuildingCount;
             public readonly int ParkCount;
+            public readonly int CentralLandmarkCount;
+            public readonly int SnappedFrontageCount;
 
-            public BuildingBakeResult(int buildingCount, int parkCount)
+            public BuildingBakeResult(
+                int buildingCount,
+                int parkCount,
+                int centralLandmarkCount,
+                int snappedFrontageCount)
             {
                 BuildingCount = buildingCount;
                 ParkCount = parkCount;
+                CentralLandmarkCount = centralLandmarkCount;
+                SnappedFrontageCount = snappedFrontageCount;
+            }
+        }
+
+        private readonly struct UrbanBlockBakeResult
+        {
+            public readonly int BuildingCount;
+            public readonly int CentralLandmarkCount;
+            public readonly int FrontageBuildingCount;
+
+            public UrbanBlockBakeResult(
+                int buildingCount,
+                int centralLandmarkCount,
+                int frontageBuildingCount = 0)
+            {
+                BuildingCount = buildingCount;
+                CentralLandmarkCount = centralLandmarkCount;
+                FrontageBuildingCount = frontageBuildingCount;
             }
         }
 
@@ -1755,6 +1981,8 @@ namespace Game.Editor
             public readonly int PowerPoles;
             public readonly int PowerLines;
             public readonly int StreetLights;
+            public readonly int BoulevardMedianTrees;
+            public readonly int BoulevardMedianLights;
             public readonly int GrassPatches;
             public readonly int MainStreetBushes;
 
@@ -1772,6 +2000,8 @@ namespace Game.Editor
                 int powerPoles,
                 int powerLines,
                 int streetLights,
+                int boulevardMedianTrees,
+                int boulevardMedianLights,
                 int grassPatches,
                 int mainStreetBushes)
             {
@@ -1788,6 +2018,8 @@ namespace Game.Editor
                 PowerPoles = powerPoles;
                 PowerLines = powerLines;
                 StreetLights = streetLights;
+                BoulevardMedianTrees = boulevardMedianTrees;
+                BoulevardMedianLights = boulevardMedianLights;
                 GrassPatches = grassPatches;
                 MainStreetBushes = mainStreetBushes;
             }
@@ -1799,7 +2031,10 @@ namespace Game.Editor
             RuntimeCitySpawnerSystemConfig config,
             Vector3 mapCenter,
             TerrainViabilityMap terrainMap,
-            SurfacePlacementContext surface)
+            SurfacePlacementContext surface,
+            HashSet<Vector2Int> roadCells,
+            HashSet<Vector2Int> dirtRoadCells,
+            Vector3 roadOrigin)
         {
             var coreObject = new GameObject("DenseCity_PedestrianCivicBazaarCore");
             coreObject.transform.SetParent(generatedRoot, false);
@@ -1810,19 +2045,38 @@ namespace Game.Editor
 
             GridConfig grid = CreateGrid(view);
             var placementContext = new BuildingPlacementContext(
-                new HashSet<Vector2Int>(),
-                view.GridOrigin);
+                roadCells,
+                roadOrigin,
+                dirtRoadCells);
             GameObject hallPrefab = FirstPrefab(config.HallPrefabs) ??
                                     throw new InvalidOperationException("Dense city config requires a hall prefab.");
-            PrefabFootprint hall = MeasurePrefab(hallPrefab, 0.95f);
-            SpawnBuilding(
-                visualSystem,
-                hall,
-                mapCenter + new Vector3(0f, 0f, 55f),
-                180f,
-                grid,
-                terrainMap,
-                placementContext);
+            PrefabFootprint hall = MeasurePrefab(hallPrefab, CivicHallVisualScale);
+            Vector3 hallPosition = mapCenter + new Vector3(0f, 0f, 55f);
+            var hallCenter = new Vector2(hallPosition.x, hallPosition.z);
+            bool hallRoadClearance = placementContext.CanPlace(hall, 180f, hallCenter);
+            bool hallTerrainEvaluated = terrainMap.TryEvaluateBuilding(
+                hallCenter,
+                hall.Width,
+                hall.Depth,
+                out SurfacePatchEvaluation hallPatch);
+            bool hallTerrainClearance = hallTerrainEvaluated && terrainMap.CanPlaceBuilding(hallPatch);
+            Debug.Log(
+                $"[DenseCityCivicHallPlacement] prefab={hall.Prefab.name} " +
+                $"size={hall.Width:0.0}x{hall.Height:0.0}x{hall.Depth:0.0} " +
+                $"scale={hall.VisualScale:0.00} roadClear={hallRoadClearance} " +
+                $"terrainEvaluated={hallTerrainEvaluated} terrainClear={hallTerrainClearance}");
+            if (!SpawnBuilding(
+                    visualSystem,
+                    hall,
+                    hallPosition,
+                    180f,
+                    grid,
+                    terrainMap,
+                    placementContext))
+            {
+                throw new InvalidOperationException(
+                    "Dense city civic hall could not be placed inside its road loop.");
+            }
 
             var market = new List<PrefabFootprint>();
             AddPrefabList(config.ShopPrefabs, market, 0.9f);
@@ -1831,6 +2085,15 @@ namespace Game.Editor
 
             var random = new System.Random(unchecked((int)config.RandomSeed) ^ 0x2ca44f);
             int shopIndex = 0;
+            int civicRoadsideShops = AddCivicRoadsideBazaar(
+                visualSystem,
+                market,
+                grid,
+                mapCenter,
+                roadOrigin,
+                terrainMap,
+                placementContext,
+                random);
             float[] marketRows = { -78f, -62f, -46f, -30f, -14f, 2f, 18f, 34f, 50f };
             for (int rowIndex = 0; rowIndex < marketRows.Length; rowIndex++)
             {
@@ -1905,11 +2168,187 @@ namespace Game.Editor
                 random);
 
             Debug.Log(
-                $"[DenseCityCivicPlacementAudit] reserved={placementContext.ReservedCount} overlaps=0");
+                $"[DenseCityCivicPlacementAudit] reserved={placementContext.ReservedCount} " +
+                $"roadsideShops={civicRoadsideShops} overlaps=0");
 
             DisableColliders(coreObject);
             SetStaticRecursively(coreObject);
             return CountActiveRenderers(coreObject);
+        }
+
+        private static int AddCivicRoadsideBazaar(
+            RuntimeCityVisualPresentationSystemHelper visuals,
+            List<PrefabFootprint> market,
+            GridConfig grid,
+            Vector3 civicCenter,
+            Vector3 roadOrigin,
+            TerrainViabilityMap terrainMap,
+            BuildingPlacementContext placementContext,
+            System.Random random)
+        {
+            const float frontageGap = DirtBuildingRoadSetback + 0.2f;
+            const float packingGap = 0.45f;
+            int count = 0;
+
+            float leftRoadX = SnapRoadX(civicCenter.x - 60f);
+            float rightRoadX = SnapRoadX(civicCenter.x + 60f);
+            float southRoadZ = SnapRoadZ(civicCenter.z - 15f);
+            float northRoadZ = SnapRoadZ(civicCenter.z + 125f);
+            float hallRoadZ = SnapRoadZ(civicCenter.z + 55f);
+            float centerRoadX = SnapRoadX(civicCenter.x);
+
+            PlaceHorizontal(
+                civicCenter.x - 122f,
+                civicCenter.x + 122f,
+                southRoadZ,
+                placeOnPositiveSide: false);
+            PlaceHorizontal(
+                civicCenter.x - 122f,
+                civicCenter.x + 122f,
+                southRoadZ,
+                placeOnPositiveSide: true);
+            PlaceHorizontal(
+                civicCenter.x - 122f,
+                civicCenter.x + 122f,
+                northRoadZ,
+                placeOnPositiveSide: false);
+            PlaceHorizontal(
+                civicCenter.x - 122f,
+                civicCenter.x + 122f,
+                northRoadZ,
+                placeOnPositiveSide: true);
+
+            PlaceVertical(
+                civicCenter.z - 86f,
+                civicCenter.z + 116f,
+                leftRoadX,
+                placeOnPositiveSide: false);
+            PlaceVertical(
+                civicCenter.z - 86f,
+                civicCenter.z + 116f,
+                leftRoadX,
+                placeOnPositiveSide: true);
+            PlaceVertical(
+                civicCenter.z - 86f,
+                civicCenter.z + 116f,
+                rightRoadX,
+                placeOnPositiveSide: false);
+            PlaceVertical(
+                civicCenter.z - 86f,
+                civicCenter.z + 116f,
+                rightRoadX,
+                placeOnPositiveSide: true);
+
+            PlaceVertical(
+                civicCenter.z - 88f,
+                civicCenter.z - 25f,
+                centerRoadX,
+                placeOnPositiveSide: false);
+            PlaceVertical(
+                civicCenter.z - 88f,
+                civicCenter.z - 25f,
+                centerRoadX,
+                placeOnPositiveSide: true);
+            PlaceHorizontal(
+                civicCenter.x - 124f,
+                civicCenter.x - 70f,
+                hallRoadZ,
+                placeOnPositiveSide: false);
+            PlaceHorizontal(
+                civicCenter.x - 124f,
+                civicCenter.x - 70f,
+                hallRoadZ,
+                placeOnPositiveSide: true);
+            PlaceHorizontal(
+                civicCenter.x + 70f,
+                civicCenter.x + 124f,
+                hallRoadZ,
+                placeOnPositiveSide: false);
+            PlaceHorizontal(
+                civicCenter.x + 70f,
+                civicCenter.x + 124f,
+                hallRoadZ,
+                placeOnPositiveSide: true);
+
+            return count;
+
+            float SnapRoadX(float worldX)
+            {
+                int column = Mathf.RoundToInt((worldX - roadOrigin.x) / RoadGridSize - 0.5f);
+                return RoadCellWorldCenter(new Vector2Int(column, 0), roadOrigin).x;
+            }
+
+            float SnapRoadZ(float worldZ)
+            {
+                int row = Mathf.RoundToInt((worldZ - roadOrigin.z) / RoadGridSize - 0.5f);
+                return RoadCellWorldCenter(new Vector2Int(0, row), roadOrigin).y;
+            }
+
+            void PlaceHorizontal(
+                float minimumX,
+                float maximumX,
+                float roadZ,
+                bool placeOnPositiveSide)
+            {
+                float cursor = minimumX;
+                while (cursor < maximumX)
+                {
+                    PrefabFootprint info = market[random.Next(market.Count)];
+                    float rotation = placeOnPositiveSide ? 180f : 0f;
+                    float centerX = cursor + info.Width * 0.5f;
+                    if (centerX + info.Width * 0.5f > maximumX)
+                        break;
+                    float direction = placeOnPositiveSide ? 1f : -1f;
+                    float centerZ = roadZ + direction *
+                        (RoadGridSize * 0.5f + frontageGap + info.Depth * 0.5f);
+                    if (SpawnBuilding(
+                            visuals,
+                            info,
+                            new Vector3(centerX, grid.Origin.y, centerZ),
+                            rotation,
+                            grid,
+                            terrainMap,
+                            placementContext))
+                    {
+                        count++;
+                    }
+
+                    cursor += info.Width + packingGap;
+                }
+            }
+
+            void PlaceVertical(
+                float minimumZ,
+                float maximumZ,
+                float roadX,
+                bool placeOnPositiveSide)
+            {
+                float cursor = minimumZ;
+                while (cursor < maximumZ)
+                {
+                    PrefabFootprint info = market[random.Next(market.Count)];
+                    float rotation = placeOnPositiveSide ? 270f : 90f;
+                    float centerZ = cursor + info.Width * 0.5f;
+                    if (centerZ + info.Width * 0.5f > maximumZ)
+                        break;
+                    float direction = placeOnPositiveSide ? 1f : -1f;
+                    float centerX = roadX + direction *
+                        (RoadGridSize * 0.5f + frontageGap + info.Depth * 0.5f);
+                    if (SpawnBuilding(
+                            visuals,
+                            info,
+                            new Vector3(centerX, grid.Origin.y, centerZ),
+                            rotation,
+                            grid,
+                            terrainMap,
+                            placementContext))
+                    {
+                        count++;
+                    }
+
+                    cursor += info.Width + packingGap;
+                }
+            }
         }
 
         private static void AddCivicPromenadeTrees(
@@ -1960,6 +2399,7 @@ namespace Game.Editor
             float mapWidth,
             float mapDepth,
             Rect authoredCoreBounds,
+            Vector2 civicCenter,
             CityFootprint cityFootprint,
             TerrainViabilityMap terrainMap,
             uint seed,
@@ -1975,33 +2415,43 @@ namespace Game.Editor
             List<int> streetRows = BuildIrregularStreetCoordinates(maximumRow, random, 4, 12);
             int centerColumn = maximumColumn / 2;
             int centerRow = maximumRow / 2;
-            int eastArterial = centerColumn + 15;
-            int southArterial = centerRow - 12;
-            EnsureStreetCoordinate(streetColumns, eastArterial);
-            EnsureStreetCoordinate(streetRows, southArterial);
+            List<BoulevardCorridor> boulevardCorridors = BuildBoulevardCorridors(
+                maximumColumn,
+                maximumRow,
+                centerColumn,
+                centerRow);
+            var boulevardColumns = new HashSet<int>();
+            var boulevardRows = new HashSet<int>();
+            for (int index = 0; index < boulevardCorridors.Count; index++)
+            {
+                BoulevardCorridor corridor = boulevardCorridors[index];
+                HashSet<int> coordinates = corridor.Horizontal ? boulevardRows : boulevardColumns;
+                List<int> streets = corridor.Horizontal ? streetRows : streetColumns;
+                coordinates.Add(corridor.FirstLaneCoordinate);
+                coordinates.Add(corridor.SecondLaneCoordinate);
+                EnsureStreetCoordinate(streets, corridor.FirstLaneCoordinate);
+                EnsureStreetCoordinate(streets, corridor.SecondLaneCoordinate);
+            }
             var network = new RoadNetworkCompositionSystemHelper();
 
-            AddVerticalRoad(
-                network,
-                eastArterial,
-                maximumRow,
-                mapOrigin,
-                authoredCoreBounds,
-                cityFootprint,
-                terrainMap,
-                isAutobahn: true);
-            AddHorizontalRoad(
-                network,
-                southArterial,
-                maximumColumn,
-                mapOrigin,
-                authoredCoreBounds,
-                cityFootprint,
-                terrainMap,
-                isAutobahn: true);
+            for (int index = 0; index < boulevardCorridors.Count; index++)
+            {
+                BoulevardCorridor corridor = boulevardCorridors[index];
+                if (corridor.Horizontal)
+                {
+                    AddHorizontalRoad(network, corridor.FirstLaneCoordinate, maximumColumn, mapOrigin, authoredCoreBounds, cityFootprint, terrainMap, isAutobahn: true, ignoreExclusion: true);
+                    AddHorizontalRoad(network, corridor.SecondLaneCoordinate, maximumColumn, mapOrigin, authoredCoreBounds, cityFootprint, terrainMap, isAutobahn: true, ignoreExclusion: true);
+                }
+                else
+                {
+                    AddVerticalRoad(network, corridor.FirstLaneCoordinate, maximumRow, mapOrigin, authoredCoreBounds, cityFootprint, terrainMap, isAutobahn: true, ignoreExclusion: true);
+                    AddVerticalRoad(network, corridor.SecondLaneCoordinate, maximumRow, mapOrigin, authoredCoreBounds, cityFootprint, terrainMap, isAutobahn: true, ignoreExclusion: true);
+                }
+            }
+
             for (int index = 0; index < streetRows.Count; index++)
             {
-                if (streetRows[index] == southArterial)
+                if (boulevardRows.Contains(streetRows[index]))
                     continue;
                 var cells = new List<Vector2Int>(maximumColumn + 1);
                 for (int column = 1; column < maximumColumn; column++)
@@ -2018,7 +2468,7 @@ namespace Game.Editor
 
             for (int index = 0; index < streetColumns.Count; index++)
             {
-                if (streetColumns[index] == eastArterial)
+                if (boulevardColumns.Contains(streetColumns[index]))
                     continue;
                 var cells = new List<Vector2Int>(maximumRow + 1);
                 for (int row = 1; row < maximumRow; row++)
@@ -2044,6 +2494,14 @@ namespace Game.Editor
                 terrainMap,
                 random,
                 dirtRoadCells);
+            AddCivicCoreDirtRoads(
+                network,
+                mapOrigin,
+                authoredCoreBounds,
+                civicCenter,
+                cityFootprint,
+                terrainMap,
+                dirtRoadCells);
 
             foreach (Vector2Int cell in network.StrokeIdsByCell.Keys)
             {
@@ -2052,6 +2510,14 @@ namespace Game.Editor
             }
             dirtRoadCells.ExceptWith(network.AutobahnCells);
             dirtRoadCells.ExceptWith(network.AutobahnConnectorCells);
+            List<BoulevardMedianCell> boulevardMedianCells = CollectBoulevardMedianCells(
+                network,
+                boulevardCorridors,
+                maximumColumn,
+                maximumRow,
+                mapOrigin,
+                authoredCoreBounds,
+                cityFootprint);
 
             RoadVisualVariantSystem.Prefabs prefabs = LoadRoadPrefabs();
             RoadVisualVariantSystem.Prefabs dirtRoadPrefabs = LoadDirtRoadPrefabs();
@@ -2117,7 +2583,8 @@ namespace Game.Editor
                 dirtRoadCells,
                 terrainMap,
                 elevationPlan,
-                surface);
+                surface,
+                cityFootprint);
             SetStaticRecursively(roadObject);
             return new RoadBakeResult(
                 network.RoadTiles.Count,
@@ -2125,7 +2592,121 @@ namespace Game.Editor
                 streetColumns,
                 streetRows,
                 dirtRoadCells,
-                new HashSet<Vector2Int>(network.RoadTiles.Keys));
+                new HashSet<Vector2Int>(network.RoadTiles.Keys),
+                new HashSet<Vector2Int>(network.AutobahnCells),
+                boulevardMedianCells);
+        }
+
+        private static List<BoulevardCorridor> BuildBoulevardCorridors(
+            int maximumColumn,
+            int maximumRow,
+            int centerColumn,
+            int centerRow)
+        {
+            int ClampAnchor(int coordinate, int maximum) =>
+                Mathf.Clamp(coordinate, 3, maximum - BoulevardLaneSeparationCells - 3);
+
+            var corridors = new List<BoulevardCorridor>(6)
+            {
+                new(false, ClampAnchor(maximumColumn / 4, maximumColumn)),
+                new(false, ClampAnchor(centerColumn + 15, maximumColumn)),
+                new(false, ClampAnchor(maximumColumn * 3 / 4, maximumColumn)),
+                new(true, ClampAnchor(maximumRow / 4, maximumRow)),
+                new(true, ClampAnchor(centerRow - 12, maximumRow)),
+                new(true, ClampAnchor(maximumRow * 3 / 4, maximumRow))
+            };
+
+            for (int index = corridors.Count - 1; index >= 0; index--)
+            {
+                BoulevardCorridor candidate = corridors[index];
+                for (int previousIndex = 0; previousIndex < index; previousIndex++)
+                {
+                    BoulevardCorridor previous = corridors[previousIndex];
+                    if (candidate.Horizontal == previous.Horizontal &&
+                        Mathf.Abs(candidate.FirstLaneCoordinate - previous.FirstLaneCoordinate) < 8)
+                    {
+                        corridors.RemoveAt(index);
+                        break;
+                    }
+                }
+            }
+
+            return corridors;
+        }
+
+        private static List<BoulevardMedianCell> CollectBoulevardMedianCells(
+            RoadNetworkCompositionSystemHelper network,
+            List<BoulevardCorridor> corridors,
+            int maximumColumn,
+            int maximumRow,
+            Vector3 mapOrigin,
+            Rect authoredCoreBounds,
+            CityFootprint cityFootprint)
+        {
+            var medianCells = new List<BoulevardMedianCell>();
+            var claimedPairs = new HashSet<(Vector2Int First, Vector2Int Second)>();
+            for (int corridorIndex = 0; corridorIndex < corridors.Count; corridorIndex++)
+            {
+                BoulevardCorridor corridor = corridors[corridorIndex];
+                int maximumAlong = corridor.Horizontal ? maximumColumn : maximumRow;
+                for (int along = 1; along < maximumAlong; along++)
+                {
+                    Vector2Int firstLane = corridor.Horizontal
+                        ? new Vector2Int(along, corridor.FirstLaneCoordinate)
+                        : new Vector2Int(corridor.FirstLaneCoordinate, along);
+                    Vector2Int secondLane = corridor.Horizontal
+                        ? new Vector2Int(along, corridor.SecondLaneCoordinate)
+                        : new Vector2Int(corridor.SecondLaneCoordinate, along);
+                    if (!network.StrokeIdsByCell.ContainsKey(firstLane) ||
+                        !network.StrokeIdsByCell.ContainsKey(secondLane) ||
+                        IsBoulevardPairNearIntersection(
+                            network,
+                            firstLane,
+                            secondLane,
+                            corridor.Horizontal))
+                    {
+                        continue;
+                    }
+
+                    Vector2 center =
+                        (RoadCellWorldCenter(firstLane, mapOrigin) +
+                         RoadCellWorldCenter(secondLane, mapOrigin)) * 0.5f;
+                    if (authoredCoreBounds.Contains(center) ||
+                        !cityFootprint.Contains(center, 0.02f) ||
+                        !claimedPairs.Add((firstLane, secondLane)))
+                    {
+                        continue;
+                    }
+
+                    medianCells.Add(new BoulevardMedianCell(
+                        firstLane,
+                        secondLane,
+                        corridor.Horizontal));
+                }
+            }
+
+            return medianCells;
+        }
+
+        private static bool IsBoulevardPairNearIntersection(
+            RoadNetworkCompositionSystemHelper network,
+            Vector2Int firstLane,
+            Vector2Int secondLane,
+            bool horizontal)
+        {
+            Vector2Int along = horizontal ? Vector2Int.right : Vector2Int.up;
+            Vector2Int outsideFirst = horizontal ? Vector2Int.down : Vector2Int.left;
+            Vector2Int outsideSecond = horizontal ? Vector2Int.up : Vector2Int.right;
+            for (int offset = -1; offset <= 1; offset++)
+            {
+                if (network.StrokeIdsByCell.ContainsKey(firstLane + along * offset + outsideFirst) ||
+                    network.StrokeIdsByCell.ContainsKey(secondLane + along * offset + outsideSecond))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static List<int> BuildIrregularStreetCoordinates(
@@ -2165,12 +2746,21 @@ namespace Game.Editor
             Rect exclusion,
             CityFootprint footprint,
             TerrainViabilityMap terrainMap,
-            bool isAutobahn)
+            bool isAutobahn,
+            bool ignoreExclusion = false)
         {
             var cells = new List<Vector2Int>(maximumColumn + 1);
             for (int column = 1; column < maximumColumn; column++)
                 cells.Add(new Vector2Int(column, row));
-            AddMaskedRoadStroke(network, cells, mapOrigin, exclusion, footprint, terrainMap, isAutobahn);
+            AddMaskedRoadStroke(
+                network,
+                cells,
+                mapOrigin,
+                exclusion,
+                footprint,
+                terrainMap,
+                isAutobahn,
+                ignoreExclusion: ignoreExclusion);
         }
 
         private static void AddVerticalRoad(
@@ -2181,12 +2771,21 @@ namespace Game.Editor
             Rect exclusion,
             CityFootprint footprint,
             TerrainViabilityMap terrainMap,
-            bool isAutobahn)
+            bool isAutobahn,
+            bool ignoreExclusion = false)
         {
             var cells = new List<Vector2Int>(maximumRow + 1);
             for (int row = 1; row < maximumRow; row++)
                 cells.Add(new Vector2Int(column, row));
-            AddMaskedRoadStroke(network, cells, mapOrigin, exclusion, footprint, terrainMap, isAutobahn);
+            AddMaskedRoadStroke(
+                network,
+                cells,
+                mapOrigin,
+                exclusion,
+                footprint,
+                terrainMap,
+                isAutobahn,
+                ignoreExclusion: ignoreExclusion);
         }
 
         private static void AddMaskedRoadStroke(
@@ -2197,7 +2796,8 @@ namespace Game.Editor
             CityFootprint footprint,
             TerrainViabilityMap terrainMap,
             bool isAutobahn,
-            bool sparseFringe = false)
+            bool sparseFringe = false,
+            bool ignoreExclusion = false)
         {
             var segment = new List<Vector2Int>();
             bool horizontal = cells.Count > 1 && cells[0].y == cells[1].y;
@@ -2208,7 +2808,7 @@ namespace Game.Editor
                 bool omitFringeSegment = sparseFringe &&
                                          footprint.NormalizedDistance(worldCenter) > 0.7f &&
                                          ShouldOmitFringeRoadSegment(cell, horizontal);
-                if (!exclusion.Contains(worldCenter) &&
+                if ((ignoreExclusion || !exclusion.Contains(worldCenter)) &&
                     footprint.Contains(worldCenter) &&
                     terrainMap.CanPlaceRoad(cell) &&
                     !omitFringeSegment)
@@ -2301,6 +2901,68 @@ namespace Game.Editor
                     for (int alleyIndex = 1; alleyIndex < alley.Count; alleyIndex++)
                         dirtRoadCells.Add(alley[alleyIndex]);
                 }
+            }
+        }
+
+        private static void AddCivicCoreDirtRoads(
+            RoadNetworkCompositionSystemHelper network,
+            Vector3 mapOrigin,
+            Rect authoredCoreBounds,
+            Vector2 civicCenter,
+            CityFootprint footprint,
+            TerrainViabilityMap terrainMap,
+            HashSet<Vector2Int> dirtRoadCells)
+        {
+            int Column(float worldX) => Mathf.RoundToInt(
+                (worldX - mapOrigin.x) / RoadGridSize - 0.5f);
+            int Row(float worldZ) => Mathf.RoundToInt(
+                (worldZ - mapOrigin.z) / RoadGridSize - 0.5f);
+
+            int centerColumn = Column(civicCenter.x);
+            int centerRow = Row(civicCenter.y + 55f);
+            int leftColumn = Column(civicCenter.x - 60f);
+            int rightColumn = Column(civicCenter.x + 60f);
+            int southRow = Row(civicCenter.y - 15f);
+            int northRow = Row(civicCenter.y + 125f);
+            int westApproachColumn = Column(authoredCoreBounds.xMin - RoadGridSize);
+            int eastApproachColumn = Column(authoredCoreBounds.xMax + RoadGridSize);
+            int southApproachRow = Row(authoredCoreBounds.yMin - RoadGridSize);
+            int northApproachRow = Row(authoredCoreBounds.yMax + RoadGridSize);
+
+            AddCivicRoadStroke(leftColumn, rightColumn, southRow, horizontal: true);
+            AddCivicRoadStroke(leftColumn, rightColumn, northRow, horizontal: true);
+            AddCivicRoadStroke(southRow, northRow, leftColumn, horizontal: false);
+            AddCivicRoadStroke(southRow, northRow, rightColumn, horizontal: false);
+            AddCivicRoadStroke(southApproachRow, southRow, centerColumn, horizontal: false);
+            AddCivicRoadStroke(northRow, northApproachRow, centerColumn, horizontal: false);
+            AddCivicRoadStroke(westApproachColumn, leftColumn, centerRow, horizontal: true);
+            AddCivicRoadStroke(rightColumn, eastApproachColumn, centerRow, horizontal: true);
+
+            Debug.Log(
+                $"[DenseCityCivicRoadAudit] dirtCells={dirtRoadCells.Count} " +
+                $"loopColumns={leftColumn}..{rightColumn} loopRows={southRow}..{northRow}");
+
+            void AddCivicRoadStroke(int start, int end, int fixedCoordinate, bool horizontal)
+            {
+                var cells = new List<Vector2Int>(Mathf.Abs(end - start) + 1);
+                int direction = start <= end ? 1 : -1;
+                for (int coordinate = start; ; coordinate += direction)
+                {
+                    Vector2Int cell = horizontal
+                        ? new Vector2Int(coordinate, fixedCoordinate)
+                        : new Vector2Int(fixedCoordinate, coordinate);
+                    Vector2 worldCenter = RoadCellWorldCenter(cell, mapOrigin);
+                    if (footprint.Contains(worldCenter) && terrainMap.CanPlaceRoad(cell))
+                    {
+                        cells.Add(cell);
+                        dirtRoadCells.Add(cell);
+                    }
+
+                    if (coordinate == end)
+                        break;
+                }
+
+                CommitRoadStroke(network, cells);
             }
         }
 
@@ -2403,7 +3065,8 @@ namespace Game.Editor
             HashSet<Vector2Int> dirtRoadCells,
             TerrainViabilityMap terrainMap,
             RoadElevationPlan elevationPlan,
-            SurfacePlacementContext surface)
+            SurfacePlacementContext surface,
+            CityFootprint cityFootprint)
         {
             var chunkRoots = new Dictionary<Vector2Int, Transform>();
             foreach (KeyValuePair<Vector2Int, RoadNetworkCompositionSystemHelper.RoadTileData> entry in network.RoadTiles)
@@ -2460,14 +3123,22 @@ namespace Game.Editor
                 float patchHeight = 0.24f;
                 if (terrainMap.TryGetRoadPatch(cell, out SurfacePatchEvaluation roadPatch))
                     patchHeight = Mathf.Clamp(placement.y - roadPatch.MinimumHeight + 0.16f, 0.2f, 0.65f);
-                CreateNaturalGroundPatch(
-                    chunkRoot,
-                    $"RoadGroundPatch_{cell.x}_{cell.y}",
-                    placement,
-                    RoadGridSize * 1.14f,
-                    RoadGridSize * 1.14f,
-                    patchHeight,
-                    HashGroundPatch(cell.x, cell.y, 0x51f2));
+                Vector2 patchCenter = new(placement.x, placement.z);
+                const float patchClearance = RoadGridSize * 0.78f;
+                if (cityFootprint.IsAreaClear(
+                        patchCenter,
+                        patchClearance,
+                        patchClearance))
+                {
+                    CreateNaturalGroundPatch(
+                        chunkRoot,
+                        $"RoadGroundPatch_{cell.x}_{cell.y}",
+                        placement,
+                        RoadGridSize * 1.14f,
+                        RoadGridSize * 1.14f,
+                        patchHeight,
+                        HashGroundPatch(cell.x, cell.y, 0x51f2));
+                }
             }
 
             return chunkRoots.Count;
@@ -2484,6 +3155,7 @@ namespace Game.Editor
             List<int> streetRows,
             HashSet<Vector2Int> roadCells,
             HashSet<Vector2Int> dirtRoadCells,
+            HashSet<Vector2Int> boulevardRoadCells,
             Rect authoredCoreBounds,
             CityFootprint cityFootprint,
             TerrainViabilityMap terrainMap,
@@ -2502,9 +3174,14 @@ namespace Game.Editor
                 cityDepth,
                 view.GridCellSize);
             var random = new System.Random(unchecked((int)(config.RandomSeed == 0 ? 26071501u : config.RandomSeed)) ^ 0x1d45ac);
-            var placementContext = new BuildingPlacementContext(roadCells, cityOrigin);
+            var placementContext = new BuildingPlacementContext(
+                roadCells,
+                cityOrigin,
+                dirtRoadCells);
             int buildingCount = 0;
             int parkCount = 0;
+            int centralLandmarkCount = 0;
+            int snappedFrontageCount = 0;
             int blockIndex = 0;
 
             for (int columnIndex = 0; columnIndex < streetColumns.Count - 1; columnIndex++)
@@ -2550,7 +3227,15 @@ namespace Game.Editor
                     Vector2 coreCenter = authoredCoreBounds.center;
                     bool bazaar = Vector2.Distance(blockCenter, coreCenter) < 340f ||
                                   (zone == DistrictZone.InnerCity && blockIndex % 11 == 0);
-                    buildingCount += BuildUrbanBlock(
+                    bool boulevardFrontage = IsBlockAlongBoulevard(
+                        block,
+                        boulevardRoadCells,
+                        cityOrigin);
+                    float landmarkChance = ResolveCentralLandmarkChance(
+                        zone,
+                        Vector2.Distance(blockCenter, coreCenter),
+                        boulevardFrontage);
+                    UrbanBlockBakeResult blockResult = BuildUrbanBlock(
                         visualSystem,
                         palette,
                         grid,
@@ -2561,15 +3246,67 @@ namespace Game.Editor
                         placementContext,
                         dirtRoadCells,
                         cityOrigin,
-                        random);
+                        random,
+                        landmarkChance);
+                    buildingCount += blockResult.BuildingCount;
+                    centralLandmarkCount += blockResult.CentralLandmarkCount;
+                    snappedFrontageCount += blockResult.FrontageBuildingCount;
                 }
             }
 
             SetStaticRecursively(buildingObject);
             Debug.Log(
                 $"[DenseCityBuildingPlacementAudit] reserved={placementContext.ReservedCount} " +
-                "buildingOverlaps=0 roadOverlaps=0");
-            return new BuildingBakeResult(buildingCount, parkCount);
+                $"centralLandmarks={centralLandmarkCount} " +
+                $"snappedFrontages={snappedFrontageCount} buildingOverlaps=0 roadOverlaps=0");
+            return new BuildingBakeResult(
+                buildingCount,
+                parkCount,
+                centralLandmarkCount,
+                snappedFrontageCount);
+        }
+
+        private static bool IsBlockAlongBoulevard(
+            Rect block,
+            HashSet<Vector2Int> boulevardRoadCells,
+            Vector3 mapOrigin)
+        {
+            if (boulevardRoadCells == null || boulevardRoadCells.Count == 0)
+                return false;
+
+            const float frontageProbeDepth = SidewalkBuildingRoadSetback + 1.25f;
+            var frontageProbe = Rect.MinMaxRect(
+                block.xMin - frontageProbeDepth,
+                block.yMin - frontageProbeDepth,
+                block.xMax + frontageProbeDepth,
+                block.yMax + frontageProbeDepth);
+            return OverlapsRoadCell(frontageProbe, boulevardRoadCells, mapOrigin);
+        }
+
+        private static float ResolveCentralLandmarkChance(
+            DistrictZone zone,
+            float distanceFromCivicCenter,
+            bool boulevardFrontage)
+        {
+            if (distanceFromCivicCenter > 520f || zone == DistrictZone.Fringe)
+                return 0f;
+
+            if (boulevardFrontage)
+            {
+                return zone switch
+                {
+                    DistrictZone.Civic => 0.46f,
+                    DistrictZone.InnerCity => 0.32f,
+                    _ => distanceFromCivicCenter < 420f ? 0.16f : 0.08f
+                };
+            }
+
+            return zone switch
+            {
+                DistrictZone.Civic => 0.2f,
+                DistrictZone.InnerCity when distanceFromCivicCenter < 360f => 0.12f,
+                _ => 0f
+            };
         }
 
         private static DistrictZone ClassifyDistrict(float normalizedDistance)
@@ -2611,7 +3348,7 @@ namespace Game.Editor
                 ? DirtBuildingRoadSetback
                 : SidewalkBuildingRoadSetback;
 
-        private static int BuildUrbanBlock(
+        private static UrbanBlockBakeResult BuildUrbanBlock(
             RuntimeCityVisualPresentationSystemHelper visuals,
             BuildingPalette palette,
             GridConfig grid,
@@ -2622,33 +3359,57 @@ namespace Game.Editor
             BuildingPlacementContext placementContext,
             HashSet<Vector2Int> dirtRoadCells,
             Vector3 mapOrigin,
-            System.Random random)
+            System.Random random,
+            float centralLandmarkChance)
         {
             int count = 0;
-            count += PlaceHorizontalFrontage(visuals, palette, grid, block, true, 0f, bazaar, terrainMap, placementContext, dirtRoadCells, mapOrigin, random);
-            count += PlaceHorizontalFrontage(visuals, palette, grid, block, false, 180f, bazaar, terrainMap, placementContext, dirtRoadCells, mapOrigin, random);
-            count += PlaceVerticalFrontage(visuals, palette, grid, block, true, 90f, bazaar, terrainMap, placementContext, dirtRoadCells, mapOrigin, random);
-            count += PlaceVerticalFrontage(visuals, palette, grid, block, false, 270f, bazaar, terrainMap, placementContext, dirtRoadCells, mapOrigin, random);
+            int centralLandmarks = 0;
+            int frontageBuildings = 0;
+            bool compactDistrict = zone == DistrictZone.Civic ||
+                                   zone == DistrictZone.InnerCity;
+            float frontageEdgePadding = zone switch
+            {
+                DistrictZone.Civic => 0.35f,
+                DistrictZone.InnerCity => 0.5f,
+                DistrictZone.Residential => 1.25f,
+                _ => 2.5f
+            };
+            UrbanBlockBakeResult frontage = PlaceHorizontalFrontage(visuals, palette, grid, block, true, 0f, bazaar, terrainMap, placementContext, dirtRoadCells, mapOrigin, random, centralLandmarkChance, frontageEdgePadding);
+            count += frontage.BuildingCount;
+            centralLandmarks += frontage.CentralLandmarkCount;
+            frontageBuildings += frontage.FrontageBuildingCount;
+            frontage = PlaceHorizontalFrontage(visuals, palette, grid, block, false, 180f, bazaar, terrainMap, placementContext, dirtRoadCells, mapOrigin, random, centralLandmarkChance, frontageEdgePadding);
+            count += frontage.BuildingCount;
+            centralLandmarks += frontage.CentralLandmarkCount;
+            frontageBuildings += frontage.FrontageBuildingCount;
+            frontage = PlaceVerticalFrontage(visuals, palette, grid, block, true, 90f, bazaar, terrainMap, placementContext, dirtRoadCells, mapOrigin, random, centralLandmarkChance, frontageEdgePadding);
+            count += frontage.BuildingCount;
+            centralLandmarks += frontage.CentralLandmarkCount;
+            frontageBuildings += frontage.FrontageBuildingCount;
+            frontage = PlaceVerticalFrontage(visuals, palette, grid, block, false, 270f, bazaar, terrainMap, placementContext, dirtRoadCells, mapOrigin, random, centralLandmarkChance, frontageEdgePadding);
+            count += frontage.BuildingCount;
+            centralLandmarks += frontage.CentralLandmarkCount;
+            frontageBuildings += frontage.FrontageBuildingCount;
 
             Rect interior = Rect.MinMaxRect(
-                block.xMin + 8f,
-                block.yMin + 8f,
-                block.xMax - 8f,
-                block.yMax - 8f);
+                block.xMin + (compactDistrict ? 6.25f : 8f),
+                block.yMin + (compactDistrict ? 6.25f : 8f),
+                block.xMax - (compactDistrict ? 6.25f : 8f),
+                block.yMax - (compactDistrict ? 6.25f : 8f));
             if (interior.width > 8f && interior.height > 8f)
             {
                 float spacing = zone switch
                 {
-                    DistrictZone.Civic => 7.5f,
-                    DistrictZone.InnerCity => 8f,
-                    DistrictZone.Residential => 9.5f,
+                    DistrictZone.Civic => 6.75f,
+                    DistrictZone.InnerCity => 7.25f,
+                    DistrictZone.Residential => 8.75f,
                     _ => 12f
                 };
                 double skipChance = zone switch
                 {
-                    DistrictZone.Civic => 0.02d,
-                    DistrictZone.InnerCity => 0.06d,
-                    DistrictZone.Residential => 0.18d,
+                    DistrictZone.Civic => 0d,
+                    DistrictZone.InnerCity => 0.02d,
+                    DistrictZone.Residential => 0.1d,
                     _ => 0.42d
                 };
                 for (float z = interior.yMin + 3.5f; z <= interior.yMax - 3f; z += spacing)
@@ -2671,10 +3432,10 @@ namespace Game.Editor
                 }
             }
 
-            return count;
+            return new UrbanBlockBakeResult(count, centralLandmarks, frontageBuildings);
         }
 
-        private static int PlaceHorizontalFrontage(
+        private static UrbanBlockBakeResult PlaceHorizontalFrontage(
             RuntimeCityVisualPresentationSystemHelper visuals,
             BuildingPalette palette,
             GridConfig grid,
@@ -2686,14 +3447,22 @@ namespace Game.Editor
             BuildingPlacementContext placementContext,
             HashSet<Vector2Int> dirtRoadCells,
             Vector3 mapOrigin,
-            System.Random random)
+            System.Random random,
+            float centralLandmarkChance,
+            float edgePadding)
         {
             int count = 0;
-            float cursor = block.xMin + 4f;
-            float limit = block.xMax - 4f;
+            int centralLandmarks = 0;
+            float cursor = block.xMin + edgePadding;
+            float limit = block.xMax - edgePadding;
             while (cursor < limit)
             {
-                PrefabFootprint info = SelectBuilding(palette, bazaar, random);
+                PrefabFootprint info = SelectFrontageBuilding(
+                    palette,
+                    bazaar,
+                    centralLandmarkChance,
+                    random,
+                    out bool isCentralLandmark);
                 if (info.Prefab == null)
                     break;
                 float width = rotation % 180f == 0f ? info.Width : info.Depth;
@@ -2707,14 +3476,27 @@ namespace Game.Editor
                 var worldCenter = new Vector2(center, z);
                 if (FitsInsideBlock(info, rotation, worldCenter, block) &&
                     DoesNotOverlapDirtRoad(info, rotation, worldCenter, dirtRoadCells, mapOrigin) &&
-                    SpawnBuilding(visuals, info, new Vector3(center, grid.Origin.y, z), rotation, grid, terrainMap, placementContext))
+                    SpawnBuilding(
+                        visuals,
+                        info,
+                        new Vector3(center, grid.Origin.y, z),
+                        rotation,
+                        grid,
+                        terrainMap,
+                        placementContext,
+                        minimumEdge ? FrontageSnapEdge.MinimumZ : FrontageSnapEdge.MaximumZ,
+                        minimumEdge ? block.yMin : block.yMax))
+                {
                     count++;
+                    if (isCentralLandmark)
+                        centralLandmarks++;
+                }
                 cursor += width + 0.7f;
             }
-            return count;
+            return new UrbanBlockBakeResult(count, centralLandmarks, count);
         }
 
-        private static int PlaceVerticalFrontage(
+        private static UrbanBlockBakeResult PlaceVerticalFrontage(
             RuntimeCityVisualPresentationSystemHelper visuals,
             BuildingPalette palette,
             GridConfig grid,
@@ -2726,14 +3508,22 @@ namespace Game.Editor
             BuildingPlacementContext placementContext,
             HashSet<Vector2Int> dirtRoadCells,
             Vector3 mapOrigin,
-            System.Random random)
+            System.Random random,
+            float centralLandmarkChance,
+            float edgePadding)
         {
             int count = 0;
-            float cursor = block.yMin + 9f;
-            float limit = block.yMax - 9f;
+            int centralLandmarks = 0;
+            float cursor = block.yMin + edgePadding;
+            float limit = block.yMax - edgePadding;
             while (cursor < limit)
             {
-                PrefabFootprint info = SelectBuilding(palette, bazaar, random);
+                PrefabFootprint info = SelectFrontageBuilding(
+                    palette,
+                    bazaar,
+                    centralLandmarkChance,
+                    random,
+                    out bool isCentralLandmark);
                 if (info.Prefab == null)
                     break;
                 float depth = rotation % 180f == 0f ? info.Depth : info.Width;
@@ -2747,11 +3537,24 @@ namespace Game.Editor
                 var worldCenter = new Vector2(x, center);
                 if (FitsInsideBlock(info, rotation, worldCenter, block) &&
                     DoesNotOverlapDirtRoad(info, rotation, worldCenter, dirtRoadCells, mapOrigin) &&
-                    SpawnBuilding(visuals, info, new Vector3(x, grid.Origin.y, center), rotation, grid, terrainMap, placementContext))
+                    SpawnBuilding(
+                        visuals,
+                        info,
+                        new Vector3(x, grid.Origin.y, center),
+                        rotation,
+                        grid,
+                        terrainMap,
+                        placementContext,
+                        minimumEdge ? FrontageSnapEdge.MinimumX : FrontageSnapEdge.MaximumX,
+                        minimumEdge ? block.xMin : block.xMax))
+                {
                     count++;
+                    if (isCentralLandmark)
+                        centralLandmarks++;
+                }
                 cursor += depth + 0.7f;
             }
-            return count;
+            return new UrbanBlockBakeResult(count, centralLandmarks, count);
         }
 
         private static bool FitsInsideBlock(
@@ -2818,7 +3621,9 @@ namespace Game.Editor
             float rotationDegrees,
             GridConfig grid,
             TerrainViabilityMap terrainMap,
-            BuildingPlacementContext placementContext = null)
+            BuildingPlacementContext placementContext = null,
+            FrontageSnapEdge frontageSnapEdge = FrontageSnapEdge.None,
+            float frontageBoundary = 0f)
         {
             bool quarterTurn = Mathf.RoundToInt(rotationDegrees / 90f) % 2 != 0;
             float worldWidth = quarterTurn ? info.Depth : info.Width;
@@ -2864,6 +3669,15 @@ namespace Game.Editor
             wrapperPosition.y = foundationHeight;
             wrapper.transform.position = wrapperPosition;
             wrapper.transform.localScale = Vector3.one * info.VisualScale;
+            if (frontageSnapEdge != FrontageSnapEdge.None &&
+                !TrySnapBuildingRendererToFrontage(
+                    wrapper.transform,
+                    frontageSnapEdge,
+                    frontageBoundary))
+            {
+                UnityEngine.Object.DestroyImmediate(wrapper);
+                return false;
+            }
             if (placementContext != null)
             {
                 if (!TryGetWorldBounds(wrapper.transform, out Bounds actualBounds) ||
@@ -2874,6 +3688,9 @@ namespace Game.Editor
                 }
             }
 
+            if (frontageSnapEdge != FrontageSnapEdge.None)
+                wrapper.name += $"_SidewalkFrontage_{frontageSnapEdge}";
+
             CreateBuildingGroundPatch(
                 wrapper,
                 worldWidth,
@@ -2881,6 +3698,44 @@ namespace Game.Editor
                 patch,
                 foundationHeight);
             return true;
+        }
+
+        private static bool TrySnapBuildingRendererToFrontage(
+            Transform building,
+            FrontageSnapEdge edge,
+            float boundary)
+        {
+            if (!TryGetWorldBounds(building, out Bounds before))
+                return false;
+
+            float currentEdge = edge switch
+            {
+                FrontageSnapEdge.MinimumX => before.min.x,
+                FrontageSnapEdge.MaximumX => before.max.x,
+                FrontageSnapEdge.MinimumZ => before.min.z,
+                FrontageSnapEdge.MaximumZ => before.max.z,
+                _ => boundary
+            };
+            float delta = boundary - currentEdge;
+            Vector3 position = building.position;
+            if (edge is FrontageSnapEdge.MinimumX or FrontageSnapEdge.MaximumX)
+                position.x += delta;
+            else if (edge is FrontageSnapEdge.MinimumZ or FrontageSnapEdge.MaximumZ)
+                position.z += delta;
+            building.position = position;
+
+            if (!TryGetWorldBounds(building, out Bounds after))
+                return false;
+
+            float snappedEdge = edge switch
+            {
+                FrontageSnapEdge.MinimumX => after.min.x,
+                FrontageSnapEdge.MaximumX => after.max.x,
+                FrontageSnapEdge.MinimumZ => after.min.z,
+                FrontageSnapEdge.MaximumZ => after.max.z,
+                _ => boundary
+            };
+            return Mathf.Abs(snappedEdge - boundary) <= 0.025f;
         }
 
         private static int AddShopRoofDetails(Transform generatedRoot)
@@ -3100,6 +3955,8 @@ namespace Game.Editor
             Rect authoredCoreBounds,
             HashSet<Vector2Int> roadCells,
             HashSet<Vector2Int> dirtRoadCells,
+            HashSet<Vector2Int> boulevardRoadCells,
+            List<BoulevardMedianCell> boulevardMedianCells,
             float gradeElevation,
             uint seed)
         {
@@ -3115,6 +3972,7 @@ namespace Game.Editor
             GameObject powerPole = LoadRequiredPrefab(PowerPolePrefabPath);
             GameObject powerLine = LoadRequiredPrefab(PowerLinePrefabPath);
             GameObject streetLight = LoadRequiredPrefab(StreetLightPrefabPath);
+            GameObject boulevardMedianTree = LoadRequiredPrefab(BoulevardMedianTreePrefabPath);
             GameObject grass = LoadRequiredPrefab(GrassPrefabPath);
             GameObject mainStreetBush = LoadRequiredPrefab(MainStreetBushPrefabPath);
 
@@ -3132,6 +3990,8 @@ namespace Game.Editor
             utilityRootObject.transform.SetParent(generatedRoot, false);
             var streetLightRootObject = new GameObject("DenseCity_SidewalkStreetLights");
             streetLightRootObject.transform.SetParent(generatedRoot, false);
+            var boulevardMedianRootObject = new GameObject("DenseCity_LandscapedAsphaltBoulevardMedians");
+            boulevardMedianRootObject.transform.SetParent(generatedRoot, false);
             var grassRootObject = new GameObject("DenseCity_FreeGroundGrass");
             grassRootObject.transform.SetParent(generatedRoot, false);
             var mainStreetBushRootObject = new GameObject("DenseCity_MainStreetBushes");
@@ -3156,6 +4016,19 @@ namespace Game.Editor
                 gradeElevation,
                 seed);
             var reservedDetailAreas = new List<Rect>(courtyardDetails.ReservedAreas);
+            BoulevardMedianDetailResult boulevardMedianDetails = AddBoulevardMedianDetails(
+                boulevardMedianRootObject.transform,
+                buildings,
+                boulevardMedianTree,
+                streetLight,
+                boulevardMedianCells,
+                mapOrigin,
+                authoredCoreBounds,
+                roadCells,
+                reservedDetailAreas,
+                gradeElevation,
+                seed);
+            reservedDetailAreas.AddRange(boulevardMedianDetails.ReservedAreas);
             var landscapingDetails = new LandscapingDetailResult();
             AddMainStreetBushes(
                 mainStreetBushRootObject.transform,
@@ -3166,6 +4039,7 @@ namespace Game.Editor
                 authoredCoreBounds,
                 roadCells,
                 dirtRoadCells,
+                boulevardRoadCells,
                 reservedDetailAreas,
                 landscapingDetails,
                 gradeElevation,
@@ -3183,6 +4057,7 @@ namespace Game.Editor
                 authoredCoreBounds,
                 roadCells,
                 dirtRoadCells,
+                boulevardRoadCells,
                 reservedDetailAreas,
                 gradeElevation,
                 seed);
@@ -3196,6 +4071,7 @@ namespace Game.Editor
                 authoredCoreBounds,
                 roadCells,
                 dirtRoadCells,
+                boulevardRoadCells,
                 reservedDetailAreas,
                 gradeElevation,
                 seed);
@@ -3247,6 +4123,11 @@ namespace Game.Editor
             ValidateNoRoadOverlappingDetails(rockRootObject.transform, roadCells, mapOrigin);
             ValidateNoRoadOverlappingDetails(grassRootObject.transform, roadCells, mapOrigin);
             ValidateNoRoadOverlappingDetails(mainStreetBushRootObject.transform, roadCells, mapOrigin);
+            ValidateBoulevardMedianDetailAnchors(
+                boulevardMedianRootObject.transform,
+                boulevardMedianCells,
+                roadCells,
+                mapOrigin);
 
             SetStaticRecursively(rooftopRootObject);
             SetStaticRecursively(streetPropRootObject);
@@ -3255,6 +4136,7 @@ namespace Game.Editor
             SetStaticRecursively(courtyardRootObject);
             SetStaticRecursively(utilityRootObject);
             SetStaticRecursively(streetLightRootObject);
+            SetStaticRecursively(boulevardMedianRootObject);
             SetStaticRecursively(grassRootObject);
             SetStaticRecursively(mainStreetBushRootObject);
             return new UrbanDetailResult(
@@ -3271,8 +4153,119 @@ namespace Game.Editor
                 utilityDetails.Poles,
                 utilityDetails.Lines,
                 streetLightDetails.Lights,
+                boulevardMedianDetails.Trees,
+                boulevardMedianDetails.Lights,
                 landscapingDetails.GrassPatches,
                 landscapingDetails.MainStreetBushes);
+        }
+
+        private sealed class BoulevardMedianDetailResult
+        {
+            public readonly List<Rect> ReservedAreas = new();
+            public int Trees;
+            public int Lights;
+            public int GroundDetailsRemoved;
+        }
+
+        private static BoulevardMedianDetailResult AddBoulevardMedianDetails(
+            Transform parent,
+            List<GeneratedBuildingInfo> buildings,
+            GameObject treePrefab,
+            GameObject lightPrefab,
+            List<BoulevardMedianCell> medianCells,
+            Vector3 mapOrigin,
+            Rect authoredCoreBounds,
+            HashSet<Vector2Int> roadCells,
+            List<Rect> reservedAreas,
+            float gradeElevation,
+            uint seed)
+        {
+            var result = new BoulevardMedianDetailResult();
+            medianCells.Sort((left, right) =>
+            {
+                int orientationComparison = left.Horizontal.CompareTo(right.Horizontal);
+                if (orientationComparison != 0)
+                    return orientationComparison;
+                int fixedComparison = (left.Horizontal ? left.FirstLaneCell.y : left.FirstLaneCell.x)
+                    .CompareTo(right.Horizontal ? right.FirstLaneCell.y : right.FirstLaneCell.x);
+                if (fixedComparison != 0)
+                    return fixedComparison;
+                return (left.Horizontal ? left.FirstLaneCell.x : left.FirstLaneCell.y)
+                    .CompareTo(right.Horizontal ? right.FirstLaneCell.x : right.FirstLaneCell.y);
+            });
+
+            for (int index = 0; index < medianCells.Count; index++)
+            {
+                BoulevardMedianCell median = medianCells[index];
+                Vector2 position = median.WorldCenter(mapOrigin);
+                result.ReservedAreas.Add(median.Horizontal
+                    ? new Rect(
+                        position.x - RoadGridSize * 0.48f,
+                        position.y - BoulevardCenterStripWidth * 0.5f,
+                        RoadGridSize * 0.96f,
+                        BoulevardCenterStripWidth)
+                    : new Rect(
+                        position.x - BoulevardCenterStripWidth * 0.5f,
+                        position.y - RoadGridSize * 0.48f,
+                        BoulevardCenterStripWidth,
+                        RoadGridSize * 0.96f));
+                int along = median.Horizontal ? median.FirstLaneCell.x : median.FirstLaneCell.y;
+                int fixedCoordinate = median.Horizontal
+                    ? median.FirstLaneCell.y
+                    : median.FirstLaneCell.x;
+                uint hash = HashGroundPatch(
+                    along,
+                    fixedCoordinate,
+                    unchecked((int)seed) ^ (median.Horizontal ? 0x21b7 : 0x73d1));
+                bool placeTree = (along + fixedCoordinate) % 2 == 0;
+                bool placeLight = !placeTree && Mathf.Abs((along + fixedCoordinate) % 4) == 1;
+                GameObject prefab = placeTree ? treePrefab : placeLight ? lightPrefab : null;
+                if (prefab == null)
+                    continue;
+
+                float rotation = median.Horizontal ? 0f : 90f;
+                float scale = placeTree
+                    ? Mathf.Lerp(0.68f, 0.82f, Hash01(hash ^ 0xb62c318du))
+                    : 1f;
+                if (placeTree)
+                {
+                    if (InstantiateGroundedDetail(
+                            prefab,
+                            parent,
+                            $"{prefab.name}_BoulevardMedianTree_{result.Trees:0000}",
+                            position,
+                            gradeElevation + 0.025f,
+                            rotation,
+                            scale))
+                    {
+                        result.Trees++;
+                    }
+
+                    continue;
+                }
+
+                if (!InstantiateGroundedDetail(
+                        prefab,
+                        parent,
+                        $"{prefab.name}_BoulevardMedianLight_{result.Lights:0000}",
+                        position,
+                        gradeElevation + 0.025f,
+                        rotation,
+                        scale))
+                {
+                    continue;
+                }
+
+                result.Lights++;
+            }
+
+            result.GroundDetailsRemoved = RemoveOpenGroundDetailsUnderAreas(
+                parent.parent,
+                result.ReservedAreas);
+            Debug.Log(
+                $"[DenseCityBoulevardMedian] cells={medianCells.Count} trees={result.Trees} " +
+                $"lights={result.Lights} removedGroundDetails={result.GroundDetailsRemoved}");
+            return result;
         }
 
         private sealed class UtilityDetailResult
@@ -3320,6 +4313,7 @@ namespace Game.Editor
             Rect authoredCoreBounds,
             HashSet<Vector2Int> roadCells,
             HashSet<Vector2Int> dirtRoadCells,
+            HashSet<Vector2Int> boulevardRoadCells,
             List<Rect> reservedAreas,
             float gradeElevation,
             uint seed)
@@ -3355,6 +4349,7 @@ namespace Game.Editor
                     authoredCoreBounds,
                     roadCells,
                     dirtRoadCells,
+                    boulevardRoadCells,
                     reservedAreas,
                     result,
                     horizontal: true,
@@ -3378,6 +4373,7 @@ namespace Game.Editor
                     authoredCoreBounds,
                     roadCells,
                     dirtRoadCells,
+                    boulevardRoadCells,
                     reservedAreas,
                     result,
                     horizontal: false,
@@ -3400,6 +4396,7 @@ namespace Game.Editor
             Rect authoredCoreBounds,
             HashSet<Vector2Int> roadCells,
             HashSet<Vector2Int> dirtRoadCells,
+            HashSet<Vector2Int> boulevardRoadCells,
             List<Rect> courtyardAreas,
             UtilityDetailResult result,
             bool horizontal,
@@ -3415,7 +4412,9 @@ namespace Game.Editor
                 Vector2Int cell = horizontal
                     ? new Vector2Int(along, fixedCoordinate)
                     : new Vector2Int(fixedCoordinate, along);
-                bool hasRoad = along < maximumAlongCoordinate && roadCells.Contains(cell);
+                bool hasRoad = along < maximumAlongCoordinate &&
+                               roadCells.Contains(cell) &&
+                               !boulevardRoadCells.Contains(cell);
                 if (hasRoad)
                 {
                     if (runStart < 0)
@@ -3761,6 +4760,7 @@ namespace Game.Editor
             Rect authoredCoreBounds,
             HashSet<Vector2Int> roadCells,
             HashSet<Vector2Int> dirtRoadCells,
+            HashSet<Vector2Int> boulevardRoadCells,
             List<Rect> reservedAreas,
             float gradeElevation,
             uint seed)
@@ -3776,7 +4776,7 @@ namespace Game.Editor
             for (int index = 0; index < sortedRoadCells.Count; index++)
             {
                 Vector2Int cell = sortedRoadCells[index];
-                if (dirtRoadCells.Contains(cell))
+                if (dirtRoadCells.Contains(cell) || boulevardRoadCells.Contains(cell))
                     continue;
 
                 bool left = roadCells.Contains(cell + Vector2Int.left);
@@ -3954,6 +4954,7 @@ namespace Game.Editor
             Rect authoredCoreBounds,
             HashSet<Vector2Int> roadCells,
             HashSet<Vector2Int> dirtRoadCells,
+            HashSet<Vector2Int> boulevardRoadCells,
             List<Rect> reservedAreas,
             LandscapingDetailResult result,
             float gradeElevation,
@@ -3969,7 +4970,7 @@ namespace Game.Editor
             for (int index = 0; index < sortedRoadCells.Count; index++)
             {
                 Vector2Int cell = sortedRoadCells[index];
-                if (dirtRoadCells.Contains(cell))
+                if (dirtRoadCells.Contains(cell) || boulevardRoadCells.Contains(cell))
                     continue;
 
                 bool left = roadCells.Contains(cell + Vector2Int.left);
@@ -4190,6 +5191,32 @@ namespace Game.Editor
 
                 var footprint = Rect.MinMaxRect(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
                 if (!footprint.Overlaps(courtyard))
+                    continue;
+
+                UnityEngine.Object.DestroyImmediate(child.gameObject);
+                removed++;
+            }
+
+            return removed;
+        }
+
+        private static int RemoveOpenGroundDetailsUnderAreas(
+            Transform generatedRoot,
+            List<Rect> areas)
+        {
+            Transform openGroundRoot = FindDirectChild(generatedRoot, "DenseCity_OpenGroundRoundDetails");
+            if (openGroundRoot == null || areas == null || areas.Count == 0)
+                return 0;
+
+            int removed = 0;
+            for (int childIndex = openGroundRoot.childCount - 1; childIndex >= 0; childIndex--)
+            {
+                Transform child = openGroundRoot.GetChild(childIndex);
+                if (child == null || !TryGetWorldBounds(child, out Bounds bounds))
+                    continue;
+
+                var footprint = Rect.MinMaxRect(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
+                if (!OverlapsAnyRect(footprint, areas))
                     continue;
 
                 UnityEngine.Object.DestroyImmediate(child.gameObject);
@@ -4960,6 +5987,42 @@ namespace Game.Editor
             }
         }
 
+        private static void ValidateBoulevardMedianDetailAnchors(
+            Transform detailRoot,
+            List<BoulevardMedianCell> medianCells,
+            HashSet<Vector2Int> roadCells,
+            Vector3 mapOrigin)
+        {
+            var allowedCenters = new List<Vector2>(medianCells.Count);
+            for (int index = 0; index < medianCells.Count; index++)
+                allowedCenters.Add(medianCells[index].WorldCenter(mapOrigin));
+
+            for (int index = 0; index < detailRoot.childCount; index++)
+            {
+                Transform detail = detailRoot.GetChild(index);
+                if (detail == null)
+                    continue;
+
+                Vector3 position = detail.position;
+                Vector2 anchor = new(position.x, position.z);
+                bool isOnCenterSeam = false;
+                for (int centerIndex = 0; centerIndex < allowedCenters.Count; centerIndex++)
+                {
+                    if ((allowedCenters[centerIndex] - anchor).sqrMagnitude <= 0.05f * 0.05f)
+                    {
+                        isOnCenterSeam = true;
+                        break;
+                    }
+                }
+
+                if (!isOnCenterSeam)
+                {
+                    throw new InvalidOperationException(
+                        $"Boulevard median detail '{detail.name}' is not anchored to a paired-road center seam.");
+                }
+            }
+        }
+
         private static GameObject[] LoadRequiredPrefabs(string[] paths)
         {
             var prefabs = new GameObject[paths.Length];
@@ -5159,6 +6222,21 @@ namespace Game.Editor
             AddPrefabList(config.HousePrefabs, palette.Houses);
             AddPrefabList(config.ShopPrefabs, palette.Shops);
             AddPrefabList(config.OtherBuildingPrefabs, palette.Other);
+            AddPrefabList(
+                config.HallPrefabs,
+                palette.CentralLandmarks,
+                CentralHallVisualScale);
+            if (config.ClockTowerPrefab != null && IsDenseCityPrefabUsable(config.ClockTowerPrefab))
+            {
+                AddCentralLandmark(
+                    palette.CentralLandmarks,
+                    MeasurePrefab(
+                        config.ClockTowerPrefab,
+                        CentralClockTowerVisualScale));
+            }
+            AddTallOrLargeCandidates(palette.Houses, palette.CentralLandmarks);
+            AddTallOrLargeCandidates(palette.Shops, palette.CentralLandmarks);
+            AddTallOrLargeCandidates(palette.Other, palette.CentralLandmarks);
             for (int index = 0; index < CleanStandaloneShopPrefabPaths.Length; index++)
             {
                 GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(CleanStandaloneShopPrefabPaths[index]);
@@ -5178,7 +6256,58 @@ namespace Game.Editor
 
             if (palette.Houses.Count == 0 || palette.Shops.Count == 0)
                 throw new InvalidOperationException("Dense city config requires both house and shop prefabs.");
+            if (palette.CentralLandmarks.Count == 0)
+                throw new InvalidOperationException("Dense city config requires central landmark prefabs.");
+
+            Debug.Log(
+                $"[DenseCityBuildingPalette] houses={palette.Houses.Count} shops={palette.Shops.Count} " +
+                $"other={palette.Other.Count} centralLandmarks={palette.CentralLandmarks.Count}");
+            for (int index = 0; index < palette.CentralLandmarks.Count; index++)
+            {
+                PrefabFootprint landmark = palette.CentralLandmarks[index];
+                Debug.Log(
+                    $"[DenseCityCentralLandmarkPalette] prefab={landmark.Prefab.name} " +
+                    $"size={landmark.Width:0.0}x{landmark.Height:0.0}x{landmark.Depth:0.0} " +
+                    $"scale={landmark.VisualScale:0.00}");
+            }
             return palette;
+        }
+
+        private static void AddTallOrLargeCandidates(
+            List<PrefabFootprint> source,
+            List<PrefabFootprint> target)
+        {
+            for (int index = 0; index < source.Count; index++)
+            {
+                PrefabFootprint candidate = source[index];
+                if (candidate.Height >= 11.5f || candidate.Width * candidate.Depth >= 175f)
+                {
+                    float landmarkScale = candidate.Prefab.name.IndexOf(
+                        "Tower",
+                        StringComparison.OrdinalIgnoreCase) >= 0
+                        ? CentralTowerVisualScale
+                        : CentralLargeBuildingVisualScale;
+                    AddCentralLandmark(
+                        target,
+                        MeasurePrefab(candidate.Prefab, landmarkScale));
+                }
+            }
+        }
+
+        private static void AddCentralLandmark(
+            List<PrefabFootprint> target,
+            PrefabFootprint candidate)
+        {
+            if (candidate.Prefab == null)
+                return;
+
+            for (int index = 0; index < target.Count; index++)
+            {
+                if (target[index].Prefab == candidate.Prefab)
+                    return;
+            }
+
+            target.Add(candidate);
         }
 
         private static void AddPrefabList(
@@ -5398,7 +6527,7 @@ namespace Game.Editor
             Transform visualRoot = FindDescendant(prefab.transform, "CombinedMesh") ?? prefab.transform;
             Renderer[] renderers = visualRoot.GetComponentsInChildren<Renderer>(true);
             if (renderers.Length == 0)
-                return new PrefabFootprint(prefab, 10f, 10f, visualScale);
+                return new PrefabFootprint(prefab, 10f, 10f, 8f, visualScale);
 
             Matrix4x4 worldToRoot = prefab.transform.worldToLocalMatrix;
             Bounds bounds = default;
@@ -5434,8 +6563,32 @@ namespace Game.Editor
             }
 
             return hasBounds
-                ? new PrefabFootprint(prefab, bounds.size.x, bounds.size.z, visualScale)
-                : new PrefabFootprint(prefab, 10f, 10f, visualScale);
+                ? new PrefabFootprint(
+                    prefab,
+                    bounds.size.x,
+                    bounds.size.z,
+                    bounds.size.y,
+                    visualScale)
+                : new PrefabFootprint(prefab, 10f, 10f, 8f, visualScale);
+        }
+
+        private static PrefabFootprint SelectFrontageBuilding(
+            BuildingPalette palette,
+            bool preferShop,
+            float centralLandmarkChance,
+            System.Random random,
+            out bool isCentralLandmark)
+        {
+            isCentralLandmark = palette.CentralLandmarks.Count > 0 &&
+                                centralLandmarkChance > 0f &&
+                                random.NextDouble() < centralLandmarkChance;
+            if (isCentralLandmark)
+            {
+                return palette.CentralLandmarks[
+                    random.Next(palette.CentralLandmarks.Count)];
+            }
+
+            return SelectBuilding(palette, preferShop, random);
         }
 
         private static PrefabFootprint SelectBuilding(

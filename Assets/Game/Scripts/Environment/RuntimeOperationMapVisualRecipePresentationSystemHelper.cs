@@ -200,7 +200,9 @@ namespace Game.Runtime
                 if (stageEntryCount == 0)
                     continue;
 
-                float minimumStageDuration = recipe.Reveal.GetMinimumDuration(stage);
+                float minimumStageDuration = Application.isPlaying
+                    ? recipe.Reveal.GetMinimumDuration(stage)
+                    : 0f;
                 while (Time.unscaledTime - stageStartedAt < minimumStageDuration)
                     yield return null;
                 Debug.Log(

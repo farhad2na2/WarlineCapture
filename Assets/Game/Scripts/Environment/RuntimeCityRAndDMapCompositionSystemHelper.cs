@@ -531,7 +531,7 @@ namespace Game.Runtime
             EnsureGeneratedRoot();
             GridConfig grid = CreateGrid();
             bool createAlgorithmicVisuals = _activeVisualRecipe == null;
-            if (createAlgorithmicVisuals)
+            if (createAlgorithmicVisuals && _view.CreateAlgorithmicFoundation)
             {
                 if (!CreateAlgorithmicFoundation(grid))
                 {
@@ -551,7 +551,8 @@ namespace Game.Runtime
                 _view.RoadShoulderMaterial,
                 _view.AlgorithmicRoadColor,
                 _view.AlgorithmicRoadShoulderColor,
-                createAlgorithmicVisuals);
+                createAlgorithmicVisuals,
+                _view.CloneGeneratedMaterials);
 
             var roadRuntime = new RoadRuntimeGenerationCompositionSystemHelper();
             var roadContext = new RoadRuntimeGenerationCompositionSystemHelper.Context(
@@ -761,7 +762,10 @@ namespace Game.Runtime
                 new Vector3(width, 0.4f, depth),
                 _view.AlgorithmicGroundColor);
             _algorithmicVisualQuality = new RuntimeOperationMapVisualQualitySystemHelper();
-            _algorithmicVisualQuality.CreateFoundation(settings, _generatedRoot);
+            _algorithmicVisualQuality.CreateFoundation(
+                settings,
+                _generatedRoot,
+                _view.CloneGeneratedMaterials);
             return _algorithmicVisualQuality.FoundationVisualCount == 1;
         }
 

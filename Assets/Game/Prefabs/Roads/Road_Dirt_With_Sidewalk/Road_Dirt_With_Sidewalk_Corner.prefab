@@ -213,7 +213,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5396794686893339640}
   m_Layer: 0
-  m_Name: Road_Dirt_Corner
+  m_Name: Road_Dirt_With_Sidewalk_Corner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

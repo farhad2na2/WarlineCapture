@@ -14,8 +14,11 @@ namespace Game.Runtime
         [SerializeField] private RuntimeOperationMapVisualRecipe visualRecipe;
         [SerializeField] private RuntimeOperationMapVisualRecipe deterministicFallbackRecipe;
         [SerializeField] private bool deterministicFallbackEnabled = true;
+        [SerializeField] private bool runtimeGenerationEnabled = true;
         [SerializeField] private bool generateOnStart = true;
         [SerializeField] private bool showDebugOverlay = true;
+        [SerializeField] private bool createAlgorithmicFoundation = true;
+        [SerializeField] private bool cloneGeneratedMaterials = true;
         [SerializeField, Min(1)] private int visualRecipeEntriesPerFrame = 8;
         [SerializeField, Min(0.1f)] private float visualRecipeFrameBudgetMilliseconds = 6f;
 
@@ -57,8 +60,11 @@ namespace Game.Runtime
         public RuntimeOperationMapVisualRecipe DeterministicFallbackRecipe =>
             deterministicFallbackRecipe;
         public bool DeterministicFallbackEnabled => deterministicFallbackEnabled;
+        public bool RuntimeGenerationEnabled => runtimeGenerationEnabled;
         public bool GenerateOnStart => generateOnStart;
         public bool ShowDebugOverlay => showDebugOverlay;
+        public bool CreateAlgorithmicFoundation => createAlgorithmicFoundation;
+        public bool CloneGeneratedMaterials => cloneGeneratedMaterials;
         public int VisualRecipeEntriesPerFrame => Mathf.Max(1, visualRecipeEntriesPerFrame);
         public float VisualRecipeFrameBudgetMilliseconds => Mathf.Max(0.1f, visualRecipeFrameBudgetMilliseconds);
         public int GridWidth => Mathf.Max(64, gridWidth);
@@ -91,6 +97,11 @@ namespace Game.Runtime
         public void RequestGeneration()
         {
             _runtimeSystem?.RequestGeneration();
+        }
+
+        internal void AssignGeneratedRootForEditor(Transform root)
+        {
+            generatedRoot = root;
         }
 
         public void RequestCancel()
@@ -141,7 +152,7 @@ namespace Game.Runtime
 
         private void BindToDefaultWorld()
         {
-            if (!Application.isPlaying || _runtimeSystem != null)
+            if (!Application.isPlaying || !runtimeGenerationEnabled || _runtimeSystem != null)
                 return;
 
             World world = World.DefaultGameObjectInjectionWorld;

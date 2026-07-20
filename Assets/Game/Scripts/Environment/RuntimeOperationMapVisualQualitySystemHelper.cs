@@ -12,7 +12,10 @@ namespace Game.Runtime
         public int FoundationVisualCount { get; private set; }
         public int SuppressedObstructionCount { get; private set; }
 
-        public GameObject CreateFoundation(RuntimeOperationMapFoundationSettings settings, Transform parent)
+        public GameObject CreateFoundation(
+            RuntimeOperationMapFoundationSettings settings,
+            Transform parent,
+            bool cloneSourceMaterial = true)
         {
             if (!settings.IsConfigured || parent == null)
                 return null;
@@ -25,17 +28,27 @@ namespace Game.Runtime
 
             Collider collider = foundation.GetComponent<Collider>();
             if (collider != null)
-                UnityEngine.Object.Destroy(collider);
-
-            _foundationMaterialInstance = new Material(settings.Material)
             {
-                name = settings.Material.name + "_RuntimeFoundation"
-            };
-            ApplyColor(_foundationMaterialInstance, settings.Color);
-            _foundationMaterialInstance.enableInstancing = true;
+                if (Application.isPlaying)
+                    UnityEngine.Object.Destroy(collider);
+                else
+                    UnityEngine.Object.DestroyImmediate(collider);
+            }
+
+            Material foundationMaterial = settings.Material;
+            if (cloneSourceMaterial)
+            {
+                _foundationMaterialInstance = new Material(settings.Material)
+                {
+                    name = settings.Material.name + "_RuntimeFoundation"
+                };
+                ApplyColor(_foundationMaterialInstance, settings.Color);
+                _foundationMaterialInstance.enableInstancing = true;
+                foundationMaterial = _foundationMaterialInstance;
+            }
             MeshRenderer renderer = foundation.GetComponent<MeshRenderer>();
             if (renderer != null)
-                renderer.sharedMaterial = _foundationMaterialInstance;
+                renderer.sharedMaterial = foundationMaterial;
 
             FoundationVisualCount = 1;
             return foundation;

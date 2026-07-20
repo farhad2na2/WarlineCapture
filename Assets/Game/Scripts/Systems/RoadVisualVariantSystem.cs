@@ -131,7 +131,7 @@ namespace Game.Runtime
             foreach (var visual in VisualData.Values)
             {
                 if (visual.Mesh != null)
-                    Destroy(visual.Mesh);
+                    DestroyObject(visual.Mesh);
             }
 
             Variants.Clear();
@@ -247,7 +247,7 @@ namespace Game.Runtime
 
             if (connectLocalPositions.Count == 0)
             {
-                Destroy(temp);
+                DestroyObject(temp);
                 return;
             }
 
@@ -301,7 +301,7 @@ namespace Game.Runtime
                 }
             }
 
-            Destroy(temp);
+            DestroyObject(temp);
 
             Variants[type] = variantMap;
             VisualData[type] = BuildCombinedVisualData(type, prefab);
@@ -368,7 +368,7 @@ namespace Game.Runtime
                 }
             }
 
-            Destroy(temp);
+            DestroyObject(temp);
 
             if (materialOrder.Count == 0)
                 return new CombinedRoadVisualData();
@@ -396,7 +396,7 @@ namespace Game.Runtime
             finalMesh.CombineMeshes(finalSubmeshCombines, false, false, false);
 
             for (int i = 0; i < finalSubmeshCombines.Length; i++)
-                Destroy(finalSubmeshCombines[i].mesh);
+                DestroyObject(finalSubmeshCombines[i].mesh);
 
             return new CombinedRoadVisualData
             {
@@ -404,6 +404,16 @@ namespace Game.Runtime
                 Materials = materialOrder.ToArray(),
                 FootprintBounds = footprintBounds
             };
+        }
+
+        private static void DestroyObject(Object target)
+        {
+            if (target == null)
+                return;
+            if (Application.isPlaying)
+                Destroy(target);
+            else
+                DestroyImmediate(target);
         }
 
         private static TileConnectionMask BuildVariantMask(

@@ -72,7 +72,8 @@ namespace Game.Runtime
             Material shoulderMaterial,
             Color roadColor,
             Color shoulderColor,
-            bool createVisuals = true)
+            bool createVisuals = true,
+            bool cloneSourceMaterials = true)
         {
             _grid = grid;
             _roadCellSizeInGridCells = Mathf.Max(1, roadCellSizeInGridCells);
@@ -80,14 +81,19 @@ namespace Game.Runtime
 
             if (_createVisuals)
             {
-                _material = material != null
-                    ? CreateRuntimeMaterial(material, "RuntimeCityRoad_RnD", roadColor)
-                    : CreateFallbackMaterial(roadColor);
-                _ownsMaterial = _material != null;
-                _shoulderMaterial = shoulderMaterial != null
-                    ? CreateRuntimeMaterial(shoulderMaterial, "RuntimeCityRoadShoulder_RnD", shoulderColor)
-                    : CreateFallbackShoulderMaterial(shoulderColor);
-                _ownsShoulderMaterial = _shoulderMaterial != null;
+                _material = material != null && !cloneSourceMaterials
+                    ? material
+                    : material != null
+                        ? CreateRuntimeMaterial(material, "RuntimeCityRoad_RnD", roadColor)
+                        : CreateFallbackMaterial(roadColor);
+                _ownsMaterial = _material != null && (material == null || cloneSourceMaterials);
+                _shoulderMaterial = shoulderMaterial != null && !cloneSourceMaterials
+                    ? shoulderMaterial
+                    : shoulderMaterial != null
+                        ? CreateRuntimeMaterial(shoulderMaterial, "RuntimeCityRoadShoulder_RnD", shoulderColor)
+                        : CreateFallbackShoulderMaterial(shoulderColor);
+                _ownsShoulderMaterial = _shoulderMaterial != null &&
+                                        (shoulderMaterial == null || cloneSourceMaterials);
                 var root = new GameObject("RuntimeCityRoadVisuals");
                 _roadRoot = root.transform;
                 _roadRoot.SetParent(runtimeRoot, false);

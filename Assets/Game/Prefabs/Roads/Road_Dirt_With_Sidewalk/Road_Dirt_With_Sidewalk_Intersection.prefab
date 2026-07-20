@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6604090903759981620}
   m_Layer: 0
-  m_Name: Road_Dirt_Intersection
+  m_Name: Road_Dirt_With_Sidewalk_Intersection
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -232,7 +232,7 @@ namespace Game.Runtime
             }
 
             if (chunk.Mesh != null)
-                UnityEngine.Object.Destroy(chunk.Mesh);
+                DestroyObject(chunk.Mesh);
 
             chunk.Mesh = combinedMesh;
             var filter = chunk.GameObject.GetComponent<MeshFilter>();
@@ -254,9 +254,9 @@ namespace Game.Runtime
         private static void DestroyChunk(ChunkRenderData chunk)
         {
             if (chunk.Mesh != null)
-                UnityEngine.Object.Destroy(chunk.Mesh);
+                DestroyObject(chunk.Mesh);
             if (chunk.GameObject != null)
-                UnityEngine.Object.Destroy(chunk.GameObject);
+                DestroyObject(chunk.GameObject);
         }
 
         private static bool IsSpecialRoadCell(Context context, Vector2Int cell) =>
@@ -293,9 +293,19 @@ namespace Game.Runtime
             combinedMesh.CombineMeshes(submeshCombines, false, false, false);
 
             for (int i = 0; i < submeshCombines.Length; i++)
-                UnityEngine.Object.Destroy(submeshCombines[i].mesh);
+                DestroyObject(submeshCombines[i].mesh);
 
             return combinedMesh;
+        }
+
+        private static void DestroyObject(UnityEngine.Object target)
+        {
+            if (target == null)
+                return;
+            if (Application.isPlaying)
+                UnityEngine.Object.Destroy(target);
+            else
+                UnityEngine.Object.DestroyImmediate(target);
         }
 
         private static Vector2Int GetChunkCoord(Context context, Vector2Int cell)

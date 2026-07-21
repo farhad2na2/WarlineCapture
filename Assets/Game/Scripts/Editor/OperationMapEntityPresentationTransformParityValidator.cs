@@ -51,7 +51,8 @@ namespace Game.Editor
                 entityManager,
                 bakedBySource,
                 rendererBakeMap,
-                bakedWorldMatrices);
+                bakedWorldMatrices,
+                out List<BakedRenderEntityRow> bakedRenderEntities);
             var rows = new List<TransformParityRow>(candidates.Length);
 
             int rejected = 0;
@@ -72,7 +73,7 @@ namespace Game.Editor
             var report = new TransformParityReport
             {
                 schema = "warline.operation-map.transform-parity",
-                schemaVersion = 1,
+                schemaVersion = 2,
                 operationMapId = OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
                 result = rejected == 0 ? "SourceCandidateBakedParityPassed" : "SourceCandidateBakedParityRejected",
                 expectedIdentityCount = OperationMapEntityPresentationIdentityBackfillEditor.ExpectedIdentityCount,
@@ -81,7 +82,9 @@ namespace Game.Editor
                 rejectedRowCount = rejected,
                 matrixTolerance = MatrixTolerance,
                 boundsTolerance = BoundsTolerance,
-                rows = rows
+                rows = rows,
+                bakedRenderEntityCount = bakedRenderEntities.Count,
+                bakedRenderEntities = bakedRenderEntities
             };
 
             string absolutePath = Path.Combine(projectRoot, ReportPath);
@@ -201,10 +204,12 @@ namespace Game.Editor
             EntityManager entityManager,
             IReadOnlyDictionary<string, Entity> identities,
             CandidateRendererBakeMap rendererBakeMap,
-            Dictionary<Entity, Matrix4x4> worldMatrices)
+            Dictionary<Entity, Matrix4x4> worldMatrices,
+            out List<BakedRenderEntityRow> bakedRenderEntities)
         {
             var identityByEntity = identities.ToDictionary(pair => pair.Value, pair => pair.Key);
             var result = new Dictionary<string, WorldBounds>(StringComparer.Ordinal);
+            bakedRenderEntities = new List<BakedRenderEntityRow>();
             using EntityQuery query = entityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<RenderBounds>(),
                 ComponentType.ReadOnly<LocalToWorld>());
@@ -247,14 +252,17 @@ namespace Game.Editor
                 if (sourceId == null)
                 {
                     unresolved++;
+                    bakedRenderEntities.Add(CreateBakedRenderEntityRow(null, local, world));
                     continue;
                 }
 
                 WorldBounds transformed = TransformBounds(local.Value.Center, local.Value.Extents, world);
+                bakedRenderEntities.Add(CreateBakedRenderEntityRow(sourceId, local, world));
                 if (result.TryGetValue(sourceId, out WorldBounds existing))
                     transformed = WorldBounds.Encapsulate(existing, transformed);
                 result[sourceId] = transformed;
             }
+            bakedRenderEntities.Sort(BakedRenderEntityRowComparer.Instance);
             Debug.Log(
                 $"[OperationMapTransformParity] renderEntities={entities.Length} " +
                 $"bakeKeyResolved={bakeKeyResolved} fuzzyKeyResolved={fallbackKeyResolved} " +
@@ -262,6 +270,29 @@ namespace Game.Editor
                 $"unresolved={unresolved} unconsumedExpected={rendererBakeMap.UnconsumedCount} " +
                 $"ownersWithBounds={result.Count}");
             return result;
+        }
+
+        private static BakedRenderEntityRow CreateBakedRenderEntityRow(
+            string sourceId,
+            RenderBounds local,
+            Matrix4x4 world)
+        {
+            WorldBounds transformed = TransformBounds(local.Value.Center, local.Value.Extents, world);
+            return new BakedRenderEntityRow
+            {
+                sourceGlobalObjectId = sourceId ?? string.Empty,
+                worldMatrix = ToArray(world),
+                localBounds = new[]
+                {
+                    local.Value.Center.x,
+                    local.Value.Center.y,
+                    local.Value.Center.z,
+                    local.Value.Extents.x,
+                    local.Value.Extents.y,
+                    local.Value.Extents.z
+                },
+                worldBounds = transformed.ToArray()
+            };
         }
 
         private static CandidateRendererBakeMap BuildCandidateRendererBakeMap(Scene candidateScene)
@@ -648,6 +679,35 @@ namespace Game.Editor
             internal bool Consumed { get; set; }
         }
 
+        private sealed class BakedRenderEntityRowComparer : IComparer<BakedRenderEntityRow>
+        {
+            internal static readonly BakedRenderEntityRowComparer Instance = new();
+
+            public int Compare(BakedRenderEntityRow left, BakedRenderEntityRow right)
+            {
+                int source = string.Compare(
+                    left.sourceGlobalObjectId,
+                    right.sourceGlobalObjectId,
+                    StringComparison.Ordinal);
+                if (source != 0)
+                    return source;
+                int matrix = CompareValues(left.worldMatrix, right.worldMatrix);
+                return matrix != 0 ? matrix : CompareValues(left.localBounds, right.localBounds);
+            }
+
+            private static int CompareValues(float[] left, float[] right)
+            {
+                int count = Math.Min(left.Length, right.Length);
+                for (int i = 0; i < count; i++)
+                {
+                    int comparison = left[i].CompareTo(right[i]);
+                    if (comparison != 0)
+                        return comparison;
+                }
+                return left.Length.CompareTo(right.Length);
+            }
+        }
+
         [Serializable]
         internal sealed class TransformParityReport
         {
@@ -662,6 +722,17 @@ namespace Game.Editor
             public float matrixTolerance;
             public float boundsTolerance;
             public List<TransformParityRow> rows;
+            public int bakedRenderEntityCount;
+            public List<BakedRenderEntityRow> bakedRenderEntities;
+        }
+
+        [Serializable]
+        internal sealed class BakedRenderEntityRow
+        {
+            public string sourceGlobalObjectId;
+            public float[] worldMatrix;
+            public float[] localBounds;
+            public float[] worldBounds;
         }
 
         [Serializable]

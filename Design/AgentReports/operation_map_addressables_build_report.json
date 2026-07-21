@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "buildResultHash": "7910e168a7491eb2f0a749e7f7655248",
+  "buildResultHash": "872c797d60c0cbd26e4e430bb1b210f1",
   "buildTarget": "Android",
-  "aggregateBundleBytes": 127352178,
+  "aggregateBundleBytes": 119993045,
   "maps": [
-    { "mapId": "opmap.skirmish.desert_base_01", "bundleCount": 119, "bundleBytes": 127352178 }
+    { "mapId": "opmap.skirmish.desert_base_01", "bundleCount": 119, "bundleBytes": 119993045 }
   ],
   "partitions": [
     { "label": "operation-map-partition-skirmish-desert-base-01-region-n001-p002", "entryCount": 1, "bundleCount": 1 },
@@ -506,6 +506,7 @@
     "operation-map/shared/3032a38ffb33ad543a19cd7562913a11",
     "operation-map/shared/309106fe98b306e4c800eac86b63c578",
     "operation-map/shared/30cbe943772516246a73a600a2b43f48",
+    "operation-map/shared/31321ba15b8f8eb4c954353edc038b1d",
     "operation-map/shared/31f75a30df3999a439dc4ddb37dc62b1",
     "operation-map/shared/320806b28b52e154bab3ff84c02e0865",
     "operation-map/shared/332f2ea65bc3096498b3610354ffd742",
@@ -795,6 +796,7 @@
     "operation-map/shared/9291d583825874547adb4781a03fa45a",
     "operation-map/shared/92aefe6e9cae13d4cad0b3530eb4408d",
     "operation-map/shared/92caacb548a12244987351b150d1ff3a",
+    "operation-map/shared/933532a4fcc9baf4fa0491de14d08ed7",
     "operation-map/shared/939e2ce63b1a9cd4898be6e6266b2549",
     "operation-map/shared/94372992eb391dd488678968e8ad5595",
     "operation-map/shared/94580075f9264b943aa5ddc69e84c245",
@@ -1125,10 +1127,6 @@
   ],
   "entitiesArtifacts": [  ],
   "duplicateDependencies": [
-    { "assetGuid": "31321ba15b8f8eb4c954353edc038b1d", "assetPath": "Packages/com.unity.render-pipelines.universal/Runtime/Materials/Lit.mat", "bundleCount": 8, "duplicateBytes": 12628 },
-    { "assetGuid": "36e335017ad71d54fbb10842863188ae", "assetPath": "Packages/com.unity.render-pipelines.core/Runtime/RenderPipelineResources/FallbackShader.shader", "bundleCount": 17, "duplicateBytes": 54336 },
-    { "assetGuid": "933532a4fcc9baf4fa0491de14d08ed7", "assetPath": "Packages/com.unity.render-pipelines.universal/Shaders/Lit.shader", "bundleCount": 16, "duplicateBytes": 7643460 },
-    { "assetGuid": "da07703fcc09f8d4799221050659bd55", "assetPath": "Packages/com.unity.shadergraph/Editor/Resources/Shaders/FallbackError.shader", "bundleCount": 2, "duplicateBytes": 3556 },
-    { "assetGuid": "e6e9a19c3678ded42a3bc431ebef7dbd", "assetPath": "Packages/com.unity.render-pipelines.universal/Shaders/Utils/FallbackError.shader", "bundleCount": 17, "duplicateBytes": 87168 }
+    { "assetGuid": "da07703fcc09f8d4799221050659bd55", "assetPath": "Packages/com.unity.shadergraph/Editor/Resources/Shaders/FallbackError.shader", "bundleCount": 2, "duplicateBytes": 3556 }
   ]
 }

@@ -304,10 +304,14 @@ namespace Game.Editor
             {
                 ".png" or ".jpg" or ".jpeg" or ".tga" or ".psd" or ".exr" or ".tif" or ".tiff" => "texture",
                 ".mat" => "material",
+                ".shader" or ".compute" or ".shadervariants" => "shader",
                 ".fbx" or ".obj" or ".blend" => "mesh",
                 ".prefab" => "prefab",
                 _ => "other"
             };
+            if (string.Equals(kind, "shader", StringComparison.Ordinal))
+                return $"{SharedShardLabelPrefix}shader-00";
+
             int prefixLength = Math.Min(2, guid.Length);
             if (!int.TryParse(
                     guid.Substring(0, prefixLength),
@@ -351,16 +355,38 @@ namespace Game.Editor
                 .ToArray();
             for (int index = 0; index < stale.Length; index++)
                 settings.RemoveAssetEntry(stale[index].guid, false);
+
+            HashSet<string> activeShardLabels = shared.entries
+                .SelectMany(entry => entry.labels)
+                .Where(label => label.StartsWith(SharedShardLabelPrefix, StringComparison.Ordinal))
+                .ToHashSet(StringComparer.Ordinal);
+            string[] staleShardLabels = settings.GetLabels()
+                .Where(label =>
+                    label.StartsWith(SharedShardLabelPrefix, StringComparison.Ordinal) &&
+                    !activeShardLabels.Contains(label))
+                .ToArray();
+            for (int index = 0; index < staleShardLabels.Length; index++)
+                settings.RemoveLabel(staleShardLabels[index], false);
         }
 
-        private static bool IsShareableDependencyPath(string path)
+        internal static bool IsShareableDependencyPath(string path)
         {
-            if (string.IsNullOrWhiteSpace(path) ||
-                !path.StartsWith("Assets/", StringComparison.Ordinal) ||
-                StaticMapPresentationCanonicalSourceHash.IsGeneratedOutputPath(path))
+            if (string.IsNullOrWhiteSpace(path))
                 return false;
 
-            string extension = Path.GetExtension(path);
+            bool isProjectAsset = path.StartsWith("Assets/", StringComparison.Ordinal);
+            bool isRuntimePackageAsset = path.StartsWith("Packages/", StringComparison.Ordinal) &&
+                                         path.IndexOf("/Editor/", StringComparison.OrdinalIgnoreCase) < 0;
+            if (!isProjectAsset && !isRuntimePackageAsset)
+                return false;
+            if (isProjectAsset && StaticMapPresentationCanonicalSourceHash.IsGeneratedOutputPath(path))
+                return false;
+
+            string extension = Path.GetExtension(path).ToLowerInvariant();
+            if (isRuntimePackageAsset &&
+                extension is not (".mat" or ".shader" or ".compute" or ".shadervariants"))
+                return false;
+
             return !string.Equals(extension, ".unity", StringComparison.OrdinalIgnoreCase) &&
                    !string.Equals(extension, ".cs", StringComparison.OrdinalIgnoreCase) &&
                    !string.Equals(extension, ".asmdef", StringComparison.OrdinalIgnoreCase) &&

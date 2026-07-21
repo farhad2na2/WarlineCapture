@@ -141,7 +141,8 @@ namespace Game.Editor
             for (int index = 0; index < duplicates.Length; index++)
             {
                 OperationMapAddressablesDuplicateDependencyReport duplicate = duplicates[index];
-                if (duplicate.AssetPath.StartsWith("Packages/", StringComparison.Ordinal))
+                if (duplicate.AssetPath.StartsWith("Packages/", StringComparison.Ordinal) &&
+                    duplicate.AssetPath.IndexOf("/Editor/", StringComparison.OrdinalIgnoreCase) >= 0)
                     continue;
 
                 error =

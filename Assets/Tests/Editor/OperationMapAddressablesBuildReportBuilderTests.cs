@@ -103,11 +103,36 @@ public sealed class OperationMapAddressablesBuildReportBuilderTests
     }
 
     [Test]
-    public void DuplicateValidation_AllowsPackageOwnedDependency()
+    public void DuplicateValidation_RejectsRuntimePackageDependency()
     {
         OperationMapAddressablesDuplicateDependencyReport[] duplicates =
         {
             new("package-guid", "Packages/com.unity.render-pipelines.universal/Shaders/Lit.shader", 2, 12)
+        };
+
+        Assert.IsFalse(
+            OperationMapAddressablesBuildReportBuilder.TryValidateDuplicateDependencies(
+                duplicates,
+                out string error),
+            error);
+        StringAssert.Contains("Lit.shader", error);
+    }
+
+    [Test]
+    public void DuplicateValidation_AllowsEditorOnlyPackageDependency()
+    {
+        OperationMapAddressablesDuplicateDependencyReport[] duplicates =
+        {
+            new(
+                "package-guid",
+                "Packages/com.unity.shadergraph/Editor/Resources/Shaders/FallbackError.shader",
+                2,
+                12),
+            new(
+                "mixed-case-package-guid",
+                "Packages/com.example.rendering/eDiToR/Shaders/FallbackError.shader",
+                2,
+                12)
         };
 
         Assert.IsTrue(

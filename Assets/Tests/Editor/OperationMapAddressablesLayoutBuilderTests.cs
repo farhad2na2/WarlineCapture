@@ -105,6 +105,20 @@ public sealed class OperationMapAddressablesLayoutBuilderTests
                 System.StringComparison.Ordinal)), Is.EqualTo(1));
         }
 
+        string[] activeSharedShardLabels = shared.entries
+            .SelectMany(entry => entry.labels)
+            .Where(label => label.StartsWith(
+                OperationMapAddressablesLayoutBuilder.SharedShardLabelPrefix,
+                System.StringComparison.Ordinal))
+            .Distinct(System.StringComparer.Ordinal)
+            .ToArray();
+        string[] configuredSharedShardLabels = settings.GetLabels()
+            .Where(label => label.StartsWith(
+                OperationMapAddressablesLayoutBuilder.SharedShardLabelPrefix,
+                System.StringComparison.Ordinal))
+            .ToArray();
+        Assert.That(configuredSharedShardLabels, Is.EquivalentTo(activeSharedShardLabels));
+
         AssertOperationMapLabels(settings.FindAssetEntry(UnityEditor.AssetDatabase.AssetPathToGUID(OperationMapAddressablesLayoutBuilder.CatalogPath)), OperationMapAddressablesLayoutBuilder.MetadataRoleLabel, false);
         AssertOperationMapLabels(settings.FindAssetEntry(UnityEditor.AssetDatabase.AssetPathToGUID(OperationMapAddressablesLayoutBuilder.DefinitionPath)), OperationMapAddressablesLayoutBuilder.DefinitionRoleLabel, false);
         foreach (AddressableAssetEntry entry in core.entries)
@@ -130,6 +144,33 @@ public sealed class OperationMapAddressablesLayoutBuilderTests
 
         Assert.That(first, Is.EqualTo(second));
         Assert.That(first, Is.EqualTo("operation-map-shared-shard-texture-07"));
+    }
+
+    [Test]
+    public void SharedShardLabel_UsesDedicatedShaderKind()
+    {
+        string label = OperationMapAddressablesLayoutBuilder.BuildSharedShardLabel(
+            "Packages/com.unity.render-pipelines.universal/Shaders/Lit.shader",
+            "933532a4fcc9baf4fa0491de14d08ed7");
+        string projectShaderLabel = OperationMapAddressablesLayoutBuilder.BuildSharedShardLabel(
+            "Assets/Game/Rendering/Shaders/GroundMacroVariation.shader",
+            "ccc0634edfe14e0c95ffa7446dd9ec82");
+
+        Assert.That(label, Is.EqualTo("operation-map-shared-shard-shader-00"));
+        Assert.That(projectShaderLabel, Is.EqualTo(label));
+    }
+
+    [TestCase("Packages/com.unity.render-pipelines.universal/Shaders/Lit.shader", true)]
+    [TestCase("Packages/com.unity.render-pipelines.universal/Runtime/Materials/Lit.mat", true)]
+    [TestCase("Packages/com.unity.shadergraph/Editor/Resources/Shaders/FallbackError.shader", false)]
+    [TestCase("Packages/com.example.rendering/eDiToR/Shaders/FallbackError.shader", false)]
+    [TestCase("Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl", false)]
+    [TestCase("Assets/Game/Materials/Map.mat", true)]
+    public void ShareableDependencyPath_RestrictsPackageAssetsToRuntimeShaderOwnership(
+        string path,
+        bool expected)
+    {
+        Assert.That(OperationMapAddressablesLayoutBuilder.IsShareableDependencyPath(path), Is.EqualTo(expected));
     }
 
     [Test]

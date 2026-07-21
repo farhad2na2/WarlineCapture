@@ -221,7 +221,6 @@ MonoBehaviour:
     - operation-map-role-shared-dependency
     - operation-map-shared-shard-material-01
     - operation-map-shared-shard-material-07
-    - operation-map-shared-shard-other-04
     - operation-map-shared-shard-texture-03
     - operation-map-shared-shard-texture-01
     - operation-map-shared-shard-texture-07
@@ -270,6 +269,7 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p018-p004
     - operation-map-partition-skirmish-desert-base-01-region-p019-n003
     - operation-map-partition-skirmish-desert-base-01-region-p021-p006
+    - operation-map-shared-shard-shader-00
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: 11f3bcb7e92274cb9a2041ff8401d472, type: 2}

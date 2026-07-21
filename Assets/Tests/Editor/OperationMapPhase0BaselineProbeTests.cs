@@ -135,6 +135,38 @@ public sealed class OperationMapPhase0BaselineProbeTests
             Is.False);
 
         report = CreateValidMinimalReport();
+        report.canonicalMap.generatedRootCount = 1;
+        report.canonicalMap.generatedRootNames.Add(
+            "Generated_GiantDenseMiddleEasternCity_MapBakeSource");
+        Assert.That(
+            OperationMapPhase0BaselineProbe.HasRequiredReportShape(JsonUtility.ToJson(report)),
+            Is.False);
+
+        report = CreateValidMinimalReport();
+        report.canonicalMap.authoringSceneExcludedFromAddressables = false;
+        Assert.That(
+            OperationMapPhase0BaselineProbe.HasRequiredReportShape(JsonUtility.ToJson(report)),
+            Is.False);
+
+        report = CreateValidMinimalReport();
+        report.canonicalMap.collider3DCount = 1;
+        Assert.That(
+            OperationMapPhase0BaselineProbe.HasRequiredReportShape(JsonUtility.ToJson(report)),
+            Is.False);
+
+        report = CreateValidMinimalReport();
+        report.canonicalMap.protectedRootCandidates.Clear();
+        Assert.That(
+            OperationMapPhase0BaselineProbe.HasRequiredReportShape(JsonUtility.ToJson(report)),
+            Is.False);
+
+        report = CreateValidMinimalReport();
+        report.canonicalMap.runtimeBindingScene.sha256 = string.Empty;
+        Assert.That(
+            OperationMapPhase0BaselineProbe.HasRequiredReportShape(JsonUtility.ToJson(report)),
+            Is.False);
+
+        report = CreateValidMinimalReport();
         report.scenes.RemoveAt(1);
         Assert.That(
             OperationMapPhase0BaselineProbe.HasRequiredReportShape(JsonUtility.ToJson(report)),
@@ -386,6 +418,47 @@ public sealed class OperationMapPhase0BaselineProbeTests
                 CreateSceneReport(MatchScenePath, matchGuid, autoLoad: false),
                 CreateSceneReport(MatchSubScenePath, subSceneGuid, autoLoad: true)
             },
+            canonicalMap = new OperationMapPhase0BaselineProbe.CanonicalMapBaselineReport
+            {
+                authoringScene = CreateSceneReport(CanonicalMapScenePath, matchGuid, autoLoad: false),
+                mapSubScene = CreateSceneReport(
+                    "Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01_SubScene.unity",
+                    subSceneGuid,
+                    autoLoad: true),
+                authoringSceneFileBytes = 1,
+                authoringSceneFileSha256 = hash256,
+                mapSubSceneFileBytes = 1,
+                mapSubSceneFileSha256 = hash256,
+                gameObjectCount = 2,
+                rendererCount = 0,
+                meshRendererCount = 0,
+                prefabInstanceRootCount = 0,
+                mapBakeGroupCount = 0,
+                mapBakeGroupsByRole =
+                    new List<OperationMapPhase0BaselineProbe.MapBakeGroupRoleCountReport>(),
+                generatedRootCount = 0,
+                generatedRootNames = new List<string>(),
+                protectedRootCandidates =
+                    new List<OperationMapPhase0BaselineProbe.ObjectIdentityReport>
+                    {
+                        CreateSceneIdentity(
+                            "Buildings",
+                            CanonicalMapScenePath,
+                            matchGuid,
+                            "Map[0]/Buildings[0]")
+                    },
+                authoringSceneExcludedFromBuildSettings = true,
+                authoringSceneExcludedFromAddressables = true,
+                runtimeBindingScene = CreateFileIdentity(
+                    "Assets/Game/GeneratedOperationMaps/RuntimeBinding/map.unity",
+                    hash256),
+                minimapRaster = CreateFileIdentity(
+                    "Assets/Game/GeneratedStaticMapPresentation/map.png",
+                    hash256),
+                addressablesBuildReport = CreateFileIdentity(
+                    "Design/AgentReports/operation_map_addressables_build_report.json",
+                    hash256)
+            },
             subSceneReference = new OperationMapPhase0BaselineProbe.SubSceneReferenceReport
             {
                 componentHierarchyPath = "Match/SubScene[0]",
@@ -517,6 +590,18 @@ public sealed class OperationMapPhase0BaselineProbeTests
                     generatedFile.metaSha256)
             });
         return report;
+    }
+
+    private static OperationMapPhase0BaselineProbe.FileIdentityReport CreateFileIdentity(
+        string path,
+        string sha256)
+    {
+        return new OperationMapPhase0BaselineProbe.FileIdentityReport
+        {
+            path = path,
+            bytes = 1,
+            sha256 = sha256
+        };
     }
 
     private static OperationMapPhase0BaselineProbe.SceneReport CreateSceneReport(

@@ -15,6 +15,7 @@ namespace Game.Editor
     using Game.Configs;
     using Game.Rendering;
     using UnityEditor;
+    using UnityEditor.AddressableAssets;
     using UnityEditor.SceneManagement;
     using UnityEngine;
     using UnityEngine.SceneManagement;
@@ -23,7 +24,7 @@ namespace Game.Editor
     public static class OperationMapPhase0BaselineProbe
     {
         internal const string ReportSchema = "warline.operation-map.phase0-baseline";
-        internal const int ReportSchemaVersion = 1;
+        internal const int ReportSchemaVersion = 2;
         internal const string ReportPathEnvironmentVariable =
             "WARLINE_OPERATION_MAP_PHASE0_BASELINE_REPORT_PATH";
         internal const string DefaultReportPath =
@@ -39,6 +40,25 @@ namespace Game.Editor
             "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/StaticMapPresentationSceneIntegrity.json";
         private const string GeneratedSceneFolder =
             StaticMapPresentationBaker.SceneOutputFolder;
+        private const string AddressablesBuildReportPath =
+            "Design/AgentReports/operation_map_addressables_build_report.json";
+        private const string GeneratedMapSourceRootName =
+            "Generated_GiantDenseMiddleEasternCity_MapBakeSource";
+        private const string GeneratedEntityPresentationRootName =
+            "Generated_GiantDenseMiddleEasternCity_EntityPresentation";
+        private static readonly HashSet<string> ProtectedRootCandidateNames = new(
+            new[]
+            {
+                "AuthoredCityOverrides",
+                "Buildings",
+                "DenseCity_GradingArchive",
+                "Mountains",
+                "ResourceAreas",
+                "Roads",
+                "Runways",
+                "Vehicles"
+            },
+            StringComparer.Ordinal);
         private const string AggregateAlgorithm =
             "sha256(utf8(path\\0sha256\\n), entries sorted by ordinal path)";
         private const int IntegritySchemaVersion = 1;
@@ -214,6 +234,8 @@ namespace Game.Editor
                     return Reject("scene-setup-missing", out rejectionReason);
                 if (!IsSceneReportSetComplete(report.scenes, report.subSceneReference))
                     return Reject("scene-set-incomplete", out rejectionReason);
+                if (!IsCanonicalMapBaselineComplete(report.canonicalMap))
+                    return Reject("canonical-map-baseline-incomplete", out rejectionReason);
                 if (!IsMatchSceneViewReferenceSetComplete(report.matchSceneViewReferences))
                     return Reject("match-scene-view-references-incomplete", out rejectionReason);
                 if (!IsManifestReportComplete(report.manifest))
@@ -335,6 +357,56 @@ namespace Game.Editor
                        root.hierarchyObjectCount > 0 &&
                        IsSha256(root.hierarchySha256) &&
                        root.rootComponentTypes != null && root.rootComponentTypes.Count > 0);
+        }
+
+        private static bool IsCanonicalMapBaselineComplete(CanonicalMapBaselineReport baseline)
+        {
+            if (baseline == null ||
+                !IsSceneReportComplete(baseline.authoringScene) ||
+                !IsSceneReportComplete(baseline.mapSubScene) ||
+                baseline.authoringSceneFileBytes <= 0 ||
+                baseline.mapSubSceneFileBytes <= 0 ||
+                !IsSha256(baseline.authoringSceneFileSha256) ||
+                !IsSha256(baseline.mapSubSceneFileSha256) ||
+                baseline.gameObjectCount <
+                    baseline.authoringScene.hierarchyObjectCount + baseline.mapSubScene.hierarchyObjectCount ||
+                baseline.rendererCount < baseline.meshRendererCount ||
+                baseline.meshRendererCount < 0 ||
+                baseline.prefabInstanceRootCount < 0 ||
+                baseline.collider3DCount != 0 ||
+                baseline.collider2DCount != 0 ||
+                baseline.rigidbody3DCount != 0 ||
+                baseline.rigidbody2DCount != 0 ||
+                baseline.mapBakeGroupCount < 0 ||
+                baseline.mapBakeGroupsByRole == null ||
+                baseline.mapBakeGroupsByRole.Sum(entry => entry?.count ?? -1) != baseline.mapBakeGroupCount ||
+                baseline.generatedRootCount != 0 ||
+                baseline.generatedRootNames == null ||
+                baseline.generatedRootNames.Count != 0 ||
+                baseline.protectedRootCandidates == null ||
+                baseline.protectedRootCandidates.Count == 0 ||
+                !baseline.protectedRootCandidates.All(IsObjectIdentityComplete) ||
+                !baseline.authoringSceneExcludedFromBuildSettings ||
+                !baseline.authoringSceneExcludedFromAddressables ||
+                !IsFileIdentityComplete(baseline.runtimeBindingScene) ||
+                !IsFileIdentityComplete(baseline.minimapRaster) ||
+                !IsFileIdentityComplete(baseline.addressablesBuildReport))
+            {
+                return false;
+            }
+
+            return baseline.mapBakeGroupsByRole.All(entry =>
+                entry != null &&
+                !string.IsNullOrWhiteSpace(entry.role) &&
+                entry.count >= 0);
+        }
+
+        private static bool IsFileIdentityComplete(FileIdentityReport identity)
+        {
+            return identity != null &&
+                   !string.IsNullOrWhiteSpace(identity.path) &&
+                   identity.bytes > 0 &&
+                   IsSha256(identity.sha256);
         }
 
         private static bool IsMatchSceneViewReferenceSetComplete(
@@ -561,12 +633,20 @@ namespace Game.Editor
             RequireAsset(CanonicalMapScenePath);
             RequireFile(projectRoot, ManifestPath);
             RequireFile(projectRoot, IntegrityPath);
+            RequireFile(projectRoot, OperationMapRuntimeBindingSceneBuilder.OutputPath);
+            RequireFile(projectRoot, OperationMapMinimapRasterBaker.OutputPath);
+            RequireFile(projectRoot, AddressablesBuildReportPath);
 
             Scene matchScene = OpenSceneForInspection(MatchScenePath);
             Scene subScene = OpenSceneForInspection(MatchSubScenePath);
             Scene canonicalMapScene = OpenSceneForInspection(CanonicalMapScenePath);
             MatchSceneView matchSceneView = RequireSingleMatchSceneView(matchScene);
             OperationMapSceneView operationMapSceneView = RequireSingleOperationMapSceneView(canonicalMapScene);
+            string mapSubScenePath = AssetDatabase.GUIDToAssetPath(
+                operationMapSceneView.MapSubScene.SceneGUID.ToString());
+            if (string.IsNullOrWhiteSpace(mapSubScenePath))
+                throw new InvalidOperationException("Operation-map SubScene path could not be resolved.");
+            Scene mapSubScene = OpenSceneForInspection(mapSubScenePath);
             SubSceneReferenceReport subSceneReference = RequireSubSceneReference(matchScene);
             RequireEqual(MatchSubScenePath, subSceneReference.sceneAssetPath, "Match subscene asset path");
 
@@ -604,6 +684,10 @@ namespace Game.Editor
                     BuildSceneReport(matchScene, "ExplicitInspection", false, true),
                     BuildSceneReport(subScene, "ExplicitInspection", subSceneReference.autoLoad, true)
                 },
+                canonicalMap = BuildCanonicalMapBaselineReport(
+                    projectRoot,
+                    canonicalMapScene,
+                    mapSubScene),
                 subSceneReference = subSceneReference,
                 matchSceneViewReferences = BuildMatchSceneViewReferenceReports(matchSceneView),
                 manifest = manifestReport,
@@ -613,6 +697,112 @@ namespace Game.Editor
                 vehiclePlacements = vehiclePlacements,
                 mapData = mapData
             };
+        }
+
+        private static CanonicalMapBaselineReport BuildCanonicalMapBaselineReport(
+            string projectRoot,
+            Scene authoringScene,
+            Scene mapSubScene)
+        {
+            Scene[] inspectedScenes = { authoringScene, mapSubScene };
+            GameObject[] allObjects = inspectedScenes
+                .SelectMany(scene => scene.GetRootGameObjects())
+                .SelectMany(root => root.GetComponentsInChildren<Transform>(true))
+                .Select(transform => transform.gameObject)
+                .ToArray();
+            List<string> generatedRoots = allObjects
+                .Where(gameObject =>
+                    gameObject.transform.parent == null &&
+                    (string.Equals(
+                         gameObject.name,
+                         GeneratedMapSourceRootName,
+                         StringComparison.Ordinal) ||
+                     string.Equals(
+                         gameObject.name,
+                         GeneratedEntityPresentationRootName,
+                         StringComparison.Ordinal)))
+                .Select(gameObject => gameObject.name)
+                .OrderBy(name => name, StringComparer.Ordinal)
+                .ToList();
+            List<MapBakeGroupRoleCountReport> bakeGroupsByRole = allObjects
+                .Select(gameObject => gameObject.GetComponent<MapBakeGroupAuthoring>())
+                .Where(authoring => authoring != null)
+                .GroupBy(authoring => authoring.Role)
+                .OrderBy(group => group.Key)
+                .Select(group => new MapBakeGroupRoleCountReport
+                {
+                    role = group.Key.ToString(),
+                    count = group.Count()
+                })
+                .ToList();
+            List<ObjectIdentityReport> protectedRootCandidates = allObjects
+                .Where(gameObject => ProtectedRootCandidateNames.Contains(gameObject.name))
+                .Select(BuildObjectIdentity)
+                .OrderBy(identity => identity.scenePath, StringComparer.Ordinal)
+                .ThenBy(identity => identity.hierarchyPath, StringComparer.Ordinal)
+                .ToList();
+            string canonicalGuid = AssetDatabase.AssetPathToGUID(CanonicalMapScenePath);
+            bool excludedFromAddressables =
+                AddressableAssetSettingsDefaultObject.Settings == null ||
+                AddressableAssetSettingsDefaultObject.Settings.FindAssetEntry(canonicalGuid) == null;
+
+            return new CanonicalMapBaselineReport
+            {
+                authoringScene = BuildSceneReport(authoringScene, "ExplicitInspection", false, true),
+                mapSubScene = BuildSceneReport(mapSubScene, "ExplicitInspection", true, true),
+                authoringSceneFileBytes = GetFileLength(projectRoot, authoringScene.path),
+                authoringSceneFileSha256 =
+                    ComputeFileSha256(ResolveProjectPath(projectRoot, authoringScene.path)),
+                mapSubSceneFileBytes = GetFileLength(projectRoot, mapSubScene.path),
+                mapSubSceneFileSha256 =
+                    ComputeFileSha256(ResolveProjectPath(projectRoot, mapSubScene.path)),
+                gameObjectCount = allObjects.Length,
+                rendererCount = allObjects.Count(gameObject => gameObject.GetComponent<Renderer>() != null),
+                meshRendererCount =
+                    allObjects.Count(gameObject => gameObject.GetComponent<MeshRenderer>() != null),
+                prefabInstanceRootCount = allObjects.Count(PrefabUtility.IsAnyPrefabInstanceRoot),
+                collider3DCount =
+                    allObjects.Sum(gameObject => gameObject.GetComponents<Collider>().Length),
+                collider2DCount =
+                    allObjects.Sum(gameObject => gameObject.GetComponents<Collider2D>().Length),
+                rigidbody3DCount =
+                    allObjects.Sum(gameObject => gameObject.GetComponents<Rigidbody>().Length),
+                rigidbody2DCount =
+                    allObjects.Sum(gameObject => gameObject.GetComponents<Rigidbody2D>().Length),
+                mapBakeGroupCount = bakeGroupsByRole.Sum(entry => entry.count),
+                mapBakeGroupsByRole = bakeGroupsByRole,
+                generatedRootCount = generatedRoots.Count,
+                generatedRootNames = generatedRoots,
+                protectedRootCandidates = protectedRootCandidates,
+                authoringSceneExcludedFromBuildSettings = !EditorBuildSettings.scenes.Any(scene =>
+                    string.Equals(scene.path, CanonicalMapScenePath, StringComparison.Ordinal) && scene.enabled),
+                authoringSceneExcludedFromAddressables = excludedFromAddressables,
+                runtimeBindingScene = BuildFileIdentityReport(
+                    projectRoot,
+                    OperationMapRuntimeBindingSceneBuilder.OutputPath),
+                minimapRaster = BuildFileIdentityReport(
+                    projectRoot,
+                    OperationMapMinimapRasterBaker.OutputPath),
+                addressablesBuildReport = BuildFileIdentityReport(
+                    projectRoot,
+                    AddressablesBuildReportPath)
+            };
+        }
+
+        private static FileIdentityReport BuildFileIdentityReport(string projectRoot, string path)
+        {
+            string physicalPath = ResolveProjectPath(projectRoot, path);
+            return new FileIdentityReport
+            {
+                path = path,
+                bytes = new FileInfo(physicalPath).Length,
+                sha256 = ComputeFileSha256(physicalPath)
+            };
+        }
+
+        private static long GetFileLength(string projectRoot, string path)
+        {
+            return new FileInfo(ResolveProjectPath(projectRoot, path)).Length;
         }
 
         private static ProjectReport BuildProjectReport(string projectRoot)
@@ -889,7 +1079,8 @@ namespace Game.Editor
                 throw new InvalidOperationException("Static presentation manifest shape is incomplete.");
             }
 
-            string computedCanonicalHash = StaticMapPresentationCanonicalSourceHash.Compute(CanonicalMapScenePath);
+            string computedCanonicalHash =
+                StaticMapPresentationBaker.ComputeMapOwnedSourceHash(CanonicalMapScenePath);
             RequireEqual(
                 manifest.CanonicalSceneDependencyHash,
                 computedCanonicalHash,
@@ -1653,6 +1844,7 @@ namespace Game.Editor
             public ProjectReport project;
             public List<SceneSetupReport> sceneSetupBeforeProbe;
             public List<SceneReport> scenes;
+            public CanonicalMapBaselineReport canonicalMap;
             public SubSceneReferenceReport subSceneReference;
             public List<SerializedObjectReferenceFieldReport> matchSceneViewReferences;
             public ManifestReport manifest;
@@ -1661,6 +1853,50 @@ namespace Game.Editor
             public PlacementReport buildingPlacements;
             public PlacementReport vehiclePlacements;
             public MapDataReport mapData;
+        }
+
+        [Serializable]
+        internal sealed class CanonicalMapBaselineReport
+        {
+            public SceneReport authoringScene;
+            public SceneReport mapSubScene;
+            public long authoringSceneFileBytes;
+            public string authoringSceneFileSha256;
+            public long mapSubSceneFileBytes;
+            public string mapSubSceneFileSha256;
+            public int gameObjectCount;
+            public int rendererCount;
+            public int meshRendererCount;
+            public int prefabInstanceRootCount;
+            public int collider3DCount;
+            public int collider2DCount;
+            public int rigidbody3DCount;
+            public int rigidbody2DCount;
+            public int mapBakeGroupCount;
+            public List<MapBakeGroupRoleCountReport> mapBakeGroupsByRole;
+            public int generatedRootCount;
+            public List<string> generatedRootNames;
+            public List<ObjectIdentityReport> protectedRootCandidates;
+            public bool authoringSceneExcludedFromBuildSettings;
+            public bool authoringSceneExcludedFromAddressables;
+            public FileIdentityReport runtimeBindingScene;
+            public FileIdentityReport minimapRaster;
+            public FileIdentityReport addressablesBuildReport;
+        }
+
+        [Serializable]
+        internal sealed class MapBakeGroupRoleCountReport
+        {
+            public string role;
+            public int count;
+        }
+
+        [Serializable]
+        internal sealed class FileIdentityReport
+        {
+            public string path;
+            public long bytes;
+            public string sha256;
         }
 
         [Serializable]

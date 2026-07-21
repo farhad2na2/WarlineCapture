@@ -1,7 +1,7 @@
 # Operation Map ECS Presentation And Dense City Editor Bake Implementation Tracker
 
 Date: 2026-07-21
-Status: Approved direction; implementation not started; previously generated dense city cleared by project owner
+Status: Implementation started; Phase 0 baseline and contracts in progress; previously generated dense city cleared by project owner
 Parent tracker: `operation_map_scene_split_and_generator_tracker.md`
 Related contracts: `file_naming_architecture_contract.md`, `gameplay_solid_ecs_contract.md`, `performance_regression_contract.md`, `operation_map_runtime_ownership_chain.md`, `operation_map_scene_split_rollback_recipe.md`
 Related R&D only: `runtime_operation_map_generation_rnd_implementation_tracker.md`
@@ -701,11 +701,11 @@ Runtime procedural generation is not the fallback for a rendering or packaging f
 
 Progress is checklist based. Every checkbox counts. Update the count, phase status, and validation log in the same stable change that completes an item.
 
-Current progress: **0 / 144 (0%)**
+Current progress: **1 / 144 (1%)**
 
 | Phase | Status |
 |---|---|
-| Phase 0: Baseline and contracts | Not started |
+| Phase 0: Baseline and contracts | In progress |
 | Phase 0A: Existing map ECS presentation migration | Not started |
 | Phase 1: Generated ownership authoring | Not started |
 | Phase 2: Generator semantic output | Not started |
@@ -722,7 +722,7 @@ Current progress: **0 / 144 (0%)**
 
 ### Phase 0: Baseline And Contracts
 
-- [ ] Record a clean post-clear authoring-scene hash, size, hierarchy counts, renderer counts, and existing bake-group counts.
+- [x] Record a clean post-clear authoring-scene hash, size, hierarchy counts, renderer counts, and existing bake-group counts.
 - [ ] Record current accepted surface payload, static manifest, chunk count, source count, integrity ledger, minimap, runtime binding, and Addressables Build Layout identities.
 - [ ] Capture current Android APK/installed size, runtime memory, draw calls, frame timings, GC, load time, and unload time on the target device.
 - [ ] Confirm the authoring scene is excluded from current Addressables/runtime build ownership.
@@ -975,6 +975,7 @@ Extend existing tests rather than duplicating them for:
 | 2026-07-21 | ECS-first generated presentation decision | Sections 1-16, 19, and 21-25 of this tracker; parent tracker direction link | Design only | All generated permanent visuals target map SubScene entities with shared Entities Graphics assets. Generated-city GameObject chunks/pools are rejected; the existing static package is frozen rollback evidence pending the full-map cutover. |
 | 2026-07-21 | Full current-map ECS presentation decision | Existing-map 16,542-source / 514-chunk / 451-building / 29-vehicle accepted baseline; revised sections 1-25 | Design only | Existing and generated map visuals now share one ECS SubScene presentation target. Current static scenes remain frozen rollback evidence during migration and leave production package/runtime ownership after accepted cutover. |
 | 2026-07-21 | Building-attached visual ownership decision | Building authoring/data/runtime contracts plus Phases 0A, 1, 2, 5, 6, and 9 | Design only | Roof, interior, shop, tent, sign, awning, lamp, furniture, and utility visuals attached to a damageable building belong to exactly one intact/destroyed entity hierarchy and transition atomically with it. |
+| 2026-07-21 | Phase 0 deterministic editor baseline | `OperationMapPhase0BaselineProbeTests`: 8/8 passed; two `/private/tmp/warline-phase0-baseline-*.json` captures differed only by their declared report path; concise logs at `/private/tmp/warline-phase0-baseline-tests.log` and `/private/tmp/warline-phase0-probe-{a,b}.log` | Partial pass | Schema v2 recorded the clean canonical authoring scene and map SubScene identities, 15,792 GameObjects, 15,671 renderers, 15,584 mesh renderers, 13,317 prefab-instance roots, 27 bake groups, zero generated roots, zero prohibited physics components, 269 static chunks, 11,892 static sources, protected-root candidate GlobalObjectIds, and current surface/manifest/integrity/minimap/runtime-binding identities. The checked-in Addressables Build Layout predates this manifest state, so package identity and authoring-scene exclusion rows remain open pending a post-commit rebuild. Android evidence and protected-root approval also remain open. |
 
 ## 25. Completion Rule
 

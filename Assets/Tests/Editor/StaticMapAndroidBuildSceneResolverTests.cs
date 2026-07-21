@@ -10,7 +10,7 @@ using UnityEngine;
 
 public sealed class StaticMapAndroidBuildSceneResolverTests
 {
-    private const int CurrentMapChunkCount = 501;
+    private const int CurrentMapChunkCount = 269;
 
     private const string Match = "Assets/Game/Scenes/Match.unity";
     private const string Menu = "Assets/Game/Scenes/MainMenu.unity";

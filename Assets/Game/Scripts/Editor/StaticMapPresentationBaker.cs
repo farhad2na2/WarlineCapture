@@ -44,6 +44,7 @@ namespace Game.Editor
             public string GlobalObjectId;
             public string HierarchyPath;
             public string DependencyHash;
+            public string CanonicalDependencyHash;
             public string MeshGuid;
             public long MeshLocalId;
             public List<StaticMapPresentationMaterialEntry> MaterialEntries;
@@ -709,6 +710,7 @@ namespace Game.Editor
             MeshRenderer[] renderers = mapRoot.GetComponentsInChildren<MeshRenderer>(true);
             stats.Scanned = renderers.Length;
             List<SourceDescriptor> sources = new(renderers.Length);
+            Dictionary<string, string> canonicalAssetHashCache = new(StringComparer.Ordinal);
             for (int i = 0; i < renderers.Length; i++)
             {
                 if (!TryCreateSourceDescriptor(
@@ -717,6 +719,7 @@ namespace Game.Editor
                         renderers[i],
                         chunkSize,
                         stats,
+                        canonicalAssetHashCache,
                         out SourceDescriptor source))
                     continue;
 
@@ -735,6 +738,7 @@ namespace Game.Editor
             MeshRenderer renderer,
             float chunkSize,
             BakeStats stats,
+            Dictionary<string, string> canonicalAssetHashCache,
             out SourceDescriptor source)
         {
             source = null;
@@ -835,6 +839,9 @@ namespace Game.Editor
                 Chunk = new ChunkKey(worldBounds.center, chunkSize)
             };
             source.DependencyHash = BuildSourceDependencyHash(source);
+            source.CanonicalDependencyHash = BuildCanonicalSourceDependencyHash(
+                source,
+                canonicalAssetHashCache);
             return true;
         }
 
@@ -1055,17 +1062,24 @@ namespace Game.Editor
 
         private static string BuildSourceDependencyHash(SourceDescriptor source)
         {
+            return BuildSourceDependencyHash(source, AppendAssetDependencyHash);
+        }
+
+        private static string BuildSourceDependencyHash(
+            SourceDescriptor source,
+            Action<StringBuilder, Object> appendAssetHash)
+        {
             StringBuilder builder = new(1024);
             builder.Append(source.GlobalObjectId).Append('|');
             builder.Append(source.HierarchyPath).Append('|');
             AppendMatrix(builder, source.Renderer.transform.localToWorldMatrix);
             builder.Append('|').Append(source.MeshGuid).Append(':').Append(source.MeshLocalId);
-            AppendAssetDependencyHash(builder, source.Mesh);
+            appendAssetHash(builder, source.Mesh);
             for (int i = 0; i < source.MaterialEntries.Count; i++)
             {
                 StaticMapPresentationMaterialEntry material = source.MaterialEntries[i];
                 builder.Append('|').Append(material.AssetGuid).Append(':').Append(material.LocalId);
-                AppendAssetDependencyHash(builder, material.Material);
+                appendAssetHash(builder, material.Material);
             }
 
             AppendGameObjectLayerIdentity(builder, source.Layer);
@@ -1089,7 +1103,19 @@ namespace Game.Editor
         private static string ComputeMapOwnedSourceHash(List<SourceDescriptor> sources)
         {
             return StaticMapPresentationCanonicalSourceHash.ComputeMapOwnedSourceSetHash(
-                sources.Select(source => source.GlobalObjectId + "|" + source.DependencyHash));
+                sources.Select(source => source.GlobalObjectId + "|" + source.CanonicalDependencyHash));
+        }
+
+        private static string BuildCanonicalSourceDependencyHash(
+            SourceDescriptor source,
+            Dictionary<string, string> canonicalAssetHashCache)
+        {
+            return BuildSourceDependencyHash(
+                source,
+                (builder, asset) => AppendCanonicalAssetSourceHash(
+                    builder,
+                    asset,
+                    canonicalAssetHashCache));
         }
 
         internal static void AppendGameObjectLayerIdentity(StringBuilder builder, int layer)
@@ -1135,6 +1161,28 @@ namespace Game.Editor
             builder.Append(string.IsNullOrWhiteSpace(path)
                 ? "missing"
                 : AssetDatabase.GetAssetDependencyHash(path).ToString());
+        }
+
+        private static void AppendCanonicalAssetSourceHash(
+            StringBuilder builder,
+            Object asset,
+            Dictionary<string, string> canonicalAssetHashCache)
+        {
+            string path = AssetDatabase.GetAssetPath(asset);
+            builder.Append('@');
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                builder.Append("missing");
+                return;
+            }
+
+            if (!canonicalAssetHashCache.TryGetValue(path, out string sourceHash))
+            {
+                sourceHash = StaticMapPresentationCanonicalSourceHash.Compute(path);
+                canonicalAssetHashCache.Add(path, sourceHash);
+            }
+
+            builder.Append(sourceHash);
         }
 
         private static void AppendMatrix(StringBuilder builder, Matrix4x4 matrix)

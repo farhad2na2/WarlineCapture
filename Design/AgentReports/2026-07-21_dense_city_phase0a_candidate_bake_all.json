@@ -1,6 +1,6 @@
 {
     "schema": "warline.operation-map.entity-scene-candidate-bake-all",
-    "schemaVersion": 1,
+    "schemaVersion": 2,
     "result": "CandidateBakeAllPassedPendingVisualAndRuntimeAcceptance",
     "operationMapId": "opmap.skirmish.desert_base_01",
     "productionPresentationKind": "StaticSceneChunks",
@@ -12,6 +12,7 @@
     "vehicleAuthoringCount": 22,
     "renderOnlyOwnerCount": 9090,
     "presentationRootCount": 3,
+    "presentationIdentityCount": 9544,
     "colliderCount": 0,
     "rigidbodyCount": 0,
     "renderMeshEntityCount": 14212,
@@ -26,49 +27,55 @@
         {
             "name": "preflight-isolation",
             "result": "Passed",
-            "elapsedMilliseconds": 5578,
+            "elapsedMilliseconds": 2995,
             "failure": ""
         },
         {
             "name": "candidate-population",
             "result": "Passed",
-            "elapsedMilliseconds": 6938,
+            "elapsedMilliseconds": 4072,
+            "failure": ""
+        },
+        {
+            "name": "candidate-presentation-identities",
+            "result": "Passed",
+            "elapsedMilliseconds": 4418,
             "failure": ""
         },
         {
             "name": "candidate-authoring-readiness",
             "result": "Passed",
-            "elapsedMilliseconds": 1414,
+            "elapsedMilliseconds": 1174,
             "failure": ""
         },
         {
             "name": "candidate-entity-bake",
             "result": "Passed",
-            "elapsedMilliseconds": 8958,
+            "elapsedMilliseconds": 5728,
             "failure": ""
         },
         {
             "name": "shared-art-budget",
             "result": "Passed",
-            "elapsedMilliseconds": 4839,
+            "elapsedMilliseconds": 1362,
             "failure": ""
         },
         {
             "name": "candidate-binding-layout",
             "result": "Passed",
-            "elapsedMilliseconds": 24849,
+            "elapsedMilliseconds": 4647,
             "failure": ""
         },
         {
             "name": "candidate-bake-budget",
             "result": "Passed",
-            "elapsedMilliseconds": 21,
+            "elapsedMilliseconds": 3,
             "failure": ""
         },
         {
             "name": "postflight-isolation",
             "result": "Passed",
-            "elapsedMilliseconds": 12503,
+            "elapsedMilliseconds": 3971,
             "failure": ""
         }
     ]

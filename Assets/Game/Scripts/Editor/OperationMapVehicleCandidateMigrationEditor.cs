@@ -168,7 +168,7 @@ namespace Game.Editor
             }
         }
 
-        private static OperationMapVehicleEcsConversionInventoryProbe.ConversionReport LoadInventory(string projectRoot)
+        internal static OperationMapVehicleEcsConversionInventoryProbe.ConversionReport LoadInventory(string projectRoot)
         {
             string path = ResolveProjectPath(projectRoot, VehicleInventoryPath);
             if (!File.Exists(path))

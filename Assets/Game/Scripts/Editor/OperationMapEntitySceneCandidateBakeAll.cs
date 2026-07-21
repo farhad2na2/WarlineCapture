@@ -77,7 +77,7 @@ namespace Game.Editor
             var report = new CandidateBakeAllReport
             {
                 schema = "warline.operation-map.entity-scene-candidate-bake-all",
-                schemaVersion = 1,
+                schemaVersion = 2,
                 result = "CandidateBakeAllFailed",
                 operationMapId = OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
                 productionPresentationKind = OperationMapPresentationKind.StaticSceneChunks.ToString(),
@@ -90,6 +90,9 @@ namespace Game.Editor
             {
                 RunStage(report, "preflight-isolation", () => RequirePreflight(production));
                 RunStage(report, "candidate-population", EnsureCandidatePopulation);
+                RunStage(report, "candidate-presentation-identities", () =>
+                    OperationMapEntityPresentationIdentityBackfillEditor
+                        .BackfillCandidatePresentationIdentities());
                 RunStage(report, "candidate-authoring-readiness", () =>
                 {
                     CandidateAuthoringCounts counts = InspectCandidateAuthoring();
@@ -98,6 +101,7 @@ namespace Game.Editor
                     report.vehicleAuthoringCount = counts.Vehicles;
                     report.renderOnlyOwnerCount = counts.RenderOnlyOwners;
                     report.presentationRootCount = counts.PresentationRoots;
+                    report.presentationIdentityCount = counts.PresentationIdentities;
                     report.colliderCount = counts.Colliders;
                     report.rigidbodyCount = counts.Rigidbodies;
                 });
@@ -283,6 +287,7 @@ namespace Game.Editor
                     vehicles.childCount,
                     renderOwners,
                     root.GetComponentsInChildren<OperationMapEntityPresentationRootAuthoring>(true).Length,
+                    root.GetComponentsInChildren<OperationMapEntityPresentationIdentityAuthoring>(true).Length,
                     root.GetComponentsInChildren<Collider>(true).Length,
                     root.GetComponentsInChildren<Rigidbody>(true).Length);
             }
@@ -313,12 +318,14 @@ namespace Game.Editor
             if (counts.Buildings != ExpectedBuildings ||
                 counts.Vehicles != ExpectedVehicles ||
                 counts.RenderOnlyOwners != ExpectedRenderOnlyOwners ||
-                counts.PresentationRoots != ExpectedPresentationRoots)
+                counts.PresentationRoots != ExpectedPresentationRoots ||
+                counts.PresentationIdentities !=
+                OperationMapEntityPresentationIdentityBackfillEditor.ExpectedIdentityCount)
             {
                 throw new InvalidOperationException(
                     $"Candidate authoring counts rejected: buildings={counts.Buildings}, " +
                     $"vehicles={counts.Vehicles}, renderOnly={counts.RenderOnlyOwners}, " +
-                    $"roots={counts.PresentationRoots}.");
+                    $"roots={counts.PresentationRoots}, identities={counts.PresentationIdentities}.");
             }
 
             if (counts.Colliders != 0 || counts.Rigidbodies != 0)
@@ -488,6 +495,7 @@ namespace Game.Editor
                 int vehicles,
                 int renderOnlyOwners,
                 int presentationRoots,
+                int presentationIdentities,
                 int colliders,
                 int rigidbodies)
             {
@@ -495,6 +503,7 @@ namespace Game.Editor
                 Vehicles = vehicles;
                 RenderOnlyOwners = renderOnlyOwners;
                 PresentationRoots = presentationRoots;
+                PresentationIdentities = presentationIdentities;
                 Colliders = colliders;
                 Rigidbodies = rigidbodies;
             }
@@ -503,6 +512,7 @@ namespace Game.Editor
             internal int Vehicles { get; }
             internal int RenderOnlyOwners { get; }
             internal int PresentationRoots { get; }
+            internal int PresentationIdentities { get; }
             internal int Colliders { get; }
             internal int Rigidbodies { get; }
         }
@@ -557,6 +567,7 @@ namespace Game.Editor
             public int vehicleAuthoringCount;
             public int renderOnlyOwnerCount;
             public int presentationRootCount;
+            public int presentationIdentityCount;
             public int colliderCount;
             public int rigidbodyCount;
             public int renderMeshEntityCount;

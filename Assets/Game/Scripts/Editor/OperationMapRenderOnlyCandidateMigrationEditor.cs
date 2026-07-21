@@ -186,7 +186,7 @@ namespace Game.Editor
             }
         }
 
-        private static OperationMapEntityPresentationMigrationInventoryProbe.InventoryReport LoadInventoryReport()
+        internal static OperationMapEntityPresentationMigrationInventoryProbe.InventoryReport LoadInventoryReport()
         {
             string reportPath =
                 Environment.GetEnvironmentVariable(

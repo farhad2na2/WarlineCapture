@@ -28,6 +28,7 @@ namespace Game.Editor
         internal const int ExpectedGameplayBuildings = 432;
         internal const int ExpectedPresentationRoots = 3;
         internal const int ExpectedRenderOnlyOwners = 9090;
+        internal const int ExpectedPresentationIdentities = 9544;
 
         private static readonly UTF8Encoding Utf8WithoutBom = new(false);
 
@@ -79,6 +80,7 @@ namespace Game.Editor
                     $"[OperationMapEntityPresentationCandidateBakeValidator] status=Validated " +
                     $"gameplayBuildings={report.GameplayBuildingCount} " +
                     $"presentationRoots={report.PresentationRootCount} " +
+                    $"presentationIdentities={report.PresentationIdentityCount} " +
                     $"renderMeshEntities={report.RenderMeshEntityCount} " +
                     $"buildingRenderChildren={report.BuildingRenderChildCount} " +
                     $"nonFiniteTransforms={report.NonFiniteTransformCount} " +
@@ -90,28 +92,34 @@ namespace Game.Editor
                 if (bakeWorld != null)
                     bakeWorld.Dispose();
                 DisposeBlobAssetStore(blobStore);
-                try
-                {
-                    EditorSceneManager.RestoreSceneManagerSetup(previousSetup);
-                }
-                catch (Exception exception)
-                {
-                    Debug.LogWarning(
-                        $"[OperationMapEntityPresentationCandidateBakeValidator] scene-setup-restore-skipped: {exception.Message}");
-                }
+                RestoreSceneSetupOrCreateEmpty(previousSetup);
             }
+        }
+
+        private static void RestoreSceneSetupOrCreateEmpty(SceneSetup[] previousSetup)
+        {
+            if (previousSetup != null && previousSetup.Any(entry => entry.isLoaded && entry.isActive))
+            {
+                EditorSceneManager.RestoreSceneManagerSetup(previousSetup);
+                return;
+            }
+
+            EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         }
 
         private static void RequireAuthoringCounts(Scene candidateScene)
         {
             int buildings = 0;
             int roots = 0;
+            int identities = 0;
             int renderOnlyOwners = 0;
             GameObject[] sceneRoots = candidateScene.GetRootGameObjects();
             for (int i = 0; i < sceneRoots.Length; i++)
             {
                 buildings += sceneRoots[i].GetComponentsInChildren<OperationMapBuildingAuthoring>(true).Length;
                 roots += sceneRoots[i].GetComponentsInChildren<OperationMapEntityPresentationRootAuthoring>(true).Length;
+                identities += sceneRoots[i]
+                    .GetComponentsInChildren<OperationMapEntityPresentationIdentityAuthoring>(true).Length;
             }
 
             Transform renderOnly = RequirePath(candidateScene, "AuthoredOperationMapEntityPresentation/RenderOnly");
@@ -124,6 +132,8 @@ namespace Game.Editor
                 throw new InvalidOperationException($"Expected {ExpectedPresentationRoots} presentation roots, found {roots}.");
             if (renderOnlyOwners != ExpectedRenderOnlyOwners)
                 throw new InvalidOperationException($"Expected {ExpectedRenderOnlyOwners} render-only owners, found {renderOnlyOwners}.");
+            if (identities != ExpectedPresentationIdentities)
+                throw new InvalidOperationException($"Expected {ExpectedPresentationIdentities} presentation identities, found {identities}.");
         }
 
         private static bool TryBakeScene(
@@ -192,6 +202,7 @@ namespace Game.Editor
                 result = "CandidateBakeValidationFailed",
                 gameplayBuildingCount = entityManager.CreateEntityQuery(typeof(OperationMapBuildingIdentity)).CalculateEntityCount(),
                 presentationRootCount = entityManager.CreateEntityQuery(typeof(OperationMapEntityPresentationRoot)).CalculateEntityCount(),
+                presentationIdentityCount = entityManager.CreateEntityQuery(typeof(OperationMapEntityPresentationIdentity)).CalculateEntityCount(),
                 buildingPresentationCount = entityManager.CreateEntityQuery(typeof(OperationMapBuildingPresentation)).CalculateEntityCount(),
                 renderMeshEntityCount = CountRenderMeshEntities(entityManager),
                 buildingRenderChildCount = CountBuildingRenderChildren(entityManager),
@@ -210,6 +221,12 @@ namespace Game.Editor
             if (report.presentationRootCount != ExpectedPresentationRoots)
             {
                 report.rejectionReason = $"presentation-root-count:{report.presentationRootCount}";
+                return report;
+            }
+
+            if (report.presentationIdentityCount != ExpectedPresentationIdentities)
+            {
+                report.rejectionReason = $"presentation-identity-count:{report.presentationIdentityCount}";
                 return report;
             }
 
@@ -324,6 +341,7 @@ namespace Game.Editor
             report.reportPath = reportPath.Replace('\\', '/');
             report.GameplayBuildingCount = report.gameplayBuildingCount;
             report.PresentationRootCount = report.presentationRootCount;
+            report.PresentationIdentityCount = report.presentationIdentityCount;
             report.BuildingPresentationCount = report.buildingPresentationCount;
             report.RenderMeshEntityCount = report.renderMeshEntityCount;
             report.BuildingRenderChildCount = report.buildingRenderChildCount;
@@ -389,6 +407,7 @@ namespace Game.Editor
             public string reportPath;
             public int gameplayBuildingCount;
             public int presentationRootCount;
+            public int presentationIdentityCount;
             public int buildingPresentationCount;
             public int renderMeshEntityCount;
             public int buildingRenderChildCount;
@@ -403,6 +422,7 @@ namespace Game.Editor
             [NonSerialized] public string ReportPath;
             [NonSerialized] public int GameplayBuildingCount;
             [NonSerialized] public int PresentationRootCount;
+            [NonSerialized] public int PresentationIdentityCount;
             [NonSerialized] public int BuildingPresentationCount;
             [NonSerialized] public int RenderMeshEntityCount;
             [NonSerialized] public int BuildingRenderChildCount;

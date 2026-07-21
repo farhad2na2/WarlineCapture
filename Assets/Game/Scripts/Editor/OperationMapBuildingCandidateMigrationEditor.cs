@@ -186,7 +186,7 @@ namespace Game.Editor
             }
         }
 
-        private static OperationMapBuildingAttachmentOwnershipInventoryProbe.AttachmentOwnershipInventoryReport
+        internal static OperationMapBuildingAttachmentOwnershipInventoryProbe.AttachmentOwnershipInventoryReport
             LoadInventory(string projectRoot)
         {
             string path = ResolveProjectPath(projectRoot, AttachmentInventoryPath);

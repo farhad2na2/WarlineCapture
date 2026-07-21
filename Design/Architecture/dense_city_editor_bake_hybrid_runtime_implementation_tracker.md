@@ -731,13 +731,13 @@ Runtime procedural generation is not the fallback for a rendering or packaging f
 
 Progress is checklist based. Every checkbox counts. Update the count, phase status, and validation log in the same stable change that completes an item.
 
-Current progress: **32 / 148 (22%)**
+Current progress: **34 / 148 (23%)**
 
 | Phase | Status |
 |---|---|
 | Phase 0: Baseline and contracts | Complete |
 | Phase 0A: Existing map ECS presentation migration | Transactional candidate Bake All and direct baked matrix/bounds parity complete; Addressables runtime, fixed-camera, lifecycle, and Android acceptance open |
-| Phase 1: Generated ownership authoring | In progress; generated-root and authored-override contracts complete |
+| Phase 1: Generated ownership authoring | In progress; root ownership and unmanaged building state complete |
 | Phase 2: Generator semantic output | Not started |
 | Phase 3: Collider-free enforcement | Not started |
 | Phase 4: Surface and blocker proxies | Not started |
@@ -803,9 +803,9 @@ Current progress: **32 / 148 (22%)**
 
 - [x] Add `DenseCityGeneratedRootAuthoring` and its Unity `.meta` file in `Game.Authoring`.
 - [x] Add `DenseCityAuthoredOverrideAuthoring` and its Unity `.meta` file in `Game.Authoring`.
-- [ ] Add `OperationMapBuildingAuthoring` and bake intact/destroyed authoring roots to entity references using the existing `UnitGridAuthoring.Baker` pattern.
+- [x] Add `OperationMapBuildingAuthoring` and bake intact/destroyed authoring roots to entity references using the existing `UnitGridAuthoring.Baker` pattern.
 - [ ] Make the building Baker recursively include shell and attached-prop descendants under their declared visual root; reject descendants shared across buildings, present under both states, outside both states, or parented to an independent render-only owner.
-- [ ] Add unmanaged `OperationMapBuildingComponent` and `OperationMapBuildingDestroyedComponent` data in `Game.Components`.
+- [x] Add unmanaged `OperationMapBuildingComponent` and `OperationMapBuildingDestroyedComponent` data in `Game.Components`.
 - [ ] Add finite-value, stable-id, duplicate-id, size, and scene-ownership validation for all generated/override/building authoring types.
 - [ ] Add `DenseCitySemanticHierarchyBuilder` in `Game.Editor`.
 - [ ] Create the exact proxy hierarchy in the operation-map authoring scene and gameplay/render-only entity presentation hierarchy in the existing map SubScene with identity transforms.
@@ -1048,6 +1048,7 @@ Extend existing tests rather than duplicating them for:
 | 2026-07-21 | Phase 0A runtime-comparison render manifest foundation | Direct candidate bake `/private/tmp/warline-operation-map-runtime-manifest-direct-bake.log`; assembly boundaries `/private/tmp/warline-operation-map-runtime-manifest-architecture.log` 31/31; ECS/Burst `/private/tmp/warline-operation-map-runtime-manifest-ecs.log` 11/11; `Design/AgentReports/2026-07-21_dense_city_phase0a_transform_parity.json`; `dotnet build Game.Editor.csproj --no-restore`; `git diff --check` | Passed dependency foundation; Addressables runtime comparison remains open | Advanced the transform-parity report to schema v2 and recorded all 14,209 baked render entities with world matrix, local bounds, transformed world bounds, and accepted owner identity where available. The 315 package-generated unowned rows remain explicit, so the future runtime validator must match the complete multiset. Direct parity remains 9,544/9,544 identities with zero rejected rows. No runtime system, production Addressables entry, source scene, candidate scene, presentation mode, or production cutover changed. Progress remains 30/148 (20%). |
 | 2026-07-21 | Phase 8 transactional candidate runtime-content harness | `OperationMapEntitySceneCandidateRuntimeContentBuilder`; `OperationMapEntitySceneBuildAdditions.UseCurrentProcessSceneOverride`; compile `/private/tmp/warline-operation-map-candidate-runtime-builder-compile.log`; Android-target content probe `/private/tmp/warline-operation-map-candidate-runtime-content-build.log`; macOS-target rejection `/private/tmp/warline-operation-map-candidate-runtime-content-standalone-build.log`; active-target restore `/private/tmp/warline-restore-android-active-target-no-build.log`; `git diff --check` | Implementation compile-clean; packed Editor runtime validation blocked by missing macOS Standalone Build Support | Added a scoped build-process-only EntityScene override and a temporary local Addressables group transaction for the candidate definition/runtime binding. The transaction restores Addressables settings byte-for-byte and never moves or relabels production entries. An initial content-only probe inherited the Android active target and was discarded as acceptance evidence; no APK/AAB/player build ran. The corrected harness now fails immediately unless the target is StandaloneOSX and the macOS playback engine is installed. This Unity installation lacks that module, so real packed Editor runtime parity remains open with owner `local Unity installation`; other non-Android work continues. Progress remains 30/148 (20%). |
 | 2026-07-21 | Phase 1 generated ownership authoring contracts | Focused EditMode `/private/tmp/warline-dense-city-authoring-contract-tests-2.xml` 3/3; assembly boundaries `/private/tmp/warline-dense-city-authoring-contract-architecture.log` 31/31; Unity compile `/private/tmp/warline-dense-city-authoring-contract-tests-2.log`; `git diff --check` | Passed | Added passive `DenseCityGeneratedRootAuthoring` with closed MapBakeSource/EntityPresentationSource roles, shared generation identity, schema/version, seed, and lowercase SHA-256 generation hash. Added collider-free `DenseCityAuthoredOverrideAuthoring` with stable identity, finite positive local bounds, and explicit presentation/surface/blocker exclusions. Both live in `Game.Authoring`, have no Update methods or runtime ownership, and include Unity metadata plus focused malformed-input rejection. Progress is 32/148 (22%). |
+| 2026-07-21 | Phase 1 operation-map building ECS state contract | Focused EditMode `/private/tmp/warline-operation-map-building-components-tests.xml` 2/2; assembly boundaries `/private/tmp/warline-operation-map-building-components-architecture.log` 31/31; Unity compile `/private/tmp/warline-operation-map-building-components-tests.log`; `git diff --check` | Passed | Audited the existing `OperationMapBuildingAuthoring` root-reference baker and advanced it to the approved ECS contract. Added closed `OperationMapBuildingBlockerPolicy` with only `RubbleRemainsBlocked`, unmanaged stable `OperationMapBuildingComponent`, and an enableable `OperationMapBuildingDestroyedComponent` baked disabled to avoid a future per-destruction structural add. Unsupported blocker policy fails authoring validation. No destruction behavior or production presentation mode changed; recursive descendant ownership validation remains open. Progress is 34/148 (23%). |
 
 ## 25. Completion Rule
 

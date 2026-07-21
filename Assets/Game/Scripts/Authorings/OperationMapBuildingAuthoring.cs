@@ -14,6 +14,8 @@ namespace Game.Authoring
         [SerializeField, Min(0)] private int placementIndex;
         [SerializeField] private byte factionId;
         [SerializeField] private Vector2Int originCell;
+        [SerializeField] private OperationMapBuildingBlockerPolicy blockerPolicy =
+            OperationMapBuildingBlockerPolicy.RubbleRemainsBlocked;
         [SerializeField] private BuildingDefinitionAuthoring definition;
         [SerializeField] private GameObject intactVisualRoot;
         [SerializeField] private GameObject destroyedVisualRoot;
@@ -23,6 +25,7 @@ namespace Game.Authoring
         public int PlacementIndex => placementIndex;
         public byte FactionId => factionId;
         public Vector2Int OriginCell => originCell;
+        public OperationMapBuildingBlockerPolicy BlockerPolicy => blockerPolicy;
         public BuildingDefinitionAuthoring Definition => definition;
         public GameObject IntactVisualRoot => intactVisualRoot;
         public GameObject DestroyedVisualRoot => destroyedVisualRoot;
@@ -43,6 +46,11 @@ namespace Game.Authoring
             if (placementIndex < 0)
             {
                 error = "Placement index must be non-negative.";
+                return false;
+            }
+            if (blockerPolicy != OperationMapBuildingBlockerPolicy.RubbleRemainsBlocked)
+            {
+                error = $"Unsupported operation-map building blocker policy: {(byte)blockerPolicy}.";
                 return false;
             }
             if (definition == null)
@@ -93,6 +101,15 @@ namespace Game.Authoring
                     SourceGlobalObjectId = new FixedString128Bytes(authoring.sourceGlobalObjectId),
                     PlacementIndex = authoring.placementIndex
                 });
+                AddComponent(entity, new OperationMapBuildingComponent
+                {
+                    OperationMapId = new FixedString128Bytes(authoring.operationMapId),
+                    SourceGlobalObjectId = new FixedString128Bytes(authoring.sourceGlobalObjectId),
+                    PlacementIndex = authoring.placementIndex,
+                    BlockerPolicy = authoring.blockerPolicy
+                });
+                AddComponent<OperationMapBuildingDestroyedComponent>(entity);
+                SetComponentEnabled<OperationMapBuildingDestroyedComponent>(entity, false);
                 AddComponent<RuntimeBuildingCombatTag>(entity);
                 AddComponent(entity, new RuntimeBuildingCombatInfo
                 {

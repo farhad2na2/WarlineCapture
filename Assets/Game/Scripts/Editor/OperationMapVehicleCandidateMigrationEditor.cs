@@ -107,6 +107,16 @@ namespace Game.Editor
                         Quaternion.Euler(placement.WorldEulerAngles));
                     candidateOwner.transform.localScale = placement.WorldScale;
                     candidateOwner.SetActive(true);
+                    OperationMapEntityPresentationIdentityAuthoring identity =
+                        candidateOwner.GetComponent<OperationMapEntityPresentationIdentityAuthoring>() ??
+                        candidateOwner.AddComponent<OperationMapEntityPresentationIdentityAuthoring>();
+                    identity.ConfigureForEditor(
+                        OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
+                        row.authoredSourceGlobalObjectId,
+                        OperationMapEntityPresentationRole.GameplayVehicles,
+                        i);
+                    if (!identity.TryValidate(out string identityError))
+                        throw new InvalidOperationException(identityError);
                     RemoveProhibitedCandidateComponents(candidateOwner);
                     migrated++;
                 }

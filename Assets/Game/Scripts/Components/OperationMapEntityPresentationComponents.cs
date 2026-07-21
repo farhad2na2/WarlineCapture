@@ -11,6 +11,14 @@ namespace Game.Components
         public FixedString128Bytes MigrationRecordSetHash;
     }
 
+    public struct OperationMapEntityPresentationIdentity : IComponentData
+    {
+        public FixedString128Bytes OperationMapId;
+        public FixedString128Bytes SourceGlobalObjectId;
+        public byte Role;
+        public int PlacementIndex;
+    }
+
     public struct OperationMapBuildingIdentity : IComponentData
     {
         public FixedString128Bytes OperationMapId;

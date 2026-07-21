@@ -112,6 +112,11 @@ namespace Game.Editor
                     intactVisual.transform.localRotation = Quaternion.identity;
                     intactVisual.transform.localScale = placement.WorldScale;
                     intactVisual.SetActive(true);
+                    ConfigurePresentationIdentity(
+                        intactVisual,
+                        row.ownerSourceGlobalObjectId,
+                        OperationMapEntityPresentationRole.GameplayBuildings,
+                        i);
                     RemoveProhibitedCandidateComponents(intactVisual);
 
                     GameObject destroyedRoot = null;
@@ -265,6 +270,24 @@ namespace Game.Editor
             root.transform.localRotation = Quaternion.identity;
             root.transform.localScale = Vector3.one;
             return root;
+        }
+
+        private static void ConfigurePresentationIdentity(
+            GameObject owner,
+            string sourceGlobalObjectId,
+            OperationMapEntityPresentationRole role,
+            int placementIndex)
+        {
+            OperationMapEntityPresentationIdentityAuthoring identity =
+                owner.GetComponent<OperationMapEntityPresentationIdentityAuthoring>() ??
+                owner.AddComponent<OperationMapEntityPresentationIdentityAuthoring>();
+            identity.ConfigureForEditor(
+                OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
+                sourceGlobalObjectId,
+                role,
+                placementIndex);
+            if (!identity.TryValidate(out string error))
+                throw new InvalidOperationException(error);
         }
 
         private static int2 WorldToCell(GridAuthoringConfig grid, Vector3 world)

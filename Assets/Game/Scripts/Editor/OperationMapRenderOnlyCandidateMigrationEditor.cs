@@ -117,6 +117,16 @@ namespace Game.Editor
                     SceneManager.MoveGameObjectToScene(candidateOwner, candidateScene);
                     candidateOwner.transform.SetParent(bucketRoot, true);
                     candidateOwner.SetActive(true);
+                    OperationMapEntityPresentationIdentityAuthoring identity =
+                        candidateOwner.GetComponent<OperationMapEntityPresentationIdentityAuthoring>() ??
+                        candidateOwner.AddComponent<OperationMapEntityPresentationIdentityAuthoring>();
+                    identity.ConfigureForEditor(
+                        OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
+                        assignment.SourceOwnerGlobalObjectId,
+                        OperationMapEntityPresentationRole.RenderOnly,
+                        OperationMapEntityPresentationIdentityAuthoring.NoPlacementIndex);
+                    if (!identity.TryValidate(out string identityError))
+                        throw new InvalidOperationException(identityError);
                     RemoveProhibitedCandidateComponents(candidateOwner);
                     migrated++;
 

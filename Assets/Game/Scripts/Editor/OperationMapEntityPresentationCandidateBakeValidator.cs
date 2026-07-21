@@ -123,8 +123,9 @@ namespace Game.Editor
             }
 
             Transform renderOnly = RequirePath(candidateScene, "AuthoredOperationMapEntityPresentation/RenderOnly");
-            for (int i = 0; i < renderOnly.childCount; i++)
-                renderOnlyOwners += renderOnly.GetChild(i).childCount;
+            renderOnlyOwners = renderOnly
+                .GetComponentsInChildren<OperationMapEntityPresentationIdentityAuthoring>(true)
+                .Count(identity => identity.Role == OperationMapEntityPresentationRole.RenderOnly);
 
             if (buildings != ExpectedGameplayBuildings)
                 throw new InvalidOperationException($"Expected {ExpectedGameplayBuildings} building authorings, found {buildings}.");

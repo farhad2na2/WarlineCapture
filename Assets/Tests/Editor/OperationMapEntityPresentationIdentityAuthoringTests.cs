@@ -27,7 +27,9 @@ public sealed class OperationMapEntityPresentationIdentityAuthoringTests
             suite.Contract_IsPassiveAndBakesAnUnmanagedIdentity,
             suite.BackfillContract_RequiresEveryAcceptedOwner,
             suite.MatrixComparison_UsesExplicitTolerance,
-            suite.ExistingCopyMatrix_ExposesScaledAncestryLoss
+            suite.ExistingCopyMatrix_ExposesScaledAncestryLoss,
+            suite.MirroredParentChain_PreservesNestedWorldMatrix,
+            suite.VisualParity_RejectsFlattenedScaledAncestry
         };
 
         for (int i = 0; i < tests.Length; i++)
@@ -178,6 +180,59 @@ public sealed class OperationMapEntityPresentationIdentityAuthoringTests
                 existingCopyMatrix,
                 0.0001f),
             Is.False);
+    }
+
+    [Test]
+    public void MirroredParentChain_PreservesNestedWorldMatrix()
+    {
+        root = new GameObject("Root");
+        Transform sourceParent = CreateChild(root.transform, "SourceParent");
+        sourceParent.localPosition = new Vector3(7f, 2f, -3f);
+        sourceParent.localRotation = Quaternion.Euler(0f, 37f, 11f);
+        sourceParent.localScale = new Vector3(-2f, 3f, 0.5f);
+        Transform sourceOwner = CreateChild(sourceParent, "SourceOwner");
+        sourceOwner.localPosition = new Vector3(4f, -1f, 8f);
+        sourceOwner.localRotation = Quaternion.Euler(23f, 9f, 41f);
+        sourceOwner.localScale = new Vector3(0.75f, 1.25f, 2f);
+
+        Transform mirroredParent = CreateChild(root.transform, "MirroredParent");
+        OperationMapRenderOnlyCandidateMigrationEditor.CopyLocalTransform(sourceParent, mirroredParent);
+        Transform candidateOwner = CreateChild(mirroredParent, "CandidateOwner");
+        OperationMapRenderOnlyCandidateMigrationEditor.CopyLocalTransform(sourceOwner, candidateOwner);
+
+        Assert.That(
+            OperationMapEntityPresentationIdentityBackfillEditor.MatricesApproximatelyEqual(
+                sourceOwner.localToWorldMatrix,
+                candidateOwner.localToWorldMatrix,
+                0.0001f),
+            Is.True);
+    }
+
+    [Test]
+    public void VisualParity_RejectsFlattenedScaledAncestry()
+    {
+        root = new GameObject("Root");
+        Transform sourceParent = CreateChild(root.transform, "SourceParent");
+        sourceParent.localRotation = Quaternion.Euler(0f, 45f, 0f);
+        sourceParent.localScale = new Vector3(2f, 1f, 0.5f);
+        Transform sourceOwner = CreateChild(sourceParent, "SourceOwner");
+        sourceOwner.localRotation = Quaternion.Euler(20f, 0f, 35f);
+
+        Transform flattened = CreateChild(root.transform, "Flattened");
+        OperationMapRenderOnlyCandidateMigrationEditor.CopyLocalTransform(sourceOwner, flattened);
+
+        Assert.Throws<InvalidOperationException>(() =>
+            OperationMapRenderOnlyCandidateMigrationEditor.RequireExactVisualParity(
+                sourceOwner.gameObject,
+                flattened.gameObject,
+                SourceGlobalObjectId));
+    }
+
+    private static Transform CreateChild(Transform parent, string name)
+    {
+        var child = new GameObject(name);
+        child.transform.SetParent(parent, false);
+        return child.transform;
     }
 
     private OperationMapEntityPresentationIdentityAuthoring CreateMarker(

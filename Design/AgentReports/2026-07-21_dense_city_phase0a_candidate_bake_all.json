@@ -27,55 +27,55 @@
         {
             "name": "preflight-isolation",
             "result": "Passed",
-            "elapsedMilliseconds": 2995,
+            "elapsedMilliseconds": 4494,
             "failure": ""
         },
         {
             "name": "candidate-population",
             "result": "Passed",
-            "elapsedMilliseconds": 4072,
+            "elapsedMilliseconds": 5079,
             "failure": ""
         },
         {
             "name": "candidate-presentation-identities",
             "result": "Passed",
-            "elapsedMilliseconds": 4418,
+            "elapsedMilliseconds": 9100,
             "failure": ""
         },
         {
             "name": "candidate-authoring-readiness",
             "result": "Passed",
-            "elapsedMilliseconds": 1174,
+            "elapsedMilliseconds": 1575,
             "failure": ""
         },
         {
             "name": "candidate-entity-bake",
             "result": "Passed",
-            "elapsedMilliseconds": 5728,
+            "elapsedMilliseconds": 8063,
             "failure": ""
         },
         {
             "name": "shared-art-budget",
             "result": "Passed",
-            "elapsedMilliseconds": 1362,
+            "elapsedMilliseconds": 1332,
             "failure": ""
         },
         {
             "name": "candidate-binding-layout",
             "result": "Passed",
-            "elapsedMilliseconds": 4647,
+            "elapsedMilliseconds": 6776,
             "failure": ""
         },
         {
             "name": "candidate-bake-budget",
             "result": "Passed",
-            "elapsedMilliseconds": 3,
+            "elapsedMilliseconds": 4,
             "failure": ""
         },
         {
             "name": "postflight-isolation",
             "result": "Passed",
-            "elapsedMilliseconds": 3971,
+            "elapsedMilliseconds": 5504,
             "failure": ""
         }
     ]

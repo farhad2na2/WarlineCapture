@@ -78,6 +78,7 @@ namespace Game.Editor
                 RequireBuildingCount(candidateScene, ExpectedBuildingCount);
 
                 var bucketRoots = new Dictionary<string, Transform>(StringComparer.Ordinal);
+                var parentProxyCaches = new Dictionary<string, Dictionary<string, Transform>>(StringComparer.Ordinal);
                 for (int i = 0; i < plan.CountsByBucket.Count; i++)
                 {
                     string bucket = plan.CountsByBucket[i].Name;
@@ -85,6 +86,7 @@ namespace Game.Editor
                     if (bucketRoot == null)
                         throw new InvalidOperationException($"Candidate RenderOnly bucket is missing: {bucket}");
                     bucketRoots[bucket] = bucketRoot;
+                    parentProxyCaches[bucket] = new Dictionary<string, Transform>(StringComparer.Ordinal);
                 }
 
                 int migrated = 0;
@@ -112,10 +114,15 @@ namespace Game.Editor
                     if (!bucketRoots.TryGetValue(assignment.DestinationBucket, out Transform bucketRoot))
                         throw new InvalidOperationException($"Missing destination bucket: {assignment.DestinationBucket}");
 
+                    Transform candidateParent = RequireMirroredParentChain(
+                        sourceOwner.transform.parent,
+                        bucketRoot,
+                        candidateScene,
+                        parentProxyCaches[assignment.DestinationBucket]);
                     GameObject candidateOwner = UnityEngine.Object.Instantiate(sourceOwner);
                     candidateOwner.name = sourceOwner.name;
                     SceneManager.MoveGameObjectToScene(candidateOwner, candidateScene);
-                    candidateOwner.transform.SetParent(bucketRoot, true);
+                    candidateOwner.transform.SetParent(candidateParent, false);
                     candidateOwner.SetActive(true);
                     OperationMapEntityPresentationIdentityAuthoring identity =
                         candidateOwner.GetComponent<OperationMapEntityPresentationIdentityAuthoring>() ??
@@ -128,6 +135,7 @@ namespace Game.Editor
                     if (!identity.TryValidate(out string identityError))
                         throw new InvalidOperationException(identityError);
                     RemoveProhibitedCandidateComponents(candidateOwner);
+                    RequireExactVisualParity(sourceOwner, candidateOwner, assignment.SourceOwnerGlobalObjectId);
                     migrated++;
 
                     if ((migrated % 1000) == 0)
@@ -241,10 +249,90 @@ namespace Game.Editor
                 Transform bucket = renderOnlyRoot.Find(expected.Name);
                 if (bucket == null)
                     throw new InvalidOperationException($"Candidate RenderOnly bucket disappeared: {expected.Name}");
-                if (bucket.childCount != expected.Count)
+                int actual = bucket
+                    .GetComponentsInChildren<OperationMapEntityPresentationIdentityAuthoring>(true)
+                    .Count(identity => identity.Role == OperationMapEntityPresentationRole.RenderOnly);
+                if (actual != expected.Count)
                 {
                     throw new InvalidOperationException(
-                        $"Candidate RenderOnly/{expected.Name} expected {expected.Count} owners, found {bucket.childCount}.");
+                        $"Candidate RenderOnly/{expected.Name} expected {expected.Count} owners, found {actual}.");
+                }
+            }
+        }
+
+        internal static Transform RequireMirroredParentChain(
+            Transform sourceParent,
+            Transform bucketRoot,
+            Scene candidateScene,
+            Dictionary<string, Transform> cache)
+        {
+            if (sourceParent == null)
+                return bucketRoot;
+
+            string sourceId = GlobalObjectId.GetGlobalObjectIdSlow(sourceParent.gameObject).ToString();
+            if (cache.TryGetValue(sourceId, out Transform existing))
+                return existing;
+
+            Transform mirroredParent = RequireMirroredParentChain(
+                sourceParent.parent,
+                bucketRoot,
+                candidateScene,
+                cache);
+            var proxy = new GameObject($"__SourceTransform__{sourceParent.name}");
+            SceneManager.MoveGameObjectToScene(proxy, candidateScene);
+            proxy.transform.SetParent(mirroredParent, false);
+            CopyLocalTransform(sourceParent, proxy.transform);
+            cache.Add(sourceId, proxy.transform);
+            return proxy.transform;
+        }
+
+        internal static void CopyLocalTransform(Transform source, Transform destination)
+        {
+            destination.localPosition = source.localPosition;
+            destination.localRotation = source.localRotation;
+            destination.localScale = source.localScale;
+        }
+
+        internal static void RequireExactVisualParity(
+            GameObject sourceOwner,
+            GameObject candidateOwner,
+            string sourceGlobalObjectId)
+        {
+            const float matrixTolerance = 0.0001f;
+            const float boundsTolerance = 0.001f;
+            if (!OperationMapEntityPresentationIdentityBackfillEditor.MatricesApproximatelyEqual(
+                    sourceOwner.transform.localToWorldMatrix,
+                    candidateOwner.transform.localToWorldMatrix,
+                    matrixTolerance))
+            {
+                throw new InvalidOperationException(
+                    $"Render-only owner matrix parity failed: {sourceGlobalObjectId}");
+            }
+
+            Renderer[] sourceRenderers = sourceOwner.GetComponentsInChildren<Renderer>(true);
+            Renderer[] candidateRenderers = candidateOwner.GetComponentsInChildren<Renderer>(true);
+            if (sourceRenderers.Length != candidateRenderers.Length)
+            {
+                throw new InvalidOperationException(
+                    $"Render-only renderer count parity failed for {sourceGlobalObjectId}: " +
+                    $"{sourceRenderers.Length}/{candidateRenderers.Length}.");
+            }
+
+            for (int i = 0; i < sourceRenderers.Length; i++)
+            {
+                Renderer sourceRenderer = sourceRenderers[i];
+                Renderer candidateRenderer = candidateRenderers[i];
+                if (sourceRenderer.GetType() != candidateRenderer.GetType() ||
+                    !OperationMapEntityPresentationIdentityBackfillEditor.MatricesApproximatelyEqual(
+                        sourceRenderer.transform.localToWorldMatrix,
+                        candidateRenderer.transform.localToWorldMatrix,
+                        matrixTolerance) ||
+                    Vector3.Distance(sourceRenderer.bounds.center, candidateRenderer.bounds.center) > boundsTolerance ||
+                    Vector3.Distance(sourceRenderer.bounds.size, candidateRenderer.bounds.size) > boundsTolerance)
+                {
+                    throw new InvalidOperationException(
+                        $"Render-only renderer transform/bounds parity failed for " +
+                        $"{sourceGlobalObjectId} at renderer {i} ({sourceRenderer.name}).");
                 }
             }
         }
@@ -273,7 +361,7 @@ namespace Game.Editor
             return string.Join("/", segments);
         }
 
-        private static void RemoveProhibitedCandidateComponents(GameObject owner)
+        internal static void RemoveProhibitedCandidateComponents(GameObject owner)
         {
             foreach (Collider collider in owner.GetComponentsInChildren<Collider>(true))
                 UnityEngine.Object.DestroyImmediate(collider);

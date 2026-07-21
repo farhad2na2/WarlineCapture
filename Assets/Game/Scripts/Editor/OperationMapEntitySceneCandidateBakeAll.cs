@@ -278,9 +278,9 @@ namespace Game.Editor
                 Transform buildings = RequirePath(scene, "AuthoredOperationMapEntityPresentation/GameplayBuildings");
                 Transform vehicles = RequirePath(scene, "AuthoredOperationMapEntityPresentation/GameplayVehicles");
                 Transform renderOnly = RequirePath(scene, "AuthoredOperationMapEntityPresentation/RenderOnly");
-                int renderOwners = 0;
-                for (int i = 0; i < renderOnly.childCount; i++)
-                    renderOwners += renderOnly.GetChild(i).childCount;
+                int renderOwners = renderOnly
+                    .GetComponentsInChildren<OperationMapEntityPresentationIdentityAuthoring>(true)
+                    .Count(identity => identity.Role == OperationMapEntityPresentationRole.RenderOnly);
 
                 return new CandidateAuthoringCounts(
                     buildings.GetComponentsInChildren<OperationMapBuildingAuthoring>(true).Length,

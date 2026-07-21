@@ -20,13 +20,11 @@ namespace Game.Runtime
 
         public void OnDestroy(ref SystemState state)
         {
-            if (_gridQuery.IsEmptyIgnoreFilter)
+            if (!_gridQuery.TryGetSingletonEntity<GridConfig>(out Entity gridEntity))
                 return;
 
             state.Dependency.Complete();
-            using NativeArray<Entity> gridEntities = _gridQuery.ToEntityArray(Allocator.Temp);
-            for (int index = 0; index < gridEntities.Length; index++)
-                RuntimeGridPersistentStorageUtilitySystemHelper.DisposeStorage(state.EntityManager, gridEntities[index]);
+            RuntimeGridPersistentStorageUtilitySystemHelper.DisposeStorage(state.EntityManager, gridEntity);
         }
 
         public void OnUpdate(ref SystemState state)

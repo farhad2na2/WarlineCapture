@@ -25,11 +25,13 @@ The accepted production direction is editor-authored operation-map scenes loaded
 
 Runtime scene generation is not part of this implementation. Additional physical editor-authored maps remain a later content milestone after the one-map split, loader, teardown, parity, package-size, and device-performance gates pass. Remote Addressables delivery also remains deferred; the first implementation packages the single approved map locally with the application.
 
+The approved ECS presentation migration and giant dense-city extension for the first physical map are specified in `dense_city_editor_bake_hybrid_runtime_implementation_tracker.md`. That tracker owns stable-identity migration of the current 16,542 static sources, 451 buildings, and 29 vehicles into the map SubScene; retirement of the 514-scene static package from production ownership after rollback-safe parity acceptance; generation-time semantic hierarchy; preservation of military/handmade behavior; the zero-collider rule; simplified ECS surface/blocker proxies; ECS-first Entities Graphics presentation for all existing/generated map visuals; shared-art package ownership; authoring-scene exclusion; and Android acceptance. It reuses this tracker's thin runtime binding scene, map SubScene, local Addressables package, readiness, and teardown architecture. The historical static-presentation implementation remains rollback evidence during migration and available for other presentation kinds, but is unbound from `opmap.skirmish.desert_base_01` after accepted `EntityScene` cutover. Runtime procedural generation is not authorized.
+
 | Tracker Area | Current Disposition |
 |---|---|
 | Phase 0 baseline, ownership inventory, and rollback | Active; shared by both directions. |
 | Phase 1 typed map/scenario identity and metadata contracts | Active, including local Addressables references required by the selected direction. |
-| Phase 2 ownership of the current map's existing static presentation | Active for per-map ownership and deterministic editor-only baking of the single approved physical map. |
+| Phase 2 ownership of the current map's existing static presentation | Historical implementation and active rollback evidence only. The approved current-map migration moves all accepted permanent visuals to `EntityScene`; Phase 2 static outputs must not remain in production ownership after cutover. |
 | Phase 3 current-map compatibility registration | Active; shared by both directions. |
 | Phase 4 non-destructive ownership split from `Match.unity` | Active; this is the primary implementation objective. |
 | Phase 5 readiness, one-active-map, failure-unwind, and teardown contracts | Active for concrete local Addressables additive loading/unloading after Phase 2A packaging is accepted. |
@@ -58,9 +60,9 @@ The implementation sequence is therefore:
 
 1. All Phase 0 reproducibility, ownership classification, validation baseline, and rollback work.
 2. Phase 1 typed ids, map/scenario metadata, and selected local-Addressables reference contracts.
-3. Phase 2 per-map static-presentation ownership and deterministic editor-only baking for the current map; no future-map generation.
+3. Preserve Phase 2 static-presentation outputs as byte-stable rollback evidence while the current map is migrated by stable identity into one baked entity-scene presentation path; do not regenerate migrated sources into static chunks.
 4. Phase 3 registration of the current map by stable id and mapping every initially approved scenario to that same map id.
-5. Phase 4's non-destructive ownership split of the existing `Match.unity` map and its current bake products.
+5. Phase 4's non-destructive ownership split of the existing `Match.unity` map, followed by validated ECS presentation cutover and retirement of current-map static chunks from production ownership.
 6. Phase 2A local Addressables packaging, followed by Phase 5 concrete additive load, readiness, failure unwind, teardown, and unload.
 7. Phase 6 loader-neutral bounds, surface, grid, blocker, camera, minimap, runway, helipad, and movement metadata.
 8. Phase 10 validation for the complete single-map local package and runtime route.

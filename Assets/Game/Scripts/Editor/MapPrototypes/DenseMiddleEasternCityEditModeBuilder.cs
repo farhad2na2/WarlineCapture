@@ -9,6 +9,7 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 
 namespace Game.Editor
@@ -577,7 +578,7 @@ namespace Game.Editor
 
         private sealed class BuildingPlacementContext
         {
-            private const float BuildingClearance = 0.35f;
+            private const float BuildingClearance = 0.04f;
             private const float RoadVisualHalfExtent = 9f;
             private const float DirtRoadVisualHalfExtent = RoadGridSize * 0.5f;
             private const float OccupancyCellSize = 12f;
@@ -793,6 +794,33 @@ namespace Game.Editor
             "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_WaterTank_03.prefab"
         };
 
+        private static readonly string[] RooftopUtilityPrefabPaths =
+        {
+            "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Satellite_Dish_01.prefab",
+            "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Satellite_Dish_02.prefab",
+            "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_TV_Antenna_01.prefab",
+            "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_TV_Antenna_02.prefab",
+            "Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Airvent_01.prefab",
+            "Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Airvent_02.prefab"
+        };
+
+        private static readonly string[] ShopWallPropPrefabPaths =
+        {
+            "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Airconditioner_01.prefab",
+            "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Airconditioner_04.prefab",
+            "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Airconditioner_06.prefab",
+            "Assets/PolygonMilitary/Prefabs/Props/Signs/SM_Prop_Sign_Shop_01.prefab",
+            "Assets/PolygonMilitary/Prefabs/Props/Signs/SM_Prop_Sign_Shop_02.prefab",
+            "Assets/PolygonMilitary/Prefabs/Props/Signs/SM_Prop_Sign_Shop_04.prefab",
+            "Assets/PolygonMilitary/Prefabs/Props/Signs/SM_Prop_Sign_Shop_06.prefab"
+        };
+
+        private const string CivicClothCoverPrefabPath =
+            "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_ClothCover_Large_02.prefab";
+
+        private const string CivicUmbrellaPrefabPath =
+            "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Umbrella_02.prefab";
+
         private static readonly string[] StreetPropPrefabPaths =
         {
             "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Box_01.prefab",
@@ -812,6 +840,14 @@ namespace Game.Editor
         {
             "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_Large_03.prefab",
             "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_Small_01.prefab"
+        };
+
+        private static readonly string[] Demo2CanalTreePrefabPaths =
+        {
+            "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_Tree_01.prefab",
+            "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_Tree_02.prefab",
+            "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_Tree_03.prefab",
+            "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_Tree_04.prefab"
         };
 
         private static readonly string[] UrbanRockPrefabPaths =
@@ -852,6 +888,37 @@ namespace Game.Editor
         private const string MainStreetBushPrefabPath =
             "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_Bush_01.prefab";
 
+        private static readonly string[] CanalBankPrefabPaths =
+        {
+            "Assets/PolygonMilitary/Prefabs/Environment/SM_Env_Ground_Round_01.prefab",
+            "Assets/PolygonMilitary/Prefabs/Environment/SM_Env_Ground_Round_02.prefab",
+            "Assets/PolygonMilitary/Prefabs/Environment/SM_Env_Ground_Round_03.prefab",
+            "Assets/PolygonMilitary/Prefabs/Environment/SM_Env_Ground_Round_04.prefab"
+        };
+
+        private const string CanalBridgePrefabPath =
+            "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Bridge_01.prefab";
+
+        private static readonly string[] HorizonMountainPrefabPaths =
+        {
+            "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Mountain_01.prefab",
+            "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Mountain_02.prefab",
+            "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Mountain_03.prefab",
+            "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Mountain_04.prefab",
+            "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Mountain_05.prefab",
+            "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Mountain_06.prefab",
+            "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Mountain_07.prefab"
+        };
+
+        private const string CanalWaterMaterialPath =
+            "Assets/Synty/PolygonBattleRoyale/Materials/FX/PolygonBattleRoyale_Water.mat";
+
+        private const string CanalBedMaterialPath =
+            "Assets/Synty/PolygonGeneric/Materials/Generic_Water.mat";
+
+        private const string CanalGreenMaterialPath =
+            "Assets/Synty/PolygonGeneric/Materials/Generic_Grass.mat";
+
         private const string BuildingMaterialAPath =
             "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_01_A.mat";
 
@@ -860,6 +927,16 @@ namespace Game.Editor
 
         private const string BuildingMaterialCPath =
             "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_01_C.mat";
+
+        private static readonly string[] Shop05MaterialPaths =
+        {
+            "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_03_A.mat",
+            "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_03_B.mat",
+            "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_03_C.mat"
+        };
+
+        private const string GeneratedBuildingMaterialFolder =
+            "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/dense_city_building_materials";
 
         private static readonly string[] CleanStandaloneShopPrefabPaths =
         {
@@ -939,6 +1016,29 @@ namespace Game.Editor
                 terrainMap,
                 config.RandomSeed,
                 surface);
+            CanalBakeResult canalResult = BakeWaterCanals(
+                generatedRoot,
+                cityOrigin,
+                cityWidth,
+                cityDepth,
+                authoredCoreBounds,
+                new Vector2(mapCenter.x, mapCenter.z),
+                cityFootprint,
+                terrainMap,
+                roadResult,
+                authoredGradeElevation,
+                config.RandomSeed);
+            Debug.Log(
+                $"[DenseCityCanals] routes={canalResult.RouteCount} waterTiles={canalResult.WaterTiles} " +
+                $"bridges={canalResult.Bridges} greenBanks={canalResult.GreenBanks} " +
+                $"parkAreas={canalResult.ParkAreas} trees={canalResult.Trees} " +
+                $"bushes={canalResult.Bushes} streetLights={canalResult.StreetLights} " +
+                $"highwayConflicts={canalResult.HighwayConflicts}");
+            if (canalResult.HighwayConflicts > 0)
+            {
+                throw new InvalidOperationException(
+                    $"Dense city canal generation crossed {canalResult.HighwayConflicts} highway cells.");
+            }
             int authoredCoreRenderers = BakeCivicBazaarCore(
                 generatedRoot,
                 view,
@@ -1004,6 +1104,8 @@ namespace Game.Editor
                 config.RandomSeed);
             Debug.Log(
                 $"[DenseCityUrbanProps] waterTanks={urbanDetails.WaterTanks} " +
+                $"rooftopUtilities={urbanDetails.RooftopUtilities} " +
+                $"shopWallProps={urbanDetails.ShopWallProps} " +
                 $"streetProps={urbanDetails.StreetProps} trees={urbanDetails.Trees} " +
                 $"rocks={urbanDetails.Rocks} courtyards={urbanDetails.Courtyards} " +
                 $"courtyardWalls={urbanDetails.CourtyardWalls} " +
@@ -1017,6 +1119,16 @@ namespace Game.Editor
                 $"boulevardMedianLights={urbanDetails.BoulevardMedianLights} " +
                 $"grassPatches={urbanDetails.GrassPatches} " +
                 $"mainStreetBushes={urbanDetails.MainStreetBushes}");
+
+            int horizonMountains = BakeHorizonMountainPerimeter(
+                generatedRoot,
+                cityOrigin,
+                cityWidth,
+                cityDepth,
+                authoredGradeElevation,
+                protectedAreas,
+                config.RandomSeed);
+            Debug.Log($"[DenseCityHorizon] backgroundMountains={horizonMountains}");
 
             int removedFloatingBranches = RemoveUnsupportedElevatedVisualBranches(generatedRoot);
             Debug.Log($"[DenseCityFloatingItemCleanup] removedBranches={removedFloatingBranches}");
@@ -1046,7 +1158,9 @@ namespace Game.Editor
             for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
             {
                 Renderer renderer = renderers[rendererIndex];
-                if (renderer == null || !protectedAreas.Intersects(renderer.bounds))
+                if (renderer == null ||
+                    IsSubgradeCanalUnderpassRenderer(renderer) ||
+                    !protectedAreas.Intersects(renderer.bounds))
                     continue;
 
                 if (overlapCount < 20)
@@ -1061,6 +1175,21 @@ namespace Game.Editor
             Debug.Log(
                 $"[DenseCityProtectedAudit] generatedRenderers={renderers.Length} overlaps={overlapCount}");
             return overlapCount;
+        }
+
+        private static bool IsSubgradeCanalUnderpassRenderer(Renderer renderer)
+        {
+            if (renderer == null ||
+                !renderer.name.EndsWith("_Underpass", StringComparison.Ordinal) ||
+                renderer.bounds.max.y >= -0.5f)
+            {
+                return false;
+            }
+
+            string parentName = renderer.transform.parent != null
+                ? renderer.transform.parent.name
+                : string.Empty;
+            return parentName == "CanalWaterSurfaces" || parentName == "CanalBeds";
         }
 
         private static int RemoveUnsupportedElevatedVisualBranches(Transform generatedRoot)
@@ -1390,7 +1519,7 @@ namespace Game.Editor
                 view.GridHeight * view.GridCellSize * 0.5f);
             Vector3 fullMapCenter = center;
             float fullMapOrthographicSize = 545f;
-            if (TryGetWorldBounds(view.GeneratedRoot, out Bounds generatedBounds))
+            if (TryGetGeneratedCityBoundsForProof(view.GeneratedRoot, out Bounds generatedBounds))
             {
                 fullMapCenter = new Vector3(
                     generatedBounds.center.x,
@@ -1523,6 +1652,80 @@ namespace Game.Editor
                         1080,
                         Path.Combine(outputFolder, "dense_city_asphalt_boulevard_median.png"));
                 }
+                if (TryFindCanalProofView(
+                        view.GeneratedRoot,
+                        out Vector3 canalCamera,
+                        out Vector3 canalTarget))
+                {
+                    Capture(
+                        canalCamera,
+                        canalTarget,
+                        orthographic: false,
+                        orthographicSize: 0f,
+                        1920,
+                        1080,
+                        Path.Combine(outputFolder, "dense_city_water_canal_bridge_park.png"));
+                }
+                if (TryFindPairedCanalBridgeProofView(
+                        view.GeneratedRoot,
+                        out Vector3 pairedBridgeCamera,
+                        out Vector3 pairedBridgeTarget))
+                {
+                    Capture(
+                        pairedBridgeCamera,
+                        pairedBridgeTarget,
+                        orthographic: false,
+                        orthographicSize: 0f,
+                        1920,
+                        1080,
+                        Path.Combine(outputFolder, "dense_city_canal_boulevard_bridge_pair.png"));
+                }
+                if (TryFindCanalParkProofView(
+                        view.GeneratedRoot,
+                        out Vector3 canalParkCamera,
+                        out Vector3 canalParkTarget))
+                {
+                    Capture(
+                        canalParkCamera,
+                        canalParkTarget,
+                        orthographic: false,
+                        orthographicSize: 0f,
+                        1920,
+                        1080,
+                        Path.Combine(outputFolder, "dense_city_canal_pocket_park.png"));
+                }
+                if (TryFindRooftopPropProofView(
+                        view.GeneratedRoot,
+                        "Satellite_Dish",
+                        "_RoofUtility_",
+                        out Vector3 rooftopPropCamera,
+                        out Vector3 rooftopPropTarget))
+                {
+                    Capture(
+                        rooftopPropCamera,
+                        rooftopPropTarget,
+                        orthographic: false,
+                        orthographicSize: 0f,
+                        1920,
+                        1080,
+                        Path.Combine(outputFolder, "dense_city_rooftop_satellite_attachment.png"));
+                }
+                if (TryFindRooftopPropProofView(
+                        view.GeneratedRoot,
+                        "WaterTank",
+                        "_Roof_",
+                        out Vector3 rooftopTankCamera,
+                        out Vector3 rooftopTankTarget))
+                {
+                    Capture(
+                        rooftopTankCamera,
+                        rooftopTankTarget,
+                        orthographic: false,
+                        orthographicSize: 0f,
+                        1920,
+                        1080,
+                        Path.Combine(outputFolder, "dense_city_rooftop_water_tank_attachment.png"));
+                }
             }
             finally
             {
@@ -1531,6 +1734,162 @@ namespace Game.Editor
             }
             AssetDatabase.Refresh();
             Debug.Log($"[DenseCityVisualProof] result=Captured output={outputFolder}", view);
+        }
+
+        private static bool TryFindRooftopPropProofView(
+            Transform generatedRoot,
+            string prefabNameToken,
+            string placementNameToken,
+            out Vector3 cameraPosition,
+            out Vector3 target)
+        {
+            Transform[] transforms = generatedRoot.GetComponentsInChildren<Transform>(true);
+            Transform selectedProp = null;
+            Bounds selectedPropBounds = default;
+            Bounds selectedBuildingBounds = default;
+            float largestPropExtent = float.NegativeInfinity;
+            for (int index = 0; index < transforms.Length; index++)
+            {
+                Transform candidate = transforms[index];
+                if (candidate == null ||
+                    candidate.parent == null ||
+                    !candidate.name.Contains(prefabNameToken, StringComparison.Ordinal) ||
+                    !candidate.name.Contains(placementNameToken, StringComparison.Ordinal) ||
+                    !TryGetWorldBounds(candidate, out Bounds propBounds) ||
+                    !TryGetWorldBounds(candidate.parent, out Bounds buildingBounds))
+                {
+                    continue;
+                }
+
+                float propExtent = propBounds.extents.magnitude;
+                if (propExtent <= largestPropExtent)
+                    continue;
+
+                selectedProp = candidate;
+                selectedPropBounds = propBounds;
+                selectedBuildingBounds = buildingBounds;
+                largestPropExtent = propExtent;
+            }
+
+            if (selectedProp == null)
+            {
+                cameraPosition = default;
+                target = default;
+                return false;
+            }
+
+            target = new Vector3(
+                selectedPropBounds.center.x,
+                Mathf.Lerp(selectedBuildingBounds.max.y, selectedPropBounds.center.y, 0.45f),
+                selectedPropBounds.center.z);
+            Vector3 viewDirection = new Vector3(-1f, 0f, -1f).normalized;
+            float framingDistance = Mathf.Clamp(
+                Mathf.Max(
+                    Mathf.Max(selectedBuildingBounds.size.x, selectedBuildingBounds.size.z) * 1.7f,
+                    largestPropExtent * 4.5f),
+                18f,
+                42f);
+            cameraPosition = target + viewDirection * framingDistance + Vector3.up * 10f;
+            return true;
+        }
+
+        private static bool TryFindCanalProofView(
+            Transform generatedRoot,
+            out Vector3 cameraPosition,
+            out Vector3 target)
+        {
+            Transform[] transforms = generatedRoot.GetComponentsInChildren<Transform>(true);
+            for (int index = 0; index < transforms.Length; index++)
+            {
+                Transform candidate = transforms[index];
+                if (candidate == null ||
+                    !candidate.name.StartsWith("CanalBridge_", StringComparison.Ordinal) ||
+                    !TryGetWorldBounds(candidate, out Bounds bounds))
+                {
+                    continue;
+                }
+
+                target = bounds.center + Vector3.up * 1.5f;
+                cameraPosition = target + new Vector3(-34f, 29f, -40f);
+                return true;
+            }
+
+            cameraPosition = default;
+            target = default;
+            return false;
+        }
+
+        private static bool TryFindPairedCanalBridgeProofView(
+            Transform generatedRoot,
+            out Vector3 cameraPosition,
+            out Vector3 target)
+        {
+            Transform[] transforms = generatedRoot.GetComponentsInChildren<Transform>(true);
+            var bridges = new List<Transform>();
+            for (int index = 0; index < transforms.Length; index++)
+            {
+                Transform candidate = transforms[index];
+                if (candidate != null &&
+                    candidate.name.StartsWith("CanalBridge_", StringComparison.Ordinal))
+                {
+                    bridges.Add(candidate);
+                }
+            }
+
+            for (int firstIndex = 0; firstIndex < bridges.Count; firstIndex++)
+            {
+                if (!TryGetWorldBounds(bridges[firstIndex], out Bounds firstBounds))
+                    continue;
+                for (int secondIndex = firstIndex + 1; secondIndex < bridges.Count; secondIndex++)
+                {
+                    if (!TryGetWorldBounds(bridges[secondIndex], out Bounds secondBounds))
+                        continue;
+
+                    Vector2 firstCenter = new(firstBounds.center.x, firstBounds.center.z);
+                    Vector2 secondCenter = new(secondBounds.center.x, secondBounds.center.z);
+                    float separation = Vector2.Distance(firstCenter, secondCenter);
+                    if (separation < RoadGridSize * 0.75f ||
+                        separation > RoadGridSize * 1.25f)
+                    {
+                        continue;
+                    }
+
+                    target = (firstBounds.center + secondBounds.center) * 0.5f + Vector3.up * 1.5f;
+                    cameraPosition = target + new Vector3(-30f, 32f, -38f);
+                    return true;
+                }
+            }
+
+            cameraPosition = default;
+            target = default;
+            return false;
+        }
+
+        private static bool TryFindCanalParkProofView(
+            Transform generatedRoot,
+            out Vector3 cameraPosition,
+            out Vector3 target)
+        {
+            Transform[] transforms = generatedRoot.GetComponentsInChildren<Transform>(true);
+            for (int index = 0; index < transforms.Length; index++)
+            {
+                Transform candidate = transforms[index];
+                if (candidate == null ||
+                    !candidate.name.StartsWith("CanalPocketPark_", StringComparison.Ordinal) ||
+                    candidate.name.Contains("_Round_", StringComparison.Ordinal) ||
+                    !TryGetWorldBounds(candidate, out Bounds bounds))
+                {
+                    continue;
+                }
+
+                target = bounds.center + Vector3.up * 1.25f;
+                cameraPosition = target + new Vector3(-24f, 20f, -28f);
+                return true;
+            }
+
+            cameraPosition = default;
+            target = default;
+            return false;
         }
 
         private static bool TryFindSidewalkFrontageProofView(
@@ -1823,6 +2182,32 @@ namespace Game.Editor
             }
         }
 
+        private static bool TryGetGeneratedCityBoundsForProof(Transform generatedRoot, out Bounds bounds)
+        {
+            bounds = default;
+            bool found = false;
+            for (int childIndex = 0; childIndex < generatedRoot.childCount; childIndex++)
+            {
+                Transform child = generatedRoot.GetChild(childIndex);
+                if (child == null || child.name == "DenseCity_HorizonMountainPerimeter")
+                    continue;
+                if (!TryGetWorldBounds(child, out Bounds childBounds))
+                    continue;
+
+                if (!found)
+                {
+                    bounds = childBounds;
+                    found = true;
+                }
+                else
+                {
+                    bounds.Encapsulate(childBounds);
+                }
+            }
+
+            return found;
+        }
+
         private readonly struct RoadBakeResult
         {
             public readonly int TileCount;
@@ -1833,6 +2218,8 @@ namespace Game.Editor
             public readonly HashSet<Vector2Int> RoadCells;
             public readonly HashSet<Vector2Int> BoulevardRoadCells;
             public readonly List<BoulevardMedianCell> BoulevardMedianCells;
+            public readonly Dictionary<Vector2Int, GameObject> RoadTileObjects;
+            public readonly Dictionary<Vector2Int, GameObject> RoadGroundPatchObjects;
 
             public RoadBakeResult(
                 int tileCount,
@@ -1842,7 +2229,9 @@ namespace Game.Editor
                 HashSet<Vector2Int> dirtRoadCells,
                 HashSet<Vector2Int> roadCells,
                 HashSet<Vector2Int> boulevardRoadCells,
-                List<BoulevardMedianCell> boulevardMedianCells)
+                List<BoulevardMedianCell> boulevardMedianCells,
+                Dictionary<Vector2Int, GameObject> roadTileObjects,
+                Dictionary<Vector2Int, GameObject> roadGroundPatchObjects)
             {
                 TileCount = tileCount;
                 ChunkCount = chunkCount;
@@ -1852,6 +2241,55 @@ namespace Game.Editor
                 RoadCells = roadCells;
                 BoulevardRoadCells = boulevardRoadCells;
                 BoulevardMedianCells = boulevardMedianCells;
+                RoadTileObjects = roadTileObjects;
+                RoadGroundPatchObjects = roadGroundPatchObjects;
+            }
+        }
+
+        private readonly struct CanalBakeResult
+        {
+            public readonly int RouteCount;
+            public readonly int WaterTiles;
+            public readonly int Bridges;
+            public readonly int GreenBanks;
+            public readonly int ParkAreas;
+            public readonly int Trees;
+            public readonly int Bushes;
+            public readonly int StreetLights;
+            public readonly int HighwayConflicts;
+
+            public CanalBakeResult(
+                int routeCount,
+                int waterTiles,
+                int bridges,
+                int greenBanks,
+                int parkAreas,
+                int trees,
+                int bushes,
+                int streetLights,
+                int highwayConflicts)
+            {
+                RouteCount = routeCount;
+                WaterTiles = waterTiles;
+                Bridges = bridges;
+                GreenBanks = greenBanks;
+                ParkAreas = parkAreas;
+                Trees = trees;
+                Bushes = bushes;
+                StreetLights = streetLights;
+                HighwayConflicts = highwayConflicts;
+            }
+        }
+
+        private sealed class CanalRoute
+        {
+            public readonly bool Horizontal;
+            public readonly List<Vector2Int> Cells;
+
+            public CanalRoute(bool horizontal, List<Vector2Int> cells)
+            {
+                Horizontal = horizontal;
+                Cells = cells;
             }
         }
 
@@ -1951,14 +2389,16 @@ namespace Game.Editor
         {
             public readonly Transform Wrapper;
             public readonly Bounds Bounds;
+            public readonly Bounds LocalBounds;
             public readonly Rect Footprint;
             public readonly bool IsShop;
             public readonly bool IsHouse;
 
-            public GeneratedBuildingInfo(Transform wrapper, Bounds bounds)
+            public GeneratedBuildingInfo(Transform wrapper, Bounds bounds, Bounds localBounds)
             {
                 Wrapper = wrapper;
                 Bounds = bounds;
+                LocalBounds = localBounds;
                 Footprint = Rect.MinMaxRect(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
                 IsShop = wrapper.name.IndexOf("Shop", StringComparison.OrdinalIgnoreCase) >= 0;
                 IsHouse = wrapper.name.IndexOf("House", StringComparison.OrdinalIgnoreCase) >= 0 ||
@@ -1966,9 +2406,25 @@ namespace Game.Editor
             }
         }
 
+        private readonly struct RoofTriangle
+        {
+            public readonly Vector3 A;
+            public readonly Vector3 B;
+            public readonly Vector3 C;
+
+            public RoofTriangle(Vector3 a, Vector3 b, Vector3 c)
+            {
+                A = a;
+                B = b;
+                C = c;
+            }
+        }
+
         private readonly struct UrbanDetailResult
         {
             public readonly int WaterTanks;
+            public readonly int RooftopUtilities;
+            public readonly int ShopWallProps;
             public readonly int StreetProps;
             public readonly int Trees;
             public readonly int Rocks;
@@ -1988,6 +2444,8 @@ namespace Game.Editor
 
             public UrbanDetailResult(
                 int waterTanks,
+                int rooftopUtilities,
+                int shopWallProps,
                 int streetProps,
                 int trees,
                 int rocks,
@@ -2006,6 +2464,8 @@ namespace Game.Editor
                 int mainStreetBushes)
             {
                 WaterTanks = waterTanks;
+                RooftopUtilities = rooftopUtilities;
+                ShopWallProps = shopWallProps;
                 StreetProps = streetProps;
                 Trees = trees;
                 Rocks = rocks;
@@ -2078,6 +2538,23 @@ namespace Game.Editor
                     "Dense city civic hall could not be placed inside its road loop.");
             }
 
+            if (!TryFindGeneratedVisualAt(
+                    coreObject.transform,
+                    new Vector2(hallPosition.x, hallPosition.z),
+                    out Transform hallVisual,
+                    out Bounds hallBounds))
+            {
+                throw new InvalidOperationException(
+                    "Dense city civic hall visual could not be resolved after placement.");
+            }
+
+            const float hallPlazaClearance = 28f;
+            Rect hallPlazaExclusion = Rect.MinMaxRect(
+                hallBounds.min.x - hallPlazaClearance,
+                hallBounds.min.z - hallPlazaClearance,
+                hallBounds.max.x + hallPlazaClearance,
+                hallBounds.max.z + hallPlazaClearance);
+
             var market = new List<PrefabFootprint>();
             AddPrefabList(config.ShopPrefabs, market, 0.9f);
             if (market.Count == 0)
@@ -2093,71 +2570,77 @@ namespace Game.Editor
                 roadOrigin,
                 terrainMap,
                 placementContext,
-                random);
+                random,
+                hallPlazaExclusion);
             float[] marketRows = { -78f, -62f, -46f, -30f, -14f, 2f, 18f, 34f, 50f };
             for (int rowIndex = 0; rowIndex < marketRows.Length; rowIndex++)
             {
                 float rowZ = marketRows[rowIndex];
                 float facing = rowIndex % 2 == 0 ? 0f : 180f;
                 float offset = rowIndex % 2 == 0 ? 0f : 5.75f;
-                for (float x = -104f + offset; x <= 104f; x += 11.5f)
+                float cursor = -104f + offset;
+                float limit = 104f;
+                while (cursor < limit)
                 {
-                    if (rowZ >= 18f && Mathf.Abs(x) < 48f)
+                    PrefabFootprint shop = market[shopIndex++ % market.Count];
+                    float centerX = cursor + shop.Width * 0.5f;
+                    if (centerX + shop.Width * 0.5f > limit)
+                        break;
+
+                    Vector3 position = mapCenter + new Vector3(centerX, 0f, rowZ);
+                    if (FootprintOverlapsRect(shop, facing, position, hallPlazaExclusion))
+                    {
+                        cursor += shop.Width + 0.08f;
                         continue;
+                    }
                     SpawnBuilding(
                         visualSystem,
-                        market[shopIndex++ % market.Count],
-                        mapCenter + new Vector3(x, 0f, rowZ),
+                        shop,
+                        position,
                         facing,
+                        grid,
+                        terrainMap,
+                        placementContext);
+                    cursor += shop.Width + 0.08f;
+                }
+            }
+
+            for (float z = -72f; z <= 54f; z += 14f)
+            {
+                PrefabFootprint leftShop = market[shopIndex++ % market.Count];
+                Vector3 leftPosition = mapCenter + new Vector3(-116f, 0f, z);
+                if (!FootprintOverlapsRect(leftShop, 90f, leftPosition, hallPlazaExclusion))
+                {
+                    SpawnBuilding(
+                        visualSystem,
+                        leftShop,
+                        leftPosition,
+                        90f,
+                        grid,
+                        terrainMap,
+                        placementContext);
+                }
+
+                PrefabFootprint rightShop = market[shopIndex++ % market.Count];
+                Vector3 rightPosition = mapCenter + new Vector3(116f, 0f, z);
+                if (!FootprintOverlapsRect(rightShop, 270f, rightPosition, hallPlazaExclusion))
+                {
+                    SpawnBuilding(
+                        visualSystem,
+                        rightShop,
+                        rightPosition,
+                        270f,
                         grid,
                         terrainMap,
                         placementContext);
                 }
             }
 
-            for (float z = -72f; z <= 54f; z += 14f)
-            {
-                SpawnBuilding(
-                    visualSystem,
-                    market[shopIndex++ % market.Count],
-                    mapCenter + new Vector3(-116f, 0f, z),
-                    90f,
-                    grid,
-                    terrainMap,
-                    placementContext);
-                SpawnBuilding(
-                    visualSystem,
-                    market[shopIndex++ % market.Count],
-                    mapCenter + new Vector3(116f, 0f, z),
-                    270f,
-                    grid,
-                    terrainMap,
-                    placementContext);
-            }
-
-            GameObject fountain01 = AssetDatabase.LoadAssetAtPath<GameObject>(ParkPrefabPaths[4]);
-            GameObject fountain02 = AssetDatabase.LoadAssetAtPath<GameObject>(ParkPrefabPaths[5]);
-            if (fountain01 != null && fountain02 != null)
-            {
-                PrefabFootprint fountain = MeasurePrefab(fountain01, 0.8f);
-                SpawnBuilding(
-                    visualSystem,
-                    fountain,
-                    mapCenter + new Vector3(-42f, 0f, 29f),
-                    random.Next(0, 4) * 90f,
-                    grid,
-                    terrainMap,
-                    placementContext);
-                fountain = MeasurePrefab(fountain02, 0.8f);
-                SpawnBuilding(
-                    visualSystem,
-                    fountain,
-                    mapCenter + new Vector3(42f, 0f, 29f),
-                    random.Next(0, 4) * 90f,
-                    grid,
-                    terrainMap,
-                    placementContext);
-            }
+            int plazaDetails = AddCivicMarketPlazaDetails(
+                coreObject.transform,
+                hallBounds,
+                hallPatch.MaximumHeight + 0.035f,
+                random);
 
             AddCivicPromenadeTrees(
                 visualSystem,
@@ -2169,7 +2652,8 @@ namespace Game.Editor
 
             Debug.Log(
                 $"[DenseCityCivicPlacementAudit] reserved={placementContext.ReservedCount} " +
-                $"roadsideShops={civicRoadsideShops} overlaps=0");
+                $"roadsideShops={civicRoadsideShops} plazaDetails={plazaDetails} " +
+                $"hall={hallVisual.name} overlaps=0");
 
             DisableColliders(coreObject);
             SetStaticRecursively(coreObject);
@@ -2184,10 +2668,11 @@ namespace Game.Editor
             Vector3 roadOrigin,
             TerrainViabilityMap terrainMap,
             BuildingPlacementContext placementContext,
-            System.Random random)
+            System.Random random,
+            Rect hallPlazaExclusion)
         {
             const float frontageGap = DirtBuildingRoadSetback + 0.2f;
-            const float packingGap = 0.45f;
+            const float packingGap = 0.08f;
             int count = 0;
 
             float leftRoadX = SnapRoadX(civicCenter.x - 60f);
@@ -2301,10 +2786,16 @@ namespace Game.Editor
                     float direction = placeOnPositiveSide ? 1f : -1f;
                     float centerZ = roadZ + direction *
                         (RoadGridSize * 0.5f + frontageGap + info.Depth * 0.5f);
+                    Vector3 position = new(centerX, grid.Origin.y, centerZ);
+                    if (FootprintOverlapsRect(info, rotation, position, hallPlazaExclusion))
+                    {
+                        cursor += info.Width + packingGap;
+                        continue;
+                    }
                     if (SpawnBuilding(
                             visuals,
                             info,
-                            new Vector3(centerX, grid.Origin.y, centerZ),
+                            position,
                             rotation,
                             grid,
                             terrainMap,
@@ -2334,10 +2825,16 @@ namespace Game.Editor
                     float direction = placeOnPositiveSide ? 1f : -1f;
                     float centerX = roadX + direction *
                         (RoadGridSize * 0.5f + frontageGap + info.Depth * 0.5f);
+                    Vector3 position = new(centerX, grid.Origin.y, centerZ);
+                    if (FootprintOverlapsRect(info, rotation, position, hallPlazaExclusion))
+                    {
+                        cursor += info.Width + packingGap;
+                        continue;
+                    }
                     if (SpawnBuilding(
                             visuals,
                             info,
-                            new Vector3(centerX, grid.Origin.y, centerZ),
+                            position,
                             rotation,
                             grid,
                             terrainMap,
@@ -2349,6 +2846,161 @@ namespace Game.Editor
                     cursor += info.Width + packingGap;
                 }
             }
+        }
+
+        private static bool FootprintOverlapsRect(
+            PrefabFootprint info,
+            float rotationDegrees,
+            Vector3 position,
+            Rect exclusion)
+        {
+            bool quarterTurn = Mathf.Abs(Mathf.RoundToInt(rotationDegrees / 90f)) % 2 != 0;
+            float halfWidth = (quarterTurn ? info.Depth : info.Width) * 0.5f;
+            float halfDepth = (quarterTurn ? info.Width : info.Depth) * 0.5f;
+            var footprint = Rect.MinMaxRect(
+                position.x - halfWidth,
+                position.z - halfDepth,
+                position.x + halfWidth,
+                position.z + halfDepth);
+            return footprint.Overlaps(exclusion, true);
+        }
+
+        private static bool TryFindGeneratedVisualAt(
+            Transform root,
+            Vector2 worldPosition,
+            out Transform visual,
+            out Bounds bounds)
+        {
+            visual = null;
+            bounds = default;
+            float bestDistance = float.PositiveInfinity;
+            Transform[] transforms = root.GetComponentsInChildren<Transform>(true);
+            for (int index = 0; index < transforms.Length; index++)
+            {
+                Transform candidate = transforms[index];
+                if (candidate == null ||
+                    candidate.parent == null ||
+                    candidate.parent.name != "RuntimeCityVisuals" ||
+                    !candidate.name.EndsWith("_Visual", StringComparison.Ordinal) ||
+                    !TryGetWorldBounds(candidate, out Bounds candidateBounds))
+                {
+                    continue;
+                }
+
+                float distance = Vector2.Distance(
+                    new Vector2(candidateBounds.center.x, candidateBounds.center.z),
+                    worldPosition);
+                if (distance >= bestDistance)
+                    continue;
+
+                bestDistance = distance;
+                visual = candidate;
+                bounds = candidateBounds;
+            }
+
+            return visual != null;
+        }
+
+        private static int AddCivicMarketPlazaDetails(
+            Transform civicRoot,
+            Bounds hallBounds,
+            float supportHeight,
+            System.Random random)
+        {
+            GameObject clothCover = LoadRequiredPrefab(CivicClothCoverPrefabPath);
+            GameObject umbrella = LoadRequiredPrefab(CivicUmbrellaPrefabPath);
+            GameObject fountain01 = LoadRequiredPrefab(ParkPrefabPaths[4]);
+            GameObject fountain02 = LoadRequiredPrefab(ParkPrefabPaths[5]);
+            var rootObject = new GameObject("DenseCity_CivicMarketPlazaDetails");
+            rootObject.transform.SetParent(civicRoot, false);
+
+            float centerX = hallBounds.center.x;
+            float centerZ = hallBounds.center.z;
+            float frontZ = hallBounds.min.z - 13f;
+            float outerFrontZ = hallBounds.min.z - 27f;
+            float sideOffset = Mathf.Max(16f, hallBounds.extents.x + 13f);
+            Vector2[] clothPositions =
+            {
+                new(centerX - 34f, frontZ),
+                new(centerX, frontZ),
+                new(centerX + 34f, frontZ),
+                new(centerX - sideOffset, centerZ - 20f),
+                new(centerX + sideOffset, centerZ - 20f),
+                new(centerX - sideOffset, centerZ + 20f),
+                new(centerX + sideOffset, centerZ + 20f)
+            };
+            Vector2[] umbrellaPositions =
+            {
+                new(centerX - 50f, outerFrontZ),
+                new(centerX - 18f, outerFrontZ),
+                new(centerX + 18f, outerFrontZ),
+                new(centerX + 50f, outerFrontZ),
+                new(centerX - sideOffset - 5f, centerZ),
+                new(centerX + sideOffset + 5f, centerZ)
+            };
+
+            int count = 0;
+            for (int index = 0; index < clothPositions.Length; index++)
+            {
+                if (InstantiateGroundedDetail(
+                        clothCover,
+                        rootObject.transform,
+                        $"{clothCover.name}_CivicPlaza_{index:00}",
+                        clothPositions[index],
+                        supportHeight,
+                        index % 2 == 0 ? 0f : 90f,
+                        1f))
+                {
+                    count++;
+                }
+            }
+
+            for (int index = 0; index < umbrellaPositions.Length; index++)
+            {
+                if (InstantiateGroundedDetail(
+                        umbrella,
+                        rootObject.transform,
+                        $"{umbrella.name}_CivicPlaza_{index:00}",
+                        umbrellaPositions[index],
+                        supportHeight,
+                        random.Next(0, 4) * 90f,
+                        1.05f))
+                {
+                    count++;
+                }
+            }
+
+            Vector2 fountainPosition01 = new(centerX - 26f, hallBounds.min.z - 43f);
+            Vector2 fountainPosition02 = new(centerX + 26f, hallBounds.min.z - 43f);
+            if (InstantiateGroundedDetail(
+                    fountain01,
+                    rootObject.transform,
+                    $"{fountain01.name}_CivicPlaza",
+                    fountainPosition01,
+                    supportHeight,
+                    0f,
+                    1.1f))
+            {
+                count++;
+            }
+            if (InstantiateGroundedDetail(
+                    fountain02,
+                    rootObject.transform,
+                    $"{fountain02.name}_CivicPlaza",
+                    fountainPosition02,
+                    supportHeight,
+                    0f,
+                    1.1f))
+            {
+                count++;
+            }
+
+            DisableColliders(rootObject);
+            SetStaticRecursively(rootObject);
+            Debug.Log(
+                $"[DenseCityCivicMarketPlaza] clothCovers={clothPositions.Length} " +
+                $"umbrellas={umbrellaPositions.Length} fountains=2 details={count}");
+            return count;
         }
 
         private static void AddCivicPromenadeTrees(
@@ -2584,7 +3236,9 @@ namespace Game.Editor
                 terrainMap,
                 elevationPlan,
                 surface,
-                cityFootprint);
+                cityFootprint,
+                out Dictionary<Vector2Int, GameObject> roadTileObjects,
+                out Dictionary<Vector2Int, GameObject> roadGroundPatchObjects);
             SetStaticRecursively(roadObject);
             return new RoadBakeResult(
                 network.RoadTiles.Count,
@@ -2594,7 +3248,1387 @@ namespace Game.Editor
                 dirtRoadCells,
                 new HashSet<Vector2Int>(network.RoadTiles.Keys),
                 new HashSet<Vector2Int>(network.AutobahnCells),
-                boulevardMedianCells);
+                boulevardMedianCells,
+                roadTileObjects,
+                roadGroundPatchObjects);
+        }
+
+        private static int BakeHorizonMountainPerimeter(
+            Transform generatedRoot,
+            Vector3 mapOrigin,
+            float mapWidth,
+            float mapDepth,
+            float gradeElevation,
+            ProtectedAreaMap protectedAreas,
+            uint seed)
+        {
+            GameObject[] mountainPrefabs = LoadRequiredPrefabs(HorizonMountainPrefabPaths);
+            var rootObject = new GameObject("DenseCity_HorizonMountainPerimeter");
+            rootObject.transform.SetParent(generatedRoot, false);
+            int created = 0;
+            int longSideCount = Mathf.Max(10, Mathf.CeilToInt(mapWidth / 145f) + 2);
+            int shortSideCount = Mathf.Max(9, Mathf.CeilToInt(mapDepth / 145f) + 2);
+
+            for (int index = 0; index < longSideCount; index++)
+            {
+                float t = (index + 0.5f) / longSideCount;
+                float x = mapOrigin.x + mapWidth * t;
+                TryPlaceMountain(new Vector2(x, mapOrigin.z), Vector2.down, index, "South");
+                TryPlaceMountain(new Vector2(x, mapOrigin.z + mapDepth), Vector2.up, index, "North");
+            }
+
+            for (int index = 0; index < shortSideCount; index++)
+            {
+                float t = (index + 0.5f) / shortSideCount;
+                if (Mathf.Abs(t - 0.5f) < 0.12f)
+                    continue;
+
+                float z = mapOrigin.z + mapDepth * t;
+                TryPlaceMountain(new Vector2(mapOrigin.x, z), Vector2.left, index, "West");
+                TryPlaceMountain(new Vector2(mapOrigin.x + mapWidth, z), Vector2.right, index, "East");
+            }
+
+            if (created == 0)
+            {
+                UnityEngine.Object.DestroyImmediate(rootObject);
+                return 0;
+            }
+
+            DisableColliders(rootObject);
+            SetStaticRecursively(rootObject);
+            return created;
+
+            void TryPlaceMountain(Vector2 edgeCenter, Vector2 outward, int index, string sideName)
+            {
+                uint hash = HashGroundPatch(index, sideName[0], unchecked((int)seed) ^ 0x7a41);
+                GameObject prefab = mountainPrefabs[(int)(hash % (uint)mountainPrefabs.Length)];
+                GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, rootObject.transform);
+                instance.name = $"HorizonMountain_{sideName}_{index:00}";
+                instance.transform.SetPositionAndRotation(
+                    new Vector3(edgeCenter.x, 0f, edgeCenter.y),
+                    Quaternion.Euler(0f, Hash01(hash ^ 0x42d913afu) * 360f, 0f));
+                instance.transform.localScale = Vector3.one;
+                if (!TryGetRendererBounds(instance, out Bounds sourceBounds))
+                {
+                    UnityEngine.Object.DestroyImmediate(instance);
+                    return;
+                }
+
+                float targetSpan = Mathf.Lerp(240f, 340f, Hash01(hash ^ 0x1d73b549u));
+                float uniformScale = targetSpan /
+                                     Mathf.Max(1f, Mathf.Max(sourceBounds.size.x, sourceBounds.size.z));
+                instance.transform.localScale = Vector3.one * uniformScale;
+                if (!TryGetRendererBounds(instance, out Bounds scaledBounds))
+                {
+                    UnityEngine.Object.DestroyImmediate(instance);
+                    return;
+                }
+
+                float baseOffset = targetSpan * 0.3f + 55f;
+                for (int attempt = 0; attempt < 3; attempt++)
+                {
+                    Vector2 target = edgeCenter + outward * (baseOffset + attempt * 180f);
+                    Vector3 position = instance.transform.position;
+                    position.x += target.x - scaledBounds.center.x;
+                    position.y += gradeElevation - 18f - scaledBounds.min.y;
+                    position.z += target.y - scaledBounds.center.z;
+                    instance.transform.position = position;
+                    if (!TryGetRendererBounds(instance, out Bounds placedBounds))
+                        break;
+                    if (!protectedAreas.Intersects(placedBounds))
+                    {
+                        created++;
+                        return;
+                    }
+
+                    scaledBounds = placedBounds;
+                }
+
+                UnityEngine.Object.DestroyImmediate(instance);
+            }
+        }
+
+        private static CanalBakeResult BakeWaterCanals(
+            Transform generatedRoot,
+            Vector3 mapOrigin,
+            float mapWidth,
+            float mapDepth,
+            Rect authoredCoreBounds,
+            Vector2 civicCenter,
+            CityFootprint cityFootprint,
+            TerrainViabilityMap terrainMap,
+            RoadBakeResult roadResult,
+            float gradeElevation,
+            uint seed)
+        {
+            GameObject[] bankPrefabs = LoadRequiredPrefabs(CanalBankPrefabPaths);
+            GameObject bridgePrefab = LoadRequiredPrefab(CanalBridgePrefabPath);
+            GameObject[] canalTreePrefabs = LoadRequiredPrefabs(Demo2CanalTreePrefabPaths);
+            GameObject bushPrefab = LoadRequiredPrefab(MainStreetBushPrefabPath);
+            GameObject streetLightPrefab = LoadRequiredPrefab(StreetLightPrefabPath);
+            Material waterMaterial = AssetDatabase.LoadAssetAtPath<Material>(CanalWaterMaterialPath) ??
+                                     throw new InvalidOperationException(
+                                         $"Missing Demo2 canal water material {CanalWaterMaterialPath}.");
+            Material canalBedMaterial = AssetDatabase.LoadAssetAtPath<Material>(CanalBedMaterialPath) ??
+                                        throw new InvalidOperationException(
+                                            $"Missing Demo2 canal bed material {CanalBedMaterialPath}.");
+            Material canalGreenMaterial = AssetDatabase.LoadAssetAtPath<Material>(CanalGreenMaterialPath) ??
+                                          throw new InvalidOperationException(
+                                              $"Missing canal green-ground material {CanalGreenMaterialPath}.");
+
+            var canalObject = new GameObject("DenseCity_WaterCanalsAndParks");
+            canalObject.transform.SetParent(generatedRoot, false);
+            var waterRootObject = new GameObject("CanalWaterSurfaces");
+            waterRootObject.transform.SetParent(canalObject.transform, false);
+            var bedRootObject = new GameObject("CanalBeds");
+            bedRootObject.transform.SetParent(canalObject.transform, false);
+            var bankRootObject = new GameObject("CanalGreenBanks");
+            bankRootObject.transform.SetParent(canalObject.transform, false);
+            var bridgeRootObject = new GameObject("CanalStreetBridges");
+            bridgeRootObject.transform.SetParent(canalObject.transform, false);
+            var parkRootObject = new GameObject("CanalPocketParks");
+            parkRootObject.transform.SetParent(canalObject.transform, false);
+            var detailRootObject = new GameObject("CanalTreesBushesAndLights");
+            detailRootObject.transform.SetParent(canalObject.transform, false);
+
+            int maximumColumn = Mathf.FloorToInt(mapWidth / RoadGridSize) - 1;
+            int maximumRow = Mathf.FloorToInt(mapDepth / RoadGridSize) - 1;
+            var originalRoadCells = new HashSet<Vector2Int>(roadResult.RoadCells);
+            List<CanalRoute> routes = BuildCanalRoutes(
+                mapOrigin,
+                maximumColumn,
+                maximumRow,
+                authoredCoreBounds,
+                civicCenter,
+                cityFootprint,
+                terrainMap,
+                roadResult,
+                seed);
+
+            int waterTiles = 0;
+            int bridges = 0;
+            int greenBanks = 0;
+            int parkAreas = 0;
+            int trees = 0;
+            int bushes = 0;
+            int streetLights = 0;
+            int highwayConflicts = 0;
+            int highwayUnderpasses = 0;
+            int removedCrossingRoads = 0;
+            int removedUnbridgedCrossings = 0;
+            int removedUnbridgedRoadStubTiles = 0;
+            var bridgeCells = new List<Vector2Int>();
+            var canalCellUseCounts = new Dictionary<Vector2Int, int>();
+            for (int routeIndex = 0; routeIndex < routes.Count; routeIndex++)
+            {
+                for (int cellIndex = 0; cellIndex < routes[routeIndex].Cells.Count; cellIndex++)
+                {
+                    Vector2Int cell = routes[routeIndex].Cells[cellIndex];
+                    canalCellUseCounts.TryGetValue(cell, out int useCount);
+                    canalCellUseCounts[cell] = useCount + 1;
+                }
+            }
+            var bakedCanalCells = new HashSet<Vector2Int>();
+            for (int routeIndex = 0; routeIndex < routes.Count; routeIndex++)
+            {
+                CanalRoute route = routes[routeIndex];
+                for (int cellIndex = 0; cellIndex < route.Cells.Count; cellIndex++)
+                {
+                    Vector2Int cell = route.Cells[cellIndex];
+                    if (!bakedCanalCells.Add(cell))
+                        continue;
+
+                    bool junction = canalCellUseCounts[cell] > 1;
+                    Vector2 center = RoadCellWorldCenter(cell, mapOrigin);
+                    bool authoredHighwayUnderpass =
+                        !cityFootprint.IsAreaClear(
+                            center,
+                            RoadGridSize * 0.55f,
+                            RoadGridSize * 0.55f);
+                    // Generated boulevards are part of the city street network and
+                    // need a visible bridge for each carriageway. Only the protected
+                    // authored highway is allowed to carry the canal below grade.
+                    bool highwayUnderpass = authoredHighwayUnderpass;
+                    bool streetCrossing = originalRoadCells.Contains(cell);
+                    roadResult.RoadCells.Add(cell);
+                    float waterWidth = junction
+                        ? RoadGridSize * 1.04f
+                        : route.Horizontal ? RoadGridSize * 1.04f : RoadGridSize * 0.64f;
+                    float waterDepth = junction
+                        ? RoadGridSize * 1.04f
+                        : route.Horizontal ? RoadGridSize * 0.64f : RoadGridSize * 1.04f;
+                    float waterTopElevation = highwayUnderpass
+                        ? gradeElevation - 1.25f
+                        : gradeElevation + 0.075f;
+                    CreateCanalCubeSurface(
+                        bedRootObject.transform,
+                        $"CanalBed_{routeIndex:00}_{cellIndex:000}" +
+                        (highwayUnderpass ? "_Underpass" : string.Empty),
+                        center,
+                        waterTopElevation - 0.04f,
+                        waterWidth * 0.96f,
+                        waterDepth * 0.92f,
+                        0.12f,
+                        canalBedMaterial);
+                    CreateCanalCubeSurface(
+                        waterRootObject.transform,
+                        $"CanalWater_{routeIndex:00}_{cellIndex:000}" +
+                        (highwayUnderpass ? "_Underpass" : string.Empty),
+                        center,
+                        waterTopElevation,
+                        waterWidth,
+                        waterDepth,
+                        0.04f,
+                        waterMaterial);
+                    waterTiles++;
+
+                    if (highwayUnderpass)
+                    {
+                        // Preserve the multilane highway in place and carry the canal below it.
+                        highwayUnderpasses++;
+                        continue;
+                    }
+
+                    if (streetCrossing)
+                    {
+                        bool hasThroughRoad = TryResolveBridgeThroughRoadAxisAlongX(
+                            cell,
+                            originalRoadCells,
+                            roadResult.BoulevardRoadCells,
+                            route.Horizontal,
+                            out bool roadAxisAlongWorldX);
+                        float roadElevation = RemoveRoadVisualAtCanalCrossing(roadResult, cell);
+                        removedCrossingRoads++;
+                        bool boulevardCrossing = roadResult.BoulevardRoadCells.Contains(cell);
+                        bool bridgeHasClearance = hasThroughRoad &&
+                                                  (boulevardCrossing ||
+                                                   HasBridgeSpacing(cell, bridgeCells, 14));
+                        if (bridgeHasClearance)
+                        {
+                            InstantiateCanalBridge(
+                                bridgePrefab,
+                                bridgeRootObject.transform,
+                                $"CanalBridge_{routeIndex:00}_{cellIndex:000}",
+                                center,
+                                roadElevation,
+                                roadAxisAlongWorldX);
+                            bridges++;
+                            bridgeCells.Add(cell);
+                        }
+                        else
+                        {
+                            removedUnbridgedCrossings++;
+                            removedUnbridgedRoadStubTiles += RemoveUnbridgedCanalRoadApproaches(
+                                roadResult,
+                                originalRoadCells,
+                                cell,
+                                roadAxisAlongWorldX);
+                        }
+                        continue;
+                    }
+
+                    if (junction)
+                        continue;
+
+                    Vector2 bankAxis = route.Horizontal ? Vector2.up : Vector2.right;
+                    for (int side = -1; side <= 1; side += 2)
+                    {
+                        float bankThickness = ResolveCanalBankThickness(
+                            route,
+                            routeIndex,
+                            cellIndex,
+                            side,
+                            center,
+                            bankAxis,
+                            originalRoadCells,
+                            mapOrigin);
+                        float canalHalfWidth = RoadGridSize * 0.32f;
+                        Vector2 bankCenter = center + bankAxis *
+                            ((canalHalfWidth + bankThickness * 0.5f - 0.12f) * side);
+                        float bankWidth = route.Horizontal ? RoadGridSize * 1.04f : bankThickness;
+                        float bankDepth = route.Horizontal ? bankThickness : RoadGridSize * 1.04f;
+                        var bankBounds = new Rect(
+                            bankCenter.x - bankWidth * 0.5f,
+                            bankCenter.y - bankDepth * 0.5f,
+                            bankWidth,
+                            bankDepth);
+                        int bankPatchCount = InstantiateRoundCanalBankCluster(
+                            bankPrefabs,
+                            bankRootObject.transform,
+                            $"CanalRoundBank_{routeIndex:00}_{cellIndex:000}_{(side < 0 ? "A" : "B")}",
+                            bankCenter,
+                            gradeElevation + 0.065f,
+                            bankWidth,
+                            bankDepth,
+                            route.Horizontal,
+                            detailHashSeed: HashGroundPatch(
+                                cell.x,
+                                cell.y,
+                                0x294d + routeIndex * 43 + side * 13),
+                            materialOverride: canalGreenMaterial);
+                        ReserveRectAsCells(bankBounds, roadResult.RoadCells, mapOrigin);
+                        greenBanks += bankPatchCount;
+
+                        uint detailHash = HashGroundPatch(cell.x, cell.y, 0x6d2f + routeIndex * 31 + side);
+                        Rect detailFootprint = new(
+                            bankCenter.x - 1.2f,
+                            bankCenter.y - 1.2f,
+                            2.4f,
+                            2.4f);
+                        if (OverlapsRoadCell(detailFootprint, originalRoadCells, mapOrigin))
+                            continue;
+
+                        if ((cellIndex + routeIndex + side + 3) % 5 == 0)
+                        {
+                            if (InstantiateGroundedDetail(
+                                    streetLightPrefab,
+                                    detailRootObject.transform,
+                                    $"CanalStreetLight_{routeIndex:00}_{cellIndex:000}_{side}",
+                                    bankCenter,
+                                    gradeElevation + 0.03f,
+                                    route.Horizontal ? 0f : 90f,
+                                    1f))
+                            {
+                                streetLights++;
+                            }
+                        }
+                        else if ((cellIndex + routeIndex + side + 3) % 3 == 0)
+                        {
+                            GameObject treePrefab = canalTreePrefabs[
+                                (int)(detailHash % (uint)canalTreePrefabs.Length)];
+                            if (InstantiateGroundedDetail(
+                                    treePrefab,
+                                    detailRootObject.transform,
+                                    $"CanalTree_{routeIndex:00}_{cellIndex:000}_{side}",
+                                    bankCenter,
+                                    gradeElevation + 0.03f,
+                                    Hash01(detailHash) * 360f,
+                                    Mathf.Lerp(0.78f, 1.08f, Hash01(detailHash ^ 0x45f0a113u))))
+                            {
+                                trees++;
+                            }
+                        }
+                        else if ((cellIndex + side + 5) % 2 == 0)
+                        {
+                            if (InstantiateGroundedDetail(
+                                    bushPrefab,
+                                    detailRootObject.transform,
+                                    $"CanalBush_{routeIndex:00}_{cellIndex:000}_{side}",
+                                    bankCenter,
+                                    gradeElevation + 0.03f,
+                                    Hash01(detailHash ^ 0x18d7b3a5u) * 360f,
+                                    Mathf.Lerp(0.72f, 1.05f, Hash01(detailHash ^ 0xa250c711u))))
+                            {
+                                bushes++;
+                            }
+                        }
+                    }
+                }
+
+                if (TryAddCanalPocketPark(
+                        route,
+                        routeIndex,
+                        mapOrigin,
+                        gradeElevation,
+                        authoredCoreBounds,
+                        cityFootprint,
+                        originalRoadCells,
+                        roadResult.RoadCells,
+                        bankPrefabs,
+                        canalTreePrefabs[(routeIndex + 1) % canalTreePrefabs.Length],
+                        bushPrefab,
+                        streetLightPrefab,
+                        canalGreenMaterial,
+                        parkRootObject.transform,
+                        detailRootObject.transform,
+                        out int parkTrees,
+                        out int parkBushes,
+                        out int parkLights))
+                {
+                    parkAreas++;
+                    trees += parkTrees;
+                    bushes += parkBushes;
+                    streetLights += parkLights;
+                }
+            }
+
+            if (removedCrossingRoads != bridges + removedUnbridgedCrossings)
+            {
+                throw new InvalidOperationException(
+                    $"Dense city canal bridge audit failed: bridges={bridges} " +
+                    $"unbridgedCrossings={removedUnbridgedCrossings} " +
+                    $"removedCrossingRoads={removedCrossingRoads}.");
+            }
+            Debug.Log(
+                $"[DenseCityCanalBridgeAudit] bridges={bridges} " +
+                $"removedCrossingRoads={removedCrossingRoads} " +
+                $"unbridgedCrossings={removedUnbridgedCrossings} " +
+                $"removedUnbridgedRoadStubTiles={removedUnbridgedRoadStubTiles} " +
+                $"highwayUnderpasses={highwayUnderpasses} orientation=roadAxis");
+
+            SetStaticRecursively(canalObject);
+            return new CanalBakeResult(
+                routes.Count,
+                waterTiles,
+                bridges,
+                greenBanks,
+                parkAreas,
+                trees,
+                bushes,
+                streetLights,
+                highwayConflicts);
+        }
+
+        private static List<CanalRoute> BuildCanalRoutes(
+            Vector3 mapOrigin,
+            int maximumColumn,
+            int maximumRow,
+            Rect authoredCoreBounds,
+            Vector2 civicCenter,
+            CityFootprint cityFootprint,
+            TerrainViabilityMap terrainMap,
+            RoadBakeResult roadResult,
+            uint seed)
+        {
+            var routes = new List<CanalRoute>();
+            float[] preferredFractions = { 0.31f, 0.69f };
+            var civicHallAndBazaarExclusion = Rect.MinMaxRect(
+                civicCenter.x - 175f,
+                civicCenter.y - 120f,
+                civicCenter.x + 175f,
+                civicCenter.y + 195f);
+            var selectedRows = new List<int>();
+            var selectedColumns = new List<int>();
+            int mountainBuryCells = 12;
+            int minimumCanalSpacingCells = 12;
+            _ = seed;
+            _ = cityFootprint;
+            _ = terrainMap;
+
+            for (int specificationIndex = 0; specificationIndex < preferredFractions.Length; specificationIndex++)
+            {
+                int preferredRow = Mathf.RoundToInt(maximumRow * preferredFractions[specificationIndex]);
+                if (TryFindStraightCanalRow(preferredRow, out int selectedRow))
+                {
+                    var cells = new List<Vector2Int>(maximumColumn + mountainBuryCells * 2 + 1);
+                    for (int column = -mountainBuryCells;
+                         column <= maximumColumn + mountainBuryCells;
+                         column++)
+                    {
+                        cells.Add(new Vector2Int(column, selectedRow));
+                    }
+
+                    routes.Add(new CanalRoute(horizontal: true, cells));
+                    selectedRows.Add(selectedRow);
+                    Debug.Log(
+                        $"[DenseCityCanalRoute] waterway={specificationIndex:00} cells={cells.Count} " +
+                        $"row={selectedRow} axis=west-east straight=1 turns=0 mountainBuriedEnds=1");
+                    continue;
+                }
+
+                int preferredColumn = Mathf.RoundToInt(maximumColumn * preferredFractions[specificationIndex]);
+                if (!TryFindStraightCanalColumn(preferredColumn, out int selectedColumn))
+                {
+                    Debug.LogWarning(
+                        $"[DenseCityCanalRoute] skipped preferredRow={preferredRow} " +
+                        $"preferredColumn={preferredColumn} " +
+                        "because no straight protected-area-clear corridor was available.");
+                    continue;
+                }
+
+                var verticalCells = new List<Vector2Int>(maximumRow + mountainBuryCells * 2 + 1);
+                for (int row = -mountainBuryCells;
+                     row <= maximumRow + mountainBuryCells;
+                     row++)
+                {
+                    verticalCells.Add(new Vector2Int(selectedColumn, row));
+                }
+
+                routes.Add(new CanalRoute(horizontal: false, verticalCells));
+                selectedColumns.Add(selectedColumn);
+                Debug.Log(
+                    $"[DenseCityCanalRoute] waterway={specificationIndex:00} cells={verticalCells.Count} " +
+                    $"column={selectedColumn} axis=north-south straight=1 turns=0 mountainBuriedEnds=1");
+            }
+
+            if (routes.Count < 2)
+            {
+                throw new InvalidOperationException(
+                    $"Dense city requires at least two straight mountain-to-mountain canals; " +
+                    $"generated={routes.Count}.");
+            }
+            return routes;
+
+            bool TryFindStraightCanalRow(int preferredRow, out int selectedRow)
+            {
+                int bestRow = -1;
+                int bestBlockerCount = int.MaxValue;
+                for (int radius = 0; radius <= maximumRow / 2; radius++)
+                {
+                    int preferredDirection = ((seed + (uint)radius) & 1u) == 0u ? 1 : -1;
+                    int attemptCount = radius == 0 ? 1 : 2;
+                    for (int attempt = 0; attempt < attemptCount; attempt++)
+                    {
+                        int row = preferredRow + radius * (attempt == 0
+                            ? preferredDirection
+                            : -preferredDirection);
+                        if (row < 2 || row > maximumRow - 2 ||
+                            IsNearSelectedCanal(row))
+                        {
+                            continue;
+                        }
+
+                        int blockerCount = CountStraightCorridorBlockers(row);
+                        if (blockerCount < bestBlockerCount)
+                        {
+                            bestBlockerCount = blockerCount;
+                            bestRow = row;
+                        }
+                        if (blockerCount > 0)
+                            continue;
+
+                        selectedRow = row;
+                        return true;
+                    }
+                }
+
+                Debug.LogWarning(
+                    $"[DenseCityCanalRouteAudit] preferredRow={preferredRow} " +
+                    $"bestRow={bestRow} blockers={bestBlockerCount}");
+                selectedRow = default;
+                return false;
+            }
+
+            bool IsNearSelectedCanal(int row)
+            {
+                for (int index = 0; index < selectedRows.Count; index++)
+                {
+                    if (Mathf.Abs(selectedRows[index] - row) < minimumCanalSpacingCells)
+                        return true;
+                }
+                return false;
+            }
+
+            bool TryFindStraightCanalColumn(int preferredColumn, out int selectedColumn)
+            {
+                int bestColumn = -1;
+                int bestBlockerCount = int.MaxValue;
+                for (int radius = 0; radius <= maximumColumn / 2; radius++)
+                {
+                    int preferredDirection = ((seed + (uint)radius) & 1u) == 0u ? 1 : -1;
+                    int attemptCount = radius == 0 ? 1 : 2;
+                    for (int attempt = 0; attempt < attemptCount; attempt++)
+                    {
+                        int column = preferredColumn + radius * (attempt == 0
+                            ? preferredDirection
+                            : -preferredDirection);
+                        if (column < 2 || column > maximumColumn - 2 ||
+                            IsNearSelectedColumn(column))
+                        {
+                            continue;
+                        }
+
+                        int blockerCount = CountStraightColumnBlockers(column);
+                        if (blockerCount < bestBlockerCount)
+                        {
+                            bestBlockerCount = blockerCount;
+                            bestColumn = column;
+                        }
+                        if (blockerCount > 0 &&
+                            !IsContiguousProtectedUnderpassColumn(column, maximumCells: 6))
+                            continue;
+
+                        selectedColumn = column;
+                        return true;
+                    }
+                }
+
+                Debug.LogWarning(
+                    $"[DenseCityCanalRouteAudit] preferredColumn={preferredColumn} " +
+                    $"bestColumn={bestColumn} blockers={bestBlockerCount}");
+                LogStraightColumnBlockerBreakdown(bestColumn);
+                selectedColumn = default;
+                return false;
+            }
+
+            bool IsNearSelectedColumn(int column)
+            {
+                for (int index = 0; index < selectedColumns.Count; index++)
+                {
+                    if (Mathf.Abs(selectedColumns[index] - column) < minimumCanalSpacingCells)
+                        return true;
+                }
+                return false;
+            }
+
+            int CountStraightCorridorBlockers(int row)
+            {
+                int blockers = 0;
+                for (int column = 2; column <= maximumColumn - 2; column++)
+                {
+                    var cell = new Vector2Int(column, row);
+                    Vector2 center = RoadCellWorldCenter(cell, mapOrigin);
+                    if (authoredCoreBounds.Contains(center) ||
+                        civicHallAndBazaarExclusion.Contains(center) ||
+                        !cityFootprint.IsAreaClear(
+                            center,
+                            RoadGridSize * 0.55f,
+                            RoadGridSize * 0.55f) ||
+                        IsNearParallelBoulevard(cell, 4, horizontalCanal: true))
+                    {
+                        blockers++;
+                    }
+                }
+
+                return blockers;
+            }
+
+            bool IsContiguousProtectedUnderpassColumn(int column, int maximumCells)
+            {
+                int protectedCellCount = 0;
+                int previousProtectedRow = -2;
+                for (int row = 2; row <= maximumRow - 2; row++)
+                {
+                    var cell = new Vector2Int(column, row);
+                    Vector2 center = RoadCellWorldCenter(cell, mapOrigin);
+                    if (authoredCoreBounds.Contains(center) ||
+                        civicHallAndBazaarExclusion.Contains(center) ||
+                        IsNearParallelBoulevard(cell, 4, horizontalCanal: false))
+                    {
+                        return false;
+                    }
+
+                    if (cityFootprint.IsAreaClear(
+                            center,
+                            RoadGridSize * 0.55f,
+                            RoadGridSize * 0.55f))
+                    {
+                        continue;
+                    }
+
+                    if (protectedCellCount > 0 && row != previousProtectedRow + 1)
+                        return false;
+
+                    protectedCellCount++;
+                    previousProtectedRow = row;
+                    if (protectedCellCount > maximumCells)
+                        return false;
+                }
+
+                return protectedCellCount > 0;
+            }
+
+            int CountStraightColumnBlockers(int column)
+            {
+                int blockers = 0;
+                for (int row = 2; row <= maximumRow - 2; row++)
+                {
+                    var cell = new Vector2Int(column, row);
+                    Vector2 center = RoadCellWorldCenter(cell, mapOrigin);
+                    if (authoredCoreBounds.Contains(center) ||
+                        civicHallAndBazaarExclusion.Contains(center) ||
+                        !cityFootprint.IsAreaClear(
+                            center,
+                            RoadGridSize * 0.55f,
+                            RoadGridSize * 0.55f) ||
+                        IsNearParallelBoulevard(cell, 4, horizontalCanal: false))
+                    {
+                        blockers++;
+                    }
+                }
+
+                return blockers;
+            }
+
+            void LogStraightColumnBlockerBreakdown(int column)
+            {
+                int authoredCore = 0;
+                int civic = 0;
+                int protectedGeometry = 0;
+                int parallelBoulevard = 0;
+                var protectedRows = new List<int>();
+                for (int row = 2; row <= maximumRow - 2; row++)
+                {
+                    var cell = new Vector2Int(column, row);
+                    Vector2 center = RoadCellWorldCenter(cell, mapOrigin);
+                    if (authoredCoreBounds.Contains(center))
+                        authoredCore++;
+                    if (civicHallAndBazaarExclusion.Contains(center))
+                        civic++;
+                    if (!cityFootprint.IsAreaClear(
+                            center,
+                            RoadGridSize * 0.55f,
+                            RoadGridSize * 0.55f))
+                    {
+                        protectedGeometry++;
+                        protectedRows.Add(row);
+                    }
+                    if (IsNearParallelBoulevard(cell, 4, horizontalCanal: false))
+                        parallelBoulevard++;
+                }
+
+                Debug.LogWarning(
+                    $"[DenseCityCanalRouteAuditBreakdown] column={column} " +
+                    $"authoredCore={authoredCore} civic={civic} protected={protectedGeometry} " +
+                    $"parallelBoulevard={parallelBoulevard} " +
+                    $"protectedRows={string.Join(",", protectedRows)}");
+            }
+
+            bool IsNearParallelBoulevard(
+                Vector2Int cell,
+                int clearanceCells,
+                bool horizontalCanal)
+            {
+                int minimumColumnOffset = horizontalCanal ? -1 : -clearanceCells;
+                int maximumColumnOffset = horizontalCanal ? 1 : clearanceCells;
+                int minimumRowOffset = horizontalCanal ? -clearanceCells : -1;
+                int maximumRowOffset = horizontalCanal ? clearanceCells : 1;
+                for (int rowOffset = minimumRowOffset; rowOffset <= maximumRowOffset; rowOffset++)
+                {
+                    for (int columnOffset = minimumColumnOffset;
+                         columnOffset <= maximumColumnOffset;
+                         columnOffset++)
+                    {
+                        var nearbyCell = cell + new Vector2Int(columnOffset, rowOffset);
+                        if (!roadResult.BoulevardRoadCells.Contains(nearbyCell))
+                            continue;
+
+                        int horizontalConnections =
+                            (roadResult.BoulevardRoadCells.Contains(nearbyCell + Vector2Int.left) ? 1 : 0) +
+                            (roadResult.BoulevardRoadCells.Contains(nearbyCell + Vector2Int.right) ? 1 : 0);
+                        int verticalConnections =
+                            (roadResult.BoulevardRoadCells.Contains(nearbyCell + Vector2Int.down) ? 1 : 0) +
+                            (roadResult.BoulevardRoadCells.Contains(nearbyCell + Vector2Int.up) ? 1 : 0);
+                        bool parallelBoulevard = horizontalCanal
+                            ? horizontalConnections > verticalConnections
+                            : verticalConnections > horizontalConnections;
+                        if (parallelBoulevard)
+                            return true;
+                    }
+                }
+
+                return false;
+            }
+
+        }
+
+        private static bool TryAddCanalPocketPark(
+            CanalRoute route,
+            int routeIndex,
+            Vector3 mapOrigin,
+            float gradeElevation,
+            Rect authoredCoreBounds,
+            CityFootprint cityFootprint,
+            HashSet<Vector2Int> originalRoadCells,
+            HashSet<Vector2Int> reservedCells,
+            GameObject[] roundGroundPrefabs,
+            GameObject treePrefab,
+            GameObject bushPrefab,
+            GameObject streetLightPrefab,
+            Material greenMaterial,
+            Transform parkRoot,
+            Transform detailRoot,
+            out int trees,
+            out int bushes,
+            out int lights)
+        {
+            trees = 0;
+            bushes = 0;
+            lights = 0;
+            if (route.Cells.Count < 9)
+                return false;
+
+            Vector2 parkCenter = default;
+            Rect parkBounds = default;
+            bool foundParkSite = false;
+            int middle = route.Cells.Count / 2;
+            for (int radius = 0; radius <= middle && !foundParkSite; radius++)
+            {
+                for (int directionIndex = 0; directionIndex < (radius == 0 ? 1 : 2) && !foundParkSite; directionIndex++)
+                {
+                    int routeCellIndex = middle + radius * (directionIndex == 0 ? 1 : -1);
+                    if (routeCellIndex < 0 || routeCellIndex >= route.Cells.Count)
+                        continue;
+                    Vector2Int routeCell = route.Cells[routeCellIndex];
+                    for (int sideIndex = 0; sideIndex < 2; sideIndex++)
+                    {
+                        int side = ((routeIndex + sideIndex) & 1) == 0 ? 1 : -1;
+                        Vector2Int parkCell = routeCell + (route.Horizontal
+                            ? new Vector2Int(0, side)
+                            : new Vector2Int(side, 0));
+                        if (originalRoadCells.Contains(routeCell) || originalRoadCells.Contains(parkCell))
+                            continue;
+
+                        parkCenter = RoadCellWorldCenter(parkCell, mapOrigin);
+                        parkBounds = new Rect(parkCenter.x - 4.2f, parkCenter.y - 4.2f, 8.4f, 8.4f);
+                        if (!authoredCoreBounds.Overlaps(parkBounds) &&
+                            cityFootprint.IsAreaClear(parkBounds) &&
+                            cityFootprint.Contains(parkCenter, 0.04f) &&
+                            !OverlapsRoadCell(parkBounds, originalRoadCells, mapOrigin))
+                        {
+                            foundParkSite = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (!foundParkSite)
+                return false;
+
+            var parkObject = new GameObject($"CanalPocketPark_{routeIndex:00}");
+            parkObject.transform.SetParent(parkRoot, false);
+            InstantiateOrganicCanalPark(
+                roundGroundPrefabs,
+                parkObject.transform,
+                "Ground",
+                parkCenter,
+                gradeElevation + 0.065f,
+                parkBounds.width,
+                parkBounds.height,
+                HashGroundPatch(routeIndex, route.Cells.Count, 0x4ac3),
+                greenMaterial);
+            ReserveRectAsCells(parkBounds, reservedCells, mapOrigin);
+
+            Vector2[] treeOffsets =
+            {
+                new(-2.5f, -2.3f),
+                new(2.5f, 2.3f)
+            };
+            for (int index = 0; index < treeOffsets.Length; index++)
+            {
+                if (InstantiateGroundedDetail(
+                        treePrefab,
+                        detailRoot,
+                        $"CanalParkTree_{routeIndex:00}_{index:00}",
+                        parkCenter + treeOffsets[index],
+                        gradeElevation + 0.03f,
+                        (routeIndex * 73f + index * 91f) % 360f,
+                        0.62f + index % 2 * 0.1f))
+                {
+                    trees++;
+                }
+            }
+
+            Vector2[] bushOffsets = { new(-1.8f, 1.7f), new(1.8f, -1.7f) };
+            for (int index = 0; index < bushOffsets.Length; index++)
+            {
+                if (InstantiateGroundedDetail(
+                        bushPrefab,
+                        detailRoot,
+                        $"CanalParkBush_{routeIndex:00}_{index:00}",
+                        parkCenter + bushOffsets[index],
+                        gradeElevation + 0.03f,
+                        index * 180f,
+                        0.9f))
+                {
+                    bushes++;
+                }
+            }
+
+            Vector2 lightOffset = route.Horizontal ? new Vector2(0f, 3.1f) : new Vector2(3.1f, 0f);
+            if (InstantiateGroundedDetail(
+                    streetLightPrefab,
+                    detailRoot,
+                    $"CanalParkLight_{routeIndex:00}",
+                    parkCenter + lightOffset,
+                    gradeElevation + 0.03f,
+                    route.Horizontal ? 90f : 0f,
+                    1f))
+            {
+                lights++;
+            }
+
+            return true;
+        }
+
+        private static void ReserveRectAsCells(
+            Rect bounds,
+            HashSet<Vector2Int> cells,
+            Vector3 mapOrigin)
+        {
+            int minimumColumn = Mathf.FloorToInt((bounds.xMin - mapOrigin.x) / RoadGridSize);
+            int maximumColumn = Mathf.FloorToInt((bounds.xMax - mapOrigin.x) / RoadGridSize);
+            int minimumRow = Mathf.FloorToInt((bounds.yMin - mapOrigin.z) / RoadGridSize);
+            int maximumRow = Mathf.FloorToInt((bounds.yMax - mapOrigin.z) / RoadGridSize);
+            for (int column = minimumColumn; column <= maximumColumn; column++)
+            {
+                for (int row = minimumRow; row <= maximumRow; row++)
+                    cells.Add(new Vector2Int(column, row));
+            }
+        }
+
+        private static int InstantiateRoundCanalBankCluster(
+            GameObject[] roundBankPrefabs,
+            Transform parent,
+            string objectName,
+            Vector2 center,
+            float topElevation,
+            float targetWidth,
+            float targetDepth,
+            bool horizontalCanal,
+            uint detailHashSeed,
+            Material materialOverride)
+        {
+            if (roundBankPrefabs == null || roundBankPrefabs.Length == 0)
+                throw new InvalidOperationException("Round canal bank prefabs are required.");
+
+            float alongLength = horizontalCanal ? targetWidth : targetDepth;
+            float crossLength = horizontalCanal ? targetDepth : targetWidth;
+            Vector2 alongAxis = horizontalCanal ? Vector2.right : Vector2.up;
+            float asymmetry = Mathf.Lerp(-0.08f, 0.08f, Hash01(detailHashSeed));
+            float edgeOffset = alongLength * (0.27f + asymmetry);
+            int created = 0;
+
+            CreatePatch("Core", Vector2.zero, alongLength * 0.8f, crossLength, detailHashSeed);
+            CreatePatch("Leading", -alongAxis * edgeOffset, alongLength * 0.62f, crossLength * 0.88f,
+                detailHashSeed ^ 0x61e5a2b7u);
+            CreatePatch("Trailing", alongAxis * edgeOffset, alongLength * 0.58f, crossLength * 0.94f,
+                detailHashSeed ^ 0x9d34c117u);
+            return created;
+
+            void CreatePatch(string suffix, Vector2 offset, float patchAlong, float patchCross, uint hash)
+            {
+                GameObject prefab = roundBankPrefabs[(int)(hash % (uint)roundBankPrefabs.Length)];
+                float width = horizontalCanal ? patchAlong : patchCross;
+                float depth = horizontalCanal ? patchCross : patchAlong;
+                CreateCanalEllipseSurface(
+                    parent,
+                    $"{objectName}_{suffix}_GreenBase",
+                    center + offset,
+                    topElevation - 0.006f,
+                    width * 1.04f,
+                    depth * 1.04f,
+                    0.04f,
+                    materialOverride);
+                InstantiateScaledCanalSurface(
+                    prefab,
+                    parent,
+                    $"{objectName}_{suffix}",
+                    center + offset,
+                    topElevation + created * 0.002f,
+                    width,
+                    depth,
+                    materialOverride);
+                created++;
+            }
+        }
+
+        private static void InstantiateOrganicCanalPark(
+            GameObject[] roundGroundPrefabs,
+            Transform parent,
+            string objectName,
+            Vector2 center,
+            float topElevation,
+            float targetWidth,
+            float targetDepth,
+            uint detailHashSeed,
+            Material materialOverride)
+        {
+            if (roundGroundPrefabs == null || roundGroundPrefabs.Length == 0)
+                throw new InvalidOperationException("Round canal park prefabs are required.");
+
+            Vector2[] offsets =
+            {
+                Vector2.zero,
+                new(-targetWidth * 0.24f, -targetDepth * 0.1f),
+                new(targetWidth * 0.23f, targetDepth * 0.12f),
+                new(-targetWidth * 0.06f, targetDepth * 0.25f),
+                new(targetWidth * 0.08f, -targetDepth * 0.24f)
+            };
+            for (int index = 0; index < offsets.Length; index++)
+            {
+                uint hash = detailHashSeed ^ (uint)(0x19d7 + index * 0x2719);
+                GameObject prefab = roundGroundPrefabs[(int)(hash % (uint)roundGroundPrefabs.Length)];
+                float widthScale = index == 0 ? 0.78f : Mathf.Lerp(0.48f, 0.62f, Hash01(hash));
+                float depthScale = index == 0 ? 0.76f : Mathf.Lerp(0.46f, 0.6f, Hash01(hash ^ 0x7f2419adu));
+                CreateCanalEllipseSurface(
+                    parent,
+                    $"{objectName}_Round_{index:00}_GreenBase",
+                    center + offsets[index],
+                    topElevation - 0.006f + index * 0.002f,
+                    targetWidth * widthScale * 1.04f,
+                    targetDepth * depthScale * 1.04f,
+                    0.04f,
+                    materialOverride);
+                InstantiateScaledCanalSurface(
+                    prefab,
+                    parent,
+                    $"{objectName}_Round_{index:00}",
+                    center + offsets[index],
+                    topElevation + index * 0.002f,
+                    targetWidth * widthScale,
+                    targetDepth * depthScale,
+                    materialOverride);
+            }
+        }
+
+        private static GameObject CreateCanalEllipseSurface(
+            Transform parent,
+            string objectName,
+            Vector2 center,
+            float topElevation,
+            float targetWidth,
+            float targetDepth,
+            float thickness,
+            Material material)
+        {
+            GameObject surface = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            surface.name = objectName;
+            surface.transform.SetParent(parent, false);
+            float resolvedThickness = Mathf.Max(0.01f, thickness);
+            surface.transform.SetPositionAndRotation(
+                new Vector3(center.x, topElevation - resolvedThickness * 0.5f, center.y),
+                Quaternion.identity);
+            surface.transform.localScale = new Vector3(
+                targetWidth,
+                resolvedThickness * 0.5f,
+                targetDepth);
+            Renderer renderer = surface.GetComponent<Renderer>();
+            if (renderer != null)
+                renderer.sharedMaterial = material;
+            DisableColliders(surface);
+            return surface;
+        }
+
+        private static GameObject InstantiateScaledCanalSurface(
+            GameObject prefab,
+            Transform parent,
+            string objectName,
+            Vector2 center,
+            float topElevation,
+            float targetWidth,
+            float targetDepth,
+            Material materialOverride)
+        {
+            GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
+            instance.name = objectName;
+            instance.transform.SetPositionAndRotation(
+                new Vector3(center.x, 0f, center.y),
+                Quaternion.identity);
+            instance.transform.localScale = Vector3.one;
+            if (!TryGetRendererBounds(instance, out Bounds sourceBounds))
+                throw new InvalidOperationException($"Canal prefab '{prefab.name}' has no renderer bounds.");
+
+            instance.transform.localScale = new Vector3(
+                targetWidth / Mathf.Max(0.01f, sourceBounds.size.x),
+                1f,
+                targetDepth / Mathf.Max(0.01f, sourceBounds.size.z));
+            if (!TryGetRendererBounds(instance, out Bounds scaledBounds))
+                throw new InvalidOperationException($"Canal prefab '{prefab.name}' lost renderer bounds after scaling.");
+            Vector3 position = instance.transform.position;
+            position.x += center.x - scaledBounds.center.x;
+            position.y += topElevation - scaledBounds.max.y;
+            position.z += center.y - scaledBounds.center.z;
+            instance.transform.position = position;
+            DisableColliders(instance);
+
+            if (materialOverride != null)
+            {
+                Renderer[] renderers = instance.GetComponentsInChildren<Renderer>(true);
+                for (int index = 0; index < renderers.Length; index++)
+                    renderers[index].sharedMaterial = materialOverride;
+            }
+
+            return instance;
+        }
+
+        private static GameObject CreateCanalCubeSurface(
+            Transform parent,
+            string objectName,
+            Vector2 center,
+            float topElevation,
+            float targetWidth,
+            float targetDepth,
+            float thickness,
+            Material material)
+        {
+            GameObject surface = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            surface.name = objectName;
+            surface.transform.SetParent(parent, false);
+            float resolvedThickness = Mathf.Max(0.01f, thickness);
+            surface.transform.SetPositionAndRotation(
+                new Vector3(center.x, topElevation - resolvedThickness * 0.5f, center.y),
+                Quaternion.identity);
+            surface.transform.localScale = new Vector3(
+                targetWidth,
+                resolvedThickness,
+                targetDepth);
+            Renderer renderer = surface.GetComponent<Renderer>();
+            if (renderer != null)
+                renderer.sharedMaterial = material;
+            DisableColliders(surface);
+            return surface;
+        }
+
+        private static GameObject InstantiateCanalBridge(
+            GameObject prefab,
+            Transform parent,
+            string objectName,
+            Vector2 center,
+            float supportElevation,
+            bool roadAxisAlongWorldX)
+        {
+            GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
+            instance.name = objectName;
+            instance.transform.SetPositionAndRotation(
+                new Vector3(center.x, 0f, center.y),
+                Quaternion.identity);
+            instance.transform.localScale = Vector3.one;
+            if (!TryGetRendererBounds(instance, out Bounds sourceBounds))
+                throw new InvalidOperationException($"Canal bridge prefab '{prefab.name}' has no renderer bounds.");
+
+            // SM_Env_Bridge_01 is authored with its traversable road deck on local Z.
+            instance.transform.rotation = roadAxisAlongWorldX
+                ? Quaternion.Euler(0f, 90f, 0f)
+                : Quaternion.identity;
+            float crossAxisScale = RoadGridSize * 0.86f / Mathf.Max(0.01f, sourceBounds.size.x);
+            float roadAxisScale = RoadGridSize * 1.28f / Mathf.Max(0.01f, sourceBounds.size.z);
+            instance.transform.localScale = new Vector3(
+                crossAxisScale,
+                Mathf.Min(roadAxisScale, 1.15f),
+                roadAxisScale);
+            Vector3 expectedRoadAxis = roadAxisAlongWorldX ? Vector3.right : Vector3.forward;
+            if (Mathf.Abs(Vector3.Dot(instance.transform.forward, expectedRoadAxis)) < 0.999f)
+            {
+                throw new InvalidOperationException(
+                    $"Canal bridge '{objectName}' does not align with its connected road axis.");
+            }
+            if (!TryGetRendererBounds(instance, out Bounds scaledBounds))
+                throw new InvalidOperationException($"Canal bridge prefab '{prefab.name}' lost renderer bounds after scaling.");
+            Vector3 position = instance.transform.position;
+            position.x += center.x - scaledBounds.center.x;
+            position.z += center.y - scaledBounds.center.z;
+            // The authored bridge root is its road-deck grade. Align it directly with
+            // the removed road tile instead of lifting the bridge by its lowest support.
+            position.y = supportElevation;
+            instance.transform.position = position;
+            if (!TryGetRendererBounds(instance, out Bounds placedBounds) ||
+                Vector2.Distance(
+                    new Vector2(placedBounds.center.x, placedBounds.center.z),
+                    center) > 0.01f)
+            {
+                throw new InvalidOperationException(
+                    $"Canal bridge '{objectName}' visual center does not match its canal crossing center.");
+            }
+            if (Mathf.Abs(instance.transform.position.y - supportElevation) > 0.001f)
+            {
+                throw new InvalidOperationException(
+                    $"Canal bridge '{objectName}' deck grade does not match its connected road grade.");
+            }
+            DisableColliders(instance);
+            return instance;
+        }
+
+        private static bool TryResolveBridgeThroughRoadAxisAlongX(
+            Vector2Int cell,
+            HashSet<Vector2Int> roadCells,
+            HashSet<Vector2Int> boulevardRoadCells,
+            bool horizontalCanal,
+            out bool roadAxisAlongWorldX)
+        {
+            bool axisAlongWorldX = !horizontalCanal;
+            roadAxisAlongWorldX = axisAlongWorldX;
+            Vector2Int negativeDirection = axisAlongWorldX
+                ? Vector2Int.left
+                : Vector2Int.down;
+            Vector2Int positiveDirection = -negativeDirection;
+
+            // Immediate neighbours are insufficient: a short road fragment can
+            // exist on both banks and still terminate shortly after the bridge.
+            // Require each approach to reconnect to a perpendicular street or a
+            // boulevard before permitting a bridge.
+            return BranchReconnectsToRoadNetwork(negativeDirection) &&
+                   BranchReconnectsToRoadNetwork(positiveDirection);
+
+            bool BranchReconnectsToRoadNetwork(Vector2Int direction)
+            {
+                Vector2Int cursor = cell + direction;
+                for (int distance = 0; distance < 128; distance++, cursor += direction)
+                {
+                    if (!roadCells.Contains(cursor))
+                        return false;
+                    if (boulevardRoadCells.Contains(cursor))
+                        return true;
+
+                    bool hasPerpendicularConnection = axisAlongWorldX
+                        ? roadCells.Contains(cursor + Vector2Int.up) ||
+                          roadCells.Contains(cursor + Vector2Int.down)
+                        : roadCells.Contains(cursor + Vector2Int.left) ||
+                          roadCells.Contains(cursor + Vector2Int.right);
+                    if (hasPerpendicularConnection)
+                        return true;
+                }
+
+                return false;
+            }
+        }
+
+        private static bool HasBridgeSpacing(
+            Vector2Int candidate,
+            List<Vector2Int> existingBridgeCells,
+            int minimumCellDistance)
+        {
+            for (int index = 0; index < existingBridgeCells.Count; index++)
+            {
+                Vector2Int delta = existingBridgeCells[index] - candidate;
+                int gridDistance = Mathf.Abs(delta.x) + Mathf.Abs(delta.y);
+                if (gridDistance < minimumCellDistance)
+                    return false;
+            }
+
+            return true;
+        }
+
+        private static float ResolveCanalBankThickness(
+            CanalRoute route,
+            int routeIndex,
+            int cellIndex,
+            int side,
+            Vector2 canalCenter,
+            Vector2 bankAxis,
+            HashSet<Vector2Int> originalRoadCells,
+            Vector3 mapOrigin)
+        {
+            int nearestCrossingDistance = route.Cells.Count;
+            for (int index = 0; index < route.Cells.Count; index++)
+            {
+                if (originalRoadCells.Contains(route.Cells[index]))
+                    nearestCrossingDistance = Mathf.Min(nearestCrossingDistance, Mathf.Abs(index - cellIndex));
+            }
+
+            float wave = 0.5f + 0.5f * Mathf.Sin((cellIndex + routeIndex * 9) * 0.31f);
+            uint widthHash = HashGroundPatch(
+                route.Cells[cellIndex].x,
+                route.Cells[cellIndex].y,
+                0x51d3 + routeIndex * 37 + side * 11);
+            float irregularity = Hash01(widthHash ^ 0x87c91a3du);
+            float widthBlend = Mathf.Clamp01(wave * 0.72f + irregularity * 0.28f);
+            float desiredThickness = Mathf.Lerp(
+                RoadGridSize * 0.48f,
+                RoadGridSize * 1.42f,
+                widthBlend);
+            if (nearestCrossingDistance <= 1)
+                desiredThickness = RoadGridSize * 0.28f;
+            else if (nearestCrossingDistance == 2)
+                desiredThickness = Mathf.Min(desiredThickness, RoadGridSize * 0.52f);
+
+            const float minimumThickness = RoadGridSize * 0.26f;
+            float canalHalfWidth = RoadGridSize * 0.32f;
+            for (float thickness = desiredThickness;
+                 thickness >= minimumThickness;
+                 thickness -= RoadGridSize * 0.12f)
+            {
+                Vector2 center = canalCenter + bankAxis *
+                    ((canalHalfWidth + thickness * 0.5f - 0.12f) * side);
+                float width = route.Horizontal ? RoadGridSize * 1.02f : thickness;
+                float depth = route.Horizontal ? thickness : RoadGridSize * 1.02f;
+                var bounds = new Rect(
+                    center.x - width * 0.5f + 0.04f,
+                    center.y - depth * 0.5f + 0.04f,
+                    width - 0.08f,
+                    depth - 0.08f);
+                if (!OverlapsRoadCell(bounds, originalRoadCells, mapOrigin))
+                    return thickness;
+            }
+
+            return minimumThickness;
+        }
+
+        private static float RemoveRoadVisualAtCanalCrossing(
+            RoadBakeResult roadResult,
+            Vector2Int cell)
+        {
+            if (!roadResult.RoadTileObjects.TryGetValue(cell, out GameObject roadTile) || roadTile == null)
+            {
+                throw new InvalidOperationException(
+                    $"Canal crossing at road cell {cell} has no instantiated road tile to replace.");
+            }
+
+            float roadElevation = roadTile.transform.position.y;
+            roadResult.RoadTileObjects.Remove(cell);
+            UnityEngine.Object.DestroyImmediate(roadTile);
+            if (roadResult.RoadGroundPatchObjects.TryGetValue(cell, out GameObject groundPatch))
+            {
+                roadResult.RoadGroundPatchObjects.Remove(cell);
+                if (groundPatch != null)
+                    UnityEngine.Object.DestroyImmediate(groundPatch);
+            }
+
+            return roadElevation;
+        }
+
+        private static int RemoveUnbridgedCanalRoadApproaches(
+            RoadBakeResult roadResult,
+            HashSet<Vector2Int> originalRoadCells,
+            Vector2Int crossingCell,
+            bool roadAxisAlongWorldX)
+        {
+            originalRoadCells.Remove(crossingCell);
+            roadResult.DirtRoadCells.Remove(crossingCell);
+
+            Vector2Int negativeDirection = roadAxisAlongWorldX
+                ? Vector2Int.left
+                : Vector2Int.down;
+            Vector2Int positiveDirection = -negativeDirection;
+            int removed = 0;
+            removed += RemoveApproach(negativeDirection);
+            removed += RemoveApproach(positiveDirection);
+            return removed;
+
+            int RemoveApproach(Vector2Int direction)
+            {
+                int removedInDirection = 0;
+                Vector2Int cursor = crossingCell + direction;
+                for (int distance = 0; distance < 128; distance++, cursor += direction)
+                {
+                    if (!originalRoadCells.Contains(cursor) ||
+                        roadResult.BoulevardRoadCells.Contains(cursor) ||
+                        IsConnectedRoadJunction(cursor))
+                    {
+                        break;
+                    }
+
+                    RemoveRoadVisualIfPresent(roadResult, cursor);
+                    originalRoadCells.Remove(cursor);
+                    roadResult.RoadCells.Remove(cursor);
+                    roadResult.DirtRoadCells.Remove(cursor);
+                    removedInDirection++;
+                }
+
+                return removedInDirection;
+            }
+
+            bool IsConnectedRoadJunction(Vector2Int cell)
+            {
+                if (roadAxisAlongWorldX)
+                {
+                    return originalRoadCells.Contains(cell + Vector2Int.up) ||
+                           originalRoadCells.Contains(cell + Vector2Int.down);
+                }
+
+                return originalRoadCells.Contains(cell + Vector2Int.left) ||
+                       originalRoadCells.Contains(cell + Vector2Int.right);
+            }
+        }
+
+        private static void RemoveRoadVisualIfPresent(
+            RoadBakeResult roadResult,
+            Vector2Int cell)
+        {
+            if (roadResult.RoadTileObjects.TryGetValue(cell, out GameObject roadTile))
+            {
+                roadResult.RoadTileObjects.Remove(cell);
+                if (roadTile != null)
+                    UnityEngine.Object.DestroyImmediate(roadTile);
+            }
+
+            if (roadResult.RoadGroundPatchObjects.TryGetValue(cell, out GameObject groundPatch))
+            {
+                roadResult.RoadGroundPatchObjects.Remove(cell);
+                if (groundPatch != null)
+                    UnityEngine.Object.DestroyImmediate(groundPatch);
+            }
         }
 
         private static List<BoulevardCorridor> BuildBoulevardCorridors(
@@ -3066,9 +5100,13 @@ namespace Game.Editor
             TerrainViabilityMap terrainMap,
             RoadElevationPlan elevationPlan,
             SurfacePlacementContext surface,
-            CityFootprint cityFootprint)
+            CityFootprint cityFootprint,
+            out Dictionary<Vector2Int, GameObject> roadTileObjects,
+            out Dictionary<Vector2Int, GameObject> roadGroundPatchObjects)
         {
             var chunkRoots = new Dictionary<Vector2Int, Transform>();
+            roadTileObjects = new Dictionary<Vector2Int, GameObject>();
+            roadGroundPatchObjects = new Dictionary<Vector2Int, GameObject>();
             foreach (KeyValuePair<Vector2Int, RoadNetworkCompositionSystemHelper.RoadTileData> entry in network.RoadTiles)
             {
                 Vector2Int cell = entry.Key;
@@ -3120,6 +5158,7 @@ namespace Game.Editor
                 road.transform.SetPositionAndRotation(placement, variant.Rotation);
                 road.transform.localScale = variant.Scale;
                 DisableColliders(road);
+                roadTileObjects.Add(cell, road);
                 float patchHeight = 0.24f;
                 if (terrainMap.TryGetRoadPatch(cell, out SurfacePatchEvaluation roadPatch))
                     patchHeight = Mathf.Clamp(placement.y - roadPatch.MinimumHeight + 0.16f, 0.2f, 0.65f);
@@ -3130,7 +5169,7 @@ namespace Game.Editor
                         patchClearance,
                         patchClearance))
                 {
-                    CreateNaturalGroundPatch(
+                    GameObject groundPatch = CreateNaturalGroundPatch(
                         chunkRoot,
                         $"RoadGroundPatch_{cell.x}_{cell.y}",
                         placement,
@@ -3138,6 +5177,8 @@ namespace Game.Editor
                         RoadGridSize * 1.14f,
                         patchHeight,
                         HashGroundPatch(cell.x, cell.y, 0x51f2));
+                    if (groundPatch != null)
+                        roadGroundPatchObjects.Add(cell, groundPatch);
                 }
             }
 
@@ -3491,7 +5532,7 @@ namespace Game.Editor
                     if (isCentralLandmark)
                         centralLandmarks++;
                 }
-                cursor += width + 0.7f;
+                cursor += width + (bazaar ? 0.08f : 0.7f);
             }
             return new UrbanBlockBakeResult(count, centralLandmarks, count);
         }
@@ -3552,7 +5593,7 @@ namespace Game.Editor
                     if (isCentralLandmark)
                         centralLandmarks++;
                 }
-                cursor += depth + 0.7f;
+                cursor += depth + (bazaar ? 0.08f : 0.7f);
             }
             return new UrbanBlockBakeResult(count, centralLandmarks, count);
         }
@@ -3962,6 +6003,8 @@ namespace Game.Editor
         {
             List<GeneratedBuildingInfo> buildings = CollectGeneratedBuildings(generatedRoot);
             GameObject[] waterTanks = LoadRequiredPrefabs(RooftopWaterTankPrefabPaths);
+            GameObject[] rooftopUtilities = LoadRequiredPrefabs(RooftopUtilityPrefabPaths);
+            GameObject[] shopWallProps = LoadRequiredPrefabs(ShopWallPropPrefabPaths);
             GameObject[] streetProps = LoadRequiredPrefabs(StreetPropPrefabPaths);
             GameObject[] trees = LoadRequiredPrefabs(DenseTreePrefabPaths);
             GameObject[] rocks = LoadRequiredPrefabs(UrbanRockPrefabPaths);
@@ -3978,6 +6021,10 @@ namespace Game.Editor
 
             var rooftopRootObject = new GameObject("DenseCity_RooftopWaterTanks");
             rooftopRootObject.transform.SetParent(generatedRoot, false);
+            var rooftopUtilityRootObject = new GameObject("DenseCity_RooftopUtilityProps");
+            rooftopUtilityRootObject.transform.SetParent(generatedRoot, false);
+            var shopWallPropRootObject = new GameObject("DenseCity_ShopWallProps");
+            shopWallPropRootObject.transform.SetParent(generatedRoot, false);
             var streetPropRootObject = new GameObject("DenseCity_GroundedStreetProps");
             streetPropRootObject.transform.SetParent(generatedRoot, false);
             var treeRootObject = new GameObject("DenseCity_DenseTreeClusters");
@@ -4001,6 +6048,16 @@ namespace Game.Editor
                 rooftopRootObject.transform,
                 buildings,
                 waterTanks,
+                seed);
+            int rooftopUtilityCount = AddRooftopUtilityProps(
+                rooftopUtilityRootObject.transform,
+                buildings,
+                rooftopUtilities,
+                seed);
+            int shopWallPropCount = AddShopWallProps(
+                shopWallPropRootObject.transform,
+                buildings,
+                shopWallProps,
                 seed);
             CourtyardDetailResult courtyardDetails = AddHouseCourtyards(
                 courtyardRootObject.transform,
@@ -4123,6 +6180,10 @@ namespace Game.Editor
             ValidateNoRoadOverlappingDetails(rockRootObject.transform, roadCells, mapOrigin);
             ValidateNoRoadOverlappingDetails(grassRootObject.transform, roadCells, mapOrigin);
             ValidateNoRoadOverlappingDetails(mainStreetBushRootObject.transform, roadCells, mapOrigin);
+            ValidateNoNaturalDetailOverlaps(
+                treeRootObject.transform,
+                rockRootObject.transform,
+                buildings);
             ValidateBoulevardMedianDetailAnchors(
                 boulevardMedianRootObject.transform,
                 boulevardMedianCells,
@@ -4130,6 +6191,8 @@ namespace Game.Editor
                 mapOrigin);
 
             SetStaticRecursively(rooftopRootObject);
+            SetStaticRecursively(rooftopUtilityRootObject);
+            SetStaticRecursively(shopWallPropRootObject);
             SetStaticRecursively(streetPropRootObject);
             SetStaticRecursively(treeRootObject);
             SetStaticRecursively(rockRootObject);
@@ -4141,6 +6204,8 @@ namespace Game.Editor
             SetStaticRecursively(mainStreetBushRootObject);
             return new UrbanDetailResult(
                 waterTankCount,
+                rooftopUtilityCount,
+                shopWallPropCount,
                 streetPropCount,
                 treeCount,
                 rockCount,
@@ -5438,57 +7503,94 @@ namespace Game.Editor
             Material materialC = AssetDatabase.LoadAssetAtPath<Material>(BuildingMaterialCPath) ??
                                  throw new InvalidOperationException(
                                      $"Missing building material {BuildingMaterialCPath}.");
-            Material[] variants = { materialA, materialB, materialC };
+            Material[] sourceVariants = { materialA, materialB, materialC };
+            Material[] shop05SourceVariants = new Material[Shop05MaterialPaths.Length];
+            for (int sourceIndex = 0; sourceIndex < Shop05MaterialPaths.Length; sourceIndex++)
+            {
+                shop05SourceVariants[sourceIndex] =
+                    AssetDatabase.LoadAssetAtPath<Material>(Shop05MaterialPaths[sourceIndex]) ??
+                    throw new InvalidOperationException(
+                        $"Missing Shop_05 material {Shop05MaterialPaths[sourceIndex]}.");
+            }
+            Color[] facadeTints =
+            {
+                new(1f, 0.97f, 0.91f, 1f),
+                new(0.94f, 0.96f, 0.98f, 1f),
+                new(0.95f, 0.98f, 0.93f, 1f),
+                new(0.98f, 0.94f, 0.90f, 1f),
+                new(0.97f, 0.94f, 0.96f, 1f),
+                new(0.92f, 0.95f, 0.95f, 1f)
+            };
+            Color[] shop05Tones =
+            {
+                new(0.86f, 0.82f, 0.70f, 1f),
+                new(0.63f, 0.72f, 0.76f, 1f),
+                new(0.68f, 0.74f, 0.64f, 1f),
+                new(0.72f, 0.68f, 0.61f, 1f),
+                new(0.48f, 0.53f, 0.54f, 1f)
+            };
+            EnsureAssetFolder(GeneratedBuildingMaterialFolder);
+            Material[,] tintedVariants = BuildTintedVariantSet("Facade", facadeTints);
+            Material[] shop05Variants = BuildShop05VariantSet(shop05SourceVariants[0], shop05Tones);
+            AssetDatabase.SaveAssets();
             int buildingsA = 0;
             int buildingsB = 0;
             int buildingsC = 0;
             int materialSlotsChanged = 0;
+            int shop05VisibleSlotsChanged = 0;
+            int shop05PinkVisibleSlotsAssigned = 0;
+            int[] shop05PaletteCounts = new int[shop05Tones.Length + 1];
 
             Transform[] transforms = generatedRoot.GetComponentsInChildren<Transform>(true);
             for (int transformIndex = 0; transformIndex < transforms.Length; transformIndex++)
             {
                 Transform wrapper = transforms[transformIndex];
-                if (wrapper == null ||
-                    wrapper.parent == null ||
-                    wrapper.parent.name != "RuntimeCityVisuals" ||
-                    !wrapper.name.EndsWith("_Visual", StringComparison.Ordinal))
+                if (!IsRuntimeCityBuildingWrapper(wrapper) ||
+                    wrapper.name.IndexOf("Hall", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
                     continue;
                 }
 
                 Renderer[] renderers = wrapper.GetComponentsInChildren<Renderer>(true);
-                bool usesMaterialA = false;
-                for (int rendererIndex = 0; rendererIndex < renderers.Length && !usesMaterialA; rendererIndex++)
+                bool isShop05 = wrapper.name.IndexOf("Shop_05", StringComparison.OrdinalIgnoreCase) >= 0;
+                bool usesBuildingMaterialFamily = false;
+                for (int rendererIndex = 0;
+                     rendererIndex < renderers.Length && !usesBuildingMaterialFamily;
+                     rendererIndex++)
                 {
                     Material[] sharedMaterials = renderers[rendererIndex].sharedMaterials;
                     for (int materialIndex = 0; materialIndex < sharedMaterials.Length; materialIndex++)
                     {
-                        if (sharedMaterials[materialIndex] == materialA)
+                        if (TryGetVariantIndex(sharedMaterials[materialIndex], out _) ||
+                            (isShop05 && IsShop05Material(sharedMaterials[materialIndex])))
                         {
-                            usesMaterialA = true;
+                            usesBuildingMaterialFamily = true;
                             break;
                         }
                     }
                 }
 
-                if (!usesMaterialA)
+                if (!usesBuildingMaterialFamily)
                     continue;
 
                 uint hash = HashGroundPatch(
                     Mathf.RoundToInt(wrapper.position.x * 10f),
                     Mathf.RoundToInt(wrapper.position.z * 10f),
                     unchecked((int)seed) ^ 0x4c39);
-                int variantIndex = (int)(hash % 3u);
-                Material selectedMaterial = variants[variantIndex];
-                if (variantIndex == 0)
+                bool useOriginalShop05Pink = isShop05 && hash % 5u == 0u;
+                int tintIndex = isShop05
+                    ? useOriginalShop05Pink
+                        ? 0
+                        : 1 + (int)((hash / 5u) % (uint)shop05Tones.Length)
+                    : (int)(hash % (uint)facadeTints.Length);
+                if (isShop05)
+                    shop05PaletteCounts[tintIndex]++;
+                if (tintIndex % 3 == 0)
                     buildingsA++;
-                else if (variantIndex == 1)
+                else if (tintIndex % 3 == 1)
                     buildingsB++;
                 else
                     buildingsC++;
-
-                if (selectedMaterial == materialA)
-                    continue;
 
                 for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
                 {
@@ -5497,7 +7599,30 @@ namespace Game.Editor
                     bool changed = false;
                     for (int materialIndex = 0; materialIndex < sharedMaterials.Length; materialIndex++)
                     {
-                        if (sharedMaterials[materialIndex] != materialA)
+                        if (isShop05 && IsShop05Material(sharedMaterials[materialIndex]))
+                        {
+                            Material selectedShopMaterial = useOriginalShop05Pink
+                                ? shop05SourceVariants[0]
+                                : shop05Variants[tintIndex - 1];
+                            if (useOriginalShop05Pink && renderer.gameObject.activeInHierarchy)
+                                shop05PinkVisibleSlotsAssigned++;
+                            if (sharedMaterials[materialIndex] != selectedShopMaterial)
+                            {
+                                sharedMaterials[materialIndex] = selectedShopMaterial;
+                                materialSlotsChanged++;
+                                if (renderer.gameObject.activeInHierarchy)
+                                    shop05VisibleSlotsChanged++;
+                                changed = true;
+                            }
+
+                            continue;
+                        }
+
+                        if (!TryGetVariantIndex(sharedMaterials[materialIndex], out int sourceVariantIndex))
+                            continue;
+
+                        Material selectedMaterial = tintedVariants[sourceVariantIndex, tintIndex];
+                        if (sharedMaterials[materialIndex] == selectedMaterial)
                             continue;
 
                         sharedMaterials[materialIndex] = selectedMaterial;
@@ -5506,8 +7631,240 @@ namespace Game.Editor
                     }
 
                     if (changed)
+                    {
                         renderer.sharedMaterials = sharedMaterials;
+                        EditorUtility.SetDirty(renderer);
+                    }
                 }
+            }
+
+            int shop05OriginalVisibleSlotsRemaining = 0;
+            for (int transformIndex = 0; transformIndex < transforms.Length; transformIndex++)
+            {
+                Transform wrapper = transforms[transformIndex];
+                if (!IsRuntimeCityBuildingWrapper(wrapper) ||
+                    wrapper.name.IndexOf("Shop_05", StringComparison.OrdinalIgnoreCase) < 0)
+                {
+                    continue;
+                }
+
+                Renderer[] renderers = wrapper.GetComponentsInChildren<Renderer>(true);
+                for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
+                {
+                    Renderer renderer = renderers[rendererIndex];
+                    if (!renderer.gameObject.activeInHierarchy)
+                        continue;
+
+                    Material[] sharedMaterials = renderer.sharedMaterials;
+                    for (int materialIndex = 0; materialIndex < sharedMaterials.Length; materialIndex++)
+                    {
+                        if (IsOriginalShop05Material(sharedMaterials[materialIndex]))
+                            shop05OriginalVisibleSlotsRemaining++;
+                    }
+                }
+            }
+
+            if (shop05VisibleSlotsChanged == 0 ||
+                shop05PinkVisibleSlotsAssigned == 0 ||
+                shop05OriginalVisibleSlotsRemaining != shop05PinkVisibleSlotsAssigned)
+            {
+                throw new InvalidOperationException(
+                    "Shop_05 visible material replacement failed. " +
+                    $"changed={shop05VisibleSlotsChanged} " +
+                    $"pinkAssigned={shop05PinkVisibleSlotsAssigned} " +
+                    $"originalRemaining={shop05OriginalVisibleSlotsRemaining}.");
+            }
+
+            bool IsOriginalShop05Material(Material material)
+            {
+                for (int sourceIndex = 0; sourceIndex < shop05SourceVariants.Length; sourceIndex++)
+                {
+                    if (material == shop05SourceVariants[sourceIndex])
+                        return true;
+                }
+
+                return false;
+            }
+
+            bool IsShop05Material(Material material)
+            {
+                if (IsOriginalShop05Material(material))
+                    return true;
+
+                for (int tintIndex = 0; tintIndex < shop05Variants.Length; tintIndex++)
+                {
+                    if (material == shop05Variants[tintIndex])
+                        return true;
+                }
+
+                return false;
+            }
+
+            bool TryGetVariantIndex(Material material, out int variantIndex)
+            {
+                for (int index = 0; index < sourceVariants.Length; index++)
+                {
+                    if (material == sourceVariants[index])
+                    {
+                        variantIndex = index;
+                        return true;
+                    }
+                }
+
+                for (int sourceIndex = 0; sourceIndex < sourceVariants.Length; sourceIndex++)
+                {
+                    for (int tintIndex = 0; tintIndex < facadeTints.Length; tintIndex++)
+                    {
+                        if (material != tintedVariants[sourceIndex, tintIndex])
+                            continue;
+
+                        variantIndex = sourceIndex;
+                        return true;
+                    }
+
+                    for (int tintIndex = 0; tintIndex < shop05Tones.Length; tintIndex++)
+                    {
+                        if (material != shop05Variants[tintIndex])
+                            continue;
+
+                        variantIndex = sourceIndex;
+                        return true;
+                    }
+                }
+
+                variantIndex = -1;
+                return false;
+            }
+
+            Material[,] BuildTintedVariantSet(string prefix, Color[] tints)
+            {
+                var materials = new Material[sourceVariants.Length, tints.Length];
+                for (int sourceIndex = 0; sourceIndex < sourceVariants.Length; sourceIndex++)
+                {
+                    for (int tintIndex = 0; tintIndex < tints.Length; tintIndex++)
+                    {
+                        string materialPath =
+                            $"{GeneratedBuildingMaterialFolder}/DenseCity_{prefix}_{(char)('A' + sourceIndex)}_{tintIndex + 1:00}.mat";
+                        Material material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
+                        if (material == null)
+                        {
+                            material = new Material(sourceVariants[sourceIndex]);
+                            AssetDatabase.CreateAsset(material, materialPath);
+                        }
+
+                        material.name = Path.GetFileNameWithoutExtension(materialPath);
+                        material.CopyPropertiesFromMaterial(sourceVariants[sourceIndex]);
+                        if (material.HasProperty("_BaseColor"))
+                            material.SetColor("_BaseColor", tints[tintIndex]);
+                        if (material.HasProperty("_Color"))
+                            material.SetColor("_Color", tints[tintIndex]);
+                        material.enableInstancing = true;
+                        EditorUtility.SetDirty(material);
+                        materials[sourceIndex, tintIndex] = material;
+                    }
+                }
+
+                return materials;
+            }
+
+            Material[] BuildShop05VariantSet(Material sourceMaterial, Color[] targetTones)
+            {
+                Texture2D sourceTexture = sourceMaterial.GetTexture("_BaseMap") as Texture2D;
+                if (sourceTexture == null || !sourceTexture.isReadable)
+                {
+                    throw new InvalidOperationException(
+                        $"Shop_05 source material '{sourceMaterial.name}' requires a readable _BaseMap texture.");
+                }
+
+                for (int sourceIndex = 1; sourceIndex < sourceVariants.Length; sourceIndex++)
+                {
+                    for (int toneIndex = 0; toneIndex < targetTones.Length; toneIndex++)
+                    {
+                        AssetDatabase.DeleteAsset(
+                            $"{GeneratedBuildingMaterialFolder}/DenseCity_Shop05_{(char)('A' + sourceIndex)}_{toneIndex + 1:00}.mat");
+                    }
+                }
+
+                var materials = new Material[targetTones.Length];
+                Color32[] sourcePixels = sourceTexture.GetPixels32();
+                for (int toneIndex = 0; toneIndex < targetTones.Length; toneIndex++)
+                {
+                    string texturePath =
+                        $"{GeneratedBuildingMaterialFolder}/DenseCity_Shop05_Texture_{toneIndex + 1:00}.png";
+                    var texture = new Texture2D(
+                        sourceTexture.width,
+                        sourceTexture.height,
+                        TextureFormat.RGBA32,
+                        false,
+                        false);
+                    var recoloredPixels = new Color32[sourcePixels.Length];
+                    Color.RGBToHSV(targetTones[toneIndex], out float targetHue, out float targetSaturation, out _);
+                    float brightnessScale = Mathf.Lerp(0.72f, 1f, targetTones[toneIndex].maxColorComponent);
+                    for (int pixelIndex = 0; pixelIndex < sourcePixels.Length; pixelIndex++)
+                    {
+                        Color sourceColor = sourcePixels[pixelIndex];
+                        Color.RGBToHSV(sourceColor, out float hue, out float saturation, out float value);
+                        bool isWarmFacadePixel =
+                            saturation > 0.04f &&
+                            (hue < 0.18f || hue > 0.78f) &&
+                            sourceColor.r > sourceColor.g * 1.01f;
+                        if (!isWarmFacadePixel)
+                        {
+                            recoloredPixels[pixelIndex] = sourcePixels[pixelIndex];
+                            continue;
+                        }
+
+                        float recoloredSaturation = Mathf.Clamp(targetSaturation, 0.08f, 0.22f);
+                        Color recolored = Color.HSVToRGB(
+                            targetHue,
+                            recoloredSaturation,
+                            Mathf.Clamp01(value * brightnessScale));
+                        recolored.a = sourceColor.a;
+                        recoloredPixels[pixelIndex] = recolored;
+                    }
+
+                    texture.SetPixels32(recoloredPixels);
+                    texture.Apply(false, false);
+                    File.WriteAllBytes(Path.GetFullPath(texturePath), texture.EncodeToPNG());
+                    UnityEngine.Object.DestroyImmediate(texture);
+                    AssetDatabase.ImportAsset(texturePath, ImportAssetOptions.ForceSynchronousImport);
+                    if (AssetImporter.GetAtPath(texturePath) is TextureImporter importer)
+                    {
+                        importer.textureType = TextureImporterType.Default;
+                        importer.sRGBTexture = true;
+                        importer.mipmapEnabled = true;
+                        importer.isReadable = false;
+                        importer.maxTextureSize = 2048;
+                        importer.textureCompression = TextureImporterCompression.CompressedHQ;
+                        importer.SaveAndReimport();
+                    }
+
+                    Texture2D recoloredTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath) ??
+                                                 throw new InvalidOperationException(
+                                                     $"Could not import generated Shop_05 texture {texturePath}.");
+                    string materialPath =
+                        $"{GeneratedBuildingMaterialFolder}/DenseCity_Shop05_A_{toneIndex + 1:00}.mat";
+                    Material material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
+                    if (material == null)
+                    {
+                        material = new Material(sourceMaterial);
+                        AssetDatabase.CreateAsset(material, materialPath);
+                    }
+
+                    material.name = Path.GetFileNameWithoutExtension(materialPath);
+                    material.CopyPropertiesFromMaterial(sourceMaterial);
+                    material.SetTexture("_BaseMap", recoloredTexture);
+                    material.SetTexture("_MainTex", recoloredTexture);
+                    if (material.HasProperty("_BaseColor"))
+                        material.SetColor("_BaseColor", Color.white);
+                    if (material.HasProperty("_Color"))
+                        material.SetColor("_Color", Color.white);
+                    material.enableInstancing = true;
+                    EditorUtility.SetDirty(material);
+                    materials[toneIndex] = material;
+                }
+
+                return materials;
             }
 
             if (buildingsB == 0 || buildingsC == 0)
@@ -5516,11 +7873,32 @@ namespace Game.Editor
                     "Dense city building material variation did not produce both B and C variants.");
             }
 
+            Debug.Log(
+                $"[DenseCityShop05Materials] originalPink={shop05PaletteCounts[0]} " +
+                $"limestone={shop05PaletteCounts[1]} blueGray={shop05PaletteCounts[2]} " +
+                $"sageGray={shop05PaletteCounts[3]} taupeGray={shop05PaletteCounts[4]} " +
+                $"charcoalGray={shop05PaletteCounts[5]} " +
+                $"visibleSlotsChanged={shop05VisibleSlotsChanged} " +
+                $"originalVisibleSlotsRemaining={shop05OriginalVisibleSlotsRemaining}");
+
             return new BuildingMaterialVariantResult(
                 buildingsA,
                 buildingsB,
                 buildingsC,
                 materialSlotsChanged);
+        }
+
+        private static void EnsureAssetFolder(string folderPath)
+        {
+            string[] segments = folderPath.Split('/');
+            string current = segments[0];
+            for (int index = 1; index < segments.Length; index++)
+            {
+                string next = $"{current}/{segments[index]}";
+                if (!AssetDatabase.IsValidFolder(next))
+                    AssetDatabase.CreateFolder(current, segments[index]);
+                current = next;
+            }
         }
 
         private static List<GeneratedBuildingInfo> CollectGeneratedBuildings(Transform generatedRoot)
@@ -5530,16 +7908,14 @@ namespace Game.Editor
             for (int index = 0; index < transforms.Length; index++)
             {
                 Transform wrapper = transforms[index];
-                if (wrapper == null ||
-                    wrapper.parent == null ||
-                    wrapper.parent.name != "RuntimeCityVisuals" ||
-                    !wrapper.name.EndsWith("_Visual", StringComparison.Ordinal) ||
-                    !TryGetWorldBounds(wrapper, out Bounds bounds))
+                if (!IsRuntimeCityBuildingWrapper(wrapper) ||
+                    !TryGetWorldBounds(wrapper, out Bounds bounds) ||
+                    !TryGetLocalRendererBounds(wrapper, out Bounds localBounds))
                 {
                     continue;
                 }
 
-                buildings.Add(new GeneratedBuildingInfo(wrapper, bounds));
+                buildings.Add(new GeneratedBuildingInfo(wrapper, bounds, localBounds));
             }
 
             return buildings;
@@ -5567,27 +7943,385 @@ namespace Game.Editor
                     Mathf.RoundToInt(building.Bounds.center.x * 10f),
                     Mathf.RoundToInt(building.Bounds.center.z * 10f),
                     unchecked((int)seed) ^ 0x4f37);
-                float placementChance = building.IsShop ? 0.46f : 0.24f;
+                float placementChance = building.IsShop ? 0.78f : 0.42f;
                 if (Hash01(hash ^ 0x74b21e63u) > placementChance)
                     continue;
 
                 GameObject prefab = waterTankPrefabs[hash % (uint)waterTankPrefabs.Length];
-                float offsetX = Mathf.Lerp(-0.2f, 0.2f, Hash01(hash ^ 0x83b9d20du)) * building.Bounds.size.x;
-                float offsetZ = Mathf.Lerp(-0.2f, 0.2f, Hash01(hash ^ 0x28cc61fbu)) * building.Bounds.size.z;
+                if (!TryFindLowerRoofAnchor(building, hash ^ 0x83b9d20du, out Vector3 roofAnchor))
+                    continue;
+
                 if (InstantiateGroundedDetail(
                         prefab,
                         parent,
                         $"{prefab.name}_Roof_{count:0000}",
-                        new Vector2(building.Bounds.center.x + offsetX, building.Bounds.center.z + offsetZ),
-                        building.Bounds.max.y + 0.025f,
-                        Hash01(hash ^ 0x5e3b7421u) * 360f,
-                        Mathf.Lerp(0.82f, 1.08f, Hash01(hash ^ 0xcf5087abu))))
+                        new Vector2(roofAnchor.x, roofAnchor.z),
+                        roofAnchor.y + 0.025f,
+                        building.Wrapper.eulerAngles.y + Hash01(hash ^ 0x5e3b7421u) * 360f,
+                        Mathf.Lerp(0.82f, 1.08f, Hash01(hash ^ 0xcf5087abu)),
+                        building.Wrapper))
                 {
                     count++;
                 }
             }
 
             return count;
+        }
+
+        private static int AddRooftopUtilityProps(
+            Transform parent,
+            List<GeneratedBuildingInfo> buildings,
+            GameObject[] utilityPrefabs,
+            uint seed)
+        {
+            int count = 0;
+            for (int buildingIndex = 0; buildingIndex < buildings.Count; buildingIndex++)
+            {
+                GeneratedBuildingInfo building = buildings[buildingIndex];
+                float roofArea = building.Bounds.size.x * building.Bounds.size.z;
+                if ((!building.IsShop && !building.IsHouse) ||
+                    roofArea < 62f ||
+                    building.Bounds.size.y < 4.5f)
+                {
+                    continue;
+                }
+
+                uint hash = HashGroundPatch(
+                    Mathf.RoundToInt(building.Bounds.center.x * 10f),
+                    Mathf.RoundToInt(building.Bounds.center.z * 10f),
+                    unchecked((int)seed) ^ 0x6a31);
+                float placementChance = building.IsShop ? 0.82f : 0.48f;
+                if (Hash01(hash ^ 0x11b457d3u) > placementChance)
+                    continue;
+
+                int desiredCount = building.IsShop && roofArea > 150f &&
+                                   Hash01(hash ^ 0xb5226f41u) < 0.52f
+                    ? 2
+                    : 1;
+                for (int detailIndex = 0; detailIndex < desiredCount; detailIndex++)
+                {
+                    uint detailHash = hash ^ (uint)(detailIndex * 0x9e3779b9);
+                    GameObject prefab = utilityPrefabs[detailHash % (uint)utilityPrefabs.Length];
+                    if (!TryFindLowerRoofAnchor(building, detailHash ^ 0x945d32abu, out Vector3 roofAnchor))
+                        continue;
+
+                    if (InstantiateGroundedDetail(
+                            prefab,
+                            parent,
+                            $"{prefab.name}_RoofUtility_{count:0000}",
+                            new Vector2(roofAnchor.x, roofAnchor.z),
+                            roofAnchor.y + 0.025f,
+                            building.Wrapper.eulerAngles.y + Hash01(detailHash ^ 0x71e9042fu) * 360f,
+                            Mathf.Lerp(0.82f, 1.05f, Hash01(detailHash ^ 0x3c85d719u)),
+                            building.Wrapper))
+                    {
+                        count++;
+                    }
+                }
+            }
+
+            return count;
+        }
+
+        private static int AddShopWallProps(
+            Transform parent,
+            List<GeneratedBuildingInfo> buildings,
+            GameObject[] wallPropPrefabs,
+            uint seed)
+        {
+            int count = 0;
+            for (int buildingIndex = 0; buildingIndex < buildings.Count; buildingIndex++)
+            {
+                GeneratedBuildingInfo building = buildings[buildingIndex];
+                if (!building.IsShop || building.Bounds.size.y < 4f)
+                    continue;
+
+                uint hash = HashGroundPatch(
+                    Mathf.RoundToInt(building.Bounds.center.x * 10f),
+                    Mathf.RoundToInt(building.Bounds.center.z * 10f),
+                    unchecked((int)seed) ^ 0x7e29);
+                int desiredCount = building.Bounds.size.x * building.Bounds.size.z > 115f ? 2 : 1;
+                for (int detailIndex = 0; detailIndex < desiredCount; detailIndex++)
+                {
+                    uint detailHash = hash ^ (uint)(detailIndex * 0x45d9f3b);
+                    GameObject prefab = wallPropPrefabs[detailHash % (uint)wallPropPrefabs.Length];
+                    int face = (int)((detailHash >> 4) & 3u);
+                    float along = Mathf.Lerp(-0.28f, 0.28f, Hash01(detailHash ^ 0x8a31fc55u));
+                    float localYaw = face switch
+                    {
+                        0 => 90f,
+                        1 => 270f,
+                        2 => 0f,
+                        _ => 180f
+                    };
+                    Vector3 localNormal = face switch
+                    {
+                        0 => Vector3.left,
+                        1 => Vector3.right,
+                        2 => Vector3.back,
+                        _ => Vector3.forward
+                    };
+                    float localHeight = Mathf.Lerp(
+                        building.LocalBounds.min.y + building.LocalBounds.size.y * 0.42f,
+                        building.LocalBounds.min.y + building.LocalBounds.size.y * 0.68f,
+                        Hash01(detailHash ^ 0x2b1975e3u));
+                    Vector3 localAnchor = face switch
+                    {
+                        0 => new Vector3(
+                            building.LocalBounds.min.x,
+                            localHeight,
+                            building.LocalBounds.center.z + along * building.LocalBounds.size.z),
+                        1 => new Vector3(
+                            building.LocalBounds.max.x,
+                            localHeight,
+                            building.LocalBounds.center.z + along * building.LocalBounds.size.z),
+                        2 => new Vector3(
+                            building.LocalBounds.center.x + along * building.LocalBounds.size.x,
+                            localHeight,
+                            building.LocalBounds.min.z),
+                        _ => new Vector3(
+                            building.LocalBounds.center.x + along * building.LocalBounds.size.x,
+                            localHeight,
+                            building.LocalBounds.max.z)
+                    };
+                    Vector3 anchor = building.Wrapper.TransformPoint(localAnchor);
+                    Vector3 outwardNormal = building.Wrapper.TransformDirection(localNormal).normalized;
+
+                    GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
+                    if (instance == null)
+                        continue;
+
+                    instance.name = $"{prefab.name}_ShopWall_{count:0000}";
+                    instance.transform.SetPositionAndRotation(
+                        anchor,
+                        Quaternion.Euler(0f, building.Wrapper.eulerAngles.y + localYaw, 0f));
+                    instance.transform.localScale = Vector3.one *
+                                                    Mathf.Lerp(0.82f, 1.05f, Hash01(detailHash ^ 0xe2c631a7u));
+                    if (!TryGetRendererBounds(instance, out Bounds propBounds))
+                    {
+                        UnityEngine.Object.DestroyImmediate(instance);
+                        continue;
+                    }
+
+                    Vector3 position = instance.transform.position;
+                    position.y += anchor.y - propBounds.center.y;
+                    float projectedExtent =
+                        Mathf.Abs(outwardNormal.x) * propBounds.extents.x +
+                        Mathf.Abs(outwardNormal.y) * propBounds.extents.y +
+                        Mathf.Abs(outwardNormal.z) * propBounds.extents.z;
+                    float innerProjection = Vector3.Dot(propBounds.center, outwardNormal) - projectedExtent;
+                    float wallProjection = Vector3.Dot(anchor, outwardNormal);
+                    position += outwardNormal * (wallProjection + 0.025f - innerProjection);
+                    instance.transform.position = position;
+                    instance.transform.SetParent(building.Wrapper, true);
+                    DisableColliders(instance);
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+        private static bool TryFindLowerRoofAnchor(
+            GeneratedBuildingInfo building,
+            uint hash,
+            out Vector3 anchor)
+        {
+            anchor = default;
+            MeshFilter[] meshFilters = building.Wrapper.GetComponentsInChildren<MeshFilter>(true);
+            if (meshFilters.Length == 0)
+                return false;
+
+            var roofTriangles = new List<RoofTriangle>(256);
+            for (int filterIndex = 0; filterIndex < meshFilters.Length; filterIndex++)
+            {
+                MeshFilter meshFilter = meshFilters[filterIndex];
+                if (!meshFilter.gameObject.activeInHierarchy || meshFilter.sharedMesh == null)
+                    continue;
+
+                CollectRoofTriangles(building.Wrapper, meshFilter, roofTriangles);
+            }
+
+            if (roofTriangles.Count == 0)
+                return false;
+
+            float minimumLocalRoofHeight = building.LocalBounds.min.y + building.LocalBounds.size.y * 0.55f;
+            float maximumLocalRoofHeight = building.LocalBounds.max.y + 0.05f;
+            float lowestLocalRoofHeight = float.PositiveInfinity;
+            float phase = Hash01(hash ^ 0x9e3779b9u) * Mathf.PI * 2f;
+
+            for (int sampleIndex = 0; sampleIndex < 16; sampleIndex++)
+            {
+                float angle = phase + sampleIndex * Mathf.PI * 0.61803398875f;
+                float radius = Mathf.Lerp(
+                    0.24f,
+                    0.43f,
+                    Hash01(hash ^ (uint)(sampleIndex * 0x45d9f3b)));
+                Vector3 localColumn = new(
+                    building.LocalBounds.center.x + Mathf.Cos(angle) * building.LocalBounds.size.x * radius,
+                    0f,
+                    building.LocalBounds.center.z + Mathf.Sin(angle) * building.LocalBounds.size.z * radius);
+                float sampleTop = float.NegativeInfinity;
+                for (int triangleIndex = 0; triangleIndex < roofTriangles.Count; triangleIndex++)
+                {
+                    RoofTriangle triangle = roofTriangles[triangleIndex];
+                    if (!TryInterpolateTriangleHeight(
+                            triangle,
+                            localColumn.x,
+                            localColumn.z,
+                            out float triangleHeight) ||
+                        triangleHeight <= sampleTop)
+                    {
+                        continue;
+                    }
+
+                    sampleTop = triangleHeight;
+                }
+
+                if (sampleTop < minimumLocalRoofHeight ||
+                    sampleTop > maximumLocalRoofHeight ||
+                    sampleTop >= lowestLocalRoofHeight)
+                    continue;
+
+                lowestLocalRoofHeight = sampleTop;
+                anchor = building.Wrapper.TransformPoint(new Vector3(
+                    localColumn.x,
+                    sampleTop,
+                    localColumn.z));
+            }
+
+            return !float.IsPositiveInfinity(lowestLocalRoofHeight);
+        }
+
+        private static void CollectRoofTriangles(
+            Transform wrapper,
+            MeshFilter meshFilter,
+            List<RoofTriangle> output)
+        {
+            Mesh mesh = meshFilter.sharedMesh;
+            using Mesh.MeshDataArray meshDataArray = Mesh.AcquireReadOnlyMeshData(mesh);
+            Mesh.MeshData meshData = meshDataArray[0];
+            if (!meshData.HasVertexAttribute(VertexAttribute.Position) ||
+                meshData.GetVertexAttributeFormat(VertexAttribute.Position) != VertexAttributeFormat.Float32 ||
+                meshData.GetVertexAttributeDimension(VertexAttribute.Position) < 3)
+            {
+                return;
+            }
+
+            int positionStream = meshData.GetVertexAttributeStream(VertexAttribute.Position);
+            int positionOffset = meshData.GetVertexAttributeOffset(VertexAttribute.Position);
+            int vertexStride = meshData.GetVertexBufferStride(positionStream);
+            NativeArray<byte> vertexData = meshData.GetVertexData<byte>(positionStream);
+            var localVertices = new Vector3[meshData.vertexCount];
+            Matrix4x4 meshToWrapper = wrapper.worldToLocalMatrix * meshFilter.transform.localToWorldMatrix;
+            for (int vertexIndex = 0; vertexIndex < localVertices.Length; vertexIndex++)
+            {
+                int byteOffset = vertexIndex * vertexStride + positionOffset;
+                Vector3 meshVertex = new(
+                    ReadFloat(vertexData, byteOffset),
+                    ReadFloat(vertexData, byteOffset + 4),
+                    ReadFloat(vertexData, byteOffset + 8));
+                localVertices[vertexIndex] = meshToWrapper.MultiplyPoint3x4(meshVertex);
+            }
+
+            if (meshData.indexFormat == IndexFormat.UInt16)
+            {
+                NativeArray<ushort> indices = meshData.GetIndexData<ushort>();
+                for (int subMeshIndex = 0; subMeshIndex < meshData.subMeshCount; subMeshIndex++)
+                    AppendRoofTriangles(meshData.GetSubMesh(subMeshIndex), indices, localVertices, output);
+            }
+            else
+            {
+                NativeArray<uint> indices = meshData.GetIndexData<uint>();
+                for (int subMeshIndex = 0; subMeshIndex < meshData.subMeshCount; subMeshIndex++)
+                    AppendRoofTriangles(meshData.GetSubMesh(subMeshIndex), indices, localVertices, output);
+            }
+        }
+
+        private static void AppendRoofTriangles<TIndex>(
+            SubMeshDescriptor subMesh,
+            NativeArray<TIndex> indices,
+            Vector3[] vertices,
+            List<RoofTriangle> output)
+            where TIndex : unmanaged
+        {
+            if (subMesh.topology != MeshTopology.Triangles)
+                return;
+
+            int end = subMesh.indexStart + subMesh.indexCount;
+            for (int index = subMesh.indexStart; index + 2 < end; index += 3)
+            {
+                int aIndex = ReadIndex(indices[index]) + subMesh.baseVertex;
+                int bIndex = ReadIndex(indices[index + 1]) + subMesh.baseVertex;
+                int cIndex = ReadIndex(indices[index + 2]) + subMesh.baseVertex;
+                if ((uint)aIndex >= vertices.Length ||
+                    (uint)bIndex >= vertices.Length ||
+                    (uint)cIndex >= vertices.Length)
+                {
+                    continue;
+                }
+
+                Vector3 a = vertices[aIndex];
+                Vector3 b = vertices[bIndex];
+                Vector3 c = vertices[cIndex];
+                Vector3 normal = Vector3.Cross(b - a, c - a);
+                if (normal.sqrMagnitude < 0.000001f || normal.normalized.y < 0.72f)
+                    continue;
+
+                output.Add(new RoofTriangle(a, b, c));
+            }
+
+            static int ReadIndex(TIndex value)
+            {
+                if (typeof(TIndex) == typeof(ushort))
+                    return (ushort)(object)value;
+                return checked((int)(uint)(object)value);
+            }
+        }
+
+        private static bool TryInterpolateTriangleHeight(
+            RoofTriangle triangle,
+            float x,
+            float z,
+            out float height)
+        {
+            float denominator =
+                (triangle.B.z - triangle.C.z) * (triangle.A.x - triangle.C.x) +
+                (triangle.C.x - triangle.B.x) * (triangle.A.z - triangle.C.z);
+            if (Mathf.Abs(denominator) < 0.000001f)
+            {
+                height = 0f;
+                return false;
+            }
+
+            float aWeight =
+                ((triangle.B.z - triangle.C.z) * (x - triangle.C.x) +
+                 (triangle.C.x - triangle.B.x) * (z - triangle.C.z)) / denominator;
+            float bWeight =
+                ((triangle.C.z - triangle.A.z) * (x - triangle.C.x) +
+                 (triangle.A.x - triangle.C.x) * (z - triangle.C.z)) / denominator;
+            float cWeight = 1f - aWeight - bWeight;
+            const float epsilon = -0.0001f;
+            if (aWeight < epsilon || bWeight < epsilon || cWeight < epsilon)
+            {
+                height = 0f;
+                return false;
+            }
+
+            height =
+                triangle.A.y * aWeight +
+                triangle.B.y * bWeight +
+                triangle.C.y * cWeight;
+            return true;
+        }
+
+        private static float ReadFloat(NativeArray<byte> bytes, int offset)
+        {
+            int bits = bytes[offset] |
+                       bytes[offset + 1] << 8 |
+                       bytes[offset + 2] << 16 |
+                       bytes[offset + 3] << 24;
+            return BitConverter.Int32BitsToSingle(bits);
         }
 
         private static int AddGroundedBuildingProps(
@@ -5708,6 +8442,8 @@ namespace Game.Editor
         {
             int treeCount = 0;
             int rockCount = 0;
+            var treeOccupiedAreas = new List<Rect>();
+            var rockOccupiedAreas = new List<Rect>();
             const float clusterSpacing = 24f;
             for (float z = clusterSpacing * 0.5f; z < mapDepth; z += clusterSpacing)
             {
@@ -5745,15 +8481,23 @@ namespace Game.Editor
                         }
 
                         GameObject prefab = treePrefabs[Hash01(detailHash ^ 0xf28c4b13u) < 0.42f ? 0 : 1];
-                        if (InstantiateGroundedDetail(
+                        if (TryInstantiateGroundedFreeDetail(
                                 prefab,
                                 treeParent,
                                 $"{prefab.name}_Cluster_{treeCount:0000}",
                                 position,
                                 gradeElevation + 0.03f,
                                 Hash01(detailHash ^ 0x62ae91d5u) * 360f,
-                                Mathf.Lerp(0.82f, 1.24f, Hash01(detailHash ^ 0xd12047c9u))))
+                                Mathf.Lerp(0.82f, 1.24f, Hash01(detailHash ^ 0xd12047c9u)),
+                                roadCells,
+                                mapOrigin,
+                                buildings,
+                                reservedAreas,
+                                rockOccupiedAreas,
+                                authoredCoreBounds,
+                                out Rect treeOccupiedArea))
                         {
+                            treeOccupiedAreas.Add(treeOccupiedArea);
                             treeCount++;
                         }
                     }
@@ -5771,7 +8515,7 @@ namespace Game.Editor
                             !OverlapsAnyBuilding(rockBounds, buildings))
                         {
                             GameObject prefab = rockPrefabs[hash % (uint)rockPrefabs.Length];
-                            if (InstantiateGroundedDetailClearOfRoads(
+                            if (TryInstantiateGroundedFreeDetail(
                                     prefab,
                                     rockParent,
                                     $"{prefab.name}_Urban_{rockCount:0000}",
@@ -5780,8 +8524,14 @@ namespace Game.Editor
                                     Hash01(hash ^ 0xc391f287u) * 360f,
                                     Mathf.Lerp(0.65f, 1.25f, Hash01(hash ^ 0x3b8c592du)),
                                     roadCells,
-                                    mapOrigin))
+                                    mapOrigin,
+                                    buildings,
+                                    reservedAreas,
+                                    treeOccupiedAreas,
+                                    authoredCoreBounds,
+                                    out Rect rockOccupiedArea))
                             {
+                                rockOccupiedAreas.Add(rockOccupiedArea);
                                 rockCount++;
                             }
                         }
@@ -5835,7 +8585,8 @@ namespace Game.Editor
             Vector2 position,
             float supportHeight,
             float rotationDegrees,
-            float scale)
+            float scale,
+            Transform attachmentParent = null)
         {
             GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
             if (instance == null)
@@ -5855,6 +8606,8 @@ namespace Game.Editor
             Vector3 worldPosition = instance.transform.position;
             worldPosition.y += supportHeight - bounds.min.y;
             instance.transform.position = worldPosition;
+            if (attachmentParent != null)
+                instance.transform.SetParent(attachmentParent, true);
             DisableColliders(instance);
             return true;
         }
@@ -5987,6 +8740,57 @@ namespace Game.Editor
             }
         }
 
+        private static void ValidateNoNaturalDetailOverlaps(
+            Transform treeRoot,
+            Transform rockRoot,
+            List<GeneratedBuildingInfo> buildings)
+        {
+            var treeAreas = new List<Rect>(treeRoot.childCount);
+            ValidateCategory(treeRoot, "tree", treeAreas);
+            var rockAreas = new List<Rect>(rockRoot.childCount);
+            ValidateCategory(rockRoot, "rock", rockAreas);
+
+            for (int treeIndex = 0; treeIndex < treeAreas.Count; treeIndex++)
+            {
+                for (int rockIndex = 0; rockIndex < rockAreas.Count; rockIndex++)
+                {
+                    if (treeAreas[treeIndex].Overlaps(rockAreas[rockIndex]))
+                    {
+                        throw new InvalidOperationException(
+                            $"Generated dense-city tree footprint {treeAreas[treeIndex]} " +
+                            $"overlaps urban rock footprint {rockAreas[rockIndex]}.");
+                    }
+                }
+            }
+
+            Debug.Log(
+                $"[DenseCityNaturalDetailAudit] trees={treeAreas.Count} rocks={rockAreas.Count} " +
+                "buildingOverlaps=0 treeRockOverlaps=0");
+
+            void ValidateCategory(Transform categoryRoot, string categoryName, List<Rect> areas)
+            {
+                for (int index = 0; index < categoryRoot.childCount; index++)
+                {
+                    Transform detail = categoryRoot.GetChild(index);
+                    if (detail == null || !TryGetWorldBounds(detail, out Bounds bounds))
+                        continue;
+
+                    var footprint = Rect.MinMaxRect(
+                        bounds.min.x,
+                        bounds.min.z,
+                        bounds.max.x,
+                        bounds.max.z);
+                    if (OverlapsAnyBuilding(footprint, buildings))
+                    {
+                        throw new InvalidOperationException(
+                            $"Generated dense-city {categoryName} '{detail.name}' overlaps a building footprint.");
+                    }
+
+                    areas.Add(footprint);
+                }
+            }
+        }
+
         private static void ValidateBoulevardMedianDetailAnchors(
             Transform detailRoot,
             List<BoulevardMedianCell> medianCells,
@@ -6068,7 +8872,7 @@ namespace Game.Editor
                     0x2a97));
         }
 
-        private static void CreateNaturalGroundPatch(
+        private static GameObject CreateNaturalGroundPatch(
             Transform parent,
             string objectName,
             Vector3 topCenter,
@@ -6113,10 +8917,11 @@ namespace Game.Editor
             DisableColliders(patch);
             Material material = GetGroundVariationMaterial();
             if (material == null)
-                return;
+                return patch;
             Renderer[] renderers = patch.GetComponentsInChildren<Renderer>(true);
             for (int index = 0; index < renderers.Length; index++)
                 renderers[index].sharedMaterial = material;
+            return patch;
         }
 
         private static GameObject[] LoadNaturalGroundPrefabs()
@@ -6150,6 +8955,59 @@ namespace Game.Editor
             for (int index = 1; index < renderers.Length; index++)
                 bounds.Encapsulate(renderers[index].bounds);
             return true;
+        }
+
+        private static bool IsRuntimeCityBuildingWrapper(Transform wrapper)
+        {
+            if (wrapper == null || wrapper.parent == null || wrapper.parent.name != "RuntimeCityVisuals")
+                return false;
+
+            string objectName = wrapper.name;
+            return objectName.IndexOf("_Visual", StringComparison.Ordinal) >= 0 &&
+                   objectName.IndexOf("_GroundPatch", StringComparison.Ordinal) < 0;
+        }
+
+        private static bool TryGetLocalRendererBounds(Transform root, out Bounds bounds)
+        {
+            bounds = default;
+            Renderer[] renderers = root.GetComponentsInChildren<Renderer>(true);
+            bool hasBounds = false;
+            for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
+            {
+                Renderer renderer = renderers[rendererIndex];
+                if (renderer == null || !renderer.enabled || !renderer.gameObject.activeInHierarchy)
+                    continue;
+
+                Bounds rendererBounds = renderer.localBounds;
+                Vector3 min = rendererBounds.min;
+                Vector3 max = rendererBounds.max;
+                for (int x = 0; x < 2; x++)
+                {
+                    for (int y = 0; y < 2; y++)
+                    {
+                        for (int z = 0; z < 2; z++)
+                        {
+                            Vector3 rendererPoint = new(
+                                x == 0 ? min.x : max.x,
+                                y == 0 ? min.y : max.y,
+                                z == 0 ? min.z : max.z);
+                            Vector3 localPoint = root.InverseTransformPoint(
+                                renderer.transform.TransformPoint(rendererPoint));
+                            if (!hasBounds)
+                            {
+                                bounds = new Bounds(localPoint, Vector3.zero);
+                                hasBounds = true;
+                            }
+                            else
+                            {
+                                bounds.Encapsulate(localPoint);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return hasBounds;
         }
 
         private static uint HashGroundPatch(int x, int z, int salt)

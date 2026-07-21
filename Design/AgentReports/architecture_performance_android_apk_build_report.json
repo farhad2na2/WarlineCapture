@@ -2,8 +2,8 @@
   "taskId": "APH-500",
   "schemaVersion": 1,
   "status": "complete",
-  "exactCommit": "2b19449570ccf1b78c43ea0154e83785ecb3031e",
-  "dirty": false,
+  "exactCommit": "b089517166fbf49489f1b85e573ed0d35d47436c",
+  "dirty": true,
   "unityVersion": "6000.5.2f1",
   "releaseBuildType": "release",
   "packageType": "APK",
@@ -13,22 +13,22 @@
   "frameTimingStatsEnabled": true,
   "detailedBuildReport": true,
   "artifactPath": "Build/AndroidAPK/WarlineCapture.apk",
-  "artifactBytes": 380801943,
-  "artifactSha256": "31bb8749ec04f6be69d65a323a3e60956927aa7ebaa13a9af08c5c5ab4b4e74d",
+  "artifactBytes": 476851204,
+  "artifactSha256": "0d70364c74553467b1d682c883c5d51021d09994e1d4c3fed3b924dfef969d55",
   "artifactSizeSemantics": "Compressed APK/AAB package file length. This is not a sum of per-asset packed contributions.",
   "buildReportSizeSemantics": "Unity BuildReport bytes. Included-asset rows are serialized packed contributions; packed file overhead and summary-unaccounted bytes are reported separately.",
-  "packedFileCount": 554,
-  "packedAssetEntryCount": 23416,
-  "unattributedPackedEntryCount": 517,
-  "totalIncludedAssetCount": 6440,
+  "packedFileCount": 40,
+  "packedAssetEntryCount": 21727,
+  "unattributedPackedEntryCount": 3,
+  "totalIncludedAssetCount": 5670,
   "reportedIncludedAssetCount": 100,
-  "attributedPackedAssetBytes": 650446703,
-  "unattributedPackedAssetBytes": 312073,
-  "packedContentBytes": 650758776,
-  "packedFileOverheadBytes": 860590,
-  "accountedPackedFileBytes": 651619366,
-  "buildReportSummaryTotalSizeBytes": 3049162850,
-  "buildReportSummaryUnaccountedBytes": 2397543484,
+  "attributedPackedAssetBytes": 464572890,
+  "unattributedPackedAssetBytes": 78927,
+  "packedContentBytes": 464651817,
+  "packedFileOverheadBytes": 661019,
+  "accountedPackedFileBytes": 465312836,
+  "buildReportSummaryTotalSizeBytes": 3084145752,
+  "buildReportSummaryUnaccountedBytes": 2618832916,
   "buildReportIncludedAssets": [
     {
       "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_A.png",
@@ -54,13 +54,6 @@
     {
       "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/AnimationTexture2.asset",
       "packedBytes": 16777348,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/PolygonMilitary/Textures/SkyBox.png",
-      "packedBytes": 16777336,
       "objectTypes": [
         "UnityEngine.Texture2D"
       ]
@@ -94,28 +87,7 @@
       ]
     },
     {
-      "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_02_B.png",
-      "packedBytes": 9961676,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_02_C.png",
-      "packedBytes": 9961676,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
       "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_03_A.png",
-      "packedBytes": 9961676,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_03_B.png",
       "packedBytes": 9961676,
       "objectTypes": [
         "UnityEngine.Texture2D"
@@ -136,36 +108,8 @@
       ]
     },
     {
-      "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_04_B.png",
-      "packedBytes": 9961676,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_04_C.png",
-      "packedBytes": 9961676,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Game/GeneratedStaticMapPresentation/StaticMapPresentationManifest.asset",
-      "packedBytes": 6817900,
-      "objectTypes": [
-        "UnityEngine.MonoBehaviour"
-      ]
-    },
-    {
       "sourceAssetPath": "Assets/PolygonMilitary/Textures/Air_Vehicle_Burnt.png",
       "packedBytes": 5592564,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Vehicles/Veh_Heli_01_B.png",
-      "packedBytes": 5592560,
       "objectTypes": [
         "UnityEngine.Texture2D"
       ]
@@ -178,31 +122,10 @@
       ]
     },
     {
-      "sourceAssetPath": "Assets/Game/Rendering/Textures/Stylized/T_GroundStylized_Soft_Normal.png",
-      "packedBytes": 5592544,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
       "sourceAssetPath": "Assets/Game/GeneratedCombinedMeshes/Model_PolygonMilitary_Mat_01_A_Combined 10.asset",
       "packedBytes": 4507444,
       "objectTypes": [
         "UnityEngine.Mesh"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Game/Rendering/Textures/Stylized/T_GroundStylized_Desert_Albedo.png",
-      "packedBytes": 4194448,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Game/Rendering/Textures/Stylized/T_GroundStylized_Green_Albedo.png",
-      "packedBytes": 4194448,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
       ]
     },
     {
@@ -298,20 +221,6 @@
       ]
     },
     {
-      "sourceAssetPath": "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset",
-      "packedBytes": 2512476,
-      "objectTypes": [
-        "UnityEngine.MonoBehaviour"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Vehicles_01_Damaged.png",
-      "packedBytes": 2497864,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
       "sourceAssetPath": "Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Vehicles_01_Emmision.png",
       "packedBytes": 2497864,
       "objectTypes": [
@@ -319,42 +228,7 @@
       ]
     },
     {
-      "sourceAssetPath": "Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Plane_01_Damaged.png",
-      "packedBytes": 2497860,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Camo_Netting_01.tga",
-      "packedBytes": 2497856,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_01.png",
-      "packedBytes": 2497856,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_02.png",
-      "packedBytes": 2497856,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
       "sourceAssetPath": "Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_03.png",
-      "packedBytes": 2497856,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_04.png",
       "packedBytes": 2497856,
       "objectTypes": [
         "UnityEngine.Texture2D"
@@ -368,70 +242,7 @@
       ]
     },
     {
-      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_08.png",
-      "packedBytes": 2497856,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_09.png",
-      "packedBytes": 2497856,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_10.png",
-      "packedBytes": 2497856,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
       "sourceAssetPath": "Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Texture_01_A.png",
-      "packedBytes": 2497856,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Texture_02_A.png",
-      "packedBytes": 2497856,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Texture_03_A.png",
-      "packedBytes": 2497856,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Texture_04_A.png",
-      "packedBytes": 2497856,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Vehicles_01.png",
-      "packedBytes": 2497856,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Vehicles_02.png",
-      "packedBytes": 2497856,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Vehicles_06.png",
       "packedBytes": 2497856,
       "objectTypes": [
         "UnityEngine.Texture2D"
@@ -706,22 +517,8 @@
       ]
     },
     {
-      "sourceAssetPath": "Assets/PolygonMilitary/Models/SM_Veh_APC_Heavy_01.fbx",
-      "packedBytes": 1496820,
-      "objectTypes": [
-        "UnityEngine.Mesh"
-      ]
-    },
-    {
       "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Insurgent_Female_02_CombinedSkinned_10_lod0.asset",
       "packedBytes": 1450476,
-      "objectTypes": [
-        "UnityEngine.Mesh"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/PolygonMilitary/Models/SM_Bld_OilTower_01.fbx",
-      "packedBytes": 1442312,
       "objectTypes": [
         "UnityEngine.Mesh"
       ]
@@ -734,8 +531,234 @@
       ]
     },
     {
-      "sourceAssetPath": "Assets/PolygonMilitary/Models/SM_Veh_SUV_01.fbx",
-      "packedBytes": 1341748,
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/MidLOD/MidLOD_Unit_Chr_Soldier_Male_02_Alt_04.asset",
+      "packedBytes": 1341196,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/CampaignOperations/TargetLockV01/scn05_blackout_relay_preview_v01.png",
+      "packedBytes": 1250848,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Built-in Texture2D: Splash Screen Unity Logo",
+      "packedBytes": 1250840,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/SplashLoading/TargetLockV04Imagegen/Sprites/scn01_v04_loading_panel_frame.png",
+      "packedBytes": 1222320,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Insurgent_Male_03_CombinedSkinned_13_lod0.asset",
+      "packedBytes": 1213328,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Pilot_Female_01_CombinedSkinned_17_lod0.asset",
+      "packedBytes": 1169480,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_03_overview_panel_frame.png",
+      "packedBytes": 1124864,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Models/SM_Veh_APC_Heavy_01_Destroyed.fbx",
+      "packedBytes": 1098196,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_frame_selected.png",
+      "packedBytes": 1095068,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_backing_selected.png",
+      "packedBytes": 1092108,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_frame_default_amber.png",
+      "packedBytes": 1087624,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_backing_amber.png",
+      "packedBytes": 1084900,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset",
+      "packedBytes": 1078464,
+      "objectTypes": [
+        "UnityEngine.Material",
+        "UnityEngine.MonoBehaviour",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Light SDF.asset",
+      "packedBytes": 1064140,
+      "objectTypes": [
+        "UnityEngine.Material",
+        "UnityEngine.MonoBehaviour",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Bold SDF.asset",
+      "packedBytes": 1063220,
+      "objectTypes": [
+        "UnityEngine.Material",
+        "UnityEngine.MonoBehaviour",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium SDF.asset",
+      "packedBytes": 1062544,
+      "objectTypes": [
+        "UnityEngine.Material",
+        "UnityEngine.MonoBehaviour",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait_frame_Large.png",
+      "packedBytes": 1017848,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait_frame_disabled.png",
+      "packedBytes": 1017848,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait_frame_hover.png",
+      "packedBytes": 1017848,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait_frame_pressed.png",
+      "packedBytes": 1017848,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait_frame_selected.png",
+      "packedBytes": 1017848,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_frame_default_blue.png",
+      "packedBytes": 1017840,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait_frame.png",
+      "packedBytes": 1017832,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_backing_blue.png",
+      "packedBytes": 1017136,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Bombsuit_Male_01_CombinedSkinned_0_lod0.asset",
+      "packedBytes": 983796,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/MidLOD/MidLOD_Unit_Veh_APC_Heavy.asset",
+      "packedBytes": 972220,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Models/SM_Veh_Truck_01.fbx",
+      "packedBytes": 969884,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_02_commander_identity_panel_frame.png",
+      "packedBytes": 966304,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Pilot_Male_01_CombinedSkinned_18_lod0.asset",
+      "packedBytes": 958636,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/GeneratedCombinedMeshes/Model_PolygonMilitary_Mat_Land_Vehicles_3_Combined.asset",
+      "packedBytes": 907500,
       "objectTypes": [
         "UnityEngine.Mesh"
       ]
@@ -836,6 +859,24 @@
       "packedBytes": 1786372,
       "objectTypes": [
         "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Fonts/NotoSansArabic/NotoSansArabic-Narrative SDF.asset",
+      "packedBytes": 45444,
+      "objectTypes": [
+        "UnityEngine.Material",
+        "UnityEngine.MonoBehaviour",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Fonts/NotoSansArabic/NotoSansArabic-Regular.ttf",
+      "packedBytes": 240870,
+      "objectTypes": [
+        "UnityEngine.Font",
+        "UnityEngine.Material",
         "UnityEngine.Texture2D"
       ]
     },
@@ -1113,22 +1154,6 @@
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/BuildDrawer/LayeredOneGo/chrome_12_secondary_button_bg.png",
       "packedBytes": 13612,
-      "objectTypes": [
-        "UnityEngine.Sprite",
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Game/Art/UI/Generated/BuildDrawer/LayeredOneGo/icon_01_icon_credits.png",
-      "packedBytes": 12532,
-      "objectTypes": [
-        "UnityEngine.Sprite",
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Game/Art/UI/Generated/BuildDrawer/LayeredOneGo/icon_02_icon_supplies.png",
-      "packedBytes": 15216,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -1861,14 +1886,6 @@
       ]
     },
     {
-      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_resource_crate_icon.png",
-      "packedBytes": 549188,
-      "objectTypes": [
-        "UnityEngine.Sprite",
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_resource_diamond_icon.png",
       "packedBytes": 519828,
       "objectTypes": [
@@ -2138,24 +2155,8 @@
       ]
     },
     {
-      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_credits_coin.png",
-      "packedBytes": 11256,
-      "objectTypes": [
-        "UnityEngine.Sprite",
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_focus_reticle.png",
       "packedBytes": 8696,
-      "objectTypes": [
-        "UnityEngine.Sprite",
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_fuel_can.png",
-      "packedBytes": 7100,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2244,14 +2245,6 @@
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_stop_hand.png",
       "packedBytes": 8748,
-      "objectTypes": [
-        "UnityEngine.Sprite",
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_supply_crate.png",
-      "packedBytes": 9292,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -2652,46 +2645,6 @@
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/ResourceExchange/LayeredOneGo/pop12_icon_02_close_x.png",
       "packedBytes": 8488,
-      "objectTypes": [
-        "UnityEngine.Sprite",
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Game/Art/UI/Generated/ResourceExchange/LayeredOneGo/pop12_icon_03_credits_star_coin.png",
-      "packedBytes": 10160,
-      "objectTypes": [
-        "UnityEngine.Sprite",
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Game/Art/UI/Generated/ResourceExchange/LayeredOneGo/pop12_icon_04_materials_crate.png",
-      "packedBytes": 13024,
-      "objectTypes": [
-        "UnityEngine.Sprite",
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Game/Art/UI/Generated/ResourceExchange/LayeredOneGo/pop12_icon_05_oil_droplet.png",
-      "packedBytes": 7924,
-      "objectTypes": [
-        "UnityEngine.Sprite",
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Game/Art/UI/Generated/ResourceExchange/LayeredOneGo/pop12_icon_06_fuel_jerrycan.png",
-      "packedBytes": 8764,
-      "objectTypes": [
-        "UnityEngine.Sprite",
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Game/Art/UI/Generated/ResourceExchange/LayeredOneGo/pop12_icon_07_rush_ticket.png",
-      "packedBytes": 12172,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"
@@ -4881,6 +4834,54 @@
       ]
     },
     {
+      "sourceAssetPath": "Assets/Game/Art/UI/Resources/resource_command.png",
+      "packedBytes": 30592,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Resources/resource_credits.png",
+      "packedBytes": 30752,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Resources/resource_fuel.png",
+      "packedBytes": 8740,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Resources/resource_materials.png",
+      "packedBytes": 13000,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Resources/resource_oil.png",
+      "packedBytes": 30584,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Resources/resource_rush.png",
+      "packedBytes": 12148,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
       "sourceAssetPath": "Assets/Game/Effects/Combat/Textures/Tex_Vfx_MuzzleFlashStar.png",
       "packedBytes": 40232,
       "objectTypes": [
@@ -4925,48 +4926,6 @@
     {
       "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/BatchTexture.asset",
       "packedBytes": 1398224,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Game/Rendering/Textures/Stylized/T_GroundStylized_Desert_Albedo.png",
-      "packedBytes": 4194448,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Game/Rendering/Textures/Stylized/T_GroundStylized_Green_Albedo.png",
-      "packedBytes": 4194448,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Game/Rendering/Textures/Stylized/T_GroundStylized_Soft_Normal.png",
-      "packedBytes": 5592544,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Game/Rendering/Textures/T_GroundDetail_Desert_Albedo.png",
-      "packedBytes": 1048716,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Game/Rendering/Textures/T_GroundDetail_Desert_Normal.png",
-      "packedBytes": 158572,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Game/Rendering/Textures/T_GroundDetail_Green_Albedo.png",
-      "packedBytes": 1048716,
       "objectTypes": [
         "UnityEngine.Texture2D"
       ]
@@ -5254,13 +5213,6 @@
       ]
     },
     {
-      "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Camo_Netting_01.tga",
-      "packedBytes": 2497856,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
       "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Tank_Tracks.png",
       "packedBytes": 158572,
       "objectTypes": [
@@ -5303,28 +5255,7 @@
       ]
     },
     {
-      "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_02_B.png",
-      "packedBytes": 9961676,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_02_C.png",
-      "packedBytes": 9961676,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
       "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_03_A.png",
-      "packedBytes": 9961676,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_03_B.png",
       "packedBytes": 9961676,
       "objectTypes": [
         "UnityEngine.Texture2D"
@@ -5345,20 +5276,6 @@
       ]
     },
     {
-      "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_04_B.png",
-      "packedBytes": 9961676,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_04_C.png",
-      "packedBytes": 9961676,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
       "sourceAssetPath": "Assets/PolygonMilitary/Textures/Road_Texture.png",
       "packedBytes": 2497836,
       "objectTypes": [
@@ -5368,13 +5285,6 @@
     {
       "sourceAssetPath": "Assets/PolygonMilitary/Textures/Signs 1.png",
       "packedBytes": 5592552,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/PolygonMilitary/Textures/SkyBox.png",
-      "packedBytes": 16777336,
       "objectTypes": [
         "UnityEngine.Texture2D"
       ]
@@ -5394,28 +5304,7 @@
       ]
     },
     {
-      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_01.png",
-      "packedBytes": 2497856,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_02.png",
-      "packedBytes": 2497856,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
       "sourceAssetPath": "Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_03.png",
-      "packedBytes": 2497856,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_04.png",
       "packedBytes": 2497856,
       "objectTypes": [
         "UnityEngine.Texture2D"
@@ -5429,36 +5318,8 @@
       ]
     },
     {
-      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_08.png",
-      "packedBytes": 2497856,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_09.png",
-      "packedBytes": 2497856,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_10.png",
-      "packedBytes": 2497856,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
       "sourceAssetPath": "Assets/PolygonMilitary/Textures/Vehicles/Veh_Heli_01_A.png",
       "packedBytes": 2497840,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Vehicles/Veh_Heli_01_B.png",
-      "packedBytes": 5592560,
       "objectTypes": [
         "UnityEngine.Texture2D"
       ]
@@ -5480,20 +5341,6 @@
     {
       "sourceAssetPath": "Assets/PolygonMilitary/Textures/Weapons/PolygonMilitary_Weapons_01.png",
       "packedBytes": 158572,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/PolygonMilitary/Textures/rubble.png",
-      "packedBytes": 626408,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/PolygonMilitary/Textures/vazado.tga",
-      "packedBytes": 158552,
       "objectTypes": [
         "UnityEngine.Texture2D"
       ]
@@ -5777,41 +5624,6 @@
       ]
     },
     {
-      "sourceAssetPath": "Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Fence_Alpha.tga",
-      "packedBytes": 158576,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Plane_01_Damaged.png",
-      "packedBytes": 2497860,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Road_01.png",
-      "packedBytes": 158572,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Road_Normal.png",
-      "packedBytes": 158576,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Tank_Tracks.png",
-      "packedBytes": 158576,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
       "sourceAssetPath": "Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Texture_01_A.png",
       "packedBytes": 2497856,
       "objectTypes": [
@@ -5819,64 +5631,8 @@
       ]
     },
     {
-      "sourceAssetPath": "Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Texture_02_A.png",
-      "packedBytes": 2497856,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Texture_03_A.png",
-      "packedBytes": 2497856,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Texture_04_A.png",
-      "packedBytes": 2497856,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Vehicles_01.png",
-      "packedBytes": 2497856,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Vehicles_01_Damaged.png",
-      "packedBytes": 2497864,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
       "sourceAssetPath": "Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Vehicles_01_Emmision.png",
       "packedBytes": 2497864,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Vehicles_02.png",
-      "packedBytes": 2497856,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Vehicles_06.png",
-      "packedBytes": 2497856,
-      "objectTypes": [
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Synty/PolygonBattleRoyale/Textures/Weapons/Wep_Skin_01.png",
-      "packedBytes": 158556,
       "objectTypes": [
         "UnityEngine.Texture2D"
       ]
@@ -6274,7 +6030,7 @@
     },
     {
       "sourceAssetPath": "Resources/unity_builtin_extra",
-      "packedBytes": 583328,
+      "packedBytes": 561356,
       "objectTypes": [
         "UnityEngine.Cubemap",
         "UnityEngine.Material",

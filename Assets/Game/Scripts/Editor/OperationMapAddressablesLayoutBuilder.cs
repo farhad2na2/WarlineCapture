@@ -427,7 +427,8 @@ namespace Game.Editor
             schema.Compression = BundledAssetGroupSchema.BundleCompressionMode.LZ4;
             schema.UseAssetBundleCrc = true;
             schema.UseAssetBundleCrcForCachedBundles = true;
-            schema.BundleNaming = BundledAssetGroupSchema.BundleNamingStyle.OnlyHash;
+            // Pack-by-label identities can be long, while content-only hashes collide for equal empty bundles.
+            schema.BundleNaming = BundledAssetGroupSchema.BundleNamingStyle.FileNameHash;
             schema.BundleMode = packTogetherByLabel
                 ? BundledAssetGroupSchema.BundlePackingMode.PackTogetherByLabel
                 : BundledAssetGroupSchema.BundlePackingMode.PackTogether;

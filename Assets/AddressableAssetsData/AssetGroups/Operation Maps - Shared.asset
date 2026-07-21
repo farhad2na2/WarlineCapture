@@ -285,16 +285,6 @@ MonoBehaviour:
     - operation-map-role-shared-dependency
     - operation-map-shared-shard-mesh-02
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 0a38b16d1af9474292aa331ede8faff3
-    m_Address: operation-map/shared/0a38b16d1af9474292aa331ede8faff3
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-role-shared-dependency
-    - operation-map-shared-shard-texture-02
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0a9ef9863c241814e9ae0ed9a6f88d4c
     m_Address: operation-map/shared/0a9ef9863c241814e9ae0ed9a6f88d4c
     m_ReadOnly: 0
@@ -2665,16 +2655,6 @@ MonoBehaviour:
     - operation-map-role-shared-dependency
     - operation-map-shared-shard-mesh-05
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 5d621615d28289740b6faf8741dd275c
-    m_Address: operation-map/shared/5d621615d28289740b6faf8741dd275c
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-role-shared-dependency
-    - operation-map-shared-shard-mesh-05
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5dc6b76b53b34814fa265695a9cec3e4
     m_Address: operation-map/shared/5dc6b76b53b34814fa265695a9cec3e4
     m_ReadOnly: 0
@@ -2984,16 +2964,6 @@ MonoBehaviour:
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-role-shared-dependency
     - operation-map-shared-shard-mesh-00
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 693cfe94e36b4e63b91804239c6ad4c3
-    m_Address: operation-map/shared/693cfe94e36b4e63b91804239c6ad4c3
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-role-shared-dependency
-    - operation-map-shared-shard-texture-01
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 696fd0370ebf4f2469314643c089d3ba
     m_Address: operation-map/shared/696fd0370ebf4f2469314643c089d3ba
@@ -3375,16 +3345,6 @@ MonoBehaviour:
     - operation-map-role-shared-dependency
     - operation-map-shared-shard-mesh-03
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 73914a722b634fe47a3af9593439440d
-    m_Address: operation-map/shared/73914a722b634fe47a3af9593439440d
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-role-shared-dependency
-    - operation-map-shared-shard-texture-03
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 73cdeb7b14186c44d87c7954bd60e55e
     m_Address: operation-map/shared/73cdeb7b14186c44d87c7954bd60e55e
     m_ReadOnly: 0
@@ -3655,16 +3615,6 @@ MonoBehaviour:
     - operation-map-role-shared-dependency
     - operation-map-shared-shard-mesh-05
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 7d5b1bd53457449b8e07e53543128ad6
-    m_Address: operation-map/shared/7d5b1bd53457449b8e07e53543128ad6
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-role-shared-dependency
-    - operation-map-shared-shard-texture-05
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7d6af040e5782264b80c246cfb086fd6
     m_Address: operation-map/shared/7d6af040e5782264b80c246cfb086fd6
     m_ReadOnly: 0
@@ -3684,16 +3634,6 @@ MonoBehaviour:
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-role-shared-dependency
     - operation-map-shared-shard-mesh-07
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 7fcf6ff828d9e447e8a25a4978d1a649
-    m_Address: operation-map/shared/7fcf6ff828d9e447e8a25a4978d1a649
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-role-shared-dependency
-    - operation-map-shared-shard-material-07
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8003c868326b5214c9e852839645faa3
     m_Address: operation-map/shared/8003c868326b5214c9e852839645faa3
@@ -3777,16 +3717,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 820ed87c04b8e6a41b5bcb6223e0cab2
     m_Address: operation-map/shared/820ed87c04b8e6a41b5bcb6223e0cab2
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-role-shared-dependency
-    - operation-map-shared-shard-mesh-02
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 82965ee4d06b25c469820e00177b2903
-    m_Address: operation-map/shared/82965ee4d06b25c469820e00177b2903
     m_ReadOnly: 0
     m_SerializedLabels:
     - operation-map
@@ -3984,16 +3914,6 @@ MonoBehaviour:
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-role-shared-dependency
     - operation-map-shared-shard-mesh-01
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8a01f76951beee8439c85fa02b861a90
-    m_Address: operation-map/shared/8a01f76951beee8439c85fa02b861a90
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-role-shared-dependency
-    - operation-map-shared-shard-mesh-02
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8a06110e5538189488a7c9547b8bf5b5
     m_Address: operation-map/shared/8a06110e5538189488a7c9547b8bf5b5

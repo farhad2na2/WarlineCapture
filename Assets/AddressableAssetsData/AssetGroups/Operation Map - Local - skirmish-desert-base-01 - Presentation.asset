@@ -15,6 +15,16 @@ MonoBehaviour:
   m_GroupName: Operation Map - Local - skirmish-desert-base-01 - Presentation
   m_GUID: 114057eb98a07419db344ede1f49762b
   m_SerializeEntries:
+  - m_GUID: 013cef2028cf544f38b48134515ed3d1
+    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p007_p050
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - operation-map
+    - operation-map-local
+    - operation-map-pack-skirmish-desert-base-01
+    - operation-map-partition-skirmish-desert-base-01-region-p001-p010
+    - operation-map-role-presentation
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0325bc12ea7584d61aa8baa5a8469700
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p020_p009
     m_ReadOnly: 0
@@ -23,16 +33,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p004-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 04c124ebb1979461cb0d23c0ad344ab3
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p038_p019
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0508a330b17624a259f18d9900f34489
@@ -65,16 +65,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p003-p001
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 058d605c0647f4332a9450ff78b91d7f
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p044_p007
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 05c65d728f5dd4d2ea4d484238d04661
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p020_p011
     m_ReadOnly: 0
@@ -95,14 +85,14 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p004-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 0692000d22ab54a54988dd84ee842157
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p037_p007
+  - m_GUID: 0744cbccd4cb84119a20fd80f671de3f
+    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p094_p021
     m_ReadOnly: 0
     m_SerializedLabels:
     - operation-map
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p001
+    - operation-map-partition-skirmish-desert-base-01-region-p018-p004
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 075fa7203d5ca432b81a12b413c44e94
@@ -135,26 +125,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p003-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 08693baa56f134f65be00ef2d957d99e
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p043_p012
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 08d08c9060e024f6988e665f822d496d
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p039_p010
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 09996ae8532534152ae8c1aedcb4d894
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p008_n028
     m_ReadOnly: 0
@@ -163,16 +133,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p001-n006
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 0a90369dcad1145918849b1cd13f844f
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p051_p006
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p010-p001
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0ad12d0568c8442c3a23a4b64263c3fe
@@ -185,16 +145,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-n004-n003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 0bfcd9821bf8b47d6a9755ded3d09129
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p053_p004
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p010-p000
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0cf21ad73bbb44fea86df94e295a56f0
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p036_p014
     m_ReadOnly: 0
@@ -203,66 +153,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p007-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 0d89fc69f51c84b148a6aff148cbb985
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p037_p012
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 0da7a9e9c037c46c8946a884e8a1c0b0
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p043_p011
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 0e0844563024345b3aab47c011958258
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_n002_p017
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-n001-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 0e1bb3ee227ce402faadb1a29126f1ce
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p041_p019
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 0e5a945ae9dba463fae7d9608adde78d
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p040_p017
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 0ea7e846a7b584d1fa7252802a400f62
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p047_p009
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p001
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0fa913066fed84209a2a8e1387d7346b
@@ -315,26 +205,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p014-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 1367e20a7caeb48d2b023abc92488b80
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p049_p007
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 13a9bca77afeb4386ac193cd829857e5
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p043_p006
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 13bd80762cf5a42528d6ab76059de3b2
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p029_p021
     m_ReadOnly: 0
@@ -345,34 +215,14 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p005-p004
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 153129b8ad33346f2971c38063eee034
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p049_p015
+  - m_GUID: 1496bcb38211f42a89ac8a8054597f38
+    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_n012_p052
     m_ReadOnly: 0
     m_SerializedLabels:
     - operation-map
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 157ed2f210b134bf998f18b07d6376e6
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p039_p016
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 16816f80c1c6841f09c129bba3bf2f06
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p014_p041
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p002-p008
+    - operation-map-partition-skirmish-desert-base-01-region-n003-p010
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1737e9831d8b4488ca193a096b49b64c
@@ -405,16 +255,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p004-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 17d68710ac85f423083a27443128a192
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p046_p009
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 182a4d53b77174799af2a53af12cd906
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p025_p013
     m_ReadOnly: 0
@@ -423,36 +263,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p005-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 186a059ac402340bda741bcc5ede59a6
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p044_p014
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 1879d965409dc43c09c2198306ced85d
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p051_p012
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p010-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 195632ff0366e4a33b216b9a59240f49
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p048_p016
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1b1e337f1b81b49c78471ea9cda684c6
@@ -495,26 +305,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p002-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 1d5f7cfe168944fad93e27aa64080d94
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p045_p017
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 1dfce3a82230341649eab479ae422299
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p038_p015
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1e324ace23f774ccb92f999f9fcbf2ae
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p026_p015
     m_ReadOnly: 0
@@ -523,6 +313,16 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p005-p003
+    - operation-map-role-presentation
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1ff743dfa540f43ab98319873c527c7a
+    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_n008_p056
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - operation-map
+    - operation-map-local
+    - operation-map-pack-skirmish-desert-base-01
+    - operation-map-partition-skirmish-desert-base-01-region-n002-p011
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2007737094550487c81a2bb9c9086a63
@@ -535,26 +335,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p003-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 20c95ade83b2a4843a5914be1f21812d
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p044_p016
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 20d6c559793ec4b4e925e265c88353f6
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p048_p009
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 210aec897618843d89c3777ea164ab16
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p038_p014
     m_ReadOnly: 0
@@ -563,26 +343,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p007-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 211e5d5afa9614f77be45b84b19ae380
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p035_p007
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 21ece9e12efba4091b40ba3e547ec47b
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p005_p030
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p001-p006
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 22dfdc8cb5d7243ce8a2b1abe891b798
@@ -635,16 +395,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p004-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 25576213c0aed4bbe85920d7964981be
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p054_p005
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p010-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 25bfcf39f6e7b4a3ab952c7d8627a828
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p027_p013
     m_ReadOnly: 0
@@ -653,16 +403,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p005-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 25d18cbb970e54cd29780743cdac7527
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p051_p009
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p010-p001
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 25e25d4126ce64d4c8f9e1b6d4136f4e
@@ -685,24 +425,24 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p007-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 28c2b94d7026947b4ad5c40c77092ff6
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p042_p018
+  - m_GUID: 26534a09b29f34b6fa029a5cd40f80af
+    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p056_p046
     m_ReadOnly: 0
     m_SerializedLabels:
     - operation-map
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p003
+    - operation-map-partition-skirmish-desert-base-01-region-p011-p009
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 29a6ec363a71a455a9e8a59933e967fd
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p043_p015
+  - m_GUID: 291a10e588ca947fa936b335370f01f3
+    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p015_p116
     m_ReadOnly: 0
     m_SerializedLabels:
     - operation-map
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p003
+    - operation-map-partition-skirmish-desert-base-01-region-p003-p023
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2a5f162f204b64cf4bc6f53900fcfd42
@@ -715,26 +455,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p006-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 2a6c3f5c6d2fa456199fad467008e888
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p040_p020
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p004
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 2acff2e7e3b5649b3aa4ab380c13819a
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p038_p016
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2b921805b0e28492aa1735bbd980d486
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p020_p017
     m_ReadOnly: 0
@@ -743,26 +463,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p004-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 2bdf1fb3e5091460b94b11df96108094
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p042_p007
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 2c4389344cc47453a85f6a53cc482011
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p036_p012
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2c778d0643bfc4c95865c5d6378360b1
@@ -805,26 +505,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p006-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 2df624e84403d4aafa33a4fbf870818b
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p043_p019
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 2ed1d9a0f63a148e5b4aeef5911bb3ed
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p041_p011
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2f0d8ba47fc39405083ddbebcc4d8742
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p011_p013
     m_ReadOnly: 0
@@ -833,16 +513,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p002-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 2f300881656b04a47b3227841c178fde
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p049_p009
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p001
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2f6b5fccab5cf4322b1669adcd65459c
@@ -873,16 +543,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p005-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 30df174fc2fef4aed921a325c2b4f05e
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p051_p010
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p010-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 310eca3d9ddde449fbefc10c2f8a04ff
@@ -925,16 +585,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p012-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 31bd570f973244bdea890bb0624fd48c
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p040_p019
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 31d5e667262d449a18a1276cc6acc049
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p026_p012
     m_ReadOnly: 0
@@ -943,36 +593,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p005-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 31eb1030e7ed344a1b1ab6e50af51885
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p047_p006
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 3214219a4a54b447f9cc2cb604bd149e
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p016_p029
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p003-p005
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 32422382b792047279e33a6794b427aa
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p042_p015
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 32870fd4636f345c381ea8320aa6e334
@@ -995,44 +615,14 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p004-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 340e289a1997c4ac098e90c380868ce2
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p041_p014
+  - m_GUID: 34017af5ba068444d8b7f817726c50ab
+    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_n035_p048
     m_ReadOnly: 0
     m_SerializedLabels:
     - operation-map
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 34ee3bb1fbe0b491fb6071b045ea81b2
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p038_p018
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 3505ab70f15d24733906f62ae13dc5a9
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p035_n012
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-n003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 35ef6ecefbeae4f7680bd7601468ab5b
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p038_p020
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p004
+    - operation-map-partition-skirmish-desert-base-01-region-n007-p009
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 366f434117e504098880ca8fe91e48ac
@@ -1043,16 +633,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p006-p004
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 3697aa99a5748462f9638000b3e2e24b
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p033_p012
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p006-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3757aee11497446b59889e6286fdaa17
@@ -1085,16 +665,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p004-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 383783bdfa9114fa19995e7b64409217
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p010_p022
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p002-p004
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 384da020d88dc49f6b0d8a08220474d2
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p021_p012
     m_ReadOnly: 0
@@ -1115,16 +685,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p004-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 3a9df2481473e42ac8451846f4361f35
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p047_p017
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3c5f46a942b8645de981b86e17f32934
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p025_p007
     m_ReadOnly: 0
@@ -1135,26 +695,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p005-p001
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 3d12f601305334fe8b1d0ca93d7aec42
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p045_p007
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 3d82c7c99f20a4768b455a8129a0e76b
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p042_p010
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3d891eac0d0cc48d5ad64be4a3b1a7b1
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p031_p017
     m_ReadOnly: 0
@@ -1163,36 +703,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p006-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 3dd22051f72e14b708fa93d49a79d224
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p051_p005
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p010-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 3de888d319bb14b849deb2a46358f645
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p049_p011
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 403164b5b08bf4ea4aa9e340af0712cb
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p041_p017
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 418c77015038e43f3907a79862ad731e
@@ -1225,14 +735,14 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-n006-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 427d28cc5fbe44aecb5a9deddd199d09
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p007_p036
+  - m_GUID: 429d76a9d87fe42639dc82fb4c2d9b7d
+    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p016_p042
     m_ReadOnly: 0
     m_SerializedLabels:
     - operation-map
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p001-p007
+    - operation-map-partition-skirmish-desert-base-01-region-p003-p008
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 43dc51c6aa0f34285bab24b767ad38ec
@@ -1255,26 +765,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p006-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 44dbc98e3687d4a4a86b16db359c154d
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p037_p016
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 44fc68bf86f444e6d84f147f68dbcb11
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p040_p008
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4570867710f6f4e1a93d05eda4857421
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p015_p012
     m_ReadOnly: 0
@@ -1293,16 +783,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p004-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 4605471f6c4324676bd421e0d8b06fb7
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p040_p014
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 462d20f3574ce4096a3ec1268e965988
@@ -1325,36 +805,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p004-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 473b266cc7db046e3a3861cea2a803b7
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p038_p006
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 475ef1e8daa4143b2ad4553e62f9c148
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p042_p017
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 47d3851c8aca8496793540f75003b38f
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p037_p006
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 482142b570626403bbdf6291abe44480
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p008_p013
     m_ReadOnly: 0
@@ -1363,26 +813,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p001-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 488418badec2d4be1a0e7b222943c9e5
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p048_p017
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 498d782b9d8ba40138aa9ef889765ba6
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p021_p002
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p004-p000
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4c4dadb19ac9e4c7ca06c95d5526af76
@@ -1405,16 +835,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-n009-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 4cede8433d16b437697b36433ade6581
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p029_p015
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p005-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4d240c452d1e547eeb41925b72135714
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p032_p020
     m_ReadOnly: 0
@@ -1425,16 +845,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p006-p004
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 4f976935346d8404a8e71ad4f01f4938
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p040_p012
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4fcbffff35c694105bc1c6715a08496f
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p037_p014
     m_ReadOnly: 0
@@ -1443,26 +853,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p007-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 5036df5daffae49b5940d884a9e0e3b6
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p040_p018
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 509454754e86e4112b5201b4855f4a2d
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p049_p016
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 51028603ce17c4dfaa80c043f14d0262
@@ -1493,16 +883,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p002-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 5231a8456e5a4491490b7bc4d4aef7fa
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p042_p020
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p004
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 533b02fba44f54a5e8f45bf8d33b417b
@@ -1545,46 +925,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p006-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 53922f80503244159ab047b17e798042
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p044_p011
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 54f45047b3ca94b70be1c1f035531a16
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p040_p007
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 54ff63a6495114cfe94bf1fa1fffd7c5
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p048_p012
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 55c21f2d2c172495d923f6b98079389d
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p026_p027
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p005-p005
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5605aa07ddb1e4221b57e079503ff5a4
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p026_p013
     m_ReadOnly: 0
@@ -1595,46 +935,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p005-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 56956f745ca4a40f4bf3305c7eeb63b3
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p039_p014
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 56bfb0f6f0b93410691b31fa217a581f
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p042_p016
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 57c4d2d1a36034277bf89be25cbe5919
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p049_p006
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 57deca6eca1904dbcaec5f35135f47e0
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p049_p012
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 58488fc613a6245a2b44be11a5ac552e
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p018_p008
     m_ReadOnly: 0
@@ -1643,16 +943,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p003-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 586485587170c433eb43f84d14503bd3
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p039_p015
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 593edb931c08b484db9e53564a43da00
@@ -1675,6 +965,16 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p002-p001
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 59c3827720c004f73b924e6526b31315
+    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p066_p039
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - operation-map
+    - operation-map-local
+    - operation-map-pack-skirmish-desert-base-01
+    - operation-map-partition-skirmish-desert-base-01-region-p013-p007
+    - operation-map-role-presentation
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 59d331157562845d5b2ecb413e9c282c
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p004_p013
     m_ReadOnly: 0
@@ -1695,16 +995,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p015-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 5acac4ed6ddbd4bc08bf3a6326e34b30
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p046_p005
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5b9005814d4b644efa643859f608187c
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p029_p013
     m_ReadOnly: 0
@@ -1713,16 +1003,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p005-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 5bc2a7bda0759485c87672514590cb41
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p039_p012
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5c2c0a648a55842a38dbf662d6a2bf31
@@ -1775,16 +1055,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p003-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 5ee109426fd544f73beb8f776b208e9e
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_n006_n004
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-n002-n001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5fefd976bace549c3bc7775b95e1e455
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p026_p005
     m_ReadOnly: 0
@@ -1805,36 +1075,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p005-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 60435ce7c2d7e4f66833928009e538b3
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p052_p006
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p010-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 61c60c5fed7214b79a4141973f6a112e
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p037_p009
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 6238b6527406943d5ae40434f24213bc
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p041_p015
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 625d96cd1c4ae4dd8b00e53588317ff4
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p019_p014
     m_ReadOnly: 0
@@ -1843,56 +1083,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p003-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 62d5d80bcd7254a349609d98c5a63190
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p036_p007
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 632f971f8d20b400e9a752268312907e
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p057_p005
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p011-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 6382d80acc02f4d5eac82faebae0da09
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p037_p008
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 6531dc27572dc4d9388bafd434628e34
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p051_p011
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p010-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 6586cfef5d07b4215863cd670ac49f4a
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p032_p010
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p006-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 65b4687b1310b4d55b8d11f060bda65b
@@ -1905,16 +1095,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p005-p001
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 65e27b72480ac4b6e9a615d42cc884b5
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p050_p005
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p010-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 66373d2fa45b34f0a9fb2cedfe178571
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p035_p017
     m_ReadOnly: 0
@@ -1925,14 +1105,14 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p007-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 668487b77ba15450f95aed34e3328113
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p038_p012
+  - m_GUID: 67821755d79134215b93542275d414c0
+    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p022_p041
     m_ReadOnly: 0
     m_SerializedLabels:
     - operation-map
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p002
+    - operation-map-partition-skirmish-desert-base-01-region-p004-p008
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 682dc279df84f4deb942b88a95c411ef
@@ -1945,26 +1125,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-n003-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 684361c8748804101a5568cbcbba6945
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p041_p010
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 686c4b16b5365400db2a696b054adf85
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p040_p009
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 696858ec208064b27bed8dab5ca76741
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p024_p011
     m_ReadOnly: 0
@@ -1973,16 +1133,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p004-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 69685d78519164bd3a1426907ac4b903
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p033_p010
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p006-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6a1c71bf7cb1c44dc98792f1b97b3748
@@ -2015,16 +1165,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p002-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 6c326d59eb9e149a188236ca00047bf0
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p041_p021
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p004
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6c6258494fe3e456783208dfc3d797e8
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p032_p017
     m_ReadOnly: 0
@@ -2033,36 +1173,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p006-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 6cd760813a4544e518e0a91d218b7013
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p056_p005
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p011-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 6df9d43911271488a88f22aec4ea4a0a
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p050_p009
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p010-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 6dfa703a6a6e64343924d74e5e4b056d
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p013_p001
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p002-p000
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6e338385097d84b93ba776568b011b72
@@ -2085,16 +1195,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p005-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 708b71c5d96b543e2b72fbf01934958f
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p034_p010
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p006-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 70a19abf9adbe4f5fad49524589080c8
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p025_p004
     m_ReadOnly: 0
@@ -2115,6 +1215,16 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p002-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 71e51a84d34744aa2a4deddfad5bc9c9
+    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_n013_p027
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - operation-map
+    - operation-map-local
+    - operation-map-pack-skirmish-desert-base-01
+    - operation-map-partition-skirmish-desert-base-01-region-n003-p005
+    - operation-map-role-presentation
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 71f338e07a60f43008ea8bf24c965361
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p034_p014
     m_ReadOnly: 0
@@ -2123,36 +1233,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p006-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 723280468f5694330adb914256f05194
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p045_p015
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 7304eb0e48eb34253b611f64a715073c
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p040_p022
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p004
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 7350e9bdec6f24442b58b54255674cb1
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p051_p008
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p010-p001
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7438e9098519643c4abba01505007d61
@@ -2185,26 +1265,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p006-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 759d5e88b0b32484b95494b2a85943ad
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p044_p010
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 76368ec5b49cc45ea8ae0d890788dc7a
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p042_p009
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 76425e655ef974f7990958c998d43430
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p026_p010
     m_ReadOnly: 0
@@ -2225,34 +1285,14 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p003-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 76e8e8784b0ca4324979f43221c00d8f
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p046_p010
+  - m_GUID: 77a8bc196f68b49ee96af6a670e9a517
+    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p033_p071
     m_ReadOnly: 0
     m_SerializedLabels:
     - operation-map
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 7719f3ffac6a44889b87e2f167a916ea
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p038_p007
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 77298c39f712d47b1b7039dbae01a9f3
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p043_p008
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p001
+    - operation-map-partition-skirmish-desert-base-01-region-p006-p014
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 78205c4b6840f4cc5a687c982f000fd6
@@ -2285,16 +1325,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p007-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 78a2fc496d1c94aac937ee9c910bc9a4
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p043_p024
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p004
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 78b6e77332e15472ea6b670985693a4a
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p029_p020
     m_ReadOnly: 0
@@ -2315,16 +1345,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-n009-n001
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 78df2a37706be42eb84572c03eaf78bb
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p037_p010
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 79e71ca129d9b410ab5b466ac6034052
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p032_p016
     m_ReadOnly: 0
@@ -2333,16 +1353,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p006-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 7a68d6a015aed4feeba9796139399fdf
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p048_p022
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p004
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7a7ac725a164f4129b68c90f20ffbcdd
@@ -2355,16 +1365,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p004-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 7a96d5beb76df485abb7574156bd8677
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p047_p014
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7bdf9a850bdf84b69bbef4e8b9ddd67b
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p024_p056
     m_ReadOnly: 0
@@ -2373,16 +1373,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p004-p011
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 7bfb341ea526f491ba4a73e043b37df1
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p059_p047
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p011-p009
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7c0ff3ed72b1b4e7da0186c412bf4bb0
@@ -2395,36 +1385,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p007-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 7ccb3074781c94768bcb8ce1cceb019d
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p039_p022
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p004
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 7d28b78cd10974bf19de4dd307476e8a
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p029_p014
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p005-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 7e55062e4e95d4053b30457b1bd712f8
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p043_p017
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7f22147efe0a049fb8e8352f82037236
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p019_p010
     m_ReadOnly: 0
@@ -2435,44 +1395,14 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p003-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 7f7f49b414e2b433e86349270f2b0a90
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p040_p021
+  - m_GUID: 80ab16ff557004980a564eb54059b79c
+    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p024_p042
     m_ReadOnly: 0
     m_SerializedLabels:
     - operation-map
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p004
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 7f8a325839cee48938a79170683099be
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p050_p012
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p010-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 803d1962c834b433b82bf9cd0a26583d
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p039_p019
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 809615eb9341648e38ea80011780e232
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p036_p010
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p002
+    - operation-map-partition-skirmish-desert-base-01-region-p004-p008
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 81091ac10d20c4ee4a3e42527b030e77
@@ -2483,16 +1413,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p006-p004
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 810b49b9ec3cd4e318f2a6e62092cefd
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p049_p014
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 812c311a7c8154a32af45abcbc0aa0b8
@@ -2515,6 +1435,16 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p005-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 81ffdc76e86f04755b4866dd65f28f2a
+    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p088_p035
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - operation-map
+    - operation-map-local
+    - operation-map-pack-skirmish-desert-base-01
+    - operation-map-partition-skirmish-desert-base-01-region-p017-p007
+    - operation-map-role-presentation
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8203a7c41c339492ab3ef19aedbcb584
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p030_p013
     m_ReadOnly: 0
@@ -2523,26 +1453,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p006-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 83851ffe070bd4aa2816e77655192aa5
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p046_p012
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 85cfd40e816b14f54a785c8e5828fbb7
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p048_p007
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p001
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 863e41edbef824a4b95a1f2bec932d3a
@@ -2555,36 +1465,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p003-p016
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 864b681bcd02344fdb33b74dfed83037
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p050_p011
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p010-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 865c4c57e4feb439b9b5be45eb6640a3
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p043_p007
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8792f846d48de4d3ba08986ab10207d3
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p036_p011
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8899d0428b95d44b49dffc25e40998a8
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p016_p011
     m_ReadOnly: 0
@@ -2593,26 +1473,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p003-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 88b4feddd364546e58439c021bad525a
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p032_p021
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p006-p004
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 88e0323e3057a4b5ca4494857220cbc6
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p037_p011
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8957e1472515f439e9c48db7e64795e7
@@ -2635,34 +1495,14 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p007-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 89f3ea38a90d2429ba9b4d67e4e9bd99
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p039_p020
+  - m_GUID: 8a7afbd423ac5427495d2fa84812258a
+    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p092_n013
     m_ReadOnly: 0
     m_SerializedLabels:
     - operation-map
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p004
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8a1fc0d1aad594d67bc6a532764a4717
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p035_p006
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8b8cc2a907ec9471086d9edb5bd2c640
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_n012_p023
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-n003-p004
+    - operation-map-partition-skirmish-desert-base-01-region-p018-n003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8c1c40b00525a4dddba131592cbe8f02
@@ -2675,16 +1515,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p004-p001
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8d052d3f885794c14a4f609980d1025f
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p033_p009
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p006-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8df19927a79694b6db77209b7315fe89
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p035_p014
     m_ReadOnly: 0
@@ -2693,106 +1523,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p007-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8eecc54c952b64f388682617480628d5
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p044_p015
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8f1ec68152aac4e60b81923daceee885
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p042_p006
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8f284b87932074124aa0ffdcbf12e89a
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p038_p017
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8f2c693bd66df44be9d5f3ceb3bab9e5
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p049_p005
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8f555774338164bde954954f1e05f4b1
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p039_p011
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8f56973432c0741c592ec40324874e73
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p040_p015
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8f82690cbe7aa4fd09d16162f0777874
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p039_p006
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8fc2106dba51f4fb2bb99e08e5074286
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p041_p008
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 901217b29fc3c4487b142815ca764591
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p035_p008
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 90a434f1acb7e443a9770cd06366815a
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p052_p014
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p010-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 90ad6ca260ea94306abceac49d7682a1
@@ -2805,36 +1535,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-n001-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 910182bc450e647ce9bb11e03ae1496f
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p035_p012
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 91a2561a948364ef7ad729124d590115
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p036_p008
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 924d97578e8624f63a84d2a12b23b9cb
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p046_p014
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 93f4e3349ede44519b15d4bceae81cb3
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_n047_p013
     m_ReadOnly: 0
@@ -2843,26 +1543,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-n010-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 941306c3641704e3484b77238edd8b23
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p041_p018
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 94fd062a88e9d4cd8bda15b0c3d2bae0
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p046_p006
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p001
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 95074f39539fc4256acb31e6ccf53e02
@@ -2895,16 +1575,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p003-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 9641ebe3ebd884f7d8911522a2456078
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p041_p007
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 964738ffe9bd5436a9b7d517c16f1a33
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p025_p010
     m_ReadOnly: 0
@@ -2913,26 +1583,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p005-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 96822bfa0705e4ecaba88e8acb30abb1
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p042_p014
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 96c0255c67fda47579b5342f62d2d0f2
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p052_p007
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p010-p001
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9799a1bd5157b4dd79a31249a13bb022
@@ -2953,26 +1603,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p007-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 982298d741cda496da37e21fc9518dfc
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p047_p010
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 9848ec4c418bb459d9d15404189941b1
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p046_p017
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 99676ea93453a431ead7c366d3c1ccb2
@@ -3025,36 +1655,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p007-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 9ca0f212a219a4645939c2d906eb4ccb
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_n035_p033
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-n007-p006
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 9de9dec7cf4454982b4ef71585460fbd
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p039_p017
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 9e0ce2e6b5f5641bd921c4c502ce5970
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p035_p031
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p006
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9e96e87d469684d62bfee2182d91b0dd
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_n022_p013
     m_ReadOnly: 0
@@ -3063,36 +1663,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-n005-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 9eb8e7000acaa4e158e3bffbc84fe8e7
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p051_p007
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p010-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 9ed2ef07e122849de8dd00c6512ef328
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p041_p016
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 9ed8615b633b24e81bcacc291b84745d
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p032_p012
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p006-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9fc501293c4954b888d6e57d576e857e
@@ -3105,36 +1675,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p003-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 9fd00907fedb74c2582ed73104d46959
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p038_p011
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: a03800e619f2d4ea5afb47e1023fb648
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p045_p014
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: a05ec1856681a45c6807b8089b93481f
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p043_p013
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a12998da43a9e4665b0805d923c32e6c
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p032_p018
     m_ReadOnly: 0
@@ -3145,34 +1685,14 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p006-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: a12ea4b77f35f40578841b37c4f72ce6
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p039_p018
+  - m_GUID: a26641f052eda4465ba7c236db7e55b1
+    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p107_p034
     m_ReadOnly: 0
     m_SerializedLabels:
     - operation-map
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: a1c6444edcd924c72b6fa8a103ddd504
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p039_p007
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: a23fa026de33b424ba9e853f69e82f16
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p044_p019
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p003
+    - operation-map-partition-skirmish-desert-base-01-region-p021-p006
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a3f86fc5892224bcc860320606560b58
@@ -3183,16 +1703,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p007-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: a433cc5a87475447fb2fd297e0c9d065
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p038_p008
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p001
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a43e7f87c47f34cee8742a5ab84c7999
@@ -3225,6 +1735,16 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p004-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a66fad95c6b6b4ecf8d0a16abd6a38e4
+    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p047_n024
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - operation-map
+    - operation-map-local
+    - operation-map-pack-skirmish-desert-base-01
+    - operation-map-partition-skirmish-desert-base-01-region-p009-n005
+    - operation-map-role-presentation
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a685bd84e3a1e405189ecb7400461e7e
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p025_p014
     m_ReadOnly: 0
@@ -3253,16 +1773,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p006-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: a7fdc8bd20d764afa863b4c453baa2d6
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p045_p018
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a8134416c7eb04815b6bd5ae7b2f8227
@@ -3315,34 +1825,14 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p006-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: a99c8b7cfd13547fe91fcaa12ca2f285
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p032_p011
+  - m_GUID: a9f0ef0293ec543b19e41a2591d769a7
+    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p042_p044
     m_ReadOnly: 0
     m_SerializedLabels:
     - operation-map
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p006-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: aab691ffd47154312a1603013f9fe7a6
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p039_p021
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p004
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: aaf7adcbb406848c8b41e9be13e11a84
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p045_p010
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p002
+    - operation-map-partition-skirmish-desert-base-01-region-p008-p008
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ab3fdac6f3bcd4c14b4d217348d64e2b
@@ -3355,16 +1845,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-n001-p013
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: ab87ef8ec9ad54a91bcc031cd43ab4f8
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p047_p011
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ac13472f414b2499386d5c9739034be2
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p016_p012
     m_ReadOnly: 0
@@ -3375,34 +1855,14 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p003-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: ac5d64f582dc14df4aeb262cd3dfcc82
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p022_n001
+  - m_GUID: ad8a0de599a354e8a9a759f14ba9fefc
+    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p009_p043
     m_ReadOnly: 0
     m_SerializedLabels:
     - operation-map
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p004-n001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: aceab7a4a72c640fb894c78f72adda2b
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_n013_p004
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-n003-p000
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: ada653e86c74549d2a818c2cf2ab89ff
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p041_p006
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p001
+    - operation-map-partition-skirmish-desert-base-01-region-p001-p008
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: adfac54fe2d0f4c85a8b8b3293677322
@@ -3413,26 +1873,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p007-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: af59453198e844bf9983eed27972273f
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p048_p010
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: b082e6b3e195c4c50878a4e022986cbc
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p034_p008
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p006-p001
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b1570dd8c6e874e12b7d2eda1864107b
@@ -3455,14 +1895,14 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p006-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: b1f010c7dc8d443eab852ed3d20834c8
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p038_p022
+  - m_GUID: b203bc401673545caa0b6814474b0380
+    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p013_p036
     m_ReadOnly: 0
     m_SerializedLabels:
     - operation-map
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p004
+    - operation-map-partition-skirmish-desert-base-01-region-p002-p007
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b218e3cebeeb54a0c886de1017dded49
@@ -3495,16 +1935,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p001-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: b2ff207ab653148ceab77be857fb0c4f
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p021_n002
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p004-n001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b3fbef4c82e254d4da223c08862ed449
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p018_p015
     m_ReadOnly: 0
@@ -3513,16 +1943,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p003-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: b452c41d0f38c4e04b6c87fd079cb3ea
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p041_p012
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b47ca8f74911846718a3cc8bbe389988
@@ -3545,44 +1965,14 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p004-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: b6aae408771ff4028a89aa27981aca8f
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p069_p034
+  - m_GUID: b8fab1c5c341f4e039d4f100b88e6335
+    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p017_n015
     m_ReadOnly: 0
     m_SerializedLabels:
     - operation-map
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p013-p006
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: b74eaf1c579d7411ab54e86b269fb96c
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p042_p011
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: b852c8cf7e31849f18384a9b574a7ff8
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p044_p006
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: b8f5502bcb5a54022b7ff84ba376f3bf
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p021_n008
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p004-n002
+    - operation-map-partition-skirmish-desert-base-01-region-p003-n003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b953c62ed6ab940a9a9a5f4fa50b835b
@@ -3595,16 +1985,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p006-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: b9c19f945c24d491aa0496cc547a7b62
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p033_p011
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p006-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b9ed8fc4903684567a691bbcdfcfd52d
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p056_p013
     m_ReadOnly: 0
@@ -3613,16 +1993,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p011-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: bb2f5c3a3a01e437fa15ada924efddb5
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p034_p006
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p006-p001
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: bb7bec0a5c554427ab0ebb54a6562bd2
@@ -3655,16 +2025,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p007-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: bcfc01783dadf47fca86dc9ab6763f21
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p049_p010
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: bd9a22944780d4b8897a6ba2fa1cd17a
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p027_p010
     m_ReadOnly: 0
@@ -3695,26 +2055,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p005-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: bf9f628af766f443ab3f2fa9409f78fd
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p047_p015
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: c04f4c12cfac74e0ba0a55c10603af35
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p022_p024
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p004-p004
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c0fd9efca870e4c9596a34e52b0442de
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p020_p019
     m_ReadOnly: 0
@@ -3733,16 +2073,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p004-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: c115908b98bb0402fa3287c324bfbb94
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p041_p009
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p001
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c23785ddf252e4e05b40a16636db4fa4
@@ -3775,14 +2105,14 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p006-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: c2deabbffba6943099006acbe758fa5e
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p038_p021
+  - m_GUID: c3247c941eafc4b86a6be6c87d7d59d4
+    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_n006_n015
     m_ReadOnly: 0
     m_SerializedLabels:
     - operation-map
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p004
+    - operation-map-partition-skirmish-desert-base-01-region-n002-n003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c427fafe2f1ce4569bc34cf4fcf85e92
@@ -3805,36 +2135,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p002-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: c484dcd00c1c04a66b9e53ba8d4601c0
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p035_p011
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: c4e83ad36cdcc466694d2f65cd51b078
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p041_p020
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p004
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: c505def3f061844b18a085085161fc88
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p050_p007
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p010-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c50e5db0b809247f494a9b4dd4f84333
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p033_p013
     m_ReadOnly: 0
@@ -3845,36 +2145,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p006-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: c5ad29c66b1034cbdbbddf7adba8ac55
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p044_p009
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: c609f7e56c50f4c89b02a02d0767fcb5
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p043_p018
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: c612abe41a6b6439fb9a61e2af2c2dd9
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p046_p016
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c76e99052ae9b4172b9fa90b1aab6fa5
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p038_p013
     m_ReadOnly: 0
@@ -3883,36 +2153,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p007-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: c8208d2e269a14054abc0e068d07e6da
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p084_n013
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p016-n003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: c9431641f48564f009c98bb536b64816
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p042_p012
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: c99609b72bf2f48bcb69d3183286477e
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p045_p019
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ca01048bd890c45948c70fd028acd87f
@@ -3935,16 +2175,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p006-p001
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: caa2b5dc2787b4a5d988e2077ae5827b
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p044_p018
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: cabb98a79caba49bbb96805d369e97d3
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p037_p019
     m_ReadOnly: 0
@@ -3953,56 +2183,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p007-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: cad36d6eb316b476b9bcbe27d793e75a
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p033_p035
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p006-p007
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: cb261a5e3b26447e98a4913dd60b7d4f
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_n008_p032
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-n002-p006
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: cb385c08d161b46ad8f96bfb099cac48
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p043_p014
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: cb851be2201d7477ab73ebc58a0fb10e
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p043_p009
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: cbf071dc2301d4f86ab962e7a6a6fb54
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p050_p006
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p010-p001
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: cc595c17443cb4efe849e1d4b729b1c2
@@ -4015,6 +2195,16 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p007-p004
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cc5d1bb21f252467a98160ad5c405b68
+    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p054_p051
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - operation-map
+    - operation-map-local
+    - operation-map-pack-skirmish-desert-base-01
+    - operation-map-partition-skirmish-desert-base-01-region-p010-p010
+    - operation-map-role-presentation
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: cc7211e652dd5452b9fd31d745cc94f5
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p021_p013
     m_ReadOnly: 0
@@ -4025,14 +2215,14 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p004-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: cd0a0ff64f73c41c8b184f1ec1149cfa
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p034_p009
+  - m_GUID: cccb4daed522b4f06ad75af6d9641b1e
+    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p059_n026
     m_ReadOnly: 0
     m_SerializedLabels:
     - operation-map
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p006-p001
+    - operation-map-partition-skirmish-desert-base-01-region-p011-n006
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: cd2ebb17719484ce5b331fe00fbb5838
@@ -4055,24 +2245,14 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-n002-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: cdbffdb75f79a403b909a242a1c36e86
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p044_p017
+  - m_GUID: ce8c4a5cd61b2432db8e5774cb85c45c
+    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p099_n012
     m_ReadOnly: 0
     m_SerializedLabels:
     - operation-map
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: ce8d4bcbb42ea43db995888cc61c4dc3
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p045_p016
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p003
+    - operation-map-partition-skirmish-desert-base-01-region-p019-n003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: cea28ea31f2554969a54aac71a01f798
@@ -4085,56 +2265,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p007-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: cee2c82cc236143a783f4183f7cf840b
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p025_p027
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p005-p005
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: d0543566cdc684d6bb81d893d9e8dca9
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p044_p012
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: d33ac453d353443c399ee2fa698a6b9d
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p045_p006
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: d4ad267ea42154689a6f07841d9b8c70
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p042_p019
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: d4b107247debf4326b3e371d01d91e23
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p046_p007
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d5121ac7697944b7fb358bcf1baa1af3
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p031_p007
     m_ReadOnly: 0
@@ -4143,26 +2273,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p006-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: d6287051763004a31b092bcdf86ebf38
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p049_p008
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: d63e16342297748d28c3f4a2f1b38dda
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p048_p006
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p001
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d748c88edd28443b499624962917e9ab
@@ -4185,16 +2295,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p004-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: d95818001cc5b436089426ce6f6b02c0
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p040_p010
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d9abc9f7fae44493e92d2b74da913907
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p031_p021
     m_ReadOnly: 0
@@ -4205,26 +2305,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p006-p004
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: d9e7fa8fa90b44144ae087098d7f9739
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p050_p010
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p010-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: d9fca6803f7ab4196a505c8f5ebf485d
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p026_p016
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p005-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: da3a38920b0d8411e9be20f95d1f7447
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p042_p013
     m_ReadOnly: 0
@@ -4233,46 +2313,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p008-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: da85fac3bb5614dc5ae9e7e63c8aca47
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p052_p009
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p010-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: daeaec4f3622f4726b6438f85ddb9359
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p035_p009
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: db63362d6d34347068bc5a5d01afae40
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p038_p010
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: dbfa61376dcd24cf995ab4067c0ed9d1
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p047_p007
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p001
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: dcef11c6617f84a2a91375d8320ae3b3
@@ -4295,46 +2335,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p006-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: de970e13b4dec4a55ad023c61654fa3f
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p028_p017
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p005-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: de9e8e1bec8af4caeac05e11a38c9129
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p045_p012
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: df665a7736758452cb40f435ce43e5f7
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p046_p008
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: dfbdead108df347898ae81867a6aa852
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p036_p006
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: dfdaf1dce39334c338947e073386f269
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p021_p016
     m_ReadOnly: 0
@@ -4353,36 +2353,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p003-p000
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: e0586caeb722c4adaa41964bdce57747
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p048_p011
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: e06248ffef863450ca148f8e3301838e
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_n015_p017
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-n003-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: e07267818bbd947b587017034a238c14
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p052_p008
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p010-p001
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e097e593e09b848a9947f1121b265af6
@@ -4405,16 +2375,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p011-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: e16ad4ca53b654ac39bcdf7aebb353cb
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p047_p008
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e304209fcaa14466dbd56a26421ec333
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p027_p012
     m_ReadOnly: 0
@@ -4425,16 +2385,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p005-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: e3f8540f93a134aba98bbd1e8b02626a
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p039_p008
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e3fd5fa25ee3a43d1baa0e5b2a6af864
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p029_p019
     m_ReadOnly: 0
@@ -4443,26 +2393,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p005-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: e427724ca83ed41e3a05138c477e4723
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p048_p008
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: e42ad7ee65010458db94e73af71c2e4c
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p058_p005
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p011-p001
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e4619353907ae45ed8f180757b61ed78
@@ -4485,6 +2415,16 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p006-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e5c3e76c2ad7b40d694cc4ef1ab51ac4
+    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p033_p038
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - operation-map
+    - operation-map-local
+    - operation-map-pack-skirmish-desert-base-01
+    - operation-map-partition-skirmish-desert-base-01-region-p006-p007
+    - operation-map-role-presentation
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e64254a1245ca4e6f89d5d98980b0a72
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p017_p010
     m_ReadOnly: 0
@@ -4495,16 +2435,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p003-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: e66491d8552944046bd7185250a70b21
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p039_p009
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e9a1a32ac4e2a4fd5b452122792da200
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p023_p008
     m_ReadOnly: 0
@@ -4513,36 +2443,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p004-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: e9ef190ef7e7440a1abba1b1ff539aaf
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p040_p011
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: eb4aef4c62284491d8952b8d470e1da8
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p045_p009
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: eb90991a4b3284051ab4b76781ee7356
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_n002_p020
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-n001-p004
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: eba584534ea6140768505c3c302f33ef
@@ -4565,14 +2465,14 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p003-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: ec3ab7332d6294ea186f729b3f6e5927
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p017_n010
+  - m_GUID: ec75554cef6cd4559a7790ea9499504b
+    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_n028_p004
     m_ReadOnly: 0
     m_SerializedLabels:
     - operation-map
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p003-n002
+    - operation-map-partition-skirmish-desert-base-01-region-n006-p000
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ed7e91d185b26499fb4369399ac1e735
@@ -4605,24 +2505,14 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p004-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: ef4acdb8bdce1452ea1c40fb4026e36d
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p047_p016
+  - m_GUID: f07d8328d69de43448bfd699b1b85b95
+    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p071_n026
     m_ReadOnly: 0
     m_SerializedLabels:
     - operation-map
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: f0e437a0955074e059772fda35a3b1d6
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p042_p008
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p001
+    - operation-map-partition-skirmish-desert-base-01-region-p014-n006
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f12c51c8bc8c849908497bc2f9486ef7
@@ -4643,36 +2533,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p004-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: f1c0d0ac1cd0049f79aaa83e676f9411
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p040_p016
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: f22c3e0d9c4cf4e6baf47c6e40a59c3b
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p048_p014
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: f230786ae758144c596fe08164c344f5
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p050_p008
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p010-p001
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f2ba639c2eb5d41cabd6597b017438d4
@@ -4715,66 +2575,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p004-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: f57db237fe0434a8dbd93d27259362d9
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p044_p020
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p004
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: f59f57f81bf0a46eaa92d80b935b9458
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p036_p009
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: f5dc1061307104f8ea940725cfa3db89
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p055_p005
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p011-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: f5ebdc3138b474af8a19f48f0d824c37
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p048_p015
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: f6e61f8b24cd24ea1b1c88a070577baf
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p034_p012
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p006-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: f719faa3c77314e4cac32a1c7700176f
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p045_p011
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f7fd0adc857a241e39977d813dbeaffb
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p017_p016
     m_ReadOnly: 0
@@ -4783,16 +2583,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p003-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: f8c2df27f76594d439aede5b0fb34e9b
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p044_p008
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p001
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f93d18163a2df408095b9acd352885cd
@@ -4805,16 +2595,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p007-p004
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: f94c022aa1ff044a896cb79bd4a182e5
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p035_p010
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f95f916bf2e8f4c339b538e3f079151b
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p016_p010
     m_ReadOnly: 0
@@ -4825,16 +2605,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p003-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: f98478c9b2c464745afabe5ba0b0bcf7
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p045_p008
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f9fe9259f96f94d23b357ab534893188
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p017_p012
     m_ReadOnly: 0
@@ -4843,16 +2613,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p003-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: fa3ad998fa5e44700ab4d8528aa682c8
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p043_p010
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: fa5f4e3ef1d2441f6998dafdd2acd56b
@@ -4905,36 +2665,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p006-p003
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: fc0fa93fb7bc2402c97ab1d07f0717b8
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p040_p006
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: fc5a320aa89724979afb81760950b4b8
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p034_p011
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p006-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: fcdbfbabdac09480d8e799fd2dca3ed4
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p046_p015
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: fcec50edeb7be40a6b1e9e7b48195d01
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_n035_p013
     m_ReadOnly: 0
@@ -4943,36 +2673,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-n007-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: fd287d56f3e534f65a20891838970c4b
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p038_p009
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p007-p001
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: fda129e2921d64b80b37375e07d5168c
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p047_p012
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p002
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: fde0903c6abf44a94a98a997236513e4
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p046_p011
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p009-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: fe974c92f53d146e5b1cbc2ee39d1c95
@@ -4995,16 +2695,6 @@ MonoBehaviour:
     - operation-map-partition-skirmish-desert-base-01-region-p006-p002
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: ff6e7c61adc3141a39f965aa5298d139
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p043_p016
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p008-p003
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ff8ea5b0f7355406391df8aec3e41781
     m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p030_p021
     m_ReadOnly: 0
@@ -5013,16 +2703,6 @@ MonoBehaviour:
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-partition-skirmish-desert-base-01-region-p006-p004
-    - operation-map-role-presentation
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: ff8fb8d2787a54404a9116b2731357e2
-    m_Address: operation-map/opmap.skirmish.desert_base_01/presentation/chunk_p096_p035
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-partition-skirmish-desert-base-01-region-p019-p007
     - operation-map-role-presentation
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0

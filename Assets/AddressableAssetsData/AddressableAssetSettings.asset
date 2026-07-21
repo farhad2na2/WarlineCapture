@@ -245,6 +245,31 @@ MonoBehaviour:
     - operation-map-shared-shard-other-07
     - operation-map-shared-shard-material-04
     - operation-map-shared-shard-material-02
+    - operation-map-partition-skirmish-desert-base-01-region-n007-p009
+    - operation-map-partition-skirmish-desert-base-01-region-n006-p000
+    - operation-map-partition-skirmish-desert-base-01-region-n003-p005
+    - operation-map-partition-skirmish-desert-base-01-region-n003-p010
+    - operation-map-partition-skirmish-desert-base-01-region-n002-p011
+    - operation-map-partition-skirmish-desert-base-01-region-n002-n003
+    - operation-map-partition-skirmish-desert-base-01-region-p001-p010
+    - operation-map-partition-skirmish-desert-base-01-region-p001-p008
+    - operation-map-partition-skirmish-desert-base-01-region-p002-p007
+    - operation-map-partition-skirmish-desert-base-01-region-p003-p023
+    - operation-map-partition-skirmish-desert-base-01-region-p003-p008
+    - operation-map-partition-skirmish-desert-base-01-region-p003-n003
+    - operation-map-partition-skirmish-desert-base-01-region-p004-p008
+    - operation-map-partition-skirmish-desert-base-01-region-p006-p014
+    - operation-map-partition-skirmish-desert-base-01-region-p008-p008
+    - operation-map-partition-skirmish-desert-base-01-region-p009-n005
+    - operation-map-partition-skirmish-desert-base-01-region-p010-p010
+    - operation-map-partition-skirmish-desert-base-01-region-p011-n006
+    - operation-map-partition-skirmish-desert-base-01-region-p013-p007
+    - operation-map-partition-skirmish-desert-base-01-region-p014-n006
+    - operation-map-partition-skirmish-desert-base-01-region-p017-p007
+    - operation-map-partition-skirmish-desert-base-01-region-p018-n003
+    - operation-map-partition-skirmish-desert-base-01-region-p018-p004
+    - operation-map-partition-skirmish-desert-base-01-region-p019-n003
+    - operation-map-partition-skirmish-desert-base-01-region-p021-p006
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: 11f3bcb7e92274cb9a2041ff8401d472, type: 2}

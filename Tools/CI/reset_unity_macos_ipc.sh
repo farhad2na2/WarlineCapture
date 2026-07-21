@@ -4,10 +4,11 @@ set -euo pipefail
 DRY_RUN=0
 KILL_UNITY=0
 QUIT_HUB=0
+CONFIRM_NO_EDITORS=0
 
 usage() {
     cat <<'EOF'
-Usage: Tools/CI/reset_unity_macos_ipc.sh [--dry-run] [--kill-unity] [--quit-hub]
+Usage: Tools/CI/reset_unity_macos_ipc.sh --confirm-no-editors [--dry-run] [--kill-unity] [--quit-hub]
 
 Resets Unity helper IPC on macOS after a stuck Codex/Unity batchmode run.
 
@@ -20,6 +21,9 @@ It does not kill the Unity Editor by default. Pass --kill-unity only for a
 known stuck batchmode/editor process. Pass --quit-hub when Unity Hub keeps
 respawning the generic Licensing Client and Unity reports unsupported protocol
 or Package Manager stays blocked until reboot.
+
+The reset always requires --confirm-no-editors because process discovery can
+be restricted for agent sessions. Never use it while any Unity Editor is open.
 EOF
 }
 
@@ -34,6 +38,9 @@ for arg in "$@"; do
         --quit-hub)
             QUIT_HUB=1
             ;;
+        --confirm-no-editors)
+            CONFIRM_NO_EDITORS=1
+            ;;
         -h|--help)
             usage
             exit 0
@@ -45,6 +52,18 @@ for arg in "$@"; do
             ;;
     esac
 done
+
+if [[ "$CONFIRM_NO_EDITORS" -eq 0 ]]; then
+    echo "[UnityReset] ERROR: reset is destructive. Re-run with --confirm-no-editors only after every Unity Editor is closed." >&2
+    exit 64
+fi
+
+active_editor_pids="$(pgrep -f '/Unity\.app/Contents/MacOS/Unity' 2>/dev/null || true)"
+if [[ -n "$active_editor_pids" && "$KILL_UNITY" -eq 0 ]]; then
+    echo "[UnityReset] ERROR: Unity Editor is active. Refusing to reset shared licensing or UPM IPC because it would disconnect the active Editor." >&2
+    echo "[UnityReset] Close all Editors first, or use --kill-unity only for a known stuck batchmode run." >&2
+    exit 4
+fi
 
 run() {
     echo "[UnityReset] $*"

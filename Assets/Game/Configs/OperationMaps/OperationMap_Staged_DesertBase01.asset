@@ -34,13 +34,13 @@ MonoBehaviour:
     authoredBlockedCellCount: 0
   surfaceMetadata:
     assetGuid: 12f517deb32ab49698acbfdaf7c3eac7
-    contentHash: c198ee42b6b166778f95024130a59df57fc532a17f9d6996b9dda53e85bfd833
-    runtimeBlobHash: c0260dec80831407dae424f0de126482
+    contentHash: 1402d769704008e254563ff7ecda835294db83afc2cee6d5bb456987f0392b4d
+    runtimeBlobHash: 60a44d9bef6cfd87859429865716a462
     surfaceCount: 2097152
     payloadVersion: 3
     payloadEncoding: 1
-    minimumHeight: -6.9545445
-    maximumHeight: 38.405453
+    minimumHeight: -5.31082
+    maximumHeight: 17.199179
   navigationMetadata:
     authoredSubSceneGuid: d50925a18e9164ce782536576cb833d8
     gridAuthoringLocalId: 146043441
@@ -122,43 +122,43 @@ MonoBehaviour:
     laneIndex: 2
   sourceSceneReference:
     m_AssetGUID: ca1f2d7f265d8495f8c815441d68fda0
-    m_SubObjectName:
-    m_SubObjectType:
-    m_SubObjectGUID:
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   optionalHeavyMetadataReference:
-    m_AssetGUID:
-    m_SubObjectName:
-    m_SubObjectType:
-    m_SubObjectGUID:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   staticPresentationManifestReference:
     m_AssetGUID: 2d7b3d165106141ba81b98138bb8fa7f
-    m_SubObjectName:
-    m_SubObjectType:
-    m_SubObjectGUID:
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   mapSurfaceDataReference:
     m_AssetGUID: 12f517deb32ab49698acbfdaf7c3eac7
-    m_SubObjectName:
-    m_SubObjectType:
-    m_SubObjectGUID:
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   minimapRasterReference:
     m_AssetGUID: 3b1a8dbd670bf4e94863c00acbc3a3a7
-    m_SubObjectName:
-    m_SubObjectType:
-    m_SubObjectGUID:
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   buildingPlacementsReference:
     m_AssetGUID: a84d1564be130447197d5a5f2a7fe11d
-    m_SubObjectName:
-    m_SubObjectType:
-    m_SubObjectGUID:
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   vehiclePlacementsReference:
     m_AssetGUID: 819521cb66e1e4e90a46b49e04b15aec
-    m_SubObjectName:
-    m_SubObjectType:
-    m_SubObjectGUID:
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
     m_EditorAssetChanged: 0

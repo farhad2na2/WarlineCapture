@@ -359,7 +359,7 @@ class Relay:
             "You are a local Codex agent triggered from Slack for WarlineCapture.\n"
             f"Work only inside this checkout: {self.config.codex_worktree}\n"
             "Do not edit /Users/farhad/Projects/WarlineCapture unless explicitly asked.\n"
-            "Keep changes scoped. Run relevant tests or Unity batchmode validation when practical.\n"
+            "Keep changes scoped. Run relevant tests or Unity batchmode validation when practical. Never invoke the Unity binary directly: use Tools/CI/invoke_unity_macos.sh. It preserves the shared Unity Hub licensing client; never call reset_unity_macos_ipc.sh or use --quit-hub while any Editor is running.\n"
             "Use focused searches first. Prefer rg. Do not inventory the full Unity project.\n"
             "Never scan Assets/Synty, Assets/Game/Art, Assets/Game/Prefabs/Generated, or image/model/audio assets unless explicitly asked.\n"
             "For tactical HUD work, start only with these targets: "

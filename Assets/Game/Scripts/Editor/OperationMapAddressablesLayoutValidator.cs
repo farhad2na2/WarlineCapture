@@ -221,7 +221,7 @@ namespace Game.Editor
                 schema.Compression != BundledAssetGroupSchema.BundleCompressionMode.LZ4 ||
                 !schema.UseAssetBundleCrc ||
                 !schema.UseAssetBundleCrcForCachedBundles ||
-                schema.BundleNaming != BundledAssetGroupSchema.BundleNamingStyle.OnlyHash ||
+                schema.BundleNaming != BundledAssetGroupSchema.BundleNamingStyle.FileNameHash ||
                 schema.BundleMode != (packTogetherByLabel
                     ? BundledAssetGroupSchema.BundlePackingMode.PackTogetherByLabel
                     : BundledAssetGroupSchema.BundlePackingMode.PackTogether))

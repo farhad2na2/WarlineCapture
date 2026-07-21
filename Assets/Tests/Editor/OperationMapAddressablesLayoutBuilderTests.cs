@@ -194,7 +194,7 @@ public sealed class OperationMapAddressablesLayoutBuilderTests
         Assert.That(schema.Compression, Is.EqualTo(BundledAssetGroupSchema.BundleCompressionMode.LZ4));
         Assert.That(schema.UseAssetBundleCrc, Is.True);
         Assert.That(schema.UseAssetBundleCrcForCachedBundles, Is.True);
-        Assert.That(schema.BundleNaming, Is.EqualTo(BundledAssetGroupSchema.BundleNamingStyle.OnlyHash));
+        Assert.That(schema.BundleNaming, Is.EqualTo(BundledAssetGroupSchema.BundleNamingStyle.FileNameHash));
         Assert.That(schema.BundleMode, Is.EqualTo(bundleMode));
         return group;
     }

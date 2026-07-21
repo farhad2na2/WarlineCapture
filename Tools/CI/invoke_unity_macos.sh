@@ -5,7 +5,6 @@ PROJECT_PATH="$(pwd)"
 UNITY_EXE=""
 LOG_FILE="/private/tmp/warline-unity-$(date +%Y%m%d-%H%M%S).log"
 TIMEOUT_SECONDS=0
-SKIP_RESET=0
 
 usage() {
     cat <<'EOF'
@@ -16,7 +15,6 @@ Options:
   --project PATH     Unity project path. Defaults to current directory.
   --log PATH         Unity log file path. Defaults under /private/tmp.
   --timeout SECONDS  Kill Unity and helper IPC if the command exceeds timeout.
-  --skip-reset       Do not reset Unity helper IPC before/after the run.
 
 The wrapper always supplies:
   -batchmode -projectPath <project> -logFile <log>
@@ -44,8 +42,12 @@ while [[ "$#" -gt 0 ]]; do
             TIMEOUT_SECONDS="${2:-0}"
             shift 2
             ;;
+        --reset-ipc)
+            echo "[UnityInvokeMac] ERROR: automatic IPC reset is disabled. Close every Unity Editor, then run reset_unity_macos_ipc.sh --confirm-no-editors only for a known stuck environment." >&2
+            exit 64
+            ;;
         --skip-reset)
-            SKIP_RESET=1
+            echo "[UnityInvokeMac] --skip-reset is obsolete; IPC reset is disabled by default." >&2
             shift
             ;;
         --)
@@ -78,9 +80,6 @@ mkdir -p "$(dirname "$LOG_FILE")"
 
 cleanup() {
     local exit_code=$?
-if [[ "$SKIP_RESET" -eq 0 ]]; then
-    "$PROJECT_PATH/Tools/CI/reset_unity_macos_ipc.sh" --quit-hub || true
-fi
     exit "$exit_code"
 }
 trap cleanup EXIT INT TERM
@@ -94,10 +93,6 @@ kill_tree() {
     done
     kill "$pid" 2>/dev/null || true
 }
-
-if [[ "$SKIP_RESET" -eq 0 ]]; then
-    "$PROJECT_PATH/Tools/CI/reset_unity_macos_ipc.sh" --quit-hub
-fi
 
 echo "[UnityInvokeMac] UnityExe: $UNITY_EXE"
 echo "[UnityInvokeMac] ProjectPath: $PROJECT_PATH"

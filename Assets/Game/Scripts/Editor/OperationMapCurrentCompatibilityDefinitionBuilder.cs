@@ -46,7 +46,7 @@ namespace Game.Editor
         private const string SubSceneFileHash = "bcc255f3fb140a0d91687b45b679b47fb60f01f5cfa8690bac3032ec642dadd8";
         private const string ManifestFileHash = "a006ed18eab6523d9f9aeec82d6f21b5ff7089d9743a95e778117fe0fbb89c1b";
 
-        [MenuItem("Tools/Warline Capture/Operation Maps/Rebuild Current Compatibility Definition")]
+        [MenuItem("Game/Operation Maps/Rebuild Current Compatibility Definition")]
         public static void Run()
         {
             SceneSetup[] setup = EditorSceneManager.GetSceneManagerSetup();
@@ -327,7 +327,7 @@ namespace Game.Editor
         public const string ScenarioId = "scenario.skirmish.desert_base_standard";
         public const string MissionId = "skirmish";
 
-        [MenuItem("Tools/Warline Capture/Operation Maps/Bind Current Compatibility Runtime")]
+        [MenuItem("Game/Operation Maps/Bind Current Compatibility Runtime")]
         public static void Run()
         {
             SceneSetup[] setup = EditorSceneManager.GetSceneManagerSetup();

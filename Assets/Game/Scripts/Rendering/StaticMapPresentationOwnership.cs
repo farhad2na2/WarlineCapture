@@ -43,6 +43,17 @@ namespace Game.Rendering
         {
             Dispose();
             string error = null;
+            if (canonicalPresentationMode == OperationMapCanonicalPresentationMode.EntityScene)
+            {
+                Failure = null;
+                UsingLegacyFallback = false;
+                UsingPresentation = false;
+                Debug.Log(
+                    "[StaticMapPresentationOwnership] result=EntitySceneSkipStaticOwnership " +
+                    "staticManifest=0 streamer=0 legacyBatching=0");
+                return;
+            }
+
             bool usePresentation = canonicalPresentationMode == OperationMapCanonicalPresentationMode.PresentationOnly
                 ? TryActivatePresentationOnly(manifest, mapRoot, out error)
                 : platform == RuntimePlatform.Android &&

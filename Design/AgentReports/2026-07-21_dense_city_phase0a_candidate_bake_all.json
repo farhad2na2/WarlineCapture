@@ -1,0 +1,75 @@
+{
+    "schema": "warline.operation-map.entity-scene-candidate-bake-all",
+    "schemaVersion": 1,
+    "result": "CandidateBakeAllPassedPendingVisualAndRuntimeAcceptance",
+    "operationMapId": "opmap.skirmish.desert_base_01",
+    "productionPresentationKind": "StaticSceneChunks",
+    "productionCutover": 0,
+    "rollbackApplied": 0,
+    "failure": "",
+    "rollbackFailure": "",
+    "buildingAuthoringCount": 432,
+    "vehicleAuthoringCount": 22,
+    "renderOnlyOwnerCount": 9090,
+    "presentationRootCount": 3,
+    "colliderCount": 0,
+    "rigidbodyCount": 0,
+    "renderMeshEntityCount": 14212,
+    "nonFiniteTransformCount": 0,
+    "managedMapVisualCompanionCount": 0,
+    "sharedArtSourceCount": 11892,
+    "uniqueMeshAssetCount": 670,
+    "uniqueMaterialAssetCount": 39,
+    "uniquePrefabAssetCount": 671,
+    "sharedDependencyCount": 1841,
+    "stages": [
+        {
+            "name": "preflight-isolation",
+            "result": "Passed",
+            "elapsedMilliseconds": 5578,
+            "failure": ""
+        },
+        {
+            "name": "candidate-population",
+            "result": "Passed",
+            "elapsedMilliseconds": 6938,
+            "failure": ""
+        },
+        {
+            "name": "candidate-authoring-readiness",
+            "result": "Passed",
+            "elapsedMilliseconds": 1414,
+            "failure": ""
+        },
+        {
+            "name": "candidate-entity-bake",
+            "result": "Passed",
+            "elapsedMilliseconds": 8958,
+            "failure": ""
+        },
+        {
+            "name": "shared-art-budget",
+            "result": "Passed",
+            "elapsedMilliseconds": 4839,
+            "failure": ""
+        },
+        {
+            "name": "candidate-binding-layout",
+            "result": "Passed",
+            "elapsedMilliseconds": 24849,
+            "failure": ""
+        },
+        {
+            "name": "candidate-bake-budget",
+            "result": "Passed",
+            "elapsedMilliseconds": 21,
+            "failure": ""
+        },
+        {
+            "name": "postflight-isolation",
+            "result": "Passed",
+            "elapsedMilliseconds": 12503,
+            "failure": ""
+        }
+    ]
+}

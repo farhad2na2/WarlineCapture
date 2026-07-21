@@ -27,6 +27,8 @@ namespace Game.Configs
         [SerializeField] private OperationMapMinimapConfig minimap;
         [SerializeField] private OperationMapAnchorConfig[] anchors = Array.Empty<OperationMapAnchorConfig>();
         [Header("Lazy map content")]
+        [SerializeField] private OperationMapPresentationKind presentationKind =
+            OperationMapPresentationKind.StaticSceneChunks;
         [SerializeField] private AssetReference sourceSceneReference;
         [SerializeField] private AssetReference optionalHeavyMetadataReference;
         [SerializeField] private AssetReference staticPresentationManifestReference;
@@ -38,6 +40,7 @@ namespace Game.Configs
         public string OperationMapId => operationMapId;
         public int SchemaVersion => schemaVersion;
         public int ContentVersion => contentVersion;
+        public OperationMapPresentationKind PresentationKind => presentationKind;
         public string SourceIdentityHash => sourceIdentityHash;
         public string ContentHash => contentHash;
         public string GeneratedMetadataHash => generatedMetadataHash;
@@ -206,13 +209,50 @@ namespace Game.Configs
 
         public bool TryValidateLocalContentReferences(out string error)
         {
-            if (!TryValidateRequiredReference(sourceSceneReference, "source scene", out error) ||
-                !TryValidateRequiredReference(staticPresentationManifestReference, "static presentation manifest", out error) ||
-                !TryValidateRequiredReference(mapSurfaceDataReference, "map surface data", out error) ||
-                !TryValidateRequiredReference(minimapRasterReference, "minimap raster", out error) ||
-                !TryValidateRequiredReference(buildingPlacementsReference, "building placements", out error) ||
-                !TryValidateRequiredReference(vehiclePlacementsReference, "vehicle placements", out error))
+            if (presentationKind != OperationMapPresentationKind.StaticSceneChunks &&
+                presentationKind != OperationMapPresentationKind.EntityScene)
+            {
+                error = $"Unknown operation-map presentation kind: {(byte)presentationKind}.";
                 return false;
+            }
+
+            if (!TryValidateRequiredReference(sourceSceneReference, "source scene", out error) ||
+                !TryValidateRequiredReference(mapSurfaceDataReference, "map surface data", out error) ||
+                !TryValidateRequiredReference(minimapRasterReference, "minimap raster", out error))
+            {
+                return false;
+            }
+
+            if (presentationKind == OperationMapPresentationKind.StaticSceneChunks)
+            {
+                if (!TryValidateRequiredReference(
+                        staticPresentationManifestReference,
+                        "static presentation manifest",
+                        out error) ||
+                    !TryValidateRequiredReference(
+                        buildingPlacementsReference,
+                        "building placements",
+                        out error) ||
+                    !TryValidateRequiredReference(
+                        vehiclePlacementsReference,
+                        "vehicle placements",
+                        out error))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (HasConfiguredReference(staticPresentationManifestReference))
+                {
+                    error =
+                        "EntityScene operation maps must not require a production static presentation manifest reference.";
+                    return false;
+                }
+
+                // Legacy placement AssetReferences may remain as migration evidence only.
+                // Runtime spawning is rejected separately once EntityScene loading is activated.
+            }
 
             if (optionalHeavyMetadataReference != null &&
                 !string.IsNullOrEmpty(optionalHeavyMetadataReference.AssetGUID) &&
@@ -225,6 +265,11 @@ namespace Game.Configs
 
             error = null;
             return true;
+        }
+
+        private static bool HasConfiguredReference(AssetReference reference)
+        {
+            return reference != null && !string.IsNullOrEmpty(reference.AssetGUID);
         }
 
         private static bool TryValidateRequiredReference(

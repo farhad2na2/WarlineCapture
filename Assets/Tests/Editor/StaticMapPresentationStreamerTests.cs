@@ -241,6 +241,37 @@ public sealed class StaticMapPresentationStreamerTests
     }
 
     [Test]
+    public void EntitySceneMatch_SkipsStaticStreamerBind()
+    {
+        Camera camera = CreateTopDownCamera(16f, 16f);
+        FakeSceneApi api = new();
+        StaticMapPresentationStreamer streamer = new(api);
+        MenuBootstrapCompositionSystemHelper composition = new(streamer);
+        GameObject matchObject = new("MatchSceneView");
+        _objects.Add(matchObject);
+        MatchSceneView matchView = matchObject.AddComponent<MatchSceneView>();
+        SerializedObject serializedMatch = new(matchView);
+        serializedMatch.FindProperty("worldCamera").objectReferenceValue = camera;
+        serializedMatch.ApplyModifiedPropertiesWithoutUndo();
+
+        GameObject operationMapObject = new("OperationMapSceneView");
+        _objects.Add(operationMapObject);
+        OperationMapSceneView operationMapView = operationMapObject.AddComponent<OperationMapSceneView>();
+        SerializedObject serializedOperationMap = new(operationMapView);
+        serializedOperationMap.FindProperty("canonicalPresentationMode").enumValueIndex =
+            (int)OperationMapCanonicalPresentationMode.EntityScene;
+        serializedOperationMap.ApplyModifiedPropertiesWithoutUndo();
+
+        typeof(MatchSceneView)
+            .GetField("activeOperationMapSceneView", BindingFlags.Instance | BindingFlags.NonPublic)
+            !.SetValue(matchView, operationMapView);
+
+        composition.UpdateStaticMapPresentationForLoadedMatch(true, matchView);
+        Assert.That(api.Started, Is.Empty);
+        Assert.That(api.Active, Is.Null);
+    }
+
+    [Test]
     public void BeginDrain_WaitsForInflightLoadThenUnloadsItsScene()
     {
         Camera camera = CreateTopDownCamera(16f, 16f);

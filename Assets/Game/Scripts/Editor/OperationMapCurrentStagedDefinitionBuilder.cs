@@ -16,7 +16,7 @@ namespace Game.Editor
         private const string DefinitionName = "OperationMap_Staged_DesertBase01";
         private const string MetadataHashDomain = "warline.operation-map.staged-navigation.v1";
 
-        [MenuItem("Tools/Warline Capture/Operation Maps/Build Current Staged Definition")]
+        [MenuItem("Game/Operation Maps/Build Current Staged Definition")]
         public static void Stage()
         {
             OperationMapCurrentCompatibilityPlacementStager.Stage();

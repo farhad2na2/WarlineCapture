@@ -21,7 +21,7 @@ namespace Game.Editor
         private const string AirportCategory = "Building_Airport";
         private const string HelipadCategory = "Building_Helipad";
 
-        [MenuItem("Tools/Warline Capture/Operation Maps/Validate Current Staged Spatial Bindings")]
+        [MenuItem("Game/Operation Maps/Validate Current Staged Spatial Bindings")]
         public static void Run()
         {
             if (!TryValidate(out string error))

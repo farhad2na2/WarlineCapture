@@ -592,7 +592,7 @@ namespace Game.Editor
         private const string GroundMaterialPath =
             "Assets/Game/Art/MapPrototypes/M01/Materials/M01_DistrictGround.mat";
 
-        [MenuItem("Tools/Warline Capture/Maps/Skirmish Desert Base/Install Deterministic City Builder")]
+        [MenuItem("Game/Maps/Skirmish Desert Base/Install Deterministic City Builder")]
         public static void InstallInScene()
         {
             Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
@@ -605,7 +605,7 @@ namespace Game.Editor
             Debug.Log($"[DeterministicCityEditor] result=Installed scene={ScenePath}", builder);
         }
 
-        [MenuItem("Tools/Warline Capture/Maps/Skirmish Desert Base/Validate Deterministic City Builder")]
+        [MenuItem("Game/Maps/Skirmish Desert Base/Validate Deterministic City Builder")]
         public static void ValidateEditModeBuild()
         {
             Scene validationScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
@@ -630,7 +630,7 @@ namespace Game.Editor
             }
         }
 
-        [MenuItem("Tools/Warline Capture/Maps/Skirmish Desert Base/Build Giant Dense City")]
+        [MenuItem("Game/Maps/Skirmish Desert Base/Build Giant Dense City")]
         public static void BuildMapWideInScene()
         {
             Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
@@ -644,7 +644,7 @@ namespace Game.Editor
             Debug.Log($"[DeterministicCityEditor] result=BuiltDenseMapWide scene={ScenePath}", builder);
         }
 
-        [MenuItem("Tools/Warline Capture/Maps/Skirmish Desert Base/Capture Dense City Visual Proof")]
+        [MenuItem("Game/Maps/Skirmish Desert Base/Capture Dense City Visual Proof")]
         public static void CaptureDenseCityVisualProof()
         {
             Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
@@ -653,7 +653,7 @@ namespace Game.Editor
             DenseMiddleEasternCityEditModeBuilder.CaptureVisualProof(builder);
         }
 
-        [MenuItem("Tools/Warline Capture/Maps/Skirmish Desert Base/Audit Terrain Mesh Sources")]
+        [MenuItem("Game/Maps/Skirmish Desert Base/Audit Terrain Mesh Sources")]
         public static void AuditTerrainMeshSources()
         {
             Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
@@ -714,7 +714,7 @@ namespace Game.Editor
                 $"ownedMeshFilters={ownedFilters} unityTerrains={sceneTerrains}");
         }
 
-        [MenuItem("Tools/Warline Capture/Maps/Skirmish Desert Base/Audit Expansion Obstacles")]
+        [MenuItem("Game/Maps/Skirmish Desert Base/Audit Expansion Obstacles")]
         public static void AuditExpansionObstacles()
         {
             Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);

@@ -1,0 +1,14 @@
+{
+    "result": "CandidateBakeValidationPassed",
+    "rejectionReason": "",
+    "reportPath": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/2026-07-21_dense_city_phase0a_candidate_bake_validation.json",
+    "gameplayBuildingCount": 432,
+    "presentationRootCount": 3,
+    "buildingPresentationCount": 432,
+    "renderMeshEntityCount": 14212,
+    "buildingRenderChildCount": 698,
+    "nonFiniteTransformCount": 0,
+    "managedMapVisualCompanionCount": 0,
+    "authoringBuildingCount": 432,
+    "authoringRenderOnlyOwnerCount": 9090
+}

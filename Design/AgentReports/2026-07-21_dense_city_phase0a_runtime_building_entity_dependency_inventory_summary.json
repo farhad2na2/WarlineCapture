@@ -1,0 +1,24 @@
+{
+    "reportSchema": "warline.operation-map.runtime-building-entity-dependency-inventory",
+    "reportSchemaVersion": 1,
+    "result": "AllPlacementsRequireManagedRuntimeBuildingEntity",
+    "buildingPlacementConfigPath": "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01_BuildingPlacements.asset",
+    "counts": {
+        "placementCount": 432,
+        "unresolvedJoinCount": 0,
+        "missingPrefabCount": 0,
+        "missingDefinitionAuthoringCount": 0,
+        "requiresManagedRuntimeCount": 432,
+        "hasDestroyedVisualCount": 266,
+        "hasProductionCount": 20,
+        "hasResourceCount": 70,
+        "requiresRunwayCount": 1,
+        "hideAuthoringEnabled": true
+    },
+    "dispositionCounts": [
+        {
+            "disposition": "RequiresManagedRuntimeBuildingEntity",
+            "count": 432
+        }
+    ]
+}

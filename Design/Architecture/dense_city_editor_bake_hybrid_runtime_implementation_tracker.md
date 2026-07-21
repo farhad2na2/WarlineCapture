@@ -1,7 +1,7 @@
 # Operation Map ECS Presentation And Dense City Editor Bake Implementation Tracker
 
 Date: 2026-07-21
-Status: Implementation started; Phase 0 baseline and contracts in progress; previously generated dense city cleared by project owner
+Status: Implementation started; Phase 0 complete; Phase 0A transactional candidate Bake All complete (production still StaticSceneChunks; production Addressables untouched); exact Editor-to-runtime transform parity, fixed-camera parity, Editor lifecycle, and Android acceptance next; previously generated dense city cleared by project owner
 Parent tracker: `operation_map_scene_split_and_generator_tracker.md`
 Related contracts: `file_naming_architecture_contract.md`, `gameplay_solid_ecs_contract.md`, `performance_regression_contract.md`, `operation_map_runtime_ownership_chain.md`, `operation_map_scene_split_rollback_recipe.md`
 Related R&D only: `runtime_operation_map_generation_rnd_implementation_tracker.md`
@@ -59,6 +59,7 @@ This tracker does not authorize runtime procedural city generation. Existing-map
 - Keep the existing static-presentation manifest/streamer only during migration rollback. After ECS parity acceptance, `opmap.skirmish.desert_base_01` uses entity-scene presentation mode, its manifest/514 chunk scenes leave production Addressables/build ownership, and the streamer is not bound for this map.
 - Do not introduce another map loader, streamer, runtime-generation host, update-loop `MonoBehaviour`, manager, controller, facade, service, provider, or service locator.
 - Do not ship existing-map or dense-city authoring GameObject hierarchies. Ship the thin runtime binding scene and baked ECS entity scene data/metadata with shared art dependencies.
+- Preserve the accepted Editor placement exactly through migration, baking, Addressables packaging, and runtime load. The authoritative source world matrix for every renderer owner must match its candidate-SubScene authoring matrix, baked ECS matrix, and Addressables-loaded runtime matrix within the tolerances in Section 12.0A. Runtime systems must not recompute, offset, normalize, ground-snap, or otherwise overwrite permanent map-visual transforms.
 
 ## 3. Baseline Audit
 
@@ -413,6 +414,35 @@ Every accepted existing owner requires a committed deterministic disposition con
 
 The migration cannot classify through object names, prefab filenames, material names, or renderer shape. Mixed/unresolved rows block candidate publication.
 
+### 12.0A Editor-To-Runtime Transform Parity Contract
+
+The current static bake/Addressables path is known to allow model positions at runtime to differ from their accepted Editor placements. The EntityScene migration must fix this defect rather than reproduce it. Visual similarity alone is not acceptance evidence.
+
+For every migrated or generated gameplay/render-only presentation owner, Bake All must emit one deterministic transform-parity row keyed by stable source identity. Each row contains:
+
+- authoritative accepted Editor source world matrix and local matrix;
+- source parent stable identity and the ordered parent transform chain needed to explain the world matrix;
+- prefab GUID/local id, renderer-relative transform, and mesh pivot/bounds identity;
+- candidate SubScene authoring world/local matrices after transactional copy or generation;
+- baked ECS root/render-child matrices, including `LocalTransform`, `Parent`, and `PostTransformMatrix` contributions where present;
+- Addressables-loaded runtime world matrix after entity-scene readiness and one settled frame, before camera culling affects visibility;
+- position, rotation, scale, and matrix residuals for each boundary;
+- an explicit reason code for any approved non-visual helper/proxy that is exempt from renderer parity.
+
+Required default tolerances are position `<= 0.001 m`, rotation `<= 0.01 degrees`, per-axis scale `<= 0.0001`, and world-matrix element residual `<= 0.0001`. A larger tolerance or intentional transform change requires a named, stable-identity exception in this tracker with before/after evidence; no broad category exception is allowed.
+
+Validation must fail closed when:
+
+- a source row has zero or multiple candidate/baked/runtime matches;
+- hierarchy flattening changes the resulting world matrix;
+- a nested prefab, negative/non-uniform scale, pivot, or `PostTransformMatrix` contribution is lost;
+- a building/vehicle legacy placement config or startup system applies a second offset after ECS load;
+- ground snapping, terrain sampling, floating-origin logic, or runtime normalization moves permanent presentation entities;
+- an Addressables-loaded entity differs from the same candidate baked directly in Editor;
+- a renderer bounds center/corners move beyond tolerance even when the owning root matrix appears equal.
+
+The validator must compare matrices and transformed renderer bounds numerically, then capture fixed-camera screenshots as secondary visual proof. Production cannot flip to `EntityScene`, and rollback static presentation cannot be retired, until this gate passes twice on the same candidate revision in Editor and once on the user-triggered Android build.
+
 Every generated placement must emit explicit records before visual realization:
 
 ### 12.1 Common Record Identity
@@ -701,12 +731,12 @@ Runtime procedural generation is not the fallback for a rendering or packaging f
 
 Progress is checklist based. Every checkbox counts. Update the count, phase status, and validation log in the same stable change that completes an item.
 
-Current progress: **1 / 144 (1%)**
+Current progress: **29 / 148 (20%)**
 
 | Phase | Status |
 |---|---|
-| Phase 0: Baseline and contracts | In progress |
-| Phase 0A: Existing map ECS presentation migration | Not started |
+| Phase 0: Baseline and contracts | Complete |
+| Phase 0A: Existing map ECS presentation migration | Transactional candidate Bake All complete; transform/visual parity and runtime acceptance open |
 | Phase 1: Generated ownership authoring | Not started |
 | Phase 2: Generator semantic output | Not started |
 | Phase 3: Collider-free enforcement | Not started |
@@ -723,40 +753,41 @@ Current progress: **1 / 144 (1%)**
 ### Phase 0: Baseline And Contracts
 
 - [x] Record a clean post-clear authoring-scene hash, size, hierarchy counts, renderer counts, and existing bake-group counts.
-- [ ] Record current accepted surface payload, static manifest, chunk count, source count, integrity ledger, minimap, runtime binding, and Addressables Build Layout identities.
-- [ ] Capture current Android APK/installed size, runtime memory, draw calls, frame timings, GC, load time, and unload time on the target device.
-- [ ] Confirm the authoring scene is excluded from current Addressables/runtime build ownership.
-- [ ] Confirm existing military, handmade, runway, road, mountain, resource, placement, and override roots that generation must preserve.
-- [ ] Approve generated hierarchy names and exact semantic ownership table from this tracker.
-- [ ] Approve whether city content outside the current grid is presentation-only; default is presentation-only.
-- [ ] Add focused test fixtures that can build a small deterministic city without opening or modifying the full map scene.
+- [x] Record current accepted surface payload, static manifest, chunk count, source count, integrity ledger, minimap, runtime binding, and Addressables Build Layout identities.
+- [x] Capture current Android APK/installed size, runtime memory, draw calls, frame timings, GC, load time, and unload time on the target device.
+- [x] Confirm the authoring scene is excluded from current Addressables/runtime build ownership.
+- [x] Confirm existing military, handmade, runway, road, mountain, resource, placement, and override roots that generation must preserve.
+- [x] Approve generated hierarchy names and exact semantic ownership table from this tracker.
+- [x] Approve whether city content outside the current grid is presentation-only; default is presentation-only.
+- [x] Add focused test fixtures that can build a small deterministic city without opening or modifying the full map scene.
 
 **Exit:** Regressions can be measured against a clean, cleared-city baseline.
 
 ### Phase 0A: Existing Map ECS Presentation Migration
 
-- [ ] Inventory all `16,542` current static-presentation sources by repository-relative scene/object identity, prefab GUID/local id, mesh/material identity, transform, components, and current static chunk ownership.
-- [ ] Join all `451` building and `29` vehicle placement identities to their exact authored source objects and reject zero, multiple, reused, mixed, or unresolved matches.
-- [ ] Classify every existing owner as gameplay building, gameplay vehicle, render-only entity, map metadata/proxy, approved managed boundary, or rejected/unresolved without name-based inference.
-- [ ] Audit scripts, lights, animation, particles, cross-object references, and source suppression behavior; record an explicit ECS/baked-lighting/VFX/metadata disposition for each non-renderer dependency.
-- [ ] Prove which current vehicle placements already produce ECS entities/render entities and identify only the missing conversion/duplication cleanup.
-- [ ] Inventory every managed `RuntimeBuildingEntity`/GameObject dependency required by current authored buildings and define equivalent ECS component/buffer/system ownership before visual cutover.
-- [ ] Inventory every roof, interior, shop, tent, sign, awning, lamp, furniture, and utility visual attached to each current damageable building; assign each stable identity to exactly one building and one intact/destroyed state without proximity or name inference.
-- [ ] Add `OperationMapPresentationKind` and set the candidate definition to `EntityScene` only after migration validation succeeds.
-- [ ] Extend `OperationMapCanonicalPresentationMode`, `OperationMapDefinition`, and content-reference validation for an entity-presented map with no required static manifest or runtime placement references.
-- [ ] Add `OperationMapEntityPresentationRootAuthoring` and exact protected authored hierarchy roots in the existing map SubScene.
-- [ ] Add deterministic `OperationMapEntityPresentationMigrationRecord` capture and `OperationMapEntityPresentationMigrationEditor` candidate transaction ownership.
-- [ ] Move/copy reviewed existing render-only visual authoring into the candidate SubScene while preserving world transforms, prefab/source asset references, hierarchy semantics, and shared art identity.
-- [ ] Convert all current authored building placements to `OperationMapBuildingAuthoring` ECS ownership with health, faction, footprint, targeting, production/interaction parity where applicable, and intact/destroyed entity visuals.
-- [ ] Convert/verify all current authored vehicle placements through the existing unit/vehicle Baker path and eliminate duplicate source/static/runtime GameObject visuals.
-- [ ] Remove prohibited physics components from migrated instances without mutating shared third-party prefab assets.
-- [ ] Bake the candidate SubScene and validate expected gameplay/render-only/render-child entity counts, finite transforms/bounds, archetypes, and zero managed map visual components.
-- [ ] Prove repeated meshes/materials/textures have one shared package owner and placements contribute only compact entity/transform/render-reference data.
+- [x] Inventory all current static-presentation sources by repository-relative scene/object identity, prefab GUID/local id, mesh/material identity, transform, components, and current static chunk ownership. Historical pre-clear baseline was `16,542` sources / `514` chunks; post-clear accepted package is measured by the inventory probe.
+- [x] Join all current building and vehicle placement identities to their exact authored source objects and reject zero, multiple, reused, mixed, or unresolved matches. Historical pre-clear counts were `451` / `29`; post-clear counts are measured by the inventory probe.
+- [x] Classify every existing owner as gameplay building, gameplay vehicle, render-only entity, map metadata/proxy, approved managed boundary, or rejected/unresolved without name-based inference.
+- [x] Audit scripts, lights, animation, particles, cross-object references, and source suppression behavior; record an explicit ECS/baked-lighting/VFX/metadata disposition for each non-renderer dependency.
+- [x] Prove which current vehicle placements already produce ECS entities/render entities and identify only the missing conversion/duplication cleanup.
+- [x] Inventory every managed `RuntimeBuildingEntity`/GameObject dependency required by current authored buildings and define equivalent ECS component/buffer/system ownership before visual cutover.
+- [x] Inventory every roof, interior, shop, tent, sign, awning, lamp, furniture, and utility visual attached to each current damageable building; assign each stable identity to exactly one building and one intact/destroyed state without proximity or name inference.
+- [x] Add `OperationMapPresentationKind` and set the candidate definition to `EntityScene` only after migration validation succeeds.
+- [x] Extend `OperationMapCanonicalPresentationMode`, `OperationMapDefinition`, and content-reference validation for an entity-presented map with no required static manifest or runtime placement references.
+- [x] Add `OperationMapEntityPresentationRootAuthoring` and exact protected authored hierarchy roots in the existing map SubScene.
+- [x] Add deterministic `OperationMapEntityPresentationMigrationRecord` capture and `OperationMapEntityPresentationMigrationEditor` candidate transaction ownership.
+- [x] Move/copy reviewed existing render-only visual authoring into the candidate SubScene while preserving world transforms, prefab/source asset references, hierarchy semantics, and shared art identity.
+- [x] Convert all current authored building placements to `OperationMapBuildingAuthoring` ECS ownership with health, faction, footprint, targeting, production/interaction parity where applicable, and intact/destroyed entity visuals.
+- [x] Convert/verify all current authored vehicle placements through the existing unit/vehicle Baker path and eliminate duplicate source/static/runtime GameObject visuals.
+- [x] Remove prohibited physics components from migrated instances without mutating shared third-party prefab assets.
+- [x] Bake the candidate SubScene and validate expected gameplay/render-only/render-child entity counts, finite transforms/bounds, archetypes, and zero managed map visual components.
+- [x] Prove repeated meshes/materials/textures have one shared package owner and placements contribute only compact entity/transform/render-reference data.
+- [ ] Add deterministic source-to-candidate-to-baked transform parity records and fail-closed Editor validation for every gameplay/render-only owner, including nested prefab, hierarchy, pivot, negative/non-uniform scale, `Parent`, and `PostTransformMatrix` cases.
 - [ ] Capture fixed-camera visual parity for terrain, roads, bridges, buildings, vehicles, mountains, vegetation, props, infrastructure, lighting, and minimap before changing production ownership.
-- [ ] Extend runtime binding/loading/readiness/teardown so `EntityScene` loads the map SubScene once, skips static-manifest/streamer binding, and unloads all map entities once.
-- [ ] Extend `OperationMapSceneView` and startup validation so empty legacy placement roots/configs are accepted only in validated `EntityScene` mode and cannot trigger managed map visual spawning.
-- [ ] Extend Bake All with fail-closed entity migration/readiness/bake/budget stages and rollback of source scenes, SubScene, definition, runtime binding, and Addressables layout.
-- [ ] Build a candidate local Addressables layout containing one runtime binding, one map entity-scene ownership path, shared art dependencies, and zero current-map static manifest/chunk/legacy-placement runtime entries.
+- [x] Extend runtime binding/loading/readiness/teardown so `EntityScene` loads the map SubScene once, skips static-manifest/streamer binding, and unloads all map entities once.
+- [x] Extend `OperationMapSceneView` and startup validation so empty legacy placement roots/configs are accepted only in validated `EntityScene` mode and cannot trigger managed map visual spawning.
+- [x] Extend Bake All with fail-closed entity migration/readiness/bake/budget stages and rollback of source scenes, SubScene, definition, runtime binding, and Addressables layout.
+- [x] Build a candidate local Addressables layout containing one runtime binding, one map entity-scene ownership path, shared art dependencies, and zero current-map static manifest/chunk/legacy-placement runtime entries.
 - [ ] Run Editor load, gameplay interaction, building damage/destruction, vehicle behavior, camera traversal, menu return, and two-cycle teardown with zero map visual GameObjects or static handles.
 - [ ] Run Android offline package, size, memory, frame, batching, visual parity, navigation, and two-cycle lifecycle acceptance against the exact candidate revision.
 - [ ] After acceptance, remove the 514 static scenes/manifest/integrity artifacts from production labels/build ownership and delete them from tracked generated output only in a separately reviewable cleanup commit with rollback archive/hash evidence.
@@ -838,6 +869,7 @@ Current progress: **1 / 144 (1%)**
 - [ ] Validate all legacy placement entries map one-to-one to accepted authored ECS entities and are absent from current-map runtime spawning/content references.
 - [ ] Validate every generated ECS building has finite transform/footprint/health, one intact root, one destroyed root, shared mesh/material references, and no managed runtime link.
 - [ ] Validate every attached prop resolves to exactly one building and one visual state, every intact attachment is hidden by the building transition, and no attachment is orphaned beneath an independent render-only owner.
+- [ ] Insert transform-parity validation after candidate population, after ECS baking, and after candidate Addressables runtime load; any matrix/bounds mismatch must roll back candidate outputs and invalidate stale success evidence.
 - [ ] Insert `entity-presentation-readiness` as the first content gate and `dense-city-readiness` as the conditional generated-content gate in `OperationMapCurrentMapBaker`.
 - [ ] Insert `presentation-budget` after entity-scene baking and before runtime definition/Addressables publication; invoke the existing static-presentation bake only for definitions explicitly using `StaticSceneChunks`.
 - [ ] Preserve stage report, stale-success invalidation, scene restoration, and transaction semantics.
@@ -883,6 +915,7 @@ Current progress: **1 / 144 (1%)**
 
 - [ ] Run focused load, readiness, damage/destruction, vehicle behavior, failure, retry, teardown, and sequential-load tests with the complete ECS-presented map.
 - [ ] Validate map readiness requires all expected existing/generated gameplay and render-only entities and no presentation preload queue.
+- [ ] Load the candidate through its real Addressables/runtime-binding route and prove all permanent map-visual ECS matrices and transformed renderer bounds match the accepted Editor transform-parity manifest before gameplay systems update them.
 - [ ] Validate camera traversal causes no map-visual scene load/unload; Entities Graphics culling/LOD changes visibility while entity identities remain stable.
 - [ ] Validate map unload releases entity scene/subscene/map metadata without a static-presentation drain step.
 - [ ] Validate two consecutive Deploy-to-Match-to-Menu cycles without retained map entities, static chunks, invalid handles, or stale ECS state.
@@ -902,6 +935,7 @@ Current progress: **1 / 144 (1%)**
 - [ ] Capture peak/retained memory and verify source authoring hierarchy is absent.
 - [ ] Capture CPU/GPU frame distributions, draw/SetPass calls, visible renderers, triangles, and shadow casters across representative routes.
 - [ ] Capture Entities Graphics batches, gameplay/render-only entity counts, culling/LOD behavior, entity-scene integration cost, and destruction-transition frame cost.
+- [ ] Compare the Android Addressables-loaded transform/bounds parity report with the accepted Editor manifest and reject any moved, rotated, scaled, duplicated, or missing permanent map visual.
 - [ ] Capture steady-state GC, transition allocations, thermal behavior, and sustained FPS.
 - [ ] Validate navigation, placement, targeting, aircraft clearance, camera, minimap, runway, helipad, and scenario anchors.
 - [ ] Validate entity LOD/impostor transitions, seams, missing geometry, and visual parity when applicable; confirm camera travel performs no map-visual scene streaming.
@@ -928,6 +962,7 @@ Current progress: **1 / 144 (1%)**
 
 Planned test files in `Assets/Tests/Editor`:
 
+- `DenseCityDeterministicFixtureTests.cs`
 - `DenseCityGeneratedRootAuthoringTests.cs`
 - `DenseCitySemanticHierarchyBuilderTests.cs`
 - `DenseCityGenerationRecordTests.cs`
@@ -942,12 +977,14 @@ Planned test files in `Assets/Tests/Editor`:
 - `OperationMapBuildingDestructionSystemTests.cs`
 - `OperationMapEntityPresentationMigrationEditorTests.cs`
 - `OperationMapEntityPresentationReadinessValidatorTests.cs`
+- `OperationMapEntityPresentationTransformParityTests.cs`
 - `OperationMapEntitySceneAddressablesOwnershipTests.cs`
 
 Extend existing tests rather than duplicating them for:
 
 - static presentation input, structural validation, ownership, rollback, integrity, and no-op behavior, including freeze/retirement and rejection of every existing/generated renderer after cutover;
 - Entities Graphics baking for existing/generated gameplay and render-only placements, stable identities, intact/destroyed references, shared asset ownership, and map SubScene ownership;
+- source/candidate/baked/runtime transform matrix and transformed-renderer-bounds parity, including nested hierarchy, pivot, negative/non-uniform scale, `Parent`, and `PostTransformMatrix` fixtures;
 - operation-map Addressables layout and Build Layout validation;
 - runtime binding scene generation/validation;
 - scene/SubScene loading, complete entity readiness, absence of static presentation binding, handle lifetime, teardown, and sequential map loads;
@@ -975,7 +1012,28 @@ Extend existing tests rather than duplicating them for:
 | 2026-07-21 | ECS-first generated presentation decision | Sections 1-16, 19, and 21-25 of this tracker; parent tracker direction link | Design only | All generated permanent visuals target map SubScene entities with shared Entities Graphics assets. Generated-city GameObject chunks/pools are rejected; the existing static package is frozen rollback evidence pending the full-map cutover. |
 | 2026-07-21 | Full current-map ECS presentation decision | Existing-map 16,542-source / 514-chunk / 451-building / 29-vehicle accepted baseline; revised sections 1-25 | Design only | Existing and generated map visuals now share one ECS SubScene presentation target. Current static scenes remain frozen rollback evidence during migration and leave production package/runtime ownership after accepted cutover. |
 | 2026-07-21 | Building-attached visual ownership decision | Building authoring/data/runtime contracts plus Phases 0A, 1, 2, 5, 6, and 9 | Design only | Roof, interior, shop, tent, sign, awning, lamp, furniture, and utility visuals attached to a damageable building belong to exactly one intact/destroyed entity hierarchy and transition atomically with it. |
+| 2026-07-21 | Editor-to-runtime transform parity defect accepted | Section 12.0A; Phase 0A/5/7/9 gates; audit of `OperationMapBuildingCandidateMigrationEditor`, `OperationMapVehicleCandidateMigrationEditor`, and `OperationMapRenderOnlyCandidateMigrationEditor` | Design gate added; implementation pending | The current candidate path has no source-to-baked-to-Addressables matrix proof. Render-only copies preserve world transforms, while building/vehicle candidates reconstruct placement transforms. Production cutover is now blocked until deterministic matrix and transformed-bounds parity passes twice in Editor and once on the user-triggered Android build. |
 | 2026-07-21 | Phase 0 deterministic editor baseline | `OperationMapPhase0BaselineProbeTests`: 8/8 passed; two `/private/tmp/warline-phase0-baseline-*.json` captures differed only by their declared report path; concise logs at `/private/tmp/warline-phase0-baseline-tests.log` and `/private/tmp/warline-phase0-probe-{a,b}.log` | Partial pass | Schema v2 recorded the clean canonical authoring scene and map SubScene identities, 15,792 GameObjects, 15,671 renderers, 15,584 mesh renderers, 13,317 prefab-instance roots, 27 bake groups, zero generated roots, zero prohibited physics components, 269 static chunks, 11,892 static sources, protected-root candidate GlobalObjectIds, and current surface/manifest/integrity/minimap/runtime-binding identities. The checked-in Addressables Build Layout predates this manifest state, so package identity and authoring-scene exclusion rows remain open pending a post-commit rebuild. Android evidence and protected-root approval also remain open. |
+| 2026-07-21 | Phase 0 post-commit Addressables baseline | `OperationMapAddressablesBuildReportBuilder.Run`; `/private/tmp/dense-city-phase0-addressables.log`; `/private/tmp/dense-city-phase0-post-addressables.json`; `OperationMapAddressables*`: 17/17 passed | Passed | Initial rebuild against `d4ad9cc38` proved authoring-scene exclusion for the 269-chunk/11,892-source package. Later superseded on `main` by `8f93dafe0` shader-bundle dedupe: build hash `872c797d60c0cbd26e4e430bb1b210f1`, 119 bundles, 119,993,045 aggregate bundle bytes. Android device evidence remains open. |
+| 2026-07-21 | Isolated deterministic-city fixture | `DenseCityDeterministicFixtureTests`: 1/1 passed; `/private/tmp/dense-city-deterministic-fixture-tests.xml`; `/private/tmp/dense-city-deterministic-fixture-tests.log` | Passed | Built and cleared a bounded one-city fixture twice from an in-memory config clone, produced identical hierarchy hashes, and verified the canonical operation-map scene SHA-256 did not change. The fixture uses an isolated batch scene or additive saved-scene path and creates no project asset. |
+| 2026-07-21 | Phase 0 protected-root confirmation | `Design/AgentReports/2026-07-21_dense_city_phase0_protected_roots_and_approvals.md`; baseline probe protected-root GlobalObjectIds | Passed | Confirmed eight present protected roots (`Buildings`, `Vehicles`, `Runways`, `Roads`, `Mountains` x2, `ResourceAreas`, `DenseCity_GradingArchive`) by GlobalObjectId. `AuthoredCityOverrides` is absent and remains a Phase 1 create-once root. The hierarchy/semantic and outside-grid decisions were subsequently approved by the project owner. |
+| 2026-07-21 | Phase 0A inventory, GPT 5.6 cutover review, and non-mutating planner | Focused inventory/record/planner/root-marker tests: 37/37 passed; inventory SHA-256 `a0b1c332ce715a5346785c0727cee9dad1b70f78e1895a2618df682edfa8c66d`; dry-run record-set hash `6e771d490511963753ad32cc8018f8952de947b6d56bf71e9c1badc1d84bdda2`; placement-join set hash `fd4679d4f07d2a82e058c9617e467ce9120fa151fdaa19ba35ef11eaa4c20709`; `Design/AgentReports/2026-07-21_gpt56_phase0a_inventory_review_and_grok_handoff.md` | Passed | Resolved all 11,892 renderer-component identities, partitioned them into 9,090 non-overlapping migration owners, and joined all current 432 building / 22 vehicle placements with zero unresolved, ambiguous, mixed, or reused identities. Classified 10,683 static render-only and 1,209 protected authored sources. Dispositioned 696 controller-free inert Animators for omission; found zero blocking dependencies or external scene-object references. The real inventory produces `StaticOwnersReadyGameplayOwnersPending`; no accepted scene, SubScene, presentation mode, Addressables, or rollback artifact was mutated. Production mutation remains blocked on the Android baseline and later GPT 5.6 cut-point reviews. |
+| 2026-07-21 | Phase 0 owner design approvals | Project-owner decisions captured in `Design/AgentReports/2026-07-21_dense_city_phase0_protected_roots_and_approvals.md` | Passed | Approved tracker sections 5 and 6 as the generated hierarchy/semantic ownership contract and approved presentation-only as the default for generated city content outside the gameplay grid. Android current-revision device evidence is the only remaining Phase 0 exit item. |
+| 2026-07-21 | Phase 0 Android current-revision baseline | `adb install -r -d` Success on `R4M7PZEQZ58T59ZH`; `Tools/CI/dense_city_phase0_android_baseline_capture.py`; `Design/AgentReports/2026-07-21_dense_city_phase0_android_baseline.{md,json}`; APK SHA-256 `dab470fd296b9f2ca2866ba6042940137cce36beabaa886bdf2ce7dab9f8bc44` | CharacterizationCaptured | Dirty `8f93dafe0` release APK 459,188,380 bytes; installed ~631.6 MiB via `du` base.apk+lib. Match TOTAL PSS 2,489,021 KiB; Graphics 1,096,532 KiB; menu-after-unload 1,268,879 KiB. SurfaceFlinger 60-window average FPS 58.42 (min 30.59). Match-ready upper bound 40.79 s; unload-to-menu 16.08 s. Release logcat lacked draw/GC diagnostic markers (null). Phase 0 exit complete; not Phase 9 acceptance. |
+| 2026-07-21 | Phase 0A vehicle ECS already-produced proof | `OperationMapVehicleEcsConversionInventoryProbeTests`: 4/4 passed; probe result `AllPlacementsAlreadyProduceEcs`; `Design/AgentReports/2026-07-21_dense_city_phase0a_vehicle_ecs_conversion_inventory.{md,json}` | Passed | All 22 vehicle placements exact-join to authored sources, resolve prefabs with `UnitGridAuthoring` vehicle motion + Model renderers + destroyed visuals, and hide authoring after spawn. Zero unresolved joins and zero conversion cleanup rows. Runtime path is `MapVehiclePlacementSpawnPrefabSystemHelper` → `RuntimeUnitPrefabSystem` → `UnitGridAuthoring.UnitGridBaker`. No scene/SubScene/Addressables/presentation-mode mutation. |
+| 2026-07-21 | Phase 0A RuntimeBuildingEntity dependency inventory | `OperationMapRuntimeBuildingEntityDependencyInventoryProbeTests`: 5/5 passed; probe result `AllPlacementsRequireManagedRuntimeBuildingEntity`; `Design/AgentReports/2026-07-21_dense_city_phase0a_runtime_building_entity_dependency_inventory.{md,json}` | Passed | All 432 building placements exact-join and still require managed `RuntimeBuildingEntity` presentation. Catalogued 10 managed dependency surfaces with ECS ownership proposals. Feature counts: destroyed visuals 266, production 20, resource 70, runway 1. No scene/SubScene/Addressables/presentation-mode mutation. |
+| 2026-07-21 | Phase 0A building attachment ownership inventory | `OperationMapBuildingAttachmentOwnershipInventoryProbeTests`: 6/6 passed; probe result `AttachmentOwnershipInventoryComplete`; `Design/AgentReports/2026-07-21_dense_city_phase0a_building_attachment_ownership_inventory.{md,json}` | Passed | Assigned 1,324 intact + 272 destroyed renderer attachments across 432 exact building joins with zero orphans, shared claims, or dual-state conflicts. Ownership uses exact source ancestry and configured destroyed-prefab references only; no name/proximity role inference. No scene/SubScene/Addressables/presentation-mode mutation. |
+| 2026-07-21 | Phase 0A six-role owner classification | `OperationMapEntityPresentationOwnerClassificationProbeTests`: 11/11 passed; probe result `OwnerClassificationComplete`; `Design/AgentReports/2026-07-21_dense_city_phase0a_owner_classification.{md,json}`; mutation handoff `Design/AgentReports/2026-07-21_gpt56_phase0a_mutation_ready_handoff.md` | Passed | Classified 9,544 owners: 432 GameplayBuilding, 22 GameplayVehicle, 9,090 RenderOnlyEntity, plus MapMetadataProxy/ApprovedManagedBoundary catalogs; zero RejectedUnresolved. Authored buildings/vehicles are classified from exact placement joins because they are absent from the static-presentation manifest. All 432 buildings require managed RuntimeBuildingEntity until GPT ECS cutover. |
+| 2026-07-21 | Phase 0A presentation-validation scaffolding + mutation readiness gate | `OperationMapPresentationKindContractTests`: 3/3 passed; `OperationMapEntityPresentationMutationReadinessTests`: 3/3 passed; `Design/AgentReports/2026-07-21_dense_city_phase0a_mutation_readiness_gate.md` | Passed | Confirmed fail-closed `EntityScene` content-reference/canonical-mode scaffolding remains inactive on production. Added `TryEvaluateMutationReadiness`; live Phase 0A evidence evaluates to `CandidateTransactionReadyPendingMutation`. No scene/SubScene/Addressables/presentation-mode mutation. |
+| 2026-07-21 | Phase 0A protected candidate + building ECS transaction implementation | Roslyn compile using Unity Bee response files: `Game.Components`, `Game.Configs`, `Game.Authoring`, `Game.Runtime`, `Game.Editor`, and `Game.Tests.Editor` passed; accepted scene SHA-256 `f210e53df16b9dad1c96457b4e72c03260ac8ab215a3f4e959b97d54c904be88`; accepted SubScene SHA-256 `eff3ce6992d234c7438a321f0f9f552c2abebcc0a4738445014bc8f86579965d`; handoff `Design/AgentReports/2026-07-21_gpt56_phase0a_candidate_building_conversion_grok_handoff.md` | Implementation passed; mutation blocked | Added a fail-closed separate-GUID candidate scene transaction, exact 432-placement building copy transaction, explicit intact/destroyed baked visual roots, ECS identity/combat/resource/production data, and a static-blocker-safe destruction visual transition. The required wrapper reached Unity but failed before `executeMethod` because headless licensing rejected protocol `1.18.1`; no candidate asset was created and production remains `StaticSceneChunks`. Checklist count remains 17/144 until Unity executes, bakes, and validates the candidate. |
+| 2026-07-21 | Phase 0A candidate mutation retry + render-only plan | `/private/tmp/dense-city-candidate-hierarchy.log`; restored inventory SHA-256 `a0b1c332ce715a5346785c0727cee9dad1b70f78e1895a2618df682edfa8c66d`; `OperationMapRenderOnlyCandidateMigrationPlanner(.cs)` + tests; `Design/AgentReports/2026-07-21_dense_city_phase0a_candidate_mutation_retry_and_render_only_plan.md` | Mutation still blocked; planner ready | Re-ran `CreateProtectedCandidateHierarchy` through `invoke_unity_macos.sh`; same headless licensing protocol `1.18.1` failure before `executeMethod`. Restored the accepted inventory onto the probe default tmp path. Added a fail-closed Map-child-folder → `RenderOnly/*` bucket planner covering all 9,090 owners (Props 6880, Vegetation 928, RoadsAndBridges 825, Terrain 442, Mountains 13, Horizon 2). Accepted scene/SubScene hashes unchanged; candidate folder still absent; progress remains 17/144. |
+| 2026-07-21 | Phase 0A protected candidate + 432 building populate | Non-batchmode Unity executeMethod logs `/private/tmp/dense-city-candidate-hierarchy-gui.log`, `/private/tmp/dense-city-populate-buildings-gui.log`; focused EditMode `/private/tmp/dense-city-candidate-tests-gui4.xml` 18/18; `Design/AgentReports/2026-07-21_dense_city_phase0a_candidate_hierarchy_and_buildings_executed.md` | Passed | Stopped stuck batchmode; GUI licensing path succeeded. Created candidate GUID `0f9ecd54a7f0f467fa35556af7d28f1d` ≠ source `d50925a18e9164ce782536576cb833d8`; populated 432 `OperationMapBuildingAuthoring` with 432 IntactVisual + 266 DestroyedVisual; zero Collider/Rigidbody in candidate YAML; accepted scene/SubScene hashes unchanged; production not referenced. Fixed four focused test fixtures (canonical opmap ids, job Complete, untitled-scene SetUp). Production remains `StaticSceneChunks`. |
+| 2026-07-21 | Phase 0A candidate render-only owner copy | `OperationMapRenderOnlyCandidateMigrationEditor.PopulateCandidateRenderOnlyOwners`; `/private/tmp/dense-city-populate-render-only-gui.log`; planner tests 3/3; `Design/AgentReports/2026-07-21_dense_city_phase0a_candidate_render_only_owners_copied.md` | Passed | Copied all 9,090 render-only owners into candidate `RenderOnly/*` buckets (Props 6880, Vegetation 928, RoadsAndBridges 825, Terrain 442, Mountains 13, Horizon 2, Infrastructure 0) using authored Map-child-folder identity only. Preserved 432 buildings; candidate ~35 MiB; zero Collider/Rigidbody; accepted hashes unchanged; productionCutover=0. |
+| 2026-07-21 | Phase 0A candidate bake validation | `OperationMapEntityPresentationCandidateBakeValidator.BakeAndValidateCandidateEntityPresentation`; `/private/tmp/dense-city-candidate-bake-validate3.log`; `Design/AgentReports/2026-07-21_dense_city_phase0a_candidate_bake_validation.json` | Passed | In-memory bake: `CandidateBakeValidationPassed` — gameplay buildings 432, presentation roots 3, building presentations 432, building render children 698, render-mesh entities 13,909, non-finite transforms 0, managed building companions 0. Accepted hashes unchanged; productionCutover=0. |
+| 2026-07-21 | Phase 0A candidate vehicles + shared art ownership | `PopulateCandidateGameplayVehicles`; `/private/tmp/dense-city-populate-vehicles-gui.log`; `ProveSharedArtOwnership`; shared-art tests 1/1; `Design/AgentReports/2026-07-21_dense_city_phase0a_candidate_vehicles_populated.md`; `Design/AgentReports/2026-07-21_dense_city_phase0a_shared_art_ownership.{json,md}` | Passed | Populated 22 GameplayVehicles prefab instances on the UnitGridAuthoring baker path; GameplayVehicles has 22 children. Shared art proof: 11,892 sources → 670 meshes / 39 materials / 671 prefabs, 0 missing assets, `SharedArtOwnershipProven`. Production remains `StaticSceneChunks`. |
+| 2026-07-21 | Phase 0A EntityScene binding/load/streamer skip scaffolding | Non-batchmode EditMode `/private/tmp/dense-city-entityscene-scaffold-tests-gui4.xml` 19/19; `Design/AgentReports/2026-07-21_dense_city_phase0a_entityscene_binding_scaffolding.md` | Passed | Added `OperationMapEntityScenePresentationPolicy`; SceneView accepts empty placements only for EntityScene; loading helper skips manifest load and rejects bound static manifest GUIDs; ownership Initialize already clean-skips; MenuBootstrap skips streamer bind and treats EntityScene preload ready. Production definition unchanged (`StaticSceneChunks`). |
+| 2026-07-21 | Phase 0A candidate EntityScene definition + Addressables ownership layout | Non-batchmode executeMethod `/private/tmp/dense-city-candidate-entityscene-addressables-gui9.log`; ownership tests `/private/tmp/dense-city-candidate-entityscene-addressables-tests2.xml` 2/2; `Design/AgentReports/2026-07-21_dense_city_phase0a_candidate_entityscene_addressables_layout.{json,md}` | Passed | Candidate definition set to `EntityScene`; candidate runtime binding points at entity scene GUID `0f9ecd54…`; layout plan 1846 entries (1841 shared art) with zero static-manifest/chunk/legacy-placement runtime rows; production Addressables mutated=0; production remains `StaticSceneChunks`. |
+| 2026-07-21 | Phase 0A transactional candidate Bake All implementation | `OperationMapEntitySceneCandidateBakeAll`; focused `/private/tmp/warline-phase0a-bake-all-focused-fix.log` 8/8; successful complete runs `/private/tmp/warline-phase0a-bake-all-run4.log` and `/private/tmp/warline-phase0a-bake-all-run5.log`; `git diff --check`; `Design/AgentReports/2026-07-21_dense_city_phase0a_candidate_bake_all.{json,md}` | Passed | Recovered Unity licensing IPC with explicit approval. Fixed empty batch scene-setup restoration and preserved the candidate runtime-binding `.meta` GUID across rebuilds. Settled repeated runs are byte-identical for candidate SubScene, definition, runtime binding, and runtime-binding meta. Budgets pass at 432 buildings, 22 vehicles, 9,090 render-only owners, 3 roots, 14,212 render meshes, 1,841 shared dependencies, zero production cutover. Accepted scene/SubScene hashes remain `f210e53d...` / `eff3ce69...`; production remains `StaticSceneChunks`. Exact transform parity, fixed-camera parity, Editor lifecycle, and Android acceptance remain open. Progress is 29/148 (20%). |
 
 ## 25. Completion Rule
 
@@ -985,6 +1043,7 @@ This tracker is complete only when:
 - existing military, handmade, building, vehicle, road, bridge, terrain, mountain, vegetation, prop, infrastructure, and horizon visuals bake to the protected map SubScene;
 - the city regenerates under one disposable ownership set with exactly one accepted root in each required source scene;
 - authored military, handmade, infrastructure, placement, and override behavior/transform identity remains semantically and visually preserved through migration;
+- every permanent map visual's candidate authoring, baked ECS, and Addressables-loaded runtime matrix and transformed renderer bounds match the accepted Editor source manifest within the Section 12.0A tolerances, with no runtime placement system applying a second offset;
 - production map content has zero colliders/Rigidbodies;
 - ECS surface/blocker data is generated from simplified deterministic records/proxies;
 - every damageable existing/generated building exists at runtime only as ECS simulation/render entities with intact/destroyed entity visuals;

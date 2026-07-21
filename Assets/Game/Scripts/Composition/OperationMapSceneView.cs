@@ -62,11 +62,15 @@ namespace Game.Composition
                 return false;
             }
 
-            if (buildingPlacements == null || buildingPlacements.Placements.Count == 0 ||
-                vehiclePlacements == null || vehiclePlacements.Placements.Count == 0)
+            bool entityScene = OperationMapEntityScenePresentationPolicy.UsesEntityScenePresentation(definition);
+            if (!entityScene)
             {
-                error = "Operation-map view requires non-empty building and vehicle placement configs.";
-                return false;
+                if (buildingPlacements == null || buildingPlacements.Placements.Count == 0 ||
+                    vehiclePlacements == null || vehiclePlacements.Placements.Count == 0)
+                {
+                    error = "Operation-map view requires non-empty building and vehicle placement configs.";
+                    return false;
+                }
             }
 
             if (mapRoot.gameObject.scene != gameObject.scene ||
@@ -86,6 +90,29 @@ namespace Game.Composition
                 !vehicleAuthoringRoot.IsChildOf(mapRoot))
             {
                 error = "Operation-map presentation and placement roots must remain under the map root.";
+                return false;
+            }
+
+            if (entityScene)
+            {
+                if (!OperationMapEntityScenePresentationPolicy.TryValidateEntitySceneBinding(
+                        definition,
+                        canonicalPresentationMode,
+                        mapRoot,
+                        buildingAuthoringRoot,
+                        vehicleAuthoringRoot,
+                        mapSubScene,
+                        buildingPlacements,
+                        vehiclePlacements,
+                        out error))
+                {
+                    return false;
+                }
+            }
+            else if (canonicalPresentationMode == OperationMapCanonicalPresentationMode.EntityScene)
+            {
+                error =
+                    "EntityScene canonical presentation mode requires OperationMapPresentationKind.EntityScene.";
                 return false;
             }
 

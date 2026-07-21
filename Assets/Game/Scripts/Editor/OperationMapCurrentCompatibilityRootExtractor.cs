@@ -69,7 +69,7 @@ namespace Game.Editor
             "Directional Light (1)"
         };
 
-        [MenuItem("Tools/Warline Capture/Operation Maps/Extract Current Map Roots")]
+        [MenuItem("Game/Operation Maps/Extract Current Map Roots")]
         public static void Extract()
         {
             OperationMapCurrentCompatibilitySceneStager.Stage();

@@ -69,7 +69,7 @@ namespace Game.Editor
             "runtimeGridConfig"
         };
 
-        [MenuItem("Tools/Warline Capture/Operation Maps/Cut Over Current Match Shell")]
+        [MenuItem("Game/Operation Maps/Cut Over Current Match Shell")]
         public static void Apply()
         {
             if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())

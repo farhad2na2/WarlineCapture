@@ -1,0 +1,24 @@
+{
+    "reportSchema": "warline.operation-map.entity-presentation-shared-art-ownership",
+    "reportSchemaVersion": 1,
+    "result": "SharedArtOwnershipProven",
+    "reportPath": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/2026-07-21_dense_city_phase0a_shared_art_ownership.json",
+    "sourceCount": 11892,
+    "uniqueMeshAssetCount": 670,
+    "uniqueMaterialAssetCount": 39,
+    "uniquePrefabAssetCount": 671,
+    "meshPlacementReferenceCount": 11892,
+    "materialReferenceCount": 11989,
+    "prefabPlacementReferenceCount": 11892,
+    "repeatedMeshAssetCount": 621,
+    "repeatedMaterialAssetCount": 32,
+    "repeatedPrefabAssetCount": 621,
+    "emptyMeshGuidSourceCount": 0,
+    "missingAssetCount": 0,
+    "compactInstanceDataProven": true,
+    "notes": [
+        "Each mesh/material/prefab GUID resolves to one AssetDatabase package path.",
+        "Placement rows contribute only transform/render-reference identity; art bytes are owned once per GUID.",
+        "Does not mutate scenes, SubScenes, Addressables, or OperationMapPresentationKind."
+    ]
+}

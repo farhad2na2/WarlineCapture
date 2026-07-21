@@ -8,6 +8,7 @@ using Game.UI.Shell.Ecs;
 using Game.Components;
 using Game.UI.Runtime;
 using Game.Runtime;
+using Game.Rendering;
 
 namespace Game.Composition
 {
@@ -467,6 +468,36 @@ namespace Game.Composition
                 return;
             }
 
+            if (UsesEntityScenePresentation(matchScene))
+            {
+                if (streamedMatchView != null && streamedMatchView != matchScene)
+                {
+                    staticMapPresentationStreamer.Unbind();
+                    streamedMatchView = null;
+                }
+
+                if (isMatchRoute)
+                    streamedMatchView = matchScene;
+                else if (streamedMatchView != null)
+                {
+                    staticMapPresentationStreamer.Unbind();
+                    streamedMatchView = null;
+                }
+
+                staticMapPresentationStreamer.Update();
+                if (isMatchRoute &&
+                    matchScene.OperationMapReadinessPublicationAvailable &&
+                    !matchScene.TryPublishOperationMapReadiness(
+                        presentationPreloadReady: true,
+                        presentationPreloadFailed: false,
+                        out string entitySceneReadinessError))
+                {
+                    Debug.LogError($"[OperationMapReadiness] {entitySceneReadinessError}");
+                }
+
+                return;
+            }
+
             if (isMatchRoute && streamedMatchView != matchScene)
             {
                 if (!staticMapPresentationStreamer.Bind(
@@ -504,6 +535,13 @@ namespace Game.Composition
             }
         }
 
+        private static bool UsesEntityScenePresentation(MatchSceneView matchScene)
+        {
+            return matchScene != null &&
+                matchScene.CanonicalPresentationMode ==
+                OperationMapCanonicalPresentationMode.EntityScene;
+        }
+
         private bool CanAdvanceMatchStart(UiShellStateComponent shellState)
         {
             return shellState.ActiveRoute == UIRoute.Match && IsStaticMapPresentationPreloadReady();
@@ -511,6 +549,9 @@ namespace Game.Composition
 
         private bool IsStaticMapPresentationPreloadReady()
         {
+            if (UsesEntityScenePresentation(streamedMatchView))
+                return true;
+
             return streamedMatchView != null &&
                 !staticMapPresentationStreamer.Failed &&
                 !staticMapPresentationStreamer.IsDraining &&

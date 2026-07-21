@@ -43,6 +43,19 @@ namespace Game.Composition
         IOperationMapPresentationManifestOperation Load(object runtimeKey);
     }
 
+    internal sealed class EntitySceneSkippedPresentationManifestOperation :
+        IOperationMapPresentationManifestOperation
+    {
+        public bool IsDone => true;
+        public bool Succeeded => true;
+        public float Progress01 => 1f;
+        public StaticMapPresentationManifest Manifest => null;
+        public string Failure => null;
+        public void Dispose()
+        {
+        }
+    }
+
     internal sealed class OperationMapAddressablesSourceSceneApi : IOperationMapSourceSceneApi
     {
         public IOperationMapSourceSceneOperation LoadAdditive(object runtimeKey)
@@ -259,17 +272,32 @@ namespace Game.Composition
                 return RejectStart(OperationMapLoadResultCode.MissingSourceContent, error);
             }
 
+            bool entityScene =
+                OperationMapEntityScenePresentationPolicy.ShouldSkipStaticManifestStreamerAndOwnership(
+                    definition);
             AssetReference manifestReference = definition.StaticPresentationManifestReference;
-            if (manifestReference == null || !manifestReference.RuntimeKeyIsValid())
+            if (!entityScene &&
+                (manifestReference == null || !manifestReference.RuntimeKeyIsValid()))
             {
                 error = "Operation-map presentation-manifest reference is missing or invalid.";
                 return RejectStart(OperationMapLoadResultCode.MissingSourceContent, error);
             }
 
+            if (entityScene &&
+                manifestReference != null &&
+                !string.IsNullOrEmpty(manifestReference.AssetGUID))
+            {
+                error =
+                    "EntityScene operation-map loads must not bind a production static presentation manifest.";
+                return RejectStart(OperationMapLoadResultCode.StaleContent, error);
+            }
+
             try
             {
                 sceneOperation = sceneApi.LoadAdditive(sourceReference.RuntimeKey);
-                manifestOperation = manifestApi.Load(manifestReference.RuntimeKey);
+                manifestOperation = entityScene
+                    ? new EntitySceneSkippedPresentationManifestOperation()
+                    : manifestApi.Load(manifestReference.RuntimeKey);
             }
             catch (Exception exception)
             {
@@ -337,6 +365,23 @@ namespace Game.Composition
                 !view.TryValidate(out error))
             {
                 Fail(OperationMapLoadResultCode.MetadataBindFailed, error);
+                return;
+            }
+
+            if (OperationMapEntityScenePresentationPolicy.UsesEntityScenePresentation(view.Definition))
+            {
+                if (manifestOperation.Manifest != null)
+                {
+                    Fail(
+                        OperationMapLoadResultCode.StaleContent,
+                        "EntityScene operation-map loads must not resolve a static presentation manifest.");
+                    return;
+                }
+
+                SceneView = view;
+                Manifest = null;
+                Progress01 = 1f;
+                IsReady = true;
                 return;
             }
 

@@ -1,0 +1,71 @@
+{
+  "reportSchema": "warline.dense-city.phase0-android-baseline",
+  "reportSchemaVersion": 1,
+  "result": "CharacterizationCaptured",
+  "gitCommit": "8f93dafe06098e62ef029260ed4c6a732ba2ee1b",
+  "dirtyWorktree": true,
+  "deviceSerial": "R4M7PZEQZ58T59ZH",
+  "packageName": "com.warlinecapture.game",
+  "apk": {
+    "path": "/Users/farhad/Projects/WarlineCapture/Build/AndroidAPK/WarlineCapture.apk",
+    "bytes": 459188380,
+    "sha256": "dab470fd296b9f2ca2866ba6042940137cce36beabaa886bdf2ce7dab9f8bc44"
+  },
+  "installed": {
+    "codePath": "/data/app/~~pmQ627n55inavj55y23Iag==/com.warlinecapture.game-rhLqGCDyaEzAM822RoucVw==",
+    "baseApkBytes": 459188380,
+    "nativeLibraryBytes": 172385320,
+    "installedApproximateBytes": 631573700
+  },
+  "timing": {
+    "matchReadyUpperBoundSeconds": 40.785188542,
+    "unloadForceStopToMenuSeconds": 16.084825791000014,
+    "warmupSeconds": 45,
+    "steadySeconds": 60
+  },
+  "memoryKiB": {
+    "matchTotalPss": 2489021,
+    "matchTotalRss": 2626948,
+    "matchGraphics": 1096532,
+    "matchNativeHeap": 63460,
+    "steadyTotalPss": 2492220,
+    "menuAfterUnloadTotalPss": 1268879
+  },
+  "frame": {
+    "sampleWindows": 60,
+    "source": "SurfaceFlingerLatency",
+    "averageFps": 58.42369067719338,
+    "minimumFps": 30.593994019608424,
+    "maximumFps": 61.02856692291952,
+    "p10Fps": 60.503670061870444,
+    "p90Fps": 60.98390207936811,
+    "lastGfxinfo": {
+      "layer": "87f35e SurfaceView[com.warlinecapture.game/com.unity3d.player.UnityPlayerGameActivity](BLAST)#25208",
+      "totalFrames": 0,
+      "jankyFrames": 0,
+      "p50FrameMs": 4950.0,
+      "p90FrameMs": 4950.0,
+      "p95FrameMs": 4950.0,
+      "p99FrameMs": 4950.0,
+      "rawSurfaceFlingerBytes": 2884,
+      "latencyRowCount": 48,
+      "averageMaxQueueMs": 34.00330518333333,
+      "maximumQueueMs": 49.256539
+    }
+  },
+  "diagnosticsFromLogcat": {
+    "drawCalls": null,
+    "triangles": null,
+    "averageUpdateMs": null,
+    "mainThreadMs": null,
+    "gpuMs": null,
+    "gcAllocBytesHint": null
+  },
+  "notes": [
+    "Match-ready timing is an upper bound from a fixed wait, matching prior characterization method.",
+    "Installed size uses du -sb on base.apk + lib because MIUI dumpsys package omits codeSize fields.",
+    "FPS samples prefer SurfaceFlinger BLAST-layer --latency; gfxinfo is Unity-empty on this device.",
+    "Draw/GC values are best-effort logcat parses and may be null if diagnostics markers are absent.",
+    "This report is Phase 0 baseline characterization, not Phase 9 acceptance."
+  ]
+}

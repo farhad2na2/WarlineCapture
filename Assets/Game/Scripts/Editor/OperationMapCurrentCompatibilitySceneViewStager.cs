@@ -19,7 +19,7 @@ namespace Game.Editor
         private const string GridConfigPath =
             "Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset";
 
-        [MenuItem("Tools/Warline Capture/Operation Maps/Bind Current Scene View")]
+        [MenuItem("Game/Operation Maps/Bind Current Scene View")]
         public static void Stage()
         {
             OperationMapCurrentStagedDefinitionBuilder.Stage();

@@ -1,0 +1,30 @@
+{
+    "reportSchema": "warline.operation-map.building-attachment-ownership-inventory",
+    "reportSchemaVersion": 1,
+    "result": "AttachmentOwnershipInventoryComplete",
+    "buildingPlacementConfigPath": "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01_BuildingPlacements.asset",
+    "counts": {
+        "placementCount": 432,
+        "exactJoinCount": 432,
+        "unresolvedJoinCount": 0,
+        "reusedSourceJoinCount": 0,
+        "intactAttachmentCount": 1324,
+        "destroyedAttachmentCount": 272,
+        "assignedIntactCount": 1324,
+        "assignedDestroyedCount": 272,
+        "unassignedOrphanCount": 0,
+        "sharedAcrossBuildingsCount": 0,
+        "dualStateCount": 0,
+        "placementsWithDestroyedVisualCount": 266
+    },
+    "dispositionCounts": [
+        {
+            "disposition": "AssignedDestroyed",
+            "count": 272
+        },
+        {
+            "disposition": "AssignedIntact",
+            "count": 1324
+        }
+    ]
+}

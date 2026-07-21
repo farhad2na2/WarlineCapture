@@ -2,7 +2,7 @@
 
 - Task: `APH-500`
 - Status: `complete`
-- Exact commit: `b089517166fbf49489f1b85e573ed0d35d47436c`
+- Exact commit: `8f93dafe06098e62ef029260ed4c6a732ba2ee1b`
 - Dirty: `true`
 - Unity: `6000.5.2f1`
 - Build: `release APK`
@@ -12,28 +12,28 @@
 - Frame Timing Stats: `enabled`
 - Detailed BuildReport: `true`
 - Artifact: `Build/AndroidAPK/WarlineCapture.apk`
-- Artifact SHA-256: `0d70364c74553467b1d682c883c5d51021d09994e1d4c3fed3b924dfef969d55`
+- Artifact SHA-256: `dab470fd296b9f2ca2866ba6042940137cce36beabaa886bdf2ce7dab9f8bc44`
 
 ## Size Accounting
 
 | Measure | Bytes | Meaning |
 |---|---:|---|
-| Attributed packed assets | 464,572,890 | Sum of BuildReport packed entries with a normalized sourceAssetPath |
+| Attributed packed assets | 464,572,994 | Sum of BuildReport packed entries with a normalized sourceAssetPath |
 | Unattributed packed content | 78,927 | Sum of BuildReport packed entries without a sourceAssetPath |
-| Packed file overhead | 661,019 | Sum of PackedAssets.overhead header bytes |
-| Accounted packed files | 465,312,836 | Attributed + unattributed + packed file overhead |
-| BuildReport summary total size | 3,084,145,752 | BuildSummary.totalSize for all build output |
-| BuildReport summary unaccounted | 2,618,832,916 | Summary total minus accounted packed files; signed |
-| Compressed package file length | 476,851,204 | APK/AAB artifact file length on disk |
+| Packed file overhead | 660,979 | Sum of PackedAssets.overhead header bytes |
+| Accounted packed files | 465,312,900 | Attributed + unattributed + packed file overhead |
+| BuildReport summary total size | 3,048,884,439 | BuildSummary.totalSize for all build output |
+| BuildReport summary unaccounted | 2,583,571,539 | Summary total minus accounted packed files; signed |
+| Compressed package file length | 459,188,380 | APK/AAB artifact file length on disk |
 
 Packed contributions and packed-file overhead come from `BuildReport.packedAssets`. The artifact file length is the compressed APK/AAB package size and is not a per-asset compressed-byte attribution.
 
 ## Top 100 Included Assets
 
-- Distinct attributed assets: `5670`
+- Distinct attributed assets: `5671`
 - Rows reported: `100`
 - Packed files: `40`
-- Packed entries: `21727`
+- Packed entries: `21726`
 
 | Rank | Packed bytes | MiB | Object types | Source asset path |
 |---:|---:|---:|---|---|

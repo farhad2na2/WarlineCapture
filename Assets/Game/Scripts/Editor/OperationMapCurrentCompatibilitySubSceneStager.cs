@@ -28,7 +28,7 @@ namespace Game.Editor
             "InitialUnitsSpawnerAuthoring"
         };
 
-        [MenuItem("Tools/Warline Capture/Operation Maps/Stage Current Compatibility SubScene")]
+        [MenuItem("Game/Operation Maps/Stage Current Compatibility SubScene")]
         public static void Stage()
         {
             OperationMapCurrentCompatibilityRootExtractor.Extract();

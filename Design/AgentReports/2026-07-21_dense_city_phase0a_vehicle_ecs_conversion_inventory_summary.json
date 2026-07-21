@@ -1,0 +1,16 @@
+{
+    "reportSchema": "warline.operation-map.vehicle-ecs-conversion-inventory",
+    "reportSchemaVersion": 1,
+    "result": "AllPlacementsAlreadyProduceEcs",
+    "vehiclePlacementConfigPath": "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01_VehiclePlacements.asset",
+    "placementCount": 22,
+    "alreadyReadyCount": 22,
+    "cleanupRequiredCount": 0,
+    "unresolvedJoinCount": 0,
+    "dispositionCounts": [
+        {
+            "disposition": "AlreadyProducesEcsGameplayAndRender",
+            "count": 22
+        }
+    ]
+}

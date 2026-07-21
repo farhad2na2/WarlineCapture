@@ -24,6 +24,7 @@
         "Unity.Addressables.Editor",
         "Unity.ResourceManager",
         "Unity.Entities",
+        "Unity.Entities.Hybrid",
         "Unity.Entities.Graphics",
         "Unity.Scenes",
         "Unity.Scenes.Editor",

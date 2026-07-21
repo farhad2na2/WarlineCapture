@@ -1,14 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using Game.Authoring;
 using Game.Components;
 using Game.Composition;
 using Game.Configs;
 using Game.Rendering;
+using Game.Runtime;
 using NUnit.Framework;
+using Unity.Scenes;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
 
 public sealed class OperationMapSceneLoadingSceneSystemHelperTests
@@ -26,6 +31,8 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
             Run(nameof(RejectsMissingDefinition), test => test.RejectsMissingDefinition(), ref passed);
             Run(nameof(PendingLoadPublishesProgress), test => test.PendingLoadPublishesProgress(), ref passed);
             Run(nameof(SuccessfulLoadResolvesValidatedStagedView), test => test.SuccessfulLoadResolvesValidatedStagedView(), ref passed);
+            Run(nameof(EntitySceneLoadSkipsManifestAndResolvesWithoutStaticOwnership), test => test.EntitySceneLoadSkipsManifestAndResolvesWithoutStaticOwnership(), ref passed);
+            Run(nameof(EntitySceneLoadRejectsBoundStaticManifestReference), test => test.EntitySceneLoadRejectsBoundStaticManifestReference(), ref passed);
             Run(nameof(FailedLoadReleasesExactlyOnce), test => test.FailedLoadReleasesExactlyOnce(), ref passed);
             Run(nameof(FailedManifestLoadReleasesBothExactlyOnce), test => test.FailedManifestLoadReleasesBothExactlyOnce(), ref passed);
             Run(nameof(MismatchedManifestFailsClosed), test => test.MismatchedManifestFailsClosed(), ref passed);
@@ -110,6 +117,49 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
         Assert.That(operation.DisposeCount, Is.EqualTo(1));
         Assert.That(manifestOperation.DisposeCount, Is.EqualTo(1));
         UnityEngine.Object.DestroyImmediate(manifestOperation.LoadedManifest);
+    }
+
+    [Test]
+    public void EntitySceneLoadSkipsManifestAndResolvesWithoutStaticOwnership()
+    {
+        Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+        OperationMapDefinition definition = CreateEntitySceneDefinition("opmap.skirmish.entity_scene_load");
+        FakeManifestApi manifestApi = new(new FakeManifestOperation());
+        OperationMapSceneView view = CreateEntitySceneView(scene, definition);
+        var operation = new FakeSceneOperation
+        {
+            Done = true,
+            Success = true,
+            LoadedScene = scene,
+            Progress = 1f
+        };
+        var helper = new OperationMapSceneLoadingSceneSystemHelper(
+            new FakeSceneApi(operation),
+            manifestApi);
+
+        Assert.That(helper.TryStart(definition, out string error), Is.True, error);
+        Assert.That(manifestApi.LoadCount, Is.EqualTo(0));
+        helper.Update();
+
+        Assert.That(helper.IsReady, Is.True, helper.Failure);
+        Assert.That(helper.SceneView, Is.SameAs(view));
+        Assert.That(helper.Manifest, Is.Null);
+        helper.Dispose();
+        Assert.That(operation.DisposeCount, Is.EqualTo(1));
+        UnityEngine.Object.DestroyImmediate(definition);
+    }
+
+    [Test]
+    public void EntitySceneLoadRejectsBoundStaticManifestReference()
+    {
+        OperationMapDefinition definition = CreateEntitySceneDefinition("opmap.skirmish.entity_scene_reject");
+        Set(definition, "staticPresentationManifestReference", new AssetReference(new string('a', 32)));
+        var helper = CreateHelper(new FakeSceneOperation(), new FakeManifestOperation());
+
+        Assert.That(helper.TryStart(definition, out string error), Is.False);
+        Assert.That(error, Does.Contain("must not bind a production static presentation manifest"));
+        Assert.That(helper.FailureCode, Is.EqualTo(OperationMapLoadResultCode.StaleContent));
+        UnityEngine.Object.DestroyImmediate(definition);
     }
 
     [Test]
@@ -436,6 +486,70 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
             new FakeSceneApi(sceneOperations),
             new FakeManifestApi(manifestOperations));
 
+    private static OperationMapDefinition CreateEntitySceneDefinition(string operationMapId)
+    {
+        OperationMapDefinition definition = ScriptableObject.CreateInstance<OperationMapDefinition>();
+        Set(definition, "operationMapId", operationMapId);
+        Set(definition, "presentationKind", OperationMapPresentationKind.EntityScene);
+        Set(definition, "sourceSceneReference", new AssetReference(new string('b', 32)));
+        Set(definition, "staticPresentationManifestReference", new AssetReference());
+        return definition;
+    }
+
+    private static OperationMapSceneView CreateEntitySceneView(Scene scene, OperationMapDefinition definition)
+    {
+        GameObject viewObject = new("OperationMapSceneView");
+        SceneManager.MoveGameObjectToScene(viewObject, scene);
+        OperationMapSceneView view = viewObject.AddComponent<OperationMapSceneView>();
+        Transform mapRoot = new GameObject("Map").transform;
+        mapRoot.SetParent(viewObject.transform, false);
+        CombinedMeshBaker decoration = new GameObject("Decoration").AddComponent<CombinedMeshBaker>();
+        decoration.transform.SetParent(mapRoot, false);
+        Transform buildings = new GameObject("Buildings").transform;
+        buildings.SetParent(mapRoot, false);
+        Transform vehicles = new GameObject("Vehicles").transform;
+        vehicles.SetParent(mapRoot, false);
+        MapSurfaceAuthoring surface = new GameObject("Surface").AddComponent<MapSurfaceAuthoring>();
+        surface.transform.SetParent(viewObject.transform, false);
+        GridAuthoringConfig grid = ScriptableObject.CreateInstance<GridAuthoringConfig>();
+        SubScene subScene = viewObject.AddComponent<SubScene>();
+        Set(
+            definition,
+            "navigationMetadata",
+            new OperationMapNavigationMetadataConfig(
+                subScene.SceneGUID.ToString(),
+                0,
+                0,
+                false,
+                false,
+                false));
+
+        SerializedObject serialized = new(view);
+        serialized.FindProperty("operationMapId").stringValue = definition.OperationMapId;
+        serialized.FindProperty("definition").objectReferenceValue = definition;
+        serialized.FindProperty("canonicalPresentationMode").enumValueIndex =
+            (int)OperationMapCanonicalPresentationMode.EntityScene;
+        serialized.FindProperty("mapRoot").objectReferenceValue = mapRoot;
+        serialized.FindProperty("decorationCombinedMeshBaker").objectReferenceValue = decoration;
+        serialized.FindProperty("decorationRoot").objectReferenceValue = decoration.transform;
+        serialized.FindProperty("buildingAuthoringRoot").objectReferenceValue = buildings;
+        serialized.FindProperty("vehicleAuthoringRoot").objectReferenceValue = vehicles;
+        serialized.FindProperty("mapSurfaceAuthoring").objectReferenceValue = surface;
+        serialized.FindProperty("gridAuthoringConfig").objectReferenceValue = grid;
+        serialized.FindProperty("mapSubScene").objectReferenceValue = subScene;
+        serialized.ApplyModifiedPropertiesWithoutUndo();
+        return view;
+    }
+
+    private static void Set<T>(OperationMapDefinition definition, string fieldName, T value)
+    {
+        FieldInfo field = typeof(OperationMapDefinition).GetField(
+            fieldName,
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.That(field, Is.Not.Null, fieldName);
+        field.SetValue(definition, value);
+    }
+
     private static OperationMapDefinition LoadDefinition()
     {
         OperationMapDefinition definition =
@@ -576,8 +690,13 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
             this.operations = operations;
         }
 
-        public IOperationMapPresentationManifestOperation Load(object runtimeKey) =>
-            nextOperation < operations.Length ? operations[nextOperation++] : null;
+        public int LoadCount { get; private set; }
+
+        public IOperationMapPresentationManifestOperation Load(object runtimeKey)
+        {
+            LoadCount++;
+            return nextOperation < operations.Length ? operations[nextOperation++] : null;
+        }
     }
 
     private sealed class FakeManifestOperation : IOperationMapPresentationManifestOperation

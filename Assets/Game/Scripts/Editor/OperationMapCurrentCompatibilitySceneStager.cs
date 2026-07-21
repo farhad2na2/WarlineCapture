@@ -14,7 +14,7 @@ namespace Game.Editor
         public const string DestinationScenePath =
             DestinationFolderPath + "/opmap_skirmish_desert_base_01.unity";
 
-        [MenuItem("Tools/Warline Capture/Operation Maps/Stage Current Compatibility Scene")]
+        [MenuItem("Game/Operation Maps/Stage Current Compatibility Scene")]
         public static void Stage()
         {
             if (AssetDatabase.LoadAssetAtPath<SceneAsset>(SourceScenePath) == null)

@@ -27,6 +27,7 @@
         "Unity.ResourceManager",
         "Unity.Entities",
         "Unity.Entities.Graphics",
+        "Unity.Scenes",
         "Unity.Mathematics",
         "Unity.Mathematics.Extensions",
         "Unity.TextMeshPro",

@@ -1,0 +1,29 @@
+{
+    "reportSchema": "warline.operation-map.entity-presentation-owner-classification",
+    "reportSchemaVersion": 1,
+    "result": "OwnerClassificationComplete",
+    "counts": {
+        "migrationOwnerCount": 9544,
+        "rejectedUnresolvedCount": 0,
+        "unresolvedManifestSourceCount": 0,
+        "gameplayBuildingCount": 432,
+        "gameplayVehicleCount": 22,
+        "renderOnlyEntityCount": 9090,
+        "mapMetadataProxyCatalogCount": 5,
+        "approvedManagedBoundaryCatalogCount": 3
+    },
+    "countsByRole": [
+        {
+            "ownerRole": "GameplayBuilding",
+            "count": 432
+        },
+        {
+            "ownerRole": "GameplayVehicle",
+            "count": 22
+        },
+        {
+            "ownerRole": "RenderOnlyEntity",
+            "count": 9090
+        }
+    ]
+}

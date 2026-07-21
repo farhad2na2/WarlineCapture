@@ -45,7 +45,7 @@ namespace Game.Editor
             }
         }
 
-        [MenuItem("Tools/Warline Capture/Operation Maps/Stage Current Placement Configs")]
+        [MenuItem("Game/Operation Maps/Stage Current Placement Configs")]
         public static void Stage()
         {
             OperationMapCurrentCompatibilityRootExtractor.Extract();

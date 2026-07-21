@@ -53,6 +53,9 @@ namespace Game.Editor
             object blobStore = null;
             try
             {
+                Scene sourceScene = EditorSceneManager.OpenScene(
+                    OperationMapEntityPresentationCandidateSceneBuilder.AcceptedOperationMapScenePath,
+                    OpenSceneMode.Additive);
                 Scene candidateScene = EditorSceneManager.OpenScene(candidatePath, OpenSceneMode.Additive);
                 RequireAuthoringCounts(candidateScene);
 
@@ -66,6 +69,13 @@ namespace Game.Editor
 
                 if (!report.Passed)
                     throw new InvalidOperationException($"Candidate bake validation failed: {report.RejectionReason}");
+
+                OperationMapEntityPresentationTransformParityValidator.TransformParityReport parity =
+                    OperationMapEntityPresentationTransformParityValidator.ValidateAndWrite(
+                        projectRoot,
+                        sourceScene,
+                        candidateScene,
+                        bakeWorld.EntityManager);
 
                 RequireHashUnchanged(
                     acceptedSceneHash,
@@ -85,6 +95,7 @@ namespace Game.Editor
                     $"buildingRenderChildren={report.BuildingRenderChildCount} " +
                     $"nonFiniteTransforms={report.NonFiniteTransformCount} " +
                     $"managedMapVisualCompanions={report.ManagedMapVisualCompanionCount} " +
+                    $"transformParityRows={parity.candidateIdentityCount} " +
                     $"productionCutover=0 report={report.ReportPath}");
             }
             finally

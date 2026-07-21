@@ -6,8 +6,8 @@
     "packLabel": "operation-map-candidate-pack-skirmish-desert-base-01-entity-scene",
     "addressPrefix": "operation-map-candidate/opmap.skirmish.desert_base_01/",
     "entitySceneGuid": "0f9ecd54a7f0f467fa35556af7d28f1d",
-    "entryCount": 1846,
-    "sharedDependencyCount": 1841,
+    "entryCount": 1849,
+    "sharedDependencyCount": 1844,
     "staticManifestEntryCount": 0,
     "presentationChunkEntryCount": 0,
     "legacyPlacementEntryCount": 0,
@@ -6261,6 +6261,13 @@
         },
         {
             "role": "shared-dependency",
+            "assetPath": "Assets/PolygonMilitary/Materials/Vehicles/PolygonMilitary_Mat_Helicopters_01_B.mat",
+            "address": "operation-map-candidate/shared/0538a8a3b36f4ad46ae8a737a9bedb05",
+            "roleLabel": "operation-map-role-shared-dependency",
+            "guid": "0538a8a3b36f4ad46ae8a737a9bedb05"
+        },
+        {
+            "role": "shared-dependency",
             "assetPath": "Assets/PolygonMilitary/Materials/Vehicles/PolygonMilitary_Mat_Land_Vehicles Burnt.mat",
             "address": "operation-map-candidate/shared/53ac61dbbe655bd4eb7b4f80c9d8f45f",
             "roleLabel": "operation-map-role-shared-dependency",
@@ -11532,6 +11539,13 @@
         },
         {
             "role": "shared-dependency",
+            "assetPath": "Assets/PolygonMilitary/Models/SM_Veh_APC_Heavy_01.fbx",
+            "address": "operation-map-candidate/shared/82b7b9133c02a7a42bef7cd7baca19b7",
+            "roleLabel": "operation-map-role-shared-dependency",
+            "guid": "82b7b9133c02a7a42bef7cd7baca19b7"
+        },
+        {
+            "role": "shared-dependency",
             "assetPath": "Assets/PolygonMilitary/Models/SM_Veh_APC_Heavy_01_Destroyed.fbx",
             "address": "operation-map-candidate/shared/a2884021661a3ce43bb13a9c2472733b",
             "roleLabel": "operation-map-role-shared-dependency",
@@ -12516,6 +12530,13 @@
             "address": "operation-map-candidate/shared/9b7c8dd5cead2e646bac5e8de95fecb3",
             "roleLabel": "operation-map-role-shared-dependency",
             "guid": "9b7c8dd5cead2e646bac5e8de95fecb3"
+        },
+        {
+            "role": "shared-dependency",
+            "assetPath": "Assets/PolygonMilitary/Textures/Vehicles/Veh_Heli_01_B.png",
+            "address": "operation-map-candidate/shared/dd07701bc16f10d4ab0c221bcc85b2ad",
+            "roleLabel": "operation-map-role-shared-dependency",
+            "guid": "dd07701bc16f10d4ab0c221bcc85b2ad"
         },
         {
             "role": "shared-dependency",

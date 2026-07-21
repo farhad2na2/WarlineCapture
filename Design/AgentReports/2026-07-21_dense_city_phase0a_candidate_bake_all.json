@@ -15,55 +15,55 @@
     "presentationIdentityCount": 9544,
     "colliderCount": 0,
     "rigidbodyCount": 0,
-    "renderMeshEntityCount": 14212,
+    "renderMeshEntityCount": 14209,
     "nonFiniteTransformCount": 0,
     "managedMapVisualCompanionCount": 0,
     "sharedArtSourceCount": 11892,
     "uniqueMeshAssetCount": 670,
     "uniqueMaterialAssetCount": 39,
     "uniquePrefabAssetCount": 671,
-    "sharedDependencyCount": 1841,
+    "sharedDependencyCount": 1844,
     "stages": [
         {
             "name": "preflight-isolation",
             "result": "Passed",
-            "elapsedMilliseconds": 4494,
+            "elapsedMilliseconds": 2703,
             "failure": ""
         },
         {
             "name": "candidate-population",
             "result": "Passed",
-            "elapsedMilliseconds": 5079,
+            "elapsedMilliseconds": 3600,
             "failure": ""
         },
         {
             "name": "candidate-presentation-identities",
             "result": "Passed",
-            "elapsedMilliseconds": 9100,
+            "elapsedMilliseconds": 4237,
             "failure": ""
         },
         {
             "name": "candidate-authoring-readiness",
             "result": "Passed",
-            "elapsedMilliseconds": 1575,
+            "elapsedMilliseconds": 1046,
             "failure": ""
         },
         {
             "name": "candidate-entity-bake",
             "result": "Passed",
-            "elapsedMilliseconds": 8063,
+            "elapsedMilliseconds": 202617,
             "failure": ""
         },
         {
             "name": "shared-art-budget",
             "result": "Passed",
-            "elapsedMilliseconds": 1332,
+            "elapsedMilliseconds": 1124,
             "failure": ""
         },
         {
             "name": "candidate-binding-layout",
             "result": "Passed",
-            "elapsedMilliseconds": 6776,
+            "elapsedMilliseconds": 5522,
             "failure": ""
         },
         {
@@ -75,7 +75,7 @@
         {
             "name": "postflight-isolation",
             "result": "Passed",
-            "elapsedMilliseconds": 5504,
+            "elapsedMilliseconds": 4494,
             "failure": ""
         }
     ]

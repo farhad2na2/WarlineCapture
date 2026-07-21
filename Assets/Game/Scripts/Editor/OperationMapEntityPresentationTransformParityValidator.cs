@@ -24,6 +24,8 @@ namespace Game.Editor
             "Design/AgentReports/2026-07-21_dense_city_phase0a_transform_parity.json";
         internal const float MatrixTolerance = 0.0001f;
         internal const float BoundsTolerance = 0.001f;
+        private const float RendererBakeKeyTolerance = 0.01f;
+        private const float RendererBakeFallbackJoinTolerance = 0.125f;
         private static readonly UTF8Encoding Utf8WithoutBom = new(false);
 
         internal static TransformParityReport ValidateAndWrite(
@@ -44,7 +46,12 @@ namespace Game.Editor
                 StringComparer.Ordinal);
             var bakedBySource = ReadBakedIdentities(entityManager);
             var bakedWorldMatrices = new Dictionary<Entity, Matrix4x4>();
-            var bakedBounds = CollectBakedBounds(entityManager, bakedBySource, bakedWorldMatrices);
+            CandidateRendererBakeMap rendererBakeMap = BuildCandidateRendererBakeMap(candidateScene);
+            var bakedBounds = CollectBakedBounds(
+                entityManager,
+                bakedBySource,
+                rendererBakeMap,
+                bakedWorldMatrices);
             var rows = new List<TransformParityRow>(candidates.Length);
 
             int rejected = 0;
@@ -193,6 +200,7 @@ namespace Game.Editor
         private static Dictionary<string, WorldBounds> CollectBakedBounds(
             EntityManager entityManager,
             IReadOnlyDictionary<string, Entity> identities,
+            CandidateRendererBakeMap rendererBakeMap,
             Dictionary<Entity, Matrix4x4> worldMatrices)
         {
             var identityByEntity = identities.ToDictionary(pair => pair.Value, pair => pair.Key);
@@ -201,33 +209,164 @@ namespace Game.Editor
                 ComponentType.ReadOnly<RenderBounds>(),
                 ComponentType.ReadOnly<LocalToWorld>());
             using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            int parentResolved = 0;
+            int bakeKeyResolved = 0;
+            int fallbackKeyResolved = 0;
+            int unresolved = 0;
             for (int i = 0; i < entities.Length; i++)
             {
-                Entity current = entities[i];
-                string sourceId = null;
-                for (int depth = 0; depth < 64; depth++)
-                {
-                    if (identityByEntity.TryGetValue(current, out sourceId))
-                        break;
-                    if (!entityManager.HasComponent<Parent>(current))
-                        break;
-                    current = entityManager.GetComponentData<Parent>(current).Value;
-                }
-                if (sourceId == null)
-                    continue;
-
                 RenderBounds local = entityManager.GetComponentData<RenderBounds>(entities[i]);
                 Matrix4x4 world = ComputeBakedWorldMatrix(
                     entities[i],
                     entityManager,
                     worldMatrices,
                     new HashSet<Entity>());
+                string bakeKey = BuildRendererBakeKey(local.Value.Center, local.Value.Extents, world);
+                string sourceId = rendererBakeMap.TryDequeueOwner(bakeKey);
+                if (sourceId != null)
+                    bakeKeyResolved++;
+                else
+                {
+                    sourceId = rendererBakeMap.TryDequeueNearestOwner(
+                        local.Value.Center,
+                        local.Value.Extents,
+                        world,
+                        RendererBakeFallbackJoinTolerance);
+                    if (sourceId != null)
+                        fallbackKeyResolved++;
+                    else
+                    {
+                        sourceId = ResolveIdentityByParent(
+                            entities[i],
+                            entityManager,
+                            identityByEntity);
+                        if (sourceId != null)
+                            parentResolved++;
+                    }
+                }
+                if (sourceId == null)
+                {
+                    unresolved++;
+                    continue;
+                }
+
                 WorldBounds transformed = TransformBounds(local.Value.Center, local.Value.Extents, world);
                 if (result.TryGetValue(sourceId, out WorldBounds existing))
                     transformed = WorldBounds.Encapsulate(existing, transformed);
                 result[sourceId] = transformed;
             }
+            Debug.Log(
+                $"[OperationMapTransformParity] renderEntities={entities.Length} " +
+                $"bakeKeyResolved={bakeKeyResolved} fuzzyKeyResolved={fallbackKeyResolved} " +
+                $"parentFallbackResolved={parentResolved} " +
+                $"unresolved={unresolved} unconsumedExpected={rendererBakeMap.UnconsumedCount} " +
+                $"ownersWithBounds={result.Count}");
             return result;
+        }
+
+        private static CandidateRendererBakeMap BuildCandidateRendererBakeMap(Scene candidateScene)
+        {
+            var result = new CandidateRendererBakeMap();
+            Renderer[] renderers = candidateScene
+                .GetRootGameObjects()
+                .SelectMany(root => root.GetComponentsInChildren<Renderer>(true))
+                .ToArray();
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                Renderer renderer = renderers[i];
+                if (!renderer.enabled || !renderer.gameObject.activeInHierarchy)
+                    continue;
+
+                OperationMapEntityPresentationIdentityAuthoring owner =
+                    renderer.GetComponentInParent<OperationMapEntityPresentationIdentityAuthoring>(true);
+                if (owner == null || !TryGetEntitiesGraphicsBakeData(
+                        renderer,
+                        out Bounds localBounds,
+                        out Matrix4x4 world,
+                        out int renderEntityCount))
+                    continue;
+
+                string key = BuildRendererBakeKey(localBounds.center, localBounds.extents, world);
+                for (int entityIndex = 0; entityIndex < renderEntityCount; entityIndex++)
+                {
+                    result.Add(
+                        key,
+                        owner.SourceGlobalObjectId,
+                        localBounds.center,
+                        localBounds.extents,
+                        world);
+                }
+            }
+            return result;
+        }
+
+        private static bool TryGetEntitiesGraphicsBakeData(
+            Renderer renderer,
+            out Bounds localBounds,
+            out Matrix4x4 world,
+            out int renderEntityCount)
+        {
+            localBounds = default;
+            world = default;
+            renderEntityCount = 0;
+            Material[] materials = renderer.sharedMaterials;
+            if (materials == null || materials.Length == 0)
+                return false;
+
+            if (renderer is SkinnedMeshRenderer skinned)
+            {
+                if (skinned.sharedMesh == null)
+                    return false;
+                localBounds = skinned.localBounds;
+                world = (skinned.rootBone != null ? skinned.rootBone : skinned.transform).localToWorldMatrix;
+                renderEntityCount = materials.Length;
+                return true;
+            }
+
+            if (renderer is not MeshRenderer ||
+                renderer.GetComponent<MeshFilter>()?.sharedMesh is not Mesh mesh)
+                return false;
+
+            localBounds = mesh.bounds;
+            world = renderer.transform.localToWorldMatrix;
+            renderEntityCount = materials.Length;
+            return true;
+        }
+
+        private static string BuildRendererBakeKey(float3 center, float3 extents, Matrix4x4 world)
+        {
+            var builder = new StringBuilder(192);
+            for (int i = 0; i < 16; i++)
+                builder.Append(Quantize(world[i])).Append('|');
+            builder.Append(Quantize(center.x)).Append('|')
+                .Append(Quantize(center.y)).Append('|')
+                .Append(Quantize(center.z)).Append('|')
+                .Append(Quantize(extents.x)).Append('|')
+                .Append(Quantize(extents.y)).Append('|')
+                .Append(Quantize(extents.z));
+            return builder.ToString();
+        }
+
+        private static long Quantize(float value) =>
+            (long)Math.Round(value / RendererBakeKeyTolerance, MidpointRounding.AwayFromZero);
+
+        private static string ResolveIdentityByParent(
+            Entity entity,
+            EntityManager entityManager,
+            IReadOnlyDictionary<Entity, string> identityByEntity)
+        {
+            Entity current = entity;
+            for (int depth = 0; depth < 64; depth++)
+            {
+                if (identityByEntity.TryGetValue(current, out string sourceId))
+                    return sourceId;
+                if (!entityManager.HasComponent<Parent>(current))
+                    return null;
+                current = entityManager.GetComponentData<Parent>(current).Value;
+            }
+
+            throw new InvalidOperationException(
+                $"Baked transform parent depth exceeded while resolving presentation identity for {entity}.");
         }
 
         private static Matrix4x4 ComputeBakedWorldMatrix(
@@ -309,24 +448,26 @@ namespace Game.Editor
                     continue;
                 }
 
-                if (renderer is SkinnedMeshRenderer)
+                if (renderer is SkinnedMeshRenderer skinnedRenderer)
                 {
-                    if (materials.Any(material => material != null))
-                        EncapsulateTransformed(renderer.localBounds, renderer.transform.localToWorldMatrix, ref bounds, ref hasBounds);
+                    EncapsulateTransformed(
+                        renderer.localBounds,
+                        skinnedRenderer.rootBone != null
+                            ? skinnedRenderer.rootBone.localToWorldMatrix
+                            : renderer.transform.localToWorldMatrix,
+                        ref bounds,
+                        ref hasBounds);
                     continue;
                 }
 
-                int subMeshCount = Math.Min(mesh.subMeshCount, materials.Length);
-                for (int subMesh = 0; subMesh < subMeshCount; subMesh++)
-                {
-                    if (materials[subMesh] == null)
-                        continue;
-                    EncapsulateTransformed(
-                        mesh.GetSubMesh(subMesh).bounds,
-                        renderer.transform.localToWorldMatrix,
-                        ref bounds,
-                        ref hasBounds);
-                }
+                // Entities Graphics bakes Mesh.bounds for each material entity, not the
+                // individual submesh bounds. Repeating the same bounds does not change
+                // the combined owner bounds, so evaluate it once here.
+                EncapsulateTransformed(
+                    mesh.bounds,
+                    renderer.transform.localToWorldMatrix,
+                    ref bounds,
+                    ref hasBounds);
             }
             return hasBounds;
         }
@@ -406,6 +547,105 @@ namespace Game.Editor
             internal float[] ToArray() => new[] { Min.x, Min.y, Min.z, Max.x, Max.y, Max.z };
             internal static WorldBounds Encapsulate(WorldBounds a, WorldBounds b) =>
                 new(Vector3.Min(a.Min, b.Min), Vector3.Max(a.Max, b.Max));
+        }
+
+        private sealed class CandidateRendererBakeMap
+        {
+            private readonly Dictionary<string, Queue<ExpectedRendererBakeEntry>> ownersByKey =
+                new(StringComparer.Ordinal);
+            private readonly List<ExpectedRendererBakeEntry> entries = new();
+
+            internal int UnconsumedCount { get; private set; }
+
+            internal void Add(
+                string key,
+                string sourceId,
+                Vector3 center,
+                Vector3 extents,
+                Matrix4x4 world)
+            {
+                if (!ownersByKey.TryGetValue(key, out Queue<ExpectedRendererBakeEntry> owners))
+                {
+                    owners = new Queue<ExpectedRendererBakeEntry>();
+                    ownersByKey.Add(key, owners);
+                }
+                var entry = new ExpectedRendererBakeEntry(sourceId, center, extents, world);
+                owners.Enqueue(entry);
+                entries.Add(entry);
+                UnconsumedCount++;
+            }
+
+            internal string TryDequeueOwner(string key)
+            {
+                if (!ownersByKey.TryGetValue(key, out Queue<ExpectedRendererBakeEntry> owners))
+                    return null;
+                while (owners.Count > 0 && owners.Peek().Consumed)
+                    owners.Dequeue();
+                if (owners.Count == 0)
+                    return null;
+                ExpectedRendererBakeEntry entry = owners.Dequeue();
+                entry.Consumed = true;
+                UnconsumedCount--;
+                return entry.SourceId;
+            }
+
+            internal string TryDequeueNearestOwner(
+                float3 center,
+                float3 extents,
+                Matrix4x4 world,
+                float maxResidual)
+            {
+                ExpectedRendererBakeEntry best = null;
+                float bestResidual = float.PositiveInfinity;
+                for (int i = 0; i < entries.Count; i++)
+                {
+                    ExpectedRendererBakeEntry entry = entries[i];
+                    if (entry.Consumed)
+                        continue;
+                    float residual = Mathf.Max(
+                        MaxResidual(entry.World, world),
+                        MaxComponentResidual(entry.Center, center),
+                        MaxComponentResidual(entry.Extents, extents));
+                    if (residual < bestResidual)
+                    {
+                        bestResidual = residual;
+                        best = entry;
+                    }
+                }
+
+                if (best == null || bestResidual > maxResidual)
+                    return null;
+                best.Consumed = true;
+                UnconsumedCount--;
+                return best.SourceId;
+            }
+
+            private static float MaxComponentResidual(Vector3 left, float3 right) =>
+                Mathf.Max(
+                    Mathf.Abs(left.x - right.x),
+                    Mathf.Abs(left.y - right.y),
+                    Mathf.Abs(left.z - right.z));
+        }
+
+        private sealed class ExpectedRendererBakeEntry
+        {
+            internal ExpectedRendererBakeEntry(
+                string sourceId,
+                Vector3 center,
+                Vector3 extents,
+                Matrix4x4 world)
+            {
+                SourceId = sourceId;
+                Center = center;
+                Extents = extents;
+                World = world;
+            }
+
+            internal string SourceId { get; }
+            internal Vector3 Center { get; }
+            internal Vector3 Extents { get; }
+            internal Matrix4x4 World { get; }
+            internal bool Consumed { get; set; }
         }
 
         [Serializable]

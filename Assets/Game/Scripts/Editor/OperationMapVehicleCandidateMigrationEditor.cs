@@ -13,10 +13,11 @@ namespace Game.Editor
     using UnityEngine.SceneManagement;
 
     /// <summary>
-    /// Candidate-only copy of the 22 accepted vehicle placements under
-    /// <c>AuthoredOperationMapEntityPresentation/GameplayVehicles</c> using the existing
-    /// vehicle prefab <c>UnitGridAuthoring</c> baker path. Does not mutate accepted source,
-    /// Addressables, or production presentation mode.
+    /// Candidate-only copy of the 22 accepted vehicle instances under
+    /// <c>AuthoredOperationMapEntityPresentation/GameplayVehicles</c>. The accepted scene
+    /// instance is authoritative so per-instance renderer-child transforms survive while
+    /// the existing <c>UnitGridAuthoring</c> baker path remains unchanged. Does not mutate
+    /// accepted source, Addressables, or production presentation mode.
     /// </summary>
     internal static class OperationMapVehicleCandidateMigrationEditor
     {
@@ -63,7 +64,11 @@ namespace Game.Editor
                     candidateScene,
                     "AuthoredOperationMapEntityPresentation/GameplayVehicles");
                 if (vehicleRoot.childCount != 0)
-                    throw new InvalidOperationException("Candidate gameplay-vehicle root is not empty; refusing to overwrite it.");
+                {
+                    RequireReplaceableVehiclePopulation(vehicleRoot);
+                    for (int childIndex = vehicleRoot.childCount - 1; childIndex >= 0; childIndex--)
+                        UnityEngine.Object.DestroyImmediate(vehicleRoot.GetChild(childIndex).gameObject);
+                }
 
                 int migrated = 0;
                 for (int i = 0; i < report.placements.Count; i++)
@@ -96,10 +101,11 @@ namespace Game.Editor
                         throw new InvalidOperationException($"Vehicle source identity could not be resolved at placement {i}.");
                     }
 
-                    GameObject candidateOwner = PrefabUtility.InstantiatePrefab(placement.VehiclePrefab, candidateScene) as GameObject;
+                    GameObject candidateOwner = UnityEngine.Object.Instantiate(sourceOwner);
                     if (candidateOwner == null)
-                        throw new InvalidOperationException($"Failed to instantiate vehicle prefab at placement {i}.");
+                        throw new InvalidOperationException($"Failed to copy accepted vehicle instance at placement {i}.");
 
+                    SceneManager.MoveGameObjectToScene(candidateOwner, candidateScene);
                     candidateOwner.name = $"Vehicle_{i:D2}_{sourceOwner.name}";
                     candidateOwner.transform.SetParent(vehicleRoot, false);
                     candidateOwner.transform.SetPositionAndRotation(
@@ -188,6 +194,28 @@ namespace Game.Editor
             }
 
             return report;
+        }
+
+        private static void RequireReplaceableVehiclePopulation(Transform vehicleRoot)
+        {
+            if (vehicleRoot.childCount != ExpectedVehicleCount)
+            {
+                throw new InvalidOperationException(
+                    $"Candidate gameplay-vehicle population is partial: {vehicleRoot.childCount}.");
+            }
+
+            for (int i = 0; i < vehicleRoot.childCount; i++)
+            {
+                OperationMapEntityPresentationIdentityAuthoring identity =
+                    vehicleRoot.GetChild(i).GetComponent<OperationMapEntityPresentationIdentityAuthoring>();
+                if (identity == null ||
+                    identity.Role != OperationMapEntityPresentationRole.GameplayVehicles ||
+                    identity.PlacementIndex != i)
+                {
+                    throw new InvalidOperationException(
+                        $"Candidate gameplay-vehicle owner {i} is not safe to replace.");
+                }
+            }
         }
 
         private static void RemoveProhibitedCandidateComponents(GameObject owner)

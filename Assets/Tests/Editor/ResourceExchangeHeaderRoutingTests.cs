@@ -31,8 +31,8 @@ public sealed class ResourceExchangeHeaderRoutingTests
                 test => test.ResourceHeaderClick_EnqueuesOpenResourceExchangeAction(),
                 ref passed);
             RunValidationStep(
-                nameof(MatchHudPrefabResourceSlotClickSurfaceEnqueuesOpenResourceExchangeAction),
-                test => test.MatchHudPrefabResourceSlotClickSurfaceEnqueuesOpenResourceExchangeAction(),
+                nameof(MatchHudPrefabResourcePanelClickEnqueuesOpenResourceExchangeAction),
+                test => test.MatchHudPrefabResourcePanelClickEnqueuesOpenResourceExchangeAction(),
                 ref passed);
             RunValidationStep(
                 nameof(UiActionRequestSystem_OpenResourceExchangeRequiresEnabledExchange),
@@ -98,29 +98,19 @@ public sealed class ResourceExchangeHeaderRoutingTests
         GameObject header = CreateMatchHudHeaderContent();
         try
         {
-            ConfigureResourceExchangeSlot(header.transform.Find("ResourceStrip/MaterialsSlot"));
-            ConfigureResourceExchangeSlot(header.transform.Find("ResourceStrip/OilSlot"));
-            ConfigureResourceExchangeSlot(header.transform.Find("ResourceStrip/FuelSlot"));
+            Transform resourceStrip = header.transform.Find("ResourceStrip");
+            ConfigureResourceExchangePanel(resourceStrip);
             runtimeUi.BindMatchHudThreatJumpPanel(header);
             Transform materialsSlot = header.transform.Find("ResourceStrip/MaterialsSlot");
-            Transform oilSlot = header.transform.Find("ResourceStrip/OilSlot");
-            Transform fuelSlot = header.transform.Find("ResourceStrip/FuelSlot");
-            Button materialsButton = materialsSlot.GetComponent<Button>();
-            Button oilButton = oilSlot.GetComponent<Button>();
-            Button fuelButton = fuelSlot.GetComponent<Button>();
-
-            Assert.NotNull(materialsButton, "Materials slot must be clickable for Resource Exchange access.");
-            Assert.NotNull(oilButton, "Oil slot must be clickable for Resource Exchange access.");
-            Assert.NotNull(fuelButton, "Fuel slot must be clickable for Resource Exchange access.");
-            Assert.AreSame(materialsSlot.GetComponent<Graphic>(), materialsButton.targetGraphic);
-            Assert.AreSame(oilSlot.GetComponent<Graphic>(), oilButton.targetGraphic);
-            Assert.AreSame(fuelSlot.GetComponent<Graphic>(), fuelButton.targetGraphic);
+            Button exchangeButton = resourceStrip.GetComponent<Button>();
+            Assert.NotNull(exchangeButton, "The resource panel must open Resource Exchange.");
+            Assert.AreSame(resourceStrip.GetComponent<Graphic>(), exchangeButton.targetGraphic);
             TMP_Text materialsLabel =
                 header.transform.Find("ResourceStrip/MaterialsSlot/Label").GetComponent<TMP_Text>();
             Assert.AreEqual("Materials", materialsLabel.text);
             Assert.GreaterOrEqual(materialsLabel.rectTransform.rect.width, 300f);
 
-            oilButton.onClick.Invoke();
+            exchangeButton.onClick.Invoke();
 
             Assert.AreEqual(1, gateway.ActionCount);
             Assert.AreEqual(UiActionKind.OpenResourceExchange, gateway.LastActionKind);
@@ -134,7 +124,7 @@ public sealed class ResourceExchangeHeaderRoutingTests
     }
 
     [Test]
-    public void MatchHudPrefabResourceSlotClickSurfaceEnqueuesOpenResourceExchangeAction()
+    public void MatchHudPrefabResourcePanelClickEnqueuesOpenResourceExchangeAction()
     {
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(MatchHudContentPrefabPath);
         Assert.NotNull(prefab);
@@ -145,17 +135,17 @@ public sealed class ResourceExchangeHeaderRoutingTests
         GameObject header = UnityEngine.Object.Instantiate(prefab);
         try
         {
-            Transform oilSlot = header.transform.Find("HeaderContent/ResourceStrip/OilSlot");
-            Assert.NotNull(oilSlot);
-            Button oilButton = oilSlot.GetComponent<Button>();
-            Image clickSurface = oilSlot.GetComponent<Image>();
-            Assert.NotNull(oilButton, "The slot root must own the resource exchange button.");
-            Assert.NotNull(clickSurface, "The prefab slot must have an authored click surface for UI raycasts.");
-            Assert.IsTrue(clickSurface.raycastTarget);
-            Assert.AreSame(clickSurface, oilButton.targetGraphic);
+            Transform resourceStrip = header.transform.Find("HeaderContent/ResourceStrip");
+            Assert.NotNull(resourceStrip);
+            Button exchangeButton = resourceStrip.GetComponent<Button>();
+            Image panelImage = resourceStrip.GetComponent<Image>();
+            Assert.NotNull(exchangeButton, "The existing resource panel must own the exchange button.");
+            Assert.NotNull(panelImage, "The existing resource panel Image must remain the click surface.");
+            Assert.IsTrue(panelImage.raycastTarget);
+            Assert.AreSame(panelImage, exchangeButton.targetGraphic);
 
             runtimeUi.BindMatchHudThreatJumpPanel(header);
-            oilButton.onClick.Invoke();
+            exchangeButton.onClick.Invoke();
 
             Assert.AreEqual(1, gateway.ActionCount);
             Assert.AreEqual(UiActionKind.OpenResourceExchange, gateway.LastActionKind);
@@ -570,7 +560,7 @@ public sealed class ResourceExchangeHeaderRoutingTests
     private static GameObject CreateMatchHudHeaderContent()
     {
         GameObject header = new("HeaderContent", typeof(RectTransform));
-        GameObject strip = new("ResourceStrip", typeof(RectTransform));
+        GameObject strip = new("ResourceStrip", typeof(RectTransform), typeof(Image));
         strip.transform.SetParent(header.transform, false);
 
         CreateResourceSlot(strip.transform, "MaterialsSlot");
@@ -595,11 +585,12 @@ public sealed class ResourceExchangeHeaderRoutingTests
         label.GetComponent<TMP_Text>().text = name == "MaterialsSlot" ? "Materials" : name;
     }
 
-    private static void ConfigureResourceExchangeSlot(Transform slot)
+    private static void ConfigureResourceExchangePanel(Transform resourceStrip)
     {
-        Image clickSurface = slot.GetComponent<Image>();
-        Button button = slot.gameObject.AddComponent<Button>();
-        button.targetGraphic = clickSurface;
+        Image panelImage = resourceStrip.GetComponent<Image>();
+        panelImage.raycastTarget = true;
+        Button button = resourceStrip.gameObject.AddComponent<Button>();
+        button.targetGraphic = panelImage;
         button.transition = Selectable.Transition.None;
     }
 

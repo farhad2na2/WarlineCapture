@@ -437,9 +437,7 @@ namespace Game.UI.Runtime
         private void BindMatchHudResourceExchangeButtons(MatchHudHeaderReferenceUiSystemHelper references)
         {
             UnbindMatchHudResourceExchangeButtons();
-            BindMatchHudResourceExchangeButton(references.MaterialsSlot?.Root);
-            BindMatchHudResourceExchangeButton(references.OilSlot?.Root);
-            BindMatchHudResourceExchangeButton(references.FuelSlot?.Root);
+            BindMatchHudResourceExchangeButton(references.ResourceStrip);
         }
 
         private void BindMatchHudResourceExchangeButton(Transform slot)

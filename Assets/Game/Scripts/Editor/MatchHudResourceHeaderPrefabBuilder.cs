@@ -54,21 +54,11 @@ namespace Game.Editor
                 Sprite oilIcon = RequireSprite(OilIconPath);
                 Sprite fuelIcon = RequireSprite(FuelIconPath);
 
-                ConfigureSlot(materialsSlot, "Materials", materialsIcon, -480f, 1);
-                ConfigureSlot(oilSlot, "Oil", oilIcon, -160f, 2);
-                ConfigureSlot(fuelSlot, "Fuel", fuelIcon, 160f, 3);
-                ConfigureSlot(civilianRiskSlot, "Civilian Risk", null, 480f, 4);
-                ConfigureResourceExchangeButton(materialsSlot);
-                ConfigureResourceExchangeButton(oilSlot);
-                ConfigureResourceExchangeButton(fuelSlot);
-
-                Transform frame = RequireDirectChild(resourceStrip, "Frame");
-                frame.SetSiblingIndex(0);
-                if (frame is RectTransform frameRect)
-                    frameRect.sizeDelta = new Vector2(1280f, frameRect.sizeDelta.y);
-
-                if (resourceStrip is RectTransform stripRect)
-                    stripRect.sizeDelta = new Vector2(1280f, stripRect.sizeDelta.y);
+                ConfigureSlot(materialsSlot, "Materials", materialsIcon, -480f, 0);
+                ConfigureSlot(oilSlot, "Oil", oilIcon, -160f, 1);
+                ConfigureSlot(fuelSlot, "Fuel", fuelIcon, 160f, 2);
+                ConfigureSlot(civilianRiskSlot, "Civilian Risk", null, 480f, 3);
+                ConfigureResourceExchangeButton(resourceStrip);
 
                 PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             }
@@ -97,16 +87,11 @@ namespace Game.Editor
                 throw new InvalidOperationException("Match HUD still contains legacy Credits/Supply resource slots.");
             }
 
-            ValidateSlot(resourceStrip, "MaterialsSlot", "Materials", MaterialsIconPath, 1);
-            ValidateSlot(resourceStrip, "OilSlot", "Oil", OilIconPath, 2);
-            ValidateSlot(resourceStrip, "FuelSlot", "Fuel", FuelIconPath, 3);
-            ValidateSlot(resourceStrip, "CivilianRiskSlot", "Civilian Risk", null, 4);
-            ValidateResourceExchangeButton(RequireDirectChild(resourceStrip, "MaterialsSlot"));
-            ValidateResourceExchangeButton(RequireDirectChild(resourceStrip, "OilSlot"));
-            ValidateResourceExchangeButton(RequireDirectChild(resourceStrip, "FuelSlot"));
-            Transform frame = RequireDirectChild(resourceStrip, "Frame");
-            if (frame.GetSiblingIndex() != 0)
-                throw new InvalidOperationException("ResourceStrip/Frame must render behind the four header sections.");
+            ValidateSlot(resourceStrip, "MaterialsSlot", "Materials", MaterialsIconPath, 0);
+            ValidateSlot(resourceStrip, "OilSlot", "Oil", OilIconPath, 1);
+            ValidateSlot(resourceStrip, "FuelSlot", "Fuel", FuelIconPath, 2);
+            ValidateSlot(resourceStrip, "CivilianRiskSlot", "Civilian Risk", null, 3);
+            ValidateResourceExchangeButton(resourceStrip);
             Debug.Log("[MatchHudResourceHeaderPrefabBuilder] Validation passed.");
         }
 
@@ -250,32 +235,31 @@ namespace Game.Editor
                 throw new InvalidOperationException($"{slotName} uses '{actualPath}' instead of '{iconPath}'.");
         }
 
-        private static void ConfigureResourceExchangeButton(Transform slot)
+        private static void ConfigureResourceExchangeButton(Transform resourceStrip)
         {
-            Image clickSurface = slot.GetComponent<Image>();
+            Image clickSurface = resourceStrip.GetComponent<Image>();
             if (clickSurface == null)
-                clickSurface = slot.gameObject.AddComponent<Image>();
+                throw new InvalidOperationException("ResourceStrip is missing its panel Image.");
 
-            clickSurface.color = Color.clear;
             clickSurface.raycastTarget = true;
 
-            Button button = slot.GetComponent<Button>();
+            Button button = resourceStrip.GetComponent<Button>();
             if (button == null)
-                button = slot.gameObject.AddComponent<Button>();
+                button = resourceStrip.gameObject.AddComponent<Button>();
 
             button.targetGraphic = clickSurface;
             button.transition = Selectable.Transition.None;
         }
 
-        private static void ValidateResourceExchangeButton(Transform slot)
+        private static void ValidateResourceExchangeButton(Transform resourceStrip)
         {
-            Image clickSurface = slot.GetComponent<Image>();
-            Button button = slot.GetComponent<Button>();
+            Image clickSurface = resourceStrip.GetComponent<Image>();
+            Button button = resourceStrip.GetComponent<Button>();
             if (clickSurface == null || !clickSurface.raycastTarget ||
                 button == null || button.targetGraphic != clickSurface)
             {
                 throw new InvalidOperationException(
-                    $"{slot.name} must own a raycastable Resource Exchange button surface.");
+                    "ResourceStrip must use its panel Image as the Resource Exchange button surface.");
             }
         }
 

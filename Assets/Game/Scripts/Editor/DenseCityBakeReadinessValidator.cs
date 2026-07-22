@@ -1,14 +1,64 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Game.Authoring;
 using Game.Configs;
+using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Game.Editor
 {
     public static class DenseCityBakeReadinessValidator
     {
+        [MenuItem("Game/Operation Maps/EntityScene Migration/Validate Dense City Bake Readiness")]
+        public static void ValidateCurrentCandidate() => ValidateCurrentCandidateCore();
+
+        public static void ValidateCurrentCandidateBatch() => ValidateCurrentCandidateCore();
+
+        internal static bool TryResolveGenerationState(
+            Scene operationMapScene,
+            Scene entityPresentationScene,
+            out bool generated,
+            out string generationId,
+            out string error)
+        {
+            generated = false;
+            generationId = null;
+            DenseCityGeneratedRootAuthoring[] mapRoots = FindGeneratedRoots(operationMapScene);
+            DenseCityGeneratedRootAuthoring[] entityRoots = FindGeneratedRoots(entityPresentationScene);
+            if (mapRoots.Length == 0 && entityRoots.Length == 0)
+            {
+                error = null;
+                return true;
+            }
+            if (mapRoots.Length != 1 || entityRoots.Length != 1)
+            {
+                error =
+                    $"Dense-city generation ownership is partial or duplicated: " +
+                    $"mapRoots={mapRoots.Length} entityRoots={entityRoots.Length}.";
+                return false;
+            }
+            if (mapRoots[0].Role != DenseCityGeneratedRootRole.MapBakeSource ||
+                entityRoots[0].Role != DenseCityGeneratedRootRole.EntityPresentationSource)
+            {
+                error = "Dense-city generated roots have incorrect scene roles.";
+                return false;
+            }
+            if (!string.Equals(mapRoots[0].GenerationId, entityRoots[0].GenerationId, StringComparison.Ordinal))
+            {
+                error = "Dense-city generated roots do not share one generation id.";
+                return false;
+            }
+
+            generated = true;
+            generationId = mapRoots[0].GenerationId;
+            error = null;
+            return true;
+        }
+
         public static bool TryValidateAuthoringOwnership(
             Scene operationMapScene,
             Scene entityPresentationScene,
@@ -115,6 +165,58 @@ namespace Game.Editor
 
             error = null;
             return true;
+        }
+
+        private static void ValidateCurrentCandidateCore()
+        {
+            string mapPath = OperationMapEntityPresentationCandidateSceneBuilder.AcceptedOperationMapScenePath;
+            string entityPath = OperationMapEntityPresentationMigrationEditor.CandidateSubScenePath;
+            string projectRoot = Path.GetDirectoryName(Application.dataPath) ??
+                                 throw new InvalidOperationException("Project root is unavailable.");
+            if (!File.Exists(Path.Combine(projectRoot, mapPath)) ||
+                !File.Exists(Path.Combine(projectRoot, entityPath)))
+            {
+                throw new FileNotFoundException("Dense-city readiness source scene pair is incomplete.");
+            }
+
+            SceneSetup[] previousSetup = EditorSceneManager.GetSceneManagerSetup();
+            try
+            {
+                Scene mapScene = EditorSceneManager.OpenScene(mapPath, OpenSceneMode.Single);
+                Scene entityScene = EditorSceneManager.OpenScene(entityPath, OpenSceneMode.Additive);
+                if (!TryResolveGenerationState(
+                        mapScene,
+                        entityScene,
+                        out bool generated,
+                        out string generationId,
+                        out string stateError))
+                {
+                    throw new InvalidOperationException(stateError);
+                }
+                if (!generated)
+                {
+                    Debug.Log("[DenseCityBakeReadiness] result=NotGenerated");
+                    return;
+                }
+                if (!TryValidateAuthoringOwnership(
+                        mapScene,
+                        entityScene,
+                        OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
+                        generationId,
+                        out string error))
+                {
+                    throw new InvalidOperationException(error);
+                }
+
+                Debug.Log($"[DenseCityBakeReadiness] result=Passed generationId={generationId}");
+            }
+            finally
+            {
+                if (previousSetup.Any(entry => entry.isLoaded && entry.isActive))
+                    EditorSceneManager.RestoreSceneManagerSetup(previousSetup);
+                else
+                    EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            }
         }
 
         private static DenseCityGeneratedRootAuthoring[] FindGeneratedRoots(Scene scene) =>

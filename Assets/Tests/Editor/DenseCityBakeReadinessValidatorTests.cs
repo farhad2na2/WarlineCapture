@@ -26,7 +26,9 @@ public sealed class DenseCityBakeReadinessValidatorTests
             suite.AuthoringOwnership_RejectsDuplicateOverrideId,
             suite.AuthoringOwnership_RejectsDuplicateBuildingStableIdentity,
             suite.AuthoringOwnership_RejectsBuildingInOperationMapScene,
-            suite.AuthoringOwnership_RejectsPhysicsInInactiveGeneratedDescendant
+            suite.AuthoringOwnership_RejectsPhysicsInInactiveGeneratedDescendant,
+            suite.GenerationState_AcceptsExplicitNotGeneratedScenePair,
+            suite.GenerationState_RejectsPartialGeneratedScenePair
         };
 
         for (int index = 0; index < tests.Length; index++)
@@ -209,6 +211,67 @@ public sealed class DenseCityBakeReadinessValidatorTests
                 Is.False);
             StringAssert.Contains("BoxCollider2D", error);
             StringAssert.Contains("InactiveInvalidPhysics", error);
+        }
+        finally
+        {
+            EditorSceneManager.CloseScene(entityScene, true);
+            EditorSceneManager.CloseScene(mapScene, true);
+        }
+    }
+
+    [Test]
+    public void GenerationState_AcceptsExplicitNotGeneratedScenePair()
+    {
+        (Scene mapScene, Scene entityScene) = CreateScenePair();
+        try
+        {
+            Assert.That(
+                DenseCityBakeReadinessValidator.TryResolveGenerationState(
+                    mapScene,
+                    entityScene,
+                    out bool generated,
+                    out string generationId,
+                    out string error),
+                Is.True,
+                error);
+            Assert.That(generated, Is.False);
+            Assert.That(generationId, Is.Null);
+        }
+        finally
+        {
+            EditorSceneManager.CloseScene(entityScene, true);
+            EditorSceneManager.CloseScene(mapScene, true);
+        }
+    }
+
+    [Test]
+    public void GenerationState_RejectsPartialGeneratedScenePair()
+    {
+        (Scene mapScene, Scene entityScene) = CreateScenePair();
+        try
+        {
+            Scene temporaryEntityScene = EditorSceneManager.NewScene(
+                NewSceneSetup.EmptyScene,
+                NewSceneMode.Additive);
+            DenseCitySemanticHierarchyBuilder.Create(
+                mapScene,
+                temporaryEntityScene,
+                GenerationId,
+                "dense-city-v1",
+                1,
+                42,
+                Hash);
+            EditorSceneManager.CloseScene(temporaryEntityScene, true);
+
+            Assert.That(
+                DenseCityBakeReadinessValidator.TryResolveGenerationState(
+                    mapScene,
+                    entityScene,
+                    out _,
+                    out _,
+                    out string error),
+                Is.False);
+            StringAssert.Contains("partial or duplicated", error);
         }
         finally
         {

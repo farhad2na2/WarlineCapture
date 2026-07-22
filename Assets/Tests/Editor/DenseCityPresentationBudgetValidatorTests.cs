@@ -12,6 +12,7 @@ public sealed class DenseCityPresentationBudgetValidatorTests
         {
             suite.Budget_AcceptsCompleteCoreEvidence,
             suite.Budget_RejectsTransformBoundsMismatch,
+            suite.Budget_RejectsIncompleteGeometryEvidence,
             suite.Budget_SerializationIsDeterministicAndMarksPackedMetricsPending,
             suite.CandidateBakeAll_OrdersBudgetAfterBakeAndBeforePostflight,
             suite.CurrentMapBaker_BakesStaticPresentationOnlyForStaticDefinitions
@@ -30,14 +31,27 @@ public sealed class DenseCityPresentationBudgetValidatorTests
     [Test]
     public void Budget_RejectsTransformBoundsMismatch()
     {
-        CreateEvidence(out var bake, out var art, out var parity, out var layout);
+        CreateEvidence(out var bake, out var art, out var parity, out var layout, out var geometry);
         parity.bakedRenderEntityCount--;
 
         Assert.That(
             DenseCityPresentationBudgetValidator.TryCreateReport(
-                bake, art, parity, layout, out _, out string error),
+                bake, art, parity, layout, geometry, out _, out string error),
             Is.False);
         Assert.That(error, Is.EqualTo("transform-bounds-parity-budget"));
+    }
+
+    [Test]
+    public void Budget_RejectsIncompleteGeometryEvidence()
+    {
+        CreateEvidence(out var bake, out var art, out var parity, out var layout, out var geometry);
+        geometry.uniqueTextureAssetCount = 0;
+
+        Assert.That(
+            DenseCityPresentationBudgetValidator.TryCreateReport(
+                bake, art, parity, layout, geometry, out _, out string error),
+            Is.False);
+        Assert.That(error, Is.EqualTo("candidate-geometry-budget"));
     }
 
     [Test]
@@ -51,6 +65,8 @@ public sealed class DenseCityPresentationBudgetValidatorTests
         StringAssert.Contains("\"packedContentMetricsComplete\": 0", first);
         StringAssert.Contains("\"entitySceneBytes\": -1", first);
         StringAssert.Contains("\"productionCutover\": 0", first);
+        StringAssert.Contains("\"instancedTriangleCount\": 2000", first);
+        StringAssert.Contains("\"uniqueTextureAssetCount\": 12", first);
     }
 
     [Test]
@@ -95,16 +111,17 @@ public sealed class DenseCityPresentationBudgetValidatorTests
         out DenseCityPresentationBudgetValidator.PresentationBudgetReport report,
         out string error)
     {
-        CreateEvidence(out var bake, out var art, out var parity, out var layout);
+        CreateEvidence(out var bake, out var art, out var parity, out var layout, out var geometry);
         return DenseCityPresentationBudgetValidator.TryCreateReport(
-            bake, art, parity, layout, out report, out error);
+            bake, art, parity, layout, geometry, out report, out error);
     }
 
     private static void CreateEvidence(
         out DenseCityPresentationBudgetValidator.CandidateBakeEvidence bake,
         out DenseCityPresentationBudgetValidator.SharedArtEvidence art,
         out DenseCityPresentationBudgetValidator.TransformParityEvidence parity,
-        out DenseCityPresentationBudgetValidator.CandidateLayoutEvidence layout)
+        out DenseCityPresentationBudgetValidator.CandidateLayoutEvidence layout,
+        out DenseCityPresentationBudgetValidator.CandidateGeometryEvidence geometry)
     {
         bake = new DenseCityPresentationBudgetValidator.CandidateBakeEvidence
         {
@@ -151,6 +168,25 @@ public sealed class DenseCityPresentationBudgetValidatorTests
             presentationChunkEntryCount = 0,
             legacyPlacementEntryCount = 0,
             productionAddressablesMutated = 0
+        };
+        geometry = new DenseCityPresentationBudgetValidator.CandidateGeometryEvidence
+        {
+            result = "CandidateGeometryEvidencePassed",
+            acceptedSourceAuthoredRendererCount = 90,
+            authoredRendererCount = 100,
+            activeRendererCount = 90,
+            uniqueMeshAssetCount = 10,
+            uniqueMaterialAssetCount = 8,
+            uniqueTextureAssetCount = 12,
+            uniqueTriangleCount = 500,
+            instancedTriangleCount = 2000,
+            shadowCasterCount = 40,
+            batchingEligibleRendererCount = 95,
+            missingAssetReferenceCount = 0,
+            nonFiniteBoundsCount = 0,
+            worldBoundsCenter = new Vector3(10f, 5f, 20f),
+            worldBoundsSize = new Vector3(1000f, 100f, 800f),
+            rendererDensityPerSquareKilometer = 112.5f
         };
     }
 

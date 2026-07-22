@@ -3,10 +3,14 @@
 namespace Game.Editor
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Text;
     using UnityEditor;
+    using UnityEditor.SceneManagement;
     using UnityEngine;
+    using UnityEngine.Rendering;
+    using UnityEngine.SceneManagement;
 
     /// <summary>
     /// Aggregates deterministic candidate ECS presentation evidence before publication. Packed
@@ -59,8 +63,16 @@ namespace Game.Editor
             SharedArtEvidence art = Read<SharedArtEvidence>(projectRoot, SharedArtReportPath);
             TransformParityEvidence parity = Read<TransformParityEvidence>(projectRoot, TransformParityReportPath);
             CandidateLayoutEvidence layout = Read<CandidateLayoutEvidence>(projectRoot, CandidateLayoutReportPath);
+            CandidateGeometryEvidence geometry = CaptureCandidateGeometryEvidence();
 
-            if (!TryCreateReport(bake, art, parity, layout, out PresentationBudgetReport report, out string error))
+            if (!TryCreateReport(
+                    bake,
+                    art,
+                    parity,
+                    layout,
+                    geometry,
+                    out PresentationBudgetReport report,
+                    out string error))
                 throw new InvalidOperationException($"Candidate presentation budget rejected: {error}");
 
             WriteReport(projectRoot, report);
@@ -68,6 +80,7 @@ namespace Game.Editor
                 $"[DenseCityPresentationBudget] result={report.result} " +
                 $"identities={report.presentationIdentityCount} renderEntities={report.renderEntityCount} " +
                 $"uniqueMeshes={report.uniqueMeshAssetCount} uniqueMaterials={report.uniqueMaterialAssetCount} " +
+                $"triangles={report.instancedTriangleCount} shadows={report.shadowCasterCount} " +
                 $"packedMetrics={report.packedContentMetricsComplete} productionCutover=0");
         }
 
@@ -76,11 +89,12 @@ namespace Game.Editor
             SharedArtEvidence art,
             TransformParityEvidence parity,
             CandidateLayoutEvidence layout,
+            CandidateGeometryEvidence geometry,
             out PresentationBudgetReport report,
             out string error)
         {
             report = null;
-            if (bake == null || art == null || parity == null || layout == null)
+            if (bake == null || art == null || parity == null || layout == null || geometry == null)
             {
                 error = "required-evidence-null";
                 return false;
@@ -126,6 +140,23 @@ namespace Game.Editor
                 error = "candidate-layout-budget";
                 return false;
             }
+            if (!string.Equals(geometry.result, "CandidateGeometryEvidencePassed", StringComparison.Ordinal) ||
+                geometry.acceptedSourceAuthoredRendererCount <= 0 ||
+                geometry.authoredRendererCount <= 0 || geometry.activeRendererCount <= 0 ||
+                geometry.uniqueMeshAssetCount <= 0 || geometry.uniqueMaterialAssetCount <= 0 ||
+                geometry.uniqueTextureAssetCount <= 0 || geometry.uniqueTriangleCount <= 0 ||
+                geometry.instancedTriangleCount < geometry.uniqueTriangleCount ||
+                geometry.shadowCasterCount < 0 ||
+                geometry.batchingEligibleRendererCount <= 0 ||
+                geometry.batchingEligibleRendererCount > geometry.authoredRendererCount ||
+                geometry.missingAssetReferenceCount != 0 || geometry.nonFiniteBoundsCount != 0 ||
+                !IsFinitePositive(geometry.worldBoundsSize.x) ||
+                !IsFinitePositive(geometry.worldBoundsSize.z) ||
+                !IsFinitePositive(geometry.rendererDensityPerSquareKilometer))
+            {
+                error = "candidate-geometry-budget";
+                return false;
+            }
 
             report = new PresentationBudgetReport
             {
@@ -150,6 +181,21 @@ namespace Game.Editor
                 repeatedMeshAssetCount = art.repeatedMeshAssetCount,
                 repeatedMaterialAssetCount = art.repeatedMaterialAssetCount,
                 compactInstanceDataProven = art.compactInstanceDataProven ? 1 : 0,
+                acceptedSourceAuthoredRendererCount = geometry.acceptedSourceAuthoredRendererCount,
+                candidateAuthoringRendererCount = geometry.authoredRendererCount,
+                candidateActiveRendererCount = geometry.activeRendererCount,
+                candidateUniqueMeshAssetCount = geometry.uniqueMeshAssetCount,
+                candidateUniqueMaterialAssetCount = geometry.uniqueMaterialAssetCount,
+                uniqueTextureAssetCount = geometry.uniqueTextureAssetCount,
+                uniqueTriangleCount = geometry.uniqueTriangleCount,
+                instancedTriangleCount = geometry.instancedTriangleCount,
+                shadowCasterCount = geometry.shadowCasterCount,
+                batchingEligibleRendererCount = geometry.batchingEligibleRendererCount,
+                missingGeometryAssetReferenceCount = geometry.missingAssetReferenceCount,
+                nonFiniteRendererBoundsCount = geometry.nonFiniteBoundsCount,
+                worldBoundsCenter = geometry.worldBoundsCenter,
+                worldBoundsSize = geometry.worldBoundsSize,
+                rendererDensityPerSquareKilometer = geometry.rendererDensityPerSquareKilometer,
                 transformParityIdentityCount = parity.bakedIdentityCount,
                 transformedBoundsEntityCount = parity.bakedRenderEntityCount,
                 transformParityRejectedRowCount = parity.rejectedRowCount,
@@ -168,6 +214,215 @@ namespace Game.Editor
             error = null;
             return true;
         }
+
+        private static CandidateGeometryEvidence CaptureCandidateGeometryEvidence()
+        {
+            SceneSetup[] previousSetup = EditorSceneManager.GetSceneManagerSetup();
+            try
+            {
+                Scene acceptedOperationMap = EditorSceneManager.OpenScene(
+                    OperationMapEntityPresentationCandidateSceneBuilder.AcceptedOperationMapScenePath,
+                    OpenSceneMode.Additive);
+                Scene acceptedSubScene = EditorSceneManager.OpenScene(
+                    OperationMapEntityPresentationMigrationEditor.AcceptedSubScenePath,
+                    OpenSceneMode.Additive);
+                Scene candidateScene = EditorSceneManager.OpenScene(
+                    OperationMapEntityPresentationMigrationEditor.CandidateSubScenePath,
+                    OpenSceneMode.Additive);
+                int acceptedSourceRendererCount =
+                    CountRenderers(acceptedOperationMap) + CountRenderers(acceptedSubScene);
+                var renderers = new List<Renderer>();
+                GameObject[] roots = candidateScene.GetRootGameObjects();
+                for (int rootIndex = 0; rootIndex < roots.Length; rootIndex++)
+                    renderers.AddRange(roots[rootIndex].GetComponentsInChildren<Renderer>(true));
+                CandidateGeometryEvidence evidence = BuildGeometryEvidence(renderers);
+                evidence.acceptedSourceAuthoredRendererCount = acceptedSourceRendererCount;
+                return evidence;
+            }
+            finally
+            {
+                if (OperationMapEntitySceneCandidateBakeAll.HasRestorableSceneSetup(previousSetup))
+                    EditorSceneManager.RestoreSceneManagerSetup(previousSetup);
+                else
+                    EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            }
+        }
+
+        private static int CountRenderers(Scene scene)
+        {
+            int count = 0;
+            GameObject[] roots = scene.GetRootGameObjects();
+            for (int rootIndex = 0; rootIndex < roots.Length; rootIndex++)
+                count += roots[rootIndex].GetComponentsInChildren<Renderer>(true).Length;
+            return count;
+        }
+
+        internal static CandidateGeometryEvidence BuildGeometryEvidence(IReadOnlyList<Renderer> renderers)
+        {
+            var meshTriangles = new Dictionary<string, long>(StringComparer.Ordinal);
+            var materialKeys = new HashSet<string>(StringComparer.Ordinal);
+            var textureKeys = new HashSet<string>(StringComparer.Ordinal);
+            var inspectedMaterials = new HashSet<string>(StringComparer.Ordinal);
+            int active = 0;
+            int shadows = 0;
+            int batchingEligible = 0;
+            int missing = 0;
+            int nonFiniteBounds = 0;
+            long instancedTriangles = 0;
+            Bounds aggregateBounds = default;
+            bool hasBounds = false;
+
+            for (int index = 0; index < renderers.Count; index++)
+            {
+                Renderer renderer = renderers[index];
+                if (renderer == null)
+                {
+                    missing++;
+                    continue;
+                }
+
+                bool isActive = renderer.enabled && renderer.gameObject.activeInHierarchy;
+                if (isActive)
+                {
+                    active++;
+                    if (renderer.shadowCastingMode != ShadowCastingMode.Off)
+                        shadows++;
+                    Bounds bounds = renderer.bounds;
+                    if (!IsFinite(bounds.center) || !IsFinite(bounds.size))
+                    {
+                        nonFiniteBounds++;
+                    }
+                    else
+                    {
+                        if (!hasBounds)
+                        {
+                            aggregateBounds = bounds;
+                            hasBounds = true;
+                        }
+                        else
+                        {
+                            aggregateBounds.Encapsulate(bounds);
+                        }
+                    }
+                }
+
+                Mesh mesh = ResolveMesh(renderer);
+                bool rendererBatchingEligible = TryGetPersistentAssetKey(mesh, out string meshKey);
+                if (!rendererBatchingEligible)
+                {
+                    missing++;
+                }
+                else
+                {
+                    if (!meshTriangles.TryGetValue(meshKey, out long triangleCount))
+                    {
+                        triangleCount = GetTriangleCount(mesh);
+                        meshTriangles.Add(meshKey, triangleCount);
+                    }
+                    instancedTriangles += triangleCount;
+                }
+
+                Material[] materials = renderer.sharedMaterials;
+                if (materials == null || materials.Length == 0)
+                    rendererBatchingEligible = false;
+                for (int materialIndex = 0; materialIndex < materials.Length; materialIndex++)
+                {
+                    Material material = materials[materialIndex];
+                    if (!TryGetPersistentAssetKey(material, out string materialKey))
+                    {
+                        missing++;
+                        rendererBatchingEligible = false;
+                        continue;
+                    }
+
+                    materialKeys.Add(materialKey);
+                    if (!inspectedMaterials.Add(materialKey))
+                        continue;
+                    string[] textureProperties = material.GetTexturePropertyNames();
+                    for (int propertyIndex = 0; propertyIndex < textureProperties.Length; propertyIndex++)
+                    {
+                        Texture texture = material.GetTexture(textureProperties[propertyIndex]);
+                        if (texture == null)
+                            continue;
+                        if (!TryGetPersistentAssetKey(texture, out string textureKey))
+                        {
+                            missing++;
+                            rendererBatchingEligible = false;
+                            continue;
+                        }
+                        textureKeys.Add(textureKey);
+                    }
+                }
+
+                if (renderer.HasPropertyBlock())
+                    rendererBatchingEligible = false;
+                if (rendererBatchingEligible)
+                    batchingEligible++;
+            }
+
+            long uniqueTriangles = 0;
+            foreach (long triangleCount in meshTriangles.Values)
+                uniqueTriangles += triangleCount;
+            Vector3 boundsSize = hasBounds ? aggregateBounds.size : Vector3.zero;
+            float squareKilometers = boundsSize.x * boundsSize.z / 1_000_000f;
+            float density = squareKilometers > 0f ? active / squareKilometers : 0f;
+            bool passed = renderers.Count > 0 && active > 0 && meshTriangles.Count > 0 &&
+                          materialKeys.Count > 0 && textureKeys.Count > 0 &&
+                          uniqueTriangles > 0 && instancedTriangles >= uniqueTriangles &&
+                          batchingEligible > 0 && missing == 0 && nonFiniteBounds == 0 &&
+                          hasBounds && IsFinitePositive(density);
+
+            return new CandidateGeometryEvidence
+            {
+                result = passed ? "CandidateGeometryEvidencePassed" : "CandidateGeometryEvidenceRejected",
+                authoredRendererCount = renderers.Count,
+                activeRendererCount = active,
+                uniqueMeshAssetCount = meshTriangles.Count,
+                uniqueMaterialAssetCount = materialKeys.Count,
+                uniqueTextureAssetCount = textureKeys.Count,
+                uniqueTriangleCount = uniqueTriangles,
+                instancedTriangleCount = instancedTriangles,
+                shadowCasterCount = shadows,
+                batchingEligibleRendererCount = batchingEligible,
+                missingAssetReferenceCount = missing,
+                nonFiniteBoundsCount = nonFiniteBounds,
+                worldBoundsCenter = hasBounds ? aggregateBounds.center : Vector3.zero,
+                worldBoundsSize = boundsSize,
+                rendererDensityPerSquareKilometer = density
+            };
+        }
+
+        private static Mesh ResolveMesh(Renderer renderer)
+        {
+            if (renderer is SkinnedMeshRenderer skinned)
+                return skinned.sharedMesh;
+            MeshFilter filter = renderer.GetComponent<MeshFilter>();
+            return filter != null ? filter.sharedMesh : null;
+        }
+
+        private static long GetTriangleCount(Mesh mesh)
+        {
+            long indices = 0;
+            for (int subMesh = 0; subMesh < mesh.subMeshCount; subMesh++)
+                indices += (long)mesh.GetIndexCount(subMesh);
+            return indices / 3L;
+        }
+
+        private static bool TryGetPersistentAssetKey(UnityEngine.Object asset, out string key)
+        {
+            key = string.Empty;
+            if (asset == null ||
+                !AssetDatabase.TryGetGUIDAndLocalFileIdentifier(asset, out string guid, out long localId) ||
+                string.IsNullOrWhiteSpace(guid))
+                return false;
+            key = guid + ":" + localId;
+            return true;
+        }
+
+        private static bool IsFinite(Vector3 value) =>
+            float.IsFinite(value.x) && float.IsFinite(value.y) && float.IsFinite(value.z);
+
+        private static bool IsFinitePositive(float value) => float.IsFinite(value) && value > 0f;
 
         internal static string ToDeterministicJson(PresentationBudgetReport report) =>
             JsonUtility.ToJson(report, true) + "\n";
@@ -244,6 +499,27 @@ namespace Game.Editor
         }
 
         [Serializable]
+        internal sealed class CandidateGeometryEvidence
+        {
+            public string result;
+            public int acceptedSourceAuthoredRendererCount;
+            public int authoredRendererCount;
+            public int activeRendererCount;
+            public int uniqueMeshAssetCount;
+            public int uniqueMaterialAssetCount;
+            public int uniqueTextureAssetCount;
+            public long uniqueTriangleCount;
+            public long instancedTriangleCount;
+            public int shadowCasterCount;
+            public int batchingEligibleRendererCount;
+            public int missingAssetReferenceCount;
+            public int nonFiniteBoundsCount;
+            public Vector3 worldBoundsCenter;
+            public Vector3 worldBoundsSize;
+            public float rendererDensityPerSquareKilometer;
+        }
+
+        [Serializable]
         internal sealed class PresentationBudgetReport
         {
             public string schema;
@@ -268,6 +544,21 @@ namespace Game.Editor
             public int repeatedMeshAssetCount;
             public int repeatedMaterialAssetCount;
             public int compactInstanceDataProven;
+            public int acceptedSourceAuthoredRendererCount;
+            public int candidateAuthoringRendererCount;
+            public int candidateActiveRendererCount;
+            public int candidateUniqueMeshAssetCount;
+            public int candidateUniqueMaterialAssetCount;
+            public int uniqueTextureAssetCount;
+            public long uniqueTriangleCount;
+            public long instancedTriangleCount;
+            public int shadowCasterCount;
+            public int batchingEligibleRendererCount;
+            public int missingGeometryAssetReferenceCount;
+            public int nonFiniteRendererBoundsCount;
+            public Vector3 worldBoundsCenter;
+            public Vector3 worldBoundsSize;
+            public float rendererDensityPerSquareKilometer;
             public int transformParityIdentityCount;
             public int transformedBoundsEntityCount;
             public int transformParityRejectedRowCount;

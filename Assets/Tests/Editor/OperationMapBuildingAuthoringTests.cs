@@ -74,4 +74,66 @@ public sealed class OperationMapBuildingAuthoringTests
             Object.DestroyImmediate(definitionOwner);
         }
     }
+
+    [Test]
+    public void TryValidate_RejectsRendererOutsideDeclaredVisualStates()
+    {
+        using var fixture = new BuildingAuthoringFixture();
+        new GameObject("OrphanRenderer", typeof(MeshRenderer))
+            .transform.SetParent(fixture.Owner.transform, false);
+
+        Assert.That(fixture.Authoring.TryValidate(out string error), Is.False);
+        StringAssert.Contains("exactly one declared building visual state", error);
+    }
+
+    [Test]
+    public void TryValidate_RejectsIndependentRenderOnlyIdentityInsideVisualState()
+    {
+        using var fixture = new BuildingAuthoringFixture();
+        GameObject prop = new("IndependentProp", typeof(MeshRenderer));
+        prop.transform.SetParent(fixture.IntactVisual.transform, false);
+        OperationMapEntityPresentationIdentityAuthoring identity =
+            prop.AddComponent<OperationMapEntityPresentationIdentityAuthoring>();
+        identity.ConfigureForEditor(
+            "opmap.skirmish.building_test_01",
+            "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-123-0",
+            OperationMapEntityPresentationRole.RenderOnly,
+            OperationMapEntityPresentationIdentityAuthoring.NoPlacementIndex);
+
+        Assert.That(fixture.Authoring.TryValidate(out string error), Is.False);
+        StringAssert.Contains("independent or mismatched presentation ownership", error);
+    }
+
+    private sealed class BuildingAuthoringFixture : System.IDisposable
+    {
+        public BuildingAuthoringFixture()
+        {
+            Owner = new GameObject("BuildingOwner");
+            IntactVisual = new GameObject("IntactVisual");
+            IntactVisual.transform.SetParent(Owner.transform, false);
+            DefinitionOwner = new GameObject("BuildingDefinition");
+            Authoring = Owner.AddComponent<OperationMapBuildingAuthoring>();
+            BuildingDefinitionAuthoring definition =
+                DefinitionOwner.AddComponent<BuildingDefinitionAuthoring>();
+            var serialized = new SerializedObject(Authoring);
+            serialized.FindProperty("operationMapId").stringValue = "opmap.skirmish.building_test_01";
+            serialized.FindProperty("sourceGlobalObjectId").stringValue =
+                "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-123-0";
+            serialized.FindProperty("placementIndex").intValue = 4;
+            serialized.FindProperty("definition").objectReferenceValue = definition;
+            serialized.FindProperty("intactVisualRoot").objectReferenceValue = IntactVisual;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        public GameObject Owner { get; }
+        public GameObject IntactVisual { get; }
+        public GameObject DefinitionOwner { get; }
+        public OperationMapBuildingAuthoring Authoring { get; }
+
+        public void Dispose()
+        {
+            Object.DestroyImmediate(Owner);
+            Object.DestroyImmediate(DefinitionOwner);
+        }
+    }
 }

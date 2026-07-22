@@ -68,11 +68,98 @@ namespace Game.Authoring
                 error = "The destroyed visual root must be an immediate child when configured.";
                 return false;
             }
+            if (!TryValidateVisualOwnership(out error))
+                return false;
             Vector2Int footprint = definition.ConfiguredFootprintCells;
             if (footprint.x <= 0 || footprint.y <= 0)
             {
                 error = "Building footprint must be positive.";
                 return false;
+            }
+
+            error = null;
+            return true;
+        }
+
+        private bool TryValidateVisualOwnership(out string error)
+        {
+            Transform intactRoot = intactVisualRoot.transform;
+            Transform destroyedRoot = destroyedVisualRoot != null ? destroyedVisualRoot.transform : null;
+            if (destroyedRoot != null &&
+                (destroyedRoot == intactRoot || destroyedRoot.IsChildOf(intactRoot) || intactRoot.IsChildOf(destroyedRoot)))
+            {
+                error = "Intact and destroyed visual roots must be separate, non-overlapping hierarchies.";
+                return false;
+            }
+
+            OperationMapEntityPresentationRootAuthoring presentationRoot =
+                GetComponentInParent<OperationMapEntityPresentationRootAuthoring>();
+            if (presentationRoot != null &&
+                presentationRoot.Role != OperationMapEntityPresentationRole.GameplayBuildings)
+            {
+                error = "Operation-map buildings must be parented under the GameplayBuildings presentation role.";
+                return false;
+            }
+
+            foreach (OperationMapBuildingAuthoring nested in
+                     intactRoot.GetComponentsInChildren<OperationMapBuildingAuthoring>(true))
+            {
+                if (nested != this)
+                {
+                    error = "A building visual hierarchy cannot contain another building owner.";
+                    return false;
+                }
+            }
+            if (destroyedRoot != null)
+            {
+                foreach (OperationMapBuildingAuthoring nested in
+                         destroyedRoot.GetComponentsInChildren<OperationMapBuildingAuthoring>(true))
+                {
+                    if (nested != this)
+                    {
+                        error = "A destroyed visual hierarchy cannot contain another building owner.";
+                        return false;
+                    }
+                }
+            }
+
+            foreach (Renderer renderer in GetComponentsInChildren<Renderer>(true))
+            {
+                bool inIntact = renderer.transform == intactRoot || renderer.transform.IsChildOf(intactRoot);
+                bool inDestroyed = destroyedRoot != null &&
+                                   (renderer.transform == destroyedRoot || renderer.transform.IsChildOf(destroyedRoot));
+                if (inIntact == inDestroyed)
+                {
+                    error =
+                        $"Renderer '{renderer.name}' must belong to exactly one declared building visual state.";
+                    return false;
+                }
+            }
+
+            if (!TryValidatePresentationIdentities(intactRoot, out error) ||
+                (destroyedRoot != null && !TryValidatePresentationIdentities(destroyedRoot, out error)))
+            {
+                return false;
+            }
+
+            error = null;
+            return true;
+        }
+
+        private bool TryValidatePresentationIdentities(Transform visualRoot, out string error)
+        {
+            foreach (OperationMapEntityPresentationIdentityAuthoring identity in
+                     visualRoot.GetComponentsInChildren<OperationMapEntityPresentationIdentityAuthoring>(true))
+            {
+                if (identity.Role != OperationMapEntityPresentationRole.GameplayBuildings ||
+                    !string.Equals(identity.OperationMapId, operationMapId, System.StringComparison.Ordinal) ||
+                    !string.Equals(identity.SourceGlobalObjectId, sourceGlobalObjectId, System.StringComparison.Ordinal) ||
+                    identity.PlacementIndex != placementIndex)
+                {
+                    error =
+                        $"Visual descendant '{identity.name}' has independent or mismatched presentation ownership.";
+                    return false;
+                }
             }
 
             error = null;
@@ -155,6 +242,9 @@ namespace Game.Authoring
                 Entity destroyedVisual = authoring.destroyedVisualRoot != null
                     ? GetEntity(authoring.destroyedVisualRoot, TransformUsageFlags.Renderable)
                     : Entity.Null;
+                BakeVisualHierarchy(authoring.intactVisualRoot);
+                if (authoring.destroyedVisualRoot != null)
+                    BakeVisualHierarchy(authoring.destroyedVisualRoot);
                 AddComponent(entity, new OperationMapBuildingPresentation
                 {
                     IntactVisualRoot = intactVisual,
@@ -169,6 +259,12 @@ namespace Game.Authoring
                 AddResourceStorage(entity, runtimeBuildingId, authoring.factionId, definition);
                 AddDefense(entity, definition);
                 AddProductionPrefabs(entity, definition);
+            }
+
+            private void BakeVisualHierarchy(GameObject visualRoot)
+            {
+                foreach (Transform descendant in visualRoot.GetComponentsInChildren<Transform>(true))
+                    GetEntity(descendant.gameObject, TransformUsageFlags.Renderable);
             }
 
             private void AddResourceStorage(

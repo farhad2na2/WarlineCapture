@@ -934,25 +934,6 @@ namespace Game.Editor
         private const string CanalGreenMaterialPath =
             "Assets/Synty/PolygonGeneric/Materials/Generic_Grass.mat";
 
-        private const string BuildingMaterialAPath =
-            "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_01_A.mat";
-
-        private const string BuildingMaterialBPath =
-            "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_01_B.mat";
-
-        private const string BuildingMaterialCPath =
-            "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_01_C.mat";
-
-        private static readonly string[] Shop05MaterialPaths =
-        {
-            "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_03_A.mat",
-            "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_03_B.mat",
-            "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_03_C.mat"
-        };
-
-        private const string GeneratedBuildingMaterialFolder =
-            "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/dense_city_building_materials";
-
         private static readonly string[] CleanStandaloneShopPrefabPaths =
         {
             "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Shop_04.prefab",
@@ -7522,52 +7503,15 @@ namespace Game.Editor
             Transform generatedRoot,
             uint seed)
         {
-            Material materialA = AssetDatabase.LoadAssetAtPath<Material>(BuildingMaterialAPath) ??
-                                 throw new InvalidOperationException(
-                                     $"Missing building material {BuildingMaterialAPath}.");
-            Material materialB = AssetDatabase.LoadAssetAtPath<Material>(BuildingMaterialBPath) ??
-                                 throw new InvalidOperationException(
-                                     $"Missing building material {BuildingMaterialBPath}.");
-            Material materialC = AssetDatabase.LoadAssetAtPath<Material>(BuildingMaterialCPath) ??
-                                 throw new InvalidOperationException(
-                                     $"Missing building material {BuildingMaterialCPath}.");
-            Material[] sourceVariants = { materialA, materialB, materialC };
-            Material[] shop05SourceVariants = new Material[Shop05MaterialPaths.Length];
-            for (int sourceIndex = 0; sourceIndex < Shop05MaterialPaths.Length; sourceIndex++)
-            {
-                shop05SourceVariants[sourceIndex] =
-                    AssetDatabase.LoadAssetAtPath<Material>(Shop05MaterialPaths[sourceIndex]) ??
-                    throw new InvalidOperationException(
-                        $"Missing Shop_05 material {Shop05MaterialPaths[sourceIndex]}.");
-            }
-            Color[] facadeTints =
-            {
-                new(1f, 0.97f, 0.91f, 1f),
-                new(0.94f, 0.96f, 0.98f, 1f),
-                new(0.95f, 0.98f, 0.93f, 1f),
-                new(0.98f, 0.94f, 0.90f, 1f),
-                new(0.97f, 0.94f, 0.96f, 1f),
-                new(0.92f, 0.95f, 0.95f, 1f)
-            };
-            Color[] shop05Tones =
-            {
-                new(0.86f, 0.82f, 0.70f, 1f),
-                new(0.63f, 0.72f, 0.76f, 1f),
-                new(0.68f, 0.74f, 0.64f, 1f),
-                new(0.72f, 0.68f, 0.61f, 1f),
-                new(0.48f, 0.53f, 0.54f, 1f)
-            };
-            EnsureAssetFolder(GeneratedBuildingMaterialFolder);
-            Material[,] tintedVariants = BuildTintedVariantSet("Facade", facadeTints);
-            Material[] shop05Variants = BuildShop05VariantSet(shop05SourceVariants[0], shop05Tones);
-            AssetDatabase.SaveAssets();
+            DenseCityBuildingMaterialLibrary materialLibrary =
+                DenseCityBuildingMaterialLibrary.CreateOrUpdate();
             int buildingsA = 0;
             int buildingsB = 0;
             int buildingsC = 0;
             int materialSlotsChanged = 0;
             int shop05VisibleSlotsChanged = 0;
             int shop05PinkVisibleSlotsAssigned = 0;
-            int[] shop05PaletteCounts = new int[shop05Tones.Length + 1];
+            int[] shop05PaletteCounts = new int[DenseCityBuildingMaterialLibrary.ShopToneCount + 1];
 
             Transform[] transforms = generatedRoot.GetComponentsInChildren<Transform>(true);
             for (int transformIndex = 0; transformIndex < transforms.Length; transformIndex++)
@@ -7580,42 +7524,38 @@ namespace Game.Editor
                 }
 
                 Renderer[] renderers = wrapper.GetComponentsInChildren<Renderer>(true);
-                bool isShop05 = wrapper.name.IndexOf("Shop_05", StringComparison.OrdinalIgnoreCase) >= 0;
-                bool usesBuildingMaterialFamily = false;
-                for (int rendererIndex = 0;
-                     rendererIndex < renderers.Length && !usesBuildingMaterialFamily;
-                     rendererIndex++)
+                bool usesFacadeMaterialFamily = false;
+                bool usesShop05MaterialFamily = false;
+                for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
                 {
                     Material[] sharedMaterials = renderers[rendererIndex].sharedMaterials;
                     for (int materialIndex = 0; materialIndex < sharedMaterials.Length; materialIndex++)
                     {
-                        if (TryGetVariantIndex(sharedMaterials[materialIndex], out _) ||
-                            (isShop05 && IsShop05Material(sharedMaterials[materialIndex])))
-                        {
-                            usesBuildingMaterialFamily = true;
-                            break;
-                        }
+                        Material material = sharedMaterials[materialIndex];
+                        usesFacadeMaterialFamily |= materialLibrary.IsFacadeFamily(material);
+                        usesShop05MaterialFamily |= materialLibrary.IsShopFamily(material);
                     }
                 }
 
+                bool usesBuildingMaterialFamily =
+                    usesFacadeMaterialFamily || usesShop05MaterialFamily;
                 if (!usesBuildingMaterialFamily)
                     continue;
 
-                uint hash = HashGroundPatch(
-                    Mathf.RoundToInt(wrapper.position.x * 10f),
-                    Mathf.RoundToInt(wrapper.position.z * 10f),
-                    unchecked((int)seed) ^ 0x4c39);
-                bool useOriginalShop05Pink = isShop05 && hash % 5u == 0u;
-                int tintIndex = isShop05
-                    ? useOriginalShop05Pink
-                        ? 0
-                        : 1 + (int)((hash / 5u) % (uint)shop05Tones.Length)
-                    : (int)(hash % (uint)facadeTints.Length);
-                if (isShop05)
-                    shop05PaletteCounts[tintIndex]++;
-                if (tintIndex % 3 == 0)
+                DenseCityBuildingMaterialSelection selection =
+                    DenseCityBuildingMaterialVariantSelector.Select(
+                        wrapper.position,
+                        seed,
+                        usesShop05MaterialFamily
+                            ? GeneratedCityBuildingRole.Shop
+                            : GeneratedCityBuildingRole.Other,
+                        true,
+                        usesShop05MaterialFamily);
+                if (usesShop05MaterialFamily)
+                    shop05PaletteCounts[selection.PaletteIndex]++;
+                if (selection.PaletteIndex % 3 == 0)
                     buildingsA++;
-                else if (tintIndex % 3 == 1)
+                else if (selection.PaletteIndex % 3 == 1)
                     buildingsB++;
                 else
                     buildingsC++;
@@ -7627,34 +7567,22 @@ namespace Game.Editor
                     bool changed = false;
                     for (int materialIndex = 0; materialIndex < sharedMaterials.Length; materialIndex++)
                     {
-                        if (isShop05 && IsShop05Material(sharedMaterials[materialIndex]))
+                        Material currentMaterial = sharedMaterials[materialIndex];
+                        bool isShopMaterial = materialLibrary.IsShopFamily(currentMaterial);
+                        Material selectedMaterial = materialLibrary.Resolve(currentMaterial, selection);
+                        if (isShopMaterial &&
+                            selection.UseOriginalShopMaterial &&
+                            renderer.gameObject.activeInHierarchy)
                         {
-                            Material selectedShopMaterial = useOriginalShop05Pink
-                                ? shop05SourceVariants[0]
-                                : shop05Variants[tintIndex - 1];
-                            if (useOriginalShop05Pink && renderer.gameObject.activeInHierarchy)
-                                shop05PinkVisibleSlotsAssigned++;
-                            if (sharedMaterials[materialIndex] != selectedShopMaterial)
-                            {
-                                sharedMaterials[materialIndex] = selectedShopMaterial;
-                                materialSlotsChanged++;
-                                if (renderer.gameObject.activeInHierarchy)
-                                    shop05VisibleSlotsChanged++;
-                                changed = true;
-                            }
-
-                            continue;
+                            shop05PinkVisibleSlotsAssigned++;
                         }
-
-                        if (!TryGetVariantIndex(sharedMaterials[materialIndex], out int sourceVariantIndex))
-                            continue;
-
-                        Material selectedMaterial = tintedVariants[sourceVariantIndex, tintIndex];
-                        if (sharedMaterials[materialIndex] == selectedMaterial)
+                        if (currentMaterial == selectedMaterial)
                             continue;
 
                         sharedMaterials[materialIndex] = selectedMaterial;
                         materialSlotsChanged++;
+                        if (isShopMaterial && renderer.gameObject.activeInHierarchy)
+                            shop05VisibleSlotsChanged++;
                         changed = true;
                     }
 
@@ -7670,8 +7598,7 @@ namespace Game.Editor
             for (int transformIndex = 0; transformIndex < transforms.Length; transformIndex++)
             {
                 Transform wrapper = transforms[transformIndex];
-                if (!IsRuntimeCityBuildingWrapper(wrapper) ||
-                    wrapper.name.IndexOf("Shop_05", StringComparison.OrdinalIgnoreCase) < 0)
+                if (!IsRuntimeCityBuildingWrapper(wrapper))
                 {
                     continue;
                 }
@@ -7686,7 +7613,7 @@ namespace Game.Editor
                     Material[] sharedMaterials = renderer.sharedMaterials;
                     for (int materialIndex = 0; materialIndex < sharedMaterials.Length; materialIndex++)
                     {
-                        if (IsOriginalShop05Material(sharedMaterials[materialIndex]))
+                        if (materialLibrary.IsOriginalShopMaterial(sharedMaterials[materialIndex]))
                             shop05OriginalVisibleSlotsRemaining++;
                     }
                 }
@@ -7701,198 +7628,6 @@ namespace Game.Editor
                     $"changed={shop05VisibleSlotsChanged} " +
                     $"pinkAssigned={shop05PinkVisibleSlotsAssigned} " +
                     $"originalRemaining={shop05OriginalVisibleSlotsRemaining}.");
-            }
-
-            bool IsOriginalShop05Material(Material material)
-            {
-                for (int sourceIndex = 0; sourceIndex < shop05SourceVariants.Length; sourceIndex++)
-                {
-                    if (material == shop05SourceVariants[sourceIndex])
-                        return true;
-                }
-
-                return false;
-            }
-
-            bool IsShop05Material(Material material)
-            {
-                if (IsOriginalShop05Material(material))
-                    return true;
-
-                for (int tintIndex = 0; tintIndex < shop05Variants.Length; tintIndex++)
-                {
-                    if (material == shop05Variants[tintIndex])
-                        return true;
-                }
-
-                return false;
-            }
-
-            bool TryGetVariantIndex(Material material, out int variantIndex)
-            {
-                for (int index = 0; index < sourceVariants.Length; index++)
-                {
-                    if (material == sourceVariants[index])
-                    {
-                        variantIndex = index;
-                        return true;
-                    }
-                }
-
-                for (int sourceIndex = 0; sourceIndex < sourceVariants.Length; sourceIndex++)
-                {
-                    for (int tintIndex = 0; tintIndex < facadeTints.Length; tintIndex++)
-                    {
-                        if (material != tintedVariants[sourceIndex, tintIndex])
-                            continue;
-
-                        variantIndex = sourceIndex;
-                        return true;
-                    }
-
-                    for (int tintIndex = 0; tintIndex < shop05Tones.Length; tintIndex++)
-                    {
-                        if (material != shop05Variants[tintIndex])
-                            continue;
-
-                        variantIndex = sourceIndex;
-                        return true;
-                    }
-                }
-
-                variantIndex = -1;
-                return false;
-            }
-
-            Material[,] BuildTintedVariantSet(string prefix, Color[] tints)
-            {
-                var materials = new Material[sourceVariants.Length, tints.Length];
-                for (int sourceIndex = 0; sourceIndex < sourceVariants.Length; sourceIndex++)
-                {
-                    for (int tintIndex = 0; tintIndex < tints.Length; tintIndex++)
-                    {
-                        string materialPath =
-                            $"{GeneratedBuildingMaterialFolder}/DenseCity_{prefix}_{(char)('A' + sourceIndex)}_{tintIndex + 1:00}.mat";
-                        Material material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
-                        if (material == null)
-                        {
-                            material = new Material(sourceVariants[sourceIndex]);
-                            AssetDatabase.CreateAsset(material, materialPath);
-                        }
-
-                        material.name = Path.GetFileNameWithoutExtension(materialPath);
-                        material.CopyPropertiesFromMaterial(sourceVariants[sourceIndex]);
-                        if (material.HasProperty("_BaseColor"))
-                            material.SetColor("_BaseColor", tints[tintIndex]);
-                        if (material.HasProperty("_Color"))
-                            material.SetColor("_Color", tints[tintIndex]);
-                        material.enableInstancing = true;
-                        EditorUtility.SetDirty(material);
-                        materials[sourceIndex, tintIndex] = material;
-                    }
-                }
-
-                return materials;
-            }
-
-            Material[] BuildShop05VariantSet(Material sourceMaterial, Color[] targetTones)
-            {
-                Texture2D sourceTexture = sourceMaterial.GetTexture("_BaseMap") as Texture2D;
-                if (sourceTexture == null || !sourceTexture.isReadable)
-                {
-                    throw new InvalidOperationException(
-                        $"Shop_05 source material '{sourceMaterial.name}' requires a readable _BaseMap texture.");
-                }
-
-                for (int sourceIndex = 1; sourceIndex < sourceVariants.Length; sourceIndex++)
-                {
-                    for (int toneIndex = 0; toneIndex < targetTones.Length; toneIndex++)
-                    {
-                        AssetDatabase.DeleteAsset(
-                            $"{GeneratedBuildingMaterialFolder}/DenseCity_Shop05_{(char)('A' + sourceIndex)}_{toneIndex + 1:00}.mat");
-                    }
-                }
-
-                var materials = new Material[targetTones.Length];
-                Color32[] sourcePixels = sourceTexture.GetPixels32();
-                for (int toneIndex = 0; toneIndex < targetTones.Length; toneIndex++)
-                {
-                    string texturePath =
-                        $"{GeneratedBuildingMaterialFolder}/DenseCity_Shop05_Texture_{toneIndex + 1:00}.png";
-                    var texture = new Texture2D(
-                        sourceTexture.width,
-                        sourceTexture.height,
-                        TextureFormat.RGBA32,
-                        false,
-                        false);
-                    var recoloredPixels = new Color32[sourcePixels.Length];
-                    Color.RGBToHSV(targetTones[toneIndex], out float targetHue, out float targetSaturation, out _);
-                    float brightnessScale = Mathf.Lerp(0.72f, 1f, targetTones[toneIndex].maxColorComponent);
-                    for (int pixelIndex = 0; pixelIndex < sourcePixels.Length; pixelIndex++)
-                    {
-                        Color sourceColor = sourcePixels[pixelIndex];
-                        Color.RGBToHSV(sourceColor, out float hue, out float saturation, out float value);
-                        bool isWarmFacadePixel =
-                            saturation > 0.04f &&
-                            (hue < 0.18f || hue > 0.78f) &&
-                            sourceColor.r > sourceColor.g * 1.01f;
-                        if (!isWarmFacadePixel)
-                        {
-                            recoloredPixels[pixelIndex] = sourcePixels[pixelIndex];
-                            continue;
-                        }
-
-                        float recoloredSaturation = Mathf.Clamp(targetSaturation, 0.08f, 0.22f);
-                        Color recolored = Color.HSVToRGB(
-                            targetHue,
-                            recoloredSaturation,
-                            Mathf.Clamp01(value * brightnessScale));
-                        recolored.a = sourceColor.a;
-                        recoloredPixels[pixelIndex] = recolored;
-                    }
-
-                    texture.SetPixels32(recoloredPixels);
-                    texture.Apply(false, false);
-                    File.WriteAllBytes(Path.GetFullPath(texturePath), texture.EncodeToPNG());
-                    UnityEngine.Object.DestroyImmediate(texture);
-                    AssetDatabase.ImportAsset(texturePath, ImportAssetOptions.ForceSynchronousImport);
-                    if (AssetImporter.GetAtPath(texturePath) is TextureImporter importer)
-                    {
-                        importer.textureType = TextureImporterType.Default;
-                        importer.sRGBTexture = true;
-                        importer.mipmapEnabled = true;
-                        importer.isReadable = false;
-                        importer.maxTextureSize = 2048;
-                        importer.textureCompression = TextureImporterCompression.CompressedHQ;
-                        importer.SaveAndReimport();
-                    }
-
-                    Texture2D recoloredTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath) ??
-                                                 throw new InvalidOperationException(
-                                                     $"Could not import generated Shop_05 texture {texturePath}.");
-                    string materialPath =
-                        $"{GeneratedBuildingMaterialFolder}/DenseCity_Shop05_A_{toneIndex + 1:00}.mat";
-                    Material material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
-                    if (material == null)
-                    {
-                        material = new Material(sourceMaterial);
-                        AssetDatabase.CreateAsset(material, materialPath);
-                    }
-
-                    material.name = Path.GetFileNameWithoutExtension(materialPath);
-                    material.CopyPropertiesFromMaterial(sourceMaterial);
-                    material.SetTexture("_BaseMap", recoloredTexture);
-                    material.SetTexture("_MainTex", recoloredTexture);
-                    if (material.HasProperty("_BaseColor"))
-                        material.SetColor("_BaseColor", Color.white);
-                    if (material.HasProperty("_Color"))
-                        material.SetColor("_Color", Color.white);
-                    material.enableInstancing = true;
-                    EditorUtility.SetDirty(material);
-                    materials[toneIndex] = material;
-                }
-
-                return materials;
             }
 
             if (buildingsB == 0 || buildingsC == 0)
@@ -7914,19 +7649,6 @@ namespace Game.Editor
                 buildingsB,
                 buildingsC,
                 materialSlotsChanged);
-        }
-
-        private static void EnsureAssetFolder(string folderPath)
-        {
-            string[] segments = folderPath.Split('/');
-            string current = segments[0];
-            for (int index = 1; index < segments.Length; index++)
-            {
-                string next = $"{current}/{segments[index]}";
-                if (!AssetDatabase.IsValidFolder(next))
-                    AssetDatabase.CreateFolder(current, segments[index]);
-                current = next;
-            }
         }
 
         private static List<GeneratedBuildingInfo> CollectGeneratedBuildings(Transform generatedRoot)

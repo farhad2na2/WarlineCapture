@@ -77,6 +77,83 @@ namespace Game.Editor
             new(1740, 740)
         };
 
+        internal static (
+            DenseCityGeneratedRootAuthoring MapBakeSource,
+            DenseCityGeneratedRootAuthoring EntityPresentationSource) ReplaceDenseCitySemanticHierarchy(
+            Scene operationMapScene,
+            Scene entityPresentationScene,
+            string generationId,
+            string generatorSchema,
+            int generatorSchemaVersion,
+            int deterministicSeed,
+            string deterministicGenerationHash)
+        {
+            if (!operationMapScene.IsValid() || !operationMapScene.isLoaded ||
+                !entityPresentationScene.IsValid() || !entityPresentationScene.isLoaded ||
+                operationMapScene == entityPresentationScene)
+            {
+                throw new InvalidOperationException(
+                    "Dense-city semantic replacement requires two distinct loaded scenes.");
+            }
+
+            DenseCityGeneratedRootAuthoring[] mapRoots = FindGeneratedRoots(operationMapScene);
+            DenseCityGeneratedRootAuthoring[] entityRoots = FindGeneratedRoots(entityPresentationScene);
+            if ((mapRoots.Length == 0) != (entityRoots.Length == 0) ||
+                mapRoots.Length > 1 || entityRoots.Length > 1)
+            {
+                throw new InvalidOperationException(
+                    "Dense-city semantic replacement requires either no marked roots or one valid paired ownership set.");
+            }
+            if (mapRoots.Length == 1 &&
+                !DenseCitySemanticHierarchyBuilder.TryValidate(
+                    operationMapScene,
+                    entityPresentationScene,
+                    mapRoots[0].GenerationId,
+                    out string existingError))
+            {
+                throw new InvalidOperationException(
+                    $"Existing dense-city ownership set is invalid: {existingError}");
+            }
+
+            Undo.IncrementCurrentGroup();
+            int undoGroup = Undo.GetCurrentGroup();
+            Undo.SetCurrentGroupName("Replace Dense City Semantic Ownership");
+            try
+            {
+                if (mapRoots.Length == 1)
+                {
+                    Undo.DestroyObjectImmediate(mapRoots[0].gameObject);
+                    Undo.DestroyObjectImmediate(entityRoots[0].gameObject);
+                }
+
+                var roots = DenseCitySemanticHierarchyBuilder.Create(
+                    operationMapScene,
+                    entityPresentationScene,
+                    generationId,
+                    generatorSchema,
+                    generatorSchemaVersion,
+                    deterministicSeed,
+                    deterministicGenerationHash);
+                EditorSceneManager.MarkSceneDirty(operationMapScene);
+                EditorSceneManager.MarkSceneDirty(entityPresentationScene);
+                Undo.CollapseUndoOperations(undoGroup);
+                return roots;
+            }
+            catch
+            {
+                Undo.RevertAllDownToGroup(undoGroup);
+                throw;
+            }
+        }
+
+        private static DenseCityGeneratedRootAuthoring[] FindGeneratedRoots(Scene scene)
+        {
+            var roots = new List<DenseCityGeneratedRootAuthoring>();
+            foreach (GameObject sceneRoot in scene.GetRootGameObjects())
+                roots.AddRange(sceneRoot.GetComponentsInChildren<DenseCityGeneratedRootAuthoring>(true));
+            return roots.ToArray();
+        }
+
         public static void Build(RuntimeCityRAndDMapView view)
         {
             if (view == null)

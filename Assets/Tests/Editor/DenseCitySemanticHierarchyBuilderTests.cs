@@ -167,6 +167,65 @@ public sealed class DenseCitySemanticHierarchyBuilderTests
         }
     }
 
+    [Test]
+    public void ReplaceSemanticHierarchy_DeletesOnlyMarkedRootsAndPreservesOtherObjects()
+    {
+        (Scene mapScene, Scene entityScene) = CreateScenePair();
+        try
+        {
+            var protectedMapObject = new GameObject("ProtectedMapObject");
+            SceneManager.MoveGameObjectToScene(protectedMapObject, mapScene);
+            var protectedEntityObject = new GameObject("ProtectedEntityObject");
+            SceneManager.MoveGameObjectToScene(protectedEntityObject, entityScene);
+            GlobalObjectId mapIdentityBefore = GlobalObjectId.GetGlobalObjectIdSlow(protectedMapObject);
+            GlobalObjectId entityIdentityBefore = GlobalObjectId.GetGlobalObjectIdSlow(protectedEntityObject);
+
+            var first = DenseCitySemanticHierarchyBuilder.Create(
+                mapScene,
+                entityScene,
+                "dense-city:test:42",
+                "dense-city-v1",
+                1,
+                42,
+                Hash);
+            DenseCityGeneratedRootAuthoring firstMapRoot = first.MapBakeSource;
+            DenseCityGeneratedRootAuthoring firstEntityRoot = first.EntityPresentationSource;
+
+            var replacement = RuntimeCityRAndDEditModeBuilder.ReplaceDenseCitySemanticHierarchy(
+                mapScene,
+                entityScene,
+                "dense-city:test:84",
+                "dense-city-v1",
+                1,
+                84,
+                "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789");
+            Assert.That(EditorSceneManager.SaveScene(mapScene, MapScenePath), Is.True);
+            Assert.That(EditorSceneManager.SaveScene(entityScene, EntityScenePath), Is.True);
+
+            Assert.That(ReferenceEquals(replacement.MapBakeSource, firstMapRoot), Is.False);
+            Assert.That(ReferenceEquals(replacement.EntityPresentationSource, firstEntityRoot), Is.False);
+            Assert.That(GlobalObjectId.GetGlobalObjectIdSlow(protectedMapObject), Is.EqualTo(mapIdentityBefore));
+            Assert.That(GlobalObjectId.GetGlobalObjectIdSlow(protectedEntityObject), Is.EqualTo(entityIdentityBefore));
+            Assert.That(mapScene.GetRootGameObjects(), Has.Exactly(1).Matches<GameObject>(
+                owner => owner == protectedMapObject));
+            Assert.That(entityScene.GetRootGameObjects(), Has.Exactly(1).Matches<GameObject>(
+                owner => owner == protectedEntityObject));
+            Assert.That(
+                DenseCitySemanticHierarchyBuilder.TryValidate(
+                    mapScene,
+                    entityScene,
+                    "dense-city:test:84",
+                    out string error),
+                Is.True,
+                error);
+        }
+        finally
+        {
+            EditorSceneManager.CloseScene(entityScene, true);
+            EditorSceneManager.CloseScene(mapScene, true);
+        }
+    }
+
     private static (Scene MapScene, Scene EntityScene) CreateScenePair()
     {
         Scene mapScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);

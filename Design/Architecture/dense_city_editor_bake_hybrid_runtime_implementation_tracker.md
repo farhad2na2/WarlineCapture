@@ -731,14 +731,14 @@ Runtime procedural generation is not the fallback for a rendering or packaging f
 
 Progress is checklist based. Every checkbox counts. Update the count, phase status, and validation log in the same stable change that completes an item.
 
-Current progress: **39 / 148 (26%)**
+Current progress: **40 / 148 (27%)**
 
 | Phase | Status |
 |---|---|
 | Phase 0: Baseline and contracts | Complete |
 | Phase 0A: Existing map ECS presentation migration | Transactional candidate Bake All and direct baked matrix/bounds parity complete; Addressables runtime, fixed-camera, lifecycle, and Android acceptance open |
 | Phase 1: Generated ownership authoring | In progress; semantic hierarchy and fail-closed role/scene ownership validation complete |
-| Phase 2: Generator semantic output | Not started |
+| Phase 2: Generator semantic output | In progress; bounded stable-ordered record contracts complete |
 | Phase 3: Collider-free enforcement | Not started |
 | Phase 4: Surface and blocker proxies | Not started |
 | Phase 5: Readiness and Bake All integration | Not started |
@@ -817,7 +817,7 @@ Current progress: **39 / 148 (26%)**
 
 ### Phase 2: Generator Semantic Output
 
-- [ ] Add bounded `DenseCityGenerationRecords` value types and stable ordering rules.
+- [x] Add bounded `DenseCityGenerationRecords` value types and stable ordering rules.
 - [ ] Refactor building placement to emit ECS-building, foundation, blocker, intact-visual, and destroyed-visual records before realization.
 - [ ] Emit stable building-owned attachment records for roof/interior/shop/tent props during generation and realize them beneath the declared intact or destroyed root rather than the global render-only prop hierarchy.
 - [ ] Refactor road generation to emit distinct road, shoulder, terrain-patch, bridge, and ramp records.
@@ -1054,6 +1054,7 @@ Extend existing tests rather than duplicating them for:
 | 2026-07-22 | Phase 1 authoring and scene-ownership readiness | Focused validator `/private/tmp/warline-dense-city-authoring-readiness-tests-2.xml` 4/4; authoring regression `/private/tmp/warline-dense-city-authoring-contract-regression-tests.xml` 17/17; assembly boundaries `/private/tmp/warline-dense-city-authoring-readiness-architecture.log` 31/31; Unity logs; `git diff --check` | Passed; full Phase 5 readiness remains open | Centralized strict source `GlobalObjectId` validation; added finite/nonzero transform and positive-size validation for generated roots, authored overrides, and buildings; and added an editor-only scene-pair ownership validator that rejects duplicate override ids, duplicate building source/placement identities, misplaced buildings, wrong generated-root identities, and invalid building presentation ownership. This validates the Phase 1 authoring/ownership slice only; collider, proxy, bake-budget, package, and full readiness checks remain explicit Phase 3-5 work. Progress is 37/148 (25%). |
 | 2026-07-22 | Phase 1 fail-closed semantic role ownership | Focused EditMode `/private/tmp/warline-dense-city-semantic-ownership-tests-2.xml` 4/4; assembly boundaries `/private/tmp/warline-dense-city-semantic-ownership-architecture.log` 31/31; Unity compile logs; `git diff --check` | Passed | Tightened semantic-path validation from first-name lookup to exact direct-child traversal, so duplicate path segments cannot be accepted. Proxy groups now require one component on the exact role node and reject overlapping ancestor role ownership. Existing generation-id, root-role, scene-pair, override-placement, and generated-building owner checks remain fail-closed. No accepted scene, candidate scene, production package, or runtime system changed. Progress is 38/148 (26%). |
 | 2026-07-22 | Phase 1 transactional generated-root replacement | Focused EditMode `/private/tmp/warline-dense-city-semantic-replacement-tests-2.xml` 5/5; assembly boundaries `/private/tmp/warline-dense-city-semantic-replacement-architecture.log` 31/31; Unity compile logs; `git diff --check` | Passed in isolated scene pair; accepted assets intentionally unchanged | Added the approved editor coordinator operation that accepts only zero roots or one already-valid paired generation set, destroys only the two marked roots through one Undo transaction, recreates and validates the replacement pair, marks both scenes dirty, and reverts the transaction on failure. The focused fixture saves both scenes and proves unmarked roots retain their exact `GlobalObjectId` while both marked roots are replaced. This is mutation-safety evidence, not authorization to alter the protected accepted source/candidate before generator semantic output is wired. Progress is 39/148 (26%). |
+| 2026-07-22 | Phase 2 bounded semantic generation records | Focused EditMode `/private/tmp/warline-dense-city-generation-records-tests-final.xml` 5/5; assembly boundaries `/private/tmp/warline-dense-city-generation-records-architecture.log` 31/31; ECS/Burst guardrails `/private/tmp/warline-dense-city-generation-records-ecs.log` 11/11; Unity compile logs; `git diff --check` | Passed | Added the tracker-approved editor-only closed presentation/surface categories, deterministic record identity, immutable building/surface/presentation bake records, and editor-lifetime `DenseCityGenerationRecordSet`. The set requires explicit bounded capacities, rejects duplicate stable identities across all record kinds, cannot be read before sealing or mutated afterward, sorts each record kind ordinally by deterministic identity, exposes copied collections read-only, and clears owned collections on disposal. Geometry, asset identity, transform, health, blocker policy, and attachment ownership validate fail-closed. No generator realization, RNG order, runtime assembly, scene, SubScene, or package changed. Progress is 40/148 (27%). |
 
 ## 25. Completion Rule
 

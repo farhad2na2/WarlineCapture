@@ -22,7 +22,10 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
             suite.LayoutBudget_RejectsLegacyPlacementOwnership,
             suite.LayoutBudget_AcceptsEntitySceneOnlyOwnership,
             suite.SceneSetup_RejectsEmptyBatchSetup,
-            suite.SceneSetup_AcceptsLoadedActiveScene
+            suite.SceneSetup_AcceptsLoadedActiveScene,
+            suite.SourceCandidateParity_AcceptsExactMatrixAndBounds,
+            suite.SourceCandidateParity_RejectsMatrixDrift,
+            suite.SourceCandidateParity_RejectsBoundsDrift
         };
 
         for (int i = 0; i < tests.Length; i++)
@@ -179,5 +182,46 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
         };
 
         Assert.That(OperationMapEntitySceneCandidateBakeAll.HasRestorableSceneSetup(setup), Is.True);
+    }
+
+    [Test]
+    public void SourceCandidateParity_AcceptsExactMatrixAndBounds()
+    {
+        Matrix4x4 matrix = Matrix4x4.TRS(new Vector3(4f, 2f, -3f), Quaternion.Euler(0f, 30f, 0f), Vector3.one);
+        var bounds = new Bounds(new Vector3(4f, 3f, -3f), new Vector3(2f, 4f, 6f));
+        Assert.That(
+            OperationMapEntityPresentationTransformParityValidator.GetSourceCandidateRejectionReason(
+                matrix, matrix, true, bounds, true, bounds),
+            Is.Empty);
+    }
+
+    [Test]
+    public void SourceCandidateParity_RejectsMatrixDrift()
+    {
+        Assert.That(
+            OperationMapEntityPresentationTransformParityValidator.GetSourceCandidateRejectionReason(
+                Matrix4x4.identity,
+                Matrix4x4.Translate(Vector3.right),
+                false,
+                default,
+                false,
+                default),
+            Is.EqualTo("owner-matrix-residual"));
+    }
+
+    [Test]
+    public void SourceCandidateParity_RejectsBoundsDrift()
+    {
+        var source = new Bounds(Vector3.zero, Vector3.one);
+        var candidate = new Bounds(Vector3.right, Vector3.one);
+        Assert.That(
+            OperationMapEntityPresentationTransformParityValidator.GetSourceCandidateRejectionReason(
+                Matrix4x4.identity,
+                Matrix4x4.identity,
+                true,
+                source,
+                true,
+                candidate),
+            Is.EqualTo("renderer-bounds-residual"));
     }
 }

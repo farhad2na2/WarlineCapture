@@ -28,6 +28,78 @@ namespace Game.Editor
         private const float RendererBakeFallbackJoinTolerance = 0.125f;
         private static readonly UTF8Encoding Utf8WithoutBom = new(false);
 
+        internal static void InvalidateEvidence(string projectRoot, string checkpoint)
+        {
+            WriteReport(projectRoot, new TransformParityReport
+            {
+                schema = "warline.operation-map.transform-parity",
+                schemaVersion = 3,
+                operationMapId = OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
+                checkpoint = checkpoint,
+                result = "TransformParityEvidenceInvalidated",
+                expectedIdentityCount = OperationMapEntityPresentationIdentityBackfillEditor.ExpectedIdentityCount,
+                matrixTolerance = MatrixTolerance,
+                boundsTolerance = BoundsTolerance,
+                rows = new List<TransformParityRow>(),
+                bakedRenderEntities = new List<BakedRenderEntityRow>()
+            });
+        }
+
+        internal static TransformParityReport ValidateSourceCandidateAndWrite(
+            string projectRoot,
+            Scene sourceScene,
+            Scene candidateScene)
+        {
+            OperationMapEntityPresentationIdentityAuthoring[] candidates = candidateScene
+                .GetRootGameObjects()
+                .SelectMany(root => root.GetComponentsInChildren<OperationMapEntityPresentationIdentityAuthoring>(true))
+                .OrderBy(identity => identity.SourceGlobalObjectId, StringComparer.Ordinal)
+                .ToArray();
+            var sourceIds = new HashSet<string>(StringComparer.Ordinal);
+            var rows = new List<TransformParityRow>(candidates.Length);
+            int rejected = 0;
+            foreach (OperationMapEntityPresentationIdentityAuthoring candidate in candidates)
+            {
+                TransformParityRow row = BuildSourceCandidateRow(sourceScene, candidate);
+                if (!sourceIds.Add(candidate.SourceGlobalObjectId))
+                {
+                    row.result = "Rejected";
+                    row.rejectionReason = "candidate-source-identity-duplicate";
+                }
+                if (!string.Equals(row.result, "Passed", StringComparison.Ordinal))
+                    rejected++;
+                rows.Add(row);
+            }
+
+            var report = new TransformParityReport
+            {
+                schema = "warline.operation-map.transform-parity",
+                schemaVersion = 3,
+                operationMapId = OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
+                checkpoint = "candidate-population",
+                result = rejected == 0 && sourceIds.Count ==
+                    OperationMapEntityPresentationIdentityBackfillEditor.ExpectedIdentityCount
+                    ? "SourceCandidateParityPassedPendingBake"
+                    : "SourceCandidateParityRejected",
+                expectedIdentityCount = OperationMapEntityPresentationIdentityBackfillEditor.ExpectedIdentityCount,
+                candidateIdentityCount = sourceIds.Count,
+                bakedIdentityCount = 0,
+                rejectedRowCount = rejected,
+                matrixTolerance = MatrixTolerance,
+                boundsTolerance = BoundsTolerance,
+                rows = rows,
+                bakedRenderEntities = new List<BakedRenderEntityRow>()
+            };
+            WriteReport(projectRoot, report);
+            if (sourceIds.Count != report.expectedIdentityCount || rejected != 0)
+            {
+                throw new InvalidOperationException(
+                    $"Source/candidate transform parity rejected: candidate={sourceIds.Count}, " +
+                    $"rejected={rejected}. Report: {ReportPath}");
+            }
+            return report;
+        }
+
         internal static TransformParityReport ValidateAndWrite(
             string projectRoot,
             Scene sourceScene,
@@ -73,8 +145,9 @@ namespace Game.Editor
             var report = new TransformParityReport
             {
                 schema = "warline.operation-map.transform-parity",
-                schemaVersion = 2,
+                schemaVersion = 3,
                 operationMapId = OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
+                checkpoint = "ecs-bake",
                 result = rejected == 0 ? "SourceCandidateBakedParityPassed" : "SourceCandidateBakedParityRejected",
                 expectedIdentityCount = OperationMapEntityPresentationIdentityBackfillEditor.ExpectedIdentityCount,
                 candidateIdentityCount = candidateBySource.Count,
@@ -87,10 +160,7 @@ namespace Game.Editor
                 bakedRenderEntities = bakedRenderEntities
             };
 
-            string absolutePath = Path.Combine(projectRoot, ReportPath);
-            Directory.CreateDirectory(Path.GetDirectoryName(absolutePath));
-            File.WriteAllText(absolutePath, JsonUtility.ToJson(report, true) + "\n", Utf8WithoutBom);
-            AssetDatabase.ImportAsset(ReportPath, ImportAssetOptions.ForceSynchronousImport);
+            WriteReport(projectRoot, report);
 
             if (candidateBySource.Count != report.expectedIdentityCount ||
                 bakedBySource.Count != report.expectedIdentityCount ||
@@ -102,6 +172,85 @@ namespace Game.Editor
             }
 
             return report;
+        }
+
+        private static TransformParityRow BuildSourceCandidateRow(
+            Scene sourceScene,
+            OperationMapEntityPresentationIdentityAuthoring candidate)
+        {
+            var row = new TransformParityRow
+            {
+                sourceGlobalObjectId = candidate.SourceGlobalObjectId,
+                role = candidate.Role.ToString(),
+                placementIndex = candidate.PlacementIndex,
+                candidatePath = GetPath(candidate.transform),
+                candidateLocalMatrix = ToArray(Matrix4x4.TRS(
+                    candidate.transform.localPosition,
+                    candidate.transform.localRotation,
+                    candidate.transform.localScale)),
+                candidateWorldMatrix = ToArray(candidate.transform.localToWorldMatrix),
+                bakedWorldMatrix = Array.Empty<float>(),
+                bakedLocalTransformMatrix = Array.Empty<float>(),
+                bakedPostTransformMatrix = Array.Empty<float>(),
+                bakedBounds = Array.Empty<float>()
+            };
+            if (!GlobalObjectId.TryParse(candidate.SourceGlobalObjectId, out GlobalObjectId sourceId) ||
+                GlobalObjectId.GlobalObjectIdentifierToObjectSlow(sourceId) is not GameObject source ||
+                source.scene != sourceScene)
+            {
+                row.result = "Rejected";
+                row.rejectionReason = "source-match-count-not-one";
+                return row;
+            }
+
+            row.sourcePath = GetPath(source.transform);
+            row.sourceLocalMatrix = ToArray(Matrix4x4.TRS(
+                source.transform.localPosition,
+                source.transform.localRotation,
+                source.transform.localScale));
+            row.sourceWorldMatrix = ToArray(source.transform.localToWorldMatrix);
+            row.sourceParentChain = BuildParentChain(source.transform.parent);
+            row.sourceCandidateMatrixResidual = MaxResidual(
+                source.transform.localToWorldMatrix,
+                candidate.transform.localToWorldMatrix);
+            bool sourceHasBounds = TryCombinedRendererBounds(source, out Bounds sourceBounds);
+            bool candidateHasBounds = TryCombinedRendererBounds(candidate.gameObject, out Bounds candidateBounds);
+            row.sourceBounds = sourceHasBounds ? ToArray(sourceBounds) : Array.Empty<float>();
+            row.candidateBounds = candidateHasBounds ? ToArray(candidateBounds) : Array.Empty<float>();
+            row.rejectionReason = GetSourceCandidateRejectionReason(
+                source.transform.localToWorldMatrix,
+                candidate.transform.localToWorldMatrix,
+                sourceHasBounds,
+                sourceBounds,
+                candidateHasBounds,
+                candidateBounds);
+            row.result = string.IsNullOrEmpty(row.rejectionReason) ? "Passed" : "Rejected";
+            return row;
+        }
+
+        internal static string GetSourceCandidateRejectionReason(
+            Matrix4x4 sourceMatrix,
+            Matrix4x4 candidateMatrix,
+            bool sourceHasBounds,
+            Bounds sourceBounds,
+            bool candidateHasBounds,
+            Bounds candidateBounds)
+        {
+            if (MaxResidual(sourceMatrix, candidateMatrix) > MatrixTolerance)
+                return "owner-matrix-residual";
+            if (sourceHasBounds != candidateHasBounds)
+                return "renderer-bounds-presence";
+            if (sourceHasBounds && BoundsResidual(sourceBounds, candidateBounds) > BoundsTolerance)
+                return "renderer-bounds-residual";
+            return string.Empty;
+        }
+
+        private static void WriteReport(string projectRoot, TransformParityReport report)
+        {
+            string absolutePath = Path.Combine(projectRoot, ReportPath);
+            Directory.CreateDirectory(Path.GetDirectoryName(absolutePath));
+            File.WriteAllText(absolutePath, JsonUtility.ToJson(report, true) + "\n", Utf8WithoutBom);
+            AssetDatabase.ImportAsset(ReportPath, ImportAssetOptions.ForceSynchronousImport);
         }
 
         private static TransformParityRow BuildRow(
@@ -714,6 +863,7 @@ namespace Game.Editor
             public string schema;
             public int schemaVersion;
             public string operationMapId;
+            public string checkpoint;
             public string result;
             public int expectedIdentityCount;
             public int candidateIdentityCount;

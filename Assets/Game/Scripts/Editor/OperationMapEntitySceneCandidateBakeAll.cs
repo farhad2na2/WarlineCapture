@@ -85,6 +85,9 @@ namespace Game.Editor
                 rollbackApplied = 0,
                 stages = new List<CandidateBakeAllStageReport>()
             };
+            OperationMapEntityPresentationTransformParityValidator.InvalidateEvidence(
+                projectRoot,
+                "candidate-bake-all-started");
 
             try
             {
@@ -93,6 +96,8 @@ namespace Game.Editor
                 RunStage(report, "candidate-presentation-identities", () =>
                     OperationMapEntityPresentationIdentityBackfillEditor
                         .BackfillCandidatePresentationIdentities());
+                RunStage(report, "candidate-source-transform-parity", () =>
+                    ValidateSourceCandidateTransformParity(projectRoot));
                 RunStage(report, "candidate-authoring-readiness", () =>
                 {
                     CandidateAuthoringCounts counts = InspectCandidateAuthoring();
@@ -290,6 +295,28 @@ namespace Game.Editor
                     root.GetComponentsInChildren<OperationMapEntityPresentationIdentityAuthoring>(true).Length,
                     root.GetComponentsInChildren<Collider>(true).Length,
                     root.GetComponentsInChildren<Rigidbody>(true).Length);
+            }
+            finally
+            {
+                RestoreSceneSetupOrCreateEmpty(previousSetup);
+            }
+        }
+
+        private static void ValidateSourceCandidateTransformParity(string projectRoot)
+        {
+            SceneSetup[] previousSetup = EditorSceneManager.GetSceneManagerSetup();
+            try
+            {
+                Scene sourceScene = EditorSceneManager.OpenScene(
+                    OperationMapEntityPresentationCandidateSceneBuilder.AcceptedOperationMapScenePath,
+                    OpenSceneMode.Additive);
+                Scene candidateScene = EditorSceneManager.OpenScene(
+                    OperationMapEntityPresentationMigrationEditor.CandidateSubScenePath,
+                    OpenSceneMode.Additive);
+                OperationMapEntityPresentationTransformParityValidator.ValidateSourceCandidateAndWrite(
+                    projectRoot,
+                    sourceScene,
+                    candidateScene);
             }
             finally
             {

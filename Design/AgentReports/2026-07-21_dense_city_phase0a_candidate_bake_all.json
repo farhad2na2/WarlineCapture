@@ -15,7 +15,7 @@
     "presentationIdentityCount": 9544,
     "colliderCount": 0,
     "rigidbodyCount": 0,
-    "renderMeshEntityCount": 14209,
+    "renderMeshEntityCount": 14249,
     "nonFiniteTransformCount": 0,
     "managedMapVisualCompanionCount": 0,
     "sharedArtSourceCount": 11892,
@@ -27,55 +27,61 @@
         {
             "name": "preflight-isolation",
             "result": "Passed",
-            "elapsedMilliseconds": 2703,
+            "elapsedMilliseconds": 2707,
             "failure": ""
         },
         {
             "name": "candidate-population",
             "result": "Passed",
-            "elapsedMilliseconds": 3600,
+            "elapsedMilliseconds": 3822,
             "failure": ""
         },
         {
             "name": "candidate-presentation-identities",
             "result": "Passed",
-            "elapsedMilliseconds": 4237,
+            "elapsedMilliseconds": 4020,
+            "failure": ""
+        },
+        {
+            "name": "candidate-source-transform-parity",
+            "result": "Passed",
+            "elapsedMilliseconds": 237505,
             "failure": ""
         },
         {
             "name": "candidate-authoring-readiness",
             "result": "Passed",
-            "elapsedMilliseconds": 1046,
+            "elapsedMilliseconds": 1866,
             "failure": ""
         },
         {
             "name": "candidate-entity-bake",
             "result": "Passed",
-            "elapsedMilliseconds": 202617,
+            "elapsedMilliseconds": 284402,
             "failure": ""
         },
         {
             "name": "shared-art-budget",
             "result": "Passed",
-            "elapsedMilliseconds": 1124,
+            "elapsedMilliseconds": 1122,
             "failure": ""
         },
         {
             "name": "candidate-binding-layout",
             "result": "Passed",
-            "elapsedMilliseconds": 5522,
+            "elapsedMilliseconds": 5209,
             "failure": ""
         },
         {
             "name": "candidate-bake-budget",
             "result": "Passed",
-            "elapsedMilliseconds": 4,
+            "elapsedMilliseconds": 2,
             "failure": ""
         },
         {
             "name": "postflight-isolation",
             "result": "Passed",
-            "elapsedMilliseconds": 4494,
+            "elapsedMilliseconds": 4385,
             "failure": ""
         }
     ]

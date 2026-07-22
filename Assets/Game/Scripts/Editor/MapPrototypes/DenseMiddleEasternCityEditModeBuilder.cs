@@ -2428,6 +2428,31 @@ namespace Game.Editor
             }
         }
 
+        private readonly struct NaturalGroundPatchPlan
+        {
+            public NaturalGroundPatchPlan(
+                GameObject prefab,
+                Material material,
+                Vector3 position,
+                Quaternion rotation,
+                Vector3 scale)
+            {
+                Prefab = prefab;
+                Material = material;
+                Position = position;
+                Rotation = rotation;
+                Scale = scale;
+                WorldMatrix = Matrix4x4.TRS(position, rotation, scale);
+            }
+
+            public readonly GameObject Prefab;
+            public readonly Material Material;
+            public readonly Vector3 Position;
+            public readonly Quaternion Rotation;
+            public readonly Vector3 Scale;
+            public readonly Matrix4x4 WorldMatrix;
+        }
+
         private readonly struct CanalBakeResult
         {
             public readonly int RouteCount;
@@ -5332,6 +5357,7 @@ namespace Game.Editor
                 throw new ArgumentNullException(nameof(generationTransactions));
             var chunkRoots = new Dictionary<Vector2Int, Transform>();
             var metadataByPrefab = new Dictionary<GameObject, DenseCityVisualAssetMetadata>();
+            var groundMetadataByPrefab = new Dictionary<GameObject, DenseCityVisualAssetMetadata>();
             roadTileObjects = new Dictionary<Vector2Int, GameObject>();
             roadGroundPatchObjects = new Dictionary<Vector2Int, GameObject>();
             foreach (KeyValuePair<Vector2Int, RoadNetworkCompositionSystemHelper.RoadTileData> entry in network.RoadTiles)
@@ -5454,16 +5480,75 @@ namespace Game.Editor
                         patchClearance,
                         patchClearance))
                 {
-                    GameObject groundPatch = CreateNaturalGroundPatch(
-                        chunkRoot,
-                        $"RoadGroundPatch_{cell.x}_{cell.y}",
+                    NaturalGroundPatchPlan patchPlan = PlanNaturalGroundPatch(
                         placement,
                         RoadGridSize * 1.14f,
                         RoadGridSize * 1.14f,
                         patchHeight,
                         HashGroundPatch(cell.x, cell.y, 0x51f2));
-                    if (groundPatch != null)
-                        roadGroundPatchObjects.Add(cell, groundPatch);
+                    if (!groundMetadataByPrefab.TryGetValue(
+                            patchPlan.Prefab,
+                            out DenseCityVisualAssetMetadata groundMetadata))
+                    {
+                        groundMetadata = patchPlan.Material != null
+                            ? DenseCityVisualAssetMetadataExtractor.Extract(
+                                patchPlan.Prefab,
+                                _ => patchPlan.Material)
+                            : DenseCityVisualAssetMetadataExtractor.Extract(patchPlan.Prefab);
+                        groundMetadataByPrefab.Add(patchPlan.Prefab, groundMetadata);
+                    }
+
+                    GameObject groundPatch = null;
+                    try
+                    {
+                        bool accepted = generationTransactions.TryPlaceInfrastructure(
+                            0,
+                            sequence => DenseCityInfrastructureRecordFactory.CreateVisualized(
+                                new DenseCityInfrastructureRecordInput(
+                                    DenseCityGeneratorSchema,
+                                    unchecked((int)seed),
+                                    0,
+                                    sequence,
+                                    "road-terrain-patch",
+                                    DenseCitySurfaceRecordKind.Terrain,
+                                    groundMetadata.PrefabAssetGuid,
+                                    groundMetadata.PrefabLocalId,
+                                    groundMetadata.MaterialAssetGuids,
+                                    patchPlan.WorldMatrix,
+                                    new Vector2(RoadGridSize * 1.14f, RoadGridSize * 1.14f),
+                                    placement.y - 0.025f,
+                                    DenseCityBuildingMovementMask,
+                                    DenseCityBuildingSurfaceLayer,
+                                    chunkCoordinate,
+                                    true,
+                                    true,
+                                    1)),
+                            () =>
+                            {
+                                groundPatch = RealizeNaturalGroundPatch(
+                                    chunkRoot,
+                                    $"RoadGroundPatch_{cell.x}_{cell.y}",
+                                    patchPlan);
+                                Matrix4x4 actualMatrix = groundPatch.transform.localToWorldMatrix;
+                                for (int matrixIndex = 0; matrixIndex < 16; matrixIndex++)
+                                {
+                                    if (Mathf.Abs(actualMatrix[matrixIndex] - patchPlan.WorldMatrix[matrixIndex]) > 0.0001f)
+                                    {
+                                        throw new InvalidOperationException(
+                                            $"Dense-city road terrain-patch transform parity failed at cell {cell}.");
+                                    }
+                                }
+                                return true;
+                            });
+                        if (accepted)
+                            roadGroundPatchObjects.Add(cell, groundPatch);
+                    }
+                    catch
+                    {
+                        if (groundPatch != null)
+                            UnityEngine.Object.DestroyImmediate(groundPatch);
+                        throw;
+                    }
                 }
             }
 
@@ -9100,6 +9185,24 @@ namespace Game.Editor
             uint hash,
             bool forcePrimaryGroundPrefab = false)
         {
+            NaturalGroundPatchPlan plan = PlanNaturalGroundPatch(
+                topCenter,
+                targetWidth,
+                targetDepth,
+                targetHeight,
+                hash,
+                forcePrimaryGroundPrefab);
+            return RealizeNaturalGroundPatch(parent, objectName, plan);
+        }
+
+        private static NaturalGroundPatchPlan PlanNaturalGroundPatch(
+            Vector3 topCenter,
+            float targetWidth,
+            float targetDepth,
+            float targetHeight,
+            uint hash,
+            bool forcePrimaryGroundPrefab = false)
+        {
             GameObject[] prefabs = LoadNaturalGroundPrefabs();
             int prefabIndex;
             if (forcePrimaryGroundPrefab || prefabs.Length == 1 || Hash01(hash ^ 0x19a53b71u) < 0.9f)
@@ -9107,38 +9210,45 @@ namespace Game.Editor
             else
                 prefabIndex = 1 + (int)(hash % (uint)(prefabs.Length - 1));
             GameObject prefab = prefabs[prefabIndex];
-            GameObject patch = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
-            patch.name = objectName;
-            patch.transform.SetPositionAndRotation(
-                new Vector3(topCenter.x, 0f, topCenter.z),
-                Quaternion.identity);
-            patch.transform.localScale = Vector3.one;
-
-            if (!TryGetRendererBounds(patch, out Bounds sourceBounds))
+            if (!TryGetRendererBounds(prefab, out Bounds sourceBounds))
                 throw new InvalidOperationException($"Natural ground prefab '{prefab.name}' has no renderer bounds.");
 
             float widthVariation = Mathf.Lerp(0.92f, 1.12f, Hash01(hash ^ 0x68bc21ebu));
             float depthVariation = Mathf.Lerp(0.92f, 1.12f, Hash01(hash ^ 0x02e5be93u));
             float heightVariation = Mathf.Lerp(0.82f, 1.18f, Hash01(hash ^ 0x967a889bu));
-            patch.transform.localScale = new Vector3(
+            var scale = new Vector3(
                 targetWidth * widthVariation / Mathf.Max(0.01f, sourceBounds.size.x),
                 targetHeight * heightVariation / Mathf.Max(0.01f, sourceBounds.size.y),
                 targetDepth * depthVariation / Mathf.Max(0.01f, sourceBounds.size.z));
-            patch.transform.rotation = Quaternion.Euler(0f, Hash01(hash ^ 0x4f1bbcdcu) * 360f, 0f);
+            Quaternion rotation = Quaternion.Euler(0f, Hash01(hash ^ 0x4f1bbcdcu) * 360f, 0f);
+            var position = new Vector3(
+                topCenter.x,
+                topCenter.y - 0.025f - sourceBounds.max.y * scale.y,
+                topCenter.z);
+            return new NaturalGroundPatchPlan(
+                prefab,
+                GetGroundVariationMaterial(),
+                position,
+                rotation,
+                scale);
+        }
 
-            if (!TryGetRendererBounds(patch, out Bounds scaledBounds))
-                throw new InvalidOperationException($"Natural ground prefab '{prefab.name}' lost renderer bounds after scaling.");
-            Vector3 position = patch.transform.position;
-            position.y += topCenter.y - 0.025f - scaledBounds.max.y;
-            patch.transform.position = position;
+        private static GameObject RealizeNaturalGroundPatch(
+            Transform parent,
+            string objectName,
+            NaturalGroundPatchPlan plan)
+        {
+            GameObject patch = (GameObject)PrefabUtility.InstantiatePrefab(plan.Prefab, parent);
+            patch.name = objectName;
+            patch.transform.SetPositionAndRotation(plan.Position, plan.Rotation);
+            patch.transform.localScale = plan.Scale;
 
             DisableColliders(patch);
-            Material material = GetGroundVariationMaterial();
-            if (material == null)
+            if (plan.Material == null)
                 return patch;
             Renderer[] renderers = patch.GetComponentsInChildren<Renderer>(true);
             for (int index = 0; index < renderers.Length; index++)
-                renderers[index].sharedMaterial = material;
+                renderers[index].sharedMaterial = plan.Material;
             return patch;
         }
 

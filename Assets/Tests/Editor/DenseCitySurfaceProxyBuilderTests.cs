@@ -34,6 +34,7 @@ public sealed class DenseCitySurfaceProxyBuilderTests
             suite.Build_PartitionsRecordsAndCreatesBakeOnlyMeshes,
             suite.Build_ConsumesTerrainFoundationAndParkFactoryRecords,
             suite.Build_SeparatesRoadFromShoulderAndNaturalGroundFactoryRecords,
+            suite.Build_SeparatesBridgeDeckFromApproachRampFactoryRecords,
             suite.Build_ProducesRuntimeSurfaceQueriesForRepresentativeMovers,
             suite.Build_MergesOnlyAdjacentCoplanarRectangles,
             suite.Build_IsDeterministicAcrossEquivalentRecordSets,
@@ -337,6 +338,76 @@ public sealed class DenseCitySurfaceProxyBuilderTests
             Is.EqualTo((MapSurfaceMovementMask)3));
         Assert.That(terrainProxy.GetComponent<MapBakeGroupAuthoring>().MovementMask,
             Is.EqualTo((MapSurfaceMovementMask)3));
+    }
+
+    [Test]
+    public void Build_SeparatesBridgeDeckFromApproachRampFactoryRecords()
+    {
+        var (_, _, mapRoot) = CreateScenePair("bridge-factories");
+        using var records = new DenseCityGenerationRecordSet(1, 3, 1);
+        DenseCityBridgeRecordGroup bridge = DenseCityInfrastructureRecordFactory.CreateBridgeWithApproaches(
+            new DenseCityInfrastructureRecordInput(
+                "dense-city-v1",
+                42,
+                3,
+                0,
+                "bridge",
+                DenseCitySurfaceRecordKind.Bridge,
+                SourceGuid,
+                40,
+                new[] { SourceGuid },
+                Matrix4x4.identity,
+                new Vector2(4f, 6f),
+                2f,
+                3,
+                2,
+                Vector2Int.zero,
+                true,
+                true,
+                2),
+            new DenseCityBridgeApproachRecordInput(
+                "bridge-ramp-south",
+                Matrix4x4.Translate(new Vector3(0f, 0f, -5f)),
+                new Vector2(4f, 4f),
+                1f,
+                Vector2Int.zero),
+            new DenseCityBridgeApproachRecordInput(
+                "bridge-ramp-north",
+                Matrix4x4.Translate(new Vector3(0f, 0f, 5f)),
+                new Vector2(4f, 4f),
+                1f,
+                Vector2Int.zero));
+        records.AddBridgeGroup(
+            bridge.Bridge,
+            bridge.Presentation,
+            bridge.FirstApproachRamp,
+            bridge.SecondApproachRamp);
+        records.Seal();
+
+        DenseCitySurfaceProxyBuildResult result = DenseCitySurfaceProxyBuilder.Build(
+            records,
+            mapRoot,
+            OperationMapId,
+            MapSurfaceBounds,
+            OutputFolder);
+
+        Assert.That(result.Records, Is.EqualTo(3));
+        Assert.That(result.Partitions, Is.EqualTo(2));
+        MeshFilter[] filters = mapRoot.GetComponentsInChildren<MeshFilter>(true);
+        MeshFilter bridgeProxy = Array.Find(
+            filters,
+            filter => filter.GetComponent<MapBakeGroupAuthoring>().Role == MapBakeGroupRole.Bridge);
+        MeshFilter rampProxy = Array.Find(
+            filters,
+            filter => filter.GetComponent<MapBakeGroupAuthoring>().Role == MapBakeGroupRole.Ramp);
+        Assert.That(bridgeProxy, Is.Not.Null);
+        Assert.That(rampProxy, Is.Not.Null);
+        Assert.That(bridgeProxy.sharedMesh.vertexCount, Is.EqualTo(4));
+        Assert.That(rampProxy.sharedMesh.vertexCount, Is.EqualTo(8));
+        Assert.That(bridgeProxy.sharedMesh.triangles, Has.Length.EqualTo(6));
+        Assert.That(rampProxy.sharedMesh.triangles, Has.Length.EqualTo(12));
+        AssertProxyMetadata(bridgeProxy, MapBakeGroupRole.Bridge, 2, 3);
+        AssertProxyMetadata(rampProxy, MapBakeGroupRole.Ramp, 2, 3);
     }
 
     [Test]
@@ -674,6 +745,18 @@ public sealed class DenseCitySurfaceProxyBuilderTests
             Is.True);
         Assert.That(sample.SurfaceType, Is.EqualTo(expectedType));
         Assert.That((sample.MovementMask & movement) != 0, Is.EqualTo(expectedAllowed));
+    }
+
+    private static void AssertProxyMetadata(
+        MeshFilter filter,
+        MapBakeGroupRole role,
+        int layer,
+        uint movementMask)
+    {
+        MapBakeGroupAuthoring owner = filter.GetComponent<MapBakeGroupAuthoring>();
+        Assert.That(owner.Role, Is.EqualTo(role));
+        Assert.That(owner.LayerId, Is.EqualTo(layer));
+        Assert.That((uint)owner.MovementMask, Is.EqualTo(movementMask));
     }
 
     private static void AssertMeshFacesUp(Mesh mesh)

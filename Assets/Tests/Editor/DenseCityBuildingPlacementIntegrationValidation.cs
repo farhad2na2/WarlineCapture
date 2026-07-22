@@ -36,6 +36,7 @@ public static class DenseCityBuildingPlacementIntegrationValidation
             Assert.That(result.SemanticBuildingAttachments, Is.GreaterThan(0));
             Assert.That(result.SemanticRoadShoulders, Is.GreaterThan(0));
             Assert.That(result.SemanticCanalWaterExclusions, Is.GreaterThan(0));
+            Assert.That(result.SemanticCanalBankTerrains, Is.GreaterThan(0));
             Assert.That(result.SemanticSurfaces, Is.GreaterThan(result.SemanticBuildings * 2));
             Debug.Log(
                 $"[DenseCityBuildingPlacementIntegrationValidation] result=Passed " +
@@ -43,7 +44,8 @@ public static class DenseCityBuildingPlacementIntegrationValidation
                 $"semanticAttachments={result.SemanticBuildingAttachments} " +
                 $"surfaces={result.SemanticSurfaces} presentations={result.SemanticPresentations} " +
                 $"roadShoulders={result.SemanticRoadShoulders} " +
-                $"canalWaterExclusions={result.SemanticCanalWaterExclusions}");
+                $"canalWaterExclusions={result.SemanticCanalWaterExclusions} " +
+                $"canalBankTerrains={result.SemanticCanalBankTerrains}");
         }
         catch (Exception exception)
         {

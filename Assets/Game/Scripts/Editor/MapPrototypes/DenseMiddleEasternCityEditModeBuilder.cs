@@ -29,6 +29,7 @@ namespace Game.Editor
             public readonly int SemanticPresentations;
             public readonly int SemanticRoadShoulders;
             public readonly int SemanticCanalWaterExclusions;
+            public readonly int SemanticCanalBankTerrains;
 
             public Result(
                 int roadTiles,
@@ -41,7 +42,8 @@ namespace Game.Editor
                 int semanticSurfaces,
                 int semanticPresentations,
                 int semanticRoadShoulders,
-                int semanticCanalWaterExclusions)
+                int semanticCanalWaterExclusions,
+                int semanticCanalBankTerrains)
             {
                 RoadTiles = roadTiles;
                 RoadChunks = roadChunks;
@@ -54,6 +56,7 @@ namespace Game.Editor
                 SemanticPresentations = semanticPresentations;
                 SemanticRoadShoulders = semanticRoadShoulders;
                 SemanticCanalWaterExclusions = semanticCanalWaterExclusions;
+                SemanticCanalBankTerrains = semanticCanalBankTerrains;
             }
         }
 
@@ -1267,6 +1270,15 @@ namespace Game.Editor
             int semanticCanalWaterPresentations = CountPresentationRecords(
                 generationTransactions.Records.Presentations,
                 "canal-water-visual");
+            int semanticCanalBankTerrains = CountSurfaceRecords(
+                generationTransactions.Records.Surfaces,
+                "canal-bank-terrain");
+            int semanticCanalBankBasePresentations = CountPresentationRecords(
+                generationTransactions.Records.Presentations,
+                "canal-bank-base-visual");
+            int semanticCanalBankPresentations = CountPresentationRecords(
+                generationTransactions.Records.Presentations,
+                "canal-bank-visual");
             if (semanticCanalWaterExclusions != canalResult.WaterTiles ||
                 semanticCanalBedPresentations != canalResult.WaterTiles ||
                 semanticCanalWaterPresentations != canalResult.WaterTiles)
@@ -1276,12 +1288,23 @@ namespace Game.Editor
                     $"exclusions={semanticCanalWaterExclusions} beds={semanticCanalBedPresentations} " +
                     $"water={semanticCanalWaterPresentations}.");
             }
+            if (canalResult.GreenBanks % 3 != 0 ||
+                semanticCanalBankTerrains != canalResult.GreenBanks / 3 ||
+                semanticCanalBankBasePresentations != canalResult.GreenBanks ||
+                semanticCanalBankPresentations != canalResult.GreenBanks)
+            {
+                throw new InvalidOperationException(
+                    $"Canal bank semantic parity failed: patches={canalResult.GreenBanks} " +
+                    $"terrains={semanticCanalBankTerrains} bases={semanticCanalBankBasePresentations} " +
+                    $"visuals={semanticCanalBankPresentations}.");
+            }
             Debug.Log(
                 $"[DenseCitySemanticRecords] buildings={generationTransactions.Records.Buildings.Count} " +
                 $"surfaces={generationTransactions.Records.Surfaces.Count} " +
                 $"presentations={generationTransactions.Records.Presentations.Count} " +
                 $"roadShoulders={semanticRoadShoulders} " +
-                $"canalWaterExclusions={semanticCanalWaterExclusions}");
+                $"canalWaterExclusions={semanticCanalWaterExclusions} " +
+                $"canalBankTerrains={semanticCanalBankTerrains}");
 
             int horizonMountains = BakeHorizonMountainPerimeter(
                 generatedRoot,
@@ -1315,7 +1338,8 @@ namespace Game.Editor
                 generationTransactions.Records.Surfaces.Count,
                 generationTransactions.Records.Presentations.Count,
                 semanticRoadShoulders,
-                semanticCanalWaterExclusions);
+                semanticCanalWaterExclusions,
+                semanticCanalBankTerrains);
         }
 
         private static int CountSurfaceRecords(
@@ -3706,6 +3730,13 @@ namespace Game.Editor
             Material canalGreenMaterial = AssetDatabase.LoadAssetAtPath<Material>(CanalGreenMaterialPath) ??
                                           throw new InvalidOperationException(
                                               $"Missing canal green-ground material {CanalGreenMaterialPath}.");
+            var bankMetadata = new DenseCityVisualAssetMetadata[bankPrefabs.Length];
+            for (int index = 0; index < bankPrefabs.Length; index++)
+            {
+                bankMetadata[index] = DenseCityVisualAssetMetadataExtractor.Extract(
+                    bankPrefabs[index],
+                    _ => canalGreenMaterial);
+            }
             GameObject canalSurfacePrefab = LoadRequiredPrefab(CanalSurfacePrefabPath);
             DenseCityVisualAssetMetadata canalBedMetadata =
                 DenseCityVisualAssetMetadataExtractor.Extract(canalSurfacePrefab, _ => canalBedMaterial);
@@ -4015,6 +4046,7 @@ namespace Game.Editor
                             bankDepth);
                         int bankPatchCount = InstantiateRoundCanalBankCluster(
                             bankPrefabs,
+                            bankMetadata,
                             bankRootObject.transform,
                             $"CanalRoundBank_{routeIndex:00}_{cellIndex:000}_{(side < 0 ? "A" : "B")}",
                             bankCenter,
@@ -4026,7 +4058,10 @@ namespace Game.Editor
                                 cell.x,
                                 cell.y,
                                 0x294d + routeIndex * 43 + side * 13),
-                            materialOverride: canalGreenMaterial);
+                            materialOverride: canalGreenMaterial,
+                            seed: seed,
+                            chunk: canalChunk,
+                            generationTransactions: generationTransactions);
                         ReserveRectAsCells(bankBounds, roadResult.RoadCells, mapOrigin);
                         greenBanks += bankPatchCount;
 
@@ -4621,6 +4656,7 @@ namespace Game.Editor
 
         private static int InstantiateRoundCanalBankCluster(
             GameObject[] roundBankPrefabs,
+            DenseCityVisualAssetMetadata[] roundBankMetadata,
             Transform parent,
             string objectName,
             Vector2 center,
@@ -4629,49 +4665,122 @@ namespace Game.Editor
             float targetDepth,
             bool horizontalCanal,
             uint detailHashSeed,
-            Material materialOverride)
+            Material materialOverride,
+            uint seed,
+            Vector2Int chunk,
+            DenseCityGenerationTransactionContext generationTransactions)
         {
             if (roundBankPrefabs == null || roundBankPrefabs.Length == 0)
                 throw new InvalidOperationException("Round canal bank prefabs are required.");
+            if (roundBankMetadata == null || roundBankMetadata.Length != roundBankPrefabs.Length)
+                throw new ArgumentException("Canal bank metadata must match the prefab set.", nameof(roundBankMetadata));
+            if (generationTransactions == null)
+                throw new ArgumentNullException(nameof(generationTransactions));
 
             float alongLength = horizontalCanal ? targetWidth : targetDepth;
             float crossLength = horizontalCanal ? targetDepth : targetWidth;
             Vector2 alongAxis = horizontalCanal ? Vector2.right : Vector2.up;
             float asymmetry = Mathf.Lerp(-0.08f, 0.08f, Hash01(detailHashSeed));
             float edgeOffset = alongLength * (0.27f + asymmetry);
-            int created = 0;
+            var plans = new List<CanalSurfacePlan>(6);
+            var names = new List<string>(6);
+            var metadata = new List<DenseCityVisualAssetMetadata>(6);
+            int createdPatches = 0;
 
             CreatePatch("Core", Vector2.zero, alongLength * 0.8f, crossLength, detailHashSeed);
             CreatePatch("Leading", -alongAxis * edgeOffset, alongLength * 0.62f, crossLength * 0.88f,
                 detailHashSeed ^ 0x61e5a2b7u);
             CreatePatch("Trailing", alongAxis * edgeOffset, alongLength * 0.58f, crossLength * 0.94f,
                 detailHashSeed ^ 0x9d34c117u);
-            return created;
+            var presentationInputs = new DenseCityTerrainVisualPresentationInput[plans.Count];
+            for (int index = 0; index < plans.Count; index++)
+            {
+                DenseCityVisualAssetMetadata visualMetadata = metadata[index];
+                presentationInputs[index] = new DenseCityTerrainVisualPresentationInput(
+                    (index & 1) == 0 ? "canal-bank-base-visual" : "canal-bank-visual",
+                    visualMetadata.PrefabAssetGuid,
+                    visualMetadata.PrefabLocalId,
+                    visualMetadata.MaterialAssetGuids,
+                    plans[index].WorldMatrix,
+                    false,
+                    true,
+                    1);
+            }
+
+            var realized = new List<GameObject>(plans.Count);
+            try
+            {
+                bool accepted = generationTransactions.TryPlaceTerrainVisuals(
+                    0,
+                    plans.Count,
+                    sequence => DenseCityTerrainVisualRecordFactory.Create(
+                        new DenseCityTerrainVisualRecordInput(
+                            DenseCityGeneratorSchema,
+                            unchecked((int)seed),
+                            0,
+                            sequence,
+                            "canal-bank-terrain",
+                            Matrix4x4.TRS(
+                                new Vector3(center.x, topElevation, center.y),
+                                Quaternion.identity,
+                                Vector3.one),
+                            new Vector2(targetWidth, targetDepth),
+                            topElevation,
+                            (uint)(MapSurfaceMovementMask.AllGroundUnits |
+                                   MapSurfaceMovementMask.AirGrounded),
+                            DenseCityBuildingSurfaceLayer,
+                            chunk,
+                            presentationInputs)),
+                    () =>
+                    {
+                        for (int index = 0; index < plans.Count; index++)
+                        {
+                            GameObject surface = RealizeCanalSurface(
+                                parent,
+                                names[index],
+                                plans[index],
+                                materialOverride);
+                            realized.Add(surface);
+                            ValidateCanalSurfaceMatrix(surface, plans[index]);
+                        }
+                        return true;
+                    });
+                return accepted ? createdPatches : 0;
+            }
+            catch
+            {
+                for (int index = realized.Count - 1; index >= 0; index--)
+                {
+                    if (realized[index] != null)
+                        UnityEngine.Object.DestroyImmediate(realized[index]);
+                }
+                throw;
+            }
 
             void CreatePatch(string suffix, Vector2 offset, float patchAlong, float patchCross, uint hash)
             {
-                GameObject prefab = roundBankPrefabs[(int)(hash % (uint)roundBankPrefabs.Length)];
+                int prefabIndex = (int)(hash % (uint)roundBankPrefabs.Length);
+                GameObject prefab = roundBankPrefabs[prefabIndex];
+                DenseCityVisualAssetMetadata visualMetadata = roundBankMetadata[prefabIndex];
                 float width = horizontalCanal ? patchAlong : patchCross;
                 float depth = horizontalCanal ? patchCross : patchAlong;
-                CreateCanalEllipseSurface(
-                    parent,
-                    $"{objectName}_{suffix}_GreenBase",
+                plans.Add(PlanCanalSurface(
+                    prefab,
                     center + offset,
                     topElevation - 0.006f,
                     width * 1.04f,
-                    depth * 1.04f,
-                    0.04f,
-                    materialOverride);
-                InstantiateScaledCanalSurface(
+                    depth * 1.04f));
+                names.Add($"{objectName}_{suffix}_GreenBase");
+                metadata.Add(visualMetadata);
+                plans.Add(PlanCanalSurface(
                     prefab,
-                    parent,
-                    $"{objectName}_{suffix}",
                     center + offset,
-                    topElevation + created * 0.002f,
+                    topElevation + createdPatches * 0.002f,
                     width,
-                    depth,
-                    materialOverride);
-                created++;
+                    depth));
+                names.Add($"{objectName}_{suffix}");
+                metadata.Add(visualMetadata);
+                createdPatches++;
             }
         }
 

@@ -641,4 +641,90 @@ namespace Game.Editor
             AssetDatabase.CreateFolder(parent, Path.GetFileName(path));
         }
     }
+
+    internal static class DenseCitySurfaceProxyBakeSourceCollector
+    {
+        internal static MapSurfaceMeshBakeSource[] Collect(
+            DenseCityGeneratedRootAuthoring mapBakeRoot)
+        {
+            if (mapBakeRoot == null || mapBakeRoot.Role != DenseCityGeneratedRootRole.MapBakeSource)
+                throw new ArgumentException("A map-bake generated root is required.", nameof(mapBakeRoot));
+            if (!mapBakeRoot.TryValidate(out string rootError))
+                throw new InvalidOperationException(rootError);
+
+            MeshFilter[] filters = mapBakeRoot.GetComponentsInChildren<MeshFilter>(true);
+            if (filters.Length == 0)
+                throw new InvalidOperationException("Dense-city surface proxies contain no generated meshes.");
+            Array.Sort(filters, CompareFilters);
+
+            var sources = new List<MapSurfaceMeshBakeSource>(filters.Length);
+            for (int index = 0; index < filters.Length; index++)
+            {
+                MeshFilter filter = filters[index];
+                MapBakeGroupAuthoring owner = filter.GetComponent<MapBakeGroupAuthoring>();
+                if (owner == null || filter.GetComponents<MapBakeGroupAuthoring>().Length != 1 ||
+                    filter.GetComponentInParent<MapBakeGroupAuthoring>(true) != owner)
+                {
+                    throw new InvalidOperationException(
+                        $"Surface proxy '{GetPath(filter.transform)}' requires exactly one nearest role owner.");
+                }
+                if (filter.sharedMesh == null)
+                    throw new InvalidOperationException($"Surface proxy '{GetPath(filter.transform)}' has no mesh.");
+
+                ResolveSurface(owner.Role, out MapSurfaceType type, out MapSurfaceFlags flags);
+                sources.Add(new MapSurfaceMeshBakeSource(
+                    filter.sharedMesh,
+                    filter.transform.localToWorldMatrix,
+                    type,
+                    flags,
+                    owner.MovementMask,
+                    owner.LayerId));
+            }
+
+            return sources.ToArray();
+        }
+
+        private static void ResolveSurface(
+            MapBakeGroupRole role,
+            out MapSurfaceType type,
+            out MapSurfaceFlags flags)
+        {
+            switch (role)
+            {
+                case MapBakeGroupRole.Terrain:
+                    type = MapSurfaceType.Terrain;
+                    flags = MapSurfaceFlags.None;
+                    return;
+                case MapBakeGroupRole.Road:
+                    type = MapSurfaceType.Road;
+                    flags = MapSurfaceFlags.Road;
+                    return;
+                case MapBakeGroupRole.Bridge:
+                    type = MapSurfaceType.BridgeDeck;
+                    flags = MapSurfaceFlags.Bridge;
+                    return;
+                case MapBakeGroupRole.Ramp:
+                    type = MapSurfaceType.Ramp;
+                    flags = MapSurfaceFlags.Ramp;
+                    return;
+                case MapBakeGroupRole.Blocker:
+                    type = MapSurfaceType.Blocked;
+                    flags = MapSurfaceFlags.None;
+                    return;
+                default:
+                    throw new InvalidOperationException($"Unsupported dense-city proxy role: {role}.");
+            }
+        }
+
+        private static int CompareFilters(MeshFilter left, MeshFilter right) =>
+            string.CompareOrdinal(GetPath(left.transform), GetPath(right.transform));
+
+        private static string GetPath(Transform transform)
+        {
+            var names = new Stack<string>();
+            for (Transform current = transform; current != null; current = current.parent)
+                names.Push(current.name);
+            return string.Join("/", names);
+        }
+    }
 }

@@ -4,6 +4,9 @@ using Game.Authoring;
 using Game.Components;
 using Game.Editor;
 using NUnit.Framework;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Mathematics;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -28,6 +31,7 @@ public sealed class DenseCitySurfaceProxyBuilderTests
         Action[] tests =
         {
             suite.Build_PartitionsRecordsAndCreatesBakeOnlyMeshes,
+            suite.Build_ProducesRuntimeSurfaceQueriesForRepresentativeMovers,
             suite.Build_MergesOnlyAdjacentCoplanarRectangles,
             suite.Build_IsDeterministicAcrossEquivalentRecordSets,
             suite.Build_OutOfBoundsPolygonLeavesNoCandidateOutput,
@@ -49,6 +53,65 @@ public sealed class DenseCitySurfaceProxyBuilderTests
         }
 
         Debug.Log($"[DenseCitySurfaceProxyValidation] result=Passed tests={tests.Length}");
+    }
+
+    [Test]
+    public void Build_ProducesRuntimeSurfaceQueriesForRepresentativeMovers()
+    {
+        var (_, _, mapRoot) = CreateScenePair("runtime-query");
+        using var records = new DenseCityGenerationRecordSet(1, 5, 1);
+        uint terrainMask = (uint)(MapSurfaceMovementMask.AllGroundUnits |
+            MapSurfaceMovementMask.AirGrounded |
+            MapSurfaceMovementMask.BuildingPlacement);
+        uint roadMask = (uint)(MapSurfaceMovementMask.AllGroundUnits |
+            MapSurfaceMovementMask.AirGrounded);
+        uint groundUnitMask = (uint)MapSurfaceMovementMask.AllGroundUnits;
+        records.Add(CreateSurface(1, DenseCitySurfaceRecordKind.Terrain, CellRectangle(0), terrainMask, 0, Vector2Int.zero, 0f));
+        records.Add(CreateSurface(2, DenseCitySurfaceRecordKind.Road, CellRectangle(1), roadMask, 0, Vector2Int.zero, 0f));
+        records.Add(CreateSurface(3, DenseCitySurfaceRecordKind.Bridge, CellRectangle(2), groundUnitMask, 1, Vector2Int.zero, 0f));
+        records.Add(CreateSurface(4, DenseCitySurfaceRecordKind.Ramp, CellRectangle(3), groundUnitMask, 1, Vector2Int.zero, 0f));
+        records.Add(CreateSurface(5, DenseCitySurfaceRecordKind.Blocker, CellRectangle(4), 0, 0, Vector2Int.zero, 0f));
+        records.Seal();
+
+        DenseCitySurfaceProxyBuilder.Build(
+            records,
+            mapRoot,
+            OperationMapId,
+            new Rect(0f, 0f, 20f, 4f),
+            OutputFolder);
+        MapSurfaceMeshBakeSource[] sources =
+            DenseCitySurfaceProxyBakeSourceCollector.Collect(mapRoot);
+        Assert.That(sources, Has.Length.EqualTo(5));
+
+        BlobAssetReference<MapSurfaceBlob> blob = default;
+        try
+        {
+            Assert.That(
+                new MapSurfaceBakeSystem().TryBuildSingleLayerTerrain(
+                    new MapSurfaceBakeRequest(float3.zero, 4f, new int2(5, 1)),
+                    sources,
+                    Allocator.Persistent,
+                    out blob),
+                Is.True);
+
+            ref MapSurfaceBlob surface = ref blob.Value;
+            AssertSurface(ref surface, 0, MapSurfaceType.Terrain, MapSurfaceMovementMask.Infantry, true);
+            AssertSurface(ref surface, 0, MapSurfaceType.Terrain, MapSurfaceMovementMask.WheeledVehicle, true);
+            AssertSurface(ref surface, 0, MapSurfaceType.Terrain, MapSurfaceMovementMask.TrackedVehicle, true);
+            AssertSurface(ref surface, 0, MapSurfaceType.Terrain, MapSurfaceMovementMask.BuildingPlacement, true);
+            AssertSurface(ref surface, 0, MapSurfaceType.Terrain, MapSurfaceMovementMask.AirGrounded, true);
+            AssertSurface(ref surface, 1, MapSurfaceType.Road, MapSurfaceMovementMask.BuildingPlacement, false);
+            AssertSurface(ref surface, 1, MapSurfaceType.Road, MapSurfaceMovementMask.AirGrounded, true);
+            AssertSurface(ref surface, 2, MapSurfaceType.BridgeDeck, MapSurfaceMovementMask.WheeledVehicle, true);
+            AssertSurface(ref surface, 2, MapSurfaceType.BridgeDeck, MapSurfaceMovementMask.AirGrounded, false);
+            AssertSurface(ref surface, 3, MapSurfaceType.Ramp, MapSurfaceMovementMask.TrackedVehicle, true);
+            AssertSurface(ref surface, 4, MapSurfaceType.Blocked, MapSurfaceMovementMask.Infantry, false);
+        }
+        finally
+        {
+            if (blob.IsCreated)
+                blob.Dispose();
+        }
     }
 
     [SetUp]
@@ -362,6 +425,35 @@ public sealed class DenseCitySurfaceProxyBuilderTests
             new Vector2(x + 4f, 3f),
             new Vector2(x, 3f)
         };
+
+    private static Vector2[] CellRectangle(int cell)
+    {
+        float x = cell * 4f;
+        return new[]
+        {
+            new Vector2(x, 0f),
+            new Vector2(x + 4f, 0f),
+            new Vector2(x + 4f, 4f),
+            new Vector2(x, 4f)
+        };
+    }
+
+    private static void AssertSurface(
+        ref MapSurfaceBlob blob,
+        int cellX,
+        MapSurfaceType expectedType,
+        MapSurfaceMovementMask movement,
+        bool expectedAllowed)
+    {
+        Assert.That(
+            MapSurfaceBlobAccess.TryGetPrimarySurface(
+                ref blob,
+                new int2(cellX, 0),
+                out MapSurfaceSample sample),
+            Is.True);
+        Assert.That(sample.SurfaceType, Is.EqualTo(expectedType));
+        Assert.That((sample.MovementMask & movement) != 0, Is.EqualTo(expectedAllowed));
+    }
 
     private static void AssertMeshFacesUp(Mesh mesh)
     {

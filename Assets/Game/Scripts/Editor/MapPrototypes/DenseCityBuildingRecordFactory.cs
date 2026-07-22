@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Game.Components;
+using Game.Configs;
+using UnityEditor;
 using UnityEngine;
 
 namespace Game.Editor
@@ -25,6 +27,8 @@ namespace Game.Editor
             float foundationElevation,
             Bounds blockerBounds,
             Vector3 frontageDirection,
+            GeneratedCityBuildingRole role,
+            string definitionConfigAssetGuid,
             int factionId,
             float maximumHealth,
             uint movementMask,
@@ -52,6 +56,8 @@ namespace Game.Editor
             FoundationElevation = foundationElevation;
             BlockerBounds = blockerBounds;
             FrontageDirection = frontageDirection;
+            Role = role;
+            DefinitionConfigAssetGuid = definitionConfigAssetGuid;
             FactionId = factionId;
             MaximumHealth = maximumHealth;
             MovementMask = movementMask;
@@ -77,6 +83,8 @@ namespace Game.Editor
         internal float FoundationElevation { get; }
         internal Bounds BlockerBounds { get; }
         internal Vector3 FrontageDirection { get; }
+        internal GeneratedCityBuildingRole Role { get; }
+        internal string DefinitionConfigAssetGuid { get; }
         internal int FactionId { get; }
         internal float MaximumHealth { get; }
         internal uint MovementMask { get; }
@@ -128,6 +136,8 @@ namespace Game.Editor
                 input.FoundationElevation,
                 input.BlockerBounds,
                 input.FrontageDirection,
+                input.Role,
+                input.DefinitionConfigAssetGuid,
                 input.FactionId,
                 input.MaximumHealth,
                 OperationMapBuildingBlockerPolicy.RubbleRemainsBlocked,
@@ -228,5 +238,64 @@ namespace Game.Editor
         }
 
         private static Vector2 ToXZ(Vector3 value) => new(value.x, value.z);
+    }
+
+    internal sealed class DenseCityBuildingDefinitionLibrary
+    {
+        private const string HousePath =
+            "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_House_Config.asset";
+        private const string ShopPath =
+            "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Shop_Config.asset";
+        private const string CivicPath =
+            "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Hall_Config.asset";
+
+        private readonly Entry house;
+        private readonly Entry shop;
+        private readonly Entry civic;
+
+        private DenseCityBuildingDefinitionLibrary(Entry house, Entry shop, Entry civic)
+        {
+            this.house = house;
+            this.shop = shop;
+            this.civic = civic;
+        }
+
+        internal static DenseCityBuildingDefinitionLibrary LoadExisting() =>
+            new(Load(HousePath), Load(ShopPath), Load(CivicPath));
+
+        internal string ResolveAssetGuid(GeneratedCityBuildingRole role) => Resolve(role).AssetGuid;
+
+        internal BuildingDefinitionAuthoringConfig ResolveAsset(GeneratedCityBuildingRole role) =>
+            Resolve(role).Asset;
+
+        private Entry Resolve(GeneratedCityBuildingRole role) => role switch
+        {
+            GeneratedCityBuildingRole.Shop => shop,
+            GeneratedCityBuildingRole.Civic => civic,
+            GeneratedCityBuildingRole.House or GeneratedCityBuildingRole.Other => house,
+            _ => throw new ArgumentOutOfRangeException(nameof(role), role, null)
+        };
+
+        private static Entry Load(string path)
+        {
+            BuildingDefinitionAuthoringConfig asset =
+                AssetDatabase.LoadAssetAtPath<BuildingDefinitionAuthoringConfig>(path);
+            string guid = AssetDatabase.AssetPathToGUID(path);
+            if (asset == null || string.IsNullOrEmpty(guid))
+                throw new InvalidOperationException($"Dense-city building definition is unavailable: '{path}'.");
+            return new Entry(guid, asset);
+        }
+
+        private readonly struct Entry
+        {
+            internal Entry(string assetGuid, BuildingDefinitionAuthoringConfig asset)
+            {
+                AssetGuid = assetGuid;
+                Asset = asset;
+            }
+
+            internal string AssetGuid { get; }
+            internal BuildingDefinitionAuthoringConfig Asset { get; }
+        }
     }
 }

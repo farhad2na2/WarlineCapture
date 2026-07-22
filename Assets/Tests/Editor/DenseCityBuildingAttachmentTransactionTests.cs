@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Game.Components;
+using Game.Configs;
 using Game.Editor;
 using NUnit.Framework;
 using UnityEditor;
@@ -143,6 +144,8 @@ public sealed class DenseCityBuildingAttachmentTransactionTests
                 0f,
                 new Bounds(Vector3.up * 2f, new Vector3(8f, 4f, 6f)),
                 Vector3.forward,
+                GeneratedCityBuildingRole.House,
+                SourceGuid,
                 0,
                 500f,
                 1,

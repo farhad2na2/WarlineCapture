@@ -275,6 +275,8 @@ public sealed class DenseCityGenerationTransactionContextTests
                 2f,
                 new Bounds(new Vector3(sequence, 4f, districtId), new Vector3(8f, 4f, 6f)),
                 Vector3.forward,
+                GeneratedCityBuildingRole.House,
+                IntactGuid,
                 0,
                 500f,
                 1,

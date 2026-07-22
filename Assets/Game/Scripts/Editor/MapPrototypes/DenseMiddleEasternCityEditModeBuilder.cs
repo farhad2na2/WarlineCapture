@@ -698,6 +698,7 @@ namespace Game.Editor
             private readonly Vector3 _roadOrigin;
             private readonly RuntimeCitySpawnerSystemConfig _config;
             private readonly DenseCityBuildingMaterialLibrary _materialLibrary;
+            private readonly DenseCityBuildingDefinitionLibrary _definitionLibrary;
             private readonly DenseCityGenerationTransactionContext _generationTransactions;
             private readonly Transform _presentationParent;
             private readonly List<Rect> _occupiedBounds = new();
@@ -720,6 +721,7 @@ namespace Game.Editor
                 _roadOrigin = roadOrigin;
                 _config = config ?? throw new ArgumentNullException(nameof(config));
                 _materialLibrary = materialLibrary ?? throw new ArgumentNullException(nameof(materialLibrary));
+                _definitionLibrary = DenseCityBuildingDefinitionLibrary.LoadExisting();
                 _generationTransactions = generationTransactions ??
                     throw new ArgumentNullException(nameof(generationTransactions));
                 _presentationParent = presentationParent != null
@@ -776,6 +778,8 @@ namespace Game.Editor
                             plan.FoundationElevation,
                             plan.BlockerBounds,
                             plan.FrontageDirection,
+                            info.BuildingRole,
+                            _definitionLibrary.ResolveAssetGuid(info.BuildingRole),
                             0,
                             _config.DefaultBuildingMaxHealth,
                             DenseCityBuildingMovementMask,

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 using Game.Components;
+using Game.Configs;
 using UnityEngine;
 
 namespace Game.Editor
@@ -137,6 +138,8 @@ namespace Game.Editor
             float foundationElevation,
             Bounds blockerBounds,
             Vector3 frontageDirection,
+            GeneratedCityBuildingRole role,
+            string definitionConfigAssetGuid,
             int factionId,
             float maximumHealth,
             OperationMapBuildingBlockerPolicy blockerPolicy,
@@ -159,6 +162,12 @@ namespace Game.Editor
                 throw new ArgumentOutOfRangeException(nameof(blockerBounds));
             if (!IsFinite(frontageDirection) || frontageDirection.sqrMagnitude <= 0.000001f)
                 throw new ArgumentOutOfRangeException(nameof(frontageDirection));
+            if (role is <= GeneratedCityBuildingRole.None or > GeneratedCityBuildingRole.Other)
+                throw new ArgumentOutOfRangeException(nameof(role));
+            if (!IsLowerHexGuid(definitionConfigAssetGuid))
+                throw new ArgumentException(
+                    "Building definition config GUID must be 32 lowercase hexadecimal characters.",
+                    nameof(definitionConfigAssetGuid));
             if (factionId < 0)
                 throw new ArgumentOutOfRangeException(nameof(factionId));
             if (!float.IsFinite(maximumHealth) || maximumHealth <= 0f)
@@ -174,6 +183,8 @@ namespace Game.Editor
             FoundationElevation = foundationElevation;
             BlockerBounds = blockerBounds;
             FrontageDirection = frontageDirection.normalized;
+            Role = role;
+            DefinitionConfigAssetGuid = definitionConfigAssetGuid;
             FactionId = factionId;
             MaximumHealth = maximumHealth;
             BlockerPolicy = blockerPolicy;
@@ -191,6 +202,8 @@ namespace Game.Editor
         internal float FoundationElevation { get; }
         internal Bounds BlockerBounds { get; }
         internal Vector3 FrontageDirection { get; }
+        internal GeneratedCityBuildingRole Role { get; }
+        internal string DefinitionConfigAssetGuid { get; }
         internal int FactionId { get; }
         internal float MaximumHealth { get; }
         internal OperationMapBuildingBlockerPolicy BlockerPolicy { get; }
@@ -213,6 +226,20 @@ namespace Game.Editor
 
         private static bool IsFinite(Vector3 value) =>
             float.IsFinite(value.x) && float.IsFinite(value.y) && float.IsFinite(value.z);
+
+        private static bool IsLowerHexGuid(string value)
+        {
+            if (string.IsNullOrEmpty(value) || value.Length != 32)
+                return false;
+            for (int index = 0; index < value.Length; index++)
+            {
+                char character = value[index];
+                if (!((character >= '0' && character <= '9') ||
+                      (character >= 'a' && character <= 'f')))
+                    return false;
+            }
+            return true;
+        }
     }
 
     internal readonly struct DenseCitySurfaceBakeRecord

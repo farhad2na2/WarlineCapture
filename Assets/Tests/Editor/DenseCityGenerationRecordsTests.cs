@@ -1,5 +1,6 @@
 using System;
 using Game.Components;
+using Game.Configs;
 using Game.Editor;
 using NUnit.Framework;
 using UnityEngine;
@@ -101,6 +102,8 @@ public sealed class DenseCityGenerationRecordsTests
                 0f,
                 new Bounds(Vector3.zero, Vector3.one),
                 Vector3.forward,
+                GeneratedCityBuildingRole.House,
+                SourceGuid,
                 0,
                 100f,
                 OperationMapBuildingBlockerPolicy.RubbleRemainsBlocked,
@@ -201,6 +204,8 @@ public sealed class DenseCityGenerationRecordsTests
             0f,
             new Bounds(Vector3.zero, new Vector3(8f, 5f, 6f)),
             Vector3.forward,
+            GeneratedCityBuildingRole.House,
+            SourceGuid,
             0,
             100f,
             OperationMapBuildingBlockerPolicy.RubbleRemainsBlocked,

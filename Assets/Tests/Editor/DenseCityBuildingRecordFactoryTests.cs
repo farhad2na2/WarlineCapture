@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Game.Configs;
 using Game.Editor;
 using NUnit.Framework;
 using UnityEngine;
@@ -17,6 +18,8 @@ public sealed class DenseCityBuildingRecordFactoryTests
         Assert.That(group.Building.Identity.DeterministicSequence, Is.EqualTo(20));
         Assert.That(group.Building.OriginCell, Is.EqualTo(new Vector2Int(12, 18)));
         Assert.That(group.Building.FootprintCells, Is.EqualTo(new Vector2Int(8, 6)));
+        Assert.That(group.Building.Role, Is.EqualTo(GeneratedCityBuildingRole.Shop));
+        Assert.That(group.Building.DefinitionConfigAssetGuid, Is.EqualTo(IntactGuid));
         Assert.That(group.Foundation.Identity, Is.EqualTo(group.Building.FoundationSurfaceIdentity));
         Assert.That(group.Blocker.Identity, Is.EqualTo(group.Building.BlockerSurfaceIdentity));
         Assert.That(group.IntactPresentation.Identity, Is.EqualTo(group.Building.IntactPresentationIdentity));
@@ -57,6 +60,8 @@ public sealed class DenseCityBuildingRecordFactoryTests
             2f,
             new Bounds(new Vector3(10f, 4f, 20f), new Vector3(6f, 4f, 8f)),
             Vector3.right,
+            GeneratedCityBuildingRole.Shop,
+            IntactGuid,
             0,
             500f,
             1,

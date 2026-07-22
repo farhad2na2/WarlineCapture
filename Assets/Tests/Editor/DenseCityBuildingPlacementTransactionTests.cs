@@ -1,4 +1,5 @@
 using System;
+using Game.Configs;
 using Game.Editor;
 using NUnit.Framework;
 using UnityEngine;
@@ -96,6 +97,8 @@ public sealed class DenseCityBuildingPlacementTransactionTests
                 2f,
                 new Bounds(new Vector3(10f, 4f, 20f), new Vector3(8f, 4f, 6f)),
                 Vector3.forward,
+                GeneratedCityBuildingRole.Civic,
+                IntactGuid,
                 0,
                 500f,
                 1,

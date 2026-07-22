@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Game.Configs;
 using UnityEngine;
 
 namespace Game.Editor
@@ -21,6 +22,8 @@ namespace Game.Editor
             float foundationElevation,
             Bounds blockerBounds,
             Vector3 frontageDirection,
+            GeneratedCityBuildingRole role,
+            string definitionConfigAssetGuid,
             int factionId,
             float maximumHealth,
             uint movementMask,
@@ -42,6 +45,8 @@ namespace Game.Editor
             FoundationElevation = foundationElevation;
             BlockerBounds = blockerBounds;
             FrontageDirection = frontageDirection;
+            Role = role;
+            DefinitionConfigAssetGuid = definitionConfigAssetGuid;
             FactionId = factionId;
             MaximumHealth = maximumHealth;
             MovementMask = movementMask;
@@ -64,6 +69,8 @@ namespace Game.Editor
         internal float FoundationElevation { get; }
         internal Bounds BlockerBounds { get; }
         internal Vector3 FrontageDirection { get; }
+        internal GeneratedCityBuildingRole Role { get; }
+        internal string DefinitionConfigAssetGuid { get; }
         internal int FactionId { get; }
         internal float MaximumHealth { get; }
         internal uint MovementMask { get; }
@@ -109,6 +116,8 @@ namespace Game.Editor
                 request.FoundationElevation,
                 request.BlockerBounds,
                 request.FrontageDirection,
+                request.Role,
+                request.DefinitionConfigAssetGuid,
                 request.FactionId,
                 request.MaximumHealth,
                 request.MovementMask,

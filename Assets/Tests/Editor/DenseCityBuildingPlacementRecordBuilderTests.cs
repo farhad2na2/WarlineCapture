@@ -20,6 +20,7 @@ public sealed class DenseCityBuildingPlacementRecordBuilderTests
         GameObject intactPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShopPath);
         GameObject destroyedPrefab = config.GetGeneratedDestroyedVisualPrefab(GeneratedCityBuildingRole.Shop);
         DenseCityBuildingMaterialLibrary materialLibrary = DenseCityBuildingMaterialLibrary.LoadExisting();
+        DenseCityBuildingDefinitionLibrary definitionLibrary = DenseCityBuildingDefinitionLibrary.LoadExisting();
         DenseCityBuildingMaterialSelection selection =
             DenseCityBuildingMaterialVariantSelector.Select(
                 new Vector3(10f, 0f, -5f),
@@ -48,6 +49,8 @@ public sealed class DenseCityBuildingPlacementRecordBuilderTests
                 2f,
                 new Bounds(new Vector3(10f, 4f, -5f), new Vector3(6f, 4f, 8f)),
                 Vector3.right,
+                GeneratedCityBuildingRole.Shop,
+                definitionLibrary.ResolveAssetGuid(GeneratedCityBuildingRole.Shop),
                 0,
                 config.DefaultBuildingMaxHealth,
                 (uint)(MapSurfaceMovementMask.AllGroundUnits |
@@ -62,6 +65,10 @@ public sealed class DenseCityBuildingPlacementRecordBuilderTests
         Assert.That(group.Building.Identity.DeterministicSequence, Is.EqualTo(25));
         Assert.That(group.Building.OriginCell, Is.EqualTo(new Vector2Int(20, 30)));
         Assert.That(group.Building.FootprintCells, Is.EqualTo(new Vector2Int(8, 6)));
+        Assert.That(group.Building.Role, Is.EqualTo(GeneratedCityBuildingRole.Shop));
+        Assert.That(
+            group.Building.DefinitionConfigAssetGuid,
+            Is.EqualTo(definitionLibrary.ResolveAssetGuid(GeneratedCityBuildingRole.Shop)));
         Assert.That(group.Building.MaximumHealth, Is.EqualTo(config.DefaultBuildingMaxHealth));
         Assert.That(group.IntactPresentation.PrefabAssetGuid, Is.EqualTo(AssetDatabase.AssetPathToGUID(ShopPath)));
         Assert.That(group.IntactPresentation.MaterialAssetGuids.ToArray(), Does.Contain(selectedMaterialGuid));

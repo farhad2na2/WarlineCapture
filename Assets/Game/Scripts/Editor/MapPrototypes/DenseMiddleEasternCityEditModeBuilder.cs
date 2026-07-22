@@ -37,6 +37,9 @@ namespace Game.Editor
             public readonly int SemanticCivicBuildings;
             public readonly int SemanticCivicRoads;
             public readonly int SemanticHorizonMountains;
+            public readonly int SemanticBoulevardMedianTrees;
+            public readonly int SemanticBoulevardMedianLights;
+            public readonly int SemanticSidewalkStreetLights;
 
             public Result(
                 int roadTiles,
@@ -57,7 +60,10 @@ namespace Game.Editor
                 int semanticCanalLights,
                 int semanticCivicBuildings,
                 int semanticCivicRoads,
-                int semanticHorizonMountains)
+                int semanticHorizonMountains,
+                int semanticBoulevardMedianTrees,
+                int semanticBoulevardMedianLights,
+                int semanticSidewalkStreetLights)
             {
                 RoadTiles = roadTiles;
                 RoadChunks = roadChunks;
@@ -78,6 +84,9 @@ namespace Game.Editor
                 SemanticCivicBuildings = semanticCivicBuildings;
                 SemanticCivicRoads = semanticCivicRoads;
                 SemanticHorizonMountains = semanticHorizonMountains;
+                SemanticBoulevardMedianTrees = semanticBoulevardMedianTrees;
+                SemanticBoulevardMedianLights = semanticBoulevardMedianLights;
+                SemanticSidewalkStreetLights = semanticSidewalkStreetLights;
             }
         }
 
@@ -1360,6 +1369,15 @@ namespace Game.Editor
             int semanticHorizonMountains = CountPresentationRecords(
                 generationTransactions.Records.Presentations,
                 "horizon-mountain-visual");
+            int semanticBoulevardMedianTrees = CountPresentationRecords(
+                generationTransactions.Records.Presentations,
+                "boulevard-median-tree-visual");
+            int semanticBoulevardMedianLights = CountPresentationRecords(
+                generationTransactions.Records.Presentations,
+                "boulevard-median-light-visual");
+            int semanticSidewalkStreetLights = CountPresentationRecords(
+                generationTransactions.Records.Presentations,
+                "sidewalk-street-light-visual");
             if (semanticCanalWaterExclusions != canalResult.WaterTiles ||
                 semanticCanalBedPresentations != canalResult.WaterTiles ||
                 semanticCanalWaterPresentations != canalResult.WaterTiles)
@@ -1428,6 +1446,16 @@ namespace Game.Editor
                     $"Horizon mountain semantic parity failed: " +
                     $"realized={horizonMountains} semantic={semanticHorizonMountains}.");
             }
+            if (semanticBoulevardMedianTrees != urbanDetails.BoulevardMedianTrees ||
+                semanticBoulevardMedianLights != urbanDetails.BoulevardMedianLights ||
+                semanticSidewalkStreetLights != urbanDetails.StreetLights)
+            {
+                throw new InvalidOperationException(
+                    $"Street-detail semantic parity failed: " +
+                    $"medianTrees={urbanDetails.BoulevardMedianTrees}/{semanticBoulevardMedianTrees} " +
+                    $"medianLights={urbanDetails.BoulevardMedianLights}/{semanticBoulevardMedianLights} " +
+                    $"sidewalkLights={urbanDetails.StreetLights}/{semanticSidewalkStreetLights}.");
+            }
             Debug.Log(
                 $"[DenseCitySemanticRecords] buildings={generationTransactions.Records.Buildings.Count} " +
                 $"surfaces={generationTransactions.Records.Surfaces.Count} " +
@@ -1439,7 +1467,10 @@ namespace Game.Editor
                 $"canalTrees={semanticCanalTrees} canalBushes={semanticCanalBushes} " +
                 $"canalLights={semanticCanalLights} " +
                 $"civicBuildings={semanticCivicBuildings} civicRoads={semanticCivicRoads} " +
-                $"horizonMountains={semanticHorizonMountains}");
+                $"horizonMountains={semanticHorizonMountains} " +
+                $"boulevardMedianTrees={semanticBoulevardMedianTrees} " +
+                $"boulevardMedianLights={semanticBoulevardMedianLights} " +
+                $"sidewalkStreetLights={semanticSidewalkStreetLights}");
 
             int removedFloatingBranches = RemoveUnsupportedElevatedVisualBranches(generatedRoot);
             Debug.Log($"[DenseCityFloatingItemCleanup] removedBranches={removedFloatingBranches}");
@@ -1471,7 +1502,10 @@ namespace Game.Editor
                 semanticCanalLights,
                 semanticCivicBuildings,
                 semanticCivicRoads,
-                semanticHorizonMountains);
+                semanticHorizonMountains,
+                semanticBoulevardMedianTrees,
+                semanticBoulevardMedianLights,
+                semanticSidewalkStreetLights);
         }
 
         private static int CountBuildingRecords(
@@ -7230,6 +7264,10 @@ namespace Game.Editor
             GameObject boulevardMedianTree = LoadRequiredPrefab(BoulevardMedianTreePrefabPath);
             GameObject grass = LoadRequiredPrefab(GrassPrefabPath);
             GameObject mainStreetBush = LoadRequiredPrefab(MainStreetBushPrefabPath);
+            DenseCityVisualAssetMetadata boulevardMedianTreeMetadata =
+                DenseCityVisualAssetMetadataExtractor.Extract(boulevardMedianTree);
+            DenseCityVisualAssetMetadata streetLightMetadata =
+                DenseCityVisualAssetMetadataExtractor.Extract(streetLight);
 
             var streetPropRootObject = new GameObject("DenseCity_GroundedStreetProps");
             streetPropRootObject.transform.SetParent(generatedRoot, false);
@@ -7283,14 +7321,17 @@ namespace Game.Editor
                 boulevardMedianRootObject.transform,
                 buildings,
                 boulevardMedianTree,
+                boulevardMedianTreeMetadata,
                 streetLight,
+                streetLightMetadata,
                 boulevardMedianCells,
                 mapOrigin,
                 authoredCoreBounds,
                 roadCells,
                 reservedDetailAreas,
                 gradeElevation,
-                seed);
+                seed,
+                generationTransactions);
             reservedDetailAreas.AddRange(boulevardMedianDetails.ReservedAreas);
             var landscapingDetails = new LandscapingDetailResult();
             AddMainStreetBushes(
@@ -7329,6 +7370,7 @@ namespace Game.Editor
                 streetLightRootObject.transform,
                 buildings,
                 streetLight,
+                streetLightMetadata,
                 mapOrigin,
                 cityFootprint,
                 authoredCoreBounds,
@@ -7337,7 +7379,8 @@ namespace Game.Editor
                 boulevardRoadCells,
                 reservedDetailAreas,
                 gradeElevation,
-                seed);
+                seed,
+                generationTransactions);
             reservedDetailAreas.AddRange(streetLightDetails.ReservedAreas);
             int bushReservedAreaCount = landscapingDetails.ReservedAreas.Count;
             AddFreeGroundGrass(
@@ -7439,14 +7482,17 @@ namespace Game.Editor
             Transform parent,
             List<GeneratedBuildingInfo> buildings,
             GameObject treePrefab,
+            DenseCityVisualAssetMetadata treeMetadata,
             GameObject lightPrefab,
+            DenseCityVisualAssetMetadata lightMetadata,
             List<BoulevardMedianCell> medianCells,
             Vector3 mapOrigin,
             Rect authoredCoreBounds,
             HashSet<Vector2Int> roadCells,
             List<Rect> reservedAreas,
             float gradeElevation,
-            uint seed)
+            uint seed,
+            DenseCityGenerationTransactionContext generationTransactions)
         {
             var result = new BoulevardMedianDetailResult();
             medianCells.Sort((left, right) =>
@@ -7497,14 +7543,19 @@ namespace Game.Editor
                     : 1f;
                 if (placeTree)
                 {
-                    if (InstantiateGroundedDetail(
+                    if (InstantiateTransactionalGroundedDetail(
                             prefab,
+                            treeMetadata,
                             parent,
                             $"{prefab.name}_BoulevardMedianTree_{result.Trees:0000}",
                             position,
                             gradeElevation + 0.025f,
                             rotation,
-                            scale))
+                            scale,
+                            DenseCityPresentationCategory.Vegetation,
+                            "boulevard-median-tree-visual",
+                            seed,
+                            generationTransactions))
                     {
                         result.Trees++;
                     }
@@ -7512,14 +7563,19 @@ namespace Game.Editor
                     continue;
                 }
 
-                if (!InstantiateGroundedDetail(
+                if (!InstantiateTransactionalGroundedDetail(
                         prefab,
+                        lightMetadata,
                         parent,
                         $"{prefab.name}_BoulevardMedianLight_{result.Lights:0000}",
                         position,
                         gradeElevation + 0.025f,
                         rotation,
-                        scale))
+                        scale,
+                        DenseCityPresentationCategory.Infrastructure,
+                        "boulevard-median-light-visual",
+                        seed,
+                        generationTransactions))
                 {
                     continue;
                 }
@@ -8023,6 +8079,7 @@ namespace Game.Editor
             Transform parent,
             List<GeneratedBuildingInfo> buildings,
             GameObject lightPrefab,
+            DenseCityVisualAssetMetadata lightMetadata,
             Vector3 mapOrigin,
             CityFootprint cityFootprint,
             Rect authoredCoreBounds,
@@ -8031,7 +8088,8 @@ namespace Game.Editor
             HashSet<Vector2Int> boulevardRoadCells,
             List<Rect> reservedAreas,
             float gradeElevation,
-            uint seed)
+            uint seed,
+            DenseCityGenerationTransactionContext generationTransactions)
         {
             var result = new StreetLightDetailResult();
             var sortedRoadCells = new List<Vector2Int>(roadCells);
@@ -8087,14 +8145,19 @@ namespace Game.Editor
                 float rotation = horizontal
                     ? resolvedSide > 0 ? 180f : 0f
                     : resolvedSide > 0 ? 270f : 90f;
-                if (!InstantiateGroundedDetail(
+                if (!InstantiateTransactionalGroundedDetail(
                         lightPrefab,
+                        lightMetadata,
                         parent,
                         $"{lightPrefab.name}_Sidewalk_{result.Lights:0000}",
                         lightPosition,
                         gradeElevation + 0.025f,
                         rotation,
-                        1f))
+                        1f,
+                        DenseCityPresentationCategory.Infrastructure,
+                        "sidewalk-street-light-visual",
+                        seed,
+                        generationTransactions))
                 {
                     continue;
                 }

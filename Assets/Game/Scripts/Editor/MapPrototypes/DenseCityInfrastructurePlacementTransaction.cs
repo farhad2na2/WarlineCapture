@@ -16,6 +16,20 @@ namespace Game.Editor
         internal DenseCityPresentationBakeRecord Presentation { get; }
     }
 
+    internal readonly struct DenseCityVisualBlockerRecordGroup
+    {
+        internal DenseCityVisualBlockerRecordGroup(
+            DenseCitySurfaceBakeRecord blocker,
+            DenseCityPresentationBakeRecord presentation)
+        {
+            Blocker = blocker;
+            Presentation = presentation;
+        }
+
+        internal DenseCitySurfaceBakeRecord Blocker { get; }
+        internal DenseCityPresentationBakeRecord Presentation { get; }
+    }
+
     internal readonly struct DenseCityBridgeRecordGroup
     {
         internal DenseCityBridgeRecordGroup(
@@ -108,6 +122,35 @@ namespace Game.Editor
             catch
             {
                 records.RemoveInfrastructureGroup(group.Surface, group.Presentation);
+                throw;
+            }
+        }
+    }
+
+    internal static class DenseCityVisualBlockerPlacementTransaction
+    {
+        internal static bool TryCommitAndRealize(
+            DenseCityGenerationRecordSet records,
+            DenseCityVisualBlockerRecordGroup group,
+            Func<bool> realize)
+        {
+            if (records == null)
+                throw new ArgumentNullException(nameof(records));
+            if (realize == null)
+                throw new ArgumentNullException(nameof(realize));
+
+            records.AddVisualBlockerGroup(group.Blocker, group.Presentation);
+            try
+            {
+                if (realize())
+                    return true;
+
+                records.RemoveVisualBlockerGroup(group.Blocker, group.Presentation);
+                return false;
+            }
+            catch
+            {
+                records.RemoveVisualBlockerGroup(group.Blocker, group.Presentation);
                 throw;
             }
         }

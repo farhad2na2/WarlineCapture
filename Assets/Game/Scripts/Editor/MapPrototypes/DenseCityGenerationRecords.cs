@@ -448,6 +448,54 @@ namespace Game.Editor
             presentations.Add(presentation);
         }
 
+        internal void AddVisualBlockerGroup(
+            DenseCitySurfaceBakeRecord blocker,
+            DenseCityPresentationBakeRecord presentation)
+        {
+            RequireWritable();
+            if (blocker.Kind != DenseCitySurfaceRecordKind.Blocker || blocker.MovementMask != 0)
+                throw new ArgumentException("Visual blocker requires a non-traversable blocker record.", nameof(blocker));
+            if (presentation.Category != DenseCityPresentationCategory.Infrastructure)
+                throw new ArgumentException("Visual blocker presentation must be infrastructure.", nameof(presentation));
+            if (surfaces.Count >= surfaceCapacity || presentations.Count >= presentationCapacity)
+                throw new InvalidOperationException("Dense-city visual blocker record group exceeds a configured capacity.");
+
+            string blockerKey = blocker.Identity.StableKey;
+            string presentationKey = presentation.Identity.StableKey;
+            if (blockerKey == presentationKey || stableKeys.Contains(blockerKey) || stableKeys.Contains(presentationKey))
+            {
+                throw new InvalidOperationException(
+                    $"Duplicate dense-city record identity: '{(stableKeys.Contains(blockerKey) ? blockerKey : presentationKey)}'.");
+            }
+
+            stableKeys.Add(blockerKey);
+            stableKeys.Add(presentationKey);
+            surfaces.Add(blocker);
+            presentations.Add(presentation);
+        }
+
+        internal void RemoveVisualBlockerGroup(
+            DenseCitySurfaceBakeRecord blocker,
+            DenseCityPresentationBakeRecord presentation)
+        {
+            RequireWritable();
+            int blockerIndex = FindIndex(surfaces, blocker.Identity.StableKey, record => record.Identity);
+            int presentationIndex = FindIndex(
+                presentations,
+                presentation.Identity.StableKey,
+                record => record.Identity);
+            if (blockerIndex < 0 || presentationIndex < 0)
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city visual blocker record group is incomplete: '{blocker.Identity.StableKey}'.");
+            }
+
+            stableKeys.Remove(blocker.Identity.StableKey);
+            stableKeys.Remove(presentation.Identity.StableKey);
+            surfaces.RemoveAt(blockerIndex);
+            presentations.RemoveAt(presentationIndex);
+        }
+
         internal void RemoveInfrastructureGroup(
             DenseCitySurfaceBakeRecord surface,
             DenseCityPresentationBakeRecord presentation)

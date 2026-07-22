@@ -102,6 +102,33 @@ public sealed class DenseCityGenerationTransactionContextTests
     }
 
     [Test]
+    public void VisualBlockerPlacement_CommitsAndRollsBackSurfaceAndPresentationAtomically()
+    {
+        using var context = new DenseCityGenerationTransactionContext(1, 1, 1);
+        int rejectedSequence = -1;
+        int acceptedSequence = -1;
+
+        Assert.That(context.TryPlaceVisualBlocker(4, sequence =>
+        {
+            rejectedSequence = sequence;
+            return CreateVisualBlockerGroup(sequence);
+        }, () => false), Is.False);
+        Assert.That(context.TryPlaceVisualBlocker(4, sequence =>
+        {
+            acceptedSequence = sequence;
+            return CreateVisualBlockerGroup(sequence);
+        }, () => true), Is.True);
+        context.Seal();
+
+        Assert.That(rejectedSequence, Is.Zero);
+        Assert.That(acceptedSequence, Is.EqualTo(2));
+        Assert.That(context.Records.Surfaces, Has.Count.EqualTo(1));
+        Assert.That(context.Records.Surfaces[0].Kind, Is.EqualTo(DenseCitySurfaceRecordKind.Blocker));
+        Assert.That(context.Records.Presentations, Has.Count.EqualTo(1));
+        Assert.That(context.Records.Presentations[0].Category, Is.EqualTo(DenseCityPresentationCategory.Infrastructure));
+    }
+
+    [Test]
     public void BridgePlacement_ReservesFourSharedInfrastructureSequences()
     {
         using var context = new DenseCityGenerationTransactionContext(1, 4, 1);
@@ -277,6 +304,26 @@ public sealed class DenseCityGenerationTransactionContextTests
             2);
         return new DenseCityInfrastructureRecordGroup(surface, presentation);
     }
+
+    private static DenseCityVisualBlockerRecordGroup CreateVisualBlockerGroup(int sequence) =>
+        DenseCityVisualBlockerRecordFactory.Create(
+            new DenseCityVisualBlockerRecordInput(
+                "dense-city-v1",
+                42,
+                4,
+                sequence,
+                "courtyard-wall",
+                IntactGuid,
+                123,
+                new[] { MaterialGuid },
+                Matrix4x4.identity,
+                new Vector2(4f, 0.4f),
+                0f,
+                0,
+                Vector2Int.zero,
+                true,
+                true,
+                1));
 
     private static DenseCitySurfaceBakeRecord CreateRamp(int sequence) =>
         CreateSurface(sequence, DenseCitySurfaceRecordKind.Ramp, "ramp");

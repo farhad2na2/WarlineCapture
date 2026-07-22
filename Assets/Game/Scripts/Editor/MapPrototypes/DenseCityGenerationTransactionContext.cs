@@ -150,6 +150,28 @@ namespace Game.Editor
                 realize);
         }
 
+        internal bool TryPlaceVisualBlocker(
+            int districtId,
+            Func<int, DenseCityVisualBlockerRecordGroup> createGroup,
+            Func<bool> realize)
+        {
+            RequireActive();
+            if (districtId < 0)
+                throw new ArgumentOutOfRangeException(nameof(districtId));
+            if (createGroup == null)
+                throw new ArgumentNullException(nameof(createGroup));
+            if (realize == null)
+                throw new ArgumentNullException(nameof(realize));
+
+            int sequenceStart = GetInfrastructureSequenceStart(districtId, 2);
+            DenseCityVisualBlockerRecordGroup group = createGroup(sequenceStart);
+            nextInfrastructureSequenceByDistrict[districtId] = sequenceStart + 2;
+            return DenseCityVisualBlockerPlacementTransaction.TryCommitAndRealize(
+                Records,
+                group,
+                realize);
+        }
+
         internal bool TryPlaceRoad(
             int districtId,
             int shoulderCount,

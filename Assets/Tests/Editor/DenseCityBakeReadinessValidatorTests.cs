@@ -28,7 +28,9 @@ public sealed class DenseCityBakeReadinessValidatorTests
             suite.AuthoringOwnership_RejectsBuildingInOperationMapScene,
             suite.AuthoringOwnership_RejectsPhysicsInInactiveGeneratedDescendant,
             suite.GenerationState_AcceptsExplicitNotGeneratedScenePair,
-            suite.GenerationState_RejectsPartialGeneratedScenePair
+            suite.GenerationState_RejectsPartialGeneratedScenePair,
+            suite.AuthoringOwnership_RejectsDuplicateGeneratedRoleRoot,
+            suite.AuthoringOwnership_RejectsEveryGenerationContractMismatch
         };
 
         for (int index = 0; index < tests.Length; index++)
@@ -277,6 +279,90 @@ public sealed class DenseCityBakeReadinessValidatorTests
         {
             EditorSceneManager.CloseScene(entityScene, true);
             EditorSceneManager.CloseScene(mapScene, true);
+        }
+    }
+
+    [Test]
+    public void AuthoringOwnership_RejectsDuplicateGeneratedRoleRoot()
+    {
+        (Scene mapScene, Scene entityScene) = CreateScenePair();
+        try
+        {
+            var roots = DenseCitySemanticHierarchyBuilder.Create(
+                mapScene,
+                entityScene,
+                GenerationId,
+                "dense-city-v1",
+                1,
+                42,
+                Hash);
+            GameObject duplicate = UnityEngine.Object.Instantiate(roots.MapBakeSource.gameObject);
+            duplicate.name = "DuplicateMapBakeSource";
+            SceneManager.MoveGameObjectToScene(duplicate, mapScene);
+
+            Assert.That(
+                DenseCityBakeReadinessValidator.TryValidateAuthoringOwnership(
+                    mapScene,
+                    entityScene,
+                    OperationMapId,
+                    GenerationId,
+                    out string error),
+                Is.False);
+            StringAssert.Contains("exactly one marked dense-city root", error);
+        }
+        finally
+        {
+            EditorSceneManager.CloseScene(entityScene, true);
+            EditorSceneManager.CloseScene(mapScene, true);
+        }
+    }
+
+    [Test]
+    public void AuthoringOwnership_RejectsEveryGenerationContractMismatch()
+    {
+        (string propertyName, Action<SerializedProperty> mutate)[] mismatches =
+        {
+            ("generationId", property => property.stringValue = "dense-city:test:43"),
+            ("generatorSchema", property => property.stringValue = "dense-city-v2"),
+            ("generatorSchemaVersion", property => property.intValue = 2),
+            ("deterministicSeed", property => property.intValue = 43),
+            ("deterministicGenerationHash", property => property.stringValue =
+                "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789")
+        };
+
+        foreach ((string propertyName, Action<SerializedProperty> mutate) in mismatches)
+        {
+            (Scene mapScene, Scene entityScene) = CreateScenePair();
+            try
+            {
+                var roots = DenseCitySemanticHierarchyBuilder.Create(
+                    mapScene,
+                    entityScene,
+                    GenerationId,
+                    "dense-city-v1",
+                    1,
+                    42,
+                    Hash);
+                var serialized = new SerializedObject(roots.EntityPresentationSource);
+                mutate(serialized.FindProperty(propertyName));
+                serialized.ApplyModifiedPropertiesWithoutUndo();
+
+                Assert.That(
+                    DenseCityBakeReadinessValidator.TryValidateAuthoringOwnership(
+                        mapScene,
+                        entityScene,
+                        OperationMapId,
+                        GenerationId,
+                        out string error),
+                    Is.False,
+                    propertyName);
+                StringAssert.Contains("same deterministic generation set", error, propertyName);
+            }
+            finally
+            {
+                EditorSceneManager.CloseScene(entityScene, true);
+                EditorSceneManager.CloseScene(mapScene, true);
+            }
         }
     }
 

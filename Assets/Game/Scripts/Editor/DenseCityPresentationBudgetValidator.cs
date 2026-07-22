@@ -104,7 +104,17 @@ namespace Game.Editor
                 bake.gameplayVehicleCount != OperationMapEntityPresentationCandidateBakeValidator.ExpectedGameplayVehicles ||
                 bake.presentationRootCount != OperationMapEntityPresentationCandidateBakeValidator.ExpectedPresentationRoots ||
                 bake.presentationIdentityCount != OperationMapEntityPresentationCandidateBakeValidator.ExpectedPresentationIdentities ||
+                bake.gameplayBuildingIdentityCount != OperationMapEntityPresentationCandidateBakeValidator.ExpectedGameplayBuildings ||
+                bake.gameplayVehicleIdentityCount != OperationMapEntityPresentationCandidateBakeValidator.ExpectedGameplayVehicles ||
+                bake.renderOnlyIdentityCount != OperationMapEntityPresentationCandidateBakeValidator.ExpectedRenderOnlyOwners ||
+                bake.unknownRoleIdentityCount != 0 || bake.totalEntityCount <= 0 ||
+                bake.entityArchetypeCount <= 0 || bake.entityChunkCount <= 0 ||
                 bake.renderMeshEntityCount <= 0 || bake.nonFiniteTransformCount != 0 ||
+                bake.renderChildEntityCount <= 0 || bake.sharedRenderMeshArrayIdentityCount <= 0 ||
+                bake.sharedMeshAssetIdentityCount <= 0 || bake.sharedMaterialAssetIdentityCount <= 0 ||
+                bake.intactVisualRootCount != OperationMapEntityPresentationCandidateBakeValidator.ExpectedGameplayBuildings ||
+                bake.missingIntactVisualRootCount != 0 ||
+                bake.sharedIntactDestroyedVisualRootCount != 0 ||
                 bake.managedMapVisualCompanionCount != 0)
             {
                 error = "candidate-bake-budget";
@@ -168,8 +178,23 @@ namespace Game.Editor
                 gameplayVehicleCount = bake.gameplayVehicleCount,
                 presentationRootCount = bake.presentationRootCount,
                 presentationIdentityCount = bake.presentationIdentityCount,
+                gameplayBuildingIdentityCount = bake.gameplayBuildingIdentityCount,
+                gameplayVehicleIdentityCount = bake.gameplayVehicleIdentityCount,
+                renderOnlyIdentityCount = bake.renderOnlyIdentityCount,
+                totalEntityCount = bake.totalEntityCount,
+                entityArchetypeCount = bake.entityArchetypeCount,
+                entityChunkCount = bake.entityChunkCount,
                 renderEntityCount = bake.renderMeshEntityCount,
+                renderChildEntityCount = bake.renderChildEntityCount,
+                sharedRenderMeshArrayIdentityCount = bake.sharedRenderMeshArrayIdentityCount,
+                sharedMeshAssetIdentityCount = bake.sharedMeshAssetIdentityCount,
+                sharedMaterialAssetIdentityCount = bake.sharedMaterialAssetIdentityCount,
                 buildingRenderChildCount = bake.buildingRenderChildCount,
+                intactVisualRootCount = bake.intactVisualRootCount,
+                destroyedVisualRootCount = bake.destroyedVisualRootCount,
+                missingIntactVisualRootCount = bake.missingIntactVisualRootCount,
+                missingDestroyedVisualRootCount = bake.missingDestroyedVisualRootCount,
+                sharedIntactDestroyedVisualRootCount = bake.sharedIntactDestroyedVisualRootCount,
                 nonFiniteTransformCount = bake.nonFiniteTransformCount,
                 managedMapVisualCompanionCount = bake.managedMapVisualCompanionCount,
                 sourceRendererCount = art.sourceCount,
@@ -452,8 +477,24 @@ namespace Game.Editor
             public int gameplayVehicleCount;
             public int presentationRootCount;
             public int presentationIdentityCount;
+            public int gameplayBuildingIdentityCount;
+            public int gameplayVehicleIdentityCount;
+            public int renderOnlyIdentityCount;
+            public int unknownRoleIdentityCount;
+            public int totalEntityCount;
+            public int entityArchetypeCount;
+            public int entityChunkCount;
             public int renderMeshEntityCount;
+            public int renderChildEntityCount;
+            public int sharedRenderMeshArrayIdentityCount;
+            public int sharedMeshAssetIdentityCount;
+            public int sharedMaterialAssetIdentityCount;
             public int buildingRenderChildCount;
+            public int intactVisualRootCount;
+            public int destroyedVisualRootCount;
+            public int missingIntactVisualRootCount;
+            public int missingDestroyedVisualRootCount;
+            public int sharedIntactDestroyedVisualRootCount;
             public int nonFiniteTransformCount;
             public int managedMapVisualCompanionCount;
         }
@@ -531,8 +572,23 @@ namespace Game.Editor
             public int gameplayVehicleCount;
             public int presentationRootCount;
             public int presentationIdentityCount;
+            public int gameplayBuildingIdentityCount;
+            public int gameplayVehicleIdentityCount;
+            public int renderOnlyIdentityCount;
+            public int totalEntityCount;
+            public int entityArchetypeCount;
+            public int entityChunkCount;
             public int renderEntityCount;
+            public int renderChildEntityCount;
+            public int sharedRenderMeshArrayIdentityCount;
+            public int sharedMeshAssetIdentityCount;
+            public int sharedMaterialAssetIdentityCount;
             public int buildingRenderChildCount;
+            public int intactVisualRootCount;
+            public int destroyedVisualRootCount;
+            public int missingIntactVisualRootCount;
+            public int missingDestroyedVisualRootCount;
+            public int sharedIntactDestroyedVisualRootCount;
             public int nonFiniteTransformCount;
             public int managedMapVisualCompanionCount;
             public int sourceRendererCount;

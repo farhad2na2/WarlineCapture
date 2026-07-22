@@ -13,6 +13,7 @@ public sealed class DenseCityPresentationBudgetValidatorTests
             suite.Budget_AcceptsCompleteCoreEvidence,
             suite.Budget_RejectsTransformBoundsMismatch,
             suite.Budget_RejectsIncompleteGeometryEvidence,
+            suite.Budget_RejectsIncompleteBakedOwnershipEvidence,
             suite.Budget_SerializationIsDeterministicAndMarksPackedMetricsPending,
             suite.CandidateBakeAll_OrdersBudgetAfterBakeAndBeforePostflight,
             suite.CurrentMapBaker_BakesStaticPresentationOnlyForStaticDefinitions
@@ -52,6 +53,19 @@ public sealed class DenseCityPresentationBudgetValidatorTests
                 bake, art, parity, layout, geometry, out _, out string error),
             Is.False);
         Assert.That(error, Is.EqualTo("candidate-geometry-budget"));
+    }
+
+    [Test]
+    public void Budget_RejectsIncompleteBakedOwnershipEvidence()
+    {
+        CreateEvidence(out var bake, out var art, out var parity, out var layout, out var geometry);
+        bake.missingIntactVisualRootCount = 1;
+
+        Assert.That(
+            DenseCityPresentationBudgetValidator.TryCreateReport(
+                bake, art, parity, layout, geometry, out _, out string error),
+            Is.False);
+        Assert.That(error, Is.EqualTo("candidate-bake-budget"));
     }
 
     [Test]
@@ -130,8 +144,24 @@ public sealed class DenseCityPresentationBudgetValidatorTests
             gameplayVehicleCount = 22,
             presentationRootCount = 3,
             presentationIdentityCount = 9544,
+            gameplayBuildingIdentityCount = 432,
+            gameplayVehicleIdentityCount = 22,
+            renderOnlyIdentityCount = 9090,
+            unknownRoleIdentityCount = 0,
+            totalEntityCount = 16000,
+            entityArchetypeCount = 80,
+            entityChunkCount = 300,
             renderMeshEntityCount = 14249,
+            renderChildEntityCount = 10000,
+            sharedRenderMeshArrayIdentityCount = 600,
+            sharedMeshAssetIdentityCount = 700,
+            sharedMaterialAssetIdentityCount = 40,
             buildingRenderChildCount = 698,
+            intactVisualRootCount = 432,
+            destroyedVisualRootCount = 266,
+            missingIntactVisualRootCount = 0,
+            missingDestroyedVisualRootCount = 0,
+            sharedIntactDestroyedVisualRootCount = 0,
             nonFiniteTransformCount = 0,
             managedMapVisualCompanionCount = 0
         };

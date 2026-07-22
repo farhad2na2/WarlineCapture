@@ -34,6 +34,15 @@ namespace Game.Editor
                 .Single(root => root.Role == DenseCityGeneratedRootRole.MapBakeSource);
             DenseCityGeneratedRootAuthoring entityGeneratedRoot = FindGeneratedRoots(entityPresentationScene)
                 .Single(root => root.Role == DenseCityGeneratedRootRole.EntityPresentationSource);
+            if (!DenseCityPhysicsComponentStripper.TryValidateNoProhibitedComponents(
+                    mapGeneratedRoot.gameObject,
+                    out error) ||
+                !DenseCityPhysicsComponentStripper.TryValidateNoProhibitedComponents(
+                    entityGeneratedRoot.gameObject,
+                    out error))
+            {
+                return false;
+            }
 
             DenseCityAuthoredOverrideAuthoring[] mapOverrides = FindOverrides(operationMapScene);
             if (FindOverrides(entityPresentationScene).Length != 0)

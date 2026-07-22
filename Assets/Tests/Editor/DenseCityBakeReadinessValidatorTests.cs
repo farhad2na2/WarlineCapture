@@ -1,3 +1,4 @@
+using System;
 using Game.Authoring;
 using Game.Editor;
 using NUnit.Framework;
@@ -15,6 +16,34 @@ public sealed class DenseCityBakeReadinessValidatorTests
     private const string OperationMapId = "opmap.skirmish.building_test_01";
     private const string Hash =
         "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+
+    public static void RunFocusedValidation()
+    {
+        var suite = new DenseCityBakeReadinessValidatorTests();
+        Action[] tests =
+        {
+            suite.AuthoringOwnership_AcceptsExplicitScenePairAndUniqueOverride,
+            suite.AuthoringOwnership_RejectsDuplicateOverrideId,
+            suite.AuthoringOwnership_RejectsDuplicateBuildingStableIdentity,
+            suite.AuthoringOwnership_RejectsBuildingInOperationMapScene,
+            suite.AuthoringOwnership_RejectsPhysicsInInactiveGeneratedDescendant
+        };
+
+        for (int index = 0; index < tests.Length; index++)
+        {
+            suite.SetUp();
+            try
+            {
+                tests[index]();
+            }
+            finally
+            {
+                suite.TearDown();
+            }
+        }
+
+        Debug.Log($"[DenseCityBakeReadinessValidation] result=Passed tests={tests.Length}");
+    }
 
     [SetUp]
     public void SetUp()
@@ -83,7 +112,7 @@ public sealed class DenseCityBakeReadinessValidatorTests
     }
 
     [Test]
-    public void AuthoringOwnership_RejectsDuplicateBuildingSourceIdentity()
+    public void AuthoringOwnership_RejectsDuplicateBuildingStableIdentity()
     {
         (Scene mapScene, Scene entityScene) = CreateScenePair();
         try
@@ -111,7 +140,7 @@ public sealed class DenseCityBakeReadinessValidatorTests
                     GenerationId,
                     out string error),
                 Is.False);
-            StringAssert.Contains("Duplicate operation-map building source id", error);
+            StringAssert.Contains("Duplicate operation-map building stable id", error);
         }
         finally
         {
@@ -143,6 +172,43 @@ public sealed class DenseCityBakeReadinessValidatorTests
                     out string error),
                 Is.False);
             StringAssert.Contains("entity-presentation scene", error);
+        }
+        finally
+        {
+            EditorSceneManager.CloseScene(entityScene, true);
+            EditorSceneManager.CloseScene(mapScene, true);
+        }
+    }
+
+    [Test]
+    public void AuthoringOwnership_RejectsPhysicsInInactiveGeneratedDescendant()
+    {
+        (Scene mapScene, Scene entityScene) = CreateScenePair();
+        try
+        {
+            var roots = DenseCitySemanticHierarchyBuilder.Create(
+                mapScene,
+                entityScene,
+                GenerationId,
+                "dense-city-v1",
+                1,
+                42,
+                Hash);
+            var invalid = new GameObject("InactiveInvalidPhysics");
+            invalid.transform.SetParent(roots.EntityPresentationSource.transform, false);
+            invalid.AddComponent<BoxCollider2D>();
+            invalid.SetActive(false);
+
+            Assert.That(
+                DenseCityBakeReadinessValidator.TryValidateAuthoringOwnership(
+                    mapScene,
+                    entityScene,
+                    OperationMapId,
+                    GenerationId,
+                    out string error),
+                Is.False);
+            StringAssert.Contains("BoxCollider2D", error);
+            StringAssert.Contains("InactiveInvalidPhysics", error);
         }
         finally
         {

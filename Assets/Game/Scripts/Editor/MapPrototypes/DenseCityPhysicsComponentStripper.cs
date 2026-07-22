@@ -27,6 +27,27 @@ namespace Game.Editor
 
     internal static class DenseCityPhysicsComponentStripper
     {
+        internal static bool TryValidateNoProhibitedComponents(
+            GameObject root,
+            out string error)
+        {
+            if (root == null)
+            {
+                error = "Dense-city physics validation requires a hierarchy root.";
+                return false;
+            }
+
+            if (TryFindProhibited(root, out Component prohibited))
+            {
+                error = $"Dense-city generated hierarchy contains prohibited " +
+                        $"{prohibited.GetType().Name} at '{GetPath(prohibited.transform)}'.";
+                return false;
+            }
+
+            error = null;
+            return true;
+        }
+
         internal static DenseCityPhysicsStripResult StripInstanceHierarchy(GameObject instanceRoot)
         {
             if (instanceRoot == null)
@@ -60,6 +81,36 @@ namespace Game.Editor
                 if (components[index] != null)
                     UnityEngine.Object.DestroyImmediate(components[index]);
             }
+        }
+
+        private static bool TryFindProhibited(GameObject root, out Component prohibited)
+        {
+            Component[][] componentSets =
+            {
+                root.GetComponentsInChildren<Collider>(true),
+                root.GetComponentsInChildren<Collider2D>(true),
+                root.GetComponentsInChildren<Rigidbody>(true),
+                root.GetComponentsInChildren<Rigidbody2D>(true)
+            };
+            for (int setIndex = 0; setIndex < componentSets.Length; setIndex++)
+            {
+                Component[] components = componentSets[setIndex];
+                if (components.Length == 0)
+                    continue;
+                prohibited = components[0];
+                return true;
+            }
+
+            prohibited = null;
+            return false;
+        }
+
+        private static string GetPath(Transform transform)
+        {
+            string path = transform.name;
+            for (Transform parent = transform.parent; parent != null; parent = parent.parent)
+                path = parent.name + "/" + path;
+            return path;
         }
     }
 }

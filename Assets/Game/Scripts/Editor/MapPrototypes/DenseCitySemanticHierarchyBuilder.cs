@@ -149,6 +149,7 @@ namespace Game.Editor
                     return false;
                 MapBakeGroupAuthoring group = groupTransform.GetComponent<MapBakeGroupAuthoring>();
                 if (group == null || group.Role != role ||
+                    groupTransform.GetComponents<MapBakeGroupAuthoring>().Length != 1 ||
                     groupTransform.GetComponentInParent<MapBakeGroupAuthoring>(true) != group)
                 {
                     error = $"Proxy group '{name}' does not have exactly one nearest {role} owner.";
@@ -242,15 +243,39 @@ namespace Game.Editor
 
         private static Transform RequireIdentityPath(Transform root, string path, out string error)
         {
-            Transform child = root.Find(path);
-            if (child == null || !HasIdentityTransform(child))
+            Transform current = root;
+            string[] segments = path.Split('/');
+            for (int segmentIndex = 0; segmentIndex < segments.Length; segmentIndex++)
+            {
+                string segment = segments[segmentIndex];
+                Transform match = null;
+                int matchCount = 0;
+                for (int childIndex = 0; childIndex < current.childCount; childIndex++)
+                {
+                    Transform candidate = current.GetChild(childIndex);
+                    if (!string.Equals(candidate.name, segment, StringComparison.Ordinal))
+                        continue;
+                    match = candidate;
+                    matchCount++;
+                }
+
+                if (matchCount != 1 || !HasIdentityTransform(match))
+                {
+                    error = $"Dense-city semantic path '{path}' must contain exactly one identity-transformed '{segment}' segment.";
+                    return null;
+                }
+
+                current = match;
+            }
+
+            if (current == null)
             {
                 error = $"Dense-city semantic path '{path}' is missing or not identity transformed.";
                 return null;
             }
 
             error = null;
-            return child;
+            return current;
         }
 
         private static bool HasIdentityTransform(Transform transform) =>

@@ -731,13 +731,13 @@ Runtime procedural generation is not the fallback for a rendering or packaging f
 
 Progress is checklist based. Every checkbox counts. Update the count, phase status, and validation log in the same stable change that completes an item.
 
-Current progress: **37 / 148 (25%)**
+Current progress: **38 / 148 (26%)**
 
 | Phase | Status |
 |---|---|
 | Phase 0: Baseline and contracts | Complete |
 | Phase 0A: Existing map ECS presentation migration | Transactional candidate Bake All and direct baked matrix/bounds parity complete; Addressables runtime, fixed-camera, lifecycle, and Android acceptance open |
-| Phase 1: Generated ownership authoring | In progress; semantic hierarchy and authoring/scene-ownership validation complete |
+| Phase 1: Generated ownership authoring | In progress; semantic hierarchy and fail-closed role/scene ownership validation complete |
 | Phase 2: Generator semantic output | Not started |
 | Phase 3: Collider-free enforcement | Not started |
 | Phase 4: Surface and blocker proxies | Not started |
@@ -810,7 +810,7 @@ Current progress: **37 / 148 (25%)**
 - [x] Add `DenseCitySemanticHierarchyBuilder` in `Game.Editor`.
 - [ ] Create the exact proxy hierarchy in the operation-map authoring scene and gameplay/render-only entity presentation hierarchy in the existing map SubScene with identity transforms.
 - [ ] Add exactly one nearest `MapBakeGroupAuthoring` role owner to each proxy semantic group; do not classify generated render entities as static-presentation inputs.
-- [ ] Reject duplicate/missing role roots, mismatched generation ids, misplaced override roots, role overlap, and roots outside the active operation-map scene pair.
+- [x] Reject duplicate/missing role roots, mismatched generation ids, misplaced override roots, role overlap, and roots outside the active operation-map scene pair.
 - [ ] Prove regeneration deletes only the two marked role roots and preserves all other objects in both scenes by identity/hash.
 
 **Exit:** One logical disposable generation set spans two explicit scene-scoped roots, one persistent override domain remains protected, and generated building authoring has an explicit ECS bake contract.
@@ -1052,6 +1052,7 @@ Extend existing tests rather than duplicating them for:
 | 2026-07-21 | Phase 1 building visual hierarchy ownership | Focused EditMode `/private/tmp/warline-operation-map-building-ownership-tests.xml` 4/4; protected candidate bake `/private/tmp/warline-operation-map-building-ownership-candidate-bake.log`; assembly boundaries `/private/tmp/warline-operation-map-building-ownership-architecture.log` 31/31; `git diff --check` | Passed | The building baker now explicitly includes every transform beneath intact/destroyed roots and fails closed on overlapping state roots, renderers outside both states, nested/shared building owners, incorrect presentation-role ancestry, and independent or mismatched descendant presentation identities. The actual protected candidate remains valid with 432 gameplay buildings, 698 building render children, 9,544 identities, 14,209 render entities, zero non-finite transforms, zero managed map visual companions, and `productionCutover=0`. Progress is 35/148 (24%). |
 | 2026-07-21 | Phase 1 semantic hierarchy builder | Focused EditMode `/private/tmp/warline-dense-city-semantic-hierarchy-tests-3.xml` 2/2; assembly boundaries `/private/tmp/warline-dense-city-semantic-hierarchy-architecture.log` 31/31; Unity compile `/private/tmp/warline-dense-city-semantic-hierarchy-tests-3.log`; `git diff --check` | Passed | Added editor-only `DenseCitySemanticHierarchyBuilder` with explicit operation-map and entity-presentation scene inputs. It creates identity-transformed marked roots, the five exact `MapBakeGroupAuthoring` proxy roles, generated gameplay-building buckets, and render-only buckets; validates shared deterministic generation identity and nearest proxy ownership; and rejects same-scene use or overwrite of an existing marked root. It does not generate districts, save scenes, delete accepted content, search at runtime, or change production presentation. Progress is 36/148 (24%). |
 | 2026-07-22 | Phase 1 authoring and scene-ownership readiness | Focused validator `/private/tmp/warline-dense-city-authoring-readiness-tests-2.xml` 4/4; authoring regression `/private/tmp/warline-dense-city-authoring-contract-regression-tests.xml` 17/17; assembly boundaries `/private/tmp/warline-dense-city-authoring-readiness-architecture.log` 31/31; Unity logs; `git diff --check` | Passed; full Phase 5 readiness remains open | Centralized strict source `GlobalObjectId` validation; added finite/nonzero transform and positive-size validation for generated roots, authored overrides, and buildings; and added an editor-only scene-pair ownership validator that rejects duplicate override ids, duplicate building source/placement identities, misplaced buildings, wrong generated-root identities, and invalid building presentation ownership. This validates the Phase 1 authoring/ownership slice only; collider, proxy, bake-budget, package, and full readiness checks remain explicit Phase 3-5 work. Progress is 37/148 (25%). |
+| 2026-07-22 | Phase 1 fail-closed semantic role ownership | Focused EditMode `/private/tmp/warline-dense-city-semantic-ownership-tests-2.xml` 4/4; assembly boundaries `/private/tmp/warline-dense-city-semantic-ownership-architecture.log` 31/31; Unity compile logs; `git diff --check` | Passed | Tightened semantic-path validation from first-name lookup to exact direct-child traversal, so duplicate path segments cannot be accepted. Proxy groups now require one component on the exact role node and reject overlapping ancestor role ownership. Existing generation-id, root-role, scene-pair, override-placement, and generated-building owner checks remain fail-closed. No accepted scene, candidate scene, production package, or runtime system changed. Progress is 38/148 (26%). |
 
 ## 25. Completion Rule
 

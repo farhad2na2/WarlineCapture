@@ -101,6 +101,72 @@ public sealed class DenseCitySemanticHierarchyBuilderTests
         }
     }
 
+    [Test]
+    public void Validate_RejectsDuplicateSemanticPath()
+    {
+        (Scene mapScene, Scene entityScene) = CreateScenePair();
+        try
+        {
+            var roots = DenseCitySemanticHierarchyBuilder.Create(
+                mapScene,
+                entityScene,
+                "dense-city:test:42",
+                "dense-city-v1",
+                1,
+                42,
+                Hash);
+            var duplicate = new GameObject("Roads");
+            duplicate.transform.SetParent(roots.MapBakeSource.transform.Find("BakeSources"), false);
+
+            Assert.That(
+                DenseCitySemanticHierarchyBuilder.TryValidate(
+                    mapScene,
+                    entityScene,
+                    "dense-city:test:42",
+                    out string error),
+                Is.False);
+            StringAssert.Contains("exactly one", error);
+        }
+        finally
+        {
+            EditorSceneManager.CloseScene(entityScene, true);
+            EditorSceneManager.CloseScene(mapScene, true);
+        }
+    }
+
+    [Test]
+    public void Validate_RejectsOverlappingProxyRoleOwnership()
+    {
+        (Scene mapScene, Scene entityScene) = CreateScenePair();
+        try
+        {
+            var roots = DenseCitySemanticHierarchyBuilder.Create(
+                mapScene,
+                entityScene,
+                "dense-city:test:42",
+                "dense-city-v1",
+                1,
+                42,
+                Hash);
+            roots.MapBakeSource.transform.Find("BakeSources")
+                .gameObject.AddComponent<MapBakeGroupAuthoring>();
+
+            Assert.That(
+                DenseCitySemanticHierarchyBuilder.TryValidate(
+                    mapScene,
+                    entityScene,
+                    "dense-city:test:42",
+                    out string error),
+                Is.False);
+            StringAssert.Contains("exactly 5 proxy role groups", error);
+        }
+        finally
+        {
+            EditorSceneManager.CloseScene(entityScene, true);
+            EditorSceneManager.CloseScene(mapScene, true);
+        }
+    }
+
     private static (Scene MapScene, Scene EntityScene) CreateScenePair()
     {
         Scene mapScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);

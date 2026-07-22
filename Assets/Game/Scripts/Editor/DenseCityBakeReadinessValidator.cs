@@ -84,6 +84,13 @@ namespace Game.Editor
                 .Single(root => root.Role == DenseCityGeneratedRootRole.MapBakeSource);
             DenseCityGeneratedRootAuthoring entityGeneratedRoot = FindGeneratedRoots(entityPresentationScene)
                 .Single(root => root.Role == DenseCityGeneratedRootRole.EntityPresentationSource);
+            if (!TryValidateGeneratedRendererOwnership(
+                    mapGeneratedRoot,
+                    entityGeneratedRoot,
+                    out error))
+            {
+                return false;
+            }
             if (!DenseCityPhysicsComponentStripper.TryValidateNoProhibitedComponents(
                     mapGeneratedRoot.gameObject,
                     out error) ||
@@ -167,6 +174,52 @@ namespace Game.Editor
             return true;
         }
 
+        private static bool TryValidateGeneratedRendererOwnership(
+            DenseCityGeneratedRootAuthoring mapGeneratedRoot,
+            DenseCityGeneratedRootAuthoring entityGeneratedRoot,
+            out string error)
+        {
+            Renderer[] proxyRenderers = mapGeneratedRoot.GetComponentsInChildren<Renderer>(true);
+            if (proxyRenderers.Length != 0)
+            {
+                error =
+                    $"Dense-city proxy hierarchy contains detailed renderer " +
+                    $"'{GetHierarchyPath(proxyRenderers[0].transform, mapGeneratedRoot.transform)}'.";
+                return false;
+            }
+
+            Transform entityRoot = entityGeneratedRoot.transform;
+            Transform[] renderOnlyCategories =
+            {
+                entityRoot.Find("RenderOnly/Infrastructure"),
+                entityRoot.Find("RenderOnly/Vegetation"),
+                entityRoot.Find("RenderOnly/Props"),
+                entityRoot.Find("RenderOnly/Horizon")
+            };
+            Renderer[] presentationRenderers =
+                entityGeneratedRoot.GetComponentsInChildren<Renderer>(true);
+            foreach (Renderer renderer in presentationRenderers)
+            {
+                OperationMapBuildingAuthoring buildingOwner =
+                    renderer.GetComponentInParent<OperationMapBuildingAuthoring>(true);
+                bool hasBuildingOwner = buildingOwner != null &&
+                                        buildingOwner.transform.IsChildOf(entityRoot);
+                bool hasRenderOnlyOwner = renderOnlyCategories.Any(category =>
+                    category != null &&
+                    (renderer.transform == category || renderer.transform.IsChildOf(category)));
+                if (hasBuildingOwner || hasRenderOnlyOwner)
+                    continue;
+
+                error =
+                    $"Dense-city generated renderer is unclassified: " +
+                    $"'{GetHierarchyPath(renderer.transform, entityRoot)}'.";
+                return false;
+            }
+
+            error = null;
+            return true;
+        }
+
         private static void ValidateCurrentCandidateCore()
         {
             string mapPath = OperationMapEntityPresentationCandidateSceneBuilder.AcceptedOperationMapScenePath;
@@ -233,5 +286,17 @@ namespace Game.Editor
             scene.GetRootGameObjects()
                 .SelectMany(root => root.GetComponentsInChildren<OperationMapBuildingAuthoring>(true))
                 .ToArray();
+
+        private static string GetHierarchyPath(Transform owner, Transform root)
+        {
+            string path = owner.name;
+            Transform current = owner.parent;
+            while (current != null && current != root)
+            {
+                path = current.name + "/" + path;
+                current = current.parent;
+            }
+            return root.name + "/" + path;
+        }
     }
 }

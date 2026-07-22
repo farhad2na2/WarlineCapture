@@ -30,7 +30,10 @@ public sealed class DenseCityBakeReadinessValidatorTests
             suite.GenerationState_AcceptsExplicitNotGeneratedScenePair,
             suite.GenerationState_RejectsPartialGeneratedScenePair,
             suite.AuthoringOwnership_RejectsDuplicateGeneratedRoleRoot,
-            suite.AuthoringOwnership_RejectsEveryGenerationContractMismatch
+            suite.AuthoringOwnership_RejectsEveryGenerationContractMismatch,
+            suite.AuthoringOwnership_AcceptsClassifiedRenderOnlyRenderer,
+            suite.AuthoringOwnership_RejectsDetailedRendererBeneathProxyRoot,
+            suite.AuthoringOwnership_RejectsUnclassifiedGeneratedRenderer
         };
 
         for (int index = 0; index < tests.Length; index++)
@@ -363,6 +366,116 @@ public sealed class DenseCityBakeReadinessValidatorTests
                 EditorSceneManager.CloseScene(entityScene, true);
                 EditorSceneManager.CloseScene(mapScene, true);
             }
+        }
+    }
+
+    [Test]
+    public void AuthoringOwnership_AcceptsClassifiedRenderOnlyRenderer()
+    {
+        (Scene mapScene, Scene entityScene) = CreateScenePair();
+        try
+        {
+            var roots = DenseCitySemanticHierarchyBuilder.Create(
+                mapScene,
+                entityScene,
+                GenerationId,
+                "dense-city-v1",
+                1,
+                42,
+                Hash);
+            Transform props = roots.EntityPresentationSource.transform.Find("RenderOnly/Props");
+            var classified = new GameObject("ClassifiedPropRenderer");
+            classified.transform.SetParent(props, false);
+            classified.AddComponent<MeshRenderer>();
+
+            Assert.That(
+                DenseCityBakeReadinessValidator.TryValidateAuthoringOwnership(
+                    mapScene,
+                    entityScene,
+                    OperationMapId,
+                    GenerationId,
+                    out string error),
+                Is.True,
+                error);
+        }
+        finally
+        {
+            EditorSceneManager.CloseScene(entityScene, true);
+            EditorSceneManager.CloseScene(mapScene, true);
+        }
+    }
+
+    [Test]
+    public void AuthoringOwnership_RejectsDetailedRendererBeneathProxyRoot()
+    {
+        (Scene mapScene, Scene entityScene) = CreateScenePair();
+        try
+        {
+            var roots = DenseCitySemanticHierarchyBuilder.Create(
+                mapScene,
+                entityScene,
+                GenerationId,
+                "dense-city-v1",
+                1,
+                42,
+                Hash);
+            Transform terrain = roots.MapBakeSource.transform.Find("BakeSources/Terrain");
+            var detailed = new GameObject("ForbiddenDetailedRenderer");
+            detailed.transform.SetParent(terrain, false);
+            detailed.AddComponent<MeshRenderer>();
+
+            Assert.That(
+                DenseCityBakeReadinessValidator.TryValidateAuthoringOwnership(
+                    mapScene,
+                    entityScene,
+                    OperationMapId,
+                    GenerationId,
+                    out string error),
+                Is.False);
+            StringAssert.Contains("proxy hierarchy contains detailed renderer", error);
+            StringAssert.Contains("ForbiddenDetailedRenderer", error);
+        }
+        finally
+        {
+            EditorSceneManager.CloseScene(entityScene, true);
+            EditorSceneManager.CloseScene(mapScene, true);
+        }
+    }
+
+    [Test]
+    public void AuthoringOwnership_RejectsUnclassifiedGeneratedRenderer()
+    {
+        (Scene mapScene, Scene entityScene) = CreateScenePair();
+        try
+        {
+            var roots = DenseCitySemanticHierarchyBuilder.Create(
+                mapScene,
+                entityScene,
+                GenerationId,
+                "dense-city-v1",
+                1,
+                42,
+                Hash);
+            Transform renderOnly = roots.EntityPresentationSource.transform.Find("RenderOnly");
+            var unclassified = new GameObject("UnclassifiedRenderer");
+            unclassified.transform.SetParent(renderOnly, false);
+            unclassified.AddComponent<MeshRenderer>();
+
+            Assert.That(
+                DenseCityBakeReadinessValidator.TryValidateAuthoringOwnership(
+                    mapScene,
+                    entityScene,
+                    OperationMapId,
+                    GenerationId,
+                    out string error),
+                Is.False);
+            StringAssert.Contains("generated renderer is unclassified", error);
+            StringAssert.Contains("UnclassifiedRenderer", error);
+        }
+        finally
+        {
+            EditorSceneManager.CloseScene(entityScene, true);
+            EditorSceneManager.CloseScene(mapScene, true);
         }
     }
 

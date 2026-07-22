@@ -1106,6 +1106,10 @@ namespace Game.Editor
                 cityFootprint,
                 Mathf.FloorToInt(cityWidth / RoadGridSize) - 1,
                 Mathf.FloorToInt(cityDepth / RoadGridSize) - 1);
+            using var generationTransactions = new DenseCityGenerationTransactionContext(
+                DenseCityGenerationBuildingCapacity,
+                DenseCityGenerationSurfaceCapacity,
+                DenseCityGenerationPresentationCapacity);
             RoadBakeResult roadResult = BakeRoadNetwork(
                 generatedRoot,
                 cityOrigin,
@@ -1116,7 +1120,8 @@ namespace Game.Editor
                 cityFootprint,
                 terrainMap,
                 config.RandomSeed,
-                surface);
+                surface,
+                generationTransactions);
             CanalBakeResult canalResult = BakeWaterCanals(
                 generatedRoot,
                 cityOrigin,
@@ -1142,10 +1147,6 @@ namespace Game.Editor
             }
             DenseCityBuildingMaterialLibrary materialLibrary =
                 DenseCityBuildingMaterialLibrary.LoadExisting();
-            using var generationTransactions = new DenseCityGenerationTransactionContext(
-                DenseCityGenerationBuildingCapacity,
-                DenseCityGenerationSurfaceCapacity,
-                DenseCityGenerationPresentationCapacity);
             int authoredCoreRenderers = BakeCivicBazaarCore(
                 generatedRoot,
                 view,
@@ -3271,8 +3272,11 @@ namespace Game.Editor
             CityFootprint cityFootprint,
             TerrainViabilityMap terrainMap,
             uint seed,
-            SurfacePlacementContext surface)
+            SurfacePlacementContext surface,
+            DenseCityGenerationTransactionContext generationTransactions)
         {
+            if (generationTransactions == null)
+                throw new ArgumentNullException(nameof(generationTransactions));
             var roadObject = new GameObject("DenseCity_ConnectedSidewalkRoadNetwork");
             roadObject.transform.SetParent(generatedRoot, false);
 
@@ -3453,6 +3457,8 @@ namespace Game.Editor
                 elevationPlan,
                 surface,
                 cityFootprint,
+                seed,
+                generationTransactions,
                 out Dictionary<Vector2Int, GameObject> roadTileObjects,
                 out Dictionary<Vector2Int, GameObject> roadGroundPatchObjects);
             SetStaticRecursively(roadObject);
@@ -5317,10 +5323,15 @@ namespace Game.Editor
             RoadElevationPlan elevationPlan,
             SurfacePlacementContext surface,
             CityFootprint cityFootprint,
+            uint seed,
+            DenseCityGenerationTransactionContext generationTransactions,
             out Dictionary<Vector2Int, GameObject> roadTileObjects,
             out Dictionary<Vector2Int, GameObject> roadGroundPatchObjects)
         {
+            if (generationTransactions == null)
+                throw new ArgumentNullException(nameof(generationTransactions));
             var chunkRoots = new Dictionary<Vector2Int, Transform>();
+            var metadataByPrefab = new Dictionary<GameObject, DenseCityVisualAssetMetadata>();
             roadTileObjects = new Dictionary<Vector2Int, GameObject>();
             roadGroundPatchObjects = new Dictionary<Vector2Int, GameObject>();
             foreach (KeyValuePair<Vector2Int, RoadNetworkCompositionSystemHelper.RoadTileData> entry in network.RoadTiles)
@@ -5362,8 +5373,6 @@ namespace Game.Editor
                     chunkRoots.Add(chunkCoordinate, chunkRoot);
                 }
 
-                GameObject road = (GameObject)PrefabUtility.InstantiatePrefab(prefab, chunkRoot);
-                road.name = $"{prefab.name}_{cell.x}_{cell.y}";
                 Vector3 placement = RoadChunkVisualSystem.GetPlacementPosition(placementContext, cell, variant);
                 Vector3 samplePoint = placementContext.GridOrigin + new Vector3(
                     (cell.x + 0.5f) * RoadGridSize,
@@ -5371,9 +5380,69 @@ namespace Game.Editor
                     (cell.y + 0.5f) * RoadGridSize);
                 float fallbackHeight = (surface?.SampleHeight(samplePoint) ?? placement.y) + 0.025f;
                 placement.y = elevationPlan.GetElevation(cell, fallbackHeight);
-                road.transform.SetPositionAndRotation(placement, variant.Rotation);
-                road.transform.localScale = variant.Scale;
-                DisableColliders(road);
+                Matrix4x4 roadWorldMatrix = Matrix4x4.TRS(
+                    placement,
+                    variant.Rotation,
+                    variant.Scale);
+                if (!metadataByPrefab.TryGetValue(prefab, out DenseCityVisualAssetMetadata metadata))
+                {
+                    metadata = DenseCityVisualAssetMetadataExtractor.Extract(prefab);
+                    metadataByPrefab.Add(prefab, metadata);
+                }
+
+                GameObject road = null;
+                try
+                {
+                    bool accepted = generationTransactions.TryPlaceInfrastructure(
+                        0,
+                        sequence => DenseCityInfrastructureRecordFactory.CreateVisualized(
+                            new DenseCityInfrastructureRecordInput(
+                                DenseCityGeneratorSchema,
+                                unchecked((int)seed),
+                                0,
+                                sequence,
+                                "road",
+                                DenseCitySurfaceRecordKind.Road,
+                                metadata.PrefabAssetGuid,
+                                metadata.PrefabLocalId,
+                                metadata.MaterialAssetGuids,
+                                roadWorldMatrix,
+                                new Vector2(RoadGridSize, RoadGridSize),
+                                placement.y,
+                                (uint)(MapSurfaceMovementMask.AllGroundUnits |
+                                       MapSurfaceMovementMask.AirGrounded),
+                                DenseCityBuildingSurfaceLayer,
+                                chunkCoordinate,
+                                true,
+                                true,
+                                2)),
+                        () =>
+                        {
+                            road = (GameObject)PrefabUtility.InstantiatePrefab(prefab, chunkRoot);
+                            road.name = $"{prefab.name}_{cell.x}_{cell.y}";
+                            road.transform.SetPositionAndRotation(placement, variant.Rotation);
+                            road.transform.localScale = variant.Scale;
+                            DisableColliders(road);
+                            Matrix4x4 actualMatrix = road.transform.localToWorldMatrix;
+                            for (int matrixIndex = 0; matrixIndex < 16; matrixIndex++)
+                            {
+                                if (Mathf.Abs(actualMatrix[matrixIndex] - roadWorldMatrix[matrixIndex]) > 0.0001f)
+                                {
+                                    throw new InvalidOperationException(
+                                        $"Dense-city road transform parity failed at cell {cell}.");
+                                }
+                            }
+                            return true;
+                        });
+                    if (!accepted)
+                        continue;
+                }
+                catch
+                {
+                    if (road != null)
+                        UnityEngine.Object.DestroyImmediate(road);
+                    throw;
+                }
                 roadTileObjects.Add(cell, road);
                 float patchHeight = 0.24f;
                 if (terrainMap.TryGetRoadPatch(cell, out SurfacePatchEvaluation roadPatch))

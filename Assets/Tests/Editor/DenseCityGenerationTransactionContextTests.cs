@@ -101,6 +101,40 @@ public sealed class DenseCityGenerationTransactionContextTests
     }
 
     [Test]
+    public void BridgePlacement_ReservesFourSharedInfrastructureSequences()
+    {
+        using var context = new DenseCityGenerationTransactionContext(1, 4, 1);
+        var observedSequences = new List<int>();
+
+        Assert.That(
+            context.TryPlaceBridge(
+                4,
+                sequence =>
+                {
+                    observedSequences.Add(sequence);
+                    return CreateBridgeGroup(sequence);
+                },
+                () => false),
+            Is.False);
+        Assert.That(
+            context.TryPlaceSurface(
+                4,
+                sequence =>
+                {
+                    observedSequences.Add(sequence);
+                    return CreateRamp(sequence);
+                },
+                () => true),
+            Is.True);
+        context.Seal();
+
+        Assert.That(observedSequences, Is.EqualTo(new[] { 0, 4 }));
+        Assert.That(context.Records.Surfaces, Has.Count.EqualTo(1));
+        Assert.That(context.Records.Surfaces[0].Identity.DeterministicSequence, Is.EqualTo(4));
+        Assert.That(context.Records.Presentations, Is.Empty);
+    }
+
+    [Test]
     public void RegisterRealizedBuildingOwner_UsesCommittedIdentityAndRejectsDuplicates()
     {
         using var context = new DenseCityGenerationTransactionContext(1, 2, 2);
@@ -193,6 +227,40 @@ public sealed class DenseCityGenerationTransactionContextTests
 
     private static DenseCitySurfaceBakeRecord CreateRamp(int sequence) =>
         CreateSurface(sequence, DenseCitySurfaceRecordKind.Ramp, "ramp");
+
+    private static DenseCityBridgeRecordGroup CreateBridgeGroup(int sequence)
+    {
+        DenseCitySurfaceBakeRecord bridge = CreateSurface(
+            sequence,
+            DenseCitySurfaceRecordKind.Bridge,
+            "bridge");
+        var presentation = new DenseCityPresentationBakeRecord(
+            new DenseCityRecordIdentity(
+                "dense-city-v1",
+                42,
+                4,
+                "bridge-visual",
+                sequence + 1,
+                IntactGuid,
+                123),
+            DenseCityPresentationCategory.Infrastructure,
+            IntactGuid,
+            null,
+            new[] { MaterialGuid },
+            Matrix4x4.identity,
+            true,
+            true,
+            2);
+        DenseCitySurfaceBakeRecord firstRamp = CreateSurface(
+            sequence + 2,
+            DenseCitySurfaceRecordKind.Ramp,
+            "bridge-ramp-a");
+        DenseCitySurfaceBakeRecord secondRamp = CreateSurface(
+            sequence + 3,
+            DenseCitySurfaceRecordKind.Ramp,
+            "bridge-ramp-b");
+        return new DenseCityBridgeRecordGroup(bridge, presentation, firstRamp, secondRamp);
+    }
 
     private static DenseCitySurfaceBakeRecord CreateSurface(
         int sequence,

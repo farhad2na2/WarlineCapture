@@ -1133,7 +1133,8 @@ namespace Game.Editor
                 terrainMap,
                 roadResult,
                 authoredGradeElevation,
-                config.RandomSeed);
+                config.RandomSeed,
+                generationTransactions);
             Debug.Log(
                 $"[DenseCityCanals] routes={canalResult.RouteCount} waterTiles={canalResult.WaterTiles} " +
                 $"bridges={canalResult.Bridges} greenBanks={canalResult.GreenBanks} " +
@@ -3606,10 +3607,15 @@ namespace Game.Editor
             TerrainViabilityMap terrainMap,
             RoadBakeResult roadResult,
             float gradeElevation,
-            uint seed)
+            uint seed,
+            DenseCityGenerationTransactionContext generationTransactions)
         {
+            if (generationTransactions == null)
+                throw new ArgumentNullException(nameof(generationTransactions));
             GameObject[] bankPrefabs = LoadRequiredPrefabs(CanalBankPrefabPaths);
             GameObject bridgePrefab = LoadRequiredPrefab(CanalBridgePrefabPath);
+            DenseCityVisualAssetMetadata bridgeMetadata =
+                DenseCityVisualAssetMetadataExtractor.Extract(bridgePrefab);
             GameObject[] canalTreePrefabs = LoadRequiredPrefabs(Demo2CanalTreePrefabPaths);
             GameObject bushPrefab = LoadRequiredPrefab(MainStreetBushPrefabPath);
             GameObject streetLightPrefab = LoadRequiredPrefab(StreetLightPrefabPath);
@@ -3752,13 +3758,93 @@ namespace Game.Editor
                                                    HasBridgeSpacing(cell, bridgeCells, 14));
                         if (bridgeHasClearance)
                         {
-                            InstantiateCanalBridge(
+                            CanalBridgePlan bridgePlan = PlanCanalBridge(
                                 bridgePrefab,
-                                bridgeRootObject.transform,
-                                $"CanalBridge_{routeIndex:00}_{cellIndex:000}",
                                 center,
                                 roadElevation,
                                 roadAxisAlongWorldX);
+                            Vector3 roadAxis = roadAxisAlongWorldX ? Vector3.right : Vector3.forward;
+                            const float approachLength = RoadGridSize;
+                            float approachOffset = RoadGridSize * 1.28f * 0.5f + approachLength * 0.5f;
+                            var crossingCenter = new Vector3(center.x, roadElevation, center.y);
+                            Vector3 firstApproachCenter = crossingCenter - roadAxis * approachOffset;
+                            Vector3 secondApproachCenter = crossingCenter + roadAxis * approachOffset;
+                            Matrix4x4 firstApproachMatrix = Matrix4x4.TRS(
+                                firstApproachCenter,
+                                bridgePlan.Rotation,
+                                Vector3.one);
+                            Matrix4x4 secondApproachMatrix = Matrix4x4.TRS(
+                                secondApproachCenter,
+                                bridgePlan.Rotation,
+                                Vector3.one);
+                            Vector2Int firstApproachCell = cell +
+                                (roadAxisAlongWorldX ? Vector2Int.left : Vector2Int.down);
+                            Vector2Int secondApproachCell = cell +
+                                (roadAxisAlongWorldX ? Vector2Int.right : Vector2Int.up);
+                            Vector2Int bridgeChunk = new(
+                                Mathf.FloorToInt((float)cell.x / RoadChunkSize),
+                                Mathf.FloorToInt((float)cell.y / RoadChunkSize));
+                            Vector2Int firstApproachChunk = new(
+                                Mathf.FloorToInt((float)firstApproachCell.x / RoadChunkSize),
+                                Mathf.FloorToInt((float)firstApproachCell.y / RoadChunkSize));
+                            Vector2Int secondApproachChunk = new(
+                                Mathf.FloorToInt((float)secondApproachCell.x / RoadChunkSize),
+                                Mathf.FloorToInt((float)secondApproachCell.y / RoadChunkSize));
+                            GameObject bridge = null;
+                            try
+                            {
+                                bool accepted = generationTransactions.TryPlaceBridge(
+                                    0,
+                                    sequence => DenseCityInfrastructureRecordFactory.CreateBridgeWithApproaches(
+                                        new DenseCityInfrastructureRecordInput(
+                                            DenseCityGeneratorSchema,
+                                            unchecked((int)seed),
+                                            0,
+                                            sequence,
+                                            "canal-bridge",
+                                            DenseCitySurfaceRecordKind.Bridge,
+                                            bridgeMetadata.PrefabAssetGuid,
+                                            bridgeMetadata.PrefabLocalId,
+                                            bridgeMetadata.MaterialAssetGuids,
+                                            bridgePlan.WorldMatrix,
+                                            new Vector2(RoadGridSize * 0.86f, RoadGridSize * 1.28f),
+                                            roadElevation,
+                                            (uint)(MapSurfaceMovementMask.AllGroundUnits |
+                                                   MapSurfaceMovementMask.AirGrounded),
+                                            DenseCityBuildingSurfaceLayer,
+                                            bridgeChunk,
+                                            true,
+                                            true,
+                                            2),
+                                        new DenseCityBridgeApproachRecordInput(
+                                            "canal-bridge-ramp-a",
+                                            firstApproachMatrix,
+                                            new Vector2(RoadGridSize * 0.86f, approachLength),
+                                            roadElevation,
+                                            firstApproachChunk),
+                                        new DenseCityBridgeApproachRecordInput(
+                                            "canal-bridge-ramp-b",
+                                            secondApproachMatrix,
+                                            new Vector2(RoadGridSize * 0.86f, approachLength),
+                                            roadElevation,
+                                            secondApproachChunk)),
+                                    () =>
+                                    {
+                                        bridge = RealizeCanalBridge(
+                                            bridgeRootObject.transform,
+                                            $"CanalBridge_{routeIndex:00}_{cellIndex:000}",
+                                            bridgePlan);
+                                        return true;
+                                    });
+                                if (!accepted)
+                                    continue;
+                            }
+                            catch
+                            {
+                                if (bridge != null)
+                                    UnityEngine.Object.DestroyImmediate(bridge);
+                                throw;
+                            }
                             bridges++;
                             bridgeCells.Add(cell);
                         }
@@ -4608,63 +4694,105 @@ namespace Game.Editor
             return surface;
         }
 
-        private static GameObject InstantiateCanalBridge(
+        private readonly struct CanalBridgePlan
+        {
+            internal CanalBridgePlan(
+                GameObject prefab,
+                Vector3 position,
+                Quaternion rotation,
+                Vector3 scale)
+            {
+                Prefab = prefab;
+                Position = position;
+                Rotation = rotation;
+                Scale = scale;
+                WorldMatrix = Matrix4x4.TRS(position, rotation, scale);
+            }
+
+            internal GameObject Prefab { get; }
+            internal Vector3 Position { get; }
+            internal Quaternion Rotation { get; }
+            internal Vector3 Scale { get; }
+            internal Matrix4x4 WorldMatrix { get; }
+        }
+
+        private static CanalBridgePlan PlanCanalBridge(
             GameObject prefab,
-            Transform parent,
-            string objectName,
             Vector2 center,
             float supportElevation,
             bool roadAxisAlongWorldX)
         {
-            GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
-            instance.name = objectName;
-            instance.transform.SetPositionAndRotation(
-                new Vector3(center.x, 0f, center.y),
-                Quaternion.identity);
-            instance.transform.localScale = Vector3.one;
-            if (!TryGetRendererBounds(instance, out Bounds sourceBounds))
+            if (!TryGetPrefabLocalRendererBounds(prefab.transform, out Bounds sourceBounds))
                 throw new InvalidOperationException($"Canal bridge prefab '{prefab.name}' has no renderer bounds.");
 
             // SM_Env_Bridge_01 is authored with its traversable road deck on local Z.
-            instance.transform.rotation = roadAxisAlongWorldX
+            Quaternion rotation = roadAxisAlongWorldX
                 ? Quaternion.Euler(0f, 90f, 0f)
                 : Quaternion.identity;
             float crossAxisScale = RoadGridSize * 0.86f / Mathf.Max(0.01f, sourceBounds.size.x);
             float roadAxisScale = RoadGridSize * 1.28f / Mathf.Max(0.01f, sourceBounds.size.z);
-            instance.transform.localScale = new Vector3(
+            var scale = new Vector3(
                 crossAxisScale,
                 Mathf.Min(roadAxisScale, 1.15f),
                 roadAxisScale);
-            Vector3 expectedRoadAxis = roadAxisAlongWorldX ? Vector3.right : Vector3.forward;
-            if (Mathf.Abs(Vector3.Dot(instance.transform.forward, expectedRoadAxis)) < 0.999f)
+            Vector3 transformedCenterOffset = rotation * Vector3.Scale(sourceBounds.center, scale);
+            var position = new Vector3(
+                center.x - transformedCenterOffset.x,
+                supportElevation,
+                center.y - transformedCenterOffset.z);
+            return new CanalBridgePlan(prefab, position, rotation, scale);
+        }
+
+        private static GameObject RealizeCanalBridge(
+            Transform parent,
+            string objectName,
+            CanalBridgePlan plan)
+        {
+            GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(plan.Prefab, parent);
+            try
             {
-                throw new InvalidOperationException(
-                    $"Canal bridge '{objectName}' does not align with its connected road axis.");
+                instance.name = objectName;
+                instance.transform.SetPositionAndRotation(plan.Position, plan.Rotation);
+                instance.transform.localScale = plan.Scale;
+                Vector3 expectedRoadAxis = plan.Rotation * Vector3.forward;
+                if (Mathf.Abs(Vector3.Dot(instance.transform.forward, expectedRoadAxis)) < 0.999f)
+                {
+                    throw new InvalidOperationException(
+                        $"Canal bridge '{objectName}' does not align with its connected road axis.");
+                }
+                if (!TryGetPrefabLocalRendererBounds(plan.Prefab.transform, out Bounds sourceBounds))
+                {
+                    throw new InvalidOperationException(
+                        $"Canal bridge prefab '{plan.Prefab.name}' lost renderer bounds after scaling.");
+                }
+                Matrix4x4 actualMatrix = instance.transform.localToWorldMatrix;
+                for (int matrixIndex = 0; matrixIndex < 16; matrixIndex++)
+                {
+                    if (Mathf.Abs(actualMatrix[matrixIndex] - plan.WorldMatrix[matrixIndex]) > 0.0001f)
+                        throw new InvalidOperationException($"Canal bridge '{objectName}' transform parity failed.");
+                }
+                Vector3 plannedCenter = plan.WorldMatrix.MultiplyPoint3x4(sourceBounds.center);
+                if (!TryGetRendererBounds(instance, out Bounds placedBounds) ||
+                    Vector2.Distance(
+                        new Vector2(placedBounds.center.x, placedBounds.center.z),
+                        new Vector2(plannedCenter.x, plannedCenter.z)) > 0.01f)
+                {
+                    throw new InvalidOperationException(
+                        $"Canal bridge '{objectName}' visual center does not match its canal crossing center.");
+                }
+                if (Mathf.Abs(instance.transform.position.y - plan.Position.y) > 0.001f)
+                {
+                    throw new InvalidOperationException(
+                        $"Canal bridge '{objectName}' deck grade does not match its connected road grade.");
+                }
+                DisableColliders(instance);
+                return instance;
             }
-            if (!TryGetRendererBounds(instance, out Bounds scaledBounds))
-                throw new InvalidOperationException($"Canal bridge prefab '{prefab.name}' lost renderer bounds after scaling.");
-            Vector3 position = instance.transform.position;
-            position.x += center.x - scaledBounds.center.x;
-            position.z += center.y - scaledBounds.center.z;
-            // The authored bridge root is its road-deck grade. Align it directly with
-            // the removed road tile instead of lifting the bridge by its lowest support.
-            position.y = supportElevation;
-            instance.transform.position = position;
-            if (!TryGetRendererBounds(instance, out Bounds placedBounds) ||
-                Vector2.Distance(
-                    new Vector2(placedBounds.center.x, placedBounds.center.z),
-                    center) > 0.01f)
+            catch
             {
-                throw new InvalidOperationException(
-                    $"Canal bridge '{objectName}' visual center does not match its canal crossing center.");
+                UnityEngine.Object.DestroyImmediate(instance);
+                throw;
             }
-            if (Mathf.Abs(instance.transform.position.y - supportElevation) > 0.001f)
-            {
-                throw new InvalidOperationException(
-                    $"Canal bridge '{objectName}' deck grade does not match its connected road grade.");
-            }
-            DisableColliders(instance);
-            return instance;
         }
 
         private static bool TryResolveBridgeThroughRoadAxisAlongX(
@@ -9304,6 +9432,49 @@ namespace Game.Editor
             {
                 Renderer renderer = renderers[rendererIndex];
                 if (renderer == null || !renderer.enabled || !renderer.gameObject.activeInHierarchy)
+                    continue;
+
+                Bounds rendererBounds = renderer.localBounds;
+                Vector3 min = rendererBounds.min;
+                Vector3 max = rendererBounds.max;
+                for (int x = 0; x < 2; x++)
+                {
+                    for (int y = 0; y < 2; y++)
+                    {
+                        for (int z = 0; z < 2; z++)
+                        {
+                            Vector3 rendererPoint = new(
+                                x == 0 ? min.x : max.x,
+                                y == 0 ? min.y : max.y,
+                                z == 0 ? min.z : max.z);
+                            Vector3 localPoint = root.InverseTransformPoint(
+                                renderer.transform.TransformPoint(rendererPoint));
+                            if (!hasBounds)
+                            {
+                                bounds = new Bounds(localPoint, Vector3.zero);
+                                hasBounds = true;
+                            }
+                            else
+                            {
+                                bounds.Encapsulate(localPoint);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return hasBounds;
+        }
+
+        private static bool TryGetPrefabLocalRendererBounds(Transform root, out Bounds bounds)
+        {
+            bounds = default;
+            Renderer[] renderers = root.GetComponentsInChildren<Renderer>(true);
+            bool hasBounds = false;
+            for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
+            {
+                Renderer renderer = renderers[rendererIndex];
+                if (renderer == null)
                     continue;
 
                 Bounds rendererBounds = renderer.localBounds;

@@ -16,6 +16,26 @@ namespace Game.Editor
         internal DenseCityPresentationBakeRecord Presentation { get; }
     }
 
+    internal readonly struct DenseCityBridgeRecordGroup
+    {
+        internal DenseCityBridgeRecordGroup(
+            DenseCitySurfaceBakeRecord bridge,
+            DenseCityPresentationBakeRecord presentation,
+            DenseCitySurfaceBakeRecord firstApproachRamp,
+            DenseCitySurfaceBakeRecord secondApproachRamp)
+        {
+            Bridge = bridge;
+            Presentation = presentation;
+            FirstApproachRamp = firstApproachRamp;
+            SecondApproachRamp = secondApproachRamp;
+        }
+
+        internal DenseCitySurfaceBakeRecord Bridge { get; }
+        internal DenseCityPresentationBakeRecord Presentation { get; }
+        internal DenseCitySurfaceBakeRecord FirstApproachRamp { get; }
+        internal DenseCitySurfaceBakeRecord SecondApproachRamp { get; }
+    }
+
     internal static class DenseCityInfrastructurePlacementTransaction
     {
         internal static bool TryCommitAndRealize(
@@ -72,5 +92,47 @@ namespace Game.Editor
                 throw;
             }
         }
+    }
+
+    internal static class DenseCityBridgePlacementTransaction
+    {
+        internal static bool TryCommitAndRealize(
+            DenseCityGenerationRecordSet records,
+            DenseCityBridgeRecordGroup group,
+            Func<bool> realize)
+        {
+            if (records == null)
+                throw new ArgumentNullException(nameof(records));
+            if (realize == null)
+                throw new ArgumentNullException(nameof(realize));
+
+            records.AddBridgeGroup(
+                group.Bridge,
+                group.Presentation,
+                group.FirstApproachRamp,
+                group.SecondApproachRamp);
+            try
+            {
+                if (realize())
+                    return true;
+
+                Remove(records, group);
+                return false;
+            }
+            catch
+            {
+                Remove(records, group);
+                throw;
+            }
+        }
+
+        private static void Remove(
+            DenseCityGenerationRecordSet records,
+            DenseCityBridgeRecordGroup group) =>
+            records.RemoveBridgeGroup(
+                group.Bridge,
+                group.Presentation,
+                group.FirstApproachRamp,
+                group.SecondApproachRamp);
     }
 }

@@ -71,6 +71,29 @@ namespace Game.Editor
         internal byte LodImportance { get; }
     }
 
+    internal readonly struct DenseCityBridgeApproachRecordInput
+    {
+        internal DenseCityBridgeApproachRecordInput(
+            string recordKind,
+            Matrix4x4 worldMatrix,
+            Vector2 surfaceSize,
+            float elevation,
+            Vector2Int chunk)
+        {
+            RecordKind = recordKind;
+            WorldMatrix = worldMatrix;
+            SurfaceSize = surfaceSize;
+            Elevation = elevation;
+            Chunk = chunk;
+        }
+
+        internal string RecordKind { get; }
+        internal Matrix4x4 WorldMatrix { get; }
+        internal Vector2 SurfaceSize { get; }
+        internal float Elevation { get; }
+        internal Vector2Int Chunk { get; }
+    }
+
     internal static class DenseCityInfrastructureRecordFactory
     {
         internal static DenseCityInfrastructureRecordGroup CreateVisualized(
@@ -108,6 +131,28 @@ namespace Game.Editor
             return CreateSurface(input, CreateIdentity(input, 0, input.RecordKind));
         }
 
+        internal static DenseCityBridgeRecordGroup CreateBridgeWithApproaches(
+            DenseCityInfrastructureRecordInput bridgeInput,
+            DenseCityBridgeApproachRecordInput firstApproach,
+            DenseCityBridgeApproachRecordInput secondApproach)
+        {
+            if (bridgeInput.SurfaceKind != DenseCitySurfaceRecordKind.Bridge)
+                throw new ArgumentException("Bridge surface input is required.", nameof(bridgeInput));
+            if (bridgeInput.SequenceStart > int.MaxValue - 3)
+                throw new ArgumentOutOfRangeException(nameof(bridgeInput));
+
+            DenseCityInfrastructureRecordGroup bridge = CreateVisualized(bridgeInput);
+            DenseCitySurfaceBakeRecord firstRamp = CreateSurfaceOnlyRamp(
+                CreateApproachInput(bridgeInput, firstApproach, 2));
+            DenseCitySurfaceBakeRecord secondRamp = CreateSurfaceOnlyRamp(
+                CreateApproachInput(bridgeInput, secondApproach, 3));
+            return new DenseCityBridgeRecordGroup(
+                bridge.Surface,
+                bridge.Presentation,
+                firstRamp,
+                secondRamp);
+        }
+
         private static DenseCitySurfaceBakeRecord CreateSurface(
             DenseCityInfrastructureRecordInput input,
             DenseCityRecordIdentity identity) =>
@@ -132,6 +177,30 @@ namespace Game.Editor
                 input.SequenceStart + sequenceOffset,
                 input.SourceAssetGuid,
                 input.SourceLocalId);
+
+        private static DenseCityInfrastructureRecordInput CreateApproachInput(
+            DenseCityInfrastructureRecordInput bridgeInput,
+            DenseCityBridgeApproachRecordInput approach,
+            int sequenceOffset) =>
+            new(
+                bridgeInput.GeneratorSchema,
+                bridgeInput.Seed,
+                bridgeInput.DistrictId,
+                bridgeInput.SequenceStart + sequenceOffset,
+                approach.RecordKind,
+                DenseCitySurfaceRecordKind.Ramp,
+                bridgeInput.SourceAssetGuid,
+                bridgeInput.SourceLocalId,
+                bridgeInput.MaterialAssetGuids,
+                approach.WorldMatrix,
+                approach.SurfaceSize,
+                approach.Elevation,
+                bridgeInput.MovementMask,
+                bridgeInput.SurfaceLayer,
+                approach.Chunk,
+                false,
+                false,
+                0);
 
         private static Vector2[] CreateSurfacePolygon(Matrix4x4 worldMatrix, Vector2 surfaceSize)
         {

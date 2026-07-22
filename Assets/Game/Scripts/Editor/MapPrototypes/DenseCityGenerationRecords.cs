@@ -443,6 +443,85 @@ namespace Game.Editor
             presentations.RemoveAt(presentationIndex);
         }
 
+        internal void AddBridgeGroup(
+            DenseCitySurfaceBakeRecord bridge,
+            DenseCityPresentationBakeRecord presentation,
+            DenseCitySurfaceBakeRecord firstApproachRamp,
+            DenseCitySurfaceBakeRecord secondApproachRamp)
+        {
+            RequireWritable();
+            if (bridge.Kind != DenseCitySurfaceRecordKind.Bridge)
+                throw new ArgumentException("Bridge surface record is required.", nameof(bridge));
+            if (presentation.Category != DenseCityPresentationCategory.Infrastructure)
+                throw new ArgumentException("Infrastructure presentation category is required.", nameof(presentation));
+            if (firstApproachRamp.Kind != DenseCitySurfaceRecordKind.Ramp)
+                throw new ArgumentException("First approach must be a ramp surface record.", nameof(firstApproachRamp));
+            if (secondApproachRamp.Kind != DenseCitySurfaceRecordKind.Ramp)
+                throw new ArgumentException("Second approach must be a ramp surface record.", nameof(secondApproachRamp));
+            if (surfaces.Count > surfaceCapacity - 3 || presentations.Count >= presentationCapacity)
+                throw new InvalidOperationException("Dense-city bridge record group exceeds a configured capacity.");
+
+            string[] keys =
+            {
+                bridge.Identity.StableKey,
+                presentation.Identity.StableKey,
+                firstApproachRamp.Identity.StableKey,
+                secondApproachRamp.Identity.StableKey
+            };
+            var pendingKeys = new HashSet<string>(StringComparer.Ordinal);
+            for (int index = 0; index < keys.Length; index++)
+            {
+                string key = keys[index];
+                if (!pendingKeys.Add(key) || stableKeys.Contains(key))
+                    throw new InvalidOperationException($"Duplicate dense-city record identity: '{key}'.");
+            }
+
+            for (int index = 0; index < keys.Length; index++)
+                stableKeys.Add(keys[index]);
+            surfaces.Add(bridge);
+            surfaces.Add(firstApproachRamp);
+            surfaces.Add(secondApproachRamp);
+            presentations.Add(presentation);
+        }
+
+        internal void RemoveBridgeGroup(
+            DenseCitySurfaceBakeRecord bridge,
+            DenseCityPresentationBakeRecord presentation,
+            DenseCitySurfaceBakeRecord firstApproachRamp,
+            DenseCitySurfaceBakeRecord secondApproachRamp)
+        {
+            RequireWritable();
+            int bridgeIndex = FindIndex(surfaces, bridge.Identity.StableKey, record => record.Identity);
+            int firstRampIndex = FindIndex(
+                surfaces,
+                firstApproachRamp.Identity.StableKey,
+                record => record.Identity);
+            int secondRampIndex = FindIndex(
+                surfaces,
+                secondApproachRamp.Identity.StableKey,
+                record => record.Identity);
+            int presentationIndex = FindIndex(
+                presentations,
+                presentation.Identity.StableKey,
+                record => record.Identity);
+            if (bridgeIndex < 0 || firstRampIndex < 0 || secondRampIndex < 0 || presentationIndex < 0)
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city bridge record group is incomplete: '{bridge.Identity.StableKey}'.");
+            }
+
+            int[] surfaceIndices = { bridgeIndex, firstRampIndex, secondRampIndex };
+            Array.Sort(surfaceIndices);
+            for (int index = surfaceIndices.Length - 1; index >= 0; index--)
+            {
+                int surfaceIndex = surfaceIndices[index];
+                stableKeys.Remove(surfaces[surfaceIndex].Identity.StableKey);
+                surfaces.RemoveAt(surfaceIndex);
+            }
+            stableKeys.Remove(presentation.Identity.StableKey);
+            presentations.RemoveAt(presentationIndex);
+        }
+
         internal void RemoveSurface(DenseCitySurfaceBakeRecord surface)
         {
             RequireWritable();

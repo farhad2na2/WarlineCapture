@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Game.Editor;
 using NUnit.Framework;
 using UnityEngine;
@@ -97,6 +98,77 @@ public sealed class DenseCityInfrastructurePlacementTransactionTests
         Assert.That(records.Presentations, Is.Empty);
     }
 
+    [Test]
+    public void BridgeTransaction_KeepsBridgePresentationAndBothApproachesAfterAcceptedRealization()
+    {
+        using var records = new DenseCityGenerationRecordSet(1, 3, 1);
+        DenseCityBridgeRecordGroup group = CreateBridgeGroup();
+
+        bool accepted = DenseCityBridgePlacementTransaction.TryCommitAndRealize(
+            records,
+            group,
+            () => true);
+        records.Seal();
+
+        Assert.That(accepted, Is.True);
+        Assert.That(records.Surfaces, Has.Count.EqualTo(3));
+        Assert.That(records.Presentations, Has.Count.EqualTo(1));
+        Assert.That(
+            records.Surfaces.Count(record => record.Kind == DenseCitySurfaceRecordKind.Bridge),
+            Is.EqualTo(1));
+        Assert.That(
+            records.Surfaces.Count(record => record.Kind == DenseCitySurfaceRecordKind.Ramp),
+            Is.EqualTo(2));
+    }
+
+    [TestCase(false)]
+    [TestCase(true)]
+    public void BridgeTransaction_RollsBackAllRecords(bool throwDuringRealization)
+    {
+        using var records = new DenseCityGenerationRecordSet(1, 3, 1);
+        DenseCityBridgeRecordGroup group = CreateBridgeGroup();
+
+        if (throwDuringRealization)
+        {
+            Assert.That(
+                () => DenseCityBridgePlacementTransaction.TryCommitAndRealize(
+                    records,
+                    group,
+                    () => throw new InvalidOperationException("bridge realization failed")),
+                Throws.InvalidOperationException.With.Message.EqualTo("bridge realization failed"));
+        }
+        else
+        {
+            Assert.That(
+                DenseCityBridgePlacementTransaction.TryCommitAndRealize(records, group, () => false),
+                Is.False);
+        }
+
+        records.Seal();
+        Assert.That(records.Surfaces, Is.Empty);
+        Assert.That(records.Presentations, Is.Empty);
+    }
+
+    [Test]
+    public void BridgeGroup_PreflightRejectsInvalidSecondApproachWithoutMutation()
+    {
+        using var records = new DenseCityGenerationRecordSet(1, 3, 1);
+        DenseCityBridgeRecordGroup valid = CreateBridgeGroup();
+        DenseCitySurfaceBakeRecord invalidSecondApproach =
+            CreateSurface(3, "bridge-ramp-b", DenseCitySurfaceRecordKind.Road);
+
+        Assert.That(
+            () => records.AddBridgeGroup(
+                valid.Bridge,
+                valid.Presentation,
+                valid.FirstApproachRamp,
+                invalidSecondApproach),
+            Throws.ArgumentException);
+        records.Seal();
+        Assert.That(records.Surfaces, Is.Empty);
+        Assert.That(records.Presentations, Is.Empty);
+    }
+
     private static DenseCityInfrastructureRecordGroup CreateInfrastructureGroup()
     {
         DenseCitySurfaceBakeRecord surface = CreateSurface(0, "road", DenseCitySurfaceRecordKind.Road);
@@ -111,6 +183,26 @@ public sealed class DenseCityInfrastructurePlacementTransactionTests
             true,
             2);
         return new DenseCityInfrastructureRecordGroup(surface, presentation);
+    }
+
+    private static DenseCityBridgeRecordGroup CreateBridgeGroup()
+    {
+        DenseCitySurfaceBakeRecord bridge = CreateSurface(0, "bridge", DenseCitySurfaceRecordKind.Bridge);
+        var presentation = new DenseCityPresentationBakeRecord(
+            CreateIdentity(1, "bridge-visual"),
+            DenseCityPresentationCategory.Infrastructure,
+            SourceGuid,
+            null,
+            new[] { MaterialGuid },
+            Matrix4x4.identity,
+            true,
+            true,
+            4);
+        DenseCitySurfaceBakeRecord firstApproach =
+            CreateSurface(2, "bridge-ramp-a", DenseCitySurfaceRecordKind.Ramp);
+        DenseCitySurfaceBakeRecord secondApproach =
+            CreateSurface(3, "bridge-ramp-b", DenseCitySurfaceRecordKind.Ramp);
+        return new DenseCityBridgeRecordGroup(bridge, presentation, firstApproach, secondApproach);
     }
 
     private static DenseCitySurfaceBakeRecord CreateSurface(

@@ -172,6 +172,28 @@ namespace Game.Editor
                 realize);
         }
 
+        internal bool TryPlaceBridge(
+            int districtId,
+            Func<int, DenseCityBridgeRecordGroup> createGroup,
+            Func<bool> realize)
+        {
+            RequireActive();
+            if (districtId < 0)
+                throw new ArgumentOutOfRangeException(nameof(districtId));
+            if (createGroup == null)
+                throw new ArgumentNullException(nameof(createGroup));
+            if (realize == null)
+                throw new ArgumentNullException(nameof(realize));
+
+            int sequenceStart = GetInfrastructureSequenceStart(districtId, 4);
+            DenseCityBridgeRecordGroup group = createGroup(sequenceStart);
+            nextInfrastructureSequenceByDistrict[districtId] = sequenceStart + 4;
+            return DenseCityBridgePlacementTransaction.TryCommitAndRealize(
+                Records,
+                group,
+                realize);
+        }
+
         internal void RegisterRealizedBuildingOwner(
             DenseCityBuildingBakeRecord building,
             Transform intactPresentationRoot,

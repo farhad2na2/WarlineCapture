@@ -66,6 +66,77 @@ public sealed class DenseCityInfrastructureRecordFactoryTests
             Throws.ArgumentException);
     }
 
+    [Test]
+    public void CreateBridgeWithApproaches_ProducesContiguousExplicitRecords()
+    {
+        Matrix4x4 bridgeMatrix = Matrix4x4.TRS(
+            new Vector3(20f, 3f, 40f),
+            Quaternion.Euler(0f, 90f, 0f),
+            Vector3.one);
+        Matrix4x4 firstMatrix = Matrix4x4.TRS(
+            new Vector3(8f, 3f, 40f),
+            Quaternion.Euler(0f, 90f, 0f),
+            Vector3.one);
+        Matrix4x4 secondMatrix = Matrix4x4.TRS(
+            new Vector3(32f, 3f, 40f),
+            Quaternion.Euler(0f, 90f, 0f),
+            Vector3.one);
+
+        DenseCityBridgeRecordGroup group = DenseCityInfrastructureRecordFactory.CreateBridgeWithApproaches(
+            CreateInput(
+                30,
+                "canal-bridge",
+                DenseCitySurfaceRecordKind.Bridge,
+                bridgeMatrix,
+                new Vector2(12f, 18f)),
+            new DenseCityBridgeApproachRecordInput(
+                "canal-bridge-ramp-a",
+                firstMatrix,
+                new Vector2(12f, 6f),
+                3f,
+                new Vector2Int(0, 2)),
+            new DenseCityBridgeApproachRecordInput(
+                "canal-bridge-ramp-b",
+                secondMatrix,
+                new Vector2(12f, 6f),
+                3f,
+                new Vector2Int(2, 2)));
+
+        Assert.That(group.Bridge.Kind, Is.EqualTo(DenseCitySurfaceRecordKind.Bridge));
+        Assert.That(group.Presentation.Category, Is.EqualTo(DenseCityPresentationCategory.Infrastructure));
+        Assert.That(group.FirstApproachRamp.Kind, Is.EqualTo(DenseCitySurfaceRecordKind.Ramp));
+        Assert.That(group.SecondApproachRamp.Kind, Is.EqualTo(DenseCitySurfaceRecordKind.Ramp));
+        Assert.That(group.Bridge.Identity.DeterministicSequence, Is.EqualTo(30));
+        Assert.That(group.Presentation.Identity.DeterministicSequence, Is.EqualTo(31));
+        Assert.That(group.FirstApproachRamp.Identity.DeterministicSequence, Is.EqualTo(32));
+        Assert.That(group.SecondApproachRamp.Identity.DeterministicSequence, Is.EqualTo(33));
+        Assert.That(group.FirstApproachRamp.Polygon.Span[0], Is.EqualTo(new Vector2(5f, 46f)).Using(Vector2Comparer));
+        Assert.That(group.SecondApproachRamp.Polygon.Span[2], Is.EqualTo(new Vector2(35f, 34f)).Using(Vector2Comparer));
+    }
+
+    [Test]
+    public void CreateBridgeWithApproaches_RejectsNonBridgeInput()
+    {
+        var approach = new DenseCityBridgeApproachRecordInput(
+            "bridge-ramp",
+            Matrix4x4.identity,
+            Vector2.one,
+            0f,
+            Vector2Int.zero);
+
+        Assert.That(
+            () => DenseCityInfrastructureRecordFactory.CreateBridgeWithApproaches(
+                CreateInput(
+                    30,
+                    "road",
+                    DenseCitySurfaceRecordKind.Road,
+                    Matrix4x4.identity,
+                    Vector2.one),
+                approach,
+                approach),
+            Throws.ArgumentException);
+    }
+
     private static DenseCityInfrastructureRecordInput CreateInput(
         int sequence,
         string recordKind,

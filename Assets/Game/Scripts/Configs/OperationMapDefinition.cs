@@ -441,6 +441,35 @@ namespace Game.Configs
                  IsNumbered(value, segments[1], 'c', 'h'));
         }
 
+        public static bool IsValidSourceGlobalObjectId(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value) || value.Length > 127)
+                return false;
+
+            string[] segments = value.Split('-');
+            if (segments.Length != 5 ||
+                !string.Equals(segments[0], "GlobalObjectId_V1", StringComparison.Ordinal) ||
+                !uint.TryParse(segments[1], out _) ||
+                segments[2].Length != 32 ||
+                !ulong.TryParse(segments[3], out _) ||
+                !ulong.TryParse(segments[4], out _))
+            {
+                return false;
+            }
+
+            for (int i = 0; i < segments[2].Length; i++)
+            {
+                char character = segments[2][i];
+                if (!((character >= '0' && character <= '9') ||
+                      (character >= 'a' && character <= 'f')))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         public static bool IsValidScenarioId(string value)
         {
             Span<IdSegment> segments = stackalloc IdSegment[4];

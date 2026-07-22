@@ -37,10 +37,14 @@ namespace Game.Authoring
                 error = $"Invalid operation-map id: '{operationMapId ?? "<null>"}'.";
                 return false;
             }
-            if (string.IsNullOrWhiteSpace(sourceGlobalObjectId) ||
-                !sourceGlobalObjectId.StartsWith("GlobalObjectId_V1-", System.StringComparison.Ordinal))
+            if (!Game.Configs.OperationMapIdentityRules.IsValidSourceGlobalObjectId(sourceGlobalObjectId))
             {
                 error = "A stable source GlobalObjectId is required.";
+                return false;
+            }
+            if (!HasFiniteTransform(transform))
+            {
+                error = "Operation-map building transform must be finite with non-zero scale.";
                 return false;
             }
             if (placementIndex < 0)
@@ -80,6 +84,20 @@ namespace Game.Authoring
             error = null;
             return true;
         }
+
+        private static bool HasFiniteTransform(Transform owner)
+        {
+            Vector3 position = owner.localPosition;
+            Quaternion rotation = owner.localRotation;
+            Vector3 scale = owner.localScale;
+            return IsFinite(position.x) && IsFinite(position.y) && IsFinite(position.z) &&
+                   IsFinite(rotation.x) && IsFinite(rotation.y) && IsFinite(rotation.z) &&
+                   IsFinite(rotation.w) && IsFinite(scale.x) && IsFinite(scale.y) &&
+                   IsFinite(scale.z) && math.abs(scale.x) > 0.000001f &&
+                   math.abs(scale.y) > 0.000001f && math.abs(scale.z) > 0.000001f;
+        }
+
+        private static bool IsFinite(float value) => !float.IsNaN(value) && !float.IsInfinity(value);
 
         private bool TryValidateVisualOwnership(out string error)
         {

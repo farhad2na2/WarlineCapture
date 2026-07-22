@@ -52,6 +52,15 @@ namespace Game.Authoring
                 error = "Dense-city authored overrides use serialized bounds and cannot own colliders.";
                 return false;
             }
+            if (!IsFinite(transform.localPosition) || !IsFinite(transform.localScale) ||
+                !IsFinite(transform.localRotation) ||
+                Mathf.Abs(transform.localScale.x) <= 0.000001f ||
+                Mathf.Abs(transform.localScale.y) <= 0.000001f ||
+                Mathf.Abs(transform.localScale.z) <= 0.000001f)
+            {
+                error = "Dense-city authored override transform must be finite with non-zero scale.";
+                return false;
+            }
 
             error = null;
             return true;
@@ -59,5 +68,9 @@ namespace Game.Authoring
 
         private static bool IsFinite(Vector3 value) =>
             float.IsFinite(value.x) && float.IsFinite(value.y) && float.IsFinite(value.z);
+
+        private static bool IsFinite(Quaternion value) =>
+            float.IsFinite(value.x) && float.IsFinite(value.y) &&
+            float.IsFinite(value.z) && float.IsFinite(value.w);
     }
 }

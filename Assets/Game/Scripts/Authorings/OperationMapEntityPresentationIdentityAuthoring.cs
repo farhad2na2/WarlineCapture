@@ -43,7 +43,7 @@ namespace Game.Authoring
                 return false;
             }
 
-            if (!IsValidSourceGlobalObjectId(sourceGlobalObjectId))
+            if (!OperationMapIdentityRules.IsValidSourceGlobalObjectId(sourceGlobalObjectId))
             {
                 error = "Source GlobalObjectId is missing or malformed.";
                 return false;
@@ -67,35 +67,6 @@ namespace Game.Authoring
             }
 
             error = null;
-            return true;
-        }
-
-        private static bool IsValidSourceGlobalObjectId(string value)
-        {
-            if (string.IsNullOrWhiteSpace(value))
-                return false;
-
-            string[] segments = value.Split('-');
-            if (segments.Length != 5 ||
-                !string.Equals(segments[0], "GlobalObjectId_V1", System.StringComparison.Ordinal) ||
-                !uint.TryParse(segments[1], out _) ||
-                segments[2].Length != 32 ||
-                !ulong.TryParse(segments[3], out _) ||
-                !ulong.TryParse(segments[4], out _))
-            {
-                return false;
-            }
-
-            for (int i = 0; i < segments[2].Length; i++)
-            {
-                char character = segments[2][i];
-                if (!((character >= '0' && character <= '9') ||
-                      (character >= 'a' && character <= 'f')))
-                {
-                    return false;
-                }
-            }
-
             return true;
         }
 

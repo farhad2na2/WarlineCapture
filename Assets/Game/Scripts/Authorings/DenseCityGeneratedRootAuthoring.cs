@@ -56,6 +56,11 @@ namespace Game.Authoring
                 error = "Dense-city deterministic generation hash must be lowercase SHA-256.";
                 return false;
             }
+            if (!HasFiniteTransform(transform))
+            {
+                error = "Dense-city generated-root transform must be finite with non-zero scale.";
+                return false;
+            }
 
             error = null;
             return true;
@@ -76,5 +81,19 @@ namespace Game.Authoring
             }
             return true;
         }
+
+        private static bool HasFiniteTransform(Transform owner)
+        {
+            Vector3 position = owner.localPosition;
+            Quaternion rotation = owner.localRotation;
+            Vector3 scale = owner.localScale;
+            return IsFinite(position.x) && IsFinite(position.y) && IsFinite(position.z) &&
+                   IsFinite(rotation.x) && IsFinite(rotation.y) && IsFinite(rotation.z) &&
+                   IsFinite(rotation.w) && IsFinite(scale.x) && IsFinite(scale.y) &&
+                   IsFinite(scale.z) && Mathf.Abs(scale.x) > 0.000001f &&
+                   Mathf.Abs(scale.y) > 0.000001f && Mathf.Abs(scale.z) > 0.000001f;
+        }
+
+        private static bool IsFinite(float value) => !float.IsNaN(value) && !float.IsInfinity(value);
     }
 }

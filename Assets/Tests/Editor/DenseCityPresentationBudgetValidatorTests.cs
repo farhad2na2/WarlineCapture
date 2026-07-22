@@ -13,7 +13,8 @@ public sealed class DenseCityPresentationBudgetValidatorTests
             suite.Budget_AcceptsCompleteCoreEvidence,
             suite.Budget_RejectsTransformBoundsMismatch,
             suite.Budget_SerializationIsDeterministicAndMarksPackedMetricsPending,
-            suite.CandidateBakeAll_OrdersBudgetAfterBakeAndBeforePostflight
+            suite.CandidateBakeAll_OrdersBudgetAfterBakeAndBeforePostflight,
+            suite.CurrentMapBaker_BakesStaticPresentationOnlyForStaticDefinitions
         };
         for (int i = 0; i < tests.Length; i++)
             tests[i]();
@@ -72,6 +73,22 @@ public sealed class DenseCityPresentationBudgetValidatorTests
         Assert.That(
             Count(source, "DenseCityPresentationBudgetValidator.InvalidateEvidence"),
             Is.EqualTo(2));
+    }
+
+    [Test]
+    public void CurrentMapBaker_BakesStaticPresentationOnlyForStaticDefinitions()
+    {
+        Assert.That(
+            OperationMapCurrentMapBaker.ShouldBakeStaticPresentation(
+                Game.Configs.OperationMapPresentationKind.StaticSceneChunks),
+            Is.True);
+        Assert.That(
+            OperationMapCurrentMapBaker.ShouldBakeStaticPresentation(
+                Game.Configs.OperationMapPresentationKind.EntityScene),
+            Is.False);
+        Assert.Throws<InvalidOperationException>(() =>
+            OperationMapCurrentMapBaker.ShouldBakeStaticPresentation(
+                (Game.Configs.OperationMapPresentationKind)byte.MaxValue));
     }
 
     private static bool TryCreateValidReport(

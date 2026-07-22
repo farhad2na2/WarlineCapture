@@ -64,6 +64,8 @@ namespace Game.Editor
 
                 mapScene = EditorSceneManager.OpenScene(report.scenePath, OpenSceneMode.Single);
                 OperationMapSceneView mapView = RequireCurrentMapView(mapScene);
+                bool bakeStaticPresentation = ShouldBakeStaticPresentation(
+                    mapView.Definition.PresentationKind);
 
                 RunStage(report, "building-placements", () =>
                     MapBuildingPlacementBakeEditor.BakeOperationMapBuildingPlacements(mapScene, mapView));
@@ -79,10 +81,17 @@ namespace Game.Editor
                 EditorSceneManager.CloseScene(mapScene, removeScene: true);
                 mapScene = default;
 
-                RunStage(
+                RunConditionalStage(
                     report,
                     "presentation-chunks",
-                    StaticMapPresentationBaker.BakeCurrentStagedOperationMapPresentation);
+                    () =>
+                    {
+                        if (!bakeStaticPresentation)
+                            return false;
+
+                        StaticMapPresentationBaker.BakeCurrentStagedOperationMapPresentation();
+                        return true;
+                    });
                 CloseCurrentMapSceneIfLoaded();
                 RunStage(
                     report,
@@ -195,6 +204,17 @@ namespace Game.Editor
                 name = name,
                 elapsedMilliseconds = stopwatch.ElapsedMilliseconds
             });
+        }
+
+        internal static bool ShouldBakeStaticPresentation(OperationMapPresentationKind presentationKind)
+        {
+            return presentationKind switch
+            {
+                OperationMapPresentationKind.StaticSceneChunks => true,
+                OperationMapPresentationKind.EntityScene => false,
+                _ => throw new InvalidOperationException(
+                    $"Unsupported operation-map presentation kind: {presentationKind}.")
+            };
         }
 
         private static void RefreshSurfaceMetadata(OperationMapSceneView mapView)

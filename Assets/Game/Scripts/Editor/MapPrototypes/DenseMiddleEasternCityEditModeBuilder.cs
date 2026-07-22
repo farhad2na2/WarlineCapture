@@ -654,10 +654,14 @@ namespace Game.Editor
             public bool TryPlaceSemanticBuilding(
                 PrefabFootprint info,
                 DenseCityBuildingPlacementPlan plan,
-                Func<bool> realize)
+                Func<bool> realize,
+                out DenseCityBuildingBakeRecord acceptedBuilding)
             {
                 if (info.PresentationCategory != DenseCityPresentationCategory.GameplayBuildingIntact)
+                {
+                    acceptedBuilding = default;
                     return realize();
+                }
                 if (_districtId < 0)
                     throw new InvalidOperationException("Dense-city building district must be explicit before placement.");
 
@@ -689,7 +693,20 @@ namespace Game.Editor
                             DenseCityBuildingSurfaceLayer,
                             plan.Chunk),
                         _materialLibrary),
-                    realize);
+                    realize,
+                    out acceptedBuilding);
+            }
+
+            public void RegisterRealizedBuildingOwner(
+                DenseCityBuildingBakeRecord building,
+                Transform intactPresentationRoot,
+                PrefabFootprint info)
+            {
+                _generationTransactions.RegisterRealizedBuildingOwner(
+                    building,
+                    intactPresentationRoot,
+                    info.Prefab,
+                    info.BuildingRole);
             }
 
             public bool CanPlace(PrefabFootprint info, float rotationDegrees, Vector2 center)
@@ -838,7 +855,7 @@ namespace Game.Editor
         private const string DenseCityGeneratorSchema = "dense-city-v1";
         private const int DenseCityGenerationBuildingCapacity = 100_000;
         private const int DenseCityGenerationSurfaceCapacity = DenseCityGenerationBuildingCapacity * 2;
-        private const int DenseCityGenerationPresentationCapacity = DenseCityGenerationBuildingCapacity * 2;
+        private const int DenseCityGenerationPresentationCapacity = DenseCityGenerationBuildingCapacity * 8;
         private const int DenseCityBuildingSurfaceLayer = 0;
         private const uint DenseCityBuildingMovementMask =
             (uint)(MapSurfaceMovementMask.AllGroundUnits |
@@ -1189,6 +1206,7 @@ namespace Game.Editor
 
             UrbanDetailResult urbanDetails = AddUrbanDetailProps(
                 generatedRoot,
+                generationTransactions.RealizedBuildingOwners,
                 cityOrigin,
                 cityWidth,
                 cityDepth,
@@ -2486,22 +2504,28 @@ namespace Game.Editor
 
         private readonly struct GeneratedBuildingInfo
         {
+            public readonly DenseCityBuildingBakeRecord BuildingRecord;
             public readonly Transform Wrapper;
+            public readonly GameObject SourcePrefab;
             public readonly Bounds Bounds;
             public readonly Bounds LocalBounds;
             public readonly Rect Footprint;
             public readonly bool IsShop;
             public readonly bool IsHouse;
 
-            public GeneratedBuildingInfo(Transform wrapper, Bounds bounds, Bounds localBounds)
+            public GeneratedBuildingInfo(
+                DenseCityRealizedBuildingOwner owner,
+                Bounds bounds,
+                Bounds localBounds)
             {
-                Wrapper = wrapper;
+                BuildingRecord = owner.Building;
+                Wrapper = owner.IntactPresentationRoot;
+                SourcePrefab = owner.SourcePrefab;
                 Bounds = bounds;
                 LocalBounds = localBounds;
                 Footprint = Rect.MinMaxRect(bounds.min.x, bounds.min.z, bounds.max.x, bounds.max.z);
-                IsShop = wrapper.name.IndexOf("Shop", StringComparison.OrdinalIgnoreCase) >= 0;
-                IsHouse = wrapper.name.IndexOf("House", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                          wrapper.name.IndexOf("Village", StringComparison.OrdinalIgnoreCase) >= 0;
+                IsShop = owner.Role == GeneratedCityBuildingRole.Shop;
+                IsHouse = owner.Role == GeneratedCityBuildingRole.House;
             }
         }
 
@@ -5828,9 +5852,22 @@ namespace Game.Editor
                 frontageBoundary,
                 placementContext?.PresentationParentLocalToWorldMatrix ?? Matrix4x4.identity,
                 placementContext?.PresentationParentWorldToLocalMatrix ?? Matrix4x4.identity);
+            Transform realizedWrapper = null;
             if (placementContext == null)
                 return Realize();
-            return placementContext.TryPlaceSemanticBuilding(info, plan, Realize);
+            bool accepted = placementContext.TryPlaceSemanticBuilding(
+                info,
+                plan,
+                Realize,
+                out DenseCityBuildingBakeRecord acceptedBuilding);
+            if (accepted && info.PresentationCategory == DenseCityPresentationCategory.GameplayBuildingIntact)
+            {
+                placementContext.RegisterRealizedBuildingOwner(
+                    acceptedBuilding,
+                    realizedWrapper,
+                    info);
+            }
+            return accepted;
 
             bool Realize()
             {
@@ -5898,6 +5935,7 @@ namespace Game.Editor
                         worldDepth,
                         patch,
                         foundationHeight);
+                    realizedWrapper = wrapper.transform;
                     return true;
                 }
                 catch
@@ -6167,6 +6205,7 @@ namespace Game.Editor
 
         private static UrbanDetailResult AddUrbanDetailProps(
             Transform generatedRoot,
+            IReadOnlyList<DenseCityRealizedBuildingOwner> buildingOwners,
             Vector3 mapOrigin,
             float mapWidth,
             float mapDepth,
@@ -6179,7 +6218,7 @@ namespace Game.Editor
             float gradeElevation,
             uint seed)
         {
-            List<GeneratedBuildingInfo> buildings = CollectGeneratedBuildings(generatedRoot);
+            List<GeneratedBuildingInfo> buildings = CollectGeneratedBuildings(buildingOwners);
             GameObject[] waterTanks = LoadRequiredPrefabs(RooftopWaterTankPrefabPaths);
             GameObject[] rooftopUtilities = LoadRequiredPrefabs(RooftopUtilityPrefabPaths);
             GameObject[] shopWallProps = LoadRequiredPrefabs(ShopWallPropPrefabPaths);
@@ -7822,21 +7861,22 @@ namespace Game.Editor
                 materialSlotsChanged);
         }
 
-        private static List<GeneratedBuildingInfo> CollectGeneratedBuildings(Transform generatedRoot)
+        private static List<GeneratedBuildingInfo> CollectGeneratedBuildings(
+            IReadOnlyList<DenseCityRealizedBuildingOwner> owners)
         {
-            var buildings = new List<GeneratedBuildingInfo>();
-            Transform[] transforms = generatedRoot.GetComponentsInChildren<Transform>(true);
-            for (int index = 0; index < transforms.Length; index++)
+            var buildings = new List<GeneratedBuildingInfo>(owners.Count);
+            for (int index = 0; index < owners.Count; index++)
             {
-                Transform wrapper = transforms[index];
-                if (!IsRuntimeCityBuildingWrapper(wrapper) ||
+                DenseCityRealizedBuildingOwner owner = owners[index];
+                Transform wrapper = owner.IntactPresentationRoot;
+                if (wrapper == null ||
                     !TryGetWorldBounds(wrapper, out Bounds bounds) ||
                     !TryGetLocalRendererBounds(wrapper, out Bounds localBounds))
                 {
                     continue;
                 }
 
-                buildings.Add(new GeneratedBuildingInfo(wrapper, bounds, localBounds));
+                buildings.Add(new GeneratedBuildingInfo(owner, bounds, localBounds));
             }
 
             return buildings;

@@ -355,6 +355,38 @@ namespace Game.Editor
         internal void Add(DenseCityPresentationBakeRecord record) =>
             Add(record, record.Identity, presentations, presentationCapacity, "presentation");
 
+        internal void AddBuildingAttachment(DenseCityPresentationBakeRecord attachment)
+        {
+            RequireWritable();
+            if (attachment.Category is not (DenseCityPresentationCategory.BuildingAttachmentIntact or
+                DenseCityPresentationCategory.BuildingAttachmentDestroyed))
+            {
+                throw new ArgumentException(
+                    "Building attachment presentation category is required.",
+                    nameof(attachment));
+            }
+            if (FindIndex(buildings, attachment.BuildingOwnerStableKey, record => record.Identity) < 0)
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city attachment owner is not committed: '{attachment.BuildingOwnerStableKey}'.");
+            }
+
+            Add(attachment);
+        }
+
+        internal void RemoveBuildingAttachment(DenseCityPresentationBakeRecord attachment)
+        {
+            RequireWritable();
+            int index = FindIndex(presentations, attachment.Identity.StableKey, record => record.Identity);
+            if (index < 0)
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city attachment record is missing: '{attachment.Identity.StableKey}'.");
+            }
+            stableKeys.Remove(attachment.Identity.StableKey);
+            presentations.RemoveAt(index);
+        }
+
         internal void AddBuildingGroup(
             DenseCityBuildingBakeRecord building,
             DenseCitySurfaceBakeRecord foundation,

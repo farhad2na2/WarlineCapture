@@ -1,3 +1,4 @@
+using Game.Configs;
 using Game.Editor;
 using NUnit.Framework;
 using UnityEngine;
@@ -62,6 +63,47 @@ public sealed class DenseCityGenerationTransactionContextTests
         Assert.That(acceptedSequence, Is.EqualTo(5));
         Assert.That(context.Records.Buildings, Has.Count.EqualTo(1));
         Assert.That(context.Records.Buildings[0].Identity.DeterministicSequence, Is.EqualTo(5));
+    }
+
+    [Test]
+    public void RegisterRealizedBuildingOwner_UsesCommittedIdentityAndRejectsDuplicates()
+    {
+        using var context = new DenseCityGenerationTransactionContext(1, 2, 2);
+        Assert.That(context.TryPlaceBuilding(
+            3,
+            sequence => CreateGroup(3, sequence),
+            () => true,
+            out DenseCityBuildingBakeRecord building), Is.True);
+        var rootObject = new GameObject("IntactPresentationRoot");
+        var sourcePrefab = new GameObject("SourcePrefab");
+        try
+        {
+            context.RegisterRealizedBuildingOwner(
+                building,
+                rootObject.transform,
+                sourcePrefab,
+                GeneratedCityBuildingRole.Shop);
+
+            Assert.That(context.RealizedBuildingOwners, Has.Count.EqualTo(1));
+            Assert.That(
+                context.RealizedBuildingOwners[0].Building.Identity.StableKey,
+                Is.EqualTo(building.Identity.StableKey));
+            Assert.That(context.RealizedBuildingOwners[0].IntactPresentationRoot, Is.SameAs(rootObject.transform));
+            Assert.That(context.RealizedBuildingOwners[0].SourcePrefab, Is.SameAs(sourcePrefab));
+            Assert.That(context.RealizedBuildingOwners[0].Role, Is.EqualTo(GeneratedCityBuildingRole.Shop));
+            Assert.That(
+                () => context.RegisterRealizedBuildingOwner(
+                    building,
+                    rootObject.transform,
+                    sourcePrefab,
+                    GeneratedCityBuildingRole.Shop),
+                Throws.InvalidOperationException.With.Message.Contains("duplicated"));
+        }
+        finally
+        {
+            Object.DestroyImmediate(rootObject);
+            Object.DestroyImmediate(sourcePrefab);
+        }
     }
 
     private static DenseCityBuildingRecordGroup CreateGroup(int districtId, int sequence) =>

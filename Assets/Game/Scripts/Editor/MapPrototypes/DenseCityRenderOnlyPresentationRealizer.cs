@@ -46,6 +46,47 @@ namespace Game.Editor
             }
         }
 
+        internal static Transform RealizeAttachment(
+            DenseCityPresentationBakeRecord presentation,
+            Transform declaredBuildingVisualRoot,
+            DenseCityPresentationHierarchyContext hierarchy)
+        {
+            if (hierarchy == null)
+                throw new ArgumentNullException(nameof(hierarchy));
+            if (presentation.Category is not (DenseCityPresentationCategory.BuildingAttachmentIntact or
+                DenseCityPresentationCategory.BuildingAttachmentDestroyed))
+            {
+                throw new ArgumentOutOfRangeException(nameof(presentation));
+            }
+
+            Transform parent = hierarchy.RequireAttachmentParent(
+                presentation.Category,
+                declaredBuildingVisualRoot);
+            GameObject prefab = LoadRequiredPrefab(presentation, out string prefabPath);
+            GameObject instance = null;
+            try
+            {
+                instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
+                if (instance == null)
+                    throw new InvalidOperationException($"Failed to instantiate dense-city prefab '{prefabPath}'.");
+                instance.name = $"{prefab.name}_{presentation.Identity.DeterministicSequence:D6}";
+                ApplyWorldMatrix(instance.transform, presentation.WorldMatrix);
+                RequireMaterialIdentity(instance, presentation);
+                hierarchy.RequireAttachmentRoot(
+                    presentation.Category,
+                    declaredBuildingVisualRoot,
+                    instance.transform);
+                RequireMatrixParity(instance.transform.localToWorldMatrix, presentation);
+                return instance.transform;
+            }
+            catch
+            {
+                if (instance != null)
+                    UnityEngine.Object.DestroyImmediate(instance);
+                throw;
+            }
+        }
+
         internal static GameObject LoadRequiredPrefab(
             DenseCityPresentationBakeRecord presentation,
             out string prefabPath)

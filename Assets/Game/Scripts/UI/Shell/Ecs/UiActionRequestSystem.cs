@@ -82,14 +82,8 @@ namespace Game.UI.Shell.Ecs
             bool matchIntroInputLocked =
                 state.EntityManager.HasComponent<MatchIntroTransitionComponent>(boundary) &&
                 state.EntityManager.GetComponentData<MatchIntroTransitionComponent>(boundary).InputLocked != 0;
-            bool canOpenResourceExchange =
-                CanOpenResourceExchange(
-                    shellState,
-                    matchIntroInputLocked,
-                    hasResourceExchangeRequestEntity,
-                    resourceExchangeRuntimeState,
-                    state.EntityManager,
-                    resourceExchangeRequestEntity);
+            bool canPresentResourceExchange =
+                CanPresentResourceExchange(shellState, matchIntroInputLocked);
             int frame = UnityEngine.Time.frameCount;
 
             for (int i = 0; i < actionRequests.Length; i++)
@@ -106,7 +100,7 @@ namespace Game.UI.Shell.Ecs
                     ref squadTrayState,
                     ref resourceExchangeState,
                     hasResourceExchangeState,
-                    canOpenResourceExchange,
+                    canPresentResourceExchange,
                     state.EntityManager,
                     resourceExchangeRequestEntity,
                     resourceExchangeRuntimeState,
@@ -189,43 +183,14 @@ namespace Game.UI.Shell.Ecs
             return entity != Entity.Null;
         }
 
-        private static bool CanOpenResourceExchange(
+        private static bool CanPresentResourceExchange(
             in UiShellStateComponent shellState,
-            bool matchIntroInputLocked,
-            bool hasResourceExchangeRequestEntity,
-            in ResourceExchangeEnabledComponent enabled,
-            EntityManager entityManager,
-            Entity exchangeEntity)
+            bool matchIntroInputLocked)
         {
-            if (shellState.ActiveRoute != UIRoute.Match ||
-                shellState.CurrentMode != UiShellMode.MatchHud ||
-                shellState.IsTransitionRunning != 0 ||
-                matchIntroInputLocked ||
-                !hasResourceExchangeRequestEntity ||
-                enabled.Enabled == 0 ||
-                enabled.FactionId != FactionIdentity.PlayerFactionId ||
-                enabled.MaxQueueItems <= 0 ||
-                enabled.ScenarioTag.Length == 0 ||
-                exchangeEntity == Entity.Null ||
-                !entityManager.Exists(exchangeEntity) ||
-                !entityManager.HasBuffer<ResourceExchangeRecipeComponent>(exchangeEntity))
-            {
-                return false;
-            }
-
-            DynamicBuffer<ResourceExchangeRecipeComponent> recipes =
-                entityManager.GetBuffer<ResourceExchangeRecipeComponent>(exchangeEntity);
-            for (int i = 0; i < recipes.Length; i++)
-            {
-                ResourceExchangeRecipeComponent recipe = recipes[i];
-                if (recipe.Enabled != 0 &&
-                    (recipe.MissionTag.Length == 0 || recipe.MissionTag.Equals(enabled.ScenarioTag)))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return shellState.ActiveRoute == UIRoute.Match &&
+                   shellState.CurrentMode == UiShellMode.MatchHud &&
+                   shellState.IsTransitionRunning == 0 &&
+                   !matchIntroInputLocked;
         }
 
     }

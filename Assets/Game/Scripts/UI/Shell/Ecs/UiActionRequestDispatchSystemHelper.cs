@@ -23,7 +23,7 @@ namespace Game.UI.Shell.Ecs
             ref UiMatchHudSquadTrayStateComponent squadTrayState,
             ref UiResourceExchangeStateComponent resourceExchangeState,
             bool hasResourceExchangeState,
-            bool canOpenResourceExchange,
+            bool canPresentResourceExchange,
             EntityManager entityManager,
             Entity resourceExchangeRequestEntity,
             in ResourceExchangeEnabledComponent resourceExchangeRuntimeState,
@@ -49,7 +49,7 @@ namespace Game.UI.Shell.Ecs
                     break;
                 case UiActionKind.OpenResourceExchange:
                     CaptureUiClickSequence(ref inputState, commandRequests, frame);
-                    if (canOpenResourceExchange)
+                    if (canPresentResourceExchange)
                         EnqueuePopup(popupRequests, UiShellPopupKind.ResourceExchange, UiShellPopupIntent.Show, request.PayloadId);
                     break;
                 case UiActionKind.CloseResourceExchange:

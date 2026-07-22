@@ -35,12 +35,12 @@ public sealed class ResourceExchangeHeaderRoutingTests
                 test => test.MatchHudPrefabResourcePanelClickEnqueuesOpenResourceExchangeAction(),
                 ref passed);
             RunValidationStep(
-                nameof(UiActionRequestSystem_OpenResourceExchangeRequiresEnabledExchange),
-                test => test.UiActionRequestSystem_OpenResourceExchangeRequiresEnabledExchange(),
+                nameof(UiActionRequestSystem_OpenResourceExchangePresentsUnavailableState),
+                test => test.UiActionRequestSystem_OpenResourceExchangePresentsUnavailableState(),
                 ref passed);
             RunValidationStep(
-                nameof(UiActionRequestSystem_OpenResourceExchangeRejectsEnemyOnlyCapability),
-                test => test.UiActionRequestSystem_OpenResourceExchangeRejectsEnemyOnlyCapability(),
+                nameof(UiActionRequestSystem_OpenResourceExchangePresentsUnavailableForEnemyOnlyCapability),
+                test => test.UiActionRequestSystem_OpenResourceExchangePresentsUnavailableForEnemyOnlyCapability(),
                 ref passed);
             RunValidationStep(
                 nameof(UiActionRequestSystem_IntroLockedTapIsConsumedWithoutStaleOpen),
@@ -158,7 +158,7 @@ public sealed class ResourceExchangeHeaderRoutingTests
     }
 
     [Test]
-    public void UiActionRequestSystem_OpenResourceExchangeRequiresEnabledExchange()
+    public void UiActionRequestSystem_OpenResourceExchangePresentsUnavailableState()
     {
         using World enabledWorld = new("ResourceExchangeHeaderRouting_Enabled");
         ResourceExchangeActionResult enabledResult = RunResourceExchangeAction(enabledWorld, UiActionKind.OpenResourceExchange, exchangeEnabled: true);
@@ -171,14 +171,15 @@ public sealed class ResourceExchangeHeaderRoutingTests
         using World disabledWorld = new("ResourceExchangeHeaderRouting_Disabled");
         ResourceExchangeActionResult disabledResult = RunResourceExchangeAction(disabledWorld, UiActionKind.OpenResourceExchange, exchangeEnabled: false);
         Assert.AreEqual(0, disabledResult.ActionRequestCount, "OpenResourceExchange action should be consumed when exchange is disabled.");
-        Assert.AreEqual(0, disabledResult.PopupRequestCount, "OpenResourceExchange must not show the popup when exchange is disabled.");
+        Assert.AreEqual(1, disabledResult.PopupRequestCount, "The popup must present its unavailable state when exchange is disabled.");
+        Assert.AreEqual(UiShellPopupKind.ResourceExchange, disabledResult.PopupKind);
         Assert.IsTrue(disabledResult.WorldInputSuppressed, "Disabled Resource Exchange clicks still need to suppress the matching world click.");
     }
 
     [Test]
-    public void UiActionRequestSystem_OpenResourceExchangeRejectsEnemyOnlyCapability()
+    public void UiActionRequestSystem_OpenResourceExchangePresentsUnavailableForEnemyOnlyCapability()
     {
-        using World world = new(nameof(UiActionRequestSystem_OpenResourceExchangeRejectsEnemyOnlyCapability));
+        using World world = new(nameof(UiActionRequestSystem_OpenResourceExchangePresentsUnavailableForEnemyOnlyCapability));
         EntityManager entityManager = world.EntityManager;
         Entity boundary = CreateUiBoundary(entityManager);
         Entity selectionInput = CreateSelectionInput(entityManager);
@@ -192,7 +193,11 @@ public sealed class ResourceExchangeHeaderRoutingTests
         system.Update(world.Unmanaged);
 
         Assert.AreEqual(0, entityManager.GetBuffer<UiActionRequestComponent>(boundary).Length);
-        Assert.AreEqual(0, entityManager.GetBuffer<UiShellPopupRequestComponent>(boundary).Length);
+        DynamicBuffer<UiShellPopupRequestComponent> popupRequests =
+            entityManager.GetBuffer<UiShellPopupRequestComponent>(boundary);
+        Assert.AreEqual(1, popupRequests.Length);
+        Assert.AreEqual(UiShellPopupKind.ResourceExchange, popupRequests[0].PopupKind);
+        Assert.AreEqual(UiShellPopupIntent.Show, popupRequests[0].Intent);
         RtsSelectionInputStateComponent inputState =
             entityManager.GetComponentData<RtsSelectionInputStateComponent>(selectionInput);
         Assert.AreEqual(1, inputState.IgnoreUiClickUntilRelease);

@@ -450,21 +450,8 @@ namespace Game.UI.Runtime
             Button button = slot.GetComponent<Button>();
             if (button == null)
             {
-                button = slot.gameObject.AddComponent<Button>();
-                button.transition = Selectable.Transition.None;
-            }
-
-            if (button.targetGraphic == null)
-            {
-                if (!slot.TryGetComponent(out Graphic graphic))
-                {
-                    Image clickSurface = slot.gameObject.AddComponent<Image>();
-                    clickSurface.color = Color.clear;
-                    graphic = clickSurface;
-                }
-
-                graphic.raycastTarget = true;
-                button.targetGraphic = graphic;
+                Debug.LogWarning($"[MainMenuPlayUI] {slot.name} is missing its authored Resource Exchange button.");
+                return;
             }
 
             button.onClick.RemoveListener(RequestResourceExchangePopup);

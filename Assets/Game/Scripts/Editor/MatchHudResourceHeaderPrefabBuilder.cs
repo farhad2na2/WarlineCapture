@@ -58,6 +58,9 @@ namespace Game.Editor
                 ConfigureSlot(oilSlot, "Oil", oilIcon, -160f, 2);
                 ConfigureSlot(fuelSlot, "Fuel", fuelIcon, 160f, 3);
                 ConfigureSlot(civilianRiskSlot, "Civilian Risk", null, 480f, 4);
+                ConfigureResourceExchangeButton(materialsSlot);
+                ConfigureResourceExchangeButton(oilSlot);
+                ConfigureResourceExchangeButton(fuelSlot);
 
                 Transform frame = RequireDirectChild(resourceStrip, "Frame");
                 frame.SetSiblingIndex(0);
@@ -98,6 +101,9 @@ namespace Game.Editor
             ValidateSlot(resourceStrip, "OilSlot", "Oil", OilIconPath, 2);
             ValidateSlot(resourceStrip, "FuelSlot", "Fuel", FuelIconPath, 3);
             ValidateSlot(resourceStrip, "CivilianRiskSlot", "Civilian Risk", null, 4);
+            ValidateResourceExchangeButton(RequireDirectChild(resourceStrip, "MaterialsSlot"));
+            ValidateResourceExchangeButton(RequireDirectChild(resourceStrip, "OilSlot"));
+            ValidateResourceExchangeButton(RequireDirectChild(resourceStrip, "FuelSlot"));
             Transform frame = RequireDirectChild(resourceStrip, "Frame");
             if (frame.GetSiblingIndex() != 0)
                 throw new InvalidOperationException("ResourceStrip/Frame must render behind the four header sections.");
@@ -242,6 +248,35 @@ namespace Game.Editor
                 : string.Empty;
             if (!string.Equals(actualPath, iconPath, StringComparison.Ordinal))
                 throw new InvalidOperationException($"{slotName} uses '{actualPath}' instead of '{iconPath}'.");
+        }
+
+        private static void ConfigureResourceExchangeButton(Transform slot)
+        {
+            Image clickSurface = slot.GetComponent<Image>();
+            if (clickSurface == null)
+                clickSurface = slot.gameObject.AddComponent<Image>();
+
+            clickSurface.color = Color.clear;
+            clickSurface.raycastTarget = true;
+
+            Button button = slot.GetComponent<Button>();
+            if (button == null)
+                button = slot.gameObject.AddComponent<Button>();
+
+            button.targetGraphic = clickSurface;
+            button.transition = Selectable.Transition.None;
+        }
+
+        private static void ValidateResourceExchangeButton(Transform slot)
+        {
+            Image clickSurface = slot.GetComponent<Image>();
+            Button button = slot.GetComponent<Button>();
+            if (clickSurface == null || !clickSurface.raycastTarget ||
+                button == null || button.targetGraphic != clickSurface)
+            {
+                throw new InvalidOperationException(
+                    $"{slot.name} must own a raycastable Resource Exchange button surface.");
+            }
         }
 
         private static void ConfigureOilIconImporter()

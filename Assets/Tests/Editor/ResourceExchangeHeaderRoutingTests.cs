@@ -98,6 +98,9 @@ public sealed class ResourceExchangeHeaderRoutingTests
         GameObject header = CreateMatchHudHeaderContent();
         try
         {
+            ConfigureResourceExchangeSlot(header.transform.Find("ResourceStrip/MaterialsSlot"));
+            ConfigureResourceExchangeSlot(header.transform.Find("ResourceStrip/OilSlot"));
+            ConfigureResourceExchangeSlot(header.transform.Find("ResourceStrip/FuelSlot"));
             runtimeUi.BindMatchHudThreatJumpPanel(header);
             Transform materialsSlot = header.transform.Find("ResourceStrip/MaterialsSlot");
             Transform oilSlot = header.transform.Find("ResourceStrip/OilSlot");
@@ -142,15 +145,16 @@ public sealed class ResourceExchangeHeaderRoutingTests
         GameObject header = UnityEngine.Object.Instantiate(prefab);
         try
         {
-            runtimeUi.BindMatchHudThreatJumpPanel(header);
             Transform oilSlot = header.transform.Find("HeaderContent/ResourceStrip/OilSlot");
             Assert.NotNull(oilSlot);
             Button oilButton = oilSlot.GetComponent<Button>();
             Image clickSurface = oilSlot.GetComponent<Image>();
             Assert.NotNull(oilButton, "The slot root must own the resource exchange button.");
-            Assert.NotNull(clickSurface, "The slot root must have a click surface for UI raycasts.");
+            Assert.NotNull(clickSurface, "The prefab slot must have an authored click surface for UI raycasts.");
             Assert.IsTrue(clickSurface.raycastTarget);
             Assert.AreSame(clickSurface, oilButton.targetGraphic);
+
+            runtimeUi.BindMatchHudThreatJumpPanel(header);
             oilButton.onClick.Invoke();
 
             Assert.AreEqual(1, gateway.ActionCount);
@@ -589,6 +593,14 @@ public sealed class ResourceExchangeHeaderRoutingTests
         labelRect.anchorMax = Vector2.one;
         labelRect.sizeDelta = Vector2.zero;
         label.GetComponent<TMP_Text>().text = name == "MaterialsSlot" ? "Materials" : name;
+    }
+
+    private static void ConfigureResourceExchangeSlot(Transform slot)
+    {
+        Image clickSurface = slot.GetComponent<Image>();
+        Button button = slot.gameObject.AddComponent<Button>();
+        button.targetGraphic = clickSurface;
+        button.transition = Selectable.Transition.None;
     }
 
     private static T FindInScene<T>(Scene scene) where T : UnityEngine.Object

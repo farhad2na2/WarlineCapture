@@ -731,7 +731,7 @@ Runtime procedural generation is not the fallback for a rendering or packaging f
 
 Progress is checklist based. Every checkbox counts. Update the count, phase status, and validation log in the same stable change that completes an item.
 
-Current progress: **58 / 148 (39%)**
+Current progress: **59 / 148 (40%)**
 
 | Phase | Status |
 |---|---|
@@ -740,7 +740,7 @@ Current progress: **58 / 148 (39%)**
 | Phase 1: Generated ownership authoring | In progress; semantic hierarchy and fail-closed role/scene ownership validation complete |
 | Phase 2: Generator semantic output | In progress; building/attachment, infrastructure, canal/park, civic/market, and combined courtyard/detail records integrated and validated |
 | Phase 3: Collider-free enforcement | In progress; instance-only recursive stripper integrated into record-driven presentation replay |
-| Phase 4: Surface and blocker proxies | In progress; terrain, road, bridge-deck, and approach-ramp variants are integrated with separate semantic ownership |
+| Phase 4: Surface and blocker proxies | In progress; traversable surfaces and collider-free canal exclusions are integrated with separate presentation ownership |
 | Phase 5: Readiness and Bake All integration | Not started |
 | Phase 6: ECS presentation optimization | Not started |
 | Phase 7: Runtime package separation | Not started |
@@ -853,7 +853,7 @@ Current progress: **58 / 148 (39%)**
 - [x] Build simplified terrain proxy meshes from terrain/foundation/park records.
 - [x] Build road proxies separately from shoulders and natural ground patches.
 - [x] Build bridge deck and ramp proxies with correct layer and movement masks.
-- [ ] Build canal/water exclusion data without colliders.
+- [x] Build canal/water exclusion data without colliders.
 - [ ] Build coarse building/wall/rock blocker proxies from deterministic footprints.
 - [x] Merge compatible proxy geometry by semantic role and spatial chunk.
 - [x] Enforce deterministic winding, vertex/index ordering, finite values, and map bounds.
@@ -1117,6 +1117,7 @@ Extend existing tests rather than duplicating them for:
 | 2026-07-22 | Phase 4 terrain/foundation/park proxy integration | Focused proxy validation `/private/tmp/warline-dense-city-terrain-proxy-factory.log` 9/9; assembly boundaries `/private/tmp/warline-dense-city-terrain-proxy-architecture.log` 31/31; ECS/Burst guardrails `/private/tmp/warline-dense-city-terrain-proxy-ecs.log` 11/11; `dotnet build Game.Tests.Editor.csproj --no-restore` 0 errors; `git diff --check` | Passed | Added an integration fixture over the actual terrain-visual and building record factories. District terrain, canal-park terrain, and generated-building foundation records flow through their existing immutable `Terrain` records into one simplified terrain proxy partition, while the linked building blocker remains a separate blocker partition. The fixture validates record counts, reduced proxy geometry, movement-mask ownership, and no dependence on detailed presentation meshes. No duplicate terrain builder, runtime owner, managed bridge, scene mutation, Addressables change, production cutover, or Android build was added. Progress is 56/148 (38%). |
 | 2026-07-22 | Phase 4 road/shoulder/natural-ground proxy separation | Focused proxy validation `/private/tmp/warline-dense-city-road-proxy-factory.log` 10/10; assembly boundaries `/private/tmp/warline-dense-city-road-proxy-architecture.log` 31/31; ECS/Burst guardrails `/private/tmp/warline-dense-city-road-proxy-ecs.log` 11/11; `dotnet build Game.Tests.Editor.csproj --no-restore` 0 errors; `git diff --check` | Passed | Added an integration fixture over `DenseCityInfrastructureRecordFactory.CreateRoadWithShoulders` plus the terrain-visual factory used by natural ground. One road, two shoulders, and one natural-ground record produce exactly one `Road` proxy partition and one separate `Terrain` partition. Geometry counts prove the road mesh contains only the road polygon while shoulders and natural ground remain terrain-owned; both retain their explicit movement-mask metadata. No duplicate road builder, detailed-mesh rasterization, runtime owner, scene mutation, Addressables change, production cutover, or Android build was added. Progress is 57/148 (39%). |
 | 2026-07-22 | Phase 4 bridge-deck/approach-ramp proxy separation | Focused proxy validation `/private/tmp/warline-dense-city-bridge-ramp-proxy.log` 11/11; assembly boundaries `/private/tmp/warline-dense-city-bridge-ramp-architecture.log` 31/31; ECS/Burst guardrails `/private/tmp/warline-dense-city-bridge-ramp-ecs.log` 11/11; `dotnet build Game.Tests.Editor.csproj --no-restore --disable-build-servers` 0 errors; `git diff --check` | Passed | Added an integration fixture over the real `DenseCityInfrastructureRecordFactory.CreateBridgeWithApproaches` path. One bridge transaction emits one `Bridge` deck record and two `Ramp` approach records, and the proxy builder preserves them as separate semantic partitions with explicit layer 2 and movement mask 3 metadata. Geometry counts prove the deck remains one quad while the approaches form the independent ramp mesh; no presentation mesh is rasterized into gameplay data. No duplicate bridge builder, runtime owner, scene mutation, Addressables change, production cutover, or Android build was added. Progress is 58/148 (39%). |
+| 2026-07-22 | Phase 4 collider-free canal-water exclusion integration | Focused proxy validation `/private/tmp/warline-dense-city-canal-water-proxy.log` 12/12; assembly boundaries `/private/tmp/warline-dense-city-canal-water-architecture.log` 31/31; ECS/Burst guardrails `/private/tmp/warline-dense-city-canal-water-ecs.log` 11/11; `dotnet build Game.Tests.Editor.csproj --no-restore --disable-build-servers` 0 errors; `git diff --check` | Passed | Added an integration fixture over the real canal-water record factory. Its zero-movement exclusion produces exactly one layer-4 `Blocker` proxy, while the bed and water remain two presentation-only records and never become gameplay meshes. The production map-surface bake path classifies every sampled canal cell as blocked for infantry, and the complete generated proxy hierarchy contains no collider or rigidbody. No duplicate water owner, presentation-mesh rasterization, runtime system, managed bridge, scene mutation, Addressables change, production cutover, or Android build was added. Progress is 59/148 (40%). |
 
 ## 25. Completion Rule
 

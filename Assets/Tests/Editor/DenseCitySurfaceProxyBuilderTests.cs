@@ -35,6 +35,7 @@ public sealed class DenseCitySurfaceProxyBuilderTests
             suite.Build_ConsumesTerrainFoundationAndParkFactoryRecords,
             suite.Build_SeparatesRoadFromShoulderAndNaturalGroundFactoryRecords,
             suite.Build_SeparatesBridgeDeckFromApproachRampFactoryRecords,
+            suite.Build_ConvertsCanalWaterExclusionWithoutPhysicsComponents,
             suite.Build_ProducesRuntimeSurfaceQueriesForRepresentativeMovers,
             suite.Build_MergesOnlyAdjacentCoplanarRectangles,
             suite.Build_IsDeterministicAcrossEquivalentRecordSets,
@@ -411,6 +412,84 @@ public sealed class DenseCitySurfaceProxyBuilderTests
     }
 
     [Test]
+    public void Build_ConvertsCanalWaterExclusionWithoutPhysicsComponents()
+    {
+        var (_, _, mapRoot) = CreateScenePair("canal-water-exclusion");
+        using var records = new DenseCityGenerationRecordSet(1, 1, 2);
+        Matrix4x4 bedMatrix = Matrix4x4.TRS(
+            new Vector3(20f, 1.9f, 40f),
+            Quaternion.identity,
+            new Vector3(12f, 1f, 8f));
+        Matrix4x4 waterMatrix = Matrix4x4.TRS(
+            new Vector3(20f, 2f, 40f),
+            Quaternion.identity,
+            new Vector3(12f, 1f, 8f));
+        DenseCityCanalWaterRecordGroup canal = DenseCityCanalWaterRecordFactory.Create(
+            new DenseCityCanalWaterRecordInput(
+                "dense-city-v1",
+                42,
+                3,
+                0,
+                SourceGuid,
+                50,
+                new[] { SourceGuid },
+                new[] { SourceGuid },
+                bedMatrix,
+                waterMatrix,
+                new Vector2(12f, 8f),
+                2f,
+                4,
+                Vector2Int.zero));
+        records.AddCanalWaterGroup(
+            canal.Exclusion,
+            canal.BedPresentation,
+            canal.WaterPresentation);
+        records.Seal();
+
+        DenseCitySurfaceProxyBuildResult result = DenseCitySurfaceProxyBuilder.Build(
+            records,
+            mapRoot,
+            OperationMapId,
+            MapSurfaceBounds,
+            OutputFolder);
+
+        Assert.That(result.Records, Is.EqualTo(1));
+        Assert.That(result.Partitions, Is.EqualTo(1));
+        Assert.That(records.Presentations, Has.Count.EqualTo(2));
+        MeshFilter[] filters = mapRoot.GetComponentsInChildren<MeshFilter>(true);
+        Assert.That(filters, Has.Length.EqualTo(1));
+        AssertProxyMetadata(filters[0], MapBakeGroupRole.Blocker, 4, 0);
+        Assert.That(mapRoot.GetComponentsInChildren<Collider>(true), Is.Empty);
+        Assert.That(mapRoot.GetComponentsInChildren<Rigidbody>(true), Is.Empty);
+
+        MapSurfaceMeshBakeSource[] sources =
+            DenseCitySurfaceProxyBakeSourceCollector.Collect(mapRoot);
+        Assert.That(sources, Has.Length.EqualTo(1));
+        BlobAssetReference<MapSurfaceBlob> blob = default;
+        try
+        {
+            Assert.That(
+                new MapSurfaceBakeSystem().TryBuildSingleLayerTerrain(
+                    new MapSurfaceBakeRequest(new float3(14f, 0f, 36f), 4f, new int2(3, 2)),
+                    sources,
+                    Allocator.Persistent,
+                    out blob),
+                Is.True);
+            ref MapSurfaceBlob surface = ref blob.Value;
+            for (int z = 0; z < 2; z++)
+            {
+                for (int x = 0; x < 3; x++)
+                    AssertSurface(ref surface, x, z, MapSurfaceType.Blocked, MapSurfaceMovementMask.Infantry, false);
+            }
+        }
+        finally
+        {
+            if (blob.IsCreated)
+                blob.Dispose();
+        }
+    }
+
+    [Test]
     public void Build_MergesOnlyAdjacentCoplanarRectangles()
     {
         var (_, _, mapRoot) = CreateScenePair("merge-boundary");
@@ -735,12 +814,21 @@ public sealed class DenseCitySurfaceProxyBuilderTests
         int cellX,
         MapSurfaceType expectedType,
         MapSurfaceMovementMask movement,
+        bool expectedAllowed) =>
+        AssertSurface(ref blob, cellX, 0, expectedType, movement, expectedAllowed);
+
+    private static void AssertSurface(
+        ref MapSurfaceBlob blob,
+        int cellX,
+        int cellZ,
+        MapSurfaceType expectedType,
+        MapSurfaceMovementMask movement,
         bool expectedAllowed)
     {
         Assert.That(
             MapSurfaceBlobAccess.TryGetPrimarySurface(
                 ref blob,
-                new int2(cellX, 0),
+                new int2(cellX, cellZ),
                 out MapSurfaceSample sample),
             Is.True);
         Assert.That(sample.SurfaceType, Is.EqualTo(expectedType));

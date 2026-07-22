@@ -22,20 +22,7 @@ namespace Game.Editor
                     "Record-driven render-only realization currently requires one persistent prefab source.");
             }
 
-            string prefabPath = AssetDatabase.GUIDToAssetPath(presentation.PrefabAssetGuid);
-            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
-            if (prefab == null ||
-                !AssetDatabase.TryGetGUIDAndLocalFileIdentifier(
-                    prefab,
-                    out string actualGuid,
-                    out long actualLocalId) ||
-                !string.Equals(actualGuid, presentation.PrefabAssetGuid, StringComparison.Ordinal) ||
-                actualLocalId != presentation.Identity.SourceLocalId)
-            {
-                throw new InvalidOperationException(
-                    $"Dense-city presentation source identity is unavailable or mismatched: " +
-                    $"'{presentation.Identity.StableKey}'.");
-            }
+            GameObject prefab = LoadRequiredPrefab(presentation, out string prefabPath);
 
             Transform parent = hierarchy.ResolveIndependentParent(presentation.Category);
             GameObject instance = null;
@@ -59,19 +46,50 @@ namespace Game.Editor
             }
         }
 
-        private static void ApplyWorldMatrix(Transform transform, Matrix4x4 matrix)
+        internal static GameObject LoadRequiredPrefab(
+            DenseCityPresentationBakeRecord presentation,
+            out string prefabPath)
         {
-            Vector3 position = matrix.GetColumn(3);
-            Vector3 right = matrix.GetColumn(0);
-            Vector3 up = matrix.GetColumn(1);
-            Vector3 forward = matrix.GetColumn(2);
+            if (string.IsNullOrEmpty(presentation.PrefabAssetGuid) ||
+                !string.IsNullOrEmpty(presentation.MeshAssetGuid))
+            {
+                throw new InvalidOperationException(
+                    "Record-driven presentation realization requires one persistent prefab source.");
+            }
+
+            prefabPath = AssetDatabase.GUIDToAssetPath(presentation.PrefabAssetGuid);
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+            if (prefab == null ||
+                !AssetDatabase.TryGetGUIDAndLocalFileIdentifier(
+                    prefab,
+                    out string actualGuid,
+                    out long actualLocalId) ||
+                !string.Equals(actualGuid, presentation.PrefabAssetGuid, StringComparison.Ordinal) ||
+                actualLocalId != presentation.Identity.SourceLocalId)
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city presentation source identity is unavailable or mismatched: " +
+                    $"'{presentation.Identity.StableKey}'.");
+            }
+            return prefab;
+        }
+
+        internal static void ApplyWorldMatrix(Transform transform, Matrix4x4 matrix)
+        {
+            Matrix4x4 localMatrix = transform.parent != null
+                ? transform.parent.worldToLocalMatrix * matrix
+                : matrix;
+            Vector3 position = localMatrix.GetColumn(3);
+            Vector3 right = localMatrix.GetColumn(0);
+            Vector3 up = localMatrix.GetColumn(1);
+            Vector3 forward = localMatrix.GetColumn(2);
             var scale = new Vector3(right.magnitude, up.magnitude, forward.magnitude);
             if (!float.IsFinite(scale.x) || !float.IsFinite(scale.y) || !float.IsFinite(scale.z) ||
                 scale.x <= 0.000001f || scale.y <= 0.000001f || scale.z <= 0.000001f)
             {
                 throw new InvalidOperationException("Dense-city presentation matrix has invalid scale.");
             }
-            if (matrix.determinant < 0f)
+            if (localMatrix.determinant < 0f)
             {
                 scale.x = -scale.x;
                 right = -right;
@@ -81,17 +99,17 @@ namespace Game.Editor
             Matrix4x4 reconstructed = Matrix4x4.TRS(position, rotation, scale);
             for (int index = 0; index < 16; index++)
             {
-                if (Mathf.Abs(reconstructed[index] - matrix[index]) <= 0.0001f)
+                if (Mathf.Abs(reconstructed[index] - localMatrix[index]) <= 0.0001f)
                     continue;
                 throw new InvalidOperationException(
                     "Dense-city presentation matrix contains unsupported shear or decomposition drift.");
             }
 
-            transform.SetPositionAndRotation(position, rotation);
+            transform.SetLocalPositionAndRotation(position, rotation);
             transform.localScale = scale;
         }
 
-        private static void RequireMaterialIdentity(
+        internal static void RequireMaterialIdentity(
             GameObject instance,
             DenseCityPresentationBakeRecord presentation)
         {
@@ -137,7 +155,7 @@ namespace Game.Editor
                 $"Dense-city presentation material identity differs from its record: " +
                 $"'{presentation.Identity.StableKey}'.");
 
-        private static void RequireMatrixParity(
+        internal static void RequireMatrixParity(
             Matrix4x4 actual,
             DenseCityPresentationBakeRecord presentation)
         {

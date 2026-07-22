@@ -136,6 +136,16 @@ namespace Game.Authoring
             return productions[index];
         }
 
+#if UNITY_EDITOR
+        public void ConfigureForEditor(BuildingDefinitionAuthoringConfig buildingConfig)
+        {
+            config = buildingConfig != null
+                ? buildingConfig
+                : throw new ArgumentNullException(nameof(buildingConfig));
+            ApplyConfigIfAvailable();
+        }
+#endif
+
         public void OnBeforeSerialize()
         {
         }

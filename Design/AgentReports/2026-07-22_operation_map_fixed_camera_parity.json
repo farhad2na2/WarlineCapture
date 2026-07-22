@@ -1,0 +1,144 @@
+{
+    "schema": "warline.operation-map.fixed-camera-parity",
+    "schemaVersion": 1,
+    "operationMapId": "opmap.skirmish.desert_base_01",
+    "contentScope": "ExistingAcceptedMapOnly",
+    "generatedCityState": "NotGenerated",
+    "combinedGeneratedParityAccepted": 0,
+    "result": "FixedCameraParityPassed",
+    "width": 1280,
+    "height": 720,
+    "sourceRendererCount": 13691,
+    "candidateRendererCount": 13691,
+    "viewCount": 5,
+    "rejectedViewCount": 0,
+    "maximumMeanChannelDelta": 0.0024999999441206457,
+    "maximumChangedPixelRatio": 0.009999999776482582,
+    "rows": [
+        {
+            "view": "overview",
+            "result": "Passed",
+            "sourcePath": "Design/AgentReports/Captures/2026-07-22_operation_map_fixed_camera_parity/overview_source.png",
+            "candidatePath": "Design/AgentReports/Captures/2026-07-22_operation_map_fixed_camera_parity/overview_candidate.png",
+            "sourceSha256": "ff9c4bcb95b9180c7eb11361c563cd07b959f987a4047370816f967ce91011c0",
+            "candidateSha256": "528197fae162f9dfa075a4dce9fd7b9b76557d783b65d0a0c1ca4898a830e46f",
+            "meanChannelDelta": 5.212588689573749e-7,
+            "maximumChannelDelta": 0.23529411852359773,
+            "changedPixelRatio": 0.000018446180547471158,
+            "sourceLumaVariance": 0.010946481488645077,
+            "cameraPosition": [
+                611.2305908203125,
+                190.3773193359375,
+                254.322509765625
+            ],
+            "cameraRotation": [
+                26.981407165527345,
+                44.999996185302737,
+                -0.000001916108431032626
+            ],
+            "orthographic": 0,
+            "fieldOfView": 42.0,
+            "orthographicSize": 0.0
+        },
+        {
+            "view": "minimap",
+            "result": "Passed",
+            "sourcePath": "Design/AgentReports/Captures/2026-07-22_operation_map_fixed_camera_parity/minimap_source.png",
+            "candidatePath": "Design/AgentReports/Captures/2026-07-22_operation_map_fixed_camera_parity/minimap_candidate.png",
+            "sourceSha256": "1d91bb289439712837aa024db32b4c34ec8a72296da60a4718061ea6d93600bf",
+            "candidateSha256": "7e8a43689fe7a2d4e990c6a15a41de5ef04537cb2ed4a3eccf493c9b41fc51d5",
+            "meanChannelDelta": 7.223158604574564e-7,
+            "maximumChannelDelta": 0.27843138575553896,
+            "changedPixelRatio": 0.000019531249563442543,
+            "sourceLumaVariance": 0.009925028309226036,
+            "cameraPosition": [
+                863.87353515625,
+                687.2156982421875,
+                506.9654541015625
+            ],
+            "cameraRotation": [
+                90.0,
+                0.0,
+                0.0
+            ],
+            "orthographic": 1,
+            "fieldOfView": 60.0,
+            "orthographicSize": 206.4603729248047
+        },
+        {
+            "view": "detail_01",
+            "result": "Passed",
+            "sourcePath": "Design/AgentReports/Captures/2026-07-22_operation_map_fixed_camera_parity/detail_01_source.png",
+            "candidatePath": "Design/AgentReports/Captures/2026-07-22_operation_map_fixed_camera_parity/detail_01_candidate.png",
+            "sourceSha256": "f2fb54b3ad534162aecf862303001077711901349ebd846007e7071029faae69",
+            "candidateSha256": "9c2ec03ef731192bf02d644895208e9b624a77d71aa04211711121c21fbe8432",
+            "meanChannelDelta": 0.000004568993517750641,
+            "maximumChannelDelta": 0.47058823704719546,
+            "changedPixelRatio": 0.00004991319292457774,
+            "sourceLumaVariance": 0.017077255994081498,
+            "cameraPosition": [
+                1069.5740966796875,
+                76.07028198242188,
+                553.1444091796875
+            ],
+            "cameraRotation": [
+                41.125144958496097,
+                50.90614318847656,
+                0.0
+            ],
+            "orthographic": 0,
+            "fieldOfView": 42.0,
+            "orthographicSize": 0.0
+        },
+        {
+            "view": "detail_02",
+            "result": "Passed",
+            "sourcePath": "Design/AgentReports/Captures/2026-07-22_operation_map_fixed_camera_parity/detail_02_source.png",
+            "candidatePath": "Design/AgentReports/Captures/2026-07-22_operation_map_fixed_camera_parity/detail_02_candidate.png",
+            "sourceSha256": "ed0d9763128da2ee10088f92401ce3d8cd1135ec7e963fc088ad42e7d27dce5e",
+            "candidateSha256": "6e5f1fcda5a6f10ee483d4e1d3169edd97c0e84949b31843ca5d82044b7fe74b",
+            "meanChannelDelta": 0.000001747812802932458,
+            "maximumChannelDelta": 0.42352941632270815,
+            "changedPixelRatio": 0.000018446180547471158,
+            "sourceLumaVariance": 0.014475650154054165,
+            "cameraPosition": [
+                1134.572021484375,
+                77.5306396484375,
+                443.9169921875
+            ],
+            "cameraRotation": [
+                40.903228759765628,
+                316.8476257324219,
+                0.0
+            ],
+            "orthographic": 0,
+            "fieldOfView": 42.0,
+            "orthographicSize": 0.0
+        },
+        {
+            "view": "detail_03",
+            "result": "Passed",
+            "sourcePath": "Design/AgentReports/Captures/2026-07-22_operation_map_fixed_camera_parity/detail_03_source.png",
+            "candidatePath": "Design/AgentReports/Captures/2026-07-22_operation_map_fixed_camera_parity/detail_03_candidate.png",
+            "sourceSha256": "c8bacbc04b4c4b9ede5ebf226abcbfcaf672cdfba18a1558040966e168591ff6",
+            "candidateSha256": "03060b2b5413c1e78b25be0454ad7a46d63cefbd9085f173752a18607df5a178",
+            "meanChannelDelta": 8.03164141416346e-7,
+            "maximumChannelDelta": 0.6196078658103943,
+            "changedPixelRatio": 0.000005425347353593679,
+            "sourceLumaVariance": 0.019900165498256685,
+            "cameraPosition": [
+                721.2990112304688,
+                80.7038345336914,
+                554.1911010742188
+            ],
+            "cameraRotation": [
+                41.12513732910156,
+                230.90615844726563,
+                -0.0000022668314159091098
+            ],
+            "orthographic": 0,
+            "fieldOfView": 42.0,
+            "orthographicSize": 0.0
+        }
+    ]
+}

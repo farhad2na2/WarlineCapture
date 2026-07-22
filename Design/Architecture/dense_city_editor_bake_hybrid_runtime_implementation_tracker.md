@@ -731,13 +731,13 @@ Runtime procedural generation is not the fallback for a rendering or packaging f
 
 Progress is checklist based. Every checkbox counts. Update the count, phase status, and validation log in the same stable change that completes an item.
 
-Current progress: **35 / 148 (24%)**
+Current progress: **36 / 148 (24%)**
 
 | Phase | Status |
 |---|---|
 | Phase 0: Baseline and contracts | Complete |
 | Phase 0A: Existing map ECS presentation migration | Transactional candidate Bake All and direct baked matrix/bounds parity complete; Addressables runtime, fixed-camera, lifecycle, and Android acceptance open |
-| Phase 1: Generated ownership authoring | In progress; building visual hierarchy ownership complete |
+| Phase 1: Generated ownership authoring | In progress; semantic hierarchy builder complete |
 | Phase 2: Generator semantic output | Not started |
 | Phase 3: Collider-free enforcement | Not started |
 | Phase 4: Surface and blocker proxies | Not started |
@@ -807,7 +807,7 @@ Current progress: **35 / 148 (24%)**
 - [x] Make the building Baker recursively include shell and attached-prop descendants under their declared visual root; reject descendants shared across buildings, present under both states, outside both states, or parented to an independent render-only owner.
 - [x] Add unmanaged `OperationMapBuildingComponent` and `OperationMapBuildingDestroyedComponent` data in `Game.Components`.
 - [ ] Add finite-value, stable-id, duplicate-id, size, and scene-ownership validation for all generated/override/building authoring types.
-- [ ] Add `DenseCitySemanticHierarchyBuilder` in `Game.Editor`.
+- [x] Add `DenseCitySemanticHierarchyBuilder` in `Game.Editor`.
 - [ ] Create the exact proxy hierarchy in the operation-map authoring scene and gameplay/render-only entity presentation hierarchy in the existing map SubScene with identity transforms.
 - [ ] Add exactly one nearest `MapBakeGroupAuthoring` role owner to each proxy semantic group; do not classify generated render entities as static-presentation inputs.
 - [ ] Reject duplicate/missing role roots, mismatched generation ids, misplaced override roots, role overlap, and roots outside the active operation-map scene pair.
@@ -1050,6 +1050,7 @@ Extend existing tests rather than duplicating them for:
 | 2026-07-21 | Phase 1 generated ownership authoring contracts | Focused EditMode `/private/tmp/warline-dense-city-authoring-contract-tests-2.xml` 3/3; assembly boundaries `/private/tmp/warline-dense-city-authoring-contract-architecture.log` 31/31; Unity compile `/private/tmp/warline-dense-city-authoring-contract-tests-2.log`; `git diff --check` | Passed | Added passive `DenseCityGeneratedRootAuthoring` with closed MapBakeSource/EntityPresentationSource roles, shared generation identity, schema/version, seed, and lowercase SHA-256 generation hash. Added collider-free `DenseCityAuthoredOverrideAuthoring` with stable identity, finite positive local bounds, and explicit presentation/surface/blocker exclusions. Both live in `Game.Authoring`, have no Update methods or runtime ownership, and include Unity metadata plus focused malformed-input rejection. Progress is 32/148 (22%). |
 | 2026-07-21 | Phase 1 operation-map building ECS state contract | Focused EditMode `/private/tmp/warline-operation-map-building-components-tests.xml` 2/2; assembly boundaries `/private/tmp/warline-operation-map-building-components-architecture.log` 31/31; Unity compile `/private/tmp/warline-operation-map-building-components-tests.log`; `git diff --check` | Passed | Audited the existing `OperationMapBuildingAuthoring` root-reference baker and advanced it to the approved ECS contract. Added closed `OperationMapBuildingBlockerPolicy` with only `RubbleRemainsBlocked`, unmanaged stable `OperationMapBuildingComponent`, and an enableable `OperationMapBuildingDestroyedComponent` baked disabled to avoid a future per-destruction structural add. Unsupported blocker policy fails authoring validation. No destruction behavior or production presentation mode changed; recursive descendant ownership validation remains open. Progress is 34/148 (23%). |
 | 2026-07-21 | Phase 1 building visual hierarchy ownership | Focused EditMode `/private/tmp/warline-operation-map-building-ownership-tests.xml` 4/4; protected candidate bake `/private/tmp/warline-operation-map-building-ownership-candidate-bake.log`; assembly boundaries `/private/tmp/warline-operation-map-building-ownership-architecture.log` 31/31; `git diff --check` | Passed | The building baker now explicitly includes every transform beneath intact/destroyed roots and fails closed on overlapping state roots, renderers outside both states, nested/shared building owners, incorrect presentation-role ancestry, and independent or mismatched descendant presentation identities. The actual protected candidate remains valid with 432 gameplay buildings, 698 building render children, 9,544 identities, 14,209 render entities, zero non-finite transforms, zero managed map visual companions, and `productionCutover=0`. Progress is 35/148 (24%). |
+| 2026-07-21 | Phase 1 semantic hierarchy builder | Focused EditMode `/private/tmp/warline-dense-city-semantic-hierarchy-tests-3.xml` 2/2; assembly boundaries `/private/tmp/warline-dense-city-semantic-hierarchy-architecture.log` 31/31; Unity compile `/private/tmp/warline-dense-city-semantic-hierarchy-tests-3.log`; `git diff --check` | Passed | Added editor-only `DenseCitySemanticHierarchyBuilder` with explicit operation-map and entity-presentation scene inputs. It creates identity-transformed marked roots, the five exact `MapBakeGroupAuthoring` proxy roles, generated gameplay-building buckets, and render-only buckets; validates shared deterministic generation identity and nearest proxy ownership; and rejects same-scene use or overwrite of an existing marked root. It does not generate districts, save scenes, delete accepted content, search at runtime, or change production presentation. Progress is 36/148 (24%). |
 
 ## 25. Completion Rule
 

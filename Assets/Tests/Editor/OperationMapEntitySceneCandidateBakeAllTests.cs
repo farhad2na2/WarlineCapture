@@ -23,6 +23,7 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
             suite.LayoutBudget_AcceptsEntitySceneOnlyOwnership,
             suite.SceneSetup_RejectsEmptyBatchSetup,
             suite.SceneSetup_AcceptsLoadedActiveScene,
+            suite.CandidateBakeAll_PreservesFailureAndSceneRestorationOrdering,
             suite.SourceCandidateParity_AcceptsExactMatrixAndBounds,
             suite.SourceCandidateParity_RejectsMatrixDrift,
             suite.SourceCandidateParity_RejectsBoundsDrift
@@ -185,6 +186,42 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
     }
 
     [Test]
+    public void CandidateBakeAll_PreservesFailureAndSceneRestorationOrdering()
+    {
+        const string path =
+            "Assets/Game/Scripts/Editor/OperationMapEntitySceneCandidateBakeAll.cs";
+        string source = File.ReadAllText(path);
+        int catchBlock = source.IndexOf("catch (Exception exception)", StringComparison.Ordinal);
+        int invalidation = source.IndexOf(
+            "DenseCityPresentationBudgetValidator.InvalidateEvidence",
+            catchBlock,
+            StringComparison.Ordinal);
+        int rollback = source.IndexOf("transaction.Rollback()", catchBlock, StringComparison.Ordinal);
+        int protectedCheck = source.IndexOf(
+            "production.RequireUnchanged()",
+            rollback,
+            StringComparison.Ordinal);
+        int failureReport = source.IndexOf(
+            "WriteReport(projectRoot, report)",
+            protectedCheck,
+            StringComparison.Ordinal);
+        int rethrow = source.IndexOf(
+            "throw new InvalidOperationException",
+            failureReport,
+            StringComparison.Ordinal);
+
+        Assert.That(catchBlock, Is.GreaterThanOrEqualTo(0));
+        Assert.That(invalidation, Is.GreaterThan(catchBlock));
+        Assert.That(rollback, Is.GreaterThan(invalidation));
+        Assert.That(protectedCheck, Is.GreaterThan(rollback));
+        Assert.That(failureReport, Is.GreaterThan(protectedCheck));
+        Assert.That(rethrow, Is.GreaterThan(failureReport));
+        Assert.That(
+            Count(source, "RestoreSceneSetupOrCreateEmpty(previousSetup)"),
+            Is.EqualTo(2));
+    }
+
+    [Test]
     public void SourceCandidateParity_AcceptsExactMatrixAndBounds()
     {
         Matrix4x4 matrix = Matrix4x4.TRS(new Vector3(4f, 2f, -3f), Quaternion.Euler(0f, 30f, 0f), Vector3.one);
@@ -223,5 +260,17 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
                 true,
                 candidate),
             Is.EqualTo("renderer-bounds-residual"));
+    }
+
+    private static int Count(string source, string value)
+    {
+        int count = 0;
+        int index = 0;
+        while ((index = source.IndexOf(value, index, StringComparison.Ordinal)) >= 0)
+        {
+            count++;
+            index += value.Length;
+        }
+        return count;
     }
 }

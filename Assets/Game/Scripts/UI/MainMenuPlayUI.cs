@@ -449,15 +449,24 @@ namespace Game.UI.Runtime
 
             Button button = slot.GetComponent<Button>();
             if (button == null)
-                button = slot.gameObject.AddComponent<Button>();
-
-            if (slot.TryGetComponent(out Graphic graphic))
             {
+                button = slot.gameObject.AddComponent<Button>();
+                button.transition = Selectable.Transition.None;
+            }
+
+            if (button.targetGraphic == null)
+            {
+                if (!slot.TryGetComponent(out Graphic graphic))
+                {
+                    Image clickSurface = slot.gameObject.AddComponent<Image>();
+                    clickSurface.color = Color.clear;
+                    graphic = clickSurface;
+                }
+
                 graphic.raycastTarget = true;
                 button.targetGraphic = graphic;
             }
 
-            button.transition = Selectable.Transition.None;
             button.onClick.RemoveListener(RequestResourceExchangePopup);
             button.onClick.AddListener(RequestResourceExchangePopup);
             _matchHudResourceExchangeButtons.Add(button);

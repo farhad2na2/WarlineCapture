@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using TMPro;
 using Unity.Entities;
+using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -17,6 +18,8 @@ using Game.UI.Shell.Ecs;
 public sealed class ResourceExchangeHeaderRoutingTests
 {
     private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
+    private const string MatchHudContentPrefabPath =
+        "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab";
 
     public static void RunFocusedValidation()
     {
@@ -26,6 +29,10 @@ public sealed class ResourceExchangeHeaderRoutingTests
             RunValidationStep(
                 nameof(ResourceHeaderClick_EnqueuesOpenResourceExchangeAction),
                 test => test.ResourceHeaderClick_EnqueuesOpenResourceExchangeAction(),
+                ref passed);
+            RunValidationStep(
+                nameof(MatchHudPrefabResourceSlotClickSurfaceEnqueuesOpenResourceExchangeAction),
+                test => test.MatchHudPrefabResourceSlotClickSurfaceEnqueuesOpenResourceExchangeAction(),
                 ref passed);
             RunValidationStep(
                 nameof(UiActionRequestSystem_OpenResourceExchangeRequiresEnabledExchange),
@@ -92,13 +99,19 @@ public sealed class ResourceExchangeHeaderRoutingTests
         try
         {
             runtimeUi.BindMatchHudThreatJumpPanel(header);
-            Button materialsButton = header.transform.Find("ResourceStrip/MaterialsSlot").GetComponent<Button>();
-            Button oilButton = header.transform.Find("ResourceStrip/OilSlot").GetComponent<Button>();
-            Button fuelButton = header.transform.Find("ResourceStrip/FuelSlot").GetComponent<Button>();
+            Transform materialsSlot = header.transform.Find("ResourceStrip/MaterialsSlot");
+            Transform oilSlot = header.transform.Find("ResourceStrip/OilSlot");
+            Transform fuelSlot = header.transform.Find("ResourceStrip/FuelSlot");
+            Button materialsButton = materialsSlot.GetComponent<Button>();
+            Button oilButton = oilSlot.GetComponent<Button>();
+            Button fuelButton = fuelSlot.GetComponent<Button>();
 
             Assert.NotNull(materialsButton, "Materials slot must be clickable for Resource Exchange access.");
             Assert.NotNull(oilButton, "Oil slot must be clickable for Resource Exchange access.");
             Assert.NotNull(fuelButton, "Fuel slot must be clickable for Resource Exchange access.");
+            Assert.AreSame(materialsSlot.GetComponent<Graphic>(), materialsButton.targetGraphic);
+            Assert.AreSame(oilSlot.GetComponent<Graphic>(), oilButton.targetGraphic);
+            Assert.AreSame(fuelSlot.GetComponent<Graphic>(), fuelButton.targetGraphic);
             TMP_Text materialsLabel =
                 header.transform.Find("ResourceStrip/MaterialsSlot/Label").GetComponent<TMP_Text>();
             Assert.AreEqual("Materials", materialsLabel.text);
@@ -109,6 +122,39 @@ public sealed class ResourceExchangeHeaderRoutingTests
             Assert.AreEqual(1, gateway.ActionCount);
             Assert.AreEqual(UiActionKind.OpenResourceExchange, gateway.LastActionKind);
             Assert.AreEqual(0, gateway.LastActionPayloadId);
+        }
+        finally
+        {
+            runtimeUi.Dispose();
+            UnityEngine.Object.DestroyImmediate(header);
+        }
+    }
+
+    [Test]
+    public void MatchHudPrefabResourceSlotClickSurfaceEnqueuesOpenResourceExchangeAction()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(MatchHudContentPrefabPath);
+        Assert.NotNull(prefab);
+
+        var gateway = new RecordingGateway();
+        UiShellRuntimeGateway.Register(gateway);
+        MainMenuPlayUI runtimeUi = new();
+        GameObject header = UnityEngine.Object.Instantiate(prefab);
+        try
+        {
+            runtimeUi.BindMatchHudThreatJumpPanel(header);
+            Transform oilSlot = header.transform.Find("HeaderContent/ResourceStrip/OilSlot");
+            Assert.NotNull(oilSlot);
+            Button oilButton = oilSlot.GetComponent<Button>();
+            Image clickSurface = oilSlot.GetComponent<Image>();
+            Assert.NotNull(oilButton, "The slot root must own the resource exchange button.");
+            Assert.NotNull(clickSurface, "The slot root must have a click surface for UI raycasts.");
+            Assert.IsTrue(clickSurface.raycastTarget);
+            Assert.AreSame(clickSurface, oilButton.targetGraphic);
+            oilButton.onClick.Invoke();
+
+            Assert.AreEqual(1, gateway.ActionCount);
+            Assert.AreEqual(UiActionKind.OpenResourceExchange, gateway.LastActionKind);
         }
         finally
         {

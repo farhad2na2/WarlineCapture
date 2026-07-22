@@ -31,6 +31,9 @@ namespace Game.Editor
             public readonly int SemanticCanalWaterExclusions;
             public readonly int SemanticCanalBankTerrains;
             public readonly int SemanticCanalParkTerrains;
+            public readonly int SemanticCanalTrees;
+            public readonly int SemanticCanalBushes;
+            public readonly int SemanticCanalLights;
 
             public Result(
                 int roadTiles,
@@ -45,7 +48,10 @@ namespace Game.Editor
                 int semanticRoadShoulders,
                 int semanticCanalWaterExclusions,
                 int semanticCanalBankTerrains,
-                int semanticCanalParkTerrains)
+                int semanticCanalParkTerrains,
+                int semanticCanalTrees,
+                int semanticCanalBushes,
+                int semanticCanalLights)
             {
                 RoadTiles = roadTiles;
                 RoadChunks = roadChunks;
@@ -60,6 +66,9 @@ namespace Game.Editor
                 SemanticCanalWaterExclusions = semanticCanalWaterExclusions;
                 SemanticCanalBankTerrains = semanticCanalBankTerrains;
                 SemanticCanalParkTerrains = semanticCanalParkTerrains;
+                SemanticCanalTrees = semanticCanalTrees;
+                SemanticCanalBushes = semanticCanalBushes;
+                SemanticCanalLights = semanticCanalLights;
             }
         }
 
@@ -1291,6 +1300,15 @@ namespace Game.Editor
             int semanticCanalParkPresentations = CountPresentationRecords(
                 generationTransactions.Records.Presentations,
                 "canal-park-visual");
+            int semanticCanalTrees = CountPresentationRecords(
+                generationTransactions.Records.Presentations,
+                "canal-tree-visual");
+            int semanticCanalBushes = CountPresentationRecords(
+                generationTransactions.Records.Presentations,
+                "canal-bush-visual");
+            int semanticCanalLights = CountPresentationRecords(
+                generationTransactions.Records.Presentations,
+                "canal-light-visual");
             if (semanticCanalWaterExclusions != canalResult.WaterTiles ||
                 semanticCanalBedPresentations != canalResult.WaterTiles ||
                 semanticCanalWaterPresentations != canalResult.WaterTiles)
@@ -1320,6 +1338,16 @@ namespace Game.Editor
                     $"terrains={semanticCanalParkTerrains} bases={semanticCanalParkBasePresentations} " +
                     $"visuals={semanticCanalParkPresentations}.");
             }
+            if (semanticCanalTrees != canalResult.Trees ||
+                semanticCanalBushes != canalResult.Bushes ||
+                semanticCanalLights != canalResult.StreetLights)
+            {
+                throw new InvalidOperationException(
+                    $"Canal detail semantic parity failed: " +
+                    $"trees={canalResult.Trees}/{semanticCanalTrees} " +
+                    $"bushes={canalResult.Bushes}/{semanticCanalBushes} " +
+                    $"lights={canalResult.StreetLights}/{semanticCanalLights}.");
+            }
             Debug.Log(
                 $"[DenseCitySemanticRecords] buildings={generationTransactions.Records.Buildings.Count} " +
                 $"surfaces={generationTransactions.Records.Surfaces.Count} " +
@@ -1327,7 +1355,9 @@ namespace Game.Editor
                 $"roadShoulders={semanticRoadShoulders} " +
                 $"canalWaterExclusions={semanticCanalWaterExclusions} " +
                 $"canalBankTerrains={semanticCanalBankTerrains} " +
-                $"canalParkTerrains={semanticCanalParkTerrains}");
+                $"canalParkTerrains={semanticCanalParkTerrains} " +
+                $"canalTrees={semanticCanalTrees} canalBushes={semanticCanalBushes} " +
+                $"canalLights={semanticCanalLights}");
 
             int horizonMountains = BakeHorizonMountainPerimeter(
                 generatedRoot,
@@ -1363,7 +1393,10 @@ namespace Game.Editor
                 semanticRoadShoulders,
                 semanticCanalWaterExclusions,
                 semanticCanalBankTerrains,
-                semanticCanalParkTerrains);
+                semanticCanalParkTerrains,
+                semanticCanalTrees,
+                semanticCanalBushes,
+                semanticCanalLights);
         }
 
         private static int CountSurfaceRecords(
@@ -3743,8 +3776,15 @@ namespace Game.Editor
             DenseCityVisualAssetMetadata bridgeMetadata =
                 DenseCityVisualAssetMetadataExtractor.Extract(bridgePrefab);
             GameObject[] canalTreePrefabs = LoadRequiredPrefabs(Demo2CanalTreePrefabPaths);
+            var canalTreeMetadata = new DenseCityVisualAssetMetadata[canalTreePrefabs.Length];
+            for (int index = 0; index < canalTreePrefabs.Length; index++)
+                canalTreeMetadata[index] = DenseCityVisualAssetMetadataExtractor.Extract(canalTreePrefabs[index]);
             GameObject bushPrefab = LoadRequiredPrefab(MainStreetBushPrefabPath);
+            DenseCityVisualAssetMetadata bushMetadata =
+                DenseCityVisualAssetMetadataExtractor.Extract(bushPrefab);
             GameObject streetLightPrefab = LoadRequiredPrefab(StreetLightPrefabPath);
+            DenseCityVisualAssetMetadata streetLightMetadata =
+                DenseCityVisualAssetMetadataExtractor.Extract(streetLightPrefab);
             Material waterMaterial = AssetDatabase.LoadAssetAtPath<Material>(CanalWaterMaterialPath) ??
                                      throw new InvalidOperationException(
                                          $"Missing Demo2 canal water material {CanalWaterMaterialPath}.");
@@ -4100,44 +4140,59 @@ namespace Game.Editor
 
                         if ((cellIndex + routeIndex + side + 3) % 5 == 0)
                         {
-                            if (InstantiateGroundedDetail(
+                            if (InstantiateTransactionalGroundedDetail(
                                     streetLightPrefab,
+                                    streetLightMetadata,
                                     detailRootObject.transform,
                                     $"CanalStreetLight_{routeIndex:00}_{cellIndex:000}_{side}",
                                     bankCenter,
                                     gradeElevation + 0.03f,
                                     route.Horizontal ? 0f : 90f,
-                                    1f))
+                                    1f,
+                                    DenseCityPresentationCategory.Infrastructure,
+                                    "canal-light-visual",
+                                    seed,
+                                    generationTransactions))
                             {
                                 streetLights++;
                             }
                         }
                         else if ((cellIndex + routeIndex + side + 3) % 3 == 0)
                         {
-                            GameObject treePrefab = canalTreePrefabs[
-                                (int)(detailHash % (uint)canalTreePrefabs.Length)];
-                            if (InstantiateGroundedDetail(
+                            int treePrefabIndex = (int)(detailHash % (uint)canalTreePrefabs.Length);
+                            GameObject treePrefab = canalTreePrefabs[treePrefabIndex];
+                            if (InstantiateTransactionalGroundedDetail(
                                     treePrefab,
+                                    canalTreeMetadata[treePrefabIndex],
                                     detailRootObject.transform,
                                     $"CanalTree_{routeIndex:00}_{cellIndex:000}_{side}",
                                     bankCenter,
                                     gradeElevation + 0.03f,
                                     Hash01(detailHash) * 360f,
-                                    Mathf.Lerp(0.78f, 1.08f, Hash01(detailHash ^ 0x45f0a113u))))
+                                    Mathf.Lerp(0.78f, 1.08f, Hash01(detailHash ^ 0x45f0a113u)),
+                                    DenseCityPresentationCategory.Vegetation,
+                                    "canal-tree-visual",
+                                    seed,
+                                    generationTransactions))
                             {
                                 trees++;
                             }
                         }
                         else if ((cellIndex + side + 5) % 2 == 0)
                         {
-                            if (InstantiateGroundedDetail(
+                            if (InstantiateTransactionalGroundedDetail(
                                     bushPrefab,
+                                    bushMetadata,
                                     detailRootObject.transform,
                                     $"CanalBush_{routeIndex:00}_{cellIndex:000}_{side}",
                                     bankCenter,
                                     gradeElevation + 0.03f,
                                     Hash01(detailHash ^ 0x18d7b3a5u) * 360f,
-                                    Mathf.Lerp(0.72f, 1.05f, Hash01(detailHash ^ 0xa250c711u))))
+                                    Mathf.Lerp(0.72f, 1.05f, Hash01(detailHash ^ 0xa250c711u)),
+                                    DenseCityPresentationCategory.Vegetation,
+                                    "canal-bush-visual",
+                                    seed,
+                                    generationTransactions))
                             {
                                 bushes++;
                             }
@@ -4157,8 +4212,11 @@ namespace Game.Editor
                         bankPrefabs,
                         bankMetadata,
                         canalTreePrefabs[(routeIndex + 1) % canalTreePrefabs.Length],
+                        canalTreeMetadata[(routeIndex + 1) % canalTreePrefabs.Length],
                         bushPrefab,
+                        bushMetadata,
                         streetLightPrefab,
+                        streetLightMetadata,
                         canalGreenMaterial,
                         parkRootObject.transform,
                         detailRootObject.transform,
@@ -4547,8 +4605,11 @@ namespace Game.Editor
             GameObject[] roundGroundPrefabs,
             DenseCityVisualAssetMetadata[] roundGroundMetadata,
             GameObject treePrefab,
+            DenseCityVisualAssetMetadata treeMetadata,
             GameObject bushPrefab,
+            DenseCityVisualAssetMetadata bushMetadata,
             GameObject streetLightPrefab,
+            DenseCityVisualAssetMetadata streetLightMetadata,
             Material greenMaterial,
             Transform parkRoot,
             Transform detailRoot,
@@ -4637,14 +4698,19 @@ namespace Game.Editor
             };
             for (int index = 0; index < treeOffsets.Length; index++)
             {
-                if (InstantiateGroundedDetail(
+                if (InstantiateTransactionalGroundedDetail(
                         treePrefab,
+                        treeMetadata,
                         detailRoot,
                         $"CanalParkTree_{routeIndex:00}_{index:00}",
                         parkCenter + treeOffsets[index],
                         gradeElevation + 0.03f,
                         (routeIndex * 73f + index * 91f) % 360f,
-                        0.62f + index % 2 * 0.1f))
+                        0.62f + index % 2 * 0.1f,
+                        DenseCityPresentationCategory.Vegetation,
+                        "canal-tree-visual",
+                        seed,
+                        generationTransactions))
                 {
                     trees++;
                 }
@@ -4653,28 +4719,38 @@ namespace Game.Editor
             Vector2[] bushOffsets = { new(-1.8f, 1.7f), new(1.8f, -1.7f) };
             for (int index = 0; index < bushOffsets.Length; index++)
             {
-                if (InstantiateGroundedDetail(
+                if (InstantiateTransactionalGroundedDetail(
                         bushPrefab,
+                        bushMetadata,
                         detailRoot,
                         $"CanalParkBush_{routeIndex:00}_{index:00}",
                         parkCenter + bushOffsets[index],
                         gradeElevation + 0.03f,
                         index * 180f,
-                        0.9f))
+                        0.9f,
+                        DenseCityPresentationCategory.Vegetation,
+                        "canal-bush-visual",
+                        seed,
+                        generationTransactions))
                 {
                     bushes++;
                 }
             }
 
             Vector2 lightOffset = route.Horizontal ? new Vector2(0f, 3.1f) : new Vector2(3.1f, 0f);
-            if (InstantiateGroundedDetail(
+            if (InstantiateTransactionalGroundedDetail(
                     streetLightPrefab,
+                    streetLightMetadata,
                     detailRoot,
                     $"CanalParkLight_{routeIndex:00}",
                     parkCenter + lightOffset,
                     gradeElevation + 0.03f,
                     route.Horizontal ? 90f : 0f,
-                    1f))
+                    1f,
+                    DenseCityPresentationCategory.Infrastructure,
+                    "canal-light-visual",
+                    seed,
+                    generationTransactions))
             {
                 lights++;
             }
@@ -9359,6 +9435,131 @@ namespace Game.Editor
                 if (instance != null)
                     UnityEngine.Object.DestroyImmediate(instance);
                 throw;
+            }
+        }
+
+        private readonly struct GroundedDetailPlan
+        {
+            internal GroundedDetailPlan(
+                GameObject prefab,
+                Vector3 position,
+                Quaternion rotation,
+                Vector3 scale)
+            {
+                Prefab = prefab;
+                Position = position;
+                Rotation = rotation;
+                Scale = scale;
+                WorldMatrix = Matrix4x4.TRS(position, rotation, scale);
+            }
+
+            internal GameObject Prefab { get; }
+            internal Vector3 Position { get; }
+            internal Quaternion Rotation { get; }
+            internal Vector3 Scale { get; }
+            internal Matrix4x4 WorldMatrix { get; }
+        }
+
+        private static bool InstantiateTransactionalGroundedDetail(
+            GameObject prefab,
+            DenseCityVisualAssetMetadata metadata,
+            Transform parent,
+            string objectName,
+            Vector2 position,
+            float supportHeight,
+            float rotationDegrees,
+            float scale,
+            DenseCityPresentationCategory category,
+            string recordKind,
+            uint seed,
+            DenseCityGenerationTransactionContext generationTransactions)
+        {
+            if (generationTransactions == null)
+                throw new ArgumentNullException(nameof(generationTransactions));
+            GroundedDetailPlan plan = PlanGroundedDetail(
+                prefab,
+                position,
+                supportHeight,
+                rotationDegrees,
+                scale);
+            GameObject instance = null;
+            try
+            {
+                return generationTransactions.TryPlaceRenderOnlyPresentation(
+                    0,
+                    sequence => DenseCityRenderOnlyPresentationRecordFactory.Create(
+                        new DenseCityRenderOnlyPresentationRecordInput(
+                            DenseCityGeneratorSchema,
+                            unchecked((int)seed),
+                            0,
+                            sequence,
+                            recordKind,
+                            category,
+                            metadata.PrefabAssetGuid,
+                            metadata.PrefabLocalId,
+                            metadata.MaterialAssetGuids,
+                            plan.WorldMatrix,
+                            true,
+                            true,
+                            1)),
+                    () =>
+                    {
+                        instance = (GameObject)PrefabUtility.InstantiatePrefab(plan.Prefab, parent);
+                        if (instance == null)
+                            return false;
+                        instance.name = objectName;
+                        instance.transform.SetPositionAndRotation(plan.Position, plan.Rotation);
+                        instance.transform.localScale = plan.Scale;
+                        ValidateGroundedDetailMatrix(instance, plan);
+                        DisableColliders(instance);
+                        return true;
+                    });
+            }
+            catch
+            {
+                if (instance != null)
+                    UnityEngine.Object.DestroyImmediate(instance);
+                throw;
+            }
+        }
+
+        private static GroundedDetailPlan PlanGroundedDetail(
+            GameObject prefab,
+            Vector2 position,
+            float supportHeight,
+            float rotationDegrees,
+            float scale)
+        {
+            if (prefab == null)
+                throw new ArgumentNullException(nameof(prefab));
+            if (!float.IsFinite(position.x) || !float.IsFinite(position.y) ||
+                !float.IsFinite(supportHeight) || !float.IsFinite(rotationDegrees) ||
+                !float.IsFinite(scale) || scale <= 0f)
+            {
+                throw new ArgumentOutOfRangeException(nameof(scale));
+            }
+            if (!TryGetPrefabLocalRendererBounds(prefab.transform, out Bounds localBounds))
+                throw new InvalidOperationException($"Grounded detail prefab '{prefab.name}' has no renderer bounds.");
+
+            Quaternion rotation = Quaternion.Euler(0f, rotationDegrees, 0f);
+            var resolvedScale = Vector3.one * scale;
+            var rootPosition = new Vector3(
+                position.x,
+                supportHeight - localBounds.min.y * scale,
+                position.y);
+            return new GroundedDetailPlan(prefab, rootPosition, rotation, resolvedScale);
+        }
+
+        private static void ValidateGroundedDetailMatrix(GameObject instance, GroundedDetailPlan plan)
+        {
+            Matrix4x4 actual = instance.transform.localToWorldMatrix;
+            for (int index = 0; index < 16; index++)
+            {
+                if (Mathf.Abs(actual[index] - plan.WorldMatrix[index]) > 0.0001f)
+                {
+                    throw new InvalidOperationException(
+                        $"Grounded detail transform parity failed for '{instance.name}' at matrix index {index}.");
+                }
             }
         }
 

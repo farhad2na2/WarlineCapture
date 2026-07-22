@@ -264,6 +264,58 @@ namespace Game.Editor
                 if (!TryValidateGeneratedBuilding(generatedBuilding, out error))
                     return false;
             }
+            if (!TryValidateGeneratedBuildingAttachments(
+                    entityGeneratedRoot,
+                    generatedBuildings,
+                    out error))
+            {
+                return false;
+            }
+
+            error = null;
+            return true;
+        }
+
+        private static bool TryValidateGeneratedBuildingAttachments(
+            DenseCityGeneratedRootAuthoring entityGeneratedRoot,
+            IReadOnlyCollection<OperationMapBuildingAuthoring> generatedBuildings,
+            out string error)
+        {
+            var approvedOwners = new HashSet<OperationMapBuildingAuthoring>(generatedBuildings);
+            var attachmentRoots = new HashSet<Transform>();
+            OperationMapBuildingAttachmentAuthoring[] attachments =
+                entityGeneratedRoot.GetComponentsInChildren<OperationMapBuildingAttachmentAuthoring>(true);
+            foreach (OperationMapBuildingAttachmentAuthoring attachment in attachments)
+            {
+                if (!attachment.TryValidate(out error))
+                    return false;
+                if (!approvedOwners.Contains(attachment.BuildingOwner))
+                {
+                    error = $"Generated building attachment '{attachment.name}' has an orphaned owner.";
+                    return false;
+                }
+                if (!attachmentRoots.Add(attachment.transform) ||
+                    attachment.GetComponentsInChildren<OperationMapBuildingAttachmentAuthoring>(true).Length != 1)
+                {
+                    error = $"Generated building attachment '{attachment.name}' has duplicate attachment ownership.";
+                    return false;
+                }
+                if (attachment.GetComponentsInChildren<OperationMapEntityPresentationIdentityAuthoring>(true)
+                        .Length != 0)
+                {
+                    error =
+                        $"Generated building attachment '{attachment.name}' is also an independent render-only owner.";
+                    return false;
+                }
+                if (!TryValidateSharedRenderAssets(
+                        attachment.gameObject,
+                        attachment.BuildingOwner.PlacementIndex,
+                        $"{attachment.VisualState.ToString().ToLowerInvariant()} attachment",
+                        out error))
+                {
+                    return false;
+                }
+            }
 
             error = null;
             return true;
@@ -303,6 +355,47 @@ namespace Game.Editor
                     "destroyed",
                     out error))
             {
+                return false;
+            }
+            if (!TryValidateAddedAttachmentOverrides(
+                    building.IntactVisualRoot,
+                    building.PlacementIndex,
+                    out error) ||
+                !TryValidateAddedAttachmentOverrides(
+                    building.DestroyedVisualRoot,
+                    building.PlacementIndex,
+                    out error))
+            {
+                return false;
+            }
+
+            error = null;
+            return true;
+        }
+
+        private static bool TryValidateAddedAttachmentOverrides(
+            GameObject visualRoot,
+            int placementIndex,
+            out string error)
+        {
+            foreach (Transform descendant in visualRoot.GetComponentsInChildren<Transform>(true))
+            {
+                if (descendant == visualRoot.transform ||
+                    !PrefabUtility.IsAddedGameObjectOverride(descendant.gameObject))
+                {
+                    continue;
+                }
+                OperationMapBuildingAttachmentAuthoring attachmentOwner =
+                    descendant.GetComponentInParent<OperationMapBuildingAttachmentAuthoring>(true);
+                if (attachmentOwner != null &&
+                    (attachmentOwner.transform == descendant ||
+                     descendant.IsChildOf(attachmentOwner.transform)))
+                {
+                    continue;
+                }
+
+                error =
+                    $"Generated building {placementIndex} contains unowned added visual '{descendant.name}'.";
                 return false;
             }
 

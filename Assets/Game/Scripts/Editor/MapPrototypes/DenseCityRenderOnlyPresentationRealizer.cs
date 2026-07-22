@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Game.Authoring;
 using UnityEditor;
 using UnityEngine;
 
@@ -78,6 +79,21 @@ namespace Game.Editor
                     presentation.Category,
                     declaredBuildingVisualRoot,
                     instance.transform);
+                OperationMapBuildingAuthoring buildingOwner =
+                    declaredBuildingVisualRoot.GetComponentInParent<OperationMapBuildingAuthoring>(true);
+                if (buildingOwner == null)
+                {
+                    throw new InvalidOperationException(
+                        "Dense-city building attachment has no gameplay-building owner.");
+                }
+                var attachmentAuthoring = instance.AddComponent<OperationMapBuildingAttachmentAuthoring>();
+                attachmentAuthoring.ConfigureForEditor(
+                    buildingOwner,
+                    presentation.Category == DenseCityPresentationCategory.BuildingAttachmentIntact
+                        ? OperationMapBuildingVisualState.Intact
+                        : OperationMapBuildingVisualState.Destroyed);
+                if (!attachmentAuthoring.TryValidate(out string attachmentError))
+                    throw new InvalidOperationException(attachmentError);
                 RequireMatrixParity(instance.transform.localToWorldMatrix, presentation);
                 return instance.transform;
             }

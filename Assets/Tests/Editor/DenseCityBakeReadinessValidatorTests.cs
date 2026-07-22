@@ -48,7 +48,11 @@ public sealed class DenseCityBakeReadinessValidatorTests
             suite.AuthoringOwnership_AcceptsCompleteGeneratedBuildingEcsPresentation,
             suite.AuthoringOwnership_RejectsGeneratedBuildingWithoutDestroyedRoot,
             suite.AuthoringOwnership_RejectsGeneratedBuildingManagedRuntimeLink,
-            suite.AuthoringOwnership_RejectsGeneratedBuildingSceneEmbeddedMesh
+            suite.AuthoringOwnership_RejectsGeneratedBuildingSceneEmbeddedMesh,
+            suite.AuthoringOwnership_AcceptsOwnedIntactBuildingAttachment,
+            suite.AuthoringOwnership_RejectsAttachmentUnderWrongVisualState,
+            suite.AuthoringOwnership_RejectsAttachmentWithIndependentPresentationOwner,
+            suite.AuthoringOwnership_RejectsNestedAttachmentOwnership
         };
 
         for (int index = 0; index < tests.Length; index++)
@@ -697,6 +701,51 @@ public sealed class DenseCityBakeReadinessValidatorTests
         }
     }
 
+    [Test]
+    public void AuthoringOwnership_AcceptsOwnedIntactBuildingAttachment()
+    {
+        AssertGeneratedBuildingMutationAccepted(building =>
+            CreateAttachment(building, building.IntactVisualRoot.transform));
+    }
+
+    [Test]
+    public void AuthoringOwnership_RejectsAttachmentUnderWrongVisualState()
+    {
+        AssertGeneratedBuildingRejected(building =>
+        {
+            OperationMapBuildingAttachmentAuthoring attachment =
+                CreateAttachment(building, building.DestroyedVisualRoot.transform);
+            attachment.ConfigureForEditor(building, OperationMapBuildingVisualState.Intact);
+        }, "declared visual-state root");
+    }
+
+    [Test]
+    public void AuthoringOwnership_RejectsAttachmentWithIndependentPresentationOwner()
+    {
+        AssertGeneratedBuildingRejected(building =>
+        {
+            OperationMapBuildingAttachmentAuthoring attachment =
+                CreateAttachment(building, building.IntactVisualRoot.transform);
+            attachment.gameObject.AddComponent<OperationMapEntityPresentationIdentityAuthoring>();
+        }, "independent or mismatched presentation ownership");
+    }
+
+    [Test]
+    public void AuthoringOwnership_RejectsNestedAttachmentOwnership()
+    {
+        AssertGeneratedBuildingRejected(building =>
+        {
+            OperationMapBuildingAttachmentAuthoring parent =
+                CreateAttachment(building, building.IntactVisualRoot.transform);
+            var nested = new GameObject("NestedAttachment");
+            nested.transform.SetParent(parent.transform, false);
+            AddPersistentRenderer(nested);
+            OperationMapBuildingAttachmentAuthoring marker =
+                nested.AddComponent<OperationMapBuildingAttachmentAuthoring>();
+            marker.ConfigureForEditor(building, OperationMapBuildingVisualState.Intact);
+        }, "duplicate attachment ownership");
+    }
+
     private static void AssertGeneratedBuildingMutationAccepted(Action<OperationMapBuildingAuthoring> mutate)
     {
         (Scene mapScene, Scene entityScene) = CreateScenePair();
@@ -782,6 +831,23 @@ public sealed class DenseCityBakeReadinessValidatorTests
             intact,
             destroyed);
         return building;
+    }
+
+    private static OperationMapBuildingAttachmentAuthoring CreateAttachment(
+        OperationMapBuildingAuthoring building,
+        Transform visualStateRoot)
+    {
+        var owner = new GameObject("GeneratedAttachment");
+        owner.transform.SetParent(visualStateRoot, false);
+        AddPersistentRenderer(owner);
+        OperationMapBuildingAttachmentAuthoring attachment =
+            owner.AddComponent<OperationMapBuildingAttachmentAuthoring>();
+        attachment.ConfigureForEditor(
+            building,
+            visualStateRoot == building.IntactVisualRoot.transform
+                ? OperationMapBuildingVisualState.Intact
+                : OperationMapBuildingVisualState.Destroyed);
+        return attachment;
     }
 
     private static void AddPersistentRenderer(GameObject owner)

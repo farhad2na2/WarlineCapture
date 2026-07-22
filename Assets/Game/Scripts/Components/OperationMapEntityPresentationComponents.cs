@@ -36,6 +36,12 @@ namespace Game.Components
         public byte State;
     }
 
+    public struct OperationMapBuildingAttachment : IComponentData
+    {
+        public Entity Building;
+        public byte VisualState;
+    }
+
     [InternalBufferCapacity(4)]
     public struct OperationMapBuildingProductionPrefab : IBufferElementData
     {

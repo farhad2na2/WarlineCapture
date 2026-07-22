@@ -1,4 +1,5 @@
 using System.Linq;
+using Game.Authoring;
 using Game.Configs;
 using Game.Editor;
 using NUnit.Framework;
@@ -74,6 +75,18 @@ public sealed class DenseCityBuildingPresentationReplayTransactionTests
             Assert.That(
                 realized[0].DestroyedVisualRoot.GetChild(0).name,
                 Does.StartWith("destroyed-attachment_"));
+            OperationMapBuildingAttachmentAuthoring intactAttachment =
+                realized[0].IntactVisualRoot.GetChild(0)
+                    .GetComponent<OperationMapBuildingAttachmentAuthoring>();
+            OperationMapBuildingAttachmentAuthoring destroyedAttachment =
+                realized[0].DestroyedVisualRoot.GetChild(0)
+                    .GetComponent<OperationMapBuildingAttachmentAuthoring>();
+            Assert.That(intactAttachment, Is.Not.Null);
+            Assert.That(intactAttachment.BuildingOwner, Is.SameAs(realized[0].Authoring));
+            Assert.That(intactAttachment.VisualState, Is.EqualTo(OperationMapBuildingVisualState.Intact));
+            Assert.That(destroyedAttachment, Is.Not.Null);
+            Assert.That(destroyedAttachment.BuildingOwner, Is.SameAs(realized[0].Authoring));
+            Assert.That(destroyedAttachment.VisualState, Is.EqualTo(OperationMapBuildingVisualState.Destroyed));
             Assert.That(
                 realized[0].Authoring.GetComponentsInChildren<Collider>(true),
                 Is.Empty);

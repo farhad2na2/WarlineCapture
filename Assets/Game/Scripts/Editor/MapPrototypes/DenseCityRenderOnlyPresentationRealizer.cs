@@ -1,0 +1,154 @@
+using System;
+using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
+
+namespace Game.Editor
+{
+    internal static class DenseCityRenderOnlyPresentationRealizer
+    {
+        internal static Transform Realize(
+            DenseCityPresentationBakeRecord presentation,
+            DenseCityPresentationHierarchyContext hierarchy)
+        {
+            if (hierarchy == null)
+                throw new ArgumentNullException(nameof(hierarchy));
+            DenseCityRenderOnlyPresentationRecordFactory.RequireRenderOnlyCategory(
+                presentation.Category);
+            if (string.IsNullOrEmpty(presentation.PrefabAssetGuid) ||
+                !string.IsNullOrEmpty(presentation.MeshAssetGuid))
+            {
+                throw new InvalidOperationException(
+                    "Record-driven render-only realization currently requires one persistent prefab source.");
+            }
+
+            string prefabPath = AssetDatabase.GUIDToAssetPath(presentation.PrefabAssetGuid);
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+            if (prefab == null ||
+                !AssetDatabase.TryGetGUIDAndLocalFileIdentifier(
+                    prefab,
+                    out string actualGuid,
+                    out long actualLocalId) ||
+                !string.Equals(actualGuid, presentation.PrefabAssetGuid, StringComparison.Ordinal) ||
+                actualLocalId != presentation.Identity.SourceLocalId)
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city presentation source identity is unavailable or mismatched: " +
+                    $"'{presentation.Identity.StableKey}'.");
+            }
+
+            Transform parent = hierarchy.ResolveIndependentParent(presentation.Category);
+            GameObject instance = null;
+            try
+            {
+                instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
+                if (instance == null)
+                    throw new InvalidOperationException($"Failed to instantiate dense-city prefab '{prefabPath}'.");
+                instance.name = $"{prefab.name}_{presentation.Identity.DeterministicSequence:D6}";
+                ApplyWorldMatrix(instance.transform, presentation.WorldMatrix);
+                RequireMaterialIdentity(instance, presentation);
+                hierarchy.RequireIndependentRoot(presentation.Category, instance.transform);
+                RequireMatrixParity(instance.transform.localToWorldMatrix, presentation);
+                return instance.transform;
+            }
+            catch
+            {
+                if (instance != null)
+                    UnityEngine.Object.DestroyImmediate(instance);
+                throw;
+            }
+        }
+
+        private static void ApplyWorldMatrix(Transform transform, Matrix4x4 matrix)
+        {
+            Vector3 position = matrix.GetColumn(3);
+            Vector3 right = matrix.GetColumn(0);
+            Vector3 up = matrix.GetColumn(1);
+            Vector3 forward = matrix.GetColumn(2);
+            var scale = new Vector3(right.magnitude, up.magnitude, forward.magnitude);
+            if (!float.IsFinite(scale.x) || !float.IsFinite(scale.y) || !float.IsFinite(scale.z) ||
+                scale.x <= 0.000001f || scale.y <= 0.000001f || scale.z <= 0.000001f)
+            {
+                throw new InvalidOperationException("Dense-city presentation matrix has invalid scale.");
+            }
+            if (matrix.determinant < 0f)
+            {
+                scale.x = -scale.x;
+                right = -right;
+            }
+
+            Quaternion rotation = Quaternion.LookRotation(forward / scale.z, up / scale.y);
+            Matrix4x4 reconstructed = Matrix4x4.TRS(position, rotation, scale);
+            for (int index = 0; index < 16; index++)
+            {
+                if (Mathf.Abs(reconstructed[index] - matrix[index]) <= 0.0001f)
+                    continue;
+                throw new InvalidOperationException(
+                    "Dense-city presentation matrix contains unsupported shear or decomposition drift.");
+            }
+
+            transform.SetPositionAndRotation(position, rotation);
+            transform.localScale = scale;
+        }
+
+        private static void RequireMaterialIdentity(
+            GameObject instance,
+            DenseCityPresentationBakeRecord presentation)
+        {
+            var actualGuids = new SortedSet<string>(StringComparer.Ordinal);
+            Renderer[] renderers = instance.GetComponentsInChildren<Renderer>(true);
+            for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
+            {
+                Material[] materials = renderers[rendererIndex].sharedMaterials;
+                for (int materialIndex = 0; materialIndex < materials.Length; materialIndex++)
+                {
+                    Material material = materials[materialIndex];
+                    if (material == null)
+                        continue;
+                    if (!AssetDatabase.TryGetGUIDAndLocalFileIdentifier(
+                            material,
+                            out string materialGuid,
+                            out long materialLocalId) ||
+                        string.IsNullOrEmpty(materialGuid) || materialLocalId <= 0)
+                    {
+                        throw new InvalidOperationException(
+                            $"Dense-city realized material is not persistent: '{material.name}'.");
+                    }
+                    actualGuids.Add(materialGuid);
+                }
+            }
+
+            ReadOnlyMemory<string> expectedMemory = presentation.MaterialAssetGuids;
+            ReadOnlySpan<string> expected = expectedMemory.Span;
+            if (actualGuids.Count != expected.Length)
+                throw MaterialMismatch(presentation);
+            int index = 0;
+            foreach (string actualGuid in actualGuids)
+            {
+                if (!string.Equals(actualGuid, expected[index], StringComparison.Ordinal))
+                    throw MaterialMismatch(presentation);
+                index++;
+            }
+        }
+
+        private static InvalidOperationException MaterialMismatch(
+            DenseCityPresentationBakeRecord presentation) =>
+            new(
+                $"Dense-city presentation material identity differs from its record: " +
+                $"'{presentation.Identity.StableKey}'.");
+
+        private static void RequireMatrixParity(
+            Matrix4x4 actual,
+            DenseCityPresentationBakeRecord presentation)
+        {
+            for (int index = 0; index < 16; index++)
+            {
+                if (Mathf.Abs(actual[index] - presentation.WorldMatrix[index]) <= 0.0001f)
+                    continue;
+                throw new InvalidOperationException(
+                    $"Dense-city realized transform differs from its record: " +
+                    $"'{presentation.Identity.StableKey}'.");
+            }
+        }
+    }
+}

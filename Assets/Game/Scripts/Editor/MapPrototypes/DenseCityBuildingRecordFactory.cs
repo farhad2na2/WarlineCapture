@@ -27,7 +27,8 @@ namespace Game.Editor
             float maximumHealth,
             uint movementMask,
             int surfaceLayer,
-            Vector2Int chunk)
+            Vector2Int chunk,
+            string identityKindPrefix = null)
         {
             if (sequenceStart < 0 || sequenceStart > int.MaxValue - 4)
                 throw new ArgumentOutOfRangeException(nameof(sequenceStart));
@@ -52,6 +53,7 @@ namespace Game.Editor
             MovementMask = movementMask;
             SurfaceLayer = surfaceLayer;
             Chunk = chunk;
+            IdentityKindPrefix = identityKindPrefix;
         }
 
         internal string GeneratorSchema { get; }
@@ -74,6 +76,7 @@ namespace Game.Editor
         internal uint MovementMask { get; }
         internal int SurfaceLayer { get; }
         internal Vector2Int Chunk { get; }
+        internal string IdentityKindPrefix { get; }
     }
 
     internal readonly struct DenseCityBuildingRecordGroup
@@ -103,11 +106,11 @@ namespace Game.Editor
     {
         internal static DenseCityBuildingRecordGroup Create(DenseCityBuildingRecordInput input)
         {
-            DenseCityRecordIdentity buildingIdentity = CreateIdentity(input, 0, "building", false);
-            DenseCityRecordIdentity foundationIdentity = CreateIdentity(input, 1, "foundation", false);
-            DenseCityRecordIdentity blockerIdentity = CreateIdentity(input, 2, "blocker", false);
-            DenseCityRecordIdentity intactIdentity = CreateIdentity(input, 3, "building-intact", false);
-            DenseCityRecordIdentity destroyedIdentity = CreateIdentity(input, 4, "building-destroyed", true);
+            DenseCityRecordIdentity buildingIdentity = CreateIdentity(input, 0, Kind(input, "building"), false);
+            DenseCityRecordIdentity foundationIdentity = CreateIdentity(input, 1, Kind(input, "foundation"), false);
+            DenseCityRecordIdentity blockerIdentity = CreateIdentity(input, 2, Kind(input, "blocker"), false);
+            DenseCityRecordIdentity intactIdentity = CreateIdentity(input, 3, Kind(input, "building-intact"), false);
+            DenseCityRecordIdentity destroyedIdentity = CreateIdentity(input, 4, Kind(input, "building-destroyed"), true);
             Vector2[] footprintPolygon = CreateFootprintPolygon(input);
 
             var building = new DenseCityBuildingBakeRecord(
@@ -188,6 +191,11 @@ namespace Game.Editor
                 input.SequenceStart + sequenceOffset,
                 destroyedSource ? input.DestroyedPrefabGuid : input.IntactPrefabGuid,
                 destroyedSource ? input.DestroyedPrefabLocalId : input.IntactPrefabLocalId);
+
+        private static string Kind(DenseCityBuildingRecordInput input, string suffix) =>
+            string.IsNullOrEmpty(input.IdentityKindPrefix)
+                ? suffix
+                : string.Concat(input.IdentityKindPrefix, "-", suffix);
 
         private static Vector2[] CreateFootprintPolygon(DenseCityBuildingRecordInput input)
         {

@@ -34,6 +34,8 @@ namespace Game.Editor
             public readonly int SemanticCanalTrees;
             public readonly int SemanticCanalBushes;
             public readonly int SemanticCanalLights;
+            public readonly int SemanticCivicBuildings;
+            public readonly int SemanticCivicRoads;
 
             public Result(
                 int roadTiles,
@@ -51,7 +53,9 @@ namespace Game.Editor
                 int semanticCanalParkTerrains,
                 int semanticCanalTrees,
                 int semanticCanalBushes,
-                int semanticCanalLights)
+                int semanticCanalLights,
+                int semanticCivicBuildings,
+                int semanticCivicRoads)
             {
                 RoadTiles = roadTiles;
                 RoadChunks = roadChunks;
@@ -69,6 +73,8 @@ namespace Game.Editor
                 SemanticCanalTrees = semanticCanalTrees;
                 SemanticCanalBushes = semanticCanalBushes;
                 SemanticCanalLights = semanticCanalLights;
+                SemanticCivicBuildings = semanticCivicBuildings;
+                SemanticCivicRoads = semanticCivicRoads;
             }
         }
 
@@ -721,7 +727,8 @@ namespace Game.Editor
                             _config.DefaultBuildingMaxHealth,
                             DenseCityBuildingMovementMask,
                             DenseCityBuildingSurfaceLayer,
-                            plan.Chunk),
+                            plan.Chunk,
+                            info.BuildingRole == GeneratedCityBuildingRole.Civic ? "civic" : null),
                         _materialLibrary),
                     realize,
                     out acceptedBuilding);
@@ -1309,6 +1316,33 @@ namespace Game.Editor
             int semanticCanalLights = CountPresentationRecords(
                 generationTransactions.Records.Presentations,
                 "canal-light-visual");
+            int semanticCivicBuildings = CountBuildingRecords(
+                generationTransactions.Records.Buildings,
+                "civic-building");
+            int semanticCivicFoundations = CountSurfaceRecords(
+                generationTransactions.Records.Surfaces,
+                "civic-foundation");
+            int semanticCivicBlockers = CountSurfaceRecords(
+                generationTransactions.Records.Surfaces,
+                "civic-blocker");
+            int semanticCivicIntactPresentations = CountPresentationRecords(
+                generationTransactions.Records.Presentations,
+                "civic-building-intact");
+            int semanticCivicDestroyedPresentations = CountPresentationRecords(
+                generationTransactions.Records.Presentations,
+                "civic-building-destroyed");
+            int semanticCivicRoads = CountSurfaceRecords(
+                generationTransactions.Records.Surfaces,
+                "civic-road");
+            int semanticCivicRoadPresentations = CountPresentationRecords(
+                generationTransactions.Records.Presentations,
+                "civic-road-visual");
+            int semanticCivicRoadTerrains = CountSurfaceRecords(
+                generationTransactions.Records.Surfaces,
+                "civic-road-terrain-patch");
+            int semanticCivicRoadTerrainPresentations = CountPresentationRecords(
+                generationTransactions.Records.Presentations,
+                "civic-road-terrain-patch-visual");
             if (semanticCanalWaterExclusions != canalResult.WaterTiles ||
                 semanticCanalBedPresentations != canalResult.WaterTiles ||
                 semanticCanalWaterPresentations != canalResult.WaterTiles)
@@ -1348,6 +1382,29 @@ namespace Game.Editor
                     $"bushes={canalResult.Bushes}/{semanticCanalBushes} " +
                     $"lights={canalResult.StreetLights}/{semanticCanalLights}.");
             }
+            if (semanticCivicBuildings <= 0 ||
+                semanticCivicFoundations != semanticCivicBuildings ||
+                semanticCivicBlockers != semanticCivicBuildings ||
+                semanticCivicIntactPresentations != semanticCivicBuildings ||
+                semanticCivicDestroyedPresentations != semanticCivicBuildings)
+            {
+                throw new InvalidOperationException(
+                    $"Civic building semantic parity failed: buildings={semanticCivicBuildings} " +
+                    $"foundations={semanticCivicFoundations} blockers={semanticCivicBlockers} " +
+                    $"intact={semanticCivicIntactPresentations} " +
+                    $"destroyed={semanticCivicDestroyedPresentations}.");
+            }
+            if (semanticCivicRoads <= 0 ||
+                semanticCivicRoadPresentations != semanticCivicRoads ||
+                semanticCivicRoadTerrains <= 0 ||
+                semanticCivicRoadTerrains != semanticCivicRoadTerrainPresentations)
+            {
+                throw new InvalidOperationException(
+                    $"Civic road semantic parity failed: roads={semanticCivicRoads} " +
+                    $"roadVisuals={semanticCivicRoadPresentations} " +
+                    $"terrain={semanticCivicRoadTerrains} " +
+                    $"terrainVisuals={semanticCivicRoadTerrainPresentations}.");
+            }
             Debug.Log(
                 $"[DenseCitySemanticRecords] buildings={generationTransactions.Records.Buildings.Count} " +
                 $"surfaces={generationTransactions.Records.Surfaces.Count} " +
@@ -1357,7 +1414,8 @@ namespace Game.Editor
                 $"canalBankTerrains={semanticCanalBankTerrains} " +
                 $"canalParkTerrains={semanticCanalParkTerrains} " +
                 $"canalTrees={semanticCanalTrees} canalBushes={semanticCanalBushes} " +
-                $"canalLights={semanticCanalLights}");
+                $"canalLights={semanticCanalLights} " +
+                $"civicBuildings={semanticCivicBuildings} civicRoads={semanticCivicRoads}");
 
             int horizonMountains = BakeHorizonMountainPerimeter(
                 generatedRoot,
@@ -1396,7 +1454,27 @@ namespace Game.Editor
                 semanticCanalParkTerrains,
                 semanticCanalTrees,
                 semanticCanalBushes,
-                semanticCanalLights);
+                semanticCanalLights,
+                semanticCivicBuildings,
+                semanticCivicRoads);
+        }
+
+        private static int CountBuildingRecords(
+            IReadOnlyList<DenseCityBuildingBakeRecord> buildings,
+            string recordKind)
+        {
+            int count = 0;
+            for (int index = 0; index < buildings.Count; index++)
+            {
+                if (string.Equals(
+                        buildings[index].Identity.Kind,
+                        recordKind,
+                        StringComparison.Ordinal))
+                {
+                    count++;
+                }
+            }
+            return count;
         }
 
         private static int CountSurfaceRecords(
@@ -2557,6 +2635,7 @@ namespace Game.Editor
             public readonly List<int> StreetColumns;
             public readonly List<int> StreetRows;
             public readonly HashSet<Vector2Int> DirtRoadCells;
+            public readonly HashSet<Vector2Int> CivicRoadCells;
             public readonly HashSet<Vector2Int> RoadCells;
             public readonly HashSet<Vector2Int> BoulevardRoadCells;
             public readonly List<BoulevardMedianCell> BoulevardMedianCells;
@@ -2569,6 +2648,7 @@ namespace Game.Editor
                 List<int> streetColumns,
                 List<int> streetRows,
                 HashSet<Vector2Int> dirtRoadCells,
+                HashSet<Vector2Int> civicRoadCells,
                 HashSet<Vector2Int> roadCells,
                 HashSet<Vector2Int> boulevardRoadCells,
                 List<BoulevardMedianCell> boulevardMedianCells,
@@ -2580,6 +2660,7 @@ namespace Game.Editor
                 StreetColumns = streetColumns;
                 StreetRows = streetRows;
                 DirtRoadCells = dirtRoadCells;
+                CivicRoadCells = civicRoadCells;
                 RoadCells = roadCells;
                 BoulevardRoadCells = boulevardRoadCells;
                 BoulevardMedianCells = boulevardMedianCells;
@@ -3541,6 +3622,7 @@ namespace Game.Editor
             }
 
             var dirtRoadCells = new HashSet<Vector2Int>();
+            var civicRoadCells = new HashSet<Vector2Int>();
             AddNeighborhoodAlleys(
                 network,
                 streetColumns,
@@ -3558,7 +3640,8 @@ namespace Game.Editor
                 civicCenter,
                 cityFootprint,
                 terrainMap,
-                dirtRoadCells);
+                dirtRoadCells,
+                civicRoadCells);
 
             foreach (Vector2Int cell in network.StrokeIdsByCell.Keys)
             {
@@ -3638,6 +3721,7 @@ namespace Game.Editor
                 placementContext,
                 roadObject.transform,
                 dirtRoadCells,
+                civicRoadCells,
                 terrainMap,
                 elevationPlan,
                 surface,
@@ -3653,6 +3737,7 @@ namespace Game.Editor
                 streetColumns,
                 streetRows,
                 dirtRoadCells,
+                civicRoadCells,
                 new HashSet<Vector2Int>(network.RoadTiles.Keys),
                 new HashSet<Vector2Int>(network.AutobahnCells),
                 boulevardMedianCells,
@@ -5736,7 +5821,8 @@ namespace Game.Editor
             Vector2 civicCenter,
             CityFootprint footprint,
             TerrainViabilityMap terrainMap,
-            HashSet<Vector2Int> dirtRoadCells)
+            HashSet<Vector2Int> dirtRoadCells,
+            HashSet<Vector2Int> civicRoadCells)
         {
             int Column(float worldX) => Mathf.RoundToInt(
                 (worldX - mapOrigin.x) / RoadGridSize - 0.5f);
@@ -5781,6 +5867,7 @@ namespace Game.Editor
                     {
                         cells.Add(cell);
                         dirtRoadCells.Add(cell);
+                        civicRoadCells.Add(cell);
                     }
 
                     if (coordinate == end)
@@ -5888,6 +5975,7 @@ namespace Game.Editor
             RoadChunkVisualSystem.Context placementContext,
             Transform targetRoot,
             HashSet<Vector2Int> dirtRoadCells,
+            HashSet<Vector2Int> civicRoadCells,
             TerrainViabilityMap terrainMap,
             RoadElevationPlan elevationPlan,
             SurfacePlacementContext surface,
@@ -5912,6 +6000,8 @@ namespace Game.Editor
                                       network.AutobahnConnectorCells.Contains(cell);
                 bool useDirtRoad = dirtRoadCells.Contains(cell) &&
                                    !useAsphaltRoad;
+                bool useCivicRoad = civicRoadCells.Contains(cell) &&
+                                    !useAsphaltRoad;
                 RoadVisualVariantSystem selectedVariants = useAsphaltRoad
                     ? asphaltRoadVariants
                     : useDirtRoad
@@ -5983,7 +6073,7 @@ namespace Game.Editor
                                 unchecked((int)seed),
                                 0,
                                 sequence,
-                                "road",
+                                useCivicRoad ? "civic-road" : "road",
                                 DenseCitySurfaceRecordKind.Road,
                                 metadata.PrefabAssetGuid,
                                 metadata.PrefabLocalId,
@@ -6066,7 +6156,7 @@ namespace Game.Editor
                                     unchecked((int)seed),
                                     0,
                                     sequence,
-                                    "road-terrain-patch",
+                                    useCivicRoad ? "civic-road-terrain-patch" : "road-terrain-patch",
                                     DenseCitySurfaceRecordKind.Terrain,
                                     groundMetadata.PrefabAssetGuid,
                                     groundMetadata.PrefabLocalId,

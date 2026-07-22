@@ -64,7 +64,19 @@ public sealed class DenseCityBuildingPlacementTransactionTests
         Assert.That(records.Presentations, Is.Empty);
     }
 
-    private static DenseCityBuildingRecordGroup CreateGroup() =>
+    [Test]
+    public void Create_WithCivicPrefix_LabelsEveryAtomicBuildingRecord()
+    {
+        DenseCityBuildingRecordGroup group = CreateGroup("civic");
+
+        Assert.That(group.Building.Identity.Kind, Is.EqualTo("civic-building"));
+        Assert.That(group.Foundation.Identity.Kind, Is.EqualTo("civic-foundation"));
+        Assert.That(group.Blocker.Identity.Kind, Is.EqualTo("civic-blocker"));
+        Assert.That(group.IntactPresentation.Identity.Kind, Is.EqualTo("civic-building-intact"));
+        Assert.That(group.DestroyedPresentation.Identity.Kind, Is.EqualTo("civic-building-destroyed"));
+    }
+
+    private static DenseCityBuildingRecordGroup CreateGroup(string identityKindPrefix = null) =>
         DenseCityBuildingRecordFactory.Create(
             new DenseCityBuildingRecordInput(
                 "dense-city-v1",
@@ -86,5 +98,6 @@ public sealed class DenseCityBuildingPlacementTransactionTests
                 500f,
                 1,
                 0,
-                new Vector2Int(1, 2)));
+                new Vector2Int(1, 2),
+                identityKindPrefix));
 }

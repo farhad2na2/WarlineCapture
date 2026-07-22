@@ -23,7 +23,8 @@ namespace Game.Editor
             float maximumHealth,
             uint movementMask,
             int surfaceLayer,
-            Vector2Int chunk)
+            Vector2Int chunk,
+            string identityKindPrefix = null)
         {
             GeneratorSchema = generatorSchema;
             Seed = seed;
@@ -42,6 +43,7 @@ namespace Game.Editor
             MovementMask = movementMask;
             SurfaceLayer = surfaceLayer;
             Chunk = chunk;
+            IdentityKindPrefix = identityKindPrefix;
         }
 
         internal string GeneratorSchema { get; }
@@ -61,6 +63,7 @@ namespace Game.Editor
         internal uint MovementMask { get; }
         internal int SurfaceLayer { get; }
         internal Vector2Int Chunk { get; }
+        internal string IdentityKindPrefix { get; }
     }
 
     internal static class DenseCityBuildingPlacementRecordBuilder
@@ -102,7 +105,8 @@ namespace Game.Editor
                 request.MaximumHealth,
                 request.MovementMask,
                 request.SurfaceLayer,
-                request.Chunk);
+                request.Chunk,
+                request.IdentityKindPrefix);
             return DenseCityBuildingRecordFactory.Create(input);
         }
 

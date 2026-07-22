@@ -31,6 +31,7 @@ public sealed class DenseCitySurfaceProxyBuilderTests
             suite.Build_MergesOnlyAdjacentCoplanarRectangles,
             suite.Build_IsDeterministicAcrossEquivalentRecordSets,
             suite.Build_OutOfBoundsPolygonLeavesNoCandidateOutput,
+            suite.Build_ProhibitedProxyComponentLeavesNoCandidateOutput,
             suite.Build_InvalidConcavePolygonLeavesNoCandidateOutput
         };
 
@@ -250,6 +251,34 @@ public sealed class DenseCitySurfaceProxyBuilderTests
                 MapSurfaceBounds,
                 OutputFolder),
             Throws.InvalidOperationException.With.Message.Contains("map bounds"));
+        Assert.That(AssetDatabase.IsValidFolder(OutputFolder), Is.False);
+        Assert.That(mapRoot.GetComponentsInChildren<MeshFilter>(true), Is.Empty);
+    }
+
+    [Test]
+    public void Build_ProhibitedProxyComponentLeavesNoCandidateOutput()
+    {
+        var (_, _, mapRoot) = CreateScenePair("polluted");
+        Transform terrainRoot = mapRoot.transform.Find("BakeSources/Terrain");
+        terrainRoot.gameObject.AddComponent<AudioSource>();
+        using var records = new DenseCityGenerationRecordSet(1, 1, 1);
+        records.Add(CreateSurface(
+            1,
+            DenseCitySurfaceRecordKind.Terrain,
+            Rectangle(0f),
+            1,
+            0,
+            Vector2Int.zero));
+        records.Seal();
+
+        Assert.That(
+            () => DenseCitySurfaceProxyBuilder.Build(
+                records,
+                mapRoot,
+                OperationMapId,
+                MapSurfaceBounds,
+                OutputFolder),
+            Throws.InvalidOperationException.With.Message.Contains("AudioSource"));
         Assert.That(AssetDatabase.IsValidFolder(OutputFolder), Is.False);
         Assert.That(mapRoot.GetComponentsInChildren<MeshFilter>(true), Is.Empty);
     }

@@ -179,6 +179,7 @@ namespace Game.Editor
                 }
                 polygons.Add(new PreparedPolygon(surface, points));
             }
+            RequireCleanProxyHierarchy(mapBakeRoot.gameObject, surfaces.Count, 0);
 
             var createdRoots = new List<GameObject>(partitions.Count);
             bool folderCreated = false;
@@ -500,16 +501,48 @@ namespace Game.Editor
 
         private static void RequireCleanProxyHierarchy(GameObject root, int records, int partitions)
         {
-            if (root.GetComponentsInChildren<MeshFilter>(true).Length != partitions ||
-                root.GetComponentsInChildren<MeshRenderer>(true).Length != 0 ||
-                root.GetComponentsInChildren<Collider>(true).Length != 0 ||
-                root.GetComponentsInChildren<Collider2D>(true).Length != 0 ||
-                root.GetComponentsInChildren<Rigidbody>(true).Length != 0 ||
-                root.GetComponentsInChildren<Rigidbody2D>(true).Length != 0)
+            Transform bakeSources = root.transform.Find("BakeSources");
+            if (bakeSources == null)
+                throw new InvalidOperationException("Dense-city proxy BakeSources root is missing.");
+            Component[] components = bakeSources.GetComponentsInChildren<Component>(true);
+            int meshFilters = 0;
+            for (int index = 0; index < components.Length; index++)
+            {
+                Component component = components[index];
+                if (component == null)
+                {
+                    throw new InvalidOperationException(
+                        "Dense-city proxy hierarchy contains a missing script component.");
+                }
+                if (component is Transform or MapBakeGroupAuthoring)
+                    continue;
+                if (component is MeshFilter)
+                {
+                    meshFilters++;
+                    continue;
+                }
+                throw new InvalidOperationException(
+                    $"Dense-city proxy hierarchy contains prohibited component " +
+                    $"'{component.GetType().Name}' at '{GetHierarchyPath(component.transform, bakeSources)}'.");
+            }
+            if (meshFilters != partitions)
             {
                 throw new InvalidOperationException(
                     $"Dense-city proxy hierarchy validation failed for {records} records.");
             }
+        }
+
+        private static string GetHierarchyPath(Transform owner, Transform root)
+        {
+            var names = new List<string>();
+            for (Transform current = owner; current != null; current = current.parent)
+            {
+                names.Add(current.name);
+                if (current == root)
+                    break;
+            }
+            names.Reverse();
+            return string.Join("/", names);
         }
 
         private static void Configure(MapBakeGroupAuthoring group, PartitionKey key)

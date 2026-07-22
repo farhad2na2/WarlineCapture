@@ -137,7 +137,7 @@ namespace Game.Editor
                 DenseCitySurfaceRecordKind.Blocker,
                 footprintPolygon,
                 input.FoundationElevation,
-                input.MovementMask,
+                0,
                 input.SurfaceLayer,
                 input.Chunk);
             var intact = new DenseCityPresentationBakeRecord(

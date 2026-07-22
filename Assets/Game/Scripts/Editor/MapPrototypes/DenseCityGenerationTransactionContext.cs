@@ -203,6 +203,28 @@ namespace Game.Editor
                 realize);
         }
 
+        internal bool TryPlaceCanalWater(
+            int districtId,
+            Func<int, DenseCityCanalWaterRecordGroup> createGroup,
+            Func<bool> realize)
+        {
+            RequireActive();
+            if (districtId < 0)
+                throw new ArgumentOutOfRangeException(nameof(districtId));
+            if (createGroup == null)
+                throw new ArgumentNullException(nameof(createGroup));
+            if (realize == null)
+                throw new ArgumentNullException(nameof(realize));
+
+            int sequenceStart = GetInfrastructureSequenceStart(districtId, 3);
+            DenseCityCanalWaterRecordGroup group = createGroup(sequenceStart);
+            nextInfrastructureSequenceByDistrict[districtId] = sequenceStart + 3;
+            return DenseCityCanalWaterPlacementTransaction.TryCommitAndRealize(
+                Records,
+                group,
+                realize);
+        }
+
         internal bool TryPlaceBridge(
             int districtId,
             Func<int, DenseCityBridgeRecordGroup> createGroup,

@@ -204,7 +204,7 @@ public sealed class DenseCityGenerationRecordsTests
             DenseCitySurfaceRecordKind.Blocker,
             polygon,
             0f,
-            1,
+            0,
             0,
             Vector2Int.zero);
         intact = CreateBuildingPresentation(intactIdentity, DenseCityPresentationCategory.GameplayBuildingIntact);

@@ -212,8 +212,15 @@ namespace Game.Editor
             }
             if (!float.IsFinite(elevation))
                 throw new ArgumentOutOfRangeException(nameof(elevation));
-            if (movementMask == 0)
+            if (kind == DenseCitySurfaceRecordKind.Blocker)
+            {
+                if (movementMask != 0)
+                    throw new ArgumentOutOfRangeException(nameof(movementMask));
+            }
+            else if (movementMask == 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(movementMask));
+            }
             if (layer < 0 || layer > 31)
                 throw new ArgumentOutOfRangeException(nameof(layer));
 
@@ -441,6 +448,65 @@ namespace Game.Editor
             stableKeys.Remove(presentation.Identity.StableKey);
             surfaces.RemoveAt(surfaceIndex);
             presentations.RemoveAt(presentationIndex);
+        }
+
+        internal void AddCanalWaterGroup(
+            DenseCitySurfaceBakeRecord exclusion,
+            DenseCityPresentationBakeRecord bedPresentation,
+            DenseCityPresentationBakeRecord waterPresentation)
+        {
+            RequireWritable();
+            if (exclusion.Kind != DenseCitySurfaceRecordKind.Blocker || exclusion.MovementMask != 0)
+                throw new ArgumentException("Canal water requires a non-traversable blocker record.", nameof(exclusion));
+            if (bedPresentation.Category != DenseCityPresentationCategory.Infrastructure)
+                throw new ArgumentException("Canal bed presentation must be infrastructure.", nameof(bedPresentation));
+            if (waterPresentation.Category != DenseCityPresentationCategory.Infrastructure)
+                throw new ArgumentException("Canal water presentation must be infrastructure.", nameof(waterPresentation));
+            if (surfaces.Count >= surfaceCapacity || presentations.Count > presentationCapacity - 2)
+                throw new InvalidOperationException("Dense-city canal water record group exceeds a configured capacity.");
+
+            var pendingKeys = new HashSet<string>(StringComparer.Ordinal);
+            RequireUniquePendingKey(exclusion.Identity.StableKey, pendingKeys);
+            RequireUniquePendingKey(bedPresentation.Identity.StableKey, pendingKeys);
+            RequireUniquePendingKey(waterPresentation.Identity.StableKey, pendingKeys);
+
+            stableKeys.Add(exclusion.Identity.StableKey);
+            stableKeys.Add(bedPresentation.Identity.StableKey);
+            stableKeys.Add(waterPresentation.Identity.StableKey);
+            surfaces.Add(exclusion);
+            presentations.Add(bedPresentation);
+            presentations.Add(waterPresentation);
+        }
+
+        internal void RemoveCanalWaterGroup(
+            DenseCitySurfaceBakeRecord exclusion,
+            DenseCityPresentationBakeRecord bedPresentation,
+            DenseCityPresentationBakeRecord waterPresentation)
+        {
+            RequireWritable();
+            int exclusionIndex = FindIndex(surfaces, exclusion.Identity.StableKey, record => record.Identity);
+            int bedIndex = FindIndex(
+                presentations,
+                bedPresentation.Identity.StableKey,
+                record => record.Identity);
+            int waterIndex = FindIndex(
+                presentations,
+                waterPresentation.Identity.StableKey,
+                record => record.Identity);
+            if (exclusionIndex < 0 || bedIndex < 0 || waterIndex < 0)
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city canal water record group is incomplete: '{exclusion.Identity.StableKey}'.");
+            }
+
+            stableKeys.Remove(exclusion.Identity.StableKey);
+            stableKeys.Remove(bedPresentation.Identity.StableKey);
+            stableKeys.Remove(waterPresentation.Identity.StableKey);
+            surfaces.RemoveAt(exclusionIndex);
+            int firstPresentationIndex = Math.Max(bedIndex, waterIndex);
+            int secondPresentationIndex = Math.Min(bedIndex, waterIndex);
+            presentations.RemoveAt(firstPresentationIndex);
+            presentations.RemoveAt(secondPresentationIndex);
         }
 
         internal void AddBridgeGroup(

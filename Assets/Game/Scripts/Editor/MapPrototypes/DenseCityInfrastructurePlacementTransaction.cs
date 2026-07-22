@@ -53,6 +53,23 @@ namespace Game.Editor
         internal DenseCitySurfaceBakeRecord[] Shoulders { get; }
     }
 
+    internal readonly struct DenseCityCanalWaterRecordGroup
+    {
+        internal DenseCityCanalWaterRecordGroup(
+            DenseCitySurfaceBakeRecord exclusion,
+            DenseCityPresentationBakeRecord bedPresentation,
+            DenseCityPresentationBakeRecord waterPresentation)
+        {
+            Exclusion = exclusion;
+            BedPresentation = bedPresentation;
+            WaterPresentation = waterPresentation;
+        }
+
+        internal DenseCitySurfaceBakeRecord Exclusion { get; }
+        internal DenseCityPresentationBakeRecord BedPresentation { get; }
+        internal DenseCityPresentationBakeRecord WaterPresentation { get; }
+    }
+
     internal static class DenseCityInfrastructurePlacementTransaction
     {
         internal static bool TryCommitAndRealize(
@@ -151,6 +168,46 @@ namespace Game.Editor
                 group.Presentation,
                 group.FirstApproachRamp,
                 group.SecondApproachRamp);
+    }
+
+    internal static class DenseCityCanalWaterPlacementTransaction
+    {
+        internal static bool TryCommitAndRealize(
+            DenseCityGenerationRecordSet records,
+            DenseCityCanalWaterRecordGroup group,
+            Func<bool> realize)
+        {
+            if (records == null)
+                throw new ArgumentNullException(nameof(records));
+            if (realize == null)
+                throw new ArgumentNullException(nameof(realize));
+
+            records.AddCanalWaterGroup(
+                group.Exclusion,
+                group.BedPresentation,
+                group.WaterPresentation);
+            try
+            {
+                if (realize())
+                    return true;
+
+                Remove(records, group);
+                return false;
+            }
+            catch
+            {
+                Remove(records, group);
+                throw;
+            }
+        }
+
+        private static void Remove(
+            DenseCityGenerationRecordSet records,
+            DenseCityCanalWaterRecordGroup group) =>
+            records.RemoveCanalWaterGroup(
+                group.Exclusion,
+                group.BedPresentation,
+                group.WaterPresentation);
     }
 
     internal static class DenseCityRoadPlacementTransaction

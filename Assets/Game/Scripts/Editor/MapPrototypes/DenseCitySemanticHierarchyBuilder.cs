@@ -135,13 +135,7 @@ namespace Game.Editor
             Transform bakeSources = RequireIdentityPath(mapRoot.transform, "BakeSources", out error);
             if (bakeSources == null)
                 return false;
-            MapBakeGroupAuthoring[] groups =
-                mapRoot.GetComponentsInChildren<MapBakeGroupAuthoring>(true);
-            if (groups.Length != ProxyGroups.Length)
-            {
-                error = $"Map-bake root must own exactly {ProxyGroups.Length} proxy role groups.";
-                return false;
-            }
+            var approvedGroups = new HashSet<MapBakeGroupAuthoring>();
             foreach ((string name, MapBakeGroupRole role) in ProxyGroups)
             {
                 Transform groupTransform = RequireIdentityPath(bakeSources, name, out error);
@@ -155,6 +149,29 @@ namespace Game.Editor
                     error = $"Proxy group '{name}' does not have exactly one nearest {role} owner.";
                     return false;
                 }
+                approvedGroups.Add(group);
+                for (int childIndex = 0; childIndex < groupTransform.childCount; childIndex++)
+                {
+                    Transform partition = groupTransform.GetChild(childIndex);
+                    MapBakeGroupAuthoring partitionGroup = partition.GetComponent<MapBakeGroupAuthoring>();
+                    if (partitionGroup == null)
+                        continue;
+                    if (partition.GetComponents<MapBakeGroupAuthoring>().Length != 1 ||
+                        partitionGroup.Role != role)
+                    {
+                        error = $"Proxy partition '{partition.name}' must have one matching {role} owner.";
+                        return false;
+                    }
+                    approvedGroups.Add(partitionGroup);
+                }
+            }
+            MapBakeGroupAuthoring[] groups =
+                mapRoot.GetComponentsInChildren<MapBakeGroupAuthoring>(true);
+            if (groups.Length != approvedGroups.Count || groups.Any(group => !approvedGroups.Contains(group)))
+            {
+                error = $"Map-bake root must own exactly {ProxyGroups.Length} proxy role groups " +
+                        "plus direct matching proxy partitions.";
+                return false;
             }
 
             string[] entityPaths =

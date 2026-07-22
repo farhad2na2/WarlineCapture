@@ -28,6 +28,7 @@ namespace Game.Editor
             public readonly int SemanticSurfaces;
             public readonly int SemanticPresentations;
             public readonly int SemanticRoadShoulders;
+            public readonly int SemanticCanalWaterExclusions;
 
             public Result(
                 int roadTiles,
@@ -39,7 +40,8 @@ namespace Game.Editor
                 int semanticBuildingAttachments,
                 int semanticSurfaces,
                 int semanticPresentations,
-                int semanticRoadShoulders)
+                int semanticRoadShoulders,
+                int semanticCanalWaterExclusions)
             {
                 RoadTiles = roadTiles;
                 RoadChunks = roadChunks;
@@ -51,6 +53,7 @@ namespace Game.Editor
                 SemanticSurfaces = semanticSurfaces;
                 SemanticPresentations = semanticPresentations;
                 SemanticRoadShoulders = semanticRoadShoulders;
+                SemanticCanalWaterExclusions = semanticCanalWaterExclusions;
             }
         }
 
@@ -1042,6 +1045,9 @@ namespace Game.Editor
         private const string CanalWaterMaterialPath =
             "Assets/Synty/PolygonBattleRoyale/Materials/FX/PolygonBattleRoyale_Water.mat";
 
+        private const string CanalSurfacePrefabPath =
+            "Assets/Synty/PolygonGeneric/Prefabs/Environment/SM_Gen_Env_Water_Plane_01.prefab";
+
         private const string CanalBedMaterialPath =
             "Assets/Synty/PolygonGeneric/Materials/Generic_Water.mat";
 
@@ -1252,11 +1258,30 @@ namespace Game.Editor
             int semanticRoadShoulders = CountSurfaceRecords(
                 generationTransactions.Records.Surfaces,
                 "road-shoulder");
+            int semanticCanalWaterExclusions = CountSurfaceRecords(
+                generationTransactions.Records.Surfaces,
+                "canal-water-exclusion");
+            int semanticCanalBedPresentations = CountPresentationRecords(
+                generationTransactions.Records.Presentations,
+                "canal-bed-visual");
+            int semanticCanalWaterPresentations = CountPresentationRecords(
+                generationTransactions.Records.Presentations,
+                "canal-water-visual");
+            if (semanticCanalWaterExclusions != canalResult.WaterTiles ||
+                semanticCanalBedPresentations != canalResult.WaterTiles ||
+                semanticCanalWaterPresentations != canalResult.WaterTiles)
+            {
+                throw new InvalidOperationException(
+                    $"Canal semantic parity failed: tiles={canalResult.WaterTiles} " +
+                    $"exclusions={semanticCanalWaterExclusions} beds={semanticCanalBedPresentations} " +
+                    $"water={semanticCanalWaterPresentations}.");
+            }
             Debug.Log(
                 $"[DenseCitySemanticRecords] buildings={generationTransactions.Records.Buildings.Count} " +
                 $"surfaces={generationTransactions.Records.Surfaces.Count} " +
                 $"presentations={generationTransactions.Records.Presentations.Count} " +
-                $"roadShoulders={semanticRoadShoulders}");
+                $"roadShoulders={semanticRoadShoulders} " +
+                $"canalWaterExclusions={semanticCanalWaterExclusions}");
 
             int horizonMountains = BakeHorizonMountainPerimeter(
                 generatedRoot,
@@ -1289,7 +1314,8 @@ namespace Game.Editor
                 generationTransactions.RealizedBuildingAttachments.Count,
                 generationTransactions.Records.Surfaces.Count,
                 generationTransactions.Records.Presentations.Count,
-                semanticRoadShoulders);
+                semanticRoadShoulders,
+                semanticCanalWaterExclusions);
         }
 
         private static int CountSurfaceRecords(
@@ -1301,6 +1327,24 @@ namespace Game.Editor
             {
                 if (string.Equals(
                         surfaces[index].Identity.Kind,
+                        recordKind,
+                        StringComparison.Ordinal))
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        private static int CountPresentationRecords(
+            IReadOnlyList<DenseCityPresentationBakeRecord> presentations,
+            string recordKind)
+        {
+            int count = 0;
+            for (int index = 0; index < presentations.Count; index++)
+            {
+                if (string.Equals(
+                        presentations[index].Identity.Kind,
                         recordKind,
                         StringComparison.Ordinal))
                 {
@@ -3662,6 +3706,11 @@ namespace Game.Editor
             Material canalGreenMaterial = AssetDatabase.LoadAssetAtPath<Material>(CanalGreenMaterialPath) ??
                                           throw new InvalidOperationException(
                                               $"Missing canal green-ground material {CanalGreenMaterialPath}.");
+            GameObject canalSurfacePrefab = LoadRequiredPrefab(CanalSurfacePrefabPath);
+            DenseCityVisualAssetMetadata canalBedMetadata =
+                DenseCityVisualAssetMetadataExtractor.Extract(canalSurfacePrefab, _ => canalBedMaterial);
+            DenseCityVisualAssetMetadata canalWaterMetadata =
+                DenseCityVisualAssetMetadataExtractor.Extract(canalSurfacePrefab, _ => waterMaterial);
 
             var canalObject = new GameObject("DenseCity_WaterCanalsAndParks");
             canalObject.transform.SetParent(generatedRoot, false);
@@ -3747,26 +3796,71 @@ namespace Game.Editor
                     float waterTopElevation = highwayUnderpass
                         ? gradeElevation - 1.25f
                         : gradeElevation + 0.075f;
-                    CreateCanalCubeSurface(
-                        bedRootObject.transform,
-                        $"CanalBed_{routeIndex:00}_{cellIndex:000}" +
-                        (highwayUnderpass ? "_Underpass" : string.Empty),
+                    CanalSurfacePlan bedPlan = PlanCanalSurface(
+                        canalSurfacePrefab,
                         center,
                         waterTopElevation - 0.04f,
                         waterWidth * 0.96f,
-                        waterDepth * 0.92f,
-                        0.12f,
-                        canalBedMaterial);
-                    CreateCanalCubeSurface(
-                        waterRootObject.transform,
-                        $"CanalWater_{routeIndex:00}_{cellIndex:000}" +
-                        (highwayUnderpass ? "_Underpass" : string.Empty),
+                        waterDepth * 0.92f);
+                    CanalSurfacePlan waterPlan = PlanCanalSurface(
+                        canalSurfacePrefab,
                         center,
                         waterTopElevation,
                         waterWidth,
-                        waterDepth,
-                        0.04f,
-                        waterMaterial);
+                        waterDepth);
+                    Vector2Int canalChunk = new(
+                        Mathf.FloorToInt((float)cell.x / RoadChunkSize),
+                        Mathf.FloorToInt((float)cell.y / RoadChunkSize));
+                    GameObject bedSurface = null;
+                    GameObject waterSurface = null;
+                    try
+                    {
+                        bool accepted = generationTransactions.TryPlaceCanalWater(
+                            0,
+                            sequence => DenseCityCanalWaterRecordFactory.Create(
+                                new DenseCityCanalWaterRecordInput(
+                                    DenseCityGeneratorSchema,
+                                    unchecked((int)seed),
+                                    0,
+                                    sequence,
+                                    canalWaterMetadata.PrefabAssetGuid,
+                                    canalWaterMetadata.PrefabLocalId,
+                                    canalBedMetadata.MaterialAssetGuids,
+                                    canalWaterMetadata.MaterialAssetGuids,
+                                    bedPlan.WorldMatrix,
+                                    waterPlan.WorldMatrix,
+                                    new Vector2(waterWidth, waterDepth),
+                                    waterTopElevation,
+                                    DenseCityBuildingSurfaceLayer,
+                                    canalChunk)),
+                            () =>
+                            {
+                                string underpassSuffix = highwayUnderpass ? "_Underpass" : string.Empty;
+                                bedSurface = RealizeCanalSurface(
+                                    bedRootObject.transform,
+                                    $"CanalBed_{routeIndex:00}_{cellIndex:000}{underpassSuffix}",
+                                    bedPlan,
+                                    canalBedMaterial);
+                                waterSurface = RealizeCanalSurface(
+                                    waterRootObject.transform,
+                                    $"CanalWater_{routeIndex:00}_{cellIndex:000}{underpassSuffix}",
+                                    waterPlan,
+                                    waterMaterial);
+                                ValidateCanalSurfaceMatrix(bedSurface, bedPlan);
+                                ValidateCanalSurfaceMatrix(waterSurface, waterPlan);
+                                return true;
+                            });
+                        if (!accepted)
+                            continue;
+                    }
+                    catch
+                    {
+                        if (bedSurface != null)
+                            UnityEngine.Object.DestroyImmediate(bedSurface);
+                        if (waterSurface != null)
+                            UnityEngine.Object.DestroyImmediate(waterSurface);
+                        throw;
+                    }
                     waterTiles++;
 
                     if (highwayUnderpass)
@@ -4700,32 +4794,78 @@ namespace Game.Editor
             return instance;
         }
 
-        private static GameObject CreateCanalCubeSurface(
-            Transform parent,
-            string objectName,
+        private readonly struct CanalSurfacePlan
+        {
+            internal CanalSurfacePlan(GameObject prefab, Vector3 position, Vector3 scale)
+            {
+                Prefab = prefab;
+                Position = position;
+                Scale = scale;
+                WorldMatrix = Matrix4x4.TRS(position, Quaternion.identity, scale);
+            }
+
+            internal GameObject Prefab { get; }
+            internal Vector3 Position { get; }
+            internal Vector3 Scale { get; }
+            internal Matrix4x4 WorldMatrix { get; }
+        }
+
+        private static CanalSurfacePlan PlanCanalSurface(
+            GameObject prefab,
             Vector2 center,
             float topElevation,
             float targetWidth,
-            float targetDepth,
-            float thickness,
+            float targetDepth)
+        {
+            if (prefab == null)
+                throw new ArgumentNullException(nameof(prefab));
+            if (!TryGetRendererBounds(prefab, out Bounds sourceBounds))
+                throw new InvalidOperationException($"Canal surface prefab '{prefab.name}' has no renderer bounds.");
+            if (!float.IsFinite(targetWidth) || !float.IsFinite(targetDepth) ||
+                targetWidth <= 0f || targetDepth <= 0f || !float.IsFinite(topElevation))
+            {
+                throw new ArgumentOutOfRangeException(nameof(targetWidth));
+            }
+
+            var scale = new Vector3(
+                targetWidth / Mathf.Max(0.01f, sourceBounds.size.x),
+                1f,
+                targetDepth / Mathf.Max(0.01f, sourceBounds.size.z));
+            var position = new Vector3(
+                center.x - sourceBounds.center.x * scale.x,
+                topElevation - sourceBounds.max.y * scale.y,
+                center.y - sourceBounds.center.z * scale.z);
+            return new CanalSurfacePlan(prefab, position, scale);
+        }
+
+        private static GameObject RealizeCanalSurface(
+            Transform parent,
+            string objectName,
+            CanalSurfacePlan plan,
             Material material)
         {
-            GameObject surface = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            GameObject surface = (GameObject)PrefabUtility.InstantiatePrefab(plan.Prefab, parent);
             surface.name = objectName;
-            surface.transform.SetParent(parent, false);
-            float resolvedThickness = Mathf.Max(0.01f, thickness);
-            surface.transform.SetPositionAndRotation(
-                new Vector3(center.x, topElevation - resolvedThickness * 0.5f, center.y),
-                Quaternion.identity);
-            surface.transform.localScale = new Vector3(
-                targetWidth,
-                resolvedThickness,
-                targetDepth);
-            Renderer renderer = surface.GetComponent<Renderer>();
-            if (renderer != null)
-                renderer.sharedMaterial = material;
+            surface.transform.SetPositionAndRotation(plan.Position, Quaternion.identity);
+            surface.transform.localScale = plan.Scale;
+            Renderer[] renderers = surface.GetComponentsInChildren<Renderer>(true);
+            for (int index = 0; index < renderers.Length; index++)
+                renderers[index].sharedMaterial = material;
             DisableColliders(surface);
             return surface;
+        }
+
+        private static void ValidateCanalSurfaceMatrix(GameObject surface, CanalSurfacePlan plan)
+        {
+            Matrix4x4 actual = surface.transform.localToWorldMatrix;
+            for (int index = 0; index < 16; index++)
+            {
+                if (Mathf.Abs(actual[index] - plan.WorldMatrix[index]) > 0.0001f)
+                {
+                    throw new InvalidOperationException(
+                        $"Canal surface transform parity failed for '{surface.name}' at matrix index {index}.");
+                }
+            }
         }
 
         private readonly struct CanalBridgePlan

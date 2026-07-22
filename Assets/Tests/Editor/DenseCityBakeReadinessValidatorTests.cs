@@ -35,7 +35,14 @@ public sealed class DenseCityBakeReadinessValidatorTests
             suite.AuthoringOwnership_RejectsDetailedRendererBeneathProxyRoot,
             suite.AuthoringOwnership_RejectsUnclassifiedGeneratedRenderer,
             suite.AuthoringOwnership_AcceptsExplicitProxyOwner,
-            suite.AuthoringOwnership_RejectsInheritedProxyOwner
+            suite.AuthoringOwnership_RejectsInheritedProxyOwner,
+            suite.ProtectedRoots_AcceptsStableIdentityAndHierarchy,
+            suite.ProtectedRoots_RejectsRenamedRoot,
+            suite.ProtectedRoots_RejectsDisabledRoot,
+            suite.ProtectedRoots_RejectsMovedRoot,
+            suite.ProtectedRoots_RejectsReparentedRoot,
+            suite.ProtectedRoots_RejectsDeletedRoot,
+            suite.ProtectedBoundsIndex_DetectsOnlyOverlappingFootprints
         };
 
         for (int index = 0; index < tests.Length; index++)
@@ -564,6 +571,136 @@ public sealed class DenseCityBakeReadinessValidatorTests
             EditorSceneManager.CloseScene(entityScene, true);
             EditorSceneManager.CloseScene(mapScene, true);
         }
+    }
+
+    [Test]
+    public void ProtectedRoots_AcceptsStableIdentityAndHierarchy()
+    {
+        (Scene scene, GameObject owner, DenseCityBakeReadinessValidator.ProtectedRootContract contract) =
+            CreateProtectedRootScene();
+        try
+        {
+            Assert.That(
+                DenseCityBakeReadinessValidator.TryValidateProtectedRootContracts(
+                    scene,
+                    new[] { contract },
+                    out string error),
+                Is.True,
+                error);
+        }
+        finally
+        {
+            CloseProtectedRootScene(scene);
+        }
+    }
+
+    [Test]
+    public void ProtectedRoots_RejectsRenamedRoot()
+    {
+        AssertProtectedRootMutationRejected(owner => owner.name = "RenamedProtectedRoot", "renamed");
+    }
+
+    [Test]
+    public void ProtectedRoots_RejectsDisabledRoot()
+    {
+        AssertProtectedRootMutationRejected(owner => owner.SetActive(false), "active state changed");
+    }
+
+    [Test]
+    public void ProtectedRoots_RejectsMovedRoot()
+    {
+        AssertProtectedRootMutationRejected(
+            owner => owner.transform.localPosition = Vector3.right,
+            "transform moved");
+    }
+
+    [Test]
+    public void ProtectedRoots_RejectsReparentedRoot()
+    {
+        AssertProtectedRootMutationRejected(owner =>
+        {
+            var parent = new GameObject("UnexpectedParent");
+            SceneManager.MoveGameObjectToScene(parent, owner.scene);
+            owner.transform.SetParent(parent.transform, false);
+        }, "reparented");
+    }
+
+    [Test]
+    public void ProtectedRoots_RejectsDeletedRoot()
+    {
+        AssertProtectedRootMutationRejected(UnityEngine.Object.DestroyImmediate, "missing");
+    }
+
+    [Test]
+    public void ProtectedBoundsIndex_DetectsOnlyOverlappingFootprints()
+    {
+        var index = new DenseCityBakeReadinessValidator.ProtectedBoundsIndex(8f);
+        index.Add(new Bounds(Vector3.zero, new Vector3(10f, 2f, 10f)), 2f, "Map/Protected");
+
+        Assert.That(
+            index.TryFindOverlap(
+                new Bounds(new Vector3(6f, 100f, 0f), Vector3.one),
+                out string sourcePath),
+            Is.True);
+        Assert.That(sourcePath, Is.EqualTo("Map/Protected"));
+        Assert.That(
+            index.TryFindOverlap(
+                new Bounds(new Vector3(20f, 0f, 0f), Vector3.one),
+                out _),
+            Is.False);
+    }
+
+    private static void AssertProtectedRootMutationRejected(
+        Action<GameObject> mutate,
+        string expectedError)
+    {
+        (Scene scene, GameObject owner, DenseCityBakeReadinessValidator.ProtectedRootContract contract) =
+            CreateProtectedRootScene();
+        try
+        {
+            mutate(owner);
+            Assert.That(
+                DenseCityBakeReadinessValidator.TryValidateProtectedRootContracts(
+                    scene,
+                    new[] { contract },
+                    out string error),
+                Is.False);
+            StringAssert.Contains(expectedError, error.ToLowerInvariant());
+        }
+        finally
+        {
+            CloseProtectedRootScene(scene);
+        }
+    }
+
+    private static void CloseProtectedRootScene(Scene scene)
+    {
+        if (!scene.IsValid() || !scene.isLoaded)
+            return;
+        Scene replacement = EditorSceneManager.NewScene(
+            NewSceneSetup.EmptyScene,
+            NewSceneMode.Additive);
+        SceneManager.SetActiveScene(replacement);
+        EditorSceneManager.CloseScene(scene, true);
+    }
+
+    private static (
+        Scene Scene,
+        GameObject Owner,
+        DenseCityBakeReadinessValidator.ProtectedRootContract Contract)
+        CreateProtectedRootScene()
+    {
+        Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+        var owner = new GameObject("ProtectedRoot");
+        Assert.That(EditorSceneManager.SaveScene(scene, MapScenePath), Is.True);
+        string globalObjectId = GlobalObjectId.GetGlobalObjectIdSlow(owner).ToString();
+        var contract = new DenseCityBakeReadinessValidator.ProtectedRootContract(
+            globalObjectId,
+            owner.name,
+            "ProtectedRoot[0]",
+            true,
+            1f);
+        return (scene, owner, contract);
     }
 
     private static void CreateHierarchy(Scene mapScene, Scene entityScene)

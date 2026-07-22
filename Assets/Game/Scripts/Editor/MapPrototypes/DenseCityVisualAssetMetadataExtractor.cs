@@ -28,6 +28,13 @@ namespace Game.Editor
     {
         internal static DenseCityVisualAssetMetadata Extract(GameObject prefab)
         {
+            return Extract(prefab, null);
+        }
+
+        internal static DenseCityVisualAssetMetadata Extract(
+            GameObject prefab,
+            Func<Material, Material> materialResolver)
+        {
             if (prefab == null)
                 throw new ArgumentNullException(nameof(prefab));
             if (!AssetDatabase.TryGetGUIDAndLocalFileIdentifier(prefab, out string prefabGuid, out long prefabLocalId) ||
@@ -47,6 +54,12 @@ namespace Game.Editor
                     Material material = materials[materialIndex];
                     if (material == null)
                         continue;
+                    if (materialResolver != null)
+                    {
+                        material = materialResolver(material) ??
+                                   throw new InvalidOperationException(
+                                       "Dense-city material resolver returned null.");
+                    }
                     if (!AssetDatabase.TryGetGUIDAndLocalFileIdentifier(material, out string materialGuid, out long localId) ||
                         string.IsNullOrEmpty(materialGuid) || localId <= 0)
                     {

@@ -1,4 +1,5 @@
 using System.Linq;
+using Game.Configs;
 using Game.Editor;
 using NUnit.Framework;
 using UnityEditor;
@@ -40,5 +41,38 @@ public sealed class DenseCityVisualAssetMetadataExtractorTests
         {
             Object.DestroyImmediate(instance);
         }
+    }
+
+    [Test]
+    public void Extract_RecordsResolvedPersistentMaterialIdentityBeforeRealization()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShopPrefabPath);
+        DenseCityBuildingMaterialLibrary library = DenseCityBuildingMaterialLibrary.LoadExisting();
+        DenseCityBuildingMaterialSelection selection =
+            DenseCityBuildingMaterialVariantSelector.Select(
+                new Vector3(10f, 0f, -5f),
+                24681357u,
+                GeneratedCityBuildingRole.Shop,
+                true,
+                false);
+
+        DenseCityVisualAssetMetadata metadata = DenseCityVisualAssetMetadataExtractor.Extract(
+            prefab,
+            material => library.Resolve(material, selection));
+        string selectedMaterialGuid = AssetDatabase.AssetPathToGUID(
+            "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/dense_city_building_materials/DenseCity_Facade_A_04.mat");
+
+        Assert.That(selectedMaterialGuid, Is.Not.Empty);
+        Assert.That(metadata.MaterialAssetGuids, Does.Contain(selectedMaterialGuid));
+    }
+
+    [Test]
+    public void Extract_RejectsNullMaterialResolution()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShopPrefabPath);
+
+        Assert.That(
+            () => DenseCityVisualAssetMetadataExtractor.Extract(prefab, _ => null),
+            Throws.InvalidOperationException.With.Message.Contains("resolver returned null"));
     }
 }

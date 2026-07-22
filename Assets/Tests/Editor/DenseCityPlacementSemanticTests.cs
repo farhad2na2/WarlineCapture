@@ -1,5 +1,6 @@
 using System;
 using Game.Editor;
+using Game.Configs;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -26,7 +27,10 @@ public sealed class DenseCityPlacementSemanticTests
                     6f,
                     4f,
                     1f,
-                    category);
+                    category,
+                    category == DenseCityPresentationCategory.GameplayBuildingIntact
+                        ? GeneratedCityBuildingRole.House
+                        : GeneratedCityBuildingRole.None);
 
                 Assert.That(footprint.PresentationCategory, Is.EqualTo(category));
             }
@@ -50,7 +54,33 @@ public sealed class DenseCityPlacementSemanticTests
                     6f,
                     4f,
                     1f,
-                    DenseCityPresentationCategory.Unknown),
+                    DenseCityPresentationCategory.Unknown,
+                    GeneratedCityBuildingRole.None),
+                Throws.TypeOf<ArgumentOutOfRangeException>());
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(prefab);
+        }
+    }
+
+    [Test]
+    public void PrefabFootprint_RejectsMissingOrUnexpectedBuildingRole()
+    {
+        var prefab = new GameObject("PlacementSemanticTest");
+        try
+        {
+            Assert.That(
+                () => new DenseMiddleEasternCityEditModeBuilder.PrefabFootprint(
+                    prefab, 8f, 6f, 4f, 1f,
+                    DenseCityPresentationCategory.GameplayBuildingIntact,
+                    GeneratedCityBuildingRole.None),
+                Throws.TypeOf<ArgumentOutOfRangeException>());
+            Assert.That(
+                () => new DenseMiddleEasternCityEditModeBuilder.PrefabFootprint(
+                    prefab, 8f, 6f, 4f, 1f,
+                    DenseCityPresentationCategory.Vegetation,
+                    GeneratedCityBuildingRole.House),
                 Throws.TypeOf<ArgumentOutOfRangeException>());
         }
         finally

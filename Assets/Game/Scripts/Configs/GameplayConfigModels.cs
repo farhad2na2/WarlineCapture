@@ -28,6 +28,15 @@ namespace Game.Configs
         MilitaryCamp = 5
     }
 
+    public enum GeneratedCityBuildingRole : byte
+    {
+        None = 0,
+        House = 1,
+        Shop = 2,
+        Civic = 3,
+        Other = 4
+    }
+
     public enum UnitAnimationKind : byte
     {
         Idle = 0,
@@ -205,7 +214,7 @@ namespace Game.Configs
 
     [CreateAssetMenu(menuName = "Game/Config/Runtime City Spawner")]
     public class RuntimeCitySpawnerSystemConfig : ScriptableObject
-    { [SerializeField] private bool spawnOnStart = true; [SerializeField] private bool generateBuildings = true; [SerializeField] private uint randomSeed = 24681357; [SerializeField] private int cityCount = 1; [SerializeField] private Vector2Int startCell = new(180, 180); [SerializeField] private int generationYieldInterval; [SerializeField] private int gasStationCount = 3; [SerializeField] private int shopCount = 20; [SerializeField] private int houseCount = 32; [SerializeField] private int otherBuildingCount = 8; [SerializeField] private int cityDecorationBuildingCount = 16; [SerializeField] private int hallPlazaRadiusRoadCells = 2; [SerializeField] private int extraTownRadiusRoadCells = 5; [SerializeField] private int cityMinSpacingRoadCells = 16; [Range(0f, 1f), SerializeField] private float ruralHouseRatio = 0.35f; [SerializeField] private int gasStationMinSpacingRoadCells = 3; [Range(0f, 1f), SerializeField] private float houseWallChance = 0.5f; [SerializeField] private int houseWallMinDistanceCells = 2; [SerializeField] private int houseWallMaxDistanceCells = 4; [SerializeField] private int landmarkMinDistanceFromHallRoadCells = 3; [SerializeField] private int landmarkClearanceCells = 4; [SerializeField] private int autobahnMinLengthRoadCells = 8; [SerializeField] private int autobahnEdgeMarginRoadCells = 3; [SerializeField] private int defaultBuildingMaxHealth = 300; [SerializeField] private GameObject clockTowerPrefab; [SerializeField] private List<GameObject> fountainPrefabs = new(); [SerializeField] private List<GameObject> monumentPrefabs = new(); [SerializeField] private List<GameObject> pillarPrefabs = new(); [SerializeField] private List<GameObject> hallPrefabs = new(); [SerializeField] private List<GameObject> gasStationPrefabs = new(); [SerializeField] private List<GameObject> shopPrefabs = new(); [SerializeField] private List<GameObject> housePrefabs = new(); [SerializeField] private List<GameObject> otherBuildingPrefabs = new(); [SerializeField] private List<GameObject> cityDecorationPrefabs = new(); [SerializeField] private List<GameObject> houseWallPrefabs = new(); [SerializeField] private GameObject houseWallGatePrefab; [SerializeField] private GameObject houseWallPillarPrefab;
+    { [SerializeField] private bool spawnOnStart = true; [SerializeField] private bool generateBuildings = true; [SerializeField] private uint randomSeed = 24681357; [SerializeField] private int cityCount = 1; [SerializeField] private Vector2Int startCell = new(180, 180); [SerializeField] private int generationYieldInterval; [SerializeField] private int gasStationCount = 3; [SerializeField] private int shopCount = 20; [SerializeField] private int houseCount = 32; [SerializeField] private int otherBuildingCount = 8; [SerializeField] private int cityDecorationBuildingCount = 16; [SerializeField] private int hallPlazaRadiusRoadCells = 2; [SerializeField] private int extraTownRadiusRoadCells = 5; [SerializeField] private int cityMinSpacingRoadCells = 16; [Range(0f, 1f), SerializeField] private float ruralHouseRatio = 0.35f; [SerializeField] private int gasStationMinSpacingRoadCells = 3; [Range(0f, 1f), SerializeField] private float houseWallChance = 0.5f; [SerializeField] private int houseWallMinDistanceCells = 2; [SerializeField] private int houseWallMaxDistanceCells = 4; [SerializeField] private int landmarkMinDistanceFromHallRoadCells = 3; [SerializeField] private int landmarkClearanceCells = 4; [SerializeField] private int autobahnMinLengthRoadCells = 8; [SerializeField] private int autobahnEdgeMarginRoadCells = 3; [SerializeField] private int defaultBuildingMaxHealth = 300; [SerializeField] private GameObject generatedHouseDestroyedVisualPrefab; [SerializeField] private GameObject generatedShopDestroyedVisualPrefab; [SerializeField] private GameObject generatedCivicDestroyedVisualPrefab; [SerializeField] private GameObject generatedOtherDestroyedVisualPrefab; [SerializeField] private GameObject clockTowerPrefab; [SerializeField] private List<GameObject> fountainPrefabs = new(); [SerializeField] private List<GameObject> monumentPrefabs = new(); [SerializeField] private List<GameObject> pillarPrefabs = new(); [SerializeField] private List<GameObject> hallPrefabs = new(); [SerializeField] private List<GameObject> gasStationPrefabs = new(); [SerializeField] private List<GameObject> shopPrefabs = new(); [SerializeField] private List<GameObject> housePrefabs = new(); [SerializeField] private List<GameObject> otherBuildingPrefabs = new(); [SerializeField] private List<GameObject> cityDecorationPrefabs = new(); [SerializeField] private List<GameObject> houseWallPrefabs = new(); [SerializeField] private GameObject houseWallGatePrefab; [SerializeField] private GameObject houseWallPillarPrefab;
 
         public bool SpawnOnStart => spawnOnStart;
         public bool GenerateBuildings => generateBuildings;
@@ -231,6 +240,18 @@ namespace Game.Configs
         public int AutobahnMinLengthRoadCells => autobahnMinLengthRoadCells;
         public int AutobahnEdgeMarginRoadCells => autobahnEdgeMarginRoadCells;
         public int DefaultBuildingMaxHealth => defaultBuildingMaxHealth;
+        public GameObject GeneratedHouseDestroyedVisualPrefab => generatedHouseDestroyedVisualPrefab;
+        public GameObject GeneratedShopDestroyedVisualPrefab => generatedShopDestroyedVisualPrefab;
+        public GameObject GeneratedCivicDestroyedVisualPrefab => generatedCivicDestroyedVisualPrefab;
+        public GameObject GeneratedOtherDestroyedVisualPrefab => generatedOtherDestroyedVisualPrefab;
+        public GameObject GetGeneratedDestroyedVisualPrefab(GeneratedCityBuildingRole role) => role switch
+        {
+            GeneratedCityBuildingRole.House => generatedHouseDestroyedVisualPrefab,
+            GeneratedCityBuildingRole.Shop => generatedShopDestroyedVisualPrefab,
+            GeneratedCityBuildingRole.Civic => generatedCivicDestroyedVisualPrefab,
+            GeneratedCityBuildingRole.Other => generatedOtherDestroyedVisualPrefab,
+            _ => throw new ArgumentOutOfRangeException(nameof(role))
+        };
         public GameObject ClockTowerPrefab => clockTowerPrefab;
         public List<GameObject> FountainPrefabs => fountainPrefabs;
         public List<GameObject> MonumentPrefabs => monumentPrefabs;

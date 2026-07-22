@@ -15,6 +15,31 @@ public sealed class DenseCityBuildingPresentationReplayTransactionTests
     private const string Hash =
         "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 
+    public static void RunFocusedValidation()
+    {
+        var suite = new DenseCityBuildingPresentationReplayTransactionTests();
+        System.Action[] tests =
+        {
+            suite.Realize_ReplaysBuildingAndAttachmentsUnderDeclaredVisualStates,
+            suite.Realize_LateAttachmentMismatchRollsBackCompleteReplay
+        };
+
+        for (int index = 0; index < tests.Length; index++)
+        {
+            suite.SetUp();
+            try
+            {
+                tests[index]();
+            }
+            finally
+            {
+                suite.TearDown();
+            }
+        }
+
+        Debug.Log($"[DenseCityBuildingReplayValidation] result=Passed tests={tests.Length}");
+    }
+
     [SetUp]
     public void SetUp()
     {
@@ -49,6 +74,9 @@ public sealed class DenseCityBuildingPresentationReplayTransactionTests
             Assert.That(
                 realized[0].DestroyedVisualRoot.GetChild(0).name,
                 Does.StartWith("destroyed-attachment_"));
+            Assert.That(
+                realized[0].Authoring.GetComponentsInChildren<Collider>(true),
+                Is.Empty);
         }
         finally
         {
@@ -199,6 +227,7 @@ public sealed class DenseCityBuildingPresentationReplayTransactionTests
         var source = new GameObject(sourceName);
         source.AddComponent<MeshFilter>().sharedMesh = Resources.GetBuiltinResource<Mesh>("Cube.fbx");
         source.AddComponent<MeshRenderer>().sharedMaterial = material;
+        source.AddComponent<BoxCollider>();
         GameObject prefab = PrefabUtility.SaveAsPrefabAsset(source, prefabPath);
         Object.DestroyImmediate(source);
         return DenseCityVisualAssetMetadataExtractor.Extract(prefab);

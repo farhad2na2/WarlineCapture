@@ -90,6 +90,9 @@ public sealed class DenseCityRenderOnlyPresentationReplayTransactionTests
             Assert.That(
                 realized[1].parent,
                 Is.SameAs(hierarchy.ResolveIndependentParent(DenseCityPresentationCategory.Vegetation)));
+            Assert.That(realized[0].GetComponentsInChildren<Collider>(true), Is.Empty);
+            Assert.That(realized[1].GetComponentsInChildren<Collider>(true), Is.Empty);
+            Assert.That(prefab.GetComponentsInChildren<Collider>(true), Has.Length.EqualTo(1));
         }
         finally
         {
@@ -176,6 +179,7 @@ public sealed class DenseCityRenderOnlyPresentationReplayTransactionTests
         var source = new GameObject("PropSource");
         source.AddComponent<MeshFilter>().sharedMesh = Resources.GetBuiltinResource<Mesh>("Cube.fbx");
         source.AddComponent<MeshRenderer>().sharedMaterial = material;
+        source.AddComponent<BoxCollider>();
         GameObject prefab = PrefabUtility.SaveAsPrefabAsset(source, PrefabPath);
         UnityEngine.Object.DestroyImmediate(source);
         return prefab;

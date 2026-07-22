@@ -125,6 +125,7 @@ namespace Game.Editor
             GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, owner);
             if (instance == null)
                 throw new InvalidOperationException($"Failed to instantiate dense-city prefab '{prefabPath}'.");
+            DenseCityPhysicsComponentStripper.StripInstanceHierarchy(instance);
             instance.name = name;
             DenseCityRenderOnlyPresentationRealizer.ApplyWorldMatrix(
                 instance.transform,

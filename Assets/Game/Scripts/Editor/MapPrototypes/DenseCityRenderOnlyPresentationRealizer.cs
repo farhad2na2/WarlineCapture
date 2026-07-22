@@ -31,6 +31,7 @@ namespace Game.Editor
                 instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
                 if (instance == null)
                     throw new InvalidOperationException($"Failed to instantiate dense-city prefab '{prefabPath}'.");
+                DenseCityPhysicsComponentStripper.StripInstanceHierarchy(instance);
                 instance.name = $"{prefab.name}_{presentation.Identity.DeterministicSequence:D6}";
                 ApplyWorldMatrix(instance.transform, presentation.WorldMatrix);
                 RequireMaterialIdentity(instance, presentation);
@@ -69,6 +70,7 @@ namespace Game.Editor
                 instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
                 if (instance == null)
                     throw new InvalidOperationException($"Failed to instantiate dense-city prefab '{prefabPath}'.");
+                DenseCityPhysicsComponentStripper.StripInstanceHierarchy(instance);
                 instance.name = $"{prefab.name}_{presentation.Identity.DeterministicSequence:D6}";
                 ApplyWorldMatrix(instance.transform, presentation.WorldMatrix);
                 RequireMaterialIdentity(instance, presentation);

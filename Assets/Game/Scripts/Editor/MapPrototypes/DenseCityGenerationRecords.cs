@@ -131,6 +131,8 @@ namespace Game.Editor
         internal DenseCityBuildingBakeRecord(
             DenseCityRecordIdentity identity,
             Matrix4x4 worldMatrix,
+            Vector2Int originCell,
+            Vector2Int footprintCells,
             Vector2 footprintSize,
             float foundationElevation,
             Bounds blockerBounds,
@@ -144,6 +146,10 @@ namespace Game.Editor
             DenseCityRecordIdentity destroyedPresentationIdentity)
         {
             RequireFiniteMatrix(worldMatrix, nameof(worldMatrix));
+            if (originCell.x < 0 || originCell.y < 0)
+                throw new ArgumentOutOfRangeException(nameof(originCell));
+            if (footprintCells.x <= 0 || footprintCells.y <= 0)
+                throw new ArgumentOutOfRangeException(nameof(footprintCells));
             if (!IsFinite(footprintSize) || footprintSize.x <= 0f || footprintSize.y <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(footprintSize));
             if (!float.IsFinite(foundationElevation))
@@ -162,6 +168,8 @@ namespace Game.Editor
 
             Identity = identity;
             WorldMatrix = worldMatrix;
+            OriginCell = originCell;
+            FootprintCells = footprintCells;
             FootprintSize = footprintSize;
             FoundationElevation = foundationElevation;
             BlockerBounds = blockerBounds;
@@ -177,6 +185,8 @@ namespace Game.Editor
 
         internal DenseCityRecordIdentity Identity { get; }
         internal Matrix4x4 WorldMatrix { get; }
+        internal Vector2Int OriginCell { get; }
+        internal Vector2Int FootprintCells { get; }
         internal Vector2 FootprintSize { get; }
         internal float FoundationElevation { get; }
         internal Bounds BlockerBounds { get; }

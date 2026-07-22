@@ -15,6 +15,8 @@ namespace Game.Authoring
         [SerializeField, Min(0)] private int placementIndex;
         [SerializeField] private byte factionId;
         [SerializeField] private Vector2Int originCell;
+        [SerializeField] private Vector2Int generatedFootprintCells;
+        [SerializeField, Min(0)] private int generatedMaxHealth;
         [SerializeField] private OperationMapBuildingBlockerPolicy blockerPolicy =
             OperationMapBuildingBlockerPolicy.RubbleRemainsBlocked;
         [SerializeField] private BuildingDefinitionAuthoring definition;
@@ -27,6 +29,12 @@ namespace Game.Authoring
         public int PlacementIndex => placementIndex;
         public byte FactionId => factionId;
         public Vector2Int OriginCell => originCell;
+        public Vector2Int FootprintCells => IsGeneratedIdentity
+            ? generatedFootprintCells
+            : definition != null ? definition.ConfiguredFootprintCells : Vector2Int.zero;
+        public int MaxHealth => IsGeneratedIdentity
+            ? generatedMaxHealth
+            : definition != null ? definition.ConfiguredMaxHealth : 0;
         public OperationMapBuildingBlockerPolicy BlockerPolicy => blockerPolicy;
         public BuildingDefinitionAuthoring Definition => definition;
         public GameObject IntactVisualRoot => intactVisualRoot;
@@ -39,6 +47,8 @@ namespace Game.Authoring
             int generatedPlacementIndex,
             byte ownerFactionId,
             Vector2Int generatedOriginCell,
+            Vector2Int footprintCells,
+            int maximumHealth,
             BuildingDefinitionAuthoring buildingDefinition,
             GameObject intactRoot,
             GameObject destroyedRoot)
@@ -49,6 +59,8 @@ namespace Game.Authoring
             placementIndex = generatedPlacementIndex;
             factionId = ownerFactionId;
             originCell = generatedOriginCell;
+            generatedFootprintCells = footprintCells;
+            generatedMaxHealth = maximumHealth;
             blockerPolicy = OperationMapBuildingBlockerPolicy.RubbleRemainsBlocked;
             definition = buildingDefinition;
             intactVisualRoot = intactRoot;
@@ -72,6 +84,15 @@ namespace Game.Authoring
                 (hasGeneratedIdentity && !string.IsNullOrEmpty(sourceGlobalObjectId)))
             {
                 error = "Exactly one authored GlobalObjectId or generated dense-city stable id is required.";
+                return false;
+            }
+            bool hasGeneratedGameplayValues = generatedFootprintCells.x > 0 &&
+                                              generatedFootprintCells.y > 0 && generatedMaxHealth > 0;
+            if (hasGeneratedIdentity != hasGeneratedGameplayValues)
+            {
+                error = hasGeneratedIdentity
+                    ? "Generated building footprint and maximum health must be positive."
+                    : "Authored buildings cannot contain generated gameplay overrides.";
                 return false;
             }
             if (!HasFiniteTransform(transform))
@@ -106,10 +127,15 @@ namespace Game.Authoring
             }
             if (!TryValidateVisualOwnership(out error))
                 return false;
-            Vector2Int footprint = definition.ConfiguredFootprintCells;
+            Vector2Int footprint = FootprintCells;
             if (footprint.x <= 0 || footprint.y <= 0)
             {
                 error = "Building footprint must be positive.";
+                return false;
+            }
+            if (MaxHealth <= 0)
+            {
+                error = "Building maximum health must be positive.";
                 return false;
             }
 
@@ -130,6 +156,9 @@ namespace Game.Authoring
         }
 
         private static bool IsFinite(float value) => !float.IsNaN(value) && !float.IsInfinity(value);
+
+        private bool IsGeneratedIdentity =>
+            Game.Configs.OperationMapIdentityRules.IsValidGeneratedStableId(stableId);
 
         private bool TryValidateVisualOwnership(out string error)
         {
@@ -229,11 +258,11 @@ namespace Game.Authoring
                 BuildingDefinitionAuthoring definition = authoring.definition;
                 DependsOn(definition);
                 Entity entity = GetEntity(TransformUsageFlags.Dynamic);
-                Vector2Int footprint = definition.ConfiguredFootprintCells;
+                Vector2Int footprint = authoring.FootprintCells;
                 int2 footprintCells = new(math.max(1, footprint.x), math.max(1, footprint.y));
                 int2 origin = new(authoring.originCell.x, authoring.originCell.y);
                 int runtimeBuildingId = authoring.placementIndex + 1;
-                int maxHealth = math.max(1, definition.ConfiguredMaxHealth);
+                int maxHealth = authoring.MaxHealth;
 
                 AddComponent(entity, new OperationMapBuildingIdentity
                 {

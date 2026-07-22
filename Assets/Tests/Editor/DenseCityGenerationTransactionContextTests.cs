@@ -269,6 +269,8 @@ public sealed class DenseCityGenerationTransactionContextTests
                 new[] { MaterialGuid },
                 new[] { MaterialGuid },
                 Matrix4x4.TRS(new Vector3(sequence, 2f, districtId), Quaternion.identity, Vector3.one),
+                new Vector2Int(sequence, districtId),
+                new Vector2Int(8, 6),
                 new Vector2(8f, 6f),
                 2f,
                 new Bounds(new Vector3(sequence, 4f, districtId), new Vector3(8f, 4f, 6f)),

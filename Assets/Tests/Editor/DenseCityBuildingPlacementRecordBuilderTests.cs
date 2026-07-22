@@ -42,6 +42,8 @@ public sealed class DenseCityBuildingPlacementRecordBuilderTests
                 destroyedPrefab,
                 selection,
                 matrix,
+                new Vector2Int(20, 30),
+                new Vector2Int(8, 6),
                 new Vector2(8f, 6f),
                 2f,
                 new Bounds(new Vector3(10f, 4f, -5f), new Vector3(6f, 4f, 8f)),
@@ -58,6 +60,8 @@ public sealed class DenseCityBuildingPlacementRecordBuilderTests
         string selectedMaterialGuid = AssetDatabase.AssetPathToGUID(
             "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/dense_city_building_materials/DenseCity_Facade_A_04.mat");
         Assert.That(group.Building.Identity.DeterministicSequence, Is.EqualTo(25));
+        Assert.That(group.Building.OriginCell, Is.EqualTo(new Vector2Int(20, 30)));
+        Assert.That(group.Building.FootprintCells, Is.EqualTo(new Vector2Int(8, 6)));
         Assert.That(group.Building.MaximumHealth, Is.EqualTo(config.DefaultBuildingMaxHealth));
         Assert.That(group.IntactPresentation.PrefabAssetGuid, Is.EqualTo(AssetDatabase.AssetPathToGUID(ShopPath)));
         Assert.That(group.IntactPresentation.MaterialAssetGuids.ToArray(), Does.Contain(selectedMaterialGuid));

@@ -17,9 +17,10 @@ public sealed class OperationMapBuildingAuthoringTests
         authoringTests.TryValidate_RequiresStableIdentityAndDefinition();
         authoringTests.TryValidate_AcceptsGeneratedStableIdentityWithoutGlobalObjectId();
         authoringTests.ConfigureGeneratedForEditor_AssignsCompleteValidatedOwnership();
+        authoringTests.TryValidate_RejectsIncompleteGeneratedGameplayValues();
         authoringTests.TryValidate_RejectsMixedAuthoredAndGeneratedIdentities();
         recordTests.RecordIdentity_CreatesDeterministicBoundedGeneratedStableId();
-        Debug.Log("[OperationMapGeneratedBuildingIdentityValidation] result=Passed tests=5");
+        Debug.Log("[OperationMapGeneratedBuildingIdentityValidation] result=Passed tests=6");
     }
 
     [Test]
@@ -43,6 +44,8 @@ public sealed class OperationMapBuildingAuthoringTests
                 17,
                 3,
                 new Vector2Int(23, 41),
+                new Vector2Int(8, 6),
+                725,
                 definition,
                 intactVisual,
                 destroyedVisual);
@@ -53,6 +56,8 @@ public sealed class OperationMapBuildingAuthoringTests
             Assert.That(authoring.PlacementIndex, Is.EqualTo(17));
             Assert.That(authoring.FactionId, Is.EqualTo(3));
             Assert.That(authoring.OriginCell, Is.EqualTo(new Vector2Int(23, 41)));
+            Assert.That(authoring.FootprintCells, Is.EqualTo(new Vector2Int(8, 6)));
+            Assert.That(authoring.MaxHealth, Is.EqualTo(725));
             Assert.That(authoring.Definition, Is.SameAs(definition));
             Assert.That(authoring.IntactVisualRoot, Is.SameAs(intactVisual));
             Assert.That(authoring.DestroyedVisualRoot, Is.SameAs(destroyedVisual));
@@ -129,6 +134,8 @@ public sealed class OperationMapBuildingAuthoringTests
             serialized.FindProperty("stableId").stringValue = GeneratedStableId;
             serialized.FindProperty("sourceGlobalObjectId").stringValue = string.Empty;
             serialized.FindProperty("placementIndex").intValue = 9;
+            serialized.FindProperty("generatedFootprintCells").vector2IntValue = new Vector2Int(5, 7);
+            serialized.FindProperty("generatedMaxHealth").intValue = 640;
             serialized.FindProperty("definition").objectReferenceValue =
                 definitionOwner.AddComponent<BuildingDefinitionAuthoring>();
             serialized.FindProperty("intactVisualRoot").objectReferenceValue = intactVisual;
@@ -138,6 +145,39 @@ public sealed class OperationMapBuildingAuthoringTests
             Assert.That(authoring.StableId, Is.EqualTo(GeneratedStableId));
             Assert.That(authoring.SourceGlobalObjectId, Is.Empty);
             Assert.That(OperationMapIdentityRules.IsValidGeneratedStableId(authoring.StableId), Is.True);
+            Assert.That(authoring.FootprintCells, Is.EqualTo(new Vector2Int(5, 7)));
+            Assert.That(authoring.MaxHealth, Is.EqualTo(640));
+        }
+        finally
+        {
+            Object.DestroyImmediate(owner);
+            Object.DestroyImmediate(definitionOwner);
+        }
+    }
+
+    [Test]
+    public void TryValidate_RejectsIncompleteGeneratedGameplayValues()
+    {
+        var owner = new GameObject("GeneratedBuildingOwner");
+        var intactVisual = new GameObject("IntactVisual");
+        var definitionOwner = new GameObject("BuildingDefinition");
+        try
+        {
+            intactVisual.transform.SetParent(owner.transform, false);
+            var authoring = owner.AddComponent<OperationMapBuildingAuthoring>();
+            var serialized = new SerializedObject(authoring);
+            serialized.FindProperty("operationMapId").stringValue = "opmap.skirmish.building_test_01";
+            serialized.FindProperty("stableId").stringValue = GeneratedStableId;
+            serialized.FindProperty("placementIndex").intValue = 9;
+            serialized.FindProperty("generatedFootprintCells").vector2IntValue = new Vector2Int(5, 0);
+            serialized.FindProperty("generatedMaxHealth").intValue = 640;
+            serialized.FindProperty("definition").objectReferenceValue =
+                definitionOwner.AddComponent<BuildingDefinitionAuthoring>();
+            serialized.FindProperty("intactVisualRoot").objectReferenceValue = intactVisual;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+
+            Assert.That(authoring.TryValidate(out string error), Is.False);
+            StringAssert.Contains("footprint and maximum health", error);
         }
         finally
         {

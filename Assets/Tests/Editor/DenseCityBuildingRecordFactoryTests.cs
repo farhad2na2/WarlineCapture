@@ -15,6 +15,8 @@ public sealed class DenseCityBuildingRecordFactoryTests
         DenseCityBuildingRecordGroup group = DenseCityBuildingRecordFactory.Create(CreateInput());
 
         Assert.That(group.Building.Identity.DeterministicSequence, Is.EqualTo(20));
+        Assert.That(group.Building.OriginCell, Is.EqualTo(new Vector2Int(12, 18)));
+        Assert.That(group.Building.FootprintCells, Is.EqualTo(new Vector2Int(8, 6)));
         Assert.That(group.Foundation.Identity, Is.EqualTo(group.Building.FoundationSurfaceIdentity));
         Assert.That(group.Blocker.Identity, Is.EqualTo(group.Building.BlockerSurfaceIdentity));
         Assert.That(group.IntactPresentation.Identity, Is.EqualTo(group.Building.IntactPresentationIdentity));
@@ -49,6 +51,8 @@ public sealed class DenseCityBuildingRecordFactoryTests
             new[] { MaterialGuid },
             new[] { MaterialGuid },
             Matrix4x4.TRS(new Vector3(10f, 2f, 20f), Quaternion.Euler(0f, 90f, 0f), Vector3.one),
+            new Vector2Int(12, 18),
+            new Vector2Int(8, 6),
             new Vector2(8f, 6f),
             2f,
             new Bounds(new Vector3(10f, 4f, 20f), new Vector3(6f, 4f, 8f)),

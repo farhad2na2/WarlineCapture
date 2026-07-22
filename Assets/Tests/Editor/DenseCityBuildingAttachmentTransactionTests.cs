@@ -137,6 +137,8 @@ public sealed class DenseCityBuildingAttachmentTransactionTests
                 new[] { MaterialGuid },
                 new[] { MaterialGuid },
                 Matrix4x4.identity,
+                Vector2Int.zero,
+                new Vector2Int(8, 6),
                 new Vector2(8f, 6f),
                 0f,
                 new Bounds(Vector3.up * 2f, new Vector3(8f, 4f, 6f)),

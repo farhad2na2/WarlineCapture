@@ -90,6 +90,8 @@ public sealed class DenseCityBuildingPlacementTransactionTests
                 new[] { MaterialGuid },
                 new[] { MaterialGuid },
                 Matrix4x4.TRS(new Vector3(10f, 2f, 20f), Quaternion.identity, Vector3.one),
+                new Vector2Int(6, 9),
+                new Vector2Int(8, 6),
                 new Vector2(8f, 6f),
                 2f,
                 new Bounds(new Vector3(10f, 4f, 20f), new Vector3(8f, 4f, 6f)),

@@ -770,6 +770,8 @@ namespace Game.Editor
                             destroyedPrefab,
                             materialSelection,
                             plan.WorldMatrix,
+                            plan.OriginCell,
+                            plan.FootprintCells,
                             plan.FootprintSize,
                             plan.FoundationElevation,
                             plan.BlockerBounds,

@@ -95,6 +95,8 @@ public sealed class DenseCityGenerationRecordsTests
             () => new DenseCityBuildingBakeRecord(
                 identity,
                 Matrix4x4.identity,
+                Vector2Int.zero,
+                Vector2Int.one,
                 Vector2.zero,
                 0f,
                 new Bounds(Vector3.zero, Vector3.one),
@@ -193,6 +195,8 @@ public sealed class DenseCityGenerationRecordsTests
         building = new DenseCityBuildingBakeRecord(
             buildingIdentity,
             Matrix4x4.identity,
+            new Vector2Int(4, 7),
+            new Vector2Int(8, 6),
             new Vector2(8f, 6f),
             0f,
             new Bounds(Vector3.zero, new Vector3(8f, 5f, 6f)),

@@ -15,6 +15,8 @@ namespace Game.Editor
             GameObject destroyedPrefab,
             DenseCityBuildingMaterialSelection materialSelection,
             Matrix4x4 worldMatrix,
+            Vector2Int originCell,
+            Vector2Int footprintCells,
             Vector2 footprintSize,
             float foundationElevation,
             Bounds blockerBounds,
@@ -34,6 +36,8 @@ namespace Game.Editor
             DestroyedPrefab = destroyedPrefab;
             MaterialSelection = materialSelection;
             WorldMatrix = worldMatrix;
+            OriginCell = originCell;
+            FootprintCells = footprintCells;
             FootprintSize = footprintSize;
             FoundationElevation = foundationElevation;
             BlockerBounds = blockerBounds;
@@ -54,6 +58,8 @@ namespace Game.Editor
         internal GameObject DestroyedPrefab { get; }
         internal DenseCityBuildingMaterialSelection MaterialSelection { get; }
         internal Matrix4x4 WorldMatrix { get; }
+        internal Vector2Int OriginCell { get; }
+        internal Vector2Int FootprintCells { get; }
         internal Vector2 FootprintSize { get; }
         internal float FoundationElevation { get; }
         internal Bounds BlockerBounds { get; }
@@ -97,6 +103,8 @@ namespace Game.Editor
                 Copy(intactMetadata.MaterialAssetGuids),
                 Copy(destroyedMetadata.MaterialAssetGuids),
                 request.WorldMatrix,
+                request.OriginCell,
+                request.FootprintCells,
                 request.FootprintSize,
                 request.FoundationElevation,
                 request.BlockerBounds,

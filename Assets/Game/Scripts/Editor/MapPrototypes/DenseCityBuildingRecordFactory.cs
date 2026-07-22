@@ -19,6 +19,8 @@ namespace Game.Editor
             IReadOnlyList<string> intactMaterialGuids,
             IReadOnlyList<string> destroyedMaterialGuids,
             Matrix4x4 worldMatrix,
+            Vector2Int originCell,
+            Vector2Int footprintCells,
             Vector2 footprintSize,
             float foundationElevation,
             Bounds blockerBounds,
@@ -44,6 +46,8 @@ namespace Game.Editor
             IntactMaterialGuids = intactMaterialGuids;
             DestroyedMaterialGuids = destroyedMaterialGuids;
             WorldMatrix = worldMatrix;
+            OriginCell = originCell;
+            FootprintCells = footprintCells;
             FootprintSize = footprintSize;
             FoundationElevation = foundationElevation;
             BlockerBounds = blockerBounds;
@@ -67,6 +71,8 @@ namespace Game.Editor
         internal IReadOnlyList<string> IntactMaterialGuids { get; }
         internal IReadOnlyList<string> DestroyedMaterialGuids { get; }
         internal Matrix4x4 WorldMatrix { get; }
+        internal Vector2Int OriginCell { get; }
+        internal Vector2Int FootprintCells { get; }
         internal Vector2 FootprintSize { get; }
         internal float FoundationElevation { get; }
         internal Bounds BlockerBounds { get; }
@@ -116,6 +122,8 @@ namespace Game.Editor
             var building = new DenseCityBuildingBakeRecord(
                 buildingIdentity,
                 input.WorldMatrix,
+                input.OriginCell,
+                input.FootprintCells,
                 input.FootprintSize,
                 input.FoundationElevation,
                 input.BlockerBounds,

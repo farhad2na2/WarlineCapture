@@ -257,6 +257,29 @@ namespace Game.Editor
                 realize);
         }
 
+        internal bool TryPlaceRenderOnlyPresentation(
+            int districtId,
+            Func<int, DenseCityPresentationBakeRecord> createPresentation,
+            Func<bool> realize)
+        {
+            RequireActive();
+            if (districtId < 0)
+                throw new ArgumentOutOfRangeException(nameof(districtId));
+            if (createPresentation == null)
+                throw new ArgumentNullException(nameof(createPresentation));
+            if (realize == null)
+                throw new ArgumentNullException(nameof(realize));
+
+            int sequence = GetInfrastructureSequenceStart(districtId, 1);
+            DenseCityPresentationBakeRecord presentation = createPresentation(sequence);
+            DenseCityRenderOnlyPresentationRecordFactory.RequireRenderOnlyCategory(presentation.Category);
+            nextInfrastructureSequenceByDistrict[districtId] = sequence + 1;
+            return DenseCityRenderOnlyPresentationPlacementTransaction.TryCommitAndRealize(
+                Records,
+                presentation,
+                realize);
+        }
+
         internal bool TryPlaceBridge(
             int districtId,
             Func<int, DenseCityBridgeRecordGroup> createGroup,

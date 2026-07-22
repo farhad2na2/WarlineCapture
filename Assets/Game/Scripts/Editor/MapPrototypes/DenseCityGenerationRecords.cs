@@ -362,6 +362,26 @@ namespace Game.Editor
         internal void Add(DenseCityPresentationBakeRecord record) =>
             Add(record, record.Identity, presentations, presentationCapacity, "presentation");
 
+        internal void AddRenderOnlyPresentation(DenseCityPresentationBakeRecord presentation)
+        {
+            DenseCityRenderOnlyPresentationRecordFactory.RequireRenderOnlyCategory(presentation.Category);
+            Add(presentation);
+        }
+
+        internal void RemoveRenderOnlyPresentation(DenseCityPresentationBakeRecord presentation)
+        {
+            RequireWritable();
+            DenseCityRenderOnlyPresentationRecordFactory.RequireRenderOnlyCategory(presentation.Category);
+            int index = FindIndex(presentations, presentation.Identity.StableKey, record => record.Identity);
+            if (index < 0)
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city render-only presentation is missing: '{presentation.Identity.StableKey}'.");
+            }
+            stableKeys.Remove(presentation.Identity.StableKey);
+            presentations.RemoveAt(index);
+        }
+
         internal void AddBuildingAttachment(DenseCityPresentationBakeRecord attachment)
         {
             RequireWritable();

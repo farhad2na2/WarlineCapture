@@ -5,6 +5,7 @@ using System.Linq;
 using Game.Authoring;
 using Game.Configs;
 using Game.Rendering;
+using Game.Runtime;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -219,6 +220,7 @@ namespace Game.Editor
             OperationMapBuildingAuthoring[] buildings = FindBuildings(entityPresentationScene);
             var stableIds = new HashSet<string>(StringComparer.Ordinal);
             var placementIds = new HashSet<string>(StringComparer.Ordinal);
+            var generatedBuildings = new List<OperationMapBuildingAuthoring>();
             foreach (OperationMapBuildingAuthoring building in buildings)
             {
                 if (!building.TryValidate(out error))
@@ -243,6 +245,8 @@ namespace Game.Editor
                         $"Building {building.PlacementIndex} must have exactly one approved entity-presentation owner.";
                     return false;
                 }
+                if (hasGeneratedOwner)
+                    generatedBuildings.Add(building);
                 if (!stableIds.Add(building.StableId))
                 {
                     error = $"Duplicate operation-map building stable id: '{building.StableId}'.";
@@ -255,9 +259,111 @@ namespace Game.Editor
                     return false;
                 }
             }
+            foreach (OperationMapBuildingAuthoring generatedBuilding in generatedBuildings)
+            {
+                if (!TryValidateGeneratedBuilding(generatedBuilding, out error))
+                    return false;
+            }
 
             error = null;
             return true;
+        }
+
+        private static bool TryValidateGeneratedBuilding(
+            OperationMapBuildingAuthoring building,
+            out string error)
+        {
+            if (!OperationMapIdentityRules.IsValidGeneratedStableId(building.StableId) ||
+                building.FootprintCells.x <= 0 || building.FootprintCells.y <= 0 ||
+                building.MaxHealth <= 0)
+            {
+                error = $"Generated building {building.PlacementIndex} has incomplete ECS gameplay data.";
+                return false;
+            }
+            if (building.IntactVisualRoot == null || building.DestroyedVisualRoot == null)
+            {
+                error =
+                    $"Generated building {building.PlacementIndex} requires one intact and one destroyed visual root.";
+                return false;
+            }
+            if (building.GetComponentsInChildren<RuntimeBuildingEntityLink>(true).Length != 0)
+            {
+                error =
+                    $"Generated building {building.PlacementIndex} contains a managed RuntimeBuildingEntityLink.";
+                return false;
+            }
+            if (!TryValidateSharedRenderAssets(
+                    building.IntactVisualRoot,
+                    building.PlacementIndex,
+                    "intact",
+                    out error) ||
+                !TryValidateSharedRenderAssets(
+                    building.DestroyedVisualRoot,
+                    building.PlacementIndex,
+                    "destroyed",
+                    out error))
+            {
+                return false;
+            }
+
+            error = null;
+            return true;
+        }
+
+        private static bool TryValidateSharedRenderAssets(
+            GameObject visualRoot,
+            int placementIndex,
+            string state,
+            out string error)
+        {
+            Renderer[] renderers = visualRoot.GetComponentsInChildren<Renderer>(true);
+            if (renderers.Length == 0)
+            {
+                error = $"Generated building {placementIndex} {state} visual root has no renderer.";
+                return false;
+            }
+
+            foreach (Renderer renderer in renderers)
+            {
+                Mesh mesh = renderer switch
+                {
+                    MeshRenderer => renderer.GetComponent<MeshFilter>()?.sharedMesh,
+                    SkinnedMeshRenderer skinned => skinned.sharedMesh,
+                    _ => null
+                };
+                if (!TryGetPersistentAssetIdentity(mesh, out _, out _))
+                {
+                    error =
+                        $"Generated building {placementIndex} {state} renderer '{renderer.name}' " +
+                        "does not use a persistent shared mesh asset.";
+                    return false;
+                }
+
+                Material[] materials = renderer.sharedMaterials;
+                if (materials.Length == 0 || materials.Any(material =>
+                        !TryGetPersistentAssetIdentity(material, out _, out _)))
+                {
+                    error =
+                        $"Generated building {placementIndex} {state} renderer '{renderer.name}' " +
+                        "does not use persistent shared material assets.";
+                    return false;
+                }
+            }
+
+            error = null;
+            return true;
+        }
+
+        private static bool TryGetPersistentAssetIdentity(
+            UnityEngine.Object asset,
+            out string guid,
+            out long localId)
+        {
+            guid = null;
+            localId = 0;
+            return asset != null &&
+                   AssetDatabase.TryGetGUIDAndLocalFileIdentifier(asset, out guid, out localId) &&
+                   !string.IsNullOrEmpty(guid) && localId > 0;
         }
 
         private static bool TryValidateProxyOwnership(

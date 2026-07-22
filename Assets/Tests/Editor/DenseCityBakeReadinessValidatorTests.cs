@@ -1,6 +1,8 @@
 using System;
+using System.Linq;
 using Game.Authoring;
 using Game.Editor;
+using Game.Runtime;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -42,7 +44,11 @@ public sealed class DenseCityBakeReadinessValidatorTests
             suite.ProtectedRoots_RejectsMovedRoot,
             suite.ProtectedRoots_RejectsReparentedRoot,
             suite.ProtectedRoots_RejectsDeletedRoot,
-            suite.ProtectedBoundsIndex_DetectsOnlyOverlappingFootprints
+            suite.ProtectedBoundsIndex_DetectsOnlyOverlappingFootprints,
+            suite.AuthoringOwnership_AcceptsCompleteGeneratedBuildingEcsPresentation,
+            suite.AuthoringOwnership_RejectsGeneratedBuildingWithoutDestroyedRoot,
+            suite.AuthoringOwnership_RejectsGeneratedBuildingManagedRuntimeLink,
+            suite.AuthoringOwnership_RejectsGeneratedBuildingSceneEmbeddedMesh
         };
 
         for (int index = 0; index < tests.Length; index++)
@@ -648,6 +654,153 @@ public sealed class DenseCityBakeReadinessValidatorTests
                 new Bounds(new Vector3(20f, 0f, 0f), Vector3.one),
                 out _),
             Is.False);
+    }
+
+    [Test]
+    public void AuthoringOwnership_AcceptsCompleteGeneratedBuildingEcsPresentation()
+    {
+        AssertGeneratedBuildingMutationAccepted(_ => { });
+    }
+
+    [Test]
+    public void AuthoringOwnership_RejectsGeneratedBuildingWithoutDestroyedRoot()
+    {
+        AssertGeneratedBuildingRejected(
+            building => UnityEngine.Object.DestroyImmediate(building.DestroyedVisualRoot),
+            "one intact and one destroyed visual root");
+    }
+
+    [Test]
+    public void AuthoringOwnership_RejectsGeneratedBuildingManagedRuntimeLink()
+    {
+        AssertGeneratedBuildingRejected(
+            building => building.gameObject.AddComponent<RuntimeBuildingEntityLink>(),
+            "managed RuntimeBuildingEntityLink");
+    }
+
+    [Test]
+    public void AuthoringOwnership_RejectsGeneratedBuildingSceneEmbeddedMesh()
+    {
+        Mesh embeddedMesh = null;
+        try
+        {
+            AssertGeneratedBuildingRejected(building =>
+            {
+                embeddedMesh = new Mesh { name = "SceneEmbeddedGeneratedBuildingMesh" };
+                building.IntactVisualRoot.GetComponent<MeshFilter>().sharedMesh = embeddedMesh;
+            }, "persistent shared mesh asset");
+        }
+        finally
+        {
+            if (embeddedMesh != null)
+                UnityEngine.Object.DestroyImmediate(embeddedMesh);
+        }
+    }
+
+    private static void AssertGeneratedBuildingMutationAccepted(Action<OperationMapBuildingAuthoring> mutate)
+    {
+        (Scene mapScene, Scene entityScene) = CreateScenePair();
+        try
+        {
+            OperationMapBuildingAuthoring building = CreateGeneratedBuilding(mapScene, entityScene);
+            mutate(building);
+            Assert.That(
+                DenseCityBakeReadinessValidator.TryValidateAuthoringOwnership(
+                    mapScene,
+                    entityScene,
+                    OperationMapId,
+                    GenerationId,
+                    out string error),
+                Is.True,
+                error);
+        }
+        finally
+        {
+            EditorSceneManager.CloseScene(entityScene, true);
+            EditorSceneManager.CloseScene(mapScene, true);
+        }
+    }
+
+    private static void AssertGeneratedBuildingRejected(
+        Action<OperationMapBuildingAuthoring> mutate,
+        string expectedError)
+    {
+        (Scene mapScene, Scene entityScene) = CreateScenePair();
+        try
+        {
+            OperationMapBuildingAuthoring building = CreateGeneratedBuilding(mapScene, entityScene);
+            mutate(building);
+            Assert.That(
+                DenseCityBakeReadinessValidator.TryValidateAuthoringOwnership(
+                    mapScene,
+                    entityScene,
+                    OperationMapId,
+                    GenerationId,
+                    out string error),
+                Is.False);
+            StringAssert.Contains(expectedError, error);
+        }
+        finally
+        {
+            EditorSceneManager.CloseScene(entityScene, true);
+            EditorSceneManager.CloseScene(mapScene, true);
+        }
+    }
+
+    private static OperationMapBuildingAuthoring CreateGeneratedBuilding(
+        Scene mapScene,
+        Scene entityScene)
+    {
+        var roots = DenseCitySemanticHierarchyBuilder.Create(
+            mapScene,
+            entityScene,
+            GenerationId,
+            "dense-city-v1",
+            1,
+            42,
+            Hash);
+        Transform parent = roots.EntityPresentationSource.transform.Find("GameplayBuildings/Buildings");
+        var owner = new GameObject("GeneratedBuilding");
+        owner.transform.SetParent(parent, false);
+        var intact = new GameObject("IntactVisual");
+        intact.transform.SetParent(owner.transform, false);
+        var destroyed = new GameObject("DestroyedVisual");
+        destroyed.transform.SetParent(owner.transform, false);
+        AddPersistentRenderer(intact);
+        AddPersistentRenderer(destroyed);
+        BuildingDefinitionAuthoring definition = owner.AddComponent<BuildingDefinitionAuthoring>();
+        OperationMapBuildingAuthoring building = owner.AddComponent<OperationMapBuildingAuthoring>();
+        building.ConfigureGeneratedForEditor(
+            OperationMapId,
+            "densecity.0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+            1,
+            2,
+            new Vector2Int(10, 20),
+            new Vector2Int(4, 5),
+            500,
+            definition,
+            intact,
+            destroyed);
+        return building;
+    }
+
+    private static void AddPersistentRenderer(GameObject owner)
+    {
+        owner.AddComponent<MeshFilter>().sharedMesh = LoadProjectAsset<Mesh>();
+        owner.AddComponent<MeshRenderer>().sharedMaterial = LoadProjectAsset<Material>();
+    }
+
+    private static T LoadProjectAsset<T>() where T : UnityEngine.Object
+    {
+        foreach (string guid in AssetDatabase.FindAssets($"t:{typeof(T).Name}", new[] { "Assets/PolygonMilitary" }))
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            T asset = AssetDatabase.LoadAllAssetsAtPath(path).OfType<T>().FirstOrDefault();
+            if (asset != null)
+                return asset;
+        }
+        Assert.Fail($"No persistent {typeof(T).Name} test asset was found.");
+        return null;
     }
 
     private static void AssertProtectedRootMutationRejected(

@@ -387,6 +387,76 @@ namespace Game.Editor
             presentations.RemoveAt(index);
         }
 
+        internal void AddInfrastructureGroup(
+            DenseCitySurfaceBakeRecord surface,
+            DenseCityPresentationBakeRecord presentation)
+        {
+            RequireWritable();
+            if (surface.Kind is DenseCitySurfaceRecordKind.Unknown or DenseCitySurfaceRecordKind.Blocker)
+            {
+                throw new ArgumentException(
+                    "Infrastructure surfaces must be terrain, road, bridge, or ramp records.",
+                    nameof(surface));
+            }
+            if (presentation.Category != DenseCityPresentationCategory.Infrastructure)
+            {
+                throw new ArgumentException(
+                    "Infrastructure presentation category is required.",
+                    nameof(presentation));
+            }
+            if (surfaces.Count >= surfaceCapacity || presentations.Count >= presentationCapacity)
+                throw new InvalidOperationException("Dense-city infrastructure record group exceeds a configured capacity.");
+
+            string surfaceKey = surface.Identity.StableKey;
+            string presentationKey = presentation.Identity.StableKey;
+            if (surfaceKey == presentationKey || stableKeys.Contains(surfaceKey) || stableKeys.Contains(presentationKey))
+            {
+                throw new InvalidOperationException(
+                    $"Duplicate dense-city record identity: '{(stableKeys.Contains(surfaceKey) ? surfaceKey : presentationKey)}'.");
+            }
+
+            stableKeys.Add(surfaceKey);
+            stableKeys.Add(presentationKey);
+            surfaces.Add(surface);
+            presentations.Add(presentation);
+        }
+
+        internal void RemoveInfrastructureGroup(
+            DenseCitySurfaceBakeRecord surface,
+            DenseCityPresentationBakeRecord presentation)
+        {
+            RequireWritable();
+            int surfaceIndex = FindIndex(surfaces, surface.Identity.StableKey, record => record.Identity);
+            int presentationIndex = FindIndex(
+                presentations,
+                presentation.Identity.StableKey,
+                record => record.Identity);
+            if (surfaceIndex < 0 || presentationIndex < 0)
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city infrastructure record group is incomplete: '{surface.Identity.StableKey}'.");
+            }
+
+            stableKeys.Remove(surface.Identity.StableKey);
+            stableKeys.Remove(presentation.Identity.StableKey);
+            surfaces.RemoveAt(surfaceIndex);
+            presentations.RemoveAt(presentationIndex);
+        }
+
+        internal void RemoveSurface(DenseCitySurfaceBakeRecord surface)
+        {
+            RequireWritable();
+            int surfaceIndex = FindIndex(surfaces, surface.Identity.StableKey, record => record.Identity);
+            if (surfaceIndex < 0)
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city surface record is missing: '{surface.Identity.StableKey}'.");
+            }
+
+            stableKeys.Remove(surface.Identity.StableKey);
+            surfaces.RemoveAt(surfaceIndex);
+        }
+
         internal void AddBuildingGroup(
             DenseCityBuildingBakeRecord building,
             DenseCitySurfaceBakeRecord foundation,

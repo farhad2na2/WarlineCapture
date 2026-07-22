@@ -33,7 +33,9 @@ public sealed class DenseCityBakeReadinessValidatorTests
             suite.AuthoringOwnership_RejectsEveryGenerationContractMismatch,
             suite.AuthoringOwnership_AcceptsClassifiedRenderOnlyRenderer,
             suite.AuthoringOwnership_RejectsDetailedRendererBeneathProxyRoot,
-            suite.AuthoringOwnership_RejectsUnclassifiedGeneratedRenderer
+            suite.AuthoringOwnership_RejectsUnclassifiedGeneratedRenderer,
+            suite.AuthoringOwnership_AcceptsExplicitProxyOwner,
+            suite.AuthoringOwnership_RejectsInheritedProxyOwner
         };
 
         for (int index = 0; index < tests.Length; index++)
@@ -474,6 +476,91 @@ public sealed class DenseCityBakeReadinessValidatorTests
         }
         finally
         {
+            EditorSceneManager.CloseScene(entityScene, true);
+            EditorSceneManager.CloseScene(mapScene, true);
+        }
+    }
+
+    [Test]
+    public void AuthoringOwnership_AcceptsExplicitProxyOwner()
+    {
+        (Scene mapScene, Scene entityScene) = CreateScenePair();
+        Mesh mesh = null;
+        try
+        {
+            var roots = DenseCitySemanticHierarchyBuilder.Create(
+                mapScene,
+                entityScene,
+                GenerationId,
+                "dense-city-v1",
+                1,
+                42,
+                Hash);
+            Transform terrain = roots.MapBakeSource.transform.Find("BakeSources/Terrain");
+            var proxy = new GameObject("OwnedTerrainProxy");
+            proxy.transform.SetParent(terrain, false);
+            MapBakeGroupAuthoring owner = proxy.AddComponent<MapBakeGroupAuthoring>();
+            var serialized = new SerializedObject(owner);
+            serialized.FindProperty("role").enumValueIndex = (int)MapBakeGroupRole.Terrain;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            mesh = new Mesh { name = "OwnedTerrainProxyMesh" };
+            proxy.AddComponent<MeshFilter>().sharedMesh = mesh;
+
+            Assert.That(
+                DenseCityBakeReadinessValidator.TryValidateAuthoringOwnership(
+                    mapScene,
+                    entityScene,
+                    OperationMapId,
+                    GenerationId,
+                    out string error),
+                Is.True,
+                error);
+        }
+        finally
+        {
+            if (mesh != null)
+                UnityEngine.Object.DestroyImmediate(mesh);
+            EditorSceneManager.CloseScene(entityScene, true);
+            EditorSceneManager.CloseScene(mapScene, true);
+        }
+    }
+
+    [Test]
+    public void AuthoringOwnership_RejectsInheritedProxyOwner()
+    {
+        (Scene mapScene, Scene entityScene) = CreateScenePair();
+        Mesh mesh = null;
+        try
+        {
+            var roots = DenseCitySemanticHierarchyBuilder.Create(
+                mapScene,
+                entityScene,
+                GenerationId,
+                "dense-city-v1",
+                1,
+                42,
+                Hash);
+            Transform terrain = roots.MapBakeSource.transform.Find("BakeSources/Terrain");
+            var proxy = new GameObject("InheritedTerrainProxy");
+            proxy.transform.SetParent(terrain, false);
+            mesh = new Mesh { name = "InheritedTerrainProxyMesh" };
+            proxy.AddComponent<MeshFilter>().sharedMesh = mesh;
+
+            Assert.That(
+                DenseCityBakeReadinessValidator.TryValidateAuthoringOwnership(
+                    mapScene,
+                    entityScene,
+                    OperationMapId,
+                    GenerationId,
+                    out string error),
+                Is.False);
+            StringAssert.Contains("exactly one nearest bake-group owner", error);
+            StringAssert.Contains("InheritedTerrainProxy", error);
+        }
+        finally
+        {
+            if (mesh != null)
+                UnityEngine.Object.DestroyImmediate(mesh);
             EditorSceneManager.CloseScene(entityScene, true);
             EditorSceneManager.CloseScene(mapScene, true);
         }

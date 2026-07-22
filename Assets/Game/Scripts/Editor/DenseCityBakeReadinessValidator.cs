@@ -91,6 +91,8 @@ namespace Game.Editor
             {
                 return false;
             }
+            if (!TryValidateProxyOwnership(mapGeneratedRoot, out error))
+                return false;
             if (!DenseCityPhysicsComponentStripper.TryValidateNoProhibitedComponents(
                     mapGeneratedRoot.gameObject,
                     out error) ||
@@ -166,6 +168,29 @@ namespace Game.Editor
                 if (!placementIds.Add(placementKey))
                 {
                     error = $"Duplicate operation-map building placement: '{placementKey}'.";
+                    return false;
+                }
+            }
+
+            error = null;
+            return true;
+        }
+
+        private static bool TryValidateProxyOwnership(
+            DenseCityGeneratedRootAuthoring mapGeneratedRoot,
+            out string error)
+        {
+            MeshFilter[] proxies = mapGeneratedRoot.GetComponentsInChildren<MeshFilter>(true);
+            foreach (MeshFilter proxy in proxies)
+            {
+                MapBakeGroupAuthoring owner = proxy.GetComponent<MapBakeGroupAuthoring>();
+                if (owner == null ||
+                    proxy.GetComponents<MapBakeGroupAuthoring>().Length != 1 ||
+                    proxy.GetComponentInParent<MapBakeGroupAuthoring>(true) != owner)
+                {
+                    error =
+                        $"Dense-city surface proxy requires exactly one nearest bake-group owner: " +
+                        $"'{GetHierarchyPath(proxy.transform, mapGeneratedRoot.transform)}'.";
                     return false;
                 }
             }

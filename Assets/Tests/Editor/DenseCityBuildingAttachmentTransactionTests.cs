@@ -1,11 +1,15 @@
 using System;
+using System.Linq;
 using Game.Components;
 using Game.Editor;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEngine;
 
 public sealed class DenseCityBuildingAttachmentTransactionTests
 {
+    private const string RoofCapPrefabPath =
+        "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Roof_Cap_03.prefab";
     private const string SourceGuid = "0123456789abcdef0123456789abcdef";
     private const string DestroyedGuid = "fedcba9876543210fedcba9876543210";
     private const string MaterialGuid = "abcdef0123456789abcdef0123456789";
@@ -63,14 +67,69 @@ public sealed class DenseCityBuildingAttachmentTransactionTests
         Assert.That(realized, Is.False);
     }
 
+    [Test]
+    public void Context_AllocatesPersistentAttachmentRecordForRegisteredOwner()
+    {
+        using var context = new DenseCityGenerationTransactionContext(1, 2, 3);
+        Assert.That(context.TryPlaceBuilding(
+            3,
+            sequence => CreateGroup(sequence),
+            () => true,
+            out DenseCityBuildingBakeRecord building), Is.True);
+        var rootObject = new GameObject("IntactPresentationRoot");
+        var sourceObject = new GameObject("SourceBuilding");
+        GameObject roofCapPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(RoofCapPrefabPath);
+        Assert.That(roofCapPrefab, Is.Not.Null);
+        try
+        {
+            context.RegisterRealizedBuildingOwner(
+                building,
+                rootObject.transform,
+                sourceObject,
+                Game.Configs.GeneratedCityBuildingRole.Shop);
+            DenseCityRealizedBuildingOwner owner = context.RealizedBuildingOwners[0];
+            var attachmentObject = new GameObject("RoofAttachment");
+            attachmentObject.transform.SetParent(rootObject.transform, false);
+
+            Assert.That(context.TryPlaceBuildingAttachment(
+                owner,
+                roofCapPrefab,
+                attachmentObject.transform,
+                Matrix4x4.TRS(Vector3.up * 4f, Quaternion.identity, Vector3.one),
+                DenseCityPresentationCategory.BuildingAttachmentIntact,
+                () => true), Is.True);
+            context.Seal();
+
+            Assert.That(context.Records.Presentations, Has.Count.EqualTo(3));
+            DenseCityPresentationBakeRecord attachment = context.Records.Presentations.Single(
+                record => record.Category == DenseCityPresentationCategory.BuildingAttachmentIntact);
+            Assert.That(attachment.BuildingOwnerStableKey, Is.EqualTo(building.Identity.StableKey));
+            Assert.That(context.RealizedBuildingAttachments, Has.Count.EqualTo(1));
+            Assert.That(
+                context.RealizedBuildingAttachments[0].PresentationRoot,
+                Is.SameAs(attachmentObject.transform));
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(rootObject);
+            UnityEngine.Object.DestroyImmediate(sourceObject);
+        }
+    }
+
     private static DenseCityBuildingBakeRecord AddBuilding(DenseCityGenerationRecordSet records)
     {
-        DenseCityBuildingRecordGroup group = DenseCityBuildingRecordFactory.Create(
+        DenseCityBuildingRecordGroup group = CreateGroup(0);
+        DenseCityBuildingRecordFactory.Add(records, group);
+        return group.Building;
+    }
+
+    private static DenseCityBuildingRecordGroup CreateGroup(int sequence) =>
+        DenseCityBuildingRecordFactory.Create(
             new DenseCityBuildingRecordInput(
                 "dense-city-v1",
                 42,
                 3,
-                0,
+                sequence,
                 SourceGuid,
                 123,
                 DestroyedGuid,
@@ -87,9 +146,6 @@ public sealed class DenseCityBuildingAttachmentTransactionTests
                 1,
                 0,
                 Vector2Int.zero));
-        DenseCityBuildingRecordFactory.Add(records, group);
-        return group.Building;
-    }
 
     private static DenseCityPresentationBakeRecord CreateAttachment(string ownerStableKey) =>
         new(

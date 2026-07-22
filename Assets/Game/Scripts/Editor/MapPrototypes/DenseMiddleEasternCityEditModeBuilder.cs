@@ -24,6 +24,7 @@ namespace Game.Editor
             public readonly int Parks;
             public readonly int AuthoredCoreRenderers;
             public readonly int SemanticBuildings;
+            public readonly int SemanticBuildingAttachments;
 
             public Result(
                 int roadTiles,
@@ -31,7 +32,8 @@ namespace Game.Editor
                 int buildings,
                 int parks,
                 int authoredCoreRenderers,
-                int semanticBuildings)
+                int semanticBuildings,
+                int semanticBuildingAttachments)
             {
                 RoadTiles = roadTiles;
                 RoadChunks = roadChunks;
@@ -39,6 +41,7 @@ namespace Game.Editor
                 Parks = parks;
                 AuthoredCoreRenderers = authoredCoreRenderers;
                 SemanticBuildings = semanticBuildings;
+                SemanticBuildingAttachments = semanticBuildingAttachments;
             }
         }
 
@@ -1174,12 +1177,6 @@ namespace Game.Editor
                 materialLibrary,
                 generationTransactions);
 
-            generationTransactions.Seal();
-            Debug.Log(
-                $"[DenseCitySemanticRecords] buildings={generationTransactions.Records.Buildings.Count} " +
-                $"surfaces={generationTransactions.Records.Surfaces.Count} " +
-                $"presentations={generationTransactions.Records.Presentations.Count}");
-
             BuildingMaterialVariantResult materialVariants = ApplyBuildingMaterialVariants(
                 generatedRoot,
                 config.RandomSeed,
@@ -1189,7 +1186,9 @@ namespace Game.Editor
                 $"buildingsB={materialVariants.BuildingsB} buildingsC={materialVariants.BuildingsC} " +
                 $"materialSlotsChanged={materialVariants.MaterialSlotsChanged}");
 
-            int roofDetails = AddShopRoofDetails(generatedRoot);
+            int roofDetails = AddShopRoofDetails(
+                generationTransactions.RealizedBuildingOwners,
+                generationTransactions);
             int openGroundDetails = AddOpenGroundDetails(
                 generatedRoot,
                 cityOrigin,
@@ -1207,6 +1206,7 @@ namespace Game.Editor
             UrbanDetailResult urbanDetails = AddUrbanDetailProps(
                 generatedRoot,
                 generationTransactions.RealizedBuildingOwners,
+                generationTransactions,
                 cityOrigin,
                 cityWidth,
                 cityDepth,
@@ -1236,6 +1236,13 @@ namespace Game.Editor
                 $"grassPatches={urbanDetails.GrassPatches} " +
                 $"mainStreetBushes={urbanDetails.MainStreetBushes}");
 
+            generationTransactions.Seal();
+            ValidateRealizedBuildingAttachmentOwnership(generationTransactions);
+            Debug.Log(
+                $"[DenseCitySemanticRecords] buildings={generationTransactions.Records.Buildings.Count} " +
+                $"surfaces={generationTransactions.Records.Surfaces.Count} " +
+                $"presentations={generationTransactions.Records.Presentations.Count}");
+
             int horizonMountains = BakeHorizonMountainPerimeter(
                 generatedRoot,
                 cityOrigin,
@@ -1263,7 +1270,64 @@ namespace Game.Editor
                 buildingResult.BuildingCount,
                 buildingResult.ParkCount,
                 authoredCoreRenderers,
-                generationTransactions.Records.Buildings.Count);
+                generationTransactions.Records.Buildings.Count,
+                generationTransactions.RealizedBuildingAttachments.Count);
+        }
+
+        private static void ValidateRealizedBuildingAttachmentOwnership(
+            DenseCityGenerationTransactionContext generationTransactions)
+        {
+            IReadOnlyList<DenseCityRealizedBuildingOwner> owners =
+                generationTransactions.RealizedBuildingOwners;
+            var rootsByStableKey = new Dictionary<string, Transform>(owners.Count, StringComparer.Ordinal);
+            for (int index = 0; index < owners.Count; index++)
+            {
+                DenseCityRealizedBuildingOwner owner = owners[index];
+                rootsByStableKey.Add(owner.Building.Identity.StableKey, owner.IntactPresentationRoot);
+            }
+
+            IReadOnlyList<DenseCityRealizedBuildingAttachment> realizedAttachments =
+                generationTransactions.RealizedBuildingAttachments;
+            int semanticAttachmentCount = 0;
+            IReadOnlyList<DenseCityPresentationBakeRecord> presentations =
+                generationTransactions.Records.Presentations;
+            for (int index = 0; index < presentations.Count; index++)
+            {
+                if (presentations[index].Category is DenseCityPresentationCategory.BuildingAttachmentIntact or
+                    DenseCityPresentationCategory.BuildingAttachmentDestroyed)
+                {
+                    semanticAttachmentCount++;
+                }
+            }
+            if (semanticAttachmentCount != realizedAttachments.Count)
+            {
+                throw new InvalidOperationException(
+                    "Dense-city semantic and realized attachment counts differ. " +
+                    $"semantic={semanticAttachmentCount} realized={realizedAttachments.Count}.");
+            }
+
+            for (int index = 0; index < realizedAttachments.Count; index++)
+            {
+                DenseCityRealizedBuildingAttachment attachment = realizedAttachments[index];
+                string ownerStableKey = attachment.Presentation.BuildingOwnerStableKey;
+                if (!rootsByStableKey.TryGetValue(ownerStableKey, out Transform ownerRoot) ||
+                    attachment.PresentationRoot == null ||
+                    attachment.PresentationRoot.parent != ownerRoot)
+                {
+                    throw new InvalidOperationException(
+                        $"Dense-city attachment hierarchy owner mismatch: '{attachment.Presentation.Identity.StableKey}'.");
+                }
+
+                Matrix4x4 actualMatrix = attachment.PresentationRoot.localToWorldMatrix;
+                for (int matrixIndex = 0; matrixIndex < 16; matrixIndex++)
+                {
+                    if (Mathf.Abs(actualMatrix[matrixIndex] - attachment.Presentation.WorldMatrix[matrixIndex]) > 0.0001f)
+                    {
+                        throw new InvalidOperationException(
+                            $"Dense-city attachment transform drift: '{attachment.Presentation.Identity.StableKey}'.");
+                    }
+                }
+            }
         }
 
         private static int AuditGeneratedProtectedOverlaps(
@@ -2504,6 +2568,7 @@ namespace Game.Editor
 
         private readonly struct GeneratedBuildingInfo
         {
+            public readonly DenseCityRealizedBuildingOwner Owner;
             public readonly DenseCityBuildingBakeRecord BuildingRecord;
             public readonly Transform Wrapper;
             public readonly GameObject SourcePrefab;
@@ -2518,6 +2583,7 @@ namespace Game.Editor
                 Bounds bounds,
                 Bounds localBounds)
             {
+                Owner = owner;
                 BuildingRecord = owner.Building;
                 Wrapper = owner.IntactPresentationRoot;
                 SourcePrefab = owner.SourcePrefab;
@@ -2778,6 +2844,8 @@ namespace Game.Editor
 
             int plazaDetails = AddCivicMarketPlazaDetails(
                 coreObject.transform,
+                generationTransactions.GetRequiredRealizedBuildingOwner(hallVisual),
+                generationTransactions,
                 hallBounds,
                 hallPatch.MaximumHeight + 0.035f,
                 random);
@@ -3043,6 +3111,8 @@ namespace Game.Editor
 
         private static int AddCivicMarketPlazaDetails(
             Transform civicRoot,
+            DenseCityRealizedBuildingOwner hallOwner,
+            DenseCityGenerationTransactionContext generationTransactions,
             Bounds hallBounds,
             float supportHeight,
             System.Random random)
@@ -3082,14 +3152,15 @@ namespace Game.Editor
             int count = 0;
             for (int index = 0; index < clothPositions.Length; index++)
             {
-                if (InstantiateGroundedDetail(
+                if (InstantiateOwnedBuildingAttachment(
                         clothCover,
-                        rootObject.transform,
+                        hallOwner,
                         $"{clothCover.name}_CivicPlaza_{index:00}",
                         clothPositions[index],
                         supportHeight,
                         index % 2 == 0 ? 0f : 90f,
-                        1f))
+                        1f,
+                        generationTransactions))
                 {
                     count++;
                 }
@@ -3097,14 +3168,15 @@ namespace Game.Editor
 
             for (int index = 0; index < umbrellaPositions.Length; index++)
             {
-                if (InstantiateGroundedDetail(
+                if (InstantiateOwnedBuildingAttachment(
                         umbrella,
-                        rootObject.transform,
+                        hallOwner,
                         $"{umbrella.name}_CivicPlaza_{index:00}",
                         umbrellaPositions[index],
                         supportHeight,
                         random.Next(0, 4) * 90f,
-                        1.05f))
+                        1.05f,
+                        generationTransactions))
                 {
                     count++;
                 }
@@ -5995,70 +6067,79 @@ namespace Game.Editor
             return Mathf.Abs(snappedEdge - boundary) <= 0.025f;
         }
 
-        private static int AddShopRoofDetails(Transform generatedRoot)
+        private static int AddShopRoofDetails(
+            IReadOnlyList<DenseCityRealizedBuildingOwner> buildingOwners,
+            DenseCityGenerationTransactionContext generationTransactions)
         {
             GameObject roofCapPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(RoofCap03PrefabPath);
             if (roofCapPrefab == null)
                 throw new InvalidOperationException($"Missing roof-cap prefab {RoofCap03PrefabPath}.");
+            GameObject shop04Prefab = AssetDatabase.LoadAssetAtPath<GameObject>(CleanStandaloneShopPrefabPaths[0]);
+            GameObject shop08Prefab = AssetDatabase.LoadAssetAtPath<GameObject>(CleanStandaloneShopPrefabPaths[1]);
+            if (shop04Prefab == null || shop08Prefab == null)
+                throw new InvalidOperationException("Missing explicit dense-city shop attachment owners.");
 
-            var detailRootObject = new GameObject("DenseCity_ShopRoofDetails");
-            detailRootObject.transform.SetParent(generatedRoot, false);
             int count = AddRoofCapsForShop(
-                generatedRoot,
-                detailRootObject.transform,
+                buildingOwners,
+                generationTransactions,
                 roofCapPrefab,
-                "SM_Bld_Shop_04_Visual",
+                shop04Prefab,
                 "SM_Bld_Roof_Cap_03 (3)",
                 int.MaxValue);
             count += AddRoofCapsForShop(
-                generatedRoot,
-                detailRootObject.transform,
+                buildingOwners,
+                generationTransactions,
                 roofCapPrefab,
-                "SM_Bld_Shop_08_Visual",
+                shop08Prefab,
                 "SM_Bld_Roof_Cap_03 (2)",
                 int.MaxValue);
-            SetStaticRecursively(detailRootObject);
             return count;
         }
 
         private static int AddRoofCapsForShop(
-            Transform generatedRoot,
-            Transform detailRoot,
+            IReadOnlyList<DenseCityRealizedBuildingOwner> buildingOwners,
+            DenseCityGenerationTransactionContext generationTransactions,
             GameObject roofCapPrefab,
-            string shopWrapperName,
+            GameObject shopPrefab,
             string roofCapName,
             int maximumCount)
         {
-            var candidates = new List<Transform>();
-            Transform[] transforms = generatedRoot.GetComponentsInChildren<Transform>(true);
-            for (int index = 0; index < transforms.Length; index++)
+            var candidates = new List<DenseCityRealizedBuildingOwner>();
+            for (int index = 0; index < buildingOwners.Count; index++)
             {
-                Transform candidate = transforms[index];
-                if (candidate != null && candidate.name == shopWrapperName)
+                DenseCityRealizedBuildingOwner candidate = buildingOwners[index];
+                if (candidate.SourcePrefab == shopPrefab)
                     candidates.Add(candidate);
             }
 
             candidates.Sort((left, right) =>
             {
                 uint leftHash = HashGroundPatch(
-                    Mathf.RoundToInt(left.position.x * 10f),
-                    Mathf.RoundToInt(left.position.z * 10f),
+                    Mathf.RoundToInt(left.IntactPresentationRoot.position.x * 10f),
+                    Mathf.RoundToInt(left.IntactPresentationRoot.position.z * 10f),
                     0x73c1);
                 uint rightHash = HashGroundPatch(
-                    Mathf.RoundToInt(right.position.x * 10f),
-                    Mathf.RoundToInt(right.position.z * 10f),
+                    Mathf.RoundToInt(right.IntactPresentationRoot.position.x * 10f),
+                    Mathf.RoundToInt(right.IntactPresentationRoot.position.z * 10f),
                     0x73c1);
-                return leftHash.CompareTo(rightHash);
+                int hashOrder = leftHash.CompareTo(rightHash);
+                return hashOrder != 0
+                    ? hashOrder
+                    : string.Compare(
+                        left.Building.Identity.StableKey,
+                        right.Building.Identity.StableKey,
+                        StringComparison.Ordinal);
             });
 
             int count = Mathf.Min(maximumCount, candidates.Count);
             for (int index = 0; index < count; index++)
             {
-                Transform shop = candidates[index];
+                DenseCityRealizedBuildingOwner owner = candidates[index];
+                Transform shop = owner.IntactPresentationRoot;
                 if (!TryGetWorldBounds(shop, out Bounds shopBounds))
                     continue;
 
-                GameObject roofCap = (GameObject)PrefabUtility.InstantiatePrefab(roofCapPrefab, detailRoot);
+                GameObject roofCap = (GameObject)PrefabUtility.InstantiatePrefab(roofCapPrefab, shop);
                 roofCap.name = $"{roofCapName}_{index:00}";
                 roofCap.transform.SetPositionAndRotation(
                     new Vector3(shopBounds.center.x, 0f, shopBounds.center.z),
@@ -6070,7 +6151,27 @@ namespace Game.Editor
                 Vector3 position = roofCap.transform.position;
                 position.y += shopBounds.max.y + 0.02f - capBounds.min.y;
                 roofCap.transform.position = position;
-                DisableColliders(roofCap);
+                try
+                {
+                    if (!generationTransactions.TryPlaceBuildingAttachment(
+                            owner,
+                            roofCapPrefab,
+                            roofCap.transform,
+                            roofCap.transform.localToWorldMatrix,
+                            DenseCityPresentationCategory.BuildingAttachmentIntact,
+                            () => roofCap.transform.parent == shop))
+                    {
+                        UnityEngine.Object.DestroyImmediate(roofCap);
+                        continue;
+                    }
+                    DisableColliders(roofCap);
+                    SetStaticRecursively(roofCap);
+                }
+                catch
+                {
+                    UnityEngine.Object.DestroyImmediate(roofCap);
+                    throw;
+                }
             }
 
             return count;
@@ -6206,6 +6307,7 @@ namespace Game.Editor
         private static UrbanDetailResult AddUrbanDetailProps(
             Transform generatedRoot,
             IReadOnlyList<DenseCityRealizedBuildingOwner> buildingOwners,
+            DenseCityGenerationTransactionContext generationTransactions,
             Vector3 mapOrigin,
             float mapWidth,
             float mapDepth,
@@ -6236,12 +6338,6 @@ namespace Game.Editor
             GameObject grass = LoadRequiredPrefab(GrassPrefabPath);
             GameObject mainStreetBush = LoadRequiredPrefab(MainStreetBushPrefabPath);
 
-            var rooftopRootObject = new GameObject("DenseCity_RooftopWaterTanks");
-            rooftopRootObject.transform.SetParent(generatedRoot, false);
-            var rooftopUtilityRootObject = new GameObject("DenseCity_RooftopUtilityProps");
-            rooftopUtilityRootObject.transform.SetParent(generatedRoot, false);
-            var shopWallPropRootObject = new GameObject("DenseCity_ShopWallProps");
-            shopWallPropRootObject.transform.SetParent(generatedRoot, false);
             var streetPropRootObject = new GameObject("DenseCity_GroundedStreetProps");
             streetPropRootObject.transform.SetParent(generatedRoot, false);
             var treeRootObject = new GameObject("DenseCity_DenseTreeClusters");
@@ -6262,20 +6358,20 @@ namespace Game.Editor
             mainStreetBushRootObject.transform.SetParent(generatedRoot, false);
 
             int waterTankCount = AddRooftopWaterTanks(
-                rooftopRootObject.transform,
                 buildings,
                 waterTanks,
-                seed);
+                seed,
+                generationTransactions);
             int rooftopUtilityCount = AddRooftopUtilityProps(
-                rooftopUtilityRootObject.transform,
                 buildings,
                 rooftopUtilities,
-                seed);
+                seed,
+                generationTransactions);
             int shopWallPropCount = AddShopWallProps(
-                shopWallPropRootObject.transform,
                 buildings,
                 shopWallProps,
-                seed);
+                seed,
+                generationTransactions);
             CourtyardDetailResult courtyardDetails = AddHouseCourtyards(
                 courtyardRootObject.transform,
                 buildings,
@@ -6407,9 +6503,6 @@ namespace Game.Editor
                 roadCells,
                 mapOrigin);
 
-            SetStaticRecursively(rooftopRootObject);
-            SetStaticRecursively(rooftopUtilityRootObject);
-            SetStaticRecursively(shopWallPropRootObject);
             SetStaticRecursively(streetPropRootObject);
             SetStaticRecursively(treeRootObject);
             SetStaticRecursively(rockRootObject);
@@ -7883,10 +7976,10 @@ namespace Game.Editor
         }
 
         private static int AddRooftopWaterTanks(
-            Transform parent,
             List<GeneratedBuildingInfo> buildings,
             GameObject[] waterTankPrefabs,
-            uint seed)
+            uint seed,
+            DenseCityGenerationTransactionContext generationTransactions)
         {
             int count = 0;
             for (int index = 0; index < buildings.Count; index++)
@@ -7912,15 +8005,15 @@ namespace Game.Editor
                 if (!TryFindLowerRoofAnchor(building, hash ^ 0x83b9d20du, out Vector3 roofAnchor))
                     continue;
 
-                if (InstantiateGroundedDetail(
+                if (InstantiateOwnedBuildingAttachment(
                         prefab,
-                        parent,
+                        building,
                         $"{prefab.name}_Roof_{count:0000}",
                         new Vector2(roofAnchor.x, roofAnchor.z),
                         roofAnchor.y + 0.025f,
                         building.Wrapper.eulerAngles.y + Hash01(hash ^ 0x5e3b7421u) * 360f,
                         Mathf.Lerp(0.82f, 1.08f, Hash01(hash ^ 0xcf5087abu)),
-                        building.Wrapper))
+                        generationTransactions))
                 {
                     count++;
                 }
@@ -7930,10 +8023,10 @@ namespace Game.Editor
         }
 
         private static int AddRooftopUtilityProps(
-            Transform parent,
             List<GeneratedBuildingInfo> buildings,
             GameObject[] utilityPrefabs,
-            uint seed)
+            uint seed,
+            DenseCityGenerationTransactionContext generationTransactions)
         {
             int count = 0;
             for (int buildingIndex = 0; buildingIndex < buildings.Count; buildingIndex++)
@@ -7966,15 +8059,15 @@ namespace Game.Editor
                     if (!TryFindLowerRoofAnchor(building, detailHash ^ 0x945d32abu, out Vector3 roofAnchor))
                         continue;
 
-                    if (InstantiateGroundedDetail(
+                    if (InstantiateOwnedBuildingAttachment(
                             prefab,
-                            parent,
+                            building,
                             $"{prefab.name}_RoofUtility_{count:0000}",
                             new Vector2(roofAnchor.x, roofAnchor.z),
                             roofAnchor.y + 0.025f,
                             building.Wrapper.eulerAngles.y + Hash01(detailHash ^ 0x71e9042fu) * 360f,
                             Mathf.Lerp(0.82f, 1.05f, Hash01(detailHash ^ 0x3c85d719u)),
-                            building.Wrapper))
+                            generationTransactions))
                     {
                         count++;
                     }
@@ -7985,10 +8078,10 @@ namespace Game.Editor
         }
 
         private static int AddShopWallProps(
-            Transform parent,
             List<GeneratedBuildingInfo> buildings,
             GameObject[] wallPropPrefabs,
-            uint seed)
+            uint seed,
+            DenseCityGenerationTransactionContext generationTransactions)
         {
             int count = 0;
             for (int buildingIndex = 0; buildingIndex < buildings.Count; buildingIndex++)
@@ -8048,7 +8141,7 @@ namespace Game.Editor
                     Vector3 anchor = building.Wrapper.TransformPoint(localAnchor);
                     Vector3 outwardNormal = building.Wrapper.TransformDirection(localNormal).normalized;
 
-                    GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
+                    GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, building.Wrapper);
                     if (instance == null)
                         continue;
 
@@ -8074,9 +8167,28 @@ namespace Game.Editor
                     float wallProjection = Vector3.Dot(anchor, outwardNormal);
                     position += outwardNormal * (wallProjection + 0.025f - innerProjection);
                     instance.transform.position = position;
-                    instance.transform.SetParent(building.Wrapper, true);
-                    DisableColliders(instance);
-                    count++;
+                    try
+                    {
+                        if (!generationTransactions.TryPlaceBuildingAttachment(
+                                building.Owner,
+                                prefab,
+                                instance.transform,
+                                instance.transform.localToWorldMatrix,
+                                DenseCityPresentationCategory.BuildingAttachmentIntact,
+                                () => instance.transform.parent == building.Wrapper))
+                        {
+                            UnityEngine.Object.DestroyImmediate(instance);
+                            continue;
+                        }
+                        DisableColliders(instance);
+                        SetStaticRecursively(instance);
+                        count++;
+                    }
+                    catch
+                    {
+                        UnityEngine.Object.DestroyImmediate(instance);
+                        throw;
+                    }
                 }
             }
 
@@ -8537,6 +8649,82 @@ namespace Game.Editor
             }
 
             return false;
+        }
+
+        private static bool InstantiateOwnedBuildingAttachment(
+            GameObject prefab,
+            GeneratedBuildingInfo building,
+            string objectName,
+            Vector2 position,
+            float supportHeight,
+            float rotationDegrees,
+            float scale,
+            DenseCityGenerationTransactionContext generationTransactions)
+        {
+            return InstantiateOwnedBuildingAttachment(
+                prefab,
+                building.Owner,
+                objectName,
+                position,
+                supportHeight,
+                rotationDegrees,
+                scale,
+                generationTransactions);
+        }
+
+        private static bool InstantiateOwnedBuildingAttachment(
+            GameObject prefab,
+            DenseCityRealizedBuildingOwner owner,
+            string objectName,
+            Vector2 position,
+            float supportHeight,
+            float rotationDegrees,
+            float scale,
+            DenseCityGenerationTransactionContext generationTransactions)
+        {
+            Transform ownerRoot = owner.IntactPresentationRoot;
+            GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, ownerRoot);
+            if (instance == null)
+                return false;
+
+            try
+            {
+                instance.name = objectName;
+                instance.transform.SetPositionAndRotation(
+                    new Vector3(position.x, 0f, position.y),
+                    Quaternion.Euler(0f, rotationDegrees, 0f));
+                instance.transform.localScale = Vector3.one * scale;
+                if (!TryGetRendererBounds(instance, out Bounds bounds))
+                {
+                    UnityEngine.Object.DestroyImmediate(instance);
+                    return false;
+                }
+
+                Vector3 worldPosition = instance.transform.position;
+                worldPosition.y += supportHeight - bounds.min.y;
+                instance.transform.position = worldPosition;
+                if (!generationTransactions.TryPlaceBuildingAttachment(
+                        owner,
+                        prefab,
+                        instance.transform,
+                        instance.transform.localToWorldMatrix,
+                        DenseCityPresentationCategory.BuildingAttachmentIntact,
+                        () => instance.transform.parent == ownerRoot))
+                {
+                    UnityEngine.Object.DestroyImmediate(instance);
+                    return false;
+                }
+
+                DisableColliders(instance);
+                SetStaticRecursively(instance);
+                return true;
+            }
+            catch
+            {
+                if (instance != null)
+                    UnityEngine.Object.DestroyImmediate(instance);
+                throw;
+            }
         }
 
         private static bool InstantiateGroundedDetail(

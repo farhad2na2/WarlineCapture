@@ -31,12 +31,31 @@ namespace Game.Editor
         internal GeneratedCityBuildingRole Role { get; }
     }
 
+    internal readonly struct DenseCityRealizedBuildingAttachment
+    {
+        internal DenseCityRealizedBuildingAttachment(
+            DenseCityPresentationBakeRecord presentation,
+            Transform presentationRoot)
+        {
+            Presentation = presentation;
+            PresentationRoot = presentationRoot != null
+                ? presentationRoot
+                : throw new ArgumentNullException(nameof(presentationRoot));
+        }
+
+        internal DenseCityPresentationBakeRecord Presentation { get; }
+        internal Transform PresentationRoot { get; }
+    }
+
     internal sealed class DenseCityGenerationTransactionContext : IDisposable
     {
         private readonly Dictionary<int, int> nextBuildingSequenceByDistrict = new();
+        private readonly Dictionary<int, int> nextAttachmentSequenceByDistrict = new();
         private readonly List<DenseCityRealizedBuildingOwner> realizedBuildingOwners = new();
         private readonly HashSet<string> realizedBuildingStableKeys = new(StringComparer.Ordinal);
         private readonly HashSet<Transform> realizedBuildingRoots = new();
+        private readonly List<DenseCityRealizedBuildingAttachment> realizedBuildingAttachments = new();
+        private readonly HashSet<Transform> realizedAttachmentRoots = new();
         private bool disposed;
 
         internal DenseCityGenerationTransactionContext(
@@ -58,6 +77,15 @@ namespace Game.Editor
             {
                 RequireActive();
                 return realizedBuildingOwners;
+            }
+        }
+
+        internal IReadOnlyList<DenseCityRealizedBuildingAttachment> RealizedBuildingAttachments
+        {
+            get
+            {
+                RequireActive();
+                return realizedBuildingAttachments;
             }
         }
 
@@ -126,6 +154,100 @@ namespace Game.Editor
             realizedBuildingRoots.Add(intactPresentationRoot);
         }
 
+        internal DenseCityRealizedBuildingOwner GetRequiredRealizedBuildingOwner(Transform intactPresentationRoot)
+        {
+            RequireActive();
+            if (intactPresentationRoot == null)
+                throw new ArgumentNullException(nameof(intactPresentationRoot));
+            for (int index = 0; index < realizedBuildingOwners.Count; index++)
+            {
+                if (realizedBuildingOwners[index].IntactPresentationRoot == intactPresentationRoot)
+                    return realizedBuildingOwners[index];
+            }
+
+            throw new InvalidOperationException(
+                $"Dense-city realized building root is not registered: '{intactPresentationRoot.name}'.");
+        }
+
+        internal bool TryPlaceBuildingAttachment(
+            DenseCityRealizedBuildingOwner owner,
+            GameObject attachmentPrefab,
+            Transform attachmentRoot,
+            Matrix4x4 worldMatrix,
+            DenseCityPresentationCategory category,
+            Func<bool> realize)
+        {
+            RequireActive();
+            if (attachmentPrefab == null)
+                throw new ArgumentNullException(nameof(attachmentPrefab));
+            if (attachmentRoot == null)
+                throw new ArgumentNullException(nameof(attachmentRoot));
+            if (realize == null)
+                throw new ArgumentNullException(nameof(realize));
+            if (category != DenseCityPresentationCategory.BuildingAttachmentIntact)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(category),
+                    "Only attachments beneath the registered intact presentation root are currently accepted.");
+            }
+            string ownerStableKey = owner.Building.Identity.StableKey;
+            if (!realizedBuildingStableKeys.Contains(ownerStableKey) ||
+                !realizedBuildingRoots.Contains(owner.IntactPresentationRoot))
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city attachment owner is not registered: '{ownerStableKey}'.");
+            }
+            if (attachmentRoot.parent != owner.IntactPresentationRoot)
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city attachment is not beneath its declared intact root: '{ownerStableKey}'.");
+            }
+            if (realizedAttachmentRoots.Contains(attachmentRoot))
+                throw new InvalidOperationException("Dense-city attachment transform ownership is duplicated.");
+
+            int districtId = owner.Building.Identity.DistrictId;
+            int sequence = nextAttachmentSequenceByDistrict.TryGetValue(districtId, out int nextSequence)
+                ? nextSequence
+                : 0;
+            if (sequence == int.MaxValue)
+                throw new InvalidOperationException("Dense-city attachment sequence capacity is exhausted.");
+            nextAttachmentSequenceByDistrict[districtId] = sequence + 1;
+
+            DenseCityVisualAssetMetadata metadata =
+                DenseCityVisualAssetMetadataExtractor.Extract(attachmentPrefab);
+            var identity = new DenseCityRecordIdentity(
+                owner.Building.Identity.GeneratorSchema,
+                owner.Building.Identity.Seed,
+                districtId,
+                "building-attachment-intact",
+                sequence,
+                metadata.PrefabAssetGuid,
+                metadata.PrefabLocalId);
+            var attachment = new DenseCityPresentationBakeRecord(
+                identity,
+                category,
+                metadata.PrefabAssetGuid,
+                null,
+                metadata.MaterialAssetGuids,
+                worldMatrix,
+                true,
+                true,
+                2,
+                ownerStableKey);
+            bool accepted = DenseCityBuildingAttachmentTransaction.TryCommitAndRealize(
+                Records,
+                attachment,
+                realize);
+            if (accepted)
+            {
+                realizedBuildingAttachments.Add(new DenseCityRealizedBuildingAttachment(
+                    attachment,
+                    attachmentRoot));
+                realizedAttachmentRoots.Add(attachmentRoot);
+            }
+            return accepted;
+        }
+
         internal void Seal()
         {
             RequireActive();
@@ -138,9 +260,12 @@ namespace Game.Editor
                 return;
             Records.Dispose();
             nextBuildingSequenceByDistrict.Clear();
+            nextAttachmentSequenceByDistrict.Clear();
             realizedBuildingOwners.Clear();
             realizedBuildingStableKeys.Clear();
             realizedBuildingRoots.Clear();
+            realizedBuildingAttachments.Clear();
+            realizedAttachmentRoots.Clear();
             disposed = true;
         }
 

@@ -33,9 +33,11 @@ public static class DenseCityBuildingPlacementIntegrationValidation
             Assert.That(view.GeneratedRoot.lossyScale, Is.EqualTo(Vector3.one));
             Assert.That(result.Buildings, Is.GreaterThan(0));
             Assert.That(result.SemanticBuildings, Is.GreaterThan(result.Buildings));
+            Assert.That(result.SemanticBuildingAttachments, Is.GreaterThan(0));
             Debug.Log(
                 $"[DenseCityBuildingPlacementIntegrationValidation] result=Passed " +
-                $"districtBuildings={result.Buildings} semanticBuildings={result.SemanticBuildings}");
+                $"districtBuildings={result.Buildings} semanticBuildings={result.SemanticBuildings} " +
+                $"semanticAttachments={result.SemanticBuildingAttachments}");
         }
         catch (Exception exception)
         {

@@ -90,6 +90,7 @@ namespace Game.Editor
                 Debug.Log(
                     $"[OperationMapEntityPresentationCandidateBakeValidator] status=Validated " +
                     $"gameplayBuildings={report.GameplayBuildingCount} " +
+                    $"gameplayVehicles={report.GameplayVehicleCount} " +
                     $"presentationRoots={report.PresentationRootCount} " +
                     $"presentationIdentities={report.PresentationIdentityCount} " +
                     $"renderMeshEntities={report.RenderMeshEntityCount} " +
@@ -122,6 +123,7 @@ namespace Game.Editor
         private static void RequireAuthoringCounts(Scene candidateScene)
         {
             int buildings = 0;
+            int vehicles = 0;
             int roots = 0;
             int identities = 0;
             int renderOnlyOwners = 0;
@@ -129,6 +131,7 @@ namespace Game.Editor
             for (int i = 0; i < sceneRoots.Length; i++)
             {
                 buildings += sceneRoots[i].GetComponentsInChildren<OperationMapBuildingAuthoring>(true).Length;
+                vehicles += sceneRoots[i].GetComponentsInChildren<UnitGridAuthoring>(true).Length;
                 roots += sceneRoots[i].GetComponentsInChildren<OperationMapEntityPresentationRootAuthoring>(true).Length;
                 identities += sceneRoots[i]
                     .GetComponentsInChildren<OperationMapEntityPresentationIdentityAuthoring>(true).Length;
@@ -141,6 +144,8 @@ namespace Game.Editor
 
             if (buildings != ExpectedGameplayBuildings)
                 throw new InvalidOperationException($"Expected {ExpectedGameplayBuildings} building authorings, found {buildings}.");
+            if (vehicles != ExpectedGameplayVehicles)
+                throw new InvalidOperationException($"Expected {ExpectedGameplayVehicles} vehicle authorings, found {vehicles}.");
             if (roots != ExpectedPresentationRoots)
                 throw new InvalidOperationException($"Expected {ExpectedPresentationRoots} presentation roots, found {roots}.");
             if (renderOnlyOwners != ExpectedRenderOnlyOwners)
@@ -214,6 +219,10 @@ namespace Game.Editor
             {
                 result = "CandidateBakeValidationFailed",
                 gameplayBuildingCount = entityManager.CreateEntityQuery(typeof(OperationMapBuildingIdentity)).CalculateEntityCount(),
+                gameplayVehicleCount = entityManager.CreateEntityQuery(
+                    typeof(UnitGrid),
+                    typeof(UnitMove),
+                    typeof(UnitVehicleMovement)).CalculateEntityCount(),
                 presentationRootCount = entityManager.CreateEntityQuery(typeof(OperationMapEntityPresentationRoot)).CalculateEntityCount(),
                 presentationIdentityCount = entityManager.CreateEntityQuery(typeof(OperationMapEntityPresentationIdentity)).CalculateEntityCount(),
                 buildingPresentationCount = entityManager.CreateEntityQuery(typeof(OperationMapBuildingPresentation)).CalculateEntityCount(),
@@ -228,6 +237,12 @@ namespace Game.Editor
             if (report.gameplayBuildingCount != ExpectedGameplayBuildings)
             {
                 report.rejectionReason = $"gameplay-building-count:{report.gameplayBuildingCount}";
+                return report;
+            }
+
+            if (report.gameplayVehicleCount != ExpectedGameplayVehicles)
+            {
+                report.rejectionReason = $"gameplay-vehicle-count:{report.gameplayVehicleCount}";
                 return report;
             }
 
@@ -353,6 +368,7 @@ namespace Game.Editor
                 "Design/AgentReports/2026-07-21_dense_city_phase0a_candidate_bake_validation.json");
             report.reportPath = reportPath.Replace('\\', '/');
             report.GameplayBuildingCount = report.gameplayBuildingCount;
+            report.GameplayVehicleCount = report.gameplayVehicleCount;
             report.PresentationRootCount = report.presentationRootCount;
             report.PresentationIdentityCount = report.presentationIdentityCount;
             report.BuildingPresentationCount = report.buildingPresentationCount;
@@ -419,6 +435,7 @@ namespace Game.Editor
             public string rejectionReason;
             public string reportPath;
             public int gameplayBuildingCount;
+            public int gameplayVehicleCount;
             public int presentationRootCount;
             public int presentationIdentityCount;
             public int buildingPresentationCount;
@@ -434,6 +451,7 @@ namespace Game.Editor
             [NonSerialized] public string RejectionReason;
             [NonSerialized] public string ReportPath;
             [NonSerialized] public int GameplayBuildingCount;
+            [NonSerialized] public int GameplayVehicleCount;
             [NonSerialized] public int PresentationRootCount;
             [NonSerialized] public int PresentationIdentityCount;
             [NonSerialized] public int BuildingPresentationCount;

@@ -101,21 +101,41 @@ namespace Game.Editor
                         throw new InvalidOperationException($"Vehicle source identity could not be resolved at placement {i}.");
                     }
 
-                    GameObject candidateOwner = UnityEngine.Object.Instantiate(sourceOwner);
+                    GameObject candidateOwner = PrefabUtility.InstantiatePrefab(
+                        placement.VehiclePrefab,
+                        candidateScene) as GameObject;
                     if (candidateOwner == null)
-                        throw new InvalidOperationException($"Failed to copy accepted vehicle instance at placement {i}.");
+                        throw new InvalidOperationException($"Failed to instantiate gameplay vehicle prefab at placement {i}.");
 
-                    SceneManager.MoveGameObjectToScene(candidateOwner, candidateScene);
-                    candidateOwner.name = $"Vehicle_{i:D2}_{sourceOwner.name}";
                     candidateOwner.transform.SetParent(vehicleRoot, false);
                     candidateOwner.transform.SetPositionAndRotation(
                         placement.WorldPosition,
                         Quaternion.Euler(placement.WorldEulerAngles));
                     candidateOwner.transform.localScale = placement.WorldScale;
                     candidateOwner.SetActive(true);
+                    UnitGridAuthoring candidateAuthoring = candidateOwner.GetComponent<UnitGridAuthoring>();
+                    Transform placeholderModel = ResolveModelRoot(candidateAuthoring);
+                    if (candidateAuthoring == null || placeholderModel == null)
+                    {
+                        throw new InvalidOperationException(
+                            $"Gameplay vehicle prefab has no candidate Baker/model ownership at placement {i}.");
+                    }
+
+                    UnityEngine.Object.DestroyImmediate(placeholderModel.gameObject);
+                    GameObject acceptedModel = UnityEngine.Object.Instantiate(sourceOwner);
+                    acceptedModel.transform.SetParent(null, true);
+                    SceneManager.MoveGameObjectToScene(acceptedModel, candidateScene);
+                    acceptedModel.name = "Model";
+                    acceptedModel.transform.SetParent(candidateOwner.transform, true);
+                    Transform candidateModel = acceptedModel.transform;
+                    AlignModelToAcceptedVisual(candidateModel, sourceOwner.transform, i);
+                    var candidateAuthoringSerialized = new SerializedObject(candidateAuthoring);
+                    candidateAuthoringSerialized.FindProperty("modelRoot").objectReferenceValue = candidateModel;
+                    candidateAuthoringSerialized.ApplyModifiedPropertiesWithoutUndo();
+
                     OperationMapEntityPresentationIdentityAuthoring identity =
-                        candidateOwner.GetComponent<OperationMapEntityPresentationIdentityAuthoring>() ??
-                        candidateOwner.AddComponent<OperationMapEntityPresentationIdentityAuthoring>();
+                        candidateModel.GetComponent<OperationMapEntityPresentationIdentityAuthoring>() ??
+                        candidateModel.gameObject.AddComponent<OperationMapEntityPresentationIdentityAuthoring>();
                     identity.ConfigureForEditor(
                         OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
                         row.authoredSourceGlobalObjectId,
@@ -124,6 +144,7 @@ namespace Game.Editor
                     if (!identity.TryValidate(out string identityError))
                         throw new InvalidOperationException(identityError);
                     RemoveProhibitedCandidateComponents(candidateOwner);
+                    RequireAcceptedVisualParity(sourceOwner, candidateModel, i);
                     migrated++;
                 }
 
@@ -174,6 +195,95 @@ namespace Game.Editor
             }
         }
 
+        private static Transform ResolveModelRoot(UnitGridAuthoring authoring)
+        {
+            if (authoring == null)
+                return null;
+            var serialized = new SerializedObject(authoring);
+            Transform modelRoot = serialized.FindProperty("modelRoot").objectReferenceValue as Transform;
+            return modelRoot != null ? modelRoot : authoring.transform.Find("Model");
+        }
+
+        private static void RequireAcceptedVisualParity(GameObject source, Transform candidateModel, int placementIndex)
+        {
+            float matrixResidual = MaxMatrixResidual(
+                source.transform.localToWorldMatrix,
+                candidateModel.localToWorldMatrix);
+            bool sourceHasBounds = TryCombinedRendererBounds(source, out Bounds sourceBounds);
+            bool candidateHasBounds = TryCombinedRendererBounds(candidateModel.gameObject, out Bounds candidateBounds);
+            float boundsResidual = sourceHasBounds && candidateHasBounds
+                ? Mathf.Max(
+                    (sourceBounds.center - candidateBounds.center).magnitude,
+                    (sourceBounds.extents - candidateBounds.extents).magnitude)
+                : 0f;
+            if (matrixResidual > OperationMapEntityPresentationTransformParityValidator.MatrixTolerance ||
+                sourceHasBounds != candidateHasBounds ||
+                boundsResidual > OperationMapEntityPresentationTransformParityValidator.BoundsTolerance)
+            {
+                throw new InvalidOperationException(
+                    $"Candidate vehicle {placementIndex} differs from its accepted visual: " +
+                    $"matrixResidual={matrixResidual:R} boundsResidual={boundsResidual:R} " +
+                    $"sourceRenderers='{DescribeRendererBounds(source)}' " +
+                    $"candidateRenderers='{DescribeRendererBounds(candidateModel.gameObject)}'.");
+            }
+        }
+
+        private static string DescribeRendererBounds(GameObject owner) => string.Join(
+            ";",
+            owner.GetComponentsInChildren<Renderer>(true).Select(renderer =>
+                $"{renderer.name}:{renderer.bounds.center}:{renderer.bounds.extents}"));
+
+        private static void AlignModelToAcceptedVisual(
+            Transform candidateModel,
+            Transform acceptedVisual,
+            int placementIndex)
+        {
+            Transform parent = candidateModel.parent;
+            Vector3 parentScale = parent != null ? parent.lossyScale : Vector3.one;
+            if (Mathf.Abs(parentScale.x) < 0.000001f ||
+                Mathf.Abs(parentScale.y) < 0.000001f ||
+                Mathf.Abs(parentScale.z) < 0.000001f)
+            {
+                throw new InvalidOperationException(
+                    $"Candidate vehicle {placementIndex} has a zero-scale gameplay parent.");
+            }
+
+            candidateModel.SetPositionAndRotation(acceptedVisual.position, acceptedVisual.rotation);
+            Vector3 acceptedScale = acceptedVisual.lossyScale;
+            candidateModel.localScale = new Vector3(
+                acceptedScale.x / parentScale.x,
+                acceptedScale.y / parentScale.y,
+                acceptedScale.z / parentScale.z);
+        }
+
+        private static float MaxMatrixResidual(Matrix4x4 left, Matrix4x4 right)
+        {
+            float residual = 0f;
+            for (int row = 0; row < 4; row++)
+            for (int column = 0; column < 4; column++)
+                residual = Mathf.Max(residual, Mathf.Abs(left[row, column] - right[row, column]));
+            return residual;
+        }
+
+        private static bool TryCombinedRendererBounds(GameObject owner, out Bounds bounds)
+        {
+            bounds = default;
+            bool found = false;
+            foreach (Renderer renderer in owner.GetComponentsInChildren<Renderer>(true))
+            {
+                if (!found)
+                {
+                    bounds = renderer.bounds;
+                    found = true;
+                }
+                else
+                {
+                    bounds.Encapsulate(renderer.bounds);
+                }
+            }
+            return found;
+        }
+
         internal static OperationMapVehicleEcsConversionInventoryProbe.ConversionReport LoadInventory(string projectRoot)
         {
             string path = ResolveProjectPath(projectRoot, VehicleInventoryPath);
@@ -206,8 +316,9 @@ namespace Game.Editor
 
             for (int i = 0; i < vehicleRoot.childCount; i++)
             {
+                Transform candidateOwner = vehicleRoot.GetChild(i);
                 OperationMapEntityPresentationIdentityAuthoring identity =
-                    vehicleRoot.GetChild(i).GetComponent<OperationMapEntityPresentationIdentityAuthoring>();
+                    candidateOwner.GetComponentInChildren<OperationMapEntityPresentationIdentityAuthoring>(true);
                 if (identity == null ||
                     identity.Role != OperationMapEntityPresentationRole.GameplayVehicles ||
                     identity.PlacementIndex != i)

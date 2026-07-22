@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using Game.Authoring;
+using Game.Configs;
 using Game.Editor;
 using NUnit.Framework;
 using UnityEditor;
@@ -21,7 +23,9 @@ public sealed class OperationMapEntityPresentationReadinessValidatorTests
             suite.Readiness_AcceptsCompleteRoleAndIdentityOwnership,
             suite.Readiness_RejectsDuplicateSourceIdentity,
             suite.Readiness_RejectsIdentityUnderWrongRole,
-            suite.Readiness_RejectsInactivePhysicsDescendant
+            suite.Readiness_RejectsInactivePhysicsDescendant,
+            suite.LegacyPlacementParity_AcceptsVehicleIdentityOwnedByUnitBaker,
+            suite.LegacyPlacementParity_RejectsVehicleIdentityWithoutUnitBaker
         };
         for (int index = 0; index < tests.Length; index++)
         {
@@ -98,6 +102,83 @@ public sealed class OperationMapEntityPresentationReadinessValidatorTests
             Is.False);
         StringAssert.Contains("InactiveCollider", error);
         StringAssert.Contains("BoxCollider", error);
+    }
+
+    [Test]
+    public void LegacyPlacementParity_AcceptsVehicleIdentityOwnedByUnitBaker()
+    {
+        AssertLegacyVehicleParity(unitBakerOwnsIdentity: true, expected: true);
+    }
+
+    [Test]
+    public void LegacyPlacementParity_RejectsVehicleIdentityWithoutUnitBaker()
+    {
+        AssertLegacyVehicleParity(unitBakerOwnsIdentity: false, expected: false);
+    }
+
+    private static void AssertLegacyVehicleParity(bool unitBakerOwnsIdentity, bool expected)
+    {
+        Scene scene = SceneManager.GetActiveScene();
+        Transform vehicles = CreateRoleRoot(
+            scene,
+            "GameplayVehicles",
+            OperationMapEntityPresentationRole.GameplayVehicles);
+        var prefab = new GameObject("VehiclePrefab");
+        prefab.AddComponent<UnitGridAuthoring>();
+        var owner = new GameObject("VehicleOwner");
+        owner.transform.SetParent(vehicles, false);
+        if (unitBakerOwnsIdentity)
+            owner.AddComponent<UnitGridAuthoring>();
+        Transform identityParent = unitBakerOwnsIdentity ? owner.transform : vehicles;
+        CreateIdentity(
+            identityParent,
+            "Model",
+            SourceId(2),
+            OperationMapEntityPresentationRole.GameplayVehicles,
+            0);
+
+        var buildingConfig = ScriptableObject.CreateInstance<MapBuildingPlacementConfig>();
+        buildingConfig.EditorSetPlacements(new List<MapBuildingPlacementConfigEntry>());
+        var vehicleConfig = ScriptableObject.CreateInstance<MapVehiclePlacementConfig>();
+        vehicleConfig.EditorSetPlacements(new List<MapVehiclePlacementConfigEntry>
+        {
+            new(
+                "Map/Vehicles/Vehicle",
+                "Vehicle",
+                prefab,
+                1,
+                Vector3.zero,
+                Vector3.zero,
+                Vector3.zero,
+                Vector3.one)
+        });
+        var vehicleRows = new[]
+        {
+            new OperationMapVehicleEcsConversionInventoryProbe.PlacementConversionReport
+            {
+                placementIndex = 0,
+                sourcePath = "Map/Vehicles/Vehicle",
+                vehiclePrefabPath = string.Empty,
+                authoredJoinResolveState = "Exact",
+                authoredSourceGlobalObjectId = SourceId(2),
+                conversionDisposition = "AlreadyProducesEcsGameplayAndRender"
+            }
+        };
+
+        bool result = OperationMapEntityPresentationReadinessValidator.TryValidateLegacyPlacementParity(
+            scene,
+            buildingConfig,
+            Array.Empty<OperationMapBuildingAttachmentOwnershipInventoryProbe.BuildingPlacementReport>(),
+            vehicleConfig,
+            vehicleRows,
+            out string error);
+
+        Assert.That(result, Is.EqualTo(expected), error);
+        if (!expected)
+            StringAssert.Contains("ECS unit Baker owner", error);
+        UnityEngine.Object.DestroyImmediate(buildingConfig);
+        UnityEngine.Object.DestroyImmediate(vehicleConfig);
+        UnityEngine.Object.DestroyImmediate(prefab);
     }
 
     private static Transform[] CreateValidHierarchy(Scene scene)

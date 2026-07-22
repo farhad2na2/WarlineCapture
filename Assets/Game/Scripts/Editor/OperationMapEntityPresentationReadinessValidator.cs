@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Game.Authoring;
+using Game.Composition;
 using Game.Configs;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -163,6 +164,142 @@ namespace Game.Editor
             return true;
         }
 
+        internal static bool TryValidateLegacyPlacementParity(
+            Scene candidateScene,
+            MapBuildingPlacementConfig buildingConfig,
+            IReadOnlyList<OperationMapBuildingAttachmentOwnershipInventoryProbe.BuildingPlacementReport> buildingRows,
+            MapVehiclePlacementConfig vehicleConfig,
+            IReadOnlyList<OperationMapVehicleEcsConversionInventoryProbe.PlacementConversionReport> vehicleRows,
+            out string error)
+        {
+            if (buildingConfig == null || buildingRows == null ||
+                vehicleConfig == null || vehicleRows == null ||
+                buildingConfig.Placements.Count != buildingRows.Count ||
+                vehicleConfig.Placements.Count != vehicleRows.Count)
+            {
+                error = "Legacy placement evidence is missing or count-mismatched.";
+                return false;
+            }
+
+            OperationMapEntityPresentationIdentityAuthoring[] identities =
+                FindInScene<OperationMapEntityPresentationIdentityAuthoring>(candidateScene);
+            OperationMapEntityPresentationIdentityAuthoring[] buildingIdentities = identities
+                .Where(identity => identity.Role == OperationMapEntityPresentationRole.GameplayBuildings)
+                .ToArray();
+            OperationMapEntityPresentationIdentityAuthoring[] vehicleIdentities = identities
+                .Where(identity => identity.Role == OperationMapEntityPresentationRole.GameplayVehicles)
+                .ToArray();
+            if (buildingIdentities.Select(identity => identity.PlacementIndex).Distinct().Count() != buildingIdentities.Length ||
+                vehicleIdentities.Select(identity => identity.PlacementIndex).Distinct().Count() != vehicleIdentities.Length)
+            {
+                error = "Candidate ECS placement identities contain duplicate indices.";
+                return false;
+            }
+            var buildings = buildingIdentities.ToDictionary(identity => identity.PlacementIndex);
+            var vehicles = vehicleIdentities.ToDictionary(identity => identity.PlacementIndex);
+            if (buildings.Count != buildingRows.Count || vehicles.Count != vehicleRows.Count)
+            {
+                error = "Legacy placement counts do not match candidate ECS identity counts.";
+                return false;
+            }
+
+            for (int index = 0; index < buildingRows.Count; index++)
+            {
+                MapBuildingPlacementConfigEntry placement = buildingConfig.Placements[index];
+                OperationMapBuildingAttachmentOwnershipInventoryProbe.BuildingPlacementReport row =
+                    buildingRows[index];
+                if (placement == null || row == null || row.placementIndex != index ||
+                    !string.Equals(row.authoredJoinResolveState, "Exact", StringComparison.Ordinal) ||
+                    !string.Equals(placement.SourcePath, row.sourcePath, StringComparison.Ordinal) ||
+                    placement.BuildingPrefab == null ||
+                    !string.Equals(
+                        AssetDatabase.GetAssetPath(placement.BuildingPrefab),
+                        row.buildingPrefabPath,
+                        StringComparison.Ordinal) ||
+                    !buildings.TryGetValue(index, out OperationMapEntityPresentationIdentityAuthoring identity) ||
+                    !string.Equals(identity.SourceGlobalObjectId, row.ownerSourceGlobalObjectId, StringComparison.Ordinal))
+                {
+                    error = $"Legacy building placement {index} does not map one-to-one to its candidate identity.";
+                    return false;
+                }
+
+                OperationMapBuildingAuthoring building =
+                    identity.GetComponentInParent<OperationMapBuildingAuthoring>(true);
+                if (building == null || building.PlacementIndex != index ||
+                    !string.Equals(building.OperationMapId, identity.OperationMapId, StringComparison.Ordinal) ||
+                    !string.Equals(building.SourceGlobalObjectId, identity.SourceGlobalObjectId, StringComparison.Ordinal))
+                {
+                    error = $"Legacy building placement {index} has no matching ECS building authoring owner.";
+                    return false;
+                }
+            }
+
+            for (int index = 0; index < vehicleRows.Count; index++)
+            {
+                MapVehiclePlacementConfigEntry placement = vehicleConfig.Placements[index];
+                OperationMapVehicleEcsConversionInventoryProbe.PlacementConversionReport row = vehicleRows[index];
+                if (placement == null || row == null || row.placementIndex != index ||
+                    !string.Equals(row.authoredJoinResolveState, "Exact", StringComparison.Ordinal) ||
+                    !string.Equals(row.conversionDisposition, "AlreadyProducesEcsGameplayAndRender", StringComparison.Ordinal) ||
+                    !string.Equals(placement.SourcePath, row.sourcePath, StringComparison.Ordinal) ||
+                    placement.VehiclePrefab == null ||
+                    !string.Equals(
+                        AssetDatabase.GetAssetPath(placement.VehiclePrefab),
+                        row.vehiclePrefabPath,
+                        StringComparison.Ordinal) ||
+                    !vehicles.TryGetValue(index, out OperationMapEntityPresentationIdentityAuthoring identity) ||
+                    !string.Equals(identity.SourceGlobalObjectId, row.authoredSourceGlobalObjectId, StringComparison.Ordinal) ||
+                    identity.GetComponentsInParent<UnitGridAuthoring>(true).Length != 1)
+                {
+                    string components = vehicles.TryGetValue(index, out OperationMapEntityPresentationIdentityAuthoring owner)
+                        ? string.Join(",", owner.GetComponentsInChildren<MonoBehaviour>(true)
+                            .Where(component => component != null)
+                            .Select(component => component.GetType().Name)
+                            .Distinct())
+                        : "<missing-identity>";
+                    error =
+                        $"Legacy vehicle placement {index} does not map one-to-one to an ECS unit Baker owner; " +
+                        $"candidateComponents='{components}'.";
+                    return false;
+                }
+            }
+
+            error = null;
+            return true;
+        }
+
+        internal static bool TryValidateCandidatePlacementRetirement(
+            OperationMapDefinition definition,
+            OperationMapSceneView runtimeView,
+            OperationMapEntitySceneCandidateAddressablesLayoutPlan layout,
+            out string error)
+        {
+            if (definition == null || definition.PresentationKind != OperationMapPresentationKind.EntityScene ||
+                HasAssetGuid(definition.BuildingPlacementsReference) ||
+                HasAssetGuid(definition.VehiclePlacementsReference))
+            {
+                error = "Candidate EntityScene definition still references legacy placement content.";
+                return false;
+            }
+            if (runtimeView == null || runtimeView.BuildingPlacements != null || runtimeView.VehiclePlacements != null)
+            {
+                error = "Candidate runtime binding still exposes legacy placement spawning inputs.";
+                return false;
+            }
+            if (layout.Entries == null || layout.Entries.Any(entry =>
+                    string.Equals(entry.Role, "building-placements", StringComparison.Ordinal) ||
+                    string.Equals(entry.Role, "vehicle-placements", StringComparison.Ordinal) ||
+                    string.Equals(entry.AssetPath, OperationMapAddressablesLayoutBuilder.BuildingPlacementsPath, StringComparison.Ordinal) ||
+                    string.Equals(entry.AssetPath, OperationMapAddressablesLayoutBuilder.VehiclePlacementsPath, StringComparison.Ordinal)))
+            {
+                error = "Candidate Addressables layout still owns legacy placement content.";
+                return false;
+            }
+
+            error = null;
+            return true;
+        }
+
         private static void ValidateCurrentCandidateCore()
         {
             string candidatePath = OperationMapEntityPresentationMigrationEditor.CandidateSubScenePath;
@@ -187,6 +324,54 @@ namespace Game.Editor
                     throw new InvalidOperationException(error);
                 }
 
+                string projectRoot = Path.GetDirectoryName(Application.dataPath) ??
+                                     throw new InvalidOperationException("Project root is unavailable.");
+                OperationMapBuildingAttachmentOwnershipInventoryProbe.AttachmentOwnershipInventoryReport
+                    buildingInventory = OperationMapBuildingCandidateMigrationEditor.LoadInventory(projectRoot);
+                OperationMapVehicleEcsConversionInventoryProbe.ConversionReport vehicleInventory =
+                    OperationMapVehicleCandidateMigrationEditor.LoadInventory(projectRoot);
+                MapBuildingPlacementConfig buildingConfig =
+                    AssetDatabase.LoadAssetAtPath<MapBuildingPlacementConfig>(
+                        buildingInventory.buildingPlacementConfigPath);
+                MapVehiclePlacementConfig vehicleConfig =
+                    AssetDatabase.LoadAssetAtPath<MapVehiclePlacementConfig>(
+                        vehicleInventory.vehiclePlacementConfigPath);
+                if (!TryValidateLegacyPlacementParity(
+                        candidate,
+                        buildingConfig,
+                        buildingInventory.placements,
+                        vehicleConfig,
+                        vehicleInventory.placements,
+                        out error))
+                {
+                    throw new InvalidOperationException(error);
+                }
+
+                OperationMapDefinition definition = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
+                    OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateDefinitionPath);
+                if (!OperationMapEntitySceneCandidateAddressablesLayoutPlanner.TryCreatePlan(
+                        out OperationMapEntitySceneCandidateAddressablesLayoutPlan layout,
+                        out string layoutError))
+                {
+                    throw new InvalidOperationException($"Candidate layout rejected: {layoutError}");
+                }
+                Scene runtimeScene = EditorSceneManager.OpenScene(
+                    OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateRuntimeBindingPath,
+                    OpenSceneMode.Additive);
+                OperationMapSceneView[] runtimeViews = FindInScene<OperationMapSceneView>(runtimeScene);
+                if (runtimeViews.Length != 1 ||
+                    !TryValidateCandidatePlacementRetirement(
+                        definition,
+                        runtimeViews.SingleOrDefault(),
+                        layout,
+                        out error))
+                {
+                    throw new InvalidOperationException(
+                        runtimeViews.Length != 1
+                            ? $"Candidate runtime binding requires one operation-map view; found {runtimeViews.Length}."
+                            : error);
+                }
+
                 Debug.Log(
                     "[OperationMapEntityPresentationReadiness] result=Passed " +
                     $"buildings={OperationMapEntityPresentationCandidateBakeValidator.ExpectedGameplayBuildings} " +
@@ -206,5 +391,8 @@ namespace Game.Editor
             scene.GetRootGameObjects()
                 .SelectMany(root => root.GetComponentsInChildren<T>(true))
                 .ToArray();
+
+        private static bool HasAssetGuid(UnityEngine.AddressableAssets.AssetReference reference) =>
+            reference != null && !string.IsNullOrEmpty(reference.AssetGUID);
     }
 }

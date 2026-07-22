@@ -34,6 +34,7 @@ public sealed class DenseCitySurfaceProxyBuilderTests
             suite.Build_ProducesRuntimeSurfaceQueriesForRepresentativeMovers,
             suite.Build_MergesOnlyAdjacentCoplanarRectangles,
             suite.Build_IsDeterministicAcrossEquivalentRecordSets,
+            suite.Build_OutsideGridPresentationRemainsPresentationOnly,
             suite.Build_OutOfBoundsPolygonLeavesNoCandidateOutput,
             suite.Build_ProhibitedProxyComponentLeavesNoCandidateOutput,
             suite.Build_InvalidConcavePolygonLeavesNoCandidateOutput
@@ -290,6 +291,53 @@ public sealed class DenseCitySurfaceProxyBuilderTests
         Assert.That(CreateMeshSignature(secondRoot), Is.EqualTo(firstSignature));
         Assert.That(secondMap.IsValid(), Is.True);
         Assert.That(secondEntity.IsValid(), Is.True);
+    }
+
+    [Test]
+    public void Build_OutsideGridPresentationRemainsPresentationOnly()
+    {
+        var (_, _, mapRoot) = CreateScenePair("presentation-only");
+        using var records = new DenseCityGenerationRecordSet(1, 1, 1);
+        records.Add(CreateSurface(
+            1,
+            DenseCitySurfaceRecordKind.Terrain,
+            Rectangle(0f),
+            1,
+            0,
+            Vector2Int.zero));
+        records.Add(new DenseCityPresentationBakeRecord(
+            new DenseCityRecordIdentity(
+                "dense-city-v1",
+                42,
+                3,
+                "horizon-presentation",
+                2,
+                SourceGuid,
+                2),
+            DenseCityPresentationCategory.Horizon,
+            string.Empty,
+            SourceGuid,
+            new[] { SourceGuid },
+            Matrix4x4.Translate(new Vector3(MapSurfaceBounds.xMax + 500f, 0f, MapSurfaceBounds.yMax + 500f)),
+            true,
+            true,
+            0));
+        records.Seal();
+
+        DenseCitySurfaceProxyBuildResult result = DenseCitySurfaceProxyBuilder.Build(
+            records,
+            mapRoot,
+            OperationMapId,
+            MapSurfaceBounds,
+            OutputFolder);
+
+        Assert.That(records.Presentations, Has.Count.EqualTo(1));
+        Assert.That(records.Presentations[0].WorldMatrix.GetPosition().x, Is.GreaterThan(MapSurfaceBounds.xMax));
+        Assert.That(records.Presentations[0].WorldMatrix.GetPosition().z, Is.GreaterThan(MapSurfaceBounds.yMax));
+        Assert.That(result.Records, Is.EqualTo(1));
+        Assert.That(result.Partitions, Is.EqualTo(1));
+        Assert.That(mapRoot.GetComponentsInChildren<MeshFilter>(true), Has.Length.EqualTo(1));
+        Assert.That(DenseCitySurfaceProxyBakeSourceCollector.Collect(mapRoot), Has.Length.EqualTo(1));
     }
 
     [Test]

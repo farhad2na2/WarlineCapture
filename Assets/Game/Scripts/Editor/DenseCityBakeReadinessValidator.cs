@@ -65,7 +65,7 @@ namespace Game.Editor
                 return false;
             }
             OperationMapBuildingAuthoring[] buildings = FindBuildings(entityPresentationScene);
-            var sourceIds = new HashSet<string>(StringComparer.Ordinal);
+            var stableIds = new HashSet<string>(StringComparer.Ordinal);
             var placementIds = new HashSet<string>(StringComparer.Ordinal);
             foreach (OperationMapBuildingAuthoring building in buildings)
             {
@@ -91,9 +91,9 @@ namespace Game.Editor
                         $"Building {building.PlacementIndex} must have exactly one approved entity-presentation owner.";
                     return false;
                 }
-                if (!sourceIds.Add(building.SourceGlobalObjectId))
+                if (!stableIds.Add(building.StableId))
                 {
-                    error = $"Duplicate operation-map building source id: '{building.SourceGlobalObjectId}'.";
+                    error = $"Duplicate operation-map building stable id: '{building.StableId}'.";
                     return false;
                 }
                 string placementKey = $"{building.OperationMapId}:{building.PlacementIndex}";

@@ -10,6 +10,7 @@ namespace Game.Authoring
     public sealed class OperationMapBuildingAuthoring : MonoBehaviour
     {
         [SerializeField] private string operationMapId;
+        [SerializeField] private string stableId;
         [SerializeField] private string sourceGlobalObjectId;
         [SerializeField, Min(0)] private int placementIndex;
         [SerializeField] private byte factionId;
@@ -21,6 +22,7 @@ namespace Game.Authoring
         [SerializeField] private GameObject destroyedVisualRoot;
 
         public string OperationMapId => operationMapId;
+        public string StableId => string.IsNullOrEmpty(stableId) ? sourceGlobalObjectId : stableId;
         public string SourceGlobalObjectId => sourceGlobalObjectId;
         public int PlacementIndex => placementIndex;
         public byte FactionId => factionId;
@@ -37,9 +39,15 @@ namespace Game.Authoring
                 error = $"Invalid operation-map id: '{operationMapId ?? "<null>"}'.";
                 return false;
             }
-            if (!Game.Configs.OperationMapIdentityRules.IsValidSourceGlobalObjectId(sourceGlobalObjectId))
+            bool hasAuthoredIdentity =
+                Game.Configs.OperationMapIdentityRules.IsValidSourceGlobalObjectId(sourceGlobalObjectId);
+            bool hasGeneratedIdentity =
+                Game.Configs.OperationMapIdentityRules.IsValidGeneratedStableId(stableId);
+            if (hasAuthoredIdentity == hasGeneratedIdentity ||
+                (hasAuthoredIdentity && !string.IsNullOrEmpty(stableId)) ||
+                (hasGeneratedIdentity && !string.IsNullOrEmpty(sourceGlobalObjectId)))
             {
-                error = "A stable source GlobalObjectId is required.";
+                error = "Exactly one authored GlobalObjectId or generated dense-city stable id is required.";
                 return false;
             }
             if (!HasFiniteTransform(transform))
@@ -166,11 +174,14 @@ namespace Game.Authoring
 
         private bool TryValidatePresentationIdentities(Transform visualRoot, out string error)
         {
+            bool hasAuthoredIdentity =
+                Game.Configs.OperationMapIdentityRules.IsValidSourceGlobalObjectId(sourceGlobalObjectId);
             foreach (OperationMapEntityPresentationIdentityAuthoring identity in
                      visualRoot.GetComponentsInChildren<OperationMapEntityPresentationIdentityAuthoring>(true))
             {
                 if (identity.Role != OperationMapEntityPresentationRole.GameplayBuildings ||
                     !string.Equals(identity.OperationMapId, operationMapId, System.StringComparison.Ordinal) ||
+                    !hasAuthoredIdentity ||
                     !string.Equals(identity.SourceGlobalObjectId, sourceGlobalObjectId, System.StringComparison.Ordinal) ||
                     identity.PlacementIndex != placementIndex)
                 {
@@ -203,12 +214,14 @@ namespace Game.Authoring
                 AddComponent(entity, new OperationMapBuildingIdentity
                 {
                     OperationMapId = new FixedString128Bytes(authoring.operationMapId),
+                    StableId = new FixedString128Bytes(authoring.StableId),
                     SourceGlobalObjectId = new FixedString128Bytes(authoring.sourceGlobalObjectId),
                     PlacementIndex = authoring.placementIndex
                 });
                 AddComponent(entity, new OperationMapBuildingComponent
                 {
                     OperationMapId = new FixedString128Bytes(authoring.operationMapId),
+                    StableId = new FixedString128Bytes(authoring.StableId),
                     SourceGlobalObjectId = new FixedString128Bytes(authoring.sourceGlobalObjectId),
                     PlacementIndex = authoring.placementIndex,
                     BlockerPolicy = authoring.blockerPolicy

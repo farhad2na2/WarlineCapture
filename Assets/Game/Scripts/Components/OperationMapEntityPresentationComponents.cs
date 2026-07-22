@@ -22,6 +22,7 @@ namespace Game.Components
     public struct OperationMapBuildingIdentity : IComponentData
     {
         public FixedString128Bytes OperationMapId;
+        public FixedString128Bytes StableId;
         public FixedString128Bytes SourceGlobalObjectId;
         public int PlacementIndex;
     }

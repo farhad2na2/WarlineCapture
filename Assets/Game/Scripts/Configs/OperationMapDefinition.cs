@@ -470,6 +470,28 @@ namespace Game.Configs
             return true;
         }
 
+        public static bool IsValidGeneratedStableId(string value)
+        {
+            const string prefix = "densecity.";
+            if (string.IsNullOrEmpty(value) || value.Length != prefix.Length + 64 ||
+                !value.StartsWith(prefix, StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            for (int index = prefix.Length; index < value.Length; index++)
+            {
+                char character = value[index];
+                if (!((character >= '0' && character <= '9') ||
+                      (character >= 'a' && character <= 'f')))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         public static bool IsValidScenarioId(string value)
         {
             Span<IdSegment> segments = stackalloc IdSegment[4];

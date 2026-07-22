@@ -1,11 +1,26 @@
 using Game.Authoring;
 using Game.Components;
+using Game.Configs;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
 
 public sealed class OperationMapBuildingAuthoringTests
 {
+    private const string GeneratedStableId =
+        "densecity.0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+
+    public static void RunGeneratedIdentityValidation()
+    {
+        var authoringTests = new OperationMapBuildingAuthoringTests();
+        var recordTests = new DenseCityGenerationRecordsTests();
+        authoringTests.TryValidate_RequiresStableIdentityAndDefinition();
+        authoringTests.TryValidate_AcceptsGeneratedStableIdentityWithoutGlobalObjectId();
+        authoringTests.TryValidate_RejectsMixedAuthoredAndGeneratedIdentities();
+        recordTests.RecordIdentity_CreatesDeterministicBoundedGeneratedStableId();
+        Debug.Log("[OperationMapGeneratedBuildingIdentityValidation] result=Passed tests=4");
+    }
+
     [Test]
     public void TryValidate_RequiresStableIdentityAndDefinition()
     {
@@ -29,12 +44,57 @@ public sealed class OperationMapBuildingAuthoringTests
             serialized.ApplyModifiedPropertiesWithoutUndo();
 
             Assert.That(authoring.TryValidate(out string error), Is.True, error);
+            Assert.That(authoring.StableId, Is.EqualTo(authoring.SourceGlobalObjectId));
             Assert.That(authoring.PlacementIndex, Is.EqualTo(4));
             Assert.That(authoring.FactionId, Is.EqualTo(2));
             Assert.That(authoring.OriginCell, Is.EqualTo(new Vector2Int(12, 18)));
             Assert.That(
                 authoring.BlockerPolicy,
                 Is.EqualTo(OperationMapBuildingBlockerPolicy.RubbleRemainsBlocked));
+        }
+        finally
+        {
+            Object.DestroyImmediate(owner);
+            Object.DestroyImmediate(definitionOwner);
+        }
+    }
+
+    [Test]
+    public void TryValidate_RejectsMixedAuthoredAndGeneratedIdentities()
+    {
+        using var fixture = new BuildingAuthoringFixture();
+        var serialized = new SerializedObject(fixture.Authoring);
+        serialized.FindProperty("stableId").stringValue = GeneratedStableId;
+        serialized.ApplyModifiedPropertiesWithoutUndo();
+
+        Assert.That(fixture.Authoring.TryValidate(out string error), Is.False);
+        StringAssert.Contains("Exactly one", error);
+    }
+
+    [Test]
+    public void TryValidate_AcceptsGeneratedStableIdentityWithoutGlobalObjectId()
+    {
+        var owner = new GameObject("GeneratedBuildingOwner");
+        var intactVisual = new GameObject("IntactVisual");
+        var definitionOwner = new GameObject("BuildingDefinition");
+        try
+        {
+            intactVisual.transform.SetParent(owner.transform, false);
+            var authoring = owner.AddComponent<OperationMapBuildingAuthoring>();
+            var serialized = new SerializedObject(authoring);
+            serialized.FindProperty("operationMapId").stringValue = "opmap.skirmish.building_test_01";
+            serialized.FindProperty("stableId").stringValue = GeneratedStableId;
+            serialized.FindProperty("sourceGlobalObjectId").stringValue = string.Empty;
+            serialized.FindProperty("placementIndex").intValue = 9;
+            serialized.FindProperty("definition").objectReferenceValue =
+                definitionOwner.AddComponent<BuildingDefinitionAuthoring>();
+            serialized.FindProperty("intactVisualRoot").objectReferenceValue = intactVisual;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+
+            Assert.That(authoring.TryValidate(out string error), Is.True, error);
+            Assert.That(authoring.StableId, Is.EqualTo(GeneratedStableId));
+            Assert.That(authoring.SourceGlobalObjectId, Is.Empty);
+            Assert.That(OperationMapIdentityRules.IsValidGeneratedStableId(authoring.StableId), Is.True);
         }
         finally
         {

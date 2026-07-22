@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Text;
 using Game.Components;
 using UnityEngine;
 
@@ -73,6 +75,24 @@ namespace Game.Editor
         internal string SourceAssetGuid { get; }
         internal long SourceLocalId { get; }
         internal string StableKey { get; }
+
+        internal string CreateBakedStableId()
+        {
+            byte[] input = Encoding.UTF8.GetBytes(StableKey);
+            byte[] hash;
+            using (SHA256 sha = SHA256.Create())
+                hash = sha.ComputeHash(input);
+            var characters = new char[10 + hash.Length * 2];
+            const string prefix = "densecity.";
+            prefix.CopyTo(0, characters, 0, prefix.Length);
+            const string hexadecimal = "0123456789abcdef";
+            for (int index = 0; index < hash.Length; index++)
+            {
+                characters[prefix.Length + index * 2] = hexadecimal[hash[index] >> 4];
+                characters[prefix.Length + index * 2 + 1] = hexadecimal[hash[index] & 0x0f];
+            }
+            return new string(characters);
+        }
 
         public int CompareTo(DenseCityRecordIdentity other) =>
             string.Compare(StableKey, other.StableKey, StringComparison.Ordinal);

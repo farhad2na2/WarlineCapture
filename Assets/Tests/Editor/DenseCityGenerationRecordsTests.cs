@@ -6,6 +6,26 @@ using UnityEngine;
 
 public sealed class DenseCityGenerationRecordsTests
 {
+    [Test]
+    public void RecordIdentity_CreatesDeterministicBoundedGeneratedStableId()
+    {
+        var identity = new DenseCityRecordIdentity(
+            "dense-city-v1",
+            42,
+            7,
+            "building",
+            13,
+            "0123456789abcdef0123456789abcdef",
+            1234);
+
+        string first = identity.CreateBakedStableId();
+
+        Assert.That(first, Is.EqualTo(identity.CreateBakedStableId()));
+        Assert.That(first, Does.StartWith("densecity."));
+        Assert.That(first, Has.Length.EqualTo(74));
+        Assert.That(Game.Configs.OperationMapIdentityRules.IsValidGeneratedStableId(first), Is.True);
+    }
+
     private const string SourceGuid = "0123456789abcdef0123456789abcdef";
     private const string MaterialGuid = "abcdef0123456789abcdef0123456789";
 

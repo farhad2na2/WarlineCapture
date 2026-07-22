@@ -52,6 +52,7 @@ namespace Game.Editor
             public readonly int SemanticUrbanTrees;
             public readonly int SemanticUrbanRocks;
             public readonly int SemanticCivicFountains;
+            public readonly int SemanticOpenGroundTerrains;
 
             public Result(
                 int roadTiles,
@@ -87,7 +88,8 @@ namespace Game.Editor
                 int semanticStreetProps,
                 int semanticUrbanTrees,
                 int semanticUrbanRocks,
-                int semanticCivicFountains)
+                int semanticCivicFountains,
+                int semanticOpenGroundTerrains)
             {
                 RoadTiles = roadTiles;
                 RoadChunks = roadChunks;
@@ -123,6 +125,7 @@ namespace Game.Editor
                 SemanticUrbanTrees = semanticUrbanTrees;
                 SemanticUrbanRocks = semanticUrbanRocks;
                 SemanticCivicFountains = semanticCivicFountains;
+                SemanticOpenGroundTerrains = semanticOpenGroundTerrains;
             }
         }
 
@@ -1276,20 +1279,7 @@ namespace Game.Editor
             int roofDetails = AddShopRoofDetails(
                 generationTransactions.RealizedBuildingOwners,
                 generationTransactions);
-            int openGroundDetails = AddOpenGroundDetails(
-                generatedRoot,
-                cityOrigin,
-                cityWidth,
-                cityDepth,
-                cityFootprint,
-                authoredCoreBounds,
-                roadResult.RoadCells,
-                authoredGradeElevation,
-                config.RandomSeed);
-            Debug.Log(
-                $"[DenseCityDetailPass] roofCaps={roofDetails} " +
-                $"openGroundPatches={openGroundDetails}");
-
+            List<Rect> openGroundBuildingFootprints = CollectGeneratedBuildingFootprints(generatedRoot);
             UrbanDetailResult urbanDetails = AddUrbanDetailProps(
                 generatedRoot,
                 generationTransactions.RealizedBuildingOwners,
@@ -1305,6 +1295,22 @@ namespace Game.Editor
                 roadResult.BoulevardMedianCells,
                 authoredGradeElevation,
                 config.RandomSeed);
+            int openGroundDetails = AddOpenGroundDetails(
+                generatedRoot,
+                cityOrigin,
+                cityWidth,
+                cityDepth,
+                cityFootprint,
+                authoredCoreBounds,
+                roadResult.RoadCells,
+                openGroundBuildingFootprints,
+                urbanDetails.OpenGroundExclusionAreas,
+                authoredGradeElevation,
+                config.RandomSeed,
+                generationTransactions);
+            Debug.Log(
+                $"[DenseCityDetailPass] roofCaps={roofDetails} " +
+                $"openGroundPatches={openGroundDetails}");
             Debug.Log(
                 $"[DenseCityUrbanProps] waterTanks={urbanDetails.WaterTanks} " +
                 $"rooftopUtilities={urbanDetails.RooftopUtilities} " +
@@ -1456,6 +1462,12 @@ namespace Game.Editor
             int semanticCivicFountains = CountPresentationRecords(
                 generationTransactions.Records.Presentations,
                 "civic-fountain-visual");
+            int semanticOpenGroundTerrains = CountSurfaceRecords(
+                generationTransactions.Records.Surfaces,
+                "open-ground-terrain");
+            int semanticOpenGroundPresentations = CountPresentationRecords(
+                generationTransactions.Records.Presentations,
+                "open-ground-visual");
             if (semanticCanalWaterExclusions != canalResult.WaterTiles ||
                 semanticCanalBedPresentations != canalResult.WaterTiles ||
                 semanticCanalWaterPresentations != canalResult.WaterTiles)
@@ -1581,6 +1593,13 @@ namespace Game.Editor
                 throw new InvalidOperationException(
                     $"Civic fountain semantic parity failed: expected=2 actual={semanticCivicFountains}.");
             }
+            if (semanticOpenGroundTerrains != openGroundDetails ||
+                semanticOpenGroundPresentations != openGroundDetails)
+            {
+                throw new InvalidOperationException(
+                    $"Open-ground semantic parity failed: realized={openGroundDetails} " +
+                    $"terrain={semanticOpenGroundTerrains} visuals={semanticOpenGroundPresentations}.");
+            }
             Debug.Log(
                 $"[DenseCitySemanticRecords] buildings={generationTransactions.Records.Buildings.Count} " +
                 $"surfaces={generationTransactions.Records.Surfaces.Count} " +
@@ -1604,7 +1623,8 @@ namespace Game.Editor
                 $"courtyardWells={semanticCourtyardWells} " +
                 $"courtyardBushes={semanticCourtyardBushes} " +
                 $"streetProps={semanticStreetProps} urbanTrees={semanticUrbanTrees} " +
-                $"urbanRocks={semanticUrbanRocks} civicFountains={semanticCivicFountains}");
+                $"urbanRocks={semanticUrbanRocks} civicFountains={semanticCivicFountains} " +
+                $"openGroundTerrains={semanticOpenGroundTerrains}");
 
             int removedFloatingBranches = RemoveUnsupportedElevatedVisualBranches(generatedRoot);
             Debug.Log($"[DenseCityFloatingItemCleanup] removedBranches={removedFloatingBranches}");
@@ -1651,7 +1671,8 @@ namespace Game.Editor
                 semanticStreetProps,
                 semanticUrbanTrees,
                 semanticUrbanRocks,
-                semanticCivicFountains);
+                semanticCivicFountains,
+                semanticOpenGroundTerrains);
         }
 
         private static int CountBuildingRecords(
@@ -3073,6 +3094,7 @@ namespace Game.Editor
 
         private readonly struct UrbanDetailResult
         {
+            public readonly List<Rect> OpenGroundExclusionAreas;
             public readonly int WaterTanks;
             public readonly int RooftopUtilities;
             public readonly int ShopWallProps;
@@ -3094,6 +3116,7 @@ namespace Game.Editor
             public readonly int MainStreetBushes;
 
             public UrbanDetailResult(
+                List<Rect> openGroundExclusionAreas,
                 int waterTanks,
                 int rooftopUtilities,
                 int shopWallProps,
@@ -3114,6 +3137,7 @@ namespace Game.Editor
                 int grassPatches,
                 int mainStreetBushes)
             {
+                OpenGroundExclusionAreas = openGroundExclusionAreas;
                 WaterTanks = waterTanks;
                 RooftopUtilities = rooftopUtilities;
                 ShopWallProps = shopWallProps;
@@ -7274,12 +7298,18 @@ namespace Game.Editor
             CityFootprint cityFootprint,
             Rect authoredCoreBounds,
             HashSet<Vector2Int> roadCells,
+            List<Rect> buildingFootprints,
+            List<Rect> exclusionAreas,
             float gradeElevation,
-            uint seed)
+            uint seed,
+            DenseCityGenerationTransactionContext generationTransactions)
         {
+            if (generationTransactions == null)
+                throw new ArgumentNullException(nameof(generationTransactions));
             var rootObject = new GameObject("DenseCity_OpenGroundRoundDetails");
             rootObject.transform.SetParent(generatedRoot, false);
-            List<Rect> buildingFootprints = CollectGeneratedBuildingFootprints(generatedRoot);
+            var metadataByPrefab = new Dictionary<GameObject, DenseCityVisualAssetMetadata>();
+            var localBoundsByPrefab = new Dictionary<GameObject, Bounds>();
             int count = 0;
             const float spacing = 10f;
             for (float z = spacing * 0.5f; z < mapDepth; z += spacing)
@@ -7317,16 +7347,93 @@ namespace Game.Editor
 
                     float visibleRelief = Mathf.Lerp(0.4f, 0.9f, Hash01(hash ^ 0xd04c39a7u));
                     float patchHeight = Mathf.Lerp(1.1f, 2.2f, Hash01(hash ^ 0x36eb52d1u));
-                    CreateNaturalGroundPatch(
-                        rootObject.transform,
-                        $"SM_Env_Ground_Round_01_Open_{count:0000}",
+                    NaturalGroundPatchPlan plan = PlanNaturalGroundPatch(
                         new Vector3(point.x, gradeElevation + visibleRelief + 0.025f, point.y),
                         width,
                         depth,
                         patchHeight,
                         hash,
                         forcePrimaryGroundPrefab: true);
-                    count++;
+                    if (!localBoundsByPrefab.TryGetValue(plan.Prefab, out Bounds localBounds))
+                    {
+                        if (!TryGetPrefabLocalRendererBounds(plan.Prefab.transform, out localBounds))
+                        {
+                            throw new InvalidOperationException(
+                                $"Open-ground prefab '{plan.Prefab.name}' has no renderer bounds.");
+                        }
+                        localBoundsByPrefab.Add(plan.Prefab, localBounds);
+                    }
+                    Bounds plannedBounds = TransformLocalBounds(localBounds, plan.WorldMatrix);
+                    var plannedFootprint = Rect.MinMaxRect(
+                        plannedBounds.min.x,
+                        plannedBounds.min.z,
+                        plannedBounds.max.x,
+                        plannedBounds.max.z);
+                    if (OverlapsAnyRect(plannedFootprint, exclusionAreas))
+                        continue;
+
+                    if (!metadataByPrefab.TryGetValue(plan.Prefab, out DenseCityVisualAssetMetadata metadata))
+                    {
+                        metadata = DenseCityVisualAssetMetadataExtractor.Extract(
+                            plan.Prefab,
+                            _ => plan.Material);
+                        metadataByPrefab.Add(plan.Prefab, metadata);
+                    }
+                    var roadCell = new Vector2Int(
+                        Mathf.FloorToInt((point.x - mapOrigin.x) / RoadGridSize),
+                        Mathf.FloorToInt((point.y - mapOrigin.z) / RoadGridSize));
+                    var chunk = new Vector2Int(
+                        Mathf.FloorToInt((float)roadCell.x / RoadChunkSize),
+                        Mathf.FloorToInt((float)roadCell.y / RoadChunkSize));
+                    GameObject patch = null;
+                    try
+                    {
+                        bool accepted = generationTransactions.TryPlaceTerrainVisuals(
+                            0,
+                            1,
+                            sequence => DenseCityTerrainVisualRecordFactory.Create(
+                                new DenseCityTerrainVisualRecordInput(
+                                    DenseCityGeneratorSchema,
+                                    unchecked((int)seed),
+                                    0,
+                                    sequence,
+                                    "open-ground-terrain",
+                                    Matrix4x4.TRS(plannedBounds.center, Quaternion.identity, Vector3.one),
+                                    new Vector2(plannedBounds.size.x, plannedBounds.size.z),
+                                    plannedBounds.max.y,
+                                    DenseCityBuildingMovementMask,
+                                    DenseCityBuildingSurfaceLayer,
+                                    chunk,
+                                    new[]
+                                    {
+                                        new DenseCityTerrainVisualPresentationInput(
+                                            "open-ground-visual",
+                                            metadata.PrefabAssetGuid,
+                                            metadata.PrefabLocalId,
+                                            metadata.MaterialAssetGuids,
+                                            plan.WorldMatrix,
+                                            true,
+                                            true,
+                                            1)
+                                    })),
+                            () =>
+                            {
+                                patch = RealizeNaturalGroundPatch(
+                                    rootObject.transform,
+                                    $"SM_Env_Ground_Round_01_Open_{count:0000}",
+                                    plan);
+                                ValidateWorldMatrix(patch.transform, plan.WorldMatrix, "open-ground patch");
+                                return true;
+                            });
+                        if (accepted)
+                            count++;
+                    }
+                    catch
+                    {
+                        if (patch != null)
+                            UnityEngine.Object.DestroyImmediate(patch);
+                        throw;
+                    }
                 }
             }
 
@@ -7520,6 +7627,8 @@ namespace Game.Editor
                 gradeElevation,
                 seed,
                 generationTransactions);
+            var openGroundExclusionAreas = new List<Rect>(courtyardDetails.ReservedAreas);
+            openGroundExclusionAreas.AddRange(boulevardMedianDetails.ReservedAreas);
             reservedDetailAreas.AddRange(boulevardMedianDetails.ReservedAreas);
             var landscapingDetails = new LandscapingDetailResult();
             AddMainStreetBushes(
@@ -7647,6 +7756,7 @@ namespace Game.Editor
             SetStaticRecursively(grassRootObject);
             SetStaticRecursively(mainStreetBushRootObject);
             return new UrbanDetailResult(
+                openGroundExclusionAreas,
                 waterTankCount,
                 rooftopUtilityCount,
                 shopWallPropCount,

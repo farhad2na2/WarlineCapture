@@ -39,6 +39,10 @@ public sealed class ResourceExchangeHeaderRoutingTests
                 test => test.MatchHudInstalledHeaderUsesShellPointerRouting(),
                 ref passed);
             RunValidationStep(
+                nameof(MatchHudResourceBindingPreservesAuthoredLayout),
+                test => test.MatchHudResourceBindingPreservesAuthoredLayout(),
+                ref passed);
+            RunValidationStep(
                 nameof(UiActionRequestSystem_OpenResourceExchangePresentsUnavailableState),
                 test => test.UiActionRequestSystem_OpenResourceExchangePresentsUnavailableState(),
                 ref passed);
@@ -73,6 +77,10 @@ public sealed class ResourceExchangeHeaderRoutingTests
             RunValidationStep(
                 nameof(MenuSceneShell_RebindingRuntimeUiTransfersOpenResourceExchangePopup),
                 test => test.MenuSceneShell_RebindingRuntimeUiTransfersOpenResourceExchangePopup(),
+                ref passed);
+            RunValidationStep(
+                nameof(MenuSceneShell_ExchangeCloseThenBuildRestoresPopupLayer),
+                test => test.MenuSceneShell_ExchangeCloseThenBuildRestoresPopupLayer(),
                 ref passed);
 
             Debug.Log($"[ResourceExchangeHeaderRoutingValidation] result=Passed tests={passed}");
@@ -168,20 +176,71 @@ public sealed class ResourceExchangeHeaderRoutingTests
         Assert.NotNull(prefab);
         Transform sourceHeader = prefab.transform.Find("HeaderContent");
         Assert.NotNull(sourceHeader);
-        Assert.IsNull(sourceHeader.GetComponent<Canvas>(),
-            "Interactive HeaderContent must remain on the shell canvas.");
+        Assert.NotNull(sourceHeader.GetComponent<Canvas>(),
+            "HeaderContent must retain its original batching canvas.");
         Assert.IsNull(sourceHeader.GetComponent<GraphicRaycaster>(),
-            "HeaderContent must use the shell GraphicRaycaster.");
+            "The full HeaderContent batching canvas must not intercept other HUD regions.");
 
         Transform resourceStrip = sourceHeader.Find("ResourceStrip");
         Assert.NotNull(resourceStrip);
+        Assert.NotNull(resourceStrip.GetComponent<Canvas>());
+        Assert.NotNull(resourceStrip.GetComponent<GraphicRaycaster>());
         Assert.NotNull(resourceStrip.GetComponent<Button>());
         Assert.IsTrue(resourceStrip.GetComponent<Image>().raycastTarget);
 
         Transform currentOrderBanner = sourceHeader.Find("CurrentOrderBanner");
         Assert.NotNull(currentOrderBanner);
-        Assert.NotNull(currentOrderBanner.GetComponent<Canvas>(),
-            "Only the noninteractive current-order banner keeps a local batching canvas.");
+        Assert.IsNull(currentOrderBanner.GetComponent<Canvas>(),
+            "The original header layout must not gain another nested canvas.");
+    }
+
+    [Test]
+    public void MatchHudResourceBindingPreservesAuthoredLayout()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(MatchHudContentPrefabPath);
+        Assert.NotNull(prefab);
+
+        MainMenuPlayUI runtimeUi = new();
+        GameObject instance = UnityEngine.Object.Instantiate(prefab);
+        try
+        {
+            Transform header = instance.transform.Find("HeaderContent");
+            Assert.NotNull(header);
+            Transform[] slots =
+            {
+                header.Find("ResourceStrip/MaterialsSlot"),
+                header.Find("ResourceStrip/OilSlot"),
+                header.Find("ResourceStrip/FuelSlot"),
+                header.Find("ResourceStrip/CivilianRiskSlot")
+            };
+            Vector2[] positions = new Vector2[slots.Length];
+            Vector2[] sizes = new Vector2[slots.Length];
+            for (int i = 0; i < slots.Length; i++)
+            {
+                Assert.NotNull(slots[i]);
+                RectTransform rect = slots[i].GetComponent<RectTransform>();
+                Assert.NotNull(rect);
+                positions[i] = rect.anchoredPosition;
+                sizes[i] = rect.sizeDelta;
+            }
+
+            runtimeUi.BindMatchHudThreatJumpPanel(header.gameObject);
+            runtimeUi.BindMatchHudThreatJumpPanel(header.gameObject);
+
+            for (int i = 0; i < slots.Length; i++)
+            {
+                RectTransform rect = slots[i].GetComponent<RectTransform>();
+                Assert.AreEqual(positions[i], rect.anchoredPosition,
+                    $"{slots[i].name} position must remain prefab-authored after runtime rebind.");
+                Assert.AreEqual(sizes[i], rect.sizeDelta,
+                    $"{slots[i].name} size must remain prefab-authored after runtime rebind.");
+            }
+        }
+        finally
+        {
+            runtimeUi.Dispose();
+            UnityEngine.Object.DestroyImmediate(instance);
+        }
     }
 
     [Test]
@@ -355,6 +414,16 @@ public sealed class ResourceExchangeHeaderRoutingTests
         popupView.CloseButton.onClick.Invoke();
 
         Assert.AreEqual(UiActionKind.CloseResourceExchange, gateway.LastActionKind, "Close button must enqueue the typed close action.");
+        content.PrepareForCommandSequence(new[]
+        {
+            new UiShellPresentationCommandModel(
+                UiShellCommandKind.HidePopup,
+                UiShellRegionId.PopupLayer,
+                UIRoute.Match,
+                UiShellMode.MatchHud,
+                3,
+                UiShellPopupKind.ResourceExchange)
+        });
         AssertRegionIsEmpty(content.ShellView, UIShellRegionId.PopupLayer);
         bool hitAfterClose = runtimeUi.IsPointerOverAnyGameplayUi(popupCenter, out string sourceAfterClose);
         Assert.IsFalse(
@@ -453,6 +522,63 @@ public sealed class ResourceExchangeHeaderRoutingTests
         {
             firstRuntimeUi.Dispose();
             secondRuntimeUi.Dispose();
+        }
+    }
+
+    [Test]
+    public void MenuSceneShell_ExchangeCloseThenBuildRestoresPopupLayer()
+    {
+        Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
+        UIShellContentView content = FindInScene<UIShellContentView>(scene);
+        Assert.NotNull(content);
+
+        var gateway = new RecordingGateway();
+        UiShellRuntimeGateway.Register(gateway);
+        MainMenuPlayUI runtimeUi = new();
+        try
+        {
+            content.PrepareForCommandSequence(new[]
+            {
+                new UiShellPresentationCommandModel(
+                    UiShellCommandKind.EnterMatchHud,
+                    UiShellRegionId.None,
+                    UIRoute.Match,
+                    UiShellMode.MatchHud,
+                    1)
+            });
+            content.BindGameplayRuntimeDependencies(null, runtimeUi);
+
+            GameObject exchange = content.InstallResourceExchangePopup();
+            Assert.NotNull(exchange);
+            ResourceExchangePopupView exchangeView = exchange.GetComponent<ResourceExchangePopupView>();
+            Assert.NotNull(exchangeView);
+            exchangeView.CloseButton.onClick.Invoke();
+            Assert.AreEqual(UiActionKind.CloseResourceExchange, gateway.LastActionKind);
+
+            content.PrepareForCommandSequence(new[]
+            {
+                new UiShellPresentationCommandModel(
+                    UiShellCommandKind.HidePopup,
+                    UiShellRegionId.PopupLayer,
+                    UIRoute.Match,
+                    UiShellMode.MatchHud,
+                    2,
+                    UiShellPopupKind.ResourceExchange)
+            });
+
+            Assert.IsTrue(content.ShellView.TryGetRegion(UIShellRegionId.PopupLayer, out UIShellRegionView popupRegion));
+            popupRegion.RegionRoot.localScale = Vector3.zero;
+            GameObject build = content.InstallBuildDrawerPopup();
+
+            Assert.NotNull(build);
+            Assert.AreEqual("SCN09_BuildDrawerPopup", build.name);
+            Assert.AreEqual(Vector3.one, popupRegion.RegionRoot.localScale,
+                "A popup opened after Exchange closes must restore the shared popup layer scale.");
+            Assert.AreSame(build, AssertRegionHasChild(content.ShellView, UIShellRegionId.PopupLayer));
+        }
+        finally
+        {
+            runtimeUi.Dispose();
         }
     }
 

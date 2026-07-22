@@ -58,7 +58,7 @@ namespace Game.Editor
                 ConfigureSlot(oilSlot, "Oil", oilIcon, -160f, 1);
                 ConfigureSlot(fuelSlot, "Fuel", fuelIcon, 160f, 2);
                 ConfigureSlot(civilianRiskSlot, "Civilian Risk", null, 480f, 3);
-                ConfigureHeaderPointerRouting(resourceStrip.parent);
+                ConfigureResourceStripPointerRouting(resourceStrip);
                 ConfigureResourceExchangeButton(resourceStrip);
 
                 PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
@@ -92,7 +92,7 @@ namespace Game.Editor
             ValidateSlot(resourceStrip, "OilSlot", "Oil", OilIconPath, 1);
             ValidateSlot(resourceStrip, "FuelSlot", "Fuel", FuelIconPath, 2);
             ValidateSlot(resourceStrip, "CivilianRiskSlot", "Civilian Risk", null, 3);
-            ValidateHeaderPointerRouting(resourceStrip.parent);
+            ValidateResourceStripPointerRouting(resourceStrip);
             ValidateResourceExchangeButton(resourceStrip);
             Debug.Log("[MatchHudResourceHeaderPrefabBuilder] Validation passed.");
         }
@@ -253,28 +253,29 @@ namespace Game.Editor
             button.transition = Selectable.Transition.None;
         }
 
-        private static void ConfigureHeaderPointerRouting(Transform headerContent)
+        private static void ConfigureResourceStripPointerRouting(Transform resourceStrip)
         {
-            if (headerContent == null)
-                throw new InvalidOperationException("ResourceStrip must belong to HeaderContent.");
+            if (resourceStrip == null)
+                throw new InvalidOperationException("ResourceStrip pointer root is missing.");
 
-            GraphicRaycaster localRaycaster = headerContent.GetComponent<GraphicRaycaster>();
-            if (localRaycaster != null)
-                UnityEngine.Object.DestroyImmediate(localRaycaster);
+            Canvas canvas = resourceStrip.GetComponent<Canvas>();
+            if (canvas == null)
+                canvas = resourceStrip.gameObject.AddComponent<Canvas>();
+            canvas.overrideSorting = false;
+            canvas.pixelPerfect = false;
 
-            Canvas localCanvas = headerContent.GetComponent<Canvas>();
-            if (localCanvas != null)
-                UnityEngine.Object.DestroyImmediate(localCanvas);
+            if (resourceStrip.GetComponent<GraphicRaycaster>() == null)
+                resourceStrip.gameObject.AddComponent<GraphicRaycaster>();
         }
 
-        private static void ValidateHeaderPointerRouting(Transform headerContent)
+        private static void ValidateResourceStripPointerRouting(Transform resourceStrip)
         {
-            if (headerContent == null ||
-                headerContent.GetComponent<Canvas>() != null ||
-                headerContent.GetComponent<GraphicRaycaster>() != null)
+            if (resourceStrip == null ||
+                resourceStrip.GetComponent<Canvas>() == null ||
+                resourceStrip.GetComponent<GraphicRaycaster>() == null)
             {
                 throw new InvalidOperationException(
-                    "Interactive HeaderContent must remain on the shell canvas and raycaster.");
+                    "ResourceStrip must provide its scoped Canvas and GraphicRaycaster.");
             }
         }
 

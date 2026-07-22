@@ -149,6 +149,10 @@ namespace Game.UI.Runtime
                     case UiShellCommandKind.ShowPopup:
                         InstallPopup(commands[i]);
                         break;
+                    case UiShellCommandKind.HidePopup:
+                        if (commands[i].PopupKind == UiShellPopupKind.ResourceExchange)
+                            CloseResourceExchangePopup(playPopupMotion: false);
+                        break;
                 }
             }
         }
@@ -627,7 +631,12 @@ namespace Game.UI.Runtime
 
         public void CloseResourceExchangePopup()
         {
-            _resourceExchangeShellBinding.Close(this, _mainMenuPlayUi);
+            CloseResourceExchangePopup(playPopupMotion: true);
+        }
+
+        private void CloseResourceExchangePopup(bool playPopupMotion)
+        {
+            _resourceExchangeShellBinding.Close(this, _mainMenuPlayUi, playPopupMotion);
         }
 
         private void BindBuildDrawerPopupInputBlocker(GameObject popup)
@@ -669,7 +678,6 @@ namespace Game.UI.Runtime
         {
             _mainMenuPlayUi?.CaptureGameplayUiClickSequence();
             UiShellRuntimeGateway.TryEnqueueUiAction(UiActionKind.CloseResourceExchange, 0);
-            CloseResourceExchangePopup();
         }
 
         private void BindBuildDrawerRuntimeCommands(GameObject popup)
@@ -723,6 +731,13 @@ namespace Game.UI.Runtime
         {
             if (prefab == null || !TryGetRegionContentRoot(regionId, out RectTransform contentRoot))
                 return null;
+
+            if (regionId == UIShellRegionId.PopupLayer &&
+                shellView != null &&
+                shellView.TryGetRegion(UIShellRegionId.PopupLayer, out UIShellRegionView popupRegion))
+            {
+                popupRegion.ResetVisualState();
+            }
 
             ClearChildren(contentRoot);
             GameObject instance = Instantiate(prefab, contentRoot, false);

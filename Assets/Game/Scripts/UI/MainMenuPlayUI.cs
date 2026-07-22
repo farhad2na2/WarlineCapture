@@ -391,7 +391,6 @@ namespace Game.UI.Runtime
                 references.FuelSlot == null)
                 return;
 
-            ArrangeMatchHudResourceSlots(references);
             BindMatchHudResourceExchangeButtons(references);
             _matchHudResourceHeaderPresentation.Bind(
                 references.OilSlot.Root.gameObject,
@@ -404,34 +403,6 @@ namespace Game.UI.Runtime
                 references.CivilianRiskSlot?.Label,
                 references.CivilianRiskSlot?.Value,
                 Time.unscaledTime);
-        }
-
-        private static void ArrangeMatchHudResourceSlots(MatchHudHeaderReferenceUiSystemHelper references)
-        {
-            SetResourceSlotLayout(references.MaterialsSlot?.Root, -480f);
-            SetResourceSlotLayout(references.OilSlot?.Root, -160f);
-            SetResourceSlotLayout(references.FuelSlot?.Root, 160f);
-            SetResourceSlotLayout(references.CivilianRiskSlot?.Root, 480f);
-        }
-
-        private static void SetResourceSlotLayout(Transform slot, float x)
-        {
-            if (slot == null || !slot.TryGetComponent(out RectTransform rectTransform))
-                return;
-
-            Vector2 anchoredPosition = new(x, rectTransform.anchoredPosition.y);
-            if (!Mathf.Approximately(rectTransform.anchoredPosition.x, anchoredPosition.x) ||
-                !Mathf.Approximately(rectTransform.anchoredPosition.y, anchoredPosition.y))
-            {
-                rectTransform.anchoredPosition = anchoredPosition;
-            }
-
-            Vector2 sizeDelta = new(300f, rectTransform.sizeDelta.y);
-            if (!Mathf.Approximately(rectTransform.sizeDelta.x, sizeDelta.x) ||
-                !Mathf.Approximately(rectTransform.sizeDelta.y, sizeDelta.y))
-            {
-                rectTransform.sizeDelta = sizeDelta;
-            }
         }
 
         private void BindMatchHudResourceExchangeButtons(MatchHudHeaderReferenceUiSystemHelper references)

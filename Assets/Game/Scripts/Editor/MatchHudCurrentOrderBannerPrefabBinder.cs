@@ -20,7 +20,6 @@ namespace Game.Editor
             {
                 Transform header = Require(prefab.transform, "HeaderContent");
                 Transform banner = Require(header, "CurrentOrderBanner");
-                EnsureBannerCanvas(banner.gameObject);
                 Image chevrons = EnsureChevrons(banner);
                 MatchHudCurrentOrderBannerView bannerView = header.GetComponent<MatchHudCurrentOrderBannerView>() ??
                                                             header.gameObject.AddComponent<MatchHudCurrentOrderBannerView>();
@@ -72,13 +71,6 @@ namespace Game.Editor
             if (child == null)
                 throw new MissingReferenceException($"{parent.name} is missing child {childName}.");
             return child;
-        }
-
-        private static void EnsureBannerCanvas(GameObject banner)
-        {
-            Canvas canvas = banner.GetComponent<Canvas>() ?? banner.AddComponent<Canvas>();
-            canvas.overrideSorting = false;
-            canvas.pixelPerfect = false;
         }
 
         private static T RequireComponent<T>(Transform parent, string childName) where T : Component

@@ -26,7 +26,7 @@ namespace Game.UI.Runtime
             return _instance;
         }
 
-        public void Close(UIShellContentView shell, MainMenuPlayUI mainMenuPlayUi)
+        public void Close(UIShellContentView shell, MainMenuPlayUI mainMenuPlayUi, bool playPopupMotion)
         {
             UnbindCloseButton();
             mainMenuPlayUi?.BindResourceExchangePopup(null);
@@ -37,7 +37,7 @@ namespace Game.UI.Runtime
             if (popup == null)
                 return;
 
-            if (Application.isPlaying)
+            if (playPopupMotion && Application.isPlaying)
             {
                 UIPopupMotionView motionView = popup.GetComponent<UIPopupMotionView>();
                 if (motionView != null && motionView.PlayHide(() =>

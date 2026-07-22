@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MapBuildingPlacementConfig
   spawnOnMatchStart: 1
   hideAuthoringVisualsAfterSpawn: 1
+  useExistingStaticPresentationWhenAuthoringVisualMissing: 1
   placements:
   - sourcePath: Map/Buildings/Building_Airport/SM_Bld_ControlTower_01
     category: Building_Airport

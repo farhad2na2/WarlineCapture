@@ -59,16 +59,25 @@ namespace Game.Configs
     {
         [SerializeField] private bool spawnOnMatchStart = true;
         [SerializeField] private bool hideAuthoringVisualsAfterSpawn = true;
+        [SerializeField] private bool useExistingStaticPresentationWhenAuthoringVisualMissing;
         [SerializeField] private List<MapBuildingPlacementConfigEntry> placements = new();
 
         public bool SpawnOnMatchStart => spawnOnMatchStart;
         public bool HideAuthoringVisualsAfterSpawn => hideAuthoringVisualsAfterSpawn;
+        public bool UseExistingStaticPresentationWhenAuthoringVisualMissing =>
+            useExistingStaticPresentationWhenAuthoringVisualMissing;
         public IReadOnlyList<MapBuildingPlacementConfigEntry> Placements => placements;
 
     #if UNITY_EDITOR
         public void EditorSetPlacements(List<MapBuildingPlacementConfigEntry> newPlacements)
         {
             placements = newPlacements ?? new List<MapBuildingPlacementConfigEntry>();
+            UnityEditor.EditorUtility.SetDirty(this);
+        }
+
+        public void EditorSetUseExistingStaticPresentationWhenAuthoringVisualMissing(bool value)
+        {
+            useExistingStaticPresentationWhenAuthoringVisualMissing = value;
             UnityEditor.EditorUtility.SetDirty(this);
         }
     #endif

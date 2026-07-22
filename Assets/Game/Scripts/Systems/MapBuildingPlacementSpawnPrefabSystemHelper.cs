@@ -243,14 +243,21 @@ namespace Game.Runtime
             wrapper.transform.localScale = placement.WorldScale;
             wrapper.AddComponent<MapAuthoredBuildingVisualComponent>();
 
-            GameObject visual = hasAuthoringVisual
-                ? UnityEngine.Object.Instantiate(source.gameObject, wrapper.transform)
-                : UnityEngine.Object.Instantiate(placement.BuildingPrefab, wrapper.transform);
-            visual.name = hasAuthoringVisual ? source.name : placement.BuildingPrefab.name;
-            visual.transform.localPosition = Vector3.zero;
-            visual.transform.localRotation = Quaternion.identity;
-            visual.transform.localScale = Vector3.one;
-            visual.SetActive(true);
+            bool useExistingStaticPresentation =
+                !hasAuthoringVisual &&
+                context.Config != null &&
+                context.Config.UseExistingStaticPresentationWhenAuthoringVisualMissing;
+            if (!useExistingStaticPresentation)
+            {
+                GameObject visual = hasAuthoringVisual
+                    ? UnityEngine.Object.Instantiate(source.gameObject, wrapper.transform)
+                    : UnityEngine.Object.Instantiate(placement.BuildingPrefab, wrapper.transform);
+                visual.name = hasAuthoringVisual ? source.name : placement.BuildingPrefab.name;
+                visual.transform.localPosition = Vector3.zero;
+                visual.transform.localRotation = Quaternion.identity;
+                visual.transform.localScale = Vector3.one;
+                visual.SetActive(true);
+            }
             TryAttachMapRunwayAnchor(context.AuthoringBuildingsRoot, placement, wrapper.transform, context.LogWarning);
             if (hasAuthoringVisual && context.Config.HideAuthoringVisualsAfterSpawn)
                 source.gameObject.SetActive(false);

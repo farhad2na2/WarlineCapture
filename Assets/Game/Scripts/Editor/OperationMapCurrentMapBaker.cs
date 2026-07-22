@@ -53,6 +53,15 @@ namespace Game.Editor
             Scene mapScene = default;
             try
             {
+                RunStage(
+                    report,
+                    "entity-presentation-readiness",
+                    OperationMapEntityPresentationReadinessValidator.ValidateCurrentCandidateBatch);
+                RunConditionalStage(
+                    report,
+                    "dense-city-readiness",
+                    DenseCityBakeReadinessValidator.ValidateCurrentCandidateIfGeneratedBatch);
+
                 mapScene = EditorSceneManager.OpenScene(report.scenePath, OpenSceneMode.Single);
                 OperationMapSceneView mapView = RequireCurrentMapView(mapScene);
 
@@ -166,6 +175,21 @@ namespace Game.Editor
             Stopwatch stopwatch = Stopwatch.StartNew();
             action();
             stopwatch.Stop();
+            report.stages.Add(new BakeStageReport
+            {
+                name = name,
+                elapsedMilliseconds = stopwatch.ElapsedMilliseconds
+            });
+        }
+
+        private static void RunConditionalStage(BakeReport report, string name, Func<bool> action)
+        {
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            bool executed = action();
+            stopwatch.Stop();
+            if (!executed)
+                return;
+
             report.stages.Add(new BakeStageReport
             {
                 name = name,

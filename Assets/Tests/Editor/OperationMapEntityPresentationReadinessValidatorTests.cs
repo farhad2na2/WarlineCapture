@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Game.Authoring;
 using Game.Configs;
 using Game.Editor;
@@ -25,7 +26,8 @@ public sealed class OperationMapEntityPresentationReadinessValidatorTests
             suite.Readiness_RejectsIdentityUnderWrongRole,
             suite.Readiness_RejectsInactivePhysicsDescendant,
             suite.LegacyPlacementParity_AcceptsVehicleIdentityOwnedByUnitBaker,
-            suite.LegacyPlacementParity_RejectsVehicleIdentityWithoutUnitBaker
+            suite.LegacyPlacementParity_RejectsVehicleIdentityWithoutUnitBaker,
+            suite.CurrentMapBaker_RunsReadinessBeforeContentMutation
         };
         for (int index = 0; index < tests.Length; index++)
         {
@@ -114,6 +116,29 @@ public sealed class OperationMapEntityPresentationReadinessValidatorTests
     public void LegacyPlacementParity_RejectsVehicleIdentityWithoutUnitBaker()
     {
         AssertLegacyVehicleParity(unitBakerOwnsIdentity: false, expected: false);
+    }
+
+    [Test]
+    public void CurrentMapBaker_RunsReadinessBeforeContentMutation()
+    {
+        const string path = "Assets/Game/Scripts/Editor/OperationMapCurrentMapBaker.cs";
+        string source = File.ReadAllText(path);
+        int entityReadiness = source.IndexOf(
+            "\"entity-presentation-readiness\"",
+            StringComparison.Ordinal);
+        int denseReadiness = source.IndexOf(
+            "\"dense-city-readiness\"",
+            StringComparison.Ordinal);
+        int firstContentMutation = source.IndexOf(
+            "MapBuildingPlacementBakeEditor.BakeOperationMapBuildingPlacements",
+            StringComparison.Ordinal);
+
+        Assert.That(entityReadiness, Is.GreaterThanOrEqualTo(0));
+        Assert.That(denseReadiness, Is.GreaterThan(entityReadiness));
+        Assert.That(firstContentMutation, Is.GreaterThan(denseReadiness));
+        StringAssert.Contains(
+            "DenseCityBakeReadinessValidator.ValidateCurrentCandidateIfGeneratedBatch",
+            source);
     }
 
     private static void AssertLegacyVehicleParity(bool unitBakerOwnsIdentity, bool expected)

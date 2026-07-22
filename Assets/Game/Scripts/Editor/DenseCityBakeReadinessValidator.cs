@@ -95,6 +95,9 @@ namespace Game.Editor
 
         public static void ValidateCurrentCandidateBatch() => ValidateCurrentCandidateCore();
 
+        internal static bool ValidateCurrentCandidateIfGeneratedBatch() =>
+            ValidateCurrentCandidateCore();
+
         internal static bool TryResolveGenerationState(
             Scene operationMapScene,
             Scene entityPresentationScene,
@@ -748,7 +751,7 @@ namespace Game.Editor
             return true;
         }
 
-        private static void ValidateCurrentCandidateCore()
+        private static bool ValidateCurrentCandidateCore()
         {
             string mapPath = OperationMapEntityPresentationCandidateSceneBuilder.AcceptedOperationMapScenePath;
             string entityPath = OperationMapEntityPresentationMigrationEditor.CandidateSubScenePath;
@@ -779,7 +782,7 @@ namespace Game.Editor
                     if (!TryValidateApprovedProtectedContent(mapScene, null, out string protectedError))
                         throw new InvalidOperationException(protectedError);
                     Debug.Log("[DenseCityBakeReadiness] result=NotGenerated");
-                    return;
+                    return false;
                 }
                 if (!TryValidateAuthoringOwnership(
                         mapScene,
@@ -792,6 +795,7 @@ namespace Game.Editor
                 }
 
                 Debug.Log($"[DenseCityBakeReadiness] result=Passed generationId={generationId}");
+                return true;
             }
             finally
             {

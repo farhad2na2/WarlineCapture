@@ -36,6 +36,7 @@ public sealed class DenseCitySurfaceProxyBuilderTests
             suite.Build_SeparatesRoadFromShoulderAndNaturalGroundFactoryRecords,
             suite.Build_SeparatesBridgeDeckFromApproachRampFactoryRecords,
             suite.Build_ConvertsCanalWaterExclusionWithoutPhysicsComponents,
+            suite.Build_ConsumesBuildingWallAndRockBlockerFactoryRecords,
             suite.Build_ProducesRuntimeSurfaceQueriesForRepresentativeMovers,
             suite.Build_MergesOnlyAdjacentCoplanarRectangles,
             suite.Build_IsDeterministicAcrossEquivalentRecordSets,
@@ -490,6 +491,77 @@ public sealed class DenseCitySurfaceProxyBuilderTests
     }
 
     [Test]
+    public void Build_ConsumesBuildingWallAndRockBlockerFactoryRecords()
+    {
+        var (_, _, mapRoot) = CreateScenePair("building-wall-rock-blockers");
+        using var records = new DenseCityGenerationRecordSet(1, 4, 4);
+        DenseCityBuildingRecordFactory.Add(records, DenseCityBuildingRecordFactory.Create(
+            new DenseCityBuildingRecordInput(
+                "dense-city-v1",
+                42,
+                3,
+                0,
+                SourceGuid,
+                60,
+                SourceGuid,
+                61,
+                new[] { SourceGuid },
+                new[] { SourceGuid },
+                Matrix4x4.TRS(new Vector3(10f, 0f, 10f), Quaternion.identity, Vector3.one),
+                Vector2Int.zero,
+                new Vector2Int(2, 2),
+                new Vector2(8f, 8f),
+                0f,
+                new Bounds(new Vector3(10f, 2f, 10f), new Vector3(8f, 4f, 8f)),
+                Vector3.forward,
+                GeneratedCityBuildingRole.House,
+                SourceGuid,
+                0,
+                100f,
+                1,
+                3,
+                Vector2Int.zero,
+                "blocker-proxy")));
+        DenseCityVisualBlockerRecordGroup wall = CreateVisualBlockerGroup(
+            5,
+            "courtyard-wall-blocker",
+            new Vector3(30f, 0f, 10f),
+            Quaternion.Euler(0f, 90f, 0f),
+            new Vector2(2f, 8f));
+        DenseCityVisualBlockerRecordGroup rock = CreateVisualBlockerGroup(
+            7,
+            "urban-rock-blocker",
+            new Vector3(50f, 0f, 10f),
+            Quaternion.Euler(0f, 30f, 0f),
+            new Vector2(6f, 6f));
+        records.AddVisualBlockerGroup(wall.Blocker, wall.Presentation);
+        records.AddVisualBlockerGroup(rock.Blocker, rock.Presentation);
+        records.Seal();
+
+        DenseCitySurfaceProxyBuildResult result = DenseCitySurfaceProxyBuilder.Build(
+            records,
+            mapRoot,
+            OperationMapId,
+            MapSurfaceBounds,
+            OutputFolder);
+
+        Assert.That(records.Buildings, Has.Count.EqualTo(1));
+        Assert.That(records.Surfaces, Has.Count.EqualTo(4));
+        Assert.That(records.Presentations, Has.Count.EqualTo(4));
+        Assert.That(result.Records, Is.EqualTo(4));
+        Assert.That(result.Partitions, Is.EqualTo(2));
+        MeshFilter blockerProxy = Array.Find(
+            mapRoot.GetComponentsInChildren<MeshFilter>(true),
+            filter => filter.GetComponent<MapBakeGroupAuthoring>().Role == MapBakeGroupRole.Blocker);
+        Assert.That(blockerProxy, Is.Not.Null);
+        Assert.That(blockerProxy.sharedMesh.vertexCount, Is.EqualTo(12));
+        Assert.That(blockerProxy.sharedMesh.triangles, Has.Length.EqualTo(18));
+        AssertProxyMetadata(blockerProxy, MapBakeGroupRole.Blocker, 3, 0);
+        Assert.That(mapRoot.GetComponentsInChildren<Collider>(true), Is.Empty);
+        Assert.That(mapRoot.GetComponentsInChildren<Rigidbody>(true), Is.Empty);
+    }
+
+    [Test]
     public void Build_MergesOnlyAdjacentCoplanarRectangles()
     {
         var (_, _, mapRoot) = CreateScenePair("merge-boundary");
@@ -763,6 +835,30 @@ public sealed class DenseCitySurfaceProxyBuilderTests
                     true,
                     1)
             }));
+
+    private static DenseCityVisualBlockerRecordGroup CreateVisualBlockerGroup(
+        int sequence,
+        string recordKind,
+        Vector3 position,
+        Quaternion rotation,
+        Vector2 blockerSize) =>
+        DenseCityVisualBlockerRecordFactory.Create(new DenseCityVisualBlockerRecordInput(
+            "dense-city-v1",
+            42,
+            3,
+            sequence,
+            recordKind,
+            SourceGuid,
+            sequence,
+            new[] { SourceGuid },
+            Matrix4x4.TRS(position, rotation, Vector3.one),
+            blockerSize,
+            0f,
+            3,
+            Vector2Int.zero,
+            true,
+            true,
+            1));
 
     private static DenseCitySurfaceBakeRecord CreateSurface(
         int sequence,

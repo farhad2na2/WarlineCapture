@@ -58,6 +58,7 @@ namespace Game.Editor
                 ConfigureSlot(oilSlot, "Oil", oilIcon, -160f, 1);
                 ConfigureSlot(fuelSlot, "Fuel", fuelIcon, 160f, 2);
                 ConfigureSlot(civilianRiskSlot, "Civilian Risk", null, 480f, 3);
+                ConfigureHeaderPointerRouting(resourceStrip.parent);
                 ConfigureResourceExchangeButton(resourceStrip);
 
                 PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
@@ -91,6 +92,7 @@ namespace Game.Editor
             ValidateSlot(resourceStrip, "OilSlot", "Oil", OilIconPath, 1);
             ValidateSlot(resourceStrip, "FuelSlot", "Fuel", FuelIconPath, 2);
             ValidateSlot(resourceStrip, "CivilianRiskSlot", "Civilian Risk", null, 3);
+            ValidateHeaderPointerRouting(resourceStrip.parent);
             ValidateResourceExchangeButton(resourceStrip);
             Debug.Log("[MatchHudResourceHeaderPrefabBuilder] Validation passed.");
         }
@@ -249,6 +251,31 @@ namespace Game.Editor
 
             button.targetGraphic = clickSurface;
             button.transition = Selectable.Transition.None;
+        }
+
+        private static void ConfigureHeaderPointerRouting(Transform headerContent)
+        {
+            if (headerContent == null)
+                throw new InvalidOperationException("ResourceStrip must belong to HeaderContent.");
+
+            GraphicRaycaster localRaycaster = headerContent.GetComponent<GraphicRaycaster>();
+            if (localRaycaster != null)
+                UnityEngine.Object.DestroyImmediate(localRaycaster);
+
+            Canvas localCanvas = headerContent.GetComponent<Canvas>();
+            if (localCanvas != null)
+                UnityEngine.Object.DestroyImmediate(localCanvas);
+        }
+
+        private static void ValidateHeaderPointerRouting(Transform headerContent)
+        {
+            if (headerContent == null ||
+                headerContent.GetComponent<Canvas>() != null ||
+                headerContent.GetComponent<GraphicRaycaster>() != null)
+            {
+                throw new InvalidOperationException(
+                    "Interactive HeaderContent must remain on the shell canvas and raycaster.");
+            }
         }
 
         private static void ValidateResourceExchangeButton(Transform resourceStrip)

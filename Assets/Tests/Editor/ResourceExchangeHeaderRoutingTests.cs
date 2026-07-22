@@ -35,6 +35,10 @@ public sealed class ResourceExchangeHeaderRoutingTests
                 test => test.MatchHudPrefabResourcePanelClickEnqueuesOpenResourceExchangeAction(),
                 ref passed);
             RunValidationStep(
+                nameof(MatchHudInstalledHeaderUsesShellPointerRouting),
+                test => test.MatchHudInstalledHeaderUsesShellPointerRouting(),
+                ref passed);
+            RunValidationStep(
                 nameof(UiActionRequestSystem_OpenResourceExchangePresentsUnavailableState),
                 test => test.UiActionRequestSystem_OpenResourceExchangePresentsUnavailableState(),
                 ref passed);
@@ -155,6 +159,29 @@ public sealed class ResourceExchangeHeaderRoutingTests
             runtimeUi.Dispose();
             UnityEngine.Object.DestroyImmediate(header);
         }
+    }
+
+    [Test]
+    public void MatchHudInstalledHeaderUsesShellPointerRouting()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(MatchHudContentPrefabPath);
+        Assert.NotNull(prefab);
+        Transform sourceHeader = prefab.transform.Find("HeaderContent");
+        Assert.NotNull(sourceHeader);
+        Assert.IsNull(sourceHeader.GetComponent<Canvas>(),
+            "Interactive HeaderContent must remain on the shell canvas.");
+        Assert.IsNull(sourceHeader.GetComponent<GraphicRaycaster>(),
+            "HeaderContent must use the shell GraphicRaycaster.");
+
+        Transform resourceStrip = sourceHeader.Find("ResourceStrip");
+        Assert.NotNull(resourceStrip);
+        Assert.NotNull(resourceStrip.GetComponent<Button>());
+        Assert.IsTrue(resourceStrip.GetComponent<Image>().raycastTarget);
+
+        Transform currentOrderBanner = sourceHeader.Find("CurrentOrderBanner");
+        Assert.NotNull(currentOrderBanner);
+        Assert.NotNull(currentOrderBanner.GetComponent<Canvas>(),
+            "Only the noninteractive current-order banner keeps a local batching canvas.");
     }
 
     [Test]

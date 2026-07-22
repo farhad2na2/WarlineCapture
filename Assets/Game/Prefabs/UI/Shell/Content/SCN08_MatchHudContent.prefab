@@ -2629,7 +2629,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1015059290347022097}
   - component: {fileID: 8011269770518212775}
-  - component: {fileID: -8214421000369228991}
   m_Layer: 0
   m_Name: HeaderContent
   m_TagString: Untagged
@@ -2682,30 +2681,6 @@ MonoBehaviour:
   icon: {fileID: 1327526324820689724}
   orderText: {fileID: 8143834800751326139}
   descriptionText: {fileID: 6879796393442765888}
---- !u!223 &-8214421000369228991
-Canvas:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1116400741511091209}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_RenderMode: 2
-  m_Camera: {fileID: 0}
-  m_PlaneDistance: 100
-  m_PixelPerfect: 0
-  m_ReceivesEvents: 1
-  m_OverrideSorting: 0
-  m_OverridePixelPerfect: 0
-  m_SortingBucketNormalizedSize: 0
-  m_VertexColorAlwaysGammaSpace: 0
-  m_UseReflectionProbes: 0
-  m_AdditionalShaderChannelsFlag: 25
-  m_UpdateRectTransformForStandalone: 0
-  m_SortingLayerID: 0
-  m_SortingOrder: 0
-  m_TargetDisplay: 0
 --- !u!1 &1134626251888356840
 GameObject:
   m_ObjectHideFlags: 0
@@ -11885,6 +11860,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6733199879463048671}
+  - component: {fileID: 910900000000000004}
   m_Layer: 0
   m_Name: CurrentOrderBanner
   m_TagString: Untagged
@@ -11916,6 +11892,30 @@ RectTransform:
   m_AnchoredPosition: {x: 1865, y: -18}
   m_SizeDelta: {x: 700, y: 150}
   m_Pivot: {x: 0, y: 1}
+--- !u!223 &910900000000000004
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5578377795360193905}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
+  m_AdditionalShaderChannelsFlag: 25
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
 --- !u!1 &5583567062961573980
 GameObject:
   m_ObjectHideFlags: 0

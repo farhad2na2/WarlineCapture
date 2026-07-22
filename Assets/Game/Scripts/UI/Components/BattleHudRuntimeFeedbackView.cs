@@ -91,7 +91,12 @@ namespace Game.UI.Runtime
         {
             currentOrderBanner = bannerView;
             if (currentOrderBanner != null)
+            {
+                MatchHudCanvasBatchingUtility.EnsureLocalCanvas(
+                    currentOrderBanner.BannerRoot,
+                    needsRaycaster: false);
                 currentOrderBanner.Apply(_persistentCurrentOrderBanner);
+            }
         }
 
         public void ApplyCurrentOrderBanner(MatchHudCurrentOrderBannerModel model)
@@ -125,7 +130,9 @@ namespace Game.UI.Runtime
             MatchHudCanvasBatchingUtility.EnsureLocalCanvas(feedbackPanel, needsRaycaster: false);
             MatchHudCanvasBatchingUtility.EnsureLocalCanvas(feedbackActionsRoot, needsRaycaster: true);
             if (currentOrderBanner != null)
-                MatchHudCanvasBatchingUtility.EnsureLocalCanvas(currentOrderBanner.gameObject, needsRaycaster: false);
+                MatchHudCanvasBatchingUtility.EnsureLocalCanvas(
+                    currentOrderBanner.BannerRoot,
+                    needsRaycaster: false);
             BindUnityEvents();
             HideFeedbackMessage();
         }

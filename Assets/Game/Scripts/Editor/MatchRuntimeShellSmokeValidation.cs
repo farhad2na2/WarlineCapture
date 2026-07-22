@@ -10,7 +10,9 @@ using Unity.Transforms;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using Game.UI.Contracts;
 using Game.UI.Shell.Ecs;
 using Game.UI.Shell.Contracts.Ecs;
@@ -38,6 +40,7 @@ namespace Game.Editor
         private const string RequireInitialBuildingSmokeKey = "MatchRuntimeShellSmokeValidation.RequireInitialBuildingSmoke";
         private const string RequireFuelReadinessKey = "MatchRuntimeShellSmokeValidation.RequireFuelReadiness";
         private const string RequireResourceHaulerMovementKey = "MatchRuntimeShellSmokeValidation.RequireResourceHaulerMovement";
+        private const string RequireResourceExchangeHeaderClickKey = "MatchRuntimeShellSmokeValidation.RequireResourceExchangeHeaderClick";
         private const string EvidenceCommitKey = "MatchRuntimeShellSmokeValidation.EvidenceCommit";
         private const string EvidenceEnvironmentKey = "MatchRuntimeShellSmokeValidation.EvidenceEnvironment";
         private const string EvidenceDirtyKey = "MatchRuntimeShellSmokeValidation.EvidenceDirty";
@@ -78,7 +81,8 @@ namespace Game.Editor
             WaitingForBaselineMetrics = 6,
             WaitingForInitialBuildingPostAi = 7,
             WaitingForFuelReadiness = 8,
-            WaitingForResourceHaulerMovement = 9
+            WaitingForResourceHaulerMovement = 9,
+            WaitingForResourceExchangePopup = 10
         }
 
         private static Entity _airSmokeLauncher = Entity.Null;
@@ -184,6 +188,19 @@ namespace Game.Editor
                 requireResourceHaulerMovement: true);
         }
 
+        public static void RunResourceExchangeHeaderClick()
+        {
+            RunInternal(
+                requireFrameDiag: false,
+                requireAirMissileSmoke: false,
+                requireBaselineMetrics: false,
+                requirePerformanceRegressionReport: false,
+                requireInitialBuildingSmoke: false,
+                requireFuelReadiness: false,
+                requireResourceHaulerMovement: false,
+                requireResourceExchangeHeaderClick: true);
+        }
+
         private static void RunInternal(bool requireFrameDiag)
         {
             RunInternal(requireFrameDiag, requireAirMissileSmoke: false, requireBaselineMetrics: false);
@@ -220,7 +237,8 @@ namespace Game.Editor
             bool requirePerformanceRegressionReport,
             bool requireInitialBuildingSmoke,
             bool requireFuelReadiness = false,
-            bool requireResourceHaulerMovement = false)
+            bool requireResourceHaulerMovement = false,
+            bool requireResourceExchangeHeaderClick = false)
         {
             try
             {
@@ -240,6 +258,7 @@ namespace Game.Editor
                 SessionState.SetBool(RequireInitialBuildingSmokeKey, requireInitialBuildingSmoke);
                 SessionState.SetBool(RequireFuelReadinessKey, requireFuelReadiness);
                 SessionState.SetBool(RequireResourceHaulerMovementKey, requireResourceHaulerMovement);
+                SessionState.SetBool(RequireResourceExchangeHeaderClickKey, requireResourceExchangeHeaderClick);
                 SessionState.EraseString(FrameDiagKey);
                 SessionState.EraseString(InitialBuildingImmediateStatusKey);
                 SessionState.EraseFloat(ReadyAtKey);
@@ -482,6 +501,19 @@ namespace Game.Editor
                 return;
             }
 
+            if (phase == Phase.WaitingForResourceExchangePopup)
+            {
+                ResourceExchangePopupView popup = UnityEngine.Object.FindFirstObjectByType<ResourceExchangePopupView>(
+                    FindObjectsInactive.Include);
+                if (popup != null && popup.IsOpen)
+                {
+                    Finish(true, "resourceExchangeHeaderPointerClick=Passed popup=Visible");
+                    return;
+                }
+
+                return;
+            }
+
             if (phase != Phase.WaitingForMatchReady)
                 return;
 
@@ -554,7 +586,77 @@ namespace Game.Editor
                 return;
             }
 
+            if (SessionState.GetBool(RequireResourceExchangeHeaderClickKey, false))
+            {
+                if (!TryClickResourceExchangeHeader(out string clickStatus))
+                {
+                    Finish(false, clickStatus);
+                    return;
+                }
+
+                Debug.Log($"[MatchRuntimeShellSmokeValidation] {clickStatus}");
+                SessionState.SetInt(PhaseKey, (int)Phase.WaitingForResourceExchangePopup);
+                return;
+            }
+
             Finish(true, status);
+        }
+
+        private static bool TryClickResourceExchangeHeader(out string status)
+        {
+            status = "resourceExchangeHeaderPointerClick=Failed reason=ResourceStripMissing";
+            Button resourceButton = null;
+            foreach (Button candidate in UnityEngine.Object.FindObjectsByType<Button>(
+                         FindObjectsInactive.Exclude,
+                         FindObjectsSortMode.None))
+            {
+                if (candidate != null && candidate.gameObject.name == "ResourceStrip")
+                {
+                    resourceButton = candidate;
+                    break;
+                }
+            }
+
+            if (resourceButton == null || resourceButton.transform is not RectTransform resourceRect)
+                return false;
+
+            EventSystem eventSystem = EventSystem.current;
+            if (eventSystem == null)
+            {
+                status = "resourceExchangeHeaderPointerClick=Failed reason=EventSystemMissing";
+                return false;
+            }
+
+            Vector3[] corners = new Vector3[4];
+            resourceRect.GetWorldCorners(corners);
+            Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(
+                null,
+                (corners[0] + corners[2]) * 0.5f);
+            PointerEventData pointer = new(eventSystem)
+            {
+                button = PointerEventData.InputButton.Left,
+                position = screenPoint
+            };
+            var results = new List<RaycastResult>();
+            eventSystem.RaycastAll(pointer, results);
+            if (results.Count == 0)
+            {
+                status = $"resourceExchangeHeaderPointerClick=Failed reason=NoRaycast point={screenPoint}";
+                return false;
+            }
+
+            GameObject clickHandler = ExecuteEvents.GetEventHandler<IPointerClickHandler>(results[0].gameObject);
+            if (clickHandler != resourceButton.gameObject)
+            {
+                status =
+                    $"resourceExchangeHeaderPointerClick=Failed reason=Intercepted " +
+                    $"hit={results[0].gameObject.name} handler={(clickHandler != null ? clickHandler.name : "none")}";
+                return false;
+            }
+
+            ExecuteEvents.Execute(clickHandler, pointer, ExecuteEvents.pointerClickHandler);
+            status = $"resourceExchangeHeaderPointerClick=Dispatched point={screenPoint}";
+            return true;
         }
 
         private static bool ValidateResourceHaulerMovement(out string status)
@@ -2684,6 +2786,7 @@ namespace Game.Editor
             SessionState.EraseBool(RequireInitialBuildingSmokeKey);
             SessionState.EraseBool(RequireFuelReadinessKey);
             SessionState.EraseBool(RequireResourceHaulerMovementKey);
+            SessionState.EraseBool(RequireResourceExchangeHeaderClickKey);
             SessionState.EraseString(EvidenceCommitKey);
             SessionState.EraseString(EvidenceEnvironmentKey);
             SessionState.EraseBool(EvidenceDirtyKey);

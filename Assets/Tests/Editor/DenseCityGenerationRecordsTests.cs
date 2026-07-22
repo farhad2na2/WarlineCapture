@@ -82,8 +82,10 @@ public sealed class DenseCityGenerationRecordsTests
                 0,
                 100f,
                 OperationMapBuildingBlockerPolicy.RubbleRemainsBlocked,
-                CreateIdentity(2, "intact"),
-                CreateIdentity(3, "destroyed")),
+                CreateIdentity(2, "foundation"),
+                CreateIdentity(3, "blocker"),
+                CreateIdentity(4, "intact"),
+                CreateIdentity(5, "destroyed")),
             Throws.TypeOf<ArgumentOutOfRangeException>());
         Assert.That(
             () => new DenseCitySurfaceBakeRecord(
@@ -95,6 +97,47 @@ public sealed class DenseCityGenerationRecordsTests
                 0,
                 Vector2Int.zero),
             Throws.TypeOf<ArgumentOutOfRangeException>());
+    }
+
+    [Test]
+    public void BuildingGroup_AddsAndRemovesAllFiveRecordsAtomically()
+    {
+        using var records = new DenseCityGenerationRecordSet(1, 2, 2);
+        CreateBuildingGroup(
+            out DenseCityBuildingBakeRecord building,
+            out DenseCitySurfaceBakeRecord foundation,
+            out DenseCitySurfaceBakeRecord blocker,
+            out DenseCityPresentationBakeRecord intact,
+            out DenseCityPresentationBakeRecord destroyed);
+
+        records.AddBuildingGroup(building, foundation, blocker, intact, destroyed);
+        records.RemoveBuildingGroup(building);
+        records.Seal();
+
+        Assert.That(records.Buildings, Is.Empty);
+        Assert.That(records.Surfaces, Is.Empty);
+        Assert.That(records.Presentations, Is.Empty);
+    }
+
+    [Test]
+    public void BuildingGroup_DuplicatePreflightLeavesSetUnchanged()
+    {
+        using var records = new DenseCityGenerationRecordSet(1, 2, 3);
+        CreateBuildingGroup(
+            out DenseCityBuildingBakeRecord building,
+            out DenseCitySurfaceBakeRecord foundation,
+            out DenseCitySurfaceBakeRecord blocker,
+            out DenseCityPresentationBakeRecord intact,
+            out DenseCityPresentationBakeRecord destroyed);
+        records.Add(CreatePresentation(building.Identity));
+
+        Assert.That(
+            () => records.AddBuildingGroup(building, foundation, blocker, intact, destroyed),
+            Throws.InvalidOperationException.With.Message.Contains("Duplicate"));
+        records.Seal();
+        Assert.That(records.Buildings, Is.Empty);
+        Assert.That(records.Surfaces, Is.Empty);
+        Assert.That(records.Presentations, Has.Count.EqualTo(1));
     }
 
     private static DenseCityRecordIdentity CreateIdentity(int sequence, string kind) =>
@@ -114,4 +157,73 @@ public sealed class DenseCityGenerationRecordsTests
             true,
             true,
             1);
+
+    private static void CreateBuildingGroup(
+        out DenseCityBuildingBakeRecord building,
+        out DenseCitySurfaceBakeRecord foundation,
+        out DenseCitySurfaceBakeRecord blocker,
+        out DenseCityPresentationBakeRecord intact,
+        out DenseCityPresentationBakeRecord destroyed)
+    {
+        DenseCityRecordIdentity buildingIdentity = CreateIdentity(10, "building");
+        DenseCityRecordIdentity foundationIdentity = CreateIdentity(11, "foundation");
+        DenseCityRecordIdentity blockerIdentity = CreateIdentity(12, "blocker");
+        DenseCityRecordIdentity intactIdentity = CreateIdentity(13, "building-intact");
+        DenseCityRecordIdentity destroyedIdentity = CreateIdentity(14, "building-destroyed");
+        building = new DenseCityBuildingBakeRecord(
+            buildingIdentity,
+            Matrix4x4.identity,
+            new Vector2(8f, 6f),
+            0f,
+            new Bounds(Vector3.zero, new Vector3(8f, 5f, 6f)),
+            Vector3.forward,
+            0,
+            100f,
+            OperationMapBuildingBlockerPolicy.RubbleRemainsBlocked,
+            foundationIdentity,
+            blockerIdentity,
+            intactIdentity,
+            destroyedIdentity);
+        Vector2[] polygon =
+        {
+            new(-4f, -3f),
+            new(4f, -3f),
+            new(4f, 3f),
+            new(-4f, 3f)
+        };
+        foundation = new DenseCitySurfaceBakeRecord(
+            foundationIdentity,
+            DenseCitySurfaceRecordKind.Terrain,
+            polygon,
+            0f,
+            1,
+            0,
+            Vector2Int.zero);
+        blocker = new DenseCitySurfaceBakeRecord(
+            blockerIdentity,
+            DenseCitySurfaceRecordKind.Blocker,
+            polygon,
+            0f,
+            1,
+            0,
+            Vector2Int.zero);
+        intact = CreateBuildingPresentation(intactIdentity, DenseCityPresentationCategory.GameplayBuildingIntact);
+        destroyed = CreateBuildingPresentation(
+            destroyedIdentity,
+            DenseCityPresentationCategory.GameplayBuildingDestroyed);
+    }
+
+    private static DenseCityPresentationBakeRecord CreateBuildingPresentation(
+        DenseCityRecordIdentity identity,
+        DenseCityPresentationCategory category) =>
+        new(
+            identity,
+            category,
+            SourceGuid,
+            null,
+            new[] { MaterialGuid },
+            Matrix4x4.identity,
+            true,
+            true,
+            3);
 }

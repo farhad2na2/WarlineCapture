@@ -118,6 +118,8 @@ namespace Game.Editor
             int factionId,
             float maximumHealth,
             OperationMapBuildingBlockerPolicy blockerPolicy,
+            DenseCityRecordIdentity foundationSurfaceIdentity,
+            DenseCityRecordIdentity blockerSurfaceIdentity,
             DenseCityRecordIdentity intactPresentationIdentity,
             DenseCityRecordIdentity destroyedPresentationIdentity)
         {
@@ -147,6 +149,8 @@ namespace Game.Editor
             FactionId = factionId;
             MaximumHealth = maximumHealth;
             BlockerPolicy = blockerPolicy;
+            FoundationSurfaceIdentity = foundationSurfaceIdentity;
+            BlockerSurfaceIdentity = blockerSurfaceIdentity;
             IntactPresentationIdentity = intactPresentationIdentity;
             DestroyedPresentationIdentity = destroyedPresentationIdentity;
         }
@@ -160,6 +164,8 @@ namespace Game.Editor
         internal int FactionId { get; }
         internal float MaximumHealth { get; }
         internal OperationMapBuildingBlockerPolicy BlockerPolicy { get; }
+        internal DenseCityRecordIdentity FoundationSurfaceIdentity { get; }
+        internal DenseCityRecordIdentity BlockerSurfaceIdentity { get; }
         internal DenseCityRecordIdentity IntactPresentationIdentity { get; }
         internal DenseCityRecordIdentity DestroyedPresentationIdentity { get; }
 
@@ -349,6 +355,98 @@ namespace Game.Editor
         internal void Add(DenseCityPresentationBakeRecord record) =>
             Add(record, record.Identity, presentations, presentationCapacity, "presentation");
 
+        internal void AddBuildingGroup(
+            DenseCityBuildingBakeRecord building,
+            DenseCitySurfaceBakeRecord foundation,
+            DenseCitySurfaceBakeRecord blocker,
+            DenseCityPresentationBakeRecord intactPresentation,
+            DenseCityPresentationBakeRecord destroyedPresentation)
+        {
+            RequireWritable();
+            if (foundation.Kind != DenseCitySurfaceRecordKind.Terrain)
+                throw new ArgumentException("Building foundation must be a terrain surface record.", nameof(foundation));
+            if (blocker.Kind != DenseCitySurfaceRecordKind.Blocker)
+                throw new ArgumentException("Building blocker must be a blocker surface record.", nameof(blocker));
+            if (foundation.Identity.StableKey != building.FoundationSurfaceIdentity.StableKey)
+                throw new ArgumentException("Building foundation identity mismatch.", nameof(foundation));
+            if (blocker.Identity.StableKey != building.BlockerSurfaceIdentity.StableKey)
+                throw new ArgumentException("Building blocker identity mismatch.", nameof(blocker));
+            if (intactPresentation.Category != DenseCityPresentationCategory.GameplayBuildingIntact ||
+                intactPresentation.Identity.StableKey != building.IntactPresentationIdentity.StableKey)
+            {
+                throw new ArgumentException("Building intact presentation identity/category mismatch.", nameof(intactPresentation));
+            }
+            if (destroyedPresentation.Category != DenseCityPresentationCategory.GameplayBuildingDestroyed ||
+                destroyedPresentation.Identity.StableKey != building.DestroyedPresentationIdentity.StableKey)
+            {
+                throw new ArgumentException("Building destroyed presentation identity/category mismatch.", nameof(destroyedPresentation));
+            }
+            if (buildings.Count >= buildingCapacity || surfaces.Count > surfaceCapacity - 2 ||
+                presentations.Count > presentationCapacity - 2)
+            {
+                throw new InvalidOperationException("Dense-city building record group exceeds a configured capacity.");
+            }
+
+            string[] keys =
+            {
+                building.Identity.StableKey,
+                foundation.Identity.StableKey,
+                blocker.Identity.StableKey,
+                intactPresentation.Identity.StableKey,
+                destroyedPresentation.Identity.StableKey
+            };
+            var pendingKeys = new HashSet<string>(StringComparer.Ordinal);
+            for (int index = 0; index < keys.Length; index++)
+            {
+                string key = keys[index];
+                if (!pendingKeys.Add(key) || stableKeys.Contains(key))
+                    throw new InvalidOperationException($"Duplicate dense-city record identity: '{key}'.");
+            }
+
+            for (int index = 0; index < keys.Length; index++)
+                stableKeys.Add(keys[index]);
+            buildings.Add(building);
+            surfaces.Add(foundation);
+            surfaces.Add(blocker);
+            presentations.Add(intactPresentation);
+            presentations.Add(destroyedPresentation);
+        }
+
+        internal void RemoveBuildingGroup(DenseCityBuildingBakeRecord building)
+        {
+            RequireWritable();
+            int buildingIndex = FindIndex(buildings, building.Identity.StableKey, record => record.Identity);
+            int intactIndex = FindIndex(
+                presentations,
+                building.IntactPresentationIdentity.StableKey,
+                record => record.Identity);
+            int destroyedIndex = FindIndex(
+                presentations,
+                building.DestroyedPresentationIdentity.StableKey,
+                record => record.Identity);
+            int foundationIndex = FindIndex(
+                surfaces,
+                building.FoundationSurfaceIdentity.StableKey,
+                record => record.Identity);
+            int blockerIndex = FindIndex(
+                surfaces,
+                building.BlockerSurfaceIdentity.StableKey,
+                record => record.Identity);
+            if (buildingIndex < 0 || intactIndex < 0 || destroyedIndex < 0 ||
+                foundationIndex < 0 || blockerIndex < 0)
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city building record group is incomplete: '{building.Identity.StableKey}'.");
+            }
+
+            RemovePresentationIndices(intactIndex, destroyedIndex);
+            RemoveSurfaceIndices(foundationIndex, blockerIndex);
+            buildings.RemoveAt(buildingIndex);
+            stableKeys.Remove(building.Identity.StableKey);
+            stableKeys.Remove(building.IntactPresentationIdentity.StableKey);
+            stableKeys.Remove(building.DestroyedPresentationIdentity.StableKey);
+        }
+
         internal void Seal()
         {
             RequireWritable();
@@ -378,6 +476,39 @@ namespace Game.Editor
             if (!stableKeys.Add(identity.StableKey))
                 throw new InvalidOperationException($"Duplicate dense-city record identity: '{identity.StableKey}'.");
             destination.Add(record);
+        }
+
+        private static int FindIndex<T>(
+            List<T> records,
+            string stableKey,
+            Func<T, DenseCityRecordIdentity> identitySelector)
+        {
+            for (int index = 0; index < records.Count; index++)
+            {
+                if (identitySelector(records[index]).StableKey == stableKey)
+                    return index;
+            }
+            return -1;
+        }
+
+        private void RemovePresentationIndices(int first, int second)
+        {
+            int high = Math.Max(first, second);
+            int low = Math.Min(first, second);
+            stableKeys.Remove(presentations[high].Identity.StableKey);
+            presentations.RemoveAt(high);
+            stableKeys.Remove(presentations[low].Identity.StableKey);
+            presentations.RemoveAt(low);
+        }
+
+        private void RemoveSurfaceIndices(int first, int second)
+        {
+            int high = Math.Max(first, second);
+            int low = Math.Min(first, second);
+            stableKeys.Remove(surfaces[high].Identity.StableKey);
+            surfaces.RemoveAt(high);
+            stableKeys.Remove(surfaces[low].Identity.StableKey);
+            surfaces.RemoveAt(low);
         }
 
         private IReadOnlyList<T> RequireSealed<T>(List<T> records)

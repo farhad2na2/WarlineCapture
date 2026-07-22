@@ -34,26 +34,35 @@ namespace Game.Editor
             }
         }
 
-        private readonly struct PrefabFootprint
+        internal readonly struct PrefabFootprint
         {
             public readonly GameObject Prefab;
             public readonly float Width;
             public readonly float Depth;
             public readonly float Height;
             public readonly float VisualScale;
+            public readonly DenseCityPresentationCategory PresentationCategory;
 
             public PrefabFootprint(
                 GameObject prefab,
                 float width,
                 float depth,
                 float height,
-                float visualScale)
+                float visualScale,
+                DenseCityPresentationCategory presentationCategory)
             {
+                if (presentationCategory is not (DenseCityPresentationCategory.GameplayBuildingIntact or
+                    DenseCityPresentationCategory.Vegetation or DenseCityPresentationCategory.Prop))
+                {
+                    throw new ArgumentOutOfRangeException(nameof(presentationCategory));
+                }
+
                 Prefab = prefab;
                 VisualScale = Mathf.Max(0.01f, visualScale);
                 Width = Mathf.Max(3f, width * VisualScale);
                 Depth = Mathf.Max(3f, depth * VisualScale);
                 Height = Mathf.Max(1f, height * VisualScale);
+                PresentationCategory = presentationCategory;
             }
         }
 
@@ -2510,7 +2519,10 @@ namespace Game.Editor
                 dirtRoadCells);
             GameObject hallPrefab = FirstPrefab(config.HallPrefabs) ??
                                     throw new InvalidOperationException("Dense city config requires a hall prefab.");
-            PrefabFootprint hall = MeasurePrefab(hallPrefab, CivicHallVisualScale);
+            PrefabFootprint hall = MeasurePrefab(
+                hallPrefab,
+                CivicHallVisualScale,
+                DenseCityPresentationCategory.GameplayBuildingIntact);
             Vector3 hallPosition = mapCenter + new Vector3(0f, 0f, 55f);
             var hallCenter = new Vector2(hallPosition.x, hallPosition.z);
             bool hallRoadClearance = placementContext.CanPlace(hall, 180f, hallCenter);
@@ -2556,7 +2568,11 @@ namespace Game.Editor
                 hallBounds.max.z + hallPlazaClearance);
 
             var market = new List<PrefabFootprint>();
-            AddPrefabList(config.ShopPrefabs, market, 0.9f);
+            AddPrefabList(
+                config.ShopPrefabs,
+                market,
+                DenseCityPresentationCategory.GameplayBuildingIntact,
+                0.9f);
             if (market.Count == 0)
                 throw new InvalidOperationException("Dense city config requires shop prefabs for its bazaar.");
 
@@ -3016,7 +3032,10 @@ namespace Game.Editor
             {
                 GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ParkPrefabPaths[index]);
                 if (prefab != null)
-                    treePrefabs.Add(MeasurePrefab(prefab, 0.9f));
+                    treePrefabs.Add(MeasurePrefab(
+                        prefab,
+                        0.9f,
+                        DenseCityPresentationCategory.Vegetation));
             }
 
             if (treePrefabs.Count == 0)
@@ -9077,12 +9096,22 @@ namespace Game.Editor
         private static BuildingPalette BuildPalette(RuntimeCitySpawnerSystemConfig config)
         {
             var palette = new BuildingPalette();
-            AddPrefabList(config.HousePrefabs, palette.Houses);
-            AddPrefabList(config.ShopPrefabs, palette.Shops);
-            AddPrefabList(config.OtherBuildingPrefabs, palette.Other);
+            AddPrefabList(
+                config.HousePrefabs,
+                palette.Houses,
+                DenseCityPresentationCategory.GameplayBuildingIntact);
+            AddPrefabList(
+                config.ShopPrefabs,
+                palette.Shops,
+                DenseCityPresentationCategory.GameplayBuildingIntact);
+            AddPrefabList(
+                config.OtherBuildingPrefabs,
+                palette.Other,
+                DenseCityPresentationCategory.GameplayBuildingIntact);
             AddPrefabList(
                 config.HallPrefabs,
                 palette.CentralLandmarks,
+                DenseCityPresentationCategory.GameplayBuildingIntact,
                 CentralHallVisualScale);
             if (config.ClockTowerPrefab != null && IsDenseCityPrefabUsable(config.ClockTowerPrefab))
             {
@@ -9090,7 +9119,8 @@ namespace Game.Editor
                     palette.CentralLandmarks,
                     MeasurePrefab(
                         config.ClockTowerPrefab,
-                        CentralClockTowerVisualScale));
+                        CentralClockTowerVisualScale,
+                        DenseCityPresentationCategory.GameplayBuildingIntact));
             }
             AddTallOrLargeCandidates(palette.Houses, palette.CentralLandmarks);
             AddTallOrLargeCandidates(palette.Shops, palette.CentralLandmarks);
@@ -9099,16 +9129,27 @@ namespace Game.Editor
             {
                 GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(CleanStandaloneShopPrefabPaths[index]);
                 if (prefab != null)
-                    palette.Shops.Add(MeasurePrefab(prefab, BuildingVisualScale));
+                    palette.Shops.Add(MeasurePrefab(
+                        prefab,
+                        BuildingVisualScale,
+                        DenseCityPresentationCategory.GameplayBuildingIntact));
             }
             for (int index = 0; index < ParkPrefabPaths.Length; index++)
             {
                 GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ParkPrefabPaths[index]);
                 if (prefab != null)
                 {
-                    palette.Park.Add(MeasurePrefab(prefab, 1f));
+                    DenseCityPresentationCategory category = index >= 4
+                        ? DenseCityPresentationCategory.Prop
+                        : DenseCityPresentationCategory.Vegetation;
+                    palette.Park.Add(MeasurePrefab(prefab, 1f, category));
                     if (index >= 4)
-                        palette.Fountains.Add(MeasurePrefab(prefab, 0.85f));
+                    {
+                        palette.Fountains.Add(MeasurePrefab(
+                            prefab,
+                            0.85f,
+                            DenseCityPresentationCategory.Prop));
+                    }
                 }
             }
 
@@ -9147,7 +9188,10 @@ namespace Game.Editor
                         : CentralLargeBuildingVisualScale;
                     AddCentralLandmark(
                         target,
-                        MeasurePrefab(candidate.Prefab, landmarkScale));
+                        MeasurePrefab(
+                            candidate.Prefab,
+                            landmarkScale,
+                            candidate.PresentationCategory));
                 }
             }
         }
@@ -9171,6 +9215,7 @@ namespace Game.Editor
         private static void AddPrefabList(
             List<GameObject> source,
             List<PrefabFootprint> target,
+            DenseCityPresentationCategory presentationCategory,
             float visualScale = BuildingVisualScale)
         {
             if (source == null)
@@ -9179,7 +9224,7 @@ namespace Game.Editor
             {
                 GameObject prefab = source[index];
                 if (prefab != null && IsDenseCityPrefabUsable(prefab))
-                    target.Add(MeasurePrefab(prefab, visualScale));
+                    target.Add(MeasurePrefab(prefab, visualScale, presentationCategory));
             }
         }
 
@@ -9380,12 +9425,23 @@ namespace Game.Editor
             return null;
         }
 
-        private static PrefabFootprint MeasurePrefab(GameObject prefab, float visualScale)
+        private static PrefabFootprint MeasurePrefab(
+            GameObject prefab,
+            float visualScale,
+            DenseCityPresentationCategory presentationCategory)
         {
             Transform visualRoot = FindDescendant(prefab.transform, "CombinedMesh") ?? prefab.transform;
             Renderer[] renderers = visualRoot.GetComponentsInChildren<Renderer>(true);
             if (renderers.Length == 0)
-                return new PrefabFootprint(prefab, 10f, 10f, 8f, visualScale);
+            {
+                return new PrefabFootprint(
+                    prefab,
+                    10f,
+                    10f,
+                    8f,
+                    visualScale,
+                    presentationCategory);
+            }
 
             Matrix4x4 worldToRoot = prefab.transform.worldToLocalMatrix;
             Bounds bounds = default;
@@ -9426,8 +9482,15 @@ namespace Game.Editor
                     bounds.size.x,
                     bounds.size.z,
                     bounds.size.y,
-                    visualScale)
-                : new PrefabFootprint(prefab, 10f, 10f, 8f, visualScale);
+                    visualScale,
+                    presentationCategory)
+                : new PrefabFootprint(
+                    prefab,
+                    10f,
+                    10f,
+                    8f,
+                    visualScale,
+                    presentationCategory);
         }
 
         private static PrefabFootprint SelectFrontageBuilding(

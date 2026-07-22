@@ -509,6 +509,79 @@ namespace Game.Editor
             presentations.RemoveAt(secondPresentationIndex);
         }
 
+        internal void AddTerrainVisualGroup(
+            DenseCitySurfaceBakeRecord terrain,
+            IReadOnlyList<DenseCityPresentationBakeRecord> visualPresentations)
+        {
+            RequireWritable();
+            if (terrain.Kind != DenseCitySurfaceRecordKind.Terrain)
+                throw new ArgumentException("Terrain surface record is required.", nameof(terrain));
+            if (visualPresentations == null || visualPresentations.Count == 0 || visualPresentations.Count > 16)
+                throw new ArgumentOutOfRangeException(nameof(visualPresentations));
+            if (surfaces.Count >= surfaceCapacity ||
+                presentations.Count > presentationCapacity - visualPresentations.Count)
+            {
+                throw new InvalidOperationException("Dense-city terrain visual group exceeds a configured capacity.");
+            }
+
+            var pendingKeys = new HashSet<string>(StringComparer.Ordinal);
+            RequireUniquePendingKey(terrain.Identity.StableKey, pendingKeys);
+            for (int index = 0; index < visualPresentations.Count; index++)
+            {
+                DenseCityPresentationBakeRecord presentation = visualPresentations[index];
+                if (presentation.Category != DenseCityPresentationCategory.Infrastructure)
+                {
+                    throw new ArgumentException(
+                        "Terrain visual presentations must be infrastructure.",
+                        nameof(visualPresentations));
+                }
+                RequireUniquePendingKey(presentation.Identity.StableKey, pendingKeys);
+            }
+
+            stableKeys.Add(terrain.Identity.StableKey);
+            surfaces.Add(terrain);
+            for (int index = 0; index < visualPresentations.Count; index++)
+            {
+                DenseCityPresentationBakeRecord presentation = visualPresentations[index];
+                stableKeys.Add(presentation.Identity.StableKey);
+                presentations.Add(presentation);
+            }
+        }
+
+        internal void RemoveTerrainVisualGroup(
+            DenseCitySurfaceBakeRecord terrain,
+            IReadOnlyList<DenseCityPresentationBakeRecord> visualPresentations)
+        {
+            RequireWritable();
+            if (visualPresentations == null || visualPresentations.Count == 0)
+                throw new ArgumentOutOfRangeException(nameof(visualPresentations));
+
+            int terrainIndex = FindIndex(surfaces, terrain.Identity.StableKey, record => record.Identity);
+            var presentationIndices = new int[visualPresentations.Count];
+            for (int index = 0; index < visualPresentations.Count; index++)
+            {
+                presentationIndices[index] = FindIndex(
+                    presentations,
+                    visualPresentations[index].Identity.StableKey,
+                    record => record.Identity);
+            }
+            if (terrainIndex < 0 || Array.Exists(presentationIndices, index => index < 0))
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city terrain visual group is incomplete: '{terrain.Identity.StableKey}'.");
+            }
+
+            stableKeys.Remove(terrain.Identity.StableKey);
+            surfaces.RemoveAt(terrainIndex);
+            Array.Sort(presentationIndices);
+            for (int index = presentationIndices.Length - 1; index >= 0; index--)
+            {
+                int presentationIndex = presentationIndices[index];
+                stableKeys.Remove(presentations[presentationIndex].Identity.StableKey);
+                presentations.RemoveAt(presentationIndex);
+            }
+        }
+
         internal void AddBridgeGroup(
             DenseCitySurfaceBakeRecord bridge,
             DenseCityPresentationBakeRecord presentation,

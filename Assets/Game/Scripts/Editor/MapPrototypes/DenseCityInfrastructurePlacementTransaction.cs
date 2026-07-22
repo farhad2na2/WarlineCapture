@@ -70,6 +70,20 @@ namespace Game.Editor
         internal DenseCityPresentationBakeRecord WaterPresentation { get; }
     }
 
+    internal readonly struct DenseCityTerrainVisualRecordGroup
+    {
+        internal DenseCityTerrainVisualRecordGroup(
+            DenseCitySurfaceBakeRecord terrain,
+            DenseCityPresentationBakeRecord[] presentations)
+        {
+            Terrain = terrain;
+            Presentations = presentations ?? throw new ArgumentNullException(nameof(presentations));
+        }
+
+        internal DenseCitySurfaceBakeRecord Terrain { get; }
+        internal DenseCityPresentationBakeRecord[] Presentations { get; }
+    }
+
     internal static class DenseCityInfrastructurePlacementTransaction
     {
         internal static bool TryCommitAndRealize(
@@ -208,6 +222,35 @@ namespace Game.Editor
                 group.Exclusion,
                 group.BedPresentation,
                 group.WaterPresentation);
+    }
+
+    internal static class DenseCityTerrainVisualPlacementTransaction
+    {
+        internal static bool TryCommitAndRealize(
+            DenseCityGenerationRecordSet records,
+            DenseCityTerrainVisualRecordGroup group,
+            Func<bool> realize)
+        {
+            if (records == null)
+                throw new ArgumentNullException(nameof(records));
+            if (realize == null)
+                throw new ArgumentNullException(nameof(realize));
+
+            records.AddTerrainVisualGroup(group.Terrain, group.Presentations);
+            try
+            {
+                if (realize())
+                    return true;
+
+                records.RemoveTerrainVisualGroup(group.Terrain, group.Presentations);
+                return false;
+            }
+            catch
+            {
+                records.RemoveTerrainVisualGroup(group.Terrain, group.Presentations);
+                throw;
+            }
+        }
     }
 
     internal static class DenseCityRoadPlacementTransaction

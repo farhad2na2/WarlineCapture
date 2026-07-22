@@ -225,6 +225,38 @@ namespace Game.Editor
                 realize);
         }
 
+        internal bool TryPlaceTerrainVisuals(
+            int districtId,
+            int presentationCount,
+            Func<int, DenseCityTerrainVisualRecordGroup> createGroup,
+            Func<bool> realize)
+        {
+            RequireActive();
+            if (districtId < 0)
+                throw new ArgumentOutOfRangeException(nameof(districtId));
+            if (presentationCount <= 0 || presentationCount > 16)
+                throw new ArgumentOutOfRangeException(nameof(presentationCount));
+            if (createGroup == null)
+                throw new ArgumentNullException(nameof(createGroup));
+            if (realize == null)
+                throw new ArgumentNullException(nameof(realize));
+
+            int requiredCount = checked(1 + presentationCount);
+            int sequenceStart = GetInfrastructureSequenceStart(districtId, requiredCount);
+            DenseCityTerrainVisualRecordGroup group = createGroup(sequenceStart);
+            if (group.Presentations.Length != presentationCount)
+            {
+                throw new InvalidOperationException(
+                    $"Terrain visual transaction declared {presentationCount} presentations but created " +
+                    $"{group.Presentations.Length}.");
+            }
+            nextInfrastructureSequenceByDistrict[districtId] = sequenceStart + requiredCount;
+            return DenseCityTerrainVisualPlacementTransaction.TryCommitAndRealize(
+                Records,
+                group,
+                realize);
+        }
+
         internal bool TryPlaceBridge(
             int districtId,
             Func<int, DenseCityBridgeRecordGroup> createGroup,

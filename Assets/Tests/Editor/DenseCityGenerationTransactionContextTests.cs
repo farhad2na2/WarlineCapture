@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Game.Configs;
 using Game.Editor;
 using NUnit.Framework;
@@ -135,6 +136,58 @@ public sealed class DenseCityGenerationTransactionContextTests
     }
 
     [Test]
+    public void RoadPlacement_ReservesRoadPresentationAndDeclaredShoulders()
+    {
+        using var context = new DenseCityGenerationTransactionContext(1, 4, 1);
+        var observedSequences = new List<int>();
+
+        Assert.That(
+            context.TryPlaceRoad(
+                4,
+                2,
+                sequence =>
+                {
+                    observedSequences.Add(sequence);
+                    return CreateRoadGroup(sequence);
+                },
+                () => false),
+            Is.False);
+        Assert.That(
+            context.TryPlaceSurface(
+                4,
+                sequence =>
+                {
+                    observedSequences.Add(sequence);
+                    return CreateRamp(sequence);
+                },
+                () => true),
+            Is.True);
+        context.Seal();
+
+        Assert.That(observedSequences, Is.EqualTo(new[] { 0, 4 }));
+        Assert.That(context.Records.Surfaces, Has.Count.EqualTo(1));
+        Assert.That(context.Records.Surfaces[0].Identity.DeterministicSequence, Is.EqualTo(4));
+    }
+
+    [Test]
+    public void RoadPlacement_RejectsShoulderCountMismatchBeforeAdvancingSequence()
+    {
+        using var context = new DenseCityGenerationTransactionContext(1, 4, 1);
+
+        Assert.That(
+            () => context.TryPlaceRoad(4, 1, CreateRoadGroup, () => true),
+            Throws.InvalidOperationException.With.Message.Contains("declared 1 shoulders"));
+        Assert.That(
+            context.TryPlaceRoad(4, 2, CreateRoadGroup, () => true),
+            Is.True);
+        context.Seal();
+
+        DenseCitySurfaceBakeRecord road = context.Records.Surfaces.Single(
+            record => record.Kind == DenseCitySurfaceRecordKind.Road);
+        Assert.That(road.Identity.DeterministicSequence, Is.Zero);
+    }
+
+    [Test]
     public void RegisterRealizedBuildingOwner_UsesCommittedIdentityAndRejectsDuplicates()
     {
         using var context = new DenseCityGenerationTransactionContext(1, 2, 2);
@@ -260,6 +313,19 @@ public sealed class DenseCityGenerationTransactionContextTests
             DenseCitySurfaceRecordKind.Ramp,
             "bridge-ramp-b");
         return new DenseCityBridgeRecordGroup(bridge, presentation, firstRamp, secondRamp);
+    }
+
+    private static DenseCityRoadRecordGroup CreateRoadGroup(int sequence)
+    {
+        DenseCityInfrastructureRecordGroup road = CreateInfrastructureGroup(sequence);
+        return new DenseCityRoadRecordGroup(
+            road.Surface,
+            road.Presentation,
+            new[]
+            {
+                CreateSurface(sequence + 2, DenseCitySurfaceRecordKind.Terrain, "road-shoulder"),
+                CreateSurface(sequence + 3, DenseCitySurfaceRecordKind.Terrain, "road-shoulder")
+            });
     }
 
     private static DenseCitySurfaceBakeRecord CreateSurface(

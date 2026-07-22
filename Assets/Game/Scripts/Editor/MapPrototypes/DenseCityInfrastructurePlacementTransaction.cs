@@ -36,6 +36,23 @@ namespace Game.Editor
         internal DenseCitySurfaceBakeRecord SecondApproachRamp { get; }
     }
 
+    internal readonly struct DenseCityRoadRecordGroup
+    {
+        internal DenseCityRoadRecordGroup(
+            DenseCitySurfaceBakeRecord road,
+            DenseCityPresentationBakeRecord presentation,
+            DenseCitySurfaceBakeRecord[] shoulders)
+        {
+            Road = road;
+            Presentation = presentation;
+            Shoulders = shoulders ?? throw new ArgumentNullException(nameof(shoulders));
+        }
+
+        internal DenseCitySurfaceBakeRecord Road { get; }
+        internal DenseCityPresentationBakeRecord Presentation { get; }
+        internal DenseCitySurfaceBakeRecord[] Shoulders { get; }
+    }
+
     internal static class DenseCityInfrastructurePlacementTransaction
     {
         internal static bool TryCommitAndRealize(
@@ -134,5 +151,34 @@ namespace Game.Editor
                 group.Presentation,
                 group.FirstApproachRamp,
                 group.SecondApproachRamp);
+    }
+
+    internal static class DenseCityRoadPlacementTransaction
+    {
+        internal static bool TryCommitAndRealize(
+            DenseCityGenerationRecordSet records,
+            DenseCityRoadRecordGroup group,
+            Func<bool> realize)
+        {
+            if (records == null)
+                throw new ArgumentNullException(nameof(records));
+            if (realize == null)
+                throw new ArgumentNullException(nameof(realize));
+
+            records.AddRoadGroup(group.Road, group.Presentation, group.Shoulders);
+            try
+            {
+                if (realize())
+                    return true;
+
+                records.RemoveRoadGroup(group.Road, group.Presentation, group.Shoulders);
+                return false;
+            }
+            catch
+            {
+                records.RemoveRoadGroup(group.Road, group.Presentation, group.Shoulders);
+                throw;
+            }
+        }
     }
 }

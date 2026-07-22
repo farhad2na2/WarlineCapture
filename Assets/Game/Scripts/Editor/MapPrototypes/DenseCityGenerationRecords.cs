@@ -522,6 +522,96 @@ namespace Game.Editor
             presentations.RemoveAt(presentationIndex);
         }
 
+        internal void AddRoadGroup(
+            DenseCitySurfaceBakeRecord road,
+            DenseCityPresentationBakeRecord presentation,
+            IReadOnlyList<DenseCitySurfaceBakeRecord> shoulders)
+        {
+            RequireWritable();
+            if (road.Kind != DenseCitySurfaceRecordKind.Road)
+                throw new ArgumentException("Road surface record is required.", nameof(road));
+            if (presentation.Category != DenseCityPresentationCategory.Infrastructure)
+                throw new ArgumentException("Infrastructure presentation category is required.", nameof(presentation));
+            if (shoulders == null)
+                throw new ArgumentNullException(nameof(shoulders));
+            for (int index = 0; index < shoulders.Count; index++)
+            {
+                if (shoulders[index].Kind != DenseCitySurfaceRecordKind.Terrain)
+                    throw new ArgumentException("Road shoulders must be terrain surface records.", nameof(shoulders));
+            }
+
+            int requiredSurfaceCount = checked(1 + shoulders.Count);
+            if (surfaces.Count > surfaceCapacity - requiredSurfaceCount ||
+                presentations.Count >= presentationCapacity)
+            {
+                throw new InvalidOperationException("Dense-city road record group exceeds a configured capacity.");
+            }
+
+            var pendingKeys = new HashSet<string>(StringComparer.Ordinal);
+            RequireUniquePendingKey(road.Identity.StableKey, pendingKeys);
+            RequireUniquePendingKey(presentation.Identity.StableKey, pendingKeys);
+            for (int index = 0; index < shoulders.Count; index++)
+                RequireUniquePendingKey(shoulders[index].Identity.StableKey, pendingKeys);
+
+            stableKeys.Add(road.Identity.StableKey);
+            stableKeys.Add(presentation.Identity.StableKey);
+            surfaces.Add(road);
+            presentations.Add(presentation);
+            for (int index = 0; index < shoulders.Count; index++)
+            {
+                DenseCitySurfaceBakeRecord shoulder = shoulders[index];
+                stableKeys.Add(shoulder.Identity.StableKey);
+                surfaces.Add(shoulder);
+            }
+        }
+
+        internal void RemoveRoadGroup(
+            DenseCitySurfaceBakeRecord road,
+            DenseCityPresentationBakeRecord presentation,
+            IReadOnlyList<DenseCitySurfaceBakeRecord> shoulders)
+        {
+            RequireWritable();
+            if (shoulders == null)
+                throw new ArgumentNullException(nameof(shoulders));
+
+            var surfaceIndices = new int[1 + shoulders.Count];
+            surfaceIndices[0] = FindIndex(surfaces, road.Identity.StableKey, record => record.Identity);
+            for (int index = 0; index < shoulders.Count; index++)
+            {
+                surfaceIndices[index + 1] = FindIndex(
+                    surfaces,
+                    shoulders[index].Identity.StableKey,
+                    record => record.Identity);
+            }
+            int presentationIndex = FindIndex(
+                presentations,
+                presentation.Identity.StableKey,
+                record => record.Identity);
+            for (int index = 0; index < surfaceIndices.Length; index++)
+            {
+                if (surfaceIndices[index] < 0)
+                {
+                    throw new InvalidOperationException(
+                        $"Dense-city road record group is incomplete: '{road.Identity.StableKey}'.");
+                }
+            }
+            if (presentationIndex < 0)
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city road record group is incomplete: '{road.Identity.StableKey}'.");
+            }
+
+            Array.Sort(surfaceIndices);
+            for (int index = surfaceIndices.Length - 1; index >= 0; index--)
+            {
+                int surfaceIndex = surfaceIndices[index];
+                stableKeys.Remove(surfaces[surfaceIndex].Identity.StableKey);
+                surfaces.RemoveAt(surfaceIndex);
+            }
+            stableKeys.Remove(presentation.Identity.StableKey);
+            presentations.RemoveAt(presentationIndex);
+        }
+
         internal void RemoveSurface(DenseCitySurfaceBakeRecord surface)
         {
             RequireWritable();
@@ -670,6 +760,12 @@ namespace Game.Editor
                     return index;
             }
             return -1;
+        }
+
+        private void RequireUniquePendingKey(string key, HashSet<string> pendingKeys)
+        {
+            if (!pendingKeys.Add(key) || stableKeys.Contains(key))
+                throw new InvalidOperationException($"Duplicate dense-city record identity: '{key}'.");
         }
 
         private void RemovePresentationIndices(int first, int second)

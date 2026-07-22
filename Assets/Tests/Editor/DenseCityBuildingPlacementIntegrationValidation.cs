@@ -34,10 +34,14 @@ public static class DenseCityBuildingPlacementIntegrationValidation
             Assert.That(result.Buildings, Is.GreaterThan(0));
             Assert.That(result.SemanticBuildings, Is.GreaterThan(result.Buildings));
             Assert.That(result.SemanticBuildingAttachments, Is.GreaterThan(0));
+            Assert.That(result.SemanticRoadShoulders, Is.GreaterThan(0));
+            Assert.That(result.SemanticSurfaces, Is.GreaterThan(result.SemanticBuildings * 2));
             Debug.Log(
                 $"[DenseCityBuildingPlacementIntegrationValidation] result=Passed " +
                 $"districtBuildings={result.Buildings} semanticBuildings={result.SemanticBuildings} " +
-                $"semanticAttachments={result.SemanticBuildingAttachments}");
+                $"semanticAttachments={result.SemanticBuildingAttachments} " +
+                $"surfaces={result.SemanticSurfaces} presentations={result.SemanticPresentations} " +
+                $"roadShoulders={result.SemanticRoadShoulders}");
         }
         catch (Exception exception)
         {

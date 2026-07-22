@@ -25,6 +25,9 @@ namespace Game.Editor
             public readonly int AuthoredCoreRenderers;
             public readonly int SemanticBuildings;
             public readonly int SemanticBuildingAttachments;
+            public readonly int SemanticSurfaces;
+            public readonly int SemanticPresentations;
+            public readonly int SemanticRoadShoulders;
 
             public Result(
                 int roadTiles,
@@ -33,7 +36,10 @@ namespace Game.Editor
                 int parks,
                 int authoredCoreRenderers,
                 int semanticBuildings,
-                int semanticBuildingAttachments)
+                int semanticBuildingAttachments,
+                int semanticSurfaces,
+                int semanticPresentations,
+                int semanticRoadShoulders)
             {
                 RoadTiles = roadTiles;
                 RoadChunks = roadChunks;
@@ -42,6 +48,9 @@ namespace Game.Editor
                 AuthoredCoreRenderers = authoredCoreRenderers;
                 SemanticBuildings = semanticBuildings;
                 SemanticBuildingAttachments = semanticBuildingAttachments;
+                SemanticSurfaces = semanticSurfaces;
+                SemanticPresentations = semanticPresentations;
+                SemanticRoadShoulders = semanticRoadShoulders;
             }
         }
 
@@ -1240,10 +1249,14 @@ namespace Game.Editor
 
             generationTransactions.Seal();
             ValidateRealizedBuildingAttachmentOwnership(generationTransactions);
+            int semanticRoadShoulders = CountSurfaceRecords(
+                generationTransactions.Records.Surfaces,
+                "road-shoulder");
             Debug.Log(
                 $"[DenseCitySemanticRecords] buildings={generationTransactions.Records.Buildings.Count} " +
                 $"surfaces={generationTransactions.Records.Surfaces.Count} " +
-                $"presentations={generationTransactions.Records.Presentations.Count}");
+                $"presentations={generationTransactions.Records.Presentations.Count} " +
+                $"roadShoulders={semanticRoadShoulders}");
 
             int horizonMountains = BakeHorizonMountainPerimeter(
                 generatedRoot,
@@ -1273,7 +1286,28 @@ namespace Game.Editor
                 buildingResult.ParkCount,
                 authoredCoreRenderers,
                 generationTransactions.Records.Buildings.Count,
-                generationTransactions.RealizedBuildingAttachments.Count);
+                generationTransactions.RealizedBuildingAttachments.Count,
+                generationTransactions.Records.Surfaces.Count,
+                generationTransactions.Records.Presentations.Count,
+                semanticRoadShoulders);
+        }
+
+        private static int CountSurfaceRecords(
+            IReadOnlyList<DenseCitySurfaceBakeRecord> surfaces,
+            string recordKind)
+        {
+            int count = 0;
+            for (int index = 0; index < surfaces.Count; index++)
+            {
+                if (string.Equals(
+                        surfaces[index].Identity.Kind,
+                        recordKind,
+                        StringComparison.Ordinal))
+                {
+                    count++;
+                }
+            }
+            return count;
         }
 
         private static void ValidateRealizedBuildingAttachmentOwnership(
@@ -5543,13 +5577,25 @@ namespace Game.Editor
                     metadata = DenseCityVisualAssetMetadataExtractor.Extract(prefab);
                     metadataByPrefab.Add(prefab, metadata);
                 }
+                IReadOnlyList<RoadGridProjectionSystem.RoadFootprintBoundsData> roadFootprints =
+                    selectedVariants.VisualData.TryGetValue(
+                        tile.Type,
+                        out RoadGridProjectionSystem.CombinedRoadVisualData roadVisualData)
+                        ? roadVisualData.FootprintBounds
+                        : Array.Empty<RoadGridProjectionSystem.RoadFootprintBoundsData>();
+                DenseCityRoadShoulderRecordInput[] shoulderInputs =
+                    DenseCityRoadShoulderRecordPlanner.Create(
+                        roadFootprints,
+                        roadWorldMatrix,
+                        chunkCoordinate);
 
                 GameObject road = null;
                 try
                 {
-                    bool accepted = generationTransactions.TryPlaceInfrastructure(
+                    bool accepted = generationTransactions.TryPlaceRoad(
                         0,
-                        sequence => DenseCityInfrastructureRecordFactory.CreateVisualized(
+                        shoulderInputs.Length,
+                        sequence => DenseCityInfrastructureRecordFactory.CreateRoadWithShoulders(
                             new DenseCityInfrastructureRecordInput(
                                 DenseCityGeneratorSchema,
                                 unchecked((int)seed),
@@ -5569,7 +5615,8 @@ namespace Game.Editor
                                 chunkCoordinate,
                                 true,
                                 true,
-                                2)),
+                                2),
+                            shoulderInputs),
                         () =>
                         {
                             road = (GameObject)PrefabUtility.InstantiatePrefab(prefab, chunkRoot);

@@ -94,6 +94,26 @@ namespace Game.Editor
         internal Vector2Int Chunk { get; }
     }
 
+    internal readonly struct DenseCityRoadShoulderRecordInput
+    {
+        internal DenseCityRoadShoulderRecordInput(
+            Matrix4x4 worldMatrix,
+            Vector2 surfaceSize,
+            float elevation,
+            Vector2Int chunk)
+        {
+            WorldMatrix = worldMatrix;
+            SurfaceSize = surfaceSize;
+            Elevation = elevation;
+            Chunk = chunk;
+        }
+
+        internal Matrix4x4 WorldMatrix { get; }
+        internal Vector2 SurfaceSize { get; }
+        internal float Elevation { get; }
+        internal Vector2Int Chunk { get; }
+    }
+
     internal static class DenseCityInfrastructureRecordFactory
     {
         internal static DenseCityInfrastructureRecordGroup CreateVisualized(
@@ -116,6 +136,34 @@ namespace Game.Editor
                 input.BatchingEligible,
                 input.LodImportance);
             return new DenseCityInfrastructureRecordGroup(surface, presentation);
+        }
+
+        internal static DenseCityRoadRecordGroup CreateRoadWithShoulders(
+            DenseCityInfrastructureRecordInput roadInput,
+            IReadOnlyList<DenseCityRoadShoulderRecordInput> shoulderInputs)
+        {
+            if (roadInput.SurfaceKind != DenseCitySurfaceRecordKind.Road)
+                throw new ArgumentException("Road surface input is required.", nameof(roadInput));
+            if (shoulderInputs == null)
+                throw new ArgumentNullException(nameof(shoulderInputs));
+            if (roadInput.SequenceStart > int.MaxValue - 1 - shoulderInputs.Count)
+                throw new ArgumentOutOfRangeException(nameof(roadInput));
+
+            DenseCityInfrastructureRecordGroup road = CreateVisualized(roadInput);
+            var shoulders = new DenseCitySurfaceBakeRecord[shoulderInputs.Count];
+            for (int index = 0; index < shoulderInputs.Count; index++)
+            {
+                DenseCityRoadShoulderRecordInput shoulderInput = shoulderInputs[index];
+                DenseCityInfrastructureRecordInput surfaceInput = CreateShoulderInput(
+                    roadInput,
+                    shoulderInput,
+                    index + 2);
+                shoulders[index] = CreateSurface(
+                    surfaceInput,
+                    CreateIdentity(surfaceInput, 0, "road-shoulder"));
+            }
+
+            return new DenseCityRoadRecordGroup(road.Surface, road.Presentation, shoulders);
         }
 
         internal static DenseCitySurfaceBakeRecord CreateSurfaceOnlyRamp(
@@ -198,6 +246,30 @@ namespace Game.Editor
                 bridgeInput.MovementMask,
                 bridgeInput.SurfaceLayer,
                 approach.Chunk,
+                false,
+                false,
+                0);
+
+        private static DenseCityInfrastructureRecordInput CreateShoulderInput(
+            DenseCityInfrastructureRecordInput roadInput,
+            DenseCityRoadShoulderRecordInput shoulder,
+            int sequenceOffset) =>
+            new(
+                roadInput.GeneratorSchema,
+                roadInput.Seed,
+                roadInput.DistrictId,
+                roadInput.SequenceStart + sequenceOffset,
+                "road-shoulder",
+                DenseCitySurfaceRecordKind.Terrain,
+                roadInput.SourceAssetGuid,
+                roadInput.SourceLocalId,
+                roadInput.MaterialAssetGuids,
+                shoulder.WorldMatrix,
+                shoulder.SurfaceSize,
+                shoulder.Elevation,
+                roadInput.MovementMask,
+                roadInput.SurfaceLayer,
+                shoulder.Chunk,
                 false,
                 false,
                 0);

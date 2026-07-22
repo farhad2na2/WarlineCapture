@@ -150,6 +150,37 @@ namespace Game.Editor
                 realize);
         }
 
+        internal bool TryPlaceRoad(
+            int districtId,
+            int shoulderCount,
+            Func<int, DenseCityRoadRecordGroup> createGroup,
+            Func<bool> realize)
+        {
+            RequireActive();
+            if (districtId < 0)
+                throw new ArgumentOutOfRangeException(nameof(districtId));
+            if (shoulderCount < 0 || shoulderCount > 64)
+                throw new ArgumentOutOfRangeException(nameof(shoulderCount));
+            if (createGroup == null)
+                throw new ArgumentNullException(nameof(createGroup));
+            if (realize == null)
+                throw new ArgumentNullException(nameof(realize));
+
+            int requiredCount = checked(2 + shoulderCount);
+            int sequenceStart = GetInfrastructureSequenceStart(districtId, requiredCount);
+            DenseCityRoadRecordGroup group = createGroup(sequenceStart);
+            if (group.Shoulders.Length != shoulderCount)
+            {
+                throw new InvalidOperationException(
+                    $"Road transaction declared {shoulderCount} shoulders but created {group.Shoulders.Length}.");
+            }
+            nextInfrastructureSequenceByDistrict[districtId] = sequenceStart + requiredCount;
+            return DenseCityRoadPlacementTransaction.TryCommitAndRealize(
+                Records,
+                group,
+                realize);
+        }
+
         internal bool TryPlaceSurface(
             int districtId,
             Func<int, DenseCitySurfaceBakeRecord> createSurface,

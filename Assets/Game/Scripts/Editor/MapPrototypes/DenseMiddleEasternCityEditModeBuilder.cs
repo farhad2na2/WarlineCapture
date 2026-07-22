@@ -44,6 +44,10 @@ namespace Game.Editor
             public readonly int SemanticMainStreetBushes;
             public readonly int SemanticPowerPoles;
             public readonly int SemanticPowerLines;
+            public readonly int SemanticCourtyardWalls;
+            public readonly int SemanticCourtyardPillars;
+            public readonly int SemanticCourtyardWells;
+            public readonly int SemanticCourtyardBushes;
 
             public Result(
                 int roadTiles,
@@ -71,7 +75,11 @@ namespace Game.Editor
                 int semanticGrassPatches,
                 int semanticMainStreetBushes,
                 int semanticPowerPoles,
-                int semanticPowerLines)
+                int semanticPowerLines,
+                int semanticCourtyardWalls,
+                int semanticCourtyardPillars,
+                int semanticCourtyardWells,
+                int semanticCourtyardBushes)
             {
                 RoadTiles = roadTiles;
                 RoadChunks = roadChunks;
@@ -99,6 +107,10 @@ namespace Game.Editor
                 SemanticMainStreetBushes = semanticMainStreetBushes;
                 SemanticPowerPoles = semanticPowerPoles;
                 SemanticPowerLines = semanticPowerLines;
+                SemanticCourtyardWalls = semanticCourtyardWalls;
+                SemanticCourtyardPillars = semanticCourtyardPillars;
+                SemanticCourtyardWells = semanticCourtyardWells;
+                SemanticCourtyardBushes = semanticCourtyardBushes;
             }
         }
 
@@ -1402,6 +1414,21 @@ namespace Game.Editor
             int semanticPowerLines = CountPresentationRecords(
                 generationTransactions.Records.Presentations,
                 "power-line-visual");
+            int semanticCourtyardWalls = CountSurfaceRecords(
+                generationTransactions.Records.Surfaces,
+                "courtyard-wall");
+            int semanticCourtyardWallPresentations = CountPresentationRecords(
+                generationTransactions.Records.Presentations,
+                "courtyard-wall-visual");
+            int semanticCourtyardPillars = CountPresentationRecords(
+                generationTransactions.Records.Presentations,
+                "courtyard-pillar-visual");
+            int semanticCourtyardWells = CountPresentationRecords(
+                generationTransactions.Records.Presentations,
+                "courtyard-well-visual");
+            int semanticCourtyardBushes = CountPresentationRecords(
+                generationTransactions.Records.Presentations,
+                "courtyard-bush-visual");
             if (semanticCanalWaterExclusions != canalResult.WaterTiles ||
                 semanticCanalBedPresentations != canalResult.WaterTiles ||
                 semanticCanalWaterPresentations != canalResult.WaterTiles)
@@ -1496,6 +1523,20 @@ namespace Game.Editor
                     $"poles={urbanDetails.PowerPoles}/{semanticPowerPoles} " +
                     $"lines={urbanDetails.PowerLines}/{semanticPowerLines}.");
             }
+            if (semanticCourtyardWalls != urbanDetails.CourtyardWalls ||
+                semanticCourtyardWallPresentations != urbanDetails.CourtyardWalls ||
+                semanticCourtyardPillars != urbanDetails.CourtyardPillars ||
+                semanticCourtyardWells != urbanDetails.CourtyardWells ||
+                semanticCourtyardBushes != urbanDetails.CourtyardBushes)
+            {
+                throw new InvalidOperationException(
+                    $"Courtyard semantic parity failed: " +
+                    $"walls={urbanDetails.CourtyardWalls}/{semanticCourtyardWalls}/" +
+                    $"{semanticCourtyardWallPresentations} " +
+                    $"pillars={urbanDetails.CourtyardPillars}/{semanticCourtyardPillars} " +
+                    $"wells={urbanDetails.CourtyardWells}/{semanticCourtyardWells} " +
+                    $"bushes={urbanDetails.CourtyardBushes}/{semanticCourtyardBushes}.");
+            }
             Debug.Log(
                 $"[DenseCitySemanticRecords] buildings={generationTransactions.Records.Buildings.Count} " +
                 $"surfaces={generationTransactions.Records.Surfaces.Count} " +
@@ -1513,7 +1554,11 @@ namespace Game.Editor
                 $"sidewalkStreetLights={semanticSidewalkStreetLights} " +
                 $"grassPatches={semanticGrassPatches} " +
                 $"mainStreetBushes={semanticMainStreetBushes} " +
-                $"powerPoles={semanticPowerPoles} powerLines={semanticPowerLines}");
+                $"powerPoles={semanticPowerPoles} powerLines={semanticPowerLines} " +
+                $"courtyardWalls={semanticCourtyardWalls} " +
+                $"courtyardPillars={semanticCourtyardPillars} " +
+                $"courtyardWells={semanticCourtyardWells} " +
+                $"courtyardBushes={semanticCourtyardBushes}");
 
             int removedFloatingBranches = RemoveUnsupportedElevatedVisualBranches(generatedRoot);
             Debug.Log($"[DenseCityFloatingItemCleanup] removedBranches={removedFloatingBranches}");
@@ -1552,7 +1597,11 @@ namespace Game.Editor
                 semanticGrassPatches,
                 semanticMainStreetBushes,
                 semanticPowerPoles,
-                semanticPowerLines);
+                semanticPowerLines,
+                semanticCourtyardWalls,
+                semanticCourtyardPillars,
+                semanticCourtyardWells,
+                semanticCourtyardBushes);
         }
 
         private static int CountBuildingRecords(
@@ -7319,6 +7368,19 @@ namespace Game.Editor
                 DenseCityVisualAssetMetadataExtractor.Extract(grass);
             DenseCityVisualAssetMetadata mainStreetBushMetadata =
                 DenseCityVisualAssetMetadataExtractor.Extract(mainStreetBush);
+            DenseCityVisualAssetMetadata courtyardWallMetadata =
+                DenseCityVisualAssetMetadataExtractor.Extract(courtyardWall);
+            DenseCityVisualAssetMetadata courtyardPillarMetadata =
+                DenseCityVisualAssetMetadataExtractor.Extract(courtyardPillar);
+            DenseCityVisualAssetMetadata courtyardWellMetadata =
+                DenseCityVisualAssetMetadataExtractor.Extract(courtyardWell);
+            DenseCityVisualAssetMetadata courtyardBushMetadata =
+                DenseCityVisualAssetMetadataExtractor.Extract(courtyardBush);
+            if (!TryGetPrefabLocalRendererBounds(courtyardWall.transform, out Bounds courtyardWallLocalBounds))
+            {
+                throw new InvalidOperationException(
+                    $"Courtyard wall prefab '{courtyardWall.name}' has no renderer bounds.");
+            }
 
             var streetPropRootObject = new GameObject("DenseCity_GroundedStreetProps");
             streetPropRootObject.transform.SetParent(generatedRoot, false);
@@ -7358,15 +7420,21 @@ namespace Game.Editor
                 courtyardRootObject.transform,
                 buildings,
                 courtyardWall,
+                courtyardWallMetadata,
+                courtyardWallLocalBounds,
                 courtyardPillar,
+                courtyardPillarMetadata,
                 courtyardWell,
+                courtyardWellMetadata,
                 courtyardBush,
+                courtyardBushMetadata,
                 cityFootprint,
                 authoredCoreBounds,
                 roadCells,
                 mapOrigin,
                 gradeElevation,
-                seed);
+                seed,
+                generationTransactions);
             var reservedDetailAreas = new List<Rect>(courtyardDetails.ReservedAreas);
             BoulevardMedianDetailResult boulevardMedianDetails = AddBoulevardMedianDetails(
                 boulevardMedianRootObject.transform,
@@ -8560,15 +8628,21 @@ namespace Game.Editor
             Transform parent,
             List<GeneratedBuildingInfo> buildings,
             GameObject wallPrefab,
+            DenseCityVisualAssetMetadata wallMetadata,
+            Bounds wallLocalBounds,
             GameObject pillarPrefab,
+            DenseCityVisualAssetMetadata pillarMetadata,
             GameObject wellPrefab,
+            DenseCityVisualAssetMetadata wellMetadata,
             GameObject bushPrefab,
+            DenseCityVisualAssetMetadata bushMetadata,
             CityFootprint cityFootprint,
             Rect authoredCoreBounds,
             HashSet<Vector2Int> roadCells,
             Vector3 mapOrigin,
             float gradeElevation,
-            uint seed)
+            uint seed,
+            DenseCityGenerationTransactionContext generationTransactions)
         {
             var result = new CourtyardDetailResult();
             for (int buildingIndex = 0; buildingIndex < buildings.Count; buildingIndex++)
@@ -8610,26 +8684,37 @@ namespace Game.Editor
                     const float wallScale = 1f;
                     PlaceCourtyardWalls(
                         wallPrefab,
+                        wallMetadata,
+                        wallLocalBounds,
                         pillarPrefab,
+                        pillarMetadata,
                         parent,
                         yard,
                         side,
                         gradeElevation,
                         wallScale,
                         courtyardIndex,
+                        mapOrigin,
+                        seed,
+                        generationTransactions,
                         ref result.Walls,
                         ref result.Pillars);
 
                     Vector2 interiorCenter = yard.center;
                     if (Hash01(sideHash ^ 0x941ce2b7u) < 0.58f &&
-                        InstantiateGroundedDetail(
+                        InstantiateTransactionalGroundedDetail(
                             wellPrefab,
+                            wellMetadata,
                             parent,
                             $"{wellPrefab.name}_Courtyard_{courtyardIndex:0000}",
                             interiorCenter,
                             gradeElevation + 0.025f,
                             Hash01(sideHash ^ 0xe61b89a3u) * 360f,
-                            Mathf.Lerp(0.78f, 1.02f, Hash01(sideHash ^ 0x1f35ca9du))))
+                            Mathf.Lerp(0.78f, 1.02f, Hash01(sideHash ^ 0x1f35ca9du)),
+                            DenseCityPresentationCategory.Prop,
+                            "courtyard-well-visual",
+                            seed,
+                            generationTransactions))
                     {
                         result.Wells++;
                     }
@@ -8644,14 +8729,19 @@ namespace Game.Editor
                         if (Vector2.Distance(bushPosition, interiorCenter) < 1.15f)
                             bushPosition = Vector2.Lerp(bushPosition, yard.min + Vector2.one, 0.65f);
 
-                        if (InstantiateGroundedDetail(
+                        if (InstantiateTransactionalGroundedDetail(
                                 bushPrefab,
+                                bushMetadata,
                                 parent,
                                 $"{bushPrefab.name}_Courtyard_{courtyardIndex:0000}_{bushIndex:00}",
                                 bushPosition,
                                 gradeElevation + 0.02f,
                                 Hash01(bushHash ^ 0x4f7812c9u) * 360f,
-                                Mathf.Lerp(0.78f, 1.16f, Hash01(bushHash ^ 0xc7a4e591u))))
+                                Mathf.Lerp(0.78f, 1.16f, Hash01(bushHash ^ 0xc7a4e591u)),
+                                DenseCityPresentationCategory.Vegetation,
+                                "courtyard-bush-visual",
+                                seed,
+                                generationTransactions))
                         {
                             result.Bushes++;
                         }
@@ -8734,13 +8824,19 @@ namespace Game.Editor
 
         private static void PlaceCourtyardWalls(
             GameObject wallPrefab,
+            DenseCityVisualAssetMetadata wallMetadata,
+            Bounds wallLocalBounds,
             GameObject pillarPrefab,
+            DenseCityVisualAssetMetadata pillarMetadata,
             Transform parent,
             Rect yard,
             int buildingSide,
             float gradeElevation,
             float wallScale,
             int courtyardIndex,
+            Vector3 mapOrigin,
+            uint seed,
+            DenseCityGenerationTransactionContext generationTransactions,
             ref int wallCount,
             ref int pillarCount)
         {
@@ -8751,7 +8847,10 @@ namespace Game.Editor
                 float outerX = buildingSide == 0 ? yard.xMin + edgeInset : yard.xMax - edgeInset;
                 AddCourtyardEntrance(
                     wallPrefab,
+                    wallMetadata,
+                    wallLocalBounds,
                     pillarPrefab,
+                    pillarMetadata,
                     parent,
                     courtyardIndex,
                     new Vector2(outerX, yard.center.y),
@@ -8759,18 +8858,24 @@ namespace Game.Editor
                     yard.height - cornerClearance * 2f,
                     gradeElevation,
                     wallScale,
+                    mapOrigin,
+                    seed,
+                    generationTransactions,
                     ref wallCount,
                     ref pillarCount);
                 float sideCenterX = yard.center.x + (buildingSide == 0 ? cornerClearance * 0.5f : -cornerClearance * 0.5f);
-                AddCourtyardWall(wallPrefab, parent, courtyardIndex, "North", new Vector2(sideCenterX, yard.yMax - edgeInset), 0f, yard.width - cornerClearance, gradeElevation, wallScale, ref wallCount);
-                AddCourtyardWall(wallPrefab, parent, courtyardIndex, "South", new Vector2(sideCenterX, yard.yMin + edgeInset), 0f, yard.width - cornerClearance, gradeElevation, wallScale, ref wallCount);
+                AddCourtyardWall(wallPrefab, wallMetadata, wallLocalBounds, parent, courtyardIndex, "North", new Vector2(sideCenterX, yard.yMax - edgeInset), 0f, yard.width - cornerClearance, gradeElevation, wallScale, mapOrigin, seed, generationTransactions, ref wallCount);
+                AddCourtyardWall(wallPrefab, wallMetadata, wallLocalBounds, parent, courtyardIndex, "South", new Vector2(sideCenterX, yard.yMin + edgeInset), 0f, yard.width - cornerClearance, gradeElevation, wallScale, mapOrigin, seed, generationTransactions, ref wallCount);
             }
             else
             {
                 float outerZ = buildingSide == 2 ? yard.yMin + edgeInset : yard.yMax - edgeInset;
                 AddCourtyardEntrance(
                     wallPrefab,
+                    wallMetadata,
+                    wallLocalBounds,
                     pillarPrefab,
+                    pillarMetadata,
                     parent,
                     courtyardIndex,
                     new Vector2(yard.center.x, outerZ),
@@ -8778,17 +8883,23 @@ namespace Game.Editor
                     yard.width - cornerClearance * 2f,
                     gradeElevation,
                     wallScale,
+                    mapOrigin,
+                    seed,
+                    generationTransactions,
                     ref wallCount,
                     ref pillarCount);
                 float sideCenterZ = yard.center.y + (buildingSide == 2 ? cornerClearance * 0.5f : -cornerClearance * 0.5f);
-                AddCourtyardWall(wallPrefab, parent, courtyardIndex, "West", new Vector2(yard.xMin + edgeInset, sideCenterZ), 90f, yard.height - cornerClearance, gradeElevation, wallScale, ref wallCount);
-                AddCourtyardWall(wallPrefab, parent, courtyardIndex, "East", new Vector2(yard.xMax - edgeInset, sideCenterZ), 90f, yard.height - cornerClearance, gradeElevation, wallScale, ref wallCount);
+                AddCourtyardWall(wallPrefab, wallMetadata, wallLocalBounds, parent, courtyardIndex, "West", new Vector2(yard.xMin + edgeInset, sideCenterZ), 90f, yard.height - cornerClearance, gradeElevation, wallScale, mapOrigin, seed, generationTransactions, ref wallCount);
+                AddCourtyardWall(wallPrefab, wallMetadata, wallLocalBounds, parent, courtyardIndex, "East", new Vector2(yard.xMax - edgeInset, sideCenterZ), 90f, yard.height - cornerClearance, gradeElevation, wallScale, mapOrigin, seed, generationTransactions, ref wallCount);
             }
         }
 
         private static void AddCourtyardEntrance(
             GameObject wallPrefab,
+            DenseCityVisualAssetMetadata wallMetadata,
+            Bounds wallLocalBounds,
             GameObject pillarPrefab,
+            DenseCityVisualAssetMetadata pillarMetadata,
             Transform parent,
             int courtyardIndex,
             Vector2 center,
@@ -8796,6 +8907,9 @@ namespace Game.Editor
             float totalLength,
             float gradeElevation,
             float wallScale,
+            Vector3 mapOrigin,
+            uint seed,
+            DenseCityGenerationTransactionContext generationTransactions,
             ref int wallCount,
             ref int pillarCount)
         {
@@ -8806,6 +8920,8 @@ namespace Game.Editor
 
             AddCourtyardWall(
                 wallPrefab,
+                wallMetadata,
+                wallLocalBounds,
                 parent,
                 courtyardIndex,
                 "EntranceLeft",
@@ -8814,9 +8930,14 @@ namespace Game.Editor
                 segmentLength,
                 gradeElevation,
                 wallScale,
+                mapOrigin,
+                seed,
+                generationTransactions,
                 ref wallCount);
             AddCourtyardWall(
                 wallPrefab,
+                wallMetadata,
+                wallLocalBounds,
                 parent,
                 courtyardIndex,
                 "EntranceRight",
@@ -8825,10 +8946,14 @@ namespace Game.Editor
                 segmentLength,
                 gradeElevation,
                 wallScale,
+                mapOrigin,
+                seed,
+                generationTransactions,
                 ref wallCount);
 
             AddCourtyardPillar(
                 pillarPrefab,
+                pillarMetadata,
                 parent,
                 courtyardIndex,
                 "GateLeft",
@@ -8836,9 +8961,12 @@ namespace Game.Editor
                 wallRotation,
                 gradeElevation,
                 wallScale,
+                seed,
+                generationTransactions,
                 ref pillarCount);
             AddCourtyardPillar(
                 pillarPrefab,
+                pillarMetadata,
                 parent,
                 courtyardIndex,
                 "GateRight",
@@ -8846,11 +8974,14 @@ namespace Game.Editor
                 wallRotation,
                 gradeElevation,
                 wallScale,
+                seed,
+                generationTransactions,
                 ref pillarCount);
         }
 
         private static void AddCourtyardPillar(
             GameObject prefab,
+            DenseCityVisualAssetMetadata metadata,
             Transform parent,
             int courtyardIndex,
             string pillarName,
@@ -8858,16 +8989,23 @@ namespace Game.Editor
             float rotation,
             float gradeElevation,
             float scale,
+            uint seed,
+            DenseCityGenerationTransactionContext generationTransactions,
             ref int pillarCount)
         {
-            if (InstantiateGroundedDetail(
+            if (InstantiateTransactionalGroundedDetail(
                     prefab,
+                    metadata,
                     parent,
                     $"{prefab.name}_Courtyard_{courtyardIndex:0000}_{pillarName}",
                     position,
                     gradeElevation + 0.02f,
                     rotation,
-                    scale))
+                    scale,
+                    DenseCityPresentationCategory.Infrastructure,
+                    "courtyard-pillar-visual",
+                    seed,
+                    generationTransactions))
             {
                 pillarCount++;
             }
@@ -8875,6 +9013,8 @@ namespace Game.Editor
 
         private static void AddCourtyardWall(
             GameObject prefab,
+            DenseCityVisualAssetMetadata metadata,
+            Bounds localBounds,
             Transform parent,
             int courtyardIndex,
             string edgeName,
@@ -8883,36 +9023,79 @@ namespace Game.Editor
             float targetLength,
             float gradeElevation,
             float heightScale,
+            Vector3 mapOrigin,
+            uint seed,
+            DenseCityGenerationTransactionContext generationTransactions,
             ref int wallCount)
         {
-            GameObject wall = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
-            if (wall == null)
-                return;
-
-            wall.name = $"{prefab.name}_Courtyard_{courtyardIndex:0000}_{edgeName}";
-            wall.transform.SetPositionAndRotation(
-                new Vector3(position.x, 0f, position.y),
-                Quaternion.Euler(0f, rotation, 0f));
-            if (!TryGetRendererBounds(wall, out Bounds initialBounds))
-            {
-                UnityEngine.Object.DestroyImmediate(wall);
-                return;
-            }
-
+            Quaternion worldRotation = Quaternion.Euler(0f, rotation, 0f);
+            Bounds initialBounds = TransformLocalBounds(
+                localBounds,
+                Matrix4x4.TRS(new Vector3(position.x, 0f, position.y), worldRotation, Vector3.one));
             float sourceLength = rotation % 180f == 0f ? initialBounds.size.x : initialBounds.size.z;
             float lengthScale = Mathf.Clamp(targetLength / Mathf.Max(0.1f, sourceLength), 0.22f, 1.65f);
-            wall.transform.localScale = new Vector3(lengthScale, heightScale, 1f);
-            if (!TryGetRendererBounds(wall, out Bounds scaledBounds))
+            var scale = new Vector3(lengthScale, heightScale, 1f);
+            Bounds scaledBounds = TransformLocalBounds(
+                localBounds,
+                Matrix4x4.TRS(new Vector3(position.x, 0f, position.y), worldRotation, scale));
+            var groundedPosition = new Vector3(
+                position.x,
+                gradeElevation + 0.02f - scaledBounds.min.y,
+                position.y);
+            Matrix4x4 worldMatrix = Matrix4x4.TRS(groundedPosition, worldRotation, scale);
+            var roadCell = new Vector2Int(
+                Mathf.FloorToInt((position.x - mapOrigin.x) / RoadGridSize),
+                Mathf.FloorToInt((position.y - mapOrigin.z) / RoadGridSize));
+            var chunk = new Vector2Int(
+                Mathf.FloorToInt((float)roadCell.x / RoadChunkSize),
+                Mathf.FloorToInt((float)roadCell.y / RoadChunkSize));
+            var blockerSize = new Vector2(
+                Mathf.Max(0.1f, localBounds.size.x * lengthScale),
+                Mathf.Max(0.1f, localBounds.size.z));
+            GameObject wall = null;
+            try
             {
-                UnityEngine.Object.DestroyImmediate(wall);
-                return;
+                bool accepted = generationTransactions.TryPlaceVisualBlocker(
+                    0,
+                    sequence => DenseCityVisualBlockerRecordFactory.Create(
+                        new DenseCityVisualBlockerRecordInput(
+                            DenseCityGeneratorSchema,
+                            unchecked((int)seed),
+                            0,
+                            sequence,
+                            "courtyard-wall",
+                            metadata.PrefabAssetGuid,
+                            metadata.PrefabLocalId,
+                            metadata.MaterialAssetGuids,
+                            worldMatrix,
+                            blockerSize,
+                            gradeElevation + 0.02f,
+                            DenseCityBuildingSurfaceLayer,
+                            chunk,
+                            true,
+                            true,
+                            1)),
+                    () =>
+                    {
+                        wall = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
+                        if (wall == null)
+                            return false;
+                        wall.name = $"{prefab.name}_Courtyard_{courtyardIndex:0000}_{edgeName}";
+                        wall.transform.SetPositionAndRotation(groundedPosition, worldRotation);
+                        wall.transform.localScale = scale;
+                        ValidateWorldMatrix(wall.transform, worldMatrix, "courtyard wall");
+                        DisableColliders(wall);
+                        return true;
+                    });
+                if (accepted)
+                    wallCount++;
             }
-
-            Vector3 groundedPosition = wall.transform.position;
-            groundedPosition.y += gradeElevation + 0.02f - scaledBounds.min.y;
-            wall.transform.position = groundedPosition;
-            DisableColliders(wall);
-            wallCount++;
+            catch
+            {
+                if (wall != null)
+                    UnityEngine.Object.DestroyImmediate(wall);
+                throw;
+            }
         }
 
         private static BuildingMaterialVariantResult ApplyBuildingMaterialVariants(

@@ -26,6 +26,7 @@ namespace Game.Editor
     internal static class OperationMapEntityPresentationCandidateBakeValidator
     {
         internal const int ExpectedGameplayBuildings = 432;
+        internal const int ExpectedGameplayVehicles = 22;
         internal const int ExpectedPresentationRoots = 3;
         internal const int ExpectedRenderOnlyOwners = 9090;
         internal const int ExpectedPresentationIdentities = 9544;

@@ -731,7 +731,7 @@ Runtime procedural generation is not the fallback for a rendering or packaging f
 
 Progress is checklist based. Every checkbox counts. Update the count, phase status, and validation log in the same stable change that completes an item.
 
-Current progress: **60 / 148 (41%)**
+Current progress: **61 / 148 (41%)**
 
 | Phase | Status |
 |---|---|
@@ -741,7 +741,7 @@ Current progress: **60 / 148 (41%)**
 | Phase 2: Generator semantic output | In progress; building/attachment, infrastructure, canal/park, civic/market, and combined courtyard/detail records integrated and validated |
 | Phase 3: Collider-free enforcement | In progress; instance-only recursive stripper integrated into record-driven presentation replay |
 | Phase 4: Surface and blocker proxies | Complete; deterministic terrain, road, bridge, ramp, canal, building, wall, and rock proxies are validated without physics components |
-| Phase 5: Readiness and Bake All integration | Not started |
+| Phase 5: Readiness and Bake All integration | In progress; existing-map entity-presentation role, identity, placement, hash, and physics readiness gate is live |
 | Phase 6: ECS presentation optimization | Not started |
 | Phase 7: Runtime package separation | Not started |
 | Phase 8: Runtime lifecycle validation | Not started |
@@ -865,7 +865,7 @@ Current progress: **60 / 148 (41%)**
 
 ### Phase 5: Readiness And Bake All Integration
 
-- [ ] Add `OperationMapEntityPresentationReadinessValidator` with menu and batch entry points.
+- [x] Add `OperationMapEntityPresentationReadinessValidator` with menu and batch entry points.
 - [ ] Add `DenseCityBakeReadinessValidator` with menu and batch entry points.
 - [ ] Validate exactly one generated root per required role, matching generation id/schema/version/seed, and deterministic content hashes.
 - [ ] Validate zero unclassified generated renderers and zero detailed renderers beneath proxy roots.
@@ -1119,6 +1119,7 @@ Extend existing tests rather than duplicating them for:
 | 2026-07-22 | Phase 4 bridge-deck/approach-ramp proxy separation | Focused proxy validation `/private/tmp/warline-dense-city-bridge-ramp-proxy.log` 11/11; assembly boundaries `/private/tmp/warline-dense-city-bridge-ramp-architecture.log` 31/31; ECS/Burst guardrails `/private/tmp/warline-dense-city-bridge-ramp-ecs.log` 11/11; `dotnet build Game.Tests.Editor.csproj --no-restore --disable-build-servers` 0 errors; `git diff --check` | Passed | Added an integration fixture over the real `DenseCityInfrastructureRecordFactory.CreateBridgeWithApproaches` path. One bridge transaction emits one `Bridge` deck record and two `Ramp` approach records, and the proxy builder preserves them as separate semantic partitions with explicit layer 2 and movement mask 3 metadata. Geometry counts prove the deck remains one quad while the approaches form the independent ramp mesh; no presentation mesh is rasterized into gameplay data. No duplicate bridge builder, runtime owner, scene mutation, Addressables change, production cutover, or Android build was added. Progress is 58/148 (39%). |
 | 2026-07-22 | Phase 4 collider-free canal-water exclusion integration | Focused proxy validation `/private/tmp/warline-dense-city-canal-water-proxy.log` 12/12; assembly boundaries `/private/tmp/warline-dense-city-canal-water-architecture.log` 31/31; ECS/Burst guardrails `/private/tmp/warline-dense-city-canal-water-ecs.log` 11/11; `dotnet build Game.Tests.Editor.csproj --no-restore --disable-build-servers` 0 errors; `git diff --check` | Passed | Added an integration fixture over the real canal-water record factory. Its zero-movement exclusion produces exactly one layer-4 `Blocker` proxy, while the bed and water remain two presentation-only records and never become gameplay meshes. The production map-surface bake path classifies every sampled canal cell as blocked for infantry, and the complete generated proxy hierarchy contains no collider or rigidbody. No duplicate water owner, presentation-mesh rasterization, runtime system, managed bridge, scene mutation, Addressables change, production cutover, or Android build was added. Progress is 59/148 (40%). |
 | 2026-07-22 | Phase 4 building/wall/rock coarse-blocker integration and phase closure | Focused proxy validation `/private/tmp/warline-dense-city-building-wall-rock-proxy.log` 13/13; assembly boundaries `/private/tmp/warline-dense-city-building-wall-rock-architecture.log` 31/31; ECS/Burst guardrails `/private/tmp/warline-dense-city-building-wall-rock-ecs.log` 11/11; `dotnet build Game.Tests.Editor.csproj --no-restore --disable-build-servers` 0 errors; `git diff --check` | Passed; Phase 4 complete | Added one integration fixture over the real generated-building factory and the shared visual-blocker factory used by courtyard walls and urban rocks. Their deterministic rectangle/oriented-rectangle footprints produce three coarse blockers in one explicit layer-3 zero-movement partition while the building foundation remains independently terrain-owned. Geometry counts prove all three footprints are represented without detailed presentation-mesh rasterization, and the proxy hierarchy remains free of colliders and rigidbodies. Every Phase 4 checklist item is now accepted. No runtime owner, managed bridge, scene mutation, Addressables change, production cutover, or Android build was added. Progress is 60/148 (41%). |
+| 2026-07-22 | Phase 5 existing-map entity-presentation readiness entry point | Focused readiness `/private/tmp/warline-operation-map-presentation-readiness-focused.log` 4/4; live protected-candidate batch entry `/private/tmp/warline-operation-map-presentation-readiness-live.log`; assembly boundaries `/private/tmp/warline-operation-map-presentation-readiness-architecture.log` 31/31; ECS/Burst guardrails `/private/tmp/warline-operation-map-presentation-readiness-ecs.log` 11/11; `dotnet build Game.Tests.Editor.csproj --no-restore --disable-build-servers` 0 errors; `git diff --check` | Passed; broader Phase 5 gates remain open | Added the approved `OperationMapEntityPresentationReadinessValidator` with a `Game/Operation Maps/EntityScene Migration` menu command and public batch entry point. It non-mutatingly requires exactly one valid root for each of the three closed roles, one shared migration hash, unique valid source identities, matching nearest role ownership, unique role-scoped placement indices, accepted identity counts, and zero prohibited physics components including inactive descendants. Focused fixtures reject duplicate identities, wrong role ancestry, and inactive colliders. The real protected candidate passes with 432 building, 22 vehicle, and 9,090 render-only identities. Protected-content parity, legacy-spawn retirement, and package publication remain separate open checklist items. No scene save, source/candidate mutation, Addressables change, production cutover, or Android build occurred. Progress is 61/148 (41%). |
 
 ## 25. Completion Rule
 

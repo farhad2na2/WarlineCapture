@@ -16,9 +16,52 @@ public sealed class OperationMapBuildingAuthoringTests
         var recordTests = new DenseCityGenerationRecordsTests();
         authoringTests.TryValidate_RequiresStableIdentityAndDefinition();
         authoringTests.TryValidate_AcceptsGeneratedStableIdentityWithoutGlobalObjectId();
+        authoringTests.ConfigureGeneratedForEditor_AssignsCompleteValidatedOwnership();
         authoringTests.TryValidate_RejectsMixedAuthoredAndGeneratedIdentities();
         recordTests.RecordIdentity_CreatesDeterministicBoundedGeneratedStableId();
-        Debug.Log("[OperationMapGeneratedBuildingIdentityValidation] result=Passed tests=4");
+        Debug.Log("[OperationMapGeneratedBuildingIdentityValidation] result=Passed tests=5");
+    }
+
+    [Test]
+    public void ConfigureGeneratedForEditor_AssignsCompleteValidatedOwnership()
+    {
+        var owner = new GameObject("GeneratedBuildingOwner");
+        var intactVisual = new GameObject("IntactVisual");
+        var destroyedVisual = new GameObject("DestroyedVisual");
+        var definitionOwner = new GameObject("BuildingDefinition");
+        try
+        {
+            intactVisual.transform.SetParent(owner.transform, false);
+            destroyedVisual.transform.SetParent(owner.transform, false);
+            var authoring = owner.AddComponent<OperationMapBuildingAuthoring>();
+            BuildingDefinitionAuthoring definition =
+                definitionOwner.AddComponent<BuildingDefinitionAuthoring>();
+
+            authoring.ConfigureGeneratedForEditor(
+                "opmap.skirmish.building_test_01",
+                GeneratedStableId,
+                17,
+                3,
+                new Vector2Int(23, 41),
+                definition,
+                intactVisual,
+                destroyedVisual);
+
+            Assert.That(authoring.TryValidate(out string error), Is.True, error);
+            Assert.That(authoring.StableId, Is.EqualTo(GeneratedStableId));
+            Assert.That(authoring.SourceGlobalObjectId, Is.Empty);
+            Assert.That(authoring.PlacementIndex, Is.EqualTo(17));
+            Assert.That(authoring.FactionId, Is.EqualTo(3));
+            Assert.That(authoring.OriginCell, Is.EqualTo(new Vector2Int(23, 41)));
+            Assert.That(authoring.Definition, Is.SameAs(definition));
+            Assert.That(authoring.IntactVisualRoot, Is.SameAs(intactVisual));
+            Assert.That(authoring.DestroyedVisualRoot, Is.SameAs(destroyedVisual));
+        }
+        finally
+        {
+            Object.DestroyImmediate(owner);
+            Object.DestroyImmediate(definitionOwner);
+        }
     }
 
     [Test]

@@ -32,6 +32,30 @@ namespace Game.Authoring
         public GameObject IntactVisualRoot => intactVisualRoot;
         public GameObject DestroyedVisualRoot => destroyedVisualRoot;
 
+#if UNITY_EDITOR
+        public void ConfigureGeneratedForEditor(
+            string mapId,
+            string generatedStableId,
+            int generatedPlacementIndex,
+            byte ownerFactionId,
+            Vector2Int generatedOriginCell,
+            BuildingDefinitionAuthoring buildingDefinition,
+            GameObject intactRoot,
+            GameObject destroyedRoot)
+        {
+            operationMapId = mapId;
+            stableId = generatedStableId;
+            sourceGlobalObjectId = string.Empty;
+            placementIndex = generatedPlacementIndex;
+            factionId = ownerFactionId;
+            originCell = generatedOriginCell;
+            blockerPolicy = OperationMapBuildingBlockerPolicy.RubbleRemainsBlocked;
+            definition = buildingDefinition;
+            intactVisualRoot = intactRoot;
+            destroyedVisualRoot = destroyedRoot;
+        }
+#endif
+
         public bool TryValidate(out string error)
         {
             if (!Game.Configs.OperationMapIdentityRules.IsValidOperationMapId(operationMapId))

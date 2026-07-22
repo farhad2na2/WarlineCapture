@@ -47,6 +47,8 @@ public static class DenseCityBuildingPlacementIntegrationValidation
             Assert.That(result.SemanticBoulevardMedianTrees, Is.GreaterThan(0));
             Assert.That(result.SemanticBoulevardMedianLights, Is.GreaterThan(0));
             Assert.That(result.SemanticSidewalkStreetLights, Is.GreaterThan(0));
+            Assert.That(result.SemanticGrassPatches, Is.GreaterThan(0));
+            Assert.That(result.SemanticMainStreetBushes, Is.GreaterThan(0));
             Assert.That(result.SemanticSurfaces, Is.GreaterThan(result.SemanticBuildings * 2));
             Debug.Log(
                 $"[DenseCityBuildingPlacementIntegrationValidation] result=Passed " +
@@ -64,7 +66,9 @@ public static class DenseCityBuildingPlacementIntegrationValidation
                 $"horizonMountains={result.SemanticHorizonMountains} " +
                 $"boulevardMedianTrees={result.SemanticBoulevardMedianTrees} " +
                 $"boulevardMedianLights={result.SemanticBoulevardMedianLights} " +
-                $"sidewalkStreetLights={result.SemanticSidewalkStreetLights}");
+                $"sidewalkStreetLights={result.SemanticSidewalkStreetLights} " +
+                $"grassPatches={result.SemanticGrassPatches} " +
+                $"mainStreetBushes={result.SemanticMainStreetBushes}");
         }
         catch (Exception exception)
         {

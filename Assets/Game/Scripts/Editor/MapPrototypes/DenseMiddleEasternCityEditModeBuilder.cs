@@ -40,6 +40,8 @@ namespace Game.Editor
             public readonly int SemanticBoulevardMedianTrees;
             public readonly int SemanticBoulevardMedianLights;
             public readonly int SemanticSidewalkStreetLights;
+            public readonly int SemanticGrassPatches;
+            public readonly int SemanticMainStreetBushes;
 
             public Result(
                 int roadTiles,
@@ -63,7 +65,9 @@ namespace Game.Editor
                 int semanticHorizonMountains,
                 int semanticBoulevardMedianTrees,
                 int semanticBoulevardMedianLights,
-                int semanticSidewalkStreetLights)
+                int semanticSidewalkStreetLights,
+                int semanticGrassPatches,
+                int semanticMainStreetBushes)
             {
                 RoadTiles = roadTiles;
                 RoadChunks = roadChunks;
@@ -87,6 +91,8 @@ namespace Game.Editor
                 SemanticBoulevardMedianTrees = semanticBoulevardMedianTrees;
                 SemanticBoulevardMedianLights = semanticBoulevardMedianLights;
                 SemanticSidewalkStreetLights = semanticSidewalkStreetLights;
+                SemanticGrassPatches = semanticGrassPatches;
+                SemanticMainStreetBushes = semanticMainStreetBushes;
             }
         }
 
@@ -1378,6 +1384,12 @@ namespace Game.Editor
             int semanticSidewalkStreetLights = CountPresentationRecords(
                 generationTransactions.Records.Presentations,
                 "sidewalk-street-light-visual");
+            int semanticGrassPatches = CountPresentationRecords(
+                generationTransactions.Records.Presentations,
+                "free-ground-grass-visual");
+            int semanticMainStreetBushes = CountPresentationRecords(
+                generationTransactions.Records.Presentations,
+                "main-street-bush-visual");
             if (semanticCanalWaterExclusions != canalResult.WaterTiles ||
                 semanticCanalBedPresentations != canalResult.WaterTiles ||
                 semanticCanalWaterPresentations != canalResult.WaterTiles)
@@ -1456,6 +1468,14 @@ namespace Game.Editor
                     $"medianLights={urbanDetails.BoulevardMedianLights}/{semanticBoulevardMedianLights} " +
                     $"sidewalkLights={urbanDetails.StreetLights}/{semanticSidewalkStreetLights}.");
             }
+            if (semanticGrassPatches != urbanDetails.GrassPatches ||
+                semanticMainStreetBushes != urbanDetails.MainStreetBushes)
+            {
+                throw new InvalidOperationException(
+                    $"Landscaping semantic parity failed: " +
+                    $"grass={urbanDetails.GrassPatches}/{semanticGrassPatches} " +
+                    $"mainStreetBushes={urbanDetails.MainStreetBushes}/{semanticMainStreetBushes}.");
+            }
             Debug.Log(
                 $"[DenseCitySemanticRecords] buildings={generationTransactions.Records.Buildings.Count} " +
                 $"surfaces={generationTransactions.Records.Surfaces.Count} " +
@@ -1470,7 +1490,9 @@ namespace Game.Editor
                 $"horizonMountains={semanticHorizonMountains} " +
                 $"boulevardMedianTrees={semanticBoulevardMedianTrees} " +
                 $"boulevardMedianLights={semanticBoulevardMedianLights} " +
-                $"sidewalkStreetLights={semanticSidewalkStreetLights}");
+                $"sidewalkStreetLights={semanticSidewalkStreetLights} " +
+                $"grassPatches={semanticGrassPatches} " +
+                $"mainStreetBushes={semanticMainStreetBushes}");
 
             int removedFloatingBranches = RemoveUnsupportedElevatedVisualBranches(generatedRoot);
             Debug.Log($"[DenseCityFloatingItemCleanup] removedBranches={removedFloatingBranches}");
@@ -1505,7 +1527,9 @@ namespace Game.Editor
                 semanticHorizonMountains,
                 semanticBoulevardMedianTrees,
                 semanticBoulevardMedianLights,
-                semanticSidewalkStreetLights);
+                semanticSidewalkStreetLights,
+                semanticGrassPatches,
+                semanticMainStreetBushes);
         }
 
         private static int CountBuildingRecords(
@@ -7268,6 +7292,10 @@ namespace Game.Editor
                 DenseCityVisualAssetMetadataExtractor.Extract(boulevardMedianTree);
             DenseCityVisualAssetMetadata streetLightMetadata =
                 DenseCityVisualAssetMetadataExtractor.Extract(streetLight);
+            DenseCityVisualAssetMetadata grassMetadata =
+                DenseCityVisualAssetMetadataExtractor.Extract(grass);
+            DenseCityVisualAssetMetadata mainStreetBushMetadata =
+                DenseCityVisualAssetMetadataExtractor.Extract(mainStreetBush);
 
             var streetPropRootObject = new GameObject("DenseCity_GroundedStreetProps");
             streetPropRootObject.transform.SetParent(generatedRoot, false);
@@ -7338,6 +7366,7 @@ namespace Game.Editor
                 mainStreetBushRootObject.transform,
                 buildings,
                 mainStreetBush,
+                mainStreetBushMetadata,
                 mapOrigin,
                 cityFootprint,
                 authoredCoreBounds,
@@ -7347,7 +7376,8 @@ namespace Game.Editor
                 reservedDetailAreas,
                 landscapingDetails,
                 gradeElevation,
-                seed);
+                seed,
+                generationTransactions);
             reservedDetailAreas.AddRange(landscapingDetails.ReservedAreas);
             UtilityDetailResult utilityDetails = AddRoadsidePowerNetwork(
                 utilityRootObject.transform,
@@ -7387,6 +7417,7 @@ namespace Game.Editor
                 grassRootObject.transform,
                 buildings,
                 grass,
+                grassMetadata,
                 mapOrigin,
                 mapWidth,
                 mapDepth,
@@ -7396,7 +7427,8 @@ namespace Game.Editor
                 reservedDetailAreas,
                 landscapingDetails,
                 gradeElevation,
-                seed);
+                seed,
+                generationTransactions);
             for (int index = bushReservedAreaCount; index < landscapingDetails.ReservedAreas.Count; index++)
                 reservedDetailAreas.Add(landscapingDetails.ReservedAreas[index]);
             int streetPropCount = AddGroundedBuildingProps(
@@ -8219,6 +8251,7 @@ namespace Game.Editor
             Transform parent,
             List<GeneratedBuildingInfo> buildings,
             GameObject prefab,
+            DenseCityVisualAssetMetadata metadata,
             Vector3 mapOrigin,
             float mapWidth,
             float mapDepth,
@@ -8228,7 +8261,8 @@ namespace Game.Editor
             List<Rect> reservedAreas,
             LandscapingDetailResult result,
             float gradeElevation,
-            uint seed)
+            uint seed,
+            DenseCityGenerationTransactionContext generationTransactions)
         {
             const float spacing = 14f;
             for (float z = spacing * 0.5f; z < mapDepth; z += spacing)
@@ -8251,8 +8285,9 @@ namespace Game.Editor
                     if (Hash01(hash ^ 0x8f64d731u) > placementChance)
                         continue;
 
-                    if (!TryInstantiateGroundedFreeDetail(
+                    if (!TryInstantiateTransactionalGroundedFreeDetail(
                             prefab,
+                            metadata,
                             parent,
                             $"{prefab.name}_FreeGround_{result.GrassPatches:0000}",
                             position,
@@ -8265,6 +8300,10 @@ namespace Game.Editor
                             reservedAreas,
                             result.ReservedAreas,
                             authoredCoreBounds,
+                            DenseCityPresentationCategory.Vegetation,
+                            "free-ground-grass-visual",
+                            seed,
+                            generationTransactions,
                             out Rect occupiedArea))
                     {
                         continue;
@@ -8280,6 +8319,7 @@ namespace Game.Editor
             Transform parent,
             List<GeneratedBuildingInfo> buildings,
             GameObject prefab,
+            DenseCityVisualAssetMetadata metadata,
             Vector3 mapOrigin,
             CityFootprint cityFootprint,
             Rect authoredCoreBounds,
@@ -8289,7 +8329,8 @@ namespace Game.Editor
             List<Rect> reservedAreas,
             LandscapingDetailResult result,
             float gradeElevation,
-            uint seed)
+            uint seed,
+            DenseCityGenerationTransactionContext generationTransactions)
         {
             var sortedRoadCells = new List<Vector2Int>(roadCells);
             sortedRoadCells.Sort((left, right) =>
@@ -8340,8 +8381,9 @@ namespace Game.Editor
                         continue;
 
                     uint detailHash = corridorHash ^ (uint)(along * 0x45d9f3b) ^ (uint)sideAttempt;
-                    if (!TryInstantiateGroundedFreeDetail(
+                    if (!TryInstantiateTransactionalGroundedFreeDetail(
                             prefab,
+                            metadata,
                             parent,
                             $"{prefab.name}_MainStreet_{result.MainStreetBushes:0000}",
                             position,
@@ -8354,6 +8396,10 @@ namespace Game.Editor
                             reservedAreas,
                             result.ReservedAreas,
                             authoredCoreBounds,
+                            DenseCityPresentationCategory.Vegetation,
+                            "main-street-bush-visual",
+                            seed,
+                            generationTransactions,
                             out Rect occupiedArea))
                     {
                         continue;
@@ -9944,6 +9990,70 @@ namespace Game.Editor
             instance.transform.position = worldPosition;
             DisableColliders(instance);
             return true;
+        }
+
+        private static bool TryInstantiateTransactionalGroundedFreeDetail(
+            GameObject prefab,
+            DenseCityVisualAssetMetadata metadata,
+            Transform parent,
+            string objectName,
+            Vector2 position,
+            float supportHeight,
+            float rotationDegrees,
+            float scale,
+            HashSet<Vector2Int> roadCells,
+            Vector3 mapOrigin,
+            List<GeneratedBuildingInfo> buildings,
+            List<Rect> reservedAreas,
+            List<Rect> localReservedAreas,
+            Rect authoredCoreBounds,
+            DenseCityPresentationCategory category,
+            string recordKind,
+            uint seed,
+            DenseCityGenerationTransactionContext generationTransactions,
+            out Rect occupiedArea)
+        {
+            GroundedDetailPlan plan = PlanGroundedDetail(
+                prefab,
+                position,
+                supportHeight,
+                rotationDegrees,
+                scale);
+            if (!TryGetPrefabLocalRendererBounds(prefab.transform, out Bounds localBounds))
+                throw new InvalidOperationException($"Free detail prefab '{prefab.name}' has no renderer bounds.");
+            Bounds plannedBounds = TransformLocalBounds(localBounds, plan.WorldMatrix);
+            const float detailClearance = 0.08f;
+            occupiedArea = Rect.MinMaxRect(
+                plannedBounds.min.x - detailClearance,
+                plannedBounds.min.z - detailClearance,
+                plannedBounds.max.x + detailClearance,
+                plannedBounds.max.z + detailClearance);
+            if (authoredCoreBounds.Overlaps(occupiedArea) ||
+                OverlapsRoadCell(occupiedArea, roadCells, mapOrigin) ||
+                OverlapsAnyBuilding(occupiedArea, buildings) ||
+                OverlapsAnyRect(occupiedArea, reservedAreas) ||
+                OverlapsAnyRect(occupiedArea, localReservedAreas))
+            {
+                occupiedArea = default;
+                return false;
+            }
+
+            bool accepted = InstantiateTransactionalGroundedDetail(
+                prefab,
+                metadata,
+                parent,
+                objectName,
+                position,
+                supportHeight,
+                rotationDegrees,
+                scale,
+                category,
+                recordKind,
+                seed,
+                generationTransactions);
+            if (!accepted)
+                occupiedArea = default;
+            return accepted;
         }
 
         private static void ValidateNoRoadOverlappingDetails(

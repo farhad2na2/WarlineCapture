@@ -18,6 +18,7 @@ public sealed class DenseCitySurfaceProxyBuilderTests
     private const string OutputRoot = TempRoot + "/Primary/" + OperationMapId + "/Candidate/" + Hash;
     private const string OutputFolder = OutputRoot + "/SurfaceProxies";
     private const string SourceGuid = "0123456789abcdef0123456789abcdef";
+    private static readonly Rect MapSurfaceBounds = new(-10f, -10f, 100f, 100f);
     private const string Hash =
         "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 
@@ -29,6 +30,7 @@ public sealed class DenseCitySurfaceProxyBuilderTests
             suite.Build_PartitionsRecordsAndCreatesBakeOnlyMeshes,
             suite.Build_MergesOnlyAdjacentCoplanarRectangles,
             suite.Build_IsDeterministicAcrossEquivalentRecordSets,
+            suite.Build_OutOfBoundsPolygonLeavesNoCandidateOutput,
             suite.Build_InvalidConcavePolygonLeavesNoCandidateOutput
         };
 
@@ -71,7 +73,12 @@ public sealed class DenseCitySurfaceProxyBuilderTests
         using DenseCityGenerationRecordSet records = CreateRepresentativeRecords();
 
         DenseCitySurfaceProxyBuildResult result =
-            DenseCitySurfaceProxyBuilder.Build(records, mapRoot, OperationMapId, OutputFolder);
+            DenseCitySurfaceProxyBuilder.Build(
+                records,
+                mapRoot,
+                OperationMapId,
+                MapSurfaceBounds,
+                OutputFolder);
 
         Assert.That(result.Records, Is.EqualTo(7));
         Assert.That(result.Partitions, Is.EqualTo(6));
@@ -172,7 +179,12 @@ public sealed class DenseCitySurfaceProxyBuilderTests
         records.Seal();
 
         DenseCitySurfaceProxyBuildResult result =
-            DenseCitySurfaceProxyBuilder.Build(records, mapRoot, OperationMapId, OutputFolder);
+            DenseCitySurfaceProxyBuilder.Build(
+                records,
+                mapRoot,
+                OperationMapId,
+                MapSurfaceBounds,
+                OutputFolder);
 
         Assert.That(result.Partitions, Is.EqualTo(2));
         Assert.That(result.Records, Is.EqualTo(5));
@@ -195,6 +207,7 @@ public sealed class DenseCitySurfaceProxyBuilderTests
             firstRecords,
             firstRoot,
             OperationMapId,
+            MapSurfaceBounds,
             TempRoot + "/First/" + OperationMapId + "/Candidate/" + Hash + "/SurfaceProxies");
         string firstSignature = CreateMeshSignature(firstRoot);
         EditorSceneManager.CloseScene(firstEntity, true);
@@ -207,11 +220,38 @@ public sealed class DenseCitySurfaceProxyBuilderTests
             secondRecords,
             secondRoot,
             OperationMapId,
+            MapSurfaceBounds,
             TempRoot + "/Second/" + OperationMapId + "/Candidate/" + Hash + "/SurfaceProxies");
 
         Assert.That(CreateMeshSignature(secondRoot), Is.EqualTo(firstSignature));
         Assert.That(secondMap.IsValid(), Is.True);
         Assert.That(secondEntity.IsValid(), Is.True);
+    }
+
+    [Test]
+    public void Build_OutOfBoundsPolygonLeavesNoCandidateOutput()
+    {
+        var (_, _, mapRoot) = CreateScenePair("bounds");
+        using var records = new DenseCityGenerationRecordSet(1, 1, 1);
+        records.Add(CreateSurface(
+            1,
+            DenseCitySurfaceRecordKind.Terrain,
+            Rectangle(88f),
+            1,
+            0,
+            Vector2Int.zero));
+        records.Seal();
+
+        Assert.That(
+            () => DenseCitySurfaceProxyBuilder.Build(
+                records,
+                mapRoot,
+                OperationMapId,
+                MapSurfaceBounds,
+                OutputFolder),
+            Throws.InvalidOperationException.With.Message.Contains("map bounds"));
+        Assert.That(AssetDatabase.IsValidFolder(OutputFolder), Is.False);
+        Assert.That(mapRoot.GetComponentsInChildren<MeshFilter>(true), Is.Empty);
     }
 
     [Test]
@@ -236,7 +276,12 @@ public sealed class DenseCitySurfaceProxyBuilderTests
         records.Seal();
 
         Assert.That(
-            () => DenseCitySurfaceProxyBuilder.Build(records, mapRoot, OperationMapId, OutputFolder),
+            () => DenseCitySurfaceProxyBuilder.Build(
+                records,
+                mapRoot,
+                OperationMapId,
+                MapSurfaceBounds,
+                OutputFolder),
             Throws.InvalidOperationException.With.Message.Contains("convex"));
         Assert.That(AssetDatabase.IsValidFolder(OutputFolder), Is.False);
         Assert.That(mapRoot.GetComponentsInChildren<MeshFilter>(true), Is.Empty);

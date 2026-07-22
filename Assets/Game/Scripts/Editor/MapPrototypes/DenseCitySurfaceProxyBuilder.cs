@@ -151,6 +151,7 @@ namespace Game.Editor
             DenseCityGenerationRecordSet records,
             DenseCityGeneratedRootAuthoring mapBakeRoot,
             string operationMapId,
+            Rect mapSurfaceBounds,
             string candidateAssetFolder)
         {
             if (records == null)
@@ -159,6 +160,7 @@ namespace Game.Editor
                 throw new ArgumentException("A map-bake generated root is required.", nameof(mapBakeRoot));
             if (!mapBakeRoot.TryValidate(out string rootError))
                 throw new InvalidOperationException(rootError);
+            RequireFiniteMapBounds(mapSurfaceBounds);
             RequireNewCandidateFolder(operationMapId, mapBakeRoot.DeterministicGenerationHash, candidateAssetFolder);
 
             IReadOnlyList<DenseCitySurfaceBakeRecord> surfaces = records.Surfaces;
@@ -168,7 +170,7 @@ namespace Game.Editor
             for (int index = 0; index < surfaces.Count; index++)
             {
                 DenseCitySurfaceBakeRecord surface = surfaces[index];
-                Vector2[] points = PreparePolygon(surface);
+                Vector2[] points = PreparePolygon(surface, mapSurfaceBounds);
                 var key = new PartitionKey(surface);
                 if (!partitions.TryGetValue(key, out List<PreparedPolygon> polygons))
                 {
@@ -227,9 +229,19 @@ namespace Game.Editor
             }
         }
 
-        private static Vector2[] PreparePolygon(DenseCitySurfaceBakeRecord record)
+        private static Vector2[] PreparePolygon(DenseCitySurfaceBakeRecord record, Rect mapSurfaceBounds)
         {
             Vector2[] points = record.Polygon.ToArray();
+            for (int index = 0; index < points.Length; index++)
+            {
+                Vector2 point = points[index];
+                if (point.x < mapSurfaceBounds.xMin || point.x > mapSurfaceBounds.xMax ||
+                    point.y < mapSurfaceBounds.yMin || point.y > mapSurfaceBounds.yMax)
+                {
+                    throw new InvalidOperationException(
+                        $"Surface polygon exceeds approved map bounds: '{record.Identity.StableKey}'.");
+                }
+            }
             float signedArea = SignedArea(points);
             if (!float.IsFinite(signedArea) || Mathf.Abs(signedArea) <= 0.0001f)
                 throw new InvalidOperationException($"Surface polygon has zero area: '{record.Identity.StableKey}'.");
@@ -571,6 +583,18 @@ namespace Game.Editor
             {
                 throw new InvalidOperationException(
                     "Dense-city proxy output requires a new map-scoped candidate Assets folder.");
+            }
+        }
+
+        private static void RequireFiniteMapBounds(Rect bounds)
+        {
+            if (!float.IsFinite(bounds.xMin) || !float.IsFinite(bounds.yMin) ||
+                !float.IsFinite(bounds.xMax) || !float.IsFinite(bounds.yMax) ||
+                bounds.width <= 0f || bounds.height <= 0f)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(bounds),
+                    "Dense-city proxy map bounds must be finite with positive dimensions.");
             }
         }
 

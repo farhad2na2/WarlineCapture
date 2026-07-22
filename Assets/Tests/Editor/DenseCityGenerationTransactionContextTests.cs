@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Game.Configs;
 using Game.Editor;
 using NUnit.Framework;
@@ -66,6 +67,40 @@ public sealed class DenseCityGenerationTransactionContextTests
     }
 
     [Test]
+    public void InfrastructureAndSurfacePlacements_ShareStableSequenceAcrossRejectedAttempts()
+    {
+        using var context = new DenseCityGenerationTransactionContext(1, 3, 1);
+        var observedSequences = new List<int>();
+
+        Assert.That(
+            context.TryPlaceInfrastructure(
+                4,
+                sequence =>
+                {
+                    observedSequences.Add(sequence);
+                    return CreateInfrastructureGroup(sequence);
+                },
+                () => false),
+            Is.False);
+        Assert.That(
+            context.TryPlaceSurface(
+                4,
+                sequence =>
+                {
+                    observedSequences.Add(sequence);
+                    return CreateRamp(sequence);
+                },
+                () => true),
+            Is.True);
+        context.Seal();
+
+        Assert.That(observedSequences, Is.EqualTo(new[] { 0, 2 }));
+        Assert.That(context.Records.Surfaces, Has.Count.EqualTo(1));
+        Assert.That(context.Records.Surfaces[0].Identity.DeterministicSequence, Is.EqualTo(2));
+        Assert.That(context.Records.Presentations, Is.Empty);
+    }
+
+    [Test]
     public void RegisterRealizedBuildingOwner_UsesCommittedIdentityAndRejectsDuplicates()
     {
         using var context = new DenseCityGenerationTransactionContext(1, 2, 2);
@@ -129,4 +164,53 @@ public sealed class DenseCityGenerationTransactionContextTests
                 1,
                 0,
                 new Vector2Int(districtId, 0)));
+
+    private static DenseCityInfrastructureRecordGroup CreateInfrastructureGroup(int sequence)
+    {
+        DenseCitySurfaceBakeRecord surface = CreateSurface(
+            sequence,
+            DenseCitySurfaceRecordKind.Road,
+            "road");
+        var presentation = new DenseCityPresentationBakeRecord(
+            new DenseCityRecordIdentity(
+                "dense-city-v1",
+                42,
+                4,
+                "road-visual",
+                sequence + 1,
+                IntactGuid,
+                123),
+            DenseCityPresentationCategory.Infrastructure,
+            IntactGuid,
+            null,
+            new[] { MaterialGuid },
+            Matrix4x4.identity,
+            true,
+            true,
+            2);
+        return new DenseCityInfrastructureRecordGroup(surface, presentation);
+    }
+
+    private static DenseCitySurfaceBakeRecord CreateRamp(int sequence) =>
+        CreateSurface(sequence, DenseCitySurfaceRecordKind.Ramp, "ramp");
+
+    private static DenseCitySurfaceBakeRecord CreateSurface(
+        int sequence,
+        DenseCitySurfaceRecordKind kind,
+        string recordKind) =>
+        new(
+            new DenseCityRecordIdentity(
+                "dense-city-v1",
+                42,
+                4,
+                recordKind,
+                sequence,
+                IntactGuid,
+                123),
+            kind,
+            new[] { Vector2.zero, Vector2.right, Vector2.one, Vector2.up },
+            0f,
+            1,
+            0,
+            Vector2Int.zero);
 }

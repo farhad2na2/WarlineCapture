@@ -51,6 +51,7 @@ namespace Game.Editor
     {
         private readonly Dictionary<int, int> nextBuildingSequenceByDistrict = new();
         private readonly Dictionary<int, int> nextAttachmentSequenceByDistrict = new();
+        private readonly Dictionary<int, int> nextInfrastructureSequenceByDistrict = new();
         private readonly List<DenseCityRealizedBuildingOwner> realizedBuildingOwners = new();
         private readonly HashSet<string> realizedBuildingStableKeys = new(StringComparer.Ordinal);
         private readonly HashSet<Transform> realizedBuildingRoots = new();
@@ -125,6 +126,50 @@ namespace Game.Editor
                 realize);
             acceptedBuilding = accepted ? group.Building : default;
             return accepted;
+        }
+
+        internal bool TryPlaceInfrastructure(
+            int districtId,
+            Func<int, DenseCityInfrastructureRecordGroup> createGroup,
+            Func<bool> realize)
+        {
+            RequireActive();
+            if (districtId < 0)
+                throw new ArgumentOutOfRangeException(nameof(districtId));
+            if (createGroup == null)
+                throw new ArgumentNullException(nameof(createGroup));
+            if (realize == null)
+                throw new ArgumentNullException(nameof(realize));
+
+            int sequenceStart = GetInfrastructureSequenceStart(districtId, 2);
+            DenseCityInfrastructureRecordGroup group = createGroup(sequenceStart);
+            nextInfrastructureSequenceByDistrict[districtId] = sequenceStart + 2;
+            return DenseCityInfrastructurePlacementTransaction.TryCommitAndRealize(
+                Records,
+                group,
+                realize);
+        }
+
+        internal bool TryPlaceSurface(
+            int districtId,
+            Func<int, DenseCitySurfaceBakeRecord> createSurface,
+            Func<bool> realize)
+        {
+            RequireActive();
+            if (districtId < 0)
+                throw new ArgumentOutOfRangeException(nameof(districtId));
+            if (createSurface == null)
+                throw new ArgumentNullException(nameof(createSurface));
+            if (realize == null)
+                throw new ArgumentNullException(nameof(realize));
+
+            int sequenceStart = GetInfrastructureSequenceStart(districtId, 1);
+            DenseCitySurfaceBakeRecord surface = createSurface(sequenceStart);
+            nextInfrastructureSequenceByDistrict[districtId] = sequenceStart + 1;
+            return DenseCitySurfacePlacementTransaction.TryCommitAndRealize(
+                Records,
+                surface,
+                realize);
         }
 
         internal void RegisterRealizedBuildingOwner(
@@ -261,12 +306,25 @@ namespace Game.Editor
             Records.Dispose();
             nextBuildingSequenceByDistrict.Clear();
             nextAttachmentSequenceByDistrict.Clear();
+            nextInfrastructureSequenceByDistrict.Clear();
             realizedBuildingOwners.Clear();
             realizedBuildingStableKeys.Clear();
             realizedBuildingRoots.Clear();
             realizedBuildingAttachments.Clear();
             realizedAttachmentRoots.Clear();
             disposed = true;
+        }
+
+        private int GetInfrastructureSequenceStart(int districtId, int requiredCount)
+        {
+            int sequenceStart = nextInfrastructureSequenceByDistrict.TryGetValue(
+                districtId,
+                out int nextSequence)
+                ? nextSequence
+                : 0;
+            if (sequenceStart > int.MaxValue - requiredCount)
+                throw new InvalidOperationException("Dense-city infrastructure sequence capacity is exhausted.");
+            return sequenceStart;
         }
 
         private void RequireActive()

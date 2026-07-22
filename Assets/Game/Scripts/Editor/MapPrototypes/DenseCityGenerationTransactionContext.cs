@@ -302,6 +302,57 @@ namespace Game.Editor
                 realize);
         }
 
+        internal bool TryPlaceRenderOnlyPresentation(
+            int districtId,
+            DenseCityPresentationHierarchyContext presentationHierarchy,
+            Func<int, DenseCityPresentationBakeRecord> createPresentation,
+            Func<Transform, Transform> realizeUnderExplicitParent)
+        {
+            RequireActive();
+            if (districtId < 0)
+                throw new ArgumentOutOfRangeException(nameof(districtId));
+            if (presentationHierarchy == null)
+                throw new ArgumentNullException(nameof(presentationHierarchy));
+            if (createPresentation == null)
+                throw new ArgumentNullException(nameof(createPresentation));
+            if (realizeUnderExplicitParent == null)
+                throw new ArgumentNullException(nameof(realizeUnderExplicitParent));
+
+            int sequence = GetInfrastructureSequenceStart(districtId, 1);
+            DenseCityPresentationBakeRecord presentation = createPresentation(sequence);
+            DenseCityRenderOnlyPresentationRecordFactory.RequireRenderOnlyCategory(presentation.Category);
+            nextInfrastructureSequenceByDistrict[districtId] = sequence + 1;
+            Transform realizedRoot = null;
+            try
+            {
+                bool accepted = DenseCityRenderOnlyPresentationPlacementTransaction.TryCommitAndRealize(
+                    Records,
+                    presentation,
+                    () =>
+                    {
+                        Transform parent = presentationHierarchy.ResolveIndependentParent(
+                            presentation.Category);
+                        realizedRoot = realizeUnderExplicitParent(parent);
+                        if (realizedRoot == null)
+                            return false;
+                        presentationHierarchy.RequireIndependentRoot(
+                            presentation.Category,
+                            realizedRoot);
+                        RequireWorldMatrix(presentation, realizedRoot);
+                        return true;
+                    });
+                if (!accepted && realizedRoot != null)
+                    UnityEngine.Object.DestroyImmediate(realizedRoot.gameObject);
+                return accepted;
+            }
+            catch
+            {
+                if (realizedRoot != null)
+                    UnityEngine.Object.DestroyImmediate(realizedRoot.gameObject);
+                throw;
+            }
+        }
+
         internal bool TryPlaceBridge(
             int districtId,
             Func<int, DenseCityBridgeRecordGroup> createGroup,
@@ -465,6 +516,20 @@ namespace Game.Editor
             realizedBuildingAttachments.Clear();
             realizedAttachmentRoots.Clear();
             disposed = true;
+        }
+
+        private static void RequireWorldMatrix(
+            DenseCityPresentationBakeRecord presentation,
+            Transform realizedRoot)
+        {
+            Matrix4x4 actual = realizedRoot.localToWorldMatrix;
+            for (int index = 0; index < 16; index++)
+            {
+                if (Mathf.Abs(actual[index] - presentation.WorldMatrix[index]) <= 0.0001f)
+                    continue;
+                throw new InvalidOperationException(
+                    $"Dense-city presentation transform drift: '{presentation.Identity.StableKey}'.");
+            }
         }
 
         private int GetInfrastructureSequenceStart(int districtId, int requiredCount)

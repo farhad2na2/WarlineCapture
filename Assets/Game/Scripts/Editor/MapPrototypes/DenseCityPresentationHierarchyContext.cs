@@ -80,6 +80,43 @@ namespace Game.Editor
             return declaredBuildingVisualRoot;
         }
 
+        internal Transform RequireIndependentRoot(
+            DenseCityPresentationCategory category,
+            Transform realizedRoot,
+            GeneratedCityBuildingRole buildingRole = GeneratedCityBuildingRole.None)
+        {
+            if (realizedRoot == null)
+                throw new ArgumentNullException(nameof(realizedRoot));
+            Transform expectedParent = ResolveIndependentParent(category, buildingRole);
+            if (realizedRoot.parent != expectedParent ||
+                realizedRoot.gameObject.scene != expectedParent.gameObject.scene)
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city {category} presentation must be created directly under " +
+                    $"'{GetPath(expectedParent)}'.");
+            }
+
+            return realizedRoot;
+        }
+
+        internal Transform RequireAttachmentRoot(
+            DenseCityPresentationCategory category,
+            Transform declaredBuildingVisualRoot,
+            Transform realizedAttachmentRoot)
+        {
+            Transform expectedParent = RequireAttachmentParent(category, declaredBuildingVisualRoot);
+            if (realizedAttachmentRoot == null)
+                throw new ArgumentNullException(nameof(realizedAttachmentRoot));
+            if (realizedAttachmentRoot.parent != expectedParent ||
+                realizedAttachmentRoot.gameObject.scene != expectedParent.gameObject.scene)
+            {
+                throw new InvalidOperationException(
+                    "Dense-city building attachment must be created directly under its declared visual-state owner.");
+            }
+
+            return realizedAttachmentRoot;
+        }
+
         private Transform RequireBuildingRole(GeneratedCityBuildingRole role)
         {
             if (role is <= GeneratedCityBuildingRole.None or > GeneratedCityBuildingRole.Other)
@@ -120,5 +157,17 @@ namespace Game.Editor
             transform.localPosition == Vector3.zero &&
             transform.localRotation == Quaternion.identity &&
             transform.localScale == Vector3.one;
+
+        private static string GetPath(Transform transform)
+        {
+            string path = transform.name;
+            Transform current = transform.parent;
+            while (current != null)
+            {
+                path = current.name + "/" + path;
+                current = current.parent;
+            }
+            return path;
+        }
     }
 }

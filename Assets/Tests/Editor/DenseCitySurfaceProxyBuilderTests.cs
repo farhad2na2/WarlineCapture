@@ -33,6 +33,7 @@ public sealed class DenseCitySurfaceProxyBuilderTests
         {
             suite.Build_PartitionsRecordsAndCreatesBakeOnlyMeshes,
             suite.Build_ConsumesTerrainFoundationAndParkFactoryRecords,
+            suite.Build_SeparatesRoadFromShoulderAndNaturalGroundFactoryRecords,
             suite.Build_ProducesRuntimeSurfaceQueriesForRepresentativeMovers,
             suite.Build_MergesOnlyAdjacentCoplanarRectangles,
             suite.Build_IsDeterministicAcrossEquivalentRecordSets,
@@ -261,6 +262,81 @@ public sealed class DenseCitySurfaceProxyBuilderTests
         Assert.That(
             terrainProxy.GetComponent<MapBakeGroupAuthoring>().MovementMask,
             Is.EqualTo((MapSurfaceMovementMask)1));
+    }
+
+    [Test]
+    public void Build_SeparatesRoadFromShoulderAndNaturalGroundFactoryRecords()
+    {
+        var (_, _, mapRoot) = CreateScenePair("road-factories");
+        using var records = new DenseCityGenerationRecordSet(1, 4, 2);
+        DenseCityRoadRecordGroup road = DenseCityInfrastructureRecordFactory.CreateRoadWithShoulders(
+            new DenseCityInfrastructureRecordInput(
+                "dense-city-v1",
+                42,
+                3,
+                0,
+                "road",
+                DenseCitySurfaceRecordKind.Road,
+                SourceGuid,
+                30,
+                new[] { SourceGuid },
+                Matrix4x4.identity,
+                new Vector2(4f, 12f),
+                0f,
+                3,
+                0,
+                Vector2Int.zero,
+                false,
+                true,
+                1),
+            new[]
+            {
+                new DenseCityRoadShoulderRecordInput(
+                    Matrix4x4.Translate(new Vector3(-3f, 0f, 0f)),
+                    new Vector2(2f, 12f),
+                    0f,
+                    Vector2Int.zero),
+                new DenseCityRoadShoulderRecordInput(
+                    Matrix4x4.Translate(new Vector3(3f, 0f, 0f)),
+                    new Vector2(2f, 12f),
+                    0f,
+                    Vector2Int.zero)
+            });
+        records.AddRoadGroup(road.Road, road.Presentation, road.Shoulders);
+        DenseCityTerrainVisualRecordGroup naturalGround = CreateTerrainGroup(
+            4,
+            "natural-ground-terrain",
+            new Vector3(20f, 0f, 20f),
+            3);
+        records.AddTerrainVisualGroup(naturalGround.Terrain, naturalGround.Presentations);
+        records.Seal();
+
+        DenseCitySurfaceProxyBuildResult result = DenseCitySurfaceProxyBuilder.Build(
+            records,
+            mapRoot,
+            OperationMapId,
+            MapSurfaceBounds,
+            OutputFolder);
+
+        Assert.That(result.Records, Is.EqualTo(4));
+        Assert.That(result.Partitions, Is.EqualTo(2));
+        MeshFilter[] filters = mapRoot.GetComponentsInChildren<MeshFilter>(true);
+        MeshFilter roadProxy = Array.Find(
+            filters,
+            filter => filter.GetComponent<MapBakeGroupAuthoring>().Role == MapBakeGroupRole.Road);
+        MeshFilter terrainProxy = Array.Find(
+            filters,
+            filter => filter.GetComponent<MapBakeGroupAuthoring>().Role == MapBakeGroupRole.Terrain);
+        Assert.That(roadProxy, Is.Not.Null);
+        Assert.That(terrainProxy, Is.Not.Null);
+        Assert.That(roadProxy.sharedMesh.vertexCount, Is.EqualTo(4));
+        Assert.That(terrainProxy.sharedMesh.vertexCount, Is.EqualTo(12));
+        Assert.That(roadProxy.sharedMesh.triangles, Has.Length.EqualTo(6));
+        Assert.That(terrainProxy.sharedMesh.triangles, Has.Length.EqualTo(18));
+        Assert.That(roadProxy.GetComponent<MapBakeGroupAuthoring>().MovementMask,
+            Is.EqualTo((MapSurfaceMovementMask)3));
+        Assert.That(terrainProxy.GetComponent<MapBakeGroupAuthoring>().MovementMask,
+            Is.EqualTo((MapSurfaceMovementMask)3));
     }
 
     [Test]
@@ -511,7 +587,8 @@ public sealed class DenseCitySurfaceProxyBuilderTests
     private static DenseCityTerrainVisualRecordGroup CreateTerrainGroup(
         int sequence,
         string recordKind,
-        Vector3 position) =>
+        Vector3 position,
+        uint movementMask = 1) =>
         DenseCityTerrainVisualRecordFactory.Create(new DenseCityTerrainVisualRecordInput(
             "dense-city-v1",
             42,
@@ -521,7 +598,7 @@ public sealed class DenseCitySurfaceProxyBuilderTests
             Matrix4x4.TRS(position, Quaternion.identity, Vector3.one),
             new Vector2(8f, 6f),
             0f,
-            1,
+            movementMask,
             0,
             Vector2Int.zero,
             new[]

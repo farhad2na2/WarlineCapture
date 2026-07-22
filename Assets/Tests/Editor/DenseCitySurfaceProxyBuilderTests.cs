@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Game.Authoring;
 using Game.Components;
+using Game.Configs;
 using Game.Editor;
 using NUnit.Framework;
 using Unity.Collections;
@@ -31,6 +32,7 @@ public sealed class DenseCitySurfaceProxyBuilderTests
         Action[] tests =
         {
             suite.Build_PartitionsRecordsAndCreatesBakeOnlyMeshes,
+            suite.Build_ConsumesTerrainFoundationAndParkFactoryRecords,
             suite.Build_ProducesRuntimeSurfaceQueriesForRepresentativeMovers,
             suite.Build_MergesOnlyAdjacentCoplanarRectangles,
             suite.Build_IsDeterministicAcrossEquivalentRecordSets,
@@ -194,6 +196,71 @@ public sealed class DenseCitySurfaceProxyBuilderTests
                 out string error),
             Is.True,
             error);
+    }
+
+    [Test]
+    public void Build_ConsumesTerrainFoundationAndParkFactoryRecords()
+    {
+        var (_, _, mapRoot) = CreateScenePair("terrain-factories");
+        using var records = new DenseCityGenerationRecordSet(1, 4, 4);
+        DenseCityTerrainVisualRecordGroup terrain = CreateTerrainGroup(
+            0,
+            "district-terrain",
+            new Vector3(0f, 0f, 0f));
+        DenseCityTerrainVisualRecordGroup park = CreateTerrainGroup(
+            2,
+            "canal-park-terrain",
+            new Vector3(20f, 0f, 0f));
+        records.AddTerrainVisualGroup(terrain.Terrain, terrain.Presentations);
+        records.AddTerrainVisualGroup(park.Terrain, park.Presentations);
+        DenseCityBuildingRecordFactory.Add(records, DenseCityBuildingRecordFactory.Create(
+            new DenseCityBuildingRecordInput(
+                "dense-city-v1",
+                42,
+                3,
+                4,
+                SourceGuid,
+                20,
+                SourceGuid,
+                21,
+                new[] { SourceGuid },
+                new[] { SourceGuid },
+                Matrix4x4.TRS(new Vector3(40f, 0f, 0f), Quaternion.identity, Vector3.one),
+                Vector2Int.zero,
+                new Vector2Int(2, 2),
+                new Vector2(8f, 6f),
+                0f,
+                new Bounds(new Vector3(40f, 2f, 0f), new Vector3(8f, 4f, 6f)),
+                Vector3.forward,
+                GeneratedCityBuildingRole.House,
+                SourceGuid,
+                0,
+                100f,
+                1,
+                0,
+                Vector2Int.zero,
+                "proxy")));
+        records.Seal();
+
+        DenseCitySurfaceProxyBuildResult result = DenseCitySurfaceProxyBuilder.Build(
+            records,
+            mapRoot,
+            OperationMapId,
+            MapSurfaceBounds,
+            OutputFolder);
+
+        Assert.That(records.Surfaces, Has.Count.EqualTo(4));
+        Assert.That(result.Records, Is.EqualTo(4));
+        Assert.That(result.Partitions, Is.EqualTo(2));
+        MeshFilter terrainProxy = Array.Find(
+            mapRoot.GetComponentsInChildren<MeshFilter>(true),
+            filter => filter.GetComponent<MapBakeGroupAuthoring>().Role == MapBakeGroupRole.Terrain);
+        Assert.That(terrainProxy, Is.Not.Null);
+        Assert.That(terrainProxy.sharedMesh.vertexCount, Is.EqualTo(12));
+        Assert.That(terrainProxy.sharedMesh.triangles, Has.Length.EqualTo(18));
+        Assert.That(
+            terrainProxy.GetComponent<MapBakeGroupAuthoring>().MovementMask,
+            Is.EqualTo((MapSurfaceMovementMask)1));
     }
 
     [Test]
@@ -440,6 +507,35 @@ public sealed class DenseCitySurfaceProxyBuilderTests
         records.Seal();
         return records;
     }
+
+    private static DenseCityTerrainVisualRecordGroup CreateTerrainGroup(
+        int sequence,
+        string recordKind,
+        Vector3 position) =>
+        DenseCityTerrainVisualRecordFactory.Create(new DenseCityTerrainVisualRecordInput(
+            "dense-city-v1",
+            42,
+            3,
+            sequence,
+            recordKind,
+            Matrix4x4.TRS(position, Quaternion.identity, Vector3.one),
+            new Vector2(8f, 6f),
+            0f,
+            1,
+            0,
+            Vector2Int.zero,
+            new[]
+            {
+                new DenseCityTerrainVisualPresentationInput(
+                    recordKind + "-visual",
+                    SourceGuid,
+                    sequence + 1,
+                    new[] { SourceGuid },
+                    Matrix4x4.TRS(position, Quaternion.identity, Vector3.one),
+                    false,
+                    true,
+                    1)
+            }));
 
     private static DenseCitySurfaceBakeRecord CreateSurface(
         int sequence,

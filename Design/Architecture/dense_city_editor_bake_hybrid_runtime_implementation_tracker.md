@@ -731,7 +731,7 @@ Runtime procedural generation is not the fallback for a rendering or packaging f
 
 Progress is checklist based. Every checkbox counts. Update the count, phase status, and validation log in the same stable change that completes an item.
 
-Current progress: **55 / 148 (37%)**
+Current progress: **56 / 148 (38%)**
 
 | Phase | Status |
 |---|---|
@@ -740,7 +740,7 @@ Current progress: **55 / 148 (37%)**
 | Phase 1: Generated ownership authoring | In progress; semantic hierarchy and fail-closed role/scene ownership validation complete |
 | Phase 2: Generator semantic output | In progress; building/attachment, infrastructure, canal/park, civic/market, and combined courtyard/detail records integrated and validated |
 | Phase 3: Collider-free enforcement | In progress; instance-only recursive stripper integrated into record-driven presentation replay |
-| Phase 4: Surface and blocker proxies | In progress; deterministic bake-only proxies, representative runtime queries, and outside-grid presentation-only ownership are validated |
+| Phase 4: Surface and blocker proxies | In progress; terrain/foundation/park integration, representative queries, and outside-grid presentation-only ownership are validated |
 | Phase 5: Readiness and Bake All integration | Not started |
 | Phase 6: ECS presentation optimization | Not started |
 | Phase 7: Runtime package separation | Not started |
@@ -850,7 +850,7 @@ Current progress: **55 / 148 (37%)**
 ### Phase 4: Surface And Blocker Proxies
 
 - [x] Add `DenseCitySurfaceProxyBuilder` and map-scoped candidate-output ownership.
-- [ ] Build simplified terrain proxy meshes from terrain/foundation/park records.
+- [x] Build simplified terrain proxy meshes from terrain/foundation/park records.
 - [ ] Build road proxies separately from shoulders and natural ground patches.
 - [ ] Build bridge deck and ramp proxies with correct layer and movement masks.
 - [ ] Build canal/water exclusion data without colliders.
@@ -1114,6 +1114,7 @@ Extend existing tests rather than duplicating them for:
 | 2026-07-22 | Phase 4 strict bake-only proxy component ownership | Focused proxy validation `/private/tmp/warline-dense-city-surface-proxy-components-focused.log` 6/6; assembly boundaries `/private/tmp/warline-dense-city-surface-proxy-components-architecture.log` 31/31; ECS/Burst guardrails `/private/tmp/warline-dense-city-surface-proxy-components-ecs.log` 11/11; Unity compile 0 errors; `git diff --check` | Passed; operation-map dependency-closure validation remains open | Replaced the limited renderer/physics count check with a fail-closed component allowlist over the complete `BakeSources` hierarchy. Only `Transform`, the canonical or partition `MapBakeGroupAuthoring`, and the exact expected generated `MeshFilter` count are permitted. This excludes all renderers, colliders, rigidbodies, animation, audio, particles, arbitrary scripts, and missing-script components before candidate output is created and after it is populated. A pollution fixture proves an `AudioSource` under a canonical role root aborts with its hierarchy path and leaves no candidate mesh folder or generated mesh owner. No accepted scene, SubScene, Addressables ownership, runtime code, production mode, or Android build changed. Progress is 53/148 (36%). |
 | 2026-07-22 | Phase 4 representative generated-proxy surface queries | Focused proxy/runtime query validation `/private/tmp/warline-dense-city-surface-proxy-runtime-query-after-reset.log` 7/7; assembly boundaries `/private/tmp/warline-dense-city-surface-query-architecture.log` 31/31; ECS/Burst guardrails `/private/tmp/warline-dense-city-surface-query-ecs.log` 11/11; `dotnet build Game.Editor.csproj --no-restore` 0 errors; `dotnet build Game.Tests.Editor.csproj --no-restore` 0 errors; `git diff --check` | Passed after user-authorized documented licensing IPC recovery | Added an editor-only collector that maps the generated Terrain/Road/Bridge/Ramp/Blocker proxy owners and meshes into the real `MapSurfaceMeshBakeSource` contract in stable hierarchy order. The focused fixture sends those sources through the production `MapSurfaceBakeSystem` and proves representative infantry, wheeled, tracked, building-placement, and grounded-aircraft acceptance/rejection against the generated proxies. The recovery was performed only after the dry run confirmed no active Unity Editor; Hub was reopened signed in and the versioned Unity 6000.5.2 licensing channel then initialized correctly. No scene, SubScene, production map definition, Addressables ownership, runtime system, production mode, or Android build changed. Progress is 54/148 (36%). |
 | 2026-07-22 | Phase 4 outside-grid presentation-only contract | Focused proxy validation `/private/tmp/warline-dense-city-presentation-only-surface-query.log` 8/8; assembly boundaries `/private/tmp/warline-dense-city-presentation-only-architecture.log` 31/31; ECS/Burst guardrails `/private/tmp/warline-dense-city-presentation-only-ecs.log` 11/11; `dotnet build Game.Tests.Editor.csproj --no-restore` 0 errors; `git diff --check` | Passed | Added a mixed sealed-record-set regression proving that a Horizon presentation translated beyond both approved gameplay-grid axes remains in the presentation record set but contributes no generated proxy or `MapSurfaceMeshBakeSource`. The existing fail-closed out-of-bounds surface fixture continues to prove that the same location cannot enter gameplay surface ownership. This locks the default policy without adding an exception path, runtime owner, managed bridge, scene mutation, Addressables change, production cutover, or Android build. Progress is 55/148 (37%). |
+| 2026-07-22 | Phase 4 terrain/foundation/park proxy integration | Focused proxy validation `/private/tmp/warline-dense-city-terrain-proxy-factory.log` 9/9; assembly boundaries `/private/tmp/warline-dense-city-terrain-proxy-architecture.log` 31/31; ECS/Burst guardrails `/private/tmp/warline-dense-city-terrain-proxy-ecs.log` 11/11; `dotnet build Game.Tests.Editor.csproj --no-restore` 0 errors; `git diff --check` | Passed | Added an integration fixture over the actual terrain-visual and building record factories. District terrain, canal-park terrain, and generated-building foundation records flow through their existing immutable `Terrain` records into one simplified terrain proxy partition, while the linked building blocker remains a separate blocker partition. The fixture validates record counts, reduced proxy geometry, movement-mask ownership, and no dependence on detailed presentation meshes. No duplicate terrain builder, runtime owner, managed bridge, scene mutation, Addressables change, production cutover, or Android build was added. Progress is 56/148 (38%). |
 
 ## 25. Completion Rule
 

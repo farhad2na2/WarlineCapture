@@ -23,14 +23,22 @@ namespace Game.Editor
             public readonly int Buildings;
             public readonly int Parks;
             public readonly int AuthoredCoreRenderers;
+            public readonly int SemanticBuildings;
 
-            public Result(int roadTiles, int roadChunks, int buildings, int parks, int authoredCoreRenderers)
+            public Result(
+                int roadTiles,
+                int roadChunks,
+                int buildings,
+                int parks,
+                int authoredCoreRenderers,
+                int semanticBuildings)
             {
                 RoadTiles = roadTiles;
                 RoadChunks = roadChunks;
                 Buildings = buildings;
                 Parks = parks;
                 AuthoredCoreRenderers = authoredCoreRenderers;
+                SemanticBuildings = semanticBuildings;
             }
         }
 
@@ -601,19 +609,87 @@ namespace Game.Editor
             private readonly HashSet<Vector2Int> _roadCells;
             private readonly HashSet<Vector2Int> _dirtRoadCells;
             private readonly Vector3 _roadOrigin;
+            private readonly RuntimeCitySpawnerSystemConfig _config;
+            private readonly DenseCityBuildingMaterialLibrary _materialLibrary;
+            private readonly DenseCityGenerationTransactionContext _generationTransactions;
+            private readonly Transform _presentationParent;
             private readonly List<Rect> _occupiedBounds = new();
             private readonly Dictionary<Vector2Int, List<int>> _occupiedByCell = new();
+            private int _districtId = -1;
 
             public int ReservedCount => _occupiedBounds.Count;
 
             public BuildingPlacementContext(
                 HashSet<Vector2Int> roadCells,
                 Vector3 roadOrigin,
-                HashSet<Vector2Int> dirtRoadCells = null)
+                HashSet<Vector2Int> dirtRoadCells,
+                RuntimeCitySpawnerSystemConfig config,
+                DenseCityBuildingMaterialLibrary materialLibrary,
+                DenseCityGenerationTransactionContext generationTransactions,
+                Transform presentationParent)
             {
                 _roadCells = roadCells ?? new HashSet<Vector2Int>();
                 _dirtRoadCells = dirtRoadCells ?? new HashSet<Vector2Int>();
                 _roadOrigin = roadOrigin;
+                _config = config ?? throw new ArgumentNullException(nameof(config));
+                _materialLibrary = materialLibrary ?? throw new ArgumentNullException(nameof(materialLibrary));
+                _generationTransactions = generationTransactions ??
+                    throw new ArgumentNullException(nameof(generationTransactions));
+                _presentationParent = presentationParent != null
+                    ? presentationParent
+                    : throw new ArgumentNullException(nameof(presentationParent));
+            }
+
+            public Matrix4x4 PresentationParentLocalToWorldMatrix => _presentationParent.localToWorldMatrix;
+
+            public Matrix4x4 PresentationParentWorldToLocalMatrix => _presentationParent.worldToLocalMatrix;
+
+            public void SetDistrict(int districtId)
+            {
+                if (districtId < 0)
+                    throw new ArgumentOutOfRangeException(nameof(districtId));
+                _districtId = districtId;
+            }
+
+            public bool TryPlaceSemanticBuilding(
+                PrefabFootprint info,
+                DenseCityBuildingPlacementPlan plan,
+                Func<bool> realize)
+            {
+                if (info.PresentationCategory != DenseCityPresentationCategory.GameplayBuildingIntact)
+                    return realize();
+                if (_districtId < 0)
+                    throw new InvalidOperationException("Dense-city building district must be explicit before placement.");
+
+                DenseCityBuildingMaterialSelection materialSelection = _materialLibrary.Select(
+                    info.Prefab,
+                    plan.WorldMatrix.GetColumn(3),
+                    _config.RandomSeed,
+                    info.BuildingRole);
+                GameObject destroyedPrefab = _config.GetGeneratedDestroyedVisualPrefab(info.BuildingRole);
+                return _generationTransactions.TryPlaceBuilding(
+                    _districtId,
+                    sequence => DenseCityBuildingPlacementRecordBuilder.Create(
+                        new DenseCityBuildingPlacementRecordRequest(
+                            DenseCityGeneratorSchema,
+                            unchecked((int)_config.RandomSeed),
+                            _districtId,
+                            sequence,
+                            info.Prefab,
+                            destroyedPrefab,
+                            materialSelection,
+                            plan.WorldMatrix,
+                            plan.FootprintSize,
+                            plan.FoundationElevation,
+                            plan.BlockerBounds,
+                            plan.FrontageDirection,
+                            0,
+                            _config.DefaultBuildingMaxHealth,
+                            DenseCityBuildingMovementMask,
+                            DenseCityBuildingSurfaceLayer,
+                            plan.Chunk),
+                        _materialLibrary),
+                    realize);
             }
 
             public bool CanPlace(PrefabFootprint info, float rotationDegrees, Vector2 center)
@@ -759,6 +835,15 @@ namespace Game.Editor
         private const float NorthCityExpansion = 128f;
         private const int RoadChunkSize = 16;
         private const float BuildingVisualScale = 0.82f;
+        private const string DenseCityGeneratorSchema = "dense-city-v1";
+        private const int DenseCityGenerationBuildingCapacity = 100_000;
+        private const int DenseCityGenerationSurfaceCapacity = DenseCityGenerationBuildingCapacity * 2;
+        private const int DenseCityGenerationPresentationCapacity = DenseCityGenerationBuildingCapacity * 2;
+        private const int DenseCityBuildingSurfaceLayer = 0;
+        private const uint DenseCityBuildingMovementMask =
+            (uint)(MapSurfaceMovementMask.AllGroundUnits |
+                   MapSurfaceMovementMask.AirGrounded |
+                   MapSurfaceMovementMask.BuildingPlacement);
         private const float CivicHallVisualScale = 2.75f;
         private const float CentralHallVisualScale = 2.35f;
         private const float CentralClockTowerVisualScale = 3.25f;
@@ -1035,6 +1120,12 @@ namespace Game.Editor
                 throw new InvalidOperationException(
                     $"Dense city canal generation crossed {canalResult.HighwayConflicts} highway cells.");
             }
+            DenseCityBuildingMaterialLibrary materialLibrary =
+                DenseCityBuildingMaterialLibrary.LoadExisting();
+            using var generationTransactions = new DenseCityGenerationTransactionContext(
+                DenseCityGenerationBuildingCapacity,
+                DenseCityGenerationSurfaceCapacity,
+                DenseCityGenerationPresentationCapacity);
             int authoredCoreRenderers = BakeCivicBazaarCore(
                 generatedRoot,
                 view,
@@ -1044,7 +1135,9 @@ namespace Game.Editor
                 surface,
                 roadResult.RoadCells,
                 roadResult.DirtRoadCells,
-                cityOrigin);
+                cityOrigin,
+                materialLibrary,
+                generationTransactions);
             BuildingBakeResult buildingResult = BakeDenseDistricts(
                 generatedRoot,
                 view,
@@ -1060,11 +1153,20 @@ namespace Game.Editor
                 authoredCoreBounds,
                 cityFootprint,
                 terrainMap,
-                surface);
+                surface,
+                materialLibrary,
+                generationTransactions);
+
+            generationTransactions.Seal();
+            Debug.Log(
+                $"[DenseCitySemanticRecords] buildings={generationTransactions.Records.Buildings.Count} " +
+                $"surfaces={generationTransactions.Records.Surfaces.Count} " +
+                $"presentations={generationTransactions.Records.Presentations.Count}");
 
             BuildingMaterialVariantResult materialVariants = ApplyBuildingMaterialVariants(
                 generatedRoot,
-                config.RandomSeed);
+                config.RandomSeed,
+                materialLibrary);
             Debug.Log(
                 $"[DenseCityBuildingMaterials] buildingsA={materialVariants.BuildingsA} " +
                 $"buildingsB={materialVariants.BuildingsB} buildingsC={materialVariants.BuildingsC} " +
@@ -1142,7 +1244,8 @@ namespace Game.Editor
                 roadResult.ChunkCount,
                 buildingResult.BuildingCount,
                 buildingResult.ParkCount,
-                authoredCoreRenderers);
+                authoredCoreRenderers,
+                generationTransactions.Records.Buildings.Count);
         }
 
         private static int AuditGeneratedProtectedOverlaps(
@@ -2490,12 +2593,15 @@ namespace Game.Editor
             SurfacePlacementContext surface,
             HashSet<Vector2Int> roadCells,
             HashSet<Vector2Int> dirtRoadCells,
-            Vector3 roadOrigin)
+            Vector3 roadOrigin,
+            DenseCityBuildingMaterialLibrary materialLibrary,
+            DenseCityGenerationTransactionContext generationTransactions)
         {
             var coreObject = new GameObject("DenseCity_PedestrianCivicBazaarCore");
             coreObject.transform.SetParent(generatedRoot, false);
             var visualSystem = new RuntimeCityVisualPresentationSystemHelper();
             visualSystem.SetRuntimeRoot(coreObject.transform);
+            visualSystem.EnsureCityVisualRoot();
             if (surface != null)
                 visualSystem.ConfigureSurface(surface.Surface);
 
@@ -2503,7 +2609,12 @@ namespace Game.Editor
             var placementContext = new BuildingPlacementContext(
                 roadCells,
                 roadOrigin,
-                dirtRoadCells);
+                dirtRoadCells,
+                config,
+                materialLibrary,
+                generationTransactions,
+                visualSystem.CityVisualRoot);
+            placementContext.SetDistrict(0);
             GameObject hallPrefab = FirstPrefab(config.HallPrefabs) ??
                                     throw new InvalidOperationException("Dense city config requires a hall prefab.");
             PrefabFootprint hall = MeasurePrefab(
@@ -5209,12 +5320,15 @@ namespace Game.Editor
             Rect authoredCoreBounds,
             CityFootprint cityFootprint,
             TerrainViabilityMap terrainMap,
-            SurfacePlacementContext surface)
+            SurfacePlacementContext surface,
+            DenseCityBuildingMaterialLibrary materialLibrary,
+            DenseCityGenerationTransactionContext generationTransactions)
         {
             var buildingObject = new GameObject("DenseCity_TightlyPackedUrbanBlocks");
             buildingObject.transform.SetParent(generatedRoot, false);
             var visualSystem = new RuntimeCityVisualPresentationSystemHelper();
             visualSystem.SetRuntimeRoot(buildingObject.transform);
+            visualSystem.EnsureCityVisualRoot();
             if (surface != null)
                 visualSystem.ConfigureSurface(surface.Surface);
             BuildingPalette palette = BuildPalette(config);
@@ -5227,7 +5341,11 @@ namespace Game.Editor
             var placementContext = new BuildingPlacementContext(
                 roadCells,
                 cityOrigin,
-                dirtRoadCells);
+                dirtRoadCells,
+                config,
+                materialLibrary,
+                generationTransactions,
+                visualSystem.CityVisualRoot);
             int buildingCount = 0;
             int parkCount = 0;
             int centralLandmarkCount = 0;
@@ -5254,6 +5372,7 @@ namespace Game.Editor
                         continue;
 
                     blockIndex++;
+                    placementContext.SetDistrict(blockIndex);
                     DistrictZone zone = ClassifyDistrict(normalizedDistance);
                     int parkFrequency = zone == DistrictZone.InnerCity ? 23 : 13;
                     bool park = blockIndex % parkFrequency == 0 ||
@@ -5695,60 +5814,110 @@ namespace Game.Editor
                 return false;
             }
 
-            int footprintX = Mathf.Max(1, Mathf.CeilToInt(quarterTurn ? info.Depth : info.Width));
-            int footprintZ = Mathf.Max(1, Mathf.CeilToInt(quarterTurn ? info.Width : info.Depth));
-            int originX = Mathf.Clamp(
-                Mathf.RoundToInt(center.x - grid.Origin.x - footprintX * 0.5f),
-                0,
-                grid.Width - footprintX);
-            int originZ = Mathf.Clamp(
-                Mathf.RoundToInt(center.z - grid.Origin.z - footprintZ * 0.5f),
-                0,
-                grid.Height - footprintZ);
-            GameObject wrapper = visuals.SpawnVisualOnlyPrefab(
-                info.Prefab,
-                new Vector2Int(originX, originZ),
-                new Vector2Int(footprintX, footprintZ),
-                Quaternion.Euler(0f, rotationDegrees, 0f),
-                grid);
-            if (wrapper == null)
-                return false;
-
             float foundationHeight = patch.MaximumHeight + 0.035f;
-            Vector3 wrapperPosition = wrapper.transform.position;
-            wrapperPosition.y = foundationHeight;
-            wrapper.transform.position = wrapperPosition;
-            wrapper.transform.localScale = Vector3.one * info.VisualScale;
-            if (frontageSnapEdge != FrontageSnapEdge.None &&
-                !TrySnapBuildingRendererToFrontage(
-                    wrapper.transform,
-                    frontageSnapEdge,
-                    frontageBoundary))
+            DenseCityBuildingPlacementPlan plan = DenseCityBuildingPlacementPlanner.Create(
+                center,
+                rotationDegrees,
+                info.Width,
+                info.Depth,
+                info.Height,
+                info.VisualScale,
+                foundationHeight,
+                grid,
+                ToDenseCityFrontageEdge(frontageSnapEdge),
+                frontageBoundary,
+                placementContext?.PresentationParentLocalToWorldMatrix ?? Matrix4x4.identity,
+                placementContext?.PresentationParentWorldToLocalMatrix ?? Matrix4x4.identity);
+            if (placementContext == null)
+                return Realize();
+            return placementContext.TryPlaceSemanticBuilding(info, plan, Realize);
+
+            bool Realize()
             {
-                UnityEngine.Object.DestroyImmediate(wrapper);
-                return false;
-            }
-            if (placementContext != null)
-            {
-                if (!TryGetWorldBounds(wrapper.transform, out Bounds actualBounds) ||
-                    !placementContext.TryReserve(actualBounds))
+                GameObject wrapper = null;
+                try
                 {
-                    UnityEngine.Object.DestroyImmediate(wrapper);
-                    return false;
+                    wrapper = visuals.SpawnVisualOnlyPrefab(
+                        info.Prefab,
+                        plan.OriginCell,
+                        plan.FootprintCells,
+                        Quaternion.Euler(0f, rotationDegrees, 0f),
+                        grid);
+                    if (wrapper == null)
+                        return false;
+
+                    wrapper.transform.localPosition = plan.RealizationLocalPosition;
+                    wrapper.transform.localRotation = plan.RealizationLocalRotation;
+                    wrapper.transform.localScale = Vector3.one * info.VisualScale;
+
+                    if (!TryGetWorldBounds(wrapper.transform, out Bounds actualBounds) ||
+                        !DenseCityBuildingPlacementPlanner.MatchesRealization(
+                            plan,
+                            wrapper.transform.localToWorldMatrix,
+                            actualBounds))
+                    {
+                        float matrixResidual = 0f;
+                        Matrix4x4 actualMatrix = wrapper.transform.localToWorldMatrix;
+                        for (int row = 0; row < 4; row++)
+                        {
+                            for (int column = 0; column < 4; column++)
+                            {
+                                matrixResidual = Mathf.Max(
+                                    matrixResidual,
+                                    Mathf.Abs(plan.WorldMatrix[row, column] - actualMatrix[row, column]));
+                            }
+                        }
+                        Debug.LogWarning(
+                            $"[DenseCityBuildingPlacementParity] rejected={info.Prefab.name} " +
+                            $"matrixResidual={matrixResidual:R} " +
+                            $"centerResidual=({Mathf.Abs(plan.BlockerBounds.center.x - actualBounds.center.x):R}," +
+                            $"{Mathf.Abs(plan.BlockerBounds.center.z - actualBounds.center.z):R}) " +
+                            $"footingResidual={Mathf.Abs(plan.BlockerBounds.min.y - actualBounds.min.y):R} " +
+                            $"overflowMin=({plan.BlockerBounds.min.x - actualBounds.min.x:R}," +
+                            $"{plan.BlockerBounds.min.z - actualBounds.min.z:R}) " +
+                            $"overflowMax=({actualBounds.max.x - plan.BlockerBounds.max.x:R}," +
+                            $"{actualBounds.max.y - plan.BlockerBounds.max.y:R}," +
+                            $"{actualBounds.max.z - plan.BlockerBounds.max.z:R}) " +
+                            $"plannedMatrix={plan.WorldMatrix} actualMatrix={actualMatrix} " +
+                            $"plannedBounds={plan.BlockerBounds} actualBounds={actualBounds}");
+                        UnityEngine.Object.DestroyImmediate(wrapper);
+                        return false;
+                    }
+                    if (placementContext != null && !placementContext.TryReserve(actualBounds))
+                    {
+                        UnityEngine.Object.DestroyImmediate(wrapper);
+                        return false;
+                    }
+
+                    if (frontageSnapEdge != FrontageSnapEdge.None)
+                        wrapper.name += $"_SidewalkFrontage_{frontageSnapEdge}";
+
+                    CreateBuildingGroundPatch(
+                        wrapper,
+                        worldWidth,
+                        worldDepth,
+                        patch,
+                        foundationHeight);
+                    return true;
+                }
+                catch
+                {
+                    if (wrapper != null)
+                        UnityEngine.Object.DestroyImmediate(wrapper);
+                    throw;
                 }
             }
-
-            if (frontageSnapEdge != FrontageSnapEdge.None)
-                wrapper.name += $"_SidewalkFrontage_{frontageSnapEdge}";
-
-            CreateBuildingGroundPatch(
-                wrapper,
-                worldWidth,
-                worldDepth,
-                patch,
-                foundationHeight);
-            return true;
         }
+
+        private static DenseCityFrontageEdge ToDenseCityFrontageEdge(FrontageSnapEdge edge) => edge switch
+        {
+            FrontageSnapEdge.None => DenseCityFrontageEdge.None,
+            FrontageSnapEdge.MinimumX => DenseCityFrontageEdge.MinimumX,
+            FrontageSnapEdge.MaximumX => DenseCityFrontageEdge.MaximumX,
+            FrontageSnapEdge.MinimumZ => DenseCityFrontageEdge.MinimumZ,
+            FrontageSnapEdge.MaximumZ => DenseCityFrontageEdge.MaximumZ,
+            _ => throw new ArgumentOutOfRangeException(nameof(edge))
+        };
 
         private static bool TrySnapBuildingRendererToFrontage(
             Transform building,
@@ -7501,10 +7670,11 @@ namespace Game.Editor
 
         private static BuildingMaterialVariantResult ApplyBuildingMaterialVariants(
             Transform generatedRoot,
-            uint seed)
+            uint seed,
+            DenseCityBuildingMaterialLibrary materialLibrary)
         {
-            DenseCityBuildingMaterialLibrary materialLibrary =
-                DenseCityBuildingMaterialLibrary.CreateOrUpdate();
+            if (materialLibrary == null)
+                throw new ArgumentNullException(nameof(materialLibrary));
             int buildingsA = 0;
             int buildingsB = 0;
             int buildingsC = 0;
@@ -7598,7 +7768,8 @@ namespace Game.Editor
             for (int transformIndex = 0; transformIndex < transforms.Length; transformIndex++)
             {
                 Transform wrapper = transforms[transformIndex];
-                if (!IsRuntimeCityBuildingWrapper(wrapper))
+                if (!IsRuntimeCityBuildingWrapper(wrapper) ||
+                    wrapper.name.IndexOf("Hall", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
                     continue;
                 }

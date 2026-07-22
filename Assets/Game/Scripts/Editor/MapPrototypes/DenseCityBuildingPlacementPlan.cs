@@ -23,7 +23,9 @@ namespace Game.Editor
             Vector2 footprintSize,
             float foundationElevation,
             Vector3 frontageDirection,
-            Vector2Int chunk)
+            Vector2Int chunk,
+            Vector3 realizationLocalPosition,
+            Quaternion realizationLocalRotation)
         {
             OriginCell = originCell;
             FootprintCells = footprintCells;
@@ -33,6 +35,8 @@ namespace Game.Editor
             FoundationElevation = foundationElevation;
             FrontageDirection = frontageDirection;
             Chunk = chunk;
+            RealizationLocalPosition = realizationLocalPosition;
+            RealizationLocalRotation = realizationLocalRotation;
         }
 
         internal Vector2Int OriginCell { get; }
@@ -43,11 +47,15 @@ namespace Game.Editor
         internal float FoundationElevation { get; }
         internal Vector3 FrontageDirection { get; }
         internal Vector2Int Chunk { get; }
+        internal Vector3 RealizationLocalPosition { get; }
+        internal Quaternion RealizationLocalRotation { get; }
     }
 
     internal static class DenseCityBuildingPlacementPlanner
     {
         internal const float PresentationChunkSize = 32f;
+        private const float MatrixTolerance = 0.0001f;
+        private const float BoundsTolerance = 0.05f;
 
         internal static DenseCityBuildingPlacementPlan Create(
             Vector3 requestedCenter,
@@ -60,6 +68,35 @@ namespace Game.Editor
             GridConfig grid,
             DenseCityFrontageEdge frontageEdge,
             float frontageBoundary)
+        {
+            return Create(
+                requestedCenter,
+                rotationDegrees,
+                localWidth,
+                localDepth,
+                localHeight,
+                visualScale,
+                foundationElevation,
+                grid,
+                frontageEdge,
+                frontageBoundary,
+                Matrix4x4.identity,
+                Matrix4x4.identity);
+        }
+
+        internal static DenseCityBuildingPlacementPlan Create(
+            Vector3 requestedCenter,
+            float rotationDegrees,
+            float localWidth,
+            float localDepth,
+            float localHeight,
+            float visualScale,
+            float foundationElevation,
+            GridConfig grid,
+            DenseCityFrontageEdge frontageEdge,
+            float frontageBoundary,
+            Matrix4x4 realizationParentLocalToWorld,
+            Matrix4x4 realizationParentWorldToLocal)
         {
             RequireFinite(requestedCenter, nameof(requestedCenter));
             RequireFinite(rotationDegrees, nameof(rotationDegrees));
@@ -103,16 +140,20 @@ namespace Game.Editor
 
             Vector3 scaledSize = new(worldWidth, localHeight, worldDepth);
             ApplyFrontageSnap(ref position, scaledSize, frontageEdge, frontageBoundary);
-            var blockerBounds = new Bounds(
-                position + Vector3.up * scaledSize.y * 0.5f,
-                scaledSize);
-            Matrix4x4 worldMatrix = Matrix4x4.TRS(
-                position,
-                Quaternion.Euler(0f, rotationDegrees, 0f),
+            Quaternion worldRotation = Quaternion.Euler(0f, rotationDegrees, 0f);
+            Vector3 localPosition = realizationParentWorldToLocal.MultiplyPoint3x4(position);
+            Quaternion localRotation = Quaternion.Inverse(realizationParentLocalToWorld.rotation) * worldRotation;
+            Matrix4x4 worldMatrix = realizationParentLocalToWorld * Matrix4x4.TRS(
+                localPosition,
+                localRotation,
                 Vector3.one * visualScale);
+            Vector3 realizablePosition = worldMatrix.GetColumn(3);
+            var blockerBounds = new Bounds(
+                realizablePosition + Vector3.up * scaledSize.y * 0.5f,
+                scaledSize);
             var chunk = new Vector2Int(
-                Mathf.FloorToInt(position.x / PresentationChunkSize),
-                Mathf.FloorToInt(position.z / PresentationChunkSize));
+                Mathf.FloorToInt(realizablePosition.x / PresentationChunkSize),
+                Mathf.FloorToInt(realizablePosition.z / PresentationChunkSize));
             return new DenseCityBuildingPlacementPlan(
                 originCell,
                 footprintCells,
@@ -120,8 +161,37 @@ namespace Game.Editor
                 blockerBounds,
                 new Vector2(worldWidth, worldDepth),
                 foundationElevation,
-                ResolveFrontageDirection(frontageEdge),
-                chunk);
+                ResolveFrontageDirection(frontageEdge, rotationDegrees),
+                chunk,
+                localPosition,
+                localRotation);
+        }
+
+        internal static bool MatchesRealization(
+            DenseCityBuildingPlacementPlan plan,
+            Matrix4x4 realizedWorldMatrix,
+            Bounds realizedBounds)
+        {
+            for (int row = 0; row < 4; row++)
+            {
+                for (int column = 0; column < 4; column++)
+                {
+                    if (Mathf.Abs(plan.WorldMatrix[row, column] - realizedWorldMatrix[row, column]) >
+                        MatrixTolerance)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return Mathf.Abs(plan.BlockerBounds.center.x - realizedBounds.center.x) <= BoundsTolerance &&
+                   Mathf.Abs(plan.BlockerBounds.center.z - realizedBounds.center.z) <= BoundsTolerance &&
+                   Mathf.Abs(plan.BlockerBounds.min.y - realizedBounds.min.y) <= BoundsTolerance &&
+                   realizedBounds.min.x >= plan.BlockerBounds.min.x - BoundsTolerance &&
+                   realizedBounds.max.x <= plan.BlockerBounds.max.x + BoundsTolerance &&
+                   realizedBounds.max.y <= plan.BlockerBounds.max.y + BoundsTolerance &&
+                   realizedBounds.min.z >= plan.BlockerBounds.min.z - BoundsTolerance &&
+                   realizedBounds.max.z <= plan.BlockerBounds.max.z + BoundsTolerance;
         }
 
         private static void ApplyFrontageSnap(
@@ -151,9 +221,11 @@ namespace Game.Editor
             }
         }
 
-        private static Vector3 ResolveFrontageDirection(DenseCityFrontageEdge edge) => edge switch
+        private static Vector3 ResolveFrontageDirection(
+            DenseCityFrontageEdge edge,
+            float rotationDegrees) => edge switch
         {
-            DenseCityFrontageEdge.None => Vector3.zero,
+            DenseCityFrontageEdge.None => Quaternion.Euler(0f, rotationDegrees, 0f) * Vector3.forward,
             DenseCityFrontageEdge.MinimumX => Vector3.left,
             DenseCityFrontageEdge.MaximumX => Vector3.right,
             DenseCityFrontageEdge.MinimumZ => Vector3.back,
@@ -180,5 +252,6 @@ namespace Game.Editor
             RequireFinite(value.y, name);
             RequireFinite(value.z, name);
         }
+
     }
 }

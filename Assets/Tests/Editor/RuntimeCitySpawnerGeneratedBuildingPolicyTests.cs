@@ -2,16 +2,38 @@ using System;
 using Game.Configs;
 using NUnit.Framework;
 using UnityEditor;
+using UnityEngine;
 
 public sealed class RuntimeCitySpawnerGeneratedBuildingPolicyTests
 {
     private const string ConfigPath = "Assets/Game/Configs/Scene/Game_RuntimeCitySpawner_Config.asset";
+    private const string MapWideConfigPath =
+        "Assets/Game/Configs/OperationMaps/Skirmish/SkirmishDesertBase_MapWideCity_Config.asset";
 
-    [Test]
-    public void ProductionConfig_ProvidesDestroyedVisualForEveryGeneratedBuildingRole()
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            var tests = new RuntimeCitySpawnerGeneratedBuildingPolicyTests();
+            tests.ProductionConfig_ProvidesDestroyedVisualForEveryGeneratedBuildingRole(ConfigPath);
+            tests.ProductionConfig_ProvidesDestroyedVisualForEveryGeneratedBuildingRole(MapWideConfigPath);
+            Debug.Log("[RuntimeCitySpawnerGeneratedBuildingPolicyValidation] result=Passed configs=2");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[RuntimeCitySpawnerGeneratedBuildingPolicyValidation] result=Failed");
+            ValidationExit.Exit(1);
+        }
+    }
+
+    [TestCase(ConfigPath)]
+    [TestCase(MapWideConfigPath)]
+    public void ProductionConfig_ProvidesDestroyedVisualForEveryGeneratedBuildingRole(string configPath)
     {
         RuntimeCitySpawnerSystemConfig config =
-            AssetDatabase.LoadAssetAtPath<RuntimeCitySpawnerSystemConfig>(ConfigPath);
+            AssetDatabase.LoadAssetAtPath<RuntimeCitySpawnerSystemConfig>(configPath);
         Assert.That(config, Is.Not.Null);
 
         AssertRole(config, GeneratedCityBuildingRole.House,

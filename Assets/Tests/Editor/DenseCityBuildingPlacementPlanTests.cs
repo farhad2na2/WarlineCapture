@@ -13,7 +13,9 @@ public sealed class DenseCityBuildingPlacementPlanTests
             var tests = new DenseCityBuildingPlacementPlanTests();
             tests.Create_ReproducesGridAndFrontagePlacementWithoutRealization();
             tests.Create_RejectsNonQuarterTurnAndOversizedFootprint();
-            Debug.Log("[DenseCityBuildingPlacementPlanValidation] result=Passed tests=2");
+            tests.Create_QuantizesWorldMatrixThroughPresentationParentBeforeRealization();
+            tests.MatchesRealization_RejectsMatrixOrBoundsDrift();
+            Debug.Log("[DenseCityBuildingPlacementPlanValidation] result=Passed tests=4");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -22,6 +24,45 @@ public sealed class DenseCityBuildingPlacementPlanTests
             Debug.LogError("[DenseCityBuildingPlacementPlanValidation] result=Failed");
             ValidationExit.Exit(1);
         }
+    }
+
+    [Test]
+    public void Create_QuantizesWorldMatrixThroughPresentationParentBeforeRealization()
+    {
+        var grid = new GridConfig
+        {
+            Width = 2048,
+            Height = 1024,
+            CellSize = 1f,
+            Origin = new float3(768f, 0f, 256f)
+        };
+        Matrix4x4 parentLocalToWorld = Matrix4x4.TRS(
+            new Vector3(700f, 0f, 413.3f),
+            Quaternion.Euler(0f, 90f, 0f),
+            Vector3.one);
+        Matrix4x4 parentWorldToLocal = parentLocalToWorld.inverse;
+
+        DenseCityBuildingPlacementPlan plan = DenseCityBuildingPlacementPlanner.Create(
+            new Vector3(1792f, 0f, 823f),
+            180f,
+            99.94f,
+            65.86f,
+            61.54f,
+            2.75f,
+            0.035f,
+            grid,
+            DenseCityFrontageEdge.None,
+            0f,
+            parentLocalToWorld,
+            parentWorldToLocal);
+
+        Matrix4x4 realized = parentLocalToWorld * Matrix4x4.TRS(
+            plan.RealizationLocalPosition,
+            plan.RealizationLocalRotation,
+            Vector3.one * 2.75f);
+
+        Assert.That(DenseCityBuildingPlacementPlanner.MatchesRealization(
+            plan, realized, plan.BlockerBounds), Is.True);
     }
 
     [Test]
@@ -55,6 +96,8 @@ public sealed class DenseCityBuildingPlacementPlanTests
         Assert.That(plan.FootprintSize, Is.EqualTo(new Vector2(12f, 8f)));
         Assert.That(plan.FrontageDirection, Is.EqualTo(Vector3.left));
         Assert.That(plan.Chunk, Is.EqualTo(Vector2Int.zero));
+        Assert.That(plan.RealizationLocalPosition, Is.EqualTo(new Vector3(11f, 2.035f, 20f)));
+        Assert.That(plan.RealizationLocalRotation, Is.EqualTo(Quaternion.Euler(0f, 90f, 0f)));
     }
 
     [Test]
@@ -76,5 +119,44 @@ public sealed class DenseCityBuildingPlacementPlanTests
             DenseCityBuildingPlacementPlanner.Create(
                 Vector3.zero, 0f, 11f, 3f, 3f, 1f, 0f, grid,
                 DenseCityFrontageEdge.None, 0f));
+    }
+
+    [Test]
+    public void MatchesRealization_RejectsMatrixOrBoundsDrift()
+    {
+        var grid = new GridConfig
+        {
+            Width = 64,
+            Height = 64,
+            CellSize = 1f,
+            Origin = float3.zero
+        };
+        DenseCityBuildingPlacementPlan plan = DenseCityBuildingPlacementPlanner.Create(
+            new Vector3(20f, 0f, 20f),
+            0f,
+            8f,
+            6f,
+            4f,
+            1f,
+            2f,
+            grid,
+            DenseCityFrontageEdge.None,
+            0f);
+
+        Assert.That(DenseCityBuildingPlacementPlanner.MatchesRealization(
+            plan, plan.WorldMatrix, plan.BlockerBounds), Is.True);
+        Matrix4x4 moved = plan.WorldMatrix;
+        moved.m03 += 0.01f;
+        Assert.That(DenseCityBuildingPlacementPlanner.MatchesRealization(
+            plan, moved, plan.BlockerBounds), Is.False);
+        Bounds contained = plan.BlockerBounds;
+        contained.size -= new Vector3(0.2f, 0.2f, 0.2f);
+        contained.center -= Vector3.up * 0.1f;
+        Assert.That(DenseCityBuildingPlacementPlanner.MatchesRealization(
+            plan, plan.WorldMatrix, contained), Is.True);
+        Bounds oversized = plan.BlockerBounds;
+        oversized.size += new Vector3(0.1f, 0f, 0f);
+        Assert.That(DenseCityBuildingPlacementPlanner.MatchesRealization(
+            plan, plan.WorldMatrix, oversized), Is.False);
     }
 }

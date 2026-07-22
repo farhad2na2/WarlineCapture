@@ -274,7 +274,8 @@ namespace Game.Editor
             }
         }
 
-        public static void BuildDenseMapWide(RuntimeCityRAndDMapView view)
+        public static DenseMiddleEasternCityEditModeBuilder.Result BuildDenseMapWide(
+            RuntimeCityRAndDMapView view)
         {
             if (view == null)
                 throw new ArgumentNullException(nameof(view));
@@ -294,6 +295,7 @@ namespace Game.Editor
                 Transform root = EnsureGeneratedRoot(view);
                 root.name = "Generated_GiantDenseMiddleEasternCity";
                 ClearChildren(root);
+                NormalizeGeneratedRootWorldTransform(root);
 
                 DenseMiddleEasternCityEditModeBuilder.Result result =
                     DenseMiddleEasternCityEditModeBuilder.Build(view, root, config);
@@ -304,8 +306,10 @@ namespace Game.Editor
                     $"[DeterministicCityEditor] result=BuiltGiantDenseMiddleEasternCity " +
                     $"buildings={result.Buildings} parks={result.Parks} " +
                     $"roadTiles={result.RoadTiles} roadChunks={result.RoadChunks} " +
-                    $"authoredCoreRenderers={result.AuthoredCoreRenderers}",
+                    $"authoredCoreRenderers={result.AuthoredCoreRenderers} " +
+                    $"semanticBuildings={result.SemanticBuildings}",
                     view);
+                return result;
             }
             catch (Exception exception)
             {
@@ -636,6 +640,24 @@ namespace Game.Editor
         {
             for (int index = root.childCount - 1; index >= 0; index--)
                 Undo.DestroyObjectImmediate(root.GetChild(index).gameObject);
+        }
+
+        private static void NormalizeGeneratedRootWorldTransform(Transform root)
+        {
+            if (root == null)
+                throw new ArgumentNullException(nameof(root));
+
+            if (root.parent != null)
+                Undo.SetTransformParent(root, null, "Move Dense City Generation Root To Scene Ownership");
+            root.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+            root.localScale = Vector3.one;
+            if (root.position.sqrMagnitude > 0.000001f ||
+                Quaternion.Angle(root.rotation, Quaternion.identity) > 0.0001f ||
+                (root.lossyScale - Vector3.one).sqrMagnitude > 0.000001f)
+            {
+                throw new InvalidOperationException(
+                    "Dense-city generated root must resolve to an identity world transform before generation.");
+            }
         }
 
         private static void RegisterGeneratedChildrenForUndo(Transform root)

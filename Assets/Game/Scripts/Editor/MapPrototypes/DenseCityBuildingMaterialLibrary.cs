@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using Game.Configs;
 using UnityEditor;
 using UnityEngine;
 
@@ -46,6 +48,19 @@ namespace Game.Editor
         private readonly Material[] _shopSources;
         private readonly Material[,] _facadeVariants;
         private readonly Material[] _shopVariants;
+        private readonly Dictionary<GameObject, MaterialFamily> _materialFamilyByPrefab = new();
+
+        private readonly struct MaterialFamily
+        {
+            internal MaterialFamily(bool usesFacade, bool usesShop)
+            {
+                UsesFacade = usesFacade;
+                UsesShop = usesShop;
+            }
+
+            internal bool UsesFacade { get; }
+            internal bool UsesShop { get; }
+        }
 
         private DenseCityBuildingMaterialLibrary(
             Material[] facadeSources,
@@ -154,6 +169,48 @@ namespace Game.Editor
             if ((uint)facadeTintIndex >= (uint)FacadeTints.Length)
                 throw new ArgumentOutOfRangeException(nameof(selection));
             return _facadeVariants[sourceIndex, facadeTintIndex];
+        }
+
+        internal DenseCityBuildingMaterialSelection Select(
+            GameObject prefab,
+            Vector3 worldPosition,
+            uint seed,
+            GeneratedCityBuildingRole role)
+        {
+            if (prefab == null)
+                throw new ArgumentNullException(nameof(prefab));
+
+            MaterialFamily family = ResolveMaterialFamily(prefab);
+            return DenseCityBuildingMaterialVariantSelector.Select(
+                worldPosition,
+                seed,
+                role,
+                family.UsesFacade || family.UsesShop,
+                family.UsesShop);
+        }
+
+        private MaterialFamily ResolveMaterialFamily(GameObject prefab)
+        {
+            if (_materialFamilyByPrefab.TryGetValue(prefab, out MaterialFamily family))
+                return family;
+
+            bool usesFacade = false;
+            bool usesShop = false;
+            Renderer[] renderers = prefab.GetComponentsInChildren<Renderer>(true);
+            for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
+            {
+                Material[] materials = renderers[rendererIndex].sharedMaterials;
+                for (int materialIndex = 0; materialIndex < materials.Length; materialIndex++)
+                {
+                    Material material = materials[materialIndex];
+                    usesFacade |= IsFacadeFamily(material);
+                    usesShop |= IsShopFamily(material);
+                }
+            }
+
+            family = new MaterialFamily(usesFacade, usesShop);
+            _materialFamilyByPrefab.Add(prefab, family);
+            return family;
         }
 
         private bool TryGetFacadeSourceIndex(Material material, out int sourceIndex)

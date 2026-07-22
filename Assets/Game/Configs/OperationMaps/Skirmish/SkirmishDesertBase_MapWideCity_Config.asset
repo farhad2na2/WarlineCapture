@@ -36,6 +36,10 @@ MonoBehaviour:
   autobahnMinLengthRoadCells: 8
   autobahnEdgeMarginRoadCells: 3
   defaultBuildingMaxHealth: 350
+  generatedHouseDestroyedVisualPrefab: {fileID: 592706889690310982, guid: 6d40cda8e12154454a6ec1f160415e5a, type: 3}
+  generatedShopDestroyedVisualPrefab: {fileID: 2140523290708807874, guid: 10826b4776fa247f88122e08f5120eb2, type: 3}
+  generatedCivicDestroyedVisualPrefab: {fileID: 8439187972236899031, guid: 5838b58b4ee2042da81e088ee01e3382, type: 3}
+  generatedOtherDestroyedVisualPrefab: {fileID: 9083467568423483946, guid: 81a72a361a4ec4f20b4327e0dfe7a61a, type: 3}
   clockTowerPrefab: {fileID: 1465231023479234, guid: a056b38d0d5177b42b5bc8318cad5901, type: 3}
   fountainPrefabs:
   - {fileID: 1465904934661882, guid: e3ef0989e5ed5ab4faada7d3fa29e8e8, type: 3}

@@ -46,6 +46,15 @@ namespace Game.Runtime
             _cityVisualRoot.localScale = Vector3.one;
         }
 
+        public Transform CityVisualRoot
+        {
+            get
+            {
+                EnsureCityVisualRoot();
+                return _cityVisualRoot;
+            }
+        }
+
         public GameObject SpawnVisualOnlyPrefab(
             GameObject prefab,
             Vector2Int originCell,

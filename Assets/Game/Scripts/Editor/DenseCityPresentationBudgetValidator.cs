@@ -33,6 +33,24 @@ namespace Game.Editor
 
         public static void ValidateCurrentCandidateBatch() => ValidateCurrentCandidateCore();
 
+        internal static void InvalidateEvidence(string projectRoot, string reason)
+        {
+            var report = new PresentationBudgetReport
+            {
+                schema = "warline.operation-map.dense-city-presentation-budget",
+                schemaVersion = 1,
+                result = "PresentationBudgetEvidenceInvalidated",
+                operationMapId = OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
+                invalidationReason = reason ?? string.Empty,
+                packedContentMetricsComplete = 0,
+                entitySceneBytes = -1,
+                sharedDependencyBytes = -1,
+                duplicatedDependencyBytes = -1,
+                productionCutover = 0
+            };
+            WriteReport(projectRoot, report);
+        }
+
         private static void ValidateCurrentCandidateCore()
         {
             string projectRoot = Path.GetDirectoryName(Application.dataPath) ??
@@ -45,10 +63,7 @@ namespace Game.Editor
             if (!TryCreateReport(bake, art, parity, layout, out PresentationBudgetReport report, out string error))
                 throw new InvalidOperationException($"Candidate presentation budget rejected: {error}");
 
-            string physicalPath = Path.Combine(projectRoot, ReportPath);
-            Directory.CreateDirectory(Path.GetDirectoryName(physicalPath) ?? projectRoot);
-            File.WriteAllText(physicalPath, ToDeterministicJson(report), Utf8WithoutBom);
-            AssetDatabase.ImportAsset(ReportPath, ImportAssetOptions.ForceSynchronousImport);
+            WriteReport(projectRoot, report);
             Debug.Log(
                 $"[DenseCityPresentationBudget] result={report.result} " +
                 $"identities={report.presentationIdentityCount} renderEntities={report.renderEntityCount} " +
@@ -157,6 +172,14 @@ namespace Game.Editor
         internal static string ToDeterministicJson(PresentationBudgetReport report) =>
             JsonUtility.ToJson(report, true) + "\n";
 
+        private static void WriteReport(string projectRoot, PresentationBudgetReport report)
+        {
+            string physicalPath = Path.Combine(projectRoot, ReportPath);
+            Directory.CreateDirectory(Path.GetDirectoryName(physicalPath) ?? projectRoot);
+            File.WriteAllText(physicalPath, ToDeterministicJson(report), Utf8WithoutBom);
+            AssetDatabase.ImportAsset(ReportPath, ImportAssetOptions.ForceSynchronousImport);
+        }
+
         private static T Read<T>(string projectRoot, string path) where T : class
         {
             string physicalPath = Path.Combine(projectRoot, path);
@@ -227,6 +250,7 @@ namespace Game.Editor
             public int schemaVersion;
             public string result;
             public string operationMapId;
+            public string invalidationReason;
             public int gameplayBuildingCount;
             public int gameplayVehicleCount;
             public int presentationRootCount;

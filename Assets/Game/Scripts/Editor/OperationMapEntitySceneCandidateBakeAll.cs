@@ -88,6 +88,9 @@ namespace Game.Editor
             OperationMapEntityPresentationTransformParityValidator.InvalidateEvidence(
                 projectRoot,
                 "candidate-bake-all-started");
+            DenseCityPresentationBudgetValidator.InvalidateEvidence(
+                projectRoot,
+                "candidate-bake-all-started");
 
             try
             {
@@ -123,6 +126,10 @@ namespace Game.Editor
                         .BuildCandidateEntitySceneAddressablesLayout());
                 RunStage(report, "candidate-bake-budget", () =>
                     RequireBakeAndLayoutBudgets(projectRoot, report));
+                RunStage(
+                    report,
+                    "presentation-budget",
+                    DenseCityPresentationBudgetValidator.ValidateCurrentCandidateBatch);
                 RunStage(report, "postflight-isolation", () => RequirePostflight(production));
 
                 report.result = "CandidateBakeAllPassedPendingVisualAndRuntimeAcceptance";
@@ -137,6 +144,16 @@ namespace Game.Editor
             catch (Exception exception)
             {
                 report.failure = exception.Message;
+                try
+                {
+                    DenseCityPresentationBudgetValidator.InvalidateEvidence(
+                        projectRoot,
+                        $"candidate-bake-all-failed:{exception.GetType().Name}");
+                }
+                catch (Exception evidenceException)
+                {
+                    report.evidenceInvalidationFailure = evidenceException.Message;
+                }
                 try
                 {
                     transaction.Rollback();
@@ -589,6 +606,7 @@ namespace Game.Editor
             public int productionCutover;
             public int rollbackApplied;
             public string failure;
+            public string evidenceInvalidationFailure;
             public string rollbackFailure;
             public int buildingAuthoringCount;
             public int vehicleAuthoringCount;

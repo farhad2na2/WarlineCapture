@@ -3,6 +3,7 @@
     "schemaVersion": 1,
     "result": "PresentationBudgetCorePassedPendingPackedContentMetrics",
     "operationMapId": "opmap.skirmish.desert_base_01",
+    "invalidationReason": "",
     "gameplayBuildingCount": 432,
     "gameplayVehicleCount": 22,
     "presentationRootCount": 3,

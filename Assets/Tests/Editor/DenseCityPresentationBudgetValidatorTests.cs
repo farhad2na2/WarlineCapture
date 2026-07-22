@@ -12,7 +12,8 @@ public sealed class DenseCityPresentationBudgetValidatorTests
         {
             suite.Budget_AcceptsCompleteCoreEvidence,
             suite.Budget_RejectsTransformBoundsMismatch,
-            suite.Budget_SerializationIsDeterministicAndMarksPackedMetricsPending
+            suite.Budget_SerializationIsDeterministicAndMarksPackedMetricsPending,
+            suite.CandidateBakeAll_OrdersBudgetAfterBakeAndBeforePostflight
         };
         for (int i = 0; i < tests.Length; i++)
             tests[i]();
@@ -49,6 +50,28 @@ public sealed class DenseCityPresentationBudgetValidatorTests
         StringAssert.Contains("\"packedContentMetricsComplete\": 0", first);
         StringAssert.Contains("\"entitySceneBytes\": -1", first);
         StringAssert.Contains("\"productionCutover\": 0", first);
+    }
+
+    [Test]
+    public void CandidateBakeAll_OrdersBudgetAfterBakeAndBeforePostflight()
+    {
+        const string path =
+            "Assets/Game/Scripts/Editor/OperationMapEntitySceneCandidateBakeAll.cs";
+        string source = System.IO.File.ReadAllText(path);
+        int invalidation = source.IndexOf(
+            "DenseCityPresentationBudgetValidator.InvalidateEvidence",
+            StringComparison.Ordinal);
+        int entityBake = source.IndexOf("\"candidate-entity-bake\"", StringComparison.Ordinal);
+        int budget = source.IndexOf("\"presentation-budget\"", StringComparison.Ordinal);
+        int postflight = source.IndexOf("\"postflight-isolation\"", StringComparison.Ordinal);
+
+        Assert.That(invalidation, Is.GreaterThanOrEqualTo(0));
+        Assert.That(entityBake, Is.GreaterThan(invalidation));
+        Assert.That(budget, Is.GreaterThan(entityBake));
+        Assert.That(postflight, Is.GreaterThan(budget));
+        Assert.That(
+            Count(source, "DenseCityPresentationBudgetValidator.InvalidateEvidence"),
+            Is.EqualTo(2));
     }
 
     private static bool TryCreateValidReport(
@@ -112,5 +135,17 @@ public sealed class DenseCityPresentationBudgetValidatorTests
             legacyPlacementEntryCount = 0,
             productionAddressablesMutated = 0
         };
+    }
+
+    private static int Count(string source, string value)
+    {
+        int count = 0;
+        int index = 0;
+        while ((index = source.IndexOf(value, index, StringComparison.Ordinal)) >= 0)
+        {
+            count++;
+            index += value.Length;
+        }
+        return count;
     }
 }

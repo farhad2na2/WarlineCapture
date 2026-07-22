@@ -7,6 +7,7 @@
     "productionCutover": 0,
     "rollbackApplied": 0,
     "failure": "",
+    "evidenceInvalidationFailure": "",
     "rollbackFailure": "",
     "buildingAuthoringCount": 432,
     "vehicleAuthoringCount": 22,
@@ -27,49 +28,49 @@
         {
             "name": "preflight-isolation",
             "result": "Passed",
-            "elapsedMilliseconds": 2707,
+            "elapsedMilliseconds": 2558,
             "failure": ""
         },
         {
             "name": "candidate-population",
             "result": "Passed",
-            "elapsedMilliseconds": 3822,
+            "elapsedMilliseconds": 3672,
             "failure": ""
         },
         {
             "name": "candidate-presentation-identities",
             "result": "Passed",
-            "elapsedMilliseconds": 4020,
+            "elapsedMilliseconds": 4007,
             "failure": ""
         },
         {
             "name": "candidate-source-transform-parity",
             "result": "Passed",
-            "elapsedMilliseconds": 237505,
+            "elapsedMilliseconds": 208456,
             "failure": ""
         },
         {
             "name": "candidate-authoring-readiness",
             "result": "Passed",
-            "elapsedMilliseconds": 1866,
+            "elapsedMilliseconds": 1511,
             "failure": ""
         },
         {
             "name": "candidate-entity-bake",
             "result": "Passed",
-            "elapsedMilliseconds": 284402,
+            "elapsedMilliseconds": 210545,
             "failure": ""
         },
         {
             "name": "shared-art-budget",
             "result": "Passed",
-            "elapsedMilliseconds": 1122,
+            "elapsedMilliseconds": 845,
             "failure": ""
         },
         {
             "name": "candidate-binding-layout",
             "result": "Passed",
-            "elapsedMilliseconds": 5209,
+            "elapsedMilliseconds": 3260,
             "failure": ""
         },
         {
@@ -79,9 +80,15 @@
             "failure": ""
         },
         {
+            "name": "presentation-budget",
+            "result": "Passed",
+            "elapsedMilliseconds": 152,
+            "failure": ""
+        },
+        {
             "name": "postflight-isolation",
             "result": "Passed",
-            "elapsedMilliseconds": 4385,
+            "elapsedMilliseconds": 3200,
             "failure": ""
         }
     ]

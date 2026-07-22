@@ -42,6 +42,8 @@ namespace Game.Editor
             public readonly int SemanticSidewalkStreetLights;
             public readonly int SemanticGrassPatches;
             public readonly int SemanticMainStreetBushes;
+            public readonly int SemanticPowerPoles;
+            public readonly int SemanticPowerLines;
 
             public Result(
                 int roadTiles,
@@ -67,7 +69,9 @@ namespace Game.Editor
                 int semanticBoulevardMedianLights,
                 int semanticSidewalkStreetLights,
                 int semanticGrassPatches,
-                int semanticMainStreetBushes)
+                int semanticMainStreetBushes,
+                int semanticPowerPoles,
+                int semanticPowerLines)
             {
                 RoadTiles = roadTiles;
                 RoadChunks = roadChunks;
@@ -93,6 +97,8 @@ namespace Game.Editor
                 SemanticSidewalkStreetLights = semanticSidewalkStreetLights;
                 SemanticGrassPatches = semanticGrassPatches;
                 SemanticMainStreetBushes = semanticMainStreetBushes;
+                SemanticPowerPoles = semanticPowerPoles;
+                SemanticPowerLines = semanticPowerLines;
             }
         }
 
@@ -1390,6 +1396,12 @@ namespace Game.Editor
             int semanticMainStreetBushes = CountPresentationRecords(
                 generationTransactions.Records.Presentations,
                 "main-street-bush-visual");
+            int semanticPowerPoles = CountPresentationRecords(
+                generationTransactions.Records.Presentations,
+                "power-pole-visual");
+            int semanticPowerLines = CountPresentationRecords(
+                generationTransactions.Records.Presentations,
+                "power-line-visual");
             if (semanticCanalWaterExclusions != canalResult.WaterTiles ||
                 semanticCanalBedPresentations != canalResult.WaterTiles ||
                 semanticCanalWaterPresentations != canalResult.WaterTiles)
@@ -1476,6 +1488,14 @@ namespace Game.Editor
                     $"grass={urbanDetails.GrassPatches}/{semanticGrassPatches} " +
                     $"mainStreetBushes={urbanDetails.MainStreetBushes}/{semanticMainStreetBushes}.");
             }
+            if (semanticPowerPoles != urbanDetails.PowerPoles ||
+                semanticPowerLines != urbanDetails.PowerLines)
+            {
+                throw new InvalidOperationException(
+                    $"Power-network semantic parity failed: " +
+                    $"poles={urbanDetails.PowerPoles}/{semanticPowerPoles} " +
+                    $"lines={urbanDetails.PowerLines}/{semanticPowerLines}.");
+            }
             Debug.Log(
                 $"[DenseCitySemanticRecords] buildings={generationTransactions.Records.Buildings.Count} " +
                 $"surfaces={generationTransactions.Records.Surfaces.Count} " +
@@ -1492,7 +1512,8 @@ namespace Game.Editor
                 $"boulevardMedianLights={semanticBoulevardMedianLights} " +
                 $"sidewalkStreetLights={semanticSidewalkStreetLights} " +
                 $"grassPatches={semanticGrassPatches} " +
-                $"mainStreetBushes={semanticMainStreetBushes}");
+                $"mainStreetBushes={semanticMainStreetBushes} " +
+                $"powerPoles={semanticPowerPoles} powerLines={semanticPowerLines}");
 
             int removedFloatingBranches = RemoveUnsupportedElevatedVisualBranches(generatedRoot);
             Debug.Log($"[DenseCityFloatingItemCleanup] removedBranches={removedFloatingBranches}");
@@ -1529,7 +1550,9 @@ namespace Game.Editor
                 semanticBoulevardMedianLights,
                 semanticSidewalkStreetLights,
                 semanticGrassPatches,
-                semanticMainStreetBushes);
+                semanticMainStreetBushes,
+                semanticPowerPoles,
+                semanticPowerLines);
         }
 
         private static int CountBuildingRecords(
@@ -7394,7 +7417,8 @@ namespace Game.Editor
                 boulevardRoadCells,
                 reservedDetailAreas,
                 gradeElevation,
-                seed);
+                seed,
+                generationTransactions);
             reservedDetailAreas.AddRange(utilityDetails.ReservedAreas);
             StreetLightDetailResult streetLightDetails = AddSidewalkStreetLights(
                 streetLightRootObject.transform,
@@ -7626,7 +7650,29 @@ namespace Game.Editor
 
         private sealed class UtilityDetailResult
         {
+            public UtilityDetailResult(
+                DenseCityVisualAssetMetadata poleMetadata,
+                Bounds poleLocalBounds,
+                DenseCityVisualAssetMetadata lineMetadata,
+                Bounds lineLocalBounds,
+                uint seed,
+                DenseCityGenerationTransactionContext generationTransactions)
+            {
+                PoleMetadata = poleMetadata;
+                PoleLocalBounds = poleLocalBounds;
+                LineMetadata = lineMetadata;
+                LineLocalBounds = lineLocalBounds;
+                Seed = seed;
+                GenerationTransactions = generationTransactions;
+            }
+
             public readonly List<Rect> ReservedAreas = new();
+            public DenseCityVisualAssetMetadata PoleMetadata { get; }
+            public Bounds PoleLocalBounds { get; }
+            public DenseCityVisualAssetMetadata LineMetadata { get; }
+            public Bounds LineLocalBounds { get; }
+            public uint Seed { get; }
+            public DenseCityGenerationTransactionContext GenerationTransactions { get; }
             public int Poles;
             public int Lines;
         }
@@ -7672,9 +7718,22 @@ namespace Game.Editor
             HashSet<Vector2Int> boulevardRoadCells,
             List<Rect> reservedAreas,
             float gradeElevation,
-            uint seed)
+            uint seed,
+            DenseCityGenerationTransactionContext generationTransactions)
         {
-            var result = new UtilityDetailResult();
+            if (generationTransactions == null)
+                throw new ArgumentNullException(nameof(generationTransactions));
+            if (!TryGetPrefabLocalRendererBounds(polePrefab.transform, out Bounds poleLocalBounds))
+                throw new InvalidOperationException($"Power pole prefab '{polePrefab.name}' has no renderer bounds.");
+            if (!TryGetPrefabLocalRendererBounds(linePrefab.transform, out Bounds lineLocalBounds))
+                throw new InvalidOperationException($"Power line prefab '{linePrefab.name}' has no renderer bounds.");
+            var result = new UtilityDetailResult(
+                DenseCityVisualAssetMetadataExtractor.Extract(polePrefab),
+                poleLocalBounds,
+                DenseCityVisualAssetMetadataExtractor.Extract(linePrefab),
+                lineLocalBounds,
+                seed,
+                generationTransactions);
             int maximumColumn = Mathf.FloorToInt(mapWidth / RoadGridSize) - 1;
             int maximumRow = Mathf.FloorToInt(mapDepth / RoadGridSize) - 1;
             var utilityRows = new HashSet<int>();
@@ -7952,6 +8011,7 @@ namespace Game.Editor
                         candidate.Position,
                         gradeElevation + 0.02f,
                         poleRotation,
+                        result,
                         out UtilityPolePoint polePoint,
                         candidate.Side))
                 {
@@ -7971,7 +8031,8 @@ namespace Game.Editor
                         parent,
                         $"{linePrefab.name}_Roadside_{result.Lines:0000}",
                         previousPole.Value,
-                        polePoint))
+                        polePoint,
+                        result))
                 {
                     result.Lines++;
                 }
@@ -8030,40 +8091,64 @@ namespace Game.Editor
             Vector2 position,
             float supportHeight,
             float rotation,
+            UtilityDetailResult result,
             out UtilityPolePoint polePoint,
             int side)
         {
-            GameObject pole = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
-            if (pole == null)
+            GroundedDetailPlan plan = PlanGroundedDetail(
+                prefab,
+                position,
+                supportHeight,
+                rotation,
+                1f);
+            Bounds plannedBounds = TransformLocalBounds(result.PoleLocalBounds, plan.WorldMatrix);
+            GameObject pole = null;
+            try
             {
-                polePoint = default;
-                return false;
-            }
+                bool accepted = result.GenerationTransactions.TryPlaceRenderOnlyPresentation(
+                    0,
+                    sequence => DenseCityRenderOnlyPresentationRecordFactory.Create(
+                        new DenseCityRenderOnlyPresentationRecordInput(
+                            DenseCityGeneratorSchema,
+                            unchecked((int)result.Seed),
+                            0,
+                            sequence,
+                            "power-pole-visual",
+                            DenseCityPresentationCategory.Infrastructure,
+                            result.PoleMetadata.PrefabAssetGuid,
+                            result.PoleMetadata.PrefabLocalId,
+                            result.PoleMetadata.MaterialAssetGuids,
+                            plan.WorldMatrix,
+                            true,
+                            true,
+                            1)),
+                    () =>
+                    {
+                        pole = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
+                        if (pole == null)
+                            return false;
+                        pole.name = objectName;
+                        pole.transform.SetPositionAndRotation(plan.Position, plan.Rotation);
+                        pole.transform.localScale = plan.Scale;
+                        ValidateWorldMatrix(pole.transform, plan.WorldMatrix, "power pole");
+                        DisableColliders(pole);
+                        return true;
+                    });
+                if (!accepted)
+                {
+                    polePoint = default;
+                    return false;
+                }
 
-            pole.name = objectName;
-            pole.transform.SetPositionAndRotation(
-                new Vector3(position.x, 0f, position.y),
-                Quaternion.Euler(0f, rotation, 0f));
-            if (!TryGetRendererBounds(pole, out Bounds bounds))
+                polePoint = new UtilityPolePoint(plan.Position, plannedBounds.max.y - 0.12f, side);
+                return true;
+            }
+            catch
             {
-                UnityEngine.Object.DestroyImmediate(pole);
-                polePoint = default;
-                return false;
+                if (pole != null)
+                    UnityEngine.Object.DestroyImmediate(pole);
+                throw;
             }
-
-            Vector3 groundedPosition = pole.transform.position;
-            groundedPosition.y += supportHeight - bounds.min.y;
-            pole.transform.position = groundedPosition;
-            if (!TryGetRendererBounds(pole, out bounds))
-            {
-                UnityEngine.Object.DestroyImmediate(pole);
-                polePoint = default;
-                return false;
-            }
-
-            DisableColliders(pole);
-            polePoint = new UtilityPolePoint(pole.transform.position, bounds.max.y - 0.12f, side);
-            return true;
         }
 
         private static bool InstantiatePowerLineSpan(
@@ -8071,7 +8156,8 @@ namespace Game.Editor
             Transform parent,
             string objectName,
             UtilityPolePoint start,
-            UtilityPolePoint end)
+            UtilityPolePoint end,
+            UtilityDetailResult result)
         {
             Vector3 direction = end.Position - start.Position;
             direction.y = 0f;
@@ -8079,26 +8165,53 @@ namespace Game.Editor
             if (distance < 0.1f)
                 return false;
 
-            GameObject line = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
-            if (line == null)
-                return false;
-
-            line.name = objectName;
-            line.transform.SetPositionAndRotation(
-                new Vector3(start.Position.x, (start.WireHeight + end.WireHeight) * 0.5f, start.Position.z),
-                Quaternion.identity);
-            line.transform.localScale = Vector3.one;
-            if (!TryGetRendererBounds(line, out Bounds sourceBounds))
+            float sourceLength = Mathf.Max(0.1f, result.LineLocalBounds.size.z);
+            var position = new Vector3(
+                start.Position.x,
+                (start.WireHeight + end.WireHeight) * 0.5f,
+                start.Position.z);
+            Quaternion rotation = Quaternion.LookRotation(direction.normalized, Vector3.up);
+            var scale = new Vector3(1f, 1f, distance / sourceLength);
+            Matrix4x4 worldMatrix = Matrix4x4.TRS(position, rotation, scale);
+            GameObject line = null;
+            try
             {
-                UnityEngine.Object.DestroyImmediate(line);
-                return false;
+                return result.GenerationTransactions.TryPlaceRenderOnlyPresentation(
+                    0,
+                    sequence => DenseCityRenderOnlyPresentationRecordFactory.Create(
+                        new DenseCityRenderOnlyPresentationRecordInput(
+                            DenseCityGeneratorSchema,
+                            unchecked((int)result.Seed),
+                            0,
+                            sequence,
+                            "power-line-visual",
+                            DenseCityPresentationCategory.Infrastructure,
+                            result.LineMetadata.PrefabAssetGuid,
+                            result.LineMetadata.PrefabLocalId,
+                            result.LineMetadata.MaterialAssetGuids,
+                            worldMatrix,
+                            true,
+                            true,
+                            1)),
+                    () =>
+                    {
+                        line = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
+                        if (line == null)
+                            return false;
+                        line.name = objectName;
+                        line.transform.SetPositionAndRotation(position, rotation);
+                        line.transform.localScale = scale;
+                        ValidateWorldMatrix(line.transform, worldMatrix, "power line");
+                        DisableColliders(line);
+                        return true;
+                    });
             }
-
-            float sourceLength = Mathf.Max(0.1f, sourceBounds.size.z);
-            line.transform.rotation = Quaternion.LookRotation(direction.normalized, Vector3.up);
-            line.transform.localScale = new Vector3(1f, 1f, distance / sourceLength);
-            DisableColliders(line);
-            return true;
+            catch
+            {
+                if (line != null)
+                    UnityEngine.Object.DestroyImmediate(line);
+                throw;
+            }
         }
 
         private sealed class StreetLightDetailResult

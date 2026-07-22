@@ -51,6 +51,7 @@ namespace Game.Editor
             public readonly int SemanticStreetProps;
             public readonly int SemanticUrbanTrees;
             public readonly int SemanticUrbanRocks;
+            public readonly int SemanticCivicFountains;
 
             public Result(
                 int roadTiles,
@@ -85,7 +86,8 @@ namespace Game.Editor
                 int semanticCourtyardBushes,
                 int semanticStreetProps,
                 int semanticUrbanTrees,
-                int semanticUrbanRocks)
+                int semanticUrbanRocks,
+                int semanticCivicFountains)
             {
                 RoadTiles = roadTiles;
                 RoadChunks = roadChunks;
@@ -120,6 +122,7 @@ namespace Game.Editor
                 SemanticStreetProps = semanticStreetProps;
                 SemanticUrbanTrees = semanticUrbanTrees;
                 SemanticUrbanRocks = semanticUrbanRocks;
+                SemanticCivicFountains = semanticCivicFountains;
             }
         }
 
@@ -1450,6 +1453,9 @@ namespace Game.Editor
             int semanticUrbanRockPresentations = CountPresentationRecords(
                 generationTransactions.Records.Presentations,
                 "urban-rock-visual");
+            int semanticCivicFountains = CountPresentationRecords(
+                generationTransactions.Records.Presentations,
+                "civic-fountain-visual");
             if (semanticCanalWaterExclusions != canalResult.WaterTiles ||
                 semanticCanalBedPresentations != canalResult.WaterTiles ||
                 semanticCanalWaterPresentations != canalResult.WaterTiles)
@@ -1570,6 +1576,11 @@ namespace Game.Editor
                     $"rocks={urbanDetails.Rocks}/{semanticUrbanRocks}/" +
                     $"{semanticUrbanRockPresentations}.");
             }
+            if (semanticCivicFountains != 2)
+            {
+                throw new InvalidOperationException(
+                    $"Civic fountain semantic parity failed: expected=2 actual={semanticCivicFountains}.");
+            }
             Debug.Log(
                 $"[DenseCitySemanticRecords] buildings={generationTransactions.Records.Buildings.Count} " +
                 $"surfaces={generationTransactions.Records.Surfaces.Count} " +
@@ -1593,7 +1604,7 @@ namespace Game.Editor
                 $"courtyardWells={semanticCourtyardWells} " +
                 $"courtyardBushes={semanticCourtyardBushes} " +
                 $"streetProps={semanticStreetProps} urbanTrees={semanticUrbanTrees} " +
-                $"urbanRocks={semanticUrbanRocks}");
+                $"urbanRocks={semanticUrbanRocks} civicFountains={semanticCivicFountains}");
 
             int removedFloatingBranches = RemoveUnsupportedElevatedVisualBranches(generatedRoot);
             Debug.Log($"[DenseCityFloatingItemCleanup] removedBranches={removedFloatingBranches}");
@@ -1639,7 +1650,8 @@ namespace Game.Editor
                 semanticCourtyardBushes,
                 semanticStreetProps,
                 semanticUrbanTrees,
-                semanticUrbanRocks);
+                semanticUrbanRocks,
+                semanticCivicFountains);
         }
 
         private static int CountBuildingRecords(
@@ -3298,6 +3310,7 @@ namespace Game.Editor
                 generationTransactions,
                 hallBounds,
                 hallPatch.MaximumHeight + 0.035f,
+                config.RandomSeed,
                 random);
 
             AddCivicPromenadeTrees(
@@ -3565,12 +3578,17 @@ namespace Game.Editor
             DenseCityGenerationTransactionContext generationTransactions,
             Bounds hallBounds,
             float supportHeight,
+            uint seed,
             System.Random random)
         {
             GameObject clothCover = LoadRequiredPrefab(CivicClothCoverPrefabPath);
             GameObject umbrella = LoadRequiredPrefab(CivicUmbrellaPrefabPath);
             GameObject fountain01 = LoadRequiredPrefab(ParkPrefabPaths[4]);
             GameObject fountain02 = LoadRequiredPrefab(ParkPrefabPaths[5]);
+            DenseCityVisualAssetMetadata fountain01Metadata =
+                DenseCityVisualAssetMetadataExtractor.Extract(fountain01);
+            DenseCityVisualAssetMetadata fountain02Metadata =
+                DenseCityVisualAssetMetadataExtractor.Extract(fountain02);
             var rootObject = new GameObject("DenseCity_CivicMarketPlazaDetails");
             rootObject.transform.SetParent(civicRoot, false);
 
@@ -3634,25 +3652,35 @@ namespace Game.Editor
 
             Vector2 fountainPosition01 = new(centerX - 26f, hallBounds.min.z - 43f);
             Vector2 fountainPosition02 = new(centerX + 26f, hallBounds.min.z - 43f);
-            if (InstantiateGroundedDetail(
+            if (InstantiateTransactionalGroundedDetail(
                     fountain01,
+                    fountain01Metadata,
                     rootObject.transform,
                     $"{fountain01.name}_CivicPlaza",
                     fountainPosition01,
                     supportHeight,
                     0f,
-                    1.1f))
+                    1.1f,
+                    DenseCityPresentationCategory.Prop,
+                    "civic-fountain-visual",
+                    seed,
+                    generationTransactions))
             {
                 count++;
             }
-            if (InstantiateGroundedDetail(
+            if (InstantiateTransactionalGroundedDetail(
                     fountain02,
+                    fountain02Metadata,
                     rootObject.transform,
                     $"{fountain02.name}_CivicPlaza",
                     fountainPosition02,
                     supportHeight,
                     0f,
-                    1.1f))
+                    1.1f,
+                    DenseCityPresentationCategory.Prop,
+                    "civic-fountain-visual",
+                    seed,
+                    generationTransactions))
             {
                 count++;
             }

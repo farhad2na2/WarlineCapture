@@ -36,6 +36,7 @@ namespace Game.Editor
             public readonly int SemanticCanalLights;
             public readonly int SemanticCivicBuildings;
             public readonly int SemanticCivicRoads;
+            public readonly int SemanticHorizonMountains;
 
             public Result(
                 int roadTiles,
@@ -55,7 +56,8 @@ namespace Game.Editor
                 int semanticCanalBushes,
                 int semanticCanalLights,
                 int semanticCivicBuildings,
-                int semanticCivicRoads)
+                int semanticCivicRoads,
+                int semanticHorizonMountains)
             {
                 RoadTiles = roadTiles;
                 RoadChunks = roadChunks;
@@ -75,6 +77,7 @@ namespace Game.Editor
                 SemanticCanalLights = semanticCanalLights;
                 SemanticCivicBuildings = semanticCivicBuildings;
                 SemanticCivicRoads = semanticCivicRoads;
+                SemanticHorizonMountains = semanticHorizonMountains;
             }
         }
 
@@ -1275,6 +1278,17 @@ namespace Game.Editor
                 $"grassPatches={urbanDetails.GrassPatches} " +
                 $"mainStreetBushes={urbanDetails.MainStreetBushes}");
 
+            int horizonMountains = BakeHorizonMountainPerimeter(
+                generatedRoot,
+                cityOrigin,
+                cityWidth,
+                cityDepth,
+                authoredGradeElevation,
+                protectedAreas,
+                config.RandomSeed,
+                generationTransactions);
+            Debug.Log($"[DenseCityHorizon] backgroundMountains={horizonMountains}");
+
             generationTransactions.Seal();
             ValidateRealizedBuildingAttachmentOwnership(generationTransactions);
             int semanticRoadShoulders = CountSurfaceRecords(
@@ -1343,6 +1357,9 @@ namespace Game.Editor
             int semanticCivicRoadTerrainPresentations = CountPresentationRecords(
                 generationTransactions.Records.Presentations,
                 "civic-road-terrain-patch-visual");
+            int semanticHorizonMountains = CountPresentationRecords(
+                generationTransactions.Records.Presentations,
+                "horizon-mountain-visual");
             if (semanticCanalWaterExclusions != canalResult.WaterTiles ||
                 semanticCanalBedPresentations != canalResult.WaterTiles ||
                 semanticCanalWaterPresentations != canalResult.WaterTiles)
@@ -1405,6 +1422,12 @@ namespace Game.Editor
                     $"terrain={semanticCivicRoadTerrains} " +
                     $"terrainVisuals={semanticCivicRoadTerrainPresentations}.");
             }
+            if (semanticHorizonMountains <= 0 || semanticHorizonMountains != horizonMountains)
+            {
+                throw new InvalidOperationException(
+                    $"Horizon mountain semantic parity failed: " +
+                    $"realized={horizonMountains} semantic={semanticHorizonMountains}.");
+            }
             Debug.Log(
                 $"[DenseCitySemanticRecords] buildings={generationTransactions.Records.Buildings.Count} " +
                 $"surfaces={generationTransactions.Records.Surfaces.Count} " +
@@ -1415,17 +1438,8 @@ namespace Game.Editor
                 $"canalParkTerrains={semanticCanalParkTerrains} " +
                 $"canalTrees={semanticCanalTrees} canalBushes={semanticCanalBushes} " +
                 $"canalLights={semanticCanalLights} " +
-                $"civicBuildings={semanticCivicBuildings} civicRoads={semanticCivicRoads}");
-
-            int horizonMountains = BakeHorizonMountainPerimeter(
-                generatedRoot,
-                cityOrigin,
-                cityWidth,
-                cityDepth,
-                authoredGradeElevation,
-                protectedAreas,
-                config.RandomSeed);
-            Debug.Log($"[DenseCityHorizon] backgroundMountains={horizonMountains}");
+                $"civicBuildings={semanticCivicBuildings} civicRoads={semanticCivicRoads} " +
+                $"horizonMountains={semanticHorizonMountains}");
 
             int removedFloatingBranches = RemoveUnsupportedElevatedVisualBranches(generatedRoot);
             Debug.Log($"[DenseCityFloatingItemCleanup] removedBranches={removedFloatingBranches}");
@@ -1456,7 +1470,8 @@ namespace Game.Editor
                 semanticCanalBushes,
                 semanticCanalLights,
                 semanticCivicBuildings,
-                semanticCivicRoads);
+                semanticCivicRoads,
+                semanticHorizonMountains);
         }
 
         private static int CountBuildingRecords(
@@ -3752,9 +3767,25 @@ namespace Game.Editor
             float mapDepth,
             float gradeElevation,
             ProtectedAreaMap protectedAreas,
-            uint seed)
+            uint seed,
+            DenseCityGenerationTransactionContext generationTransactions)
         {
+            if (generationTransactions == null)
+                throw new ArgumentNullException(nameof(generationTransactions));
             GameObject[] mountainPrefabs = LoadRequiredPrefabs(HorizonMountainPrefabPaths);
+            var metadataByPrefab = new Dictionary<GameObject, DenseCityVisualAssetMetadata>();
+            var localBoundsByPrefab = new Dictionary<GameObject, Bounds>();
+            for (int index = 0; index < mountainPrefabs.Length; index++)
+            {
+                GameObject prefab = mountainPrefabs[index];
+                metadataByPrefab.Add(prefab, DenseCityVisualAssetMetadataExtractor.Extract(prefab));
+                if (!TryGetPrefabLocalRendererBounds(prefab.transform, out Bounds localBounds))
+                {
+                    throw new InvalidOperationException(
+                        $"Horizon mountain prefab '{prefab.name}' has no renderer bounds.");
+                }
+                localBoundsByPrefab.Add(prefab, localBounds);
+            }
             var rootObject = new GameObject("DenseCity_HorizonMountainPerimeter");
             rootObject.transform.SetParent(generatedRoot, false);
             int created = 0;
@@ -3794,49 +3825,110 @@ namespace Game.Editor
             {
                 uint hash = HashGroundPatch(index, sideName[0], unchecked((int)seed) ^ 0x7a41);
                 GameObject prefab = mountainPrefabs[(int)(hash % (uint)mountainPrefabs.Length)];
-                GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, rootObject.transform);
-                instance.name = $"HorizonMountain_{sideName}_{index:00}";
-                instance.transform.SetPositionAndRotation(
-                    new Vector3(edgeCenter.x, 0f, edgeCenter.y),
-                    Quaternion.Euler(0f, Hash01(hash ^ 0x42d913afu) * 360f, 0f));
-                instance.transform.localScale = Vector3.one;
-                if (!TryGetRendererBounds(instance, out Bounds sourceBounds))
-                {
-                    UnityEngine.Object.DestroyImmediate(instance);
-                    return;
-                }
-
+                DenseCityVisualAssetMetadata metadata = metadataByPrefab[prefab];
+                Bounds localBounds = localBoundsByPrefab[prefab];
+                Quaternion rotation = Quaternion.Euler(0f, Hash01(hash ^ 0x42d913afu) * 360f, 0f);
+                Bounds sourceBounds = TransformLocalBounds(
+                    localBounds,
+                    Matrix4x4.TRS(Vector3.zero, rotation, Vector3.one));
                 float targetSpan = Mathf.Lerp(240f, 340f, Hash01(hash ^ 0x1d73b549u));
                 float uniformScale = targetSpan /
                                      Mathf.Max(1f, Mathf.Max(sourceBounds.size.x, sourceBounds.size.z));
-                instance.transform.localScale = Vector3.one * uniformScale;
-                if (!TryGetRendererBounds(instance, out Bounds scaledBounds))
-                {
-                    UnityEngine.Object.DestroyImmediate(instance);
-                    return;
-                }
-
+                Vector3 scale = Vector3.one * uniformScale;
+                Bounds scaledBounds = TransformLocalBounds(
+                    localBounds,
+                    Matrix4x4.TRS(Vector3.zero, rotation, scale));
                 float baseOffset = targetSpan * 0.3f + 55f;
                 for (int attempt = 0; attempt < 3; attempt++)
                 {
                     Vector2 target = edgeCenter + outward * (baseOffset + attempt * 180f);
-                    Vector3 position = instance.transform.position;
-                    position.x += target.x - scaledBounds.center.x;
-                    position.y += gradeElevation - 18f - scaledBounds.min.y;
-                    position.z += target.y - scaledBounds.center.z;
-                    instance.transform.position = position;
-                    if (!TryGetRendererBounds(instance, out Bounds placedBounds))
-                        break;
-                    if (!protectedAreas.Intersects(placedBounds))
+                    var position = new Vector3(
+                        target.x - scaledBounds.center.x,
+                        gradeElevation - 18f - scaledBounds.min.y,
+                        target.y - scaledBounds.center.z);
+                    Matrix4x4 worldMatrix = Matrix4x4.TRS(position, rotation, scale);
+                    Bounds placedBounds = TransformLocalBounds(localBounds, worldMatrix);
+                    if (protectedAreas.Intersects(placedBounds))
+                        continue;
+
+                    GameObject instance = null;
+                    try
                     {
-                        created++;
+                        bool accepted = generationTransactions.TryPlaceRenderOnlyPresentation(
+                            0,
+                            sequence => DenseCityRenderOnlyPresentationRecordFactory.Create(
+                                new DenseCityRenderOnlyPresentationRecordInput(
+                                    DenseCityGeneratorSchema,
+                                    unchecked((int)seed),
+                                    0,
+                                    sequence,
+                                    "horizon-mountain-visual",
+                                    DenseCityPresentationCategory.Horizon,
+                                    metadata.PrefabAssetGuid,
+                                    metadata.PrefabLocalId,
+                                    metadata.MaterialAssetGuids,
+                                    worldMatrix,
+                                    true,
+                                    true,
+                                    1)),
+                            () =>
+                            {
+                                instance = (GameObject)PrefabUtility.InstantiatePrefab(
+                                    prefab,
+                                    rootObject.transform);
+                                if (instance == null)
+                                    return false;
+                                instance.name = $"HorizonMountain_{sideName}_{index:00}";
+                                instance.transform.SetPositionAndRotation(position, rotation);
+                                instance.transform.localScale = scale;
+                                ValidateWorldMatrix(instance.transform, worldMatrix, "horizon mountain");
+                                DisableColliders(instance);
+                                return true;
+                            });
+                        if (accepted)
+                            created++;
                         return;
                     }
-
-                    scaledBounds = placedBounds;
+                    catch
+                    {
+                        if (instance != null)
+                            UnityEngine.Object.DestroyImmediate(instance);
+                        throw;
+                    }
                 }
+            }
+        }
 
-                UnityEngine.Object.DestroyImmediate(instance);
+        private static Bounds TransformLocalBounds(Bounds localBounds, Matrix4x4 worldMatrix)
+        {
+            Vector3 center = worldMatrix.MultiplyPoint3x4(localBounds.center);
+            Vector3 extents = localBounds.extents;
+            Vector3 worldExtents = new(
+                Mathf.Abs(worldMatrix.m00) * extents.x +
+                Mathf.Abs(worldMatrix.m01) * extents.y +
+                Mathf.Abs(worldMatrix.m02) * extents.z,
+                Mathf.Abs(worldMatrix.m10) * extents.x +
+                Mathf.Abs(worldMatrix.m11) * extents.y +
+                Mathf.Abs(worldMatrix.m12) * extents.z,
+                Mathf.Abs(worldMatrix.m20) * extents.x +
+                Mathf.Abs(worldMatrix.m21) * extents.y +
+                Mathf.Abs(worldMatrix.m22) * extents.z);
+            return new Bounds(center, worldExtents * 2f);
+        }
+
+        private static void ValidateWorldMatrix(
+            Transform instance,
+            Matrix4x4 expected,
+            string context)
+        {
+            Matrix4x4 actual = instance.localToWorldMatrix;
+            for (int index = 0; index < 16; index++)
+            {
+                if (Mathf.Abs(actual[index] - expected[index]) > 0.0001f)
+                {
+                    throw new InvalidOperationException(
+                        $"Dense-city {context} transform parity failed at matrix index {index}.");
+                }
             }
         }
 

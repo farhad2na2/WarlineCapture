@@ -27,6 +27,7 @@ public sealed class DenseCitySurfaceProxyBuilderTests
         Action[] tests =
         {
             suite.Build_PartitionsRecordsAndCreatesBakeOnlyMeshes,
+            suite.Build_MergesOnlyAdjacentCoplanarRectangles,
             suite.Build_IsDeterministicAcrossEquivalentRecordSets,
             suite.Build_InvalidConcavePolygonLeavesNoCandidateOutput
         };
@@ -74,8 +75,8 @@ public sealed class DenseCitySurfaceProxyBuilderTests
 
         Assert.That(result.Records, Is.EqualTo(7));
         Assert.That(result.Partitions, Is.EqualTo(6));
-        Assert.That(result.Vertices, Is.EqualTo(28));
-        Assert.That(result.Triangles, Is.EqualTo(14));
+        Assert.That(result.Vertices, Is.EqualTo(24));
+        Assert.That(result.Triangles, Is.EqualTo(12));
         Assert.That(AssetDatabase.IsValidFolder(OutputFolder), Is.True);
         Assert.That(AssetDatabase.FindAssets("t:Mesh", new[] { OutputFolder }), Has.Length.EqualTo(6));
         Assert.That(mapRoot.GetComponentsInChildren<MeshFilter>(true), Has.Length.EqualTo(6));
@@ -105,6 +106,14 @@ public sealed class DenseCitySurfaceProxyBuilderTests
         Assert.That(metadata, Does.Contain("Bridge:1:00000001"));
         Assert.That(metadata, Does.Contain("Ramp:1:00000001"));
         Assert.That(metadata, Does.Contain("Blocker:0:00000000"));
+        MeshFilter mergedTerrain = Array.Find(
+            mapRoot.GetComponentsInChildren<MeshFilter>(true),
+            filter =>
+            {
+                MapBakeGroupAuthoring owner = filter.GetComponent<MapBakeGroupAuthoring>();
+                return owner.Role == MapBakeGroupRole.Terrain && (uint)owner.MovementMask == 1;
+            });
+        Assert.That(mergedTerrain.sharedMesh.vertexCount, Is.EqualTo(4));
         Assert.That(
             DenseCitySemanticHierarchyBuilder.TryValidate(
                 mapScene,
@@ -113,6 +122,68 @@ public sealed class DenseCitySurfaceProxyBuilderTests
                 out string error),
             Is.True,
             error);
+    }
+
+    [Test]
+    public void Build_MergesOnlyAdjacentCoplanarRectangles()
+    {
+        var (_, _, mapRoot) = CreateScenePair("merge-boundary");
+        using var records = new DenseCityGenerationRecordSet(1, 5, 1);
+        records.Add(CreateSurface(
+            1,
+            DenseCitySurfaceRecordKind.Terrain,
+            Rectangle(0f),
+            1,
+            0,
+            Vector2Int.zero,
+            2f));
+        records.Add(CreateSurface(
+            2,
+            DenseCitySurfaceRecordKind.Terrain,
+            Rectangle(4f),
+            1,
+            0,
+            Vector2Int.zero,
+            2f));
+        records.Add(CreateSurface(
+            3,
+            DenseCitySurfaceRecordKind.Terrain,
+            Rectangle(8f),
+            1,
+            0,
+            Vector2Int.zero,
+            3f));
+        records.Add(CreateSurface(
+            4,
+            DenseCitySurfaceRecordKind.Road,
+            Rectangle(20f),
+            3,
+            0,
+            Vector2Int.one,
+            1f));
+        records.Add(CreateSurface(
+            5,
+            DenseCitySurfaceRecordKind.Road,
+            Rectangle(24f),
+            3,
+            0,
+            Vector2Int.one,
+            1f));
+        records.Seal();
+
+        DenseCitySurfaceProxyBuildResult result =
+            DenseCitySurfaceProxyBuilder.Build(records, mapRoot, OperationMapId, OutputFolder);
+
+        Assert.That(result.Partitions, Is.EqualTo(2));
+        Assert.That(result.Records, Is.EqualTo(5));
+        Assert.That(result.Vertices, Is.EqualTo(12));
+        Assert.That(result.Triangles, Is.EqualTo(6));
+        MeshFilter[] filters = mapRoot.GetComponentsInChildren<MeshFilter>(true);
+        Assert.That(filters, Has.Length.EqualTo(2));
+        MeshFilter road = Array.Find(
+            filters,
+            filter => filter.GetComponent<MapBakeGroupAuthoring>().Role == MapBakeGroupRole.Road);
+        Assert.That(road.sharedMesh.vertexCount, Is.EqualTo(4));
     }
 
     [Test]
@@ -175,9 +246,9 @@ public sealed class DenseCitySurfaceProxyBuilderTests
     {
         var records = new DenseCityGenerationRecordSet(1, 7, 1);
         records.Add(CreateSurface(7, DenseCitySurfaceRecordKind.Blocker, Rectangle(60f), 0, 0, new Vector2Int(2, 3)));
-        records.Add(CreateSurface(2, DenseCitySurfaceRecordKind.Terrain, Rectangle(10f), 1, 0, Vector2Int.zero));
+        records.Add(CreateSurface(2, DenseCitySurfaceRecordKind.Terrain, Rectangle(4f), 1, 0, Vector2Int.zero, 0f));
         records.Add(CreateSurface(6, DenseCitySurfaceRecordKind.Ramp, Rectangle(50f), 1, 1, new Vector2Int(2, 3)));
-        records.Add(CreateSurface(1, DenseCitySurfaceRecordKind.Terrain, Rectangle(0f), 1, 0, Vector2Int.zero));
+        records.Add(CreateSurface(1, DenseCitySurfaceRecordKind.Terrain, Rectangle(0f), 1, 0, Vector2Int.zero, 0f));
         records.Add(CreateSurface(4, DenseCitySurfaceRecordKind.Road, Rectangle(30f), 3, 0, new Vector2Int(1, 2)));
         records.Add(CreateSurface(3, DenseCitySurfaceRecordKind.Terrain, Rectangle(20f), 3, 0, Vector2Int.zero));
         records.Add(CreateSurface(5, DenseCitySurfaceRecordKind.Bridge, Rectangle(40f), 1, 1, new Vector2Int(2, 3)));
@@ -191,7 +262,8 @@ public sealed class DenseCitySurfaceProxyBuilderTests
         IReadOnlyList<Vector2> polygon,
         uint movementMask,
         int layer,
-        Vector2Int chunk) =>
+        Vector2Int chunk,
+        float? elevation = null) =>
         new(
             new DenseCityRecordIdentity(
                 "dense-city-v1",
@@ -203,7 +275,7 @@ public sealed class DenseCitySurfaceProxyBuilderTests
                 sequence),
             kind,
             polygon,
-            sequence * 0.25f,
+            elevation ?? sequence * 0.25f,
             movementMask,
             layer,
             chunk);

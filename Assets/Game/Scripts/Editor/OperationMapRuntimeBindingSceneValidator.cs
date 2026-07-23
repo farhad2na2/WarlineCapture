@@ -1,5 +1,6 @@
 using System;
 using Game.Composition;
+using Game.Configs;
 using Game.Rendering;
 using UnityEditor;
 using UnityEngine;
@@ -14,13 +15,103 @@ namespace Game.Editor
             string expectedOperationMapId,
             out string error)
         {
+            if (!TryValidateStructure(
+                    scene,
+                    expectedOperationMapId,
+                    OperationMapCanonicalPresentationMode.PresentationOnly,
+                    out OperationMapSceneView view,
+                    out error))
+            {
+                return false;
+            }
+
+            if (!string.Equals(
+                    view.PresentationSourceSceneGuid,
+                    AssetDatabase.AssetPathToGUID(OperationMapAddressablesLayoutBuilder.AuthoringScenePath),
+                    StringComparison.Ordinal) ||
+                !string.Equals(
+                    view.PresentationSourceScenePath,
+                    OperationMapAddressablesLayoutBuilder.AuthoringScenePath,
+                    StringComparison.Ordinal) ||
+                !string.Equals(
+                    AssetDatabase.GetAssetPath(view.Definition),
+                    OperationMapAddressablesLayoutBuilder.DefinitionPath,
+                    StringComparison.Ordinal))
+            {
+                error = "Runtime binding scene authoring-source or definition identity is invalid.";
+                return false;
+            }
+
+            error = null;
+            return true;
+        }
+
+        public static bool TryValidateLoadedEntityScene(
+            Scene scene,
+            string expectedOperationMapId,
+            string expectedDefinitionPath,
+            string expectedSubScenePath,
+            out string error)
+        {
+            if (!TryValidateStructure(
+                    scene,
+                    expectedOperationMapId,
+                    OperationMapCanonicalPresentationMode.EntityScene,
+                    out OperationMapSceneView view,
+                    out error))
+            {
+                return false;
+            }
+
+            if (view.Definition.PresentationKind != OperationMapPresentationKind.EntityScene ||
+                !string.Equals(
+                    AssetDatabase.GetAssetPath(view.Definition),
+                    expectedDefinitionPath,
+                    StringComparison.Ordinal) ||
+                view.MapSubScene == null ||
+                !string.Equals(
+                    AssetDatabase.GetAssetPath(view.MapSubScene.SceneAsset),
+                    expectedSubScenePath,
+                    StringComparison.Ordinal))
+            {
+                error = "EntityScene runtime binding definition or SubScene identity is invalid.";
+                return false;
+            }
+            if (!view.MapSubScene.AutoLoadScene)
+            {
+                error = "EntityScene runtime binding SubScene must auto-load.";
+                return false;
+            }
+            if (view.BuildingPlacements != null || view.VehiclePlacements != null)
+            {
+                error = "EntityScene runtime binding must not retain legacy placement configs.";
+                return false;
+            }
+            if (!string.IsNullOrWhiteSpace(view.PresentationSourceSceneGuid) ||
+                !string.IsNullOrWhiteSpace(view.PresentationSourceScenePath))
+            {
+                error = "EntityScene runtime binding must not retain PresentationOnly source identity.";
+                return false;
+            }
+
+            error = null;
+            return true;
+        }
+
+        private static bool TryValidateStructure(
+            Scene scene,
+            string expectedOperationMapId,
+            OperationMapCanonicalPresentationMode expectedPresentationMode,
+            out OperationMapSceneView view,
+            out string error)
+        {
+            view = null;
             if (!scene.IsValid() || !scene.isLoaded)
             {
                 error = "Runtime binding scene is not loaded.";
                 return false;
             }
 
-            OperationMapSceneView view = null;
             int rootCount = 0;
             foreach (GameObject root in scene.GetRootGameObjects())
             {
@@ -45,36 +136,32 @@ namespace Game.Editor
                 return false;
             }
             if (!string.Equals(view.OperationMapId, expectedOperationMapId, StringComparison.Ordinal) ||
-                view.CanonicalPresentationMode != OperationMapCanonicalPresentationMode.PresentationOnly)
+                view.CanonicalPresentationMode != expectedPresentationMode)
             {
                 error = "Runtime binding scene identity or presentation mode is invalid.";
                 return false;
             }
             if (!view.TryValidate(out error))
                 return false;
-            if (!string.Equals(
-                    view.PresentationSourceSceneGuid,
-                    AssetDatabase.AssetPathToGUID(OperationMapAddressablesLayoutBuilder.AuthoringScenePath),
-                    StringComparison.Ordinal) ||
-                !string.Equals(
-                    view.PresentationSourceScenePath,
-                    OperationMapAddressablesLayoutBuilder.AuthoringScenePath,
-                    StringComparison.Ordinal) ||
-                !string.Equals(
-                    AssetDatabase.GetAssetPath(view.Definition),
-                    OperationMapAddressablesLayoutBuilder.DefinitionPath,
-                    StringComparison.Ordinal))
+            if (view.MapRoot.GetComponentsInChildren<Renderer>(true).Length != 0)
             {
-                error = "Runtime binding scene authoring-source or definition identity is invalid.";
+                error = "Runtime binding map root contains renderer content.";
                 return false;
             }
-            if (view.MapRoot.GetComponentsInChildren<Renderer>(true).Length != 0 ||
-                view.MapRoot.GetComponentsInChildren<Collider>(true).Length != 0 ||
-                view.MapRoot.GetComponentsInChildren<Rigidbody>(true).Length != 0 ||
-                view.MapRoot.GetComponentsInChildren<Camera>(true).Length != 0 ||
+            if (view.MapRoot.GetComponentsInChildren<Collider>(true).Length != 0)
+            {
+                error = "Runtime binding map root contains collider content.";
+                return false;
+            }
+            if (view.MapRoot.GetComponentsInChildren<Rigidbody>(true).Length != 0)
+            {
+                error = "Runtime binding map root contains unmanaged Rigidbody content.";
+                return false;
+            }
+            if (view.MapRoot.GetComponentsInChildren<Camera>(true).Length != 0 ||
                 view.MapRoot.GetComponentsInChildren<Light>(true).Length != 0)
             {
-                error = "Runtime binding map root contains visual, camera, lighting, or unmanaged physics content.";
+                error = "Runtime binding map root contains camera or lighting content.";
                 return false;
             }
             if (view.DecorationRoot.childCount != 0 ||

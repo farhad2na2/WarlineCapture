@@ -161,7 +161,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ff37f00c6585b49f2b142f7c43215901, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Game.Runtime::Game.Runtime.CombinedMeshBaker
   combineOnStart: 0
   includeInactive: 1
@@ -249,7 +249,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 45a335734b1572644a6a5d09d87adc65, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.Scenes::Unity.Scenes.SubScene
   _SceneAsset: {fileID: 102900000, guid: 0f9ecd54a7f0f467fa35556af7d28f1d, type: 3}
   _HierarchyColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
@@ -318,7 +318,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e01c90502278473c988d8a5c33999a58, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Game.Composition::Game.Composition.OperationMapSceneView
   operationMapId: opmap.skirmish.desert_base_01
   definition: {fileID: 11400000, guid: 7ae9bbe86984a4e91bb59584d0b9abd1, type: 2}
@@ -333,8 +333,8 @@ MonoBehaviour:
   vehiclePlacements: {fileID: 0}
   mapSubScene: {fileID: 390147488}
   canonicalPresentationMode: 2
-  presentationSourceSceneGuid: ca1f2d7f265d8495f8c815441d68fda0
-  presentationSourceScenePath: Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01.unity
+  presentationSourceSceneGuid:
+  presentationSourceScenePath:
 --- !u!4 &1175376036
 Transform:
   m_ObjectHideFlags: 0
@@ -392,7 +392,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e4a11c9241684f579a0926616f8c708a, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Game.Authoring::Game.Authoring.MapSurfaceAuthoring
   bakedSurfaceData: {fileID: 11400000, guid: 12f517deb32ab49698acbfdaf7c3eac7, type: 2}
   gridConfig: {fileID: 11400000, guid: b201000000000000000000000000000b, type: 2}

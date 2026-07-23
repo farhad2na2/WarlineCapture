@@ -223,6 +223,8 @@ namespace Game.Editor
                 viewData.FindProperty("vehiclePlacements").objectReferenceValue = null;
                 viewData.FindProperty("canonicalPresentationMode").enumValueIndex =
                     (int)OperationMapCanonicalPresentationMode.EntityScene;
+                viewData.FindProperty("presentationSourceSceneGuid").stringValue = string.Empty;
+                viewData.FindProperty("presentationSourceScenePath").stringValue = string.Empty;
                 viewData.ApplyModifiedPropertiesWithoutUndo();
                 EditorUtility.SetDirty(view);
                 EditorSceneManager.MarkSceneDirty(scene);
@@ -236,6 +238,7 @@ namespace Game.Editor
             }
 
             // Fail-closed: Unity sometimes drops brand-new ScriptableObject refs in the same session.
+            NormalizeSceneText(outputPath);
             PatchDefinitionReferenceIfMissing(outputPath, candidateDefinitionPath);
             AssetDatabase.ImportAsset(outputPath, ImportAssetOptions.ForceSynchronousImport);
 
@@ -243,7 +246,12 @@ namespace Game.Editor
             try
             {
                 OperationMapSceneView reloadedView = FindSingleView(reloaded);
-                if (!reloadedView.TryValidate(out string validateError))
+                if (!OperationMapRuntimeBindingSceneValidator.TryValidateLoadedEntityScene(
+                        reloaded,
+                        reloadedView.OperationMapId,
+                        candidateDefinitionPath,
+                        OperationMapEntityPresentationMigrationEditor.CandidateSubScenePath,
+                        out string validateError))
                 {
                     throw new InvalidOperationException(
                         $"Candidate EntityScene runtime binding invalid after reload: {validateError} " +
@@ -268,6 +276,16 @@ namespace Game.Editor
             if (definitionSerialized.ApplyModifiedPropertiesWithoutUndo())
                 EditorUtility.SetDirty(definition);
             AssetDatabase.SaveAssets();
+        }
+
+        private static void NormalizeSceneText(string scenePath)
+        {
+            string physical = Path.GetFullPath(Path.Combine(Application.dataPath, "..", scenePath));
+            string[] lines = File.ReadAllLines(physical);
+            var normalized = new StringBuilder();
+            for (int index = 0; index < lines.Length; index++)
+                normalized.Append(lines[index].TrimEnd(' ', '\t')).Append('\n');
+            File.WriteAllText(physical, normalized.ToString(), Utf8WithoutBom);
         }
 
         private static void PatchDefinitionReferenceIfMissing(

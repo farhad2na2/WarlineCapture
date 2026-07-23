@@ -13,6 +13,7 @@ namespace Game.Runtime
 
         private readonly AudioPlaybackPresentationBridgeSystemHelper _bridge = new();
         private AudioPlaybackPresentationSystemHelper _playbackHelper;
+        private bool _musicReconciliationPending;
 
         public int LastPresentedRequestId => _bridge.LastPresentedRequestId;
         public int ActiveSourceCount => _playbackHelper?.ActiveSourceCount ?? 0;
@@ -21,6 +22,11 @@ namespace Game.Runtime
         private void Awake()
         {
             EnsureInitialized();
+        }
+
+        private void OnEnable()
+        {
+            _musicReconciliationPending = true;
         }
 
         private void Update()
@@ -33,6 +39,17 @@ namespace Game.Runtime
             World world = World.DefaultGameObjectInjectionWorld;
             if (world == null || !world.IsCreated)
                 return;
+
+            if (_musicReconciliationPending)
+            {
+                _bridge.ReconcileCurrentMusicState(
+                    world.EntityManager,
+                    eventCatalog,
+                    mixerBusConfig,
+                    _playbackHelper,
+                    Time.unscaledTime);
+                _musicReconciliationPending = false;
+            }
 
             _bridge.DrainAcceptedRequests(
                 world.EntityManager,

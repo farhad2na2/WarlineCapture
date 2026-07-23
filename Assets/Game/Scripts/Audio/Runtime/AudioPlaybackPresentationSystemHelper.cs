@@ -258,6 +258,21 @@ namespace Game.Runtime
             return false;
         }
 
+        public bool HasActiveSourceForEvent(uint eventHash)
+        {
+            if (eventHash == 0u)
+                return false;
+
+            for (int i = 0; i < _sources.Count; i++)
+            {
+                PooledAudioSource pooledSource = _sources[i];
+                if (pooledSource.InUse && pooledSource.EventHash == eventHash)
+                    return true;
+            }
+
+            return false;
+        }
+
         public void Dispose()
         {
             StopAll();

@@ -24,6 +24,8 @@ public sealed class AudioPlaybackPresentationBridgeSystemHelperTests
             passed++;
             RunCase(test => test.DrainAcceptedRequests_DoesNotReplayPresentedRequestWithNewBridge());
             passed++;
+            RunCase(test => test.ReconcileCurrentMusicState_ReplaysIntoRecreatedPresentationOnlyOnce());
+            passed++;
             RunCase(test => test.DrainAcceptedRequests_SkipsPendingAndCooldownSkippedRequests());
             passed++;
             RunCase(test => test.DrainAcceptedRequests_RecordsMissingEventWithoutPlayback());
@@ -179,6 +181,65 @@ public sealed class AudioPlaybackPresentationBridgeSystemHelperTests
         Assert.AreEqual(1, playback.ActiveSourceCount);
         Assert.AreEqual(AudioPlaybackRequestStatus.Presented, requests[0].Status);
         Assert.AreEqual(2, results.Length);
+    }
+
+    [Test]
+    public void ReconcileCurrentMusicState_ReplaysIntoRecreatedPresentationOnlyOnce()
+    {
+        Entity audioEntity = AudioEventRequestSystem.EnsureAudioEntity(_entityManager);
+        AudioMusicStateComponent musicState = _entityManager.GetComponentData<AudioMusicStateComponent>(audioEntity);
+        musicState.CurrentEventHash = AudioEventIds.MusicMenuLoopHash;
+        musicState.CurrentEventId = new FixedString64Bytes(AudioEventIds.MusicMenuLoop);
+        musicState.TransitionSeconds = 0f;
+        musicState.Loop = 1;
+        _entityManager.SetComponentData(audioEntity, musicState);
+
+        AudioSettingsComponent settings = _entityManager.GetComponentData<AudioSettingsComponent>(audioEntity);
+        settings.MusicMuted = 0;
+        settings.MusicVolume = 1f;
+        _entityManager.SetComponentData(audioEntity, settings);
+
+        AudioEventCatalogConfig catalog = CreateCatalog(CreateEntry(
+            AudioEventIds.MusicMenuLoop,
+            "Music",
+            CreateClip("music_menu_loop")));
+        AudioMixerBusConfig buses = CreateBuses(CreateBus("Music"));
+
+        using (AudioPlaybackPresentationSystemHelper firstPlayback = new(initialPoolSize: 1, maxPoolSize: 1))
+        using (AudioPlaybackPresentationBridgeSystemHelper firstBridge = new())
+        {
+            AudioPlaybackPresentationResult first = firstBridge.ReconcileCurrentMusicState(
+                _entityManager,
+                catalog,
+                buses,
+                firstPlayback,
+                now: 1f);
+            AudioPlaybackPresentationResult duplicate = firstBridge.ReconcileCurrentMusicState(
+                _entityManager,
+                catalog,
+                buses,
+                firstPlayback,
+                now: 1.1f);
+
+            Assert.IsTrue(first.Played);
+            Assert.IsFalse(duplicate.Played);
+            Assert.AreEqual("AlreadyPresented", duplicate.Reason);
+            Assert.AreEqual(1, firstPlayback.ActiveSourceCount);
+        }
+
+        using AudioPlaybackPresentationSystemHelper recreatedPlayback = new(initialPoolSize: 1, maxPoolSize: 1);
+        using AudioPlaybackPresentationBridgeSystemHelper recreatedBridge = new();
+        AudioPlaybackPresentationResult replay = recreatedBridge.ReconcileCurrentMusicState(
+            _entityManager,
+            catalog,
+            buses,
+            recreatedPlayback,
+            now: 2f);
+
+        Assert.IsTrue(replay.Played);
+        Assert.AreEqual("Played", replay.Reason);
+        Assert.AreEqual(1, recreatedPlayback.ActiveSourceCount);
+        Assert.IsTrue(recreatedPlayback.HasActiveSourceForEvent(AudioEventIds.MusicMenuLoopHash));
     }
 
     [Test]

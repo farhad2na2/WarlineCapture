@@ -36,6 +36,67 @@ namespace Game.Runtime
 
         public int LastPresentedRequestId => _lastPresentedRequestId;
 
+        public AudioPlaybackPresentationResult ReconcileCurrentMusicState(
+            EntityManager em,
+            AudioEventCatalogConfig eventCatalog,
+            AudioMixerBusConfig mixerBusConfig,
+            AudioPlaybackPresentationSystemHelper playbackHelper,
+            float now)
+        {
+            if (eventCatalog == null || playbackHelper == null)
+            {
+                return new AudioPlaybackPresentationResult(
+                    false,
+                    AudioPlaybackRequestStatus.MissingEvent,
+                    "PresentationUnavailable",
+                    -1);
+            }
+
+            RebuildCachesIfNeeded(eventCatalog, mixerBusConfig);
+
+            Entity audioEntity = AudioEventRequestSystem.EnsureAudioEntity(em);
+            AudioMusicStateComponent musicState = em.GetComponentData<AudioMusicStateComponent>(audioEntity);
+            if (musicState.CurrentEventHash == 0u)
+            {
+                return new AudioPlaybackPresentationResult(
+                    false,
+                    AudioPlaybackRequestStatus.Culled,
+                    "NoCurrentMusicState",
+                    -1);
+            }
+
+            if (playbackHelper.HasActiveSourceForEvent(musicState.CurrentEventHash))
+            {
+                return new AudioPlaybackPresentationResult(
+                    false,
+                    AudioPlaybackRequestStatus.Presented,
+                    "AlreadyPresented",
+                    -1);
+            }
+
+            AudioPlaybackRequestElement request = new()
+            {
+                Kind = AudioPlaybackRequestKind.MusicState,
+                Priority = AudioPlaybackPriority.High,
+                Status = AudioPlaybackRequestStatus.Accepted,
+                EventHash = musicState.CurrentEventHash,
+                EventId = musicState.CurrentEventId,
+                BusId = new FixedString32Bytes("Music"),
+                PitchMultiplier = 1f,
+                RequestedAt = now
+            };
+            AudioEventCatalogEntry entry = ResolveEvent(request);
+            AudioMixerBusEntry bus = ResolveBus(entry, request);
+            AudioSettingsComponent settings = em.GetComponentData<AudioSettingsComponent>(audioEntity);
+            return playbackHelper.PlayAcceptedRequest(
+                request,
+                entry,
+                bus,
+                settings,
+                now,
+                musicState.TransitionSeconds);
+        }
+
         public AudioPlaybackPresentationBridgeResult DrainAcceptedRequests(
             EntityManager em,
             AudioEventCatalogConfig eventCatalog,

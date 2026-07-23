@@ -22,6 +22,7 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.AddressableAssets.ResourceLocators;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.TestTools;
+using UnityEngine.SceneManagement;
 using Hash128 = Unity.Entities.Hash128;
 
 public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
@@ -227,6 +228,12 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
         Assert.That(SceneSystem.IsSceneLoaded(world.Unmanaged, sceneEntity), Is.True,
             $"Candidate EntityScene did not finish streaming in cycle {cycle}.");
 
+        Scene sourceScene = loader.SceneView.gameObject.scene;
+        Assert.That(sourceScene.IsValid(), Is.True);
+        Assert.That(sourceScene.isLoaded, Is.True);
+        Entity[] resolvedSectionEntities = GetResolvedSectionEntities(
+            world.EntityManager,
+            sceneEntity);
         RuntimeCapture actual = Capture(world.EntityManager, sceneEntity);
         Compare(expected, actual, cycle);
 
@@ -250,11 +257,33 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
                SceneSystem.IsSceneLoaded(world.Unmanaged, sceneEntity))
             yield return null;
 
-        Assert.That(
-            world.EntityManager.Exists(sceneEntity) &&
-            SceneSystem.IsSceneLoaded(world.Unmanaged, sceneEntity),
-            Is.False,
-            $"Candidate EntityScene remained loaded after cycle {cycle}.");
+        Assert.That(world.EntityManager.Exists(sceneEntity), Is.False,
+            $"Candidate EntityScene metadata remained after cycle {cycle}.");
+        for (int sectionIndex = 0; sectionIndex < resolvedSectionEntities.Length; sectionIndex++)
+        {
+            Assert.That(
+                world.EntityManager.Exists(resolvedSectionEntities[sectionIndex]),
+                Is.False,
+                $"Candidate EntityScene section metadata {sectionIndex} remained after cycle {cycle}.");
+        }
+        Assert.That(sourceScene.isLoaded, Is.False,
+            $"Candidate thin runtime-binding scene remained loaded after cycle {cycle}.");
+    }
+
+    private static Entity[] GetResolvedSectionEntities(
+        EntityManager entityManager,
+        Entity sceneEntity)
+    {
+        Assert.That(entityManager.HasBuffer<ResolvedSectionEntity>(sceneEntity), Is.True,
+            "Loaded EntityScene has no resolved section buffer.");
+        DynamicBuffer<ResolvedSectionEntity> sections =
+            entityManager.GetBuffer<ResolvedSectionEntity>(sceneEntity);
+        Assert.That(sections.Length, Is.GreaterThan(0));
+
+        var resolved = new Entity[sections.Length];
+        for (int sectionIndex = 0; sectionIndex < sections.Length; sectionIndex++)
+            resolved[sectionIndex] = sections[sectionIndex].SectionEntity;
+        return resolved;
     }
 
     private static RuntimeCapture Capture(EntityManager entityManager, Entity sceneEntity)

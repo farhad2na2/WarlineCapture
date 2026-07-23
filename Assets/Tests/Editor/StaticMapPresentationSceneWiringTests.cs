@@ -160,6 +160,51 @@ public sealed class StaticMapPresentationSceneWiringTests
         Assert.That(restoreIndex, Is.GreaterThan(bootstrapDestroyIndex));
     }
 
+    [Test]
+    public void EntitySceneMenuTeardown_ReleasesMetadataBeforePackedContentAndMatchShell()
+    {
+        string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+        string matchSceneViewSource = File.ReadAllText(Path.Combine(
+            projectRoot,
+            "Assets/Game/Scripts/Composition/MatchSceneView.cs"));
+        string loaderSource = File.ReadAllText(Path.Combine(
+            projectRoot,
+            "Assets/Game/Scripts/Composition/OperationMapSceneLoadingSceneSystemHelper.cs"));
+        string menuSource = File.ReadAllText(Path.Combine(
+            projectRoot,
+            "Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs"));
+
+        int contentUnloadIndex = menuSource.IndexOf(
+            "streamedMatchView.TryBeginOperationMapContentUnload",
+            StringComparison.Ordinal);
+        int matchUnloadIndex = menuSource.IndexOf(
+            "sceneLifecycleSceneSystemHelper.QueueUnloadMatch(entityManager);",
+            StringComparison.Ordinal);
+        int beginContentUnloadIndex = matchSceneViewSource.IndexOf(
+            "internal bool TryBeginOperationMapContentUnload",
+            StringComparison.Ordinal);
+        int shutdownIndex = matchSceneViewSource.IndexOf(
+            "ShutdownMatchRuntimeBound(disposeSourceSceneLoad: false);",
+            beginContentUnloadIndex,
+            StringComparison.Ordinal);
+        int metadataDisposeIndex = matchSceneViewSource.IndexOf(
+            "DisposeOperationMapMetadataBootstrap();",
+            matchSceneViewSource.IndexOf(
+                "private void ShutdownMatchRuntimeBound",
+                StringComparison.Ordinal),
+            StringComparison.Ordinal);
+        int packedReleaseIndex = loaderSource.IndexOf(
+            "SceneSystem.UnloadParameters.DestroyMetaEntities",
+            StringComparison.Ordinal);
+
+        Assert.That(contentUnloadIndex, Is.GreaterThanOrEqualTo(0));
+        Assert.That(matchUnloadIndex, Is.GreaterThan(contentUnloadIndex));
+        Assert.That(beginContentUnloadIndex, Is.GreaterThanOrEqualTo(0));
+        Assert.That(shutdownIndex, Is.GreaterThan(beginContentUnloadIndex));
+        Assert.That(metadataDisposeIndex, Is.GreaterThanOrEqualTo(0));
+        Assert.That(packedReleaseIndex, Is.GreaterThanOrEqualTo(0));
+    }
+
     private static MatchSceneView FindSingleView(Scene scene)
     {
         List<MatchSceneView> views = new();

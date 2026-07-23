@@ -171,7 +171,8 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
     {
         yield return RunPackedCandidateRoute(
             cycleCount: 2,
-            validateCameraTraversal: false);
+            validateCameraTraversal: false,
+            validateSteadyStateAllocation: false);
     }
 
     [UnityTest]
@@ -186,12 +187,24 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
 
         yield return RunPackedCandidateRoute(
             cycleCount: 1,
-            validateCameraTraversal: true);
+            validateCameraTraversal: true,
+            validateSteadyStateAllocation: false);
+    }
+
+    [UnityTest]
+    [Timeout(600000)]
+    public IEnumerator PackedCandidate_ReadyOperationMapOrchestrationAllocatesZeroBytes()
+    {
+        yield return RunPackedCandidateRoute(
+            cycleCount: 1,
+            validateCameraTraversal: false,
+            validateSteadyStateAllocation: true);
     }
 
     private static IEnumerator RunPackedCandidateRoute(
         int cycleCount,
-        bool validateCameraTraversal)
+        bool validateCameraTraversal,
+        bool validateSteadyStateAllocation)
     {
         string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
         string catalogPath = Path.Combine(
@@ -265,7 +278,8 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
                     definitionHandle.Result,
                     staticStreamer,
                     cycle,
-                    validateCameraTraversal && cycle == 1);
+                    validateCameraTraversal && cycle == 1,
+                    validateSteadyStateAllocation && cycle == 1);
             }
         }
         finally
@@ -291,7 +305,8 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
         OperationMapDefinition definition,
         StaticMapPresentationStreamer staticStreamer,
         int cycle,
-        bool validateCameraTraversal)
+        bool validateCameraTraversal,
+        bool validateSteadyStateAllocation)
     {
         yield return Aph805MenuMatchMenuLifecyclePlayModeTests.EnterStableMatch(route);
         Assert.That(
@@ -319,6 +334,17 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
         {
             yield return ValidateCameraTraversalKeepsEntitySceneResident(
                 route,
+                sceneEntity,
+                resolvedSectionEntities,
+                staticStreamer);
+        }
+
+        if (validateSteadyStateAllocation)
+        {
+            ValidateReadyOperationMapOrchestrationAllocatesZeroBytes(
+                route.Menu,
+                route.Match,
+                world,
                 sceneEntity,
                 resolvedSectionEntities,
                 staticStreamer);
@@ -353,6 +379,89 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
         Assert.That(staticStreamer.DrainComplete, Is.False);
         Assert.That(staticStreamer.PendingOperationCount, Is.Zero);
         Assert.That(staticStreamer.HasActiveOperation, Is.False);
+    }
+
+    private static void ValidateReadyOperationMapOrchestrationAllocatesZeroBytes(
+        MenuBootstrapView menu,
+        MatchSceneView match,
+        World world,
+        Entity sceneEntity,
+        IReadOnlyList<Entity> resolvedSectionEntities,
+        StaticMapPresentationStreamer staticStreamer)
+    {
+        FieldInfo boundField = typeof(MatchSceneView).GetField(
+            "matchRuntimeBound",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        FieldInfo loaderField = typeof(MatchSceneView).GetField(
+            "operationMapSceneLoadingSystem",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.That(boundField, Is.Not.Null);
+        Assert.That(loaderField, Is.Not.Null);
+        Assert.That((bool)boundField.GetValue(match), Is.True,
+            "The production Match route must stop polling map loading after binding.");
+        Assert.That(loaderField.GetValue(match), Is.Not.Null);
+        Assert.That(match.OperationMapContentReady, Is.True);
+        Assert.That(match.OperationMapReadinessPublicationAvailable, Is.True);
+        MenuBootstrapCompositionSystemHelper menuBootstrap =
+            ResolveMenuBootstrapSystem(menu);
+
+        EntityManager entityManager = world.EntityManager;
+        int expectedSectionEntityCount =
+            CountEntitiesForSections(entityManager, resolvedSectionEntities);
+        Assert.That(expectedSectionEntityCount, Is.GreaterThan(0));
+
+        const int WarmupIterations = 256;
+        const int MeasuredIterations = 2048;
+        for (int iteration = 0; iteration < WarmupIterations; iteration++)
+        {
+            menuBootstrap.UpdateStaticMapPresentationForLoadedMatch(
+                isMatchRoute: true,
+                match);
+        }
+
+        long maximumInvocationBytes = 0;
+        int firstAllocatingIteration = -1;
+        long firstAllocationBytes = 0;
+        long allocationStart = GC.GetAllocatedBytesForCurrentThread();
+        for (int iteration = 0; iteration < MeasuredIterations; iteration++)
+        {
+            long invocationStart = GC.GetAllocatedBytesForCurrentThread();
+            menuBootstrap.UpdateStaticMapPresentationForLoadedMatch(
+                isMatchRoute: true,
+                match);
+            long invocationBytes =
+                GC.GetAllocatedBytesForCurrentThread() - invocationStart;
+            if (invocationBytes > maximumInvocationBytes)
+                maximumInvocationBytes = invocationBytes;
+            if (invocationBytes > 0 && firstAllocatingIteration < 0)
+            {
+                firstAllocatingIteration = iteration;
+                firstAllocationBytes = invocationBytes;
+            }
+        }
+        long allocatedBytes =
+            GC.GetAllocatedBytesForCurrentThread() - allocationStart;
+
+        Assert.That(allocatedBytes, Is.Zero,
+            "Ready operation-map orchestration must allocate 0 B after warmup.");
+        Assert.That(maximumInvocationBytes, Is.Zero,
+            $"First allocating iteration={firstAllocatingIteration}, " +
+            $"bytes={firstAllocationBytes}.");
+        Assert.That(match.OperationMapContentReady, Is.True);
+        Assert.That(entityManager.Exists(sceneEntity), Is.True);
+        Assert.That(SceneSystem.IsSceneLoaded(world.Unmanaged, sceneEntity), Is.True);
+        Assert.That(
+            CountEntitiesForSections(entityManager, resolvedSectionEntities),
+            Is.EqualTo(expectedSectionEntityCount));
+        AssertSinglePublishedOperationMapRoot(entityManager);
+        Assert.That(staticStreamer.DrainComplete, Is.False);
+        Assert.That(staticStreamer.PendingOperationCount, Is.Zero);
+        Assert.That(staticStreamer.HasActiveOperation, Is.False);
+        Debug.Log(
+            $"[OperationMapPackedAllocation] warmup={WarmupIterations} " +
+            $"samples={MeasuredIterations} allocatedBytes={allocatedBytes} " +
+            $"maximumInvocationBytes={maximumInvocationBytes} " +
+            $"sectionEntities={expectedSectionEntityCount}");
     }
 
     private static IEnumerator ValidateCameraTraversalKeepsEntitySceneResident(
@@ -775,6 +884,18 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
     private static StaticMapPresentationStreamer ResolveStaticPresentationStreamer(
         MenuBootstrapView menu)
     {
+        MenuBootstrapCompositionSystemHelper helper =
+            ResolveMenuBootstrapSystem(menu);
+        FieldInfo streamerField = typeof(MenuBootstrapCompositionSystemHelper).GetField(
+            "staticMapPresentationStreamer",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.That(streamerField, Is.Not.Null);
+        return (StaticMapPresentationStreamer)streamerField.GetValue(helper);
+    }
+
+    private static MenuBootstrapCompositionSystemHelper ResolveMenuBootstrapSystem(
+        MenuBootstrapView menu)
+    {
         Assert.That(menu, Is.Not.Null);
         FieldInfo helperField = typeof(MenuBootstrapView).GetField(
             "menuBootstrapSystem",
@@ -782,11 +903,7 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
         Assert.That(helperField, Is.Not.Null);
         var helper = helperField.GetValue(menu) as MenuBootstrapCompositionSystemHelper;
         Assert.That(helper, Is.Not.Null);
-        FieldInfo streamerField = typeof(MenuBootstrapCompositionSystemHelper).GetField(
-            "staticMapPresentationStreamer",
-            BindingFlags.Instance | BindingFlags.NonPublic);
-        Assert.That(streamerField, Is.Not.Null);
-        return (StaticMapPresentationStreamer)streamerField.GetValue(helper);
+        return helper;
     }
 
     private static int CountEntitiesForSections(

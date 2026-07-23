@@ -16,6 +16,8 @@ public sealed class OperationMapRuntimeBindingSceneValidatorTests
         int passed = 0;
         try
         {
+            tests.SourceScenePathTargetsOnlyThinRuntimeBindingScene();
+            passed++;
             tests.GeneratedScenePassesStructuralValidation();
             passed++;
             tests.GeneratedSceneDoesNotDependOnAuthoringScene();
@@ -33,6 +35,23 @@ public sealed class OperationMapRuntimeBindingSceneValidatorTests
                 $"[OperationMapRuntimeBindingSceneValidation] result=Failed passed={passed}\n{exception}");
             ValidationExit.Exit(1);
         }
+    }
+
+    [Test]
+    public void SourceScenePathTargetsOnlyThinRuntimeBindingScene()
+    {
+        Assert.That(
+            OperationMapAddressablesLayoutBuilder.SourceScenePath,
+            Is.EqualTo(OperationMapRuntimeBindingSceneBuilder.OutputPath));
+        Assert.That(
+            OperationMapAddressablesLayoutBuilder.SourceScenePath,
+            Is.Not.EqualTo(OperationMapAddressablesLayoutBuilder.AuthoringScenePath));
+        Assert.That(
+            OperationMapAddressablesLayoutBuilder.SourceScenePath,
+            Is.Not.EqualTo(OperationMapAddressablesLayoutBuilder.SourceSubScenePath));
+        Assert.That(
+            AssetDatabase.LoadAssetAtPath<SceneAsset>(OperationMapAddressablesLayoutBuilder.SourceScenePath),
+            Is.Not.Null);
     }
 
     [Test]

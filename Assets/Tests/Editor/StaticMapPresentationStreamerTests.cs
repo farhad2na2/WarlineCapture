@@ -291,8 +291,16 @@ public sealed class StaticMapPresentationStreamerTests
         typeof(MatchSceneView)
             .GetField("activeOperationMapSceneView", BindingFlags.Instance | BindingFlags.NonPublic)
             !.SetValue(matchView, operationMapView);
+        typeof(MatchSceneView)
+            .GetField(
+                "loadedOperationMapCanonicalPresentationMode",
+                BindingFlags.Instance | BindingFlags.NonPublic)
+            !.SetValue(matchView, OperationMapCanonicalPresentationMode.EntityScene);
 
         composition.UpdateStaticMapPresentationForLoadedMatch(true, matchView);
+        typeof(MatchSceneView)
+            .GetField("activeOperationMapSceneView", BindingFlags.Instance | BindingFlags.NonPublic)
+            !.SetValue(matchView, null);
         composition.UpdateStaticMapPresentationForLoadedMatch(false, matchView);
 
         FieldInfo streamedMatchViewField = typeof(MenuBootstrapCompositionSystemHelper)

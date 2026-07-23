@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography;
 using Game.Components;
 using Game.Composition;
@@ -162,6 +163,236 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
             RuntimeContentManager.Cleanup(out _);
             RuntimeContentManager.Initialize();
         }
+    }
+
+    [UnityTest]
+    [Timeout(600000)]
+    public IEnumerator PackedCandidate_MatchToMenuReleasesAllOwnershipWithoutStaticDrain()
+    {
+        string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+        string catalogPath = Path.Combine(
+            projectRoot,
+            "Library/com.unity.addressables/aa/OSX/catalog.bin");
+        string entityContentRoot = Path.Combine(projectRoot, EntityContentPath);
+        string entityCatalogPath = Path.Combine(
+            entityContentRoot,
+            RuntimeContentManager.RelativeCatalogPath);
+        Assert.That(File.Exists(catalogPath), Is.True,
+            $"Build candidate runtime parity content before running this test: {catalogPath}");
+        Assert.That(File.Exists(entityCatalogPath), Is.True,
+            $"Build candidate Entities runtime content before running this test: {entityCatalogPath}");
+
+        RuntimeContentReport runtimeContentReport =
+            JsonUtility.FromJson<RuntimeContentReport>(
+                File.ReadAllText(Path.Combine(projectRoot, RuntimeContentReportPath)));
+        ValidateRuntimeContentReport(
+            runtimeContentReport,
+            projectRoot,
+            catalogPath,
+            entityCatalogPath);
+
+        AsyncOperationHandle<IResourceLocator> catalogHandle = default;
+        AsyncOperationHandle<OperationMapDefinition> definitionHandle = default;
+        OperationMapCatalogConfig candidateCatalog = null;
+        var route = new Aph805MenuMatchMenuLifecyclePlayModeTests.TransitionContext
+        {
+            OperationMapSceneName = Path.GetFileNameWithoutExtension(CandidateRuntimeBindingPath)
+        };
+        try
+        {
+            RuntimeContentManager.Cleanup(out _);
+            RuntimeContentManager.Initialize();
+            Assert.That(
+                RuntimeContentManager.LoadLocalCatalogData(
+                    entityCatalogPath,
+                    RuntimeContentManager.DefaultContentFileNameFunc,
+                    file => Path.Combine(
+                        entityContentRoot,
+                        RuntimeContentManager.DefaultArchivePathFunc(file))),
+                Is.True,
+                $"Candidate Entities runtime catalog failed to load: {entityCatalogPath}");
+
+            catalogHandle =
+                Addressables.LoadContentCatalogAsync(catalogPath, autoReleaseHandle: false);
+            yield return catalogHandle;
+            Assert.That(catalogHandle.Status, Is.EqualTo(AsyncOperationStatus.Succeeded),
+                catalogHandle.OperationException?.Message);
+
+            definitionHandle =
+                Addressables.LoadAssetAsync<OperationMapDefinition>(DefinitionAddress);
+            yield return definitionHandle;
+            Assert.That(definitionHandle.Status, Is.EqualTo(AsyncOperationStatus.Succeeded),
+                definitionHandle.OperationException?.Message);
+
+            candidateCatalog = CreateCandidateCatalog(definitionHandle.Result);
+            MatchSceneView.SetEditorOperationMapCatalogOverrideForTests(candidateCatalog);
+
+            yield return Aph805MenuMatchMenuLifecyclePlayModeTests.PrepareStableMenu(route);
+            StaticMapPresentationStreamer staticStreamer =
+                ResolveStaticPresentationStreamer(route.Menu);
+            Assert.That(staticStreamer.DrainComplete, Is.False);
+            Assert.That(staticStreamer.PendingOperationCount, Is.Zero);
+            Assert.That(staticStreamer.HasActiveOperation, Is.False);
+
+            yield return Aph805MenuMatchMenuLifecyclePlayModeTests.EnterStableMatch(route);
+            Assert.That(
+                route.Match.CanonicalPresentationMode,
+                Is.EqualTo(OperationMapCanonicalPresentationMode.EntityScene));
+            Assert.That(staticStreamer.DrainComplete, Is.False);
+            Assert.That(staticStreamer.PendingOperationCount, Is.Zero);
+            Assert.That(staticStreamer.HasActiveOperation, Is.False);
+
+            World world = route.World;
+            EntityManager entityManager = world.EntityManager;
+            var sceneGuid = new Hash128(
+                definitionHandle.Result.NavigationMetadata.AuthoredSubSceneGuid);
+            Entity sceneEntity = SceneSystem.GetSceneEntity(world.Unmanaged, sceneGuid);
+            Assert.That(sceneEntity, Is.Not.EqualTo(Entity.Null));
+            Assert.That(SceneSystem.IsSceneLoaded(world.Unmanaged, sceneEntity), Is.True);
+            Entity[] resolvedSectionEntities =
+                GetResolvedSectionEntities(entityManager, sceneEntity);
+            Assert.That(
+                CountEntitiesForSections(entityManager, resolvedSectionEntities),
+                Is.GreaterThan(0));
+            AssertSinglePublishedOperationMapRoot(entityManager);
+
+            if (SystemInfo.graphicsDeviceType ==
+                UnityEngine.Rendering.GraphicsDeviceType.Null)
+            {
+                LogAssert.Expect(LogType.Error, "RenderTexture.Create failed");
+                LogAssert.Expect(LogType.Error, "RenderTexture.Create failed");
+            }
+            yield return Aph805MenuMatchMenuLifecyclePlayModeTests.ReturnToStableMenu(route);
+
+            Assert.That(entityManager.Exists(sceneEntity), Is.False);
+            Assert.That(SceneSystem.GetSceneEntity(world.Unmanaged, sceneGuid), Is.EqualTo(Entity.Null));
+            for (int sectionIndex = 0; sectionIndex < resolvedSectionEntities.Length; sectionIndex++)
+            {
+                Assert.That(
+                    entityManager.Exists(resolvedSectionEntities[sectionIndex]),
+                    Is.False,
+                    $"Candidate EntityScene section metadata {sectionIndex} remained after Menu return.");
+            }
+            Assert.That(
+                CountEntitiesForSections(entityManager, resolvedSectionEntities),
+                Is.Zero,
+                "Candidate EntityScene entities remained after Menu return.");
+            AssertNoPublishedOperationMapMetadata(entityManager);
+            Assert.That(staticStreamer.DrainComplete, Is.False);
+            Assert.That(staticStreamer.PendingOperationCount, Is.Zero);
+            Assert.That(staticStreamer.HasActiveOperation, Is.False);
+        }
+        finally
+        {
+            MatchSceneView.SetEditorOperationMapCatalogOverrideForTests(null);
+            if (candidateCatalog != null)
+                UnityEngine.Object.Destroy(candidateCatalog);
+            if (definitionHandle.IsValid())
+                Addressables.Release(definitionHandle);
+            if (catalogHandle.IsValid())
+            {
+                if (catalogHandle.Status == AsyncOperationStatus.Succeeded)
+                    Addressables.RemoveResourceLocator(catalogHandle.Result);
+                Addressables.Release(catalogHandle);
+            }
+            RuntimeContentManager.Cleanup(out _);
+            RuntimeContentManager.Initialize();
+        }
+    }
+
+    [UnityTearDown]
+    public IEnumerator TearDown()
+    {
+        MatchSceneView.SetEditorOperationMapCatalogOverrideForTests(null);
+        yield return Aph805MenuMatchMenuLifecyclePlayModeTests.EnsureMatchIsUnloaded();
+    }
+
+    private static OperationMapCatalogConfig CreateCandidateCatalog(
+        OperationMapDefinition definition)
+    {
+        Assert.That(definition, Is.Not.Null);
+        var catalog = ScriptableObject.CreateInstance<OperationMapCatalogConfig>();
+        var contentPack = new OperationMapContentPackConfig(
+            "opmap-pack." + definition.OperationMapId.Substring("opmap.".Length),
+            OperationMapDeliveryKind.BuiltInLocal,
+            definition.ContentVersion,
+            definition.ContentHash);
+        var entry = new OperationMapCatalogEntryConfig(definition, contentPack);
+        SetPrivateField(catalog, "definitions", new[] { definition });
+        SetPrivateField(catalog, "entries", new[] { entry });
+        Assert.That(catalog.TryValidate(out string error), Is.True, error);
+        return catalog;
+    }
+
+    private static StaticMapPresentationStreamer ResolveStaticPresentationStreamer(
+        MenuBootstrapView menu)
+    {
+        Assert.That(menu, Is.Not.Null);
+        FieldInfo helperField = typeof(MenuBootstrapView).GetField(
+            "menuBootstrapSystem",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.That(helperField, Is.Not.Null);
+        var helper = helperField.GetValue(menu) as MenuBootstrapCompositionSystemHelper;
+        Assert.That(helper, Is.Not.Null);
+        FieldInfo streamerField = typeof(MenuBootstrapCompositionSystemHelper).GetField(
+            "staticMapPresentationStreamer",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.That(streamerField, Is.Not.Null);
+        return (StaticMapPresentationStreamer)streamerField.GetValue(helper);
+    }
+
+    private static int CountEntitiesForSections(
+        EntityManager entityManager,
+        IReadOnlyList<Entity> sectionEntities)
+    {
+        using EntityQuery query = entityManager.CreateEntityQuery(new EntityQueryDesc
+        {
+            All = new[] { ComponentType.ReadOnly<SceneTag>() },
+            Options = EntityQueryOptions.IncludeDisabledEntities |
+                      EntityQueryOptions.IncludePrefab
+        });
+        int count = 0;
+        for (int sectionIndex = 0; sectionIndex < sectionEntities.Count; sectionIndex++)
+        {
+            query.SetSharedComponentFilter(new SceneTag
+            {
+                SceneEntity = sectionEntities[sectionIndex]
+            });
+            count += query.CalculateEntityCount();
+        }
+        query.ResetFilter();
+        return count;
+    }
+
+    private static void AssertSinglePublishedOperationMapRoot(EntityManager entityManager)
+    {
+        using EntityQuery query = entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<OperationMapRootComponent>(),
+            ComponentType.ReadOnly<OperationMapMetadataComponent>(),
+            ComponentType.ReadOnly<OperationMapReadinessComponent>());
+        Assert.That(query.CalculateEntityCount(), Is.EqualTo(1));
+    }
+
+    private static void AssertNoPublishedOperationMapMetadata(EntityManager entityManager)
+    {
+        using EntityQuery rootQuery = entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<OperationMapRootComponent>());
+        using EntityQuery metadataQuery = entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<OperationMapMetadataComponent>());
+        using EntityQuery readinessQuery = entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<OperationMapReadinessComponent>());
+        Assert.That(rootQuery.CalculateEntityCount(), Is.Zero);
+        Assert.That(metadataQuery.CalculateEntityCount(), Is.Zero);
+        Assert.That(readinessQuery.CalculateEntityCount(), Is.Zero);
+    }
+
+    private static void SetPrivateField(object owner, string fieldName, object value)
+    {
+        FieldInfo field = owner.GetType().GetField(
+            fieldName,
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.That(field, Is.Not.Null, $"Missing field '{fieldName}'.");
+        field.SetValue(owner, value);
     }
 
     private static bool SetSystemEnabled<T>(World world, bool enabled)

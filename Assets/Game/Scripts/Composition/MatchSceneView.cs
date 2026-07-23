@@ -25,6 +25,8 @@ namespace Game.Composition
         private OperationMapRuntimeBootstrapSceneSystemHelper operationMapRuntimeBootstrapSystem;
         private OperationMapSceneLoadingSceneSystemHelper operationMapSceneLoadingSystem;
         private OperationMapSceneView activeOperationMapSceneView;
+        private OperationMapCanonicalPresentationMode loadedOperationMapCanonicalPresentationMode =
+            OperationMapCanonicalPresentationMode.SourceRenderersPresent;
         private bool operationMapLoadFailureReported;
         private OperationMapLoadResultCode operationMapLoadFailureCode;
         private string operationMapLoadFailure;
@@ -72,6 +74,10 @@ namespace Game.Composition
         [SerializeField] private string scenarioId = "scenario.skirmish.desert_base_standard";
         [SerializeField] private string missionId = "skirmish";
 
+#if UNITY_EDITOR
+        private static OperationMapCatalogConfig editorOperationMapCatalogOverrideForTests;
+#endif
+
         public Camera WorldCamera => worldCamera;
         public Light DirectionalLight => directionalLight;
         public Volume GlobalVolume => globalVolume;
@@ -83,7 +89,7 @@ namespace Game.Composition
         public OperationMapCanonicalPresentationMode CanonicalPresentationMode =>
             activeOperationMapSceneView != null
                 ? activeOperationMapSceneView.CanonicalPresentationMode
-                : OperationMapCanonicalPresentationMode.SourceRenderersPresent;
+                : loadedOperationMapCanonicalPresentationMode;
         public CombinedMeshBaker DecorationCombinedMeshBaker =>
             activeOperationMapSceneView != null
                 ? activeOperationMapSceneView.DecorationCombinedMeshBaker
@@ -135,7 +141,7 @@ namespace Game.Composition
         public AIPlanEntryStartupConfig AIPlanEntryConfig => aiPlanEntryConfig;
         public ResourceExchangeRecipeConfigSet ResourceExchangeConfig => resourceExchangeConfig;
         public IReadOnlyList<AIControllerConfig> AIControllerConfigs => aiControllerConfigs;
-        public OperationMapCatalogConfig OperationMapCatalog => operationMapCatalog;
+        public OperationMapCatalogConfig OperationMapCatalog => ResolveOperationMapCatalog();
         public string OperationMapId => operationMapId;
         public string ScenarioId => scenarioId;
         public string MissionId => missionId;
@@ -384,6 +390,7 @@ namespace Game.Composition
                 return false;
             }
 
+            OperationMapCatalogConfig catalog = ResolveOperationMapCatalog();
             operationMapRuntimeBootstrapSystem = new OperationMapRuntimeBootstrapSceneSystemHelper(world);
             var fixedScenarioId = new Unity.Collections.FixedString64Bytes(scenarioId);
             var fixedMissionId = new Unity.Collections.FixedString64Bytes(missionId);
@@ -394,7 +401,7 @@ namespace Game.Composition
                 out OperationMapReadinessFlags readyFlags,
                 out OperationMapReadinessFlags requiredFlags);
             if (operationMapRuntimeBootstrapSystem.TryPublish(
-                    operationMapCatalog,
+                    catalog,
                     operationMapId,
                     in fixedScenarioId,
                     in fixedMissionId,
@@ -525,8 +532,9 @@ namespace Game.Composition
             if (operationMapSceneLoadingSystem != null)
                 return;
 
-            if (operationMapCatalog == null ||
-                !operationMapCatalog.TryResolve(operationMapId, out OperationMapDefinition definition))
+            OperationMapCatalogConfig catalog = ResolveOperationMapCatalog();
+            if (catalog == null ||
+                !catalog.TryResolve(operationMapId, out OperationMapDefinition definition))
             {
                 ReportOperationMapLoadFailure(
                     OperationMapIdentityRules.IsValidOperationMapId(operationMapId)
@@ -545,6 +553,23 @@ namespace Game.Composition
                 ReportOperationMapLoadFailure(failureCode, error);
             }
         }
+
+        private OperationMapCatalogConfig ResolveOperationMapCatalog()
+        {
+#if UNITY_EDITOR
+            if (editorOperationMapCatalogOverrideForTests != null)
+                return editorOperationMapCatalogOverrideForTests;
+#endif
+            return operationMapCatalog;
+        }
+
+#if UNITY_EDITOR
+        internal static void SetEditorOperationMapCatalogOverrideForTests(
+            OperationMapCatalogConfig catalog)
+        {
+            editorOperationMapCatalogOverrideForTests = catalog;
+        }
+#endif
 
         private void UpdateOperationMapSourceSceneLoad()
         {
@@ -579,6 +604,8 @@ namespace Game.Composition
                 return;
 
             activeOperationMapSceneView = operationMapSceneLoadingSystem.SceneView;
+            loadedOperationMapCanonicalPresentationMode =
+                activeOperationMapSceneView.CanonicalPresentationMode;
             if (!TryBindMatchRuntime(World.DefaultGameObjectInjectionWorld, out string error))
                 ReportOperationMapLoadFailure(OperationMapLoadResultCode.MetadataBindFailed, error);
         }
@@ -586,6 +613,8 @@ namespace Game.Composition
         private void DisposeOperationMapSourceSceneLoad()
         {
             activeOperationMapSceneView = null;
+            loadedOperationMapCanonicalPresentationMode =
+                OperationMapCanonicalPresentationMode.SourceRenderersPresent;
             operationMapSceneUnloadStartPending = false;
             operationMapSceneLoadingSystem?.Dispose();
             operationMapSceneLoadingSystem = null;

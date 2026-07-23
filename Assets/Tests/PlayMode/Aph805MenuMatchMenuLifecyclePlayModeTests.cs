@@ -24,6 +24,8 @@ public sealed class Aph805MenuMatchMenuLifecyclePlayModeTests
         public MatchSceneView Match { get; set; }
         public MatchBootstrapCompositionSystemHelper MatchBootstrap { get; set; }
         public World World { get; set; }
+        public string OperationMapSceneName { get; set; } =
+            Aph805MenuMatchMenuLifecyclePlayModeTests.OperationMapSceneName;
     }
 
     [UnityTest]
@@ -96,7 +98,7 @@ public sealed class Aph805MenuMatchMenuLifecyclePlayModeTests
         yield return WaitForOperationMapContent(context.Match);
         Debug.Log("[Aph805Lifecycle] stage=OperationMapContentReady");
         Assert.That(
-            SceneManager.GetSceneByName(OperationMapSceneName).isLoaded,
+            SceneManager.GetSceneByName(context.OperationMapSceneName).isLoaded,
             Is.True,
             "The selected operation-map source scene was not loaded additively.");
         AssertMatchSerializedReferences(context.Match);
@@ -143,7 +145,7 @@ public sealed class Aph805MenuMatchMenuLifecyclePlayModeTests
 
         Assert.That(SceneManager.GetSceneByName(MenuSceneName).isLoaded, Is.True);
         Assert.That(
-            SceneManager.GetSceneByName(OperationMapSceneName).isLoaded,
+            SceneManager.GetSceneByName(context.OperationMapSceneName).isLoaded,
             Is.False,
             "The operation-map source scene remained loaded after Match teardown.");
         Assert.That(FindInLoadedScene<MatchSceneView>(MatchSceneName), Is.Null);
@@ -190,10 +192,17 @@ public sealed class Aph805MenuMatchMenuLifecyclePlayModeTests
         Assert.That(match.DirectionalLight, Is.Not.Null);
         Assert.That(ReadPrivateField(match, "globalVolume"), Is.Not.Null);
         Assert.That(ReadPrivateField(match, "staticMapPresentationManifest"), Is.Null);
-        Assert.That(match.StaticMapPresentationManifest, Is.Not.Null);
+        Assert.That(
+            match.StaticMapPresentationManifest,
+            match.CanonicalPresentationMode == Game.Rendering.OperationMapCanonicalPresentationMode.EntityScene
+                ? Is.Null
+                : Is.Not.Null);
         Assert.That(match.MapSurfaceAuthoring, Is.Not.Null);
-        Assert.That(match.MapBuildingPlacementConfig, Is.Not.Null);
-        Assert.That(match.MapVehiclePlacementConfig, Is.Not.Null);
+        bool entityScene =
+            match.CanonicalPresentationMode ==
+            Game.Rendering.OperationMapCanonicalPresentationMode.EntityScene;
+        Assert.That(match.MapBuildingPlacementConfig, entityScene ? Is.Null : Is.Not.Null);
+        Assert.That(match.MapVehiclePlacementConfig, entityScene ? Is.Null : Is.Not.Null);
         Assert.That(match.RtsSelectionConfig, Is.Not.Null);
         Assert.That(match.BuildingPlacementConfig, Is.Not.Null);
         Assert.That(match.RuntimeGridConfig, Is.Not.Null);

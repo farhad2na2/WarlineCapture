@@ -8,7 +8,7 @@ namespace Game.Runtime
     [BurstCompile]
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     [UpdateAfter(typeof(UnitAttackSystem))]
-    public partial struct OperationMapBuildingDestroyedVisualSystem : ISystem
+    public partial struct OperationMapBuildingDestructionSystem : ISystem
     {
         private ComponentLookup<LocalTransform> _localTransforms;
 
@@ -30,23 +30,38 @@ namespace Game.Runtime
         }
 
         [BurstCompile]
+        [WithDisabled(typeof(OperationMapBuildingDestroyedComponent))]
         private partial struct ApplyBuildingVisualStateJob : IJobEntity
         {
             public ComponentLookup<LocalTransform> LocalTransforms;
 
-            private void Execute(in UnitHealth health, ref OperationMapBuildingPresentation presentation)
+            private void Execute(
+                in UnitHealth health,
+                in OperationMapBuildingComponent building,
+                ref OperationMapBuildingPresentation presentation,
+                EnabledRefRW<OperationMapBuildingDestroyedComponent> destroyed)
             {
-                byte targetState = health.Current <= 0 ? (byte)1 : (byte)0;
-                if (presentation.State == targetState)
+                if (destroyed.ValueRO)
                     return;
 
-                SetScale(
-                    presentation.IntactVisualRoot,
-                    targetState == 0 ? presentation.IntactVisibleScale : 0f);
-                SetScale(
-                    presentation.DestroyedVisualRoot,
-                    targetState == 1 ? presentation.DestroyedVisibleScale : 0f);
-                presentation.State = targetState;
+                if (health.Current <= 0)
+                {
+                    if (building.BlockerPolicy != OperationMapBuildingBlockerPolicy.RubbleRemainsBlocked)
+                        return;
+
+                    SetScale(presentation.IntactVisualRoot, 0f);
+                    SetScale(presentation.DestroyedVisualRoot, presentation.DestroyedVisibleScale);
+                    presentation.State = 1;
+                    destroyed.ValueRW = true;
+                    return;
+                }
+
+                if (presentation.State != 0)
+                {
+                    SetScale(presentation.IntactVisualRoot, presentation.IntactVisibleScale);
+                    SetScale(presentation.DestroyedVisualRoot, 0f);
+                    presentation.State = 0;
+                }
             }
 
             private void SetScale(Entity entity, float scale)

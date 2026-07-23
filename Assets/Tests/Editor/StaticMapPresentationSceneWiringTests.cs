@@ -105,14 +105,17 @@ public sealed class StaticMapPresentationSceneWiringTests
         Assert.That(startGateIndex, Is.GreaterThanOrEqualTo(0));
         Assert.That(startUpdateIndex, Is.GreaterThan(startGateIndex));
 
-        const string drainGate = "if (!staticMapPresentationStreamer.DrainComplete)";
+        const string drainPolicy = "RequiresStaticPresentationDrain(streamedMatchView)";
+        const string drainGate = "!staticMapPresentationStreamer.DrainComplete";
         const string contentUnloadGate = "!streamedMatchView.OperationMapContentUnloadComplete";
         const string contentUnloadCall = "streamedMatchView.TryBeginOperationMapContentUnload";
         const string unloadCall = "sceneLifecycleSceneSystemHelper.QueueUnloadMatch(entityManager);";
-        int drainGateIndex = source.IndexOf(drainGate, StringComparison.Ordinal);
+        int drainPolicyIndex = source.IndexOf(drainPolicy, StringComparison.Ordinal);
+        int drainGateIndex = source.IndexOf(drainGate, drainPolicyIndex, StringComparison.Ordinal);
         int contentUnloadGateIndex = source.IndexOf(contentUnloadGate, StringComparison.Ordinal);
         int contentUnloadCallIndex = source.IndexOf(contentUnloadCall, StringComparison.Ordinal);
         int unloadCallIndex = source.IndexOf(unloadCall, StringComparison.Ordinal);
+        Assert.That(drainPolicyIndex, Is.GreaterThanOrEqualTo(0));
         Assert.That(drainGateIndex, Is.GreaterThanOrEqualTo(0));
         Assert.That(contentUnloadGateIndex, Is.GreaterThan(drainGateIndex));
         Assert.That(contentUnloadCallIndex, Is.GreaterThan(contentUnloadGateIndex));
@@ -120,6 +123,10 @@ public sealed class StaticMapPresentationSceneWiringTests
         Assert.AreEqual(1, CountOccurrences(source, unloadCall));
         StringAssert.Contains("else if (staticMapPresentationStreamer.IsDraining)", source);
         StringAssert.Contains("!staticMapPresentationStreamer.IsDraining", source);
+        StringAssert.Contains(
+            "streamedMatchView = matchScene;",
+            source,
+            "EntityScene route transitions must retain the MatchSceneView lifecycle owner.");
     }
 
     [Test]

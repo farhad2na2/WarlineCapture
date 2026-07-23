@@ -272,6 +272,41 @@ public sealed class StaticMapPresentationStreamerTests
     }
 
     [Test]
+    public void EntitySceneMenuTransition_RetainsLifecycleOwnerWithoutStaticDrain()
+    {
+        FakeSceneApi api = new();
+        StaticMapPresentationStreamer streamer = new(api);
+        MenuBootstrapCompositionSystemHelper composition = new(streamer);
+        GameObject matchObject = new("MatchSceneView");
+        _objects.Add(matchObject);
+        MatchSceneView matchView = matchObject.AddComponent<MatchSceneView>();
+
+        GameObject operationMapObject = new("OperationMapSceneView");
+        _objects.Add(operationMapObject);
+        OperationMapSceneView operationMapView = operationMapObject.AddComponent<OperationMapSceneView>();
+        SerializedObject serializedOperationMap = new(operationMapView);
+        serializedOperationMap.FindProperty("canonicalPresentationMode").enumValueIndex =
+            (int)OperationMapCanonicalPresentationMode.EntityScene;
+        serializedOperationMap.ApplyModifiedPropertiesWithoutUndo();
+        typeof(MatchSceneView)
+            .GetField("activeOperationMapSceneView", BindingFlags.Instance | BindingFlags.NonPublic)
+            !.SetValue(matchView, operationMapView);
+
+        composition.UpdateStaticMapPresentationForLoadedMatch(true, matchView);
+        composition.UpdateStaticMapPresentationForLoadedMatch(false, matchView);
+
+        FieldInfo streamedMatchViewField = typeof(MenuBootstrapCompositionSystemHelper)
+            .GetField("streamedMatchView", BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.That(streamedMatchViewField, Is.Not.Null);
+        Assert.That(streamedMatchViewField.GetValue(composition), Is.SameAs(matchView));
+        Assert.That(
+            MenuBootstrapCompositionSystemHelper.RequiresStaticPresentationDrain(matchView),
+            Is.False);
+        Assert.That(streamer.DrainComplete, Is.False);
+        Assert.That(api.Started, Is.Empty);
+    }
+
+    [Test]
     public void BeginDrain_WaitsForInflightLoadThenUnloadsItsScene()
     {
         Camera camera = CreateTopDownCamera(16f, 16f);

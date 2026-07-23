@@ -367,7 +367,8 @@ namespace Game.Composition
             {
                 if (sceneState.IsBusy == 0 && sceneState.IsMatchLoaded != 0)
                 {
-                    if (!staticMapPresentationStreamer.DrainComplete)
+                    if (RequiresStaticPresentationDrain(streamedMatchView) &&
+                        !staticMapPresentationStreamer.DrainComplete)
                     {
                         SetLoading(
                             entityManager,
@@ -407,20 +408,16 @@ namespace Game.Composition
                             return;
                         }
 
-                        if (streamedMatchView.OperationMapContentUnloadComplete)
+                        if (!streamedMatchView.OperationMapContentUnloadComplete)
                         {
-                            sceneLifecycleSceneSystemHelper.QueueUnloadMatch(entityManager);
-                            SetLoading(entityManager, boundary, 1f, false, "Unloading match");
+                            SetLoading(
+                                entityManager,
+                                boundary,
+                                Mathf.Clamp01(streamedMatchView.OperationMapContentProgress01),
+                                false,
+                                "Unloading operation map");
                             return;
                         }
-
-                        SetLoading(
-                            entityManager,
-                            boundary,
-                            Mathf.Clamp01(streamedMatchView.OperationMapContentProgress01),
-                            false,
-                            "Unloading operation map");
-                        return;
                     }
 
                     sceneLifecycleSceneSystemHelper.QueueUnloadMatch(entityManager);
@@ -471,18 +468,11 @@ namespace Game.Composition
             if (UsesEntityScenePresentation(matchScene))
             {
                 if (streamedMatchView != null && streamedMatchView != matchScene)
-                {
                     staticMapPresentationStreamer.Unbind();
-                    streamedMatchView = null;
-                }
 
-                if (isMatchRoute)
-                    streamedMatchView = matchScene;
-                else if (streamedMatchView != null)
-                {
-                    staticMapPresentationStreamer.Unbind();
-                    streamedMatchView = null;
-                }
+                // Retain the lifecycle owner across the route transition. The menu-loading path
+                // coordinates EntityScene teardown before the Match shell itself is unloaded.
+                streamedMatchView = matchScene;
 
                 staticMapPresentationStreamer.Update();
                 if (isMatchRoute &&
@@ -541,6 +531,9 @@ namespace Game.Composition
                 matchScene.CanonicalPresentationMode ==
                 OperationMapCanonicalPresentationMode.EntityScene;
         }
+
+        internal static bool RequiresStaticPresentationDrain(MatchSceneView matchScene) =>
+            !UsesEntityScenePresentation(matchScene);
 
         private bool CanAdvanceMatchStart(UiShellStateComponent shellState)
         {

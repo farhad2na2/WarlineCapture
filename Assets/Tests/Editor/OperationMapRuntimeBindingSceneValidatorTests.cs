@@ -205,6 +205,7 @@ public sealed class OperationMapRuntimeBindingSceneValidatorTests
                 .SelectMany(root => root.GetComponentsInChildren<OperationMapSceneView>(true))
                 .Single();
             GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            UnityEngine.Object.DestroyImmediate(cube.GetComponent<Collider>());
             cube.transform.SetParent(view.MapRoot, false);
 
             Assert.That(

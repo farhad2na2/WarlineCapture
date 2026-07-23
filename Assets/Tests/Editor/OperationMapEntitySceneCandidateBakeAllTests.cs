@@ -24,6 +24,7 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
             suite.SceneSetup_RejectsEmptyBatchSetup,
             suite.SceneSetup_AcceptsLoadedActiveScene,
             suite.CandidateBakeAll_ValidatesSourcePhysicsBeforePopulation,
+            suite.CandidateBakeAll_ValidatesRuntimePhysicsAfterBindingBeforeBudget,
             suite.CandidateBakeAll_PreservesFailureAndSceneRestorationOrdering,
             suite.SourceCandidateParity_AcceptsExactMatrixAndBounds,
             suite.SourceCandidateParity_RejectsMatrixDrift,
@@ -205,6 +206,27 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
         Assert.That(preflight, Is.GreaterThanOrEqualTo(0));
         Assert.That(sourcePhysics, Is.GreaterThan(preflight));
         Assert.That(population, Is.GreaterThan(sourcePhysics));
+    }
+
+    [Test]
+    public void CandidateBakeAll_ValidatesRuntimePhysicsAfterBindingBeforeBudget()
+    {
+        const string path =
+            "Assets/Game/Scripts/Editor/OperationMapEntitySceneCandidateBakeAll.cs";
+        string source = File.ReadAllText(path);
+        int binding = source.IndexOf(
+            "RunStage(report, \"candidate-binding-layout\"",
+            StringComparison.Ordinal);
+        int runtimePhysics = source.IndexOf(
+            "\"runtime-physics-readiness\"",
+            StringComparison.Ordinal);
+        int bakeBudget = source.IndexOf(
+            "RunStage(report, \"candidate-bake-budget\"",
+            StringComparison.Ordinal);
+
+        Assert.That(binding, Is.GreaterThanOrEqualTo(0));
+        Assert.That(runtimePhysics, Is.GreaterThan(binding));
+        Assert.That(bakeBudget, Is.GreaterThan(runtimePhysics));
     }
 
     [Test]

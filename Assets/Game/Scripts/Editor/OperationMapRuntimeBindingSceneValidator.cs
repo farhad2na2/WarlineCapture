@@ -116,6 +116,15 @@ namespace Game.Editor
             foreach (GameObject root in scene.GetRootGameObjects())
             {
                 rootCount++;
+                if (!DenseCityPhysicsComponentStripper.TryValidateNoProhibitedComponents(
+                        root,
+                        out error))
+                {
+                    error =
+                        $"Runtime binding scene contains prohibited collider or rigidbody physics. {error}";
+                    return false;
+                }
+
                 OperationMapSceneView[] views =
                     root.GetComponentsInChildren<OperationMapSceneView>(true);
                 for (int index = 0; index < views.Length; index++)
@@ -146,16 +155,6 @@ namespace Game.Editor
             if (view.MapRoot.GetComponentsInChildren<Renderer>(true).Length != 0)
             {
                 error = "Runtime binding map root contains renderer content.";
-                return false;
-            }
-            if (view.MapRoot.GetComponentsInChildren<Collider>(true).Length != 0)
-            {
-                error = "Runtime binding map root contains collider content.";
-                return false;
-            }
-            if (view.MapRoot.GetComponentsInChildren<Rigidbody>(true).Length != 0)
-            {
-                error = "Runtime binding map root contains unmanaged Rigidbody content.";
                 return false;
             }
             if (view.MapRoot.GetComponentsInChildren<Camera>(true).Length != 0 ||

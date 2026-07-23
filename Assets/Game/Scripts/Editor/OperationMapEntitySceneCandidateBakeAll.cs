@@ -128,6 +128,10 @@ namespace Game.Editor
                 RunStage(report, "candidate-binding-layout", () =>
                     OperationMapEntitySceneCandidateAddressablesLayoutBuilder
                         .BuildCandidateEntitySceneAddressablesLayout());
+                RunStage(
+                    report,
+                    "runtime-physics-readiness",
+                    OperationMapEntitySceneRuntimePhysicsValidator.ValidateCurrentCandidateBatch);
                 RunStage(report, "candidate-bake-budget", () =>
                     RequireBakeAndLayoutBudgets(projectRoot, report));
                 RunStage(

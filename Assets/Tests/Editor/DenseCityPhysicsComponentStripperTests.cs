@@ -16,7 +16,8 @@ public sealed class DenseCityPhysicsComponentStripperTests
         {
             suite.StripInstanceHierarchy_RemovesActiveAndInactivePhysicsWithoutMutatingPrefab,
             suite.StripInstanceHierarchy_RejectsPersistentPrefabAsset,
-            suite.StripInstanceHierarchy_RemovesPrimitiveCollider
+            suite.StripInstanceHierarchy_RemovesPrimitiveCollider,
+            suite.StripInstanceHierarchy_RecordsRemovedComponentOverrides
         };
 
         for (int index = 0; index < tests.Length; index++)
@@ -104,6 +105,28 @@ public sealed class DenseCityPhysicsComponentStripperTests
         finally
         {
             UnityEngine.Object.DestroyImmediate(primitive);
+        }
+    }
+
+    [Test]
+    public void StripInstanceHierarchy_RecordsRemovedComponentOverrides()
+    {
+        GameObject prefab = CreatePhysicsPrefab();
+        GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+        try
+        {
+            DenseCityPhysicsComponentStripper.StripInstanceHierarchy(instance);
+
+            Assert.That(
+                PrefabUtility.GetRemovedComponents(instance),
+                Has.Count.EqualTo(4));
+            Assert.That(
+                PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(instance),
+                Is.EqualTo(PrefabPath));
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(instance);
         }
     }
 

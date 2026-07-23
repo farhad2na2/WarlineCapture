@@ -50,11 +50,12 @@ public sealed partial class UnitRenderBudgetSystemTests
             tests.RenderSafetyUsesCachedLookups();
             tests.MassRenderSettingsPatchesUnitRenderChildren();
             tests.MassRenderSettingsPatchesRenderFiltersAfterLookupWork();
+            tests.MassRenderSettingsRetriesUnitUntilVisualReferenceExists();
             tests.DiagnosticLogFlushClearsQueuedMessages();
             tests.CharacterImpostorsScaleUpAtHighTacticalCameraHeight();
             tests.HighCameraCharacterImpostorsFaceCameraPlane();
             tests.SourceKeyPrefixChecksDoNotAllocate();
-            Debug.Log("[UnitRenderBudgetFocusedValidation] result=Passed tests=34");
+            Debug.Log("[UnitRenderBudgetFocusedValidation] result=Passed tests=35");
         }
         catch (System.Exception ex)
         {
@@ -212,7 +213,10 @@ public sealed partial class UnitRenderBudgetSystemTests
     {
         using var world = new World(nameof(MassRenderSettingsPatchesUnitRenderChildren));
         EntityManager em = world.EntityManager;
-        Entity unit = em.CreateEntity(typeof(UnitGrid), typeof(Faction));
+        Entity unit = em.CreateEntity(
+            typeof(UnitGrid),
+            typeof(Faction),
+            typeof(UnitModelInstanceReference));
         em.SetComponentData(unit, new UnitGrid { Cell = int2.zero });
         em.SetComponentData(unit, new Faction { Id = 1 });
         Entity lodGroup = em.CreateEntity(typeof(MeshLODGroupComponent));
@@ -254,7 +258,10 @@ public sealed partial class UnitRenderBudgetSystemTests
     {
         using var world = new World(nameof(MassRenderSettingsPatchesRenderFiltersAfterLookupWork));
         EntityManager em = world.EntityManager;
-        Entity unit = em.CreateEntity(typeof(UnitGrid), typeof(Faction));
+        Entity unit = em.CreateEntity(
+            typeof(UnitGrid),
+            typeof(Faction),
+            typeof(UnitModelInstanceReference));
         em.SetComponentData(unit, new UnitGrid { Cell = int2.zero });
         em.SetComponentData(unit, new Faction { Id = 1 });
         Entity firstGroup = CreateLodGroup(em);
@@ -267,6 +274,31 @@ public sealed partial class UnitRenderBudgetSystemTests
 
         AssertPatchedRenderChild(em, firstRenderChild, firstGroup);
         AssertPatchedRenderChild(em, secondRenderChild, secondGroup);
+    }
+
+    [Test]
+    public void MassRenderSettingsRetriesUnitUntilVisualReferenceExists()
+    {
+        using var world = new World(nameof(MassRenderSettingsRetriesUnitUntilVisualReferenceExists));
+        EntityManager em = world.EntityManager;
+        Entity unit = em.CreateEntity(typeof(UnitGrid), typeof(Faction));
+        em.SetComponentData(unit, new UnitGrid { Cell = int2.zero });
+        em.SetComponentData(unit, new Faction { Id = 1 });
+        Entity lodGroup = CreateLodGroup(em);
+        Entity renderChild = CreateRenderChildWithFilter(em, unit, lodGroup);
+        SystemHandle system = world.CreateSystem<UnitMassRenderSettingsSystem>();
+
+        system.Update(world.Unmanaged);
+
+        Assert.IsFalse(em.HasComponent<UnitMassRenderSettingsApplied>(renderChild));
+        Assert.AreEqual(
+            new float3(1f, 2f, 3f),
+            em.GetComponentData<RenderBounds>(renderChild).Value.Extents);
+
+        em.AddComponent<UnitModelInstanceReference>(unit);
+        system.Update(world.Unmanaged);
+
+        AssertPatchedRenderChild(em, renderChild, lodGroup);
     }
 
     private static Entity CreateLodGroup(EntityManager em)

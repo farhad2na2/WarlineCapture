@@ -27,6 +27,10 @@ namespace Game.Components
         public int PlacementIndex;
     }
 
+    public struct OperationMapAuthoredVehiclePresentation : IComponentData
+    {
+    }
+
     public struct OperationMapBuildingPresentation : IComponentData
     {
         public Entity IntactVisualRoot;

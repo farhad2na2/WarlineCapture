@@ -2,6 +2,8 @@ using System;
 using Game.Components;
 using Game.Configs;
 using Game.Rendering;
+using Unity.Entities;
+using Unity.Scenes;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceProviders;
@@ -41,6 +43,125 @@ namespace Game.Composition
     internal interface IOperationMapPresentationManifestApi
     {
         IOperationMapPresentationManifestOperation Load(object runtimeKey);
+    }
+
+    internal interface IOperationMapEntitySceneApi
+    {
+        bool TryEnsureReady(
+            string sceneGuid,
+            ref Entity sceneEntity,
+            ref bool ownsScene,
+            out bool ready,
+            out string error);
+
+        bool TryReleaseOwned(
+            ref Entity sceneEntity,
+            ref bool ownsScene,
+            ref bool releaseStarted,
+            out bool complete,
+            out string error);
+    }
+
+    internal sealed class OperationMapEntitySceneApi : IOperationMapEntitySceneApi
+    {
+        public bool TryEnsureReady(
+            string sceneGuidValue,
+            ref Entity sceneEntity,
+            ref bool ownsScene,
+            out bool ready,
+            out string error)
+        {
+            ready = false;
+            error = null;
+            World world = World.DefaultGameObjectInjectionWorld;
+            if (world == null || !world.IsCreated)
+            {
+                error = "Packed EntityScene loading requires the default ECS world.";
+                return false;
+            }
+
+            var sceneGuid = new Hash128(sceneGuidValue);
+            if (!sceneGuid.IsValid)
+            {
+                error =
+                    "Packed EntityScene definition has an invalid authored SubScene GUID: " +
+                    $"'{sceneGuidValue}'.";
+                return false;
+            }
+
+            if (sceneEntity == Entity.Null || !world.EntityManager.Exists(sceneEntity))
+                sceneEntity = SceneSystem.GetSceneEntity(world.Unmanaged, sceneGuid);
+
+            if (sceneEntity != Entity.Null &&
+                world.EntityManager.HasComponent<RequestSceneLoaded>(sceneEntity))
+            {
+                ready = SceneSystem.IsSceneLoaded(world.Unmanaged, sceneEntity);
+                return true;
+            }
+
+            sceneEntity = SceneSystem.LoadSceneAsync(world.Unmanaged, sceneGuid);
+            ownsScene = sceneEntity != Entity.Null;
+            if (!ownsScene)
+            {
+                error = $"Packed EntityScene load did not start for GUID '{sceneGuid}'.";
+                return false;
+            }
+
+            ready = SceneSystem.IsSceneLoaded(world.Unmanaged, sceneEntity);
+            return true;
+        }
+
+        public bool TryReleaseOwned(
+            ref Entity sceneEntity,
+            ref bool ownsScene,
+            ref bool releaseStarted,
+            out bool complete,
+            out string error)
+        {
+            complete = false;
+            error = null;
+            if (!ownsScene)
+            {
+                sceneEntity = Entity.Null;
+                releaseStarted = false;
+                complete = true;
+                return true;
+            }
+
+            World world = World.DefaultGameObjectInjectionWorld;
+            if (world == null || !world.IsCreated)
+            {
+                error = "Packed EntityScene unload requires the default ECS world.";
+                return false;
+            }
+
+            if (sceneEntity == Entity.Null || !world.EntityManager.Exists(sceneEntity))
+            {
+                sceneEntity = Entity.Null;
+                ownsScene = false;
+                releaseStarted = false;
+                complete = true;
+                return true;
+            }
+
+            if (!releaseStarted)
+            {
+                SceneSystem.UnloadScene(
+                    world.Unmanaged,
+                    sceneEntity,
+                    SceneSystem.UnloadParameters.DestroyMetaEntities);
+                releaseStarted = true;
+            }
+
+            complete = !world.EntityManager.Exists(sceneEntity);
+            if (!complete)
+                return true;
+
+            sceneEntity = Entity.Null;
+            ownsScene = false;
+            releaseStarted = false;
+            return true;
+        }
     }
 
     internal sealed class EntitySceneSkippedPresentationManifestOperation :
@@ -210,22 +331,28 @@ namespace Game.Composition
     {
         private readonly IOperationMapSourceSceneApi sceneApi;
         private readonly IOperationMapPresentationManifestApi manifestApi;
+        private readonly IOperationMapEntitySceneApi entitySceneApi;
         private readonly OperationMapSceneReferenceSceneSystemHelper sceneReference;
         private IOperationMapSourceSceneOperation sceneOperation;
         private IOperationMapPresentationManifestOperation manifestOperation;
         private string expectedOperationMapId;
         private string expectedSourceSceneGuid;
+        private Entity packedEntityScene;
+        private bool ownsPackedEntityScene;
+        private bool packedEntitySceneReleaseStarted;
         private bool disposed;
         private bool unloading;
 
         public OperationMapSceneLoadingSceneSystemHelper(
             IOperationMapSourceSceneApi sceneApi = null,
             IOperationMapPresentationManifestApi manifestApi = null,
-            OperationMapSceneReferenceSceneSystemHelper sceneReference = null)
+            OperationMapSceneReferenceSceneSystemHelper sceneReference = null,
+            IOperationMapEntitySceneApi entitySceneApi = null)
         {
             this.sceneApi = sceneApi ?? new OperationMapAddressablesSourceSceneApi();
             this.manifestApi = manifestApi ??
                 new OperationMapAddressablesPresentationManifestApi();
+            this.entitySceneApi = entitySceneApi ?? new OperationMapEntitySceneApi();
             this.sceneReference = sceneReference ?? new OperationMapSceneReferenceSceneSystemHelper();
         }
 
@@ -378,6 +505,19 @@ namespace Game.Composition
                     return;
                 }
 
+                if (!TryEnsurePackedEntitySceneReady(view, out bool packedReady, out error))
+                {
+                    Fail(OperationMapLoadResultCode.MetadataBindFailed, error);
+                    return;
+                }
+                if (!packedReady)
+                {
+                    SceneView = view;
+                    Manifest = null;
+                    Progress01 = 0.95f;
+                    return;
+                }
+
                 SceneView = view;
                 Manifest = null;
                 Progress01 = 1f;
@@ -427,6 +567,8 @@ namespace Game.Composition
             if (!sceneOperation.TryBeginUnload(out error))
                 return false;
 
+            if (!TryReleaseOwnedPackedEntityScene(out _, out error))
+                return false;
             unloading = true;
             IsReady = false;
             Progress01 = 0f;
@@ -482,6 +624,9 @@ namespace Game.Composition
             FailureCode = OperationMapLoadResultCode.None;
             expectedOperationMapId = null;
             expectedSourceSceneGuid = null;
+            packedEntityScene = Entity.Null;
+            ownsPackedEntityScene = false;
+            packedEntitySceneReleaseStarted = false;
             unloading = false;
             UnloadComplete = false;
         }
@@ -489,6 +634,15 @@ namespace Game.Composition
         private void UpdateUnload()
         {
             Progress01 = sceneOperation.UnloadProgress01;
+            if (!TryReleaseOwnedPackedEntityScene(
+                    out bool packedEntitySceneReleaseComplete,
+                    out string packedEntitySceneReleaseError))
+            {
+                Fail(
+                    OperationMapLoadResultCode.SourceUnloadFailed,
+                    packedEntitySceneReleaseError);
+                return;
+            }
             if (!sceneOperation.UnloadDone)
                 return;
             if (!sceneOperation.UnloadSucceeded)
@@ -498,6 +652,11 @@ namespace Game.Composition
                     string.IsNullOrWhiteSpace(sceneOperation.UnloadFailure)
                         ? "Operation-map source-scene unload failed."
                         : sceneOperation.UnloadFailure);
+                return;
+            }
+            if (!packedEntitySceneReleaseComplete)
+            {
+                Progress01 = 0.95f;
                 return;
             }
 
@@ -535,10 +694,44 @@ namespace Game.Composition
 
         private void ReleaseOperations()
         {
+            TryReleaseOwnedPackedEntityScene(out _, out _);
             sceneOperation?.Dispose();
             sceneOperation = null;
             manifestOperation?.Dispose();
             manifestOperation = null;
+        }
+
+        private bool TryEnsurePackedEntitySceneReady(
+            OperationMapSceneView view,
+            out bool ready,
+            out string error)
+        {
+            ready = false;
+            error = null;
+            if (view.MapSubScene.SceneGUID.IsValid)
+            {
+                ready = true;
+                return true;
+            }
+
+            return entitySceneApi.TryEnsureReady(
+                view.Definition.NavigationMetadata.AuthoredSubSceneGuid,
+                ref packedEntityScene,
+                ref ownsPackedEntityScene,
+                out ready,
+                out error);
+        }
+
+        private bool TryReleaseOwnedPackedEntityScene(
+            out bool complete,
+            out string error)
+        {
+            return entitySceneApi.TryReleaseOwned(
+                ref packedEntityScene,
+                ref ownsPackedEntityScene,
+                ref packedEntitySceneReleaseStarted,
+                out complete,
+                out error);
         }
 
         private static bool TryValidateManifest(

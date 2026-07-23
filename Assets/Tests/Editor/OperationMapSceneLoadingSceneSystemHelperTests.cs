@@ -9,6 +9,7 @@ using Game.Configs;
 using Game.Rendering;
 using Game.Runtime;
 using NUnit.Framework;
+using Unity.Entities;
 using Unity.Scenes;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -32,6 +33,7 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
             Run(nameof(PendingLoadPublishesProgress), test => test.PendingLoadPublishesProgress(), ref passed);
             Run(nameof(SuccessfulLoadResolvesValidatedStagedView), test => test.SuccessfulLoadResolvesValidatedStagedView(), ref passed);
             Run(nameof(EntitySceneLoadSkipsManifestAndResolvesWithoutStaticOwnership), test => test.EntitySceneLoadSkipsManifestAndResolvesWithoutStaticOwnership(), ref passed);
+            Run(nameof(EntitySceneUnloadWaitsForOwnedMetadataRelease), test => test.EntitySceneUnloadWaitsForOwnedMetadataRelease(), ref passed);
             Run(nameof(EntitySceneLoadRejectsBoundStaticManifestReference), test => test.EntitySceneLoadRejectsBoundStaticManifestReference(), ref passed);
             Run(nameof(FailedLoadReleasesExactlyOnce), test => test.FailedLoadReleasesExactlyOnce(), ref passed);
             Run(nameof(FailedManifestLoadReleasesBothExactlyOnce), test => test.FailedManifestLoadReleasesBothExactlyOnce(), ref passed);
@@ -133,9 +135,11 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
             LoadedScene = scene,
             Progress = 1f
         };
+        FakeEntitySceneApi entitySceneApi = new();
         var helper = new OperationMapSceneLoadingSceneSystemHelper(
             new FakeSceneApi(operation),
-            manifestApi);
+            manifestApi,
+            entitySceneApi: entitySceneApi);
 
         Assert.That(helper.TryStart(definition, out string error), Is.True, error);
         Assert.That(manifestApi.LoadCount, Is.EqualTo(0));
@@ -144,7 +148,9 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
         Assert.That(helper.IsReady, Is.True, helper.Failure);
         Assert.That(helper.SceneView, Is.SameAs(view));
         Assert.That(helper.Manifest, Is.Null);
+        Assert.That(entitySceneApi.EnsureReadyCount, Is.EqualTo(1));
         helper.Dispose();
+        Assert.That(entitySceneApi.ReleaseOwnedCount, Is.EqualTo(1));
         Assert.That(operation.DisposeCount, Is.EqualTo(1));
         UnityEngine.Object.DestroyImmediate(definition);
     }
@@ -159,6 +165,51 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
         Assert.That(helper.TryStart(definition, out string error), Is.False);
         Assert.That(error, Does.Contain("must not bind a production static presentation manifest"));
         Assert.That(helper.FailureCode, Is.EqualTo(OperationMapLoadResultCode.StaleContent));
+        UnityEngine.Object.DestroyImmediate(definition);
+    }
+
+    [Test]
+    public void EntitySceneUnloadWaitsForOwnedMetadataRelease()
+    {
+        Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+        OperationMapDefinition definition =
+            CreateEntitySceneDefinition("opmap.skirmish.entity_scene_unload");
+        OperationMapSceneView view = CreateEntitySceneView(scene, definition);
+        var operation = new FakeSceneOperation
+        {
+            Done = true,
+            Success = true,
+            LoadedScene = scene,
+            Progress = 1f,
+            UnloadDoneState = true,
+            UnloadSuccess = true
+        };
+        FakeEntitySceneApi entitySceneApi = new() { ReleaseComplete = false };
+        var helper = new OperationMapSceneLoadingSceneSystemHelper(
+            new FakeSceneApi(operation),
+            new FakeManifestApi(new FakeManifestOperation()),
+            entitySceneApi: entitySceneApi);
+
+        Assert.That(helper.TryStart(definition, out string error), Is.True, error);
+        helper.Update();
+        Assert.That(helper.IsReady, Is.True, helper.Failure);
+        Assert.That(helper.SceneView, Is.SameAs(view));
+        Assert.That(helper.TryBeginUnload(out error), Is.True, error);
+        helper.Update();
+
+        Assert.That(helper.IsUnloading, Is.True);
+        Assert.That(helper.UnloadComplete, Is.False);
+        Assert.That(entitySceneApi.ReleaseOwnedCount, Is.EqualTo(1));
+        Assert.That(operation.DisposeCount, Is.Zero);
+
+        entitySceneApi.ReleaseComplete = true;
+        helper.Update();
+
+        Assert.That(helper.IsUnloading, Is.False);
+        Assert.That(helper.UnloadComplete, Is.True);
+        Assert.That(entitySceneApi.ReleaseOwnedCount, Is.EqualTo(1));
+        Assert.That(operation.DisposeCount, Is.EqualTo(1));
+        helper.Dispose();
         UnityEngine.Object.DestroyImmediate(definition);
     }
 
@@ -717,6 +768,57 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
         public void Dispose()
         {
             DisposeCount++;
+        }
+    }
+
+    private sealed class FakeEntitySceneApi : IOperationMapEntitySceneApi
+    {
+        public int EnsureReadyCount { get; private set; }
+        public int ReleaseOwnedCount { get; private set; }
+        public bool ReleaseComplete { get; set; } = true;
+
+        public bool TryEnsureReady(
+            string sceneGuid,
+            ref Entity sceneEntity,
+            ref bool ownsScene,
+            out bool ready,
+            out string error)
+        {
+            EnsureReadyCount++;
+            sceneEntity = new Entity { Index = 1, Version = 1 };
+            ownsScene = true;
+            ready = true;
+            error = null;
+            return true;
+        }
+
+        public bool TryReleaseOwned(
+            ref Entity sceneEntity,
+            ref bool ownsScene,
+            ref bool releaseStarted,
+            out bool complete,
+            out string error)
+        {
+            error = null;
+            if (!ownsScene)
+            {
+                complete = true;
+                return true;
+            }
+            if (!releaseStarted)
+            {
+                releaseStarted = true;
+                ReleaseOwnedCount++;
+            }
+
+            complete = ReleaseComplete;
+            if (!complete)
+                return true;
+
+            sceneEntity = Entity.Null;
+            ownsScene = false;
+            releaseStarted = false;
+            return true;
         }
     }
 }

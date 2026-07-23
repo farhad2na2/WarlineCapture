@@ -3,14 +3,22 @@
 namespace Game.Editor
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
+    using System.Security.Cryptography;
     using System.Text;
+    using Unity.Entities;
+    using Unity.Entities.Build;
+    using Unity.Entities.Content;
+    using Unity.Scenes.Editor;
     using UnityEditor;
     using UnityEditor.AddressableAssets;
     using UnityEditor.AddressableAssets.Build;
     using UnityEditor.AddressableAssets.Settings;
     using UnityEditor.AddressableAssets.Settings.GroupSchemas;
     using UnityEngine;
+    using Hash128 = Unity.Entities.Hash128;
 
     /// <summary>
     /// Builds local candidate content for runtime parity without retaining candidate entries in
@@ -22,6 +30,8 @@ namespace Game.Editor
             "Operation Map - Validation Only - skirmish-desert-base-01 - EntityScene";
         internal const string ReportPath =
             "Design/AgentReports/2026-07-21_dense_city_phase0a_candidate_runtime_content.json";
+        internal const string EntityContentOutputPath =
+            "Library/OperationMapCandidateRuntimeContent/Entities";
         private static readonly UTF8Encoding Utf8WithoutBom = new(false);
 
         [MenuItem("Game/Operation Maps/EntityScene Migration/Build Candidate Runtime Parity Content")]
@@ -70,6 +80,7 @@ namespace Game.Editor
             byte[] settingsSnapshot = File.ReadAllBytes(settingsPhysicalPath);
             AddressableAssetGroup candidateGroup = null;
             AddressablesPlayerBuildResult buildResult = null;
+            EntityContentBuildResult entityContentResult = default;
             try
             {
                 candidateGroup = CreateCandidateGroup(settings);
@@ -85,11 +96,7 @@ namespace Game.Editor
                     plan.AddressPrefix + "source-scene");
                 AssetDatabase.SaveAssets();
 
-                using (OperationMapEntitySceneBuildAdditions.UseCurrentProcessSceneOverride(
-                           OperationMapEntityPresentationMigrationEditor.CandidateSubScenePath))
-                {
-                    AddressableAssetSettings.BuildPlayerContent(out buildResult);
-                }
+                AddressableAssetSettings.BuildPlayerContent(out buildResult);
 
                 if (buildResult == null || !string.IsNullOrEmpty(buildResult.Error))
                 {
@@ -97,10 +104,13 @@ namespace Game.Editor
                         buildResult?.Error ?? "Candidate Addressables content build returned no result.");
                 }
 
-                WriteReport(plan, buildResult);
+                entityContentResult = BuildCandidateEntityContent(plan);
+                WriteReport(plan, buildResult, entityContentResult);
                 Debug.Log(
                     $"[OperationMapCandidateRuntimeContent] result=Passed " +
                     $"entitySceneGuid={plan.EntitySceneGuid} output={buildResult.OutputPath} " +
+                    $"entityContent={entityContentResult.OutputPath} " +
+                    $"entityArchives={entityContentResult.ArchiveCount} " +
                     "productionCutover=0 temporaryGroupRetained=0");
             }
             finally
@@ -164,18 +174,38 @@ namespace Game.Editor
 
         private static void WriteReport(
             OperationMapEntitySceneCandidateAddressablesLayoutPlan plan,
-            AddressablesPlayerBuildResult result)
+            AddressablesPlayerBuildResult result,
+            EntityContentBuildResult entityContentResult)
         {
             var report = new RuntimeContentReport
             {
                 schema = "warline.operation-map.candidate-runtime-content",
-                schemaVersion = 1,
+                schemaVersion = 3,
                 result = "CandidateRuntimeContentBuilt",
                 operationMapId = plan.OperationMapId,
                 entitySceneGuid = plan.EntitySceneGuid,
                 definitionAddress = plan.AddressPrefix + "definition",
                 sourceSceneAddress = plan.AddressPrefix + "source-scene",
                 outputPath = result.OutputPath,
+                entityContentOutputPath = entityContentResult.OutputPath,
+                entityContentCatalogPath = entityContentResult.CatalogPath,
+                entityContentArchiveCount = entityContentResult.ArchiveCount,
+                candidateSubSceneSha256 = ComputeSha256(
+                    OperationMapEntityPresentationMigrationEditor.CandidateSubScenePath),
+                candidateDefinitionSha256 = ComputeSha256(
+                    OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                        .CandidateDefinitionPath),
+                candidateRuntimeBindingSha256 = ComputeSha256(
+                    OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                        .CandidateRuntimeBindingPath),
+                transformParityReportSha256 = ComputeSha256(
+                    OperationMapEntityPresentationTransformParityValidator.ReportPath),
+                addressablesCatalogSha256 = ComputeSha256(Path.Combine(
+                    Path.GetDirectoryName(result.OutputPath) ??
+                    throw new InvalidOperationException(
+                        $"Addressables output has no directory: {result.OutputPath}"),
+                    "catalog.bin")),
+                entityContentCatalogSha256 = ComputeSha256(entityContentResult.CatalogPath),
                 productionCutover = 0,
                 temporaryGroupRetained = 0
             };
@@ -184,6 +214,86 @@ namespace Game.Editor
             Directory.CreateDirectory(Path.GetDirectoryName(absolutePath) ?? projectRoot);
             File.WriteAllText(absolutePath, JsonUtility.ToJson(report, true) + "\n", Utf8WithoutBom);
             AssetDatabase.ImportAsset(ReportPath, ImportAssetOptions.ForceSynchronousImport);
+        }
+
+        private static string ComputeSha256(string path)
+        {
+            string physicalPath = Path.IsPathRooted(path)
+                ? path
+                : Path.GetFullPath(Path.Combine(Application.dataPath, "..", path));
+            if (!File.Exists(physicalPath))
+                throw new InvalidOperationException(
+                    $"Candidate runtime-content fingerprint input is missing: {physicalPath}");
+
+            using FileStream stream = File.OpenRead(physicalPath);
+            using SHA256 algorithm = SHA256.Create();
+            return string.Concat(
+                algorithm.ComputeHash(stream).Select(value => value.ToString("x2")));
+        }
+
+        private static EntityContentBuildResult BuildCandidateEntityContent(
+            OperationMapEntitySceneCandidateAddressablesLayoutPlan plan)
+        {
+            var sceneGuid = new Hash128(plan.EntitySceneGuid);
+            if (!sceneGuid.IsValid)
+                throw new InvalidOperationException(
+                    $"Candidate EntityScene GUID is invalid: {plan.EntitySceneGuid}");
+
+            Hash128 playerGuid = DotsGlobalSettings.Instance.GetClientGUID();
+            if (!playerGuid.IsValid)
+                throw new InvalidOperationException("Entities client player GUID is invalid.");
+
+            string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+            string outputPath = Path.GetFullPath(Path.Combine(
+                projectRoot,
+                EntityContentOutputPath));
+            if (Directory.Exists(outputPath))
+                Directory.Delete(outputPath, true);
+            Directory.CreateDirectory(outputPath);
+
+            RemoteContentCatalogBuildUtility.BuildContent(
+                new HashSet<Hash128> { sceneGuid },
+                playerGuid,
+                BuildTarget.StandaloneOSX,
+                outputPath);
+
+            string catalogPath = Path.Combine(
+                outputPath,
+                RuntimeContentManager.RelativeCatalogPath);
+            if (!File.Exists(catalogPath))
+                throw new InvalidOperationException(
+                    $"Candidate Entities content catalog was not produced: {catalogPath}");
+
+            int archiveCount = Directory
+                .EnumerateFiles(outputPath, "*", SearchOption.AllDirectories)
+                .Count(path => path.EndsWith(
+                    ".archive",
+                    StringComparison.OrdinalIgnoreCase));
+            if (archiveCount == 0)
+                throw new InvalidOperationException(
+                    $"Candidate Entities content has no archives: {outputPath}");
+
+            return new EntityContentBuildResult(
+                outputPath,
+                catalogPath,
+                archiveCount);
+        }
+
+        private readonly struct EntityContentBuildResult
+        {
+            public EntityContentBuildResult(
+                string outputPath,
+                string catalogPath,
+                int archiveCount)
+            {
+                OutputPath = outputPath;
+                CatalogPath = catalogPath;
+                ArchiveCount = archiveCount;
+            }
+
+            public string OutputPath { get; }
+            public string CatalogPath { get; }
+            public int ArchiveCount { get; }
         }
 
         [Serializable]
@@ -197,6 +307,15 @@ namespace Game.Editor
             public string definitionAddress;
             public string sourceSceneAddress;
             public string outputPath;
+            public string entityContentOutputPath;
+            public string entityContentCatalogPath;
+            public int entityContentArchiveCount;
+            public string candidateSubSceneSha256;
+            public string candidateDefinitionSha256;
+            public string candidateRuntimeBindingSha256;
+            public string transformParityReportSha256;
+            public string addressablesCatalogSha256;
+            public string entityContentCatalogSha256;
             public int productionCutover;
             public int temporaryGroupRetained;
         }

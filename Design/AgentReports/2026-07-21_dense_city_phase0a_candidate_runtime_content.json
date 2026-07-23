@@ -1,12 +1,21 @@
 {
     "schema": "warline.operation-map.candidate-runtime-content",
-    "schemaVersion": 1,
+    "schemaVersion": 3,
     "result": "CandidateRuntimeContentBuilt",
     "operationMapId": "opmap.skirmish.desert_base_01",
     "entitySceneGuid": "0f9ecd54a7f0f467fa35556af7d28f1d",
     "definitionAddress": "operation-map-candidate/opmap.skirmish.desert_base_01/definition",
     "sourceSceneAddress": "operation-map-candidate/opmap.skirmish.desert_base_01/source-scene",
     "outputPath": "Library/com.unity.addressables/aa/OSX/settings.json",
+    "entityContentOutputPath": "/Users/farhad/Projects/WarlineCapture/Library/OperationMapCandidateRuntimeContent/Entities",
+    "entityContentCatalogPath": "/Users/farhad/Projects/WarlineCapture/Library/OperationMapCandidateRuntimeContent/Entities/ContentArchives/archive_dependencies.bin",
+    "entityContentArchiveCount": 1,
+    "candidateSubSceneSha256": "ffac1e687e60b664c5b86e7ae32df80d0c9cdc696a722a4b23d9565b997810a3",
+    "candidateDefinitionSha256": "0b1926b09b444df38c298429f98c9e8fca820834f7734d04e7a604dbb02cc48c",
+    "candidateRuntimeBindingSha256": "7fefb906c2d7582e00a8a003b8fe284e48899cc1b9ca3ed4e180b98a1f341c67",
+    "transformParityReportSha256": "5aecc8ffd5a6d0ac2b2162a1e439c280deeab8f1f9e8f3e048104525b4992c28",
+    "addressablesCatalogSha256": "e9f3e7d2b77d10804a9369936c83f40c0381e650c510630f47687670b7474cfd",
+    "entityContentCatalogSha256": "cec707fc9ad99e0fa0cefb0e6151c2ff59bdfeac15b9a209bb3f8799a5537d51",
     "productionCutover": 0,
     "temporaryGroupRetained": 0
 }

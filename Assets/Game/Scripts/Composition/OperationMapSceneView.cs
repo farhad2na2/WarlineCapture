@@ -125,12 +125,19 @@ namespace Game.Composition
                 return false;
             }
 
-            if (!string.Equals(
+            string boundSubSceneGuid = mapSubScene.SceneGUID.ToString();
+            bool packedEntitySceneReference =
+                entityScene && !mapSubScene.SceneGUID.IsValid;
+            if (!packedEntitySceneReference &&
+                !string.Equals(
                     definition.NavigationMetadata.AuthoredSubSceneGuid,
-                    mapSubScene.SceneGUID.ToString(),
+                    boundSubSceneGuid,
                     StringComparison.Ordinal))
             {
-                error = "Operation-map definition does not identify the bound map subscene.";
+                error =
+                    "Operation-map definition does not identify the bound map subscene: " +
+                    $"definition='{definition.NavigationMetadata.AuthoredSubSceneGuid}', " +
+                    $"bound='{boundSubSceneGuid}'.";
                 return false;
             }
 

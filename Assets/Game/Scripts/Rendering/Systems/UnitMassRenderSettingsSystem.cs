@@ -29,6 +29,12 @@ namespace Game.Rendering
         private ComponentLookup<Parent> _parentLookup;
         private ComponentLookup<UnitGrid> _unitGridLookup;
         private ComponentLookup<Faction> _factionLookup;
+        private ComponentLookup<OperationMapEntityPresentationIdentity> _operationMapIdentityLookup;
+        private ComponentLookup<OperationMapAuthoredVehiclePresentation>
+            _operationMapVehicleLookup;
+        private ComponentLookup<Prefab> _prefabLookup;
+        private ComponentLookup<UnitDetailedVisualReference> _detailedVisualLookup;
+        private ComponentLookup<UnitModelInstanceReference> _modelInstanceLookup;
         private ComponentLookup<Unity.Rendering.RenderBounds> _renderBoundsLookup;
         private ComponentLookup<MeshLODComponent> _meshLodLookup;
         private ComponentLookup<MeshLODGroupComponent> _meshLodGroupLookup;
@@ -53,6 +59,13 @@ namespace Game.Rendering
             _parentLookup = state.GetComponentLookup<Parent>(true);
             _unitGridLookup = state.GetComponentLookup<UnitGrid>(true);
             _factionLookup = state.GetComponentLookup<Faction>(true);
+            _operationMapIdentityLookup =
+                state.GetComponentLookup<OperationMapEntityPresentationIdentity>(true);
+            _operationMapVehicleLookup =
+                state.GetComponentLookup<OperationMapAuthoredVehiclePresentation>(true);
+            _prefabLookup = state.GetComponentLookup<Prefab>(true);
+            _detailedVisualLookup = state.GetComponentLookup<UnitDetailedVisualReference>(true);
+            _modelInstanceLookup = state.GetComponentLookup<UnitModelInstanceReference>(true);
             _renderBoundsLookup = state.GetComponentLookup<Unity.Rendering.RenderBounds>();
             _meshLodLookup = state.GetComponentLookup<MeshLODComponent>();
             _meshLodGroupLookup = state.GetComponentLookup<MeshLODGroupComponent>();
@@ -69,6 +82,11 @@ namespace Game.Rendering
             _parentLookup.Update(ref state);
             _unitGridLookup.Update(ref state);
             _factionLookup.Update(ref state);
+            _operationMapIdentityLookup.Update(ref state);
+            _operationMapVehicleLookup.Update(ref state);
+            _prefabLookup.Update(ref state);
+            _detailedVisualLookup.Update(ref state);
+            _modelInstanceLookup.Update(ref state);
             _renderBoundsLookup.Update(ref state);
             _meshLodLookup.Update(ref state);
             _meshLodGroupLookup.Update(ref state);
@@ -76,6 +94,15 @@ namespace Game.Rendering
             int processed = 0;
             int applied = 0;
             int deepestUnitAncestor = 0;
+            using NativeHashSet<Entity> authoredVisualRoots =
+                new(64, Allocator.Temp);
+            foreach (RefRO<UnitDetailedVisualReference> visualReference in SystemAPI
+                         .Query<RefRO<UnitDetailedVisualReference>>()
+                         .WithAll<OperationMapAuthoredVehiclePresentation>())
+            {
+                if (visualReference.ValueRO.Root != Entity.Null)
+                    authoredVisualRoots.Add(visualReference.ValueRO.Root);
+            }
             using NativeList<Entity> unitRenderEntities = new(MaxRenderEntitiesPerFrame, Allocator.TempJob);
             using NativeList<Entity> processedEntities = new(MaxRenderEntitiesPerFrame, Allocator.Temp);
             using NativeArray<int> patchCounts = new(2, Allocator.TempJob);
@@ -91,11 +118,27 @@ namespace Game.Rendering
                     break;
 
                 processed++;
-                processedEntities.Add(entity);
 
-                if (!TryFindUnitAncestor(entity, _parentLookup, _unitGridLookup, _factionLookup, out int depth))
+                if (!TryFindUnitAncestor(
+                        entity,
+                        _parentLookup,
+                        _unitGridLookup,
+                        _factionLookup,
+                        _operationMapIdentityLookup,
+                        _operationMapVehicleLookup,
+                        _prefabLookup,
+                        _detailedVisualLookup,
+                        _modelInstanceLookup,
+                        authoredVisualRoots,
+                        out int depth,
+                        out bool retry))
+                {
+                    if (!retry)
+                        processedEntities.Add(entity);
                     continue;
+                }
 
+                processedEntities.Add(entity);
                 deepestUnitAncestor = math.max(deepestUnitAncestor, depth);
                 unitRenderEntities.Add(entity);
             }
@@ -179,18 +222,40 @@ namespace Game.Rendering
             ComponentLookup<Parent> parentLookup,
             ComponentLookup<UnitGrid> unitGridLookup,
             ComponentLookup<Faction> factionLookup,
-            out int foundDepth)
+            ComponentLookup<OperationMapEntityPresentationIdentity> operationMapIdentityLookup,
+            ComponentLookup<OperationMapAuthoredVehiclePresentation> operationMapVehicleLookup,
+            ComponentLookup<Prefab> prefabLookup,
+            ComponentLookup<UnitDetailedVisualReference> detailedVisualLookup,
+            ComponentLookup<UnitModelInstanceReference> modelInstanceLookup,
+            NativeHashSet<Entity> authoredVisualRoots,
+            out int foundDepth,
+            out bool retry)
         {
             Entity current = entity;
             foundDepth = 0;
+            retry = false;
             for (int depth = 0; depth < MaxParentSearchDepth; depth++)
             {
+                if (prefabLookup.HasComponent(current))
+                    return false;
+                if (authoredVisualRoots.Contains(current))
+                    return false;
+                if (operationMapIdentityLookup.HasComponent(current))
+                    return false;
                 if (!parentLookup.HasComponent(current))
                     return false;
 
                 current = parentLookup[current].Value;
                 if (unitGridLookup.HasComponent(current) && factionLookup.HasComponent(current))
                 {
+                    if (!detailedVisualLookup.HasComponent(current) &&
+                        !modelInstanceLookup.HasComponent(current))
+                    {
+                        retry = true;
+                        return false;
+                    }
+                    if (operationMapVehicleLookup.HasComponent(current))
+                        return false;
                     foundDepth = depth + 1;
                     return true;
                 }

@@ -510,6 +510,10 @@ namespace Game.Authoring
                 if (model != null)
                 {
                     Entity modelEntity = GetEntity(model.gameObject, TransformUsageFlags.Renderable);
+                    bool operationMapAuthoredPresentation =
+                        model.GetComponent<OperationMapEntityPresentationIdentityAuthoring>() != null;
+                    if (operationMapAuthoredPresentation)
+                        AddComponent<OperationMapAuthoredVehiclePresentation>(entity);
                     AddComponent(entity, new UnitModelLocalTransform
                     {
                         Position = model.localPosition,
@@ -521,7 +525,7 @@ namespace Game.Authoring
                         Root = modelEntity
                     });
 
-                    if (authoring.MidLodPrefab != null)
+                    if (!operationMapAuthoredPresentation && authoring.MidLodPrefab != null)
                     {
                         Entity midLodPrefab = GetEntity(authoring.MidLodPrefab, TransformUsageFlags.Renderable);
                         AddComponent(entity, new UnitMidLodPrefabReference

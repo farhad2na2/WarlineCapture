@@ -18,8 +18,11 @@
         "Unity.Addressables",
         "Unity.Collections",
         "Unity.Entities",
+        "Unity.Entities.Graphics",
         "Unity.Mathematics",
+        "Unity.Mathematics.Extensions",
         "Unity.ResourceManager",
+        "Unity.Scenes",
         "Unity.TextMeshPro",
         "Unity.Transforms",
         "UnityEngine.UI"

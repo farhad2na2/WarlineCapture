@@ -167,7 +167,7 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
 
     [UnityTest]
     [Timeout(600000)]
-    public IEnumerator PackedCandidate_MatchToMenuReleasesAllOwnershipWithoutStaticDrain()
+    public IEnumerator PackedCandidate_TwoMatchToMenuCyclesReleaseAllOwnershipWithoutStaticDrain()
     {
         string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
         string catalogPath = Path.Combine(
@@ -234,53 +234,14 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
             Assert.That(staticStreamer.PendingOperationCount, Is.Zero);
             Assert.That(staticStreamer.HasActiveOperation, Is.False);
 
-            yield return Aph805MenuMatchMenuLifecyclePlayModeTests.EnterStableMatch(route);
-            Assert.That(
-                route.Match.CanonicalPresentationMode,
-                Is.EqualTo(OperationMapCanonicalPresentationMode.EntityScene));
-            Assert.That(staticStreamer.DrainComplete, Is.False);
-            Assert.That(staticStreamer.PendingOperationCount, Is.Zero);
-            Assert.That(staticStreamer.HasActiveOperation, Is.False);
-
-            World world = route.World;
-            EntityManager entityManager = world.EntityManager;
-            var sceneGuid = new Hash128(
-                definitionHandle.Result.NavigationMetadata.AuthoredSubSceneGuid);
-            Entity sceneEntity = SceneSystem.GetSceneEntity(world.Unmanaged, sceneGuid);
-            Assert.That(sceneEntity, Is.Not.EqualTo(Entity.Null));
-            Assert.That(SceneSystem.IsSceneLoaded(world.Unmanaged, sceneEntity), Is.True);
-            Entity[] resolvedSectionEntities =
-                GetResolvedSectionEntities(entityManager, sceneEntity);
-            Assert.That(
-                CountEntitiesForSections(entityManager, resolvedSectionEntities),
-                Is.GreaterThan(0));
-            AssertSinglePublishedOperationMapRoot(entityManager);
-
-            if (SystemInfo.graphicsDeviceType ==
-                UnityEngine.Rendering.GraphicsDeviceType.Null)
+            for (int cycle = 1; cycle <= 2; cycle++)
             {
-                LogAssert.Expect(LogType.Error, "RenderTexture.Create failed");
-                LogAssert.Expect(LogType.Error, "RenderTexture.Create failed");
+                yield return RunPackedMatchToMenuCycle(
+                    route,
+                    definitionHandle.Result,
+                    staticStreamer,
+                    cycle);
             }
-            yield return Aph805MenuMatchMenuLifecyclePlayModeTests.ReturnToStableMenu(route);
-
-            Assert.That(entityManager.Exists(sceneEntity), Is.False);
-            Assert.That(SceneSystem.GetSceneEntity(world.Unmanaged, sceneGuid), Is.EqualTo(Entity.Null));
-            for (int sectionIndex = 0; sectionIndex < resolvedSectionEntities.Length; sectionIndex++)
-            {
-                Assert.That(
-                    entityManager.Exists(resolvedSectionEntities[sectionIndex]),
-                    Is.False,
-                    $"Candidate EntityScene section metadata {sectionIndex} remained after Menu return.");
-            }
-            Assert.That(
-                CountEntitiesForSections(entityManager, resolvedSectionEntities),
-                Is.Zero,
-                "Candidate EntityScene entities remained after Menu return.");
-            AssertNoPublishedOperationMapMetadata(entityManager);
-            Assert.That(staticStreamer.DrainComplete, Is.False);
-            Assert.That(staticStreamer.PendingOperationCount, Is.Zero);
-            Assert.That(staticStreamer.HasActiveOperation, Is.False);
         }
         finally
         {
@@ -298,6 +259,65 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
             RuntimeContentManager.Cleanup(out _);
             RuntimeContentManager.Initialize();
         }
+    }
+
+    private static IEnumerator RunPackedMatchToMenuCycle(
+        Aph805MenuMatchMenuLifecyclePlayModeTests.TransitionContext route,
+        OperationMapDefinition definition,
+        StaticMapPresentationStreamer staticStreamer,
+        int cycle)
+    {
+        yield return Aph805MenuMatchMenuLifecyclePlayModeTests.EnterStableMatch(route);
+        Assert.That(
+            route.Match.CanonicalPresentationMode,
+            Is.EqualTo(OperationMapCanonicalPresentationMode.EntityScene));
+        Assert.That(staticStreamer.DrainComplete, Is.False);
+        Assert.That(staticStreamer.PendingOperationCount, Is.Zero);
+        Assert.That(staticStreamer.HasActiveOperation, Is.False);
+
+        World world = route.World;
+        EntityManager entityManager = world.EntityManager;
+        var sceneGuid = new Hash128(definition.NavigationMetadata.AuthoredSubSceneGuid);
+        Entity sceneEntity = SceneSystem.GetSceneEntity(world.Unmanaged, sceneGuid);
+        Assert.That(sceneEntity, Is.Not.EqualTo(Entity.Null),
+            $"Cycle {cycle} did not create the candidate EntityScene.");
+        Assert.That(SceneSystem.IsSceneLoaded(world.Unmanaged, sceneEntity), Is.True);
+        Entity[] resolvedSectionEntities =
+            GetResolvedSectionEntities(entityManager, sceneEntity);
+        Assert.That(
+            CountEntitiesForSections(entityManager, resolvedSectionEntities),
+            Is.GreaterThan(0));
+        AssertSinglePublishedOperationMapRoot(entityManager);
+
+        if (SystemInfo.graphicsDeviceType ==
+            UnityEngine.Rendering.GraphicsDeviceType.Null)
+        {
+            LogAssert.Expect(LogType.Error, "RenderTexture.Create failed");
+            LogAssert.Expect(LogType.Error, "RenderTexture.Create failed");
+        }
+        yield return Aph805MenuMatchMenuLifecyclePlayModeTests.ReturnToStableMenu(route);
+
+        Assert.That(entityManager.Exists(sceneEntity), Is.False,
+            $"Cycle {cycle} retained EntityScene metadata.");
+        Assert.That(
+            SceneSystem.GetSceneEntity(world.Unmanaged, sceneGuid),
+            Is.EqualTo(Entity.Null),
+            $"Cycle {cycle} retained the candidate scene lookup.");
+        for (int sectionIndex = 0; sectionIndex < resolvedSectionEntities.Length; sectionIndex++)
+        {
+            Assert.That(
+                entityManager.Exists(resolvedSectionEntities[sectionIndex]),
+                Is.False,
+                $"Cycle {cycle} retained section metadata {sectionIndex}.");
+        }
+        Assert.That(
+            CountEntitiesForSections(entityManager, resolvedSectionEntities),
+            Is.Zero,
+            $"Cycle {cycle} retained candidate EntityScene entities.");
+        AssertNoPublishedOperationMapMetadata(entityManager);
+        Assert.That(staticStreamer.DrainComplete, Is.False);
+        Assert.That(staticStreamer.PendingOperationCount, Is.Zero);
+        Assert.That(staticStreamer.HasActiveOperation, Is.False);
     }
 
     [UnityTearDown]

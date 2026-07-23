@@ -1,11 +1,38 @@
+using System;
 using System.Linq;
 using Game.Configs;
 using Game.Editor;
 using NUnit.Framework;
 using UnityEditor;
+using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 public sealed class OperationMapEntitySceneAddressablesOwnershipTests
 {
+    public static void RunFocusedValidation()
+    {
+        var tests = new OperationMapEntitySceneAddressablesOwnershipTests();
+        int passed = 0;
+        try
+        {
+            tests.Planner_RequiresDistinctCandidateEntitySceneAndCoreRoles();
+            passed++;
+            tests.CandidateDefinition_ReferencesOnlyEntitySceneRuntimeAssets();
+            passed++;
+            tests.ProductionDefinition_RemainsStaticSceneChunksWhileCandidatePathIsSeparate();
+            passed++;
+            Debug.Log($"[OperationMapEntitySceneAddressablesOwnershipValidation] result=Passed tests={passed}");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError(
+                $"[OperationMapEntitySceneAddressablesOwnershipValidation] " +
+                $"result=Failed passed={passed}\n{exception}");
+            ValidationExit.Exit(1);
+        }
+    }
+
     [Test]
     public void Planner_RequiresDistinctCandidateEntitySceneAndCoreRoles()
     {
@@ -64,6 +91,37 @@ public sealed class OperationMapEntitySceneAddressablesOwnershipTests
     }
 
     [Test]
+    public void CandidateDefinition_ReferencesOnlyEntitySceneRuntimeAssets()
+    {
+        OperationMapDefinition candidate = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
+            OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateDefinitionPath);
+        Assert.That(candidate, Is.Not.Null);
+        Assert.That(candidate.PresentationKind, Is.EqualTo(OperationMapPresentationKind.EntityScene));
+        Assert.That(
+            candidate.TryValidateLocalContentReferences(out string validationError),
+            Is.True,
+            validationError);
+
+        AssertReference(
+            candidate.SourceSceneReference,
+            OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateRuntimeBindingPath);
+        AssertReference(
+            candidate.MapSurfaceDataReference,
+            OperationMapAddressablesLayoutBuilder.MapSurfacePath);
+        AssertReference(
+            candidate.MinimapRasterReference,
+            OperationMapAddressablesLayoutBuilder.MinimapRasterPath);
+        Assert.That(
+            candidate.NavigationMetadata.AuthoredSubSceneGuid,
+            Is.EqualTo(AssetDatabase.AssetPathToGUID(
+                OperationMapEntityPresentationMigrationEditor.CandidateSubScenePath)));
+
+        AssertNoReference(candidate.StaticPresentationManifestReference);
+        AssertNoReference(candidate.BuildingPlacementsReference);
+        AssertNoReference(candidate.VehiclePlacementsReference);
+    }
+
+    [Test]
     public void ProductionDefinition_RemainsStaticSceneChunksWhileCandidatePathIsSeparate()
     {
         OperationMapDefinition production = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
@@ -79,5 +137,18 @@ public sealed class OperationMapEntitySceneAddressablesOwnershipTests
         Assert.That(
             OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateRuntimeBindingPath,
             Is.Not.EqualTo(OperationMapAddressablesLayoutBuilder.SourceScenePath));
+    }
+
+    private static void AssertReference(AssetReference reference, string expectedPath)
+    {
+        Assert.That(reference, Is.Not.Null);
+        Assert.That(reference.AssetGUID, Is.EqualTo(AssetDatabase.AssetPathToGUID(expectedPath)));
+        Assert.That(reference.RuntimeKeyIsValid(), Is.True);
+    }
+
+    private static void AssertNoReference(AssetReference reference)
+    {
+        Assert.That(reference == null || string.IsNullOrEmpty(reference.AssetGUID), Is.True);
+        Assert.That(reference?.RuntimeKeyIsValid() ?? false, Is.False);
     }
 }

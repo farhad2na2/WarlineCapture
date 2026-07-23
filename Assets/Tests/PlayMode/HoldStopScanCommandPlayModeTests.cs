@@ -258,12 +258,14 @@ public sealed class HoldStopScanCommandPlayModeTests
             typeof(Faction),
             typeof(UnitGrid),
             typeof(UnitMove),
+            typeof(UnitCombat),
             typeof(UnitHealth),
             typeof(UnitSourcePrefabKey),
             typeof(LocalTransform));
         em.SetComponentData(unit, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(unit, new UnitGrid { Cell = cell });
         em.SetComponentData(unit, new UnitMove { Speed = 8f, WalkSpeed = 8f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
+        em.SetComponentData(unit, new UnitCombat { CanAttack = 1 });
         em.SetComponentData(unit, new UnitHealth { Current = 100, Max = 100 });
         em.SetComponentData(unit, new UnitSourcePrefabKey { Value = new FixedString64Bytes("Unit_Veh_Drone_Recon") });
         em.SetComponentData(unit, LocalTransform.FromPosition(new float3(cell.x + 0.5f, 0f, cell.y + 0.5f)));

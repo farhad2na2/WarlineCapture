@@ -391,7 +391,7 @@ public sealed class GameSceneTransportBoardingPlayModeTests
 
         Assert.IsTrue(em.HasComponent<UnitTransportParachuteDropComponent>(soldier), "Airdropped soldier should descend under parachute state.");
         UnitTransportParachuteDropComponent drop = em.GetComponentData<UnitTransportParachuteDropComponent>(soldier);
-        AssertVisualTracksPassenger(em, soldier, drop.VisualEntity, 2.2f);
+        AssertVisualTracksPassenger(em, soldier, drop.VisualEntity, 2.2f, 1.2f);
 
         world.SetTime(new TimeData(drop.StartedAt + drop.DurationSeconds + 0.1f, 0.1f));
         airdropSystem.Update(world.Unmanaged);
@@ -428,7 +428,7 @@ public sealed class GameSceneTransportBoardingPlayModeTests
 
         Assert.IsTrue(em.HasComponent<UnitTransportCargoDropComponent>(vehicle), "Airdropped vehicle should descend under cargo-drop state.");
         UnitTransportCargoDropComponent drop = em.GetComponentData<UnitTransportCargoDropComponent>(vehicle);
-        AssertVisualTracksPassenger(em, vehicle, drop.VisualEntity, 1.6f);
+        AssertVisualTracksPassenger(em, vehicle, drop.VisualEntity, 1.6f, 1f);
 
         world.SetTime(new TimeData(drop.StartedAt + drop.DurationSeconds + 0.1f, 0.1f));
         airdropSystem.Update(world.Unmanaged);
@@ -715,7 +715,12 @@ public sealed class GameSceneTransportBoardingPlayModeTests
         Assert.IsTrue(em.HasComponent<UnitTransportAirdropSettleComponent>(passenger), "Landed passenger should begin the short settle/rollout motion.");
     }
 
-    private static void AssertVisualTracksPassenger(EntityManager em, Entity passenger, Entity visual, float expectedHeightOffset)
+    private static void AssertVisualTracksPassenger(
+        EntityManager em,
+        Entity passenger,
+        Entity visual,
+        float expectedHeightOffset,
+        float expectedScale)
     {
         Assert.AreNotEqual(Entity.Null, visual);
         Assert.IsTrue(em.Exists(visual));
@@ -725,7 +730,7 @@ public sealed class GameSceneTransportBoardingPlayModeTests
         Assert.AreEqual(passengerTransform.Position.x, visualTransform.Position.x, 0.001f);
         Assert.AreEqual(passengerTransform.Position.z, visualTransform.Position.z, 0.001f);
         Assert.AreEqual(passengerTransform.Position.y + expectedHeightOffset, visualTransform.Position.y, 0.001f);
-        Assert.AreEqual(1f, visualTransform.Scale, 0.001f);
+        Assert.AreEqual(expectedScale, visualTransform.Scale, 0.001f);
     }
 
     private static void AssertPassengerStartedDrop(EntityManager em, Entity passenger)

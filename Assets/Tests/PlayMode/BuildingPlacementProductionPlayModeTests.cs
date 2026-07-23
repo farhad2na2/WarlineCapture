@@ -32,7 +32,8 @@ public sealed class BuildingPlacementProductionPlayModeTests
             BuildingDefinition placementDefinition = new()
             {
                 DisplayName = "PlayMode Barracks",
-                Prefab = buildingPrefab
+                Prefab = buildingPrefab,
+                MaterialsCost = 300
             };
 
             bool beganPlacement = false;
@@ -72,7 +73,8 @@ public sealed class BuildingPlacementProductionPlayModeTests
                 out BuildingUiCampItemCommandResultElement placementResult));
             Assert.AreEqual(1, placementResult.Accepted);
             Assert.AreEqual(BuildingUiCampItemCommandResultElement.PlacementStarted, placementResult.ResultCode);
-            Assert.AreEqual(300, activePlacementCost);
+            Assert.AreEqual(300, placementResult.Price);
+            Assert.AreEqual(-1, activePlacementCost, "UI-supplied price must not become the placement charge.");
             Assert.IsTrue(beganPlacement);
             Assert.AreEqual(0, producer.PendingProductions.Count);
 

@@ -13,6 +13,12 @@ using UnityEngine.UI;
 
 public sealed class FirstLaunchNarrativePlayModeTests
 {
+    [TearDown]
+    public void TearDown()
+    {
+        FirstLaunchNarrativeReviewUtilitySystemHelper.ClearRequest();
+    }
+
     [UnityTest]
     public IEnumerator ReviewerBoot_AddressablesPlaybackAndDebriefSkipCompleteInLiveMenu()
     {
@@ -34,11 +40,11 @@ public sealed class FirstLaunchNarrativePlayModeTests
         Assert.NotNull(dialogue);
         Assert.AreEqual(2.2f, dialogue.localScale.x, 0.01f);
         Assert.AreEqual(0f, narrative.LocationIntroView.GetComponent<RectTransform>().pivot.x, 0.001f);
-        Assert.Greater(narrative.GetComponent<CanvasGroup>().alpha, 0.99f);
         float openingPanelDeadline = Time.realtimeSinceStartup + 5f;
         while (narrative.CurrentPanelSprite == null && Time.realtimeSinceStartup < openingPanelDeadline)
             yield return null;
         Assert.NotNull(narrative.CurrentPanelSprite, "FL-P01 must load through Addressables before live presentation.");
+        Assert.Greater(narrative.GetComponent<CanvasGroup>().alpha, 0.99f);
         Sprite openingPanel = narrative.CurrentPanelSprite;
         Assert.AreEqual(1f, narrative.ReviewerControlsView.GetComponent<CanvasGroup>().alpha);
 
@@ -107,6 +113,9 @@ public sealed class FirstLaunchNarrativePlayModeTests
             {
                 Transform identity = narrative.transform.Find("SafeArea/CommanderIdentitySurface");
                 Assert.NotNull(identity);
+                float identitySurfaceDeadline = Time.realtimeSinceStartup + 5f;
+                while (!identity.gameObject.activeSelf && Time.realtimeSinceStartup < identitySurfaceDeadline)
+                    yield return null;
                 Assert.IsTrue(identity.gameObject.activeSelf);
                 Button[] portraits = Array.FindAll(
                     identity.GetComponentsInChildren<Button>(true),
@@ -128,6 +137,10 @@ public sealed class FirstLaunchNarrativePlayModeTests
 
                 Transform guidance = narrative.transform.Find("SafeArea/GuidanceChoiceSurface");
                 Assert.NotNull(guidance);
+                float guidanceSurfaceDeadline = Time.realtimeSinceStartup + 5f;
+                while (!guidance.gameObject.activeSelf && Time.realtimeSinceStartup < guidanceSurfaceDeadline)
+                    yield return null;
+                Assert.IsTrue(guidance.gameObject.activeSelf);
                 Button guidanceContinue = Array.Find(
                     guidance.GetComponentsInChildren<Button>(true),
                     value => value.name == "ContinueButton");

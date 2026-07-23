@@ -130,7 +130,9 @@ public sealed class InitialUnitsMatchStartPlayModeTests
 
     private static Entity CreateRuntimeGameplayState(EntityManager em, bool playRequested)
     {
-        Entity entity = em.CreateEntity(typeof(RuntimeGameplayStateComponent));
+        Entity entity = em.CreateEntity(
+            typeof(RuntimeGameplayStateComponent),
+            typeof(RuntimeCameraFocusRequestComponent));
         em.SetComponentData(entity, new RuntimeGameplayStateComponent { PlayRequested = (byte)(playRequested ? 1 : 0) });
         return entity;
     }

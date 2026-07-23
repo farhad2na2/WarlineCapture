@@ -33,7 +33,6 @@ namespace Game.Editor
         private const int ExpectedRenderOnlyOwners = 9090;
         private const int ExpectedPresentationRoots = 3;
         private const int MinimumRenderMeshEntities = 9090;
-        private const int MinimumSharedDependencies = 1;
 
         private static readonly UTF8Encoding Utf8WithoutBom = new(false);
 
@@ -209,8 +208,8 @@ namespace Game.Editor
                     "CandidateEntitySceneAddressablesLayoutReady",
                     StringComparison.Ordinal))
                 throw new InvalidOperationException($"Candidate layout result rejected: {budget.Result}");
-            if (budget.SharedDependencyCount < MinimumSharedDependencies)
-                throw new InvalidOperationException("Candidate shared-dependency layout is empty.");
+            if (budget.SharedDependencyCount != 0)
+                throw new InvalidOperationException("Candidate layout has explicit shared-dependency ownership.");
             if (budget.StaticManifestEntryCount != 0 ||
                 budget.PresentationChunkEntryCount != 0 ||
                 budget.LegacyPlacementEntryCount != 0 ||

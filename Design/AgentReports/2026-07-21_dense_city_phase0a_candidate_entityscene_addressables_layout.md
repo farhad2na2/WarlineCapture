@@ -8,8 +8,8 @@ Result: `CandidateEntitySceneAddressablesLayoutReady`
 - Operation map: `opmap.skirmish.desert_base_01`
 - Pack label: `operation-map-candidate-pack-skirmish-desert-base-01-entity-scene`
 - Entity scene GUID: `0f9ecd54a7f0f467fa35556af7d28f1d`
-- Entries: 1849
-- Shared art dependencies: 1844
+- Entries: 5
+- Shared art dependencies: 0
 - Static manifest entries: 0
 - Presentation chunk entries: 0
 - Legacy placement entries: 0

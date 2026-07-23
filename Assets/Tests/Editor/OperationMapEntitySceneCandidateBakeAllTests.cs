@@ -20,6 +20,7 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
             suite.BakeBudget_AcceptsCandidateBaseline,
             suite.BakeBudget_RejectsManagedVisualCompanions,
             suite.LayoutBudget_RejectsLegacyPlacementOwnership,
+            suite.LayoutBudget_RejectsExplicitSharedDependencyOwnership,
             suite.LayoutBudget_AcceptsEntitySceneOnlyOwnership,
             suite.SceneSetup_RejectsEmptyBatchSetup,
             suite.SceneSetup_AcceptsLoadedActiveScene,
@@ -140,7 +141,7 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
             () => OperationMapEntitySceneCandidateBakeAll.RequireLayoutBudget(
                 new OperationMapEntitySceneCandidateBakeAll.CandidateLayoutBudget(
                     "CandidateEntitySceneAddressablesLayoutReady",
-                    1841,
+                    0,
                     0,
                     0,
                     1,
@@ -155,12 +156,27 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
             () => OperationMapEntitySceneCandidateBakeAll.RequireLayoutBudget(
                 new OperationMapEntitySceneCandidateBakeAll.CandidateLayoutBudget(
                     "CandidateEntitySceneAddressablesLayoutReady",
-                    1841,
+                    0,
                     0,
                     0,
                     0,
                     0)),
             Throws.Nothing);
+    }
+
+    [Test]
+    public void LayoutBudget_RejectsExplicitSharedDependencyOwnership()
+    {
+        Assert.That(
+            () => OperationMapEntitySceneCandidateBakeAll.RequireLayoutBudget(
+                new OperationMapEntitySceneCandidateBakeAll.CandidateLayoutBudget(
+                    "CandidateEntitySceneAddressablesLayoutReady",
+                    1,
+                    0,
+                    0,
+                    0,
+                    0)),
+            Throws.InvalidOperationException.With.Message.Contains("explicit shared-dependency"));
     }
 
     [Test]

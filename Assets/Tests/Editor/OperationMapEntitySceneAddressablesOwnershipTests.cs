@@ -17,6 +17,8 @@ public sealed class OperationMapEntitySceneAddressablesOwnershipTests
         {
             tests.Planner_RequiresDistinctCandidateEntitySceneAndCoreRoles();
             passed++;
+            tests.Planner_DoesNotPromoteTransitiveDependenciesToExplicitOwnership();
+            passed++;
             tests.CandidateDefinition_ReferencesOnlyEntitySceneRuntimeAssets();
             passed++;
             tests.ProductionDefinition_RemainsStaticSceneChunksWhileCandidatePathIsSeparate();
@@ -67,7 +69,8 @@ public sealed class OperationMapEntitySceneAddressablesOwnershipTests
         Assert.That(plan.Entries.Count(entry => entry.Role == "entity-scene"), Is.EqualTo(1));
         Assert.That(plan.Entries.Count(entry => entry.Role == "map-surface"), Is.EqualTo(1));
         Assert.That(plan.Entries.Count(entry => entry.Role == "minimap-raster"), Is.EqualTo(1));
-        Assert.That(plan.SharedDependencyCount, Is.GreaterThan(0));
+        Assert.That(plan.SharedDependencyCount, Is.EqualTo(0));
+        Assert.That(plan.Entries, Has.Count.EqualTo(5));
         Assert.That(plan.Entries.Count(entry => entry.Role == "static-manifest"), Is.EqualTo(0));
         Assert.That(plan.Entries.Count(entry => entry.Role == "presentation"), Is.EqualTo(0));
         Assert.That(plan.Entries.Count(entry => entry.Role == "building-placements"), Is.EqualTo(0));
@@ -119,6 +122,22 @@ public sealed class OperationMapEntitySceneAddressablesOwnershipTests
         AssertNoReference(candidate.StaticPresentationManifestReference);
         AssertNoReference(candidate.BuildingPlacementsReference);
         AssertNoReference(candidate.VehiclePlacementsReference);
+    }
+
+    [Test]
+    public void Planner_DoesNotPromoteTransitiveDependenciesToExplicitOwnership()
+    {
+        Assert.That(
+            OperationMapEntitySceneCandidateAddressablesLayoutPlanner.TryCreatePlan(
+                out OperationMapEntitySceneCandidateAddressablesLayoutPlan plan,
+                out string rejectionReason),
+            Is.True,
+            rejectionReason);
+
+        Assert.That(plan.SharedDependencyCount, Is.EqualTo(0));
+        Assert.That(
+            plan.Entries.Any(entry => entry.Role == "shared-dependency"),
+            Is.False);
     }
 
     [Test]

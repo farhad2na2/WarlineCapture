@@ -4,10 +4,8 @@ namespace Game.Editor
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using Game.Configs;
     using UnityEditor;
-    using UnityEngine;
 
     /// <summary>
     /// Fail-closed planner for a candidate-only EntityScene Addressables ownership layout.
@@ -91,27 +89,6 @@ namespace Game.Editor
                     OperationMapAddressablesLayoutBuilder.MinimapRasterRoleLabel)
             };
 
-            string[] sharedDependencies = CollectCandidateSharedDependencyPaths(
-                candidateSubScenePath,
-                entries);
-            for (int i = 0; i < sharedDependencies.Length; i++)
-            {
-                string path = sharedDependencies[i];
-                string guid = AssetDatabase.AssetPathToGUID(path);
-                if (string.IsNullOrEmpty(guid))
-                {
-                    rejectionReason = $"shared-dependency-missing:{path}";
-                    return false;
-                }
-
-                entries.Add(
-                    new OperationMapEntitySceneCandidateAddressablesLayoutEntry(
-                        "shared-dependency",
-                        path,
-                        "operation-map-candidate/shared/" + guid,
-                        OperationMapAddressablesLayoutBuilder.SharedDependencyRoleLabel));
-            }
-
             string[] forbiddenRuntimePaths =
             {
                 OperationMapAddressablesLayoutBuilder.ManifestPath,
@@ -161,9 +138,9 @@ namespace Game.Editor
                 return false;
             }
 
-            if (CountRole(entries, "shared-dependency") == 0)
+            if (CountRole(entries, "shared-dependency") != 0)
             {
-                rejectionReason = "shared-art-dependencies-empty";
+                rejectionReason = "explicit-shared-dependency-ownership-present";
                 return false;
             }
 
@@ -183,56 +160,6 @@ namespace Game.Editor
                 candidateGuid,
                 entries);
             return true;
-        }
-
-        internal static string[] CollectCandidateSharedDependencyPaths(
-            string entityScenePath,
-            IReadOnlyList<OperationMapEntitySceneCandidateAddressablesLayoutEntry> coreEntries = null)
-        {
-            var excluded = new HashSet<string>(StringComparer.Ordinal)
-            {
-                entityScenePath,
-                OperationMapAddressablesLayoutBuilder.ManifestPath,
-                OperationMapAddressablesLayoutBuilder.BuildingPlacementsPath,
-                OperationMapAddressablesLayoutBuilder.VehiclePlacementsPath,
-                OperationMapAddressablesLayoutBuilder.SourceScenePath,
-                OperationMapAddressablesLayoutBuilder.DefinitionPath,
-                OperationMapAddressablesLayoutBuilder.AuthoringScenePath,
-                OperationMapEntityPresentationMigrationEditor.AcceptedSubScenePath,
-                CandidateDefinitionPath,
-                CandidateRuntimeBindingPath
-            };
-            if (coreEntries != null)
-            {
-                for (int i = 0; i < coreEntries.Count; i++)
-                    excluded.Add(coreEntries[i].AssetPath);
-            }
-
-            var usage = new Dictionary<string, int>(StringComparer.Ordinal);
-            string[] dependencies = AssetDatabase.GetDependencies(entityScenePath, true);
-            for (int i = 0; i < dependencies.Length; i++)
-            {
-                string path = dependencies[i];
-                if (excluded.Contains(path))
-                    continue;
-                if (!OperationMapAddressablesLayoutBuilder.IsShareableDependencyPath(path))
-                    continue;
-                // Chunk scenes and other static presentation scenes are never candidate shared art.
-                if (path.IndexOf(
-                        "/GeneratedStaticMapPresentation/",
-                        StringComparison.OrdinalIgnoreCase) >= 0 &&
-                    path.EndsWith(".unity", StringComparison.OrdinalIgnoreCase))
-                {
-                    continue;
-                }
-
-                usage.TryGetValue(path, out int count);
-                usage[path] = count + 1;
-            }
-
-            return usage.Keys
-                .OrderBy(path => path, StringComparer.Ordinal)
-                .ToArray();
         }
 
         private static int CountRole(

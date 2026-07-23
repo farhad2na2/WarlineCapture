@@ -362,6 +362,7 @@ namespace Game.Composition
         private Entity packedEntityScene;
         private bool ownsPackedEntityScene;
         private bool packedEntitySceneReleaseStarted;
+        private bool failedEntitySceneCleanupPending;
         private bool disposed;
         private bool unloading;
 
@@ -617,6 +618,22 @@ namespace Game.Composition
                 return false;
             }
 
+            if (HasFailed)
+            {
+                if (!TryCompleteFailedEntitySceneCleanup(
+                        out bool cleanupComplete,
+                        out error))
+                {
+                    return false;
+                }
+                if (!cleanupComplete)
+                {
+                    error =
+                        "Operation-map failed EntityScene cleanup is still in progress.";
+                    return false;
+                }
+            }
+
             ReleaseOperations();
             ResetResultState();
             error = null;
@@ -649,6 +666,7 @@ namespace Game.Composition
             packedEntityScene = Entity.Null;
             ownsPackedEntityScene = false;
             packedEntitySceneReleaseStarted = false;
+            failedEntitySceneCleanupPending = false;
             unloading = false;
             UnloadComplete = false;
         }
@@ -706,12 +724,84 @@ namespace Game.Composition
             Failure = string.IsNullOrWhiteSpace(error)
                 ? "Operation-map source-scene load failed."
                 : error;
-            ReleaseOperations();
+            if (ownsPackedEntityScene)
+            {
+                failedEntitySceneCleanupPending = true;
+                TryBeginFailedEntitySceneCleanup();
+            }
+            else
+            {
+                ReleaseOperations();
+            }
             SceneView = null;
             Manifest = null;
             IsReady = false;
             unloading = false;
             Progress01 = 0f;
+        }
+
+        private void TryBeginFailedEntitySceneCleanup()
+        {
+            TryReleaseOwnedPackedEntityScene(out _, out _);
+            if (sceneOperation != null &&
+                sceneOperation.IsDone &&
+                sceneOperation.Succeeded &&
+                !sceneOperation.UnloadStarted)
+            {
+                sceneOperation.TryBeginUnload(out _);
+            }
+        }
+
+        private bool TryCompleteFailedEntitySceneCleanup(
+            out bool complete,
+            out string error)
+        {
+            complete = true;
+            error = null;
+            if (!failedEntitySceneCleanupPending)
+                return true;
+
+            if (!TryReleaseOwnedPackedEntityScene(
+                    out bool entitySceneComplete,
+                    out error))
+            {
+                complete = false;
+                return false;
+            }
+
+            if (sceneOperation != null && !sceneOperation.UnloadStarted)
+            {
+                if (!sceneOperation.IsDone || !sceneOperation.Succeeded)
+                {
+                    complete = false;
+                    error =
+                        "Failed operation-map source scene is not available for cleanup.";
+                    return false;
+                }
+                if (!sceneOperation.TryBeginUnload(out error))
+                {
+                    complete = false;
+                    return false;
+                }
+            }
+
+            bool sourceSceneComplete =
+                sceneOperation == null || sceneOperation.UnloadDone;
+            if (sceneOperation != null &&
+                sceneOperation.UnloadDone &&
+                !sceneOperation.UnloadSucceeded)
+            {
+                complete = false;
+                error = string.IsNullOrWhiteSpace(sceneOperation.UnloadFailure)
+                    ? "Failed operation-map source-scene cleanup did not complete."
+                    : sceneOperation.UnloadFailure;
+                return false;
+            }
+
+            complete = entitySceneComplete && sourceSceneComplete;
+            if (complete)
+                failedEntitySceneCleanupPending = false;
+            return true;
         }
 
         private void ReleaseOperations()

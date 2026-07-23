@@ -238,6 +238,219 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
             validateVehicleMovement: true);
     }
 
+    [UnityTest]
+    [Timeout(600000)]
+    public IEnumerator PackedCandidate_ReadinessFailureResetsAndRetriesWithoutStaleOwnership()
+    {
+        string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+        string catalogPath = Path.Combine(
+            projectRoot,
+            "Library/com.unity.addressables/aa/OSX/catalog.bin");
+        string entityContentRoot = Path.Combine(projectRoot, EntityContentPath);
+        string entityCatalogPath = Path.Combine(
+            entityContentRoot,
+            RuntimeContentManager.RelativeCatalogPath);
+        Assert.That(File.Exists(catalogPath), Is.True,
+            $"Build candidate runtime parity content before running this test: {catalogPath}");
+        Assert.That(File.Exists(entityCatalogPath), Is.True,
+            $"Build candidate Entities runtime content before running this test: {entityCatalogPath}");
+
+        RuntimeContentReport runtimeContentReport =
+            JsonUtility.FromJson<RuntimeContentReport>(
+                File.ReadAllText(Path.Combine(projectRoot, RuntimeContentReportPath)));
+        ValidateRuntimeContentReport(
+            runtimeContentReport,
+            projectRoot,
+            catalogPath,
+            entityCatalogPath);
+
+        AsyncOperationHandle<IResourceLocator> catalogHandle = default;
+        AsyncOperationHandle<OperationMapDefinition> definitionHandle = default;
+        OperationMapSceneLoadingSceneSystemHelper loader = null;
+        try
+        {
+            RuntimeContentManager.Cleanup(out _);
+            RuntimeContentManager.Initialize();
+            Assert.That(
+                RuntimeContentManager.LoadLocalCatalogData(
+                    entityCatalogPath,
+                    RuntimeContentManager.DefaultContentFileNameFunc,
+                    file => Path.Combine(
+                        entityContentRoot,
+                        RuntimeContentManager.DefaultArchivePathFunc(file))),
+                Is.True,
+                $"Candidate Entities runtime catalog failed to load: {entityCatalogPath}");
+
+            catalogHandle =
+                Addressables.LoadContentCatalogAsync(catalogPath, autoReleaseHandle: false);
+            yield return catalogHandle;
+            Assert.That(catalogHandle.Status, Is.EqualTo(AsyncOperationStatus.Succeeded),
+                catalogHandle.OperationException?.Message);
+
+            definitionHandle =
+                Addressables.LoadAssetAsync<OperationMapDefinition>(DefinitionAddress);
+            yield return definitionHandle;
+            Assert.That(definitionHandle.Status, Is.EqualTo(AsyncOperationStatus.Succeeded),
+                definitionHandle.OperationException?.Message);
+
+            World world = World.DefaultGameObjectInjectionWorld;
+            Assert.That(world, Is.Not.Null);
+            Assert.That(world.IsCreated, Is.True);
+            EntityManager entityManager = world.EntityManager;
+            var sceneGuid = new Hash128(
+                definitionHandle.Result.NavigationMetadata.AuthoredSubSceneGuid);
+            var failReadinessOnceApi = new FailReadinessOncePackedEntitySceneApi();
+            loader = new OperationMapSceneLoadingSceneSystemHelper(
+                entitySceneApi: failReadinessOnceApi);
+
+            Assert.That(
+                loader.TryStart(definitionHandle.Result, out string startError),
+                Is.True,
+                startError);
+            float deadline = Time.realtimeSinceStartup + MaximumWaitSeconds;
+            while (!loader.HasFailed &&
+                   !loader.IsReady &&
+                   Time.realtimeSinceStartup < deadline)
+            {
+                loader.Update();
+                yield return null;
+            }
+
+            Assert.That(loader.HasFailed, Is.True);
+            Assert.That(loader.IsReady, Is.False);
+            Assert.That(loader.FailureCode,
+                Is.EqualTo(OperationMapLoadResultCode.MetadataBindFailed));
+            Assert.That(loader.Failure, Does.Contain("different operation map"));
+            Assert.That(loader.Manifest, Is.Null);
+            Assert.That(failReadinessOnceApi.FailureCount, Is.EqualTo(1));
+            Assert.That(failReadinessOnceApi.FailedSceneEntity, Is.Not.EqualTo(Entity.Null));
+            Assert.That(failReadinessOnceApi.FailedSectionEntities.Length, Is.GreaterThan(0));
+
+            bool reset = false;
+            string resetError = null;
+            deadline = Time.realtimeSinceStartup + MaximumWaitSeconds;
+            while (!reset && Time.realtimeSinceStartup < deadline)
+            {
+                reset = loader.TryReset(out resetError);
+                if (!reset)
+                {
+                    Assert.That(
+                        resetError,
+                        Does.Contain("cleanup is still in progress"));
+                    yield return null;
+                }
+            }
+
+            Assert.That(reset, Is.True, resetError);
+            Assert.That(loader.HasFailed, Is.False);
+            Assert.That(loader.FailureCode, Is.EqualTo(OperationMapLoadResultCode.None));
+
+            deadline = Time.realtimeSinceStartup + MaximumWaitSeconds;
+            while (Time.realtimeSinceStartup < deadline &&
+                   entityManager.Exists(failReadinessOnceApi.FailedSceneEntity))
+            {
+                yield return null;
+            }
+
+            Assert.That(
+                entityManager.Exists(failReadinessOnceApi.FailedSceneEntity),
+                Is.False,
+                "Failed packed EntityScene metadata remained after reset cleanup.");
+            for (int sectionIndex = 0;
+                 sectionIndex < failReadinessOnceApi.FailedSectionEntities.Length;
+                 sectionIndex++)
+            {
+                Assert.That(
+                    entityManager.Exists(
+                        failReadinessOnceApi.FailedSectionEntities[sectionIndex]),
+                    Is.False,
+                    $"Failed packed section {sectionIndex} remained after reset cleanup.");
+            }
+            Assert.That(
+                SceneSystem.GetSceneEntity(world.Unmanaged, sceneGuid),
+                Is.EqualTo(Entity.Null));
+
+            Assert.That(
+                loader.TryStart(definitionHandle.Result, out startError),
+                Is.True,
+                startError);
+            deadline = Time.realtimeSinceStartup + MaximumWaitSeconds;
+            while (!loader.IsReady &&
+                   !loader.HasFailed &&
+                   Time.realtimeSinceStartup < deadline)
+            {
+                loader.Update();
+                yield return null;
+            }
+
+            Assert.That(loader.HasFailed, Is.False, loader.Failure);
+            Assert.That(loader.IsReady, Is.True);
+            Assert.That(loader.Manifest, Is.Null);
+            Assert.That(failReadinessOnceApi.FailureCount, Is.EqualTo(1),
+                "The one-shot readiness fault must not affect the retry.");
+
+            Entity retrySceneEntity =
+                SceneSystem.GetSceneEntity(world.Unmanaged, sceneGuid);
+            Assert.That(retrySceneEntity, Is.Not.EqualTo(Entity.Null));
+            Assert.That(SceneSystem.IsSceneLoaded(world.Unmanaged, retrySceneEntity), Is.True);
+            Entity[] retrySections =
+                GetResolvedSectionEntities(entityManager, retrySceneEntity);
+            Assert.That(
+                CountEntitiesForSections(entityManager, retrySections),
+                Is.GreaterThan(0));
+            Assert.That(
+                OperationMapEntityPresentationReadinessUtility.TryValidate(
+                    entityManager,
+                    retrySceneEntity,
+                    ExpectedOperationMapId,
+                    out string readinessError),
+                Is.True,
+                readinessError);
+
+            Assert.That(
+                loader.TryBeginUnload(out string unloadError),
+                Is.True,
+                unloadError);
+            deadline = Time.realtimeSinceStartup + MaximumWaitSeconds;
+            while (!loader.UnloadComplete &&
+                   !loader.HasFailed &&
+                   Time.realtimeSinceStartup < deadline)
+            {
+                loader.Update();
+                yield return null;
+            }
+
+            Assert.That(loader.HasFailed, Is.False, loader.Failure);
+            Assert.That(loader.UnloadComplete, Is.True);
+            Assert.That(entityManager.Exists(retrySceneEntity), Is.False);
+            for (int sectionIndex = 0; sectionIndex < retrySections.Length; sectionIndex++)
+            {
+                Assert.That(
+                    entityManager.Exists(retrySections[sectionIndex]),
+                    Is.False,
+                    $"Retry section {sectionIndex} remained after successful unload.");
+            }
+            Assert.That(
+                SceneSystem.GetSceneEntity(world.Unmanaged, sceneGuid),
+                Is.EqualTo(Entity.Null));
+            AssertAcceptedAuthoringScenesNotLoaded();
+        }
+        finally
+        {
+            loader?.Dispose();
+            if (definitionHandle.IsValid())
+                Addressables.Release(definitionHandle);
+            if (catalogHandle.IsValid())
+            {
+                if (catalogHandle.Status == AsyncOperationStatus.Succeeded)
+                    Addressables.RemoveResourceLocator(catalogHandle.Result);
+                Addressables.Release(catalogHandle);
+            }
+            RuntimeContentManager.Cleanup(out _);
+            RuntimeContentManager.Initialize();
+        }
+    }
+
     private static IEnumerator RunPackedCandidateRoute(
         int cycleCount,
         bool validateCameraTraversal,
@@ -1614,6 +1827,73 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
         bool previous = systemState.Enabled;
         systemState.Enabled = enabled;
         return previous;
+    }
+
+    private sealed class FailReadinessOncePackedEntitySceneApi :
+        IOperationMapEntitySceneApi
+    {
+        private readonly OperationMapEntitySceneApi inner = new();
+
+        public int FailureCount { get; private set; }
+        public Entity FailedSceneEntity { get; private set; }
+        public Entity[] FailedSectionEntities { get; private set; } =
+            Array.Empty<Entity>();
+
+        public bool TryEnsureReady(
+            string sceneGuid,
+            string expectedOperationMapId,
+            ref Entity sceneEntity,
+            ref bool ownsScene,
+            out bool ready,
+            out string error)
+        {
+            World world = World.DefaultGameObjectInjectionWorld;
+            if (FailureCount == 0 &&
+                world != null &&
+                world.IsCreated &&
+                sceneEntity != Entity.Null &&
+                world.EntityManager.Exists(sceneEntity) &&
+                SceneSystem.IsSceneLoaded(world.Unmanaged, sceneEntity))
+            {
+                EntityManager entityManager = world.EntityManager;
+                FailedSceneEntity = sceneEntity;
+                FailedSectionEntities =
+                    GetResolvedSectionEntities(entityManager, sceneEntity);
+                FailureCount++;
+                ready = false;
+                bool unexpectedlyAccepted =
+                    OperationMapEntityPresentationReadinessUtility.TryValidate(
+                        entityManager,
+                        sceneEntity,
+                        expectedOperationMapId + ".forced-readiness-failure",
+                        out error);
+                Assert.That(unexpectedlyAccepted, Is.False);
+                return false;
+            }
+
+            return inner.TryEnsureReady(
+                sceneGuid,
+                expectedOperationMapId,
+                ref sceneEntity,
+                ref ownsScene,
+                out ready,
+                out error);
+        }
+
+        public bool TryReleaseOwned(
+            ref Entity sceneEntity,
+            ref bool ownsScene,
+            ref bool releaseStarted,
+            out bool complete,
+            out string error)
+        {
+            return inner.TryReleaseOwned(
+                ref sceneEntity,
+                ref ownsScene,
+                ref releaseStarted,
+                out complete,
+                out error);
+        }
     }
 
     private static IEnumerator RunLoadCaptureUnloadCycle(

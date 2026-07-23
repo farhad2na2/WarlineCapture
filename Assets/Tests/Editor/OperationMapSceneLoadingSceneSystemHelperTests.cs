@@ -35,6 +35,7 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
             Run(nameof(EntitySceneLoadSkipsManifestAndResolvesWithoutStaticOwnership), test => test.EntitySceneLoadSkipsManifestAndResolvesWithoutStaticOwnership(), ref passed);
             Run(nameof(EntitySceneLoadWaitsForPresentationReadinessContract), test => test.EntitySceneLoadWaitsForPresentationReadinessContract(), ref passed);
             Run(nameof(EntitySceneLoadFailsClosedWhenPresentationReadinessContractRejects), test => test.EntitySceneLoadFailsClosedWhenPresentationReadinessContractRejects(), ref passed);
+            Run(nameof(EntitySceneReadinessFailureBlocksResetUntilOwnedCleanupCompletes), test => test.EntitySceneReadinessFailureBlocksResetUntilOwnedCleanupCompletes(), ref passed);
             Run(nameof(EntitySceneUnloadWaitsForOwnedMetadataRelease), test => test.EntitySceneUnloadWaitsForOwnedMetadataRelease(), ref passed);
             Run(nameof(EntitySceneLoadRejectsBoundStaticManifestReference), test => test.EntitySceneLoadRejectsBoundStaticManifestReference(), ref passed);
             Run(nameof(FailedLoadReleasesExactlyOnce), test => test.FailedLoadReleasesExactlyOnce(), ref passed);
@@ -235,6 +236,55 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
         Assert.That(helper.HasFailed, Is.True);
         Assert.That(helper.FailureCode, Is.EqualTo(OperationMapLoadResultCode.MetadataBindFailed));
         Assert.That(helper.Failure, Does.Contain("render-only identity count mismatch"));
+        helper.Dispose();
+        UnityEngine.Object.DestroyImmediate(definition);
+    }
+
+    [Test]
+    public void EntitySceneReadinessFailureBlocksResetUntilOwnedCleanupCompletes()
+    {
+        Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+        OperationMapDefinition definition =
+            CreateEntitySceneDefinition("opmap.skirmish.entity_scene_cleanup_gate");
+        CreateEntitySceneView(scene, definition);
+        var operation = new FakeSceneOperation
+        {
+            Done = true,
+            Success = true,
+            LoadedScene = scene,
+            Progress = 1f,
+            UnloadDoneState = false,
+            UnloadSuccess = true
+        };
+        FakeEntitySceneApi entitySceneApi = new()
+        {
+            EnsureSucceeded = false,
+            EnsureFailure = "forced readiness failure",
+            ReleaseComplete = false
+        };
+        var helper = new OperationMapSceneLoadingSceneSystemHelper(
+            new FakeSceneApi(operation),
+            new FakeManifestApi(new FakeManifestOperation()),
+            entitySceneApi: entitySceneApi);
+
+        Assert.That(helper.TryStart(definition, out string error), Is.True, error);
+        helper.Update();
+
+        Assert.That(helper.HasFailed, Is.True);
+        Assert.That(operation.BeginUnloadCount, Is.EqualTo(1));
+        Assert.That(entitySceneApi.ReleaseOwnedCount, Is.EqualTo(1));
+        Assert.That(helper.TryReset(out error), Is.False);
+        Assert.That(error, Does.Contain("cleanup is still in progress"));
+        Assert.That(operation.DisposeCount, Is.Zero);
+
+        entitySceneApi.ReleaseComplete = true;
+        operation.UnloadDoneState = true;
+
+        Assert.That(helper.TryReset(out error), Is.True, error);
+        Assert.That(helper.HasFailed, Is.False);
+        Assert.That(operation.BeginUnloadCount, Is.EqualTo(1));
+        Assert.That(entitySceneApi.ReleaseOwnedCount, Is.EqualTo(1));
+        Assert.That(operation.DisposeCount, Is.EqualTo(1));
         helper.Dispose();
         UnityEngine.Object.DestroyImmediate(definition);
     }

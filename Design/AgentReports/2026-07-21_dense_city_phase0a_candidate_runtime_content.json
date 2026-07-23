@@ -1,0 +1,12 @@
+{
+    "schema": "warline.operation-map.candidate-runtime-content",
+    "schemaVersion": 1,
+    "result": "CandidateRuntimeContentBuilt",
+    "operationMapId": "opmap.skirmish.desert_base_01",
+    "entitySceneGuid": "0f9ecd54a7f0f467fa35556af7d28f1d",
+    "definitionAddress": "operation-map-candidate/opmap.skirmish.desert_base_01/definition",
+    "sourceSceneAddress": "operation-map-candidate/opmap.skirmish.desert_base_01/source-scene",
+    "outputPath": "Library/com.unity.addressables/aa/OSX/settings.json",
+    "productionCutover": 0,
+    "temporaryGroupRetained": 0
+}

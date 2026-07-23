@@ -151,6 +151,10 @@ namespace Game.Composition
         public string GameplayStartFailureMessage => gameplayStartupSystem.GameplayStartFailureMessage;
         public float GameplayStartProgress01 => gameplayStartupSystem.GameplayStartProgress01;
         public string GameplayStartStatus => gameplayStartupSystem.GameplayStartStatus;
+        internal int ManagedRuntimeBuildingCount =>
+            _buildingUiQueryContext.RuntimeBuildings?.Count ?? 0;
+        internal int RuntimeBuildingEntityLinkCount =>
+            _buildingRuntimeUpdateContext.RuntimeBuildingEntityLinks?.Count ?? 0;
 
         public void Awake(World runtimeWorld, MatchSceneView view, Transform ownerTransform, int ownerLayer)
         {

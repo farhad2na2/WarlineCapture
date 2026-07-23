@@ -9,6 +9,8 @@ namespace Game.Runtime
         private readonly List<RuntimeBuildingEntityLink> links = new();
         private double nextSyncAt;
 
+        public int Count => links.Count;
+
         public void Register(RuntimeBuildingEntityLink link)
         {
             if (link == null || links.Contains(link))

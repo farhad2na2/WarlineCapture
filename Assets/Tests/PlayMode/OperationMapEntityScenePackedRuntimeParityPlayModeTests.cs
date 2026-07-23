@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
+using Game.Authoring;
 using Game.Components;
 using Game.Composition;
 using Game.Configs;
@@ -178,7 +179,8 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
         yield return RunPackedCandidateRoute(
             cycleCount: 2,
             validateCameraTraversal: false,
-            validateSteadyStateAllocation: false);
+            validateSteadyStateAllocation: false,
+            validateBuildingDestruction: false);
     }
 
     [UnityTest]
@@ -194,7 +196,8 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
         yield return RunPackedCandidateRoute(
             cycleCount: 1,
             validateCameraTraversal: true,
-            validateSteadyStateAllocation: false);
+            validateSteadyStateAllocation: false,
+            validateBuildingDestruction: false);
     }
 
     [UnityTest]
@@ -204,13 +207,26 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
         yield return RunPackedCandidateRoute(
             cycleCount: 1,
             validateCameraTraversal: false,
-            validateSteadyStateAllocation: true);
+            validateSteadyStateAllocation: true,
+            validateBuildingDestruction: false);
+    }
+
+    [UnityTest]
+    [Timeout(600000)]
+    public IEnumerator PackedCandidate_BuildingDestructionUsesBakedEntityVisualsOnly()
+    {
+        yield return RunPackedCandidateRoute(
+            cycleCount: 1,
+            validateCameraTraversal: false,
+            validateSteadyStateAllocation: false,
+            validateBuildingDestruction: true);
     }
 
     private static IEnumerator RunPackedCandidateRoute(
         int cycleCount,
         bool validateCameraTraversal,
-        bool validateSteadyStateAllocation)
+        bool validateSteadyStateAllocation,
+        bool validateBuildingDestruction)
     {
         string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
         string catalogPath = Path.Combine(
@@ -285,7 +301,8 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
                     staticStreamer,
                     cycle,
                     validateCameraTraversal && cycle == 1,
-                    validateSteadyStateAllocation && cycle == 1);
+                    validateSteadyStateAllocation && cycle == 1,
+                    validateBuildingDestruction && cycle == 1);
             }
         }
         finally
@@ -312,7 +329,8 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
         StaticMapPresentationStreamer staticStreamer,
         int cycle,
         bool validateCameraTraversal,
-        bool validateSteadyStateAllocation)
+        bool validateSteadyStateAllocation,
+        bool validateBuildingDestruction)
     {
         yield return Aph805MenuMatchMenuLifecyclePlayModeTests.EnterStableMatch(route);
         Assert.That(
@@ -322,6 +340,15 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
             route.Match.MatchBootstrap.RuntimeCity,
             Is.Null,
             "EntityScene presentation must not construct the legacy runtime city generator.");
+        Assert.That(
+            route.Match.MatchBootstrap.RuntimeGridBlockers,
+            Is.Null,
+            "EntityScene presentation must not construct legacy runtime blocker visuals.");
+        Assert.That(
+            route.Match.MatchBootstrap.RuntimeDecorations,
+            Is.Null,
+            "EntityScene presentation must not construct legacy runtime decoration visuals.");
+        AssertNoManagedMapVisualOwnership(route.Match.MatchBootstrap);
         Assert.That(staticStreamer.DrainComplete, Is.False);
         Assert.That(staticStreamer.PendingOperationCount, Is.Zero);
         Assert.That(staticStreamer.HasActiveOperation, Is.False);
@@ -360,6 +387,9 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
                 resolvedSectionEntities,
                 staticStreamer);
         }
+
+        if (validateBuildingDestruction)
+            ValidateBuildingDestructionUsesBakedEntitiesOnly(route.Match.MatchBootstrap, world);
 
         if (SystemInfo.graphicsDeviceType ==
             UnityEngine.Rendering.GraphicsDeviceType.Null)
@@ -973,6 +1003,155 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
             SceneManager.GetSceneByPath(AcceptedSubScenePath).isLoaded,
             Is.False,
             "The accepted authoring SubScene must not load at runtime.");
+    }
+
+    private static void AssertNoManagedMapVisualOwnership(
+        MatchBootstrapCompositionSystemHelper matchBootstrap)
+    {
+        Assert.That(
+            matchBootstrap.ManagedRuntimeBuildingCount,
+            Is.Zero,
+            "Permanent EntityScene buildings must not enter the managed runtime-building registry.");
+        Assert.That(
+            matchBootstrap.RuntimeBuildingEntityLinkCount,
+            Is.Zero,
+            "Permanent EntityScene buildings must not enter the managed entity-link registry.");
+        Assert.That(
+            UnityEngine.Object.FindObjectsByType<RuntimeBuildingEntityLink>(
+                FindObjectsInactive.Include),
+            Is.Empty,
+            "EntityScene presentation must not create RuntimeBuildingEntityLink components.");
+        Assert.That(
+            UnityEngine.Object.FindObjectsByType<MapAuthoredBuildingVisualComponent>(
+                FindObjectsInactive.Include),
+            Is.Empty,
+            "EntityScene presentation must not create legacy authored-building visual GameObjects.");
+        Assert.That(
+            UnityEngine.Object.FindObjectsByType<OperationMapBuildingAuthoring>(
+                FindObjectsInactive.Include),
+            Is.Empty,
+            "Candidate building authoring GameObjects must not survive baking into runtime.");
+        Assert.That(
+            UnityEngine.Object.FindObjectsByType<OperationMapBuildingAttachmentAuthoring>(
+                FindObjectsInactive.Include),
+            Is.Empty,
+            "Candidate attachment authoring GameObjects must not survive baking into runtime.");
+
+        Transform[] transforms = UnityEngine.Object.FindObjectsByType<Transform>(
+            FindObjectsInactive.Include);
+        for (int index = 0; index < transforms.Length; index++)
+        {
+            Transform current = transforms[index];
+            if (current == null)
+                continue;
+
+            Assert.That(
+                current.name,
+                Is.Not.EqualTo("BuildingPlacementVisualPool"),
+                "Permanent EntityScene map visuals must not create building GameObject pool entries.");
+            if (current.name != "RuntimeCity" &&
+                current.name != "RuntimeBuildings" &&
+                current.name != "RuntimeBlockers")
+                continue;
+
+            Renderer[] renderers = current.GetComponentsInChildren<Renderer>(true);
+            Assert.That(
+                renderers,
+                Is.Empty,
+                $"{current.name} must remain an empty gameplay shell for EntityScene presentation.");
+        }
+    }
+
+    private static void ValidateBuildingDestructionUsesBakedEntitiesOnly(
+        MatchBootstrapCompositionSystemHelper matchBootstrap,
+        World world)
+    {
+        EntityManager entityManager = world.EntityManager;
+        using EntityQuery buildingQuery = entityManager.CreateEntityQuery(
+            ComponentType.ReadWrite<UnitHealth>(),
+            ComponentType.ReadOnly<OperationMapBuildingComponent>(),
+            ComponentType.ReadWrite<OperationMapBuildingPresentation>());
+        using NativeArray<Entity> buildings =
+            buildingQuery.ToEntityArray(Allocator.Temp);
+
+        Entity building = Entity.Null;
+        OperationMapBuildingPresentation presentation = default;
+        for (int index = 0; index < buildings.Length; index++)
+        {
+            Entity candidate = buildings[index];
+            OperationMapBuildingComponent buildingData =
+                entityManager.GetComponentData<OperationMapBuildingComponent>(candidate);
+            OperationMapBuildingPresentation candidatePresentation =
+                entityManager.GetComponentData<OperationMapBuildingPresentation>(candidate);
+            if (buildingData.BlockerPolicy !=
+                    OperationMapBuildingBlockerPolicy.RubbleRemainsBlocked ||
+                candidatePresentation.IntactVisualRoot == Entity.Null ||
+                candidatePresentation.DestroyedVisualRoot == Entity.Null ||
+                !entityManager.Exists(candidatePresentation.IntactVisualRoot) ||
+                !entityManager.Exists(candidatePresentation.DestroyedVisualRoot))
+            {
+                continue;
+            }
+
+            building = candidate;
+            presentation = candidatePresentation;
+            break;
+        }
+
+        Assert.That(building, Is.Not.EqualTo(Entity.Null),
+            "Packed candidate contains no complete destructible building presentation.");
+        Assert.That(
+            entityManager.IsComponentEnabled<OperationMapBuildingDestroyedComponent>(building),
+            Is.False);
+
+        HashSet<int> gameObjectIdsBefore = CaptureLoadedGameObjectIds();
+        int entityCountBefore = entityManager.UniversalQuery.CalculateEntityCount();
+        entityManager.SetComponentData(building, new UnitHealth
+        {
+            Current = 0,
+            Max = entityManager.GetComponentData<UnitHealth>(building).Max
+        });
+
+        SystemHandle handle =
+            world.Unmanaged.GetExistingUnmanagedSystem<OperationMapBuildingDestructionSystem>();
+        Assert.That(handle, Is.Not.EqualTo(SystemHandle.Null));
+        ref SystemState state = ref world.Unmanaged.ResolveSystemStateRef(handle);
+        world.Unmanaged.GetUnsafeSystemRef<OperationMapBuildingDestructionSystem>(handle)
+            .OnUpdate(ref state);
+        state.Dependency.Complete();
+        entityManager.CompleteAllTrackedJobs();
+
+        OperationMapBuildingPresentation destroyedPresentation =
+            entityManager.GetComponentData<OperationMapBuildingPresentation>(building);
+        Assert.That(destroyedPresentation.State, Is.EqualTo(1));
+        Assert.That(
+            entityManager.IsComponentEnabled<OperationMapBuildingDestroyedComponent>(building),
+            Is.True);
+        Assert.That(
+            entityManager.GetComponentData<LocalTransform>(presentation.IntactVisualRoot).Scale,
+            Is.Zero);
+        Assert.That(
+            entityManager.GetComponentData<LocalTransform>(presentation.DestroyedVisualRoot).Scale,
+            Is.EqualTo(presentation.DestroyedVisibleScale));
+        Assert.That(
+            entityManager.UniversalQuery.CalculateEntityCount(),
+            Is.EqualTo(entityCountBefore),
+            "Operation-map destruction must not instantiate replacement entities.");
+        Assert.That(
+            CaptureLoadedGameObjectIds(),
+            Is.EquivalentTo(gameObjectIdsBefore),
+            "Operation-map destruction must not instantiate or destroy GameObject replacements.");
+        AssertNoManagedMapVisualOwnership(matchBootstrap);
+    }
+
+    private static HashSet<int> CaptureLoadedGameObjectIds()
+    {
+        GameObject[] gameObjects = UnityEngine.Object.FindObjectsByType<GameObject>(
+            FindObjectsInactive.Include);
+        var ids = new HashSet<int>();
+        for (int index = 0; index < gameObjects.Length; index++)
+            ids.Add(gameObjects[index].GetEntityId().GetHashCode());
+        return ids;
     }
 
     private static void SetPrivateField(object owner, string fieldName, object value)

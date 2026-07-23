@@ -29,7 +29,7 @@ namespace Game.Composition
         }
 
         public Result Initialize(
-            bool enableRuntimeCityGeneration,
+            bool enableLegacyRuntimeMapPresentation,
             RuntimeCitySpawnerSystemConfig runtimeCitySpawnerConfig,
             RuntimeGridBlockerSystemConfig runtimeGridBlockerConfig,
             RuntimeDecorationSpawnerSystemConfig runtimeDecorationSpawnerConfig,
@@ -52,7 +52,7 @@ namespace Game.Composition
             IReadOnlyList<GridAuthoring> runtimeGridDebugViews,
             GameplaySceneBindingSceneSystemHelper sceneBindingSystem)
         {
-            RuntimeCityCompositionSystemHelper runtimeCity = enableRuntimeCityGeneration
+            RuntimeCityCompositionSystemHelper runtimeCity = enableLegacyRuntimeMapPresentation
                 ? ResolveRuntimeCityCompositionSystemHelper()
                 : null;
             runtimeCity?.Configure(
@@ -65,7 +65,10 @@ namespace Game.Composition
                 mainMenu);
 
             RuntimeCityReadModelCompositionSystemHelper runtimeCityReadModel = runtimeCity?.ReadModel;
-            RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers = ResolveRuntimeGridBlockerPresentationHelper();
+            RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers =
+                enableLegacyRuntimeMapPresentation
+                    ? ResolveRuntimeGridBlockerPresentationHelper()
+                    : null;
             runtimeGridBlockers?.Init(runtimeGridBlockerConfig, runtimeBlockerRoot, runtimeCityReadModel);
             bindRoadGameplayFeatures?.Invoke(mainMenu, runtimeGridBlockers);
             sceneBindingSystem?.BindRuntimeGridBlockerDebugViews(runtimeGridBlockers, runtimeGridDebugViews);
@@ -77,7 +80,10 @@ namespace Game.Composition
                 runtimeCity,
                 citizenPopulationEventSystem);
 
-            RuntimeDecorationSpawnerPresentationSystemHelper runtimeDecorations = ResolveRuntimeDecorationSpawnerPresentationHelper();
+            RuntimeDecorationSpawnerPresentationSystemHelper runtimeDecorations =
+                enableLegacyRuntimeMapPresentation
+                    ? ResolveRuntimeDecorationSpawnerPresentationHelper()
+                    : null;
             runtimeDecorations?.Init(
                 runtimeDecorationSpawnerConfig,
                 decorationRoot,

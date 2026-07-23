@@ -132,6 +132,18 @@ public sealed class Aph805MenuMatchMenuLifecyclePlayModeTests
             entityScene
                 ? "EntityScene Match must not construct the legacy runtime city generator."
                 : "StaticSceneChunks Match must preserve legacy runtime city ownership.");
+        Assert.That(
+            context.MatchBootstrap.RuntimeGridBlockers,
+            entityScene ? Is.Null : Is.Not.Null,
+            entityScene
+                ? "EntityScene Match must not construct legacy runtime blocker visuals."
+                : "StaticSceneChunks Match must preserve legacy runtime blocker visuals.");
+        Assert.That(
+            context.MatchBootstrap.RuntimeDecorations,
+            entityScene ? Is.Null : Is.Not.Null,
+            entityScene
+                ? "EntityScene Match must not construct legacy runtime decoration visuals."
+                : "StaticSceneChunks Match must preserve legacy runtime decoration visuals.");
     }
 
     internal static IEnumerator ReturnToStableMenu(TransitionContext context)

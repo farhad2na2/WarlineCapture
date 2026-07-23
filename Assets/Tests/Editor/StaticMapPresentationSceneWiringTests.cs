@@ -304,10 +304,16 @@ public sealed class StaticMapPresentationSceneWiringTests
             featureStartupSource,
             "public Result Initialize(");
         StringAssert.Contains(
-            "RuntimeCityCompositionSystemHelper runtimeCity = enableRuntimeCityGeneration",
+            "RuntimeCityCompositionSystemHelper runtimeCity = enableLegacyRuntimeMapPresentation",
             featureStartup);
         StringAssert.Contains(
             "? ResolveRuntimeCityCompositionSystemHelper()",
+            featureStartup);
+        StringAssert.Contains(
+            "? ResolveRuntimeGridBlockerPresentationHelper()",
+            featureStartup);
+        StringAssert.Contains(
+            "? ResolveRuntimeDecorationSpawnerPresentationHelper()",
             featureStartup);
     }
 

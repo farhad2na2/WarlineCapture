@@ -95,6 +95,10 @@ namespace Game.Editor
             try
             {
                 RunStage(report, "preflight-isolation", () => RequirePreflight(production));
+                RunStage(
+                    report,
+                    "source-physics-readiness",
+                    OperationMapSourceScenePhysicsValidator.ValidateAcceptedSourcesBatch);
                 RunStage(report, "candidate-population", EnsureCandidatePopulation);
                 RunStage(report, "candidate-presentation-identities", () =>
                     OperationMapEntityPresentationIdentityBackfillEditor

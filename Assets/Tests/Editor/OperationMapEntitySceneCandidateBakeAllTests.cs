@@ -23,6 +23,7 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
             suite.LayoutBudget_AcceptsEntitySceneOnlyOwnership,
             suite.SceneSetup_RejectsEmptyBatchSetup,
             suite.SceneSetup_AcceptsLoadedActiveScene,
+            suite.CandidateBakeAll_ValidatesSourcePhysicsBeforePopulation,
             suite.CandidateBakeAll_PreservesFailureAndSceneRestorationOrdering,
             suite.SourceCandidateParity_AcceptsExactMatrixAndBounds,
             suite.SourceCandidateParity_RejectsMatrixDrift,
@@ -183,6 +184,27 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
         };
 
         Assert.That(OperationMapEntitySceneCandidateBakeAll.HasRestorableSceneSetup(setup), Is.True);
+    }
+
+    [Test]
+    public void CandidateBakeAll_ValidatesSourcePhysicsBeforePopulation()
+    {
+        const string path =
+            "Assets/Game/Scripts/Editor/OperationMapEntitySceneCandidateBakeAll.cs";
+        string source = File.ReadAllText(path);
+        int preflight = source.IndexOf(
+            "RunStage(report, \"preflight-isolation\"",
+            StringComparison.Ordinal);
+        int sourcePhysics = source.IndexOf(
+            "RunStage(\n                    report,\n                    \"source-physics-readiness\"",
+            StringComparison.Ordinal);
+        int population = source.IndexOf(
+            "RunStage(report, \"candidate-population\"",
+            StringComparison.Ordinal);
+
+        Assert.That(preflight, Is.GreaterThanOrEqualTo(0));
+        Assert.That(sourcePhysics, Is.GreaterThan(preflight));
+        Assert.That(population, Is.GreaterThan(sourcePhysics));
     }
 
     [Test]

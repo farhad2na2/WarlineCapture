@@ -27,7 +27,12 @@ namespace Game.Runtime
             GridConfig grid = state.EntityManager.GetComponentData<GridConfig>(gridEntity);
             var ecb = new EntityCommandBuffer(Allocator.TempJob);
 
-            state.Dependency = new SnapUnitGridJob
+            state.Dependency = new InitializeAuthoredVehicleGridJob
+            {
+                Grid = grid,
+                Ecb = ecb
+            }.Schedule(state.Dependency);
+            state.Dependency = new SnapSpawnedUnitGridJob
             {
                 Grid = grid,
                 Ecb = ecb
@@ -39,8 +44,29 @@ namespace Game.Runtime
         }
 
         [BurstCompile]
+        [WithAll(typeof(OperationMapAuthoredVehiclePresentation))]
         [WithNone(typeof(UnitGridInitialized), typeof(UnitAirMovement))]
-        private partial struct SnapUnitGridJob : IJobEntity
+        private partial struct InitializeAuthoredVehicleGridJob : IJobEntity
+        {
+            public GridConfig Grid;
+            public EntityCommandBuffer Ecb;
+
+            private void Execute(
+                Entity entity,
+                ref UnitGrid unitGrid,
+                in LocalTransform transform)
+            {
+                unitGrid.Cell = GridUtils.WorldToCell(Grid, transform.Position);
+                Ecb.AddComponent<UnitGridInitialized>(entity);
+            }
+        }
+
+        [BurstCompile]
+        [WithNone(
+            typeof(UnitGridInitialized),
+            typeof(UnitAirMovement),
+            typeof(OperationMapAuthoredVehiclePresentation))]
+        private partial struct SnapSpawnedUnitGridJob : IJobEntity
         {
             public GridConfig Grid;
             public EntityCommandBuffer Ecb;

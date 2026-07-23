@@ -7,6 +7,7 @@ using Game.Components;
 
 namespace Game.Runtime
 {
+    [UpdateInGroup(typeof(SimulationSystemGroup))]
     [UpdateAfter(typeof(UnitMoveOrderRequestSystem))]
     public partial struct UnitPathfindingSystem : ISystem
     {

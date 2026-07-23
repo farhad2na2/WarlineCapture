@@ -180,7 +180,8 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
             cycleCount: 2,
             validateCameraTraversal: false,
             validateSteadyStateAllocation: false,
-            validateBuildingDestruction: false);
+            validateBuildingDestruction: false,
+            validateVehicleMovement: false);
     }
 
     [UnityTest]
@@ -197,7 +198,8 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
             cycleCount: 1,
             validateCameraTraversal: true,
             validateSteadyStateAllocation: false,
-            validateBuildingDestruction: false);
+            validateBuildingDestruction: false,
+            validateVehicleMovement: false);
     }
 
     [UnityTest]
@@ -208,7 +210,8 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
             cycleCount: 1,
             validateCameraTraversal: false,
             validateSteadyStateAllocation: true,
-            validateBuildingDestruction: false);
+            validateBuildingDestruction: false,
+            validateVehicleMovement: false);
     }
 
     [UnityTest]
@@ -219,14 +222,28 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
             cycleCount: 1,
             validateCameraTraversal: false,
             validateSteadyStateAllocation: false,
-            validateBuildingDestruction: true);
+            validateBuildingDestruction: true,
+            validateVehicleMovement: false);
+    }
+
+    [UnityTest]
+    [Timeout(600000)]
+    public IEnumerator PackedCandidate_AuthoredGroundVehicleMovesAndRetainsEcsPresentation()
+    {
+        yield return RunPackedCandidateRoute(
+            cycleCount: 1,
+            validateCameraTraversal: false,
+            validateSteadyStateAllocation: false,
+            validateBuildingDestruction: false,
+            validateVehicleMovement: true);
     }
 
     private static IEnumerator RunPackedCandidateRoute(
         int cycleCount,
         bool validateCameraTraversal,
         bool validateSteadyStateAllocation,
-        bool validateBuildingDestruction)
+        bool validateBuildingDestruction,
+        bool validateVehicleMovement)
     {
         string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
         string catalogPath = Path.Combine(
@@ -302,7 +319,8 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
                     cycle,
                     validateCameraTraversal && cycle == 1,
                     validateSteadyStateAllocation && cycle == 1,
-                    validateBuildingDestruction && cycle == 1);
+                    validateBuildingDestruction && cycle == 1,
+                    validateVehicleMovement && cycle == 1);
             }
         }
         finally
@@ -330,7 +348,8 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
         int cycle,
         bool validateCameraTraversal,
         bool validateSteadyStateAllocation,
-        bool validateBuildingDestruction)
+        bool validateBuildingDestruction,
+        bool validateVehicleMovement)
     {
         yield return Aph805MenuMatchMenuLifecyclePlayModeTests.EnterStableMatch(route);
         Assert.That(
@@ -391,6 +410,16 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
         if (validateBuildingDestruction)
             ValidateBuildingDestructionUsesBakedEntitiesOnly(route.Match.MatchBootstrap, world);
 
+        if (validateVehicleMovement)
+        {
+            yield return ValidateAuthoredGroundVehicleMovement(
+                route.Match.MatchBootstrap,
+                world,
+                sceneEntity,
+                resolvedSectionEntities,
+                staticStreamer);
+        }
+
         if (SystemInfo.graphicsDeviceType ==
             UnityEngine.Rendering.GraphicsDeviceType.Null)
         {
@@ -421,6 +450,417 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
         Assert.That(staticStreamer.DrainComplete, Is.False);
         Assert.That(staticStreamer.PendingOperationCount, Is.Zero);
         Assert.That(staticStreamer.HasActiveOperation, Is.False);
+    }
+
+    private static IEnumerator ValidateAuthoredGroundVehicleMovement(
+        MatchBootstrapCompositionSystemHelper matchBootstrap,
+        World world,
+        Entity sceneEntity,
+        IReadOnlyList<Entity> resolvedSectionEntities,
+        StaticMapPresentationStreamer staticStreamer)
+    {
+        EntityManager entityManager = world.EntityManager;
+        int expectedSectionEntityCount =
+            CountEntitiesForSections(entityManager, resolvedSectionEntities);
+        Entity[] expectedSceneRequests =
+            GetEntitiesWithComponent<RequestSceneLoaded>(entityManager);
+
+        Entity[] vehicles = GetMovableAuthoredGroundVehicles(entityManager);
+        Assert.That(vehicles.Length, Is.GreaterThan(0),
+            "Packed candidate has no movable authored ground vehicle.");
+
+        Entity vehicle = Entity.Null;
+        int2 goal = default;
+        for (int vehicleIndex = 0; vehicleIndex < vehicles.Length; vehicleIndex++)
+        {
+            Entity candidate = vehicles[vehicleIndex];
+            UnitMovementBehavior behavior =
+                entityManager.GetComponentData<UnitMovementBehavior>(candidate);
+            if (behavior.UsesVehicleMotion == 0)
+                continue;
+            if (TryFindNearbyVehicleGoal(entityManager, candidate, out goal))
+            {
+                vehicle = candidate;
+                break;
+            }
+        }
+
+        Assert.That(vehicle, Is.Not.EqualTo(Entity.Null),
+            "No packed authored ground vehicle had a valid nearby movement goal.");
+        SceneTag vehicleSceneTag = entityManager.GetSharedComponent<SceneTag>(vehicle);
+        Assert.That(resolvedSectionEntities, Does.Contain(vehicleSceneTag.SceneEntity));
+
+        UnitDetailedVisualReference expectedVisualReference =
+            entityManager.GetComponentData<UnitDetailedVisualReference>(vehicle);
+        Assert.That(expectedVisualReference.Root, Is.Not.EqualTo(Entity.Null));
+        Assert.That(entityManager.Exists(expectedVisualReference.Root), Is.True);
+        Assert.That(
+            entityManager.HasComponent<OperationMapEntityPresentationIdentity>(
+                expectedVisualReference.Root),
+            Is.True,
+            "The authored source identity belongs to the baked vehicle visual root.");
+        OperationMapEntityPresentationIdentity expectedIdentity =
+            entityManager.GetComponentData<OperationMapEntityPresentationIdentity>(
+                expectedVisualReference.Root);
+        Assert.That(
+            IsEntityDescendantOf(entityManager, expectedVisualReference.Root, vehicle),
+            Is.True,
+            "The baked detailed visual must remain in the vehicle transform hierarchy.");
+
+        float3 startPosition =
+            entityManager.GetComponentData<LocalTransform>(vehicle).Position;
+        float3 startVisualPosition =
+            entityManager.GetComponentData<LocalToWorld>(expectedVisualReference.Root).Position;
+        int2 startCell = entityManager.GetComponentData<UnitGrid>(vehicle).Cell;
+        Assert.That(goal, Is.Not.EqualTo(startCell));
+        byte vehicleFactionId = entityManager.GetComponentData<Faction>(vehicle).Id;
+        Entity temporaryFuelStorage =
+            CreateTemporaryVehicleFuelStorage(entityManager, vehicleFactionId);
+        UnitMoveOrderSystem.MoveOrderCommandResult moveOrderResult =
+            new UnitMoveOrderSystem().IssueGroupedManualMoveOrder(
+            entityManager,
+            vehicle,
+            goal,
+            issueGroundPathNow: true,
+            useGroundPathRetryCooldown: false,
+            resumeFrame: 0,
+            currentFrame: Time.frameCount);
+        Assert.That(
+            moveOrderResult.Issued,
+            Is.True,
+            $"Packed vehicle {entityManager.GetName(vehicle)} rejected goal {goal}.");
+        Assert.That(entityManager.HasComponent<UnitTarget>(vehicle), Is.True);
+        Assert.That(entityManager.GetComponentData<UnitTarget>(vehicle).Cell, Is.EqualTo(goal));
+        Assert.That(entityManager.HasComponent<UnitPathRequest>(vehicle), Is.True);
+        Assert.That(entityManager.GetComponentData<UnitPathRequest>(vehicle).Goal, Is.EqualTo(goal));
+
+        float deadline = Time.realtimeSinceStartup + 8f;
+        bool pathResolved = false;
+        bool moved = false;
+        while (Time.realtimeSinceStartup < deadline)
+        {
+            yield return null;
+            if (!entityManager.Exists(vehicle))
+                Assert.Fail("Packed authored vehicle was destroyed while executing a move order.");
+
+            pathResolved |= entityManager.HasComponent<UnitPathRange>(vehicle) &&
+                            entityManager.GetComponentData<UnitPathRange>(vehicle).Length > 0;
+            float3 currentPosition =
+                entityManager.GetComponentData<LocalTransform>(vehicle).Position;
+            if (math.distance(startPosition, currentPosition) > 0.1f)
+            {
+                moved = true;
+                break;
+            }
+        }
+
+        RuntimeGameplayStateComponent gameplayState =
+            GetSingletonComponent<RuntimeGameplayStateComponent>(entityManager);
+        UnitPathfindingPendingStateComponent pendingState =
+            GetSingletonComponent<UnitPathfindingPendingStateComponent>(entityManager);
+        Assert.That(pathResolved, Is.True,
+            $"Packed vehicle {entityManager.GetName(vehicle)} never resolved a path " +
+            $"from {startCell} to {goal}. request=" +
+            $"{entityManager.HasComponent<UnitPathRequest>(vehicle)} " +
+            $"retry={entityManager.HasComponent<UnitPathRetryCooldown>(vehicle)} " +
+            $"play={gameplayState.PlayRequested} simulation={gameplayState.SimulationActive} " +
+            $"pending={pendingState.HasPendingPathJob}:{pendingState.RequestCount}:" +
+            $"{pendingState.ScheduledFrame}.");
+        Assert.That(moved, Is.True,
+            $"Packed vehicle {entityManager.GetName(vehicle)} did not move from {startCell} toward {goal}.");
+        yield return null;
+
+        float3 movedPosition =
+            entityManager.GetComponentData<LocalTransform>(vehicle).Position;
+        float3 movedVisualPosition =
+            entityManager.GetComponentData<LocalToWorld>(expectedVisualReference.Root).Position;
+        float vehicleDistance = math.distance(startPosition, movedPosition);
+        float visualDistance = math.distance(startVisualPosition, movedVisualPosition);
+        Assert.That(visualDistance, Is.GreaterThan(0.05f),
+            "The baked detailed visual did not follow the moving vehicle.");
+        Assert.That(math.abs(vehicleDistance - visualDistance), Is.LessThan(0.15f),
+            "Vehicle and baked detailed visual movement diverged.");
+        Assert.That(
+            entityManager.GetComponentData<OperationMapEntityPresentationIdentity>(
+                expectedVisualReference.Root),
+            Is.EqualTo(expectedIdentity));
+        Assert.That(
+            entityManager.GetComponentData<UnitDetailedVisualReference>(vehicle),
+            Is.EqualTo(expectedVisualReference));
+        Assert.That(
+            IsEntityDescendantOf(entityManager, expectedVisualReference.Root, vehicle),
+            Is.True);
+        Assert.That(entityManager.Exists(sceneEntity), Is.True);
+        Assert.That(SceneSystem.IsSceneLoaded(world.Unmanaged, sceneEntity), Is.True);
+        Assert.That(
+            CountEntitiesForSections(entityManager, resolvedSectionEntities),
+            Is.EqualTo(expectedSectionEntityCount));
+        Assert.That(
+            GetEntitiesWithComponent<RequestSceneLoaded>(entityManager),
+            Is.EqualTo(expectedSceneRequests));
+        AssertSinglePublishedOperationMapRoot(entityManager);
+        AssertNoManagedMapVisualOwnership(matchBootstrap);
+        Assert.That(staticStreamer.DrainComplete, Is.False);
+        Assert.That(staticStreamer.PendingOperationCount, Is.Zero);
+        Assert.That(staticStreamer.HasActiveOperation, Is.False);
+
+        Assert.That(
+            UnitMoveOrderRequestSystem.EnqueueAndProcessClearMovementOrder(
+                entityManager,
+                vehicle),
+            Is.True);
+        entityManager.DestroyEntity(temporaryFuelStorage);
+        yield return null;
+        Debug.Log(
+            $"[OperationMapPackedVehicle] entity={entityManager.GetName(vehicle)} " +
+            $"startCell={startCell} goal={goal} moved={vehicleDistance:R} " +
+            $"visualMoved={visualDistance:R}");
+    }
+
+    private static Entity CreateTemporaryVehicleFuelStorage(
+        EntityManager entityManager,
+        byte factionId)
+    {
+        Entity storage = entityManager.CreateEntity(
+            ComponentType.ReadWrite<BuildingResourceStorageComponent>());
+        entityManager.SetComponentData(storage, new BuildingResourceStorageComponent
+        {
+            RuntimeBuildingId = int.MinValue,
+            OwnerFactionId = factionId,
+            FuelStorageCapacity = 1000,
+            StoredFuelBarrels = 1000f,
+            Version = 1
+        });
+        return storage;
+    }
+
+    private static Entity[] GetMovableAuthoredGroundVehicles(
+        EntityManager entityManager)
+    {
+        using EntityQuery vehicleQuery = entityManager.CreateEntityQuery(
+            new EntityQueryDesc
+            {
+                All = new[]
+                {
+                    ComponentType.ReadOnly<OperationMapAuthoredVehiclePresentation>(),
+                    ComponentType.ReadOnly<UnitGrid>(),
+                    ComponentType.ReadOnly<UnitMove>(),
+                    ComponentType.ReadOnly<UnitFootprint>(),
+                    ComponentType.ReadOnly<UnitMovementBehavior>(),
+                    ComponentType.ReadOnly<UnitVehicleMovement>(),
+                    ComponentType.ReadOnly<UnitVehicleKinematics>(),
+                    ComponentType.ReadOnly<UnitDetailedVisualReference>(),
+                    ComponentType.ReadOnly<LocalTransform>(),
+                    ComponentType.ReadOnly<Faction>(),
+                    ComponentType.ReadOnly<SceneTag>()
+                },
+                None = new[]
+                {
+                    ComponentType.ReadOnly<UnitAirMovement>(),
+                    ComponentType.ReadOnly<Prefab>(),
+                    ComponentType.ReadOnly<Disabled>()
+                }
+            });
+        using NativeArray<Entity> vehicles =
+            vehicleQuery.ToEntityArray(Allocator.Temp);
+        return vehicles.ToArray();
+    }
+
+    private static T GetSingletonComponent<T>(EntityManager entityManager)
+        where T : unmanaged, IComponentData
+    {
+        using EntityQuery query =
+            entityManager.CreateEntityQuery(ComponentType.ReadOnly<T>());
+        Assert.That(query.CalculateEntityCount(), Is.EqualTo(1));
+        return query.GetSingleton<T>();
+    }
+
+    private static bool TryFindNearbyVehicleGoal(
+        EntityManager entityManager,
+        Entity vehicle,
+        out int2 goal)
+    {
+        using EntityQuery gridQuery = entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<GridConfig>(),
+            ComponentType.ReadOnly<GridWalkable>(),
+            ComponentType.ReadOnly<DynamicBlockerComponent>(),
+            ComponentType.ReadOnly<DynamicOccupancyComponent>());
+        Assert.That(gridQuery.CalculateEntityCount(), Is.EqualTo(1));
+        Entity gridEntity = gridQuery.GetSingletonEntity();
+        GridConfig grid = entityManager.GetComponentData<GridConfig>(gridEntity);
+        NativeArray<GridWalkable> walkable =
+            entityManager.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
+        DynamicBlockerComponent blockers =
+            entityManager.GetComponentData<DynamicBlockerComponent>(gridEntity);
+        DynamicOccupancyComponent occupancy =
+            entityManager.GetComponentData<DynamicOccupancyComponent>(gridEntity);
+        using EntityQuery surfaceQuery =
+            entityManager.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
+        MapSurfaceComponent surface = surfaceQuery.CalculateEntityCount() == 1
+            ? surfaceQuery.GetSingleton<MapSurfaceComponent>()
+            : default;
+        byte hasSurfaceData =
+            (byte)(surface.HasSurfaceData != 0 && surface.SurfaceBlob.IsCreated ? 1 : 0);
+        UnitGrid unitGrid = entityManager.GetComponentData<UnitGrid>(vehicle);
+        int2 footprint = entityManager.GetComponentData<UnitFootprint>(vehicle).Size;
+        byte factionId = entityManager.GetComponentData<Faction>(vehicle).Id;
+        if (!CanVehicleTraverseSurfaceFootprint(
+                surface,
+                hasSurfaceData,
+                grid,
+                unitGrid.Cell,
+                footprint))
+        {
+            goal = default;
+            return false;
+        }
+        int2[] directions =
+        {
+            new(1, 0),
+            new(-1, 0),
+            new(0, 1),
+            new(0, -1),
+            new(1, 1),
+            new(-1, 1),
+            new(1, -1),
+            new(-1, -1)
+        };
+        for (int radius = 3; radius <= 12; radius++)
+        {
+            for (int directionIndex = 0;
+                 directionIndex < directions.Length;
+                 directionIndex++)
+            {
+                int2 candidate = unitGrid.Cell + directions[directionIndex] * radius;
+                bool directRouteValid = true;
+                for (int step = 1; step <= radius; step++)
+                {
+                    int2 routeCell =
+                        unitGrid.Cell + directions[directionIndex] * step;
+                    if (!UnitFootprintUtility.CanPlaceWithPadding(
+                            grid,
+                            walkable,
+                            blockers.Blocked,
+                            blockers.FriendlyPassFactionIds,
+                            occupancy.Occupied,
+                            routeCell,
+                            footprint,
+                            unitGrid.Cell,
+                            occupiedPadding: 1,
+                            factionId: factionId) ||
+                        !CanVehicleTraverseSurfaceFootprint(
+                            surface,
+                            hasSurfaceData,
+                            grid,
+                            routeCell,
+                            footprint))
+                    {
+                        directRouteValid = false;
+                        break;
+                    }
+                }
+                if (!directRouteValid)
+                    continue;
+
+                goal = candidate;
+                return true;
+            }
+        }
+
+        goal = default;
+        return false;
+    }
+
+    private static bool CanVehicleTraverseSurfaceFootprint(
+        MapSurfaceComponent surface,
+        byte hasSurfaceData,
+        in GridConfig grid,
+        int2 cell,
+        int2 footprintSize)
+    {
+        if (hasSurfaceData == 0)
+            return true;
+
+        int2 size = UnitFootprintUtility.ClampSize(footprintSize);
+        int2 minimum = UnitFootprintUtility.GetMinCell(cell, size);
+        int2 maximum = minimum + size;
+        if (minimum.x < 0 || minimum.y < 0 ||
+            maximum.x > grid.Width || maximum.y > grid.Height)
+        {
+            return false;
+        }
+
+        ref MapSurfaceBlob blob = ref surface.SurfaceBlob.Value;
+        MapSurfaceMovementMask vehicleMask =
+            MapSurfaceMovementMask.WheeledVehicle |
+            MapSurfaceMovementMask.TrackedVehicle;
+        for (int y = minimum.y; y < maximum.y; y++)
+        {
+            for (int x = minimum.x; x < maximum.x; x++)
+            {
+                if (!MapSurfaceBlobAccess.TryGetSurfaceRange(
+                        ref blob,
+                        new int2(x, y),
+                        out MapSurfaceCellSurfaceRange range))
+                {
+                    return false;
+                }
+
+                bool traversable = false;
+                for (int surfaceIndex = 0;
+                     surfaceIndex < range.SurfaceCount;
+                     surfaceIndex++)
+                {
+                    if (!MapSurfaceBlobAccess.TryGetSurface(
+                            ref blob,
+                            range,
+                            surfaceIndex,
+                            out MapSurfaceSample sample) ||
+                        (sample.MovementMask & vehicleMask) == 0 ||
+                        sample.SurfaceType == MapSurfaceType.Blocked ||
+                        (sample.Flags & MapSurfaceFlags.Reserved) != 0)
+                    {
+                        continue;
+                    }
+
+                    bool roadLike =
+                        sample.SurfaceType == MapSurfaceType.Road ||
+                        sample.SurfaceType == MapSurfaceType.DirtRoad ||
+                        sample.SurfaceType == MapSurfaceType.Highway ||
+                        sample.SurfaceType == MapSurfaceType.BridgeDeck ||
+                        sample.SurfaceType == MapSurfaceType.Ramp ||
+                        (sample.Flags & MapSurfaceFlags.Road) != 0;
+                    if (roadLike || math.max(0f, sample.SlopeDegrees) <= 18f)
+                    {
+                        traversable = true;
+                        break;
+                    }
+                }
+
+                if (!traversable)
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool IsEntityDescendantOf(
+        EntityManager entityManager,
+        Entity entity,
+        Entity expectedAncestor)
+    {
+        Entity current = entity;
+        for (int depth = 0; depth < 32 && current != Entity.Null; depth++)
+        {
+            if (current == expectedAncestor)
+                return true;
+            if (!entityManager.HasComponent<Parent>(current))
+                return false;
+            current = entityManager.GetComponentData<Parent>(current).Value;
+        }
+
+        return false;
     }
 
     private static void ValidateReadyOperationMapOrchestrationAllocatesZeroBytes(

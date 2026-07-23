@@ -10,12 +10,12 @@
     "entityContentOutputPath": "/Users/farhad/Projects/WarlineCapture/Library/OperationMapCandidateRuntimeContent/Entities",
     "entityContentCatalogPath": "/Users/farhad/Projects/WarlineCapture/Library/OperationMapCandidateRuntimeContent/Entities/ContentArchives/archive_dependencies.bin",
     "entityContentArchiveCount": 1,
-    "candidateSubSceneSha256": "ffac1e687e60b664c5b86e7ae32df80d0c9cdc696a722a4b23d9565b997810a3",
+    "candidateSubSceneSha256": "31a2638471ed23fa5dfe39c3544454ff79af126b219fa3813de6cbd09c8f4314",
     "candidateDefinitionSha256": "0b1926b09b444df38c298429f98c9e8fca820834f7734d04e7a604dbb02cc48c",
     "candidateRuntimeBindingSha256": "7fefb906c2d7582e00a8a003b8fe284e48899cc1b9ca3ed4e180b98a1f341c67",
     "transformParityReportSha256": "5aecc8ffd5a6d0ac2b2162a1e439c280deeab8f1f9e8f3e048104525b4992c28",
-    "addressablesCatalogSha256": "e9f3e7d2b77d10804a9369936c83f40c0381e650c510630f47687670b7474cfd",
-    "entityContentCatalogSha256": "cec707fc9ad99e0fa0cefb0e6151c2ff59bdfeac15b9a209bb3f8799a5537d51",
+    "addressablesCatalogSha256": "6c6ca51da886f38accec8423aeb0504fad55109ce449401e67252924b67cb7da",
+    "entityContentCatalogSha256": "7d18b2d6711535a72d956b4d9544c45ab1ed74ed94aedeb10d67945d53386a6b",
     "productionCutover": 0,
     "temporaryGroupRetained": 0
 }

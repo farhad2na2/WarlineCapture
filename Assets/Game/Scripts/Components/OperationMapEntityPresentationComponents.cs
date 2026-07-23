@@ -11,6 +11,18 @@ namespace Game.Components
         public FixedString128Bytes MigrationRecordSetHash;
     }
 
+    public struct OperationMapEntityPresentationReadinessContract : IComponentData
+    {
+        public FixedString128Bytes OperationMapId;
+        public FixedString128Bytes MigrationRecordSetHash;
+        public int ExpectedPresentationRootCount;
+        public int ExpectedGameplayBuildingCount;
+        public int ExpectedGameplayVehicleCount;
+        public int ExpectedRenderOnlyCount;
+        public int ExpectedGeneratedIdentityCount;
+        public byte RequiresStaticPresentationPreload;
+    }
+
     public struct OperationMapEntityPresentationIdentity : IComponentData
     {
         public FixedString128Bytes OperationMapId;

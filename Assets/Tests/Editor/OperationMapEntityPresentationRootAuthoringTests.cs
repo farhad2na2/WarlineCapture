@@ -125,6 +125,13 @@ public sealed class OperationMapEntityPresentationRootAuthoringTests
         serialized.FindProperty("role").intValue = (byte)role;
         serialized.FindProperty("schemaVersion").intValue = schemaVersion;
         serialized.FindProperty("migrationRecordSetHash").stringValue = migrationRecordSetHash;
+        if (role == OperationMapEntityPresentationRole.GameplayBuildings)
+        {
+            serialized.FindProperty("expectedGameplayBuildingCount").intValue = 432;
+            serialized.FindProperty("expectedGameplayVehicleCount").intValue = 22;
+            serialized.FindProperty("expectedRenderOnlyCount").intValue = 9090;
+            serialized.FindProperty("expectedGeneratedIdentityCount").intValue = 0;
+        }
         serialized.ApplyModifiedPropertiesWithoutUndo();
     }
 }

@@ -33,6 +33,8 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
             Run(nameof(PendingLoadPublishesProgress), test => test.PendingLoadPublishesProgress(), ref passed);
             Run(nameof(SuccessfulLoadResolvesValidatedStagedView), test => test.SuccessfulLoadResolvesValidatedStagedView(), ref passed);
             Run(nameof(EntitySceneLoadSkipsManifestAndResolvesWithoutStaticOwnership), test => test.EntitySceneLoadSkipsManifestAndResolvesWithoutStaticOwnership(), ref passed);
+            Run(nameof(EntitySceneLoadWaitsForPresentationReadinessContract), test => test.EntitySceneLoadWaitsForPresentationReadinessContract(), ref passed);
+            Run(nameof(EntitySceneLoadFailsClosedWhenPresentationReadinessContractRejects), test => test.EntitySceneLoadFailsClosedWhenPresentationReadinessContractRejects(), ref passed);
             Run(nameof(EntitySceneUnloadWaitsForOwnedMetadataRelease), test => test.EntitySceneUnloadWaitsForOwnedMetadataRelease(), ref passed);
             Run(nameof(EntitySceneLoadRejectsBoundStaticManifestReference), test => test.EntitySceneLoadRejectsBoundStaticManifestReference(), ref passed);
             Run(nameof(FailedLoadReleasesExactlyOnce), test => test.FailedLoadReleasesExactlyOnce(), ref passed);
@@ -165,6 +167,75 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
         Assert.That(helper.TryStart(definition, out string error), Is.False);
         Assert.That(error, Does.Contain("must not bind a production static presentation manifest"));
         Assert.That(helper.FailureCode, Is.EqualTo(OperationMapLoadResultCode.StaleContent));
+        UnityEngine.Object.DestroyImmediate(definition);
+    }
+
+    [Test]
+    public void EntitySceneLoadWaitsForPresentationReadinessContract()
+    {
+        Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+        OperationMapDefinition definition =
+            CreateEntitySceneDefinition("opmap.skirmish.entity_scene_readiness_pending");
+        CreateEntitySceneView(scene, definition);
+        var operation = new FakeSceneOperation
+        {
+            Done = true,
+            Success = true,
+            LoadedScene = scene,
+            Progress = 1f
+        };
+        FakeEntitySceneApi entitySceneApi = new() { EnsureReady = false };
+        var helper = new OperationMapSceneLoadingSceneSystemHelper(
+            new FakeSceneApi(operation),
+            new FakeManifestApi(new FakeManifestOperation()),
+            entitySceneApi: entitySceneApi);
+
+        Assert.That(helper.TryStart(definition, out string error), Is.True, error);
+        helper.Update();
+        Assert.That(helper.IsReady, Is.False);
+        Assert.That(helper.HasFailed, Is.False);
+
+        entitySceneApi.EnsureReady = true;
+        helper.Update();
+
+        Assert.That(helper.IsReady, Is.True, helper.Failure);
+        Assert.That(entitySceneApi.EnsureReadyCount, Is.EqualTo(2));
+        helper.Dispose();
+        UnityEngine.Object.DestroyImmediate(definition);
+    }
+
+    [Test]
+    public void EntitySceneLoadFailsClosedWhenPresentationReadinessContractRejects()
+    {
+        Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+        OperationMapDefinition definition =
+            CreateEntitySceneDefinition("opmap.skirmish.entity_scene_readiness_reject");
+        CreateEntitySceneView(scene, definition);
+        var operation = new FakeSceneOperation
+        {
+            Done = true,
+            Success = true,
+            LoadedScene = scene,
+            Progress = 1f
+        };
+        FakeEntitySceneApi entitySceneApi = new()
+        {
+            EnsureSucceeded = false,
+            EnsureFailure = "render-only identity count mismatch"
+        };
+        var helper = new OperationMapSceneLoadingSceneSystemHelper(
+            new FakeSceneApi(operation),
+            new FakeManifestApi(new FakeManifestOperation()),
+            entitySceneApi: entitySceneApi);
+
+        Assert.That(helper.TryStart(definition, out string error), Is.True, error);
+        helper.Update();
+
+        Assert.That(helper.IsReady, Is.False);
+        Assert.That(helper.HasFailed, Is.True);
+        Assert.That(helper.FailureCode, Is.EqualTo(OperationMapLoadResultCode.MetadataBindFailed));
+        Assert.That(helper.Failure, Does.Contain("render-only identity count mismatch"));
+        helper.Dispose();
         UnityEngine.Object.DestroyImmediate(definition);
     }
 
@@ -776,9 +847,13 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
         public int EnsureReadyCount { get; private set; }
         public int ReleaseOwnedCount { get; private set; }
         public bool ReleaseComplete { get; set; } = true;
+        public bool EnsureReady { get; set; } = true;
+        public bool EnsureSucceeded { get; set; } = true;
+        public string EnsureFailure { get; set; }
 
         public bool TryEnsureReady(
             string sceneGuid,
+            string expectedOperationMapId,
             ref Entity sceneEntity,
             ref bool ownsScene,
             out bool ready,
@@ -787,9 +862,9 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
             EnsureReadyCount++;
             sceneEntity = new Entity { Index = 1, Version = 1 };
             ownsScene = true;
-            ready = true;
-            error = null;
-            return true;
+            ready = EnsureReady;
+            error = EnsureSucceeded ? null : EnsureFailure;
+            return EnsureSucceeded;
         }
 
         public bool TryReleaseOwned(

@@ -23,11 +23,19 @@ namespace Game.Authoring
         [SerializeField] private OperationMapEntityPresentationRole role;
         [SerializeField, Min(1)] private int schemaVersion = CurrentSchemaVersion;
         [SerializeField] private string migrationRecordSetHash;
+        [SerializeField, Min(0)] private int expectedGameplayBuildingCount;
+        [SerializeField, Min(0)] private int expectedGameplayVehicleCount;
+        [SerializeField, Min(0)] private int expectedRenderOnlyCount;
+        [SerializeField, Min(0)] private int expectedGeneratedIdentityCount;
 
         public string OperationMapId => operationMapId;
         public OperationMapEntityPresentationRole Role => role;
         public int SchemaVersion => schemaVersion;
         public string MigrationRecordSetHash => migrationRecordSetHash;
+        public int ExpectedGameplayBuildingCount => expectedGameplayBuildingCount;
+        public int ExpectedGameplayVehicleCount => expectedGameplayVehicleCount;
+        public int ExpectedRenderOnlyCount => expectedRenderOnlyCount;
+        public int ExpectedGeneratedIdentityCount => expectedGeneratedIdentityCount;
 
         public bool TryValidate(out string error)
         {
@@ -59,6 +67,16 @@ namespace Game.Authoring
                 return false;
             }
 
+            if (role == OperationMapEntityPresentationRole.GameplayBuildings &&
+                (expectedGameplayBuildingCount <= 0 ||
+                 expectedGameplayVehicleCount <= 0 ||
+                 expectedRenderOnlyCount <= 0 ||
+                 expectedGeneratedIdentityCount < 0))
+            {
+                error = "Gameplay-building root must contain a complete non-negative readiness contract.";
+                return false;
+            }
+
             error = null;
             return true;
         }
@@ -78,6 +96,24 @@ namespace Game.Authoring
                     SchemaVersion = authoring.schemaVersion,
                     MigrationRecordSetHash = new FixedString128Bytes(authoring.migrationRecordSetHash)
                 });
+                if (authoring.role == OperationMapEntityPresentationRole.GameplayBuildings)
+                {
+                    AddComponent(entity, new OperationMapEntityPresentationReadinessContract
+                    {
+                        OperationMapId = new FixedString128Bytes(authoring.operationMapId),
+                        MigrationRecordSetHash =
+                            new FixedString128Bytes(authoring.migrationRecordSetHash),
+                        ExpectedPresentationRootCount = 3,
+                        ExpectedGameplayBuildingCount =
+                            authoring.expectedGameplayBuildingCount,
+                        ExpectedGameplayVehicleCount =
+                            authoring.expectedGameplayVehicleCount,
+                        ExpectedRenderOnlyCount = authoring.expectedRenderOnlyCount,
+                        ExpectedGeneratedIdentityCount =
+                            authoring.expectedGeneratedIdentityCount,
+                        RequiresStaticPresentationPreload = 0
+                    });
+                }
             }
         }
     }

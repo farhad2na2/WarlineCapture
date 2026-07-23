@@ -208,6 +208,13 @@ namespace Game.Editor
             serialized.FindProperty("schemaVersion").intValue =
                 OperationMapEntityPresentationRootAuthoring.CurrentSchemaVersion;
             serialized.FindProperty("migrationRecordSetHash").stringValue = recordSetHash;
+            if (role == OperationMapEntityPresentationRole.GameplayBuildings)
+            {
+                serialized.FindProperty("expectedGameplayBuildingCount").intValue = 432;
+                serialized.FindProperty("expectedGameplayVehicleCount").intValue = 22;
+                serialized.FindProperty("expectedRenderOnlyCount").intValue = 9090;
+                serialized.FindProperty("expectedGeneratedIdentityCount").intValue = 0;
+            }
             serialized.ApplyModifiedPropertiesWithoutUndo();
             if (!marker.TryValidate(out string error))
                 throw new InvalidOperationException(error);

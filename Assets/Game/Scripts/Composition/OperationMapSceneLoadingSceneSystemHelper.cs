@@ -49,6 +49,7 @@ namespace Game.Composition
     {
         bool TryEnsureReady(
             string sceneGuid,
+            string expectedOperationMapId,
             ref Entity sceneEntity,
             ref bool ownsScene,
             out bool ready,
@@ -66,6 +67,7 @@ namespace Game.Composition
     {
         public bool TryEnsureReady(
             string sceneGuidValue,
+            string expectedOperationMapId,
             ref Entity sceneEntity,
             ref bool ownsScene,
             out bool ready,
@@ -96,6 +98,16 @@ namespace Game.Composition
                 world.EntityManager.HasComponent<RequestSceneLoaded>(sceneEntity))
             {
                 ready = SceneSystem.IsSceneLoaded(world.Unmanaged, sceneEntity);
+                if (ready &&
+                    !OperationMapEntityPresentationReadinessUtility.TryValidate(
+                        world.EntityManager,
+                        sceneEntity,
+                        expectedOperationMapId,
+                        out error))
+                {
+                    ready = false;
+                    return false;
+                }
                 return true;
             }
 
@@ -108,6 +120,16 @@ namespace Game.Composition
             }
 
             ready = SceneSystem.IsSceneLoaded(world.Unmanaged, sceneEntity);
+            if (ready &&
+                !OperationMapEntityPresentationReadinessUtility.TryValidate(
+                    world.EntityManager,
+                    sceneEntity,
+                    expectedOperationMapId,
+                    out error))
+            {
+                ready = false;
+                return false;
+            }
             return true;
         }
 
@@ -716,6 +738,7 @@ namespace Game.Composition
 
             return entitySceneApi.TryEnsureReady(
                 view.Definition.NavigationMetadata.AuthoredSubSceneGuid,
+                expectedOperationMapId,
                 ref packedEntityScene,
                 ref ownsPackedEntityScene,
                 out ready,

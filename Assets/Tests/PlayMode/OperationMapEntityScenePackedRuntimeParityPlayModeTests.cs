@@ -169,6 +169,30 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
     [Timeout(600000)]
     public IEnumerator PackedCandidate_TwoMatchToMenuCyclesReleaseAllOwnershipWithoutStaticDrain()
     {
+        yield return RunPackedCandidateRoute(
+            cycleCount: 2,
+            validateCameraTraversal: false);
+    }
+
+    [UnityTest]
+    [Timeout(600000)]
+    public IEnumerator PackedCandidate_CameraTraversalChangesCullingWithoutSceneStreaming()
+    {
+        if (SystemInfo.graphicsDeviceType ==
+            UnityEngine.Rendering.GraphicsDeviceType.Null)
+        {
+            Assert.Ignore("Entities Graphics culling visibility requires a graphics device.");
+        }
+
+        yield return RunPackedCandidateRoute(
+            cycleCount: 1,
+            validateCameraTraversal: true);
+    }
+
+    private static IEnumerator RunPackedCandidateRoute(
+        int cycleCount,
+        bool validateCameraTraversal)
+    {
         string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
         string catalogPath = Path.Combine(
             projectRoot,
@@ -234,13 +258,14 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
             Assert.That(staticStreamer.PendingOperationCount, Is.Zero);
             Assert.That(staticStreamer.HasActiveOperation, Is.False);
 
-            for (int cycle = 1; cycle <= 2; cycle++)
+            for (int cycle = 1; cycle <= cycleCount; cycle++)
             {
                 yield return RunPackedMatchToMenuCycle(
                     route,
                     definitionHandle.Result,
                     staticStreamer,
-                    cycle);
+                    cycle,
+                    validateCameraTraversal && cycle == 1);
             }
         }
         finally
@@ -265,7 +290,8 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
         Aph805MenuMatchMenuLifecyclePlayModeTests.TransitionContext route,
         OperationMapDefinition definition,
         StaticMapPresentationStreamer staticStreamer,
-        int cycle)
+        int cycle,
+        bool validateCameraTraversal)
     {
         yield return Aph805MenuMatchMenuLifecyclePlayModeTests.EnterStableMatch(route);
         Assert.That(
@@ -288,6 +314,15 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
             CountEntitiesForSections(entityManager, resolvedSectionEntities),
             Is.GreaterThan(0));
         AssertSinglePublishedOperationMapRoot(entityManager);
+
+        if (validateCameraTraversal)
+        {
+            yield return ValidateCameraTraversalKeepsEntitySceneResident(
+                route,
+                sceneEntity,
+                resolvedSectionEntities,
+                staticStreamer);
+        }
 
         if (SystemInfo.graphicsDeviceType ==
             UnityEngine.Rendering.GraphicsDeviceType.Null)
@@ -318,6 +353,399 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
         Assert.That(staticStreamer.DrainComplete, Is.False);
         Assert.That(staticStreamer.PendingOperationCount, Is.Zero);
         Assert.That(staticStreamer.HasActiveOperation, Is.False);
+    }
+
+    private static IEnumerator ValidateCameraTraversalKeepsEntitySceneResident(
+        Aph805MenuMatchMenuLifecyclePlayModeTests.TransitionContext route,
+        Entity sceneEntity,
+        IReadOnlyList<Entity> resolvedSectionEntities,
+        StaticMapPresentationStreamer staticStreamer)
+    {
+        World world = route.World;
+        EntityManager entityManager = world.EntityManager;
+        Camera worldCamera = route.Match.WorldCamera;
+        Assert.That(worldCamera, Is.Not.Null);
+        EntitiesGraphicsSystem graphicsSystem =
+            world.GetExistingSystemManaged<EntitiesGraphicsSystem>();
+        Assert.That(graphicsSystem, Is.Not.Null);
+
+        Entity[] expectedEntities =
+            GetSectionTaggedEntities(entityManager, resolvedSectionEntities);
+        Entity[] expectedSceneRequests =
+            GetEntitiesWithComponent<RequestSceneLoaded>(entityManager);
+        string[] expectedLoadedScenes = GetLoadedSceneSignatures();
+        Bounds mapBounds =
+            CalculateSectionRenderBounds(entityManager, resolvedSectionEntities);
+        Assert.That(expectedEntities.Length, Is.GreaterThan(0));
+
+        Vector3 originalPosition = worldCamera.transform.position;
+        Quaternion originalRotation = worldCamera.transform.rotation;
+        bool originalOrthographic = worldCamera.orthographic;
+        float originalOrthographicSize = worldCamera.orthographicSize;
+        float originalNearClip = worldCamera.nearClipPlane;
+        float originalFarClip = worldCamera.farClipPlane;
+        ShadowQuality originalShadowQuality = QualitySettings.shadows;
+        Camera[] cameras = Camera.allCameras;
+        var cameraEnabledStates = new bool[cameras.Length];
+        try
+        {
+            for (int cameraIndex = 0; cameraIndex < cameras.Length; cameraIndex++)
+            {
+                cameraEnabledStates[cameraIndex] = cameras[cameraIndex].enabled;
+                if (cameras[cameraIndex] != worldCamera)
+                    cameras[cameraIndex].enabled = false;
+            }
+
+            worldCamera.enabled = true;
+            QualitySettings.shadows = ShadowQuality.Disable;
+            worldCamera.orthographic = true;
+            worldCamera.nearClipPlane = 0.1f;
+            float mapSpan = math.max(mapBounds.size.x, mapBounds.size.z);
+            worldCamera.orthographicSize = math.max(
+                mapBounds.extents.z,
+                mapBounds.extents.x / math.max(0.1f, worldCamera.aspect)) * 0.35f;
+            worldCamera.farClipPlane = math.max(1000f, mapSpan * 4f);
+
+            Vector3 center = mapBounds.center;
+            float cameraHeight = mapBounds.max.y + math.max(100f, mapSpan);
+            worldCamera.transform.SetPositionAndRotation(
+                new Vector3(center.x, cameraHeight, center.z),
+                Quaternion.Euler(90f, 0f, 0f));
+            var nearSample = new EntitiesGraphicsCullingSample();
+            yield return CaptureEntitiesGraphicsCullingSample(
+                graphicsSystem,
+                worldCamera,
+                nearSample,
+                "detail");
+            AssertCameraTraversalResidency(
+                world,
+                entityManager,
+                sceneEntity,
+                resolvedSectionEntities,
+                expectedEntities,
+                expectedSceneRequests,
+                expectedLoadedScenes,
+                staticStreamer,
+                "detail");
+
+            worldCamera.transform.SetPositionAndRotation(
+                new Vector3(
+                    center.x + mapSpan * 6f,
+                    cameraHeight,
+                    center.z + mapSpan * 6f),
+                Quaternion.Euler(-90f, 0f, 0f));
+            var offMapSample = new EntitiesGraphicsCullingSample();
+            yield return CaptureEntitiesGraphicsCullingSample(
+                graphicsSystem,
+                worldCamera,
+                offMapSample,
+                "off-map");
+            AssertCameraTraversalResidency(
+                world,
+                entityManager,
+                sceneEntity,
+                resolvedSectionEntities,
+                expectedEntities,
+                expectedSceneRequests,
+                expectedLoadedScenes,
+                staticStreamer,
+                "off-map");
+
+            Assert.That(nearSample.MaximumBatchCount, Is.GreaterThan(0));
+            Assert.That(nearSample.MaximumChunkTotal, Is.GreaterThan(0));
+            Assert.That(nearSample.MaximumRenderedInstanceCount, Is.GreaterThan(0));
+            Assert.That(nearSample.MaximumDrawCommandCount, Is.GreaterThan(0));
+            Assert.That(nearSample.MaximumInstanceTests, Is.GreaterThan(0));
+            Assert.That(nearSample.MaximumCulledChunkCount, Is.GreaterThan(0));
+            Assert.That(offMapSample.MaximumCameraMoveDistance, Is.GreaterThan(0f));
+            Assert.That(
+                offMapSample.MinimumRenderedInstanceCount,
+                Is.LessThan(nearSample.MaximumRenderedInstanceCount),
+                "Camera traversal did not change Entities Graphics visibility.");
+
+            int mapLodEntityCount =
+                CountSectionEntitiesWithComponent<MeshLODComponent>(
+                    entityManager,
+                    resolvedSectionEntities);
+            Debug.Log(
+                $"[PackedCameraCulling] mapLodEntities={mapLodEntityCount} " +
+                $"lodChunksTested=" +
+                $"{math.max(nearSample.MaximumLodChunksTested, offMapSample.MaximumLodChunksTested)} " +
+                "lodTransitionAcceptance=deferred-to-android");
+        }
+        finally
+        {
+            worldCamera.transform.SetPositionAndRotation(
+                originalPosition,
+                originalRotation);
+            worldCamera.orthographic = originalOrthographic;
+            worldCamera.orthographicSize = originalOrthographicSize;
+            worldCamera.nearClipPlane = originalNearClip;
+            worldCamera.farClipPlane = originalFarClip;
+            QualitySettings.shadows = originalShadowQuality;
+            for (int cameraIndex = 0; cameraIndex < cameras.Length; cameraIndex++)
+            {
+                if (cameras[cameraIndex] != null)
+                    cameras[cameraIndex].enabled = cameraEnabledStates[cameraIndex];
+            }
+        }
+    }
+
+    private static IEnumerator CaptureEntitiesGraphicsCullingSample(
+        EntitiesGraphicsSystem graphicsSystem,
+        Camera camera,
+        EntitiesGraphicsCullingSample sample,
+        string checkpoint)
+    {
+        const int warmupFrames = 2;
+        const int measuredFrames = 6;
+        sample.MinimumRenderedInstanceCount = int.MaxValue;
+        RenderTexture destination = RenderTexture.GetTemporary(
+            320,
+            240,
+            24,
+            RenderTextureFormat.ARGB32);
+        try
+        {
+            var request = new UnityEngine.Rendering.RenderPipeline.StandardRequest
+            {
+                destination = destination
+            };
+            Assert.That(
+                UnityEngine.Rendering.RenderPipeline.SupportsRenderRequest(
+                    camera,
+                    request),
+                Is.True,
+                "The active render pipeline does not support explicit camera requests.");
+
+            for (int frame = 0; frame < warmupFrames + measuredFrames; frame++)
+            {
+                UnityEngine.Rendering.RenderPipeline.SubmitRenderRequest(
+                    camera,
+                    request);
+                yield return null;
+                EntitiesGraphicsStats stats = graphicsSystem.Stats;
+                sample.MaximumCameraMoveDistance =
+                    math.max(sample.MaximumCameraMoveDistance, stats.CameraMoveDistance);
+                if (frame < warmupFrames)
+                    continue;
+
+                int batchCount = math.max(0, stats.BatchCount);
+                int chunkTotal = math.max(0, stats.ChunkTotal);
+                int instanceTests = math.max(0, stats.InstanceTests);
+                int drawCommandCount = math.max(0, stats.DrawCommandCount);
+                int lodChunksTested = math.max(0, stats.LodChunksTested);
+                int renderedInstanceCount =
+                    math.max(0, stats.RenderedInstanceCount);
+                int culledChunkCount = math.max(
+                    0,
+                    stats.ChunkCountAnyLod -
+                    stats.ChunkCountFullyIn -
+                    stats.ChunkCountInstancesProcessed);
+                sample.MaximumBatchCount =
+                    math.max(sample.MaximumBatchCount, batchCount);
+                sample.MaximumChunkTotal =
+                    math.max(sample.MaximumChunkTotal, chunkTotal);
+                sample.MaximumInstanceTests =
+                    math.max(sample.MaximumInstanceTests, instanceTests);
+                sample.MaximumDrawCommandCount =
+                    math.max(sample.MaximumDrawCommandCount, drawCommandCount);
+                sample.MaximumLodChunksTested =
+                    math.max(sample.MaximumLodChunksTested, lodChunksTested);
+                sample.MaximumCulledChunkCount =
+                    math.max(sample.MaximumCulledChunkCount, culledChunkCount);
+                sample.MaximumRenderedInstanceCount =
+                    math.max(sample.MaximumRenderedInstanceCount, renderedInstanceCount);
+                sample.MinimumRenderedInstanceCount =
+                    math.min(sample.MinimumRenderedInstanceCount, renderedInstanceCount);
+            }
+        }
+        finally
+        {
+            RenderTexture.ReleaseTemporary(destination);
+        }
+        Debug.Log(
+            $"[PackedCameraCulling] checkpoint={checkpoint} " +
+            $"batches={sample.MaximumBatchCount} chunks={sample.MaximumChunkTotal} " +
+            $"instanceTests={sample.MaximumInstanceTests} " +
+            $"culledChunks={sample.MaximumCulledChunkCount} " +
+            $"rendered={sample.MinimumRenderedInstanceCount}.." +
+            $"{sample.MaximumRenderedInstanceCount} " +
+            $"drawCommands={sample.MaximumDrawCommandCount} " +
+            $"lodChunksTested={sample.MaximumLodChunksTested} " +
+            $"cameraMove={sample.MaximumCameraMoveDistance:R}");
+    }
+
+    private static void AssertCameraTraversalResidency(
+        World world,
+        EntityManager entityManager,
+        Entity sceneEntity,
+        IReadOnlyList<Entity> resolvedSectionEntities,
+        IReadOnlyList<Entity> expectedEntities,
+        IReadOnlyList<Entity> expectedSceneRequests,
+        IReadOnlyList<string> expectedLoadedScenes,
+        StaticMapPresentationStreamer staticStreamer,
+        string checkpoint)
+    {
+        Assert.That(entityManager.Exists(sceneEntity), Is.True, checkpoint);
+        Assert.That(SceneSystem.IsSceneLoaded(world.Unmanaged, sceneEntity), Is.True, checkpoint);
+        Assert.That(
+            GetResolvedSectionEntities(entityManager, sceneEntity),
+            Is.EqualTo(resolvedSectionEntities),
+            checkpoint);
+        Assert.That(
+            GetSectionTaggedEntities(entityManager, resolvedSectionEntities),
+            Is.EqualTo(expectedEntities),
+            checkpoint);
+        Assert.That(
+            GetEntitiesWithComponent<RequestSceneLoaded>(entityManager),
+            Is.EqualTo(expectedSceneRequests),
+            checkpoint);
+        Assert.That(GetLoadedSceneSignatures(), Is.EqualTo(expectedLoadedScenes), checkpoint);
+        AssertSinglePublishedOperationMapRoot(entityManager);
+        Assert.That(staticStreamer.DrainComplete, Is.False, checkpoint);
+        Assert.That(staticStreamer.PendingOperationCount, Is.Zero, checkpoint);
+        Assert.That(staticStreamer.HasActiveOperation, Is.False, checkpoint);
+    }
+
+    private static Entity[] GetSectionTaggedEntities(
+        EntityManager entityManager,
+        IReadOnlyList<Entity> sectionEntities)
+    {
+        using EntityQuery query = entityManager.CreateEntityQuery(new EntityQueryDesc
+        {
+            All = new[] { ComponentType.ReadOnly<SceneTag>() },
+            Options = EntityQueryOptions.IncludeDisabledEntities |
+                      EntityQueryOptions.IncludePrefab
+        });
+        var entities = new List<Entity>();
+        for (int sectionIndex = 0; sectionIndex < sectionEntities.Count; sectionIndex++)
+        {
+            query.SetSharedComponentFilter(new SceneTag
+            {
+                SceneEntity = sectionEntities[sectionIndex]
+            });
+            using NativeArray<Entity> section =
+                query.ToEntityArray(Allocator.Temp);
+            entities.AddRange(section);
+        }
+        query.ResetFilter();
+        entities.Sort(CompareEntities);
+        return entities.ToArray();
+    }
+
+    private static Entity[] GetEntitiesWithComponent<T>(EntityManager entityManager)
+        where T : unmanaged, IComponentData
+    {
+        using EntityQuery query = entityManager.CreateEntityQuery(new EntityQueryDesc
+        {
+            All = new[] { ComponentType.ReadOnly<T>() },
+            Options = EntityQueryOptions.IncludeDisabledEntities |
+                      EntityQueryOptions.IncludePrefab
+        });
+        using NativeArray<Entity> values = query.ToEntityArray(Allocator.Temp);
+        Entity[] entities = values.ToArray();
+        Array.Sort(entities, CompareEntities);
+        return entities;
+    }
+
+    private static int CountSectionEntitiesWithComponent<T>(
+        EntityManager entityManager,
+        IReadOnlyList<Entity> sectionEntities)
+        where T : unmanaged, IComponentData
+    {
+        using EntityQuery query = entityManager.CreateEntityQuery(new EntityQueryDesc
+        {
+            All = new[]
+            {
+                ComponentType.ReadOnly<T>(),
+                ComponentType.ReadOnly<SceneTag>()
+            },
+            Options = EntityQueryOptions.IncludeDisabledEntities |
+                      EntityQueryOptions.IncludePrefab
+        });
+        int count = 0;
+        for (int sectionIndex = 0; sectionIndex < sectionEntities.Count; sectionIndex++)
+        {
+            query.SetSharedComponentFilter(new SceneTag
+            {
+                SceneEntity = sectionEntities[sectionIndex]
+            });
+            count += query.CalculateEntityCount();
+        }
+        query.ResetFilter();
+        return count;
+    }
+
+    private static Bounds CalculateSectionRenderBounds(
+        EntityManager entityManager,
+        IReadOnlyList<Entity> sectionEntities)
+    {
+        using EntityQuery query = entityManager.CreateEntityQuery(new EntityQueryDesc
+        {
+            All = new[]
+            {
+                ComponentType.ReadOnly<WorldRenderBounds>(),
+                ComponentType.ReadOnly<SceneTag>()
+            },
+            Options = EntityQueryOptions.IncludeDisabledEntities |
+                      EntityQueryOptions.IncludePrefab
+        });
+        bool hasBounds = false;
+        float3 minimum = new(float.MaxValue);
+        float3 maximum = new(float.MinValue);
+        for (int sectionIndex = 0; sectionIndex < sectionEntities.Count; sectionIndex++)
+        {
+            query.SetSharedComponentFilter(new SceneTag
+            {
+                SceneEntity = sectionEntities[sectionIndex]
+            });
+            using NativeArray<WorldRenderBounds> bounds =
+                query.ToComponentDataArray<WorldRenderBounds>(Allocator.Temp);
+            for (int boundsIndex = 0; boundsIndex < bounds.Length; boundsIndex++)
+            {
+                minimum = math.min(minimum, bounds[boundsIndex].Value.Min);
+                maximum = math.max(maximum, bounds[boundsIndex].Value.Max);
+                hasBounds = true;
+            }
+        }
+        query.ResetFilter();
+        Assert.That(hasBounds, Is.True, "Candidate sections have no world render bounds.");
+        return new Bounds(
+            (Vector3)((minimum + maximum) * 0.5f),
+            (Vector3)(maximum - minimum));
+    }
+
+    private static string[] GetLoadedSceneSignatures()
+    {
+        var signatures = new string[SceneManager.sceneCount];
+        for (int sceneIndex = 0; sceneIndex < SceneManager.sceneCount; sceneIndex++)
+        {
+            Scene scene = SceneManager.GetSceneAt(sceneIndex);
+            signatures[sceneIndex] =
+                $"{scene.handle}:{scene.path}:{scene.name}:{scene.isLoaded}";
+        }
+        Array.Sort(signatures, StringComparer.Ordinal);
+        return signatures;
+    }
+
+    private static int CompareEntities(Entity left, Entity right)
+    {
+        int index = left.Index.CompareTo(right.Index);
+        return index != 0 ? index : left.Version.CompareTo(right.Version);
+    }
+
+    private sealed class EntitiesGraphicsCullingSample
+    {
+        public int MaximumBatchCount;
+        public int MaximumChunkTotal;
+        public int MaximumInstanceTests;
+        public int MaximumDrawCommandCount;
+        public int MaximumCulledChunkCount;
+        public int MaximumLodChunksTested;
+        public int MaximumRenderedInstanceCount;
+        public int MinimumRenderedInstanceCount;
+        public float MaximumCameraMoveDistance;
     }
 
     [UnityTearDown]

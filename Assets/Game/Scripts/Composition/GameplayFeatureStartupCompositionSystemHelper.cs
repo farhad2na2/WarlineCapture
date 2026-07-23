@@ -29,6 +29,7 @@ namespace Game.Composition
         }
 
         public Result Initialize(
+            bool enableRuntimeCityGeneration,
             RuntimeCitySpawnerSystemConfig runtimeCitySpawnerConfig,
             RuntimeGridBlockerSystemConfig runtimeGridBlockerConfig,
             RuntimeDecorationSpawnerSystemConfig runtimeDecorationSpawnerConfig,
@@ -51,7 +52,9 @@ namespace Game.Composition
             IReadOnlyList<GridAuthoring> runtimeGridDebugViews,
             GameplaySceneBindingSceneSystemHelper sceneBindingSystem)
         {
-            RuntimeCityCompositionSystemHelper runtimeCity = ResolveRuntimeCityCompositionSystemHelper();
+            RuntimeCityCompositionSystemHelper runtimeCity = enableRuntimeCityGeneration
+                ? ResolveRuntimeCityCompositionSystemHelper()
+                : null;
             runtimeCity?.Configure(
                 runtimeCitySpawnerConfig,
                 roadRuntimeGenerationHelper,

@@ -45,6 +45,12 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
         "Assets/Game/GeneratedOperationMaps/RuntimeBinding/" +
         "opmap.skirmish.desert_base_01/Candidates/" +
         "opmap_skirmish_desert_base_01_entity_scene_runtime.unity";
+    private const string AcceptedOperationMapScenePath =
+        "Assets/Game/Scenes/OperationMaps/Skirmish/" +
+        "opmap_skirmish_desert_base_01.unity";
+    private const string AcceptedSubScenePath =
+        "Assets/Game/Scenes/OperationMaps/Skirmish/" +
+        "opmap_skirmish_desert_base_01_subscene.unity";
     private const string EntityContentPath =
         "Library/OperationMapCandidateRuntimeContent/Entities";
     private const float MaximumWaitSeconds = 300f;
@@ -312,6 +318,10 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
         Assert.That(
             route.Match.CanonicalPresentationMode,
             Is.EqualTo(OperationMapCanonicalPresentationMode.EntityScene));
+        Assert.That(
+            route.Match.MatchBootstrap.RuntimeCity,
+            Is.Null,
+            "EntityScene presentation must not construct the legacy runtime city generator.");
         Assert.That(staticStreamer.DrainComplete, Is.False);
         Assert.That(staticStreamer.PendingOperationCount, Is.Zero);
         Assert.That(staticStreamer.HasActiveOperation, Is.False);
@@ -329,6 +339,7 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
             CountEntitiesForSections(entityManager, resolvedSectionEntities),
             Is.GreaterThan(0));
         AssertSinglePublishedOperationMapRoot(entityManager);
+        AssertAcceptedAuthoringScenesNotLoaded();
 
         if (validateCameraTraversal)
         {
@@ -376,6 +387,7 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
             Is.Zero,
             $"Cycle {cycle} retained candidate EntityScene entities.");
         AssertNoPublishedOperationMapMetadata(entityManager);
+        AssertAcceptedAuthoringScenesNotLoaded();
         Assert.That(staticStreamer.DrainComplete, Is.False);
         Assert.That(staticStreamer.PendingOperationCount, Is.Zero);
         Assert.That(staticStreamer.HasActiveOperation, Is.False);
@@ -949,6 +961,18 @@ public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
         Assert.That(rootQuery.CalculateEntityCount(), Is.Zero);
         Assert.That(metadataQuery.CalculateEntityCount(), Is.Zero);
         Assert.That(readinessQuery.CalculateEntityCount(), Is.Zero);
+    }
+
+    private static void AssertAcceptedAuthoringScenesNotLoaded()
+    {
+        Assert.That(
+            SceneManager.GetSceneByPath(AcceptedOperationMapScenePath).isLoaded,
+            Is.False,
+            "The accepted operation-map authoring scene must not load at runtime.");
+        Assert.That(
+            SceneManager.GetSceneByPath(AcceptedSubScenePath).isLoaded,
+            Is.False,
+            "The accepted authoring SubScene must not load at runtime.");
     }
 
     private static void SetPrivateField(object owner, string fieldName, object value)

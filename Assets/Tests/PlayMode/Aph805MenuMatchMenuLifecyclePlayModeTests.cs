@@ -123,6 +123,15 @@ public sealed class Aph805MenuMatchMenuLifecyclePlayModeTests
         Debug.Log("[Aph805Lifecycle] stage=MatchStable");
 
         context.MatchBootstrap = context.Match.MatchBootstrap;
+        bool entityScene =
+            context.Match.CanonicalPresentationMode ==
+            Game.Rendering.OperationMapCanonicalPresentationMode.EntityScene;
+        Assert.That(
+            context.MatchBootstrap.RuntimeCity,
+            entityScene ? Is.Null : Is.Not.Null,
+            entityScene
+                ? "EntityScene Match must not construct the legacy runtime city generator."
+                : "StaticSceneChunks Match must preserve legacy runtime city ownership.");
     }
 
     internal static IEnumerator ReturnToStableMenu(TransitionContext context)

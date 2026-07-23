@@ -950,6 +950,9 @@ namespace Game.Composition
                 return;
 
             GameplayFeatureStartupCompositionSystemHelper.Result gameplaySystems = _gameplayFeatureStartupSystem.Initialize(
+                sceneView == null ||
+                sceneView.CanonicalPresentationMode !=
+                OperationMapCanonicalPresentationMode.EntityScene,
                 RuntimeCitySpawnerConfig,
                 RuntimeGridBlockerConfig,
                 RuntimeDecorationSpawnerConfig,

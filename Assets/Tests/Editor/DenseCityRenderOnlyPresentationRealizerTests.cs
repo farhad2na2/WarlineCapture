@@ -13,6 +13,7 @@ public sealed class DenseCityRenderOnlyPresentationRealizerTests
     private const string EntityScenePath = TempRoot + "/entity.unity";
     private const string MaterialPath = TempRoot + "/material.mat";
     private const string OtherMaterialPath = TempRoot + "/other.mat";
+    private const string ThirdMaterialPath = TempRoot + "/third.mat";
     private const string PrefabPath = TempRoot + "/prop.prefab";
     private const string Hash =
         "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
@@ -63,7 +64,7 @@ public sealed class DenseCityRenderOnlyPresentationRealizerTests
     }
 
     [Test]
-    public void Realize_MaterialIdentityMismatchFailsAndRemovesPartialInstance()
+    public void Realize_AppliesRecordedSingleMaterialOverride()
     {
         (Scene mapScene, Scene entityScene) = CreateScenePair();
         try
@@ -92,6 +93,51 @@ public sealed class DenseCityRenderOnlyPresentationRealizerTests
                 true,
                 1);
             DenseCityPresentationHierarchyContext hierarchy = CreateHierarchy(mapScene, entityScene);
+            Transform realized = DenseCityRenderOnlyPresentationRealizer.Realize(record, hierarchy);
+
+            Assert.That(realized.GetComponentInChildren<Renderer>().sharedMaterial, Is.SameAs(other));
+        }
+        finally
+        {
+            EditorSceneManager.CloseScene(entityScene, true);
+            EditorSceneManager.CloseScene(mapScene, true);
+        }
+    }
+
+    [Test]
+    public void Realize_AmbiguousMaterialIdentityMismatchFailsAndRemovesPartialInstance()
+    {
+        (Scene mapScene, Scene entityScene) = CreateScenePair();
+        try
+        {
+            GameObject prefab = CreatePrefab(MaterialPath);
+            DenseCityVisualAssetMetadata metadata = DenseCityVisualAssetMetadataExtractor.Extract(prefab);
+            Material other = CreateMaterial(OtherMaterialPath);
+            Material third = CreateMaterial(ThirdMaterialPath);
+            Assert.That(
+                AssetDatabase.TryGetGUIDAndLocalFileIdentifier(other, out string otherGuid, out long _),
+                Is.True);
+            Assert.That(
+                AssetDatabase.TryGetGUIDAndLocalFileIdentifier(third, out string thirdGuid, out long _),
+                Is.True);
+            var record = new DenseCityPresentationBakeRecord(
+                new DenseCityRecordIdentity(
+                    "dense-city-v1",
+                    42,
+                    0,
+                    "prop-visual",
+                    0,
+                    metadata.PrefabAssetGuid,
+                    metadata.PrefabLocalId),
+                DenseCityPresentationCategory.Prop,
+                metadata.PrefabAssetGuid,
+                null,
+                new[] { otherGuid, thirdGuid },
+                Matrix4x4.identity,
+                true,
+                true,
+                1);
+            DenseCityPresentationHierarchyContext hierarchy = CreateHierarchy(mapScene, entityScene);
             Transform props = hierarchy.ResolveIndependentParent(DenseCityPresentationCategory.Prop);
 
             Assert.That(
@@ -104,6 +150,29 @@ public sealed class DenseCityRenderOnlyPresentationRealizerTests
             EditorSceneManager.CloseScene(entityScene, true);
             EditorSceneManager.CloseScene(mapScene, true);
         }
+    }
+
+    [Test]
+    public void RequireMatrixParity_AcceptsOneUlpAtLargeCoordinatesButRejectsDrift()
+    {
+        GameObject prefab = CreatePrefab(MaterialPath);
+        DenseCityVisualAssetMetadata metadata = DenseCityVisualAssetMetadataExtractor.Extract(prefab);
+        Matrix4x4 expected = Matrix4x4.identity;
+        expected[12] = 1704.95789f;
+        DenseCityPresentationBakeRecord record = CreateRecord(metadata, expected);
+        Matrix4x4 oneUlp = expected;
+        oneUlp[12] = BitConverter.Int32BitsToSingle(
+            BitConverter.SingleToInt32Bits(expected[12]) + 1);
+
+        Assert.That(
+            () => DenseCityRenderOnlyPresentationRealizer.RequireMatrixParity(oneUlp, record),
+            Throws.Nothing);
+
+        Matrix4x4 drifted = expected;
+        drifted[12] += 0.01f;
+        Assert.That(
+            () => DenseCityRenderOnlyPresentationRealizer.RequireMatrixParity(drifted, record),
+            Throws.TypeOf<InvalidOperationException>().With.Message.Contains("matrix[12]"));
     }
 
     private static GameObject CreatePrefab(string materialPath)

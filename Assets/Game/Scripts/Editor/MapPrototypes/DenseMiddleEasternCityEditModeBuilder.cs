@@ -705,6 +705,7 @@ namespace Game.Editor
             private readonly DenseCityBuildingDefinitionLibrary _definitionLibrary;
             private readonly DenseCityGenerationTransactionContext _generationTransactions;
             private readonly Transform _presentationParent;
+            private readonly Rect? _approvedMapSurfaceBounds;
             private readonly List<Rect> _occupiedBounds = new();
             private readonly Dictionary<Vector2Int, List<int>> _occupiedByCell = new();
             private int _districtId = -1;
@@ -718,7 +719,8 @@ namespace Game.Editor
                 RuntimeCitySpawnerSystemConfig config,
                 DenseCityBuildingMaterialLibrary materialLibrary,
                 DenseCityGenerationTransactionContext generationTransactions,
-                Transform presentationParent)
+                Transform presentationParent,
+                Rect? approvedMapSurfaceBounds = null)
             {
                 _roadCells = roadCells ?? new HashSet<Vector2Int>();
                 _dirtRoadCells = dirtRoadCells ?? new HashSet<Vector2Int>();
@@ -731,6 +733,7 @@ namespace Game.Editor
                 _presentationParent = presentationParent != null
                     ? presentationParent
                     : throw new ArgumentNullException(nameof(presentationParent));
+                _approvedMapSurfaceBounds = approvedMapSurfaceBounds;
             }
 
             public Matrix4x4 PresentationParentLocalToWorldMatrix => _presentationParent.localToWorldMatrix;
@@ -757,6 +760,17 @@ namespace Game.Editor
                 }
                 if (_districtId < 0)
                     throw new InvalidOperationException("Dense-city building district must be explicit before placement.");
+                bool insideApprovedMapSurface = true;
+                if (_approvedMapSurfaceBounds.HasValue)
+                {
+                    Rect bounds = _approvedMapSurfaceBounds.Value;
+                    Bounds blockerBounds = plan.BlockerBounds;
+                    if (blockerBounds.min.x < bounds.xMin || blockerBounds.max.x > bounds.xMax ||
+                        blockerBounds.min.z < bounds.yMin || blockerBounds.max.z > bounds.yMax)
+                    {
+                        insideApprovedMapSurface = false;
+                    }
+                }
 
                 DenseCityBuildingMaterialSelection materialSelection = _materialLibrary.Select(
                     info.Prefab,
@@ -791,7 +805,7 @@ namespace Game.Editor
                             plan.Chunk,
                             info.BuildingRole == GeneratedCityBuildingRole.Civic ? "civic" : null),
                         _materialLibrary),
-                    realize,
+                    insideApprovedMapSurface ? realize : static () => false,
                     out acceptedBuilding);
             }
 
@@ -1170,6 +1184,11 @@ namespace Game.Editor
             float cityWidth = runtimeGridWidth + WestCityExpansion;
             float cityDepth = runtimeGridDepth + SouthCityExpansion + NorthCityExpansion;
             Vector3 cityCenter = cityOrigin + new Vector3(cityWidth * 0.5f, 0f, cityDepth * 0.5f);
+            var approvedMapSurfaceBounds = new Rect(
+                runtimeGridOrigin.x,
+                runtimeGridOrigin.z,
+                runtimeGridWidth,
+                runtimeGridDepth);
             var authoredCoreBounds = new Rect(
                 mapCenter.x - 130f,
                 mapCenter.z - 95f,
@@ -1213,6 +1232,7 @@ namespace Game.Editor
                 cityOrigin,
                 cityWidth,
                 cityDepth,
+                approvedMapSurfaceBounds,
                 authoredCoreBounds,
                 new Vector2(mapCenter.x, mapCenter.z),
                 cityFootprint,
@@ -1232,6 +1252,7 @@ namespace Game.Editor
                 roadResult,
                 authoredGradeElevation,
                 config.RandomSeed,
+                approvedMapSurfaceBounds,
                 generationTransactions);
             Debug.Log(
                 $"[DenseCityCanals] routes={canalResult.RouteCount} waterTiles={canalResult.WaterTiles} " +
@@ -1265,6 +1286,7 @@ namespace Game.Editor
                 cityOrigin,
                 cityWidth,
                 cityDepth,
+                approvedMapSurfaceBounds,
                 roadResult.StreetColumns,
                 roadResult.StreetRows,
                 roadResult.RoadCells,
@@ -1297,6 +1319,7 @@ namespace Game.Editor
                 cityOrigin,
                 cityWidth,
                 cityDepth,
+                approvedMapSurfaceBounds,
                 cityFootprint,
                 authoredCoreBounds,
                 roadResult.RoadCells,
@@ -1305,11 +1328,12 @@ namespace Game.Editor
                 roadResult.BoulevardMedianCells,
                 authoredGradeElevation,
                 config.RandomSeed);
-            int openGroundDetails = AddOpenGroundDetails(
+            OpenGroundDetailResult openGroundDetails = AddOpenGroundDetails(
                 generatedRoot,
                 cityOrigin,
                 cityWidth,
                 cityDepth,
+                approvedMapSurfaceBounds,
                 cityFootprint,
                 authoredCoreBounds,
                 roadResult.RoadCells,
@@ -1320,7 +1344,7 @@ namespace Game.Editor
                 generationTransactions);
             Debug.Log(
                 $"[DenseCityDetailPass] roofCaps={roofDetails} " +
-                $"openGroundPatches={openGroundDetails}");
+                $"openGroundPatches={openGroundDetails.Visuals}");
             Debug.Log(
                 $"[DenseCityUrbanProps] waterTanks={urbanDetails.WaterTanks} " +
                 $"rooftopUtilities={urbanDetails.RooftopUtilities} " +
@@ -1478,33 +1502,36 @@ namespace Game.Editor
             int semanticOpenGroundPresentations = CountPresentationRecords(
                 generationTransactions.Records.Presentations,
                 "open-ground-visual");
-            if (semanticCanalWaterExclusions != canalResult.WaterTiles ||
+            if (semanticCanalWaterExclusions != canalResult.GameplayWaterExclusions ||
                 semanticCanalBedPresentations != canalResult.WaterTiles ||
                 semanticCanalWaterPresentations != canalResult.WaterTiles)
             {
                 throw new InvalidOperationException(
                     $"Canal semantic parity failed: tiles={canalResult.WaterTiles} " +
-                    $"exclusions={semanticCanalWaterExclusions} beds={semanticCanalBedPresentations} " +
+                    $"exclusions={semanticCanalWaterExclusions}/" +
+                    $"{canalResult.GameplayWaterExclusions} beds={semanticCanalBedPresentations} " +
                     $"water={semanticCanalWaterPresentations}.");
             }
             if (canalResult.GreenBanks % 3 != 0 ||
-                semanticCanalBankTerrains != canalResult.GreenBanks / 3 ||
+                semanticCanalBankTerrains != canalResult.GameplayBankTerrains ||
                 semanticCanalBankBasePresentations != canalResult.GreenBanks ||
                 semanticCanalBankPresentations != canalResult.GreenBanks)
             {
                 throw new InvalidOperationException(
                     $"Canal bank semantic parity failed: patches={canalResult.GreenBanks} " +
-                    $"terrains={semanticCanalBankTerrains} bases={semanticCanalBankBasePresentations} " +
+                    $"terrains={semanticCanalBankTerrains}/" +
+                    $"{canalResult.GameplayBankTerrains} bases={semanticCanalBankBasePresentations} " +
                     $"visuals={semanticCanalBankPresentations}.");
             }
             const int CanalParkPatches = 5;
-            if (semanticCanalParkTerrains != canalResult.ParkAreas ||
+            if (semanticCanalParkTerrains != canalResult.GameplayParkTerrains ||
                 semanticCanalParkBasePresentations != canalResult.ParkAreas * CanalParkPatches ||
                 semanticCanalParkPresentations != canalResult.ParkAreas * CanalParkPatches)
             {
                 throw new InvalidOperationException(
                     $"Canal park semantic parity failed: parks={canalResult.ParkAreas} " +
-                    $"terrains={semanticCanalParkTerrains} bases={semanticCanalParkBasePresentations} " +
+                    $"terrains={semanticCanalParkTerrains}/" +
+                    $"{canalResult.GameplayParkTerrains} bases={semanticCanalParkBasePresentations} " +
                     $"visuals={semanticCanalParkPresentations}.");
             }
             if (semanticCanalTrees != canalResult.Trees ||
@@ -1573,14 +1600,15 @@ namespace Game.Editor
                     $"lines={urbanDetails.PowerLines}/{semanticPowerLines}.");
             }
             if (semanticCourtyardWalls != urbanDetails.CourtyardWalls ||
-                semanticCourtyardWallPresentations != urbanDetails.CourtyardWalls ||
+                semanticCourtyardWallPresentations != urbanDetails.CourtyardWallVisuals ||
                 semanticCourtyardPillars != urbanDetails.CourtyardPillars ||
                 semanticCourtyardWells != urbanDetails.CourtyardWells ||
                 semanticCourtyardBushes != urbanDetails.CourtyardBushes)
             {
                 throw new InvalidOperationException(
                     $"Courtyard semantic parity failed: " +
-                    $"walls={urbanDetails.CourtyardWalls}/{semanticCourtyardWalls}/" +
+                    $"walls={urbanDetails.CourtyardWalls}/{semanticCourtyardWalls} " +
+                    $"visuals={urbanDetails.CourtyardWallVisuals}/" +
                     $"{semanticCourtyardWallPresentations} " +
                     $"pillars={urbanDetails.CourtyardPillars}/{semanticCourtyardPillars} " +
                     $"wells={urbanDetails.CourtyardWells}/{semanticCourtyardWells} " +
@@ -1588,14 +1616,15 @@ namespace Game.Editor
             }
             if (semanticStreetProps != urbanDetails.StreetProps ||
                 semanticUrbanTrees != urbanDetails.Trees ||
-                semanticUrbanRocks != urbanDetails.Rocks ||
+                semanticUrbanRocks != urbanDetails.GameplayRocks ||
                 semanticUrbanRockPresentations != urbanDetails.Rocks)
             {
                 throw new InvalidOperationException(
                     $"Natural-detail semantic parity failed: " +
                     $"streetProps={urbanDetails.StreetProps}/{semanticStreetProps} " +
                     $"trees={urbanDetails.Trees}/{semanticUrbanTrees} " +
-                    $"rocks={urbanDetails.Rocks}/{semanticUrbanRocks}/" +
+                    $"rocks={urbanDetails.GameplayRocks}/{semanticUrbanRocks} " +
+                    $"visuals={urbanDetails.Rocks}/" +
                     $"{semanticUrbanRockPresentations}.");
             }
             if (semanticCivicFountains != 2)
@@ -1603,12 +1632,13 @@ namespace Game.Editor
                 throw new InvalidOperationException(
                     $"Civic fountain semantic parity failed: expected=2 actual={semanticCivicFountains}.");
             }
-            if (semanticOpenGroundTerrains != openGroundDetails ||
-                semanticOpenGroundPresentations != openGroundDetails)
+            if (semanticOpenGroundTerrains != openGroundDetails.GameplayTerrains ||
+                semanticOpenGroundPresentations != openGroundDetails.Visuals)
             {
                 throw new InvalidOperationException(
-                    $"Open-ground semantic parity failed: realized={openGroundDetails} " +
-                    $"terrain={semanticOpenGroundTerrains} visuals={semanticOpenGroundPresentations}.");
+                    $"Open-ground semantic parity failed: realized={openGroundDetails.Visuals} " +
+                    $"terrain={semanticOpenGroundTerrains}/" +
+                    $"{openGroundDetails.GameplayTerrains} visuals={semanticOpenGroundPresentations}.");
             }
             Debug.Log(
                 $"[DenseCitySemanticRecords] buildings={generationTransactions.Records.Buildings.Count} " +
@@ -2925,9 +2955,12 @@ namespace Game.Editor
         {
             public readonly int RouteCount;
             public readonly int WaterTiles;
+            public readonly int GameplayWaterExclusions;
             public readonly int Bridges;
             public readonly int GreenBanks;
+            public readonly int GameplayBankTerrains;
             public readonly int ParkAreas;
+            public readonly int GameplayParkTerrains;
             public readonly int Trees;
             public readonly int Bushes;
             public readonly int StreetLights;
@@ -2936,9 +2969,12 @@ namespace Game.Editor
             public CanalBakeResult(
                 int routeCount,
                 int waterTiles,
+                int gameplayWaterExclusions,
                 int bridges,
                 int greenBanks,
+                int gameplayBankTerrains,
                 int parkAreas,
+                int gameplayParkTerrains,
                 int trees,
                 int bushes,
                 int streetLights,
@@ -2946,9 +2982,12 @@ namespace Game.Editor
             {
                 RouteCount = routeCount;
                 WaterTiles = waterTiles;
+                GameplayWaterExclusions = gameplayWaterExclusions;
                 Bridges = bridges;
                 GreenBanks = greenBanks;
+                GameplayBankTerrains = gameplayBankTerrains;
                 ParkAreas = parkAreas;
+                GameplayParkTerrains = gameplayParkTerrains;
                 Trees = trees;
                 Bushes = bushes;
                 StreetLights = streetLights;
@@ -3112,8 +3151,10 @@ namespace Game.Editor
             public readonly int StreetProps;
             public readonly int Trees;
             public readonly int Rocks;
+            public readonly int GameplayRocks;
             public readonly int Courtyards;
             public readonly int CourtyardWalls;
+            public readonly int CourtyardWallVisuals;
             public readonly int CourtyardPillars;
             public readonly int CourtyardWells;
             public readonly int CourtyardBushes;
@@ -3134,8 +3175,10 @@ namespace Game.Editor
                 int streetProps,
                 int trees,
                 int rocks,
+                int gameplayRocks,
                 int courtyards,
                 int courtyardWalls,
+                int courtyardWallVisuals,
                 int courtyardPillars,
                 int courtyardWells,
                 int courtyardBushes,
@@ -3155,8 +3198,10 @@ namespace Game.Editor
                 StreetProps = streetProps;
                 Trees = trees;
                 Rocks = rocks;
+                GameplayRocks = gameplayRocks;
                 Courtyards = courtyards;
                 CourtyardWalls = courtyardWalls;
+                CourtyardWallVisuals = courtyardWallVisuals;
                 CourtyardPillars = courtyardPillars;
                 CourtyardWells = courtyardWells;
                 CourtyardBushes = courtyardBushes;
@@ -3779,6 +3824,7 @@ namespace Game.Editor
             Vector3 mapOrigin,
             float mapWidth,
             float mapDepth,
+            Rect mapSurfaceBounds,
             Rect authoredCoreBounds,
             Vector2 civicCenter,
             CityFootprint cityFootprint,
@@ -3972,6 +4018,7 @@ namespace Game.Editor
                 elevationPlan,
                 surface,
                 cityFootprint,
+                mapSurfaceBounds,
                 seed,
                 generationTransactions,
                 out Dictionary<Vector2Int, GameObject> roadTileObjects,
@@ -4175,6 +4222,7 @@ namespace Game.Editor
             RoadBakeResult roadResult,
             float gradeElevation,
             uint seed,
+            Rect mapSurfaceBounds,
             DenseCityGenerationTransactionContext generationTransactions)
         {
             if (generationTransactions == null)
@@ -4245,9 +4293,12 @@ namespace Game.Editor
                 seed);
 
             int waterTiles = 0;
+            int gameplayWaterExclusions = 0;
             int bridges = 0;
             int greenBanks = 0;
+            int gameplayBankTerrains = 0;
             int parkAreas = 0;
+            int gameplayParkTerrains = 0;
             int trees = 0;
             int bushes = 0;
             int streetLights = 0;
@@ -4318,43 +4369,86 @@ namespace Game.Editor
                     GameObject waterSurface = null;
                     try
                     {
-                        bool accepted = generationTransactions.TryPlaceCanalWater(
-                            0,
-                            sequence => DenseCityCanalWaterRecordFactory.Create(
-                                new DenseCityCanalWaterRecordInput(
-                                    DenseCityGeneratorSchema,
+                        bool hasGameplayExclusion = TryResolveClippedSurface(
+                            center,
+                            waterWidth,
+                            waterDepth,
+                            waterTopElevation,
+                            mapSurfaceBounds,
+                            out Matrix4x4 exclusionMatrix,
+                            out Vector2 exclusionSize);
+                        var waterPresentations = new[]
+                        {
+                            new DenseCityTerrainVisualPresentationInput(
+                                "canal-bed-visual",
+                                canalWaterMetadata.PrefabAssetGuid,
+                                canalWaterMetadata.PrefabLocalId,
+                                canalBedMetadata.MaterialAssetGuids,
+                                bedPlan.WorldMatrix,
+                                false,
+                                true,
+                                1),
+                            new DenseCityTerrainVisualPresentationInput(
+                                "canal-water-visual",
+                                canalWaterMetadata.PrefabAssetGuid,
+                                canalWaterMetadata.PrefabLocalId,
+                                canalWaterMetadata.MaterialAssetGuids,
+                                waterPlan.WorldMatrix,
+                                false,
+                                true,
+                                2)
+                        };
+                        bool accepted = hasGameplayExclusion
+                            ? generationTransactions.TryPlaceCanalWater(
+                                0,
+                                sequence => DenseCityCanalWaterRecordFactory.Create(
+                                    new DenseCityCanalWaterRecordInput(
+                                        DenseCityGeneratorSchema,
+                                        unchecked((int)seed),
+                                        0,
+                                        sequence,
+                                        canalWaterMetadata.PrefabAssetGuid,
+                                        canalWaterMetadata.PrefabLocalId,
+                                        canalBedMetadata.MaterialAssetGuids,
+                                        canalWaterMetadata.MaterialAssetGuids,
+                                        bedPlan.WorldMatrix,
+                                        waterPlan.WorldMatrix,
+                                        exclusionSize,
+                                        waterTopElevation,
+                                        DenseCityBuildingSurfaceLayer,
+                                        canalChunk,
+                                        exclusionMatrix)),
+                                RealizeWater)
+                            : generationTransactions.TryPlacePresentationOnlyTerrainVisuals(
+                                0,
+                                waterPresentations.Length,
+                                sequence => CreatePresentationOnlyTerrainRecords(
+                                    waterPresentations,
                                     unchecked((int)seed),
-                                    0,
-                                    sequence,
-                                    canalWaterMetadata.PrefabAssetGuid,
-                                    canalWaterMetadata.PrefabLocalId,
-                                    canalBedMetadata.MaterialAssetGuids,
-                                    canalWaterMetadata.MaterialAssetGuids,
-                                    bedPlan.WorldMatrix,
-                                    waterPlan.WorldMatrix,
-                                    new Vector2(waterWidth, waterDepth),
-                                    waterTopElevation,
-                                    DenseCityBuildingSurfaceLayer,
-                                    canalChunk)),
-                            () =>
-                            {
-                                string underpassSuffix = highwayUnderpass ? "_Underpass" : string.Empty;
-                                bedSurface = RealizeCanalSurface(
-                                    bedRootObject.transform,
-                                    $"CanalBed_{routeIndex:00}_{cellIndex:000}{underpassSuffix}",
-                                    bedPlan,
-                                    canalBedMaterial);
-                                waterSurface = RealizeCanalSurface(
-                                    waterRootObject.transform,
-                                    $"CanalWater_{routeIndex:00}_{cellIndex:000}{underpassSuffix}",
-                                    waterPlan,
-                                    waterMaterial);
-                                ValidateCanalSurfaceMatrix(bedSurface, bedPlan);
-                                ValidateCanalSurfaceMatrix(waterSurface, waterPlan);
-                                return true;
-                            });
+                                    sequence),
+                                RealizeWater);
                         if (!accepted)
                             continue;
+                        if (hasGameplayExclusion)
+                            gameplayWaterExclusions++;
+
+                        bool RealizeWater()
+                        {
+                            string underpassSuffix = highwayUnderpass ? "_Underpass" : string.Empty;
+                            bedSurface = RealizeCanalSurface(
+                                bedRootObject.transform,
+                                $"CanalBed_{routeIndex:00}_{cellIndex:000}{underpassSuffix}",
+                                bedPlan,
+                                canalBedMaterial);
+                            waterSurface = RealizeCanalSurface(
+                                waterRootObject.transform,
+                                $"CanalWater_{routeIndex:00}_{cellIndex:000}{underpassSuffix}",
+                                waterPlan,
+                                waterMaterial);
+                            ValidateCanalSurfaceMatrix(bedSurface, bedPlan);
+                            ValidateCanalSurfaceMatrix(waterSurface, waterPlan);
+                            return true;
+                        }
                     }
                     catch
                     {
@@ -4533,7 +4627,20 @@ namespace Game.Editor
                             materialOverride: canalGreenMaterial,
                             seed: seed,
                             chunk: canalChunk,
+                            mapSurfaceBounds: mapSurfaceBounds,
                             generationTransactions: generationTransactions);
+                        if (bankPatchCount > 0 &&
+                            TryResolveClippedSurface(
+                                bankCenter,
+                                bankWidth,
+                                bankDepth,
+                                gradeElevation + 0.065f,
+                                mapSurfaceBounds,
+                                out _,
+                                out _))
+                        {
+                            gameplayBankTerrains++;
+                        }
                         ReserveRectAsCells(bankBounds, roadResult.RoadCells, mapOrigin);
                         greenBanks += bankPatchCount;
 
@@ -4612,6 +4719,7 @@ namespace Game.Editor
                         route,
                         routeIndex,
                         mapOrigin,
+                        mapSurfaceBounds,
                         gradeElevation,
                         authoredCoreBounds,
                         cityFootprint,
@@ -4632,9 +4740,12 @@ namespace Game.Editor
                         generationTransactions,
                         out int parkTrees,
                         out int parkBushes,
-                        out int parkLights))
+                        out int parkLights,
+                        out bool parkHasGameplaySurface))
                 {
                     parkAreas++;
+                    if (parkHasGameplaySurface)
+                        gameplayParkTerrains++;
                     trees += parkTrees;
                     bushes += parkBushes;
                     streetLights += parkLights;
@@ -4659,9 +4770,12 @@ namespace Game.Editor
             return new CanalBakeResult(
                 routes.Count,
                 waterTiles,
+                gameplayWaterExclusions,
                 bridges,
                 greenBanks,
+                gameplayBankTerrains,
                 parkAreas,
+                gameplayParkTerrains,
                 trees,
                 bushes,
                 streetLights,
@@ -5005,6 +5119,7 @@ namespace Game.Editor
             CanalRoute route,
             int routeIndex,
             Vector3 mapOrigin,
+            Rect mapSurfaceBounds,
             float gradeElevation,
             Rect authoredCoreBounds,
             CityFootprint cityFootprint,
@@ -5025,11 +5140,13 @@ namespace Game.Editor
             DenseCityGenerationTransactionContext generationTransactions,
             out int trees,
             out int bushes,
-            out int lights)
+            out int lights,
+            out bool hasGameplaySurface)
         {
             trees = 0;
             bushes = 0;
             lights = 0;
+            hasGameplaySurface = false;
             if (route.Cells.Count < 9)
                 return false;
             if (roundGroundMetadata == null || roundGroundMetadata.Length != roundGroundPrefabs.Length)
@@ -5081,6 +5198,14 @@ namespace Game.Editor
             Vector2Int parkChunk = new(
                 Mathf.FloorToInt((float)parkCellForChunk.x / RoadChunkSize),
                 Mathf.FloorToInt((float)parkCellForChunk.y / RoadChunkSize));
+            hasGameplaySurface = TryResolveClippedSurface(
+                parkCenter,
+                parkBounds.width,
+                parkBounds.height,
+                gradeElevation + 0.065f,
+                mapSurfaceBounds,
+                out _,
+                out _);
             bool accepted = InstantiateOrganicCanalPark(
                 roundGroundPrefabs,
                 roundGroundMetadata,
@@ -5094,9 +5219,13 @@ namespace Game.Editor
                 greenMaterial,
                 seed,
                 parkChunk,
+                mapSurfaceBounds,
                 generationTransactions);
             if (!accepted)
+            {
+                hasGameplaySurface = false;
                 return false;
+            }
             ReserveRectAsCells(parkBounds, reservedCells, mapOrigin);
 
             Vector2[] treeOffsets =
@@ -5196,6 +5325,7 @@ namespace Game.Editor
             Material materialOverride,
             uint seed,
             Vector2Int chunk,
+            Rect mapSurfaceBounds,
             DenseCityGenerationTransactionContext generationTransactions)
         {
             if (roundBankPrefabs == null || roundBankPrefabs.Length == 0)
@@ -5238,42 +5368,58 @@ namespace Game.Editor
             var realized = new List<GameObject>(plans.Count);
             try
             {
-                bool accepted = generationTransactions.TryPlaceTerrainVisuals(
-                    0,
-                    plans.Count,
-                    sequence => DenseCityTerrainVisualRecordFactory.Create(
-                        new DenseCityTerrainVisualRecordInput(
-                            DenseCityGeneratorSchema,
+                bool hasGameplaySurface = TryResolveClippedSurface(
+                    center,
+                    targetWidth,
+                    targetDepth,
+                    topElevation,
+                    mapSurfaceBounds,
+                    out Matrix4x4 surfaceMatrix,
+                    out Vector2 surfaceSize);
+                bool accepted = hasGameplaySurface
+                    ? generationTransactions.TryPlaceTerrainVisuals(
+                        0,
+                        plans.Count,
+                        sequence => DenseCityTerrainVisualRecordFactory.Create(
+                            new DenseCityTerrainVisualRecordInput(
+                                DenseCityGeneratorSchema,
+                                unchecked((int)seed),
+                                0,
+                                sequence,
+                                "canal-bank-terrain",
+                                surfaceMatrix,
+                                surfaceSize,
+                                topElevation,
+                                (uint)(MapSurfaceMovementMask.AllGroundUnits |
+                                       MapSurfaceMovementMask.AirGrounded),
+                                DenseCityBuildingSurfaceLayer,
+                                chunk,
+                                presentationInputs)),
+                        RealizeAll)
+                    : generationTransactions.TryPlacePresentationOnlyTerrainVisuals(
+                        0,
+                        plans.Count,
+                        sequence => CreatePresentationOnlyTerrainRecords(
+                            presentationInputs,
                             unchecked((int)seed),
-                            0,
-                            sequence,
-                            "canal-bank-terrain",
-                            Matrix4x4.TRS(
-                                new Vector3(center.x, topElevation, center.y),
-                                Quaternion.identity,
-                                Vector3.one),
-                            new Vector2(targetWidth, targetDepth),
-                            topElevation,
-                            (uint)(MapSurfaceMovementMask.AllGroundUnits |
-                                   MapSurfaceMovementMask.AirGrounded),
-                            DenseCityBuildingSurfaceLayer,
-                            chunk,
-                            presentationInputs)),
-                    () =>
-                    {
-                        for (int index = 0; index < plans.Count; index++)
-                        {
-                            GameObject surface = RealizeCanalSurface(
-                                parent,
-                                names[index],
-                                plans[index],
-                                materialOverride);
-                            realized.Add(surface);
-                            ValidateCanalSurfaceMatrix(surface, plans[index]);
-                        }
-                        return true;
-                    });
+                            sequence),
+                        RealizeAll);
                 return accepted ? createdPatches : 0;
+
+                bool RealizeAll()
+                {
+                    for (int index = 0; index < plans.Count; index++)
+                    {
+                        GameObject surface = RealizeCanalSurface(
+                            parent,
+                            names[index],
+                            plans[index],
+                            materialOverride);
+                        realized.Add(surface);
+                        ValidateCanalSurfaceMatrix(surface, plans[index]);
+                    }
+                    return true;
+                }
             }
             catch
             {
@@ -5312,6 +5458,99 @@ namespace Game.Editor
             }
         }
 
+        private static bool TryResolveClippedSurface(
+            Vector2 center,
+            float width,
+            float depth,
+            float elevation,
+            Rect mapSurfaceBounds,
+            out Matrix4x4 surfaceMatrix,
+            out Vector2 surfaceSize)
+        {
+            float minimumX = Mathf.Max(center.x - width * 0.5f, mapSurfaceBounds.xMin);
+            float maximumX = Mathf.Min(center.x + width * 0.5f, mapSurfaceBounds.xMax);
+            float minimumY = Mathf.Max(center.y - depth * 0.5f, mapSurfaceBounds.yMin);
+            float maximumY = Mathf.Min(center.y + depth * 0.5f, mapSurfaceBounds.yMax);
+            if (minimumX >= maximumX || minimumY >= maximumY)
+            {
+                surfaceMatrix = default;
+                surfaceSize = default;
+                return false;
+            }
+
+            // Reconstructing center +/- half-size can round one ULP back outside an exact edge.
+            const float BoundaryInset = 0.0001f;
+            if (minimumX <= mapSurfaceBounds.xMin)
+                minimumX += BoundaryInset;
+            if (maximumX >= mapSurfaceBounds.xMax)
+                maximumX -= BoundaryInset;
+            if (minimumY <= mapSurfaceBounds.yMin)
+                minimumY += BoundaryInset;
+            if (maximumY >= mapSurfaceBounds.yMax)
+                maximumY -= BoundaryInset;
+            if (minimumX >= maximumX || minimumY >= maximumY)
+            {
+                surfaceMatrix = default;
+                surfaceSize = default;
+                return false;
+            }
+
+            surfaceSize = new Vector2(maximumX - minimumX, maximumY - minimumY);
+            surfaceMatrix = Matrix4x4.TRS(
+                new Vector3(
+                    (minimumX + maximumX) * 0.5f,
+                    elevation,
+                    (minimumY + maximumY) * 0.5f),
+                Quaternion.identity,
+                Vector3.one);
+            return true;
+        }
+
+        private static bool IsSurfaceInsideBounds(
+            DenseCitySurfaceBakeRecord surface,
+            Rect bounds)
+        {
+            ReadOnlySpan<Vector2> polygon = surface.Polygon.Span;
+            for (int index = 0; index < polygon.Length; index++)
+            {
+                Vector2 point = polygon[index];
+                if (point.x < bounds.xMin || point.x > bounds.xMax ||
+                    point.y < bounds.yMin || point.y > bounds.yMax)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private static DenseCityPresentationBakeRecord[] CreatePresentationOnlyTerrainRecords(
+            IReadOnlyList<DenseCityTerrainVisualPresentationInput> inputs,
+            int seed,
+            int sequenceStart)
+        {
+            var presentations = new DenseCityPresentationBakeRecord[inputs.Count];
+            for (int index = 0; index < presentations.Length; index++)
+            {
+                DenseCityTerrainVisualPresentationInput input = inputs[index];
+                presentations[index] = DenseCityRenderOnlyPresentationRecordFactory.Create(
+                    new DenseCityRenderOnlyPresentationRecordInput(
+                        DenseCityGeneratorSchema,
+                        seed,
+                        0,
+                        sequenceStart + index + 1,
+                        input.RecordKind,
+                        DenseCityPresentationCategory.Infrastructure,
+                        input.SourceAssetGuid,
+                        input.SourceLocalId,
+                        input.MaterialAssetGuids,
+                        input.WorldMatrix,
+                        input.CastsShadows,
+                        input.BatchingEligible,
+                        input.LodImportance));
+            }
+            return presentations;
+        }
+
         private static bool InstantiateOrganicCanalPark(
             GameObject[] roundGroundPrefabs,
             DenseCityVisualAssetMetadata[] roundGroundMetadata,
@@ -5325,6 +5564,7 @@ namespace Game.Editor
             Material materialOverride,
             uint seed,
             Vector2Int chunk,
+            Rect mapSurfaceBounds,
             DenseCityGenerationTransactionContext generationTransactions)
         {
             if (roundGroundPrefabs == null || roundGroundPrefabs.Length == 0)
@@ -5389,44 +5629,60 @@ namespace Game.Editor
             var realized = new List<GameObject>(plans.Count);
             try
             {
-                bool accepted = generationTransactions.TryPlaceTerrainVisuals(
-                    0,
-                    plans.Count,
-                    sequence => DenseCityTerrainVisualRecordFactory.Create(
-                        new DenseCityTerrainVisualRecordInput(
-                            DenseCityGeneratorSchema,
+                bool hasGameplaySurface = TryResolveClippedSurface(
+                    center,
+                    targetWidth,
+                    targetDepth,
+                    topElevation,
+                    mapSurfaceBounds,
+                    out Matrix4x4 surfaceMatrix,
+                    out Vector2 surfaceSize);
+                bool accepted = hasGameplaySurface
+                    ? generationTransactions.TryPlaceTerrainVisuals(
+                        0,
+                        plans.Count,
+                        sequence => DenseCityTerrainVisualRecordFactory.Create(
+                            new DenseCityTerrainVisualRecordInput(
+                                DenseCityGeneratorSchema,
+                                unchecked((int)seed),
+                                0,
+                                sequence,
+                                "canal-park-terrain",
+                                surfaceMatrix,
+                                surfaceSize,
+                                topElevation,
+                                (uint)(MapSurfaceMovementMask.AllGroundUnits |
+                                       MapSurfaceMovementMask.AirGrounded),
+                                DenseCityBuildingSurfaceLayer,
+                                chunk,
+                                presentationInputs)),
+                        RealizeAll)
+                    : generationTransactions.TryPlacePresentationOnlyTerrainVisuals(
+                        0,
+                        plans.Count,
+                        sequence => CreatePresentationOnlyTerrainRecords(
+                            presentationInputs,
                             unchecked((int)seed),
-                            0,
-                            sequence,
-                            "canal-park-terrain",
-                            Matrix4x4.TRS(
-                                new Vector3(center.x, topElevation, center.y),
-                                Quaternion.identity,
-                                Vector3.one),
-                            new Vector2(targetWidth, targetDepth),
-                            topElevation,
-                            (uint)(MapSurfaceMovementMask.AllGroundUnits |
-                                   MapSurfaceMovementMask.AirGrounded),
-                            DenseCityBuildingSurfaceLayer,
-                            chunk,
-                            presentationInputs)),
-                    () =>
-                    {
-                        parkObject = new GameObject(objectName);
-                        parkObject.transform.SetParent(parkRoot, false);
-                        for (int index = 0; index < plans.Count; index++)
-                        {
-                            GameObject surface = RealizeCanalSurface(
-                                parkObject.transform,
-                                names[index],
-                                plans[index],
-                                materialOverride);
-                            realized.Add(surface);
-                            ValidateCanalSurfaceMatrix(surface, plans[index]);
-                        }
-                        return true;
-                    });
+                            sequence),
+                        RealizeAll);
                 return accepted;
+
+                bool RealizeAll()
+                {
+                    parkObject = new GameObject(objectName);
+                    parkObject.transform.SetParent(parkRoot, false);
+                    for (int index = 0; index < plans.Count; index++)
+                    {
+                        GameObject surface = RealizeCanalSurface(
+                            parkObject.transform,
+                            names[index],
+                            plans[index],
+                            materialOverride);
+                        realized.Add(surface);
+                        ValidateCanalSurfaceMatrix(surface, plans[index]);
+                    }
+                    return true;
+                }
             }
             catch
             {
@@ -6303,6 +6559,7 @@ namespace Game.Editor
             RoadElevationPlan elevationPlan,
             SurfacePlacementContext surface,
             CityFootprint cityFootprint,
+            Rect mapSurfaceBounds,
             uint seed,
             DenseCityGenerationTransactionContext generationTransactions,
             out Dictionary<Vector2Int, GameObject> roadTileObjects,
@@ -6387,10 +6644,35 @@ namespace Game.Editor
                 GameObject road = null;
                 try
                 {
-                    bool accepted = generationTransactions.TryPlaceRoad(
-                        0,
-                        shoulderInputs.Length,
-                        sequence => DenseCityInfrastructureRecordFactory.CreateRoadWithShoulders(
+                    DenseCityRoadRecordGroup plannedGroup = CreateRoadGroup(0);
+                    bool hasGameplayRoad = IsSurfaceInsideBounds(
+                        plannedGroup.Road,
+                        mapSurfaceBounds);
+                    for (int index = 0; index < plannedGroup.Shoulders.Length && hasGameplayRoad; index++)
+                    {
+                        hasGameplayRoad = IsSurfaceInsideBounds(
+                            plannedGroup.Shoulders[index],
+                            mapSurfaceBounds);
+                    }
+
+                    int reservedSequenceCount = checked(2 + shoulderInputs.Length);
+                    bool accepted = hasGameplayRoad
+                        ? generationTransactions.TryPlaceRoad(
+                            0,
+                            shoulderInputs.Length,
+                            CreateRoadGroup,
+                            RealizeRoad)
+                        : generationTransactions.TryPlacePresentationOnlyVisuals(
+                            0,
+                            reservedSequenceCount,
+                            1,
+                            sequence => new[] { CreateRoadGroup(sequence).Presentation },
+                            RealizeRoad);
+                    if (!accepted)
+                        continue;
+
+                    DenseCityRoadRecordGroup CreateRoadGroup(int sequence) =>
+                        DenseCityInfrastructureRecordFactory.CreateRoadWithShoulders(
                             new DenseCityInfrastructureRecordInput(
                                 DenseCityGeneratorSchema,
                                 unchecked((int)seed),
@@ -6411,27 +6693,26 @@ namespace Game.Editor
                                 true,
                                 true,
                                 2),
-                            shoulderInputs),
-                        () =>
+                            shoulderInputs);
+
+                    bool RealizeRoad()
+                    {
+                        road = (GameObject)PrefabUtility.InstantiatePrefab(prefab, chunkRoot);
+                        road.name = $"{prefab.name}_{cell.x}_{cell.y}";
+                        road.transform.SetPositionAndRotation(placement, variant.Rotation);
+                        road.transform.localScale = variant.Scale;
+                        DisableColliders(road);
+                        Matrix4x4 actualMatrix = road.transform.localToWorldMatrix;
+                        for (int matrixIndex = 0; matrixIndex < 16; matrixIndex++)
                         {
-                            road = (GameObject)PrefabUtility.InstantiatePrefab(prefab, chunkRoot);
-                            road.name = $"{prefab.name}_{cell.x}_{cell.y}";
-                            road.transform.SetPositionAndRotation(placement, variant.Rotation);
-                            road.transform.localScale = variant.Scale;
-                            DisableColliders(road);
-                            Matrix4x4 actualMatrix = road.transform.localToWorldMatrix;
-                            for (int matrixIndex = 0; matrixIndex < 16; matrixIndex++)
+                            if (Mathf.Abs(actualMatrix[matrixIndex] - roadWorldMatrix[matrixIndex]) > 0.0001f)
                             {
-                                if (Mathf.Abs(actualMatrix[matrixIndex] - roadWorldMatrix[matrixIndex]) > 0.0001f)
-                                {
-                                    throw new InvalidOperationException(
-                                        $"Dense-city road transform parity failed at cell {cell}.");
-                                }
+                                throw new InvalidOperationException(
+                                    $"Dense-city road transform parity failed at cell {cell}.");
                             }
-                            return true;
-                        });
-                    if (!accepted)
-                        continue;
+                        }
+                        return true;
+                    }
                 }
                 catch
                 {
@@ -6471,9 +6752,25 @@ namespace Game.Editor
                     GameObject groundPatch = null;
                     try
                     {
-                        bool accepted = generationTransactions.TryPlaceInfrastructure(
-                            0,
-                            sequence => DenseCityInfrastructureRecordFactory.CreateVisualized(
+                        DenseCityInfrastructureRecordGroup plannedGroup = CreatePatchGroup(0);
+                        bool accepted = IsSurfaceInsideBounds(
+                                plannedGroup.Surface,
+                                mapSurfaceBounds)
+                            ? generationTransactions.TryPlaceInfrastructure(
+                                0,
+                                CreatePatchGroup,
+                                RealizePatch)
+                            : generationTransactions.TryPlacePresentationOnlyVisuals(
+                                0,
+                                2,
+                                1,
+                                sequence => new[] { CreatePatchGroup(sequence).Presentation },
+                                RealizePatch);
+                        if (accepted)
+                            roadGroundPatchObjects.Add(cell, groundPatch);
+
+                        DenseCityInfrastructureRecordGroup CreatePatchGroup(int sequence) =>
+                            DenseCityInfrastructureRecordFactory.CreateVisualized(
                                 new DenseCityInfrastructureRecordInput(
                                     DenseCityGeneratorSchema,
                                     unchecked((int)seed),
@@ -6492,26 +6789,25 @@ namespace Game.Editor
                                     chunkCoordinate,
                                     true,
                                     true,
-                                    1)),
-                            () =>
+                                    1));
+
+                        bool RealizePatch()
+                        {
+                            groundPatch = RealizeNaturalGroundPatch(
+                                chunkRoot,
+                                $"RoadGroundPatch_{cell.x}_{cell.y}",
+                                patchPlan);
+                            Matrix4x4 actualMatrix = groundPatch.transform.localToWorldMatrix;
+                            for (int matrixIndex = 0; matrixIndex < 16; matrixIndex++)
                             {
-                                groundPatch = RealizeNaturalGroundPatch(
-                                    chunkRoot,
-                                    $"RoadGroundPatch_{cell.x}_{cell.y}",
-                                    patchPlan);
-                                Matrix4x4 actualMatrix = groundPatch.transform.localToWorldMatrix;
-                                for (int matrixIndex = 0; matrixIndex < 16; matrixIndex++)
+                                if (Mathf.Abs(actualMatrix[matrixIndex] - patchPlan.WorldMatrix[matrixIndex]) > 0.0001f)
                                 {
-                                    if (Mathf.Abs(actualMatrix[matrixIndex] - patchPlan.WorldMatrix[matrixIndex]) > 0.0001f)
-                                    {
-                                        throw new InvalidOperationException(
-                                            $"Dense-city road terrain-patch transform parity failed at cell {cell}.");
-                                    }
+                                    throw new InvalidOperationException(
+                                        $"Dense-city road terrain-patch transform parity failed at cell {cell}.");
                                 }
-                                return true;
-                            });
-                        if (accepted)
-                            roadGroundPatchObjects.Add(cell, groundPatch);
+                            }
+                            return true;
+                        }
                     }
                     catch
                     {
@@ -6532,6 +6828,7 @@ namespace Game.Editor
             Vector3 cityOrigin,
             float cityWidth,
             float cityDepth,
+            Rect mapSurfaceBounds,
             List<int> streetColumns,
             List<int> streetRows,
             HashSet<Vector2Int> roadCells,
@@ -6565,7 +6862,8 @@ namespace Game.Editor
                 config,
                 materialLibrary,
                 generationTransactions,
-                visualSystem.CityVisualRoot);
+                visualSystem.CityVisualRoot,
+                mapSurfaceBounds);
             int buildingCount = 0;
             int parkCount = 0;
             int centralLandmarkCount = 0;
@@ -7301,11 +7599,24 @@ namespace Game.Editor
             return count;
         }
 
-        private static int AddOpenGroundDetails(
+        private readonly struct OpenGroundDetailResult
+        {
+            internal OpenGroundDetailResult(int visuals, int gameplayTerrains)
+            {
+                Visuals = visuals;
+                GameplayTerrains = gameplayTerrains;
+            }
+
+            internal int Visuals { get; }
+            internal int GameplayTerrains { get; }
+        }
+
+        private static OpenGroundDetailResult AddOpenGroundDetails(
             Transform generatedRoot,
             Vector3 mapOrigin,
             float mapWidth,
             float mapDepth,
+            Rect mapSurfaceBounds,
             CityFootprint cityFootprint,
             Rect authoredCoreBounds,
             HashSet<Vector2Int> roadCells,
@@ -7322,6 +7633,7 @@ namespace Game.Editor
             var metadataByPrefab = new Dictionary<GameObject, DenseCityVisualAssetMetadata>();
             var localBoundsByPrefab = new Dictionary<GameObject, Bounds>();
             int count = 0;
+            int gameplayTerrains = 0;
             const float spacing = 10f;
             for (float z = spacing * 0.5f; z < mapDepth; z += spacing)
             {
@@ -7399,45 +7711,69 @@ namespace Game.Editor
                     GameObject patch = null;
                     try
                     {
-                        bool accepted = generationTransactions.TryPlaceTerrainVisuals(
-                            0,
-                            1,
-                            sequence => DenseCityTerrainVisualRecordFactory.Create(
-                                new DenseCityTerrainVisualRecordInput(
-                                    DenseCityGeneratorSchema,
+                        bool hasGameplayTerrain = TryResolveClippedSurface(
+                            new Vector2(plannedBounds.center.x, plannedBounds.center.z),
+                            plannedBounds.size.x,
+                            plannedBounds.size.z,
+                            plannedBounds.max.y,
+                            mapSurfaceBounds,
+                            out Matrix4x4 terrainMatrix,
+                            out Vector2 terrainSize);
+                        var presentationInputs = new[]
+                        {
+                            new DenseCityTerrainVisualPresentationInput(
+                                "open-ground-visual",
+                                metadata.PrefabAssetGuid,
+                                metadata.PrefabLocalId,
+                                metadata.MaterialAssetGuids,
+                                plan.WorldMatrix,
+                                true,
+                                true,
+                                1)
+                        };
+                        bool accepted = hasGameplayTerrain
+                            ? generationTransactions.TryPlaceTerrainVisuals(
+                                0,
+                                presentationInputs.Length,
+                                sequence => DenseCityTerrainVisualRecordFactory.Create(
+                                    new DenseCityTerrainVisualRecordInput(
+                                        DenseCityGeneratorSchema,
+                                        unchecked((int)seed),
+                                        0,
+                                        sequence,
+                                        "open-ground-terrain",
+                                        terrainMatrix,
+                                        terrainSize,
+                                        plannedBounds.max.y,
+                                        DenseCityBuildingMovementMask,
+                                        DenseCityBuildingSurfaceLayer,
+                                        chunk,
+                                        presentationInputs)),
+                                RealizePatch)
+                            : generationTransactions.TryPlacePresentationOnlyTerrainVisuals(
+                                0,
+                                presentationInputs.Length,
+                                sequence => CreatePresentationOnlyTerrainRecords(
+                                    presentationInputs,
                                     unchecked((int)seed),
-                                    0,
-                                    sequence,
-                                    "open-ground-terrain",
-                                    Matrix4x4.TRS(plannedBounds.center, Quaternion.identity, Vector3.one),
-                                    new Vector2(plannedBounds.size.x, plannedBounds.size.z),
-                                    plannedBounds.max.y,
-                                    DenseCityBuildingMovementMask,
-                                    DenseCityBuildingSurfaceLayer,
-                                    chunk,
-                                    new[]
-                                    {
-                                        new DenseCityTerrainVisualPresentationInput(
-                                            "open-ground-visual",
-                                            metadata.PrefabAssetGuid,
-                                            metadata.PrefabLocalId,
-                                            metadata.MaterialAssetGuids,
-                                            plan.WorldMatrix,
-                                            true,
-                                            true,
-                                            1)
-                                    })),
-                            () =>
-                            {
-                                patch = RealizeNaturalGroundPatch(
-                                    rootObject.transform,
-                                    $"SM_Env_Ground_Round_01_Open_{count:0000}",
-                                    plan);
-                                ValidateWorldMatrix(patch.transform, plan.WorldMatrix, "open-ground patch");
-                                return true;
-                            });
+                                    sequence),
+                                RealizePatch);
                         if (accepted)
+                        {
                             count++;
+                            if (hasGameplayTerrain)
+                                gameplayTerrains++;
+                        }
+
+                        bool RealizePatch()
+                        {
+                            patch = RealizeNaturalGroundPatch(
+                                rootObject.transform,
+                                $"SM_Env_Ground_Round_01_Open_{count:0000}",
+                                plan);
+                            ValidateWorldMatrix(patch.transform, plan.WorldMatrix, "open-ground patch");
+                            return true;
+                        }
                     }
                     catch
                     {
@@ -7449,7 +7785,7 @@ namespace Game.Editor
             }
 
             SetStaticRecursively(rootObject);
-            return count;
+            return new OpenGroundDetailResult(count, gameplayTerrains);
         }
 
         private static List<Rect> CollectGeneratedBuildingFootprints(Transform generatedRoot)
@@ -7518,6 +7854,7 @@ namespace Game.Editor
             Vector3 mapOrigin,
             float mapWidth,
             float mapDepth,
+            Rect mapSurfaceBounds,
             CityFootprint cityFootprint,
             Rect authoredCoreBounds,
             HashSet<Vector2Int> roadCells,
@@ -7619,6 +7956,7 @@ namespace Game.Editor
                 authoredCoreBounds,
                 roadCells,
                 mapOrigin,
+                mapSurfaceBounds,
                 gradeElevation,
                 seed,
                 generationTransactions);
@@ -7724,7 +8062,7 @@ namespace Game.Editor
                 gradeElevation,
                 seed,
                 generationTransactions);
-            (int treeCount, int rockCount) = AddDenseTreeAndRockClusters(
+            (int treeCount, int rockCount, int gameplayRockCount) = AddDenseTreeAndRockClusters(
                 treeRootObject.transform,
                 rockRootObject.transform,
                 buildings,
@@ -7735,6 +8073,7 @@ namespace Game.Editor
                 mapOrigin,
                 mapWidth,
                 mapDepth,
+                mapSurfaceBounds,
                 cityFootprint,
                 authoredCoreBounds,
                 roadCells,
@@ -7774,8 +8113,10 @@ namespace Game.Editor
                 streetPropCount,
                 treeCount,
                 rockCount,
+                gameplayRockCount,
                 courtyardDetails.Courtyards,
                 courtyardDetails.Walls,
+                courtyardDetails.WallVisuals,
                 courtyardDetails.Pillars,
                 courtyardDetails.Wells,
                 courtyardDetails.Bushes,
@@ -8813,6 +9154,7 @@ namespace Game.Editor
             public readonly List<Rect> ReservedAreas = new();
             public int Courtyards;
             public int Walls;
+            public int WallVisuals;
             public int Pillars;
             public int Wells;
             public int Bushes;
@@ -8835,6 +9177,7 @@ namespace Game.Editor
             Rect authoredCoreBounds,
             HashSet<Vector2Int> roadCells,
             Vector3 mapOrigin,
+            Rect mapSurfaceBounds,
             float gradeElevation,
             uint seed,
             DenseCityGenerationTransactionContext generationTransactions)
@@ -8890,9 +9233,11 @@ namespace Game.Editor
                         wallScale,
                         courtyardIndex,
                         mapOrigin,
+                        mapSurfaceBounds,
                         seed,
                         generationTransactions,
                         ref result.Walls,
+                        ref result.WallVisuals,
                         ref result.Pillars);
 
                     Vector2 interiorCenter = yard.center;
@@ -9030,9 +9375,11 @@ namespace Game.Editor
             float wallScale,
             int courtyardIndex,
             Vector3 mapOrigin,
+            Rect mapSurfaceBounds,
             uint seed,
             DenseCityGenerationTransactionContext generationTransactions,
             ref int wallCount,
+            ref int wallVisualCount,
             ref int pillarCount)
         {
             const float edgeInset = 0.25f;
@@ -9054,13 +9401,15 @@ namespace Game.Editor
                     gradeElevation,
                     wallScale,
                     mapOrigin,
+                    mapSurfaceBounds,
                     seed,
                     generationTransactions,
                     ref wallCount,
+                    ref wallVisualCount,
                     ref pillarCount);
                 float sideCenterX = yard.center.x + (buildingSide == 0 ? cornerClearance * 0.5f : -cornerClearance * 0.5f);
-                AddCourtyardWall(wallPrefab, wallMetadata, wallLocalBounds, parent, courtyardIndex, "North", new Vector2(sideCenterX, yard.yMax - edgeInset), 0f, yard.width - cornerClearance, gradeElevation, wallScale, mapOrigin, seed, generationTransactions, ref wallCount);
-                AddCourtyardWall(wallPrefab, wallMetadata, wallLocalBounds, parent, courtyardIndex, "South", new Vector2(sideCenterX, yard.yMin + edgeInset), 0f, yard.width - cornerClearance, gradeElevation, wallScale, mapOrigin, seed, generationTransactions, ref wallCount);
+                AddCourtyardWall(wallPrefab, wallMetadata, wallLocalBounds, parent, courtyardIndex, "North", new Vector2(sideCenterX, yard.yMax - edgeInset), 0f, yard.width - cornerClearance, gradeElevation, wallScale, mapOrigin, mapSurfaceBounds, seed, generationTransactions, ref wallCount, ref wallVisualCount);
+                AddCourtyardWall(wallPrefab, wallMetadata, wallLocalBounds, parent, courtyardIndex, "South", new Vector2(sideCenterX, yard.yMin + edgeInset), 0f, yard.width - cornerClearance, gradeElevation, wallScale, mapOrigin, mapSurfaceBounds, seed, generationTransactions, ref wallCount, ref wallVisualCount);
             }
             else
             {
@@ -9079,13 +9428,15 @@ namespace Game.Editor
                     gradeElevation,
                     wallScale,
                     mapOrigin,
+                    mapSurfaceBounds,
                     seed,
                     generationTransactions,
                     ref wallCount,
+                    ref wallVisualCount,
                     ref pillarCount);
                 float sideCenterZ = yard.center.y + (buildingSide == 2 ? cornerClearance * 0.5f : -cornerClearance * 0.5f);
-                AddCourtyardWall(wallPrefab, wallMetadata, wallLocalBounds, parent, courtyardIndex, "West", new Vector2(yard.xMin + edgeInset, sideCenterZ), 90f, yard.height - cornerClearance, gradeElevation, wallScale, mapOrigin, seed, generationTransactions, ref wallCount);
-                AddCourtyardWall(wallPrefab, wallMetadata, wallLocalBounds, parent, courtyardIndex, "East", new Vector2(yard.xMax - edgeInset, sideCenterZ), 90f, yard.height - cornerClearance, gradeElevation, wallScale, mapOrigin, seed, generationTransactions, ref wallCount);
+                AddCourtyardWall(wallPrefab, wallMetadata, wallLocalBounds, parent, courtyardIndex, "West", new Vector2(yard.xMin + edgeInset, sideCenterZ), 90f, yard.height - cornerClearance, gradeElevation, wallScale, mapOrigin, mapSurfaceBounds, seed, generationTransactions, ref wallCount, ref wallVisualCount);
+                AddCourtyardWall(wallPrefab, wallMetadata, wallLocalBounds, parent, courtyardIndex, "East", new Vector2(yard.xMax - edgeInset, sideCenterZ), 90f, yard.height - cornerClearance, gradeElevation, wallScale, mapOrigin, mapSurfaceBounds, seed, generationTransactions, ref wallCount, ref wallVisualCount);
             }
         }
 
@@ -9103,9 +9454,11 @@ namespace Game.Editor
             float gradeElevation,
             float wallScale,
             Vector3 mapOrigin,
+            Rect mapSurfaceBounds,
             uint seed,
             DenseCityGenerationTransactionContext generationTransactions,
             ref int wallCount,
+            ref int wallVisualCount,
             ref int pillarCount)
         {
             float gateWidth = Mathf.Clamp(totalLength * 0.3f, 1.8f, 2.4f);
@@ -9126,9 +9479,11 @@ namespace Game.Editor
                 gradeElevation,
                 wallScale,
                 mapOrigin,
+                mapSurfaceBounds,
                 seed,
                 generationTransactions,
-                ref wallCount);
+                ref wallCount,
+                ref wallVisualCount);
             AddCourtyardWall(
                 wallPrefab,
                 wallMetadata,
@@ -9142,9 +9497,11 @@ namespace Game.Editor
                 gradeElevation,
                 wallScale,
                 mapOrigin,
+                mapSurfaceBounds,
                 seed,
                 generationTransactions,
-                ref wallCount);
+                ref wallCount,
+                ref wallVisualCount);
 
             AddCourtyardPillar(
                 pillarPrefab,
@@ -9219,9 +9576,11 @@ namespace Game.Editor
             float gradeElevation,
             float heightScale,
             Vector3 mapOrigin,
+            Rect mapSurfaceBounds,
             uint seed,
             DenseCityGenerationTransactionContext generationTransactions,
-            ref int wallCount)
+            ref int wallCount,
+            ref int wallVisualCount)
         {
             Quaternion worldRotation = Quaternion.Euler(0f, rotation, 0f);
             Bounds initialBounds = TransformLocalBounds(
@@ -9250,40 +9609,76 @@ namespace Game.Editor
             GameObject wall = null;
             try
             {
-                bool accepted = generationTransactions.TryPlaceVisualBlocker(
-                    0,
-                    sequence => DenseCityVisualBlockerRecordFactory.Create(
-                        new DenseCityVisualBlockerRecordInput(
-                            DenseCityGeneratorSchema,
+                bool hasGameplayBlocker = TryResolveClippedSurface(
+                    position,
+                    scaledBounds.size.x,
+                    scaledBounds.size.z,
+                    gradeElevation + 0.02f,
+                    mapSurfaceBounds,
+                    out Matrix4x4 blockerMatrix,
+                    out Vector2 clippedBlockerSize);
+                bool accepted = hasGameplayBlocker
+                    ? generationTransactions.TryPlaceVisualBlocker(
+                        0,
+                        sequence => DenseCityVisualBlockerRecordFactory.Create(
+                            new DenseCityVisualBlockerRecordInput(
+                                DenseCityGeneratorSchema,
+                                unchecked((int)seed),
+                                0,
+                                sequence,
+                                "courtyard-wall",
+                                metadata.PrefabAssetGuid,
+                                metadata.PrefabLocalId,
+                                metadata.MaterialAssetGuids,
+                                worldMatrix,
+                                blockerSize,
+                                gradeElevation + 0.02f,
+                                DenseCityBuildingSurfaceLayer,
+                                chunk,
+                                true,
+                                true,
+                                1,
+                                blockerMatrix,
+                                clippedBlockerSize)),
+                        RealizeWall)
+                    : generationTransactions.TryPlacePresentationOnlyTerrainVisuals(
+                        0,
+                        1,
+                        sequence => CreatePresentationOnlyTerrainRecords(
+                            new[]
+                            {
+                                new DenseCityTerrainVisualPresentationInput(
+                                    "courtyard-wall-visual",
+                                    metadata.PrefabAssetGuid,
+                                    metadata.PrefabLocalId,
+                                    metadata.MaterialAssetGuids,
+                                    worldMatrix,
+                                    true,
+                                    true,
+                                    1)
+                            },
                             unchecked((int)seed),
-                            0,
-                            sequence,
-                            "courtyard-wall",
-                            metadata.PrefabAssetGuid,
-                            metadata.PrefabLocalId,
-                            metadata.MaterialAssetGuids,
-                            worldMatrix,
-                            blockerSize,
-                            gradeElevation + 0.02f,
-                            DenseCityBuildingSurfaceLayer,
-                            chunk,
-                            true,
-                            true,
-                            1)),
-                    () =>
-                    {
-                        wall = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
-                        if (wall == null)
-                            return false;
-                        wall.name = $"{prefab.name}_Courtyard_{courtyardIndex:0000}_{edgeName}";
-                        wall.transform.SetPositionAndRotation(groundedPosition, worldRotation);
-                        wall.transform.localScale = scale;
-                        ValidateWorldMatrix(wall.transform, worldMatrix, "courtyard wall");
-                        DisableColliders(wall);
-                        return true;
-                    });
+                            sequence),
+                        RealizeWall);
                 if (accepted)
-                    wallCount++;
+                {
+                    wallVisualCount++;
+                    if (hasGameplayBlocker)
+                        wallCount++;
+                }
+
+                bool RealizeWall()
+                {
+                    wall = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
+                    if (wall == null)
+                        return false;
+                    wall.name = $"{prefab.name}_Courtyard_{courtyardIndex:0000}_{edgeName}";
+                    wall.transform.SetPositionAndRotation(groundedPosition, worldRotation);
+                    wall.transform.localScale = scale;
+                    ValidateWorldMatrix(wall.transform, worldMatrix, "courtyard wall");
+                    DisableColliders(wall);
+                    return true;
+                }
             }
             catch
             {
@@ -9996,7 +10391,7 @@ namespace Game.Editor
             return false;
         }
 
-        private static (int trees, int rocks) AddDenseTreeAndRockClusters(
+        private static (int trees, int rocks, int gameplayRocks) AddDenseTreeAndRockClusters(
             Transform treeParent,
             Transform rockParent,
             List<GeneratedBuildingInfo> buildings,
@@ -10007,6 +10402,7 @@ namespace Game.Editor
             Vector3 mapOrigin,
             float mapWidth,
             float mapDepth,
+            Rect mapSurfaceBounds,
             CityFootprint cityFootprint,
             Rect authoredCoreBounds,
             HashSet<Vector2Int> roadCells,
@@ -10017,6 +10413,7 @@ namespace Game.Editor
         {
             int treeCount = 0;
             int rockCount = 0;
+            int gameplayRockCount = 0;
             var treeOccupiedAreas = new List<Rect>();
             var rockOccupiedAreas = new List<Rect>();
             const float clusterSpacing = 24f;
@@ -10112,6 +10509,7 @@ namespace Game.Editor
                                     reservedAreas,
                                     treeOccupiedAreas,
                                     authoredCoreBounds,
+                                    mapSurfaceBounds,
                                     "urban-rock",
                                     seed,
                                     generationTransactions,
@@ -10119,13 +10517,15 @@ namespace Game.Editor
                             {
                                 rockOccupiedAreas.Add(rockOccupiedArea);
                                 rockCount++;
+                                if (mapSurfaceBounds.Overlaps(rockOccupiedArea))
+                                    gameplayRockCount++;
                             }
                         }
                     }
                 }
             }
 
-            return (treeCount, rockCount);
+            return (treeCount, rockCount, gameplayRockCount);
         }
 
         private static bool OverlapsOtherBuilding(
@@ -10629,6 +11029,7 @@ namespace Game.Editor
             List<Rect> reservedAreas,
             List<Rect> localReservedAreas,
             Rect authoredCoreBounds,
+            Rect mapSurfaceBounds,
             string recordKind,
             uint seed,
             DenseCityGenerationTransactionContext generationTransactions,
@@ -10671,41 +11072,77 @@ namespace Game.Editor
             GameObject instance = null;
             try
             {
-                bool accepted = generationTransactions.TryPlaceVisualBlocker(
-                    0,
-                    sequence => DenseCityVisualBlockerRecordFactory.Create(
-                        new DenseCityVisualBlockerRecordInput(
-                            DenseCityGeneratorSchema,
-                            unchecked((int)seed),
-                            0,
-                            sequence,
-                            recordKind,
-                            metadata.PrefabAssetGuid,
-                            metadata.PrefabLocalId,
-                            metadata.MaterialAssetGuids,
-                            plan.WorldMatrix,
-                            blockerSize,
-                            supportHeight,
-                            DenseCityBuildingSurfaceLayer,
-                            chunk,
-                            true,
-                            true,
-                            1)),
-                    () =>
-                    {
-                        instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
-                        if (instance == null)
-                            return false;
-                        instance.name = objectName;
-                        instance.transform.SetPositionAndRotation(plan.Position, plan.Rotation);
-                        instance.transform.localScale = plan.Scale;
-                        ValidateGroundedDetailMatrix(instance, plan);
-                        DisableColliders(instance);
-                        return true;
-                    });
+                bool hasGameplayBlocker = TryResolveClippedSurface(
+                    new Vector2(plannedBounds.center.x, plannedBounds.center.z),
+                    plannedBounds.size.x,
+                    plannedBounds.size.z,
+                    supportHeight,
+                    mapSurfaceBounds,
+                    out Matrix4x4 blockerMatrix,
+                    out Vector2 clippedBlockerSize);
+                bool accepted = hasGameplayBlocker
+                    ? generationTransactions.TryPlaceVisualBlocker(
+                        0,
+                        sequence => DenseCityVisualBlockerRecordFactory.Create(
+                            new DenseCityVisualBlockerRecordInput(
+                                DenseCityGeneratorSchema,
+                                unchecked((int)seed),
+                                0,
+                                sequence,
+                                recordKind,
+                                metadata.PrefabAssetGuid,
+                                metadata.PrefabLocalId,
+                                metadata.MaterialAssetGuids,
+                                plan.WorldMatrix,
+                                blockerSize,
+                                supportHeight,
+                                DenseCityBuildingSurfaceLayer,
+                                chunk,
+                                true,
+                                true,
+                                1,
+                                blockerMatrix,
+                                clippedBlockerSize)),
+                        RealizeBlocker)
+                    : generationTransactions.TryPlacePresentationOnlyVisuals(
+                        0,
+                        2,
+                        1,
+                        sequence => new[]
+                        {
+                            DenseCityRenderOnlyPresentationRecordFactory.Create(
+                                new DenseCityRenderOnlyPresentationRecordInput(
+                                    DenseCityGeneratorSchema,
+                                    unchecked((int)seed),
+                                    0,
+                                    sequence + 1,
+                                    string.Concat(recordKind, "-visual"),
+                                    DenseCityPresentationCategory.Prop,
+                                    metadata.PrefabAssetGuid,
+                                    metadata.PrefabLocalId,
+                                    metadata.MaterialAssetGuids,
+                                    plan.WorldMatrix,
+                                    true,
+                                    true,
+                                    1))
+                        },
+                        RealizeBlocker);
                 if (!accepted)
                     occupiedArea = default;
                 return accepted;
+
+                bool RealizeBlocker()
+                {
+                    instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
+                    if (instance == null)
+                        return false;
+                    instance.name = objectName;
+                    instance.transform.SetPositionAndRotation(plan.Position, plan.Rotation);
+                    instance.transform.localScale = plan.Scale;
+                    ValidateGroundedDetailMatrix(instance, plan);
+                    DisableColliders(instance);
+                    return true;
+                }
             }
             catch
             {

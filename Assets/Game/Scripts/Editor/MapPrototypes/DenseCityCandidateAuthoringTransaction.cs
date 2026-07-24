@@ -1,10 +1,12 @@
 using System;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using Game.Authoring;
 using Game.Configs;
+using Game.Runtime;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -31,6 +33,8 @@ namespace Game.Editor
             "SkirmishDesertBase_MapWideCity_Config.asset";
         private const string GeneratorSchema = "dense-city-v1";
         private const int GeneratorSchemaVersion = 1;
+        private const string CandidateGeneratedAssetRoot =
+            "Assets/Game/GeneratedOperationMaps/DenseCity";
 
         [MenuItem("Game/Maps/Skirmish Desert Base/Create Dense City Candidate Hierarchy")]
         public static void CreateCandidateHierarchy()
@@ -72,6 +76,166 @@ namespace Game.Editor
                 $"[DenseCityCandidateAuthoringTransaction] result=Created " +
                 $"generationId={generationId} generationHash={generationHash} " +
                 $"mapCandidate={CandidateMapScenePath} entityCandidate={CandidateEntityScenePath}");
+        }
+
+        [MenuItem("Game/Maps/Skirmish Desert Base/Realize Dense City Candidate")]
+        public static void RealizeCandidate()
+        {
+            if (!TryRealizeCandidate(out string summary, out string error))
+            {
+                string message = $"Dense-city candidate realization rejected: {error}";
+                if (Application.isBatchMode)
+                {
+                    Debug.LogError(message);
+                    EditorApplication.Exit(1);
+                    return;
+                }
+
+                throw new InvalidOperationException(message);
+            }
+
+            Debug.Log($"[DenseCityCandidateAuthoringTransaction] result=Realized {summary}");
+            if (Application.isBatchMode)
+                EditorApplication.Exit(0);
+        }
+
+        internal static bool TryRealizeCandidate(out string summary, out string error)
+        {
+            summary = null;
+            error = null;
+            Scene mapScene = default;
+            Scene entityScene = default;
+            Scene previousActiveScene = SceneManager.GetActiveScene();
+            string mapBackup = null;
+            string entityBackup = null;
+            string proxyFolder = null;
+
+            try
+            {
+                if (!AssetExists(CandidateMapScenePath) ||
+                    !AssetExists(CandidateEntityScenePath))
+                {
+                    error = "Dense-city candidate hierarchy scenes are missing.";
+                    return false;
+                }
+
+                string sourceMapHash = ComputeFileHash(SourceMapScenePath);
+                string sourceEntityHash = ComputeFileHash(SourceEntityScenePath);
+                mapBackup = CreateBackup(CandidateMapScenePath);
+                entityBackup = CreateBackup(CandidateEntityScenePath);
+                mapScene = EditorSceneManager.OpenScene(
+                    CandidateMapScenePath,
+                    OpenSceneMode.Additive);
+                entityScene = EditorSceneManager.OpenScene(
+                    CandidateEntityScenePath,
+                    OpenSceneMode.Additive);
+                if (!SceneManager.SetActiveScene(mapScene))
+                {
+                    throw new InvalidOperationException(
+                        "Dense-city map candidate could not become the active generation scene.");
+                }
+
+                DenseCityGeneratedRootAuthoring mapRoot =
+                    RequireGeneratedRoot(mapScene, DenseCityGeneratedRootRole.MapBakeSource);
+                DenseCityGeneratedRootAuthoring entityRoot =
+                    RequireGeneratedRoot(
+                        entityScene,
+                        DenseCityGeneratedRootRole.EntityPresentationSource);
+                string generationId = mapRoot.GenerationId;
+                if (!DenseCitySemanticHierarchyBuilder.TryValidate(
+                        mapScene,
+                        entityScene,
+                        generationId,
+                        out error))
+                {
+                    throw new InvalidOperationException(error);
+                }
+                RequireEmptyCandidateOwnership(mapRoot, entityRoot);
+
+                RuntimeCityRAndDMapView view = RequireMapView(mapScene);
+                DenseMiddleEasternCityEditModeBuilder.Result result =
+                    RuntimeCityRAndDEditModeBuilder.BuildDenseMapWide(view);
+                if (result.Records == null ||
+                    result.Records.Buildings.Count != result.SemanticBuildings ||
+                    result.Records.Surfaces.Count != result.SemanticSurfaces ||
+                    result.Records.Presentations.Count != result.SemanticPresentations)
+                {
+                    throw new InvalidOperationException(
+                        "Dense-city generator result and replay snapshot counts differ.");
+                }
+
+                DenseCityPresentationHierarchyContext hierarchy =
+                    DenseCityPresentationHierarchyContext.Create(entityRoot);
+                DenseCityRealizedPresentationSet realized =
+                    DenseCityPresentationReplayTransaction.Realize(
+                        OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
+                        result.Records,
+                        hierarchy,
+                        DenseCityBuildingDefinitionLibrary.LoadExisting(),
+                        DenseCityBuildingMaterialLibrary.LoadExisting());
+
+                proxyFolder = CandidateGeneratedAssetRoot + "/" +
+                              OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId +
+                              "/Candidate/" + mapRoot.DeterministicGenerationHash +
+                              "/SurfaceProxies";
+                Rect mapBounds = new(
+                    view.GridOrigin.x,
+                    view.GridOrigin.z,
+                    view.GridWidth * view.GridCellSize,
+                    view.GridHeight * view.GridCellSize);
+                DenseCitySurfaceProxyBuildResult proxies = DenseCitySurfaceProxyBuilder.Build(
+                    result.Records,
+                    mapRoot,
+                    OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
+                    mapBounds,
+                    proxyFolder);
+
+                ClearTemporaryLegacyVisuals(view.GeneratedRoot);
+                if (!DenseCityBakeReadinessValidator.TryValidateAuthoringOwnership(
+                        mapScene,
+                        entityScene,
+                        OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
+                        generationId,
+                        out error))
+                {
+                    throw new InvalidOperationException(error);
+                }
+                if (!EditorSceneManager.SaveScene(mapScene, CandidateMapScenePath, false) ||
+                    !EditorSceneManager.SaveScene(entityScene, CandidateEntityScenePath, false))
+                {
+                    throw new InvalidOperationException(
+                        "Dense-city realized candidate scene save failed.");
+                }
+
+                RestoreActiveScene(previousActiveScene);
+                CloseScene(ref entityScene);
+                CloseScene(ref mapScene);
+                RequireProtectedSourceHashes(sourceMapHash, sourceEntityHash);
+                AssetDatabase.SaveAssets();
+                summary =
+                    $"generationId={generationId} buildings={realized.Buildings.Count} " +
+                    $"renderOnly={realized.RenderOnly.Count} proxies={proxies.Partitions} " +
+                    $"surfaces={proxies.Records} proxyFolder={proxyFolder}";
+                return true;
+            }
+            catch (Exception exception)
+            {
+                error = exception.Message;
+                RestoreActiveScene(previousActiveScene);
+                CloseScene(ref entityScene);
+                CloseScene(ref mapScene);
+                if (!string.IsNullOrEmpty(proxyFolder))
+                    AssetDatabase.DeleteAsset(proxyFolder);
+                RestoreBackup(mapBackup, CandidateMapScenePath);
+                RestoreBackup(entityBackup, CandidateEntityScenePath);
+                AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+                return false;
+            }
+            finally
+            {
+                DeleteBackup(mapBackup);
+                DeleteBackup(entityBackup);
+            }
         }
 
         internal static bool TryCreate(
@@ -271,6 +435,108 @@ namespace Game.Editor
         private static bool AssetExists(string assetPath) =>
             AssetDatabase.LoadAssetAtPath<SceneAsset>(assetPath) != null ||
             File.Exists(ToPhysicalPath(assetPath));
+
+        private static DenseCityGeneratedRootAuthoring RequireGeneratedRoot(
+            Scene scene,
+            DenseCityGeneratedRootRole role)
+        {
+            DenseCityGeneratedRootAuthoring[] roots = scene.GetRootGameObjects()
+                .SelectMany(root =>
+                    root.GetComponentsInChildren<DenseCityGeneratedRootAuthoring>(true))
+                .Where(root => root.Role == role)
+                .ToArray();
+            if (roots.Length != 1)
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city candidate requires exactly one {role} root.");
+            }
+            return roots[0];
+        }
+
+        private static RuntimeCityRAndDMapView RequireMapView(Scene scene)
+        {
+            RuntimeCityRAndDMapView[] views = scene.GetRootGameObjects()
+                .SelectMany(root =>
+                    root.GetComponentsInChildren<RuntimeCityRAndDMapView>(true))
+                .ToArray();
+            if (views.Length != 1)
+            {
+                throw new InvalidOperationException(
+                    "Dense-city map candidate requires exactly one runtime city map view.");
+            }
+            return views[0];
+        }
+
+        private static void RequireEmptyCandidateOwnership(
+            DenseCityGeneratedRootAuthoring mapRoot,
+            DenseCityGeneratedRootAuthoring entityRoot)
+        {
+            if (mapRoot.GetComponentsInChildren<MeshFilter>(true).Length != 0 ||
+                entityRoot.GetComponentsInChildren<Renderer>(true).Length != 0 ||
+                entityRoot.GetComponentsInChildren<OperationMapBuildingAuthoring>(true).Length != 0)
+            {
+                throw new InvalidOperationException(
+                    "Dense-city candidate ownership is already realized.");
+            }
+        }
+
+        private static void ClearTemporaryLegacyVisuals(Transform generatedRoot)
+        {
+            if (generatedRoot == null)
+                throw new InvalidOperationException("Dense-city temporary generated root is missing.");
+            for (int index = generatedRoot.childCount - 1; index >= 0; index--)
+                UnityEngine.Object.DestroyImmediate(generatedRoot.GetChild(index).gameObject);
+        }
+
+        private static string CreateBackup(string assetPath)
+        {
+            string backup = Path.GetTempFileName();
+            File.Copy(ToPhysicalPath(assetPath), backup, true);
+            return backup;
+        }
+
+        private static void RestoreBackup(string backup, string assetPath)
+        {
+            if (!string.IsNullOrEmpty(backup) && File.Exists(backup))
+                File.Copy(backup, ToPhysicalPath(assetPath), true);
+        }
+
+        private static void DeleteBackup(string backup)
+        {
+            if (!string.IsNullOrEmpty(backup) && File.Exists(backup))
+                File.Delete(backup);
+        }
+
+        private static void CloseScene(ref Scene scene)
+        {
+            if (scene.IsValid() && scene.isLoaded)
+                EditorSceneManager.CloseScene(scene, true);
+            scene = default;
+        }
+
+        private static void RestoreActiveScene(Scene scene)
+        {
+            if (scene.IsValid() && scene.isLoaded)
+                SceneManager.SetActiveScene(scene);
+        }
+
+        private static void RequireProtectedSourceHashes(
+            string expectedMapHash,
+            string expectedEntityHash)
+        {
+            if (!string.Equals(
+                    expectedMapHash,
+                    ComputeFileHash(SourceMapScenePath),
+                    StringComparison.Ordinal) ||
+                !string.Equals(
+                    expectedEntityHash,
+                    ComputeFileHash(SourceEntityScenePath),
+                    StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException(
+                    "Dense-city candidate realization changed a protected source scene.");
+            }
+        }
 
         private static void RequireIndependentGuid(string sourcePath, string candidatePath)
         {

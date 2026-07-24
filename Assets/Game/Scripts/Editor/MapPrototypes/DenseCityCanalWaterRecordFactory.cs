@@ -20,7 +20,8 @@ namespace Game.Editor
             Vector2 exclusionSize,
             float exclusionElevation,
             int surfaceLayer,
-            Vector2Int chunk)
+            Vector2Int chunk,
+            Matrix4x4? exclusionWorldMatrix = null)
         {
             if (sequenceStart < 0 || sequenceStart > int.MaxValue - 2)
                 throw new ArgumentOutOfRangeException(nameof(sequenceStart));
@@ -39,6 +40,7 @@ namespace Game.Editor
             ExclusionElevation = exclusionElevation;
             SurfaceLayer = surfaceLayer;
             Chunk = chunk;
+            ExclusionWorldMatrix = exclusionWorldMatrix ?? waterWorldMatrix;
         }
 
         internal string GeneratorSchema { get; }
@@ -55,6 +57,7 @@ namespace Game.Editor
         internal float ExclusionElevation { get; }
         internal int SurfaceLayer { get; }
         internal Vector2Int Chunk { get; }
+        internal Matrix4x4 ExclusionWorldMatrix { get; }
     }
 
     internal static class DenseCityCanalWaterRecordFactory
@@ -67,7 +70,7 @@ namespace Game.Editor
             var exclusion = new DenseCitySurfaceBakeRecord(
                 exclusionIdentity,
                 DenseCitySurfaceRecordKind.Blocker,
-                CreateSurfacePolygon(input.WaterWorldMatrix, input.ExclusionSize),
+                CreateSurfacePolygon(input.ExclusionWorldMatrix, input.ExclusionSize),
                 input.ExclusionElevation,
                 0,
                 input.SurfaceLayer,

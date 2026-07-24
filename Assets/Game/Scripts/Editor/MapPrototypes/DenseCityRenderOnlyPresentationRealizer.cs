@@ -8,6 +8,9 @@ namespace Game.Editor
 {
     internal static class DenseCityRenderOnlyPresentationRealizer
     {
+        private const float MatrixAbsoluteTolerance = 0.0001f;
+        private const float MatrixRelativeTolerance = 0.0000002f;
+
         internal static Transform Realize(
             DenseCityPresentationBakeRecord presentation,
             DenseCityPresentationHierarchyContext hierarchy)
@@ -35,6 +38,7 @@ namespace Game.Editor
                 DenseCityPhysicsComponentStripper.StripInstanceHierarchy(instance);
                 instance.name = $"{prefab.name}_{presentation.Identity.DeterministicSequence:D6}";
                 ApplyWorldMatrix(instance.transform, presentation.WorldMatrix);
+                ApplyRecordedSingleMaterialOverride(instance, presentation);
                 RequireMaterialIdentity(instance, presentation);
                 hierarchy.RequireIndependentRoot(presentation.Category, instance.transform);
                 RequireMatrixParity(instance.transform.localToWorldMatrix, presentation);
@@ -74,6 +78,7 @@ namespace Game.Editor
                 DenseCityPhysicsComponentStripper.StripInstanceHierarchy(instance);
                 instance.name = $"{prefab.name}_{presentation.Identity.DeterministicSequence:D6}";
                 ApplyWorldMatrix(instance.transform, presentation.WorldMatrix);
+                ApplyRecordedSingleMaterialOverride(instance, presentation);
                 RequireMaterialIdentity(instance, presentation);
                 hierarchy.RequireAttachmentRoot(
                     presentation.Category,
@@ -131,6 +136,40 @@ namespace Game.Editor
                     $"'{presentation.Identity.StableKey}'.");
             }
             return prefab;
+        }
+
+        private static void ApplyRecordedSingleMaterialOverride(
+            GameObject instance,
+            DenseCityPresentationBakeRecord presentation)
+        {
+            ReadOnlySpan<string> expected = presentation.MaterialAssetGuids.Span;
+            if (expected.Length != 1)
+                return;
+
+            string materialPath = AssetDatabase.GUIDToAssetPath(expected[0]);
+            Material material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
+            if (material == null)
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city recorded material is unavailable: '{expected[0]}'.");
+            }
+
+            Renderer[] renderers = instance.GetComponentsInChildren<Renderer>(true);
+            for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
+            {
+                Renderer renderer = renderers[rendererIndex];
+                Material[] materials = renderer.sharedMaterials;
+                bool changed = false;
+                for (int materialIndex = 0; materialIndex < materials.Length; materialIndex++)
+                {
+                    if (materials[materialIndex] == null || materials[materialIndex] == material)
+                        continue;
+                    materials[materialIndex] = material;
+                    changed = true;
+                }
+                if (changed)
+                    renderer.sharedMaterials = materials;
+            }
         }
 
         internal static void ApplyWorldMatrix(Transform transform, Matrix4x4 matrix)
@@ -220,11 +259,18 @@ namespace Game.Editor
         {
             for (int index = 0; index < 16; index++)
             {
-                if (Mathf.Abs(actual[index] - presentation.WorldMatrix[index]) <= 0.0001f)
+                float expected = presentation.WorldMatrix[index];
+                float delta = Mathf.Abs(actual[index] - expected);
+                float tolerance = Mathf.Max(
+                    MatrixAbsoluteTolerance,
+                    Mathf.Abs(expected) * MatrixRelativeTolerance);
+                if (delta <= tolerance)
                     continue;
                 throw new InvalidOperationException(
                     $"Dense-city realized transform differs from its record: " +
-                    $"'{presentation.Identity.StableKey}'.");
+                    $"'{presentation.Identity.StableKey}' matrix[{index}] " +
+                    $"expected={expected:R} actual={actual[index]:R} " +
+                    $"delta={delta:R} tolerance={tolerance:R}.");
             }
         }
     }

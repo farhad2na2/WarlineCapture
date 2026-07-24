@@ -22,7 +22,9 @@ namespace Game.Editor
             Vector2Int chunk,
             bool castsShadows,
             bool batchingEligible,
-            byte lodImportance)
+            byte lodImportance,
+            Matrix4x4? blockerWorldMatrix = null,
+            Vector2? clippedBlockerSize = null)
         {
             if (sequenceStart < 0 || sequenceStart > int.MaxValue - 1)
                 throw new ArgumentOutOfRangeException(nameof(sequenceStart));
@@ -42,6 +44,8 @@ namespace Game.Editor
             CastsShadows = castsShadows;
             BatchingEligible = batchingEligible;
             LodImportance = lodImportance;
+            BlockerWorldMatrix = blockerWorldMatrix ?? worldMatrix;
+            ClippedBlockerSize = clippedBlockerSize ?? blockerSize;
         }
 
         internal string GeneratorSchema { get; }
@@ -60,6 +64,8 @@ namespace Game.Editor
         internal bool CastsShadows { get; }
         internal bool BatchingEligible { get; }
         internal byte LodImportance { get; }
+        internal Matrix4x4 BlockerWorldMatrix { get; }
+        internal Vector2 ClippedBlockerSize { get; }
     }
 
     internal static class DenseCityVisualBlockerRecordFactory
@@ -86,7 +92,7 @@ namespace Game.Editor
             var blocker = new DenseCitySurfaceBakeRecord(
                 blockerIdentity,
                 DenseCitySurfaceRecordKind.Blocker,
-                CreateFootprint(input.WorldMatrix, input.BlockerSize),
+                CreateFootprint(input.BlockerWorldMatrix, input.ClippedBlockerSize),
                 input.Elevation,
                 0,
                 input.SurfaceLayer,

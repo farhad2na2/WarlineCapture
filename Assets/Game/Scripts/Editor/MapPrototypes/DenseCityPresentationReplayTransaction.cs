@@ -24,7 +24,8 @@ namespace Game.Editor
             string operationMapId,
             IDenseCityGenerationRecordSource records,
             DenseCityPresentationHierarchyContext hierarchy,
-            DenseCityBuildingDefinitionLibrary definitionLibrary)
+            DenseCityBuildingDefinitionLibrary definitionLibrary,
+            DenseCityBuildingMaterialLibrary materialLibrary = null)
         {
             IReadOnlyList<DenseCityRealizedBuildingPresentation> buildings = null;
             try
@@ -33,7 +34,8 @@ namespace Game.Editor
                     operationMapId,
                     records,
                     hierarchy,
-                    definitionLibrary);
+                    definitionLibrary,
+                    materialLibrary);
                 IReadOnlyList<Transform> renderOnly =
                     DenseCityRenderOnlyPresentationReplayTransaction.Realize(records, hierarchy);
                 return new DenseCityRealizedPresentationSet(buildings, renderOnly);

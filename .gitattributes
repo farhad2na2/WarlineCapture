@@ -2,4 +2,6 @@
 
 Assets/Game/Scenes/Generated/*.unity filter=lfs diff=lfs merge=lfs -text
 Assets/Game/Scenes/OperationMaps/**/*.unity filter=lfs diff=lfs merge=lfs -text
+Assets/Game/GeneratedOperationMaps/DenseCity.meta -diff
+Assets/Game/GeneratedOperationMaps/DenseCity/** -diff
 Design/AgentReports/2026-07-21_dense_city_phase0a_transform_parity.json filter=lfs diff=lfs merge=lfs -text

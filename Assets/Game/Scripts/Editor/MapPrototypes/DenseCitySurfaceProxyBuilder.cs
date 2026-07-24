@@ -183,12 +183,15 @@ namespace Game.Editor
 
             var createdRoots = new List<GameObject>(partitions.Count);
             bool folderCreated = false;
+            bool assetEditing = false;
             int vertexCount = 0;
             int triangleCount = 0;
             try
             {
                 EnsureFolder(candidateAssetFolder);
                 folderCreated = true;
+                AssetDatabase.StartAssetEditing();
+                assetEditing = true;
                 int partitionIndex = 0;
                 foreach (KeyValuePair<PartitionKey, List<PreparedPolygon>> entry in partitions)
                 {
@@ -208,6 +211,7 @@ namespace Game.Editor
                     vertexCount += vertices;
                     triangleCount += triangles;
                 }
+                StopAssetEditing(ref assetEditing);
 
                 RequireCleanProxyHierarchy(mapBakeRoot.gameObject, surfaces.Count, createdRoots.Count);
                 AssetDatabase.SaveAssets();
@@ -219,6 +223,7 @@ namespace Game.Editor
             }
             catch
             {
+                StopAssetEditing(ref assetEditing);
                 for (int index = createdRoots.Count - 1; index >= 0; index--)
                 {
                     if (createdRoots[index] != null)
@@ -228,6 +233,14 @@ namespace Game.Editor
                     AssetDatabase.DeleteAsset(candidateAssetFolder);
                 throw;
             }
+        }
+
+        private static void StopAssetEditing(ref bool assetEditing)
+        {
+            if (!assetEditing)
+                return;
+            assetEditing = false;
+            AssetDatabase.StopAssetEditing();
         }
 
         private static Vector2[] PreparePolygon(DenseCitySurfaceBakeRecord record, Rect mapSurfaceBounds)
@@ -240,7 +253,10 @@ namespace Game.Editor
                     point.y < mapSurfaceBounds.yMin || point.y > mapSurfaceBounds.yMax)
                 {
                     throw new InvalidOperationException(
-                        $"Surface polygon exceeds approved map bounds: '{record.Identity.StableKey}'.");
+                        $"Surface polygon exceeds approved map bounds: " +
+                        $"'{record.Identity.StableKey}' point[{index}]=({point.x:R},{point.y:R}) " +
+                        $"bounds=({mapSurfaceBounds.xMin:R},{mapSurfaceBounds.yMin:R})-" +
+                        $"({mapSurfaceBounds.xMax:R},{mapSurfaceBounds.yMax:R}).");
                 }
             }
             float signedArea = SignedArea(points);

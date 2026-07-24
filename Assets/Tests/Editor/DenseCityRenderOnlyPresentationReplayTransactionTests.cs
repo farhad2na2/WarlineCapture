@@ -14,6 +14,7 @@ public sealed class DenseCityRenderOnlyPresentationReplayTransactionTests
     private const string EntityScenePath = TempRoot + "/entity.unity";
     private const string MaterialPath = TempRoot + "/material.mat";
     private const string OtherMaterialPath = TempRoot + "/other.mat";
+    private const string ThirdMaterialPath = TempRoot + "/third.mat";
     private const string PrefabPath = TempRoot + "/prop.prefab";
     private const string Hash =
         "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
@@ -116,8 +117,12 @@ public sealed class DenseCityRenderOnlyPresentationReplayTransactionTests
                 DenseCityPresentationCategory.Prop,
                 Vector3.zero));
             Material other = CreateMaterial(OtherMaterialPath);
+            Material third = CreateMaterial(ThirdMaterialPath);
             Assert.That(
                 AssetDatabase.TryGetGUIDAndLocalFileIdentifier(other, out string otherGuid, out long _),
+                Is.True);
+            Assert.That(
+                AssetDatabase.TryGetGUIDAndLocalFileIdentifier(third, out string thirdGuid, out long _),
                 Is.True);
             records.AddRenderOnlyPresentation(new DenseCityPresentationBakeRecord(
                 new DenseCityRecordIdentity(
@@ -131,7 +136,7 @@ public sealed class DenseCityRenderOnlyPresentationReplayTransactionTests
                 DenseCityPresentationCategory.Prop,
                 metadata.PrefabAssetGuid,
                 null,
-                new[] { otherGuid },
+                new[] { otherGuid, thirdGuid },
                 Matrix4x4.TRS(Vector3.right, Quaternion.identity, Vector3.one),
                 true,
                 true,

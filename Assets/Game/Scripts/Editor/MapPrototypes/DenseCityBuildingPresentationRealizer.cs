@@ -35,7 +35,9 @@ namespace Game.Editor
             DenseCityPresentationBakeRecord intactPresentation,
             DenseCityPresentationBakeRecord destroyedPresentation,
             DenseCityPresentationHierarchyContext hierarchy,
-            DenseCityBuildingDefinitionLibrary definitionLibrary)
+            DenseCityBuildingDefinitionLibrary definitionLibrary,
+            DenseCityBuildingMaterialLibrary materialLibrary = null,
+            int? placementIndexOverride = null)
         {
             if (!OperationMapIdentityRules.IsValidOperationMapId(operationMapId))
                 throw new ArgumentException("A valid operation-map id is required.", nameof(operationMapId));
@@ -46,6 +48,13 @@ namespace Game.Editor
             RequireLinkedPresentations(building, intactPresentation, destroyedPresentation);
             if (building.FactionId > byte.MaxValue)
                 throw new InvalidOperationException("Generated building faction exceeds byte storage.");
+            int placementIndex =
+                placementIndexOverride ?? building.Identity.DeterministicSequence;
+            if (placementIndex < 0)
+            {
+                throw new InvalidOperationException(
+                    "Generated building placement index must be non-negative.");
+            }
 
             BuildingDefinitionAuthoringConfig definitionConfig =
                 definitionLibrary.ResolveAsset(building.Role);
@@ -70,7 +79,7 @@ namespace Game.Editor
             GameObject owner = null;
             try
             {
-                owner = new GameObject($"Building_{building.Identity.DeterministicSequence:D6}");
+                owner = new GameObject($"Building_{placementIndex:D6}");
                 owner.transform.SetParent(parent, false);
                 DenseCityRenderOnlyPresentationRealizer.ApplyWorldMatrix(
                     owner.transform,
@@ -80,7 +89,12 @@ namespace Game.Editor
                     owner.transform,
                     building.Role);
 
-                Transform intactRoot = InstantiateVisual(intactPresentation, owner.transform, "IntactVisual");
+                Transform intactRoot = InstantiateVisual(
+                    intactPresentation,
+                    owner.transform,
+                    "IntactVisual",
+                    materialLibrary,
+                    building);
                 Transform destroyedRoot = InstantiateVisual(
                     destroyedPresentation,
                     owner.transform,
@@ -91,7 +105,7 @@ namespace Game.Editor
                 authoring.ConfigureGeneratedForEditor(
                     operationMapId,
                     building.Identity.CreateBakedStableId(),
-                    building.Identity.DeterministicSequence,
+                    placementIndex,
                     (byte)building.FactionId,
                     building.OriginCell,
                     building.FootprintCells,
@@ -117,7 +131,9 @@ namespace Game.Editor
         private static Transform InstantiateVisual(
             DenseCityPresentationBakeRecord presentation,
             Transform owner,
-            string name)
+            string name,
+            DenseCityBuildingMaterialLibrary materialLibrary = null,
+            DenseCityBuildingBakeRecord building = default)
         {
             GameObject prefab = DenseCityRenderOnlyPresentationRealizer.LoadRequiredPrefab(
                 presentation,
@@ -130,11 +146,44 @@ namespace Game.Editor
             DenseCityRenderOnlyPresentationRealizer.ApplyWorldMatrix(
                 instance.transform,
                 presentation.WorldMatrix);
+            if (materialLibrary != null)
+            {
+                DenseCityBuildingMaterialSelection selection = materialLibrary.Select(
+                    prefab,
+                    building.WorldMatrix.GetColumn(3),
+                    unchecked((uint)building.Identity.Seed),
+                    building.Role);
+                ApplyMaterialSelection(instance, materialLibrary, selection);
+            }
             DenseCityRenderOnlyPresentationRealizer.RequireMaterialIdentity(instance, presentation);
             DenseCityRenderOnlyPresentationRealizer.RequireMatrixParity(
                 instance.transform.localToWorldMatrix,
                 presentation);
             return instance.transform;
+        }
+
+        private static void ApplyMaterialSelection(
+            GameObject instance,
+            DenseCityBuildingMaterialLibrary materialLibrary,
+            DenseCityBuildingMaterialSelection selection)
+        {
+            Renderer[] renderers = instance.GetComponentsInChildren<Renderer>(true);
+            for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
+            {
+                Renderer renderer = renderers[rendererIndex];
+                Material[] materials = renderer.sharedMaterials;
+                bool changed = false;
+                for (int materialIndex = 0; materialIndex < materials.Length; materialIndex++)
+                {
+                    Material resolved = materialLibrary.Resolve(materials[materialIndex], selection);
+                    if (resolved == materials[materialIndex])
+                        continue;
+                    materials[materialIndex] = resolved;
+                    changed = true;
+                }
+                if (changed)
+                    renderer.sharedMaterials = materials;
+            }
         }
 
         private static void RequireLinkedPresentations(

@@ -170,18 +170,24 @@ public sealed class DenseCityBuildingPresentationReplayTransactionTests
             DenseCityPresentationCategory.BuildingAttachmentIntact,
             buildingMatrix * Matrix4x4.Translate(new Vector3(0.25f, 1f, 0f)),
             null);
-        Material mismatchMaterial = mismatchDestroyedAttachment
-            ? CreateMaterial(TempRoot + "/mismatch.mat")
-            : null;
-        string mismatchGuid = null;
-        if (mismatchMaterial != null)
+        string[] mismatchGuids = null;
+        if (mismatchDestroyedAttachment)
         {
+            Material mismatchA = CreateMaterial(TempRoot + "/mismatch-a.mat");
+            Material mismatchB = CreateMaterial(TempRoot + "/mismatch-b.mat");
             Assert.That(
                 AssetDatabase.TryGetGUIDAndLocalFileIdentifier(
-                    mismatchMaterial,
-                    out mismatchGuid,
+                    mismatchA,
+                    out string mismatchGuidA,
                     out long _),
                 Is.True);
+            Assert.That(
+                AssetDatabase.TryGetGUIDAndLocalFileIdentifier(
+                    mismatchB,
+                    out string mismatchGuidB,
+                    out long _),
+                Is.True);
+            mismatchGuids = new[] { mismatchGuidA, mismatchGuidB };
         }
         DenseCityPresentationBakeRecord destroyedAttachment = CreateAttachment(
             "DestroyedAttachmentSource",
@@ -190,7 +196,7 @@ public sealed class DenseCityBuildingPresentationReplayTransactionTests
             group.Building.Identity.StableKey,
             DenseCityPresentationCategory.BuildingAttachmentDestroyed,
             buildingMatrix * Matrix4x4.Translate(new Vector3(-0.25f, 0.5f, 0f)),
-            mismatchGuid);
+            mismatchGuids);
 
         var records = new DenseCityGenerationRecordSet(1, 2, 4);
         DenseCityBuildingRecordFactory.Add(records, group);
@@ -207,7 +213,7 @@ public sealed class DenseCityBuildingPresentationReplayTransactionTests
         string ownerStableKey,
         DenseCityPresentationCategory category,
         Matrix4x4 matrix,
-        string overrideMaterialGuid)
+        string[] overrideMaterialGuids)
     {
         DenseCityVisualAssetMetadata metadata = CreatePrefabMetadata(sourceName, kind);
         return new DenseCityPresentationBakeRecord(
@@ -222,9 +228,9 @@ public sealed class DenseCityBuildingPresentationReplayTransactionTests
             category,
             metadata.PrefabAssetGuid,
             null,
-            overrideMaterialGuid == null
+            overrideMaterialGuids == null
                 ? metadata.MaterialAssetGuids.ToArray()
-                : new[] { overrideMaterialGuid },
+                : overrideMaterialGuids,
             matrix,
             true,
             true,

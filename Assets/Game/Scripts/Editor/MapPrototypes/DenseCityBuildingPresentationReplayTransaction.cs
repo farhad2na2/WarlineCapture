@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Game.Authoring;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 
 namespace Game.Editor
@@ -10,7 +12,8 @@ namespace Game.Editor
             string operationMapId,
             IDenseCityGenerationRecordSource records,
             DenseCityPresentationHierarchyContext hierarchy,
-            DenseCityBuildingDefinitionLibrary definitionLibrary)
+            DenseCityBuildingDefinitionLibrary definitionLibrary,
+            DenseCityBuildingMaterialLibrary materialLibrary = null)
         {
             if (records == null)
                 throw new ArgumentNullException(nameof(records));
@@ -30,6 +33,7 @@ namespace Game.Editor
             IndexPresentations(presentations, presentationByStableKey, attachmentsByOwner);
 
             var realized = new List<DenseCityRealizedBuildingPresentation>(buildings.Count);
+            int placementIndexBase = ResolvePlacementIndexBase(operationMapId, hierarchy);
             string previousBuildingStableKey = null;
             try
             {
@@ -49,6 +53,11 @@ namespace Game.Editor
                     DenseCityPresentationBakeRecord destroyed = RequirePresentation(
                         presentationByStableKey,
                         building.DestroyedPresentationIdentity.StableKey);
+                    if (index > int.MaxValue - placementIndexBase)
+                    {
+                        throw new InvalidOperationException(
+                            "Generated building placement-index capacity is exhausted.");
+                    }
                     DenseCityRealizedBuildingPresentation owner =
                         DenseCityBuildingPresentationRealizer.Realize(
                             operationMapId,
@@ -56,7 +65,9 @@ namespace Game.Editor
                             intact,
                             destroyed,
                             hierarchy,
-                            definitionLibrary);
+                            definitionLibrary,
+                            materialLibrary,
+                            placementIndexBase + index);
                     realized.Add(owner);
                     if (attachmentsByOwner.TryGetValue(buildingStableKey, out var attachments))
                         RealizeAttachments(attachments, owner, hierarchy);
@@ -74,6 +85,36 @@ namespace Game.Editor
                 }
                 throw;
             }
+        }
+
+        private static int ResolvePlacementIndexBase(
+            string operationMapId,
+            DenseCityPresentationHierarchyContext hierarchy)
+        {
+            Scene scene = hierarchy.ResolveIndependentParent(
+                DenseCityPresentationCategory.GameplayBuildingIntact,
+                Game.Configs.GeneratedCityBuildingRole.Other).gameObject.scene;
+            int maximumPlacementIndex = -1;
+            foreach (GameObject root in scene.GetRootGameObjects())
+            {
+                OperationMapBuildingAuthoring[] existing =
+                    root.GetComponentsInChildren<OperationMapBuildingAuthoring>(true);
+                for (int index = 0; index < existing.Length; index++)
+                {
+                    OperationMapBuildingAuthoring building = existing[index];
+                    if (!string.Equals(building.OperationMapId, operationMapId, StringComparison.Ordinal))
+                        continue;
+                    maximumPlacementIndex = Math.Max(
+                        maximumPlacementIndex,
+                        building.PlacementIndex);
+                }
+            }
+            if (maximumPlacementIndex == int.MaxValue)
+            {
+                throw new InvalidOperationException(
+                    "Generated building placement-index capacity is exhausted.");
+            }
+            return maximumPlacementIndex + 1;
         }
 
         private static void IndexPresentations(

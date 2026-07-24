@@ -302,6 +302,62 @@ namespace Game.Editor
                 realize);
         }
 
+        internal bool TryPlacePresentationOnlyTerrainVisuals(
+            int districtId,
+            int presentationCount,
+            Func<int, DenseCityPresentationBakeRecord[]> createPresentations,
+            Func<bool> realize)
+        {
+            return TryPlacePresentationOnlyVisuals(
+                districtId,
+                checked(1 + presentationCount),
+                presentationCount,
+                createPresentations,
+                realize);
+        }
+
+        internal bool TryPlacePresentationOnlyVisuals(
+            int districtId,
+            int reservedSequenceCount,
+            int presentationCount,
+            Func<int, DenseCityPresentationBakeRecord[]> createPresentations,
+            Func<bool> realize)
+        {
+            RequireActive();
+            if (districtId < 0)
+                throw new ArgumentOutOfRangeException(nameof(districtId));
+            if (reservedSequenceCount <= 0)
+                throw new ArgumentOutOfRangeException(nameof(reservedSequenceCount));
+            if (presentationCount <= 0 || presentationCount > 16)
+                throw new ArgumentOutOfRangeException(nameof(presentationCount));
+            if (reservedSequenceCount < presentationCount)
+                throw new ArgumentOutOfRangeException(nameof(reservedSequenceCount));
+            if (createPresentations == null)
+                throw new ArgumentNullException(nameof(createPresentations));
+            if (realize == null)
+                throw new ArgumentNullException(nameof(realize));
+
+            int sequenceStart = GetInfrastructureSequenceStart(districtId, reservedSequenceCount);
+            DenseCityPresentationBakeRecord[] presentations = createPresentations(sequenceStart);
+            if (presentations == null || presentations.Length != presentationCount)
+            {
+                throw new InvalidOperationException(
+                    $"Presentation-only terrain transaction declared {presentationCount} presentations.");
+            }
+            for (int index = 0; index < presentations.Length; index++)
+            {
+                DenseCityRenderOnlyPresentationRecordFactory.RequireRenderOnlyCategory(
+                    presentations[index].Category);
+            }
+
+            nextInfrastructureSequenceByDistrict[districtId] =
+                checked(sequenceStart + reservedSequenceCount);
+            return DenseCityRenderOnlyPresentationGroupPlacementTransaction.TryCommitAndRealize(
+                Records,
+                presentations,
+                realize);
+        }
+
         internal bool TryPlaceRenderOnlyPresentation(
             int districtId,
             DenseCityPresentationHierarchyContext presentationHierarchy,

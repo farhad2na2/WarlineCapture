@@ -52,9 +52,12 @@ public sealed class DenseCityBuildingPresentationRealizerTests
                     group.IntactPresentation,
                     group.DestroyedPresentation,
                     hierarchy,
-                    definitions);
+                    definitions,
+                    null,
+                    432);
 
             Assert.That(realized.Authoring.TryValidate(out string error), Is.True, error);
+            Assert.That(realized.Authoring.PlacementIndex, Is.EqualTo(432));
             Assert.That(realized.Authoring.StableId, Is.EqualTo(group.Building.Identity.CreateBakedStableId()));
             Assert.That(realized.Authoring.OriginCell, Is.EqualTo(group.Building.OriginCell));
             Assert.That(realized.Authoring.FootprintCells, Is.EqualTo(group.Building.FootprintCells));

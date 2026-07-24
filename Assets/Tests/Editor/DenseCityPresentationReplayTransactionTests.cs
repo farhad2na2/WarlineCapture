@@ -152,14 +152,21 @@ public sealed class DenseCityPresentationReplayTransactionTests
         IReadOnlyList<string> secondMaterials = vegetation.MaterialAssetGuids;
         if (mismatchSecondRenderOnly)
         {
-            Material mismatch = CreateMaterial(TempRoot + "/mismatch.mat");
+            Material mismatchA = CreateMaterial(TempRoot + "/mismatch-a.mat");
+            Material mismatchB = CreateMaterial(TempRoot + "/mismatch-b.mat");
             Assert.That(
                 AssetDatabase.TryGetGUIDAndLocalFileIdentifier(
-                    mismatch,
-                    out string mismatchGuid,
+                    mismatchA,
+                    out string mismatchGuidA,
                     out long _),
                 Is.True);
-            secondMaterials = new[] { mismatchGuid };
+            Assert.That(
+                AssetDatabase.TryGetGUIDAndLocalFileIdentifier(
+                    mismatchB,
+                    out string mismatchGuidB,
+                    out long _),
+                Is.True);
+            secondMaterials = new[] { mismatchGuidA, mismatchGuidB };
         }
 
         var records = new DenseCityGenerationRecordSet(1, 2, 4);

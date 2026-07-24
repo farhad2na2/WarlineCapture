@@ -27,7 +27,7 @@ using UnityEngine.TestTools;
 using UnityEngine.SceneManagement;
 using Hash128 = Unity.Entities.Hash128;
 
-public sealed class OperationMapEntityScenePackedRuntimeParityPlayModeTests
+public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTests
 {
     private const string DefinitionAddress =
         "operation-map-candidate/opmap.skirmish.desert_base_01/definition";

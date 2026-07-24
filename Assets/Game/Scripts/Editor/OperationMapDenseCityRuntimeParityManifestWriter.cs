@@ -43,9 +43,12 @@ namespace Game.Editor
             if (string.IsNullOrWhiteSpace(projectRoot))
                 throw new ArgumentException("A project root is required.", nameof(projectRoot));
 
-            LegacyIdentityRow[] legacyIdentities = ReadLegacyIdentities(entityManager);
-            DenseIdentityRow[] denseIdentities = ReadDenseIdentities(entityManager);
-            RenderRow[] renderRows = ReadRenderRows(entityManager);
+            var worldMatrices = new CanonicalWorldMatrixResolver(entityManager);
+            LegacyIdentityRow[] legacyIdentities =
+                ReadLegacyIdentities(entityManager, worldMatrices);
+            DenseIdentityRow[] denseIdentities =
+                ReadDenseIdentities(entityManager, worldMatrices);
+            RenderRow[] renderRows = ReadRenderRows(entityManager, worldMatrices);
             RequireExpectedCounts(legacyIdentities, denseIdentities, renderRows);
             string candidateSubSceneSha256 = ComputeSha256(Resolve(
                 projectRoot,
@@ -143,7 +146,9 @@ namespace Game.Editor
             }
         }
 
-        private static LegacyIdentityRow[] ReadLegacyIdentities(EntityManager entityManager)
+        private static LegacyIdentityRow[] ReadLegacyIdentities(
+            EntityManager entityManager,
+            CanonicalWorldMatrixResolver worldMatrices)
         {
             using EntityQuery query = entityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<OperationMapEntityPresentationIdentity>());
@@ -170,13 +175,15 @@ namespace Game.Editor
                     sourceId,
                     values[i].Role,
                     values[i].PlacementIndex,
-                    ReadWorldMatrix(entityManager, entities[i]));
+                    ToMatrix(worldMatrices.Resolve(entities[i])));
             }
             Array.Sort(result, LegacyIdentityRowComparer.Instance);
             return result;
         }
 
-        private static DenseIdentityRow[] ReadDenseIdentities(EntityManager entityManager)
+        private static DenseIdentityRow[] ReadDenseIdentities(
+            EntityManager entityManager,
+            CanonicalWorldMatrixResolver worldMatrices)
         {
             using EntityQuery query = entityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<DenseCityPresentationIdentity>());
@@ -196,28 +203,29 @@ namespace Game.Editor
                 result[i] = new DenseIdentityRow(
                     stableId,
                     values[i].Role,
-                    ReadWorldMatrix(entityManager, entities[i]));
+                    ToMatrix(worldMatrices.Resolve(entities[i])));
             }
             Array.Sort(result, DenseIdentityRowComparer.Instance);
             return result;
         }
 
-        private static RenderRow[] ReadRenderRows(EntityManager entityManager)
+        private static RenderRow[] ReadRenderRows(
+            EntityManager entityManager,
+            CanonicalWorldMatrixResolver worldMatrices)
         {
             using EntityQuery query = entityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<RenderBounds>(),
                 ComponentType.ReadOnly<LocalToWorld>());
             using NativeArray<RenderBounds> bounds =
                 query.ToComponentDataArray<RenderBounds>(Allocator.Temp);
-            using NativeArray<LocalToWorld> transforms =
-                query.ToComponentDataArray<LocalToWorld>(Allocator.Temp);
-            if (bounds.Length != transforms.Length)
+            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            if (bounds.Length != entities.Length)
                 throw new InvalidOperationException("Dense parity render component counts differ.");
 
             var result = new RenderRow[bounds.Length];
             for (int i = 0; i < result.Length; i++)
             {
-                Matrix4x4 world = ToMatrix(transforms[i].Value);
+                Matrix4x4 world = ToMatrix(worldMatrices.Resolve(entities[i]));
                 float3 center = bounds[i].Value.Center;
                 float3 extents = bounds[i].Value.Extents;
                 result[i] = RenderRow.Create(world, center, extents);
@@ -307,18 +315,77 @@ namespace Game.Editor
             return matrix;
         }
 
-        private static Matrix4x4 ReadWorldMatrix(EntityManager entityManager, Entity entity)
+        private sealed class CanonicalWorldMatrixResolver
         {
-            if (!entityManager.HasComponent<LocalToWorld>(entity))
+            private const int MaximumParentDepth = 128;
+            private readonly EntityManager entityManager;
+            private readonly Dictionary<Entity, float4x4> cache = new();
+            private readonly HashSet<Entity> visiting = new();
+
+            internal CanonicalWorldMatrixResolver(EntityManager entityManager)
             {
-                throw new InvalidOperationException(
-                    $"Dense parity identity has no baked LocalToWorld: {entity}");
+                this.entityManager = entityManager;
             }
-            Matrix4x4 matrix = ToMatrix(
-                entityManager.GetComponentData<LocalToWorld>(entity).Value);
-            for (int i = 0; i < 16; i++)
-                RequireFinite(matrix[i]);
-            return matrix;
+
+            internal float4x4 Resolve(Entity entity)
+            {
+                return Resolve(entity, 0);
+            }
+
+            private float4x4 Resolve(Entity entity, int depth)
+            {
+                if (cache.TryGetValue(entity, out float4x4 cached))
+                    return cached;
+                if (depth >= MaximumParentDepth)
+                {
+                    throw new InvalidOperationException(
+                        $"Dense parity transform parent depth exceeded at {entity}.");
+                }
+                if (!visiting.Add(entity))
+                {
+                    throw new InvalidOperationException(
+                        $"Dense parity transform parent cycle at {entity}.");
+                }
+
+                float4x4 world;
+                if (entityManager.HasComponent<LocalTransform>(entity))
+                {
+                    float4x4 local =
+                        entityManager.GetComponentData<LocalTransform>(entity).ToMatrix();
+                    if (entityManager.HasComponent<PostTransformMatrix>(entity))
+                    {
+                        local = math.mul(
+                            local,
+                            entityManager.GetComponentData<PostTransformMatrix>(entity).Value);
+                    }
+                    if (entityManager.HasComponent<Parent>(entity))
+                    {
+                        Entity parent = entityManager.GetComponentData<Parent>(entity).Value;
+                        world = math.mul(Resolve(parent, depth + 1), local);
+                    }
+                    else
+                        world = local;
+                }
+                else if (entityManager.HasComponent<LocalToWorld>(entity))
+                    world = entityManager.GetComponentData<LocalToWorld>(entity).Value;
+                else
+                {
+                    throw new InvalidOperationException(
+                        $"Dense parity entity has no canonical transform: {entity}.");
+                }
+
+                visiting.Remove(entity);
+                if (!math.all(math.isfinite(world.c0)) ||
+                    !math.all(math.isfinite(world.c1)) ||
+                    !math.all(math.isfinite(world.c2)) ||
+                    !math.all(math.isfinite(world.c3)))
+                {
+                    throw new InvalidOperationException(
+                        $"Dense parity canonical transform is non-finite at {entity}.");
+                }
+                cache.Add(entity, world);
+                return world;
+            }
         }
 
         private static float[] TransformBounds(

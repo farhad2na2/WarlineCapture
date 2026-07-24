@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Game.Authoring;
 using Game.Configs;
 using Game.Editor;
 using NUnit.Framework;
@@ -77,6 +78,28 @@ public sealed class DenseCityPresentationReplayTransactionTests
             Assert.That(
                 realized.RenderOnly[1].parent,
                 Is.SameAs(hierarchy.ResolveIndependentParent(DenseCityPresentationCategory.Vegetation)));
+
+            foreach (DenseCityPresentationIdentityAuthoring identity in
+                     entityScene.GetRootGameObjects()
+                         .SelectMany(root =>
+                             root.GetComponentsInChildren<DenseCityPresentationIdentityAuthoring>(true))
+                         .ToArray())
+            {
+                UnityEngine.Object.DestroyImmediate(identity);
+            }
+            DenseCityGeneratedRootAuthoring entityRoot = entityScene.GetRootGameObjects()
+                .SelectMany(root => root.GetComponentsInChildren<DenseCityGeneratedRootAuthoring>(true))
+                .Single(root => root.Role == DenseCityGeneratedRootRole.EntityPresentationSource);
+            DenseCityCandidatePresentationIdentityBackfill.BackfillResult backfill =
+                DenseCityCandidatePresentationIdentityBackfill.Apply(snapshot, hierarchy, entityRoot);
+
+            Assert.That(backfill.Buildings, Is.EqualTo(1));
+            Assert.That(backfill.RenderOnly, Is.EqualTo(2));
+            Assert.That(backfill.Added, Is.EqualTo(3));
+            Assert.That(backfill.Existing, Is.Zero);
+            Assert.That(
+                entityRoot.GetComponentsInChildren<DenseCityPresentationIdentityAuthoring>(true),
+                Has.Length.EqualTo(3));
         }
         finally
         {

@@ -238,6 +238,7 @@ namespace Game.Editor
                         generated.Records,
                         DenseCityPresentationHierarchyContext.Create(entityRoot),
                         entityRoot);
+                    ConfigureDenseReadinessContract(entityScene);
                     if (!DenseCityBakeReadinessValidator.TryValidateAuthoringOwnership(
                             mapScene,
                             entityScene,
@@ -311,6 +312,33 @@ namespace Game.Editor
                     $"Generated building count is {result.Count}; expected {expectedCount}.");
             }
             return result;
+        }
+
+        private static void ConfigureDenseReadinessContract(Scene entityScene)
+        {
+            OperationMapEntityPresentationRootAuthoring[] roots = entityScene
+                .GetRootGameObjects()
+                .SelectMany(root =>
+                    root.GetComponentsInChildren<OperationMapEntityPresentationRootAuthoring>(true))
+                .ToArray();
+            OperationMapEntityPresentationRootAuthoring buildingRoot = roots.Single(root =>
+                root.Role == OperationMapEntityPresentationRole.GameplayBuildings);
+            var serialized = new SerializedObject(buildingRoot);
+            serialized.FindProperty("expectedGameplayBuildingCount").intValue =
+                OperationMapEntityPresentationCandidateBakeValidator.ExpectedDenseGameplayBuildings;
+            serialized.FindProperty("expectedGameplayVehicleCount").intValue =
+                OperationMapEntityPresentationCandidateBakeValidator.ExpectedGameplayVehicles;
+            serialized.FindProperty("expectedRenderOnlyCount").intValue =
+                OperationMapEntityPresentationCandidateBakeValidator.ExpectedRenderOnlyOwners +
+                OperationMapEntityPresentationCandidateBakeValidator
+                    .ExpectedDenseGeneratedRenderOnlyOwners;
+            serialized.FindProperty("expectedGeneratedIdentityCount").intValue =
+                OperationMapEntityPresentationCandidateBakeValidator
+                    .ExpectedDenseGeneratedIdentities;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(buildingRoot);
+            if (!buildingRoot.TryValidate(out string error))
+                throw new InvalidOperationException(error);
         }
 
         private static void RequirePresentationMatch(

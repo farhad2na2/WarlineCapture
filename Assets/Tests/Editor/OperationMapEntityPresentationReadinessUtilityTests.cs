@@ -108,6 +108,51 @@ public sealed class OperationMapEntityPresentationReadinessUtilityTests
         Assert.That(error, Does.Contain("prohibited static preload"));
     }
 
+    [Test]
+    public void TryValidate_AcceptsExplicitGeneratedIdentityTotals()
+    {
+        OperationMapEntityPresentationReadinessContract contract =
+            world.EntityManager.GetComponentData<
+                OperationMapEntityPresentationReadinessContract>(contractEntity);
+        contract.ExpectedGameplayBuildingCount = 2;
+        contract.ExpectedRenderOnlyCount = 2;
+        contract.ExpectedGeneratedIdentityCount = 2;
+        world.EntityManager.SetComponentData(contractEntity, contract);
+        CreateGeneratedIdentity(1, "dense-building");
+        CreateGeneratedIdentity(3, "dense-render-only");
+        CreateSectionEntity(typeof(OperationMapBuildingPresentation));
+
+        Assert.That(
+            OperationMapEntityPresentationReadinessUtility.TryValidate(
+                world.EntityManager,
+                sceneEntity,
+                OperationMapId,
+                out string error),
+            Is.True,
+            error);
+    }
+
+    [Test]
+    public void TryValidate_RejectsDuplicateGeneratedIdentity()
+    {
+        OperationMapEntityPresentationReadinessContract contract =
+            world.EntityManager.GetComponentData<
+                OperationMapEntityPresentationReadinessContract>(contractEntity);
+        contract.ExpectedGeneratedIdentityCount = 2;
+        world.EntityManager.SetComponentData(contractEntity, contract);
+        CreateGeneratedIdentity(1, "duplicate");
+        CreateGeneratedIdentity(3, "duplicate");
+
+        Assert.That(
+            OperationMapEntityPresentationReadinessUtility.TryValidate(
+                world.EntityManager,
+                sceneEntity,
+                OperationMapId,
+                out string error),
+            Is.False);
+        Assert.That(error, Does.Contain("duplicate generated identity"));
+    }
+
     private Entity CreateSectionEntity(params ComponentType[] componentTypes)
     {
         Entity entity = world.EntityManager.CreateEntity(componentTypes);
@@ -142,6 +187,18 @@ public sealed class OperationMapEntityPresentationReadinessUtilityTests
                 SourceGlobalObjectId = new FixedString128Bytes(sourceId),
                 Role = role,
                 PlacementIndex = role
+            });
+    }
+
+    private void CreateGeneratedIdentity(byte role, string stableId)
+    {
+        Entity entity = CreateSectionEntity(typeof(DenseCityPresentationIdentity));
+        world.EntityManager.SetComponentData(
+            entity,
+            new DenseCityPresentationIdentity
+            {
+                StableId = new FixedString128Bytes(stableId),
+                Role = role
             });
     }
 }

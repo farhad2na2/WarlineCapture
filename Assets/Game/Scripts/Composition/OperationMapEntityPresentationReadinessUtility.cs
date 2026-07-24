@@ -38,6 +38,9 @@ namespace Game.Composition
             using EntityQuery identityQuery = entityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<OperationMapEntityPresentationIdentity>(),
                 ComponentType.ReadOnly<SceneTag>());
+            using EntityQuery generatedIdentityQuery = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<DenseCityPresentationIdentity>(),
+                ComponentType.ReadOnly<SceneTag>());
             using EntityQuery buildingQuery = entityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<OperationMapBuildingPresentation>(),
                 ComponentType.ReadOnly<SceneTag>());
@@ -49,8 +52,13 @@ namespace Game.Composition
             var roots = new NativeList<OperationMapEntityPresentationRoot>(Allocator.Temp);
             var identities = new NativeList<OperationMapEntityPresentationIdentity>(
                 Allocator.Temp);
+            var generatedIdentities = new NativeList<DenseCityPresentationIdentity>(
+                Allocator.Temp);
             var sourceIds = new NativeParallelHashSet<FixedString128Bytes>(
-                16,
+                16384,
+                Allocator.Temp);
+            var generatedIds = new NativeParallelHashSet<FixedString128Bytes>(
+                65536,
                 Allocator.Temp);
             int buildingCount = 0;
             int vehicleCount = 0;
@@ -65,12 +73,14 @@ namespace Game.Composition
                     contractQuery.SetSharedComponentFilter(sceneTag);
                     rootQuery.SetSharedComponentFilter(sceneTag);
                     identityQuery.SetSharedComponentFilter(sceneTag);
+                    generatedIdentityQuery.SetSharedComponentFilter(sceneTag);
                     buildingQuery.SetSharedComponentFilter(sceneTag);
                     vehicleQuery.SetSharedComponentFilter(sceneTag);
 
                     Append(contractQuery, ref contracts);
                     Append(rootQuery, ref roots);
                     Append(identityQuery, ref identities);
+                    Append(generatedIdentityQuery, ref generatedIdentities);
                     buildingCount += buildingQuery.CalculateEntityCount();
                     vehicleCount += vehicleQuery.CalculateEntityCount();
                 }
@@ -167,6 +177,45 @@ namespace Game.Composition
                     }
                 }
 
+                int generatedGameplayBuildings = 0;
+                int generatedRenderOnly = 0;
+                for (int i = 0; i < generatedIdentities.Length; i++)
+                {
+                    DenseCityPresentationIdentity identity = generatedIdentities[i];
+                    if (identity.StableId.Length == 0 ||
+                        !generatedIds.Add(identity.StableId))
+                    {
+                        error =
+                            "Packed EntityScene contains empty or duplicate generated identity " +
+                            $"'{identity.StableId}'.";
+                        return false;
+                    }
+                    switch (identity.Role)
+                    {
+                        case 1:
+                            generatedGameplayBuildings++;
+                            break;
+                        case 3:
+                            generatedRenderOnly++;
+                            break;
+                        default:
+                            error =
+                                $"Packed EntityScene contains unknown generated identity role " +
+                                $"{identity.Role}.";
+                            return false;
+                    }
+                }
+
+                if (generatedIdentities.Length != contract.ExpectedGeneratedIdentityCount)
+                {
+                    error =
+                        "Packed EntityScene generated identity count differs from the " +
+                        $"readiness contract: {generatedIdentities.Length}/" +
+                        $"{contract.ExpectedGeneratedIdentityCount}.";
+                    return false;
+                }
+                gameplayBuildings += generatedGameplayBuildings;
+                renderOnly += generatedRenderOnly;
                 if (gameplayBuildings != contract.ExpectedGameplayBuildingCount ||
                     gameplayVehicles != contract.ExpectedGameplayVehicleCount ||
                     renderOnly != contract.ExpectedRenderOnlyCount)
@@ -176,13 +225,6 @@ namespace Game.Composition
                         $"buildings={gameplayBuildings}/{contract.ExpectedGameplayBuildingCount} " +
                         $"vehicles={gameplayVehicles}/{contract.ExpectedGameplayVehicleCount} " +
                         $"renderOnly={renderOnly}/{contract.ExpectedRenderOnlyCount}.";
-                    return false;
-                }
-                if (contract.ExpectedGeneratedIdentityCount != 0)
-                {
-                    error =
-                        "Packed EntityScene readiness contract does not match the accepted " +
-                        "not-generated dense-city state.";
                     return false;
                 }
                 if (buildingCount != contract.ExpectedGameplayBuildingCount ||
@@ -203,7 +245,9 @@ namespace Game.Composition
                 contracts.Dispose();
                 roots.Dispose();
                 identities.Dispose();
+                generatedIdentities.Dispose();
                 sourceIds.Dispose();
+                generatedIds.Dispose();
             }
         }
 

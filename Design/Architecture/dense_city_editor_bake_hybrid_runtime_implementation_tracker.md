@@ -731,14 +731,14 @@ Runtime procedural generation is not the fallback for a rendering or packaging f
 
 Progress is checklist based. Every checkbox counts. Update the count, phase status, and validation log in the same stable change that completes an item.
 
-Current progress: **97 / 148 (66%)**
+Current progress: **97 / 149 (65%)**
 
 | Phase | Status |
 |---|---|
 | Phase 0: Baseline and contracts | Complete |
 | Phase 0A: Existing map ECS presentation migration | Transactional candidate Bake All plus direct and packed runtime matrix/bounds parity and fixed-camera Editor parity complete; broader lifecycle and Android acceptance open |
 | Phase 1: Generated ownership authoring | Complete; protected candidate scene-pair transaction, exact semantic hierarchy, and fail-closed role/scene ownership validation complete |
-| Phase 2: Generator semantic output | In progress; building/attachment, infrastructure, canal/park, civic/market, and combined courtyard/detail records now replay into the protected candidate hierarchy with deterministic map-global gameplay-building indices |
+| Phase 2: Generator semantic output | In progress; building/attachment, infrastructure, canal/park, civic/market, and combined courtyard/detail records now replay into the protected candidate hierarchy with deterministic map-global gameplay-building indices; protected-candidate Autobahn/two-lane-road harmonization remains open |
 | Phase 3: Collider-free enforcement | In progress; stripper coverage and source/candidate gates complete; production dependency closure blocked by seven collider-bearing transitive prefabs in the frozen static package |
 | Phase 4: Surface and blocker proxies | Complete; deterministic terrain, road, bridge, ramp, canal, building, wall, and rock proxies are validated without physics components |
 | Phase 5: Readiness and Bake All integration | In progress; generation, renderer/proxy ownership, protected authored-content identity/overlap, presentation-kind publication ordering, and deterministic dense candidate-to-baked-to-Addressables-runtime transform/bounds gates are live |
@@ -824,6 +824,7 @@ Current progress: **97 / 148 (66%)**
 - [x] Refactor building placement to emit ECS-building, foundation, blocker, intact-visual, and destroyed-visual records before realization.
 - [x] Emit stable building-owned attachment records for roof/interior/shop/tent props during generation and realize them beneath the declared intact or destroyed root rather than the global render-only prop hierarchy.
 - [x] Refactor road generation to emit distinct road, shoulder, terrain-patch, bridge, and ramp records.
+- [ ] After packed dense-city fixed-camera acceptance, replace the pre-dense-city main Autobahn presentation in the protected candidate with the shared dense-city two-lane road family; preserve its route and gameplay surface semantics, connect both ends and every crossing to the existing generated two-lane road graph, and fail validation on visible model/material discontinuity, overlap, or any open gap.
 - [x] Refactor canal/park generation to emit separate water exclusion, bridge, bank, terrain, vegetation, and light/prop records.
 - [x] Refactor civic/market generation to separate hero presentation, terrain, road, and blocker records.
 - [x] Refactor courtyard, wall, rock, mountain, vegetation, rooftop, power, and street-detail generation according to the semantic table.

@@ -29,14 +29,67 @@ namespace Game.Editor
             "Game/Operation Maps/EntityScene Migration/Build Candidate EntityScene Addressables Layout")]
         public static void BuildCandidateEntitySceneAddressablesLayout()
         {
+            BuildCandidateEntitySceneAddressablesLayout(false);
+        }
+
+        [MenuItem(
+            "Game/Operation Maps/EntityScene Migration/Build Dense City Candidate EntityScene Addressables Layout")]
+        public static void BuildDenseCityCandidateEntitySceneAddressablesLayout()
+        {
+            BuildCandidateEntitySceneAddressablesLayout(true);
+        }
+
+        private static void BuildCandidateEntitySceneAddressablesLayout(bool denseCity)
+        {
+            string projectRoot = Path.GetDirectoryName(Application.dataPath);
+            string definitionPath = denseCity
+                ? OperationMapEntitySceneCandidateAddressablesLayoutPlanner.DenseCandidateDefinitionPath
+                : OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateDefinitionPath;
+            string runtimeBindingPath = denseCity
+                ? OperationMapEntitySceneCandidateAddressablesLayoutPlanner.DenseCandidateRuntimeBindingPath
+                : OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateRuntimeBindingPath;
+            string reportRelativePath = denseCity
+                ? "Design/AgentReports/2026-07-24_dense_city_candidate_entityscene_addressables_layout.json"
+                : "Design/AgentReports/2026-07-21_dense_city_phase0a_candidate_entityscene_addressables_layout.json";
+            string summaryRelativePath = denseCity
+                ? null
+                : "Design/AgentReports/2026-07-21_dense_city_phase0a_candidate_entityscene_addressables_layout.md";
+            var transactionPaths = new List<string>
+            {
+                definitionPath,
+                definitionPath + ".meta",
+                runtimeBindingPath,
+                runtimeBindingPath + ".meta",
+                reportRelativePath
+            };
+            if (!string.IsNullOrEmpty(summaryRelativePath))
+                transactionPaths.Add(summaryRelativePath);
+
+            OperationMapEntitySceneCandidateBakeAll.CandidateFileTransaction transaction =
+                OperationMapEntitySceneCandidateBakeAll.CandidateFileTransaction.Capture(
+                    projectRoot,
+                    transactionPaths);
+            OperationMapEntitySceneCandidateBakeAll.ProtectedProductionSnapshot protectedSnapshot =
+                OperationMapEntitySceneCandidateBakeAll.ProtectedProductionSnapshot.Capture(
+                    projectRoot,
+                    GetProtectedAssetPaths(denseCity),
+                    new[] { "Assets/AddressableAssetsData" });
             SceneSetup[] previousSetup = EditorSceneManager.GetSceneManagerSetup();
             try
             {
-                EnsureCandidateDefinition();
-                EnsureCandidateRuntimeBindingScene();
+                if (denseCity)
+                {
+                    EnsureDenseCityCandidateDefinition();
+                    EnsureDenseCityCandidateRuntimeBindingScene();
+                }
+                else
+                {
+                    EnsureCandidateDefinition();
+                    EnsureCandidateRuntimeBindingScene();
+                }
+
                 OperationMapDefinition candidateDefinition =
-                    AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
-                        OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateDefinitionPath);
+                    AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(definitionPath);
                 if (candidateDefinition == null)
                     throw new InvalidOperationException("Candidate EntityScene definition is missing after build.");
                 if (candidateDefinition.PresentationKind != OperationMapPresentationKind.EntityScene)
@@ -44,9 +97,16 @@ namespace Game.Editor
                 if (!candidateDefinition.TryValidateLocalContentReferences(out string definitionError))
                     throw new InvalidOperationException($"Candidate EntityScene definition invalid: {definitionError}");
 
-                if (!OperationMapEntitySceneCandidateAddressablesLayoutPlanner.TryCreatePlan(
-                        out OperationMapEntitySceneCandidateAddressablesLayoutPlan plan,
-                        out string rejectionReason))
+                OperationMapEntitySceneCandidateAddressablesLayoutPlan plan;
+                string rejectionReason;
+                bool planned = denseCity
+                    ? OperationMapEntitySceneCandidateAddressablesLayoutPlanner.TryCreateDenseCityPlan(
+                        out plan,
+                        out rejectionReason)
+                    : OperationMapEntitySceneCandidateAddressablesLayoutPlanner.TryCreatePlan(
+                        out plan,
+                        out rejectionReason);
+                if (!planned)
                 {
                     throw new InvalidOperationException(
                         $"Candidate EntityScene Addressables layout rejected: {rejectionReason}");
@@ -55,24 +115,29 @@ namespace Game.Editor
                 RequireCandidateAssetsExist(plan);
                 RequireProductionAddressablesUntouched();
 
-                string projectRoot = Path.GetDirectoryName(Application.dataPath);
-                string reportPath = Path.Combine(
-                    projectRoot,
-                    "Design/AgentReports/2026-07-21_dense_city_phase0a_candidate_entityscene_addressables_layout.json");
+                string reportPath = Path.Combine(projectRoot, reportRelativePath);
                 LayoutReport report = CreateReport(plan, reportPath);
                 Directory.CreateDirectory(Path.GetDirectoryName(reportPath) ?? projectRoot);
                 File.WriteAllText(reportPath, JsonUtility.ToJson(report, true), Utf8WithoutBom);
 
-                string summaryPath = Path.Combine(
-                    projectRoot,
-                    "Design/AgentReports/2026-07-21_dense_city_phase0a_candidate_entityscene_addressables_layout.md");
-                File.WriteAllText(summaryPath, BuildMarkdown(report), Utf8WithoutBom);
+                if (!string.IsNullOrEmpty(summaryRelativePath))
+                {
+                    string summaryPath = Path.Combine(projectRoot, summaryRelativePath);
+                    File.WriteAllText(summaryPath, BuildMarkdown(report), Utf8WithoutBom);
+                }
 
+                protectedSnapshot.RequireUnchanged();
                 Debug.Log(
                     $"[OperationMapEntitySceneCandidateAddressablesLayoutBuilder] status={report.result} " +
+                    $"profile={(denseCity ? "DenseCity" : "Accepted")} " +
                     $"entries={report.entryCount} shared={report.sharedDependencyCount} " +
                     $"entitySceneGuid={report.entitySceneGuid} productionAddressablesMutated=0 " +
                     $"report={report.reportPath}");
+            }
+            catch
+            {
+                transaction.Rollback();
+                throw;
             }
             finally
             {
@@ -81,10 +146,62 @@ namespace Game.Editor
             }
         }
 
+        private static IEnumerable<string> GetProtectedAssetPaths(bool denseCity)
+        {
+            var paths = new List<string>
+            {
+                OperationMapAddressablesLayoutBuilder.DefinitionPath,
+                OperationMapAddressablesLayoutBuilder.DefinitionPath + ".meta",
+                OperationMapAddressablesLayoutBuilder.SourceScenePath,
+                OperationMapAddressablesLayoutBuilder.SourceScenePath + ".meta",
+                OperationMapAddressablesLayoutBuilder.AuthoringScenePath,
+                OperationMapAddressablesLayoutBuilder.AuthoringScenePath + ".meta",
+                OperationMapAddressablesLayoutBuilder.MapSurfacePath,
+                OperationMapAddressablesLayoutBuilder.MapSurfacePath + ".meta",
+                OperationMapAddressablesLayoutBuilder.MinimapRasterPath,
+                OperationMapAddressablesLayoutBuilder.MinimapRasterPath + ".meta",
+                OperationMapEntityPresentationMigrationEditor.AcceptedSubScenePath,
+                OperationMapEntityPresentationMigrationEditor.AcceptedSubScenePath + ".meta",
+                OperationMapEntityPresentationMigrationEditor.CandidateSubScenePath,
+                OperationMapEntityPresentationMigrationEditor.CandidateSubScenePath + ".meta"
+            };
+            if (denseCity)
+            {
+                paths.Add(DenseCityCandidateAuthoringTransaction.CandidateMapScenePath);
+                paths.Add(DenseCityCandidateAuthoringTransaction.CandidateMapScenePath + ".meta");
+                paths.Add(DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath);
+                paths.Add(DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath + ".meta");
+                paths.Add(OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateDefinitionPath);
+                paths.Add(OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateDefinitionPath + ".meta");
+                paths.Add(OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateRuntimeBindingPath);
+                paths.Add(OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateRuntimeBindingPath + ".meta");
+            }
+
+            return paths;
+        }
+
         internal static OperationMapDefinition EnsureCandidateDefinition()
         {
-            string folder = Path.GetDirectoryName(
-                OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateDefinitionPath);
+            return EnsureCandidateDefinition(
+                OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateDefinitionPath,
+                OperationMapEntityPresentationMigrationEditor.CandidateSubScenePath,
+                OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateRuntimeBindingPath);
+        }
+
+        internal static OperationMapDefinition EnsureDenseCityCandidateDefinition()
+        {
+            return EnsureCandidateDefinition(
+                OperationMapEntitySceneCandidateAddressablesLayoutPlanner.DenseCandidateDefinitionPath,
+                DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath,
+                OperationMapEntitySceneCandidateAddressablesLayoutPlanner.DenseCandidateRuntimeBindingPath);
+        }
+
+        private static OperationMapDefinition EnsureCandidateDefinition(
+            string candidatePath,
+            string candidateSubScenePath,
+            string candidateRuntimeBindingPath)
+        {
+            string folder = Path.GetDirectoryName(candidatePath);
             if (!string.IsNullOrEmpty(folder) && !AssetDatabase.IsValidFolder(folder))
             {
                 string parent = "Assets/Game/Configs/OperationMaps";
@@ -97,8 +214,6 @@ namespace Game.Editor
             if (production == null)
                 throw new InvalidOperationException("Production operation-map definition is missing.");
 
-            string candidatePath =
-                OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateDefinitionPath;
             OperationMapDefinition candidate =
                 AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(candidatePath);
             if (candidate == null)
@@ -109,12 +224,12 @@ namespace Game.Editor
             }
 
             string candidateSubSceneGuid = AssetDatabase.AssetPathToGUID(
-                OperationMapEntityPresentationMigrationEditor.CandidateSubScenePath);
+                candidateSubScenePath);
             if (string.IsNullOrEmpty(candidateSubSceneGuid))
                 throw new InvalidOperationException("Candidate entity SubScene GUID is missing.");
 
             string runtimeBindingGuid = AssetDatabase.AssetPathToGUID(
-                OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateRuntimeBindingPath);
+                candidateRuntimeBindingPath);
             string mapSurfaceGuid = AssetDatabase.AssetPathToGUID(
                 OperationMapAddressablesLayoutBuilder.MapSurfacePath);
             string minimapGuid = AssetDatabase.AssetPathToGUID(
@@ -128,15 +243,17 @@ namespace Game.Editor
             serialized.FindProperty("navigationMetadata")
                 .FindPropertyRelative("authoredSubSceneGuid").stringValue = candidateSubSceneGuid;
             SetAssetReferenceGuid(serialized, "staticPresentationManifestReference", string.Empty);
+            SetAssetReferenceGuid(serialized, "optionalHeavyMetadataReference", string.Empty);
             SetAssetReferenceGuid(serialized, "buildingPlacementsReference", string.Empty);
             SetAssetReferenceGuid(serialized, "vehiclePlacementsReference", string.Empty);
             SetAssetReferenceGuid(serialized, "mapSurfaceDataReference", mapSurfaceGuid);
             SetAssetReferenceGuid(serialized, "minimapRasterReference", minimapGuid);
-            if (!string.IsNullOrEmpty(runtimeBindingGuid))
-                SetAssetReferenceGuid(serialized, "sourceSceneReference", runtimeBindingGuid);
+            SetAssetReferenceGuid(serialized, "sourceSceneReference", runtimeBindingGuid);
             serialized.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(candidate);
-            AssetDatabase.SaveAssets();
+            AssetDatabase.SaveAssetIfDirty(candidate);
+            NormalizeAssetText(candidatePath);
+            NormalizeAssetText(candidatePath + ".meta");
             AssetDatabase.ImportAsset(candidatePath, ImportAssetOptions.ForceSynchronousImport);
 
             candidate = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(candidatePath);
@@ -153,13 +270,28 @@ namespace Game.Editor
 
         internal static void EnsureCandidateRuntimeBindingScene()
         {
-            string outputPath =
-                OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateRuntimeBindingPath;
+            EnsureCandidateRuntimeBindingScene(
+                OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateRuntimeBindingPath,
+                OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateDefinitionPath,
+                OperationMapEntityPresentationMigrationEditor.CandidateSubScenePath);
+        }
+
+        internal static void EnsureDenseCityCandidateRuntimeBindingScene()
+        {
+            EnsureCandidateRuntimeBindingScene(
+                OperationMapEntitySceneCandidateAddressablesLayoutPlanner.DenseCandidateRuntimeBindingPath,
+                OperationMapEntitySceneCandidateAddressablesLayoutPlanner.DenseCandidateDefinitionPath,
+                DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath);
+        }
+
+        private static void EnsureCandidateRuntimeBindingScene(
+            string outputPath,
+            string candidateDefinitionPath,
+            string candidateSubScenePath)
+        {
             string folder = Path.GetDirectoryName(outputPath)?.Replace('\\', '/');
             EnsureFolder(folder);
 
-            string candidateDefinitionPath =
-                OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateDefinitionPath;
             OperationMapDefinition definition =
                 AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(candidateDefinitionPath);
             if (definition == null ||
@@ -169,7 +301,7 @@ namespace Game.Editor
             }
 
             SceneAsset subSceneAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(
-                OperationMapEntityPresentationMigrationEditor.CandidateSubScenePath);
+                candidateSubScenePath);
             if (subSceneAsset == null)
                 throw new InvalidOperationException("Candidate entity SubScene asset is missing.");
 
@@ -238,7 +370,8 @@ namespace Game.Editor
             }
 
             // Fail-closed: Unity sometimes drops brand-new ScriptableObject refs in the same session.
-            NormalizeSceneText(outputPath);
+            NormalizeAssetText(outputPath);
+            NormalizeAssetText(outputPath + ".meta");
             PatchDefinitionReferenceIfMissing(outputPath, candidateDefinitionPath);
             AssetDatabase.ImportAsset(outputPath, ImportAssetOptions.ForceSynchronousImport);
 
@@ -250,7 +383,7 @@ namespace Game.Editor
                         reloaded,
                         reloadedView.OperationMapId,
                         candidateDefinitionPath,
-                        OperationMapEntityPresentationMigrationEditor.CandidateSubScenePath,
+                        candidateSubScenePath,
                         out string validateError))
                 {
                     throw new InvalidOperationException(
@@ -275,12 +408,15 @@ namespace Game.Editor
             SetAssetReferenceGuid(definitionSerialized, "sourceSceneReference", runtimeGuid);
             if (definitionSerialized.ApplyModifiedPropertiesWithoutUndo())
                 EditorUtility.SetDirty(definition);
-            AssetDatabase.SaveAssets();
+            AssetDatabase.SaveAssetIfDirty(definition);
         }
 
-        private static void NormalizeSceneText(string scenePath)
+        private static void NormalizeAssetText(string assetPath)
         {
-            string physical = Path.GetFullPath(Path.Combine(Application.dataPath, "..", scenePath));
+            string physical = Path.GetFullPath(Path.Combine(Application.dataPath, "..", assetPath));
+            if (!File.Exists(physical))
+                return;
+
             string[] lines = File.ReadAllLines(physical);
             var normalized = new StringBuilder();
             for (int index = 0; index < lines.Length; index++)

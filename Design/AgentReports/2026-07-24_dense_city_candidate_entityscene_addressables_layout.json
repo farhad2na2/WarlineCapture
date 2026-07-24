@@ -1,0 +1,54 @@
+{
+    "schema": "warline.operation-map.entity-scene-candidate-addressables-layout",
+    "schemaVersion": 1,
+    "result": "CandidateEntitySceneAddressablesLayoutReady",
+    "operationMapId": "opmap.skirmish.desert_base_01",
+    "packLabel": "operation-map-candidate-pack-skirmish-desert-base-01-dense-city-entity-scene",
+    "addressPrefix": "operation-map-candidate/opmap.skirmish.desert_base_01/dense-city/",
+    "entitySceneGuid": "c00140f2e94a04c3084c8dcb0c18cbd0",
+    "entryCount": 5,
+    "sharedDependencyCount": 0,
+    "staticManifestEntryCount": 0,
+    "presentationChunkEntryCount": 0,
+    "legacyPlacementEntryCount": 0,
+    "productionAddressablesMutated": 0,
+    "productionPresentationKind": "StaticSceneChunks",
+    "reportPath": "/Users/farhad/Projects/WarlineCapture/Design/AgentReports/2026-07-24_dense_city_candidate_entityscene_addressables_layout.json",
+    "entries": [
+        {
+            "role": "definition",
+            "assetPath": "Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset",
+            "address": "operation-map-candidate/opmap.skirmish.desert_base_01/dense-city/definition",
+            "roleLabel": "operation-map-role-definition",
+            "guid": "cbfc2f62e3142413485019bd83197539"
+        },
+        {
+            "role": "source-scene",
+            "assetPath": "Assets/Game/GeneratedOperationMaps/RuntimeBinding/opmap.skirmish.desert_base_01/Candidates/opmap_skirmish_desert_base_01_dense_city_entity_scene_runtime.unity",
+            "address": "operation-map-candidate/opmap.skirmish.desert_base_01/dense-city/source-scene",
+            "roleLabel": "operation-map-role-source-scene",
+            "guid": "dad0bd13fb20943dfb2f881cbe225f05"
+        },
+        {
+            "role": "entity-scene",
+            "assetPath": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
+            "address": "operation-map-candidate/opmap.skirmish.desert_base_01/dense-city/entity-scene",
+            "roleLabel": "operation-map-role-entity-scene",
+            "guid": "c00140f2e94a04c3084c8dcb0c18cbd0"
+        },
+        {
+            "role": "map-surface",
+            "assetPath": "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset",
+            "address": "operation-map-candidate/opmap.skirmish.desert_base_01/dense-city/map-surface",
+            "roleLabel": "operation-map-role-metadata",
+            "guid": "12f517deb32ab49698acbfdaf7c3eac7"
+        },
+        {
+            "role": "minimap-raster",
+            "assetPath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/MinimapRaster.png",
+            "address": "operation-map-candidate/opmap.skirmish.desert_base_01/dense-city/minimap-raster",
+            "roleLabel": "operation-map-role-minimap-raster",
+            "guid": "3b1a8dbd670bf4e94863c00acbc3a3a7"
+        }
+    ]
+}

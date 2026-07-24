@@ -1,0 +1,165 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f935472054514bc4baed4554d4d90758, type: 3}
+  m_Name: OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.OperationMapDefinition
+  operationMapId: opmap.skirmish.desert_base_01
+  schemaVersion: 1
+  contentVersion: 4
+  sourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900
+  contentHash: 2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c
+  generatedMetadataHash: 2089955094bb8a72f2f5e7ca1e05e67c78df049da9185a7d44eabce25d82dc69
+  bounds:
+    worldMin: {x: 0, y: -6.9545445, z: 0}
+    worldMax: {x: 2048, y: 100, z: 1024}
+    playableMin: {x: 0, y: -6.9545445, z: 0}
+    playableMax: {x: 2048, y: 40.375454, z: 1024}
+    cameraMin: {x: 0, y: 15, z: 0}
+    cameraMax: {x: 2048, y: 100, z: 1024}
+  gridMetadata:
+    assetGuid: b201000000000000000000000000000b
+    contentHash: 8ef1b3f17074774040111a48ea82901b3355da8b8b86c8dc5c6e2a0bcccc2cfb
+    origin: {x: 0, y: 0, z: 0}
+    dimensions: {x: 2048, y: 1024}
+    cellSize: 1
+    authoredBlockedCellCount: 0
+  surfaceMetadata:
+    assetGuid: 12f517deb32ab49698acbfdaf7c3eac7
+    contentHash: 1402d769704008e254563ff7ecda835294db83afc2cee6d5bb456987f0392b4d
+    runtimeBlobHash: 60a44d9bef6cfd87859429865716a462
+    surfaceCount: 2097152
+    payloadVersion: 3
+    payloadEncoding: 1
+    minimumHeight: -5.31082
+    maximumHeight: 17.199179
+  navigationMetadata:
+    authoredSubSceneGuid: c00140f2e94a04c3084c8dcb0c18cbd0
+    gridAuthoringLocalId: 146043441
+    staticGridBlockerCount: 0
+    usesSurfaceMovementMetadata: 1
+    supportsDynamicBlockers: 1
+    supportsDynamicOccupancy: 1
+  cameras:
+  - cameraId: camera.skirmish.desert_base_01.active
+    position: {x: 870.0283, y: 42.030247, z: 325.60086}
+    eulerAngles: {x: 33.209724, y: 11.1042595, z: 0.0000068879754}
+    orthographic: 0
+    fieldOfView: 31.2
+    orthographicSize: 5
+    clampToCameraBounds: 1
+  planningCameraId: camera.skirmish.desert_base_01.active
+  battleCameraId: camera.skirmish.desert_base_01.active
+  minimap:
+    minimapId: minimap.skirmish.desert_base_01.full
+    projectionOrigin: {x: 0, y: 0, z: 0}
+    projectionSize: {x: 2048, y: 1024}
+    orientationDegrees: 0
+  anchors:
+  - anchorId: anchor.skirmish.desert_base_01.compat_start
+    kind: 14
+    position: {x: 0, y: -0, z: 1024}
+    eulerAngles: {x: -0, y: 0, z: 0}
+    radius: 0
+    factionId: -1
+    laneIndex: -1
+  - anchorId: anchor.skirmish.desert_base_01.compat_end
+    kind: 14
+    position: {x: 2048, y: -0, z: 0}
+    eulerAngles: {x: -0, y: 0, z: 0}
+    radius: 0
+    factionId: -1
+    laneIndex: -1
+  - anchorId: anchor.skirmish.desert_base_01.deployment.faction_1
+    kind: 3
+    position: {x: 949, y: 23, z: 344.7}
+    eulerAngles: {x: -0, y: 0, z: 0}
+    radius: 102.1
+    factionId: 1
+    laneIndex: -1
+  - anchorId: anchor.skirmish.desert_base_01.deployment.faction_2
+    kind: 3
+    position: {x: 1686, y: 23, z: 108}
+    eulerAngles: {x: -0, y: 0, z: 0}
+    radius: 102.1
+    factionId: 2
+    laneIndex: -1
+  - anchorId: anchor.skirmish.desert_base_01.runway.faction_1.lane_0
+    kind: 9
+    position: {x: 886.8202, y: 0.6849844, z: 314.50977}
+    eulerAngles: {x: -0, y: 269.99036, z: 0}
+    radius: 90.65007
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.skirmish.desert_base_01.helipad.faction_1.lane_0
+    kind: 10
+    position: {x: 999.9, y: 0.73, z: 359.99994}
+    eulerAngles: {x: -0, y: 90, z: 0}
+    radius: 7.200793
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.skirmish.desert_base_01.helipad.faction_1.lane_1
+    kind: 10
+    position: {x: 1006.83, y: 0.73, z: 393.25995}
+    eulerAngles: {x: -0, y: 90, z: 0}
+    radius: 7.200793
+    factionId: 1
+    laneIndex: 1
+  - anchorId: anchor.skirmish.desert_base_01.helipad.faction_1.lane_2
+    kind: 10
+    position: {x: 975.8001, y: 0.73, z: 393.32996}
+    eulerAngles: {x: -0, y: 90, z: 0}
+    radius: 7.200793
+    factionId: 1
+    laneIndex: 2
+  presentationKind: 1
+  sourceSceneReference:
+    m_AssetGUID: dad0bd13fb20943dfb2f881cbe225f05
+    m_SubObjectName:
+    m_SubObjectType:
+    m_SubObjectGUID:
+    m_EditorAssetChanged: 0
+  optionalHeavyMetadataReference:
+    m_AssetGUID:
+    m_SubObjectName:
+    m_SubObjectType:
+    m_SubObjectGUID:
+    m_EditorAssetChanged: 0
+  staticPresentationManifestReference:
+    m_AssetGUID:
+    m_SubObjectName:
+    m_SubObjectType:
+    m_SubObjectGUID:
+    m_EditorAssetChanged: 0
+  mapSurfaceDataReference:
+    m_AssetGUID: 12f517deb32ab49698acbfdaf7c3eac7
+    m_SubObjectName:
+    m_SubObjectType:
+    m_SubObjectGUID:
+    m_EditorAssetChanged: 0
+  minimapRasterReference:
+    m_AssetGUID: 3b1a8dbd670bf4e94863c00acbc3a3a7
+    m_SubObjectName:
+    m_SubObjectType:
+    m_SubObjectGUID:
+    m_EditorAssetChanged: 0
+  buildingPlacementsReference:
+    m_AssetGUID:
+    m_SubObjectName:
+    m_SubObjectType:
+    m_SubObjectGUID:
+    m_EditorAssetChanged: 0
+  vehiclePlacementsReference:
+    m_AssetGUID:
+    m_SubObjectName:
+    m_SubObjectType:
+    m_SubObjectGUID:
+    m_EditorAssetChanged: 0

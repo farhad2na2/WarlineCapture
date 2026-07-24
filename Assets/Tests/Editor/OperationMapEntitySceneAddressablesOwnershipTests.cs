@@ -23,6 +23,12 @@ public sealed class OperationMapEntitySceneAddressablesOwnershipTests
             passed++;
             tests.ProductionDefinition_RemainsStaticSceneChunksWhileCandidatePathIsSeparate();
             passed++;
+            tests.DenseCityPlanner_RequiresDistinctPathsAndExactlyFiveCoreRoles();
+            passed++;
+            tests.DenseCityPlanner_IsGuidIsolatedAndContainsNoProductionReferences();
+            passed++;
+            tests.DenseCityCandidateDefinition_ReferencesOnlyDenseEntitySceneRuntimeAssets();
+            passed++;
             Debug.Log($"[OperationMapEntitySceneAddressablesOwnershipValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
         }
@@ -156,6 +162,170 @@ public sealed class OperationMapEntitySceneAddressablesOwnershipTests
         Assert.That(
             OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateRuntimeBindingPath,
             Is.Not.EqualTo(OperationMapAddressablesLayoutBuilder.SourceScenePath));
+    }
+
+    [Test]
+    public void DenseCityPlanner_RequiresDistinctPathsAndExactlyFiveCoreRoles()
+    {
+        Assume.That(
+            AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(
+                DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath),
+            Is.Not.Null,
+            "Dense-city candidate EntityScene must exist before ownership planning.");
+
+        Assert.That(
+            OperationMapEntitySceneCandidateAddressablesLayoutPlanner.TryCreateDenseCityPlan(
+                out OperationMapEntitySceneCandidateAddressablesLayoutPlan plan,
+                out string rejectionReason),
+            Is.True,
+            rejectionReason);
+
+        Assert.That(plan.OperationMapId, Is.EqualTo("opmap.skirmish.desert_base_01"));
+        Assert.That(
+            plan.PackLabel,
+            Is.EqualTo(OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                .DenseCandidatePackLabel));
+        Assert.That(
+            plan.AddressPrefix,
+            Is.EqualTo(OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                .DenseCandidateAddressPrefix));
+        Assert.That(plan.Entries, Has.Count.EqualTo(5));
+        Assert.That(plan.Entries.Count(entry => entry.Role == "definition"), Is.EqualTo(1));
+        Assert.That(plan.Entries.Count(entry => entry.Role == "source-scene"), Is.EqualTo(1));
+        Assert.That(plan.Entries.Count(entry => entry.Role == "entity-scene"), Is.EqualTo(1));
+        Assert.That(plan.Entries.Count(entry => entry.Role == "map-surface"), Is.EqualTo(1));
+        Assert.That(plan.Entries.Count(entry => entry.Role == "minimap-raster"), Is.EqualTo(1));
+        Assert.That(plan.SharedDependencyCount, Is.EqualTo(0));
+        Assert.That(plan.Entries.Count(entry => entry.Role == "shared-dependency"), Is.EqualTo(0));
+        Assert.That(plan.Entries.Count(entry => entry.Role == "static-manifest"), Is.EqualTo(0));
+        Assert.That(plan.Entries.Count(entry => entry.Role == "presentation"), Is.EqualTo(0));
+        Assert.That(plan.Entries.Count(entry => entry.Role == "building-placements"), Is.EqualTo(0));
+        Assert.That(plan.Entries.Count(entry => entry.Role == "vehicle-placements"), Is.EqualTo(0));
+
+        Assert.That(
+            plan.Entries.Single(entry => entry.Role == "definition").AssetPath,
+            Is.EqualTo(OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                .DenseCandidateDefinitionPath));
+        Assert.That(
+            plan.Entries.Single(entry => entry.Role == "source-scene").AssetPath,
+            Is.EqualTo(OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                .DenseCandidateRuntimeBindingPath));
+        Assert.That(
+            plan.Entries.Single(entry => entry.Role == "entity-scene").AssetPath,
+            Is.EqualTo(DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath));
+        Assert.That(
+            plan.Entries.All(entry =>
+                entry.Address.StartsWith(plan.AddressPrefix, StringComparison.Ordinal)),
+            Is.True);
+        Assert.That(
+            plan.Entries.All(entry => !string.IsNullOrEmpty(AssetDatabase.AssetPathToGUID(
+                entry.AssetPath))),
+            Is.True);
+    }
+
+    [Test]
+    public void DenseCityPlanner_IsGuidIsolatedAndContainsNoProductionReferences()
+    {
+        Assert.That(
+            OperationMapEntitySceneCandidateAddressablesLayoutPlanner.TryCreateDenseCityPlan(
+                out OperationMapEntitySceneCandidateAddressablesLayoutPlan plan,
+                out string rejectionReason),
+            Is.True,
+            rejectionReason);
+
+        string acceptedSourceSubSceneGuid = AssetDatabase.AssetPathToGUID(
+            OperationMapEntityPresentationMigrationEditor.AcceptedSubScenePath);
+        string acceptedCandidateSubSceneGuid = AssetDatabase.AssetPathToGUID(
+            OperationMapEntityPresentationMigrationEditor.CandidateSubScenePath);
+        Assert.That(plan.EntitySceneGuid, Is.Not.EqualTo(acceptedSourceSubSceneGuid));
+        Assert.That(plan.EntitySceneGuid, Is.Not.EqualTo(acceptedCandidateSubSceneGuid));
+
+        string[] protectedGuids =
+        {
+            acceptedSourceSubSceneGuid,
+            acceptedCandidateSubSceneGuid,
+            AssetDatabase.AssetPathToGUID(OperationMapAddressablesLayoutBuilder.DefinitionPath),
+            AssetDatabase.AssetPathToGUID(OperationMapAddressablesLayoutBuilder.SourceScenePath),
+            AssetDatabase.AssetPathToGUID(OperationMapAddressablesLayoutBuilder.AuthoringScenePath),
+            AssetDatabase.AssetPathToGUID(OperationMapAddressablesLayoutBuilder.MapSurfacePath),
+            AssetDatabase.AssetPathToGUID(OperationMapAddressablesLayoutBuilder.MinimapRasterPath),
+            AssetDatabase.AssetPathToGUID(
+                OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateDefinitionPath),
+            AssetDatabase.AssetPathToGUID(
+                OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                    .CandidateRuntimeBindingPath)
+        };
+        string denseDefinitionGuid = AssetDatabase.AssetPathToGUID(
+            OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                .DenseCandidateDefinitionPath);
+        string denseRuntimeBindingGuid = AssetDatabase.AssetPathToGUID(
+            OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                .DenseCandidateRuntimeBindingPath);
+        if (!string.IsNullOrEmpty(denseDefinitionGuid))
+            Assert.That(protectedGuids, Does.Not.Contain(denseDefinitionGuid));
+        if (!string.IsNullOrEmpty(denseRuntimeBindingGuid))
+            Assert.That(protectedGuids, Does.Not.Contain(denseRuntimeBindingGuid));
+        Assert.That(protectedGuids, Does.Not.Contain(plan.EntitySceneGuid));
+        if (!string.IsNullOrEmpty(denseDefinitionGuid) &&
+            !string.IsNullOrEmpty(denseRuntimeBindingGuid))
+        {
+            Assert.That(denseDefinitionGuid, Is.Not.EqualTo(denseRuntimeBindingGuid));
+        }
+
+        string[] forbiddenPaths =
+        {
+            OperationMapAddressablesLayoutBuilder.ManifestPath,
+            OperationMapAddressablesLayoutBuilder.BuildingPlacementsPath,
+            OperationMapAddressablesLayoutBuilder.VehiclePlacementsPath,
+            OperationMapAddressablesLayoutBuilder.SourceScenePath,
+            OperationMapAddressablesLayoutBuilder.DefinitionPath,
+            OperationMapAddressablesLayoutBuilder.AuthoringScenePath,
+            OperationMapEntityPresentationMigrationEditor.AcceptedSubScenePath,
+            OperationMapEntityPresentationMigrationEditor.CandidateSubScenePath,
+            OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateDefinitionPath,
+            OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateRuntimeBindingPath
+        };
+        Assert.That(
+            plan.Entries
+                .Select(entry => entry.AssetPath)
+                .Intersect(forbiddenPaths, StringComparer.Ordinal),
+            Is.Empty);
+    }
+
+    [Test]
+    public void DenseCityCandidateDefinition_ReferencesOnlyDenseEntitySceneRuntimeAssets()
+    {
+        OperationMapDefinition candidate = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
+            OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                .DenseCandidateDefinitionPath);
+        Assume.That(
+            candidate,
+            Is.Not.Null,
+            "Dense-city candidate definition is created by the later builder checkpoint.");
+
+        Assert.That(candidate.PresentationKind, Is.EqualTo(OperationMapPresentationKind.EntityScene));
+        Assert.That(
+            candidate.TryValidateLocalContentReferences(out string validationError),
+            Is.True,
+            validationError);
+        AssertReference(
+            candidate.SourceSceneReference,
+            OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                .DenseCandidateRuntimeBindingPath);
+        AssertReference(
+            candidate.MapSurfaceDataReference,
+            OperationMapAddressablesLayoutBuilder.MapSurfacePath);
+        AssertReference(
+            candidate.MinimapRasterReference,
+            OperationMapAddressablesLayoutBuilder.MinimapRasterPath);
+        Assert.That(
+            candidate.NavigationMetadata.AuthoredSubSceneGuid,
+            Is.EqualTo(AssetDatabase.AssetPathToGUID(
+                DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath)));
+        AssertNoReference(candidate.StaticPresentationManifestReference);
+        AssertNoReference(candidate.OptionalHeavyMetadataReference);
+        AssertNoReference(candidate.BuildingPlacementsReference);
+        AssertNoReference(candidate.VehiclePlacementsReference);
     }
 
     private static void AssertReference(AssetReference reference, string expectedPath)

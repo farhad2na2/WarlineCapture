@@ -378,6 +378,37 @@ namespace Game.Editor
         }
     }
 
+    internal sealed class DenseCityGenerationRecordSnapshot
+    {
+        private readonly DenseCityBuildingBakeRecord[] buildings;
+        private readonly DenseCitySurfaceBakeRecord[] surfaces;
+        private readonly DenseCityPresentationBakeRecord[] presentations;
+
+        internal DenseCityGenerationRecordSnapshot(
+            IReadOnlyList<DenseCityBuildingBakeRecord> buildings,
+            IReadOnlyList<DenseCitySurfaceBakeRecord> surfaces,
+            IReadOnlyList<DenseCityPresentationBakeRecord> presentations)
+        {
+            this.buildings = Copy(buildings);
+            this.surfaces = Copy(surfaces);
+            this.presentations = Copy(presentations);
+        }
+
+        internal IReadOnlyList<DenseCityBuildingBakeRecord> Buildings => buildings;
+        internal IReadOnlyList<DenseCitySurfaceBakeRecord> Surfaces => surfaces;
+        internal IReadOnlyList<DenseCityPresentationBakeRecord> Presentations => presentations;
+
+        private static T[] Copy<T>(IReadOnlyList<T> source)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+            var copy = new T[source.Count];
+            for (int index = 0; index < source.Count; index++)
+                copy[index] = source[index];
+            return copy;
+        }
+    }
+
     internal sealed class DenseCityGenerationRecordSet : IDisposable
     {
         private readonly List<DenseCityBuildingBakeRecord> buildings;
@@ -409,6 +440,9 @@ namespace Game.Editor
         internal IReadOnlyList<DenseCityBuildingBakeRecord> Buildings => RequireSealed(buildings);
         internal IReadOnlyList<DenseCitySurfaceBakeRecord> Surfaces => RequireSealed(surfaces);
         internal IReadOnlyList<DenseCityPresentationBakeRecord> Presentations => RequireSealed(presentations);
+
+        internal DenseCityGenerationRecordSnapshot CreateSnapshot() =>
+            new(Buildings, Surfaces, Presentations);
 
         internal void Add(DenseCityBuildingBakeRecord record) =>
             Add(record, record.Identity, buildings, buildingCapacity, "building");

@@ -59,6 +59,37 @@ public sealed class DenseCityGenerationRecordsTests
     }
 
     [Test]
+    public void RecordSnapshot_OwnsSealedStableOrderAfterSourceDisposal()
+    {
+        var records = new DenseCityGenerationRecordSet(1, 1, 3);
+        records.Add(CreatePresentation(9));
+        records.Add(CreatePresentation(2));
+        records.Add(CreatePresentation(5));
+        records.Seal();
+
+        DenseCityGenerationRecordSnapshot snapshot = records.CreateSnapshot();
+        records.Dispose();
+
+        Assert.That(snapshot.Buildings, Is.Empty);
+        Assert.That(snapshot.Surfaces, Is.Empty);
+        Assert.That(snapshot.Presentations.Count, Is.EqualTo(3));
+        Assert.That(snapshot.Presentations[0].Identity.DeterministicSequence, Is.EqualTo(2));
+        Assert.That(snapshot.Presentations[1].Identity.DeterministicSequence, Is.EqualTo(5));
+        Assert.That(snapshot.Presentations[2].Identity.DeterministicSequence, Is.EqualTo(9));
+    }
+
+    [Test]
+    public void RecordSnapshot_RejectsUnsealedSource()
+    {
+        using var records = new DenseCityGenerationRecordSet(1, 1, 1);
+        records.Add(CreatePresentation(1));
+
+        Assert.That(
+            () => records.CreateSnapshot(),
+            Throws.InvalidOperationException.With.Message.Contains("sealed"));
+    }
+
+    [Test]
     public void RecordSet_RejectsDuplicateIdentityAcrossRecordKinds()
     {
         using var records = new DenseCityGenerationRecordSet(1, 1, 1);

@@ -32,6 +32,15 @@ namespace Game.Editor
         internal const int ExpectedPresentationRoots = 3;
         internal const int ExpectedRenderOnlyOwners = 9090;
         internal const int ExpectedPresentationIdentities = 9544;
+        internal const int ExpectedDenseGameplayBuildings = 5803;
+        internal const int ExpectedDenseGeneratedGameplayBuildings = 5371;
+        internal const int ExpectedDenseGeneratedRenderOnlyOwners = 30425;
+        internal const int ExpectedDenseGeneratedIdentities = 35796;
+
+        private const string DenseCandidateBakeReportPath =
+            "Design/AgentReports/2026-07-24_dense_city_generated_candidate_bake_validation.json";
+        private const string MapWideConfigPath =
+            "Assets/Game/Configs/OperationMaps/Skirmish/SkirmishDesertBase_MapWideCity_Config.asset";
 
         private static readonly UTF8Encoding Utf8WithoutBom = new(false);
 
@@ -111,6 +120,83 @@ namespace Game.Editor
             }
         }
 
+        [MenuItem("Game/Operation Maps/EntityScene Migration/Bake And Validate Dense City Candidate")]
+        public static void BakeAndValidateDenseCityCandidate()
+        {
+            string projectRoot = Path.GetDirectoryName(Application.dataPath);
+            string candidatePath = DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath;
+            string candidatePhysicalPath = ResolveProjectPath(projectRoot, candidatePath);
+            if (!File.Exists(candidatePhysicalPath))
+                throw new FileNotFoundException("Dense-city candidate entity scene has not been created.", candidatePhysicalPath);
+
+            string[] protectedPaths =
+            {
+                OperationMapEntityPresentationCandidateSceneBuilder.AcceptedOperationMapScenePath,
+                OperationMapEntityPresentationMigrationEditor.AcceptedSubScenePath,
+                OperationMapEntityPresentationMigrationEditor.CandidateSubScenePath,
+                DenseCityCandidateAuthoringTransaction.CandidateMapScenePath,
+                DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath,
+                MapWideConfigPath
+            };
+            var protectedHashes = protectedPaths.ToDictionary(
+                path => path,
+                path => ComputeSha256(ResolveProjectPath(projectRoot, path)),
+                StringComparer.Ordinal);
+
+            SceneSetup[] previousSetup = EditorSceneManager.GetSceneManagerSetup();
+            World bakeWorld = null;
+            object blobStore = null;
+            try
+            {
+                Scene candidateScene = EditorSceneManager.OpenScene(candidatePath, OpenSceneMode.Additive);
+                DenseAuthoringCounts authoring = RequireDenseAuthoringCounts(candidateScene);
+
+                bakeWorld = new World("DenseCityEntityPresentationCandidateBake");
+                blobStore = CreateBlobAssetStore();
+                if (!TryBakeScene(bakeWorld, candidateScene, candidatePath, blobStore, out string bakeError))
+                    throw new InvalidOperationException($"Dense-city candidate bake failed: {bakeError}");
+
+                DenseCandidateBakeReport report =
+                    ValidateDenseBakedWorld(bakeWorld.EntityManager, authoring);
+                WriteDenseReport(projectRoot, report);
+                if (!report.Passed)
+                {
+                    throw new InvalidOperationException(
+                        $"Dense-city candidate bake validation failed: {report.rejectionReason}");
+                }
+
+                OperationMapDenseCityGeneratedTransformParityValidator.DenseCityGeneratedTransformParityReport parity =
+                    OperationMapDenseCityGeneratedTransformParityValidator.ValidateAndWrite(
+                        projectRoot,
+                        candidateScene,
+                        bakeWorld.EntityManager);
+
+                foreach (KeyValuePair<string, string> protectedHash in protectedHashes)
+                {
+                    RequireHashUnchanged(
+                        protectedHash.Value,
+                        ResolveProjectPath(projectRoot, protectedHash.Key));
+                }
+
+                Debug.Log(
+                    $"[OperationMapEntityPresentationCandidateBakeValidator] status=DenseCandidateValidated " +
+                    $"gameplayBuildings={report.gameplayBuildingCount} " +
+                    $"generatedIdentities={report.denseIdentityCount} " +
+                    $"generatedBuildingIdentities={report.denseGameplayBuildingIdentityCount} " +
+                    $"generatedRenderOnlyIdentities={report.denseRenderOnlyIdentityCount} " +
+                    $"renderMeshEntities={report.renderMeshEntityCount} " +
+                    $"transformParityRows={parity.candidateIdentityCount} " +
+                    $"productionCutover=0 report={report.reportPath}");
+            }
+            finally
+            {
+                if (bakeWorld != null)
+                    bakeWorld.Dispose();
+                DisposeBlobAssetStore(blobStore);
+                RestoreSceneSetupOrCreateEmpty(previousSetup);
+            }
+        }
+
         private static void RestoreSceneSetupOrCreateEmpty(SceneSetup[] previousSetup)
         {
             if (previousSetup != null && previousSetup.Any(entry => entry.isLoaded && entry.isActive))
@@ -154,6 +240,80 @@ namespace Game.Editor
                 throw new InvalidOperationException($"Expected {ExpectedRenderOnlyOwners} render-only owners, found {renderOnlyOwners}.");
             if (identities != ExpectedPresentationIdentities)
                 throw new InvalidOperationException($"Expected {ExpectedPresentationIdentities} presentation identities, found {identities}.");
+        }
+
+        private static DenseAuthoringCounts RequireDenseAuthoringCounts(Scene candidateScene)
+        {
+            var counts = new DenseAuthoringCounts();
+            GameObject[] sceneRoots = candidateScene.GetRootGameObjects();
+            for (int i = 0; i < sceneRoots.Length; i++)
+            {
+                GameObject root = sceneRoots[i];
+                counts.GameplayBuildings +=
+                    root.GetComponentsInChildren<OperationMapBuildingAuthoring>(true).Length;
+                counts.GameplayVehicles +=
+                    root.GetComponentsInChildren<UnitGridAuthoring>(true).Length;
+                counts.PresentationRoots +=
+                    root.GetComponentsInChildren<OperationMapEntityPresentationRootAuthoring>(true).Length;
+                counts.LegacyPresentationIdentities += root
+                    .GetComponentsInChildren<OperationMapEntityPresentationIdentityAuthoring>(true).Length;
+                DenseCityPresentationIdentityAuthoring[] denseIdentities =
+                    root.GetComponentsInChildren<DenseCityPresentationIdentityAuthoring>(true);
+                counts.DenseIdentities += denseIdentities.Length;
+                for (int identityIndex = 0; identityIndex < denseIdentities.Length; identityIndex++)
+                {
+                    DenseCityPresentationIdentityAuthoring identity = denseIdentities[identityIndex];
+                    if (!identity.TryValidate(out string error))
+                    {
+                        throw new InvalidOperationException(
+                            $"Invalid dense-city presentation identity '{identity.name}': {error}");
+                    }
+
+                    switch (identity.Role)
+                    {
+                        case OperationMapEntityPresentationRole.GameplayBuildings:
+                            counts.DenseGameplayBuildingIdentities++;
+                            break;
+                        case OperationMapEntityPresentationRole.RenderOnly:
+                            counts.DenseRenderOnlyIdentities++;
+                            break;
+                        default:
+                            counts.DenseUnknownRoleIdentities++;
+                            break;
+                    }
+                }
+            }
+
+            RequireCount(
+                nameof(counts.GameplayBuildings),
+                counts.GameplayBuildings,
+                ExpectedDenseGameplayBuildings);
+            RequireCount(nameof(counts.GameplayVehicles), counts.GameplayVehicles, ExpectedGameplayVehicles);
+            RequireCount(nameof(counts.PresentationRoots), counts.PresentationRoots, ExpectedPresentationRoots);
+            RequireCount(
+                nameof(counts.LegacyPresentationIdentities),
+                counts.LegacyPresentationIdentities,
+                ExpectedPresentationIdentities);
+            RequireCount(
+                nameof(counts.DenseIdentities),
+                counts.DenseIdentities,
+                ExpectedDenseGeneratedIdentities);
+            RequireCount(
+                nameof(counts.DenseGameplayBuildingIdentities),
+                counts.DenseGameplayBuildingIdentities,
+                ExpectedDenseGeneratedGameplayBuildings);
+            RequireCount(
+                nameof(counts.DenseRenderOnlyIdentities),
+                counts.DenseRenderOnlyIdentities,
+                ExpectedDenseGeneratedRenderOnlyOwners);
+            RequireCount(nameof(counts.DenseUnknownRoleIdentities), counts.DenseUnknownRoleIdentities, 0);
+            return counts;
+        }
+
+        private static void RequireCount(string label, int actual, int expected)
+        {
+            if (actual != expected)
+                throw new InvalidOperationException($"Expected {expected} {label}, found {actual}.");
         }
 
         private static bool TryBakeScene(
@@ -323,6 +483,121 @@ namespace Game.Editor
 
             report.result = "CandidateBakeValidationPassed";
             report.rejectionReason = null;
+            return report;
+        }
+
+        private static DenseCandidateBakeReport ValidateDenseBakedWorld(
+            EntityManager entityManager,
+            DenseAuthoringCounts authoring)
+        {
+            using EntityQuery renderQuery = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<MaterialMeshInfo>(),
+                ComponentType.ReadOnly<RenderMeshArray>());
+            var report = new DenseCandidateBakeReport
+            {
+                schema = "warline.dense-city.generated-candidate-bake-validation",
+                schemaVersion = 1,
+                operationMapId = OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
+                checkpoint = "accepted-editor-to-dense-candidate-subscene-to-in-memory-baked-ecs",
+                result = "DenseCandidateBakeValidationFailed",
+                gameplayBuildingCount =
+                    entityManager.CreateEntityQuery(typeof(OperationMapBuildingIdentity)).CalculateEntityCount(),
+                gameplayVehicleCount = entityManager.CreateEntityQuery(
+                    typeof(UnitGrid),
+                    typeof(UnitMove),
+                    typeof(UnitVehicleMovement)).CalculateEntityCount(),
+                presentationRootCount =
+                    entityManager.CreateEntityQuery(typeof(OperationMapEntityPresentationRoot)).CalculateEntityCount(),
+                legacyPresentationIdentityCount =
+                    entityManager.CreateEntityQuery(typeof(OperationMapEntityPresentationIdentity)).CalculateEntityCount(),
+                denseIdentityCount =
+                    entityManager.CreateEntityQuery(typeof(DenseCityPresentationIdentity)).CalculateEntityCount(),
+                buildingPresentationCount =
+                    entityManager.CreateEntityQuery(typeof(OperationMapBuildingPresentation)).CalculateEntityCount(),
+                renderMeshEntityCount = renderQuery.CalculateEntityCount(),
+                totalEntityCount = entityManager.UniversalQuery.CalculateEntityCount(),
+                entityChunkCount = entityManager.UniversalQuery.CalculateChunkCount(),
+                nonFiniteTransformCount = CountNonFiniteTransforms(entityManager),
+                managedMapVisualCompanionCount = CountManagedMapVisualCompanions(entityManager),
+                authoringGameplayBuildingCount = authoring.GameplayBuildings,
+                authoringDenseIdentityCount = authoring.DenseIdentities,
+                authoringDenseGameplayBuildingIdentityCount =
+                    authoring.DenseGameplayBuildingIdentities,
+                authoringDenseRenderOnlyIdentityCount = authoring.DenseRenderOnlyIdentities,
+                productionCutover = 0
+            };
+
+            using NativeArray<DenseCityPresentationIdentity> identities =
+                entityManager.CreateEntityQuery(typeof(DenseCityPresentationIdentity))
+                    .ToComponentDataArray<DenseCityPresentationIdentity>(Allocator.Temp);
+            var stableIds = new HashSet<string>(StringComparer.Ordinal);
+            for (int i = 0; i < identities.Length; i++)
+            {
+                string stableId = identities[i].StableId.ToString();
+                if (!stableIds.Add(stableId))
+                    report.duplicateDenseIdentityCount++;
+
+                switch ((OperationMapEntityPresentationRole)identities[i].Role)
+                {
+                    case OperationMapEntityPresentationRole.GameplayBuildings:
+                        report.denseGameplayBuildingIdentityCount++;
+                        break;
+                    case OperationMapEntityPresentationRole.RenderOnly:
+                        report.denseRenderOnlyIdentityCount++;
+                        break;
+                    default:
+                        report.denseUnknownRoleIdentityCount++;
+                        break;
+                }
+            }
+
+            if (report.gameplayBuildingCount != ExpectedDenseGameplayBuildings)
+                report.rejectionReason = $"gameplay-building-count:{report.gameplayBuildingCount}";
+            else if (report.gameplayVehicleCount != ExpectedGameplayVehicles)
+                report.rejectionReason = $"gameplay-vehicle-count:{report.gameplayVehicleCount}";
+            else if (report.presentationRootCount != ExpectedPresentationRoots)
+                report.rejectionReason = $"presentation-root-count:{report.presentationRootCount}";
+            else if (report.legacyPresentationIdentityCount != ExpectedPresentationIdentities)
+                report.rejectionReason =
+                    $"legacy-presentation-identity-count:{report.legacyPresentationIdentityCount}";
+            else if (report.denseIdentityCount != ExpectedDenseGeneratedIdentities)
+                report.rejectionReason = $"dense-presentation-identity-count:{report.denseIdentityCount}";
+            else if (report.denseGameplayBuildingIdentityCount !=
+                     ExpectedDenseGeneratedGameplayBuildings)
+                report.rejectionReason =
+                    $"dense-gameplay-building-identity-count:{report.denseGameplayBuildingIdentityCount}";
+            else if (report.denseRenderOnlyIdentityCount != ExpectedDenseGeneratedRenderOnlyOwners)
+                report.rejectionReason =
+                    $"dense-render-only-identity-count:{report.denseRenderOnlyIdentityCount}";
+            else if (report.denseUnknownRoleIdentityCount != 0)
+                report.rejectionReason =
+                    $"dense-unknown-role-identity-count:{report.denseUnknownRoleIdentityCount}";
+            else if (report.duplicateDenseIdentityCount != 0)
+                report.rejectionReason =
+                    $"duplicate-dense-presentation-identity-count:{report.duplicateDenseIdentityCount}";
+            else if (report.buildingPresentationCount != ExpectedDenseGameplayBuildings)
+                report.rejectionReason =
+                    $"building-presentation-count:{report.buildingPresentationCount}";
+            else if (report.renderMeshEntityCount <
+                     ExpectedRenderOnlyOwners + ExpectedDenseGeneratedRenderOnlyOwners)
+                report.rejectionReason =
+                    $"render-mesh-entities-below-owner-count:{report.renderMeshEntityCount}";
+            else if (report.nonFiniteTransformCount != 0)
+                report.rejectionReason =
+                    $"non-finite-transforms:{report.nonFiniteTransformCount}";
+            else if (report.managedMapVisualCompanionCount != 0)
+                report.rejectionReason =
+                    $"managed-map-visual-companions:{report.managedMapVisualCompanionCount}";
+            else
+            {
+                report.result = "DenseCandidateBakeValidationPassed";
+                report.rejectionReason = string.Empty;
+            }
+
+            report.Passed = string.Equals(
+                report.result,
+                "DenseCandidateBakeValidationPassed",
+                StringComparison.Ordinal);
             return report;
         }
 
@@ -509,6 +784,18 @@ namespace Game.Editor
             File.WriteAllText(reportPath, json, Utf8WithoutBom);
         }
 
+        private static void WriteDenseReport(string projectRoot, DenseCandidateBakeReport report)
+        {
+            string reportPath = Path.Combine(projectRoot, DenseCandidateBakeReportPath);
+            report.reportPath = reportPath.Replace('\\', '/');
+            string json = JsonUtility.ToJson(report, true);
+            Directory.CreateDirectory(Path.GetDirectoryName(reportPath) ?? projectRoot);
+            File.WriteAllText(reportPath, json + "\n", Utf8WithoutBom);
+            AssetDatabase.ImportAsset(
+                DenseCandidateBakeReportPath,
+                ImportAssetOptions.ForceSynchronousImport);
+        }
+
         private static object CreateBlobAssetStore()
         {
             Type storeType =
@@ -603,6 +890,52 @@ namespace Game.Editor
             [NonSerialized] public int BuildingRenderChildCount;
             [NonSerialized] public int NonFiniteTransformCount;
             [NonSerialized] public int ManagedMapVisualCompanionCount;
+        }
+
+        private sealed class DenseAuthoringCounts
+        {
+            internal int GameplayBuildings;
+            internal int GameplayVehicles;
+            internal int PresentationRoots;
+            internal int LegacyPresentationIdentities;
+            internal int DenseIdentities;
+            internal int DenseGameplayBuildingIdentities;
+            internal int DenseRenderOnlyIdentities;
+            internal int DenseUnknownRoleIdentities;
+        }
+
+        [Serializable]
+        private sealed class DenseCandidateBakeReport
+        {
+            public string schema;
+            public int schemaVersion;
+            public string operationMapId;
+            public string checkpoint;
+            public string result;
+            public string rejectionReason;
+            public string reportPath;
+            public int authoringGameplayBuildingCount;
+            public int authoringDenseIdentityCount;
+            public int authoringDenseGameplayBuildingIdentityCount;
+            public int authoringDenseRenderOnlyIdentityCount;
+            public int gameplayBuildingCount;
+            public int gameplayVehicleCount;
+            public int presentationRootCount;
+            public int legacyPresentationIdentityCount;
+            public int denseIdentityCount;
+            public int denseGameplayBuildingIdentityCount;
+            public int denseRenderOnlyIdentityCount;
+            public int denseUnknownRoleIdentityCount;
+            public int duplicateDenseIdentityCount;
+            public int buildingPresentationCount;
+            public int renderMeshEntityCount;
+            public int totalEntityCount;
+            public int entityChunkCount;
+            public int nonFiniteTransformCount;
+            public int managedMapVisualCompanionCount;
+            public int productionCutover;
+
+            [NonSerialized] public bool Passed;
         }
     }
 }

@@ -170,6 +170,11 @@ namespace Game.Editor
                         projectRoot,
                         candidateScene,
                         bakeWorld.EntityManager);
+                OperationMapDenseCityRuntimeParityManifestWriter.DenseRuntimeParityManifestSummary
+                    runtimeParityManifest =
+                        OperationMapDenseCityRuntimeParityManifestWriter.Write(
+                            projectRoot,
+                            bakeWorld.EntityManager);
 
                 foreach (KeyValuePair<string, string> protectedHash in protectedHashes)
                 {
@@ -186,6 +191,7 @@ namespace Game.Editor
                     $"generatedRenderOnlyIdentities={report.denseRenderOnlyIdentityCount} " +
                     $"renderMeshEntities={report.renderMeshEntityCount} " +
                     $"transformParityRows={parity.candidateIdentityCount} " +
+                    $"runtimeParityManifestBytes={runtimeParityManifest.manifestBytes} " +
                     $"productionCutover=0 report={report.reportPath}");
             }
             finally

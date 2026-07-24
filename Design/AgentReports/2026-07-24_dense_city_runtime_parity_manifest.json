@@ -1,0 +1,18 @@
+{
+    "schema": "warline.operation-map.dense-city-runtime-parity-manifest",
+    "schemaVersion": 1,
+    "result": "DenseCityRuntimeParityManifestWritten",
+    "operationMapId": "opmap.skirmish.desert_base_01",
+    "entitySceneGuid": "c00140f2e94a04c3084c8dcb0c18cbd0",
+    "candidateSubSceneSha256": "4214935c617037c59b73602b27c0c13cf2ceb584e4b7dece4f413bde74534c2b",
+    "directBakeParityReportSha256": "6f987994ec157ad53f3a1df066258ee86985f90000af3140e7664cb67bf2e509",
+    "formatVersion": 3,
+    "matrixTolerance": 0.00009999999747378752,
+    "boundsTolerance": 0.0010000000474974514,
+    "legacyIdentityCount": 9544,
+    "denseIdentityCount": 35796,
+    "renderRowCount": 78325,
+    "manifestBytes": 15434582,
+    "manifestSha256": "520593bee83829829e99541a66beacf390c1ca9e067f1e3f541e8ac46df378f3",
+    "productionCutover": 0
+}

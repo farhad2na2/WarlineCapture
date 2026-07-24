@@ -64,6 +64,7 @@ Shader "Game/Environment/GroundMacroVariation"
             Cull Back
 
             HLSLPROGRAM
+            #pragma target 4.5
             #pragma vertex GroundVertex
             #pragma fragment GroundFragment
 
@@ -79,6 +80,7 @@ Shader "Game/Environment/GroundMacroVariation"
             #pragma multi_compile _ SHADOWS_SHADOWMASK
             #pragma multi_compile_fog
             #pragma multi_compile_instancing
+            #pragma multi_compile _ DOTS_INSTANCING_ON
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
@@ -303,9 +305,11 @@ Shader "Game/Environment/GroundMacroVariation"
             Cull Back
 
             HLSLPROGRAM
+            #pragma target 4.5
             #pragma vertex ShadowVertex
             #pragma fragment ShadowFragment
             #pragma multi_compile_instancing
+            #pragma multi_compile _ DOTS_INSTANCING_ON
             #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
@@ -367,9 +371,11 @@ Shader "Game/Environment/GroundMacroVariation"
             Cull Back
 
             HLSLPROGRAM
+            #pragma target 4.5
             #pragma vertex DepthOnlyVertex
             #pragma fragment DepthOnlyFragment
             #pragma multi_compile_instancing
+            #pragma multi_compile _ DOTS_INSTANCING_ON
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
@@ -408,9 +414,11 @@ Shader "Game/Environment/GroundMacroVariation"
             Cull Back
 
             HLSLPROGRAM
+            #pragma target 4.5
             #pragma vertex DepthNormalsVertex
             #pragma fragment DepthNormalsFragment
             #pragma multi_compile_instancing
+            #pragma multi_compile _ DOTS_INSTANCING_ON
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 

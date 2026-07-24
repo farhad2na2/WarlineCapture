@@ -50,13 +50,33 @@ public sealed class VehicleVisualAdornmentsSystemTests
             tests.UnitRuntimeHealthBarSystemRetainsAndHidesBarsForTransportedOrImpostorOnlyCharacters();
             tests.UnitDestroyedVisualSystemInitializesAliveAndDestroyedChildScales();
             tests.UnitHealthBarSystemExpiresRecentDamageVisibilityWithEcb();
-            Debug.Log("[VehicleVisualAdornmentsFocusedValidation] result=Passed tests=21");
+            tests.UnitFactionTintTargetBackfillIgnoresOperationMapBuildingRenderers();
+            Debug.Log("[VehicleVisualAdornmentsFocusedValidation] result=Passed tests=22");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
         {
             Debug.LogException(exception);
             Debug.LogError("[VehicleVisualAdornmentsFocusedValidation] result=Failed");
+            ValidationExit.Exit(1);
+        }
+    }
+
+    public static void RunFactionTintFocusedValidation()
+    {
+        try
+        {
+            var tests = new VehicleVisualAdornmentsSystemTests();
+            tests.UnitFactionTintTargetBackfillIgnoresSelectionObjectOutlines();
+            tests.UnitFactionTintTargetBackfillIgnoresOperationMapBuildingRenderers();
+            tests.UnitFactionTintTargetBackfillFindsDeepCharacterRenderHierarchy();
+            Debug.Log("[FactionTintFocusedValidation] result=Passed tests=3");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[FactionTintFocusedValidation] result=Failed");
             ValidationExit.Exit(1);
         }
     }
@@ -634,6 +654,50 @@ public sealed class VehicleVisualAdornmentsSystemTests
         Assert.IsTrue(em.HasComponent<FactionTintColor>(renderer));
         Assert.IsFalse(em.HasComponent<FactionTintTarget>(outline), "Selection-object outlines keep their authored cyan material and must not become faction tint targets.");
         Assert.IsFalse(em.HasComponent<FactionTintColor>(outline));
+    }
+
+    [Test]
+    public void UnitFactionTintTargetBackfillIgnoresOperationMapBuildingRenderers()
+    {
+        using var world = new World(nameof(UnitFactionTintTargetBackfillIgnoresOperationMapBuildingRenderers));
+        EntityManager em = world.EntityManager;
+        Entity building = em.CreateEntity(
+            typeof(OperationMapBuildingComponent),
+            typeof(UnitGrid),
+            typeof(UnitSourcePrefabKey));
+        em.SetComponentData(building, new UnitSourcePrefabKey
+        {
+            Value = new FixedString64Bytes("Building_MilitaryBase")
+        });
+        Entity renderer = CreateRenderableChild(em, building, "AuthoredBuildingRenderer", 1f);
+
+        SystemHandle backfill = world.CreateSystem<UnitFactionTintTargetBackfillSystem>();
+        backfill.Update(world.Unmanaged);
+
+        Assert.IsFalse(
+            em.HasComponent<FactionTintTarget>(renderer),
+            "Permanent operation-map renderers must retain their authored material colors.");
+        Assert.IsFalse(em.HasComponent<FactionTintColor>(renderer));
+        Assert.IsFalse(em.HasComponent<FactionSnivelerBaseColor>(renderer));
+
+        Entity authoredVehicle = em.CreateEntity(
+            typeof(OperationMapEntityPresentationIdentity),
+            typeof(UnitGrid),
+            typeof(UnitSourcePrefabKey));
+        em.SetComponentData(authoredVehicle, new UnitSourcePrefabKey
+        {
+            Value = new FixedString64Bytes("Unit_Veh_Tank_USA")
+        });
+        Entity vehicleRenderer =
+            CreateRenderableChild(em, authoredVehicle, "AuthoredVehicleRenderer", 1f);
+
+        backfill.Update(world.Unmanaged);
+
+        Assert.IsFalse(
+            em.HasComponent<FactionTintTarget>(vehicleRenderer),
+            "Permanent operation-map vehicle renderers must retain their authored material colors.");
+        Assert.IsFalse(em.HasComponent<FactionTintColor>(vehicleRenderer));
+        Assert.IsFalse(em.HasComponent<FactionSnivelerBaseColor>(vehicleRenderer));
     }
 
     [Test]

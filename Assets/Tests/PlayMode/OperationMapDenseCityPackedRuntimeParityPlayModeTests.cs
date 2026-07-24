@@ -31,6 +31,8 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
     private const int DenseExpectedLegacyIdentityCount = 9544;
     private const int DenseExpectedGeneratedIdentityCount = 35796;
     private const int DenseExpectedRenderRowCount = 78325;
+    private const int DenseGraphicsStableFrameCount = 3;
+    private const int DenseGraphicsReadinessFrameLimit = 120;
     private const string DenseDefinitionAddress =
         "operation-map-candidate/opmap.skirmish.desert_base_01/dense-city/definition";
     private const string DenseParityManifestPath =
@@ -55,6 +57,72 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
         "opmap_skirmish_desert_base_01_dense_city_entity_scene_runtime.unity";
     private const string DenseDirectBakeParityReportPath =
         "Design/AgentReports/2026-07-24_dense_city_generated_transform_parity.json";
+    private const string DenseEditorFixedCameraReportPath =
+        "Design/AgentReports/2026-07-24_dense_city_editor_fixed_camera_baseline.json";
+    private const string DenseRuntimeFixedCameraReportPath =
+        "Design/AgentReports/2026-07-24_dense_city_runtime_fixed_camera_parity.json";
+    private const string DenseRuntimeFixedCameraCaptureDirectory =
+        "Design/AgentReports/Captures/2026-07-24_dense_city_runtime_fixed_camera_parity";
+
+    [Test]
+    public void DenseComparePixels_UniformColorDriftRemainsInteriorFailure()
+    {
+        const int width = 3;
+        const int height = 3;
+        var source = new Color32[width * height];
+        var runtime = new Color32[width * height];
+        for (int i = 0; i < source.Length; i++)
+        {
+            source[i] = new Color32(10, 10, 10, 255);
+            runtime[i] = new Color32(20, 20, 20, 255);
+        }
+
+        DensePixelComparison comparison = DenseComparePixels(
+            source,
+            runtime,
+            width,
+            height,
+            changedThreshold: 3,
+            edgeThreshold: 16);
+
+        Assert.That(comparison.RawChangedPixelRatio, Is.EqualTo(1f));
+        Assert.That(comparison.InteriorChangedPixelRatio, Is.EqualTo(1f));
+        Assert.That(comparison.EdgePixelRatio, Is.EqualTo(0f));
+    }
+
+    [Test]
+    public void DenseComparePixels_OnePixelSilhouetteShiftIsEdgeDiagnostic()
+    {
+        const int width = 5;
+        const int height = 3;
+        var source = new Color32[width * height];
+        var runtime = new Color32[width * height];
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                int index = y * width + x;
+                source[index] = x < 2
+                    ? new Color32(0, 0, 0, 255)
+                    : new Color32(255, 255, 255, 255);
+                runtime[index] = x < 3
+                    ? new Color32(0, 0, 0, 255)
+                    : new Color32(255, 255, 255, 255);
+            }
+        }
+
+        DensePixelComparison comparison = DenseComparePixels(
+            source,
+            runtime,
+            width,
+            height,
+            changedThreshold: 3,
+            edgeThreshold: 16);
+
+        Assert.That(comparison.RawChangedPixelRatio, Is.EqualTo(3f / 15f));
+        Assert.That(comparison.InteriorChangedPixelRatio, Is.EqualTo(0f));
+        Assert.That(comparison.EdgePixelRatio, Is.GreaterThan(0f));
+    }
 
     [UnityTest]
     [Timeout(600000)]
@@ -102,6 +170,22 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
         bool bladeSpinWasEnabled = false;
         bool transportDoorStateCaptured = false;
         bool transportDoorWasEnabled = false;
+        bool previousIgnoreFailingMessages = LogAssert.ignoreFailingMessages;
+        var unexpectedErrors = new List<string>();
+        Application.LogCallback logCallback = (condition, _, type) =>
+        {
+            if (type != LogType.Error &&
+                type != LogType.Exception &&
+                type != LogType.Assert)
+                return;
+            if (condition.StartsWith(
+                    "[Worker1] Max unique Entity Name capacity exceeded.",
+                    StringComparison.Ordinal))
+                return;
+            unexpectedErrors.Add(condition);
+        };
+        Application.logMessageReceived += logCallback;
+        LogAssert.ignoreFailingMessages = true;
         try
         {
             RuntimeContentManager.Cleanup(out _);
@@ -182,7 +266,13 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
             }
             RuntimeContentManager.Cleanup(out _);
             RuntimeContentManager.Initialize();
+            LogAssert.ignoreFailingMessages = previousIgnoreFailingMessages;
+            Application.logMessageReceived -= logCallback;
         }
+        Assert.That(
+            unexpectedErrors,
+            Is.Empty,
+            "Dense packed parity emitted unexpected error logs.");
     }
 
     private static IEnumerator DenseRunLoadCaptureUnloadCycle(
@@ -240,6 +330,9 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
             world.EntityManager,
             sectionEntities);
         DenseCompare(expected, actual, cycle);
+        DenseAuditPackedMaterialDependencies(world.EntityManager);
+        DenseAssertOperationMapBuildingsRetainAuthoredMaterials(world.EntityManager);
+        yield return DenseCaptureFixedCameraRuntime(expected, cycle);
 
         Assert.That(loader.TryBeginUnload(out string unloadError), Is.True, unloadError);
         deadline = Time.realtimeSinceStartup + MaximumWaitSeconds;
@@ -269,6 +362,656 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
         }
         Assert.That(sourceScene.isLoaded, Is.False,
             $"Dense thin runtime-binding scene remained loaded after cycle {cycle}.");
+    }
+
+    private static void DenseAssertOperationMapBuildingsRetainAuthoredMaterials(
+        EntityManager entityManager)
+    {
+        using EntityQuery query = entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<FactionTintTarget>(),
+            ComponentType.ReadOnly<Parent>());
+        using NativeArray<Entity> targets = query.ToEntityArray(Allocator.Temp);
+        int operationMapBuildingTargetCount = 0;
+        int legacyIdentityTargetCount = 0;
+        int denseIdentityTargetCount = 0;
+        for (int targetIndex = 0; targetIndex < targets.Length; targetIndex++)
+        {
+            Entity current = targets[targetIndex];
+            for (int depth = 0; depth < 64; depth++)
+            {
+                if (entityManager.HasComponent<OperationMapEntityPresentationIdentity>(current))
+                    legacyIdentityTargetCount++;
+                if (entityManager.HasComponent<DenseCityPresentationIdentity>(current))
+                    denseIdentityTargetCount++;
+                if (entityManager.HasComponent<OperationMapBuildingComponent>(current))
+                {
+                    operationMapBuildingTargetCount++;
+                    break;
+                }
+
+                if (!entityManager.HasComponent<Parent>(current))
+                    break;
+
+                current = entityManager.GetComponentData<Parent>(current).Value;
+            }
+        }
+
+        Debug.Log(
+            $"[DensePackedMaterialOverrideAudit] factionTintTargets={targets.Length} " +
+            $"operationMapBuildingTargets={operationMapBuildingTargetCount} " +
+            $"legacyIdentityTargets={legacyIdentityTargetCount} " +
+            $"denseIdentityTargets={denseIdentityTargetCount}");
+        DenseAuditUrpBaseColorOverrides(entityManager);
+        Assert.That(
+            operationMapBuildingTargetCount,
+            Is.Zero,
+            "Permanent operation-map building renderers must retain authored material colors.");
+    }
+
+    private static void DenseAuditPackedMaterialDependencies(EntityManager entityManager)
+    {
+        using EntityQuery query = entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<MaterialMeshInfo>(),
+            ComponentType.ReadOnly<RenderMeshArray>());
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        var materials = new HashSet<Material>();
+        int unresolvedMaterialRows = 0;
+        for (int entityIndex = 0; entityIndex < entities.Length; entityIndex++)
+        {
+            Entity entity = entities[entityIndex];
+            MaterialMeshInfo materialMeshInfo =
+                entityManager.GetComponentData<MaterialMeshInfo>(entity);
+            RenderMeshArray renderMeshArray =
+                entityManager.GetSharedComponentManaged<RenderMeshArray>(entity);
+            Material material = renderMeshArray.GetMaterial(materialMeshInfo);
+            if (material == null)
+            {
+                unresolvedMaterialRows++;
+                continue;
+            }
+
+            materials.Add(material);
+        }
+
+        int baseMapPropertyCount = 0;
+        int resolvedBaseMapCount = 0;
+        int missingBaseMapCount = 0;
+        int nonWhiteBaseColorCount = 0;
+        var shaderNames = new HashSet<string>(StringComparer.Ordinal);
+        var missingBaseMapSamples = new StringBuilder();
+        var nonWhiteBaseColorSamples = new StringBuilder();
+        foreach (Material material in materials)
+        {
+            shaderNames.Add(material.shader != null ? material.shader.name : "<null>");
+            if (material.HasProperty("_BaseColor") &&
+                material.GetColor("_BaseColor") != Color.white)
+            {
+                nonWhiteBaseColorCount++;
+                if (nonWhiteBaseColorSamples.Length < 1024)
+                {
+                    if (nonWhiteBaseColorSamples.Length > 0)
+                        nonWhiteBaseColorSamples.Append(", ");
+                    Color color = material.GetColor("_BaseColor");
+                    nonWhiteBaseColorSamples.Append(material.name)
+                        .Append('=')
+                        .Append(color)
+                        .Append('@')
+                        .Append(material.shader != null ? material.shader.name : "<null>");
+                }
+            }
+            if (!material.HasProperty("_BaseMap"))
+                continue;
+
+            baseMapPropertyCount++;
+            if (material.GetTexture("_BaseMap") != null)
+            {
+                resolvedBaseMapCount++;
+                continue;
+            }
+
+            missingBaseMapCount++;
+            if (missingBaseMapSamples.Length < 512)
+            {
+                if (missingBaseMapSamples.Length > 0)
+                    missingBaseMapSamples.Append(", ");
+                missingBaseMapSamples.Append(material.name);
+            }
+        }
+
+        Debug.Log(
+            $"[DensePackedMaterialDependencyAudit] renderRows={entities.Length} " +
+            $"materials={materials.Count} shaders={shaderNames.Count} " +
+            $"unresolvedMaterialRows={unresolvedMaterialRows} " +
+            $"baseMapProperties={baseMapPropertyCount} " +
+            $"resolvedBaseMaps={resolvedBaseMapCount} missingBaseMaps={missingBaseMapCount} " +
+            $"nonWhiteBaseColors={nonWhiteBaseColorCount} " +
+            $"shaderNames=[{string.Join(", ", shaderNames)}] " +
+            $"missingBaseMapSamples=[{missingBaseMapSamples}] " +
+            $"nonWhiteBaseColorSamples=[{nonWhiteBaseColorSamples}]");
+        Assert.That(
+            unresolvedMaterialRows,
+            Is.Zero,
+            "Every packed render row must resolve its material from RenderMeshArray.");
+    }
+
+    private static void DenseAuditUrpBaseColorOverrides(EntityManager entityManager)
+    {
+        using EntityQuery query = entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<URPMaterialPropertyBaseColor>(),
+            ComponentType.ReadOnly<MaterialMeshInfo>(),
+            ComponentType.ReadOnly<RenderMeshArray>());
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        int legacyIdentityCount = 0;
+        int denseIdentityCount = 0;
+        int nonWhiteCount = 0;
+        int unresolvedMaterialCount = 0;
+        int materialColorMismatchCount = 0;
+        var materialColorMismatchSamples = new StringBuilder();
+        for (int entityIndex = 0; entityIndex < entities.Length; entityIndex++)
+        {
+            Entity entity = entities[entityIndex];
+            float4 value = entityManager
+                .GetComponentData<URPMaterialPropertyBaseColor>(entity)
+                .Value;
+            if (!math.all(value == new float4(1f, 1f, 1f, 1f)))
+                nonWhiteCount++;
+
+            MaterialMeshInfo materialMeshInfo =
+                entityManager.GetComponentData<MaterialMeshInfo>(entity);
+            RenderMeshArray renderMeshArray =
+                entityManager.GetSharedComponentManaged<RenderMeshArray>(entity);
+            Material material = renderMeshArray.GetMaterial(materialMeshInfo);
+            if (material == null || !material.HasProperty("_BaseColor"))
+            {
+                unresolvedMaterialCount++;
+            }
+            else
+            {
+                Color color = material.GetColor("_BaseColor").linear;
+                var expected = new float4(color.r, color.g, color.b, color.a);
+                if (!math.all(math.abs(value - expected) <= 0.0001f))
+                {
+                    materialColorMismatchCount++;
+                    if (materialColorMismatchSamples.Length < 2048)
+                    {
+                        if (materialColorMismatchSamples.Length > 0)
+                            materialColorMismatchSamples.Append(", ");
+                        materialColorMismatchSamples.Append(material.name)
+                            .Append('@')
+                            .Append(material.shader != null ? material.shader.name : "<null>")
+                            .Append(":expected=")
+                            .Append(expected)
+                            .Append(":actual=")
+                            .Append(value);
+                    }
+                }
+            }
+
+            Entity current = entity;
+            for (int depth = 0; depth < 64; depth++)
+            {
+                if (entityManager.HasComponent<OperationMapEntityPresentationIdentity>(current))
+                    legacyIdentityCount++;
+                if (entityManager.HasComponent<DenseCityPresentationIdentity>(current))
+                    denseIdentityCount++;
+                if (!entityManager.HasComponent<Parent>(current))
+                    break;
+                current = entityManager.GetComponentData<Parent>(current).Value;
+            }
+        }
+
+        Debug.Log(
+            $"[DensePackedUrpBaseColorAudit] overrides={entities.Length} " +
+            $"nonWhite={nonWhiteCount} legacyIdentityOverrides={legacyIdentityCount} " +
+            $"denseIdentityOverrides={denseIdentityCount} " +
+            $"unresolvedMaterials={unresolvedMaterialCount} " +
+            $"materialColorMismatches={materialColorMismatchCount} " +
+            $"mismatchSamples=[{materialColorMismatchSamples}]");
+        Assert.That(
+            unresolvedMaterialCount,
+            Is.Zero,
+            "Every packed base-color override must resolve a material with _BaseColor.");
+        Assert.That(
+            materialColorMismatchCount,
+            Is.Zero,
+            "Packed base-color overrides must preserve each resolved material's exact linear color.");
+    }
+
+    private static IEnumerator DenseCaptureFixedCameraRuntime(
+        DenseParityManifest expected,
+        int cycle)
+    {
+        string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+        string baselinePath = DenseResolve(projectRoot, DenseEditorFixedCameraReportPath);
+        DenseRequireFile(baselinePath);
+        DenseEditorFixedCameraReport baseline =
+            JsonUtility.FromJson<DenseEditorFixedCameraReport>(
+                File.ReadAllText(baselinePath));
+        Assert.That(
+            baseline.schema,
+            Is.EqualTo("warline.operation-map.dense-city-editor-fixed-camera-baseline"));
+        Assert.That(baseline.schemaVersion, Is.EqualTo(1));
+        Assert.That(baseline.operationMapId, Is.EqualTo(expected.OperationMapId));
+        Assert.That(baseline.candidateSubSceneSha256, Is.EqualTo(expected.SubSceneSha256));
+        Assert.That(baseline.width, Is.EqualTo(1280));
+        Assert.That(baseline.height, Is.EqualTo(720));
+        Assert.That(baseline.viewCount, Is.EqualTo(5));
+        Assert.That(baseline.rows, Has.Length.EqualTo(baseline.viewCount));
+
+        string captureDirectory =
+            DenseResolve(projectRoot, DenseRuntimeFixedCameraCaptureDirectory);
+        Directory.CreateDirectory(captureDirectory);
+        var runtimeRows = new DenseRuntimeFixedCameraRow[baseline.rows.Length];
+        Camera[] existingCameras = Camera.allCameras;
+        var cameraStates = new bool[existingCameras.Length];
+        Light[] existingLights = UnityEngine.Object.FindObjectsByType<Light>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None);
+        var lightStates = new bool[existingLights.Length];
+        var cameraObject = new GameObject("DensePackedFixedCamera");
+        var lightObject = new GameObject("DensePackedFixedCameraLight");
+        Camera camera = cameraObject.AddComponent<Camera>();
+        Light light = lightObject.AddComponent<Light>();
+        Color previousAmbientLight = RenderSettings.ambientLight;
+        float previousAmbientIntensity = RenderSettings.ambientIntensity;
+        UnityEngine.Rendering.AmbientMode previousAmbientMode =
+            RenderSettings.ambientMode;
+        ShadowQuality previousShadowQuality = QualitySettings.shadows;
+        try
+        {
+            for (int i = 0; i < existingCameras.Length; i++)
+            {
+                cameraStates[i] = existingCameras[i].enabled;
+                existingCameras[i].enabled = false;
+            }
+            for (int i = 0; i < existingLights.Length; i++)
+            {
+                lightStates[i] = existingLights[i].enabled;
+                existingLights[i].enabled = false;
+            }
+
+            camera.clearFlags = CameraClearFlags.SolidColor;
+            camera.backgroundColor = new Color(0.12f, 0.14f, 0.16f, 1f);
+            camera.nearClipPlane = 0.1f;
+            camera.farClipPlane = 20000f;
+            camera.allowHDR = false;
+            camera.allowMSAA = false;
+            camera.useOcclusionCulling = false;
+            camera.aspect = baseline.width / (float)baseline.height;
+            camera.enabled = true;
+
+            lightObject.transform.rotation = Quaternion.Euler(48f, -32f, 0f);
+            light.type = LightType.Directional;
+            light.color = new Color(1f, 0.96f, 0.9f, 1f);
+            light.intensity = 1.1f;
+            light.shadows = LightShadows.None;
+            light.enabled = true;
+            RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
+            RenderSettings.ambientLight = new Color(0.72f, 0.72f, 0.72f, 1f);
+            RenderSettings.ambientIntensity = 1f;
+            QualitySettings.shadows = ShadowQuality.Disable;
+
+            for (int i = 0; i < baseline.rows.Length; i++)
+            {
+                DenseEditorFixedCameraRow source = baseline.rows[i];
+                string sourcePath = DenseResolve(projectRoot, source.editorPath);
+                DenseRequireFile(sourcePath);
+                Assert.That(ComputeSha256(sourcePath), Is.EqualTo(source.editorSha256));
+
+                camera.transform.SetPositionAndRotation(
+                    DenseVector3(source.cameraPosition),
+                    Quaternion.Euler(DenseVector3(source.cameraRotation)));
+                camera.orthographic = source.orthographic != 0;
+                camera.fieldOfView = source.fieldOfView;
+                camera.orthographicSize = source.orthographicSize;
+
+                Color32[] runtimePixels = null;
+                byte[] runtimePng = null;
+                yield return DenseRenderCamera(
+                    camera,
+                    baseline.width,
+                    baseline.height,
+                    (pixels, png) =>
+                    {
+                        runtimePixels = pixels;
+                        runtimePng = png;
+                    });
+                Assert.That(runtimePixels, Is.Not.Null);
+                Assert.That(runtimePng, Is.Not.Null);
+
+                byte[] sourcePng = File.ReadAllBytes(sourcePath);
+                var sourceTexture =
+                    new Texture2D(2, 2, TextureFormat.RGBA32, false, false);
+                try
+                {
+                    Assert.That(sourceTexture.LoadImage(sourcePng, markNonReadable: false), Is.True);
+                    Color32[] sourcePixels = sourceTexture.GetPixels32();
+                    DensePixelComparison comparison = DenseComparePixels(
+                        sourcePixels,
+                        runtimePixels,
+                        baseline.width,
+                        baseline.height,
+                        3,
+                        16);
+                    string runtimeRelative =
+                        $"{DenseRuntimeFixedCameraCaptureDirectory}/" +
+                        $"{source.view}_cycle_{cycle:D2}_runtime.png";
+                    string runtimePath = DenseResolve(projectRoot, runtimeRelative);
+                    File.WriteAllBytes(runtimePath, runtimePng);
+                    bool passed =
+                        comparison.MeanChannelDelta <= baseline.maximumMeanChannelDelta &&
+                        comparison.InteriorChangedPixelRatio <=
+                            baseline.maximumChangedPixelRatio &&
+                        comparison.SourceLumaVariance > 0.0001f &&
+                        comparison.RuntimeLumaVariance > 0.0001f;
+                    runtimeRows[i] = new DenseRuntimeFixedCameraRow
+                    {
+                        view = source.view,
+                        result = passed ? "Passed" : "Rejected",
+                        editorPath = source.editorPath,
+                        runtimePath = runtimeRelative,
+                        editorSha256 = source.editorSha256,
+                        runtimeSha256 = ComputeSha256(runtimePath),
+                        meanChannelDelta = comparison.MeanChannelDelta,
+                        maximumChannelDelta = comparison.MaximumChannelDelta,
+                        changedPixelRatio = comparison.RawChangedPixelRatio,
+                        interiorChangedPixelRatio =
+                            comparison.InteriorChangedPixelRatio,
+                        edgePixelRatio = comparison.EdgePixelRatio,
+                        editorLumaVariance = comparison.SourceLumaVariance,
+                        runtimeLumaVariance = comparison.RuntimeLumaVariance
+                    };
+                }
+                finally
+                {
+                    UnityEngine.Object.DestroyImmediate(sourceTexture);
+                }
+            }
+        }
+        finally
+        {
+            QualitySettings.shadows = previousShadowQuality;
+            RenderSettings.ambientMode = previousAmbientMode;
+            RenderSettings.ambientLight = previousAmbientLight;
+            RenderSettings.ambientIntensity = previousAmbientIntensity;
+            for (int i = 0; i < existingLights.Length; i++)
+            {
+                if (existingLights[i] != null)
+                    existingLights[i].enabled = lightStates[i];
+            }
+            for (int i = 0; i < existingCameras.Length; i++)
+            {
+                if (existingCameras[i] != null)
+                    existingCameras[i].enabled = cameraStates[i];
+            }
+            UnityEngine.Object.DestroyImmediate(lightObject);
+            UnityEngine.Object.DestroyImmediate(cameraObject);
+        }
+
+        string reportPath = DenseResolve(projectRoot, DenseRuntimeFixedCameraReportPath);
+        var allRows = new List<DenseRuntimeFixedCameraRow>(baseline.rows.Length * cycle);
+        if (cycle > 1)
+        {
+            DenseRequireFile(reportPath);
+            DenseRuntimeFixedCameraReport previous =
+                JsonUtility.FromJson<DenseRuntimeFixedCameraReport>(
+                    File.ReadAllText(reportPath));
+            Assert.That(previous.cycleCount, Is.EqualTo(cycle - 1));
+            Assert.That(previous.rows, Has.Length.EqualTo(baseline.rows.Length * (cycle - 1)));
+            allRows.AddRange(previous.rows);
+        }
+        allRows.AddRange(runtimeRows);
+
+        int rejected = 0;
+        for (int i = 0; i < allRows.Count; i++)
+        {
+            if (!string.Equals(allRows[i].result, "Passed", StringComparison.Ordinal))
+                rejected++;
+        }
+        var report = new DenseRuntimeFixedCameraReport
+        {
+            schema = "warline.operation-map.dense-city-runtime-fixed-camera-parity",
+            schemaVersion = 2,
+            operationMapId = expected.OperationMapId,
+            result = rejected == 0
+                ? "DenseCityRuntimeFixedCameraParityPassed"
+                : "DenseCityRuntimeFixedCameraParityRejected",
+            candidateSubSceneSha256 = expected.SubSceneSha256,
+            manifestSha256 = ComputeSha256(
+                DenseResolve(projectRoot, DenseParityManifestPath)),
+            width = baseline.width,
+            height = baseline.height,
+            editorRendererCount = baseline.rendererCount,
+            runtimeRenderRowCount = DenseExpectedRenderRowCount,
+            cycleCount = cycle,
+            viewCount = allRows.Count,
+            rejectedViewCount = rejected,
+            maximumMeanChannelDelta = baseline.maximumMeanChannelDelta,
+            maximumChangedPixelRatio = baseline.maximumChangedPixelRatio,
+            productionCutover = 0,
+            rows = allRows.ToArray()
+        };
+        File.WriteAllText(reportPath, JsonUtility.ToJson(report, true) + "\n");
+        Assert.That(
+            rejected,
+            Is.Zero,
+            $"Dense fixed-camera parity rejected {rejected}/{allRows.Count} views. " +
+            $"Report: {DenseRuntimeFixedCameraReportPath}");
+    }
+
+    private static IEnumerator DenseRenderCamera(
+        Camera camera,
+        int width,
+        int height,
+        Action<Color32[], byte[]> completed)
+    {
+        var destination = new RenderTexture(
+            width,
+            height,
+            24,
+            RenderTextureFormat.ARGB32)
+        {
+            antiAliasing = 1,
+            name = "DensePackedFixedCameraParityTarget"
+        };
+        try
+        {
+            var request = new UnityEngine.Rendering.RenderPipeline.StandardRequest
+            {
+                destination = destination
+            };
+            Assert.That(
+                UnityEngine.Rendering.RenderPipeline.SupportsRenderRequest(camera, request),
+                Is.True);
+            World world = World.DefaultGameObjectInjectionWorld;
+            Assert.That(world, Is.Not.Null);
+            EntitiesGraphicsSystem graphics =
+                world.GetExistingSystemManaged<EntitiesGraphicsSystem>();
+            Assert.That(graphics, Is.Not.Null);
+
+            int stableFrameCount = 0;
+            int previousBatchCount = -1;
+            int previousChunkTotal = -1;
+            int previousRenderedInstanceCount = -1;
+            int previousDrawCommandCount = -1;
+            EntitiesGraphicsStats stats = default;
+            for (int frame = 0;
+                 frame < DenseGraphicsReadinessFrameLimit &&
+                 stableFrameCount < DenseGraphicsStableFrameCount;
+                 frame++)
+            {
+                UnityEngine.Rendering.RenderPipeline.SubmitRenderRequest(camera, request);
+                yield return null;
+
+                stats = graphics.Stats;
+                bool ready =
+                    stats.BatchCount > 0 &&
+                    stats.ChunkTotal > 0 &&
+                    stats.RenderedInstanceCount > 0 &&
+                    stats.DrawCommandCount > 0;
+                bool unchanged =
+                    ready &&
+                    stats.BatchCount == previousBatchCount &&
+                    stats.ChunkTotal == previousChunkTotal &&
+                    stats.RenderedInstanceCount == previousRenderedInstanceCount &&
+                    stats.DrawCommandCount == previousDrawCommandCount;
+                stableFrameCount = unchanged ? stableFrameCount + 1 : ready ? 1 : 0;
+                previousBatchCount = stats.BatchCount;
+                previousChunkTotal = stats.ChunkTotal;
+                previousRenderedInstanceCount = stats.RenderedInstanceCount;
+                previousDrawCommandCount = stats.DrawCommandCount;
+            }
+            Assert.That(
+                stableFrameCount,
+                Is.GreaterThanOrEqualTo(DenseGraphicsStableFrameCount),
+                "Entities Graphics did not reach stable nonzero culling/draw readiness: " +
+                $"batches={stats.BatchCount}, chunks={stats.ChunkTotal}, " +
+                $"instances={stats.RenderedInstanceCount}, draws={stats.DrawCommandCount}.");
+
+            RenderTexture previous = RenderTexture.active;
+            RenderTexture.active = destination;
+            var texture = new Texture2D(
+                width,
+                height,
+                TextureFormat.RGBA32,
+                false,
+                false);
+            try
+            {
+                texture.ReadPixels(new Rect(0f, 0f, width, height), 0, 0, false);
+                texture.Apply(false, false);
+                completed(texture.GetPixels32(), texture.EncodeToPNG());
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(texture);
+                RenderTexture.active = previous;
+            }
+        }
+        finally
+        {
+            destination.Release();
+            UnityEngine.Object.DestroyImmediate(destination);
+        }
+    }
+
+    private static DensePixelComparison DenseComparePixels(
+        IReadOnlyList<Color32> source,
+        IReadOnlyList<Color32> runtime,
+        int width,
+        int height,
+        byte changedThreshold,
+        byte edgeThreshold)
+    {
+        Assert.That(runtime.Count, Is.EqualTo(source.Count));
+        Assert.That(source.Count, Is.EqualTo(width * height));
+        long totalDelta = 0;
+        int maximumDelta = 0;
+        int rawChanged = 0;
+        int interiorChanged = 0;
+        int edgePixels = 0;
+        double sourceLuma = 0d;
+        double sourceLumaSquared = 0d;
+        double runtimeLuma = 0d;
+        double runtimeLumaSquared = 0d;
+        for (int i = 0; i < source.Count; i++)
+        {
+            int red = Math.Abs(source[i].r - runtime[i].r);
+            int green = Math.Abs(source[i].g - runtime[i].g);
+            int blue = Math.Abs(source[i].b - runtime[i].b);
+            int alpha = Math.Abs(source[i].a - runtime[i].a);
+            int pixelMaximum = Math.Max(Math.Max(red, green), Math.Max(blue, alpha));
+            totalDelta += red + green + blue + alpha;
+            maximumDelta = Math.Max(maximumDelta, pixelMaximum);
+            bool edge = DenseIsEdgePixel(
+                source,
+                runtime,
+                width,
+                height,
+                i,
+                edgeThreshold);
+            if (edge)
+                edgePixels++;
+            if (pixelMaximum > changedThreshold)
+            {
+                rawChanged++;
+                if (!edge)
+                    interiorChanged++;
+            }
+            double sourceValue =
+                (0.2126d * source[i].r + 0.7152d * source[i].g +
+                 0.0722d * source[i].b) / 255d;
+            double runtimeValue =
+                (0.2126d * runtime[i].r + 0.7152d * runtime[i].g +
+                 0.0722d * runtime[i].b) / 255d;
+            sourceLuma += sourceValue;
+            sourceLumaSquared += sourceValue * sourceValue;
+            runtimeLuma += runtimeValue;
+            runtimeLumaSquared += runtimeValue * runtimeValue;
+        }
+        double count = source.Count;
+        double sourceMean = sourceLuma / count;
+        double runtimeMean = runtimeLuma / count;
+        return new DensePixelComparison(
+            (float)(totalDelta / (count * 4d * 255d)),
+            maximumDelta / 255f,
+            rawChanged / (float)count,
+            interiorChanged / (float)count,
+            edgePixels / (float)count,
+            (float)Math.Max(0d, sourceLumaSquared / count - sourceMean * sourceMean),
+            (float)Math.Max(0d, runtimeLumaSquared / count - runtimeMean * runtimeMean));
+    }
+
+    private static bool DenseIsEdgePixel(
+        IReadOnlyList<Color32> source,
+        IReadOnlyList<Color32> runtime,
+        int width,
+        int height,
+        int index,
+        byte edgeThreshold)
+    {
+        int centerX = index % width;
+        int centerY = index / width;
+        int sourceMinR = 255, sourceMinG = 255, sourceMinB = 255;
+        int sourceMaxR = 0, sourceMaxG = 0, sourceMaxB = 0;
+        int runtimeMinR = 255, runtimeMinG = 255, runtimeMinB = 255;
+        int runtimeMaxR = 0, runtimeMaxG = 0, runtimeMaxB = 0;
+        for (int y = Math.Max(0, centerY - 1);
+             y <= Math.Min(height - 1, centerY + 1);
+             y++)
+        {
+            for (int x = Math.Max(0, centerX - 1);
+                 x <= Math.Min(width - 1, centerX + 1);
+                 x++)
+            {
+                Color32 sourcePixel = source[y * width + x];
+                Color32 runtimePixel = runtime[y * width + x];
+                sourceMinR = Math.Min(sourceMinR, sourcePixel.r);
+                sourceMinG = Math.Min(sourceMinG, sourcePixel.g);
+                sourceMinB = Math.Min(sourceMinB, sourcePixel.b);
+                sourceMaxR = Math.Max(sourceMaxR, sourcePixel.r);
+                sourceMaxG = Math.Max(sourceMaxG, sourcePixel.g);
+                sourceMaxB = Math.Max(sourceMaxB, sourcePixel.b);
+                runtimeMinR = Math.Min(runtimeMinR, runtimePixel.r);
+                runtimeMinG = Math.Min(runtimeMinG, runtimePixel.g);
+                runtimeMinB = Math.Min(runtimeMinB, runtimePixel.b);
+                runtimeMaxR = Math.Max(runtimeMaxR, runtimePixel.r);
+                runtimeMaxG = Math.Max(runtimeMaxG, runtimePixel.g);
+                runtimeMaxB = Math.Max(runtimeMaxB, runtimePixel.b);
+            }
+        }
+        return sourceMaxR - sourceMinR > edgeThreshold ||
+               sourceMaxG - sourceMinG > edgeThreshold ||
+               sourceMaxB - sourceMinB > edgeThreshold ||
+               runtimeMaxR - runtimeMinR > edgeThreshold ||
+               runtimeMaxG - runtimeMinG > edgeThreshold ||
+               runtimeMaxB - runtimeMinB > edgeThreshold;
+    }
+
+    private static Vector3 DenseVector3(IReadOnlyList<float> values)
+    {
+        Assert.That(values.Count, Is.EqualTo(3));
+        return new Vector3(values[0], values[1], values[2]);
     }
 
     private static DenseRuntimeCapture DenseCapture(
@@ -1122,6 +1865,110 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
             }
             return left.Count.CompareTo(right.Count);
         }
+    }
+
+    private readonly struct DensePixelComparison
+    {
+        public DensePixelComparison(
+            float meanChannelDelta,
+            float maximumChannelDelta,
+            float rawChangedPixelRatio,
+            float interiorChangedPixelRatio,
+            float edgePixelRatio,
+            float sourceLumaVariance,
+            float runtimeLumaVariance)
+        {
+            MeanChannelDelta = meanChannelDelta;
+            MaximumChannelDelta = maximumChannelDelta;
+            RawChangedPixelRatio = rawChangedPixelRatio;
+            InteriorChangedPixelRatio = interiorChangedPixelRatio;
+            EdgePixelRatio = edgePixelRatio;
+            SourceLumaVariance = sourceLumaVariance;
+            RuntimeLumaVariance = runtimeLumaVariance;
+        }
+
+        public float MeanChannelDelta { get; }
+        public float MaximumChannelDelta { get; }
+        public float RawChangedPixelRatio { get; }
+        public float InteriorChangedPixelRatio { get; }
+        public float EdgePixelRatio { get; }
+        public float SourceLumaVariance { get; }
+        public float RuntimeLumaVariance { get; }
+    }
+
+    [Serializable]
+    private sealed class DenseEditorFixedCameraReport
+    {
+        public string schema;
+        public int schemaVersion;
+        public string operationMapId;
+        public string result;
+        public string candidateSubSceneSha256;
+        public int width;
+        public int height;
+        public int rendererCount;
+        public int legacyIdentityCount;
+        public int denseIdentityCount;
+        public int expectedRuntimeRenderRowCount;
+        public int viewCount;
+        public float maximumMeanChannelDelta;
+        public float maximumChangedPixelRatio;
+        public int productionCutover;
+        public DenseEditorFixedCameraRow[] rows;
+    }
+
+    [Serializable]
+    private sealed class DenseEditorFixedCameraRow
+    {
+        public string view;
+        public string editorPath;
+        public string editorSha256;
+        public float editorLumaVariance;
+        public float[] cameraPosition;
+        public float[] cameraRotation;
+        public int orthographic;
+        public float fieldOfView;
+        public float orthographicSize;
+    }
+
+    [Serializable]
+    private sealed class DenseRuntimeFixedCameraReport
+    {
+        public string schema;
+        public int schemaVersion;
+        public string operationMapId;
+        public string result;
+        public string candidateSubSceneSha256;
+        public string manifestSha256;
+        public int width;
+        public int height;
+        public int editorRendererCount;
+        public int runtimeRenderRowCount;
+        public int cycleCount;
+        public int viewCount;
+        public int rejectedViewCount;
+        public float maximumMeanChannelDelta;
+        public float maximumChangedPixelRatio;
+        public int productionCutover;
+        public DenseRuntimeFixedCameraRow[] rows;
+    }
+
+    [Serializable]
+    private sealed class DenseRuntimeFixedCameraRow
+    {
+        public string view;
+        public string result;
+        public string editorPath;
+        public string runtimePath;
+        public string editorSha256;
+        public string runtimeSha256;
+        public float meanChannelDelta;
+        public float maximumChannelDelta;
+        public float changedPixelRatio;
+        public float interiorChangedPixelRatio;
+        public float edgePixelRatio;
+        public float editorLumaVariance;
+        public float runtimeLumaVariance;
     }
 
     [Serializable]

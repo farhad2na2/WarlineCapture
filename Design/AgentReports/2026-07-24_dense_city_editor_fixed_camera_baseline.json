@@ -1,0 +1,115 @@
+{
+    "schema": "warline.operation-map.dense-city-editor-fixed-camera-baseline",
+    "schemaVersion": 1,
+    "operationMapId": "opmap.skirmish.desert_base_01",
+    "result": "DenseCityEditorFixedCameraBaselineCaptured",
+    "candidateSubScenePath": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
+    "candidateSubSceneSha256": "01418abb2bd8f0ef467f7bc30009988b44e849056310b1698c600fc3d228ba3c",
+    "width": 1280,
+    "height": 720,
+    "rendererCount": 77783,
+    "legacyIdentityCount": 9544,
+    "denseIdentityCount": 35796,
+    "expectedRuntimeRenderRowCount": 78325,
+    "viewCount": 5,
+    "maximumMeanChannelDelta": 0.0024999999441206457,
+    "maximumChangedPixelRatio": 0.009999999776482582,
+    "productionCutover": 0,
+    "rows": [
+        {
+            "view": "overview",
+            "editorPath": "Design/AgentReports/Captures/2026-07-24_dense_city_editor_fixed_camera_baseline/overview_editor.png",
+            "editorSha256": "79c7a4325b66d66a50097b24d466d64b5b2b490cd41df67fd3b5ec91702b3298",
+            "editorLumaVariance": 0.013955553993582726,
+            "cameraPosition": [
+                731.322021484375,
+                591.2198486328125,
+                -25.55657958984375
+            ],
+            "cameraRotation": [
+                26.981409072875978,
+                44.999996185302737,
+                -0.000001916108431032626
+            ],
+            "orthographic": 0,
+            "fieldOfView": 42.0,
+            "orthographicSize": 0.0
+        },
+        {
+            "view": "minimap",
+            "editorPath": "Design/AgentReports/Captures/2026-07-24_dense_city_editor_fixed_camera_baseline/minimap_editor.png",
+            "editorSha256": "c49ed0fc65438f36aa623a877f2a626c0de3c5e1fc3fa14f228f207abab5284c",
+            "editorLumaVariance": 0.013068631291389466,
+            "cameraPosition": [
+                1513.48876953125,
+                2129.400390625,
+                756.6101684570313
+            ],
+            "cameraRotation": [
+                90.0,
+                0.0,
+                0.0
+            ],
+            "orthographic": 1,
+            "fieldOfView": 60.0,
+            "orthographicSize": 593.7508544921875
+        },
+        {
+            "view": "detail_01",
+            "editorPath": "Design/AgentReports/Captures/2026-07-24_dense_city_editor_fixed_camera_baseline/detail_01_editor.png",
+            "editorSha256": "01aab0b75a635c0ae0967201b3df3517bff40f6f2939299d4b3d006fc5eee5e6",
+            "editorLumaVariance": 0.013719809241592884,
+            "cameraPosition": [
+                870.778076171875,
+                229.57742309570313,
+                408.9427185058594
+            ],
+            "cameraRotation": [
+                41.12513732910156,
+                50.90614318847656,
+                0.0
+            ],
+            "orthographic": 0,
+            "fieldOfView": 42.0,
+            "orthographicSize": 0.0
+        },
+        {
+            "view": "detail_02",
+            "editorPath": "Design/AgentReports/Captures/2026-07-24_dense_city_editor_fixed_camera_baseline/detail_02_editor.png",
+            "editorSha256": "90e174e3aa9e1b90957764c43bd7476d39c4b227f235c7b968a787e3b52d80e1",
+            "editorLumaVariance": 0.008913700468838215,
+            "cameraPosition": [
+                783.1275024414063,
+                228.46351623535157,
+                193.98696899414063
+            ],
+            "cameraRotation": [
+                40.903228759765628,
+                316.84759521484377,
+                -0.000002259208031318849
+            ],
+            "orthographic": 0,
+            "fieldOfView": 42.0,
+            "orthographicSize": 0.0
+        },
+        {
+            "view": "detail_03",
+            "editorPath": "Design/AgentReports/Captures/2026-07-24_dense_city_editor_fixed_camera_baseline/detail_03_editor.png",
+            "editorSha256": "25f8a665be4924fb3fb0f29939b68e66ddcc31268aa24229cbf472beeed0c301",
+            "editorLumaVariance": 0.010009012185037136,
+            "cameraPosition": [
+                1085.851318359375,
+                227.168701171875,
+                549.13671875
+            ],
+            "cameraRotation": [
+                41.1251335144043,
+                230.90615844726563,
+                0.0
+            ],
+            "orthographic": 0,
+            "fieldOfView": 42.0,
+            "orthographicSize": 0.0
+        }
+    ]
+}

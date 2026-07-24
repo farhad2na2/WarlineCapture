@@ -16,6 +16,7 @@ namespace Game.Editor
     using Unity.Mathematics;
     using Unity.Rendering;
     using Unity.Transforms;
+    using UnityEditor;
     using UnityEngine;
     using UnityEngine.SceneManagement;
 
@@ -73,7 +74,13 @@ namespace Game.Editor
                 rendererBakeMap,
                 worldMatrices,
                 out int generatedBakedRenderEntityCount,
-                out int unresolvedGeneratedRendererEntityCount);
+                out int unresolvedGeneratedRendererEntityCount,
+                out int unresolvedGeneratedMaterialCount,
+                out int generatedMaterialMismatchCount,
+                out int generatedBaseColorPropertyCount,
+                out int generatedBaseColorOverrideCount,
+                out int generatedBaseColorMismatchCount,
+                out List<DenseCityGeneratedMaterialMismatchSample> materialMismatchSamples);
             Dictionary<string, Bounds> candidateBounds = CollectCandidateBounds(candidateScene);
 
             var rows = new List<DenseCityGeneratedTransformParityRow>(candidates.Length);
@@ -133,6 +140,11 @@ namespace Game.Editor
                           missingBakedStableIds.Length == 0 &&
                           unexpectedBakedStableIds.Length == 0 &&
                           unresolvedGeneratedRendererEntityCount == 0 &&
+                          unresolvedGeneratedMaterialCount == 0 &&
+                          generatedMaterialMismatchCount == 0 &&
+                          generatedBaseColorPropertyCount ==
+                          generatedBaseColorOverrideCount &&
+                          generatedBaseColorMismatchCount == 0 &&
                           rendererBakeMap.UnconsumedCount == 0 &&
                           rendererBakeMap.ExpectedEntryCount == generatedBakedRenderEntityCount;
             var report = new DenseCityGeneratedTransformParityReport
@@ -149,6 +161,12 @@ namespace Game.Editor
                 generatedCandidateRendererEntityCount = rendererBakeMap.ExpectedEntryCount,
                 generatedBakedRenderEntityCount = generatedBakedRenderEntityCount,
                 unresolvedGeneratedRendererEntityCount = unresolvedGeneratedRendererEntityCount,
+                unresolvedGeneratedMaterialCount = unresolvedGeneratedMaterialCount,
+                generatedMaterialMismatchCount = generatedMaterialMismatchCount,
+                generatedBaseColorPropertyCount = generatedBaseColorPropertyCount,
+                generatedBaseColorOverrideCount = generatedBaseColorOverrideCount,
+                generatedBaseColorMismatchCount = generatedBaseColorMismatchCount,
+                materialMismatchSamples = materialMismatchSamples,
                 unconsumedCandidateRendererEntityCount = rendererBakeMap.UnconsumedCount,
                 rejectedRowCount = rejectedRowCount,
                 rejectedSampleCount = rejectedSamples.Count,
@@ -176,6 +194,11 @@ namespace Game.Editor
                     $"unexpected={unexpectedBakedStableIds.Length}, " +
                     $"renderers={generatedBakedRenderEntityCount}/{rendererBakeMap.ExpectedEntryCount}, " +
                     $"unresolved={unresolvedGeneratedRendererEntityCount}, " +
+                    $"unresolvedMaterials={unresolvedGeneratedMaterialCount}, " +
+                    $"materialMismatches={generatedMaterialMismatchCount}, " +
+                    $"baseColors={generatedBaseColorOverrideCount}/" +
+                    $"{generatedBaseColorPropertyCount}, " +
+                    $"baseColorMismatches={generatedBaseColorMismatchCount}, " +
                     $"unconsumed={rendererBakeMap.UnconsumedCount}. Report: {reportPath}");
             }
 
@@ -328,6 +351,7 @@ namespace Game.Editor
                         renderer,
                         out Bounds localBounds,
                         out Matrix4x4 world,
+                        out _,
                         out _))
                 {
                     continue;
@@ -361,12 +385,14 @@ namespace Game.Editor
                         renderer,
                         out Bounds localBounds,
                         out Matrix4x4 world,
-                        out int renderEntityCount))
+                        out int renderEntityCount,
+                        out Mesh mesh))
                 {
                     continue;
                 }
 
                 string key = BuildRendererBakeKey(localBounds.center, localBounds.extents, world);
+                Material[] materials = renderer.sharedMaterials;
                 for (int i = 0; i < renderEntityCount; i++)
                 {
                     result.Add(
@@ -374,7 +400,10 @@ namespace Game.Editor
                         owner.StableId,
                         localBounds.center,
                         localBounds.extents,
-                        world);
+                        world,
+                        materials[i],
+                        mesh,
+                        i);
                 }
             }
             return result;
@@ -386,11 +415,23 @@ namespace Game.Editor
             CandidateRendererBakeMap rendererBakeMap,
             Dictionary<Entity, Matrix4x4> worldMatrices,
             out int generatedBakedRenderEntityCount,
-            out int unresolvedGeneratedRendererEntityCount)
+            out int unresolvedGeneratedRendererEntityCount,
+            out int unresolvedGeneratedMaterialCount,
+            out int generatedMaterialMismatchCount,
+            out int generatedBaseColorPropertyCount,
+            out int generatedBaseColorOverrideCount,
+            out int generatedBaseColorMismatchCount,
+            out List<DenseCityGeneratedMaterialMismatchSample> materialMismatchSamples)
         {
             var result = new Dictionary<string, WorldBounds>(StringComparer.Ordinal);
             generatedBakedRenderEntityCount = 0;
             unresolvedGeneratedRendererEntityCount = 0;
+            unresolvedGeneratedMaterialCount = 0;
+            generatedMaterialMismatchCount = 0;
+            generatedBaseColorPropertyCount = 0;
+            generatedBaseColorOverrideCount = 0;
+            generatedBaseColorMismatchCount = 0;
+            materialMismatchSamples = new List<DenseCityGeneratedMaterialMismatchSample>();
             using EntityQuery query = entityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<RenderBounds>(),
                 ComponentType.ReadOnly<LocalToWorld>());
@@ -406,29 +447,55 @@ namespace Game.Editor
                     new HashSet<Entity>());
                 string key = BuildRendererBakeKey(local.Value.Center, local.Value.Extents, world);
                 string stableId = ResolveIdentityByParent(entity, entityManager, identityByEntity);
+                ExpectedRendererBakeEntry expectedEntry = null;
+                int subMesh = -1;
+                Material bakedMaterial = null;
+                Mesh bakedMesh = null;
+                if (entityManager.HasComponent<MaterialMeshInfo>(entity) &&
+                    entityManager.HasComponent<RenderMeshArray>(entity))
+                {
+                    MaterialMeshInfo materialMeshInfo =
+                        entityManager.GetComponentData<MaterialMeshInfo>(entity);
+                    subMesh = materialMeshInfo.SubMesh;
+                    RenderMeshArray renderMeshArray =
+                        entityManager.GetSharedComponentManaged<RenderMeshArray>(entity);
+                    bakedMaterial = renderMeshArray.GetMaterial(materialMeshInfo);
+                    bakedMesh = renderMeshArray.GetMesh(materialMeshInfo);
+                }
                 if (stableId != null)
                 {
-                    bool consumed = rendererBakeMap.TryConsumeOwner(key, stableId) ||
+                    bool consumed = rendererBakeMap.TryConsumeOwner(
+                                        key,
+                                        stableId,
+                                        bakedMesh,
+                                        subMesh,
+                                        out expectedEntry) ||
                                     rendererBakeMap.TryConsumeNearestOwner(
                                         stableId,
                                         local.Value.Center,
                                         local.Value.Extents,
                                         world,
-                                        RendererBakeFallbackJoinTolerance);
+                                        bakedMesh,
+                                        subMesh,
+                                        RendererBakeFallbackJoinTolerance,
+                                        out expectedEntry);
                     if (!consumed)
                         unresolvedGeneratedRendererEntityCount++;
                 }
                 else
                 {
-                    stableId = rendererBakeMap.TryDequeueOwner(key);
-                    if (stableId == null)
+                    expectedEntry = rendererBakeMap.TryDequeueOwner(key, bakedMesh, subMesh);
+                    if (expectedEntry == null)
                     {
-                        stableId = rendererBakeMap.TryDequeueNearestOwner(
+                        expectedEntry = rendererBakeMap.TryDequeueNearestOwner(
                             local.Value.Center,
                             local.Value.Extents,
                             world,
+                            bakedMesh,
+                            subMesh,
                             RendererBakeFallbackJoinTolerance);
                     }
+                    stableId = expectedEntry?.StableId;
                 }
 
                 // A renderer without a dense generated owner is accepted base/legacy content.
@@ -436,6 +503,51 @@ namespace Game.Editor
                     continue;
 
                 generatedBakedRenderEntityCount++;
+                if (bakedMaterial == null)
+                    unresolvedGeneratedMaterialCount++;
+                else if (expectedEntry != null && expectedEntry.Material != bakedMaterial)
+                {
+                    generatedMaterialMismatchCount++;
+                    if (materialMismatchSamples.Count < MaxRejectedSamples)
+                    {
+                        materialMismatchSamples.Add(new DenseCityGeneratedMaterialMismatchSample
+                        {
+                            stableId = stableId,
+                            subMesh = subMesh,
+                            candidateMaterialName = expectedEntry.Material != null
+                                ? expectedEntry.Material.name
+                                : string.Empty,
+                            candidateMaterialPath = expectedEntry.Material != null
+                                ? AssetDatabase.GetAssetPath(expectedEntry.Material)
+                                : string.Empty,
+                            bakedMaterialName = bakedMaterial.name,
+                            bakedMaterialPath = AssetDatabase.GetAssetPath(bakedMaterial)
+                        });
+                    }
+                }
+                if (bakedMaterial != null && bakedMaterial.HasProperty("_BaseColor"))
+                {
+                    generatedBaseColorPropertyCount++;
+                    if (!entityManager.HasComponent<URPMaterialPropertyBaseColor>(entity))
+                    {
+                        generatedBaseColorMismatchCount++;
+                    }
+                    else
+                    {
+                        generatedBaseColorOverrideCount++;
+                        Color expectedColor = bakedMaterial.GetColor("_BaseColor").linear;
+                        float4 actualColor = entityManager
+                            .GetComponentData<URPMaterialPropertyBaseColor>(entity)
+                            .Value;
+                        float4 expected = new(
+                            expectedColor.r,
+                            expectedColor.g,
+                            expectedColor.b,
+                            expectedColor.a);
+                        if (!math.all(math.abs(expected - actualColor) <= 0.000001f))
+                            generatedBaseColorMismatchCount++;
+                    }
+                }
                 WorldBounds transformed = TransformBounds(local.Value.Center, local.Value.Extents, world);
                 if (result.TryGetValue(stableId, out WorldBounds existing))
                     transformed = WorldBounds.Encapsulate(existing, transformed);
@@ -509,11 +621,13 @@ namespace Game.Editor
             Renderer renderer,
             out Bounds localBounds,
             out Matrix4x4 world,
-            out int renderEntityCount)
+            out int renderEntityCount,
+            out Mesh mesh)
         {
             localBounds = default;
             world = default;
             renderEntityCount = 0;
+            mesh = null;
             if (!renderer.enabled || !renderer.gameObject.activeInHierarchy)
                 return false;
 
@@ -527,17 +641,19 @@ namespace Game.Editor
                 localBounds = skinned.localBounds;
                 world = (skinned.rootBone != null ? skinned.rootBone : skinned.transform).localToWorldMatrix;
                 renderEntityCount = materials.Length;
+                mesh = skinned.sharedMesh;
                 return true;
             }
             if (renderer is not MeshRenderer ||
-                renderer.GetComponent<MeshFilter>()?.sharedMesh is not Mesh mesh)
+                renderer.GetComponent<MeshFilter>()?.sharedMesh is not Mesh rendererMesh)
             {
                 return false;
             }
 
-            localBounds = mesh.bounds;
+            localBounds = rendererMesh.bounds;
             world = renderer.transform.localToWorldMatrix;
             renderEntityCount = materials.Length;
+            mesh = rendererMesh;
             return true;
         }
 
@@ -803,14 +919,24 @@ namespace Game.Editor
                 string stableId,
                 Vector3 center,
                 Vector3 extents,
-                Matrix4x4 world)
+                Matrix4x4 world,
+                Material material,
+                Mesh mesh,
+                int subMesh)
             {
                 if (!entriesByKey.TryGetValue(key, out Queue<ExpectedRendererBakeEntry> queue))
                 {
                     queue = new Queue<ExpectedRendererBakeEntry>();
                     entriesByKey.Add(key, queue);
                 }
-                var entry = new ExpectedRendererBakeEntry(stableId, center, extents, world);
+                var entry = new ExpectedRendererBakeEntry(
+                    stableId,
+                    center,
+                    extents,
+                    world,
+                    material,
+                    mesh,
+                    subMesh);
                 queue.Enqueue(entry);
                 (long X, long Y, long Z) cell = GetFallbackCell(world);
                 if (!entriesByFallbackCell.TryGetValue(
@@ -825,42 +951,57 @@ namespace Game.Editor
                 UnconsumedCount++;
             }
 
-            internal bool TryConsumeOwner(string key, string stableId)
+            internal bool TryConsumeOwner(
+                string key,
+                string stableId,
+                Mesh mesh,
+                int subMesh,
+                out ExpectedRendererBakeEntry consumed)
             {
+                consumed = null;
                 if (!entriesByKey.TryGetValue(key, out Queue<ExpectedRendererBakeEntry> queue))
                     return false;
                 foreach (ExpectedRendererBakeEntry entry in queue)
                 {
                     if (entry.Consumed ||
+                        entry.Mesh != mesh ||
+                        entry.SubMesh != subMesh ||
                         !string.Equals(entry.StableId, stableId, StringComparison.Ordinal))
                     {
                         continue;
                     }
                     entry.Consumed = true;
                     UnconsumedCount--;
+                    consumed = entry;
                     return true;
                 }
                 return false;
             }
 
-            internal string TryDequeueOwner(string key)
+            internal ExpectedRendererBakeEntry TryDequeueOwner(
+                string key,
+                Mesh mesh,
+                int subMesh)
             {
                 if (!entriesByKey.TryGetValue(key, out Queue<ExpectedRendererBakeEntry> queue))
                     return null;
-                while (queue.Count > 0 && queue.Peek().Consumed)
-                    queue.Dequeue();
-                if (queue.Count == 0)
-                    return null;
-                ExpectedRendererBakeEntry entry = queue.Dequeue();
-                entry.Consumed = true;
-                UnconsumedCount--;
-                return entry.StableId;
+                foreach (ExpectedRendererBakeEntry entry in queue)
+                {
+                    if (entry.Consumed || entry.Mesh != mesh || entry.SubMesh != subMesh)
+                        continue;
+                    entry.Consumed = true;
+                    UnconsumedCount--;
+                    return entry;
+                }
+                return null;
             }
 
-            internal string TryDequeueNearestOwner(
+            internal ExpectedRendererBakeEntry TryDequeueNearestOwner(
                 float3 center,
                 float3 extents,
                 Matrix4x4 world,
+                Mesh mesh,
+                int subMesh,
                 float maxResidual)
             {
                 ExpectedRendererBakeEntry best = FindNearestOwner(
@@ -868,12 +1009,14 @@ namespace Game.Editor
                     center,
                     extents,
                     world,
+                    mesh,
+                    subMesh,
                     maxResidual);
                 if (best == null)
                     return null;
                 best.Consumed = true;
                 UnconsumedCount--;
-                return best.StableId;
+                return best;
             }
 
             internal bool TryConsumeNearestOwner(
@@ -881,18 +1024,25 @@ namespace Game.Editor
                 float3 center,
                 float3 extents,
                 Matrix4x4 world,
-                float maxResidual)
+                Mesh mesh,
+                int subMesh,
+                float maxResidual,
+                out ExpectedRendererBakeEntry consumed)
             {
+                consumed = null;
                 ExpectedRendererBakeEntry best = FindNearestOwner(
                     stableId,
                     center,
                     extents,
                     world,
+                    mesh,
+                    subMesh,
                     maxResidual);
                 if (best == null)
                     return false;
                 best.Consumed = true;
                 UnconsumedCount--;
+                consumed = best;
                 return true;
             }
 
@@ -901,6 +1051,8 @@ namespace Game.Editor
                 float3 center,
                 float3 extents,
                 Matrix4x4 world,
+                Mesh mesh,
+                int subMesh,
                 float maxResidual)
             {
                 ExpectedRendererBakeEntry best = null;
@@ -919,6 +1071,8 @@ namespace Game.Editor
                     foreach (ExpectedRendererBakeEntry entry in fallbackEntries)
                     {
                         if (entry.Consumed ||
+                            entry.Mesh != mesh ||
+                            entry.SubMesh != subMesh ||
                             (requiredStableId != null &&
                              !string.Equals(
                                  entry.StableId,
@@ -963,18 +1117,27 @@ namespace Game.Editor
                 string stableId,
                 Vector3 center,
                 Vector3 extents,
-                Matrix4x4 world)
+                Matrix4x4 world,
+                Material material,
+                Mesh mesh,
+                int subMesh)
             {
                 StableId = stableId;
                 Center = center;
                 Extents = extents;
                 World = world;
+                Material = material;
+                Mesh = mesh;
+                SubMesh = subMesh;
             }
 
             internal string StableId { get; }
             internal Vector3 Center { get; }
             internal Vector3 Extents { get; }
             internal Matrix4x4 World { get; }
+            internal Material Material { get; }
+            internal Mesh Mesh { get; }
+            internal int SubMesh { get; }
             internal bool Consumed { get; set; }
         }
 
@@ -1008,6 +1171,12 @@ namespace Game.Editor
             public int generatedCandidateRendererEntityCount;
             public int generatedBakedRenderEntityCount;
             public int unresolvedGeneratedRendererEntityCount;
+            public int unresolvedGeneratedMaterialCount;
+            public int generatedMaterialMismatchCount;
+            public int generatedBaseColorPropertyCount;
+            public int generatedBaseColorOverrideCount;
+            public int generatedBaseColorMismatchCount;
+            public List<DenseCityGeneratedMaterialMismatchSample> materialMismatchSamples;
             public int unconsumedCandidateRendererEntityCount;
             public int rejectedRowCount;
             public int rejectedSampleCount;
@@ -1022,6 +1191,17 @@ namespace Game.Editor
             public string bakedIdentitySetSha256;
             public string evaluatedRowsSha256;
             public List<DenseCityGeneratedTransformParityRow> rejectedSamples;
+        }
+
+        [Serializable]
+        internal sealed class DenseCityGeneratedMaterialMismatchSample
+        {
+            public string stableId;
+            public int subMesh;
+            public string candidateMaterialName;
+            public string candidateMaterialPath;
+            public string bakedMaterialName;
+            public string bakedMaterialPath;
         }
 
         [Serializable]

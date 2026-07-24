@@ -78,6 +78,10 @@ namespace Game.Rendering
                     return false;
                 }
 
+                if (em.HasComponent<OperationMapBuildingComponent>(current) ||
+                    em.HasComponent<OperationMapEntityPresentationIdentity>(current))
+                    return false;
+
                 if (em.HasComponent<UnitGrid>(current) &&
                     em.HasComponent<UnitSourcePrefabKey>(current))
                 {

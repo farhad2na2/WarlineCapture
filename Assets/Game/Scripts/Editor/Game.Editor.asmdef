@@ -27,6 +27,7 @@
         "Unity.Entities.Build",
         "Unity.Entities.Hybrid",
         "Unity.Entities.Graphics",
+        "Unity.RenderPipelines.Universal.Editor",
         "Unity.Scenes",
         "Unity.Scenes.Editor",
         "Unity.Mathematics",

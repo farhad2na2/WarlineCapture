@@ -21,15 +21,172 @@ namespace Game.Editor
             "Design/AgentReports/2026-07-22_operation_map_fixed_camera_parity.json";
         internal const string CaptureDirectory =
             "Design/AgentReports/Captures/2026-07-22_operation_map_fixed_camera_parity";
+        internal const string DenseEditorReportPath =
+            "Design/AgentReports/2026-07-24_dense_city_editor_fixed_camera_baseline.json";
+        internal const string DenseEditorCaptureDirectory =
+            "Design/AgentReports/Captures/2026-07-24_dense_city_editor_fixed_camera_baseline";
         internal const int Width = 1280;
+        private static readonly int BaseColorPropertyId = Shader.PropertyToID("_BaseColor");
         internal const int Height = 720;
         internal const float MaximumMeanChannelDelta = 0.0025f;
         internal const float MaximumChangedPixelRatio = 0.01f;
         private const byte ChangedChannelThreshold = 3;
+        private const int ExpectedDenseIdentityCount = 35796;
+        private const int ExpectedDenseRuntimeRenderRowCount = 78325;
         private static readonly UTF8Encoding Utf8WithoutBom = new(false);
 
         [MenuItem("Game/Operation Maps/EntityScene Migration/Capture Fixed Camera Parity")]
         public static void CaptureCurrentCandidate() => CaptureCurrentCandidateBatch();
+
+        [MenuItem(
+            "Game/Operation Maps/EntityScene Migration/Capture Dense City Editor Baseline")]
+        public static void CaptureDenseCityEditorBaseline() =>
+            CaptureDenseCityEditorBaselineBatch();
+
+        public static void CaptureDenseCityEditorBaselineBatch()
+        {
+            string projectRoot = Path.GetDirectoryName(Application.dataPath) ??
+                                 throw new InvalidOperationException("Project root is unavailable.");
+            string candidatePath =
+                DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath;
+            RequireAsset(candidatePath);
+
+            SceneSetup[] previousSetup = EditorSceneManager.GetSceneManagerSetup();
+            Scene workspace = default;
+            var rendererStates = new List<RendererState>();
+            var lightStates = new List<LightState>();
+            AmbientMode previousAmbientMode = RenderSettings.ambientMode;
+            Color previousAmbientLight = RenderSettings.ambientLight;
+            float previousAmbientIntensity = RenderSettings.ambientIntensity;
+            try
+            {
+                workspace = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+                Scene candidate =
+                    EditorSceneManager.OpenScene(candidatePath, OpenSceneMode.Additive);
+                SceneManager.SetActiveScene(workspace);
+
+                List<Renderer> renderers = BuildDenseEditorRenderers(
+                    candidate,
+                    out int legacyIdentityCount,
+                    out int denseIdentityCount);
+                if (renderers.Count == 0)
+                {
+                    throw new InvalidOperationException(
+                        "Dense fixed-camera baseline has no active finite renderers.");
+                }
+                rendererStates.AddRange(renderers.Select(renderer => new RendererState(renderer)));
+                foreach (Light light in candidate.GetRootGameObjects()
+                             .SelectMany(root => root.GetComponentsInChildren<Light>(true)))
+                {
+                    lightStates.Add(new LightState(light));
+                }
+                for (int i = 0; i < lightStates.Count; i++)
+                    lightStates[i].light.enabled = false;
+
+                RenderSettings.ambientMode = AmbientMode.Flat;
+                RenderSettings.ambientLight = new Color(0.72f, 0.72f, 0.72f, 1f);
+                RenderSettings.ambientIntensity = 1f;
+                SetVisible(renderers, true);
+                ApplyInitialDenseVisualState(candidate);
+                ApplyPackedBaseColorPreview(renderers);
+
+                Bounds bounds = CalculateBounds(renderers);
+                Camera camera = CreateCamera(workspace);
+                Light captureLight = CreateLight(workspace);
+                IReadOnlyList<ViewSpec> views = BuildViews(bounds, renderers);
+                string captureRoot = Path.Combine(projectRoot, DenseEditorCaptureDirectory);
+                Directory.CreateDirectory(captureRoot);
+
+                var rows = new List<DenseEditorCaptureRow>(views.Count);
+                for (int i = 0; i < views.Count; i++)
+                {
+                    ViewSpec view = views[i];
+                    ConfigureCamera(camera, view);
+                    WarmUp(camera);
+                    Texture2D texture = Capture(camera);
+                    try
+                    {
+                        string relativePath =
+                            $"{DenseEditorCaptureDirectory}/{view.name}_editor.png";
+                        byte[] png = texture.EncodeToPNG();
+                        File.WriteAllBytes(Path.Combine(projectRoot, relativePath), png);
+                        PixelComparison nonBlank = Compare(
+                            texture.GetPixels32(),
+                            texture.GetPixels32(),
+                            ChangedChannelThreshold);
+                        if (nonBlank.sourceLumaVariance <= 0.0001f)
+                        {
+                            throw new InvalidOperationException(
+                                $"Dense fixed-camera baseline view is blank: {view.name}");
+                        }
+                        rows.Add(new DenseEditorCaptureRow
+                        {
+                            view = view.name,
+                            editorPath = relativePath,
+                            editorSha256 = Sha256(png),
+                            editorLumaVariance = nonBlank.sourceLumaVariance,
+                            cameraPosition = ToArray(view.position),
+                            cameraRotation = ToArray(view.rotation.eulerAngles),
+                            orthographic = view.orthographic ? 1 : 0,
+                            fieldOfView = view.fieldOfView,
+                            orthographicSize = view.orthographicSize
+                        });
+                    }
+                    finally
+                    {
+                        UnityEngine.Object.DestroyImmediate(texture);
+                    }
+                }
+
+                var report = new DenseEditorCaptureReport
+                {
+                    schema = "warline.operation-map.dense-city-editor-fixed-camera-baseline",
+                    schemaVersion = 1,
+                    operationMapId =
+                        OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
+                    result = "DenseCityEditorFixedCameraBaselineCaptured",
+                    candidateSubScenePath = candidatePath,
+                    candidateSubSceneSha256 =
+                        Sha256File(Path.Combine(projectRoot, candidatePath)),
+                    width = Width,
+                    height = Height,
+                    rendererCount = renderers.Count,
+                    legacyIdentityCount = legacyIdentityCount,
+                    denseIdentityCount = denseIdentityCount,
+                    expectedRuntimeRenderRowCount = ExpectedDenseRuntimeRenderRowCount,
+                    viewCount = rows.Count,
+                    maximumMeanChannelDelta = MaximumMeanChannelDelta,
+                    maximumChangedPixelRatio = MaximumChangedPixelRatio,
+                    productionCutover = 0,
+                    rows = rows
+                };
+                string reportPath = Path.Combine(projectRoot, DenseEditorReportPath);
+                Directory.CreateDirectory(
+                    Path.GetDirectoryName(reportPath) ?? projectRoot);
+                File.WriteAllText(
+                    reportPath,
+                    JsonUtility.ToJson(report, true) + "\n",
+                    Utf8WithoutBom);
+                AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+                Debug.Log(
+                    $"[DenseCityEditorFixedCameraBaseline] result={report.result} " +
+                    $"views={rows.Count} renderers={renderers.Count} " +
+                    $"report={DenseEditorReportPath}");
+                UnityEngine.Object.DestroyImmediate(captureLight.gameObject);
+                UnityEngine.Object.DestroyImmediate(camera.gameObject);
+            }
+            finally
+            {
+                for (int i = 0; i < rendererStates.Count; i++)
+                    rendererStates[i].Restore();
+                for (int i = 0; i < lightStates.Count; i++)
+                    lightStates[i].Restore();
+                RenderSettings.ambientMode = previousAmbientMode;
+                RenderSettings.ambientLight = previousAmbientLight;
+                RenderSettings.ambientIntensity = previousAmbientIntensity;
+                RestoreSceneSetupOrCreateEmpty(previousSetup);
+            }
+        }
 
         public static void CaptureCurrentCandidateBatch()
         {
@@ -250,6 +407,149 @@ namespace Game.Editor
                 candidateRenderers.OrderBy(GetPath, StringComparer.Ordinal).ToList());
         }
 
+        private static List<Renderer> BuildDenseEditorRenderers(
+            Scene candidate,
+            out int legacyIdentityCount,
+            out int denseIdentityCount)
+        {
+            OperationMapEntityPresentationIdentityAuthoring[] legacy =
+                candidate.GetRootGameObjects()
+                    .SelectMany(root => root.GetComponentsInChildren<
+                        OperationMapEntityPresentationIdentityAuthoring>(true))
+                    .ToArray();
+            DenseCityPresentationIdentityAuthoring[] dense =
+                candidate.GetRootGameObjects()
+                    .SelectMany(root => root.GetComponentsInChildren<
+                        DenseCityPresentationIdentityAuthoring>(true))
+                    .ToArray();
+            legacyIdentityCount = legacy.Length;
+            denseIdentityCount = dense.Length;
+            if (legacyIdentityCount !=
+                    OperationMapEntityPresentationIdentityBackfillEditor.ExpectedIdentityCount ||
+                denseIdentityCount != ExpectedDenseIdentityCount)
+            {
+                throw new InvalidOperationException(
+                    $"Dense fixed-camera identity counts differ: legacy={legacyIdentityCount}, " +
+                    $"dense={denseIdentityCount}.");
+            }
+
+            var identities = new HashSet<string>(StringComparer.Ordinal);
+            for (int i = 0; i < legacy.Length; i++)
+            {
+                if (string.IsNullOrWhiteSpace(legacy[i].SourceGlobalObjectId) ||
+                    !identities.Add("legacy:" + legacy[i].SourceGlobalObjectId))
+                {
+                    throw new InvalidOperationException(
+                        "Dense fixed-camera legacy identity is empty or duplicated.");
+                }
+            }
+            for (int i = 0; i < dense.Length; i++)
+            {
+                if (!dense[i].TryValidate(out string error) ||
+                    !identities.Add("dense:" + dense[i].StableId))
+                {
+                    throw new InvalidOperationException(
+                        "Dense fixed-camera generated identity is invalid or duplicated: " +
+                        error);
+                }
+            }
+
+            var owned = new HashSet<Renderer>();
+            for (int i = 0; i < legacy.Length; i++)
+            {
+                foreach (Renderer renderer in
+                         legacy[i].GetComponentsInChildren<Renderer>(true))
+                    owned.Add(renderer);
+            }
+            for (int i = 0; i < dense.Length; i++)
+            {
+                foreach (Renderer renderer in dense[i].GetComponentsInChildren<Renderer>(true))
+                    owned.Add(renderer);
+            }
+            OperationMapBuildingAuthoring[] buildings = candidate.GetRootGameObjects()
+                .SelectMany(root => root.GetComponentsInChildren<
+                    OperationMapBuildingAuthoring>(true))
+                .ToArray();
+            for (int i = 0; i < buildings.Length; i++)
+            {
+                foreach (Renderer renderer in
+                         buildings[i].GetComponentsInChildren<Renderer>(true))
+                    owned.Add(renderer);
+            }
+            UnitGridAuthoring[] vehicles = candidate.GetRootGameObjects()
+                .SelectMany(root => root.GetComponentsInChildren<UnitGridAuthoring>(true))
+                .ToArray();
+            for (int i = 0; i < vehicles.Length; i++)
+            {
+                foreach (Renderer renderer in
+                         vehicles[i].GetComponentsInChildren<Renderer>(true))
+                    owned.Add(renderer);
+            }
+
+            List<Renderer> active = candidate.GetRootGameObjects()
+                .SelectMany(root => root.GetComponentsInChildren<Renderer>(true))
+                .Where(renderer =>
+                    renderer.enabled &&
+                    renderer.gameObject.activeInHierarchy &&
+                    IsEntitiesGraphicsRenderer(renderer) &&
+                    IsFinite(renderer.bounds.center) &&
+                    IsFinite(renderer.bounds.extents))
+                .OrderBy(GetPath, StringComparer.Ordinal)
+                .ToList();
+            for (int i = 0; i < active.Count; i++)
+            {
+                if (!owned.Contains(active[i]))
+                {
+                    throw new InvalidOperationException(
+                        "Dense fixed-camera active renderer has no accepted identity owner: " +
+                        GetPath(active[i]));
+                }
+            }
+            return active;
+        }
+
+        private static void ApplyInitialDenseVisualState(Scene candidate)
+        {
+            OperationMapBuildingAuthoring[] buildings = candidate.GetRootGameObjects()
+                .SelectMany(root => root.GetComponentsInChildren<
+                    OperationMapBuildingAuthoring>(true))
+                .ToArray();
+            for (int i = 0; i < buildings.Length; i++)
+            {
+                SetHierarchyVisible(buildings[i].IntactVisualRoot, true);
+                SetHierarchyVisible(buildings[i].DestroyedVisualRoot, false);
+            }
+
+            UnitGridAuthoring[] vehicles = candidate.GetRootGameObjects()
+                .SelectMany(root => root.GetComponentsInChildren<UnitGridAuthoring>(true))
+                .ToArray();
+            for (int i = 0; i < vehicles.Length; i++)
+            {
+                Transform destroyed = vehicles[i].transform.Find("Destroyed");
+                if (destroyed != null)
+                    SetHierarchyVisible(destroyed.gameObject, false);
+            }
+        }
+
+        private static void SetHierarchyVisible(GameObject root, bool visible)
+        {
+            if (root == null)
+                return;
+            foreach (Renderer renderer in root.GetComponentsInChildren<Renderer>(true))
+                renderer.forceRenderingOff = !visible;
+        }
+
+        private static bool IsEntitiesGraphicsRenderer(Renderer renderer)
+        {
+            Material[] materials = renderer.sharedMaterials;
+            if (materials == null || materials.Length == 0)
+                return false;
+            if (renderer is SkinnedMeshRenderer skinned)
+                return skinned.sharedMesh != null;
+            return renderer is MeshRenderer &&
+                   renderer.GetComponent<MeshFilter>()?.sharedMesh != null;
+        }
+
         private static Bounds CalculateBounds(IReadOnlyList<Renderer> renderers)
         {
             var activeBounds = new List<Bounds>(renderers.Count);
@@ -427,9 +727,18 @@ namespace Game.Editor
             RenderTexture previousActive = RenderTexture.active;
             try
             {
-                camera.targetTexture = target;
+                var request = new RenderPipeline.StandardRequest
+                {
+                    destination = target
+                };
+                if (!RenderPipeline.SupportsRenderRequest(camera, request))
+                {
+                    throw new InvalidOperationException(
+                        "The active render pipeline does not support fixed-camera StandardRequest capture.");
+                }
+
                 RenderTexture.active = target;
-                camera.Render();
+                RenderPipeline.SubmitRenderRequest(camera, request);
                 var texture = new Texture2D(Width, Height, TextureFormat.RGBA32, false, false);
                 texture.ReadPixels(new Rect(0f, 0f, Width, Height), 0, 0, false);
                 texture.Apply(false, false);
@@ -441,6 +750,66 @@ namespace Game.Editor
                 RenderTexture.active = previousActive;
                 target.Release();
                 UnityEngine.Object.DestroyImmediate(target);
+            }
+        }
+
+        private static void WarmUp(Camera camera)
+        {
+            var target = new RenderTexture(Width, Height, 24, RenderTextureFormat.ARGB32)
+            {
+                antiAliasing = 1,
+                name = "OperationMapFixedCameraParityWarmup"
+            };
+            try
+            {
+                var request = new RenderPipeline.StandardRequest
+                {
+                    destination = target
+                };
+                if (!RenderPipeline.SupportsRenderRequest(camera, request))
+                {
+                    throw new InvalidOperationException(
+                        "The active render pipeline does not support fixed-camera warmup.");
+                }
+
+                RenderPipeline.SubmitRenderRequest(camera, request);
+                RenderPipeline.SubmitRenderRequest(camera, request);
+            }
+            finally
+            {
+                target.Release();
+                UnityEngine.Object.DestroyImmediate(target);
+            }
+        }
+
+        private static void ApplyPackedBaseColorPreview(IReadOnlyList<Renderer> renderers)
+        {
+            for (int rendererIndex = 0; rendererIndex < renderers.Count; rendererIndex++)
+            {
+                Renderer renderer = renderers[rendererIndex];
+                renderer.SetPropertyBlock(null);
+                Material[] materials = renderer.sharedMaterials;
+                for (int materialIndex = 0; materialIndex < materials.Length; materialIndex++)
+                {
+                    Material material = materials[materialIndex];
+                    if (material == null ||
+                        material.shader == null ||
+                        !material.shader.name.StartsWith(
+                            "Universal Render Pipeline/",
+                            StringComparison.Ordinal) ||
+                        !material.HasProperty(BaseColorPropertyId))
+                    {
+                        renderer.SetPropertyBlock(null, materialIndex);
+                        continue;
+                    }
+
+                    Color color = material.GetColor(BaseColorPropertyId).linear;
+                    var block = new MaterialPropertyBlock();
+                    block.SetVector(
+                        BaseColorPropertyId,
+                        new Vector4(color.r, color.g, color.b, color.a));
+                    renderer.SetPropertyBlock(block, materialIndex);
+                }
             }
         }
 
@@ -467,6 +836,17 @@ namespace Game.Editor
         {
             using SHA256 sha = SHA256.Create();
             byte[] hash = sha.ComputeHash(bytes);
+            var builder = new StringBuilder(hash.Length * 2);
+            for (int i = 0; i < hash.Length; i++)
+                builder.Append(hash[i].ToString("x2"));
+            return builder.ToString();
+        }
+
+        private static string Sha256File(string path)
+        {
+            using FileStream stream = File.OpenRead(path);
+            using SHA256 sha = SHA256.Create();
+            byte[] hash = sha.ComputeHash(stream);
             var builder = new StringBuilder(hash.Length * 2);
             for (int i = 0; i < hash.Length; i++)
                 builder.Append(hash[i].ToString("x2"));
@@ -524,14 +904,52 @@ namespace Game.Editor
             {
                 this.renderer = renderer;
                 forceRenderingOff = renderer.forceRenderingOff;
+                globalPropertyBlock = CapturePropertyBlock(renderer);
+                Material[] materials = renderer.sharedMaterials;
+                materialPropertyBlocks = new MaterialPropertyBlock[materials.Length];
+                for (int materialIndex = 0; materialIndex < materials.Length; materialIndex++)
+                {
+                    materialPropertyBlocks[materialIndex] =
+                        CapturePropertyBlock(renderer, materialIndex);
+                }
             }
 
             internal readonly Renderer renderer;
             private readonly bool forceRenderingOff;
+            private readonly MaterialPropertyBlock globalPropertyBlock;
+            private readonly MaterialPropertyBlock[] materialPropertyBlocks;
+
             internal void Restore()
             {
-                if (renderer != null)
-                    renderer.forceRenderingOff = forceRenderingOff;
+                if (renderer == null)
+                    return;
+
+                renderer.forceRenderingOff = forceRenderingOff;
+                renderer.SetPropertyBlock(globalPropertyBlock);
+                for (int materialIndex = 0;
+                     materialIndex < materialPropertyBlocks.Length;
+                     materialIndex++)
+                {
+                    renderer.SetPropertyBlock(
+                        materialPropertyBlocks[materialIndex],
+                        materialIndex);
+                }
+            }
+
+            private static MaterialPropertyBlock CapturePropertyBlock(Renderer renderer)
+            {
+                var block = new MaterialPropertyBlock();
+                renderer.GetPropertyBlock(block);
+                return block.isEmpty ? null : block;
+            }
+
+            private static MaterialPropertyBlock CapturePropertyBlock(
+                Renderer renderer,
+                int materialIndex)
+            {
+                var block = new MaterialPropertyBlock();
+                renderer.GetPropertyBlock(block, materialIndex);
+                return block.isEmpty ? null : block;
             }
         }
 
@@ -612,6 +1030,42 @@ namespace Game.Editor
             public float maximumChannelDelta;
             public float changedPixelRatio;
             public float sourceLumaVariance;
+            public float[] cameraPosition;
+            public float[] cameraRotation;
+            public int orthographic;
+            public float fieldOfView;
+            public float orthographicSize;
+        }
+
+        [Serializable]
+        private sealed class DenseEditorCaptureReport
+        {
+            public string schema;
+            public int schemaVersion;
+            public string operationMapId;
+            public string result;
+            public string candidateSubScenePath;
+            public string candidateSubSceneSha256;
+            public int width;
+            public int height;
+            public int rendererCount;
+            public int legacyIdentityCount;
+            public int denseIdentityCount;
+            public int expectedRuntimeRenderRowCount;
+            public int viewCount;
+            public float maximumMeanChannelDelta;
+            public float maximumChangedPixelRatio;
+            public int productionCutover;
+            public List<DenseEditorCaptureRow> rows;
+        }
+
+        [Serializable]
+        private sealed class DenseEditorCaptureRow
+        {
+            public string view;
+            public string editorPath;
+            public string editorSha256;
+            public float editorLumaVariance;
             public float[] cameraPosition;
             public float[] cameraRotation;
             public int orthographic;

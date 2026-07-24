@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -8,6 +9,7 @@ using Game.Authoring;
 using Game.Configs;
 using Game.Runtime;
 using UnityEditor;
+using UnityEditor.Rendering.Universal.ShaderGUI;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -35,6 +37,16 @@ namespace Game.Editor
         private const int GeneratorSchemaVersion = 1;
         private const string CandidateGeneratedAssetRoot =
             "Assets/Game/GeneratedOperationMaps/DenseCity";
+        private const string LegacySkyMaterialPath =
+            "Assets/PolygonMilitary/Materials/Misc/SkyBox.mat";
+        private const string CandidateSkyMaterialPath =
+            "Assets/Game/GeneratedOperationMaps/DenseCity/" +
+            "opmap.skirmish.desert_base_01/Candidate/SharedMaterials/" +
+            "DenseCity_SkyBox_DOTS.mat";
+        private const string CandidateSharedMaterialFolder =
+            "Assets/Game/GeneratedOperationMaps/DenseCity/" +
+            "opmap.skirmish.desert_base_01/Candidate/SharedMaterials";
+        private const string SyntyGenericBasicShaderName = "Synty/Generic_Basic";
 
         [MenuItem("Game/Maps/Skirmish Desert Base/Create Dense City Candidate Hierarchy")]
         public static void CreateCandidateHierarchy()
@@ -97,6 +109,60 @@ namespace Game.Editor
             Debug.Log($"[DenseCityCandidateAuthoringTransaction] result=Realized {summary}");
             if (Application.isBatchMode)
                 EditorApplication.Exit(0);
+        }
+
+        [MenuItem(
+            "Game/Maps/Skirmish Desert Base/Apply Dense City Candidate DOTS Materials")]
+        public static void ApplyCandidateMaterialCompatibilityBatch()
+        {
+            string sourceMapHash = ComputeFileHash(SourceMapScenePath);
+            string sourceEntityHash = ComputeFileHash(SourceEntityScenePath);
+            string candidateBackup = CreateBackup(CandidateEntityScenePath);
+            SceneSetup[] previousSetup = EditorSceneManager.GetSceneManagerSetup();
+            Scene candidate = default;
+            try
+            {
+                candidate = EditorSceneManager.OpenScene(
+                    CandidateEntityScenePath,
+                    OpenSceneMode.Additive);
+                int compatibleRendererCount =
+                    ApplyCandidateMaterialCompatibility(
+                        candidate,
+                        out int syntyMaterialSlotCount);
+                if (compatibleRendererCount != 1)
+                {
+                    throw new InvalidOperationException(
+                        "Dense-city candidate requires exactly one legacy sky renderer; " +
+                        $"found {compatibleRendererCount}.");
+                }
+                if (!EditorSceneManager.SaveScene(
+                        candidate,
+                        CandidateEntityScenePath,
+                        false))
+                {
+                    throw new InvalidOperationException(
+                        "Dense-city candidate DOTS material save failed.");
+                }
+                AssetDatabase.SaveAssets();
+                RequireProtectedSourceHashes(sourceMapHash, sourceEntityHash);
+                Debug.Log(
+                    "[DenseCityCandidateMaterialCompatibility] result=Passed " +
+                    $"compatibleRenderers={compatibleRendererCount} " +
+                    $"syntyMaterialSlots={syntyMaterialSlotCount} " +
+                    $"material={CandidateSkyMaterialPath}");
+            }
+            catch
+            {
+                RestoreBackup(candidateBackup, CandidateEntityScenePath);
+                AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+                throw;
+            }
+            finally
+            {
+                CloseScene(ref candidate);
+                DeleteBackup(candidateBackup);
+                RestoreSceneSetup(previousSetup);
+            }
         }
 
         internal static bool TryRealizeCandidate(out string summary, out string error)
@@ -173,6 +239,7 @@ namespace Game.Editor
                         hierarchy,
                         DenseCityBuildingDefinitionLibrary.LoadExisting(),
                         DenseCityBuildingMaterialLibrary.LoadExisting());
+                ApplyCandidateMaterialCompatibility(entityScene, out _);
 
                 proxyFolder = CandidateGeneratedAssetRoot + "/" +
                               OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId +
@@ -518,6 +585,227 @@ namespace Game.Editor
         {
             if (scene.IsValid() && scene.isLoaded)
                 SceneManager.SetActiveScene(scene);
+        }
+
+        private static void RestoreSceneSetup(SceneSetup[] setup)
+        {
+            if (setup != null && setup.Any(entry => entry.isLoaded))
+                EditorSceneManager.RestoreSceneManagerSetup(setup);
+        }
+
+        private static int ApplyCandidateMaterialCompatibility(
+            Scene candidate,
+            out int syntyMaterialSlotCount)
+        {
+            Material legacy =
+                AssetDatabase.LoadAssetAtPath<Material>(LegacySkyMaterialPath);
+            if (legacy == null)
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city legacy sky material is missing: '{LegacySkyMaterialPath}'.");
+            }
+
+            Shader shader = Shader.Find("Universal Render Pipeline/Unlit");
+            if (shader == null)
+                throw new InvalidOperationException("URP Unlit shader is unavailable.");
+            EnsureAssetFolder(
+                Path.GetDirectoryName(CandidateSkyMaterialPath)?.Replace('\\', '/'));
+            Material compatible =
+                AssetDatabase.LoadAssetAtPath<Material>(CandidateSkyMaterialPath);
+            if (compatible == null)
+            {
+                compatible = new Material(shader)
+                {
+                    name = "DenseCity_SkyBox_DOTS"
+                };
+                AssetDatabase.CreateAsset(compatible, CandidateSkyMaterialPath);
+            }
+            else
+            {
+                compatible.shader = shader;
+            }
+
+            compatible.SetTexture("_BaseMap", legacy.GetTexture("_MainTex"));
+            compatible.SetColor(
+                "_BaseColor",
+                legacy.HasProperty("_Color") ? legacy.GetColor("_Color") : Color.white);
+            compatible.enableInstancing = true;
+            compatible.renderQueue = legacy.renderQueue;
+            EditorUtility.SetDirty(compatible);
+
+            int compatibleRendererCount = 0;
+            syntyMaterialSlotCount = 0;
+            var syntyMaterialCopies = new Dictionary<Material, Material>();
+            Renderer[] renderers = candidate.GetRootGameObjects()
+                .SelectMany(root => root.GetComponentsInChildren<Renderer>(true))
+                .ToArray();
+            for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
+            {
+                Material[] materials = renderers[rendererIndex].sharedMaterials;
+                bool changed = false;
+                for (int materialIndex = 0; materialIndex < materials.Length; materialIndex++)
+                {
+                    Material material = materials[materialIndex];
+                    if (material == legacy || material == compatible)
+                    {
+                        compatibleRendererCount++;
+                        if (material == legacy)
+                        {
+                            materials[materialIndex] = compatible;
+                            changed = true;
+                        }
+                        continue;
+                    }
+
+                    if (material == null ||
+                        material.shader == null ||
+                        !string.Equals(
+                            material.shader.name,
+                            SyntyGenericBasicShaderName,
+                            StringComparison.Ordinal))
+                        continue;
+
+                    if (!syntyMaterialCopies.TryGetValue(material, out Material converted))
+                    {
+                        converted = CreateOrUpdateSyntyCompatibleMaterial(material);
+                        syntyMaterialCopies.Add(material, converted);
+                    }
+                    materials[materialIndex] = converted;
+                    syntyMaterialSlotCount++;
+                    changed = true;
+                }
+                if (changed)
+                    renderers[rendererIndex].sharedMaterials = materials;
+            }
+            return compatibleRendererCount;
+        }
+
+        private static Material CreateOrUpdateSyntyCompatibleMaterial(Material source)
+        {
+            string sourcePath = AssetDatabase.GetAssetPath(source);
+            string sourceGuid = AssetDatabase.AssetPathToGUID(sourcePath);
+            if (string.IsNullOrEmpty(sourcePath) || string.IsNullOrEmpty(sourceGuid))
+            {
+                throw new InvalidOperationException(
+                    $"Synty candidate material '{source.name}' is not a persistent asset.");
+            }
+            if (source.HasProperty("_ZTest") &&
+                !Mathf.Approximately(source.GetFloat("_ZTest"), 4f))
+            {
+                throw new InvalidOperationException(
+                    $"Synty candidate material '{sourcePath}' uses unsupported _ZTest " +
+                    $"{source.GetFloat("_ZTest")}.");
+            }
+
+            Shader shader = Shader.Find("Universal Render Pipeline/Lit");
+            if (shader == null)
+                throw new InvalidOperationException("URP Lit shader is unavailable.");
+            EnsureAssetFolder(CandidateSharedMaterialFolder);
+            string destinationPath =
+                $"{CandidateSharedMaterialFolder}/Synty_Generic_Basic_{sourceGuid}.mat";
+            Material destination =
+                AssetDatabase.LoadAssetAtPath<Material>(destinationPath);
+            if (destination == null)
+            {
+                destination = new Material(shader);
+                AssetDatabase.CreateAsset(destination, destinationPath);
+            }
+            else
+            {
+                destination.shader = shader;
+            }
+
+            destination.name =
+                $"DenseCity_DOTS_{Path.GetFileNameWithoutExtension(sourcePath)}";
+            CopyTexture(source, "_Albedo_Map", destination, "_BaseMap");
+            CopyColor(source, "_BaseColor", destination, "_BaseColor");
+            CopyTexture(source, "_Normal_Map", destination, "_BumpMap");
+            CopyFloat(source, "_Normal_Amount", destination, "_BumpScale");
+            CopyFloat(source, "_Metallic", destination, "_Metallic");
+            CopyFloat(source, "_Smoothness", destination, "_Smoothness");
+            CopyTexture(source, "_Emission_Map", destination, "_EmissionMap");
+            CopyColor(source, "_Emission_Color", destination, "_EmissionColor");
+            CopyFloat(source, "_Alpha_Clip_Threshold", destination, "_Cutoff");
+            CopyFloat(source, "_AlphaClip", destination, "_AlphaClip");
+            CopyFloat(source, "_Surface", destination, "_Surface");
+            CopyFloat(source, "_Blend", destination, "_Blend");
+            CopyFloat(source, "_Cull", destination, "_Cull");
+            CopyFloat(source, "_ReceiveShadows", destination, "_ReceiveShadows");
+            CopyFloat(
+                source,
+                "_BlendModePreserveSpecular",
+                destination,
+                "_BlendModePreserveSpecular");
+            CopyFloat(source, "_ZWrite", destination, "_ZWrite");
+            CopyFloat(source, "_AlphaToMask", destination, "_AlphaToMask");
+            if (destination.HasProperty("_WorkflowMode"))
+                destination.SetFloat("_WorkflowMode", 1f);
+
+            BaseShaderGUI.SetMaterialKeywords(destination, LitGUI.SetMaterialKeywords);
+            destination.enableInstancing = true;
+            destination.renderQueue = source.renderQueue;
+            destination.SetOverrideTag(
+                "RenderType",
+                source.GetTag("RenderType", false, string.Empty));
+            destination.doubleSidedGI = source.doubleSidedGI;
+            destination.globalIlluminationFlags = source.globalIlluminationFlags;
+            CopyShaderPassState(source, destination, "ShadowCaster");
+            CopyShaderPassState(source, destination, "DepthOnly");
+            CopyShaderPassState(source, destination, "MotionVectors");
+            EditorUtility.SetDirty(destination);
+            return destination;
+        }
+
+        private static void CopyTexture(
+            Material source,
+            string sourceProperty,
+            Material destination,
+            string destinationProperty)
+        {
+            if (!source.HasProperty(sourceProperty) ||
+                !destination.HasProperty(destinationProperty))
+                return;
+            destination.SetTexture(
+                destinationProperty,
+                source.GetTexture(sourceProperty));
+            destination.SetTextureScale(
+                destinationProperty,
+                source.GetTextureScale(sourceProperty));
+            destination.SetTextureOffset(
+                destinationProperty,
+                source.GetTextureOffset(sourceProperty));
+        }
+
+        private static void CopyColor(
+            Material source,
+            string sourceProperty,
+            Material destination,
+            string destinationProperty)
+        {
+            if (source.HasProperty(sourceProperty) &&
+                destination.HasProperty(destinationProperty))
+                destination.SetColor(destinationProperty, source.GetColor(sourceProperty));
+        }
+
+        private static void CopyFloat(
+            Material source,
+            string sourceProperty,
+            Material destination,
+            string destinationProperty)
+        {
+            if (source.HasProperty(sourceProperty) &&
+                destination.HasProperty(destinationProperty))
+                destination.SetFloat(destinationProperty, source.GetFloat(sourceProperty));
+        }
+
+        private static void CopyShaderPassState(
+            Material source,
+            Material destination,
+            string passName)
+        {
+            destination.SetShaderPassEnabled(
+                passName,
+                source.GetShaderPassEnabled(passName));
         }
 
         private static void RequireProtectedSourceHashes(

@@ -9,6 +9,7 @@
         "Unity.Burst",
         "Unity.Collections",
         "Unity.Entities",
+        "Unity.Entities.Hybrid",
         "Unity.Entities.Graphics",
         "Unity.Mathematics",
         "Unity.Mathematics.Extensions",

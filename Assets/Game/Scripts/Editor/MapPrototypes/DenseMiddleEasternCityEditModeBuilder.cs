@@ -53,6 +53,7 @@ namespace Game.Editor
             public readonly int SemanticUrbanRocks;
             public readonly int SemanticCivicFountains;
             public readonly int SemanticOpenGroundTerrains;
+            public readonly DenseCityGenerationRecordSnapshot Records;
 
             public Result(
                 int roadTiles,
@@ -89,7 +90,8 @@ namespace Game.Editor
                 int semanticUrbanTrees,
                 int semanticUrbanRocks,
                 int semanticCivicFountains,
-                int semanticOpenGroundTerrains)
+                int semanticOpenGroundTerrains,
+                DenseCityGenerationRecordSnapshot records)
             {
                 RoadTiles = roadTiles;
                 RoadChunks = roadChunks;
@@ -126,6 +128,8 @@ namespace Game.Editor
                 SemanticUrbanRocks = semanticUrbanRocks;
                 SemanticCivicFountains = semanticCivicFountains;
                 SemanticOpenGroundTerrains = semanticOpenGroundTerrains;
+                Records = records ??
+                    throw new ArgumentNullException(nameof(records));
             }
         }
 
@@ -1678,7 +1682,8 @@ namespace Game.Editor
                 semanticUrbanTrees,
                 semanticUrbanRocks,
                 semanticCivicFountains,
-                semanticOpenGroundTerrains);
+                semanticOpenGroundTerrains,
+                generationTransactions.Records.CreateSnapshot());
         }
 
         private static int CountBuildingRecords(

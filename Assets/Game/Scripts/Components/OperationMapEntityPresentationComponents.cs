@@ -31,6 +31,12 @@ namespace Game.Components
         public int PlacementIndex;
     }
 
+    public struct DenseCityPresentationIdentity : IComponentData
+    {
+        public FixedString128Bytes StableId;
+        public byte Role;
+    }
+
     public struct OperationMapBuildingIdentity : IComponentData
     {
         public FixedString128Bytes OperationMapId;

@@ -59,6 +59,16 @@ public sealed class DenseCityBuildingPresentationRealizerTests
             Assert.That(realized.Authoring.TryValidate(out string error), Is.True, error);
             Assert.That(realized.Authoring.PlacementIndex, Is.EqualTo(432));
             Assert.That(realized.Authoring.StableId, Is.EqualTo(group.Building.Identity.CreateBakedStableId()));
+            DenseCityPresentationIdentityAuthoring presentationIdentity =
+                realized.Authoring.GetComponent<DenseCityPresentationIdentityAuthoring>();
+            Assert.That(presentationIdentity, Is.Not.Null);
+            Assert.That(presentationIdentity.TryValidate(out error), Is.True, error);
+            Assert.That(
+                presentationIdentity.StableId,
+                Is.EqualTo(group.Building.Identity.CreateBakedStableId()));
+            Assert.That(
+                presentationIdentity.Role,
+                Is.EqualTo(OperationMapEntityPresentationRole.GameplayBuildings));
             Assert.That(realized.Authoring.OriginCell, Is.EqualTo(group.Building.OriginCell));
             Assert.That(realized.Authoring.FootprintCells, Is.EqualTo(group.Building.FootprintCells));
             Assert.That(realized.Authoring.MaxHealth, Is.EqualTo((int)group.Building.MaximumHealth));

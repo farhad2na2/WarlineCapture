@@ -102,6 +102,11 @@ namespace Game.Editor
                 BuildingDefinitionAuthoring definition = owner.AddComponent<BuildingDefinitionAuthoring>();
                 definition.ConfigureForEditor(definitionConfig);
                 OperationMapBuildingAuthoring authoring = owner.AddComponent<OperationMapBuildingAuthoring>();
+                var presentationIdentity =
+                    owner.AddComponent<DenseCityPresentationIdentityAuthoring>();
+                presentationIdentity.ConfigureForEditor(
+                    building.Identity.CreateBakedStableId(),
+                    OperationMapEntityPresentationRole.GameplayBuildings);
                 authoring.ConfigureGeneratedForEditor(
                     operationMapId,
                     building.Identity.CreateBakedStableId(),
@@ -115,6 +120,11 @@ namespace Game.Editor
                     destroyedRoot.gameObject);
                 if (!authoring.TryValidate(out string error))
                     throw new InvalidOperationException($"Generated building authoring is invalid: {error}");
+                if (!presentationIdentity.TryValidate(out error))
+                {
+                    throw new InvalidOperationException(
+                        $"Generated building presentation identity is invalid: {error}");
+                }
                 DenseCityRenderOnlyPresentationRealizer.RequireMatrixParity(
                     owner.transform.localToWorldMatrix,
                     intactPresentation);

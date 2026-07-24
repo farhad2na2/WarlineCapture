@@ -41,6 +41,15 @@ namespace Game.Editor
                 ApplyRecordedSingleMaterialOverride(instance, presentation);
                 RequireMaterialIdentity(instance, presentation);
                 hierarchy.RequireIndependentRoot(presentation.Category, instance.transform);
+                var identity = instance.AddComponent<DenseCityPresentationIdentityAuthoring>();
+                identity.ConfigureForEditor(
+                    presentation.Identity.CreateBakedStableId(),
+                    OperationMapEntityPresentationRole.RenderOnly);
+                if (!identity.TryValidate(out string identityError))
+                {
+                    throw new InvalidOperationException(
+                        $"Dense-city presentation identity is invalid: {identityError}");
+                }
                 RequireMatrixParity(instance.transform.localToWorldMatrix, presentation);
                 return instance.transform;
             }

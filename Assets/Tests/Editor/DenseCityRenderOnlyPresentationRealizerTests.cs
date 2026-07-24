@@ -1,4 +1,6 @@
 using System;
+using Game.Authoring;
+using Game.Configs;
 using Game.Editor;
 using NUnit.Framework;
 using UnityEditor;
@@ -55,6 +57,12 @@ public sealed class DenseCityRenderOnlyPresentationRealizerTests
             Assert.That(
                 PrefabUtility.GetCorrespondingObjectFromSource(realized.gameObject),
                 Is.SameAs(prefab));
+            DenseCityPresentationIdentityAuthoring identity =
+                realized.GetComponent<DenseCityPresentationIdentityAuthoring>();
+            Assert.That(identity, Is.Not.Null);
+            Assert.That(identity.TryValidate(out string error), Is.True, error);
+            Assert.That(identity.StableId, Is.EqualTo(record.Identity.CreateBakedStableId()));
+            Assert.That(identity.Role, Is.EqualTo(OperationMapEntityPresentationRole.RenderOnly));
         }
         finally
         {

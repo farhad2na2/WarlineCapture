@@ -11,14 +11,14 @@ Mesh:
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
-    indexCount: 24
+    indexCount: 12
     topology: 0
     baseVertex: 0
     firstVertex: 0
-    vertexCount: 16
+    vertexCount: 8
     localAABB:
-      m_Center: {x: 1294.5863, y: 0.035, z: 300.404}
-      m_Extent: {x: 14.963745, y: 0, z: 15.521469}
+      m_Center: {x: 1308, y: 0.035, z: 301.28955}
+      m_Extent: {x: 3.3052979, y: 0, z: 14.63591}
   m_Shapes:
     vertices: []
     shapes: []
@@ -35,10 +35,10 @@ Mesh:
   m_KeepVertices: 1
   m_KeepIndices: 1
   m_IndexFormat: 0
-  m_IndexBuffer: 000001000200000002000300040005000600040006000700080009000a0008000a000b000c000d000e000c000e000f00
+  m_IndexBuffer: 000001000200000002000300040005000600040006000700
   m_VertexData:
     serializedVersion: 3
-    m_VertexCount: 16
+    m_VertexCount: 8
     m_Channels:
     - stream: 0
       offset: 0
@@ -96,8 +96,8 @@ Mesh:
       offset: 0
       format: 0
       dimension: 0
-    m_DataSize: 192
-    _typelessdata: ecf39f44295c0f3df6708e43ecf39f44295c0f3d0a0f9343140ca144295c0f3d0a0f9343140ca144295c0f3df6708e433b96a144295c0f3daa538f433b96a144295c0f3d562c9243c569a244295c0f3d562c9243c569a244295c0f3daa538f43e9a7a144295c0f3d8b899b43e9a7a144295c0f3d75f69d431758a244295c0f3d75f69d431758a244295c0f3d8b899b43662ea344295c0f3d00009c43662ea344295c0f3d00809d439ab1a344295c0f3d00809d439ab1a344295c0f3d00009c43
+    m_DataSize: 96
+    _typelessdata: 3b16a344295c0f3daa538f433b16a344295c0f3d562c9243c5e9a344295c0f3d562c9243c5e9a344295c0f3daa538f43e927a344295c0f3d8b899b43e927a344295c0f3d75f69d4317d8a344295c0f3d75f69d4317d8a344295c0f3d8b899b43
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -151,8 +151,8 @@ Mesh:
       m_BitSize: 0
     m_UVInfo: 0
   m_LocalAABB:
-    m_Center: {x: 1294.5863, y: 0.035, z: 300.404}
-    m_Extent: {x: 14.963745, y: 0, z: 15.521469}
+    m_Center: {x: 1308, y: 0.035, z: 301.28955}
+    m_Extent: {x: 3.3052979, y: 0, z: 14.63591}
   m_MeshUsageFlags: 0
   m_CookingOptions: 30
   m_BakedConvexCollisionMesh: 

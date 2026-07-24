@@ -32,10 +32,10 @@ namespace Game.Editor
         internal const int ExpectedPresentationRoots = 3;
         internal const int ExpectedRenderOnlyOwners = 9090;
         internal const int ExpectedPresentationIdentities = 9544;
-        internal const int ExpectedDenseGameplayBuildings = 5803;
-        internal const int ExpectedDenseGeneratedGameplayBuildings = 5371;
-        internal const int ExpectedDenseGeneratedRenderOnlyOwners = 30425;
-        internal const int ExpectedDenseGeneratedIdentities = 35796;
+        internal const int ExpectedDenseGameplayBuildings = 5403;
+        internal const int ExpectedDenseGeneratedGameplayBuildings = 4971;
+        internal const int ExpectedDenseGeneratedRenderOnlyOwners = 31975;
+        internal const int ExpectedDenseGeneratedIdentities = 36946;
 
         private const string DenseCandidateBakeReportPath =
             "Design/AgentReports/2026-07-24_dense_city_generated_candidate_bake_validation.json";

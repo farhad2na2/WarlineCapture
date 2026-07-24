@@ -247,13 +247,32 @@ namespace Game.Editor
             ReadOnlySpan<string> expected = expectedMemory.Span;
             if (actualGuids.Count != expected.Length)
                 throw MaterialMismatch(presentation);
-            int index = 0;
-            foreach (string actualGuid in actualGuids)
+
+            var unmatchedActualGuids = new HashSet<string>(
+                actualGuids,
+                StringComparer.Ordinal);
+            for (int expectedIndex = 0; expectedIndex < expected.Length; expectedIndex++)
             {
-                if (!string.Equals(actualGuid, expected[index], StringComparison.Ordinal))
+                string expectedGuid = expected[expectedIndex];
+                if (unmatchedActualGuids.Remove(expectedGuid))
+                    continue;
+
+                string deterministicReplacement = null;
+                foreach (string actualGuid in unmatchedActualGuids)
+                {
+                    if (DenseCityCandidateAuthoringTransaction
+                        .IsDeterministicSyntyMaterialReplacement(expectedGuid, actualGuid))
+                    {
+                        deterministicReplacement = actualGuid;
+                        break;
+                    }
+                }
+                if (deterministicReplacement == null)
                     throw MaterialMismatch(presentation);
-                index++;
+                unmatchedActualGuids.Remove(deterministicReplacement);
             }
+            if (unmatchedActualGuids.Count != 0)
+                throw MaterialMismatch(presentation);
         }
 
         private static InvalidOperationException MaterialMismatch(

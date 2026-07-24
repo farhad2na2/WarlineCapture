@@ -11,14 +11,14 @@ Mesh:
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
-    indexCount: 30
+    indexCount: 6
     topology: 0
     baseVertex: 0
     firstVertex: 0
-    vertexCount: 20
+    vertexCount: 4
     localAABB:
-      m_Center: {x: 1265.312, y: 0.035, z: 689.027}
-      m_Extent: {x: 15.543884, y: 0, z: 19.291168}
+      m_Center: {x: 1253, y: 0.035, z: 700.4254}
+      m_Extent: {x: 2.7528076, y: 0, z: 2.425415}
   m_Shapes:
     vertices: []
     shapes: []
@@ -35,10 +35,10 @@ Mesh:
   m_KeepVertices: 1
   m_KeepIndices: 1
   m_IndexFormat: 0
-  m_IndexBuffer: 000001000200000002000300040005000600040006000700080009000a0008000a000b000c000d000e000c000e000f00100011001200100012001300
+  m_IndexBuffer: 000001000200000002000300
   m_VertexData:
     serializedVersion: 3
-    m_VertexCount: 20
+    m_VertexCount: 4
     m_Channels:
     - stream: 0
       offset: 0
@@ -96,8 +96,8 @@ Mesh:
       offset: 0
       format: 0
       dimension: 0
-    m_DataSize: 240
-    _typelessdata: 95389c44295c0f3d176f274495389c44295c0f3de9102a446b279d44295c0f3de9102a446b279d44295c0f3d176f2744e9479c44295c0f3d00802e44e9479c44295c0f3d74b62f4417f89c44295c0f3d74b62f4417f89c44295c0f3d00802e44e9079d44295c0f3d00802e44e9079d44295c0f3d74b62f4417b89d44295c0f3d74b62f4417b89d44295c0f3d00802e449cc49d44295c0f3d00802e449cc49d44295c0f3d5c143144641ba044295c0f3d5c143144641ba044295c0f3d00802e443be69e44295c0f3dd50928443be69e44295c0f3d2b762944c5b99f44295c0f3d2b762944c5b99f44295c0f3dd5092844
+    m_DataSize: 48
+    _typelessdata: e9479c44295c0f3d00802e44e9479c44295c0f3d74b62f4417f89c44295c0f3d74b62f4417f89c44295c0f3d00802e44
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -151,8 +151,8 @@ Mesh:
       m_BitSize: 0
     m_UVInfo: 0
   m_LocalAABB:
-    m_Center: {x: 1265.312, y: 0.035, z: 689.027}
-    m_Extent: {x: 15.543884, y: 0, z: 19.291168}
+    m_Center: {x: 1253, y: 0.035, z: 700.4254}
+    m_Extent: {x: 2.7528076, y: 0, z: 2.425415}
   m_MeshUsageFlags: 0
   m_CookingOptions: 30
   m_BakedConvexCollisionMesh: 

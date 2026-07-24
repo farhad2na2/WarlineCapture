@@ -152,7 +152,8 @@ namespace Game.Editor
             DenseCityGeneratedRootAuthoring mapBakeRoot,
             string operationMapId,
             Rect mapSurfaceBounds,
-            string candidateAssetFolder)
+            string candidateAssetFolder,
+            string reusableAssetFolder = null)
         {
             if (records == null)
                 throw new ArgumentNullException(nameof(records));
@@ -182,6 +183,9 @@ namespace Game.Editor
             RequireCleanProxyHierarchy(mapBakeRoot.gameObject, surfaces.Count, 0);
 
             var createdRoots = new List<GameObject>(partitions.Count);
+            Dictionary<string, List<string>> reusableAssets =
+                IndexReusableAssets(reusableAssetFolder);
+            var movedReusableAssets = new List<(string Current, string Original)>();
             bool folderCreated = false;
             bool assetEditing = false;
             int vertexCount = 0;
@@ -190,18 +194,58 @@ namespace Game.Editor
             {
                 EnsureFolder(candidateAssetFolder);
                 folderCreated = true;
-                AssetDatabase.StartAssetEditing();
-                assetEditing = true;
+                if (reusableAssets.Count == 0)
+                {
+                    AssetDatabase.StartAssetEditing();
+                    assetEditing = true;
+                }
                 int partitionIndex = 0;
                 foreach (KeyValuePair<PartitionKey, List<PreparedPolygon>> entry in partitions)
                 {
                     PartitionKey key = entry.Key;
                     Transform roleRoot = ResolveRoleRoot(mapBakeRoot.transform, key.Role);
-                    string name = CreatePartitionName(key, partitionIndex++);
+                    string generatedName = CreatePartitionName(key, partitionIndex++);
+                    string signature = GetPartitionSignature(generatedName);
+                    string reusablePath = null;
+                    if (reusableAssets.TryGetValue(
+                            signature,
+                            out List<string> indexedReusablePaths) &&
+                        indexedReusablePaths.Count != 0)
+                    {
+                        reusablePath = indexedReusablePaths[0];
+                        indexedReusablePaths.RemoveAt(0);
+                    }
+                    string name = reusablePath == null
+                        ? generatedName
+                        : Path.GetFileNameWithoutExtension(reusablePath);
                     List<PreparedPolygon> mergedPolygons = MergeCompatibleRectangles(entry.Value);
                     Mesh mesh = CreateMesh(name, mergedPolygons, out int vertices, out int triangles);
                     string assetPath = candidateAssetFolder + "/" + name + ".asset";
-                    AssetDatabase.CreateAsset(mesh, assetPath);
+                    if (reusablePath == null)
+                    {
+                        AssetDatabase.CreateAsset(mesh, assetPath);
+                    }
+                    else
+                    {
+                        string moveError = AssetDatabase.MoveAsset(reusablePath, assetPath);
+                        if (!string.IsNullOrEmpty(moveError))
+                        {
+                            UnityEngine.Object.DestroyImmediate(mesh);
+                            throw new InvalidOperationException(
+                                $"Dense-city reusable proxy move failed: {moveError}");
+                        }
+                        movedReusableAssets.Add((assetPath, reusablePath));
+                        Mesh persistentMesh = AssetDatabase.LoadAssetAtPath<Mesh>(assetPath);
+                        if (persistentMesh == null)
+                        {
+                            UnityEngine.Object.DestroyImmediate(mesh);
+                            throw new InvalidOperationException(
+                                $"Dense-city reusable proxy mesh is missing: '{assetPath}'.");
+                        }
+                        EditorUtility.CopySerialized(mesh, persistentMesh);
+                        UnityEngine.Object.DestroyImmediate(mesh);
+                        mesh = persistentMesh;
+                    }
 
                     var owner = new GameObject(name);
                     owner.transform.SetParent(roleRoot, false);
@@ -229,10 +273,63 @@ namespace Game.Editor
                     if (createdRoots[index] != null)
                         UnityEngine.Object.DestroyImmediate(createdRoots[index]);
                 }
+                for (int index = movedReusableAssets.Count - 1; index >= 0; index--)
+                {
+                    (string current, string original) = movedReusableAssets[index];
+                    if (AssetDatabase.LoadMainAssetAtPath(current) == null)
+                        continue;
+                    string moveError = AssetDatabase.MoveAsset(current, original);
+                    if (!string.IsNullOrEmpty(moveError))
+                    {
+                        throw new InvalidOperationException(
+                            $"Dense-city reusable proxy rollback failed: {moveError}");
+                    }
+                }
                 if (folderCreated)
                     AssetDatabase.DeleteAsset(candidateAssetFolder);
                 throw;
             }
+        }
+
+        private static Dictionary<string, List<string>> IndexReusableAssets(string assetFolder)
+        {
+            var result = new Dictionary<string, List<string>>(StringComparer.Ordinal);
+            if (string.IsNullOrEmpty(assetFolder) || !AssetDatabase.IsValidFolder(assetFolder))
+                return result;
+
+            string[] assetGuids = AssetDatabase.FindAssets("t:Mesh", new[] { assetFolder });
+            for (int index = 0; index < assetGuids.Length; index++)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(assetGuids[index]);
+                string name = Path.GetFileNameWithoutExtension(path);
+                string signature = GetPartitionSignature(name);
+                if (!result.TryGetValue(signature, out List<string> paths))
+                {
+                    paths = new List<string>();
+                    result.Add(signature, paths);
+                }
+                paths.Add(path);
+            }
+            foreach (List<string> paths in result.Values)
+                paths.Sort(StringComparer.Ordinal);
+            return result;
+        }
+
+        private static string GetPartitionSignature(string name)
+        {
+            if (string.IsNullOrEmpty(name) ||
+                !name.StartsWith("Proxy_", StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city proxy name is invalid: '{name ?? "<null>"}'.");
+            }
+            int separator = name.IndexOf('_', "Proxy_".Length);
+            if (separator < 0 || separator == name.Length - 1)
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city proxy name has no partition signature: '{name}'.");
+            }
+            return name.Substring(separator + 1);
         }
 
         private static void StopAssetEditing(ref bool assetEditing)

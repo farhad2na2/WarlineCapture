@@ -4,13 +4,13 @@
     "operationMapId": "opmap.skirmish.desert_base_01",
     "result": "DenseCityEditorFixedCameraBaselineCaptured",
     "candidateSubScenePath": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
-    "candidateSubSceneSha256": "01418abb2bd8f0ef467f7bc30009988b44e849056310b1698c600fc3d228ba3c",
+    "candidateSubSceneSha256": "750beab584ebe524188a7ddde65264e0e58f9dfe6738b5a99d8f7a7fd806b150",
     "width": 1280,
     "height": 720,
-    "rendererCount": 77783,
+    "rendererCount": 82261,
     "legacyIdentityCount": 9544,
-    "denseIdentityCount": 35796,
-    "expectedRuntimeRenderRowCount": 78325,
+    "denseIdentityCount": 36946,
+    "expectedRuntimeRenderRowCount": 82797,
     "viewCount": 5,
     "maximumMeanChannelDelta": 0.0024999999441206457,
     "maximumChangedPixelRatio": 0.009999999776482582,
@@ -19,17 +19,17 @@
         {
             "view": "overview",
             "editorPath": "Design/AgentReports/Captures/2026-07-24_dense_city_editor_fixed_camera_baseline/overview_editor.png",
-            "editorSha256": "79c7a4325b66d66a50097b24d466d64b5b2b490cd41df67fd3b5ec91702b3298",
-            "editorLumaVariance": 0.013955553993582726,
+            "editorSha256": "5622a8185404f4d3f6bde64ae56100731212495eae071daa8120998bc112edc2",
+            "editorLumaVariance": 0.012966993264853955,
             "cameraPosition": [
-                731.322021484375,
-                591.2198486328125,
-                -25.55657958984375
+                -538.12939453125,
+                1016.0633544921875,
+                -622.336181640625
             ],
             "cameraRotation": [
-                26.981409072875978,
+                26.98141098022461,
                 44.999996185302737,
-                -0.000001916108431032626
+                -9.58054215516313e-7
             ],
             "orthographic": 0,
             "fieldOfView": 42.0,
@@ -38,12 +38,12 @@
         {
             "view": "minimap",
             "editorPath": "Design/AgentReports/Captures/2026-07-24_dense_city_editor_fixed_camera_baseline/minimap_editor.png",
-            "editorSha256": "c49ed0fc65438f36aa623a877f2a626c0de3c5e1fc3fa14f228f207abab5284c",
-            "editorLumaVariance": 0.013068631291389466,
+            "editorSha256": "7e414330da89e70f7df7329ba6dcf4dfb2d6402bd218c4ddebbea312442222d8",
+            "editorLumaVariance": 0.01091700792312622,
             "cameraPosition": [
-                1513.48876953125,
-                2129.400390625,
-                756.6101684570313
+                837.7506103515625,
+                3721.818603515625,
+                753.5438232421875
             ],
             "cameraRotation": [
                 90.0,
@@ -52,20 +52,20 @@
             ],
             "orthographic": 1,
             "fieldOfView": 60.0,
-            "orthographicSize": 593.7508544921875
+            "orthographicSize": 1044.44482421875
         },
         {
             "view": "detail_01",
             "editorPath": "Design/AgentReports/Captures/2026-07-24_dense_city_editor_fixed_camera_baseline/detail_01_editor.png",
-            "editorSha256": "01aab0b75a635c0ae0967201b3df3517bff40f6f2939299d4b3d006fc5eee5e6",
-            "editorLumaVariance": 0.013719809241592884,
+            "editorSha256": "5a647d4f5bf42b953b6885770290f13de61b2059fbd26efe8e409377a0a1ffed",
+            "editorLumaVariance": 0.007898334413766861,
             "cameraPosition": [
-                870.778076171875,
-                229.57742309570313,
-                408.9427185058594
+                666.327392578125,
+                399.2830810546875,
+                396.1640625
             ],
             "cameraRotation": [
-                41.12513732910156,
+                41.12512969970703,
                 50.90614318847656,
                 0.0
             ],
@@ -76,17 +76,17 @@
         {
             "view": "detail_02",
             "editorPath": "Design/AgentReports/Captures/2026-07-24_dense_city_editor_fixed_camera_baseline/detail_02_editor.png",
-            "editorSha256": "90e174e3aa9e1b90957764c43bd7476d39c4b227f235c7b968a787e3b52d80e1",
-            "editorLumaVariance": 0.008913700468838215,
+            "editorSha256": "8bd1292777c7a221b89f212600a866203d5d3a94e948bfc4fd461951950349cf",
+            "editorLumaVariance": 0.003983066417276859,
             "cameraPosition": [
-                783.1275024414063,
-                228.46351623535157,
-                193.98696899414063
+                988.0900268554688,
+                397.63385009765627,
+                79.06927490234375
             ],
             "cameraRotation": [
-                40.903228759765628,
+                40.90321731567383,
                 316.84759521484377,
-                -0.000002259208031318849
+                0.000002259208031318849
             ],
             "orthographic": 0,
             "fieldOfView": 42.0,
@@ -95,16 +95,16 @@
         {
             "view": "detail_03",
             "editorPath": "Design/AgentReports/Captures/2026-07-24_dense_city_editor_fixed_camera_baseline/detail_03_editor.png",
-            "editorSha256": "25f8a665be4924fb3fb0f29939b68e66ddcc31268aa24229cbf472beeed0c301",
-            "editorLumaVariance": 0.010009012185037136,
+            "editorSha256": "2674b072a0a46a7fe12f6139a35d6411eee064dc999e5d9f98b643d5c13b4c7d",
+            "editorLumaVariance": 0.034463681280612949,
             "cameraPosition": [
-                1085.851318359375,
-                227.168701171875,
-                549.13671875
+                1931.673095703125,
+                397.41680908203127,
+                1284.72509765625
             ],
             "cameraRotation": [
                 41.1251335144043,
-                230.90615844726563,
+                230.90614318847657,
                 0.0
             ],
             "orthographic": 0,

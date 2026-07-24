@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 using Game.Authoring;
 using Game.Components;
@@ -1162,10 +1163,28 @@ namespace Game.Editor
 
         private static readonly Dictionary<GameObject, bool> DenseCityPrefabUsabilityCache = new();
 
+        internal static Vector2 GetRoadGridOrigin(RuntimeCityRAndDMapView view)
+        {
+            if (view == null)
+                throw new ArgumentNullException(nameof(view));
+            return new Vector2(
+                view.GridOrigin.x - WestCityExpansion,
+                view.GridOrigin.z - SouthCityExpansion);
+        }
+
         public static Result Build(
             RuntimeCityRAndDMapView view,
             Transform generatedRoot,
             RuntimeCitySpawnerSystemConfig config)
+        {
+            return Build(view, generatedRoot, config, null);
+        }
+
+        internal static Result Build(
+            RuntimeCityRAndDMapView view,
+            Transform generatedRoot,
+            RuntimeCitySpawnerSystemConfig config,
+            DenseCityProtectedAutobahnRouteDescriptor protectedAutobahnReplacement)
         {
             if (view == null)
                 throw new ArgumentNullException(nameof(view));
@@ -1239,7 +1258,8 @@ namespace Game.Editor
                 terrainMap,
                 config.RandomSeed,
                 surface,
-                generationTransactions);
+                generationTransactions,
+                protectedAutobahnReplacement);
             CanalBakeResult canalResult = BakeWaterCanals(
                 generatedRoot,
                 cityOrigin,
@@ -1831,12 +1851,20 @@ namespace Game.Editor
             ProtectedAreaMap protectedAreas)
         {
             int overlapCount = 0;
+            int protectedAutobahnReplacementRendererCount = 0;
             Renderer[] renderers = generatedRoot.GetComponentsInChildren<Renderer>(false);
             for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
             {
                 Renderer renderer = renderers[rendererIndex];
-                if (renderer == null ||
-                    IsSubgradeCanalUnderpassRenderer(renderer) ||
+                if (renderer == null)
+                    continue;
+                if (renderer.GetComponentInParent<
+                        DenseCityProtectedAutobahnReplacementTileMarker>(true) != null)
+                {
+                    protectedAutobahnReplacementRendererCount++;
+                    continue;
+                }
+                if (IsSubgradeCanalUnderpassRenderer(renderer) ||
                     !protectedAreas.Intersects(renderer.bounds))
                     continue;
 
@@ -1850,7 +1878,9 @@ namespace Game.Editor
             }
 
             Debug.Log(
-                $"[DenseCityProtectedAudit] generatedRenderers={renderers.Length} overlaps={overlapCount}");
+                $"[DenseCityProtectedAudit] generatedRenderers={renderers.Length} " +
+                $"protectedAutobahnReplacementRenderers=" +
+                $"{protectedAutobahnReplacementRendererCount} overlaps={overlapCount}");
             return overlapCount;
         }
 
@@ -3831,7 +3861,8 @@ namespace Game.Editor
             TerrainViabilityMap terrainMap,
             uint seed,
             SurfacePlacementContext surface,
-            DenseCityGenerationTransactionContext generationTransactions)
+            DenseCityGenerationTransactionContext generationTransactions,
+            DenseCityProtectedAutobahnRouteDescriptor protectedAutobahnReplacement)
         {
             if (generationTransactions == null)
                 throw new ArgumentNullException(nameof(generationTransactions));
@@ -3935,6 +3966,11 @@ namespace Game.Editor
                 dirtRoadCells,
                 civicRoadCells);
 
+            HashSet<Vector2Int> protectedAutobahnReplacementCells =
+                AddProtectedAutobahnReplacement(
+                    network,
+                    protectedAutobahnReplacement);
+
             foreach (Vector2Int cell in network.StrokeIdsByCell.Keys)
             {
                 if (cityFootprint.NormalizedDistance(RoadCellWorldCenter(cell, mapOrigin)) >= 0.72f)
@@ -4021,6 +4057,7 @@ namespace Game.Editor
                 mapSurfaceBounds,
                 seed,
                 generationTransactions,
+                protectedAutobahnReplacementCells,
                 out Dictionary<Vector2Int, GameObject> roadTileObjects,
                 out Dictionary<Vector2Int, GameObject> roadGroundPatchObjects);
             SetStaticRecursively(roadObject);
@@ -4036,6 +4073,93 @@ namespace Game.Editor
                 boulevardMedianCells,
                 roadTileObjects,
                 roadGroundPatchObjects);
+        }
+
+        internal static HashSet<Vector2Int> AddProtectedAutobahnReplacement(
+            RoadNetworkCompositionSystemHelper network,
+            DenseCityProtectedAutobahnRouteDescriptor descriptor)
+        {
+            var replacementCells = new HashSet<Vector2Int>();
+            if (descriptor == null)
+                return replacementCells;
+            if (!DenseCityProtectedAutobahnReplacementPlanner.TryValidate(
+                    descriptor,
+                    out string error))
+            {
+                throw new InvalidOperationException(error);
+            }
+
+            var existingCells = new HashSet<Vector2Int>(network.StrokeIdsByCell.Keys);
+            for (int rangeIndex = 0; rangeIndex < descriptor.LaneRanges.Count; rangeIndex++)
+            {
+                DenseCityProtectedAutobahnLaneRange range = descriptor.LaneRanges[rangeIndex];
+                var lane = new List<Vector2Int>(
+                    range.MaximumColumn - range.MinimumColumn + 1);
+                for (int column = range.MinimumColumn;
+                     column <= range.MaximumColumn;
+                     column++)
+                {
+                    lane.Add(new Vector2Int(column, range.Row));
+                }
+
+                CommitRoadStroke(network, lane, isAutobahn: true);
+            }
+
+            const int MaximumConnectorDistanceCells = 8;
+            int firstLaneRow = descriptor.LaneRanges[0].Row;
+            int secondLaneRow = descriptor.LaneRanges[1].Row;
+            var crossingColumns = existingCells
+                .Where(cell =>
+                    cell.x >= descriptor.LaneRanges[0].MinimumColumn &&
+                    cell.x <= descriptor.LaneRanges[0].MaximumColumn &&
+                    cell.y >= firstLaneRow - MaximumConnectorDistanceCells &&
+                    cell.y <= secondLaneRow + MaximumConnectorDistanceCells &&
+                    (network.HasEdge(cell, cell + Vector2Int.up) ||
+                     network.HasEdge(cell, cell + Vector2Int.down)))
+                .Select(cell => cell.x)
+                .Distinct()
+                .OrderBy(column => column)
+                .ToArray();
+            for (int index = 0; index < crossingColumns.Length; index++)
+            {
+                int column = crossingColumns[index];
+                int? south = existingCells
+                    .Where(cell =>
+                        cell.x == column &&
+                        cell.y < firstLaneRow &&
+                        firstLaneRow - cell.y <= MaximumConnectorDistanceCells)
+                    .Select(cell => (int?)cell.y)
+                    .Max();
+                int? north = existingCells
+                    .Where(cell =>
+                        cell.x == column &&
+                        cell.y > secondLaneRow &&
+                        cell.y - secondLaneRow <= MaximumConnectorDistanceCells)
+                    .Select(cell => (int?)cell.y)
+                    .Min();
+                if (!south.HasValue && !north.HasValue)
+                    continue;
+
+                int minimumRow = south ?? firstLaneRow;
+                int maximumRow = north ?? secondLaneRow;
+                var connector = new List<Vector2Int>(maximumRow - minimumRow + 1);
+                for (int row = minimumRow; row <= maximumRow; row++)
+                    connector.Add(new Vector2Int(column, row));
+                CommitRoadStroke(network, connector, isAutobahn: true);
+            }
+
+            foreach (Vector2Int cell in network.StrokeIdsByCell.Keys)
+            {
+                if (!existingCells.Contains(cell))
+                    replacementCells.Add(cell);
+            }
+            if (replacementCells.Count == 0)
+            {
+                throw new InvalidOperationException(
+                    "Protected Autobahn replacement did not add any road cells.");
+            }
+
+            return replacementCells;
         }
 
         private static int BakeHorizonMountainPerimeter(
@@ -6562,6 +6686,7 @@ namespace Game.Editor
             Rect mapSurfaceBounds,
             uint seed,
             DenseCityGenerationTransactionContext generationTransactions,
+            HashSet<Vector2Int> protectedAutobahnReplacementCells,
             out Dictionary<Vector2Int, GameObject> roadTileObjects,
             out Dictionary<Vector2Int, GameObject> roadGroundPatchObjects)
         {
@@ -6619,7 +6744,9 @@ namespace Game.Editor
                     0f,
                     (cell.y + 0.5f) * RoadGridSize);
                 float fallbackHeight = (surface?.SampleHeight(samplePoint) ?? placement.y) + 0.025f;
-                placement.y = elevationPlan.GetElevation(cell, fallbackHeight);
+                placement.y = protectedAutobahnReplacementCells.Contains(cell)
+                    ? placementContext.BuildPlaneY + 0.08f
+                    : elevationPlan.GetElevation(cell, fallbackHeight);
                 Matrix4x4 roadWorldMatrix = Matrix4x4.TRS(
                     placement,
                     variant.Rotation,
@@ -6645,7 +6772,9 @@ namespace Game.Editor
                 try
                 {
                     DenseCityRoadRecordGroup plannedGroup = CreateRoadGroup(0);
-                    bool hasGameplayRoad = IsSurfaceInsideBounds(
+                    bool hasGameplayRoad =
+                        !protectedAutobahnReplacementCells.Contains(cell) &&
+                        IsSurfaceInsideBounds(
                         plannedGroup.Road,
                         mapSurfaceBounds);
                     for (int index = 0; index < plannedGroup.Shoulders.Length && hasGameplayRoad; index++)
@@ -6702,6 +6831,12 @@ namespace Game.Editor
                         road.transform.SetPositionAndRotation(placement, variant.Rotation);
                         road.transform.localScale = variant.Scale;
                         DisableColliders(road);
+                        if (protectedAutobahnReplacementCells.Contains(cell))
+                        {
+                            road.AddComponent<
+                                    DenseCityProtectedAutobahnReplacementTileMarker>()
+                                .Configure(cell);
+                        }
                         Matrix4x4 actualMatrix = road.transform.localToWorldMatrix;
                         for (int matrixIndex = 0; matrixIndex < 16; matrixIndex++)
                         {
@@ -6726,7 +6861,8 @@ namespace Game.Editor
                     patchHeight = Mathf.Clamp(placement.y - roadPatch.MinimumHeight + 0.16f, 0.2f, 0.65f);
                 Vector2 patchCenter = new(placement.x, placement.z);
                 const float patchClearance = RoadGridSize * 0.78f;
-                if (cityFootprint.IsAreaClear(
+                if (!protectedAutobahnReplacementCells.Contains(cell) &&
+                    cityFootprint.IsAreaClear(
                         patchCenter,
                         patchClearance,
                         patchClearance))

@@ -230,14 +230,23 @@ namespace Game.Editor
                 }
 
                 RuntimeCityRAndDMapView view = RequireMapView(mapScene);
+                DenseCityProtectedAutobahnRouteDescriptor protectedAutobahnReplacement =
+                    DenseCityCandidateAuthoringTransaction
+                        .CreateProtectedAutobahnReplacementDescriptor(entityScene, view);
                 DenseMiddleEasternCityEditModeBuilder.Result generated =
-                    RuntimeCityRAndDEditModeBuilder.BuildDenseMapWide(view);
+                    RuntimeCityRAndDEditModeBuilder.BuildDenseMapWide(
+                        view,
+                        protectedAutobahnReplacement);
                 try
                 {
                     BackfillResult result = Apply(
                         generated.Records,
                         DenseCityPresentationHierarchyContext.Create(entityRoot),
                         entityRoot);
+                    DenseCityCandidateAuthoringTransaction.MarkRealizedProtectedAutobahnTiles(
+                        entityRoot,
+                        view.GeneratedRoot,
+                        protectedAutobahnReplacement);
                     ConfigureDenseReadinessContract(entityScene);
                     if (!DenseCityBakeReadinessValidator.TryValidateAuthoringOwnership(
                             mapScene,

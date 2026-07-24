@@ -29,8 +29,8 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
     private const uint DenseParityMagic = 0x57444350;
     private const int DenseParityFormatVersion = 3;
     private const int DenseExpectedLegacyIdentityCount = 9544;
-    private const int DenseExpectedGeneratedIdentityCount = 35796;
-    private const int DenseExpectedRenderRowCount = 78325;
+    private const int DenseExpectedGeneratedIdentityCount = 36946;
+    private const int DenseExpectedRenderRowCount = 82797;
     private const int DenseGraphicsStableFrameCount = 3;
     private const int DenseGraphicsReadinessFrameLimit = 120;
     private const string DenseDefinitionAddress =
@@ -178,8 +178,11 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
                 type != LogType.Exception &&
                 type != LogType.Assert)
                 return;
-            if (condition.StartsWith(
-                    "[Worker1] Max unique Entity Name capacity exceeded.",
+            if (condition.StartsWith("[Worker", StringComparison.Ordinal) &&
+                condition.EndsWith(
+                    "Max unique Entity Name capacity exceeded. If you require more storage, " +
+                    "edit EntityNameStorage.cs and change the value of kMaxEntries to " +
+                    "pre-allocate more space.",
                     StringComparison.Ordinal))
                 return;
             unexpectedErrors.Add(condition);

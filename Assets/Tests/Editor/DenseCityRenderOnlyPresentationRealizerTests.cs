@@ -183,6 +183,32 @@ public sealed class DenseCityRenderOnlyPresentationRealizerTests
             Throws.TypeOf<InvalidOperationException>().With.Message.Contains("matrix[12]"));
     }
 
+    [Test]
+    public void DeterministicSyntyMaterialReplacementPath_AcceptsOnlyCanonicalDerivedPath()
+    {
+        const string sourceGuid = "0123456789abcdef0123456789abcdef";
+        string canonicalPath =
+            DenseCityCandidateAuthoringTransaction.CandidateSharedMaterialFolder +
+            "/Synty_Generic_Basic_" + sourceGuid + ".mat";
+
+        Assert.That(
+            DenseCityCandidateAuthoringTransaction
+                .IsDeterministicSyntyMaterialReplacementPath(sourceGuid, canonicalPath),
+            Is.True);
+        Assert.That(
+            DenseCityCandidateAuthoringTransaction
+                .IsDeterministicSyntyMaterialReplacementPath(
+                    sourceGuid,
+                    TempRoot + "/Synty_Generic_Basic_" + sourceGuid + ".mat"),
+            Is.False);
+        Assert.That(
+            DenseCityCandidateAuthoringTransaction
+                .IsDeterministicSyntyMaterialReplacementPath(
+                    sourceGuid.ToUpperInvariant(),
+                    canonicalPath),
+            Is.False);
+    }
+
     private static GameObject CreatePrefab(string materialPath)
     {
         Material material = CreateMaterial(materialPath);

@@ -43,7 +43,7 @@ namespace Game.Editor
             "Assets/Game/GeneratedOperationMaps/DenseCity/" +
             "opmap.skirmish.desert_base_01/Candidate/SharedMaterials/" +
             "DenseCity_SkyBox_DOTS.mat";
-        private const string CandidateSharedMaterialFolder =
+        internal const string CandidateSharedMaterialFolder =
             "Assets/Game/GeneratedOperationMaps/DenseCity/" +
             "opmap.skirmish.desert_base_01/Candidate/SharedMaterials";
         private const string SyntyGenericBasicShaderName = "Synty/Generic_Basic";
@@ -175,6 +175,7 @@ namespace Game.Editor
             string mapBackup = null;
             string entityBackup = null;
             string proxyFolder = null;
+            string proxyBackupFolder = null;
 
             try
             {
@@ -216,11 +217,26 @@ namespace Game.Editor
                 {
                     throw new InvalidOperationException(error);
                 }
+                var replacementRoots =
+                    RuntimeCityRAndDEditModeBuilder.ReplaceDenseCitySemanticHierarchy(
+                        mapScene,
+                        entityScene,
+                        generationId,
+                        mapRoot.GeneratorSchema,
+                        mapRoot.GeneratorSchemaVersion,
+                        mapRoot.DeterministicSeed,
+                        mapRoot.DeterministicGenerationHash);
+                mapRoot = replacementRoots.MapBakeSource;
+                entityRoot = replacementRoots.EntityPresentationSource;
                 RequireEmptyCandidateOwnership(mapRoot, entityRoot);
 
                 RuntimeCityRAndDMapView view = RequireMapView(mapScene);
+                DenseCityProtectedAutobahnRouteDescriptor protectedAutobahnReplacement =
+                    CreateProtectedAutobahnReplacementDescriptor(entityScene, view);
                 DenseMiddleEasternCityEditModeBuilder.Result result =
-                    RuntimeCityRAndDEditModeBuilder.BuildDenseMapWide(view);
+                    RuntimeCityRAndDEditModeBuilder.BuildDenseMapWide(
+                        view,
+                        protectedAutobahnReplacement);
                 if (result.Records == null ||
                     result.Records.Buildings.Count != result.SemanticBuildings ||
                     result.Records.Surfaces.Count != result.SemanticSurfaces ||
@@ -239,12 +255,19 @@ namespace Game.Editor
                         hierarchy,
                         DenseCityBuildingDefinitionLibrary.LoadExisting(),
                         DenseCityBuildingMaterialLibrary.LoadExisting());
+                int realizedAutobahnTiles = MarkRealizedProtectedAutobahnTiles(
+                    entityRoot,
+                    view.GeneratedRoot,
+                    protectedAutobahnReplacement);
                 ApplyCandidateMaterialCompatibility(entityScene, out _);
+                int retiredAutobahnOwners =
+                    RetireProtectedAutobahnLegacyVisuals(entityScene);
 
                 proxyFolder = CandidateGeneratedAssetRoot + "/" +
                               OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId +
                               "/Candidate/" + mapRoot.DeterministicGenerationHash +
                               "/SurfaceProxies";
+                proxyBackupFolder = MoveAssetFolderAside(proxyFolder);
                 Rect mapBounds = new(
                     view.GridOrigin.x,
                     view.GridOrigin.z,
@@ -255,7 +278,8 @@ namespace Game.Editor
                     mapRoot,
                     OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
                     mapBounds,
-                    proxyFolder);
+                    proxyFolder,
+                    proxyBackupFolder);
 
                 ClearTemporaryLegacyVisuals(view.GeneratedRoot);
                 if (!DenseCityBakeReadinessValidator.TryValidateAuthoringOwnership(
@@ -279,10 +303,14 @@ namespace Game.Editor
                 CloseScene(ref mapScene);
                 RequireProtectedSourceHashes(sourceMapHash, sourceEntityHash);
                 AssetDatabase.SaveAssets();
+                DeleteAssetFolder(proxyBackupFolder);
+                proxyBackupFolder = null;
                 summary =
                     $"generationId={generationId} buildings={realized.Buildings.Count} " +
                     $"renderOnly={realized.RenderOnly.Count} proxies={proxies.Partitions} " +
-                    $"surfaces={proxies.Records} proxyFolder={proxyFolder}";
+                    $"surfaces={proxies.Records} retiredAutobahnOwners={retiredAutobahnOwners} " +
+                    $"realizedAutobahnTiles={realizedAutobahnTiles} " +
+                    $"proxyFolder={proxyFolder}";
                 return true;
             }
             catch (Exception exception)
@@ -291,8 +319,8 @@ namespace Game.Editor
                 RestoreActiveScene(previousActiveScene);
                 CloseScene(ref entityScene);
                 CloseScene(ref mapScene);
-                if (!string.IsNullOrEmpty(proxyFolder))
-                    AssetDatabase.DeleteAsset(proxyFolder);
+                RestoreAssetFolder(proxyBackupFolder, proxyFolder);
+                proxyBackupFolder = null;
                 RestoreBackup(mapBackup, CandidateMapScenePath);
                 RestoreBackup(entityBackup, CandidateEntityScenePath);
                 AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
@@ -300,9 +328,366 @@ namespace Game.Editor
             }
             finally
             {
+                DeleteAssetFolder(proxyBackupFolder);
                 DeleteBackup(mapBackup);
                 DeleteBackup(entityBackup);
             }
+        }
+
+        private static string MoveAssetFolderAside(string assetFolder)
+        {
+            if (!AssetDatabase.IsValidFolder(assetFolder))
+                return null;
+
+            string backupFolder = assetFolder + "__TransactionBackup";
+            if (AssetDatabase.IsValidFolder(backupFolder))
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city transaction backup folder already exists: '{backupFolder}'.");
+            }
+            string error = AssetDatabase.MoveAsset(assetFolder, backupFolder);
+            if (!string.IsNullOrEmpty(error))
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city proxy backup move failed: {error}");
+            }
+            return backupFolder;
+        }
+
+        private static void RestoreAssetFolder(string backupFolder, string assetFolder)
+        {
+            if (string.IsNullOrEmpty(backupFolder))
+            {
+                DeleteAssetFolder(assetFolder);
+                return;
+            }
+
+            DeleteAssetFolder(assetFolder);
+            string error = AssetDatabase.MoveAsset(backupFolder, assetFolder);
+            if (!string.IsNullOrEmpty(error))
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city proxy backup restore failed: {error}");
+            }
+        }
+
+        private static void DeleteAssetFolder(string assetFolder)
+        {
+            if (!string.IsNullOrEmpty(assetFolder) &&
+                AssetDatabase.IsValidFolder(assetFolder) &&
+                !AssetDatabase.DeleteAsset(assetFolder))
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city generated asset cleanup failed: '{assetFolder}'.");
+            }
+        }
+
+        internal static DenseCityProtectedAutobahnRouteDescriptor
+            CreateProtectedAutobahnReplacementDescriptor(
+                Scene entityScene,
+                RuntimeCityRAndDMapView view)
+        {
+            OperationMapEntityPresentationIdentityAuthoring[] owners =
+                RequireProtectedAutobahnOwners(entityScene);
+            string[] sourceIds = owners
+                .Select(owner => owner.SourceGlobalObjectId)
+                .ToArray();
+            if (!DenseCityProtectedAutobahnReplacementPlanner.TryCreate(
+                    sourceIds,
+                    DenseMiddleEasternCityEditModeBuilder.GetRoadGridOrigin(view),
+                    out DenseCityProtectedAutobahnRouteDescriptor descriptor,
+                    out string error))
+            {
+                throw new InvalidOperationException(error);
+            }
+            return descriptor;
+        }
+
+        internal static int MarkRealizedProtectedAutobahnTiles(
+            DenseCityGeneratedRootAuthoring entityRoot,
+            Transform temporaryGeneratedRoot,
+            DenseCityProtectedAutobahnRouteDescriptor descriptor)
+        {
+            if (entityRoot == null ||
+                entityRoot.Role != DenseCityGeneratedRootRole.EntityPresentationSource)
+            {
+                throw new ArgumentException(
+                    "The dense-city entity-presentation root is required.",
+                    nameof(entityRoot));
+            }
+            if (temporaryGeneratedRoot == null)
+                throw new ArgumentNullException(nameof(temporaryGeneratedRoot));
+            if (!DenseCityProtectedAutobahnReplacementPlanner.TryValidate(
+                    descriptor,
+                    out string descriptorError))
+            {
+                throw new InvalidOperationException(descriptorError);
+            }
+            Transform[] realizedTransforms =
+                entityRoot.GetComponentsInChildren<Transform>(true);
+            for (int index = 0; index < realizedTransforms.Length; index++)
+            {
+                GameObject owner = realizedTransforms[index].gameObject;
+                if (GameObjectUtility.GetMonoBehavioursWithMissingScriptCount(owner) != 0)
+                    GameObjectUtility.RemoveMonoBehavioursWithMissingScript(owner);
+            }
+
+            DenseCityProtectedAutobahnReplacementTileMarker[] temporaryMarkers =
+                temporaryGeneratedRoot.GetComponentsInChildren<
+                    DenseCityProtectedAutobahnReplacementTileMarker>(true);
+            var expectedTiles = new List<(Vector2Int Cell, string PrefabGuid, Matrix4x4 Matrix)>(
+                temporaryMarkers.Length);
+            var expectedCells = new HashSet<Vector2Int>();
+            for (int index = 0; index < temporaryMarkers.Length; index++)
+            {
+                GameObject owner = temporaryMarkers[index].gameObject;
+                Vector2Int cell = temporaryMarkers[index].Cell;
+                string prefabGuid = AssetDatabase.AssetPathToGUID(
+                    PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(owner));
+                if (string.IsNullOrEmpty(prefabGuid) ||
+                    !expectedCells.Add(cell))
+                {
+                    throw new InvalidOperationException(
+                        $"Protected Autobahn temporary tile ownership is invalid at {cell}.");
+                }
+                expectedTiles.Add((cell, prefabGuid, owner.transform.localToWorldMatrix));
+            }
+            if (expectedTiles.Count == 0)
+            {
+                throw new InvalidOperationException(
+                    "Protected Autobahn temporary tile ownership is empty.");
+            }
+
+            DenseCityProtectedAutobahnReplacementTileMarker[] existingMarkers =
+                entityRoot.GetComponentsInChildren<
+                    DenseCityProtectedAutobahnReplacementTileMarker>(true);
+            for (int index = existingMarkers.Length - 1; index >= 0; index--)
+                UnityEngine.Object.DestroyImmediate(existingMarkers[index]);
+            DenseCityProtectedAutobahnReplacementManifestAuthoring[] existingManifests =
+                entityRoot.GetComponentsInChildren<
+                    DenseCityProtectedAutobahnReplacementManifestAuthoring>(true);
+            for (int index = 1; index < existingManifests.Length; index++)
+                UnityEngine.Object.DestroyImmediate(existingManifests[index]);
+            DenseCityProtectedAutobahnReplacementManifestAuthoring manifest =
+                existingManifests.Length == 0
+                    ? entityRoot.gameObject.AddComponent<
+                        DenseCityProtectedAutobahnReplacementManifestAuthoring>()
+                    : existingManifests[0];
+            var realizedCells = new HashSet<Vector2Int>();
+            DenseCityPresentationIdentityAuthoring[] identities =
+                entityRoot.GetComponentsInChildren<DenseCityPresentationIdentityAuthoring>(true);
+            var ownersByPrefabGuid = new Dictionary<string, List<GameObject>>(
+                StringComparer.Ordinal);
+            for (int identityIndex = 0; identityIndex < identities.Length; identityIndex++)
+            {
+                GameObject owner = identities[identityIndex].gameObject;
+                string prefabGuid = AssetDatabase.AssetPathToGUID(
+                    PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(owner));
+                if (string.IsNullOrEmpty(prefabGuid))
+                    continue;
+                if (!ownersByPrefabGuid.TryGetValue(prefabGuid, out List<GameObject> owners))
+                {
+                    owners = new List<GameObject>();
+                    ownersByPrefabGuid.Add(prefabGuid, owners);
+                }
+                owners.Add(owner);
+            }
+            var usedOwners = new HashSet<GameObject>();
+            var manifestEntries =
+                new List<DenseCityProtectedAutobahnReplacementManifestEntry>(
+                    expectedTiles.Count);
+            for (int expectedIndex = 0; expectedIndex < expectedTiles.Count; expectedIndex++)
+            {
+                (Vector2Int cell, string expectedPrefabGuid, Matrix4x4 expectedMatrix) =
+                    expectedTiles[expectedIndex];
+                GameObject matchedOwner = null;
+                if (!ownersByPrefabGuid.TryGetValue(
+                        expectedPrefabGuid,
+                        out List<GameObject> candidateOwners))
+                {
+                    throw new InvalidOperationException(
+                        $"Protected Autobahn realized prefab is missing at {cell}.");
+                }
+                for (int candidateIndex = 0;
+                     candidateIndex < candidateOwners.Count;
+                     candidateIndex++)
+                {
+                    GameObject candidate = candidateOwners[candidateIndex];
+                    if (usedOwners.Contains(candidate))
+                        continue;
+                    if (!MatricesApproximatelyEqual(
+                            expectedMatrix,
+                            candidate.transform.localToWorldMatrix,
+                            0.001f))
+                    {
+                        continue;
+                    }
+                    if (matchedOwner != null)
+                    {
+                        throw new InvalidOperationException(
+                            $"Protected Autobahn realized tile is ambiguous at {cell}.");
+                    }
+                    matchedOwner = candidate;
+                }
+                if (matchedOwner == null || !usedOwners.Add(matchedOwner) ||
+                    !realizedCells.Add(cell))
+                {
+                    throw new InvalidOperationException(
+                        $"Protected Autobahn realized tile does not resolve at {cell}.");
+                }
+                DenseCityPresentationIdentityAuthoring identity =
+                    matchedOwner.GetComponent<DenseCityPresentationIdentityAuthoring>();
+                if (identity == null)
+                {
+                    throw new InvalidOperationException(
+                        $"Protected Autobahn realized tile identity is missing at {cell}.");
+                }
+                if (!identity.TryValidate(out string identityError))
+                    throw new InvalidOperationException(identityError);
+                manifestEntries.Add(
+                    new DenseCityProtectedAutobahnReplacementManifestEntry(
+                        identity.StableId,
+                        expectedPrefabGuid,
+                        cell));
+            }
+
+            if (realizedCells.Count != expectedTiles.Count)
+            {
+                throw new InvalidOperationException(
+                    $"Protected Autobahn realized tile coverage is {realizedCells.Count}/" +
+                    $"{expectedTiles.Count}.");
+            }
+            manifestEntries.Sort((left, right) =>
+            {
+                int comparison = left.Cell.y.CompareTo(right.Cell.y);
+                return comparison != 0
+                    ? comparison
+                    : left.Cell.x.CompareTo(right.Cell.x);
+            });
+            manifest.Configure(manifestEntries);
+            EditorUtility.SetDirty(manifest);
+            return realizedCells.Count;
+        }
+
+        private static int RetireProtectedAutobahnLegacyVisuals(Scene entityScene)
+        {
+            OperationMapEntityPresentationIdentityAuthoring[] owners =
+                RequireProtectedAutobahnOwners(entityScene);
+            for (int ownerIndex = 0; ownerIndex < owners.Length; ownerIndex++)
+            {
+                GameObject owner = owners[ownerIndex].gameObject;
+                Matrix4x4 worldMatrix = owner.transform.localToWorldMatrix;
+                if (PrefabUtility.IsPartOfPrefabInstance(owner))
+                {
+                    GameObject nearestRoot =
+                        PrefabUtility.GetNearestPrefabInstanceRoot(owner);
+                    if (nearestRoot != owner)
+                    {
+                        throw new InvalidOperationException(
+                            $"Protected Autobahn owner is not an independent prefab root: " +
+                            $"'{owners[ownerIndex].SourceGlobalObjectId}'.");
+                    }
+                    PrefabUtility.UnpackPrefabInstance(
+                        owner,
+                        PrefabUnpackMode.Completely,
+                        InteractionMode.AutomatedAction);
+                }
+
+                for (int childIndex = owner.transform.childCount - 1;
+                     childIndex >= 0;
+                     childIndex--)
+                {
+                    UnityEngine.Object.DestroyImmediate(
+                        owner.transform.GetChild(childIndex).gameObject);
+                }
+
+                Component[] components = owner.GetComponents<Component>();
+                for (int componentIndex = components.Length - 1;
+                     componentIndex >= 0;
+                     componentIndex--)
+                {
+                    Component component = components[componentIndex];
+                    if (component == null ||
+                        component is Transform ||
+                        component is OperationMapEntityPresentationIdentityAuthoring)
+                    {
+                        continue;
+                    }
+                    UnityEngine.Object.DestroyImmediate(component);
+                }
+
+                if (!MatricesApproximatelyEqual(
+                        worldMatrix,
+                        owner.transform.localToWorldMatrix,
+                        0.0001f) ||
+                    owner.GetComponentsInChildren<Renderer>(true).Length != 0 ||
+                    owner.GetComponentsInChildren<Collider>(true).Length != 0)
+                {
+                    throw new InvalidOperationException(
+                        $"Protected Autobahn legacy visual retirement failed for " +
+                        $"'{owners[ownerIndex].SourceGlobalObjectId}'.");
+                }
+            }
+            return owners.Length;
+        }
+
+        private static OperationMapEntityPresentationIdentityAuthoring[]
+            RequireProtectedAutobahnOwners(Scene entityScene)
+        {
+            if (!entityScene.IsValid() || !entityScene.isLoaded)
+                throw new ArgumentException("A loaded entity-presentation scene is required.");
+
+            string[] expectedIds =
+            {
+                DenseCityProtectedAutobahnReplacementPlanner.AcceptedWestSourceGlobalObjectId,
+                DenseCityProtectedAutobahnReplacementPlanner.AcceptedEastSourceGlobalObjectId
+            };
+            Dictionary<string, OperationMapEntityPresentationIdentityAuthoring> bySource =
+                entityScene.GetRootGameObjects()
+                    .SelectMany(root =>
+                        root.GetComponentsInChildren<
+                            OperationMapEntityPresentationIdentityAuthoring>(true))
+                    .Where(identity => expectedIds.Contains(
+                        identity.SourceGlobalObjectId,
+                        StringComparer.Ordinal))
+                    .ToDictionary(
+                        identity => identity.SourceGlobalObjectId,
+                        identity => identity,
+                        StringComparer.Ordinal);
+            if (bySource.Count != expectedIds.Length)
+            {
+                throw new InvalidOperationException(
+                    $"Protected Autobahn candidate owners resolve {bySource.Count}/" +
+                    $"{expectedIds.Length} exact source identities.");
+            }
+
+            var owners = new OperationMapEntityPresentationIdentityAuthoring[expectedIds.Length];
+            for (int index = 0; index < expectedIds.Length; index++)
+            {
+                owners[index] = bySource[expectedIds[index]];
+                if (owners[index].Role != OperationMapEntityPresentationRole.RenderOnly ||
+                    owners[index].PlacementIndex !=
+                    OperationMapEntityPresentationIdentityAuthoring.NoPlacementIndex)
+                {
+                    throw new InvalidOperationException(
+                        $"Protected Autobahn owner has invalid presentation ownership: " +
+                        $"'{expectedIds[index]}'.");
+                }
+            }
+            return owners;
+        }
+
+        private static bool MatricesApproximatelyEqual(
+            Matrix4x4 first,
+            Matrix4x4 second,
+            float tolerance)
+        {
+            for (int index = 0; index < 16; index++)
+            {
+                if (Mathf.Abs(first[index] - second[index]) > tolerance)
+                    return false;
+            }
+            return true;
         }
 
         internal static bool TryCreate(
@@ -754,6 +1139,38 @@ namespace Game.Editor
             CopyShaderPassState(source, destination, "MotionVectors");
             EditorUtility.SetDirty(destination);
             return destination;
+        }
+
+        internal static bool IsDeterministicSyntyMaterialReplacement(
+            string sourceGuid,
+            string replacementGuid)
+        {
+            if (string.IsNullOrEmpty(replacementGuid))
+                return false;
+            return IsDeterministicSyntyMaterialReplacementPath(
+                sourceGuid,
+                AssetDatabase.GUIDToAssetPath(replacementGuid));
+        }
+
+        internal static bool IsDeterministicSyntyMaterialReplacementPath(
+            string sourceGuid,
+            string replacementPath)
+        {
+            if (string.IsNullOrEmpty(sourceGuid) || sourceGuid.Length != 32)
+                return false;
+            for (int index = 0; index < sourceGuid.Length; index++)
+            {
+                char character = sourceGuid[index];
+                if (!((character >= '0' && character <= '9') ||
+                      (character >= 'a' && character <= 'f')))
+                {
+                    return false;
+                }
+            }
+
+            string expectedPath =
+                $"{CandidateSharedMaterialFolder}/Synty_Generic_Basic_{sourceGuid}.mat";
+            return string.Equals(replacementPath, expectedPath, StringComparison.Ordinal);
         }
 
         private static void CopyTexture(

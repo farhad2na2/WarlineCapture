@@ -277,6 +277,13 @@ namespace Game.Editor
         public static DenseMiddleEasternCityEditModeBuilder.Result BuildDenseMapWide(
             RuntimeCityRAndDMapView view)
         {
+            return BuildDenseMapWide(view, null);
+        }
+
+        internal static DenseMiddleEasternCityEditModeBuilder.Result BuildDenseMapWide(
+            RuntimeCityRAndDMapView view,
+            DenseCityProtectedAutobahnRouteDescriptor protectedAutobahnReplacement)
+        {
             if (view == null)
                 throw new ArgumentNullException(nameof(view));
             if (Application.isPlaying)
@@ -298,7 +305,11 @@ namespace Game.Editor
                 NormalizeGeneratedRootWorldTransform(root);
 
                 DenseMiddleEasternCityEditModeBuilder.Result result =
-                    DenseMiddleEasternCityEditModeBuilder.Build(view, root, config);
+                    DenseMiddleEasternCityEditModeBuilder.Build(
+                        view,
+                        root,
+                        config,
+                        protectedAutobahnReplacement);
 
                 RegisterGeneratedChildrenForUndo(root);
                 MarkSceneDirty(view);

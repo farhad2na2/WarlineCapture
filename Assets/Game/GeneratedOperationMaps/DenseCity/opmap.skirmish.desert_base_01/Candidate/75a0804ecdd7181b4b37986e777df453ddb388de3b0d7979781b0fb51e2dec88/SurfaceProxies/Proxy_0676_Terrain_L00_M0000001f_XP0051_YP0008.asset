@@ -11,14 +11,14 @@ Mesh:
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
-    indexCount: 24
+    indexCount: 12
     topology: 0
     baseVertex: 0
     firstVertex: 0
-    vertexCount: 16
+    vertexCount: 8
     localAABB:
-      m_Center: {x: 1646.5205, y: 0.035, z: 283.55353}
-      m_Extent: {x: 17.464355, y: 0, z: 5.103531}
+      m_Center: {x: 1652.5623, y: 0.035, z: 282.43774}
+      m_Extent: {x: 12.190491, y: 0, z: 3.9877167}
   m_Shapes:
     vertices: []
     shapes: []
@@ -35,10 +35,10 @@ Mesh:
   m_KeepVertices: 1
   m_KeepIndices: 1
   m_IndexFormat: 0
-  m_IndexBuffer: 000001000200000002000300040005000600040006000700080009000a0008000a000b000c000d000e000c000e000f00
+  m_IndexBuffer: 000001000200000002000300040005000600040006000700
   m_VertexData:
     serializedVersion: 3
-    m_VertexCount: 16
+    m_VertexCount: 8
     m_Channels:
     - stream: 0
       offset: 0
@@ -96,8 +96,8 @@ Mesh:
       offset: 0
       format: 0
       dimension: 0
-    m_DataSize: 192
-    _typelessdata: cca1cb44295c0f3d9a398b43cca1cb44295c0f3d5c068d43345ecc44295c0f3d5c068d43345ecc44295c0f3d9a398b43ce19cd44295c0f3d9f198d43ce19cd44295c0f3d61e68e4336d6cd44295c0f3d61e68e4336d6cd44295c0f3d9f198d435647cf44295c0f3de5ab8b435647cf44295c0f3d1b54904384ffcf44295c0f3d1b54904384ffcf44295c0f3de5ab8b430060cf44295c0f3d9a398b430060cf44295c0f3d9ab98c4300c0cf44295c0f3d9ab98c4300c0cf44295c0f3d9a398b43
+    m_DataSize: 96
+    _typelessdata: e60bcd44295c0f3d8bc98c43e60bcd44295c0f3d75368f4314bccd44295c0f3d75368f4314bccd44295c0f3d8bc98c43e967cf44295c0f3d9a398b43e967cf44295c0f3d84a68d431718d044295c0f3d84a68d431718d044295c0f3d9a398b43
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -151,8 +151,8 @@ Mesh:
       m_BitSize: 0
     m_UVInfo: 0
   m_LocalAABB:
-    m_Center: {x: 1646.5205, y: 0.035, z: 283.55353}
-    m_Extent: {x: 17.464355, y: 0, z: 5.103531}
+    m_Center: {x: 1652.5623, y: 0.035, z: 282.43774}
+    m_Extent: {x: 12.190491, y: 0, z: 3.9877167}
   m_MeshUsageFlags: 0
   m_CookingOptions: 30
   m_BakedConvexCollisionMesh: 

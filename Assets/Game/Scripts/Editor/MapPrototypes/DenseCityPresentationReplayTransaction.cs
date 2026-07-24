@@ -22,7 +22,7 @@ namespace Game.Editor
     {
         internal static DenseCityRealizedPresentationSet Realize(
             string operationMapId,
-            DenseCityGenerationRecordSet records,
+            IDenseCityGenerationRecordSource records,
             DenseCityPresentationHierarchyContext hierarchy,
             DenseCityBuildingDefinitionLibrary definitionLibrary)
         {

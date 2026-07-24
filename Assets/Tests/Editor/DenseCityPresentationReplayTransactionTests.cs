@@ -58,12 +58,14 @@ public sealed class DenseCityPresentationReplayTransactionTests
         (Scene mapScene, Scene entityScene) = CreateScenePair();
         try
         {
-            using DenseCityGenerationRecordSet records = CreateRecords(false);
+            DenseCityGenerationRecordSet records = CreateRecords(false);
+            DenseCityGenerationRecordSnapshot snapshot = records.CreateSnapshot();
+            records.Dispose();
             DenseCityPresentationHierarchyContext hierarchy = CreateHierarchy(mapScene, entityScene);
 
             DenseCityRealizedPresentationSet realized = DenseCityPresentationReplayTransaction.Realize(
                 "opmap.skirmish.presentation_replay_test",
-                records,
+                snapshot,
                 hierarchy,
                 DenseCityBuildingDefinitionLibrary.LoadExisting());
 

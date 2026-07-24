@@ -8,7 +8,7 @@ namespace Game.Editor
     {
         internal static IReadOnlyList<DenseCityRealizedBuildingPresentation> Realize(
             string operationMapId,
-            DenseCityGenerationRecordSet records,
+            IDenseCityGenerationRecordSource records,
             DenseCityPresentationHierarchyContext hierarchy,
             DenseCityBuildingDefinitionLibrary definitionLibrary)
         {

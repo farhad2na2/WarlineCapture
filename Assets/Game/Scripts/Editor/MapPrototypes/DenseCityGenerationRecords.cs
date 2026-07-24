@@ -378,7 +378,14 @@ namespace Game.Editor
         }
     }
 
-    internal sealed class DenseCityGenerationRecordSnapshot
+    internal interface IDenseCityGenerationRecordSource
+    {
+        IReadOnlyList<DenseCityBuildingBakeRecord> Buildings { get; }
+        IReadOnlyList<DenseCitySurfaceBakeRecord> Surfaces { get; }
+        IReadOnlyList<DenseCityPresentationBakeRecord> Presentations { get; }
+    }
+
+    internal sealed class DenseCityGenerationRecordSnapshot : IDenseCityGenerationRecordSource
     {
         private readonly DenseCityBuildingBakeRecord[] buildings;
         private readonly DenseCitySurfaceBakeRecord[] surfaces;
@@ -397,6 +404,12 @@ namespace Game.Editor
         internal IReadOnlyList<DenseCityBuildingBakeRecord> Buildings => buildings;
         internal IReadOnlyList<DenseCitySurfaceBakeRecord> Surfaces => surfaces;
         internal IReadOnlyList<DenseCityPresentationBakeRecord> Presentations => presentations;
+        IReadOnlyList<DenseCityBuildingBakeRecord> IDenseCityGenerationRecordSource.Buildings =>
+            Buildings;
+        IReadOnlyList<DenseCitySurfaceBakeRecord> IDenseCityGenerationRecordSource.Surfaces =>
+            Surfaces;
+        IReadOnlyList<DenseCityPresentationBakeRecord>
+            IDenseCityGenerationRecordSource.Presentations => Presentations;
 
         private static T[] Copy<T>(IReadOnlyList<T> source)
         {
@@ -409,7 +422,9 @@ namespace Game.Editor
         }
     }
 
-    internal sealed class DenseCityGenerationRecordSet : IDisposable
+    internal sealed class DenseCityGenerationRecordSet :
+        IDenseCityGenerationRecordSource,
+        IDisposable
     {
         private readonly List<DenseCityBuildingBakeRecord> buildings;
         private readonly List<DenseCitySurfaceBakeRecord> surfaces;
@@ -440,6 +455,12 @@ namespace Game.Editor
         internal IReadOnlyList<DenseCityBuildingBakeRecord> Buildings => RequireSealed(buildings);
         internal IReadOnlyList<DenseCitySurfaceBakeRecord> Surfaces => RequireSealed(surfaces);
         internal IReadOnlyList<DenseCityPresentationBakeRecord> Presentations => RequireSealed(presentations);
+        IReadOnlyList<DenseCityBuildingBakeRecord> IDenseCityGenerationRecordSource.Buildings =>
+            Buildings;
+        IReadOnlyList<DenseCitySurfaceBakeRecord> IDenseCityGenerationRecordSource.Surfaces =>
+            Surfaces;
+        IReadOnlyList<DenseCityPresentationBakeRecord>
+            IDenseCityGenerationRecordSource.Presentations => Presentations;
 
         internal DenseCityGenerationRecordSnapshot CreateSnapshot() =>
             new(Buildings, Surfaces, Presentations);

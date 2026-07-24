@@ -7,7 +7,7 @@ namespace Game.Editor
     internal static class DenseCityRenderOnlyPresentationReplayTransaction
     {
         internal static IReadOnlyList<Transform> Realize(
-            DenseCityGenerationRecordSet records,
+            IDenseCityGenerationRecordSource records,
             DenseCityPresentationHierarchyContext hierarchy)
         {
             if (records == null)

@@ -148,7 +148,7 @@ namespace Game.Editor
         }
 
         internal static DenseCitySurfaceProxyBuildResult Build(
-            DenseCityGenerationRecordSet records,
+            IDenseCityGenerationRecordSource records,
             DenseCityGeneratedRootAuthoring mapBakeRoot,
             string operationMapId,
             Rect mapSurfaceBounds,

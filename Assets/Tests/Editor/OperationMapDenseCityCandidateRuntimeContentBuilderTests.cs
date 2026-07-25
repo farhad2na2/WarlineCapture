@@ -20,7 +20,10 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
             suite.MeasureFrozenRollbackContent_AcceptsCurrentFrozenPackage,
             suite.MeasureProductionStaticAddressables_ReportsLegacyBaseline,
             suite.MeasureProductionStaticAddressables_RejectsRetiredEntriesAfterCutover,
-            suite.MeasureProductionStaticAddressables_AcceptsZeroEntriesAfterCutover
+            suite.MeasureProductionStaticAddressables_AcceptsZeroEntriesAfterCutover,
+            suite.MeasurePackedDependencyBytes_ReportsSharedAndExcessPhysicalBytes,
+            suite.MeasurePackedDependencyBytes_DeduplicatesSameBundleRows,
+            suite.MeasurePackedDependencyBytes_RejectsMissingSharedEvidence
         };
         for (int i = 0; i < tests.Length; i++)
             tests[i]();
@@ -195,6 +198,83 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
         Assert.That(result.ManifestEntryCount, Is.Zero);
         Assert.That(result.ChunkEntryCount, Is.Zero);
         Assert.That(result.ZeroCountsSatisfied, Is.True);
+    }
+
+    [Test]
+    public void MeasurePackedDependencyBytes_ReportsSharedAndExcessPhysicalBytes()
+    {
+        var occurrences =
+            new[]
+            {
+                new OperationMapDenseCityCandidateRuntimeContentBuilder.PackedAssetOccurrence(
+                    "shared-guid",
+                    "shared.bundle",
+                    100),
+                new OperationMapDenseCityCandidateRuntimeContentBuilder.PackedAssetOccurrence(
+                    "duplicate-guid",
+                    "a.bundle",
+                    30),
+                new OperationMapDenseCityCandidateRuntimeContentBuilder.PackedAssetOccurrence(
+                    "duplicate-guid",
+                    "b.bundle",
+                    25),
+                new OperationMapDenseCityCandidateRuntimeContentBuilder.PackedAssetOccurrence(
+                    "unique-guid",
+                    "a.bundle",
+                    9)
+            };
+
+        OperationMapDenseCityCandidateRuntimeContentBuilder.PackedDependencyByteResult result =
+            OperationMapDenseCityCandidateRuntimeContentBuilder.MeasurePackedDependencyBytes(
+                occurrences,
+                new[] { "shared-guid" });
+
+        Assert.That(result.SharedDependencyGuidCount, Is.EqualTo(1));
+        Assert.That(result.SharedDependencyBytes, Is.EqualTo(100));
+        Assert.That(result.DuplicatedDependencyGuidCount, Is.EqualTo(1));
+        Assert.That(result.DuplicatedDependencyBytes, Is.EqualTo(25));
+    }
+
+    [Test]
+    public void MeasurePackedDependencyBytes_DeduplicatesSameBundleRows()
+    {
+        var occurrences =
+            new[]
+            {
+                new OperationMapDenseCityCandidateRuntimeContentBuilder.PackedAssetOccurrence(
+                    "shared-guid",
+                    "shared.bundle",
+                    40),
+                new OperationMapDenseCityCandidateRuntimeContentBuilder.PackedAssetOccurrence(
+                    "shared-guid",
+                    "shared.bundle",
+                    40)
+            };
+
+        OperationMapDenseCityCandidateRuntimeContentBuilder.PackedDependencyByteResult result =
+            OperationMapDenseCityCandidateRuntimeContentBuilder.MeasurePackedDependencyBytes(
+                occurrences,
+                new[] { "shared-guid", "shared-guid" });
+
+        Assert.That(result.SharedDependencyGuidCount, Is.EqualTo(1));
+        Assert.That(result.SharedDependencyBytes, Is.EqualTo(40));
+        Assert.That(result.DuplicatedDependencyGuidCount, Is.Zero);
+        Assert.That(result.DuplicatedDependencyBytes, Is.Zero);
+    }
+
+    [Test]
+    public void MeasurePackedDependencyBytes_RejectsMissingSharedEvidence()
+    {
+        InvalidOperationException exception = Assert.Throws<InvalidOperationException>(
+            () => OperationMapDenseCityCandidateRuntimeContentBuilder
+                .MeasurePackedDependencyBytes(
+                    new[]
+                    {
+                        new OperationMapDenseCityCandidateRuntimeContentBuilder
+                            .PackedAssetOccurrence("present-guid", "bundle", 10)
+                    },
+                    new[] { "missing-guid" }));
+        Assert.That(exception.Message, Does.Contain("missing from Build Layout evidence"));
     }
 
     private static string WriteBytes(string root, string relativePath, int count)

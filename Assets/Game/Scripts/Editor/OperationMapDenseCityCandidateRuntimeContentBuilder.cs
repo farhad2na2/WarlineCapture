@@ -468,6 +468,85 @@ namespace Game.Editor
                 zeroCountsSatisfied);
         }
 
+        internal static PackedDependencyByteResult MeasurePackedDependencyBytes(
+            IEnumerable<PackedAssetOccurrence> occurrences,
+            IEnumerable<string> sharedDependencyGuids)
+        {
+            if (occurrences == null)
+                throw new ArgumentNullException(nameof(occurrences));
+            if (sharedDependencyGuids == null)
+                throw new ArgumentNullException(nameof(sharedDependencyGuids));
+
+            var bytesByGuidAndBundle =
+                new Dictionary<string, Dictionary<string, long>>(StringComparer.Ordinal);
+            foreach (PackedAssetOccurrence occurrence in occurrences)
+            {
+                if (string.IsNullOrWhiteSpace(occurrence.AssetGuid) ||
+                    string.IsNullOrWhiteSpace(occurrence.BundleName) ||
+                    occurrence.Bytes <= 0)
+                {
+                    throw new InvalidOperationException(
+                        "Packed dependency occurrence requires a GUID, bundle, and positive bytes.");
+                }
+
+                if (!bytesByGuidAndBundle.TryGetValue(
+                        occurrence.AssetGuid,
+                        out Dictionary<string, long> byBundle))
+                {
+                    byBundle = new Dictionary<string, long>(StringComparer.Ordinal);
+                    bytesByGuidAndBundle.Add(occurrence.AssetGuid, byBundle);
+                }
+
+                if (!byBundle.TryGetValue(occurrence.BundleName, out long existing) ||
+                    occurrence.Bytes > existing)
+                {
+                    byBundle[occurrence.BundleName] = occurrence.Bytes;
+                }
+            }
+
+            string[] sharedGuids = sharedDependencyGuids
+                .Distinct(StringComparer.Ordinal)
+                .OrderBy(guid => guid, StringComparer.Ordinal)
+                .ToArray();
+            long sharedBytes = 0;
+            for (int index = 0; index < sharedGuids.Length; index++)
+            {
+                string guid = sharedGuids[index];
+                if (string.IsNullOrWhiteSpace(guid) ||
+                    !bytesByGuidAndBundle.TryGetValue(
+                        guid,
+                        out Dictionary<string, long> sharedByBundle))
+                {
+                    throw new InvalidOperationException(
+                        $"Packed shared dependency is missing from Build Layout evidence: {guid}");
+                }
+
+                checked
+                {
+                    sharedBytes += sharedByBundle.Values.Sum();
+                }
+            }
+
+            int duplicatedGuidCount = 0;
+            long duplicatedBytes = 0;
+            foreach (Dictionary<string, long> byBundle in bytesByGuidAndBundle.Values)
+            {
+                if (byBundle.Count <= 1)
+                    continue;
+                duplicatedGuidCount++;
+                checked
+                {
+                    duplicatedBytes += byBundle.Values.Sum() - byBundle.Values.Max();
+                }
+            }
+
+            return new PackedDependencyByteResult(
+                sharedGuids.Length,
+                sharedBytes,
+                duplicatedGuidCount,
+                duplicatedBytes);
+        }
+
         private static ProductionStaticAddressablesResult
             MeasureCurrentProductionStaticAddressables()
         {
@@ -691,6 +770,40 @@ namespace Game.Editor
             internal int ManifestEntryCount { get; }
             internal int ChunkEntryCount { get; }
             internal bool ZeroCountsSatisfied { get; }
+        }
+
+        internal readonly struct PackedAssetOccurrence
+        {
+            internal PackedAssetOccurrence(string assetGuid, string bundleName, long bytes)
+            {
+                AssetGuid = assetGuid;
+                BundleName = bundleName;
+                Bytes = bytes;
+            }
+
+            internal string AssetGuid { get; }
+            internal string BundleName { get; }
+            internal long Bytes { get; }
+        }
+
+        internal readonly struct PackedDependencyByteResult
+        {
+            internal PackedDependencyByteResult(
+                int sharedDependencyGuidCount,
+                long sharedDependencyBytes,
+                int duplicatedDependencyGuidCount,
+                long duplicatedDependencyBytes)
+            {
+                SharedDependencyGuidCount = sharedDependencyGuidCount;
+                SharedDependencyBytes = sharedDependencyBytes;
+                DuplicatedDependencyGuidCount = duplicatedDependencyGuidCount;
+                DuplicatedDependencyBytes = duplicatedDependencyBytes;
+            }
+
+            internal int SharedDependencyGuidCount { get; }
+            internal long SharedDependencyBytes { get; }
+            internal int DuplicatedDependencyGuidCount { get; }
+            internal long DuplicatedDependencyBytes { get; }
         }
 
         private sealed class DenseRuntimeContentOutputTransaction : IDisposable

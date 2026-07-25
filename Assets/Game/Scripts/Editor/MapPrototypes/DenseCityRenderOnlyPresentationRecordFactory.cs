@@ -19,7 +19,8 @@ namespace Game.Editor
             Matrix4x4 worldMatrix,
             bool castsShadows,
             bool batchingEligible,
-            byte lodImportance)
+            byte lodImportance,
+            bool allowsProtectedOverlap = false)
         {
             GeneratorSchema = generatorSchema;
             Seed = seed;
@@ -34,6 +35,7 @@ namespace Game.Editor
             CastsShadows = castsShadows;
             BatchingEligible = batchingEligible;
             LodImportance = lodImportance;
+            AllowsProtectedOverlap = allowsProtectedOverlap;
         }
 
         internal string GeneratorSchema { get; }
@@ -49,6 +51,7 @@ namespace Game.Editor
         internal bool CastsShadows { get; }
         internal bool BatchingEligible { get; }
         internal byte LodImportance { get; }
+        internal bool AllowsProtectedOverlap { get; }
     }
 
     internal static class DenseCityRenderOnlyPresentationRecordFactory
@@ -74,7 +77,8 @@ namespace Game.Editor
                 input.WorldMatrix,
                 input.CastsShadows,
                 input.BatchingEligible,
-                input.LodImportance);
+                input.LodImportance,
+                allowsProtectedOverlap: input.AllowsProtectedOverlap);
         }
 
         internal static void RequireRenderOnlyCategory(DenseCityPresentationCategory category)

@@ -106,7 +106,8 @@ namespace Game.Editor
                     owner.AddComponent<DenseCityPresentationIdentityAuthoring>();
                 presentationIdentity.ConfigureForEditor(
                     building.Identity.CreateBakedStableId(),
-                    OperationMapEntityPresentationRole.GameplayBuildings);
+                    OperationMapEntityPresentationRole.GameplayBuildings,
+                    Game.Components.DenseCityPresentationSemanticCategory.GameplayBuildingIntact);
                 authoring.ConfigureGeneratedForEditor(
                     operationMapId,
                     building.Identity.CreateBakedStableId(),

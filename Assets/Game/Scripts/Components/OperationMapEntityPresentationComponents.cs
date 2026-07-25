@@ -3,6 +3,26 @@ using Unity.Entities;
 
 namespace Game.Components
 {
+    public enum DenseCityPresentationSemanticCategory : byte
+    {
+        Unknown = 0,
+        GameplayBuildingIntact = 1,
+        GameplayBuildingDestroyed = 2,
+        BuildingAttachmentIntact = 3,
+        BuildingAttachmentDestroyed = 4,
+        Infrastructure = 5,
+        Vegetation = 6,
+        Prop = 7,
+        Horizon = 8
+    }
+
+    [System.Flags]
+    public enum DenseCityPresentationSemanticFlags : byte
+    {
+        None = 0,
+        AllowsProtectedOverlap = 1
+    }
+
     public struct OperationMapEntityPresentationRoot : IComponentData
     {
         public FixedString128Bytes OperationMapId;
@@ -35,6 +55,8 @@ namespace Game.Components
     {
         public FixedString128Bytes StableId;
         public byte Role;
+        public byte Category;
+        public byte Flags;
     }
 
     public struct OperationMapBuildingIdentity : IComponentData

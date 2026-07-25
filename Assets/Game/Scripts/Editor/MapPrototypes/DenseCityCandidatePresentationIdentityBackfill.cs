@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using Game.Authoring;
+using Game.Components;
 using Game.Configs;
 using Game.Runtime;
 using UnityEditor;
@@ -70,8 +71,34 @@ namespace Game.Editor
                     nameof(entityRoot));
             }
 
+            DenseCityPresentationIdentityAuthoring[] existingIdentities =
+                entityRoot.GetComponentsInChildren<DenseCityPresentationIdentityAuthoring>(true);
+            if (existingIdentities.Length > 0)
+            {
+                return UpgradeExistingIdentitySemantics(
+                    records,
+                    hierarchy,
+                    entityRoot,
+                    existingIdentities);
+            }
+
             var expectedIds = new HashSet<string>(StringComparer.Ordinal);
             var plan = new List<PlannedIdentity>();
+            DenseCityProtectedAutobahnReplacementManifestAuthoring manifest =
+                entityRoot.GetComponentInChildren<
+                    DenseCityProtectedAutobahnReplacementManifestAuthoring>(true);
+            var manifestIds = manifest == null
+                ? new HashSet<string>(StringComparer.Ordinal)
+                : manifest.Entries
+                    .Select(entry => entry.StableId)
+                    .ToHashSet(StringComparer.Ordinal);
+            if (manifest != null &&
+                (manifestIds.Count != manifest.Entries.Count ||
+                 manifestIds.Any(string.IsNullOrWhiteSpace)))
+            {
+                throw new InvalidOperationException(
+                    "Protected Autobahn manifest contains empty or duplicate stable identities.");
+            }
             IReadOnlyList<DenseCityBuildingBakeRecord> buildings = records.Buildings;
             Dictionary<string, OperationMapBuildingAuthoring> buildingByStableId =
                 IndexGeneratedBuildings(entityRoot, buildings.Count);
@@ -89,7 +116,9 @@ namespace Game.Editor
                     plan,
                     owner.gameObject,
                     stableId,
-                    OperationMapEntityPresentationRole.GameplayBuildings);
+                    OperationMapEntityPresentationRole.GameplayBuildings,
+                    DenseCityPresentationSemanticCategory.GameplayBuildingIntact,
+                    false);
             }
 
             int renderOnlyCount = 0;
@@ -97,19 +126,30 @@ namespace Game.Editor
             {
                 DenseCityPresentationCategory category = RenderOnlyCategories[categoryIndex];
                 DenseCityPresentationBakeRecord[] expected = records.Presentations
-                    .Where(record => record.Category == category)
+                    .Where(record =>
+                        record.Category == category &&
+                        !manifestIds.Contains(record.Identity.CreateBakedStableId()))
                     .ToArray();
                 Transform parent = hierarchy.ResolveIndependentParent(category);
-                if (parent.childCount != expected.Length)
+                Transform[] owners = Enumerable.Range(0, parent.childCount)
+                    .Select(parent.GetChild)
+                    .Where(owner =>
+                    {
+                        DenseCityPresentationIdentityAuthoring identity =
+                            owner.GetComponent<DenseCityPresentationIdentityAuthoring>();
+                        return identity == null || !manifestIds.Contains(identity.StableId);
+                    })
+                    .ToArray();
+                if (owners.Length != expected.Length)
                 {
                     throw new InvalidOperationException(
-                        $"Dense-city {category} owner count is {parent.childCount}; expected {expected.Length}.");
+                        $"Dense-city {category} owner count is {owners.Length}; expected {expected.Length}.");
                 }
 
                 for (int index = 0; index < expected.Length; index++)
                 {
                     DenseCityPresentationBakeRecord record = expected[index];
-                    Transform owner = parent.GetChild(index);
+                    Transform owner = owners[index];
                     hierarchy.RequireIndependentRoot(category, owner);
                     RequirePresentationMatch(owner, record);
                     string stableId = record.Identity.CreateBakedStableId();
@@ -123,13 +163,48 @@ namespace Game.Editor
                         plan,
                         owner.gameObject,
                         stableId,
-                        OperationMapEntityPresentationRole.RenderOnly);
+                        OperationMapEntityPresentationRole.RenderOnly,
+                        (DenseCityPresentationSemanticCategory)record.Category,
+                        record.AllowsProtectedOverlap);
+                    renderOnlyCount++;
+                }
+            }
+            if (manifest != null)
+            {
+                Transform infrastructure =
+                    hierarchy.ResolveIndependentParent(DenseCityPresentationCategory.Infrastructure);
+                Dictionary<string, DenseCityPresentationIdentityAuthoring[]> identitiesByStableId =
+                    entityRoot.GetComponentsInChildren<
+                            DenseCityPresentationIdentityAuthoring>(true)
+                        .GroupBy(identity => identity.StableId, StringComparer.Ordinal)
+                        .ToDictionary(
+                            group => group.Key,
+                            group => group.ToArray(),
+                            StringComparer.Ordinal);
+                foreach (DenseCityProtectedAutobahnReplacementManifestEntry entry in manifest.Entries)
+                {
+                    if (!identitiesByStableId.TryGetValue(
+                            entry.StableId,
+                            out DenseCityPresentationIdentityAuthoring[] matches) ||
+                        matches.Length != 1 ||
+                        !matches[0].transform.IsChildOf(infrastructure) ||
+                        !expectedIds.Add(entry.StableId))
+                    {
+                        throw new InvalidOperationException(
+                            $"Protected Autobahn manifest identity does not resolve once: " +
+                            $"'{entry.StableId}'.");
+                    }
+                    PlanIdentity(
+                        plan,
+                        matches[0].gameObject,
+                        entry.StableId,
+                        OperationMapEntityPresentationRole.RenderOnly,
+                        DenseCityPresentationSemanticCategory.Infrastructure,
+                        false);
                     renderOnlyCount++;
                 }
             }
 
-            DenseCityPresentationIdentityAuthoring[] existingIdentities =
-                entityRoot.GetComponentsInChildren<DenseCityPresentationIdentityAuthoring>(true);
             Dictionary<string, PlannedIdentity> plannedById = plan.ToDictionary(
                 item => item.StableId,
                 item => item,
@@ -141,6 +216,8 @@ namespace Game.Editor
                     !plannedById.TryGetValue(identity.StableId, out PlannedIdentity planned) ||
                     planned.Owner != identity.gameObject ||
                     planned.Role != identity.Role ||
+                    planned.Category != identity.Category ||
+                    planned.AllowsProtectedOverlap != identity.AllowsProtectedOverlap ||
                     !existingIds.Add(identity.StableId))
                 {
                     throw new InvalidOperationException(
@@ -161,7 +238,11 @@ namespace Game.Editor
                 }
 
                 var identity = item.Owner.AddComponent<DenseCityPresentationIdentityAuthoring>();
-                identity.ConfigureForEditor(item.StableId, item.Role);
+                identity.ConfigureForEditor(
+                    item.StableId,
+                    item.Role,
+                    item.Category,
+                    item.AllowsProtectedOverlap);
                 if (!identity.TryValidate(out string error))
                     throw new InvalidOperationException(error);
                 added++;
@@ -177,6 +258,187 @@ namespace Game.Editor
             }
 
             return new BackfillResult(buildings.Count, renderOnlyCount, added, existing);
+        }
+
+        private static BackfillResult UpgradeExistingIdentitySemantics(
+            IDenseCityGenerationRecordSource records,
+            DenseCityPresentationHierarchyContext hierarchy,
+            DenseCityGeneratedRootAuthoring entityRoot,
+            DenseCityPresentationIdentityAuthoring[] existingIdentities)
+        {
+            if (existingIdentities.Length !=
+                OperationMapEntityPresentationCandidateBakeValidator
+                    .ExpectedDenseGeneratedIdentities)
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city existing identity count is {existingIdentities.Length}; expected " +
+                    $"{OperationMapEntityPresentationCandidateBakeValidator.ExpectedDenseGeneratedIdentities}.");
+            }
+
+            var overlapIds = records.Presentations
+                .Where(record => record.AllowsProtectedOverlap)
+                .Select(record => record.Identity.CreateBakedStableId())
+                .ToHashSet(StringComparer.Ordinal);
+            var existingIdSet = existingIdentities
+                .Select(identity => identity.StableId)
+                .ToHashSet(StringComparer.Ordinal);
+            int resolvedRecordOverlapCount = overlapIds.Count(existingIdSet.Contains);
+            int expectedProtectedOverlapOwners = resolvedRecordOverlapCount > 0
+                ? overlapIds.Count
+                : records.Presentations
+                    .Where(record => record.AllowsProtectedOverlap)
+                    .Select(record => new Vector2Int(
+                        Mathf.RoundToInt(record.WorldMatrix.m03 * 1000f),
+                        Mathf.RoundToInt(record.WorldMatrix.m23 * 1000f)))
+                    .Distinct()
+                    .Count();
+            var plan = new List<PlannedIdentity>(existingIdentities.Length);
+            var expectedIds = new HashSet<string>(StringComparer.Ordinal);
+
+            OperationMapBuildingAuthoring[] buildings =
+                entityRoot.GetComponentsInChildren<OperationMapBuildingAuthoring>(true);
+            if (buildings.Length !=
+                OperationMapEntityPresentationCandidateBakeValidator
+                    .ExpectedDenseGeneratedIdentities -
+                OperationMapEntityPresentationCandidateBakeValidator
+                    .ExpectedDenseGeneratedRenderOnlyOwners)
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city generated building owner count is {buildings.Length}; expected " +
+                    $"{OperationMapEntityPresentationCandidateBakeValidator.ExpectedDenseGeneratedIdentities - OperationMapEntityPresentationCandidateBakeValidator.ExpectedDenseGeneratedRenderOnlyOwners}.");
+            }
+            foreach (OperationMapBuildingAuthoring building in buildings)
+            {
+                DenseCityPresentationIdentityAuthoring identity =
+                    building.GetComponent<DenseCityPresentationIdentityAuthoring>();
+                if (identity == null ||
+                    !string.Equals(identity.StableId, building.StableId, StringComparison.Ordinal) ||
+                    !expectedIds.Add(identity.StableId))
+                {
+                    throw new InvalidOperationException(
+                        $"Dense-city building owner does not have one matching stable identity: " +
+                        $"'{building.StableId}'.");
+                }
+                PlanIdentity(
+                    plan,
+                    building.gameObject,
+                    identity.StableId,
+                    OperationMapEntityPresentationRole.GameplayBuildings,
+                    DenseCityPresentationSemanticCategory.GameplayBuildingIntact,
+                    false);
+            }
+
+            int renderOnlyCount = 0;
+            int protectedOverlapCount = 0;
+            foreach (DenseCityPresentationCategory category in RenderOnlyCategories)
+            {
+                Transform parent = hierarchy.ResolveIndependentParent(category);
+                for (int index = 0; index < parent.childCount; index++)
+                {
+                    Transform owner = parent.GetChild(index);
+                    hierarchy.RequireIndependentRoot(category, owner);
+                    DenseCityPresentationIdentityAuthoring identity =
+                        owner.GetComponent<DenseCityPresentationIdentityAuthoring>();
+                    if (identity == null || !expectedIds.Add(identity.StableId))
+                    {
+                        throw new InvalidOperationException(
+                            $"Dense-city {category} owner does not have one unique stable identity: " +
+                            $"'{owner.name}'.");
+                    }
+
+                    bool allowsProtectedOverlap =
+                        overlapIds.Contains(identity.StableId) ||
+                        IsLegacySubgradeProtectedRouteOwner(owner);
+                    if (allowsProtectedOverlap)
+                    {
+                        if (category != DenseCityPresentationCategory.Infrastructure)
+                        {
+                            throw new InvalidOperationException(
+                                $"Dense-city protected-overlap owner is outside Infrastructure: " +
+                                $"'{identity.StableId}'.");
+                        }
+                        protectedOverlapCount++;
+                    }
+                    PlanIdentity(
+                        plan,
+                        owner.gameObject,
+                        identity.StableId,
+                        OperationMapEntityPresentationRole.RenderOnly,
+                        (DenseCityPresentationSemanticCategory)category,
+                        allowsProtectedOverlap);
+                    renderOnlyCount++;
+                }
+            }
+
+            if (renderOnlyCount !=
+                OperationMapEntityPresentationCandidateBakeValidator
+                    .ExpectedDenseGeneratedRenderOnlyOwners)
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city render-only owner count is {renderOnlyCount}; expected " +
+                    $"{OperationMapEntityPresentationCandidateBakeValidator.ExpectedDenseGeneratedRenderOnlyOwners}.");
+            }
+            if (protectedOverlapCount != expectedProtectedOverlapOwners)
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city protected-overlap owner count is {protectedOverlapCount}; " +
+                    $"the deterministic migration contract requires " +
+                    $"{expectedProtectedOverlapOwners}.");
+            }
+            if (expectedIds.Count != existingIdentities.Length)
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city semantic hierarchy resolves {expectedIds.Count} identities; " +
+                    $"expected {existingIdentities.Length}.");
+            }
+
+            Dictionary<string, PlannedIdentity> plannedById = plan.ToDictionary(
+                item => item.StableId,
+                item => item,
+                StringComparer.Ordinal);
+            foreach (DenseCityPresentationIdentityAuthoring identity in existingIdentities)
+            {
+                if (!identity.TryValidate(out string error) ||
+                    !plannedById.TryGetValue(identity.StableId, out PlannedIdentity planned) ||
+                    planned.Owner != identity.gameObject ||
+                    planned.Role != identity.Role ||
+                    planned.Category != identity.Category ||
+                    planned.AllowsProtectedOverlap != identity.AllowsProtectedOverlap)
+                {
+                    throw new InvalidOperationException(
+                        $"Dense-city generated identity is invalid or outside its semantic owner: " +
+                        $"'{identity.StableId}' ({error ?? "ownership mismatch"}).");
+                }
+            }
+
+            return new BackfillResult(buildings.Length, renderOnlyCount, 0, plan.Count);
+        }
+
+        // Accepted candidates predating semantic flags are upgraded once here. Production
+        // generation and readiness consume only the explicit AllowsProtectedOverlap flag.
+        private static bool IsLegacySubgradeProtectedRouteOwner(Transform owner)
+        {
+            var protectedFootprint = Rect.MinMaxRect(
+                DenseCityProtectedAutobahnReplacementPlanner.LegacyMinimumWorldX,
+                DenseCityProtectedAutobahnReplacementPlanner.LegacyMinimumWorldZ,
+                DenseCityProtectedAutobahnReplacementPlanner.LegacyMaximumWorldX,
+                DenseCityProtectedAutobahnReplacementPlanner.LegacyMaximumWorldZ);
+            Renderer[] renderers = owner.GetComponentsInChildren<Renderer>(true);
+            for (int index = 0; index < renderers.Length; index++)
+            {
+                Renderer renderer = renderers[index];
+                Bounds bounds = renderer.bounds;
+                var footprint = Rect.MinMaxRect(
+                    bounds.min.x,
+                    bounds.min.z,
+                    bounds.max.x,
+                    bounds.max.z);
+                if (bounds.max.y < -0.5f && protectedFootprint.Overlaps(footprint))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private static bool TryBackfillCandidate(out string summary, out string error)
@@ -233,20 +495,43 @@ namespace Game.Editor
                 DenseCityProtectedAutobahnRouteDescriptor protectedAutobahnReplacement =
                     DenseCityCandidateAuthoringTransaction
                         .CreateProtectedAutobahnReplacementDescriptor(entityScene, view);
-                DenseMiddleEasternCityEditModeBuilder.Result generated =
-                    RuntimeCityRAndDEditModeBuilder.BuildDenseMapWide(
+                bool hasAcceptedAutobahnManifest =
+                    entityRoot.GetComponentInChildren<
+                        DenseCityProtectedAutobahnReplacementManifestAuthoring>(true) != null;
+                DenseMiddleEasternCityEditModeBuilder.Result generated;
+                DenseCityGenerationRecordSnapshot backfillRecords;
+                if (hasAcceptedAutobahnManifest)
+                {
+                    DenseMiddleEasternCityEditModeBuilder.Result replacementGenerated =
+                        RuntimeCityRAndDEditModeBuilder.BuildDenseMapWide(
+                            view,
+                            protectedAutobahnReplacement);
+                    generated = RuntimeCityRAndDEditModeBuilder.BuildDenseMapWide(view);
+                    backfillRecords = new DenseCityGenerationRecordSnapshot(
+                        replacementGenerated.Records.Buildings,
+                        generated.Records.Surfaces,
+                        generated.Records.Presentations);
+                }
+                else
+                {
+                    generated = RuntimeCityRAndDEditModeBuilder.BuildDenseMapWide(
                         view,
                         protectedAutobahnReplacement);
+                    backfillRecords = generated.Records;
+                }
                 try
                 {
                     BackfillResult result = Apply(
-                        generated.Records,
+                        backfillRecords,
                         DenseCityPresentationHierarchyContext.Create(entityRoot),
                         entityRoot);
-                    DenseCityCandidateAuthoringTransaction.MarkRealizedProtectedAutobahnTiles(
-                        entityRoot,
-                        view.GeneratedRoot,
-                        protectedAutobahnReplacement);
+                    if (!hasAcceptedAutobahnManifest)
+                    {
+                        DenseCityCandidateAuthoringTransaction.MarkRealizedProtectedAutobahnTiles(
+                            entityRoot,
+                            view.GeneratedRoot,
+                            protectedAutobahnReplacement);
+                    }
                     ConfigureDenseReadinessContract(entityScene);
                     if (!DenseCityBakeReadinessValidator.TryValidateAuthoringOwnership(
                             mapScene,
@@ -376,24 +661,47 @@ namespace Game.Editor
             List<PlannedIdentity> plan,
             GameObject owner,
             string stableId,
-            OperationMapEntityPresentationRole role)
+            OperationMapEntityPresentationRole role,
+            DenseCityPresentationSemanticCategory category,
+            bool allowsProtectedOverlap)
         {
             DenseCityPresentationIdentityAuthoring identity =
                 owner.GetComponent<DenseCityPresentationIdentityAuthoring>();
             if (identity != null)
             {
-                if (!identity.TryValidate(out string error) ||
-                    !string.Equals(identity.StableId, stableId, StringComparison.Ordinal) ||
+                if (!string.Equals(identity.StableId, stableId, StringComparison.Ordinal) ||
                     identity.Role != role)
                 {
                     throw new InvalidOperationException(
-                        $"Existing dense-city identity mismatch on '{owner.name}': {error}");
+                        $"Existing dense-city identity mismatch on '{owner.name}'.");
                 }
-                plan.Add(new PlannedIdentity(owner, stableId, role, true));
+                if (identity.Category != category ||
+                    identity.AllowsProtectedOverlap != allowsProtectedOverlap)
+                {
+                    identity.ConfigureForEditor(
+                        stableId,
+                        role,
+                        category,
+                        allowsProtectedOverlap);
+                    EditorUtility.SetDirty(identity);
+                }
+                plan.Add(new PlannedIdentity(
+                    owner,
+                    stableId,
+                    role,
+                    category,
+                    allowsProtectedOverlap,
+                    true));
             }
             else
             {
-                plan.Add(new PlannedIdentity(owner, stableId, role, false));
+                plan.Add(new PlannedIdentity(
+                    owner,
+                    stableId,
+                    role,
+                    category,
+                    allowsProtectedOverlap,
+                    false));
             }
         }
 
@@ -488,17 +796,23 @@ namespace Game.Editor
                 GameObject owner,
                 string stableId,
                 OperationMapEntityPresentationRole role,
+                DenseCityPresentationSemanticCategory category,
+                bool allowsProtectedOverlap,
                 bool existing)
             {
                 Owner = owner;
                 StableId = stableId;
                 Role = role;
+                Category = category;
+                AllowsProtectedOverlap = allowsProtectedOverlap;
                 Existing = existing;
             }
 
             internal GameObject Owner { get; }
             internal string StableId { get; }
             internal OperationMapEntityPresentationRole Role { get; }
+            internal DenseCityPresentationSemanticCategory Category { get; }
+            internal bool AllowsProtectedOverlap { get; }
             internal bool Existing { get; }
         }
 

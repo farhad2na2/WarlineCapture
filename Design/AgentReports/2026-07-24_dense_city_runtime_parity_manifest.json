@@ -4,7 +4,7 @@
     "result": "DenseCityRuntimeParityManifestWritten",
     "operationMapId": "opmap.skirmish.desert_base_01",
     "entitySceneGuid": "c00140f2e94a04c3084c8dcb0c18cbd0",
-    "candidateSubSceneSha256": "750beab584ebe524188a7ddde65264e0e58f9dfe6738b5a99d8f7a7fd806b150",
+    "candidateSubSceneSha256": "a78eb6d8e6457820963c46813a7834ad09584acceb1f382584b154464bad5fc1",
     "directBakeParityReportSha256": "8f05ebc93524346c78b176dbf5560f83a8ead7e23eda36a8e59cc5272c89de4a",
     "formatVersion": 3,
     "matrixTolerance": 0.00009999999747378752,
@@ -13,6 +13,6 @@
     "denseIdentityCount": 36946,
     "renderRowCount": 82797,
     "manifestBytes": 16099896,
-    "manifestSha256": "067c03ec0d58c781d429e9e4770409d728125313d3f1701d5e2b6fbde3bf9e5d",
+    "manifestSha256": "64a3422cd31c11ca1eb8fb38d4dcc7a7cfcdeefecb42f814f5a6cb39c1c76a6b",
     "productionCutover": 0
 }

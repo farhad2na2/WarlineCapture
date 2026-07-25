@@ -44,7 +44,9 @@ namespace Game.Editor
                 var identity = instance.AddComponent<DenseCityPresentationIdentityAuthoring>();
                 identity.ConfigureForEditor(
                     presentation.Identity.CreateBakedStableId(),
-                    OperationMapEntityPresentationRole.RenderOnly);
+                    OperationMapEntityPresentationRole.RenderOnly,
+                    (Game.Components.DenseCityPresentationSemanticCategory)presentation.Category,
+                    presentation.AllowsProtectedOverlap);
                 if (!identity.TryValidate(out string identityError))
                 {
                     throw new InvalidOperationException(

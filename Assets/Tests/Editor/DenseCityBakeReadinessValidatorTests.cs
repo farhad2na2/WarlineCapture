@@ -1,7 +1,9 @@
 using System;
 using System.Linq;
 using Game.Authoring;
+using Game.Components;
 using Game.Editor;
+using Game.Configs;
 using Game.Runtime;
 using NUnit.Framework;
 using UnityEditor;
@@ -34,6 +36,7 @@ public sealed class DenseCityBakeReadinessValidatorTests
             suite.AuthoringOwnership_RejectsDuplicateGeneratedRoleRoot,
             suite.AuthoringOwnership_RejectsEveryGenerationContractMismatch,
             suite.AuthoringOwnership_AcceptsClassifiedRenderOnlyRenderer,
+            suite.SemanticIdentity_RejectsInvalidRoleCategoryAndOverlapCombinations,
             suite.AuthoringOwnership_RejectsDetailedRendererBeneathProxyRoot,
             suite.AuthoringOwnership_RejectsUnclassifiedGeneratedRenderer,
             suite.AuthoringOwnership_AcceptsExplicitProxyOwner,
@@ -406,6 +409,11 @@ public sealed class DenseCityBakeReadinessValidatorTests
             var classified = new GameObject("ClassifiedPropRenderer");
             classified.transform.SetParent(props, false);
             classified.AddComponent<MeshRenderer>();
+            classified.AddComponent<DenseCityPresentationIdentityAuthoring>()
+                .ConfigureForEditor(
+                    "densecity.0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+                    OperationMapEntityPresentationRole.RenderOnly,
+                    DenseCityPresentationSemanticCategory.Prop);
 
             Assert.That(
                 DenseCityBakeReadinessValidator.TryValidateAuthoringOwnership(
@@ -421,6 +429,44 @@ public sealed class DenseCityBakeReadinessValidatorTests
         {
             EditorSceneManager.CloseScene(entityScene, true);
             EditorSceneManager.CloseScene(mapScene, true);
+        }
+    }
+
+    [Test]
+    public void SemanticIdentity_RejectsInvalidRoleCategoryAndOverlapCombinations()
+    {
+        var owner = new GameObject("SemanticIdentity");
+        try
+        {
+            DenseCityPresentationIdentityAuthoring identity =
+                owner.AddComponent<DenseCityPresentationIdentityAuthoring>();
+            const string StableId =
+                "densecity.0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+
+            identity.ConfigureForEditor(
+                StableId,
+                OperationMapEntityPresentationRole.GameplayBuildings,
+                DenseCityPresentationSemanticCategory.Prop);
+            Assert.That(identity.TryValidate(out _), Is.False);
+
+            identity.ConfigureForEditor(
+                StableId,
+                OperationMapEntityPresentationRole.RenderOnly,
+                DenseCityPresentationSemanticCategory.Prop,
+                true);
+            Assert.That(identity.TryValidate(out _), Is.False);
+
+            identity.ConfigureForEditor(
+                StableId,
+                OperationMapEntityPresentationRole.RenderOnly,
+                DenseCityPresentationSemanticCategory.Infrastructure,
+                true);
+            Assert.That(identity.TryValidate(out string error), Is.True, error);
+            Assert.That(identity.AllowsProtectedOverlap, Is.True);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(owner);
         }
     }
 

@@ -21,7 +21,8 @@ namespace Game.Editor
             float exclusionElevation,
             int surfaceLayer,
             Vector2Int chunk,
-            Matrix4x4? exclusionWorldMatrix = null)
+            Matrix4x4? exclusionWorldMatrix = null,
+            bool allowsProtectedOverlap = false)
         {
             if (sequenceStart < 0 || sequenceStart > int.MaxValue - 2)
                 throw new ArgumentOutOfRangeException(nameof(sequenceStart));
@@ -41,6 +42,7 @@ namespace Game.Editor
             SurfaceLayer = surfaceLayer;
             Chunk = chunk;
             ExclusionWorldMatrix = exclusionWorldMatrix ?? waterWorldMatrix;
+            AllowsProtectedOverlap = allowsProtectedOverlap;
         }
 
         internal string GeneratorSchema { get; }
@@ -58,6 +60,7 @@ namespace Game.Editor
         internal int SurfaceLayer { get; }
         internal Vector2Int Chunk { get; }
         internal Matrix4x4 ExclusionWorldMatrix { get; }
+        internal bool AllowsProtectedOverlap { get; }
     }
 
     internal static class DenseCityCanalWaterRecordFactory
@@ -84,7 +87,8 @@ namespace Game.Editor
                 input.BedWorldMatrix,
                 false,
                 true,
-                1);
+                1,
+                allowsProtectedOverlap: input.AllowsProtectedOverlap);
             var waterPresentation = new DenseCityPresentationBakeRecord(
                 waterIdentity,
                 DenseCityPresentationCategory.Infrastructure,
@@ -94,7 +98,8 @@ namespace Game.Editor
                 input.WaterWorldMatrix,
                 false,
                 true,
-                2);
+                2,
+                allowsProtectedOverlap: input.AllowsProtectedOverlap);
             return new DenseCityCanalWaterRecordGroup(exclusion, bedPresentation, waterPresentation);
         }
 

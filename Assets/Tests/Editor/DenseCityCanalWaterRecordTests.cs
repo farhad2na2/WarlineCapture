@@ -10,6 +10,17 @@ public sealed class DenseCityCanalWaterRecordTests
     private const string BedMaterialGuid = "11111111111111111111111111111111";
     private const string WaterMaterialGuid = "22222222222222222222222222222222";
 
+    public static void RunFocusedValidation()
+    {
+        var suite = new DenseCityCanalWaterRecordTests();
+        suite.Factory_ProducesBlockedExclusionAndSeparateBedAndWaterPresentations();
+        suite.Factory_PropagatesExplicitProtectedOverlapPermission();
+        suite.Transaction_RollsBackAllCanalRecordsAfterRejectedOrExceptionalRealization();
+        suite.Context_AllocatesContiguousCanalSequenceBeforeFollowingInfrastructure();
+        suite.SurfaceRecord_RequiresNoneOnlyForBlockers();
+        Debug.Log("[DenseCityCanalWaterRecordValidation] result=Passed tests=5");
+    }
+
     [Test]
     public void Factory_ProducesBlockedExclusionAndSeparateBedAndWaterPresentations()
     {
@@ -37,6 +48,23 @@ public sealed class DenseCityCanalWaterRecordTests
         Assert.That(group.WaterPresentation.MaterialAssetGuids.Span[0], Is.EqualTo(WaterMaterialGuid));
         Assert.That(group.Exclusion.Polygon.Span[0], Is.EqualTo(new Vector2(14f, 36f)));
         Assert.That(group.Exclusion.Polygon.Span[2], Is.EqualTo(new Vector2(26f, 44f)));
+        Assert.That(group.BedPresentation.AllowsProtectedOverlap, Is.False);
+        Assert.That(group.WaterPresentation.AllowsProtectedOverlap, Is.False);
+    }
+
+    [Test]
+    public void Factory_PropagatesExplicitProtectedOverlapPermission()
+    {
+        DenseCityCanalWaterRecordInput input = CreateInput(
+            30,
+            Matrix4x4.identity,
+            Matrix4x4.identity,
+            true);
+
+        DenseCityCanalWaterRecordGroup group = DenseCityCanalWaterRecordFactory.Create(input);
+
+        Assert.That(group.BedPresentation.AllowsProtectedOverlap, Is.True);
+        Assert.That(group.WaterPresentation.AllowsProtectedOverlap, Is.True);
     }
 
     [Test]
@@ -147,7 +175,8 @@ public sealed class DenseCityCanalWaterRecordTests
     private static DenseCityCanalWaterRecordInput CreateInput(
         int sequence,
         Matrix4x4 bedMatrix,
-        Matrix4x4 waterMatrix) =>
+        Matrix4x4 waterMatrix,
+        bool allowsProtectedOverlap = false) =>
         new(
             "dense-city-v1",
             7,
@@ -162,5 +191,6 @@ public sealed class DenseCityCanalWaterRecordTests
             new Vector2(12f, 8f),
             2f,
             0,
-            new Vector2Int(2, 4));
+            new Vector2Int(2, 4),
+            allowsProtectedOverlap: allowsProtectedOverlap);
 }

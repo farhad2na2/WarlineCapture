@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Game.Authoring;
+using Game.Components;
 using Game.Configs;
 using Game.Rendering;
 using Game.Runtime;
@@ -547,7 +548,7 @@ namespace Game.Editor
                 foreach (Renderer generated in generatedRenderers)
                 {
                     if (generated == null || !generated.enabled || !generated.gameObject.activeInHierarchy ||
-                        IsSubgradeCanalUnderpassRenderer(generated))
+                        AllowsProtectedOverlap(generated, entityGeneratedRoot.transform))
                     {
                         continue;
                     }
@@ -720,13 +721,6 @@ namespace Game.Editor
             }
 
             Transform entityRoot = entityGeneratedRoot.transform;
-            Transform[] renderOnlyCategories =
-            {
-                entityRoot.Find("RenderOnly/Infrastructure"),
-                entityRoot.Find("RenderOnly/Vegetation"),
-                entityRoot.Find("RenderOnly/Props"),
-                entityRoot.Find("RenderOnly/Horizon")
-            };
             Renderer[] presentationRenderers =
                 entityGeneratedRoot.GetComponentsInChildren<Renderer>(true);
             foreach (Renderer renderer in presentationRenderers)
@@ -735,9 +729,13 @@ namespace Game.Editor
                     renderer.GetComponentInParent<OperationMapBuildingAuthoring>(true);
                 bool hasBuildingOwner = buildingOwner != null &&
                                         buildingOwner.transform.IsChildOf(entityRoot);
-                bool hasRenderOnlyOwner = renderOnlyCategories.Any(category =>
-                    category != null &&
-                    (renderer.transform == category || renderer.transform.IsChildOf(category)));
+                DenseCityPresentationIdentityAuthoring identity =
+                    renderer.GetComponentInParent<DenseCityPresentationIdentityAuthoring>(true);
+                bool hasRenderOnlyOwner = identity != null &&
+                                          identity.transform.IsChildOf(entityRoot) &&
+                                          identity.Role ==
+                                          OperationMapEntityPresentationRole.RenderOnly &&
+                                          IsRenderOnlyCategory(identity.Category);
                 if (hasBuildingOwner || hasRenderOnlyOwner)
                     continue;
 
@@ -854,14 +852,22 @@ namespace Game.Editor
                 Mathf.Abs(size.z));
         }
 
-        private static bool IsSubgradeCanalUnderpassRenderer(Renderer renderer)
+        private static bool AllowsProtectedOverlap(Renderer renderer, Transform generatedRoot)
         {
-            string parentName = renderer.transform.parent?.name;
-            return renderer.name.EndsWith("_Underpass", StringComparison.Ordinal) &&
-                   (string.Equals(parentName, "CanalWaterSurfaces", StringComparison.Ordinal) ||
-                    string.Equals(parentName, "CanalBeds", StringComparison.Ordinal)) &&
-                   renderer.bounds.max.y < -0.5f;
+            DenseCityPresentationIdentityAuthoring identity =
+                renderer.GetComponentInParent<DenseCityPresentationIdentityAuthoring>(true);
+            return identity != null &&
+                   identity.transform.IsChildOf(generatedRoot) &&
+                   identity.Role == OperationMapEntityPresentationRole.RenderOnly &&
+                   identity.Category == DenseCityPresentationSemanticCategory.Infrastructure &&
+                   identity.AllowsProtectedOverlap;
         }
+
+        private static bool IsRenderOnlyCategory(DenseCityPresentationSemanticCategory category) =>
+            category is DenseCityPresentationSemanticCategory.Infrastructure or
+                DenseCityPresentationSemanticCategory.Vegetation or
+                DenseCityPresentationSemanticCategory.Prop or
+                DenseCityPresentationSemanticCategory.Horizon;
 
         internal sealed class ProtectedBoundsIndex
         {

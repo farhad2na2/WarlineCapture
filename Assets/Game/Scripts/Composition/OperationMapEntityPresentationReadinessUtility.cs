@@ -193,9 +193,39 @@ namespace Game.Composition
                     switch (identity.Role)
                     {
                         case 1:
+                            if (identity.Category !=
+                                    (byte)DenseCityPresentationSemanticCategory.GameplayBuildingIntact ||
+                                identity.Flags != (byte)DenseCityPresentationSemanticFlags.None)
+                            {
+                                error =
+                                    "Packed EntityScene generated building identity has invalid " +
+                                    $"semantic metadata: category={identity.Category} flags={identity.Flags}.";
+                                return false;
+                            }
                             generatedGameplayBuildings++;
                             break;
                         case 3:
+                            bool renderOnlyCategory =
+                                identity.Category is
+                                    (byte)DenseCityPresentationSemanticCategory.Infrastructure or
+                                    (byte)DenseCityPresentationSemanticCategory.Vegetation or
+                                    (byte)DenseCityPresentationSemanticCategory.Prop or
+                                    (byte)DenseCityPresentationSemanticCategory.Horizon;
+                            byte knownFlags =
+                                (byte)DenseCityPresentationSemanticFlags.AllowsProtectedOverlap;
+                            bool overlapIsValid =
+                                (identity.Flags & knownFlags) == 0 ||
+                                identity.Category ==
+                                (byte)DenseCityPresentationSemanticCategory.Infrastructure;
+                            if (!renderOnlyCategory ||
+                                (identity.Flags & ~knownFlags) != 0 ||
+                                !overlapIsValid)
+                            {
+                                error =
+                                    "Packed EntityScene generated render-only identity has invalid " +
+                                    $"semantic metadata: category={identity.Category} flags={identity.Flags}.";
+                                return false;
+                            }
                             generatedRenderOnly++;
                             break;
                         default:

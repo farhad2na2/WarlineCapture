@@ -312,7 +312,8 @@ namespace Game.Editor
             bool castsShadows,
             bool batchingEligible,
             byte lodImportance,
-            string buildingOwnerStableKey = null)
+            string buildingOwnerStableKey = null,
+            bool allowsProtectedOverlap = false)
         {
             if (category is <= DenseCityPresentationCategory.Unknown or > DenseCityPresentationCategory.Horizon)
                 throw new ArgumentOutOfRangeException(nameof(category));
@@ -348,6 +349,7 @@ namespace Game.Editor
             BatchingEligible = batchingEligible;
             LodImportance = lodImportance;
             BuildingOwnerStableKey = buildingOwnerStableKey;
+            AllowsProtectedOverlap = allowsProtectedOverlap;
         }
 
         internal DenseCityRecordIdentity Identity { get; }
@@ -360,6 +362,7 @@ namespace Game.Editor
         internal bool BatchingEligible { get; }
         internal byte LodImportance { get; }
         internal string BuildingOwnerStableKey { get; }
+        internal bool AllowsProtectedOverlap { get; }
 
         private static bool IsOptionalGuid(string value) => string.IsNullOrEmpty(value) || IsGuid(value);
 

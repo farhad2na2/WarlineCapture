@@ -1250,6 +1250,7 @@ namespace Game.Editor
                 DenseCityGenerationBuildingCapacity,
                 DenseCityGenerationSurfaceCapacity,
                 DenseCityGenerationPresentationCapacity);
+            var protectedOverlapRenderers = new HashSet<Renderer>();
             RoadBakeResult roadResult = BakeRoadNetwork(
                 generatedRoot,
                 cityOrigin,
@@ -1277,7 +1278,8 @@ namespace Game.Editor
                 authoredGradeElevation,
                 config.RandomSeed,
                 approvedMapSurfaceBounds,
-                generationTransactions);
+                generationTransactions,
+                protectedOverlapRenderers);
             Debug.Log(
                 $"[DenseCityCanals] routes={canalResult.RouteCount} waterTiles={canalResult.WaterTiles} " +
                 $"bridges={canalResult.Bridges} greenBanks={canalResult.GreenBanks} " +
@@ -1691,7 +1693,10 @@ namespace Game.Editor
                 $"urbanRocks={semanticUrbanRocks} civicFountains={semanticCivicFountains} " +
                 $"openGroundTerrains={semanticOpenGroundTerrains}");
 
-            int protectedOverlaps = AuditGeneratedProtectedOverlaps(generatedRoot, protectedAreas);
+            int protectedOverlaps = AuditGeneratedProtectedOverlaps(
+                generatedRoot,
+                protectedAreas,
+                protectedOverlapRenderers);
             if (protectedOverlaps > 0)
             {
                 throw new InvalidOperationException(
@@ -1850,7 +1855,8 @@ namespace Game.Editor
 
         private static int AuditGeneratedProtectedOverlaps(
             Transform generatedRoot,
-            ProtectedAreaMap protectedAreas)
+            ProtectedAreaMap protectedAreas,
+            ISet<Renderer> protectedOverlapRenderers)
         {
             int overlapCount = 0;
             int protectedAutobahnReplacementRendererCount = 0;
@@ -1866,7 +1872,7 @@ namespace Game.Editor
                     protectedAutobahnReplacementRendererCount++;
                     continue;
                 }
-                if (IsSubgradeCanalUnderpassRenderer(renderer) ||
+                if (protectedOverlapRenderers.Contains(renderer) ||
                     !protectedAreas.Intersects(renderer.bounds))
                     continue;
 
@@ -1884,21 +1890,6 @@ namespace Game.Editor
                 $"protectedAutobahnReplacementRenderers=" +
                 $"{protectedAutobahnReplacementRendererCount} overlaps={overlapCount}");
             return overlapCount;
-        }
-
-        private static bool IsSubgradeCanalUnderpassRenderer(Renderer renderer)
-        {
-            if (renderer == null ||
-                !renderer.name.EndsWith("_Underpass", StringComparison.Ordinal) ||
-                renderer.bounds.max.y >= -0.5f)
-            {
-                return false;
-            }
-
-            string parentName = renderer.transform.parent != null
-                ? renderer.transform.parent.name
-                : string.Empty;
-            return parentName == "CanalWaterSurfaces" || parentName == "CanalBeds";
         }
 
         private static int PrepareTerrainForDenseCity(CityFootprint footprint)
@@ -4201,10 +4192,13 @@ namespace Game.Editor
             float gradeElevation,
             uint seed,
             Rect mapSurfaceBounds,
-            DenseCityGenerationTransactionContext generationTransactions)
+            DenseCityGenerationTransactionContext generationTransactions,
+            ISet<Renderer> protectedOverlapRenderers)
         {
             if (generationTransactions == null)
                 throw new ArgumentNullException(nameof(generationTransactions));
+            if (protectedOverlapRenderers == null)
+                throw new ArgumentNullException(nameof(protectedOverlapRenderers));
             GameObject[] bankPrefabs = LoadRequiredPrefabs(CanalBankPrefabPaths);
             GameObject bridgePrefab = LoadRequiredPrefab(CanalBridgePrefabPath);
             DenseCityVisualAssetMetadata bridgeMetadata =
@@ -4365,7 +4359,8 @@ namespace Game.Editor
                                 bedPlan.WorldMatrix,
                                 false,
                                 true,
-                                1),
+                                1,
+                                highwayUnderpass),
                             new DenseCityTerrainVisualPresentationInput(
                                 "canal-water-visual",
                                 canalWaterMetadata.PrefabAssetGuid,
@@ -4374,7 +4369,8 @@ namespace Game.Editor
                                 waterPlan.WorldMatrix,
                                 false,
                                 true,
-                                2)
+                                2,
+                                highwayUnderpass)
                         };
                         bool accepted = hasGameplayExclusion
                             ? generationTransactions.TryPlaceCanalWater(
@@ -4395,7 +4391,8 @@ namespace Game.Editor
                                         waterTopElevation,
                                         DenseCityBuildingSurfaceLayer,
                                         canalChunk,
-                                        exclusionMatrix)),
+                                        exclusionMatrix,
+                                        highwayUnderpass)),
                                 RealizeWater)
                             : generationTransactions.TryPlacePresentationOnlyTerrainVisuals(
                                 0,
@@ -4425,6 +4422,19 @@ namespace Game.Editor
                                 waterMaterial);
                             ValidateCanalSurfaceMatrix(bedSurface, bedPlan);
                             ValidateCanalSurfaceMatrix(waterSurface, waterPlan);
+                            if (highwayUnderpass)
+                            {
+                                foreach (Renderer renderer in
+                                         bedSurface.GetComponentsInChildren<Renderer>(true))
+                                {
+                                    protectedOverlapRenderers.Add(renderer);
+                                }
+                                foreach (Renderer renderer in
+                                         waterSurface.GetComponentsInChildren<Renderer>(true))
+                                {
+                                    protectedOverlapRenderers.Add(renderer);
+                                }
+                            }
                             return true;
                         }
                     }
@@ -5524,7 +5534,8 @@ namespace Game.Editor
                         input.WorldMatrix,
                         input.CastsShadows,
                         input.BatchingEligible,
-                        input.LodImportance));
+                        input.LodImportance,
+                        input.AllowsProtectedOverlap));
             }
             return presentations;
         }

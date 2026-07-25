@@ -14,7 +14,8 @@ namespace Game.Editor
             Matrix4x4 worldMatrix,
             bool castsShadows,
             bool batchingEligible,
-            byte lodImportance)
+            byte lodImportance,
+            bool allowsProtectedOverlap = false)
         {
             RecordKind = recordKind;
             SourceAssetGuid = sourceAssetGuid;
@@ -24,6 +25,7 @@ namespace Game.Editor
             CastsShadows = castsShadows;
             BatchingEligible = batchingEligible;
             LodImportance = lodImportance;
+            AllowsProtectedOverlap = allowsProtectedOverlap;
         }
 
         internal string RecordKind { get; }
@@ -34,6 +36,7 @@ namespace Game.Editor
         internal bool CastsShadows { get; }
         internal bool BatchingEligible { get; }
         internal byte LodImportance { get; }
+        internal bool AllowsProtectedOverlap { get; }
     }
 
     internal readonly struct DenseCityTerrainVisualRecordInput
@@ -129,7 +132,8 @@ namespace Game.Editor
                     presentationInput.WorldMatrix,
                     presentationInput.CastsShadows,
                     presentationInput.BatchingEligible,
-                    presentationInput.LodImportance);
+                    presentationInput.LodImportance,
+                    allowsProtectedOverlap: presentationInput.AllowsProtectedOverlap);
             }
             return new DenseCityTerrainVisualRecordGroup(terrain, presentations);
         }

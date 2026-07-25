@@ -1,8 +1,10 @@
+using System;
 using Game.Components;
 using Game.Composition;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
+using UnityEngine;
 using Unity.Scenes;
 
 public sealed class OperationMapEntityPresentationReadinessUtilityTests
@@ -13,6 +15,34 @@ public sealed class OperationMapEntityPresentationReadinessUtilityTests
     private Entity sceneEntity;
     private Entity sectionEntity;
     private Entity contractEntity;
+
+    public static void RunFocusedValidation()
+    {
+        var suite = new OperationMapEntityPresentationReadinessUtilityTests();
+        Action[] tests =
+        {
+            suite.TryValidate_AcceptsCompleteEntitySceneWithoutStaticPreload,
+            suite.TryValidate_RejectsIncompleteIdentitySet,
+            suite.TryValidate_RejectsStaticPresentationPreloadRequirement,
+            suite.TryValidate_AcceptsExplicitGeneratedIdentityTotals,
+            suite.TryValidate_RejectsDuplicateGeneratedIdentity,
+            suite.TryValidate_RejectsGeneratedRoleCategoryMismatch,
+            suite.TryValidate_RejectsProtectedOverlapOnNonInfrastructure
+        };
+        foreach (Action test in tests)
+        {
+            suite.SetUp();
+            try
+            {
+                test();
+            }
+            finally
+            {
+                suite.TearDown();
+            }
+        }
+        Debug.Log($"[OperationMapEntityPresentationReadinessValidation] result=Passed tests={tests.Length}");
+    }
 
     [SetUp]
     public void SetUp()
@@ -153,6 +183,60 @@ public sealed class OperationMapEntityPresentationReadinessUtilityTests
         Assert.That(error, Does.Contain("duplicate generated identity"));
     }
 
+    [Test]
+    public void TryValidate_RejectsGeneratedRoleCategoryMismatch()
+    {
+        ConfigureGeneratedContract(1, 2, 1);
+        CreateGeneratedIdentity(
+            1,
+            "dense-building",
+            DenseCityPresentationSemanticCategory.Prop);
+        CreateSectionEntity(typeof(OperationMapBuildingPresentation));
+
+        Assert.That(
+            OperationMapEntityPresentationReadinessUtility.TryValidate(
+                world.EntityManager,
+                sceneEntity,
+                OperationMapId,
+                out string error),
+            Is.False);
+        Assert.That(error, Does.Contain("invalid semantic metadata"));
+    }
+
+    [Test]
+    public void TryValidate_RejectsProtectedOverlapOnNonInfrastructure()
+    {
+        ConfigureGeneratedContract(1, 2, 1);
+        CreateGeneratedIdentity(
+            3,
+            "dense-prop",
+            DenseCityPresentationSemanticCategory.Prop,
+            DenseCityPresentationSemanticFlags.AllowsProtectedOverlap);
+
+        Assert.That(
+            OperationMapEntityPresentationReadinessUtility.TryValidate(
+                world.EntityManager,
+                sceneEntity,
+                OperationMapId,
+                out string error),
+            Is.False);
+        Assert.That(error, Does.Contain("invalid semantic metadata"));
+    }
+
+    private void ConfigureGeneratedContract(
+        int generatedCount,
+        int expectedBuildings,
+        int expectedRenderOnly)
+    {
+        OperationMapEntityPresentationReadinessContract contract =
+            world.EntityManager.GetComponentData<
+                OperationMapEntityPresentationReadinessContract>(contractEntity);
+        contract.ExpectedGeneratedIdentityCount = generatedCount;
+        contract.ExpectedGameplayBuildingCount = expectedBuildings;
+        contract.ExpectedRenderOnlyCount = expectedRenderOnly;
+        world.EntityManager.SetComponentData(contractEntity, contract);
+    }
+
     private Entity CreateSectionEntity(params ComponentType[] componentTypes)
     {
         Entity entity = world.EntityManager.CreateEntity(componentTypes);
@@ -190,15 +274,28 @@ public sealed class OperationMapEntityPresentationReadinessUtilityTests
             });
     }
 
-    private void CreateGeneratedIdentity(byte role, string stableId)
+    private void CreateGeneratedIdentity(
+        byte role,
+        string stableId,
+        DenseCityPresentationSemanticCategory category =
+            DenseCityPresentationSemanticCategory.Unknown,
+        DenseCityPresentationSemanticFlags flags = DenseCityPresentationSemanticFlags.None)
     {
+        if (category == DenseCityPresentationSemanticCategory.Unknown)
+        {
+            category = role == 1
+                ? DenseCityPresentationSemanticCategory.GameplayBuildingIntact
+                : DenseCityPresentationSemanticCategory.Infrastructure;
+        }
         Entity entity = CreateSectionEntity(typeof(DenseCityPresentationIdentity));
         world.EntityManager.SetComponentData(
             entity,
             new DenseCityPresentationIdentity
             {
                 StableId = new FixedString128Bytes(stableId),
-                Role = role
+                Role = role,
+                Category = (byte)category,
+                Flags = (byte)flags
             });
     }
 }

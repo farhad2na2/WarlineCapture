@@ -143,6 +143,7 @@ namespace Game.Editor
             public readonly float VisualScale;
             public readonly DenseCityPresentationCategory PresentationCategory;
             public readonly GeneratedCityBuildingRole BuildingRole;
+            public readonly bool ApplyMaterialVariants;
 
             public PrefabFootprint(
                 GameObject prefab,
@@ -151,7 +152,8 @@ namespace Game.Editor
                 float height,
                 float visualScale,
                 DenseCityPresentationCategory presentationCategory,
-                GeneratedCityBuildingRole buildingRole)
+                GeneratedCityBuildingRole buildingRole,
+                bool applyMaterialVariants = true)
             {
                 if (presentationCategory is not (DenseCityPresentationCategory.GameplayBuildingIntact or
                     DenseCityPresentationCategory.Vegetation or DenseCityPresentationCategory.Prop))
@@ -169,6 +171,7 @@ namespace Game.Editor
                 Height = Mathf.Max(1f, height * VisualScale);
                 PresentationCategory = presentationCategory;
                 BuildingRole = buildingRole;
+                ApplyMaterialVariants = applyMaterialVariants;
             }
         }
 
@@ -819,7 +822,8 @@ namespace Game.Editor
                     building,
                     intactPresentationRoot,
                     info.Prefab,
-                    info.BuildingRole);
+                    info.BuildingRole,
+                    info.ApplyMaterialVariants);
             }
 
             public bool CanPlace(PrefabFootprint info, float rotationDegrees, Vector2 center)
@@ -1320,7 +1324,7 @@ namespace Game.Editor
                 generationTransactions);
 
             BuildingMaterialVariantResult materialVariants = ApplyBuildingMaterialVariants(
-                generatedRoot,
+                generationTransactions.RealizedBuildingOwners,
                 config.RandomSeed,
                 materialLibrary);
             Debug.Log(
@@ -1331,7 +1335,8 @@ namespace Game.Editor
             int roofDetails = AddShopRoofDetails(
                 generationTransactions.RealizedBuildingOwners,
                 generationTransactions);
-            List<Rect> openGroundBuildingFootprints = CollectGeneratedBuildingFootprints(generatedRoot);
+            List<Rect> openGroundBuildingFootprints = CollectGeneratedBuildingFootprints(
+                generationTransactions.RealizedBuildingOwners);
             UrbanDetailResult urbanDetails = AddUrbanDetailProps(
                 generatedRoot,
                 generationTransactions.RealizedBuildingOwners,
@@ -1686,9 +1691,6 @@ namespace Game.Editor
                 $"urbanRocks={semanticUrbanRocks} civicFountains={semanticCivicFountains} " +
                 $"openGroundTerrains={semanticOpenGroundTerrains}");
 
-            int removedFloatingBranches = RemoveUnsupportedElevatedVisualBranches(generatedRoot);
-            Debug.Log($"[DenseCityFloatingItemCleanup] removedBranches={removedFloatingBranches}");
-
             int protectedOverlaps = AuditGeneratedProtectedOverlaps(generatedRoot, protectedAreas);
             if (protectedOverlaps > 0)
             {
@@ -1897,121 +1899,6 @@ namespace Game.Editor
                 ? renderer.transform.parent.name
                 : string.Empty;
             return parentName == "CanalWaterSurfaces" || parentName == "CanalBeds";
-        }
-
-        private static int RemoveUnsupportedElevatedVisualBranches(Transform generatedRoot)
-        {
-            const float groundedTolerance = 0.75f;
-            const float maximumVerticalJoinGap = 1.35f;
-            const float horizontalJoinMargin = 0.35f;
-
-            int removedBranches = 0;
-            Transform[] transforms = generatedRoot.GetComponentsInChildren<Transform>(true);
-            for (int transformIndex = 0; transformIndex < transforms.Length; transformIndex++)
-            {
-                Transform wrapper = transforms[transformIndex];
-                if (wrapper == null ||
-                    !wrapper.name.EndsWith("_Visual", StringComparison.Ordinal) ||
-                    wrapper.parent == null ||
-                    wrapper.parent.name != "RuntimeCityVisuals")
-                {
-                    continue;
-                }
-
-                Renderer[] renderers = wrapper.GetComponentsInChildren<Renderer>(false);
-                if (renderers.Length < 2)
-                    continue;
-
-                float groundedHeight = wrapper.position.y + groundedTolerance;
-                var supported = new HashSet<Renderer>();
-                for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
-                {
-                    Renderer renderer = renderers[rendererIndex];
-                    if (renderer != null && renderer.bounds.min.y <= groundedHeight)
-                        supported.Add(renderer);
-                }
-
-                bool addedSupport;
-                do
-                {
-                    addedSupport = false;
-                    for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
-                    {
-                        Renderer candidate = renderers[rendererIndex];
-                        if (candidate == null || supported.Contains(candidate))
-                            continue;
-
-                        foreach (Renderer support in supported)
-                        {
-                            if (IsRendererSupportedBy(
-                                    candidate.bounds,
-                                    support.bounds,
-                                    maximumVerticalJoinGap,
-                                    horizontalJoinMargin))
-                            {
-                                supported.Add(candidate);
-                                addedSupport = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-                while (addedSupport);
-
-                var unsupportedObjects = new HashSet<GameObject>();
-                for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
-                {
-                    Renderer renderer = renderers[rendererIndex];
-                    if (renderer != null && !supported.Contains(renderer))
-                        unsupportedObjects.Add(renderer.gameObject);
-                }
-
-                foreach (GameObject unsupportedObject in unsupportedObjects)
-                {
-                    if (unsupportedObject == null ||
-                        HasUnsupportedAncestor(unsupportedObject.transform, wrapper, unsupportedObjects))
-                    {
-                        continue;
-                    }
-
-                    UnityEngine.Object.DestroyImmediate(unsupportedObject);
-                    removedBranches++;
-                }
-            }
-
-            return removedBranches;
-        }
-
-        private static bool IsRendererSupportedBy(
-            Bounds candidate,
-            Bounds support,
-            float maximumVerticalJoinGap,
-            float horizontalJoinMargin)
-        {
-            float verticalGap = candidate.min.y - support.max.y;
-            if (verticalGap < -0.1f || verticalGap > maximumVerticalJoinGap)
-                return false;
-
-            return candidate.min.x <= support.max.x + horizontalJoinMargin &&
-                   candidate.max.x >= support.min.x - horizontalJoinMargin &&
-                   candidate.min.z <= support.max.z + horizontalJoinMargin &&
-                   candidate.max.z >= support.min.z - horizontalJoinMargin;
-        }
-
-        private static bool HasUnsupportedAncestor(
-            Transform candidate,
-            Transform wrapper,
-            HashSet<GameObject> unsupportedObjects)
-        {
-            Transform ancestor = candidate.parent;
-            while (ancestor != null && ancestor != wrapper)
-            {
-                if (unsupportedObjects.Contains(ancestor.gameObject))
-                    return true;
-                ancestor = ancestor.parent;
-            }
-
-            return false;
         }
 
         private static int PrepareTerrainForDenseCity(CityFootprint footprint)
@@ -3283,7 +3170,8 @@ namespace Game.Editor
                 hallPrefab,
                 CivicHallVisualScale,
                 DenseCityPresentationCategory.GameplayBuildingIntact,
-                GeneratedCityBuildingRole.Civic);
+                GeneratedCityBuildingRole.Civic,
+                applyMaterialVariants: false);
             Vector3 hallPosition = mapCenter + new Vector3(0f, 0f, 55f);
             var hallCenter = new Vector2(hallPosition.x, hallPosition.z);
             bool hallRoadClearance = placementContext.CanPlace(hall, 180f, hallCenter);
@@ -3298,6 +3186,7 @@ namespace Game.Editor
                 $"size={hall.Width:0.0}x{hall.Height:0.0}x{hall.Depth:0.0} " +
                 $"scale={hall.VisualScale:0.00} roadClear={hallRoadClearance} " +
                 $"terrainEvaluated={hallTerrainEvaluated} terrainClear={hallTerrainClearance}");
+            int ownerCountBeforeHall = generationTransactions.RealizedBuildingOwners.Count;
             if (!SpawnBuilding(
                     visualSystem,
                     hall,
@@ -3311,15 +3200,16 @@ namespace Game.Editor
                     "Dense city civic hall could not be placed inside its road loop.");
             }
 
-            if (!TryFindGeneratedVisualAt(
-                    coreObject.transform,
-                    new Vector2(hallPosition.x, hallPosition.z),
-                    out Transform hallVisual,
-                    out Bounds hallBounds))
+            IReadOnlyList<DenseCityRealizedBuildingOwner> realizedOwners =
+                generationTransactions.RealizedBuildingOwners;
+            if (realizedOwners.Count != ownerCountBeforeHall + 1)
             {
                 throw new InvalidOperationException(
-                    "Dense city civic hall visual could not be resolved after placement.");
+                    "Dense city civic hall placement did not publish exactly one building owner.");
             }
+            Transform hallVisual = realizedOwners[ownerCountBeforeHall].IntactPresentationRoot;
+            if (!TryGetWorldBounds(hallVisual, out Bounds hallBounds))
+                throw new InvalidOperationException("Dense city civic hall has no renderer bounds.");
 
             const float hallPlazaClearance = 28f;
             Rect hallPlazaExclusion = Rect.MinMaxRect(
@@ -3644,42 +3534,6 @@ namespace Game.Editor
                 position.x + halfWidth,
                 position.z + halfDepth);
             return footprint.Overlaps(exclusion, true);
-        }
-
-        private static bool TryFindGeneratedVisualAt(
-            Transform root,
-            Vector2 worldPosition,
-            out Transform visual,
-            out Bounds bounds)
-        {
-            visual = null;
-            bounds = default;
-            float bestDistance = float.PositiveInfinity;
-            Transform[] transforms = root.GetComponentsInChildren<Transform>(true);
-            for (int index = 0; index < transforms.Length; index++)
-            {
-                Transform candidate = transforms[index];
-                if (candidate == null ||
-                    candidate.parent == null ||
-                    candidate.parent.name != "RuntimeCityVisuals" ||
-                    !candidate.name.EndsWith("_Visual", StringComparison.Ordinal) ||
-                    !TryGetWorldBounds(candidate, out Bounds candidateBounds))
-                {
-                    continue;
-                }
-
-                float distance = Vector2.Distance(
-                    new Vector2(candidateBounds.center.x, candidateBounds.center.z),
-                    worldPosition);
-                if (distance >= bestDistance)
-                    continue;
-
-                bestDistance = distance;
-                visual = candidate;
-                bounds = candidateBounds;
-            }
-
-            return visual != null;
         }
 
         private static int AddCivicMarketPlazaDetails(
@@ -7924,21 +7778,15 @@ namespace Game.Editor
             return new OpenGroundDetailResult(count, gameplayTerrains);
         }
 
-        private static List<Rect> CollectGeneratedBuildingFootprints(Transform generatedRoot)
+        private static List<Rect> CollectGeneratedBuildingFootprints(
+            IReadOnlyList<DenseCityRealizedBuildingOwner> realizedOwners)
         {
-            var footprints = new List<Rect>();
-            Transform[] transforms = generatedRoot.GetComponentsInChildren<Transform>(true);
-            for (int index = 0; index < transforms.Length; index++)
+            var footprints = new List<Rect>(realizedOwners.Count);
+            for (int index = 0; index < realizedOwners.Count; index++)
             {
-                Transform wrapper = transforms[index];
-                if (wrapper == null ||
-                    wrapper.parent == null ||
-                    wrapper.parent.name != "RuntimeCityVisuals" ||
-                    !wrapper.name.EndsWith("_Visual", StringComparison.Ordinal) ||
-                    !TryGetWorldBounds(wrapper, out Bounds bounds))
-                {
+                Transform wrapper = realizedOwners[index].IntactPresentationRoot;
+                if (!TryGetWorldBounds(wrapper, out Bounds bounds))
                     continue;
-                }
 
                 const float clearance = 0.8f;
                 footprints.Add(Rect.MinMaxRect(
@@ -9825,7 +9673,7 @@ namespace Game.Editor
         }
 
         private static BuildingMaterialVariantResult ApplyBuildingMaterialVariants(
-            Transform generatedRoot,
+            IReadOnlyList<DenseCityRealizedBuildingOwner> realizedOwners,
             uint seed,
             DenseCityBuildingMaterialLibrary materialLibrary)
         {
@@ -9839,15 +9687,12 @@ namespace Game.Editor
             int shop05PinkVisibleSlotsAssigned = 0;
             int[] shop05PaletteCounts = new int[DenseCityBuildingMaterialLibrary.ShopToneCount + 1];
 
-            Transform[] transforms = generatedRoot.GetComponentsInChildren<Transform>(true);
-            for (int transformIndex = 0; transformIndex < transforms.Length; transformIndex++)
+            for (int ownerIndex = 0; ownerIndex < realizedOwners.Count; ownerIndex++)
             {
-                Transform wrapper = transforms[transformIndex];
-                if (!IsRuntimeCityBuildingWrapper(wrapper) ||
-                    wrapper.name.IndexOf("Hall", StringComparison.OrdinalIgnoreCase) >= 0)
-                {
+                DenseCityRealizedBuildingOwner owner = realizedOwners[ownerIndex];
+                if (!owner.ApplyMaterialVariants)
                     continue;
-                }
+                Transform wrapper = owner.IntactPresentationRoot;
 
                 Renderer[] renderers = wrapper.GetComponentsInChildren<Renderer>(true);
                 bool usesFacadeMaterialFamily = false;
@@ -9921,14 +9766,12 @@ namespace Game.Editor
             }
 
             int shop05OriginalVisibleSlotsRemaining = 0;
-            for (int transformIndex = 0; transformIndex < transforms.Length; transformIndex++)
+            for (int ownerIndex = 0; ownerIndex < realizedOwners.Count; ownerIndex++)
             {
-                Transform wrapper = transforms[transformIndex];
-                if (!IsRuntimeCityBuildingWrapper(wrapper) ||
-                    wrapper.name.IndexOf("Hall", StringComparison.OrdinalIgnoreCase) >= 0)
-                {
+                DenseCityRealizedBuildingOwner owner = realizedOwners[ownerIndex];
+                if (!owner.ApplyMaterialVariants)
                     continue;
-                }
+                Transform wrapper = owner.IntactPresentationRoot;
 
                 Renderer[] renderers = wrapper.GetComponentsInChildren<Renderer>(true);
                 for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
@@ -11563,16 +11406,6 @@ namespace Game.Editor
             return true;
         }
 
-        private static bool IsRuntimeCityBuildingWrapper(Transform wrapper)
-        {
-            if (wrapper == null || wrapper.parent == null || wrapper.parent.name != "RuntimeCityVisuals")
-                return false;
-
-            string objectName = wrapper.name;
-            return objectName.IndexOf("_Visual", StringComparison.Ordinal) >= 0 &&
-                   objectName.IndexOf("_GroundPatch", StringComparison.Ordinal) < 0;
-        }
-
         private static bool TryGetLocalRendererBounds(Transform root, out Bounds bounds)
         {
             bounds = default;
@@ -11746,7 +11579,8 @@ namespace Game.Editor
                 palette.CentralLandmarks,
                 DenseCityPresentationCategory.GameplayBuildingIntact,
                 GeneratedCityBuildingRole.Civic,
-                CentralHallVisualScale);
+                CentralHallVisualScale,
+                applyMaterialVariants: false);
             if (config.ClockTowerPrefab != null && IsDenseCityPrefabUsable(config.ClockTowerPrefab))
             {
                 AddCentralLandmark(
@@ -11859,7 +11693,8 @@ namespace Game.Editor
             List<PrefabFootprint> target,
             DenseCityPresentationCategory presentationCategory,
             GeneratedCityBuildingRole buildingRole,
-            float visualScale = BuildingVisualScale)
+            float visualScale = BuildingVisualScale,
+            bool applyMaterialVariants = true)
         {
             if (source == null)
                 return;
@@ -11867,7 +11702,14 @@ namespace Game.Editor
             {
                 GameObject prefab = source[index];
                 if (prefab != null && IsDenseCityPrefabUsable(prefab))
-                    target.Add(MeasurePrefab(prefab, visualScale, presentationCategory, buildingRole));
+                {
+                    target.Add(MeasurePrefab(
+                        prefab,
+                        visualScale,
+                        presentationCategory,
+                        buildingRole,
+                        applyMaterialVariants));
+                }
             }
         }
 
@@ -11952,6 +11794,22 @@ namespace Game.Editor
 
             unsupportedIslandCount = islands.Count - supported.Count;
             return unsupportedIslandCount > 0;
+        }
+
+        private static bool IsRendererSupportedBy(
+            Bounds candidate,
+            Bounds support,
+            float maximumVerticalJoinGap,
+            float horizontalJoinMargin)
+        {
+            float verticalGap = candidate.min.y - support.max.y;
+            if (verticalGap < -0.1f || verticalGap > maximumVerticalJoinGap)
+                return false;
+
+            return candidate.min.x <= support.max.x + horizontalJoinMargin &&
+                   candidate.max.x >= support.min.x - horizontalJoinMargin &&
+                   candidate.min.z <= support.max.z + horizontalJoinMargin &&
+                   candidate.max.z >= support.min.z - horizontalJoinMargin;
         }
 
         private static void AddConnectedMeshIslandBounds(
@@ -12072,7 +11930,8 @@ namespace Game.Editor
             GameObject prefab,
             float visualScale,
             DenseCityPresentationCategory presentationCategory,
-            GeneratedCityBuildingRole buildingRole)
+            GeneratedCityBuildingRole buildingRole,
+            bool applyMaterialVariants = true)
         {
             Transform visualRoot = FindDescendant(prefab.transform, "CombinedMesh") ?? prefab.transform;
             Renderer[] renderers = visualRoot.GetComponentsInChildren<Renderer>(true);
@@ -12085,7 +11944,8 @@ namespace Game.Editor
                     8f,
                     visualScale,
                     presentationCategory,
-                    buildingRole);
+                    buildingRole,
+                    applyMaterialVariants);
             }
 
             Matrix4x4 worldToRoot = prefab.transform.worldToLocalMatrix;
@@ -12129,7 +11989,8 @@ namespace Game.Editor
                     bounds.size.y,
                     visualScale,
                     presentationCategory,
-                    buildingRole)
+                    buildingRole,
+                    applyMaterialVariants)
                 : new PrefabFootprint(
                     prefab,
                     10f,
@@ -12137,7 +11998,8 @@ namespace Game.Editor
                     8f,
                     visualScale,
                     presentationCategory,
-                    buildingRole);
+                    buildingRole,
+                    applyMaterialVariants);
         }
 
         private static PrefabFootprint SelectFrontageBuilding(

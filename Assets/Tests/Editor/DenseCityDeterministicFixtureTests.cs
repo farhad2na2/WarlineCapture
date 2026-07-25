@@ -25,8 +25,28 @@ public sealed class DenseCityDeterministicFixtureTests
     private const string GroundMaterialPath =
         "Assets/Game/Art/MapPrototypes/M01/Materials/M01_DistrictGround.mat";
 
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            new DenseCityDeterministicFixtureTests()
+                .RunSmallFixture(forceReplaceUntitledScene: true);
+            Debug.Log("[DenseCityDeterministicFixtureValidation] result=Passed tests=1");
+            ValidationExit.Passed();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[DenseCityDeterministicFixtureValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
     [Test]
-    public void SmallFixture_BuildsDeterministicallyWithoutMutatingCanonicalMap()
+    public void SmallFixture_BuildsDeterministicallyWithoutMutatingCanonicalMap() =>
+        RunSmallFixture(forceReplaceUntitledScene: false);
+
+    private void RunSmallFixture(bool forceReplaceUntitledScene)
     {
         string canonicalHashBefore = ComputeFileSha256(CanonicalMapScenePath);
         Scene previousActiveScene = SceneManager.GetActiveScene();
@@ -35,13 +55,14 @@ public sealed class DenseCityDeterministicFixtureTests
             previousActiveScene.isLoaded &&
             string.IsNullOrEmpty(previousActiveScene.path) &&
             previousActiveScene.rootCount != 0;
-        if (hasOccupiedUntitledScene && !Application.isBatchMode)
+        if (hasOccupiedUntitledScene && !Application.isBatchMode && !forceReplaceUntitledScene)
         {
             Assert.Ignore(
                 "Cannot create an additive fixture while an unsaved untitled scene contains objects.");
         }
 
-        bool replaceBatchUntitledScene = hasOccupiedUntitledScene && Application.isBatchMode;
+        bool replaceBatchUntitledScene =
+            hasOccupiedUntitledScene && (Application.isBatchMode || forceReplaceUntitledScene);
         bool closeFixtureScene =
             !replaceBatchUntitledScene && !CanUseEmptyUntitledScene(previousActiveScene);
         Scene fixtureScene = replaceBatchUntitledScene

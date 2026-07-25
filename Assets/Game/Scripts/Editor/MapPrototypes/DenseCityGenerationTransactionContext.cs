@@ -11,7 +11,8 @@ namespace Game.Editor
             DenseCityBuildingBakeRecord building,
             Transform intactPresentationRoot,
             GameObject sourcePrefab,
-            GeneratedCityBuildingRole role)
+            GeneratedCityBuildingRole role,
+            bool applyMaterialVariants)
         {
             Building = building;
             IntactPresentationRoot = intactPresentationRoot != null
@@ -23,12 +24,14 @@ namespace Game.Editor
             if (role is <= GeneratedCityBuildingRole.None or > GeneratedCityBuildingRole.Other)
                 throw new ArgumentOutOfRangeException(nameof(role));
             Role = role;
+            ApplyMaterialVariants = applyMaterialVariants;
         }
 
         internal DenseCityBuildingBakeRecord Building { get; }
         internal Transform IntactPresentationRoot { get; }
         internal GameObject SourcePrefab { get; }
         internal GeneratedCityBuildingRole Role { get; }
+        internal bool ApplyMaterialVariants { get; }
     }
 
     internal readonly struct DenseCityRealizedBuildingAttachment
@@ -435,7 +438,8 @@ namespace Game.Editor
             DenseCityBuildingBakeRecord building,
             Transform intactPresentationRoot,
             GameObject sourcePrefab,
-            GeneratedCityBuildingRole role)
+            GeneratedCityBuildingRole role,
+            bool applyMaterialVariants = true)
         {
             RequireActive();
             if (intactPresentationRoot == null)
@@ -453,7 +457,8 @@ namespace Game.Editor
                 building,
                 intactPresentationRoot,
                 sourcePrefab,
-                role));
+                role,
+                applyMaterialVariants));
             realizedBuildingStableKeys.Add(stableKey);
             realizedBuildingRoots.Add(intactPresentationRoot);
         }

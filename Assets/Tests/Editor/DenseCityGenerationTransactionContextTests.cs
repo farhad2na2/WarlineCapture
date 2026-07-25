@@ -1,15 +1,48 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Game.Configs;
 using Game.Editor;
 using NUnit.Framework;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 public sealed class DenseCityGenerationTransactionContextTests
 {
     private const string IntactGuid = "0123456789abcdef0123456789abcdef";
     private const string DestroyedGuid = "fedcba9876543210fedcba9876543210";
     private const string MaterialGuid = "abcdef0123456789abcdef0123456789";
+
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            var suite = new DenseCityGenerationTransactionContextTests();
+            Action[] tests =
+            {
+                suite.TryPlaceBuilding_AllocatesStableFiveRecordSequencesPerDistrict,
+                suite.TryPlaceBuilding_RejectionConsumesAttemptSequenceButLeavesNoRecords,
+                suite.InfrastructureAndSurfacePlacements_ShareStableSequenceAcrossRejectedAttempts,
+                suite.VisualBlockerPlacement_CommitsAndRollsBackSurfaceAndPresentationAtomically,
+                suite.BridgePlacement_ReservesFourSharedInfrastructureSequences,
+                suite.RoadPlacement_ReservesRoadPresentationAndDeclaredShoulders,
+                suite.RoadPlacement_RejectsShoulderCountMismatchBeforeAdvancingSequence,
+                suite.RegisterRealizedBuildingOwner_UsesCommittedIdentityAndRejectsDuplicates
+            };
+            for (int index = 0; index < tests.Length; index++)
+                tests[index]();
+
+            Debug.Log(
+                $"[DenseCityGenerationTransactionContextValidation] result=Passed tests={tests.Length}");
+            ValidationExit.Passed();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[DenseCityGenerationTransactionContextValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
 
     [Test]
     public void TryPlaceBuilding_AllocatesStableFiveRecordSequencesPerDistrict()
@@ -231,7 +264,8 @@ public sealed class DenseCityGenerationTransactionContextTests
                 building,
                 rootObject.transform,
                 sourcePrefab,
-                GeneratedCityBuildingRole.Shop);
+                GeneratedCityBuildingRole.Shop,
+                applyMaterialVariants: false);
 
             Assert.That(context.RealizedBuildingOwners, Has.Count.EqualTo(1));
             Assert.That(
@@ -240,6 +274,7 @@ public sealed class DenseCityGenerationTransactionContextTests
             Assert.That(context.RealizedBuildingOwners[0].IntactPresentationRoot, Is.SameAs(rootObject.transform));
             Assert.That(context.RealizedBuildingOwners[0].SourcePrefab, Is.SameAs(sourcePrefab));
             Assert.That(context.RealizedBuildingOwners[0].Role, Is.EqualTo(GeneratedCityBuildingRole.Shop));
+            Assert.That(context.RealizedBuildingOwners[0].ApplyMaterialVariants, Is.False);
             Assert.That(
                 () => context.RegisterRealizedBuildingOwner(
                     building,

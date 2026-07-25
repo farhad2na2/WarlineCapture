@@ -43,6 +43,7 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
             suite.MeasureLocalBundleDelivery_RejectsExcludedGroup,
             suite.MeasureLocalBundleDelivery_RejectsNetworkLoadPath,
             suite.MeasurePublishedLocalContent_ReportsCatalogAndBundleBytes,
+            suite.MeasurePublishedLocalContent_FingerprintsBundleSetDeterministically,
             suite.MeasurePublishedLocalContent_RejectsCatalogOutsideOutput,
             suite.MeasurePublishedLocalContent_RejectsMissingBundle
         };
@@ -699,6 +700,41 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
                 Assert.That(result.CatalogBytes, Is.EqualTo(7));
                 Assert.That(result.BundleCount, Is.EqualTo(2));
                 Assert.That(result.BundleBytes, Is.EqualTo(24));
+            });
+    }
+
+    [Test]
+    public void MeasurePublishedLocalContent_FingerprintsBundleSetDeterministically()
+    {
+        WithContentDirectory(
+            root =>
+            {
+                string firstRoot = Path.Combine(root, "first");
+                string secondRoot = Path.Combine(root, "second");
+                string firstCatalog = WriteBytes(firstRoot, "catalog.bin", 7);
+                string secondCatalog = WriteBytes(secondRoot, "catalog.bin", 7);
+                string firstBundle =
+                    WriteBytes(firstRoot, "StandaloneOSX/dense.bundle", 11);
+                WriteBytes(secondRoot, "StandaloneOSX/dense.bundle", 11);
+
+                OperationMapDenseCityCandidateRuntimeContentBuilder
+                    .PublishedLocalContentResult first =
+                        OperationMapDenseCityCandidateRuntimeContentBuilder
+                            .MeasurePublishedLocalContent(firstRoot, firstCatalog);
+                OperationMapDenseCityCandidateRuntimeContentBuilder
+                    .PublishedLocalContentResult second =
+                        OperationMapDenseCityCandidateRuntimeContentBuilder
+                            .MeasurePublishedLocalContent(secondRoot, secondCatalog);
+
+                Assert.That(first.BundleSetSha256, Has.Length.EqualTo(64));
+                Assert.That(second.BundleSetSha256, Is.EqualTo(first.BundleSetSha256));
+
+                File.WriteAllBytes(firstBundle, new byte[13]);
+                OperationMapDenseCityCandidateRuntimeContentBuilder
+                    .PublishedLocalContentResult changed =
+                        OperationMapDenseCityCandidateRuntimeContentBuilder
+                            .MeasurePublishedLocalContent(firstRoot, firstCatalog);
+                Assert.That(changed.BundleSetSha256, Is.Not.EqualTo(first.BundleSetSha256));
             });
     }
 

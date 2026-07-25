@@ -584,13 +584,40 @@ namespace Game.Editor
                     $"catalogBytes={catalogBytes}, bundles={bundlePaths.Length}, " +
                     $"bundleBytes={bundleBytes}.");
             }
+            var bundleManifest = new StringBuilder();
+            for (int index = 0; index < bundlePaths.Length; index++)
+            {
+                string relativePath = Path
+                    .GetRelativePath(fullOutputPath, bundlePaths[index])
+                    .Replace('\\', '/');
+                long bytes = new FileInfo(bundlePaths[index]).Length;
+                string sha256 = ComputeSha256(bundlePaths[index]);
+                bundleManifest
+                    .Append(relativePath.Length)
+                    .Append(':')
+                    .Append(relativePath)
+                    .Append('\n')
+                    .Append(bytes)
+                    .Append('\n')
+                    .Append(sha256)
+                    .Append('\n');
+            }
+            string bundleSetSha256;
+            using (SHA256 algorithm = SHA256.Create())
+            {
+                bundleSetSha256 = string.Concat(
+                    algorithm
+                        .ComputeHash(Utf8WithoutBom.GetBytes(bundleManifest.ToString()))
+                        .Select(value => value.ToString("x2")));
+            }
 
             return new PublishedLocalContentResult(
                 fullOutputPath,
                 fullCatalogPath,
                 catalogBytes,
                 bundlePaths.Length,
-                bundleBytes);
+                bundleBytes,
+                bundleSetSha256);
         }
 
         private static EntityContentBuildResult BuildEntityContent(
@@ -1029,7 +1056,7 @@ namespace Game.Editor
             return new RuntimeContentReport
             {
                 schema = "warline.operation-map.dense-city-candidate-runtime-content",
-                schemaVersion = 6,
+                schemaVersion = 7,
                 result = "DenseCityCandidateRuntimeContentBuilt",
                 operationMapId = plan.OperationMapId,
                 entitySceneGuid = plan.EntitySceneGuid,
@@ -1052,6 +1079,8 @@ namespace Game.Editor
                     addressablesResult.PublishedLocalContent.BundleCount,
                 publishedLocalBundleBytes =
                     addressablesResult.PublishedLocalContent.BundleBytes,
+                publishedLocalBundleSetSha256 =
+                    addressablesResult.PublishedLocalContent.BundleSetSha256,
                 addressablesBuildLayoutPath = addressablesResult.BuildLayoutPath,
                 addressablesBuildLayoutSha256 = ComputeSha256(
                     addressablesResult.BuildLayoutPath),
@@ -1211,13 +1240,15 @@ namespace Game.Editor
                 string catalogPath,
                 long catalogBytes,
                 int bundleCount,
-                long bundleBytes)
+                long bundleBytes,
+                string bundleSetSha256)
             {
                 OutputPath = outputPath;
                 CatalogPath = catalogPath;
                 CatalogBytes = catalogBytes;
                 BundleCount = bundleCount;
                 BundleBytes = bundleBytes;
+                BundleSetSha256 = bundleSetSha256;
             }
 
             internal string OutputPath { get; }
@@ -1225,6 +1256,7 @@ namespace Game.Editor
             internal long CatalogBytes { get; }
             internal int BundleCount { get; }
             internal long BundleBytes { get; }
+            internal string BundleSetSha256 { get; }
         }
 
         internal readonly struct FrozenRollbackContentResult
@@ -1711,6 +1743,7 @@ namespace Game.Editor
             public long publishedLocalCatalogBytes;
             public int publishedLocalBundleCount;
             public long publishedLocalBundleBytes;
+            public string publishedLocalBundleSetSha256;
             public string addressablesBuildLayoutPath;
             public string addressablesBuildLayoutSha256;
             public int packedDependencyMetricsComplete;

@@ -19,6 +19,9 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
     private const string LegacyDenseRoadOutputRoot =
         "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/" +
         "opmap/skirmish/dense_city_roads";
+    private const string DenseBuildingMaterialOutputRoot =
+        "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/" +
+        "opmap/skirmish/dense_city_building_materials";
     private const string IdentityDeltaReportPath =
         "Design/AgentReports/2026-07-25_dense_city_fresh_identity_delta.json";
 
@@ -46,6 +49,23 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
     {
         DenseCandidateGeneratedRoot,
         LegacyDenseRoadOutputRoot
+    };
+
+    private static readonly string[] TwoRunIncidentalFiles =
+    {
+        DenseBuildingMaterialOutputRoot + ".meta",
+        "Design/AgentReports/2026-07-21_dense_city_phase0a_candidate_bake_all.json",
+        "Design/AgentReports/2026-07-21_dense_city_phase0a_candidate_bake_all.md",
+        "Design/AgentReports/2026-07-21_dense_city_phase0a_transform_parity.json",
+        "Design/AgentReports/2026-07-22_dense_city_presentation_budget.json",
+        "Design/AgentReports/2026-07-24_dense_city_candidate_entityscene_addressables_layout.json",
+        "Design/AgentReports/2026-07-24_dense_city_generated_transform_parity.json",
+        "Design/AgentReports/2026-07-24_dense_city_runtime_parity_manifest.json"
+    };
+
+    private static readonly string[] TwoRunIncidentalDirectories =
+    {
+        DenseBuildingMaterialOutputRoot
     };
 
     private string projectRoot;
@@ -92,29 +112,67 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
     public static void RunTwoRunNoOpValidation()
     {
         string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
-        using (CandidateOutputCheckpoint checkpoint = CandidateOutputCheckpoint.Capture(
-                   root,
-                   TwoRunCandidateFiles,
-                   TwoRunCandidateDirectories))
+        string token = Guid.NewGuid().ToString("N");
+        string inventoryPath = Path.Combine(
+            Path.GetTempPath(),
+            $"warline-dense-two-run-migration-inventory-{token}.json");
+        string inventorySummaryPath = Path.Combine(
+            Path.GetTempPath(),
+            $"warline-dense-two-run-migration-inventory-summary-{token}.json");
+        string previousInventoryPath = Environment.GetEnvironmentVariable(
+            OperationMapEntityPresentationMigrationInventoryProbe.ReportPathEnvironmentVariable);
+        string previousInventorySummaryPath = Environment.GetEnvironmentVariable(
+            OperationMapEntityPresentationMigrationInventoryProbe.SummaryPathEnvironmentVariable);
+        try
         {
-            RunCompleteDenseCandidateBake("first");
-            string firstFingerprint = ComputeCandidateOutputFingerprint(root);
+            Environment.SetEnvironmentVariable(
+                OperationMapEntityPresentationMigrationInventoryProbe.ReportPathEnvironmentVariable,
+                inventoryPath);
+            Environment.SetEnvironmentVariable(
+                OperationMapEntityPresentationMigrationInventoryProbe.SummaryPathEnvironmentVariable,
+                inventorySummaryPath);
+            OperationMapEntityPresentationMigrationInventoryProbe.Run();
 
-            RunCompleteDenseCandidateBake("second");
-            string secondFingerprint = ComputeCandidateOutputFingerprint(root);
-
-            if (!string.Equals(firstFingerprint, secondFingerprint, StringComparison.Ordinal))
+            using (CandidateOutputCheckpoint incidentalCheckpoint =
+                   CandidateOutputCheckpoint.Capture(
+                       root,
+                       TwoRunIncidentalFiles,
+                       TwoRunIncidentalDirectories))
+            using (CandidateOutputCheckpoint checkpoint = CandidateOutputCheckpoint.Capture(
+                       root,
+                       TwoRunCandidateFiles,
+                       TwoRunCandidateDirectories))
             {
-                throw new InvalidOperationException(
-                    "Dense-city generation plus complete Candidate Bake All changed stable " +
-                    $"candidate outputs on its second run. first={firstFingerprint} " +
-                    $"second={secondFingerprint}");
-            }
+                RunCompleteDenseCandidateBake("first");
+                string firstFingerprint = ComputeCandidateOutputFingerprint(root);
 
-            checkpoint.Commit();
-            Debug.Log(
-                "[DenseCityCandidateTwoRunNoOpValidation] result=Passed " +
-                $"fingerprint={secondFingerprint}");
+                RunCompleteDenseCandidateBake("second");
+                string secondFingerprint = ComputeCandidateOutputFingerprint(root);
+
+                if (!string.Equals(firstFingerprint, secondFingerprint, StringComparison.Ordinal))
+                {
+                    throw new InvalidOperationException(
+                        "Dense-city generation plus complete Candidate Bake All changed stable " +
+                        $"candidate outputs on its second run. first={firstFingerprint} " +
+                        $"second={secondFingerprint}");
+                }
+
+                checkpoint.Commit();
+                Debug.Log(
+                    "[DenseCityCandidateTwoRunNoOpValidation] result=Passed " +
+                    $"fingerprint={secondFingerprint}");
+            }
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable(
+                OperationMapEntityPresentationMigrationInventoryProbe.ReportPathEnvironmentVariable,
+                previousInventoryPath);
+            Environment.SetEnvironmentVariable(
+                OperationMapEntityPresentationMigrationInventoryProbe.SummaryPathEnvironmentVariable,
+                previousInventorySummaryPath);
+            DeleteIfExists(inventoryPath);
+            DeleteIfExists(inventorySummaryPath);
         }
     }
 
@@ -464,6 +522,12 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
             index += value.Length;
         }
         return count;
+    }
+
+    private static void DeleteIfExists(string path)
+    {
+        if (File.Exists(path))
+            File.Delete(path);
     }
 
     private static void RunCompleteDenseCandidateBake(string pass)

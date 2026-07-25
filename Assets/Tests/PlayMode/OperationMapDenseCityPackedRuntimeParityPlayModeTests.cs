@@ -278,6 +278,283 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
             "Dense packed parity emitted unexpected error logs.");
     }
 
+    [UnityTest]
+    [Timeout(600000)]
+    public IEnumerator DensePackedCandidate_ReadinessFailureResetsAndRetriesWithoutStaleOwnership()
+    {
+        string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+        string manifestPath = DenseResolve(projectRoot, DenseParityManifestPath);
+        string summaryPath = DenseResolve(projectRoot, DenseParitySummaryPath);
+        string runtimeContentReportPath =
+            DenseResolve(projectRoot, DenseRuntimeContentReportPath);
+        string addressablesCatalogPath =
+            DenseResolve(projectRoot, DenseAddressablesCatalogPath);
+        string entityContentRoot = DenseResolve(projectRoot, DenseEntityContentPath);
+        string entityCatalogPath = Path.Combine(
+            entityContentRoot,
+            RuntimeContentManager.RelativeCatalogPath);
+
+        DenseRequireFile(manifestPath);
+        DenseRequireFile(summaryPath);
+        DenseRequireFile(runtimeContentReportPath);
+        DenseRequireFile(addressablesCatalogPath);
+        DenseRequireFile(entityCatalogPath);
+
+        DenseParitySummary summary = JsonUtility.FromJson<DenseParitySummary>(
+            File.ReadAllText(summaryPath));
+        DenseRuntimeContentReport runtimeContent =
+            JsonUtility.FromJson<DenseRuntimeContentReport>(
+                File.ReadAllText(runtimeContentReportPath));
+        DenseParityManifest expected = DenseParityManifest.Read(manifestPath);
+        DenseValidateFingerprints(
+            projectRoot,
+            manifestPath,
+            addressablesCatalogPath,
+            entityCatalogPath,
+            summary,
+            runtimeContent,
+            expected);
+
+        AsyncOperationHandle<IResourceLocator> catalogHandle = default;
+        AsyncOperationHandle<OperationMapDefinition> definitionHandle = default;
+        OperationMapSceneLoadingSceneSystemHelper loader = null;
+        bool previousIgnoreFailingMessages = LogAssert.ignoreFailingMessages;
+        var unexpectedErrors = new List<string>();
+        Application.LogCallback logCallback = (condition, _, type) =>
+        {
+            if (type != LogType.Error &&
+                type != LogType.Exception &&
+                type != LogType.Assert)
+                return;
+            if (condition.StartsWith("[Worker", StringComparison.Ordinal) &&
+                condition.EndsWith(
+                    "Max unique Entity Name capacity exceeded. If you require more storage, " +
+                    "edit EntityNameStorage.cs and change the value of kMaxEntries to " +
+                    "pre-allocate more space.",
+                    StringComparison.Ordinal))
+                return;
+            unexpectedErrors.Add(condition);
+        };
+        Application.logMessageReceived += logCallback;
+        LogAssert.ignoreFailingMessages = true;
+        try
+        {
+            RuntimeContentManager.Cleanup(out _);
+            RuntimeContentManager.Initialize();
+            Assert.That(
+                RuntimeContentManager.LoadLocalCatalogData(
+                    entityCatalogPath,
+                    RuntimeContentManager.DefaultContentFileNameFunc,
+                    file => Path.Combine(
+                        entityContentRoot,
+                        RuntimeContentManager.DefaultArchivePathFunc(file))),
+                Is.True,
+                $"Dense candidate Entities content catalog failed to load: {entityCatalogPath}");
+
+            catalogHandle = Addressables.LoadContentCatalogAsync(
+                addressablesCatalogPath,
+                autoReleaseHandle: false);
+            yield return catalogHandle;
+            Assert.That(catalogHandle.Status, Is.EqualTo(AsyncOperationStatus.Succeeded),
+                catalogHandle.OperationException?.Message);
+
+            definitionHandle =
+                Addressables.LoadAssetAsync<OperationMapDefinition>(DenseDefinitionAddress);
+            yield return definitionHandle;
+            Assert.That(definitionHandle.Status, Is.EqualTo(AsyncOperationStatus.Succeeded),
+                definitionHandle.OperationException?.Message);
+            Assert.That(definitionHandle.Result, Is.Not.Null);
+            Assert.That(
+                definitionHandle.Result.OperationMapId,
+                Is.EqualTo(expected.OperationMapId));
+
+            World world = World.DefaultGameObjectInjectionWorld;
+            Assert.That(world, Is.Not.Null);
+            Assert.That(world.IsCreated, Is.True);
+            EntityManager entityManager = world.EntityManager;
+            var sceneGuid = new Hash128(expected.EntitySceneGuid);
+            Assert.That(sceneGuid.IsValid, Is.True);
+            var failReadinessOnceApi = new FailReadinessOncePackedEntitySceneApi();
+            loader = new OperationMapSceneLoadingSceneSystemHelper(
+                entitySceneApi: failReadinessOnceApi);
+
+            Assert.That(
+                loader.TryStart(definitionHandle.Result, out string startError),
+                Is.True,
+                startError);
+            float deadline = Time.realtimeSinceStartup + MaximumWaitSeconds;
+            while (!loader.HasFailed &&
+                   !loader.IsReady &&
+                   Time.realtimeSinceStartup < deadline)
+            {
+                loader.Update();
+                yield return null;
+            }
+
+            Assert.That(loader.HasFailed, Is.True);
+            Assert.That(loader.IsReady, Is.False);
+            Assert.That(
+                loader.FailureCode,
+                Is.EqualTo(OperationMapLoadResultCode.MetadataBindFailed));
+            Assert.That(loader.Failure, Does.Contain("different operation map"));
+            Assert.That(loader.Manifest, Is.Null);
+            Assert.That(failReadinessOnceApi.FailureCount, Is.EqualTo(1));
+            Assert.That(
+                failReadinessOnceApi.FailedSceneEntity,
+                Is.Not.EqualTo(Entity.Null));
+            Assert.That(
+                failReadinessOnceApi.FailedSectionEntities.Length,
+                Is.GreaterThan(0));
+
+            bool reset = false;
+            string resetError = null;
+            deadline = Time.realtimeSinceStartup + MaximumWaitSeconds;
+            while (!reset && Time.realtimeSinceStartup < deadline)
+            {
+                reset = loader.TryReset(out resetError);
+                if (!reset)
+                {
+                    Assert.That(
+                        resetError,
+                        Does.Contain("cleanup is still in progress"));
+                    yield return null;
+                }
+            }
+
+            Assert.That(reset, Is.True, resetError);
+            Assert.That(loader.HasFailed, Is.False);
+            Assert.That(
+                loader.FailureCode,
+                Is.EqualTo(OperationMapLoadResultCode.None));
+
+            deadline = Time.realtimeSinceStartup + MaximumWaitSeconds;
+            while (Time.realtimeSinceStartup < deadline &&
+                   entityManager.Exists(failReadinessOnceApi.FailedSceneEntity))
+            {
+                yield return null;
+            }
+
+            Assert.That(
+                entityManager.Exists(failReadinessOnceApi.FailedSceneEntity),
+                Is.False,
+                "Failed dense EntityScene metadata remained after reset cleanup.");
+            for (int sectionIndex = 0;
+                 sectionIndex < failReadinessOnceApi.FailedSectionEntities.Length;
+                 sectionIndex++)
+            {
+                Assert.That(
+                    entityManager.Exists(
+                        failReadinessOnceApi.FailedSectionEntities[sectionIndex]),
+                    Is.False,
+                    $"Failed dense section {sectionIndex} remained after reset cleanup.");
+            }
+            Assert.That(
+                SceneSystem.GetSceneEntity(world.Unmanaged, sceneGuid),
+                Is.EqualTo(Entity.Null));
+
+            Assert.That(
+                loader.TryStart(definitionHandle.Result, out startError),
+                Is.True,
+                startError);
+            deadline = Time.realtimeSinceStartup + MaximumWaitSeconds;
+            while (!loader.IsReady &&
+                   !loader.HasFailed &&
+                   Time.realtimeSinceStartup < deadline)
+            {
+                loader.Update();
+                yield return null;
+            }
+
+            Assert.That(loader.HasFailed, Is.False, loader.Failure);
+            Assert.That(loader.IsReady, Is.True);
+            Assert.That(loader.Manifest, Is.Null);
+            Assert.That(
+                failReadinessOnceApi.FailureCount,
+                Is.EqualTo(1),
+                "The one-shot readiness fault must not affect the dense retry.");
+
+            Entity retrySceneEntity =
+                SceneSystem.GetSceneEntity(world.Unmanaged, sceneGuid);
+            Assert.That(retrySceneEntity, Is.Not.EqualTo(Entity.Null));
+            Assert.That(
+                SceneSystem.IsSceneLoaded(world.Unmanaged, retrySceneEntity),
+                Is.True);
+            Entity[] retrySections =
+                GetResolvedSectionEntities(entityManager, retrySceneEntity);
+            Assert.That(
+                CountEntitiesForSections(entityManager, retrySections),
+                Is.GreaterThan(0));
+            Assert.That(
+                OperationMapEntityPresentationReadinessUtility.TryValidate(
+                    entityManager,
+                    retrySceneEntity,
+                    expected.OperationMapId,
+                    out string readinessError),
+                Is.True,
+                readinessError);
+
+            DenseRuntimeCapture retryCapture =
+                DenseCapture(entityManager, retrySections);
+            Assert.That(
+                retryCapture.LegacyRows,
+                Has.Length.EqualTo(DenseExpectedLegacyIdentityCount));
+            Assert.That(
+                retryCapture.DenseRows,
+                Has.Length.EqualTo(DenseExpectedGeneratedIdentityCount));
+            Assert.That(
+                retryCapture.RenderRows,
+                Has.Length.EqualTo(DenseExpectedRenderRowCount));
+
+            Assert.That(
+                loader.TryBeginUnload(out string unloadError),
+                Is.True,
+                unloadError);
+            deadline = Time.realtimeSinceStartup + MaximumWaitSeconds;
+            while (!loader.UnloadComplete &&
+                   !loader.HasFailed &&
+                   Time.realtimeSinceStartup < deadline)
+            {
+                loader.Update();
+                yield return null;
+            }
+
+            Assert.That(loader.HasFailed, Is.False, loader.Failure);
+            Assert.That(loader.UnloadComplete, Is.True);
+            Assert.That(entityManager.Exists(retrySceneEntity), Is.False);
+            for (int sectionIndex = 0; sectionIndex < retrySections.Length; sectionIndex++)
+            {
+                Assert.That(
+                    entityManager.Exists(retrySections[sectionIndex]),
+                    Is.False,
+                    $"Dense retry section {sectionIndex} remained after successful unload.");
+            }
+            Assert.That(
+                SceneSystem.GetSceneEntity(world.Unmanaged, sceneGuid),
+                Is.EqualTo(Entity.Null));
+            AssertAcceptedAuthoringScenesNotLoaded();
+        }
+        finally
+        {
+            loader?.Dispose();
+            if (definitionHandle.IsValid())
+                Addressables.Release(definitionHandle);
+            if (catalogHandle.IsValid())
+            {
+                if (catalogHandle.Status == AsyncOperationStatus.Succeeded)
+                    Addressables.RemoveResourceLocator(catalogHandle.Result);
+                Addressables.Release(catalogHandle);
+            }
+            RuntimeContentManager.Cleanup(out _);
+            RuntimeContentManager.Initialize();
+            LogAssert.ignoreFailingMessages = previousIgnoreFailingMessages;
+            Application.logMessageReceived -= logCallback;
+        }
+        Assert.That(
+            unexpectedErrors,
+            Is.Empty,
+            "Dense packed failure/retry emitted unexpected error logs.");
+    }
+
     private static IEnumerator DenseRunLoadCaptureUnloadCycle(
         OperationMapDefinition definition,
         DenseParityManifest expected,

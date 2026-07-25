@@ -732,7 +732,7 @@ Runtime procedural generation is not the fallback for a rendering or packaging f
 
 Progress is checklist based. Every checkbox counts. Update the count, phase status, and validation log in the same stable change that completes an item.
 
-Current progress: **106 / 149 (71%)**
+Current progress: **107 / 149 (72%)**
 
 | Phase | Status |
 |---|---|
@@ -980,7 +980,8 @@ Current progress: **106 / 149 (71%)**
 
 - [x] Document the exact author workflow: edit overrides, clear/regenerate city, validate, Bake All, review report, device test.
   - Accepted 2026-07-25 in `Design/Architecture/dense_city_author_workflow.md`: the workflow separates persistent authored overrides from disposable generated ownership, uses the transactional candidate hierarchy/realization/material commands, enumerates the fail-closed validation order and candidate-only Bake All command, identifies tracked evidence, preserves production `StaticSceneChunks`, and keeps Android/device acceptance explicitly open.
-- [ ] Document existing-map authored ECS editing, building/vehicle authoring, SubScene workflow, static rollback artifacts, and entity-scene cutover/rollback.
+- [x] Document existing-map authored ECS editing, building/vehicle authoring, SubScene workflow, static rollback artifacts, and entity-scene cutover/rollback.
+  - Accepted 2026-07-25 in `Design/Architecture/operation_map_authored_ecs_workflow.md`: the workflow identifies source/candidate/runtime boundaries, exact presentation roles, building/vehicle/render-only authoring contracts, candidate migration and validation commands, frozen static ownership, cutover prerequisites, and both candidate and committed-production rollback paths. It explicitly states that candidate success does not authorize production cutover or static-package deletion.
 - [ ] Document generated versus authored ownership and how to preserve hand edits.
 - [ ] Document every generated output owner and rollback path.
 - [ ] Update the parent operation-map tracker with accepted dense-city implementation evidence.
@@ -1215,6 +1216,7 @@ Extend existing tests rather than duplicating them for:
 
 | 2026-07-25 | Windows dense feature semantics and collider-free acceptance | Windows resolver `C:\Users\zfoul\AppData\Local\Temp\warline-unity-resolve-windows.log`; stripper `warline-dense-city-windows-physics-stripper.log` 6/6; visual-blocker transaction `warline-dense-city-windows-visual-blocker-contract.log` 9/9; full map `warline-dense-city-windows-building-integration-final.log`; feature-owner XML `warline-dense-city-windows-feature-owner.xml` 1/1 in `3.79 s`; `git diff --check` | Passed; Phase 2 complete and Phase 3 focused stripping items accepted | Fixed Windows Editor resolution to ignore absent roots while retaining `D:\Program Files` on Jenkins hosts where it exists. The first full-map run correctly rejected mixed urban-rock categories; visual-blocker inputs now carry an explicit category and the record-set gate permits only infrastructure or prop, with vegetation rejection covered. The final full-map run passed at 5,371 semantic buildings, 33,536 surfaces, 42,730 presentations, 25 urban rocks, and zero prohibited generated-root physics while preserving accepted scene bytes. The focused hierarchy test passed exact owner routing, and the stripper suite passed recursive prefab/primitive removal and persistent prefab non-mutation. No accepted source/candidate, production Addressables, frozen rollback content, or Android output changed. Progress is 105/149 (70%). |
 | 2026-07-25 | Dense-city author workflow documentation | `Design/Architecture/dense_city_author_workflow.md`; source-code menu/path/report reference audit; tracker checkbox count `106/149`; `git diff --check` | Passed documentation step; device and production-cutover acceptance remain open | Documented the exact candidate-only override, regeneration, validation, Bake All, report-review, device-test, rejection, rollback, and commit flow. The workflow explicitly prevents saving disposable previews over accepted assets, identifies the candidate transaction as the acceptance path, preserves production `StaticSceneChunks`, and does not claim Android evidence that has not run. Progress is 106/149 (71%). |
+| 2026-07-25 | Existing-map authored ECS and rollback workflow documentation | `Design/Architecture/operation_map_authored_ecs_workflow.md`; source-code menu/type/path reference audit; tracker checkbox count `107/149`; `git diff --check` | Passed documentation step; production cutover and static cleanup remain open | Documented the accepted source, candidate, and runtime boundaries; three presentation roles; proxy ownership; existing building, vehicle, and render-only authoring rules; exact migration/validation/Bake All sequence; frozen static rollback root; cutover prerequisites; and candidate versus committed-production rollback. The workflow does not mutate or authorize mutation of accepted sources, production Addressables, or rollback artifacts. Progress is 107/149 (72%). |
 
 ## 25. Completion Rule
 

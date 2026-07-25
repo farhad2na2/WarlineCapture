@@ -562,7 +562,8 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
         bool validateCameraTraversal,
         bool validateSteadyStateAllocation,
         bool validateBuildingDestruction,
-        bool validateVehicleMovement)
+        bool validateVehicleMovement,
+        Action<World, Entity[]> validateLoadedContent = null)
     {
         yield return Aph805MenuMatchMenuLifecyclePlayModeTests.EnterStableMatch(route);
         Assert.That(
@@ -599,6 +600,7 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
             Is.GreaterThan(0));
         AssertSinglePublishedOperationMapRoot(entityManager);
         AssertAcceptedAuthoringScenesNotLoaded();
+        validateLoadedContent?.Invoke(world, resolvedSectionEntities);
 
         if (validateCameraTraversal)
         {

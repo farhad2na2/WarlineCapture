@@ -280,6 +280,163 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
 
     [UnityTest]
     [Timeout(600000)]
+    public IEnumerator DensePackedCandidate_AuthoredGroundVehicleMovesAndRetainsEcsPresentation()
+    {
+        string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+        string manifestPath = DenseResolve(projectRoot, DenseParityManifestPath);
+        string summaryPath = DenseResolve(projectRoot, DenseParitySummaryPath);
+        string runtimeContentReportPath =
+            DenseResolve(projectRoot, DenseRuntimeContentReportPath);
+        string addressablesCatalogPath =
+            DenseResolve(projectRoot, DenseAddressablesCatalogPath);
+        string entityContentRoot = DenseResolve(projectRoot, DenseEntityContentPath);
+        string entityCatalogPath = Path.Combine(
+            entityContentRoot,
+            RuntimeContentManager.RelativeCatalogPath);
+
+        DenseRequireFile(manifestPath);
+        DenseRequireFile(summaryPath);
+        DenseRequireFile(runtimeContentReportPath);
+        DenseRequireFile(addressablesCatalogPath);
+        DenseRequireFile(entityCatalogPath);
+
+        DenseParitySummary summary = JsonUtility.FromJson<DenseParitySummary>(
+            File.ReadAllText(summaryPath));
+        DenseRuntimeContentReport runtimeContent =
+            JsonUtility.FromJson<DenseRuntimeContentReport>(
+                File.ReadAllText(runtimeContentReportPath));
+        DenseParityManifest expected = DenseParityManifest.Read(manifestPath);
+        DenseValidateFingerprints(
+            projectRoot,
+            manifestPath,
+            addressablesCatalogPath,
+            entityCatalogPath,
+            summary,
+            runtimeContent,
+            expected);
+
+        AsyncOperationHandle<IResourceLocator> catalogHandle = default;
+        AsyncOperationHandle<OperationMapDefinition> definitionHandle = default;
+        OperationMapCatalogConfig candidateCatalog = null;
+        var route = new Aph805MenuMatchMenuLifecyclePlayModeTests.TransitionContext
+        {
+            OperationMapSceneName =
+                Path.GetFileNameWithoutExtension(DenseCandidateRuntimeBindingPath)
+        };
+        bool previousIgnoreFailingMessages = LogAssert.ignoreFailingMessages;
+        var unexpectedErrors = new List<string>();
+        Application.LogCallback logCallback = (condition, _, type) =>
+        {
+            if (type != LogType.Error &&
+                type != LogType.Exception &&
+                type != LogType.Assert)
+                return;
+            if (condition.StartsWith("[Worker", StringComparison.Ordinal) &&
+                condition.EndsWith(
+                    "Max unique Entity Name capacity exceeded. If you require more storage, " +
+                    "edit EntityNameStorage.cs and change the value of kMaxEntries to " +
+                    "pre-allocate more space.",
+                    StringComparison.Ordinal))
+                return;
+            unexpectedErrors.Add(condition);
+        };
+        Application.logMessageReceived += logCallback;
+        LogAssert.ignoreFailingMessages = true;
+        try
+        {
+            RuntimeContentManager.Cleanup(out _);
+            RuntimeContentManager.Initialize();
+            Assert.That(
+                RuntimeContentManager.LoadLocalCatalogData(
+                    entityCatalogPath,
+                    RuntimeContentManager.DefaultContentFileNameFunc,
+                    file => Path.Combine(
+                        entityContentRoot,
+                        RuntimeContentManager.DefaultArchivePathFunc(file))),
+                Is.True,
+                $"Dense candidate Entities content catalog failed to load: {entityCatalogPath}");
+
+            catalogHandle = Addressables.LoadContentCatalogAsync(
+                addressablesCatalogPath,
+                autoReleaseHandle: false);
+            yield return catalogHandle;
+            Assert.That(catalogHandle.Status, Is.EqualTo(AsyncOperationStatus.Succeeded),
+                catalogHandle.OperationException?.Message);
+
+            definitionHandle =
+                Addressables.LoadAssetAsync<OperationMapDefinition>(DenseDefinitionAddress);
+            yield return definitionHandle;
+            Assert.That(definitionHandle.Status, Is.EqualTo(AsyncOperationStatus.Succeeded),
+                definitionHandle.OperationException?.Message);
+            Assert.That(definitionHandle.Result, Is.Not.Null);
+            Assert.That(
+                definitionHandle.Result.OperationMapId,
+                Is.EqualTo(expected.OperationMapId));
+
+            candidateCatalog = CreateCandidateCatalog(definitionHandle.Result);
+            MatchSceneView.SetEditorOperationMapCatalogOverrideForTests(candidateCatalog);
+
+            yield return Aph805MenuMatchMenuLifecyclePlayModeTests.PrepareStableMenu(route);
+            StaticMapPresentationStreamer staticStreamer =
+                ResolveStaticPresentationStreamer(route.Menu);
+            Assert.That(staticStreamer.DrainComplete, Is.False);
+            Assert.That(staticStreamer.PendingOperationCount, Is.Zero);
+            Assert.That(staticStreamer.HasActiveOperation, Is.False);
+
+            yield return RunPackedMatchToMenuCycle(
+                route,
+                definitionHandle.Result,
+                staticStreamer,
+                cycle: 1,
+                validateCameraTraversal: false,
+                validateSteadyStateAllocation: false,
+                validateBuildingDestruction: false,
+                validateVehicleMovement: true,
+                validateLoadedContent: DenseAssertCompleteRuntimeCounts);
+        }
+        finally
+        {
+            MatchSceneView.SetEditorOperationMapCatalogOverrideForTests(null);
+            if (candidateCatalog != null)
+                UnityEngine.Object.Destroy(candidateCatalog);
+            if (definitionHandle.IsValid())
+                Addressables.Release(definitionHandle);
+            if (catalogHandle.IsValid())
+            {
+                if (catalogHandle.Status == AsyncOperationStatus.Succeeded)
+                    Addressables.RemoveResourceLocator(catalogHandle.Result);
+                Addressables.Release(catalogHandle);
+            }
+            RuntimeContentManager.Cleanup(out _);
+            RuntimeContentManager.Initialize();
+            LogAssert.ignoreFailingMessages = previousIgnoreFailingMessages;
+            Application.logMessageReceived -= logCallback;
+        }
+        Assert.That(
+            unexpectedErrors,
+            Is.Empty,
+            "Dense packed vehicle route emitted unexpected error logs.");
+    }
+
+    private static void DenseAssertCompleteRuntimeCounts(
+        World world,
+        Entity[] resolvedSectionEntities)
+    {
+        DenseRuntimeCapture capture =
+            DenseCapture(world.EntityManager, resolvedSectionEntities);
+        Assert.That(
+            capture.LegacyRows,
+            Has.Length.EqualTo(DenseExpectedLegacyIdentityCount));
+        Assert.That(
+            capture.DenseRows,
+            Has.Length.EqualTo(DenseExpectedGeneratedIdentityCount));
+        Assert.That(
+            capture.RenderRows,
+            Has.Length.EqualTo(DenseExpectedRenderRowCount));
+    }
+
+    [UnityTest]
+    [Timeout(600000)]
     public IEnumerator DensePackedCandidate_ReadinessFailureResetsAndRetriesWithoutStaleOwnership()
     {
         string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));

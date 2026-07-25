@@ -732,7 +732,7 @@ Runtime procedural generation is not the fallback for a rendering or packaging f
 
 Progress is checklist based. Every checkbox counts. Update the count, phase status, and validation log in the same stable change that completes an item.
 
-Current progress: **105 / 149 (70%)**
+Current progress: **106 / 149 (71%)**
 
 | Phase | Status |
 |---|---|
@@ -978,7 +978,8 @@ Current progress: **105 / 149 (70%)**
 
 ### Phase 10: Documentation And Closeout
 
-- [ ] Document the exact author workflow: edit overrides, clear/regenerate city, validate, Bake All, review report, device test.
+- [x] Document the exact author workflow: edit overrides, clear/regenerate city, validate, Bake All, review report, device test.
+  - Accepted 2026-07-25 in `Design/Architecture/dense_city_author_workflow.md`: the workflow separates persistent authored overrides from disposable generated ownership, uses the transactional candidate hierarchy/realization/material commands, enumerates the fail-closed validation order and candidate-only Bake All command, identifies tracked evidence, preserves production `StaticSceneChunks`, and keeps Android/device acceptance explicitly open.
 - [ ] Document existing-map authored ECS editing, building/vehicle authoring, SubScene workflow, static rollback artifacts, and entity-scene cutover/rollback.
 - [ ] Document generated versus authored ownership and how to preserve hand edits.
 - [ ] Document every generated output owner and rollback path.
@@ -1213,6 +1214,7 @@ Extend existing tests rather than duplicating them for:
 | 2026-07-25 | Phase 3 indirect building immediate-strip and full-root gate | `DenseMiddleEasternCityEditModeBuilder.SpawnBuilding`; `DenseCityBuildingPlacementIntegrationValidation`; Unity Roslyn compile of `Game.Editor` and `Game.Tests.Editor`; dense-generation instantiation inventory; `git diff --check` | Immediate-strip implementation inventory complete; checklist item remains open pending wrapper-driven full generation | Closed the remaining indirect editor-generation gap without adding an editor dependency to `Game.Runtime`: immediately after the nullable `SpawnVisualOnlyPrefab` result, the dense editor builder recursively strips its complete wrapper hierarchy before applying realization transforms, calculating bounds, reserving placement, creating foundations, or accepting semantic records. The existing full-map integration entry point now also calls `DenseCityPhysicsComponentStripper.TryValidateNoProhibitedComponents` on the complete generated root, including inactive descendants, so any missed direct or indirect path fails closed. Combined inventory now covers the guarded primitive factory, guarded prefab factory, 16 direct giant-dense sites, three record-replay sites, and the single runtime-helper-backed building site. Unity Roslyn compiles both affected assemblies with zero errors and `git diff --check` passes. The mandated macOS wrapper cannot execute in this Windows workspace, so no full-generation or focused stripper pass is claimed, both immediate-strip/primitive acceptance items remain open, and progress stays 102/149 (68%). No accepted source/candidate, production Addressables, frozen rollback content, or Android output changed. |
 
 | 2026-07-25 | Windows dense feature semantics and collider-free acceptance | Windows resolver `C:\Users\zfoul\AppData\Local\Temp\warline-unity-resolve-windows.log`; stripper `warline-dense-city-windows-physics-stripper.log` 6/6; visual-blocker transaction `warline-dense-city-windows-visual-blocker-contract.log` 9/9; full map `warline-dense-city-windows-building-integration-final.log`; feature-owner XML `warline-dense-city-windows-feature-owner.xml` 1/1 in `3.79 s`; `git diff --check` | Passed; Phase 2 complete and Phase 3 focused stripping items accepted | Fixed Windows Editor resolution to ignore absent roots while retaining `D:\Program Files` on Jenkins hosts where it exists. The first full-map run correctly rejected mixed urban-rock categories; visual-blocker inputs now carry an explicit category and the record-set gate permits only infrastructure or prop, with vegetation rejection covered. The final full-map run passed at 5,371 semantic buildings, 33,536 surfaces, 42,730 presentations, 25 urban rocks, and zero prohibited generated-root physics while preserving accepted scene bytes. The focused hierarchy test passed exact owner routing, and the stripper suite passed recursive prefab/primitive removal and persistent prefab non-mutation. No accepted source/candidate, production Addressables, frozen rollback content, or Android output changed. Progress is 105/149 (70%). |
+| 2026-07-25 | Dense-city author workflow documentation | `Design/Architecture/dense_city_author_workflow.md`; source-code menu/path/report reference audit; tracker checkbox count `106/149`; `git diff --check` | Passed documentation step; device and production-cutover acceptance remain open | Documented the exact candidate-only override, regeneration, validation, Bake All, report-review, device-test, rejection, rollback, and commit flow. The workflow explicitly prevents saving disposable previews over accepted assets, identifies the candidate transaction as the acceptance path, preserves production `StaticSceneChunks`, and does not claim Android evidence that has not run. Progress is 106/149 (71%). |
 
 ## 25. Completion Rule
 

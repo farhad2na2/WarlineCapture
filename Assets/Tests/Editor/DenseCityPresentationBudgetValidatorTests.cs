@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Game.Editor;
 using NUnit.Framework;
 using UnityEngine;
@@ -14,6 +15,7 @@ public sealed class DenseCityPresentationBudgetValidatorTests
             suite.Budget_RejectsTransformBoundsMismatch,
             suite.Budget_RejectsIncompleteGeometryEvidence,
             suite.Budget_RejectsIncompleteBakedOwnershipEvidence,
+            suite.BudgetFailure_RestoresAcceptedCandidateOutput,
             suite.Budget_SerializationIsDeterministicAndMarksPackedMetricsPending,
             suite.CandidateBakeAll_OrdersBudgetAfterBakeAndBeforePostflight,
             suite.CurrentMapBaker_BakesStaticPresentationOnlyForStaticDefinitions
@@ -66,6 +68,51 @@ public sealed class DenseCityPresentationBudgetValidatorTests
                 bake, art, parity, layout, geometry, out _, out string error),
             Is.False);
         Assert.That(error, Is.EqualTo("candidate-bake-budget"));
+    }
+
+    [Test]
+    public void BudgetFailure_RestoresAcceptedCandidateOutput()
+    {
+        string projectRoot = Path.GetDirectoryName(Application.dataPath);
+        Assert.That(projectRoot, Is.Not.Null.And.Not.Empty);
+        const string outputDirectory =
+            "Temp/DenseCityPresentationBudgetValidatorTests/BudgetRollback";
+        const string acceptedRelative = outputDirectory + "/accepted-output.bin";
+        const string partialRelative = outputDirectory + "/partial-output.bin";
+        string acceptedPath = Path.Combine(projectRoot, acceptedRelative);
+        string partialPath = Path.Combine(projectRoot, partialRelative);
+        Directory.CreateDirectory(Path.GetDirectoryName(acceptedPath));
+        byte[] acceptedBytes = { 1, 4, 9, 16 };
+        File.WriteAllBytes(acceptedPath, acceptedBytes);
+
+        try
+        {
+            OperationMapEntitySceneCandidateBakeAll.CandidateFileTransaction transaction =
+                OperationMapEntitySceneCandidateBakeAll.CandidateFileTransaction.Capture(
+                    projectRoot,
+                    new[] { acceptedRelative, partialRelative });
+            File.WriteAllBytes(acceptedPath, new byte[] { 2, 3, 5, 7 });
+            File.WriteAllBytes(partialPath, new byte[] { 11, 13 });
+            CreateEvidence(out var bake, out var art, out var parity, out var layout, out var geometry);
+            geometry.uniqueTextureAssetCount = 0;
+
+            Assert.That(
+                DenseCityPresentationBudgetValidator.TryCreateReport(
+                    bake, art, parity, layout, geometry, out _, out string error),
+                Is.False);
+            Assert.That(error, Is.EqualTo("candidate-geometry-budget"));
+
+            transaction.Rollback();
+
+            Assert.That(File.ReadAllBytes(acceptedPath), Is.EqualTo(acceptedBytes));
+            Assert.That(File.Exists(partialPath), Is.False);
+        }
+        finally
+        {
+            string physicalDirectory = Path.Combine(projectRoot, outputDirectory);
+            if (Directory.Exists(physicalDirectory))
+                Directory.Delete(physicalDirectory, true);
+        }
     }
 
     [Test]

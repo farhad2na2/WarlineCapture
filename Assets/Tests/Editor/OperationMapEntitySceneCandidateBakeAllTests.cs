@@ -153,6 +153,33 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
             $"report={IdentityDeltaReportPath}");
     }
 
+    public static void RunFailureRollbackValidation()
+    {
+        DenseCityCandidateAuthoringTransactionTests.RunProxyFailureRollbackValidation();
+        DenseCityInfrastructurePlacementTransactionTests.RunSurfaceFailureRollbackValidation();
+
+        var presentation = new DenseCityPresentationReplayTransactionTests();
+        presentation.SetUp();
+        try
+        {
+            presentation.Realize_LateFailurePreservesAcceptedAndRollsBackNewPresentationSet();
+        }
+        finally
+        {
+            presentation.TearDown();
+        }
+
+        var readiness = new OperationMapEntityPresentationReadinessValidatorTests();
+        readiness.SetUp();
+        readiness.ReadinessFailure_DoesNotMutateAcceptedHierarchy();
+
+        var budget = new DenseCityPresentationBudgetValidatorTests();
+        budget.BudgetFailure_RestoresAcceptedCandidateOutput();
+
+        Debug.Log(
+            "[DenseCityBakeAllFailureRollbackValidation] result=Passed categories=5");
+    }
+
     [SetUp]
     public void SetUp()
     {

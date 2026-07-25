@@ -301,6 +301,13 @@ public sealed class OperationMapEntityPresentationReadinessValidatorTests
         serialized.FindProperty("schemaVersion").intValue =
             OperationMapEntityPresentationRootAuthoring.CurrentSchemaVersion;
         serialized.FindProperty("migrationRecordSetHash").stringValue = Hash;
+        if (role == OperationMapEntityPresentationRole.GameplayBuildings)
+        {
+            serialized.FindProperty("expectedGameplayBuildingCount").intValue = 1;
+            serialized.FindProperty("expectedGameplayVehicleCount").intValue = 1;
+            serialized.FindProperty("expectedRenderOnlyCount").intValue = 1;
+            serialized.FindProperty("expectedGeneratedIdentityCount").intValue = 0;
+        }
         serialized.ApplyModifiedPropertiesWithoutUndo();
         return owner.transform;
     }

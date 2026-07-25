@@ -25,7 +25,10 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
             suite.MeasurePackedDependencyBytes_ReportsSharedAndExcessPhysicalBytes,
             suite.MeasurePackedDependencyBytes_DeduplicatesSameBundleRows,
             suite.MeasurePackedDependencyBytes_RejectsMissingSharedEvidence,
-            suite.MeasurePackedDependencyBytes_AdaptsAddressablesBuildLayout
+            suite.MeasurePackedDependencyBytes_AdaptsAddressablesBuildLayout,
+            suite.SelectSingleGeneratedBuildLayoutPath_ReturnsOnlyNewJson,
+            suite.SelectSingleGeneratedBuildLayoutPath_RejectsMissingReport,
+            suite.SelectSingleGeneratedBuildLayoutPath_RejectsAmbiguousReports
         };
         for (int i = 0; i < tests.Length; i++)
             tests[i]();
@@ -342,6 +345,43 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
         };
         bundle.Files.Add(file);
         return file;
+    }
+
+    [Test]
+    public void SelectSingleGeneratedBuildLayoutPath_ReturnsOnlyNewJson()
+    {
+        string result =
+            OperationMapDenseCityCandidateRuntimeContentBuilder
+                .SelectSingleGeneratedBuildLayoutPath(
+                    new[] { "old.json" },
+                    new[] { "old.json", "new.json", "ignored.txt" },
+                    path => path == "new.json");
+
+        Assert.That(result, Is.EqualTo("new.json"));
+    }
+
+    [Test]
+    public void SelectSingleGeneratedBuildLayoutPath_RejectsMissingReport()
+    {
+        InvalidOperationException exception = Assert.Throws<InvalidOperationException>(
+            () => OperationMapDenseCityCandidateRuntimeContentBuilder
+                .SelectSingleGeneratedBuildLayoutPath(
+                    new[] { "old.json" },
+                    new[] { "old.json" },
+                    _ => true));
+        Assert.That(exception.Message, Does.Contain("found 0"));
+    }
+
+    [Test]
+    public void SelectSingleGeneratedBuildLayoutPath_RejectsAmbiguousReports()
+    {
+        InvalidOperationException exception = Assert.Throws<InvalidOperationException>(
+            () => OperationMapDenseCityCandidateRuntimeContentBuilder
+                .SelectSingleGeneratedBuildLayoutPath(
+                    Array.Empty<string>(),
+                    new[] { "first.json", "second.json" },
+                    _ => true));
+        Assert.That(exception.Message, Does.Contain("found 2"));
     }
 
     private static string WriteBytes(string root, string relativePath, int count)

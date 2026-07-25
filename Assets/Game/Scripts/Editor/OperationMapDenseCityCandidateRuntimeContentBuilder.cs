@@ -35,6 +35,10 @@ namespace Game.Editor
             "Design/AgentReports/2026-07-25_dense_city_frozen_rollback_byte_inventory.json";
         internal const string AddressablesOutputPath =
             "Library/OperationMapDenseCityRuntimeContent/Addressables";
+        internal const string BuildLayoutOutputPath =
+            "Library/OperationMapDenseCityRuntimeContent/BuildLayout";
+        internal const string AddressablesBuildLayoutPath =
+            BuildLayoutOutputPath + "/buildlayout.json";
         internal const string EntityContentOutputPath =
             "Library/OperationMapDenseCityRuntimeContent/Entities";
         internal const string FrozenRollbackRootPath =
@@ -99,11 +103,12 @@ namespace Game.Editor
                 projectRoot,
                 SharedAddressablesOutputPath,
                 AddressablesOutputPath,
-                EntityContentOutputPath);
+                EntityContentOutputPath,
+                BuildLayoutOutputPath);
 
             try
             {
-                AddressablesPlayerBuildResult addressablesResult =
+                AddressablesContentBuildResult addressablesResult =
                     BuildIsolatedAddressables(plan, outputTransaction);
                 productionSettingsTransaction.Rollback();
                 EntityContentBuildResult entityContentResult = BuildEntityContent(plan);
@@ -123,6 +128,8 @@ namespace Game.Editor
                     $"entitySceneGuid={plan.EntitySceneGuid} " +
                     $"addressablesBundles={report.addressablesBundleCount} " +
                     $"addressablesBytes={report.addressablesBytes} " +
+                    $"sharedDependencyBytes={report.sharedDependencyBytes} " +
+                    $"duplicatedDependencyBytes={report.duplicatedDependencyBytes} " +
                     $"entityArchives={report.entityContentArchiveCount} " +
                     $"entitySceneArchiveBytes={report.entitySceneArchiveBytes} " +
                     $"entityMetadataBytes={report.entityContentMetadataBytes} " +
@@ -178,12 +185,13 @@ namespace Game.Editor
                 "productionCutover=0");
         }
 
-        private static AddressablesPlayerBuildResult BuildIsolatedAddressables(
+        private static AddressablesContentBuildResult BuildIsolatedAddressables(
             OperationMapEntitySceneCandidateAddressablesLayoutPlan plan,
             DenseRuntimeContentOutputTransaction outputTransaction)
         {
             AddressableAssetSettings settings = null;
             BuildScriptPackedMode builder = null;
+            using var buildLayoutCapture = BuildLayoutCaptureScope.Begin();
             try
             {
                 DeleteTransientSettings();
@@ -286,8 +294,45 @@ namespace Game.Editor
                         result?.Error ?? "Dense Addressables content build returned no result.");
                 }
 
+                string sourceBuildLayoutPath =
+                    buildLayoutCapture.RequireSingleGeneratedBuildLayoutPath();
+                BuildLayout buildLayout = BuildLayout.Open(
+                    sourceBuildLayoutPath,
+                    readFullFile: true);
+                if (buildLayout == null)
+                    throw new InvalidOperationException(
+                        $"Dense Addressables Build Layout could not be opened: {sourceBuildLayoutPath}");
+                string[] sharedDependencyGuids = plan.Entries
+                    .Where(entry =>
+                        string.Equals(
+                            entry.Role,
+                            "shared-dependency",
+                            StringComparison.Ordinal))
+                    .Select(entry => AssetDatabase.AssetPathToGUID(entry.AssetPath))
+                    .ToArray();
+                PackedDependencyByteResult packedDependencyBytes =
+                    MeasurePackedDependencyBytes(buildLayout, sharedDependencyGuids);
+                if (packedDependencyBytes.SharedDependencyGuidCount !=
+                    plan.SharedDependencyCount)
+                {
+                    throw new InvalidOperationException(
+                        "Dense Addressables Build Layout shared-dependency count drifted: " +
+                        $"planned={plan.SharedDependencyCount}, " +
+                        $"packed={packedDependencyBytes.SharedDependencyGuidCount}");
+                }
+
                 outputTransaction.PublishBuiltAddressables();
-                return result;
+                string publishedBuildLayoutPath = Path.GetFullPath(
+                    Path.Combine(projectRoot, AddressablesBuildLayoutPath));
+                Directory.CreateDirectory(
+                    Path.GetDirectoryName(publishedBuildLayoutPath) ??
+                    throw new InvalidOperationException(
+                        "Dense Addressables Build Layout path has no parent."));
+                File.Copy(sourceBuildLayoutPath, publishedBuildLayoutPath, true);
+                return new AddressablesContentBuildResult(
+                    result,
+                    publishedBuildLayoutPath,
+                    packedDependencyBytes);
             }
             finally
             {
@@ -589,6 +634,40 @@ namespace Game.Editor
                 sharedDependencyGuids);
         }
 
+        internal static string SelectSingleGeneratedBuildLayoutPath(
+            IEnumerable<string> originalPaths,
+            IEnumerable<string> currentPaths,
+            Func<string, bool> fileExists)
+        {
+            if (originalPaths == null)
+                throw new ArgumentNullException(nameof(originalPaths));
+            if (currentPaths == null)
+                throw new ArgumentNullException(nameof(currentPaths));
+            if (fileExists == null)
+                throw new ArgumentNullException(nameof(fileExists));
+
+            var original = new HashSet<string>(
+                originalPaths.Where(path => !string.IsNullOrWhiteSpace(path)),
+                StringComparer.Ordinal);
+            string[] generated = currentPaths
+                .Where(path =>
+                    !string.IsNullOrWhiteSpace(path) &&
+                    !original.Contains(path) &&
+                    path.EndsWith(".json", StringComparison.OrdinalIgnoreCase) &&
+                    fileExists(path))
+                .Distinct(StringComparer.Ordinal)
+                .OrderBy(path => path, StringComparer.Ordinal)
+                .ToArray();
+            if (generated.Length != 1)
+            {
+                throw new InvalidOperationException(
+                    "Dense Addressables build must produce exactly one new JSON Build Layout, " +
+                    $"but found {generated.Length}.");
+            }
+
+            return generated[0];
+        }
+
         private static ProductionStaticAddressablesResult
             MeasureCurrentProductionStaticAddressables()
         {
@@ -613,7 +692,7 @@ namespace Game.Editor
         private static RuntimeContentReport CreateReport(
             string projectRoot,
             OperationMapEntitySceneCandidateAddressablesLayoutPlan plan,
-            AddressablesPlayerBuildResult addressablesResult,
+            AddressablesContentBuildResult addressablesResult,
             EntityContentBuildResult entityContentResult,
             FrozenRollbackContentResult frozenRollbackResult)
         {
@@ -630,7 +709,7 @@ namespace Game.Editor
             return new RuntimeContentReport
             {
                 schema = "warline.operation-map.dense-city-candidate-runtime-content",
-                schemaVersion = 3,
+                schemaVersion = 4,
                 result = "DenseCityCandidateRuntimeContentBuilt",
                 operationMapId = plan.OperationMapId,
                 entitySceneGuid = plan.EntitySceneGuid,
@@ -646,6 +725,18 @@ namespace Game.Editor
                     .EnumerateFiles(addressablesOutput, "*.bundle", SearchOption.AllDirectories)
                     .Count(),
                 addressablesBytes = ComputeDirectoryBytes(addressablesOutput),
+                addressablesBuildLayoutPath = addressablesResult.BuildLayoutPath,
+                addressablesBuildLayoutSha256 = ComputeSha256(
+                    addressablesResult.BuildLayoutPath),
+                packedDependencyMetricsComplete = 1,
+                sharedDependencyGuidCount =
+                    addressablesResult.PackedDependencyBytes.SharedDependencyGuidCount,
+                sharedDependencyBytes =
+                    addressablesResult.PackedDependencyBytes.SharedDependencyBytes,
+                duplicatedDependencyGuidCount =
+                    addressablesResult.PackedDependencyBytes.DuplicatedDependencyGuidCount,
+                duplicatedDependencyBytes =
+                    addressablesResult.PackedDependencyBytes.DuplicatedDependencyBytes,
                 entityContentOutputPath = entityContentResult.OutputPath,
                 entityContentCatalogPath = entityContentResult.CatalogPath,
                 entityContentArchiveCount = entityContentResult.ArchiveCount,
@@ -673,7 +764,7 @@ namespace Game.Editor
                     OperationMapDenseCityGeneratedTransformParityValidator.DefaultReportPath),
                 addressablesCatalogSha256 = ComputeSha256(addressablesCatalog),
                 entityContentCatalogSha256 = ComputeSha256(entityContentResult.CatalogPath),
-                buildResultOutputPath = addressablesResult.OutputPath,
+                buildResultOutputPath = addressablesResult.PlayerBuildResult.OutputPath,
                 productionCutover = 0,
                 productionSettingsMutated = 0,
                 sharedOutputRestored = 1
@@ -848,12 +939,81 @@ namespace Game.Editor
             internal long DuplicatedDependencyBytes { get; }
         }
 
+        private readonly struct AddressablesContentBuildResult
+        {
+            internal AddressablesContentBuildResult(
+                AddressablesPlayerBuildResult playerBuildResult,
+                string buildLayoutPath,
+                PackedDependencyByteResult packedDependencyBytes)
+            {
+                PlayerBuildResult = playerBuildResult;
+                BuildLayoutPath = buildLayoutPath;
+                PackedDependencyBytes = packedDependencyBytes;
+            }
+
+            internal AddressablesPlayerBuildResult PlayerBuildResult { get; }
+            internal string BuildLayoutPath { get; }
+            internal PackedDependencyByteResult PackedDependencyBytes { get; }
+        }
+
+        private sealed class BuildLayoutCaptureScope : IDisposable
+        {
+            private readonly bool originalGenerateBuildLayout;
+            private readonly ProjectConfigData.ReportFileFormat originalFormat;
+            private readonly string[] originalPaths;
+            private bool disposed;
+
+            private BuildLayoutCaptureScope()
+            {
+                originalGenerateBuildLayout = ProjectConfigData.GenerateBuildLayout;
+                originalFormat = ProjectConfigData.BuildLayoutReportFileFormat;
+                originalPaths = ProjectConfigData.BuildReportFilePaths.ToArray();
+                ProjectConfigData.BuildLayoutReportFileFormat =
+                    ProjectConfigData.ReportFileFormat.JSON;
+                ProjectConfigData.GenerateBuildLayout = true;
+            }
+
+            internal static BuildLayoutCaptureScope Begin() => new();
+
+            internal string RequireSingleGeneratedBuildLayoutPath() =>
+                SelectSingleGeneratedBuildLayoutPath(
+                    originalPaths,
+                    ProjectConfigData.BuildReportFilePaths,
+                    File.Exists);
+
+            public void Dispose()
+            {
+                if (disposed)
+                    return;
+                disposed = true;
+
+                string[] generatedPaths = ProjectConfigData.BuildReportFilePaths
+                    .Where(path =>
+                        !string.IsNullOrWhiteSpace(path) &&
+                        !originalPaths.Contains(path, StringComparer.Ordinal))
+                    .Distinct(StringComparer.Ordinal)
+                    .ToArray();
+                ProjectConfigData.ClearBuildReportFilePaths();
+                for (int index = 0; index < originalPaths.Length; index++)
+                    ProjectConfigData.AddBuildReportFilePath(originalPaths[index]);
+                ProjectConfigData.BuildLayoutReportFileFormat = originalFormat;
+                ProjectConfigData.GenerateBuildLayout = originalGenerateBuildLayout;
+
+                for (int index = 0; index < generatedPaths.Length; index++)
+                {
+                    if (File.Exists(generatedPaths[index]))
+                        File.Delete(generatedPaths[index]);
+                }
+            }
+        }
+
         private sealed class DenseRuntimeContentOutputTransaction : IDisposable
         {
             private readonly string backupRoot;
             private readonly DirectoryState shared;
             private readonly DirectoryState denseAddressables;
             private readonly DirectoryState denseEntities;
+            private readonly DirectoryState denseBuildLayout;
             private bool completed;
             private bool sharedPrepared;
 
@@ -861,19 +1021,22 @@ namespace Game.Editor
                 string backupRoot,
                 DirectoryState shared,
                 DirectoryState denseAddressables,
-                DirectoryState denseEntities)
+                DirectoryState denseEntities,
+                DirectoryState denseBuildLayout)
             {
                 this.backupRoot = backupRoot;
                 this.shared = shared;
                 this.denseAddressables = denseAddressables;
                 this.denseEntities = denseEntities;
+                this.denseBuildLayout = denseBuildLayout;
             }
 
             internal static DenseRuntimeContentOutputTransaction Begin(
                 string projectRoot,
                 string sharedPath,
                 string denseAddressablesPath,
-                string denseEntitiesPath)
+                string denseEntitiesPath,
+                string denseBuildLayoutPath)
             {
                 string backupRoot = Path.Combine(
                     projectRoot,
@@ -891,7 +1054,11 @@ namespace Game.Editor
                     Capture(
                         projectRoot,
                         denseEntitiesPath,
-                        Path.Combine(backupRoot, "dense-entities")));
+                        Path.Combine(backupRoot, "dense-entities")),
+                    Capture(
+                        projectRoot,
+                        denseBuildLayoutPath,
+                        Path.Combine(backupRoot, "dense-build-layout")));
             }
 
             internal void PrepareSharedOutputForBuild()
@@ -923,7 +1090,8 @@ namespace Game.Editor
                 if (completed)
                     throw new InvalidOperationException("Dense runtime-content transaction already completed.");
                 if (!Directory.Exists(denseAddressables.Path) ||
-                    !Directory.Exists(denseEntities.Path))
+                    !Directory.Exists(denseEntities.Path) ||
+                    !Directory.Exists(denseBuildLayout.Path))
                 {
                     throw new InvalidOperationException(
                         "Dense runtime-content transaction cannot commit incomplete outputs.");
@@ -941,9 +1109,11 @@ namespace Game.Editor
                 DeleteDirectory(shared.Path);
                 DeleteDirectory(denseAddressables.Path);
                 DeleteDirectory(denseEntities.Path);
+                DeleteDirectory(denseBuildLayout.Path);
                 Restore(shared);
                 Restore(denseAddressables);
                 Restore(denseEntities);
+                Restore(denseBuildLayout);
                 completed = true;
                 DeleteDirectory(backupRoot);
             }
@@ -1075,6 +1245,13 @@ namespace Game.Editor
             public string addressablesCatalogPath;
             public int addressablesBundleCount;
             public long addressablesBytes;
+            public string addressablesBuildLayoutPath;
+            public string addressablesBuildLayoutSha256;
+            public int packedDependencyMetricsComplete;
+            public int sharedDependencyGuidCount;
+            public long sharedDependencyBytes;
+            public int duplicatedDependencyGuidCount;
+            public long duplicatedDependencyBytes;
             public string entityContentOutputPath;
             public string entityContentCatalogPath;
             public int entityContentArchiveCount;

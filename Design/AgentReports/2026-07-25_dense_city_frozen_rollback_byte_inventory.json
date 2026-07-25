@@ -1,0 +1,12 @@
+{
+    "schema": "warline.operation-map.dense-city-frozen-rollback-byte-inventory",
+    "schemaVersion": 1,
+    "result": "DenseCityFrozenRollbackByteInventoryPassed",
+    "operationMapId": "opmap.skirmish.desert_base_01",
+    "manifestPath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/StaticMapPresentationManifest.asset",
+    "manifestBytes": 10097753,
+    "chunkDirectoryPath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes",
+    "chunkCount": 269,
+    "chunkBytes": 32381589,
+    "productionCutover": 0
+}

@@ -28,10 +28,15 @@ namespace Game.Editor
     {
         internal const string ReportPath =
             "Design/AgentReports/2026-07-24_dense_city_candidate_runtime_content.json";
+        internal const string FrozenRollbackReportPath =
+            "Design/AgentReports/2026-07-25_dense_city_frozen_rollback_byte_inventory.json";
         internal const string AddressablesOutputPath =
             "Library/OperationMapDenseCityRuntimeContent/Addressables";
         internal const string EntityContentOutputPath =
             "Library/OperationMapDenseCityRuntimeContent/Entities";
+        internal const string FrozenRollbackRootPath =
+            "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/" +
+            "desert_base_01";
 
         private const string SharedAddressablesOutputPath =
             "Library/com.unity.addressables/aa/OSX";
@@ -99,11 +104,14 @@ namespace Game.Editor
                     BuildIsolatedAddressables(plan, outputTransaction);
                 productionSettingsTransaction.Rollback();
                 EntityContentBuildResult entityContentResult = BuildEntityContent(plan);
+                FrozenRollbackContentResult frozenRollbackResult =
+                    MeasureFrozenRollbackContent(projectRoot);
                 RuntimeContentReport report = CreateReport(
                     projectRoot,
                     plan,
                     addressablesResult,
-                    entityContentResult);
+                    entityContentResult,
+                    frozenRollbackResult);
                 WriteReport(projectRoot, report);
                 protectedSnapshot.RequireUnchanged();
                 outputTransaction.Commit();
@@ -116,6 +124,8 @@ namespace Game.Editor
                     $"entitySceneArchiveBytes={report.entitySceneArchiveBytes} " +
                     $"entityMetadataBytes={report.entityContentMetadataBytes} " +
                     $"entityContentBytes={report.entityContentBytes} productionCutover=0 " +
+                    $"frozenRollbackChunks={report.frozenRollbackChunkCount} " +
+                    $"frozenRollbackChunkBytes={report.frozenRollbackChunkBytes} " +
                     "productionSettingsMutated=0 sharedOutputRestored=1");
             }
             catch
@@ -124,6 +134,32 @@ namespace Game.Editor
                 reportTransaction.Rollback();
                 throw;
             }
+        }
+
+        [MenuItem(
+            "Game/Operation Maps/EntityScene Migration/Report Dense City Frozen Rollback Bytes")]
+        public static void ReportDenseCityFrozenRollbackBytes()
+        {
+            string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+            FrozenRollbackContentResult result = MeasureFrozenRollbackContent(projectRoot);
+            var report = new FrozenRollbackByteInventoryReport
+            {
+                schema = "warline.operation-map.dense-city-frozen-rollback-byte-inventory",
+                schemaVersion = 1,
+                result = "DenseCityFrozenRollbackByteInventoryPassed",
+                operationMapId = OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
+                manifestPath = FrozenRollbackRootPath + "/StaticMapPresentationManifest.asset",
+                manifestBytes = result.ManifestBytes,
+                chunkDirectoryPath = FrozenRollbackRootPath + "/Scenes",
+                chunkCount = result.ChunkCount,
+                chunkBytes = result.ChunkBytes,
+                productionCutover = 0
+            };
+            WriteJsonReport(projectRoot, FrozenRollbackReportPath, report);
+            Debug.Log(
+                "[DenseCityFrozenRollbackByteInventory] result=Passed " +
+                $"manifestBytes={report.manifestBytes} chunks={report.chunkCount} " +
+                $"chunkBytes={report.chunkBytes} productionCutover=0");
         }
 
         private static AddressablesPlayerBuildResult BuildIsolatedAddressables(
@@ -329,11 +365,51 @@ namespace Game.Editor
                 totalBytes);
         }
 
+        internal static FrozenRollbackContentResult MeasureFrozenRollbackContent(
+            string projectRoot)
+        {
+            if (string.IsNullOrWhiteSpace(projectRoot) || !Directory.Exists(projectRoot))
+                throw new InvalidOperationException(
+                    $"Dense candidate project root is missing: {projectRoot}");
+
+            string rollbackRoot = Path.GetFullPath(Path.Combine(
+                projectRoot,
+                FrozenRollbackRootPath));
+            string manifestPath = Path.Combine(
+                rollbackRoot,
+                "StaticMapPresentationManifest.asset");
+            string sceneDirectory = Path.Combine(rollbackRoot, "Scenes");
+            if (!File.Exists(manifestPath))
+                throw new InvalidOperationException(
+                    $"Dense candidate frozen rollback manifest is missing: {manifestPath}");
+            if (!Directory.Exists(sceneDirectory))
+                throw new InvalidOperationException(
+                    $"Dense candidate frozen rollback scene directory is missing: {sceneDirectory}");
+
+            string[] scenePaths = Directory
+                .EnumerateFiles(sceneDirectory, "*.unity", SearchOption.TopDirectoryOnly)
+                .OrderBy(path => path, StringComparer.Ordinal)
+                .ToArray();
+            long manifestBytes = new FileInfo(manifestPath).Length;
+            long chunkBytes = scenePaths.Sum(path => new FileInfo(path).Length);
+            if (manifestBytes <= 0 || scenePaths.Length <= 0 || chunkBytes <= 0)
+                throw new InvalidOperationException(
+                    "Dense candidate frozen rollback byte inventory is invalid: " +
+                    $"manifestBytes={manifestBytes}, chunks={scenePaths.Length}, " +
+                    $"chunkBytes={chunkBytes}");
+
+            return new FrozenRollbackContentResult(
+                manifestBytes,
+                scenePaths.Length,
+                chunkBytes);
+        }
+
         private static RuntimeContentReport CreateReport(
             string projectRoot,
             OperationMapEntitySceneCandidateAddressablesLayoutPlan plan,
             AddressablesPlayerBuildResult addressablesResult,
-            EntityContentBuildResult entityContentResult)
+            EntityContentBuildResult entityContentResult,
+            FrozenRollbackContentResult frozenRollbackResult)
         {
             string addressablesOutput = Path.GetFullPath(Path.Combine(
                 projectRoot,
@@ -368,6 +444,9 @@ namespace Game.Editor
                 entitySceneArchiveBytes = entityContentResult.ArchiveBytes,
                 entityContentMetadataBytes = entityContentResult.MetadataBytes,
                 entityContentBytes = entityContentResult.TotalBytes,
+                frozenRollbackManifestBytes = frozenRollbackResult.ManifestBytes,
+                frozenRollbackChunkCount = frozenRollbackResult.ChunkCount,
+                frozenRollbackChunkBytes = frozenRollbackResult.ChunkBytes,
                 candidateSubSceneSha256 = ComputeSha256(
                     DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath),
                 candidateDefinitionSha256 = ComputeSha256(
@@ -389,13 +468,21 @@ namespace Game.Editor
 
         private static void WriteReport(string projectRoot, RuntimeContentReport report)
         {
-            string absolutePath = Path.Combine(projectRoot, ReportPath);
+            WriteJsonReport(projectRoot, ReportPath, report);
+        }
+
+        private static void WriteJsonReport(
+            string projectRoot,
+            string reportPath,
+            object report)
+        {
+            string absolutePath = Path.Combine(projectRoot, reportPath);
             Directory.CreateDirectory(Path.GetDirectoryName(absolutePath) ?? projectRoot);
             File.WriteAllText(
                 absolutePath,
                 JsonUtility.ToJson(report, true) + "\n",
                 Utf8WithoutBom);
-            AssetDatabase.ImportAsset(ReportPath, ImportAssetOptions.ForceSynchronousImport);
+            AssetDatabase.ImportAsset(reportPath, ImportAssetOptions.ForceSynchronousImport);
         }
 
         private static void RequireMacOsBuildTarget()
@@ -474,6 +561,23 @@ namespace Game.Editor
             internal long ArchiveBytes { get; }
             internal long MetadataBytes { get; }
             internal long TotalBytes { get; }
+        }
+
+        internal readonly struct FrozenRollbackContentResult
+        {
+            internal FrozenRollbackContentResult(
+                long manifestBytes,
+                int chunkCount,
+                long chunkBytes)
+            {
+                ManifestBytes = manifestBytes;
+                ChunkCount = chunkCount;
+                ChunkBytes = chunkBytes;
+            }
+
+            internal long ManifestBytes { get; }
+            internal int ChunkCount { get; }
+            internal long ChunkBytes { get; }
         }
 
         private sealed class DenseRuntimeContentOutputTransaction : IDisposable
@@ -665,6 +769,21 @@ namespace Game.Editor
         }
 
         [Serializable]
+        private sealed class FrozenRollbackByteInventoryReport
+        {
+            public string schema;
+            public int schemaVersion;
+            public string result;
+            public string operationMapId;
+            public string manifestPath;
+            public long manifestBytes;
+            public string chunkDirectoryPath;
+            public int chunkCount;
+            public long chunkBytes;
+            public int productionCutover;
+        }
+
+        [Serializable]
         private sealed class RuntimeContentReport
         {
             public string schema;
@@ -688,6 +807,9 @@ namespace Game.Editor
             public long entitySceneArchiveBytes;
             public long entityContentMetadataBytes;
             public long entityContentBytes;
+            public long frozenRollbackManifestBytes;
+            public int frozenRollbackChunkCount;
+            public long frozenRollbackChunkBytes;
             public string candidateSubSceneSha256;
             public string candidateDefinitionSha256;
             public string candidateRuntimeBindingSha256;

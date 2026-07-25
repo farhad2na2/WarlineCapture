@@ -13,7 +13,10 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
         {
             suite.MeasureEntityContent_SeparatesArchiveAndMetadataBytes,
             suite.MeasureEntityContent_RejectsMissingCatalog,
-            suite.MeasureEntityContent_ReportsMultipleArchivesForFailClosedCaller
+            suite.MeasureEntityContent_ReportsMultipleArchivesForFailClosedCaller,
+            suite.MeasureFrozenRollbackContent_SeparatesManifestAndChunkBytes,
+            suite.MeasureFrozenRollbackContent_RejectsMissingManifest,
+            suite.MeasureFrozenRollbackContent_AcceptsCurrentFrozenPackage
         };
         for (int i = 0; i < tests.Length; i++)
             tests[i]();
@@ -82,6 +85,64 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
             });
     }
 
+    [Test]
+    public void MeasureFrozenRollbackContent_SeparatesManifestAndChunkBytes()
+    {
+        WithProjectDirectory(
+            projectRoot =>
+            {
+                string rollbackRoot = Path.Combine(
+                    projectRoot,
+                    OperationMapDenseCityCandidateRuntimeContentBuilder.FrozenRollbackRootPath);
+                WriteBytes(rollbackRoot, "StaticMapPresentationManifest.asset", 17);
+                WriteBytes(rollbackRoot, "Scenes/chunk-a.unity", 11);
+                WriteBytes(rollbackRoot, "Scenes/chunk-b.unity", 13);
+                WriteBytes(rollbackRoot, "Scenes/chunk-a.unity.meta", 101);
+
+                OperationMapDenseCityCandidateRuntimeContentBuilder.FrozenRollbackContentResult
+                    result =
+                        OperationMapDenseCityCandidateRuntimeContentBuilder
+                            .MeasureFrozenRollbackContent(projectRoot);
+
+                Assert.That(result.ManifestBytes, Is.EqualTo(17));
+                Assert.That(result.ChunkCount, Is.EqualTo(2));
+                Assert.That(result.ChunkBytes, Is.EqualTo(24));
+            });
+    }
+
+    [Test]
+    public void MeasureFrozenRollbackContent_RejectsMissingManifest()
+    {
+        WithProjectDirectory(
+            projectRoot =>
+            {
+                string rollbackRoot = Path.Combine(
+                    projectRoot,
+                    OperationMapDenseCityCandidateRuntimeContentBuilder.FrozenRollbackRootPath);
+                WriteBytes(rollbackRoot, "Scenes/chunk-a.unity", 11);
+
+                InvalidOperationException exception = Assert.Throws<InvalidOperationException>(
+                    () => OperationMapDenseCityCandidateRuntimeContentBuilder
+                        .MeasureFrozenRollbackContent(projectRoot));
+                Assert.That(exception.Message, Does.Contain("rollback manifest is missing"));
+            });
+    }
+
+    [Test]
+    public void MeasureFrozenRollbackContent_AcceptsCurrentFrozenPackage()
+    {
+        string projectRoot = Path.GetDirectoryName(Application.dataPath);
+        Assert.That(projectRoot, Is.Not.Null.And.Not.Empty);
+
+        OperationMapDenseCityCandidateRuntimeContentBuilder.FrozenRollbackContentResult result =
+            OperationMapDenseCityCandidateRuntimeContentBuilder.MeasureFrozenRollbackContent(
+                projectRoot);
+
+        Assert.That(result.ManifestBytes, Is.EqualTo(10097753));
+        Assert.That(result.ChunkCount, Is.EqualTo(269));
+        Assert.That(result.ChunkBytes, Is.EqualTo(32381589));
+    }
+
     private static string WriteBytes(string root, string relativePath, int count)
     {
         string path = Path.Combine(root, relativePath);
@@ -104,6 +165,23 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
         finally
         {
             Directory.Delete(root, true);
+        }
+    }
+
+    private static void WithProjectDirectory(Action<string> action)
+    {
+        string projectRoot = Path.Combine(
+            Path.GetTempPath(),
+            "WarlineDenseRuntimeContentRollbackByteTests",
+            Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(projectRoot);
+        try
+        {
+            action(projectRoot);
+        }
+        finally
+        {
+            Directory.Delete(projectRoot, true);
         }
     }
 }

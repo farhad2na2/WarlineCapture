@@ -1514,15 +1514,58 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
         Assert.That(
             runtimeContent.schema,
             Is.EqualTo("warline.operation-map.dense-city-candidate-runtime-content"));
-        Assert.That(runtimeContent.schemaVersion, Is.EqualTo(1));
+        Assert.That(runtimeContent.schemaVersion, Is.EqualTo(9));
         Assert.That(
             runtimeContent.result,
             Is.EqualTo("DenseCityCandidateRuntimeContentBuilt"));
+        Assert.That(
+            runtimeContent.validationBuildTarget,
+            Is.EqualTo("StandaloneWindows64").Or.EqualTo("StandaloneOSX"));
+        Assert.That(
+            runtimeContent.addressablesPlatformSubfolder,
+            Is.EqualTo(
+                runtimeContent.validationBuildTarget == "StandaloneWindows64"
+                    ? "Windows"
+                    : "OSX"));
         Assert.That(runtimeContent.productionCutover, Is.Zero);
         Assert.That(runtimeContent.productionSettingsMutated, Is.Zero);
         Assert.That(runtimeContent.sharedOutputRestored, Is.EqualTo(1));
+        Assert.That(runtimeContent.plannedRootCount, Is.EqualTo(5));
+        Assert.That(runtimeContent.explicitAddressableEntryCount, Is.EqualTo(2));
         Assert.That(runtimeContent.staticRuntimeEntryCount, Is.Zero);
         Assert.That(runtimeContent.sharedDependencyCount, Is.Zero);
+        Assert.That(runtimeContent.addressablesBundleCount, Is.GreaterThan(0));
+        Assert.That(runtimeContent.addressablesBytes, Is.GreaterThan(0));
+        Assert.That(runtimeContent.publishedLocalContentEvidenceComplete, Is.EqualTo(1));
+        Assert.That(runtimeContent.publishedLocalCatalogBytes, Is.GreaterThan(0));
+        Assert.That(
+            runtimeContent.publishedLocalBundleCount,
+            Is.EqualTo(runtimeContent.addressablesBundleCount));
+        Assert.That(runtimeContent.publishedLocalBundleBytes, Is.GreaterThan(0));
+        DenseAssertSha256(
+            runtimeContent.publishedLocalBundleSetSha256,
+            nameof(runtimeContent.publishedLocalBundleSetSha256));
+        DenseAssertSha256(
+            runtimeContent.addressablesBuildLayoutSha256,
+            nameof(runtimeContent.addressablesBuildLayoutSha256));
+        Assert.That(runtimeContent.packedDependencyMetricsComplete, Is.EqualTo(1));
+        Assert.That(runtimeContent.duplicatedDependencyGuidCount, Is.Zero);
+        Assert.That(runtimeContent.duplicatedDependencyBytes, Is.Zero);
+        Assert.That(runtimeContent.packedSourceHierarchyEvidenceComplete, Is.EqualTo(1));
+        Assert.That(runtimeContent.packedAssetPathCount, Is.EqualTo(5));
+        Assert.That(runtimeContent.packedSourceHierarchyExplicitAssetCount, Is.Zero);
+        Assert.That(runtimeContent.packedSourceHierarchyImplicitAssetCount, Is.Zero);
+        Assert.That(runtimeContent.entityContentArchiveCount, Is.EqualTo(1));
+        Assert.That(runtimeContent.entitySceneArchiveBytes, Is.GreaterThan(0));
+        DenseAssertSha256(
+            runtimeContent.entitySceneArchiveSetSha256,
+            nameof(runtimeContent.entitySceneArchiveSetSha256));
+        Assert.That(runtimeContent.entityContentMetadataBytes, Is.GreaterThan(0));
+        Assert.That(
+            runtimeContent.entityContentBytes,
+            Is.EqualTo(
+                runtimeContent.entitySceneArchiveBytes +
+                runtimeContent.entityContentMetadataBytes));
         Assert.That(runtimeContent.definitionAddress, Is.EqualTo(DenseDefinitionAddress));
         Assert.That(runtimeContent.operationMapId, Is.EqualTo(manifest.OperationMapId));
         Assert.That(runtimeContent.entitySceneGuid, Is.EqualTo(manifest.EntitySceneGuid));
@@ -1555,6 +1598,15 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
         Assert.That(
             Path.GetFullPath(runtimeContent.entityContentCatalogPath),
             Is.EqualTo(Path.GetFullPath(entityCatalogPath)));
+    }
+
+    private static void DenseAssertSha256(string value, string label)
+    {
+        Assert.That(value, Has.Length.EqualTo(64), label);
+        Assert.That(
+            value,
+            Does.Match("^[0-9a-f]{64}$"),
+            label);
     }
 
     private static void DenseAssertValuesWithin(
@@ -2089,12 +2141,36 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
         public int schemaVersion;
         public string result;
         public string operationMapId;
+        public string validationBuildTarget;
+        public string addressablesPlatformSubfolder;
         public string entitySceneGuid;
         public string definitionAddress;
+        public int plannedRootCount;
+        public int explicitAddressableEntryCount;
         public int sharedDependencyCount;
         public int staticRuntimeEntryCount;
+        public int addressablesBundleCount;
+        public long addressablesBytes;
+        public int publishedLocalContentEvidenceComplete;
+        public long publishedLocalCatalogBytes;
+        public int publishedLocalBundleCount;
+        public long publishedLocalBundleBytes;
+        public string publishedLocalBundleSetSha256;
+        public string addressablesBuildLayoutSha256;
+        public int packedDependencyMetricsComplete;
+        public int duplicatedDependencyGuidCount;
+        public long duplicatedDependencyBytes;
+        public int packedSourceHierarchyEvidenceComplete;
+        public int packedAssetPathCount;
+        public int packedSourceHierarchyExplicitAssetCount;
+        public int packedSourceHierarchyImplicitAssetCount;
         public string addressablesCatalogPath;
         public string entityContentCatalogPath;
+        public int entityContentArchiveCount;
+        public long entitySceneArchiveBytes;
+        public string entitySceneArchiveSetSha256;
+        public long entityContentMetadataBytes;
+        public long entityContentBytes;
         public string candidateSubSceneSha256;
         public string candidateDefinitionSha256;
         public string candidateRuntimeBindingSha256;

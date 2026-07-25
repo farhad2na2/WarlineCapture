@@ -6,6 +6,7 @@ namespace Game.Editor
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Reflection;
     using System.Security.Cryptography;
     using System.Text;
     using Game.Configs;
@@ -14,6 +15,7 @@ namespace Game.Editor
     using Unity.Entities.Content;
     using Unity.Scenes.Editor;
     using UnityEditor;
+    using UnityEditor.Build;
     using UnityEditor.AddressableAssets;
     using UnityEditor.AddressableAssets.Build;
     using UnityEditor.AddressableAssets.Build.Layout;
@@ -64,6 +66,8 @@ namespace Game.Editor
         public static void BuildDenseCityCandidateRuntimeParityContent()
         {
             BuildTarget buildTarget = RequireSupportedValidationBuildTarget();
+            using IDisposable scriptingBackendScope =
+                StandaloneScriptingBackendScope.Begin(buildTarget);
             string sharedAddressablesOutputPath =
                 GetSharedAddressablesOutputPath(buildTarget);
             string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
@@ -170,6 +174,59 @@ namespace Game.Editor
                 layoutTransaction.Rollback();
                 throw;
             }
+        }
+
+        public static void ReportDenseCityRuntimeContentBuildConfiguration()
+        {
+            BuildTarget target = EditorUserBuildSettings.activeBuildTarget;
+            BuildTargetGroup group = BuildPipeline.GetBuildTargetGroup(target);
+            BuildWindowStatus status = GetBuildWindowStatus(target);
+            Type userBuildSettingsType = status.ExtensionType?.Assembly.GetType(
+                "UnityEditor.WindowsStandalone.UserBuildSettings");
+            object architecture = userBuildSettingsType?.GetProperty(
+                    "architecture",
+                    BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
+                ?.GetValue(null);
+            Debug.Log(
+                "[DenseCityRuntimeContentBuildConfiguration] result=Passed " +
+                $"activeTarget={target} targetGroup={group} " +
+                $"supported={BuildPipeline.IsBuildTargetSupported(group, target)} " +
+                $"standaloneSubtarget={EditorUserBuildSettings.standaloneBuildSubtarget} " +
+                $"architecture={architecture?.ToString() ?? "<null>"} " +
+                $"scriptingBackend={PlayerSettings.GetScriptingBackend(NamedBuildTarget.Standalone)} " +
+                $"module={status.ModuleName ?? "<null>"} " +
+                $"extension={status.ExtensionType?.FullName ?? "<null>"} " +
+                $"buildEnabled={status.Enabled} " +
+                $"buildError={status.Error ?? "<null>"}");
+        }
+
+        public static void ValidateDenseCityRuntimeContentBackendRestoration()
+        {
+            BuildTarget target = RequireSupportedValidationBuildTarget();
+            ScriptingImplementation original =
+                PlayerSettings.GetScriptingBackend(NamedBuildTarget.Standalone);
+            using (StandaloneScriptingBackendScope.Begin(target))
+            {
+                ScriptingImplementation active =
+                    PlayerSettings.GetScriptingBackend(NamedBuildTarget.Standalone);
+                if (original == ScriptingImplementation.IL2CPP &&
+                    active != ScriptingImplementation.Mono2x)
+                {
+                    throw new InvalidOperationException(
+                        $"Expected temporary Mono backend, found {active}.");
+                }
+            }
+            ScriptingImplementation restored =
+                PlayerSettings.GetScriptingBackend(NamedBuildTarget.Standalone);
+            if (restored != original)
+            {
+                throw new InvalidOperationException(
+                    $"Standalone scripting backend was not restored: " +
+                    $"expected={original} actual={restored}.");
+            }
+            Debug.Log(
+                "[DenseCityRuntimeContentBackendRestoration] result=Passed " +
+                $"backend={restored}");
         }
 
         internal static string[] GetDenseLayoutOutputTransactionPaths() =>
@@ -1208,6 +1265,62 @@ namespace Game.Editor
             return activeBuildTarget;
         }
 
+        internal static ScriptingImplementation? SelectTemporaryScriptingBackend(
+            BuildTarget buildTarget,
+            ScriptingImplementation currentBackend,
+            bool buildEnabled,
+            string buildError)
+        {
+            if (buildEnabled)
+                return null;
+            if (buildTarget == BuildTarget.StandaloneWindows64 &&
+                currentBackend == ScriptingImplementation.IL2CPP &&
+                string.Equals(
+                    buildError,
+                    "Currently selected scripting backend (IL2CPP) is not installed.",
+                    StringComparison.Ordinal))
+            {
+                return ScriptingImplementation.Mono2x;
+            }
+
+            throw new InvalidOperationException(
+                $"Dense candidate runtime content cannot build for {buildTarget}: " +
+                $"{buildError ?? "the platform build extension disabled Build"}");
+        }
+
+        private static BuildWindowStatus GetBuildWindowStatus(BuildTarget target)
+        {
+            Type moduleManagerType =
+                typeof(Editor).Assembly.GetType("UnityEditor.Modules.ModuleManager");
+            MethodInfo getTargetString = moduleManagerType?.GetMethod(
+                "GetTargetStringFrom",
+                BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic,
+                null,
+                new[] { typeof(BuildTarget) },
+                null);
+            string moduleName = getTargetString?.Invoke(null, new object[] { target }) as string;
+            MethodInfo getBuildWindowExtension = moduleManagerType?.GetMethod(
+                "GetBuildWindowExtension",
+                BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic,
+                null,
+                new[] { typeof(string) },
+                null);
+            object extension = getBuildWindowExtension?.Invoke(
+                null,
+                new object[] { moduleName });
+            MethodInfo enabledBuildButton = extension?.GetType().GetMethod(
+                "EnabledBuildButton",
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            MethodInfo getBuildError = extension?.GetType().GetMethod(
+                "GetCannotBuildPlayerInCurrentSetupError",
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            return new BuildWindowStatus(
+                moduleName,
+                extension?.GetType(),
+                enabledBuildButton?.Invoke(extension, null) is true,
+                getBuildError?.Invoke(extension, null) as string);
+        }
+
         internal static string GetAddressablesPlatformSubfolder(BuildTarget buildTarget) =>
             buildTarget switch
             {
@@ -1294,6 +1407,142 @@ namespace Game.Editor
             Directory
                 .EnumerateFiles(path, "*", SearchOption.AllDirectories)
                 .Sum(file => new FileInfo(file).Length);
+
+        private readonly struct BuildWindowStatus
+        {
+            internal BuildWindowStatus(
+                string moduleName,
+                Type extensionType,
+                bool enabled,
+                string error)
+            {
+                ModuleName = moduleName;
+                ExtensionType = extensionType;
+                Enabled = enabled;
+                Error = error;
+            }
+
+            internal string ModuleName { get; }
+            internal Type ExtensionType { get; }
+            internal bool Enabled { get; }
+            internal string Error { get; }
+        }
+
+        private sealed class StandaloneScriptingBackendScope : IDisposable
+        {
+            private readonly ScriptingImplementation originalBackend;
+            private readonly int originalNumberOfMipsStripped;
+            private bool restoreRequired;
+
+            private StandaloneScriptingBackendScope(
+                ScriptingImplementation originalBackend,
+                int originalNumberOfMipsStripped)
+            {
+                this.originalBackend = originalBackend;
+                this.originalNumberOfMipsStripped = originalNumberOfMipsStripped;
+            }
+
+            internal static StandaloneScriptingBackendScope Begin(BuildTarget buildTarget)
+            {
+                ScriptingImplementation original =
+                    PlayerSettings.GetScriptingBackend(NamedBuildTarget.Standalone);
+                var scope = new StandaloneScriptingBackendScope(
+                    original,
+                    GetSerializedPlayerSettingsInteger("numberOfMipsStripped"));
+                BuildWindowStatus status = GetBuildWindowStatus(buildTarget);
+                ScriptingImplementation? temporary =
+                    SelectTemporaryScriptingBackend(
+                        buildTarget,
+                        original,
+                        status.Enabled,
+                        status.Error);
+                if (!temporary.HasValue)
+                    return scope;
+
+                try
+                {
+                    PlayerSettings.SetScriptingBackend(
+                        NamedBuildTarget.Standalone,
+                        temporary.Value);
+                    scope.restoreRequired = true;
+                    BuildWindowStatus temporaryStatus = GetBuildWindowStatus(buildTarget);
+                    if (!temporaryStatus.Enabled)
+                    {
+                        throw new InvalidOperationException(
+                            $"Dense candidate runtime content temporary " +
+                            $"{temporary.Value} backend remains disabled: " +
+                            $"{temporaryStatus.Error ?? "unknown build extension error"}");
+                    }
+                    Debug.Log(
+                        "[OperationMapDenseCityRuntimeContent] " +
+                        $"temporaryScriptingBackend={temporary.Value} " +
+                        $"restoresScriptingBackend={original}");
+                    return scope;
+                }
+                catch
+                {
+                    scope.Dispose();
+                    throw;
+                }
+            }
+
+            public void Dispose()
+            {
+                if (!restoreRequired)
+                    return;
+                PlayerSettings.SetScriptingBackend(
+                    NamedBuildTarget.Standalone,
+                    originalBackend);
+                SetSerializedPlayerSettingsInteger(
+                    "numberOfMipsStripped",
+                    originalNumberOfMipsStripped);
+                AssetDatabase.SaveAssets();
+                restoreRequired = false;
+                Debug.Log(
+                    "[OperationMapDenseCityRuntimeContent] " +
+                    $"restoredScriptingBackend={originalBackend}");
+            }
+
+            private static int GetSerializedPlayerSettingsInteger(string propertyName)
+            {
+                SerializedObject settings = GetSerializedPlayerSettings();
+                SerializedProperty property = settings.FindProperty(propertyName);
+                if (property == null)
+                {
+                    throw new InvalidOperationException(
+                        $"Serialized PlayerSettings property is missing: {propertyName}");
+                }
+                return property.intValue;
+            }
+
+            private static void SetSerializedPlayerSettingsInteger(
+                string propertyName,
+                int value)
+            {
+                SerializedObject settings = GetSerializedPlayerSettings();
+                SerializedProperty property = settings.FindProperty(propertyName);
+                if (property == null)
+                {
+                    throw new InvalidOperationException(
+                        $"Serialized PlayerSettings property is missing: {propertyName}");
+                }
+                property.intValue = value;
+                settings.ApplyModifiedPropertiesWithoutUndo();
+            }
+
+            private static SerializedObject GetSerializedPlayerSettings()
+            {
+                UnityEngine.Object settings = AssetDatabase
+                    .LoadAllAssetsAtPath("ProjectSettings/ProjectSettings.asset")
+                    .FirstOrDefault();
+                if (settings == null)
+                {
+                    throw new InvalidOperationException(
+                        "Serialized PlayerSettings asset could not be loaded.");
+                }
+                return new SerializedObject(settings);
+            }
+        }
 
         internal readonly struct EntityContentBuildResult
         {

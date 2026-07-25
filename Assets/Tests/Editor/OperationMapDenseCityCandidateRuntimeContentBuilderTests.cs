@@ -18,6 +18,9 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
             suite.RequireSupportedValidationBuildTarget_AcceptsWindows64,
             suite.RequireSupportedValidationBuildTarget_AcceptsMacOs,
             suite.RequireSupportedValidationBuildTarget_RejectsAndroidOrMissingSupport,
+            suite.SelectTemporaryScriptingBackend_UsesMonoForMissingWindowsIl2Cpp,
+            suite.SelectTemporaryScriptingBackend_PreservesEnabledBackend,
+            suite.SelectTemporaryScriptingBackend_RejectsUnrecognizedDisabledBuild,
             suite.GetSharedAddressablesOutputPath_MapsStandalonePlatform,
             suite.GetDenseLayoutOutputTransactionPaths_CoversCompleteOwnerSet,
             suite.MeasureEntityContent_SeparatesArchiveAndMetadataBytes,
@@ -97,6 +100,45 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
                 .RequireSupportedValidationBuildTarget(
                     BuildTarget.StandaloneWindows64,
                     (_, _) => false));
+    }
+
+    [Test]
+    public void SelectTemporaryScriptingBackend_UsesMonoForMissingWindowsIl2Cpp()
+    {
+        Assert.That(
+            OperationMapDenseCityCandidateRuntimeContentBuilder
+                .SelectTemporaryScriptingBackend(
+                    BuildTarget.StandaloneWindows64,
+                    ScriptingImplementation.IL2CPP,
+                    false,
+                    "Currently selected scripting backend (IL2CPP) is not installed."),
+            Is.EqualTo(ScriptingImplementation.Mono2x));
+    }
+
+    [Test]
+    public void SelectTemporaryScriptingBackend_PreservesEnabledBackend()
+    {
+        Assert.That(
+            OperationMapDenseCityCandidateRuntimeContentBuilder
+                .SelectTemporaryScriptingBackend(
+                    BuildTarget.StandaloneWindows64,
+                    ScriptingImplementation.IL2CPP,
+                    true,
+                    null),
+            Is.Null);
+    }
+
+    [Test]
+    public void SelectTemporaryScriptingBackend_RejectsUnrecognizedDisabledBuild()
+    {
+        InvalidOperationException exception = Assert.Throws<InvalidOperationException>(
+            () => OperationMapDenseCityCandidateRuntimeContentBuilder
+                .SelectTemporaryScriptingBackend(
+                    BuildTarget.StandaloneOSX,
+                    ScriptingImplementation.IL2CPP,
+                    false,
+                    "Unexpected platform failure."));
+        Assert.That(exception.Message, Does.Contain("Unexpected platform failure"));
     }
 
     [Test]

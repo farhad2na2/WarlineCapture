@@ -76,6 +76,127 @@ public sealed class DenseCityPresentationHierarchyContextTests
     }
 
     [Test]
+    public void GeneratedFeatureKinds_RouteToTheirExplicitPresentationOwner()
+    {
+        (Scene mapScene, Scene entityScene) = CreateScenePair();
+        try
+        {
+            var roots = DenseCitySemanticHierarchyBuilder.Create(
+                mapScene,
+                entityScene,
+                "dense-city:test:42",
+                "dense-city-v1",
+                1,
+                42,
+                Hash);
+            DenseCityPresentationHierarchyContext context =
+                DenseCityPresentationHierarchyContext.Create(roots.EntityPresentationSource);
+            var expected = new[]
+            {
+                ("building-intact", DenseCityPresentationCategory.GameplayBuildingIntact,
+                    GeneratedCityBuildingRole.House, "Buildings"),
+                ("building-destroyed", DenseCityPresentationCategory.GameplayBuildingDestroyed,
+                    GeneratedCityBuildingRole.House, "Buildings"),
+                ("civic-building-intact", DenseCityPresentationCategory.GameplayBuildingIntact,
+                    GeneratedCityBuildingRole.Civic, "CivicAndMarket"),
+                ("civic-building-destroyed", DenseCityPresentationCategory.GameplayBuildingDestroyed,
+                    GeneratedCityBuildingRole.Civic, "CivicAndMarket"),
+                ("road-visual", DenseCityPresentationCategory.Infrastructure,
+                    GeneratedCityBuildingRole.None, "Infrastructure"),
+                ("road-terrain-patch-visual", DenseCityPresentationCategory.Infrastructure,
+                    GeneratedCityBuildingRole.None, "Infrastructure"),
+                ("canal-bed-visual", DenseCityPresentationCategory.Infrastructure,
+                    GeneratedCityBuildingRole.None, "Infrastructure"),
+                ("canal-water-visual", DenseCityPresentationCategory.Infrastructure,
+                    GeneratedCityBuildingRole.None, "Infrastructure"),
+                ("canal-bridge-visual", DenseCityPresentationCategory.Infrastructure,
+                    GeneratedCityBuildingRole.None, "Infrastructure"),
+                ("canal-bank-base-visual", DenseCityPresentationCategory.Infrastructure,
+                    GeneratedCityBuildingRole.None, "Infrastructure"),
+                ("canal-bank-visual", DenseCityPresentationCategory.Infrastructure,
+                    GeneratedCityBuildingRole.None, "Infrastructure"),
+                ("canal-park-base-visual", DenseCityPresentationCategory.Infrastructure,
+                    GeneratedCityBuildingRole.None, "Infrastructure"),
+                ("canal-park-visual", DenseCityPresentationCategory.Infrastructure,
+                    GeneratedCityBuildingRole.None, "Infrastructure"),
+                ("canal-tree-visual", DenseCityPresentationCategory.Vegetation,
+                    GeneratedCityBuildingRole.None, "Vegetation"),
+                ("canal-bush-visual", DenseCityPresentationCategory.Vegetation,
+                    GeneratedCityBuildingRole.None, "Vegetation"),
+                ("canal-light-visual", DenseCityPresentationCategory.Infrastructure,
+                    GeneratedCityBuildingRole.None, "Infrastructure"),
+                ("civic-road-visual", DenseCityPresentationCategory.Infrastructure,
+                    GeneratedCityBuildingRole.None, "Infrastructure"),
+                ("civic-road-terrain-patch-visual", DenseCityPresentationCategory.Infrastructure,
+                    GeneratedCityBuildingRole.None, "Infrastructure"),
+                ("civic-fountain-visual", DenseCityPresentationCategory.Prop,
+                    GeneratedCityBuildingRole.None, "Props"),
+                ("horizon-mountain-visual", DenseCityPresentationCategory.Horizon,
+                    GeneratedCityBuildingRole.None, "Horizon"),
+                ("boulevard-median-tree-visual", DenseCityPresentationCategory.Vegetation,
+                    GeneratedCityBuildingRole.None, "Vegetation"),
+                ("boulevard-median-light-visual", DenseCityPresentationCategory.Infrastructure,
+                    GeneratedCityBuildingRole.None, "Infrastructure"),
+                ("sidewalk-street-light-visual", DenseCityPresentationCategory.Infrastructure,
+                    GeneratedCityBuildingRole.None, "Infrastructure"),
+                ("free-ground-grass-visual", DenseCityPresentationCategory.Vegetation,
+                    GeneratedCityBuildingRole.None, "Vegetation"),
+                ("main-street-bush-visual", DenseCityPresentationCategory.Vegetation,
+                    GeneratedCityBuildingRole.None, "Vegetation"),
+                ("power-pole-visual", DenseCityPresentationCategory.Infrastructure,
+                    GeneratedCityBuildingRole.None, "Infrastructure"),
+                ("power-line-visual", DenseCityPresentationCategory.Infrastructure,
+                    GeneratedCityBuildingRole.None, "Infrastructure"),
+                ("courtyard-wall-visual", DenseCityPresentationCategory.Infrastructure,
+                    GeneratedCityBuildingRole.None, "Infrastructure"),
+                ("courtyard-pillar-visual", DenseCityPresentationCategory.Infrastructure,
+                    GeneratedCityBuildingRole.None, "Infrastructure"),
+                ("courtyard-well-visual", DenseCityPresentationCategory.Prop,
+                    GeneratedCityBuildingRole.None, "Props"),
+                ("courtyard-bush-visual", DenseCityPresentationCategory.Vegetation,
+                    GeneratedCityBuildingRole.None, "Vegetation"),
+                ("street-prop-visual", DenseCityPresentationCategory.Prop,
+                    GeneratedCityBuildingRole.None, "Props"),
+                ("urban-tree-visual", DenseCityPresentationCategory.Vegetation,
+                    GeneratedCityBuildingRole.None, "Vegetation"),
+                ("urban-rock-visual", DenseCityPresentationCategory.Prop,
+                    GeneratedCityBuildingRole.None, "Props"),
+                ("open-ground-visual", DenseCityPresentationCategory.Infrastructure,
+                    GeneratedCityBuildingRole.None, "Infrastructure")
+            };
+
+            foreach ((string kind, DenseCityPresentationCategory category,
+                         GeneratedCityBuildingRole role, string expectedParent) in expected)
+            {
+                Assert.That(
+                    context.ResolveIndependentParent(category, role).name,
+                    Is.EqualTo(expectedParent),
+                    $"Dense-city feature '{kind}' has the wrong presentation owner.");
+            }
+
+            Transform buildingParent = context.ResolveIndependentParent(
+                DenseCityPresentationCategory.GameplayBuildingIntact,
+                GeneratedCityBuildingRole.House);
+            var building = new GameObject("BuildingAttachmentOwner");
+            building.transform.SetParent(buildingParent, false);
+            var attachment = new GameObject("BuildingAttachment");
+            attachment.transform.SetParent(building.transform, false);
+            Assert.That(
+                context.RequireAttachmentRoot(
+                    DenseCityPresentationCategory.BuildingAttachmentIntact,
+                    building.transform,
+                    attachment.transform),
+                Is.SameAs(attachment.transform),
+                "Dense-city feature 'building-attachment-intact' must remain beneath its building owner.");
+        }
+        finally
+        {
+            EditorSceneManager.CloseScene(entityScene, true);
+            EditorSceneManager.CloseScene(mapScene, true);
+        }
+    }
+
+    [Test]
     public void ResolveIndependentParent_RejectsBuildingAttachments()
     {
         (Scene mapScene, Scene entityScene) = CreateScenePair();

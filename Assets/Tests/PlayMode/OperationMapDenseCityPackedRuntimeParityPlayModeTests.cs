@@ -336,6 +336,9 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
         DenseAuditPackedMaterialDependencies(world.EntityManager);
         DenseAssertOperationMapBuildingsRetainAuthoredMaterials(world.EntityManager);
         yield return DenseCaptureFixedCameraRuntime(expected, cycle);
+        DenseValidateGeneratedBuildingDestructionUsesBakedEntitiesOnly(
+            world,
+            cycle);
 
         Assert.That(loader.TryBeginUnload(out string unloadError), Is.True, unloadError);
         deadline = Time.realtimeSinceStartup + MaximumWaitSeconds;
@@ -365,6 +368,90 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
         }
         Assert.That(sourceScene.isLoaded, Is.False,
             $"Dense thin runtime-binding scene remained loaded after cycle {cycle}.");
+    }
+
+    private static void DenseValidateGeneratedBuildingDestructionUsesBakedEntitiesOnly(
+        World world,
+        int cycle)
+    {
+        EntityManager entityManager = world.EntityManager;
+        using EntityQuery query = entityManager.CreateEntityQuery(
+            ComponentType.ReadWrite<UnitHealth>(),
+            ComponentType.ReadOnly<OperationMapBuildingComponent>(),
+            ComponentType.ReadOnly<OperationMapBuildingIdentity>(),
+            ComponentType.ReadWrite<OperationMapBuildingPresentation>());
+        using NativeArray<Entity> buildings = query.ToEntityArray(Allocator.Temp);
+
+        Entity building = Entity.Null;
+        OperationMapBuildingPresentation presentation = default;
+        for (int index = 0; index < buildings.Length; index++)
+        {
+            Entity candidate = buildings[index];
+            OperationMapBuildingIdentity identity =
+                entityManager.GetComponentData<OperationMapBuildingIdentity>(candidate);
+            OperationMapBuildingComponent buildingData =
+                entityManager.GetComponentData<OperationMapBuildingComponent>(candidate);
+            OperationMapBuildingPresentation candidatePresentation =
+                entityManager.GetComponentData<OperationMapBuildingPresentation>(candidate);
+            if (!OperationMapIdentityRules.IsValidGeneratedStableId(
+                    identity.StableId.ToString()) ||
+                buildingData.BlockerPolicy !=
+                    OperationMapBuildingBlockerPolicy.RubbleRemainsBlocked ||
+                candidatePresentation.IntactVisualRoot == Entity.Null ||
+                candidatePresentation.DestroyedVisualRoot == Entity.Null ||
+                !entityManager.Exists(candidatePresentation.IntactVisualRoot) ||
+                !entityManager.Exists(candidatePresentation.DestroyedVisualRoot))
+            {
+                continue;
+            }
+
+            building = candidate;
+            presentation = candidatePresentation;
+            break;
+        }
+
+        Assert.That(
+            building,
+            Is.Not.EqualTo(Entity.Null),
+            $"Dense packed cycle {cycle} contains no complete generated building.");
+        Assert.That(
+            UnityEngine.Object.FindObjectsByType<RuntimeBuildingEntityLink>(
+                FindObjectsInactive.Include),
+            Is.Empty,
+            "Dense-generated buildings must not create managed runtime entity links.");
+
+        HashSet<int> gameObjectIdsBefore = CaptureLoadedGameObjectIds();
+        int entityCountBefore = entityManager.UniversalQuery.CalculateEntityCount();
+        UnitHealth health = entityManager.GetComponentData<UnitHealth>(building);
+        health.Current = 0;
+        entityManager.SetComponentData(building, health);
+
+        SystemHandle handle =
+            world.Unmanaged.GetExistingUnmanagedSystem<OperationMapBuildingDestructionSystem>();
+        Assert.That(handle, Is.Not.EqualTo(SystemHandle.Null));
+        ref SystemState state = ref world.Unmanaged.ResolveSystemStateRef(handle);
+        world.Unmanaged.GetUnsafeSystemRef<OperationMapBuildingDestructionSystem>(handle)
+            .OnUpdate(ref state);
+        state.Dependency.Complete();
+        entityManager.CompleteAllTrackedJobs();
+
+        Assert.That(
+            entityManager.IsComponentEnabled<OperationMapBuildingDestroyedComponent>(building),
+            Is.True);
+        Assert.That(
+            entityManager.GetComponentData<LocalTransform>(presentation.IntactVisualRoot).Scale,
+            Is.Zero);
+        Assert.That(
+            entityManager.GetComponentData<LocalTransform>(presentation.DestroyedVisualRoot).Scale,
+            Is.EqualTo(presentation.DestroyedVisibleScale));
+        Assert.That(
+            entityManager.UniversalQuery.CalculateEntityCount(),
+            Is.EqualTo(entityCountBefore),
+            "Dense building destruction must not instantiate replacement entities.");
+        Assert.That(
+            CaptureLoadedGameObjectIds(),
+            Is.EquivalentTo(gameObjectIdsBefore),
+            "Dense building destruction must not instantiate or destroy GameObject replacements.");
     }
 
     private static void DenseAssertOperationMapBuildingsRetainAuthoredMaterials(

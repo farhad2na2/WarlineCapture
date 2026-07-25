@@ -33,6 +33,8 @@ namespace Game.Editor
         private const string ConfigPath =
             "Assets/Game/Configs/OperationMaps/Skirmish/" +
             "SkirmishDesertBase_MapWideCity_Config.asset";
+        internal const string ProtectedBuildingPlacementConfigPath =
+            OperationMapCurrentCompatibilityPlacementStager.SourceBuildingConfigPath;
         private const string GeneratorSchema = "dense-city-v1";
         private const int GeneratorSchemaVersion = 1;
         private const string CandidateGeneratedAssetRoot =
@@ -47,6 +49,23 @@ namespace Game.Editor
             "Assets/Game/GeneratedOperationMaps/DenseCity/" +
             "opmap.skirmish.desert_base_01/Candidate/SharedMaterials";
         private const string SyntyGenericBasicShaderName = "Synty/Generic_Basic";
+
+        internal readonly struct ProtectedPlacementConfigSnapshot
+        {
+            internal ProtectedPlacementConfigSnapshot(
+                string assetPath,
+                int placementCount,
+                string sha256)
+            {
+                AssetPath = assetPath;
+                PlacementCount = placementCount;
+                Sha256 = sha256;
+            }
+
+            internal string AssetPath { get; }
+            internal int PlacementCount { get; }
+            internal string Sha256 { get; }
+        }
 
         [MenuItem("Game/Maps/Skirmish Desert Base/Create Dense City Candidate Hierarchy")]
         public static void CreateCandidateHierarchy()
@@ -174,6 +193,7 @@ namespace Game.Editor
             Scene previousActiveScene = SceneManager.GetActiveScene();
             string mapBackup = null;
             string entityBackup = null;
+            string placementConfigBackup = null;
             string proxyFolder = null;
             string proxyBackupFolder = null;
 
@@ -188,8 +208,13 @@ namespace Game.Editor
 
                 string sourceMapHash = ComputeFileHash(SourceMapScenePath);
                 string sourceEntityHash = ComputeFileHash(SourceEntityScenePath);
+                ProtectedPlacementConfigSnapshot placementConfigSnapshot =
+                    CaptureProtectedPlacementConfig(
+                        ProtectedBuildingPlacementConfigPath);
                 mapBackup = CreateBackup(CandidateMapScenePath);
                 entityBackup = CreateBackup(CandidateEntityScenePath);
+                placementConfigBackup = CreateBackup(
+                    ProtectedBuildingPlacementConfigPath);
                 mapScene = EditorSceneManager.OpenScene(
                     CandidateMapScenePath,
                     OpenSceneMode.Additive);
@@ -303,6 +328,7 @@ namespace Game.Editor
                 CloseScene(ref mapScene);
                 RequireProtectedSourceHashes(sourceMapHash, sourceEntityHash);
                 AssetDatabase.SaveAssets();
+                RequireProtectedPlacementConfig(placementConfigSnapshot);
                 DeleteAssetFolder(proxyBackupFolder);
                 proxyBackupFolder = null;
                 summary =
@@ -310,6 +336,8 @@ namespace Game.Editor
                     $"renderOnly={realized.RenderOnly.Count} proxies={proxies.Partitions} " +
                     $"surfaces={proxies.Records} retiredAutobahnOwners={retiredAutobahnOwners} " +
                     $"realizedAutobahnTiles={realizedAutobahnTiles} " +
+                    $"buildingPlacementCount={placementConfigSnapshot.PlacementCount} " +
+                    $"buildingPlacementSha256={placementConfigSnapshot.Sha256} " +
                     $"proxyFolder={proxyFolder}";
                 return true;
             }
@@ -323,6 +351,9 @@ namespace Game.Editor
                 proxyBackupFolder = null;
                 RestoreBackup(mapBackup, CandidateMapScenePath);
                 RestoreBackup(entityBackup, CandidateEntityScenePath);
+                RestoreBackup(
+                    placementConfigBackup,
+                    ProtectedBuildingPlacementConfigPath);
                 AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
                 return false;
             }
@@ -331,7 +362,57 @@ namespace Game.Editor
                 DeleteAssetFolder(proxyBackupFolder);
                 DeleteBackup(mapBackup);
                 DeleteBackup(entityBackup);
+                DeleteBackup(placementConfigBackup);
             }
+        }
+
+        internal static ProtectedPlacementConfigSnapshot CaptureProtectedPlacementConfig(
+            string assetPath)
+        {
+            MapBuildingPlacementConfig config =
+                AssetDatabase.LoadAssetAtPath<MapBuildingPlacementConfig>(assetPath);
+            if (config == null)
+            {
+                throw new InvalidOperationException(
+                    $"Protected building-placement config is missing: '{assetPath}'.");
+            }
+
+            return new ProtectedPlacementConfigSnapshot(
+                assetPath,
+                config.Placements?.Count ?? -1,
+                ComputeFileHash(assetPath));
+        }
+
+        internal static bool TryValidateProtectedPlacementConfig(
+            ProtectedPlacementConfigSnapshot snapshot,
+            out string error)
+        {
+            MapBuildingPlacementConfig config =
+                AssetDatabase.LoadAssetAtPath<MapBuildingPlacementConfig>(
+                    snapshot.AssetPath);
+            int currentCount = config?.Placements?.Count ?? -1;
+            string currentHash = config == null
+                ? string.Empty
+                : ComputeFileHash(snapshot.AssetPath);
+            if (currentCount != snapshot.PlacementCount ||
+                !string.Equals(currentHash, snapshot.Sha256, StringComparison.Ordinal))
+            {
+                error =
+                    "Dense-city candidate realization changed the protected " +
+                    $"building-placement config: count={currentCount}/" +
+                    $"{snapshot.PlacementCount} sha256={currentHash}/{snapshot.Sha256}.";
+                return false;
+            }
+
+            error = null;
+            return true;
+        }
+
+        private static void RequireProtectedPlacementConfig(
+            ProtectedPlacementConfigSnapshot snapshot)
+        {
+            if (!TryValidateProtectedPlacementConfig(snapshot, out string error))
+                throw new InvalidOperationException(error);
         }
 
         private static string MoveAssetFolderAside(string assetFolder)

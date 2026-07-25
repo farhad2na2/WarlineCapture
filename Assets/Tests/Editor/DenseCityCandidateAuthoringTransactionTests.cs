@@ -1,6 +1,8 @@
 using System.IO;
+using System.Collections.Generic;
 using System.Linq;
 using Game.Authoring;
+using Game.Configs;
 using Game.Editor;
 using NUnit.Framework;
 using UnityEditor;
@@ -16,6 +18,7 @@ public sealed class DenseCityCandidateAuthoringTransactionTests
     private const string SourceEntityPath = TempRoot + "/source-entity.unity";
     private const string CandidateMapPath = TempRoot + "/candidate-map.unity";
     private const string CandidateEntityPath = TempRoot + "/candidate-entity.unity";
+    private const string PlacementConfigPath = TempRoot + "/building-placements.asset";
     private const string Hash =
         "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 
@@ -160,6 +163,49 @@ public sealed class DenseCityCandidateAuthoringTransactionTests
         Assert.That(error, Does.Contain("hash is invalid"));
         Assert.That(File.Exists(ToPhysicalPath(CandidateMapPath)), Is.False);
         Assert.That(File.Exists(ToPhysicalPath(CandidateEntityPath)), Is.False);
+    }
+
+    [Test]
+    public void ProtectedPlacementConfig_RejectsAnyDenseGenerationMutation()
+    {
+        var config = ScriptableObject.CreateInstance<MapBuildingPlacementConfig>();
+        config.EditorSetPlacements(new List<MapBuildingPlacementConfigEntry>());
+        AssetDatabase.CreateAsset(config, PlacementConfigPath);
+        AssetDatabase.SaveAssets();
+        DenseCityCandidateAuthoringTransaction.ProtectedPlacementConfigSnapshot snapshot =
+            DenseCityCandidateAuthoringTransaction.CaptureProtectedPlacementConfig(
+                PlacementConfigPath);
+
+        Assert.That(
+            DenseCityCandidateAuthoringTransaction.TryValidateProtectedPlacementConfig(
+                snapshot,
+                out string error),
+            Is.True,
+            error);
+
+        config.EditorSetPlacements(new List<MapBuildingPlacementConfigEntry>
+        {
+            new(
+                "generated/densecity",
+                "Generated",
+                null,
+                0,
+                Vector3.zero,
+                Vector3.zero,
+                Vector3.zero,
+                Vector3.one,
+                0f,
+                false)
+        });
+        AssetDatabase.SaveAssets();
+
+        Assert.That(
+            DenseCityCandidateAuthoringTransaction.TryValidateProtectedPlacementConfig(
+                snapshot,
+                out error),
+            Is.False);
+        Assert.That(error, Does.Contain("changed the protected building-placement config"));
+        Assert.That(error, Does.Contain("count=1/0"));
     }
 
     [Test]

@@ -16,6 +16,7 @@ namespace Game.Editor
     using UnityEditor;
     using UnityEditor.AddressableAssets;
     using UnityEditor.AddressableAssets.Build;
+    using UnityEditor.AddressableAssets.Build.Layout;
     using UnityEditor.AddressableAssets.Build.DataBuilders;
     using UnityEditor.AddressableAssets.Settings;
     using UnityEditor.AddressableAssets.Settings.GroupSchemas;
@@ -545,6 +546,47 @@ namespace Game.Editor
                 sharedBytes,
                 duplicatedGuidCount,
                 duplicatedBytes);
+        }
+
+        internal static PackedDependencyByteResult MeasurePackedDependencyBytes(
+            BuildLayout layout,
+            IEnumerable<string> sharedDependencyGuids)
+        {
+            if (layout == null)
+                throw new ArgumentNullException(nameof(layout));
+
+            IEnumerable<PackedAssetOccurrence> explicitOccurrences =
+                BuildLayoutHelpers
+                    .EnumerateAssets(layout)
+                    .Where(asset =>
+                        asset != null &&
+                        asset.Bundle != null &&
+                        asset.SerializedSize + asset.StreamedSize > 0)
+                    .Select(asset => new PackedAssetOccurrence(
+                        asset.Guid,
+                        asset.Bundle.Name,
+                        checked((long)(asset.SerializedSize + asset.StreamedSize))));
+            IEnumerable<PackedAssetOccurrence> implicitOccurrences =
+                BuildLayoutHelpers
+                    .EnumerateBundles(layout)
+                    .SelectMany(bundle => bundle.Files)
+                    .SelectMany(file =>
+                        file.OtherAssets.Concat(
+                            file.Assets.SelectMany(asset =>
+                                asset.InternalReferencedOtherAssets)))
+                    .Where(asset =>
+                        asset != null &&
+                        asset.File != null &&
+                        asset.File.Bundle != null &&
+                        asset.SerializedSize + asset.StreamedSize > 0)
+                    .Select(asset => new PackedAssetOccurrence(
+                        asset.AssetGuid,
+                        asset.File.Bundle.Name,
+                        checked((long)(asset.SerializedSize + asset.StreamedSize))));
+
+            return MeasurePackedDependencyBytes(
+                explicitOccurrences.Concat(implicitOccurrences),
+                sharedDependencyGuids);
         }
 
         private static ProductionStaticAddressablesResult

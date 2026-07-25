@@ -3,6 +3,7 @@ using System.IO;
 using Game.Editor;
 using Game.Configs;
 using NUnit.Framework;
+using UnityEditor.AddressableAssets.Build.Layout;
 using UnityEngine;
 
 public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
@@ -23,7 +24,8 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
             suite.MeasureProductionStaticAddressables_AcceptsZeroEntriesAfterCutover,
             suite.MeasurePackedDependencyBytes_ReportsSharedAndExcessPhysicalBytes,
             suite.MeasurePackedDependencyBytes_DeduplicatesSameBundleRows,
-            suite.MeasurePackedDependencyBytes_RejectsMissingSharedEvidence
+            suite.MeasurePackedDependencyBytes_RejectsMissingSharedEvidence,
+            suite.MeasurePackedDependencyBytes_AdaptsAddressablesBuildLayout
         };
         for (int i = 0; i < tests.Length; i++)
             tests[i]();
@@ -275,6 +277,71 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
                     },
                     new[] { "missing-guid" }));
         Assert.That(exception.Message, Does.Contain("missing from Build Layout evidence"));
+    }
+
+    [Test]
+    public void MeasurePackedDependencyBytes_AdaptsAddressablesBuildLayout()
+    {
+        var layout = new BuildLayout();
+        var group = new BuildLayout.Group { Name = "Dense Candidate" };
+        layout.Groups.Add(group);
+
+        BuildLayout.File firstFile = AddBuildLayoutFile(group, "first.bundle");
+        firstFile.Assets.Add(
+            new BuildLayout.ExplicitAsset
+            {
+                Guid = "shared-guid",
+                Bundle = firstFile.Bundle,
+                SerializedSize = 60,
+                StreamedSize = 40
+            });
+        firstFile.OtherAssets.Add(
+            new BuildLayout.DataFromOtherAsset
+            {
+                AssetGuid = "duplicate-guid",
+                File = firstFile,
+                SerializedSize = 25,
+                StreamedSize = 5
+            });
+
+        BuildLayout.File secondFile = AddBuildLayoutFile(group, "second.bundle");
+        secondFile.OtherAssets.Add(
+            new BuildLayout.DataFromOtherAsset
+            {
+                AssetGuid = "duplicate-guid",
+                File = secondFile,
+                SerializedSize = 20,
+                StreamedSize = 5
+            });
+
+        OperationMapDenseCityCandidateRuntimeContentBuilder.PackedDependencyByteResult result =
+            OperationMapDenseCityCandidateRuntimeContentBuilder.MeasurePackedDependencyBytes(
+                layout,
+                new[] { "shared-guid" });
+
+        Assert.That(result.SharedDependencyGuidCount, Is.EqualTo(1));
+        Assert.That(result.SharedDependencyBytes, Is.EqualTo(100));
+        Assert.That(result.DuplicatedDependencyGuidCount, Is.EqualTo(1));
+        Assert.That(result.DuplicatedDependencyBytes, Is.EqualTo(25));
+    }
+
+    private static BuildLayout.File AddBuildLayoutFile(
+        BuildLayout.Group group,
+        string bundleName)
+    {
+        var bundle = new BuildLayout.Bundle
+        {
+            Name = bundleName,
+            Group = group
+        };
+        group.Bundles.Add(bundle);
+        var file = new BuildLayout.File
+        {
+            Name = bundleName,
+            Bundle = bundle
+        };
+        bundle.Files.Add(file);
+        return file;
     }
 
     private static string WriteBytes(string root, string relativePath, int count)

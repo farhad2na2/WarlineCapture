@@ -17,6 +17,7 @@ public sealed class DenseCityPhysicsComponentStripperTests
             suite.StripInstanceHierarchy_RemovesActiveAndInactivePhysicsWithoutMutatingPrefab,
             suite.StripInstanceHierarchy_RejectsPersistentPrefabAsset,
             suite.StripInstanceHierarchy_RemovesPrimitiveCollider,
+            suite.CreatePrimitiveWithoutPhysics_ReturnsUnparentedColliderFreePrimitive,
             suite.StripInstanceHierarchy_RecordsRemovedComponentOverrides
         };
 
@@ -101,6 +102,27 @@ public sealed class DenseCityPhysicsComponentStripperTests
             Assert.That(result.Colliders3D, Is.EqualTo(1));
             Assert.That(result.Total, Is.EqualTo(1));
             Assert.That(primitive.GetComponent<Collider>(), Is.Null);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(primitive);
+        }
+    }
+
+    [Test]
+    public void CreatePrimitiveWithoutPhysics_ReturnsUnparentedColliderFreePrimitive()
+    {
+        GameObject primitive =
+            DenseCityPhysicsComponentStripper.CreatePrimitiveWithoutPhysics(PrimitiveType.Cube);
+        try
+        {
+            Assert.That(primitive.transform.parent, Is.Null);
+            Assert.That(primitive.GetComponentsInChildren<Collider>(true), Is.Empty);
+            Assert.That(primitive.GetComponentsInChildren<Collider2D>(true), Is.Empty);
+            Assert.That(primitive.GetComponentsInChildren<Rigidbody>(true), Is.Empty);
+            Assert.That(primitive.GetComponentsInChildren<Rigidbody2D>(true), Is.Empty);
+            Assert.That(primitive.GetComponent<MeshFilter>(), Is.Not.Null);
+            Assert.That(primitive.GetComponent<MeshRenderer>(), Is.Not.Null);
         }
         finally
         {

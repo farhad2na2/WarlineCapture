@@ -27,6 +27,21 @@ namespace Game.Editor
 
     internal static class DenseCityPhysicsComponentStripper
     {
+        internal static GameObject CreatePrimitiveWithoutPhysics(PrimitiveType primitiveType)
+        {
+            GameObject primitive = GameObject.CreatePrimitive(primitiveType);
+            try
+            {
+                StripInstanceHierarchy(primitive);
+                return primitive;
+            }
+            catch
+            {
+                UnityEngine.Object.DestroyImmediate(primitive);
+                throw;
+            }
+        }
+
         internal static bool TryValidateNoProhibitedComponents(
             GameObject root,
             out string error)

@@ -387,21 +387,21 @@ namespace Game.Editor
             Material roadMaterial,
             Material shoulderMaterial)
         {
-            GameObject shoulder = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            GameObject shoulder =
+                DenseCityPhysicsComponentStripper.CreatePrimitiveWithoutPhysics(PrimitiveType.Cube);
             shoulder.name = name + "_Shoulder";
             shoulder.transform.SetParent(parent, false);
             shoulder.transform.position = position + Vector3.down * 0.035f;
             shoulder.transform.localScale = new Vector3(scale.x + 3f, 0.08f, scale.z + 3f);
             ApplySharedMaterial(shoulder, shoulderMaterial);
-            RemoveCollider(shoulder);
 
-            GameObject road = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            GameObject road =
+                DenseCityPhysicsComponentStripper.CreatePrimitiveWithoutPhysics(PrimitiveType.Cube);
             road.name = name;
             road.transform.SetParent(parent, false);
             road.transform.position = position + Vector3.up * 0.03f;
             road.transform.localScale = scale;
             ApplySharedMaterial(road, roadMaterial);
-            RemoveCollider(road);
         }
 
         private static int CreateDenseBuildingBlocks(
@@ -565,13 +565,6 @@ namespace Game.Editor
             MeshRenderer renderer = target.GetComponent<MeshRenderer>();
             if (renderer != null && material != null)
                 renderer.sharedMaterial = material;
-        }
-
-        private static void RemoveCollider(GameObject target)
-        {
-            Collider collider = target.GetComponent<Collider>();
-            if (collider != null)
-                UnityEngine.Object.DestroyImmediate(collider);
         }
 
         private static void BuildMapWideDistrict(

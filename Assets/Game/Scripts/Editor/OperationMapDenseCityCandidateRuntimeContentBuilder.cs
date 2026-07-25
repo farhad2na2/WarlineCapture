@@ -113,14 +113,10 @@ namespace Game.Editor
                 OperationMapEntitySceneCandidateBakeAll.CandidateFileTransaction.Capture(
                     projectRoot,
                     new[] { ReportPath });
-            OperationMapEntitySceneCandidateBakeAll.CandidateFileTransaction
-                productionSettingsTransaction =
-                    OperationMapEntitySceneCandidateBakeAll.CandidateFileTransaction.Capture(
-                        projectRoot,
-                        new[]
-                        {
-                            "Assets/AddressableAssetsData/AddressableAssetSettings.asset"
-                        });
+            CandidateDirectoryTransaction productionSettingsTransaction =
+                CandidateDirectoryTransaction.Capture(
+                    projectRoot,
+                    "Assets/AddressableAssetsData");
             using var outputTransaction = DenseRuntimeContentOutputTransaction.Begin(
                 projectRoot,
                 sharedAddressablesOutputPath,
@@ -1426,6 +1422,89 @@ namespace Game.Editor
             internal Type ExtensionType { get; }
             internal bool Enabled { get; }
             internal string Error { get; }
+        }
+
+        internal sealed class CandidateDirectoryTransaction
+        {
+            private readonly string directoryPath;
+            private readonly Dictionary<string, byte[]> files;
+            private bool restored;
+
+            private CandidateDirectoryTransaction(
+                string directoryPath,
+                Dictionary<string, byte[]> files)
+            {
+                this.directoryPath = directoryPath;
+                this.files = files;
+            }
+
+            internal static CandidateDirectoryTransaction Capture(
+                string projectRoot,
+                string relativeDirectoryPath)
+            {
+                if (string.IsNullOrWhiteSpace(projectRoot))
+                    throw new ArgumentException("Project root is required.", nameof(projectRoot));
+                if (string.IsNullOrWhiteSpace(relativeDirectoryPath))
+                {
+                    throw new ArgumentException(
+                        "Relative directory path is required.",
+                        nameof(relativeDirectoryPath));
+                }
+
+                string directoryPath = Path.GetFullPath(
+                    Path.Combine(projectRoot, relativeDirectoryPath));
+                string relativeFromProject = Path.GetRelativePath(projectRoot, directoryPath);
+                if (relativeFromProject == ".." ||
+                    relativeFromProject.StartsWith(
+                        ".." + Path.DirectorySeparatorChar,
+                        StringComparison.Ordinal))
+                {
+                    throw new InvalidOperationException(
+                        $"Candidate directory transaction is outside the project: " +
+                        $"{relativeDirectoryPath}");
+                }
+                if (!Directory.Exists(directoryPath))
+                {
+                    throw new InvalidOperationException(
+                        $"Candidate directory transaction source is missing: " +
+                        $"{relativeDirectoryPath}");
+                }
+
+                var files = Directory
+                    .EnumerateFiles(directoryPath, "*", SearchOption.AllDirectories)
+                    .ToDictionary(
+                        path => Path.GetRelativePath(directoryPath, path),
+                        File.ReadAllBytes,
+                        StringComparer.Ordinal);
+                return new CandidateDirectoryTransaction(directoryPath, files);
+            }
+
+            internal void Rollback()
+            {
+                if (restored)
+                    return;
+
+                Directory.CreateDirectory(directoryPath);
+                foreach (string currentPath in Directory.EnumerateFiles(
+                             directoryPath,
+                             "*",
+                             SearchOption.AllDirectories))
+                {
+                    string relativePath = Path.GetRelativePath(directoryPath, currentPath);
+                    if (!files.ContainsKey(relativePath))
+                        File.Delete(currentPath);
+                }
+                foreach (KeyValuePair<string, byte[]> file in files)
+                {
+                    string physicalPath = Path.Combine(directoryPath, file.Key);
+                    Directory.CreateDirectory(
+                        Path.GetDirectoryName(physicalPath) ?? directoryPath);
+                    File.WriteAllBytes(physicalPath, file.Value);
+                }
+
+                AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+                restored = true;
+            }
         }
 
         private sealed class StandaloneScriptingBackendScope : IDisposable

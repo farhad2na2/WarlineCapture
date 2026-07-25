@@ -23,6 +23,7 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
             suite.SelectTemporaryScriptingBackend_RejectsUnrecognizedDisabledBuild,
             suite.GetSharedAddressablesOutputPath_MapsStandalonePlatform,
             suite.GetDenseLayoutOutputTransactionPaths_CoversCompleteOwnerSet,
+            suite.CandidateDirectoryTransaction_RestoresCompleteFileTree,
             suite.MeasureEntityContent_SeparatesArchiveAndMetadataBytes,
             suite.MeasureEntityContent_FingerprintsArchiveSetDeterministically,
             suite.MeasureEntityContent_RejectsMissingCatalog,
@@ -177,6 +178,36 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
                     OperationMapDenseCityCandidateRuntimeContentBuilder
                         .DenseCandidateLayoutReportPath
                 }));
+    }
+
+    [Test]
+    public void CandidateDirectoryTransaction_RestoresCompleteFileTree()
+    {
+        WithProjectDirectory(
+            projectRoot =>
+            {
+                string directory = Path.Combine(projectRoot, "Assets", "ProtectedSettings");
+                string retained = WriteBytes(directory, "retained.asset", 7);
+                string deleted = WriteBytes(directory, "Nested/deleted.asset", 11);
+                byte[] retainedBytes = File.ReadAllBytes(retained);
+                byte[] deletedBytes = File.ReadAllBytes(deleted);
+                OperationMapDenseCityCandidateRuntimeContentBuilder
+                    .CandidateDirectoryTransaction transaction =
+                        OperationMapDenseCityCandidateRuntimeContentBuilder
+                            .CandidateDirectoryTransaction.Capture(
+                                projectRoot,
+                                "Assets/ProtectedSettings");
+
+                File.WriteAllBytes(retained, new byte[19]);
+                File.Delete(deleted);
+                string added = WriteBytes(directory, "Nested/added.asset", 13);
+                transaction.Rollback();
+                transaction.Rollback();
+
+                Assert.That(File.ReadAllBytes(retained), Is.EqualTo(retainedBytes));
+                Assert.That(File.ReadAllBytes(deleted), Is.EqualTo(deletedBytes));
+                Assert.That(File.Exists(added), Is.False);
+            });
     }
 
     [Test]

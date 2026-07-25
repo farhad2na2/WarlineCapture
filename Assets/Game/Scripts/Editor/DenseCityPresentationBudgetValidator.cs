@@ -37,6 +37,10 @@ namespace Game.Editor
             OperationMapDenseCityGeneratedTransformParityValidator.DefaultReportPath;
         internal const string DenseCandidateLayoutReportPath =
             "Design/AgentReports/2026-07-24_dense_city_candidate_entityscene_addressables_layout.json";
+        internal const string DenseRuntimeContentReportPath =
+            "Design/AgentReports/2026-07-24_dense_city_candidate_runtime_content.json";
+        internal const string DensePackedAssetSharingReportPath =
+            "Design/AgentReports/2026-07-25_dense_city_packed_asset_sharing.json";
 
         private static readonly UTF8Encoding Utf8WithoutBom = new(false);
 
@@ -87,6 +91,42 @@ namespace Game.Editor
 
         public static void ValidateDenseCityEntitySceneOwnershipBatch() =>
             ValidateDenseCityEntitySceneOwnership();
+
+        [MenuItem("Game/Operation Maps/EntityScene Migration/Validate Dense City Packed Asset Sharing")]
+        public static void ValidateDenseCityPackedAssetSharing()
+        {
+            string projectRoot = Path.GetDirectoryName(Application.dataPath) ??
+                                 throw new InvalidOperationException("Project root is unavailable.");
+            DenseCandidateBakeEvidence bake =
+                Read<DenseCandidateBakeEvidence>(projectRoot, DenseCandidateBakeReportPath);
+            DenseTransformParityEvidence parity =
+                Read<DenseTransformParityEvidence>(projectRoot, DenseTransformParityReportPath);
+            DenseRuntimeContentEvidence runtime =
+                Read<DenseRuntimeContentEvidence>(projectRoot, DenseRuntimeContentReportPath);
+
+            if (!TryCreateDensePackedAssetSharingReport(
+                    bake,
+                    parity,
+                    runtime,
+                    out DensePackedAssetSharingReport report,
+                    out string error))
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city packed asset sharing rejected: {error}");
+            }
+
+            WriteJsonReport(projectRoot, DensePackedAssetSharingReportPath, report);
+            Debug.Log(
+                $"[DenseCityPackedAssetSharing] result={report.result} " +
+                $"renderEntities={report.renderEntityCount} " +
+                $"renderMeshArrays={report.sharedRenderMeshArrayIdentityCount} " +
+                $"archiveBytes={report.entitySceneArchiveBytes} " +
+                $"duplicatedGuids={report.duplicatedDependencyGuidCount} " +
+                $"duplicatedBytes={report.duplicatedDependencyBytes} productionCutover=0");
+        }
+
+        public static void ValidateDenseCityPackedAssetSharingBatch() =>
+            ValidateDenseCityPackedAssetSharing();
 
         internal static void InvalidateEvidence(string projectRoot, string reason)
         {
@@ -406,6 +446,118 @@ namespace Game.Editor
                 staticPresentationEntryCount = staticPresentationEntryCount,
                 legacyPlacementEntryCount = layout.legacyPlacementEntryCount,
                 productionAddressablesMutated = layout.productionAddressablesMutated,
+                productionCutover = 0
+            };
+            error = null;
+            return true;
+        }
+
+        internal static bool TryCreateDensePackedAssetSharingReport(
+            DenseCandidateBakeEvidence bake,
+            DenseTransformParityEvidence parity,
+            DenseRuntimeContentEvidence runtime,
+            out DensePackedAssetSharingReport report,
+            out string error)
+        {
+            report = null;
+            if (bake == null || parity == null || runtime == null)
+            {
+                error = "packed-asset-sharing-evidence-null";
+                return false;
+            }
+
+            if (!string.Equals(
+                    bake.result,
+                    "DenseCandidateBakeValidationPassed",
+                    StringComparison.Ordinal) ||
+                bake.renderMeshEntityCount <= 0 ||
+                bake.sharedRenderMeshArrayIdentityCount != 1 ||
+                bake.sharedMeshAssetIdentityCount <= 0 ||
+                bake.sharedMaterialAssetIdentityCount <= 0 ||
+                bake.managedMapVisualCompanionCount != 0)
+            {
+                error = "packed-asset-sharing-bake";
+                return false;
+            }
+
+            if (!string.Equals(
+                    parity.result,
+                    "DenseCityGeneratedTransformParityPassed",
+                    StringComparison.Ordinal) ||
+                parity.generatedBakedRenderEntityCount <= 0 ||
+                parity.persistentGeneratedSourceFailureCount != 0 ||
+                parity.repeatedGeneratedPrefabSourceCount <= 0 ||
+                parity.repeatedGeneratedPrefabPlacementCount <= 0 ||
+                parity.repeatedGeneratedPresentationSignatureCount <= 0 ||
+                parity.repeatedGeneratedPresentationEntryCount <= 0 ||
+                parity.unresolvedGeneratedMeshCount != 0 ||
+                parity.unresolvedGeneratedMaterialCount != 0 ||
+                parity.generatedMeshMismatchCount != 0 ||
+                parity.generatedMaterialMismatchCount != 0 ||
+                parity.generatedManagedInstanceComponentCount != 0 ||
+                parity.repeatedSignatureAssetPairMismatchCount != 0 ||
+                parity.rejectedRowCount != 0)
+            {
+                error = "packed-asset-sharing-parity";
+                return false;
+            }
+
+            if (!string.Equals(
+                    runtime.result,
+                    "DenseCityCandidateRuntimeContentBuilt",
+                    StringComparison.Ordinal) ||
+                runtime.schemaVersion != 9 ||
+                !string.Equals(
+                    runtime.operationMapId,
+                    OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
+                    StringComparison.Ordinal) ||
+                runtime.packedDependencyMetricsComplete != 1 ||
+                runtime.sharedDependencyGuidCount != 0 ||
+                runtime.sharedDependencyBytes != 0 ||
+                runtime.duplicatedDependencyGuidCount != 0 ||
+                runtime.duplicatedDependencyBytes != 0 ||
+                runtime.entityContentArchiveCount != 1 ||
+                runtime.entitySceneArchiveBytes <= 0 ||
+                runtime.staticRuntimeEntryCount != 0 ||
+                runtime.productionSettingsMutated != 0 ||
+                runtime.productionCutover != 0)
+            {
+                error = "packed-asset-sharing-runtime";
+                return false;
+            }
+
+            report = new DensePackedAssetSharingReport
+            {
+                schema = "warline.operation-map.dense-city-packed-asset-sharing",
+                schemaVersion = 1,
+                result = "DenseCityPackedAssetSharingPassed",
+                operationMapId = runtime.operationMapId,
+                entitySceneGuid = runtime.entitySceneGuid,
+                renderEntityCount = bake.renderMeshEntityCount,
+                sharedRenderMeshArrayIdentityCount =
+                    bake.sharedRenderMeshArrayIdentityCount,
+                sharedMeshAssetIdentityCount = bake.sharedMeshAssetIdentityCount,
+                sharedMaterialAssetIdentityCount =
+                    bake.sharedMaterialAssetIdentityCount,
+                repeatedGeneratedPrefabSourceCount =
+                    parity.repeatedGeneratedPrefabSourceCount,
+                repeatedGeneratedPrefabPlacementCount =
+                    parity.repeatedGeneratedPrefabPlacementCount,
+                repeatedGeneratedPresentationSignatureCount =
+                    parity.repeatedGeneratedPresentationSignatureCount,
+                repeatedGeneratedPresentationEntryCount =
+                    parity.repeatedGeneratedPresentationEntryCount,
+                entityContentArchiveCount = runtime.entityContentArchiveCount,
+                entitySceneArchiveBytes = runtime.entitySceneArchiveBytes,
+                sharedDependencyGuidCount = runtime.sharedDependencyGuidCount,
+                sharedDependencyBytes = runtime.sharedDependencyBytes,
+                duplicatedDependencyGuidCount =
+                    runtime.duplicatedDependencyGuidCount,
+                duplicatedDependencyBytes = runtime.duplicatedDependencyBytes,
+                staticRuntimeEntryCount = runtime.staticRuntimeEntryCount,
+                managedMapVisualCompanionCount =
+                    bake.managedMapVisualCompanionCount,
+                productionSettingsMutated = runtime.productionSettingsMutated,
                 productionCutover = 0
             };
             error = null;
@@ -741,6 +893,22 @@ namespace Game.Editor
                 ImportAssetOptions.ForceSynchronousImport);
         }
 
+        private static void WriteJsonReport<T>(
+            string projectRoot,
+            string assetPath,
+            T report)
+        {
+            string physicalPath = Path.Combine(projectRoot, assetPath);
+            Directory.CreateDirectory(Path.GetDirectoryName(physicalPath) ?? projectRoot);
+            File.WriteAllText(
+                physicalPath,
+                JsonUtility.ToJson(report, true) + "\n",
+                Utf8WithoutBom);
+            AssetDatabase.ImportAsset(
+                assetPath,
+                ImportAssetOptions.ForceSynchronousImport);
+        }
+
         private static T Read<T>(string projectRoot, string path) where T : class
         {
             string physicalPath = Path.Combine(projectRoot, path);
@@ -854,6 +1022,10 @@ namespace Game.Editor
             public int denseRenderOnlyIdentityCount;
             public int denseUnknownRoleIdentityCount;
             public int duplicateDenseIdentityCount;
+            public int renderMeshEntityCount;
+            public int sharedRenderMeshArrayIdentityCount;
+            public int sharedMeshAssetIdentityCount;
+            public int sharedMaterialAssetIdentityCount;
             public int missingIntactVisualRootCount;
             public int sharedIntactDestroyedVisualRootCount;
             public int nonFiniteTransformCount;
@@ -871,7 +1043,17 @@ namespace Game.Editor
             public int generatedCandidateRendererEntityCount;
             public int generatedBakedRenderEntityCount;
             public int persistentGeneratedSourceFailureCount;
+            public int repeatedGeneratedPrefabSourceCount;
+            public int repeatedGeneratedPrefabPlacementCount;
+            public int repeatedGeneratedPresentationSignatureCount;
+            public int repeatedGeneratedPresentationEntryCount;
             public int unresolvedGeneratedRendererEntityCount;
+            public int unresolvedGeneratedMeshCount;
+            public int unresolvedGeneratedMaterialCount;
+            public int generatedMeshMismatchCount;
+            public int generatedMaterialMismatchCount;
+            public int generatedManagedInstanceComponentCount;
+            public int repeatedSignatureAssetPairMismatchCount;
             public int unconsumedCandidateRendererEntityCount;
             public int rejectedRowCount;
             public int duplicateCandidateStableIdCount;
@@ -880,6 +1062,25 @@ namespace Game.Editor
             public int unexpectedBakedStableIdCount;
             public string candidateIdentitySetSha256;
             public string bakedIdentitySetSha256;
+        }
+
+        [Serializable]
+        internal sealed class DenseRuntimeContentEvidence
+        {
+            public int schemaVersion;
+            public string result;
+            public string operationMapId;
+            public string entitySceneGuid;
+            public int staticRuntimeEntryCount;
+            public int packedDependencyMetricsComplete;
+            public int sharedDependencyGuidCount;
+            public long sharedDependencyBytes;
+            public int duplicatedDependencyGuidCount;
+            public long duplicatedDependencyBytes;
+            public int entityContentArchiveCount;
+            public long entitySceneArchiveBytes;
+            public int productionSettingsMutated;
+            public int productionCutover;
         }
 
         [Serializable]
@@ -924,6 +1125,34 @@ namespace Game.Editor
             public int staticPresentationEntryCount;
             public int legacyPlacementEntryCount;
             public int productionAddressablesMutated;
+            public int productionCutover;
+        }
+
+        [Serializable]
+        internal sealed class DensePackedAssetSharingReport
+        {
+            public string schema;
+            public int schemaVersion;
+            public string result;
+            public string operationMapId;
+            public string entitySceneGuid;
+            public int renderEntityCount;
+            public int sharedRenderMeshArrayIdentityCount;
+            public int sharedMeshAssetIdentityCount;
+            public int sharedMaterialAssetIdentityCount;
+            public int repeatedGeneratedPrefabSourceCount;
+            public int repeatedGeneratedPrefabPlacementCount;
+            public int repeatedGeneratedPresentationSignatureCount;
+            public int repeatedGeneratedPresentationEntryCount;
+            public int entityContentArchiveCount;
+            public long entitySceneArchiveBytes;
+            public int sharedDependencyGuidCount;
+            public long sharedDependencyBytes;
+            public int duplicatedDependencyGuidCount;
+            public long duplicatedDependencyBytes;
+            public int staticRuntimeEntryCount;
+            public int managedMapVisualCompanionCount;
+            public int productionSettingsMutated;
             public int productionCutover;
         }
 

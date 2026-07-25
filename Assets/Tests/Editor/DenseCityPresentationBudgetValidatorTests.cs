@@ -19,6 +19,10 @@ public sealed class DenseCityPresentationBudgetValidatorTests
             suite.DenseOwnership_AcceptsCompleteEntitySceneEvidence,
             suite.DenseOwnership_RejectsMissingGeneratedIdentity,
             suite.DenseOwnership_RejectsAuthoringSceneEntry,
+            suite.PackedAssetSharing_AcceptsCompleteEvidence,
+            suite.PackedAssetSharing_RejectsDuplicatedDependency,
+            suite.PackedAssetSharing_RejectsMultipleEntityArchives,
+            suite.PackedAssetSharing_CurrentEvidenceWritesAcceptedReport,
             suite.CategorySharing_AcceptsEveryRequiredSemanticFamily,
             suite.CategorySharing_RejectsMissingRequiredFamily,
             suite.CategorySharing_RejectsBakedAssetPairDrift,
@@ -151,6 +155,90 @@ public sealed class DenseCityPresentationBudgetValidatorTests
                 out string error),
             Is.False);
         Assert.That(error, Is.EqualTo("dense-candidate-layout-entry"));
+    }
+
+    [Test]
+    public void PackedAssetSharing_AcceptsCompleteEvidence()
+    {
+        CreateDensePackedAssetSharingEvidence(
+            out var bake,
+            out var parity,
+            out var runtime);
+
+        Assert.That(
+            DenseCityPresentationBudgetValidator.TryCreateDensePackedAssetSharingReport(
+                bake,
+                parity,
+                runtime,
+                out var report,
+                out string error),
+            Is.True,
+            error);
+        Assert.That(report.sharedRenderMeshArrayIdentityCount, Is.EqualTo(1));
+        Assert.That(report.entityContentArchiveCount, Is.EqualTo(1));
+        Assert.That(report.duplicatedDependencyBytes, Is.Zero);
+    }
+
+    [Test]
+    public void PackedAssetSharing_RejectsDuplicatedDependency()
+    {
+        CreateDensePackedAssetSharingEvidence(
+            out var bake,
+            out var parity,
+            out var runtime);
+        runtime.duplicatedDependencyGuidCount = 1;
+        runtime.duplicatedDependencyBytes = 4096;
+
+        Assert.That(
+            DenseCityPresentationBudgetValidator.TryCreateDensePackedAssetSharingReport(
+                bake,
+                parity,
+                runtime,
+                out _,
+                out string error),
+            Is.False);
+        Assert.That(error, Is.EqualTo("packed-asset-sharing-runtime"));
+    }
+
+    [Test]
+    public void PackedAssetSharing_RejectsMultipleEntityArchives()
+    {
+        CreateDensePackedAssetSharingEvidence(
+            out var bake,
+            out var parity,
+            out var runtime);
+        runtime.entityContentArchiveCount = 2;
+
+        Assert.That(
+            DenseCityPresentationBudgetValidator.TryCreateDensePackedAssetSharingReport(
+                bake,
+                parity,
+                runtime,
+                out _,
+                out string error),
+            Is.False);
+        Assert.That(error, Is.EqualTo("packed-asset-sharing-runtime"));
+    }
+
+    [Test]
+    public void PackedAssetSharing_CurrentEvidenceWritesAcceptedReport()
+    {
+        DenseCityPresentationBudgetValidator.ValidateDenseCityPackedAssetSharing();
+
+        string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+        string reportPath = Path.Combine(
+            projectRoot,
+            DenseCityPresentationBudgetValidator.DensePackedAssetSharingReportPath);
+        Assert.That(File.Exists(reportPath), Is.True);
+        var report = JsonUtility.FromJson<
+            DenseCityPresentationBudgetValidator.DensePackedAssetSharingReport>(
+            File.ReadAllText(reportPath));
+        Assert.That(report, Is.Not.Null);
+        Assert.That(report.result, Is.EqualTo("DenseCityPackedAssetSharingPassed"));
+        Assert.That(report.renderEntityCount, Is.EqualTo(82797));
+        Assert.That(report.entityContentArchiveCount, Is.EqualTo(1));
+        Assert.That(report.duplicatedDependencyGuidCount, Is.Zero);
+        Assert.That(report.duplicatedDependencyBytes, Is.Zero);
     }
 
     [Test]
@@ -453,6 +541,10 @@ public sealed class DenseCityPresentationBudgetValidatorTests
             denseRenderOnlyIdentityCount = 31975,
             denseUnknownRoleIdentityCount = 0,
             duplicateDenseIdentityCount = 0,
+            renderMeshEntityCount = 82797,
+            sharedRenderMeshArrayIdentityCount = 1,
+            sharedMeshAssetIdentityCount = 1769,
+            sharedMaterialAssetIdentityCount = 80,
             missingIntactVisualRootCount = 0,
             sharedIntactDestroyedVisualRootCount = 0,
             nonFiniteTransformCount = 0,
@@ -477,7 +569,17 @@ public sealed class DenseCityPresentationBudgetValidatorTests
             generatedCandidateRendererEntityCount = 68735,
             generatedBakedRenderEntityCount = 68735,
             persistentGeneratedSourceFailureCount = 0,
+            repeatedGeneratedPrefabSourceCount = 57,
+            repeatedGeneratedPrefabPlacementCount = 31973,
+            repeatedGeneratedPresentationSignatureCount = 377,
+            repeatedGeneratedPresentationEntryCount = 68722,
             unresolvedGeneratedRendererEntityCount = 0,
+            unresolvedGeneratedMeshCount = 0,
+            unresolvedGeneratedMaterialCount = 0,
+            generatedMeshMismatchCount = 0,
+            generatedMaterialMismatchCount = 0,
+            generatedManagedInstanceComponentCount = 0,
+            repeatedSignatureAssetPairMismatchCount = 0,
             unconsumedCandidateRendererEntityCount = 0,
             rejectedRowCount = 0,
             duplicateCandidateStableIdCount = 0,
@@ -528,6 +630,35 @@ public sealed class DenseCityPresentationBudgetValidatorTests
                     assetPath = OperationMapAddressablesLayoutBuilder.MinimapRasterPath
                 }
             }
+        };
+    }
+
+    private static void CreateDensePackedAssetSharingEvidence(
+        out DenseCityPresentationBudgetValidator.DenseCandidateBakeEvidence bake,
+        out DenseCityPresentationBudgetValidator.DenseTransformParityEvidence parity,
+        out DenseCityPresentationBudgetValidator.DenseRuntimeContentEvidence runtime)
+    {
+        CreateDenseOwnershipEvidence(
+            out bake,
+            out _,
+            out parity,
+            out _);
+        runtime = new DenseCityPresentationBudgetValidator.DenseRuntimeContentEvidence
+        {
+            schemaVersion = 9,
+            result = "DenseCityCandidateRuntimeContentBuilt",
+            operationMapId = "opmap.skirmish.desert_base_01",
+            entitySceneGuid = "c00140f2e94a04c3084c8dcb0c18cbd0",
+            staticRuntimeEntryCount = 0,
+            packedDependencyMetricsComplete = 1,
+            sharedDependencyGuidCount = 0,
+            sharedDependencyBytes = 0,
+            duplicatedDependencyGuidCount = 0,
+            duplicatedDependencyBytes = 0,
+            entityContentArchiveCount = 1,
+            entitySceneArchiveBytes = 137862756,
+            productionSettingsMutated = 0,
+            productionCutover = 0
         };
     }
 

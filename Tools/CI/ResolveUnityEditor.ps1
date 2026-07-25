@@ -102,7 +102,10 @@ $programFiles = @(
     [Environment]::GetEnvironmentVariable("ProgramFiles(x86)"),
     "C:\Program Files",
     "D:\Program Files"
-) | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Select-Object -Unique
+) | Where-Object {
+    -not [string]::IsNullOrWhiteSpace($_) -and
+    [System.IO.Directory]::Exists($_)
+} | Select-Object -Unique
 
 $filesystemRoots = Get-PSDrive -PSProvider FileSystem -ErrorAction SilentlyContinue |
     Where-Object { $_.Root -match '^[A-Z]:\\$' } |

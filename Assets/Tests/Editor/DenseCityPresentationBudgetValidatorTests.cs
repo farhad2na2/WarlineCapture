@@ -15,6 +15,9 @@ public sealed class DenseCityPresentationBudgetValidatorTests
             suite.Budget_RejectsTransformBoundsMismatch,
             suite.Budget_RejectsIncompleteGeometryEvidence,
             suite.Budget_RejectsIncompleteBakedOwnershipEvidence,
+            suite.DenseOwnership_AcceptsCompleteEntitySceneEvidence,
+            suite.DenseOwnership_RejectsMissingGeneratedIdentity,
+            suite.DenseOwnership_RejectsAuthoringSceneEntry,
             suite.BudgetFailure_RestoresAcceptedCandidateOutput,
             suite.Budget_SerializationIsDeterministicAndMarksPackedMetricsPending,
             suite.CandidateBakeAll_OrdersBudgetAfterBakeAndBeforePostflight,
@@ -68,6 +71,79 @@ public sealed class DenseCityPresentationBudgetValidatorTests
                 bake, art, parity, layout, geometry, out _, out string error),
             Is.False);
         Assert.That(error, Is.EqualTo("candidate-bake-budget"));
+    }
+
+    [Test]
+    public void DenseOwnership_AcceptsCompleteEntitySceneEvidence()
+    {
+        CreateDenseOwnershipEvidence(
+            out var bake,
+            out var existingParity,
+            out var parity,
+            out var layout);
+
+        Assert.That(
+            DenseCityPresentationBudgetValidator.TryCreateDenseOwnershipReport(
+                bake,
+                existingParity,
+                parity,
+                layout,
+                layout.entitySceneGuid,
+                out var report,
+                out string error),
+            Is.True,
+            error);
+        Assert.That(report.existingVisualIdentityCount, Is.EqualTo(9544));
+        Assert.That(report.generatedVisualIdentityCount, Is.EqualTo(36946));
+        Assert.That(report.authoringSceneEntryCount, Is.Zero);
+        Assert.That(report.staticPresentationEntryCount, Is.Zero);
+    }
+
+    [Test]
+    public void DenseOwnership_RejectsMissingGeneratedIdentity()
+    {
+        CreateDenseOwnershipEvidence(
+            out var bake,
+            out var existingParity,
+            out var parity,
+            out var layout);
+        parity.missingBakedStableIdCount = 1;
+
+        Assert.That(
+            DenseCityPresentationBudgetValidator.TryCreateDenseOwnershipReport(
+                bake,
+                existingParity,
+                parity,
+                layout,
+                layout.entitySceneGuid,
+                out _,
+                out string error),
+            Is.False);
+        Assert.That(error, Is.EqualTo("dense-generated-renderer-parity"));
+    }
+
+    [Test]
+    public void DenseOwnership_RejectsAuthoringSceneEntry()
+    {
+        CreateDenseOwnershipEvidence(
+            out var bake,
+            out var existingParity,
+            out var parity,
+            out var layout);
+        layout.entries[1].assetPath =
+            DenseCityCandidateAuthoringTransaction.CandidateMapScenePath;
+
+        Assert.That(
+            DenseCityPresentationBudgetValidator.TryCreateDenseOwnershipReport(
+                bake,
+                existingParity,
+                parity,
+                layout,
+                layout.entitySceneGuid,
+                out _,
+                out string error),
+            Is.False);
+        Assert.That(error, Is.EqualTo("dense-candidate-layout-entry"));
     }
 
     [Test]
@@ -264,6 +340,102 @@ public sealed class DenseCityPresentationBudgetValidatorTests
             worldBoundsCenter = new Vector3(10f, 5f, 20f),
             worldBoundsSize = new Vector3(1000f, 100f, 800f),
             rendererDensityPerSquareKilometer = 112.5f
+        };
+    }
+
+    private static void CreateDenseOwnershipEvidence(
+        out DenseCityPresentationBudgetValidator.DenseCandidateBakeEvidence bake,
+        out DenseCityPresentationBudgetValidator.TransformParityEvidence existingParity,
+        out DenseCityPresentationBudgetValidator.DenseTransformParityEvidence parity,
+        out DenseCityPresentationBudgetValidator.DenseCandidateLayoutEvidence layout)
+    {
+        bake = new DenseCityPresentationBudgetValidator.DenseCandidateBakeEvidence
+        {
+            result = "DenseCandidateBakeValidationPassed",
+            authoringDenseIdentityCount = 36946,
+            authoringDenseGameplayBuildingIdentityCount = 4971,
+            authoringDenseRenderOnlyIdentityCount = 31975,
+            legacyPresentationIdentityCount = 9544,
+            denseIdentityCount = 36946,
+            denseGameplayBuildingIdentityCount = 4971,
+            denseRenderOnlyIdentityCount = 31975,
+            denseUnknownRoleIdentityCount = 0,
+            duplicateDenseIdentityCount = 0,
+            missingIntactVisualRootCount = 0,
+            sharedIntactDestroyedVisualRootCount = 0,
+            nonFiniteTransformCount = 0,
+            managedMapVisualCompanionCount = 0
+        };
+        existingParity = new DenseCityPresentationBudgetValidator.TransformParityEvidence
+        {
+            checkpoint = "ecs-bake",
+            result = "SourceCandidateBakedParityPassed",
+            candidateIdentityCount = 9544,
+            bakedIdentityCount = 9544,
+            rejectedRowCount = 0,
+            bakedRenderEntityCount = 14249
+        };
+        parity = new DenseCityPresentationBudgetValidator.DenseTransformParityEvidence
+        {
+            result = "DenseCityGeneratedTransformParityPassed",
+            candidateIdentityCount = 36946,
+            uniqueCandidateIdentityCount = 36946,
+            bakedIdentityCount = 36946,
+            uniqueBakedIdentityCount = 36946,
+            generatedCandidateRendererEntityCount = 68735,
+            generatedBakedRenderEntityCount = 68735,
+            persistentGeneratedSourceFailureCount = 0,
+            unresolvedGeneratedRendererEntityCount = 0,
+            unconsumedCandidateRendererEntityCount = 0,
+            rejectedRowCount = 0,
+            duplicateCandidateStableIdCount = 0,
+            duplicateBakedStableIdCount = 0,
+            missingBakedStableIdCount = 0,
+            unexpectedBakedStableIdCount = 0,
+            candidateIdentitySetSha256 = new string('a', 64),
+            bakedIdentitySetSha256 = new string('a', 64)
+        };
+        layout = new DenseCityPresentationBudgetValidator.DenseCandidateLayoutEvidence
+        {
+            result = "CandidateEntitySceneAddressablesLayoutReady",
+            entitySceneGuid = "c00140f2e94a04c3084c8dcb0c18cbd0",
+            entryCount = 5,
+            sharedDependencyCount = 0,
+            staticManifestEntryCount = 0,
+            presentationChunkEntryCount = 0,
+            legacyPlacementEntryCount = 0,
+            productionAddressablesMutated = 0,
+            entries = new System.Collections.Generic.List<
+                DenseCityPresentationBudgetValidator.DenseCandidateLayoutEntryEvidence>
+            {
+                new()
+                {
+                    role = "definition",
+                    assetPath = OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                        .DenseCandidateDefinitionPath
+                },
+                new()
+                {
+                    role = "source-scene",
+                    assetPath = OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                        .DenseCandidateRuntimeBindingPath
+                },
+                new()
+                {
+                    role = "entity-scene",
+                    assetPath = DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath
+                },
+                new()
+                {
+                    role = "map-surface",
+                    assetPath = OperationMapAddressablesLayoutBuilder.MapSurfacePath
+                },
+                new()
+                {
+                    role = "minimap-raster",
+                    assetPath = OperationMapAddressablesLayoutBuilder.MinimapRasterPath
+                }
+            }
         };
     }
 

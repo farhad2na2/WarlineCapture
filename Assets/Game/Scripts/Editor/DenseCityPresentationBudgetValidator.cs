@@ -29,6 +29,14 @@ namespace Game.Editor
             OperationMapEntityPresentationTransformParityValidator.ReportPath;
         internal const string CandidateLayoutReportPath =
             "Design/AgentReports/2026-07-21_dense_city_phase0a_candidate_entityscene_addressables_layout.json";
+        internal const string DenseOwnershipReportPath =
+            "Design/AgentReports/2026-07-25_dense_city_entity_scene_ownership.json";
+        internal const string DenseCandidateBakeReportPath =
+            "Design/AgentReports/2026-07-24_dense_city_generated_candidate_bake_validation.json";
+        internal const string DenseTransformParityReportPath =
+            OperationMapDenseCityGeneratedTransformParityValidator.DefaultReportPath;
+        internal const string DenseCandidateLayoutReportPath =
+            "Design/AgentReports/2026-07-24_dense_city_candidate_entityscene_addressables_layout.json";
 
         private static readonly UTF8Encoding Utf8WithoutBom = new(false);
 
@@ -36,6 +44,49 @@ namespace Game.Editor
         public static void ValidateCurrentCandidate() => ValidateCurrentCandidateCore();
 
         public static void ValidateCurrentCandidateBatch() => ValidateCurrentCandidateCore();
+
+        [MenuItem("Game/Operation Maps/EntityScene Migration/Validate Dense City EntityScene Ownership")]
+        public static void ValidateDenseCityEntitySceneOwnership()
+        {
+            string projectRoot = Path.GetDirectoryName(Application.dataPath) ??
+                                 throw new InvalidOperationException("Project root is unavailable.");
+            DenseCandidateBakeEvidence bake =
+                Read<DenseCandidateBakeEvidence>(projectRoot, DenseCandidateBakeReportPath);
+            TransformParityEvidence existingParity =
+                Read<TransformParityEvidence>(projectRoot, TransformParityReportPath);
+            DenseTransformParityEvidence parity =
+                Read<DenseTransformParityEvidence>(projectRoot, DenseTransformParityReportPath);
+            DenseCandidateLayoutEvidence layout =
+                Read<DenseCandidateLayoutEvidence>(projectRoot, DenseCandidateLayoutReportPath);
+            string entitySceneGuid = AssetDatabase.AssetPathToGUID(
+                DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath);
+
+            if (!TryCreateDenseOwnershipReport(
+                    bake,
+                    existingParity,
+                    parity,
+                    layout,
+                    entitySceneGuid,
+                    out DenseEntitySceneOwnershipReport report,
+                    out string error))
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city EntityScene ownership rejected: {error}");
+            }
+
+            WriteDenseOwnershipReport(projectRoot, report);
+            Debug.Log(
+                $"[DenseCityEntitySceneOwnership] result={report.result} " +
+                $"existingIdentities={report.existingVisualIdentityCount} " +
+                $"generatedIdentities={report.generatedVisualIdentityCount} " +
+                $"generatedRenderers={report.generatedBakedRenderEntityCount} " +
+                $"authoringEntries={report.authoringSceneEntryCount} " +
+                $"staticEntries={report.staticPresentationEntryCount} " +
+                $"managedCompanions={report.managedMapVisualCompanionCount} productionCutover=0");
+        }
+
+        public static void ValidateDenseCityEntitySceneOwnershipBatch() =>
+            ValidateDenseCityEntitySceneOwnership();
 
         internal static void InvalidateEvidence(string projectRoot, string reason)
         {
@@ -236,6 +287,221 @@ namespace Game.Editor
                 duplicatedDependencyBytes = -1,
                 productionCutover = 0
             };
+            error = null;
+            return true;
+        }
+
+        internal static bool TryCreateDenseOwnershipReport(
+            DenseCandidateBakeEvidence bake,
+            TransformParityEvidence existingParity,
+            DenseTransformParityEvidence parity,
+            DenseCandidateLayoutEvidence layout,
+            string expectedEntitySceneGuid,
+            out DenseEntitySceneOwnershipReport report,
+            out string error)
+        {
+            report = null;
+            if (bake == null || existingParity == null || parity == null || layout == null)
+            {
+                error = "dense-ownership-evidence-null";
+                return false;
+            }
+
+            if (!string.Equals(bake.result, "DenseCandidateBakeValidationPassed", StringComparison.Ordinal) ||
+                bake.authoringDenseIdentityCount !=
+                OperationMapEntityPresentationCandidateBakeValidator.ExpectedDenseGeneratedIdentities ||
+                bake.denseIdentityCount != bake.authoringDenseIdentityCount ||
+                bake.authoringDenseGameplayBuildingIdentityCount !=
+                OperationMapEntityPresentationCandidateBakeValidator.ExpectedDenseGeneratedGameplayBuildings ||
+                bake.denseGameplayBuildingIdentityCount !=
+                bake.authoringDenseGameplayBuildingIdentityCount ||
+                bake.authoringDenseRenderOnlyIdentityCount !=
+                OperationMapEntityPresentationCandidateBakeValidator.ExpectedDenseGeneratedRenderOnlyOwners ||
+                bake.denseRenderOnlyIdentityCount != bake.authoringDenseRenderOnlyIdentityCount ||
+                bake.legacyPresentationIdentityCount !=
+                OperationMapEntityPresentationCandidateBakeValidator.ExpectedPresentationIdentities ||
+                bake.denseUnknownRoleIdentityCount != 0 ||
+                bake.duplicateDenseIdentityCount != 0 ||
+                bake.missingIntactVisualRootCount != 0 ||
+                bake.sharedIntactDestroyedVisualRootCount != 0 ||
+                bake.nonFiniteTransformCount != 0 ||
+                bake.managedMapVisualCompanionCount != 0)
+            {
+                error = "dense-baked-visual-ownership";
+                return false;
+            }
+
+            if (!string.Equals(existingParity.checkpoint, "ecs-bake", StringComparison.Ordinal) ||
+                !string.Equals(
+                    existingParity.result,
+                    "SourceCandidateBakedParityPassed",
+                    StringComparison.Ordinal) ||
+                existingParity.candidateIdentityCount != bake.legacyPresentationIdentityCount ||
+                existingParity.bakedIdentityCount != existingParity.candidateIdentityCount ||
+                existingParity.bakedRenderEntityCount <= 0 ||
+                existingParity.rejectedRowCount != 0)
+            {
+                error = "dense-existing-renderer-parity";
+                return false;
+            }
+
+            if (!string.Equals(
+                    parity.result,
+                    "DenseCityGeneratedTransformParityPassed",
+                    StringComparison.Ordinal) ||
+                parity.candidateIdentityCount != bake.denseIdentityCount ||
+                parity.uniqueCandidateIdentityCount != parity.candidateIdentityCount ||
+                parity.bakedIdentityCount != parity.candidateIdentityCount ||
+                parity.uniqueBakedIdentityCount != parity.bakedIdentityCount ||
+                parity.generatedCandidateRendererEntityCount <= 0 ||
+                parity.generatedBakedRenderEntityCount !=
+                parity.generatedCandidateRendererEntityCount ||
+                parity.persistentGeneratedSourceFailureCount != 0 ||
+                parity.unresolvedGeneratedRendererEntityCount != 0 ||
+                parity.unconsumedCandidateRendererEntityCount != 0 ||
+                parity.rejectedRowCount != 0 ||
+                parity.duplicateCandidateStableIdCount != 0 ||
+                parity.duplicateBakedStableIdCount != 0 ||
+                parity.missingBakedStableIdCount != 0 ||
+                parity.unexpectedBakedStableIdCount != 0 ||
+                string.IsNullOrWhiteSpace(parity.candidateIdentitySetSha256) ||
+                !string.Equals(
+                    parity.candidateIdentitySetSha256,
+                    parity.bakedIdentitySetSha256,
+                    StringComparison.Ordinal))
+            {
+                error = "dense-generated-renderer-parity";
+                return false;
+            }
+
+            if (!TryValidateDenseOwnershipLayout(
+                    layout,
+                    expectedEntitySceneGuid,
+                    out int authoringSceneEntryCount,
+                    out int staticPresentationEntryCount,
+                    out error))
+            {
+                return false;
+            }
+
+            report = new DenseEntitySceneOwnershipReport
+            {
+                schema = "warline.operation-map.dense-city-entity-scene-ownership",
+                schemaVersion = 1,
+                result = "DenseCityEntitySceneOwnershipPassed",
+                operationMapId =
+                    OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
+                entitySceneGuid = layout.entitySceneGuid,
+                existingVisualIdentityCount = bake.legacyPresentationIdentityCount,
+                existingBakedRenderEntityCount = existingParity.bakedRenderEntityCount,
+                generatedVisualIdentityCount = bake.denseIdentityCount,
+                generatedCandidateRendererEntityCount =
+                    parity.generatedCandidateRendererEntityCount,
+                generatedBakedRenderEntityCount = parity.generatedBakedRenderEntityCount,
+                missingGeneratedVisualIdentityCount = parity.missingBakedStableIdCount,
+                unexpectedGeneratedVisualIdentityCount = parity.unexpectedBakedStableIdCount,
+                managedMapVisualCompanionCount = bake.managedMapVisualCompanionCount,
+                authoringSceneEntryCount = authoringSceneEntryCount,
+                explicitSharedDependencyEntryCount = layout.sharedDependencyCount,
+                staticPresentationEntryCount = staticPresentationEntryCount,
+                legacyPlacementEntryCount = layout.legacyPlacementEntryCount,
+                productionAddressablesMutated = layout.productionAddressablesMutated,
+                productionCutover = 0
+            };
+            error = null;
+            return true;
+        }
+
+        private static bool TryValidateDenseOwnershipLayout(
+            DenseCandidateLayoutEvidence layout,
+            string expectedEntitySceneGuid,
+            out int authoringSceneEntryCount,
+            out int staticPresentationEntryCount,
+            out string error)
+        {
+            authoringSceneEntryCount = 0;
+            staticPresentationEntryCount = 0;
+            if (!string.Equals(
+                    layout.result,
+                    "CandidateEntitySceneAddressablesLayoutReady",
+                    StringComparison.Ordinal) ||
+                string.IsNullOrWhiteSpace(expectedEntitySceneGuid) ||
+                !string.Equals(layout.entitySceneGuid, expectedEntitySceneGuid, StringComparison.Ordinal) ||
+                layout.entryCount != 5 ||
+                layout.entries == null ||
+                layout.entries.Count != layout.entryCount ||
+                layout.sharedDependencyCount != 0 ||
+                layout.staticManifestEntryCount != 0 ||
+                layout.presentationChunkEntryCount != 0 ||
+                layout.legacyPlacementEntryCount != 0 ||
+                layout.productionAddressablesMutated != 0)
+            {
+                error = "dense-candidate-layout-ownership";
+                return false;
+            }
+
+            var expectedEntries = new Dictionary<string, string>(StringComparer.Ordinal)
+            {
+                ["definition"] =
+                    OperationMapEntitySceneCandidateAddressablesLayoutPlanner.DenseCandidateDefinitionPath,
+                ["source-scene"] =
+                    OperationMapEntitySceneCandidateAddressablesLayoutPlanner.DenseCandidateRuntimeBindingPath,
+                ["entity-scene"] = DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath,
+                ["map-surface"] = OperationMapAddressablesLayoutBuilder.MapSurfacePath,
+                ["minimap-raster"] = OperationMapAddressablesLayoutBuilder.MinimapRasterPath
+            };
+            var observedRoles = new HashSet<string>(StringComparer.Ordinal);
+            for (int i = 0; i < layout.entries.Count; i++)
+            {
+                DenseCandidateLayoutEntryEvidence entry = layout.entries[i];
+                if (entry == null ||
+                    !expectedEntries.TryGetValue(entry.role ?? string.Empty, out string expectedPath) ||
+                    !string.Equals(entry.assetPath, expectedPath, StringComparison.Ordinal) ||
+                    !observedRoles.Add(entry.role))
+                {
+                    error = "dense-candidate-layout-entry";
+                    return false;
+                }
+
+                if (string.Equals(
+                        entry.assetPath,
+                        DenseCityCandidateAuthoringTransaction.CandidateMapScenePath,
+                        StringComparison.Ordinal) ||
+                    string.Equals(
+                        entry.assetPath,
+                        OperationMapEntityPresentationCandidateSceneBuilder.AcceptedOperationMapScenePath,
+                        StringComparison.Ordinal) ||
+                    string.Equals(
+                        entry.assetPath,
+                        OperationMapEntityPresentationMigrationEditor.AcceptedSubScenePath,
+                        StringComparison.Ordinal) ||
+                    string.Equals(
+                        entry.assetPath,
+                        OperationMapEntityPresentationMigrationEditor.CandidateSubScenePath,
+                        StringComparison.Ordinal))
+                {
+                    authoringSceneEntryCount++;
+                }
+                if (string.Equals(
+                        entry.assetPath,
+                        StaticMapPresentationBaker.ManifestPath,
+                        StringComparison.Ordinal) ||
+                    entry.assetPath.StartsWith(
+                        StaticMapPresentationBaker.SceneOutputFolder + "/",
+                        StringComparison.Ordinal))
+                {
+                    staticPresentationEntryCount++;
+                }
+            }
+
+            if (observedRoles.Count != expectedEntries.Count ||
+                authoringSceneEntryCount != 0 ||
+                staticPresentationEntryCount != 0)
+            {
+                error = "dense-authoring-or-static-entry-present";
+                return false;
+            }
+
             error = null;
             return true;
         }
@@ -460,6 +726,21 @@ namespace Game.Editor
             AssetDatabase.ImportAsset(ReportPath, ImportAssetOptions.ForceSynchronousImport);
         }
 
+        private static void WriteDenseOwnershipReport(
+            string projectRoot,
+            DenseEntitySceneOwnershipReport report)
+        {
+            string physicalPath = Path.Combine(projectRoot, DenseOwnershipReportPath);
+            Directory.CreateDirectory(Path.GetDirectoryName(physicalPath) ?? projectRoot);
+            File.WriteAllText(
+                physicalPath,
+                JsonUtility.ToJson(report, true) + "\n",
+                Utf8WithoutBom);
+            AssetDatabase.ImportAsset(
+                DenseOwnershipReportPath,
+                ImportAssetOptions.ForceSynchronousImport);
+        }
+
         private static T Read<T>(string projectRoot, string path) where T : class
         {
             string physicalPath = Path.Combine(projectRoot, path);
@@ -558,6 +839,92 @@ namespace Game.Editor
             public Vector3 worldBoundsCenter;
             public Vector3 worldBoundsSize;
             public float rendererDensityPerSquareKilometer;
+        }
+
+        [Serializable]
+        internal sealed class DenseCandidateBakeEvidence
+        {
+            public string result;
+            public int authoringDenseIdentityCount;
+            public int authoringDenseGameplayBuildingIdentityCount;
+            public int authoringDenseRenderOnlyIdentityCount;
+            public int legacyPresentationIdentityCount;
+            public int denseIdentityCount;
+            public int denseGameplayBuildingIdentityCount;
+            public int denseRenderOnlyIdentityCount;
+            public int denseUnknownRoleIdentityCount;
+            public int duplicateDenseIdentityCount;
+            public int missingIntactVisualRootCount;
+            public int sharedIntactDestroyedVisualRootCount;
+            public int nonFiniteTransformCount;
+            public int managedMapVisualCompanionCount;
+        }
+
+        [Serializable]
+        internal sealed class DenseTransformParityEvidence
+        {
+            public string result;
+            public int candidateIdentityCount;
+            public int uniqueCandidateIdentityCount;
+            public int bakedIdentityCount;
+            public int uniqueBakedIdentityCount;
+            public int generatedCandidateRendererEntityCount;
+            public int generatedBakedRenderEntityCount;
+            public int persistentGeneratedSourceFailureCount;
+            public int unresolvedGeneratedRendererEntityCount;
+            public int unconsumedCandidateRendererEntityCount;
+            public int rejectedRowCount;
+            public int duplicateCandidateStableIdCount;
+            public int duplicateBakedStableIdCount;
+            public int missingBakedStableIdCount;
+            public int unexpectedBakedStableIdCount;
+            public string candidateIdentitySetSha256;
+            public string bakedIdentitySetSha256;
+        }
+
+        [Serializable]
+        internal sealed class DenseCandidateLayoutEvidence
+        {
+            public string result;
+            public string entitySceneGuid;
+            public int entryCount;
+            public int sharedDependencyCount;
+            public int staticManifestEntryCount;
+            public int presentationChunkEntryCount;
+            public int legacyPlacementEntryCount;
+            public int productionAddressablesMutated;
+            public List<DenseCandidateLayoutEntryEvidence> entries;
+        }
+
+        [Serializable]
+        internal sealed class DenseCandidateLayoutEntryEvidence
+        {
+            public string role;
+            public string assetPath;
+        }
+
+        [Serializable]
+        internal sealed class DenseEntitySceneOwnershipReport
+        {
+            public string schema;
+            public int schemaVersion;
+            public string result;
+            public string operationMapId;
+            public string entitySceneGuid;
+            public int existingVisualIdentityCount;
+            public int existingBakedRenderEntityCount;
+            public int generatedVisualIdentityCount;
+            public int generatedCandidateRendererEntityCount;
+            public int generatedBakedRenderEntityCount;
+            public int missingGeneratedVisualIdentityCount;
+            public int unexpectedGeneratedVisualIdentityCount;
+            public int managedMapVisualCompanionCount;
+            public int authoringSceneEntryCount;
+            public int explicitSharedDependencyEntryCount;
+            public int staticPresentationEntryCount;
+            public int legacyPlacementEntryCount;
+            public int productionAddressablesMutated;
+            public int productionCutover;
         }
 
         [Serializable]

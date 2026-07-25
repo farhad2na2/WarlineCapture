@@ -12,6 +12,7 @@ namespace Game.Editor
             int districtId,
             int sequenceStart,
             string recordKind,
+            DenseCityPresentationCategory presentationCategory,
             string sourceAssetGuid,
             long sourceLocalId,
             IReadOnlyList<string> materialAssetGuids,
@@ -33,6 +34,7 @@ namespace Game.Editor
             DistrictId = districtId;
             SequenceStart = sequenceStart;
             RecordKind = recordKind;
+            PresentationCategory = presentationCategory;
             SourceAssetGuid = sourceAssetGuid;
             SourceLocalId = sourceLocalId;
             MaterialAssetGuids = materialAssetGuids;
@@ -53,6 +55,7 @@ namespace Game.Editor
         internal int DistrictId { get; }
         internal int SequenceStart { get; }
         internal string RecordKind { get; }
+        internal DenseCityPresentationCategory PresentationCategory { get; }
         internal string SourceAssetGuid { get; }
         internal long SourceLocalId { get; }
         internal IReadOnlyList<string> MaterialAssetGuids { get; }
@@ -99,7 +102,7 @@ namespace Game.Editor
                 input.Chunk);
             var presentation = new DenseCityPresentationBakeRecord(
                 presentationIdentity,
-                DenseCityPresentationCategory.Infrastructure,
+                input.PresentationCategory,
                 input.SourceAssetGuid,
                 null,
                 input.MaterialAssetGuids,

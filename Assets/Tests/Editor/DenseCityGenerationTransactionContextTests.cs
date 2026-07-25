@@ -24,6 +24,7 @@ public sealed class DenseCityGenerationTransactionContextTests
                 suite.TryPlaceBuilding_RejectionConsumesAttemptSequenceButLeavesNoRecords,
                 suite.InfrastructureAndSurfacePlacements_ShareStableSequenceAcrossRejectedAttempts,
                 suite.VisualBlockerPlacement_CommitsAndRollsBackSurfaceAndPresentationAtomically,
+                suite.VisualBlockerPlacement_AllowsPropsAndRejectsOtherPresentationCategories,
                 suite.BridgePlacement_ReservesFourSharedInfrastructureSequences,
                 suite.RoadPlacement_ReservesRoadPresentationAndDeclaredShoulders,
                 suite.RoadPlacement_RejectsShoulderCountMismatchBeforeAdvancingSequence,
@@ -144,12 +145,12 @@ public sealed class DenseCityGenerationTransactionContextTests
         Assert.That(context.TryPlaceVisualBlocker(4, sequence =>
         {
             rejectedSequence = sequence;
-            return CreateVisualBlockerGroup(sequence);
+            return CreateVisualBlockerGroup(sequence, DenseCityPresentationCategory.Infrastructure);
         }, () => false), Is.False);
         Assert.That(context.TryPlaceVisualBlocker(4, sequence =>
         {
             acceptedSequence = sequence;
-            return CreateVisualBlockerGroup(sequence);
+            return CreateVisualBlockerGroup(sequence, DenseCityPresentationCategory.Infrastructure);
         }, () => true), Is.True);
         context.Seal();
 
@@ -159,6 +160,31 @@ public sealed class DenseCityGenerationTransactionContextTests
         Assert.That(context.Records.Surfaces[0].Kind, Is.EqualTo(DenseCitySurfaceRecordKind.Blocker));
         Assert.That(context.Records.Presentations, Has.Count.EqualTo(1));
         Assert.That(context.Records.Presentations[0].Category, Is.EqualTo(DenseCityPresentationCategory.Infrastructure));
+    }
+
+    [Test]
+    public void VisualBlockerPlacement_AllowsPropsAndRejectsOtherPresentationCategories()
+    {
+        using var context = new DenseCityGenerationTransactionContext(1, 2, 2);
+
+        Assert.That(
+            context.TryPlaceVisualBlocker(
+                4,
+                sequence => CreateVisualBlockerGroup(sequence, DenseCityPresentationCategory.Prop),
+                () => true),
+            Is.True);
+        Assert.That(
+            () => context.TryPlaceVisualBlocker(
+                4,
+                sequence => CreateVisualBlockerGroup(sequence, DenseCityPresentationCategory.Vegetation),
+                () => true),
+            Throws.TypeOf<ArgumentException>()
+                .With.Message.Contains("infrastructure or a prop"));
+
+        context.Seal();
+        Assert.That(context.Records.Surfaces, Has.Count.EqualTo(1));
+        Assert.That(context.Records.Presentations, Has.Count.EqualTo(1));
+        Assert.That(context.Records.Presentations[0].Category, Is.EqualTo(DenseCityPresentationCategory.Prop));
     }
 
     [Test]
@@ -344,7 +370,9 @@ public sealed class DenseCityGenerationTransactionContextTests
         return new DenseCityInfrastructureRecordGroup(surface, presentation);
     }
 
-    private static DenseCityVisualBlockerRecordGroup CreateVisualBlockerGroup(int sequence) =>
+    private static DenseCityVisualBlockerRecordGroup CreateVisualBlockerGroup(
+        int sequence,
+        DenseCityPresentationCategory presentationCategory) =>
         DenseCityVisualBlockerRecordFactory.Create(
             new DenseCityVisualBlockerRecordInput(
                 "dense-city-v1",
@@ -352,6 +380,7 @@ public sealed class DenseCityGenerationTransactionContextTests
                 4,
                 sequence,
                 "courtyard-wall",
+                presentationCategory,
                 IntactGuid,
                 123,
                 new[] { MaterialGuid },

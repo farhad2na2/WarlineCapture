@@ -570,8 +570,13 @@ namespace Game.Editor
             RequireWritable();
             if (blocker.Kind != DenseCitySurfaceRecordKind.Blocker || blocker.MovementMask != 0)
                 throw new ArgumentException("Visual blocker requires a non-traversable blocker record.", nameof(blocker));
-            if (presentation.Category != DenseCityPresentationCategory.Infrastructure)
-                throw new ArgumentException("Visual blocker presentation must be infrastructure.", nameof(presentation));
+            if (presentation.Category != DenseCityPresentationCategory.Infrastructure &&
+                presentation.Category != DenseCityPresentationCategory.Prop)
+            {
+                throw new ArgumentException(
+                    "Visual blocker presentation must be infrastructure or a prop.",
+                    nameof(presentation));
+            }
             if (surfaces.Count >= surfaceCapacity || presentations.Count >= presentationCapacity)
                 throw new InvalidOperationException("Dense-city visual blocker record group exceeds a configured capacity.");
 

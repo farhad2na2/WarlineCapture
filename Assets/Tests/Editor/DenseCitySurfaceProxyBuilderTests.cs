@@ -848,6 +848,7 @@ public sealed class DenseCitySurfaceProxyBuilderTests
             3,
             sequence,
             recordKind,
+            DenseCityPresentationCategory.Infrastructure,
             SourceGuid,
             sequence,
             new[] { SourceGuid },

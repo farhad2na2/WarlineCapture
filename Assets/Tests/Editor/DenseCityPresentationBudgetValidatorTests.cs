@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using Game.Components;
 using Game.Editor;
 using NUnit.Framework;
 using UnityEngine;
@@ -18,6 +19,9 @@ public sealed class DenseCityPresentationBudgetValidatorTests
             suite.DenseOwnership_AcceptsCompleteEntitySceneEvidence,
             suite.DenseOwnership_RejectsMissingGeneratedIdentity,
             suite.DenseOwnership_RejectsAuthoringSceneEntry,
+            suite.CategorySharing_AcceptsEveryRequiredSemanticFamily,
+            suite.CategorySharing_RejectsMissingRequiredFamily,
+            suite.CategorySharing_RejectsBakedAssetPairDrift,
             suite.BudgetFailure_RestoresAcceptedCandidateOutput,
             suite.Budget_SerializationIsDeterministicAndMarksPackedMetricsPending,
             suite.CandidateBakeAll_OrdersBudgetAfterBakeAndBeforePostflight,
@@ -144,6 +148,48 @@ public sealed class DenseCityPresentationBudgetValidatorTests
                 out string error),
             Is.False);
         Assert.That(error, Is.EqualTo("dense-candidate-layout-entry"));
+    }
+
+    [Test]
+    public void CategorySharing_AcceptsEveryRequiredSemanticFamily()
+    {
+        var reports = CreateRequiredCategorySharingReports();
+
+        Assert.That(
+            OperationMapDenseCityGeneratedTransformParityValidator
+                .TryValidateRequiredCategorySharing(reports, out string error),
+            Is.True,
+            error);
+    }
+
+    [Test]
+    public void CategorySharing_RejectsMissingRequiredFamily()
+    {
+        var reports = CreateRequiredCategorySharingReports();
+        reports.RemoveAt(reports.Count - 1);
+
+        Assert.That(
+            OperationMapDenseCityGeneratedTransformParityValidator
+                .TryValidateRequiredCategorySharing(reports, out string error),
+            Is.False);
+        StringAssert.StartsWith("category-sharing-incomplete:", error);
+    }
+
+    [Test]
+    public void CategorySharing_RejectsBakedAssetPairDrift()
+    {
+        var reports = CreateRequiredCategorySharingReports();
+        reports[1].repeatedAssetPairMismatchCount = 1;
+
+        Assert.That(
+            OperationMapDenseCityGeneratedTransformParityValidator
+                .TryValidateRequiredCategorySharing(reports, out string error),
+            Is.False);
+        Assert.That(
+            error,
+            Is.EqualTo(
+                $"category-sharing-incomplete:" +
+                $"{(byte)DenseCityPresentationSemanticCategory.Infrastructure}"));
     }
 
     [Test]
@@ -436,6 +482,47 @@ public sealed class DenseCityPresentationBudgetValidatorTests
                     assetPath = OperationMapAddressablesLayoutBuilder.MinimapRasterPath
                 }
             }
+        };
+    }
+
+    private static System.Collections.Generic.List<
+        OperationMapDenseCityGeneratedTransformParityValidator
+            .DenseCityGeneratedCategorySharingReport>
+        CreateRequiredCategorySharingReports()
+    {
+        return new()
+        {
+            CreateCategorySharingReport(
+                DenseCityPresentationSemanticCategory.GameplayBuildingIntact,
+                "building"),
+            CreateCategorySharingReport(
+                DenseCityPresentationSemanticCategory.Infrastructure,
+                "road-module,bridge-module,infrastructure"),
+            CreateCategorySharingReport(
+                DenseCityPresentationSemanticCategory.Vegetation,
+                "tree,vegetation"),
+            CreateCategorySharingReport(
+                DenseCityPresentationSemanticCategory.Prop,
+                "prop")
+        };
+    }
+
+    private static OperationMapDenseCityGeneratedTransformParityValidator
+        .DenseCityGeneratedCategorySharingReport CreateCategorySharingReport(
+            DenseCityPresentationSemanticCategory category,
+            string coveredFamilies)
+    {
+        return new OperationMapDenseCityGeneratedTransformParityValidator
+            .DenseCityGeneratedCategorySharingReport
+        {
+            category = category.ToString(),
+            categoryValue = (byte)category,
+            coveredFamilies = coveredFamilies,
+            rendererEntryCount = 20,
+            presentationSignatureCount = 4,
+            repeatedPresentationSignatureCount = 3,
+            repeatedPresentationEntryCount = 19,
+            repeatedAssetPairMismatchCount = 0
         };
     }
 

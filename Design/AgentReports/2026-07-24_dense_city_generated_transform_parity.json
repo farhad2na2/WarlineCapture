@@ -1,6 +1,6 @@
 {
     "schema": "warline.operation-map.dense-city-generated-transform-parity",
-    "schemaVersion": 2,
+    "schemaVersion": 3,
     "checkpoint": "ecs-bake",
     "result": "DenseCityGeneratedTransformParityPassed",
     "candidateIdentityCount": 36946,
@@ -29,6 +29,59 @@
     "generatedMaterialMismatchCount": 0,
     "generatedManagedInstanceComponentCount": 0,
     "repeatedSignatureAssetPairMismatchCount": 0,
+    "categorySharing": [
+        {
+            "category": "GameplayBuildingIntact",
+            "categoryValue": 1,
+            "coveredFamilies": "building",
+            "rendererEntryCount": 18375,
+            "presentationSignatureCount": 274,
+            "repeatedPresentationSignatureCount": 263,
+            "repeatedPresentationEntryCount": 18364,
+            "repeatedAssetPairMismatchCount": 0
+        },
+        {
+            "category": "Infrastructure",
+            "categoryValue": 5,
+            "coveredFamilies": "road-module,bridge-module,infrastructure",
+            "rendererEntryCount": 39005,
+            "presentationSignatureCount": 81,
+            "repeatedPresentationSignatureCount": 81,
+            "repeatedPresentationEntryCount": 39005,
+            "repeatedAssetPairMismatchCount": 0
+        },
+        {
+            "category": "Vegetation",
+            "categoryValue": 6,
+            "coveredFamilies": "tree,vegetation",
+            "rendererEntryCount": 5423,
+            "presentationSignatureCount": 10,
+            "repeatedPresentationSignatureCount": 10,
+            "repeatedPresentationEntryCount": 5423,
+            "repeatedAssetPairMismatchCount": 0
+        },
+        {
+            "category": "Prop",
+            "categoryValue": 7,
+            "coveredFamilies": "prop",
+            "rendererEntryCount": 5879,
+            "presentationSignatureCount": 19,
+            "repeatedPresentationSignatureCount": 16,
+            "repeatedPresentationEntryCount": 5876,
+            "repeatedAssetPairMismatchCount": 0
+        },
+        {
+            "category": "Horizon",
+            "categoryValue": 8,
+            "coveredFamilies": "",
+            "rendererEntryCount": 53,
+            "presentationSignatureCount": 7,
+            "repeatedPresentationSignatureCount": 7,
+            "repeatedPresentationEntryCount": 53,
+            "repeatedAssetPairMismatchCount": 0
+        }
+    ],
+    "categorySharingRejectionReason": "",
     "sourceFailureSamples": [],
     "generatedBaseColorPropertyCount": 68735,
     "generatedBaseColorOverrideCount": 68735,

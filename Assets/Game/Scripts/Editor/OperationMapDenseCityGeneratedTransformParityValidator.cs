@@ -35,6 +35,13 @@ namespace Game.Editor
         private const float RendererBakeKeyTolerance = 0.01f;
         private const float RendererBakeFallbackJoinTolerance = 0.125f;
         private const int MaxRejectedSamples = 64;
+        private static readonly byte[] RequiredSharedReferenceCategories =
+        {
+            (byte)DenseCityPresentationSemanticCategory.GameplayBuildingIntact,
+            (byte)DenseCityPresentationSemanticCategory.Infrastructure,
+            (byte)DenseCityPresentationSemanticCategory.Vegetation,
+            (byte)DenseCityPresentationSemanticCategory.Prop
+        };
         private static readonly UTF8Encoding Utf8WithoutBom = new(false);
 
         internal static DenseCityGeneratedTransformParityReport ValidateAndWrite(
@@ -138,6 +145,11 @@ namespace Game.Editor
             if (rejectedSamples.Count > MaxRejectedSamples)
                 rejectedSamples.RemoveRange(MaxRejectedSamples, rejectedSamples.Count - MaxRejectedSamples);
 
+            List<DenseCityGeneratedCategorySharingReport> categorySharing =
+                rendererBakeMap.CreateCategorySharingReports();
+            bool categorySharingPassed = TryValidateRequiredCategorySharing(
+                categorySharing,
+                out string categorySharingRejectionReason);
             bool passed = rejectedRowCount == 0 &&
                           duplicateCandidateStableIds.Length == 0 &&
                           bakedIndex.DuplicateStableIds.Length == 0 &&
@@ -153,6 +165,7 @@ namespace Game.Editor
                           generatedMaterialMismatchCount == 0 &&
                           generatedManagedInstanceComponentCount == 0 &&
                           rendererBakeMap.RepeatedSignatureAssetPairMismatchCount == 0 &&
+                          categorySharingPassed &&
                           generatedBaseColorPropertyCount ==
                           generatedBaseColorOverrideCount &&
                           generatedBaseColorMismatchCount == 0 &&
@@ -161,7 +174,7 @@ namespace Game.Editor
             var report = new DenseCityGeneratedTransformParityReport
             {
                 schema = "warline.operation-map.dense-city-generated-transform-parity",
-                schemaVersion = 2,
+                schemaVersion = 3,
                 checkpoint = "ecs-bake",
                 result = passed ? "DenseCityGeneratedTransformParityPassed" :
                     "DenseCityGeneratedTransformParityRejected",
@@ -199,6 +212,8 @@ namespace Game.Editor
                 generatedManagedInstanceComponentCount = generatedManagedInstanceComponentCount,
                 repeatedSignatureAssetPairMismatchCount =
                     rendererBakeMap.RepeatedSignatureAssetPairMismatchCount,
+                categorySharing = categorySharing,
+                categorySharingRejectionReason = categorySharingRejectionReason,
                 sourceFailureSamples = rendererBakeMap.SourceFailureSamples,
                 generatedBaseColorPropertyCount = generatedBaseColorPropertyCount,
                 generatedBaseColorOverrideCount = generatedBaseColorOverrideCount,
@@ -244,6 +259,7 @@ namespace Game.Editor
                     $"materialMismatches={generatedMaterialMismatchCount}, " +
                     $"managedInstanceComponents={generatedManagedInstanceComponentCount}, " +
                     $"sharedPairMismatches={rendererBakeMap.RepeatedSignatureAssetPairMismatchCount}, " +
+                    $"categorySharing={categorySharingRejectionReason}, " +
                     $"baseColors={generatedBaseColorOverrideCount}/" +
                     $"{generatedBaseColorPropertyCount}, " +
                     $"baseColorMismatches={generatedBaseColorMismatchCount}, " +
@@ -460,11 +476,60 @@ namespace Game.Editor
                         rendererSourceIdentity,
                         meshIdentity,
                         materialIdentity,
+                        (byte)owner.Category,
                         GetPath(renderer.transform),
                         renderer.GetType().FullName);
                 }
             }
             return result;
+        }
+
+        internal static bool TryValidateRequiredCategorySharing(
+            IReadOnlyList<DenseCityGeneratedCategorySharingReport> reports,
+            out string rejectionReason)
+        {
+            if (reports == null)
+            {
+                rejectionReason = "category-sharing-report-null";
+                return false;
+            }
+
+            for (int requiredIndex = 0;
+                 requiredIndex < RequiredSharedReferenceCategories.Length;
+                 requiredIndex++)
+            {
+                byte requiredCategory = RequiredSharedReferenceCategories[requiredIndex];
+                DenseCityGeneratedCategorySharingReport match = null;
+                for (int reportIndex = 0; reportIndex < reports.Count; reportIndex++)
+                {
+                    DenseCityGeneratedCategorySharingReport candidate = reports[reportIndex];
+                    if (candidate != null && candidate.categoryValue == requiredCategory)
+                    {
+                        if (match != null)
+                        {
+                            rejectionReason =
+                                $"category-sharing-duplicate:{requiredCategory}";
+                            return false;
+                        }
+                        match = candidate;
+                    }
+                }
+
+                if (match == null ||
+                    match.rendererEntryCount <= 0 ||
+                    match.presentationSignatureCount <= 0 ||
+                    match.repeatedPresentationSignatureCount <= 0 ||
+                    match.repeatedPresentationEntryCount <=
+                    match.repeatedPresentationSignatureCount ||
+                    match.repeatedAssetPairMismatchCount != 0)
+                {
+                    rejectionReason = $"category-sharing-incomplete:{requiredCategory}";
+                    return false;
+                }
+            }
+
+            rejectionReason = string.Empty;
+            return true;
         }
 
         private static Dictionary<string, WorldBounds> CollectBakedBounds(
@@ -1033,6 +1098,8 @@ namespace Game.Editor
                 new(StringComparer.Ordinal);
             private readonly Dictionary<string, int> entriesByPresentationSignature =
                 new(StringComparer.Ordinal);
+            private readonly Dictionary<byte, Dictionary<string, int>>
+                entriesByCategoryAndPresentationSignature = new();
             private readonly Dictionary<string, HashSet<SharedAssetPair>> bakedPairsBySignature =
                 new(StringComparer.Ordinal);
             private readonly List<DenseCityGeneratedSourceFailureSample> sourceFailureSamples = new();
@@ -1084,6 +1151,7 @@ namespace Game.Editor
                 string rendererSourceIdentity,
                 string meshIdentity,
                 string materialIdentity,
+                byte category,
                 string rendererPath,
                 string rendererType)
             {
@@ -1179,6 +1247,15 @@ namespace Game.Editor
                     presentationSignature,
                     out int signatureCount);
                 entriesByPresentationSignature[presentationSignature] = signatureCount + 1;
+                if (!entriesByCategoryAndPresentationSignature.TryGetValue(
+                        category,
+                        out Dictionary<string, int> categoryEntries))
+                {
+                    categoryEntries = new Dictionary<string, int>(StringComparer.Ordinal);
+                    entriesByCategoryAndPresentationSignature.Add(category, categoryEntries);
+                }
+                categoryEntries.TryGetValue(presentationSignature, out int categorySignatureCount);
+                categoryEntries[presentationSignature] = categorySignatureCount + 1;
             }
 
             internal void RecordBakedAssetPair(
@@ -1207,6 +1284,54 @@ namespace Game.Editor
                 ComputeStringSetDigest(entriesByPresentationSignature
                     .OrderBy(pair => pair.Key, StringComparer.Ordinal)
                     .Select(pair => $"{pair.Key}|{pair.Value.ToString(CultureInfo.InvariantCulture)}"));
+
+            internal List<DenseCityGeneratedCategorySharingReport>
+                CreateCategorySharingReports()
+            {
+                var reports = new List<DenseCityGeneratedCategorySharingReport>(
+                    entriesByCategoryAndPresentationSignature.Count);
+                foreach (KeyValuePair<byte, Dictionary<string, int>> category in
+                         entriesByCategoryAndPresentationSignature.OrderBy(pair => pair.Key))
+                {
+                    int repeatedSignatureCount =
+                        category.Value.Count(pair => pair.Value > 1);
+                    int repeatedEntryCount = category.Value
+                        .Where(pair => pair.Value > 1)
+                        .Sum(pair => pair.Value);
+                    int mismatchCount = category.Value.Count(pair =>
+                        pair.Value > 1 &&
+                        (!bakedPairsBySignature.TryGetValue(
+                             pair.Key,
+                             out HashSet<SharedAssetPair> pairs) ||
+                         pairs.Count != 1));
+                    reports.Add(new DenseCityGeneratedCategorySharingReport
+                    {
+                        category = ((DenseCityPresentationSemanticCategory)category.Key).ToString(),
+                        categoryValue = category.Key,
+                        coveredFamilies = GetCoveredFamilies(category.Key),
+                        rendererEntryCount = category.Value.Sum(pair => pair.Value),
+                        presentationSignatureCount = category.Value.Count,
+                        repeatedPresentationSignatureCount = repeatedSignatureCount,
+                        repeatedPresentationEntryCount = repeatedEntryCount,
+                        repeatedAssetPairMismatchCount = mismatchCount
+                    });
+                }
+                return reports;
+            }
+
+            private static string GetCoveredFamilies(byte category) =>
+                (DenseCityPresentationSemanticCategory)category switch
+                {
+                    DenseCityPresentationSemanticCategory.GameplayBuildingIntact =>
+                        "building",
+                    DenseCityPresentationSemanticCategory.Infrastructure =>
+                        "road-module,bridge-module,infrastructure",
+                    DenseCityPresentationSemanticCategory.Vegetation =>
+                        "tree,vegetation",
+                    DenseCityPresentationSemanticCategory.Prop =>
+                        "prop",
+                    _ => string.Empty
+                };
 
             private static string BuildPresentationSignature(
                 string prefabSourceIdentity,
@@ -1484,6 +1609,8 @@ namespace Game.Editor
             public int generatedMaterialMismatchCount;
             public int generatedManagedInstanceComponentCount;
             public int repeatedSignatureAssetPairMismatchCount;
+            public List<DenseCityGeneratedCategorySharingReport> categorySharing;
+            public string categorySharingRejectionReason;
             public List<DenseCityGeneratedSourceFailureSample> sourceFailureSamples;
             public int generatedBaseColorPropertyCount;
             public int generatedBaseColorOverrideCount;
@@ -1504,6 +1631,19 @@ namespace Game.Editor
             public string generatedPresentationSignatureSetSha256;
             public string evaluatedRowsSha256;
             public List<DenseCityGeneratedTransformParityRow> rejectedSamples;
+        }
+
+        [Serializable]
+        internal sealed class DenseCityGeneratedCategorySharingReport
+        {
+            public string category;
+            public byte categoryValue;
+            public string coveredFamilies;
+            public int rendererEntryCount;
+            public int presentationSignatureCount;
+            public int repeatedPresentationSignatureCount;
+            public int repeatedPresentationEntryCount;
+            public int repeatedAssetPairMismatchCount;
         }
 
         [Serializable]

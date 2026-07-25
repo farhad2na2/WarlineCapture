@@ -584,32 +584,8 @@ namespace Game.Editor
                     $"catalogBytes={catalogBytes}, bundles={bundlePaths.Length}, " +
                     $"bundleBytes={bundleBytes}.");
             }
-            var bundleManifest = new StringBuilder();
-            for (int index = 0; index < bundlePaths.Length; index++)
-            {
-                string relativePath = Path
-                    .GetRelativePath(fullOutputPath, bundlePaths[index])
-                    .Replace('\\', '/');
-                long bytes = new FileInfo(bundlePaths[index]).Length;
-                string sha256 = ComputeSha256(bundlePaths[index]);
-                bundleManifest
-                    .Append(relativePath.Length)
-                    .Append(':')
-                    .Append(relativePath)
-                    .Append('\n')
-                    .Append(bytes)
-                    .Append('\n')
-                    .Append(sha256)
-                    .Append('\n');
-            }
-            string bundleSetSha256;
-            using (SHA256 algorithm = SHA256.Create())
-            {
-                bundleSetSha256 = string.Concat(
-                    algorithm
-                        .ComputeHash(Utf8WithoutBom.GetBytes(bundleManifest.ToString()))
-                        .Select(value => value.ToString("x2")));
-            }
+            string bundleSetSha256 =
+                ComputeRelativeFileSetSha256(fullOutputPath, bundlePaths);
 
             return new PublishedLocalContentResult(
                 fullOutputPath,
@@ -676,6 +652,8 @@ namespace Game.Editor
                     "Dense candidate Entities content byte inventory is invalid: " +
                     $"archives={archivePaths.Length}, archiveBytes={archiveBytes}, " +
                     $"totalBytes={totalBytes}");
+            string archiveSetSha256 =
+                ComputeRelativeFileSetSha256(outputPath, archivePaths);
 
             return new EntityContentBuildResult(
                 outputPath,
@@ -683,7 +661,8 @@ namespace Game.Editor
                 archivePaths.Length,
                 archiveBytes,
                 metadataBytes,
-                totalBytes);
+                totalBytes,
+                archiveSetSha256);
         }
 
         internal static FrozenRollbackContentResult MeasureFrozenRollbackContent(
@@ -1056,7 +1035,7 @@ namespace Game.Editor
             return new RuntimeContentReport
             {
                 schema = "warline.operation-map.dense-city-candidate-runtime-content",
-                schemaVersion = 7,
+                schemaVersion = 8,
                 result = "DenseCityCandidateRuntimeContentBuilt",
                 operationMapId = plan.OperationMapId,
                 entitySceneGuid = plan.EntitySceneGuid,
@@ -1106,6 +1085,7 @@ namespace Game.Editor
                 entityContentCatalogPath = entityContentResult.CatalogPath,
                 entityContentArchiveCount = entityContentResult.ArchiveCount,
                 entitySceneArchiveBytes = entityContentResult.ArchiveBytes,
+                entitySceneArchiveSetSha256 = entityContentResult.ArchiveSetSha256,
                 entityContentMetadataBytes = entityContentResult.MetadataBytes,
                 entityContentBytes = entityContentResult.TotalBytes,
                 frozenRollbackManifestBytes = frozenRollbackResult.ManifestBytes,
@@ -1202,6 +1182,45 @@ namespace Game.Editor
                 algorithm.ComputeHash(stream).Select(value => value.ToString("x2")));
         }
 
+        private static string ComputeRelativeFileSetSha256(
+            string rootPath,
+            IEnumerable<string> filePaths)
+        {
+            string fullRootPath = Path.GetFullPath(rootPath);
+            var manifest = new StringBuilder();
+            foreach (string filePath in filePaths
+                         .Select(Path.GetFullPath)
+                         .OrderBy(path => path, StringComparer.Ordinal))
+            {
+                string relativePath = Path
+                    .GetRelativePath(fullRootPath, filePath)
+                    .Replace('\\', '/');
+                if (relativePath == ".." ||
+                    relativePath.StartsWith("../", StringComparison.Ordinal))
+                {
+                    throw new InvalidOperationException(
+                        $"Dense fingerprint input is outside its owned root: {filePath}");
+                }
+                long bytes = new FileInfo(filePath).Length;
+                string sha256 = ComputeSha256(filePath);
+                manifest
+                    .Append(relativePath.Length)
+                    .Append(':')
+                    .Append(relativePath)
+                    .Append('\n')
+                    .Append(bytes)
+                    .Append('\n')
+                    .Append(sha256)
+                    .Append('\n');
+            }
+
+            using SHA256 algorithm = SHA256.Create();
+            return string.Concat(
+                algorithm
+                    .ComputeHash(Utf8WithoutBom.GetBytes(manifest.ToString()))
+                    .Select(value => value.ToString("x2")));
+        }
+
         private static long ComputeDirectoryBytes(string path) =>
             Directory
                 .EnumerateFiles(path, "*", SearchOption.AllDirectories)
@@ -1215,7 +1234,8 @@ namespace Game.Editor
                 int archiveCount,
                 long archiveBytes,
                 long metadataBytes,
-                long totalBytes)
+                long totalBytes,
+                string archiveSetSha256)
             {
                 OutputPath = outputPath;
                 CatalogPath = catalogPath;
@@ -1223,6 +1243,7 @@ namespace Game.Editor
                 ArchiveBytes = archiveBytes;
                 MetadataBytes = metadataBytes;
                 TotalBytes = totalBytes;
+                ArchiveSetSha256 = archiveSetSha256;
             }
 
             internal string OutputPath { get; }
@@ -1231,6 +1252,7 @@ namespace Game.Editor
             internal long ArchiveBytes { get; }
             internal long MetadataBytes { get; }
             internal long TotalBytes { get; }
+            internal string ArchiveSetSha256 { get; }
         }
 
         internal readonly struct PublishedLocalContentResult
@@ -1759,6 +1781,7 @@ namespace Game.Editor
             public string entityContentCatalogPath;
             public int entityContentArchiveCount;
             public long entitySceneArchiveBytes;
+            public string entitySceneArchiveSetSha256;
             public long entityContentMetadataBytes;
             public long entityContentBytes;
             public long frozenRollbackManifestBytes;

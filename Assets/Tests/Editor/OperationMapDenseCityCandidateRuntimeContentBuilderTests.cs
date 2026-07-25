@@ -15,6 +15,7 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
         Action[] tests =
         {
             suite.MeasureEntityContent_SeparatesArchiveAndMetadataBytes,
+            suite.MeasureEntityContent_FingerprintsArchiveSetDeterministically,
             suite.MeasureEntityContent_RejectsMissingCatalog,
             suite.MeasureEntityContent_ReportsMultipleArchivesForFailClosedCaller,
             suite.MeasureFrozenRollbackContent_SeparatesManifestAndChunkBytes,
@@ -73,6 +74,39 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
                 Assert.That(result.ArchiveBytes, Is.EqualTo(19));
                 Assert.That(result.MetadataBytes, Is.EqualTo(12));
                 Assert.That(result.TotalBytes, Is.EqualTo(31));
+            });
+    }
+
+    [Test]
+    public void MeasureEntityContent_FingerprintsArchiveSetDeterministically()
+    {
+        WithContentDirectory(
+            root =>
+            {
+                string firstRoot = Path.Combine(root, "first");
+                string secondRoot = Path.Combine(root, "second");
+                string firstCatalog = WriteBytes(firstRoot, "catalog.bin", 7);
+                string secondCatalog = WriteBytes(secondRoot, "catalog.bin", 7);
+                string firstArchive = WriteBytes(firstRoot, "scene.archive", 19);
+                WriteBytes(secondRoot, "scene.archive", 19);
+                WriteBytes(firstRoot, "metadata/header.bin", 5);
+                WriteBytes(secondRoot, "metadata/header.bin", 5);
+
+                OperationMapDenseCityCandidateRuntimeContentBuilder.EntityContentBuildResult
+                    first = OperationMapDenseCityCandidateRuntimeContentBuilder
+                        .MeasureEntityContent(firstRoot, firstCatalog);
+                OperationMapDenseCityCandidateRuntimeContentBuilder.EntityContentBuildResult
+                    second = OperationMapDenseCityCandidateRuntimeContentBuilder
+                        .MeasureEntityContent(secondRoot, secondCatalog);
+
+                Assert.That(first.ArchiveSetSha256, Has.Length.EqualTo(64));
+                Assert.That(second.ArchiveSetSha256, Is.EqualTo(first.ArchiveSetSha256));
+
+                File.WriteAllBytes(firstArchive, new byte[23]);
+                OperationMapDenseCityCandidateRuntimeContentBuilder.EntityContentBuildResult
+                    changed = OperationMapDenseCityCandidateRuntimeContentBuilder
+                        .MeasureEntityContent(firstRoot, firstCatalog);
+                Assert.That(changed.ArchiveSetSha256, Is.Not.EqualTo(first.ArchiveSetSha256));
             });
     }
 

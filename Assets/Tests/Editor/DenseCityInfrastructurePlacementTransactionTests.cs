@@ -9,6 +9,14 @@ public sealed class DenseCityInfrastructurePlacementTransactionTests
     private const string SourceGuid = "0123456789abcdef0123456789abcdef";
     private const string MaterialGuid = "abcdef0123456789abcdef0123456789";
 
+    public static void RunSurfaceFailureRollbackValidation()
+    {
+        var suite = new DenseCityInfrastructurePlacementTransactionTests();
+        suite.SurfaceTransaction_FailurePreservesAcceptedOutput();
+        Debug.Log(
+            "[DenseCitySurfaceFailureRollbackValidation] result=Passed tests=1");
+    }
+
     [Test]
     public void InfrastructureTransaction_KeepsPairedRecordsAfterAcceptedRealization()
     {
@@ -95,6 +103,38 @@ public sealed class DenseCityInfrastructurePlacementTransactionTests
 
         Assert.That(accepted, Is.False);
         Assert.That(records.Surfaces, Is.Empty);
+        Assert.That(records.Presentations, Is.Empty);
+    }
+
+    [Test]
+    public void SurfaceTransaction_FailurePreservesAcceptedOutput()
+    {
+        using var records = new DenseCityGenerationRecordSet(1, 2, 1);
+        DenseCitySurfaceBakeRecord accepted =
+            CreateSurface(0, "accepted-terrain", DenseCitySurfaceRecordKind.Terrain);
+        DenseCitySurfaceBakeRecord rejected =
+            CreateSurface(1, "rejected-ramp", DenseCitySurfaceRecordKind.Ramp);
+        records.Add(accepted);
+
+        Assert.That(
+            () => DenseCitySurfacePlacementTransaction.TryCommitAndRealize(
+                records,
+                rejected,
+                () => throw new InvalidOperationException(
+                    "Injected surface realization failure.")),
+            Throws.InvalidOperationException.With.Message.EqualTo(
+                "Injected surface realization failure."));
+
+        records.Seal();
+        Assert.That(records.Surfaces, Has.Count.EqualTo(1));
+        DenseCitySurfaceBakeRecord restored = records.Surfaces.Single();
+        Assert.That(restored.Identity.StableKey, Is.EqualTo(accepted.Identity.StableKey));
+        Assert.That(restored.Kind, Is.EqualTo(accepted.Kind));
+        Assert.That(restored.Polygon.ToArray(), Is.EqualTo(accepted.Polygon.ToArray()));
+        Assert.That(restored.Elevation, Is.EqualTo(accepted.Elevation));
+        Assert.That(restored.MovementMask, Is.EqualTo(accepted.MovementMask));
+        Assert.That(restored.Layer, Is.EqualTo(accepted.Layer));
+        Assert.That(restored.Chunk, Is.EqualTo(accepted.Chunk));
         Assert.That(records.Presentations, Is.Empty);
     }
 

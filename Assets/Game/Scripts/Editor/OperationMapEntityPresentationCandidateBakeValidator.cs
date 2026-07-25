@@ -557,6 +557,10 @@ namespace Game.Editor
                 }
             }
 
+            CaptureDenseEntityLayoutCounts(entityManager, report);
+            CaptureDenseRenderAssetCounts(entityManager, report);
+            CaptureDenseBuildingVisualOwnership(entityManager, report);
+
             if (report.gameplayBuildingCount != ExpectedDenseGameplayBuildings)
                 report.rejectionReason = $"gameplay-building-count:{report.gameplayBuildingCount}";
             else if (report.gameplayVehicleCount != ExpectedGameplayVehicles)
@@ -588,6 +592,28 @@ namespace Game.Editor
                      ExpectedRenderOnlyOwners + ExpectedDenseGeneratedRenderOnlyOwners)
                 report.rejectionReason =
                     $"render-mesh-entities-below-owner-count:{report.renderMeshEntityCount}";
+            else if (report.entityArchetypeCount <= 0 || report.entityChunkCount <= 0)
+                report.rejectionReason =
+                    $"entity-layout-counts:{report.entityArchetypeCount}:{report.entityChunkCount}";
+            else if (report.renderChildEntityCount <= 0 ||
+                     report.sharedRenderMeshArrayIdentityCount <= 0 ||
+                     report.sharedMeshAssetIdentityCount <= 0 ||
+                     report.sharedMaterialAssetIdentityCount <= 0)
+                report.rejectionReason =
+                    $"render-asset-counts:{report.renderChildEntityCount}:" +
+                    $"{report.sharedRenderMeshArrayIdentityCount}:" +
+                    $"{report.sharedMeshAssetIdentityCount}:" +
+                    $"{report.sharedMaterialAssetIdentityCount}";
+            else if (report.intactVisualRootCount != ExpectedDenseGameplayBuildings ||
+                     report.missingIntactVisualRootCount != 0 ||
+                     report.sharedIntactDestroyedVisualRootCount != 0 ||
+                     report.destroyedVisualRootCount + report.missingDestroyedVisualRootCount !=
+                     report.buildingPresentationCount)
+                report.rejectionReason =
+                    $"building-visual-ownership:{report.intactVisualRootCount}:" +
+                    $"{report.destroyedVisualRootCount}:{report.missingIntactVisualRootCount}:" +
+                    $"{report.missingDestroyedVisualRootCount}:" +
+                    $"{report.sharedIntactDestroyedVisualRootCount}";
             else if (report.nonFiniteTransformCount != 0)
                 report.rejectionReason =
                     $"non-finite-transforms:{report.nonFiniteTransformCount}";
@@ -605,6 +631,102 @@ namespace Game.Editor
                 "DenseCandidateBakeValidationPassed",
                 StringComparison.Ordinal);
             return report;
+        }
+
+        private static void CaptureDenseEntityLayoutCounts(
+            EntityManager entityManager,
+            DenseCandidateBakeReport report)
+        {
+            using NativeArray<ArchetypeChunk> chunks =
+                entityManager.UniversalQuery.ToArchetypeChunkArray(Allocator.Temp);
+            var archetypes = new HashSet<EntityArchetype>();
+            for (int i = 0; i < chunks.Length; i++)
+                archetypes.Add(chunks[i].Archetype);
+            report.entityArchetypeCount = archetypes.Count;
+        }
+
+        private static void CaptureDenseRenderAssetCounts(
+            EntityManager entityManager,
+            DenseCandidateBakeReport report)
+        {
+            using EntityQuery query = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<MaterialMeshInfo>(),
+                ComponentType.ReadOnly<RenderMeshArray>());
+            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            var arrays = new HashSet<string>(StringComparer.Ordinal);
+            var meshes = new HashSet<Mesh>();
+            var materials = new HashSet<Material>();
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity entity = entities[i];
+                if (entityManager.HasComponent<Parent>(entity))
+                    report.renderChildEntityCount++;
+
+                RenderMeshArray renderMeshArray =
+                    entityManager.GetSharedComponentManaged<RenderMeshArray>(entity);
+                arrays.Add(renderMeshArray.GetHash128().ToString());
+                if (renderMeshArray.MeshReferences != null)
+                {
+                    for (int meshIndex = 0;
+                         meshIndex < renderMeshArray.MeshReferences.Length;
+                         meshIndex++)
+                    {
+                        Mesh mesh = renderMeshArray.MeshReferences[meshIndex].Value;
+                        if (mesh != null)
+                            meshes.Add(mesh);
+                    }
+                }
+                if (renderMeshArray.MaterialReferences != null)
+                {
+                    for (int materialIndex = 0;
+                         materialIndex < renderMeshArray.MaterialReferences.Length;
+                         materialIndex++)
+                    {
+                        Material material =
+                            renderMeshArray.MaterialReferences[materialIndex].Value;
+                        if (material != null)
+                            materials.Add(material);
+                    }
+                }
+            }
+
+            report.sharedRenderMeshArrayIdentityCount = arrays.Count;
+            report.sharedMeshAssetIdentityCount = meshes.Count;
+            report.sharedMaterialAssetIdentityCount = materials.Count;
+        }
+
+        private static void CaptureDenseBuildingVisualOwnership(
+            EntityManager entityManager,
+            DenseCandidateBakeReport report)
+        {
+            var intactRoots = new HashSet<Entity>();
+            var destroyedRoots = new HashSet<Entity>();
+            using NativeArray<OperationMapBuildingPresentation> presentations =
+                entityManager.CreateEntityQuery(typeof(OperationMapBuildingPresentation))
+                    .ToComponentDataArray<OperationMapBuildingPresentation>(Allocator.Temp);
+            for (int i = 0; i < presentations.Length; i++)
+            {
+                Entity intact = presentations[i].IntactVisualRoot;
+                Entity destroyed = presentations[i].DestroyedVisualRoot;
+                if (intact != Entity.Null && entityManager.Exists(intact))
+                    intactRoots.Add(intact);
+                else
+                    report.missingIntactVisualRootCount++;
+                if (destroyed != Entity.Null && entityManager.Exists(destroyed))
+                    destroyedRoots.Add(destroyed);
+                else
+                    report.missingDestroyedVisualRootCount++;
+            }
+
+            report.intactVisualRootCount = intactRoots.Count;
+            report.destroyedVisualRootCount = destroyedRoots.Count;
+            foreach (Entity root in intactRoots)
+            {
+                if (destroyedRoots.Contains(root))
+                    report.sharedIntactDestroyedVisualRootCount++;
+            }
+            report.buildingRenderChildCount =
+                report.intactVisualRootCount + report.destroyedVisualRootCount;
         }
 
         private static void CaptureIdentityRoleCounts(
@@ -793,7 +915,7 @@ namespace Game.Editor
         private static void WriteDenseReport(string projectRoot, DenseCandidateBakeReport report)
         {
             string reportPath = Path.Combine(projectRoot, DenseCandidateBakeReportPath);
-            report.reportPath = reportPath.Replace('\\', '/');
+            report.reportPath = DenseCandidateBakeReportPath;
             string json = JsonUtility.ToJson(report, true);
             Directory.CreateDirectory(Path.GetDirectoryName(reportPath) ?? projectRoot);
             File.WriteAllText(reportPath, json + "\n", Utf8WithoutBom);
@@ -936,7 +1058,18 @@ namespace Game.Editor
             public int buildingPresentationCount;
             public int renderMeshEntityCount;
             public int totalEntityCount;
+            public int entityArchetypeCount;
             public int entityChunkCount;
+            public int renderChildEntityCount;
+            public int sharedRenderMeshArrayIdentityCount;
+            public int sharedMeshAssetIdentityCount;
+            public int sharedMaterialAssetIdentityCount;
+            public int buildingRenderChildCount;
+            public int intactVisualRootCount;
+            public int destroyedVisualRootCount;
+            public int missingIntactVisualRootCount;
+            public int missingDestroyedVisualRootCount;
+            public int sharedIntactDestroyedVisualRootCount;
             public int nonFiniteTransformCount;
             public int managedMapVisualCompanionCount;
             public int productionCutover;

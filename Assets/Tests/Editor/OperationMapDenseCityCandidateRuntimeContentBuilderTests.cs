@@ -27,6 +27,9 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
             suite.MeasurePackedDependencyBytes_DeduplicatesSameBundleRows,
             suite.MeasurePackedDependencyBytes_RejectsMissingSharedEvidence,
             suite.MeasurePackedDependencyBytes_AdaptsAddressablesBuildLayout,
+            suite.MeasurePackedSourceHierarchy_AcceptsRuntimeOnlyPaths,
+            suite.MeasurePackedSourceHierarchy_RejectsExplicitOrImplicitSourcePath,
+            suite.MeasurePackedSourceHierarchy_AdaptsAddressablesBuildLayout,
             suite.SelectSingleGeneratedBuildLayoutPath_ReturnsOnlyNewJson,
             suite.SelectSingleGeneratedBuildLayoutPath_RejectsMissingReport,
             suite.SelectSingleGeneratedBuildLayoutPath_RejectsAmbiguousReports,
@@ -353,6 +356,96 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
         };
         bundle.Files.Add(file);
         return file;
+    }
+
+    [Test]
+    public void MeasurePackedSourceHierarchy_AcceptsRuntimeOnlyPaths()
+    {
+        var occurrences =
+            new[]
+            {
+                new OperationMapDenseCityCandidateRuntimeContentBuilder
+                    .PackedAssetPathOccurrence(
+                        OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                            .DenseCandidateDefinitionPath,
+                        "dense.bundle",
+                        true),
+                new OperationMapDenseCityCandidateRuntimeContentBuilder
+                    .PackedAssetPathOccurrence(
+                        "Assets/Game/Art/Shared/road.mat",
+                        "dense.bundle",
+                        false)
+            };
+
+        OperationMapDenseCityCandidateRuntimeContentBuilder.PackedSourceHierarchyResult result =
+            OperationMapDenseCityCandidateRuntimeContentBuilder
+                .MeasurePackedSourceHierarchy(occurrences);
+
+        Assert.That(result.PackedAssetPathCount, Is.EqualTo(2));
+        Assert.That(result.SourceHierarchyExplicitAssetCount, Is.Zero);
+        Assert.That(result.SourceHierarchyImplicitAssetCount, Is.Zero);
+        Assert.DoesNotThrow(
+            () => OperationMapDenseCityCandidateRuntimeContentBuilder
+                .RequirePackedSourceHierarchyExclusion(result));
+    }
+
+    [Test]
+    public void MeasurePackedSourceHierarchy_RejectsExplicitOrImplicitSourcePath()
+    {
+        var occurrences =
+            new[]
+            {
+                new OperationMapDenseCityCandidateRuntimeContentBuilder
+                    .PackedAssetPathOccurrence(
+                        DenseCityCandidateAuthoringTransaction.CandidateMapScenePath,
+                        "dense.bundle",
+                        true),
+                new OperationMapDenseCityCandidateRuntimeContentBuilder
+                    .PackedAssetPathOccurrence(
+                        DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath,
+                        "dense.bundle",
+                        false)
+            };
+
+        OperationMapDenseCityCandidateRuntimeContentBuilder.PackedSourceHierarchyResult result =
+            OperationMapDenseCityCandidateRuntimeContentBuilder
+                .MeasurePackedSourceHierarchy(occurrences);
+
+        Assert.That(result.SourceHierarchyExplicitAssetCount, Is.EqualTo(1));
+        Assert.That(result.SourceHierarchyImplicitAssetCount, Is.EqualTo(1));
+        Assert.Throws<InvalidOperationException>(
+            () => OperationMapDenseCityCandidateRuntimeContentBuilder
+                .RequirePackedSourceHierarchyExclusion(result));
+    }
+
+    [Test]
+    public void MeasurePackedSourceHierarchy_AdaptsAddressablesBuildLayout()
+    {
+        var layout = new BuildLayout();
+        var group = new BuildLayout.Group { Name = "Dense Candidate" };
+        layout.Groups.Add(group);
+        BuildLayout.File file = AddBuildLayoutFile(group, "dense.bundle");
+        file.Assets.Add(
+            new BuildLayout.ExplicitAsset
+            {
+                AssetPath = DenseCityCandidateAuthoringTransaction.CandidateMapScenePath,
+                Bundle = file.Bundle,
+                File = file
+            });
+        file.OtherAssets.Add(
+            new BuildLayout.DataFromOtherAsset
+            {
+                AssetPath = DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath,
+                File = file
+            });
+
+        OperationMapDenseCityCandidateRuntimeContentBuilder.PackedSourceHierarchyResult result =
+            OperationMapDenseCityCandidateRuntimeContentBuilder
+                .MeasurePackedSourceHierarchy(layout);
+
+        Assert.That(result.PackedAssetPathCount, Is.EqualTo(2));
+        Assert.That(result.SourceHierarchyExplicitAssetCount, Is.EqualTo(1));
+        Assert.That(result.SourceHierarchyImplicitAssetCount, Is.EqualTo(1));
     }
 
     [Test]

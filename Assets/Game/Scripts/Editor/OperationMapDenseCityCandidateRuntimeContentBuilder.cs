@@ -391,6 +391,9 @@ namespace Game.Editor
                         $"planned={plan.SharedDependencyCount}, " +
                         $"packed={packedDependencyBytes.SharedDependencyGuidCount}");
                 }
+                PackedSourceHierarchyResult packedSourceHierarchy =
+                    MeasurePackedSourceHierarchy(buildLayout);
+                RequirePackedSourceHierarchyExclusion(packedSourceHierarchy);
 
                 outputTransaction.PublishBuiltAddressables();
                 string publishedBuildLayoutPath = Path.GetFullPath(
@@ -403,7 +406,8 @@ namespace Game.Editor
                 return new AddressablesContentBuildResult(
                     result,
                     publishedBuildLayoutPath,
-                    packedDependencyBytes);
+                    packedDependencyBytes,
+                    packedSourceHierarchy);
             }
             finally
             {
@@ -447,14 +451,7 @@ namespace Game.Editor
                 .Select(NormalizeAssetPath)
                 .ToArray();
             var forbidden = new HashSet<string>(
-                new[]
-                {
-                    OperationMapAddressablesLayoutBuilder.AuthoringScenePath,
-                    OperationMapEntityPresentationMigrationEditor.AcceptedSubScenePath,
-                    OperationMapEntityPresentationMigrationEditor.CandidateSubScenePath,
-                    DenseCityCandidateAuthoringTransaction.CandidateMapScenePath,
-                    DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath
-                }.Select(NormalizeAssetPath),
+                DenseSourceHierarchyPaths,
                 StringComparer.Ordinal);
             return new SourceHierarchyExclusionResult(
                 explicitPaths.Length,
@@ -482,6 +479,16 @@ namespace Game.Editor
 
         private static string NormalizeAssetPath(string path) =>
             (path ?? string.Empty).Replace('\\', '/').Trim();
+
+        private static string[] DenseSourceHierarchyPaths =>
+            new[]
+            {
+                OperationMapAddressablesLayoutBuilder.AuthoringScenePath,
+                OperationMapEntityPresentationMigrationEditor.AcceptedSubScenePath,
+                OperationMapEntityPresentationMigrationEditor.CandidateSubScenePath,
+                DenseCityCandidateAuthoringTransaction.CandidateMapScenePath,
+                DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath
+            }.Select(NormalizeAssetPath).ToArray();
 
         internal static LocalBundleDeliveryResult MeasureLocalBundleDelivery(
             bool buildRemoteCatalog,
@@ -804,6 +811,80 @@ namespace Game.Editor
                 sharedDependencyGuids);
         }
 
+        internal static PackedSourceHierarchyResult MeasurePackedSourceHierarchy(
+            IEnumerable<PackedAssetPathOccurrence> occurrences)
+        {
+            if (occurrences == null)
+                throw new ArgumentNullException(nameof(occurrences));
+
+            var forbidden = new HashSet<string>(
+                DenseSourceHierarchyPaths,
+                StringComparer.Ordinal);
+            PackedAssetPathOccurrence[] unique = occurrences
+                .Select(occurrence => new PackedAssetPathOccurrence(
+                    NormalizeAssetPath(occurrence.AssetPath),
+                    occurrence.BundleName,
+                    occurrence.Explicit))
+                .Where(occurrence => !string.IsNullOrEmpty(occurrence.AssetPath))
+                .GroupBy(
+                    occurrence =>
+                        $"{occurrence.AssetPath}\n{occurrence.BundleName}\n" +
+                        (occurrence.Explicit ? "explicit" : "implicit"),
+                    StringComparer.Ordinal)
+                .Select(group => group.First())
+                .ToArray();
+            return new PackedSourceHierarchyResult(
+                unique.Length,
+                unique.Count(occurrence =>
+                    occurrence.Explicit && forbidden.Contains(occurrence.AssetPath)),
+                unique.Count(occurrence =>
+                    !occurrence.Explicit && forbidden.Contains(occurrence.AssetPath)));
+        }
+
+        internal static PackedSourceHierarchyResult MeasurePackedSourceHierarchy(
+            BuildLayout layout)
+        {
+            if (layout == null)
+                throw new ArgumentNullException(nameof(layout));
+
+            IEnumerable<PackedAssetPathOccurrence> explicitOccurrences =
+                BuildLayoutHelpers
+                    .EnumerateAssets(layout)
+                    .Where(asset => asset != null)
+                    .Select(asset => new PackedAssetPathOccurrence(
+                        asset.AssetPath,
+                        asset.Bundle?.Name,
+                        true));
+            IEnumerable<PackedAssetPathOccurrence> implicitOccurrences =
+                BuildLayoutHelpers
+                    .EnumerateBundles(layout)
+                    .SelectMany(bundle => bundle.Files)
+                    .SelectMany(file =>
+                        file.OtherAssets.Concat(
+                            file.Assets.SelectMany(asset =>
+                                asset.InternalReferencedOtherAssets)))
+                    .Where(asset => asset != null)
+                    .Select(asset => new PackedAssetPathOccurrence(
+                        asset.AssetPath,
+                        asset.File?.Bundle?.Name,
+                        false));
+            return MeasurePackedSourceHierarchy(
+                explicitOccurrences.Concat(implicitOccurrences));
+        }
+
+        internal static void RequirePackedSourceHierarchyExclusion(
+            PackedSourceHierarchyResult result)
+        {
+            if (result.SourceHierarchyExplicitAssetCount != 0 ||
+                result.SourceHierarchyImplicitAssetCount != 0)
+            {
+                throw new InvalidOperationException(
+                    "Dense Addressables Build Layout contains source hierarchy assets: " +
+                    $"explicit={result.SourceHierarchyExplicitAssetCount}, " +
+                    $"implicit={result.SourceHierarchyImplicitAssetCount}.");
+            }
+        }
+
         internal static string SelectSingleGeneratedBuildLayoutPath(
             IEnumerable<string> originalPaths,
             IEnumerable<string> currentPaths,
@@ -879,7 +960,7 @@ namespace Game.Editor
             return new RuntimeContentReport
             {
                 schema = "warline.operation-map.dense-city-candidate-runtime-content",
-                schemaVersion = 4,
+                schemaVersion = 5,
                 result = "DenseCityCandidateRuntimeContentBuilt",
                 operationMapId = plan.OperationMapId,
                 entitySceneGuid = plan.EntitySceneGuid,
@@ -907,6 +988,15 @@ namespace Game.Editor
                     addressablesResult.PackedDependencyBytes.DuplicatedDependencyGuidCount,
                 duplicatedDependencyBytes =
                     addressablesResult.PackedDependencyBytes.DuplicatedDependencyBytes,
+                packedSourceHierarchyEvidenceComplete = 1,
+                packedAssetPathCount =
+                    addressablesResult.PackedSourceHierarchy.PackedAssetPathCount,
+                packedSourceHierarchyExplicitAssetCount =
+                    addressablesResult.PackedSourceHierarchy
+                        .SourceHierarchyExplicitAssetCount,
+                packedSourceHierarchyImplicitAssetCount =
+                    addressablesResult.PackedSourceHierarchy
+                        .SourceHierarchyImplicitAssetCount,
                 entityContentOutputPath = entityContentResult.OutputPath,
                 entityContentCatalogPath = entityContentResult.CatalogPath,
                 entityContentArchiveCount = entityContentResult.ArchiveCount,
@@ -1089,6 +1179,23 @@ namespace Game.Editor
             internal long Bytes { get; }
         }
 
+        internal readonly struct PackedAssetPathOccurrence
+        {
+            internal PackedAssetPathOccurrence(
+                string assetPath,
+                string bundleName,
+                bool explicitAsset)
+            {
+                AssetPath = assetPath;
+                BundleName = bundleName ?? string.Empty;
+                Explicit = explicitAsset;
+            }
+
+            internal string AssetPath { get; }
+            internal string BundleName { get; }
+            internal bool Explicit { get; }
+        }
+
         internal readonly struct PackedDependencyByteResult
         {
             internal PackedDependencyByteResult(
@@ -1109,21 +1216,41 @@ namespace Game.Editor
             internal long DuplicatedDependencyBytes { get; }
         }
 
+        internal readonly struct PackedSourceHierarchyResult
+        {
+            internal PackedSourceHierarchyResult(
+                int packedAssetPathCount,
+                int sourceHierarchyExplicitAssetCount,
+                int sourceHierarchyImplicitAssetCount)
+            {
+                PackedAssetPathCount = packedAssetPathCount;
+                SourceHierarchyExplicitAssetCount = sourceHierarchyExplicitAssetCount;
+                SourceHierarchyImplicitAssetCount = sourceHierarchyImplicitAssetCount;
+            }
+
+            internal int PackedAssetPathCount { get; }
+            internal int SourceHierarchyExplicitAssetCount { get; }
+            internal int SourceHierarchyImplicitAssetCount { get; }
+        }
+
         private readonly struct AddressablesContentBuildResult
         {
             internal AddressablesContentBuildResult(
                 AddressablesPlayerBuildResult playerBuildResult,
                 string buildLayoutPath,
-                PackedDependencyByteResult packedDependencyBytes)
+                PackedDependencyByteResult packedDependencyBytes,
+                PackedSourceHierarchyResult packedSourceHierarchy)
             {
                 PlayerBuildResult = playerBuildResult;
                 BuildLayoutPath = buildLayoutPath;
                 PackedDependencyBytes = packedDependencyBytes;
+                PackedSourceHierarchy = packedSourceHierarchy;
             }
 
             internal AddressablesPlayerBuildResult PlayerBuildResult { get; }
             internal string BuildLayoutPath { get; }
             internal PackedDependencyByteResult PackedDependencyBytes { get; }
+            internal PackedSourceHierarchyResult PackedSourceHierarchy { get; }
         }
 
         private sealed class BuildLayoutCaptureScope : IDisposable
@@ -1485,6 +1612,10 @@ namespace Game.Editor
             public long sharedDependencyBytes;
             public int duplicatedDependencyGuidCount;
             public long duplicatedDependencyBytes;
+            public int packedSourceHierarchyEvidenceComplete;
+            public int packedAssetPathCount;
+            public int packedSourceHierarchyExplicitAssetCount;
+            public int packedSourceHierarchyImplicitAssetCount;
             public string entityContentOutputPath;
             public string entityContentCatalogPath;
             public int entityContentArchiveCount;

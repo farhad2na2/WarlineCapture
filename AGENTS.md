@@ -1,11 +1,35 @@
 # Unity Execution Contract
 
 - Keep Unity Hub open and signed in while any Unity Editor or validation runs.
-- Run Unity validation **only** through `Tools/CI/invoke_unity_macos.sh`. Do not invoke the Unity executable directly.
+- Never invoke the Unity executable directly. Use the platform-specific repository wrapper described below.
 - On macOS, `invoke_unity_macos.sh` uses **GUI licensing** and never passes `-batchmode`. Do not add `-batchmode`, do not bypass the wrapper, and do not try an alternate Unity command when validation fails.
 - Normal Editors and wrapper-driven validation may run concurrently. The shared licensing client supports multiple clients.
 - Never run `Tools/CI/reset_unity_macos_ipc.sh`, pass `--reset-ipc`, or use `--quit-hub` while any Unity Editor is running. Reset requires `--confirm-no-editors` and is recovery-only for a fully closed, known-stuck Unity environment that the user explicitly asked to recover.
 - Do not terminate Unity, Unity Hub, Unity.Licensing.Client, Package Manager, or remove `/private/tmp/Unity-*.sock` files unless the user explicitly asks to recover a stuck Unity environment.
+
+## Windows validation rule (approved 2026-07-25)
+
+Windows validation is permitted through the checked-in PowerShell wrappers:
+
+- Use `Tools/CI/ResolveUnityEditor.ps1` to resolve the Editor version recorded in `ProjectSettings/ProjectVersion.txt`.
+- Use `Tools/CI/InvokeUnityExecuteMethodValidation.ps1` for focused `executeMethod` validation.
+- Use `Tools/CI/InvokeUnity.ps1` for Unity Test Framework runs or other validation modes not covered by the focused wrapper.
+- Launch the PowerShell wrappers with `powershell.exe -NoProfile -ExecutionPolicy Bypass -File ...` when the machine's execution policy blocks checked-in scripts.
+- `-batchmode` is permitted on Windows only through `InvokeUnity.ps1`; this does not relax the macOS prohibition.
+- Give every run an explicit log path and timeout. Treat a timeout, missing pass marker, nonzero exit, or project lock as a failed validation.
+- Before starting a run, confirm that no active Unity process owns this project. Do not terminate an existing Editor to make room for validation.
+- A wrapper timeout may terminate only the Unity process tree that wrapper started. Never terminate unrelated Unity or Unity Hub processes.
+
+Example:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/CI/InvokeUnityExecuteMethodValidation.ps1 `
+  -UnityExe "C:\Program Files\Unity\Hub\Editor\6000.5.2f1\Editor\Unity.exe" `
+  -ProjectPath (Get-Location).Path `
+  -ExecuteMethod Game.Tests.Editor.MyTests.RunFocusedValidation `
+  -LogFile "$env:TEMP\warline-task.log" `
+  -RequiredPassMarker "[MyTests] result=Passed"
+```
 
 ## macOS licensing rule (mandatory)
 
@@ -21,7 +45,7 @@ When Unity Hub updates past **3.19.5** (or ships `UnityLicensingClient_V1` **≥
 2. If Hub speaks LocalIPC **≥ 1.18.1**, re-test `-batchmode` through `invoke_unity_macos.sh` and consider restoring batchmode as the default.
 3. Until then, keep GUI licensing and do not treat the `505 / 1.18.1` log line as a blocker by itself.
 
-Agents must:
+On macOS, agents must:
 
 1. Use `Tools/CI/invoke_unity_macos.sh` for every Unity `executeMethod`, test run, prefab build, and capture.
 2. Never pass `-batchmode` or invoke `/Applications/Unity/Hub/Editor/.../Unity` directly.

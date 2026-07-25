@@ -27,6 +27,8 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
             suite.MeasurePackedDependencyBytes_DeduplicatesSameBundleRows,
             suite.MeasurePackedDependencyBytes_RejectsMissingSharedEvidence,
             suite.MeasurePackedDependencyBytes_AdaptsAddressablesBuildLayout,
+            suite.RequireNoPackedDependencyDuplication_AcceptsSinglePhysicalBundle,
+            suite.RequireNoPackedDependencyDuplication_RejectsCrossBundleCopy,
             suite.MeasurePackedSourceHierarchy_AcceptsRuntimeOnlyPaths,
             suite.MeasurePackedSourceHierarchy_RejectsExplicitOrImplicitSourcePath,
             suite.MeasurePackedSourceHierarchy_AdaptsAddressablesBuildLayout,
@@ -337,6 +339,58 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
         Assert.That(result.SharedDependencyBytes, Is.EqualTo(100));
         Assert.That(result.DuplicatedDependencyGuidCount, Is.EqualTo(1));
         Assert.That(result.DuplicatedDependencyBytes, Is.EqualTo(25));
+    }
+
+    [Test]
+    public void RequireNoPackedDependencyDuplication_AcceptsSinglePhysicalBundle()
+    {
+        var occurrences =
+            new[]
+            {
+                new OperationMapDenseCityCandidateRuntimeContentBuilder.PackedAssetOccurrence(
+                    "shared-guid",
+                    "dense.bundle",
+                    40),
+                new OperationMapDenseCityCandidateRuntimeContentBuilder.PackedAssetOccurrence(
+                    "shared-guid",
+                    "dense.bundle",
+                    40)
+            };
+        OperationMapDenseCityCandidateRuntimeContentBuilder.PackedDependencyByteResult result =
+            OperationMapDenseCityCandidateRuntimeContentBuilder.MeasurePackedDependencyBytes(
+                occurrences,
+                new[] { "shared-guid" });
+
+        Assert.DoesNotThrow(
+            () => OperationMapDenseCityCandidateRuntimeContentBuilder
+                .RequireNoPackedDependencyDuplication(result));
+    }
+
+    [Test]
+    public void RequireNoPackedDependencyDuplication_RejectsCrossBundleCopy()
+    {
+        var occurrences =
+            new[]
+            {
+                new OperationMapDenseCityCandidateRuntimeContentBuilder.PackedAssetOccurrence(
+                    "copied-guid",
+                    "first.bundle",
+                    40),
+                new OperationMapDenseCityCandidateRuntimeContentBuilder.PackedAssetOccurrence(
+                    "copied-guid",
+                    "second.bundle",
+                    25)
+            };
+        OperationMapDenseCityCandidateRuntimeContentBuilder.PackedDependencyByteResult result =
+            OperationMapDenseCityCandidateRuntimeContentBuilder.MeasurePackedDependencyBytes(
+                occurrences,
+                Array.Empty<string>());
+
+        InvalidOperationException exception = Assert.Throws<InvalidOperationException>(
+            () => OperationMapDenseCityCandidateRuntimeContentBuilder
+                .RequireNoPackedDependencyDuplication(result));
+        Assert.That(exception.Message, Does.Contain("guids=1"));
+        Assert.That(exception.Message, Does.Contain("excessBytes=25"));
     }
 
     private static BuildLayout.File AddBuildLayoutFile(

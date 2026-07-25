@@ -383,6 +383,7 @@ namespace Game.Editor
                     .ToArray();
                 PackedDependencyByteResult packedDependencyBytes =
                     MeasurePackedDependencyBytes(buildLayout, sharedDependencyGuids);
+                RequireNoPackedDependencyDuplication(packedDependencyBytes);
                 if (packedDependencyBytes.SharedDependencyGuidCount !=
                     plan.SharedDependencyCount)
                 {
@@ -768,6 +769,19 @@ namespace Game.Editor
                 sharedBytes,
                 duplicatedGuidCount,
                 duplicatedBytes);
+        }
+
+        internal static void RequireNoPackedDependencyDuplication(
+            PackedDependencyByteResult result)
+        {
+            if (result.DuplicatedDependencyGuidCount != 0 ||
+                result.DuplicatedDependencyBytes != 0)
+            {
+                throw new InvalidOperationException(
+                    "Dense Addressables Build Layout contains duplicated dependency payloads: " +
+                    $"guids={result.DuplicatedDependencyGuidCount}, " +
+                    $"excessBytes={result.DuplicatedDependencyBytes}.");
+            }
         }
 
         internal static PackedDependencyByteResult MeasurePackedDependencyBytes(

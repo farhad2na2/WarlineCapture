@@ -4,6 +4,7 @@ using Game.Editor;
 using Game.Configs;
 using NUnit.Framework;
 using UnityEditor.AddressableAssets.Build.Layout;
+using UnityEditor.AddressableAssets.Settings;
 using UnityEngine;
 
 public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
@@ -31,7 +32,11 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
             suite.SelectSingleGeneratedBuildLayoutPath_RejectsAmbiguousReports,
             suite.MeasureSourceHierarchyExclusion_AcceptsRuntimeEntriesAndUnrelatedBuildScenes,
             suite.MeasureSourceHierarchyExclusion_ReportsForbiddenExplicitEntry,
-            suite.MeasureSourceHierarchyExclusion_ReportsForbiddenPlayerBuildScene
+            suite.MeasureSourceHierarchyExclusion_ReportsForbiddenPlayerBuildScene,
+            suite.MeasureLocalBundleDelivery_AcceptsIncludedLocalOfflineGroup,
+            suite.MeasureLocalBundleDelivery_RejectsRemoteCatalog,
+            suite.MeasureLocalBundleDelivery_RejectsExcludedGroup,
+            suite.MeasureLocalBundleDelivery_RejectsNetworkLoadPath
         };
         for (int i = 0; i < tests.Length; i++)
             tests[i]();
@@ -451,6 +456,79 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
         Assert.Throws<InvalidOperationException>(
             () => OperationMapDenseCityCandidateRuntimeContentBuilder
                 .RequireSourceHierarchyExclusion(result, expectedExplicitEntryCount: 2));
+    }
+
+    [Test]
+    public void MeasureLocalBundleDelivery_AcceptsIncludedLocalOfflineGroup()
+    {
+        OperationMapDenseCityCandidateRuntimeContentBuilder.LocalBundleDeliveryResult
+            result = OperationMapDenseCityCandidateRuntimeContentBuilder
+                .MeasureLocalBundleDelivery(
+                    buildRemoteCatalog: false,
+                    disableCatalogUpdateOnStartup: true,
+                    includeInBuild: true,
+                    AddressableAssetSettings.kLocalBuildPath,
+                    AddressableAssetSettings.kLocalLoadPath,
+                    "{UnityEngine.AddressableAssets.Addressables.RuntimePath}/StandaloneWindows64");
+
+        Assert.DoesNotThrow(
+            () => OperationMapDenseCityCandidateRuntimeContentBuilder
+                .RequireLocalBundleDelivery(result));
+    }
+
+    [Test]
+    public void MeasureLocalBundleDelivery_RejectsRemoteCatalog()
+    {
+        OperationMapDenseCityCandidateRuntimeContentBuilder.LocalBundleDeliveryResult
+            result = OperationMapDenseCityCandidateRuntimeContentBuilder
+                .MeasureLocalBundleDelivery(
+                    buildRemoteCatalog: true,
+                    disableCatalogUpdateOnStartup: true,
+                    includeInBuild: true,
+                    AddressableAssetSettings.kLocalBuildPath,
+                    AddressableAssetSettings.kLocalLoadPath,
+                    "C:/Warline/LocalBundles");
+
+        Assert.Throws<InvalidOperationException>(
+            () => OperationMapDenseCityCandidateRuntimeContentBuilder
+                .RequireLocalBundleDelivery(result));
+    }
+
+    [Test]
+    public void MeasureLocalBundleDelivery_RejectsExcludedGroup()
+    {
+        OperationMapDenseCityCandidateRuntimeContentBuilder.LocalBundleDeliveryResult
+            result = OperationMapDenseCityCandidateRuntimeContentBuilder
+                .MeasureLocalBundleDelivery(
+                    buildRemoteCatalog: false,
+                    disableCatalogUpdateOnStartup: true,
+                    includeInBuild: false,
+                    AddressableAssetSettings.kLocalBuildPath,
+                    AddressableAssetSettings.kLocalLoadPath,
+                    "C:/Warline/LocalBundles");
+
+        Assert.Throws<InvalidOperationException>(
+            () => OperationMapDenseCityCandidateRuntimeContentBuilder
+                .RequireLocalBundleDelivery(result));
+    }
+
+    [Test]
+    public void MeasureLocalBundleDelivery_RejectsNetworkLoadPath()
+    {
+        OperationMapDenseCityCandidateRuntimeContentBuilder.LocalBundleDeliveryResult
+            result = OperationMapDenseCityCandidateRuntimeContentBuilder
+                .MeasureLocalBundleDelivery(
+                    buildRemoteCatalog: false,
+                    disableCatalogUpdateOnStartup: true,
+                    includeInBuild: true,
+                    AddressableAssetSettings.kLocalBuildPath,
+                    AddressableAssetSettings.kLocalLoadPath,
+                    "https://cdn.example.invalid/warline");
+
+        Assert.That(result.NetworkLoadPath, Is.True);
+        Assert.Throws<InvalidOperationException>(
+            () => OperationMapDenseCityCandidateRuntimeContentBuilder
+                .RequireLocalBundleDelivery(result));
     }
 
     private static string WriteBytes(string root, string relativePath, int count)

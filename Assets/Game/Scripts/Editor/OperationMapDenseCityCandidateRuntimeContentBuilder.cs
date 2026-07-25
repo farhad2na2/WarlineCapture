@@ -290,6 +290,8 @@ namespace Game.Editor
                 if (schema == null)
                     throw new InvalidOperationException("Dense candidate group has no bundled schema.");
 
+                settings.BuildRemoteCatalog = false;
+                settings.DisableCatalogUpdateOnStartup = true;
                 schema.BuildPath.SetVariableByName(
                     settings,
                     AddressableAssetSettings.kLocalBuildPath);
@@ -297,11 +299,20 @@ namespace Game.Editor
                     settings,
                     AddressableAssetSettings.kLocalLoadPath);
                 schema.UseDefaultSchemaSettings = false;
+                schema.IncludeInBuild = true;
                 schema.Compression = BundledAssetGroupSchema.BundleCompressionMode.LZ4;
                 schema.UseAssetBundleCrc = true;
                 schema.UseAssetBundleCrcForCachedBundles = true;
                 schema.BundleNaming = BundledAssetGroupSchema.BundleNamingStyle.FileNameHash;
                 schema.BundleMode = BundledAssetGroupSchema.BundlePackingMode.PackTogether;
+                RequireLocalBundleDelivery(
+                    MeasureLocalBundleDelivery(
+                        settings.BuildRemoteCatalog,
+                        settings.DisableCatalogUpdateOnStartup,
+                        schema.IncludeInBuild,
+                        schema.BuildPath.GetName(settings),
+                        schema.LoadPath.GetName(settings),
+                        schema.LoadPath.GetValue(settings, false)));
 
                 AddEntry(
                     settings,
@@ -471,6 +482,53 @@ namespace Game.Editor
 
         private static string NormalizeAssetPath(string path) =>
             (path ?? string.Empty).Replace('\\', '/').Trim();
+
+        internal static LocalBundleDeliveryResult MeasureLocalBundleDelivery(
+            bool buildRemoteCatalog,
+            bool disableCatalogUpdateOnStartup,
+            bool includeInBuild,
+            string buildPathVariableName,
+            string loadPathVariableName,
+            string loadPathValue)
+        {
+            string normalizedLoadPath = (loadPathValue ?? string.Empty).Trim();
+            bool networkLoadPath =
+                Uri.TryCreate(normalizedLoadPath, UriKind.Absolute, out Uri uri) &&
+                !uri.IsFile;
+            return new LocalBundleDeliveryResult(
+                buildRemoteCatalog,
+                disableCatalogUpdateOnStartup,
+                includeInBuild,
+                string.Equals(
+                    buildPathVariableName,
+                    AddressableAssetSettings.kLocalBuildPath,
+                    StringComparison.Ordinal),
+                string.Equals(
+                    loadPathVariableName,
+                    AddressableAssetSettings.kLocalLoadPath,
+                    StringComparison.Ordinal),
+                networkLoadPath);
+        }
+
+        internal static void RequireLocalBundleDelivery(LocalBundleDeliveryResult result)
+        {
+            if (result.BuildRemoteCatalog ||
+                !result.DisableCatalogUpdateOnStartup ||
+                !result.IncludeInBuild ||
+                !result.UsesLocalBuildPath ||
+                !result.UsesLocalLoadPath ||
+                result.NetworkLoadPath)
+            {
+                throw new InvalidOperationException(
+                    "Dense local bundle delivery failed: " +
+                    $"remoteCatalog={(result.BuildRemoteCatalog ? 1 : 0)} " +
+                    $"startupUpdatesDisabled={(result.DisableCatalogUpdateOnStartup ? 1 : 0)} " +
+                    $"includeInBuild={(result.IncludeInBuild ? 1 : 0)} " +
+                    $"localBuildPath={(result.UsesLocalBuildPath ? 1 : 0)} " +
+                    $"localLoadPath={(result.UsesLocalLoadPath ? 1 : 0)} " +
+                    $"networkLoadPath={(result.NetworkLoadPath ? 1 : 0)}.");
+            }
+        }
 
         private static EntityContentBuildResult BuildEntityContent(
             OperationMapEntitySceneCandidateAddressablesLayoutPlan plan)
@@ -1338,6 +1396,32 @@ namespace Game.Editor
             internal int EnabledPlayerBuildSceneCount { get; }
             internal int SourceHierarchyExplicitAddressableEntryCount { get; }
             internal int SourceHierarchyPlayerBuildSceneCount { get; }
+        }
+
+        internal readonly struct LocalBundleDeliveryResult
+        {
+            internal LocalBundleDeliveryResult(
+                bool buildRemoteCatalog,
+                bool disableCatalogUpdateOnStartup,
+                bool includeInBuild,
+                bool usesLocalBuildPath,
+                bool usesLocalLoadPath,
+                bool networkLoadPath)
+            {
+                BuildRemoteCatalog = buildRemoteCatalog;
+                DisableCatalogUpdateOnStartup = disableCatalogUpdateOnStartup;
+                IncludeInBuild = includeInBuild;
+                UsesLocalBuildPath = usesLocalBuildPath;
+                UsesLocalLoadPath = usesLocalLoadPath;
+                NetworkLoadPath = networkLoadPath;
+            }
+
+            internal bool BuildRemoteCatalog { get; }
+            internal bool DisableCatalogUpdateOnStartup { get; }
+            internal bool IncludeInBuild { get; }
+            internal bool UsesLocalBuildPath { get; }
+            internal bool UsesLocalLoadPath { get; }
+            internal bool NetworkLoadPath { get; }
         }
 
         [Serializable]

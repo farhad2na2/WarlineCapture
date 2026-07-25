@@ -19,6 +19,7 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
             suite.RequireSupportedValidationBuildTarget_AcceptsMacOs,
             suite.RequireSupportedValidationBuildTarget_RejectsAndroidOrMissingSupport,
             suite.GetSharedAddressablesOutputPath_MapsStandalonePlatform,
+            suite.GetDenseLayoutOutputTransactionPaths_CoversCompleteOwnerSet,
             suite.MeasureEntityContent_SeparatesArchiveAndMetadataBytes,
             suite.MeasureEntityContent_FingerprintsArchiveSetDeterministically,
             suite.MeasureEntityContent_RejectsMissingCatalog,
@@ -112,6 +113,28 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
         Assert.Throws<InvalidOperationException>(
             () => OperationMapDenseCityCandidateRuntimeContentBuilder
                 .GetSharedAddressablesOutputPath(BuildTarget.Android));
+    }
+
+    [Test]
+    public void GetDenseLayoutOutputTransactionPaths_CoversCompleteOwnerSet()
+    {
+        Assert.That(
+            OperationMapDenseCityCandidateRuntimeContentBuilder
+                .GetDenseLayoutOutputTransactionPaths(),
+            Is.EqualTo(
+                new[]
+                {
+                    OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                        .DenseCandidateDefinitionPath,
+                    OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                        .DenseCandidateDefinitionPath + ".meta",
+                    OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                        .DenseCandidateRuntimeBindingPath,
+                    OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                        .DenseCandidateRuntimeBindingPath + ".meta",
+                    OperationMapDenseCityCandidateRuntimeContentBuilder
+                        .DenseCandidateLayoutReportPath
+                }));
     }
 
     [Test]

@@ -35,6 +35,8 @@ namespace Game.Editor
             "Design/AgentReports/2026-07-25_dense_city_frozen_rollback_byte_inventory.json";
         internal const string SourceHierarchyExclusionReportPath =
             "Design/AgentReports/2026-07-25_dense_city_source_hierarchy_exclusion.json";
+        internal const string DenseCandidateLayoutReportPath =
+            "Design/AgentReports/2026-07-24_dense_city_candidate_entityscene_addressables_layout.json";
         internal const string AddressablesOutputPath =
             "Library/OperationMapDenseCityRuntimeContent/Addressables";
         internal const string BuildLayoutOutputPath =
@@ -64,18 +66,30 @@ namespace Game.Editor
             BuildTarget buildTarget = RequireSupportedValidationBuildTarget();
             string sharedAddressablesOutputPath =
                 GetSharedAddressablesOutputPath(buildTarget);
-            OperationMapEntitySceneCandidateAddressablesLayoutBuilder
-                .BuildDenseCityCandidateEntitySceneAddressablesLayout();
-            if (!OperationMapEntitySceneCandidateAddressablesLayoutPlanner.TryCreateDenseCityPlan(
-                    out OperationMapEntitySceneCandidateAddressablesLayoutPlan plan,
-                    out string planError))
-            {
-                throw new InvalidOperationException(
-                    $"Dense candidate runtime-content plan rejected: {planError}");
-            }
-
             string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
             RequireFreeDiskSpace(projectRoot);
+            OperationMapEntitySceneCandidateBakeAll.CandidateFileTransaction layoutTransaction =
+                OperationMapEntitySceneCandidateBakeAll.CandidateFileTransaction.Capture(
+                    projectRoot,
+                    GetDenseLayoutOutputTransactionPaths());
+            OperationMapEntitySceneCandidateAddressablesLayoutPlan plan;
+            try
+            {
+                OperationMapEntitySceneCandidateAddressablesLayoutBuilder
+                    .BuildDenseCityCandidateEntitySceneAddressablesLayout();
+                if (!OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                        .TryCreateDenseCityPlan(out plan, out string planError))
+                {
+                    throw new InvalidOperationException(
+                        $"Dense candidate runtime-content plan rejected: {planError}");
+                }
+            }
+            catch
+            {
+                layoutTransaction.Rollback();
+                throw;
+            }
+
             OperationMapEntitySceneCandidateBakeAll.ProtectedProductionSnapshot protectedSnapshot =
                 OperationMapEntitySceneCandidateBakeAll.ProtectedProductionSnapshot.Capture(
                     projectRoot,
@@ -153,9 +167,24 @@ namespace Game.Editor
             {
                 productionSettingsTransaction.Rollback();
                 reportTransaction.Rollback();
+                layoutTransaction.Rollback();
                 throw;
             }
         }
+
+        internal static string[] GetDenseLayoutOutputTransactionPaths() =>
+            new[]
+            {
+                OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                    .DenseCandidateDefinitionPath,
+                OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                    .DenseCandidateDefinitionPath + ".meta",
+                OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                    .DenseCandidateRuntimeBindingPath,
+                OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                    .DenseCandidateRuntimeBindingPath + ".meta",
+                DenseCandidateLayoutReportPath
+            };
 
         [MenuItem(
             "Game/Operation Maps/EntityScene Migration/Report Dense City Frozen Rollback Bytes")]

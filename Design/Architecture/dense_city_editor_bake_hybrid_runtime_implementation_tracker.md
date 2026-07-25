@@ -732,7 +732,7 @@ Runtime procedural generation is not the fallback for a rendering or packaging f
 
 Progress is checklist based. Every checkbox counts. Update the count, phase status, and validation log in the same stable change that completes an item.
 
-Current progress: **108 / 149 (72%)**
+Current progress: **109 / 149 (73%)**
 
 | Phase | Status |
 |---|---|
@@ -747,7 +747,7 @@ Current progress: **108 / 149 (72%)**
 | Phase 7: Runtime package separation | In progress; production thin binding identity plus accepted and dense-candidate EntityScene binding structures, exact definition references, distinct GUID ownership, five-root candidate ownership with zero authoring-derived explicit shared entries, isolated dense macOS Addressables/Entities content, and dense Addressables-loaded runtime parity are validated |
 | Phase 8: Runtime lifecycle validation | In progress; packed transform/bounds and dense fixed-camera parity, fail-closed readiness, authored-vehicle movement, resident camera culling, complete unload, sequential production-route lifecycle, post-bind ownership isolation, ECS-only map-visual lifecycle, and complete Editor PlayMode validation complete |
 | Phase 9: Android acceptance | Not started |
-| Phase 10: Documentation and closeout | Not started |
+| Phase 10: Documentation and closeout | In progress; author workflow, authored ECS workflow, generated/authored ownership, and generated-output rollback ownership documented |
 
 ## 21. Implementation Checklist
 
@@ -984,7 +984,8 @@ Current progress: **108 / 149 (72%)**
   - Accepted 2026-07-25 in `Design/Architecture/operation_map_authored_ecs_workflow.md`: the workflow identifies source/candidate/runtime boundaries, exact presentation roles, building/vehicle/render-only authoring contracts, candidate migration and validation commands, frozen static ownership, cutover prerequisites, and both candidate and committed-production rollback paths. It explicitly states that candidate success does not authorize production cutover or static-package deletion.
 - [x] Document generated versus authored ownership and how to preserve hand edits.
   - Accepted 2026-07-25 in `Design/Architecture/dense_city_generated_authored_ownership.md`: an explicit ownership matrix and hierarchy contract distinguish persistent authored sources, two disposable generated roots, derived candidate/evidence outputs, and the frozen rollback package. The promotion procedures cover generator-family changes, exclusion/correction overrides, and persistent visual/gameplay objects without preserving candidate-instance edits.
-- [ ] Document every generated output owner and rollback path.
+- [x] Document every generated output owner and rollback path.
+  - Accepted 2026-07-25 in `Design/Architecture/dense_city_generated_output_ownership.md`: the owner matrix covers candidate scenes and marked roots, proxy meshes, shared/generated material and legacy road support folders, candidate SubScene/definitions/thin bindings/layout, isolated Addressables and Entities content, runtime parity binary, tracked report/capture families, transient logs/caches, and the frozen static rollback package. It distinguishes transaction-journaled rollback from deterministic regeneration plus version-control rollback where no journal exists.
 - [ ] Update the parent operation-map tracker with accepted dense-city implementation evidence.
 - [ ] Update architecture/naming guardrails for all new types and exceptions, if any.
 - [ ] Record final deterministic hashes, counts, package sizes, performance evidence, logs, and screenshots.
@@ -1219,6 +1220,7 @@ Extend existing tests rather than duplicating them for:
 | 2026-07-25 | Dense-city author workflow documentation | `Design/Architecture/dense_city_author_workflow.md`; source-code menu/path/report reference audit; tracker checkbox count `106/149`; `git diff --check` | Passed documentation step; device and production-cutover acceptance remain open | Documented the exact candidate-only override, regeneration, validation, Bake All, report-review, device-test, rejection, rollback, and commit flow. The workflow explicitly prevents saving disposable previews over accepted assets, identifies the candidate transaction as the acceptance path, preserves production `StaticSceneChunks`, and does not claim Android evidence that has not run. Progress is 106/149 (71%). |
 | 2026-07-25 | Existing-map authored ECS and rollback workflow documentation | `Design/Architecture/operation_map_authored_ecs_workflow.md`; source-code menu/type/path reference audit; tracker checkbox count `107/149`; `git diff --check` | Passed documentation step; production cutover and static cleanup remain open | Documented the accepted source, candidate, and runtime boundaries; three presentation roles; proxy ownership; existing building, vehicle, and render-only authoring rules; exact migration/validation/Bake All sequence; frozen static rollback root; cutover prerequisites; and candidate versus committed-production rollback. The workflow does not mutate or authorize mutation of accepted sources, production Addressables, or rollback artifacts. Progress is 107/149 (72%). |
 | 2026-07-25 | Generated-versus-authored ownership documentation | `Design/Architecture/dense_city_generated_authored_ownership.md`; source-code root/type/enum reference audit; tracker checkbox count `108/149`; `git diff --check` | Passed documentation step | Documented the persistent authored, disposable generated, derived evidence, candidate, and frozen rollback ownership classes; exact two-root hierarchy; authored override contract; and safe promotion paths for procedural, exclusion, visual, building, vehicle, and anchor edits. The document rejects name inference, collider exclusions, candidate-as-source edits, report edits, rollback mutation, and unauthorized production cutover. Progress is 108/149 (72%). |
+| 2026-07-25 | Generated-output owner and rollback documentation | `Design/Architecture/dense_city_generated_output_ownership.md`; source-code producer/path/transaction audit; tracker checkbox count `109/149`; `git diff --check` | Passed documentation step | Assigned the candidate scene/root, proxy, material, definition/binding/layout, isolated runtime-content, evidence, transient, and frozen-static families to exact producers and rollback paths. The contract explicitly records the surface-proxy and runtime-content journals, candidate file transactions, protected production snapshots, and the weaker version-control rollback required for candidate shared materials and legacy support folders that have no complete transaction journal. Progress is 109/149 (73%). |
 
 ## 25. Completion Rule
 

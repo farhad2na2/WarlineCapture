@@ -176,4 +176,3 @@ Follow `operation_map_scene_split_rollback_recipe.md`:
 5. rerun the authoritative baseline probe, static ownership/integrity tests, two no-op static bakes, Editor gameplay parity, and risk-required Android validation.
 
 Do not use a repository-wide reset/clean, recreate evidence manually, or delete unlisted paths.
-

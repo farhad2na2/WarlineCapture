@@ -732,7 +732,7 @@ Runtime procedural generation is not the fallback for a rendering or packaging f
 
 Progress is checklist based. Every checkbox counts. Update the count, phase status, and validation log in the same stable change that completes an item.
 
-Current progress: **109 / 149 (73%)**
+Current progress: **110 / 149 (74%)**
 
 | Phase | Status |
 |---|---|
@@ -747,7 +747,7 @@ Current progress: **109 / 149 (73%)**
 | Phase 7: Runtime package separation | In progress; production thin binding identity plus accepted and dense-candidate EntityScene binding structures, exact definition references, distinct GUID ownership, five-root candidate ownership with zero authoring-derived explicit shared entries, isolated dense macOS Addressables/Entities content, and dense Addressables-loaded runtime parity are validated |
 | Phase 8: Runtime lifecycle validation | In progress; packed transform/bounds and dense fixed-camera parity, fail-closed readiness, authored-vehicle movement, resident camera culling, complete unload, sequential production-route lifecycle, post-bind ownership isolation, ECS-only map-visual lifecycle, and complete Editor PlayMode validation complete |
 | Phase 9: Android acceptance | Not started |
-| Phase 10: Documentation and closeout | In progress; author workflow, authored ECS workflow, generated/authored ownership, and generated-output rollback ownership documented |
+| Phase 10: Documentation and closeout | In progress; author workflow, authored ECS workflow, generated/authored ownership, generated-output rollback ownership, and parent-tracker evidence synchronization documented |
 
 ## 21. Implementation Checklist
 
@@ -986,7 +986,8 @@ Current progress: **109 / 149 (73%)**
   - Accepted 2026-07-25 in `Design/Architecture/dense_city_generated_authored_ownership.md`: an explicit ownership matrix and hierarchy contract distinguish persistent authored sources, two disposable generated roots, derived candidate/evidence outputs, and the frozen rollback package. The promotion procedures cover generator-family changes, exclusion/correction overrides, and persistent visual/gameplay objects without preserving candidate-instance edits.
 - [x] Document every generated output owner and rollback path.
   - Accepted 2026-07-25 in `Design/Architecture/dense_city_generated_output_ownership.md`: the owner matrix covers candidate scenes and marked roots, proxy meshes, shared/generated material and legacy road support folders, candidate SubScene/definitions/thin bindings/layout, isolated Addressables and Entities content, runtime parity binary, tracked report/capture families, transient logs/caches, and the frozen static rollback package. It distinguishes transaction-journaled rollback from deterministic regeneration plus version-control rollback where no journal exists.
-- [ ] Update the parent operation-map tracker with accepted dense-city implementation evidence.
+- [x] Update the parent operation-map tracker with accepted dense-city implementation evidence.
+  - Accepted 2026-07-25 in `Design/Architecture/operation_map_scene_split_and_generator_tracker.md`: the parent now records the dense candidate's ECS presentation, semantic/proxy, isolated packaging, parity, and ECS-only destruction evidence together with its exact non-cutover boundary. Parent checklist counts remain unchanged because production remains `StaticSceneChunks` and Android/package/performance/static-retirement gates are still open.
 - [ ] Update architecture/naming guardrails for all new types and exceptions, if any.
 - [ ] Record final deterministic hashes, counts, package sizes, performance evidence, logs, and screenshots.
 - [ ] Confirm all generated artifacts are committed through their accepted ownership policy and transient logs/build caches are excluded.
@@ -1221,6 +1222,7 @@ Extend existing tests rather than duplicating them for:
 | 2026-07-25 | Existing-map authored ECS and rollback workflow documentation | `Design/Architecture/operation_map_authored_ecs_workflow.md`; source-code menu/type/path reference audit; tracker checkbox count `107/149`; `git diff --check` | Passed documentation step; production cutover and static cleanup remain open | Documented the accepted source, candidate, and runtime boundaries; three presentation roles; proxy ownership; existing building, vehicle, and render-only authoring rules; exact migration/validation/Bake All sequence; frozen static rollback root; cutover prerequisites; and candidate versus committed-production rollback. The workflow does not mutate or authorize mutation of accepted sources, production Addressables, or rollback artifacts. Progress is 107/149 (72%). |
 | 2026-07-25 | Generated-versus-authored ownership documentation | `Design/Architecture/dense_city_generated_authored_ownership.md`; source-code root/type/enum reference audit; tracker checkbox count `108/149`; `git diff --check` | Passed documentation step | Documented the persistent authored, disposable generated, derived evidence, candidate, and frozen rollback ownership classes; exact two-root hierarchy; authored override contract; and safe promotion paths for procedural, exclusion, visual, building, vehicle, and anchor edits. The document rejects name inference, collider exclusions, candidate-as-source edits, report edits, rollback mutation, and unauthorized production cutover. Progress is 108/149 (72%). |
 | 2026-07-25 | Generated-output owner and rollback documentation | `Design/Architecture/dense_city_generated_output_ownership.md`; source-code producer/path/transaction audit; tracker checkbox count `109/149`; `git diff --check` | Passed documentation step | Assigned the candidate scene/root, proxy, material, definition/binding/layout, isolated runtime-content, evidence, transient, and frozen-static families to exact producers and rollback paths. The contract explicitly records the surface-proxy and runtime-content journals, candidate file transactions, protected production snapshots, and the weaker version-control rollback required for candidate shared materials and legacy support folders that have no complete transaction journal. Progress is 109/149 (73%). |
+| 2026-07-25 | Parent operation-map tracker evidence synchronization | `Design/Architecture/operation_map_scene_split_and_generator_tracker.md`; dense tracker evidence/production-boundary audit; tracker checkbox count `110/149`; `git diff --check` | Passed documentation step | Added a parent-facing candidate-only dense-city evidence snapshot and validation-log row. It records the accepted ECS presentation, semantic/proxy, isolated packaging, parity, and ECS-only building proof while preserving the parent’s completion counts and explicit production boundary: `StaticSceneChunks`, production Addressables, frozen static rollback, and Android/package/performance/static-retirement gates remain unchanged/open. Progress is 110/149 (74%). |
 
 ## 25. Completion Rule
 

@@ -7,6 +7,7 @@ namespace Game.Editor
     using System.Globalization;
     using System.IO;
     using System.Linq;
+    using System.Runtime.CompilerServices;
     using System.Security.Cryptography;
     using System.Text;
     using Game.Authoring;
@@ -75,8 +76,11 @@ namespace Game.Editor
                 worldMatrices,
                 out int generatedBakedRenderEntityCount,
                 out int unresolvedGeneratedRendererEntityCount,
+                out int unresolvedGeneratedMeshCount,
                 out int unresolvedGeneratedMaterialCount,
+                out int generatedMeshMismatchCount,
                 out int generatedMaterialMismatchCount,
+                out int generatedManagedInstanceComponentCount,
                 out int generatedBaseColorPropertyCount,
                 out int generatedBaseColorOverrideCount,
                 out int generatedBaseColorMismatchCount,
@@ -139,9 +143,16 @@ namespace Game.Editor
                           bakedIndex.DuplicateStableIds.Length == 0 &&
                           missingBakedStableIds.Length == 0 &&
                           unexpectedBakedStableIds.Length == 0 &&
+                          rendererBakeMap.PersistentSourceFailureCount == 0 &&
+                          rendererBakeMap.RepeatedPrefabSourceCount > 0 &&
+                          rendererBakeMap.RepeatedPresentationSignatureCount > 0 &&
                           unresolvedGeneratedRendererEntityCount == 0 &&
+                          unresolvedGeneratedMeshCount == 0 &&
                           unresolvedGeneratedMaterialCount == 0 &&
+                          generatedMeshMismatchCount == 0 &&
                           generatedMaterialMismatchCount == 0 &&
+                          generatedManagedInstanceComponentCount == 0 &&
+                          rendererBakeMap.RepeatedSignatureAssetPairMismatchCount == 0 &&
                           generatedBaseColorPropertyCount ==
                           generatedBaseColorOverrideCount &&
                           generatedBaseColorMismatchCount == 0 &&
@@ -150,7 +161,7 @@ namespace Game.Editor
             var report = new DenseCityGeneratedTransformParityReport
             {
                 schema = "warline.operation-map.dense-city-generated-transform-parity",
-                schemaVersion = 1,
+                schemaVersion = 2,
                 checkpoint = "ecs-bake",
                 result = passed ? "DenseCityGeneratedTransformParityPassed" :
                     "DenseCityGeneratedTransformParityRejected",
@@ -160,9 +171,35 @@ namespace Game.Editor
                 uniqueBakedIdentityCount = bakedIndex.AllStableIds.Count,
                 generatedCandidateRendererEntityCount = rendererBakeMap.ExpectedEntryCount,
                 generatedBakedRenderEntityCount = generatedBakedRenderEntityCount,
+                persistentGeneratedSourceFailureCount = rendererBakeMap.PersistentSourceFailureCount,
+                generatedPrefabBackedRendererEntryCount =
+                    rendererBakeMap.PrefabBackedRendererEntryCount,
+                generatedMeshBackedRendererEntryCount =
+                    rendererBakeMap.MeshBackedRendererEntryCount,
+                missingGeneratedPrefabRendererSourceCount =
+                    rendererBakeMap.MissingPrefabRendererSourceCount,
+                missingGeneratedPrefabMeshSourceCount =
+                    rendererBakeMap.MissingPrefabMeshSourceCount,
+                nonPersistentGeneratedMeshBackedSourceCount =
+                    rendererBakeMap.NonPersistentMeshBackedSourceCount,
+                missingGeneratedMaterialSourceCount = rendererBakeMap.MissingMaterialSourceCount,
+                generatedPrefabSourceIdentityCount = rendererBakeMap.PrefabSourceIdentityCount,
+                repeatedGeneratedPrefabSourceCount = rendererBakeMap.RepeatedPrefabSourceCount,
+                repeatedGeneratedPrefabPlacementCount = rendererBakeMap.RepeatedPrefabPlacementCount,
+                generatedPresentationSignatureCount = rendererBakeMap.PresentationSignatureCount,
+                repeatedGeneratedPresentationSignatureCount =
+                    rendererBakeMap.RepeatedPresentationSignatureCount,
+                repeatedGeneratedPresentationEntryCount =
+                    rendererBakeMap.RepeatedPresentationEntryCount,
                 unresolvedGeneratedRendererEntityCount = unresolvedGeneratedRendererEntityCount,
+                unresolvedGeneratedMeshCount = unresolvedGeneratedMeshCount,
                 unresolvedGeneratedMaterialCount = unresolvedGeneratedMaterialCount,
+                generatedMeshMismatchCount = generatedMeshMismatchCount,
                 generatedMaterialMismatchCount = generatedMaterialMismatchCount,
+                generatedManagedInstanceComponentCount = generatedManagedInstanceComponentCount,
+                repeatedSignatureAssetPairMismatchCount =
+                    rendererBakeMap.RepeatedSignatureAssetPairMismatchCount,
+                sourceFailureSamples = rendererBakeMap.SourceFailureSamples,
                 generatedBaseColorPropertyCount = generatedBaseColorPropertyCount,
                 generatedBaseColorOverrideCount = generatedBaseColorOverrideCount,
                 generatedBaseColorMismatchCount = generatedBaseColorMismatchCount,
@@ -179,6 +216,8 @@ namespace Game.Editor
                 unexpectedBakedStableIdCount = unexpectedBakedStableIds.Length,
                 candidateIdentitySetSha256 = ComputeStringSetDigest(candidateGroups.Keys),
                 bakedIdentitySetSha256 = ComputeStringSetDigest(bakedIndex.AllStableIds),
+                generatedPresentationSignatureSetSha256 =
+                    rendererBakeMap.ComputePresentationSignatureSetDigest(),
                 evaluatedRowsSha256 = ComputeRowsDigest(rows),
                 rejectedSamples = rejectedSamples
             };
@@ -194,8 +233,17 @@ namespace Game.Editor
                     $"unexpected={unexpectedBakedStableIds.Length}, " +
                     $"renderers={generatedBakedRenderEntityCount}/{rendererBakeMap.ExpectedEntryCount}, " +
                     $"unresolved={unresolvedGeneratedRendererEntityCount}, " +
+                    $"sourceFailures={rendererBakeMap.PersistentSourceFailureCount}, " +
+                    $"repeatedPrefabs={rendererBakeMap.RepeatedPrefabSourceCount}/" +
+                    $"{rendererBakeMap.RepeatedPrefabPlacementCount}, " +
+                    $"repeatedSignatures={rendererBakeMap.RepeatedPresentationSignatureCount}/" +
+                    $"{rendererBakeMap.RepeatedPresentationEntryCount}, " +
+                    $"unresolvedMeshes={unresolvedGeneratedMeshCount}, " +
                     $"unresolvedMaterials={unresolvedGeneratedMaterialCount}, " +
+                    $"meshMismatches={generatedMeshMismatchCount}, " +
                     $"materialMismatches={generatedMaterialMismatchCount}, " +
+                    $"managedInstanceComponents={generatedManagedInstanceComponentCount}, " +
+                    $"sharedPairMismatches={rendererBakeMap.RepeatedSignatureAssetPairMismatchCount}, " +
                     $"baseColors={generatedBaseColorOverrideCount}/" +
                     $"{generatedBaseColorPropertyCount}, " +
                     $"baseColorMismatches={generatedBaseColorMismatchCount}, " +
@@ -393,8 +441,12 @@ namespace Game.Editor
 
                 string key = BuildRendererBakeKey(localBounds.center, localBounds.extents, world);
                 Material[] materials = renderer.sharedMaterials;
+                string prefabSourceIdentity = GetPersistentPrefabSourceIdentity(owner.gameObject);
+                string rendererSourceIdentity = GetPersistentRendererSourceIdentity(renderer);
                 for (int i = 0; i < renderEntityCount; i++)
                 {
+                    string meshIdentity = GetPersistentAssetIdentity(mesh);
+                    string materialIdentity = GetPersistentAssetIdentity(materials[i]);
                     result.Add(
                         key,
                         owner.StableId,
@@ -403,7 +455,13 @@ namespace Game.Editor
                         world,
                         materials[i],
                         mesh,
-                        i);
+                        i,
+                        prefabSourceIdentity,
+                        rendererSourceIdentity,
+                        meshIdentity,
+                        materialIdentity,
+                        GetPath(renderer.transform),
+                        renderer.GetType().FullName);
                 }
             }
             return result;
@@ -416,8 +474,11 @@ namespace Game.Editor
             Dictionary<Entity, Matrix4x4> worldMatrices,
             out int generatedBakedRenderEntityCount,
             out int unresolvedGeneratedRendererEntityCount,
+            out int unresolvedGeneratedMeshCount,
             out int unresolvedGeneratedMaterialCount,
+            out int generatedMeshMismatchCount,
             out int generatedMaterialMismatchCount,
+            out int generatedManagedInstanceComponentCount,
             out int generatedBaseColorPropertyCount,
             out int generatedBaseColorOverrideCount,
             out int generatedBaseColorMismatchCount,
@@ -426,8 +487,11 @@ namespace Game.Editor
             var result = new Dictionary<string, WorldBounds>(StringComparer.Ordinal);
             generatedBakedRenderEntityCount = 0;
             unresolvedGeneratedRendererEntityCount = 0;
+            unresolvedGeneratedMeshCount = 0;
             unresolvedGeneratedMaterialCount = 0;
+            generatedMeshMismatchCount = 0;
             generatedMaterialMismatchCount = 0;
+            generatedManagedInstanceComponentCount = 0;
             generatedBaseColorPropertyCount = 0;
             generatedBaseColorOverrideCount = 0;
             generatedBaseColorMismatchCount = 0;
@@ -503,6 +567,10 @@ namespace Game.Editor
                     continue;
 
                 generatedBakedRenderEntityCount++;
+                if (bakedMesh == null)
+                    unresolvedGeneratedMeshCount++;
+                else if (expectedEntry != null && expectedEntry.Mesh != bakedMesh)
+                    generatedMeshMismatchCount++;
                 if (bakedMaterial == null)
                     unresolvedGeneratedMaterialCount++;
                 else if (expectedEntry != null && expectedEntry.Material != bakedMaterial)
@@ -525,6 +593,10 @@ namespace Game.Editor
                         });
                     }
                 }
+                generatedManagedInstanceComponentCount +=
+                    CountManagedInstanceComponents(entityManager, entity);
+                if (expectedEntry != null)
+                    rendererBakeMap.RecordBakedAssetPair(expectedEntry, bakedMesh, bakedMaterial);
                 if (bakedMaterial != null && bakedMaterial.HasProperty("_BaseColor"))
                 {
                     generatedBaseColorPropertyCount++;
@@ -554,6 +626,53 @@ namespace Game.Editor
                 result[stableId] = transformed;
             }
             return result;
+        }
+
+        private static int CountManagedInstanceComponents(
+            EntityManager entityManager,
+            Entity entity)
+        {
+            int count = 0;
+            using NativeArray<ComponentType> componentTypes =
+                entityManager.GetComponentTypes(entity, Allocator.Temp);
+            for (int i = 0; i < componentTypes.Length; i++)
+            {
+                ComponentType componentType = componentTypes[i];
+                if (!componentType.IsManagedComponent ||
+                    componentType.TypeIndex == TypeManager.GetTypeIndex<RenderMeshArray>())
+                {
+                    continue;
+                }
+                count++;
+            }
+            return count;
+        }
+
+        private static string GetPersistentPrefabSourceIdentity(GameObject instance)
+        {
+            GameObject source = PrefabUtility.GetCorrespondingObjectFromOriginalSource(instance);
+            return GetPersistentAssetIdentity(source);
+        }
+
+        private static string GetPersistentRendererSourceIdentity(Renderer renderer)
+        {
+            Renderer source = PrefabUtility.GetCorrespondingObjectFromOriginalSource(renderer);
+            return GetPersistentAssetIdentity(source);
+        }
+
+        private static string GetPersistentAssetIdentity(UnityEngine.Object asset)
+        {
+            if (asset == null ||
+                !AssetDatabase.TryGetGUIDAndLocalFileIdentifier(
+                    asset,
+                    out string guid,
+                    out long localId) ||
+                string.IsNullOrEmpty(guid) ||
+                localId == 0)
+            {
+                return string.Empty;
+            }
+            return $"{guid}:{localId.ToString(CultureInfo.InvariantCulture)}";
         }
 
         private static string ResolveIdentityByParent(
@@ -910,9 +1029,47 @@ namespace Game.Editor
                 new(StringComparer.Ordinal);
             private readonly Dictionary<(long X, long Y, long Z), List<ExpectedRendererBakeEntry>>
                 entriesByFallbackCell = new();
+            private readonly Dictionary<string, HashSet<string>> placementsByPrefabSource =
+                new(StringComparer.Ordinal);
+            private readonly Dictionary<string, int> entriesByPresentationSignature =
+                new(StringComparer.Ordinal);
+            private readonly Dictionary<string, HashSet<SharedAssetPair>> bakedPairsBySignature =
+                new(StringComparer.Ordinal);
+            private readonly List<DenseCityGeneratedSourceFailureSample> sourceFailureSamples = new();
 
             internal int ExpectedEntryCount { get; private set; }
             internal int UnconsumedCount { get; private set; }
+            internal int PrefabBackedRendererEntryCount { get; private set; }
+            internal int MeshBackedRendererEntryCount { get; private set; }
+            internal int MissingPrefabRendererSourceCount { get; private set; }
+            internal int MissingPrefabMeshSourceCount { get; private set; }
+            internal int NonPersistentMeshBackedSourceCount { get; private set; }
+            internal int MissingMaterialSourceCount { get; private set; }
+            internal int PersistentSourceFailureCount =>
+                MissingPrefabRendererSourceCount +
+                MissingPrefabMeshSourceCount +
+                MissingMaterialSourceCount;
+            internal List<DenseCityGeneratedSourceFailureSample> SourceFailureSamples =>
+                sourceFailureSamples;
+            internal int PrefabSourceIdentityCount => placementsByPrefabSource.Count;
+            internal int RepeatedPrefabSourceCount =>
+                placementsByPrefabSource.Count(pair => pair.Value.Count > 1);
+            internal int RepeatedPrefabPlacementCount =>
+                placementsByPrefabSource
+                    .Where(pair => pair.Value.Count > 1)
+                    .Sum(pair => pair.Value.Count);
+            internal int PresentationSignatureCount => entriesByPresentationSignature.Count;
+            internal int RepeatedPresentationSignatureCount =>
+                entriesByPresentationSignature.Count(pair => pair.Value > 1);
+            internal int RepeatedPresentationEntryCount =>
+                entriesByPresentationSignature
+                    .Where(pair => pair.Value > 1)
+                    .Sum(pair => pair.Value);
+            internal int RepeatedSignatureAssetPairMismatchCount =>
+                bakedPairsBySignature.Count(pair =>
+                    entriesByPresentationSignature.TryGetValue(pair.Key, out int count) &&
+                    count > 1 &&
+                    pair.Value.Count != 1);
 
             internal void Add(
                 string key,
@@ -922,13 +1079,26 @@ namespace Game.Editor
                 Matrix4x4 world,
                 Material material,
                 Mesh mesh,
-                int subMesh)
+                int subMesh,
+                string prefabSourceIdentity,
+                string rendererSourceIdentity,
+                string meshIdentity,
+                string materialIdentity,
+                string rendererPath,
+                string rendererType)
             {
                 if (!entriesByKey.TryGetValue(key, out Queue<ExpectedRendererBakeEntry> queue))
                 {
                     queue = new Queue<ExpectedRendererBakeEntry>();
                     entriesByKey.Add(key, queue);
                 }
+                bool prefabBacked = !string.IsNullOrEmpty(prefabSourceIdentity);
+                string presentationSignature = BuildPresentationSignature(
+                    prefabSourceIdentity,
+                    rendererSourceIdentity,
+                    meshIdentity,
+                    materialIdentity,
+                    subMesh);
                 var entry = new ExpectedRendererBakeEntry(
                     stableId,
                     center,
@@ -936,7 +1106,8 @@ namespace Game.Editor
                     world,
                     material,
                     mesh,
-                    subMesh);
+                    subMesh,
+                    presentationSignature);
                 queue.Enqueue(entry);
                 (long X, long Y, long Z) cell = GetFallbackCell(world);
                 if (!entriesByFallbackCell.TryGetValue(
@@ -949,7 +1120,103 @@ namespace Game.Editor
                 fallbackEntries.Add(entry);
                 ExpectedEntryCount++;
                 UnconsumedCount++;
+                if (prefabBacked)
+                    PrefabBackedRendererEntryCount++;
+                else
+                    MeshBackedRendererEntryCount++;
+                if (prefabBacked && string.IsNullOrEmpty(rendererSourceIdentity))
+                    MissingPrefabRendererSourceCount++;
+                if (string.IsNullOrEmpty(meshIdentity))
+                {
+                    if (prefabBacked)
+                        MissingPrefabMeshSourceCount++;
+                    else
+                        NonPersistentMeshBackedSourceCount++;
+                }
+                if (string.IsNullOrEmpty(materialIdentity))
+                    MissingMaterialSourceCount++;
+
+                if ((prefabBacked && string.IsNullOrEmpty(rendererSourceIdentity)) ||
+                    (prefabBacked && string.IsNullOrEmpty(meshIdentity)) ||
+                    string.IsNullOrEmpty(materialIdentity))
+                {
+                    if (sourceFailureSamples.Count < MaxRejectedSamples)
+                    {
+                        sourceFailureSamples.Add(new DenseCityGeneratedSourceFailureSample
+                        {
+                            stableId = stableId,
+                            rendererPath = rendererPath,
+                            rendererType = rendererType,
+                            prefabSourceIdentity = prefabSourceIdentity,
+                            rendererSourceIdentity = rendererSourceIdentity,
+                            meshName = mesh != null ? mesh.name : string.Empty,
+                            meshIdentity = meshIdentity,
+                            materialName = material != null ? material.name : string.Empty,
+                            materialIdentity = materialIdentity,
+                            reason = string.IsNullOrEmpty(rendererSourceIdentity)
+                                ? "missing-prefab-renderer-source"
+                                : string.IsNullOrEmpty(meshIdentity)
+                                    ? "missing-prefab-mesh-source"
+                                    : "missing-material-source"
+                        });
+                    }
+                    return;
+                }
+                if (!prefabBacked && string.IsNullOrEmpty(meshIdentity))
+                    return;
+                if (prefabBacked)
+                {
+                    if (!placementsByPrefabSource.TryGetValue(
+                            prefabSourceIdentity,
+                            out HashSet<string> placements))
+                    {
+                        placements = new HashSet<string>(StringComparer.Ordinal);
+                        placementsByPrefabSource.Add(prefabSourceIdentity, placements);
+                    }
+                    placements.Add(stableId);
+                }
+                entriesByPresentationSignature.TryGetValue(
+                    presentationSignature,
+                    out int signatureCount);
+                entriesByPresentationSignature[presentationSignature] = signatureCount + 1;
             }
+
+            internal void RecordBakedAssetPair(
+                ExpectedRendererBakeEntry entry,
+                Mesh mesh,
+                Material material)
+            {
+                if (entry == null ||
+                    string.IsNullOrEmpty(entry.PresentationSignature) ||
+                    mesh == null ||
+                    material == null)
+                {
+                    return;
+                }
+                if (!bakedPairsBySignature.TryGetValue(
+                        entry.PresentationSignature,
+                        out HashSet<SharedAssetPair> pairs))
+                {
+                    pairs = new HashSet<SharedAssetPair>();
+                    bakedPairsBySignature.Add(entry.PresentationSignature, pairs);
+                }
+                pairs.Add(new SharedAssetPair(mesh, material));
+            }
+
+            internal string ComputePresentationSignatureSetDigest() =>
+                ComputeStringSetDigest(entriesByPresentationSignature
+                    .OrderBy(pair => pair.Key, StringComparer.Ordinal)
+                    .Select(pair => $"{pair.Key}|{pair.Value.ToString(CultureInfo.InvariantCulture)}"));
+
+            private static string BuildPresentationSignature(
+                string prefabSourceIdentity,
+                string rendererSourceIdentity,
+                string meshIdentity,
+                string materialIdentity,
+                int subMesh) =>
+                $"{(string.IsNullOrEmpty(prefabSourceIdentity) ? "mesh" : "prefab")}|" +
+                $"{prefabSourceIdentity}|{rendererSourceIdentity}|{meshIdentity}|" +
+                $"{materialIdentity}|{subMesh.ToString(CultureInfo.InvariantCulture)}";
 
             internal bool TryConsumeOwner(
                 string key,
@@ -1120,7 +1387,8 @@ namespace Game.Editor
                 Matrix4x4 world,
                 Material material,
                 Mesh mesh,
-                int subMesh)
+                int subMesh,
+                string presentationSignature)
             {
                 StableId = stableId;
                 Center = center;
@@ -1129,6 +1397,7 @@ namespace Game.Editor
                 Material = material;
                 Mesh = mesh;
                 SubMesh = subMesh;
+                PresentationSignature = presentationSignature;
             }
 
             internal string StableId { get; }
@@ -1138,7 +1407,32 @@ namespace Game.Editor
             internal Material Material { get; }
             internal Mesh Mesh { get; }
             internal int SubMesh { get; }
+            internal string PresentationSignature { get; }
             internal bool Consumed { get; set; }
+        }
+
+        private readonly struct SharedAssetPair : IEquatable<SharedAssetPair>
+        {
+            internal SharedAssetPair(Mesh mesh, Material material)
+            {
+                Mesh = mesh;
+                Material = material;
+            }
+
+            private Mesh Mesh { get; }
+            private Material Material { get; }
+
+            public bool Equals(SharedAssetPair other) =>
+                ReferenceEquals(Mesh, other.Mesh) &&
+                ReferenceEquals(Material, other.Material);
+
+            public override bool Equals(object obj) =>
+                obj is SharedAssetPair other && Equals(other);
+
+            public override int GetHashCode() =>
+                HashCode.Combine(
+                    Mesh != null ? RuntimeHelpers.GetHashCode(Mesh) : 0,
+                    Material != null ? RuntimeHelpers.GetHashCode(Material) : 0);
         }
 
         private sealed class DenseCityGeneratedTransformParityRowComparer :
@@ -1170,9 +1464,27 @@ namespace Game.Editor
             public int uniqueBakedIdentityCount;
             public int generatedCandidateRendererEntityCount;
             public int generatedBakedRenderEntityCount;
+            public int persistentGeneratedSourceFailureCount;
+            public int generatedPrefabBackedRendererEntryCount;
+            public int generatedMeshBackedRendererEntryCount;
+            public int missingGeneratedPrefabRendererSourceCount;
+            public int missingGeneratedPrefabMeshSourceCount;
+            public int nonPersistentGeneratedMeshBackedSourceCount;
+            public int missingGeneratedMaterialSourceCount;
+            public int generatedPrefabSourceIdentityCount;
+            public int repeatedGeneratedPrefabSourceCount;
+            public int repeatedGeneratedPrefabPlacementCount;
+            public int generatedPresentationSignatureCount;
+            public int repeatedGeneratedPresentationSignatureCount;
+            public int repeatedGeneratedPresentationEntryCount;
             public int unresolvedGeneratedRendererEntityCount;
+            public int unresolvedGeneratedMeshCount;
             public int unresolvedGeneratedMaterialCount;
+            public int generatedMeshMismatchCount;
             public int generatedMaterialMismatchCount;
+            public int generatedManagedInstanceComponentCount;
+            public int repeatedSignatureAssetPairMismatchCount;
+            public List<DenseCityGeneratedSourceFailureSample> sourceFailureSamples;
             public int generatedBaseColorPropertyCount;
             public int generatedBaseColorOverrideCount;
             public int generatedBaseColorMismatchCount;
@@ -1189,6 +1501,7 @@ namespace Game.Editor
             public int unexpectedBakedStableIdCount;
             public string candidateIdentitySetSha256;
             public string bakedIdentitySetSha256;
+            public string generatedPresentationSignatureSetSha256;
             public string evaluatedRowsSha256;
             public List<DenseCityGeneratedTransformParityRow> rejectedSamples;
         }
@@ -1202,6 +1515,21 @@ namespace Game.Editor
             public string candidateMaterialPath;
             public string bakedMaterialName;
             public string bakedMaterialPath;
+        }
+
+        [Serializable]
+        internal sealed class DenseCityGeneratedSourceFailureSample
+        {
+            public string stableId;
+            public string rendererPath;
+            public string rendererType;
+            public string prefabSourceIdentity;
+            public string rendererSourceIdentity;
+            public string meshName;
+            public string meshIdentity;
+            public string materialName;
+            public string materialIdentity;
+            public string reason;
         }
 
         [Serializable]

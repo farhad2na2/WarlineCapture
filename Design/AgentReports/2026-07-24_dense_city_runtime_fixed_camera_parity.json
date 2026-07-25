@@ -4,7 +4,7 @@
     "operationMapId": "opmap.skirmish.desert_base_01",
     "result": "DenseCityRuntimeFixedCameraParityPassed",
     "candidateSubSceneSha256": "750beab584ebe524188a7ddde65264e0e58f9dfe6738b5a99d8f7a7fd806b150",
-    "manifestSha256": "1f5b2c6a6b10b654d1b1eaf6954781d38049c52825d7f4bb92020e9df12cea3c",
+    "manifestSha256": "067c03ec0d58c781d429e9e4770409d728125313d3f1701d5e2b6fbde3bf9e5d",
     "width": 1280,
     "height": 720,
     "editorRendererCount": 82261,
@@ -22,14 +22,14 @@
             "editorPath": "Design/AgentReports/Captures/2026-07-24_dense_city_editor_fixed_camera_baseline/overview_editor.png",
             "runtimePath": "Design/AgentReports/Captures/2026-07-24_dense_city_runtime_fixed_camera_parity/overview_cycle_01_runtime.png",
             "editorSha256": "5622a8185404f4d3f6bde64ae56100731212495eae071daa8120998bc112edc2",
-            "runtimeSha256": "e3c0fecb5dfcc4be8428c681ad6a16f93d857a35e1e9d64ba1b607e1ada276f4",
-            "meanChannelDelta": 0.0003119968168903142,
+            "runtimeSha256": "e9713fa5c7256f6f122521a7925cc592c4fe864337cb8fddcbd9149562e5a534",
+            "meanChannelDelta": 0.00031211916939355433,
             "maximumChannelDelta": 0.43529412150382998,
-            "changedPixelRatio": 0.009415147826075554,
-            "interiorChangedPixelRatio": 0.000006510416824312415,
+            "changedPixelRatio": 0.009420572780072689,
+            "interiorChangedPixelRatio": 0.000005425347353593679,
             "edgePixelRatio": 0.18976670503616334,
             "editorLumaVariance": 0.012966993264853955,
-            "runtimeLumaVariance": 0.012963908724486828
+            "runtimeLumaVariance": 0.012964002788066864
         },
         {
             "view": "minimap",
@@ -37,14 +37,14 @@
             "editorPath": "Design/AgentReports/Captures/2026-07-24_dense_city_editor_fixed_camera_baseline/minimap_editor.png",
             "runtimePath": "Design/AgentReports/Captures/2026-07-24_dense_city_runtime_fixed_camera_parity/minimap_cycle_01_runtime.png",
             "editorSha256": "7e414330da89e70f7df7329ba6dcf4dfb2d6402bd218c4ddebbea312442222d8",
-            "runtimeSha256": "c40b5f0c4b2f824b244cd5ffb51ed4ca1b72c958a8c13ee0190164e2a9810178",
-            "meanChannelDelta": 0.000273368350462988,
+            "runtimeSha256": "799f46aa272438c5a77e4cdb2c3ebbbb155211d070a83341aca906a36a260616",
+            "meanChannelDelta": 0.00027338750078342855,
             "maximumChannelDelta": 0.3803921639919281,
             "changedPixelRatio": 0.009356553666293621,
             "interiorChangedPixelRatio": 0.00007812499825377017,
             "edgePixelRatio": 0.25135743618011477,
             "editorLumaVariance": 0.01091700792312622,
-            "runtimeLumaVariance": 0.010897543281316758
+            "runtimeLumaVariance": 0.010897568427026272
         },
         {
             "view": "detail_01",
@@ -52,14 +52,14 @@
             "editorPath": "Design/AgentReports/Captures/2026-07-24_dense_city_editor_fixed_camera_baseline/detail_01_editor.png",
             "runtimePath": "Design/AgentReports/Captures/2026-07-24_dense_city_runtime_fixed_camera_parity/detail_01_cycle_01_runtime.png",
             "editorSha256": "5a647d4f5bf42b953b6885770290f13de61b2059fbd26efe8e409377a0a1ffed",
-            "runtimeSha256": "ad7597aabf5474ac0d22f93b5748e645e980b817d153c3146e0873eb05414284",
-            "meanChannelDelta": 0.0015130655374377967,
+            "runtimeSha256": "36d27328ebdfb670dd416672833ef85af853bafb2b5bc9176e1d04410538ea85",
+            "meanChannelDelta": 0.0015100347809493542,
             "maximumChannelDelta": 0.5764706134796143,
-            "changedPixelRatio": 0.04362521693110466,
+            "changedPixelRatio": 0.043442923575639728,
             "interiorChangedPixelRatio": 0.002044270746409893,
-            "edgePixelRatio": 0.5267317891120911,
+            "edgePixelRatio": 0.5267285108566284,
             "editorLumaVariance": 0.007898334413766861,
-            "runtimeLumaVariance": 0.007937762886285782
+            "runtimeLumaVariance": 0.007936183363199234
         },
         {
             "view": "detail_02",
@@ -67,14 +67,14 @@
             "editorPath": "Design/AgentReports/Captures/2026-07-24_dense_city_editor_fixed_camera_baseline/detail_02_editor.png",
             "runtimePath": "Design/AgentReports/Captures/2026-07-24_dense_city_runtime_fixed_camera_parity/detail_02_cycle_01_runtime.png",
             "editorSha256": "8bd1292777c7a221b89f212600a866203d5d3a94e948bfc4fd461951950349cf",
-            "runtimeSha256": "b607fa9ee17261b86ada8574e4d50152fd0b10177cc2215bd15d5f9cf4ae7c73",
-            "meanChannelDelta": 0.0008526560850441456,
+            "runtimeSha256": "acb721f4ff22bcf3ab42c923824c9101f66852ee35e8215355ed352ed0796654",
+            "meanChannelDelta": 0.000853518838994205,
             "maximumChannelDelta": 0.5568627715110779,
-            "changedPixelRatio": 0.023554688319563867,
+            "changedPixelRatio": 0.023603515699505807,
             "interiorChangedPixelRatio": 0.0017827691044658423,
-            "edgePixelRatio": 0.2906716465950012,
+            "edgePixelRatio": 0.29066839814186098,
             "editorLumaVariance": 0.003983066417276859,
-            "runtimeLumaVariance": 0.004036879166960716
+            "runtimeLumaVariance": 0.004037532489746809
         },
         {
             "view": "detail_03",
@@ -82,14 +82,14 @@
             "editorPath": "Design/AgentReports/Captures/2026-07-24_dense_city_editor_fixed_camera_baseline/detail_03_editor.png",
             "runtimePath": "Design/AgentReports/Captures/2026-07-24_dense_city_runtime_fixed_camera_parity/detail_03_cycle_01_runtime.png",
             "editorSha256": "2674b072a0a46a7fe12f6139a35d6411eee064dc999e5d9f98b643d5c13b4c7d",
-            "runtimeSha256": "043fa30b4f16f76c83e0f6f9655f47445bde92b4176ea51a0834234c47743200",
-            "meanChannelDelta": 0.0013106659753248096,
+            "runtimeSha256": "67ea85a0d19388a94f12da9ab3a756827bfc82335efc55c389d4c08993e780a8",
+            "meanChannelDelta": 0.0013105766847729684,
             "maximumChannelDelta": 0.615686297416687,
-            "changedPixelRatio": 0.03543945401906967,
-            "interiorChangedPixelRatio": 0.0018218315672129393,
+            "changedPixelRatio": 0.03544379398226738,
+            "interiorChangedPixelRatio": 0.0018229166744276882,
             "edgePixelRatio": 0.4126909673213959,
             "editorLumaVariance": 0.034463681280612949,
-            "runtimeLumaVariance": 0.03446108102798462
+            "runtimeLumaVariance": 0.034461185336112979
         },
         {
             "view": "overview",
@@ -97,14 +97,14 @@
             "editorPath": "Design/AgentReports/Captures/2026-07-24_dense_city_editor_fixed_camera_baseline/overview_editor.png",
             "runtimePath": "Design/AgentReports/Captures/2026-07-24_dense_city_runtime_fixed_camera_parity/overview_cycle_02_runtime.png",
             "editorSha256": "5622a8185404f4d3f6bde64ae56100731212495eae071daa8120998bc112edc2",
-            "runtimeSha256": "aad592f60d2e019e74d656c891e4288e9db2c7e02f9ab0f92f35d17dc596d0a8",
-            "meanChannelDelta": 0.00031203299295157194,
+            "runtimeSha256": "cb254194415f02ef207c97d7d82d8f3befe2138599d4968a91fdb79a425db857",
+            "meanChannelDelta": 0.00031206809217110276,
             "maximumChannelDelta": 0.43529412150382998,
             "changedPixelRatio": 0.009417317807674408,
-            "interiorChangedPixelRatio": 0.000006510416824312415,
+            "interiorChangedPixelRatio": 0.000005425347353593679,
             "edgePixelRatio": 0.18976670503616334,
             "editorLumaVariance": 0.012966993264853955,
-            "runtimeLumaVariance": 0.012963898479938507
+            "runtimeLumaVariance": 0.01296395342797041
         },
         {
             "view": "minimap",
@@ -112,14 +112,14 @@
             "editorPath": "Design/AgentReports/Captures/2026-07-24_dense_city_editor_fixed_camera_baseline/minimap_editor.png",
             "runtimePath": "Design/AgentReports/Captures/2026-07-24_dense_city_runtime_fixed_camera_parity/minimap_cycle_02_runtime.png",
             "editorSha256": "7e414330da89e70f7df7329ba6dcf4dfb2d6402bd218c4ddebbea312442222d8",
-            "runtimeSha256": "33ee64229d6dcf8b1af0f12a31468acf63a4112560349315507634daca8852ca",
-            "meanChannelDelta": 0.0002732300490606576,
+            "runtimeSha256": "629926a3aacc7bb8b3535a85c747557bdc48f64d6e6888b9aa739d2628c696f5",
+            "meanChannelDelta": 0.0002732768771238625,
             "maximumChannelDelta": 0.3803921639919281,
-            "changedPixelRatio": 0.009351128712296486,
+            "changedPixelRatio": 0.00935329869389534,
             "interiorChangedPixelRatio": 0.00007812499825377017,
             "edgePixelRatio": 0.25135743618011477,
             "editorLumaVariance": 0.01091700792312622,
-            "runtimeLumaVariance": 0.010897547006607056
+            "runtimeLumaVariance": 0.010897560976445675
         },
         {
             "view": "detail_01",
@@ -127,14 +127,14 @@
             "editorPath": "Design/AgentReports/Captures/2026-07-24_dense_city_editor_fixed_camera_baseline/detail_01_editor.png",
             "runtimePath": "Design/AgentReports/Captures/2026-07-24_dense_city_runtime_fixed_camera_parity/detail_01_cycle_02_runtime.png",
             "editorSha256": "5a647d4f5bf42b953b6885770290f13de61b2059fbd26efe8e409377a0a1ffed",
-            "runtimeSha256": "ae4ca90157f83337fb44664e41dc2738f9b1a7f6b8b5eecdf5a77aa77f4d1270",
-            "meanChannelDelta": 0.001510181580670178,
+            "runtimeSha256": "567b761b06e6134f271675e87ac95ff5187a6637a831c4d3106e826f27488736",
+            "meanChannelDelta": 0.00151140708476305,
             "maximumChannelDelta": 0.5764706134796143,
-            "changedPixelRatio": 0.04344617947936058,
-            "interiorChangedPixelRatio": 0.0020453559700399639,
-            "edgePixelRatio": 0.5267295837402344,
+            "changedPixelRatio": 0.043529730290174487,
+            "interiorChangedPixelRatio": 0.002044270746409893,
+            "edgePixelRatio": 0.5267306566238403,
             "editorLumaVariance": 0.007898334413766861,
-            "runtimeLumaVariance": 0.007936286740005017
+            "runtimeLumaVariance": 0.007936622947454453
         },
         {
             "view": "detail_02",
@@ -142,14 +142,14 @@
             "editorPath": "Design/AgentReports/Captures/2026-07-24_dense_city_editor_fixed_camera_baseline/detail_02_editor.png",
             "runtimePath": "Design/AgentReports/Captures/2026-07-24_dense_city_runtime_fixed_camera_parity/detail_02_cycle_02_runtime.png",
             "editorSha256": "8bd1292777c7a221b89f212600a866203d5d3a94e948bfc4fd461951950349cf",
-            "runtimeSha256": "1e370983523c357e91cf3a7489bf20d2c8d5b4b1c88510e5112037ba10e41b22",
-            "meanChannelDelta": 0.0008525922312401235,
+            "runtimeSha256": "4ce6c3c324a5cf1e70e3c6af51c6b6941a97e923efda9b0bc179a5f16b087c10",
+            "meanChannelDelta": 0.0008535592351108789,
             "maximumChannelDelta": 0.5568627715110779,
-            "changedPixelRatio": 0.023557942360639573,
+            "changedPixelRatio": 0.023602429777383806,
             "interiorChangedPixelRatio": 0.0017827691044658423,
             "edgePixelRatio": 0.29066839814186098,
             "editorLumaVariance": 0.003983066417276859,
-            "runtimeLumaVariance": 0.004036915488541126
+            "runtimeLumaVariance": 0.004037491977214813
         },
         {
             "view": "detail_03",
@@ -157,14 +157,14 @@
             "editorPath": "Design/AgentReports/Captures/2026-07-24_dense_city_editor_fixed_camera_baseline/detail_03_editor.png",
             "runtimePath": "Design/AgentReports/Captures/2026-07-24_dense_city_runtime_fixed_camera_parity/detail_03_cycle_02_runtime.png",
             "editorSha256": "2674b072a0a46a7fe12f6139a35d6411eee064dc999e5d9f98b643d5c13b4c7d",
-            "runtimeSha256": "4b0dab0107cccd9a48a517e778b8d7ad3d339c988a308bd767929262cb527ab4",
-            "meanChannelDelta": 0.0013107191771268845,
+            "runtimeSha256": "a04daa9a857db019107a89120df161d78a550a43eb3e406ef49b6f6c520784e1",
+            "meanChannelDelta": 0.0013106436235830188,
             "maximumChannelDelta": 0.615686297416687,
-            "changedPixelRatio": 0.035440538078546527,
-            "interiorChangedPixelRatio": 0.0018229166744276882,
+            "changedPixelRatio": 0.03543402627110481,
+            "interiorChangedPixelRatio": 0.0018218315672129393,
             "edgePixelRatio": 0.4126909673213959,
             "editorLumaVariance": 0.034463681280612949,
-            "runtimeLumaVariance": 0.03446105495095253
+            "runtimeLumaVariance": 0.03446105867624283
         }
     ]
 }

@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.Text;
 using Game.Authoring;
 using Game.Configs;
 using Game.Editor;
@@ -25,6 +27,7 @@ public sealed class OperationMapEntityPresentationReadinessValidatorTests
             suite.Readiness_RejectsDuplicateSourceIdentity,
             suite.Readiness_RejectsIdentityUnderWrongRole,
             suite.Readiness_RejectsInactivePhysicsDescendant,
+            suite.ReadinessFailure_DoesNotMutateAcceptedHierarchy,
             suite.LegacyPlacementParity_AcceptsVehicleIdentityOwnedByUnitBaker,
             suite.LegacyPlacementParity_RejectsVehicleIdentityWithoutUnitBaker,
             suite.CurrentMapBaker_RunsReadinessBeforeContentMutation
@@ -104,6 +107,21 @@ public sealed class OperationMapEntityPresentationReadinessValidatorTests
             Is.False);
         StringAssert.Contains("InactiveCollider", error);
         StringAssert.Contains("BoxCollider", error);
+    }
+
+    [Test]
+    public void ReadinessFailure_DoesNotMutateAcceptedHierarchy()
+    {
+        Scene scene = SceneManager.GetActiveScene();
+        CreateValidHierarchy(scene);
+        string acceptedState = CaptureHierarchyState(scene);
+
+        Assert.That(
+            OperationMapEntityPresentationReadinessValidator.TryValidateScene(
+                scene, OperationMapId, 2, 1, 1, out string error),
+            Is.False);
+        Assert.That(error, Does.Contain("count"));
+        Assert.That(CaptureHierarchyState(scene), Is.EqualTo(acceptedState));
     }
 
     [Test]
@@ -204,6 +222,52 @@ public sealed class OperationMapEntityPresentationReadinessValidatorTests
         UnityEngine.Object.DestroyImmediate(buildingConfig);
         UnityEngine.Object.DestroyImmediate(vehicleConfig);
         UnityEngine.Object.DestroyImmediate(prefab);
+    }
+
+    private static string CaptureHierarchyState(Scene scene)
+    {
+        var builder = new StringBuilder();
+        GameObject[] roots = scene.GetRootGameObjects();
+        for (int index = 0; index < roots.Length; index++)
+            AppendHierarchyState(builder, roots[index].transform);
+        return builder.ToString();
+    }
+
+    private static void AppendHierarchyState(StringBuilder builder, Transform transform)
+    {
+        builder.Append(transform.name).Append('|')
+            .Append(transform.gameObject.activeSelf).Append('|');
+        AppendVector(builder, transform.localPosition);
+        AppendQuaternion(builder, transform.localRotation);
+        AppendVector(builder, transform.localScale);
+        Component[] components = transform.GetComponents<Component>();
+        for (int index = 0; index < components.Length; index++)
+        {
+            Component component = components[index];
+            builder.Append(component.GetType().FullName).Append(':');
+            if (component is not Transform)
+                builder.Append(EditorJsonUtility.ToJson(component));
+            builder.Append('|');
+        }
+        builder.Append('{');
+        for (int index = 0; index < transform.childCount; index++)
+            AppendHierarchyState(builder, transform.GetChild(index));
+        builder.Append('}');
+    }
+
+    private static void AppendVector(StringBuilder builder, Vector3 value)
+    {
+        builder.Append(value.x.ToString("R", CultureInfo.InvariantCulture)).Append(',')
+            .Append(value.y.ToString("R", CultureInfo.InvariantCulture)).Append(',')
+            .Append(value.z.ToString("R", CultureInfo.InvariantCulture)).Append('|');
+    }
+
+    private static void AppendQuaternion(StringBuilder builder, Quaternion value)
+    {
+        builder.Append(value.x.ToString("R", CultureInfo.InvariantCulture)).Append(',')
+            .Append(value.y.ToString("R", CultureInfo.InvariantCulture)).Append(',')
+            .Append(value.z.ToString("R", CultureInfo.InvariantCulture)).Append(',')
+            .Append(value.w.ToString("R", CultureInfo.InvariantCulture)).Append('|');
     }
 
     private static Transform[] CreateValidHierarchy(Scene scene)

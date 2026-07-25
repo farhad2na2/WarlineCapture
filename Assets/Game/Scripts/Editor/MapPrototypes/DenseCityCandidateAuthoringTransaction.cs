@@ -415,7 +415,7 @@ namespace Game.Editor
                 throw new InvalidOperationException(error);
         }
 
-        private static string MoveAssetFolderAside(string assetFolder)
+        internal static string MoveAssetFolderAside(string assetFolder)
         {
             if (!AssetDatabase.IsValidFolder(assetFolder))
                 return null;
@@ -435,7 +435,7 @@ namespace Game.Editor
             return backupFolder;
         }
 
-        private static void RestoreAssetFolder(string backupFolder, string assetFolder)
+        internal static void RestoreAssetFolder(string backupFolder, string assetFolder)
         {
             if (string.IsNullOrEmpty(backupFolder))
             {

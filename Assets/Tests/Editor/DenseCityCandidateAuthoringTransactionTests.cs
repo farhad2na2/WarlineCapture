@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,24 @@ public sealed class DenseCityCandidateAuthoringTransactionTests
     private const string PlacementConfigPath = TempRoot + "/building-placements.asset";
     private const string Hash =
         "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+
+    public static void RunProxyFailureRollbackValidation()
+    {
+        var suite = new DenseCityCandidateAuthoringTransactionTests();
+        suite.SetUp();
+        try
+        {
+            suite.ProxyFailure_RestoresAcceptedOutputAndRemovesPartialReplacement();
+        }
+        finally
+        {
+            suite.TearDown();
+        }
+
+        Debug.Log(
+            "[DenseCityCandidateAuthoringProxyFailureRollbackValidation] " +
+            "result=Passed tests=1");
+    }
 
     [SetUp]
     public void SetUp()
@@ -206,6 +225,56 @@ public sealed class DenseCityCandidateAuthoringTransactionTests
             Is.False);
         Assert.That(error, Does.Contain("changed the protected building-placement config"));
         Assert.That(error, Does.Contain("count=1/0"));
+    }
+
+    [Test]
+    public void ProxyFailure_RestoresAcceptedOutputAndRemovesPartialReplacement()
+    {
+        string proxyFolder = TempRoot + "/SurfaceProxies";
+        string acceptedAsset = proxyFolder + "/accepted-proxy.txt";
+        string partialAsset = proxyFolder + "/partial-proxy.txt";
+        EnsureFolder(proxyFolder);
+        File.WriteAllText(ToPhysicalPath(acceptedAsset), "accepted-proxy-bytes");
+        AssetDatabase.ImportAsset(acceptedAsset, ImportAssetOptions.ForceSynchronousImport);
+        string acceptedFolderGuid = AssetDatabase.AssetPathToGUID(proxyFolder);
+        string acceptedAssetGuid = AssetDatabase.AssetPathToGUID(acceptedAsset);
+        byte[] acceptedBytes = File.ReadAllBytes(ToPhysicalPath(acceptedAsset));
+
+        string backupFolder =
+            DenseCityCandidateAuthoringTransaction.MoveAssetFolderAside(proxyFolder);
+        try
+        {
+            EnsureFolder(proxyFolder);
+            File.WriteAllText(ToPhysicalPath(partialAsset), "partial-proxy-bytes");
+            AssetDatabase.ImportAsset(
+                partialAsset,
+                ImportAssetOptions.ForceSynchronousImport);
+            throw new InvalidOperationException("Injected proxy generation failure.");
+        }
+        catch (InvalidOperationException exception)
+        {
+            Assert.That(exception.Message, Does.Contain("Injected proxy generation failure"));
+            DenseCityCandidateAuthoringTransaction.RestoreAssetFolder(
+                backupFolder,
+                proxyFolder);
+            backupFolder = null;
+        }
+
+        Assert.That(AssetDatabase.IsValidFolder(proxyFolder), Is.True);
+        Assert.That(
+            AssetDatabase.AssetPathToGUID(proxyFolder),
+            Is.EqualTo(acceptedFolderGuid));
+        Assert.That(File.Exists(ToPhysicalPath(acceptedAsset)), Is.True);
+        Assert.That(
+            AssetDatabase.AssetPathToGUID(acceptedAsset),
+            Is.EqualTo(acceptedAssetGuid));
+        Assert.That(
+            File.ReadAllBytes(ToPhysicalPath(acceptedAsset)),
+            Is.EqualTo(acceptedBytes));
+        Assert.That(File.Exists(ToPhysicalPath(partialAsset)), Is.False);
+        Assert.That(
+            AssetDatabase.IsValidFolder(proxyFolder + "__TransactionBackup"),
+            Is.False);
     }
 
     [Test]

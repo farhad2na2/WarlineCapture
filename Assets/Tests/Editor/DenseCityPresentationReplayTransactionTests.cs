@@ -24,7 +24,7 @@ public sealed class DenseCityPresentationReplayTransactionTests
         Action[] tests =
         {
             suite.Realize_ReplaysBuildingsAndRenderOnlyPresentationsAsOneSet,
-            suite.Realize_LateRenderOnlyFailureRollsBackCompletePresentationSet
+            suite.Realize_LateFailurePreservesAcceptedAndRollsBackNewPresentationSet
         };
 
         for (int index = 0; index < tests.Length; index++)
@@ -109,7 +109,7 @@ public sealed class DenseCityPresentationReplayTransactionTests
     }
 
     [Test]
-    public void Realize_LateRenderOnlyFailureRollsBackCompletePresentationSet()
+    public void Realize_LateFailurePreservesAcceptedAndRollsBackNewPresentationSet()
     {
         (Scene mapScene, Scene entityScene) = CreateScenePair();
         try
@@ -120,6 +120,10 @@ public sealed class DenseCityPresentationReplayTransactionTests
                 DenseCityPresentationCategory.GameplayBuildingIntact,
                 GeneratedCityBuildingRole.Shop);
             Transform props = hierarchy.ResolveIndependentParent(DenseCityPresentationCategory.Prop);
+            var acceptedBuilding = new GameObject("AcceptedBuildingPresentation");
+            acceptedBuilding.transform.SetParent(buildings, false);
+            var acceptedProp = new GameObject("AcceptedPropPresentation");
+            acceptedProp.transform.SetParent(props, false);
 
             Assert.That(
                 () => DenseCityPresentationReplayTransaction.Realize(
@@ -128,8 +132,10 @@ public sealed class DenseCityPresentationReplayTransactionTests
                     hierarchy,
                     DenseCityBuildingDefinitionLibrary.LoadExisting()),
                 Throws.TypeOf<InvalidOperationException>().With.Message.Contains("material identity"));
-            Assert.That(buildings.childCount, Is.Zero);
-            Assert.That(props.childCount, Is.Zero);
+            Assert.That(buildings.childCount, Is.EqualTo(1));
+            Assert.That(buildings.GetChild(0).gameObject, Is.SameAs(acceptedBuilding));
+            Assert.That(props.childCount, Is.EqualTo(1));
+            Assert.That(props.GetChild(0).gameObject, Is.SameAs(acceptedProp));
         }
         finally
         {

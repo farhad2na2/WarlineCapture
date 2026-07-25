@@ -20,6 +20,23 @@ public sealed class DenseCityRenderOnlyPresentationRealizerTests
     private const string Hash =
         "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 
+    public static void RunWorldMatrixPrecisionValidation()
+    {
+        var suite = new DenseCityRenderOnlyPresentationRealizerTests();
+        suite.SetUp();
+        try
+        {
+            suite.ApplyWorldMatrix_CorrectsNestedLargeCoordinateTranslationResidual();
+        }
+        finally
+        {
+            suite.TearDown();
+        }
+
+        Debug.Log(
+            "[DenseCityWorldMatrixPrecisionValidation] result=Passed tests=1");
+    }
+
     [SetUp]
     public void SetUp()
     {
@@ -181,6 +198,46 @@ public sealed class DenseCityRenderOnlyPresentationRealizerTests
         Assert.That(
             () => DenseCityRenderOnlyPresentationRealizer.RequireMatrixParity(drifted, record),
             Throws.TypeOf<InvalidOperationException>().With.Message.Contains("matrix[12]"));
+    }
+
+    [Test]
+    public void ApplyWorldMatrix_CorrectsNestedLargeCoordinateTranslationResidual()
+    {
+        var grandParent = new GameObject("GrandParent");
+        var parent = new GameObject("Parent");
+        var child = new GameObject("Child");
+        try
+        {
+            grandParent.transform.SetPositionAndRotation(
+                new Vector3(1173.375f, 2.25f, 611.625f),
+                Quaternion.Euler(0f, 31f, 0f));
+            grandParent.transform.localScale = Vector3.one * 1.25f;
+            parent.transform.SetParent(grandParent.transform, false);
+            parent.transform.SetLocalPositionAndRotation(
+                new Vector3(-182.625f, 4.5f, 93.875f),
+                Quaternion.Euler(0f, -17f, 0f));
+            child.transform.SetParent(parent.transform, false);
+            Matrix4x4 expected = Matrix4x4.TRS(
+                new Vector3(857.8677f, 13.125f, 857.8677f),
+                Quaternion.Euler(0f, 73f, 0f),
+                new Vector3(1.2f, 0.9f, 1.1f));
+
+            DenseCityRenderOnlyPresentationRealizer.ApplyWorldMatrix(
+                child.transform,
+                expected);
+
+            for (int index = 12; index <= 14; index++)
+            {
+                Assert.That(
+                    child.transform.localToWorldMatrix[index],
+                    Is.EqualTo(expected[index]).Within(0.0001f),
+                    $"matrix[{index}]");
+            }
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(grandParent);
+        }
     }
 
     [Test]

@@ -212,6 +212,26 @@ namespace Game.Editor
 
             transform.SetLocalPositionAndRotation(position, rotation);
             transform.localScale = scale;
+            CorrectWorldPositionResidual(transform, matrix.GetColumn(3));
+        }
+
+        private static void CorrectWorldPositionResidual(
+            Transform transform,
+            Vector3 expectedWorldPosition)
+        {
+            const int maximumCorrectionPasses = 3;
+            for (int pass = 0; pass < maximumCorrectionPasses; pass++)
+            {
+                Vector3 actualWorldPosition = transform.localToWorldMatrix.GetColumn(3);
+                Vector3 worldResidual = expectedWorldPosition - actualWorldPosition;
+                if (worldResidual == Vector3.zero)
+                    return;
+
+                Vector3 localResidual = transform.parent != null
+                    ? transform.parent.worldToLocalMatrix.MultiplyVector(worldResidual)
+                    : worldResidual;
+                transform.localPosition += localResidual;
+            }
         }
 
         internal static void RequireMaterialIdentity(

@@ -1,12 +1,50 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using Game.Editor;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
 public sealed class OperationMapEntitySceneCandidateBakeAllTests
 {
+    private const string DenseCandidateGeneratedRoot =
+        "Assets/Game/GeneratedOperationMaps/DenseCity/" +
+        "opmap.skirmish.desert_base_01/Candidate";
+    private const string LegacyDenseRoadOutputRoot =
+        "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/" +
+        "opmap/skirmish/dense_city_roads";
+
+    private static readonly string[] TwoRunCandidateFiles =
+    {
+        DenseCityCandidateAuthoringTransaction.CandidateMapScenePath,
+        DenseCityCandidateAuthoringTransaction.CandidateMapScenePath + ".meta",
+        DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath,
+        DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath + ".meta",
+        OperationMapEntityPresentationMigrationEditor.CandidateSubScenePath,
+        OperationMapEntityPresentationMigrationEditor.CandidateSubScenePath + ".meta",
+        OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateDefinitionPath,
+        OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateDefinitionPath + ".meta",
+        OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateRuntimeBindingPath,
+        OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateRuntimeBindingPath + ".meta",
+        OperationMapEntitySceneCandidateAddressablesLayoutPlanner.DenseCandidateDefinitionPath,
+        OperationMapEntitySceneCandidateAddressablesLayoutPlanner.DenseCandidateDefinitionPath + ".meta",
+        OperationMapEntitySceneCandidateAddressablesLayoutPlanner.DenseCandidateRuntimeBindingPath,
+        OperationMapEntitySceneCandidateAddressablesLayoutPlanner.DenseCandidateRuntimeBindingPath + ".meta",
+        DenseCandidateGeneratedRoot + ".meta",
+        LegacyDenseRoadOutputRoot + ".meta"
+    };
+
+    private static readonly string[] TwoRunCandidateDirectories =
+    {
+        DenseCandidateGeneratedRoot,
+        LegacyDenseRoadOutputRoot
+    };
+
     private string projectRoot;
     private string tempDirectory;
 
@@ -46,6 +84,35 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
         }
 
         Debug.Log($"[OperationMapEntitySceneCandidateBakeAllValidation] result=Passed tests={tests.Length}");
+    }
+
+    public static void RunTwoRunNoOpValidation()
+    {
+        string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+        using (CandidateOutputCheckpoint checkpoint = CandidateOutputCheckpoint.Capture(
+                   root,
+                   TwoRunCandidateFiles,
+                   TwoRunCandidateDirectories))
+        {
+            RunCompleteDenseCandidateBake("first");
+            string firstFingerprint = ComputeCandidateOutputFingerprint(root);
+
+            RunCompleteDenseCandidateBake("second");
+            string secondFingerprint = ComputeCandidateOutputFingerprint(root);
+
+            if (!string.Equals(firstFingerprint, secondFingerprint, StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException(
+                    "Dense-city generation plus complete Candidate Bake All changed stable " +
+                    $"candidate outputs on its second run. first={firstFingerprint} " +
+                    $"second={secondFingerprint}");
+            }
+
+            checkpoint.Commit();
+            Debug.Log(
+                "[DenseCityCandidateTwoRunNoOpValidation] result=Passed " +
+                $"fingerprint={secondFingerprint}");
+        }
     }
 
     [SetUp]
@@ -332,5 +399,279 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
             index += value.Length;
         }
         return count;
+    }
+
+    private static void RunCompleteDenseCandidateBake(string pass)
+    {
+        if (!DenseCityCandidateAuthoringTransaction.TryRealizeCandidate(
+                out string summary,
+                out string error))
+        {
+            throw new InvalidOperationException(
+                $"Dense-city candidate realization failed during {pass} pass: {error}");
+        }
+
+        Debug.Log(
+            $"[DenseCityCandidateTwoRunNoOpValidation] pass={pass} stage=realize {summary}");
+        OperationMapEntityPresentationCandidateBakeValidator.BakeAndValidateDenseCityCandidate();
+        OperationMapEntitySceneCandidateAddressablesLayoutBuilder
+            .BuildDenseCityCandidateEntitySceneAddressablesLayout();
+        OperationMapEntitySceneCandidateBakeAll.BakeAllCandidateEntityScene();
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+    }
+
+    private static string ComputeCandidateOutputFingerprint(string root)
+    {
+        var manifest = new StringBuilder();
+        foreach (string path in TwoRunCandidateFiles.OrderBy(
+                     value => value,
+                     StringComparer.Ordinal))
+        {
+            AppendFileFingerprint(root, path, manifest);
+        }
+
+        foreach (string directory in TwoRunCandidateDirectories.OrderBy(
+                     value => value,
+                     StringComparer.Ordinal))
+        {
+            string physicalDirectory = ResolveProjectPath(root, directory);
+            if (!Directory.Exists(physicalDirectory))
+            {
+                manifest.Append("directory-missing|").Append(directory).Append('\n');
+                continue;
+            }
+
+            manifest.Append("directory|").Append(directory).Append('\n');
+            string[] files = Directory.GetFiles(
+                physicalDirectory,
+                "*",
+                SearchOption.AllDirectories);
+            Array.Sort(files, StringComparer.Ordinal);
+            for (int i = 0; i < files.Length; i++)
+            {
+                string relative = directory + "/" +
+                                  files[i].Substring(physicalDirectory.Length)
+                                      .TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                                      .Replace('\\', '/');
+                AppendFileFingerprint(root, relative, manifest);
+            }
+        }
+
+        return ComputeSha256(Encoding.UTF8.GetBytes(manifest.ToString()));
+    }
+
+    private static void AppendFileFingerprint(
+        string root,
+        string relativePath,
+        StringBuilder manifest)
+    {
+        string physicalPath = ResolveProjectPath(root, relativePath);
+        if (!File.Exists(physicalPath))
+        {
+            manifest.Append("file-missing|").Append(relativePath).Append('\n');
+            return;
+        }
+
+        manifest.Append("file|")
+            .Append(relativePath)
+            .Append('|')
+            .Append(ComputeFileSha256(physicalPath))
+            .Append('\n');
+    }
+
+    private static string ComputeFileSha256(string path)
+    {
+        using (SHA256 sha256 = SHA256.Create())
+        using (FileStream stream = File.OpenRead(path))
+        {
+            return FormatSha256(sha256.ComputeHash(stream));
+        }
+    }
+
+    private static string ComputeSha256(byte[] bytes)
+    {
+        using (SHA256 sha256 = SHA256.Create())
+        {
+            return FormatSha256(sha256.ComputeHash(bytes));
+        }
+    }
+
+    private static string FormatSha256(byte[] hash) =>
+        BitConverter.ToString(hash)
+            .Replace("-", string.Empty)
+            .ToLowerInvariant();
+
+    private static string ResolveProjectPath(string root, string relativePath) =>
+        Path.GetFullPath(Path.Combine(
+            root,
+            relativePath.Replace('/', Path.DirectorySeparatorChar)));
+
+    private sealed class CandidateOutputCheckpoint : IDisposable
+    {
+        private readonly string root;
+        private readonly string backupRoot;
+        private readonly List<FileCheckpoint> files;
+        private readonly List<DirectoryCheckpoint> directories;
+        private bool committed;
+
+        private CandidateOutputCheckpoint(
+            string root,
+            string backupRoot,
+            List<FileCheckpoint> files,
+            List<DirectoryCheckpoint> directories)
+        {
+            this.root = root;
+            this.backupRoot = backupRoot;
+            this.files = files;
+            this.directories = directories;
+        }
+
+        internal static CandidateOutputCheckpoint Capture(
+            string root,
+            IEnumerable<string> filePaths,
+            IEnumerable<string> directoryPaths)
+        {
+            string backupRoot = Path.Combine(
+                root,
+                "Temp",
+                "DenseCityCandidateTwoRunNoOp",
+                Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(backupRoot);
+            var files = new List<FileCheckpoint>();
+            var directories = new List<DirectoryCheckpoint>();
+
+            int index = 0;
+            foreach (string relativePath in filePaths.Distinct(StringComparer.Ordinal))
+            {
+                string physicalPath = ResolveProjectPath(root, relativePath);
+                bool existed = File.Exists(physicalPath);
+                string backupPath = Path.Combine(backupRoot, $"file-{index++}.bin");
+                if (existed)
+                    File.Copy(physicalPath, backupPath, true);
+                files.Add(new FileCheckpoint(relativePath, existed, backupPath));
+            }
+
+            index = 0;
+            foreach (string relativePath in directoryPaths.Distinct(StringComparer.Ordinal))
+            {
+                string physicalPath = ResolveProjectPath(root, relativePath);
+                bool existed = Directory.Exists(physicalPath);
+                string backupPath = Path.Combine(backupRoot, $"directory-{index++}");
+                if (existed)
+                    CopyDirectory(physicalPath, backupPath);
+                directories.Add(new DirectoryCheckpoint(relativePath, existed, backupPath));
+            }
+
+            return new CandidateOutputCheckpoint(root, backupRoot, files, directories);
+        }
+
+        internal void Commit()
+        {
+            committed = true;
+        }
+
+        public void Dispose()
+        {
+            try
+            {
+                if (!committed)
+                    Restore();
+            }
+            finally
+            {
+                if (Directory.Exists(backupRoot))
+                    Directory.Delete(backupRoot, true);
+            }
+        }
+
+        private void Restore()
+        {
+            for (int i = 0; i < directories.Count; i++)
+            {
+                DirectoryCheckpoint checkpoint = directories[i];
+                string target = ResolveProjectPath(root, checkpoint.RelativePath);
+                if (Directory.Exists(target))
+                    Directory.Delete(target, true);
+                if (checkpoint.Existed)
+                    CopyDirectory(checkpoint.BackupPath, target);
+            }
+
+            for (int i = 0; i < files.Count; i++)
+            {
+                FileCheckpoint checkpoint = files[i];
+                string target = ResolveProjectPath(root, checkpoint.RelativePath);
+                if (checkpoint.Existed)
+                {
+                    string parent = Path.GetDirectoryName(target);
+                    if (!string.IsNullOrEmpty(parent))
+                        Directory.CreateDirectory(parent);
+                    File.Copy(checkpoint.BackupPath, target, true);
+                }
+                else if (File.Exists(target))
+                {
+                    File.Delete(target);
+                }
+            }
+
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+        }
+
+        private static void CopyDirectory(string source, string destination)
+        {
+            Directory.CreateDirectory(destination);
+            string[] directories = Directory.GetDirectories(
+                source,
+                "*",
+                SearchOption.AllDirectories);
+            Array.Sort(directories, StringComparer.Ordinal);
+            for (int i = 0; i < directories.Length; i++)
+            {
+                string relative = directories[i].Substring(source.Length)
+                    .TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                Directory.CreateDirectory(Path.Combine(destination, relative));
+            }
+
+            string[] files = Directory.GetFiles(source, "*", SearchOption.AllDirectories);
+            Array.Sort(files, StringComparer.Ordinal);
+            for (int i = 0; i < files.Length; i++)
+            {
+                string relative = files[i].Substring(source.Length)
+                    .TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                string target = Path.Combine(destination, relative);
+                string parent = Path.GetDirectoryName(target);
+                if (!string.IsNullOrEmpty(parent))
+                    Directory.CreateDirectory(parent);
+                File.Copy(files[i], target, true);
+            }
+        }
+
+        private readonly struct FileCheckpoint
+        {
+            internal FileCheckpoint(string relativePath, bool existed, string backupPath)
+            {
+                RelativePath = relativePath;
+                Existed = existed;
+                BackupPath = backupPath;
+            }
+
+            internal string RelativePath { get; }
+            internal bool Existed { get; }
+            internal string BackupPath { get; }
+        }
+
+        private readonly struct DirectoryCheckpoint
+        {
+            internal DirectoryCheckpoint(string relativePath, bool existed, string backupPath)
+            {
+                RelativePath = relativePath;
+                Existed = existed;
+                BackupPath = backupPath;
+            }
+
+            internal string RelativePath { get; }
+            internal bool Existed { get; }
+            internal string BackupPath { get; }
+        }
     }
 }

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using Game.Authoring;
 using Game.Editor;
 using NUnit.Framework;
 using UnityEditor;
@@ -18,6 +19,8 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
     private const string LegacyDenseRoadOutputRoot =
         "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/" +
         "opmap/skirmish/dense_city_roads";
+    private const string IdentityDeltaReportPath =
+        "Design/AgentReports/2026-07-25_dense_city_fresh_identity_delta.json";
 
     private static readonly string[] TwoRunCandidateFiles =
     {
@@ -113,6 +116,41 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
                 "[DenseCityCandidateTwoRunNoOpValidation] result=Passed " +
                 $"fingerprint={secondFingerprint}");
         }
+    }
+
+    public static void RunFreshIdentityDeltaValidation()
+    {
+        string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+        Dictionary<string, IdentitySnapshotEntry> accepted =
+            CaptureDenseIdentitySnapshot(
+                DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath);
+        CandidateIdentityDeltaReport report;
+
+        using (CandidateOutputCheckpoint checkpoint = CandidateOutputCheckpoint.Capture(
+                   root,
+                   TwoRunCandidateFiles,
+                   TwoRunCandidateDirectories))
+        {
+            if (!DenseCityCandidateAuthoringTransaction.TryRealizeCandidate(
+                    out string summary,
+                    out string error))
+            {
+                throw new InvalidOperationException(
+                    $"Fresh dense-city identity diagnostic could not realize the candidate: {error}");
+            }
+
+            Dictionary<string, IdentitySnapshotEntry> fresh =
+                CaptureDenseIdentitySnapshot(
+                    DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath);
+            report = CreateIdentityDeltaReport(accepted, fresh, summary);
+        }
+
+        WriteIdentityDeltaReport(root, report);
+        Debug.Log(
+            "[DenseCityFreshIdentityDeltaValidation] result=Passed " +
+            $"accepted={report.acceptedCount} fresh={report.freshCount} " +
+            $"acceptedOnly={report.acceptedOnlyCount} freshOnly={report.freshOnlyCount} " +
+            $"report={IdentityDeltaReportPath}");
     }
 
     [SetUp]
@@ -421,6 +459,146 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
         AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
     }
 
+    private static Dictionary<string, IdentitySnapshotEntry> CaptureDenseIdentitySnapshot(
+        string scenePath)
+    {
+        SceneSetup[] previousSetup = EditorSceneManager.GetSceneManagerSetup();
+        UnityEngine.SceneManagement.Scene scene = default;
+        try
+        {
+            scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Additive);
+            var result = new Dictionary<string, IdentitySnapshotEntry>(
+                StringComparer.Ordinal);
+            GameObject[] roots = scene.GetRootGameObjects();
+            for (int rootIndex = 0; rootIndex < roots.Length; rootIndex++)
+            {
+                DenseCityPresentationIdentityAuthoring[] identities =
+                    roots[rootIndex]
+                        .GetComponentsInChildren<DenseCityPresentationIdentityAuthoring>(true);
+                for (int identityIndex = 0; identityIndex < identities.Length; identityIndex++)
+                {
+                    DenseCityPresentationIdentityAuthoring identity =
+                        identities[identityIndex];
+                    if (!identity.TryValidate(out string error))
+                    {
+                        throw new InvalidOperationException(
+                            $"Dense-city identity snapshot rejected '{identity.name}': {error}");
+                    }
+
+                    string stableId = identity.StableId;
+                    if (!result.TryAdd(
+                            stableId,
+                            new IdentitySnapshotEntry(
+                                stableId,
+                                identity.Role.ToString(),
+                                identity.Category.ToString(),
+                                identity.name,
+                                GetHierarchyPath(identity.transform),
+                                PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(
+                                    identity.gameObject))))
+                    {
+                        throw new InvalidOperationException(
+                            $"Dense-city identity snapshot contains duplicate stable id '{stableId}'.");
+                    }
+                }
+            }
+
+            return result;
+        }
+        finally
+        {
+            if (scene.IsValid() && scene.isLoaded)
+                EditorSceneManager.CloseScene(scene, true);
+            if (OperationMapEntitySceneCandidateBakeAll.HasRestorableSceneSetup(previousSetup))
+                EditorSceneManager.RestoreSceneManagerSetup(previousSetup);
+            else
+                EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+        }
+    }
+
+    private static CandidateIdentityDeltaReport CreateIdentityDeltaReport(
+        IReadOnlyDictionary<string, IdentitySnapshotEntry> accepted,
+        IReadOnlyDictionary<string, IdentitySnapshotEntry> fresh,
+        string realizationSummary)
+    {
+        List<IdentitySnapshotEntry> acceptedOnly = accepted
+            .Where(pair => !fresh.ContainsKey(pair.Key))
+            .Select(pair => pair.Value)
+            .OrderBy(entry => entry.stableId, StringComparer.Ordinal)
+            .ToList();
+        List<IdentitySnapshotEntry> freshOnly = fresh
+            .Where(pair => !accepted.ContainsKey(pair.Key))
+            .Select(pair => pair.Value)
+            .OrderBy(entry => entry.stableId, StringComparer.Ordinal)
+            .ToList();
+        return new CandidateIdentityDeltaReport
+        {
+            schema = "warline.dense-city.fresh-identity-delta",
+            schemaVersion = 1,
+            result = "FreshIdentityDeltaCaptured",
+            acceptedCount = accepted.Count,
+            freshCount = fresh.Count,
+            sharedCount = accepted.Keys.Count(fresh.ContainsKey),
+            acceptedOnlyCount = acceptedOnly.Count,
+            freshOnlyCount = freshOnly.Count,
+            realizationSummary = realizationSummary,
+            acceptedOnlyGroups = CreateIdentityGroups(acceptedOnly),
+            freshOnlyGroups = CreateIdentityGroups(freshOnly),
+            acceptedOnly = acceptedOnly,
+            freshOnly = freshOnly
+        };
+    }
+
+    private static List<IdentityDeltaGroup> CreateIdentityGroups(
+        IEnumerable<IdentitySnapshotEntry> entries) =>
+        entries
+            .GroupBy(
+                entry => entry.category + "|" +
+                         (string.IsNullOrEmpty(entry.prefabPath)
+                             ? "<no-prefab>"
+                             : entry.prefabPath),
+                StringComparer.Ordinal)
+            .Select(group => new IdentityDeltaGroup
+            {
+                category = group.First().category,
+                prefabPath = group.First().prefabPath,
+                count = group.Count()
+            })
+            .OrderByDescending(group => group.count)
+            .ThenBy(group => group.category, StringComparer.Ordinal)
+            .ThenBy(group => group.prefabPath, StringComparer.Ordinal)
+            .ToList();
+
+    private static void WriteIdentityDeltaReport(
+        string root,
+        CandidateIdentityDeltaReport report)
+    {
+        string physicalPath = ResolveProjectPath(root, IdentityDeltaReportPath);
+        string parent = Path.GetDirectoryName(physicalPath);
+        if (!string.IsNullOrEmpty(parent))
+            Directory.CreateDirectory(parent);
+        File.WriteAllText(
+            physicalPath,
+            JsonUtility.ToJson(report, true) + Environment.NewLine,
+            new UTF8Encoding(false));
+        AssetDatabase.ImportAsset(
+            IdentityDeltaReportPath,
+            ImportAssetOptions.ForceSynchronousImport);
+    }
+
+    private static string GetHierarchyPath(Transform transform)
+    {
+        var segments = new Stack<string>();
+        Transform current = transform;
+        while (current != null)
+        {
+            segments.Push(current.name);
+            current = current.parent;
+        }
+
+        return string.Join("/", segments);
+    }
+
     private static string ComputeCandidateOutputFingerprint(string root)
     {
         var manifest = new StringBuilder();
@@ -673,5 +851,58 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
             internal bool Existed { get; }
             internal string BackupPath { get; }
         }
+    }
+
+    [Serializable]
+    private sealed class CandidateIdentityDeltaReport
+    {
+        public string schema;
+        public int schemaVersion;
+        public string result;
+        public int acceptedCount;
+        public int freshCount;
+        public int sharedCount;
+        public int acceptedOnlyCount;
+        public int freshOnlyCount;
+        public string realizationSummary;
+        public List<IdentityDeltaGroup> acceptedOnlyGroups;
+        public List<IdentityDeltaGroup> freshOnlyGroups;
+        public List<IdentitySnapshotEntry> acceptedOnly;
+        public List<IdentitySnapshotEntry> freshOnly;
+    }
+
+    [Serializable]
+    private sealed class IdentityDeltaGroup
+    {
+        public string category;
+        public string prefabPath;
+        public int count;
+    }
+
+    [Serializable]
+    private sealed class IdentitySnapshotEntry
+    {
+        internal IdentitySnapshotEntry(
+            string stableId,
+            string role,
+            string category,
+            string objectName,
+            string hierarchyPath,
+            string prefabPath)
+        {
+            this.stableId = stableId;
+            this.role = role;
+            this.category = category;
+            this.objectName = objectName;
+            this.hierarchyPath = hierarchyPath;
+            this.prefabPath = prefabPath;
+        }
+
+        public string stableId;
+        public string role;
+        public string category;
+        public string objectName;
+        public string hierarchyPath;
+        public string prefabPath;
     }
 }

@@ -7381,6 +7381,7 @@ namespace Game.Editor
                         grid);
                     if (wrapper == null)
                         return false;
+                    DenseCityPhysicsComponentStripper.StripInstanceHierarchy(wrapper);
 
                     wrapper.transform.localPosition = plan.RealizationLocalPosition;
                     wrapper.transform.localRotation = plan.RealizationLocalRotation;

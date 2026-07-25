@@ -30,6 +30,12 @@ public static class DenseCityBuildingPlacementIntegrationValidation
             DenseMiddleEasternCityEditModeBuilder.Result result =
                 RuntimeCityRAndDEditModeBuilder.BuildDenseMapWide(view);
             ValidateGeneratedFeatureRecordContracts(result.Records);
+            Assert.That(
+                DenseCityPhysicsComponentStripper.TryValidateNoProhibitedComponents(
+                    view.GeneratedRoot.gameObject,
+                    out string physicsError),
+                Is.True,
+                physicsError);
             Assert.That(view.GeneratedRoot.position, Is.EqualTo(Vector3.zero));
             Assert.That(Quaternion.Angle(view.GeneratedRoot.rotation, Quaternion.identity), Is.LessThan(0.0001f));
             Assert.That(view.GeneratedRoot.lossyScale, Is.EqualTo(Vector3.one));

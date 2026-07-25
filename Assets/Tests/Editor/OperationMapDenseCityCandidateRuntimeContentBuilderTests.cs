@@ -41,7 +41,10 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
             suite.MeasureLocalBundleDelivery_AcceptsIncludedLocalOfflineGroup,
             suite.MeasureLocalBundleDelivery_RejectsRemoteCatalog,
             suite.MeasureLocalBundleDelivery_RejectsExcludedGroup,
-            suite.MeasureLocalBundleDelivery_RejectsNetworkLoadPath
+            suite.MeasureLocalBundleDelivery_RejectsNetworkLoadPath,
+            suite.MeasurePublishedLocalContent_ReportsCatalogAndBundleBytes,
+            suite.MeasurePublishedLocalContent_RejectsCatalogOutsideOutput,
+            suite.MeasurePublishedLocalContent_RejectsMissingBundle
         };
         for (int i = 0; i < tests.Length; i++)
             tests[i]();
@@ -676,6 +679,60 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
         Assert.Throws<InvalidOperationException>(
             () => OperationMapDenseCityCandidateRuntimeContentBuilder
                 .RequireLocalBundleDelivery(result));
+    }
+
+    [Test]
+    public void MeasurePublishedLocalContent_ReportsCatalogAndBundleBytes()
+    {
+        WithContentDirectory(
+            root =>
+            {
+                string catalog = WriteBytes(root, "catalog.bin", 7);
+                WriteBytes(root, "StandaloneOSX/first.bundle", 11);
+                WriteBytes(root, "StandaloneOSX/second.bundle", 13);
+
+                OperationMapDenseCityCandidateRuntimeContentBuilder
+                    .PublishedLocalContentResult result =
+                        OperationMapDenseCityCandidateRuntimeContentBuilder
+                            .MeasurePublishedLocalContent(root, catalog);
+
+                Assert.That(result.CatalogBytes, Is.EqualTo(7));
+                Assert.That(result.BundleCount, Is.EqualTo(2));
+                Assert.That(result.BundleBytes, Is.EqualTo(24));
+            });
+    }
+
+    [Test]
+    public void MeasurePublishedLocalContent_RejectsCatalogOutsideOutput()
+    {
+        WithContentDirectory(
+            root =>
+            {
+                string output = Path.Combine(root, "output");
+                Directory.CreateDirectory(output);
+                WriteBytes(output, "dense.bundle", 11);
+                string outsideCatalog = WriteBytes(root, "outside-catalog.bin", 7);
+
+                InvalidOperationException exception = Assert.Throws<InvalidOperationException>(
+                    () => OperationMapDenseCityCandidateRuntimeContentBuilder
+                        .MeasurePublishedLocalContent(output, outsideCatalog));
+                Assert.That(exception.Message, Does.Contain("outside its output"));
+            });
+    }
+
+    [Test]
+    public void MeasurePublishedLocalContent_RejectsMissingBundle()
+    {
+        WithContentDirectory(
+            root =>
+            {
+                string catalog = WriteBytes(root, "catalog.bin", 7);
+
+                InvalidOperationException exception = Assert.Throws<InvalidOperationException>(
+                    () => OperationMapDenseCityCandidateRuntimeContentBuilder
+                        .MeasurePublishedLocalContent(root, catalog));
+                Assert.That(exception.Message, Does.Contain("bundles=0"));
+            });
     }
 
     private static string WriteBytes(string root, string relativePath, int count)

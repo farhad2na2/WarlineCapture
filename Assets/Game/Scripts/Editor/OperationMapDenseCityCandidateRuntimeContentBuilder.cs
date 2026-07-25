@@ -397,6 +397,12 @@ namespace Game.Editor
                 RequirePackedSourceHierarchyExclusion(packedSourceHierarchy);
 
                 outputTransaction.PublishBuiltAddressables();
+                string publishedAddressablesPath = Path.GetFullPath(
+                    Path.Combine(projectRoot, AddressablesOutputPath));
+                PublishedLocalContentResult publishedLocalContent =
+                    MeasurePublishedLocalContent(
+                        publishedAddressablesPath,
+                        Path.Combine(publishedAddressablesPath, "catalog.bin"));
                 string publishedBuildLayoutPath = Path.GetFullPath(
                     Path.Combine(projectRoot, AddressablesBuildLayoutPath));
                 Directory.CreateDirectory(
@@ -408,7 +414,8 @@ namespace Game.Editor
                     result,
                     publishedBuildLayoutPath,
                     packedDependencyBytes,
-                    packedSourceHierarchy);
+                    packedSourceHierarchy,
+                    publishedLocalContent);
             }
             finally
             {
@@ -536,6 +543,54 @@ namespace Game.Editor
                     $"localLoadPath={(result.UsesLocalLoadPath ? 1 : 0)} " +
                     $"networkLoadPath={(result.NetworkLoadPath ? 1 : 0)}.");
             }
+        }
+
+        internal static PublishedLocalContentResult MeasurePublishedLocalContent(
+            string outputPath,
+            string catalogPath)
+        {
+            if (string.IsNullOrWhiteSpace(outputPath) || !Directory.Exists(outputPath))
+                throw new InvalidOperationException(
+                    $"Dense published Addressables output is missing: {outputPath}");
+            string fullOutputPath = Path.GetFullPath(outputPath);
+            string fullCatalogPath = string.IsNullOrWhiteSpace(catalogPath)
+                ? string.Empty
+                : Path.GetFullPath(catalogPath);
+            string outputPrefix =
+                fullOutputPath.TrimEnd(
+                    Path.DirectorySeparatorChar,
+                    Path.AltDirectorySeparatorChar) +
+                Path.DirectorySeparatorChar;
+            if (string.IsNullOrEmpty(fullCatalogPath) ||
+                !fullCatalogPath.StartsWith(
+                    outputPrefix,
+                    StringComparison.OrdinalIgnoreCase) ||
+                !File.Exists(fullCatalogPath))
+            {
+                throw new InvalidOperationException(
+                    $"Dense published local catalog is missing or outside its output: {catalogPath}");
+            }
+
+            long catalogBytes = new FileInfo(fullCatalogPath).Length;
+            string[] bundlePaths = Directory
+                .EnumerateFiles(fullOutputPath, "*.bundle", SearchOption.AllDirectories)
+                .OrderBy(path => path, StringComparer.Ordinal)
+                .ToArray();
+            long bundleBytes = bundlePaths.Sum(path => new FileInfo(path).Length);
+            if (catalogBytes <= 0 || bundlePaths.Length <= 0 || bundleBytes <= 0)
+            {
+                throw new InvalidOperationException(
+                    "Dense published local content is empty: " +
+                    $"catalogBytes={catalogBytes}, bundles={bundlePaths.Length}, " +
+                    $"bundleBytes={bundleBytes}.");
+            }
+
+            return new PublishedLocalContentResult(
+                fullOutputPath,
+                fullCatalogPath,
+                catalogBytes,
+                bundlePaths.Length,
+                bundleBytes);
         }
 
         private static EntityContentBuildResult BuildEntityContent(
@@ -974,7 +1029,7 @@ namespace Game.Editor
             return new RuntimeContentReport
             {
                 schema = "warline.operation-map.dense-city-candidate-runtime-content",
-                schemaVersion = 5,
+                schemaVersion = 6,
                 result = "DenseCityCandidateRuntimeContentBuilt",
                 operationMapId = plan.OperationMapId,
                 entitySceneGuid = plan.EntitySceneGuid,
@@ -990,6 +1045,13 @@ namespace Game.Editor
                     .EnumerateFiles(addressablesOutput, "*.bundle", SearchOption.AllDirectories)
                     .Count(),
                 addressablesBytes = ComputeDirectoryBytes(addressablesOutput),
+                publishedLocalContentEvidenceComplete = 1,
+                publishedLocalCatalogBytes =
+                    addressablesResult.PublishedLocalContent.CatalogBytes,
+                publishedLocalBundleCount =
+                    addressablesResult.PublishedLocalContent.BundleCount,
+                publishedLocalBundleBytes =
+                    addressablesResult.PublishedLocalContent.BundleBytes,
                 addressablesBuildLayoutPath = addressablesResult.BuildLayoutPath,
                 addressablesBuildLayoutSha256 = ComputeSha256(
                     addressablesResult.BuildLayoutPath),
@@ -1142,6 +1204,29 @@ namespace Game.Editor
             internal long TotalBytes { get; }
         }
 
+        internal readonly struct PublishedLocalContentResult
+        {
+            internal PublishedLocalContentResult(
+                string outputPath,
+                string catalogPath,
+                long catalogBytes,
+                int bundleCount,
+                long bundleBytes)
+            {
+                OutputPath = outputPath;
+                CatalogPath = catalogPath;
+                CatalogBytes = catalogBytes;
+                BundleCount = bundleCount;
+                BundleBytes = bundleBytes;
+            }
+
+            internal string OutputPath { get; }
+            internal string CatalogPath { get; }
+            internal long CatalogBytes { get; }
+            internal int BundleCount { get; }
+            internal long BundleBytes { get; }
+        }
+
         internal readonly struct FrozenRollbackContentResult
         {
             internal FrozenRollbackContentResult(
@@ -1253,18 +1338,21 @@ namespace Game.Editor
                 AddressablesPlayerBuildResult playerBuildResult,
                 string buildLayoutPath,
                 PackedDependencyByteResult packedDependencyBytes,
-                PackedSourceHierarchyResult packedSourceHierarchy)
+                PackedSourceHierarchyResult packedSourceHierarchy,
+                PublishedLocalContentResult publishedLocalContent)
             {
                 PlayerBuildResult = playerBuildResult;
                 BuildLayoutPath = buildLayoutPath;
                 PackedDependencyBytes = packedDependencyBytes;
                 PackedSourceHierarchy = packedSourceHierarchy;
+                PublishedLocalContent = publishedLocalContent;
             }
 
             internal AddressablesPlayerBuildResult PlayerBuildResult { get; }
             internal string BuildLayoutPath { get; }
             internal PackedDependencyByteResult PackedDependencyBytes { get; }
             internal PackedSourceHierarchyResult PackedSourceHierarchy { get; }
+            internal PublishedLocalContentResult PublishedLocalContent { get; }
         }
 
         private sealed class BuildLayoutCaptureScope : IDisposable
@@ -1619,6 +1707,10 @@ namespace Game.Editor
             public string addressablesCatalogPath;
             public int addressablesBundleCount;
             public long addressablesBytes;
+            public int publishedLocalContentEvidenceComplete;
+            public long publishedLocalCatalogBytes;
+            public int publishedLocalBundleCount;
+            public long publishedLocalBundleBytes;
             public string addressablesBuildLayoutPath;
             public string addressablesBuildLayoutSha256;
             public int packedDependencyMetricsComplete;

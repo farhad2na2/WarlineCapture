@@ -291,7 +291,8 @@ public sealed class DenseCityGenerationTransactionContextTests
                 rootObject.transform,
                 sourcePrefab,
                 GeneratedCityBuildingRole.Shop,
-                applyMaterialVariants: false);
+                applyMaterialVariants: false,
+                reservesOpenGroundClearance: false);
 
             Assert.That(context.RealizedBuildingOwners, Has.Count.EqualTo(1));
             Assert.That(
@@ -301,6 +302,7 @@ public sealed class DenseCityGenerationTransactionContextTests
             Assert.That(context.RealizedBuildingOwners[0].SourcePrefab, Is.SameAs(sourcePrefab));
             Assert.That(context.RealizedBuildingOwners[0].Role, Is.EqualTo(GeneratedCityBuildingRole.Shop));
             Assert.That(context.RealizedBuildingOwners[0].ApplyMaterialVariants, Is.False);
+            Assert.That(context.RealizedBuildingOwners[0].ReservesOpenGroundClearance, Is.False);
             Assert.That(
                 () => context.RegisterRealizedBuildingOwner(
                     building,

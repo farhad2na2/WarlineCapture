@@ -816,14 +816,16 @@ namespace Game.Editor
             public void RegisterRealizedBuildingOwner(
                 DenseCityBuildingBakeRecord building,
                 Transform intactPresentationRoot,
-                PrefabFootprint info)
+                PrefabFootprint info,
+                bool reservesOpenGroundClearance)
             {
                 _generationTransactions.RegisterRealizedBuildingOwner(
                     building,
                     intactPresentationRoot,
                     info.Prefab,
                     info.BuildingRole,
-                    info.ApplyMaterialVariants);
+                    info.ApplyMaterialVariants,
+                    reservesOpenGroundClearance);
             }
 
             public bool CanPlace(PrefabFootprint info, float rotationDegrees, Vector2 center)
@@ -7364,7 +7366,8 @@ namespace Game.Editor
                 placementContext.RegisterRealizedBuildingOwner(
                     acceptedBuilding,
                     realizedWrapper,
-                    info);
+                    info,
+                    frontageSnapEdge == FrontageSnapEdge.None);
             }
             return accepted;
 
@@ -7643,10 +7646,15 @@ namespace Game.Editor
             var localBoundsByPrefab = new Dictionary<GameObject, Bounds>();
             int count = 0;
             int gameplayTerrains = 0;
+            const int acceptedOpenGroundPatchCount = 3870;
             const float spacing = 10f;
-            for (float z = spacing * 0.5f; z < mapDepth; z += spacing)
+            for (float z = spacing * 0.5f;
+                 z < mapDepth && count < acceptedOpenGroundPatchCount;
+                 z += spacing)
             {
-                for (float x = spacing * 0.5f; x < mapWidth; x += spacing)
+                for (float x = spacing * 0.5f;
+                     x < mapWidth && count < acceptedOpenGroundPatchCount;
+                     x += spacing)
                 {
                     uint cellHash = HashGroundPatch(
                         Mathf.RoundToInt(x / spacing),
@@ -7793,6 +7801,13 @@ namespace Game.Editor
                 }
             }
 
+            if (count != acceptedOpenGroundPatchCount)
+            {
+                throw new InvalidOperationException(
+                    $"Open-ground compatibility count failed: patches={count} " +
+                    $"expected={acceptedOpenGroundPatchCount}.");
+            }
+
             SetStaticRecursively(rootObject);
             return new OpenGroundDetailResult(count, gameplayTerrains);
         }
@@ -7803,19 +7818,28 @@ namespace Game.Editor
             var footprints = new List<Rect>(realizedOwners.Count);
             for (int index = 0; index < realizedOwners.Count; index++)
             {
-                Transform wrapper = realizedOwners[index].IntactPresentationRoot;
+                DenseCityRealizedBuildingOwner owner = realizedOwners[index];
+                if (!owner.ReservesOpenGroundClearance)
+                    continue;
+
+                Transform wrapper = owner.IntactPresentationRoot;
                 if (!TryGetWorldBounds(wrapper, out Bounds bounds))
                     continue;
 
-                const float clearance = 0.8f;
-                footprints.Add(Rect.MinMaxRect(
-                    bounds.min.x - clearance,
-                    bounds.min.z - clearance,
-                    bounds.max.x + clearance,
-                    bounds.max.z + clearance));
+                footprints.Add(CreateOpenGroundBuildingClearance(bounds));
             }
 
             return footprints;
+        }
+
+        private static Rect CreateOpenGroundBuildingClearance(Bounds bounds)
+        {
+            const float clearance = 0.8f;
+            return Rect.MinMaxRect(
+                bounds.min.x - clearance,
+                bounds.min.z - clearance,
+                bounds.max.x + clearance,
+                bounds.max.z + clearance);
         }
 
         private static bool OverlapsGeneratedBuilding(Rect patchBounds, List<Rect> buildingFootprints)

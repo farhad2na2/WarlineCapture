@@ -22,6 +22,9 @@ public sealed class DenseCityPresentationBudgetValidatorTests
             suite.CategorySharing_AcceptsEveryRequiredSemanticFamily,
             suite.CategorySharing_RejectsMissingRequiredFamily,
             suite.CategorySharing_RejectsBakedAssetPairDrift,
+            suite.MeshCombinationPolicy_AcceptsBoundedBuildingMeshesOnly,
+            suite.MeshCombinationPolicy_RejectsInfrastructureCombinationWithoutEvidence,
+            suite.MeshCombinationPolicy_RejectsWholeCityMesh,
             suite.BudgetFailure_RestoresAcceptedCandidateOutput,
             suite.Budget_SerializationIsDeterministicAndMarksPackedMetricsPending,
             suite.CandidateBakeAll_OrdersBudgetAfterBakeAndBeforePostflight,
@@ -190,6 +193,49 @@ public sealed class DenseCityPresentationBudgetValidatorTests
             Is.EqualTo(
                 $"category-sharing-incomplete:" +
                 $"{(byte)DenseCityPresentationSemanticCategory.Infrastructure}"));
+    }
+
+    [Test]
+    public void MeshCombinationPolicy_AcceptsBoundedBuildingMeshesOnly()
+    {
+        var report = CreateMeshCombinationPolicyReport();
+
+        Assert.That(
+            OperationMapDenseCityGeneratedTransformParityValidator
+                .TryValidateMeshCombinationPolicy(report, out string error),
+            Is.True,
+            error);
+    }
+
+    [Test]
+    public void MeshCombinationPolicy_RejectsInfrastructureCombinationWithoutEvidence()
+    {
+        var report = CreateMeshCombinationPolicyReport();
+        report.infrastructureMeshBackedRendererEntryCount = 1;
+        report.unauthorizedMeshBackedRendererEntryCount = 1;
+
+        Assert.That(
+            OperationMapDenseCityGeneratedTransformParityValidator
+                .TryValidateMeshCombinationPolicy(report, out string error),
+            Is.False);
+        Assert.That(error, Is.EqualTo("mesh-combination-policy-rejected"));
+    }
+
+    [Test]
+    public void MeshCombinationPolicy_RejectsWholeCityMesh()
+    {
+        var report = CreateMeshCombinationPolicyReport();
+        report.maximumMeshBackedSpanRatioX =
+            OperationMapDenseCityGeneratedTransformParityValidator.WholeCityMeshSpanRatio;
+        report.maximumMeshBackedSpanRatioZ =
+            OperationMapDenseCityGeneratedTransformParityValidator.WholeCityMeshSpanRatio;
+        report.wholeCityMeshBackedRendererEntryCount = 1;
+
+        Assert.That(
+            OperationMapDenseCityGeneratedTransformParityValidator
+                .TryValidateMeshCombinationPolicy(report, out string error),
+            Is.False);
+        Assert.That(error, Is.EqualTo("mesh-combination-policy-rejected"));
     }
 
     [Test]
@@ -522,7 +568,32 @@ public sealed class DenseCityPresentationBudgetValidatorTests
             presentationSignatureCount = 4,
             repeatedPresentationSignatureCount = 3,
             repeatedPresentationEntryCount = 19,
-            repeatedAssetPairMismatchCount = 0
+            repeatedAssetPairMismatchCount = 0,
+            prefabBackedRendererEntryCount =
+                category == DenseCityPresentationSemanticCategory.GameplayBuildingIntact ? 0 : 20,
+            meshBackedRendererEntryCount =
+                category == DenseCityPresentationSemanticCategory.GameplayBuildingIntact ? 20 : 0
+        };
+    }
+
+    private static OperationMapDenseCityGeneratedTransformParityValidator
+        .DenseCityGeneratedMeshCombinationPolicyReport CreateMeshCombinationPolicyReport()
+    {
+        return new OperationMapDenseCityGeneratedTransformParityValidator
+            .DenseCityGeneratedMeshCombinationPolicyReport
+        {
+            wholeCitySpanRatio =
+                OperationMapDenseCityGeneratedTransformParityValidator.WholeCityMeshSpanRatio,
+            aggregateSpanX = 5000f,
+            aggregateSpanZ = 4000f,
+            maximumMeshBackedSpanRatioX = 0.05f,
+            maximumMeshBackedSpanRatioZ = 0.04f,
+            meshBackedRendererEntryCount = 20,
+            authorizedBuildingMeshBackedRendererEntryCount = 20,
+            infrastructureMeshBackedRendererEntryCount = 0,
+            unauthorizedMeshBackedRendererEntryCount = 0,
+            wholeCityMeshBackedRendererEntryCount = 0,
+            continuousTerrainRoadCombinationAuthorized = 0
         };
     }
 

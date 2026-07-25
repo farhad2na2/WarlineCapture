@@ -1,6 +1,6 @@
 {
     "schema": "warline.operation-map.dense-city-generated-transform-parity",
-    "schemaVersion": 3,
+    "schemaVersion": 4,
     "checkpoint": "ecs-bake",
     "result": "DenseCityGeneratedTransformParityPassed",
     "candidateIdentityCount": 36946,
@@ -38,7 +38,9 @@
             "presentationSignatureCount": 274,
             "repeatedPresentationSignatureCount": 263,
             "repeatedPresentationEntryCount": 18364,
-            "repeatedAssetPairMismatchCount": 0
+            "repeatedAssetPairMismatchCount": 0,
+            "prefabBackedRendererEntryCount": 0,
+            "meshBackedRendererEntryCount": 18375
         },
         {
             "category": "Infrastructure",
@@ -48,7 +50,9 @@
             "presentationSignatureCount": 81,
             "repeatedPresentationSignatureCount": 81,
             "repeatedPresentationEntryCount": 39005,
-            "repeatedAssetPairMismatchCount": 0
+            "repeatedAssetPairMismatchCount": 0,
+            "prefabBackedRendererEntryCount": 39005,
+            "meshBackedRendererEntryCount": 0
         },
         {
             "category": "Vegetation",
@@ -58,7 +62,9 @@
             "presentationSignatureCount": 10,
             "repeatedPresentationSignatureCount": 10,
             "repeatedPresentationEntryCount": 5423,
-            "repeatedAssetPairMismatchCount": 0
+            "repeatedAssetPairMismatchCount": 0,
+            "prefabBackedRendererEntryCount": 5423,
+            "meshBackedRendererEntryCount": 0
         },
         {
             "category": "Prop",
@@ -68,7 +74,9 @@
             "presentationSignatureCount": 19,
             "repeatedPresentationSignatureCount": 16,
             "repeatedPresentationEntryCount": 5876,
-            "repeatedAssetPairMismatchCount": 0
+            "repeatedAssetPairMismatchCount": 0,
+            "prefabBackedRendererEntryCount": 5879,
+            "meshBackedRendererEntryCount": 0
         },
         {
             "category": "Horizon",
@@ -78,10 +86,26 @@
             "presentationSignatureCount": 7,
             "repeatedPresentationSignatureCount": 7,
             "repeatedPresentationEntryCount": 53,
-            "repeatedAssetPairMismatchCount": 0
+            "repeatedAssetPairMismatchCount": 0,
+            "prefabBackedRendererEntryCount": 53,
+            "meshBackedRendererEntryCount": 0
         }
     ],
     "categorySharingRejectionReason": "",
+    "meshCombinationPolicy": {
+        "wholeCitySpanRatio": 0.5,
+        "aggregateSpanX": 5195.9345703125,
+        "aggregateSpanZ": 2103.0869140625,
+        "maximumMeshBackedSpanRatioX": 0.021895121783018113,
+        "maximumMeshBackedSpanRatioZ": 0.054094649851322177,
+        "meshBackedRendererEntryCount": 18375,
+        "authorizedBuildingMeshBackedRendererEntryCount": 18375,
+        "infrastructureMeshBackedRendererEntryCount": 0,
+        "unauthorizedMeshBackedRendererEntryCount": 0,
+        "wholeCityMeshBackedRendererEntryCount": 0,
+        "continuousTerrainRoadCombinationAuthorized": 0
+    },
+    "meshCombinationPolicyRejectionReason": "",
     "sourceFailureSamples": [],
     "generatedBaseColorPropertyCount": 68735,
     "generatedBaseColorOverrideCount": 68735,

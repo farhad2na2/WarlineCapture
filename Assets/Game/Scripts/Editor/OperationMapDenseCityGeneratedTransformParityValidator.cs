@@ -34,6 +34,7 @@ namespace Game.Editor
 
         private const float RendererBakeKeyTolerance = 0.01f;
         private const float RendererBakeFallbackJoinTolerance = 0.125f;
+        internal const float WholeCityMeshSpanRatio = 0.5f;
         private const int MaxRejectedSamples = 64;
         private static readonly byte[] RequiredSharedReferenceCategories =
         {
@@ -150,6 +151,11 @@ namespace Game.Editor
             bool categorySharingPassed = TryValidateRequiredCategorySharing(
                 categorySharing,
                 out string categorySharingRejectionReason);
+            DenseCityGeneratedMeshCombinationPolicyReport meshCombinationPolicy =
+                rendererBakeMap.CreateMeshCombinationPolicyReport(categorySharing);
+            bool meshCombinationPolicyPassed = TryValidateMeshCombinationPolicy(
+                meshCombinationPolicy,
+                out string meshCombinationPolicyRejectionReason);
             bool passed = rejectedRowCount == 0 &&
                           duplicateCandidateStableIds.Length == 0 &&
                           bakedIndex.DuplicateStableIds.Length == 0 &&
@@ -166,6 +172,7 @@ namespace Game.Editor
                           generatedManagedInstanceComponentCount == 0 &&
                           rendererBakeMap.RepeatedSignatureAssetPairMismatchCount == 0 &&
                           categorySharingPassed &&
+                          meshCombinationPolicyPassed &&
                           generatedBaseColorPropertyCount ==
                           generatedBaseColorOverrideCount &&
                           generatedBaseColorMismatchCount == 0 &&
@@ -174,7 +181,7 @@ namespace Game.Editor
             var report = new DenseCityGeneratedTransformParityReport
             {
                 schema = "warline.operation-map.dense-city-generated-transform-parity",
-                schemaVersion = 3,
+                schemaVersion = 4,
                 checkpoint = "ecs-bake",
                 result = passed ? "DenseCityGeneratedTransformParityPassed" :
                     "DenseCityGeneratedTransformParityRejected",
@@ -214,6 +221,9 @@ namespace Game.Editor
                     rendererBakeMap.RepeatedSignatureAssetPairMismatchCount,
                 categorySharing = categorySharing,
                 categorySharingRejectionReason = categorySharingRejectionReason,
+                meshCombinationPolicy = meshCombinationPolicy,
+                meshCombinationPolicyRejectionReason =
+                    meshCombinationPolicyRejectionReason,
                 sourceFailureSamples = rendererBakeMap.SourceFailureSamples,
                 generatedBaseColorPropertyCount = generatedBaseColorPropertyCount,
                 generatedBaseColorOverrideCount = generatedBaseColorOverrideCount,
@@ -260,6 +270,7 @@ namespace Game.Editor
                     $"managedInstanceComponents={generatedManagedInstanceComponentCount}, " +
                     $"sharedPairMismatches={rendererBakeMap.RepeatedSignatureAssetPairMismatchCount}, " +
                     $"categorySharing={categorySharingRejectionReason}, " +
+                    $"meshCombination={meshCombinationPolicyRejectionReason}, " +
                     $"baseColors={generatedBaseColorOverrideCount}/" +
                     $"{generatedBaseColorPropertyCount}, " +
                     $"baseColorMismatches={generatedBaseColorMismatchCount}, " +
@@ -526,6 +537,48 @@ namespace Game.Editor
                     rejectionReason = $"category-sharing-incomplete:{requiredCategory}";
                     return false;
                 }
+            }
+
+            rejectionReason = string.Empty;
+            return true;
+        }
+
+        internal static bool TryValidateMeshCombinationPolicy(
+            DenseCityGeneratedMeshCombinationPolicyReport report,
+            out string rejectionReason)
+        {
+            if (report == null)
+            {
+                rejectionReason = "mesh-combination-report-null";
+                return false;
+            }
+            if (!float.IsFinite(report.aggregateSpanX) ||
+                !float.IsFinite(report.aggregateSpanZ) ||
+                report.aggregateSpanX <= 0f ||
+                report.aggregateSpanZ <= 0f ||
+                !float.IsFinite(report.maximumMeshBackedSpanRatioX) ||
+                !float.IsFinite(report.maximumMeshBackedSpanRatioZ) ||
+                report.maximumMeshBackedSpanRatioX < 0f ||
+                report.maximumMeshBackedSpanRatioZ < 0f)
+            {
+                rejectionReason = "mesh-combination-bounds-invalid";
+                return false;
+            }
+            if (Mathf.Abs(report.wholeCitySpanRatio - WholeCityMeshSpanRatio) >
+                float.Epsilon)
+            {
+                rejectionReason = "mesh-combination-threshold-drift";
+                return false;
+            }
+            if (report.meshBackedRendererEntryCount <= 0 ||
+                report.authorizedBuildingMeshBackedRendererEntryCount !=
+                report.meshBackedRendererEntryCount ||
+                report.unauthorizedMeshBackedRendererEntryCount != 0 ||
+                report.infrastructureMeshBackedRendererEntryCount != 0 ||
+                report.wholeCityMeshBackedRendererEntryCount != 0)
+            {
+                rejectionReason = "mesh-combination-policy-rejected";
+                return false;
             }
 
             rejectionReason = string.Empty;
@@ -1100,9 +1153,14 @@ namespace Game.Editor
                 new(StringComparer.Ordinal);
             private readonly Dictionary<byte, Dictionary<string, int>>
                 entriesByCategoryAndPresentationSignature = new();
+            private readonly Dictionary<byte, int> prefabBackedEntriesByCategory = new();
+            private readonly Dictionary<byte, int> meshBackedEntriesByCategory = new();
             private readonly Dictionary<string, HashSet<SharedAssetPair>> bakedPairsBySignature =
                 new(StringComparer.Ordinal);
             private readonly List<DenseCityGeneratedSourceFailureSample> sourceFailureSamples = new();
+            private readonly List<WorldBounds> meshBackedWorldBounds = new();
+            private bool hasAggregateWorldBounds;
+            private WorldBounds aggregateWorldBounds;
 
             internal int ExpectedEntryCount { get; private set; }
             internal int UnconsumedCount { get; private set; }
@@ -1189,9 +1247,21 @@ namespace Game.Editor
                 ExpectedEntryCount++;
                 UnconsumedCount++;
                 if (prefabBacked)
+                {
                     PrefabBackedRendererEntryCount++;
+                    Increment(prefabBackedEntriesByCategory, category);
+                }
                 else
+                {
                     MeshBackedRendererEntryCount++;
+                    Increment(meshBackedEntriesByCategory, category);
+                    meshBackedWorldBounds.Add(TransformBounds(center, extents, world));
+                }
+                WorldBounds rendererWorldBounds = TransformBounds(center, extents, world);
+                aggregateWorldBounds = hasAggregateWorldBounds
+                    ? WorldBounds.Encapsulate(aggregateWorldBounds, rendererWorldBounds)
+                    : rendererWorldBounds;
+                hasAggregateWorldBounds = true;
                 if (prefabBacked && string.IsNullOrEmpty(rendererSourceIdentity))
                     MissingPrefabRendererSourceCount++;
                 if (string.IsNullOrEmpty(meshIdentity))
@@ -1313,10 +1383,87 @@ namespace Game.Editor
                         presentationSignatureCount = category.Value.Count,
                         repeatedPresentationSignatureCount = repeatedSignatureCount,
                         repeatedPresentationEntryCount = repeatedEntryCount,
-                        repeatedAssetPairMismatchCount = mismatchCount
+                        repeatedAssetPairMismatchCount = mismatchCount,
+                        prefabBackedRendererEntryCount =
+                            GetCount(prefabBackedEntriesByCategory, category.Key),
+                        meshBackedRendererEntryCount =
+                            GetCount(meshBackedEntriesByCategory, category.Key)
                     });
                 }
                 return reports;
+            }
+
+            internal DenseCityGeneratedMeshCombinationPolicyReport
+                CreateMeshCombinationPolicyReport(
+                    IReadOnlyList<DenseCityGeneratedCategorySharingReport> categorySharing)
+            {
+                Vector3 aggregateSize = hasAggregateWorldBounds
+                    ? aggregateWorldBounds.Max - aggregateWorldBounds.Min
+                    : Vector3.zero;
+                float maximumRatioX = 0f;
+                float maximumRatioZ = 0f;
+                int wholeCityCount = 0;
+                for (int i = 0; i < meshBackedWorldBounds.Count; i++)
+                {
+                    Vector3 size = meshBackedWorldBounds[i].Max -
+                                   meshBackedWorldBounds[i].Min;
+                    float ratioX = aggregateSize.x > 0f ? size.x / aggregateSize.x : 0f;
+                    float ratioZ = aggregateSize.z > 0f ? size.z / aggregateSize.z : 0f;
+                    maximumRatioX = Mathf.Max(maximumRatioX, ratioX);
+                    maximumRatioZ = Mathf.Max(maximumRatioZ, ratioZ);
+                    if (ratioX >= WholeCityMeshSpanRatio &&
+                        ratioZ >= WholeCityMeshSpanRatio)
+                    {
+                        wholeCityCount++;
+                    }
+                }
+
+                int buildingMeshBackedCount = GetCategoryMeshBackedCount(
+                    categorySharing,
+                    (byte)DenseCityPresentationSemanticCategory.GameplayBuildingIntact);
+                int infrastructureMeshBackedCount = GetCategoryMeshBackedCount(
+                    categorySharing,
+                    (byte)DenseCityPresentationSemanticCategory.Infrastructure);
+                return new DenseCityGeneratedMeshCombinationPolicyReport
+                {
+                    wholeCitySpanRatio = WholeCityMeshSpanRatio,
+                    aggregateSpanX = aggregateSize.x,
+                    aggregateSpanZ = aggregateSize.z,
+                    maximumMeshBackedSpanRatioX = maximumRatioX,
+                    maximumMeshBackedSpanRatioZ = maximumRatioZ,
+                    meshBackedRendererEntryCount = MeshBackedRendererEntryCount,
+                    authorizedBuildingMeshBackedRendererEntryCount =
+                        buildingMeshBackedCount,
+                    infrastructureMeshBackedRendererEntryCount =
+                        infrastructureMeshBackedCount,
+                    unauthorizedMeshBackedRendererEntryCount =
+                        MeshBackedRendererEntryCount - buildingMeshBackedCount,
+                    wholeCityMeshBackedRendererEntryCount = wholeCityCount,
+                    continuousTerrainRoadCombinationAuthorized = 0
+                };
+            }
+
+            private static int GetCategoryMeshBackedCount(
+                IReadOnlyList<DenseCityGeneratedCategorySharingReport> reports,
+                byte category)
+            {
+                if (reports == null)
+                    return 0;
+                for (int i = 0; i < reports.Count; i++)
+                {
+                    if (reports[i] != null && reports[i].categoryValue == category)
+                        return reports[i].meshBackedRendererEntryCount;
+                }
+                return 0;
+            }
+
+            private static int GetCount(Dictionary<byte, int> counts, byte category) =>
+                counts.TryGetValue(category, out int count) ? count : 0;
+
+            private static void Increment(Dictionary<byte, int> counts, byte category)
+            {
+                counts.TryGetValue(category, out int count);
+                counts[category] = count + 1;
             }
 
             private static string GetCoveredFamilies(byte category) =>
@@ -1611,6 +1758,8 @@ namespace Game.Editor
             public int repeatedSignatureAssetPairMismatchCount;
             public List<DenseCityGeneratedCategorySharingReport> categorySharing;
             public string categorySharingRejectionReason;
+            public DenseCityGeneratedMeshCombinationPolicyReport meshCombinationPolicy;
+            public string meshCombinationPolicyRejectionReason;
             public List<DenseCityGeneratedSourceFailureSample> sourceFailureSamples;
             public int generatedBaseColorPropertyCount;
             public int generatedBaseColorOverrideCount;
@@ -1644,6 +1793,24 @@ namespace Game.Editor
             public int repeatedPresentationSignatureCount;
             public int repeatedPresentationEntryCount;
             public int repeatedAssetPairMismatchCount;
+            public int prefabBackedRendererEntryCount;
+            public int meshBackedRendererEntryCount;
+        }
+
+        [Serializable]
+        internal sealed class DenseCityGeneratedMeshCombinationPolicyReport
+        {
+            public float wholeCitySpanRatio;
+            public float aggregateSpanX;
+            public float aggregateSpanZ;
+            public float maximumMeshBackedSpanRatioX;
+            public float maximumMeshBackedSpanRatioZ;
+            public int meshBackedRendererEntryCount;
+            public int authorizedBuildingMeshBackedRendererEntryCount;
+            public int infrastructureMeshBackedRendererEntryCount;
+            public int unauthorizedMeshBackedRendererEntryCount;
+            public int wholeCityMeshBackedRendererEntryCount;
+            public int continuousTerrainRoadCombinationAuthorized;
         }
 
         [Serializable]

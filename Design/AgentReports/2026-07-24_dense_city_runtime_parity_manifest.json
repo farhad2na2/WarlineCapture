@@ -5,7 +5,7 @@
     "operationMapId": "opmap.skirmish.desert_base_01",
     "entitySceneGuid": "c00140f2e94a04c3084c8dcb0c18cbd0",
     "candidateSubSceneSha256": "a78eb6d8e6457820963c46813a7834ad09584acceb1f382584b154464bad5fc1",
-    "directBakeParityReportSha256": "da416fa98b9e7dba048faf701f4e9fa2b60282d27012b6ab9f7e070135641892",
+    "directBakeParityReportSha256": "d7aff7330f591a13b079578493874eaa14c0563d74275e5d82fc86fa388f6d11",
     "formatVersion": 3,
     "matrixTolerance": 0.00009999999747378752,
     "boundsTolerance": 0.0010000000474974514,
@@ -13,6 +13,6 @@
     "denseIdentityCount": 36946,
     "renderRowCount": 82797,
     "manifestBytes": 16099896,
-    "manifestSha256": "6be6fc239f8df8039d683306b7106e537b2fd2f4a1ba3921b6c0d0e7a46a8b72",
+    "manifestSha256": "db458fa096189905a679e0553622ddb479920bea3c3c1a0abca545a52255cfd7",
     "productionCutover": 0
 }

@@ -33,6 +33,8 @@ namespace Game.Editor
             "Design/AgentReports/2026-07-24_dense_city_candidate_runtime_content.json";
         internal const string FrozenRollbackReportPath =
             "Design/AgentReports/2026-07-25_dense_city_frozen_rollback_byte_inventory.json";
+        internal const string SourceHierarchyExclusionReportPath =
+            "Design/AgentReports/2026-07-25_dense_city_source_hierarchy_exclusion.json";
         internal const string AddressablesOutputPath =
             "Library/OperationMapDenseCityRuntimeContent/Addressables";
         internal const string BuildLayoutOutputPath =
@@ -185,6 +187,55 @@ namespace Game.Editor
                 "productionCutover=0");
         }
 
+        [MenuItem(
+            "Game/Operation Maps/EntityScene Migration/Report Dense City Source Hierarchy Exclusion")]
+        public static void ReportDenseCitySourceHierarchyExclusion()
+        {
+            string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+            string[] explicitAddressablePaths =
+            {
+                OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                    .DenseCandidateDefinitionPath,
+                OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                    .DenseCandidateRuntimeBindingPath
+            };
+            string[] enabledBuildScenePaths = EditorBuildSettings.scenes
+                .Where(scene => scene.enabled)
+                .Select(scene => scene.path)
+                .ToArray();
+            SourceHierarchyExclusionResult result = MeasureSourceHierarchyExclusion(
+                explicitAddressablePaths,
+                enabledBuildScenePaths);
+            RequireSourceHierarchyExclusion(result, expectedExplicitEntryCount: 2);
+            var report = new SourceHierarchyExclusionReport
+            {
+                schema = "warline.operation-map.dense-city-source-hierarchy-exclusion",
+                schemaVersion = 1,
+                result = "DenseCitySourceHierarchyExplicitAndBuildSceneExclusionPassed",
+                operationMapId =
+                    OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
+                explicitAddressableEntryCount = result.ExplicitAddressableEntryCount,
+                enabledPlayerBuildSceneCount = result.EnabledPlayerBuildSceneCount,
+                sourceHierarchyExplicitAddressableEntryCount =
+                    result.SourceHierarchyExplicitAddressableEntryCount,
+                sourceHierarchyPlayerBuildSceneCount =
+                    result.SourceHierarchyPlayerBuildSceneCount,
+                packedImplicitDependencyEvidenceComplete = 0,
+                productionCutover = 0
+            };
+            WriteJsonReport(projectRoot, SourceHierarchyExclusionReportPath, report);
+            Debug.Log(
+                "[DenseCitySourceHierarchyExclusion] result=Passed " +
+                $"explicitEntries={report.explicitAddressableEntryCount} " +
+                $"enabledBuildScenes={report.enabledPlayerBuildSceneCount} " +
+                $"sourceExplicitEntries={report.sourceHierarchyExplicitAddressableEntryCount} " +
+                $"sourceBuildScenes={report.sourceHierarchyPlayerBuildSceneCount} " +
+                "packedImplicitEvidence=0 productionCutover=0");
+        }
+
+        public static void ReportDenseCitySourceHierarchyExclusionBatch() =>
+            ReportDenseCitySourceHierarchyExclusion();
+
         private static AddressablesContentBuildResult BuildIsolatedAddressables(
             OperationMapEntitySceneCandidateAddressablesLayoutPlan plan,
             DenseRuntimeContentOutputTransaction outputTransaction)
@@ -270,6 +321,15 @@ namespace Game.Editor
                     throw new InvalidOperationException(
                         "Temporary dense Addressables settings contain unexpected groups or entries.");
                 }
+                SourceHierarchyExclusionResult sourceHierarchyExclusion =
+                    MeasureSourceHierarchyExclusion(
+                        group.entries.Select(entry => AssetDatabase.GUIDToAssetPath(entry.guid)),
+                        EditorBuildSettings.scenes
+                            .Where(scene => scene.enabled)
+                            .Select(scene => scene.path));
+                RequireSourceHierarchyExclusion(
+                    sourceHierarchyExclusion,
+                    expectedExplicitEntryCount: 2);
 
                 outputTransaction.PrepareSharedOutputForBuild();
                 builder = ScriptableObject.CreateInstance<BuildScriptPackedMode>();
@@ -359,6 +419,58 @@ namespace Game.Editor
             AddressableAssetEntry entry = settings.CreateOrMoveEntry(guid, group, false, false);
             entry.SetAddress(address, false);
         }
+
+        internal static SourceHierarchyExclusionResult MeasureSourceHierarchyExclusion(
+            IEnumerable<string> explicitAddressablePaths,
+            IEnumerable<string> enabledPlayerBuildScenePaths)
+        {
+            if (explicitAddressablePaths == null)
+                throw new ArgumentNullException(nameof(explicitAddressablePaths));
+            if (enabledPlayerBuildScenePaths == null)
+                throw new ArgumentNullException(nameof(enabledPlayerBuildScenePaths));
+
+            string[] explicitPaths = explicitAddressablePaths
+                .Select(NormalizeAssetPath)
+                .ToArray();
+            string[] buildScenePaths = enabledPlayerBuildScenePaths
+                .Select(NormalizeAssetPath)
+                .ToArray();
+            var forbidden = new HashSet<string>(
+                new[]
+                {
+                    OperationMapAddressablesLayoutBuilder.AuthoringScenePath,
+                    OperationMapEntityPresentationMigrationEditor.AcceptedSubScenePath,
+                    OperationMapEntityPresentationMigrationEditor.CandidateSubScenePath,
+                    DenseCityCandidateAuthoringTransaction.CandidateMapScenePath,
+                    DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath
+                }.Select(NormalizeAssetPath),
+                StringComparer.Ordinal);
+            return new SourceHierarchyExclusionResult(
+                explicitPaths.Length,
+                buildScenePaths.Length,
+                explicitPaths.Count(forbidden.Contains),
+                buildScenePaths.Count(forbidden.Contains));
+        }
+
+        internal static void RequireSourceHierarchyExclusion(
+            SourceHierarchyExclusionResult result,
+            int expectedExplicitEntryCount)
+        {
+            if (result.ExplicitAddressableEntryCount != expectedExplicitEntryCount ||
+                result.SourceHierarchyExplicitAddressableEntryCount != 0 ||
+                result.SourceHierarchyPlayerBuildSceneCount != 0)
+            {
+                throw new InvalidOperationException(
+                    "Dense source hierarchy exclusion failed: " +
+                    $"explicit={result.ExplicitAddressableEntryCount}/" +
+                    $"{result.SourceHierarchyExplicitAddressableEntryCount}, " +
+                    $"buildScenes={result.EnabledPlayerBuildSceneCount}/" +
+                    $"{result.SourceHierarchyPlayerBuildSceneCount}.");
+            }
+        }
+
+        private static string NormalizeAssetPath(string path) =>
+            (path ?? string.Empty).Replace('\\', '/').Trim();
 
         private static EntityContentBuildResult BuildEntityContent(
             OperationMapEntitySceneCandidateAddressablesLayoutPlan plan)
@@ -1204,6 +1316,43 @@ namespace Game.Editor
                 internal string BackupPath { get; }
                 internal bool Existed { get; }
             }
+        }
+
+        internal readonly struct SourceHierarchyExclusionResult
+        {
+            internal SourceHierarchyExclusionResult(
+                int explicitAddressableEntryCount,
+                int enabledPlayerBuildSceneCount,
+                int sourceHierarchyExplicitAddressableEntryCount,
+                int sourceHierarchyPlayerBuildSceneCount)
+            {
+                ExplicitAddressableEntryCount = explicitAddressableEntryCount;
+                EnabledPlayerBuildSceneCount = enabledPlayerBuildSceneCount;
+                SourceHierarchyExplicitAddressableEntryCount =
+                    sourceHierarchyExplicitAddressableEntryCount;
+                SourceHierarchyPlayerBuildSceneCount =
+                    sourceHierarchyPlayerBuildSceneCount;
+            }
+
+            internal int ExplicitAddressableEntryCount { get; }
+            internal int EnabledPlayerBuildSceneCount { get; }
+            internal int SourceHierarchyExplicitAddressableEntryCount { get; }
+            internal int SourceHierarchyPlayerBuildSceneCount { get; }
+        }
+
+        [Serializable]
+        private sealed class SourceHierarchyExclusionReport
+        {
+            public string schema;
+            public int schemaVersion;
+            public string result;
+            public string operationMapId;
+            public int explicitAddressableEntryCount;
+            public int enabledPlayerBuildSceneCount;
+            public int sourceHierarchyExplicitAddressableEntryCount;
+            public int sourceHierarchyPlayerBuildSceneCount;
+            public int packedImplicitDependencyEvidenceComplete;
+            public int productionCutover;
         }
 
         [Serializable]

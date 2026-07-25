@@ -28,7 +28,10 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
             suite.MeasurePackedDependencyBytes_AdaptsAddressablesBuildLayout,
             suite.SelectSingleGeneratedBuildLayoutPath_ReturnsOnlyNewJson,
             suite.SelectSingleGeneratedBuildLayoutPath_RejectsMissingReport,
-            suite.SelectSingleGeneratedBuildLayoutPath_RejectsAmbiguousReports
+            suite.SelectSingleGeneratedBuildLayoutPath_RejectsAmbiguousReports,
+            suite.MeasureSourceHierarchyExclusion_AcceptsRuntimeEntriesAndUnrelatedBuildScenes,
+            suite.MeasureSourceHierarchyExclusion_ReportsForbiddenExplicitEntry,
+            suite.MeasureSourceHierarchyExclusion_ReportsForbiddenPlayerBuildScene
         };
         for (int i = 0; i < tests.Length; i++)
             tests[i]();
@@ -382,6 +385,72 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
                     new[] { "first.json", "second.json" },
                     _ => true));
         Assert.That(exception.Message, Does.Contain("found 2"));
+    }
+
+    [Test]
+    public void MeasureSourceHierarchyExclusion_AcceptsRuntimeEntriesAndUnrelatedBuildScenes()
+    {
+        OperationMapDenseCityCandidateRuntimeContentBuilder.SourceHierarchyExclusionResult
+            result = OperationMapDenseCityCandidateRuntimeContentBuilder
+                .MeasureSourceHierarchyExclusion(
+                    new[]
+                    {
+                        OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                            .DenseCandidateDefinitionPath,
+                        OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                            .DenseCandidateRuntimeBindingPath
+                    },
+                    new[]
+                    {
+                        "Assets/Game/Scenes/Bootstrap.unity",
+                        "Assets/Game/Scenes/MainMenu.unity"
+                    });
+
+        Assert.That(result.ExplicitAddressableEntryCount, Is.EqualTo(2));
+        Assert.That(result.EnabledPlayerBuildSceneCount, Is.EqualTo(2));
+        Assert.That(result.SourceHierarchyExplicitAddressableEntryCount, Is.Zero);
+        Assert.That(result.SourceHierarchyPlayerBuildSceneCount, Is.Zero);
+    }
+
+    [Test]
+    public void MeasureSourceHierarchyExclusion_ReportsForbiddenExplicitEntry()
+    {
+        OperationMapDenseCityCandidateRuntimeContentBuilder.SourceHierarchyExclusionResult
+            result = OperationMapDenseCityCandidateRuntimeContentBuilder
+                .MeasureSourceHierarchyExclusion(
+                    new[]
+                    {
+                        OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                            .DenseCandidateDefinitionPath,
+                        DenseCityCandidateAuthoringTransaction.CandidateMapScenePath
+                    },
+                    Array.Empty<string>());
+
+        Assert.That(result.SourceHierarchyExplicitAddressableEntryCount, Is.EqualTo(1));
+        Assert.That(result.SourceHierarchyPlayerBuildSceneCount, Is.Zero);
+        Assert.Throws<InvalidOperationException>(
+            () => OperationMapDenseCityCandidateRuntimeContentBuilder
+                .RequireSourceHierarchyExclusion(result, expectedExplicitEntryCount: 2));
+    }
+
+    [Test]
+    public void MeasureSourceHierarchyExclusion_ReportsForbiddenPlayerBuildScene()
+    {
+        OperationMapDenseCityCandidateRuntimeContentBuilder.SourceHierarchyExclusionResult
+            result = OperationMapDenseCityCandidateRuntimeContentBuilder
+                .MeasureSourceHierarchyExclusion(
+                    Array.Empty<string>(),
+                    new[]
+                    {
+                        "Assets/Game/Scenes/Bootstrap.unity",
+                        DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath
+                    });
+
+        Assert.That(result.SourceHierarchyExplicitAddressableEntryCount, Is.Zero);
+        Assert.That(result.SourceHierarchyPlayerBuildSceneCount, Is.EqualTo(1));
+        Assert.Throws<InvalidOperationException>(
+            () => OperationMapDenseCityCandidateRuntimeContentBuilder
+                .RequireSourceHierarchyExclusion(result, expectedExplicitEntryCount: 2));
     }
 
     private static string WriteBytes(string root, string relativePath, int count)

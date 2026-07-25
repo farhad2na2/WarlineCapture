@@ -1,0 +1,12 @@
+{
+    "schema": "warline.operation-map.dense-city-source-hierarchy-exclusion",
+    "schemaVersion": 1,
+    "result": "DenseCitySourceHierarchyExplicitAndBuildSceneExclusionPassed",
+    "operationMapId": "opmap.skirmish.desert_base_01",
+    "explicitAddressableEntryCount": 2,
+    "enabledPlayerBuildSceneCount": 2,
+    "sourceHierarchyExplicitAddressableEntryCount": 0,
+    "sourceHierarchyPlayerBuildSceneCount": 0,
+    "packedImplicitDependencyEvidenceComplete": 0,
+    "productionCutover": 0
+}

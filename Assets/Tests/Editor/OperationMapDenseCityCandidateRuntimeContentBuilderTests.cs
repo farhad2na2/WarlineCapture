@@ -3,6 +3,7 @@ using System.IO;
 using Game.Editor;
 using Game.Configs;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEditor.AddressableAssets.Build.Layout;
 using UnityEditor.AddressableAssets.Settings;
 using UnityEngine;
@@ -14,6 +15,10 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
         var suite = new OperationMapDenseCityCandidateRuntimeContentBuilderTests();
         Action[] tests =
         {
+            suite.RequireSupportedValidationBuildTarget_AcceptsWindows64,
+            suite.RequireSupportedValidationBuildTarget_AcceptsMacOs,
+            suite.RequireSupportedValidationBuildTarget_RejectsAndroidOrMissingSupport,
+            suite.GetSharedAddressablesOutputPath_MapsStandalonePlatform,
             suite.MeasureEntityContent_SeparatesArchiveAndMetadataBytes,
             suite.MeasureEntityContent_FingerprintsArchiveSetDeterministically,
             suite.MeasureEntityContent_RejectsMissingCatalog,
@@ -52,6 +57,61 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
             tests[i]();
         Debug.Log(
             $"[DenseCityRuntimeContentByteInventoryValidation] result=Passed tests={tests.Length}");
+    }
+
+    [Test]
+    public void RequireSupportedValidationBuildTarget_AcceptsWindows64()
+    {
+        BuildTarget result = OperationMapDenseCityCandidateRuntimeContentBuilder
+            .RequireSupportedValidationBuildTarget(
+                BuildTarget.StandaloneWindows64,
+                (group, target) =>
+                    group == BuildTargetGroup.Standalone &&
+                    target == BuildTarget.StandaloneWindows64);
+
+        Assert.That(result, Is.EqualTo(BuildTarget.StandaloneWindows64));
+    }
+
+    [Test]
+    public void RequireSupportedValidationBuildTarget_AcceptsMacOs()
+    {
+        BuildTarget result = OperationMapDenseCityCandidateRuntimeContentBuilder
+            .RequireSupportedValidationBuildTarget(
+                BuildTarget.StandaloneOSX,
+                (_, _) => true);
+
+        Assert.That(result, Is.EqualTo(BuildTarget.StandaloneOSX));
+    }
+
+    [Test]
+    public void RequireSupportedValidationBuildTarget_RejectsAndroidOrMissingSupport()
+    {
+        Assert.Throws<InvalidOperationException>(
+            () => OperationMapDenseCityCandidateRuntimeContentBuilder
+                .RequireSupportedValidationBuildTarget(
+                    BuildTarget.Android,
+                    (_, _) => true));
+        Assert.Throws<InvalidOperationException>(
+            () => OperationMapDenseCityCandidateRuntimeContentBuilder
+                .RequireSupportedValidationBuildTarget(
+                    BuildTarget.StandaloneWindows64,
+                    (_, _) => false));
+    }
+
+    [Test]
+    public void GetSharedAddressablesOutputPath_MapsStandalonePlatform()
+    {
+        Assert.That(
+            OperationMapDenseCityCandidateRuntimeContentBuilder
+                .GetSharedAddressablesOutputPath(BuildTarget.StandaloneWindows64),
+            Is.EqualTo("Library/com.unity.addressables/aa/Windows"));
+        Assert.That(
+            OperationMapDenseCityCandidateRuntimeContentBuilder
+                .GetSharedAddressablesOutputPath(BuildTarget.StandaloneOSX),
+            Is.EqualTo("Library/com.unity.addressables/aa/OSX"));
+        Assert.Throws<InvalidOperationException>(
+            () => OperationMapDenseCityCandidateRuntimeContentBuilder
+                .GetSharedAddressablesOutputPath(BuildTarget.Android));
     }
 
     [Test]

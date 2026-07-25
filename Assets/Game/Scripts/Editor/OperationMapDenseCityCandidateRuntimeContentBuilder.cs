@@ -47,8 +47,8 @@ namespace Game.Editor
             "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/" +
             "desert_base_01";
 
-        private const string SharedAddressablesOutputPath =
-            "Library/com.unity.addressables/aa/OSX";
+        private const string SharedAddressablesOutputRoot =
+            "Library/com.unity.addressables/aa";
         private const string TransientSettingsFolder =
             "Assets/Game/GeneratedOperationMaps/RuntimeBinding/" +
             "opmap.skirmish.desert_base_01/Candidates/DenseCityRuntimeContentBuildTemp";
@@ -61,7 +61,9 @@ namespace Game.Editor
             "Game/Operation Maps/EntityScene Migration/Build Dense City Candidate Runtime Parity Content")]
         public static void BuildDenseCityCandidateRuntimeParityContent()
         {
-            RequireMacOsBuildTarget();
+            BuildTarget buildTarget = RequireSupportedValidationBuildTarget();
+            string sharedAddressablesOutputPath =
+                GetSharedAddressablesOutputPath(buildTarget);
             OperationMapEntitySceneCandidateAddressablesLayoutBuilder
                 .BuildDenseCityCandidateEntitySceneAddressablesLayout();
             if (!OperationMapEntitySceneCandidateAddressablesLayoutPlanner.TryCreateDenseCityPlan(
@@ -87,7 +89,7 @@ namespace Game.Editor
                     {
                         "Assets/AddressableAssetsData",
                         "Library/OperationMapCandidateRuntimeContent",
-                        SharedAddressablesOutputPath
+                        sharedAddressablesOutputPath
                     });
             OperationMapEntitySceneCandidateBakeAll.CandidateFileTransaction reportTransaction =
                 OperationMapEntitySceneCandidateBakeAll.CandidateFileTransaction.Capture(
@@ -103,7 +105,7 @@ namespace Game.Editor
                         });
             using var outputTransaction = DenseRuntimeContentOutputTransaction.Begin(
                 projectRoot,
-                SharedAddressablesOutputPath,
+                sharedAddressablesOutputPath,
                 AddressablesOutputPath,
                 EntityContentOutputPath,
                 BuildLayoutOutputPath);
@@ -111,14 +113,20 @@ namespace Game.Editor
             try
             {
                 AddressablesContentBuildResult addressablesResult =
-                    BuildIsolatedAddressables(plan, outputTransaction);
+                    BuildIsolatedAddressables(
+                        plan,
+                        outputTransaction,
+                        buildTarget,
+                        sharedAddressablesOutputPath);
                 productionSettingsTransaction.Rollback();
-                EntityContentBuildResult entityContentResult = BuildEntityContent(plan);
+                EntityContentBuildResult entityContentResult =
+                    BuildEntityContent(plan, buildTarget);
                 FrozenRollbackContentResult frozenRollbackResult =
                     MeasureFrozenRollbackContent(projectRoot);
                 RuntimeContentReport report = CreateReport(
                     projectRoot,
                     plan,
+                    buildTarget,
                     addressablesResult,
                     entityContentResult,
                     frozenRollbackResult);
@@ -128,6 +136,7 @@ namespace Game.Editor
                 Debug.Log(
                     $"[OperationMapDenseCityRuntimeContent] result=Passed " +
                     $"entitySceneGuid={plan.EntitySceneGuid} " +
+                    $"buildTarget={buildTarget} " +
                     $"addressablesBundles={report.addressablesBundleCount} " +
                     $"addressablesBytes={report.addressablesBytes} " +
                     $"sharedDependencyBytes={report.sharedDependencyBytes} " +
@@ -238,7 +247,9 @@ namespace Game.Editor
 
         private static AddressablesContentBuildResult BuildIsolatedAddressables(
             OperationMapEntitySceneCandidateAddressablesLayoutPlan plan,
-            DenseRuntimeContentOutputTransaction outputTransaction)
+            DenseRuntimeContentOutputTransaction outputTransaction,
+            BuildTarget buildTarget,
+            string sharedAddressablesOutputPath)
         {
             AddressableAssetSettings settings = null;
             BuildScriptPackedMode builder = null;
@@ -256,13 +267,13 @@ namespace Game.Editor
                 string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
                 string temporaryBundleBuildPath = Path.GetFullPath(Path.Combine(
                         projectRoot,
-                        SharedAddressablesOutputPath,
-                        BuildTarget.StandaloneOSX.ToString()))
+                        sharedAddressablesOutputPath,
+                        buildTarget.ToString()))
                     .Replace('\\', '/');
                 string denseBundleLoadPath = Path.GetFullPath(Path.Combine(
                         projectRoot,
                         AddressablesOutputPath,
-                        BuildTarget.StandaloneOSX.ToString()))
+                        buildTarget.ToString()))
                     .Replace('\\', '/');
                 settings.profileSettings.SetValue(
                     settings.activeProfileId,
@@ -597,7 +608,8 @@ namespace Game.Editor
         }
 
         private static EntityContentBuildResult BuildEntityContent(
-            OperationMapEntitySceneCandidateAddressablesLayoutPlan plan)
+            OperationMapEntitySceneCandidateAddressablesLayoutPlan plan,
+            BuildTarget buildTarget)
         {
             var sceneGuid = new Hash128(plan.EntitySceneGuid);
             if (!sceneGuid.IsValid)
@@ -614,7 +626,7 @@ namespace Game.Editor
             RemoteContentCatalogBuildUtility.BuildContent(
                 new HashSet<Hash128> { sceneGuid },
                 playerGuid,
-                BuildTarget.StandaloneOSX,
+                buildTarget,
                 outputPath);
 
             string catalogPath = Path.Combine(outputPath, RuntimeContentManager.RelativeCatalogPath);
@@ -1018,6 +1030,7 @@ namespace Game.Editor
         private static RuntimeContentReport CreateReport(
             string projectRoot,
             OperationMapEntitySceneCandidateAddressablesLayoutPlan plan,
+            BuildTarget buildTarget,
             AddressablesContentBuildResult addressablesResult,
             EntityContentBuildResult entityContentResult,
             FrozenRollbackContentResult frozenRollbackResult)
@@ -1035,9 +1048,12 @@ namespace Game.Editor
             return new RuntimeContentReport
             {
                 schema = "warline.operation-map.dense-city-candidate-runtime-content",
-                schemaVersion = 8,
+                schemaVersion = 9,
                 result = "DenseCityCandidateRuntimeContentBuilt",
                 operationMapId = plan.OperationMapId,
+                validationBuildTarget = buildTarget.ToString(),
+                addressablesPlatformSubfolder =
+                    GetAddressablesPlatformSubfolder(buildTarget),
                 entitySceneGuid = plan.EntitySceneGuid,
                 definitionAddress = plan.AddressPrefix + "definition",
                 sourceSceneAddress = plan.AddressPrefix + "source-scene",
@@ -1135,22 +1151,46 @@ namespace Game.Editor
             AssetDatabase.ImportAsset(reportPath, ImportAssetOptions.ForceSynchronousImport);
         }
 
-        private static void RequireMacOsBuildTarget()
+        private static BuildTarget RequireSupportedValidationBuildTarget() =>
+            RequireSupportedValidationBuildTarget(
+                EditorUserBuildSettings.activeBuildTarget,
+                BuildPipeline.IsBuildTargetSupported);
+
+        internal static BuildTarget RequireSupportedValidationBuildTarget(
+            BuildTarget activeBuildTarget,
+            Func<BuildTargetGroup, BuildTarget, bool> isSupported)
         {
-            if (!BuildPipeline.IsBuildTargetSupported(
-                    BuildTargetGroup.Standalone,
-                    BuildTarget.StandaloneOSX))
+            if (isSupported == null)
+                throw new ArgumentNullException(nameof(isSupported));
+            if (activeBuildTarget != BuildTarget.StandaloneOSX &&
+                activeBuildTarget != BuildTarget.StandaloneWindows64)
             {
                 throw new InvalidOperationException(
-                    "Dense candidate runtime parity requires macOS Standalone Build Support.");
+                    "Dense candidate runtime content requires active target StandaloneOSX " +
+                    $"or StandaloneWindows64, not {activeBuildTarget}. " +
+                    "Android validation remains a separate user-triggered lane.");
             }
-            if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.StandaloneOSX)
+            if (!isSupported(BuildTargetGroup.Standalone, activeBuildTarget))
             {
                 throw new InvalidOperationException(
-                    "Dense candidate runtime content must use -buildTarget StandaloneOSX. " +
-                    "Android validation is user-triggered only.");
+                    $"Dense candidate runtime content build support is missing for " +
+                    $"{activeBuildTarget}.");
             }
+            return activeBuildTarget;
         }
+
+        internal static string GetAddressablesPlatformSubfolder(BuildTarget buildTarget) =>
+            buildTarget switch
+            {
+                BuildTarget.StandaloneOSX => "OSX",
+                BuildTarget.StandaloneWindows64 => "Windows",
+                _ => throw new InvalidOperationException(
+                    $"Unsupported dense validation build target: {buildTarget}")
+            };
+
+        internal static string GetSharedAddressablesOutputPath(BuildTarget buildTarget) =>
+            SharedAddressablesOutputRoot + "/" +
+            GetAddressablesPlatformSubfolder(buildTarget);
 
         private static void RequireFreeDiskSpace(string projectRoot)
         {
@@ -1750,6 +1790,8 @@ namespace Game.Editor
             public int schemaVersion;
             public string result;
             public string operationMapId;
+            public string validationBuildTarget;
+            public string addressablesPlatformSubfolder;
             public string entitySceneGuid;
             public string definitionAddress;
             public string sourceSceneAddress;

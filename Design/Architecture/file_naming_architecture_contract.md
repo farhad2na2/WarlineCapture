@@ -24,4 +24,36 @@ Runtime C# filenames and top-level type names must make ECS ownership obvious:
 
 The active migration is tracked in `Design/Architecture/non_ecs_system_helper_naming_refactor_tracker.md`.
 
+## Operation-Map EntityScene And Dense-City Naming
+
+The operation-map EntityScene and dense-city implementation uses these domain prefixes:
+
+- `OperationMap*` for accepted-map identity, configuration, authoring, baked ECS data, runtime loading/readiness, building state, packaging, and validation;
+- `DenseCity*` for generated-city authoring, immutable generation records, semantic realization, candidate transactions, proxies, and dense-only validation;
+- `Map*`, `Building*`, or another narrower existing domain prefix when ownership is not specific to the operation-map migration.
+
+Suffixes declare the execution boundary:
+
+- `*Authoring` is a Unity conversion-edge component and may exist only in the authoring assembly/source scenes;
+- `*Component` and buffer element names are unmanaged ECS data in `Game.Components`;
+- a bare `*System` is allowed only for an actual ECS `ISystem` or ECS system base, including baking-world systems;
+- runtime managed boundaries retain an approved reason suffix or a narrow non-system noun such as `Policy` or `Utility`;
+- editor-only producers use explicit nouns such as `Builder`, `Planner`, `Transaction`, `Validator`, `Probe`, `Writer`, `Backfill`, `Factory`, `Realizer`, `Extractor`, or `Library`.
+
+`OperationMapBuildingDestructionSystem` and
+`OperationMapRenderMaterialBaseColorBakingSystem` are not naming exceptions: both are
+actual `ISystem` implementations, and the latter is restricted to the baking world.
+`OperationMapEntityScenePresentationPolicy` and
+`OperationMapEntityPresentationReadinessUtility` are narrow runtime composition helpers
+that do not claim ECS scheduling. Dense-city editor producers are editor-only and must
+not be added to a runtime non-ECS `*System` allowlist.
+
+Generated assets, reports, and captures use the operation-map or dense-city domain
+prefix plus their stable owner/purpose. Candidate-only paths additionally use
+`Candidate` or `Candidates`; this is an ownership marker, not a runtime presentation
+kind. Every added or renamed Unity source/asset keeps a same-name tracked `.meta` file.
+
+No new product-prefix, broad-shell, bare non-ECS `*System`, or top-level naming-escape
+exception is approved for the EntityScene/dense-city lane.
+
 New exceptions require an explicit note in the owning architecture document. Player-facing product names may appear in in-game text, store copy, bundle identifiers, namespaces, and final exported deliverables, but not as the starting token of tracked source asset filenames.

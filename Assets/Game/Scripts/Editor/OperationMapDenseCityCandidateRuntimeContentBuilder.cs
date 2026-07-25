@@ -8,11 +8,13 @@ namespace Game.Editor
     using System.Linq;
     using System.Security.Cryptography;
     using System.Text;
+    using Game.Configs;
     using Unity.Entities;
     using Unity.Entities.Build;
     using Unity.Entities.Content;
     using Unity.Scenes.Editor;
     using UnityEditor;
+    using UnityEditor.AddressableAssets;
     using UnityEditor.AddressableAssets.Build;
     using UnityEditor.AddressableAssets.Build.DataBuilders;
     using UnityEditor.AddressableAssets.Settings;
@@ -142,10 +144,12 @@ namespace Game.Editor
         {
             string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
             FrozenRollbackContentResult result = MeasureFrozenRollbackContent(projectRoot);
+            ProductionStaticAddressablesResult production =
+                MeasureCurrentProductionStaticAddressables();
             var report = new FrozenRollbackByteInventoryReport
             {
                 schema = "warline.operation-map.dense-city-frozen-rollback-byte-inventory",
-                schemaVersion = 1,
+                schemaVersion = 2,
                 result = "DenseCityFrozenRollbackByteInventoryPassed",
                 operationMapId = OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
                 manifestPath = FrozenRollbackRootPath + "/StaticMapPresentationManifest.asset",
@@ -153,13 +157,24 @@ namespace Game.Editor
                 chunkDirectoryPath = FrozenRollbackRootPath + "/Scenes",
                 chunkCount = result.ChunkCount,
                 chunkBytes = result.ChunkBytes,
+                productionPresentationKind = production.PresentationKind,
+                productionStaticManifestEntryCount = production.ManifestEntryCount,
+                productionPresentationChunkEntryCount = production.ChunkEntryCount,
+                requiredStaticManifestEntryCountAfterCutover = 0,
+                requiredPresentationChunkEntryCountAfterCutover = 0,
+                postCutoverZeroCountsSatisfied = production.ZeroCountsSatisfied ? 1 : 0,
                 productionCutover = 0
             };
             WriteJsonReport(projectRoot, FrozenRollbackReportPath, report);
             Debug.Log(
                 "[DenseCityFrozenRollbackByteInventory] result=Passed " +
                 $"manifestBytes={report.manifestBytes} chunks={report.chunkCount} " +
-                $"chunkBytes={report.chunkBytes} productionCutover=0");
+                $"chunkBytes={report.chunkBytes} " +
+                $"productionKind={report.productionPresentationKind} " +
+                $"productionStaticManifestEntries={report.productionStaticManifestEntryCount} " +
+                $"productionChunkEntries={report.productionPresentationChunkEntryCount} " +
+                $"postCutoverZeroCountsSatisfied={report.postCutoverZeroCountsSatisfied} " +
+                "productionCutover=0");
         }
 
         private static AddressablesPlayerBuildResult BuildIsolatedAddressables(
@@ -404,6 +419,76 @@ namespace Game.Editor
                 chunkBytes);
         }
 
+        internal static ProductionStaticAddressablesResult MeasureProductionStaticAddressables(
+            OperationMapPresentationKind presentationKind,
+            IEnumerable<string> entryAssetPaths)
+        {
+            if (entryAssetPaths == null)
+                throw new ArgumentNullException(nameof(entryAssetPaths));
+            if (presentationKind != OperationMapPresentationKind.StaticSceneChunks &&
+                presentationKind != OperationMapPresentationKind.EntityScene)
+            {
+                throw new InvalidOperationException(
+                    $"Unknown production presentation kind: {presentationKind}");
+            }
+
+            string chunkPrefix = StaticMapPresentationBaker.SceneOutputFolder + "/";
+            int manifestCount = 0;
+            int chunkCount = 0;
+            foreach (string path in entryAssetPaths)
+            {
+                if (string.Equals(
+                        path,
+                        OperationMapAddressablesLayoutBuilder.ManifestPath,
+                        StringComparison.Ordinal))
+                {
+                    manifestCount++;
+                }
+                else if (!string.IsNullOrEmpty(path) &&
+                         path.StartsWith(chunkPrefix, StringComparison.Ordinal) &&
+                         path.EndsWith(".unity", StringComparison.OrdinalIgnoreCase))
+                {
+                    chunkCount++;
+                }
+            }
+
+            bool zeroCountsSatisfied = manifestCount == 0 && chunkCount == 0;
+            if (presentationKind == OperationMapPresentationKind.EntityScene &&
+                !zeroCountsSatisfied)
+            {
+                throw new InvalidOperationException(
+                    "EntityScene production still owns retired static Addressables entries: " +
+                    $"manifests={manifestCount}, chunks={chunkCount}");
+            }
+
+            return new ProductionStaticAddressablesResult(
+                presentationKind.ToString(),
+                manifestCount,
+                chunkCount,
+                zeroCountsSatisfied);
+        }
+
+        private static ProductionStaticAddressablesResult
+            MeasureCurrentProductionStaticAddressables()
+        {
+            AddressableAssetSettings settings =
+                AddressableAssetSettingsDefaultObject.GetSettings(false);
+            OperationMapDefinition definition =
+                AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
+                    OperationMapAddressablesLayoutBuilder.DefinitionPath);
+            if (settings == null || definition == null)
+                throw new InvalidOperationException(
+                    "Production Addressables settings and operation-map definition are required.");
+
+            return MeasureProductionStaticAddressables(
+                definition.PresentationKind,
+                settings.groups
+                    .Where(group => group != null)
+                    .SelectMany(group => group.entries)
+                    .Where(entry => entry != null)
+                    .Select(entry => entry.AssetPath));
+        }
+
         private static RuntimeContentReport CreateReport(
             string projectRoot,
             OperationMapEntitySceneCandidateAddressablesLayoutPlan plan,
@@ -418,11 +503,13 @@ namespace Game.Editor
             if (!File.Exists(addressablesCatalog))
                 throw new InvalidOperationException(
                     $"Dense candidate Addressables catalog is missing: {addressablesCatalog}");
+            ProductionStaticAddressablesResult production =
+                MeasureCurrentProductionStaticAddressables();
 
             return new RuntimeContentReport
             {
                 schema = "warline.operation-map.dense-city-candidate-runtime-content",
-                schemaVersion = 2,
+                schemaVersion = 3,
                 result = "DenseCityCandidateRuntimeContentBuilt",
                 operationMapId = plan.OperationMapId,
                 entitySceneGuid = plan.EntitySceneGuid,
@@ -447,6 +534,12 @@ namespace Game.Editor
                 frozenRollbackManifestBytes = frozenRollbackResult.ManifestBytes,
                 frozenRollbackChunkCount = frozenRollbackResult.ChunkCount,
                 frozenRollbackChunkBytes = frozenRollbackResult.ChunkBytes,
+                productionPresentationKind = production.PresentationKind,
+                productionStaticManifestEntryCount = production.ManifestEntryCount,
+                productionPresentationChunkEntryCount = production.ChunkEntryCount,
+                requiredStaticManifestEntryCountAfterCutover = 0,
+                requiredPresentationChunkEntryCountAfterCutover = 0,
+                postCutoverZeroCountsSatisfied = production.ZeroCountsSatisfied ? 1 : 0,
                 candidateSubSceneSha256 = ComputeSha256(
                     DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath),
                 candidateDefinitionSha256 = ComputeSha256(
@@ -578,6 +671,26 @@ namespace Game.Editor
             internal long ManifestBytes { get; }
             internal int ChunkCount { get; }
             internal long ChunkBytes { get; }
+        }
+
+        internal readonly struct ProductionStaticAddressablesResult
+        {
+            internal ProductionStaticAddressablesResult(
+                string presentationKind,
+                int manifestEntryCount,
+                int chunkEntryCount,
+                bool zeroCountsSatisfied)
+            {
+                PresentationKind = presentationKind;
+                ManifestEntryCount = manifestEntryCount;
+                ChunkEntryCount = chunkEntryCount;
+                ZeroCountsSatisfied = zeroCountsSatisfied;
+            }
+
+            internal string PresentationKind { get; }
+            internal int ManifestEntryCount { get; }
+            internal int ChunkEntryCount { get; }
+            internal bool ZeroCountsSatisfied { get; }
         }
 
         private sealed class DenseRuntimeContentOutputTransaction : IDisposable
@@ -780,6 +893,12 @@ namespace Game.Editor
             public string chunkDirectoryPath;
             public int chunkCount;
             public long chunkBytes;
+            public string productionPresentationKind;
+            public int productionStaticManifestEntryCount;
+            public int productionPresentationChunkEntryCount;
+            public int requiredStaticManifestEntryCountAfterCutover;
+            public int requiredPresentationChunkEntryCountAfterCutover;
+            public int postCutoverZeroCountsSatisfied;
             public int productionCutover;
         }
 
@@ -810,6 +929,12 @@ namespace Game.Editor
             public long frozenRollbackManifestBytes;
             public int frozenRollbackChunkCount;
             public long frozenRollbackChunkBytes;
+            public string productionPresentationKind;
+            public int productionStaticManifestEntryCount;
+            public int productionPresentationChunkEntryCount;
+            public int requiredStaticManifestEntryCountAfterCutover;
+            public int requiredPresentationChunkEntryCountAfterCutover;
+            public int postCutoverZeroCountsSatisfied;
             public string candidateSubSceneSha256;
             public string candidateDefinitionSha256;
             public string candidateRuntimeBindingSha256;

@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using Game.Editor;
+using Game.Configs;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -16,7 +17,10 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
             suite.MeasureEntityContent_ReportsMultipleArchivesForFailClosedCaller,
             suite.MeasureFrozenRollbackContent_SeparatesManifestAndChunkBytes,
             suite.MeasureFrozenRollbackContent_RejectsMissingManifest,
-            suite.MeasureFrozenRollbackContent_AcceptsCurrentFrozenPackage
+            suite.MeasureFrozenRollbackContent_AcceptsCurrentFrozenPackage,
+            suite.MeasureProductionStaticAddressables_ReportsLegacyBaseline,
+            suite.MeasureProductionStaticAddressables_RejectsRetiredEntriesAfterCutover,
+            suite.MeasureProductionStaticAddressables_AcceptsZeroEntriesAfterCutover
         };
         for (int i = 0; i < tests.Length; i++)
             tests[i]();
@@ -141,6 +145,56 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
         Assert.That(result.ManifestBytes, Is.EqualTo(10097753));
         Assert.That(result.ChunkCount, Is.EqualTo(269));
         Assert.That(result.ChunkBytes, Is.EqualTo(32381589));
+    }
+
+    [Test]
+    public void MeasureProductionStaticAddressables_ReportsLegacyBaseline()
+    {
+        string[] paths =
+        {
+            OperationMapAddressablesLayoutBuilder.ManifestPath,
+            StaticMapPresentationBaker.SceneOutputFolder + "/chunk-a.unity",
+            StaticMapPresentationBaker.SceneOutputFolder + "/chunk-b.unity",
+            "Assets/Game/Configs/OperationMaps/other.asset"
+        };
+
+        OperationMapDenseCityCandidateRuntimeContentBuilder
+            .ProductionStaticAddressablesResult result =
+                OperationMapDenseCityCandidateRuntimeContentBuilder
+                    .MeasureProductionStaticAddressables(
+                        OperationMapPresentationKind.StaticSceneChunks,
+                        paths);
+
+        Assert.That(result.PresentationKind, Is.EqualTo("StaticSceneChunks"));
+        Assert.That(result.ManifestEntryCount, Is.EqualTo(1));
+        Assert.That(result.ChunkEntryCount, Is.EqualTo(2));
+        Assert.That(result.ZeroCountsSatisfied, Is.False);
+    }
+
+    [Test]
+    public void MeasureProductionStaticAddressables_RejectsRetiredEntriesAfterCutover()
+    {
+        InvalidOperationException exception = Assert.Throws<InvalidOperationException>(
+            () => OperationMapDenseCityCandidateRuntimeContentBuilder
+                .MeasureProductionStaticAddressables(
+                    OperationMapPresentationKind.EntityScene,
+                    new[] { OperationMapAddressablesLayoutBuilder.ManifestPath }));
+        Assert.That(exception.Message, Does.Contain("still owns retired static"));
+    }
+
+    [Test]
+    public void MeasureProductionStaticAddressables_AcceptsZeroEntriesAfterCutover()
+    {
+        OperationMapDenseCityCandidateRuntimeContentBuilder
+            .ProductionStaticAddressablesResult result =
+                OperationMapDenseCityCandidateRuntimeContentBuilder
+                    .MeasureProductionStaticAddressables(
+                        OperationMapPresentationKind.EntityScene,
+                        new[] { "Assets/Game/Configs/OperationMaps/other.asset" });
+
+        Assert.That(result.ManifestEntryCount, Is.Zero);
+        Assert.That(result.ChunkEntryCount, Is.Zero);
+        Assert.That(result.ZeroCountsSatisfied, Is.True);
     }
 
     private static string WriteBytes(string root, string relativePath, int count)

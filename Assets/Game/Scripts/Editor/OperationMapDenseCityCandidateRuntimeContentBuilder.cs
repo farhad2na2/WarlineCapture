@@ -113,7 +113,9 @@ namespace Game.Editor
                     $"addressablesBundles={report.addressablesBundleCount} " +
                     $"addressablesBytes={report.addressablesBytes} " +
                     $"entityArchives={report.entityContentArchiveCount} " +
-                    $"entityBytes={report.entityContentBytes} productionCutover=0 " +
+                    $"entitySceneArchiveBytes={report.entitySceneArchiveBytes} " +
+                    $"entityMetadataBytes={report.entityContentMetadataBytes} " +
+                    $"entityContentBytes={report.entityContentBytes} productionCutover=0 " +
                     "productionSettingsMutated=0 sharedOutputRestored=1");
             }
             catch
@@ -286,18 +288,45 @@ namespace Game.Editor
             if (!File.Exists(catalogPath))
                 throw new InvalidOperationException(
                     $"Dense candidate Entities catalog was not produced: {catalogPath}");
-            int archiveCount = Directory
-                .EnumerateFiles(outputPath, "*.archive", SearchOption.AllDirectories)
-                .Count();
-            if (archiveCount == 0)
+            EntityContentBuildResult result = MeasureEntityContent(outputPath, catalogPath);
+            if (result.ArchiveCount != 1)
                 throw new InvalidOperationException(
-                    $"Dense candidate Entities content has no archives: {outputPath}");
+                    "Dense candidate Entities content must contain exactly one EntityScene " +
+                    $"archive, but found {result.ArchiveCount}: {outputPath}");
+            return result;
+        }
+
+        internal static EntityContentBuildResult MeasureEntityContent(
+            string outputPath,
+            string catalogPath)
+        {
+            if (string.IsNullOrWhiteSpace(outputPath) || !Directory.Exists(outputPath))
+                throw new InvalidOperationException(
+                    $"Dense candidate Entities content directory is missing: {outputPath}");
+            if (string.IsNullOrWhiteSpace(catalogPath) || !File.Exists(catalogPath))
+                throw new InvalidOperationException(
+                    $"Dense candidate Entities catalog is missing: {catalogPath}");
+
+            string[] archivePaths = Directory
+                .EnumerateFiles(outputPath, "*.archive", SearchOption.AllDirectories)
+                .OrderBy(path => path, StringComparer.Ordinal)
+                .ToArray();
+            long archiveBytes = archivePaths.Sum(path => new FileInfo(path).Length);
+            long totalBytes = ComputeDirectoryBytes(outputPath);
+            long metadataBytes = totalBytes - archiveBytes;
+            if (archiveBytes <= 0 || metadataBytes < 0)
+                throw new InvalidOperationException(
+                    "Dense candidate Entities content byte inventory is invalid: " +
+                    $"archives={archivePaths.Length}, archiveBytes={archiveBytes}, " +
+                    $"totalBytes={totalBytes}");
 
             return new EntityContentBuildResult(
                 outputPath,
                 catalogPath,
-                archiveCount,
-                ComputeDirectoryBytes(outputPath));
+                archivePaths.Length,
+                archiveBytes,
+                metadataBytes,
+                totalBytes);
         }
 
         private static RuntimeContentReport CreateReport(
@@ -317,7 +346,7 @@ namespace Game.Editor
             return new RuntimeContentReport
             {
                 schema = "warline.operation-map.dense-city-candidate-runtime-content",
-                schemaVersion = 1,
+                schemaVersion = 2,
                 result = "DenseCityCandidateRuntimeContentBuilt",
                 operationMapId = plan.OperationMapId,
                 entitySceneGuid = plan.EntitySceneGuid,
@@ -336,7 +365,9 @@ namespace Game.Editor
                 entityContentOutputPath = entityContentResult.OutputPath,
                 entityContentCatalogPath = entityContentResult.CatalogPath,
                 entityContentArchiveCount = entityContentResult.ArchiveCount,
-                entityContentBytes = entityContentResult.Bytes,
+                entitySceneArchiveBytes = entityContentResult.ArchiveBytes,
+                entityContentMetadataBytes = entityContentResult.MetadataBytes,
+                entityContentBytes = entityContentResult.TotalBytes,
                 candidateSubSceneSha256 = ComputeSha256(
                     DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath),
                 candidateDefinitionSha256 = ComputeSha256(
@@ -419,24 +450,30 @@ namespace Game.Editor
                 .EnumerateFiles(path, "*", SearchOption.AllDirectories)
                 .Sum(file => new FileInfo(file).Length);
 
-        private readonly struct EntityContentBuildResult
+        internal readonly struct EntityContentBuildResult
         {
             internal EntityContentBuildResult(
                 string outputPath,
                 string catalogPath,
                 int archiveCount,
-                long bytes)
+                long archiveBytes,
+                long metadataBytes,
+                long totalBytes)
             {
                 OutputPath = outputPath;
                 CatalogPath = catalogPath;
                 ArchiveCount = archiveCount;
-                Bytes = bytes;
+                ArchiveBytes = archiveBytes;
+                MetadataBytes = metadataBytes;
+                TotalBytes = totalBytes;
             }
 
             internal string OutputPath { get; }
             internal string CatalogPath { get; }
             internal int ArchiveCount { get; }
-            internal long Bytes { get; }
+            internal long ArchiveBytes { get; }
+            internal long MetadataBytes { get; }
+            internal long TotalBytes { get; }
         }
 
         private sealed class DenseRuntimeContentOutputTransaction : IDisposable
@@ -648,6 +685,8 @@ namespace Game.Editor
             public string entityContentOutputPath;
             public string entityContentCatalogPath;
             public int entityContentArchiveCount;
+            public long entitySceneArchiveBytes;
+            public long entityContentMetadataBytes;
             public long entityContentBytes;
             public string candidateSubSceneSha256;
             public string candidateDefinitionSha256;

@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using Game.Configs;
 using Game.Editor;
 using Game.Runtime;
@@ -24,14 +25,17 @@ public sealed class DenseCityDeterministicFixtureTests
         "Assets/Game/Art/MapPrototypes/M01/Materials/M01_TransitionGround.mat";
     private const string GroundMaterialPath =
         "Assets/Game/Art/MapPrototypes/M01/Materials/M01_DistrictGround.mat";
+    private const string DenseBuilderSourcePath =
+        "Assets/Game/Scripts/Editor/MapPrototypes/DenseMiddleEasternCityEditModeBuilder.cs";
 
     public static void RunFocusedValidation()
     {
         try
         {
-            new DenseCityDeterministicFixtureTests()
-                .RunSmallFixture(forceReplaceUntitledScene: true);
-            Debug.Log("[DenseCityDeterministicFixtureValidation] result=Passed tests=1");
+            var tests = new DenseCityDeterministicFixtureTests();
+            tests.DenseBuilder_RandomContractMatchesGeneratorSchemaV1();
+            tests.RunSmallFixture(forceReplaceUntitledScene: true);
+            Debug.Log("[DenseCityDeterministicFixtureValidation] result=Passed tests=2");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -45,6 +49,91 @@ public sealed class DenseCityDeterministicFixtureTests
     [Test]
     public void SmallFixture_BuildsDeterministicallyWithoutMutatingCanonicalMap() =>
         RunSmallFixture(forceReplaceUntitledScene: false);
+
+    [Test]
+    public void DenseBuilder_RandomContractMatchesGeneratorSchemaV1()
+    {
+        string source = File.ReadAllText(Path.GetFullPath(DenseBuilderSourcePath));
+        string compactSource = Regex.Replace(source, @"\s+", string.Empty);
+
+        string[] expectedRandomStreams =
+        {
+            "newSystem.Random(unchecked((int)config.RandomSeed)^0x2ca44f)",
+            "newSystem.Random(unchecked((int)(seed==0?26071501u:seed))^0x4a17b2)",
+            "newSystem.Random(unchecked((int)(config.RandomSeed==0?26071501u:config.RandomSeed))^0x1d45ac)",
+        };
+        AssertOrderedContract(
+            compactSource,
+            expectedRandomStreams,
+            "Dense city generator schema v1 RNG stream");
+        Assert.That(
+            Regex.Matches(compactSource, @"newSystem\.Random\(").Count,
+            Is.EqualTo(expectedRandomStreams.Length),
+            "Dense city generator schema v1 must keep exactly three RNG streams. " +
+            "A reviewed generator schema/version migration must accompany any change.");
+
+        string[] expectedRandomCalls =
+        {
+            "random.Next(market.Count)",
+            "random.Next(market.Count)",
+            "random.Next(0,4)",
+            "random.Next(treePrefabs.Count)",
+            "random.Next(4)",
+            "random.Next(treePrefabs.Count)",
+            "random.Next(4)",
+            "random.Next(minimumBlockCells,maximumBlockCells+1)",
+            "random.NextDouble()",
+            "random.Next(2)",
+            "random.Next(2)",
+            "random.Next(2)",
+            "random.NextDouble()",
+            "random.NextDouble()",
+            "random.Next(0,4)",
+            "random.Next(palette.Fountains.Count)",
+            "random.Next(0,4)",
+            "random.Next(palette.Park.Count)",
+            "random.NextDouble()",
+            "random.NextDouble()",
+            "random.Next(0,4)",
+            "random.NextDouble()",
+            "random.Next(palette.CentralLandmarks.Count)",
+            "random.Next(100)",
+            "random.Next(source.Count)",
+        };
+        MatchCollection randomCalls = Regex.Matches(
+            compactSource,
+            @"random\.Next(?:Double)?\([^)]*\)");
+        var actualRandomCalls = new string[randomCalls.Count];
+        for (int index = 0; index < randomCalls.Count; index++)
+            actualRandomCalls[index] = randomCalls[index].Value;
+
+        CollectionAssert.AreEqual(
+            expectedRandomCalls,
+            actualRandomCalls,
+            "Dense city generator schema v1 RNG draws changed. Preserve their exact order, " +
+            "or perform a reviewed generator schema/version migration.");
+    }
+
+    private static void AssertOrderedContract(
+        string source,
+        string[] expectedTokens,
+        string contractName)
+    {
+        int searchStart = 0;
+        for (int index = 0; index < expectedTokens.Length; index++)
+        {
+            int tokenIndex = source.IndexOf(
+                expectedTokens[index],
+                searchStart,
+                StringComparison.Ordinal);
+            Assert.That(
+                tokenIndex,
+                Is.GreaterThanOrEqualTo(0),
+                $"{contractName} token {index + 1} is missing or out of order: " +
+                expectedTokens[index]);
+            searchStart = tokenIndex + expectedTokens[index].Length;
+        }
+    }
 
     private void RunSmallFixture(bool forceReplaceUntitledScene)
     {

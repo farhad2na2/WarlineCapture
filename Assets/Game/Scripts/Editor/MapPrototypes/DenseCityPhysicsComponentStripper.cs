@@ -42,6 +42,34 @@ namespace Game.Editor
             }
         }
 
+        internal static GameObject InstantiatePrefabWithoutPhysics(
+            GameObject prefab,
+            Transform parent)
+        {
+            if (prefab == null)
+                throw new ArgumentNullException(nameof(prefab));
+            if (parent == null)
+                throw new ArgumentNullException(nameof(parent));
+
+            GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
+            if (instance == null)
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city prefab instantiation failed: '{AssetDatabase.GetAssetPath(prefab)}'.");
+            }
+
+            try
+            {
+                StripInstanceHierarchy(instance);
+                return instance;
+            }
+            catch
+            {
+                UnityEngine.Object.DestroyImmediate(instance);
+                throw;
+            }
+        }
+
         internal static bool TryValidateNoProhibitedComponents(
             GameObject root,
             out string error)

@@ -4120,7 +4120,7 @@ namespace Game.Editor
                                     1)),
                             () =>
                             {
-                                instance = (GameObject)PrefabUtility.InstantiatePrefab(
+                                instance = DenseCityPhysicsComponentStripper.InstantiatePrefabWithoutPhysics(
                                     prefab,
                                     rootObject.transform);
                                 if (instance == null)
@@ -5739,7 +5739,8 @@ namespace Game.Editor
             CanalSurfacePlan plan,
             Material material)
         {
-            GameObject surface = (GameObject)PrefabUtility.InstantiatePrefab(plan.Prefab, parent);
+            GameObject surface =
+                DenseCityPhysicsComponentStripper.InstantiatePrefabWithoutPhysics(plan.Prefab, parent);
             surface.name = objectName;
             surface.transform.SetPositionAndRotation(plan.Position, Quaternion.identity);
             surface.transform.localScale = plan.Scale;
@@ -5817,7 +5818,8 @@ namespace Game.Editor
             string objectName,
             CanalBridgePlan plan)
         {
-            GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(plan.Prefab, parent);
+            GameObject instance =
+                DenseCityPhysicsComponentStripper.InstantiatePrefabWithoutPhysics(plan.Prefab, parent);
             try
             {
                 instance.name = objectName;
@@ -6691,7 +6693,9 @@ namespace Game.Editor
 
                     bool RealizeRoad()
                     {
-                        road = (GameObject)PrefabUtility.InstantiatePrefab(prefab, chunkRoot);
+                        road = DenseCityPhysicsComponentStripper.InstantiatePrefabWithoutPhysics(
+                            prefab,
+                            chunkRoot);
                         road.name = $"{prefab.name}_{cell.x}_{cell.y}";
                         road.transform.SetPositionAndRotation(placement, variant.Rotation);
                         road.transform.localScale = variant.Scale;
@@ -7562,7 +7566,10 @@ namespace Game.Editor
                 if (!TryGetWorldBounds(shop, out Bounds shopBounds))
                     continue;
 
-                GameObject roofCap = (GameObject)PrefabUtility.InstantiatePrefab(roofCapPrefab, shop);
+                GameObject roofCap =
+                    DenseCityPhysicsComponentStripper.InstantiatePrefabWithoutPhysics(
+                        roofCapPrefab,
+                        shop);
                 roofCap.name = $"{roofCapName}_{index:00}";
                 roofCap.transform.SetPositionAndRotation(
                     new Vector3(shopBounds.center.x, 0f, shopBounds.center.z),
@@ -8723,7 +8730,9 @@ namespace Game.Editor
                             1)),
                     () =>
                     {
-                        pole = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
+                        pole = DenseCityPhysicsComponentStripper.InstantiatePrefabWithoutPhysics(
+                            prefab,
+                            parent);
                         if (pole == null)
                             return false;
                         pole.name = objectName;
@@ -8794,7 +8803,9 @@ namespace Game.Editor
                             1)),
                     () =>
                     {
-                        line = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
+                        line = DenseCityPhysicsComponentStripper.InstantiatePrefabWithoutPhysics(
+                            prefab,
+                            parent);
                         if (line == null)
                             return false;
                         line.name = objectName;
@@ -9664,7 +9675,9 @@ namespace Game.Editor
 
                 bool RealizeWall()
                 {
-                    wall = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
+                    wall = DenseCityPhysicsComponentStripper.InstantiatePrefabWithoutPhysics(
+                        prefab,
+                        parent);
                     if (wall == null)
                         return false;
                     wall.name = $"{prefab.name}_Courtyard_{courtyardIndex:0000}_{edgeName}";
@@ -10019,7 +10032,10 @@ namespace Game.Editor
                     Vector3 anchor = building.Wrapper.TransformPoint(localAnchor);
                     Vector3 outwardNormal = building.Wrapper.TransformDirection(localNormal).normalized;
 
-                    GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, building.Wrapper);
+                    GameObject instance =
+                        DenseCityPhysicsComponentStripper.InstantiatePrefabWithoutPhysics(
+                            prefab,
+                            building.Wrapper);
                     if (instance == null)
                         continue;
 
@@ -10586,7 +10602,8 @@ namespace Game.Editor
             DenseCityGenerationTransactionContext generationTransactions)
         {
             Transform ownerRoot = owner.IntactPresentationRoot;
-            GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, ownerRoot);
+            GameObject instance =
+                DenseCityPhysicsComponentStripper.InstantiatePrefabWithoutPhysics(prefab, ownerRoot);
             if (instance == null)
                 return false;
 
@@ -10696,7 +10713,9 @@ namespace Game.Editor
                             1)),
                     () =>
                     {
-                        instance = (GameObject)PrefabUtility.InstantiatePrefab(plan.Prefab, parent);
+                        instance = DenseCityPhysicsComponentStripper.InstantiatePrefabWithoutPhysics(
+                            plan.Prefab,
+                            parent);
                         if (instance == null)
                             return false;
                         instance.name = objectName;
@@ -10765,7 +10784,8 @@ namespace Game.Editor
             float scale,
             Transform attachmentParent = null)
         {
-            GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
+            GameObject instance =
+                DenseCityPhysicsComponentStripper.InstantiatePrefabWithoutPhysics(prefab, parent);
             if (instance == null)
                 return false;
 
@@ -10800,7 +10820,8 @@ namespace Game.Editor
             HashSet<Vector2Int> roadCells,
             Vector3 mapOrigin)
         {
-            GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
+            GameObject instance =
+                DenseCityPhysicsComponentStripper.InstantiatePrefabWithoutPhysics(prefab, parent);
             if (instance == null)
                 return false;
 
@@ -10897,7 +10918,8 @@ namespace Game.Editor
             Rect authoredCoreBounds,
             out Rect occupiedArea)
         {
-            GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
+            GameObject instance =
+                DenseCityPhysicsComponentStripper.InstantiatePrefabWithoutPhysics(prefab, parent);
             if (instance == null)
             {
                 occupiedArea = default;
@@ -11123,7 +11145,9 @@ namespace Game.Editor
 
                 bool RealizeBlocker()
                 {
-                    instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
+                    instance = DenseCityPhysicsComponentStripper.InstantiatePrefabWithoutPhysics(
+                        prefab,
+                        parent);
                     if (instance == null)
                         return false;
                     instance.name = objectName;
@@ -11370,7 +11394,8 @@ namespace Game.Editor
             string objectName,
             NaturalGroundPatchPlan plan)
         {
-            GameObject patch = (GameObject)PrefabUtility.InstantiatePrefab(plan.Prefab, parent);
+            GameObject patch =
+                DenseCityPhysicsComponentStripper.InstantiatePrefabWithoutPhysics(plan.Prefab, parent);
             patch.name = objectName;
             patch.transform.SetPositionAndRotation(plan.Position, plan.Rotation);
             patch.transform.localScale = plan.Scale;

@@ -148,11 +148,9 @@ namespace Game.Editor
         {
             GameObject prefab = DenseCityRenderOnlyPresentationRealizer.LoadRequiredPrefab(
                 presentation,
-                out string prefabPath);
-            GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, owner);
-            if (instance == null)
-                throw new InvalidOperationException($"Failed to instantiate dense-city prefab '{prefabPath}'.");
-            DenseCityPhysicsComponentStripper.StripInstanceHierarchy(instance);
+                out _);
+            GameObject instance =
+                DenseCityPhysicsComponentStripper.InstantiatePrefabWithoutPhysics(prefab, owner);
             instance.name = name;
             DenseCityRenderOnlyPresentationRealizer.ApplyWorldMatrix(
                 instance.transform,

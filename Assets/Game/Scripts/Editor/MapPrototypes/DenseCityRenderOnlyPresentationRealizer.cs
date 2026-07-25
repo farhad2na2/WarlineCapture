@@ -26,16 +26,14 @@ namespace Game.Editor
                     "Record-driven render-only realization currently requires one persistent prefab source.");
             }
 
-            GameObject prefab = LoadRequiredPrefab(presentation, out string prefabPath);
+            GameObject prefab = LoadRequiredPrefab(presentation, out _);
 
             Transform parent = hierarchy.ResolveIndependentParent(presentation.Category);
             GameObject instance = null;
             try
             {
-                instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
-                if (instance == null)
-                    throw new InvalidOperationException($"Failed to instantiate dense-city prefab '{prefabPath}'.");
-                DenseCityPhysicsComponentStripper.StripInstanceHierarchy(instance);
+                instance =
+                    DenseCityPhysicsComponentStripper.InstantiatePrefabWithoutPhysics(prefab, parent);
                 instance.name = $"{prefab.name}_{presentation.Identity.DeterministicSequence:D6}";
                 ApplyWorldMatrix(instance.transform, presentation.WorldMatrix);
                 ApplyRecordedSingleMaterialOverride(instance, presentation);
@@ -79,14 +77,12 @@ namespace Game.Editor
             Transform parent = hierarchy.RequireAttachmentParent(
                 presentation.Category,
                 declaredBuildingVisualRoot);
-            GameObject prefab = LoadRequiredPrefab(presentation, out string prefabPath);
+            GameObject prefab = LoadRequiredPrefab(presentation, out _);
             GameObject instance = null;
             try
             {
-                instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
-                if (instance == null)
-                    throw new InvalidOperationException($"Failed to instantiate dense-city prefab '{prefabPath}'.");
-                DenseCityPhysicsComponentStripper.StripInstanceHierarchy(instance);
+                instance =
+                    DenseCityPhysicsComponentStripper.InstantiatePrefabWithoutPhysics(prefab, parent);
                 instance.name = $"{prefab.name}_{presentation.Identity.DeterministicSequence:D6}";
                 ApplyWorldMatrix(instance.transform, presentation.WorldMatrix);
                 ApplyRecordedSingleMaterialOverride(instance, presentation);

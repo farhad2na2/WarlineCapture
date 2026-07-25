@@ -18,6 +18,7 @@ public sealed class DenseCityPhysicsComponentStripperTests
             suite.StripInstanceHierarchy_RejectsPersistentPrefabAsset,
             suite.StripInstanceHierarchy_RemovesPrimitiveCollider,
             suite.CreatePrimitiveWithoutPhysics_ReturnsUnparentedColliderFreePrimitive,
+            suite.InstantiatePrefabWithoutPhysics_ParentsStrippedInstanceWithoutMutatingPrefab,
             suite.StripInstanceHierarchy_RecordsRemovedComponentOverrides
         };
 
@@ -127,6 +128,39 @@ public sealed class DenseCityPhysicsComponentStripperTests
         finally
         {
             UnityEngine.Object.DestroyImmediate(primitive);
+        }
+    }
+
+    [Test]
+    public void InstantiatePrefabWithoutPhysics_ParentsStrippedInstanceWithoutMutatingPrefab()
+    {
+        GameObject prefab = CreatePhysicsPrefab();
+        var parent = new GameObject("PhysicsFreePrefabParent");
+        GameObject instance = null;
+        try
+        {
+            instance = DenseCityPhysicsComponentStripper.InstantiatePrefabWithoutPhysics(
+                prefab,
+                parent.transform);
+
+            Assert.That(instance.transform.parent, Is.SameAs(parent.transform));
+            Assert.That(instance.GetComponentsInChildren<Collider>(true), Is.Empty);
+            Assert.That(instance.GetComponentsInChildren<Collider2D>(true), Is.Empty);
+            Assert.That(instance.GetComponentsInChildren<Rigidbody>(true), Is.Empty);
+            Assert.That(instance.GetComponentsInChildren<Rigidbody2D>(true), Is.Empty);
+            Assert.That(PrefabUtility.GetRemovedComponents(instance), Has.Count.EqualTo(4));
+
+            GameObject persisted = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
+            Assert.That(persisted.GetComponentsInChildren<Collider>(true), Has.Length.EqualTo(1));
+            Assert.That(persisted.GetComponentsInChildren<Collider2D>(true), Has.Length.EqualTo(1));
+            Assert.That(persisted.GetComponentsInChildren<Rigidbody>(true), Has.Length.EqualTo(1));
+            Assert.That(persisted.GetComponentsInChildren<Rigidbody2D>(true), Has.Length.EqualTo(1));
+        }
+        finally
+        {
+            if (instance != null)
+                UnityEngine.Object.DestroyImmediate(instance);
+            UnityEngine.Object.DestroyImmediate(parent);
         }
     }
 

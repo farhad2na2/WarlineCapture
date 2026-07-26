@@ -83,6 +83,7 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
         {
             suite.CandidateTransaction_RestoresExistingAndDeletesNewOutputs,
             suite.NormalizeAssetText_ChangesOnceThenBecomesByteNoOp,
+            suite.NormalizeAssetText_UnloadsImportedAssetBeforeChangedWrite,
             suite.ProtectedProductionSnapshot_RejectsFileDrift,
             suite.BakeBudget_AcceptsCandidateBaseline,
             suite.BakeBudget_RejectsManagedVisualCompanions,
@@ -305,6 +306,42 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
             OperationMapEntitySceneCandidateAddressablesLayoutBuilder
                 .NormalizeAssetText(relative),
             Is.False);
+    }
+
+    [Test]
+    public void NormalizeAssetText_UnloadsImportedAssetBeforeChangedWrite()
+    {
+        string folderName =
+            "OperationMapEntitySceneCandidateBakeAllTestsTemp_" +
+            Guid.NewGuid().ToString("N");
+        string folder = "Assets/" + folderName;
+        string relative = folder + "/normalize.txt";
+        Assert.That(AssetDatabase.CreateFolder("Assets", folderName), Is.Not.Empty);
+        try
+        {
+            string physical = Path.Combine(projectRoot, relative);
+            File.WriteAllText(
+                physical,
+                "mapped  \r\nasset\t\n",
+                new UTF8Encoding(false));
+            AssetDatabase.ImportAsset(
+                relative,
+                ImportAssetOptions.ForceSynchronousImport);
+            TextAsset loaded = AssetDatabase.LoadAssetAtPath<TextAsset>(relative);
+            Assert.That(loaded, Is.Not.Null);
+
+            Assert.That(
+                OperationMapEntitySceneCandidateAddressablesLayoutBuilder
+                    .NormalizeAssetText(relative),
+                Is.True);
+            Assert.That(
+                File.ReadAllBytes(physical),
+                Is.EqualTo(new UTF8Encoding(false).GetBytes("mapped\nasset\n")));
+        }
+        finally
+        {
+            AssetDatabase.DeleteAsset(folder);
+        }
     }
 
     [Test]

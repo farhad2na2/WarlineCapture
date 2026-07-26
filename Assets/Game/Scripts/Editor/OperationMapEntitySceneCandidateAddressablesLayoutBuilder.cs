@@ -439,6 +439,9 @@ namespace Game.Editor
             // Imported YAML assets can remain memory-mapped on Windows. Only release
             // Unity's cached handles when normalization has a real byte change; the
             // common second-run no-op must not rewrite the loaded candidate asset.
+            UnityEngine.Object loadedAsset = AssetDatabase.LoadMainAssetAtPath(assetPath);
+            if (loadedAsset != null)
+                Resources.UnloadAsset(loadedAsset);
             AssetDatabase.ReleaseCachedFileHandles();
             File.WriteAllBytes(physical, normalizedBytes);
             return true;

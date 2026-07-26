@@ -674,6 +674,16 @@ namespace Game.Editor
                 foreach (FileState state in files)
                 {
                     string physical = Path.GetFullPath(Path.Combine(projectRoot, state.Path));
+                    string assetPath = state.Path.Replace('\\', '/');
+                    if (assetPath.StartsWith("Assets/", StringComparison.Ordinal))
+                    {
+                        UnityEngine.Object loadedAsset =
+                            AssetDatabase.LoadMainAssetAtPath(assetPath);
+                        if (loadedAsset != null)
+                            Resources.UnloadAsset(loadedAsset);
+                        AssetDatabase.ReleaseCachedFileHandles();
+                    }
+
                     if (state.Existed)
                     {
                         Directory.CreateDirectory(Path.GetDirectoryName(physical) ?? projectRoot);

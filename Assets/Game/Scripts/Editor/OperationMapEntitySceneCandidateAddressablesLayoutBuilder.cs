@@ -226,11 +226,13 @@ namespace Game.Editor
 
             OperationMapDefinition candidate =
                 AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(candidatePath);
+            bool candidateCreated = false;
             if (candidate == null)
             {
                 candidate = ScriptableObject.CreateInstance<OperationMapDefinition>();
                 EditorUtility.CopySerialized(production, candidate);
                 AssetDatabase.CreateAsset(candidate, candidatePath);
+                candidateCreated = true;
             }
 
             string candidateSubSceneGuid = AssetDatabase.AssetPathToGUID(
@@ -244,6 +246,46 @@ namespace Game.Editor
                 OperationMapAddressablesLayoutBuilder.MapSurfacePath);
             string minimapGuid = AssetDatabase.AssetPathToGUID(
                 OperationMapAddressablesLayoutBuilder.MinimapRasterPath);
+
+            bool candidateChanged = ApplyCandidateDefinitionProperties(
+                candidate,
+                candidateSubSceneGuid,
+                runtimeBindingGuid,
+                mapSurfaceGuid,
+                minimapGuid);
+            if (candidateChanged)
+                EditorUtility.SetDirty(candidate);
+            if (candidateCreated || candidateChanged)
+            {
+                AssetDatabase.SaveAssetIfDirty(candidate);
+                NormalizeAssetText(candidatePath);
+                NormalizeAssetText(candidatePath + ".meta");
+                AssetDatabase.ImportAsset(
+                    candidatePath,
+                    ImportAssetOptions.ForceSynchronousImport);
+            }
+
+            candidate = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(candidatePath);
+            if (candidate == null ||
+                string.IsNullOrEmpty(candidate.OperationMapId) ||
+                candidate.PresentationKind != OperationMapPresentationKind.EntityScene)
+            {
+                throw new InvalidOperationException(
+                    "Candidate EntityScene definition failed to persist after import.");
+            }
+
+            return candidate;
+        }
+
+        internal static bool ApplyCandidateDefinitionProperties(
+            OperationMapDefinition candidate,
+            string candidateSubSceneGuid,
+            string runtimeBindingGuid,
+            string mapSurfaceGuid,
+            string minimapGuid)
+        {
+            if (candidate == null)
+                throw new ArgumentNullException(nameof(candidate));
 
             SerializedObject serialized = new(candidate);
             serialized.FindProperty("operationMapId").stringValue =
@@ -259,23 +301,7 @@ namespace Game.Editor
             SetAssetReferenceGuid(serialized, "mapSurfaceDataReference", mapSurfaceGuid);
             SetAssetReferenceGuid(serialized, "minimapRasterReference", minimapGuid);
             SetAssetReferenceGuid(serialized, "sourceSceneReference", runtimeBindingGuid);
-            serialized.ApplyModifiedPropertiesWithoutUndo();
-            EditorUtility.SetDirty(candidate);
-            AssetDatabase.SaveAssetIfDirty(candidate);
-            NormalizeAssetText(candidatePath);
-            NormalizeAssetText(candidatePath + ".meta");
-            AssetDatabase.ImportAsset(candidatePath, ImportAssetOptions.ForceSynchronousImport);
-
-            candidate = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(candidatePath);
-            if (candidate == null ||
-                string.IsNullOrEmpty(candidate.OperationMapId) ||
-                candidate.PresentationKind != OperationMapPresentationKind.EntityScene)
-            {
-                throw new InvalidOperationException(
-                    "Candidate EntityScene definition failed to persist after import.");
-            }
-
-            return candidate;
+            return serialized.ApplyModifiedPropertiesWithoutUndo();
         }
 
         internal static void EnsureCandidateRuntimeBindingScene()

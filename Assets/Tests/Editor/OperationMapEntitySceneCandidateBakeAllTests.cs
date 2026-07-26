@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using Game.Authoring;
+using Game.Configs;
 using Game.Editor;
 using NUnit.Framework;
 using UnityEditor;
@@ -85,6 +86,7 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
             suite.CandidateOutputCheckpoint_UnloadsImportedAssetBeforeRestore,
             suite.TextDifference_ReportsFirstChangedLine,
             suite.GenerationContract_AcceptsExactInputsAndRejectsStaleHash,
+            suite.CandidateDefinitionProperties_IdenticalSecondApplyIsNoOp,
             suite.NormalizeAssetText_ChangesOnceThenBecomesByteNoOp,
             suite.NormalizeAssetText_UnloadsImportedAssetBeforeChangedWrite,
             suite.ProtectedProductionSnapshot_RejectsFileDrift,
@@ -145,6 +147,47 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
                 24681357,
                 currentHash),
             Is.False);
+    }
+
+    [Test]
+    public void CandidateDefinitionProperties_IdenticalSecondApplyIsNoOp()
+    {
+        OperationMapDefinition candidate =
+            ScriptableObject.CreateInstance<OperationMapDefinition>();
+        try
+        {
+            Assert.That(
+                OperationMapEntitySceneCandidateAddressablesLayoutBuilder
+                    .ApplyCandidateDefinitionProperties(
+                        candidate,
+                        "11111111111111111111111111111111",
+                        "22222222222222222222222222222222",
+                        "33333333333333333333333333333333",
+                        "44444444444444444444444444444444"),
+                Is.True);
+            Assert.That(
+                OperationMapEntitySceneCandidateAddressablesLayoutBuilder
+                    .ApplyCandidateDefinitionProperties(
+                        candidate,
+                        "11111111111111111111111111111111",
+                        "22222222222222222222222222222222",
+                        "33333333333333333333333333333333",
+                        "44444444444444444444444444444444"),
+                Is.False);
+            Assert.That(
+                OperationMapEntitySceneCandidateAddressablesLayoutBuilder
+                    .ApplyCandidateDefinitionProperties(
+                        candidate,
+                        "11111111111111111111111111111111",
+                        "22222222222222222222222222222222",
+                        "33333333333333333333333333333333",
+                        "55555555555555555555555555555555"),
+                Is.True);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(candidate);
+        }
     }
 
     public static void RunTwoRunNoOpValidation()

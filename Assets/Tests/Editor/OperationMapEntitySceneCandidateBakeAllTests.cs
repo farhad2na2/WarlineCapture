@@ -82,6 +82,7 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
         Action[] tests =
         {
             suite.CandidateTransaction_RestoresExistingAndDeletesNewOutputs,
+            suite.CandidateOutputCheckpoint_UnloadsImportedAssetBeforeRestore,
             suite.NormalizeAssetText_ChangesOnceThenBecomesByteNoOp,
             suite.NormalizeAssetText_UnloadsImportedAssetBeforeChangedWrite,
             suite.ProtectedProductionSnapshot_RejectsFileDrift,
@@ -285,6 +286,42 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
 
         Assert.That(File.ReadAllText(existing), Is.EqualTo("before"));
         Assert.That(File.Exists(created), Is.False);
+    }
+
+    [Test]
+    public void CandidateOutputCheckpoint_UnloadsImportedAssetBeforeRestore()
+    {
+        string folderName =
+            "OperationMapCandidateCheckpointTestsTemp_" +
+            Guid.NewGuid().ToString("N");
+        string folder = "Assets/" + folderName;
+        string relative = folder + "/checkpoint.txt";
+        Assert.That(AssetDatabase.CreateFolder("Assets", folderName), Is.Not.Empty);
+        try
+        {
+            string physical = Path.Combine(projectRoot, relative);
+            File.WriteAllText(physical, "before", new UTF8Encoding(false));
+            CandidateOutputCheckpoint checkpoint = CandidateOutputCheckpoint.Capture(
+                projectRoot,
+                new[] { relative },
+                Array.Empty<string>());
+            File.WriteAllText(physical, "after", new UTF8Encoding(false));
+            AssetDatabase.ImportAsset(
+                relative,
+                ImportAssetOptions.ForceSynchronousImport);
+            TextAsset loaded = AssetDatabase.LoadAssetAtPath<TextAsset>(relative);
+            Assert.That(loaded, Is.Not.Null);
+
+            checkpoint.Dispose();
+
+            Assert.That(
+                File.ReadAllText(physical, new UTF8Encoding(false)),
+                Is.EqualTo("before"));
+        }
+        finally
+        {
+            AssetDatabase.DeleteAsset(folder);
+        }
     }
 
     [Test]
@@ -981,7 +1018,10 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
                 DirectoryCheckpoint checkpoint = directories[i];
                 string target = ResolveProjectPath(root, checkpoint.RelativePath);
                 if (Directory.Exists(target))
+                {
+                    ReleaseLoadedAssetsUnderDirectory(target);
                     Directory.Delete(target, true);
+                }
                 if (checkpoint.Existed)
                     CopyDirectory(checkpoint.BackupPath, target);
             }
@@ -990,6 +1030,7 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
             {
                 FileCheckpoint checkpoint = files[i];
                 string target = ResolveProjectPath(root, checkpoint.RelativePath);
+                ReleaseLoadedAsset(target);
                 if (checkpoint.Existed)
                 {
                     string parent = Path.GetDirectoryName(target);
@@ -1004,6 +1045,43 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
             }
 
             AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+        }
+
+        private void ReleaseLoadedAssetsUnderDirectory(string physicalDirectory)
+        {
+            string[] paths = Directory.GetFiles(
+                physicalDirectory,
+                "*",
+                SearchOption.AllDirectories);
+            for (int i = 0; i < paths.Length; i++)
+                ReleaseLoadedAsset(paths[i], false);
+            AssetDatabase.ReleaseCachedFileHandles();
+        }
+
+        private void ReleaseLoadedAsset(
+            string physicalPath,
+            bool releaseCachedHandles = true)
+        {
+            string normalizedRoot = root.TrimEnd(
+                Path.DirectorySeparatorChar,
+                Path.AltDirectorySeparatorChar);
+            string prefix = normalizedRoot + Path.DirectorySeparatorChar;
+            if (physicalPath.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+            {
+                string assetPath = physicalPath.Substring(prefix.Length)
+                    .Replace('\\', '/');
+                if (assetPath.StartsWith("Assets/", StringComparison.Ordinal) &&
+                    !assetPath.EndsWith(".meta", StringComparison.OrdinalIgnoreCase))
+                {
+                    UnityEngine.Object loadedAsset =
+                        AssetDatabase.LoadMainAssetAtPath(assetPath);
+                    if (loadedAsset != null)
+                        Resources.UnloadAsset(loadedAsset);
+                }
+            }
+
+            if (releaseCachedHandles)
+                AssetDatabase.ReleaseCachedFileHandles();
         }
 
         private static void CopyDirectory(string source, string destination)

@@ -233,8 +233,8 @@ namespace Game.Editor
                     layout.result,
                     "CandidateEntitySceneAddressablesLayoutReady",
                     StringComparison.Ordinal) ||
-                string.IsNullOrWhiteSpace(layout.entitySceneGuid) || layout.entryCount <= 0 ||
-                layout.sharedDependencyCount <= 0 || layout.staticManifestEntryCount != 0 ||
+                string.IsNullOrWhiteSpace(layout.entitySceneGuid) || layout.entryCount != 5 ||
+                layout.sharedDependencyCount != 0 || layout.staticManifestEntryCount != 0 ||
                 layout.presentationChunkEntryCount != 0 || layout.legacyPlacementEntryCount != 0 ||
                 layout.productionAddressablesMutated != 0)
             {

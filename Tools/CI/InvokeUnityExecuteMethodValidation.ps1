@@ -18,6 +18,9 @@ param(
     [string] $BuildTarget = "",
 
     [Parameter(Mandatory = $false)]
+    [switch] $GuiLicensing,
+
+    [Parameter(Mandatory = $false)]
     [int] $TimeoutSeconds = 900
 )
 
@@ -36,6 +39,7 @@ $unityArguments += @("-executeMethod", $ExecuteMethod)
     -ProjectPath $ProjectPath `
     -LogFile $LogFile `
     -NoProcessExit `
+    -GuiLicensing:$GuiLicensing `
     -TimeoutSeconds $TimeoutSeconds `
     -UnityArguments $unityArguments
 $unityExit = $LASTEXITCODE

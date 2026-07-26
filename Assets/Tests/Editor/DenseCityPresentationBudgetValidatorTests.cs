@@ -13,6 +13,7 @@ public sealed class DenseCityPresentationBudgetValidatorTests
         Action[] tests =
         {
             suite.Budget_AcceptsCompleteCoreEvidence,
+            suite.Budget_RejectsLegacyExplicitSharedLayout,
             suite.Budget_RejectsTransformBoundsMismatch,
             suite.Budget_RejectsIncompleteGeometryEvidence,
             suite.Budget_RejectsIncompleteBakedOwnershipEvidence,
@@ -43,6 +44,19 @@ public sealed class DenseCityPresentationBudgetValidatorTests
     public void Budget_AcceptsCompleteCoreEvidence()
     {
         Assert.That(TryCreateValidReport(out _, out string error), Is.True, error);
+    }
+
+    [Test]
+    public void Budget_RejectsLegacyExplicitSharedLayout()
+    {
+        CreateEvidence(out var bake, out var art, out var parity, out var layout, out var geometry);
+        layout.sharedDependencyCount = 1;
+
+        Assert.That(
+            DenseCityPresentationBudgetValidator.TryCreateReport(
+                bake, art, parity, layout, geometry, out _, out string error),
+            Is.False);
+        Assert.That(error, Is.EqualTo("candidate-layout-budget"));
     }
 
     [Test]
@@ -495,8 +509,8 @@ public sealed class DenseCityPresentationBudgetValidatorTests
         {
             result = "CandidateEntitySceneAddressablesLayoutReady",
             entitySceneGuid = "0f9ecd54a7f0f467fa35556af7d28f1d",
-            entryCount = 1849,
-            sharedDependencyCount = 1844,
+            entryCount = 5,
+            sharedDependencyCount = 0,
             staticManifestEntryCount = 0,
             presentationChunkEntryCount = 0,
             legacyPlacementEntryCount = 0,

@@ -12,6 +12,9 @@ param(
     [switch] $NoProcessExit,
 
     [Parameter(Mandatory = $false)]
+    [switch] $GuiLicensing,
+
+    [Parameter(Mandatory = $false)]
     [int] $TimeoutSeconds = 0,
 
     [Parameter(Mandatory = $false, ValueFromRemainingArguments = $true)]
@@ -156,8 +159,12 @@ if (-not (Test-Path -LiteralPath $resolvedProjectPath -PathType Container)) {
     throw "Unity project path does not exist: $resolvedProjectPath"
 }
 
-$arguments = @(
-    "-batchmode",
+$arguments = @()
+if (-not $GuiLicensing) {
+    $arguments += "-batchmode"
+}
+
+$arguments += @(
     "-projectPath",
     $resolvedProjectPath,
     "-logFile",
@@ -174,6 +181,7 @@ Remove-Item -LiteralPath $stdoutLogFile -Force -ErrorAction Ignore
 Remove-Item -LiteralPath $stderrLogFile -Force -ErrorAction Ignore
 
 Write-InvocationLog "[UnityInvoke] Arguments: $($arguments -join ' ')"
+Write-InvocationLog "[UnityInvoke] LicensingMode: $(if ($GuiLicensing) { 'gui' } else { 'batchmode' })"
 Write-InvocationLog "[UnityInvoke] ProcessArguments: $argumentLine"
 Write-InvocationLog "[UnityInvoke] StdoutLog: $stdoutLogFile"
 Write-InvocationLog "[UnityInvoke] StderrLog: $stderrLogFile"

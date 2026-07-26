@@ -54,8 +54,13 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
     private static readonly string[] TwoRunIncidentalFiles =
     {
         DenseBuildingMaterialOutputRoot + ".meta",
+        "Design/AgentReports/2026-07-21_dense_city_phase0a_candidate_bake_validation.json",
         "Design/AgentReports/2026-07-21_dense_city_phase0a_candidate_bake_all.json",
         "Design/AgentReports/2026-07-21_dense_city_phase0a_candidate_bake_all.md",
+        "Design/AgentReports/2026-07-21_dense_city_phase0a_candidate_entityscene_addressables_layout.json",
+        "Design/AgentReports/2026-07-21_dense_city_phase0a_candidate_entityscene_addressables_layout.md",
+        "Design/AgentReports/2026-07-21_dense_city_phase0a_shared_art_ownership.json",
+        "Design/AgentReports/2026-07-21_dense_city_phase0a_shared_art_ownership.md",
         "Design/AgentReports/2026-07-21_dense_city_phase0a_transform_parity.json",
         "Design/AgentReports/2026-07-22_dense_city_presentation_budget.json",
         "Design/AgentReports/2026-07-24_dense_city_candidate_entityscene_addressables_layout.json",

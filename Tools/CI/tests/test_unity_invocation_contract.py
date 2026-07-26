@@ -66,6 +66,15 @@ class UnityInvocationContractTests(unittest.TestCase):
             self.source,
         )
 
+    def test_gui_licensing_is_opt_in_and_batchmode_remains_default(self):
+        self.assertIn("[switch] $GuiLicensing", self.source)
+        self.assertIn("if (-not $GuiLicensing)", self.source)
+        self.assertIn('$arguments += "-batchmode"', self.source)
+        self.assertIn(
+            "LicensingMode: $(if ($GuiLicensing) { 'gui' } else { 'batchmode' })",
+            self.source,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

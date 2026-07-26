@@ -41,6 +41,10 @@ class UnityExecuteMethodValidationContractTests(unittest.TestCase):
         self.assertIn('Contains("result=Failed")', self.wrapper)
         self.assertIn('Contains("StackOverflowException:")', self.wrapper)
 
+    def test_gui_licensing_is_forwarded_without_changing_the_default(self) -> None:
+        self.assertIn("[switch] $GuiLicensing", self.wrapper)
+        self.assertIn("-GuiLicensing:$GuiLicensing", self.wrapper)
+
 
 if __name__ == "__main__":
     unittest.main()

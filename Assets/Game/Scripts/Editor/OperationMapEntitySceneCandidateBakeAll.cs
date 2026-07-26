@@ -666,6 +666,11 @@ namespace Game.Editor
 
             internal void Rollback()
             {
+                // Unity can retain memory-mapped importer handles after a synchronous
+                // candidate build on Windows. Release those handles before restoring
+                // the byte checkpoint or File.WriteAllBytes can fail with Win32 1224.
+                AssetDatabase.ReleaseCachedFileHandles();
+
                 foreach (FileState state in files)
                 {
                     string physical = Path.GetFullPath(Path.Combine(projectRoot, state.Path));

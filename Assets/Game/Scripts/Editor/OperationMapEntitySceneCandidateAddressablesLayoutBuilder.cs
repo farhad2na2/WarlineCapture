@@ -134,9 +134,19 @@ namespace Game.Editor
                     $"entitySceneGuid={report.entitySceneGuid} productionAddressablesMutated=0 " +
                     $"report={report.reportPath}");
             }
-            catch
+            catch (Exception exception)
             {
-                transaction.Rollback();
+                try
+                {
+                    transaction.Rollback();
+                }
+                catch (Exception rollbackException)
+                {
+                    throw new AggregateException(
+                        "Candidate Addressables layout failed and its byte rollback also failed.",
+                        exception,
+                        rollbackException);
+                }
                 throw;
             }
             finally

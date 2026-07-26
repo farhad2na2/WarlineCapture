@@ -149,17 +149,22 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
                        TwoRunCandidateDirectories))
             {
                 RunCompleteDenseCandidateBake("first");
-                string firstFingerprint = ComputeCandidateOutputFingerprint(root);
+                string firstFingerprint = ComputeCandidateOutputFingerprint(
+                    root,
+                    out string firstManifest);
 
                 RunCompleteDenseCandidateBake("second");
-                string secondFingerprint = ComputeCandidateOutputFingerprint(root);
+                string secondFingerprint = ComputeCandidateOutputFingerprint(
+                    root,
+                    out string secondManifest);
 
                 if (!string.Equals(firstFingerprint, secondFingerprint, StringComparison.Ordinal))
                 {
                     throw new InvalidOperationException(
                         "Dense-city generation plus complete Candidate Bake All changed stable " +
                         $"candidate outputs on its second run. first={firstFingerprint} " +
-                        $"second={secondFingerprint}");
+                        $"second={secondFingerprint} " +
+                        DescribeManifestDifference(firstManifest, secondManifest));
                 }
 
                 checkpoint.Commit();
@@ -695,7 +700,9 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
         return string.Join("/", segments);
     }
 
-    private static string ComputeCandidateOutputFingerprint(string root)
+    private static string ComputeCandidateOutputFingerprint(
+        string root,
+        out string manifestText)
     {
         // Bake All can leave orphaned generated .meta files queued for removal by the
         // asset pipeline. Drain that queue before enumerating so the fingerprint sees
@@ -737,7 +744,40 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
             }
         }
 
-        return ComputeSha256(Encoding.UTF8.GetBytes(manifest.ToString()));
+        manifestText = manifest.ToString();
+        return ComputeSha256(Encoding.UTF8.GetBytes(manifestText));
+    }
+
+    private static string DescribeManifestDifference(
+        string firstManifest,
+        string secondManifest)
+    {
+        string[] firstLines = firstManifest.Split(
+            new[] { '\n' },
+            StringSplitOptions.RemoveEmptyEntries);
+        string[] secondLines = secondManifest.Split(
+            new[] { '\n' },
+            StringSplitOptions.RemoveEmptyEntries);
+        int sharedCount = Math.Min(firstLines.Length, secondLines.Length);
+        for (int i = 0; i < sharedCount; i++)
+        {
+            if (!string.Equals(firstLines[i], secondLines[i], StringComparison.Ordinal))
+            {
+                return $"firstEntries={firstLines.Length} secondEntries={secondLines.Length} " +
+                       $"firstDifferenceIndex={i} firstEntry={firstLines[i]} " +
+                       $"secondEntry={secondLines[i]}";
+            }
+        }
+
+        string firstTail = firstLines.Length > sharedCount
+            ? firstLines[sharedCount]
+            : "<none>";
+        string secondTail = secondLines.Length > sharedCount
+            ? secondLines[sharedCount]
+            : "<none>";
+        return $"firstEntries={firstLines.Length} secondEntries={secondLines.Length} " +
+               $"firstDifferenceIndex={sharedCount} firstEntry={firstTail} " +
+               $"secondEntry={secondTail}";
     }
 
     private static void AppendFileFingerprint(

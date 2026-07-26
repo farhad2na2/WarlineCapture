@@ -82,6 +82,7 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
         Action[] tests =
         {
             suite.CandidateTransaction_RestoresExistingAndDeletesNewOutputs,
+            suite.NormalizeAssetText_ChangesOnceThenBecomesByteNoOp,
             suite.ProtectedProductionSnapshot_RejectsFileDrift,
             suite.BakeBudget_AcceptsCandidateBaseline,
             suite.BakeBudget_RejectsManagedVisualCompanions,
@@ -283,6 +284,27 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
 
         Assert.That(File.ReadAllText(existing), Is.EqualTo("before"));
         Assert.That(File.Exists(created), Is.False);
+    }
+
+    [Test]
+    public void NormalizeAssetText_ChangesOnceThenBecomesByteNoOp()
+    {
+        string relative =
+            "Temp/OperationMapEntitySceneCandidateBakeAllTests/normalize.asset";
+        string physical = Path.Combine(projectRoot, relative);
+        File.WriteAllText(physical, "alpha  \r\nbeta\t\n", new UTF8Encoding(false));
+
+        Assert.That(
+            OperationMapEntitySceneCandidateAddressablesLayoutBuilder
+                .NormalizeAssetText(relative),
+            Is.True);
+        Assert.That(
+            File.ReadAllBytes(physical),
+            Is.EqualTo(new UTF8Encoding(false).GetBytes("alpha\nbeta\n")));
+        Assert.That(
+            OperationMapEntitySceneCandidateAddressablesLayoutBuilder
+                .NormalizeAssetText(relative),
+            Is.False);
     }
 
     [Test]

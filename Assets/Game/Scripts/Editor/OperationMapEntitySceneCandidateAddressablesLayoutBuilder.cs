@@ -421,17 +421,41 @@ namespace Game.Editor
             AssetDatabase.SaveAssetIfDirty(definition);
         }
 
-        private static void NormalizeAssetText(string assetPath)
+        internal static bool NormalizeAssetText(string assetPath)
         {
             string physical = Path.GetFullPath(Path.Combine(Application.dataPath, "..", assetPath));
             if (!File.Exists(physical))
-                return;
+                return false;
 
             string[] lines = File.ReadAllLines(physical);
             var normalized = new StringBuilder();
             for (int index = 0; index < lines.Length; index++)
                 normalized.Append(lines[index].TrimEnd(' ', '\t')).Append('\n');
-            File.WriteAllText(physical, normalized.ToString(), Utf8WithoutBom);
+            byte[] normalizedBytes = Utf8WithoutBom.GetBytes(normalized.ToString());
+            byte[] currentBytes = File.ReadAllBytes(physical);
+            if (BytesEqual(currentBytes, normalizedBytes))
+                return false;
+
+            // Imported YAML assets can remain memory-mapped on Windows. Only release
+            // Unity's cached handles when normalization has a real byte change; the
+            // common second-run no-op must not rewrite the loaded candidate asset.
+            AssetDatabase.ReleaseCachedFileHandles();
+            File.WriteAllBytes(physical, normalizedBytes);
+            return true;
+        }
+
+        private static bool BytesEqual(byte[] left, byte[] right)
+        {
+            if (ReferenceEquals(left, right))
+                return true;
+            if (left == null || right == null || left.Length != right.Length)
+                return false;
+            for (int index = 0; index < left.Length; index++)
+            {
+                if (left[index] != right[index])
+                    return false;
+            }
+            return true;
         }
 
         private static void PatchDefinitionReferenceIfMissing(

@@ -211,10 +211,6 @@ namespace Game.Editor
                 ProtectedPlacementConfigSnapshot placementConfigSnapshot =
                     CaptureProtectedPlacementConfig(
                         ProtectedBuildingPlacementConfigPath);
-                mapBackup = CreateBackup(CandidateMapScenePath);
-                entityBackup = CreateBackup(CandidateEntityScenePath);
-                placementConfigBackup = CreateBackup(
-                    ProtectedBuildingPlacementConfigPath);
                 mapScene = EditorSceneManager.OpenScene(
                     CandidateMapScenePath,
                     OpenSceneMode.Additive);
@@ -242,6 +238,45 @@ namespace Game.Editor
                 {
                     throw new InvalidOperationException(error);
                 }
+                RuntimeCitySpawnerSystemConfig config =
+                    AssetDatabase.LoadAssetAtPath<RuntimeCitySpawnerSystemConfig>(ConfigPath);
+                if (config == null)
+                    throw new InvalidOperationException($"Dense-city config is missing: '{ConfigPath}'.");
+                int expectedSeed = unchecked((int)config.RandomSeed);
+                string expectedGenerationHash = ComputeGenerationHash(
+                    SourceMapScenePath,
+                    SourceEntityScenePath,
+                    ConfigPath,
+                    GeneratorSchema,
+                    GeneratorSchemaVersion,
+                    expectedSeed);
+                string existingProxyFolder = CandidateGeneratedAssetRoot + "/" +
+                                             OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId +
+                                             "/Candidate/" + expectedGenerationHash +
+                                             "/SurfaceProxies";
+                if (TryUseExistingRealization(
+                        mapScene,
+                        entityScene,
+                        mapRoot,
+                        generationId,
+                        expectedSeed,
+                        expectedGenerationHash,
+                        existingProxyFolder,
+                        placementConfigSnapshot,
+                        out summary))
+                {
+                    RestoreActiveScene(previousActiveScene);
+                    CloseScene(ref entityScene);
+                    CloseScene(ref mapScene);
+                    RequireProtectedSourceHashes(sourceMapHash, sourceEntityHash);
+                    RequireProtectedPlacementConfig(placementConfigSnapshot);
+                    return true;
+                }
+
+                mapBackup = CreateBackup(CandidateMapScenePath);
+                entityBackup = CreateBackup(CandidateEntityScenePath);
+                placementConfigBackup = CreateBackup(
+                    ProtectedBuildingPlacementConfigPath);
                 var replacementRoots =
                     RuntimeCityRAndDEditModeBuilder.ReplaceDenseCitySemanticHierarchy(
                         mapScene,
@@ -365,6 +400,73 @@ namespace Game.Editor
                 DeleteBackup(placementConfigBackup);
             }
         }
+
+        private static bool TryUseExistingRealization(
+            Scene mapScene,
+            Scene entityScene,
+            DenseCityGeneratedRootAuthoring mapRoot,
+            string generationId,
+            int expectedSeed,
+            string expectedGenerationHash,
+            string proxyFolder,
+            ProtectedPlacementConfigSnapshot placementConfigSnapshot,
+            out string summary)
+        {
+            summary = null;
+            if (!MatchesGenerationContract(
+                    mapRoot.GeneratorSchema,
+                    mapRoot.GeneratorSchemaVersion,
+                    mapRoot.DeterministicSeed,
+                    mapRoot.DeterministicGenerationHash,
+                    expectedSeed,
+                    expectedGenerationHash) ||
+                !AssetDatabase.IsValidFolder(proxyFolder) ||
+                !DenseCityBakeReadinessValidator.TryValidateAuthoringOwnership(
+                    mapScene,
+                    entityScene,
+                    OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
+                    generationId,
+                    out _))
+            {
+                return false;
+            }
+
+            int proxyCount = mapRoot.GetComponentsInChildren<MeshFilter>(true).Length;
+            DenseCityGeneratedRootAuthoring entityRoot = RequireGeneratedRoot(
+                entityScene,
+                DenseCityGeneratedRootRole.EntityPresentationSource);
+            int buildingCount =
+                entityRoot.GetComponentsInChildren<OperationMapBuildingAuthoring>(true).Length;
+            int renderOnlyCount =
+                entityRoot.GetComponentsInChildren<DenseCityPresentationIdentityAuthoring>(true)
+                    .Count(identity =>
+                        identity.Role == OperationMapEntityPresentationRole.RenderOnly);
+            if (proxyCount == 0 || buildingCount == 0 || renderOnlyCount == 0)
+                return false;
+
+            summary =
+                $"result=AlreadyComplete generationId={generationId} " +
+                $"buildings={buildingCount} renderOnly={renderOnlyCount} proxies={proxyCount} " +
+                $"buildingPlacementCount={placementConfigSnapshot.PlacementCount} " +
+                $"buildingPlacementSha256={placementConfigSnapshot.Sha256} " +
+                $"proxyFolder={proxyFolder}";
+            return true;
+        }
+
+        internal static bool MatchesGenerationContract(
+            string generatorSchema,
+            int generatorSchemaVersion,
+            int deterministicSeed,
+            string deterministicGenerationHash,
+            int expectedSeed,
+            string expectedGenerationHash) =>
+            string.Equals(generatorSchema, GeneratorSchema, StringComparison.Ordinal) &&
+            generatorSchemaVersion == GeneratorSchemaVersion &&
+            deterministicSeed == expectedSeed &&
+            string.Equals(
+                deterministicGenerationHash,
+                expectedGenerationHash,
+                StringComparison.Ordinal);
 
         internal static ProtectedPlacementConfigSnapshot CaptureProtectedPlacementConfig(
             string assetPath)

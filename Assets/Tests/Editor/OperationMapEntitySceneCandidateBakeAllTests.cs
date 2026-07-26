@@ -84,6 +84,7 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
             suite.CandidateTransaction_RestoresExistingAndDeletesNewOutputs,
             suite.CandidateOutputCheckpoint_UnloadsImportedAssetBeforeRestore,
             suite.TextDifference_ReportsFirstChangedLine,
+            suite.GenerationContract_AcceptsExactInputsAndRejectsStaleHash,
             suite.NormalizeAssetText_ChangesOnceThenBecomesByteNoOp,
             suite.NormalizeAssetText_UnloadsImportedAssetBeforeChangedWrite,
             suite.ProtectedProductionSnapshot_RejectsFileDrift,
@@ -116,6 +117,34 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
         }
 
         Debug.Log($"[OperationMapEntitySceneCandidateBakeAllValidation] result=Passed tests={tests.Length}");
+    }
+
+    [Test]
+    public void GenerationContract_AcceptsExactInputsAndRejectsStaleHash()
+    {
+        const string currentHash =
+            "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+        const string staleHash =
+            "1123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+
+        Assert.That(
+            DenseCityCandidateAuthoringTransaction.MatchesGenerationContract(
+                "dense-city-v1",
+                1,
+                24681357,
+                currentHash,
+                24681357,
+                currentHash),
+            Is.True);
+        Assert.That(
+            DenseCityCandidateAuthoringTransaction.MatchesGenerationContract(
+                "dense-city-v1",
+                1,
+                24681357,
+                staleHash,
+                24681357,
+                currentHash),
+            Is.False);
     }
 
     public static void RunTwoRunNoOpValidation()

@@ -83,6 +83,7 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
         {
             suite.CandidateTransaction_RestoresExistingAndDeletesNewOutputs,
             suite.CandidateOutputCheckpoint_UnloadsImportedAssetBeforeRestore,
+            suite.TextDifference_ReportsFirstChangedLine,
             suite.NormalizeAssetText_ChangesOnceThenBecomesByteNoOp,
             suite.NormalizeAssetText_UnloadsImportedAssetBeforeChangedWrite,
             suite.ProtectedProductionSnapshot_RejectsFileDrift,
@@ -127,6 +128,9 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
         string inventorySummaryPath = Path.Combine(
             Path.GetTempPath(),
             $"warline-dense-two-run-migration-inventory-summary-{token}.json");
+        string firstAuthoringSceneSnapshotPath = Path.Combine(
+            Path.GetTempPath(),
+            $"warline-dense-two-run-first-authoring-scene-{token}.unity");
         string previousInventoryPath = Environment.GetEnvironmentVariable(
             OperationMapEntityPresentationMigrationInventoryProbe.ReportPathEnvironmentVariable);
         string previousInventorySummaryPath = Environment.GetEnvironmentVariable(
@@ -155,6 +159,12 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
                 string firstFingerprint = ComputeCandidateOutputFingerprint(
                     root,
                     out string firstManifest);
+                File.Copy(
+                    ResolveProjectPath(
+                        root,
+                        DenseCityCandidateAuthoringTransaction.CandidateMapScenePath),
+                    firstAuthoringSceneSnapshotPath,
+                    true);
 
                 RunCompleteDenseCandidateBake("second");
                 string secondFingerprint = ComputeCandidateOutputFingerprint(
@@ -167,7 +177,12 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
                         "Dense-city generation plus complete Candidate Bake All changed stable " +
                         $"candidate outputs on its second run. first={firstFingerprint} " +
                         $"second={secondFingerprint} " +
-                        DescribeManifestDifference(firstManifest, secondManifest));
+                        DescribeManifestDifference(firstManifest, secondManifest) + " " +
+                        DescribeTextFileDifference(
+                            firstAuthoringSceneSnapshotPath,
+                            ResolveProjectPath(
+                                root,
+                                DenseCityCandidateAuthoringTransaction.CandidateMapScenePath)));
                 }
 
                 checkpoint.Commit();
@@ -186,6 +201,7 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
                 previousInventorySummaryPath);
             DeleteIfExists(inventoryPath);
             DeleteIfExists(inventorySummaryPath);
+            DeleteIfExists(firstAuthoringSceneSnapshotPath);
         }
     }
 
@@ -322,6 +338,21 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
         {
             AssetDatabase.DeleteAsset(folder);
         }
+    }
+
+    [Test]
+    public void TextDifference_ReportsFirstChangedLine()
+    {
+        string first = Path.Combine(tempDirectory, "first.txt");
+        string second = Path.Combine(tempDirectory, "second.txt");
+        File.WriteAllText(first, "same\nbefore value\nlast\n", new UTF8Encoding(false));
+        File.WriteAllText(second, "same\nafter value\nlast\n", new UTF8Encoding(false));
+
+        string difference = DescribeTextFileDifference(first, second);
+
+        Assert.That(difference, Does.Contain("textFirstDifferenceLine=2"));
+        Assert.That(difference, Does.Contain("firstText='before value'"));
+        Assert.That(difference, Does.Contain("secondText='after value'"));
     }
 
     [Test]
@@ -874,6 +905,60 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
         return $"firstEntries={firstLines.Length} secondEntries={secondLines.Length} " +
                $"firstDifferenceIndex={sharedCount} firstEntry={firstTail} " +
                $"secondEntry={secondTail}";
+    }
+
+    private static string DescribeTextFileDifference(
+        string firstPath,
+        string secondPath)
+    {
+        using (var first = new StreamReader(
+                   firstPath,
+                   Encoding.UTF8,
+                   true,
+                   64 * 1024))
+        using (var second = new StreamReader(
+                   secondPath,
+                   Encoding.UTF8,
+                   true,
+                   64 * 1024))
+        {
+            int lineNumber = 1;
+            while (true)
+            {
+                string firstLine = first.ReadLine();
+                string secondLine = second.ReadLine();
+                if (!string.Equals(firstLine, secondLine, StringComparison.Ordinal))
+                {
+                    return $"textFirstDifferenceLine={lineNumber} " +
+                           $"firstText='{FormatDifferenceText(firstLine)}' " +
+                           $"secondText='{FormatDifferenceText(secondLine)}'";
+                }
+
+                if (firstLine == null)
+                    break;
+                lineNumber++;
+            }
+        }
+
+        long firstLength = new FileInfo(firstPath).Length;
+        long secondLength = new FileInfo(secondPath).Length;
+        return "textLinesEqualBytesDiffer=1 " +
+               $"firstBytes={firstLength} secondBytes={secondLength}";
+    }
+
+    private static string FormatDifferenceText(string value)
+    {
+        if (value == null)
+            return "<eof>";
+
+        string escaped = value
+            .Replace("\\", "\\\\")
+            .Replace("\t", "\\t")
+            .Replace("'", "\\'");
+        const int maximumLength = 240;
+        return escaped.Length <= maximumLength
+            ? escaped
+            : escaped.Substring(0, maximumLength) + "...";
     }
 
     private static void AppendFileFingerprint(

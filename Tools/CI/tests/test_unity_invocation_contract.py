@@ -75,6 +75,14 @@ class UnityInvocationContractTests(unittest.TestCase):
             self.source,
         )
 
+    def test_timeout_uses_absolute_windows_taskkill_path(self):
+        self.assertIn(
+            '$taskkillExe = Join-Path $env:SystemRoot "System32\\taskkill.exe"',
+            self.source,
+        )
+        self.assertIn("& $taskkillExe /PID $process.Id /T /F", self.source)
+        self.assertNotIn("& taskkill.exe", self.source)
+
 
 if __name__ == "__main__":
     unittest.main()

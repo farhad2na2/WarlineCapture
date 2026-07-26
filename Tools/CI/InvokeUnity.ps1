@@ -199,7 +199,11 @@ while (-not $process.HasExited) {
     if ($TimeoutSeconds -gt 0 -and ((Get-Date) - $startedAt).TotalSeconds -ge $TimeoutSeconds) {
         $timedOut = $true
         Write-InvocationLog "[UnityInvoke] ERROR: Unity timed out after $TimeoutSeconds seconds. Killing process tree for PID $($process.Id)."
-        & taskkill.exe /PID $process.Id /T /F 2>&1 | ForEach-Object {
+        $taskkillExe = Join-Path $env:SystemRoot "System32\taskkill.exe"
+        if (-not (Test-Path -LiteralPath $taskkillExe -PathType Leaf)) {
+            throw "Windows taskkill executable is missing: $taskkillExe"
+        }
+        & $taskkillExe /PID $process.Id /T /F 2>&1 | ForEach-Object {
             Write-InvocationLog "[UnityInvoke] taskkill: $_"
         }
         break

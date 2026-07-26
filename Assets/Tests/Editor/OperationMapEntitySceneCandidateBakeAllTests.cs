@@ -697,6 +697,11 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
 
     private static string ComputeCandidateOutputFingerprint(string root)
     {
+        // Bake All can leave orphaned generated .meta files queued for removal by the
+        // asset pipeline. Drain that queue before enumerating so the fingerprint sees
+        // only the stable post-import candidate output set.
+        AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+
         var manifest = new StringBuilder();
         foreach (string path in TwoRunCandidateFiles.OrderBy(
                      value => value,
@@ -747,11 +752,22 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
             return;
         }
 
-        manifest.Append("file|")
-            .Append(relativePath)
-            .Append('|')
-            .Append(ComputeFileSha256(physicalPath))
-            .Append('\n');
+        try
+        {
+            manifest.Append("file|")
+                .Append(relativePath)
+                .Append('|')
+                .Append(ComputeFileSha256(physicalPath))
+                .Append('\n');
+        }
+        catch (FileNotFoundException)
+        {
+            manifest.Append("file-missing|").Append(relativePath).Append('\n');
+        }
+        catch (DirectoryNotFoundException)
+        {
+            manifest.Append("file-missing|").Append(relativePath).Append('\n');
+        }
     }
 
     private static string ComputeFileSha256(string path)

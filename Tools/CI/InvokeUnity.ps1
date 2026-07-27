@@ -94,7 +94,9 @@ function Find-UnityLoggedFailure {
         'executeMethod method .+ threw exception\.',
         'Application will terminate with return code [1-9][0-9]*',
         'No valid Unity Editor license found\.',
-        'Aborting batchmode due to failure'
+        'Aborting batchmode due to failure',
+        'Crash!!!',
+        'A crash has been intercepted by the crash handler\.'
     )
     foreach ($pattern in $fatalPatterns) {
         $match = [System.Text.RegularExpressions.Regex]::Match(

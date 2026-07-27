@@ -152,6 +152,9 @@ namespace Game.Editor
                                 AssetDatabase.AssetPathToGUID(path)));
             using var deployment =
                 OperationMapDenseCityCandidateAndroidPackageDeployment.Begin(projectRoot);
+            using var entitySceneOverride =
+                OperationMapEntitySceneBuildAdditions.UseCurrentProcessSceneOverride(
+                    DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath);
             var buildPlayerOptions = new BuildPlayerOptions
             {
                 scenes = scenes,

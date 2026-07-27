@@ -66,11 +66,7 @@ public sealed class OperationMapDenseCityCandidateAndroidPackageTests
                 {
                     "aa/DenseCityCandidate/catalog.bin",
                     "aa/DenseCityCandidate/catalog.hash",
-                    "aa/DenseCityCandidate/Android/candidate.bundle",
-                    "ContentArchives/archive_dependencies.bin",
-                    "ContentArchives/candidate.archive",
-                    $"EntityScenes/{DenseGuid}.entityheader",
-                    $"EntityScenes/{DenseGuid}.0.entities"
+                    "aa/DenseCityCandidate/Android/candidate.bundle"
                 }));
             Assert.That(
                 plan.All(file => Path.IsPathRooted(file.SourcePath)),
@@ -118,16 +114,23 @@ public sealed class OperationMapDenseCityCandidateAndroidPackageTests
         string[] entries =
         {
             $"assets/EntityScenes/{DenseGuid}.entityheader",
-            $"assets/EntityScenes/{DenseGuid}.0.entities",
             "assets/ContentArchives/archive_dependencies.bin",
-            "assets/ContentArchives/candidate.archive",
+            "assets/ContentArchives/archive_dependencies.txt",
+            "assets/ContentArchives/b8ebb31853db87420b18072fd34a9579",
             "assets/aa/DenseCityCandidate/catalog.bin",
             "assets/aa/DenseCityCandidate/Android/candidate.bundle"
         };
+        string archiveCatalog =
+            $"Archive: b8ebb31853db87420b18072fd34a9579\n" +
+            $"\tObject: {DenseGuid}:0\n";
 
         Assert.That(
             OperationMapDenseCityCandidateAndroidPackageDeployment
-                .GetPackageValidationError(entries, DenseGuid, ProductionGuid),
+                .GetPackageValidationError(
+                    entries,
+                    DenseGuid,
+                    ProductionGuid,
+                    archiveCatalog),
             Is.Null);
     }
 
@@ -137,17 +140,23 @@ public sealed class OperationMapDenseCityCandidateAndroidPackageTests
         string[] entries =
         {
             $"assets/EntityScenes/{DenseGuid}.entityheader",
-            $"assets/EntityScenes/{DenseGuid}.0.entities",
             $"assets/EntityScenes/{ProductionGuid}.entityheader",
             "assets/ContentArchives/archive_dependencies.bin",
-            "assets/ContentArchives/candidate.archive",
+            "assets/ContentArchives/archive_dependencies.txt",
+            "assets/ContentArchives/b8ebb31853db87420b18072fd34a9579",
             "assets/aa/DenseCityCandidate/catalog.bin",
             "assets/aa/DenseCityCandidate/Android/candidate.bundle"
         };
+        string archiveCatalog =
+            $"\tObject: {DenseGuid}:0\n\tObject: {ProductionGuid}:0\n";
 
         Assert.That(
             OperationMapDenseCityCandidateAndroidPackageDeployment
-                .GetPackageValidationError(entries, DenseGuid, ProductionGuid),
+                .GetPackageValidationError(
+                    entries,
+                    DenseGuid,
+                    ProductionGuid,
+                    archiveCatalog),
             Does.Contain("production EntityScene"));
     }
 
@@ -157,13 +166,18 @@ public sealed class OperationMapDenseCityCandidateAndroidPackageTests
         string[] entityEntries =
         {
             $"assets/EntityScenes/{DenseGuid}.entityheader",
-            $"assets/EntityScenes/{DenseGuid}.0.entities",
             "assets/ContentArchives/archive_dependencies.bin",
-            "assets/ContentArchives/candidate.archive"
+            "assets/ContentArchives/archive_dependencies.txt",
+            "assets/ContentArchives/b8ebb31853db87420b18072fd34a9579"
         };
+        string archiveCatalog = $"\tObject: {DenseGuid}:0\n";
         Assert.That(
             OperationMapDenseCityCandidateAndroidPackageDeployment
-                .GetPackageValidationError(entityEntries, DenseGuid, ProductionGuid),
+                .GetPackageValidationError(
+                    entityEntries,
+                    DenseGuid,
+                    ProductionGuid,
+                    archiveCatalog),
             Does.Contain("catalog.bin"));
 
         Assert.That(
@@ -173,7 +187,8 @@ public sealed class OperationMapDenseCityCandidateAndroidPackageTests
                             "assets/aa/DenseCityCandidate/catalog.bin")
                         .ToArray(),
                     DenseGuid,
-                    ProductionGuid),
+                    ProductionGuid,
+                    archiveCatalog),
             Does.Contain("no dense candidate Android bundles"));
     }
 
@@ -212,30 +227,10 @@ public sealed class OperationMapDenseCityCandidateAndroidPackageTests
                 projectRoot,
                 OperationMapDenseCityCandidateRuntimeContentBuilder.AddressablesOutputPath);
             string bundleRoot = Path.Combine(addressablesRoot, "Android");
-            string archiveRoot = Path.Combine(
-                projectRoot,
-                OperationMapDenseCityCandidateRuntimeContentBuilder.EntityContentOutputPath,
-                "ContentArchives");
-            string entitySceneRoot = Path.Combine(
-                projectRoot,
-                OperationMapDenseCityCandidateRuntimeContentBuilder.EntityContentOutputPath,
-                "EntityScenes");
             Directory.CreateDirectory(bundleRoot);
-            Directory.CreateDirectory(archiveRoot);
-            Directory.CreateDirectory(entitySceneRoot);
             File.WriteAllText(Path.Combine(addressablesRoot, "catalog.bin"), "catalog");
             File.WriteAllText(Path.Combine(addressablesRoot, "catalog.hash"), "hash");
             File.WriteAllText(Path.Combine(bundleRoot, "candidate.bundle"), "bundle");
-            File.WriteAllText(
-                Path.Combine(archiveRoot, "archive_dependencies.bin"),
-                "catalog");
-            File.WriteAllText(Path.Combine(archiveRoot, "candidate.archive"), "archive");
-            File.WriteAllText(
-                Path.Combine(entitySceneRoot, DenseGuid + ".entityheader"),
-                "header");
-            File.WriteAllText(
-                Path.Combine(entitySceneRoot, DenseGuid + ".0.entities"),
-                "entities");
 
             action(projectRoot);
         }

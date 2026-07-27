@@ -64,9 +64,6 @@ namespace Game.Editor
             string addressablesRoot = ResolveOwnedDirectory(
                 normalizedRoot,
                 OperationMapDenseCityCandidateRuntimeContentBuilder.AddressablesOutputPath);
-            string entityContentRoot = ResolveOwnedDirectory(
-                normalizedRoot,
-                OperationMapDenseCityCandidateRuntimeContentBuilder.EntityContentOutputPath);
             string androidBundleRoot = Path.Combine(addressablesRoot, "Android");
             if (!Directory.Exists(androidBundleRoot))
                 throw new InvalidOperationException(
@@ -91,15 +88,6 @@ namespace Game.Editor
                     bundlePath,
                     AddressablesDestinationRoot + "/Android/" +
                     Path.GetFileName(bundlePath));
-            }
-
-            foreach (string contentPath in Directory
-                         .EnumerateFiles(entityContentRoot, "*", SearchOption.AllDirectories)
-                         .OrderBy(path => path, StringComparer.Ordinal))
-            {
-                string relativePath = Path.GetRelativePath(entityContentRoot, contentPath)
-                    .Replace('\\', '/');
-                AddRequiredFile(files, contentPath, relativePath);
             }
 
             RequireValidPlan(files);
@@ -157,7 +145,8 @@ namespace Game.Editor
         internal static string GetPackageValidationError(
             IReadOnlyList<string> packageEntries,
             string denseEntitySceneGuid,
-            string productionEntitySceneGuid)
+            string productionEntitySceneGuid,
+            string archiveDependenciesText)
         {
             if (packageEntries == null)
                 return "Android package entries are required.";
@@ -170,14 +159,12 @@ namespace Game.Editor
                 "/" + AddressablesDestinationRoot + "/Android/";
             string entityHeaderSuffix =
                 $"/EntityScenes/{denseEntitySceneGuid}.entityheader";
-            string entitySectionPrefix =
-                $"/EntityScenes/{denseEntitySceneGuid}.";
             bool hasCatalog = false;
             int bundleCount = 0;
             bool hasEntityHeader = false;
-            bool hasEntitySection = false;
             bool hasEntityArchiveCatalog = false;
-            int entityArchiveCount = 0;
+            bool hasEntityArchiveCatalogText = false;
+            int entityArchivePayloadCount = 0;
             bool hasProductionEntityScene = false;
             string productionHeaderSuffix = string.IsNullOrWhiteSpace(productionEntitySceneGuid)
                 ? null
@@ -192,18 +179,18 @@ namespace Game.Editor
                 hasEntityHeader |= path.EndsWith(
                     entityHeaderSuffix,
                     StringComparison.Ordinal);
-                hasEntitySection |=
-                    path.Contains(entitySectionPrefix, StringComparison.Ordinal) &&
-                    path.EndsWith(".entities", StringComparison.Ordinal);
                 hasEntityArchiveCatalog |= path.EndsWith(
                     "/ContentArchives/archive_dependencies.bin",
                     StringComparison.Ordinal);
-                if (path.Contains(
-                        "/ContentArchives/",
-                        StringComparison.Ordinal) &&
-                    path.EndsWith(".archive", StringComparison.Ordinal))
+                hasEntityArchiveCatalogText |= path.EndsWith(
+                    "/ContentArchives/archive_dependencies.txt",
+                    StringComparison.Ordinal);
+                string fileName = Path.GetFileName(path);
+                if (path.Contains("/ContentArchives/", StringComparison.Ordinal) &&
+                    fileName.Length == 32 &&
+                    fileName.All(Uri.IsHexDigit))
                 {
-                    entityArchiveCount++;
+                    entityArchivePayloadCount++;
                 }
                 if (path.Contains(bundleFragment, StringComparison.Ordinal) &&
                     path.EndsWith(".bundle", StringComparison.Ordinal))
@@ -219,20 +206,25 @@ namespace Game.Editor
                 return "Android package is missing " +
                        $"EntityScenes/{denseEntitySceneGuid}.entityheader.";
             }
-            if (!hasEntitySection)
-            {
-                return "Android package is missing " +
-                       $"EntityScenes/{denseEntitySceneGuid}.*.entities.";
-            }
             if (!hasEntityArchiveCatalog)
             {
                 return "Android package is missing the dense candidate Entities " +
                        "archive dependency catalog.";
             }
-            if (entityArchiveCount != 1)
+            if (!hasEntityArchiveCatalogText)
             {
-                return "Android package must contain exactly one dense candidate Entities " +
-                       $"archive, but found {entityArchiveCount}.";
+                return "Android package is missing the readable dense candidate Entities " +
+                       "archive dependency catalog.";
+            }
+            if (entityArchivePayloadCount == 0)
+                return "Android package contains no Entities archive payload.";
+            if (string.IsNullOrWhiteSpace(archiveDependenciesText) ||
+                !archiveDependenciesText.Contains(
+                    $"Object: {denseEntitySceneGuid}:",
+                    StringComparison.Ordinal))
+            {
+                return "Android package Entities archive catalog does not own the dense " +
+                       $"candidate EntityScene {denseEntitySceneGuid}.";
             }
             if (!hasCatalog)
                 return $"Android package is missing {AddressablesDestinationRoot}/catalog.bin.";
@@ -242,6 +234,14 @@ namespace Game.Editor
             {
                 return "Android package contains the production EntityScene in addition to " +
                        "the isolated dense candidate.";
+            }
+            if (!string.IsNullOrWhiteSpace(productionEntitySceneGuid) &&
+                archiveDependenciesText.Contains(
+                    $"Object: {productionEntitySceneGuid}:",
+                    StringComparison.Ordinal))
+            {
+                return "Android package Entities archive catalog contains the production " +
+                       "EntityScene.";
             }
             return null;
         }
@@ -258,10 +258,21 @@ namespace Game.Editor
             string[] entries = archive.Entries
                 .Select(entry => entry.FullName)
                 .ToArray();
+            ZipArchiveEntry archiveCatalogEntry = archive.Entries.SingleOrDefault(entry =>
+                ("/" + entry.FullName.Replace('\\', '/').TrimStart('/')).EndsWith(
+                    "/ContentArchives/archive_dependencies.txt",
+                    StringComparison.Ordinal));
+            string archiveDependenciesText = null;
+            if (archiveCatalogEntry != null)
+            {
+                using StreamReader reader = new(archiveCatalogEntry.Open());
+                archiveDependenciesText = reader.ReadToEnd();
+            }
             string error = GetPackageValidationError(
                 entries,
                 denseEntitySceneGuid,
-                productionEntitySceneGuid);
+                productionEntitySceneGuid,
+                archiveDependenciesText);
             if (error != null)
                 throw new InvalidOperationException(error);
         }
@@ -321,7 +332,6 @@ namespace Game.Editor
 
             var destinations = new HashSet<string>(StringComparer.Ordinal);
             int bundleCount = 0;
-            int entityArchiveCount = 0;
             foreach (DenseCityCandidatePackageFile file in files)
             {
                 if (Path.IsPathRooted(file.DestinationPath) ||
@@ -339,29 +349,11 @@ namespace Game.Editor
                 bundleCount += file.DestinationPath.EndsWith(
                     ".bundle",
                     StringComparison.Ordinal) ? 1 : 0;
-                entityArchiveCount +=
-                    file.DestinationPath.StartsWith(
-                        "ContentArchives/",
-                        StringComparison.Ordinal) &&
-                    file.DestinationPath.EndsWith(
-                        ".archive",
-                        StringComparison.Ordinal) ? 1 : 0;
             }
 
             if (bundleCount == 0)
                 throw new InvalidOperationException(
                     "Dense candidate package file plan contains no Android bundles.");
-            if (!destinations.Contains("ContentArchives/archive_dependencies.bin"))
-            {
-                throw new InvalidOperationException(
-                    "Dense candidate package file plan is missing the Entities archive catalog.");
-            }
-            if (entityArchiveCount != 1)
-            {
-                throw new InvalidOperationException(
-                    "Dense candidate package file plan must contain exactly one Entities " +
-                    $"archive, but found {entityArchiveCount}.");
-            }
         }
     }
 

@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.IO.Compression;
 using System.Reflection;
+using Game.Composition;
 
 namespace Game.Editor
 {
@@ -155,10 +156,15 @@ namespace Game.Editor
             using var entitySceneOverride =
                 OperationMapEntitySceneBuildAdditions.UseCurrentProcessSceneOverride(
                     DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath);
+            string denseGuid = AssetDatabase.AssetPathToGUID(
+                DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath);
             var buildPlayerOptions = new BuildPlayerOptions
             {
                 scenes = scenes,
                 target = BuildTarget.Android,
+                extraScriptingDefines =
+                    OperationMapDenseCityCandidateAndroidPackageDeployment
+                        .GetRuntimeScriptingDefines(denseGuid),
                 options = cleanBuildCache
                     ? CleanReleaseAndroidBuildOptions
                     : ReleaseAndroidBuildOptions,
@@ -171,8 +177,6 @@ namespace Game.Editor
                 $"revision={buildProvenance.ExactCommit} dirty={buildProvenance.Dirty}");
             BuildReport report = ExecuteBuild(buildPlayerOptions);
 
-            string denseGuid = AssetDatabase.AssetPathToGUID(
-                DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath);
             string productionGuid = AssetDatabase.AssetPathToGUID(
                 OperationMapEntityPresentationMigrationEditor.AcceptedSubScenePath);
             OperationMapDenseCityCandidateAndroidPackageDeployment.ValidatePackage(

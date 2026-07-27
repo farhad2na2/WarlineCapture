@@ -24,6 +24,9 @@ namespace Game.Composition
         private bool matchRuntimeBound;
         private OperationMapRuntimeBootstrapSceneSystemHelper operationMapRuntimeBootstrapSystem;
         private OperationMapSceneLoadingSceneSystemHelper operationMapSceneLoadingSystem;
+        private readonly OperationMapDenseCityCandidateRuntimeOverride
+            denseCityCandidateRuntimeOverride = new();
+        private OperationMapDefinition resolvedOperationMapDefinition;
         private OperationMapSceneView activeOperationMapSceneView;
         private OperationMapCanonicalPresentationMode loadedOperationMapCanonicalPresentationMode =
             OperationMapCanonicalPresentationMode.SourceRenderersPresent;
@@ -260,6 +263,7 @@ namespace Game.Composition
         {
             RestoreAudioListenerAuthority();
             ShutdownMatchRuntimeBound();
+            denseCityCandidateRuntimeOverride.Dispose();
         }
 
         private void OnDisable()
@@ -390,7 +394,17 @@ namespace Game.Composition
                 return false;
             }
 
-            OperationMapCatalogConfig catalog = ResolveOperationMapCatalog();
+            if (resolvedOperationMapDefinition == null &&
+                !TryResolveOperationMapDefinition(
+                    out resolvedOperationMapDefinition,
+                    out bool waiting,
+                    out error))
+            {
+                if (waiting)
+                    error = "Operation-map definition is still loading.";
+                return false;
+            }
+
             operationMapRuntimeBootstrapSystem = new OperationMapRuntimeBootstrapSceneSystemHelper(world);
             var fixedScenarioId = new Unity.Collections.FixedString64Bytes(scenarioId);
             var fixedMissionId = new Unity.Collections.FixedString64Bytes(missionId);
@@ -401,8 +415,7 @@ namespace Game.Composition
                 out OperationMapReadinessFlags readyFlags,
                 out OperationMapReadinessFlags requiredFlags);
             if (operationMapRuntimeBootstrapSystem.TryPublish(
-                    catalog,
-                    operationMapId,
+                    resolvedOperationMapDefinition,
                     in fixedScenarioId,
                     in fixedMissionId,
                     1,
@@ -532,18 +545,22 @@ namespace Game.Composition
             if (operationMapSceneLoadingSystem != null)
                 return;
 
-            OperationMapCatalogConfig catalog = ResolveOperationMapCatalog();
-            if (catalog == null ||
-                !catalog.TryResolve(operationMapId, out OperationMapDefinition definition))
+            if (!TryResolveOperationMapDefinition(
+                    out OperationMapDefinition definition,
+                    out bool waiting,
+                    out string resolveError))
             {
+                if (waiting)
+                    return;
                 ReportOperationMapLoadFailure(
                     OperationMapIdentityRules.IsValidOperationMapId(operationMapId)
                         ? OperationMapLoadResultCode.MissingDefinition
                         : OperationMapLoadResultCode.InvalidOperationMapId,
-                    $"Operation-map id '{operationMapId ?? "<null>"}' is not present in the catalog.");
+                    resolveError);
                 return;
             }
 
+            resolvedOperationMapDefinition = definition;
             operationMapSceneLoadingSystem = new OperationMapSceneLoadingSceneSystemHelper();
             if (!operationMapSceneLoadingSystem.TryStart(definition, out string error))
             {
@@ -561,6 +578,19 @@ namespace Game.Composition
                 return editorOperationMapCatalogOverrideForTests;
 #endif
             return operationMapCatalog;
+        }
+
+        private bool TryResolveOperationMapDefinition(
+            out OperationMapDefinition definition,
+            out bool waiting,
+            out string error)
+        {
+            return denseCityCandidateRuntimeOverride.TryResolve(
+                ResolveOperationMapCatalog(),
+                operationMapId,
+                out definition,
+                out waiting,
+                out error);
         }
 
 #if UNITY_EDITOR
@@ -618,6 +648,7 @@ namespace Game.Composition
             operationMapSceneUnloadStartPending = false;
             operationMapSceneLoadingSystem?.Dispose();
             operationMapSceneLoadingSystem = null;
+            resolvedOperationMapDefinition = null;
             operationMapLoadFailureReported = false;
             operationMapLoadFailureCode = OperationMapLoadResultCode.None;
             operationMapLoadFailure = null;

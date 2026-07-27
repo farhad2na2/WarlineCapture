@@ -1,8 +1,11 @@
 using System;
 using System.IO;
 using System.Linq;
+using Game.Composition;
+using Game.Configs;
 using Game.Editor;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEngine;
 
 public sealed class OperationMapDenseCityCandidateAndroidPackageTests
@@ -22,6 +25,10 @@ public sealed class OperationMapDenseCityCandidateAndroidPackageTests
             suite.PackageGate_AcceptsIsolatedDenseCandidate,
             suite.PackageGate_RejectsProductionEntityScene,
             suite.PackageGate_RejectsMissingCatalogOrBundles,
+            suite.RuntimeSelectionContract_AcceptsExactCandidate,
+            suite.RuntimeSelectionContract_RejectsWrongEntityScene,
+            suite.RuntimeOverride_ProductionBuildResolvesValidatedCatalog,
+            suite.RuntimeOverride_ProductionBuildRejectsUnknownMap,
             suite.DeploymentScope_ActivatesAndClearsAdditionalFiles
         };
         foreach (Action test in tests)
@@ -190,6 +197,84 @@ public sealed class OperationMapDenseCityCandidateAndroidPackageTests
                     ProductionGuid,
                     archiveCatalog),
             Does.Contain("no dense candidate Android bundles"));
+    }
+
+    [Test]
+    public void RuntimeSelectionContract_AcceptsExactCandidate()
+    {
+        Assert.That(
+            OperationMapDenseCityCandidateAndroidPackageDeployment
+                .GetRuntimeSelectionContractError(DenseGuid),
+            Is.Null);
+        Assert.That(
+            OperationMapDenseCityCandidateAndroidPackageDeployment
+                .GetRuntimeScriptingDefines(DenseGuid),
+            Is.EqualTo(new[] { "WARLINE_DENSE_CITY_CANDIDATE" }));
+    }
+
+    [Test]
+    public void RuntimeSelectionContract_RejectsWrongEntityScene()
+    {
+        Assert.That(
+            OperationMapDenseCityCandidateAndroidPackageDeployment
+                .GetRuntimeSelectionContractError(ProductionGuid),
+            Does.Contain("runtime EntityScene GUID"));
+        Assert.Throws<InvalidOperationException>(() =>
+            OperationMapDenseCityCandidateAndroidPackageDeployment
+                .GetRuntimeScriptingDefines(ProductionGuid));
+    }
+
+    [Test]
+    public void RuntimeOverride_ProductionBuildResolvesValidatedCatalog()
+    {
+        OperationMapCatalogConfig catalog =
+            AssetDatabase.LoadAssetAtPath<OperationMapCatalogConfig>(
+                OperationMapAddressablesLayoutBuilder.CatalogPath);
+        Assert.That(catalog, Is.Not.Null);
+        Assert.That(
+            OperationMapDenseCityCandidateRuntimeOverride.CandidateBuildEnabled,
+            Is.False);
+        Assert.That(
+            catalog.TryResolve(
+                OperationMapDenseCityCandidateRuntimeOverride.OperationMapId,
+                out OperationMapDefinition expected),
+            Is.True);
+
+        using var runtimeOverride =
+            new OperationMapDenseCityCandidateRuntimeOverride();
+        Assert.That(
+            runtimeOverride.TryResolve(
+                catalog,
+                OperationMapDenseCityCandidateRuntimeOverride.OperationMapId,
+                out OperationMapDefinition actual,
+                out bool waiting,
+                out string error),
+            Is.True,
+            error);
+        Assert.That(waiting, Is.False);
+        Assert.That(actual, Is.SameAs(expected));
+    }
+
+    [Test]
+    public void RuntimeOverride_ProductionBuildRejectsUnknownMap()
+    {
+        OperationMapCatalogConfig catalog =
+            AssetDatabase.LoadAssetAtPath<OperationMapCatalogConfig>(
+                OperationMapAddressablesLayoutBuilder.CatalogPath);
+        Assert.That(catalog, Is.Not.Null);
+
+        using var runtimeOverride =
+            new OperationMapDenseCityCandidateRuntimeOverride();
+        Assert.That(
+            runtimeOverride.TryResolve(
+                catalog,
+                "opmap.skirmish.unknown",
+                out _,
+                out bool waiting,
+                out string error),
+            Is.False);
+        Assert.That(waiting, Is.False);
+        Assert.That(error, Does.Contain("not present in the catalog"));
     }
 
     [Test]

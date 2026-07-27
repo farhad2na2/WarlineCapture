@@ -7,6 +7,7 @@ namespace Game.Editor
     using System.IO;
     using System.IO.Compression;
     using System.Linq;
+    using Game.Composition;
     using UnityEditor;
     using UnityEditor.Build;
 
@@ -92,6 +93,66 @@ namespace Game.Editor
 
             RequireValidPlan(files);
             return files.ToArray();
+        }
+
+        internal static string GetRuntimeSelectionContractError(string denseEntitySceneGuid)
+        {
+            if (!string.Equals(
+                    denseEntitySceneGuid,
+                    OperationMapDenseCityCandidateRuntimeOverride.EntitySceneGuid,
+                    StringComparison.Ordinal))
+            {
+                return "Dense candidate runtime EntityScene GUID does not match the " +
+                       $"packaged EntityScene: runtime=" +
+                       $"{OperationMapDenseCityCandidateRuntimeOverride.EntitySceneGuid} " +
+                       $"package={denseEntitySceneGuid ?? "<null>"}.";
+            }
+
+            string expectedDefinitionAddress =
+                OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                    .DenseCandidateAddressPrefix + "definition";
+            if (!string.Equals(
+                    OperationMapDenseCityCandidateRuntimeOverride.DefinitionAddress,
+                    expectedDefinitionAddress,
+                    StringComparison.Ordinal))
+            {
+                return "Dense candidate runtime definition address does not match the " +
+                       $"candidate layout: runtime=" +
+                       $"{OperationMapDenseCityCandidateRuntimeOverride.DefinitionAddress} " +
+                       $"layout={expectedDefinitionAddress}.";
+            }
+
+            string expectedCatalogPath = AddressablesDestinationRoot + "/catalog.bin";
+            if (!string.Equals(
+                    OperationMapDenseCityCandidateRuntimeOverride.CatalogRelativePath,
+                    expectedCatalogPath,
+                    StringComparison.Ordinal))
+            {
+                return "Dense candidate runtime catalog path does not match the package " +
+                       $"layout: runtime=" +
+                       $"{OperationMapDenseCityCandidateRuntimeOverride.CatalogRelativePath} " +
+                       $"package={expectedCatalogPath}.";
+            }
+
+            if (string.IsNullOrWhiteSpace(
+                    OperationMapDenseCityCandidateRuntimeOverride.BuildDefine))
+            {
+                return "Dense candidate runtime build define is missing.";
+            }
+
+            return null;
+        }
+
+        internal static string[] GetRuntimeScriptingDefines(string denseEntitySceneGuid)
+        {
+            string error = GetRuntimeSelectionContractError(denseEntitySceneGuid);
+            if (error != null)
+                throw new InvalidOperationException(error);
+
+            return new[]
+            {
+                OperationMapDenseCityCandidateRuntimeOverride.BuildDefine
+            };
         }
 
         internal static string[] ResolvePlayerScenes(
@@ -256,6 +317,10 @@ namespace Game.Editor
             string denseEntitySceneGuid,
             string productionEntitySceneGuid)
         {
+            string runtimeSelectionError =
+                GetRuntimeSelectionContractError(denseEntitySceneGuid);
+            if (runtimeSelectionError != null)
+                throw new InvalidOperationException(runtimeSelectionError);
             if (!File.Exists(packagePath))
                 throw new InvalidOperationException($"Android package not found: {packagePath}");
 

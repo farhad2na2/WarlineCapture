@@ -52,6 +52,8 @@ namespace Game.Editor
         internal const string EmbeddedAndroidAddressablesLoadPath =
             "{UnityEngine.AddressableAssets.Addressables.RuntimePath}/" +
             "DenseCityCandidate/Android";
+        internal const string EmbeddedAndroidAddressablesBuildPath =
+            "{UnityEngine.AddressableAssets.Addressables.BuildPath}/Android";
         internal const string FrozenRollbackRootPath =
             "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/" +
             "desert_base_01";
@@ -401,7 +403,10 @@ namespace Game.Editor
                         buildTarget.ToString()))
                     .Replace('\\', '/');
                 if (!string.IsNullOrWhiteSpace(addressablesLoadPathOverride))
+                {
                     denseBundleLoadPath = addressablesLoadPathOverride.Trim();
+                    temporaryBundleBuildPath = EmbeddedAndroidAddressablesBuildPath;
+                }
                 settings.profileSettings.SetValue(
                     settings.activeProfileId,
                     AddressableAssetSettings.kLocalBuildPath,

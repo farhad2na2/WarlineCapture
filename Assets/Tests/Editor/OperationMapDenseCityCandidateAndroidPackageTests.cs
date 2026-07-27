@@ -44,6 +44,11 @@ public sealed class OperationMapDenseCityCandidateAndroidPackageTests
             OperationMapDenseCityCandidateRuntimeContentBuilder
                 .EmbeddedAndroidAddressablesLoadPath,
             Does.Not.StartWith("http"));
+        Assert.That(
+            OperationMapDenseCityCandidateRuntimeContentBuilder
+                .EmbeddedAndroidAddressablesBuildPath,
+            Is.EqualTo(
+                "{UnityEngine.AddressableAssets.Addressables.BuildPath}/Android"));
     }
 
     [Test]

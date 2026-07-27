@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "status": "candidate_evidence_wrapper_rejected",
+  "artifactBuildRevision": "963713b8c",
+  "archiveSuffixGateRevision": "c4d47920a",
+  "buildWrapperLog": "%TEMP%/warline-dense-candidate-android-clean-apk-canonical-env.log",
+  "buildSucceeded": 1,
+  "wrapperValidationAccepted": 0,
+  "wrapperValidationBlocker": "Unity 6000.5.2f1 crashes or stalls during shutdown after the candidate APK gate logs its pass marker on this Windows-on-ARM host.",
+  "package": {
+    "relativePath": "Build/AndroidDenseCandidate/WarlineCapture-DenseCityCandidate.apk",
+    "packageId": "com.warlinecapture.game",
+    "versionCode": 1,
+    "versionName": "0.1.0",
+    "minimumSdkVersion": 26,
+    "targetSdkVersion": 36,
+    "launchableActivity": "com.unity3d.player.UnityPlayerGameActivity",
+    "bytes": 555819265,
+    "sha256": "c1600f5797eb9469ee1fb817215143f6ffedc4779c5ed98d8925fb4081e299da",
+    "zipEntryCount": 1020
+  },
+  "playerScenes": [
+    "Assets/Game/Scenes/Menu.unity",
+    "Assets/Game/Scenes/Match.unity"
+  ],
+  "sourceAuthoringSceneIncluded": 0,
+  "legacyStaticPresentationSceneIncluded": 0,
+  "denseEntitySceneGuid": "c00140f2e94a04c3084c8dcb0c18cbd0",
+  "denseEntitySceneOwnedByArchiveDependencies": 1,
+  "productionEntitySceneGuid": "d50925a18e9164ce782536576cb833d8",
+  "productionEntitySceneOwnedByArchiveDependencies": 0,
+  "entitiesArchives": {
+    "count": 3,
+    "uncompressedBytes": 119634184,
+    "compressedBytes": 119634184,
+    "entries": [
+      {
+        "path": "assets/ContentArchives/2e45ddf0aab6c52e0147461761554717.archive",
+        "uncompressedBytes": 62324667,
+        "compressedBytes": 62324667
+      },
+      {
+        "path": "assets/ContentArchives/b8ebb31853db87420b18072fd34a9579.archive",
+        "uncompressedBytes": 53616394,
+        "compressedBytes": 53616394
+      },
+      {
+        "path": "assets/ContentArchives/ce1993e36063131e707f5ec6e270e3ad.archive",
+        "uncompressedBytes": 3693123,
+        "compressedBytes": 3693123
+      }
+    ]
+  },
+  "embeddedCandidateAddressables": {
+    "catalogPath": "assets/aa/DenseCityCandidate/catalog.bin",
+    "catalogBytes": 2977,
+    "catalogHashBytes": 32,
+    "bundleCount": 4,
+    "bundleBytes": 915795,
+    "bundles": [
+      {
+        "path": "assets/aa/DenseCityCandidate/Android/059ad5323b1112826e7d3560ced80254.bundle",
+        "bytes": 152869
+      },
+      {
+        "path": "assets/aa/DenseCityCandidate/Android/35bb55c2a2243cb23b01da4d5c7def26.bundle",
+        "bytes": 756018
+      },
+      {
+        "path": "assets/aa/DenseCityCandidate/Android/c2059c47c5fbfa12fb10b95f9419f34c.bundle",
+        "bytes": 2033
+      },
+      {
+        "path": "assets/aa/DenseCityCandidate/Android/c48ad4aaa3aa494a72de9af64059511f.bundle",
+        "bytes": 4875
+      }
+    ]
+  },
+  "packedDependencyEvidence": {
+    "sourceReport": "Design/AgentReports/2026-07-27_dense_city_candidate_android_runtime_content.json",
+    "duplicatedDependencyGuidCount": 0,
+    "duplicatedDependencyBytes": 0,
+    "sourceHierarchyExplicitAssetCount": 0,
+    "sourceHierarchyImplicitAssetCount": 0
+  },
+  "duplicateZipEntries": {
+    "count": 6,
+    "classification": "Android resource merge names; not candidate packed-dependency duplication",
+    "paths": [
+      "res/9N.9.png",
+      "res/GR.xml",
+      "res/Gt.9.png",
+      "res/QZ.xml",
+      "res/X3.9.png",
+      "res/YG.9.png"
+    ]
+  },
+  "deviceAcceptance": {
+    "adbDeviceConnected": 0,
+    "installedBytesCaptured": 0,
+    "networkDisabledLaunchValidated": 0,
+    "deployEntryValidated": 0,
+    "runtimeMetricsCaptured": 0
+  }
+}

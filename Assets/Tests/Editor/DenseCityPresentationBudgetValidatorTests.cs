@@ -16,6 +16,7 @@ public sealed class DenseCityPresentationBudgetValidatorTests
             suite.Budget_RejectsLegacyExplicitSharedLayout,
             suite.Budget_RejectsTransformBoundsMismatch,
             suite.Budget_RejectsIncompleteGeometryEvidence,
+            suite.Budget_RejectsIncompleteMobileMaterialLightingEvidence,
             suite.Budget_RejectsIncompleteBakedOwnershipEvidence,
             suite.DenseOwnership_AcceptsCompleteEntitySceneEvidence,
             suite.DenseOwnership_RejectsMissingGeneratedIdentity,
@@ -77,6 +78,19 @@ public sealed class DenseCityPresentationBudgetValidatorTests
     {
         CreateEvidence(out var bake, out var art, out var parity, out var layout, out var geometry);
         geometry.uniqueTextureAssetCount = 0;
+
+        Assert.That(
+            DenseCityPresentationBudgetValidator.TryCreateReport(
+                bake, art, parity, layout, geometry, out _, out string error),
+            Is.False);
+        Assert.That(error, Is.EqualTo("candidate-geometry-budget"));
+    }
+
+    [Test]
+    public void Budget_RejectsIncompleteMobileMaterialLightingEvidence()
+    {
+        CreateEvidence(out var bake, out var art, out var parity, out var layout, out var geometry);
+        geometry.mobileMaterialLightingEvidenceComplete = 0;
 
         Assert.That(
             DenseCityPresentationBudgetValidator.TryCreateReport(
@@ -393,11 +407,16 @@ public sealed class DenseCityPresentationBudgetValidatorTests
         string second = DenseCityPresentationBudgetValidator.ToDeterministicJson(report);
 
         Assert.That(second, Is.EqualTo(first));
+        StringAssert.Contains("\"schemaVersion\": 2", first);
         StringAssert.Contains("\"packedContentMetricsComplete\": 0", first);
         StringAssert.Contains("\"entitySceneBytes\": -1", first);
         StringAssert.Contains("\"productionCutover\": 0", first);
         StringAssert.Contains("\"instancedTriangleCount\": 2000", first);
         StringAssert.Contains("\"uniqueTextureAssetCount\": 12", first);
+        StringAssert.Contains("\"transparentMaterialCount\": 2", first);
+        StringAssert.Contains("\"alphaClippedMaterialCount\": 3", first);
+        StringAssert.Contains("\"smallDetailMaximumExtentMeters\": 1.0", first);
+        StringAssert.Contains("\"mobileMaterialLightingEvidenceComplete\": 1", first);
     }
 
     [Test]
@@ -528,6 +547,13 @@ public sealed class DenseCityPresentationBudgetValidatorTests
             uniqueTriangleCount = 500,
             instancedTriangleCount = 2000,
             shadowCasterCount = 40,
+            shadowReceiverCount = 35,
+            transparentMaterialCount = 2,
+            alphaClippedMaterialCount = 3,
+            smallDetailRendererCount = 12,
+            lightmappedRendererCount = 20,
+            lightProbeRendererCount = 70,
+            mobileMaterialLightingEvidenceComplete = 1,
             batchingEligibleRendererCount = 95,
             missingAssetReferenceCount = 0,
             nonFiniteBoundsCount = 0,

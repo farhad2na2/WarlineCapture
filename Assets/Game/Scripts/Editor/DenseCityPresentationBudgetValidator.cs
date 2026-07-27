@@ -19,6 +19,7 @@ namespace Game.Editor
     /// </summary>
     public static class DenseCityPresentationBudgetValidator
     {
+        internal const float SmallDetailMaximumExtentMeters = 1f;
         internal const string ReportPath =
             "Design/AgentReports/2026-07-22_dense_city_presentation_budget.json";
         internal const string CandidateBakeReportPath =
@@ -133,7 +134,7 @@ namespace Game.Editor
             var report = new PresentationBudgetReport
             {
                 schema = "warline.operation-map.dense-city-presentation-budget",
-                schemaVersion = 1,
+                schemaVersion = 2,
                 result = "PresentationBudgetEvidenceInvalidated",
                 operationMapId = OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
                 invalidationReason = reason ?? string.Empty,
@@ -247,7 +248,21 @@ namespace Game.Editor
                 geometry.uniqueMeshAssetCount <= 0 || geometry.uniqueMaterialAssetCount <= 0 ||
                 geometry.uniqueTextureAssetCount <= 0 || geometry.uniqueTriangleCount <= 0 ||
                 geometry.instancedTriangleCount < geometry.uniqueTriangleCount ||
+                geometry.mobileMaterialLightingEvidenceComplete != 1 ||
                 geometry.shadowCasterCount < 0 ||
+                geometry.shadowCasterCount > geometry.activeRendererCount ||
+                geometry.shadowReceiverCount < 0 ||
+                geometry.shadowReceiverCount > geometry.activeRendererCount ||
+                geometry.transparentMaterialCount < 0 ||
+                geometry.transparentMaterialCount > geometry.uniqueMaterialAssetCount ||
+                geometry.alphaClippedMaterialCount < 0 ||
+                geometry.alphaClippedMaterialCount > geometry.uniqueMaterialAssetCount ||
+                geometry.smallDetailRendererCount < 0 ||
+                geometry.smallDetailRendererCount > geometry.activeRendererCount ||
+                geometry.lightmappedRendererCount < 0 ||
+                geometry.lightmappedRendererCount > geometry.activeRendererCount ||
+                geometry.lightProbeRendererCount < 0 ||
+                geometry.lightProbeRendererCount > geometry.activeRendererCount ||
                 geometry.batchingEligibleRendererCount <= 0 ||
                 geometry.batchingEligibleRendererCount > geometry.authoredRendererCount ||
                 geometry.missingAssetReferenceCount != 0 || geometry.nonFiniteBoundsCount != 0 ||
@@ -262,7 +277,7 @@ namespace Game.Editor
             report = new PresentationBudgetReport
             {
                 schema = "warline.operation-map.dense-city-presentation-budget",
-                schemaVersion = 1,
+                schemaVersion = 2,
                 result = "PresentationBudgetCorePassedPendingPackedContentMetrics",
                 operationMapId = OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
                 gameplayBuildingCount = bake.gameplayBuildingCount,
@@ -306,6 +321,15 @@ namespace Game.Editor
                 uniqueTriangleCount = geometry.uniqueTriangleCount,
                 instancedTriangleCount = geometry.instancedTriangleCount,
                 shadowCasterCount = geometry.shadowCasterCount,
+                shadowReceiverCount = geometry.shadowReceiverCount,
+                transparentMaterialCount = geometry.transparentMaterialCount,
+                alphaClippedMaterialCount = geometry.alphaClippedMaterialCount,
+                smallDetailMaximumExtentMeters = SmallDetailMaximumExtentMeters,
+                smallDetailRendererCount = geometry.smallDetailRendererCount,
+                lightmappedRendererCount = geometry.lightmappedRendererCount,
+                lightProbeRendererCount = geometry.lightProbeRendererCount,
+                mobileMaterialLightingEvidenceComplete =
+                    geometry.mobileMaterialLightingEvidenceComplete,
                 batchingEligibleRendererCount = geometry.batchingEligibleRendererCount,
                 missingGeometryAssetReferenceCount = geometry.missingAssetReferenceCount,
                 nonFiniteRendererBoundsCount = geometry.nonFiniteBoundsCount,
@@ -706,8 +730,14 @@ namespace Game.Editor
             var materialKeys = new HashSet<string>(StringComparer.Ordinal);
             var textureKeys = new HashSet<string>(StringComparer.Ordinal);
             var inspectedMaterials = new HashSet<string>(StringComparer.Ordinal);
+            var transparentMaterials = new HashSet<string>(StringComparer.Ordinal);
+            var alphaClippedMaterials = new HashSet<string>(StringComparer.Ordinal);
             int active = 0;
             int shadows = 0;
+            int shadowReceivers = 0;
+            int smallDetails = 0;
+            int lightmapped = 0;
+            int lightProbes = 0;
             int batchingEligible = 0;
             int missing = 0;
             int nonFiniteBounds = 0;
@@ -730,6 +760,8 @@ namespace Game.Editor
                     active++;
                     if (renderer.shadowCastingMode != ShadowCastingMode.Off)
                         shadows++;
+                    if (renderer.receiveShadows)
+                        shadowReceivers++;
                     Bounds bounds = renderer.bounds;
                     if (!IsFinite(bounds.center) || !IsFinite(bounds.size))
                     {
@@ -737,6 +769,15 @@ namespace Game.Editor
                     }
                     else
                     {
+                        if (Mathf.Max(bounds.size.x, bounds.size.y, bounds.size.z) <=
+                            SmallDetailMaximumExtentMeters)
+                        {
+                            smallDetails++;
+                        }
+                        if (renderer.lightmapIndex >= 0 && renderer.lightmapIndex < 65534)
+                            lightmapped++;
+                        if (renderer.lightProbeUsage != LightProbeUsage.Off)
+                            lightProbes++;
                         if (!hasBounds)
                         {
                             aggregateBounds = bounds;
@@ -781,6 +822,10 @@ namespace Game.Editor
                     materialKeys.Add(materialKey);
                     if (!inspectedMaterials.Add(materialKey))
                         continue;
+                    if (IsTransparentMaterial(material))
+                        transparentMaterials.Add(materialKey);
+                    if (IsAlphaClippedMaterial(material))
+                        alphaClippedMaterials.Add(materialKey);
                     string[] textureProperties = material.GetTexturePropertyNames();
                     for (int propertyIndex = 0; propertyIndex < textureProperties.Length; propertyIndex++)
                     {
@@ -826,6 +871,13 @@ namespace Game.Editor
                 uniqueTriangleCount = uniqueTriangles,
                 instancedTriangleCount = instancedTriangles,
                 shadowCasterCount = shadows,
+                shadowReceiverCount = shadowReceivers,
+                transparentMaterialCount = transparentMaterials.Count,
+                alphaClippedMaterialCount = alphaClippedMaterials.Count,
+                smallDetailRendererCount = smallDetails,
+                lightmappedRendererCount = lightmapped,
+                lightProbeRendererCount = lightProbes,
+                mobileMaterialLightingEvidenceComplete = 1,
                 batchingEligibleRendererCount = batchingEligible,
                 missingAssetReferenceCount = missing,
                 nonFiniteBoundsCount = nonFiniteBounds,
@@ -833,6 +885,20 @@ namespace Game.Editor
                 worldBoundsSize = boundsSize,
                 rendererDensityPerSquareKilometer = density
             };
+        }
+
+        internal static bool IsTransparentMaterial(Material material)
+        {
+            return material != null &&
+                   (material.renderQueue >= (int)RenderQueue.Transparent ||
+                    material.HasProperty("_Surface") && material.GetFloat("_Surface") > 0.5f);
+        }
+
+        internal static bool IsAlphaClippedMaterial(Material material)
+        {
+            return material != null &&
+                   (material.IsKeywordEnabled("_ALPHATEST_ON") ||
+                    material.HasProperty("_AlphaClip") && material.GetFloat("_AlphaClip") > 0.5f);
         }
 
         private static Mesh ResolveMesh(Renderer renderer)
@@ -1001,6 +1067,13 @@ namespace Game.Editor
             public long uniqueTriangleCount;
             public long instancedTriangleCount;
             public int shadowCasterCount;
+            public int shadowReceiverCount;
+            public int transparentMaterialCount;
+            public int alphaClippedMaterialCount;
+            public int smallDetailRendererCount;
+            public int lightmappedRendererCount;
+            public int lightProbeRendererCount;
+            public int mobileMaterialLightingEvidenceComplete;
             public int batchingEligibleRendererCount;
             public int missingAssetReferenceCount;
             public int nonFiniteBoundsCount;
@@ -1205,6 +1278,14 @@ namespace Game.Editor
             public long uniqueTriangleCount;
             public long instancedTriangleCount;
             public int shadowCasterCount;
+            public int shadowReceiverCount;
+            public int transparentMaterialCount;
+            public int alphaClippedMaterialCount;
+            public float smallDetailMaximumExtentMeters;
+            public int smallDetailRendererCount;
+            public int lightmappedRendererCount;
+            public int lightProbeRendererCount;
+            public int mobileMaterialLightingEvidenceComplete;
             public int batchingEligibleRendererCount;
             public int missingGeometryAssetReferenceCount;
             public int nonFiniteRendererBoundsCount;

@@ -26,7 +26,8 @@ public sealed class AndroidBuildReportGeneratorTests
             tests.ReleaseBuildScriptOptionsDefaultToIncrementalAndSupportCleanCache();
             tests.ReleaseBuildCapturesGitProvenanceBeforeAndroidBuildMutation();
             tests.ReleaseBuildOptionsRejectDebugAndProfilerFlags();
-            Debug.Log("[AndroidBuildReportGeneratorValidation] result=Passed tests=12");
+            tests.GitExecutableOverrideRequiresExistingAbsolutePath();
+            Debug.Log("[AndroidBuildReportGeneratorValidation] result=Passed tests=13");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -303,6 +304,28 @@ public sealed class AndroidBuildReportGeneratorTests
             "buildType,\n                buildProvenance",
             method,
             "Report generation must consume the pre-build provenance snapshot.");
+    }
+
+    [Test]
+    public void GitExecutableOverrideRequiresExistingAbsolutePath()
+    {
+        Assert.AreEqual(
+            "git",
+            AndroidBuildReportGenerator.ResolveGitExecutable(null));
+        Assert.Throws<InvalidOperationException>(
+            () => AndroidBuildReportGenerator.ResolveGitExecutable("git.exe"));
+        Assert.Throws<InvalidOperationException>(
+            () => AndroidBuildReportGenerator.ResolveGitExecutable(
+                Path.Combine(
+                    Path.GetTempPath(),
+                    $"warline-missing-git-{Guid.NewGuid():N}.exe")));
+
+        string existingAbsolutePath = Path.GetFullPath(
+            typeof(AndroidBuildReportGeneratorTests).Assembly.Location);
+        Assert.AreEqual(
+            existingAbsolutePath,
+            AndroidBuildReportGenerator.ResolveGitExecutable(
+                $"  {existingAbsolutePath}  "));
     }
 
     [Test]

@@ -439,7 +439,8 @@ namespace Game.Editor
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = "git",
+                    FileName = ResolveGitExecutable(
+                        Environment.GetEnvironmentVariable("WARLINE_GIT_EXECUTABLE")),
                     Arguments = arguments,
                     WorkingDirectory = Directory.GetCurrentDirectory(),
                     UseShellExecute = false,
@@ -463,6 +464,28 @@ namespace Game.Editor
             }
 
             return standardOutput;
+        }
+
+        internal static string ResolveGitExecutable(string configuredPath)
+        {
+            if (string.IsNullOrWhiteSpace(configuredPath))
+                return "git";
+
+            string trimmedPath = configuredPath.Trim();
+            if (!Path.IsPathRooted(trimmedPath))
+            {
+                throw new InvalidOperationException(
+                    "WARLINE_GIT_EXECUTABLE must be an absolute path.");
+            }
+
+            string fullPath = Path.GetFullPath(trimmedPath);
+            if (!File.Exists(fullPath))
+            {
+                throw new InvalidOperationException(
+                    $"WARLINE_GIT_EXECUTABLE does not exist: {fullPath}");
+            }
+
+            return fullPath;
         }
 
         private static string ComputeSha256(string filePath)

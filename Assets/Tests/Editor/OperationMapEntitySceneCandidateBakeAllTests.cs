@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.MemoryMappedFiles;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -88,6 +89,7 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
             suite.GenerationContract_AcceptsExactInputsAndRejectsStaleHash,
             suite.CandidateDefinitionProperties_IdenticalSecondApplyIsNoOp,
             suite.CandidateRuntimeBindings_ExistingScenesValidateAsNoOp,
+            suite.TransformParityReport_SameLengthWriteSupportsMappedFile,
             suite.NormalizeAssetText_ChangesOnceThenBecomesByteNoOp,
             suite.NormalizeAssetText_UnloadsImportedAssetBeforeChangedWrite,
             suite.ProtectedProductionSnapshot_RejectsFileDrift,
@@ -216,6 +218,37 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
                     out string denseError),
             Is.True,
             denseError);
+    }
+
+    [Test]
+    public void TransformParityReport_SameLengthWriteSupportsMappedFile()
+    {
+        string physical = Path.Combine(tempDirectory, "mapped-parity-report.json");
+        const string before = "{\"value\":\"before\"}\n";
+        const string after = "{\"value\":\"after!\"}\n";
+        Assert.That(Encoding.UTF8.GetByteCount(after), Is.EqualTo(Encoding.UTF8.GetByteCount(before)));
+        File.WriteAllText(physical, before, new UTF8Encoding(false));
+
+        using (MemoryMappedFile mapped = MemoryMappedFile.CreateFromFile(
+                   physical,
+                   FileMode.Open,
+                   null,
+                   0,
+                   MemoryMappedFileAccess.Read))
+        {
+            OperationMapEntityPresentationTransformParityValidator.WriteReportText(
+                physical,
+                after);
+            using MemoryMappedViewAccessor view = mapped.CreateViewAccessor(
+                0,
+                0,
+                MemoryMappedFileAccess.Read);
+            Assert.That(view.ReadByte(0), Is.EqualTo((byte)'{'));
+        }
+
+        Assert.That(
+            File.ReadAllText(physical, new UTF8Encoding(false)),
+            Is.EqualTo(after));
     }
 
     public static void RunTwoRunNoOpValidation()

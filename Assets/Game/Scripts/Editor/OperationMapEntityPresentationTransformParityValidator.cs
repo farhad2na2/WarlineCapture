@@ -249,8 +249,34 @@ namespace Game.Editor
         {
             string absolutePath = Path.Combine(projectRoot, ReportPath);
             Directory.CreateDirectory(Path.GetDirectoryName(absolutePath));
-            File.WriteAllText(absolutePath, JsonUtility.ToJson(report, true) + "\n", Utf8WithoutBom);
+            WriteReportText(
+                absolutePath,
+                JsonUtility.ToJson(report, true) + "\n");
             AssetDatabase.ImportAsset(ReportPath, ImportAssetOptions.ForceSynchronousImport);
+        }
+
+        internal static void WriteReportText(string absolutePath, string contents)
+        {
+            byte[] replacement = Utf8WithoutBom.GetBytes(contents);
+            if (File.Exists(absolutePath))
+            {
+                byte[] current = File.ReadAllBytes(absolutePath);
+                if (current.SequenceEqual(replacement))
+                    return;
+                if (current.Length == replacement.Length)
+                {
+                    using FileStream stream = new(
+                        absolutePath,
+                        FileMode.Open,
+                        FileAccess.Write,
+                        FileShare.ReadWrite | FileShare.Delete);
+                    stream.Write(replacement, 0, replacement.Length);
+                    stream.Flush(true);
+                    return;
+                }
+            }
+
+            File.WriteAllBytes(absolutePath, replacement);
         }
 
         private static TransformParityRow BuildRow(

@@ -1,0 +1,104 @@
+{
+  "schema": "warline.operation-map.dense-city-candidate-android-minimap-performance-rerun",
+  "schemaVersion": 1,
+  "result": "RejectedPerformanceMinimapPassed",
+  "capturedAt": "2026-07-27T23:39:25+02:00",
+  "candidateBuildRevision": "a3946c7b052cf7b5f87f37c09e005a244a3f7fb5",
+  "observedWorkspaceRevision": "f5b02a162823dfeb0945625fcc31772bfc9fd105",
+  "apk": {
+    "path": "Build/AndroidDenseCandidate/WarlineCapture-DenseCityCandidate.apk",
+    "bytes": 555817853,
+    "sha256": "dec15d022c10eda2f3e3e4cb397f37871fac69656af5d7cdccd77741b32ae079"
+  },
+  "device": {
+    "manufacturer": "Xiaomi",
+    "model": "24090RA29G",
+    "product": "malachite_eea",
+    "androidVersion": "16",
+    "apiLevel": 36,
+    "abi": "arm64-v8a",
+    "transport": "paired-wireless-adb"
+  },
+  "launch": {
+    "status": "ok",
+    "launchState": "COLD",
+    "totalTimeMs": 644,
+    "waitTimeMs": 653,
+    "foregroundAfterEightSeconds": 1,
+    "fatalOrAnrObserved": 0
+  },
+  "candidateRuntime": {
+    "catalogLoadStarted": 1,
+    "definitionResolved": 1,
+    "operationMapId": "opmap.skirmish.desert_base_01",
+    "entitySceneGuid": "c00140f2e94a04c3084c8dcb0c18cbd0",
+    "catalogStartToGameplayReadyMs": 3041,
+    "deferredMatchRequestToGameplayReadyMs": 3231,
+    "densePresentationVisible": 1
+  },
+  "minimap": {
+    "result": "Passed",
+    "frameVisible": 1,
+    "unitMarkersVisible": 1,
+    "retainedMarkerSnapshotVisible": 1,
+    "capturePath": "Build/AndroidDenseCandidate/validation/current/match-sustained.png",
+    "captureBytes": 2730474,
+    "captureWidth": 2712,
+    "captureHeight": 1220,
+    "captureSha256": "fe3fb9545526547029ba6db6f658c79eb91d22d79d9bf0fedd258c92d20c0c48"
+  },
+  "stableFrameObservation": {
+    "result": "Rejected",
+    "fpsMinimum": 15.7,
+    "fpsMaximum": 16.3,
+    "averageFrameTimeMsMinimum": 61.5,
+    "averageFrameTimeMsMaximum": 63.7,
+    "typicalCpuMainThreadMsMinimum": 56.7,
+    "typicalCpuMainThreadMsMaximum": 59.8,
+    "observedCpuMainThreadSpikeMs": 78.5,
+    "gpuFrameTimeMsMinimum": 15.6,
+    "gpuFrameTimeMsMaximum": 16.4,
+    "cpuRenderThreadMsMinimum": 1.8,
+    "cpuRenderThreadMsMaximum": 2.3,
+    "instrumentedGameplayUpdateAverageMs": 0.4,
+    "drawCalls": 50,
+    "setPassCalls": 31,
+    "triangles": 785844,
+    "vertices": 1423203,
+    "unitCount": 5431,
+    "modelCount": 22,
+    "impostorCount": 4,
+    "screenWidth": 2712,
+    "screenHeight": 1220,
+    "renderScale": 0.5,
+    "targetFrameRate": 60
+  },
+  "memory": {
+    "totalPssKiB": 2209278,
+    "totalRssKiB": 2352873,
+    "graphicsPssKiB": 948829,
+    "nativeHeapPssKiB": 62143,
+    "swapPssKiB": 106
+  },
+  "diagnosticQualification": {
+    "androidGfxInfoSurfaceFrames": 0,
+    "androidGfxInfoApplicable": 0,
+    "unityProfilerMarkersRerunAcceptanceSample": 0,
+    "unityProfilerMarkersPlayerLoopMsMinimum": 58.9,
+    "unityProfilerMarkersPlayerLoopMsMaximum": 103.9,
+    "unityProfilerMarkersRenderLoopMsMinimum": 1.1,
+    "unityProfilerMarkersRenderLoopMsMaximum": 1.8,
+    "unityProfilerMarkersTopEcsSystems": "none-active",
+    "rawProfilerCaptureCompleted": 0,
+    "rawProfilerCaptureFailure": "Wireless ADB disconnected during capture before the player profile could be pulled."
+  },
+  "acceptance": {
+    "minimapAccepted": 1,
+    "sustainedFpsAccepted": 0,
+    "cpuBudgetAccepted": 0,
+    "gpuBudgetAccepted": 0,
+    "memoryBudgetAccepted": 0,
+    "combinedAndroidChecklistAccepted": 0,
+    "reason": "Corrected marker retention is visible, but sustained FPS and CPU-main time remain outside the Android target. Memory and graphics residency require optimization and a complete repeatable capture."
+  }
+}

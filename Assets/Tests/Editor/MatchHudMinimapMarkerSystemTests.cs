@@ -20,7 +20,8 @@ public sealed class MatchHudMinimapMarkerSystemTests
             tests.MinimapMarkerSystemPublishesLiveCombatMarkersWithPlayerPriorityAndCap();
             tests.MinimapMarkerSystemPublishesScanRevealedHostileLastSeenMarkers();
             tests.MinimapMarkerSystemPublishesSelectedPlayerUnitsAndScanRevealedHostilesTogether();
-            Debug.Log("[MatchHudMinimapMarkerFocusedValidation] result=Passed tests=3");
+            tests.MinimapMarkerSystemRetainsMarkersBetweenBoundedRefreshes();
+            Debug.Log("[MatchHudMinimapMarkerFocusedValidation] result=Passed tests=4");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -151,6 +152,29 @@ public sealed class MatchHudMinimapMarkerSystemTests
         AssertMarkerCount(markers, selectedVehiclePosition, 1);
         AssertMarkerCount(markers, revealedHostilePosition, 1);
         AssertMarkerCount(markers, friendlyIntelPosition, 0);
+    }
+
+    [Test]
+    public void MinimapMarkerSystemRetainsMarkersBetweenBoundedRefreshes()
+    {
+        using var world = new World(nameof(MinimapMarkerSystemRetainsMarkersBetweenBoundedRefreshes));
+        EntityManager em = world.EntityManager;
+        float3 playerPosition = new(12f, 0f, 18f);
+        CreateUnit(em, FactionIdentity.PlayerFactionId, playerPosition, 100);
+
+        SystemHandle system = world.CreateSystem<MatchHudMinimapMarkerSystem>();
+        system.Update(world.Unmanaged);
+        system.Update(world.Unmanaged);
+
+        using EntityQuery markerQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<MatchHudMinimapMarkerStateComponent>(),
+            ComponentType.ReadOnly<MatchHudMinimapMarkerElement>());
+        Entity markerEntity = markerQuery.GetSingletonEntity();
+        DynamicBuffer<MatchHudMinimapMarkerElement> markers =
+            em.GetBuffer<MatchHudMinimapMarkerElement>(markerEntity);
+
+        Assert.AreEqual(1, markers.Length);
+        AssertMarkerCount(markers, playerPosition, 1);
     }
 
     private static Entity CreateUnit(EntityManager em, byte factionId, float3 position, int health)

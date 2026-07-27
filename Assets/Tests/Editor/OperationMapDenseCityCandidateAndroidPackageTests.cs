@@ -116,7 +116,7 @@ public sealed class OperationMapDenseCityCandidateAndroidPackageTests
             $"assets/EntityScenes/{DenseGuid}.entityheader",
             "assets/ContentArchives/archive_dependencies.bin",
             "assets/ContentArchives/archive_dependencies.txt",
-            "assets/ContentArchives/b8ebb31853db87420b18072fd34a9579",
+            "assets/ContentArchives/b8ebb31853db87420b18072fd34a9579.archive",
             "assets/aa/DenseCityCandidate/catalog.bin",
             "assets/aa/DenseCityCandidate/Android/candidate.bundle"
         };

@@ -186,9 +186,14 @@ namespace Game.Editor
                     "/ContentArchives/archive_dependencies.txt",
                     StringComparison.Ordinal);
                 string fileName = Path.GetFileName(path);
+                string archiveStem = fileName.EndsWith(
+                    ".archive",
+                    StringComparison.Ordinal)
+                    ? fileName.Substring(0, fileName.Length - ".archive".Length)
+                    : fileName;
                 if (path.Contains("/ContentArchives/", StringComparison.Ordinal) &&
-                    fileName.Length == 32 &&
-                    fileName.All(Uri.IsHexDigit))
+                    archiveStem.Length == 32 &&
+                    archiveStem.All(Uri.IsHexDigit))
                 {
                     entityArchivePayloadCount++;
                 }

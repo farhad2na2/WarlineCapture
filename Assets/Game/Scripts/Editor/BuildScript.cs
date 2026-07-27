@@ -185,6 +185,25 @@ namespace Game.Editor
                 $"entitySceneGuid={denseGuid} productionEntitySceneIncluded=0");
         }
 
+        public static void ValidateDenseCityCandidateAndroidApk()
+        {
+            const string packagePath =
+                "Build/AndroidDenseCandidate/WarlineCapture-DenseCityCandidate.apk";
+            string denseGuid = AssetDatabase.AssetPathToGUID(
+                DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath);
+            string productionGuid = AssetDatabase.AssetPathToGUID(
+                OperationMapEntityPresentationMigrationEditor.AcceptedSubScenePath);
+            OperationMapDenseCityCandidateAndroidPackageDeployment.ValidatePackage(
+                packagePath,
+                denseGuid,
+                productionGuid);
+            var package = new FileInfo(packagePath);
+            UnityEngine.Debug.Log(
+                "[DenseCityCandidateAndroidPackageGate] result=Passed " +
+                $"output={package.FullName} bytes={package.Length} " +
+                $"entitySceneGuid={denseGuid} productionEntitySceneIncluded=0");
+        }
+
         public static void BuildAndroidProfilerApk()
         {
             BuildAndroidProfilerApk(disableBurstAot: false);

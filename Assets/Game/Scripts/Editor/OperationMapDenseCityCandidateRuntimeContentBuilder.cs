@@ -33,6 +33,8 @@ namespace Game.Editor
     {
         internal const string ReportPath =
             "Design/AgentReports/2026-07-24_dense_city_candidate_runtime_content.json";
+        internal const string AndroidReportPath =
+            "Design/AgentReports/2026-07-27_dense_city_candidate_android_runtime_content.json";
         internal const string FrozenRollbackReportPath =
             "Design/AgentReports/2026-07-25_dense_city_frozen_rollback_byte_inventory.json";
         internal const string SourceHierarchyExclusionReportPath =
@@ -66,6 +68,7 @@ namespace Game.Editor
         public static void BuildDenseCityCandidateRuntimeParityContent()
         {
             BuildTarget buildTarget = RequireSupportedValidationBuildTarget();
+            string reportPath = GetReportPath(buildTarget);
             using IDisposable scriptingBackendScope =
                 buildTarget == BuildTarget.Android
                     ? null
@@ -114,7 +117,7 @@ namespace Game.Editor
             OperationMapEntitySceneCandidateBakeAll.CandidateFileTransaction reportTransaction =
                 OperationMapEntitySceneCandidateBakeAll.CandidateFileTransaction.Capture(
                     projectRoot,
-                    new[] { ReportPath });
+                    new[] { reportPath });
             CandidateDirectoryTransaction productionSettingsTransaction =
                 CandidateDirectoryTransaction.Capture(
                     projectRoot,
@@ -146,7 +149,7 @@ namespace Game.Editor
                     addressablesResult,
                     entityContentResult,
                     frozenRollbackResult);
-                WriteReport(projectRoot, report);
+                WriteReport(projectRoot, reportPath, report);
                 protectedSnapshot.RequireUnchanged();
                 outputTransaction.Commit();
                 Debug.Log(
@@ -1231,9 +1234,12 @@ namespace Game.Editor
             };
         }
 
-        private static void WriteReport(string projectRoot, RuntimeContentReport report)
+        private static void WriteReport(
+            string projectRoot,
+            string reportPath,
+            RuntimeContentReport report)
         {
-            WriteJsonReport(projectRoot, ReportPath, report);
+            WriteJsonReport(projectRoot, reportPath, report);
         }
 
         private static void WriteJsonReport(
@@ -1349,6 +1355,16 @@ namespace Game.Editor
         internal static string GetSharedAddressablesOutputPath(BuildTarget buildTarget) =>
             SharedAddressablesOutputRoot + "/" +
             GetAddressablesPlatformSubfolder(buildTarget);
+
+        internal static string GetReportPath(BuildTarget buildTarget) =>
+            buildTarget switch
+            {
+                BuildTarget.Android => AndroidReportPath,
+                BuildTarget.StandaloneOSX => ReportPath,
+                BuildTarget.StandaloneWindows64 => ReportPath,
+                _ => throw new InvalidOperationException(
+                    $"Unsupported dense validation build target: {buildTarget}")
+            };
 
         private static void RequireFreeDiskSpace(string projectRoot)
         {

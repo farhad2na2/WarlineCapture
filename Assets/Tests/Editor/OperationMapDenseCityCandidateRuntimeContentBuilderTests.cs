@@ -168,6 +168,21 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
         Assert.Throws<InvalidOperationException>(
             () => OperationMapDenseCityCandidateRuntimeContentBuilder
                 .GetSharedAddressablesOutputPath(BuildTarget.StandaloneLinux64));
+        Assert.That(
+            OperationMapDenseCityCandidateRuntimeContentBuilder
+                .GetReportPath(BuildTarget.StandaloneWindows64),
+            Is.EqualTo(OperationMapDenseCityCandidateRuntimeContentBuilder.ReportPath));
+        Assert.That(
+            OperationMapDenseCityCandidateRuntimeContentBuilder
+                .GetReportPath(BuildTarget.StandaloneOSX),
+            Is.EqualTo(OperationMapDenseCityCandidateRuntimeContentBuilder.ReportPath));
+        Assert.That(
+            OperationMapDenseCityCandidateRuntimeContentBuilder
+                .GetReportPath(BuildTarget.Android),
+            Is.EqualTo(OperationMapDenseCityCandidateRuntimeContentBuilder.AndroidReportPath));
+        Assert.Throws<InvalidOperationException>(
+            () => OperationMapDenseCityCandidateRuntimeContentBuilder
+                .GetReportPath(BuildTarget.StandaloneLinux64));
     }
 
     [Test]

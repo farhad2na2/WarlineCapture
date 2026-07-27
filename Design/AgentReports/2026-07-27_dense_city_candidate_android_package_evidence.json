@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "status": "candidate_evidence_wrapper_rejected",
+  "status": "candidate_offline_deploy_passed_wrapper_rejected",
   "artifactBuildRevision": "963713b8c",
   "archiveSuffixGateRevision": "c4d47920a",
   "buildWrapperLog": "%TEMP%/warline-dense-candidate-android-clean-apk-canonical-env.log",
@@ -96,10 +96,48 @@
     ]
   },
   "deviceAcceptance": {
-    "adbDeviceConnected": 0,
+    "adbDeviceConnected": 1,
+    "manufacturer": "Xiaomi",
+    "model": "24090RA29G",
+    "androidVersion": "16",
+    "cpuAbi": "arm64-v8a",
+    "installResult": "Success",
+    "installedCodeKiB": 712775,
+    "installedCodeMeasurementComplete": 0,
+    "installedCodeMeasurementLimitation": "ADB shell could not read the package oat directory.",
+    "networkBefore": {
+      "wifi": 1,
+      "mobileData": 1,
+      "airplaneMode": 0
+    },
+    "networkDuringLaunch": {
+      "wifi": 0,
+      "mobileData": 0
+    },
+    "networkAfter": {
+      "wifi": 1,
+      "mobileData": 1
+    },
+    "coldLaunchStatus": "ok",
+    "coldLaunchState": "COLD",
+    "coldLaunchTotalMilliseconds": 755,
+    "coldLaunchWaitMilliseconds": 783,
+    "foregroundAfter25Seconds": 1,
+    "firstLaunchLanguageSelectionRendered": 1,
+    "firstLaunchNarrativeRendered": 1,
+    "deployEntryRendered": 1,
+    "fatalOrAnrLogMatches": 0,
+    "optionalPlayAssetDeliveryClassProbeCount": 1,
+    "optionalPlayAssetDeliveryClassProbeDisposition": "Nonfatal in this local APK; initialization, narrative, and Deploy menu continued.",
     "installedBytesCaptured": 0,
-    "networkDisabledLaunchValidated": 0,
-    "deployEntryValidated": 0,
-    "runtimeMetricsCaptured": 0
+    "networkDisabledLaunchValidated": 1,
+    "deployEntryValidated": 1,
+    "runtimeMetricsCaptured": 0,
+    "temporaryScreenshots": [
+      "%TEMP%/warline-dense-offline-launch.png",
+      "%TEMP%/warline-dense-offline-after-language.png",
+      "%TEMP%/warline-dense-offline-main-menu.png",
+      "%TEMP%/warline-dense-offline-deploy-menu.png"
+    ]
   }
 }

@@ -348,10 +348,23 @@ namespace Game.Editor
             string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
             string productionPhysicalPath = Path.GetFullPath(Path.Combine(projectRoot, productionBindingPath));
             string outputPhysicalPath = Path.GetFullPath(Path.Combine(projectRoot, outputPath));
+            if (TryReuseExistingCandidateRuntimeBinding(
+                    outputPath,
+                    candidateDefinitionPath,
+                    candidateSubScenePath,
+                    out _))
+            {
+                return;
+            }
+
             if (File.Exists(outputPhysicalPath))
             {
                 // Preserve the candidate scene's .meta/GUID. Deleting and recopying this asset
                 // changes its GUID every run and makes the candidate definition non-deterministic.
+                UnityEngine.Object loadedOutput = AssetDatabase.LoadMainAssetAtPath(outputPath);
+                if (loadedOutput != null)
+                    Resources.UnloadAsset(loadedOutput);
+                AssetDatabase.ReleaseCachedFileHandles();
                 File.Copy(productionPhysicalPath, outputPhysicalPath, true);
             }
             else if (!AssetDatabase.CopyAsset(productionBindingPath, outputPath))
@@ -411,29 +424,14 @@ namespace Game.Editor
             PatchDefinitionReferenceIfMissing(outputPath, candidateDefinitionPath);
             AssetDatabase.ImportAsset(outputPath, ImportAssetOptions.ForceSynchronousImport);
 
-            Scene reloaded = EditorSceneManager.OpenScene(outputPath, OpenSceneMode.Single);
-            try
+            if (!TryReuseExistingCandidateRuntimeBinding(
+                    outputPath,
+                    candidateDefinitionPath,
+                    candidateSubScenePath,
+                    out string validateError))
             {
-                OperationMapSceneView reloadedView = FindSingleView(reloaded);
-                if (!OperationMapRuntimeBindingSceneValidator.TryValidateLoadedEntityScene(
-                        reloaded,
-                        reloadedView.OperationMapId,
-                        candidateDefinitionPath,
-                        candidateSubScenePath,
-                        out string validateError))
-                {
-                    throw new InvalidOperationException(
-                        $"Candidate EntityScene runtime binding invalid after reload: {validateError} " +
-                        $"viewId='{reloadedView.OperationMapId}' " +
-                        $"definitionId='{reloadedView.Definition?.OperationMapId}' " +
-                        $"definitionKind='{reloadedView.Definition?.PresentationKind}' " +
-                        $"mode='{reloadedView.CanonicalPresentationMode}' " +
-                        $"subScene='{reloadedView.MapSubScene?.SceneGUID}'.");
-                }
-            }
-            finally
-            {
-                CloseSceneKeepingEditorValid(reloaded);
+                throw new InvalidOperationException(
+                    $"Candidate EntityScene runtime binding invalid after reload: {validateError}");
             }
 
             string runtimeGuid = AssetDatabase.AssetPathToGUID(outputPath);
@@ -445,6 +443,43 @@ namespace Game.Editor
             if (definitionSerialized.ApplyModifiedPropertiesWithoutUndo())
                 EditorUtility.SetDirty(definition);
             AssetDatabase.SaveAssetIfDirty(definition);
+        }
+
+        internal static bool TryReuseExistingCandidateRuntimeBinding(
+            string outputPath,
+            string candidateDefinitionPath,
+            string candidateSubScenePath,
+            out string error)
+        {
+            string physical = Path.GetFullPath(
+                Path.Combine(Application.dataPath, "..", outputPath));
+            if (!File.Exists(physical))
+            {
+                error = "Candidate runtime binding scene is missing.";
+                return false;
+            }
+
+            Scene scene = default;
+            try
+            {
+                scene = EditorSceneManager.OpenScene(outputPath, OpenSceneMode.Single);
+                OperationMapSceneView view = FindSingleView(scene);
+                return OperationMapRuntimeBindingSceneValidator.TryValidateLoadedEntityScene(
+                    scene,
+                    view.OperationMapId,
+                    candidateDefinitionPath,
+                    candidateSubScenePath,
+                    out error);
+            }
+            catch (Exception exception)
+            {
+                error = exception.Message;
+                return false;
+            }
+            finally
+            {
+                CloseSceneKeepingEditorValid(scene);
+            }
         }
 
         internal static bool NormalizeAssetText(string assetPath)

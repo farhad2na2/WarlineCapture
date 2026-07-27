@@ -87,6 +87,7 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
             suite.TextDifference_ReportsFirstChangedLine,
             suite.GenerationContract_AcceptsExactInputsAndRejectsStaleHash,
             suite.CandidateDefinitionProperties_IdenticalSecondApplyIsNoOp,
+            suite.CandidateRuntimeBindings_ExistingScenesValidateAsNoOp,
             suite.NormalizeAssetText_ChangesOnceThenBecomesByteNoOp,
             suite.NormalizeAssetText_UnloadsImportedAssetBeforeChangedWrite,
             suite.ProtectedProductionSnapshot_RejectsFileDrift,
@@ -188,6 +189,33 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
         {
             UnityEngine.Object.DestroyImmediate(candidate);
         }
+    }
+
+    [Test]
+    public void CandidateRuntimeBindings_ExistingScenesValidateAsNoOp()
+    {
+        Assert.That(
+            OperationMapEntitySceneCandidateAddressablesLayoutBuilder
+                .TryReuseExistingCandidateRuntimeBinding(
+                    OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                        .CandidateRuntimeBindingPath,
+                    OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                        .CandidateDefinitionPath,
+                    OperationMapEntityPresentationMigrationEditor.CandidateSubScenePath,
+                    out string acceptedError),
+            Is.True,
+            acceptedError);
+        Assert.That(
+            OperationMapEntitySceneCandidateAddressablesLayoutBuilder
+                .TryReuseExistingCandidateRuntimeBinding(
+                    OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                        .DenseCandidateRuntimeBindingPath,
+                    OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                        .DenseCandidateDefinitionPath,
+                    DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath,
+                    out string denseError),
+            Is.True,
+            denseError);
     }
 
     public static void RunTwoRunNoOpValidation()

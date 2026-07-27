@@ -26,8 +26,8 @@ namespace Game.Editor
     using Hash128 = Unity.Entities.Hash128;
 
     /// <summary>
-    /// Builds dense candidate-only macOS Addressables and Entities content without using or
-    /// persisting production Addressables settings.
+    /// Builds dense candidate-only desktop or Android Addressables and Entities content without
+    /// using or persisting production Addressables settings.
     /// </summary>
     internal static class OperationMapDenseCityCandidateRuntimeContentBuilder
     {
@@ -67,7 +67,9 @@ namespace Game.Editor
         {
             BuildTarget buildTarget = RequireSupportedValidationBuildTarget();
             using IDisposable scriptingBackendScope =
-                StandaloneScriptingBackendScope.Begin(buildTarget);
+                buildTarget == BuildTarget.Android
+                    ? null
+                    : StandaloneScriptingBackendScope.Begin(buildTarget);
             string sharedAddressablesOutputPath =
                 GetSharedAddressablesOutputPath(buildTarget);
             string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
@@ -196,9 +198,24 @@ namespace Game.Editor
                 $"buildError={status.Error ?? "<null>"}");
         }
 
+        public static void ValidateDenseCityRuntimeContentTargetConfiguration()
+        {
+            BuildTarget target = RequireSupportedValidationBuildTarget();
+            Debug.Log(
+                "[DenseCityRuntimeContentTargetConfiguration] result=Passed " +
+                $"activeTarget={target} " +
+                $"targetGroup={BuildPipeline.GetBuildTargetGroup(target)} " +
+                $"addressablesPlatform={GetAddressablesPlatformSubfolder(target)}");
+        }
+
         public static void ValidateDenseCityRuntimeContentBackendRestoration()
         {
             BuildTarget target = RequireSupportedValidationBuildTarget();
+            if (target == BuildTarget.Android)
+            {
+                throw new InvalidOperationException(
+                    "Standalone backend restoration validation does not apply to Android.");
+            }
             ScriptingImplementation original =
                 PlayerSettings.GetScriptingBackend(NamedBuildTarget.Standalone);
             using (StandaloneScriptingBackendScope.Begin(target))
@@ -1245,14 +1262,16 @@ namespace Game.Editor
             if (isSupported == null)
                 throw new ArgumentNullException(nameof(isSupported));
             if (activeBuildTarget != BuildTarget.StandaloneOSX &&
-                activeBuildTarget != BuildTarget.StandaloneWindows64)
+                activeBuildTarget != BuildTarget.StandaloneWindows64 &&
+                activeBuildTarget != BuildTarget.Android)
             {
                 throw new InvalidOperationException(
                     "Dense candidate runtime content requires active target StandaloneOSX " +
-                    $"or StandaloneWindows64, not {activeBuildTarget}. " +
-                    "Android validation remains a separate user-triggered lane.");
+                    $"StandaloneWindows64, or Android, not {activeBuildTarget}.");
             }
-            if (!isSupported(BuildTargetGroup.Standalone, activeBuildTarget))
+            BuildTargetGroup buildTargetGroup =
+                BuildPipeline.GetBuildTargetGroup(activeBuildTarget);
+            if (!isSupported(buildTargetGroup, activeBuildTarget))
             {
                 throw new InvalidOperationException(
                     $"Dense candidate runtime content build support is missing for " +
@@ -1322,6 +1341,7 @@ namespace Game.Editor
             {
                 BuildTarget.StandaloneOSX => "OSX",
                 BuildTarget.StandaloneWindows64 => "Windows",
+                BuildTarget.Android => "Android",
                 _ => throw new InvalidOperationException(
                     $"Unsupported dense validation build target: {buildTarget}")
             };

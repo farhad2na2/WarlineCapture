@@ -17,11 +17,11 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
         {
             suite.RequireSupportedValidationBuildTarget_AcceptsWindows64,
             suite.RequireSupportedValidationBuildTarget_AcceptsMacOs,
-            suite.RequireSupportedValidationBuildTarget_RejectsAndroidOrMissingSupport,
+            suite.RequireSupportedValidationBuildTarget_AcceptsAndroidAndRejectsUnsupported,
             suite.SelectTemporaryScriptingBackend_UsesMonoForMissingWindowsIl2Cpp,
             suite.SelectTemporaryScriptingBackend_PreservesEnabledBackend,
             suite.SelectTemporaryScriptingBackend_RejectsUnrecognizedDisabledBuild,
-            suite.GetSharedAddressablesOutputPath_MapsStandalonePlatform,
+            suite.GetSharedAddressablesOutputPath_MapsSupportedPlatform,
             suite.GetDenseLayoutOutputTransactionPaths_CoversCompleteOwnerSet,
             suite.CandidateDirectoryTransaction_RestoresCompleteFileTree,
             suite.MeasureEntityContent_SeparatesArchiveAndMetadataBytes,
@@ -89,12 +89,20 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
     }
 
     [Test]
-    public void RequireSupportedValidationBuildTarget_RejectsAndroidOrMissingSupport()
+    public void RequireSupportedValidationBuildTarget_AcceptsAndroidAndRejectsUnsupported()
     {
+        BuildTarget result = OperationMapDenseCityCandidateRuntimeContentBuilder
+            .RequireSupportedValidationBuildTarget(
+                BuildTarget.Android,
+                (group, target) =>
+                    group == BuildTargetGroup.Android &&
+                    target == BuildTarget.Android);
+
+        Assert.That(result, Is.EqualTo(BuildTarget.Android));
         Assert.Throws<InvalidOperationException>(
             () => OperationMapDenseCityCandidateRuntimeContentBuilder
                 .RequireSupportedValidationBuildTarget(
-                    BuildTarget.Android,
+                    BuildTarget.StandaloneLinux64,
                     (_, _) => true));
         Assert.Throws<InvalidOperationException>(
             () => OperationMapDenseCityCandidateRuntimeContentBuilder
@@ -143,7 +151,7 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
     }
 
     [Test]
-    public void GetSharedAddressablesOutputPath_MapsStandalonePlatform()
+    public void GetSharedAddressablesOutputPath_MapsSupportedPlatform()
     {
         Assert.That(
             OperationMapDenseCityCandidateRuntimeContentBuilder
@@ -153,9 +161,13 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
             OperationMapDenseCityCandidateRuntimeContentBuilder
                 .GetSharedAddressablesOutputPath(BuildTarget.StandaloneOSX),
             Is.EqualTo("Library/com.unity.addressables/aa/OSX"));
+        Assert.That(
+            OperationMapDenseCityCandidateRuntimeContentBuilder
+                .GetSharedAddressablesOutputPath(BuildTarget.Android),
+            Is.EqualTo("Library/com.unity.addressables/aa/Android"));
         Assert.Throws<InvalidOperationException>(
             () => OperationMapDenseCityCandidateRuntimeContentBuilder
-                .GetSharedAddressablesOutputPath(BuildTarget.Android));
+                .GetSharedAddressablesOutputPath(BuildTarget.StandaloneLinux64));
     }
 
     [Test]

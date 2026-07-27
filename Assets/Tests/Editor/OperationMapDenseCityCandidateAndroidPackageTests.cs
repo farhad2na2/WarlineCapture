@@ -48,7 +48,7 @@ public sealed class OperationMapDenseCityCandidateAndroidPackageTests
             OperationMapDenseCityCandidateRuntimeContentBuilder
                 .EmbeddedAndroidAddressablesBuildPath,
             Is.EqualTo(
-                "{UnityEngine.AddressableAssets.Addressables.BuildPath}/Android"));
+                "[UnityEngine.AddressableAssets.Addressables.BuildPath]/Android"));
     }
 
     [Test]

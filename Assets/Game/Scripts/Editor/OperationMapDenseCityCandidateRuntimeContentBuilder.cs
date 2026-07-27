@@ -53,7 +53,7 @@ namespace Game.Editor
             "{UnityEngine.AddressableAssets.Addressables.RuntimePath}/" +
             "DenseCityCandidate/Android";
         internal const string EmbeddedAndroidAddressablesBuildPath =
-            "{UnityEngine.AddressableAssets.Addressables.BuildPath}/Android";
+            "[UnityEngine.AddressableAssets.Addressables.BuildPath]/Android";
         internal const string FrozenRollbackRootPath =
             "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/" +
             "desert_base_01";

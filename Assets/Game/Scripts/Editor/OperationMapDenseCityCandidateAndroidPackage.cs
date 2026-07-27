@@ -1,0 +1,389 @@
+#if UNITY_EDITOR
+
+namespace Game.Editor
+{
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.IO.Compression;
+    using System.Linq;
+    using UnityEditor;
+    using UnityEditor.Build;
+
+    internal readonly struct DenseCityCandidatePackageFile
+    {
+        internal DenseCityCandidatePackageFile(string sourcePath, string destinationPath)
+        {
+            SourcePath = sourcePath;
+            DestinationPath = destinationPath;
+        }
+
+        internal string SourcePath { get; }
+        internal string DestinationPath { get; }
+    }
+
+    /// <summary>
+    /// Adds the isolated dense-city candidate content to one explicitly scoped player build.
+    /// It never changes production Addressables settings or copies files into Assets.
+    /// </summary>
+    internal sealed class OperationMapDenseCityCandidateAndroidPackageDeployment : IDisposable
+    {
+        internal const string AddressablesDestinationRoot = "aa/DenseCityCandidate";
+
+        private static OperationMapDenseCityCandidateAndroidPackageDeployment active;
+        private readonly DenseCityCandidatePackageFile[] files;
+        private bool disposed;
+
+        private OperationMapDenseCityCandidateAndroidPackageDeployment(
+            DenseCityCandidatePackageFile[] files)
+        {
+            this.files = files;
+        }
+
+        internal static OperationMapDenseCityCandidateAndroidPackageDeployment Begin(
+            string projectRoot)
+        {
+            if (active != null)
+                throw new InvalidOperationException(
+                    "A dense-city candidate Android package deployment is already active.");
+
+            DenseCityCandidatePackageFile[] files = CreateFilePlan(projectRoot);
+            var deployment =
+                new OperationMapDenseCityCandidateAndroidPackageDeployment(files);
+            active = deployment;
+            return deployment;
+        }
+
+        internal static DenseCityCandidatePackageFile[] CreateFilePlan(string projectRoot)
+        {
+            if (string.IsNullOrWhiteSpace(projectRoot) || !Directory.Exists(projectRoot))
+                throw new InvalidOperationException(
+                    $"Dense candidate package project root is missing: {projectRoot}");
+
+            string normalizedRoot = Path.GetFullPath(projectRoot);
+            string addressablesRoot = ResolveOwnedDirectory(
+                normalizedRoot,
+                OperationMapDenseCityCandidateRuntimeContentBuilder.AddressablesOutputPath);
+            string entityContentRoot = ResolveOwnedDirectory(
+                normalizedRoot,
+                OperationMapDenseCityCandidateRuntimeContentBuilder.EntityContentOutputPath);
+            string androidBundleRoot = Path.Combine(addressablesRoot, "Android");
+            if (!Directory.Exists(androidBundleRoot))
+                throw new InvalidOperationException(
+                    $"Dense candidate Android bundle directory is missing: {androidBundleRoot}");
+
+            var files = new List<DenseCityCandidatePackageFile>();
+            AddRequiredFile(
+                files,
+                Path.Combine(addressablesRoot, "catalog.bin"),
+                AddressablesDestinationRoot + "/catalog.bin");
+            AddRequiredFile(
+                files,
+                Path.Combine(addressablesRoot, "catalog.hash"),
+                AddressablesDestinationRoot + "/catalog.hash");
+
+            foreach (string bundlePath in Directory
+                         .EnumerateFiles(androidBundleRoot, "*.bundle", SearchOption.TopDirectoryOnly)
+                         .OrderBy(path => path, StringComparer.Ordinal))
+            {
+                AddRequiredFile(
+                    files,
+                    bundlePath,
+                    AddressablesDestinationRoot + "/Android/" +
+                    Path.GetFileName(bundlePath));
+            }
+
+            foreach (string contentPath in Directory
+                         .EnumerateFiles(entityContentRoot, "*", SearchOption.AllDirectories)
+                         .OrderBy(path => path, StringComparer.Ordinal))
+            {
+                string relativePath = Path.GetRelativePath(entityContentRoot, contentPath)
+                    .Replace('\\', '/');
+                AddRequiredFile(files, contentPath, relativePath);
+            }
+
+            RequireValidPlan(files);
+            return files.ToArray();
+        }
+
+        internal static string[] ResolvePlayerScenes(
+            IEnumerable<string> enabledScenePaths,
+            Func<string, bool> sceneExists)
+        {
+            if (enabledScenePaths == null)
+                throw new InvalidOperationException(
+                    "Dense candidate Android build scenes are missing.");
+            if (sceneExists == null)
+                throw new ArgumentNullException(nameof(sceneExists));
+
+            string[] scenes = enabledScenePaths
+                .Select(path => (path ?? string.Empty).Replace('\\', '/').Trim())
+                .ToArray();
+            OperationMapDenseCityCandidateRuntimeContentBuilder.RequireSourceHierarchyExclusion(
+                OperationMapDenseCityCandidateRuntimeContentBuilder.MeasureSourceHierarchyExclusion(
+                    Array.Empty<string>(),
+                    scenes),
+                expectedExplicitEntryCount: 0);
+
+            if (scenes.Length == 0)
+                throw new InvalidOperationException(
+                    "Dense candidate Android build has no enabled player scenes.");
+            if (scenes.Any(string.IsNullOrWhiteSpace))
+                throw new InvalidOperationException(
+                    "Dense candidate Android build contains an invalid scene path.");
+            if (scenes.Distinct(StringComparer.Ordinal).Count() != scenes.Length)
+                throw new InvalidOperationException(
+                    "Dense candidate Android build contains duplicate player scenes.");
+
+            foreach (string scene in scenes)
+            {
+                if (!sceneExists(scene))
+                {
+                    throw new InvalidOperationException(
+                        $"Dense candidate Android base scene is missing: {scene}");
+                }
+                if (scene.StartsWith(
+                        StaticMapPresentationOutputPathContract.OperationMapsRoot + "/",
+                        StringComparison.Ordinal))
+                {
+                    throw new InvalidOperationException(
+                        $"Dense candidate Android build contains a legacy static scene: {scene}");
+                }
+            }
+
+            return scenes;
+        }
+
+        internal static string GetPackageValidationError(
+            IReadOnlyList<string> packageEntries,
+            string denseEntitySceneGuid,
+            string productionEntitySceneGuid)
+        {
+            if (packageEntries == null)
+                return "Android package entries are required.";
+            if (string.IsNullOrWhiteSpace(denseEntitySceneGuid))
+                return "The dense candidate EntityScene GUID is required.";
+
+            string catalogSuffix =
+                "/" + AddressablesDestinationRoot + "/catalog.bin";
+            string bundleFragment =
+                "/" + AddressablesDestinationRoot + "/Android/";
+            string entityHeaderSuffix =
+                $"/EntityScenes/{denseEntitySceneGuid}.entityheader";
+            string entitySectionPrefix =
+                $"/EntityScenes/{denseEntitySceneGuid}.";
+            bool hasCatalog = false;
+            int bundleCount = 0;
+            bool hasEntityHeader = false;
+            bool hasEntitySection = false;
+            bool hasEntityArchiveCatalog = false;
+            int entityArchiveCount = 0;
+            bool hasProductionEntityScene = false;
+            string productionHeaderSuffix = string.IsNullOrWhiteSpace(productionEntitySceneGuid)
+                ? null
+                : $"/EntityScenes/{productionEntitySceneGuid}.entityheader";
+
+            foreach (string entry in packageEntries)
+            {
+                string path = "/" + (entry ?? string.Empty)
+                    .Replace('\\', '/')
+                    .TrimStart('/');
+                hasCatalog |= path.EndsWith(catalogSuffix, StringComparison.Ordinal);
+                hasEntityHeader |= path.EndsWith(
+                    entityHeaderSuffix,
+                    StringComparison.Ordinal);
+                hasEntitySection |=
+                    path.Contains(entitySectionPrefix, StringComparison.Ordinal) &&
+                    path.EndsWith(".entities", StringComparison.Ordinal);
+                hasEntityArchiveCatalog |= path.EndsWith(
+                    "/ContentArchives/archive_dependencies.bin",
+                    StringComparison.Ordinal);
+                if (path.Contains(
+                        "/ContentArchives/",
+                        StringComparison.Ordinal) &&
+                    path.EndsWith(".archive", StringComparison.Ordinal))
+                {
+                    entityArchiveCount++;
+                }
+                if (path.Contains(bundleFragment, StringComparison.Ordinal) &&
+                    path.EndsWith(".bundle", StringComparison.Ordinal))
+                {
+                    bundleCount++;
+                }
+                hasProductionEntityScene |= productionHeaderSuffix != null &&
+                    path.EndsWith(productionHeaderSuffix, StringComparison.Ordinal);
+            }
+
+            if (!hasEntityHeader)
+            {
+                return "Android package is missing " +
+                       $"EntityScenes/{denseEntitySceneGuid}.entityheader.";
+            }
+            if (!hasEntitySection)
+            {
+                return "Android package is missing " +
+                       $"EntityScenes/{denseEntitySceneGuid}.*.entities.";
+            }
+            if (!hasEntityArchiveCatalog)
+            {
+                return "Android package is missing the dense candidate Entities " +
+                       "archive dependency catalog.";
+            }
+            if (entityArchiveCount != 1)
+            {
+                return "Android package must contain exactly one dense candidate Entities " +
+                       $"archive, but found {entityArchiveCount}.";
+            }
+            if (!hasCatalog)
+                return $"Android package is missing {AddressablesDestinationRoot}/catalog.bin.";
+            if (bundleCount == 0)
+                return "Android package contains no dense candidate Android bundles.";
+            if (hasProductionEntityScene)
+            {
+                return "Android package contains the production EntityScene in addition to " +
+                       "the isolated dense candidate.";
+            }
+            return null;
+        }
+
+        internal static void ValidatePackage(
+            string packagePath,
+            string denseEntitySceneGuid,
+            string productionEntitySceneGuid)
+        {
+            if (!File.Exists(packagePath))
+                throw new InvalidOperationException($"Android package not found: {packagePath}");
+
+            using var archive = ZipFile.OpenRead(packagePath);
+            string[] entries = archive.Entries
+                .Select(entry => entry.FullName)
+                .ToArray();
+            string error = GetPackageValidationError(
+                entries,
+                denseEntitySceneGuid,
+                productionEntitySceneGuid);
+            if (error != null)
+                throw new InvalidOperationException(error);
+        }
+
+        internal static bool TryGetActiveFiles(
+            out IReadOnlyList<DenseCityCandidatePackageFile> activeFiles)
+        {
+            activeFiles = active?.files;
+            return activeFiles != null;
+        }
+
+        public void Dispose()
+        {
+            if (disposed)
+                return;
+
+            disposed = true;
+            if (ReferenceEquals(active, this))
+                active = null;
+        }
+
+        private static string ResolveOwnedDirectory(string projectRoot, string relativePath)
+        {
+            string fullPath = Path.GetFullPath(Path.Combine(projectRoot, relativePath));
+            string requiredPrefix = projectRoot.EndsWith(
+                Path.DirectorySeparatorChar.ToString(),
+                StringComparison.Ordinal)
+                ? projectRoot
+                : projectRoot + Path.DirectorySeparatorChar;
+            if (!fullPath.StartsWith(requiredPrefix, StringComparison.Ordinal) ||
+                !Directory.Exists(fullPath))
+            {
+                throw new InvalidOperationException(
+                    $"Dense candidate package directory is missing or outside the project: {relativePath}");
+            }
+            return fullPath;
+        }
+
+        private static void AddRequiredFile(
+            ICollection<DenseCityCandidatePackageFile> files,
+            string sourcePath,
+            string destinationPath)
+        {
+            if (!File.Exists(sourcePath))
+                throw new InvalidOperationException(
+                    $"Dense candidate package file is missing: {sourcePath}");
+            files.Add(new DenseCityCandidatePackageFile(
+                Path.GetFullPath(sourcePath),
+                destinationPath.Replace('\\', '/')));
+        }
+
+        private static void RequireValidPlan(
+            IReadOnlyCollection<DenseCityCandidatePackageFile> files)
+        {
+            if (files.Count == 0)
+                throw new InvalidOperationException("Dense candidate package file plan is empty.");
+
+            var destinations = new HashSet<string>(StringComparer.Ordinal);
+            int bundleCount = 0;
+            int entityArchiveCount = 0;
+            foreach (DenseCityCandidatePackageFile file in files)
+            {
+                if (Path.IsPathRooted(file.DestinationPath) ||
+                    file.DestinationPath.Split('/').Any(segment =>
+                        segment.Length == 0 ||
+                        string.Equals(segment, ".", StringComparison.Ordinal) ||
+                        string.Equals(segment, "..", StringComparison.Ordinal)))
+                {
+                    throw new InvalidOperationException(
+                        $"Dense candidate package destination is unsafe: {file.DestinationPath}");
+                }
+                if (!destinations.Add(file.DestinationPath))
+                    throw new InvalidOperationException(
+                        $"Dense candidate package destination is duplicated: {file.DestinationPath}");
+                bundleCount += file.DestinationPath.EndsWith(
+                    ".bundle",
+                    StringComparison.Ordinal) ? 1 : 0;
+                entityArchiveCount +=
+                    file.DestinationPath.StartsWith(
+                        "ContentArchives/",
+                        StringComparison.Ordinal) &&
+                    file.DestinationPath.EndsWith(
+                        ".archive",
+                        StringComparison.Ordinal) ? 1 : 0;
+            }
+
+            if (bundleCount == 0)
+                throw new InvalidOperationException(
+                    "Dense candidate package file plan contains no Android bundles.");
+            if (!destinations.Contains("ContentArchives/archive_dependencies.bin"))
+            {
+                throw new InvalidOperationException(
+                    "Dense candidate package file plan is missing the Entities archive catalog.");
+            }
+            if (entityArchiveCount != 1)
+            {
+                throw new InvalidOperationException(
+                    "Dense candidate package file plan must contain exactly one Entities " +
+                    $"archive, but found {entityArchiveCount}.");
+            }
+        }
+    }
+
+    internal sealed class OperationMapDenseCityCandidateBuildPlayerProcessor :
+        BuildPlayerProcessor
+    {
+        public override void PrepareForBuild(BuildPlayerContext buildPlayerContext)
+        {
+            if (!OperationMapDenseCityCandidateAndroidPackageDeployment.TryGetActiveFiles(
+                    out IReadOnlyList<DenseCityCandidatePackageFile> files))
+            {
+                return;
+            }
+
+            foreach (DenseCityCandidatePackageFile file in files)
+            {
+                buildPlayerContext.AddAdditionalPathToStreamingAssets(
+                    file.SourcePath,
+                    file.DestinationPath);
+            }
+        }
+    }
+}
+
+#endif

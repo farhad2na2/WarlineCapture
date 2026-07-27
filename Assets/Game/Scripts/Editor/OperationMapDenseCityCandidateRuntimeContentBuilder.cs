@@ -49,6 +49,9 @@ namespace Game.Editor
             BuildLayoutOutputPath + "/buildlayout.json";
         internal const string EntityContentOutputPath =
             "Library/OperationMapDenseCityRuntimeContent/Entities";
+        internal const string EmbeddedAndroidAddressablesLoadPath =
+            "{UnityEngine.AddressableAssets.Addressables.RuntimePath}/" +
+            "DenseCityCandidate/Android";
         internal const string FrozenRollbackRootPath =
             "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/" +
             "desert_base_01";
@@ -66,6 +69,24 @@ namespace Game.Editor
         [MenuItem(
             "Game/Operation Maps/EntityScene Migration/Build Dense City Candidate Runtime Parity Content")]
         public static void BuildDenseCityCandidateRuntimeParityContent()
+        {
+            BuildDenseCityCandidateRuntimeParityContent(addressablesLoadPathOverride: null);
+        }
+
+        internal static void BuildDenseCityCandidateEmbeddedAndroidContent()
+        {
+            if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.Android)
+            {
+                throw new InvalidOperationException(
+                    "Dense candidate embedded Android content requires the Android build target.");
+            }
+
+            BuildDenseCityCandidateRuntimeParityContent(
+                EmbeddedAndroidAddressablesLoadPath);
+        }
+
+        private static void BuildDenseCityCandidateRuntimeParityContent(
+            string addressablesLoadPathOverride)
         {
             BuildTarget buildTarget = RequireSupportedValidationBuildTarget();
             string reportPath = GetReportPath(buildTarget);
@@ -136,7 +157,8 @@ namespace Game.Editor
                         plan,
                         outputTransaction,
                         buildTarget,
-                        sharedAddressablesOutputPath);
+                        sharedAddressablesOutputPath,
+                        addressablesLoadPathOverride);
                 productionSettingsTransaction.Rollback();
                 EntityContentBuildResult entityContentResult =
                     BuildEntityContent(plan, buildTarget);
@@ -351,7 +373,8 @@ namespace Game.Editor
             OperationMapEntitySceneCandidateAddressablesLayoutPlan plan,
             DenseRuntimeContentOutputTransaction outputTransaction,
             BuildTarget buildTarget,
-            string sharedAddressablesOutputPath)
+            string sharedAddressablesOutputPath,
+            string addressablesLoadPathOverride)
         {
             AddressableAssetSettings settings = null;
             BuildScriptPackedMode builder = null;
@@ -377,6 +400,8 @@ namespace Game.Editor
                         AddressablesOutputPath,
                         buildTarget.ToString()))
                     .Replace('\\', '/');
+                if (!string.IsNullOrWhiteSpace(addressablesLoadPathOverride))
+                    denseBundleLoadPath = addressablesLoadPathOverride.Trim();
                 settings.profileSettings.SetValue(
                     settings.activeProfileId,
                     AddressableAssetSettings.kLocalBuildPath,

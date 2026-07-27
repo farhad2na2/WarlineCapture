@@ -120,6 +120,68 @@ namespace Game.Editor
                 buildProvenance);
         }
 
+        public static void BuildDenseCityCandidateAndroidApk()
+        {
+            var arg = Environment.GetCommandLineArgs();
+            bool cleanBuildCache = arg.Any(value =>
+                string.Equals(value, "-cleanBuild", StringComparison.OrdinalIgnoreCase));
+            AndroidBuildReportProvenance buildProvenance =
+                AndroidBuildReportGenerator.CaptureGitProvenance();
+
+            SwitchBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
+            ConfigureGradleUserHome();
+            ConfigureAndroidBuild(buildAppBundle: false);
+            OperationMapDenseCityCandidateRuntimeContentBuilder
+                .BuildDenseCityCandidateEmbeddedAndroidContent();
+
+            const string outputDirectory = "Build/AndroidDenseCandidate";
+            CreateDirectory(outputDirectory);
+            string outputPath =
+                $"{outputDirectory}/{ResolveBuildOutputName()}-DenseCityCandidate.apk";
+            if (File.Exists(outputPath))
+                File.Delete(outputPath);
+
+            string projectRoot = Path.GetFullPath(Path.Combine(
+                UnityEngine.Application.dataPath,
+                ".."));
+            string[] scenes =
+                OperationMapDenseCityCandidateAndroidPackageDeployment.ResolvePlayerScenes(
+                    GetEnabledScenes(),
+                    path => File.Exists(Path.GetFullPath(Path.Combine(projectRoot, path))) &&
+                            !string.IsNullOrWhiteSpace(
+                                AssetDatabase.AssetPathToGUID(path)));
+            using var deployment =
+                OperationMapDenseCityCandidateAndroidPackageDeployment.Begin(projectRoot);
+            var buildPlayerOptions = new BuildPlayerOptions
+            {
+                scenes = scenes,
+                target = BuildTarget.Android,
+                options = cleanBuildCache
+                    ? CleanReleaseAndroidBuildOptions
+                    : ReleaseAndroidBuildOptions,
+                locationPathName = outputPath
+            };
+
+            UnityEngine.Debug.Log(
+                "[BuildScript] Dense candidate Android package: " +
+                $"cacheMode={(cleanBuildCache ? "clean" : "incremental")} " +
+                $"revision={buildProvenance.ExactCommit} dirty={buildProvenance.Dirty}");
+            BuildReport report = ExecuteBuild(buildPlayerOptions);
+
+            string denseGuid = AssetDatabase.AssetPathToGUID(
+                DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath);
+            string productionGuid = AssetDatabase.AssetPathToGUID(
+                OperationMapEntityPresentationMigrationEditor.AcceptedSubScenePath);
+            OperationMapDenseCityCandidateAndroidPackageDeployment.ValidatePackage(
+                outputPath,
+                denseGuid,
+                productionGuid);
+            UnityEngine.Debug.Log(
+                "[DenseCityCandidateAndroidPackage] result=Passed " +
+                $"output={outputPath} bytes={report.summary.totalSize} " +
+                $"entitySceneGuid={denseGuid} productionEntitySceneIncluded=0");
+        }
+
         public static void BuildAndroidProfilerApk()
         {
             BuildAndroidProfilerApk(disableBurstAot: false);

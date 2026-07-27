@@ -1,7 +1,9 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using Game.Configs;
 using Game.Composition;
 using Game.Runtime;
@@ -166,6 +168,62 @@ public sealed class AndroidVisualQualityValidationTests
             "class: GPUResidentDrawerResources",
             settings,
             "GPU Resident Drawer runtime resources must remain registered in URP global settings.");
+
+        Match runtimeBlock = Regex.Match(
+            settings,
+            @"m_RuntimeSettings:\s*\r?\n(?<body>[\s\S]*?)\r?\n  m_AssetVersion:",
+            RegexOptions.CultureInvariant);
+        Assert.True(
+            runtimeBlock.Success,
+            "URP global settings must retain a readable m_RuntimeSettings block.");
+
+        HashSet<string> runtimeRids = CollectRids(runtimeBlock.Groups["body"].Value);
+        Assert.That(
+            runtimeRids.Count,
+            Is.GreaterThan(0),
+            "URP runtime settings must contain at least one managed-reference RID.");
+
+        Match referencesBlock = Regex.Match(
+            settings,
+            @"\r?\n  references:\s*\r?\n(?<body>[\s\S]*)$",
+            RegexOptions.CultureInvariant);
+        Assert.True(
+            referencesBlock.Success,
+            "URP global settings must retain the managed-reference definitions block.");
+        HashSet<string> definedRids = CollectRids(referencesBlock.Groups["body"].Value);
+        foreach (string runtimeRid in runtimeRids)
+        {
+            Assert.True(
+                definedRids.Contains(runtimeRid),
+                $"URP runtime settings RID {runtimeRid} has no managed-reference definition.");
+        }
+
+        Match gpuResidentDrawer = Regex.Match(
+            referencesBlock.Groups["body"].Value,
+            @"-\s+rid:\s+(?<rid>\d+)\s*\r?\n\s+type:\s+\{class:\s+GPUResidentDrawerResources,",
+            RegexOptions.CultureInvariant);
+        Assert.True(
+            gpuResidentDrawer.Success,
+            "URP global settings must define GPUResidentDrawerResources.");
+        Assert.True(
+            runtimeRids.Contains(gpuResidentDrawer.Groups["rid"].Value),
+            "GPUResidentDrawerResources must be included in m_RuntimeSettings, not merely serialized as an unused reference.");
+    }
+
+    private static HashSet<string> CollectRids(string yamlBlock)
+    {
+        var rids = new HashSet<string>(StringComparer.Ordinal);
+        foreach (Match match in Regex.Matches(
+                     yamlBlock,
+                     @"^\s*-\s+rid:\s+(?<rid>\d+)\s*$",
+                     RegexOptions.CultureInvariant | RegexOptions.Multiline))
+        {
+            Assert.True(
+                rids.Add(match.Groups["rid"].Value),
+                $"Managed-reference RID {match.Groups["rid"].Value} is duplicated within its YAML list.");
+        }
+
+        return rids;
     }
 
     [Test]

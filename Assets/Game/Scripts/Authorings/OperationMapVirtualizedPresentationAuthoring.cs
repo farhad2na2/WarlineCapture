@@ -2,7 +2,9 @@ using Game.Components;
 using Game.Configs;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 using Unity.Rendering;
+using Unity.Transforms;
 using UnityEngine;
 
 namespace Game.Authoring
@@ -47,6 +49,13 @@ namespace Game.Authoring
                 {
                     return;
                 }
+                if (!OperationMapRenderProxySlotBuilder.TryBuild(
+                        authoring.DatabaseConfig,
+                        out OperationMapRenderProxySlotBakeDescriptor[] slotDescriptors,
+                        out _))
+                {
+                    return;
+                }
 
                 DependsOn(authoring.DatabaseConfig);
                 Entity entity = GetEntity(TransformUsageFlags.None);
@@ -58,6 +67,40 @@ namespace Game.Authoring
                     MapGeneration = authoring.mapGeneration
                 });
                 AddSharedComponentManaged(entity, renderMeshArray);
+
+                MaterialMeshInfo initialMaterialMeshInfo =
+                    MaterialMeshInfo.FromRenderMeshArrayIndices(0, 0, 0);
+                for (int index = 0; index < slotDescriptors.Length; index++)
+                {
+                    OperationMapRenderProxySlotBakeDescriptor descriptor =
+                        slotDescriptors[index];
+                    Entity slotEntity = CreateAdditionalEntity(TransformUsageFlags.None);
+                    AddSharedComponentManaged(slotEntity, renderMeshArray);
+                    AddSharedComponent(slotEntity, descriptor.FilterSettings);
+                    AddComponent(slotEntity, initialMaterialMeshInfo);
+                    SetComponentEnabled<MaterialMeshInfo>(slotEntity, false);
+                    AddComponent(slotEntity, new LocalToWorld { Value = float4x4.identity });
+                    AddComponent(slotEntity, new RenderBounds
+                    {
+                        Value = new AABB
+                        {
+                            Center = float3.zero,
+                            Extents = float3.zero
+                        }
+                    });
+                    AddComponent(slotEntity, new URPMaterialPropertyBaseColor
+                    {
+                        Value = new float4(1f)
+                    });
+                    AddComponent(slotEntity, new OperationMapRenderProxySlotComponent
+                    {
+                        SlotIndex = descriptor.SlotIndex,
+                        PoolBucketIndex = descriptor.PoolBucketIndex,
+                        PlacementIndex = -1,
+                        PartIndex = -1,
+                        AssignmentGeneration = 0
+                    });
+                }
             }
         }
     }

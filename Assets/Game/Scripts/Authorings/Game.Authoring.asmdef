@@ -9,6 +9,8 @@
         "Unity.Entities.Graphics",
         "Unity.Entities.Hybrid",
         "Unity.Mathematics",
+        "Unity.Mathematics.Extensions",
+        "Unity.RenderPipelines.Core.Runtime",
         "Unity.Transforms"
     ],
     "includePlatforms": [],

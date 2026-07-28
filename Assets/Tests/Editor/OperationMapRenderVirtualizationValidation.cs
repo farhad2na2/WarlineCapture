@@ -14,6 +14,7 @@ using Unity.Rendering;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.Rendering;
 
 public sealed class OperationMapRenderVirtualizationValidation
 {
@@ -61,7 +62,8 @@ public sealed class OperationMapRenderVirtualizationValidation
             tests.RenderDatabaseBakeConfig_IsGeneratedOnlyAndRetainsCompleteSchema();
             tests.RenderDatabaseBakeConfig_RejectsMissingOrCorruptRecords();
             tests.SharedRenderMeshArray_PreservesSortedAssetsAndEveryLogicalIndex();
-            Debug.Log("[OperationMapRenderVirtualizationValidation] result=Passed tests=39");
+            tests.ProxySlotBakePlan_UsesEveryReportedSlotAndExactFixedPolicy();
+            Debug.Log("[OperationMapRenderVirtualizationValidation] result=Passed tests=40");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -1297,6 +1299,91 @@ public sealed class OperationMapRenderVirtualizationValidation
                 Is.SameAs(config.Materials[part.MaterialIndex].Material),
                 $"parts[{index}].material");
         }
+    }
+
+    [Test]
+    public void ProxySlotBakePlan_UsesEveryReportedSlotAndExactFixedPolicy()
+    {
+        OperationMapRenderDatabaseBakeConfig config =
+            AssetDatabase.LoadAssetAtPath<OperationMapRenderDatabaseBakeConfig>(
+                "Assets/Game/GeneratedOperationMapEntityPresentationCandidate/" +
+                "VirtualizedPresentation/OperationMapRenderDatabaseBakeConfig.asset");
+        Assert.That(config, Is.Not.Null);
+        Assert.That(
+            OperationMapRenderProxySlotBuilder.TryBuild(
+                config,
+                out OperationMapRenderProxySlotBakeDescriptor[] descriptors,
+                out string error),
+            Is.True,
+            error);
+
+        int expectedTotal = 0;
+        for (int bucketIndex = 0; bucketIndex < config.PoolBuckets.Count; bucketIndex++)
+        {
+            OperationMapRenderPoolBucketConfigRecord bucket =
+                config.PoolBuckets[bucketIndex];
+            expectedTotal += bucket.Capacity;
+            int endSlot = bucket.FirstSlot + bucket.Capacity;
+            for (int slotIndex = bucket.FirstSlot; slotIndex < endSlot; slotIndex++)
+            {
+                OperationMapRenderProxySlotBakeDescriptor descriptor =
+                    descriptors[slotIndex];
+                Assert.That(descriptor.SlotIndex, Is.EqualTo(slotIndex));
+                Assert.That(descriptor.PoolBucketIndex, Is.EqualTo(bucketIndex));
+                Assert.That(descriptor.FilterSettings.Layer, Is.EqualTo(bucket.Layer));
+                Assert.That(
+                    descriptor.FilterSettings.RenderingLayerMask,
+                    Is.EqualTo(bucket.RenderingLayerMask));
+                Assert.That(
+                    descriptor.FilterSettings.MotionMode,
+                    Is.EqualTo(ToUnityMotionMode(bucket.MotionVectorMode)));
+                Assert.That(
+                    descriptor.FilterSettings.ShadowCastingMode,
+                    Is.EqualTo(
+                        HasShadowFlag(
+                            bucket.ShadowFlags,
+                            OperationMapRenderShadowFlags.CastShadows)
+                            ? ShadowCastingMode.On
+                            : ShadowCastingMode.Off));
+                Assert.That(
+                    descriptor.FilterSettings.ReceiveShadows,
+                    Is.EqualTo(
+                        HasShadowFlag(
+                            bucket.ShadowFlags,
+                            OperationMapRenderShadowFlags.ReceiveShadows)));
+                Assert.That(
+                    descriptor.FilterSettings.StaticShadowCaster,
+                    Is.EqualTo(
+                        HasShadowFlag(
+                            bucket.ShadowFlags,
+                            OperationMapRenderShadowFlags.StaticShadowCaster)));
+                Assert.That(descriptor.FilterSettings.ForceMeshLod, Is.EqualTo(-1));
+                Assert.That(descriptor.FilterSettings.MeshLodSelectionBias, Is.Zero);
+            }
+        }
+
+        Assert.That(descriptors, Has.Length.EqualTo(expectedTotal));
+        Assert.That(descriptors, Has.Length.EqualTo(704));
+    }
+
+    private static MotionVectorGenerationMode ToUnityMotionMode(
+        OperationMapRenderMotionVectorMode source)
+    {
+        return source switch
+        {
+            OperationMapRenderMotionVectorMode.Camera => MotionVectorGenerationMode.Camera,
+            OperationMapRenderMotionVectorMode.Object => MotionVectorGenerationMode.Object,
+            OperationMapRenderMotionVectorMode.ForceNoMotion =>
+                MotionVectorGenerationMode.ForceNoMotion,
+            _ => throw new ArgumentOutOfRangeException(nameof(source), source, null)
+        };
+    }
+
+    private static bool HasShadowFlag(
+        OperationMapRenderShadowFlags source,
+        OperationMapRenderShadowFlags flag)
+    {
+        return (source & flag) != 0;
     }
 
     private static OperationMapRenderDatabaseBakeConfig CreateValidBakeConfig(

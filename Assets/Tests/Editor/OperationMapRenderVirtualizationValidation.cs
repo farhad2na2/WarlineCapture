@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Game.Configs;
 using Game.Components;
+using Game.Editor;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
@@ -28,7 +30,11 @@ public sealed class OperationMapRenderVirtualizationValidation
             tests.RenderPolicyAndStateEnums_AreClosed();
             tests.DatabaseBlob_RetainsEveryRequiredLogicalField();
             tests.RuntimeComponents_RetainRequiredState();
-            Debug.Log("[OperationMapRenderVirtualizationValidation] result=Passed tests=11");
+            tests.IdentityProjection_IsExactAndRepeatable();
+            tests.IdentityProjection_RejectsEmptySources();
+            tests.IdentityCollisionDetector_RejectsDifferentSourcesForOneIdentity();
+            tests.IdentityComparer_SortsByLowThenHighDeterministically();
+            Debug.Log("[OperationMapRenderVirtualizationValidation] result=Passed tests=15");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -320,6 +326,92 @@ public sealed class OperationMapRenderVirtualizationValidation
         Assert.That(state.CameraSignature.High, Is.EqualTo(52ul));
         Assert.That(metrics.EnabledSlotCount, Is.LessThanOrEqualTo(metrics.Capacity));
         Assert.That(metrics.OverflowCount, Is.Zero);
+    }
+
+    [Test]
+    public void IdentityProjection_IsExactAndRepeatable()
+    {
+        Assert.That(
+            OperationMapRenderIdentityProjection.TryProject(
+                "dense.city.test",
+                out OperationMapRenderIdentity128 first,
+                out string firstError),
+            Is.True,
+            firstError);
+        Assert.That(
+            OperationMapRenderIdentityProjection.TryProject(
+                "dense.city.test",
+                out OperationMapRenderIdentity128 second,
+                out string secondError),
+            Is.True,
+            secondError);
+
+        Assert.That(first.Low, Is.EqualTo(1444930817465541404ul));
+        Assert.That(first.High, Is.EqualTo(16092883370877825258ul));
+        Assert.That(second.Low, Is.EqualTo(first.Low));
+        Assert.That(second.High, Is.EqualTo(first.High));
+    }
+
+    [Test]
+    public void IdentityProjection_RejectsEmptySources()
+    {
+        Assert.That(
+            OperationMapRenderIdentityProjection.TryProject(
+                string.Empty,
+                out OperationMapRenderIdentity128 identity,
+                out string error),
+            Is.False);
+        Assert.That(identity.Low, Is.Zero);
+        Assert.That(identity.High, Is.Zero);
+        Assert.That(error, Does.Contain("non-empty"));
+    }
+
+    [Test]
+    public void IdentityCollisionDetector_RejectsDifferentSourcesForOneIdentity()
+    {
+        OperationMapRenderIdentityCollisionDetector detector = new();
+        OperationMapRenderIdentity128 forcedIdentity = Identity(71ul, 72ul);
+
+        Assert.That(
+            detector.TryRegister(forcedIdentity, "stable.alpha", out string firstError),
+            Is.True,
+            firstError);
+        Assert.That(
+            detector.TryRegister(forcedIdentity, "stable.alpha", out string repeatError),
+            Is.True,
+            repeatError);
+        Assert.That(
+            detector.TryRegister(forcedIdentity, "stable.beta", out string collisionError),
+            Is.False);
+        Assert.That(collisionError, Does.Contain("stable.alpha"));
+        Assert.That(collisionError, Does.Contain("stable.beta"));
+        Assert.That(detector.Count, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void IdentityComparer_SortsByLowThenHighDeterministically()
+    {
+        List<OperationMapRenderIdentity128> first = new()
+        {
+            Identity(2ul, 0ul),
+            Identity(1ul, 9ul),
+            Identity(1ul, 1ul)
+        };
+        List<OperationMapRenderIdentity128> second = new(first);
+
+        first.Sort(OperationMapRenderIdentityComparer.Instance);
+        second.Sort(OperationMapRenderIdentityComparer.Instance);
+
+        Assert.That(first[0].Low, Is.EqualTo(1ul));
+        Assert.That(first[0].High, Is.EqualTo(1ul));
+        Assert.That(first[1].Low, Is.EqualTo(1ul));
+        Assert.That(first[1].High, Is.EqualTo(9ul));
+        Assert.That(first[2].Low, Is.EqualTo(2ul));
+        for (int index = 0; index < first.Count; index++)
+        {
+            Assert.That(second[index].Low, Is.EqualTo(first[index].Low));
+            Assert.That(second[index].High, Is.EqualTo(first[index].High));
+        }
     }
 
     private static OperationMapRenderBoundsBlob Bounds(float3 center, float3 extents)

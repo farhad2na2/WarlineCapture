@@ -209,9 +209,9 @@ Required logical fields:
 
 | Record | Required fields |
 |---|---|
-| Prototype | collision-checked `ulong2` content identity; first part; part count; combined local bounds; semantic category; eligibility flags |
+| Prototype | collision-checked `OperationMapRenderIdentity128` content identity (`ulong Low`, `ulong High`); first part; part count; combined local bounds; semantic category; eligibility flags |
 | Prototype part | renderer-path hash; mesh-array index; material-array index; submesh; local-to-placement matrix; local bounds; linear base color; fixed render-policy bucket; LOD/shadow flags |
-| Placement | collision-checked `ulong2` stable identity hash; prototype index; exact world matrix; cell index; state-owner index or `-1`; required visual state; priority; semantic category |
+| Placement | collision-checked `OperationMapRenderIdentity128` stable identity hash; prototype index; exact world matrix; cell index; state-owner index or `-1`; required visual state; priority; semantic category |
 | Cell | deterministic integer coordinate; world AABB; first placement-index entry; placement-index count |
 | Pool bucket | closed render-filter policy; first slot; capacity; computed peak required count; headroom; report identity |
 
@@ -223,7 +223,7 @@ Rules:
 - Store linear base color explicitly. Do not instantiate a material to carry per-instance color.
 - `MaterialMeshInfo` selects a mesh/material/submesh from the one shared sorted `RenderMeshArray`.
 - A prototype fingerprint includes renderer hierarchy path, mesh GUID/local id, material GUID/local id, submesh, local matrix, local bounds, base color, render-filter policy, shadow flags, and LOD policy.
-- A placement identity hash derives from the existing stable identity using a documented SHA-256-to-`ulong2` projection. The builder must retain the full stable id in the editor report and reject any 128-bit collision.
+- A placement identity hash derives from the existing stable identity using a documented SHA-256-to-`OperationMapRenderIdentity128` projection. The builder must retain the full stable id in the editor report and reject any 128-bit collision.
 - A renderer logical-row identity derives from placement identity plus prototype renderer-path identity. The editor report retains the full source identity/path for parity.
 - Arrays are sorted deterministically; timestamps, absolute paths, instance ids, entity indices, and editor-session data are forbidden hash inputs.
 
@@ -745,7 +745,7 @@ Terra must stop and request Sol when the next dependency-ready item is marked `[
 ### Phase 1: Additive Schema And Pure Contracts
 
 - [x] `VRP-010 [TERRA]` Add `OperationMapRenderResidencyMode` with default resident behavior and closed validation tests. Depends on: `VRP-001`.
-- [ ] `VRP-011 [TERRA]` Add unmanaged blob/component schema with field-level validation and no runtime use. Depends on: `VRP-010`.
+- [x] `VRP-011 [TERRA]` Add unmanaged blob/component schema with field-level validation and no runtime use. Depends on: `VRP-010`.
 - [ ] `VRP-012 [TERRA]` Add stable 128-bit identity projection, collision detection, and deterministic sorting tests. Depends on: `VRP-011`.
 - [ ] `VRP-013 [TERRA]` Add pure prototype fingerprinting for mesh/material/submesh/path/matrix/bounds/color/filter/LOD inputs. Depends on: `VRP-011`.
 - [ ] `VRP-014 [TERRA]` Add pure cell assignment and multi-cell deduplication algorithms with boundary tests. Depends on: `VRP-011`.
@@ -939,7 +939,7 @@ Forbidden shortcuts:
 | Phase | Status |
 |---|---|
 | Phase 0: Evidence and amendment | In progress; Android failure and design authorization recorded; raw profile/inventory open |
-| Phase 1: Additive schema and pure contracts | In progress; default-safe render-residency mode accepted |
+| Phase 1: Additive schema and pure contracts | In progress; default-safe mode and unmanaged schema accepted |
 | Phase 2: Deterministic database builder | Not started |
 | Phase 3: Candidate pool baking | Not started |
 | Phase 4: Jobified runtime assignment | Not started |
@@ -950,7 +950,7 @@ Forbidden shortcuts:
 | Phase 9: Android 60 FPS acceptance | Not started |
 | Phase 10: Cutover and closeout | Not started |
 
-Checklist progress: `3 / 80` complete.
+Checklist progress: `4 / 80` complete.
 
 ## 18. Validation Log
 
@@ -960,6 +960,7 @@ Checklist progress: `3 / 80` complete.
 | 2026-07-28 | `VRP-001` measured design amendment | Parent-contract/evidence audit; packed asset-sharing report; architecture/type/assembly inventory | Design accepted for candidate implementation | Simulation remains resident; only render materialization is virtualized; production and frozen rollback remain unchanged |
 | 2026-07-28 | Naming and SOLID/ECS alignment correction | `file_naming_architecture_contract.md`; `gameplay_solid_ecs_contract.md`; proposed type/file/readiness-owner audit; checklist/dependency consistency audit; `git diff --check` | Passed documentation contract alignment; implementation remains open | All proposed ECS components now use `*Component`, the buffer record no longer uses forbidden `*Element`, the generated ScriptableObject uses `*Config`, every bare `*System` remains a real ECS system, and `Game.Composition` remains the exclusive operation-map readiness publisher |
 | 2026-07-28 | `VRP-010` default-safe render-residency mode | Windows GUI-licensing wrapper `%TEMP%\warline-render-virtualization-vrp010-host.log`; `[OperationMapRenderVirtualizationValidation] result=Passed tests=6`; wrapper exit code `0`; `git diff --check` | Passed; additive contract accepted | Added the closed `ResidentEntities = 0` / `VirtualizedProxyPool = 1` enum and serialized definition field. Existing definitions remain resident without asset resaves, unknown values fail closed, static chunks reject virtualization, and EntityScene virtualization remains rejected until the database/pool contract exists. The first sandboxed wrapper attempt timed out on denied BIOS/licensing access and its wrapper-owned process tree was cleaned after timeout; the identical host-access wrapper compiled and passed. No candidate, accepted, frozen, production, Addressables, EntityScene, or Android artifact changed. |
+| 2026-07-28 | `VRP-011` unmanaged render-virtualization schema | Rejected compile `%TEMP%\warline-render-virtualization-vrp011.log`; corrected Windows GUI-licensing wrapper `%TEMP%\warline-render-virtualization-vrp011-rerun.log`; `[OperationMapRenderVirtualizationValidation] result=Passed tests=11`; wrapper exit code `0`; `git diff --check` | Passed; additive schema accepted | Added the complete schema-1 database/prototype/part/placement/cell/pool records and the six named runtime ECS contracts without wiring them to any baker or system. Field-level construction proves matrices, bounds, colors, policy/state, indices, capacity/headroom, and identities survive blob creation; every type is unmanaged and every runtime contract has the required ECS kind. The first compile rejected the design shorthand `ulong2`, which Unity.Mathematics does not provide; the schema and tracker now use the explicit unmanaged `OperationMapRenderIdentity128` (`ulong Low`, `ulong High`) and the exact rerun passed. No source render row, runtime query, candidate/accepted/frozen/production asset, Addressables content, EntityScene, or Android artifact changed. |
 
 ## 19. Evidence References
 

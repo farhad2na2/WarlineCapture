@@ -32,6 +32,48 @@ namespace Game.Editor
 
         public static void Run() => BuildCandidate();
 
+        public static void RunDeterminismValidation()
+        {
+            string projectRoot = Path.GetDirectoryName(Application.dataPath) ??
+                                 throw new InvalidOperationException("Project root is unavailable.");
+            BuildCandidate();
+            byte[] firstConfig = File.ReadAllBytes(Path.Combine(projectRoot, ConfigPath));
+            byte[] firstReport = File.ReadAllBytes(Path.Combine(projectRoot, ReportPath));
+            DatabaseReport first = JsonUtility.FromJson<DatabaseReport>(
+                new UTF8Encoding(false).GetString(firstReport));
+
+            BuildCandidate();
+            byte[] secondConfig = File.ReadAllBytes(Path.Combine(projectRoot, ConfigPath));
+            byte[] secondReport = File.ReadAllBytes(Path.Combine(projectRoot, ReportPath));
+            DatabaseReport second = JsonUtility.FromJson<DatabaseReport>(
+                new UTF8Encoding(false).GetString(secondReport));
+
+            if (!firstConfig.SequenceEqual(secondConfig) ||
+                !firstReport.SequenceEqual(secondReport) ||
+                first == null ||
+                second == null ||
+                first.contentHash != second.contentHash ||
+                first.recordOrderingSha256 != second.recordOrderingSha256 ||
+                first.meshCount != second.meshCount ||
+                first.materialCount != second.materialCount ||
+                first.prototypeCount != second.prototypeCount ||
+                first.partCount != second.partCount ||
+                first.placementCount != second.placementCount ||
+                first.cellCount != second.cellCount ||
+                first.cellPlacementIndexCount != second.cellPlacementIndexCount ||
+                first.policyBucketCount != second.policyBucketCount ||
+                first.totalPoolSlotCapacity != second.totalPoolSlotCapacity)
+            {
+                throw new InvalidOperationException(
+                    "Unchanged render database inputs produced different records or bytes.");
+            }
+
+            Debug.Log(
+                "[OperationMapRenderDatabaseBuilder] determinism=Passed " +
+                $"contentHash={second.contentHash} orderingHash={second.recordOrderingSha256} " +
+                $"configBytes={secondConfig.Length} reportBytes={secondReport.Length}");
+        }
+
         internal static void BuildCandidate()
         {
             string projectRoot = Path.GetDirectoryName(Application.dataPath) ??
@@ -116,7 +158,12 @@ namespace Game.Editor
                     throw new InvalidOperationException("Persisted render database content hash changed.");
 
                 string serializedHash = HashFile(Path.Combine(projectRoot, ConfigPath));
-                DatabaseReport report = CreateReport(inputs, records, contentHash, serializedHash);
+                DatabaseReport report = CreateReport(
+                    inputs,
+                    records,
+                    contentHash,
+                    ComputeRecordOrderingHash(records, inputs.spatial.cellPlacementIndices),
+                    serializedHash);
                 WriteAtomic(Path.Combine(projectRoot, ReportPath), JsonUtility.ToJson(report, true) + "\n");
                 DatabaseReport persistedReport =
                     JsonUtility.FromJson<DatabaseReport>(
@@ -363,6 +410,7 @@ namespace Game.Editor
             BuildInputs inputs,
             GeneratedRecords records,
             string contentHash,
+            string recordOrderingHash,
             string serializedHash) =>
             new()
             {
@@ -371,6 +419,7 @@ namespace Game.Editor
                 operationMapId = inputs.prototypes.operationMapId,
                 result = "Passed",
                 contentHash = contentHash,
+                recordOrderingSha256 = recordOrderingHash,
                 configPath = ConfigPath,
                 configSerializedSha256 = serializedHash,
                 meshCount = records.meshes.Length,
@@ -384,6 +433,44 @@ namespace Game.Editor
                 totalPoolSlotCapacity = records.poolBuckets.Sum(value => value.Capacity),
                 isolationResult = "Passed"
             };
+
+        private static string ComputeRecordOrderingHash(
+            GeneratedRecords records,
+            int[] cellPlacementIndices)
+        {
+            var source = new StringBuilder();
+            foreach (OperationMapRenderMeshConfigRecord value in records.meshes)
+                source.Append("m:").Append(value.AssetGuid).Append(':').Append(value.LocalId).Append('\n');
+            foreach (OperationMapRenderMaterialConfigRecord value in records.materials)
+                source.Append("a:").Append(value.AssetGuid).Append(':').Append(value.LocalId).Append('\n');
+            foreach (OperationMapRenderPrototypeConfigRecord value in records.prototypes)
+                source.Append("p:").Append(value.ContentIdentityLow).Append(':')
+                    .Append(value.ContentIdentityHigh).Append(':').Append(value.FirstPart)
+                    .Append(':').Append(value.PartCount).Append('\n');
+            foreach (OperationMapRenderPrototypePartConfigRecord value in records.parts)
+                source.Append("r:").Append(value.RendererPathIdentityLow).Append(':')
+                    .Append(value.RendererPathIdentityHigh).Append(':').Append(value.MeshIndex)
+                    .Append(':').Append(value.MaterialIndex).Append(':').Append(value.SubMeshIndex)
+                    .Append(':').Append(value.PoolBucketIndex).Append('\n');
+            foreach (OperationMapRenderPlacementConfigRecord value in records.placements)
+                source.Append("l:").Append(value.StableIdentityLow).Append(':')
+                    .Append(value.StableIdentityHigh).Append(':').Append(value.PrototypeIndex)
+                    .Append(':').Append(value.CellIndex).Append(':').Append(value.StateOwnerIndex)
+                    .Append('\n');
+            foreach (OperationMapRenderCellConfigRecord value in records.cells)
+                source.Append("c:").Append(value.Coordinate.x).Append(':')
+                    .Append(value.Coordinate.y).Append(':').Append(value.FirstPlacementIndex)
+                    .Append(':').Append(value.PlacementIndexCount).Append('\n');
+            foreach (int value in cellPlacementIndices)
+                source.Append("i:").Append(value).Append('\n');
+            foreach (OperationMapRenderPoolBucketConfigRecord value in records.poolBuckets)
+                source.Append("b:").Append((byte)value.PolicyBucket).Append(':')
+                    .Append(value.Layer).Append(':').Append(value.RenderingLayerMask).Append(':')
+                    .Append((byte)value.MotionVectorMode).Append(':').Append((byte)value.ShadowFlags)
+                    .Append(':').Append(value.FirstSlot).Append(':').Append(value.Capacity).Append('\n');
+            using SHA256 sha = SHA256.Create();
+            return Hex(sha.ComputeHash(new UTF8Encoding(false).GetBytes(source.ToString())));
+        }
 
         private static int ComparePolicy(CapacityPolicy left, CapacityPolicy right)
         {
@@ -603,6 +690,7 @@ namespace Game.Editor
             public string operationMapId;
             public string result;
             public string contentHash;
+            public string recordOrderingSha256;
             public string configPath;
             public string configSerializedSha256;
             public int meshCount;

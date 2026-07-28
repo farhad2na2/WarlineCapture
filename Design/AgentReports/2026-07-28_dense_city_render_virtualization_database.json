@@ -4,6 +4,7 @@
     "operationMapId": "opmap.skirmish.desert_base_01",
     "result": "Passed",
     "contentHash": "f0555edc7974e9c5d999b729ce8adf7fb5f62d9f1cfa44c44a52ed073fe9ad8a",
+    "recordOrderingSha256": "0eb0019fd859997769e85f16165557607bd6250679ee4ebd8b44bd031df9a6ef",
     "configPath": "Assets/Game/GeneratedOperationMapEntityPresentationCandidate/VirtualizedPresentation/OperationMapRenderDatabaseBakeConfig.asset",
     "configSerializedSha256": "40e9f9943506c5c9549ea6d2dd0da711a6e2f1143b647bc218de7e3ed762b8ae",
     "meshCount": 26,

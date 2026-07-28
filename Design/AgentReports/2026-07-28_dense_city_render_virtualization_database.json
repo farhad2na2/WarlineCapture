@@ -16,5 +16,11 @@
     "cellPlacementIndexCount": 11706,
     "policyBucketCount": 2,
     "totalPoolSlotCapacity": 704,
+    "sourceRenderRowCount": 82797,
+    "eligibleSourceRowCount": 11299,
+    "logicalRenderRowCount": 11299,
+    "residentSourceRowCount": 71498,
+    "sourceRowsRemoved": 0,
+    "logicalParityResult": "Passed",
     "isolationResult": "Passed"
 }

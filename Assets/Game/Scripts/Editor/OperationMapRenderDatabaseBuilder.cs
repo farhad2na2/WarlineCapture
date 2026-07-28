@@ -32,6 +32,28 @@ namespace Game.Editor
 
         public static void Run() => BuildCandidate();
 
+        public static void RunSourceParityValidation()
+        {
+            OperationMapRenderEligibilityInventoryProbe.Run();
+            RunDeterminismValidation();
+            DatabaseReport report = JsonUtility.FromJson<DatabaseReport>(
+                File.ReadAllText(ReportPath));
+            if (report == null ||
+                report.logicalParityResult != "Passed" ||
+                report.sourceRenderRowCount !=
+                    OperationMapRenderEligibilityInventoryProbe.ExpectedPackedRenderRowCount ||
+                report.eligibleSourceRowCount != report.logicalRenderRowCount ||
+                report.sourceRowsRemoved != 0)
+            {
+                throw new InvalidOperationException(
+                    "Persisted render database logical-parity report is incomplete.");
+            }
+            Debug.Log(
+                "[OperationMapRenderDatabaseBuilder] sourceParity=Passed " +
+                $"sourceRows={report.sourceRenderRowCount} eligibleRows={report.eligibleSourceRowCount} " +
+                $"residentRows={report.residentSourceRowCount} removedRows={report.sourceRowsRemoved}");
+        }
+
         public static void RunDeterminismValidation()
         {
             string projectRoot = Path.GetDirectoryName(Application.dataPath) ??
@@ -156,6 +178,7 @@ namespace Game.Editor
                         "Persisted render database config is invalid: " + schemaError);
                 if (!string.Equals(persisted.ContentHash, contentHash, StringComparison.Ordinal))
                     throw new InvalidOperationException("Persisted render database content hash changed.");
+                RequirePersistedParity(persisted, records, inputs.spatial.cellPlacementIndices);
 
                 string serializedHash = HashFile(Path.Combine(projectRoot, ConfigPath));
                 DatabaseReport report = CreateReport(
@@ -431,8 +454,177 @@ namespace Game.Editor
                 cellPlacementIndexCount = inputs.spatial.cellPlacementIndices.Length,
                 policyBucketCount = records.poolBuckets.Length,
                 totalPoolSlotCapacity = records.poolBuckets.Sum(value => value.Capacity),
+                sourceRenderRowCount =
+                    OperationMapRenderEligibilityInventoryProbe.ExpectedPackedRenderRowCount,
+                eligibleSourceRowCount = inputs.prototypes.eligibleSourceRowCount,
+                logicalRenderRowCount = inputs.prototypes.eligibleSourceRowCount,
+                residentSourceRowCount =
+                    OperationMapRenderEligibilityInventoryProbe.ExpectedPackedRenderRowCount -
+                    inputs.prototypes.eligibleSourceRowCount,
+                sourceRowsRemoved = 0,
+                logicalParityResult = "Passed",
                 isolationResult = "Passed"
             };
+
+        private static void RequirePersistedParity(
+            OperationMapRenderDatabaseBakeConfig persisted,
+            GeneratedRecords expected,
+            int[] expectedCellPlacementIndices)
+        {
+            RequireCount(persisted.Meshes.Count, expected.meshes.Length, "meshes");
+            RequireCount(persisted.Materials.Count, expected.materials.Length, "materials");
+            RequireCount(persisted.Prototypes.Count, expected.prototypes.Length, "prototypes");
+            RequireCount(persisted.Parts.Count, expected.parts.Length, "parts");
+            RequireCount(persisted.Placements.Count, expected.placements.Length, "placements");
+            RequireCount(persisted.Cells.Count, expected.cells.Length, "cells");
+            RequireCount(
+                persisted.CellPlacementIndices.Count,
+                expectedCellPlacementIndices.Length,
+                "cell placement indices");
+            RequireCount(persisted.PoolBuckets.Count, expected.poolBuckets.Length, "pool buckets");
+
+            for (int index = 0; index < expected.meshes.Length; index++)
+            {
+                OperationMapRenderMeshConfigRecord actual = persisted.Meshes[index];
+                OperationMapRenderMeshConfigRecord value = expected.meshes[index];
+                Require(
+                    actual.AssetGuid == value.AssetGuid &&
+                    actual.LocalId == value.LocalId &&
+                    actual.Mesh == value.Mesh,
+                    $"meshes[{index}]");
+            }
+            for (int index = 0; index < expected.materials.Length; index++)
+            {
+                OperationMapRenderMaterialConfigRecord actual = persisted.Materials[index];
+                OperationMapRenderMaterialConfigRecord value = expected.materials[index];
+                Require(
+                    actual.AssetGuid == value.AssetGuid &&
+                    actual.LocalId == value.LocalId &&
+                    actual.Material == value.Material,
+                    $"materials[{index}]");
+            }
+            for (int index = 0; index < expected.prototypes.Length; index++)
+            {
+                OperationMapRenderPrototypeConfigRecord actual = persisted.Prototypes[index];
+                OperationMapRenderPrototypeConfigRecord value = expected.prototypes[index];
+                Require(
+                    actual.ContentIdentityLow == value.ContentIdentityLow &&
+                    actual.ContentIdentityHigh == value.ContentIdentityHigh &&
+                    actual.FirstPart == value.FirstPart &&
+                    actual.PartCount == value.PartCount &&
+                    Exact(actual.CombinedLocalBounds, value.CombinedLocalBounds) &&
+                    actual.SemanticCategory == value.SemanticCategory &&
+                    actual.EligibilityFlags == value.EligibilityFlags,
+                    $"prototypes[{index}]");
+            }
+            for (int index = 0; index < expected.parts.Length; index++)
+            {
+                OperationMapRenderPrototypePartConfigRecord actual = persisted.Parts[index];
+                OperationMapRenderPrototypePartConfigRecord value = expected.parts[index];
+                Require(
+                    actual.RendererPathIdentityLow == value.RendererPathIdentityLow &&
+                    actual.RendererPathIdentityHigh == value.RendererPathIdentityHigh &&
+                    actual.MeshIndex == value.MeshIndex &&
+                    actual.MaterialIndex == value.MaterialIndex &&
+                    actual.SubMeshIndex == value.SubMeshIndex &&
+                    Exact(actual.LocalToPlacement, value.LocalToPlacement) &&
+                    Exact(actual.LocalBounds, value.LocalBounds) &&
+                    Exact(actual.LinearBaseColor, value.LinearBaseColor) &&
+                    actual.PolicyBucket == value.PolicyBucket &&
+                    actual.PoolBucketIndex == value.PoolBucketIndex &&
+                    actual.LodFlags == value.LodFlags &&
+                    actual.ShadowFlags == value.ShadowFlags,
+                    $"parts[{index}]");
+            }
+            for (int index = 0; index < expected.placements.Length; index++)
+            {
+                OperationMapRenderPlacementConfigRecord actual = persisted.Placements[index];
+                OperationMapRenderPlacementConfigRecord value = expected.placements[index];
+                Require(
+                    actual.StableIdentityLow == value.StableIdentityLow &&
+                    actual.StableIdentityHigh == value.StableIdentityHigh &&
+                    actual.PrototypeIndex == value.PrototypeIndex &&
+                    Exact(actual.WorldMatrix, value.WorldMatrix) &&
+                    actual.CellIndex == value.CellIndex &&
+                    actual.StateOwnerIndex == value.StateOwnerIndex &&
+                    actual.RequiredVisualState == value.RequiredVisualState &&
+                    actual.Priority == value.Priority &&
+                    actual.SemanticCategory == value.SemanticCategory,
+                    $"placements[{index}]");
+            }
+            for (int index = 0; index < expected.cells.Length; index++)
+            {
+                OperationMapRenderCellConfigRecord actual = persisted.Cells[index];
+                OperationMapRenderCellConfigRecord value = expected.cells[index];
+                Require(
+                    actual.Coordinate == value.Coordinate &&
+                    Exact(actual.WorldBounds, value.WorldBounds) &&
+                    actual.FirstPlacementIndex == value.FirstPlacementIndex &&
+                    actual.PlacementIndexCount == value.PlacementIndexCount,
+                    $"cells[{index}]");
+            }
+            for (int index = 0; index < expectedCellPlacementIndices.Length; index++)
+                Require(
+                    persisted.CellPlacementIndices[index] == expectedCellPlacementIndices[index],
+                    $"cellPlacementIndices[{index}]");
+            for (int index = 0; index < expected.poolBuckets.Length; index++)
+            {
+                OperationMapRenderPoolBucketConfigRecord actual = persisted.PoolBuckets[index];
+                OperationMapRenderPoolBucketConfigRecord value = expected.poolBuckets[index];
+                Require(
+                    actual.PolicyBucket == value.PolicyBucket &&
+                    actual.Layer == value.Layer &&
+                    actual.RenderingLayerMask == value.RenderingLayerMask &&
+                    actual.MotionVectorMode == value.MotionVectorMode &&
+                    actual.ShadowFlags == value.ShadowFlags &&
+                    actual.FirstSlot == value.FirstSlot &&
+                    actual.Capacity == value.Capacity &&
+                    actual.PeakRequiredCount == value.PeakRequiredCount &&
+                    actual.HeadroomCount == value.HeadroomCount &&
+                    actual.ReportIdentityLow == value.ReportIdentityLow &&
+                    actual.ReportIdentityHigh == value.ReportIdentityHigh,
+                    $"poolBuckets[{index}]");
+            }
+        }
+
+        private static bool Exact(Matrix4x4 left, Matrix4x4 right)
+        {
+            for (int index = 0; index < 16; index++)
+            {
+                if (BitConverter.SingleToInt32Bits(left[index]) !=
+                    BitConverter.SingleToInt32Bits(right[index]))
+                    return false;
+            }
+            return true;
+        }
+
+        private static bool Exact(Bounds left, Bounds right) =>
+            Exact(left.center, right.center) && Exact(left.extents, right.extents);
+
+        private static bool Exact(Vector3 left, Vector3 right) =>
+            BitConverter.SingleToInt32Bits(left.x) == BitConverter.SingleToInt32Bits(right.x) &&
+            BitConverter.SingleToInt32Bits(left.y) == BitConverter.SingleToInt32Bits(right.y) &&
+            BitConverter.SingleToInt32Bits(left.z) == BitConverter.SingleToInt32Bits(right.z);
+
+        private static bool Exact(Color left, Color right) =>
+            BitConverter.SingleToInt32Bits(left.r) == BitConverter.SingleToInt32Bits(right.r) &&
+            BitConverter.SingleToInt32Bits(left.g) == BitConverter.SingleToInt32Bits(right.g) &&
+            BitConverter.SingleToInt32Bits(left.b) == BitConverter.SingleToInt32Bits(right.b) &&
+            BitConverter.SingleToInt32Bits(left.a) == BitConverter.SingleToInt32Bits(right.a);
+
+        private static void RequireCount(int actual, int expected, string label)
+        {
+            if (actual != expected)
+                throw new InvalidOperationException(
+                    $"Persisted {label} count changed: {actual} != {expected}.");
+        }
+
+        private static void Require(bool condition, string label)
+        {
+            if (!condition)
+                throw new InvalidOperationException(
+                    $"Persisted render database parity failed at {label}.");
+        }
 
         private static string ComputeRecordOrderingHash(
             GeneratedRecords records,
@@ -592,6 +784,7 @@ namespace Game.Editor
             public string operationMapId;
             public string result;
             public string prototypeRecipesSha256;
+            public int eligibleSourceRowCount;
             public PrototypeDto[] prototypes;
             public PartDto[] parts;
         }
@@ -702,6 +895,12 @@ namespace Game.Editor
             public int cellPlacementIndexCount;
             public int policyBucketCount;
             public int totalPoolSlotCapacity;
+            public int sourceRenderRowCount;
+            public int eligibleSourceRowCount;
+            public int logicalRenderRowCount;
+            public int residentSourceRowCount;
+            public int sourceRowsRemoved;
+            public string logicalParityResult;
             public string isolationResult;
         }
     }

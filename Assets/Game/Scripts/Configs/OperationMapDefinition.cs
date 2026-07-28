@@ -29,6 +29,8 @@ namespace Game.Configs
         [Header("Lazy map content")]
         [SerializeField] private OperationMapPresentationKind presentationKind =
             OperationMapPresentationKind.StaticSceneChunks;
+        [SerializeField] private OperationMapRenderResidencyMode renderResidencyMode =
+            OperationMapRenderResidencyMode.ResidentEntities;
         [SerializeField] private AssetReference sourceSceneReference;
         [SerializeField] private AssetReference optionalHeavyMetadataReference;
         [SerializeField] private AssetReference staticPresentationManifestReference;
@@ -41,6 +43,7 @@ namespace Game.Configs
         public int SchemaVersion => schemaVersion;
         public int ContentVersion => contentVersion;
         public OperationMapPresentationKind PresentationKind => presentationKind;
+        public OperationMapRenderResidencyMode RenderResidencyMode => renderResidencyMode;
         public string SourceIdentityHash => sourceIdentityHash;
         public string ContentHash => contentHash;
         public string GeneratedMetadataHash => generatedMetadataHash;
@@ -213,6 +216,29 @@ namespace Game.Configs
                 presentationKind != OperationMapPresentationKind.EntityScene)
             {
                 error = $"Unknown operation-map presentation kind: {(byte)presentationKind}.";
+                return false;
+            }
+
+            if (renderResidencyMode != OperationMapRenderResidencyMode.ResidentEntities &&
+                renderResidencyMode != OperationMapRenderResidencyMode.VirtualizedProxyPool)
+            {
+                error = $"Unknown operation-map render-residency mode: {(byte)renderResidencyMode}.";
+                return false;
+            }
+
+            if (presentationKind == OperationMapPresentationKind.StaticSceneChunks &&
+                renderResidencyMode != OperationMapRenderResidencyMode.ResidentEntities)
+            {
+                error =
+                    "StaticSceneChunks operation maps require ResidentEntities render residency.";
+                return false;
+            }
+
+            if (presentationKind == OperationMapPresentationKind.EntityScene &&
+                renderResidencyMode == OperationMapRenderResidencyMode.VirtualizedProxyPool)
+            {
+                error =
+                    "VirtualizedProxyPool requires a validated render-virtualization database and proxy-pool contract.";
                 return false;
             }
 

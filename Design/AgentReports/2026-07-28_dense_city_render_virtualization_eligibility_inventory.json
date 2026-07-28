@@ -1,6 +1,6 @@
 {
     "schema": "warline.operation-map.render-virtualization-eligibility-inventory",
-    "schemaVersion": 2,
+    "schemaVersion": 3,
     "result": "Passed",
     "operationMapId": "opmap.skirmish.desert_base_01",
     "candidateScenePath": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
@@ -19,6 +19,13 @@
     "sourceRowsCompression": "gzip",
     "sourceRowsJsonSha256": "1426108ab3ce2c308c7ce67639e8c45cca08acafcb46cb828051240b6e5596c8",
     "sourceRowsGzipSha256": "b89d760526f0d01f5c5862061cdfe128e65ccca0e02757723081f17611756333",
+    "logicalPlacementCount": 9721,
+    "prototypeCount": 22,
+    "prototypePartCount": 26,
+    "prototypeRecipeRowsConsumed": 11299,
+    "prototypeRecipesSha256": "ae1095f73abfc10e152cd31aca63e1b9d563d7562e08ffb4979114e9622f2969",
+    "prototypeRecipesPath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_prototype_recipes.json",
+    "prototypeRecipesJsonSha256": "1635d92e0259373d03ef4c219601238990209380f122374cfe0f81899fbaa6f9",
     "mutationAuthorized": false,
     "mutationBlocker": "VRP-002 raw Android profile remains open; source-row inventory authorizes no mutation.",
     "bySemanticCategory": [

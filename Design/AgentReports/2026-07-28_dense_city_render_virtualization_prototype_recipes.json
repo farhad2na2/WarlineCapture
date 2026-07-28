@@ -1,0 +1,1807 @@
+{
+    "schema": "warline.operation-map.render-virtualization-prototype-recipes",
+    "schemaVersion": 1,
+    "operationMapId": "opmap.skirmish.desert_base_01",
+    "result": "Passed",
+    "logicalPlacementCount": 9721,
+    "prototypeCount": 22,
+    "prototypePartCount": 26,
+    "eligibleSourceRowCount": 11299,
+    "prototypeRecipesSha256": "ae1095f73abfc10e152cd31aca63e1b9d563d7562e08ffb4979114e9622f2969",
+    "prototypes": [
+        {
+            "prototypeIndex": 0,
+            "prototypeIdentityLow": 1152924022371509540,
+            "prototypeIdentityHigh": 8377852352743347936,
+            "prototypeCanonicalSource": "19:prototype-recipe-v1\n1:6\n1:1\n315:17:prototype-part-v1\n7:<owner>\n32:ffc63fecea48ed3418c6689c532819c0\n7:4300000\n32:cecad80e1c7e042a79301a706cc153b2\n7:2100000\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n12:0.0595291257\n10:1.51688778\n12:0.0483053923\n9:0.9059106\n8:1.647847\n11:0.852281034\n1:1\n1:1\n1:1\n1:1\n1:2\n1:0\n1:1\n1:1\n1:3\n1:1\n\n",
+            "semanticCategory": "Vegetation",
+            "placementCount": 29,
+            "firstPart": 0,
+            "partCount": 1,
+            "combinedLocalBoundsCenter": [
+                0.059529125690460208,
+                1.5168877840042115,
+                0.048305392265319827
+            ],
+            "combinedLocalBoundsExtents": [
+                0.9059106111526489,
+                1.647847056388855,
+                0.8522810339927673
+            ]
+        },
+        {
+            "prototypeIndex": 1,
+            "prototypeIdentityLow": 1174846811215418649,
+            "prototypeIdentityHigh": 12592107000476505995,
+            "prototypeCanonicalSource": "19:prototype-recipe-v1\n1:7\n1:1\n297:17:prototype-part-v1\n7:<owner>\n32:7040ec9be36e5cd42a1ed2e47a82097e\n7:4300000\n32:48843a2db7a47754f9c8d6ae390ebf4b\n7:2100000\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n10:0.31922102\n1:0\n11:0.282635659\n10:0.31922102\n11:0.277860761\n1:1\n1:1\n1:1\n1:1\n1:0\n1:0\n1:1\n1:1\n1:3\n1:1\n\n",
+            "semanticCategory": "Prop",
+            "placementCount": 357,
+            "firstPart": 1,
+            "partCount": 1,
+            "combinedLocalBoundsCenter": [
+                0.0,
+                0.31922101974487307,
+                0.0
+            ],
+            "combinedLocalBoundsExtents": [
+                0.2826356589794159,
+                0.31922101974487307,
+                0.27786076068878176
+            ]
+        },
+        {
+            "prototypeIndex": 2,
+            "prototypeIdentityLow": 1753649192867061413,
+            "prototypeIdentityHigh": 955124994690351690,
+            "prototypeCanonicalSource": "19:prototype-recipe-v1\n1:6\n1:1\n315:17:prototype-part-v1\n7:<owner>\n32:fb72c742ade8526468381ba864289832\n7:4300000\n32:cecad80e1c7e042a79301a706cc153b2\n7:2100000\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n10:-0.2884589\n10:1.47881722\n14:3.57627869E-07\n10:0.90789187\n9:1.6097765\n9:0.7681771\n1:1\n1:1\n1:1\n1:1\n1:2\n1:0\n1:1\n1:1\n1:3\n1:1\n\n",
+            "semanticCategory": "Vegetation",
+            "placementCount": 30,
+            "firstPart": 2,
+            "partCount": 1,
+            "combinedLocalBoundsCenter": [
+                -0.2884589433670044,
+                1.4788172245025635,
+                3.5762786865234377e-7
+            ],
+            "combinedLocalBoundsExtents": [
+                0.9078918695449829,
+                1.609776496887207,
+                0.7681770920753479
+            ]
+        },
+        {
+            "prototypeIndex": 3,
+            "prototypeIdentityLow": 2833000141886959645,
+            "prototypeIdentityHigh": 9667732227931272348,
+            "prototypeCanonicalSource": "19:prototype-recipe-v1\n1:7\n1:1\n326:17:prototype-part-v1\n7:<owner>\n32:6b092fe425afd3c42ba205e5401e7f5b\n7:4300000\n32:48843a2db7a47754f9c8d6ae390ebf4b\n7:2100000\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n13:-3.054738E-07\n11:0.280055076\n14:2.98023224E-07\n11:0.212619931\n11:0.280665427\n11:0.320199877\n1:1\n1:1\n1:1\n1:1\n1:0\n1:0\n1:1\n1:1\n1:3\n1:1\n\n",
+            "semanticCategory": "Prop",
+            "placementCount": 385,
+            "firstPart": 3,
+            "partCount": 1,
+            "combinedLocalBoundsCenter": [
+                -2.980232238769531e-7,
+                0.28005507588386538,
+                2.980232238769531e-7
+            ],
+            "combinedLocalBoundsExtents": [
+                0.21261993050575257,
+                0.28066542744636538,
+                0.3201998770236969
+            ]
+        },
+        {
+            "prototypeIndex": 4,
+            "prototypeIdentityLow": 2850209440034799587,
+            "prototypeIdentityHigh": 4072154788293866631,
+            "prototypeCanonicalSource": "19:prototype-recipe-v1\n1:7\n1:1\n292:17:prototype-part-v1\n7:<owner>\n32:a46009c4d241a2d488f9a56ed636daec\n7:4300000\n32:48843a2db7a47754f9c8d6ae390ebf4b\n7:2100000\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n11:0.938128948\n1:0\n10:2.75816512\n9:0.9458002\n9:0.5473206\n1:1\n1:1\n1:1\n1:1\n1:0\n1:0\n1:1\n1:1\n1:3\n1:1\n\n",
+            "semanticCategory": "Prop",
+            "placementCount": 350,
+            "firstPart": 4,
+            "partCount": 1,
+            "combinedLocalBoundsCenter": [
+                0.0,
+                0.9381289482116699,
+                0.0
+            ],
+            "combinedLocalBoundsExtents": [
+                2.758165121078491,
+                0.9458001852035523,
+                0.5473206043243408
+            ]
+        },
+        {
+            "prototypeIndex": 5,
+            "prototypeIdentityLow": 3835141366830793808,
+            "prototypeIdentityHigh": 4792537983373311920,
+            "prototypeCanonicalSource": "19:prototype-recipe-v1\n1:7\n1:1\n297:17:prototype-part-v1\n7:<owner>\n32:04fc367986963124c9cddd4d12052fcd\n7:4300000\n32:48843a2db7a47754f9c8d6ae390ebf4b\n7:2100000\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n10:0.08596696\n1:0\n11:0.903619349\n10:0.08596696\n11:0.903619349\n1:1\n1:1\n1:1\n1:1\n1:0\n1:0\n1:1\n1:1\n1:3\n1:1\n\n",
+            "semanticCategory": "Prop",
+            "placementCount": 407,
+            "firstPart": 5,
+            "partCount": 1,
+            "combinedLocalBoundsCenter": [
+                0.0,
+                0.08596695959568024,
+                0.0
+            ],
+            "combinedLocalBoundsExtents": [
+                0.9036193490028381,
+                0.08596695959568024,
+                0.9036193490028381
+            ]
+        },
+        {
+            "prototypeIndex": 6,
+            "prototypeIdentityLow": 4208491407622813457,
+            "prototypeIdentityHigh": 10791202520716130275,
+            "prototypeCanonicalSource": "19:prototype-recipe-v1\n1:7\n1:3\n301:17:prototype-part-v1\n7:<owner>\n32:889ed087ce0dc9d4f945bd290b763d9b\n7:4300000\n32:48843a2db7a47754f9c8d6ae390ebf4b\n7:2100000\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n9:0.5288561\n10:-0.6744742\n10:1.14573479\n9:0.5288561\n10:1.94602442\n1:1\n1:1\n1:1\n1:1\n1:0\n1:0\n1:1\n1:1\n1:3\n1:1\n\n356:17:prototype-part-v1\n28:SM_Prop_Cart_Wood_WHeel_l[0]\n32:889ed087ce0dc9d4f945bd290b763d9b\n7:4300004\n32:48843a2db7a47754f9c8d6ae390ebf4b\n7:2100000\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n12:-0.856748164\n11:0.397582918\n15:-1.00255328E-07\n1:1\n15:-2.98023224E-08\n1:0\n1:0\n9:0.1536274\n11:0.397582918\n8:0.397583\n1:1\n1:1\n1:1\n1:1\n1:0\n1:0\n1:1\n1:1\n1:3\n1:1\n\n358:17:prototype-part-v1\n28:SM_Prop_Cart_Wood_WHeel_r[1]\n32:889ed087ce0dc9d4f945bd290b763d9b\n7:4300002\n32:48843a2db7a47754f9c8d6ae390ebf4b\n7:2100000\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n11:0.932051837\n11:0.397582918\n15:-1.00255328E-07\n1:1\n15:-2.98023224E-08\n1:0\n1:0\n11:0.151997834\n11:0.397582918\n8:0.397583\n1:1\n1:1\n1:1\n1:1\n1:0\n1:0\n1:1\n1:1\n1:3\n1:1\n\n",
+            "semanticCategory": "Prop",
+            "placementCount": 380,
+            "firstPart": 6,
+            "partCount": 3,
+            "combinedLocalBoundsCenter": [
+                0.0,
+                0.528856098651886,
+                -0.6744742393493652
+            ],
+            "combinedLocalBoundsExtents": [
+                1.1457347869873047,
+                0.528856098651886,
+                1.9460244178771973
+            ]
+        },
+        {
+            "prototypeIndex": 7,
+            "prototypeIdentityLow": 5581525827320978788,
+            "prototypeIdentityHigh": 7180270649933628775,
+            "prototypeCanonicalSource": "19:prototype-recipe-v1\n1:6\n1:1\n295:17:prototype-part-v1\n7:<owner>\n32:17ccc6b9b48bbe641a5431d19baa6186\n7:4300000\n32:48843a2db7a47754f9c8d6ae390ebf4b\n7:2100000\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n10:0.44670552\n1:0\n11:0.995930135\n11:0.571692765\n9:0.8959305\n1:1\n1:1\n1:1\n1:1\n1:0\n1:0\n1:1\n1:1\n1:3\n1:1\n\n",
+            "semanticCategory": "Vegetation",
+            "placementCount": 2122,
+            "firstPart": 9,
+            "partCount": 1,
+            "combinedLocalBoundsCenter": [
+                0.0,
+                0.44670552015304568,
+                0.0
+            ],
+            "combinedLocalBoundsExtents": [
+                0.9959301352500916,
+                0.5716927647590637,
+                0.8959305286407471
+            ]
+        },
+        {
+            "prototypeIndex": 8,
+            "prototypeIdentityLow": 7001161822590485756,
+            "prototypeIdentityHigh": 1532968397384254693,
+            "prototypeCanonicalSource": "19:prototype-recipe-v1\n1:6\n1:1\n318:17:prototype-part-v1\n7:<owner>\n32:3e4eb286fced4ce45a66b2c511233efd\n7:4300000\n32:48843a2db7a47754f9c8d6ae390ebf4b\n7:2100000\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n12:-0.114719868\n9:0.9974501\n13:-0.0154759288\n10:1.25544429\n10:1.01102757\n10:1.26030827\n1:1\n1:1\n1:1\n1:1\n1:0\n1:0\n1:1\n1:1\n1:3\n1:1\n\n",
+            "semanticCategory": "Vegetation",
+            "placementCount": 397,
+            "firstPart": 10,
+            "partCount": 1,
+            "combinedLocalBoundsCenter": [
+                -0.11471986770629883,
+                0.9974501132965088,
+                -0.015475988388061524
+            ],
+            "combinedLocalBoundsExtents": [
+                1.2554442882537842,
+                1.0110275745391846,
+                1.2603082656860352
+            ]
+        },
+        {
+            "prototypeIndex": 9,
+            "prototypeIdentityLow": 7127063378568175029,
+            "prototypeIdentityHigh": 16452199682864387315,
+            "prototypeCanonicalSource": "19:prototype-recipe-v1\n1:7\n1:1\n293:17:prototype-part-v1\n7:<owner>\n32:5f462e34be722aa4a9145d0222da07f0\n7:4300000\n32:48843a2db7a47754f9c8d6ae390ebf4b\n7:2100000\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n9:0.4068714\n1:0\n11:0.577327847\n9:0.4068714\n11:0.787947237\n1:1\n1:1\n1:1\n1:1\n1:0\n1:0\n1:1\n1:1\n1:3\n1:1\n\n",
+            "semanticCategory": "Prop",
+            "placementCount": 367,
+            "firstPart": 11,
+            "partCount": 1,
+            "combinedLocalBoundsCenter": [
+                0.0,
+                0.40687140822410586,
+                0.0
+            ],
+            "combinedLocalBoundsExtents": [
+                0.5773278474807739,
+                0.40687140822410586,
+                0.7879472374916077
+            ]
+        },
+        {
+            "prototypeIndex": 10,
+            "prototypeIdentityLow": 8066621976318381051,
+            "prototypeIdentityHigh": 4931076054286409029,
+            "prototypeCanonicalSource": "19:prototype-recipe-v1\n1:7\n1:1\n298:17:prototype-part-v1\n7:<owner>\n32:647d43b70a3b59a4ca7d65564dd6be8e\n7:4300000\n32:48843a2db7a47754f9c8d6ae390ebf4b\n7:2100000\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n11:0.648585856\n1:0\n11:0.458457023\n10:0.65171653\n11:0.541416466\n1:1\n1:1\n1:1\n1:1\n1:0\n1:0\n1:1\n1:1\n1:3\n1:1\n\n",
+            "semanticCategory": "Prop",
+            "placementCount": 410,
+            "firstPart": 12,
+            "partCount": 1,
+            "combinedLocalBoundsCenter": [
+                0.0,
+                0.648585855960846,
+                0.0
+            ],
+            "combinedLocalBoundsExtents": [
+                0.45845702290534975,
+                0.6517165303230286,
+                0.5414164662361145
+            ]
+        },
+        {
+            "prototypeIndex": 11,
+            "prototypeIdentityLow": 8532126060324450999,
+            "prototypeIdentityHigh": 11219412432911105760,
+            "prototypeCanonicalSource": "19:prototype-recipe-v1\n1:6\n1:1\n317:17:prototype-part-v1\n7:<owner>\n32:be4a07cdff8dcdf4b9e0f7902e558b3d\n7:4300000\n32:48843a2db7a47754f9c8d6ae390ebf4b\n7:2100000\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n12:-0.202843666\n9:1.7636652\n12:0.0273646116\n10:2.21984363\n10:1.78767252\n10:2.22844362\n1:1\n1:1\n1:1\n1:1\n1:0\n1:0\n1:1\n1:1\n1:3\n1:1\n\n",
+            "semanticCategory": "Vegetation",
+            "placementCount": 513,
+            "firstPart": 13,
+            "partCount": 1,
+            "combinedLocalBoundsCenter": [
+                -0.20284366607666017,
+                1.7636651992797852,
+                0.027364730834960939
+            ],
+            "combinedLocalBoundsExtents": [
+                2.219843626022339,
+                1.787672519683838,
+                2.2284436225891115
+            ]
+        },
+        {
+            "prototypeIndex": 12,
+            "prototypeIdentityLow": 9109319662044070667,
+            "prototypeIdentityHigh": 15635448529174169051,
+            "prototypeCanonicalSource": "19:prototype-recipe-v1\n1:7\n1:1\n302:17:prototype-part-v1\n7:<owner>\n32:e8fa72d4ed49e0b488a6a0ec8b602578\n7:4300000\n32:48843a2db7a47754f9c8d6ae390ebf4b\n7:2100000\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n13:0.00070130825\n8:1.180013\n1:0\n10:1.32710934\n8:1.180013\n10:1.20115113\n1:1\n1:1\n1:1\n1:1\n1:0\n1:0\n1:1\n1:1\n1:3\n1:1\n\n",
+            "semanticCategory": "Prop",
+            "placementCount": 118,
+            "firstPart": 14,
+            "partCount": 1,
+            "combinedLocalBoundsCenter": [
+                0.0007013082504272461,
+                1.1800129413604737,
+                0.0
+            ],
+            "combinedLocalBoundsExtents": [
+                1.3271093368530274,
+                1.1800129413604737,
+                1.2011511325836182
+            ]
+        },
+        {
+            "prototypeIndex": 13,
+            "prototypeIdentityLow": 9279155450332810070,
+            "prototypeIdentityHigh": 7998642710768359997,
+            "prototypeCanonicalSource": "19:prototype-recipe-v1\n1:6\n1:1\n308:17:prototype-part-v1\n7:<owner>\n32:2f7e0aa439a901b4a9757ecb86240adc\n7:4300000\n32:cecad80e1c7e042a79301a706cc153b2\n7:2100000\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n14:1.51991844E-06\n10:1.58799481\n1:0\n11:0.866189241\n10:1.74663687\n9:0.7707525\n1:1\n1:1\n1:1\n1:1\n1:2\n1:0\n1:1\n1:1\n1:3\n1:1\n\n",
+            "semanticCategory": "Vegetation",
+            "placementCount": 29,
+            "firstPart": 15,
+            "partCount": 1,
+            "combinedLocalBoundsCenter": [
+                0.0000015497207641601563,
+                1.5879948139190674,
+                0.0
+            ],
+            "combinedLocalBoundsExtents": [
+                0.8661892414093018,
+                1.7466368675231934,
+                0.770752489566803
+            ]
+        },
+        {
+            "prototypeIndex": 14,
+            "prototypeIdentityLow": 10134459287711900476,
+            "prototypeIdentityHigh": 10064868265905195040,
+            "prototypeCanonicalSource": "19:prototype-recipe-v1\n1:6\n1:1\n316:17:prototype-part-v1\n7:<owner>\n32:bf5b2ebf1cacbe54e9b59dc8c0f78eb3\n7:4300000\n32:cecad80e1c7e042a79301a706cc153b2\n7:2100000\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n13:-8.940697E-08\n10:1.62482083\n14:-1.1920929E-07\n9:0.6953163\n9:1.7557801\n9:0.7348919\n1:1\n1:1\n1:1\n1:1\n1:2\n1:0\n1:1\n1:1\n1:3\n1:1\n\n",
+            "semanticCategory": "Vegetation",
+            "placementCount": 46,
+            "firstPart": 16,
+            "partCount": 1,
+            "combinedLocalBoundsCenter": [
+                -1.1920928955078126e-7,
+                1.6248208284378052,
+                -1.1920928955078126e-7
+            ],
+            "combinedLocalBoundsExtents": [
+                0.6953163146972656,
+                1.7557801008224488,
+                0.7348918914794922
+            ]
+        },
+        {
+            "prototypeIndex": 15,
+            "prototypeIdentityLow": 10586452143135535427,
+            "prototypeIdentityHigh": 1028585902029933015,
+            "prototypeCanonicalSource": "19:prototype-recipe-v1\n1:7\n1:1\n299:17:prototype-part-v1\n7:<owner>\n32:68a228ecd3e471e44953c3fe98ff24e4\n7:4300000\n32:48843a2db7a47754f9c8d6ae390ebf4b\n7:2100000\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n11:0.227518961\n1:0\n11:0.333805531\n11:0.227518961\n11:0.315602154\n1:1\n1:1\n1:1\n1:1\n1:0\n1:0\n1:1\n1:1\n1:3\n1:1\n\n",
+            "semanticCategory": "Prop",
+            "placementCount": 385,
+            "firstPart": 17,
+            "partCount": 1,
+            "combinedLocalBoundsCenter": [
+                0.0,
+                0.2275189608335495,
+                0.0
+            ],
+            "combinedLocalBoundsExtents": [
+                0.33380553126335146,
+                0.2275189608335495,
+                0.3156021535396576
+            ]
+        },
+        {
+            "prototypeIndex": 16,
+            "prototypeIdentityLow": 10807427980238040860,
+            "prototypeIdentityHigh": 2932628480446460194,
+            "prototypeCanonicalSource": "19:prototype-recipe-v1\n1:7\n1:1\n313:17:prototype-part-v1\n7:<owner>\n32:63c4eb820380cdb4aaff090c308cf579\n7:4300000\n32:48843a2db7a47754f9c8d6ae390ebf4b\n7:2100000\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n14:3.12924385E-07\n11:0.163638413\n1:0\n11:0.292368472\n11:0.163638413\n11:0.221354976\n1:1\n1:1\n1:1\n1:1\n1:0\n1:0\n1:1\n1:1\n1:3\n1:1\n\n",
+            "semanticCategory": "Prop",
+            "placementCount": 378,
+            "firstPart": 18,
+            "partCount": 1,
+            "combinedLocalBoundsCenter": [
+                2.980232238769531e-7,
+                0.1636384129524231,
+                0.0
+            ],
+            "combinedLocalBoundsExtents": [
+                0.29236847162246706,
+                0.1636384129524231,
+                0.22135497629642487
+            ]
+        },
+        {
+            "prototypeIndex": 17,
+            "prototypeIdentityLow": 12640910068967529780,
+            "prototypeIdentityHigh": 1828510408653750617,
+            "prototypeCanonicalSource": "19:prototype-recipe-v1\n1:6\n1:1\n316:17:prototype-part-v1\n7:<owner>\n32:d7dccd4561a0eaf429da95d32356ad1a\n7:4300000\n32:48843a2db7a47754f9c8d6ae390ebf4b\n7:2100000\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n12:-0.206343353\n10:1.69192255\n12:0.0785554647\n10:1.59482718\n10:1.81142557\n8:1.353061\n1:1\n1:1\n1:1\n1:1\n1:0\n1:0\n1:1\n1:1\n1:3\n1:1\n\n",
+            "semanticCategory": "Vegetation",
+            "placementCount": 1826,
+            "firstPart": 19,
+            "partCount": 1,
+            "combinedLocalBoundsCenter": [
+                -0.206343412399292,
+                1.6919225454330445,
+                0.07855546474456787
+            ],
+            "combinedLocalBoundsExtents": [
+                1.5948271751403809,
+                1.8114255666732789,
+                1.3530609607696534
+            ]
+        },
+        {
+            "prototypeIndex": 18,
+            "prototypeIdentityLow": 17191271093234639874,
+            "prototypeIdentityHigh": 9392089431146667270,
+            "prototypeCanonicalSource": "19:prototype-recipe-v1\n1:6\n1:1\n318:17:prototype-part-v1\n7:<owner>\n32:2d0868feaa10fed48ad711efdfe0cd99\n7:4300000\n32:48843a2db7a47754f9c8d6ae390ebf4b\n7:2100000\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n12:-0.415977538\n10:2.86875081\n11:-0.04059291\n10:2.33171749\n10:3.03182149\n10:1.84348929\n1:1\n1:1\n1:1\n1:1\n1:0\n1:0\n1:1\n1:1\n1:3\n1:1\n\n",
+            "semanticCategory": "Vegetation",
+            "placementCount": 159,
+            "firstPart": 20,
+            "partCount": 1,
+            "combinedLocalBoundsCenter": [
+                -0.41597747802734377,
+                2.868750810623169,
+                -0.04059290885925293
+            ],
+            "combinedLocalBoundsExtents": [
+                2.3317174911499025,
+                3.0318214893341066,
+                1.8434892892837525
+            ]
+        },
+        {
+            "prototypeIndex": 19,
+            "prototypeIdentityLow": 17247872730400047659,
+            "prototypeIdentityHigh": 4392836909978401984,
+            "prototypeCanonicalSource": "19:prototype-recipe-v1\n1:6\n1:1\n312:17:prototype-part-v1\n7:<owner>\n32:de6f4735d4ee8304a8677559456ed51f\n7:4300000\n32:48843a2db7a47754f9c8d6ae390ebf4b\n7:2100000\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n10:0.09232819\n10:7.15536547\n10:-0.1115911\n10:3.85342026\n10:7.68750143\n8:3.604018\n1:1\n1:1\n1:1\n1:1\n1:0\n1:0\n1:1\n1:1\n1:3\n1:1\n\n",
+            "semanticCategory": "Vegetation",
+            "placementCount": 272,
+            "firstPart": 21,
+            "partCount": 1,
+            "combinedLocalBoundsCenter": [
+                0.09232807159423828,
+                7.155365467071533,
+                -0.11159110069274903
+            ],
+            "combinedLocalBoundsExtents": [
+                3.8534202575683595,
+                7.687501430511475,
+                3.604017972946167
+            ]
+        },
+        {
+            "prototypeIndex": 20,
+            "prototypeIdentityLow": 17492198600467072391,
+            "prototypeIdentityHigh": 7518316506423869336,
+            "prototypeCanonicalSource": "19:prototype-recipe-v1\n1:7\n1:1\n299:17:prototype-part-v1\n7:<owner>\n32:66d0394c999737e4488c3589e5c95672\n7:4300000\n32:48843a2db7a47754f9c8d6ae390ebf4b\n7:2100000\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n11:0.485797673\n1:0\n11:0.267180771\n11:0.485797673\n11:0.317292482\n1:1\n1:1\n1:1\n1:1\n1:0\n1:0\n1:1\n1:1\n1:3\n1:1\n\n",
+            "semanticCategory": "Prop",
+            "placementCount": 352,
+            "firstPart": 22,
+            "partCount": 1,
+            "combinedLocalBoundsCenter": [
+                0.0,
+                0.4857976734638214,
+                0.0
+            ],
+            "combinedLocalBoundsExtents": [
+                0.26718077063560488,
+                0.4857976734638214,
+                0.3172924816608429
+            ]
+        },
+        {
+            "prototypeIndex": 21,
+            "prototypeIdentityLow": 17695498578273937966,
+            "prototypeIdentityHigh": 10819982552380163139,
+            "prototypeCanonicalSource": "19:prototype-recipe-v1\n1:7\n1:3\n306:17:prototype-part-v1\n7:<owner>\n32:810236f6a4d110548996e6294272c7d2\n7:4300000\n32:48843a2db7a47754f9c8d6ae390ebf4b\n7:2100000\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n10:1.16066372\n10:-0.8504102\n11:0.841232359\n10:1.16057813\n10:1.35921979\n1:1\n1:1\n1:1\n1:1\n1:0\n1:0\n1:1\n1:1\n1:3\n1:1\n\n359:17:prototype-part-v1\n29:SM_Prop_Cart_Stall_Wheel_l[0]\n32:810236f6a4d110548996e6294272c7d2\n7:4300002\n32:48843a2db7a47754f9c8d6ae390ebf4b\n7:2100000\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n10:-0.5366672\n11:0.185802117\n15:-0.000724740443\n1:1\n1:0\n1:0\n14:2.23517418E-08\n10:0.07128658\n10:0.17926982\n11:0.179269552\n1:1\n1:1\n1:1\n1:1\n1:0\n1:0\n1:1\n1:1\n1:3\n1:1\n\n360:17:prototype-part-v1\n29:SM_Prop_Cart_Stall_Wheel_r[1]\n32:810236f6a4d110548996e6294272c7d2\n7:4300004\n32:48843a2db7a47754f9c8d6ae390ebf4b\n7:2100000\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n1:0\n1:0\n1:0\n1:1\n1:0\n11:0.759594738\n11:0.185802117\n15:-0.000724740443\n1:1\n1:0\n1:0\n14:2.23517418E-08\n10:0.07128658\n10:0.17926982\n11:0.179269552\n1:1\n1:1\n1:1\n1:1\n1:0\n1:0\n1:1\n1:1\n1:3\n1:1\n\n",
+            "semanticCategory": "Prop",
+            "placementCount": 409,
+            "firstPart": 23,
+            "partCount": 3,
+            "combinedLocalBoundsCenter": [
+                0.0,
+                1.1606637239456177,
+                -0.8504102230072022
+            ],
+            "combinedLocalBoundsExtents": [
+                0.8412323594093323,
+                1.1605781316757203,
+                1.3592197895050049
+            ]
+        }
+    ],
+    "parts": [
+        {
+            "partIndex": 0,
+            "prototypeIndex": 0,
+            "rendererPath": "<owner>",
+            "partFingerprintLow": 8170191218808413104,
+            "partFingerprintHigh": 8816750836586284701,
+            "meshAssetGuid": "ffc63fecea48ed3418c6689c532819c0",
+            "meshLocalId": 4300000,
+            "materialAssetGuid": "cecad80e1c7e042a79301a706cc153b2",
+            "materialLocalId": 2100000,
+            "subMeshIndex": 0,
+            "localToPlacement": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localBoundsCenter": [
+                0.059529125690460208,
+                1.5168877840042115,
+                0.048305392265319827
+            ],
+            "localBoundsExtents": [
+                0.9059106111526489,
+                1.647847056388855,
+                0.8522810339927673
+            ],
+            "linearBaseColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "policyBucket": "AlphaClippedShadowsOn",
+            "layer": 0,
+            "renderingLayerMask": 1,
+            "motionVectorMode": "Object",
+            "shadowFlags": 3,
+            "lodFlags": 1
+        },
+        {
+            "partIndex": 1,
+            "prototypeIndex": 1,
+            "rendererPath": "<owner>",
+            "partFingerprintLow": 4530679061967069197,
+            "partFingerprintHigh": 2424666912603800275,
+            "meshAssetGuid": "7040ec9be36e5cd42a1ed2e47a82097e",
+            "meshLocalId": 4300000,
+            "materialAssetGuid": "48843a2db7a47754f9c8d6ae390ebf4b",
+            "materialLocalId": 2100000,
+            "subMeshIndex": 0,
+            "localToPlacement": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localBoundsCenter": [
+                0.0,
+                0.31922101974487307,
+                0.0
+            ],
+            "localBoundsExtents": [
+                0.2826356589794159,
+                0.31922101974487307,
+                0.27786076068878176
+            ],
+            "linearBaseColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "policyBucket": "OpaqueShadowsOn",
+            "layer": 0,
+            "renderingLayerMask": 1,
+            "motionVectorMode": "Object",
+            "shadowFlags": 3,
+            "lodFlags": 1
+        },
+        {
+            "partIndex": 2,
+            "prototypeIndex": 2,
+            "rendererPath": "<owner>",
+            "partFingerprintLow": 11789887200207425498,
+            "partFingerprintHigh": 6170307041760053036,
+            "meshAssetGuid": "fb72c742ade8526468381ba864289832",
+            "meshLocalId": 4300000,
+            "materialAssetGuid": "cecad80e1c7e042a79301a706cc153b2",
+            "materialLocalId": 2100000,
+            "subMeshIndex": 0,
+            "localToPlacement": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localBoundsCenter": [
+                -0.288458913564682,
+                1.4788172245025635,
+                3.5762786865234377e-7
+            ],
+            "localBoundsExtents": [
+                0.9078918695449829,
+                1.609776496887207,
+                0.7681770920753479
+            ],
+            "linearBaseColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "policyBucket": "AlphaClippedShadowsOn",
+            "layer": 0,
+            "renderingLayerMask": 1,
+            "motionVectorMode": "Object",
+            "shadowFlags": 3,
+            "lodFlags": 1
+        },
+        {
+            "partIndex": 3,
+            "prototypeIndex": 3,
+            "rendererPath": "<owner>",
+            "partFingerprintLow": 15954429406991754802,
+            "partFingerprintHigh": 5236046750090172983,
+            "meshAssetGuid": "6b092fe425afd3c42ba205e5401e7f5b",
+            "meshLocalId": 4300000,
+            "materialAssetGuid": "48843a2db7a47754f9c8d6ae390ebf4b",
+            "materialLocalId": 2100000,
+            "subMeshIndex": 0,
+            "localToPlacement": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localBoundsCenter": [
+                -3.0547380447387697e-7,
+                0.28005507588386538,
+                2.980232238769531e-7
+            ],
+            "localBoundsExtents": [
+                0.21261993050575257,
+                0.28066542744636538,
+                0.3201998770236969
+            ],
+            "linearBaseColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "policyBucket": "OpaqueShadowsOn",
+            "layer": 0,
+            "renderingLayerMask": 1,
+            "motionVectorMode": "Object",
+            "shadowFlags": 3,
+            "lodFlags": 1
+        },
+        {
+            "partIndex": 4,
+            "prototypeIndex": 4,
+            "rendererPath": "<owner>",
+            "partFingerprintLow": 8273793708888222315,
+            "partFingerprintHigh": 16248825817407554282,
+            "meshAssetGuid": "a46009c4d241a2d488f9a56ed636daec",
+            "meshLocalId": 4300000,
+            "materialAssetGuid": "48843a2db7a47754f9c8d6ae390ebf4b",
+            "materialLocalId": 2100000,
+            "subMeshIndex": 0,
+            "localToPlacement": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localBoundsCenter": [
+                0.0,
+                0.9381289482116699,
+                0.0
+            ],
+            "localBoundsExtents": [
+                2.758165121078491,
+                0.9458001852035523,
+                0.5473206043243408
+            ],
+            "linearBaseColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "policyBucket": "OpaqueShadowsOn",
+            "layer": 0,
+            "renderingLayerMask": 1,
+            "motionVectorMode": "Object",
+            "shadowFlags": 3,
+            "lodFlags": 1
+        },
+        {
+            "partIndex": 5,
+            "prototypeIndex": 5,
+            "rendererPath": "<owner>",
+            "partFingerprintLow": 10125328552162887449,
+            "partFingerprintHigh": 2718570946510585401,
+            "meshAssetGuid": "04fc367986963124c9cddd4d12052fcd",
+            "meshLocalId": 4300000,
+            "materialAssetGuid": "48843a2db7a47754f9c8d6ae390ebf4b",
+            "materialLocalId": 2100000,
+            "subMeshIndex": 0,
+            "localToPlacement": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localBoundsCenter": [
+                0.0,
+                0.08596695959568024,
+                0.0
+            ],
+            "localBoundsExtents": [
+                0.9036193490028381,
+                0.08596695959568024,
+                0.9036193490028381
+            ],
+            "linearBaseColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "policyBucket": "OpaqueShadowsOn",
+            "layer": 0,
+            "renderingLayerMask": 1,
+            "motionVectorMode": "Object",
+            "shadowFlags": 3,
+            "lodFlags": 1
+        },
+        {
+            "partIndex": 6,
+            "prototypeIndex": 6,
+            "rendererPath": "<owner>",
+            "partFingerprintLow": 18287377869028186380,
+            "partFingerprintHigh": 11154750327148824391,
+            "meshAssetGuid": "889ed087ce0dc9d4f945bd290b763d9b",
+            "meshLocalId": 4300000,
+            "materialAssetGuid": "48843a2db7a47754f9c8d6ae390ebf4b",
+            "materialLocalId": 2100000,
+            "subMeshIndex": 0,
+            "localToPlacement": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localBoundsCenter": [
+                0.0,
+                0.528856098651886,
+                -0.6744741797447205
+            ],
+            "localBoundsExtents": [
+                1.1457347869873047,
+                0.528856098651886,
+                1.9460244178771973
+            ],
+            "linearBaseColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "policyBucket": "OpaqueShadowsOn",
+            "layer": 0,
+            "renderingLayerMask": 1,
+            "motionVectorMode": "Object",
+            "shadowFlags": 3,
+            "lodFlags": 1
+        },
+        {
+            "partIndex": 7,
+            "prototypeIndex": 6,
+            "rendererPath": "SM_Prop_Cart_Wood_WHeel_l[0]",
+            "partFingerprintLow": 8266353457952583465,
+            "partFingerprintHigh": 5846586413765176926,
+            "meshAssetGuid": "889ed087ce0dc9d4f945bd290b763d9b",
+            "meshLocalId": 4300004,
+            "materialAssetGuid": "48843a2db7a47754f9c8d6ae390ebf4b",
+            "materialLocalId": 2100000,
+            "subMeshIndex": 0,
+            "localToPlacement": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                -0.8567481637001038,
+                0.39758291840553286,
+                -1.0025532759527778e-7,
+                1.0
+            ],
+            "localBoundsCenter": [
+                -2.9802322387695315e-8,
+                0.0,
+                0.0
+            ],
+            "localBoundsExtents": [
+                0.1536273956298828,
+                0.39758291840553286,
+                0.3975830078125
+            ],
+            "linearBaseColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "policyBucket": "OpaqueShadowsOn",
+            "layer": 0,
+            "renderingLayerMask": 1,
+            "motionVectorMode": "Object",
+            "shadowFlags": 3,
+            "lodFlags": 1
+        },
+        {
+            "partIndex": 8,
+            "prototypeIndex": 6,
+            "rendererPath": "SM_Prop_Cart_Wood_WHeel_r[1]",
+            "partFingerprintLow": 17612737190801615958,
+            "partFingerprintHigh": 12092369707055268516,
+            "meshAssetGuid": "889ed087ce0dc9d4f945bd290b763d9b",
+            "meshLocalId": 4300002,
+            "materialAssetGuid": "48843a2db7a47754f9c8d6ae390ebf4b",
+            "materialLocalId": 2100000,
+            "subMeshIndex": 0,
+            "localToPlacement": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.9320518374443054,
+                0.39758291840553286,
+                -1.0025532759527778e-7,
+                1.0
+            ],
+            "localBoundsCenter": [
+                -2.9802322387695315e-8,
+                0.0,
+                0.0
+            ],
+            "localBoundsExtents": [
+                0.15199783444404603,
+                0.39758291840553286,
+                0.3975830078125
+            ],
+            "linearBaseColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "policyBucket": "OpaqueShadowsOn",
+            "layer": 0,
+            "renderingLayerMask": 1,
+            "motionVectorMode": "Object",
+            "shadowFlags": 3,
+            "lodFlags": 1
+        },
+        {
+            "partIndex": 9,
+            "prototypeIndex": 7,
+            "rendererPath": "<owner>",
+            "partFingerprintLow": 12425164781483339337,
+            "partFingerprintHigh": 7610026353405935411,
+            "meshAssetGuid": "17ccc6b9b48bbe641a5431d19baa6186",
+            "meshLocalId": 4300000,
+            "materialAssetGuid": "48843a2db7a47754f9c8d6ae390ebf4b",
+            "materialLocalId": 2100000,
+            "subMeshIndex": 0,
+            "localToPlacement": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localBoundsCenter": [
+                0.0,
+                0.44670552015304568,
+                0.0
+            ],
+            "localBoundsExtents": [
+                0.9959301352500916,
+                0.5716927647590637,
+                0.8959305286407471
+            ],
+            "linearBaseColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "policyBucket": "OpaqueShadowsOn",
+            "layer": 0,
+            "renderingLayerMask": 1,
+            "motionVectorMode": "Object",
+            "shadowFlags": 3,
+            "lodFlags": 1
+        },
+        {
+            "partIndex": 10,
+            "prototypeIndex": 8,
+            "rendererPath": "<owner>",
+            "partFingerprintLow": 3809506940501641149,
+            "partFingerprintHigh": 15654353756788178704,
+            "meshAssetGuid": "3e4eb286fced4ce45a66b2c511233efd",
+            "meshLocalId": 4300000,
+            "materialAssetGuid": "48843a2db7a47754f9c8d6ae390ebf4b",
+            "materialLocalId": 2100000,
+            "subMeshIndex": 0,
+            "localToPlacement": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localBoundsCenter": [
+                -0.11471986770629883,
+                0.9974501132965088,
+                -0.015475928783416748
+            ],
+            "localBoundsExtents": [
+                1.2554442882537842,
+                1.0110275745391846,
+                1.2603082656860352
+            ],
+            "linearBaseColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "policyBucket": "OpaqueShadowsOn",
+            "layer": 0,
+            "renderingLayerMask": 1,
+            "motionVectorMode": "Object",
+            "shadowFlags": 3,
+            "lodFlags": 1
+        },
+        {
+            "partIndex": 11,
+            "prototypeIndex": 9,
+            "rendererPath": "<owner>",
+            "partFingerprintLow": 17017939240881566039,
+            "partFingerprintHigh": 16071217015208042734,
+            "meshAssetGuid": "5f462e34be722aa4a9145d0222da07f0",
+            "meshLocalId": 4300000,
+            "materialAssetGuid": "48843a2db7a47754f9c8d6ae390ebf4b",
+            "materialLocalId": 2100000,
+            "subMeshIndex": 0,
+            "localToPlacement": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localBoundsCenter": [
+                0.0,
+                0.40687140822410586,
+                0.0
+            ],
+            "localBoundsExtents": [
+                0.5773278474807739,
+                0.40687140822410586,
+                0.7879472374916077
+            ],
+            "linearBaseColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "policyBucket": "OpaqueShadowsOn",
+            "layer": 0,
+            "renderingLayerMask": 1,
+            "motionVectorMode": "Object",
+            "shadowFlags": 3,
+            "lodFlags": 1
+        },
+        {
+            "partIndex": 12,
+            "prototypeIndex": 10,
+            "rendererPath": "<owner>",
+            "partFingerprintLow": 12996090972945427341,
+            "partFingerprintHigh": 15828586854251776197,
+            "meshAssetGuid": "647d43b70a3b59a4ca7d65564dd6be8e",
+            "meshLocalId": 4300000,
+            "materialAssetGuid": "48843a2db7a47754f9c8d6ae390ebf4b",
+            "materialLocalId": 2100000,
+            "subMeshIndex": 0,
+            "localToPlacement": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localBoundsCenter": [
+                0.0,
+                0.648585855960846,
+                0.0
+            ],
+            "localBoundsExtents": [
+                0.45845702290534975,
+                0.6517165303230286,
+                0.5414164662361145
+            ],
+            "linearBaseColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "policyBucket": "OpaqueShadowsOn",
+            "layer": 0,
+            "renderingLayerMask": 1,
+            "motionVectorMode": "Object",
+            "shadowFlags": 3,
+            "lodFlags": 1
+        },
+        {
+            "partIndex": 13,
+            "prototypeIndex": 11,
+            "rendererPath": "<owner>",
+            "partFingerprintLow": 3882221248757201986,
+            "partFingerprintHigh": 3120544797967092957,
+            "meshAssetGuid": "be4a07cdff8dcdf4b9e0f7902e558b3d",
+            "meshLocalId": 4300000,
+            "materialAssetGuid": "48843a2db7a47754f9c8d6ae390ebf4b",
+            "materialLocalId": 2100000,
+            "subMeshIndex": 0,
+            "localToPlacement": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localBoundsCenter": [
+                -0.20284366607666017,
+                1.7636651992797852,
+                0.027364611625671388
+            ],
+            "localBoundsExtents": [
+                2.219843626022339,
+                1.787672519683838,
+                2.2284436225891115
+            ],
+            "linearBaseColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "policyBucket": "OpaqueShadowsOn",
+            "layer": 0,
+            "renderingLayerMask": 1,
+            "motionVectorMode": "Object",
+            "shadowFlags": 3,
+            "lodFlags": 1
+        },
+        {
+            "partIndex": 14,
+            "prototypeIndex": 12,
+            "rendererPath": "<owner>",
+            "partFingerprintLow": 5438295989380674843,
+            "partFingerprintHigh": 1485767572406282227,
+            "meshAssetGuid": "e8fa72d4ed49e0b488a6a0ec8b602578",
+            "meshLocalId": 4300000,
+            "materialAssetGuid": "48843a2db7a47754f9c8d6ae390ebf4b",
+            "materialLocalId": 2100000,
+            "subMeshIndex": 0,
+            "localToPlacement": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localBoundsCenter": [
+                0.0007013082504272461,
+                1.1800129413604737,
+                0.0
+            ],
+            "localBoundsExtents": [
+                1.3271093368530274,
+                1.1800129413604737,
+                1.2011511325836182
+            ],
+            "linearBaseColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "policyBucket": "OpaqueShadowsOn",
+            "layer": 0,
+            "renderingLayerMask": 1,
+            "motionVectorMode": "Object",
+            "shadowFlags": 3,
+            "lodFlags": 1
+        },
+        {
+            "partIndex": 15,
+            "prototypeIndex": 13,
+            "rendererPath": "<owner>",
+            "partFingerprintLow": 17831349025188163998,
+            "partFingerprintHigh": 11477341623124519815,
+            "meshAssetGuid": "2f7e0aa439a901b4a9757ecb86240adc",
+            "meshLocalId": 4300000,
+            "materialAssetGuid": "cecad80e1c7e042a79301a706cc153b2",
+            "materialLocalId": 2100000,
+            "subMeshIndex": 0,
+            "localToPlacement": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localBoundsCenter": [
+                0.000001519918441772461,
+                1.5879948139190674,
+                0.0
+            ],
+            "localBoundsExtents": [
+                0.8661892414093018,
+                1.7466368675231934,
+                0.770752489566803
+            ],
+            "linearBaseColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "policyBucket": "AlphaClippedShadowsOn",
+            "layer": 0,
+            "renderingLayerMask": 1,
+            "motionVectorMode": "Object",
+            "shadowFlags": 3,
+            "lodFlags": 1
+        },
+        {
+            "partIndex": 16,
+            "prototypeIndex": 14,
+            "rendererPath": "<owner>",
+            "partFingerprintLow": 6934054724941744844,
+            "partFingerprintHigh": 505439972255843461,
+            "meshAssetGuid": "bf5b2ebf1cacbe54e9b59dc8c0f78eb3",
+            "meshLocalId": 4300000,
+            "materialAssetGuid": "cecad80e1c7e042a79301a706cc153b2",
+            "materialLocalId": 2100000,
+            "subMeshIndex": 0,
+            "localToPlacement": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localBoundsCenter": [
+                -8.940696716308594e-8,
+                1.6248208284378052,
+                -1.1920928955078126e-7
+            ],
+            "localBoundsExtents": [
+                0.6953163146972656,
+                1.7557801008224488,
+                0.7348918914794922
+            ],
+            "linearBaseColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "policyBucket": "AlphaClippedShadowsOn",
+            "layer": 0,
+            "renderingLayerMask": 1,
+            "motionVectorMode": "Object",
+            "shadowFlags": 3,
+            "lodFlags": 1
+        },
+        {
+            "partIndex": 17,
+            "prototypeIndex": 15,
+            "rendererPath": "<owner>",
+            "partFingerprintLow": 6295498722012153162,
+            "partFingerprintHigh": 14347095212901281651,
+            "meshAssetGuid": "68a228ecd3e471e44953c3fe98ff24e4",
+            "meshLocalId": 4300000,
+            "materialAssetGuid": "48843a2db7a47754f9c8d6ae390ebf4b",
+            "materialLocalId": 2100000,
+            "subMeshIndex": 0,
+            "localToPlacement": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localBoundsCenter": [
+                0.0,
+                0.2275189608335495,
+                0.0
+            ],
+            "localBoundsExtents": [
+                0.33380553126335146,
+                0.2275189608335495,
+                0.3156021535396576
+            ],
+            "linearBaseColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "policyBucket": "OpaqueShadowsOn",
+            "layer": 0,
+            "renderingLayerMask": 1,
+            "motionVectorMode": "Object",
+            "shadowFlags": 3,
+            "lodFlags": 1
+        },
+        {
+            "partIndex": 18,
+            "prototypeIndex": 16,
+            "rendererPath": "<owner>",
+            "partFingerprintLow": 15368820466699559043,
+            "partFingerprintHigh": 2669337718718278459,
+            "meshAssetGuid": "63c4eb820380cdb4aaff090c308cf579",
+            "meshLocalId": 4300000,
+            "materialAssetGuid": "48843a2db7a47754f9c8d6ae390ebf4b",
+            "materialLocalId": 2100000,
+            "subMeshIndex": 0,
+            "localToPlacement": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localBoundsCenter": [
+                3.129243850708008e-7,
+                0.1636384129524231,
+                0.0
+            ],
+            "localBoundsExtents": [
+                0.29236847162246706,
+                0.1636384129524231,
+                0.22135497629642487
+            ],
+            "linearBaseColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "policyBucket": "OpaqueShadowsOn",
+            "layer": 0,
+            "renderingLayerMask": 1,
+            "motionVectorMode": "Object",
+            "shadowFlags": 3,
+            "lodFlags": 1
+        },
+        {
+            "partIndex": 19,
+            "prototypeIndex": 17,
+            "rendererPath": "<owner>",
+            "partFingerprintLow": 11357819347538801356,
+            "partFingerprintHigh": 4732646710351401275,
+            "meshAssetGuid": "d7dccd4561a0eaf429da95d32356ad1a",
+            "meshLocalId": 4300000,
+            "materialAssetGuid": "48843a2db7a47754f9c8d6ae390ebf4b",
+            "materialLocalId": 2100000,
+            "subMeshIndex": 0,
+            "localToPlacement": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localBoundsCenter": [
+                -0.20634335279464723,
+                1.6919225454330445,
+                0.07855546474456787
+            ],
+            "localBoundsExtents": [
+                1.5948271751403809,
+                1.8114255666732789,
+                1.3530609607696534
+            ],
+            "linearBaseColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "policyBucket": "OpaqueShadowsOn",
+            "layer": 0,
+            "renderingLayerMask": 1,
+            "motionVectorMode": "Object",
+            "shadowFlags": 3,
+            "lodFlags": 1
+        },
+        {
+            "partIndex": 20,
+            "prototypeIndex": 18,
+            "rendererPath": "<owner>",
+            "partFingerprintLow": 18239036155441485379,
+            "partFingerprintHigh": 13835916252608908335,
+            "meshAssetGuid": "2d0868feaa10fed48ad711efdfe0cd99",
+            "meshLocalId": 4300000,
+            "materialAssetGuid": "48843a2db7a47754f9c8d6ae390ebf4b",
+            "materialLocalId": 2100000,
+            "subMeshIndex": 0,
+            "localToPlacement": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localBoundsCenter": [
+                -0.4159775376319885,
+                2.868750810623169,
+                -0.04059290885925293
+            ],
+            "localBoundsExtents": [
+                2.3317174911499025,
+                3.0318214893341066,
+                1.8434892892837525
+            ],
+            "linearBaseColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "policyBucket": "OpaqueShadowsOn",
+            "layer": 0,
+            "renderingLayerMask": 1,
+            "motionVectorMode": "Object",
+            "shadowFlags": 3,
+            "lodFlags": 1
+        },
+        {
+            "partIndex": 21,
+            "prototypeIndex": 19,
+            "rendererPath": "<owner>",
+            "partFingerprintLow": 8098862337955241714,
+            "partFingerprintHigh": 1210381342019372670,
+            "meshAssetGuid": "de6f4735d4ee8304a8677559456ed51f",
+            "meshLocalId": 4300000,
+            "materialAssetGuid": "48843a2db7a47754f9c8d6ae390ebf4b",
+            "materialLocalId": 2100000,
+            "subMeshIndex": 0,
+            "localToPlacement": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localBoundsCenter": [
+                0.09232819080352783,
+                7.155365467071533,
+                -0.11159110069274903
+            ],
+            "localBoundsExtents": [
+                3.8534202575683595,
+                7.687501430511475,
+                3.604017972946167
+            ],
+            "linearBaseColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "policyBucket": "OpaqueShadowsOn",
+            "layer": 0,
+            "renderingLayerMask": 1,
+            "motionVectorMode": "Object",
+            "shadowFlags": 3,
+            "lodFlags": 1
+        },
+        {
+            "partIndex": 22,
+            "prototypeIndex": 20,
+            "rendererPath": "<owner>",
+            "partFingerprintLow": 16975151319261686091,
+            "partFingerprintHigh": 2752296996392486703,
+            "meshAssetGuid": "66d0394c999737e4488c3589e5c95672",
+            "meshLocalId": 4300000,
+            "materialAssetGuid": "48843a2db7a47754f9c8d6ae390ebf4b",
+            "materialLocalId": 2100000,
+            "subMeshIndex": 0,
+            "localToPlacement": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localBoundsCenter": [
+                0.0,
+                0.4857976734638214,
+                0.0
+            ],
+            "localBoundsExtents": [
+                0.26718077063560488,
+                0.4857976734638214,
+                0.3172924816608429
+            ],
+            "linearBaseColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "policyBucket": "OpaqueShadowsOn",
+            "layer": 0,
+            "renderingLayerMask": 1,
+            "motionVectorMode": "Object",
+            "shadowFlags": 3,
+            "lodFlags": 1
+        },
+        {
+            "partIndex": 23,
+            "prototypeIndex": 21,
+            "rendererPath": "<owner>",
+            "partFingerprintLow": 12149033020992486148,
+            "partFingerprintHigh": 9138590692250321411,
+            "meshAssetGuid": "810236f6a4d110548996e6294272c7d2",
+            "meshLocalId": 4300000,
+            "materialAssetGuid": "48843a2db7a47754f9c8d6ae390ebf4b",
+            "materialLocalId": 2100000,
+            "subMeshIndex": 0,
+            "localToPlacement": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "localBoundsCenter": [
+                0.0,
+                1.1606637239456177,
+                -0.8504102230072022
+            ],
+            "localBoundsExtents": [
+                0.8412323594093323,
+                1.1605781316757203,
+                1.3592197895050049
+            ],
+            "linearBaseColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "policyBucket": "OpaqueShadowsOn",
+            "layer": 0,
+            "renderingLayerMask": 1,
+            "motionVectorMode": "Object",
+            "shadowFlags": 3,
+            "lodFlags": 1
+        },
+        {
+            "partIndex": 24,
+            "prototypeIndex": 21,
+            "rendererPath": "SM_Prop_Cart_Stall_Wheel_l[0]",
+            "partFingerprintLow": 2040796621134702876,
+            "partFingerprintHigh": 11792462111242010365,
+            "meshAssetGuid": "810236f6a4d110548996e6294272c7d2",
+            "meshLocalId": 4300002,
+            "materialAssetGuid": "48843a2db7a47754f9c8d6ae390ebf4b",
+            "materialLocalId": 2100000,
+            "subMeshIndex": 0,
+            "localToPlacement": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                -0.5366672277450562,
+                0.18580211699008943,
+                -0.0007247404428198934,
+                1.0
+            ],
+            "localBoundsCenter": [
+                0.0,
+                0.0,
+                2.2351741790771486e-8
+            ],
+            "localBoundsExtents": [
+                0.07128658145666123,
+                0.17926982045173646,
+                0.17926955223083497
+            ],
+            "linearBaseColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "policyBucket": "OpaqueShadowsOn",
+            "layer": 0,
+            "renderingLayerMask": 1,
+            "motionVectorMode": "Object",
+            "shadowFlags": 3,
+            "lodFlags": 1
+        },
+        {
+            "partIndex": 25,
+            "prototypeIndex": 21,
+            "rendererPath": "SM_Prop_Cart_Stall_Wheel_r[1]",
+            "partFingerprintLow": 4350765276250288055,
+            "partFingerprintHigh": 4484433188130004074,
+            "meshAssetGuid": "810236f6a4d110548996e6294272c7d2",
+            "meshLocalId": 4300004,
+            "materialAssetGuid": "48843a2db7a47754f9c8d6ae390ebf4b",
+            "materialLocalId": 2100000,
+            "subMeshIndex": 0,
+            "localToPlacement": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.759594738483429,
+                0.18580211699008943,
+                -0.0007247404428198934,
+                1.0
+            ],
+            "localBoundsCenter": [
+                0.0,
+                0.0,
+                2.2351741790771486e-8
+            ],
+            "localBoundsExtents": [
+                0.07128658145666123,
+                0.17926982045173646,
+                0.17926955223083497
+            ],
+            "linearBaseColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "policyBucket": "OpaqueShadowsOn",
+            "layer": 0,
+            "renderingLayerMask": 1,
+            "motionVectorMode": "Object",
+            "shadowFlags": 3,
+            "lodFlags": 1
+        }
+    ]
+}

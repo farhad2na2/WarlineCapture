@@ -13,6 +13,7 @@ namespace Game.Editor
     using Game.Authoring;
     using Game.Components;
     using Game.Configs;
+    using Unity.Mathematics;
     using UnityEditor;
     using UnityEditor.SceneManagement;
     using UnityEngine;
@@ -29,6 +30,8 @@ namespace Game.Editor
             "Design/AgentReports/2026-07-28_dense_city_render_virtualization_eligibility_inventory.json";
         internal const string SourceRowsPath =
             "Design/AgentReports/2026-07-28_dense_city_render_virtualization_source_rows.json.gz";
+        internal const string PrototypeRecipesPath =
+            "Design/AgentReports/2026-07-28_dense_city_render_virtualization_prototype_recipes.json";
         internal const int ExpectedPackedRenderRowCount = 82797;
         private static readonly UTF8Encoding Utf8WithoutBom = new(false);
 
@@ -44,6 +47,8 @@ namespace Game.Editor
                 InventoryReport report = Build(scene);
                 string outputPath = Path.Combine(projectRoot, ReportPath);
                 string sourceRowsOutputPath = Path.Combine(projectRoot, SourceRowsPath);
+                string prototypeRecipesOutputPath =
+                    Path.Combine(projectRoot, PrototypeRecipesPath);
                 Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
                 byte[] sourceRowsJson = Utf8WithoutBom.GetBytes(
                     JsonUtility.ToJson(
@@ -66,11 +71,24 @@ namespace Game.Editor
                 report.sourceRowsGzipSha256 = ComputeSha256(sourceRowsGzip);
                 report.sourceRows = null;
 
+                byte[] prototypeRecipesJson = Utf8WithoutBom.GetBytes(
+                    JsonUtility.ToJson(report.prototypeRecipes, true) + "\n");
+                report.prototypeRecipesPath = PrototypeRecipesPath;
+                report.prototypeRecipesJsonSha256 = ComputeSha256(prototypeRecipesJson);
+                report.prototypeRecipes = null;
+
                 string sourceRowsTemporaryPath = sourceRowsOutputPath + ".tmp";
                 File.WriteAllBytes(sourceRowsTemporaryPath, sourceRowsGzip);
                 if (File.Exists(sourceRowsOutputPath))
                     File.Delete(sourceRowsOutputPath);
                 File.Move(sourceRowsTemporaryPath, sourceRowsOutputPath);
+
+                string prototypeRecipesTemporaryPath =
+                    prototypeRecipesOutputPath + ".tmp";
+                File.WriteAllBytes(prototypeRecipesTemporaryPath, prototypeRecipesJson);
+                if (File.Exists(prototypeRecipesOutputPath))
+                    File.Delete(prototypeRecipesOutputPath);
+                File.Move(prototypeRecipesTemporaryPath, prototypeRecipesOutputPath);
 
                 string temporaryPath = outputPath + ".tmp";
                 File.WriteAllText(
@@ -85,7 +103,9 @@ namespace Game.Editor
                     $"[OperationMapRenderEligibilityInventoryProbe] result=Passed " +
                     $"rows={report.totalRenderRows} eligible={report.eligibleRenderRows} " +
                     $"excluded={report.excludedRenderRows} joined={report.stableOwnerJoinedRenderRows} " +
-                    $"report={ReportPath} sourceRows={SourceRowsPath}");
+                    $"prototypes={report.prototypeCount} parts={report.prototypePartCount} " +
+                    $"report={ReportPath} sourceRows={SourceRowsPath} " +
+                    $"prototypeRecipes={PrototypeRecipesPath}");
             }
             catch (Exception exception)
             {
@@ -146,6 +166,7 @@ namespace Game.Editor
             var rendererPathIdentityCollisions = new OperationMapRenderIdentityCollisionDetector();
             var logicalRowIdentityCollisions = new OperationMapRenderIdentityCollisionDetector();
             var logicalRowSources = new HashSet<string>(StringComparer.Ordinal);
+            var eligiblePartCandidates = new List<EligiblePartCandidate>();
             int eligible = 0;
             int stableOwnerJoined = 0;
             int eligibleStableOwnerJoined = 0;
@@ -155,7 +176,11 @@ namespace Game.Editor
                 bool repeated =
                     signatureCounts.TryGetValue(row.Signature, out int signatureCount) &&
                     signatureCount > 1;
-                bool policySupported = TryClassifyPolicy(row.Renderer, row.Material, out string policy);
+                bool policySupported = TryClassifyPolicy(
+                    row.Renderer,
+                    row.Material,
+                    out string policy,
+                    out OperationMapRenderPolicyKey policyKey);
                 string reason = Classify(row, repeated, policySupported);
                 bool isEligible = string.Equals(reason, "eligible", StringComparison.Ordinal);
                 if (isEligible)
@@ -184,6 +209,11 @@ namespace Game.Editor
                     if (isEligible)
                         eligibleStableOwnerJoined++;
                 }
+                if (isEligible)
+                {
+                    eligiblePartCandidates.Add(
+                        BuildEligiblePartCandidate(row, sourceRow, policyKey));
+                }
             }
 
             if (rows.Count != ExpectedPackedRenderRowCount)
@@ -202,11 +232,19 @@ namespace Game.Editor
             sourceRows.Sort(SourceRowReportComparer.Instance);
             for (int index = 0; index < sourceRows.Count; index++)
                 sourceRows[index].sourceRowIndex = index;
+            PrototypeRecipeDocument prototypeRecipes =
+                BuildPrototypeRecipes(eligiblePartCandidates);
+            if (prototypeRecipes.eligibleSourceRowCount != eligible)
+            {
+                throw new InvalidOperationException(
+                    $"Prototype recipes consumed {prototypeRecipes.eligibleSourceRowCount} " +
+                    $"eligible rows, expected {eligible}.");
+            }
 
             return new InventoryReport
             {
                 schema = "warline.operation-map.render-virtualization-eligibility-inventory",
-                schemaVersion = 2,
+                schemaVersion = 3,
                 result = "Passed",
                 operationMapId = "opmap.skirmish.desert_base_01",
                 candidateScenePath = DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath,
@@ -224,6 +262,11 @@ namespace Game.Editor
                 eligibleStableOwnerJoinedRenderRows = eligibleStableOwnerJoined,
                 sourceRowCount = sourceRows.Count,
                 sourceRowsSha256 = ComputeSourceRowsSha256(sourceRows),
+                logicalPlacementCount = prototypeRecipes.logicalPlacementCount,
+                prototypeCount = prototypeRecipes.prototypeCount,
+                prototypePartCount = prototypeRecipes.prototypePartCount,
+                prototypeRecipeRowsConsumed = prototypeRecipes.eligibleSourceRowCount,
+                prototypeRecipesSha256 = prototypeRecipes.prototypeRecipesSha256,
                 mutationAuthorized = false,
                 mutationBlocker =
                     "VRP-002 raw Android profile remains open; source-row inventory authorizes no mutation.",
@@ -233,7 +276,8 @@ namespace Game.Editor
                 byPolicyBucket = BuildBreakdown(policies),
                 byGameplayOwnership = BuildBreakdown(ownership),
                 byReasonCode = BuildBreakdown(reasons),
-                sourceRows = sourceRows
+                sourceRows = sourceRows,
+                prototypeRecipes = prototypeRecipes
             };
         }
 
@@ -374,6 +418,296 @@ namespace Game.Editor
             return identity;
         }
 
+        private static EligiblePartCandidate BuildEligiblePartCandidate(
+            Row row,
+            SourceRowReport sourceRow,
+            OperationMapRenderPolicyKey policy)
+        {
+            if (row.DenseOwner == null || !sourceRow.stableOwnerJoined)
+            {
+                throw new InvalidOperationException(
+                    $"Eligible row lacks a dense generated owner: " +
+                    $"{sourceRow.logicalRowIdentitySource}");
+            }
+
+            Mesh mesh = row.Renderer.GetComponent<MeshFilter>()?.sharedMesh;
+            if (mesh == null)
+            {
+                throw new InvalidOperationException(
+                    $"Eligible row lacks MeshFilter source: {sourceRow.logicalRowIdentitySource}");
+            }
+
+            Matrix4x4 localToPlacement = GetLocalToAncestor(
+                row.DenseOwner.transform,
+                row.Renderer.transform);
+            Color linearBaseColor =
+                row.Material != null && row.Material.HasProperty("_BaseColor")
+                    ? row.Material.GetColor("_BaseColor").linear
+                    : Color.white.linear;
+            var fingerprintInput = new OperationMapRenderPrototypeFingerprintInput
+            {
+                RendererPath = sourceRow.rendererPath,
+                MeshAssetGuid = sourceRow.meshAssetGuid,
+                MeshLocalId = sourceRow.meshLocalId,
+                MaterialAssetGuid = sourceRow.materialAssetGuid,
+                MaterialLocalId = sourceRow.materialLocalId,
+                SubMeshIndex = sourceRow.subMeshIndex,
+                LocalToPlacement = ToFloat4x4(localToPlacement),
+                LocalBounds = new OperationMapRenderBoundsBlob
+                {
+                    Center = mesh.bounds.center,
+                    Extents = mesh.bounds.extents
+                },
+                LinearBaseColor = new float4(
+                    linearBaseColor.r,
+                    linearBaseColor.g,
+                    linearBaseColor.b,
+                    linearBaseColor.a),
+                PolicyBucket = policy.Bucket,
+                Layer = policy.Layer,
+                RenderingLayerMask = policy.RenderingLayerMask,
+                MotionVectorMode = policy.MotionVectorMode,
+                ShadowFlags = policy.ShadowFlags,
+                LodFlags = OperationMapRenderLodFlags.Lod0
+            };
+            if (!OperationMapRenderPrototypeFingerprint.TryCompute(
+                    fingerprintInput,
+                    out OperationMapRenderIdentity128 partFingerprint,
+                    out string fingerprintError))
+            {
+                throw new InvalidOperationException(
+                    $"Eligible part fingerprint rejected: {fingerprintError} " +
+                    $"row={sourceRow.logicalRowIdentitySource}");
+            }
+
+            string partCanonicalSource = BuildPartCanonicalSource(
+                sourceRow,
+                localToPlacement,
+                mesh.bounds,
+                linearBaseColor,
+                policy);
+            return new EligiblePartCandidate
+            {
+                OwnerIdentitySource = sourceRow.ownerIdentitySource,
+                SemanticCategory = row.DenseOwner.Category,
+                SourceRow = sourceRow,
+                LocalToPlacement = localToPlacement,
+                LocalBounds = mesh.bounds,
+                LinearBaseColor = linearBaseColor,
+                Policy = policy,
+                LodFlags = OperationMapRenderLodFlags.Lod0,
+                PartFingerprint = partFingerprint,
+                PartCanonicalSource = partCanonicalSource
+            };
+        }
+
+        private static PrototypeRecipeDocument BuildPrototypeRecipes(
+            IReadOnlyList<EligiblePartCandidate> candidates)
+        {
+            var partCollisions = new OperationMapRenderIdentityCollisionDetector();
+            foreach (EligiblePartCandidate candidate in candidates)
+            {
+                if (!partCollisions.TryRegister(
+                        candidate.PartFingerprint,
+                        candidate.PartCanonicalSource,
+                        out string collisionError))
+                {
+                    throw new InvalidOperationException(collisionError);
+                }
+            }
+
+            List<OwnerRecipe> owners = candidates
+                .GroupBy(candidate => candidate.OwnerIdentitySource, StringComparer.Ordinal)
+                .Select(group => BuildOwnerRecipe(group.Key, group.ToList()))
+                .OrderBy(owner => owner.OwnerIdentitySource, StringComparer.Ordinal)
+                .ToList();
+
+            var prototypeCollisions = new OperationMapRenderIdentityCollisionDetector();
+            var byPrototypeSource =
+                new Dictionary<string, PrototypeAccumulator>(StringComparer.Ordinal);
+            foreach (OwnerRecipe owner in owners)
+            {
+                string prototypeSource = BuildPrototypeCanonicalSource(owner);
+                OperationMapRenderIdentity128 prototypeIdentity =
+                    ProjectAndRegister(prototypeSource, prototypeCollisions);
+                if (!byPrototypeSource.TryGetValue(
+                        prototypeSource,
+                        out PrototypeAccumulator accumulator))
+                {
+                    accumulator = new PrototypeAccumulator
+                    {
+                        PrototypeSource = prototypeSource,
+                        PrototypeIdentity = prototypeIdentity,
+                        SemanticCategory = owner.SemanticCategory,
+                        Parts = owner.Parts
+                    };
+                    byPrototypeSource.Add(prototypeSource, accumulator);
+                }
+                accumulator.PlacementCount++;
+            }
+
+            List<PrototypeAccumulator> ordered = byPrototypeSource.Values
+                .OrderBy(prototype => prototype.PrototypeIdentity.Low)
+                .ThenBy(prototype => prototype.PrototypeIdentity.High)
+                .ToList();
+            var prototypes = new List<PrototypeRecipeReport>(ordered.Count);
+            var parts = new List<PrototypePartRecipeReport>();
+            foreach (PrototypeAccumulator prototype in ordered)
+            {
+                int firstPart = parts.Count;
+                Bounds combinedBounds = default;
+                bool hasBounds = false;
+                foreach (EligiblePartCandidate part in prototype.Parts)
+                {
+                    Bounds transformed = TransformBounds(
+                        part.LocalBounds,
+                        part.LocalToPlacement);
+                    if (hasBounds)
+                        combinedBounds.Encapsulate(transformed);
+                    else
+                    {
+                        combinedBounds = transformed;
+                        hasBounds = true;
+                    }
+                    parts.Add(BuildPartReport(parts.Count, prototypes.Count, part));
+                }
+
+                if (!hasBounds)
+                    throw new InvalidOperationException("Prototype contains no part bounds.");
+                prototypes.Add(new PrototypeRecipeReport
+                {
+                    prototypeIndex = prototypes.Count,
+                    prototypeIdentityLow = prototype.PrototypeIdentity.Low,
+                    prototypeIdentityHigh = prototype.PrototypeIdentity.High,
+                    prototypeCanonicalSource = prototype.PrototypeSource,
+                    semanticCategory = prototype.SemanticCategory.ToString(),
+                    placementCount = prototype.PlacementCount,
+                    firstPart = firstPart,
+                    partCount = prototype.Parts.Count,
+                    combinedLocalBoundsCenter = ToArray(combinedBounds.center),
+                    combinedLocalBoundsExtents = ToArray(combinedBounds.extents)
+                });
+            }
+
+            string recipesHash = ComputePrototypeRecipesSha256(prototypes, parts);
+            return new PrototypeRecipeDocument
+            {
+                schema = "warline.operation-map.render-virtualization-prototype-recipes",
+                schemaVersion = 1,
+                operationMapId = "opmap.skirmish.desert_base_01",
+                result = "Passed",
+                logicalPlacementCount = owners.Count,
+                prototypeCount = prototypes.Count,
+                prototypePartCount = parts.Count,
+                eligibleSourceRowCount = candidates.Count,
+                prototypeRecipesSha256 = recipesHash,
+                prototypes = prototypes,
+                parts = parts
+            };
+        }
+
+        private static OwnerRecipe BuildOwnerRecipe(
+            string ownerIdentitySource,
+            List<EligiblePartCandidate> parts)
+        {
+            if (parts.Count == 0)
+                throw new InvalidOperationException("Eligible owner recipe contains no parts.");
+            parts.Sort(EligiblePartCandidateComparer.Instance);
+            DenseCityPresentationSemanticCategory category = parts[0].SemanticCategory;
+            if (parts.Any(part => part.SemanticCategory != category))
+            {
+                throw new InvalidOperationException(
+                    $"Eligible owner spans semantic categories: {ownerIdentitySource}");
+            }
+            return new OwnerRecipe
+            {
+                OwnerIdentitySource = ownerIdentitySource,
+                SemanticCategory = category,
+                Parts = parts
+            };
+        }
+
+        private static string BuildPrototypeCanonicalSource(OwnerRecipe owner)
+        {
+            var builder = new StringBuilder(owner.Parts.Count * 512);
+            AppendCanonical(builder, "prototype-recipe-v1");
+            AppendCanonical(builder, (int)owner.SemanticCategory);
+            AppendCanonical(builder, owner.Parts.Count);
+            foreach (EligiblePartCandidate part in owner.Parts)
+                AppendCanonical(builder, part.PartCanonicalSource);
+            return builder.ToString();
+        }
+
+        private static string BuildPartCanonicalSource(
+            SourceRowReport row,
+            Matrix4x4 localToPlacement,
+            Bounds localBounds,
+            Color linearBaseColor,
+            OperationMapRenderPolicyKey policy)
+        {
+            var builder = new StringBuilder(768);
+            AppendCanonical(builder, "prototype-part-v1");
+            AppendCanonical(builder, row.rendererPath);
+            AppendCanonical(builder, row.meshAssetGuid);
+            AppendCanonical(builder, row.meshLocalId);
+            AppendCanonical(builder, row.materialAssetGuid);
+            AppendCanonical(builder, row.materialLocalId);
+            AppendCanonical(builder, row.subMeshIndex);
+            for (int index = 0; index < 16; index++)
+                AppendCanonical(builder, localToPlacement[index]);
+            AppendCanonical(builder, localBounds.center.x);
+            AppendCanonical(builder, localBounds.center.y);
+            AppendCanonical(builder, localBounds.center.z);
+            AppendCanonical(builder, localBounds.extents.x);
+            AppendCanonical(builder, localBounds.extents.y);
+            AppendCanonical(builder, localBounds.extents.z);
+            AppendCanonical(builder, linearBaseColor.r);
+            AppendCanonical(builder, linearBaseColor.g);
+            AppendCanonical(builder, linearBaseColor.b);
+            AppendCanonical(builder, linearBaseColor.a);
+            AppendCanonical(builder, (int)policy.Bucket);
+            AppendCanonical(builder, policy.Layer);
+            AppendCanonical(builder, policy.RenderingLayerMask);
+            AppendCanonical(builder, (int)policy.MotionVectorMode);
+            AppendCanonical(builder, (int)policy.ShadowFlags);
+            AppendCanonical(builder, (int)OperationMapRenderLodFlags.Lod0);
+            return builder.ToString();
+        }
+
+        private static PrototypePartRecipeReport BuildPartReport(
+            int partIndex,
+            int prototypeIndex,
+            EligiblePartCandidate part) =>
+            new()
+            {
+                partIndex = partIndex,
+                prototypeIndex = prototypeIndex,
+                rendererPath = part.SourceRow.rendererPath,
+                partFingerprintLow = part.PartFingerprint.Low,
+                partFingerprintHigh = part.PartFingerprint.High,
+                meshAssetGuid = part.SourceRow.meshAssetGuid,
+                meshLocalId = part.SourceRow.meshLocalId,
+                materialAssetGuid = part.SourceRow.materialAssetGuid,
+                materialLocalId = part.SourceRow.materialLocalId,
+                subMeshIndex = part.SourceRow.subMeshIndex,
+                localToPlacement = ToArray(part.LocalToPlacement),
+                localBoundsCenter = ToArray(part.LocalBounds.center),
+                localBoundsExtents = ToArray(part.LocalBounds.extents),
+                linearBaseColor = new[]
+                {
+                    part.LinearBaseColor.r,
+                    part.LinearBaseColor.g,
+                    part.LinearBaseColor.b,
+                    part.LinearBaseColor.a
+                },
+                policyBucket = part.Policy.Bucket.ToString(),
+                layer = part.Policy.Layer,
+                renderingLayerMask = part.Policy.RenderingLayerMask,
+                motionVectorMode = part.Policy.MotionVectorMode.ToString(),
+                shadowFlags = (byte)part.Policy.ShadowFlags,
+                lodFlags = (byte)part.LodFlags
+            };
+
         private static string Classify(Row row, bool repeated, bool policySupported)
         {
             if (row.DenseOwner == null)
@@ -401,8 +735,13 @@ namespace Game.Editor
             };
         }
 
-        private static bool TryClassifyPolicy(Renderer renderer, Material material, out string policy)
+        private static bool TryClassifyPolicy(
+            Renderer renderer,
+            Material material,
+            out string policy,
+            out OperationMapRenderPolicyKey policyKey)
         {
+            policyKey = default;
             if (material == null)
             {
                 policy = "Unsupported:missing-material";
@@ -436,7 +775,10 @@ namespace Game.Editor
                 renderer.renderingLayerMask,
                 motion,
                 shadowFlags);
-            if (!OperationMapRenderPolicyClassifier.TryClassify(input, out OperationMapRenderPolicyKey key, out string error))
+            if (!OperationMapRenderPolicyClassifier.TryClassify(
+                    input,
+                    out OperationMapRenderPolicyKey key,
+                    out string error))
             {
                 policy = "Unsupported:" + error;
                 return false;
@@ -449,6 +791,7 @@ namespace Game.Editor
                 key.RenderingLayerMask.ToString(CultureInfo.InvariantCulture),
                 key.MotionVectorMode,
                 (byte)key.ShadowFlags);
+            policyKey = key;
             return true;
         }
 
@@ -592,6 +935,123 @@ namespace Game.Editor
             return hex.ToString();
         }
 
+        private static string ComputePrototypeRecipesSha256(
+            IReadOnlyList<PrototypeRecipeReport> prototypes,
+            IReadOnlyList<PrototypePartRecipeReport> parts)
+        {
+            var canonical = new StringBuilder((prototypes.Count + parts.Count) * 512);
+            foreach (PrototypeRecipeReport prototype in prototypes)
+            {
+                AppendCanonical(canonical, prototype.prototypeIndex);
+                AppendCanonical(canonical, prototype.prototypeIdentityLow);
+                AppendCanonical(canonical, prototype.prototypeIdentityHigh);
+                AppendCanonical(canonical, prototype.prototypeCanonicalSource);
+                AppendCanonical(canonical, prototype.semanticCategory);
+                AppendCanonical(canonical, prototype.placementCount);
+                AppendCanonical(canonical, prototype.firstPart);
+                AppendCanonical(canonical, prototype.partCount);
+                AppendCanonical(canonical, prototype.combinedLocalBoundsCenter);
+                AppendCanonical(canonical, prototype.combinedLocalBoundsExtents);
+            }
+            foreach (PrototypePartRecipeReport part in parts)
+            {
+                AppendCanonical(canonical, part.partIndex);
+                AppendCanonical(canonical, part.prototypeIndex);
+                AppendCanonical(canonical, part.rendererPath);
+                AppendCanonical(canonical, part.partFingerprintLow);
+                AppendCanonical(canonical, part.partFingerprintHigh);
+                AppendCanonical(canonical, part.meshAssetGuid);
+                AppendCanonical(canonical, part.meshLocalId);
+                AppendCanonical(canonical, part.materialAssetGuid);
+                AppendCanonical(canonical, part.materialLocalId);
+                AppendCanonical(canonical, part.subMeshIndex);
+                AppendCanonical(canonical, part.localToPlacement);
+                AppendCanonical(canonical, part.localBoundsCenter);
+                AppendCanonical(canonical, part.localBoundsExtents);
+                AppendCanonical(canonical, part.linearBaseColor);
+                AppendCanonical(canonical, part.policyBucket);
+                AppendCanonical(canonical, part.layer);
+                AppendCanonical(canonical, part.renderingLayerMask);
+                AppendCanonical(canonical, part.motionVectorMode);
+                AppendCanonical(canonical, part.shadowFlags);
+                AppendCanonical(canonical, part.lodFlags);
+            }
+            return ComputeSha256(Utf8WithoutBom.GetBytes(canonical.ToString()));
+        }
+
+        private static Bounds TransformBounds(Bounds bounds, Matrix4x4 matrix)
+        {
+            Vector3 center = bounds.center;
+            Vector3 extents = bounds.extents;
+            Vector3 minimum = new(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity);
+            Vector3 maximum = new(float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity);
+            for (int x = -1; x <= 1; x += 2)
+            for (int y = -1; y <= 1; y += 2)
+            for (int z = -1; z <= 1; z += 2)
+            {
+                Vector3 corner = center + Vector3.Scale(extents, new Vector3(x, y, z));
+                Vector3 transformed = matrix.MultiplyPoint3x4(corner);
+                minimum = Vector3.Min(minimum, transformed);
+                maximum = Vector3.Max(maximum, transformed);
+            }
+            var result = new Bounds();
+            result.SetMinMax(minimum, maximum);
+            return result;
+        }
+
+        private static Matrix4x4 GetLocalToAncestor(Transform ancestor, Transform target)
+        {
+            if (ancestor == null || target == null)
+                throw new ArgumentNullException(ancestor == null ? nameof(ancestor) : nameof(target));
+            if (ancestor == target)
+                return Matrix4x4.identity;
+
+            var chain = new List<Transform>();
+            Transform current = target;
+            while (current != null && current != ancestor)
+            {
+                chain.Add(current);
+                current = current.parent;
+            }
+            if (current != ancestor)
+            {
+                throw new InvalidOperationException(
+                    $"Renderer '{GetPath(target)}' is not beneath owner '{GetPath(ancestor)}'.");
+            }
+
+            Matrix4x4 result = Matrix4x4.identity;
+            for (int index = chain.Count - 1; index >= 0; index--)
+            {
+                Transform item = chain[index];
+                result *= Matrix4x4.TRS(
+                    item.localPosition,
+                    item.localRotation,
+                    item.localScale);
+            }
+            return result;
+        }
+
+        private static float4x4 ToFloat4x4(Matrix4x4 value) =>
+            new(
+                ToFloat4(value.GetColumn(0)),
+                ToFloat4(value.GetColumn(1)),
+                ToFloat4(value.GetColumn(2)),
+                ToFloat4(value.GetColumn(3)));
+
+        private static float4 ToFloat4(Vector4 value) =>
+            new(value.x, value.y, value.z, value.w);
+
+        private static float[] ToArray(Matrix4x4 value)
+        {
+            var result = new float[16];
+            for (int index = 0; index < result.Length; index++)
+                result[index] = value[index];
+            return result;
+        }
+
+        private static float[] ToArray(Vector3 value) =>
+            new[] { value.x, value.y, value.z };
+
         private static byte[] CompressGzip(byte[] source)
         {
             using var output = new MemoryStream();
@@ -633,6 +1093,21 @@ namespace Game.Editor
 
         private static void AppendCanonical(StringBuilder builder, ulong value) =>
             AppendCanonical(builder, value.ToString(CultureInfo.InvariantCulture));
+
+        private static void AppendCanonical(StringBuilder builder, uint value) =>
+            AppendCanonical(builder, value.ToString(CultureInfo.InvariantCulture));
+
+        private static void AppendCanonical(StringBuilder builder, float value) =>
+            AppendCanonical(builder, value.ToString("R", CultureInfo.InvariantCulture));
+
+        private static void AppendCanonical(StringBuilder builder, IReadOnlyList<float> values)
+        {
+            AppendCanonical(builder, values?.Count ?? -1);
+            if (values == null)
+                return;
+            for (int index = 0; index < values.Count; index++)
+                AppendCanonical(builder, values[index]);
+        }
 
         private static void Increment(Dictionary<string, CountPair> values, string key, bool eligible)
         {
@@ -718,6 +1193,13 @@ namespace Game.Editor
             public string sourceRowsCompression;
             public string sourceRowsJsonSha256;
             public string sourceRowsGzipSha256;
+            public int logicalPlacementCount;
+            public int prototypeCount;
+            public int prototypePartCount;
+            public int prototypeRecipeRowsConsumed;
+            public string prototypeRecipesSha256;
+            public string prototypeRecipesPath;
+            public string prototypeRecipesJsonSha256;
             public bool mutationAuthorized;
             public string mutationBlocker;
             public List<Breakdown> bySemanticCategory;
@@ -727,6 +1209,7 @@ namespace Game.Editor
             public List<Breakdown> byGameplayOwnership;
             public List<Breakdown> byReasonCode;
             [NonSerialized] public List<SourceRowReport> sourceRows;
+            [NonSerialized] public PrototypeRecipeDocument prototypeRecipes;
         }
 
         [Serializable]
@@ -738,6 +1221,62 @@ namespace Game.Editor
             public int sourceRowCount;
             public string sourceRowsSha256;
             public List<SourceRowReport> sourceRows;
+        }
+
+        [Serializable]
+        private sealed class PrototypeRecipeDocument
+        {
+            public string schema;
+            public int schemaVersion;
+            public string operationMapId;
+            public string result;
+            public int logicalPlacementCount;
+            public int prototypeCount;
+            public int prototypePartCount;
+            public int eligibleSourceRowCount;
+            public string prototypeRecipesSha256;
+            public List<PrototypeRecipeReport> prototypes;
+            public List<PrototypePartRecipeReport> parts;
+        }
+
+        [Serializable]
+        private sealed class PrototypeRecipeReport
+        {
+            public int prototypeIndex;
+            public ulong prototypeIdentityLow;
+            public ulong prototypeIdentityHigh;
+            public string prototypeCanonicalSource;
+            public string semanticCategory;
+            public int placementCount;
+            public int firstPart;
+            public int partCount;
+            public float[] combinedLocalBoundsCenter;
+            public float[] combinedLocalBoundsExtents;
+        }
+
+        [Serializable]
+        private sealed class PrototypePartRecipeReport
+        {
+            public int partIndex;
+            public int prototypeIndex;
+            public string rendererPath;
+            public ulong partFingerprintLow;
+            public ulong partFingerprintHigh;
+            public string meshAssetGuid;
+            public long meshLocalId;
+            public string materialAssetGuid;
+            public long materialLocalId;
+            public int subMeshIndex;
+            public float[] localToPlacement;
+            public float[] localBoundsCenter;
+            public float[] localBoundsExtents;
+            public float[] linearBaseColor;
+            public string policyBucket;
+            public int layer;
+            public uint renderingLayerMask;
+            public string motionVectorMode;
+            public byte shadowFlags;
+            public byte lodFlags;
         }
 
         [Serializable]
@@ -811,6 +1350,63 @@ namespace Game.Editor
                     return result;
                 result = string.CompareOrdinal(left.materialAssetGuid, right.materialAssetGuid);
                 return result != 0 ? result : left.materialLocalId.CompareTo(right.materialLocalId);
+            }
+        }
+
+        private sealed class EligiblePartCandidate
+        {
+            internal string OwnerIdentitySource;
+            internal DenseCityPresentationSemanticCategory SemanticCategory;
+            internal SourceRowReport SourceRow;
+            internal Matrix4x4 LocalToPlacement;
+            internal Bounds LocalBounds;
+            internal Color LinearBaseColor;
+            internal OperationMapRenderPolicyKey Policy;
+            internal OperationMapRenderLodFlags LodFlags;
+            internal OperationMapRenderIdentity128 PartFingerprint;
+            internal string PartCanonicalSource;
+        }
+
+        private sealed class OwnerRecipe
+        {
+            internal string OwnerIdentitySource;
+            internal DenseCityPresentationSemanticCategory SemanticCategory;
+            internal List<EligiblePartCandidate> Parts;
+        }
+
+        private sealed class PrototypeAccumulator
+        {
+            internal string PrototypeSource;
+            internal OperationMapRenderIdentity128 PrototypeIdentity;
+            internal DenseCityPresentationSemanticCategory SemanticCategory;
+            internal List<EligiblePartCandidate> Parts;
+            internal int PlacementCount;
+        }
+
+        private sealed class EligiblePartCandidateComparer : IComparer<EligiblePartCandidate>
+        {
+            internal static readonly EligiblePartCandidateComparer Instance = new();
+
+            public int Compare(EligiblePartCandidate left, EligiblePartCandidate right)
+            {
+                if (ReferenceEquals(left, right))
+                    return 0;
+                if (left == null)
+                    return -1;
+                if (right == null)
+                    return 1;
+                int result = string.CompareOrdinal(
+                    left.SourceRow.rendererPath,
+                    right.SourceRow.rendererPath);
+                if (result != 0)
+                    return result;
+                result = left.SourceRow.subMeshIndex.CompareTo(right.SourceRow.subMeshIndex);
+                if (result != 0)
+                    return result;
+                result = left.PartFingerprint.Low.CompareTo(right.PartFingerprint.Low);
+                return result != 0
+                    ? result
+                    : left.PartFingerprint.High.CompareTo(right.PartFingerprint.High);
             }
         }
     }

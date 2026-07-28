@@ -192,5 +192,81 @@ namespace Game.Editor
             error = null;
             return true;
         }
+
+        internal static bool TryValidate(
+            in OperationMapRenderPolicyKey policy,
+            out string error)
+        {
+            if (!Enum.IsDefined(typeof(OperationMapRenderPolicyBucket), policy.Bucket))
+            {
+                error = $"Unknown render-policy bucket: {(byte)policy.Bucket}.";
+                return false;
+            }
+
+            if (policy.Layer < 0 || policy.Layer > 31)
+            {
+                error = $"Render layer must be in [0,31], but was {policy.Layer}.";
+                return false;
+            }
+
+            if (policy.RenderingLayerMask == 0u)
+            {
+                error = "Rendering-layer mask must contain at least one layer.";
+                return false;
+            }
+
+            if (!Enum.IsDefined(typeof(OperationMapRenderMotionVectorMode), policy.MotionVectorMode))
+            {
+                error = $"Unknown motion-vector mode: {(byte)policy.MotionVectorMode}.";
+                return false;
+            }
+
+            if ((policy.ShadowFlags & ~KnownShadowFlags) != 0)
+            {
+                error = $"Unknown render shadow flags: {(byte)policy.ShadowFlags}.";
+                return false;
+            }
+
+            bool castsShadows =
+                (policy.ShadowFlags & OperationMapRenderShadowFlags.CastShadows) != 0;
+            bool staticShadowCaster =
+                (policy.ShadowFlags & OperationMapRenderShadowFlags.StaticShadowCaster) != 0;
+            if (staticShadowCaster && !castsShadows)
+            {
+                error = "Static-shadow caster policy requires CastShadows.";
+                return false;
+            }
+
+            switch (policy.Bucket)
+            {
+                case OperationMapRenderPolicyBucket.OpaqueShadowsOn:
+                case OperationMapRenderPolicyBucket.AlphaClippedShadowsOn:
+                    if (!castsShadows)
+                    {
+                        error = $"{policy.Bucket} requires CastShadows.";
+                        return false;
+                    }
+
+                    break;
+                case OperationMapRenderPolicyBucket.OpaqueShadowsOff:
+                case OperationMapRenderPolicyBucket.AlphaClippedShadowsOff:
+                case OperationMapRenderPolicyBucket.TransparentShadowsOff:
+                    if (castsShadows || staticShadowCaster)
+                    {
+                        error = $"{policy.Bucket} does not permit cast or static shadows.";
+                        return false;
+                    }
+
+                    break;
+                case OperationMapRenderPolicyBucket.AlwaysResidentException:
+                    break;
+                default:
+                    error = $"Unknown render-policy bucket: {(byte)policy.Bucket}.";
+                    return false;
+            }
+
+            error = null;
+            return true;
+        }
     }
 }

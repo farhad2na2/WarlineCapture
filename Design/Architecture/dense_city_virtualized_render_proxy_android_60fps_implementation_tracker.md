@@ -339,6 +339,8 @@ capacity = ceil(maximumSimultaneouslyRequiredPartRows * 1.20)
 
 Capacity must be deterministic and checked into the report. A manual capacity constant without the sweep report is forbidden.
 
+Schema-1 sweep inputs use a nonempty ordinal sample identity, a complete validated render-policy key, and a nonnegative required-part-row count. Every reported policy must cover the identical canonical sample-identity set; missing policy/sample pairs and duplicate pairs fail closed. Input order cannot affect results: policies are sorted by bucket, layer, rendering-layer mask, motion-vector mode, then shadow flags. Peak aggregation uses the maximum per policy, and capacity uses overflow-checked integer ceiling `(peak * 120 + 99) / 100`, avoiding floating-point or culture differences.
+
 Provisional design limits:
 
 - packed runtime entities carrying enabled/disabled map `MaterialMeshInfo`: `<= 24,000`;
@@ -755,7 +757,7 @@ Terra must stop and request Sol when the next dependency-ready item is marked `[
 - [x] `VRP-013 [TERRA]` Add pure prototype fingerprinting for mesh/material/submesh/path/matrix/bounds/color/filter/LOD inputs. Depends on: `VRP-011`.
 - [x] `VRP-014 [TERRA]` Add pure cell assignment and multi-cell deduplication algorithms with boundary tests. Depends on: `VRP-011`.
 - [x] `VRP-015 [TERRA]` Add pure policy-bucket classification with fail-closed unknown combinations. Depends on: `VRP-011`.
-- [ ] `VRP-016 [TERRA]` Add deterministic camera-capacity sweep inputs/results and 20% headroom calculation tests. Depends on: `VRP-014`, `VRP-015`.
+- [x] `VRP-016 [TERRA]` Add deterministic camera-capacity sweep inputs/results and 20% headroom calculation tests. Depends on: `VRP-014`, `VRP-015`.
 - [ ] `VRP-017 [TERRA]` Add schema/report serialization and reject missing/default/negative metrics. Depends on: `VRP-012` through `VRP-016`.
 
 **Exit:** All new data algorithms compile and pass without changing candidate or production bake output.
@@ -944,7 +946,7 @@ Forbidden shortcuts:
 | Phase | Status |
 |---|---|
 | Phase 0: Evidence and amendment | In progress; Android failure and design authorization recorded; raw profile/inventory open |
-| Phase 1: Additive schema and pure contracts | In progress; mode, schema, identity/fingerprint, spatial-cell, and fixed render-policy contracts accepted |
+| Phase 1: Additive schema and pure contracts | In progress; mode, schema, identity/fingerprint, spatial-cell, fixed render-policy, and capacity-sweep contracts accepted |
 | Phase 2: Deterministic database builder | Not started |
 | Phase 3: Candidate pool baking | Not started |
 | Phase 4: Jobified runtime assignment | Not started |
@@ -955,7 +957,7 @@ Forbidden shortcuts:
 | Phase 9: Android 60 FPS acceptance | Not started |
 | Phase 10: Cutover and closeout | Not started |
 
-Checklist progress: `8 / 80` complete.
+Checklist progress: `9 / 80` complete.
 
 ## 18. Validation Log
 
@@ -970,6 +972,7 @@ Checklist progress: `8 / 80` complete.
 | 2026-07-28 | `VRP-013` canonical prototype fingerprinting | Windows GUI-licensing wrapper `%TEMP%\warline-render-virtualization-vrp013.log`; `[OperationMapRenderVirtualizationValidation] result=Passed tests=18`; wrapper exit code `0`; `git diff --check` | Passed; pure prototype contract accepted | Added an editor-only schema-1 binary fingerprint over normalized renderer hierarchy path, mesh/material GUID and local id, submesh, exact local matrix/bounds, linear base color, fixed policy bucket, shadow flags, and LOD flags. Length-prefixed UTF-8 strings and little-endian primitive writes avoid culture/platform formatting. Tests prove unchanged input is stable, every contract field changes the result, and absolute/session paths, uppercase/malformed GUIDs, non-finite matrices, negative extents, and unknown policy/flag values fail closed. No baker/runtime consumer, render row, asset, package, EntityScene, or Android artifact changed. |
 | 2026-07-28 | `VRP-014` deterministic spatial-cell assignment | Windows GUI-licensing wrapper `%TEMP%\warline-render-virtualization-vrp014.log`; `[OperationMapRenderVirtualizationValidation] result=Passed tests=24`; wrapper exit code `0`; `git diff --check` | Passed; pure cell/dedup contract accepted | Added editor-only X/Z assignment from accepted origin/cell size with row-major `(z,x)` output, half-open maximum edges for nonzero bounds, point ownership on exact boundaries, grid clipping, and complete outside rejection. The reference multi-cell gather validates every range/index, deduplicates repeated placement ownership, and globally sorts stable-identity ranks so selected-cell order cannot change results. Boundary, four-cell, partial-overlap, invalid-grid/bounds, repeated-range, and corrupt-index cases pass. No baker/runtime consumer, render row, asset, package, EntityScene, or Android artifact changed. |
 | 2026-07-28 | `VRP-015` closed render-policy classification | Windows GUI-licensing wrapper `%TEMP%\warline-render-virtualization-vrp015.log`; `[OperationMapRenderVirtualizationValidation] result=Passed tests=28`; wrapper exit code `0`; `git diff --check` | Passed; pure fixed-policy contract accepted | Added an editor-only classifier for the six closed residency buckets while retaining layer, rendering-layer mask, motion-vector mode, and cast/receive/static-shadow flags in the immutable policy key. Opaque and alpha-clipped content map independently by cast-shadow state; transparent content never falls into opaque and rejects shadow casting; always-resident ownership requires an explicit exception. Unknown material/motion/shadow values, invalid layers, empty rendering masks, and static-without-cast combinations fail closed. Tests also prove any fixed-filter field change produces a different key. No baker/runtime consumer, render row, asset, package, EntityScene, or Android artifact changed. |
+| 2026-07-28 | `VRP-016` deterministic camera-capacity sweep | Windows GUI-licensing wrapper `%TEMP%\warline-render-virtualization-vrp016.log`; `[OperationMapRenderVirtualizationValidation] result=Passed tests=32`; wrapper exit code `0`; `git diff --check` | Passed; pure sweep/headroom contract accepted | Added an editor-only capacity sweep over canonical sample identities and complete validated render-policy keys. Every policy must contain the identical sample set, duplicate pairs and negative/default/invalid inputs fail closed, aggregation takes the per-policy maximum, and results sort by every fixed-filter field independent of input order. Overflow-checked integer ceiling implements exact `ceil(peak * 1.20)` and records sample count, peak, capacity, and headroom. Tests cover order reversal, multiple-policy sorting, peak-versus-sum behavior, fractional ceiling, incomplete coverage, duplicates, invalid keys, negative counts, and Int32 overflow. No baker/runtime consumer, manual capacity, render row, asset, package, EntityScene, or Android artifact changed. |
 
 ## 19. Evidence References
 

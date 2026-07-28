@@ -47,7 +47,11 @@ public sealed class OperationMapRenderVirtualizationValidation
             tests.PolicyClassifier_PreservesCompleteFixedFilterIdentity();
             tests.PolicyClassifier_UsesExplicitAlwaysResidentBucket();
             tests.PolicyClassifier_RejectsUnsupportedOrUnknownCombinations();
-            Debug.Log("[OperationMapRenderVirtualizationValidation] result=Passed tests=28");
+            tests.CapacitySweep_IsOrderIndependentAndSortedByPolicy();
+            tests.CapacitySweep_UsesPeakAndExactTwentyPercentCeiling();
+            tests.CapacitySweep_RequiresIdenticalCanonicalSamplesPerPolicy();
+            tests.CapacitySweep_RejectsInvalidDuplicateNegativeAndOverflowInputs();
+            Debug.Log("[OperationMapRenderVirtualizationValidation] result=Passed tests=32");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -792,6 +796,204 @@ public sealed class OperationMapRenderVirtualizationValidation
                 OperationMapRenderMaterialSurface.Opaque,
                 shadowFlags: (OperationMapRenderShadowFlags)(1 << 7)),
             "Unknown render shadow flags");
+    }
+
+    [Test]
+    public void CapacitySweep_IsOrderIndependentAndSortedByPolicy()
+    {
+        OperationMapRenderPolicyKey opaque =
+            ClassifyPolicy(
+                OperationMapRenderMaterialSurface.Opaque,
+                OperationMapRenderShadowFlags.CastShadows);
+        OperationMapRenderPolicyKey alpha =
+            ClassifyPolicy(
+                OperationMapRenderMaterialSurface.AlphaClipped,
+                OperationMapRenderShadowFlags.None);
+        OperationMapRenderCapacitySweepInput[] forward =
+        {
+            new("route.b", alpha, 2),
+            new("route.a", opaque, 7),
+            new("route.a", alpha, 5),
+            new("route.b", opaque, 3)
+        };
+        OperationMapRenderCapacitySweepInput[] reverse =
+        {
+            forward[3],
+            forward[2],
+            forward[1],
+            forward[0]
+        };
+
+        Assert.That(
+            OperationMapRenderCapacitySweep.TryCalculate(
+                forward,
+                out OperationMapRenderCapacitySweepResult[] first,
+                out string firstError),
+            Is.True,
+            firstError);
+        Assert.That(
+            OperationMapRenderCapacitySweep.TryCalculate(
+                reverse,
+                out OperationMapRenderCapacitySweepResult[] second,
+                out string secondError),
+            Is.True,
+            secondError);
+
+        Assert.That(first.Length, Is.EqualTo(2));
+        Assert.That(
+            first[0].Policy.Bucket,
+            Is.EqualTo(OperationMapRenderPolicyBucket.OpaqueShadowsOn));
+        Assert.That(
+            first[1].Policy.Bucket,
+            Is.EqualTo(OperationMapRenderPolicyBucket.AlphaClippedShadowsOff));
+        for (int index = 0; index < first.Length; index++)
+        {
+            Assert.That(second[index].Policy, Is.EqualTo(first[index].Policy));
+            Assert.That(
+                second[index].PeakRequiredPartRows,
+                Is.EqualTo(first[index].PeakRequiredPartRows));
+            Assert.That(second[index].Capacity, Is.EqualTo(first[index].Capacity));
+            Assert.That(second[index].HeadroomCount, Is.EqualTo(first[index].HeadroomCount));
+            Assert.That(second[index].SweepSampleCount, Is.EqualTo(2));
+        }
+    }
+
+    [Test]
+    public void CapacitySweep_UsesPeakAndExactTwentyPercentCeiling()
+    {
+        OperationMapRenderPolicyKey opaque =
+            ClassifyPolicy(
+                OperationMapRenderMaterialSurface.Opaque,
+                OperationMapRenderShadowFlags.None);
+        OperationMapRenderCapacitySweepInput[] inputs =
+        {
+            new("pose.normal", opaque, 1),
+            new("pose.build", opaque, 5),
+            new("pose.map", opaque, 6),
+            new("pose.zoom", opaque, 10)
+        };
+
+        Assert.That(
+            OperationMapRenderCapacitySweep.TryCalculate(
+                inputs,
+                out OperationMapRenderCapacitySweepResult[] results,
+                out string error),
+            Is.True,
+            error);
+        Assert.That(results.Length, Is.EqualTo(1));
+        Assert.That(results[0].SweepSampleCount, Is.EqualTo(4));
+        Assert.That(results[0].PeakRequiredPartRows, Is.EqualTo(10));
+        Assert.That(results[0].Capacity, Is.EqualTo(12));
+        Assert.That(results[0].HeadroomCount, Is.EqualTo(2));
+
+        Assert.That(
+            OperationMapRenderCapacitySweep.TryCalculate(
+                new[] { new OperationMapRenderCapacitySweepInput("pose.one", opaque, 6) },
+                out results,
+                out error),
+            Is.True,
+            error);
+        Assert.That(results[0].Capacity, Is.EqualTo(8));
+        Assert.That(results[0].HeadroomCount, Is.EqualTo(2));
+    }
+
+    [Test]
+    public void CapacitySweep_RequiresIdenticalCanonicalSamplesPerPolicy()
+    {
+        OperationMapRenderPolicyKey opaque =
+            ClassifyPolicy(
+                OperationMapRenderMaterialSurface.Opaque,
+                OperationMapRenderShadowFlags.None);
+        OperationMapRenderPolicyKey alpha =
+            ClassifyPolicy(
+                OperationMapRenderMaterialSurface.AlphaClipped,
+                OperationMapRenderShadowFlags.None);
+        OperationMapRenderCapacitySweepInput[] inputs =
+        {
+            new("pose.normal", opaque, 2),
+            new("pose.build", opaque, 4),
+            new("pose.normal", alpha, 1)
+        };
+
+        Assert.That(
+            OperationMapRenderCapacitySweep.TryCalculate(inputs, out _, out string error),
+            Is.False);
+        Assert.That(error, Does.Contain("identical canonical sweep sample set"));
+    }
+
+    [Test]
+    public void CapacitySweep_RejectsInvalidDuplicateNegativeAndOverflowInputs()
+    {
+        OperationMapRenderPolicyKey opaque =
+            ClassifyPolicy(
+                OperationMapRenderMaterialSurface.Opaque,
+                OperationMapRenderShadowFlags.None);
+        AssertCapacitySweepRejected(null, "at least one input");
+        AssertCapacitySweepRejected(
+            Array.Empty<OperationMapRenderCapacitySweepInput>(),
+            "at least one input");
+        AssertCapacitySweepRejected(
+            new[] { new OperationMapRenderCapacitySweepInput("", opaque, 1) },
+            "empty sample identity");
+        AssertCapacitySweepRejected(
+            new[]
+            {
+                new OperationMapRenderCapacitySweepInput("pose", opaque, 1),
+                new OperationMapRenderCapacitySweepInput("pose", opaque, 2)
+            },
+            "Duplicate capacity sweep sample");
+        AssertCapacitySweepRejected(
+            new[] { new OperationMapRenderCapacitySweepInput("pose", opaque, -1) },
+            "negative required part rows");
+        AssertCapacitySweepRejected(
+            new[]
+            {
+                new OperationMapRenderCapacitySweepInput(
+                    "pose",
+                    new OperationMapRenderPolicyKey(
+                        OperationMapRenderPolicyBucket.OpaqueShadowsOn,
+                        0,
+                        1u,
+                        OperationMapRenderMotionVectorMode.ForceNoMotion,
+                        OperationMapRenderShadowFlags.None),
+                    1)
+            },
+            "requires CastShadows");
+        AssertCapacitySweepRejected(
+            new[]
+            {
+                new OperationMapRenderCapacitySweepInput(
+                    "pose",
+                    opaque,
+                    int.MaxValue)
+            },
+            "exceeds Int32");
+    }
+
+    private static OperationMapRenderPolicyKey ClassifyPolicy(
+        OperationMapRenderMaterialSurface surface,
+        OperationMapRenderShadowFlags shadowFlags)
+    {
+        OperationMapRenderPolicyClassificationInput input =
+            PolicyInput(surface, shadowFlags: shadowFlags);
+        Assert.That(
+            OperationMapRenderPolicyClassifier.TryClassify(
+                input,
+                out OperationMapRenderPolicyKey policy,
+                out string error),
+            Is.True,
+            error);
+        return policy;
+    }
+
+    private static void AssertCapacitySweepRejected(
+        IReadOnlyList<OperationMapRenderCapacitySweepInput> inputs,
+        string expectedError)
+    {
+        Assert.That(
+            OperationMapRenderCapacitySweep.TryCalculate(inputs, out _, out string error),
+            Is.False);
+        Assert.That(error, Does.Contain(expectedError));
     }
 
     private static void AssertPolicyBucket(

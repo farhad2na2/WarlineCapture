@@ -223,6 +223,7 @@ Rules:
 - Store linear base color explicitly. Do not instantiate a material to carry per-instance color.
 - `MaterialMeshInfo` selects a mesh/material/submesh from the one shared sorted `RenderMeshArray`.
 - A prototype fingerprint includes renderer hierarchy path, mesh GUID/local id, material GUID/local id, submesh, local matrix, local bounds, base color, render-filter policy, shadow flags, and LOD policy.
+- Schema 1 prototype fingerprints serialize those fields into an explicit little-endian binary payload with length-prefixed UTF-8 strings and raw finite IEEE-754 values before SHA-256 projection. Renderer paths must be normalized relative hierarchy paths; asset GUIDs must be 32 lowercase hexadecimal characters; local ids must be nonzero; indices/extents and colors must be valid; and unknown policy/shadow/LOD values fail closed.
 - A placement identity hash derives from the existing stable identity using a documented SHA-256-to-`OperationMapRenderIdentity128` projection. The builder must retain the full stable id in the editor report and reject any 128-bit collision.
 - Schema 1 projects the exact UTF-8 bytes (no BOM, no normalization) through SHA-256, stores digest bytes `0..7` as little-endian `Low` and bytes `8..15` as little-endian `High`, and sorts by unsigned `(Low, High)`. Empty sources fail closed; repeated identical sources are idempotent; any different full source registered to the same 128-bit value is a fatal collision.
 - A renderer logical-row identity derives from placement identity plus prototype renderer-path identity. The editor report retains the full source identity/path for parity.
@@ -748,7 +749,7 @@ Terra must stop and request Sol when the next dependency-ready item is marked `[
 - [x] `VRP-010 [TERRA]` Add `OperationMapRenderResidencyMode` with default resident behavior and closed validation tests. Depends on: `VRP-001`.
 - [x] `VRP-011 [TERRA]` Add unmanaged blob/component schema with field-level validation and no runtime use. Depends on: `VRP-010`.
 - [x] `VRP-012 [TERRA]` Add stable 128-bit identity projection, collision detection, and deterministic sorting tests. Depends on: `VRP-011`.
-- [ ] `VRP-013 [TERRA]` Add pure prototype fingerprinting for mesh/material/submesh/path/matrix/bounds/color/filter/LOD inputs. Depends on: `VRP-011`.
+- [x] `VRP-013 [TERRA]` Add pure prototype fingerprinting for mesh/material/submesh/path/matrix/bounds/color/filter/LOD inputs. Depends on: `VRP-011`.
 - [ ] `VRP-014 [TERRA]` Add pure cell assignment and multi-cell deduplication algorithms with boundary tests. Depends on: `VRP-011`.
 - [ ] `VRP-015 [TERRA]` Add pure policy-bucket classification with fail-closed unknown combinations. Depends on: `VRP-011`.
 - [ ] `VRP-016 [TERRA]` Add deterministic camera-capacity sweep inputs/results and 20% headroom calculation tests. Depends on: `VRP-014`, `VRP-015`.
@@ -940,7 +941,7 @@ Forbidden shortcuts:
 | Phase | Status |
 |---|---|
 | Phase 0: Evidence and amendment | In progress; Android failure and design authorization recorded; raw profile/inventory open |
-| Phase 1: Additive schema and pure contracts | In progress; mode, schema, and deterministic identity projection accepted |
+| Phase 1: Additive schema and pure contracts | In progress; mode, schema, identity projection, and prototype fingerprinting accepted |
 | Phase 2: Deterministic database builder | Not started |
 | Phase 3: Candidate pool baking | Not started |
 | Phase 4: Jobified runtime assignment | Not started |
@@ -951,7 +952,7 @@ Forbidden shortcuts:
 | Phase 9: Android 60 FPS acceptance | Not started |
 | Phase 10: Cutover and closeout | Not started |
 
-Checklist progress: `5 / 80` complete.
+Checklist progress: `6 / 80` complete.
 
 ## 18. Validation Log
 
@@ -963,6 +964,7 @@ Checklist progress: `5 / 80` complete.
 | 2026-07-28 | `VRP-010` default-safe render-residency mode | Windows GUI-licensing wrapper `%TEMP%\warline-render-virtualization-vrp010-host.log`; `[OperationMapRenderVirtualizationValidation] result=Passed tests=6`; wrapper exit code `0`; `git diff --check` | Passed; additive contract accepted | Added the closed `ResidentEntities = 0` / `VirtualizedProxyPool = 1` enum and serialized definition field. Existing definitions remain resident without asset resaves, unknown values fail closed, static chunks reject virtualization, and EntityScene virtualization remains rejected until the database/pool contract exists. The first sandboxed wrapper attempt timed out on denied BIOS/licensing access and its wrapper-owned process tree was cleaned after timeout; the identical host-access wrapper compiled and passed. No candidate, accepted, frozen, production, Addressables, EntityScene, or Android artifact changed. |
 | 2026-07-28 | `VRP-011` unmanaged render-virtualization schema | Rejected compile `%TEMP%\warline-render-virtualization-vrp011.log`; corrected Windows GUI-licensing wrapper `%TEMP%\warline-render-virtualization-vrp011-rerun.log`; `[OperationMapRenderVirtualizationValidation] result=Passed tests=11`; wrapper exit code `0`; `git diff --check` | Passed; additive schema accepted | Added the complete schema-1 database/prototype/part/placement/cell/pool records and the six named runtime ECS contracts without wiring them to any baker or system. Field-level construction proves matrices, bounds, colors, policy/state, indices, capacity/headroom, and identities survive blob creation; every type is unmanaged and every runtime contract has the required ECS kind. The first compile rejected the design shorthand `ulong2`, which Unity.Mathematics does not provide; the schema and tracker now use the explicit unmanaged `OperationMapRenderIdentity128` (`ulong Low`, `ulong High`) and the exact rerun passed. No source render row, runtime query, candidate/accepted/frozen/production asset, Addressables content, EntityScene, or Android artifact changed. |
 | 2026-07-28 | `VRP-012` deterministic 128-bit identity projection | Rejected shutdown-crash wrappers `%TEMP%\warline-render-virtualization-vrp012.log` and `-rerun.log`; accepted Windows GUI-licensing wrapper `%TEMP%\warline-render-virtualization-vrp012-final.log`; `[OperationMapRenderVirtualizationValidation] result=Passed tests=15`; wrapper exit code `0`; `git diff --check` | Passed; pure identity contract accepted | The editor-only projection hashes exact UTF-8 stable identities with SHA-256, reads digest bytes `0..7`/`8..15` into little-endian `Low`/`High`, rejects empty input, detects a different full source registered to an occupied 128-bit value, permits idempotent repeats, and sorts deterministically by unsigned `(Low, High)`. A fixed known vector guards byte order. The first two runs compiled and passed all 15 assertions but were rejected because Unity emitted `Crash!!!` during shutdown; the identical final run exited through the wrapper with code `0`. No baker/runtime consumer, source row, candidate/accepted/frozen/production asset, package, EntityScene, or Android artifact changed. |
+| 2026-07-28 | `VRP-013` canonical prototype fingerprinting | Windows GUI-licensing wrapper `%TEMP%\warline-render-virtualization-vrp013.log`; `[OperationMapRenderVirtualizationValidation] result=Passed tests=18`; wrapper exit code `0`; `git diff --check` | Passed; pure prototype contract accepted | Added an editor-only schema-1 binary fingerprint over normalized renderer hierarchy path, mesh/material GUID and local id, submesh, exact local matrix/bounds, linear base color, fixed policy bucket, shadow flags, and LOD flags. Length-prefixed UTF-8 strings and little-endian primitive writes avoid culture/platform formatting. Tests prove unchanged input is stable, every contract field changes the result, and absolute/session paths, uppercase/malformed GUIDs, non-finite matrices, negative extents, and unknown policy/flag values fail closed. No baker/runtime consumer, render row, asset, package, EntityScene, or Android artifact changed. |
 
 ## 19. Evidence References
 

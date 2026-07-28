@@ -25,13 +25,21 @@ namespace Game.Editor
             using (SHA256 sha256 = SHA256.Create())
                 digest = sha256.ComputeHash(sourceBytes);
 
-            identity = new OperationMapRenderIdentity128
+            identity = FromSha256Digest(digest);
+            error = null;
+            return true;
+        }
+
+        internal static OperationMapRenderIdentity128 FromSha256Digest(byte[] digest)
+        {
+            if (digest == null || digest.Length != 32)
+                throw new ArgumentException("A complete 32-byte SHA-256 digest is required.", nameof(digest));
+
+            return new OperationMapRenderIdentity128
             {
                 Low = ReadUInt64LittleEndian(digest, 0),
                 High = ReadUInt64LittleEndian(digest, sizeof(ulong))
             };
-            error = null;
-            return true;
         }
 
         internal static int Compare(

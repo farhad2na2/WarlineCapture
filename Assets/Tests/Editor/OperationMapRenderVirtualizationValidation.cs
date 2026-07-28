@@ -34,7 +34,10 @@ public sealed class OperationMapRenderVirtualizationValidation
             tests.IdentityProjection_RejectsEmptySources();
             tests.IdentityCollisionDetector_RejectsDifferentSourcesForOneIdentity();
             tests.IdentityComparer_SortsByLowThenHighDeterministically();
-            Debug.Log("[OperationMapRenderVirtualizationValidation] result=Passed tests=15");
+            tests.PrototypeFingerprint_IsDeterministic();
+            tests.PrototypeFingerprint_ChangesForEveryContractField();
+            tests.PrototypeFingerprint_RejectsInvalidInputs();
+            Debug.Log("[OperationMapRenderVirtualizationValidation] result=Passed tests=18");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -412,6 +415,164 @@ public sealed class OperationMapRenderVirtualizationValidation
             Assert.That(second[index].Low, Is.EqualTo(first[index].Low));
             Assert.That(second[index].High, Is.EqualTo(first[index].High));
         }
+    }
+
+    [Test]
+    public void PrototypeFingerprint_IsDeterministic()
+    {
+        OperationMapRenderPrototypeFingerprintInput input = CreatePrototypeFingerprintInput();
+        OperationMapRenderIdentity128 first = Fingerprint(input);
+        OperationMapRenderIdentity128 second = Fingerprint(input);
+
+        Assert.That(second.Low, Is.EqualTo(first.Low));
+        Assert.That(second.High, Is.EqualTo(first.High));
+    }
+
+    [Test]
+    public void PrototypeFingerprint_ChangesForEveryContractField()
+    {
+        OperationMapRenderPrototypeFingerprintInput baseline = CreatePrototypeFingerprintInput();
+        HashSet<string> fingerprints = new()
+        {
+            IdentityKey(Fingerprint(baseline))
+        };
+
+        OperationMapRenderPrototypeFingerprintInput changed = baseline;
+        changed.RendererPath = "Root/Changed";
+        AssertUnique(fingerprints, changed);
+        changed = baseline;
+        changed.MeshAssetGuid = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
+        AssertUnique(fingerprints, changed);
+        changed = baseline;
+        changed.MeshLocalId = 101;
+        AssertUnique(fingerprints, changed);
+        changed = baseline;
+        changed.MaterialAssetGuid = "dddddddddddddddddddddddddddddddd";
+        AssertUnique(fingerprints, changed);
+        changed = baseline;
+        changed.MaterialLocalId = 201;
+        AssertUnique(fingerprints, changed);
+        changed = baseline;
+        changed.SubMeshIndex = 2;
+        AssertUnique(fingerprints, changed);
+        changed = baseline;
+        changed.LocalToPlacement.c3.x = 3f;
+        AssertUnique(fingerprints, changed);
+        changed = baseline;
+        changed.LocalBounds.Center.y = 4f;
+        AssertUnique(fingerprints, changed);
+        changed = baseline;
+        changed.LocalBounds.Extents.z = 5f;
+        AssertUnique(fingerprints, changed);
+        changed = baseline;
+        changed.LinearBaseColor.x = 0.9f;
+        AssertUnique(fingerprints, changed);
+        changed = baseline;
+        changed.PolicyBucket = OperationMapRenderPolicyBucket.OpaqueShadowsOff;
+        AssertUnique(fingerprints, changed);
+        changed = baseline;
+        changed.ShadowFlags = OperationMapRenderShadowFlags.ReceiveShadows;
+        AssertUnique(fingerprints, changed);
+        changed = baseline;
+        changed.LodFlags = OperationMapRenderLodFlags.Lod1;
+        AssertUnique(fingerprints, changed);
+
+        Assert.That(fingerprints.Count, Is.EqualTo(14));
+    }
+
+    [Test]
+    public void PrototypeFingerprint_RejectsInvalidInputs()
+    {
+        OperationMapRenderPrototypeFingerprintInput input = CreatePrototypeFingerprintInput();
+        input.RendererPath = "C:\\session\\Renderer";
+        AssertFingerprintRejected(input, "Renderer path");
+
+        input = CreatePrototypeFingerprintInput();
+        input.MeshAssetGuid = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+        AssertFingerprintRejected(input, "Mesh identity");
+
+        input = CreatePrototypeFingerprintInput();
+        input.LocalToPlacement.c0.x = float.NaN;
+        AssertFingerprintRejected(input, "finite");
+
+        input = CreatePrototypeFingerprintInput();
+        input.LocalBounds.Extents.x = -1f;
+        AssertFingerprintRejected(input, "nonnegative extents");
+
+        input = CreatePrototypeFingerprintInput();
+        input.PolicyBucket = (OperationMapRenderPolicyBucket)byte.MaxValue;
+        AssertFingerprintRejected(input, "Unknown render-policy bucket");
+
+        input = CreatePrototypeFingerprintInput();
+        input.ShadowFlags = (OperationMapRenderShadowFlags)(1 << 7);
+        AssertFingerprintRejected(input, "Unknown render shadow flags");
+
+        input = CreatePrototypeFingerprintInput();
+        input.LodFlags = OperationMapRenderLodFlags.None;
+        AssertFingerprintRejected(input, "Invalid render LOD flags");
+    }
+
+    private static OperationMapRenderPrototypeFingerprintInput CreatePrototypeFingerprintInput()
+    {
+        return new OperationMapRenderPrototypeFingerprintInput
+        {
+            RendererPath = "Root/Renderer",
+            MeshAssetGuid = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            MeshLocalId = 100,
+            MaterialAssetGuid = "cccccccccccccccccccccccccccccccc",
+            MaterialLocalId = 200,
+            SubMeshIndex = 1,
+            LocalToPlacement = float4x4.TRS(
+                new float3(1f, 2f, 3f),
+                quaternion.RotateY(0.5f),
+                new float3(1f, 2f, 1f)),
+            LocalBounds = Bounds(new float3(0f, 1f, 0f), new float3(2f, 3f, 4f)),
+            LinearBaseColor = new float4(0.25f, 0.5f, 0.75f, 1f),
+            PolicyBucket = OperationMapRenderPolicyBucket.AlphaClippedShadowsOn,
+            ShadowFlags = OperationMapRenderShadowFlags.CastShadows |
+                          OperationMapRenderShadowFlags.ReceiveShadows,
+            LodFlags = OperationMapRenderLodFlags.Lod0
+        };
+    }
+
+    private static OperationMapRenderIdentity128 Fingerprint(
+        OperationMapRenderPrototypeFingerprintInput input)
+    {
+        Assert.That(
+            OperationMapRenderPrototypeFingerprint.TryCompute(
+                in input,
+                out OperationMapRenderIdentity128 fingerprint,
+                out string error),
+            Is.True,
+            error);
+        return fingerprint;
+    }
+
+    private static void AssertUnique(
+        HashSet<string> fingerprints,
+        OperationMapRenderPrototypeFingerprintInput input)
+    {
+        Assert.That(fingerprints.Add(IdentityKey(Fingerprint(input))), Is.True);
+    }
+
+    private static string IdentityKey(OperationMapRenderIdentity128 identity)
+    {
+        return $"{identity.Low:x16}{identity.High:x16}";
+    }
+
+    private static void AssertFingerprintRejected(
+        OperationMapRenderPrototypeFingerprintInput input,
+        string expectedError)
+    {
+        Assert.That(
+            OperationMapRenderPrototypeFingerprint.TryCompute(
+                in input,
+                out OperationMapRenderIdentity128 fingerprint,
+                out string error),
+            Is.False);
+        Assert.That(fingerprint.Low, Is.Zero);
+        Assert.That(fingerprint.High, Is.Zero);
+        Assert.That(error, Does.Contain(expectedError));
     }
 
     private static OperationMapRenderBoundsBlob Bounds(float3 center, float3 extents)

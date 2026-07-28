@@ -285,6 +285,8 @@ Layer, rendering-layer mask, motion-vector mode, shadow casting, receive-shadows
 
 Transparent and alpha-clipped content do not silently fall into the opaque bucket.
 
+The schema-1 pure classifier returns a complete immutable policy key containing the coarse bucket plus layer, rendering-layer mask, motion-vector mode, and shadow flags. A changed fixed-filter field therefore cannot alias an existing pool policy. Static-shadow casting requires ordinary shadow casting, transparent shadow casters are rejected, zero rendering-layer masks and layers outside `[0,31]` are rejected, and unknown material/motion/shadow values fail closed. The always-resident bucket is selected only by an explicit exception input; it is not a fallback for an unsupported combination.
+
 ## 7. Spatial Index And Capacity Contract
 
 ### 7.1 Cells
@@ -752,7 +754,7 @@ Terra must stop and request Sol when the next dependency-ready item is marked `[
 - [x] `VRP-012 [TERRA]` Add stable 128-bit identity projection, collision detection, and deterministic sorting tests. Depends on: `VRP-011`.
 - [x] `VRP-013 [TERRA]` Add pure prototype fingerprinting for mesh/material/submesh/path/matrix/bounds/color/filter/LOD inputs. Depends on: `VRP-011`.
 - [x] `VRP-014 [TERRA]` Add pure cell assignment and multi-cell deduplication algorithms with boundary tests. Depends on: `VRP-011`.
-- [ ] `VRP-015 [TERRA]` Add pure policy-bucket classification with fail-closed unknown combinations. Depends on: `VRP-011`.
+- [x] `VRP-015 [TERRA]` Add pure policy-bucket classification with fail-closed unknown combinations. Depends on: `VRP-011`.
 - [ ] `VRP-016 [TERRA]` Add deterministic camera-capacity sweep inputs/results and 20% headroom calculation tests. Depends on: `VRP-014`, `VRP-015`.
 - [ ] `VRP-017 [TERRA]` Add schema/report serialization and reject missing/default/negative metrics. Depends on: `VRP-012` through `VRP-016`.
 
@@ -942,7 +944,7 @@ Forbidden shortcuts:
 | Phase | Status |
 |---|---|
 | Phase 0: Evidence and amendment | In progress; Android failure and design authorization recorded; raw profile/inventory open |
-| Phase 1: Additive schema and pure contracts | In progress; mode, schema, identity/fingerprint, and spatial-cell contracts accepted |
+| Phase 1: Additive schema and pure contracts | In progress; mode, schema, identity/fingerprint, spatial-cell, and fixed render-policy contracts accepted |
 | Phase 2: Deterministic database builder | Not started |
 | Phase 3: Candidate pool baking | Not started |
 | Phase 4: Jobified runtime assignment | Not started |
@@ -953,7 +955,7 @@ Forbidden shortcuts:
 | Phase 9: Android 60 FPS acceptance | Not started |
 | Phase 10: Cutover and closeout | Not started |
 
-Checklist progress: `7 / 80` complete.
+Checklist progress: `8 / 80` complete.
 
 ## 18. Validation Log
 
@@ -967,6 +969,7 @@ Checklist progress: `7 / 80` complete.
 | 2026-07-28 | `VRP-012` deterministic 128-bit identity projection | Rejected shutdown-crash wrappers `%TEMP%\warline-render-virtualization-vrp012.log` and `-rerun.log`; accepted Windows GUI-licensing wrapper `%TEMP%\warline-render-virtualization-vrp012-final.log`; `[OperationMapRenderVirtualizationValidation] result=Passed tests=15`; wrapper exit code `0`; `git diff --check` | Passed; pure identity contract accepted | The editor-only projection hashes exact UTF-8 stable identities with SHA-256, reads digest bytes `0..7`/`8..15` into little-endian `Low`/`High`, rejects empty input, detects a different full source registered to an occupied 128-bit value, permits idempotent repeats, and sorts deterministically by unsigned `(Low, High)`. A fixed known vector guards byte order. The first two runs compiled and passed all 15 assertions but were rejected because Unity emitted `Crash!!!` during shutdown; the identical final run exited through the wrapper with code `0`. No baker/runtime consumer, source row, candidate/accepted/frozen/production asset, package, EntityScene, or Android artifact changed. |
 | 2026-07-28 | `VRP-013` canonical prototype fingerprinting | Windows GUI-licensing wrapper `%TEMP%\warline-render-virtualization-vrp013.log`; `[OperationMapRenderVirtualizationValidation] result=Passed tests=18`; wrapper exit code `0`; `git diff --check` | Passed; pure prototype contract accepted | Added an editor-only schema-1 binary fingerprint over normalized renderer hierarchy path, mesh/material GUID and local id, submesh, exact local matrix/bounds, linear base color, fixed policy bucket, shadow flags, and LOD flags. Length-prefixed UTF-8 strings and little-endian primitive writes avoid culture/platform formatting. Tests prove unchanged input is stable, every contract field changes the result, and absolute/session paths, uppercase/malformed GUIDs, non-finite matrices, negative extents, and unknown policy/flag values fail closed. No baker/runtime consumer, render row, asset, package, EntityScene, or Android artifact changed. |
 | 2026-07-28 | `VRP-014` deterministic spatial-cell assignment | Windows GUI-licensing wrapper `%TEMP%\warline-render-virtualization-vrp014.log`; `[OperationMapRenderVirtualizationValidation] result=Passed tests=24`; wrapper exit code `0`; `git diff --check` | Passed; pure cell/dedup contract accepted | Added editor-only X/Z assignment from accepted origin/cell size with row-major `(z,x)` output, half-open maximum edges for nonzero bounds, point ownership on exact boundaries, grid clipping, and complete outside rejection. The reference multi-cell gather validates every range/index, deduplicates repeated placement ownership, and globally sorts stable-identity ranks so selected-cell order cannot change results. Boundary, four-cell, partial-overlap, invalid-grid/bounds, repeated-range, and corrupt-index cases pass. No baker/runtime consumer, render row, asset, package, EntityScene, or Android artifact changed. |
+| 2026-07-28 | `VRP-015` closed render-policy classification | Windows GUI-licensing wrapper `%TEMP%\warline-render-virtualization-vrp015.log`; `[OperationMapRenderVirtualizationValidation] result=Passed tests=28`; wrapper exit code `0`; `git diff --check` | Passed; pure fixed-policy contract accepted | Added an editor-only classifier for the six closed residency buckets while retaining layer, rendering-layer mask, motion-vector mode, and cast/receive/static-shadow flags in the immutable policy key. Opaque and alpha-clipped content map independently by cast-shadow state; transparent content never falls into opaque and rejects shadow casting; always-resident ownership requires an explicit exception. Unknown material/motion/shadow values, invalid layers, empty rendering masks, and static-without-cast combinations fail closed. Tests also prove any fixed-filter field change produces a different key. No baker/runtime consumer, render row, asset, package, EntityScene, or Android artifact changed. |
 
 ## 19. Evidence References
 

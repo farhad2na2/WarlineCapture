@@ -43,7 +43,11 @@ public sealed class OperationMapRenderVirtualizationValidation
             tests.CellAssignment_RejectsInvalidGridOrBounds();
             tests.MultiCellGather_DeduplicatesAndSortsPlacementIndices();
             tests.MultiCellGather_RejectsInvalidRangesAndIndices();
-            Debug.Log("[OperationMapRenderVirtualizationValidation] result=Passed tests=24");
+            tests.PolicyClassifier_MapsEverySupportedSurfaceAndShadowCombination();
+            tests.PolicyClassifier_PreservesCompleteFixedFilterIdentity();
+            tests.PolicyClassifier_UsesExplicitAlwaysResidentBucket();
+            tests.PolicyClassifier_RejectsUnsupportedOrUnknownCombinations();
+            Debug.Log("[OperationMapRenderVirtualizationValidation] result=Passed tests=28");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -666,6 +670,187 @@ public sealed class OperationMapRenderVirtualizationValidation
             Is.False);
         Assert.That(invalidIndex, Is.Empty);
         Assert.That(indexError, Does.Contain("outside [0,3)"));
+    }
+
+    [Test]
+    public void PolicyClassifier_MapsEverySupportedSurfaceAndShadowCombination()
+    {
+        AssertPolicyBucket(
+            OperationMapRenderMaterialSurface.Opaque,
+            OperationMapRenderShadowFlags.CastShadows,
+            OperationMapRenderPolicyBucket.OpaqueShadowsOn);
+        AssertPolicyBucket(
+            OperationMapRenderMaterialSurface.Opaque,
+            OperationMapRenderShadowFlags.None,
+            OperationMapRenderPolicyBucket.OpaqueShadowsOff);
+        AssertPolicyBucket(
+            OperationMapRenderMaterialSurface.AlphaClipped,
+            OperationMapRenderShadowFlags.CastShadows,
+            OperationMapRenderPolicyBucket.AlphaClippedShadowsOn);
+        AssertPolicyBucket(
+            OperationMapRenderMaterialSurface.AlphaClipped,
+            OperationMapRenderShadowFlags.None,
+            OperationMapRenderPolicyBucket.AlphaClippedShadowsOff);
+        AssertPolicyBucket(
+            OperationMapRenderMaterialSurface.Transparent,
+            OperationMapRenderShadowFlags.ReceiveShadows,
+            OperationMapRenderPolicyBucket.TransparentShadowsOff);
+    }
+
+    [Test]
+    public void PolicyClassifier_PreservesCompleteFixedFilterIdentity()
+    {
+        OperationMapRenderPolicyClassificationInput baseline =
+            PolicyInput(OperationMapRenderMaterialSurface.Opaque);
+        Assert.That(
+            OperationMapRenderPolicyClassifier.TryClassify(
+                baseline,
+                out OperationMapRenderPolicyKey first,
+                out string firstError),
+            Is.True,
+            firstError);
+
+        OperationMapRenderPolicyClassificationInput differentLayer =
+            PolicyInput(OperationMapRenderMaterialSurface.Opaque, layer: 3);
+        OperationMapRenderPolicyClassificationInput differentRenderingLayer =
+            PolicyInput(
+                OperationMapRenderMaterialSurface.Opaque,
+                renderingLayerMask: 4u);
+        OperationMapRenderPolicyClassificationInput differentMotion =
+            PolicyInput(
+                OperationMapRenderMaterialSurface.Opaque,
+                motionVectorMode: OperationMapRenderMotionVectorMode.Object);
+        OperationMapRenderPolicyClassificationInput differentReceive =
+            PolicyInput(
+                OperationMapRenderMaterialSurface.Opaque,
+                shadowFlags: OperationMapRenderShadowFlags.ReceiveShadows);
+
+        AssertPolicyDiffers(first, differentLayer);
+        AssertPolicyDiffers(first, differentRenderingLayer);
+        AssertPolicyDiffers(first, differentMotion);
+        AssertPolicyDiffers(first, differentReceive);
+    }
+
+    [Test]
+    public void PolicyClassifier_UsesExplicitAlwaysResidentBucket()
+    {
+        OperationMapRenderPolicyClassificationInput input =
+            PolicyInput(
+                OperationMapRenderMaterialSurface.AlphaClipped,
+                shadowFlags: OperationMapRenderShadowFlags.CastShadows |
+                             OperationMapRenderShadowFlags.ReceiveShadows,
+                alwaysResidentException: true);
+
+        Assert.That(
+            OperationMapRenderPolicyClassifier.TryClassify(
+                input,
+                out OperationMapRenderPolicyKey policy,
+                out string error),
+            Is.True,
+            error);
+        Assert.That(
+            policy.Bucket,
+            Is.EqualTo(OperationMapRenderPolicyBucket.AlwaysResidentException));
+        Assert.That(
+            policy.ShadowFlags,
+            Is.EqualTo(
+                OperationMapRenderShadowFlags.CastShadows |
+                OperationMapRenderShadowFlags.ReceiveShadows));
+    }
+
+    [Test]
+    public void PolicyClassifier_RejectsUnsupportedOrUnknownCombinations()
+    {
+        AssertPolicyRejected(
+            PolicyInput(
+                OperationMapRenderMaterialSurface.Transparent,
+                shadowFlags: OperationMapRenderShadowFlags.CastShadows),
+            "Transparent render policy");
+        AssertPolicyRejected(
+            PolicyInput(
+                OperationMapRenderMaterialSurface.Opaque,
+                shadowFlags: OperationMapRenderShadowFlags.StaticShadowCaster),
+            "requires CastShadows");
+        AssertPolicyRejected(
+            PolicyInput((OperationMapRenderMaterialSurface)byte.MaxValue),
+            "Unknown material surface");
+        AssertPolicyRejected(
+            PolicyInput(
+                OperationMapRenderMaterialSurface.Opaque,
+                motionVectorMode: (OperationMapRenderMotionVectorMode)byte.MaxValue),
+            "Unknown motion-vector mode");
+        AssertPolicyRejected(
+            PolicyInput(OperationMapRenderMaterialSurface.Opaque, layer: 32),
+            "must be in [0,31]");
+        AssertPolicyRejected(
+            PolicyInput(
+                OperationMapRenderMaterialSurface.Opaque,
+                renderingLayerMask: 0u),
+            "must contain at least one layer");
+        AssertPolicyRejected(
+            PolicyInput(
+                OperationMapRenderMaterialSurface.Opaque,
+                shadowFlags: (OperationMapRenderShadowFlags)(1 << 7)),
+            "Unknown render shadow flags");
+    }
+
+    private static void AssertPolicyBucket(
+        OperationMapRenderMaterialSurface surface,
+        OperationMapRenderShadowFlags shadowFlags,
+        OperationMapRenderPolicyBucket expected)
+    {
+        OperationMapRenderPolicyClassificationInput input =
+            PolicyInput(surface, shadowFlags: shadowFlags);
+        Assert.That(
+            OperationMapRenderPolicyClassifier.TryClassify(
+                input,
+                out OperationMapRenderPolicyKey policy,
+                out string error),
+            Is.True,
+            error);
+        Assert.That(policy.Bucket, Is.EqualTo(expected));
+    }
+
+    private static void AssertPolicyDiffers(
+        OperationMapRenderPolicyKey baseline,
+        OperationMapRenderPolicyClassificationInput input)
+    {
+        Assert.That(
+            OperationMapRenderPolicyClassifier.TryClassify(
+                input,
+                out OperationMapRenderPolicyKey policy,
+                out string error),
+            Is.True,
+            error);
+        Assert.That(policy, Is.Not.EqualTo(baseline));
+    }
+
+    private static void AssertPolicyRejected(
+        OperationMapRenderPolicyClassificationInput input,
+        string expectedError)
+    {
+        Assert.That(
+            OperationMapRenderPolicyClassifier.TryClassify(input, out _, out string error),
+            Is.False);
+        Assert.That(error, Does.Contain(expectedError));
+    }
+
+    private static OperationMapRenderPolicyClassificationInput PolicyInput(
+        OperationMapRenderMaterialSurface surface,
+        int layer = 0,
+        uint renderingLayerMask = 1u,
+        OperationMapRenderMotionVectorMode motionVectorMode =
+            OperationMapRenderMotionVectorMode.ForceNoMotion,
+        OperationMapRenderShadowFlags shadowFlags = OperationMapRenderShadowFlags.None,
+        bool alwaysResidentException = false)
+    {
+        return new OperationMapRenderPolicyClassificationInput(
+            surface,
+            layer,
+            renderingLayerMask,
+            motionVectorMode,
+            shadowFlags,
+            alwaysResidentException);
     }
 
     private static OperationMapRenderPrototypeFingerprintInput CreatePrototypeFingerprintInput()

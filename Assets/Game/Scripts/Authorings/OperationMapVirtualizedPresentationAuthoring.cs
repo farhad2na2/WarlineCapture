@@ -2,13 +2,15 @@ using Game.Components;
 using Game.Configs;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Rendering;
 using UnityEngine;
 
 namespace Game.Authoring
 {
     /// <summary>
-    /// Candidate-only root for the future virtualized presentation database.
-    /// VRP-030 deliberately creates no proxy slots and does not alter source render entities.
+    /// Candidate-only root for the virtualized presentation database and its one shared,
+    /// deterministically ordered mesh/material array.
+    /// This baker creates no proxy slots and does not alter source render entities.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class OperationMapVirtualizedPresentationAuthoring : MonoBehaviour
@@ -38,8 +40,13 @@ namespace Game.Authoring
         {
             public override void Bake(OperationMapVirtualizedPresentationAuthoring authoring)
             {
-                if (!authoring.TryValidate(out _))
+                if (!OperationMapRenderMeshArrayBuilder.TryBuild(
+                        authoring.DatabaseConfig,
+                        out RenderMeshArray renderMeshArray,
+                        out _))
+                {
                     return;
+                }
 
                 DependsOn(authoring.DatabaseConfig);
                 Entity entity = GetEntity(TransformUsageFlags.None);
@@ -50,6 +57,7 @@ namespace Game.Authoring
                     SchemaVersion = authoring.DatabaseConfig.SchemaVersion,
                     MapGeneration = authoring.mapGeneration
                 });
+                AddSharedComponentManaged(entity, renderMeshArray);
             }
         }
     }

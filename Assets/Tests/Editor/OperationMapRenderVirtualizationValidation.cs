@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Game.Authoring;
 using Game.Configs;
 using Game.Components;
 using Game.Editor;
@@ -9,6 +10,7 @@ using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Rendering;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -58,7 +60,8 @@ public sealed class OperationMapRenderVirtualizationValidation
             tests.VirtualizationReport_RejectsCapacityReconciliationFailures();
             tests.RenderDatabaseBakeConfig_IsGeneratedOnlyAndRetainsCompleteSchema();
             tests.RenderDatabaseBakeConfig_RejectsMissingOrCorruptRecords();
-            Debug.Log("[OperationMapRenderVirtualizationValidation] result=Passed tests=38");
+            tests.SharedRenderMeshArray_PreservesSortedAssetsAndEveryLogicalIndex();
+            Debug.Log("[OperationMapRenderVirtualizationValidation] result=Passed tests=39");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -1224,6 +1227,75 @@ public sealed class OperationMapRenderVirtualizationValidation
             UnityEngine.Object.DestroyImmediate(config);
             UnityEngine.Object.DestroyImmediate(material);
             UnityEngine.Object.DestroyImmediate(mesh);
+        }
+
+        config = CreateValidBakeConfig(out mesh, out material);
+        try
+        {
+            Set(config.Parts[0], "subMeshIndex", mesh.subMeshCount);
+            Assert.That(config.TryValidateSchema(out string subMeshError), Is.False);
+            Assert.That(subMeshError, Does.Contain("invalid identity, reference"));
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(config);
+            UnityEngine.Object.DestroyImmediate(material);
+            UnityEngine.Object.DestroyImmediate(mesh);
+        }
+    }
+
+    [Test]
+    public void SharedRenderMeshArray_PreservesSortedAssetsAndEveryLogicalIndex()
+    {
+        OperationMapRenderDatabaseBakeConfig config =
+            AssetDatabase.LoadAssetAtPath<OperationMapRenderDatabaseBakeConfig>(
+                "Assets/Game/GeneratedOperationMapEntityPresentationCandidate/" +
+                "VirtualizedPresentation/OperationMapRenderDatabaseBakeConfig.asset");
+        Assert.That(config, Is.Not.Null);
+        Assert.That(
+            OperationMapRenderMeshArrayBuilder.TryBuild(
+                config,
+                out RenderMeshArray renderMeshArray,
+                out string error),
+            Is.True,
+            error);
+        Assert.That(renderMeshArray.MeshReferences, Has.Length.EqualTo(config.Meshes.Count));
+        Assert.That(
+            renderMeshArray.MaterialReferences,
+            Has.Length.EqualTo(config.Materials.Count));
+
+        for (int index = 0; index < config.Meshes.Count; index++)
+        {
+            Assert.That(
+                renderMeshArray.MeshReferences[index].Value,
+                Is.SameAs(config.Meshes[index].Mesh),
+                $"mesh[{index}]");
+        }
+
+        for (int index = 0; index < config.Materials.Count; index++)
+        {
+            Assert.That(
+                renderMeshArray.MaterialReferences[index].Value,
+                Is.SameAs(config.Materials[index].Material),
+                $"material[{index}]");
+        }
+
+        for (int index = 0; index < config.Parts.Count; index++)
+        {
+            OperationMapRenderPrototypePartConfigRecord part = config.Parts[index];
+            Assert.That(part.MeshIndex, Is.InRange(0, config.Meshes.Count - 1));
+            Assert.That(part.MaterialIndex, Is.InRange(0, config.Materials.Count - 1));
+            Assert.That(
+                part.SubMeshIndex,
+                Is.InRange(0, config.Meshes[part.MeshIndex].Mesh.subMeshCount - 1));
+            Assert.That(
+                renderMeshArray.MeshReferences[part.MeshIndex].Value,
+                Is.SameAs(config.Meshes[part.MeshIndex].Mesh),
+                $"parts[{index}].mesh");
+            Assert.That(
+                renderMeshArray.MaterialReferences[part.MaterialIndex].Value,
+                Is.SameAs(config.Materials[part.MaterialIndex].Material),
+                $"parts[{index}].material");
         }
     }
 

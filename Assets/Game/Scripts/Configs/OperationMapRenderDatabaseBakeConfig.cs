@@ -522,6 +522,7 @@ namespace Game.Configs
                     part.MaterialIndex < 0 ||
                     part.MaterialIndex >= materials.Length ||
                     part.SubMeshIndex < 0 ||
+                    part.SubMeshIndex >= meshes[part.MeshIndex].Mesh.subMeshCount ||
                     part.PoolBucketIndex < 0 ||
                     part.PoolBucketIndex >= poolBuckets.Length ||
                     part.PolicyBucket != poolBuckets[part.PoolBucketIndex].PolicyBucket ||

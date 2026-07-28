@@ -292,8 +292,9 @@ Transparent and alpha-clipped content do not silently fall into the opaque bucke
 - Start with deterministic `32 m` X/Z cells, matching the prior static-presentation diagnostic scale.
 - Derive coordinates from the accepted operation-map origin using floor division.
 - Assign a placement to every cell intersected by its combined transformed bounds, not only its pivot cell.
+- Schema 1 treats nonzero AABBs as half-open on their maximum X/Z edge, while a zero-extent point belongs to the cell containing that point. This prevents an AABB ending exactly on a boundary from leaking into the next cell.
 - Deduplicate placement indices inside each cell.
-- Sort cells by `(z, x)` and placement indices by stable identity.
+- Sort cells by `(z, x)` row-major index and placement indices by stable-identity rank. Multi-cell gathers deduplicate before returning globally sorted placement indices, so selected-cell traversal order cannot change output.
 - Keep large multi-cell placements resident initially unless measured evidence approves virtualized multi-cell ownership.
 
 ### 7.2 Camera Envelope
@@ -750,7 +751,7 @@ Terra must stop and request Sol when the next dependency-ready item is marked `[
 - [x] `VRP-011 [TERRA]` Add unmanaged blob/component schema with field-level validation and no runtime use. Depends on: `VRP-010`.
 - [x] `VRP-012 [TERRA]` Add stable 128-bit identity projection, collision detection, and deterministic sorting tests. Depends on: `VRP-011`.
 - [x] `VRP-013 [TERRA]` Add pure prototype fingerprinting for mesh/material/submesh/path/matrix/bounds/color/filter/LOD inputs. Depends on: `VRP-011`.
-- [ ] `VRP-014 [TERRA]` Add pure cell assignment and multi-cell deduplication algorithms with boundary tests. Depends on: `VRP-011`.
+- [x] `VRP-014 [TERRA]` Add pure cell assignment and multi-cell deduplication algorithms with boundary tests. Depends on: `VRP-011`.
 - [ ] `VRP-015 [TERRA]` Add pure policy-bucket classification with fail-closed unknown combinations. Depends on: `VRP-011`.
 - [ ] `VRP-016 [TERRA]` Add deterministic camera-capacity sweep inputs/results and 20% headroom calculation tests. Depends on: `VRP-014`, `VRP-015`.
 - [ ] `VRP-017 [TERRA]` Add schema/report serialization and reject missing/default/negative metrics. Depends on: `VRP-012` through `VRP-016`.
@@ -941,7 +942,7 @@ Forbidden shortcuts:
 | Phase | Status |
 |---|---|
 | Phase 0: Evidence and amendment | In progress; Android failure and design authorization recorded; raw profile/inventory open |
-| Phase 1: Additive schema and pure contracts | In progress; mode, schema, identity projection, and prototype fingerprinting accepted |
+| Phase 1: Additive schema and pure contracts | In progress; mode, schema, identity/fingerprint, and spatial-cell contracts accepted |
 | Phase 2: Deterministic database builder | Not started |
 | Phase 3: Candidate pool baking | Not started |
 | Phase 4: Jobified runtime assignment | Not started |
@@ -952,7 +953,7 @@ Forbidden shortcuts:
 | Phase 9: Android 60 FPS acceptance | Not started |
 | Phase 10: Cutover and closeout | Not started |
 
-Checklist progress: `6 / 80` complete.
+Checklist progress: `7 / 80` complete.
 
 ## 18. Validation Log
 
@@ -965,6 +966,7 @@ Checklist progress: `6 / 80` complete.
 | 2026-07-28 | `VRP-011` unmanaged render-virtualization schema | Rejected compile `%TEMP%\warline-render-virtualization-vrp011.log`; corrected Windows GUI-licensing wrapper `%TEMP%\warline-render-virtualization-vrp011-rerun.log`; `[OperationMapRenderVirtualizationValidation] result=Passed tests=11`; wrapper exit code `0`; `git diff --check` | Passed; additive schema accepted | Added the complete schema-1 database/prototype/part/placement/cell/pool records and the six named runtime ECS contracts without wiring them to any baker or system. Field-level construction proves matrices, bounds, colors, policy/state, indices, capacity/headroom, and identities survive blob creation; every type is unmanaged and every runtime contract has the required ECS kind. The first compile rejected the design shorthand `ulong2`, which Unity.Mathematics does not provide; the schema and tracker now use the explicit unmanaged `OperationMapRenderIdentity128` (`ulong Low`, `ulong High`) and the exact rerun passed. No source render row, runtime query, candidate/accepted/frozen/production asset, Addressables content, EntityScene, or Android artifact changed. |
 | 2026-07-28 | `VRP-012` deterministic 128-bit identity projection | Rejected shutdown-crash wrappers `%TEMP%\warline-render-virtualization-vrp012.log` and `-rerun.log`; accepted Windows GUI-licensing wrapper `%TEMP%\warline-render-virtualization-vrp012-final.log`; `[OperationMapRenderVirtualizationValidation] result=Passed tests=15`; wrapper exit code `0`; `git diff --check` | Passed; pure identity contract accepted | The editor-only projection hashes exact UTF-8 stable identities with SHA-256, reads digest bytes `0..7`/`8..15` into little-endian `Low`/`High`, rejects empty input, detects a different full source registered to an occupied 128-bit value, permits idempotent repeats, and sorts deterministically by unsigned `(Low, High)`. A fixed known vector guards byte order. The first two runs compiled and passed all 15 assertions but were rejected because Unity emitted `Crash!!!` during shutdown; the identical final run exited through the wrapper with code `0`. No baker/runtime consumer, source row, candidate/accepted/frozen/production asset, package, EntityScene, or Android artifact changed. |
 | 2026-07-28 | `VRP-013` canonical prototype fingerprinting | Windows GUI-licensing wrapper `%TEMP%\warline-render-virtualization-vrp013.log`; `[OperationMapRenderVirtualizationValidation] result=Passed tests=18`; wrapper exit code `0`; `git diff --check` | Passed; pure prototype contract accepted | Added an editor-only schema-1 binary fingerprint over normalized renderer hierarchy path, mesh/material GUID and local id, submesh, exact local matrix/bounds, linear base color, fixed policy bucket, shadow flags, and LOD flags. Length-prefixed UTF-8 strings and little-endian primitive writes avoid culture/platform formatting. Tests prove unchanged input is stable, every contract field changes the result, and absolute/session paths, uppercase/malformed GUIDs, non-finite matrices, negative extents, and unknown policy/flag values fail closed. No baker/runtime consumer, render row, asset, package, EntityScene, or Android artifact changed. |
+| 2026-07-28 | `VRP-014` deterministic spatial-cell assignment | Windows GUI-licensing wrapper `%TEMP%\warline-render-virtualization-vrp014.log`; `[OperationMapRenderVirtualizationValidation] result=Passed tests=24`; wrapper exit code `0`; `git diff --check` | Passed; pure cell/dedup contract accepted | Added editor-only X/Z assignment from accepted origin/cell size with row-major `(z,x)` output, half-open maximum edges for nonzero bounds, point ownership on exact boundaries, grid clipping, and complete outside rejection. The reference multi-cell gather validates every range/index, deduplicates repeated placement ownership, and globally sorts stable-identity ranks so selected-cell order cannot change results. Boundary, four-cell, partial-overlap, invalid-grid/bounds, repeated-range, and corrupt-index cases pass. No baker/runtime consumer, render row, asset, package, EntityScene, or Android artifact changed. |
 
 ## 19. Evidence References
 

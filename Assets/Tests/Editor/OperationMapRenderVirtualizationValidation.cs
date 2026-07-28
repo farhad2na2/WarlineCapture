@@ -37,7 +37,13 @@ public sealed class OperationMapRenderVirtualizationValidation
             tests.PrototypeFingerprint_IsDeterministic();
             tests.PrototypeFingerprint_ChangesForEveryContractField();
             tests.PrototypeFingerprint_RejectsInvalidInputs();
-            Debug.Log("[OperationMapRenderVirtualizationValidation] result=Passed tests=18");
+            tests.CellAssignment_UsesHalfOpenBoundariesAndPointOwnership();
+            tests.CellAssignment_EmitsEveryIntersectedCellInRowMajorOrder();
+            tests.CellAssignment_ClampsPartialOverlapAndRejectsOutsideBounds();
+            tests.CellAssignment_RejectsInvalidGridOrBounds();
+            tests.MultiCellGather_DeduplicatesAndSortsPlacementIndices();
+            tests.MultiCellGather_RejectsInvalidRangesAndIndices();
+            Debug.Log("[OperationMapRenderVirtualizationValidation] result=Passed tests=24");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -510,6 +516,156 @@ public sealed class OperationMapRenderVirtualizationValidation
         input = CreatePrototypeFingerprintInput();
         input.LodFlags = OperationMapRenderLodFlags.None;
         AssertFingerprintRejected(input, "Invalid render LOD flags");
+    }
+
+    [Test]
+    public void CellAssignment_UsesHalfOpenBoundariesAndPointOwnership()
+    {
+        Assert.That(
+            OperationMapRenderCellAssignment.TryAssign(
+                Bounds(new float3(16f, 0f, 16f), new float3(16f, 1f, 16f)),
+                32f,
+                float3.zero,
+                new int2(4, 4),
+                out int[] firstCell,
+                out string firstError),
+            Is.True,
+            firstError);
+        Assert.That(firstCell, Is.EqualTo(new[] { 0 }));
+
+        Assert.That(
+            OperationMapRenderCellAssignment.TryAssign(
+                Bounds(new float3(32f, 0f, 32f), float3.zero),
+                32f,
+                float3.zero,
+                new int2(4, 4),
+                out int[] boundaryPoint,
+                out string pointError),
+            Is.True,
+            pointError);
+        Assert.That(boundaryPoint, Is.EqualTo(new[] { 5 }));
+    }
+
+    [Test]
+    public void CellAssignment_EmitsEveryIntersectedCellInRowMajorOrder()
+    {
+        Assert.That(
+            OperationMapRenderCellAssignment.TryAssign(
+                Bounds(new float3(32f, 0f, 32f), new float3(2f, 1f, 2f)),
+                32f,
+                float3.zero,
+                new int2(4, 4),
+                out int[] cells,
+                out string error),
+            Is.True,
+            error);
+
+        Assert.That(cells, Is.EqualTo(new[] { 0, 1, 4, 5 }));
+    }
+
+    [Test]
+    public void CellAssignment_ClampsPartialOverlapAndRejectsOutsideBounds()
+    {
+        Assert.That(
+            OperationMapRenderCellAssignment.TryAssign(
+                Bounds(new float3(-1f, 0f, 16f), new float3(2f, 1f, 4f)),
+                32f,
+                float3.zero,
+                new int2(4, 4),
+                out int[] partial,
+                out string partialError),
+            Is.True,
+            partialError);
+        Assert.That(partial, Is.EqualTo(new[] { 0 }));
+
+        Assert.That(
+            OperationMapRenderCellAssignment.TryAssign(
+                Bounds(new float3(-4f, 0f, 16f), new float3(1f)),
+                32f,
+                float3.zero,
+                new int2(4, 4),
+                out int[] outside,
+                out string outsideError),
+            Is.False);
+        Assert.That(outside, Is.Empty);
+        Assert.That(outsideError, Does.Contain("do not intersect"));
+    }
+
+    [Test]
+    public void CellAssignment_RejectsInvalidGridOrBounds()
+    {
+        OperationMapRenderBoundsBlob invalidBounds =
+            Bounds(float3.zero, new float3(-1f, 1f, 1f));
+        Assert.That(
+            OperationMapRenderCellAssignment.TryAssign(
+                invalidBounds,
+                32f,
+                float3.zero,
+                new int2(4, 4),
+                out _,
+                out string boundsError),
+            Is.False);
+        Assert.That(boundsError, Does.Contain("nonnegative extents"));
+
+        Assert.That(
+            OperationMapRenderCellAssignment.TryAssign(
+                Bounds(float3.zero, new float3(1f)),
+                0f,
+                float3.zero,
+                new int2(4, 4),
+                out _,
+                out string gridError),
+            Is.False);
+        Assert.That(gridError, Does.Contain("positive cell size"));
+    }
+
+    [Test]
+    public void MultiCellGather_DeduplicatesAndSortsPlacementIndices()
+    {
+        int[] cellPlacementIndices = { 5, 2, 5, 7, 2, 3 };
+        OperationMapRenderCellRange[] ranges =
+        {
+            new(0, 3),
+            new(2, 4),
+            new(0, 3)
+        };
+
+        Assert.That(
+            OperationMapRenderCellAssignment.TryGatherUnique(
+                cellPlacementIndices,
+                ranges,
+                8,
+                out int[] unique,
+                out string error),
+            Is.True,
+            error);
+        Assert.That(unique, Is.EqualTo(new[] { 2, 3, 5, 7 }));
+    }
+
+    [Test]
+    public void MultiCellGather_RejectsInvalidRangesAndIndices()
+    {
+        Assert.That(
+            OperationMapRenderCellAssignment.TryGatherUnique(
+                new[] { 0, 1 },
+                new[] { new OperationMapRenderCellRange(1, 2) },
+                2,
+                out int[] invalidRange,
+                out string rangeError),
+            Is.False);
+        Assert.That(invalidRange, Is.Empty);
+        Assert.That(rangeError, Does.Contain("outside"));
+
+        Assert.That(
+            OperationMapRenderCellAssignment.TryGatherUnique(
+                new[] { 0, 3 },
+                new[] { new OperationMapRenderCellRange(0, 2) },
+                3,
+                out int[] invalidIndex,
+                out string indexError),
+            Is.False);
+        Assert.That(invalidIndex, Is.Empty);
+        Assert.That(indexError, Does.Contain("outside [0,3)"));
     }
 
     private static OperationMapRenderPrototypeFingerprintInput CreatePrototypeFingerprintInput()

@@ -1,6 +1,6 @@
 {
     "schema": "warline.operation-map.render-virtualization-eligibility-inventory",
-    "schemaVersion": 3,
+    "schemaVersion": 4,
     "result": "Passed",
     "operationMapId": "opmap.skirmish.desert_base_01",
     "candidateScenePath": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
@@ -26,6 +26,14 @@
     "prototypeRecipesSha256": "ae1095f73abfc10e152cd31aca63e1b9d563d7562e08ffb4979114e9622f2969",
     "prototypeRecipesPath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_prototype_recipes.json",
     "prototypeRecipesJsonSha256": "1635d92e0259373d03ef4c219601238990209380f122374cfe0f81899fbaa6f9",
+    "placementCount": 9721,
+    "stateOwnerCount": 0,
+    "stateLinkedPlacementCount": 0,
+    "renderOnlyPlacementCount": 9721,
+    "placementPartRowCount": 11299,
+    "logicalPlacementsSha256": "c53d4326f6c56bf3d85efb4640ea8ba37037100fffb02e5ba1eaaefbddc259d9",
+    "logicalPlacementsPath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_logical_placements.json",
+    "logicalPlacementsJsonSha256": "b0b531b4f867b793e9893e76eb21c45164531d1645d0342a57dc487c5f4a9484",
     "mutationAuthorized": false,
     "mutationBlocker": "VRP-002 raw Android profile remains open; source-row inventory authorizes no mutation.",
     "bySemanticCategory": [

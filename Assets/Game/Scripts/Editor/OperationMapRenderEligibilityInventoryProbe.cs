@@ -32,6 +32,8 @@ namespace Game.Editor
             "Design/AgentReports/2026-07-28_dense_city_render_virtualization_source_rows.json.gz";
         internal const string PrototypeRecipesPath =
             "Design/AgentReports/2026-07-28_dense_city_render_virtualization_prototype_recipes.json";
+        internal const string LogicalPlacementsPath =
+            "Design/AgentReports/2026-07-28_dense_city_render_virtualization_logical_placements.json";
         internal const int ExpectedPackedRenderRowCount = 82797;
         private static readonly UTF8Encoding Utf8WithoutBom = new(false);
 
@@ -49,6 +51,8 @@ namespace Game.Editor
                 string sourceRowsOutputPath = Path.Combine(projectRoot, SourceRowsPath);
                 string prototypeRecipesOutputPath =
                     Path.Combine(projectRoot, PrototypeRecipesPath);
+                string logicalPlacementsOutputPath =
+                    Path.Combine(projectRoot, LogicalPlacementsPath);
                 Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
                 byte[] sourceRowsJson = Utf8WithoutBom.GetBytes(
                     JsonUtility.ToJson(
@@ -77,6 +81,12 @@ namespace Game.Editor
                 report.prototypeRecipesJsonSha256 = ComputeSha256(prototypeRecipesJson);
                 report.prototypeRecipes = null;
 
+                byte[] logicalPlacementsJson = Utf8WithoutBom.GetBytes(
+                    JsonUtility.ToJson(report.logicalPlacements, true) + "\n");
+                report.logicalPlacementsPath = LogicalPlacementsPath;
+                report.logicalPlacementsJsonSha256 = ComputeSha256(logicalPlacementsJson);
+                report.logicalPlacements = null;
+
                 string sourceRowsTemporaryPath = sourceRowsOutputPath + ".tmp";
                 File.WriteAllBytes(sourceRowsTemporaryPath, sourceRowsGzip);
                 if (File.Exists(sourceRowsOutputPath))
@@ -89,6 +99,13 @@ namespace Game.Editor
                 if (File.Exists(prototypeRecipesOutputPath))
                     File.Delete(prototypeRecipesOutputPath);
                 File.Move(prototypeRecipesTemporaryPath, prototypeRecipesOutputPath);
+
+                string logicalPlacementsTemporaryPath =
+                    logicalPlacementsOutputPath + ".tmp";
+                File.WriteAllBytes(logicalPlacementsTemporaryPath, logicalPlacementsJson);
+                if (File.Exists(logicalPlacementsOutputPath))
+                    File.Delete(logicalPlacementsOutputPath);
+                File.Move(logicalPlacementsTemporaryPath, logicalPlacementsOutputPath);
 
                 string temporaryPath = outputPath + ".tmp";
                 File.WriteAllText(
@@ -105,7 +122,8 @@ namespace Game.Editor
                     $"excluded={report.excludedRenderRows} joined={report.stableOwnerJoinedRenderRows} " +
                     $"prototypes={report.prototypeCount} parts={report.prototypePartCount} " +
                     $"report={ReportPath} sourceRows={SourceRowsPath} " +
-                    $"prototypeRecipes={PrototypeRecipesPath}");
+                    $"prototypeRecipes={PrototypeRecipesPath} " +
+                    $"logicalPlacements={LogicalPlacementsPath}");
             }
             catch (Exception exception)
             {
@@ -244,7 +262,7 @@ namespace Game.Editor
             return new InventoryReport
             {
                 schema = "warline.operation-map.render-virtualization-eligibility-inventory",
-                schemaVersion = 3,
+                schemaVersion = 4,
                 result = "Passed",
                 operationMapId = "opmap.skirmish.desert_base_01",
                 candidateScenePath = DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath,
@@ -267,6 +285,16 @@ namespace Game.Editor
                 prototypePartCount = prototypeRecipes.prototypePartCount,
                 prototypeRecipeRowsConsumed = prototypeRecipes.eligibleSourceRowCount,
                 prototypeRecipesSha256 = prototypeRecipes.prototypeRecipesSha256,
+                placementCount = prototypeRecipes.logicalPlacements.placementCount,
+                stateOwnerCount = prototypeRecipes.logicalPlacements.stateOwnerCount,
+                stateLinkedPlacementCount =
+                    prototypeRecipes.logicalPlacements.stateLinkedPlacementCount,
+                renderOnlyPlacementCount =
+                    prototypeRecipes.logicalPlacements.renderOnlyPlacementCount,
+                placementPartRowCount =
+                    prototypeRecipes.logicalPlacements.placementPartRowCount,
+                logicalPlacementsSha256 =
+                    prototypeRecipes.logicalPlacements.logicalPlacementsSha256,
                 mutationAuthorized = false,
                 mutationBlocker =
                     "VRP-002 raw Android profile remains open; source-row inventory authorizes no mutation.",
@@ -277,7 +305,8 @@ namespace Game.Editor
                 byGameplayOwnership = BuildBreakdown(ownership),
                 byReasonCode = BuildBreakdown(reasons),
                 sourceRows = sourceRows,
-                prototypeRecipes = prototypeRecipes
+                prototypeRecipes = prototypeRecipes,
+                logicalPlacements = prototypeRecipes.logicalPlacements
             };
         }
 
@@ -497,7 +526,15 @@ namespace Game.Editor
                 Policy = policy,
                 LodFlags = OperationMapRenderLodFlags.Lod0,
                 PartFingerprint = partFingerprint,
-                PartCanonicalSource = partCanonicalSource
+                PartCanonicalSource = partCanonicalSource,
+                OwnerStableId = sourceRow.ownerStableId,
+                OwnerIdentity = new OperationMapRenderIdentity128
+                {
+                    Low = sourceRow.ownerIdentityLow,
+                    High = sourceRow.ownerIdentityHigh
+                },
+                OwnerRole = row.DenseOwner.Role,
+                PlacementWorldMatrix = row.DenseOwner.transform.localToWorldMatrix
             };
         }
 
@@ -525,9 +562,12 @@ namespace Game.Editor
             var prototypeCollisions = new OperationMapRenderIdentityCollisionDetector();
             var byPrototypeSource =
                 new Dictionary<string, PrototypeAccumulator>(StringComparer.Ordinal);
+            var prototypeSourceByOwner =
+                new Dictionary<string, string>(StringComparer.Ordinal);
             foreach (OwnerRecipe owner in owners)
             {
                 string prototypeSource = BuildPrototypeCanonicalSource(owner);
+                prototypeSourceByOwner.Add(owner.OwnerIdentitySource, prototypeSource);
                 OperationMapRenderIdentity128 prototypeIdentity =
                     ProjectAndRegister(prototypeSource, prototypeCollisions);
                 if (!byPrototypeSource.TryGetValue(
@@ -550,6 +590,9 @@ namespace Game.Editor
                 .OrderBy(prototype => prototype.PrototypeIdentity.Low)
                 .ThenBy(prototype => prototype.PrototypeIdentity.High)
                 .ToList();
+            var prototypeIndexBySource = ordered
+                .Select((prototype, index) => new { prototype.PrototypeSource, Index = index })
+                .ToDictionary(pair => pair.PrototypeSource, pair => pair.Index, StringComparer.Ordinal);
             var prototypes = new List<PrototypeRecipeReport>(ordered.Count);
             var parts = new List<PrototypePartRecipeReport>();
             foreach (PrototypeAccumulator prototype in ordered)
@@ -590,6 +633,11 @@ namespace Game.Editor
             }
 
             string recipesHash = ComputePrototypeRecipesSha256(prototypes, parts);
+            LogicalPlacementDocument logicalPlacements = BuildLogicalPlacements(
+                owners,
+                prototypeSourceByOwner,
+                prototypeIndexBySource,
+                prototypes);
             return new PrototypeRecipeDocument
             {
                 schema = "warline.operation-map.render-virtualization-prototype-recipes",
@@ -602,7 +650,8 @@ namespace Game.Editor
                 eligibleSourceRowCount = candidates.Count,
                 prototypeRecipesSha256 = recipesHash,
                 prototypes = prototypes,
-                parts = parts
+                parts = parts,
+                logicalPlacements = logicalPlacements
             };
         }
 
@@ -619,11 +668,107 @@ namespace Game.Editor
                 throw new InvalidOperationException(
                     $"Eligible owner spans semantic categories: {ownerIdentitySource}");
             }
+            if (parts.Any(part =>
+                    !string.Equals(
+                        part.OwnerStableId,
+                        parts[0].OwnerStableId,
+                        StringComparison.Ordinal) ||
+                    part.OwnerIdentity.Low != parts[0].OwnerIdentity.Low ||
+                    part.OwnerIdentity.High != parts[0].OwnerIdentity.High ||
+                    part.OwnerRole != parts[0].OwnerRole ||
+                    part.PlacementWorldMatrix != parts[0].PlacementWorldMatrix))
+            {
+                throw new InvalidOperationException(
+                    $"Eligible owner contains inconsistent placement ownership: {ownerIdentitySource}");
+            }
             return new OwnerRecipe
             {
                 OwnerIdentitySource = ownerIdentitySource,
+                OwnerStableId = parts[0].OwnerStableId,
+                OwnerIdentity = parts[0].OwnerIdentity,
+                OwnerRole = parts[0].OwnerRole,
+                WorldMatrix = parts[0].PlacementWorldMatrix,
                 SemanticCategory = category,
                 Parts = parts
+            };
+        }
+
+        private static LogicalPlacementDocument BuildLogicalPlacements(
+            IReadOnlyList<OwnerRecipe> owners,
+            IReadOnlyDictionary<string, string> prototypeSourceByOwner,
+            IReadOnlyDictionary<string, int> prototypeIndexBySource,
+            IReadOnlyList<PrototypeRecipeReport> prototypes)
+        {
+            List<OwnerRecipe> orderedOwners = owners
+                .OrderBy(owner => owner.OwnerIdentity.Low)
+                .ThenBy(owner => owner.OwnerIdentity.High)
+                .ToList();
+            var identitySources = new HashSet<string>(StringComparer.Ordinal);
+            var identityPairs = new HashSet<string>(StringComparer.Ordinal);
+            var placements = new List<LogicalPlacementReport>(orderedOwners.Count);
+            int placementPartRows = 0;
+            for (int index = 0; index < orderedOwners.Count; index++)
+            {
+                OwnerRecipe owner = orderedOwners[index];
+                if (owner.OwnerRole != OperationMapEntityPresentationRole.RenderOnly)
+                {
+                    throw new InvalidOperationException(
+                        $"Current eligible placement is not render-only: " +
+                        $"{owner.OwnerIdentitySource} role={owner.OwnerRole}.");
+                }
+                if (!identitySources.Add(owner.OwnerIdentitySource))
+                {
+                    throw new InvalidOperationException(
+                        $"Duplicate placement identity source: {owner.OwnerIdentitySource}");
+                }
+                string identityPair =
+                    owner.OwnerIdentity.Low.ToString(CultureInfo.InvariantCulture) +
+                    ":" +
+                    owner.OwnerIdentity.High.ToString(CultureInfo.InvariantCulture);
+                if (!identityPairs.Add(identityPair))
+                {
+                    throw new InvalidOperationException(
+                        $"Placement identity collision: {identityPair}");
+                }
+
+                string prototypeSource = prototypeSourceByOwner[owner.OwnerIdentitySource];
+                int prototypeIndex = prototypeIndexBySource[prototypeSource];
+                PrototypeRecipeReport prototype = prototypes[prototypeIndex];
+                placementPartRows += prototype.partCount;
+                placements.Add(new LogicalPlacementReport
+                {
+                    placementIndex = index,
+                    stableOwnerId = owner.OwnerStableId,
+                    stableIdentityLow = owner.OwnerIdentity.Low,
+                    stableIdentityHigh = owner.OwnerIdentity.High,
+                    prototypeIndex = prototypeIndex,
+                    worldMatrix = ToArray(owner.WorldMatrix),
+                    cellIndex = -1,
+                    stateOwnerIndex = -1,
+                    requiredVisualState = OperationMapRenderVisualState.Any.ToString(),
+                    priority = 0,
+                    semanticCategory = owner.SemanticCategory.ToString()
+                });
+            }
+
+            string placementsHash = ComputeLogicalPlacementsSha256(placements);
+            return new LogicalPlacementDocument
+            {
+                schema = "warline.operation-map.render-virtualization-logical-placements",
+                schemaVersion = 1,
+                operationMapId = "opmap.skirmish.desert_base_01",
+                result = "Passed",
+                placementCount = placements.Count,
+                stateOwnerCount = 0,
+                stateLinkedPlacementCount = 0,
+                renderOnlyPlacementCount = placements.Count,
+                placementPartRowCount = placementPartRows,
+                logicalPlacementsSha256 = placementsHash,
+                stateRelationshipPolicy =
+                    "Current Vegetation/Prop pilot is render-only: stateOwnerIndex=-1, " +
+                    "RequiredVisualState=Any. Building state linkage remains deferred.",
+                placements = placements,
+                stateOwners = new List<LogicalStateOwnerReport>()
             };
         }
 
@@ -979,6 +1124,27 @@ namespace Game.Editor
             return ComputeSha256(Utf8WithoutBom.GetBytes(canonical.ToString()));
         }
 
+        private static string ComputeLogicalPlacementsSha256(
+            IReadOnlyList<LogicalPlacementReport> placements)
+        {
+            var canonical = new StringBuilder(placements.Count * 256);
+            foreach (LogicalPlacementReport placement in placements)
+            {
+                AppendCanonical(canonical, placement.placementIndex);
+                AppendCanonical(canonical, placement.stableOwnerId);
+                AppendCanonical(canonical, placement.stableIdentityLow);
+                AppendCanonical(canonical, placement.stableIdentityHigh);
+                AppendCanonical(canonical, placement.prototypeIndex);
+                AppendCanonical(canonical, placement.worldMatrix);
+                AppendCanonical(canonical, placement.cellIndex);
+                AppendCanonical(canonical, placement.stateOwnerIndex);
+                AppendCanonical(canonical, placement.requiredVisualState);
+                AppendCanonical(canonical, placement.priority);
+                AppendCanonical(canonical, placement.semanticCategory);
+            }
+            return ComputeSha256(Utf8WithoutBom.GetBytes(canonical.ToString()));
+        }
+
         private static Bounds TransformBounds(Bounds bounds, Matrix4x4 matrix)
         {
             Vector3 center = bounds.center;
@@ -1200,6 +1366,14 @@ namespace Game.Editor
             public string prototypeRecipesSha256;
             public string prototypeRecipesPath;
             public string prototypeRecipesJsonSha256;
+            public int placementCount;
+            public int stateOwnerCount;
+            public int stateLinkedPlacementCount;
+            public int renderOnlyPlacementCount;
+            public int placementPartRowCount;
+            public string logicalPlacementsSha256;
+            public string logicalPlacementsPath;
+            public string logicalPlacementsJsonSha256;
             public bool mutationAuthorized;
             public string mutationBlocker;
             public List<Breakdown> bySemanticCategory;
@@ -1210,6 +1384,7 @@ namespace Game.Editor
             public List<Breakdown> byReasonCode;
             [NonSerialized] public List<SourceRowReport> sourceRows;
             [NonSerialized] public PrototypeRecipeDocument prototypeRecipes;
+            [NonSerialized] public LogicalPlacementDocument logicalPlacements;
         }
 
         [Serializable]
@@ -1237,6 +1412,50 @@ namespace Game.Editor
             public string prototypeRecipesSha256;
             public List<PrototypeRecipeReport> prototypes;
             public List<PrototypePartRecipeReport> parts;
+            [NonSerialized] public LogicalPlacementDocument logicalPlacements;
+        }
+
+        [Serializable]
+        private sealed class LogicalPlacementDocument
+        {
+            public string schema;
+            public int schemaVersion;
+            public string operationMapId;
+            public string result;
+            public int placementCount;
+            public int stateOwnerCount;
+            public int stateLinkedPlacementCount;
+            public int renderOnlyPlacementCount;
+            public int placementPartRowCount;
+            public string logicalPlacementsSha256;
+            public string stateRelationshipPolicy;
+            public List<LogicalPlacementReport> placements;
+            public List<LogicalStateOwnerReport> stateOwners;
+        }
+
+        [Serializable]
+        private sealed class LogicalPlacementReport
+        {
+            public int placementIndex;
+            public string stableOwnerId;
+            public ulong stableIdentityLow;
+            public ulong stableIdentityHigh;
+            public int prototypeIndex;
+            public float[] worldMatrix;
+            public int cellIndex;
+            public int stateOwnerIndex;
+            public string requiredVisualState;
+            public int priority;
+            public string semanticCategory;
+        }
+
+        [Serializable]
+        private sealed class LogicalStateOwnerReport
+        {
+            public int stateOwnerIndex;
+            public string stableGameplayOwnerId;
+            public ulong stableIdentityLow;
+            public ulong stableIdentityHigh;
         }
 
         [Serializable]
@@ -1365,11 +1584,19 @@ namespace Game.Editor
             internal OperationMapRenderLodFlags LodFlags;
             internal OperationMapRenderIdentity128 PartFingerprint;
             internal string PartCanonicalSource;
+            internal string OwnerStableId;
+            internal OperationMapRenderIdentity128 OwnerIdentity;
+            internal OperationMapEntityPresentationRole OwnerRole;
+            internal Matrix4x4 PlacementWorldMatrix;
         }
 
         private sealed class OwnerRecipe
         {
             internal string OwnerIdentitySource;
+            internal string OwnerStableId;
+            internal OperationMapRenderIdentity128 OwnerIdentity;
+            internal OperationMapEntityPresentationRole OwnerRole;
+            internal Matrix4x4 WorldMatrix;
             internal DenseCityPresentationSemanticCategory SemanticCategory;
             internal List<EligiblePartCandidate> Parts;
         }

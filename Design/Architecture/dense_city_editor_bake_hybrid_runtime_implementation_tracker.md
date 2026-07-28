@@ -5,6 +5,7 @@ Status: Implementation started; Phase 0 complete; Phase 0A transactional candida
 Parent tracker: `operation_map_scene_split_and_generator_tracker.md`
 Related contracts: `file_naming_architecture_contract.md`, `gameplay_solid_ecs_contract.md`, `performance_regression_contract.md`, `operation_map_runtime_ownership_chain.md`, `operation_map_scene_split_rollback_recipe.md`
 Related R&D only: `runtime_operation_map_generation_rnd_implementation_tracker.md`
+Measured Android render-residency amendment: `dense_city_virtualized_render_proxy_android_60fps_implementation_tracker.md`
 
 ## 1. Objective
 
@@ -19,7 +20,8 @@ Editor authoring scene
   -> classify and migrate existing map visuals to protected SubScene entity-authoring roots
   -> deterministic dense-city generation under one logical disposable ownership set
   -> generation-time semantic ownership and collider removal
-  -> all existing and generated visual placements baked to ECS entities and Entities Graphics
+  -> all existing and generated visual placements baked to ECS entities and Entities Graphics in resident mode
+  -> candidate-only virtualized mode may instead bake eligible placements to immutable logical data plus fixed ECS render slots
   -> coarse ECS surface/blocker data plus compact entity-scene presentation data
   -> thin generated runtime-binding scene
   -> local Addressables package
@@ -55,6 +57,7 @@ This tracker does not authorize runtime procedural city generation. Existing-map
 - Do not pool permanent map visuals. Pooling remains for transient spawned effects; permanent placements are baked entity instances with no spawn/despawn loop.
 - Keep all generated city entities resident for the lifetime of the loaded map. Camera movement changes rendering visibility through Entities Graphics only; it does not load/unload generated city scenes or simulation entities.
 - Apply the same resident entity/culling rule to existing map visuals. Existing and generated visual entities load once and unload once with the map.
+- Amendment authorized 2026-07-28 for the candidate only: the corrected Android candidate proved whole-map render-entity residency unacceptable at `15.7-16.3 FPS` with CPU main `56.7-59.8 ms` while GPU remained `15.6-16.4 ms`. `dense_city_virtualized_render_proxy_android_60fps_implementation_tracker.md` may replace eligible permanent render entities with immutable resident placement/prototype data plus one preallocated job-driven ECS render-proxy slot set. All simulation/gameplay entities remain resident; no GameObjects, runtime generation, entity spawn/despawn loop, scene streaming, production cutover, or frozen-rollback mutation is authorized by this amendment.
 - Reuse the accepted operation-map runtime binding scene, map SubScene, local Addressables layout, readiness, failure, and teardown owners.
 - Keep the existing static-presentation manifest/streamer only during migration rollback. After ECS parity acceptance, `opmap.skirmish.desert_base_01` uses entity-scene presentation mode, its manifest/514 chunk scenes leave production Addressables/build ownership, and the streamer is not bound for this map.
 - Do not introduce another map loader, streamer, runtime-generation host, update-loop `MonoBehaviour`, manager, controller, facade, service, provider, or service locator.
@@ -138,7 +141,7 @@ Additional findings:
 - Unity Physics, collider-based pathing, raycast-based map blocking, or Rigidbody gameplay.
 - Shipping the authoring scene as the runtime map scene.
 - Replacing the existing operation-map loader. The existing streamer remains implemented for legacy/future compatibility but is unbound from this ECS-presented map after cutover.
-- A GameObject pool for permanent generated map visuals.
+- A GameObject pool for permanent generated map visuals. The candidate-only fixed ECS render-slot amendment is not a GameObject pool and is governed separately by `dense_city_virtualized_render_proxy_android_60fps_implementation_tracker.md`.
 - Generated-city static-presentation scene chunks without a separately approved, measured heavyweight-content exception.
 
 ## 5. Ownership And Scene Hierarchy
@@ -391,10 +394,10 @@ Names below are normative. A different name, kind, file, or assembly requires up
 | `OperationMapBuildingBlockerPolicy` | public byte enum | `Game.Components` / `Game.Components` | `Assets/Game/Scripts/Components/OperationMapBuildingComponents.cs` | Closed blocker disposition. Initial production value is `RubbleRemainsBlocked`; passable destruction remains rejected until dynamic-grid ownership is implemented. |
 | `OperationMapBuildingComponent` | unmanaged `IComponentData` | `Game.Components` / `Game.Components` | `Assets/Game/Scripts/Components/OperationMapBuildingComponents.cs` | Stable map-building identity and deterministic destruction/blocker policy. No Unity object, string, or managed collection. |
 | `OperationMapBuildingDestroyedComponent` | unmanaged tag `IComponentData` | `Game.Components` / `Game.Components` | same file | Marks completed destruction so the transition executes once. |
-| `OperationMapBuildingDestructionSystem` | Burst-compatible `ISystem` | `Game.Runtime` / `Game.Runtime` | `Assets/Game/Scripts/Systems/OperationMapBuildingDestructionSystem.cs` | Observes `UnitHealth`, switches baked entity visuals, applies the approved blocker disposition, and records destroyed state without GameObject creation/destruction. |
+| `OperationMapBuildingDestructionSystem` | Burst-compatible `ISystem` | `Game.Runtime` / `Game.Runtime` | `Assets/Game/Scripts/Systems/OperationMapBuildingDestructionSystem.cs` | Observes `UnitHealth`, applies the approved blocker disposition, and records destroyed state without GameObject creation/destruction. Resident mode switches baked entity visuals; candidate-only virtualized mode emits the bounded canonical state transition consumed by the fixed render-slot path. |
 | `OperationMapRenderMaterialBaseColorBakingSystem` | bake-only `ISystem` | `Game.Rendering` / `Game.Rendering` | `Assets/Game/Scripts/Rendering/Baking/OperationMapRenderMaterialBaseColorBakingSystem.cs` | After Entities Graphics renderer conversion, writes each accepted/generated operation-map render entity's exact linear authored `_BaseColor` into `URPMaterialPropertyBaseColor` before EntityScene serialization. It performs no player-runtime work or structural changes. |
 
-The approved runtime addition is limited to presentation-kind selection, ECS building state, and its Burst destruction transition. All persistent existing/generated map rendering uses Entities Graphics data produced by baking; no custom per-frame instance renderer, managed registry, GameObject pool, or new scene streamer is approved. The existing static-presentation streamer remains available for `StaticSceneChunks` maps but is unbound from this map after cutover.
+The original resident-mode runtime addition is limited to presentation-kind selection, ECS building state, and its Burst destruction transition. In `ResidentEntities`, all persistent existing/generated map rendering uses Entities Graphics data produced by baking; no custom per-frame instance renderer, managed registry, GameObject pool, or new scene streamer is approved. The measured candidate-only amendment may add fixed ECS render slots and Burst assignment systems under `VirtualizedProxyPool`; it still forbids a managed registry, GameObject pool, runtime entity spawn/despawn loop, or new scene streamer. The existing static-presentation streamer remains available for `StaticSceneChunks` maps but is unbound from this map after cutover.
 
 ## 12. Migration And Generation-Time Data Contract
 
@@ -442,7 +445,7 @@ Validation must fail closed when:
 - an Addressables-loaded entity differs from the same candidate baked directly in Editor;
 - a renderer bounds center/corners move beyond tolerance even when the owning root matrix appears equal.
 
-The validator must compare matrices and transformed renderer bounds numerically, then capture fixed-camera screenshots as secondary visual proof. Production cannot flip to `EntityScene`, and rollback static presentation cannot be retired, until this gate passes twice on the same candidate revision in Editor and once on the user-triggered Android build.
+The validator must compare matrices and transformed renderer bounds numerically, then capture fixed-camera screenshots as secondary visual proof. `ResidentEntities` compares every loaded render entity directly. `VirtualizedProxyPool` must instead pass both complete immutable logical-row parity and exact materialized-proxy parity for every required canonical-camera row as defined by `dense_city_virtualized_render_proxy_android_60fps_implementation_tracker.md`; off-camera lack of a proxy is valid only after logical parity passes. Production cannot flip to `EntityScene`, and rollback static presentation cannot be retired, until the applicable gate passes twice on the same candidate revision in Editor and once on the user-triggered Android build.
 
 Every generated placement must emit explicit records before visual realization:
 
@@ -492,7 +495,7 @@ Every generated placement must emit explicit records before visual realization:
 - stable spatial cell used for diagnostics and optional future entity-section analysis;
 - renderer exclusion reason when not baked.
 
-Records are editor-transition data. They do not become managed runtime lists. All generated presentation records become baked entity data in the map SubScene; surfaces/blockers become existing immutable map metadata. Generated ECS buildings do not become `MapBuildingPlacementConfigEntry` objects, and generated render-only placements do not become static-presentation source records.
+Records are editor-transition data. They do not become managed runtime lists. In `ResidentEntities`, all generated presentation records become baked entity data in the map SubScene. In candidate-only `VirtualizedProxyPool`, eligible records become one immutable unmanaged blob plus fixed ECS render slots while canonical gameplay entities stay resident; surfaces/blockers remain existing immutable map metadata. Generated ECS buildings do not become `MapBuildingPlacementConfigEntry` objects, and generated render-only placements do not become static-presentation source records.
 
 ## 13. Proxy Geometry Contract
 
@@ -517,15 +520,15 @@ The complete current operation-map runtime representation is ECS-first:
 - transient explosion/smoke VFX: existing pooled managed VFX boundary where required;
 - production static-presentation GameObject chunks for this map: none after accepted cutover.
 
-All map visual entities load once with the map SubScene and remain loaded until map teardown. Initial acceptance relies on compact entity-scene serialization, shared mesh/material assets, Entities Graphics batching, Burst/jobified culling, and reviewed LOD/impostor data rather than camera-driven scene loading. Render-only entity section streaming is deferred and requires a measured design amendment.
+All map visual entities load once with the map SubScene and remain loaded until map teardown in `ResidentEntities` mode. Initial acceptance relied on compact entity-scene serialization, shared mesh/material assets, Entities Graphics batching, Burst/jobified culling, and reviewed LOD/impostor data rather than camera-driven scene loading. The 2026-07-27 target-device result supplied the measured design amendment required to investigate `VirtualizedProxyPool`: immutable placement/state data and fixed proxy slots still load/unload once, while Burst jobs change only slot assignment/enable state as the camera envelope changes. The exact implementation and acceptance gates are owned by `dense_city_virtualized_render_proxy_android_60fps_implementation_tracker.md`.
 
 ### 14.1 ECS Building Runtime Contract
 
 - Existing and generated building GameObjects exist only in the editor map SubScene as selectable authoring inputs. The player consumes Unity entity-scene data produced by baking; it never loads those authoring GameObjects.
 - Each building root entity owns stable map identity, `LocalTransform`, `UnitHealth`, faction, grid cell/footprint, and `OperationMapBuildingComponent` destruction/blocker policy.
-- Intact and destroyed model hierarchies bake to render entities. `UnitDestroyedVisualReference` points to their entity roots; the intact root starts visible and the destroyed root starts hidden.
-- Every building-attached prop is a descendant render entity of exactly one of those visual roots. Intact roof/interior/shop/tent props must not be separately parented, independently streamed, or classified as global render-only props. Destroyed-state debris or replacement props belong only beneath the destroyed root.
-- `OperationMapBuildingDestructionSystem` performs a one-time Burst-compatible state transition when health reaches zero: hide the complete intact entity hierarchy including all attached props, show the complete destroyed entity hierarchy, mark `OperationMapBuildingDestroyedComponent`, and apply the explicit blocker policy.
+- In `ResidentEntities`, intact and destroyed model hierarchies bake to render entities and their root references/state select the visible hierarchy. In candidate-only `VirtualizedProxyPool`, eligible intact/destroyed hierarchies bake to immutable prototype/placement recipes keyed to the canonical building state owner; fixed proxy slots materialize only the currently required recipe.
+- In `ResidentEntities`, every building-attached prop is a descendant render entity of exactly one visual root. In candidate-only `VirtualizedProxyPool`, the same exclusive intact/destroyed ownership is encoded in the compound prototype/placement recipe and canonical state-owner index. Intact roof/interior/shop/tent props must not be separately parented, independently streamed, or classified as global render-only props. Destroyed-state debris or replacement props belong only to the destroyed state.
+- `OperationMapBuildingDestructionSystem` performs a one-time Burst-compatible state transition when health reaches zero: mark `OperationMapBuildingDestroyedComponent`, apply the explicit blocker policy, and either switch the resident entity hierarchy or publish the bounded virtualized presentation-state change. Both paths must hide the complete intact presentation including all attached props and show only the complete destroyed presentation.
 - If an intact attached prop has no destroyed equivalent, it simply disappears with the intact hierarchy. No orphan visual may remain at the building position. A genuinely independent gameplay object requires its own explicit entity identity and cannot be inferred from proximity.
 - The default blocker policy is `RubbleRemainsBlocked`: the precomputed ECS blocker footprint is unchanged after destruction. A passable-after-destruction policy is forbidden until it has a stable building-to-dynamic-grid mapping and focused pathing tests.
 - Persistent buildings do not use `RuntimeBuildingEntity`, `RuntimeBuildingEntityLink`, `BuildingVisualSystem`, `BuildingDestroyedVisualPresentationSystemHelper`, `Object.Instantiate`, or `Object.Destroy`.
@@ -536,7 +539,7 @@ All map visual entities load once with the map SubScene and remain loaded until 
 
 ### 14.2 Render-Only Entity Contract
 
-- Existing and generated permanent visual placements are baked directly into entity scene chunks. They are not instantiated from a GameObject pool and have no per-frame gameplay system.
+- In `ResidentEntities`, existing and generated permanent visual placements are baked directly into entity scene chunks. In candidate-only `VirtualizedProxyPool`, eligible placements bake into immutable logical data and a fixed preallocated ECS render-slot set. Neither mode instantiates from a GameObject pool, and proxy assignment never becomes a gameplay system.
 - Repeated placements share imported mesh, material, texture, and approved render configuration assets. Per-placement runtime data is limited to entity identity required by Unity, transform/hierarchy, render bounds, LOD data, and Entities Graphics references.
 - Modular roads, sidewalks, bridges, trees, rocks, lights, props, vegetation, and skyline modules remain separate placements when transforms permit asset sharing. Do not combine them merely to reduce authoring object count.
 - Unique continuous terrain/canal/road geometry may be deterministically combined into bounded entity-render meshes when it reduces renderer count without duplicating source assets or creating a whole-city mesh.
@@ -1364,6 +1367,8 @@ Extend existing tests rather than duplicating them for:
 | 2026-07-27 | Phase 6 Android URP runtime-resource closure | `AndroidVisualQualityValidationTests.UniversalRenderPipelineGlobalSettingsRetainRuntimeResources`; Windows GUI-licensing wrapper `%TEMP%\warline-android-visual-quality-runtime-rids.log`; `[AndroidVisualQualityValidation] result=Passed tests=17`; wrapper exit code 0; `git diff --check` | Passed bounded render-policy prerequisite; device budgets remain open | The Android render policy remains fixed at the already accepted mobile render scale/MSAA/shadow/lighting/Forward+/GPU Resident Drawer settings. The strengthened fail-closed test parses runtime and definition RID sets, rejects duplicates and dangling runtime references, and proves the GPU Resident Drawer resource is runtime-owned rather than merely serialized. All 17/17 focused cases passed. No accepted/frozen asset, rendering setting, candidate output, or checklist count changed; progress remains 127/149 (85%). |
 | 2026-07-27 | Phase 9 corrected-APK minimap/performance rerun | Paired wireless ADB on Xiaomi `24090RA29G`; exact APK install/cold launch; candidate runtime/readiness logs; 30-second stable Match observation; `dumpsys meminfo`; `top -H`; transient 2712x1220 screenshots plus SHA-256; opt-in Unity profiler-marker rerun; structured `2026-07-27_dense_city_candidate_android_minimap_performance_rerun.json`; JSON parse; `git diff --check` | Minimap passed; FPS/CPU/memory acceptance rejected | The exact wrapper-accepted APK installed without a prompt, cold-launched in 644 ms, resolved dense EntityScene `c00140...cbd0`, reached gameplay readiness, and visibly retained minimap markers. Stable Match remained CPU-main-bound at `15.7-16.3 FPS`; GPU time was near a 60 FPS frame but main-thread time remained about 57-60 ms, and total PSS was 2,209,278 KiB with 948,829 KiB graphics. Gameplay update instrumentation averaged only 0.4 ms. A diagnostic marker relaunch narrowed the missing cost to PlayerLoop but was not an acceptance sample; wireless ADB disconnected before a raw Unity profile could be recovered. No source, accepted/frozen asset, package, or checklist count changed; progress remains 127/149 (85%). |
 
+| 2026-07-28 | Measured Android render-residency design amendment | Corrected-APK report; packed asset-sharing report; current bake/runtime/camera/job/assembly inventory; `dense_city_virtualized_render_proxy_android_60fps_implementation_tracker.md`; checklist/dependency consistency audit; `git diff --check` | Candidate-only design accepted; implementation and parent checklist counts remain open | The new tracker converts the measured whole-map render-entity failure into an 80-step dependency-ordered plan: immutable prototype/part/placement/cell data, one preallocated ECS render-slot set, Burst cell selection/assignment/apply, canonical building-state synchronization, two-level logical/materialized parity, exact lifecycle/package gates, and 60-FPS-class Android budgets. It labels bounded additive work for Terra and ownership/hot-path/cutover work for Sol. This authorizes investigation only: current candidate/production outputs, `StaticSceneChunks`, accepted/frozen assets, Android APK, and progress `127/149 (85%)` remain unchanged. |
+
 ## 25. Completion Rule
 
 This tracker is complete only when:
@@ -1375,9 +1380,9 @@ This tracker is complete only when:
 - every permanent map visual's candidate authoring, baked ECS, and Addressables-loaded runtime matrix and transformed renderer bounds match the accepted Editor source manifest within the Section 12.0A tolerances, with no runtime placement system applying a second offset;
 - production map content has zero colliders/Rigidbodies;
 - ECS surface/blocker data is generated from simplified deterministic records/proxies;
-- every damageable existing/generated building exists at runtime only as ECS simulation/render entities with intact/destroyed entity visuals;
+- every damageable existing/generated building exists at runtime only as a canonical ECS simulation entity plus either resident intact/destroyed entity visuals or an accepted immutable virtualized recipe materialized through fixed ECS render slots;
 - every building-attached roof/interior/shop/tent visual has one explicit building/state owner and transitions atomically with that building, leaving no intact or orphan prop after destruction;
-- every other existing/generated visual exists at runtime only as an Entities Graphics render entity sharing source art assets;
+- every other existing/generated visual exists at runtime only as either a resident Entities Graphics render entity or an accepted immutable virtualized logical row sharing source art through fixed Entities Graphics render slots;
 - current-map production Addressables/build/runtime ownership contains zero static manifest/chunk scene entries unless a measured named exception was approved in this tracker;
 - the 514-scene static package is frozen for rollback during migration and retired/deleted through the accepted cleanup only after parity acceptance;
 - operation-map and SubScene source GameObject hierarchies are absent from the runtime package;

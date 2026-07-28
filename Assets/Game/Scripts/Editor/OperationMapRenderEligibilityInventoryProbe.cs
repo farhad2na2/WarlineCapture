@@ -36,8 +36,15 @@ namespace Game.Editor
             "Design/AgentReports/2026-07-28_dense_city_render_virtualization_logical_placements.json";
         internal const string SpatialCellsPath =
             "Design/AgentReports/2026-07-28_dense_city_render_virtualization_spatial_cells.json";
+        internal const string CapacityBudgetPath =
+            "Design/AgentReports/2026-07-28_dense_city_render_virtualization_capacity_budget.json";
         internal const int ExpectedPackedRenderRowCount = 82797;
         internal const float RenderCellSize = 32f;
+        private const int ProvisionalVisibleCellRadius = 0;
+        private const int ProvisionalSafetyCellRadius = 1;
+        private const int ProvisionalPrefetchGuardCellRadius = 1;
+        private const int MapMmiEntityLimit = 24000;
+        private const int ActiveProxySlotLimit = 8000;
         private static readonly UTF8Encoding Utf8WithoutBom = new(false);
 
         public static void Run()
@@ -58,6 +65,16 @@ namespace Game.Editor
                     Path.Combine(projectRoot, LogicalPlacementsPath);
                 string spatialCellsOutputPath =
                     Path.Combine(projectRoot, SpatialCellsPath);
+                string capacityBudgetOutputPath =
+                    Path.Combine(projectRoot, CapacityBudgetPath);
+                CapacityBudgetDocument capacityBudget = BuildCapacityBudget(
+                    report.prototypeRecipes,
+                    report.logicalPlacements,
+                    report.spatialCells,
+                    report.sourceRowsSha256,
+                    report.prototypeRecipesSha256,
+                    report.logicalPlacementsSha256,
+                    report.spatialCellsSha256);
                 Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
                 byte[] sourceRowsJson = Utf8WithoutBom.GetBytes(
                     JsonUtility.ToJson(
@@ -98,6 +115,9 @@ namespace Game.Editor
                 report.spatialCellsJsonSha256 = ComputeSha256(spatialCellsJson);
                 report.spatialCells = null;
 
+                byte[] capacityBudgetJson = Utf8WithoutBom.GetBytes(
+                    JsonUtility.ToJson(capacityBudget, true) + "\n");
+
                 string sourceRowsTemporaryPath = sourceRowsOutputPath + ".tmp";
                 File.WriteAllBytes(sourceRowsTemporaryPath, sourceRowsGzip);
                 if (File.Exists(sourceRowsOutputPath))
@@ -124,6 +144,12 @@ namespace Game.Editor
                     File.Delete(spatialCellsOutputPath);
                 File.Move(spatialCellsTemporaryPath, spatialCellsOutputPath);
 
+                string capacityBudgetTemporaryPath = capacityBudgetOutputPath + ".tmp";
+                File.WriteAllBytes(capacityBudgetTemporaryPath, capacityBudgetJson);
+                if (File.Exists(capacityBudgetOutputPath))
+                    File.Delete(capacityBudgetOutputPath);
+                File.Move(capacityBudgetTemporaryPath, capacityBudgetOutputPath);
+
                 string temporaryPath = outputPath + ".tmp";
                 File.WriteAllText(
                     temporaryPath,
@@ -141,7 +167,9 @@ namespace Game.Editor
                     $"report={ReportPath} sourceRows={SourceRowsPath} " +
                     $"prototypeRecipes={PrototypeRecipesPath} " +
                     $"logicalPlacements={LogicalPlacementsPath} " +
-                    $"spatialCells={SpatialCellsPath}");
+                    $"spatialCells={SpatialCellsPath} " +
+                    $"capacityBudget={CapacityBudgetPath} " +
+                    $"capacitySlots={capacityBudget.totalProvisionalActiveProxySlots}");
             }
             catch (Exception exception)
             {
@@ -817,6 +845,218 @@ namespace Game.Editor
                 placements = placements,
                 stateOwners = new List<LogicalStateOwnerReport>(),
                 spatialCells = spatialCells
+            };
+        }
+
+        private static CapacityBudgetDocument BuildCapacityBudget(
+            PrototypeRecipeDocument prototypeRecipes,
+            LogicalPlacementDocument logicalPlacements,
+            SpatialCellDocument spatialCells,
+            string sourceRowsSha256,
+            string prototypeRecipesSha256,
+            string logicalPlacementsSha256,
+            string spatialCellsSha256)
+        {
+            if (prototypeRecipes == null || logicalPlacements == null || spatialCells == null)
+                throw new InvalidOperationException("Capacity budget requires the in-memory inventory documents.");
+
+            var policiesByPart = new OperationMapRenderPolicyKey[prototypeRecipes.parts.Count];
+            var uniquePolicies = new HashSet<OperationMapRenderPolicyKey>();
+            for (int partIndex = 0; partIndex < prototypeRecipes.parts.Count; partIndex++)
+            {
+                PrototypePartRecipeReport part = prototypeRecipes.parts[partIndex];
+                if (!Enum.TryParse(part.policyBucket, out OperationMapRenderPolicyBucket bucket) ||
+                    !Enum.TryParse(part.motionVectorMode, out OperationMapRenderMotionVectorMode motionVectorMode))
+                {
+                    throw new InvalidOperationException(
+                        $"Prototype part {partIndex} has an unparseable render policy.");
+                }
+
+                var policy = new OperationMapRenderPolicyKey(
+                    bucket,
+                    part.layer,
+                    part.renderingLayerMask,
+                    motionVectorMode,
+                    (OperationMapRenderShadowFlags)part.shadowFlags);
+                if (!OperationMapRenderPolicyClassifier.TryValidate(policy, out string policyError))
+                {
+                    throw new InvalidOperationException(
+                        $"Prototype part {partIndex} has invalid render policy: {policyError}");
+                }
+
+                policiesByPart[partIndex] = policy;
+                uniquePolicies.Add(policy);
+            }
+
+            OperationMapRenderPolicyKey[] orderedPolicies = uniquePolicies.ToArray();
+            Array.Sort(orderedPolicies, OperationMapRenderCapacitySweep.ComparePolicies);
+            var policyIndexByKey = new Dictionary<OperationMapRenderPolicyKey, int>();
+            for (int policyIndex = 0; policyIndex < orderedPolicies.Length; policyIndex++)
+                policyIndexByKey.Add(orderedPolicies[policyIndex], policyIndex);
+
+            var policyIndexByPart = new int[policiesByPart.Length];
+            for (int partIndex = 0; partIndex < policiesByPart.Length; partIndex++)
+                policyIndexByPart[partIndex] = policyIndexByKey[policiesByPart[partIndex]];
+
+            int width = spatialCells.gridDimensions[0];
+            int height = spatialCells.gridDimensions[1];
+            if (width <= 0 || height <= 0 ||
+                spatialCells.gridCellCount != checked(width * height))
+            {
+                throw new InvalidOperationException("Capacity budget received an invalid spatial grid.");
+            }
+
+            var occupiedCellsByLocalIndex = new Dictionary<int, SpatialCellReport>();
+            foreach (SpatialCellReport cell in spatialCells.cells)
+            {
+                int localX = cell.coordinateX - spatialCells.coordinateOffset[0];
+                int localZ = cell.coordinateZ - spatialCells.coordinateOffset[1];
+                if (localX < 0 || localX >= width || localZ < 0 || localZ >= height)
+                    throw new InvalidOperationException($"Spatial cell {cell.cellIndex} is outside its grid.");
+                int localIndex = localZ * width + localX;
+                if (!occupiedCellsByLocalIndex.TryAdd(localIndex, cell))
+                    throw new InvalidOperationException($"Spatial grid cell {localIndex} is duplicated.");
+            }
+
+            int envelopeRadius = checked(
+                ProvisionalVisibleCellRadius +
+                ProvisionalSafetyCellRadius +
+                ProvisionalPrefetchGuardCellRadius);
+            var inputs = new List<OperationMapRenderCapacitySweepInput>(
+                checked(width * height * orderedPolicies.Length));
+            var peakSampleByPolicy = new string[orderedPolicies.Length];
+            var peakRowsByPolicy = new int[orderedPolicies.Length];
+            var seenPlacementAtSample = new int[logicalPlacements.placements.Count];
+            int sampleOrdinal = 0;
+            for (int centerZ = 0; centerZ < height; centerZ++)
+            {
+                for (int centerX = 0; centerX < width; centerX++)
+                {
+                    string sampleIdentity = string.Format(
+                        CultureInfo.InvariantCulture,
+                        "grid-cell:{0}:{1}:visible={2}:safety={3}:guard={4}",
+                        centerX + spatialCells.coordinateOffset[0],
+                        centerZ + spatialCells.coordinateOffset[1],
+                        ProvisionalVisibleCellRadius,
+                        ProvisionalSafetyCellRadius,
+                        ProvisionalPrefetchGuardCellRadius);
+                    var requiredRowsByPolicy = new int[orderedPolicies.Length];
+                    int minimumX = Math.Max(0, centerX - envelopeRadius);
+                    int maximumX = Math.Min(width - 1, centerX + envelopeRadius);
+                    int minimumZ = Math.Max(0, centerZ - envelopeRadius);
+                    int maximumZ = Math.Min(height - 1, centerZ + envelopeRadius);
+                    for (int z = minimumZ; z <= maximumZ; z++)
+                    {
+                        for (int x = minimumX; x <= maximumX; x++)
+                        {
+                            if (!occupiedCellsByLocalIndex.TryGetValue(z * width + x, out SpatialCellReport cell))
+                                continue;
+                            int end = checked(cell.firstPlacementIndex + cell.placementIndexCount);
+                            for (int membershipIndex = cell.firstPlacementIndex;
+                                 membershipIndex < end;
+                                 membershipIndex++)
+                            {
+                                int placementIndex = spatialCells.cellPlacementIndices[membershipIndex];
+                                if (seenPlacementAtSample[placementIndex] == sampleOrdinal + 1)
+                                    continue;
+                                seenPlacementAtSample[placementIndex] = sampleOrdinal + 1;
+                                LogicalPlacementReport placement = logicalPlacements.placements[placementIndex];
+                                PrototypeRecipeReport prototype =
+                                    prototypeRecipes.prototypes[placement.prototypeIndex];
+                                int partEnd = checked(prototype.firstPart + prototype.partCount);
+                                for (int partIndex = prototype.firstPart; partIndex < partEnd; partIndex++)
+                                    requiredRowsByPolicy[policyIndexByPart[partIndex]]++;
+                            }
+                        }
+                    }
+
+                    for (int policyIndex = 0; policyIndex < orderedPolicies.Length; policyIndex++)
+                    {
+                        int requiredRows = requiredRowsByPolicy[policyIndex];
+                        inputs.Add(new OperationMapRenderCapacitySweepInput(
+                            sampleIdentity,
+                            orderedPolicies[policyIndex],
+                            requiredRows));
+                        if (requiredRows > peakRowsByPolicy[policyIndex])
+                        {
+                            peakRowsByPolicy[policyIndex] = requiredRows;
+                            peakSampleByPolicy[policyIndex] = sampleIdentity;
+                        }
+                    }
+
+                    sampleOrdinal++;
+                }
+            }
+
+            if (!OperationMapRenderCapacitySweep.TryCalculate(inputs, out var capacities, out string error))
+                throw new InvalidOperationException($"Capacity budget sweep failed: {error}");
+            if (capacities.Length != orderedPolicies.Length || sampleOrdinal != width * height)
+                throw new InvalidOperationException("Capacity budget sweep returned incomplete coverage.");
+
+            var policyBudgets = new List<CapacityPolicyBudgetReport>(capacities.Length);
+            int totalSlots = 0;
+            int totalPeakRows = 0;
+            for (int policyIndex = 0; policyIndex < capacities.Length; policyIndex++)
+            {
+                OperationMapRenderCapacitySweepResult capacity = capacities[policyIndex];
+                if (!capacity.Policy.Equals(orderedPolicies[policyIndex]) ||
+                    capacity.SweepSampleCount != sampleOrdinal ||
+                    capacity.PeakRequiredPartRows != peakRowsByPolicy[policyIndex])
+                {
+                    throw new InvalidOperationException("Capacity budget sweep result did not preserve canonical policy data.");
+                }
+
+                totalSlots = checked(totalSlots + capacity.Capacity);
+                totalPeakRows = checked(totalPeakRows + capacity.PeakRequiredPartRows);
+                policyBudgets.Add(new CapacityPolicyBudgetReport
+                {
+                    policyBucket = capacity.Policy.Bucket.ToString(),
+                    layer = capacity.Policy.Layer,
+                    renderingLayerMask = capacity.Policy.RenderingLayerMask,
+                    motionVectorMode = capacity.Policy.MotionVectorMode.ToString(),
+                    shadowFlags = (byte)capacity.Policy.ShadowFlags,
+                    sweepSampleCount = capacity.SweepSampleCount,
+                    peakRequiredPartRows = capacity.PeakRequiredPartRows,
+                    peakSampleIdentity = peakSampleByPolicy[policyIndex],
+                    capacity = capacity.Capacity,
+                    headroomCount = capacity.HeadroomCount
+                });
+            }
+
+            return new CapacityBudgetDocument
+            {
+                schema = "warline.operation-map.render-virtualization-capacity-budget",
+                schemaVersion = 1,
+                operationMapId = "opmap.skirmish.desert_base_01",
+                result = "Passed",
+                samplingPolicy =
+                    "Provisional deterministic all-grid-cell envelope sweep. Each accepted-origin-aligned " +
+                    "32 m grid cell is a sample center; a zero-cell nominal visible footprint is expanded by " +
+                    "one safety cell and one prefetch guard cell in every cardinal direction. Camera pose, " +
+                    "projection, zoom, and tactical-follow sweeps remain required before final acceptance.",
+                provisionalOnly = true,
+                cameraProjectionSweepPending = true,
+                visibleCellRadius = ProvisionalVisibleCellRadius,
+                safetyCellRadius = ProvisionalSafetyCellRadius,
+                prefetchGuardCellRadius = ProvisionalPrefetchGuardCellRadius,
+                totalEnvelopeCellRadius = envelopeRadius,
+                canonicalSampleCount = sampleOrdinal,
+                policyCount = policyBudgets.Count,
+                placementCount = logicalPlacements.placementCount,
+                provisionalMapMmiEntityBudget = logicalPlacements.placementCount,
+                mapMmiEntityLimit = MapMmiEntityLimit,
+                provisionalMapMmiEntityBudgetWithinLimit =
+                    logicalPlacements.placementCount <= MapMmiEntityLimit,
+                totalPeakRequiredPartRows = totalPeakRows,
+                totalProvisionalActiveProxySlots = totalSlots,
+                activeProxySlotLimit = ActiveProxySlotLimit,
+                provisionalActiveProxySlotsWithinLimit = totalSlots <= ActiveProxySlotLimit,
+                zeroOverflowProvenForProvisionalCapacity = true,
+                sourceRowsSha256 = sourceRowsSha256,
+                prototypeRecipesSha256 = prototypeRecipesSha256,
+                logicalPlacementsSha256 = logicalPlacementsSha256,
+                spatialCellsSha256 = spatialCellsSha256,
+                capacityByPolicy = policyBudgets
             };
         }
 
@@ -1849,6 +2089,53 @@ namespace Game.Editor
             public float[] worldBoundsExtents;
             public int firstPlacementIndex;
             public int placementIndexCount;
+        }
+
+        [Serializable]
+        private sealed class CapacityBudgetDocument
+        {
+            public string schema;
+            public int schemaVersion;
+            public string operationMapId;
+            public string result;
+            public string samplingPolicy;
+            public bool provisionalOnly;
+            public bool cameraProjectionSweepPending;
+            public int visibleCellRadius;
+            public int safetyCellRadius;
+            public int prefetchGuardCellRadius;
+            public int totalEnvelopeCellRadius;
+            public int canonicalSampleCount;
+            public int policyCount;
+            public int placementCount;
+            public int provisionalMapMmiEntityBudget;
+            public int mapMmiEntityLimit;
+            public bool provisionalMapMmiEntityBudgetWithinLimit;
+            public int totalPeakRequiredPartRows;
+            public int totalProvisionalActiveProxySlots;
+            public int activeProxySlotLimit;
+            public bool provisionalActiveProxySlotsWithinLimit;
+            public bool zeroOverflowProvenForProvisionalCapacity;
+            public string sourceRowsSha256;
+            public string prototypeRecipesSha256;
+            public string logicalPlacementsSha256;
+            public string spatialCellsSha256;
+            public List<CapacityPolicyBudgetReport> capacityByPolicy;
+        }
+
+        [Serializable]
+        private sealed class CapacityPolicyBudgetReport
+        {
+            public string policyBucket;
+            public int layer;
+            public uint renderingLayerMask;
+            public string motionVectorMode;
+            public byte shadowFlags;
+            public int sweepSampleCount;
+            public int peakRequiredPartRows;
+            public string peakSampleIdentity;
+            public int capacity;
+            public int headroomCount;
         }
 
         [Serializable]

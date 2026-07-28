@@ -452,6 +452,8 @@ The built package must contain:
 
 The runtime-content report must add resident-render rows, virtualized logical rows, prototypes, parts, cells, policy buckets, total slots, per-bucket capacity, packed database bytes, source rows removed, excluded rows by reason, and source-hierarchy counts.
 
+The schema-1 render-virtualization report uses schema identity `warline.operation-map.render-virtualization`, exact schema version `1`, a trimmed operation-map id, a 64-character lowercase content hash, explicit `VirtualizedProxyPool` mode, a closed metrics object, and a strictly sorted `capacityByPolicy` array. Structural database/slot metrics and per-policy sweep/peak metrics must be positive; zero-valid resident/exclusion/removal/hierarchy counts must still be present and nonnegative. Unknown, missing, duplicate, default, negative, inconsistent-headroom, duplicate-policy, unsorted-policy, unequal-sweep-count, and total-slot reconciliation failures reject serialization or parsing.
+
 ## 9. Runtime Scheduling Contract
 
 ### 9.1 Systems And Groups
@@ -758,7 +760,7 @@ Terra must stop and request Sol when the next dependency-ready item is marked `[
 - [x] `VRP-014 [TERRA]` Add pure cell assignment and multi-cell deduplication algorithms with boundary tests. Depends on: `VRP-011`.
 - [x] `VRP-015 [TERRA]` Add pure policy-bucket classification with fail-closed unknown combinations. Depends on: `VRP-011`.
 - [x] `VRP-016 [TERRA]` Add deterministic camera-capacity sweep inputs/results and 20% headroom calculation tests. Depends on: `VRP-014`, `VRP-015`.
-- [ ] `VRP-017 [TERRA]` Add schema/report serialization and reject missing/default/negative metrics. Depends on: `VRP-012` through `VRP-016`.
+- [x] `VRP-017 [TERRA]` Add schema/report serialization and reject missing/default/negative metrics. Depends on: `VRP-012` through `VRP-016`.
 
 **Exit:** All new data algorithms compile and pass without changing candidate or production bake output.
 
@@ -946,7 +948,7 @@ Forbidden shortcuts:
 | Phase | Status |
 |---|---|
 | Phase 0: Evidence and amendment | In progress; Android failure and design authorization recorded; raw profile/inventory open |
-| Phase 1: Additive schema and pure contracts | In progress; mode, schema, identity/fingerprint, spatial-cell, fixed render-policy, and capacity-sweep contracts accepted |
+| Phase 1: Additive schema and pure contracts | Complete; all default-safe schema, identity/fingerprint, spatial-cell, fixed-policy, capacity-sweep, and canonical-report contracts accepted |
 | Phase 2: Deterministic database builder | Not started |
 | Phase 3: Candidate pool baking | Not started |
 | Phase 4: Jobified runtime assignment | Not started |
@@ -957,7 +959,7 @@ Forbidden shortcuts:
 | Phase 9: Android 60 FPS acceptance | Not started |
 | Phase 10: Cutover and closeout | Not started |
 
-Checklist progress: `9 / 80` complete.
+Checklist progress: `10 / 80` complete.
 
 ## 18. Validation Log
 
@@ -973,6 +975,7 @@ Checklist progress: `9 / 80` complete.
 | 2026-07-28 | `VRP-014` deterministic spatial-cell assignment | Windows GUI-licensing wrapper `%TEMP%\warline-render-virtualization-vrp014.log`; `[OperationMapRenderVirtualizationValidation] result=Passed tests=24`; wrapper exit code `0`; `git diff --check` | Passed; pure cell/dedup contract accepted | Added editor-only X/Z assignment from accepted origin/cell size with row-major `(z,x)` output, half-open maximum edges for nonzero bounds, point ownership on exact boundaries, grid clipping, and complete outside rejection. The reference multi-cell gather validates every range/index, deduplicates repeated placement ownership, and globally sorts stable-identity ranks so selected-cell order cannot change results. Boundary, four-cell, partial-overlap, invalid-grid/bounds, repeated-range, and corrupt-index cases pass. No baker/runtime consumer, render row, asset, package, EntityScene, or Android artifact changed. |
 | 2026-07-28 | `VRP-015` closed render-policy classification | Windows GUI-licensing wrapper `%TEMP%\warline-render-virtualization-vrp015.log`; `[OperationMapRenderVirtualizationValidation] result=Passed tests=28`; wrapper exit code `0`; `git diff --check` | Passed; pure fixed-policy contract accepted | Added an editor-only classifier for the six closed residency buckets while retaining layer, rendering-layer mask, motion-vector mode, and cast/receive/static-shadow flags in the immutable policy key. Opaque and alpha-clipped content map independently by cast-shadow state; transparent content never falls into opaque and rejects shadow casting; always-resident ownership requires an explicit exception. Unknown material/motion/shadow values, invalid layers, empty rendering masks, and static-without-cast combinations fail closed. Tests also prove any fixed-filter field change produces a different key. No baker/runtime consumer, render row, asset, package, EntityScene, or Android artifact changed. |
 | 2026-07-28 | `VRP-016` deterministic camera-capacity sweep | Windows GUI-licensing wrapper `%TEMP%\warline-render-virtualization-vrp016.log`; `[OperationMapRenderVirtualizationValidation] result=Passed tests=32`; wrapper exit code `0`; `git diff --check` | Passed; pure sweep/headroom contract accepted | Added an editor-only capacity sweep over canonical sample identities and complete validated render-policy keys. Every policy must contain the identical sample set, duplicate pairs and negative/default/invalid inputs fail closed, aggregation takes the per-policy maximum, and results sort by every fixed-filter field independent of input order. Overflow-checked integer ceiling implements exact `ceil(peak * 1.20)` and records sample count, peak, capacity, and headroom. Tests cover order reversal, multiple-policy sorting, peak-versus-sum behavior, fractional ceiling, incomplete coverage, duplicates, invalid keys, negative counts, and Int32 overflow. No baker/runtime consumer, manual capacity, render row, asset, package, EntityScene, or Android artifact changed. |
+| 2026-07-28 | `VRP-017` canonical virtualization report schema | Rejected compile `%TEMP%\warline-render-virtualization-vrp017.log`; corrected Windows GUI-licensing wrapper `%TEMP%\warline-render-virtualization-vrp017-rerun.log`; `[OperationMapRenderVirtualizationValidation] result=Passed tests=36`; wrapper exit code `0`; `git diff --check` | Passed; Phase 1 pure contracts complete | Added deterministic editor-only JSON serialization and fail-closed parsing for schema identity/version, map/content ownership, residency mode, structural metrics, and complete sorted per-policy capacity results. Exact property sets reject missing/unknown values; the parser rejects duplicates; positive versus zero-valid metrics are explicit; capacity rows revalidate policy, sample count, exact 20% headroom, uniqueness/order, and total-slot reconciliation. Round-trip output is byte-stable. The first run was rejected because the test assembly does not directly reference Newtonsoft; the corrected fixture uses dependency-free string mutations while production editor serialization retains the package already referenced by `Game.Editor`, and all 36 tests pass. No baker/runtime consumer, report asset, render row, package, EntityScene, or Android artifact changed. |
 
 ## 19. Evidence References
 

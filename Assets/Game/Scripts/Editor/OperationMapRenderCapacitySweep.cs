@@ -128,30 +128,50 @@ namespace Game.Editor
             {
                 OperationMapRenderPolicyKey policy = sortedPolicies[index];
                 PolicyAccumulator accumulator = byPolicy[policy];
-                long scaled = (long)accumulator.PeakRequiredPartRows * CapacityPercent;
-                long capacity = (scaled + PercentScale - 1L) / PercentScale;
-                if (capacity > int.MaxValue)
+                if (!TryCalculateCapacity(
+                        accumulator.PeakRequiredPartRows,
+                        out int acceptedCapacity,
+                        out int headroomCount))
                 {
                     results = Array.Empty<OperationMapRenderCapacitySweepResult>();
                     error =
-                        $"Capacity exceeds Int32 for policy {policy.Bucket}: {capacity}.";
+                        $"Capacity exceeds Int32 for policy {policy.Bucket}.";
                     return false;
                 }
 
-                int acceptedCapacity = (int)capacity;
                 results[index] = new OperationMapRenderCapacitySweepResult(
                     policy,
                     accumulator.SampleIdentities.Count,
                     accumulator.PeakRequiredPartRows,
                     acceptedCapacity,
-                    acceptedCapacity - accumulator.PeakRequiredPartRows);
+                    headroomCount);
             }
 
             error = null;
             return true;
         }
 
-        private static int ComparePolicies(
+        internal static bool TryCalculateCapacity(
+            int peakRequiredPartRows,
+            out int capacity,
+            out int headroomCount)
+        {
+            capacity = 0;
+            headroomCount = 0;
+            if (peakRequiredPartRows < 0)
+                return false;
+
+            long scaled = (long)peakRequiredPartRows * CapacityPercent;
+            long acceptedCapacity = (scaled + PercentScale - 1L) / PercentScale;
+            if (acceptedCapacity > int.MaxValue)
+                return false;
+
+            capacity = (int)acceptedCapacity;
+            headroomCount = capacity - peakRequiredPartRows;
+            return true;
+        }
+
+        internal static int ComparePolicies(
             OperationMapRenderPolicyKey left,
             OperationMapRenderPolicyKey right)
         {

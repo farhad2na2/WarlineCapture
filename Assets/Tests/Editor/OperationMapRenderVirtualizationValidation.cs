@@ -51,7 +51,11 @@ public sealed class OperationMapRenderVirtualizationValidation
             tests.CapacitySweep_UsesPeakAndExactTwentyPercentCeiling();
             tests.CapacitySweep_RequiresIdenticalCanonicalSamplesPerPolicy();
             tests.CapacitySweep_RejectsInvalidDuplicateNegativeAndOverflowInputs();
-            Debug.Log("[OperationMapRenderVirtualizationValidation] result=Passed tests=32");
+            tests.VirtualizationReport_SerializesDeterministicallyAndRoundTrips();
+            tests.VirtualizationReport_RejectsMissingUnknownAndDuplicateProperties();
+            tests.VirtualizationReport_RejectsDefaultAndNegativeMetrics();
+            tests.VirtualizationReport_RejectsCapacityReconciliationFailures();
+            Debug.Log("[OperationMapRenderVirtualizationValidation] result=Passed tests=36");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -968,6 +972,228 @@ public sealed class OperationMapRenderVirtualizationValidation
                     int.MaxValue)
             },
             "exceeds Int32");
+    }
+
+    [Test]
+    public void VirtualizationReport_SerializesDeterministicallyAndRoundTrips()
+    {
+        OperationMapRenderVirtualizationReportDocument report = CreateValidReport();
+        Assert.That(
+            OperationMapRenderVirtualizationReportSerializer.TrySerialize(
+                report,
+                out string firstJson,
+                out string firstError),
+            Is.True,
+            firstError);
+        Assert.That(firstJson, Does.EndWith("\n"));
+        Assert.That(
+            OperationMapRenderVirtualizationReportSerializer.TrySerialize(
+                report,
+                out string secondJson,
+                out string secondError),
+            Is.True,
+            secondError);
+        Assert.That(secondJson, Is.EqualTo(firstJson));
+
+        Assert.That(
+            OperationMapRenderVirtualizationReportSerializer.TryDeserialize(
+                firstJson,
+                out OperationMapRenderVirtualizationReportDocument roundTrip,
+                out string readError),
+            Is.True,
+            readError);
+        Assert.That(roundTrip.SchemaVersion, Is.EqualTo(1));
+        Assert.That(roundTrip.OperationMapId, Is.EqualTo("opmap.test.virtualized"));
+        Assert.That(roundTrip.ContentHash, Is.EqualTo(new string('a', 64)));
+        Assert.That(
+            roundTrip.ResidencyMode,
+            Is.EqualTo(OperationMapRenderResidencyMode.VirtualizedProxyPool));
+        Assert.That(roundTrip.CapacityByPolicy.Length, Is.EqualTo(2));
+        Assert.That(roundTrip.TotalSlotCount, Is.EqualTo(18));
+
+        Assert.That(
+            OperationMapRenderVirtualizationReportSerializer.TrySerialize(
+                roundTrip,
+                out string roundTripJson,
+                out string roundTripError),
+            Is.True,
+            roundTripError);
+        Assert.That(roundTripJson, Is.EqualTo(firstJson));
+    }
+
+    [Test]
+    public void VirtualizationReport_RejectsMissingUnknownAndDuplicateProperties()
+    {
+        string validJson = SerializeValidReport();
+
+        AssertReportDeserializeRejected(
+            RemoveJsonPropertyLine(validJson, "prototypeCount"),
+            "missing required property 'prototypeCount'");
+
+        int finalBrace = validJson.LastIndexOf('}');
+        string unknown =
+            validJson.Insert(finalBrace, ",\n  \"unexpected\": 1\n");
+        AssertReportDeserializeRejected(
+            unknown,
+            "unknown property 'unexpected'");
+
+        string duplicate = validJson.Replace(
+            "\"schemaVersion\": 1,",
+            "\"schemaVersion\": 1,\n  \"schemaVersion\": 1,");
+        AssertReportDeserializeRejected(duplicate, "schemaVersion");
+    }
+
+    [Test]
+    public void VirtualizationReport_RejectsDefaultAndNegativeMetrics()
+    {
+        OperationMapRenderVirtualizationReportDocument report = CreateValidReport();
+        report.SchemaVersion = 0;
+        AssertReportSerializeRejected(report, "schema version must be 1");
+
+        report = CreateValidReport();
+        report.VirtualizedLogicalRows = 0;
+        AssertReportSerializeRejected(report, "virtualizedLogicalRows must be positive");
+
+        report = CreateValidReport();
+        report.PackedDatabaseBytes = 0;
+        AssertReportSerializeRejected(report, "packedDatabaseBytes must be positive");
+
+        report = CreateValidReport();
+        report.ResidentRenderRows = -1;
+        AssertReportSerializeRejected(report, "residentRenderRows must be nonnegative");
+
+        report = CreateValidReport();
+        report.ExcludedRowCount = -1;
+        AssertReportSerializeRejected(report, "excludedRowCount must be nonnegative");
+    }
+
+    [Test]
+    public void VirtualizationReport_RejectsCapacityReconciliationFailures()
+    {
+        OperationMapRenderVirtualizationReportDocument report = CreateValidReport();
+        report.TotalSlotCount--;
+        AssertReportSerializeRejected(report, "does not match capacity sum");
+
+        report = CreateValidReport();
+        Array.Reverse(report.CapacityByPolicy);
+        AssertReportSerializeRejected(report, "strictly sorted");
+
+        report = CreateValidReport();
+        OperationMapRenderCapacitySweepResult valid = report.CapacityByPolicy[0];
+        report.CapacityByPolicy[0] = new OperationMapRenderCapacitySweepResult(
+            valid.Policy,
+            valid.SweepSampleCount,
+            valid.PeakRequiredPartRows,
+            valid.Capacity,
+            valid.HeadroomCount + 1);
+        AssertReportSerializeRejected(report, "exact 20% headroom");
+
+        report = CreateValidReport();
+        valid = report.CapacityByPolicy[1];
+        report.CapacityByPolicy[1] = new OperationMapRenderCapacitySweepResult(
+            valid.Policy,
+            valid.SweepSampleCount + 1,
+            valid.PeakRequiredPartRows,
+            valid.Capacity,
+            valid.HeadroomCount);
+        AssertReportSerializeRejected(report, "same sweep sample count");
+    }
+
+    private static OperationMapRenderVirtualizationReportDocument CreateValidReport()
+    {
+        OperationMapRenderPolicyKey opaque =
+            ClassifyPolicy(
+                OperationMapRenderMaterialSurface.Opaque,
+                OperationMapRenderShadowFlags.None);
+        OperationMapRenderPolicyKey alpha =
+            ClassifyPolicy(
+                OperationMapRenderMaterialSurface.AlphaClipped,
+                OperationMapRenderShadowFlags.None);
+        return new OperationMapRenderVirtualizationReportDocument
+        {
+            SchemaVersion =
+                OperationMapRenderVirtualizationReportSerializer.ReportSchemaVersion,
+            OperationMapId = "opmap.test.virtualized",
+            ContentHash = new string('a', 64),
+            ResidencyMode = OperationMapRenderResidencyMode.VirtualizedProxyPool,
+            ResidentRenderRows = 4,
+            VirtualizedLogicalRows = 20,
+            PrototypeCount = 2,
+            PartCount = 5,
+            PlacementCount = 20,
+            CellCount = 8,
+            PolicyBucketCount = 2,
+            TotalSlotCount = 18,
+            PackedDatabaseBytes = 4096,
+            SourceRowsRemoved = 20,
+            ExcludedRowCount = 4,
+            SourceHierarchyObjectCount = 24,
+            CapacityByPolicy = new[]
+            {
+                new OperationMapRenderCapacitySweepResult(
+                    opaque,
+                    4,
+                    10,
+                    12,
+                    2),
+                new OperationMapRenderCapacitySweepResult(
+                    alpha,
+                    4,
+                    5,
+                    6,
+                    1)
+            }
+        };
+    }
+
+    private static string SerializeValidReport()
+    {
+        Assert.That(
+            OperationMapRenderVirtualizationReportSerializer.TrySerialize(
+                CreateValidReport(),
+                out string json,
+                out string error),
+            Is.True,
+            error);
+        return json;
+    }
+
+    private static void AssertReportSerializeRejected(
+        OperationMapRenderVirtualizationReportDocument report,
+        string expectedError)
+    {
+        Assert.That(
+            OperationMapRenderVirtualizationReportSerializer.TrySerialize(
+                report,
+                out _,
+                out string error),
+            Is.False);
+        Assert.That(error, Does.Contain(expectedError).IgnoreCase);
+    }
+
+    private static void AssertReportDeserializeRejected(
+        string json,
+        string expectedError)
+    {
+        Assert.That(
+            OperationMapRenderVirtualizationReportSerializer.TryDeserialize(
+                json,
+                out _,
+                out string error),
+            Is.False);
+        Assert.That(error, Does.Contain(expectedError).IgnoreCase);
+    }
+
+    private static string RemoveJsonPropertyLine(string json, string propertyName)
+    {
+        string token = $"\"{propertyName}\"";
+        int tokenIndex = json.IndexOf(token, StringComparison.Ordinal);
+        Assert.That(tokenIndex, Is.GreaterThanOrEqualTo(0));
+        int lineStart = json.LastIndexOf('\n', tokenIndex);
+        lineStart = lineStart < 0 ? 0 : lineStart + 1;
+        int lineEnd = json.IndexOf('\n', tokenIndex);
+        lineEnd = lineEnd < 0 ? json.Length : lineEnd + 1;
+        return json.Remove(lineStart, lineEnd - lineStart);
     }
 
     private static OperationMapRenderPolicyKey ClassifyPolicy(

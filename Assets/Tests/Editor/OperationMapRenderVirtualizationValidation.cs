@@ -9,8 +9,10 @@ using NUnit.Framework;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
+using Unity.Entities.Graphics;
 using Unity.Mathematics;
 using Unity.Rendering;
+using Unity.Transforms;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -63,7 +65,8 @@ public sealed class OperationMapRenderVirtualizationValidation
             tests.RenderDatabaseBakeConfig_RejectsMissingOrCorruptRecords();
             tests.SharedRenderMeshArray_PreservesSortedAssetsAndEveryLogicalIndex();
             tests.ProxySlotBakePlan_UsesEveryReportedSlotAndExactFixedPolicy();
-            Debug.Log("[OperationMapRenderVirtualizationValidation] result=Passed tests=40");
+            tests.ProxySlots_BakeAsDisabledLeafEntitiesWithExactBucketRanges();
+            Debug.Log("[OperationMapRenderVirtualizationValidation] result=Passed tests=41");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -1364,6 +1367,107 @@ public sealed class OperationMapRenderVirtualizationValidation
 
         Assert.That(descriptors, Has.Length.EqualTo(expectedTotal));
         Assert.That(descriptors, Has.Length.EqualTo(704));
+    }
+
+    [Test]
+    public void ProxySlots_BakeAsDisabledLeafEntitiesWithExactBucketRanges()
+    {
+        const string configPath =
+            "Assets/Game/GeneratedOperationMapEntityPresentationCandidate/" +
+            "VirtualizedPresentation/OperationMapRenderDatabaseBakeConfig.asset";
+        OperationMapRenderDatabaseBakeConfig config =
+            AssetDatabase.LoadAssetAtPath<OperationMapRenderDatabaseBakeConfig>(configPath);
+        Assert.That(config, Is.Not.Null);
+        Assert.That(config.TryValidateSchema(out string configError), Is.True, configError);
+
+        GameObject root = new("VRP033 Virtualized Presentation Bake Root");
+        World world = new("VRP033VirtualizedPresentationBake");
+        try
+        {
+            OperationMapVirtualizedPresentationAuthoring authoring =
+                root.AddComponent<OperationMapVirtualizedPresentationAuthoring>();
+            Set(authoring, "databaseConfig", config);
+            Set(authoring, "mapGeneration", 0);
+
+            BakeGameObjects(world, root);
+
+            EntityManager entityManager = world.EntityManager;
+            EntityQuery slotsQuery = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<OperationMapRenderProxySlotComponent>());
+            using NativeArray<Entity> slots = slotsQuery.ToEntityArray(Allocator.Temp);
+            Assert.That(slots, Has.Length.EqualTo(704));
+
+            var seenSlotIndices = new HashSet<int>();
+            var seenByBucket = new int[config.PoolBuckets.Count];
+            for (int slotArrayIndex = 0; slotArrayIndex < slots.Length; slotArrayIndex++)
+            {
+                Entity slotEntity = slots[slotArrayIndex];
+                OperationMapRenderProxySlotComponent slot =
+                    entityManager.GetComponentData<OperationMapRenderProxySlotComponent>(slotEntity);
+                Assert.That(seenSlotIndices.Add(slot.SlotIndex), Is.True, $"duplicate slot {slot.SlotIndex}");
+                Assert.That(slot.PoolBucketIndex, Is.InRange(0, config.PoolBuckets.Count - 1));
+
+                OperationMapRenderPoolBucketConfigRecord bucket =
+                    config.PoolBuckets[slot.PoolBucketIndex];
+                Assert.That(slot.SlotIndex, Is.InRange(bucket.FirstSlot, bucket.FirstSlot + bucket.Capacity - 1));
+                seenByBucket[slot.PoolBucketIndex]++;
+                Assert.That(slot.PlacementIndex, Is.EqualTo(-1));
+                Assert.That(slot.PartIndex, Is.EqualTo(-1));
+                Assert.That(slot.AssignmentGeneration, Is.Zero);
+
+                Assert.That(entityManager.HasComponent<RenderMeshArray>(slotEntity), Is.True);
+                Assert.That(entityManager.HasComponent<RenderFilterSettings>(slotEntity), Is.True);
+                Assert.That(entityManager.HasComponent<MaterialMeshInfo>(slotEntity), Is.True);
+                Assert.That(entityManager.HasComponent<LocalToWorld>(slotEntity), Is.True);
+                Assert.That(entityManager.HasComponent<RenderBounds>(slotEntity), Is.True);
+                Assert.That(entityManager.HasComponent<URPMaterialPropertyBaseColor>(slotEntity), Is.True);
+                Assert.That(entityManager.HasComponent<Parent>(slotEntity), Is.False);
+                Assert.That(entityManager.HasComponent<Child>(slotEntity), Is.False);
+                Assert.That(entityManager.HasComponent<LocalTransform>(slotEntity), Is.False);
+                Assert.That(entityManager.IsComponentEnabled<MaterialMeshInfo>(slotEntity), Is.False);
+            }
+
+            for (int bucketIndex = 0; bucketIndex < config.PoolBuckets.Count; bucketIndex++)
+            {
+                OperationMapRenderPoolBucketConfigRecord bucket = config.PoolBuckets[bucketIndex];
+                Assert.That(seenByBucket[bucketIndex], Is.EqualTo(bucket.Capacity), $"bucket {bucketIndex}");
+            }
+        }
+        finally
+        {
+            world.Dispose();
+            UnityEngine.Object.DestroyImmediate(root);
+        }
+    }
+
+    private static void BakeGameObjects(World world, GameObject root)
+    {
+        Type bakingUtilityType = Type.GetType("Unity.Entities.BakingUtility, Unity.Entities.Hybrid", true);
+        Type bakingSettingsType = Type.GetType("Unity.Entities.BakingSettings, Unity.Entities.Hybrid", true);
+        Type blobAssetStoreType =
+            Type.GetType("Unity.Entities.BlobAssetStore, Unity.Entities") ??
+            Type.GetType("Unity.Entities.BlobAssetStore, Unity.Entities.Hybrid");
+        Assert.That(blobAssetStoreType, Is.Not.Null);
+
+        object blobAssetStore = Activator.CreateInstance(blobAssetStoreType, 128);
+        try
+        {
+            object settings = Activator.CreateInstance(bakingSettingsType);
+            object assignName = Enum.Parse(bakingUtilityType.GetNestedType("BakingFlags"), "AssignName");
+            bakingSettingsType.GetField("BakingFlags")?.SetValue(settings, assignName);
+            bakingSettingsType.GetProperty("BlobAssetStore")?.SetValue(settings, blobAssetStore);
+
+            MethodInfo bake = bakingUtilityType.GetMethod(
+                "BakeGameObjects",
+                BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
+            Assert.That(bake, Is.Not.Null);
+            bake.Invoke(null, new object[] { world, new[] { root }, settings });
+        }
+        finally
+        {
+            if (blobAssetStore is IDisposable disposable)
+                disposable.Dispose();
+        }
     }
 
     private static MotionVectorGenerationMode ToUnityMotionMode(

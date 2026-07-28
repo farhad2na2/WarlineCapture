@@ -74,7 +74,9 @@ namespace Game.Authoring
                 {
                     OperationMapRenderProxySlotBakeDescriptor descriptor =
                         slotDescriptors[index];
-                    Entity slotEntity = CreateAdditionalEntity(TransformUsageFlags.None);
+                    // Renderable retains a world-space LocalToWorld while avoiding LocalTransform/Parent
+                    // on these fixed, hierarchy-free presentation slots.
+                    Entity slotEntity = CreateAdditionalEntity(TransformUsageFlags.Renderable);
                     AddSharedComponentManaged(slotEntity, renderMeshArray);
                     AddSharedComponent(slotEntity, descriptor.FilterSettings);
                     AddComponent(slotEntity, initialMaterialMeshInfo);

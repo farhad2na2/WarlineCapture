@@ -1,6 +1,6 @@
 {
     "schema": "warline.operation-map.render-virtualization-eligibility-inventory",
-    "schemaVersion": 4,
+    "schemaVersion": 5,
     "result": "Passed",
     "operationMapId": "opmap.skirmish.desert_base_01",
     "candidateScenePath": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
@@ -31,9 +31,36 @@
     "stateLinkedPlacementCount": 0,
     "renderOnlyPlacementCount": 9721,
     "placementPartRowCount": 11299,
-    "logicalPlacementsSha256": "c53d4326f6c56bf3d85efb4640ea8ba37037100fffb02e5ba1eaaefbddc259d9",
+    "logicalPlacementsSha256": "5c8b1dd81b4987d9e773f24c1a604ebbc7941dd3bd8d74346f7e2d7483678ace",
     "logicalPlacementsPath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_logical_placements.json",
-    "logicalPlacementsJsonSha256": "b0b531b4f867b793e9893e76eb21c45164531d1645d0342a57dc487c5f4a9484",
+    "logicalPlacementsJsonSha256": "a06881096a3ba8e0d8976d9ae26260592e1304cbf76b01451b51d9b40e464681",
+    "renderCellSize": 32.0,
+    "acceptedRenderGridOrigin": [
+        0.0,
+        0.0,
+        0.0
+    ],
+    "renderGridOrigin": [
+        416.0,
+        0.0,
+        0.0
+    ],
+    "renderGridDimensions": [
+        69,
+        48
+    ],
+    "renderGridCoordinateOffset": [
+        13,
+        0
+    ],
+    "occupiedCellCount": 1635,
+    "cellPlacementIndexCount": 11706,
+    "multiCellPlacementCount": 1741,
+    "maximumCellsPerPlacement": 4,
+    "maximumPlacementsPerCell": 43,
+    "spatialCellsSha256": "ed5ac3973f10f8e2c700f22b766811bc474cdea8ef1615643ad8e5beef1b54b9",
+    "spatialCellsPath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_spatial_cells.json",
+    "spatialCellsJsonSha256": "4f5e523b5447f02dca7173f5afe86afbb5a0df5af219d82479c4cee7d81ea4a3",
     "mutationAuthorized": false,
     "mutationBlocker": "VRP-002 raw Android profile remains open; source-row inventory authorizes no mutation.",
     "bySemanticCategory": [

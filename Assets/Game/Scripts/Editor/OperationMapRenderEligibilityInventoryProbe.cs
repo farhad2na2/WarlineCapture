@@ -34,7 +34,10 @@ namespace Game.Editor
             "Design/AgentReports/2026-07-28_dense_city_render_virtualization_prototype_recipes.json";
         internal const string LogicalPlacementsPath =
             "Design/AgentReports/2026-07-28_dense_city_render_virtualization_logical_placements.json";
+        internal const string SpatialCellsPath =
+            "Design/AgentReports/2026-07-28_dense_city_render_virtualization_spatial_cells.json";
         internal const int ExpectedPackedRenderRowCount = 82797;
+        internal const float RenderCellSize = 32f;
         private static readonly UTF8Encoding Utf8WithoutBom = new(false);
 
         public static void Run()
@@ -53,6 +56,8 @@ namespace Game.Editor
                     Path.Combine(projectRoot, PrototypeRecipesPath);
                 string logicalPlacementsOutputPath =
                     Path.Combine(projectRoot, LogicalPlacementsPath);
+                string spatialCellsOutputPath =
+                    Path.Combine(projectRoot, SpatialCellsPath);
                 Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
                 byte[] sourceRowsJson = Utf8WithoutBom.GetBytes(
                     JsonUtility.ToJson(
@@ -87,6 +92,12 @@ namespace Game.Editor
                 report.logicalPlacementsJsonSha256 = ComputeSha256(logicalPlacementsJson);
                 report.logicalPlacements = null;
 
+                byte[] spatialCellsJson = Utf8WithoutBom.GetBytes(
+                    JsonUtility.ToJson(report.spatialCells, true) + "\n");
+                report.spatialCellsPath = SpatialCellsPath;
+                report.spatialCellsJsonSha256 = ComputeSha256(spatialCellsJson);
+                report.spatialCells = null;
+
                 string sourceRowsTemporaryPath = sourceRowsOutputPath + ".tmp";
                 File.WriteAllBytes(sourceRowsTemporaryPath, sourceRowsGzip);
                 if (File.Exists(sourceRowsOutputPath))
@@ -107,6 +118,12 @@ namespace Game.Editor
                     File.Delete(logicalPlacementsOutputPath);
                 File.Move(logicalPlacementsTemporaryPath, logicalPlacementsOutputPath);
 
+                string spatialCellsTemporaryPath = spatialCellsOutputPath + ".tmp";
+                File.WriteAllBytes(spatialCellsTemporaryPath, spatialCellsJson);
+                if (File.Exists(spatialCellsOutputPath))
+                    File.Delete(spatialCellsOutputPath);
+                File.Move(spatialCellsTemporaryPath, spatialCellsOutputPath);
+
                 string temporaryPath = outputPath + ".tmp";
                 File.WriteAllText(
                     temporaryPath,
@@ -123,7 +140,8 @@ namespace Game.Editor
                     $"prototypes={report.prototypeCount} parts={report.prototypePartCount} " +
                     $"report={ReportPath} sourceRows={SourceRowsPath} " +
                     $"prototypeRecipes={PrototypeRecipesPath} " +
-                    $"logicalPlacements={LogicalPlacementsPath}");
+                    $"logicalPlacements={LogicalPlacementsPath} " +
+                    $"spatialCells={SpatialCellsPath}");
             }
             catch (Exception exception)
             {
@@ -250,8 +268,9 @@ namespace Game.Editor
             sourceRows.Sort(SourceRowReportComparer.Instance);
             for (int index = 0; index < sourceRows.Count; index++)
                 sourceRows[index].sourceRowIndex = index;
+            RenderGridSpec renderGrid = ResolveRenderGrid();
             PrototypeRecipeDocument prototypeRecipes =
-                BuildPrototypeRecipes(eligiblePartCandidates);
+                BuildPrototypeRecipes(eligiblePartCandidates, renderGrid);
             if (prototypeRecipes.eligibleSourceRowCount != eligible)
             {
                 throw new InvalidOperationException(
@@ -262,7 +281,7 @@ namespace Game.Editor
             return new InventoryReport
             {
                 schema = "warline.operation-map.render-virtualization-eligibility-inventory",
-                schemaVersion = 4,
+                schemaVersion = 5,
                 result = "Passed",
                 operationMapId = "opmap.skirmish.desert_base_01",
                 candidateScenePath = DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath,
@@ -295,6 +314,27 @@ namespace Game.Editor
                     prototypeRecipes.logicalPlacements.placementPartRowCount,
                 logicalPlacementsSha256 =
                     prototypeRecipes.logicalPlacements.logicalPlacementsSha256,
+                renderCellSize = prototypeRecipes.logicalPlacements.spatialCells.cellSize,
+                acceptedRenderGridOrigin =
+                    prototypeRecipes.logicalPlacements.spatialCells.acceptedGridOrigin,
+                renderGridOrigin =
+                    prototypeRecipes.logicalPlacements.spatialCells.gridOrigin,
+                renderGridDimensions =
+                    prototypeRecipes.logicalPlacements.spatialCells.gridDimensions,
+                renderGridCoordinateOffset =
+                    prototypeRecipes.logicalPlacements.spatialCells.coordinateOffset,
+                occupiedCellCount =
+                    prototypeRecipes.logicalPlacements.spatialCells.occupiedCellCount,
+                cellPlacementIndexCount =
+                    prototypeRecipes.logicalPlacements.spatialCells.cellPlacementIndexCount,
+                multiCellPlacementCount =
+                    prototypeRecipes.logicalPlacements.spatialCells.multiCellPlacementCount,
+                maximumCellsPerPlacement =
+                    prototypeRecipes.logicalPlacements.spatialCells.maximumCellsPerPlacement,
+                maximumPlacementsPerCell =
+                    prototypeRecipes.logicalPlacements.spatialCells.maximumPlacementsPerCell,
+                spatialCellsSha256 =
+                    prototypeRecipes.logicalPlacements.spatialCells.spatialCellsSha256,
                 mutationAuthorized = false,
                 mutationBlocker =
                     "VRP-002 raw Android profile remains open; source-row inventory authorizes no mutation.",
@@ -306,7 +346,8 @@ namespace Game.Editor
                 byReasonCode = BuildBreakdown(reasons),
                 sourceRows = sourceRows,
                 prototypeRecipes = prototypeRecipes,
-                logicalPlacements = prototypeRecipes.logicalPlacements
+                logicalPlacements = prototypeRecipes.logicalPlacements,
+                spatialCells = prototypeRecipes.logicalPlacements.spatialCells
             };
         }
 
@@ -539,7 +580,8 @@ namespace Game.Editor
         }
 
         private static PrototypeRecipeDocument BuildPrototypeRecipes(
-            IReadOnlyList<EligiblePartCandidate> candidates)
+            IReadOnlyList<EligiblePartCandidate> candidates,
+            in RenderGridSpec renderGrid)
         {
             var partCollisions = new OperationMapRenderIdentityCollisionDetector();
             foreach (EligiblePartCandidate candidate in candidates)
@@ -637,7 +679,8 @@ namespace Game.Editor
                 owners,
                 prototypeSourceByOwner,
                 prototypeIndexBySource,
-                prototypes);
+                prototypes,
+                renderGrid);
             return new PrototypeRecipeDocument
             {
                 schema = "warline.operation-map.render-virtualization-prototype-recipes",
@@ -697,7 +740,8 @@ namespace Game.Editor
             IReadOnlyList<OwnerRecipe> owners,
             IReadOnlyDictionary<string, string> prototypeSourceByOwner,
             IReadOnlyDictionary<string, int> prototypeIndexBySource,
-            IReadOnlyList<PrototypeRecipeReport> prototypes)
+            IReadOnlyList<PrototypeRecipeReport> prototypes,
+            in RenderGridSpec renderGrid)
         {
             List<OwnerRecipe> orderedOwners = owners
                 .OrderBy(owner => owner.OwnerIdentity.Low)
@@ -743,6 +787,7 @@ namespace Game.Editor
                     stableIdentityHigh = owner.OwnerIdentity.High,
                     prototypeIndex = prototypeIndex,
                     worldMatrix = ToArray(owner.WorldMatrix),
+                    worldMatrixValue = owner.WorldMatrix,
                     cellIndex = -1,
                     stateOwnerIndex = -1,
                     requiredVisualState = OperationMapRenderVisualState.Any.ToString(),
@@ -751,11 +796,13 @@ namespace Game.Editor
                 });
             }
 
+            SpatialCellDocument spatialCells =
+                BuildSpatialCells(placements, prototypes, renderGrid);
             string placementsHash = ComputeLogicalPlacementsSha256(placements);
             return new LogicalPlacementDocument
             {
                 schema = "warline.operation-map.render-virtualization-logical-placements",
-                schemaVersion = 1,
+                schemaVersion = 2,
                 operationMapId = "opmap.skirmish.desert_base_01",
                 result = "Passed",
                 placementCount = placements.Count,
@@ -768,8 +815,256 @@ namespace Game.Editor
                     "Current Vegetation/Prop pilot is render-only: stateOwnerIndex=-1, " +
                     "RequiredVisualState=Any. Building state linkage remains deferred.",
                 placements = placements,
-                stateOwners = new List<LogicalStateOwnerReport>()
+                stateOwners = new List<LogicalStateOwnerReport>(),
+                spatialCells = spatialCells
             };
+        }
+
+        private static SpatialCellDocument BuildSpatialCells(
+            IReadOnlyList<LogicalPlacementReport> placements,
+            IReadOnlyList<PrototypeRecipeReport> prototypes,
+            in RenderGridSpec acceptedGrid)
+        {
+            var worldBoundsByPlacement = new Bounds[placements.Count];
+            for (int placementIndex = 0; placementIndex < placements.Count; placementIndex++)
+            {
+                LogicalPlacementReport placement = placements[placementIndex];
+                PrototypeRecipeReport prototype = prototypes[placement.prototypeIndex];
+                Bounds combinedLocalBounds = new(
+                    ToVector3(prototype.combinedLocalBoundsCenter),
+                    ToVector3(prototype.combinedLocalBoundsExtents) * 2f);
+                worldBoundsByPlacement[placementIndex] =
+                    TransformBounds(combinedLocalBounds, placement.worldMatrixValue);
+            }
+            RenderGridSpec renderGrid =
+                BuildRenderGridEnvelope(acceptedGrid, worldBoundsByPlacement);
+
+            var placementGridCells = new int[placements.Count][];
+            var placementsByGridCell = new Dictionary<int, List<int>>();
+            var verticalBoundsByGridCell = new Dictionary<int, Vector2>();
+            int multiCellPlacementCount = 0;
+            int maximumCellsPerPlacement = 0;
+            for (int placementIndex = 0; placementIndex < placements.Count; placementIndex++)
+            {
+                LogicalPlacementReport placement = placements[placementIndex];
+                Bounds worldBounds = worldBoundsByPlacement[placementIndex];
+                var cellBounds = new OperationMapRenderBoundsBlob
+                {
+                    Center = worldBounds.center,
+                    Extents = worldBounds.extents
+                };
+                if (!OperationMapRenderCellAssignment.TryAssign(
+                        cellBounds,
+                        renderGrid.CellSize,
+                        renderGrid.Origin,
+                        renderGrid.Dimensions,
+                        out int[] gridCells,
+                        out string error))
+                {
+                    throw new InvalidOperationException(
+                        $"Placement {placementIndex} cell assignment failed: {error}");
+                }
+
+                placementGridCells[placementIndex] = gridCells;
+                if (gridCells.Length > 1)
+                    multiCellPlacementCount++;
+                maximumCellsPerPlacement =
+                    Math.Max(maximumCellsPerPlacement, gridCells.Length);
+                foreach (int gridCell in gridCells)
+                {
+                    if (!placementsByGridCell.TryGetValue(
+                            gridCell,
+                            out List<int> cellPlacements))
+                    {
+                        cellPlacements = new List<int>();
+                        placementsByGridCell.Add(gridCell, cellPlacements);
+                        verticalBoundsByGridCell.Add(
+                            gridCell,
+                            new Vector2(worldBounds.min.y, worldBounds.max.y));
+                    }
+                    else
+                    {
+                        Vector2 vertical = verticalBoundsByGridCell[gridCell];
+                        vertical.x = Math.Min(vertical.x, worldBounds.min.y);
+                        vertical.y = Math.Max(vertical.y, worldBounds.max.y);
+                        verticalBoundsByGridCell[gridCell] = vertical;
+                    }
+                    if (cellPlacements.Count > 0 &&
+                        cellPlacements[cellPlacements.Count - 1] == placementIndex)
+                    {
+                        throw new InvalidOperationException(
+                            $"Duplicate placement {placementIndex} in grid cell {gridCell}.");
+                    }
+                    cellPlacements.Add(placementIndex);
+                }
+            }
+
+            int[] orderedGridCells = placementsByGridCell.Keys.OrderBy(value => value).ToArray();
+            var compactIndexByGridCell = new Dictionary<int, int>();
+            for (int compactIndex = 0;
+                 compactIndex < orderedGridCells.Length;
+                 compactIndex++)
+            {
+                compactIndexByGridCell.Add(orderedGridCells[compactIndex], compactIndex);
+            }
+            for (int placementIndex = 0; placementIndex < placements.Count; placementIndex++)
+            {
+                placements[placementIndex].cellIndex =
+                    compactIndexByGridCell[placementGridCells[placementIndex][0]];
+            }
+
+            var cells = new List<SpatialCellReport>(orderedGridCells.Length);
+            var cellPlacementIndices = new List<int>();
+            int maximumPlacementsPerCell = 0;
+            foreach (int gridCell in orderedGridCells)
+            {
+                int localCoordinateX = gridCell % renderGrid.Dimensions.x;
+                int localCoordinateZ = gridCell / renderGrid.Dimensions.x;
+                int coordinateX = localCoordinateX + renderGrid.CoordinateOffset.x;
+                int coordinateZ = localCoordinateZ + renderGrid.CoordinateOffset.y;
+                List<int> cellPlacements = placementsByGridCell[gridCell];
+                maximumPlacementsPerCell =
+                    Math.Max(maximumPlacementsPerCell, cellPlacements.Count);
+                int firstPlacementIndex = cellPlacementIndices.Count;
+                cellPlacementIndices.AddRange(cellPlacements);
+
+                Vector2 vertical = verticalBoundsByGridCell[gridCell];
+                Vector3 minimum = new(
+                    renderGrid.Origin.x + localCoordinateX * renderGrid.CellSize,
+                    vertical.x,
+                    renderGrid.Origin.z + localCoordinateZ * renderGrid.CellSize);
+                Vector3 maximum = new(
+                    minimum.x + renderGrid.CellSize,
+                    vertical.y,
+                    minimum.z + renderGrid.CellSize);
+                var worldBounds = new Bounds();
+                worldBounds.SetMinMax(minimum, maximum);
+                cells.Add(new SpatialCellReport
+                {
+                    cellIndex = cells.Count,
+                    coordinateX = coordinateX,
+                    coordinateZ = coordinateZ,
+                    worldBoundsCenter = ToArray(worldBounds.center),
+                    worldBoundsExtents = ToArray(worldBounds.extents),
+                    firstPlacementIndex = firstPlacementIndex,
+                    placementIndexCount = cellPlacements.Count
+                });
+            }
+
+            string spatialHash = ComputeSpatialCellsSha256(
+                renderGrid,
+                cells,
+                cellPlacementIndices);
+            return new SpatialCellDocument
+            {
+                schema = "warline.operation-map.render-virtualization-spatial-cells",
+                schemaVersion = 1,
+                operationMapId = "opmap.skirmish.desert_base_01",
+                result = "Passed",
+                cellSize = renderGrid.CellSize,
+                acceptedGridOrigin = ToArray(renderGrid.AcceptedOrigin),
+                gridOrigin = ToArray(renderGrid.Origin),
+                gridDimensions =
+                    new[] { renderGrid.Dimensions.x, renderGrid.Dimensions.y },
+                coordinateOffset =
+                    new[] { renderGrid.CoordinateOffset.x, renderGrid.CoordinateOffset.y },
+                gridCellCount =
+                    checked(renderGrid.Dimensions.x * renderGrid.Dimensions.y),
+                occupiedCellCount = cells.Count,
+                cellPlacementIndexCount = cellPlacementIndices.Count,
+                multiCellPlacementCount = multiCellPlacementCount,
+                maximumCellsPerPlacement = maximumCellsPerPlacement,
+                maximumPlacementsPerCell = maximumPlacementsPerCell,
+                spatialCellsSha256 = spatialHash,
+                cells = cells,
+                cellPlacementIndices = cellPlacementIndices
+            };
+        }
+
+        private static RenderGridSpec BuildRenderGridEnvelope(
+            in RenderGridSpec acceptedGrid,
+            IReadOnlyList<Bounds> worldBounds)
+        {
+            if (worldBounds == null || worldBounds.Count == 0)
+                throw new InvalidOperationException("Render grid requires placement bounds.");
+
+            Vector3 minimum =
+                new(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity);
+            Vector3 maximum =
+                new(float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity);
+            for (int index = 0; index < worldBounds.Count; index++)
+            {
+                Bounds bounds = worldBounds[index];
+                if (!IsFinite(bounds.center) ||
+                    !IsFinite(bounds.extents) ||
+                    bounds.extents.x < 0f ||
+                    bounds.extents.y < 0f ||
+                    bounds.extents.z < 0f)
+                {
+                    throw new InvalidOperationException(
+                        $"Placement {index} has invalid transformed bounds.");
+                }
+                minimum = Vector3.Min(minimum, bounds.min);
+                maximum = Vector3.Max(maximum, bounds.max);
+            }
+
+            int minimumX = Mathf.FloorToInt(
+                (minimum.x - acceptedGrid.AcceptedOrigin.x) / acceptedGrid.CellSize);
+            int minimumZ = Mathf.FloorToInt(
+                (minimum.z - acceptedGrid.AcceptedOrigin.z) / acceptedGrid.CellSize);
+            Vector3 alignedOrigin = new(
+                acceptedGrid.AcceptedOrigin.x + minimumX * acceptedGrid.CellSize,
+                acceptedGrid.AcceptedOrigin.y,
+                acceptedGrid.AcceptedOrigin.z + minimumZ * acceptedGrid.CellSize);
+            int width = Mathf.CeilToInt(
+                (maximum.x - alignedOrigin.x) / acceptedGrid.CellSize);
+            int height = Mathf.CeilToInt(
+                (maximum.z - alignedOrigin.z) / acceptedGrid.CellSize);
+            if (width <= 0 || height <= 0)
+                throw new InvalidOperationException("Render grid envelope is empty.");
+            return new RenderGridSpec(
+                acceptedGrid.CellSize,
+                acceptedGrid.AcceptedOrigin,
+                alignedOrigin,
+                new int2(width, height),
+                new int2(minimumX, minimumZ));
+        }
+
+        private static RenderGridSpec ResolveRenderGrid()
+        {
+            GridAuthoringConfig grid =
+                AssetDatabase.LoadAssetAtPath<GridAuthoringConfig>(
+                    OperationMapBuildingCandidateMigrationEditor.GridConfigPath);
+            if (grid == null ||
+                grid.Width <= 0 ||
+                grid.Height <= 0 ||
+                !float.IsFinite(grid.CellSize) ||
+                grid.CellSize <= 0f ||
+                !IsFinite(grid.Origin))
+            {
+                throw new InvalidOperationException(
+                    "Accepted operation-map render grid metadata is invalid.");
+            }
+
+            float widthInMeters = grid.Width * grid.CellSize;
+            float heightInMeters = grid.Height * grid.CellSize;
+            int width = Mathf.RoundToInt(widthInMeters / RenderCellSize);
+            int height = Mathf.RoundToInt(heightInMeters / RenderCellSize);
+            if (width <= 0 ||
+                height <= 0 ||
+                !Mathf.Approximately(width * RenderCellSize, widthInMeters) ||
+                !Mathf.Approximately(height * RenderCellSize, heightInMeters))
+            {
+                throw new InvalidOperationException(
+                    "Accepted operation-map bounds must tile exactly into 32 m render cells.");
+            }
+
+            return new RenderGridSpec(
+                RenderCellSize,
+                grid.Origin,
+                grid.Origin,
+                new int2(width, height),
+                int2.zero);
         }
 
         private static string BuildPrototypeCanonicalSource(OwnerRecipe owner)
@@ -1145,6 +1440,41 @@ namespace Game.Editor
             return ComputeSha256(Utf8WithoutBom.GetBytes(canonical.ToString()));
         }
 
+        private static string ComputeSpatialCellsSha256(
+            in RenderGridSpec renderGrid,
+            IReadOnlyList<SpatialCellReport> cells,
+            IReadOnlyList<int> cellPlacementIndices)
+        {
+            var canonical =
+                new StringBuilder((cells.Count + cellPlacementIndices.Count) * 64);
+            AppendCanonical(canonical, renderGrid.CellSize);
+            AppendCanonical(canonical, renderGrid.AcceptedOrigin.x);
+            AppendCanonical(canonical, renderGrid.AcceptedOrigin.y);
+            AppendCanonical(canonical, renderGrid.AcceptedOrigin.z);
+            AppendCanonical(canonical, renderGrid.Origin.x);
+            AppendCanonical(canonical, renderGrid.Origin.y);
+            AppendCanonical(canonical, renderGrid.Origin.z);
+            AppendCanonical(canonical, renderGrid.Dimensions.x);
+            AppendCanonical(canonical, renderGrid.Dimensions.y);
+            AppendCanonical(canonical, renderGrid.CoordinateOffset.x);
+            AppendCanonical(canonical, renderGrid.CoordinateOffset.y);
+            AppendCanonical(canonical, cells.Count);
+            foreach (SpatialCellReport cell in cells)
+            {
+                AppendCanonical(canonical, cell.cellIndex);
+                AppendCanonical(canonical, cell.coordinateX);
+                AppendCanonical(canonical, cell.coordinateZ);
+                AppendCanonical(canonical, cell.worldBoundsCenter);
+                AppendCanonical(canonical, cell.worldBoundsExtents);
+                AppendCanonical(canonical, cell.firstPlacementIndex);
+                AppendCanonical(canonical, cell.placementIndexCount);
+            }
+            AppendCanonical(canonical, cellPlacementIndices.Count);
+            for (int index = 0; index < cellPlacementIndices.Count; index++)
+                AppendCanonical(canonical, cellPlacementIndices[index]);
+            return ComputeSha256(Utf8WithoutBom.GetBytes(canonical.ToString()));
+        }
+
         private static Bounds TransformBounds(Bounds bounds, Matrix4x4 matrix)
         {
             Vector3 center = bounds.center;
@@ -1217,6 +1547,18 @@ namespace Game.Editor
 
         private static float[] ToArray(Vector3 value) =>
             new[] { value.x, value.y, value.z };
+
+        private static Vector3 ToVector3(IReadOnlyList<float> value)
+        {
+            if (value == null || value.Count != 3)
+                throw new InvalidOperationException("Expected an exact three-value vector.");
+            return new Vector3(value[0], value[1], value[2]);
+        }
+
+        private static bool IsFinite(Vector3 value) =>
+            float.IsFinite(value.x) &&
+            float.IsFinite(value.y) &&
+            float.IsFinite(value.z);
 
         private static byte[] CompressGzip(byte[] source)
         {
@@ -1374,6 +1716,19 @@ namespace Game.Editor
             public string logicalPlacementsSha256;
             public string logicalPlacementsPath;
             public string logicalPlacementsJsonSha256;
+            public float renderCellSize;
+            public float[] acceptedRenderGridOrigin;
+            public float[] renderGridOrigin;
+            public int[] renderGridDimensions;
+            public int[] renderGridCoordinateOffset;
+            public int occupiedCellCount;
+            public int cellPlacementIndexCount;
+            public int multiCellPlacementCount;
+            public int maximumCellsPerPlacement;
+            public int maximumPlacementsPerCell;
+            public string spatialCellsSha256;
+            public string spatialCellsPath;
+            public string spatialCellsJsonSha256;
             public bool mutationAuthorized;
             public string mutationBlocker;
             public List<Breakdown> bySemanticCategory;
@@ -1385,6 +1740,7 @@ namespace Game.Editor
             [NonSerialized] public List<SourceRowReport> sourceRows;
             [NonSerialized] public PrototypeRecipeDocument prototypeRecipes;
             [NonSerialized] public LogicalPlacementDocument logicalPlacements;
+            [NonSerialized] public SpatialCellDocument spatialCells;
         }
 
         [Serializable]
@@ -1431,6 +1787,7 @@ namespace Game.Editor
             public string stateRelationshipPolicy;
             public List<LogicalPlacementReport> placements;
             public List<LogicalStateOwnerReport> stateOwners;
+            [NonSerialized] public SpatialCellDocument spatialCells;
         }
 
         [Serializable]
@@ -1447,6 +1804,7 @@ namespace Game.Editor
             public string requiredVisualState;
             public int priority;
             public string semanticCategory;
+            [NonSerialized] public Matrix4x4 worldMatrixValue;
         }
 
         [Serializable]
@@ -1456,6 +1814,41 @@ namespace Game.Editor
             public string stableGameplayOwnerId;
             public ulong stableIdentityLow;
             public ulong stableIdentityHigh;
+        }
+
+        [Serializable]
+        private sealed class SpatialCellDocument
+        {
+            public string schema;
+            public int schemaVersion;
+            public string operationMapId;
+            public string result;
+            public float cellSize;
+            public float[] acceptedGridOrigin;
+            public float[] gridOrigin;
+            public int[] gridDimensions;
+            public int[] coordinateOffset;
+            public int gridCellCount;
+            public int occupiedCellCount;
+            public int cellPlacementIndexCount;
+            public int multiCellPlacementCount;
+            public int maximumCellsPerPlacement;
+            public int maximumPlacementsPerCell;
+            public string spatialCellsSha256;
+            public List<SpatialCellReport> cells;
+            public List<int> cellPlacementIndices;
+        }
+
+        [Serializable]
+        private sealed class SpatialCellReport
+        {
+            public int cellIndex;
+            public int coordinateX;
+            public int coordinateZ;
+            public float[] worldBoundsCenter;
+            public float[] worldBoundsExtents;
+            public int firstPlacementIndex;
+            public int placementIndexCount;
         }
 
         [Serializable]
@@ -1599,6 +1992,29 @@ namespace Game.Editor
             internal Matrix4x4 WorldMatrix;
             internal DenseCityPresentationSemanticCategory SemanticCategory;
             internal List<EligiblePartCandidate> Parts;
+        }
+
+        private readonly struct RenderGridSpec
+        {
+            internal RenderGridSpec(
+                float cellSize,
+                Vector3 acceptedOrigin,
+                Vector3 origin,
+                int2 dimensions,
+                int2 coordinateOffset)
+            {
+                CellSize = cellSize;
+                AcceptedOrigin = acceptedOrigin;
+                Origin = origin;
+                Dimensions = dimensions;
+                CoordinateOffset = coordinateOffset;
+            }
+
+            internal float CellSize { get; }
+            internal Vector3 AcceptedOrigin { get; }
+            internal Vector3 Origin { get; }
+            internal int2 Dimensions { get; }
+            internal int2 CoordinateOffset { get; }
         }
 
         private sealed class PrototypeAccumulator

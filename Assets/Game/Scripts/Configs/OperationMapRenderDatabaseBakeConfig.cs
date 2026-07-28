@@ -309,6 +309,43 @@ namespace Game.Configs
         public IReadOnlyList<int> CellPlacementIndices => cellPlacementIndices;
         public IReadOnlyList<OperationMapRenderPoolBucketConfigRecord> PoolBuckets => poolBuckets;
 
+        public void InitializeGeneratedData(
+            string generatedOperationMapId,
+            string generatedContentHash,
+            float generatedCellSize,
+            Vector3 generatedGridOrigin,
+            Vector2Int generatedGridDimensions,
+            OperationMapRenderMeshConfigRecord[] generatedMeshes,
+            OperationMapRenderMaterialConfigRecord[] generatedMaterials,
+            OperationMapRenderPrototypeConfigRecord[] generatedPrototypes,
+            OperationMapRenderPrototypePartConfigRecord[] generatedParts,
+            OperationMapRenderPlacementConfigRecord[] generatedPlacements,
+            OperationMapRenderCellConfigRecord[] generatedCells,
+            int[] generatedCellPlacementIndices,
+            OperationMapRenderPoolBucketConfigRecord[] generatedPoolBuckets)
+        {
+            schemaVersion = CurrentSchemaVersion;
+            operationMapId = generatedOperationMapId;
+            contentHash = generatedContentHash;
+            cellSize = generatedCellSize;
+            gridOrigin = generatedGridOrigin;
+            gridDimensions = generatedGridDimensions;
+            meshes = generatedMeshes ?? Array.Empty<OperationMapRenderMeshConfigRecord>();
+            materials = generatedMaterials ?? Array.Empty<OperationMapRenderMaterialConfigRecord>();
+            prototypes =
+                generatedPrototypes ?? Array.Empty<OperationMapRenderPrototypeConfigRecord>();
+            parts = generatedParts ?? Array.Empty<OperationMapRenderPrototypePartConfigRecord>();
+            placements =
+                generatedPlacements ?? Array.Empty<OperationMapRenderPlacementConfigRecord>();
+            cells = generatedCells ?? Array.Empty<OperationMapRenderCellConfigRecord>();
+            cellPlacementIndices = generatedCellPlacementIndices ?? Array.Empty<int>();
+            poolBuckets =
+                generatedPoolBuckets ?? Array.Empty<OperationMapRenderPoolBucketConfigRecord>();
+
+            if (!TryValidateSchema(out string error))
+                throw new InvalidOperationException(error);
+        }
+
         public bool TryValidateSchema(out string error)
         {
             if (schemaVersion != CurrentSchemaVersion)

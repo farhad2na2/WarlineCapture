@@ -1135,11 +1135,12 @@ public sealed class OperationMapRenderVirtualizationValidation
             typeof(OperationMapRenderDatabaseBakeConfig)
                 .GetCustomAttribute<CreateAssetMenuAttribute>(),
             Is.Null);
-        Assert.That(
+        OperationMapRenderDatabaseBakeConfig generated =
             AssetDatabase.LoadAssetAtPath<OperationMapRenderDatabaseBakeConfig>(
                 "Assets/Game/GeneratedOperationMapEntityPresentationCandidate/" +
-                "VirtualizedPresentation/OperationMapRenderDatabaseBakeConfig.asset"),
-            Is.Null);
+                "VirtualizedPresentation/OperationMapRenderDatabaseBakeConfig.asset");
+        Assert.That(generated, Is.Not.Null);
+        Assert.That(generated.TryValidateSchema(out string generatedError), Is.True, generatedError);
 
         OperationMapRenderDatabaseBakeConfig config =
             CreateValidBakeConfig(out Mesh mesh, out Material material);

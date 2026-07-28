@@ -780,7 +780,7 @@ Terra must stop and request Sol when the next dependency-ready item is marked `[
 
 ### Phase 3: Candidate Pool Baking
 
-- [ ] `VRP-030 [TERRA]` Add root authoring/baker scaffolding that bakes only the database component; source rendering stays unchanged. Depends on: `VRP-028`.
+- [x] `VRP-030 [TERRA]` Add root authoring/baker scaffolding that bakes only the database component; source rendering stays unchanged. Depends on: `VRP-028`.
 - [ ] `VRP-031 [SOL]` Build one sorted shared `RenderMeshArray` and validate all logical mesh/material/submesh indices. Depends on: `VRP-030`.
 - [ ] `VRP-032 [SOL]` Bake fixed leaf proxy slots per policy bucket with disabled `MaterialMeshInfo`. Depends on: `VRP-031`.
 - [ ] `VRP-033 [TERRA]` Validate slot indices, bucket ranges, required components, absent hierarchy components, and disabled initial state. Depends on: `VRP-032`.
@@ -959,7 +959,7 @@ Forbidden shortcuts:
 | Phase 9: Android 60 FPS acceptance | Not started |
 | Phase 10: Cutover and closeout | Not started |
 
-Checklist progress: `20 / 80` complete.
+Checklist progress: `21 / 80` complete.
 
 ## 18. Validation Log
 

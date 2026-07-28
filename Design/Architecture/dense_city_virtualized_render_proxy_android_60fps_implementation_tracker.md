@@ -260,11 +260,11 @@ Add these unmanaged components/buffers with exact single ownership:
 | Type | Owner | Purpose |
 |---|---|---|
 | `OperationMapRenderDatabaseComponent` | one map EntityScene entity | Blob reference, schema, map generation, content hash |
-| `OperationMapRenderProxySlot` | every fixed slot entity | Stable slot index, fixed pool-bucket index, current placement/part binding, assignment generation |
-| `OperationMapRenderVirtualizationState` | one runtime state entity | Initialized flag, active envelope, camera signature, active/dirty/overflow counters |
-| `OperationMapVirtualizedBuildingPresentation` | canonical gameplay building | Dense state-owner index; replaces render-entity root ownership in virtualized mode |
-| `OperationMapRenderStateChangeElement` | one map-owned bounded buffer | Rare authoritative intact/destroyed state transitions |
-| `OperationMapRenderVirtualizationMetrics` | one map-owned diagnostics entity | Capacity, enabled slots, retained/released/rebound counts, overflow, rebuild reason |
+| `OperationMapRenderProxySlotComponent` | every fixed slot entity | Stable slot index, fixed pool-bucket index, current placement/part binding, assignment generation |
+| `OperationMapRenderVirtualizationStateComponent` | one runtime state entity | Initialized flag, initial-view-applied flag, active envelope, camera signature, active/dirty/overflow counters |
+| `OperationMapVirtualizedBuildingPresentationComponent` | canonical gameplay building | Dense state-owner index; replaces render-entity root ownership in virtualized mode |
+| `OperationMapRenderStateChangeComponent` | one map-owned bounded buffer | Rare authoritative intact/destroyed state transitions |
+| `OperationMapRenderVirtualizationMetricsComponent` | one map-owned diagnostics entity | Capacity, enabled slots, retained/released/rebound counts, overflow, rebuild reason |
 
 Do not add managed collections or UnityEngine object references to these components.
 
@@ -362,11 +362,11 @@ Within a priority, sort by distance then stable identity. Increment an overflow 
 Add:
 
 ```text
-Assets/Game/Scripts/Authorings/OperationMapRenderDatabaseAuthoringAsset.cs
+Assets/Game/Scripts/Configs/OperationMapRenderDatabaseBakeConfig.cs
 Assets/Game/Scripts/Authorings/OperationMapVirtualizedPresentationAuthoring.cs
 ```
 
-The generated ScriptableObject is a deterministic bake input containing sorted Unity asset references plus serialized logical records. It is not queried at player runtime.
+`OperationMapRenderDatabaseBakeConfig` is a generated ScriptableObject and deterministic bake input containing sorted Unity asset references plus serialized logical records. It is not queried at player runtime.
 
 Candidate output path:
 
@@ -396,7 +396,7 @@ The builder must:
 6. produce logical placements and state-owner relationships;
 7. create the deterministic cell index;
 8. compute policy-bucket capacity;
-9. write the authoring asset transactionally;
+9. write the bake config transactionally;
 10. emit a machine-readable report before candidate replacement;
 11. run twice and require identical logical hash, counts, ordering, and serialized bytes.
 
@@ -416,7 +416,7 @@ The authoring baker must:
 - create the database component entity;
 - create exactly the reported number of slot entities per bucket;
 - apply fixed `RenderFilterSettings` and the shared `RenderMeshArray`;
-- add `MaterialMeshInfo`, `LocalToWorld`, `RenderBounds`, `URPMaterialPropertyBaseColor`, and `OperationMapRenderProxySlot`;
+- add `MaterialMeshInfo`, `LocalToWorld`, `RenderBounds`, `URPMaterialPropertyBaseColor`, and `OperationMapRenderProxySlotComponent`;
 - initialize `MaterialMeshInfo` disabled;
 - avoid `Parent`/`Child`/`LocalTransform` on generic leaf slots;
 - avoid one proxy root hierarchy per logical placement.
@@ -425,7 +425,7 @@ The post-baking system must:
 
 - match every eligible converted source render row to exactly one logical database row;
 - mark eligible source-only render entities `BakingOnlyEntity` or strip their rendering ownership without deleting canonical gameplay entities;
-- replace virtualized building render-root references with `OperationMapVirtualizedBuildingPresentation`;
+- replace virtualized building render-root references with `OperationMapVirtualizedBuildingPresentationComponent`;
 - retain excluded render rows unchanged;
 - reject any eligible packed source render row that survives;
 - reject a source row removed without a matching logical record;
@@ -440,7 +440,7 @@ The built package must contain:
 - the accepted map surface/minimap/metadata;
 - transitive mesh/material assets required by the shared `RenderMeshArray`;
 - zero source/candidate authoring hierarchy;
-- zero explicit runtime dependency on the authoring database ScriptableObject when the baked blob already owns the data;
+- zero explicit runtime dependency on `OperationMapRenderDatabaseBakeConfig` when the baked blob already owns the data;
 - zero legacy static-presentation ownership in the candidate.
 
 The runtime-content report must add resident-render rows, virtualized logical rows, prototypes, parts, cells, policy buckets, total slots, per-bucket capacity, packed database bytes, source rows removed, excluded rows by reason, and source-hierarchy counts.
@@ -483,7 +483,8 @@ Initialization runs once per map generation and:
 - builds slot-to-binding and logical-row-to-slot maps;
 - initializes canonical building state once through a Burst job;
 - performs the first envelope selection and assignment;
-- publishes readiness only after required first-view slots are applied;
+- sets `OperationMapRenderVirtualizationStateComponent.InitialViewApplied` only after required first-view slots are applied;
+- leaves `OperationMapReadinessFlags`, acceptance/failure codes, and final readiness publication exclusively owned by the existing `Game.Composition` readiness path, which validates the mode-specific virtualization state;
 - records integration timing separately from steady-state frame timing.
 
 Dispose persistent native containers when map generation changes, unload begins, or the system is destroyed. Complete dependencies only at these lifecycle boundaries.
@@ -560,7 +561,7 @@ This no-op path is a required performance test.
 Adapt `OperationMapBuildingDestructionSystem`:
 
 - resident mode keeps the existing render-root scale behavior;
-- virtualized mode changes canonical destroyed state and appends one `OperationMapRenderStateChangeElement`;
+- virtualized mode changes canonical destroyed state and appends one `OperationMapRenderStateChangeComponent` buffer record;
 - it does not search proxy bindings or write render transforms;
 - it does not instantiate a destroyed visual;
 - it remains Burst compiled.
@@ -708,8 +709,8 @@ No new assembly definition is planned.
 | Assembly | Files/types |
 |---|---|
 | `Game.Components` | blob schema, proxy slot/state/metrics, building presentation state index, state-change buffer |
-| `Game.Configs` | `OperationMapRenderResidencyMode`; `OperationMapDefinition` field/validation |
-| `Game.Authoring` | database authoring asset and root authoring/baker; add only the required `Unity.Entities.Graphics` reference if compilation proves it necessary |
+| `Game.Configs` | `OperationMapRenderResidencyMode`; `OperationMapRenderDatabaseBakeConfig`; `OperationMapDefinition` field/validation |
+| `Game.Authoring` | virtualized-presentation root authoring/baker; add only the required `Unity.Entities.Graphics` reference if compilation proves it necessary |
 | `Game.Rendering` | baking cleanup system; initialization, cell selection, assignment, apply, state sync, metrics systems |
 | `Game.Editor` | deterministic database builder/validator, capacity sweep, report, Bake All integration |
 | `Game.Tests.Editor` | schema, builder, capacity, determinism, bake/package tests |
@@ -756,13 +757,13 @@ Terra must stop and request Sol when the next dependency-ready item is marked `[
 
 ### Phase 2: Deterministic Database Builder
 
-- [ ] `VRP-020 [TERRA]` Add authoring asset schema and generated-output ownership documentation; create no asset yet. Depends on: `VRP-017`.
+- [ ] `VRP-020 [TERRA]` Add bake-config schema and generated-output ownership documentation; create no asset yet. Depends on: `VRP-017`.
 - [ ] `VRP-021 [SOL]` Join accepted/generated stable owners to exact renderer rows and emit a source-row inventory. Depends on: `VRP-003`, `VRP-020`.
 - [ ] `VRP-022 [SOL]` Build shared prototype/part recipes with exact compound child transforms and bounds. Depends on: `VRP-021`.
 - [ ] `VRP-023 [SOL]` Build logical placements and intact/destroyed state-owner relationships. Depends on: `VRP-022`.
 - [ ] `VRP-024 [TERRA]` Build the deterministic cell index from logical placement bounds. Depends on: `VRP-023`.
 - [ ] `VRP-025 [TERRA]` Compute per-policy capacity and provisional entity/active-slot budgets. Depends on: `VRP-024`.
-- [ ] `VRP-026 [SOL]` Write the candidate authoring asset transactionally and prove accepted/frozen/production isolation. Depends on: `VRP-025`.
+- [ ] `VRP-026 [SOL]` Write the candidate bake config transactionally and prove accepted/frozen/production isolation. Depends on: `VRP-025`.
 - [ ] `VRP-027 [TERRA]` Run unchanged input twice and require identical record hash, ordering, counts, and serialized bytes. Depends on: `VRP-026`.
 - [ ] `VRP-028 [SOL]` Expand the logical database and prove source matrix/bounds/mesh/material/submesh/color/state parity before any source render row is removed. Depends on: `VRP-027`.
 
@@ -957,6 +958,7 @@ Checklist progress: `2 / 80` complete.
 |---|---|---|---|---|
 | 2026-07-27 | `VRP-000` corrected APK Android evidence | Exact APK install/cold launch; dense definition/EntityScene resolution; 30-second stable observation; `dumpsys meminfo`; `top -H`; screenshots; opt-in marker rerun; structured JSON | Passed as diagnostic baseline; performance acceptance rejected | `15.7-16.3 FPS`, CPU main `56.7-59.8 ms`, GPU `15.6-16.4 ms`, render thread `1.8-2.3 ms`, gameplay update approximately `0.4 ms`; raw profile not recovered after wireless ADB disconnected |
 | 2026-07-28 | `VRP-001` measured design amendment | Parent-contract/evidence audit; packed asset-sharing report; architecture/type/assembly inventory | Design accepted for candidate implementation | Simulation remains resident; only render materialization is virtualized; production and frozen rollback remain unchanged |
+| 2026-07-28 | Naming and SOLID/ECS alignment correction | `file_naming_architecture_contract.md`; `gameplay_solid_ecs_contract.md`; proposed type/file/readiness-owner audit; checklist/dependency consistency audit; `git diff --check` | Passed documentation contract alignment; implementation remains open | All proposed ECS components now use `*Component`, the buffer record no longer uses forbidden `*Element`, the generated ScriptableObject uses `*Config`, every bare `*System` remains a real ECS system, and `Game.Composition` remains the exclusive operation-map readiness publisher |
 
 ## 19. Evidence References
 

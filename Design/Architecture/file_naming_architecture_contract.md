@@ -36,6 +36,8 @@ Suffixes declare the execution boundary:
 
 - `*Authoring` is a Unity conversion-edge component and may exist only in the authoring assembly/source scenes;
 - `*Component` and buffer element names are unmanaged ECS data in `Game.Components`;
+- `*Blob` is reserved for immutable, non-component `BlobAssetReference` record/root structs such as the existing `OperationMapBlob`; an `IComponentData` or `IBufferElementData` may not use it to avoid the required `*Component` suffix;
+- `*Config` is serialized configuration or ScriptableObject bake input and does not own a runtime update loop;
 - a bare `*System` is allowed only for an actual ECS `ISystem` or ECS system base, including baking-world systems;
 - runtime managed boundaries retain an approved reason suffix or a narrow non-system noun such as `Policy` or `Utility`;
 - editor-only producers use explicit nouns such as `Builder`, `Planner`, `Transaction`, `Validator`, `Probe`, `Writer`, `Backfill`, `Factory`, `Realizer`, `Extractor`, or `Library`.
@@ -47,6 +49,14 @@ actual `ISystem` implementations, and the latter is restricted to the baking wor
 `OperationMapEntityPresentationReadinessUtility` are narrow runtime composition helpers
 that do not claim ECS scheduling. Dense-city editor producers are editor-only and must
 not be added to a runtime non-ECS `*System` allowlist.
+
+The candidate-only virtualized render path follows the same closed rules:
+
+- `OperationMapRenderDatabaseBakeConfig` is generated ScriptableObject bake input in `Game.Configs`;
+- `OperationMapVirtualizedPresentationAuthoring` is a conversion-edge authoring component in `Game.Authoring`;
+- `OperationMapRenderDatabaseComponent`, `OperationMapRenderProxySlotComponent`, `OperationMapRenderVirtualizationStateComponent`, `OperationMapVirtualizedBuildingPresentationComponent`, `OperationMapRenderStateChangeComponent`, and `OperationMapRenderVirtualizationMetricsComponent` are unmanaged ECS data in `Game.Components`;
+- `OperationMapRenderVirtualizationBakingSystem` and the `OperationMapRender*System` runtime owners named by the implementation tracker use bare `*System` only because each is an actual ECS system;
+- database/capacity/report producers remain editor-only `Builder` or `Validator` types.
 
 Generated assets, reports, and captures use the operation-map or dense-city domain
 prefix plus their stable owner/purpose. Candidate-only paths additionally use

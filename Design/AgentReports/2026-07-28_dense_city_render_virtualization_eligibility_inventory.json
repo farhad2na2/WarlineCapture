@@ -1,6 +1,6 @@
 {
     "schema": "warline.operation-map.render-virtualization-eligibility-inventory",
-    "schemaVersion": 1,
+    "schemaVersion": 2,
     "result": "Passed",
     "operationMapId": "opmap.skirmish.desert_base_01",
     "candidateScenePath": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
@@ -10,8 +10,17 @@
     "totalRenderRows": 82797,
     "eligibleRenderRows": 11299,
     "excludedRenderRows": 71498,
+    "stableOwnerJoinedRenderRows": 82442,
+    "unresolvedOwnerRenderRows": 355,
+    "eligibleStableOwnerJoinedRenderRows": 11299,
+    "sourceRowCount": 82797,
+    "sourceRowsSha256": "2476874c1feed3976982e8a41986b3fb8de116329568d974e5580f37023f69d8",
+    "sourceRowsPath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_source_rows.json.gz",
+    "sourceRowsCompression": "gzip",
+    "sourceRowsJsonSha256": "1426108ab3ce2c308c7ce67639e8c45cca08acafcb46cb828051240b6e5596c8",
+    "sourceRowsGzipSha256": "b89d760526f0d01f5c5862061cdfe128e65ccca0e02757723081f17611756333",
     "mutationAuthorized": false,
-    "mutationBlocker": "VRP-002 raw Android profile and VRP-021 exact source-row join remain open.",
+    "mutationBlocker": "VRP-002 raw Android profile remains open; source-row inventory authorizes no mutation.",
     "bySemanticCategory": [
         {
             "key": "AcceptedMapResident",

@@ -210,10 +210,10 @@ Required logical fields:
 | Record | Required fields |
 |---|---|
 | Prototype | collision-checked `OperationMapRenderIdentity128` content identity (`ulong Low`, `ulong High`); first part; part count; combined local bounds; semantic category; eligibility flags |
-| Prototype part | renderer-path hash; mesh-array index; material-array index; submesh; local-to-placement matrix; local bounds; linear base color; fixed render-policy bucket; LOD/shadow flags |
+| Prototype part | renderer-path hash; mesh-array index; material-array index; submesh; local-to-placement matrix; local bounds; linear base color; fixed render-policy bucket and exact pool-bucket index; LOD/shadow flags |
 | Placement | collision-checked `OperationMapRenderIdentity128` stable identity hash; prototype index; exact world matrix; cell index; state-owner index or `-1`; required visual state; priority; semantic category |
 | Cell | deterministic integer coordinate; world AABB; first placement-index entry; placement-index count |
-| Pool bucket | closed render-filter policy; first slot; capacity; computed peak required count; headroom; report identity |
+| Pool bucket | closed render-filter policy including coarse bucket, layer, rendering-layer mask, motion-vector mode, and shadow flags; first slot; capacity; computed peak required count; headroom; report identity |
 
 Rules:
 
@@ -222,7 +222,7 @@ Rules:
 - Store local renderer bounds; do not rediscover bounds from runtime mesh objects.
 - Store linear base color explicitly. Do not instantiate a material to carry per-instance color.
 - `MaterialMeshInfo` selects a mesh/material/submesh from the one shared sorted `RenderMeshArray`.
-- A prototype fingerprint includes renderer hierarchy path, mesh GUID/local id, material GUID/local id, submesh, local matrix, local bounds, base color, render-filter policy, shadow flags, and LOD policy.
+- A prototype fingerprint includes renderer hierarchy path, mesh GUID/local id, material GUID/local id, submesh, local matrix, local bounds, base color, the complete render-filter policy (coarse bucket, layer, rendering-layer mask, motion-vector mode, and shadow flags), and LOD policy.
 - Schema 1 prototype fingerprints serialize those fields into an explicit little-endian binary payload with length-prefixed UTF-8 strings and raw finite IEEE-754 values before SHA-256 projection. Renderer paths must be normalized relative hierarchy paths; asset GUIDs must be 32 lowercase hexadecimal characters; local ids must be nonzero; indices/extents and colors must be valid; and unknown policy/shadow/LOD values fail closed.
 - A placement identity hash derives from the existing stable identity using a documented SHA-256-to-`OperationMapRenderIdentity128` projection. The builder must retain the full stable id in the editor report and reject any 128-bit collision.
 - Schema 1 projects the exact UTF-8 bytes (no BOM, no normalization) through SHA-256, stores digest bytes `0..7` as little-endian `Low` and bytes `8..15` as little-endian `High`, and sorts by unsigned `(Low, High)`. Empty sources fail closed; repeated identical sources are idempotent; any different full source registered to the same 128-bit value is a fatal collision.
@@ -381,7 +381,7 @@ Candidate output path:
 Assets/Game/GeneratedOperationMapEntityPresentationCandidate/VirtualizedPresentation/
 ```
 
-The exact file names and ownership must be added to `dense_city_generated_output_ownership.md` before first mutation.
+The accepted future config path is `Assets/Game/GeneratedOperationMapEntityPresentationCandidate/VirtualizedPresentation/OperationMapRenderDatabaseBakeConfig.asset`; the accepted future report path is `Design/AgentReports/2026-07-28_dense_city_render_virtualization_database.json`. Their producer, transaction, rollback, rejection, and non-source rules are recorded in `dense_city_generated_output_ownership.md`. `VRP-020` defines only the generated `OperationMapRenderDatabaseBakeConfig` schema and creates neither output.
 
 ### 8.2 Editor Builder
 
@@ -766,7 +766,7 @@ Terra must stop and request Sol when the next dependency-ready item is marked `[
 
 ### Phase 2: Deterministic Database Builder
 
-- [ ] `VRP-020 [TERRA]` Add bake-config schema and generated-output ownership documentation; create no asset yet. Depends on: `VRP-017`.
+- [x] `VRP-020 [TERRA]` Add bake-config schema and generated-output ownership documentation; create no asset yet. Depends on: `VRP-017`.
 - [ ] `VRP-021 [SOL]` Join accepted/generated stable owners to exact renderer rows and emit a source-row inventory. Depends on: `VRP-003`, `VRP-020`.
 - [ ] `VRP-022 [SOL]` Build shared prototype/part recipes with exact compound child transforms and bounds. Depends on: `VRP-021`.
 - [ ] `VRP-023 [SOL]` Build logical placements and intact/destroyed state-owner relationships. Depends on: `VRP-022`.
@@ -949,7 +949,7 @@ Forbidden shortcuts:
 |---|---|
 | Phase 0: Evidence and amendment | In progress; Android failure and design authorization recorded; raw profile/inventory open |
 | Phase 1: Additive schema and pure contracts | Complete; all default-safe schema, identity/fingerprint, spatial-cell, fixed-policy, capacity-sweep, and canonical-report contracts accepted |
-| Phase 2: Deterministic database builder | Not started |
+| Phase 2: Deterministic database builder | In progress; generated bake-config schema and exact output ownership accepted; no asset created |
 | Phase 3: Candidate pool baking | Not started |
 | Phase 4: Jobified runtime assignment | Not started |
 | Phase 5: Render-only pilot | Not started |
@@ -959,7 +959,7 @@ Forbidden shortcuts:
 | Phase 9: Android 60 FPS acceptance | Not started |
 | Phase 10: Cutover and closeout | Not started |
 
-Checklist progress: `10 / 80` complete.
+Checklist progress: `11 / 80` complete.
 
 ## 18. Validation Log
 
@@ -976,6 +976,7 @@ Checklist progress: `10 / 80` complete.
 | 2026-07-28 | `VRP-015` closed render-policy classification | Windows GUI-licensing wrapper `%TEMP%\warline-render-virtualization-vrp015.log`; `[OperationMapRenderVirtualizationValidation] result=Passed tests=28`; wrapper exit code `0`; `git diff --check` | Passed; pure fixed-policy contract accepted | Added an editor-only classifier for the six closed residency buckets while retaining layer, rendering-layer mask, motion-vector mode, and cast/receive/static-shadow flags in the immutable policy key. Opaque and alpha-clipped content map independently by cast-shadow state; transparent content never falls into opaque and rejects shadow casting; always-resident ownership requires an explicit exception. Unknown material/motion/shadow values, invalid layers, empty rendering masks, and static-without-cast combinations fail closed. Tests also prove any fixed-filter field change produces a different key. No baker/runtime consumer, render row, asset, package, EntityScene, or Android artifact changed. |
 | 2026-07-28 | `VRP-016` deterministic camera-capacity sweep | Windows GUI-licensing wrapper `%TEMP%\warline-render-virtualization-vrp016.log`; `[OperationMapRenderVirtualizationValidation] result=Passed tests=32`; wrapper exit code `0`; `git diff --check` | Passed; pure sweep/headroom contract accepted | Added an editor-only capacity sweep over canonical sample identities and complete validated render-policy keys. Every policy must contain the identical sample set, duplicate pairs and negative/default/invalid inputs fail closed, aggregation takes the per-policy maximum, and results sort by every fixed-filter field independent of input order. Overflow-checked integer ceiling implements exact `ceil(peak * 1.20)` and records sample count, peak, capacity, and headroom. Tests cover order reversal, multiple-policy sorting, peak-versus-sum behavior, fractional ceiling, incomplete coverage, duplicates, invalid keys, negative counts, and Int32 overflow. No baker/runtime consumer, manual capacity, render row, asset, package, EntityScene, or Android artifact changed. |
 | 2026-07-28 | `VRP-017` canonical virtualization report schema | Rejected compile `%TEMP%\warline-render-virtualization-vrp017.log`; corrected Windows GUI-licensing wrapper `%TEMP%\warline-render-virtualization-vrp017-rerun.log`; `[OperationMapRenderVirtualizationValidation] result=Passed tests=36`; wrapper exit code `0`; `git diff --check` | Passed; Phase 1 pure contracts complete | Added deterministic editor-only JSON serialization and fail-closed parsing for schema identity/version, map/content ownership, residency mode, structural metrics, and complete sorted per-policy capacity results. Exact property sets reject missing/unknown values; the parser rejects duplicates; positive versus zero-valid metrics are explicit; capacity rows revalidate policy, sample count, exact 20% headroom, uniqueness/order, and total-slot reconciliation. Round-trip output is byte-stable. The first run was rejected because the test assembly does not directly reference Newtonsoft; the corrected fixture uses dependency-free string mutations while production editor serialization retains the package already referenced by `Game.Editor`, and all 36 tests pass. No baker/runtime consumer, report asset, render row, package, EntityScene, or Android artifact changed. |
+| 2026-07-28 | `VRP-020` generated render-database bake-config schema and ownership | Rejected assertion `%TEMP%\warline-render-virtualization-vrp020.log`; corrected Windows GUI-licensing wrapper `%TEMP%\warline-render-virtualization-vrp020-rerun.log`; `[OperationMapRenderVirtualizationValidation] result=Passed tests=38`; wrapper exit code `0`; exact future-path absence checks; `git diff --check` | Passed; Phase 2 additive schema prerequisite accepted | Added the generated-only `OperationMapRenderDatabaseBakeConfig` and serializable mesh/material/prototype/part/placement/cell/pool records with read-only access and no `CreateAssetMenu`. Validation requires accepted operation-map identity/content hash, finite grid data, nonempty logical arrays, sorted exact asset identities and policy keys, valid cross-record ranges/indices, complete fixed-filter ownership, exact capacity/headroom, and finite matrix/bounds/color data. The blob and fingerprint contracts now retain the exact pool-bucket index plus layer/rendering-mask/motion/shadow fields, preventing coarse-bucket aliasing before builder work. Exact future config/report paths and rollback owners are documented; both outputs remain absent. The first run correctly rejected the synthetic `opmap.test.*` fixture; the corrected fixture and report validator use the real `OperationMapIdentityRules`, and all 38 tests pass. No config/report asset, builder, source render row, candidate/accepted/frozen/production asset, package, EntityScene, or Android artifact changed. |
 
 ## 19. Evidence References
 

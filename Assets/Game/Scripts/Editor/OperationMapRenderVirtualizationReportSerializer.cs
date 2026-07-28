@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Game.Components;
 using Game.Configs;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -260,13 +261,9 @@ namespace Game.Editor
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(document.OperationMapId) ||
-                !string.Equals(
-                    document.OperationMapId,
-                    document.OperationMapId.Trim(),
-                    StringComparison.Ordinal))
+            if (!OperationMapIdentityRules.IsValidOperationMapId(document.OperationMapId))
             {
-                error = "Operation-map id must be nonempty and trimmed.";
+                error = "Operation-map id must satisfy the accepted operation-map identity contract.";
                 return false;
             }
 

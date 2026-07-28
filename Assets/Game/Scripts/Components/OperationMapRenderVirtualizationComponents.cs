@@ -42,6 +42,13 @@ namespace Game.Components
         AlwaysResidentException = 5
     }
 
+    public enum OperationMapRenderMotionVectorMode : byte
+    {
+        Camera = 0,
+        Object = 1,
+        ForceNoMotion = 2
+    }
+
     public enum OperationMapRenderVisualState : byte
     {
         Any = 0,
@@ -106,6 +113,7 @@ namespace Game.Components
         public OperationMapRenderBoundsBlob LocalBounds;
         public float4 LinearBaseColor;
         public OperationMapRenderPolicyBucket PolicyBucket;
+        public int PoolBucketIndex;
         public OperationMapRenderLodFlags LodFlags;
         public OperationMapRenderShadowFlags ShadowFlags;
     }
@@ -133,6 +141,10 @@ namespace Game.Components
     public struct OperationMapRenderPoolBucketBlob
     {
         public OperationMapRenderPolicyBucket PolicyBucket;
+        public int Layer;
+        public uint RenderingLayerMask;
+        public OperationMapRenderMotionVectorMode MotionVectorMode;
+        public OperationMapRenderShadowFlags ShadowFlags;
         public int FirstSlot;
         public int Capacity;
         public int PeakRequiredCount;

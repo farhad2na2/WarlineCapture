@@ -9,6 +9,7 @@ using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Mathematics;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -55,7 +56,9 @@ public sealed class OperationMapRenderVirtualizationValidation
             tests.VirtualizationReport_RejectsMissingUnknownAndDuplicateProperties();
             tests.VirtualizationReport_RejectsDefaultAndNegativeMetrics();
             tests.VirtualizationReport_RejectsCapacityReconciliationFailures();
-            Debug.Log("[OperationMapRenderVirtualizationValidation] result=Passed tests=36");
+            tests.RenderDatabaseBakeConfig_IsGeneratedOnlyAndRetainsCompleteSchema();
+            tests.RenderDatabaseBakeConfig_RejectsMissingOrCorruptRecords();
+            Debug.Log("[OperationMapRenderVirtualizationValidation] result=Passed tests=38");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -215,7 +218,7 @@ public sealed class OperationMapRenderVirtualizationValidation
         using BlobBuilder builder = new(Allocator.Temp);
         ref OperationMapRenderDatabaseBlob root =
             ref builder.ConstructRoot<OperationMapRenderDatabaseBlob>();
-        root.OperationMapId = new FixedString64Bytes("opmap.test.virtualized");
+        root.OperationMapId = new FixedString64Bytes("opmap.skirmish.virtualized");
         root.ContentHash = new FixedString128Bytes(new string('a', 64));
         root.SchemaVersion = 1;
         root.CellSize = 32f;
@@ -246,6 +249,7 @@ public sealed class OperationMapRenderVirtualizationValidation
             LocalBounds = Bounds(new float3(0f, 1f, 0f), new float3(1f)),
             LinearBaseColor = new float4(0.25f, 0.5f, 0.75f, 1f),
             PolicyBucket = OperationMapRenderPolicyBucket.AlphaClippedShadowsOn,
+            PoolBucketIndex = 0,
             LodFlags = OperationMapRenderLodFlags.Lod0,
             ShadowFlags = OperationMapRenderShadowFlags.CastShadows |
                           OperationMapRenderShadowFlags.ReceiveShadows
@@ -281,6 +285,11 @@ public sealed class OperationMapRenderVirtualizationValidation
         buckets[0] = new OperationMapRenderPoolBucketBlob
         {
             PolicyBucket = OperationMapRenderPolicyBucket.AlphaClippedShadowsOn,
+            Layer = 2,
+            RenderingLayerMask = 4u,
+            MotionVectorMode = OperationMapRenderMotionVectorMode.ForceNoMotion,
+            ShadowFlags = OperationMapRenderShadowFlags.CastShadows |
+                          OperationMapRenderShadowFlags.ReceiveShadows,
             FirstSlot = 10,
             Capacity = 120,
             PeakRequiredCount = 100,
@@ -292,13 +301,16 @@ public sealed class OperationMapRenderVirtualizationValidation
             builder.CreateBlobAssetReference<OperationMapRenderDatabaseBlob>(Allocator.Temp);
         try
         {
-            Assert.That(blob.Value.OperationMapId.ToString(), Is.EqualTo("opmap.test.virtualized"));
+            Assert.That(blob.Value.OperationMapId.ToString(), Is.EqualTo("opmap.skirmish.virtualized"));
             Assert.That(blob.Value.Prototypes[0].PartCount, Is.EqualTo(1));
             Assert.That(blob.Value.Parts[0].MeshArrayIndex, Is.EqualTo(3));
+            Assert.That(blob.Value.Parts[0].PoolBucketIndex, Is.EqualTo(0));
             Assert.That(blob.Value.Placements[0].StateOwnerIndex, Is.EqualTo(-1));
             Assert.That(blob.Value.Cells[0].Coordinate, Is.EqualTo(new int2(2, 3)));
             Assert.That(blob.Value.CellPlacementIndices[0], Is.EqualTo(0));
             Assert.That(blob.Value.PoolBuckets[0].HeadroomCount, Is.EqualTo(20));
+            Assert.That(blob.Value.PoolBuckets[0].Layer, Is.EqualTo(2));
+            Assert.That(blob.Value.PoolBuckets[0].RenderingLayerMask, Is.EqualTo(4u));
         }
         finally
         {
@@ -486,16 +498,25 @@ public sealed class OperationMapRenderVirtualizationValidation
         changed.LinearBaseColor.x = 0.9f;
         AssertUnique(fingerprints, changed);
         changed = baseline;
-        changed.PolicyBucket = OperationMapRenderPolicyBucket.OpaqueShadowsOff;
+        changed.PolicyBucket = OperationMapRenderPolicyBucket.OpaqueShadowsOn;
         AssertUnique(fingerprints, changed);
         changed = baseline;
-        changed.ShadowFlags = OperationMapRenderShadowFlags.ReceiveShadows;
+        changed.Layer = 3;
+        AssertUnique(fingerprints, changed);
+        changed = baseline;
+        changed.RenderingLayerMask = 8u;
+        AssertUnique(fingerprints, changed);
+        changed = baseline;
+        changed.MotionVectorMode = OperationMapRenderMotionVectorMode.Object;
+        AssertUnique(fingerprints, changed);
+        changed = baseline;
+        changed.ShadowFlags = OperationMapRenderShadowFlags.CastShadows;
         AssertUnique(fingerprints, changed);
         changed = baseline;
         changed.LodFlags = OperationMapRenderLodFlags.Lod1;
         AssertUnique(fingerprints, changed);
 
-        Assert.That(fingerprints.Count, Is.EqualTo(14));
+        Assert.That(fingerprints.Count, Is.EqualTo(17));
     }
 
     [Test]
@@ -524,6 +545,14 @@ public sealed class OperationMapRenderVirtualizationValidation
         input = CreatePrototypeFingerprintInput();
         input.ShadowFlags = (OperationMapRenderShadowFlags)(1 << 7);
         AssertFingerprintRejected(input, "Unknown render shadow flags");
+
+        input = CreatePrototypeFingerprintInput();
+        input.RenderingLayerMask = 0u;
+        AssertFingerprintRejected(input, "Rendering-layer mask");
+
+        input = CreatePrototypeFingerprintInput();
+        input.MotionVectorMode = (OperationMapRenderMotionVectorMode)byte.MaxValue;
+        AssertFingerprintRejected(input, "Unknown motion-vector mode");
 
         input = CreatePrototypeFingerprintInput();
         input.LodFlags = OperationMapRenderLodFlags.None;
@@ -1003,7 +1032,7 @@ public sealed class OperationMapRenderVirtualizationValidation
             Is.True,
             readError);
         Assert.That(roundTrip.SchemaVersion, Is.EqualTo(1));
-        Assert.That(roundTrip.OperationMapId, Is.EqualTo("opmap.test.virtualized"));
+        Assert.That(roundTrip.OperationMapId, Is.EqualTo("opmap.skirmish.virtualized"));
         Assert.That(roundTrip.ContentHash, Is.EqualTo(new string('a', 64)));
         Assert.That(
             roundTrip.ResidencyMode,
@@ -1099,6 +1128,225 @@ public sealed class OperationMapRenderVirtualizationValidation
         AssertReportSerializeRejected(report, "same sweep sample count");
     }
 
+    [Test]
+    public void RenderDatabaseBakeConfig_IsGeneratedOnlyAndRetainsCompleteSchema()
+    {
+        Assert.That(
+            typeof(OperationMapRenderDatabaseBakeConfig)
+                .GetCustomAttribute<CreateAssetMenuAttribute>(),
+            Is.Null);
+        Assert.That(
+            AssetDatabase.LoadAssetAtPath<OperationMapRenderDatabaseBakeConfig>(
+                "Assets/Game/GeneratedOperationMapEntityPresentationCandidate/" +
+                "VirtualizedPresentation/OperationMapRenderDatabaseBakeConfig.asset"),
+            Is.Null);
+
+        OperationMapRenderDatabaseBakeConfig config =
+            CreateValidBakeConfig(out Mesh mesh, out Material material);
+        try
+        {
+            Assert.That(config.TryValidateSchema(out string error), Is.True, error);
+            Assert.That(config.SchemaVersion, Is.EqualTo(1));
+            Assert.That(config.OperationMapId, Is.EqualTo("opmap.skirmish.virtualized"));
+            Assert.That(config.Meshes.Count, Is.EqualTo(1));
+            Assert.That(config.Materials.Count, Is.EqualTo(1));
+            Assert.That(config.Prototypes.Count, Is.EqualTo(1));
+            Assert.That(config.Parts[0].PoolBucketIndex, Is.EqualTo(0));
+            Assert.That(config.Placements[0].StateOwnerIndex, Is.EqualTo(-1));
+            Assert.That(config.Cells[0].PlacementIndexCount, Is.EqualTo(1));
+            Assert.That(config.PoolBuckets[0].RenderingLayerMask, Is.EqualTo(1u));
+            Assert.That(
+                config.PoolBuckets[0].MotionVectorMode,
+                Is.EqualTo(OperationMapRenderMotionVectorMode.ForceNoMotion));
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(config);
+            UnityEngine.Object.DestroyImmediate(material);
+            UnityEngine.Object.DestroyImmediate(mesh);
+        }
+    }
+
+    [Test]
+    public void RenderDatabaseBakeConfig_RejectsMissingOrCorruptRecords()
+    {
+        OperationMapRenderDatabaseBakeConfig empty =
+            ScriptableObject.CreateInstance<OperationMapRenderDatabaseBakeConfig>();
+        try
+        {
+            Assert.That(empty.TryValidateSchema(out string emptyError), Is.False);
+            Assert.That(emptyError, Does.Contain("schema must be 1"));
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(empty);
+        }
+
+        OperationMapRenderDatabaseBakeConfig config =
+            CreateValidBakeConfig(out Mesh mesh, out Material material);
+        try
+        {
+            Set(config, "contentHash", new string('A', 64));
+            Assert.That(config.TryValidateSchema(out string hashError), Is.False);
+            Assert.That(hashError, Does.Contain("lowercase hex"));
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(config);
+            UnityEngine.Object.DestroyImmediate(material);
+            UnityEngine.Object.DestroyImmediate(mesh);
+        }
+
+        config = CreateValidBakeConfig(out mesh, out material);
+        try
+        {
+            Set(config, "cellPlacementIndices", Array.Empty<int>());
+            Assert.That(config.TryValidateSchema(out string recordsError), Is.False);
+            Assert.That(recordsError, Does.Contain("nonempty cellPlacementIndices"));
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(config);
+            UnityEngine.Object.DestroyImmediate(material);
+            UnityEngine.Object.DestroyImmediate(mesh);
+        }
+
+        config = CreateValidBakeConfig(out mesh, out material);
+        try
+        {
+            Set(config.Parts[0], "poolBucketIndex", 1);
+            Assert.That(config.TryValidateSchema(out string policyError), Is.False);
+            Assert.That(policyError, Does.Contain("invalid identity, reference"));
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(config);
+            UnityEngine.Object.DestroyImmediate(material);
+            UnityEngine.Object.DestroyImmediate(mesh);
+        }
+    }
+
+    private static OperationMapRenderDatabaseBakeConfig CreateValidBakeConfig(
+        out Mesh mesh,
+        out Material material)
+    {
+        mesh = new Mesh { name = "VRP020Mesh" };
+        Shader shader = Shader.Find("Hidden/InternalErrorShader");
+        Assert.That(shader, Is.Not.Null);
+        material = new Material(shader) { name = "VRP020Material" };
+
+        OperationMapRenderDatabaseBakeConfig config =
+            ScriptableObject.CreateInstance<OperationMapRenderDatabaseBakeConfig>();
+        Set(config, "schemaVersion", 1);
+        Set(config, "operationMapId", "opmap.skirmish.virtualized");
+        Set(config, "contentHash", new string('a', 64));
+        Set(config, "cellSize", 32f);
+        Set(config, "gridOrigin", Vector3.zero);
+        Set(config, "gridDimensions", new Vector2Int(1, 1));
+        Set(
+            config,
+            "meshes",
+            new[]
+            {
+                new OperationMapRenderMeshConfigRecord(
+                    new string('a', 32),
+                    1,
+                    mesh)
+            });
+        Set(
+            config,
+            "materials",
+            new[]
+            {
+                new OperationMapRenderMaterialConfigRecord(
+                    new string('b', 32),
+                    2,
+                    material)
+            });
+        Set(
+            config,
+            "prototypes",
+            new[]
+            {
+                new OperationMapRenderPrototypeConfigRecord(
+                    1ul,
+                    2ul,
+                    0,
+                    1,
+                    new UnityEngine.Bounds(Vector3.zero, Vector3.one * 2f),
+                    DenseCityPresentationSemanticCategory.Vegetation,
+                    OperationMapRenderEligibilityFlags.Eligible)
+            });
+        Set(
+            config,
+            "parts",
+            new[]
+            {
+                new OperationMapRenderPrototypePartConfigRecord(
+                    3ul,
+                    4ul,
+                    0,
+                    0,
+                    0,
+                    Matrix4x4.identity,
+                    new UnityEngine.Bounds(Vector3.zero, Vector3.one),
+                    Color.white,
+                    OperationMapRenderPolicyBucket.OpaqueShadowsOff,
+                    0,
+                    OperationMapRenderLodFlags.Lod0,
+                    OperationMapRenderShadowFlags.None)
+            });
+        Set(
+            config,
+            "placements",
+            new[]
+            {
+                new OperationMapRenderPlacementConfigRecord(
+                    5ul,
+                    6ul,
+                    0,
+                    Matrix4x4.identity,
+                    0,
+                    -1,
+                    OperationMapRenderVisualState.Any,
+                    0,
+                    DenseCityPresentationSemanticCategory.Vegetation)
+            });
+        Set(
+            config,
+            "cells",
+            new[]
+            {
+                new OperationMapRenderCellConfigRecord(
+                    Vector2Int.zero,
+                    new UnityEngine.Bounds(
+                        new Vector3(16f, 0f, 16f),
+                        new Vector3(32f, 1f, 32f)),
+                    0,
+                    1)
+            });
+        Set(config, "cellPlacementIndices", new[] { 0 });
+        Set(
+            config,
+            "poolBuckets",
+            new[]
+            {
+                new OperationMapRenderPoolBucketConfigRecord(
+                    OperationMapRenderPolicyBucket.OpaqueShadowsOff,
+                    0,
+                    1u,
+                    OperationMapRenderMotionVectorMode.ForceNoMotion,
+                    OperationMapRenderShadowFlags.None,
+                    0,
+                    12,
+                    10,
+                    2,
+                    7ul,
+                    8ul)
+            });
+        return config;
+    }
+
     private static OperationMapRenderVirtualizationReportDocument CreateValidReport()
     {
         OperationMapRenderPolicyKey opaque =
@@ -1113,7 +1361,7 @@ public sealed class OperationMapRenderVirtualizationValidation
         {
             SchemaVersion =
                 OperationMapRenderVirtualizationReportSerializer.ReportSchemaVersion,
-            OperationMapId = "opmap.test.virtualized",
+            OperationMapId = "opmap.skirmish.virtualized",
             ContentHash = new string('a', 64),
             ResidencyMode = OperationMapRenderResidencyMode.VirtualizedProxyPool,
             ResidentRenderRows = 4,
@@ -1298,6 +1546,9 @@ public sealed class OperationMapRenderVirtualizationValidation
             LocalBounds = Bounds(new float3(0f, 1f, 0f), new float3(2f, 3f, 4f)),
             LinearBaseColor = new float4(0.25f, 0.5f, 0.75f, 1f),
             PolicyBucket = OperationMapRenderPolicyBucket.AlphaClippedShadowsOn,
+            Layer = 2,
+            RenderingLayerMask = 4u,
+            MotionVectorMode = OperationMapRenderMotionVectorMode.ForceNoMotion,
             ShadowFlags = OperationMapRenderShadowFlags.CastShadows |
                           OperationMapRenderShadowFlags.ReceiveShadows,
             LodFlags = OperationMapRenderLodFlags.Lod0
@@ -1397,12 +1648,13 @@ public sealed class OperationMapRenderVirtualizationValidation
         return new AssetReference(guid);
     }
 
-    private static void Set<T>(OperationMapDefinition definition, string fieldName, T value)
+    private static void Set<T>(object target, string fieldName, T value)
     {
-        FieldInfo field = typeof(OperationMapDefinition).GetField(
+        Assert.That(target, Is.Not.Null);
+        FieldInfo field = target.GetType().GetField(
             fieldName,
             BindingFlags.Instance | BindingFlags.NonPublic);
         Assert.That(field, Is.Not.Null, fieldName);
-        field.SetValue(definition, value);
+        field.SetValue(target, value);
     }
 }

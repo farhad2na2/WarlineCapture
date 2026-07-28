@@ -10,13 +10,6 @@ namespace Game.Editor
         Transparent = 2
     }
 
-    internal enum OperationMapRenderMotionVectorMode : byte
-    {
-        Camera = 0,
-        Object = 1,
-        ForceNoMotion = 2
-    }
-
     internal readonly struct OperationMapRenderPolicyClassificationInput
     {
         internal OperationMapRenderPolicyClassificationInput(

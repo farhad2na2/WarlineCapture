@@ -19,6 +19,9 @@ namespace Game.Editor
         internal OperationMapRenderBoundsBlob LocalBounds;
         internal float4 LinearBaseColor;
         internal OperationMapRenderPolicyBucket PolicyBucket;
+        internal int Layer;
+        internal uint RenderingLayerMask;
+        internal OperationMapRenderMotionVectorMode MotionVectorMode;
         internal OperationMapRenderShadowFlags ShadowFlags;
         internal OperationMapRenderLodFlags LodFlags;
     }
@@ -53,6 +56,9 @@ namespace Game.Editor
                 Write(writer, input.LocalBounds.Extents);
                 Write(writer, input.LinearBaseColor);
                 writer.Write((byte)input.PolicyBucket);
+                writer.Write(input.Layer);
+                writer.Write(input.RenderingLayerMask);
+                writer.Write((byte)input.MotionVectorMode);
                 writer.Write((byte)input.ShadowFlags);
                 writer.Write((byte)input.LodFlags);
                 writer.Flush();
@@ -118,19 +124,14 @@ namespace Game.Editor
                 return false;
             }
 
-            if (!Enum.IsDefined(typeof(OperationMapRenderPolicyBucket), input.PolicyBucket))
+            OperationMapRenderPolicyKey policy = new(
+                input.PolicyBucket,
+                input.Layer,
+                input.RenderingLayerMask,
+                input.MotionVectorMode,
+                input.ShadowFlags);
+            if (!OperationMapRenderPolicyClassifier.TryValidate(policy, out error))
             {
-                error = $"Unknown render-policy bucket: {(byte)input.PolicyBucket}.";
-                return false;
-            }
-
-            const OperationMapRenderShadowFlags knownShadowFlags =
-                OperationMapRenderShadowFlags.CastShadows |
-                OperationMapRenderShadowFlags.ReceiveShadows |
-                OperationMapRenderShadowFlags.StaticShadowCaster;
-            if ((input.ShadowFlags & ~knownShadowFlags) != 0)
-            {
-                error = $"Unknown render shadow flags: {(byte)input.ShadowFlags}.";
                 return false;
             }
 

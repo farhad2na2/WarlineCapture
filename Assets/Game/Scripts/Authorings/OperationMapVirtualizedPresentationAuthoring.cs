@@ -79,6 +79,9 @@ namespace Game.Authoring
                 });
                 AddComponent(entity, new OperationMapRenderVirtualizationStateComponent());
                 AddComponent(entity, new OperationMapRenderVirtualizationMetricsComponent());
+                AddComponent(
+                    entity,
+                    new OperationMapRenderSlotCommandStateComponent());
                 AddBuffer<OperationMapRenderStateChangeComponent>(entity);
                 DynamicBuffer<OperationMapRenderSlotCommandComponent> commands =
                     AddBuffer<OperationMapRenderSlotCommandComponent>(entity);

@@ -182,6 +182,11 @@ namespace Game.Components
         public byte Assigned;
     }
 
+    public struct OperationMapRenderSlotCommandStateComponent : IComponentData
+    {
+        public uint Version;
+    }
+
     public struct OperationMapRenderVirtualizationStateComponent : IComponentData
     {
         public byte Initialized;

@@ -23,12 +23,19 @@ namespace Game.Rendering
         private ComponentTypeHandle<RenderBounds> _renderBoundsType;
         private ComponentTypeHandle<MaterialMeshInfo> _materialMeshInfoType;
         private ComponentTypeHandle<URPMaterialPropertyBaseColor> _baseColorType;
+        private Entity _scheduledCommandOwner;
+        private uint _scheduledCommandVersion;
+        private uint _scheduledApplyCount;
+
+        internal uint ScheduledApplyCount => _scheduledApplyCount;
 
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
             _commandOwnerQuery = state.GetEntityQuery(
                 ComponentType.ReadOnly<OperationMapRenderDatabaseComponent>(),
+                ComponentType.ReadOnly<
+                    OperationMapRenderSlotCommandStateComponent>(),
                 ComponentType.ReadOnly<OperationMapRenderSlotCommandComponent>());
             _slotQuery = state.GetEntityQuery(new EntityQueryDesc
             {
@@ -53,6 +60,7 @@ namespace Game.Rendering
                 state.GetComponentTypeHandle<MaterialMeshInfo>(false);
             _baseColorType = state.GetComponentTypeHandle<
                 URPMaterialPropertyBaseColor>(false);
+            _scheduledCommandOwner = Entity.Null;
         }
 
         [BurstCompile]
@@ -68,12 +76,27 @@ namespace Game.Rendering
             if (commandOwnerCount == 0)
             {
                 CompleteAndDispose(ref state);
+                _scheduledCommandOwner = Entity.Null;
+                _scheduledCommandVersion = 0;
                 return;
             }
             if (commandOwnerCount != 1)
             {
                 throw new InvalidOperationException(
                     "Render proxy apply requires exactly one slot-command owner.");
+            }
+
+            Entity commandOwner = _commandOwnerQuery.GetSingletonEntity();
+            OperationMapRenderSlotCommandStateComponent commandState =
+                _commandOwnerQuery.GetSingleton<
+                    OperationMapRenderSlotCommandStateComponent>();
+            if (!OperationMapRenderApplyScheduleDecision.ShouldSchedule(
+                    commandOwner,
+                    commandState.Version,
+                    _scheduledCommandOwner,
+                    _scheduledCommandVersion))
+            {
+                return;
             }
 
             OperationMapRenderDatabaseComponent database =
@@ -111,6 +134,9 @@ namespace Game.Rendering
             };
             state.Dependency =
                 applyJob.ScheduleParallel(_slotQuery, state.Dependency);
+            _scheduledCommandOwner = commandOwner;
+            _scheduledCommandVersion = commandState.Version;
+            _scheduledApplyCount++;
         }
 
         private void EnsureFailureCapacity(
@@ -146,5 +172,17 @@ namespace Game.Rendering
             state.Dependency.Complete();
             _slotFailures.Dispose();
         }
+    }
+
+    internal static class OperationMapRenderApplyScheduleDecision
+    {
+        internal static bool ShouldSchedule(
+            Entity commandOwner,
+            uint commandVersion,
+            Entity scheduledOwner,
+            uint scheduledVersion) =>
+            commandVersion != 0 &&
+            (commandOwner != scheduledOwner ||
+             commandVersion != scheduledVersion);
     }
 }

@@ -195,6 +195,7 @@ public sealed class OperationMapRenderVirtualizationValidation
         AssertUnmanaged<OperationMapRenderDatabaseComponent>();
         AssertUnmanaged<OperationMapRenderProxySlotComponent>();
         AssertUnmanaged<OperationMapRenderSlotCommandComponent>();
+        AssertUnmanaged<OperationMapRenderSlotCommandStateComponent>();
         AssertUnmanaged<OperationMapRenderVirtualizationStateComponent>();
         AssertUnmanaged<OperationMapVirtualizedBuildingPresentationComponent>();
         AssertUnmanaged<OperationMapRenderStateChangeComponent>();
@@ -207,6 +208,7 @@ public sealed class OperationMapRenderVirtualizationValidation
         AssertComponent<OperationMapRenderDatabaseComponent>();
         AssertComponent<OperationMapRenderProxySlotComponent>();
         AssertBuffer<OperationMapRenderSlotCommandComponent>();
+        AssertComponent<OperationMapRenderSlotCommandStateComponent>();
         AssertComponent<OperationMapRenderVirtualizationStateComponent>();
         AssertComponent<OperationMapVirtualizedBuildingPresentationComponent>();
         AssertBuffer<OperationMapRenderStateChangeComponent>();

@@ -19,9 +19,12 @@ public sealed class OperationMapRenderProxyApplySystemTests
             OrdersBeforePresentationUpdateAndEntitiesGraphics();
             SchedulesApplyThroughStateDependency();
             UnchangedGenerationLeavesSlotUntouched();
+            StableVersion_SchedulesNothingAllocatesNothingAndWritesNothing();
+            ContainedStableEnvelope_RequestsNoRebuild();
+            ApplyScheduleDecision_IsAllocationFree();
             Debug.Log(
                 "[OperationMapRenderProxyApplySystemValidation] " +
-                "result=Passed tests=3");
+                "result=Passed tests=6");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -68,6 +71,94 @@ public sealed class OperationMapRenderProxyApplySystemTests
             fixture.EntityManager.GetComponentData<LocalToWorld>(
                 fixture.Slot).Value.c3.x,
             Is.EqualTo(7f).Within(0.0001f));
+        Assert.That(fixture.GetScheduledApplyCount(), Is.EqualTo(1));
+    }
+
+    [Test]
+    public static void
+        StableVersion_SchedulesNothingAllocatesNothingAndWritesNothing()
+    {
+        using var fixture = new SystemFixture(commandGeneration: 4);
+        fixture.UpdateAndCompleteForTest();
+        LocalToWorld transformBefore =
+            fixture.EntityManager.GetComponentData<LocalToWorld>(fixture.Slot);
+        OperationMapRenderProxySlotComponent slotBefore =
+            fixture.EntityManager.GetComponentData<
+                OperationMapRenderProxySlotComponent>(fixture.Slot);
+        bool enabledBefore =
+            fixture.EntityManager.IsComponentEnabled<MaterialMeshInfo>(
+                fixture.Slot);
+        uint scheduledBefore = fixture.GetScheduledApplyCount();
+
+        long allocatedBytes = fixture.UpdateStableAndMeasureAllocation();
+
+        Assert.That(allocatedBytes, Is.Zero);
+        Assert.That(fixture.GetScheduledApplyCount(), Is.EqualTo(scheduledBefore));
+        Assert.That(
+            fixture.EntityManager.GetComponentData<LocalToWorld>(
+                fixture.Slot).Value,
+            Is.EqualTo(transformBefore.Value));
+        Assert.That(
+            fixture.EntityManager.GetComponentData<
+                OperationMapRenderProxySlotComponent>(fixture.Slot),
+            Is.EqualTo(slotBefore));
+        Assert.That(
+            fixture.EntityManager.IsComponentEnabled<MaterialMeshInfo>(
+                fixture.Slot),
+            Is.EqualTo(enabledBefore));
+        Assert.That(
+            fixture.EntityManager.GetComponentData<
+                OperationMapRenderVirtualizationStateComponent>(
+                    fixture.Owner).RebuildCount,
+            Is.EqualTo(7));
+    }
+
+    [Test]
+    public static void ContainedStableEnvelope_RequestsNoRebuild()
+    {
+        var input = new OperationMapRenderGuardEnvelopeInput
+        {
+            InitialViewApplied = 1,
+            RequiredEnvelope = new OperationMapRenderCellEnvelope
+            {
+                Min = new int2(2, 3),
+                Max = new int2(4, 5)
+            },
+            GuardEnvelope = new OperationMapRenderCellEnvelope
+            {
+                Min = new int2(1, 2),
+                Max = new int2(5, 6)
+            }
+        };
+
+        Assert.That(
+            OperationMapRenderGuardEnvelopeDecision.TryDecide(
+                input,
+                out OperationMapRenderRebuildReason reason),
+            Is.True);
+        Assert.That(reason, Is.EqualTo(OperationMapRenderRebuildReason.None));
+    }
+
+    [Test]
+    public static void ApplyScheduleDecision_IsAllocationFree()
+    {
+        Entity owner = new Entity { Index = 17, Version = 3 };
+        Assert.That(
+            OperationMapRenderApplyScheduleDecision.ShouldSchedule(
+                owner, 9, owner, 9),
+            Is.False);
+        long before = System.GC.GetAllocatedBytesForCurrentThread();
+        bool scheduled = false;
+        for (int index = 0; index < 10000; index++)
+        {
+            scheduled |=
+                OperationMapRenderApplyScheduleDecision.ShouldSchedule(
+                    owner, 9, owner, 9);
+        }
+        long after = System.GC.GetAllocatedBytesForCurrentThread();
+
+        Assert.That(scheduled, Is.False);
+        Assert.That(after - before, Is.Zero);
     }
 
     [Test]
@@ -99,20 +190,31 @@ public sealed class OperationMapRenderProxyApplySystemTests
             _database;
         private readonly SystemHandle _system;
         internal EntityManager EntityManager => _world.EntityManager;
+        internal Entity Owner { get; }
         internal Entity Slot { get; }
 
         internal SystemFixture(int commandGeneration)
         {
             _world = new World("OperationMapRenderProxyApplySystemTests");
             _database = CreateDatabase();
-            Entity owner = EntityManager.CreateEntity(
-                typeof(OperationMapRenderDatabaseComponent));
+            Owner = EntityManager.CreateEntity(
+                typeof(OperationMapRenderDatabaseComponent),
+                typeof(OperationMapRenderSlotCommandStateComponent),
+                typeof(OperationMapRenderVirtualizationStateComponent));
             EntityManager.SetComponentData(
-                owner,
+                Owner,
                 new OperationMapRenderDatabaseComponent { Blob = _database });
+            EntityManager.SetComponentData(
+                Owner,
+                new OperationMapRenderSlotCommandStateComponent
+                    { Version = (uint)commandGeneration });
+            EntityManager.SetComponentData(
+                Owner,
+                new OperationMapRenderVirtualizationStateComponent
+                    { RebuildCount = 7 });
             DynamicBuffer<OperationMapRenderSlotCommandComponent> commands =
                 EntityManager.AddBuffer<
-                    OperationMapRenderSlotCommandComponent>(owner);
+                    OperationMapRenderSlotCommandComponent>(Owner);
             commands.Add(new OperationMapRenderSlotCommandComponent
             {
                 SlotIndex = 0,
@@ -150,6 +252,18 @@ public sealed class OperationMapRenderProxyApplySystemTests
             _system.Update(_world.Unmanaged);
             _world.EntityManager.CompleteAllTrackedJobs();
         }
+
+        internal long UpdateStableAndMeasureAllocation()
+        {
+            long before = System.GC.GetAllocatedBytesForCurrentThread();
+            _system.Update(_world.Unmanaged);
+            return System.GC.GetAllocatedBytesForCurrentThread() - before;
+        }
+
+        internal uint GetScheduledApplyCount() =>
+            _world.Unmanaged.GetUnsafeSystemRef<
+                OperationMapRenderProxyApplySystem>(_system)
+                .ScheduledApplyCount;
 
         public void Dispose()
         {

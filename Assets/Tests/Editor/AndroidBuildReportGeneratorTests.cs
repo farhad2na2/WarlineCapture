@@ -25,9 +25,10 @@ public sealed class AndroidBuildReportGeneratorTests
             tests.ReleaseBuildOptionsRequireDetailedReport();
             tests.ReleaseBuildScriptOptionsDefaultToIncrementalAndSupportCleanCache();
             tests.ReleaseBuildCapturesGitProvenanceBeforeAndroidBuildMutation();
+            tests.DenseCandidateProfilerBuildIsDevelopmentOnlyAndKeepsReleaseOptionsClosed();
             tests.ReleaseBuildOptionsRejectDebugAndProfilerFlags();
             tests.GitExecutableOverrideRequiresExistingAbsolutePath();
-            Debug.Log("[AndroidBuildReportGeneratorValidation] result=Passed tests=13");
+            Debug.Log("[AndroidBuildReportGeneratorValidation] result=Passed tests=14");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -304,6 +305,36 @@ public sealed class AndroidBuildReportGeneratorTests
             "buildType,\n                buildProvenance",
             method,
             "Report generation must consume the pre-build provenance snapshot.");
+    }
+
+    [Test]
+    public void DenseCandidateProfilerBuildIsDevelopmentOnlyAndKeepsReleaseOptionsClosed()
+    {
+        const string sourcePath = "Assets/Game/Scripts/Editor/BuildScript.cs";
+        string source = File.ReadAllText(sourcePath);
+        int methodStart = source.IndexOf(
+            "private static void BuildDenseCityCandidateAndroidApk(bool profilerBuild)",
+            StringComparison.Ordinal);
+        int methodEnd = source.IndexOf(
+            "public static void ValidateDenseCityCandidateAndroidApk()",
+            methodStart,
+            StringComparison.Ordinal);
+        Assert.GreaterOrEqual(methodStart, 0, "Dense candidate build method was not found.");
+        Assert.Greater(methodEnd, methodStart, "Dense candidate build method boundary was not found.");
+
+        string method = source.Substring(methodStart, methodEnd - methodStart);
+        StringAssert.Contains(
+            "profilerBuild\n                    ? BuildOptions.Development",
+            method);
+        StringAssert.DoesNotContain("BuildOptions.ConnectWithProfiler", method);
+        StringAssert.DoesNotContain("BuildOptions.EnableDeepProfilingSupport", method);
+        StringAssert.Contains("Build/AndroidDenseCandidateProfiler", method);
+        StringAssert.Contains("Build/AndroidDenseCandidate", method);
+        StringAssert.Contains(
+            "OperationMapDenseCityCandidateAndroidPackageDeployment.ValidatePackage",
+            method);
+        Assert.AreEqual(BuildOptions.None, BuildScript.ReleaseAndroidBuildOptions & BuildOptions.Development);
+        Assert.AreEqual(BuildOptions.None, BuildScript.CleanReleaseAndroidBuildOptions & BuildOptions.Development);
     }
 
     [Test]

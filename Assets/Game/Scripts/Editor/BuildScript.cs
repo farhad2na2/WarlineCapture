@@ -123,6 +123,16 @@ namespace Game.Editor
 
         public static void BuildDenseCityCandidateAndroidApk()
         {
+            BuildDenseCityCandidateAndroidApk(profilerBuild: false);
+        }
+
+        public static void BuildDenseCityCandidateAndroidProfilerApk()
+        {
+            BuildDenseCityCandidateAndroidApk(profilerBuild: true);
+        }
+
+        private static void BuildDenseCityCandidateAndroidApk(bool profilerBuild)
+        {
             var arg = Environment.GetCommandLineArgs();
             bool cleanBuildCache = arg.Any(value =>
                 string.Equals(value, "-cleanBuild", StringComparison.OrdinalIgnoreCase));
@@ -135,10 +145,15 @@ namespace Game.Editor
             OperationMapDenseCityCandidateRuntimeContentBuilder
                 .BuildDenseCityCandidateEmbeddedAndroidContent();
 
-            const string outputDirectory = "Build/AndroidDenseCandidate";
+            string outputDirectory = profilerBuild
+                ? "Build/AndroidDenseCandidateProfiler"
+                : "Build/AndroidDenseCandidate";
             CreateDirectory(outputDirectory);
+            string outputSuffix = profilerBuild
+                ? "DenseCityCandidate-Profiler"
+                : "DenseCityCandidate";
             string outputPath =
-                $"{outputDirectory}/{ResolveBuildOutputName()}-DenseCityCandidate.apk";
+                $"{outputDirectory}/{ResolveBuildOutputName()}-{outputSuffix}.apk";
             if (File.Exists(outputPath))
                 File.Delete(outputPath);
 
@@ -165,14 +180,17 @@ namespace Game.Editor
                 extraScriptingDefines =
                     OperationMapDenseCityCandidateAndroidPackageDeployment
                         .GetRuntimeScriptingDefines(denseGuid),
-                options = cleanBuildCache
-                    ? CleanReleaseAndroidBuildOptions
-                    : ReleaseAndroidBuildOptions,
+                options = profilerBuild
+                    ? BuildOptions.Development
+                    : cleanBuildCache
+                        ? CleanReleaseAndroidBuildOptions
+                        : ReleaseAndroidBuildOptions,
                 locationPathName = outputPath
             };
 
             UnityEngine.Debug.Log(
                 "[BuildScript] Dense candidate Android package: " +
+                $"profilerBuild={(profilerBuild ? 1 : 0)} " +
                 $"cacheMode={(cleanBuildCache ? "clean" : "incremental")} " +
                 $"revision={buildProvenance.ExactCommit} dirty={buildProvenance.Dirty}");
             BuildReport report = ExecuteBuild(buildPlayerOptions);

@@ -1,0 +1,131 @@
+{
+  "schema": "warline.operation-map.dense-city-vrp002-android-raw-profiler-evidence",
+  "schemaVersion": 1,
+  "result": "PassedDiagnostic",
+  "capturedAt": "2026-07-29",
+  "workspace": {
+    "branch": "main",
+    "runtimeSourceRevision": "f78a338692f6913d8034a14c0313c0b198bf7d8b",
+    "runtimeSourceDirty": 0,
+    "buildToolWorkingTreeDirty": 1,
+    "qualification": "The profiler APK was built with editor-only diagnostic build/export/test changes. No runtime assembly, scene, accepted/frozen/production asset, Addressables setting, or retained release APK source was modified."
+  },
+  "device": {
+    "manufacturer": "Xiaomi",
+    "model": "24090RA29G",
+    "serial": "R4M7PZEQZ58T59ZH",
+    "androidVersion": "16",
+    "apiLevel": 36,
+    "abi": "arm64-v8a",
+    "transport": "paired-wireless-adb"
+  },
+  "profilerApk": {
+    "path": "Build/AndroidDenseCandidateProfiler/WarlineCapture-DenseCityCandidate-Profiler.apk",
+    "bytes": 579937484,
+    "sha256": "5eeb468afd3ddaec8441bbf1679dc9b30bc819bb001dcd589b329767cdecccfe",
+    "developmentBuild": 1,
+    "connectWithProfiler": 0,
+    "deepProfiling": 0,
+    "denseEntitySceneGuid": "c00140f2e94a04c3084c8dcb0c18cbd0",
+    "productionEntitySceneIncluded": 0,
+    "productionSettingsMutated": 0,
+    "sharedOutputRestored": 1
+  },
+  "capture": {
+    "rawPath": "Build/AndroidDenseCandidateProfiler/vrp002_dense_city.raw",
+    "rawBytes": 497493532,
+    "rawSha256": "1d9916067e0e57fffd759b7a7b9762a755b5e8253a91559ea43a3942fd547ff8",
+    "capturedProfilerFrames": {
+      "first": 0,
+      "last": 900
+    },
+    "requestedFrameCount": 900,
+    "profilerMaxUsedMemoryBytes": 536870912,
+    "autoStartMatch": 1,
+    "gameplayReadyObserved": 1,
+    "operationMapId": "opmap.skirmish.desert_base_01",
+    "entitySceneGuid": "c00140f2e94a04c3084c8dcb0c18cbd0",
+    "unitCountRange": {
+      "minimum": 5425,
+      "maximum": 5429
+    },
+    "setPassCallsTypical": 32,
+    "trianglesTypical": 785846,
+    "verticesTypical": 1423207
+  },
+  "analysis": {
+    "summaryPath": "Design/AgentReports/2026-07-29_dense_city_vrp002_android_raw_profiler_summary.md",
+    "analyzedFrames": {
+      "first": 300,
+      "last": 799,
+      "count": 500
+    },
+    "averageFrameMs": 71.73,
+    "p50FrameMs": 66.45,
+    "p95FrameMs": 85.10,
+    "p99FrameMs": 87.75,
+    "averageCpuActiveMs": 71.71,
+    "p95CpuActiveMs": 85.08,
+    "averageGpuMs": 12.59,
+    "p95GpuMs": 18.46,
+    "totalGcAllocatedBytes": 3425624,
+    "dominantPlayerLoopChildren": [
+      {
+        "marker": "Default World Game.Rendering.UnitFactionTintTargetBackfillSystem",
+        "group": "PresentationSystemGroup",
+        "averageTotalMsPerFrame": 38.946,
+        "totalMs": 19472.86,
+        "selfMs": 19455.33,
+        "maxTotalMs": 41.65,
+        "framesSeen": 500,
+        "sourceOwner": "Assets/Game/Scripts/Rendering/Systems/UnitFactionTintTargetBackfillSystem.cs",
+        "observedBoundary": "Per-frame unmatched MaterialMeshInfo child scan, parent-chain classification, temporary target list, and structural tint-target backfill."
+      },
+      {
+        "marker": "Default World Game.Rendering.UnitMassRenderSettingsSystem",
+        "group": "SimulationSystemGroup",
+        "averageTotalMsPerFrame": 13.068,
+        "totalMs": 6534.13,
+        "selfMs": 6512.61,
+        "maxTotalMs": 13.91,
+        "framesSeen": 500,
+        "sourceOwner": "Assets/Game/Scripts/Rendering/Systems/UnitMassRenderSettingsSystem.cs",
+        "observedBoundary": "Unmatched render-child scan and ancestor classification, temporary collections, render data patching, shared render-filter access, structural applied-tag playback, and synchronous patch job completion."
+      },
+      {
+        "marker": "ThreatDetectionWarningSystem:ThreatScanJob (Burst)",
+        "group": "SimulationSystemGroup",
+        "averageTotalMsPerFrame": 5.211,
+        "totalMs": 2605.51,
+        "selfMs": 2605.51,
+        "maxTotalMs": 17.33,
+        "framesSeen": 156,
+        "sourceOwner": "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs",
+        "observedBoundary": "Cadenced all-target threat scan with explicit job completion."
+      }
+    ],
+    "supportingMarkers": {
+      "waitForJobGroupIdAverageTotalMsPerFrame": 8.670,
+      "jobHandleCompleteAverageTotalMsPerFrame": 8.551,
+      "entitiesGraphicsSystemAverageTotalMsPerFrame": 0.580,
+      "mainThreadRenderLoopAverageTotalMsPerFrame": 2.936,
+      "renderThreadRenderLoopAverageTotalMsPerFrame": 3.460
+    },
+    "dominantOwnerNamed": 1,
+    "representationMutationAuthorizedByThisEvidence": 0
+  },
+  "qualification": {
+    "developmentProfilerFpsAcceptanceSample": 0,
+    "developmentProfilerOverheadObserved": 1,
+    "releaseBaselineFpsMinimum": 15.7,
+    "releaseBaselineFpsMaximum": 16.3,
+    "reason": "The Development binary profiler adds measurable overhead, so its frame distribution is diagnostic only. The raw hierarchy is accepted for owner attribution; release performance remains owned by the corrected-APK baseline and the dependency-ready fixed-route reconciliation report."
+  },
+  "deviceCleanup": {
+    "profilerProcessStopped": 1,
+    "deviceRawCaptureRemovedAfterVerifiedPull": 1,
+    "retainedReleaseApkRestored": 1,
+    "retainedReleaseApkBytes": 555817853,
+    "retainedReleaseApkSha256": "dec15d022c10eda2f3e3e4cb397f37871fac69656af5d7cdccd77741b32ae079"
+  }
+}

@@ -83,6 +83,10 @@ namespace Game.Editor
 
             File.WriteAllText(reportPath, report);
             UnityEngine.Debug.Log($"[ProfilerCaptureSummaryExporter] report={Path.GetFullPath(reportPath)} frames={analysis.FrameCount} capture={capturePath}");
+            UnityEngine.Debug.Log(
+                $"[ProfilerCaptureSummaryExporter] result=Passed frames={analysis.FrameCount} " +
+                $"range={analysis.FirstFrame}..{analysis.LastFrame}");
+            UnityEngine.Debug.Log("Application will terminate with return code 0");
             EditorApplication.Exit(0);
         }
 

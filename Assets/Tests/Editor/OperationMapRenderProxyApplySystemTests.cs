@@ -20,11 +20,13 @@ public sealed class OperationMapRenderProxyApplySystemTests
             SchedulesApplyThroughStateDependency();
             UnchangedGenerationLeavesSlotUntouched();
             StableVersion_SchedulesNothingAllocatesNothingAndWritesNothing();
+            OwnerRemoval_CompletesApplyAndDisposesPersistentState();
+            SystemDestroy_CompletesApplyAndDisposesPersistentState();
             ContainedStableEnvelope_RequestsNoRebuild();
             ApplyScheduleDecision_IsAllocationFree();
             Debug.Log(
                 "[OperationMapRenderProxyApplySystemValidation] " +
-                "result=Passed tests=6");
+                "result=Passed tests=8");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -140,6 +142,34 @@ public sealed class OperationMapRenderProxyApplySystemTests
     }
 
     [Test]
+    public static void OwnerRemoval_CompletesApplyAndDisposesPersistentState()
+    {
+        using var fixture = new SystemFixture(commandGeneration: 4);
+        fixture.UpdateWithoutCompletion();
+        Assert.That(fixture.IsPersistentStateCreated(), Is.True);
+        Assert.That(fixture.GetPersistentFailureCapacity(), Is.EqualTo(1));
+
+        fixture.DestroyOwner();
+        fixture.UpdateWithoutCompletion();
+
+        Assert.That(fixture.IsPersistentStateCreated(), Is.False);
+        Assert.That(fixture.GetPersistentFailureCapacity(), Is.Zero);
+        Assert.That(fixture.GetSlotAssignmentGeneration(), Is.EqualTo(4));
+    }
+
+    [Test]
+    public static void SystemDestroy_CompletesApplyAndDisposesPersistentState()
+    {
+        using var fixture = new SystemFixture(commandGeneration: 5);
+        fixture.UpdateWithoutCompletion();
+        Assert.That(fixture.IsPersistentStateCreated(), Is.True);
+
+        fixture.DestroySystem();
+
+        Assert.That(fixture.GetSlotAssignmentGeneration(), Is.EqualTo(5));
+    }
+
+    [Test]
     public static void ApplyScheduleDecision_IsAllocationFree()
     {
         Entity owner = new Entity { Index = 17, Version = 3 };
@@ -188,7 +218,7 @@ public sealed class OperationMapRenderProxyApplySystemTests
         private readonly World _world;
         private readonly BlobAssetReference<OperationMapRenderDatabaseBlob>
             _database;
-        private readonly SystemHandle _system;
+        private SystemHandle _system;
         internal EntityManager EntityManager => _world.EntityManager;
         internal Entity Owner { get; }
         internal Entity Slot { get; }
@@ -253,6 +283,33 @@ public sealed class OperationMapRenderProxyApplySystemTests
             _world.EntityManager.CompleteAllTrackedJobs();
         }
 
+        internal void UpdateWithoutCompletion() =>
+            _system.Update(_world.Unmanaged);
+
+        internal void DestroyOwner() =>
+            EntityManager.DestroyEntity(Owner);
+
+        internal void DestroySystem()
+        {
+            _world.DestroySystem(_system);
+            _system = SystemHandle.Null;
+        }
+
+        internal int GetSlotAssignmentGeneration() =>
+            EntityManager.GetComponentData<
+                OperationMapRenderProxySlotComponent>(Slot)
+                .AssignmentGeneration;
+
+        internal bool IsPersistentStateCreated() =>
+            _world.Unmanaged.GetUnsafeSystemRef<
+                OperationMapRenderProxyApplySystem>(_system)
+                .IsPersistentStateCreated;
+
+        internal int GetPersistentFailureCapacity() =>
+            _world.Unmanaged.GetUnsafeSystemRef<
+                OperationMapRenderProxyApplySystem>(_system)
+                .PersistentFailureCapacity;
+
         internal long UpdateStableAndMeasureAllocation()
         {
             long before = System.GC.GetAllocatedBytesForCurrentThread();
@@ -269,7 +326,8 @@ public sealed class OperationMapRenderProxyApplySystemTests
         {
             if (_world.IsCreated)
             {
-                _world.DestroySystem(_system);
+                if (_system != SystemHandle.Null)
+                    _world.DestroySystem(_system);
                 _world.Dispose();
             }
             if (_database.IsCreated)

@@ -23,11 +23,17 @@ namespace Game.Rendering
         private ComponentTypeHandle<RenderBounds> _renderBoundsType;
         private ComponentTypeHandle<MaterialMeshInfo> _materialMeshInfoType;
         private ComponentTypeHandle<URPMaterialPropertyBaseColor> _baseColorType;
+        private ComponentLookup<OperationMapRenderDatabaseComponent>
+            _databaseLookup;
         private Entity _scheduledCommandOwner;
         private uint _scheduledCommandVersion;
         private uint _scheduledApplyCount;
 
         internal uint ScheduledApplyCount => _scheduledApplyCount;
+        internal bool IsPersistentStateCreated => _slotFailures.IsCreated;
+        internal int PersistentFailureCapacity => _slotFailures.IsCreated
+            ? _slotFailures.Length
+            : 0;
 
         [BurstCompile]
         public void OnCreate(ref SystemState state)
@@ -60,6 +66,8 @@ namespace Game.Rendering
                 state.GetComponentTypeHandle<MaterialMeshInfo>(false);
             _baseColorType = state.GetComponentTypeHandle<
                 URPMaterialPropertyBaseColor>(false);
+            _databaseLookup = state.GetComponentLookup<
+                OperationMapRenderDatabaseComponent>(true);
             _scheduledCommandOwner = Entity.Null;
         }
 
@@ -120,10 +128,13 @@ namespace Game.Rendering
             _renderBoundsType.Update(ref state);
             _materialMeshInfoType.Update(ref state);
             _baseColorType.Update(ref state);
+            _databaseLookup.Update(ref state);
 
             var applyJob = new OperationMapRenderSlotApplyJob
             {
                 Database = database.Blob,
+                DatabaseLookup = _databaseLookup,
+                DatabaseOwner = commandOwner,
                 SlotCommands = commands.AsNativeArray(),
                 ProxySlotType = _proxySlotType,
                 LocalToWorldType = _localToWorldType,
@@ -171,6 +182,7 @@ namespace Game.Rendering
                 return;
             state.Dependency.Complete();
             _slotFailures.Dispose();
+            _slotFailures = default;
         }
     }
 

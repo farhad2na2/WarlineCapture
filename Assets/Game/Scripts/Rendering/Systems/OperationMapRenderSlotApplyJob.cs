@@ -23,6 +23,9 @@ namespace Game.Rendering
     internal struct OperationMapRenderSlotApplyJob : IJobChunk
     {
         [ReadOnly] internal BlobAssetReference<OperationMapRenderDatabaseBlob> Database;
+        [ReadOnly] internal ComponentLookup<OperationMapRenderDatabaseComponent>
+            DatabaseLookup;
+        [ReadOnly] internal Entity DatabaseOwner;
         [ReadOnly] internal NativeArray<OperationMapRenderSlotCommandComponent>
             SlotCommands;
 
@@ -44,6 +47,10 @@ namespace Game.Rendering
             using var profilerScope =
                 OperationMapRenderVirtualizationProfilerMarkers
                     .ApplySlots.Auto();
+            BlobAssetReference<OperationMapRenderDatabaseBlob> database =
+                DatabaseOwner == Entity.Null
+                    ? Database
+                    : DatabaseLookup[DatabaseOwner].Blob;
             NativeArray<OperationMapRenderProxySlotComponent> proxySlots =
                 chunk.GetNativeArray(ref ProxySlotType);
             NativeArray<LocalToWorld> localToWorlds =
@@ -73,7 +80,7 @@ namespace Game.Rendering
                     proxySlot.AssignmentGeneration)
                     continue;
                 OperationMapRenderSlotApplyFailure failure =
-                    ValidateCommand(proxySlot, command);
+                    ValidateCommand(database, proxySlot, command);
                 if (failure != OperationMapRenderSlotApplyFailure.None)
                 {
                     SlotFailures[slotIndex] = failure;
@@ -106,7 +113,7 @@ namespace Game.Rendering
                     continue;
                 }
 
-                ref OperationMapRenderDatabaseBlob blob = ref Database.Value;
+                ref OperationMapRenderDatabaseBlob blob = ref database.Value;
                 OperationMapRenderPlacementBlob placement =
                     blob.Placements[command.PlacementIndex];
                 OperationMapRenderPrototypePartBlob part =
@@ -142,16 +149,17 @@ namespace Game.Rendering
         }
 
         private OperationMapRenderSlotApplyFailure ValidateCommand(
+            BlobAssetReference<OperationMapRenderDatabaseBlob> database,
             OperationMapRenderProxySlotComponent slot,
             OperationMapRenderSlotCommandComponent command)
         {
-            if (!Database.IsCreated ||
+            if (!database.IsCreated ||
                 command.SlotIndex != slot.SlotIndex ||
                 command.AssignmentGeneration <= 0)
             {
                 return OperationMapRenderSlotApplyFailure.InvalidCommand;
             }
-            ref OperationMapRenderDatabaseBlob blob = ref Database.Value;
+            ref OperationMapRenderDatabaseBlob blob = ref database.Value;
             if (slot.PoolBucketIndex < 0 ||
                 slot.PoolBucketIndex >= blob.PoolBuckets.Length)
                 return OperationMapRenderSlotApplyFailure.InvalidSlot;

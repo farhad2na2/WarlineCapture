@@ -17,6 +17,9 @@ namespace Game.Rendering
         private Entity _initializedDatabaseEntity;
         private int _initializedMapGeneration;
 
+        internal bool IsPersistentStateCreated => _nativeState.IsCreated;
+        internal int PersistentSlotCapacity => _nativeState.SlotCapacity;
+
         public void OnCreate(ref SystemState state)
         {
             _activeMapQuery = state.GetEntityQuery(

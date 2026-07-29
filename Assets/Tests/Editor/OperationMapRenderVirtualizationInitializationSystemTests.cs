@@ -32,6 +32,8 @@ public sealed class OperationMapRenderVirtualizationInitializationSystemTests
                 test => test.MapGenerationChange_ReinitializesBoundaryState());
             RunCase(tests, nameof(NativeState_BuildsExactUnboundMaps),
                 test => test.NativeState_BuildsExactUnboundMaps());
+            RunCase(tests, nameof(DatabaseRemoval_DisposesPersistentState),
+                test => test.DatabaseRemoval_DisposesPersistentState());
             RunCase(tests, nameof(OperationMapMismatch_FailsClosed),
                 test => test.OperationMapMismatch_FailsClosed());
             RunCase(tests, nameof(DuplicateSlotIdentity_FailsClosed),
@@ -40,7 +42,7 @@ public sealed class OperationMapRenderVirtualizationInitializationSystemTests
                 test => test.MissingStateOwner_FailsClosed());
             Debug.Log(
                 "[OperationMapRenderVirtualizationInitializationFocusedValidation] " +
-                "result=Passed tests=6");
+                "result=Passed tests=7");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -208,6 +210,24 @@ public sealed class OperationMapRenderVirtualizationInitializationSystemTests
         {
             nativeState.Dispose();
         }
+    }
+
+    [Test]
+    public void DatabaseRemoval_DisposesPersistentState()
+    {
+        _system.Update(_world.Unmanaged);
+        ref OperationMapRenderVirtualizationInitializationSystem system =
+            ref _world.Unmanaged.GetUnsafeSystemRef<
+                OperationMapRenderVirtualizationInitializationSystem>(_system);
+        Assert.That(system.IsPersistentStateCreated, Is.True);
+        Assert.That(system.PersistentSlotCapacity, Is.EqualTo(2));
+
+        _world.EntityManager.DestroyEntity(_databaseEntity);
+        _databaseEntity = Entity.Null;
+        _system.Update(_world.Unmanaged);
+
+        Assert.That(system.IsPersistentStateCreated, Is.False);
+        Assert.That(system.PersistentSlotCapacity, Is.Zero);
     }
 
     [Test]

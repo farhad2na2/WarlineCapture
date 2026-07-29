@@ -94,6 +94,9 @@ namespace Game.Rendering
             }
 
             bool generationChanged = _nativeState.IsCreated;
+            using var profilerScope =
+                OperationMapRenderVirtualizationProfilerMarkers
+                    .Initialize.Auto();
             CompleteAndDispose(ref state);
 
             OperationMapRenderDatabaseComponent database =
@@ -121,7 +124,11 @@ namespace Game.Rendering
                 databaseEntity,
                 new OperationMapRenderVirtualizationMetricsComponent
                 {
+                    LogicalPlacementCount = database.Blob.Value.Placements.Length,
+                    LogicalPartCount = _nativeState.LogicalRowCapacity,
+                    ResidentExceptionCount = readiness.ResidentSourceRowCount,
                     Capacity = _nativeState.SlotCapacity,
+                    DisabledSlotCount = _nativeState.SlotCapacity,
                     RebuildReason = generationChanged
                         ? OperationMapRenderRebuildReason.MapGenerationChanged
                         : OperationMapRenderRebuildReason.InitialView

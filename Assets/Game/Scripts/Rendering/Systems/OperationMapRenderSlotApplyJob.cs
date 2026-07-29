@@ -41,6 +41,9 @@ namespace Game.Rendering
             bool useEnabledMask,
             in v128 chunkEnabledMask)
         {
+            using var profilerScope =
+                OperationMapRenderVirtualizationProfilerMarkers
+                    .ApplySlots.Auto();
             NativeArray<OperationMapRenderProxySlotComponent> proxySlots =
                 chunk.GetNativeArray(ref ProxySlotType);
             NativeArray<LocalToWorld> localToWorlds =

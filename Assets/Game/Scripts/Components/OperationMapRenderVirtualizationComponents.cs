@@ -215,12 +215,20 @@ namespace Game.Components
 
     public struct OperationMapRenderVirtualizationMetricsComponent : IComponentData
     {
+        public int LogicalPlacementCount;
+        public int LogicalPartCount;
+        public int ResidentExceptionCount;
         public int Capacity;
         public int EnabledSlotCount;
+        public int DisabledSlotCount;
         public int RetainedCount;
         public int ReleasedCount;
         public int ReboundCount;
+        public int ActiveCellCount;
+        public int ActivePlacementCount;
         public int OverflowCount;
+        public int HighestDeficit;
+        public uint CommandVersion;
         public OperationMapRenderRebuildReason RebuildReason;
     }
 

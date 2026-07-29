@@ -49,6 +49,9 @@ namespace Game.Rendering
         [BurstCompile]
         public void Execute()
         {
+            using var profilerScope =
+                OperationMapRenderVirtualizationProfilerMarkers
+                    .AssignSlots.Auto();
             DirtySlotIndices.Clear();
             var result = new OperationMapRenderAssignmentResult();
             if (!Validate(ref result))

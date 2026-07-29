@@ -40,6 +40,9 @@ namespace Game.Rendering
         [BurstCompile]
         public void Execute()
         {
+            using var profilerScope =
+                OperationMapRenderVirtualizationProfilerMarkers
+                    .SelectCells.Auto();
             SelectedCellIndices.Clear();
             Failure.Value = OperationMapRenderCellSelectionFailure.None;
             if (!Database.IsCreated)
@@ -101,6 +104,9 @@ namespace Game.Rendering
         [BurstCompile]
         public void Execute()
         {
+            using var profilerScope =
+                OperationMapRenderVirtualizationProfilerMarkers
+                    .SelectCells.Auto();
             SelectedPlacementIndices.Clear();
             SelectedLogicalRows.Clear();
             if (Failure.Value != OperationMapRenderCellSelectionFailure.None)

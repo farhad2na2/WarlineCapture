@@ -234,14 +234,6 @@ namespace Game.Configs
                 return false;
             }
 
-            if (presentationKind == OperationMapPresentationKind.EntityScene &&
-                renderResidencyMode == OperationMapRenderResidencyMode.VirtualizedProxyPool)
-            {
-                error =
-                    "VirtualizedProxyPool requires a validated render-virtualization database and proxy-pool contract.";
-                return false;
-            }
-
             if (!TryValidateRequiredReference(sourceSceneReference, "source scene", out error) ||
                 !TryValidateRequiredReference(mapSurfaceDataReference, "map surface data", out error) ||
                 !TryValidateRequiredReference(minimapRasterReference, "minimap raster", out error))

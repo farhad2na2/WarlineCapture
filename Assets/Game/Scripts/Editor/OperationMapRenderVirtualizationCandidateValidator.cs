@@ -22,14 +22,13 @@ namespace Game.Editor
     using Hash128 = Unity.Entities.Hash128;
 
     /// <summary>
-    /// VRP-038 direct, unsaved bake of the dense candidate with render virtualization
-    /// enabled only on a temporary authoring root. The persisted candidate and production
-    /// definitions remain in their accepted resident/static modes.
+    /// Two-pass direct bake of the VRP-051 persisted candidate-only pilot.
+    /// Production remains at its accepted resident/static mode.
     /// </summary>
     internal static class OperationMapRenderVirtualizationCandidateValidator
     {
         internal const string ReportPath =
-            "Design/AgentReports/2026-07-29_dense_city_render_virtualization_direct_bake.json";
+            "Design/AgentReports/2026-07-30_dense_city_render_virtualization_pilot_enabled.json";
 
         private const int ExpectedEligibleRows = 11299;
         private const int ExpectedSlots = 704;
@@ -91,7 +90,7 @@ namespace Game.Editor
                 renderResidencyMode =
                     OperationMapRenderResidencyMode.VirtualizedProxyPool.ToString(),
                 persistedCandidateRenderResidencyMode =
-                    OperationMapRenderResidencyMode.ResidentEntities.ToString(),
+                    OperationMapRenderResidencyMode.VirtualizedProxyPool.ToString(),
                 productionPresentationKind =
                     OperationMapPresentationKind.StaticSceneChunks.ToString(),
                 productionRenderResidencyMode =
@@ -139,7 +138,6 @@ namespace Game.Editor
             Scene candidateScene = default;
             World world = null;
             object blobAssetStore = null;
-            GameObject temporaryRoot = null;
             try
             {
                 candidateScene = EditorSceneManager.OpenScene(
@@ -157,17 +155,21 @@ namespace Game.Editor
                         $"Direct virtualized bake database is invalid: {configError}");
                 }
 
-                temporaryRoot = new GameObject(
-                    $"VRP038 Direct Virtualization Root ({pass})");
-                SceneManager.MoveGameObjectToScene(temporaryRoot, candidateScene);
-                OperationMapVirtualizedPresentationAuthoring authoring =
-                    temporaryRoot.AddComponent<OperationMapVirtualizedPresentationAuthoring>();
-                var serializedAuthoring = new SerializedObject(authoring);
-                serializedAuthoring.FindProperty("databaseConfig").objectReferenceValue = config;
-                serializedAuthoring.FindProperty("sourcePresentationRoot").objectReferenceValue =
-                    temporaryRoot;
-                serializedAuthoring.FindProperty("mapGeneration").intValue = 0;
-                serializedAuthoring.ApplyModifiedPropertiesWithoutUndo();
+                OperationMapVirtualizedPresentationAuthoring[] authorings =
+                    candidateScene.GetRootGameObjects()
+                        .SelectMany(root => root.GetComponentsInChildren<
+                            OperationMapVirtualizedPresentationAuthoring>(true))
+                        .ToArray();
+                string authoringError = null;
+                if (authorings.Length != 1 ||
+                    authorings[0].DatabaseConfig != config ||
+                    authorings[0].SourcePresentationRoot != authorings[0].gameObject ||
+                    !authorings[0].TryValidate(out authoringError))
+                {
+                    throw new InvalidOperationException(
+                        "Persisted candidate requires exactly one self-owned valid " +
+                        $"virtualization authoring root: {authoringError}");
+                }
 
                 world = new World($"VRP038DirectBake-{pass}");
                 blobAssetStore = CreateBlobAssetStore();
@@ -181,8 +183,6 @@ namespace Game.Editor
                 if (world != null)
                     world.Dispose();
                 DisposeBlobAssetStore(blobAssetStore);
-                if (temporaryRoot != null)
-                    UnityEngine.Object.DestroyImmediate(temporaryRoot);
                 RestoreSceneSetupOrCreateEmpty(previousSetup);
             }
         }
@@ -506,10 +506,10 @@ namespace Game.Editor
             if (candidate == null ||
                 candidate.PresentationKind != OperationMapPresentationKind.EntityScene ||
                 candidate.RenderResidencyMode !=
-                OperationMapRenderResidencyMode.ResidentEntities)
+                OperationMapRenderResidencyMode.VirtualizedProxyPool)
             {
                 throw new InvalidOperationException(
-                    "VRP-038 requires the persisted candidate definition to remain resident.");
+                    "VRP-051 requires the persisted candidate definition to use its proxy pool.");
             }
         }
 

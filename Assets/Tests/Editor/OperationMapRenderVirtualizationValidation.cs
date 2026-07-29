@@ -29,7 +29,7 @@ public sealed class OperationMapRenderVirtualizationValidation
             tests.OperationMapDefinition_DefaultsToResidentEntities();
             tests.StaticSceneChunks_RejectsVirtualizedProxyPool();
             tests.EntityScene_ResidentEntitiesRetainsCurrentBehavior();
-            tests.EntityScene_VirtualizedProxyPoolFailsClosedUntilDatabaseContractExists();
+            tests.EntityScene_VirtualizedProxyPoolPassesStructuralValidation();
             tests.UnknownRenderResidencyMode_IsRejected();
             tests.RenderVirtualizationSchema_IsUnmanaged();
             tests.RuntimeContracts_UseExpectedEcsKinds();
@@ -143,7 +143,7 @@ public sealed class OperationMapRenderVirtualizationValidation
     }
 
     [Test]
-    public void EntityScene_VirtualizedProxyPoolFailsClosedUntilDatabaseContractExists()
+    public void EntityScene_VirtualizedProxyPoolPassesStructuralValidation()
     {
         OperationMapDefinition definition = CreateDefinitionWithRequiredLocalReferences();
         try
@@ -155,8 +155,10 @@ public sealed class OperationMapRenderVirtualizationValidation
                 OperationMapRenderResidencyMode.VirtualizedProxyPool);
             Set(definition, "staticPresentationManifestReference", new AssetReference());
 
-            Assert.That(definition.TryValidateLocalContentReferences(out string error), Is.False);
-            Assert.That(error, Does.Contain("validated render-virtualization database"));
+            Assert.That(
+                definition.TryValidateLocalContentReferences(out string error),
+                Is.True,
+                error);
         }
         finally
         {

@@ -3,6 +3,7 @@ using Game.Components;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Rendering;
 using Unity.Transforms;
 
@@ -25,6 +26,8 @@ namespace Game.Rendering
         private ComponentTypeHandle<URPMaterialPropertyBaseColor> _baseColorType;
         private ComponentLookup<OperationMapRenderDatabaseComponent>
             _databaseLookup;
+        private ComponentLookup<OperationMapRenderVirtualizationStateComponent>
+            _virtualizationStateLookup;
         private Entity _scheduledCommandOwner;
         private uint _scheduledCommandVersion;
         private uint _scheduledApplyCount;
@@ -38,24 +41,20 @@ namespace Game.Rendering
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            _commandOwnerQuery = state.GetEntityQuery(
-                ComponentType.ReadOnly<OperationMapRenderDatabaseComponent>(),
-                ComponentType.ReadOnly<
-                    OperationMapRenderSlotCommandStateComponent>(),
-                ComponentType.ReadOnly<OperationMapRenderSlotCommandComponent>());
-            _slotQuery = state.GetEntityQuery(new EntityQueryDesc
-            {
-                All = new[]
-                {
-                    ComponentType.ReadWrite<
-                        OperationMapRenderProxySlotComponent>(),
-                    ComponentType.ReadWrite<LocalToWorld>(),
-                    ComponentType.ReadWrite<RenderBounds>(),
-                    ComponentType.ReadWrite<MaterialMeshInfo>(),
-                    ComponentType.ReadWrite<URPMaterialPropertyBaseColor>()
-                },
-                Options = EntityQueryOptions.IgnoreComponentEnabledState
-            });
+            _commandOwnerQuery = new EntityQueryBuilder(Allocator.Temp)
+                .WithAll<
+                    OperationMapRenderDatabaseComponent,
+                    OperationMapRenderSlotCommandStateComponent,
+                    OperationMapRenderSlotCommandComponent>()
+                .Build(ref state);
+            _slotQuery = new EntityQueryBuilder(Allocator.Temp)
+                .WithAllRW<OperationMapRenderProxySlotComponent>()
+                .WithAllRW<LocalToWorld>()
+                .WithAllRW<RenderBounds>()
+                .WithAllRW<MaterialMeshInfo>()
+                .WithAllRW<URPMaterialPropertyBaseColor>()
+                .WithOptions(EntityQueryOptions.IgnoreComponentEnabledState)
+                .Build(ref state);
             _proxySlotType = state.GetComponentTypeHandle<
                 OperationMapRenderProxySlotComponent>(false);
             _localToWorldType =
@@ -68,6 +67,8 @@ namespace Game.Rendering
                 URPMaterialPropertyBaseColor>(false);
             _databaseLookup = state.GetComponentLookup<
                 OperationMapRenderDatabaseComponent>(true);
+            _virtualizationStateLookup = state.GetComponentLookup<
+                OperationMapRenderVirtualizationStateComponent>(false);
             _scheduledCommandOwner = Entity.Null;
         }
 
@@ -129,6 +130,7 @@ namespace Game.Rendering
             _materialMeshInfoType.Update(ref state);
             _baseColorType.Update(ref state);
             _databaseLookup.Update(ref state);
+            _virtualizationStateLookup.Update(ref state);
 
             var applyJob = new OperationMapRenderSlotApplyJob
             {
@@ -143,8 +145,13 @@ namespace Game.Rendering
                 BaseColorType = _baseColorType,
                 SlotFailures = _slotFailures
             };
-            state.Dependency =
+            JobHandle applyHandle =
                 applyJob.ScheduleParallel(_slotQuery, state.Dependency);
+            state.Dependency = new OperationMapRenderApplyCompletionJob
+            {
+                Owner = commandOwner,
+                VirtualizationStateLookup = _virtualizationStateLookup
+            }.Schedule(applyHandle);
             _scheduledCommandOwner = commandOwner;
             _scheduledCommandVersion = commandState.Version;
             _scheduledApplyCount++;
@@ -183,6 +190,23 @@ namespace Game.Rendering
             state.Dependency.Complete();
             _slotFailures.Dispose();
             _slotFailures = default;
+        }
+    }
+
+    [BurstCompile]
+    internal struct OperationMapRenderApplyCompletionJob : IJob
+    {
+        [ReadOnly] internal Entity Owner;
+        internal ComponentLookup<OperationMapRenderVirtualizationStateComponent>
+            VirtualizationStateLookup;
+
+        [BurstCompile]
+        public void Execute()
+        {
+            OperationMapRenderVirtualizationStateComponent runtime =
+                VirtualizationStateLookup[Owner];
+            runtime.InitialViewApplied = 1;
+            VirtualizationStateLookup[Owner] = runtime;
         }
     }
 

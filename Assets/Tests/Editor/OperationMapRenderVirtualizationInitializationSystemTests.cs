@@ -34,6 +34,8 @@ public sealed class OperationMapRenderVirtualizationInitializationSystemTests
                 test => test.NativeState_BuildsExactUnboundMaps());
             RunCase(tests, nameof(DatabaseRemoval_DisposesPersistentState),
                 test => test.DatabaseRemoval_DisposesPersistentState());
+            RunCase(tests, nameof(CameraSchedule_PublishesCommandsThenNoOpsInsideGuard),
+                test => test.CameraSchedule_PublishesCommandsThenNoOpsInsideGuard());
             RunCase(tests, nameof(OperationMapMismatch_FailsClosed),
                 test => test.OperationMapMismatch_FailsClosed());
             RunCase(tests, nameof(DuplicateSlotIdentity_FailsClosed),
@@ -42,7 +44,7 @@ public sealed class OperationMapRenderVirtualizationInitializationSystemTests
                 test => test.MissingStateOwner_FailsClosed());
             Debug.Log(
                 "[OperationMapRenderVirtualizationInitializationFocusedValidation] " +
-                "result=Passed tests=7");
+                "result=Passed tests=8");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -231,6 +233,57 @@ public sealed class OperationMapRenderVirtualizationInitializationSystemTests
     }
 
     [Test]
+    public void CameraSchedule_PublishesCommandsThenNoOpsInsideGuard()
+    {
+        Entity camera = _world.EntityManager.CreateEntity(
+            typeof(RuntimeCameraSnapshotComponent));
+        _world.EntityManager.SetComponentData(
+            camera,
+            new RuntimeCameraSnapshotComponent
+            {
+                IsValid = 1,
+                PublicationVersion = 1,
+                Position = new float3(1f, 20f, 1f)
+            });
+
+        _system.Update(_world.Unmanaged);
+        _world.EntityManager.CompleteAllTrackedJobs();
+
+        OperationMapRenderSlotCommandStateComponent commandState =
+            _world.EntityManager.GetComponentData<
+                OperationMapRenderSlotCommandStateComponent>(_databaseEntity);
+        DynamicBuffer<OperationMapRenderSlotCommandComponent> commands =
+            _world.EntityManager.GetBuffer<
+                OperationMapRenderSlotCommandComponent>(_databaseEntity);
+        OperationMapRenderVirtualizationStateComponent runtime =
+            _world.EntityManager.GetComponentData<
+                OperationMapRenderVirtualizationStateComponent>(_databaseEntity);
+        Assert.That(commandState.Version, Is.EqualTo(1));
+        Assert.That(commands[0].Assigned, Is.EqualTo(1));
+        Assert.That(commands[0].PlacementIndex, Is.Zero);
+        Assert.That(runtime.RebuildCount, Is.EqualTo(1));
+
+        RuntimeCameraSnapshotComponent stable =
+            _world.EntityManager.GetComponentData<
+                RuntimeCameraSnapshotComponent>(camera);
+        stable.PublicationVersion = 2;
+        _world.EntityManager.SetComponentData(camera, stable);
+        _system.Update(_world.Unmanaged);
+        _world.EntityManager.CompleteAllTrackedJobs();
+
+        Assert.That(
+            _world.EntityManager.GetComponentData<
+                OperationMapRenderSlotCommandStateComponent>(_databaseEntity)
+                .Version,
+            Is.EqualTo(1));
+        Assert.That(
+            _world.EntityManager.GetComponentData<
+                OperationMapRenderVirtualizationStateComponent>(_databaseEntity)
+                .RebuildCount,
+            Is.EqualTo(1));
+    }
+
+    [Test]
     public void OperationMapMismatch_FailsClosed()
     {
         ActiveOperationMapComponent active =
@@ -318,7 +371,14 @@ public sealed class OperationMapRenderVirtualizationInitializationSystemTests
             CellIndex = 0,
             StateOwnerIndex = -1
         };
-        builder.Allocate(ref root.Cells, 1);
+        BlobBuilderArray<OperationMapRenderCellBlob> cells =
+            builder.Allocate(ref root.Cells, 1);
+        cells[0] = new OperationMapRenderCellBlob
+        {
+            Coordinate = int2.zero,
+            FirstPlacementIndex = 0,
+            PlacementIndexCount = 1
+        };
         BlobBuilderArray<int> cellPlacements =
             builder.Allocate(ref root.CellPlacementIndices, 1);
         cellPlacements[0] = 0;
@@ -340,9 +400,24 @@ public sealed class OperationMapRenderVirtualizationInitializationSystemTests
             typeof(OperationMapRenderDatabaseComponent),
             typeof(OperationMapRenderPackedReadinessComponent),
             typeof(OperationMapRenderVirtualizationStateComponent),
-            typeof(OperationMapRenderVirtualizationMetricsComponent));
+            typeof(OperationMapRenderVirtualizationMetricsComponent),
+            typeof(OperationMapRenderSlotCommandStateComponent));
         _world.EntityManager.AddBuffer<OperationMapRenderStateChangeComponent>(
             _databaseEntity);
+        DynamicBuffer<OperationMapRenderSlotCommandComponent> commands =
+            _world.EntityManager.AddBuffer<
+                OperationMapRenderSlotCommandComponent>(_databaseEntity);
+        for (int slotIndex = 0; slotIndex < 2; slotIndex++)
+        {
+            commands.Add(new OperationMapRenderSlotCommandComponent
+            {
+                SlotIndex = slotIndex,
+                LogicalRowIndex = -1,
+                PlacementIndex = -1,
+                PartIndex = -1,
+                PoolBucketIndex = -1
+            });
+        }
         _world.EntityManager.SetComponentData(
             _databaseEntity,
             new OperationMapRenderDatabaseComponent

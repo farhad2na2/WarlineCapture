@@ -31,6 +31,8 @@ namespace Game.Rendering
         [ReadOnly] internal NativeList<int> SelectedCellIndices;
         [ReadOnly] internal NativeList<OperationMapRenderLogicalRowKey> RequiredRows;
         [ReadOnly] internal NativeArray<int> PlacementFirstLogicalRow;
+        [ReadOnly] internal NativeReference<OperationMapRenderCellSelectionFailure>
+            SelectionFailure;
         [ReadOnly] internal int AssignmentGeneration;
         [ReadOnly] internal int MaxDirtySlotCount;
 
@@ -149,6 +151,14 @@ namespace Game.Rendering
 
         private bool Validate(ref OperationMapRenderAssignmentResult result)
         {
+            if (SelectionFailure.IsCreated &&
+                SelectionFailure.Value !=
+                OperationMapRenderCellSelectionFailure.None)
+            {
+                return Fail(
+                    ref result,
+                    OperationMapRenderAssignmentFailure.InvalidSelection);
+            }
             if (!Database.IsCreated || AssignmentGeneration <= 0)
                 return Fail(ref result, OperationMapRenderAssignmentFailure.InvalidDatabase);
 

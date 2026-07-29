@@ -121,6 +121,7 @@ MonoBehaviour:
     factionId: 1
     laneIndex: 2
   presentationKind: 1
+  renderResidencyMode: 1
   sourceSceneReference:
     m_AssetGUID: dad0bd13fb20943dfb2f881cbe225f05
     m_SubObjectName:

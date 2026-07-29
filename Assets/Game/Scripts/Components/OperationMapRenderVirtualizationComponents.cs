@@ -2,6 +2,7 @@ using System;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using UnityEngine;
 
 namespace Game.Components
 {
@@ -204,5 +205,26 @@ namespace Game.Components
         public int ReboundCount;
         public int OverflowCount;
         public OperationMapRenderRebuildReason RebuildReason;
+    }
+
+    [BakingType]
+    [InternalBufferCapacity(1)]
+    public struct OperationMapRenderSourceRowBakingComponent : IBufferElementData
+    {
+        public Entity RenderEntity;
+        public OperationMapRenderIdentity128 OwnerIdentity;
+        public OperationMapRenderIdentity128 RendererPathIdentity;
+        public byte IsRenderOnlyOwner;
+    }
+
+    [BakingType]
+    [InternalBufferCapacity(0)]
+    public struct OperationMapRenderEligibleSourceRowBakingComponent : IBufferElementData
+    {
+        public OperationMapRenderIdentity128 OwnerIdentity;
+        public OperationMapRenderIdentity128 RendererPathIdentity;
+        public UnityObjectRef<Mesh> Mesh;
+        public UnityObjectRef<Material> Material;
+        public ushort SubMeshIndex;
     }
 }

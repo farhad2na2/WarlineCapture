@@ -66,7 +66,8 @@ public sealed class OperationMapRenderVirtualizationValidation
             tests.SharedRenderMeshArray_PreservesSortedAssetsAndEveryLogicalIndex();
             tests.ProxySlotBakePlan_UsesEveryReportedSlotAndExactFixedPolicy();
             tests.ProxySlots_BakeAsDisabledLeafEntitiesWithExactBucketRanges();
-            Debug.Log("[OperationMapRenderVirtualizationValidation] result=Passed tests=41");
+            tests.EligibleSourceRows_BakeOnlyWhileGameplayAndResidentOwnersSurvive();
+            Debug.Log("[OperationMapRenderVirtualizationValidation] result=Passed tests=42");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -1438,6 +1439,207 @@ public sealed class OperationMapRenderVirtualizationValidation
             world.Dispose();
             UnityEngine.Object.DestroyImmediate(root);
         }
+    }
+
+    [Test]
+    public void EligibleSourceRows_BakeOnlyWhileGameplayAndResidentOwnersSurvive()
+    {
+        const string eligibleStableId =
+            "densecity.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+        const string residentStableId =
+            "densecity.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
+        const string gameplaySourceId =
+            "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-100000-117742413752296747";
+        Assert.That(
+            OperationMapRenderIdentityProjection.TryProject(
+                "densegenerated|" + eligibleStableId,
+                out OperationMapRenderIdentity128 ownerIdentity,
+                out string ownerError),
+            Is.True,
+            ownerError);
+        Assert.That(
+            OperationMapRenderIdentityProjection.TryProject(
+                "renderer-path|<owner>",
+                out OperationMapRenderIdentity128 pathIdentity,
+                out string pathError),
+            Is.True,
+            pathError);
+
+        OperationMapRenderDatabaseBakeConfig config =
+            CreateValidBakeConfig(out Mesh mesh, out Material material);
+        mesh.vertices = new[]
+        {
+            new Vector3(0f, 0f, 0f),
+            new Vector3(1f, 0f, 0f),
+            new Vector3(0f, 1f, 0f)
+        };
+        mesh.triangles = new[] { 0, 1, 2 };
+        mesh.RecalculateBounds();
+        Set(
+            config,
+            "parts",
+            new[]
+            {
+                new OperationMapRenderPrototypePartConfigRecord(
+                    pathIdentity.Low,
+                    pathIdentity.High,
+                    0,
+                    0,
+                    0,
+                    Matrix4x4.identity,
+                    mesh.bounds,
+                    Color.white,
+                    OperationMapRenderPolicyBucket.OpaqueShadowsOff,
+                    0,
+                    OperationMapRenderLodFlags.Lod0,
+                    OperationMapRenderShadowFlags.None)
+            });
+        Set(
+            config,
+            "placements",
+            new[]
+            {
+                new OperationMapRenderPlacementConfigRecord(
+                    ownerIdentity.Low,
+                    ownerIdentity.High,
+                    0,
+                    Matrix4x4.identity,
+                    0,
+                    -1,
+                    OperationMapRenderVisualState.Any,
+                    0,
+                    DenseCityPresentationSemanticCategory.Vegetation)
+            });
+        Assert.That(config.TryValidateSchema(out string configError), Is.True, configError);
+
+        GameObject root = new("VRP034 Virtualized Presentation Bake Root");
+        GameObject sources = new("VRP034 Source Presentation");
+        sources.transform.SetParent(root.transform, false);
+        World world = new("VRP034SourceOwnershipBake");
+        try
+        {
+            OperationMapVirtualizedPresentationAuthoring virtualization =
+                root.AddComponent<OperationMapVirtualizedPresentationAuthoring>();
+            Set(virtualization, "databaseConfig", config);
+            Set(virtualization, "sourcePresentationRoot", sources);
+
+            GameObject eligible = CreateRenderOwner(
+                "VRP034 Eligible RenderOnly",
+                sources.transform,
+                mesh,
+                material);
+            eligible.AddComponent<DenseCityPresentationIdentityAuthoring>()
+                .ConfigureForEditor(
+                    eligibleStableId,
+                    OperationMapEntityPresentationRole.RenderOnly,
+                    DenseCityPresentationSemanticCategory.Vegetation);
+
+            GameObject resident = CreateRenderOwner(
+                "VRP034 Named Resident Exception",
+                sources.transform,
+                mesh,
+                material);
+            resident.AddComponent<DenseCityPresentationIdentityAuthoring>()
+                .ConfigureForEditor(
+                    residentStableId,
+                    OperationMapEntityPresentationRole.RenderOnly,
+                    DenseCityPresentationSemanticCategory.Infrastructure);
+
+            GameObject gameplay = CreateRenderOwner(
+                "VRP034 Canonical Gameplay Owner",
+                sources.transform,
+                mesh,
+                material);
+            gameplay.AddComponent<OperationMapEntityPresentationIdentityAuthoring>()
+                .ConfigureForEditor(
+                    "opmap.skirmish.virtualized",
+                    gameplaySourceId,
+                    OperationMapEntityPresentationRole.GameplayBuildings,
+                    0);
+
+            BakeGameObjects(world, root);
+
+            EntityManager entityManager = world.EntityManager;
+            Entity eligibleEntity = FindNamedRenderEntity(
+                entityManager,
+                eligible.name);
+            Entity residentEntity = FindNamedRenderEntity(
+                entityManager,
+                resident.name);
+            Entity gameplayEntity = FindNamedRenderEntity(
+                entityManager,
+                gameplay.name);
+
+            Assert.That(
+                HasBakingOnlyEntity(entityManager, eligibleEntity),
+                Is.True,
+                "The exact eligible logical/source row must be baking-only.");
+            Assert.That(
+                HasBakingOnlyEntity(entityManager, residentEntity),
+                Is.False,
+                "An unmatched named resident exception must remain packed.");
+            Assert.That(
+                HasBakingOnlyEntity(entityManager, gameplayEntity),
+                Is.False,
+                "A canonical gameplay entity must never be removed by VRP-034.");
+            Assert.That(
+                entityManager.HasComponent<OperationMapEntityPresentationIdentity>(
+                    gameplayEntity),
+                Is.True);
+        }
+        finally
+        {
+            world.Dispose();
+            UnityEngine.Object.DestroyImmediate(root);
+            UnityEngine.Object.DestroyImmediate(config);
+            UnityEngine.Object.DestroyImmediate(material);
+            UnityEngine.Object.DestroyImmediate(mesh);
+        }
+    }
+
+    private static GameObject CreateRenderOwner(
+        string name,
+        Transform parent,
+        Mesh mesh,
+        Material material)
+    {
+        GameObject owner = new(name);
+        owner.transform.SetParent(parent, false);
+        owner.AddComponent<MeshFilter>().sharedMesh = mesh;
+        owner.AddComponent<MeshRenderer>().sharedMaterial = material;
+        return owner;
+    }
+
+    private static Entity FindNamedRenderEntity(
+        EntityManager entityManager,
+        string name)
+    {
+        using NativeArray<Entity> entities =
+            entityManager.GetAllEntities(Allocator.Temp);
+        for (int index = 0; index < entities.Length; index++)
+        {
+            Entity entity = entities[index];
+            if (entityManager.GetName(entity) == name &&
+                entityManager.HasComponent<MaterialMeshInfo>(entity))
+            {
+                return entity;
+            }
+        }
+
+        Assert.Fail($"No converted render entity named '{name}' was found.");
+        return Entity.Null;
+    }
+
+    private static bool HasBakingOnlyEntity(
+        EntityManager entityManager,
+        Entity entity)
+    {
+        Type bakingOnlyType =
+            Type.GetType("Unity.Entities.BakingOnlyEntity, Unity.Entities.Hybrid", true);
+        TypeIndex typeIndex = TypeManager.GetTypeIndex(bakingOnlyType);
+        return entityManager.HasComponent(
+            entity,
+            ComponentType.FromTypeIndex(typeIndex));
     }
 
     private static void BakeGameObjects(World world, GameObject root)

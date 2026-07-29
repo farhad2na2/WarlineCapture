@@ -12,15 +12,18 @@ namespace Game.Authoring
     /// <summary>
     /// Candidate-only root for the virtualized presentation database and its one shared,
     /// deterministically ordered mesh/material array.
-    /// This baker creates no proxy slots and does not alter source render entities.
+    /// Source render ownership changes only when an explicit source presentation root is
+    /// assigned and every eligible row matches the generated logical database.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class OperationMapVirtualizedPresentationAuthoring : MonoBehaviour
     {
         [SerializeField] private OperationMapRenderDatabaseBakeConfig databaseConfig;
+        [SerializeField] private GameObject sourcePresentationRoot;
         [SerializeField, Min(0)] private int mapGeneration;
 
         public OperationMapRenderDatabaseBakeConfig DatabaseConfig => databaseConfig;
+        public GameObject SourcePresentationRoot => sourcePresentationRoot;
         public int MapGeneration => mapGeneration;
 
         public bool TryValidate(out string error)
@@ -67,6 +70,14 @@ namespace Game.Authoring
                     MapGeneration = authoring.mapGeneration
                 });
                 AddSharedComponentManaged(entity, renderMeshArray);
+                if (authoring.SourcePresentationRoot != null)
+                {
+                    OperationMapRenderSourceBakingMarkerBuilder.AddMarkers(
+                        this,
+                        authoring.SourcePresentationRoot,
+                        authoring.DatabaseConfig,
+                        entity);
+                }
 
                 MaterialMeshInfo initialMaterialMeshInfo =
                     MaterialMeshInfo.FromRenderMeshArrayIndices(0, 0, 0);

@@ -85,6 +85,11 @@ namespace Game.Authoring
                     Role = (byte)authoring.role,
                     PlacementIndex = authoring.placementIndex
                 });
+                OperationMapRenderSourceBakingMarkerBuilder.AddOwnerMarkers(
+                    this,
+                    authoring,
+                    "acceptedmap|" + authoring.sourceGlobalObjectId,
+                    authoring.role);
             }
         }
     }

@@ -93,6 +93,11 @@ namespace Game.Authoring
                     Category = (byte)authoring.category,
                     Flags = (byte)authoring.flags
                 });
+                OperationMapRenderSourceBakingMarkerBuilder.AddOwnerMarkers(
+                    this,
+                    authoring,
+                    "densegenerated|" + authoring.stableId,
+                    authoring.role);
             }
         }
     }

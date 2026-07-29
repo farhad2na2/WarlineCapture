@@ -24,6 +24,7 @@ public sealed class DenseCityPresentationBudgetValidatorTests
             suite.PackedAssetSharing_AcceptsCompleteEvidence,
             suite.PackedAssetSharing_RejectsDuplicatedDependency,
             suite.PackedAssetSharing_RejectsMultipleEntityArchives,
+            suite.PackedAssetSharing_RejectsInvalidVirtualizationDatabase,
             suite.PackedAssetSharing_CurrentEvidenceWritesAcceptedReport,
             suite.CategorySharing_AcceptsEveryRequiredSemanticFamily,
             suite.CategorySharing_RejectsMissingRequiredFamily,
@@ -191,13 +192,15 @@ public sealed class DenseCityPresentationBudgetValidatorTests
         CreateDensePackedAssetSharingEvidence(
             out var bake,
             out var parity,
-            out var runtime);
+            out var runtime,
+            out var virtualization);
 
         Assert.That(
             DenseCityPresentationBudgetValidator.TryCreateDensePackedAssetSharingReport(
                 bake,
                 parity,
                 runtime,
+                virtualization,
                 out var report,
                 out string error),
             Is.True,
@@ -205,6 +208,9 @@ public sealed class DenseCityPresentationBudgetValidatorTests
         Assert.That(report.sharedRenderMeshArrayIdentityCount, Is.EqualTo(1));
         Assert.That(report.entityContentArchiveCount, Is.EqualTo(1));
         Assert.That(report.duplicatedDependencyBytes, Is.Zero);
+        Assert.That(report.renderVirtualizationMetricsComplete, Is.Zero);
+        Assert.That(report.renderVirtualizationSlotCapacity, Is.EqualTo(704));
+        Assert.That(report.packedSourceRowsRemoved, Is.EqualTo(-1));
     }
 
     [Test]
@@ -213,7 +219,8 @@ public sealed class DenseCityPresentationBudgetValidatorTests
         CreateDensePackedAssetSharingEvidence(
             out var bake,
             out var parity,
-            out var runtime);
+            out var runtime,
+            out var virtualization);
         runtime.duplicatedDependencyGuidCount = 1;
         runtime.duplicatedDependencyBytes = 4096;
 
@@ -222,6 +229,7 @@ public sealed class DenseCityPresentationBudgetValidatorTests
                 bake,
                 parity,
                 runtime,
+                virtualization,
                 out _,
                 out string error),
             Is.False);
@@ -234,7 +242,8 @@ public sealed class DenseCityPresentationBudgetValidatorTests
         CreateDensePackedAssetSharingEvidence(
             out var bake,
             out var parity,
-            out var runtime);
+            out var runtime,
+            out var virtualization);
         runtime.entityContentArchiveCount = 2;
 
         Assert.That(
@@ -242,10 +251,33 @@ public sealed class DenseCityPresentationBudgetValidatorTests
                 bake,
                 parity,
                 runtime,
+                virtualization,
                 out _,
                 out string error),
             Is.False);
         Assert.That(error, Is.EqualTo("packed-asset-sharing-runtime"));
+    }
+
+    [Test]
+    public void PackedAssetSharing_RejectsInvalidVirtualizationDatabase()
+    {
+        CreateDensePackedAssetSharingEvidence(
+            out var bake,
+            out var parity,
+            out var runtime,
+            out var virtualization);
+        virtualization.sourceRowsRemoved = 1;
+
+        Assert.That(
+            DenseCityPresentationBudgetValidator.TryCreateDensePackedAssetSharingReport(
+                bake,
+                parity,
+                runtime,
+                virtualization,
+                out _,
+                out string error),
+            Is.False);
+        Assert.That(error, Is.EqualTo("packed-asset-sharing-virtualization-database"));
     }
 
     [Test]
@@ -267,6 +299,9 @@ public sealed class DenseCityPresentationBudgetValidatorTests
         Assert.That(report.entityContentArchiveCount, Is.EqualTo(1));
         Assert.That(report.duplicatedDependencyGuidCount, Is.Zero);
         Assert.That(report.duplicatedDependencyBytes, Is.Zero);
+        Assert.That(report.schemaVersion, Is.EqualTo(2));
+        Assert.That(report.renderVirtualizationMetricsComplete, Is.Zero);
+        Assert.That(report.packedVirtualizedSourceRowCount, Is.EqualTo(-1));
     }
 
     [Test]
@@ -676,7 +711,8 @@ public sealed class DenseCityPresentationBudgetValidatorTests
     private static void CreateDensePackedAssetSharingEvidence(
         out DenseCityPresentationBudgetValidator.DenseCandidateBakeEvidence bake,
         out DenseCityPresentationBudgetValidator.DenseTransformParityEvidence parity,
-        out DenseCityPresentationBudgetValidator.DenseRuntimeContentEvidence runtime)
+        out DenseCityPresentationBudgetValidator.DenseRuntimeContentEvidence runtime,
+        out DenseCityPresentationBudgetValidator.DenseRenderVirtualizationDatabaseEvidence virtualization)
     {
         CreateDenseOwnershipEvidence(
             out bake,
@@ -699,6 +735,26 @@ public sealed class DenseCityPresentationBudgetValidatorTests
             entitySceneArchiveBytes = 137862756,
             productionSettingsMutated = 0,
             productionCutover = 0
+        };
+        virtualization = new DenseCityPresentationBudgetValidator.DenseRenderVirtualizationDatabaseEvidence
+        {
+            schemaVersion = 1,
+            result = "Passed",
+            operationMapId = "opmap.skirmish.desert_base_01",
+            contentHash = new string('a', 64),
+            prototypeCount = 22,
+            partCount = 26,
+            placementCount = 9721,
+            cellCount = 1635,
+            policyBucketCount = 2,
+            totalPoolSlotCapacity = 704,
+            sourceRenderRowCount = 82797,
+            eligibleSourceRowCount = 11299,
+            logicalRenderRowCount = 11299,
+            residentSourceRowCount = 71498,
+            sourceRowsRemoved = 0,
+            logicalParityResult = "Passed",
+            isolationResult = "Passed"
         };
     }
 

@@ -42,6 +42,8 @@ namespace Game.Editor
             "Design/AgentReports/2026-07-24_dense_city_candidate_runtime_content.json";
         internal const string DensePackedAssetSharingReportPath =
             "Design/AgentReports/2026-07-25_dense_city_packed_asset_sharing.json";
+        internal const string RenderVirtualizationDatabaseReportPath =
+            OperationMapRenderDatabaseBuilder.ReportPath;
 
         private static readonly UTF8Encoding Utf8WithoutBom = new(false);
 
@@ -104,11 +106,16 @@ namespace Game.Editor
                 Read<DenseTransformParityEvidence>(projectRoot, DenseTransformParityReportPath);
             DenseRuntimeContentEvidence runtime =
                 Read<DenseRuntimeContentEvidence>(projectRoot, DenseRuntimeContentReportPath);
+            DenseRenderVirtualizationDatabaseEvidence virtualization =
+                Read<DenseRenderVirtualizationDatabaseEvidence>(
+                    projectRoot,
+                    RenderVirtualizationDatabaseReportPath);
 
             if (!TryCreateDensePackedAssetSharingReport(
                     bake,
                     parity,
                     runtime,
+                    virtualization,
                     out DensePackedAssetSharingReport report,
                     out string error))
             {
@@ -480,11 +487,12 @@ namespace Game.Editor
             DenseCandidateBakeEvidence bake,
             DenseTransformParityEvidence parity,
             DenseRuntimeContentEvidence runtime,
+            DenseRenderVirtualizationDatabaseEvidence virtualization,
             out DensePackedAssetSharingReport report,
             out string error)
         {
             report = null;
-            if (bake == null || parity == null || runtime == null)
+            if (bake == null || parity == null || runtime == null || virtualization == null)
             {
                 error = "packed-asset-sharing-evidence-null";
                 return false;
@@ -550,10 +558,39 @@ namespace Game.Editor
                 return false;
             }
 
+            if (virtualization.schemaVersion != 1 ||
+                !string.Equals(virtualization.result, "Passed", StringComparison.Ordinal) ||
+                !string.Equals(
+                    virtualization.operationMapId,
+                    runtime.operationMapId,
+                    StringComparison.Ordinal) ||
+                !IsLowerHexHash(virtualization.contentHash) ||
+                virtualization.prototypeCount <= 0 ||
+                virtualization.partCount <= 0 ||
+                virtualization.placementCount <= 0 ||
+                virtualization.cellCount <= 0 ||
+                virtualization.policyBucketCount <= 0 ||
+                virtualization.totalPoolSlotCapacity <= 0 ||
+                virtualization.sourceRenderRowCount != bake.renderMeshEntityCount ||
+                virtualization.eligibleSourceRowCount <= 0 ||
+                virtualization.eligibleSourceRowCount !=
+                    virtualization.logicalRenderRowCount ||
+                virtualization.residentSourceRowCount < 0 ||
+                virtualization.residentSourceRowCount +
+                    virtualization.eligibleSourceRowCount !=
+                    virtualization.sourceRenderRowCount ||
+                virtualization.sourceRowsRemoved != 0 ||
+                !string.Equals(virtualization.logicalParityResult, "Passed", StringComparison.Ordinal) ||
+                !string.Equals(virtualization.isolationResult, "Passed", StringComparison.Ordinal))
+            {
+                error = "packed-asset-sharing-virtualization-database";
+                return false;
+            }
+
             report = new DensePackedAssetSharingReport
             {
                 schema = "warline.operation-map.dense-city-packed-asset-sharing",
-                schemaVersion = 1,
+                schemaVersion = 2,
                 result = "DenseCityPackedAssetSharingPassed",
                 operationMapId = runtime.operationMapId,
                 entitySceneGuid = runtime.entitySceneGuid,
@@ -581,6 +618,23 @@ namespace Game.Editor
                 staticRuntimeEntryCount = runtime.staticRuntimeEntryCount,
                 managedMapVisualCompanionCount =
                     bake.managedMapVisualCompanionCount,
+                renderVirtualizationMetricsComplete = 0,
+                renderVirtualizationDatabaseSchemaVersion = virtualization.schemaVersion,
+                renderVirtualizationContentHash = virtualization.contentHash,
+                renderVirtualizationPrototypeCount = virtualization.prototypeCount,
+                renderVirtualizationPartCount = virtualization.partCount,
+                renderVirtualizationPlacementCount = virtualization.placementCount,
+                renderVirtualizationCellCount = virtualization.cellCount,
+                renderVirtualizationPolicyBucketCount = virtualization.policyBucketCount,
+                renderVirtualizationSlotCapacity = virtualization.totalPoolSlotCapacity,
+                renderVirtualizationEligibleSourceRowCount =
+                    virtualization.eligibleSourceRowCount,
+                renderVirtualizationDatabaseSourceRowsRemoved =
+                    virtualization.sourceRowsRemoved,
+                packedVirtualizedSourceRowCount = -1,
+                packedEligibleSourceRowCount = -1,
+                packedResidentSourceRowCount = -1,
+                packedSourceRowsRemoved = -1,
                 productionSettingsMutated = runtime.productionSettingsMutated,
                 productionCutover = 0
             };
@@ -901,6 +955,24 @@ namespace Game.Editor
                     material.HasProperty("_AlphaClip") && material.GetFloat("_AlphaClip") > 0.5f);
         }
 
+        private static bool IsLowerHexHash(string value)
+        {
+            if (string.IsNullOrEmpty(value) || value.Length != 64)
+                return false;
+
+            for (int index = 0; index < value.Length; index++)
+            {
+                char character = value[index];
+                if ((character < '0' || character > '9') &&
+                    (character < 'a' || character > 'f'))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         private static Mesh ResolveMesh(Renderer renderer)
         {
             if (renderer is SkinnedMeshRenderer skinned)
@@ -1157,6 +1229,28 @@ namespace Game.Editor
         }
 
         [Serializable]
+        internal sealed class DenseRenderVirtualizationDatabaseEvidence
+        {
+            public int schemaVersion;
+            public string result;
+            public string operationMapId;
+            public string contentHash;
+            public int prototypeCount;
+            public int partCount;
+            public int placementCount;
+            public int cellCount;
+            public int policyBucketCount;
+            public int totalPoolSlotCapacity;
+            public int sourceRenderRowCount;
+            public int eligibleSourceRowCount;
+            public int logicalRenderRowCount;
+            public int residentSourceRowCount;
+            public int sourceRowsRemoved;
+            public string logicalParityResult;
+            public string isolationResult;
+        }
+
+        [Serializable]
         internal sealed class DenseCandidateLayoutEvidence
         {
             public string result;
@@ -1225,6 +1319,21 @@ namespace Game.Editor
             public long duplicatedDependencyBytes;
             public int staticRuntimeEntryCount;
             public int managedMapVisualCompanionCount;
+            public int renderVirtualizationMetricsComplete;
+            public int renderVirtualizationDatabaseSchemaVersion;
+            public string renderVirtualizationContentHash;
+            public int renderVirtualizationPrototypeCount;
+            public int renderVirtualizationPartCount;
+            public int renderVirtualizationPlacementCount;
+            public int renderVirtualizationCellCount;
+            public int renderVirtualizationPolicyBucketCount;
+            public int renderVirtualizationSlotCapacity;
+            public int renderVirtualizationEligibleSourceRowCount;
+            public int renderVirtualizationDatabaseSourceRowsRemoved;
+            public int packedVirtualizedSourceRowCount;
+            public int packedEligibleSourceRowCount;
+            public int packedResidentSourceRowCount;
+            public int packedSourceRowsRemoved;
             public int productionSettingsMutated;
             public int productionCutover;
         }

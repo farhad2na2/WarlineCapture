@@ -80,6 +80,8 @@ namespace Game.Authoring
                 AddComponent(entity, new OperationMapRenderVirtualizationStateComponent());
                 AddComponent(entity, new OperationMapRenderVirtualizationMetricsComponent());
                 AddBuffer<OperationMapRenderStateChangeComponent>(entity);
+                DynamicBuffer<OperationMapRenderSlotCommandComponent> commands =
+                    AddBuffer<OperationMapRenderSlotCommandComponent>(entity);
                 AddSharedComponentManaged(entity, renderMeshArray);
                 if (authoring.SourcePresentationRoot != null)
                 {
@@ -97,6 +99,16 @@ namespace Game.Authoring
                 {
                     OperationMapRenderProxySlotBakeDescriptor descriptor =
                         slotDescriptors[index];
+                    commands.Add(new OperationMapRenderSlotCommandComponent
+                    {
+                        SlotIndex = descriptor.SlotIndex,
+                        LogicalRowIndex = -1,
+                        PlacementIndex = -1,
+                        PartIndex = -1,
+                        PoolBucketIndex = -1,
+                        AssignmentGeneration = 0,
+                        Assigned = 0
+                    });
                     // Renderable retains a world-space LocalToWorld while avoiding LocalTransform/Parent
                     // on these fixed, hierarchy-free presentation slots.
                     Entity slotEntity = CreateAdditionalEntity(TransformUsageFlags.Renderable);

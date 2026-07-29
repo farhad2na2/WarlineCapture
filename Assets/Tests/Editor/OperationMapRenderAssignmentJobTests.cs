@@ -174,7 +174,7 @@ public sealed class OperationMapRenderAssignmentJobTests
         internal NativeBitArray ActiveCells;
         internal NativeBitArray ActivePlacements;
         internal NativeArray<int> NextFree;
-        internal NativeArray<OperationMapRenderSlotCommand> Commands;
+        internal NativeArray<OperationMapRenderSlotCommandComponent> Commands;
         internal NativeList<int> Dirty;
         internal NativeReference<OperationMapRenderAssignmentResult> Result;
 
@@ -195,7 +195,7 @@ public sealed class OperationMapRenderAssignmentJobTests
             ActiveCells = Bits(1);
             ActivePlacements = Bits(3);
             NextFree = Filled(2, 0);
-            Commands = new NativeArray<OperationMapRenderSlotCommand>(
+            Commands = new NativeArray<OperationMapRenderSlotCommandComponent>(
                 3, Allocator.TempJob);
             Dirty = new NativeList<int>(3, Allocator.TempJob);
             Result = new NativeReference<OperationMapRenderAssignmentResult>(

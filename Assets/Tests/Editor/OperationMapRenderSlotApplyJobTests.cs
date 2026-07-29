@@ -57,7 +57,6 @@ public sealed class OperationMapRenderSlotApplyJobTests
     {
         using var fixture = new ApplyFixture();
         fixture.Commands[0] = AssignedCommand(0, 9);
-        fixture.Dirty.Set(0, true);
         fixture.Run();
 
         LocalToWorld transform =
@@ -104,7 +103,7 @@ public sealed class OperationMapRenderSlotApplyJobTests
     {
         using var fixture = new ApplyFixture();
         fixture.SetAssignedSentinel(1);
-        fixture.Commands[1] = new OperationMapRenderSlotCommand
+        fixture.Commands[1] = new OperationMapRenderSlotCommandComponent
         {
             SlotIndex = 1,
             LogicalRowIndex = -1,
@@ -114,7 +113,6 @@ public sealed class OperationMapRenderSlotApplyJobTests
             AssignmentGeneration = 12,
             Assigned = 0
         };
-        fixture.Dirty.Set(1, true);
         fixture.Run();
 
         Assert.That(
@@ -147,7 +145,7 @@ public sealed class OperationMapRenderSlotApplyJobTests
     {
         using var fixture = new ApplyFixture();
         fixture.SetAssignedSentinel(0);
-        fixture.Commands[0] = AssignedCommand(0, 15);
+        fixture.Commands[0] = AssignedCommand(0, 4);
         fixture.Run();
 
         OperationMapRenderProxySlotComponent binding =
@@ -165,10 +163,9 @@ public sealed class OperationMapRenderSlotApplyJobTests
     {
         using var fixture = new ApplyFixture();
         fixture.SetAssignedSentinel(0);
-        OperationMapRenderSlotCommand command = AssignedCommand(0, 5);
+        OperationMapRenderSlotCommandComponent command = AssignedCommand(0, 5);
         command.PoolBucketIndex = 1;
         fixture.Commands[0] = command;
-        fixture.Dirty.Set(0, true);
         fixture.Run();
 
         Assert.That(fixture.Failures[0], Is.EqualTo(
@@ -189,7 +186,6 @@ public sealed class OperationMapRenderSlotApplyJobTests
     {
         using var fixture = new ApplyFixture();
         fixture.Commands[0] = AssignedCommand(0, 1);
-        fixture.Dirty.Set(0, true);
         fixture.Run();
 
         Assert.That(
@@ -204,10 +200,10 @@ public sealed class OperationMapRenderSlotApplyJobTests
             Is.False);
     }
 
-    private static OperationMapRenderSlotCommand AssignedCommand(
+    private static OperationMapRenderSlotCommandComponent AssignedCommand(
         int slotIndex,
         int generation) =>
-        new OperationMapRenderSlotCommand
+        new OperationMapRenderSlotCommandComponent
         {
             SlotIndex = slotIndex,
             LogicalRowIndex = 0,
@@ -226,8 +222,7 @@ public sealed class OperationMapRenderSlotApplyJobTests
         private readonly EntityQuery _query;
         internal EntityManager EntityManager => _world.EntityManager;
         internal NativeArray<Entity> Entities;
-        internal NativeArray<OperationMapRenderSlotCommand> Commands;
-        internal NativeBitArray Dirty;
+        internal NativeArray<OperationMapRenderSlotCommandComponent> Commands;
         internal NativeArray<OperationMapRenderSlotApplyFailure> Failures;
 
         internal ApplyFixture()
@@ -270,10 +265,8 @@ public sealed class OperationMapRenderSlotApplyJobTests
                 },
                 Options = EntityQueryOptions.IgnoreComponentEnabledState
             });
-            Commands = new NativeArray<OperationMapRenderSlotCommand>(
+            Commands = new NativeArray<OperationMapRenderSlotCommandComponent>(
                 2, Allocator.Persistent);
-            Dirty = new NativeBitArray(
-                2, Allocator.Persistent, NativeArrayOptions.ClearMemory);
             Failures =
                 new NativeArray<OperationMapRenderSlotApplyFailure>(
                     2, Allocator.Persistent, NativeArrayOptions.ClearMemory);
@@ -285,7 +278,6 @@ public sealed class OperationMapRenderSlotApplyJobTests
             {
                 Database = _database,
                 SlotCommands = Commands,
-                DirtySlots = Dirty,
                 ProxySlotType = EntityManager.GetComponentTypeHandle<
                     OperationMapRenderProxySlotComponent>(false),
                 LocalToWorldType =
@@ -344,7 +336,6 @@ public sealed class OperationMapRenderSlotApplyJobTests
         {
             EntityManager.CompleteAllTrackedJobs();
             Failures.Dispose();
-            Dirty.Dispose();
             Commands.Dispose();
             Entities.Dispose();
             _database.Dispose();

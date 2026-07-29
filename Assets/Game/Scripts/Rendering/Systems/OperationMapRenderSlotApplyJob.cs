@@ -23,8 +23,8 @@ namespace Game.Rendering
     internal struct OperationMapRenderSlotApplyJob : IJobChunk
     {
         [ReadOnly] internal BlobAssetReference<OperationMapRenderDatabaseBlob> Database;
-        [ReadOnly] internal NativeArray<OperationMapRenderSlotCommand> SlotCommands;
-        [ReadOnly] internal NativeBitArray DirtySlots;
+        [ReadOnly] internal NativeArray<OperationMapRenderSlotCommandComponent>
+            SlotCommands;
 
         internal ComponentTypeHandle<OperationMapRenderProxySlotComponent>
             ProxySlotType;
@@ -59,16 +59,16 @@ namespace Game.Rendering
                 int slotIndex = proxySlot.SlotIndex;
                 if (slotIndex < 0 ||
                     slotIndex >= SlotCommands.Length ||
-                    slotIndex >= DirtySlots.Length ||
                     slotIndex >= SlotFailures.Length)
                 {
                     continue;
                 }
-                if (!DirtySlots.IsSet(slotIndex))
-                    continue;
 
-                OperationMapRenderSlotCommand command =
+                OperationMapRenderSlotCommandComponent command =
                     SlotCommands[slotIndex];
+                if (command.AssignmentGeneration ==
+                    proxySlot.AssignmentGeneration)
+                    continue;
                 OperationMapRenderSlotApplyFailure failure =
                     ValidateCommand(proxySlot, command);
                 if (failure != OperationMapRenderSlotApplyFailure.None)
@@ -140,7 +140,7 @@ namespace Game.Rendering
 
         private OperationMapRenderSlotApplyFailure ValidateCommand(
             OperationMapRenderProxySlotComponent slot,
-            OperationMapRenderSlotCommand command)
+            OperationMapRenderSlotCommandComponent command)
         {
             if (!Database.IsCreated ||
                 command.SlotIndex != slot.SlotIndex ||

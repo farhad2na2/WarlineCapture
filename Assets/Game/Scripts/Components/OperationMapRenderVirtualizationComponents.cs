@@ -170,6 +170,18 @@ namespace Game.Components
         public int AssignmentGeneration;
     }
 
+    [InternalBufferCapacity(0)]
+    public struct OperationMapRenderSlotCommandComponent : IBufferElementData
+    {
+        public int SlotIndex;
+        public int LogicalRowIndex;
+        public int PlacementIndex;
+        public int PartIndex;
+        public int PoolBucketIndex;
+        public int AssignmentGeneration;
+        public byte Assigned;
+    }
+
     public struct OperationMapRenderVirtualizationStateComponent : IComponentData
     {
         public byte Initialized;

@@ -15,17 +15,6 @@ namespace Game.Rendering
         InvalidBinding = 4
     }
 
-    internal struct OperationMapRenderSlotCommand
-    {
-        internal int SlotIndex;
-        internal int LogicalRowIndex;
-        internal int PlacementIndex;
-        internal int PartIndex;
-        internal int PoolBucketIndex;
-        internal int AssignmentGeneration;
-        internal byte Assigned;
-    }
-
     internal struct OperationMapRenderAssignmentResult
     {
         internal OperationMapRenderAssignmentFailure Failure;
@@ -53,7 +42,7 @@ namespace Game.Rendering
         internal NativeBitArray ActiveCells;
         internal NativeBitArray ActivePlacements;
         internal NativeArray<int> NextFreeSlotByBucket;
-        internal NativeArray<OperationMapRenderSlotCommand> SlotCommands;
+        internal NativeArray<OperationMapRenderSlotCommandComponent> SlotCommands;
         internal NativeList<int> DirtySlotIndices;
         internal NativeReference<OperationMapRenderAssignmentResult> Result;
 
@@ -138,7 +127,7 @@ namespace Game.Rendering
                 SlotToLogicalRow[slotIndex] = logicalRow;
                 LogicalRowToSlot[logicalRow] = slotIndex;
                 SlotAssignmentGenerations[slotIndex] = AssignmentGeneration;
-                SlotCommands[slotIndex] = new OperationMapRenderSlotCommand
+                SlotCommands[slotIndex] = new OperationMapRenderSlotCommandComponent
                 {
                     SlotIndex = slotIndex,
                     LogicalRowIndex = logicalRow,
@@ -323,7 +312,7 @@ namespace Game.Rendering
 
         private void WriteReleasedCommand(int slotIndex)
         {
-            SlotCommands[slotIndex] = new OperationMapRenderSlotCommand
+            SlotCommands[slotIndex] = new OperationMapRenderSlotCommandComponent
             {
                 SlotIndex = slotIndex,
                 LogicalRowIndex = -1,

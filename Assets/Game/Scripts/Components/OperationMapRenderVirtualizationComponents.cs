@@ -218,6 +218,12 @@ namespace Game.Components
     }
 
     [BakingType]
+    public struct OperationMapVirtualizedBuildingOwnerBakingComponent : IComponentData
+    {
+        public OperationMapRenderIdentity128 OwnerIdentity;
+    }
+
+    [BakingType]
     [InternalBufferCapacity(0)]
     public struct OperationMapRenderEligibleSourceRowBakingComponent : IBufferElementData
     {
@@ -226,5 +232,8 @@ namespace Game.Components
         public UnityObjectRef<Mesh> Mesh;
         public UnityObjectRef<Material> Material;
         public ushort SubMeshIndex;
+        public int StateOwnerIndex;
+        public OperationMapRenderVisualState RequiredVisualState;
+        public byte RequiresStateOwner;
     }
 }

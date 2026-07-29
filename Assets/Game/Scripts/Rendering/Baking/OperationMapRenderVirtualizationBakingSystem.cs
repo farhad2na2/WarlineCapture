@@ -14,6 +14,7 @@ namespace Game.Rendering
     {
         private EntityQuery _databaseQuery;
         private EntityQuery _sourceRowQuery;
+        private EntityQuery _buildingOwnerQuery;
 
         public void OnCreate(ref SystemState state)
         {
@@ -25,6 +26,17 @@ namespace Game.Rendering
                 All = new[]
                 {
                     ComponentType.ReadOnly<OperationMapRenderSourceRowBakingComponent>()
+                },
+                Options = EntityQueryOptions.IncludeDisabledEntities |
+                          EntityQueryOptions.IncludePrefab |
+                          EntityQueryOptions.IgnoreComponentEnabledState
+            });
+            _buildingOwnerQuery = state.GetEntityQuery(new EntityQueryDesc
+            {
+                All = new[]
+                {
+                    ComponentType.ReadOnly<
+                        OperationMapVirtualizedBuildingOwnerBakingComponent>()
                 },
                 Options = EntityQueryOptions.IncludeDisabledEntities |
                           EntityQueryOptions.IncludePrefab |
@@ -50,18 +62,64 @@ namespace Game.Rendering
             var expected = new Dictionary<
                 SourceRowKey,
                 OperationMapRenderEligibleSourceRowBakingComponent>(expectedBuffer.Length);
+            var expectedBuildingStateOwners = new Dictionary<OwnerKey, int>();
             for (int index = 0; index < expectedBuffer.Length; index++)
             {
                 OperationMapRenderEligibleSourceRowBakingComponent row =
                     expectedBuffer[index];
+                bool requiresStateOwner = row.RequiresStateOwner == 1;
+                if (row.RequiresStateOwner > 1 ||
+                    (requiresStateOwner
+                        ? row.StateOwnerIndex < 0 ||
+                          row.RequiredVisualState == OperationMapRenderVisualState.Any
+                        : row.StateOwnerIndex != -1 ||
+                          row.RequiredVisualState != OperationMapRenderVisualState.Any))
+                {
+                    throw new InvalidOperationException(
+                        "Eligible logical row has inconsistent building-state ownership.");
+                }
                 if (!expected.TryAdd(SourceRowKey.From(row), row))
                 {
                     throw new InvalidOperationException(
                         "Eligible logical rows contain a duplicate owner/path identity.");
                 }
+                if (requiresStateOwner)
+                {
+                    OwnerKey owner = OwnerKey.From(row.OwnerIdentity);
+                    if (expectedBuildingStateOwners.TryGetValue(
+                            owner,
+                            out int existingStateOwnerIndex) &&
+                        existingStateOwnerIndex != row.StateOwnerIndex)
+                    {
+                        throw new InvalidOperationException(
+                            "One virtualized building maps to more than one state-owner index.");
+                    }
+                    expectedBuildingStateOwners[owner] = row.StateOwnerIndex;
+                }
+            }
+
+            var buildingEntities = new Dictionary<OwnerKey, Entity>();
+            using (NativeArray<Entity> buildingOwnerEntities =
+                   _buildingOwnerQuery.ToEntityArray(Allocator.Temp))
+            {
+                for (int index = 0; index < buildingOwnerEntities.Length; index++)
+                {
+                    Entity buildingEntity = buildingOwnerEntities[index];
+                    OwnerKey owner = OwnerKey.From(
+                        entityManager.GetComponentData<
+                            OperationMapVirtualizedBuildingOwnerBakingComponent>(
+                            buildingEntity).OwnerIdentity);
+                    if (!buildingEntities.TryAdd(owner, buildingEntity))
+                    {
+                        throw new InvalidOperationException(
+                            "More than one canonical building uses one virtualized owner identity.");
+                    }
+                }
             }
 
             var matched = new HashSet<SourceRowKey>();
+            var buildingSourceRowCounts = new Dictionary<OwnerKey, int>();
+            var matchedBuildingRowCounts = new Dictionary<OwnerKey, int>();
             using NativeArray<Entity> sourceOwners =
                 _sourceRowQuery.ToEntityArray(Allocator.Temp);
             using var commandBuffer = new EntityCommandBuffer(Allocator.Temp);
@@ -76,16 +134,27 @@ namespace Game.Rendering
                 {
                     OperationMapRenderSourceRowBakingComponent source =
                         sourceRows[rowIndex];
+                    OwnerKey sourceOwnerKey = OwnerKey.From(source.OwnerIdentity);
+                    if (expectedBuildingStateOwners.ContainsKey(sourceOwnerKey))
+                    {
+                        buildingSourceRowCounts.TryGetValue(
+                            sourceOwnerKey,
+                            out int sourceRowCount);
+                        buildingSourceRowCounts[sourceOwnerKey] = sourceRowCount + 1;
+                    }
                     SourceRowKey key = SourceRowKey.From(source);
                     if (!expected.TryGetValue(
                             key,
                             out OperationMapRenderEligibleSourceRowBakingComponent row))
                         continue;
 
-                    if (source.IsRenderOnlyOwner != 1)
+                    bool requiresStateOwner = row.RequiresStateOwner == 1;
+                    if (requiresStateOwner
+                            ? source.IsRenderOnlyOwner != 0
+                            : source.IsRenderOnlyOwner != 1)
                     {
                         throw new InvalidOperationException(
-                            "An eligible logical row resolved to a canonical gameplay owner.");
+                            "Eligible source ownership does not match its logical state policy.");
                     }
                     if (!matched.Add(key))
                     {
@@ -93,6 +162,23 @@ namespace Game.Rendering
                             "More than one converted source render entity matched one logical row.");
                     }
                     Entity convertedRenderEntity = source.RenderEntity;
+                    if (requiresStateOwner)
+                    {
+                        if (!buildingEntities.TryGetValue(
+                                sourceOwnerKey,
+                                out Entity buildingEntity) ||
+                            convertedRenderEntity == buildingEntity)
+                        {
+                            throw new InvalidOperationException(
+                                "A stateful source row does not resolve to a separate " +
+                                "canonical gameplay building.");
+                        }
+                        matchedBuildingRowCounts.TryGetValue(
+                            sourceOwnerKey,
+                            out int matchedBuildingRowCount);
+                        matchedBuildingRowCounts[sourceOwnerKey] =
+                            matchedBuildingRowCount + 1;
+                    }
                     if (!entityManager.Exists(convertedRenderEntity) ||
                         !entityManager.HasComponent<MaterialMeshInfo>(convertedRenderEntity) ||
                         !entityManager.HasComponent<RenderMeshUnmanaged>(convertedRenderEntity))
@@ -132,7 +218,77 @@ namespace Game.Rendering
                     $"Logical/source stripping parity failed: matched {matched.Count}/" +
                     $"{expected.Count} eligible rows.");
             }
+            foreach (KeyValuePair<OwnerKey, int> stateOwner in
+                     expectedBuildingStateOwners)
+            {
+                if (!buildingEntities.TryGetValue(
+                        stateOwner.Key,
+                        out Entity buildingEntity) ||
+                    !entityManager.HasComponent<OperationMapBuildingComponent>(
+                        buildingEntity) ||
+                    !entityManager.HasComponent<OperationMapBuildingPresentation>(
+                        buildingEntity) ||
+                    entityManager.HasComponent<
+                        OperationMapVirtualizedBuildingPresentationComponent>(
+                        buildingEntity))
+                {
+                    throw new InvalidOperationException(
+                        "Virtualized building replacement requires one canonical building " +
+                        "with resident render-root ownership.");
+                }
+                buildingSourceRowCounts.TryGetValue(
+                    stateOwner.Key,
+                    out int sourceRowCount);
+                matchedBuildingRowCounts.TryGetValue(
+                    stateOwner.Key,
+                    out int matchedRowCount);
+                if (sourceRowCount == 0 || sourceRowCount != matchedRowCount)
+                {
+                    throw new InvalidOperationException(
+                        "Virtualized building replacement requires every source render row " +
+                        "to have an exact logical match.");
+                }
+
+                commandBuffer.RemoveComponent<OperationMapBuildingPresentation>(
+                    buildingEntity);
+                commandBuffer.AddComponent(
+                    buildingEntity,
+                    new OperationMapVirtualizedBuildingPresentationComponent
+                    {
+                        StateOwnerIndex = stateOwner.Value
+                    });
+            }
             commandBuffer.Playback(entityManager);
+        }
+    }
+
+    internal readonly struct OwnerKey : IEquatable<OwnerKey>
+    {
+        private readonly ulong _low;
+        private readonly ulong _high;
+
+        private OwnerKey(OperationMapRenderIdentity128 identity)
+        {
+            _low = identity.Low;
+            _high = identity.High;
+        }
+
+        internal static OwnerKey From(OperationMapRenderIdentity128 identity) =>
+            new(identity);
+
+        public bool Equals(OwnerKey other) =>
+            _low == other._low && _high == other._high;
+
+        public override bool Equals(object obj) =>
+            obj is OwnerKey other && Equals(other);
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ((int)_low ^ (int)(_low >> 32)) * 397 ^
+                       (int)_high ^ (int)(_high >> 32);
+            }
         }
     }
 

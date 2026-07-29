@@ -339,6 +339,10 @@ namespace Game.Authoring
                         : 1f,
                     State = byte.MaxValue
                 });
+                OperationMapRenderSourceBakingMarkerBuilder.AddBuildingOwnerMarker(
+                    this,
+                    authoring,
+                    entity);
 
                 AddResourceStorage(entity, runtimeBuildingId, authoring.factionId, definition);
                 AddDefense(entity, definition);

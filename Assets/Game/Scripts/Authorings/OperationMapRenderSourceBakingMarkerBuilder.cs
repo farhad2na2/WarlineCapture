@@ -58,6 +58,21 @@ namespace Game.Authoring
                 {
                     OperationMapRenderPrototypePartConfigRecord part =
                         config.Parts[prototype.FirstPart + partOffset];
+                    bool requiresStateOwner =
+                        (prototype.EligibilityFlags &
+                         OperationMapRenderEligibilityFlags.RequiresStateOwner) != 0;
+                    if (requiresStateOwner
+                            ? placement.StateOwnerIndex < 0 ||
+                              placement.RequiredVisualState ==
+                              OperationMapRenderVisualState.Any
+                            : placement.StateOwnerIndex != -1 ||
+                              placement.RequiredVisualState !=
+                              OperationMapRenderVisualState.Any)
+                    {
+                        throw new InvalidOperationException(
+                            "Eligible logical placement state ownership does not match " +
+                            "its prototype policy.");
+                    }
                     if (part.SubMeshIndex != 0)
                     {
                         throw new InvalidOperationException(
@@ -80,7 +95,10 @@ namespace Game.Authoring
                         },
                         Mesh = config.Meshes[part.MeshIndex].Mesh,
                         Material = config.Materials[part.MaterialIndex].Material,
-                        SubMeshIndex = (ushort)part.SubMeshIndex
+                        SubMeshIndex = (ushort)part.SubMeshIndex,
+                        StateOwnerIndex = placement.StateOwnerIndex,
+                        RequiredVisualState = placement.RequiredVisualState,
+                        RequiresStateOwner = (byte)(requiresStateOwner ? 1 : 0)
                     };
                     if (!expectedKeys.Add(SourceRowKey.From(row)))
                     {
@@ -97,6 +115,28 @@ namespace Game.Authoring
                     "Source-row stripping requires at least one eligible logical row.");
             }
 
+        }
+
+        internal static void AddBuildingOwnerMarker(
+            Baker<OperationMapBuildingAuthoring> baker,
+            OperationMapBuildingAuthoring authoring,
+            Entity buildingEntity)
+        {
+            if (baker == null)
+                throw new ArgumentNullException(nameof(baker));
+            if (authoring == null)
+                throw new ArgumentNullException(nameof(authoring));
+
+            string source = OperationMapIdentityRules.IsValidGeneratedStableId(
+                authoring.StableId)
+                ? "densegenerated|" + authoring.StableId
+                : "acceptedmap|" + authoring.SourceGlobalObjectId;
+            baker.AddComponent(
+                buildingEntity,
+                new OperationMapVirtualizedBuildingOwnerBakingComponent
+                {
+                    OwnerIdentity = Project(source)
+                });
         }
 
         internal static void AddOwnerMarkers<TAuthoring>(

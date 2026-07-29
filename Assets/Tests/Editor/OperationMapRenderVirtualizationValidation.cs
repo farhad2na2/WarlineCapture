@@ -67,7 +67,8 @@ public sealed class OperationMapRenderVirtualizationValidation
             tests.ProxySlotBakePlan_UsesEveryReportedSlotAndExactFixedPolicy();
             tests.ProxySlots_BakeAsDisabledLeafEntitiesWithExactBucketRanges();
             tests.EligibleSourceRows_BakeOnlyWhileGameplayAndResidentOwnersSurvive();
-            Debug.Log("[OperationMapRenderVirtualizationValidation] result=Passed tests=42");
+            tests.VirtualizedBuilding_ReplacesOnlyRenderRootOwnershipWithStateIndex();
+            Debug.Log("[OperationMapRenderVirtualizationValidation] result=Passed tests=43");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -1597,6 +1598,169 @@ public sealed class OperationMapRenderVirtualizationValidation
         }
     }
 
+    [Test]
+    public void VirtualizedBuilding_ReplacesOnlyRenderRootOwnershipWithStateIndex()
+    {
+        const string buildingStableId =
+            "densecity.cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc";
+        Assert.That(
+            OperationMapRenderIdentityProjection.TryProject(
+                "densegenerated|" + buildingStableId,
+                out OperationMapRenderIdentity128 ownerIdentity,
+                out string ownerError),
+            Is.True,
+            ownerError);
+        Assert.That(
+            OperationMapRenderIdentityProjection.TryProject(
+                "renderer-path|<owner>",
+                out OperationMapRenderIdentity128 pathIdentity,
+                out string pathError),
+            Is.True,
+            pathError);
+
+        OperationMapRenderDatabaseBakeConfig config =
+            CreateValidBakeConfig(out Mesh mesh, out Material material);
+        mesh.vertices = new[]
+        {
+            new Vector3(0f, 0f, 0f),
+            new Vector3(1f, 0f, 0f),
+            new Vector3(0f, 1f, 0f)
+        };
+        mesh.triangles = new[] { 0, 1, 2 };
+        mesh.RecalculateBounds();
+        Set(
+            config,
+            "prototypes",
+            new[]
+            {
+                new OperationMapRenderPrototypeConfigRecord(
+                    1ul,
+                    2ul,
+                    0,
+                    1,
+                    mesh.bounds,
+                    DenseCityPresentationSemanticCategory.GameplayBuildingIntact,
+                    OperationMapRenderEligibilityFlags.Eligible |
+                    OperationMapRenderEligibilityFlags.RequiresStateOwner)
+            });
+        Set(
+            config,
+            "parts",
+            new[]
+            {
+                new OperationMapRenderPrototypePartConfigRecord(
+                    pathIdentity.Low,
+                    pathIdentity.High,
+                    0,
+                    0,
+                    0,
+                    Matrix4x4.identity,
+                    mesh.bounds,
+                    Color.white,
+                    OperationMapRenderPolicyBucket.OpaqueShadowsOff,
+                    0,
+                    OperationMapRenderLodFlags.Lod0,
+                    OperationMapRenderShadowFlags.None)
+            });
+        Set(
+            config,
+            "placements",
+            new[]
+            {
+                new OperationMapRenderPlacementConfigRecord(
+                    ownerIdentity.Low,
+                    ownerIdentity.High,
+                    0,
+                    Matrix4x4.identity,
+                    0,
+                    7,
+                    OperationMapRenderVisualState.Intact,
+                    0,
+                    DenseCityPresentationSemanticCategory.GameplayBuildingIntact)
+            });
+        Assert.That(config.TryValidateSchema(out string configError), Is.True, configError);
+
+        GameObject root = new("VRP035 Virtualized Presentation Bake Root");
+        GameObject sources = new("VRP035 Source Presentation");
+        sources.transform.SetParent(root.transform, false);
+        GameObject buildingOwner = new("VRP035 Canonical Building");
+        buildingOwner.transform.SetParent(sources.transform, false);
+        GameObject intact = CreateRenderOwner(
+            "VRP035 Intact Visual",
+            buildingOwner.transform,
+            mesh,
+            material);
+        GameObject destroyed = new("VRP035 Destroyed Visual");
+        destroyed.transform.SetParent(buildingOwner.transform, false);
+        intact.AddComponent<DenseCityPresentationIdentityAuthoring>()
+            .ConfigureForEditor(
+                buildingStableId,
+                OperationMapEntityPresentationRole.GameplayBuildings,
+                DenseCityPresentationSemanticCategory.GameplayBuildingIntact);
+        BuildingDefinitionAuthoring definition =
+            buildingOwner.AddComponent<BuildingDefinitionAuthoring>();
+        buildingOwner.AddComponent<OperationMapBuildingAuthoring>()
+            .ConfigureGeneratedForEditor(
+                "opmap.skirmish.virtualized",
+                buildingStableId,
+                3,
+                2,
+                new Vector2Int(4, 6),
+                new Vector2Int(2, 2),
+                300,
+                definition,
+                intact,
+                destroyed);
+        OperationMapVirtualizedPresentationAuthoring virtualization =
+            root.AddComponent<OperationMapVirtualizedPresentationAuthoring>();
+        Set(virtualization, "databaseConfig", config);
+        Set(virtualization, "sourcePresentationRoot", sources);
+
+        World world = new("VRP035BuildingOwnershipBake");
+        try
+        {
+            BakeGameObjects(world, root);
+
+            EntityManager entityManager = world.EntityManager;
+            Entity buildingEntity = FindNamedEntityWithComponent<
+                OperationMapBuildingComponent>(
+                entityManager,
+                buildingOwner.name);
+            Entity intactEntity = FindNamedRenderEntity(
+                entityManager,
+                intact.name);
+
+            Assert.That(HasBakingOnlyEntity(entityManager, intactEntity), Is.True);
+            Assert.That(HasBakingOnlyEntity(entityManager, buildingEntity), Is.False);
+            Assert.That(
+                entityManager.HasComponent<OperationMapBuildingPresentation>(
+                    buildingEntity),
+                Is.False);
+            Assert.That(
+                entityManager.HasComponent<
+                    OperationMapVirtualizedBuildingPresentationComponent>(
+                    buildingEntity),
+                Is.True);
+            Assert.That(
+                entityManager.GetComponentData<
+                    OperationMapVirtualizedBuildingPresentationComponent>(
+                    buildingEntity).StateOwnerIndex,
+                Is.EqualTo(7));
+            Assert.That(
+                entityManager.HasComponent<OperationMapBuildingDestroyedComponent>(
+                    buildingEntity),
+                Is.True);
+        }
+        finally
+        {
+            world.Dispose();
+            UnityEngine.Object.DestroyImmediate(root);
+            UnityEngine.Object.DestroyImmediate(config);
+            UnityEngine.Object.DestroyImmediate(material);
+            UnityEngine.Object.DestroyImmediate(mesh);
+        }
+    }
+
     private static GameObject CreateRenderOwner(
         string name,
         Transform parent,
@@ -1627,6 +1791,28 @@ public sealed class OperationMapRenderVirtualizationValidation
         }
 
         Assert.Fail($"No converted render entity named '{name}' was found.");
+        return Entity.Null;
+    }
+
+    private static Entity FindNamedEntityWithComponent<T>(
+        EntityManager entityManager,
+        string name)
+        where T : unmanaged, IComponentData
+    {
+        using NativeArray<Entity> entities =
+            entityManager.GetAllEntities(Allocator.Temp);
+        for (int index = 0; index < entities.Length; index++)
+        {
+            Entity entity = entities[index];
+            if (entityManager.GetName(entity) == name &&
+                entityManager.HasComponent<T>(entity))
+            {
+                return entity;
+            }
+        }
+
+        Assert.Fail(
+            $"No converted entity named '{name}' with {typeof(T).Name} was found.");
         return Entity.Null;
     }
 

@@ -5,6 +5,7 @@ using Game.Components;
 
 namespace Game.Rendering
 {
+    [UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = true)]
     public sealed partial class RuntimeCameraReferenceSystem : SystemBase
     {
         private Entity _snapshotEntity;
@@ -13,11 +14,12 @@ namespace Game.Rendering
 
         protected override void OnCreate()
         {
-            Enabled = false;
+            _snapshotEntity = EnsureSnapshotEntity();
         }
 
         protected override void OnUpdate()
         {
+            PublishSnapshot();
         }
 
         protected override void OnDestroy()
@@ -29,13 +31,11 @@ namespace Game.Rendering
         public void SetWorldCamera(Camera camera)
         {
             WorldCamera = camera;
-            PublishSnapshot();
         }
 
         public void ClearWorldCamera()
         {
             WorldCamera = null;
-            PublishInvalidSnapshot();
         }
 
         public static bool TryGetWorldCamera(EntityManager entityManager, out Camera camera)
@@ -67,7 +67,6 @@ namespace Game.Rendering
             if (referenceSystem == null)
                 return false;
 
-            referenceSystem.PublishSnapshot();
             return referenceSystem.TryReadSnapshot(out snapshot) && snapshot.IsValid != 0;
         }
 
@@ -99,11 +98,19 @@ namespace Game.Rendering
 
             float4x4 worldToCamera = ToFloat4x4(WorldCamera.worldToCameraMatrix);
             float4x4 projection = ToFloat4x4(WorldCamera.projectionMatrix);
+            float3 position = WorldCamera.transform.position;
+            quaternion rotation = WorldCamera.transform.rotation;
             EntityManager.SetComponentData(entity, new RuntimeCameraSnapshotComponent
             {
                 IsValid = 1,
-                Position = WorldCamera.transform.position,
-                Rotation = WorldCamera.transform.rotation,
+                PublicationVersion = NextPublicationVersion(entity),
+                Signature = ComputeSignature(
+                    position,
+                    rotation,
+                    worldToCamera,
+                    projection),
+                Position = position,
+                Rotation = rotation,
                 WorldToCamera = worldToCamera,
                 Projection = projection,
                 ViewProjection = math.mul(projection, worldToCamera)
@@ -117,7 +124,14 @@ namespace Game.Rendering
 
             Entity entity = EnsureSnapshotEntity();
             if (entity != Entity.Null)
-                EntityManager.SetComponentData(entity, default(RuntimeCameraSnapshotComponent));
+            {
+                EntityManager.SetComponentData(
+                    entity,
+                    new RuntimeCameraSnapshotComponent
+                    {
+                        PublicationVersion = NextPublicationVersion(entity)
+                    });
+            }
         }
 
         private Entity EnsureSnapshotEntity()
@@ -143,6 +157,73 @@ namespace Game.Rendering
             _snapshotEntity = em.CreateEntity(typeof(RuntimeCameraSnapshotComponent));
             em.SetName(_snapshotEntity, "RuntimeCameraSnapshot");
             return _snapshotEntity;
+        }
+
+        private uint NextPublicationVersion(Entity entity)
+        {
+            uint previous = EntityManager
+                .GetComponentData<RuntimeCameraSnapshotComponent>(entity)
+                .PublicationVersion;
+            uint next = previous + 1u;
+            return next == 0u ? 1u : next;
+        }
+
+        private static OperationMapRenderIdentity128 ComputeSignature(
+            float3 position,
+            quaternion rotation,
+            float4x4 worldToCamera,
+            float4x4 projection)
+        {
+            const ulong lowPrime = 1099511628211ul;
+            const ulong highPrime = 14029467366897019727ul;
+            ulong low = 14695981039346656037ul;
+            ulong high = 7809847782465536322ul;
+            Hash(ref low, ref high, math.asuint(position.x), lowPrime, highPrime);
+            Hash(ref low, ref high, math.asuint(position.y), lowPrime, highPrime);
+            Hash(ref low, ref high, math.asuint(position.z), lowPrime, highPrime);
+            Hash(ref low, ref high, math.asuint(rotation.value.x), lowPrime, highPrime);
+            Hash(ref low, ref high, math.asuint(rotation.value.y), lowPrime, highPrime);
+            Hash(ref low, ref high, math.asuint(rotation.value.z), lowPrime, highPrime);
+            Hash(ref low, ref high, math.asuint(rotation.value.w), lowPrime, highPrime);
+            Hash(ref low, ref high, math.asuint(worldToCamera.c0), lowPrime, highPrime);
+            Hash(ref low, ref high, math.asuint(worldToCamera.c1), lowPrime, highPrime);
+            Hash(ref low, ref high, math.asuint(worldToCamera.c2), lowPrime, highPrime);
+            Hash(ref low, ref high, math.asuint(worldToCamera.c3), lowPrime, highPrime);
+            Hash(ref low, ref high, math.asuint(projection.c0), lowPrime, highPrime);
+            Hash(ref low, ref high, math.asuint(projection.c1), lowPrime, highPrime);
+            Hash(ref low, ref high, math.asuint(projection.c2), lowPrime, highPrime);
+            Hash(ref low, ref high, math.asuint(projection.c3), lowPrime, highPrime);
+            return new OperationMapRenderIdentity128
+            {
+                Low = low,
+                High = high
+            };
+        }
+
+        private static void Hash(
+            ref ulong low,
+            ref ulong high,
+            uint4 values,
+            ulong lowPrime,
+            ulong highPrime)
+        {
+            Hash(ref low, ref high, values.x, lowPrime, highPrime);
+            Hash(ref low, ref high, values.y, lowPrime, highPrime);
+            Hash(ref low, ref high, values.z, lowPrime, highPrime);
+            Hash(ref low, ref high, values.w, lowPrime, highPrime);
+        }
+
+        private static void Hash(
+            ref ulong low,
+            ref ulong high,
+            uint value,
+            ulong lowPrime,
+            ulong highPrime)
+        {
+            low = (low ^ value) * lowPrime;
+            high ^= (ulong)value + 0x9e3779b97f4a7c15ul +
+                    (high << 6) + (high >> 2);
+            high *= highPrime;
         }
 
         private static float4x4 ToFloat4x4(Matrix4x4 value)

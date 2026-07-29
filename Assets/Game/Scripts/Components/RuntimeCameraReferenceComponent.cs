@@ -9,6 +9,8 @@ namespace Game.Components
     public struct RuntimeCameraSnapshotComponent : IComponentData
     {
         public byte IsValid;
+        public uint PublicationVersion;
+        public OperationMapRenderIdentity128 Signature;
         public float3 Position;
         public quaternion Rotation;
         public float4x4 WorldToCamera;

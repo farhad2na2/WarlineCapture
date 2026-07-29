@@ -207,6 +207,30 @@ namespace Game.Components
         public OperationMapRenderRebuildReason RebuildReason;
     }
 
+    public struct OperationMapRenderPackedReadinessComponent : IComponentData
+    {
+        public byte ResidencyMode;
+        public int EligibleSourceRowCount;
+        public int ResidentSourceRowCount;
+        public int ProxySlotCount;
+        public int VirtualizedAcceptedBuildingIdentityCount;
+        public int VirtualizedAcceptedRenderOnlyIdentityCount;
+        public int VirtualizedGeneratedBuildingIdentityCount;
+        public int VirtualizedGeneratedRenderOnlyIdentityCount;
+    }
+
+    public struct OperationMapRenderEligibleSourceComponent : IComponentData
+    {
+    }
+
+    [InternalBufferCapacity(0)]
+    public struct OperationMapRenderResidentSourceRowComponent : IBufferElementData
+    {
+        public Entity RenderEntity;
+        public OperationMapRenderIdentity128 OwnerIdentity;
+        public OperationMapRenderIdentity128 RendererPathIdentity;
+    }
+
     [BakingType]
     [InternalBufferCapacity(1)]
     public struct OperationMapRenderSourceRowBakingComponent : IBufferElementData
@@ -215,6 +239,7 @@ namespace Game.Components
         public OperationMapRenderIdentity128 OwnerIdentity;
         public OperationMapRenderIdentity128 RendererPathIdentity;
         public byte IsRenderOnlyOwner;
+        public byte IsGeneratedOwner;
     }
 
     [BakingType]

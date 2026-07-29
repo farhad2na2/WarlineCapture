@@ -1384,6 +1384,7 @@ public sealed class OperationMapRenderVirtualizationValidation
 
         GameObject root = new("VRP033 Virtualized Presentation Bake Root");
         World world = new("VRP033VirtualizedPresentationBake");
+        IDisposable blobAssetStore = null;
         try
         {
             OperationMapVirtualizedPresentationAuthoring authoring =
@@ -1391,7 +1392,7 @@ public sealed class OperationMapRenderVirtualizationValidation
             Set(authoring, "databaseConfig", config);
             Set(authoring, "mapGeneration", 0);
 
-            BakeGameObjects(world, root);
+            BakeGameObjects(world, root, out blobAssetStore);
 
             EntityManager entityManager = world.EntityManager;
             EntityQuery slotsQuery = entityManager.CreateEntityQuery(
@@ -1438,6 +1439,7 @@ public sealed class OperationMapRenderVirtualizationValidation
         finally
         {
             world.Dispose();
+            blobAssetStore?.Dispose();
             UnityEngine.Object.DestroyImmediate(root);
         }
     }
@@ -1517,6 +1519,7 @@ public sealed class OperationMapRenderVirtualizationValidation
         GameObject sources = new("VRP034 Source Presentation");
         sources.transform.SetParent(root.transform, false);
         World world = new("VRP034SourceOwnershipBake");
+        IDisposable blobAssetStore = null;
         try
         {
             OperationMapVirtualizedPresentationAuthoring virtualization =
@@ -1558,7 +1561,7 @@ public sealed class OperationMapRenderVirtualizationValidation
                     OperationMapEntityPresentationRole.GameplayBuildings,
                     0);
 
-            BakeGameObjects(world, root);
+            BakeGameObjects(world, root, out blobAssetStore);
 
             EntityManager entityManager = world.EntityManager;
             Entity eligibleEntity = FindNamedRenderEntity(
@@ -1587,10 +1590,44 @@ public sealed class OperationMapRenderVirtualizationValidation
                 entityManager.HasComponent<OperationMapEntityPresentationIdentity>(
                     gameplayEntity),
                 Is.True);
+
+            using EntityQuery databaseQuery = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<OperationMapRenderDatabaseComponent>(),
+                ComponentType.ReadOnly<
+                    OperationMapRenderPackedReadinessComponent>());
+            Assert.That(databaseQuery.CalculateEntityCount(), Is.EqualTo(1));
+            Entity databaseEntity = databaseQuery.GetSingletonEntity();
+            OperationMapRenderDatabaseComponent database =
+                entityManager.GetComponentData<
+                    OperationMapRenderDatabaseComponent>(databaseEntity);
+            Assert.That(database.Blob.IsCreated, Is.True);
+            Assert.That(
+                database.Blob.Value.OperationMapId.ToString(),
+                Is.EqualTo("opmap.skirmish.virtualized"));
+            Assert.That(database.Blob.Value.Prototypes.Length, Is.EqualTo(1));
+            Assert.That(database.Blob.Value.Parts.Length, Is.EqualTo(1));
+            Assert.That(database.Blob.Value.Placements.Length, Is.EqualTo(1));
+            OperationMapRenderPackedReadinessComponent packedReadiness =
+                entityManager.GetComponentData<
+                    OperationMapRenderPackedReadinessComponent>(databaseEntity);
+            Assert.That(packedReadiness.ResidencyMode, Is.EqualTo(1));
+            Assert.That(packedReadiness.EligibleSourceRowCount, Is.EqualTo(1));
+            Assert.That(packedReadiness.ResidentSourceRowCount, Is.EqualTo(2));
+            Assert.That(packedReadiness.ProxySlotCount, Is.EqualTo(12));
+            Assert.That(
+                packedReadiness.VirtualizedGeneratedRenderOnlyIdentityCount,
+                Is.EqualTo(1));
+            Assert.That(
+                entityManager.GetBuffer<
+                    OperationMapRenderResidentSourceRowComponent>(
+                    databaseEntity,
+                    true).Length,
+                Is.EqualTo(2));
         }
         finally
         {
             world.Dispose();
+            blobAssetStore?.Dispose();
             UnityEngine.Object.DestroyImmediate(root);
             UnityEngine.Object.DestroyImmediate(config);
             UnityEngine.Object.DestroyImmediate(material);
@@ -1717,9 +1754,10 @@ public sealed class OperationMapRenderVirtualizationValidation
         Set(virtualization, "sourcePresentationRoot", sources);
 
         World world = new("VRP035BuildingOwnershipBake");
+        IDisposable blobAssetStore = null;
         try
         {
-            BakeGameObjects(world, root);
+            BakeGameObjects(world, root, out blobAssetStore);
 
             EntityManager entityManager = world.EntityManager;
             Entity buildingEntity = FindNamedEntityWithComponent<
@@ -1754,6 +1792,7 @@ public sealed class OperationMapRenderVirtualizationValidation
         finally
         {
             world.Dispose();
+            blobAssetStore?.Dispose();
             UnityEngine.Object.DestroyImmediate(root);
             UnityEngine.Object.DestroyImmediate(config);
             UnityEngine.Object.DestroyImmediate(material);
@@ -1828,7 +1867,10 @@ public sealed class OperationMapRenderVirtualizationValidation
             ComponentType.FromTypeIndex(typeIndex));
     }
 
-    private static void BakeGameObjects(World world, GameObject root)
+    private static void BakeGameObjects(
+        World world,
+        GameObject root,
+        out IDisposable blobAssetStoreLifetime)
     {
         Type bakingUtilityType = Type.GetType("Unity.Entities.BakingUtility, Unity.Entities.Hybrid", true);
         Type bakingSettingsType = Type.GetType("Unity.Entities.BakingSettings, Unity.Entities.Hybrid", true);
@@ -1838,6 +1880,7 @@ public sealed class OperationMapRenderVirtualizationValidation
         Assert.That(blobAssetStoreType, Is.Not.Null);
 
         object blobAssetStore = Activator.CreateInstance(blobAssetStoreType, 128);
+        blobAssetStoreLifetime = blobAssetStore as IDisposable;
         try
         {
             object settings = Activator.CreateInstance(bakingSettingsType);
@@ -1851,10 +1894,11 @@ public sealed class OperationMapRenderVirtualizationValidation
             Assert.That(bake, Is.Not.Null);
             bake.Invoke(null, new object[] { world, new[] { root }, settings });
         }
-        finally
+        catch
         {
-            if (blobAssetStore is IDisposable disposable)
-                disposable.Dispose();
+            blobAssetStoreLifetime?.Dispose();
+            blobAssetStoreLifetime = null;
+            throw;
         }
     }
 

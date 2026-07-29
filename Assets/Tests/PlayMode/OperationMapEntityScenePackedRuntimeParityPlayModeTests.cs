@@ -1844,6 +1844,7 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
         public bool TryEnsureReady(
             string sceneGuid,
             string expectedOperationMapId,
+            OperationMapRenderResidencyMode renderResidencyMode,
             ref Entity sceneEntity,
             ref bool ownsScene,
             out bool ready,
@@ -1868,6 +1869,7 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
                         entityManager,
                         sceneEntity,
                         expectedOperationMapId + ".forced-readiness-failure",
+                        renderResidencyMode,
                         out error);
                 Assert.That(unexpectedlyAccepted, Is.False);
                 return false;
@@ -1876,6 +1878,7 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
             return inner.TryEnsureReady(
                 sceneGuid,
                 expectedOperationMapId,
+                renderResidencyMode,
                 ref sceneEntity,
                 ref ownsScene,
                 out ready,

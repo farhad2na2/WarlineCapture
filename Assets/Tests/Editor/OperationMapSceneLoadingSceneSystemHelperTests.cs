@@ -904,6 +904,7 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
         public bool TryEnsureReady(
             string sceneGuid,
             string expectedOperationMapId,
+            OperationMapRenderResidencyMode renderResidencyMode,
             ref Entity sceneEntity,
             ref bool ownsScene,
             out bool ready,

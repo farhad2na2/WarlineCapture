@@ -1,6 +1,7 @@
 using System;
 using Game.Components;
 using Game.Composition;
+using Game.Configs;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
@@ -15,6 +16,10 @@ public sealed class OperationMapEntityPresentationReadinessUtilityTests
     private Entity sceneEntity;
     private Entity sectionEntity;
     private Entity contractEntity;
+    private Entity vehicleIdentityEntity;
+    private Entity renderOnlyIdentityEntity;
+    private Entity virtualizedDatabaseEntity;
+    private BlobAssetReference<OperationMapRenderDatabaseBlob> virtualizedBlob;
 
     public static void RunFocusedValidation()
     {
@@ -27,7 +32,11 @@ public sealed class OperationMapEntityPresentationReadinessUtilityTests
             suite.TryValidate_AcceptsExplicitGeneratedIdentityTotals,
             suite.TryValidate_RejectsDuplicateGeneratedIdentity,
             suite.TryValidate_RejectsGeneratedRoleCategoryMismatch,
-            suite.TryValidate_RejectsProtectedOverlapOnNonInfrastructure
+            suite.TryValidate_RejectsProtectedOverlapOnNonInfrastructure,
+            suite.TryValidate_AcceptsCompleteVirtualizedPackedContract,
+            suite.TryValidate_RejectsVirtualizedMissingDatabase,
+            suite.TryValidate_RejectsEligibleSourceSurvivor,
+            suite.TryValidate_RejectsDuplicateProxySlotIdentity
         };
         foreach (Action test in tests)
         {
@@ -74,8 +83,8 @@ public sealed class OperationMapEntityPresentationReadinessUtilityTests
         CreateRoot(2);
         CreateRoot(3);
         CreateIdentity(1, "building");
-        CreateIdentity(2, "vehicle");
-        CreateIdentity(3, "render-only");
+        vehicleIdentityEntity = CreateIdentity(2, "vehicle");
+        renderOnlyIdentityEntity = CreateIdentity(3, "render-only");
         CreateSectionEntity(typeof(OperationMapBuildingPresentation));
         CreateSectionEntity(typeof(OperationMapAuthoredVehiclePresentation));
     }
@@ -85,6 +94,8 @@ public sealed class OperationMapEntityPresentationReadinessUtilityTests
     {
         if (world != null && world.IsCreated)
             world.Dispose();
+        if (virtualizedBlob.IsCreated)
+            virtualizedBlob.Dispose();
     }
 
     [Test]
@@ -223,6 +234,72 @@ public sealed class OperationMapEntityPresentationReadinessUtilityTests
         Assert.That(error, Does.Contain("invalid semantic metadata"));
     }
 
+    [Test]
+    public void TryValidate_AcceptsCompleteVirtualizedPackedContract()
+    {
+        ConfigureVirtualizedPackedContract();
+
+        Assert.That(
+            OperationMapEntityPresentationReadinessUtility.TryValidate(
+                world.EntityManager,
+                sceneEntity,
+                OperationMapId,
+                OperationMapRenderResidencyMode.VirtualizedProxyPool,
+                out string error),
+            Is.True,
+            error);
+    }
+
+    [Test]
+    public void TryValidate_RejectsVirtualizedMissingDatabase()
+    {
+        ConfigureVirtualizedPackedContract();
+        world.EntityManager.DestroyEntity(virtualizedDatabaseEntity);
+
+        Assert.That(
+            OperationMapEntityPresentationReadinessUtility.TryValidate(
+                world.EntityManager,
+                sceneEntity,
+                OperationMapId,
+                OperationMapRenderResidencyMode.VirtualizedProxyPool,
+                out string error),
+            Is.False);
+        Assert.That(error, Does.Contain("exactly one packed render database"));
+    }
+
+    [Test]
+    public void TryValidate_RejectsEligibleSourceSurvivor()
+    {
+        ConfigureVirtualizedPackedContract();
+        CreateSectionEntity(typeof(OperationMapRenderEligibleSourceComponent));
+
+        Assert.That(
+            OperationMapEntityPresentationReadinessUtility.TryValidate(
+                world.EntityManager,
+                sceneEntity,
+                OperationMapId,
+                OperationMapRenderResidencyMode.VirtualizedProxyPool,
+                out string error),
+            Is.False);
+        Assert.That(error, Does.Contain("eligible source render rows"));
+    }
+
+    [Test]
+    public void TryValidate_RejectsDuplicateProxySlotIdentity()
+    {
+        ConfigureVirtualizedPackedContract(duplicateSlotIndex: true);
+
+        Assert.That(
+            OperationMapEntityPresentationReadinessUtility.TryValidate(
+                world.EntityManager,
+                sceneEntity,
+                OperationMapId,
+                OperationMapRenderResidencyMode.VirtualizedProxyPool,
+                out string error),
+            Is.False);
+        Assert.That(error, Does.Contain("invalid or duplicate slot identity"));
+    }
+
     private void ConfigureGeneratedContract(
         int generatedCount,
         int expectedBuildings,
@@ -260,7 +337,7 @@ public sealed class OperationMapEntityPresentationReadinessUtilityTests
             });
     }
 
-    private void CreateIdentity(byte role, string sourceId)
+    private Entity CreateIdentity(byte role, string sourceId)
     {
         Entity entity = CreateSectionEntity(typeof(OperationMapEntityPresentationIdentity));
         world.EntityManager.SetComponentData(
@@ -272,6 +349,139 @@ public sealed class OperationMapEntityPresentationReadinessUtilityTests
                 Role = role,
                 PlacementIndex = role
             });
+        return entity;
+    }
+
+    private void ConfigureVirtualizedPackedContract(
+        bool duplicateSlotIndex = false)
+    {
+        world.EntityManager.DestroyEntity(renderOnlyIdentityEntity);
+        virtualizedBlob = CreateVirtualizedBlob();
+        virtualizedDatabaseEntity = CreateSectionEntity(
+            typeof(OperationMapRenderDatabaseComponent),
+            typeof(OperationMapRenderPackedReadinessComponent));
+        world.EntityManager.SetComponentData(
+            virtualizedDatabaseEntity,
+            new OperationMapRenderDatabaseComponent
+            {
+                Blob = virtualizedBlob,
+                ContentHash = new FixedString128Bytes(new string('b', 64)),
+                SchemaVersion = 1,
+                MapGeneration = 0
+            });
+        world.EntityManager.SetComponentData(
+            virtualizedDatabaseEntity,
+            new OperationMapRenderPackedReadinessComponent
+            {
+                ResidencyMode =
+                    (byte)OperationMapRenderResidencyMode.VirtualizedProxyPool,
+                EligibleSourceRowCount = 1,
+                ResidentSourceRowCount = 1,
+                ProxySlotCount = 2,
+                VirtualizedAcceptedRenderOnlyIdentityCount = 1
+            });
+        world.EntityManager.AddBuffer<
+            OperationMapRenderResidentSourceRowComponent>(
+            virtualizedDatabaseEntity).Add(
+            new OperationMapRenderResidentSourceRowComponent
+            {
+                RenderEntity = vehicleIdentityEntity,
+                OwnerIdentity = new OperationMapRenderIdentity128
+                {
+                    Low = 11,
+                    High = 12
+                },
+                RendererPathIdentity = new OperationMapRenderIdentity128
+                {
+                    Low = 13,
+                    High = 14
+                }
+            });
+
+        for (int index = 0; index < 2; index++)
+        {
+            Entity slot =
+                CreateSectionEntity(typeof(OperationMapRenderProxySlotComponent));
+            world.EntityManager.SetComponentData(
+                slot,
+                new OperationMapRenderProxySlotComponent
+                {
+                    SlotIndex = duplicateSlotIndex && index == 1 ? 0 : index,
+                    PoolBucketIndex = 0,
+                    PlacementIndex = -1,
+                    PartIndex = -1,
+                    AssignmentGeneration = 0
+                });
+        }
+    }
+
+    private static BlobAssetReference<OperationMapRenderDatabaseBlob>
+        CreateVirtualizedBlob()
+    {
+        using var builder = new BlobBuilder(Allocator.Temp);
+        ref OperationMapRenderDatabaseBlob root =
+            ref builder.ConstructRoot<OperationMapRenderDatabaseBlob>();
+        root.OperationMapId = new FixedString64Bytes(OperationMapId);
+        root.ContentHash = new FixedString128Bytes(new string('b', 64));
+        root.SchemaVersion = 1;
+        root.CellSize = 32f;
+        root.GridDimensions = new Unity.Mathematics.int2(1, 1);
+        builder.Allocate(ref root.Prototypes, 1)[0] =
+            new OperationMapRenderPrototypeBlob
+            {
+                ContentIdentity = new OperationMapRenderIdentity128
+                {
+                    Low = 1,
+                    High = 2
+                },
+                FirstPart = 0,
+                PartCount = 1,
+                EligibilityFlags = OperationMapRenderEligibilityFlags.Eligible
+            };
+        builder.Allocate(ref root.Parts, 1)[0] =
+            new OperationMapRenderPrototypePartBlob
+            {
+                RendererPathHash = new OperationMapRenderIdentity128
+                {
+                    Low = 3,
+                    High = 4
+                },
+                PoolBucketIndex = 0
+            };
+        builder.Allocate(ref root.Placements, 1)[0] =
+            new OperationMapRenderPlacementBlob
+            {
+                StableIdentityHash = new OperationMapRenderIdentity128
+                {
+                    Low = 5,
+                    High = 6
+                },
+                PrototypeIndex = 0,
+                CellIndex = 0,
+                StateOwnerIndex = -1
+            };
+        builder.Allocate(ref root.Cells, 1)[0] =
+            new OperationMapRenderCellBlob
+            {
+                FirstPlacementIndex = 0,
+                PlacementIndexCount = 1
+            };
+        builder.Allocate(ref root.CellPlacementIndices, 1)[0] = 0;
+        builder.Allocate(ref root.PoolBuckets, 1)[0] =
+            new OperationMapRenderPoolBucketBlob
+            {
+                FirstSlot = 0,
+                Capacity = 2,
+                PeakRequiredCount = 1,
+                HeadroomCount = 1,
+                ReportIdentity = new OperationMapRenderIdentity128
+                {
+                    Low = 7,
+                    High = 8
+                }
+            };
+        return builder.CreateBlobAssetReference<
+            OperationMapRenderDatabaseBlob>(Allocator.Persistent);
     }
 
     private void CreateGeneratedIdentity(

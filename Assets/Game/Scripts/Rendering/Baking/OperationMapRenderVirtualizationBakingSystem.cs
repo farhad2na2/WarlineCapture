@@ -15,6 +15,7 @@ namespace Game.Rendering
         private EntityQuery _databaseQuery;
         private EntityQuery _sourceRowQuery;
         private EntityQuery _buildingOwnerQuery;
+        private EntityQuery _slotQuery;
 
         public void OnCreate(ref SystemState state)
         {
@@ -42,11 +43,27 @@ namespace Game.Rendering
                           EntityQueryOptions.IncludePrefab |
                           EntityQueryOptions.IgnoreComponentEnabledState
             });
+            _slotQuery = state.GetEntityQuery(new EntityQueryDesc
+            {
+                All = new[]
+                {
+                    ComponentType.ReadOnly<OperationMapRenderProxySlotComponent>()
+                },
+                Options = EntityQueryOptions.IncludeDisabledEntities |
+                          EntityQueryOptions.IncludePrefab |
+                          EntityQueryOptions.IgnoreComponentEnabledState
+            });
         }
 
         public void OnUpdate(ref SystemState state)
         {
             int databaseCount = _databaseQuery.CalculateEntityCount();
+            if (databaseCount == 0 &&
+                _sourceRowQuery.IsEmptyIgnoreFilter &&
+                _buildingOwnerQuery.IsEmptyIgnoreFilter)
+            {
+                return;
+            }
             if (databaseCount != 1)
             {
                 throw new InvalidOperationException(
@@ -118,6 +135,10 @@ namespace Game.Rendering
             }
 
             var matched = new HashSet<SourceRowKey>();
+            var residentKeys = new HashSet<SourceRowKey>();
+            var residentRows =
+                new List<OperationMapRenderResidentSourceRowComponent>();
+            var virtualizedOwnerClasses = new Dictionary<OwnerKey, byte>();
             var buildingSourceRowCounts = new Dictionary<OwnerKey, int>();
             var matchedBuildingRowCounts = new Dictionary<OwnerKey, int>();
             using NativeArray<Entity> sourceOwners =
@@ -146,9 +167,33 @@ namespace Game.Rendering
                     if (!expected.TryGetValue(
                             key,
                             out OperationMapRenderEligibleSourceRowBakingComponent row))
+                    {
+                        if (!residentKeys.Add(key))
+                        {
+                            throw new InvalidOperationException(
+                                "Resident source rows contain a duplicate owner/path identity.");
+                        }
+                        if (!entityManager.Exists(source.RenderEntity))
+                        {
+                            throw new InvalidOperationException(
+                                "Resident source row references a missing render entity.");
+                        }
+                        residentRows.Add(
+                            new OperationMapRenderResidentSourceRowComponent
+                            {
+                                RenderEntity = source.RenderEntity,
+                                OwnerIdentity = source.OwnerIdentity,
+                                RendererPathIdentity = source.RendererPathIdentity
+                            });
                         continue;
+                    }
 
                     bool requiresStateOwner = row.RequiresStateOwner == 1;
+                    if (source.IsGeneratedOwner > 1)
+                    {
+                        throw new InvalidOperationException(
+                            "Eligible source row has an invalid identity namespace.");
+                    }
                     if (requiresStateOwner
                             ? source.IsRenderOnlyOwner != 0
                             : source.IsRenderOnlyOwner != 1)
@@ -156,6 +201,18 @@ namespace Game.Rendering
                         throw new InvalidOperationException(
                             "Eligible source ownership does not match its logical state policy.");
                     }
+                    byte ownerClass = (byte)(
+                        (source.IsGeneratedOwner == 1 ? 2 : 0) |
+                        (requiresStateOwner ? 1 : 0));
+                    if (virtualizedOwnerClasses.TryGetValue(
+                            sourceOwnerKey,
+                            out byte existingOwnerClass) &&
+                        existingOwnerClass != ownerClass)
+                    {
+                        throw new InvalidOperationException(
+                            "One virtualized owner has inconsistent identity or gameplay roles.");
+                    }
+                    virtualizedOwnerClasses[sourceOwnerKey] = ownerClass;
                     if (!matched.Add(key))
                     {
                         throw new InvalidOperationException(
@@ -207,6 +264,9 @@ namespace Game.Rendering
                             "Eligible source render assets do not match their logical row.");
                     }
 
+                    commandBuffer.AddComponent<
+                        OperationMapRenderEligibleSourceComponent>(
+                        convertedRenderEntity);
                     commandBuffer.AddComponent<BakingOnlyEntity>(
                         convertedRenderEntity);
                 }
@@ -258,6 +318,64 @@ namespace Game.Rendering
                         StateOwnerIndex = stateOwner.Value
                     });
             }
+
+            DynamicBuffer<OperationMapRenderResidentSourceRowComponent>
+                packedResidentRows =
+                    entityManager.GetBuffer<
+                        OperationMapRenderResidentSourceRowComponent>(
+                        databaseEntity);
+            packedResidentRows.Clear();
+            for (int index = 0; index < residentRows.Count; index++)
+                packedResidentRows.Add(residentRows[index]);
+
+            int slotCount = _slotQuery.CalculateEntityCount();
+            if (slotCount <= 0)
+            {
+                throw new InvalidOperationException(
+                    "Virtualized packed readiness requires at least one proxy slot.");
+            }
+            int acceptedBuildingCount = 0;
+            int acceptedRenderOnlyCount = 0;
+            int generatedBuildingCount = 0;
+            int generatedRenderOnlyCount = 0;
+            foreach (byte ownerClass in virtualizedOwnerClasses.Values)
+            {
+                switch (ownerClass)
+                {
+                    case 0:
+                        acceptedRenderOnlyCount++;
+                        break;
+                    case 1:
+                        acceptedBuildingCount++;
+                        break;
+                    case 2:
+                        generatedRenderOnlyCount++;
+                        break;
+                    case 3:
+                        generatedBuildingCount++;
+                        break;
+                    default:
+                        throw new InvalidOperationException(
+                            "Virtualized owner classification is invalid.");
+                }
+            }
+            commandBuffer.AddComponent(
+                databaseEntity,
+                new OperationMapRenderPackedReadinessComponent
+                {
+                    ResidencyMode = 1,
+                    EligibleSourceRowCount = expected.Count,
+                    ResidentSourceRowCount = residentRows.Count,
+                    ProxySlotCount = slotCount,
+                    VirtualizedAcceptedBuildingIdentityCount =
+                        acceptedBuildingCount,
+                    VirtualizedAcceptedRenderOnlyIdentityCount =
+                        acceptedRenderOnlyCount,
+                    VirtualizedGeneratedBuildingIdentityCount =
+                        generatedBuildingCount,
+                    VirtualizedGeneratedRenderOnlyIdentityCount =
+                        generatedRenderOnlyCount
+                });
             commandBuffer.Playback(entityManager);
         }
     }

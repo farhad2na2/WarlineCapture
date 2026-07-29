@@ -173,7 +173,11 @@ namespace Game.Authoring
                     RendererPathIdentity =
                         Project("renderer-path|" + GetIndexedRelativePath(owner, renderer.transform)),
                     IsRenderOnlyOwner = (byte)(
-                        role == OperationMapEntityPresentationRole.RenderOnly ? 1 : 0)
+                        role == OperationMapEntityPresentationRole.RenderOnly ? 1 : 0),
+                    IsGeneratedOwner = (byte)(
+                        ownerIdentitySource.StartsWith(
+                            "densegenerated|",
+                            StringComparison.Ordinal) ? 1 : 0)
                 });
             }
         }

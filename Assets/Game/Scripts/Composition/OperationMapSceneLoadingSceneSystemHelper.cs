@@ -50,6 +50,7 @@ namespace Game.Composition
         bool TryEnsureReady(
             string sceneGuid,
             string expectedOperationMapId,
+            OperationMapRenderResidencyMode renderResidencyMode,
             ref Entity sceneEntity,
             ref bool ownsScene,
             out bool ready,
@@ -68,6 +69,7 @@ namespace Game.Composition
         public bool TryEnsureReady(
             string sceneGuidValue,
             string expectedOperationMapId,
+            OperationMapRenderResidencyMode renderResidencyMode,
             ref Entity sceneEntity,
             ref bool ownsScene,
             out bool ready,
@@ -103,6 +105,7 @@ namespace Game.Composition
                         world.EntityManager,
                         sceneEntity,
                         expectedOperationMapId,
+                        renderResidencyMode,
                         out error))
                 {
                     ready = false;
@@ -125,6 +128,7 @@ namespace Game.Composition
                     world.EntityManager,
                     sceneEntity,
                     expectedOperationMapId,
+                    renderResidencyMode,
                     out error))
             {
                 ready = false;
@@ -829,6 +833,7 @@ namespace Game.Composition
             return entitySceneApi.TryEnsureReady(
                 view.Definition.NavigationMetadata.AuthoredSubSceneGuid,
                 expectedOperationMapId,
+                view.Definition.RenderResidencyMode,
                 ref packedEntityScene,
                 ref ownsPackedEntityScene,
                 out ready,

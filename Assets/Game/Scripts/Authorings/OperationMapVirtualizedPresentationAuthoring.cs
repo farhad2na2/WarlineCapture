@@ -59,12 +59,20 @@ namespace Game.Authoring
                 {
                     return;
                 }
+                if (!OperationMapRenderDatabaseBlobBuilder.TryBuild(
+                        authoring.DatabaseConfig,
+                        out BlobAssetReference<OperationMapRenderDatabaseBlob> databaseBlob,
+                        out _))
+                {
+                    return;
+                }
+                AddBlobAsset(ref databaseBlob, out _);
 
                 DependsOn(authoring.DatabaseConfig);
                 Entity entity = GetEntity(TransformUsageFlags.None);
                 AddComponent(entity, new OperationMapRenderDatabaseComponent
                 {
-                    Blob = default,
+                    Blob = databaseBlob,
                     ContentHash = new FixedString128Bytes(authoring.DatabaseConfig.ContentHash),
                     SchemaVersion = authoring.DatabaseConfig.SchemaVersion,
                     MapGeneration = authoring.mapGeneration
@@ -72,6 +80,7 @@ namespace Game.Authoring
                 AddSharedComponentManaged(entity, renderMeshArray);
                 if (authoring.SourcePresentationRoot != null)
                 {
+                    AddBuffer<OperationMapRenderResidentSourceRowComponent>(entity);
                     OperationMapRenderSourceBakingMarkerBuilder.AddMarkers(
                         this,
                         authoring.SourcePresentationRoot,

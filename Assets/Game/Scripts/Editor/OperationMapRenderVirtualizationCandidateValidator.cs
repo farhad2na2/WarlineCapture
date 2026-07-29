@@ -1,0 +1,684 @@
+#if UNITY_EDITOR
+
+namespace Game.Editor
+{
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
+    using System.Security.Cryptography;
+    using System.Text;
+    using Game.Authoring;
+    using Game.Components;
+    using Game.Configs;
+    using Unity.Collections;
+    using Unity.Entities;
+    using Unity.Rendering;
+    using UnityEditor;
+    using UnityEditor.SceneManagement;
+    using UnityEngine;
+    using UnityEngine.SceneManagement;
+    using Hash128 = Unity.Entities.Hash128;
+
+    /// <summary>
+    /// VRP-038 direct, unsaved bake of the dense candidate with render virtualization
+    /// enabled only on a temporary authoring root. The persisted candidate and production
+    /// definitions remain in their accepted resident/static modes.
+    /// </summary>
+    internal static class OperationMapRenderVirtualizationCandidateValidator
+    {
+        internal const string ReportPath =
+            "Design/AgentReports/2026-07-29_dense_city_render_virtualization_direct_bake.json";
+
+        private const int ExpectedEligibleRows = 11299;
+        private const int ExpectedSlots = 704;
+        private const int ExpectedPrototypes = 22;
+        private const int ExpectedParts = 26;
+        private const int ExpectedPlacements = 9721;
+        private const int ExpectedCells = 1635;
+        private const int ExpectedPoolBuckets = 2;
+        private static readonly UTF8Encoding Utf8WithoutBom = new(false);
+
+        public static void RunTwoPassValidation()
+        {
+            string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+            var protectedSnapshot =
+                OperationMapEntitySceneCandidateBakeAll.ProtectedProductionSnapshot.Capture(
+                    projectRoot,
+                    new[]
+                    {
+                        OperationMapEntityPresentationCandidateSceneBuilder
+                            .AcceptedOperationMapScenePath,
+                        OperationMapEntityPresentationMigrationEditor.AcceptedSubScenePath,
+                        OperationMapAddressablesLayoutBuilder.DefinitionPath,
+                        OperationMapAddressablesLayoutBuilder.SourceScenePath,
+                        DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath,
+                        OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                            .DenseCandidateDefinitionPath,
+                        OperationMapRenderDatabaseBuilder.ConfigPath,
+                        "Assets/AddressableAssetsData/AddressableAssetSettings.asset",
+                        DenseCityPresentationBudgetValidator.DensePackedAssetSharingReportPath
+                    },
+                    new[]
+                    {
+                        OperationMapEntityPresentationCandidateSceneBuilder.StaticRollbackRoot,
+                        "Assets/AddressableAssetsData/AssetGroups"
+                    });
+
+            RequirePersistedModes();
+            DirectBakeSummary first = BakeAndValidate("first");
+            protectedSnapshot.RequireUnchanged();
+            RequirePersistedModes();
+            DirectBakeSummary second = BakeAndValidate("second");
+            protectedSnapshot.RequireUnchanged();
+            RequirePersistedModes();
+
+            if (!string.Equals(first.Fingerprint, second.Fingerprint, StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException(
+                    "Two direct virtualized candidate bakes produced different packed summaries: " +
+                    $"{first.Fingerprint} != {second.Fingerprint}.");
+            }
+
+            var report = new DirectBakeReport
+            {
+                schema = "warline.operation-map.render-virtualization-direct-bake",
+                schemaVersion = 1,
+                result = "Passed",
+                operationMapId =
+                    OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
+                renderResidencyMode =
+                    OperationMapRenderResidencyMode.VirtualizedProxyPool.ToString(),
+                persistedCandidateRenderResidencyMode =
+                    OperationMapRenderResidencyMode.ResidentEntities.ToString(),
+                productionPresentationKind =
+                    OperationMapPresentationKind.StaticSceneChunks.ToString(),
+                productionRenderResidencyMode =
+                    OperationMapRenderResidencyMode.ResidentEntities.ToString(),
+                productionCutover = 0,
+                passCount = 2,
+                firstFingerprint = first.Fingerprint,
+                secondFingerprint = second.Fingerprint,
+                contentHash = second.ContentHash,
+                databaseSchemaVersion = second.DatabaseSchemaVersion,
+                prototypeCount = second.PrototypeCount,
+                partCount = second.PartCount,
+                placementCount = second.PlacementCount,
+                cellCount = second.CellCount,
+                poolBucketCount = second.PoolBucketCount,
+                proxySlotCount = second.ProxySlotCount,
+                sourceRowCount = second.SourceRowCount,
+                virtualizedSourceRowCount = second.EligibleSourceRowCount,
+                packedEligibleSourceRowCount = 0,
+                packedResidentSourceRowCount = second.ResidentSourceRowCount,
+                packedSourceRowsRemoved = second.EligibleSourceRowCount,
+                virtualizedGeneratedRenderOnlyIdentityCount =
+                    second.VirtualizedGeneratedRenderOnlyIdentityCount
+            };
+            string physicalReportPath = Path.Combine(projectRoot, ReportPath);
+            Directory.CreateDirectory(
+                Path.GetDirectoryName(physicalReportPath) ?? projectRoot);
+            File.WriteAllText(
+                physicalReportPath,
+                JsonUtility.ToJson(report, true) + "\n",
+                Utf8WithoutBom);
+
+            Debug.Log(
+                "[OperationMapRenderVirtualizationCandidateValidation] result=Passed " +
+                $"passes=2 fingerprint={second.Fingerprint} " +
+                $"sourceRows={second.SourceRowCount} " +
+                $"virtualizedRows={second.EligibleSourceRowCount} " +
+                $"residentRows={second.ResidentSourceRowCount} " +
+                $"slots={second.ProxySlotCount} productionCutover=0");
+        }
+
+        private static DirectBakeSummary BakeAndValidate(string pass)
+        {
+            SceneSetup[] previousSetup = EditorSceneManager.GetSceneManagerSetup();
+            Scene candidateScene = default;
+            World world = null;
+            object blobAssetStore = null;
+            GameObject temporaryRoot = null;
+            try
+            {
+                candidateScene = EditorSceneManager.OpenScene(
+                    DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath,
+                    OpenSceneMode.Single);
+                int expectedSourceRowCount =
+                    CountAuthoringSourceRows(candidateScene);
+                OperationMapRenderDatabaseBakeConfig config =
+                    AssetDatabase.LoadAssetAtPath<OperationMapRenderDatabaseBakeConfig>(
+                        OperationMapRenderDatabaseBuilder.ConfigPath);
+                string configError = null;
+                if (config == null || !config.TryValidateSchema(out configError))
+                {
+                    throw new InvalidOperationException(
+                        $"Direct virtualized bake database is invalid: {configError}");
+                }
+
+                temporaryRoot = new GameObject(
+                    $"VRP038 Direct Virtualization Root ({pass})");
+                SceneManager.MoveGameObjectToScene(temporaryRoot, candidateScene);
+                OperationMapVirtualizedPresentationAuthoring authoring =
+                    temporaryRoot.AddComponent<OperationMapVirtualizedPresentationAuthoring>();
+                var serializedAuthoring = new SerializedObject(authoring);
+                serializedAuthoring.FindProperty("databaseConfig").objectReferenceValue = config;
+                serializedAuthoring.FindProperty("sourcePresentationRoot").objectReferenceValue =
+                    temporaryRoot;
+                serializedAuthoring.FindProperty("mapGeneration").intValue = 0;
+                serializedAuthoring.ApplyModifiedPropertiesWithoutUndo();
+
+                world = new World($"VRP038DirectBake-{pass}");
+                blobAssetStore = CreateBlobAssetStore();
+                BakeScene(world, candidateScene, blobAssetStore);
+                return ValidateWorld(
+                    world.EntityManager,
+                    expectedSourceRowCount);
+            }
+            finally
+            {
+                if (world != null)
+                    world.Dispose();
+                DisposeBlobAssetStore(blobAssetStore);
+                if (temporaryRoot != null)
+                    UnityEngine.Object.DestroyImmediate(temporaryRoot);
+                RestoreSceneSetupOrCreateEmpty(previousSetup);
+            }
+        }
+
+        private static DirectBakeSummary ValidateWorld(
+            EntityManager entityManager,
+            int expectedSourceRowCount)
+        {
+            using EntityQuery databaseQuery = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<OperationMapRenderDatabaseComponent>(),
+                ComponentType.ReadOnly<OperationMapRenderPackedReadinessComponent>(),
+                ComponentType.ReadOnly<OperationMapRenderResidentSourceRowComponent>());
+            if (databaseQuery.CalculateEntityCount() != 1)
+                throw new InvalidOperationException("Direct bake requires exactly one render database.");
+
+            Entity databaseEntity = databaseQuery.GetSingletonEntity();
+            OperationMapRenderDatabaseComponent database =
+                entityManager.GetComponentData<OperationMapRenderDatabaseComponent>(
+                    databaseEntity);
+            if (!database.Blob.IsCreated)
+                throw new InvalidOperationException("Direct bake render database blob is not created.");
+            ref OperationMapRenderDatabaseBlob blob = ref database.Blob.Value;
+            OperationMapRenderPackedReadinessComponent readiness =
+                entityManager.GetComponentData<OperationMapRenderPackedReadinessComponent>(
+                    databaseEntity);
+            DynamicBuffer<OperationMapRenderResidentSourceRowComponent> residentRows =
+                entityManager.GetBuffer<OperationMapRenderResidentSourceRowComponent>(
+                    databaseEntity,
+                    true);
+
+            int sourceRowCount = CountSourceRows(entityManager);
+            int eligibleTaggedCount = CountEligibleTaggedRows(entityManager);
+            ValidateResidentRows(entityManager, residentRows);
+            ValidateSlots(entityManager, ref blob);
+
+            string operationMapId = blob.OperationMapId.ToString();
+            string contentHash = blob.ContentHash.ToString();
+            if (!string.Equals(
+                    operationMapId,
+                    OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
+                    StringComparison.Ordinal) ||
+                !string.Equals(
+                    contentHash,
+                    database.ContentHash.ToString(),
+                    StringComparison.Ordinal) ||
+                blob.SchemaVersion != database.SchemaVersion)
+            {
+                throw new InvalidOperationException(
+                    "Direct bake database component/blob ownership is inconsistent.");
+            }
+
+            RequireCount(
+                "source rows",
+                sourceRowCount,
+                expectedSourceRowCount);
+            RequireCount(
+                "eligible readiness rows",
+                readiness.EligibleSourceRowCount,
+                ExpectedEligibleRows);
+            RequireCount("eligible tagged rows", eligibleTaggedCount, ExpectedEligibleRows);
+            RequireCount(
+                "resident readiness rows",
+                readiness.ResidentSourceRowCount,
+                expectedSourceRowCount - ExpectedEligibleRows);
+            RequireCount(
+                "resident buffer rows",
+                residentRows.Length,
+                expectedSourceRowCount - ExpectedEligibleRows);
+            RequireCount("proxy readiness slots", readiness.ProxySlotCount, ExpectedSlots);
+            RequireCount("prototypes", blob.Prototypes.Length, ExpectedPrototypes);
+            RequireCount("parts", blob.Parts.Length, ExpectedParts);
+            RequireCount("placements", blob.Placements.Length, ExpectedPlacements);
+            RequireCount("cells", blob.Cells.Length, ExpectedCells);
+            RequireCount("pool buckets", blob.PoolBuckets.Length, ExpectedPoolBuckets);
+            RequireCount(
+                "virtualized generated render-only identities",
+                readiness.VirtualizedGeneratedRenderOnlyIdentityCount,
+                ExpectedPlacements);
+            RequireCount(
+                "virtualized accepted building identities",
+                readiness.VirtualizedAcceptedBuildingIdentityCount,
+                0);
+            RequireCount(
+                "virtualized accepted render-only identities",
+                readiness.VirtualizedAcceptedRenderOnlyIdentityCount,
+                0);
+            RequireCount(
+                "virtualized generated building identities",
+                readiness.VirtualizedGeneratedBuildingIdentityCount,
+                0);
+            if (readiness.ResidencyMode !=
+                (byte)OperationMapRenderResidencyMode.VirtualizedProxyPool)
+            {
+                throw new InvalidOperationException(
+                    $"Direct bake residency mode is {readiness.ResidencyMode}.");
+            }
+            if (sourceRowCount !=
+                readiness.EligibleSourceRowCount + readiness.ResidentSourceRowCount)
+            {
+                throw new InvalidOperationException(
+                    "Direct bake source rows do not reconcile to virtualized plus resident rows.");
+            }
+
+            string canonical = string.Join(
+                "|",
+                operationMapId,
+                contentHash,
+                blob.SchemaVersion,
+                blob.Prototypes.Length,
+                blob.Parts.Length,
+                blob.Placements.Length,
+                blob.Cells.Length,
+                blob.PoolBuckets.Length,
+                sourceRowCount,
+                readiness.EligibleSourceRowCount,
+                readiness.ResidentSourceRowCount,
+                readiness.ProxySlotCount,
+                readiness.VirtualizedGeneratedRenderOnlyIdentityCount);
+            return new DirectBakeSummary(
+                ComputeSha256(canonical),
+                contentHash,
+                blob.SchemaVersion,
+                blob.Prototypes.Length,
+                blob.Parts.Length,
+                blob.Placements.Length,
+                blob.Cells.Length,
+                blob.PoolBuckets.Length,
+                readiness.ProxySlotCount,
+                sourceRowCount,
+                readiness.EligibleSourceRowCount,
+                readiness.ResidentSourceRowCount,
+                readiness.VirtualizedGeneratedRenderOnlyIdentityCount);
+        }
+
+        private static int CountSourceRows(EntityManager entityManager)
+        {
+            using EntityQuery query = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<OperationMapRenderSourceRowBakingComponent>());
+            using NativeArray<Entity> owners = query.ToEntityArray(Allocator.Temp);
+            int count = 0;
+            for (int index = 0; index < owners.Length; index++)
+            {
+                count = checked(
+                    count +
+                    entityManager.GetBuffer<OperationMapRenderSourceRowBakingComponent>(
+                        owners[index],
+                        true).Length);
+            }
+            return count;
+        }
+
+        private static int CountAuthoringSourceRows(Scene scene)
+        {
+            int count = 0;
+            GameObject[] roots = scene.GetRootGameObjects();
+            for (int rootIndex = 0; rootIndex < roots.Length; rootIndex++)
+            {
+                DenseCityPresentationIdentityAuthoring[] generatedOwners =
+                    roots[rootIndex].GetComponentsInChildren<
+                        DenseCityPresentationIdentityAuthoring>(true);
+                for (int ownerIndex = 0;
+                     ownerIndex < generatedOwners.Length;
+                     ownerIndex++)
+                {
+                    count = checked(
+                        count + CountOwnerRenderers(generatedOwners[ownerIndex]));
+                }
+
+                OperationMapEntityPresentationIdentityAuthoring[] acceptedOwners =
+                    roots[rootIndex].GetComponentsInChildren<
+                        OperationMapEntityPresentationIdentityAuthoring>(true);
+                for (int ownerIndex = 0;
+                     ownerIndex < acceptedOwners.Length;
+                     ownerIndex++)
+                {
+                    count = checked(
+                        count + CountOwnerRenderers(acceptedOwners[ownerIndex]));
+                }
+            }
+            if (count <= ExpectedEligibleRows)
+            {
+                throw new InvalidOperationException(
+                    $"Authoring source-row count is not credible: {count}.");
+            }
+            return count;
+        }
+
+        private static int CountOwnerRenderers(Component owner)
+        {
+            int count = 0;
+            Renderer[] renderers = owner.GetComponentsInChildren<Renderer>(true);
+            for (int rendererIndex = 0;
+                 rendererIndex < renderers.Length;
+                 rendererIndex++)
+            {
+                if (!HasNestedStableOwner(
+                        renderers[rendererIndex].transform,
+                        owner.transform))
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        private static bool HasNestedStableOwner(
+            Transform renderer,
+            Transform expectedOwner)
+        {
+            for (Transform current = renderer;
+                 current != null && current != expectedOwner;
+                 current = current.parent)
+            {
+                if (current.GetComponent<DenseCityPresentationIdentityAuthoring>() !=
+                        null ||
+                    current.GetComponent<
+                        OperationMapEntityPresentationIdentityAuthoring>() != null)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private static int CountEligibleTaggedRows(EntityManager entityManager)
+        {
+            Type bakingOnlyType =
+                Type.GetType("Unity.Entities.BakingOnlyEntity, Unity.Entities.Hybrid", true);
+            TypeIndex bakingOnlyTypeIndex = TypeManager.GetTypeIndex(bakingOnlyType);
+            using EntityQuery query = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<OperationMapRenderEligibleSourceComponent>(),
+                ComponentType.FromTypeIndex(bakingOnlyTypeIndex));
+            return query.CalculateEntityCount();
+        }
+
+        private static void ValidateResidentRows(
+            EntityManager entityManager,
+            DynamicBuffer<OperationMapRenderResidentSourceRowComponent> residentRows)
+        {
+            var identities = new HashSet<string>(StringComparer.Ordinal);
+            for (int index = 0; index < residentRows.Length; index++)
+            {
+                OperationMapRenderResidentSourceRowComponent row = residentRows[index];
+                if (!entityManager.Exists(row.RenderEntity) ||
+                    entityManager.HasComponent<OperationMapRenderEligibleSourceComponent>(
+                        row.RenderEntity))
+                {
+                    throw new InvalidOperationException(
+                        $"Resident source row {index} has missing or eligible render ownership.");
+                }
+
+                string identity =
+                    $"{row.OwnerIdentity.Low:x16}{row.OwnerIdentity.High:x16}|" +
+                    $"{row.RendererPathIdentity.Low:x16}{row.RendererPathIdentity.High:x16}";
+                if (!identities.Add(identity))
+                {
+                    throw new InvalidOperationException(
+                        $"Resident source row {index} duplicates owner/path identity.");
+                }
+            }
+        }
+
+        private static void ValidateSlots(
+            EntityManager entityManager,
+            ref OperationMapRenderDatabaseBlob blob)
+        {
+            using EntityQuery query = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<OperationMapRenderProxySlotComponent>());
+            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            RequireCount("proxy slots", entities.Length, ExpectedSlots);
+            var observed = new bool[ExpectedSlots];
+            for (int index = 0; index < entities.Length; index++)
+            {
+                Entity entity = entities[index];
+                OperationMapRenderProxySlotComponent slot =
+                    entityManager.GetComponentData<OperationMapRenderProxySlotComponent>(
+                        entity);
+                if ((uint)slot.SlotIndex >= (uint)observed.Length ||
+                    observed[slot.SlotIndex] ||
+                    (uint)slot.PoolBucketIndex >= (uint)blob.PoolBuckets.Length)
+                {
+                    throw new InvalidOperationException(
+                        $"Proxy slot {index} has invalid or duplicate ownership.");
+                }
+                OperationMapRenderPoolBucketBlob bucket =
+                    blob.PoolBuckets[slot.PoolBucketIndex];
+                if (slot.SlotIndex < bucket.FirstSlot ||
+                    slot.SlotIndex >= bucket.FirstSlot + bucket.Capacity ||
+                    slot.PlacementIndex != -1 ||
+                    slot.PartIndex != -1 ||
+                    slot.AssignmentGeneration != 0 ||
+                    !entityManager.HasComponent<MaterialMeshInfo>(entity) ||
+                    entityManager.IsComponentEnabled<MaterialMeshInfo>(entity))
+                {
+                    throw new InvalidOperationException(
+                        $"Proxy slot {slot.SlotIndex} violates its initial packed contract.");
+                }
+                observed[slot.SlotIndex] = true;
+            }
+            if (observed.Any(value => !value))
+                throw new InvalidOperationException("Packed proxy slot indices are not contiguous.");
+        }
+
+        private static void RequirePersistedModes()
+        {
+            OperationMapDefinition production =
+                AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
+                    OperationMapAddressablesLayoutBuilder.DefinitionPath);
+            OperationMapDefinition candidate =
+                AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
+                    OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                        .DenseCandidateDefinitionPath);
+            if (production == null ||
+                production.PresentationKind != OperationMapPresentationKind.StaticSceneChunks ||
+                production.RenderResidencyMode !=
+                OperationMapRenderResidencyMode.ResidentEntities)
+            {
+                throw new InvalidOperationException(
+                    "Production cutover is not disabled at the protected static baseline.");
+            }
+            if (candidate == null ||
+                candidate.PresentationKind != OperationMapPresentationKind.EntityScene ||
+                candidate.RenderResidencyMode !=
+                OperationMapRenderResidencyMode.ResidentEntities)
+            {
+                throw new InvalidOperationException(
+                    "VRP-038 requires the persisted candidate definition to remain resident.");
+            }
+        }
+
+        private static object CreateBlobAssetStore()
+        {
+            Type type =
+                Type.GetType("Unity.Entities.BlobAssetStore, Unity.Entities") ??
+                Type.GetType("Unity.Entities.BlobAssetStore, Unity.Entities.Hybrid");
+            if (type == null)
+                throw new InvalidOperationException("BlobAssetStore type is unavailable.");
+            return Activator.CreateInstance(type, 128);
+        }
+
+        private static void DisposeBlobAssetStore(object store)
+        {
+            if (store is IDisposable disposable)
+                disposable.Dispose();
+        }
+
+        private static void BakeScene(
+            World world,
+            Scene scene,
+            object blobAssetStore)
+        {
+            Type bakingUtilityType =
+                Type.GetType("Unity.Entities.BakingUtility, Unity.Entities.Hybrid", true);
+            Type bakingSettingsType =
+                Type.GetType("Unity.Entities.BakingSettings, Unity.Entities.Hybrid", true);
+            object settings = Activator.CreateInstance(bakingSettingsType);
+            string guid = AssetDatabase.AssetPathToGUID(
+                DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath);
+            bakingSettingsType.GetField("SceneGUID")?.SetValue(
+                settings,
+                new Hash128(guid));
+            object assignName = Enum.Parse(
+                bakingUtilityType.GetNestedType("BakingFlags"),
+                "AssignName");
+            object addGuid = Enum.Parse(
+                bakingUtilityType.GetNestedType("BakingFlags"),
+                "AddEntityGUID");
+            object flags = Enum.ToObject(
+                bakingUtilityType.GetNestedType("BakingFlags"),
+                Convert.ToUInt32(assignName) | Convert.ToUInt32(addGuid));
+            bakingSettingsType.GetProperty("BakingFlags")?.SetValue(settings, flags);
+            bakingSettingsType.GetProperty("BlobAssetStore")?.SetValue(
+                settings,
+                blobAssetStore);
+
+            MethodInfo bakeScene = bakingUtilityType.GetMethod(
+                "BakeScene",
+                BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
+            if (bakeScene == null)
+                throw new MissingMethodException("Unity.Entities.BakingUtility.BakeScene");
+            try
+            {
+                object result = bakeScene.Invoke(
+                    null,
+                    new object[] { world, scene, settings, false, null });
+                if (result is bool ok && !ok)
+                    throw new InvalidOperationException("BakeScene returned false.");
+            }
+            catch (TargetInvocationException exception)
+            {
+                throw exception.InnerException ?? exception;
+            }
+        }
+
+        private static void RestoreSceneSetupOrCreateEmpty(SceneSetup[] previousSetup)
+        {
+            if (OperationMapEntitySceneCandidateBakeAll.HasRestorableSceneSetup(previousSetup))
+                EditorSceneManager.RestoreSceneManagerSetup(previousSetup);
+            else
+                EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+        }
+
+        private static string ComputeSha256(string value)
+        {
+            using SHA256 sha256 = SHA256.Create();
+            return string.Concat(
+                sha256.ComputeHash(Utf8WithoutBom.GetBytes(value))
+                    .Select(item => item.ToString("x2")));
+        }
+
+        private static void RequireCount(string label, int actual, int expected)
+        {
+            if (actual != expected)
+                throw new InvalidOperationException(
+                    $"Direct bake expected {expected} {label}, found {actual}.");
+        }
+
+        private readonly struct DirectBakeSummary
+        {
+            internal DirectBakeSummary(
+                string fingerprint,
+                string contentHash,
+                int databaseSchemaVersion,
+                int prototypeCount,
+                int partCount,
+                int placementCount,
+                int cellCount,
+                int poolBucketCount,
+                int proxySlotCount,
+                int sourceRowCount,
+                int eligibleSourceRowCount,
+                int residentSourceRowCount,
+                int virtualizedGeneratedRenderOnlyIdentityCount)
+            {
+                Fingerprint = fingerprint;
+                ContentHash = contentHash;
+                DatabaseSchemaVersion = databaseSchemaVersion;
+                PrototypeCount = prototypeCount;
+                PartCount = partCount;
+                PlacementCount = placementCount;
+                CellCount = cellCount;
+                PoolBucketCount = poolBucketCount;
+                ProxySlotCount = proxySlotCount;
+                SourceRowCount = sourceRowCount;
+                EligibleSourceRowCount = eligibleSourceRowCount;
+                ResidentSourceRowCount = residentSourceRowCount;
+                VirtualizedGeneratedRenderOnlyIdentityCount =
+                    virtualizedGeneratedRenderOnlyIdentityCount;
+            }
+
+            internal string Fingerprint { get; }
+            internal string ContentHash { get; }
+            internal int DatabaseSchemaVersion { get; }
+            internal int PrototypeCount { get; }
+            internal int PartCount { get; }
+            internal int PlacementCount { get; }
+            internal int CellCount { get; }
+            internal int PoolBucketCount { get; }
+            internal int ProxySlotCount { get; }
+            internal int SourceRowCount { get; }
+            internal int EligibleSourceRowCount { get; }
+            internal int ResidentSourceRowCount { get; }
+            internal int VirtualizedGeneratedRenderOnlyIdentityCount { get; }
+        }
+
+        [Serializable]
+        private sealed class DirectBakeReport
+        {
+            public string schema;
+            public int schemaVersion;
+            public string result;
+            public string operationMapId;
+            public string renderResidencyMode;
+            public string persistedCandidateRenderResidencyMode;
+            public string productionPresentationKind;
+            public string productionRenderResidencyMode;
+            public int productionCutover;
+            public int passCount;
+            public string firstFingerprint;
+            public string secondFingerprint;
+            public string contentHash;
+            public int databaseSchemaVersion;
+            public int prototypeCount;
+            public int partCount;
+            public int placementCount;
+            public int cellCount;
+            public int poolBucketCount;
+            public int proxySlotCount;
+            public int sourceRowCount;
+            public int virtualizedSourceRowCount;
+            public int packedEligibleSourceRowCount;
+            public int packedResidentSourceRowCount;
+            public int packedSourceRowsRemoved;
+            public int virtualizedGeneratedRenderOnlyIdentityCount;
+        }
+    }
+}
+
+#endif

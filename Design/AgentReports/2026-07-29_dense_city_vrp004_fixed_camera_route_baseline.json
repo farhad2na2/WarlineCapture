@@ -1,0 +1,116 @@
+{
+  "schema": "warline.operation-map.dense-city-vrp004-fixed-camera-route-baseline",
+  "schemaVersion": 1,
+  "result": "PassedReconciledDiagnosticBaseline",
+  "reconciledAt": "2026-07-29",
+  "baselineRevision": {
+    "gitRevision": "f78a338692f6913d8034a14c0313c0b198bf7d8b",
+    "purpose": "The exact source revision for the fixed-camera baseline. It contains the unchanged dense candidate presentation scene and the VRP-002 diagnostic capture source; it is the last revision before the evidence-only VRP-002 commit.",
+    "currentEvidenceRevision": "da451f4c479d00f2af6ed48487ab315ab43132db",
+    "equivalenceChecks": {
+      "candidatePresentationSceneUnchangedFromReleaseApkBuild": true,
+      "candidatePresentationSceneUnchangedFromBaselineRevisionToCurrentEvidenceRevision": true,
+      "eligibilityInventoryUnchangedFromBaselineRevisionToCurrentEvidenceRevision": true,
+      "sourceRowInventoryUnchangedFromBaselineRevisionToCurrentEvidenceRevision": true,
+      "dominantOwnerSourceFilesUnchangedFromReleaseApkBuildToBaselineRevision": true,
+      "qualification": "The corrected release APK was built at a3946c7b052cf7b5f87f37c09e005a244a3f7fb5 and observed at f5b02a162823dfeb0945625fcc31772bfc9fd105. The candidate presentation scene and the three owner source files named below are unchanged through f78a3386, so the immutable row count and owner attribution reconcile to this exact baseline revision. The Development profiler binary remains diagnostic-only."
+    }
+  },
+  "identity": {
+    "operationMapId": "opmap.skirmish.desert_base_01",
+    "entitySceneGuid": "c00140f2e94a04c3084c8dcb0c18cbd0",
+    "candidateScenePath": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
+    "candidateSceneDependencyHash": "8336750a74b2e1844e086fe2118e8514"
+  },
+  "fixedCameraRoute": {
+    "routeId": "corrected-apk-dense-match-stable-camera-30s",
+    "routeKind": "fixed post-readiness Match camera observation",
+    "durationSeconds": 30,
+    "cameraPoseCaptured": false,
+    "cameraPoseQualification": "The retained VRP-000 evidence records a stable Match observation and its exact screenshot, but not a serializable camera transform. This report does not invent one; any future before/after acceptance route must record its camera samples explicitly.",
+    "screen": {
+      "width": 2712,
+      "height": 1220,
+      "renderScale": 0.5,
+      "targetFrameRate": 60
+    },
+    "visibleStateEvidence": {
+      "densePresentationVisible": true,
+      "minimapMarkersVisible": true,
+      "screenshotSha256": "fe3fb9545526547029ba6db6f658c79eb91d22d79d9bf0fedd258c92d20c0c48"
+    }
+  },
+  "renderRows": {
+    "total": 82797,
+    "eligible": 11299,
+    "excluded": 71498,
+    "reconciliation": "82797 = 11299 + 71498",
+    "sourceRowsSha256": "2476874c1feed3976982e8a41986b3fb8de116329568d974e5580f37023f69d8",
+    "sourceRowsJsonSha256": "1426108ab3ce2c308c7ce67639e8c45cca08acafcb46cb828051240b6e5596c8",
+    "sourceRowsGzipSha256": "b89d760526f0d01f5c5862061cdfe128e65ccca0e02757723081f17611756333",
+    "eligibleBySemanticCategory": {
+      "Vegetation": 5423,
+      "Prop": 5876
+    },
+    "excludedBySemanticCategory": {
+      "AcceptedMapResident": 14062,
+      "GameplayBuildingIntact": 18375,
+      "Infrastructure": 39005,
+      "Horizon": 53,
+      "Prop": 3
+    },
+    "unresolvedOwnerRows": 355,
+    "inventoryEvidencePath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_eligibility_inventory.json"
+  },
+  "releaseAndroidMeasurement": {
+    "qualification": "Release diagnostic baseline only; it is not a 120-second representative-route acceptance sample.",
+    "apk": {
+      "bytes": 555817853,
+      "sha256": "dec15d022c10eda2f3e3e4cb397f37871fac69656af5d7cdccd77741b32ae079",
+      "buildRevision": "a3946c7b052cf7b5f87f37c09e005a244a3f7fb5",
+      "observedRevision": "f5b02a162823dfeb0945625fcc31772bfc9fd105"
+    },
+    "device": {
+      "manufacturer": "Xiaomi",
+      "model": "24090RA29G",
+      "androidVersion": "16",
+      "apiLevel": 36,
+      "abi": "arm64-v8a"
+    },
+    "fps": { "minimum": 15.7, "maximum": 16.3 },
+    "frameMs": { "minimum": 61.5, "maximum": 63.7 },
+    "cpuMainMs": { "minimum": 56.7, "maximum": 59.8, "observedSpike": 78.5 },
+    "gpuMs": { "minimum": 15.6, "maximum": 16.4 },
+    "cpuRenderThreadMs": { "minimum": 1.8, "maximum": 2.3 },
+    "instrumentedGameplayUpdateAverageMs": 0.4,
+    "renderCounters": { "drawCalls": 50, "setPassCalls": 31, "triangles": 785844, "vertices": 1423203, "unitCount": 5431 },
+    "evidencePath": "Design/AgentReports/2026-07-27_dense_city_candidate_android_minimap_performance_rerun.json"
+  },
+  "rawProfilerOwnerAttribution": {
+    "qualification": "Development profiler attribution only; its 71.73 ms average frame time and 13.9 FPS do not replace the release measurement above.",
+    "profilerApkSha256": "5eeb468afd3ddaec8441bbf1679dc9b30bc819bb001dcd589b329767cdecccfe",
+    "rawCaptureSha256": "1d9916067e0e57fffd759b7a7b9762a755b5e8253a91559ea43a3942fd547ff8",
+    "analyzedFrames": "300..799 (500 frames)",
+    "dominantOwnerSourcePaths": [
+      "Assets/Game/Scripts/Rendering/Systems/UnitFactionTintTargetBackfillSystem.cs",
+      "Assets/Game/Scripts/Rendering/Systems/UnitMassRenderSettingsSystem.cs",
+      "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs"
+    ],
+    "dominantOwners": [
+      { "marker": "Default World Game.Rendering.UnitFactionTintTargetBackfillSystem", "averageMsPerFrame": 38.946 },
+      { "marker": "Default World Game.Rendering.UnitMassRenderSettingsSystem", "averageMsPerFrame": 13.068 },
+      { "marker": "ThreatDetectionWarningSystem:ThreatScanJob (Burst)", "averageMsPerFrame": 5.211 }
+    ],
+    "supportingMarkers": { "WaitForJobGroupID": 8.67, "JobHandle.Complete": 8.551, "EntitiesGraphicsSystem": 0.58, "mainThreadRenderLoop": 2.936, "renderThreadRenderLoop": 3.46 },
+    "evidencePath": "Design/AgentReports/2026-07-29_dense_city_vrp002_android_raw_profiler_evidence.json"
+  },
+  "conclusions": {
+    "rowAndAndroidIdentityReconciled": true,
+    "dominantOwnerAttributionReconciled": true,
+    "releaseFpsAccepted": false,
+    "cpuMainBudgetAccepted": false,
+    "gpuBudgetAccepted": false,
+    "representationMutationAuthorized": false,
+    "reason": "The exact 82,797-row immutable candidate identity, corrected release baseline, and VRP-002 owner profile now share an explicit baseline revision. This is evidence reconciliation only: it neither changes render-row ownership nor approves a virtualized representation, and the route lacks a captured transform for future acceptance comparisons."
+  }
+}

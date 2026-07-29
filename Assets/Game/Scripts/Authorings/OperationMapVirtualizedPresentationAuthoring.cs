@@ -77,6 +77,9 @@ namespace Game.Authoring
                     SchemaVersion = authoring.DatabaseConfig.SchemaVersion,
                     MapGeneration = authoring.mapGeneration
                 });
+                AddComponent(entity, new OperationMapRenderVirtualizationStateComponent());
+                AddComponent(entity, new OperationMapRenderVirtualizationMetricsComponent());
+                AddBuffer<OperationMapRenderStateChangeComponent>(entity);
                 AddSharedComponentManaged(entity, renderMeshArray);
                 if (authoring.SourcePresentationRoot != null)
                 {

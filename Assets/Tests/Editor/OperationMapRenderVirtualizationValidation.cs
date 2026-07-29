@@ -1395,6 +1395,26 @@ public sealed class OperationMapRenderVirtualizationValidation
             BakeGameObjects(world, root, out blobAssetStore);
 
             EntityManager entityManager = world.EntityManager;
+            using EntityQuery databaseQuery = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<OperationMapRenderDatabaseComponent>());
+            Entity databaseEntity = databaseQuery.GetSingletonEntity();
+            Assert.That(
+                entityManager.HasComponent<
+                    OperationMapRenderVirtualizationStateComponent>(databaseEntity),
+                Is.True);
+            Assert.That(
+                entityManager.HasComponent<
+                    OperationMapRenderVirtualizationMetricsComponent>(databaseEntity),
+                Is.True);
+            Assert.That(
+                entityManager.HasBuffer<OperationMapRenderStateChangeComponent>(
+                    databaseEntity),
+                Is.True);
+            using EntityQuery stateOwnerQuery = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<
+                    OperationMapRenderVirtualizationStateComponent>());
+            Assert.That(stateOwnerQuery.CalculateEntityCount(), Is.EqualTo(1));
+
             EntityQuery slotsQuery = entityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<OperationMapRenderProxySlotComponent>());
             using NativeArray<Entity> slots = slotsQuery.ToEntityArray(Allocator.Temp);

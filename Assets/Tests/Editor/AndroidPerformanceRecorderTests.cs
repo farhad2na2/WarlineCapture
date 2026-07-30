@@ -10,7 +10,7 @@ using UnityEngine;
 
 public sealed class AndroidPerformanceRecorderTests
 {
-    private const string PassMarker = "[AndroidPerformanceRecorderValidation] result=Passed tests=17";
+    private const string PassMarker = "[AndroidPerformanceRecorderValidation] result=Passed tests=18";
     private delegate void CaptureReleaseMetrics(long batches, long setPassCalls, long triangles, long vertices);
 
     public static void RunFocusedValidation()
@@ -20,6 +20,7 @@ public sealed class AndroidPerformanceRecorderTests
         {
             tests.RequiredFlagIsCaseInsensitiveAndExact();
             tests.MissingFlagKeepsRecorderDisabled();
+            tests.RenderVirtualizationMetricsFlagIsIndependentExactAndOptIn();
             tests.LegacyDevelopmentFlagRemainsEnabled();
             tests.ExplicitDevelopmentTaskRemainsEnabled();
             tests.ReleaseModeRequiresExactTaskAndFrameRate();
@@ -88,6 +89,31 @@ public sealed class AndroidPerformanceRecorderTests
         Assert.IsFalse(recorder.IsEnabled);
         Assert.IsNull(ReadField(recorder, "_frameTimesMs"));
         Assert.IsNull(ReadField(recorder, "_latestFrameTiming"));
+        DisposeWithoutReport(recorder);
+    }
+
+    [Test]
+    public void RenderVirtualizationMetricsFlagIsIndependentExactAndOptIn()
+    {
+        AndroidPerformanceRecorder recorder = new();
+        InvokeInitialize(
+            recorder,
+            new[] { "app", "-warlineVrp053Metrics" },
+            true);
+        Assert.IsFalse(recorder.IsEnabled);
+        Assert.IsTrue((bool)ReadField(
+            recorder,
+            "_renderVirtualizationMetricsEnabled"));
+        DisposeWithoutReport(recorder);
+
+        recorder = new AndroidPerformanceRecorder();
+        InvokeInitialize(
+            recorder,
+            new[] { "app", "-warlineVrp053MetricsExtra" },
+            true);
+        Assert.IsFalse((bool)ReadField(
+            recorder,
+            "_renderVirtualizationMetricsEnabled"));
         DisposeWithoutReport(recorder);
     }
 

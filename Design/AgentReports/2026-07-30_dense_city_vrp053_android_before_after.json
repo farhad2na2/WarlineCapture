@@ -1,0 +1,126 @@
+{
+  "schema": "warline.dense-city.vrp053.android-before-after",
+  "schemaVersion": 1,
+  "capturedAt": "2026-07-30",
+  "device": {
+    "manufacturer": "Xiaomi",
+    "model": "24090RA29G",
+    "androidVersion": 16,
+    "apiLevel": 36,
+    "architecture": "arm64-v8a"
+  },
+  "route": {
+    "identity": "APH-804",
+    "launchArguments": "-warlineAutoStartMatch -warlinePerformanceFrameRate 60",
+    "cameraInputDuringSample": "none",
+    "qualification": "The accepted before run and rejected after runs use the same APH-804 auto-start Match route and stationary user input. The historical before report did not serialize the exact camera pose and used a 30-second window, while the release after recorder used 600 seconds and the raw profiler analysis used frames 300..799. This supports owner ranking and rejection, but is not exact image-pixel parity."
+  },
+  "before": {
+    "source": "Design/AgentReports/2026-07-27_dense_city_candidate_android_minimap_performance_rerun.json",
+    "apkBytes": 555817853,
+    "apkSha256": "dec15d02caa0c2396ec9f9bc68a29c66fc7fbf26515dd50112ab9e67b5ae079",
+    "fpsRange": "15.7..16.3",
+    "frameTimeMsRange": "61.5..63.7",
+    "cpuMainMsRange": "56.7..59.8",
+    "cpuRenderThreadMsRange": "1.8..2.3",
+    "gpuMsRange": "15.6..16.4",
+    "totalPssKiB": 2209278,
+    "graphicsPssKiB": 948829,
+    "gameplayUpdateMs": 0.4,
+    "rawProfilerOwners": {
+      "source": "Design/AgentReports/2026-07-29_dense_city_vrp002_android_raw_profiler_evidence.json",
+      "unitFactionTintTargetBackfillMsPerFrame": 38.946,
+      "unitMassRenderSettingsMsPerFrame": 13.068,
+      "waitForJobGroupIdMsPerFrame": 8.67,
+      "jobHandleCompleteMsPerFrame": 8.551,
+      "entitiesGraphicsMsPerFrame": 0.58
+    }
+  },
+  "afterReleaseRecorder": {
+    "apkBytes": 558922441,
+    "apkSha256": "220b5f2f5fdc008ee9fb3b6d3bb7b3b1d7fbc61c4b551309cfbc4602211edde8",
+    "captureSeconds": 600.0368,
+    "samples": 5186,
+    "complete": false,
+    "failure": "release recorder required profiler counters were unavailable",
+    "averageFps": 8.64,
+    "averageFrameMs": 115.7032,
+    "p95FrameMs": 180.1522,
+    "p99FrameMs": 212.8742,
+    "averageCpuFrameMs": 115.7099,
+    "p95CpuFrameMs": 183.7231,
+    "averageGpuMs": 13.3346,
+    "p95GpuMs": 14.7886,
+    "peakResidentMiB": 2165.21,
+    "peakAllocatedMiB": 977.432,
+    "finalTotalPssKiB": 2168541,
+    "finalGraphicsPssKiB": 928705,
+    "finalNativeHeapKiB": 69884,
+    "screenshotSha256": "9cd5af031245533d0703f31b24664bc583315d71e6227aa9101d602faa7bc07",
+    "visibleReview": "Dense Match HUD, buildings, vegetation, props, and terrain were visible with no obvious gross hole in the captured view. Exact image parity is unaccepted because the before report did not serialize its camera pose."
+  },
+  "afterRawProfiler": {
+    "apkBytes": 583131036,
+    "apkSha256": "4eaf7858926d041db508911323be1e0bb171802b42b7f278d0b15d108269817b",
+    "captureBytes": 504864320,
+    "captureFrames": "0..900",
+    "analysisFrames": "300..799",
+    "analysisFrameCount": 500,
+    "summary": "Design/AgentReports/2026-07-30_dense_city_vrp053_android_after_profiler_summary.md",
+    "averageFps": 10.6,
+    "averageFrameMs": 93.94,
+    "p95FrameMs": 110.68,
+    "p99FrameMs": 114.71,
+    "maximumFrameMs": 134.55,
+    "averageCpuActiveMs": 93.93,
+    "p95CpuActiveMs": 110.66,
+    "averageGpuMs": 15.53,
+    "p95GpuMs": 16.59,
+    "totalGcAllocatedBytes": 3835632,
+    "renderThreadRenderLoopMsPerFrame": 4.028,
+    "entitiesGraphicsMsPerFrame": 0.683,
+    "dominantOwners": {
+      "unitFactionTintTargetBackfillMsPerFrame": 51.722,
+      "unitMassRenderSettingsMsPerFrame": 17.318,
+      "threatDetectionWarningJobMsPerFrame": 7.161,
+      "waitForJobGroupIdMsPerFrame": 11.342,
+      "jobHandleCompleteMsPerFrame": 11.377
+    }
+  },
+  "virtualization": {
+    "logicalPlacements": 9721,
+    "logicalParts": 11299,
+    "residentRenderRows": 70710,
+    "slotCapacity": 704,
+    "enabledSlots": 0,
+    "activeCells": 0,
+    "activePlacements": 0,
+    "retainedSlots": 0,
+    "releasedSlots": 0,
+    "reboundSlots": 0,
+    "overflow": 0,
+    "capacityDeficit": 0,
+    "rebuildReason": 1,
+    "commandVersion": 1,
+    "evidence": "[VRP-053 AndroidMetrics] placements=9721 parts=11299 resident=70710 slots=0/704 activeCells=0 activePlacements=0 retained=0 released=0 rebound=0 overflow=0 deficit=0 reason=1 commandVersion=1"
+  },
+  "decision": {
+    "result": "Rejected",
+    "expansionAccepted": false,
+    "reasons": [
+      "CPU-main p95 regressed from approximately 56.7..59.8 ms before to 110.66 ms in the raw after capture.",
+      "All 704 proxy slots remained disabled and the Android initial view selected zero cells and placements.",
+      "UnitFactionTintTargetBackfillSystem and UnitMassRenderSettingsSystem remained dominant whole-world stationary-frame owners.",
+      "Exact camera-pose image parity is unavailable from the historical before artifact."
+    ],
+    "next": "VRP-054 must reject pilot expansion, correct Android initial-view publication and remove unchanged whole-world presentation scans, then rebuild and rerun the same Android gate before any broader representation ownership mutation."
+  },
+  "validation": {
+    "instrumentationFocusedLog": "%TEMP%/warline-vrp053-metrics-contract-final.log",
+    "instrumentationFocusedMarker": "[AndroidPerformanceRecorderValidation] result=Passed tests=18",
+    "profilerApkBuildLog": "%TEMP%/warline-vrp053-profiler-metrics-apk-subst.log",
+    "profilerApkBuildMarker": "[DenseCityCandidateAndroidPackage] result=Passed",
+    "profilerExportLog": "%TEMP%/warline-vrp053-after-profiler-export.log",
+    "profilerExportMarker": "[ProfilerCaptureSummaryExporter] result=Passed frames=500 range=300..799"
+  }
+}

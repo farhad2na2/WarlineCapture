@@ -196,6 +196,7 @@ namespace Game.Runtime
             bool profilerAttached,
             bool profilerMarkersEnabled)
         {
+            InitializeRenderVirtualizationMetrics(commandLineArguments);
             _mode = ResolveMode(commandLineArguments, isDevelopmentBuild);
             if (_mode == RecorderMode.Disabled)
                 return;

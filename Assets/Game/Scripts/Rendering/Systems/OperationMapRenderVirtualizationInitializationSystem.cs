@@ -80,6 +80,11 @@ namespace Game.Rendering
 
             int stateOwnerCount = _stateOwnerQuery.CalculateEntityCount();
             int activeMapCount = _activeMapQuery.CalculateEntityCount();
+            if (activeMapCount == 0)
+            {
+                CompleteAndDispose(ref state);
+                return;
+            }
             Entity databaseEntity = databaseCount == 1
                 ? _databaseQuery.GetSingletonEntity()
                 : Entity.Null;

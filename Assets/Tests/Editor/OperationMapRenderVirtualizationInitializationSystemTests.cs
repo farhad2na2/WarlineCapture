@@ -34,6 +34,8 @@ public sealed class OperationMapRenderVirtualizationInitializationSystemTests
                 test => test.NativeState_BuildsExactUnboundMaps());
             RunCase(tests, nameof(DatabaseRemoval_DisposesPersistentState),
                 test => test.DatabaseRemoval_DisposesPersistentState());
+            RunCase(tests, nameof(MissingActiveMap_WaitsThenInitializes),
+                test => test.MissingActiveMap_WaitsThenInitializes());
             RunCase(tests, nameof(CameraSchedule_PublishesCommandsThenNoOpsInsideGuard),
                 test => test.CameraSchedule_PublishesCommandsThenNoOpsInsideGuard());
             RunCase(tests, nameof(OperationMapMismatch_FailsClosed),
@@ -44,7 +46,7 @@ public sealed class OperationMapRenderVirtualizationInitializationSystemTests
                 test => test.MissingStateOwner_FailsClosed());
             Debug.Log(
                 "[OperationMapRenderVirtualizationInitializationFocusedValidation] " +
-                "result=Passed tests=8");
+                "result=Passed tests=9");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -328,6 +330,39 @@ public sealed class OperationMapRenderVirtualizationInitializationSystemTests
         {
             nativeState.Dispose();
         }
+    }
+
+    [Test]
+    public void MissingActiveMap_WaitsThenInitializes()
+    {
+        _world.EntityManager.DestroyEntity(_activeMapEntity);
+        Assert.DoesNotThrow(() => _system.Update(_world.Unmanaged));
+        Assert.That(
+            _world.EntityManager.GetComponentData<
+                OperationMapRenderVirtualizationStateComponent>(_databaseEntity)
+                .Initialized,
+            Is.Zero);
+        ref OperationMapRenderVirtualizationInitializationSystem system =
+            ref _world.Unmanaged.GetUnsafeSystemRef<
+                OperationMapRenderVirtualizationInitializationSystem>(_system);
+        Assert.That(system.IsPersistentStateCreated, Is.False);
+
+        _activeMapEntity =
+            _world.EntityManager.CreateEntity(typeof(ActiveOperationMapComponent));
+        _world.EntityManager.SetComponentData(
+            _activeMapEntity,
+            new ActiveOperationMapComponent
+            {
+                OperationMapId = new FixedString64Bytes(OperationMapId),
+                Generation = 7
+            });
+        Assert.DoesNotThrow(() => _system.Update(_world.Unmanaged));
+        Assert.That(
+            _world.EntityManager.GetComponentData<
+                OperationMapRenderVirtualizationStateComponent>(_databaseEntity)
+                .Initialized,
+            Is.EqualTo(1));
+        Assert.That(system.IsPersistentStateCreated, Is.True);
     }
 
     [Test]

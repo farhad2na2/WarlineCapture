@@ -197,7 +197,7 @@ namespace Game.Rendering
             }
             if (!TryBuildCameraEnvelopes(
                     database.Blob,
-                    camera.Position,
+                    camera,
                     out OperationMapRenderCellEnvelope requiredEnvelope,
                     out OperationMapRenderCellEnvelope materializedEnvelope))
             {
@@ -252,40 +252,127 @@ namespace Game.Rendering
 
         internal static bool TryBuildCameraEnvelopes(
             BlobAssetReference<OperationMapRenderDatabaseBlob> database,
-            float3 cameraPosition,
+            RuntimeCameraSnapshotComponent camera,
             out OperationMapRenderCellEnvelope requiredEnvelope,
             out OperationMapRenderCellEnvelope materializedEnvelope)
         {
             requiredEnvelope = default;
             materializedEnvelope = default;
             if (!database.IsCreated ||
-                !math.all(math.isfinite(cameraPosition)))
+                camera.IsValid == 0 ||
+                !math.all(math.isfinite(camera.Position)))
                 return false;
             ref OperationMapRenderDatabaseBlob blob = ref database.Value;
             if (!math.isfinite(blob.CellSize) ||
                 blob.CellSize <= 0f ||
                 blob.GridDimensions.x <= 0 ||
-                blob.GridDimensions.y <= 0)
+                blob.GridDimensions.y <= 0 ||
+                blob.Cells.Length <= 0)
                 return false;
 
             int2 coordinateOffset = new(
                 (int)math.round(blob.GridOrigin.x / blob.CellSize),
                 (int)math.round(blob.GridOrigin.z / blob.CellSize));
             int2 maximum = coordinateOffset + blob.GridDimensions - 1;
-            int2 center = new(
-                (int)math.floor(cameraPosition.x / blob.CellSize),
-                (int)math.floor(cameraPosition.z / blob.CellSize));
-            center = math.clamp(center, coordinateOffset, maximum);
+            if (!TryProjectCameraFootprint(
+                    camera,
+                    ref blob.Cells,
+                    out float2 footprintMin,
+                    out float2 footprintMax))
+                return false;
+
+            int2 visibleMin = new(
+                (int)math.floor(footprintMin.x / blob.CellSize),
+                (int)math.floor(footprintMin.y / blob.CellSize));
+            int2 visibleMax = new(
+                (int)math.floor(footprintMax.x / blob.CellSize),
+                (int)math.floor(footprintMax.y / blob.CellSize));
+            visibleMin = math.clamp(visibleMin, coordinateOffset, maximum);
+            visibleMax = math.clamp(visibleMax, coordinateOffset, maximum);
             requiredEnvelope = new OperationMapRenderCellEnvelope
             {
-                Min = math.max(center - 1, coordinateOffset),
-                Max = math.min(center + 1, maximum)
+                Min = math.max(visibleMin - 1, coordinateOffset),
+                Max = math.min(visibleMax + 1, maximum)
             };
             materializedEnvelope = new OperationMapRenderCellEnvelope
             {
-                Min = math.max(center - 2, coordinateOffset),
-                Max = math.min(center + 2, maximum)
+                Min = math.max(visibleMin - 2, coordinateOffset),
+                Max = math.min(visibleMax + 2, maximum)
             };
+            return true;
+        }
+
+        private static bool TryProjectCameraFootprint(
+            RuntimeCameraSnapshotComponent camera,
+            ref BlobArray<OperationMapRenderCellBlob> cells,
+            out float2 footprintMin,
+            out float2 footprintMax)
+        {
+            footprintMin = new float2(float.MaxValue);
+            footprintMax = new float2(float.MinValue);
+            float minHeight = float.MaxValue;
+            float maxHeight = float.MinValue;
+            for (int i = 0; i < cells.Length; i++)
+            {
+                OperationMapRenderBoundsBlob bounds = cells[i].WorldBounds;
+                if (!math.all(math.isfinite(bounds.Center)) ||
+                    !math.all(math.isfinite(bounds.Extents)))
+                    return false;
+                minHeight = math.min(minHeight, bounds.Center.y - bounds.Extents.y);
+                maxHeight = math.max(maxHeight, bounds.Center.y + bounds.Extents.y);
+            }
+
+            float determinant = math.determinant(camera.ViewProjection);
+            if (!math.isfinite(determinant) || math.abs(determinant) < 1e-8f)
+                return false;
+            float4x4 inverseViewProjection = math.inverse(camera.ViewProjection);
+            bool found = false;
+            for (int y = -1; y <= 1; y += 2)
+            {
+                for (int x = -1; x <= 1; x += 2)
+                {
+                    float4 nearH = math.mul(
+                        inverseViewProjection,
+                        new float4(x, y, -1f, 1f));
+                    float4 farH = math.mul(
+                        inverseViewProjection,
+                        new float4(x, y, 1f, 1f));
+                    if (math.abs(nearH.w) < 1e-8f ||
+                        math.abs(farH.w) < 1e-8f)
+                        continue;
+                    float3 near = nearH.xyz / nearH.w;
+                    float3 far = farH.xyz / farH.w;
+                    found |= TryIncludeHeightIntersection(
+                        near, far, minHeight, ref footprintMin, ref footprintMax);
+                    found |= TryIncludeHeightIntersection(
+                        near, far, maxHeight, ref footprintMin, ref footprintMax);
+                }
+            }
+            return found &&
+                   math.all(math.isfinite(footprintMin)) &&
+                   math.all(math.isfinite(footprintMax));
+        }
+
+        private static bool TryIncludeHeightIntersection(
+            float3 near,
+            float3 far,
+            float height,
+            ref float2 footprintMin,
+            ref float2 footprintMax)
+        {
+            float denominator = far.y - near.y;
+            if (!math.all(math.isfinite(near)) ||
+                !math.all(math.isfinite(far)) ||
+                !math.isfinite(height) ||
+                math.abs(denominator) < 1e-6f)
+                return false;
+            float t = (height - near.y) / denominator;
+            if (!math.isfinite(t) || t < 0f || t > 1f)
+                return false;
+            float3 point = math.lerp(near, far, t);
+            float2 xz = point.xz;
+            footprintMin = math.min(footprintMin, xz);
+            footprintMax = math.max(footprintMax, xz);
             return true;
         }
 

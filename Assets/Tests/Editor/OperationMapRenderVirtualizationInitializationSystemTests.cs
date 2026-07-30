@@ -241,12 +241,10 @@ public sealed class OperationMapRenderVirtualizationInitializationSystemTests
             typeof(RuntimeCameraSnapshotComponent));
         _world.EntityManager.SetComponentData(
             camera,
-            new RuntimeCameraSnapshotComponent
-            {
-                IsValid = 1,
-                PublicationVersion = 1,
-                Position = new float3(1f, 20f, 1f)
-            });
+            CreateCameraSnapshot(
+                new Vector3(1f, 20f, 1f),
+                Vector3.zero,
+                1));
 
         _system.Update(_world.Unmanaged);
         _world.EntityManager.CompleteAllTrackedJobs();
@@ -302,6 +300,47 @@ public sealed class OperationMapRenderVirtualizationInitializationSystemTests
             () => OperationMapRenderVirtualizationInitializationSystem
                 .ValidateDatabaseIdentity(database, readiness, active));
     }
+
+    private static RuntimeCameraSnapshotComponent CreateCameraSnapshot(
+        Vector3 position,
+        Vector3 target,
+        uint publicationVersion)
+    {
+        var cameraObject = new GameObject("VRP focused camera");
+        try
+        {
+            Camera camera = cameraObject.AddComponent<Camera>();
+            camera.transform.position = position;
+            camera.transform.LookAt(target, Vector3.up);
+            camera.fieldOfView = 60f;
+            camera.aspect = 1f;
+            camera.nearClipPlane = 0.1f;
+            camera.farClipPlane = 500f;
+            Matrix4x4 worldToCamera = camera.worldToCameraMatrix;
+            Matrix4x4 projection = camera.projectionMatrix;
+            return new RuntimeCameraSnapshotComponent
+            {
+                IsValid = 1,
+                PublicationVersion = publicationVersion,
+                Position = position,
+                Rotation = camera.transform.rotation,
+                WorldToCamera = ToFloat4x4(worldToCamera),
+                Projection = ToFloat4x4(projection),
+                ViewProjection = ToFloat4x4(projection * worldToCamera)
+            };
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(cameraObject);
+        }
+    }
+
+    private static float4x4 ToFloat4x4(Matrix4x4 matrix) =>
+        new(
+            new float4(matrix.m00, matrix.m10, matrix.m20, matrix.m30),
+            new float4(matrix.m01, matrix.m11, matrix.m21, matrix.m31),
+            new float4(matrix.m02, matrix.m12, matrix.m22, matrix.m32),
+            new float4(matrix.m03, matrix.m13, matrix.m23, matrix.m33));
 
     [Test]
     public void DuplicateSlotIdentity_FailsClosed()

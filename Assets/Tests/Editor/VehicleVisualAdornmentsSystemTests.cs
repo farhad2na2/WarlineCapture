@@ -69,8 +69,9 @@ public sealed class VehicleVisualAdornmentsSystemTests
             var tests = new VehicleVisualAdornmentsSystemTests();
             tests.UnitFactionTintTargetBackfillIgnoresSelectionObjectOutlines();
             tests.UnitFactionTintTargetBackfillIgnoresOperationMapBuildingRenderers();
+            tests.UnitFactionTintTargetBackfillIgnoresMassClassifiedRenderers();
             tests.UnitFactionTintTargetBackfillFindsDeepCharacterRenderHierarchy();
-            Debug.Log("[FactionTintFocusedValidation] result=Passed tests=3");
+            Debug.Log("[FactionTintFocusedValidation] result=Passed tests=4");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -698,6 +699,31 @@ public sealed class VehicleVisualAdornmentsSystemTests
             "Permanent operation-map vehicle renderers must retain their authored material colors.");
         Assert.IsFalse(em.HasComponent<FactionTintColor>(vehicleRenderer));
         Assert.IsFalse(em.HasComponent<FactionSnivelerBaseColor>(vehicleRenderer));
+    }
+
+    [Test]
+    public void UnitFactionTintTargetBackfillIgnoresMassClassifiedRenderers()
+    {
+        using var world =
+            new World(nameof(UnitFactionTintTargetBackfillIgnoresMassClassifiedRenderers));
+        EntityManager em = world.EntityManager;
+        Entity character = CreateCharacter(em, health: 100);
+        em.AddComponentData(character, new UnitGrid());
+        em.AddComponentData(character, new UnitSourcePrefabKey
+        {
+            Value = new FixedString64Bytes("Unit_Chr_Soldier")
+        });
+        Entity renderer =
+            CreateRenderableChild(em, character, "ClassifiedCharacterBody", 1f);
+        em.AddComponent<UnitMassRenderSettingsApplied>(renderer);
+        SystemHandle backfill =
+            world.CreateSystem<UnitFactionTintTargetBackfillSystem>();
+
+        backfill.Update(world.Unmanaged);
+
+        Assert.IsFalse(em.HasComponent<FactionTintTarget>(renderer));
+        Assert.IsFalse(em.HasComponent<FactionTintColor>(renderer));
+        Assert.IsFalse(em.HasComponent<FactionSnivelerBaseColor>(renderer));
     }
 
     [Test]

@@ -161,6 +161,18 @@ namespace Game.Rendering
             for (int i = 0; i < unitRenderEntities.Length; i++)
             {
                 Entity entity = unitRenderEntities[i];
+                if (!em.HasComponent<FactionTintTarget>(entity))
+                {
+                    ecb.AddComponent<FactionTintTarget>(entity);
+                    ecb.AddComponent(entity, new FactionTintColor
+                    {
+                        Value = new float4(1f)
+                    });
+                    ecb.AddComponent(entity, new FactionSnivelerBaseColor
+                    {
+                        Value = new float4(1f)
+                    });
+                }
                 if (em.HasComponent<SelectionObjectOutlineTag>(entity) ||
                     !em.HasComponent<RenderFilterSettings>(entity))
                 {
@@ -246,6 +258,13 @@ namespace Game.Rendering
                     return false;
 
                 current = parentLookup[current].Value;
+                if (prefabLookup.HasComponent(current) ||
+                    authoredVisualRoots.Contains(current) ||
+                    operationMapIdentityLookup.HasComponent(current) ||
+                    operationMapVehicleLookup.HasComponent(current))
+                {
+                    return false;
+                }
                 if (unitGridLookup.HasComponent(current) && factionLookup.HasComponent(current))
                 {
                     if (!detailedVisualLookup.HasComponent(current) &&
@@ -254,8 +273,6 @@ namespace Game.Rendering
                         retry = true;
                         return false;
                     }
-                    if (operationMapVehicleLookup.HasComponent(current))
-                        return false;
                     foundDepth = depth + 1;
                     return true;
                 }

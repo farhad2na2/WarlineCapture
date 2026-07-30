@@ -25,6 +25,7 @@ namespace Game.Rendering
                 None = new[]
                 {
                     ComponentType.ReadOnly<FactionTintTarget>(),
+                    ComponentType.ReadOnly<UnitMassRenderSettingsApplied>(),
                     ComponentType.ReadOnly<SelectionObjectOutlineTag>()
                 }
             });
@@ -39,7 +40,10 @@ namespace Game.Rendering
             foreach (var (parent, entity) in SystemAPI
                      .Query<RefRO<Parent>>()
                      .WithAll<MaterialMeshInfo>()
-                     .WithNone<FactionTintTarget, SelectionObjectOutlineTag>()
+                     .WithNone<
+                         FactionTintTarget,
+                         UnitMassRenderSettingsApplied,
+                         SelectionObjectOutlineTag>()
                      .WithEntityAccess())
             {
                 if (IsUnitRenderable(em, entity, parent.ValueRO.Value))

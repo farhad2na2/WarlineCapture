@@ -14,6 +14,9 @@ using Game.Rendering;
 
 public sealed partial class UnitRenderBudgetSystemTests
 {
+    private const int DenseOperationMapRenderChildCount = 70710;
+    private const int Vrp054SteadyStateSampleCount = 300;
+
     public static void RunFocusedValidation()
     {
         try
@@ -51,17 +54,40 @@ public sealed partial class UnitRenderBudgetSystemTests
             tests.MassRenderSettingsPatchesUnitRenderChildren();
             tests.MassRenderSettingsPatchesRenderFiltersAfterLookupWork();
             tests.MassRenderSettingsRetriesUnitUntilVisualReferenceExists();
+            tests.MassRenderSettingsClassifiesOperationMapParentWithoutRetry();
             tests.DiagnosticLogFlushClearsQueuedMessages();
             tests.CharacterImpostorsScaleUpAtHighTacticalCameraHeight();
             tests.HighCameraCharacterImpostorsFaceCameraPlane();
             tests.SourceKeyPrefixChecksDoNotAllocate();
-            Debug.Log("[UnitRenderBudgetFocusedValidation] result=Passed tests=35");
+            Debug.Log("[UnitRenderBudgetFocusedValidation] result=Passed tests=36");
         }
         catch (System.Exception ex)
         {
             Debug.LogException(ex);
             Debug.LogError("[UnitRenderBudgetFocusedValidation] result=Failed");
             throw;
+        }
+    }
+
+    public static void RunVrp054SteadyStateValidation()
+    {
+        try
+        {
+            var tests = new UnitRenderBudgetSystemTests();
+            double p95Milliseconds =
+                tests.DenseOperationMapClassification_DrainsThenMeets120HzCpuBudget();
+            Debug.Log(
+                "[VRP054WindowsSteadyState] result=Passed " +
+                $"renderChildren={DenseOperationMapRenderChildCount} " +
+                $"samples={Vrp054SteadyStateSampleCount} " +
+                $"p95Ms={p95Milliseconds:F4} budgetMs=8.3333");
+            ValidationExit.Exit(0);
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[VRP054WindowsSteadyState] result=Failed");
+            ValidationExit.Exit(1);
         }
     }
 
@@ -243,6 +269,9 @@ public sealed partial class UnitRenderBudgetSystemTests
         system.Update(world.Unmanaged);
 
         Assert.IsTrue(em.HasComponent<UnitMassRenderSettingsApplied>(renderChild));
+        Assert.IsTrue(em.HasComponent<FactionTintTarget>(renderChild));
+        Assert.IsTrue(em.HasComponent<FactionTintColor>(renderChild));
+        Assert.IsTrue(em.HasComponent<FactionSnivelerBaseColor>(renderChild));
         RenderBounds bounds = em.GetComponentData<RenderBounds>(renderChild);
         Assert.AreEqual(new float3(64f, 64f, 64f), bounds.Value.Extents);
         MeshLODComponent meshLod = em.GetComponentData<MeshLODComponent>(renderChild);
@@ -299,6 +328,102 @@ public sealed partial class UnitRenderBudgetSystemTests
         system.Update(world.Unmanaged);
 
         AssertPatchedRenderChild(em, renderChild, lodGroup);
+    }
+
+    [Test]
+    public void MassRenderSettingsClassifiesOperationMapParentWithoutRetry()
+    {
+        using var world =
+            new World(nameof(MassRenderSettingsClassifiesOperationMapParentWithoutRetry));
+        EntityManager em = world.EntityManager;
+        Entity operationMapParent = em.CreateEntity(
+            typeof(UnitGrid),
+            typeof(Faction),
+            typeof(OperationMapEntityPresentationIdentity));
+        Entity lodGroup = CreateLodGroup(em);
+        Entity renderChild =
+            CreateRenderChildWithFilter(em, operationMapParent, lodGroup);
+        SystemHandle system = world.CreateSystem<UnitMassRenderSettingsSystem>();
+
+        system.Update(world.Unmanaged);
+        system.Update(world.Unmanaged);
+
+        Assert.IsTrue(
+            em.HasComponent<UnitMassRenderSettingsApplied>(renderChild),
+            "An operation-map render child must be terminally classified instead of retried.");
+        Assert.IsFalse(em.HasComponent<FactionTintTarget>(renderChild));
+        Assert.AreEqual(
+            new float3(1f, 2f, 3f),
+            em.GetComponentData<RenderBounds>(renderChild).Value.Extents);
+    }
+
+    public double DenseOperationMapClassification_DrainsThenMeets120HzCpuBudget()
+    {
+        using var world =
+            new World(nameof(DenseOperationMapClassification_DrainsThenMeets120HzCpuBudget));
+        EntityManager em = world.EntityManager;
+        Entity operationMapParent = em.CreateEntity(
+            typeof(UnitGrid),
+            typeof(Faction),
+            typeof(OperationMapEntityPresentationIdentity));
+        EntityArchetype renderArchetype = em.CreateArchetype(
+            typeof(Parent),
+            typeof(RenderBounds),
+            typeof(MaterialMeshInfo));
+        using var renderChildren =
+            new NativeArray<Entity>(DenseOperationMapRenderChildCount, Allocator.Temp);
+        em.CreateEntity(renderArchetype, renderChildren);
+        for (int i = 0; i < renderChildren.Length; i++)
+            em.SetComponentData(renderChildren[i], new Parent { Value = operationMapParent });
+
+        SystemHandle massRender =
+            world.CreateSystem<UnitMassRenderSettingsSystem>();
+        SystemHandle factionTint =
+            world.CreateSystem<UnitFactionTintTargetBackfillSystem>();
+        int drainFrameLimit =
+            (DenseOperationMapRenderChildCount + 11999) / 12000 + 1;
+        for (int frame = 0; frame < drainFrameLimit; frame++)
+        {
+            massRender.Update(world.Unmanaged);
+            factionTint.Update(world.Unmanaged);
+        }
+
+        using EntityQuery remaining = em.CreateEntityQuery(new EntityQueryDesc
+        {
+            All = new[]
+            {
+                ComponentType.ReadOnly<Parent>(),
+                ComponentType.ReadOnly<RenderBounds>()
+            },
+            None = new[]
+            {
+                ComponentType.ReadOnly<UnitMassRenderSettingsApplied>()
+            }
+        });
+        Assert.AreEqual(
+            0,
+            remaining.CalculateEntityCount(),
+            "The exact dense resident render-child count must drain within the bounded pass count.");
+
+        var samples = new double[Vrp054SteadyStateSampleCount];
+        var stopwatch = new System.Diagnostics.Stopwatch();
+        for (int sample = 0; sample < samples.Length; sample++)
+        {
+            stopwatch.Restart();
+            massRender.Update(world.Unmanaged);
+            factionTint.Update(world.Unmanaged);
+            stopwatch.Stop();
+            samples[sample] = stopwatch.Elapsed.TotalMilliseconds;
+        }
+
+        System.Array.Sort(samples);
+        int p95Index = (int)System.Math.Ceiling(samples.Length * 0.95d) - 1;
+        double p95Milliseconds = samples[p95Index];
+        Assert.That(
+            p95Milliseconds,
+            Is.LessThan(1000d / 120d),
+            "The corrected stationary CPU owners must fit a 120-Hz Editor CPU budget.");
+        return p95Milliseconds;
     }
 
     private static Entity CreateLodGroup(EntityManager em)

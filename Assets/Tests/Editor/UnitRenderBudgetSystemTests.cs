@@ -55,11 +55,13 @@ public sealed partial class UnitRenderBudgetSystemTests
             tests.MassRenderSettingsPatchesRenderFiltersAfterLookupWork();
             tests.MassRenderSettingsRetriesUnitUntilVisualReferenceExists();
             tests.MassRenderSettingsClassifiesOperationMapParentWithoutRetry();
+            tests.MassRenderSettingsClassifiesOperationMapAncestorAboveIncompleteUnitParent();
+            tests.MassRenderSettingsClassifiesPackedResidentRowWithoutHierarchyIdentity();
             tests.DiagnosticLogFlushClearsQueuedMessages();
             tests.CharacterImpostorsScaleUpAtHighTacticalCameraHeight();
             tests.HighCameraCharacterImpostorsFaceCameraPlane();
             tests.SourceKeyPrefixChecksDoNotAllocate();
-            Debug.Log("[UnitRenderBudgetFocusedValidation] result=Passed tests=36");
+            Debug.Log("[UnitRenderBudgetFocusedValidation] result=Passed tests=38");
         }
         catch (System.Exception ex)
         {
@@ -357,15 +359,71 @@ public sealed partial class UnitRenderBudgetSystemTests
             em.GetComponentData<RenderBounds>(renderChild).Value.Extents);
     }
 
+    [Test]
+    public void MassRenderSettingsClassifiesOperationMapAncestorAboveIncompleteUnitParent()
+    {
+        using var world =
+            new World(nameof(MassRenderSettingsClassifiesOperationMapAncestorAboveIncompleteUnitParent));
+        EntityManager em = world.EntityManager;
+        Entity operationMapRoot =
+            em.CreateEntity(typeof(OperationMapEntityPresentationIdentity));
+        Entity incompleteUnitParent =
+            em.CreateEntity(typeof(Parent), typeof(UnitGrid), typeof(Faction));
+        em.SetComponentData(
+            incompleteUnitParent,
+            new Parent { Value = operationMapRoot });
+        Entity lodGroup = CreateLodGroup(em);
+        Entity renderChild =
+            CreateRenderChildWithFilter(em, incompleteUnitParent, lodGroup);
+        SystemHandle system = world.CreateSystem<UnitMassRenderSettingsSystem>();
+
+        system.Update(world.Unmanaged);
+        system.Update(world.Unmanaged);
+
+        Assert.IsTrue(
+            em.HasComponent<UnitMassRenderSettingsApplied>(renderChild),
+            "An incomplete unit-like map parent must keep walking to its terminal operation-map ancestor.");
+        Assert.IsFalse(em.HasComponent<FactionTintTarget>(renderChild));
+        Assert.AreEqual(
+            new float3(1f, 2f, 3f),
+            em.GetComponentData<RenderBounds>(renderChild).Value.Extents);
+    }
+
+    [Test]
+    public void MassRenderSettingsClassifiesPackedResidentRowWithoutHierarchyIdentity()
+    {
+        using var world =
+            new World(nameof(MassRenderSettingsClassifiesPackedResidentRowWithoutHierarchyIdentity));
+        EntityManager em = world.EntityManager;
+        Entity incompleteUnitParent = em.CreateEntity(typeof(UnitGrid), typeof(Faction));
+        Entity lodGroup = CreateLodGroup(em);
+        Entity renderChild =
+            CreateRenderChildWithFilter(em, incompleteUnitParent, lodGroup);
+        Entity database = em.CreateEntity();
+        em.AddBuffer<OperationMapRenderResidentSourceRowComponent>(database).Add(
+            new OperationMapRenderResidentSourceRowComponent
+            {
+                RenderEntity = renderChild
+            });
+        SystemHandle system = world.CreateSystem<UnitMassRenderSettingsSystem>();
+
+        system.Update(world.Unmanaged);
+
+        Assert.IsTrue(
+            em.HasComponent<UnitMassRenderSettingsApplied>(renderChild),
+            "The exact packed resident-row contract must classify a renderer without relying on transform ancestry.");
+        Assert.IsFalse(em.HasComponent<FactionTintTarget>(renderChild));
+        Assert.AreEqual(
+            new float3(1f, 2f, 3f),
+            em.GetComponentData<RenderBounds>(renderChild).Value.Extents);
+    }
+
     public double DenseOperationMapClassification_DrainsThenMeets120HzCpuBudget()
     {
         using var world =
             new World(nameof(DenseOperationMapClassification_DrainsThenMeets120HzCpuBudget));
         EntityManager em = world.EntityManager;
-        Entity operationMapParent = em.CreateEntity(
-            typeof(UnitGrid),
-            typeof(Faction),
-            typeof(OperationMapEntityPresentationIdentity));
+        Entity operationMapParent = em.CreateEntity(typeof(UnitGrid), typeof(Faction));
         EntityArchetype renderArchetype = em.CreateArchetype(
             typeof(Parent),
             typeof(RenderBounds),
@@ -373,8 +431,17 @@ public sealed partial class UnitRenderBudgetSystemTests
         using var renderChildren =
             new NativeArray<Entity>(DenseOperationMapRenderChildCount, Allocator.Temp);
         em.CreateEntity(renderArchetype, renderChildren);
+        Entity database = em.CreateEntity();
+        DynamicBuffer<OperationMapRenderResidentSourceRowComponent> residentRows =
+            em.AddBuffer<OperationMapRenderResidentSourceRowComponent>(database);
         for (int i = 0; i < renderChildren.Length; i++)
+        {
             em.SetComponentData(renderChildren[i], new Parent { Value = operationMapParent });
+            residentRows.Add(new OperationMapRenderResidentSourceRowComponent
+            {
+                RenderEntity = renderChildren[i]
+            });
+        }
 
         SystemHandle massRender =
             world.CreateSystem<UnitMassRenderSettingsSystem>();

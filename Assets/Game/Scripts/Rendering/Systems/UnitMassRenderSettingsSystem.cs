@@ -26,6 +26,7 @@ namespace Game.Rendering
         private static readonly float3 UnitRenderBoundsMinExtents = new float3(64f, 64f, 64f);
 
         private EntityQuery _renderQuery;
+        private EntityQuery _residentSourceQuery;
         private ComponentLookup<Parent> _parentLookup;
         private ComponentLookup<UnitGrid> _unitGridLookup;
         private ComponentLookup<Faction> _factionLookup;
@@ -38,6 +39,7 @@ namespace Game.Rendering
         private ComponentLookup<Unity.Rendering.RenderBounds> _renderBoundsLookup;
         private ComponentLookup<MeshLODComponent> _meshLodLookup;
         private ComponentLookup<MeshLODGroupComponent> _meshLodGroupLookup;
+        private Entity _classifiedResidentDatabase;
         private int _nextDiagnosticFrame;
 
         public void OnCreate(ref SystemState state)
@@ -56,6 +58,8 @@ namespace Game.Rendering
                 },
                 Options = EntityQueryOptions.IncludeDisabledEntities
             });
+            _residentSourceQuery = state.GetEntityQuery(
+                ComponentType.ReadOnly<OperationMapRenderResidentSourceRowComponent>());
             _parentLookup = state.GetComponentLookup<Parent>(true);
             _unitGridLookup = state.GetComponentLookup<UnitGrid>(true);
             _factionLookup = state.GetComponentLookup<Faction>(true);
@@ -69,6 +73,7 @@ namespace Game.Rendering
             _renderBoundsLookup = state.GetComponentLookup<Unity.Rendering.RenderBounds>();
             _meshLodLookup = state.GetComponentLookup<MeshLODComponent>();
             _meshLodGroupLookup = state.GetComponentLookup<MeshLODGroupComponent>();
+            _classifiedResidentDatabase = Entity.Null;
             state.RequireForUpdate(_renderQuery);
         }
 
@@ -76,6 +81,12 @@ namespace Game.Rendering
         {
             if (_renderQuery.IsEmptyIgnoreFilter)
                 return;
+
+            if (TryClassifyPackedResidentRows(ref state, out bool classificationPending) &&
+                classificationPending)
+            {
+                return;
+            }
 
             double startTime = Time.realtimeSinceStartupAsDouble;
             EntityManager em = state.EntityManager;
@@ -208,6 +219,57 @@ namespace Game.Rendering
                 Debug.Log($"[FreezeDetect:ECS] UnitMassRenderSettingsSystem frame={Time.frameCount} {(elapsed * 1000d):F1}ms processed={processed} applied={applied} remaining={math.max(0, totalCandidates - processed)} lodComponentsPatched={lodComponentsPatched} lodGroupsPatched={lodGroupsPatched}");
         }
 
+        private bool TryClassifyPackedResidentRows(
+            ref SystemState state,
+            out bool classificationPending)
+        {
+            classificationPending = false;
+            if (_residentSourceQuery.CalculateEntityCount() != 1)
+            {
+                _classifiedResidentDatabase = Entity.Null;
+                return false;
+            }
+
+            EntityManager em = state.EntityManager;
+            Entity databaseEntity = _residentSourceQuery.GetSingletonEntity();
+            if (_classifiedResidentDatabase == databaseEntity)
+                return true;
+
+            DynamicBuffer<OperationMapRenderResidentSourceRowComponent> rows =
+                em.GetBuffer<OperationMapRenderResidentSourceRowComponent>(
+                    databaseEntity,
+                    true);
+            var ecb = new EntityCommandBuffer(Allocator.Temp);
+            int classified = 0;
+            bool exhausted = true;
+            for (int index = 0; index < rows.Length; index++)
+            {
+                Entity renderEntity = rows[index].RenderEntity;
+                if (!em.Exists(renderEntity) ||
+                    em.HasComponent<UnitMassRenderSettingsApplied>(renderEntity))
+                {
+                    continue;
+                }
+
+                ecb.AddComponent<UnitMassRenderSettingsApplied>(renderEntity);
+                classified++;
+                if (classified >= MaxRenderEntitiesPerFrame && index + 1 < rows.Length)
+                {
+                    exhausted = false;
+                    break;
+                }
+            }
+
+            if (classified > 0)
+                ecb.Playback(em);
+            ecb.Dispose();
+
+            if (exhausted)
+                _classifiedResidentDatabase = databaseEntity;
+            classificationPending = !exhausted;
+            return true;
+        }
+
         private static int PatchLodGroup(Entity group, ComponentLookup<MeshLODGroupComponent> meshLodGroupLookup)
         {
             if (group == Entity.Null || !meshLodGroupLookup.HasComponent(group))
@@ -244,6 +306,7 @@ namespace Game.Rendering
             out bool retry)
         {
             Entity current = entity;
+            bool foundIncompleteUnitAncestor = false;
             foundDepth = 0;
             retry = false;
             for (int depth = 0; depth < MaxParentSearchDepth; depth++)
@@ -255,7 +318,10 @@ namespace Game.Rendering
                 if (operationMapIdentityLookup.HasComponent(current))
                     return false;
                 if (!parentLookup.HasComponent(current))
+                {
+                    retry = foundIncompleteUnitAncestor;
                     return false;
+                }
 
                 current = parentLookup[current].Value;
                 if (prefabLookup.HasComponent(current) ||
@@ -270,14 +336,15 @@ namespace Game.Rendering
                     if (!detailedVisualLookup.HasComponent(current) &&
                         !modelInstanceLookup.HasComponent(current))
                     {
-                        retry = true;
-                        return false;
+                        foundIncompleteUnitAncestor = true;
+                        continue;
                     }
                     foundDepth = depth + 1;
                     return true;
                 }
             }
 
+            retry = foundIncompleteUnitAncestor;
             return false;
         }
 

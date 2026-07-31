@@ -14,7 +14,9 @@ public sealed class OperationMapBuildingDestructionSystemTests
         Action[] tests =
         {
             suite.Update_InitializesAndTransitionsCompleteBakedHierarchiesOnce,
-            suite.Update_MissingDestroyedEquivalentHidesIntactHierarchyWithoutCreatingOrphans
+            suite.Update_MissingDestroyedEquivalentHidesIntactHierarchyWithoutCreatingOrphans,
+            suite.Update_VirtualizedBuildingChangesOnlyCanonicalStateAndAppendsOneEvent,
+            suite.Update_VirtualizedBuildingWithoutUniqueEventBufferFailsClosed
         };
 
         foreach (Action test in tests)
@@ -110,6 +112,73 @@ public sealed class OperationMapBuildingDestructionSystemTests
         AssertVisualDescendant(entityManager, nestedShopDetail, nestedShop);
     }
 
+    [Test]
+    public void Update_VirtualizedBuildingChangesOnlyCanonicalStateAndAppendsOneEvent()
+    {
+        using var world = new World("OperationMapVirtualizedBuildingDestructionTests");
+        EntityManager entityManager = world.EntityManager;
+        Entity bufferOwner = entityManager.CreateEntity();
+        entityManager.AddBuffer<OperationMapRenderStateChangeComponent>(bufferOwner);
+        Entity unrelatedProxy = entityManager.CreateEntity(typeof(LocalTransform));
+        entityManager.SetComponentData(
+            unrelatedProxy,
+            LocalTransform.FromPositionRotationScale(
+                new Unity.Mathematics.float3(4f, 5f, 6f),
+                Unity.Mathematics.quaternion.identity,
+                3f));
+        Entity building = CreateVirtualizedBuilding(entityManager, 0, 7);
+        int entityCountBeforeDestruction =
+            entityManager.UniversalQuery.CalculateEntityCount();
+
+        UpdateSystem(world);
+        DynamicBuffer<OperationMapRenderStateChangeComponent> changes =
+            entityManager.GetBuffer<OperationMapRenderStateChangeComponent>(bufferOwner);
+
+        Assert.That(
+            entityManager.IsComponentEnabled<OperationMapBuildingDestroyedComponent>(
+                building),
+            Is.True);
+        Assert.That(
+            entityManager.HasComponent<OperationMapBuildingPresentation>(building),
+            Is.False);
+        Assert.That(entityManager.HasComponent<StaticGridBlocker>(building), Is.True);
+        Assert.That(entityManager.UniversalQuery.CalculateEntityCount(),
+            Is.EqualTo(entityCountBeforeDestruction));
+        Assert.That(entityManager.GetComponentData<LocalTransform>(unrelatedProxy).Scale,
+            Is.EqualTo(3f));
+        Assert.That(changes.Length, Is.EqualTo(1));
+        Assert.That(changes[0].StateOwnerIndex, Is.EqualTo(7));
+        Assert.That(
+            changes[0].VisualState,
+            Is.EqualTo(OperationMapRenderVisualState.Destroyed));
+        Assert.That(changes[0].ChangeVersion, Is.EqualTo(1u));
+
+        entityManager.SetComponentData(
+            building,
+            new UnitHealth { Current = 100, Max = 100 });
+        UpdateSystem(world);
+        changes = entityManager.GetBuffer<OperationMapRenderStateChangeComponent>(
+            bufferOwner);
+
+        Assert.That(changes.Length, Is.EqualTo(1));
+        Assert.That(
+            entityManager.IsComponentEnabled<OperationMapBuildingDestroyedComponent>(
+                building),
+            Is.True);
+    }
+
+    [Test]
+    public void Update_VirtualizedBuildingWithoutUniqueEventBufferFailsClosed()
+    {
+        using var world = new World("OperationMapVirtualizedBuildingMissingBufferTests");
+        CreateVirtualizedBuilding(world.EntityManager, 0, 0);
+
+        Assert.That(
+            () => UpdateSystem(world),
+            Throws.TypeOf<InvalidOperationException>().With.Message.Contains(
+                "exactly one map-owned state-change buffer"));
+    }
+
     private static Entity CreateBuilding(
         EntityManager entityManager,
         Entity intact,
@@ -137,6 +206,36 @@ public sealed class OperationMapBuildingDestructionSystemTests
             DestroyedVisibleScale = 1f,
             State = state
         });
+        return building;
+    }
+
+    private static Entity CreateVirtualizedBuilding(
+        EntityManager entityManager,
+        int currentHealth,
+        int stateOwnerIndex)
+    {
+        Entity building = entityManager.CreateEntity(
+            typeof(UnitHealth),
+            typeof(StaticGridBlocker),
+            typeof(OperationMapBuildingComponent),
+            typeof(OperationMapVirtualizedBuildingPresentationComponent),
+            typeof(OperationMapBuildingDestroyedComponent));
+        entityManager.SetComponentEnabled<OperationMapBuildingDestroyedComponent>(
+            building,
+            false);
+        entityManager.SetComponentData(
+            building,
+            new UnitHealth { Current = currentHealth, Max = 100 });
+        entityManager.SetComponentData(building, new OperationMapBuildingComponent
+        {
+            BlockerPolicy = OperationMapBuildingBlockerPolicy.RubbleRemainsBlocked
+        });
+        entityManager.SetComponentData(
+            building,
+            new OperationMapVirtualizedBuildingPresentationComponent
+            {
+                StateOwnerIndex = stateOwnerIndex
+            });
         return building;
     }
 

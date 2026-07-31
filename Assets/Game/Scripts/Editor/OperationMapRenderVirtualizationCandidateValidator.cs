@@ -22,7 +22,7 @@ namespace Game.Editor
     using Hash128 = Unity.Entities.Hash128;
 
     /// <summary>
-    /// Two-pass direct bake of the VRP-051 persisted candidate-only pilot.
+    /// Two-pass direct bake of the persisted candidate-only virtualization package.
     /// Production remains at its accepted resident/static mode.
     /// </summary>
     internal static class OperationMapRenderVirtualizationCandidateValidator
@@ -30,12 +30,14 @@ namespace Game.Editor
         internal const string ReportPath =
             "Design/AgentReports/2026-07-30_dense_city_render_virtualization_pilot_enabled.json";
 
-        private const int ExpectedEligibleRows = 11299;
-        private const int ExpectedSlots = 704;
-        private const int ExpectedPrototypes = 22;
-        private const int ExpectedParts = 26;
-        private const int ExpectedPlacements = 9721;
-        private const int ExpectedCells = 1635;
+        private const int ExpectedEligibleRows = 22058;
+        private const int ExpectedSlots = 929;
+        private const int ExpectedPrototypes = 7291;
+        private const int ExpectedParts = 10778;
+        private const int ExpectedPlacements = 16997;
+        private const int ExpectedRenderOnlyPlacements = 9721;
+        private const int ExpectedGeneratedBuildingIdentities = 3638;
+        private const int ExpectedCells = 1651;
         private const int ExpectedPoolBuckets = 2;
         private static readonly UTF8Encoding Utf8WithoutBom = new(false);
 
@@ -83,7 +85,7 @@ namespace Game.Editor
             var report = new DirectBakeReport
             {
                 schema = "warline.operation-map.render-virtualization-direct-bake",
-                schemaVersion = 1,
+                schemaVersion = 2,
                 result = "Passed",
                 operationMapId =
                     OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
@@ -113,7 +115,9 @@ namespace Game.Editor
                 packedResidentSourceRowCount = second.ResidentSourceRowCount,
                 packedSourceRowsRemoved = second.EligibleSourceRowCount,
                 virtualizedGeneratedRenderOnlyIdentityCount =
-                    second.VirtualizedGeneratedRenderOnlyIdentityCount
+                    second.VirtualizedGeneratedRenderOnlyIdentityCount,
+                virtualizedGeneratedBuildingIdentityCount =
+                    second.VirtualizedGeneratedBuildingIdentityCount
             };
             string physicalReportPath = Path.Combine(projectRoot, ReportPath);
             Directory.CreateDirectory(
@@ -129,7 +133,9 @@ namespace Game.Editor
                 $"sourceRows={second.SourceRowCount} " +
                 $"virtualizedRows={second.EligibleSourceRowCount} " +
                 $"residentRows={second.ResidentSourceRowCount} " +
-                $"slots={second.ProxySlotCount} productionCutover=0");
+                $"slots={second.ProxySlotCount} " +
+                $"buildingIdentities={second.VirtualizedGeneratedBuildingIdentityCount} " +
+                "productionCutover=0");
         }
 
         private static DirectBakeSummary BakeAndValidate(string pass)
@@ -260,7 +266,7 @@ namespace Game.Editor
             RequireCount(
                 "virtualized generated render-only identities",
                 readiness.VirtualizedGeneratedRenderOnlyIdentityCount,
-                ExpectedPlacements);
+                ExpectedRenderOnlyPlacements);
             RequireCount(
                 "virtualized accepted building identities",
                 readiness.VirtualizedAcceptedBuildingIdentityCount,
@@ -272,7 +278,7 @@ namespace Game.Editor
             RequireCount(
                 "virtualized generated building identities",
                 readiness.VirtualizedGeneratedBuildingIdentityCount,
-                0);
+                ExpectedGeneratedBuildingIdentities);
             if (readiness.ResidencyMode !=
                 (byte)OperationMapRenderResidencyMode.VirtualizedProxyPool)
             {
@@ -300,7 +306,8 @@ namespace Game.Editor
                 readiness.EligibleSourceRowCount,
                 readiness.ResidentSourceRowCount,
                 readiness.ProxySlotCount,
-                readiness.VirtualizedGeneratedRenderOnlyIdentityCount);
+                readiness.VirtualizedGeneratedRenderOnlyIdentityCount,
+                readiness.VirtualizedGeneratedBuildingIdentityCount);
             return new DirectBakeSummary(
                 ComputeSha256(canonical),
                 contentHash,
@@ -314,7 +321,8 @@ namespace Game.Editor
                 sourceRowCount,
                 readiness.EligibleSourceRowCount,
                 readiness.ResidentSourceRowCount,
-                readiness.VirtualizedGeneratedRenderOnlyIdentityCount);
+                readiness.VirtualizedGeneratedRenderOnlyIdentityCount,
+                readiness.VirtualizedGeneratedBuildingIdentityCount);
         }
 
         private static int CountSourceRows(EntityManager entityManager)
@@ -615,7 +623,8 @@ namespace Game.Editor
                 int sourceRowCount,
                 int eligibleSourceRowCount,
                 int residentSourceRowCount,
-                int virtualizedGeneratedRenderOnlyIdentityCount)
+                int virtualizedGeneratedRenderOnlyIdentityCount,
+                int virtualizedGeneratedBuildingIdentityCount)
             {
                 Fingerprint = fingerprint;
                 ContentHash = contentHash;
@@ -631,6 +640,8 @@ namespace Game.Editor
                 ResidentSourceRowCount = residentSourceRowCount;
                 VirtualizedGeneratedRenderOnlyIdentityCount =
                     virtualizedGeneratedRenderOnlyIdentityCount;
+                VirtualizedGeneratedBuildingIdentityCount =
+                    virtualizedGeneratedBuildingIdentityCount;
             }
 
             internal string Fingerprint { get; }
@@ -646,6 +657,7 @@ namespace Game.Editor
             internal int EligibleSourceRowCount { get; }
             internal int ResidentSourceRowCount { get; }
             internal int VirtualizedGeneratedRenderOnlyIdentityCount { get; }
+            internal int VirtualizedGeneratedBuildingIdentityCount { get; }
         }
 
         [Serializable]
@@ -677,6 +689,7 @@ namespace Game.Editor
             public int packedResidentSourceRowCount;
             public int packedSourceRowsRemoved;
             public int virtualizedGeneratedRenderOnlyIdentityCount;
+            public int virtualizedGeneratedBuildingIdentityCount;
         }
     }
 }

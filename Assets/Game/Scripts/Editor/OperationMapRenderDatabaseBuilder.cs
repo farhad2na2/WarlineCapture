@@ -340,9 +340,14 @@ namespace Game.Editor
                         BoundsFrom(
                             value.combinedLocalBoundsCenter,
                             value.combinedLocalBoundsExtents),
-                        Enum.Parse<DenseCityPresentationSemanticCategory>(
-                            value.semanticCategory),
-                        OperationMapRenderEligibilityFlags.Eligible)).ToArray(),
+                         Enum.Parse<DenseCityPresentationSemanticCategory>(
+                             value.semanticCategory),
+                         Enum.Parse<DenseCityPresentationSemanticCategory>(
+                             value.semanticCategory) ==
+                         DenseCityPresentationSemanticCategory.GameplayBuildingIntact
+                             ? OperationMapRenderEligibilityFlags.Eligible |
+                               OperationMapRenderEligibilityFlags.RequiresStateOwner
+                             : OperationMapRenderEligibilityFlags.Eligible)).ToArray(),
                 parts = inputs.prototypes.parts.Select(value =>
                 {
                     if (!OperationMapRenderIdentityProjection.TryProject(
@@ -386,9 +391,11 @@ namespace Game.Editor
                         value.cellIndex,
                         value.stateOwnerIndex,
                         Enum.Parse<OperationMapRenderVisualState>(value.requiredVisualState),
-                        value.priority,
-                        Enum.Parse<DenseCityPresentationSemanticCategory>(
-                            value.semanticCategory))).ToArray(),
+                         value.priority,
+                         Enum.Parse<DenseCityPresentationSemanticCategory>(
+                             value.semanticCategory),
+                         value.sourceOwnerIdentityLow,
+                         value.sourceOwnerIdentityHigh)).ToArray(),
                 cells = inputs.spatial.cells.Select(value =>
                     new OperationMapRenderCellConfigRecord(
                         new Vector2Int(value.coordinateX, value.coordinateZ),
@@ -543,6 +550,8 @@ namespace Game.Editor
                 Require(
                     actual.StableIdentityLow == value.StableIdentityLow &&
                     actual.StableIdentityHigh == value.StableIdentityHigh &&
+                    actual.SourceOwnerIdentityLow == value.SourceOwnerIdentityLow &&
+                    actual.SourceOwnerIdentityHigh == value.SourceOwnerIdentityHigh &&
                     actual.PrototypeIndex == value.PrototypeIndex &&
                     Exact(actual.WorldMatrix, value.WorldMatrix) &&
                     actual.CellIndex == value.CellIndex &&
@@ -646,7 +655,10 @@ namespace Game.Editor
                     .Append(':').Append(value.PoolBucketIndex).Append('\n');
             foreach (OperationMapRenderPlacementConfigRecord value in records.placements)
                 source.Append("l:").Append(value.StableIdentityLow).Append(':')
-                    .Append(value.StableIdentityHigh).Append(':').Append(value.PrototypeIndex)
+                    .Append(value.StableIdentityHigh).Append(':')
+                    .Append(value.SourceOwnerIdentityLow).Append(':')
+                    .Append(value.SourceOwnerIdentityHigh).Append(':')
+                    .Append(value.PrototypeIndex)
                     .Append(':').Append(value.CellIndex).Append(':').Append(value.StateOwnerIndex)
                     .Append('\n');
             foreach (OperationMapRenderCellConfigRecord value in records.cells)
@@ -828,6 +840,8 @@ namespace Game.Editor
         {
             public ulong stableIdentityLow;
             public ulong stableIdentityHigh;
+            public ulong sourceOwnerIdentityLow;
+            public ulong sourceOwnerIdentityHigh;
             public int prototypeIndex;
             public float[] worldMatrix;
             public int cellIndex;

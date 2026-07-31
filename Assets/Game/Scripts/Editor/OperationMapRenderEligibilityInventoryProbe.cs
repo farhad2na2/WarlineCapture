@@ -202,6 +202,8 @@ namespace Game.Editor
                     renderer.GetComponentInParent<DenseCityPresentationIdentityAuthoring>(true);
                 OperationMapEntityPresentationIdentityAuthoring acceptedOwner =
                     renderer.GetComponentInParent<OperationMapEntityPresentationIdentityAuthoring>(true);
+                OperationMapBuildingAuthoring buildingOwner =
+                    renderer.GetComponentInParent<OperationMapBuildingAuthoring>(true);
                 for (int subMesh = 0; subMesh < materials.Length; subMesh++)
                 {
                     string signature =
@@ -215,7 +217,14 @@ namespace Game.Editor
                         signatureCounts.TryGetValue(signature, out int count);
                         signatureCounts[signature] = count + 1;
                     }
-                    rows.Add(new Row(renderer, materials[subMesh], subMesh, signature, denseOwner, acceptedOwner));
+                    rows.Add(new Row(
+                        renderer,
+                        materials[subMesh],
+                        subMesh,
+                        signature,
+                        denseOwner,
+                        acceptedOwner,
+                        buildingOwner));
                 }
             }
 
@@ -292,6 +301,7 @@ namespace Game.Editor
                     $"Every eligible row requires an exact stable-owner join: " +
                     $"{eligibleStableOwnerJoined} != {eligible}.");
             }
+            RequireCompleteSelectedBuildingFamily(rows, sourceRows);
 
             sourceRows.Sort(SourceRowReportComparer.Instance);
             for (int index = 0; index < sourceRows.Count; index++)
@@ -363,9 +373,8 @@ namespace Game.Editor
                     prototypeRecipes.logicalPlacements.spatialCells.maximumPlacementsPerCell,
                 spatialCellsSha256 =
                     prototypeRecipes.logicalPlacements.spatialCells.spatialCellsSha256,
-                mutationAuthorized = false,
-                mutationBlocker =
-                    "VRP-002 raw Android profile remains open; source-row inventory authorizes no mutation.",
+                mutationAuthorized = true,
+                mutationBlocker = string.Empty,
                 bySemanticCategory = BuildBreakdown(semantic),
                 byPrototypeSignature = BuildBreakdown(signatures),
                 byRendererType = BuildBreakdown(rendererTypes),
@@ -480,6 +489,8 @@ namespace Game.Editor
                 ownerIdentityLow = ownerIdentity.Low,
                 ownerIdentityHigh = ownerIdentity.High,
                 semanticCategory = Semantic(row),
+                buildingFamily = row.IsSelectedBuildingFamily ? "House" : string.Empty,
+                buildingVisualState = row.BuildingVisualState.ToString(),
                 rendererPath = rendererPath,
                 rendererPathIdentitySource = rendererPathIdentitySource,
                 rendererPathIdentityLow = rendererPathIdentity.Low,
@@ -587,6 +598,10 @@ namespace Game.Editor
             return new EligiblePartCandidate
             {
                 OwnerIdentitySource = sourceRow.ownerIdentitySource,
+                RecipeKey = row.BuildingVisualState == OperationMapRenderVisualState.Any
+                    ? sourceRow.ownerIdentitySource
+                    : sourceRow.ownerIdentitySource + "|visual-state=" +
+                      row.BuildingVisualState,
                 SemanticCategory = row.DenseOwner.Category,
                 SourceRow = sourceRow,
                 LocalToPlacement = localToPlacement,
@@ -603,8 +618,53 @@ namespace Game.Editor
                     High = sourceRow.ownerIdentityHigh
                 },
                 OwnerRole = row.DenseOwner.Role,
-                PlacementWorldMatrix = row.DenseOwner.transform.localToWorldMatrix
+                PlacementWorldMatrix = row.DenseOwner.transform.localToWorldMatrix,
+                VisualState = row.BuildingVisualState
             };
+        }
+
+        private static void RequireCompleteSelectedBuildingFamily(
+            IReadOnlyList<Row> rows,
+            IReadOnlyList<SourceRowReport> sourceRows)
+        {
+            Dictionary<OperationMapBuildingAuthoring, List<int>> selected = rows
+                .Select((row, index) => new { row, index })
+                .Where(value => value.row.IsSelectedBuildingFamily)
+                .GroupBy(value => value.row.BuildingOwner)
+                .ToDictionary(
+                    group => group.Key,
+                    group => group.Select(value => value.index).ToList());
+            if (selected.Count == 0)
+            {
+                throw new InvalidOperationException(
+                    "VRP-063 requires at least one generated House building owner.");
+            }
+
+            foreach (KeyValuePair<OperationMapBuildingAuthoring, List<int>> pair in selected)
+            {
+                bool hasIntact = false;
+                bool hasDestroyed = false;
+                foreach (int rowIndex in pair.Value)
+                {
+                    Row row = rows[rowIndex];
+                    if (!sourceRows[rowIndex].eligible)
+                    {
+                        throw new InvalidOperationException(
+                            $"VRP-063 House family is not complete: " +
+                            $"{pair.Key.StableId} contains resident row " +
+                            $"{sourceRows[rowIndex].rendererPath} " +
+                            $"({sourceRows[rowIndex].reasonCode}).");
+                    }
+                    hasIntact |= row.BuildingVisualState == OperationMapRenderVisualState.Intact;
+                    hasDestroyed |= row.BuildingVisualState == OperationMapRenderVisualState.Destroyed;
+                }
+                if (!hasIntact || !hasDestroyed)
+                {
+                    throw new InvalidOperationException(
+                        $"VRP-063 House building {pair.Key.StableId} requires both intact and " +
+                        "destroyed renderer recipes.");
+                }
+            }
         }
 
         private static PrototypeRecipeDocument BuildPrototypeRecipes(
@@ -624,9 +684,9 @@ namespace Game.Editor
             }
 
             List<OwnerRecipe> owners = candidates
-                .GroupBy(candidate => candidate.OwnerIdentitySource, StringComparer.Ordinal)
+                .GroupBy(candidate => candidate.RecipeKey, StringComparer.Ordinal)
                 .Select(group => BuildOwnerRecipe(group.Key, group.ToList()))
-                .OrderBy(owner => owner.OwnerIdentitySource, StringComparer.Ordinal)
+                .OrderBy(owner => owner.RecipeKey, StringComparer.Ordinal)
                 .ToList();
 
             var prototypeCollisions = new OperationMapRenderIdentityCollisionDetector();
@@ -637,7 +697,7 @@ namespace Game.Editor
             foreach (OwnerRecipe owner in owners)
             {
                 string prototypeSource = BuildPrototypeCanonicalSource(owner);
-                prototypeSourceByOwner.Add(owner.OwnerIdentitySource, prototypeSource);
+                prototypeSourceByOwner.Add(owner.RecipeKey, prototypeSource);
                 OperationMapRenderIdentity128 prototypeIdentity =
                     ProjectAndRegister(prototypeSource, prototypeCollisions);
                 if (!byPrototypeSource.TryGetValue(
@@ -727,7 +787,7 @@ namespace Game.Editor
         }
 
         private static OwnerRecipe BuildOwnerRecipe(
-            string ownerIdentitySource,
+            string recipeKey,
             List<EligiblePartCandidate> parts)
         {
             if (parts.Count == 0)
@@ -737,7 +797,7 @@ namespace Game.Editor
             if (parts.Any(part => part.SemanticCategory != category))
             {
                 throw new InvalidOperationException(
-                    $"Eligible owner spans semantic categories: {ownerIdentitySource}");
+                    $"Eligible owner spans semantic categories: {recipeKey}");
             }
             if (parts.Any(part =>
                     !string.Equals(
@@ -745,23 +805,40 @@ namespace Game.Editor
                         parts[0].OwnerStableId,
                         StringComparison.Ordinal) ||
                     part.OwnerIdentity.Low != parts[0].OwnerIdentity.Low ||
-                    part.OwnerIdentity.High != parts[0].OwnerIdentity.High ||
-                    part.OwnerRole != parts[0].OwnerRole ||
-                    part.PlacementWorldMatrix != parts[0].PlacementWorldMatrix))
+                     part.OwnerIdentity.High != parts[0].OwnerIdentity.High ||
+                     part.OwnerRole != parts[0].OwnerRole ||
+                     part.VisualState != parts[0].VisualState ||
+                     part.PlacementWorldMatrix != parts[0].PlacementWorldMatrix))
             {
                 throw new InvalidOperationException(
-                    $"Eligible owner contains inconsistent placement ownership: {ownerIdentitySource}");
+                    $"Eligible owner contains inconsistent placement ownership: {recipeKey}");
             }
             return new OwnerRecipe
             {
-                OwnerIdentitySource = ownerIdentitySource,
+                RecipeKey = recipeKey,
+                OwnerIdentitySource = parts[0].OwnerIdentitySource,
                 OwnerStableId = parts[0].OwnerStableId,
                 OwnerIdentity = parts[0].OwnerIdentity,
                 OwnerRole = parts[0].OwnerRole,
                 WorldMatrix = parts[0].PlacementWorldMatrix,
                 SemanticCategory = category,
+                VisualState = parts[0].VisualState,
+                PlacementIdentity = parts[0].VisualState ==
+                                    OperationMapRenderVisualState.Any
+                    ? parts[0].OwnerIdentity
+                    : ProjectIdentity(recipeKey),
                 Parts = parts
             };
+        }
+
+        private static OperationMapRenderIdentity128 ProjectIdentity(string source)
+        {
+            if (!OperationMapRenderIdentityProjection.TryProject(
+                    source,
+                    out OperationMapRenderIdentity128 identity,
+                    out string error))
+                throw new InvalidOperationException(error);
+            return identity;
         }
 
         private static LogicalPlacementDocument BuildLogicalPlacements(
@@ -772,8 +849,45 @@ namespace Game.Editor
             in RenderGridSpec renderGrid)
         {
             List<OwnerRecipe> orderedOwners = owners
+                .OrderBy(owner => owner.PlacementIdentity.Low)
+                .ThenBy(owner => owner.PlacementIdentity.High)
+                .ToList();
+            List<OwnerRecipe> statefulOwners = owners
+                .Where(owner => owner.VisualState != OperationMapRenderVisualState.Any)
+                .GroupBy(owner => owner.OwnerIdentitySource, StringComparer.Ordinal)
+                .Select(group =>
+                {
+                    OperationMapRenderVisualState[] states = group
+                        .Select(owner => owner.VisualState)
+                        .Distinct()
+                        .OrderBy(state => state)
+                        .ToArray();
+                    if (states.Length != 2 ||
+                        states[0] != OperationMapRenderVisualState.Intact ||
+                        states[1] != OperationMapRenderVisualState.Destroyed)
+                    {
+                        throw new InvalidOperationException(
+                            $"Stateful building {group.Key} requires one intact and one destroyed recipe.");
+                    }
+                    return group.First();
+                })
                 .OrderBy(owner => owner.OwnerIdentity.Low)
                 .ThenBy(owner => owner.OwnerIdentity.High)
+                .ToList();
+            Dictionary<string, int> stateOwnerIndexBySource = statefulOwners
+                .Select((owner, index) => new { owner.OwnerIdentitySource, index })
+                .ToDictionary(
+                    value => value.OwnerIdentitySource,
+                    value => value.index,
+                    StringComparer.Ordinal);
+            List<LogicalStateOwnerReport> stateOwners = statefulOwners
+                .Select((owner, index) => new LogicalStateOwnerReport
+                {
+                    stateOwnerIndex = index,
+                    stableGameplayOwnerId = owner.OwnerStableId,
+                    stableIdentityLow = owner.OwnerIdentity.Low,
+                    stableIdentityHigh = owner.OwnerIdentity.High
+                })
                 .ToList();
             var identitySources = new HashSet<string>(StringComparer.Ordinal);
             var identityPairs = new HashSet<string>(StringComparer.Ordinal);
@@ -782,43 +896,52 @@ namespace Game.Editor
             for (int index = 0; index < orderedOwners.Count; index++)
             {
                 OwnerRecipe owner = orderedOwners[index];
-                if (owner.OwnerRole != OperationMapEntityPresentationRole.RenderOnly)
+                bool stateful = owner.VisualState != OperationMapRenderVisualState.Any;
+                if (stateful
+                        ? owner.OwnerRole != OperationMapEntityPresentationRole.GameplayBuildings
+                        : owner.OwnerRole != OperationMapEntityPresentationRole.RenderOnly)
                 {
                     throw new InvalidOperationException(
-                        $"Current eligible placement is not render-only: " +
-                        $"{owner.OwnerIdentitySource} role={owner.OwnerRole}.");
+                        $"Eligible placement role/state mismatch: " +
+                        $"{owner.RecipeKey} role={owner.OwnerRole} state={owner.VisualState}.");
                 }
-                if (!identitySources.Add(owner.OwnerIdentitySource))
+                if (!identitySources.Add(owner.RecipeKey))
                 {
                     throw new InvalidOperationException(
-                        $"Duplicate placement identity source: {owner.OwnerIdentitySource}");
+                        $"Duplicate placement identity source: {owner.RecipeKey}");
                 }
                 string identityPair =
-                    owner.OwnerIdentity.Low.ToString(CultureInfo.InvariantCulture) +
+                    owner.PlacementIdentity.Low.ToString(CultureInfo.InvariantCulture) +
                     ":" +
-                    owner.OwnerIdentity.High.ToString(CultureInfo.InvariantCulture);
+                    owner.PlacementIdentity.High.ToString(CultureInfo.InvariantCulture);
                 if (!identityPairs.Add(identityPair))
                 {
                     throw new InvalidOperationException(
                         $"Placement identity collision: {identityPair}");
                 }
 
-                string prototypeSource = prototypeSourceByOwner[owner.OwnerIdentitySource];
+                string prototypeSource = prototypeSourceByOwner[owner.RecipeKey];
                 int prototypeIndex = prototypeIndexBySource[prototypeSource];
                 PrototypeRecipeReport prototype = prototypes[prototypeIndex];
                 placementPartRows += prototype.partCount;
                 placements.Add(new LogicalPlacementReport
                 {
                     placementIndex = index,
-                    stableOwnerId = owner.OwnerStableId,
-                    stableIdentityLow = owner.OwnerIdentity.Low,
-                    stableIdentityHigh = owner.OwnerIdentity.High,
+                    stableOwnerId = stateful
+                        ? owner.OwnerStableId + "#" + owner.VisualState
+                        : owner.OwnerStableId,
+                    stableIdentityLow = owner.PlacementIdentity.Low,
+                    stableIdentityHigh = owner.PlacementIdentity.High,
+                    sourceOwnerIdentityLow = owner.OwnerIdentity.Low,
+                    sourceOwnerIdentityHigh = owner.OwnerIdentity.High,
                     prototypeIndex = prototypeIndex,
                     worldMatrix = ToArray(owner.WorldMatrix),
                     worldMatrixValue = owner.WorldMatrix,
                     cellIndex = -1,
-                    stateOwnerIndex = -1,
-                    requiredVisualState = OperationMapRenderVisualState.Any.ToString(),
+                    stateOwnerIndex = stateful
+                        ? stateOwnerIndexBySource[owner.OwnerIdentitySource]
+                        : -1,
+                    requiredVisualState = owner.VisualState.ToString(),
                     priority = 0,
                     semanticCategory = owner.SemanticCategory.ToString()
                 });
@@ -834,16 +957,16 @@ namespace Game.Editor
                 operationMapId = "opmap.skirmish.desert_base_01",
                 result = "Passed",
                 placementCount = placements.Count,
-                stateOwnerCount = 0,
-                stateLinkedPlacementCount = 0,
-                renderOnlyPlacementCount = placements.Count,
+                stateOwnerCount = stateOwners.Count,
+                stateLinkedPlacementCount = placements.Count(value => value.stateOwnerIndex >= 0),
+                renderOnlyPlacementCount = placements.Count(value => value.stateOwnerIndex < 0),
                 placementPartRowCount = placementPartRows,
                 logicalPlacementsSha256 = placementsHash,
                 stateRelationshipPolicy =
-                    "Current Vegetation/Prop pilot is render-only: stateOwnerIndex=-1, " +
-                    "RequiredVisualState=Any. Building state linkage remains deferred.",
+                    "Vegetation/Prop placements remain render-only. VRP-063 House intact and " +
+                    "destroyed recipes share one deterministic canonical building state owner.",
                 placements = placements,
-                stateOwners = new List<LogicalStateOwnerReport>(),
+                stateOwners = stateOwners,
                 spatialCells = spatialCells
             };
         }
@@ -1398,6 +1521,13 @@ namespace Game.Editor
                 return "unsupported-renderer";
             if (!policySupported)
                 return "unsupported-render-policy";
+            if (row.DenseOwner.Category ==
+                DenseCityPresentationSemanticCategory.GameplayBuildingIntact)
+            {
+                return row.IsSelectedBuildingFamily
+                    ? "eligible"
+                    : "gameplay-building-family-deferred-after-vrp063";
+            }
             if (!repeated)
                 return "unique-presentation-signature";
 
@@ -1405,8 +1535,6 @@ namespace Game.Editor
             {
                 DenseCityPresentationSemanticCategory.Vegetation => "eligible",
                 DenseCityPresentationSemanticCategory.Prop => "eligible",
-                DenseCityPresentationSemanticCategory.GameplayBuildingIntact =>
-                    "gameplay-building-state-sync-not-accepted",
                 DenseCityPresentationSemanticCategory.Infrastructure =>
                     "infrastructure-deferred-after-render-only-pilot",
                 DenseCityPresentationSemanticCategory.Horizon =>
@@ -1588,6 +1716,8 @@ namespace Game.Editor
                 AppendCanonical(canonical, row.ownerIdentityLow);
                 AppendCanonical(canonical, row.ownerIdentityHigh);
                 AppendCanonical(canonical, row.semanticCategory);
+                AppendCanonical(canonical, row.buildingFamily);
+                AppendCanonical(canonical, row.buildingVisualState);
                 AppendCanonical(canonical, row.rendererPath);
                 AppendCanonical(canonical, row.rendererPathIdentitySource);
                 AppendCanonical(canonical, row.rendererPathIdentityLow);
@@ -1669,6 +1799,8 @@ namespace Game.Editor
                 AppendCanonical(canonical, placement.stableOwnerId);
                 AppendCanonical(canonical, placement.stableIdentityLow);
                 AppendCanonical(canonical, placement.stableIdentityHigh);
+                AppendCanonical(canonical, placement.sourceOwnerIdentityLow);
+                AppendCanonical(canonical, placement.sourceOwnerIdentityHigh);
                 AppendCanonical(canonical, placement.prototypeIndex);
                 AppendCanonical(canonical, placement.worldMatrix);
                 AppendCanonical(canonical, placement.cellIndex);
@@ -1894,7 +2026,8 @@ namespace Game.Editor
                 int subMesh,
                 string signature,
                 DenseCityPresentationIdentityAuthoring denseOwner,
-                OperationMapEntityPresentationIdentityAuthoring acceptedOwner)
+                OperationMapEntityPresentationIdentityAuthoring acceptedOwner,
+                OperationMapBuildingAuthoring buildingOwner)
             {
                 Renderer = renderer;
                 Material = material;
@@ -1902,6 +2035,8 @@ namespace Game.Editor
                 Signature = signature;
                 DenseOwner = denseOwner;
                 AcceptedOwner = acceptedOwner;
+                BuildingOwner = buildingOwner;
+                BuildingVisualState = ResolveBuildingVisualState(renderer, buildingOwner);
             }
 
             internal Renderer Renderer { get; }
@@ -1910,6 +2045,44 @@ namespace Game.Editor
             internal string Signature { get; }
             internal DenseCityPresentationIdentityAuthoring DenseOwner { get; }
             internal OperationMapEntityPresentationIdentityAuthoring AcceptedOwner { get; }
+            internal OperationMapBuildingAuthoring BuildingOwner { get; }
+            internal OperationMapRenderVisualState BuildingVisualState { get; }
+            internal bool IsSelectedBuildingFamily =>
+                DenseOwner != null &&
+                BuildingOwner != null &&
+                DenseOwner.transform == BuildingOwner.transform &&
+                DenseOwner.Role == OperationMapEntityPresentationRole.GameplayBuildings &&
+                DenseOwner.Category ==
+                    DenseCityPresentationSemanticCategory.GameplayBuildingIntact &&
+                BuildingOwner.Definition != null &&
+                BuildingOwner.Definition.ConfiguredRole == BuildingRole.House;
+
+            private static OperationMapRenderVisualState ResolveBuildingVisualState(
+                Renderer renderer,
+                OperationMapBuildingAuthoring building)
+            {
+                if (building == null)
+                    return OperationMapRenderVisualState.Any;
+                Transform target = renderer.transform;
+                Transform intact = building.IntactVisualRoot != null
+                    ? building.IntactVisualRoot.transform
+                    : null;
+                Transform destroyed = building.DestroyedVisualRoot != null
+                    ? building.DestroyedVisualRoot.transform
+                    : null;
+                bool inIntact = intact != null &&
+                                (target == intact || target.IsChildOf(intact));
+                bool inDestroyed = destroyed != null &&
+                                   (target == destroyed || target.IsChildOf(destroyed));
+                if (inIntact == inDestroyed)
+                {
+                    throw new InvalidOperationException(
+                        $"Building renderer {renderer.name} must resolve to exactly one visual state.");
+                }
+                return inIntact
+                    ? OperationMapRenderVisualState.Intact
+                    : OperationMapRenderVisualState.Destroyed;
+            }
         }
 
         private struct CountPair
@@ -2037,6 +2210,8 @@ namespace Game.Editor
             public string stableOwnerId;
             public ulong stableIdentityLow;
             public ulong stableIdentityHigh;
+            public ulong sourceOwnerIdentityLow;
+            public ulong sourceOwnerIdentityHigh;
             public int prototypeIndex;
             public float[] worldMatrix;
             public int cellIndex;
@@ -2200,6 +2375,8 @@ namespace Game.Editor
             public ulong ownerIdentityLow;
             public ulong ownerIdentityHigh;
             public string semanticCategory;
+            public string buildingFamily;
+            public string buildingVisualState;
             public string rendererPath;
             public string rendererPathIdentitySource;
             public ulong rendererPathIdentityLow;
@@ -2255,6 +2432,7 @@ namespace Game.Editor
         private sealed class EligiblePartCandidate
         {
             internal string OwnerIdentitySource;
+            internal string RecipeKey;
             internal DenseCityPresentationSemanticCategory SemanticCategory;
             internal SourceRowReport SourceRow;
             internal Matrix4x4 LocalToPlacement;
@@ -2268,16 +2446,20 @@ namespace Game.Editor
             internal OperationMapRenderIdentity128 OwnerIdentity;
             internal OperationMapEntityPresentationRole OwnerRole;
             internal Matrix4x4 PlacementWorldMatrix;
+            internal OperationMapRenderVisualState VisualState;
         }
 
         private sealed class OwnerRecipe
         {
+            internal string RecipeKey;
             internal string OwnerIdentitySource;
             internal string OwnerStableId;
             internal OperationMapRenderIdentity128 OwnerIdentity;
+            internal OperationMapRenderIdentity128 PlacementIdentity;
             internal OperationMapEntityPresentationRole OwnerRole;
             internal Matrix4x4 WorldMatrix;
             internal DenseCityPresentationSemanticCategory SemanticCategory;
+            internal OperationMapRenderVisualState VisualState;
             internal List<EligiblePartCandidate> Parts;
         }
 

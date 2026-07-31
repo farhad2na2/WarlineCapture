@@ -64,13 +64,14 @@ public sealed class OperationMapRenderVirtualizationValidation
             tests.VirtualizationReport_RejectsCapacityReconciliationFailures();
             tests.RenderDatabaseBakeConfig_IsGeneratedOnlyAndRetainsCompleteSchema();
             tests.RenderDatabaseBakeConfig_RejectsMissingOrCorruptRecords();
+            tests.RenderDatabaseBakeConfig_SeparatesStateVariantAndSourceOwnerIdentity();
             tests.SharedRenderMeshArray_PreservesSortedAssetsAndEveryLogicalIndex();
             tests.ProxySlotBakePlan_UsesEveryReportedSlotAndExactFixedPolicy();
             tests.ProxySlots_BakeAsDisabledLeafEntitiesWithExactBucketRanges();
             tests.EligibleSourceRows_BakeOnlyWhileGameplayAndResidentOwnersSurvive();
             tests.VirtualizedBuildingStateOwnerIndices_AreContiguousAndIdentityOrdered();
             tests.VirtualizedBuilding_ReplacesOnlyRenderRootOwnershipWithStateIndex();
-            Debug.Log("[OperationMapRenderVirtualizationValidation] result=Passed tests=44");
+            Debug.Log("[OperationMapRenderVirtualizationValidation] result=Passed tests=45");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -1266,6 +1267,63 @@ public sealed class OperationMapRenderVirtualizationValidation
     }
 
     [Test]
+    public void RenderDatabaseBakeConfig_SeparatesStateVariantAndSourceOwnerIdentity()
+    {
+        OperationMapRenderDatabaseBakeConfig config =
+            CreateValidBakeConfig(out Mesh mesh, out Material material);
+        try
+        {
+            Set(
+                config,
+                "prototypes",
+                new[]
+                {
+                    new OperationMapRenderPrototypeConfigRecord(
+                        1ul,
+                        2ul,
+                        0,
+                        1,
+                        new UnityEngine.Bounds(Vector3.zero, Vector3.one * 2f),
+                        DenseCityPresentationSemanticCategory.GameplayBuildingIntact,
+                        OperationMapRenderEligibilityFlags.Eligible |
+                        OperationMapRenderEligibilityFlags.RequiresStateOwner)
+                });
+            Set(
+                config,
+                "placements",
+                new[]
+                {
+                    new OperationMapRenderPlacementConfigRecord(
+                        7ul,
+                        8ul,
+                        0,
+                        Matrix4x4.identity,
+                        0,
+                        0,
+                        OperationMapRenderVisualState.Intact,
+                        0,
+                        DenseCityPresentationSemanticCategory.GameplayBuildingIntact,
+                        5ul,
+                        6ul)
+                });
+
+            Assert.That(config.TryValidateSchema(out string error), Is.True, error);
+            Assert.That(config.Placements[0].StableIdentityLow, Is.EqualTo(7ul));
+            Assert.That(config.Placements[0].SourceOwnerIdentityLow, Is.EqualTo(5ul));
+
+            Set(config.Placements[0], "stateOwnerIndex", -1);
+            Assert.That(config.TryValidateSchema(out string stateError), Is.False);
+            Assert.That(stateError, Does.Contain("state-owner policy"));
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(config);
+            UnityEngine.Object.DestroyImmediate(material);
+            UnityEngine.Object.DestroyImmediate(mesh);
+        }
+    }
+
+    [Test]
     public void SharedRenderMeshArray_PreservesSortedAssetsAndEveryLogicalIndex()
     {
         OperationMapRenderDatabaseBakeConfig config =
@@ -1382,7 +1440,7 @@ public sealed class OperationMapRenderVirtualizationValidation
         }
 
         Assert.That(descriptors, Has.Length.EqualTo(expectedTotal));
-        Assert.That(descriptors, Has.Length.EqualTo(704));
+        Assert.That(descriptors, Has.Length.EqualTo(929));
     }
 
     [Test]
@@ -1444,7 +1502,7 @@ public sealed class OperationMapRenderVirtualizationValidation
             EntityQuery slotsQuery = entityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<OperationMapRenderProxySlotComponent>());
             using NativeArray<Entity> slots = slotsQuery.ToEntityArray(Allocator.Temp);
-            Assert.That(slots, Has.Length.EqualTo(704));
+            Assert.That(slots, Has.Length.EqualTo(929));
 
             var seenSlotIndices = new HashSet<int>();
             var seenByBucket = new int[config.PoolBuckets.Count];

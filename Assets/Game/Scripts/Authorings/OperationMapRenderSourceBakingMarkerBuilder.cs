@@ -85,8 +85,8 @@ namespace Game.Authoring
                     {
                         OwnerIdentity = new OperationMapRenderIdentity128
                         {
-                            Low = placement.StableIdentityLow,
-                            High = placement.StableIdentityHigh
+                            Low = placement.SourceOwnerIdentityLow,
+                            High = placement.SourceOwnerIdentityHigh
                         },
                         RendererPathIdentity = new OperationMapRenderIdentity128
                         {

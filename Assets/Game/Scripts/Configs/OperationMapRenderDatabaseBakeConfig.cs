@@ -147,6 +147,8 @@ namespace Game.Configs
     {
         [SerializeField] private ulong stableIdentityLow;
         [SerializeField] private ulong stableIdentityHigh;
+        [SerializeField] private ulong sourceOwnerIdentityLow;
+        [SerializeField] private ulong sourceOwnerIdentityHigh;
         [SerializeField] private int prototypeIndex;
         [SerializeField] private Matrix4x4 worldMatrix;
         [SerializeField] private int cellIndex;
@@ -157,6 +159,14 @@ namespace Game.Configs
 
         public ulong StableIdentityLow => stableIdentityLow;
         public ulong StableIdentityHigh => stableIdentityHigh;
+        public ulong SourceOwnerIdentityLow =>
+            sourceOwnerIdentityLow == 0 && sourceOwnerIdentityHigh == 0
+                ? stableIdentityLow
+                : sourceOwnerIdentityLow;
+        public ulong SourceOwnerIdentityHigh =>
+            sourceOwnerIdentityLow == 0 && sourceOwnerIdentityHigh == 0
+                ? stableIdentityHigh
+                : sourceOwnerIdentityHigh;
         public int PrototypeIndex => prototypeIndex;
         public Matrix4x4 WorldMatrix => worldMatrix;
         public int CellIndex => cellIndex;
@@ -174,10 +184,20 @@ namespace Game.Configs
             int stateOwnerIndex,
             OperationMapRenderVisualState requiredVisualState,
             int priority,
-            DenseCityPresentationSemanticCategory semanticCategory)
+            DenseCityPresentationSemanticCategory semanticCategory,
+            ulong sourceOwnerIdentityLow = 0,
+            ulong sourceOwnerIdentityHigh = 0)
         {
             this.stableIdentityLow = stableIdentityLow;
             this.stableIdentityHigh = stableIdentityHigh;
+            this.sourceOwnerIdentityLow = sourceOwnerIdentityLow == 0 &&
+                                          sourceOwnerIdentityHigh == 0
+                ? stableIdentityLow
+                : sourceOwnerIdentityLow;
+            this.sourceOwnerIdentityHigh = sourceOwnerIdentityLow == 0 &&
+                                           sourceOwnerIdentityHigh == 0
+                ? stableIdentityHigh
+                : sourceOwnerIdentityHigh;
             this.prototypeIndex = prototypeIndex;
             this.worldMatrix = worldMatrix;
             this.cellIndex = cellIndex;
@@ -576,6 +596,9 @@ namespace Game.Configs
 
         private bool ValidatePlacements(out string error)
         {
+            var placementIdentities = new HashSet<(ulong, ulong)>();
+            var stateOwnerIndices = new Dictionary<(ulong, ulong), int>();
+            var stateOwnerIdentities = new Dictionary<int, (ulong, ulong)>();
             for (int index = 0; index < placements.Length; index++)
             {
                 OperationMapRenderPlacementConfigRecord placement = placements[index];
@@ -583,6 +606,9 @@ namespace Game.Configs
                     IsZeroIdentity(
                         placement.StableIdentityLow,
                         placement.StableIdentityHigh) ||
+                    IsZeroIdentity(
+                        placement.SourceOwnerIdentityLow,
+                        placement.SourceOwnerIdentityHigh) ||
                     placement.PrototypeIndex < 0 ||
                     placement.PrototypeIndex >= prototypes.Length ||
                     placement.CellIndex < 0 ||
@@ -597,6 +623,54 @@ namespace Game.Configs
                     !IsFinite(placement.WorldMatrix))
                 {
                     error = $"placements[{index}] has invalid identity, reference, state, or matrix.";
+                    return false;
+                }
+                if (!placementIdentities.Add(
+                        (placement.StableIdentityLow, placement.StableIdentityHigh)))
+                {
+                    error = $"placements[{index}] duplicates a logical placement identity.";
+                    return false;
+                }
+
+                bool requiresStateOwner =
+                    (prototypes[placement.PrototypeIndex].EligibilityFlags &
+                     OperationMapRenderEligibilityFlags.RequiresStateOwner) != 0;
+                if (requiresStateOwner
+                        ? placement.StateOwnerIndex < 0 ||
+                          placement.RequiredVisualState == OperationMapRenderVisualState.Any
+                        : placement.StateOwnerIndex != -1 ||
+                          placement.RequiredVisualState != OperationMapRenderVisualState.Any ||
+                          placement.SourceOwnerIdentityLow != placement.StableIdentityLow ||
+                          placement.SourceOwnerIdentityHigh != placement.StableIdentityHigh)
+                {
+                    error = $"placements[{index}] has inconsistent state-owner policy.";
+                    return false;
+                }
+                if (!requiresStateOwner)
+                    continue;
+
+                var sourceOwner = (
+                    placement.SourceOwnerIdentityLow,
+                    placement.SourceOwnerIdentityHigh);
+                if ((stateOwnerIndices.TryGetValue(sourceOwner, out int existingIndex) &&
+                     existingIndex != placement.StateOwnerIndex) ||
+                    (stateOwnerIdentities.TryGetValue(
+                         placement.StateOwnerIndex,
+                         out (ulong, ulong) existingOwner) &&
+                     existingOwner != sourceOwner))
+                {
+                    error = $"placements[{index}] aliases a building state-owner index.";
+                    return false;
+                }
+                stateOwnerIndices[sourceOwner] = placement.StateOwnerIndex;
+                stateOwnerIdentities[placement.StateOwnerIndex] = sourceOwner;
+            }
+
+            for (int index = 0; index < stateOwnerIdentities.Count; index++)
+            {
+                if (!stateOwnerIdentities.ContainsKey(index))
+                {
+                    error = "Building state-owner indices must be contiguous from zero.";
                     return false;
                 }
             }

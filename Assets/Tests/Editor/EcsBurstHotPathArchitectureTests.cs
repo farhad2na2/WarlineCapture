@@ -15,6 +15,7 @@ using UnityEngine;
 public sealed class EcsBurstHotPathArchitectureTests
 {
     private const string SystemsRoot = "Assets/Game/Scripts/Systems";
+    private const string CompositionRoot = "Assets/Game/Scripts/Composition";
     private const string RenderingSystemsRoot = "Assets/Game/Scripts/Rendering/Systems";
     private const string UiShellEcsRoot = "Assets/Game/Scripts/UI/Shell/Ecs";
     private const string GameScriptsRoot = "Assets/Game/Scripts";
@@ -232,8 +233,9 @@ public sealed class EcsBurstHotPathArchitectureTests
             tests.BurstCompileCoverageMustNotDecrease();
             tests.SystemStateTypeHandlesMustBeCreatedOnlyDuringInitialization();
             tests.UnitRenderBudgetPureEcsSystemsMustNotUseUnityObjectApis();
+            tests.GameplayConsumersMustRemainIndependentFromRenderProxyAssignment();
             tests.ObsoleteBuildUiEcsPathMustNotReturn();
-            Debug.Log("[EcsBurstHotPathArchitectureValidation] result=Passed tests=11");
+            Debug.Log("[EcsBurstHotPathArchitectureValidation] result=Passed tests=12");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -645,6 +647,117 @@ public sealed class EcsBurstHotPathArchitectureTests
             string.Join(Environment.NewLine, violations));
     }
 
+    [Test]
+    public void GameplayConsumersMustRemainIndependentFromRenderProxyAssignment()
+    {
+        string[] forbiddenProxyTokens =
+        {
+            "OperationMapRenderProxySlotComponent",
+            "OperationMapRenderSlotCommandComponent",
+            "OperationMapRenderDatabaseComponent",
+            "OperationMapRenderVirtualizationStateComponent",
+            "OperationMapRenderVirtualizationMetricsComponent",
+            "OperationMapRenderCanonicalStateComponent",
+            "OperationMapRenderStateChangeComponent",
+            "OperationMapVirtualizedBuildingPresentationComponent",
+            "MaterialMeshInfo"
+        };
+
+        var groups = new Dictionary<string, ConsumerAuditGroup>(StringComparer.Ordinal)
+        {
+            ["selection"] = new ConsumerAuditGroup(
+                new[] { "Selection" },
+                new[]
+                {
+                    "Assets/Game/Scripts/Systems/SelectionStateCompositionSystemHelper.cs",
+                    "Assets/Game/Scripts/Systems/BuildingSelectionRuntimeCompositionSystemHelper.cs"
+                },
+                new[] { "SelectedUnitTag", "RuntimeBuildingCollection" }),
+            ["targeting"] = new ConsumerAuditGroup(
+                new[] { "Target", "Attack" },
+                new[]
+                {
+                    "Assets/Game/Scripts/Systems/AITargetingSystem.cs",
+                    "Assets/Game/Scripts/Systems/UnitTargetOrderSystem.cs"
+                },
+                new[] { "UnitHealth", "Faction", "UnitGrid" }),
+            ["minimap"] = new ConsumerAuditGroup(
+                new[] { "Minimap" },
+                new[]
+                {
+                    "Assets/Game/Scripts/Systems/MatchHudMinimapMarkerSystem.cs",
+                    "Assets/Game/Scripts/Composition/MatchHudMinimapDataSourceAdapter.cs"
+                },
+                new[] { "MatchHudMinimapMarkerElement", "UnitHealth", "LocalTransform", "Faction" }),
+            ["navigation"] = new ConsumerAuditGroup(
+                new[] { "Path", "Movement", "MoveOrder", "RoadGrid" },
+                new[]
+                {
+                    "Assets/Game/Scripts/Systems/UnitPathfindingScheduler.cs",
+                    "Assets/Game/Scripts/Systems/UnitMoveOrderSystem.cs"
+                },
+                new[] { "DynamicBlockerComponent", "UnitGrid" }),
+            ["blockers"] = new ConsumerAuditGroup(
+                new[] { "Blocker" },
+                new[]
+                {
+                    "Assets/Game/Scripts/Systems/StaticGridBlockerUpdateSystem.cs",
+                    "Assets/Game/Scripts/Systems/DynamicBlockerInitSystem.cs"
+                },
+                new[] { "StaticGridBlocker", "GridBlockerSize", "DynamicBlockerComponent" })
+        };
+
+        string[] sourceFiles = EnumerateFiles(SystemsRoot)
+            .Concat(EnumerateFiles(CompositionRoot))
+            .Select(NormalizePath)
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+        List<string> violations = new();
+
+        foreach (KeyValuePair<string, ConsumerAuditGroup> pair in groups)
+        {
+            ConsumerAuditGroup group = pair.Value;
+            string[] matchedFiles = sourceFiles
+                .Where(path => group.FileNameTokens.Any(token =>
+                    Path.GetFileNameWithoutExtension(path).IndexOf(token, StringComparison.Ordinal) >= 0))
+                .ToArray();
+
+            if (matchedFiles.Length == 0)
+            {
+                violations.Add($"{pair.Key}: no consumer source files matched the audit.");
+                continue;
+            }
+
+            foreach (string anchorPath in group.RequiredAnchorPaths)
+            {
+                if (!matchedFiles.Contains(anchorPath, StringComparer.Ordinal))
+                    violations.Add($"{pair.Key}: required canonical consumer `{anchorPath}` is missing from the audit.");
+            }
+
+            string aggregate = string.Join(Environment.NewLine, matchedFiles.Select(File.ReadAllText));
+            foreach (string requiredToken in group.RequiredCanonicalTokens)
+            {
+                if (aggregate.IndexOf(requiredToken, StringComparison.Ordinal) < 0)
+                    violations.Add($"{pair.Key}: canonical gameplay token `{requiredToken}` is no longer read by the audited consumers.");
+            }
+
+            foreach (string path in matchedFiles)
+            {
+                string text = File.ReadAllText(path);
+                foreach (string forbiddenToken in forbiddenProxyTokens)
+                {
+                    if (text.IndexOf(forbiddenToken, StringComparison.Ordinal) >= 0)
+                        violations.Add($"{pair.Key}: `{path}` depends on render-proxy assignment token `{forbiddenToken}`.");
+                }
+            }
+        }
+
+        Assert.IsEmpty(
+            violations,
+            "Selection, targeting, minimap, navigation, and blocker consumers must read canonical gameplay state and remain independent from render-proxy assignment:\n" +
+            string.Join(Environment.NewLine, violations));
+    }
+
     private static IEnumerable<string> EnumerateSystemFiles()
     {
         return Directory
@@ -925,6 +1038,23 @@ public sealed class EcsBurstHotPathArchitectureTests
 
         public string Path { get; }
         public int Count { get; }
+    }
+
+    private readonly struct ConsumerAuditGroup
+    {
+        public ConsumerAuditGroup(
+            string[] fileNameTokens,
+            string[] requiredAnchorPaths,
+            string[] requiredCanonicalTokens)
+        {
+            FileNameTokens = fileNameTokens;
+            RequiredAnchorPaths = requiredAnchorPaths;
+            RequiredCanonicalTokens = requiredCanonicalTokens;
+        }
+
+        public string[] FileNameTokens { get; }
+        public string[] RequiredAnchorPaths { get; }
+        public string[] RequiredCanonicalTokens { get; }
     }
 }
 #endif

@@ -5,6 +5,7 @@ using Game.Authoring;
 using Game.Configs;
 using Game.Components;
 using Game.Editor;
+using Game.Rendering;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
@@ -67,8 +68,9 @@ public sealed class OperationMapRenderVirtualizationValidation
             tests.ProxySlotBakePlan_UsesEveryReportedSlotAndExactFixedPolicy();
             tests.ProxySlots_BakeAsDisabledLeafEntitiesWithExactBucketRanges();
             tests.EligibleSourceRows_BakeOnlyWhileGameplayAndResidentOwnersSurvive();
+            tests.VirtualizedBuildingStateOwnerIndices_AreContiguousAndIdentityOrdered();
             tests.VirtualizedBuilding_ReplacesOnlyRenderRootOwnershipWithStateIndex();
-            Debug.Log("[OperationMapRenderVirtualizationValidation] result=Passed tests=43");
+            Debug.Log("[OperationMapRenderVirtualizationValidation] result=Passed tests=44");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -1662,6 +1664,41 @@ public sealed class OperationMapRenderVirtualizationValidation
     }
 
     [Test]
+    public void VirtualizedBuildingStateOwnerIndices_AreContiguousAndIdentityOrdered()
+    {
+        OwnerKey first = OwnerKey.From(new OperationMapRenderIdentity128
+        {
+            Low = 3ul,
+            High = 99ul
+        });
+        OwnerKey second = OwnerKey.From(new OperationMapRenderIdentity128
+        {
+            Low = 7ul,
+            High = 1ul
+        });
+        var accepted = new Dictionary<OwnerKey, int>
+        {
+            [second] = 1,
+            [first] = 0
+        };
+
+        Assert.DoesNotThrow(
+            () => OperationMapRenderVirtualizationBakingSystem
+                .RequireDeterministicStateOwnerIndices(accepted));
+
+        var rejected = new Dictionary<OwnerKey, int>
+        {
+            [first] = 1,
+            [second] = 0
+        };
+        Assert.That(
+            () => OperationMapRenderVirtualizationBakingSystem
+                .RequireDeterministicStateOwnerIndices(rejected),
+            Throws.TypeOf<InvalidOperationException>().With.Message.Contains(
+                "contiguous and match unsigned stable owner identity order"));
+    }
+
+    [Test]
     public void VirtualizedBuilding_ReplacesOnlyRenderRootOwnershipWithStateIndex()
     {
         const string buildingStableId =
@@ -1736,7 +1773,7 @@ public sealed class OperationMapRenderVirtualizationValidation
                     0,
                     Matrix4x4.identity,
                     0,
-                    7,
+                    0,
                     OperationMapRenderVisualState.Intact,
                     0,
                     DenseCityPresentationSemanticCategory.GameplayBuildingIntact)
@@ -1809,7 +1846,7 @@ public sealed class OperationMapRenderVirtualizationValidation
                 entityManager.GetComponentData<
                     OperationMapVirtualizedBuildingPresentationComponent>(
                     buildingEntity).StateOwnerIndex,
-                Is.EqualTo(7));
+                Is.EqualTo(0));
             Assert.That(
                 entityManager.HasComponent<OperationMapBuildingDestroyedComponent>(
                     buildingEntity),

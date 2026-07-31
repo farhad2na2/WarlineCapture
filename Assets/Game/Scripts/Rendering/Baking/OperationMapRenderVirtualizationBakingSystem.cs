@@ -114,6 +114,7 @@ namespace Game.Rendering
                     expectedBuildingStateOwners[owner] = row.StateOwnerIndex;
                 }
             }
+            RequireDeterministicStateOwnerIndices(expectedBuildingStateOwners);
 
             var buildingEntities = new Dictionary<OwnerKey, Entity>();
             using (NativeArray<Entity> buildingOwnerEntities =
@@ -378,9 +379,31 @@ namespace Game.Rendering
                 });
             commandBuffer.Playback(entityManager);
         }
+
+        internal static void RequireDeterministicStateOwnerIndices(
+            IReadOnlyDictionary<OwnerKey, int> stateOwners)
+        {
+            if (stateOwners == null)
+                throw new ArgumentNullException(nameof(stateOwners));
+            if (stateOwners.Count == 0)
+                return;
+
+            var orderedOwners = new List<OwnerKey>(stateOwners.Keys);
+            orderedOwners.Sort();
+            for (int index = 0; index < orderedOwners.Count; index++)
+            {
+                int stateOwnerIndex = stateOwners[orderedOwners[index]];
+                if (stateOwnerIndex != index)
+                {
+                    throw new InvalidOperationException(
+                        "Virtualized building state-owner indices must be contiguous and " +
+                        "match unsigned stable owner identity order.");
+                }
+            }
+        }
     }
 
-    internal readonly struct OwnerKey : IEquatable<OwnerKey>
+    internal readonly struct OwnerKey : IEquatable<OwnerKey>, IComparable<OwnerKey>
     {
         private readonly ulong _low;
         private readonly ulong _high;
@@ -396,6 +419,12 @@ namespace Game.Rendering
 
         public bool Equals(OwnerKey other) =>
             _low == other._low && _high == other._high;
+
+        public int CompareTo(OwnerKey other)
+        {
+            int comparison = _low.CompareTo(other._low);
+            return comparison != 0 ? comparison : _high.CompareTo(other._high);
+        }
 
         public override bool Equals(object obj) =>
             obj is OwnerKey other && Equals(other);

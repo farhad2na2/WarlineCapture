@@ -16,6 +16,8 @@ namespace Game.Runtime
         private EntityQuery _virtualizedQuery;
         private EntityQuery _overlapQuery;
         private EntityQuery _stateChangeBufferQuery;
+        private ComponentLookup<OperationMapRenderStateChangeSequenceComponent>
+            _stateChangeSequenceLookup;
         private ComponentLookup<LocalTransform> _localTransforms;
 
         [BurstCompile]
@@ -40,9 +42,13 @@ namespace Game.Runtime
                 ComponentType.ReadOnly<
                     OperationMapVirtualizedBuildingPresentationComponent>());
             _stateChangeBufferQuery = state.GetEntityQuery(
-                ComponentType.ReadWrite<OperationMapRenderStateChangeComponent>());
+                ComponentType.ReadWrite<OperationMapRenderStateChangeComponent>(),
+                ComponentType.ReadWrite<
+                    OperationMapRenderStateChangeSequenceComponent>());
             state.RequireForUpdate(_presenceQuery);
             _localTransforms = state.GetComponentLookup<LocalTransform>();
+            _stateChangeSequenceLookup = state.GetComponentLookup<
+                OperationMapRenderStateChangeSequenceComponent>(false);
         }
 
         [BurstCompile]
@@ -80,25 +86,25 @@ namespace Game.Runtime
                 DynamicBuffer<OperationMapRenderStateChangeComponent> stateChanges =
                     state.EntityManager.GetBuffer<
                         OperationMapRenderStateChangeComponent>(bufferOwner);
-                uint nextChangeVersion = 1;
-                if (stateChanges.Length > 0)
+                OperationMapRenderStateChangeSequenceComponent sequence =
+                    state.EntityManager.GetComponentData<
+                        OperationMapRenderStateChangeSequenceComponent>(bufferOwner);
+                if (stateChanges.Length > virtualizedBuildingCount ||
+                    (ulong)sequence.LastPublishedVersion +
+                    (uint)virtualizedBuildingCount > uint.MaxValue)
                 {
-                    uint previousVersion = stateChanges[stateChanges.Length - 1].ChangeVersion;
-                    if (previousVersion == 0 ||
-                        (ulong)previousVersion + (uint)virtualizedBuildingCount >
-                        uint.MaxValue)
-                    {
-                        throw new System.InvalidOperationException(
-                            "Virtualized building state-change versions must be nonzero " +
-                            "and must not overflow.");
-                    }
-                    nextChangeVersion = previousVersion + 1;
+                    throw new System.InvalidOperationException(
+                        "Virtualized building state-change records must remain bounded " +
+                        "and their versions must not overflow.");
                 }
 
+                _stateChangeSequenceLookup.Update(ref state);
                 dependency = new ApplyVirtualizedBuildingStateJob
                 {
                     StateChanges = stateChanges,
-                    NextChangeVersion = nextChangeVersion
+                    StateChangeSequenceLookup = _stateChangeSequenceLookup,
+                    StateChangeOwner = bufferOwner,
+                    NextChangeVersion = sequence.LastPublishedVersion + 1
                 }.Schedule(dependency);
             }
 
@@ -156,6 +162,10 @@ namespace Game.Runtime
         private partial struct ApplyVirtualizedBuildingStateJob : IJobEntity
         {
             public DynamicBuffer<OperationMapRenderStateChangeComponent> StateChanges;
+            public ComponentLookup<
+                OperationMapRenderStateChangeSequenceComponent>
+                StateChangeSequenceLookup;
+            public Entity StateChangeOwner;
             public uint NextChangeVersion;
 
             private void Execute(
@@ -178,6 +188,11 @@ namespace Game.Runtime
                     VisualState = OperationMapRenderVisualState.Destroyed,
                     ChangeVersion = NextChangeVersion
                 });
+                StateChangeSequenceLookup[StateChangeOwner] =
+                    new OperationMapRenderStateChangeSequenceComponent
+                    {
+                        LastPublishedVersion = NextChangeVersion
+                    };
                 NextChangeVersion++;
                 destroyed.ValueRW = true;
             }

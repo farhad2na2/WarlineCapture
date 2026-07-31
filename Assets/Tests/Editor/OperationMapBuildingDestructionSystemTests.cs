@@ -117,7 +117,8 @@ public sealed class OperationMapBuildingDestructionSystemTests
     {
         using var world = new World("OperationMapVirtualizedBuildingDestructionTests");
         EntityManager entityManager = world.EntityManager;
-        Entity bufferOwner = entityManager.CreateEntity();
+        Entity bufferOwner = entityManager.CreateEntity(
+            typeof(OperationMapRenderStateChangeSequenceComponent));
         entityManager.AddBuffer<OperationMapRenderStateChangeComponent>(bufferOwner);
         Entity unrelatedProxy = entityManager.CreateEntity(typeof(LocalTransform));
         entityManager.SetComponentData(
@@ -152,6 +153,11 @@ public sealed class OperationMapBuildingDestructionSystemTests
             changes[0].VisualState,
             Is.EqualTo(OperationMapRenderVisualState.Destroyed));
         Assert.That(changes[0].ChangeVersion, Is.EqualTo(1u));
+        Assert.That(
+            entityManager.GetComponentData<
+                OperationMapRenderStateChangeSequenceComponent>(bufferOwner)
+                .LastPublishedVersion,
+            Is.EqualTo(1u));
 
         entityManager.SetComponentData(
             building,

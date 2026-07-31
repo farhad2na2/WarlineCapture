@@ -203,6 +203,9 @@ public sealed class OperationMapRenderVirtualizationValidation
         AssertUnmanaged<OperationMapRenderVirtualizationStateComponent>();
         AssertUnmanaged<OperationMapVirtualizedBuildingPresentationComponent>();
         AssertUnmanaged<OperationMapRenderStateChangeComponent>();
+        AssertUnmanaged<OperationMapRenderStateChangeSequenceComponent>();
+        AssertUnmanaged<OperationMapRenderCanonicalStateComponent>();
+        AssertUnmanaged<OperationMapRenderStateSyncStateComponent>();
         AssertUnmanaged<OperationMapRenderVirtualizationMetricsComponent>();
     }
 
@@ -216,6 +219,9 @@ public sealed class OperationMapRenderVirtualizationValidation
         AssertComponent<OperationMapRenderVirtualizationStateComponent>();
         AssertComponent<OperationMapVirtualizedBuildingPresentationComponent>();
         AssertBuffer<OperationMapRenderStateChangeComponent>();
+        AssertComponent<OperationMapRenderStateChangeSequenceComponent>();
+        AssertBuffer<OperationMapRenderCanonicalStateComponent>();
+        AssertComponent<OperationMapRenderStateSyncStateComponent>();
         AssertComponent<OperationMapRenderVirtualizationMetricsComponent>();
     }
 
@@ -1417,6 +1423,18 @@ public sealed class OperationMapRenderVirtualizationValidation
             Assert.That(
                 entityManager.HasBuffer<OperationMapRenderStateChangeComponent>(
                     databaseEntity),
+                Is.True);
+            Assert.That(
+                entityManager.HasComponent<
+                    OperationMapRenderStateChangeSequenceComponent>(databaseEntity),
+                Is.True);
+            Assert.That(
+                entityManager.HasBuffer<OperationMapRenderCanonicalStateComponent>(
+                    databaseEntity),
+                Is.True);
+            Assert.That(
+                entityManager.HasComponent<
+                    OperationMapRenderStateSyncStateComponent>(databaseEntity),
                 Is.True);
             using EntityQuery stateOwnerQuery = entityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<

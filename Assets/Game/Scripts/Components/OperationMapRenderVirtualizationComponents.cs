@@ -213,6 +213,28 @@ namespace Game.Components
         public uint ChangeVersion;
     }
 
+    public struct OperationMapRenderStateChangeSequenceComponent : IComponentData
+    {
+        public uint LastPublishedVersion;
+    }
+
+    [InternalBufferCapacity(0)]
+    public struct OperationMapRenderCanonicalStateComponent : IBufferElementData
+    {
+        public OperationMapRenderVisualState VisualState;
+        public uint ChangeVersion;
+    }
+
+    public struct OperationMapRenderStateSyncStateComponent : IComponentData
+    {
+        public byte Initialized;
+        public uint Revision;
+        public uint LastAppliedChangeVersion;
+        public int StateOwnerCount;
+        public int DirtyPlacementCount;
+        public int DirtyCellCount;
+    }
+
     public struct OperationMapRenderVirtualizationMetricsComponent : IComponentData
     {
         public int LogicalPlacementCount;

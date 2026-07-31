@@ -23,6 +23,7 @@ namespace Game.Rendering
         private int _initializedMapGeneration;
         private OperationMapRenderCellEnvelope _guardEnvelope;
         private uint _scheduledCameraVersion;
+        private uint _scheduledStateRevision;
         private uint _commandVersion;
         private int _assignmentGeneration;
         private byte _hasGuardEnvelope;
@@ -104,6 +105,10 @@ namespace Game.Rendering
                 !entityManager.HasComponent<OperationMapRenderVirtualizationMetricsComponent>(
                     databaseEntity) ||
                 !entityManager.HasBuffer<OperationMapRenderStateChangeComponent>(
+                    databaseEntity) ||
+                !entityManager.HasBuffer<OperationMapRenderCanonicalStateComponent>(
+                    databaseEntity) ||
+                !entityManager.HasComponent<OperationMapRenderStateSyncStateComponent>(
                     databaseEntity))
             {
                 throw new InvalidOperationException(
@@ -188,10 +193,25 @@ namespace Game.Rendering
         {
             if (_cameraQuery.CalculateEntityCount() != 1)
                 return;
+            OperationMapRenderStateSyncStateComponent syncState =
+                state.EntityManager.GetComponentData<
+                    OperationMapRenderStateSyncStateComponent>(databaseEntity);
+            DynamicBuffer<OperationMapRenderCanonicalStateComponent>
+                canonicalStates = state.EntityManager.GetBuffer<
+                    OperationMapRenderCanonicalStateComponent>(databaseEntity);
+            if (syncState.Initialized == 0 ||
+                canonicalStates.Length != syncState.StateOwnerCount)
+            {
+                throw new InvalidOperationException(
+                    "Render virtualization requires initialized canonical visual state.");
+            }
             RuntimeCameraSnapshotComponent camera =
                 _cameraQuery.GetSingleton<RuntimeCameraSnapshotComponent>();
-            if (camera.IsValid == 0 ||
-                camera.PublicationVersion == _scheduledCameraVersion)
+            bool stateChanged =
+                syncState.Revision != _scheduledStateRevision;
+            bool cameraChanged =
+                camera.PublicationVersion != _scheduledCameraVersion;
+            if (camera.IsValid == 0 || (!stateChanged && !cameraChanged))
             {
                 return;
             }
@@ -204,10 +224,11 @@ namespace Game.Rendering
                 throw new InvalidOperationException(
                     "Render virtualization camera envelope is invalid.");
             }
-            if (_hasGuardEnvelope != 0 &&
+            bool guardContainsRequired = _hasGuardEnvelope != 0 &&
                 OperationMapRenderGuardEnvelopeDecision.Contains(
                     _guardEnvelope,
-                    requiredEnvelope))
+                    requiredEnvelope);
+            if (!stateChanged && guardContainsRequired)
             {
                 _scheduledCameraVersion = camera.PublicationVersion;
                 return;
@@ -236,18 +257,26 @@ namespace Game.Rendering
             _commandStateLookup.Update(ref state);
             state.Dependency = _nativeState.Schedule(
                 database.Blob,
-                materializedEnvelope,
+                stateChanged && guardContainsRequired
+                    ? _guardEnvelope
+                    : materializedEnvelope,
+                canonicalStates.AsNativeArray(),
                 _assignmentGeneration,
                 _commandVersion,
+                stateChanged
+                    ? OperationMapRenderRebuildReason.VisualStateChanged
+                    : OperationMapRenderRebuildReason.CameraEnvelopeChanged,
                 commands.AsNativeArray(),
                 databaseEntity,
                 _virtualizationStateLookup,
                 _metricsLookup,
                 _commandStateLookup,
                 state.Dependency);
-            _guardEnvelope = materializedEnvelope;
+            if (!guardContainsRequired)
+                _guardEnvelope = materializedEnvelope;
             _hasGuardEnvelope = 1;
             _scheduledCameraVersion = camera.PublicationVersion;
+            _scheduledStateRevision = syncState.Revision;
         }
 
         internal static bool TryBuildCameraEnvelopes(
@@ -454,6 +483,7 @@ namespace Game.Rendering
             _initializedMapGeneration = 0;
             _guardEnvelope = default;
             _scheduledCameraVersion = 0;
+            _scheduledStateRevision = 0;
             _commandVersion = 0;
             _assignmentGeneration = 0;
             _hasGuardEnvelope = 0;
@@ -472,7 +502,6 @@ namespace Game.Rendering
         private NativeBitArray _activePlacements;
         private NativeBitArray _visitedPlacements;
         private NativeArray<int> _nextFreeSlotByBucket;
-        private NativeArray<OperationMapRenderVisualState> _canonicalVisualStates;
         private NativeList<int> _selectedCells;
         private NativeList<int> _selectedPlacements;
         private NativeList<OperationMapRenderLogicalRowKey> _selectedLogicalRows;
@@ -562,10 +591,6 @@ namespace Game.Rendering
                 blob.PoolBuckets.Length,
                 Allocator.Persistent,
                 NativeArrayOptions.ClearMemory);
-            _canonicalVisualStates =
-                new NativeArray<OperationMapRenderVisualState>(
-                    0,
-                    Allocator.Persistent);
             _selectedCells = new NativeList<int>(
                 blob.Cells.Length,
                 Allocator.Persistent);
@@ -608,8 +633,11 @@ namespace Game.Rendering
         internal JobHandle Schedule(
             BlobAssetReference<OperationMapRenderDatabaseBlob> database,
             OperationMapRenderCellEnvelope materializedEnvelope,
+            NativeArray<OperationMapRenderCanonicalStateComponent>
+                canonicalStates,
             int assignmentGeneration,
             uint commandVersion,
+            OperationMapRenderRebuildReason rebuildReason,
             NativeArray<OperationMapRenderSlotCommandComponent> commands,
             Entity owner,
             ComponentLookup<OperationMapRenderVirtualizationStateComponent>
@@ -633,7 +661,7 @@ namespace Game.Rendering
             {
                 Database = database,
                 SelectedCellIndices = _selectedCells,
-                CanonicalVisualStates = _canonicalVisualStates,
+                CanonicalStates = canonicalStates,
                 MaxSelectedPlacementCount = _selectedPlacements.Capacity,
                 MaxSelectedLogicalRowCount = _selectedLogicalRows.Capacity,
                 VisitedPlacements = _visitedPlacements,
@@ -669,6 +697,7 @@ namespace Game.Rendering
                 Owner = owner,
                 MaterializedEnvelope = materializedEnvelope,
                 CommandVersion = commandVersion,
+                RebuildReason = rebuildReason,
                 SelectionFailure = _selectionFailure,
                 AssignmentResult = _assignmentResult,
                 SelectedCellIndices = _selectedCells,
@@ -695,8 +724,6 @@ namespace Game.Rendering
                 _selectedCells.Dispose();
             if (_nextFreeSlotByBucket.IsCreated)
                 _nextFreeSlotByBucket.Dispose();
-            if (_canonicalVisualStates.IsCreated)
-                _canonicalVisualStates.Dispose();
             if (_visitedPlacements.IsCreated)
                 _visitedPlacements.Dispose();
             if (_activePlacements.IsCreated)
@@ -820,6 +847,7 @@ namespace Game.Rendering
         [ReadOnly] internal Entity Owner;
         [ReadOnly] internal OperationMapRenderCellEnvelope MaterializedEnvelope;
         [ReadOnly] internal uint CommandVersion;
+        [ReadOnly] internal OperationMapRenderRebuildReason RebuildReason;
         [ReadOnly] internal NativeReference<
             OperationMapRenderCellSelectionFailure> SelectionFailure;
         [ReadOnly] internal NativeReference<
@@ -858,6 +886,7 @@ namespace Game.Rendering
             runtime.ActiveEnvelopeMax = MaterializedEnvelope.Max;
             runtime.ActiveSlotCount = assignment.RetainedCount +
                                       assignment.AssignedCount;
+            runtime.DirtyPlacementCount = 0;
             runtime.OverflowCount = assignment.OverflowCount;
             runtime.RebuildCount++;
             metrics.EnabledSlotCount = runtime.ActiveSlotCount;
@@ -874,7 +903,7 @@ namespace Game.Rendering
             metrics.CommandVersion = CommandVersion;
             metrics.RebuildReason = runtime.RebuildCount == 1
                 ? OperationMapRenderRebuildReason.InitialView
-                : OperationMapRenderRebuildReason.CameraEnvelopeChanged;
+                : RebuildReason;
             CommandStateLookup[Owner] =
                 new OperationMapRenderSlotCommandStateComponent
                 {

@@ -475,8 +475,12 @@ public sealed class OperationMapRenderVirtualizationInitializationSystemTests
             typeof(OperationMapRenderPackedReadinessComponent),
             typeof(OperationMapRenderVirtualizationStateComponent),
             typeof(OperationMapRenderVirtualizationMetricsComponent),
+            typeof(OperationMapRenderStateChangeSequenceComponent),
+            typeof(OperationMapRenderStateSyncStateComponent),
             typeof(OperationMapRenderSlotCommandStateComponent));
         _world.EntityManager.AddBuffer<OperationMapRenderStateChangeComponent>(
+            _databaseEntity);
+        _world.EntityManager.AddBuffer<OperationMapRenderCanonicalStateComponent>(
             _databaseEntity);
         DynamicBuffer<OperationMapRenderSlotCommandComponent> commands =
             _world.EntityManager.AddBuffer<
@@ -507,6 +511,14 @@ public sealed class OperationMapRenderVirtualizationInitializationSystemTests
                 ResidencyMode =
                     (byte)OperationMapRenderResidencyMode.VirtualizedProxyPool,
                 ProxySlotCount = 2
+            });
+        _world.EntityManager.SetComponentData(
+            _databaseEntity,
+            new OperationMapRenderStateSyncStateComponent
+            {
+                Initialized = 1,
+                Revision = 1,
+                StateOwnerCount = 0
             });
 
         for (int slotIndex = 0; slotIndex < 2; slotIndex++)

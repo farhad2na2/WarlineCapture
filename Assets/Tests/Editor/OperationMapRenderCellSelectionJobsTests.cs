@@ -336,7 +336,7 @@ public sealed class OperationMapRenderCellSelectionJobsTests
 
     private sealed class SelectionFixture : System.IDisposable
     {
-        internal NativeArray<OperationMapRenderVisualState> States;
+        internal NativeArray<OperationMapRenderCanonicalStateComponent> States;
         internal NativeBitArray Visited;
         internal NativeList<int> Cells;
         internal NativeList<int> Placements;
@@ -354,10 +354,13 @@ public sealed class OperationMapRenderCellSelectionJobsTests
         {
             _database = database;
             _maxPlacementCount = placementCapacity;
-            States = new NativeArray<OperationMapRenderVisualState>(
+            States = new NativeArray<OperationMapRenderCanonicalStateComponent>(
                 1,
                 Allocator.TempJob);
-            States[0] = visualState;
+            States[0] = new OperationMapRenderCanonicalStateComponent
+            {
+                VisualState = visualState
+            };
             Visited = new NativeBitArray(
                 3,
                 Allocator.TempJob,
@@ -382,7 +385,7 @@ public sealed class OperationMapRenderCellSelectionJobsTests
             {
                 Database = _database,
                 SelectedCellIndices = Cells,
-                CanonicalVisualStates = States,
+                CanonicalStates = States,
                 MaxSelectedPlacementCount = _maxPlacementCount,
                 MaxSelectedLogicalRowCount = 4,
                 VisitedPlacements = Visited,

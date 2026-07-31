@@ -82,7 +82,12 @@ namespace Game.Authoring
                 AddComponent(
                     entity,
                     new OperationMapRenderSlotCommandStateComponent());
+                AddComponent(
+                    entity,
+                    new OperationMapRenderStateChangeSequenceComponent());
+                AddComponent(entity, new OperationMapRenderStateSyncStateComponent());
                 AddBuffer<OperationMapRenderStateChangeComponent>(entity);
+                AddBuffer<OperationMapRenderCanonicalStateComponent>(entity);
                 DynamicBuffer<OperationMapRenderSlotCommandComponent> commands =
                     AddBuffer<OperationMapRenderSlotCommandComponent>(entity);
                 AddSharedComponentManaged(entity, renderMeshArray);

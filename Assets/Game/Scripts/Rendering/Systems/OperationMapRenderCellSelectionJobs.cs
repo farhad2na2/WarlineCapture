@@ -93,7 +93,8 @@ namespace Game.Rendering
     {
         [ReadOnly] internal BlobAssetReference<OperationMapRenderDatabaseBlob> Database;
         [ReadOnly] internal NativeList<int> SelectedCellIndices;
-        [ReadOnly] internal NativeArray<OperationMapRenderVisualState> CanonicalVisualStates;
+        [ReadOnly] internal NativeArray<OperationMapRenderCanonicalStateComponent>
+            CanonicalStates;
         [ReadOnly] internal int MaxSelectedPlacementCount;
         [ReadOnly] internal int MaxSelectedLogicalRowCount;
         internal NativeBitArray VisitedPlacements;
@@ -262,7 +263,7 @@ namespace Game.Rendering
                 return true;
             }
             if (placement.StateOwnerIndex < 0 ||
-                placement.StateOwnerIndex >= CanonicalVisualStates.Length ||
+                placement.StateOwnerIndex >= CanonicalStates.Length ||
                 placement.RequiredVisualState ==
                     OperationMapRenderVisualState.Any)
             {
@@ -270,7 +271,7 @@ namespace Game.Rendering
             }
 
             OperationMapRenderVisualState canonical =
-                CanonicalVisualStates[placement.StateOwnerIndex];
+                CanonicalStates[placement.StateOwnerIndex].VisualState;
             if (canonical != OperationMapRenderVisualState.Intact &&
                 canonical != OperationMapRenderVisualState.Destroyed)
             {

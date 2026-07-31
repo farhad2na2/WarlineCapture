@@ -73,14 +73,6 @@ namespace Game.Authoring
                             "Eligible logical placement state ownership does not match " +
                             "its prototype policy.");
                     }
-                    if (part.SubMeshIndex != 0)
-                    {
-                        throw new InvalidOperationException(
-                            "VRP-034 supports only the accepted single-submesh render-only " +
-                            $"pilot, but logical part {prototype.FirstPart + partOffset} " +
-                            $"uses submesh {part.SubMeshIndex}.");
-                    }
-
                     var row = new OperationMapRenderEligibleSourceRowBakingComponent
                     {
                         OwnerIdentity = new OperationMapRenderIdentity128
@@ -103,7 +95,8 @@ namespace Game.Authoring
                     if (!expectedKeys.Add(SourceRowKey.From(row)))
                     {
                         throw new InvalidOperationException(
-                            "Eligible logical rows contain a duplicate owner/path identity.");
+                            "Eligible logical rows contain a duplicate owner/path/submesh " +
+                            "identity.");
                     }
                     expectedRows.Add(row);
                 }
@@ -246,26 +239,30 @@ namespace Game.Authoring
             private readonly ulong _ownerHigh;
             private readonly ulong _pathLow;
             private readonly ulong _pathHigh;
+            private readonly ushort _subMeshIndex;
 
             private SourceRowKey(
                 OperationMapRenderIdentity128 owner,
-                OperationMapRenderIdentity128 path)
+                OperationMapRenderIdentity128 path,
+                ushort subMeshIndex)
             {
                 _ownerLow = owner.Low;
                 _ownerHigh = owner.High;
                 _pathLow = path.Low;
                 _pathHigh = path.High;
+                _subMeshIndex = subMeshIndex;
             }
 
             internal static SourceRowKey From(
                 OperationMapRenderEligibleSourceRowBakingComponent row) =>
-                new(row.OwnerIdentity, row.RendererPathIdentity);
+                new(row.OwnerIdentity, row.RendererPathIdentity, row.SubMeshIndex);
 
             public bool Equals(SourceRowKey other) =>
                 _ownerLow == other._ownerLow &&
                 _ownerHigh == other._ownerHigh &&
                 _pathLow == other._pathLow &&
-                _pathHigh == other._pathHigh;
+                _pathHigh == other._pathHigh &&
+                _subMeshIndex == other._subMeshIndex;
 
             public override bool Equals(object obj) =>
                 obj is SourceRowKey other && Equals(other);
@@ -277,7 +274,8 @@ namespace Game.Authoring
                     int hash = (int)_ownerLow ^ (int)(_ownerLow >> 32);
                     hash = (hash * 397) ^ (int)_ownerHigh ^ (int)(_ownerHigh >> 32);
                     hash = (hash * 397) ^ (int)_pathLow ^ (int)(_pathLow >> 32);
-                    return (hash * 397) ^ (int)_pathHigh ^ (int)(_pathHigh >> 32);
+                    hash = (hash * 397) ^ (int)_pathHigh ^ (int)(_pathHigh >> 32);
+                    return (hash * 397) ^ _subMeshIndex;
                 }
             }
         }

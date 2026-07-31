@@ -498,6 +498,9 @@ namespace Game.Composition
             if (readiness.ResidencyMode !=
                     (byte)OperationMapRenderResidencyMode.VirtualizedProxyPool ||
                 readiness.EligibleSourceRowCount <= 0 ||
+                readiness.EligibleSourceRendererCount <= 0 ||
+                readiness.EligibleSourceRendererCount >
+                    readiness.EligibleSourceRowCount ||
                 readiness.ResidentSourceRowCount < 0 ||
                 readiness.ProxySlotCount <= 0 ||
                 readiness.VirtualizedAcceptedBuildingIdentityCount < 0 ||

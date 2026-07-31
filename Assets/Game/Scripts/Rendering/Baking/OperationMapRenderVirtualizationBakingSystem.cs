@@ -10,10 +10,12 @@ namespace Game.Rendering
     [RequireMatchingQueriesForUpdate]
     [WorldSystemFilter(WorldSystemFilterFlags.BakingSystem)]
     [UpdateInGroup(typeof(PostBakingSystemGroup))]
+    [UpdateAfter(typeof(OperationMapRenderMaterialBaseColorBakingSystem))]
     public partial struct OperationMapRenderVirtualizationBakingSystem : ISystem
     {
         private EntityQuery _databaseQuery;
         private EntityQuery _sourceRowQuery;
+        private EntityQuery _additionalRenderQuery;
         private EntityQuery _buildingOwnerQuery;
         private EntityQuery _slotQuery;
 
@@ -27,6 +29,17 @@ namespace Game.Rendering
                 All = new[]
                 {
                     ComponentType.ReadOnly<OperationMapRenderSourceRowBakingComponent>()
+                },
+                Options = EntityQueryOptions.IncludeDisabledEntities |
+                          EntityQueryOptions.IncludePrefab |
+                          EntityQueryOptions.IgnoreComponentEnabledState
+            });
+            _additionalRenderQuery = state.GetEntityQuery(new EntityQueryDesc
+            {
+                All = new[]
+                {
+                    ComponentType.ReadOnly<AdditionalEntityParent>(),
+                    ComponentType.ReadOnly<RenderMeshUnmanaged>()
                 },
                 Options = EntityQueryOptions.IncludeDisabledEntities |
                           EntityQueryOptions.IncludePrefab |
@@ -78,7 +91,8 @@ namespace Game.Rendering
                     true);
             var expected = new Dictionary<
                 SourceRowKey,
-                OperationMapRenderEligibleSourceRowBakingComponent>(expectedBuffer.Length);
+                List<OperationMapRenderEligibleSourceRowBakingComponent>>();
+            var expectedParts = new HashSet<SourcePartKey>();
             var expectedBuildingStateOwners = new Dictionary<OwnerKey, int>();
             for (int index = 0; index < expectedBuffer.Length; index++)
             {
@@ -95,11 +109,21 @@ namespace Game.Rendering
                     throw new InvalidOperationException(
                         "Eligible logical row has inconsistent building-state ownership.");
                 }
-                if (!expected.TryAdd(SourceRowKey.From(row), row))
+                SourcePartKey partKey = SourcePartKey.From(row);
+                if (!expectedParts.Add(partKey))
                 {
                     throw new InvalidOperationException(
-                        "Eligible logical rows contain a duplicate owner/path identity.");
+                        "Eligible logical rows contain a duplicate owner/path/submesh " +
+                        "identity.");
                 }
+                SourceRowKey rendererKey = SourceRowKey.From(row);
+                if (!expected.TryGetValue(rendererKey, out var rendererRows))
+                {
+                    rendererRows = new List<
+                        OperationMapRenderEligibleSourceRowBakingComponent>();
+                    expected.Add(rendererKey, rendererRows);
+                }
+                rendererRows.Add(row);
                 if (requiresStateOwner)
                 {
                     OwnerKey owner = OwnerKey.From(row.OwnerIdentity);
@@ -135,13 +159,31 @@ namespace Game.Rendering
                 }
             }
 
-            var matched = new HashSet<SourceRowKey>();
+            var matched = new HashSet<SourcePartKey>();
+            var matchedRenderers = new HashSet<SourceRowKey>();
             var residentKeys = new HashSet<SourceRowKey>();
             var residentRows =
                 new List<OperationMapRenderResidentSourceRowComponent>();
             var virtualizedOwnerClasses = new Dictionary<OwnerKey, byte>();
             var buildingSourceRowCounts = new Dictionary<OwnerKey, int>();
             var matchedBuildingRowCounts = new Dictionary<OwnerKey, int>();
+            var additionalRenderEntities = new Dictionary<Entity, List<Entity>>();
+            using (NativeArray<Entity> additionalEntities =
+                   _additionalRenderQuery.ToEntityArray(Allocator.Temp))
+            {
+                for (int index = 0; index < additionalEntities.Length; index++)
+                {
+                    Entity additionalEntity = additionalEntities[index];
+                    Entity primary = entityManager.GetComponentData<AdditionalEntityParent>(
+                        additionalEntity).Parent;
+                    if (!additionalRenderEntities.TryGetValue(primary, out var renderEntities))
+                    {
+                        renderEntities = new List<Entity>();
+                        additionalRenderEntities.Add(primary, renderEntities);
+                    }
+                    renderEntities.Add(additionalEntity);
+                }
+            }
             using NativeArray<Entity> sourceOwners =
                 _sourceRowQuery.ToEntityArray(Allocator.Temp);
             using var commandBuffer = new EntityCommandBuffer(Allocator.Temp);
@@ -165,9 +207,7 @@ namespace Game.Rendering
                         buildingSourceRowCounts[sourceOwnerKey] = sourceRowCount + 1;
                     }
                     SourceRowKey key = SourceRowKey.From(source);
-                    if (!expected.TryGetValue(
-                            key,
-                            out OperationMapRenderEligibleSourceRowBakingComponent row))
+                    if (!expected.TryGetValue(key, out var rows))
                     {
                         if (!residentKeys.Add(key))
                         {
@@ -189,6 +229,7 @@ namespace Game.Rendering
                         continue;
                     }
 
+                    OperationMapRenderEligibleSourceRowBakingComponent row = rows[0];
                     bool requiresStateOwner = row.RequiresStateOwner == 1;
                     if (source.IsGeneratedOwner > 1)
                     {
@@ -214,10 +255,26 @@ namespace Game.Rendering
                             "One virtualized owner has inconsistent identity or gameplay roles.");
                     }
                     virtualizedOwnerClasses[sourceOwnerKey] = ownerClass;
-                    if (!matched.Add(key))
+                    if (!matchedRenderers.Add(key))
                     {
                         throw new InvalidOperationException(
-                            "More than one converted source render entity matched one logical row.");
+                            "More than one converted source render entity matched one logical " +
+                            "renderer.");
+                    }
+                    for (int expectedRowIndex = 0;
+                         expectedRowIndex < rows.Count;
+                         expectedRowIndex++)
+                    {
+                        OperationMapRenderEligibleSourceRowBakingComponent expectedRow =
+                            rows[expectedRowIndex];
+                        if (expectedRow.RequiresStateOwner != row.RequiresStateOwner ||
+                            expectedRow.StateOwnerIndex != row.StateOwnerIndex ||
+                            expectedRow.RequiredVisualState != row.RequiredVisualState)
+                        {
+                            throw new InvalidOperationException(
+                                "One logical renderer has inconsistent state ownership across " +
+                                "its submeshes.");
+                        }
                     }
                     Entity convertedRenderEntity = source.RenderEntity;
                     if (requiresStateOwner)
@@ -237,47 +294,69 @@ namespace Game.Rendering
                         matchedBuildingRowCounts[sourceOwnerKey] =
                             matchedBuildingRowCount + 1;
                     }
-                    if (!entityManager.Exists(convertedRenderEntity) ||
-                        !entityManager.HasComponent<MaterialMeshInfo>(convertedRenderEntity) ||
-                        !entityManager.HasComponent<RenderMeshUnmanaged>(convertedRenderEntity))
+                    if (!entityManager.Exists(convertedRenderEntity))
                     {
                         throw new InvalidOperationException(
                             "Eligible source row does not reference exactly one baking-time " +
                             "render entity.");
                     }
-
-                    MaterialMeshInfo materialMeshInfo =
-                        entityManager.GetComponentData<MaterialMeshInfo>(
-                            convertedRenderEntity);
-                    if (materialMeshInfo.HasMaterialMeshIndexRange ||
-                        materialMeshInfo.SubMesh != row.SubMeshIndex)
+                    var convertedRenderEntities = new List<Entity>();
+                    if (entityManager.HasComponent<RenderMeshUnmanaged>(convertedRenderEntity))
+                    {
+                        convertedRenderEntities.Add(convertedRenderEntity);
+                    }
+                    if (additionalRenderEntities.TryGetValue(
+                            convertedRenderEntity,
+                            out var additionalEntitiesForSource))
+                    {
+                        convertedRenderEntities.AddRange(additionalEntitiesForSource);
+                    }
+                    if (convertedRenderEntities.Count == 0)
                     {
                         throw new InvalidOperationException(
-                            "Eligible source render submesh does not match its logical row.");
-                    }
-                    RenderMeshUnmanaged renderMesh =
-                        entityManager.GetComponentData<RenderMeshUnmanaged>(
-                            convertedRenderEntity);
-                    if (renderMesh.mesh != row.Mesh ||
-                        renderMesh.materialForSubMesh != row.Material)
-                    {
-                        throw new InvalidOperationException(
-                            "Eligible source render assets do not match their logical row.");
+                            "Eligible source row does not resolve to a converted render " +
+                            "entity or exact additional render entities.");
                     }
 
-                    commandBuffer.AddComponent<
-                        OperationMapRenderEligibleSourceComponent>(
-                        convertedRenderEntity);
-                    commandBuffer.AddComponent<BakingOnlyEntity>(
-                        convertedRenderEntity);
+                    var rendererMatchedParts = new HashSet<SourcePartKey>();
+                    for (int renderIndex = 0;
+                         renderIndex < convertedRenderEntities.Count;
+                         renderIndex++)
+                    {
+                        Entity renderEntity = convertedRenderEntities[renderIndex];
+                        IReadOnlyList<SourcePartKey> entityParts = RequireExactRenderParts(
+                            entityManager,
+                            renderEntity,
+                            rows);
+                        for (int partIndex = 0; partIndex < entityParts.Count; partIndex++)
+                        {
+                            SourcePartKey entityPart = entityParts[partIndex];
+                            if (!rendererMatchedParts.Add(entityPart) ||
+                                !matched.Add(entityPart))
+                            {
+                                throw new InvalidOperationException(
+                                    "More than one converted render entity matched one " +
+                                    "logical submesh row.");
+                            }
+                        }
+                        commandBuffer.AddComponent<
+                            OperationMapRenderEligibleSourceComponent>(renderEntity);
+                        commandBuffer.AddComponent<BakingOnlyEntity>(renderEntity);
+                    }
+                    if (rendererMatchedParts.Count != rows.Count)
+                    {
+                        throw new InvalidOperationException(
+                            $"Converted source renderer matched {rendererMatchedParts.Count}/" +
+                            $"{rows.Count} logical submesh rows.");
+                    }
                 }
             }
 
-            if (matched.Count != expected.Count)
+            if (matched.Count != expectedParts.Count)
             {
                 throw new InvalidOperationException(
                     $"Logical/source stripping parity failed: matched {matched.Count}/" +
-                    $"{expected.Count} eligible rows.");
+                    $"{expectedParts.Count} eligible rows.");
             }
             foreach (KeyValuePair<OwnerKey, int> stateOwner in
                      expectedBuildingStateOwners)
@@ -365,7 +444,8 @@ namespace Game.Rendering
                 new OperationMapRenderPackedReadinessComponent
                 {
                     ResidencyMode = 1,
-                    EligibleSourceRowCount = expected.Count,
+                    EligibleSourceRowCount = expectedParts.Count,
+                    EligibleSourceRendererCount = matchedRenderers.Count,
                     ResidentSourceRowCount = residentRows.Count,
                     ProxySlotCount = slotCount,
                     VirtualizedAcceptedBuildingIdentityCount =
@@ -378,6 +458,41 @@ namespace Game.Rendering
                         generatedRenderOnlyCount
                 });
             commandBuffer.Playback(entityManager);
+        }
+
+        private static IReadOnlyList<SourcePartKey> RequireExactRenderParts(
+            EntityManager entityManager,
+            Entity renderEntity,
+            IReadOnlyList<OperationMapRenderEligibleSourceRowBakingComponent> expectedRows)
+        {
+            if (!entityManager.Exists(renderEntity) ||
+                !entityManager.HasComponent<RenderMeshUnmanaged>(renderEntity))
+            {
+                throw new InvalidOperationException(
+                    "A converted additional source entity is missing its exact baking-time " +
+                    "render representation.");
+            }
+            RenderMeshUnmanaged renderMesh =
+                entityManager.GetComponentData<RenderMeshUnmanaged>(renderEntity);
+            OperationMapRenderEligibleSourceRowBakingComponent row = default;
+            int matchingRowCount = 0;
+            for (int index = 0; index < expectedRows.Count; index++)
+            {
+                OperationMapRenderEligibleSourceRowBakingComponent candidate =
+                    expectedRows[index];
+                if (renderMesh.mesh != candidate.Mesh ||
+                    renderMesh.materialForSubMesh != candidate.Material)
+                    continue;
+                row = candidate;
+                matchingRowCount++;
+            }
+            if (matchingRowCount != 1)
+            {
+                throw new InvalidOperationException(
+                    $"Converted source render assets match {matchingRowCount} logical " +
+                    "submesh rows; exact submesh ownership is required.");
+            }
+            return new[] { SourcePartKey.From(row) };
         }
 
         internal static void RequireDeterministicStateOwnerIndices(
@@ -483,5 +598,30 @@ namespace Game.Rendering
                 return (hash * 397) ^ (int)_pathHigh ^ (int)(_pathHigh >> 32);
             }
         }
+    }
+
+    internal readonly struct SourcePartKey : IEquatable<SourcePartKey>
+    {
+        private readonly SourceRowKey _renderer;
+        private readonly ushort _subMeshIndex;
+
+        private SourcePartKey(SourceRowKey renderer, ushort subMeshIndex)
+        {
+            _renderer = renderer;
+            _subMeshIndex = subMeshIndex;
+        }
+
+        internal static SourcePartKey From(
+            OperationMapRenderEligibleSourceRowBakingComponent row) =>
+            new(SourceRowKey.From(row), row.SubMeshIndex);
+
+        public bool Equals(SourcePartKey other) =>
+            _renderer.Equals(other._renderer) && _subMeshIndex == other._subMeshIndex;
+
+        public override bool Equals(object obj) =>
+            obj is SourcePartKey other && Equals(other);
+
+        public override int GetHashCode() =>
+            unchecked((_renderer.GetHashCode() * 397) ^ _subMeshIndex);
     }
 }

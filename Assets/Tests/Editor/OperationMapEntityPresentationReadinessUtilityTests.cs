@@ -376,6 +376,7 @@ public sealed class OperationMapEntityPresentationReadinessUtilityTests
                 ResidencyMode =
                     (byte)OperationMapRenderResidencyMode.VirtualizedProxyPool,
                 EligibleSourceRowCount = 1,
+                EligibleSourceRendererCount = 1,
                 ResidentSourceRowCount = 1,
                 ProxySlotCount = 2,
                 VirtualizedAcceptedRenderOnlyIdentityCount = 1

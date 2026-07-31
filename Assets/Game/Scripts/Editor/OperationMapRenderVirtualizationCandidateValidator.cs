@@ -30,14 +30,15 @@ namespace Game.Editor
         internal const string ReportPath =
             "Design/AgentReports/2026-07-30_dense_city_render_virtualization_pilot_enabled.json";
 
-        private const int ExpectedEligibleRows = 22058;
-        private const int ExpectedSlots = 929;
-        private const int ExpectedPrototypes = 7291;
-        private const int ExpectedParts = 10778;
-        private const int ExpectedPlacements = 16997;
+        private const int ExpectedEligibleRows = 29268;
+        private const int ExpectedEligibleRenderers = 29081;
+        private const int ExpectedSlots = 1364;
+        private const int ExpectedPrototypes = 9875;
+        private const int ExpectedParts = 17982;
+        private const int ExpectedPlacements = 19587;
         private const int ExpectedRenderOnlyPlacements = 9721;
-        private const int ExpectedGeneratedBuildingIdentities = 3638;
-        private const int ExpectedCells = 1651;
+        private const int ExpectedGeneratedBuildingIdentities = 4933;
+        private const int ExpectedCells = 1660;
         private const int ExpectedPoolBuckets = 2;
         private static readonly UTF8Encoding Utf8WithoutBom = new(false);
 
@@ -85,7 +86,7 @@ namespace Game.Editor
             var report = new DirectBakeReport
             {
                 schema = "warline.operation-map.render-virtualization-direct-bake",
-                schemaVersion = 2,
+                schemaVersion = 3,
                 result = "Passed",
                 operationMapId =
                     OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
@@ -111,9 +112,10 @@ namespace Game.Editor
                 proxySlotCount = second.ProxySlotCount,
                 sourceRowCount = second.SourceRowCount,
                 virtualizedSourceRowCount = second.EligibleSourceRowCount,
+                virtualizedSourceRendererCount = second.EligibleSourceRendererCount,
                 packedEligibleSourceRowCount = 0,
                 packedResidentSourceRowCount = second.ResidentSourceRowCount,
-                packedSourceRowsRemoved = second.EligibleSourceRowCount,
+                packedSourceRowsRemoved = second.EligibleSourceRendererCount,
                 virtualizedGeneratedRenderOnlyIdentityCount =
                     second.VirtualizedGeneratedRenderOnlyIdentityCount,
                 virtualizedGeneratedBuildingIdentityCount =
@@ -132,6 +134,7 @@ namespace Game.Editor
                 $"passes=2 fingerprint={second.Fingerprint} " +
                 $"sourceRows={second.SourceRowCount} " +
                 $"virtualizedRows={second.EligibleSourceRowCount} " +
+                $"virtualizedRenderers={second.EligibleSourceRendererCount} " +
                 $"residentRows={second.ResidentSourceRowCount} " +
                 $"slots={second.ProxySlotCount} " +
                 $"buildingIdentities={second.VirtualizedGeneratedBuildingIdentityCount} " +
@@ -248,15 +251,19 @@ namespace Game.Editor
                 "eligible readiness rows",
                 readiness.EligibleSourceRowCount,
                 ExpectedEligibleRows);
+            RequireCount(
+                "eligible readiness renderers",
+                readiness.EligibleSourceRendererCount,
+                ExpectedEligibleRenderers);
             RequireCount("eligible tagged rows", eligibleTaggedCount, ExpectedEligibleRows);
             RequireCount(
                 "resident readiness rows",
                 readiness.ResidentSourceRowCount,
-                expectedSourceRowCount - ExpectedEligibleRows);
+                expectedSourceRowCount - ExpectedEligibleRenderers);
             RequireCount(
                 "resident buffer rows",
                 residentRows.Length,
-                expectedSourceRowCount - ExpectedEligibleRows);
+                expectedSourceRowCount - ExpectedEligibleRenderers);
             RequireCount("proxy readiness slots", readiness.ProxySlotCount, ExpectedSlots);
             RequireCount("prototypes", blob.Prototypes.Length, ExpectedPrototypes);
             RequireCount("parts", blob.Parts.Length, ExpectedParts);
@@ -286,7 +293,8 @@ namespace Game.Editor
                     $"Direct bake residency mode is {readiness.ResidencyMode}.");
             }
             if (sourceRowCount !=
-                readiness.EligibleSourceRowCount + readiness.ResidentSourceRowCount)
+                readiness.EligibleSourceRendererCount +
+                    readiness.ResidentSourceRowCount)
             {
                 throw new InvalidOperationException(
                     "Direct bake source rows do not reconcile to virtualized plus resident rows.");
@@ -304,6 +312,7 @@ namespace Game.Editor
                 blob.PoolBuckets.Length,
                 sourceRowCount,
                 readiness.EligibleSourceRowCount,
+                readiness.EligibleSourceRendererCount,
                 readiness.ResidentSourceRowCount,
                 readiness.ProxySlotCount,
                 readiness.VirtualizedGeneratedRenderOnlyIdentityCount,
@@ -320,6 +329,7 @@ namespace Game.Editor
                 readiness.ProxySlotCount,
                 sourceRowCount,
                 readiness.EligibleSourceRowCount,
+                readiness.EligibleSourceRendererCount,
                 readiness.ResidentSourceRowCount,
                 readiness.VirtualizedGeneratedRenderOnlyIdentityCount,
                 readiness.VirtualizedGeneratedBuildingIdentityCount);
@@ -622,6 +632,7 @@ namespace Game.Editor
                 int proxySlotCount,
                 int sourceRowCount,
                 int eligibleSourceRowCount,
+                int eligibleSourceRendererCount,
                 int residentSourceRowCount,
                 int virtualizedGeneratedRenderOnlyIdentityCount,
                 int virtualizedGeneratedBuildingIdentityCount)
@@ -637,6 +648,7 @@ namespace Game.Editor
                 ProxySlotCount = proxySlotCount;
                 SourceRowCount = sourceRowCount;
                 EligibleSourceRowCount = eligibleSourceRowCount;
+                EligibleSourceRendererCount = eligibleSourceRendererCount;
                 ResidentSourceRowCount = residentSourceRowCount;
                 VirtualizedGeneratedRenderOnlyIdentityCount =
                     virtualizedGeneratedRenderOnlyIdentityCount;
@@ -655,6 +667,7 @@ namespace Game.Editor
             internal int ProxySlotCount { get; }
             internal int SourceRowCount { get; }
             internal int EligibleSourceRowCount { get; }
+            internal int EligibleSourceRendererCount { get; }
             internal int ResidentSourceRowCount { get; }
             internal int VirtualizedGeneratedRenderOnlyIdentityCount { get; }
             internal int VirtualizedGeneratedBuildingIdentityCount { get; }
@@ -685,6 +698,7 @@ namespace Game.Editor
             public int proxySlotCount;
             public int sourceRowCount;
             public int virtualizedSourceRowCount;
+            public int virtualizedSourceRendererCount;
             public int packedEligibleSourceRowCount;
             public int packedResidentSourceRowCount;
             public int packedSourceRowsRemoved;

@@ -1440,7 +1440,7 @@ public sealed class OperationMapRenderVirtualizationValidation
         }
 
         Assert.That(descriptors, Has.Length.EqualTo(expectedTotal));
-        Assert.That(descriptors, Has.Length.EqualTo(929));
+        Assert.That(descriptors, Has.Length.EqualTo(1364));
     }
 
     [Test]
@@ -1502,7 +1502,7 @@ public sealed class OperationMapRenderVirtualizationValidation
             EntityQuery slotsQuery = entityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<OperationMapRenderProxySlotComponent>());
             using NativeArray<Entity> slots = slotsQuery.ToEntityArray(Allocator.Temp);
-            Assert.That(slots, Has.Length.EqualTo(929));
+            Assert.That(slots, Has.Length.EqualTo(1364));
 
             var seenSlotIndices = new HashSet<int>();
             var seenByBucket = new int[config.PoolBuckets.Count];
@@ -1574,14 +1574,45 @@ public sealed class OperationMapRenderVirtualizationValidation
 
         OperationMapRenderDatabaseBakeConfig config =
             CreateValidBakeConfig(out Mesh mesh, out Material material);
+        Material secondMaterial = new(material) { name = "VRP066SecondMaterial" };
         mesh.vertices = new[]
         {
             new Vector3(0f, 0f, 0f),
             new Vector3(1f, 0f, 0f),
             new Vector3(0f, 1f, 0f)
         };
-        mesh.triangles = new[] { 0, 1, 2 };
+        mesh.subMeshCount = 2;
+        mesh.SetTriangles(new[] { 0, 1, 2 }, 0);
+        mesh.SetTriangles(new[] { 0, 1, 2 }, 1);
         mesh.RecalculateBounds();
+        Set(
+            config,
+            "materials",
+            new[]
+            {
+                new OperationMapRenderMaterialConfigRecord(
+                    new string('b', 32),
+                    2,
+                    material),
+                new OperationMapRenderMaterialConfigRecord(
+                    new string('c', 32),
+                    3,
+                    secondMaterial)
+            });
+        Set(
+            config,
+            "prototypes",
+            new[]
+            {
+                new OperationMapRenderPrototypeConfigRecord(
+                    1ul,
+                    2ul,
+                    0,
+                    2,
+                    mesh.bounds,
+                    DenseCityPresentationSemanticCategory.Vegetation,
+                    OperationMapRenderEligibilityFlags.Eligible)
+            });
         Set(
             config,
             "parts",
@@ -1593,6 +1624,19 @@ public sealed class OperationMapRenderVirtualizationValidation
                     0,
                     0,
                     0,
+                    Matrix4x4.identity,
+                    mesh.bounds,
+                    Color.white,
+                    OperationMapRenderPolicyBucket.OpaqueShadowsOff,
+                    0,
+                    OperationMapRenderLodFlags.Lod0,
+                    OperationMapRenderShadowFlags.None),
+                new OperationMapRenderPrototypePartConfigRecord(
+                    pathIdentity.Low,
+                    pathIdentity.High,
+                    0,
+                    1,
+                    1,
                     Matrix4x4.identity,
                     mesh.bounds,
                     Color.white,
@@ -1636,6 +1680,8 @@ public sealed class OperationMapRenderVirtualizationValidation
                 sources.transform,
                 mesh,
                 material);
+            eligible.GetComponent<MeshRenderer>().sharedMaterials =
+                new[] { material, secondMaterial };
             eligible.AddComponent<DenseCityPresentationIdentityAuthoring>()
                 .ConfigureForEditor(
                     eligibleStableId,
@@ -1709,13 +1755,14 @@ public sealed class OperationMapRenderVirtualizationValidation
                 database.Blob.Value.OperationMapId.ToString(),
                 Is.EqualTo("opmap.skirmish.virtualized"));
             Assert.That(database.Blob.Value.Prototypes.Length, Is.EqualTo(1));
-            Assert.That(database.Blob.Value.Parts.Length, Is.EqualTo(1));
+            Assert.That(database.Blob.Value.Parts.Length, Is.EqualTo(2));
             Assert.That(database.Blob.Value.Placements.Length, Is.EqualTo(1));
             OperationMapRenderPackedReadinessComponent packedReadiness =
                 entityManager.GetComponentData<
                     OperationMapRenderPackedReadinessComponent>(databaseEntity);
             Assert.That(packedReadiness.ResidencyMode, Is.EqualTo(1));
-            Assert.That(packedReadiness.EligibleSourceRowCount, Is.EqualTo(1));
+            Assert.That(packedReadiness.EligibleSourceRowCount, Is.EqualTo(2));
+            Assert.That(packedReadiness.EligibleSourceRendererCount, Is.EqualTo(1));
             Assert.That(packedReadiness.ResidentSourceRowCount, Is.EqualTo(2));
             Assert.That(packedReadiness.ProxySlotCount, Is.EqualTo(12));
             Assert.That(
@@ -1734,6 +1781,7 @@ public sealed class OperationMapRenderVirtualizationValidation
             blobAssetStore?.Dispose();
             UnityEngine.Object.DestroyImmediate(root);
             UnityEngine.Object.DestroyImmediate(config);
+            UnityEngine.Object.DestroyImmediate(secondMaterial);
             UnityEngine.Object.DestroyImmediate(material);
             UnityEngine.Object.DestroyImmediate(mesh);
         }

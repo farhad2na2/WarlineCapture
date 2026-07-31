@@ -234,6 +234,7 @@ namespace Game.Editor
             var policies = new Dictionary<string, CountPair>(StringComparer.Ordinal);
             var ownership = new Dictionary<string, CountPair>(StringComparer.Ordinal);
             var reasons = new Dictionary<string, CountPair>(StringComparer.Ordinal);
+            var buildingFamilies = new Dictionary<string, CountPair>(StringComparer.Ordinal);
             var sourceRows = new List<SourceRowReport>(rows.Count);
             var ownerIdentityCollisions = new OperationMapRenderIdentityCollisionDetector();
             var rendererPathIdentityCollisions = new OperationMapRenderIdentityCollisionDetector();
@@ -243,6 +244,8 @@ namespace Game.Editor
             int eligible = 0;
             int stableOwnerJoined = 0;
             int eligibleStableOwnerJoined = 0;
+            Dictionary<BuildingRole, BuildingFamilyDecision> buildingFamilyDecisions =
+                BuildBuildingFamilyDecisions(rows, signatureCounts);
 
             foreach (Row row in rows)
             {
@@ -254,7 +257,11 @@ namespace Game.Editor
                     row.Material,
                     out string policy,
                     out OperationMapRenderPolicyKey policyKey);
-                string reason = Classify(row, repeated, policySupported);
+                string reason = Classify(
+                    row,
+                    repeated,
+                    policySupported,
+                    buildingFamilyDecisions);
                 bool isEligible = string.Equals(reason, "eligible", StringComparison.Ordinal);
                 if (isEligible)
                     eligible++;
@@ -265,6 +272,8 @@ namespace Game.Editor
                 Increment(policies, policy, isEligible);
                 Increment(ownership, Ownership(row), isEligible);
                 Increment(reasons, reason, isEligible);
+                if (row.IsGeneratedBuildingFamily)
+                    Increment(buildingFamilies, row.BuildingFamilyName, isEligible);
 
                 SourceRowReport sourceRow = BuildSourceRow(
                     row,
@@ -301,7 +310,10 @@ namespace Game.Editor
                     $"Every eligible row requires an exact stable-owner join: " +
                     $"{eligibleStableOwnerJoined} != {eligible}.");
             }
-            RequireCompleteSelectedBuildingFamily(rows, sourceRows);
+            RequireCompleteSelectedBuildingFamilies(
+                rows,
+                sourceRows,
+                buildingFamilyDecisions);
 
             sourceRows.Sort(SourceRowReportComparer.Instance);
             for (int index = 0; index < sourceRows.Count; index++)
@@ -319,7 +331,7 @@ namespace Game.Editor
             return new InventoryReport
             {
                 schema = "warline.operation-map.render-virtualization-eligibility-inventory",
-                schemaVersion = 5,
+                schemaVersion = 6,
                 result = "Passed",
                 operationMapId = "opmap.skirmish.desert_base_01",
                 candidateScenePath = DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath,
@@ -375,6 +387,15 @@ namespace Game.Editor
                     prototypeRecipes.logicalPlacements.spatialCells.spatialCellsSha256,
                 mutationAuthorized = true,
                 mutationBlocker = string.Empty,
+                buildingFamilySelectionPolicy =
+                    "Generated building families are selected atomically only when repeated, " +
+                    "every canonical owner has intact and destroyed recipes, and every family " +
+                    "row satisfies the closed renderer and render-policy schema.",
+                buildingFamilies = buildingFamilyDecisions.Values
+                    .OrderBy(decision => (byte)decision.Role)
+                    .Select(decision => decision.ToReport())
+                    .ToList(),
+                byBuildingFamily = BuildBreakdown(buildingFamilies),
                 bySemanticCategory = BuildBreakdown(semantic),
                 byPrototypeSignature = BuildBreakdown(signatures),
                 byRendererType = BuildBreakdown(rendererTypes),
@@ -489,7 +510,9 @@ namespace Game.Editor
                 ownerIdentityLow = ownerIdentity.Low,
                 ownerIdentityHigh = ownerIdentity.High,
                 semanticCategory = Semantic(row),
-                buildingFamily = row.IsSelectedBuildingFamily ? "House" : string.Empty,
+                buildingFamily = row.IsGeneratedBuildingFamily
+                    ? row.BuildingFamilyName
+                    : string.Empty,
                 buildingVisualState = row.BuildingVisualState.ToString(),
                 rendererPath = rendererPath,
                 rendererPathIdentitySource = rendererPathIdentitySource,
@@ -623,24 +646,105 @@ namespace Game.Editor
             };
         }
 
-        private static void RequireCompleteSelectedBuildingFamily(
-            IReadOnlyList<Row> rows,
-            IReadOnlyList<SourceRowReport> sourceRows)
+        private static Dictionary<BuildingRole, BuildingFamilyDecision>
+            BuildBuildingFamilyDecisions(
+                IReadOnlyList<Row> rows,
+                IReadOnlyDictionary<string, int> signatureCounts)
         {
-            Dictionary<OperationMapBuildingAuthoring, List<int>> selected = rows
+            var result = new Dictionary<BuildingRole, BuildingFamilyDecision>();
+            IEnumerable<IGrouping<BuildingRole, Row>> families = rows
+                .Where(row => row.IsGeneratedBuildingFamily)
+                .GroupBy(row => row.BuildingFamilyRole)
+                .OrderBy(group => (byte)group.Key);
+            foreach (IGrouping<BuildingRole, Row> family in families)
+            {
+                List<Row> familyRows = family.ToList();
+                List<IGrouping<OperationMapBuildingAuthoring, Row>> owners = familyRows
+                    .GroupBy(row => row.BuildingOwner)
+                    .ToList();
+                int completeOwnerCount = owners.Count(owner =>
+                    owner.Any(row => row.BuildingVisualState == OperationMapRenderVisualState.Intact) &&
+                    owner.Any(row => row.BuildingVisualState == OperationMapRenderVisualState.Destroyed));
+                int unsupportedRendererRowCount = familyRows.Count(row => row.Renderer is not MeshRenderer);
+                int unsupportedPolicyRowCount = familyRows.Count(row =>
+                    !TryClassifyPolicy(row.Renderer, row.Material, out _, out _));
+                int repeatedSignatureRowCount = familyRows.Count(row =>
+                    signatureCounts.TryGetValue(row.Signature, out int count) && count > 1);
+                bool supportedRole = family.Key is BuildingRole.House or BuildingRole.Shop or BuildingRole.CityHall;
+
+                string reasonCode;
+                bool selected;
+                if (!supportedRole)
+                {
+                    selected = false;
+                    reasonCode = "gameplay-building-family-unsupported-role";
+                }
+                else if (owners.Count < 2)
+                {
+                    selected = false;
+                    reasonCode = "gameplay-building-family-not-repeated";
+                }
+                else if (completeOwnerCount != owners.Count)
+                {
+                    selected = false;
+                    reasonCode = "gameplay-building-family-incomplete-state-coverage";
+                }
+                else if (unsupportedRendererRowCount > 0)
+                {
+                    selected = false;
+                    reasonCode = "gameplay-building-family-unsupported-renderer";
+                }
+                else if (unsupportedPolicyRowCount > 0)
+                {
+                    selected = false;
+                    reasonCode = "gameplay-building-family-unsupported-render-policy";
+                }
+                else
+                {
+                    selected = true;
+                    reasonCode = "eligible";
+                }
+
+                result.Add(
+                    family.Key,
+                    new BuildingFamilyDecision(
+                        family.Key,
+                        selected,
+                        reasonCode,
+                        owners.Count,
+                        completeOwnerCount,
+                        familyRows.Count,
+                        familyRows.Count(row => row.BuildingVisualState == OperationMapRenderVisualState.Intact),
+                        familyRows.Count(row => row.BuildingVisualState == OperationMapRenderVisualState.Destroyed),
+                        repeatedSignatureRowCount,
+                        unsupportedRendererRowCount,
+                        unsupportedPolicyRowCount));
+            }
+
+            return result;
+        }
+
+        private static void RequireCompleteSelectedBuildingFamilies(
+            IReadOnlyList<Row> rows,
+            IReadOnlyList<SourceRowReport> sourceRows,
+            IReadOnlyDictionary<BuildingRole, BuildingFamilyDecision> decisions)
+        {
+            Dictionary<OperationMapBuildingAuthoring, List<int>> selectedOwners = rows
                 .Select((row, index) => new { row, index })
-                .Where(value => value.row.IsSelectedBuildingFamily)
+                .Where(value =>
+                    value.row.IsGeneratedBuildingFamily &&
+                    decisions[value.row.BuildingFamilyRole].Selected)
                 .GroupBy(value => value.row.BuildingOwner)
                 .ToDictionary(
                     group => group.Key,
                     group => group.Select(value => value.index).ToList());
-            if (selected.Count == 0)
+            if (selectedOwners.Count == 0)
             {
                 throw new InvalidOperationException(
-                    "VRP-063 requires at least one generated House building owner.");
+                    "VRP-066 requires at least one complete repeated generated building family.");
             }
 
-            foreach (KeyValuePair<OperationMapBuildingAuthoring, List<int>> pair in selected)
+            foreach (KeyValuePair<OperationMapBuildingAuthoring, List<int>> pair in selectedOwners)
             {
                 bool hasIntact = false;
                 bool hasDestroyed = false;
@@ -650,7 +754,7 @@ namespace Game.Editor
                     if (!sourceRows[rowIndex].eligible)
                     {
                         throw new InvalidOperationException(
-                            $"VRP-063 House family is not complete: " +
+                            $"VRP-066 selected building family is not complete: " +
                             $"{pair.Key.StableId} contains resident row " +
                             $"{sourceRows[rowIndex].rendererPath} " +
                             $"({sourceRows[rowIndex].reasonCode}).");
@@ -661,7 +765,7 @@ namespace Game.Editor
                 if (!hasIntact || !hasDestroyed)
                 {
                     throw new InvalidOperationException(
-                        $"VRP-063 House building {pair.Key.StableId} requires both intact and " +
+                        $"VRP-066 building {pair.Key.StableId} requires both intact and " +
                         "destroyed renderer recipes.");
                 }
             }
@@ -1511,23 +1615,32 @@ namespace Game.Editor
                 lodFlags = (byte)part.LodFlags
             };
 
-        private static string Classify(Row row, bool repeated, bool policySupported)
+        private static string Classify(
+            Row row,
+            bool repeated,
+            bool policySupported,
+            IReadOnlyDictionary<BuildingRole, BuildingFamilyDecision> buildingFamilyDecisions)
         {
             if (row.DenseOwner == null)
                 return row.AcceptedOwner != null
                     ? "accepted-map-resident-pending-vrp021"
                     : "unresolved-owner";
+            if (row.DenseOwner.Category ==
+                DenseCityPresentationSemanticCategory.GameplayBuildingIntact)
+            {
+                if (!row.IsGeneratedBuildingFamily ||
+                    !buildingFamilyDecisions.TryGetValue(
+                        row.BuildingFamilyRole,
+                        out BuildingFamilyDecision decision))
+                {
+                    return "gameplay-building-family-unresolved";
+                }
+                return decision.Selected ? "eligible" : decision.ReasonCode;
+            }
             if (row.Renderer is not MeshRenderer)
                 return "unsupported-renderer";
             if (!policySupported)
                 return "unsupported-render-policy";
-            if (row.DenseOwner.Category ==
-                DenseCityPresentationSemanticCategory.GameplayBuildingIntact)
-            {
-                return row.IsSelectedBuildingFamily
-                    ? "eligible"
-                    : "gameplay-building-family-deferred-after-vrp063";
-            }
             if (!repeated)
                 return "unique-presentation-signature";
 
@@ -2047,7 +2160,7 @@ namespace Game.Editor
             internal OperationMapEntityPresentationIdentityAuthoring AcceptedOwner { get; }
             internal OperationMapBuildingAuthoring BuildingOwner { get; }
             internal OperationMapRenderVisualState BuildingVisualState { get; }
-            internal bool IsSelectedBuildingFamily =>
+            internal bool IsGeneratedBuildingFamily =>
                 DenseOwner != null &&
                 BuildingOwner != null &&
                 DenseOwner.transform == BuildingOwner.transform &&
@@ -2055,7 +2168,12 @@ namespace Game.Editor
                 DenseOwner.Category ==
                     DenseCityPresentationSemanticCategory.GameplayBuildingIntact &&
                 BuildingOwner.Definition != null &&
-                BuildingOwner.Definition.ConfiguredRole == BuildingRole.House;
+                BuildingOwner.Definition.ConfiguredRole != BuildingRole.None;
+            internal BuildingRole BuildingFamilyRole =>
+                IsGeneratedBuildingFamily
+                    ? BuildingOwner.Definition.ConfiguredRole
+                    : BuildingRole.None;
+            internal string BuildingFamilyName => BuildingFamilyRole.ToString();
 
             private static OperationMapRenderVisualState ResolveBuildingVisualState(
                 Renderer renderer,
@@ -2089,6 +2207,65 @@ namespace Game.Editor
         {
             internal int Eligible;
             internal int Excluded;
+        }
+
+        private sealed class BuildingFamilyDecision
+        {
+            internal BuildingFamilyDecision(
+                BuildingRole role,
+                bool selected,
+                string reasonCode,
+                int ownerCount,
+                int completeOwnerCount,
+                int totalRowCount,
+                int intactRowCount,
+                int destroyedRowCount,
+                int repeatedSignatureRowCount,
+                int unsupportedRendererRowCount,
+                int unsupportedPolicyRowCount)
+            {
+                Role = role;
+                Selected = selected;
+                ReasonCode = reasonCode;
+                OwnerCount = ownerCount;
+                CompleteOwnerCount = completeOwnerCount;
+                TotalRowCount = totalRowCount;
+                IntactRowCount = intactRowCount;
+                DestroyedRowCount = destroyedRowCount;
+                RepeatedSignatureRowCount = repeatedSignatureRowCount;
+                UnsupportedRendererRowCount = unsupportedRendererRowCount;
+                UnsupportedPolicyRowCount = unsupportedPolicyRowCount;
+            }
+
+            internal BuildingRole Role { get; }
+            internal bool Selected { get; }
+            internal string ReasonCode { get; }
+            internal int OwnerCount { get; }
+            internal int CompleteOwnerCount { get; }
+            internal int TotalRowCount { get; }
+            internal int IntactRowCount { get; }
+            internal int DestroyedRowCount { get; }
+            internal int RepeatedSignatureRowCount { get; }
+            internal int UnsupportedRendererRowCount { get; }
+            internal int UnsupportedPolicyRowCount { get; }
+
+            internal BuildingFamilyReport ToReport() => new()
+            {
+                family = Role.ToString(),
+                selected = Selected,
+                reasonCode = ReasonCode,
+                ownerCount = OwnerCount,
+                completeOwnerCount = CompleteOwnerCount,
+                excludedOwnerCount = OwnerCount - CompleteOwnerCount,
+                totalRowCount = TotalRowCount,
+                eligibleRowCount = Selected ? TotalRowCount : 0,
+                excludedRowCount = Selected ? 0 : TotalRowCount,
+                intactRowCount = IntactRowCount,
+                destroyedRowCount = DestroyedRowCount,
+                repeatedSignatureRowCount = RepeatedSignatureRowCount,
+                unsupportedRendererRowCount = UnsupportedRendererRowCount,
+                unsupportedPolicyRowCount = UnsupportedPolicyRowCount
+            };
         }
 
         [Serializable]
@@ -2144,6 +2321,9 @@ namespace Game.Editor
             public string spatialCellsJsonSha256;
             public bool mutationAuthorized;
             public string mutationBlocker;
+            public string buildingFamilySelectionPolicy;
+            public List<BuildingFamilyReport> buildingFamilies;
+            public List<Breakdown> byBuildingFamily;
             public List<Breakdown> bySemanticCategory;
             public List<Breakdown> byPrototypeSignature;
             public List<Breakdown> byRendererType;
@@ -2360,6 +2540,25 @@ namespace Game.Editor
             public int eligible;
             public int excluded;
             public int total;
+        }
+
+        [Serializable]
+        private sealed class BuildingFamilyReport
+        {
+            public string family;
+            public bool selected;
+            public string reasonCode;
+            public int ownerCount;
+            public int completeOwnerCount;
+            public int excludedOwnerCount;
+            public int totalRowCount;
+            public int eligibleRowCount;
+            public int excludedRowCount;
+            public int intactRowCount;
+            public int destroyedRowCount;
+            public int repeatedSignatureRowCount;
+            public int unsupportedRendererRowCount;
+            public int unsupportedPolicyRowCount;
         }
 
         [Serializable]

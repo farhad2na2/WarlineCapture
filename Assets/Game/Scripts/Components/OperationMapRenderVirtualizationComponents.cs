@@ -258,6 +258,7 @@ namespace Game.Components
     {
         public byte ResidencyMode;
         public int EligibleSourceRowCount;
+        public int EligibleSourceRendererCount;
         public int ResidentSourceRowCount;
         public int ProxySlotCount;
         public int VirtualizedAcceptedBuildingIdentityCount;

@@ -1,6 +1,6 @@
 {
     "schema": "warline.operation-map.render-virtualization-eligibility-inventory",
-    "schemaVersion": 5,
+    "schemaVersion": 6,
     "result": "Passed",
     "operationMapId": "opmap.skirmish.desert_base_01",
     "candidateScenePath": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
@@ -8,32 +8,32 @@
     "packedEvidencePath": "Design/AgentReports/2026-07-25_dense_city_packed_asset_sharing.json",
     "packedEvidenceRenderRows": 82797,
     "totalRenderRows": 82797,
-    "eligibleRenderRows": 22058,
-    "excludedRenderRows": 60739,
+    "eligibleRenderRows": 29268,
+    "excludedRenderRows": 53529,
     "stableOwnerJoinedRenderRows": 82442,
     "unresolvedOwnerRenderRows": 355,
-    "eligibleStableOwnerJoinedRenderRows": 22058,
+    "eligibleStableOwnerJoinedRenderRows": 29268,
     "sourceRowCount": 82797,
-    "sourceRowsSha256": "f3589bf5110f3fd5346c1afa9a5e3a31d442357e7d24f288c346c22747f8e2de",
+    "sourceRowsSha256": "62cf681c9cd792ad70ffad38cb0bd409ca9e2717ec74c196959786fa5818fce6",
     "sourceRowsPath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_source_rows.json.gz",
     "sourceRowsCompression": "gzip",
-    "sourceRowsJsonSha256": "9019fca91b7ff0f3445444e121a23276bc18f5479af44ecac07b84c692afde02",
-    "sourceRowsGzipSha256": "b7901acf077dee2dbdaffdac8cefd6e47652cd2765de1714ca8330ad2012592f",
-    "logicalPlacementCount": 16997,
-    "prototypeCount": 7291,
-    "prototypePartCount": 10778,
-    "prototypeRecipeRowsConsumed": 22058,
-    "prototypeRecipesSha256": "d5406fab83210ec1692aca428cd0542240cab73dda4294dc8373fa05e09f9dc2",
+    "sourceRowsJsonSha256": "df3a4208d18dc54b95e273b20a793bd80ec3f87f4191855c691e8e0b82bedaed",
+    "sourceRowsGzipSha256": "61c6a11ac3af545f6e7bc213b891e1e412a0b60c6892c89807ad63c8060dc17d",
+    "logicalPlacementCount": 19587,
+    "prototypeCount": 9875,
+    "prototypePartCount": 17982,
+    "prototypeRecipeRowsConsumed": 29268,
+    "prototypeRecipesSha256": "de15bf31d0dbbdaf7b64b1c4d1c0118fddb45fc6c375466a518f856ae5dc4ea9",
     "prototypeRecipesPath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_prototype_recipes.json",
-    "prototypeRecipesJsonSha256": "67079faa27e81689b3eaa174a293fb5b6e6d15bee7e79563ee42e89063bcaf27",
-    "placementCount": 16997,
-    "stateOwnerCount": 3638,
-    "stateLinkedPlacementCount": 7276,
+    "prototypeRecipesJsonSha256": "c485655c2280c6c8f0b9deda7d5aef9d20dc543ac2a65ae9a5596e7ae8530b69",
+    "placementCount": 19587,
+    "stateOwnerCount": 4933,
+    "stateLinkedPlacementCount": 9866,
     "renderOnlyPlacementCount": 9721,
-    "placementPartRowCount": 22058,
-    "logicalPlacementsSha256": "acff4c3e59eb8b994e168218faf767852857ff88788863493d56b8d4a8b91dda",
+    "placementPartRowCount": 29268,
+    "logicalPlacementsSha256": "e13b0e61fa91015609e23dd15e5275ed2514129cc4388272f2f041eb4ddf7677",
     "logicalPlacementsPath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_logical_placements.json",
-    "logicalPlacementsJsonSha256": "05a62368510aaad7af308f5d06a096ab9653641007a1f8b86c0d96f054f58e59",
+    "logicalPlacementsJsonSha256": "7113bba452fc97b44110a45d7db2a20b81a7a62e41057830fe09491b903986b5",
     "renderCellSize": 32.0,
     "acceptedRenderGridOrigin": [
         0.0,
@@ -53,16 +53,87 @@
         13,
         0
     ],
-    "occupiedCellCount": 1651,
-    "cellPlacementIndexCount": 21753,
-    "multiCellPlacementCount": 4084,
-    "maximumCellsPerPlacement": 4,
-    "maximumPlacementsPerCell": 56,
-    "spatialCellsSha256": "82fd6526ddb33d01dc290bd2a615b9ec103eff848197f4a54d6d0684398f0363",
+    "occupiedCellCount": 1660,
+    "cellPlacementIndexCount": 25795,
+    "multiCellPlacementCount": 5206,
+    "maximumCellsPerPlacement": 6,
+    "maximumPlacementsPerCell": 75,
+    "spatialCellsSha256": "73a12cc54eee5c92db4fe1fc3b574edb39c1fac1723a32f53fd4c856319dbc78",
     "spatialCellsPath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_spatial_cells.json",
-    "spatialCellsJsonSha256": "99b82462e90770187ef40d0eaffa6e72634c7159dc98a6bfb560d3c21a4268cd",
+    "spatialCellsJsonSha256": "09903f61aa220f767322271570ea2d7007c4fc87abd971f0f5cfa41d46500e53",
     "mutationAuthorized": true,
     "mutationBlocker": "",
+    "buildingFamilySelectionPolicy": "Generated building families are selected atomically only when repeated, every canonical owner has intact and destroyed recipes, and every family row satisfies the closed renderer and render-policy schema.",
+    "buildingFamilies": [
+        {
+            "family": "House",
+            "selected": true,
+            "reasonCode": "eligible",
+            "ownerCount": 3638,
+            "completeOwnerCount": 3638,
+            "excludedOwnerCount": 0,
+            "totalRowCount": 10759,
+            "eligibleRowCount": 10759,
+            "excludedRowCount": 0,
+            "intactRowCount": 7121,
+            "destroyedRowCount": 3638,
+            "repeatedSignatureRowCount": 10759,
+            "unsupportedRendererRowCount": 0,
+            "unsupportedPolicyRowCount": 0
+        },
+        {
+            "family": "Shop",
+            "selected": true,
+            "reasonCode": "eligible",
+            "ownerCount": 1295,
+            "completeOwnerCount": 1295,
+            "excludedOwnerCount": 0,
+            "totalRowCount": 7210,
+            "eligibleRowCount": 7210,
+            "excludedRowCount": 0,
+            "intactRowCount": 5915,
+            "destroyedRowCount": 1295,
+            "repeatedSignatureRowCount": 7210,
+            "unsupportedRendererRowCount": 0,
+            "unsupportedPolicyRowCount": 0
+        },
+        {
+            "family": "CityHall",
+            "selected": false,
+            "reasonCode": "gameplay-building-family-unsupported-render-policy",
+            "ownerCount": 38,
+            "completeOwnerCount": 38,
+            "excludedOwnerCount": 0,
+            "totalRowCount": 406,
+            "eligibleRowCount": 0,
+            "excludedRowCount": 406,
+            "intactRowCount": 216,
+            "destroyedRowCount": 190,
+            "repeatedSignatureRowCount": 395,
+            "unsupportedRendererRowCount": 0,
+            "unsupportedPolicyRowCount": 44
+        }
+    ],
+    "byBuildingFamily": [
+        {
+            "key": "CityHall",
+            "eligible": 0,
+            "excluded": 406,
+            "total": 406
+        },
+        {
+            "key": "House",
+            "eligible": 10759,
+            "excluded": 0,
+            "total": 10759
+        },
+        {
+            "key": "Shop",
+            "eligible": 7210,
+            "excluded": 0,
+            "total": 7210
+        }
+    ],
     "bySemanticCategory": [
         {
             "key": "AcceptedMapResident",
@@ -72,8 +143,8 @@
         },
         {
             "key": "GameplayBuildingIntact",
-            "eligible": 10759,
-            "excluded": 7616,
+            "eligible": 17969,
+            "excluded": 406,
             "total": 18375
         },
         {
@@ -8564,98 +8635,98 @@
         },
         {
             "key": "GameplayBuildingIntact|mesh||01e57d80dbfb50a4eb6822efac2190d8:23161423307815030|6fe5c156a3b147f49bd3e4766bda34b1:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 29,
-            "excluded": 69,
+            "eligible": 98,
+            "excluded": 0,
             "total": 98
         },
         {
             "key": "GameplayBuildingIntact|mesh||082e7f592b4212e4d9a6ca4a472b9974:23112575706698374|5cbc4148baeac774ab5980b037254a49:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 0,
-            "excluded": 71,
+            "eligible": 71,
+            "excluded": 0,
             "total": 71
         },
         {
             "key": "GameplayBuildingIntact|mesh||0f5262386c4594c1e8c35d8da1bf6466:5123855221298289851|cd29a08631f2d99478d1882519820c4a:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
-            "eligible": 0,
-            "excluded": 31,
+            "eligible": 31,
+            "excluded": 0,
             "total": 31
         },
         {
             "key": "GameplayBuildingIntact|mesh||0f5262386c4594c1e8c35d8da1bf6466:5123855221298289851|cd29a08631f2d99478d1882519820c4a:4300000|607ac1ca371b942b99f5b38ba589d12d:2100000|0",
-            "eligible": 0,
-            "excluded": 29,
+            "eligible": 29,
+            "excluded": 0,
             "total": 29
         },
         {
             "key": "GameplayBuildingIntact|mesh||0f5262386c4594c1e8c35d8da1bf6466:5123855221298289851|cd29a08631f2d99478d1882519820c4a:4300000|6487453456f55495a85cab7b38eaece4:2100000|0",
-            "eligible": 0,
-            "excluded": 22,
+            "eligible": 22,
+            "excluded": 0,
             "total": 22
         },
         {
             "key": "GameplayBuildingIntact|mesh||0f5262386c4594c1e8c35d8da1bf6466:5123855221298289851|cd29a08631f2d99478d1882519820c4a:4300000|c0949687d30c74ca3b5f933d68fbd88f:2100000|0",
-            "eligible": 0,
-            "excluded": 31,
+            "eligible": 31,
+            "excluded": 0,
             "total": 31
         },
         {
             "key": "GameplayBuildingIntact|mesh||0f5262386c4594c1e8c35d8da1bf6466:5123855221298289851|cd29a08631f2d99478d1882519820c4a:4300000|cee1bea9fb2214c89b13d5a8997b3930:2100000|0",
-            "eligible": 0,
-            "excluded": 26,
+            "eligible": 26,
+            "excluded": 0,
             "total": 26
         },
         {
             "key": "GameplayBuildingIntact|mesh||0f5262386c4594c1e8c35d8da1bf6466:5123855221298289851|cd29a08631f2d99478d1882519820c4a:4300000|e14749e23c1b64c0493721aaf371a8ae:2100000|0",
-            "eligible": 0,
-            "excluded": 27,
+            "eligible": 27,
+            "excluded": 0,
             "total": 27
         },
         {
             "key": "GameplayBuildingIntact|mesh||0f5262386c4594c1e8c35d8da1bf6466:76931732732247579|47b83b6cd5ed93741b384cf71aaa5205:4300000|65b0c04dcaeda408f8ee1a2c9f661e42:2100000|0",
-            "eligible": 0,
-            "excluded": 22,
+            "eligible": 22,
+            "excluded": 0,
             "total": 22
         },
         {
             "key": "GameplayBuildingIntact|mesh||0f5262386c4594c1e8c35d8da1bf6466:76931732732247579|47b83b6cd5ed93741b384cf71aaa5205:4300000|89b707d32e38b4d188a0b594dfb18c82:2100000|0",
-            "eligible": 0,
-            "excluded": 26,
+            "eligible": 26,
+            "excluded": 0,
             "total": 26
         },
         {
             "key": "GameplayBuildingIntact|mesh||0f5262386c4594c1e8c35d8da1bf6466:76931732732247579|47b83b6cd5ed93741b384cf71aaa5205:4300000|cba8d848913d44394ab7cbd76781b3d6:2100000|0",
-            "eligible": 0,
-            "excluded": 31,
+            "eligible": 31,
+            "excluded": 0,
             "total": 31
         },
         {
             "key": "GameplayBuildingIntact|mesh||0f5262386c4594c1e8c35d8da1bf6466:76931732732247579|47b83b6cd5ed93741b384cf71aaa5205:4300000|ee79f3a90caed4de595e21a36ca6c54a:2100000|0",
-            "eligible": 0,
-            "excluded": 31,
+            "eligible": 31,
+            "excluded": 0,
             "total": 31
         },
         {
             "key": "GameplayBuildingIntact|mesh||0f5262386c4594c1e8c35d8da1bf6466:76931732732247579|47b83b6cd5ed93741b384cf71aaa5205:4300000|f31e4becef8bd4ac2829212da1b1527a:2100000|0",
-            "eligible": 0,
-            "excluded": 29,
+            "eligible": 29,
+            "excluded": 0,
             "total": 29
         },
         {
             "key": "GameplayBuildingIntact|mesh||0f5262386c4594c1e8c35d8da1bf6466:76931732732247579|47b83b6cd5ed93741b384cf71aaa5205:4300000|fd59a823156264fa9a78fbc5ce18ef51:2100000|0",
-            "eligible": 0,
-            "excluded": 27,
+            "eligible": 27,
+            "excluded": 0,
             "total": 27
         },
         {
             "key": "GameplayBuildingIntact|mesh||10826b4776fa247f88122e08f5120eb2:4344286573382925600|7af5d1e8396c7774aac2352e7855ebca:4300000|d688ab17c5b4b5544abd374deb0c17ed:2100000|0",
-            "eligible": 0,
-            "excluded": 1295,
+            "eligible": 1295,
+            "excluded": 0,
             "total": 1295
         },
         {
             "key": "GameplayBuildingIntact|mesh||14669fad85f517e4b80c633beb25b51e:23041846808948610|2343a657de76fac46bf0ca7d4ea83be2:4300000|59266c69bb5e4a44b82461f5af99ddc5:2100000|0",
-            "eligible": 0,
-            "excluded": 172,
+            "eligible": 172,
+            "excluded": 0,
             "total": 172
         },
         {
@@ -8750,92 +8821,92 @@
         },
         {
             "key": "GameplayBuildingIntact|mesh||1d5a6ebaef37a414f93446bd699ff3d5:23820545000984488|85f5503fe883f4a4aa272fb89cf3841c:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 0,
-            "excluded": 184,
+            "eligible": 184,
+            "excluded": 0,
             "total": 184
         },
         {
             "key": "GameplayBuildingIntact|mesh||20cbde61b767a7240a3c9ba6cdd4e5e3:23368719039761276|9c4d7e306aee98b4ab7d8e6a21c6b965:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 31,
-            "excluded": 69,
+            "eligible": 100,
+            "excluded": 0,
             "total": 100
         },
         {
             "key": "GameplayBuildingIntact|mesh||2216968c441adcf4d8a716caec08bc44:23232591932433212|696fd0370ebf4f2469314643c089d3ba:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 32,
-            "excluded": 67,
+            "eligible": 99,
+            "excluded": 0,
             "total": 99
         },
         {
             "key": "GameplayBuildingIntact|mesh||282248d7837b54676b1815966567226b:6509827066050900029|ec0a84e8c14d21344bbb9307f11f373f:4300000|65b0c04dcaeda408f8ee1a2c9f661e42:2100000|0",
-            "eligible": 0,
-            "excluded": 36,
+            "eligible": 36,
+            "excluded": 0,
             "total": 36
         },
         {
             "key": "GameplayBuildingIntact|mesh||282248d7837b54676b1815966567226b:6509827066050900029|ec0a84e8c14d21344bbb9307f11f373f:4300000|89b707d32e38b4d188a0b594dfb18c82:2100000|0",
-            "eligible": 0,
-            "excluded": 28,
+            "eligible": 28,
+            "excluded": 0,
             "total": 28
         },
         {
             "key": "GameplayBuildingIntact|mesh||282248d7837b54676b1815966567226b:6509827066050900029|ec0a84e8c14d21344bbb9307f11f373f:4300000|cba8d848913d44394ab7cbd76781b3d6:2100000|0",
-            "eligible": 0,
-            "excluded": 25,
+            "eligible": 25,
+            "excluded": 0,
             "total": 25
         },
         {
             "key": "GameplayBuildingIntact|mesh||282248d7837b54676b1815966567226b:6509827066050900029|ec0a84e8c14d21344bbb9307f11f373f:4300000|ee79f3a90caed4de595e21a36ca6c54a:2100000|0",
-            "eligible": 0,
-            "excluded": 31,
+            "eligible": 31,
+            "excluded": 0,
             "total": 31
         },
         {
             "key": "GameplayBuildingIntact|mesh||282248d7837b54676b1815966567226b:6509827066050900029|ec0a84e8c14d21344bbb9307f11f373f:4300000|f31e4becef8bd4ac2829212da1b1527a:2100000|0",
-            "eligible": 0,
-            "excluded": 26,
+            "eligible": 26,
+            "excluded": 0,
             "total": 26
         },
         {
             "key": "GameplayBuildingIntact|mesh||282248d7837b54676b1815966567226b:6509827066050900029|ec0a84e8c14d21344bbb9307f11f373f:4300000|fd59a823156264fa9a78fbc5ce18ef51:2100000|0",
-            "eligible": 0,
-            "excluded": 22,
+            "eligible": 22,
+            "excluded": 0,
             "total": 22
         },
         {
             "key": "GameplayBuildingIntact|mesh||282248d7837b54676b1815966567226b:6713593082677426898|3c54a6630b4e72d45aeefe3a196dadf0:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
-            "eligible": 0,
-            "excluded": 25,
+            "eligible": 25,
+            "excluded": 0,
             "total": 25
         },
         {
             "key": "GameplayBuildingIntact|mesh||282248d7837b54676b1815966567226b:6713593082677426898|3c54a6630b4e72d45aeefe3a196dadf0:4300000|607ac1ca371b942b99f5b38ba589d12d:2100000|0",
-            "eligible": 0,
-            "excluded": 26,
+            "eligible": 26,
+            "excluded": 0,
             "total": 26
         },
         {
             "key": "GameplayBuildingIntact|mesh||282248d7837b54676b1815966567226b:6713593082677426898|3c54a6630b4e72d45aeefe3a196dadf0:4300000|6487453456f55495a85cab7b38eaece4:2100000|0",
-            "eligible": 0,
-            "excluded": 36,
+            "eligible": 36,
+            "excluded": 0,
             "total": 36
         },
         {
             "key": "GameplayBuildingIntact|mesh||282248d7837b54676b1815966567226b:6713593082677426898|3c54a6630b4e72d45aeefe3a196dadf0:4300000|c0949687d30c74ca3b5f933d68fbd88f:2100000|0",
-            "eligible": 0,
-            "excluded": 31,
+            "eligible": 31,
+            "excluded": 0,
             "total": 31
         },
         {
             "key": "GameplayBuildingIntact|mesh||282248d7837b54676b1815966567226b:6713593082677426898|3c54a6630b4e72d45aeefe3a196dadf0:4300000|cee1bea9fb2214c89b13d5a8997b3930:2100000|0",
-            "eligible": 0,
-            "excluded": 28,
+            "eligible": 28,
+            "excluded": 0,
             "total": 28
         },
         {
             "key": "GameplayBuildingIntact|mesh||282248d7837b54676b1815966567226b:6713593082677426898|3c54a6630b4e72d45aeefe3a196dadf0:4300000|e14749e23c1b64c0493721aaf371a8ae:2100000|0",
-            "eligible": 0,
-            "excluded": 22,
+            "eligible": 22,
+            "excluded": 0,
             "total": 22
         },
         {
@@ -8942,14 +9013,14 @@
         },
         {
             "key": "GameplayBuildingIntact|mesh||5be531933025ff94b83844cd15d60e37:23000898357209822|4d3ad0f0252a9d7418a575cd2c48f248:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 0,
-            "excluded": 213,
+            "eligible": 213,
+            "excluded": 0,
             "total": 213
         },
         {
             "key": "GameplayBuildingIntact|mesh||5e4951e5c9579944b8cb91204657872a:23080208840483292|72ecca11eb569994fa9b4d349060508f:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 32,
-            "excluded": 63,
+            "eligible": 95,
+            "excluded": 0,
             "total": 95
         },
         {
@@ -9026,146 +9097,146 @@
         },
         {
             "key": "GameplayBuildingIntact|mesh||720a593e10bc6473ca5ed71307d7301b:8148660468466034938|0452563ca30be7d4db9a5519a928f2dc:4300000|65b0c04dcaeda408f8ee1a2c9f661e42:2100000|0",
-            "eligible": 0,
-            "excluded": 37,
+            "eligible": 37,
+            "excluded": 0,
             "total": 37
         },
         {
             "key": "GameplayBuildingIntact|mesh||720a593e10bc6473ca5ed71307d7301b:8148660468466034938|0452563ca30be7d4db9a5519a928f2dc:4300000|89b707d32e38b4d188a0b594dfb18c82:2100000|0",
-            "eligible": 0,
-            "excluded": 34,
+            "eligible": 34,
+            "excluded": 0,
             "total": 34
         },
         {
             "key": "GameplayBuildingIntact|mesh||720a593e10bc6473ca5ed71307d7301b:8148660468466034938|0452563ca30be7d4db9a5519a928f2dc:4300000|cba8d848913d44394ab7cbd76781b3d6:2100000|0",
-            "eligible": 0,
-            "excluded": 35,
+            "eligible": 35,
+            "excluded": 0,
             "total": 35
         },
         {
             "key": "GameplayBuildingIntact|mesh||720a593e10bc6473ca5ed71307d7301b:8148660468466034938|0452563ca30be7d4db9a5519a928f2dc:4300000|ee79f3a90caed4de595e21a36ca6c54a:2100000|0",
-            "eligible": 0,
-            "excluded": 28,
+            "eligible": 28,
+            "excluded": 0,
             "total": 28
         },
         {
             "key": "GameplayBuildingIntact|mesh||720a593e10bc6473ca5ed71307d7301b:8148660468466034938|0452563ca30be7d4db9a5519a928f2dc:4300000|f31e4becef8bd4ac2829212da1b1527a:2100000|0",
-            "eligible": 0,
-            "excluded": 27,
+            "eligible": 27,
+            "excluded": 0,
             "total": 27
         },
         {
             "key": "GameplayBuildingIntact|mesh||720a593e10bc6473ca5ed71307d7301b:8148660468466034938|0452563ca30be7d4db9a5519a928f2dc:4300000|fd59a823156264fa9a78fbc5ce18ef51:2100000|0",
-            "eligible": 0,
-            "excluded": 24,
+            "eligible": 24,
+            "excluded": 0,
             "total": 24
         },
         {
             "key": "GameplayBuildingIntact|mesh||720a593e10bc6473ca5ed71307d7301b:9073657189930601306|01b8dd5b9d4c6084c80cefccfb0072a0:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
-            "eligible": 0,
-            "excluded": 35,
+            "eligible": 35,
+            "excluded": 0,
             "total": 35
         },
         {
             "key": "GameplayBuildingIntact|mesh||720a593e10bc6473ca5ed71307d7301b:9073657189930601306|01b8dd5b9d4c6084c80cefccfb0072a0:4300000|607ac1ca371b942b99f5b38ba589d12d:2100000|0",
-            "eligible": 0,
-            "excluded": 27,
+            "eligible": 27,
+            "excluded": 0,
             "total": 27
         },
         {
             "key": "GameplayBuildingIntact|mesh||720a593e10bc6473ca5ed71307d7301b:9073657189930601306|01b8dd5b9d4c6084c80cefccfb0072a0:4300000|6487453456f55495a85cab7b38eaece4:2100000|0",
-            "eligible": 0,
-            "excluded": 37,
+            "eligible": 37,
+            "excluded": 0,
             "total": 37
         },
         {
             "key": "GameplayBuildingIntact|mesh||720a593e10bc6473ca5ed71307d7301b:9073657189930601306|01b8dd5b9d4c6084c80cefccfb0072a0:4300000|c0949687d30c74ca3b5f933d68fbd88f:2100000|0",
-            "eligible": 0,
-            "excluded": 28,
+            "eligible": 28,
+            "excluded": 0,
             "total": 28
         },
         {
             "key": "GameplayBuildingIntact|mesh||720a593e10bc6473ca5ed71307d7301b:9073657189930601306|01b8dd5b9d4c6084c80cefccfb0072a0:4300000|cee1bea9fb2214c89b13d5a8997b3930:2100000|0",
-            "eligible": 0,
-            "excluded": 34,
+            "eligible": 34,
+            "excluded": 0,
             "total": 34
         },
         {
             "key": "GameplayBuildingIntact|mesh||720a593e10bc6473ca5ed71307d7301b:9073657189930601306|01b8dd5b9d4c6084c80cefccfb0072a0:4300000|e14749e23c1b64c0493721aaf371a8ae:2100000|0",
-            "eligible": 0,
-            "excluded": 24,
+            "eligible": 24,
+            "excluded": 0,
             "total": 24
         },
         {
             "key": "GameplayBuildingIntact|mesh||7e1c4c10a9e5243cd806bf7c6344854e:5410264351128434520|9563a35993fa0fa4e950cf228f02dab4:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
-            "eligible": 0,
-            "excluded": 15,
+            "eligible": 15,
+            "excluded": 0,
             "total": 15
         },
         {
             "key": "GameplayBuildingIntact|mesh||7e1c4c10a9e5243cd806bf7c6344854e:5410264351128434520|9563a35993fa0fa4e950cf228f02dab4:4300000|607ac1ca371b942b99f5b38ba589d12d:2100000|0",
-            "eligible": 0,
-            "excluded": 22,
+            "eligible": 22,
+            "excluded": 0,
             "total": 22
         },
         {
             "key": "GameplayBuildingIntact|mesh||7e1c4c10a9e5243cd806bf7c6344854e:5410264351128434520|9563a35993fa0fa4e950cf228f02dab4:4300000|6487453456f55495a85cab7b38eaece4:2100000|0",
-            "eligible": 0,
-            "excluded": 18,
+            "eligible": 18,
+            "excluded": 0,
             "total": 18
         },
         {
             "key": "GameplayBuildingIntact|mesh||7e1c4c10a9e5243cd806bf7c6344854e:5410264351128434520|9563a35993fa0fa4e950cf228f02dab4:4300000|c0949687d30c74ca3b5f933d68fbd88f:2100000|0",
-            "eligible": 0,
-            "excluded": 17,
+            "eligible": 17,
+            "excluded": 0,
             "total": 17
         },
         {
             "key": "GameplayBuildingIntact|mesh||7e1c4c10a9e5243cd806bf7c6344854e:5410264351128434520|9563a35993fa0fa4e950cf228f02dab4:4300000|cee1bea9fb2214c89b13d5a8997b3930:2100000|0",
-            "eligible": 0,
-            "excluded": 18,
+            "eligible": 18,
+            "excluded": 0,
             "total": 18
         },
         {
             "key": "GameplayBuildingIntact|mesh||7e1c4c10a9e5243cd806bf7c6344854e:5410264351128434520|9563a35993fa0fa4e950cf228f02dab4:4300000|e14749e23c1b64c0493721aaf371a8ae:2100000|0",
-            "eligible": 0,
-            "excluded": 20,
+            "eligible": 20,
+            "excluded": 0,
             "total": 20
         },
         {
             "key": "GameplayBuildingIntact|mesh||7e1c4c10a9e5243cd806bf7c6344854e:7531433364092588752|082468f5473c27e4386a744e984c248b:4300000|65b0c04dcaeda408f8ee1a2c9f661e42:2100000|0",
-            "eligible": 0,
-            "excluded": 18,
+            "eligible": 18,
+            "excluded": 0,
             "total": 18
         },
         {
             "key": "GameplayBuildingIntact|mesh||7e1c4c10a9e5243cd806bf7c6344854e:7531433364092588752|082468f5473c27e4386a744e984c248b:4300000|89b707d32e38b4d188a0b594dfb18c82:2100000|0",
-            "eligible": 0,
-            "excluded": 18,
+            "eligible": 18,
+            "excluded": 0,
             "total": 18
         },
         {
             "key": "GameplayBuildingIntact|mesh||7e1c4c10a9e5243cd806bf7c6344854e:7531433364092588752|082468f5473c27e4386a744e984c248b:4300000|cba8d848913d44394ab7cbd76781b3d6:2100000|0",
-            "eligible": 0,
-            "excluded": 15,
+            "eligible": 15,
+            "excluded": 0,
             "total": 15
         },
         {
             "key": "GameplayBuildingIntact|mesh||7e1c4c10a9e5243cd806bf7c6344854e:7531433364092588752|082468f5473c27e4386a744e984c248b:4300000|ee79f3a90caed4de595e21a36ca6c54a:2100000|0",
-            "eligible": 0,
-            "excluded": 17,
+            "eligible": 17,
+            "excluded": 0,
             "total": 17
         },
         {
             "key": "GameplayBuildingIntact|mesh||7e1c4c10a9e5243cd806bf7c6344854e:7531433364092588752|082468f5473c27e4386a744e984c248b:4300000|f31e4becef8bd4ac2829212da1b1527a:2100000|0",
-            "eligible": 0,
-            "excluded": 22,
+            "eligible": 22,
+            "excluded": 0,
             "total": 22
         },
         {
             "key": "GameplayBuildingIntact|mesh||7e1c4c10a9e5243cd806bf7c6344854e:7531433364092588752|082468f5473c27e4386a744e984c248b:4300000|fd59a823156264fa9a78fbc5ce18ef51:2100000|0",
-            "eligible": 0,
-            "excluded": 20,
+            "eligible": 20,
+            "excluded": 0,
             "total": 20
         },
         {
@@ -9248,308 +9319,308 @@
         },
         {
             "key": "GameplayBuildingIntact|mesh||8c0bd200438b3894f8ab22f6e1170f00:23860438639422632|0ee36102dee027841bf563aa2becf8e8:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
-            "eligible": 0,
-            "excluded": 22,
+            "eligible": 22,
+            "excluded": 0,
             "total": 22
         },
         {
             "key": "GameplayBuildingIntact|mesh||8c0bd200438b3894f8ab22f6e1170f00:23860438639422632|0ee36102dee027841bf563aa2becf8e8:4300000|607ac1ca371b942b99f5b38ba589d12d:2100000|0",
-            "eligible": 0,
-            "excluded": 22,
+            "eligible": 22,
+            "excluded": 0,
             "total": 22
         },
         {
             "key": "GameplayBuildingIntact|mesh||8c0bd200438b3894f8ab22f6e1170f00:23860438639422632|0ee36102dee027841bf563aa2becf8e8:4300000|6487453456f55495a85cab7b38eaece4:2100000|0",
-            "eligible": 0,
-            "excluded": 23,
+            "eligible": 23,
+            "excluded": 0,
             "total": 23
         },
         {
             "key": "GameplayBuildingIntact|mesh||8c0bd200438b3894f8ab22f6e1170f00:23860438639422632|0ee36102dee027841bf563aa2becf8e8:4300000|c0949687d30c74ca3b5f933d68fbd88f:2100000|0",
-            "eligible": 0,
-            "excluded": 17,
+            "eligible": 17,
+            "excluded": 0,
             "total": 17
         },
         {
             "key": "GameplayBuildingIntact|mesh||8c0bd200438b3894f8ab22f6e1170f00:23860438639422632|0ee36102dee027841bf563aa2becf8e8:4300000|cee1bea9fb2214c89b13d5a8997b3930:2100000|0",
-            "eligible": 0,
-            "excluded": 22,
+            "eligible": 22,
+            "excluded": 0,
             "total": 22
         },
         {
             "key": "GameplayBuildingIntact|mesh||8c0bd200438b3894f8ab22f6e1170f00:23860438639422632|0ee36102dee027841bf563aa2becf8e8:4300000|e14749e23c1b64c0493721aaf371a8ae:2100000|0",
-            "eligible": 0,
-            "excluded": 23,
+            "eligible": 23,
+            "excluded": 0,
             "total": 23
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:2587431571036664691|3ef1198cd97e26d49b169a27d952fe84:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
-            "eligible": 0,
-            "excluded": 22,
+            "eligible": 22,
+            "excluded": 0,
             "total": 22
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:2587431571036664691|3ef1198cd97e26d49b169a27d952fe84:4300000|607ac1ca371b942b99f5b38ba589d12d:2100000|0",
-            "eligible": 0,
-            "excluded": 25,
+            "eligible": 25,
+            "excluded": 0,
             "total": 25
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:2587431571036664691|3ef1198cd97e26d49b169a27d952fe84:4300000|6487453456f55495a85cab7b38eaece4:2100000|0",
-            "eligible": 0,
-            "excluded": 22,
+            "eligible": 22,
+            "excluded": 0,
             "total": 22
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:2587431571036664691|3ef1198cd97e26d49b169a27d952fe84:4300000|c0949687d30c74ca3b5f933d68fbd88f:2100000|0",
-            "eligible": 0,
-            "excluded": 24,
+            "eligible": 24,
+            "excluded": 0,
             "total": 24
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:2587431571036664691|3ef1198cd97e26d49b169a27d952fe84:4300000|cee1bea9fb2214c89b13d5a8997b3930:2100000|0",
-            "eligible": 0,
-            "excluded": 28,
+            "eligible": 28,
+            "excluded": 0,
             "total": 28
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:2587431571036664691|3ef1198cd97e26d49b169a27d952fe84:4300000|e14749e23c1b64c0493721aaf371a8ae:2100000|0",
-            "eligible": 0,
-            "excluded": 22,
+            "eligible": 22,
+            "excluded": 0,
             "total": 22
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:2811376451248043812|aa10106b237027a468b79655b26e0353:4300000|8dc323c1ab67edb4a958718017f2f640:2100000|0",
-            "eligible": 0,
-            "excluded": 143,
+            "eligible": 143,
+            "excluded": 0,
             "total": 143
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:2917537372567417508|0a9ef9863c241814e9ae0ed9a6f88d4c:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
-            "eligible": 0,
-            "excluded": 22,
+            "eligible": 22,
+            "excluded": 0,
             "total": 22
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:2917537372567417508|0a9ef9863c241814e9ae0ed9a6f88d4c:4300000|607ac1ca371b942b99f5b38ba589d12d:2100000|0",
-            "eligible": 0,
-            "excluded": 25,
+            "eligible": 25,
+            "excluded": 0,
             "total": 25
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:2917537372567417508|0a9ef9863c241814e9ae0ed9a6f88d4c:4300000|6487453456f55495a85cab7b38eaece4:2100000|0",
-            "eligible": 0,
-            "excluded": 22,
+            "eligible": 22,
+            "excluded": 0,
             "total": 22
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:2917537372567417508|0a9ef9863c241814e9ae0ed9a6f88d4c:4300000|c0949687d30c74ca3b5f933d68fbd88f:2100000|0",
-            "eligible": 0,
-            "excluded": 24,
+            "eligible": 24,
+            "excluded": 0,
             "total": 24
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:2917537372567417508|0a9ef9863c241814e9ae0ed9a6f88d4c:4300000|cee1bea9fb2214c89b13d5a8997b3930:2100000|0",
-            "eligible": 0,
-            "excluded": 28,
+            "eligible": 28,
+            "excluded": 0,
             "total": 28
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:2917537372567417508|0a9ef9863c241814e9ae0ed9a6f88d4c:4300000|e14749e23c1b64c0493721aaf371a8ae:2100000|0",
-            "eligible": 0,
-            "excluded": 22,
+            "eligible": 22,
+            "excluded": 0,
             "total": 22
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:5311921567160479881|f265d466abc958c408a19700c09648c3:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
-            "eligible": 0,
-            "excluded": 22,
+            "eligible": 22,
+            "excluded": 0,
             "total": 22
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:5311921567160479881|f265d466abc958c408a19700c09648c3:4300000|607ac1ca371b942b99f5b38ba589d12d:2100000|0",
-            "eligible": 0,
-            "excluded": 25,
+            "eligible": 25,
+            "excluded": 0,
             "total": 25
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:5311921567160479881|f265d466abc958c408a19700c09648c3:4300000|6487453456f55495a85cab7b38eaece4:2100000|0",
-            "eligible": 0,
-            "excluded": 22,
+            "eligible": 22,
+            "excluded": 0,
             "total": 22
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:5311921567160479881|f265d466abc958c408a19700c09648c3:4300000|c0949687d30c74ca3b5f933d68fbd88f:2100000|0",
-            "eligible": 0,
-            "excluded": 24,
+            "eligible": 24,
+            "excluded": 0,
             "total": 24
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:5311921567160479881|f265d466abc958c408a19700c09648c3:4300000|cee1bea9fb2214c89b13d5a8997b3930:2100000|0",
-            "eligible": 0,
-            "excluded": 28,
+            "eligible": 28,
+            "excluded": 0,
             "total": 28
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:5311921567160479881|f265d466abc958c408a19700c09648c3:4300000|e14749e23c1b64c0493721aaf371a8ae:2100000|0",
-            "eligible": 0,
-            "excluded": 22,
+            "eligible": 22,
+            "excluded": 0,
             "total": 22
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:5967715843985945782|5b27ba6eef070e0499c7d71e66623b33:4300000|03e5a9944852c475987259cd260d608c:2100000|0",
-            "eligible": 0,
-            "excluded": 25,
+            "eligible": 25,
+            "excluded": 0,
             "total": 25
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:5967715843985945782|5b27ba6eef070e0499c7d71e66623b33:4300000|2333bdab552ad4b138be0d14e5094c0d:2100000|0",
-            "eligible": 0,
-            "excluded": 24,
+            "eligible": 24,
+            "excluded": 0,
             "total": 24
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:5967715843985945782|5b27ba6eef070e0499c7d71e66623b33:4300000|42d0533a20b5a41e0b1391c0ca8660d0:2100000|0",
-            "eligible": 0,
-            "excluded": 22,
+            "eligible": 22,
+            "excluded": 0,
             "total": 22
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:5967715843985945782|5b27ba6eef070e0499c7d71e66623b33:4300000|4e47f2459a3ed4f338dbef1e5b487e80:2100000|0",
-            "eligible": 0,
-            "excluded": 22,
+            "eligible": 22,
+            "excluded": 0,
             "total": 22
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:5967715843985945782|5b27ba6eef070e0499c7d71e66623b33:4300000|ba0cb8ac3ac1542a9a9752ffdf1ef66e:2100000|0",
-            "eligible": 0,
-            "excluded": 22,
+            "eligible": 22,
+            "excluded": 0,
             "total": 22
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:5967715843985945782|5b27ba6eef070e0499c7d71e66623b33:4300000|c726a01b0ee89c84d9b406ebbca1fbeb:2100000|0",
-            "eligible": 0,
-            "excluded": 28,
+            "eligible": 28,
+            "excluded": 0,
             "total": 28
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:6489165712834285631|8c0d3f6b5229f65468984a6148f11d15:4300000|65b0c04dcaeda408f8ee1a2c9f661e42:2100000|0",
-            "eligible": 0,
-            "excluded": 22,
+            "eligible": 22,
+            "excluded": 0,
             "total": 22
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:6489165712834285631|8c0d3f6b5229f65468984a6148f11d15:4300000|89b707d32e38b4d188a0b594dfb18c82:2100000|0",
-            "eligible": 0,
-            "excluded": 28,
+            "eligible": 28,
+            "excluded": 0,
             "total": 28
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:6489165712834285631|8c0d3f6b5229f65468984a6148f11d15:4300000|cba8d848913d44394ab7cbd76781b3d6:2100000|0",
-            "eligible": 0,
-            "excluded": 22,
+            "eligible": 22,
+            "excluded": 0,
             "total": 22
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:6489165712834285631|8c0d3f6b5229f65468984a6148f11d15:4300000|ee79f3a90caed4de595e21a36ca6c54a:2100000|0",
-            "eligible": 0,
-            "excluded": 24,
+            "eligible": 24,
+            "excluded": 0,
             "total": 24
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:6489165712834285631|8c0d3f6b5229f65468984a6148f11d15:4300000|f31e4becef8bd4ac2829212da1b1527a:2100000|0",
-            "eligible": 0,
-            "excluded": 25,
+            "eligible": 25,
+            "excluded": 0,
             "total": 25
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:6489165712834285631|8c0d3f6b5229f65468984a6148f11d15:4300000|fd59a823156264fa9a78fbc5ce18ef51:2100000|0",
-            "eligible": 0,
-            "excluded": 22,
+            "eligible": 22,
+            "excluded": 0,
             "total": 22
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:6824952157279742062|f265d466abc958c408a19700c09648c3:4300000|8dc323c1ab67edb4a958718017f2f640:2100000|0",
-            "eligible": 0,
-            "excluded": 143,
+            "eligible": 143,
+            "excluded": 0,
             "total": 143
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:9079860529632615965|f265d466abc958c408a19700c09648c3:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
-            "eligible": 0,
-            "excluded": 22,
+            "eligible": 22,
+            "excluded": 0,
             "total": 22
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:9079860529632615965|f265d466abc958c408a19700c09648c3:4300000|607ac1ca371b942b99f5b38ba589d12d:2100000|0",
-            "eligible": 0,
-            "excluded": 25,
+            "eligible": 25,
+            "excluded": 0,
             "total": 25
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:9079860529632615965|f265d466abc958c408a19700c09648c3:4300000|6487453456f55495a85cab7b38eaece4:2100000|0",
-            "eligible": 0,
-            "excluded": 22,
+            "eligible": 22,
+            "excluded": 0,
             "total": 22
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:9079860529632615965|f265d466abc958c408a19700c09648c3:4300000|c0949687d30c74ca3b5f933d68fbd88f:2100000|0",
-            "eligible": 0,
-            "excluded": 24,
+            "eligible": 24,
+            "excluded": 0,
             "total": 24
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:9079860529632615965|f265d466abc958c408a19700c09648c3:4300000|cee1bea9fb2214c89b13d5a8997b3930:2100000|0",
-            "eligible": 0,
-            "excluded": 28,
+            "eligible": 28,
+            "excluded": 0,
             "total": 28
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:9079860529632615965|f265d466abc958c408a19700c09648c3:4300000|e14749e23c1b64c0493721aaf371a8ae:2100000|0",
-            "eligible": 0,
-            "excluded": 22,
+            "eligible": 22,
+            "excluded": 0,
             "total": 22
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:919458735491436883|f265d466abc958c408a19700c09648c3:4300000|8dc323c1ab67edb4a958718017f2f640:2100000|0",
-            "eligible": 0,
-            "excluded": 143,
+            "eligible": 143,
+            "excluded": 0,
             "total": 143
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:9219391329683794821|d92a61948aae65d47b492887656e79a2:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
-            "eligible": 0,
-            "excluded": 22,
+            "eligible": 22,
+            "excluded": 0,
             "total": 22
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:9219391329683794821|d92a61948aae65d47b492887656e79a2:4300000|607ac1ca371b942b99f5b38ba589d12d:2100000|0",
-            "eligible": 0,
-            "excluded": 25,
+            "eligible": 25,
+            "excluded": 0,
             "total": 25
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:9219391329683794821|d92a61948aae65d47b492887656e79a2:4300000|6487453456f55495a85cab7b38eaece4:2100000|0",
-            "eligible": 0,
-            "excluded": 22,
+            "eligible": 22,
+            "excluded": 0,
             "total": 22
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:9219391329683794821|d92a61948aae65d47b492887656e79a2:4300000|c0949687d30c74ca3b5f933d68fbd88f:2100000|0",
-            "eligible": 0,
-            "excluded": 24,
+            "eligible": 24,
+            "excluded": 0,
             "total": 24
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:9219391329683794821|d92a61948aae65d47b492887656e79a2:4300000|cee1bea9fb2214c89b13d5a8997b3930:2100000|0",
-            "eligible": 0,
-            "excluded": 28,
+            "eligible": 28,
+            "excluded": 0,
             "total": 28
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:9219391329683794821|d92a61948aae65d47b492887656e79a2:4300000|e14749e23c1b64c0493721aaf371a8ae:2100000|0",
-            "eligible": 0,
-            "excluded": 22,
+            "eligible": 22,
+            "excluded": 0,
             "total": 22
         },
         {
@@ -9662,14 +9733,14 @@
         },
         {
             "key": "GameplayBuildingIntact|mesh||9ce7b23b8eec7f84cb747be5fc3d6058:23629790289698760|085010b893dcc4c4a808fb1aba09e3a0:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|1",
-            "eligible": 0,
-            "excluded": 187,
+            "eligible": 187,
+            "excluded": 0,
             "total": 187
         },
         {
             "key": "GameplayBuildingIntact|mesh||9ce7b23b8eec7f84cb747be5fc3d6058:23629790289698760|085010b893dcc4c4a808fb1aba09e3a0:4300000|b2c3a31deaefda1498acfc5155aa8dbb:2100000|0",
-            "eligible": 0,
-            "excluded": 187,
+            "eligible": 187,
+            "excluded": 0,
             "total": 187
         },
         {
@@ -9722,80 +9793,80 @@
         },
         {
             "key": "GameplayBuildingIntact|mesh||ad3df7bfcb753db46acf758265bed397:23927110349108016|8dc5a5d08c1936d45aeb62efd4f19b95:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 32,
-            "excluded": 68,
+            "eligible": 100,
+            "excluded": 0,
             "total": 100
         },
         {
             "key": "GameplayBuildingIntact|mesh||b189dceced0fc4c78bf6b1d2374fb6b0:1028171700833458896|7af5d1e8396c7774aac2352e7855ebca:4300000|65b0c04dcaeda408f8ee1a2c9f661e42:2100000|0",
-            "eligible": 0,
-            "excluded": 30,
+            "eligible": 30,
+            "excluded": 0,
             "total": 30
         },
         {
             "key": "GameplayBuildingIntact|mesh||b189dceced0fc4c78bf6b1d2374fb6b0:1028171700833458896|7af5d1e8396c7774aac2352e7855ebca:4300000|89b707d32e38b4d188a0b594dfb18c82:2100000|0",
-            "eligible": 0,
-            "excluded": 26,
+            "eligible": 26,
+            "excluded": 0,
             "total": 26
         },
         {
             "key": "GameplayBuildingIntact|mesh||b189dceced0fc4c78bf6b1d2374fb6b0:1028171700833458896|7af5d1e8396c7774aac2352e7855ebca:4300000|cba8d848913d44394ab7cbd76781b3d6:2100000|0",
-            "eligible": 0,
-            "excluded": 30,
+            "eligible": 30,
+            "excluded": 0,
             "total": 30
         },
         {
             "key": "GameplayBuildingIntact|mesh||b189dceced0fc4c78bf6b1d2374fb6b0:1028171700833458896|7af5d1e8396c7774aac2352e7855ebca:4300000|ee79f3a90caed4de595e21a36ca6c54a:2100000|0",
-            "eligible": 0,
-            "excluded": 30,
+            "eligible": 30,
+            "excluded": 0,
             "total": 30
         },
         {
             "key": "GameplayBuildingIntact|mesh||b189dceced0fc4c78bf6b1d2374fb6b0:1028171700833458896|7af5d1e8396c7774aac2352e7855ebca:4300000|f31e4becef8bd4ac2829212da1b1527a:2100000|0",
-            "eligible": 0,
-            "excluded": 39,
+            "eligible": 39,
+            "excluded": 0,
             "total": 39
         },
         {
             "key": "GameplayBuildingIntact|mesh||b189dceced0fc4c78bf6b1d2374fb6b0:1028171700833458896|7af5d1e8396c7774aac2352e7855ebca:4300000|fd59a823156264fa9a78fbc5ce18ef51:2100000|0",
-            "eligible": 0,
-            "excluded": 25,
+            "eligible": 25,
+            "excluded": 0,
             "total": 25
         },
         {
             "key": "GameplayBuildingIntact|mesh||b189dceced0fc4c78bf6b1d2374fb6b0:2226447368197188737|1d3b70190da126145b9837bd88482303:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
-            "eligible": 0,
-            "excluded": 30,
+            "eligible": 30,
+            "excluded": 0,
             "total": 30
         },
         {
             "key": "GameplayBuildingIntact|mesh||b189dceced0fc4c78bf6b1d2374fb6b0:2226447368197188737|1d3b70190da126145b9837bd88482303:4300000|607ac1ca371b942b99f5b38ba589d12d:2100000|0",
-            "eligible": 0,
-            "excluded": 39,
+            "eligible": 39,
+            "excluded": 0,
             "total": 39
         },
         {
             "key": "GameplayBuildingIntact|mesh||b189dceced0fc4c78bf6b1d2374fb6b0:2226447368197188737|1d3b70190da126145b9837bd88482303:4300000|6487453456f55495a85cab7b38eaece4:2100000|0",
-            "eligible": 0,
-            "excluded": 30,
+            "eligible": 30,
+            "excluded": 0,
             "total": 30
         },
         {
             "key": "GameplayBuildingIntact|mesh||b189dceced0fc4c78bf6b1d2374fb6b0:2226447368197188737|1d3b70190da126145b9837bd88482303:4300000|c0949687d30c74ca3b5f933d68fbd88f:2100000|0",
-            "eligible": 0,
-            "excluded": 30,
+            "eligible": 30,
+            "excluded": 0,
             "total": 30
         },
         {
             "key": "GameplayBuildingIntact|mesh||b189dceced0fc4c78bf6b1d2374fb6b0:2226447368197188737|1d3b70190da126145b9837bd88482303:4300000|cee1bea9fb2214c89b13d5a8997b3930:2100000|0",
-            "eligible": 0,
-            "excluded": 26,
+            "eligible": 26,
+            "excluded": 0,
             "total": 26
         },
         {
             "key": "GameplayBuildingIntact|mesh||b189dceced0fc4c78bf6b1d2374fb6b0:2226447368197188737|1d3b70190da126145b9837bd88482303:4300000|e14749e23c1b64c0493721aaf371a8ae:2100000|0",
-            "eligible": 0,
-            "excluded": 25,
+            "eligible": 25,
+            "excluded": 0,
             "total": 25
         },
         {
@@ -9908,92 +9979,92 @@
         },
         {
             "key": "GameplayBuildingIntact|mesh||c7cbe0b7f05fd4fda825c6ce586b2be2:3375987908487706694|3ce084898a5a68e4f8281693a35d46ef:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
-            "eligible": 0,
-            "excluded": 22,
+            "eligible": 22,
+            "excluded": 0,
             "total": 22
         },
         {
             "key": "GameplayBuildingIntact|mesh||c7cbe0b7f05fd4fda825c6ce586b2be2:3375987908487706694|3ce084898a5a68e4f8281693a35d46ef:4300000|607ac1ca371b942b99f5b38ba589d12d:2100000|0",
-            "eligible": 0,
-            "excluded": 25,
+            "eligible": 25,
+            "excluded": 0,
             "total": 25
         },
         {
             "key": "GameplayBuildingIntact|mesh||c7cbe0b7f05fd4fda825c6ce586b2be2:3375987908487706694|3ce084898a5a68e4f8281693a35d46ef:4300000|6487453456f55495a85cab7b38eaece4:2100000|0",
-            "eligible": 0,
-            "excluded": 24,
+            "eligible": 24,
+            "excluded": 0,
             "total": 24
         },
         {
             "key": "GameplayBuildingIntact|mesh||c7cbe0b7f05fd4fda825c6ce586b2be2:3375987908487706694|3ce084898a5a68e4f8281693a35d46ef:4300000|c0949687d30c74ca3b5f933d68fbd88f:2100000|0",
-            "eligible": 0,
-            "excluded": 32,
+            "eligible": 32,
+            "excluded": 0,
             "total": 32
         },
         {
             "key": "GameplayBuildingIntact|mesh||c7cbe0b7f05fd4fda825c6ce586b2be2:3375987908487706694|3ce084898a5a68e4f8281693a35d46ef:4300000|cee1bea9fb2214c89b13d5a8997b3930:2100000|0",
-            "eligible": 0,
-            "excluded": 30,
+            "eligible": 30,
+            "excluded": 0,
             "total": 30
         },
         {
             "key": "GameplayBuildingIntact|mesh||c7cbe0b7f05fd4fda825c6ce586b2be2:3375987908487706694|3ce084898a5a68e4f8281693a35d46ef:4300000|e14749e23c1b64c0493721aaf371a8ae:2100000|0",
-            "eligible": 0,
-            "excluded": 23,
+            "eligible": 23,
+            "excluded": 0,
             "total": 23
         },
         {
             "key": "GameplayBuildingIntact|mesh||c7cbe0b7f05fd4fda825c6ce586b2be2:6171944244830938444|e9ced82c3bf43af46870b618cbc44352:4300000|65b0c04dcaeda408f8ee1a2c9f661e42:2100000|0",
-            "eligible": 0,
-            "excluded": 24,
+            "eligible": 24,
+            "excluded": 0,
             "total": 24
         },
         {
             "key": "GameplayBuildingIntact|mesh||c7cbe0b7f05fd4fda825c6ce586b2be2:6171944244830938444|e9ced82c3bf43af46870b618cbc44352:4300000|89b707d32e38b4d188a0b594dfb18c82:2100000|0",
-            "eligible": 0,
-            "excluded": 30,
+            "eligible": 30,
+            "excluded": 0,
             "total": 30
         },
         {
             "key": "GameplayBuildingIntact|mesh||c7cbe0b7f05fd4fda825c6ce586b2be2:6171944244830938444|e9ced82c3bf43af46870b618cbc44352:4300000|cba8d848913d44394ab7cbd76781b3d6:2100000|0",
-            "eligible": 0,
-            "excluded": 22,
+            "eligible": 22,
+            "excluded": 0,
             "total": 22
         },
         {
             "key": "GameplayBuildingIntact|mesh||c7cbe0b7f05fd4fda825c6ce586b2be2:6171944244830938444|e9ced82c3bf43af46870b618cbc44352:4300000|ee79f3a90caed4de595e21a36ca6c54a:2100000|0",
-            "eligible": 0,
-            "excluded": 32,
+            "eligible": 32,
+            "excluded": 0,
             "total": 32
         },
         {
             "key": "GameplayBuildingIntact|mesh||c7cbe0b7f05fd4fda825c6ce586b2be2:6171944244830938444|e9ced82c3bf43af46870b618cbc44352:4300000|f31e4becef8bd4ac2829212da1b1527a:2100000|0",
-            "eligible": 0,
-            "excluded": 25,
+            "eligible": 25,
+            "excluded": 0,
             "total": 25
         },
         {
             "key": "GameplayBuildingIntact|mesh||c7cbe0b7f05fd4fda825c6ce586b2be2:6171944244830938444|e9ced82c3bf43af46870b618cbc44352:4300000|fd59a823156264fa9a78fbc5ce18ef51:2100000|0",
-            "eligible": 0,
-            "excluded": 23,
+            "eligible": 23,
+            "excluded": 0,
             "total": 23
         },
         {
             "key": "GameplayBuildingIntact|mesh||cccb38fb4199d394f89a575dfcedb7c3:23820164143229318|bcbe6102b075f044aa8ae9227b603f13:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 44,
-            "excluded": 86,
+            "eligible": 130,
+            "excluded": 0,
             "total": 130
         },
         {
             "key": "GameplayBuildingIntact|mesh||cd716e0732b68a24697501e8161c9e59:23145407954086054|ba860a25ff5b5a642892d5955d183333:4300000|59266c69bb5e4a44b82461f5af99ddc5:2100000|0",
-            "eligible": 0,
-            "excluded": 209,
+            "eligible": 209,
+            "excluded": 0,
             "total": 209
         },
         {
             "key": "GameplayBuildingIntact|mesh||d907d3f247308fd4eb5935cf472fbf1b:23430190310130970|489ed28ad2eaf284fb9406f0d1b10adc:4300000|59266c69bb5e4a44b82461f5af99ddc5:2100000|0",
-            "eligible": 0,
-            "excluded": 180,
+            "eligible": 180,
+            "excluded": 0,
             "total": 180
         },
         {
@@ -10004,80 +10075,80 @@
         },
         {
             "key": "GameplayBuildingIntact|mesh||ea3dd5fe1653c2e419d93b7a12a2552b:23939979429664214|a0e132ea00f6c3e4cab5d6123534683c:4300000|59266c69bb5e4a44b82461f5af99ddc5:2100000|0",
-            "eligible": 0,
-            "excluded": 198,
+            "eligible": 198,
+            "excluded": 0,
             "total": 198
         },
         {
             "key": "GameplayBuildingIntact|mesh||ecfaeced6b06aa24fbd36c485c762242:23403433648238258|1ab4e64968c30e742bceaec998ff852f:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
-            "eligible": 0,
-            "excluded": 9,
+            "eligible": 9,
+            "excluded": 0,
             "total": 9
         },
         {
             "key": "GameplayBuildingIntact|mesh||ecfaeced6b06aa24fbd36c485c762242:23403433648238258|1ab4e64968c30e742bceaec998ff852f:4300000|607ac1ca371b942b99f5b38ba589d12d:2100000|0",
-            "eligible": 0,
-            "excluded": 12,
+            "eligible": 12,
+            "excluded": 0,
             "total": 12
         },
         {
             "key": "GameplayBuildingIntact|mesh||ecfaeced6b06aa24fbd36c485c762242:23403433648238258|1ab4e64968c30e742bceaec998ff852f:4300000|6487453456f55495a85cab7b38eaece4:2100000|0",
-            "eligible": 0,
-            "excluded": 5,
+            "eligible": 5,
+            "excluded": 0,
             "total": 5
         },
         {
             "key": "GameplayBuildingIntact|mesh||ecfaeced6b06aa24fbd36c485c762242:23403433648238258|1ab4e64968c30e742bceaec998ff852f:4300000|c0949687d30c74ca3b5f933d68fbd88f:2100000|0",
-            "eligible": 0,
-            "excluded": 13,
+            "eligible": 13,
+            "excluded": 0,
             "total": 13
         },
         {
             "key": "GameplayBuildingIntact|mesh||ecfaeced6b06aa24fbd36c485c762242:23403433648238258|1ab4e64968c30e742bceaec998ff852f:4300000|cee1bea9fb2214c89b13d5a8997b3930:2100000|0",
-            "eligible": 0,
-            "excluded": 8,
+            "eligible": 8,
+            "excluded": 0,
             "total": 8
         },
         {
             "key": "GameplayBuildingIntact|mesh||ecfaeced6b06aa24fbd36c485c762242:23403433648238258|1ab4e64968c30e742bceaec998ff852f:4300000|e14749e23c1b64c0493721aaf371a8ae:2100000|0",
-            "eligible": 0,
-            "excluded": 11,
+            "eligible": 11,
+            "excluded": 0,
             "total": 11
         },
         {
             "key": "GameplayBuildingIntact|mesh||ecfaeced6b06aa24fbd36c485c762242:23596962405743454|1ab4e64968c30e742bceaec998ff852f:4300004|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
-            "eligible": 0,
-            "excluded": 9,
+            "eligible": 9,
+            "excluded": 0,
             "total": 9
         },
         {
             "key": "GameplayBuildingIntact|mesh||ecfaeced6b06aa24fbd36c485c762242:23596962405743454|1ab4e64968c30e742bceaec998ff852f:4300004|607ac1ca371b942b99f5b38ba589d12d:2100000|0",
-            "eligible": 0,
-            "excluded": 12,
+            "eligible": 12,
+            "excluded": 0,
             "total": 12
         },
         {
             "key": "GameplayBuildingIntact|mesh||ecfaeced6b06aa24fbd36c485c762242:23596962405743454|1ab4e64968c30e742bceaec998ff852f:4300004|6487453456f55495a85cab7b38eaece4:2100000|0",
-            "eligible": 0,
-            "excluded": 5,
+            "eligible": 5,
+            "excluded": 0,
             "total": 5
         },
         {
             "key": "GameplayBuildingIntact|mesh||ecfaeced6b06aa24fbd36c485c762242:23596962405743454|1ab4e64968c30e742bceaec998ff852f:4300004|c0949687d30c74ca3b5f933d68fbd88f:2100000|0",
-            "eligible": 0,
-            "excluded": 13,
+            "eligible": 13,
+            "excluded": 0,
             "total": 13
         },
         {
             "key": "GameplayBuildingIntact|mesh||ecfaeced6b06aa24fbd36c485c762242:23596962405743454|1ab4e64968c30e742bceaec998ff852f:4300004|cee1bea9fb2214c89b13d5a8997b3930:2100000|0",
-            "eligible": 0,
-            "excluded": 8,
+            "eligible": 8,
+            "excluded": 0,
             "total": 8
         },
         {
             "key": "GameplayBuildingIntact|mesh||ecfaeced6b06aa24fbd36c485c762242:23596962405743454|1ab4e64968c30e742bceaec998ff852f:4300004|e14749e23c1b64c0493721aaf371a8ae:2100000|0",
-            "eligible": 0,
-            "excluded": 11,
+            "eligible": 11,
+            "excluded": 0,
             "total": 11
         },
         {
@@ -10196,14 +10267,14 @@
         },
         {
             "key": "GameplayBuildingIntact|mesh||f77a457110fb4b3499bbdcddcc7cc9d0:23624724685017898|7d6af040e5782264b80c246cfb086fd6:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 0,
-            "excluded": 79,
+            "eligible": 79,
+            "excluded": 0,
             "total": 79
         },
         {
             "key": "GameplayBuildingIntact|mesh||fe1500bc9510bd6439428093940e16be:23003001357791068|71c6e4d7e2bd4bc4ba7050f6772669d8:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 0,
-            "excluded": 208,
+            "eligible": 208,
+            "excluded": 0,
             "total": 208
         },
         {
@@ -10912,8 +10983,8 @@
     "byRendererType": [
         {
             "key": "UnityEngine.MeshRenderer",
-            "eligible": 22058,
-            "excluded": 60739,
+            "eligible": 29268,
+            "excluded": 53529,
             "total": 82797
         }
     ],
@@ -10938,8 +11009,8 @@
         },
         {
             "key": "OpaqueShadowsOn|0|1|Object|3",
-            "eligible": 21924,
-            "excluded": 56552,
+            "eligible": 29134,
+            "excluded": 49342,
             "total": 78476
         },
         {
@@ -10970,8 +11041,8 @@
         },
         {
             "key": "DenseGenerated:GameplayBuildings",
-            "eligible": 10759,
-            "excluded": 7616,
+            "eligible": 17969,
+            "excluded": 406,
             "total": 18375
         },
         {
@@ -10996,15 +11067,15 @@
         },
         {
             "key": "eligible",
-            "eligible": 22058,
+            "eligible": 29268,
             "excluded": 0,
-            "total": 22058
+            "total": 29268
         },
         {
-            "key": "gameplay-building-family-deferred-after-vrp063",
+            "key": "gameplay-building-family-unsupported-render-policy",
             "eligible": 0,
-            "excluded": 7572,
-            "total": 7572
+            "excluded": 406,
+            "total": 406
         },
         {
             "key": "infrastructure-deferred-after-render-only-pilot",
@@ -11033,8 +11104,8 @@
         {
             "key": "unsupported-render-policy",
             "eligible": 0,
-            "excluded": 348,
-            "total": 348
+            "excluded": 304,
+            "total": 304
         }
     ]
 }

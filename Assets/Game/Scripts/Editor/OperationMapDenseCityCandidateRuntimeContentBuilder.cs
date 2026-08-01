@@ -1550,6 +1550,11 @@ namespace Game.Editor
                 if (restored)
                     return;
 
+                // Addressables can retain memory-mapped importer handles after an
+                // isolated Windows build. Release the exact imported asset before
+                // restoring its byte checkpoint or File.WriteAllBytes fails with
+                // Win32 1224 and leaves the transaction only partially restored.
+                AssetDatabase.ReleaseCachedFileHandles();
                 Directory.CreateDirectory(directoryPath);
                 foreach (string currentPath in Directory.EnumerateFiles(
                              directoryPath,
@@ -1565,6 +1570,16 @@ namespace Game.Editor
                     string physicalPath = Path.Combine(directoryPath, file.Key);
                     Directory.CreateDirectory(
                         Path.GetDirectoryName(physicalPath) ?? directoryPath);
+                    string assetPath = FileUtil.GetProjectRelativePath(physicalPath)
+                        .Replace('\\', '/');
+                    if (assetPath.StartsWith("Assets/", StringComparison.Ordinal))
+                    {
+                        UnityEngine.Object loadedAsset =
+                            AssetDatabase.LoadMainAssetAtPath(assetPath);
+                        if (loadedAsset != null)
+                            Resources.UnloadAsset(loadedAsset);
+                        AssetDatabase.ReleaseCachedFileHandles();
+                    }
                     File.WriteAllBytes(physicalPath, file.Value);
                 }
 

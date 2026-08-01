@@ -35,6 +35,14 @@ namespace Game.Editor
             GameObject prefab,
             Func<Material, Material> materialResolver)
         {
+            return Extract(prefab, materialResolver, null);
+        }
+
+        internal static DenseCityVisualAssetMetadata Extract(
+            GameObject prefab,
+            Func<Material, Material> materialResolver,
+            Func<Renderer, bool> rendererFilter)
+        {
             if (prefab == null)
                 throw new ArgumentNullException(nameof(prefab));
             if (!AssetDatabase.TryGetGUIDAndLocalFileIdentifier(prefab, out string prefabGuid, out long prefabLocalId) ||
@@ -48,6 +56,8 @@ namespace Game.Editor
             var materialIdentities = new SortedDictionary<string, long>(StringComparer.Ordinal);
             for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
             {
+                if (rendererFilter != null && !rendererFilter(renderers[rendererIndex]))
+                    continue;
                 Material[] materials = renderers[rendererIndex].sharedMaterials;
                 for (int materialIndex = 0; materialIndex < materials.Length; materialIndex++)
                 {

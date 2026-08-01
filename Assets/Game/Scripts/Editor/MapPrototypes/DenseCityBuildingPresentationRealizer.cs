@@ -94,7 +94,8 @@ namespace Game.Editor
                     owner.transform,
                     "IntactVisual",
                     materialLibrary,
-                    building);
+                    building,
+                    normalizeIntactVisual: true);
                 Transform destroyedRoot = InstantiateVisual(
                     destroyedPresentation,
                     owner.transform,
@@ -144,7 +145,8 @@ namespace Game.Editor
             Transform owner,
             string name,
             DenseCityBuildingMaterialLibrary materialLibrary = null,
-            DenseCityBuildingBakeRecord building = default)
+            DenseCityBuildingBakeRecord building = default,
+            bool normalizeIntactVisual = false)
         {
             GameObject prefab = DenseCityRenderOnlyPresentationRealizer.LoadRequiredPrefab(
                 presentation,
@@ -155,6 +157,8 @@ namespace Game.Editor
             DenseCityRenderOnlyPresentationRealizer.ApplyWorldMatrix(
                 instance.transform,
                 presentation.WorldMatrix);
+            if (normalizeIntactVisual)
+                DenseCityBuildingIntactVisualPolicy.NormalizeRealizedIntactVisual(instance);
             if (materialLibrary != null)
             {
                 DenseCityBuildingMaterialSelection selection = materialLibrary.Select(

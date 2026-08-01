@@ -38,11 +38,18 @@ namespace Game.Editor
             "Design/AgentReports/2026-07-28_dense_city_render_virtualization_spatial_cells.json";
         internal const string CapacityBudgetPath =
             "Design/AgentReports/2026-07-28_dense_city_render_virtualization_capacity_budget.json";
-        internal const int ExpectedPackedRenderRowCount = 82797;
+        internal const int HistoricalPackedRenderRowCount = 82797;
+        internal const int ExpectedEmbeddedDestroyedDuplicateRowRemoval = 4396;
+        internal const int ExpectedPackedRenderRowCount =
+            HistoricalPackedRenderRowCount - ExpectedEmbeddedDestroyedDuplicateRowRemoval;
         internal const float RenderCellSize = 32f;
-        private const int ProvisionalVisibleCellRadius = 0;
-        private const int ProvisionalSafetyCellRadius = 1;
-        private const int ProvisionalPrefetchGuardCellRadius = 1;
+        // VRP-067 device evidence (House, stationary interior route) materialized
+        // the inclusive envelope x=42..53, z=19..27. Sweep that exact 12x9
+        // footprint and its quarter-turn orientation across the whole grid so
+        // pool sizing cannot depend on the sampled building's map position.
+        private const int ObservedMaterializedEnvelopeWidthCells = 12;
+        private const int ObservedMaterializedEnvelopeHeightCells = 9;
+        private const int ObservedMaterializedEnvelopeOrientationCount = 2;
         private const int MapMmiEntityLimit = 24000;
         private const int ActiveProxySlotLimit = 8000;
         private static readonly UTF8Encoding Utf8WithoutBom = new(false);
@@ -298,11 +305,16 @@ namespace Game.Editor
                 }
             }
 
-            if (rows.Count != ExpectedPackedRenderRowCount)
+            if (rows.Count != ExpectedPackedRenderRowCount ||
+                HistoricalPackedRenderRowCount - rows.Count !=
+                    ExpectedEmbeddedDestroyedDuplicateRowRemoval)
             {
                 throw new InvalidOperationException(
-                    $"Authoring render rows did not reconcile to packed evidence: " +
-                    $"{rows.Count} != {ExpectedPackedRenderRowCount}.");
+                    "Normalized authoring render rows did not reconcile to the historical " +
+                    $"packed evidence: current={rows.Count}, " +
+                    $"expectedCurrent={ExpectedPackedRenderRowCount}, " +
+                    $"historical={HistoricalPackedRenderRowCount}, " +
+                    $"expectedDuplicateRemoval={ExpectedEmbeddedDestroyedDuplicateRowRemoval}.");
             }
             if (eligibleStableOwnerJoined != eligible)
             {
@@ -340,7 +352,10 @@ namespace Game.Editor
                     .ToString(),
                 packedEvidencePath =
                     "Design/AgentReports/2026-07-25_dense_city_packed_asset_sharing.json",
-                packedEvidenceRenderRows = ExpectedPackedRenderRowCount,
+                packedEvidenceRenderRows = HistoricalPackedRenderRowCount,
+                normalizedEmbeddedDestroyedDuplicateRowsRemoved =
+                    ExpectedEmbeddedDestroyedDuplicateRowRemoval,
+                intactVisualNormalizationResult = "Passed",
                 totalRenderRows = rows.Count,
                 eligibleRenderRows = eligible,
                 excludedRenderRows = rows.Count - eligible,
@@ -1145,12 +1160,15 @@ namespace Game.Editor
                     throw new InvalidOperationException($"Spatial grid cell {localIndex} is duplicated.");
             }
 
-            int envelopeRadius = checked(
-                ProvisionalVisibleCellRadius +
-                ProvisionalSafetyCellRadius +
-                ProvisionalPrefetchGuardCellRadius);
+            int sampleShapeCount =
+                ObservedMaterializedEnvelopeWidthCells ==
+                ObservedMaterializedEnvelopeHeightCells
+                    ? 1
+                    : ObservedMaterializedEnvelopeOrientationCount;
             var inputs = new List<OperationMapRenderCapacitySweepInput>(
-                checked(width * height * orderedPolicies.Length));
+                checked(
+                    width * height * sampleShapeCount *
+                    orderedPolicies.Length));
             var peakSampleByPolicy = new string[orderedPolicies.Length];
             var peakRowsByPolicy = new int[orderedPolicies.Length];
             var seenPlacementAtSample = new int[logicalPlacements.placements.Count];
@@ -1159,65 +1177,109 @@ namespace Game.Editor
             {
                 for (int centerX = 0; centerX < width; centerX++)
                 {
-                    string sampleIdentity = string.Format(
-                        CultureInfo.InvariantCulture,
-                        "grid-cell:{0}:{1}:visible={2}:safety={3}:guard={4}",
-                        centerX + spatialCells.coordinateOffset[0],
-                        centerZ + spatialCells.coordinateOffset[1],
-                        ProvisionalVisibleCellRadius,
-                        ProvisionalSafetyCellRadius,
-                        ProvisionalPrefetchGuardCellRadius);
-                    var requiredRowsByPolicy = new int[orderedPolicies.Length];
-                    int minimumX = Math.Max(0, centerX - envelopeRadius);
-                    int maximumX = Math.Min(width - 1, centerX + envelopeRadius);
-                    int minimumZ = Math.Max(0, centerZ - envelopeRadius);
-                    int maximumZ = Math.Min(height - 1, centerZ + envelopeRadius);
-                    for (int z = minimumZ; z <= maximumZ; z++)
+                    for (int orientation = 0;
+                         orientation < sampleShapeCount;
+                         orientation++)
                     {
-                        for (int x = minimumX; x <= maximumX; x++)
+                        int envelopeWidth = orientation == 0
+                            ? ObservedMaterializedEnvelopeWidthCells
+                            : ObservedMaterializedEnvelopeHeightCells;
+                        int envelopeHeight = orientation == 0
+                            ? ObservedMaterializedEnvelopeHeightCells
+                            : ObservedMaterializedEnvelopeWidthCells;
+                        string sampleIdentity = string.Format(
+                            CultureInfo.InvariantCulture,
+                            "grid-cell:{0}:{1}:materialized={2}x{3}",
+                            centerX + spatialCells.coordinateOffset[0],
+                            centerZ + spatialCells.coordinateOffset[1],
+                            envelopeWidth,
+                            envelopeHeight);
+                        var requiredRowsByPolicy =
+                            new int[orderedPolicies.Length];
+                        int minimumX = Math.Max(
+                            0,
+                            centerX - (envelopeWidth - 1) / 2);
+                        int maximumX = Math.Min(
+                            width - 1,
+                            minimumX + envelopeWidth - 1);
+                        int minimumZ = Math.Max(
+                            0,
+                            centerZ - (envelopeHeight - 1) / 2);
+                        int maximumZ = Math.Min(
+                            height - 1,
+                            minimumZ + envelopeHeight - 1);
+                        for (int z = minimumZ; z <= maximumZ; z++)
                         {
-                            if (!occupiedCellsByLocalIndex.TryGetValue(z * width + x, out SpatialCellReport cell))
-                                continue;
-                            int end = checked(cell.firstPlacementIndex + cell.placementIndexCount);
-                            for (int membershipIndex = cell.firstPlacementIndex;
-                                 membershipIndex < end;
-                                 membershipIndex++)
+                            for (int x = minimumX; x <= maximumX; x++)
                             {
-                                int placementIndex = spatialCells.cellPlacementIndices[membershipIndex];
-                                if (seenPlacementAtSample[placementIndex] == sampleOrdinal + 1)
+                                if (!occupiedCellsByLocalIndex.TryGetValue(
+                                        z * width + x,
+                                        out SpatialCellReport cell))
                                     continue;
-                                seenPlacementAtSample[placementIndex] = sampleOrdinal + 1;
-                                LogicalPlacementReport placement = logicalPlacements.placements[placementIndex];
-                                PrototypeRecipeReport prototype =
-                                    prototypeRecipes.prototypes[placement.prototypeIndex];
-                                int partEnd = checked(prototype.firstPart + prototype.partCount);
-                                for (int partIndex = prototype.firstPart; partIndex < partEnd; partIndex++)
-                                    requiredRowsByPolicy[policyIndexByPart[partIndex]]++;
+                                int end = checked(
+                                    cell.firstPlacementIndex +
+                                    cell.placementIndexCount);
+                                for (int membershipIndex =
+                                         cell.firstPlacementIndex;
+                                     membershipIndex < end;
+                                     membershipIndex++)
+                                {
+                                    int placementIndex =
+                                        spatialCells.cellPlacementIndices[
+                                            membershipIndex];
+                                    if (seenPlacementAtSample[placementIndex] ==
+                                        sampleOrdinal + 1)
+                                        continue;
+                                    seenPlacementAtSample[placementIndex] =
+                                        sampleOrdinal + 1;
+                                    LogicalPlacementReport placement =
+                                        logicalPlacements.placements[
+                                            placementIndex];
+                                    PrototypeRecipeReport prototype =
+                                        prototypeRecipes.prototypes[
+                                            placement.prototypeIndex];
+                                    int partEnd = checked(
+                                        prototype.firstPart +
+                                        prototype.partCount);
+                                    for (int partIndex = prototype.firstPart;
+                                         partIndex < partEnd;
+                                         partIndex++)
+                                    {
+                                        requiredRowsByPolicy[
+                                            policyIndexByPart[partIndex]]++;
+                                    }
+                                }
                             }
                         }
-                    }
 
-                    for (int policyIndex = 0; policyIndex < orderedPolicies.Length; policyIndex++)
-                    {
-                        int requiredRows = requiredRowsByPolicy[policyIndex];
-                        inputs.Add(new OperationMapRenderCapacitySweepInput(
-                            sampleIdentity,
-                            orderedPolicies[policyIndex],
-                            requiredRows));
-                        if (requiredRows > peakRowsByPolicy[policyIndex])
+                        for (int policyIndex = 0;
+                             policyIndex < orderedPolicies.Length;
+                             policyIndex++)
                         {
-                            peakRowsByPolicy[policyIndex] = requiredRows;
-                            peakSampleByPolicy[policyIndex] = sampleIdentity;
+                            int requiredRows =
+                                requiredRowsByPolicy[policyIndex];
+                            inputs.Add(
+                                new OperationMapRenderCapacitySweepInput(
+                                    sampleIdentity,
+                                    orderedPolicies[policyIndex],
+                                    requiredRows));
+                            if (requiredRows > peakRowsByPolicy[policyIndex])
+                            {
+                                peakRowsByPolicy[policyIndex] = requiredRows;
+                                peakSampleByPolicy[policyIndex] =
+                                    sampleIdentity;
+                            }
                         }
-                    }
 
-                    sampleOrdinal++;
+                        sampleOrdinal++;
+                    }
                 }
             }
 
             if (!OperationMapRenderCapacitySweep.TryCalculate(inputs, out var capacities, out string error))
                 throw new InvalidOperationException($"Capacity budget sweep failed: {error}");
-            if (capacities.Length != orderedPolicies.Length || sampleOrdinal != width * height)
+            if (capacities.Length != orderedPolicies.Length ||
+                sampleOrdinal != checked(width * height * sampleShapeCount))
                 throw new InvalidOperationException("Capacity budget sweep returned incomplete coverage.");
 
             var policyBudgets = new List<CapacityPolicyBudgetReport>(capacities.Length);
@@ -1253,20 +1315,22 @@ namespace Game.Editor
             return new CapacityBudgetDocument
             {
                 schema = "warline.operation-map.render-virtualization-capacity-budget",
-                schemaVersion = 1,
+                schemaVersion = 2,
                 operationMapId = "opmap.skirmish.desert_base_01",
                 result = "Passed",
                 samplingPolicy =
-                    "Provisional deterministic all-grid-cell envelope sweep. Each accepted-origin-aligned " +
-                    "32 m grid cell is a sample center; a zero-cell nominal visible footprint is expanded by " +
-                    "one safety cell and one prefetch guard cell in every cardinal direction. Camera pose, " +
-                    "projection, zoom, and tactical-follow sweeps remain required before final acceptance.",
+                    "Device-informed deterministic all-grid-cell materialized-envelope sweep. The exact " +
+                    "VRP-067 House interior envelope measured 12x9 inclusive 32 m cells; both 12x9 and " +
+                    "9x12 orientations are swept at every accepted-origin-aligned grid cell. Full camera " +
+                    "pose, projection, zoom, and tactical-follow sweeps remain required before final acceptance.",
                 provisionalOnly = true,
                 cameraProjectionSweepPending = true,
-                visibleCellRadius = ProvisionalVisibleCellRadius,
-                safetyCellRadius = ProvisionalSafetyCellRadius,
-                prefetchGuardCellRadius = ProvisionalPrefetchGuardCellRadius,
-                totalEnvelopeCellRadius = envelopeRadius,
+                observedMaterializedEnvelopeWidthCells =
+                    ObservedMaterializedEnvelopeWidthCells,
+                observedMaterializedEnvelopeHeightCells =
+                    ObservedMaterializedEnvelopeHeightCells,
+                observedMaterializedEnvelopeOrientationCount =
+                    sampleShapeCount,
                 canonicalSampleCount = sampleOrdinal,
                 policyCount = policyBudgets.Count,
                 placementCount = logicalPlacements.placementCount,
@@ -2279,6 +2343,8 @@ namespace Game.Editor
             public string candidateSceneDependencyHash;
             public string packedEvidencePath;
             public int packedEvidenceRenderRows;
+            public int normalizedEmbeddedDestroyedDuplicateRowsRemoved;
+            public string intactVisualNormalizationResult;
             public int totalRenderRows;
             public int eligibleRenderRows;
             public int excludedRenderRows;
@@ -2456,10 +2522,9 @@ namespace Game.Editor
             public string samplingPolicy;
             public bool provisionalOnly;
             public bool cameraProjectionSweepPending;
-            public int visibleCellRadius;
-            public int safetyCellRadius;
-            public int prefetchGuardCellRadius;
-            public int totalEnvelopeCellRadius;
+            public int observedMaterializedEnvelopeWidthCells;
+            public int observedMaterializedEnvelopeHeightCells;
+            public int observedMaterializedEnvelopeOrientationCount;
             public int canonicalSampleCount;
             public int policyCount;
             public int placementCount;

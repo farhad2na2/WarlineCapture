@@ -95,7 +95,10 @@ namespace Game.Editor
             DenseCityVisualAssetMetadata intactMetadata =
                 DenseCityVisualAssetMetadataExtractor.Extract(
                     request.IntactPrefab,
-                    material => materialLibrary.Resolve(material, request.MaterialSelection));
+                    material => materialLibrary.Resolve(material, request.MaterialSelection),
+                    renderer => DenseCityBuildingIntactVisualPolicy.ShouldIncludeRenderer(
+                        request.IntactPrefab,
+                        renderer));
             DenseCityVisualAssetMetadata destroyedMetadata =
                 DenseCityVisualAssetMetadataExtractor.Extract(request.DestroyedPrefab);
             var input = new DenseCityBuildingRecordInput(

@@ -1,23 +1,23 @@
 {
   "schema": "warline.operation-map.vrp067-android-destruction-matrix",
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "capturedAtUtcDate": "2026-08-01",
-  "sourceRevision": "4b4d4a5b0933f45fa5138b3d3eeea1b0bca2864f",
+  "sourceRevision": "e9c643d4f5bad5d3dcdf7b5cb0bf6eefe6a92d1f",
   "trackerItem": "VRP-067",
-  "result": "Rejected",
-  "acceptanceReason": "House and Shop canonical destruction state and sequence advanced, but both materialized views overflowed the fixed proxy pool and the settled Android captures retained the intact visible building. Tent and Military variants are unavailable in the current generated candidate.",
+  "result": "Passed",
+  "acceptanceReason": "Candidate-only intact-visual normalization removed the embedded Destroyed sibling from every realized House/Shop intact visual, exact all-grid camera/projection capacity retained at least 20 percent headroom, and paired Android House/Shop reruns advanced canonical state with zero overflow while the logged target changed from intact to destroyed presentation. Tent and Military variants remain unavailable in the current generated candidate.",
   "device": {
     "manufacturer": "Xiaomi",
     "model": "24090RA29G",
     "product": "malachite_eea",
     "transport": "wireless-adb",
-    "endpoint": "192.168.2.171:37297"
+    "endpoint": "192.168.2.171:41545"
   },
   "artifact": {
     "path": "Build/AndroidDenseCandidateProfiler/WarlineCapture-DenseCityCandidate-Profiler.apk",
-    "bytes": 696279117,
-    "sha256": "b957be05df7b7c450cbdda779cf9dd212de73fbd233ba130a811f51589dd3952",
-    "checkedWrapperLog": "%TEMP%/warline-vrp067-profiler-apk-final2.log",
+    "bytes": 696278899,
+    "sha256": "34347e15192e3e311c1d9cddf7d5ce7ab5601b4c51a2bb6a7f17c14875fd9cbf",
+    "checkedWrapperLog": "%TEMP%/warline-vrp067-intact-normalized-profiler-apk-final.log",
     "requiredPassMarker": "[DenseCityCandidateAndroidPackage] result=Passed",
     "installResult": "Success",
     "productionCutover": 0,
@@ -25,18 +25,33 @@
   },
   "focusedValidation": [
     {
-      "log": "%TEMP%/warline-vrp067-instrumentation-rerun.log",
-      "marker": "[AndroidPerformanceRecorderValidation] result=Passed tests=21",
+      "log": "%TEMP%/warline-vrp067-intact-normalization-focused-final.log",
+      "marker": "[DenseCityBuildingPresentationRealizerFocusedValidation] result=Passed tests=3",
       "result": "Passed"
     },
     {
-      "log": "%TEMP%/warline-vrp067-runtime-binding-movedfrom.log",
-      "marker": "[OperationMapRuntimeBindingSceneValidation] result=Passed tests=10",
+      "log": "%TEMP%/warline-vrp067-intact-normalized-inventory-accepted.log",
+      "marker": "[OperationMapRenderEligibilityInventoryProbe] result=Passed rows=78401 eligible=24904 excluded=53497 joined=78046 prototypes=9879 parts=13595 capacitySlots=3858",
       "result": "Passed"
     },
     {
-      "log": "%TEMP%/warline-vrp067-destruction-aot-final.log",
-      "marker": "[OperationMapBuildingDestructionValidation] result=Passed tests=4",
+      "log": "%TEMP%/warline-vrp067-intact-normalized-database-determinism.log",
+      "marker": "[OperationMapRenderDatabaseBuilder] determinism=Passed",
+      "result": "Passed"
+    },
+    {
+      "log": "%TEMP%/warline-vrp067-intact-normalized-direct-bake-final.log",
+      "marker": "[OperationMapRenderVirtualizationCandidateValidation] result=Passed passes=2",
+      "result": "Passed"
+    },
+    {
+      "log": "%TEMP%/warline-vrp067-intact-normalized-virtualization-final.log",
+      "marker": "[OperationMapRenderVirtualizationValidation] result=Passed tests=45",
+      "result": "Passed"
+    },
+    {
+      "log": "%TEMP%/warline-vrp067-runtime-content-rollback-focused.log",
+      "marker": "[DenseCityRuntimeContentByteInventoryValidation] result=Passed tests=42",
       "result": "Passed"
     }
   ],
@@ -48,33 +63,33 @@
       "stableId": "densecity.8e35bd85110ec4af3590d9491739a7269ac41a5c3e1824bd99b4c2d2bd148df8",
       "position": [1519.0, 0.035, 735.0],
       "baselineFrames": 120,
-      "baselineP95Ms": 32.784,
-      "baselineMaximumMs": 49.129,
-      "transitionFrameMs": 16.367,
+      "baselineP95Ms": 24.954,
+      "baselineMaximumMs": 33.282,
+      "transitionFrameMs": 16.638,
       "postTransitionFrames": 120,
-      "postTransitionP95Ms": 32.780,
-      "postTransitionMaximumMs": 49.126,
+      "postTransitionP95Ms": 24.951,
+      "postTransitionMaximumMs": 33.272,
       "finalStateChangeSequence": 1,
-      "enabledProxySlots": 1352,
+      "enabledProxySlots": 1856,
       "activeCells": 106,
-      "activePlacements": 1258,
-      "overflowCount": 875,
-      "highestDeficit": 876,
-      "minimumDemandedRowsFromSlotsPlusOverflow": 2227,
-      "finalViewport": [0.500, 0.609, 61.194],
-      "visualResult": "RejectedIntactPresentationRemainedVisible",
+      "activePlacements": 1260,
+      "overflowCount": 0,
+      "highestDeficit": 0,
+      "activeEnvelope": [42, 19, 53, 27],
+      "finalViewport": [0.500, 0.629, 62.227],
+      "visualResult": "PassedTargetChangedToDestroyedPresentation",
       "captures": [
         {
           "state": "Intact",
           "path": "Design/AgentReports/Captures/VRP067_House_Intact.png",
-          "bytes": 2172026,
-          "sha256": "e4afb5d99893a1cca424e06aeb89bbbcc9fb67058df888f253bd503c93a4720d"
+          "bytes": 2166115,
+          "sha256": "e2281c8fd23f1d332288aaade6f139fd47303ba84da1af228d1f83f5fc7ab903"
         },
         {
           "state": "DestroyedSettled",
           "path": "Design/AgentReports/Captures/VRP067_House_DestroyedSettled.png",
-          "bytes": 2172028,
-          "sha256": "cc01b4a38791cd5e9fc4ffe1c34a29dfa847af108e9faaf1b66d9b197564ea3e"
+          "bytes": 2105621,
+          "sha256": "a1c9f77f043988dce57f16fca10e682c3709dac3358a151228282e3045dd261d"
         }
       ]
     },
@@ -85,33 +100,33 @@
       "stableId": "densecity.2939e1c873cba6ea2f4dfe19f2fb646318853e0c7ff4b8da0be64338e3db14dc",
       "position": [1500.618, 0.035, 746.5],
       "baselineFrames": 120,
-      "baselineP95Ms": 32.769,
-      "baselineMaximumMs": 65.522,
-      "transitionFrameMs": 49.129,
+      "baselineP95Ms": 33.277,
+      "baselineMaximumMs": 33.336,
+      "transitionFrameMs": 16.531,
       "postTransitionFrames": 120,
-      "postTransitionP95Ms": 32.756,
-      "postTransitionMaximumMs": 49.155,
+      "postTransitionP95Ms": 33.284,
+      "postTransitionMaximumMs": 33.331,
       "finalStateChangeSequence": 1,
-      "enabledProxySlots": 1352,
+      "enabledProxySlots": 1765,
       "activeCells": 108,
-      "activePlacements": 1222,
-      "overflowCount": 790,
-      "highestDeficit": 801,
-      "minimumDemandedRowsFromSlotsPlusOverflow": 2142,
-      "finalViewport": [0.500, 0.607, 61.111],
-      "visualResult": "RejectedIntactPresentationRemainedVisible",
+      "activePlacements": 1225,
+      "overflowCount": 0,
+      "highestDeficit": 0,
+      "activeEnvelope": [42, 19, 52, 28],
+      "finalViewport": [0.500, 0.623, 61.959],
+      "visualResult": "PassedTargetChangedToDestroyedPresentation",
       "captures": [
         {
           "state": "Intact",
           "path": "Design/AgentReports/Captures/VRP067_Shop_Intact.png",
-          "bytes": 2132402,
-          "sha256": "99a33605aad92da05c121de45c79ed6d6bc0f5f6c83f0e7668e33881d2d31745"
+          "bytes": 2204395,
+          "sha256": "a7de8b0c9ed8bc49ddd8101c68cac4ec3198c4e84222469f47f80ce84f21ad89"
         },
         {
           "state": "DestroyedSettled",
           "path": "Design/AgentReports/Captures/VRP067_Shop_DestroyedSettled.png",
-          "bytes": 2132659,
-          "sha256": "a17d7e545935730bdf79a3e8017839491181f0707e40ebf69476c26bf6a71a78"
+          "bytes": 2135857,
+          "sha256": "e63281383ae91487877ded93042cb8b54d99a58b8c454e0cd435e64c78f5a726"
         }
       ]
     },
@@ -126,19 +141,42 @@
       "reason": "No generated Military family exists in the current dense candidate."
     }
   ],
-  "capacityDiagnosis": {
-    "sourceReport": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_capacity_budget.json",
-    "sourceIsProvisional": true,
-    "cameraProjectionSweepPending": true,
-    "visibleCellRadius": 0,
-    "safetyCellRadius": 1,
-    "prefetchGuardCellRadius": 1,
-    "totalEnvelopeCellRadius": 2,
-    "provisionalTotalPeakRequiredPartRows": 1136,
-    "provisionalTotalProxySlots": 1364,
-    "observedActiveCellRange": [106, 108],
-    "conclusion": "The provisional 5x5 cell sweep does not represent the real projected interior camera envelope. Accepting VRP-067 requires dependency-correct camera/projection capacity remediation with retained headroom and zero overflow before remeasurement; no capacity gate was weakened."
+  "normalization": {
+    "scope": "candidate-only-realized-intact-visuals",
+    "historicalPackedRenderRows": 82797,
+    "embeddedDestroyedDuplicateRowsRemoved": 4396,
+    "normalizedPackedRenderRows": 78401,
+    "eligibleLogicalRows": 24904,
+    "eligiblePhysicalRenderers": 24717,
+    "residentPhysicalRenderers": 52928,
+    "logicalPlacements": 19614,
+    "stateOwners": 4933,
+    "stateLinkedPlacements": 9866,
+    "renderOnlyPlacements": 9748,
+    "prototypes": 9879,
+    "parts": 13595,
+    "cells": 1660,
+    "databaseContentHash": "e7baf6d36a30f474c4168e7f1b1823cc2aac7abf3efa7c9124fb18fb1172a1a6",
+    "configSha256": "d437b3ab69d1d99c54bc2d4d9f661b214a78889e163bfe8fdb7a6ead23b3a6bd"
   },
+  "capacityAcceptance": {
+    "sourceReport": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_capacity_budget.json",
+    "schemaVersion": 2,
+    "sweep": "exact 12x9 and 9x12 all-grid materialized-envelope orientations",
+    "totalPeakRequiredPartRows": 3214,
+    "totalProxySlots": 3858,
+    "opaquePeakRequiredPartRows": 3192,
+    "opaqueProxySlots": 3831,
+    "opaqueHeadroomSlots": 639,
+    "alphaClippedPeakRequiredPartRows": 22,
+    "alphaClippedProxySlots": 27,
+    "alphaClippedHeadroomSlots": 5,
+    "requiredHeadroomPercent": 20,
+    "androidOverflowCount": 0,
+    "androidHighestDeficit": 0,
+    "conclusion": "The deterministic camera/projection sweep covers both measured Android envelope orientations with at least 20 percent per-bucket headroom; House and Shop reruns use nonzero slots/cells and report zero overflow and deficit."
+  },
+  "performanceQualification": "VRP-067 accepts destruction-transition correctness and capacity only. House post-transition p95 is approximately 40 FPS and Shop approximately 30 FPS in this development-profiler build; the final 60 FPS Phase 9 gate remains open.",
   "productionAssetsMutated": false,
   "protectedAssetsMutated": false
 }

@@ -1440,7 +1440,7 @@ public sealed class OperationMapRenderVirtualizationValidation
         }
 
         Assert.That(descriptors, Has.Length.EqualTo(expectedTotal));
-        Assert.That(descriptors, Has.Length.EqualTo(1364));
+        Assert.That(descriptors, Has.Length.EqualTo(3858));
     }
 
     [Test]
@@ -1502,7 +1502,7 @@ public sealed class OperationMapRenderVirtualizationValidation
             EntityQuery slotsQuery = entityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<OperationMapRenderProxySlotComponent>());
             using NativeArray<Entity> slots = slotsQuery.ToEntityArray(Allocator.Temp);
-            Assert.That(slots, Has.Length.EqualTo(1364));
+            Assert.That(slots, Has.Length.EqualTo(3858));
 
             var seenSlotIndices = new HashSet<int>();
             var seenByBucket = new int[config.PoolBuckets.Count];

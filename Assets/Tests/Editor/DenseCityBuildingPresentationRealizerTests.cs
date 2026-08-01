@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Game.Authoring;
 using Game.Configs;
@@ -15,12 +16,57 @@ public sealed class DenseCityBuildingPresentationRealizerTests
     private const string EntityScenePath = TempRoot + "/entity.unity";
     private const string IntactMaterialPath = TempRoot + "/intact.mat";
     private const string DestroyedMaterialPath = TempRoot + "/destroyed.mat";
+    private const string EmbeddedDestroyedMaterialPath = TempRoot + "/embedded-destroyed.mat";
     private const string OtherMaterialPath = TempRoot + "/other.mat";
     private const string IntactPrefabPath = TempRoot + "/intact.prefab";
     private const string DestroyedPrefabPath = TempRoot + "/destroyed.prefab";
     private const string Hash =
         "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
     private const string OperationMapId = "opmap.skirmish.building_realizer_test";
+
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            RunCase(
+                nameof(Realize_CreatesValidatedOwnerAndPrefabConnectedVisualStates),
+                test => test.Realize_CreatesValidatedOwnerAndPrefabConnectedVisualStates());
+            RunCase(
+                nameof(Realize_LateVisualMismatchRemovesCompleteBuildingOwner),
+                test => test.Realize_LateVisualMismatchRemovesCompleteBuildingOwner());
+            RunCase(
+                nameof(Realize_RemovesEmbeddedDestroyedAlternativeFromIntactVisual),
+                test => test.Realize_RemovesEmbeddedDestroyedAlternativeFromIntactVisual());
+            Debug.Log("[DenseCityBuildingPresentationRealizerFocusedValidation] result=Passed tests=3");
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError(
+                "[DenseCityBuildingPresentationRealizerFocusedValidation] result=Failed");
+            throw;
+        }
+    }
+
+    private static void RunCase(
+        string name,
+        Action<DenseCityBuildingPresentationRealizerTests> action)
+    {
+        var test = new DenseCityBuildingPresentationRealizerTests();
+        test.SetUp();
+        try
+        {
+            action(test);
+        }
+        catch (Exception exception)
+        {
+            throw new InvalidOperationException($"Focused case '{name}' failed.", exception);
+        }
+        finally
+        {
+            test.TearDown();
+        }
+    }
 
     [SetUp]
     public void SetUp()
@@ -140,11 +186,54 @@ public sealed class DenseCityBuildingPresentationRealizerTests
         }
     }
 
-    private static DenseCityBuildingRecordGroup CreateGroup()
+    [Test]
+    public void Realize_RemovesEmbeddedDestroyedAlternativeFromIntactVisual()
     {
-        GameObject intactPrefab = CreatePrefab(IntactPrefabPath, IntactMaterialPath);
+        (Scene mapScene, Scene entityScene) = CreateScenePair();
+        try
+        {
+            DenseCityBuildingRecordGroup group = CreateGroup(embeddedDestroyedAlternative: true);
+            DenseCityRealizedBuildingPresentation realized =
+                DenseCityBuildingPresentationRealizer.Realize(
+                    OperationMapId,
+                    group.Building,
+                    group.IntactPresentation,
+                    group.DestroyedPresentation,
+                    CreateHierarchy(mapScene, entityScene),
+                    DenseCityBuildingDefinitionLibrary.LoadExisting(),
+                    null,
+                    433);
+
+            Assert.That(realized.IntactVisualRoot.Find("Model"), Is.Not.Null);
+            Assert.That(realized.IntactVisualRoot.Find("Destroyed"), Is.Null);
+            Assert.That(
+                realized.IntactVisualRoot.GetComponentsInChildren<Renderer>(true).Length,
+                Is.EqualTo(1));
+            Assert.That(
+                realized.DestroyedVisualRoot.GetComponentsInChildren<Renderer>(true).Length,
+                Is.EqualTo(1));
+            Assert.That(group.IntactPresentation.MaterialAssetGuids.Length, Is.EqualTo(1));
+        }
+        finally
+        {
+            EditorSceneManager.CloseScene(entityScene, true);
+            EditorSceneManager.CloseScene(mapScene, true);
+        }
+    }
+
+    private static DenseCityBuildingRecordGroup CreateGroup(
+        bool embeddedDestroyedAlternative = false)
+    {
+        GameObject intactPrefab = embeddedDestroyedAlternative
+            ? CreateIntactPrefabWithEmbeddedDestroyedAlternative()
+            : CreatePrefab(IntactPrefabPath, IntactMaterialPath);
         GameObject destroyedPrefab = CreatePrefab(DestroyedPrefabPath, DestroyedMaterialPath);
-        DenseCityVisualAssetMetadata intact = DenseCityVisualAssetMetadataExtractor.Extract(intactPrefab);
+        DenseCityVisualAssetMetadata intact = DenseCityVisualAssetMetadataExtractor.Extract(
+            intactPrefab,
+            null,
+            renderer => DenseCityBuildingIntactVisualPolicy.ShouldIncludeRenderer(
+                intactPrefab,
+                renderer));
         DenseCityVisualAssetMetadata destroyed = DenseCityVisualAssetMetadataExtractor.Extract(destroyedPrefab);
         DenseCityBuildingDefinitionLibrary definitions = DenseCityBuildingDefinitionLibrary.LoadExisting();
         Matrix4x4 matrix = Matrix4x4.TRS(
@@ -179,6 +268,26 @@ public sealed class DenseCityBuildingPresentationRealizerTests
                 new Vector2Int(1, 2)));
     }
 
+    private static GameObject CreateIntactPrefabWithEmbeddedDestroyedAlternative()
+    {
+        Material intactMaterial = CreateMaterial(IntactMaterialPath);
+        Material embeddedDestroyedMaterial = CreateMaterial(EmbeddedDestroyedMaterialPath);
+        var source = new GameObject("VisualSource");
+        var model = new GameObject("Model");
+        model.transform.SetParent(source.transform, false);
+        model.AddComponent<MeshFilter>().sharedMesh =
+            Resources.GetBuiltinResource<Mesh>("Cube.fbx");
+        model.AddComponent<MeshRenderer>().sharedMaterial = intactMaterial;
+        var destroyed = new GameObject("Destroyed");
+        destroyed.transform.SetParent(source.transform, false);
+        destroyed.AddComponent<MeshFilter>().sharedMesh =
+            Resources.GetBuiltinResource<Mesh>("Cube.fbx");
+        destroyed.AddComponent<MeshRenderer>().sharedMaterial = embeddedDestroyedMaterial;
+        GameObject prefab = PrefabUtility.SaveAsPrefabAsset(source, IntactPrefabPath);
+        UnityEngine.Object.DestroyImmediate(source);
+        return prefab;
+    }
+
     private static GameObject CreatePrefab(string prefabPath, string materialPath)
     {
         Material material = CreateMaterial(materialPath);
@@ -186,7 +295,7 @@ public sealed class DenseCityBuildingPresentationRealizerTests
         source.AddComponent<MeshFilter>().sharedMesh = Resources.GetBuiltinResource<Mesh>("Cube.fbx");
         source.AddComponent<MeshRenderer>().sharedMaterial = material;
         GameObject prefab = PrefabUtility.SaveAsPrefabAsset(source, prefabPath);
-        Object.DestroyImmediate(source);
+        UnityEngine.Object.DestroyImmediate(source);
         return prefab;
     }
 

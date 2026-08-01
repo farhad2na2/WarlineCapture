@@ -348,6 +348,13 @@ namespace Game.Editor
                     $"Generated building {building.PlacementIndex} contains a managed RuntimeBuildingEntityLink.";
                 return false;
             }
+            if (!DenseCityBuildingIntactVisualPolicy.TryValidateNormalized(
+                    building.IntactVisualRoot,
+                    out error))
+            {
+                error = $"Generated building {building.PlacementIndex} {error}";
+                return false;
+            }
             if (!TryValidateSharedRenderAssets(
                     building.IntactVisualRoot,
                     building.PlacementIndex,

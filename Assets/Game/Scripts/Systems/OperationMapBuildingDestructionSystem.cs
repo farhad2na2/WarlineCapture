@@ -1,5 +1,6 @@
 using Game.Components;
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Transforms;
@@ -23,28 +24,25 @@ namespace Game.Runtime
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            _presenceQuery = state.GetEntityQuery(new EntityQueryDesc
-            {
-                Any = new[]
-                {
-                    ComponentType.ReadOnly<OperationMapBuildingPresentation>(),
-                    ComponentType.ReadOnly<
-                        OperationMapVirtualizedBuildingPresentationComponent>()
-                }
-            });
+            _presenceQuery = new EntityQueryBuilder(Allocator.Temp)
+                .WithAny<
+                    OperationMapBuildingPresentation,
+                    OperationMapVirtualizedBuildingPresentationComponent>()
+                .Build(ref state);
             _residentQuery = state.GetEntityQuery(
                 ComponentType.ReadOnly<OperationMapBuildingPresentation>());
             _virtualizedQuery = state.GetEntityQuery(
                 ComponentType.ReadOnly<
                     OperationMapVirtualizedBuildingPresentationComponent>());
-            _overlapQuery = state.GetEntityQuery(
-                ComponentType.ReadOnly<OperationMapBuildingPresentation>(),
-                ComponentType.ReadOnly<
-                    OperationMapVirtualizedBuildingPresentationComponent>());
-            _stateChangeBufferQuery = state.GetEntityQuery(
-                ComponentType.ReadWrite<OperationMapRenderStateChangeComponent>(),
-                ComponentType.ReadWrite<
-                    OperationMapRenderStateChangeSequenceComponent>());
+            _overlapQuery = new EntityQueryBuilder(Allocator.Temp)
+                .WithAll<
+                    OperationMapBuildingPresentation,
+                    OperationMapVirtualizedBuildingPresentationComponent>()
+                .Build(ref state);
+            _stateChangeBufferQuery = new EntityQueryBuilder(Allocator.Temp)
+                .WithAllRW<OperationMapRenderStateChangeComponent>()
+                .WithAllRW<OperationMapRenderStateChangeSequenceComponent>()
+                .Build(ref state);
             state.RequireForUpdate(_presenceQuery);
             _localTransforms = state.GetComponentLookup<LocalTransform>();
             _stateChangeSequenceLookup = state.GetComponentLookup<

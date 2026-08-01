@@ -10,7 +10,7 @@ using UnityEngine;
 
 public sealed class AndroidPerformanceRecorderTests
 {
-    private const string PassMarker = "[AndroidPerformanceRecorderValidation] result=Passed tests=18";
+    private const string PassMarker = "[AndroidPerformanceRecorderValidation] result=Passed tests=21";
     private delegate void CaptureReleaseMetrics(long batches, long setPassCalls, long triangles, long vertices);
 
     public static void RunFocusedValidation()
@@ -21,6 +21,9 @@ public sealed class AndroidPerformanceRecorderTests
             tests.RequiredFlagIsCaseInsensitiveAndExact();
             tests.MissingFlagKeepsRecorderDisabled();
             tests.RenderVirtualizationMetricsFlagIsIndependentExactAndOptIn();
+            tests.Vrp067DestructionMatrixRequiresExactCompleteArguments();
+            tests.Vrp067DestructionMatrixAcceptsHouseAndShopOnly();
+            tests.Vrp067DestructionMatrixRemainsIndependentFromPerformanceGate();
             tests.LegacyDevelopmentFlagRemainsEnabled();
             tests.ExplicitDevelopmentTaskRemainsEnabled();
             tests.ReleaseModeRequiresExactTaskAndFrameRate();
@@ -114,6 +117,88 @@ public sealed class AndroidPerformanceRecorderTests
         Assert.IsFalse((bool)ReadField(
             recorder,
             "_renderVirtualizationMetricsEnabled"));
+        DisposeWithoutReport(recorder);
+    }
+
+    [Test]
+    public void Vrp067DestructionMatrixRequiresExactCompleteArguments()
+    {
+        Assert.IsFalse(TryResolveVrp067Configuration(
+            new[] { "app", "-warlineVrp067StateOwner", "12" },
+            out _,
+            out _));
+        Assert.IsFalse(TryResolveVrp067Configuration(
+            new[]
+            {
+                "app", "-warlineVrp067StateOwnerExtra", "12",
+                "-warlineVrp067Family", "House"
+            },
+            out _,
+            out _));
+        Assert.IsFalse(TryResolveVrp067Configuration(
+            new[]
+            {
+                "app", "-warlineVrp067StateOwner", "-1",
+                "-warlineVrp067Family", "House"
+            },
+            out _,
+            out _));
+    }
+
+    [Test]
+    public void Vrp067DestructionMatrixAcceptsHouseAndShopOnly()
+    {
+        Assert.IsTrue(TryResolveVrp067Configuration(
+            new[]
+            {
+                "app", "-warlineVrp067StateOwner", "4471",
+                "-warlineVrp067Family", "house"
+            },
+            out int houseOwner,
+            out string houseFamily));
+        Assert.AreEqual(4471, houseOwner);
+        Assert.AreEqual("House", houseFamily);
+
+        Assert.IsTrue(TryResolveVrp067Configuration(
+            new[]
+            {
+                "app", "-warlineVrp067StateOwner", "2479",
+                "-warlineVrp067Family", "SHOP"
+            },
+            out int shopOwner,
+            out string shopFamily));
+        Assert.AreEqual(2479, shopOwner);
+        Assert.AreEqual("Shop", shopFamily);
+
+        Assert.IsFalse(TryResolveVrp067Configuration(
+            new[]
+            {
+                "app", "-warlineVrp067StateOwner", "1",
+                "-warlineVrp067Family", "Tent"
+            },
+            out _,
+            out _));
+    }
+
+    [Test]
+    public void Vrp067DestructionMatrixRemainsIndependentFromPerformanceGate()
+    {
+        AndroidPerformanceRecorder recorder = new();
+        InvokeInitialize(
+            recorder,
+            new[]
+            {
+                "app", "-warlineVrp067StateOwner", "4471",
+                "-warlineVrp067Family", "House"
+            },
+            true);
+
+        Assert.IsFalse(recorder.IsEnabled);
+        Assert.IsTrue((bool)ReadField(
+            recorder,
+            "_vrp067DestructionMatrixEnabled"));
+        Assert.AreEqual(4471, ReadField(recorder, "_vrp067StateOwnerIndex"));
+        Assert.AreEqual("House", ReadField(recorder, "_vrp067Family"));
         DisposeWithoutReport(recorder);
     }
 
@@ -401,6 +486,22 @@ public sealed class AndroidPerformanceRecorderTests
         Assert.IsNotNull(method);
         bool result = (bool)method.Invoke(null, invocationArguments);
         frameRate = (int)invocationArguments[1];
+        return result;
+    }
+
+    private static bool TryResolveVrp067Configuration(
+        IReadOnlyList<string> arguments,
+        out int stateOwnerIndex,
+        out string family)
+    {
+        object[] invocationArguments = { arguments, -1, string.Empty };
+        MethodInfo method = typeof(AndroidPerformanceRecorder).GetMethod(
+            "TryResolveVrp067Configuration",
+            BindingFlags.Static | BindingFlags.NonPublic);
+        Assert.IsNotNull(method);
+        bool result = (bool)method.Invoke(null, invocationArguments);
+        stateOwnerIndex = (int)invocationArguments[1];
+        family = (string)invocationArguments[2];
         return result;
     }
 

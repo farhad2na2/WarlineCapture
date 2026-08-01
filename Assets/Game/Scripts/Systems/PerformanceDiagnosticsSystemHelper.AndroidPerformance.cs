@@ -1,5 +1,6 @@
 using Game.Components;
 using Unity.Entities;
+using UnityEngine;
 
 namespace Game.Runtime
 {
@@ -17,7 +18,9 @@ namespace Game.Runtime
             _androidPerformanceRecorder.Initialize(_enableProfilerMarkerDiagnostics);
         }
 
-        private void SampleAndroidPerformanceRecorder(bool gameplayActive)
+        private void SampleAndroidPerformanceRecorder(
+            bool gameplayActive,
+            Camera camera)
         {
             _androidPerformanceRecorder.Sample(
                 gameplayActive,
@@ -25,6 +28,9 @@ namespace Game.Runtime
                 _setPassCallsRecorder,
                 _trianglesRecorder,
                 _verticesRecorder);
+            _androidPerformanceRecorder.SampleVrp067DestructionMatrix(
+                gameplayActive,
+                camera);
             SampleRenderVirtualizationMetrics(gameplayActive);
         }
 

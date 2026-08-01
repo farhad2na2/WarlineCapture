@@ -24,6 +24,7 @@ namespace Game.Runtime
         private void InitializeRenderVirtualizationMetrics(
             IReadOnlyList<string> commandLineArguments)
         {
+            InitializeVrp067DestructionMatrix(commandLineArguments);
             _renderVirtualizationMetricsEnabled = ContainsExactArgument(
                 commandLineArguments,
                 RenderVirtualizationMetricsCommandLineArgument);

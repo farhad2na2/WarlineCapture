@@ -238,7 +238,7 @@ namespace Game.Runtime
             double now = UnityEngine.Time.realtimeSinceStartupAsDouble;
             double totalSeconds = now - _frameStartTimestamp;
             RecordUpdateFrameStats(totalSeconds);
-            SampleAndroidPerformanceRecorder(gameplayActive);
+            SampleAndroidPerformanceRecorder(gameplayActive, camera);
             if (!PerformanceDiagnosticsCapturePolicy.SuppressLogging &&
                 gameplayActive && (hadSlowStep || totalSeconds >= FreezeLogThresholdSeconds))
             {

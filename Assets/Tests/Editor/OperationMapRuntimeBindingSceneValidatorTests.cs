@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Game.Composition;
 using Game.Editor;
+using Game.Runtime;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -16,6 +17,8 @@ public sealed class OperationMapRuntimeBindingSceneValidatorTests
         int passed = 0;
         try
         {
+            tests.CombinedMeshBakerScriptResolves();
+            passed++;
             tests.SourceScenePathTargetsOnlyThinRuntimeBindingScene();
             passed++;
             tests.GeneratedScenePassesStructuralValidation();
@@ -43,6 +46,17 @@ public sealed class OperationMapRuntimeBindingSceneValidatorTests
                 $"[OperationMapRuntimeBindingSceneValidation] result=Failed passed={passed}\n{exception}");
             ValidationExit.Exit(1);
         }
+    }
+
+    [Test]
+    public void CombinedMeshBakerScriptResolves()
+    {
+        const string path = "Assets/Game/Scripts/Tools/CombinedMeshBaker.cs";
+        MonoScript script = AssetDatabase.LoadAssetAtPath<MonoScript>(path);
+        Assert.That(script, Is.Not.Null, $"CombinedMeshBaker MonoScript is missing at {path}.");
+        Assert.That(script.GetClass(), Is.EqualTo(typeof(CombinedMeshBaker)),
+            $"CombinedMeshBaker MonoScript resolved '{script.GetClass()?.AssemblyQualifiedName ?? "<null>"}' " +
+            $"instead of '{typeof(CombinedMeshBaker).AssemblyQualifiedName}'.");
     }
 
     [Test]

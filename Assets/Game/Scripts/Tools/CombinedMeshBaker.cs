@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace Game.Runtime
 {
     [DisallowMultipleComponent]
+    [MovedFrom(true, sourceNamespace: "", sourceAssembly: "Game.Runtime", sourceClassName: "CombinedMeshBaker")]
     public sealed class CombinedMeshBaker : MonoBehaviour
     {
         [SerializeField] private bool combineOnStart;

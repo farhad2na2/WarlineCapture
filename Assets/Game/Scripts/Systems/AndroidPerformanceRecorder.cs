@@ -86,13 +86,16 @@ namespace Game.Runtime
 
         public void MarkMatchReady()
         {
-            if (!IsEnabled || _matchReady)
+            if ((!IsEnabled && !_vrp067DestructionMatrixEnabled) || _matchReady)
                 return;
 
             _matchReady = true;
             _matchReadyRealtimeSeconds = Time.realtimeSinceStartupAsDouble;
+            string taskId = _vrp067DestructionMatrixEnabled && !IsEnabled
+                ? "VRP-067"
+                : TaskId;
             LogNoStackTrace(
-                $"[{TaskId} MatchReady] realtimeMs={(_matchReadyRealtimeSeconds - s_LaunchRealtimeSeconds) * 1000d:F3}");
+                $"[{taskId} MatchReady] realtimeMs={(_matchReadyRealtimeSeconds - s_LaunchRealtimeSeconds) * 1000d:F3}");
         }
 
         public void Sample(

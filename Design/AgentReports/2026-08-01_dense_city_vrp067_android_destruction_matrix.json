@@ -1,0 +1,144 @@
+{
+  "schema": "warline.operation-map.vrp067-android-destruction-matrix",
+  "schemaVersion": 1,
+  "capturedAtUtcDate": "2026-08-01",
+  "sourceRevision": "4b4d4a5b0933f45fa5138b3d3eeea1b0bca2864f",
+  "trackerItem": "VRP-067",
+  "result": "Rejected",
+  "acceptanceReason": "House and Shop canonical destruction state and sequence advanced, but both materialized views overflowed the fixed proxy pool and the settled Android captures retained the intact visible building. Tent and Military variants are unavailable in the current generated candidate.",
+  "device": {
+    "manufacturer": "Xiaomi",
+    "model": "24090RA29G",
+    "product": "malachite_eea",
+    "transport": "wireless-adb",
+    "endpoint": "192.168.2.171:37297"
+  },
+  "artifact": {
+    "path": "Build/AndroidDenseCandidateProfiler/WarlineCapture-DenseCityCandidate-Profiler.apk",
+    "bytes": 696279117,
+    "sha256": "b957be05df7b7c450cbdda779cf9dd212de73fbd233ba130a811f51589dd3952",
+    "checkedWrapperLog": "%TEMP%/warline-vrp067-profiler-apk-final2.log",
+    "requiredPassMarker": "[DenseCityCandidateAndroidPackage] result=Passed",
+    "installResult": "Success",
+    "productionCutover": 0,
+    "productionSettingsMutated": 0
+  },
+  "focusedValidation": [
+    {
+      "log": "%TEMP%/warline-vrp067-instrumentation-rerun.log",
+      "marker": "[AndroidPerformanceRecorderValidation] result=Passed tests=21",
+      "result": "Passed"
+    },
+    {
+      "log": "%TEMP%/warline-vrp067-runtime-binding-movedfrom.log",
+      "marker": "[OperationMapRuntimeBindingSceneValidation] result=Passed tests=10",
+      "result": "Passed"
+    },
+    {
+      "log": "%TEMP%/warline-vrp067-destruction-aot-final.log",
+      "marker": "[OperationMapBuildingDestructionValidation] result=Passed tests=4",
+      "result": "Passed"
+    }
+  ],
+  "variants": [
+    {
+      "family": "House",
+      "availability": "Available",
+      "stateOwnerIndex": 4471,
+      "stableId": "densecity.8e35bd85110ec4af3590d9491739a7269ac41a5c3e1824bd99b4c2d2bd148df8",
+      "position": [1519.0, 0.035, 735.0],
+      "baselineFrames": 120,
+      "baselineP95Ms": 32.784,
+      "baselineMaximumMs": 49.129,
+      "transitionFrameMs": 16.367,
+      "postTransitionFrames": 120,
+      "postTransitionP95Ms": 32.780,
+      "postTransitionMaximumMs": 49.126,
+      "finalStateChangeSequence": 1,
+      "enabledProxySlots": 1352,
+      "activeCells": 106,
+      "activePlacements": 1258,
+      "overflowCount": 875,
+      "highestDeficit": 876,
+      "minimumDemandedRowsFromSlotsPlusOverflow": 2227,
+      "finalViewport": [0.500, 0.609, 61.194],
+      "visualResult": "RejectedIntactPresentationRemainedVisible",
+      "captures": [
+        {
+          "state": "Intact",
+          "path": "Design/AgentReports/Captures/VRP067_House_Intact.png",
+          "bytes": 2172026,
+          "sha256": "e4afb5d99893a1cca424e06aeb89bbbcc9fb67058df888f253bd503c93a4720d"
+        },
+        {
+          "state": "DestroyedSettled",
+          "path": "Design/AgentReports/Captures/VRP067_House_DestroyedSettled.png",
+          "bytes": 2172028,
+          "sha256": "cc01b4a38791cd5e9fc4ffe1c34a29dfa847af108e9faaf1b66d9b197564ea3e"
+        }
+      ]
+    },
+    {
+      "family": "Shop",
+      "availability": "Available",
+      "stateOwnerIndex": 2479,
+      "stableId": "densecity.2939e1c873cba6ea2f4dfe19f2fb646318853e0c7ff4b8da0be64338e3db14dc",
+      "position": [1500.618, 0.035, 746.5],
+      "baselineFrames": 120,
+      "baselineP95Ms": 32.769,
+      "baselineMaximumMs": 65.522,
+      "transitionFrameMs": 49.129,
+      "postTransitionFrames": 120,
+      "postTransitionP95Ms": 32.756,
+      "postTransitionMaximumMs": 49.155,
+      "finalStateChangeSequence": 1,
+      "enabledProxySlots": 1352,
+      "activeCells": 108,
+      "activePlacements": 1222,
+      "overflowCount": 790,
+      "highestDeficit": 801,
+      "minimumDemandedRowsFromSlotsPlusOverflow": 2142,
+      "finalViewport": [0.500, 0.607, 61.111],
+      "visualResult": "RejectedIntactPresentationRemainedVisible",
+      "captures": [
+        {
+          "state": "Intact",
+          "path": "Design/AgentReports/Captures/VRP067_Shop_Intact.png",
+          "bytes": 2132402,
+          "sha256": "99a33605aad92da05c121de45c79ed6d6bc0f5f6c83f0e7668e33881d2d31745"
+        },
+        {
+          "state": "DestroyedSettled",
+          "path": "Design/AgentReports/Captures/VRP067_Shop_DestroyedSettled.png",
+          "bytes": 2132659,
+          "sha256": "a17d7e545935730bdf79a3e8017839491181f0707e40ebf69476c26bf6a71a78"
+        }
+      ]
+    },
+    {
+      "family": "Tent",
+      "availability": "Unavailable",
+      "reason": "No generated Tent family exists in the current dense candidate."
+    },
+    {
+      "family": "Military",
+      "availability": "Unavailable",
+      "reason": "No generated Military family exists in the current dense candidate."
+    }
+  ],
+  "capacityDiagnosis": {
+    "sourceReport": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_capacity_budget.json",
+    "sourceIsProvisional": true,
+    "cameraProjectionSweepPending": true,
+    "visibleCellRadius": 0,
+    "safetyCellRadius": 1,
+    "prefetchGuardCellRadius": 1,
+    "totalEnvelopeCellRadius": 2,
+    "provisionalTotalPeakRequiredPartRows": 1136,
+    "provisionalTotalProxySlots": 1364,
+    "observedActiveCellRange": [106, 108],
+    "conclusion": "The provisional 5x5 cell sweep does not represent the real projected interior camera envelope. Accepting VRP-067 requires dependency-correct camera/projection capacity remediation with retained headroom and zero overflow before remeasurement; no capacity gate was weakened."
+  },
+  "productionAssetsMutated": false,
+  "protectedAssetsMutated": false
+}

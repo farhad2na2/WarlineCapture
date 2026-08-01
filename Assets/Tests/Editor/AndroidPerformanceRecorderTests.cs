@@ -2,15 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Game.Composition;
+using Game.Components;
 using Game.Runtime;
 using Game.UI.Runtime;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using NUnit.Framework;
+using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 
 public sealed class AndroidPerformanceRecorderTests
 {
-    private const string PassMarker = "[AndroidPerformanceRecorderValidation] result=Passed tests=21";
+    private const string PassMarker = "[AndroidPerformanceRecorderValidation] result=Passed tests=22";
     private delegate void CaptureReleaseMetrics(long batches, long setPassCalls, long triangles, long vertices);
 
     public static void RunFocusedValidation()
@@ -24,6 +27,7 @@ public sealed class AndroidPerformanceRecorderTests
             tests.Vrp067DestructionMatrixRequiresExactCompleteArguments();
             tests.Vrp067DestructionMatrixAcceptsHouseAndShopOnly();
             tests.Vrp067DestructionMatrixRemainsIndependentFromPerformanceGate();
+            tests.Vrp067MetricsRetainTheExactMaterializedEnvelope();
             tests.LegacyDevelopmentFlagRemainsEnabled();
             tests.ExplicitDevelopmentTaskRemainsEnabled();
             tests.ReleaseModeRequiresExactTaskAndFrameRate();
@@ -200,6 +204,57 @@ public sealed class AndroidPerformanceRecorderTests
         Assert.AreEqual(4471, ReadField(recorder, "_vrp067StateOwnerIndex"));
         Assert.AreEqual("House", ReadField(recorder, "_vrp067Family"));
         DisposeWithoutReport(recorder);
+    }
+
+    [Test]
+    public void Vrp067MetricsRetainTheExactMaterializedEnvelope()
+    {
+        using World world = new(nameof(Vrp067MetricsRetainTheExactMaterializedEnvelope));
+        Entity owner = world.EntityManager.CreateEntity(
+            typeof(OperationMapRenderVirtualizationMetricsComponent),
+            typeof(OperationMapRenderVirtualizationStateComponent));
+        world.EntityManager.SetComponentData(
+            owner,
+            new OperationMapRenderVirtualizationMetricsComponent
+            {
+                EnabledSlotCount = 1352,
+                ActiveCellCount = 106,
+                ActivePlacementCount = 1258,
+                OverflowCount = 875,
+                HighestDeficit = 876
+            });
+        world.EntityManager.SetComponentData(
+            owner,
+            new OperationMapRenderVirtualizationStateComponent
+            {
+                ActiveEnvelopeMin = new int2(40, 11),
+                ActiveEnvelopeMax = new int2(53, 20)
+            });
+
+        object[] arguments =
+        {
+            world.EntityManager,
+            0,
+            0,
+            0,
+            0,
+            0,
+            int2.zero,
+            int2.zero
+        };
+        MethodInfo method = typeof(AndroidPerformanceRecorder).GetMethod(
+            "ReadVrp067VirtualizationMetrics",
+            BindingFlags.Static | BindingFlags.NonPublic);
+        Assert.IsNotNull(method);
+        method.Invoke(null, arguments);
+
+        Assert.AreEqual(1352, arguments[1]);
+        Assert.AreEqual(106, arguments[2]);
+        Assert.AreEqual(1258, arguments[3]);
+        Assert.AreEqual(875, arguments[4]);
+        Assert.AreEqual(876, arguments[5]);
+        Assert.AreEqual(new int2(40, 11), arguments[6]);
+        Assert.AreEqual(new int2(53, 20), arguments[7]);
     }
 
     [Test]

@@ -386,7 +386,9 @@ namespace Game.Runtime
                 out int activeCells,
                 out int activePlacements,
                 out int overflow,
-                out int deficit);
+                out int deficit,
+                out int2 envelopeMin,
+                out int2 envelopeMax);
             Vector3 viewport = camera != null
                 ? camera.WorldToViewportPoint(
                     new Vector3(
@@ -420,6 +422,8 @@ namespace Game.Runtime
                 $"slots={enabledSlots} activeCells={activeCells} " +
                 $"activePlacements={activePlacements} overflow={overflow} " +
                 $"deficit={deficit} sequence={finalSequence} " +
+                $"envelope={envelopeMin.x},{envelopeMin.y}:" +
+                $"{envelopeMax.x},{envelopeMax.y} " +
                 $"viewport={viewport.x:F3},{viewport.y:F3},{viewport.z:F3}");
         }
 
@@ -454,27 +458,40 @@ namespace Game.Runtime
             out int activeCells,
             out int activePlacements,
             out int overflow,
-            out int deficit)
+            out int deficit,
+            out int2 envelopeMin,
+            out int2 envelopeMax)
         {
             enabledSlots = 0;
             activeCells = 0;
             activePlacements = 0;
             overflow = int.MaxValue;
             deficit = int.MaxValue;
-            using EntityQuery query = entityManager.CreateEntityQuery(
+            envelopeMin = int2.zero;
+            envelopeMax = int2.zero;
+            using EntityQuery metricsQuery = entityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<
                     OperationMapRenderVirtualizationMetricsComponent>());
-            if (query.CalculateEntityCount() != 1)
+            using EntityQuery stateQuery = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<
+                    OperationMapRenderVirtualizationStateComponent>());
+            if (metricsQuery.CalculateEntityCount() != 1 ||
+                stateQuery.CalculateEntityCount() != 1)
                 return;
 
             OperationMapRenderVirtualizationMetricsComponent metrics =
-                query.GetSingleton<
+                metricsQuery.GetSingleton<
                     OperationMapRenderVirtualizationMetricsComponent>();
+            OperationMapRenderVirtualizationStateComponent state =
+                stateQuery.GetSingleton<
+                    OperationMapRenderVirtualizationStateComponent>();
             enabledSlots = metrics.EnabledSlotCount;
             activeCells = metrics.ActiveCellCount;
             activePlacements = metrics.ActivePlacementCount;
             overflow = metrics.OverflowCount;
             deficit = metrics.HighestDeficit;
+            envelopeMin = state.ActiveEnvelopeMin;
+            envelopeMax = state.ActiveEnvelopeMax;
         }
 
         private static float Vrp067Maximum(float[] values, int count)

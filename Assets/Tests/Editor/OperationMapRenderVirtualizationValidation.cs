@@ -71,7 +71,8 @@ public sealed class OperationMapRenderVirtualizationValidation
             tests.EligibleSourceRows_BakeOnlyWhileGameplayAndResidentOwnersSurvive();
             tests.VirtualizedBuildingStateOwnerIndices_AreContiguousAndIdentityOrdered();
             tests.VirtualizedBuilding_ReplacesOnlyRenderRootOwnershipWithStateIndex();
-            Debug.Log("[OperationMapRenderVirtualizationValidation] result=Passed tests=45");
+            tests.InfrastructureEligibility_RejectsDynamicAndPerInstanceOwners();
+            Debug.Log("[OperationMapRenderVirtualizationValidation] result=Passed tests=46");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -80,6 +81,86 @@ public sealed class OperationMapRenderVirtualizationValidation
             Debug.LogError("[OperationMapRenderVirtualizationValidation] result=Failed");
             ValidationExit.Failed();
         }
+    }
+
+    [Test]
+    public void InfrastructureEligibility_RejectsDynamicAndPerInstanceOwners()
+    {
+        DenseCityPresentationIdentityAuthoring plain =
+            CreateInfrastructureOwner("densecity." + new string('1', 64));
+        DenseCityPresentationIdentityAuthoring animated =
+            CreateInfrastructureOwner("densecity." + new string('2', 64));
+        DenseCityPresentationIdentityAuthoring perInstance =
+            CreateInfrastructureOwner("densecity." + new string('3', 64));
+        DenseCityPresentationIdentityAuthoring ambiguous =
+            CreateInfrastructureOwner("densecity." + new string('4', 64));
+        try
+        {
+            OperationMapRenderInfrastructureEligibilityDecision accepted =
+                OperationMapRenderInfrastructureEligibilityPolicy.Evaluate(plain);
+            Assert.That(accepted.Selected, Is.True);
+            Assert.That(accepted.ReasonCode, Is.EqualTo("eligible"));
+
+            animated.gameObject.AddComponent<Animator>();
+            OperationMapRenderInfrastructureEligibilityDecision animationRejected =
+                OperationMapRenderInfrastructureEligibilityPolicy.Evaluate(animated);
+            Assert.That(animationRejected.Selected, Is.False);
+            Assert.That(
+                animationRejected.ReasonCode,
+                Is.EqualTo("infrastructure-owner-animation"));
+
+            MeshRenderer renderer =
+                perInstance.GetComponentInChildren<MeshRenderer>(true);
+            renderer.SetPropertyBlock(new MaterialPropertyBlock());
+            var propertyBlock = new MaterialPropertyBlock();
+            propertyBlock.SetColor("_BaseColor", Color.red);
+            renderer.SetPropertyBlock(propertyBlock);
+            OperationMapRenderInfrastructureEligibilityDecision propertyRejected =
+                OperationMapRenderInfrastructureEligibilityPolicy.Evaluate(perInstance);
+            Assert.That(propertyRejected.Selected, Is.False);
+            Assert.That(
+                propertyRejected.ReasonCode,
+                Is.EqualTo("infrastructure-owner-material-property-block"));
+
+            DenseCityPresentationIdentityAuthoring nested = ambiguous.transform
+                .GetChild(0)
+                .gameObject
+                .AddComponent<DenseCityPresentationIdentityAuthoring>();
+            nested.ConfigureForEditor(
+                "densecity." + new string('5', 64),
+                OperationMapEntityPresentationRole.RenderOnly,
+                DenseCityPresentationSemanticCategory.Infrastructure);
+            OperationMapRenderInfrastructureEligibilityDecision ambiguousRejected =
+                OperationMapRenderInfrastructureEligibilityPolicy.Evaluate(ambiguous);
+            Assert.That(ambiguousRejected.Selected, Is.False);
+            Assert.That(
+                ambiguousRejected.ReasonCode,
+                Is.EqualTo("infrastructure-owner-identity-ambiguous"));
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(plain.gameObject);
+            UnityEngine.Object.DestroyImmediate(animated.gameObject);
+            UnityEngine.Object.DestroyImmediate(perInstance.gameObject);
+            UnityEngine.Object.DestroyImmediate(ambiguous.gameObject);
+        }
+    }
+
+    private static DenseCityPresentationIdentityAuthoring CreateInfrastructureOwner(
+        string stableId)
+    {
+        var owner = new GameObject(stableId);
+        DenseCityPresentationIdentityAuthoring identity =
+            owner.AddComponent<DenseCityPresentationIdentityAuthoring>();
+        identity.ConfigureForEditor(
+            stableId,
+            OperationMapEntityPresentationRole.RenderOnly,
+            DenseCityPresentationSemanticCategory.Infrastructure);
+        var visual = new GameObject("Visual");
+        visual.transform.SetParent(owner.transform, false);
+        visual.AddComponent<MeshFilter>();
+        visual.AddComponent<MeshRenderer>();
+        return identity;
     }
 
     [Test]
@@ -1440,7 +1521,7 @@ public sealed class OperationMapRenderVirtualizationValidation
         }
 
         Assert.That(descriptors, Has.Length.EqualTo(expectedTotal));
-        Assert.That(descriptors, Has.Length.EqualTo(3858));
+        Assert.That(descriptors, Has.Length.EqualTo(7075));
     }
 
     [Test]
@@ -1502,7 +1583,7 @@ public sealed class OperationMapRenderVirtualizationValidation
             EntityQuery slotsQuery = entityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<OperationMapRenderProxySlotComponent>());
             using NativeArray<Entity> slots = slotsQuery.ToEntityArray(Allocator.Temp);
-            Assert.That(slots, Has.Length.EqualTo(3858));
+            Assert.That(slots, Has.Length.EqualTo(7075));
 
             var seenSlotIndices = new HashSet<int>();
             var seenByBucket = new int[config.PoolBuckets.Count];

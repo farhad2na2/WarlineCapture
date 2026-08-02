@@ -253,6 +253,9 @@ namespace Game.Editor
             int eligibleStableOwnerJoined = 0;
             Dictionary<BuildingRole, BuildingFamilyDecision> buildingFamilyDecisions =
                 BuildBuildingFamilyDecisions(rows, signatureCounts);
+            Dictionary<DenseCityPresentationIdentityAuthoring,
+                    OperationMapRenderInfrastructureEligibilityDecision>
+                infrastructureOwnerDecisions = BuildInfrastructureOwnerDecisions(rows);
 
             foreach (Row row in rows)
             {
@@ -268,7 +271,8 @@ namespace Game.Editor
                     row,
                     repeated,
                     policySupported,
-                    buildingFamilyDecisions);
+                    buildingFamilyDecisions,
+                    infrastructureOwnerDecisions);
                 bool isEligible = string.Equals(reason, "eligible", StringComparison.Ordinal);
                 if (isEligible)
                     eligible++;
@@ -406,6 +410,22 @@ namespace Game.Editor
                     "Generated building families are selected atomically only when repeated, " +
                     "every canonical owner has intact and destroyed recipes, and every family " +
                     "row satisfies the closed renderer and render-policy schema.",
+                infrastructureSelectionPolicy =
+                    "Generated render-only Infrastructure rows are selected only when their " +
+                    "stable owner hierarchy contains transforms, mesh filters, plain mesh " +
+                    "renderers, and its single dense identity. Animation, lights, particles, " +
+                    "physics/gameplay, LOD-special, custom behavior, unsupported renderers, " +
+                    "and per-instance material-property blocks fail closed by stable reason; " +
+                    "the existing repeated-signature and fixed render-policy gates still apply.",
+                infrastructureOwners = infrastructureOwnerDecisions
+                    .OrderBy(pair => pair.Key.StableId, StringComparer.Ordinal)
+                    .Select(pair => new InfrastructureOwnerReport
+                    {
+                        stableId = pair.Key.StableId,
+                        selected = pair.Value.Selected,
+                        reasonCode = pair.Value.ReasonCode
+                    })
+                    .ToList(),
                 buildingFamilies = buildingFamilyDecisions.Values
                     .OrderBy(decision => (byte)decision.Role)
                     .Select(decision => decision.ToReport())
@@ -1683,7 +1703,10 @@ namespace Game.Editor
             Row row,
             bool repeated,
             bool policySupported,
-            IReadOnlyDictionary<BuildingRole, BuildingFamilyDecision> buildingFamilyDecisions)
+            IReadOnlyDictionary<BuildingRole, BuildingFamilyDecision> buildingFamilyDecisions,
+            IReadOnlyDictionary<DenseCityPresentationIdentityAuthoring,
+                OperationMapRenderInfrastructureEligibilityDecision>
+                infrastructureOwnerDecisions)
         {
             if (row.DenseOwner == null)
                 return row.AcceptedOwner != null
@@ -1708,16 +1731,43 @@ namespace Game.Editor
             if (!repeated)
                 return "unique-presentation-signature";
 
+            if (row.DenseOwner.Category ==
+                DenseCityPresentationSemanticCategory.Infrastructure)
+            {
+                if (!infrastructureOwnerDecisions.TryGetValue(
+                        row.DenseOwner,
+                        out OperationMapRenderInfrastructureEligibilityDecision decision))
+                {
+                    return "infrastructure-owner-decision-missing";
+                }
+                return decision.Selected ? "eligible" : decision.ReasonCode;
+            }
+
             return row.DenseOwner.Category switch
             {
                 DenseCityPresentationSemanticCategory.Vegetation => "eligible",
                 DenseCityPresentationSemanticCategory.Prop => "eligible",
-                DenseCityPresentationSemanticCategory.Infrastructure =>
-                    "infrastructure-deferred-after-render-only-pilot",
                 DenseCityPresentationSemanticCategory.Horizon =>
                     "unique-environment-content-resident",
                 _ => "unsupported-semantic-category"
             };
+        }
+
+        private static Dictionary<DenseCityPresentationIdentityAuthoring,
+                OperationMapRenderInfrastructureEligibilityDecision>
+            BuildInfrastructureOwnerDecisions(IReadOnlyList<Row> rows)
+        {
+            return rows
+                .Where(row =>
+                    row.DenseOwner != null &&
+                    row.DenseOwner.Category ==
+                        DenseCityPresentationSemanticCategory.Infrastructure)
+                .Select(row => row.DenseOwner)
+                .Distinct()
+                .OrderBy(owner => owner.StableId, StringComparer.Ordinal)
+                .ToDictionary(
+                    owner => owner,
+                    OperationMapRenderInfrastructureEligibilityPolicy.Evaluate);
         }
 
         private static bool TryClassifyPolicy(
@@ -2388,7 +2438,9 @@ namespace Game.Editor
             public bool mutationAuthorized;
             public string mutationBlocker;
             public string buildingFamilySelectionPolicy;
+            public string infrastructureSelectionPolicy;
             public List<BuildingFamilyReport> buildingFamilies;
+            public List<InfrastructureOwnerReport> infrastructureOwners;
             public List<Breakdown> byBuildingFamily;
             public List<Breakdown> bySemanticCategory;
             public List<Breakdown> byPrototypeSignature;
@@ -2624,6 +2676,14 @@ namespace Game.Editor
             public int repeatedSignatureRowCount;
             public int unsupportedRendererRowCount;
             public int unsupportedPolicyRowCount;
+        }
+
+        [Serializable]
+        private sealed class InfrastructureOwnerReport
+        {
+            public string stableId;
+            public bool selected;
+            public string reasonCode;
         }
 
         [Serializable]

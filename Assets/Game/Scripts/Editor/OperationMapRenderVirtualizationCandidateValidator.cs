@@ -30,15 +30,15 @@ namespace Game.Editor
         internal const string ReportPath =
             "Design/AgentReports/2026-07-30_dense_city_render_virtualization_pilot_enabled.json";
 
-        private const int ExpectedEligibleRows = 24904;
-        private const int ExpectedEligibleRenderers = 24717;
-        private const int ExpectedSlots = 3858;
-        private const int ExpectedPrototypes = 9879;
-        private const int ExpectedParts = 13595;
-        private const int ExpectedPlacements = 19614;
-        private const int ExpectedRenderOnlyPlacements = 9748;
+        private const int ExpectedEligibleRows = 63579;
+        private const int ExpectedEligibleRenderers = 63392;
+        private const int ExpectedSlots = 7075;
+        private const int ExpectedPrototypes = 9909;
+        private const int ExpectedParts = 13673;
+        private const int ExpectedPlacements = 41482;
+        private const int ExpectedRenderOnlyPlacements = 31616;
         private const int ExpectedGeneratedBuildingIdentities = 4933;
-        private const int ExpectedCells = 1660;
+        private const int ExpectedCells = 1934;
         private const int ExpectedPoolBuckets = 2;
         private static readonly UTF8Encoding Utf8WithoutBom = new(false);
 

@@ -165,12 +165,26 @@ namespace Game.Runtime
                     source.BuildingPlacementGridCameraSystemHelper.GetPlacementFootprint,
                     (origin, footprint, gridConfig) => source.BuildingPlacementGridCameraSystemHelper.GetFootprintCenter(origin, footprint, gridConfig, source.BuildingPlacementStartupSystemHelper.BuildPlaneY),
                     (Vector2Int origin, BuildingDefinition definition, out bool gateVertical) => tryAlignGateToNearbyWall(source, origin, definition, out gateVertical)),
-                (definition, instance, originCell, removeOverlappingBlockers) => source.BuildingRuntimeCreationCompositionSystemHelper.RegisterRuntimeBuilding(
-                    source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateCreationContext(createBuildingRuntimeContextSource(source, interactionContext, markerPropertyBlock)),
-                    definition,
-                    instance,
-                    originCell,
-                    removeOverlappingBlockers),
+                (definition, instance, originCell, removeOverlappingBlockers) =>
+                {
+                    BuildingRuntimeContextFactoryCompositionSystemHelper.Source runtimeContextSource =
+                        createBuildingRuntimeContextSource(source, interactionContext, markerPropertyBlock);
+                    RuntimeBuildingEntity building = source.BuildingRuntimeCreationCompositionSystemHelper.RegisterRuntimeBuilding(
+                        source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateCreationContext(runtimeContextSource),
+                        definition,
+                        instance,
+                        originCell,
+                        removeOverlappingBlockers);
+                    if (building != null)
+                    {
+                        source.BuildingRuntimeOwnershipCompositionSystemHelper.SetRuntimeBuildingOwnerFaction(
+                            source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateOwnershipContext(runtimeContextSource),
+                            building,
+                            FactionIdentity.PlayerFactionId);
+                    }
+
+                    return building;
+                },
                 building => source.BuildingRuntimeCreationCompositionSystemHelper.RollbackRuntimeBuildingRegistration(
                     source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateCreationContext(
                         createBuildingRuntimeContextSource(source, interactionContext, markerPropertyBlock)),

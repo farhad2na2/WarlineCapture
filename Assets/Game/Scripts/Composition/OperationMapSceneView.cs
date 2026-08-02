@@ -58,7 +58,16 @@ namespace Game.Composition
                 gridAuthoringConfig == null ||
                 mapSubScene == null)
             {
-                error = "Operation-map view requires map-owned presentation, placement, surface, and subscene references.";
+                error =
+                    "Operation-map view requires map-owned presentation, placement, surface, and subscene references. " +
+                    $"missing: mapRoot={mapRoot == null}, " +
+                    $"decorationCombinedMeshBaker={decorationCombinedMeshBaker == null}, " +
+                    $"decorationRoot={decorationRoot == null}, " +
+                    $"buildingAuthoringRoot={buildingAuthoringRoot == null}, " +
+                    $"vehicleAuthoringRoot={vehicleAuthoringRoot == null}, " +
+                    $"mapSurfaceAuthoring={mapSurfaceAuthoring == null}, " +
+                    $"gridAuthoringConfig={gridAuthoringConfig == null}, " +
+                    $"mapSubScene={mapSubScene == null}.";
                 return false;
             }
 

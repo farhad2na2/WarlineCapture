@@ -398,8 +398,10 @@ namespace Game.Editor
                 }
 
                 SerializedObject viewData = new(view);
+                CombinedMeshBaker decorationBaker = ResolveDecorationCombinedMeshBaker(scene, view);
                 viewData.FindProperty("operationMapId").stringValue = definition.OperationMapId;
                 viewData.FindProperty("definition").objectReferenceValue = definition;
+                viewData.FindProperty("decorationCombinedMeshBaker").objectReferenceValue = decorationBaker;
                 viewData.FindProperty("buildingPlacements").objectReferenceValue = null;
                 viewData.FindProperty("vehiclePlacements").objectReferenceValue = null;
                 viewData.FindProperty("canonicalPresentationMode").enumValueIndex =
@@ -693,6 +695,35 @@ namespace Game.Editor
             }
 
             return found ?? throw new InvalidOperationException("Production runtime binding view is missing.");
+        }
+
+        private static CombinedMeshBaker ResolveDecorationCombinedMeshBaker(
+            Scene scene,
+            OperationMapSceneView view)
+        {
+            CombinedMeshBaker found = null;
+            foreach (GameObject root in scene.GetRootGameObjects())
+            {
+                CombinedMeshBaker[] bakers = root.GetComponentsInChildren<CombinedMeshBaker>(true);
+                for (int i = 0; i < bakers.Length; i++)
+                {
+                    if (found != null)
+                    {
+                        throw new InvalidOperationException(
+                            "Runtime binding scene contains multiple decoration combined-mesh bakers.");
+                    }
+
+                    found = bakers[i];
+                }
+            }
+
+            if (found == null || view.DecorationRoot == null || found.transform != view.DecorationRoot)
+            {
+                throw new InvalidOperationException(
+                    "Runtime binding scene requires exactly one decoration combined-mesh baker on its decoration root.");
+            }
+
+            return found;
         }
 
         private static void CloseSceneKeepingEditorValid(Scene scene)

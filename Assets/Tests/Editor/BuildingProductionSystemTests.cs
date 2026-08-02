@@ -202,6 +202,25 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         }
     }
 
+    public static void RunOperationMapCampProductionBridgeValidation()
+    {
+        try
+        {
+            var tests = new BuildingProductionQueueCompositionSystemHelperTests();
+            tests.OperationMapCampProductionBridge_PreflightRecognizesCanonicalTent();
+            tests.OperationMapCampProductionBridge_SpendsOnceAndQueuesCanonicalRequest();
+            tests.OperationMapCampProductionBridge_CombinedGlobalLimitRejectsBeforeSpend();
+            Debug.Log("[OperationMapCampProductionBridgeValidation] result=Passed tests=3");
+            ValidationExit.Passed();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[OperationMapCampProductionBridgeValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
     public static void RunProductionMetadataValidation()
     {
         try
@@ -2608,6 +2627,130 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                 blocked.Dispose();
             if (blockerCounts.IsCreated)
                 blockerCounts.Dispose();
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
+    public void OperationMapCampProductionBridge_PreflightRecognizesCanonicalTent()
+    {
+        using var world = new World(nameof(OperationMapCampProductionBridge_PreflightRecognizesCanonicalTent));
+        EntityManager em = world.EntityManager;
+        GameObject unitPrefab = new("Rifleman");
+        try
+        {
+            Entity prefabEntity = CreateOperationMapUnitPrefab(em);
+            CreateOperationMapProducer(
+                em, prefabEntity, unitPrefab.name, FactionIdentity.PlayerFactionId, 3, "Player Tent");
+            var requestSystem = new BuildingProductionRequestSystemHelper();
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
+                new Dictionary<int, RuntimeBuildingEntity>(),
+                new BuildingProductionQueueCompositionSystemHelper(),
+                unitPrefab,
+                em);
+
+            Assert.AreEqual(
+                BuildingUiCommandSystemHelper.CampRequestFailure.None,
+                requestSystem.GetCampRequestFailure(context, unitPrefab, 25, out string requiredBuildingDisplayName));
+            Assert.IsEmpty(requiredBuildingDisplayName);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
+    public void OperationMapCampProductionBridge_SpendsOnceAndQueuesCanonicalRequest()
+    {
+        using var world = new World(nameof(OperationMapCampProductionBridge_SpendsOnceAndQueuesCanonicalRequest));
+        EntityManager em = world.EntityManager;
+        GameObject unitPrefab = new("Rifleman");
+        try
+        {
+            Entity prefabEntity = CreateOperationMapUnitPrefab(em);
+            Entity producer = CreateOperationMapProducer(
+                em, prefabEntity, unitPrefab.name, FactionIdentity.PlayerFactionId, 3, "Player Tent");
+            int spent = 0;
+            int refunded = 0;
+            var requestSystem = new BuildingProductionRequestSystemHelper();
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
+                new Dictionary<int, RuntimeBuildingEntity>(),
+                new BuildingProductionQueueCompositionSystemHelper(),
+                unitPrefab,
+                em,
+                trySpendMaterials: amount =>
+                {
+                    spent += amount;
+                    return true;
+                },
+                refundMaterials: amount => refunded += amount);
+
+            Assert.AreEqual(
+                BuildingUiCommandSystemHelper.CampRequestFailure.None,
+                requestSystem.TryRequestCampItem(
+                    context,
+                    unitPrefab,
+                    25,
+                    focusProducerOnSuccess: true,
+                    frameCount: 1,
+                    out string requiredBuildingDisplayName));
+            Assert.IsEmpty(requiredBuildingDisplayName);
+            Assert.AreEqual(25, spent);
+            Assert.AreEqual(0, refunded);
+            DynamicBuffer<OperationMapBuildingUnitProductionRequest> queue =
+                em.GetBuffer<OperationMapBuildingUnitProductionRequest>(producer, true);
+            Assert.AreEqual(1, queue.Length);
+            Assert.AreEqual(OperationMapBuildingUnitProductionRequest.Pending, queue[0].Status);
+            Assert.AreEqual(new FixedString64Bytes(unitPrefab.name), queue[0].UnitSourceKey);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
+    public void OperationMapCampProductionBridge_CombinedGlobalLimitRejectsBeforeSpend()
+    {
+        using var world = new World(nameof(OperationMapCampProductionBridge_CombinedGlobalLimitRejectsBeforeSpend));
+        EntityManager em = world.EntityManager;
+        GameObject unitPrefab = new("Rifleman");
+        try
+        {
+            Entity prefabEntity = CreateOperationMapUnitPrefab(em);
+            Entity producer = CreateOperationMapProducer(
+                em, prefabEntity, unitPrefab.name, FactionIdentity.PlayerFactionId, 3, "Player Tent");
+            int spent = 0;
+            var requestSystem = new BuildingProductionRequestSystemHelper();
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
+                new Dictionary<int, RuntimeBuildingEntity>(),
+                new BuildingProductionQueueCompositionSystemHelper(),
+                unitPrefab,
+                em,
+                trySpendMaterials: amount =>
+                {
+                    spent += amount;
+                    return true;
+                },
+                maxQueuedUnitProductions: 1);
+            Assert.IsTrue(requestSystem.TryEnqueueFriendlyOperationMapProduction(
+                context, unitPrefab, 0f, out _, out _, out _));
+
+            Assert.AreEqual(
+                BuildingUiCommandSystemHelper.CampRequestFailure.GlobalProductionQueueFull,
+                requestSystem.TryRequestCampItem(
+                    context,
+                    unitPrefab,
+                    25,
+                    focusProducerOnSuccess: false,
+                    frameCount: 1,
+                    out _));
+            Assert.AreEqual(0, spent);
+            Assert.AreEqual(1, em.GetBuffer<OperationMapBuildingUnitProductionRequest>(producer, true).Length);
+        }
+        finally
+        {
             UnityEngine.Object.DestroyImmediate(unitPrefab);
         }
     }

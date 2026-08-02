@@ -531,6 +531,22 @@ namespace Game.Runtime
 
             if (!TryFindFirstFriendlyProducerBuilding(context, prefab, requireQueueCapacity: false, out _, out _, out string producerDisplayName))
             {
+                if (TryFindFirstFriendlyOperationMapProducer(
+                        context,
+                        prefab,
+                        out Entity operationMapProducer,
+                        out _,
+                        out _) &&
+                    context.TryGetEntityManager != null &&
+                    context.TryGetEntityManager(out EntityManager em) &&
+                    em.HasComponent<OperationMapBuildingProductionQueueComponent>(operationMapProducer) &&
+                    em.HasBuffer<OperationMapBuildingUnitProductionRequest>(operationMapProducer))
+                {
+                    return HasGlobalQueueCapacity(context)
+                        ? CampRequestFailure.None
+                        : CampRequestFailure.GlobalProductionQueueFull;
+                }
+
                 TryGetRequiredProducerDisplayName(context, prefab, out requiredBuildingDisplayName);
                 return CampRequestFailure.MissingProducerBuilding;
             }
@@ -574,6 +590,29 @@ namespace Game.Runtime
                 {
                     requiredBuildingDisplayName = fullProducerDisplayName;
                     return CampRequestFailure.ProductionQueueFull;
+                }
+
+                if (TryFindFirstFriendlyOperationMapProducer(context, prefab, out _, out _, out _))
+                {
+                    if (context.TrySpendMaterials == null || !context.TrySpendMaterials(price))
+                        return CampRequestFailure.InsufficientMaterials;
+
+                    if (!TryEnqueueFriendlyOperationMapProduction(
+                            context,
+                            prefab,
+                            Time.time,
+                            out _,
+                            out _,
+                            out _))
+                    {
+                        context.RefundMaterials?.Invoke(Mathf.Max(0, price));
+                        return HasGlobalQueueCapacity(context)
+                            ? CampRequestFailure.InvalidSelection
+                            : CampRequestFailure.GlobalProductionQueueFull;
+                    }
+
+                    context.RecordUnitOrdered?.Invoke(prefab);
+                    return CampRequestFailure.None;
                 }
 
                 TryGetRequiredProducerDisplayName(context, prefab, out requiredBuildingDisplayName);
@@ -906,19 +945,54 @@ namespace Game.Runtime
 
         private static int CountFriendlyPendingUnitProductions(Context context)
         {
-            if (context.RuntimeBuildings == null)
-                return 0;
-
             int count = 0;
             if (context.RuntimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildings)
             {
                 foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
                     count += CountPendingProductionsForGlobalLimit(pair.Value);
+            }
+            else if (context.RuntimeBuildings != null)
+            {
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
+                    count += CountPendingProductionsForGlobalLimit(pair.Value);
+            }
+
+            if (context.TryGetEntityManager == null ||
+                !context.TryGetEntityManager(out EntityManager em) ||
+                em.World == null ||
+                !em.World.IsCreated)
+            {
                 return count;
             }
 
-            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
-                count += CountPendingProductionsForGlobalLimit(pair.Value);
+            using EntityQuery queueQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<OperationMapBuildingProductionQueueComponent>(),
+                ComponentType.ReadOnly<OperationMapBuildingUnitProductionRequest>(),
+                ComponentType.ReadOnly<Faction>(),
+                ComponentType.ReadOnly<UnitHealth>());
+            using NativeArray<Entity> queueOwners = queueQuery.ToEntityArray(Allocator.Temp);
+            for (int ownerIndex = 0; ownerIndex < queueOwners.Length; ownerIndex++)
+            {
+                Entity owner = queueOwners[ownerIndex];
+                byte factionId = em.GetComponentData<Faction>(owner).Id;
+                if ((factionId != FactionIdentity.PlayerFactionId &&
+                     factionId != FactionIdentity.NeutralFactionId) ||
+                    em.GetComponentData<UnitHealth>(owner).Current <= 0 ||
+                    em.HasComponent<Prefab>(owner) ||
+                    (em.HasComponent<OperationMapBuildingDestroyedComponent>(owner) &&
+                     em.IsComponentEnabled<OperationMapBuildingDestroyedComponent>(owner)))
+                {
+                    continue;
+                }
+
+                DynamicBuffer<OperationMapBuildingUnitProductionRequest> queue =
+                    em.GetBuffer<OperationMapBuildingUnitProductionRequest>(owner, true);
+                for (int queueIndex = 0; queueIndex < queue.Length; queueIndex++)
+                {
+                    if (queue[queueIndex].Status == OperationMapBuildingUnitProductionRequest.Pending)
+                        count++;
+                }
+            }
 
             return count;
         }
@@ -1204,24 +1278,6 @@ namespace Game.Runtime
                 int pendingCount = CountFriendlyPendingUnitProductions(context);
                 if (pendingCount >= globalLimit)
                     return false;
-
-                using EntityQuery queueQuery = em.CreateEntityQuery(
-                    ComponentType.ReadOnly<OperationMapBuildingProductionQueueComponent>(),
-                    ComponentType.ReadOnly<OperationMapBuildingUnitProductionRequest>());
-                using NativeArray<Entity> queueOwners = queueQuery.ToEntityArray(Allocator.Temp);
-                for (int ownerIndex = 0; ownerIndex < queueOwners.Length; ownerIndex++)
-                {
-                    DynamicBuffer<OperationMapBuildingUnitProductionRequest> ownerQueue =
-                        em.GetBuffer<OperationMapBuildingUnitProductionRequest>(queueOwners[ownerIndex], true);
-                    for (int queueIndex = 0; queueIndex < ownerQueue.Length; queueIndex++)
-                    {
-                        if (ownerQueue[queueIndex].Status == OperationMapBuildingUnitProductionRequest.Pending &&
-                            ++pendingCount >= globalLimit)
-                        {
-                            return false;
-                        }
-                    }
-                }
             }
 
             OperationMapBuildingProductionQueueComponent queueState =

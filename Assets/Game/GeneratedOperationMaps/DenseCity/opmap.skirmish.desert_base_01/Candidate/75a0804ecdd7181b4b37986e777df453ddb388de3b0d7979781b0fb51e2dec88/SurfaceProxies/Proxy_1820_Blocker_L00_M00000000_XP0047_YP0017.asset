@@ -11,14 +11,14 @@ Mesh:
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
-    indexCount: 30
+    indexCount: 24
     topology: 0
     baseVertex: 0
     firstVertex: 0
-    vertexCount: 20
+    vertexCount: 16
     localAABB:
-      m_Center: {x: 1511.3193, y: 0.035, z: 568.1732}
-      m_Extent: {x: 8.624573, y: 0, z: 10.173187}
+      m_Center: {x: 1512.3474, y: 0.035, z: 571.50525}
+      m_Extent: {x: 9.652649, y: 0, z: 9.046661}
   m_Shapes:
     vertices: []
     shapes: []
@@ -35,10 +35,10 @@ Mesh:
   m_KeepVertices: 1
   m_KeepIndices: 1
   m_IndexFormat: 0
-  m_IndexBuffer: 000001000200000002000300040005000600040006000700080009000a0008000a000b000c000d000e000c000e000f00100011001200100012001300
+  m_IndexBuffer: 000001000200000002000300040005000600040006000700080009000a0008000a000b000c000d000e000c000e000f00
   m_VertexData:
     serializedVersion: 3
-    m_VertexCount: 20
+    m_VertexCount: 16
     m_Channels:
     - stream: 0
       offset: 0
@@ -96,8 +96,8 @@ Mesh:
       offset: 0
       format: 0
       dimension: 0
-    m_DataSize: 240
-    _typelessdata: 3bd6bb44295c0f3dd5290f443bd6bb44295c0f3d2b961044c5a9bc44295c0f3d2b961044c5a9bc44295c0f3dd5290f440000bc44295c0f3d00800d440000bc44295c0f3d00400e440060bc44295c0f3d00400e440060bc44295c0f3d00800d443b46bc44295c0f3d00800b443b46bc44295c0f3d56ec0c44c519bd44295c0f3d56ec0c44c519bd44295c0f3d00800b440000bd44295c0f3d599d0c440000bd44295c0f3da7220f440060bd44295c0f3da7220f440060bd44295c0f3d599d0c44cc41bd44295c0f3d00800b44cc41bd44295c0f3d62660c4434febd44295c0f3d62660c4434febd44295c0f3d00800b44
+    m_DataSize: 192
+    _typelessdata: 3bd6bb44295c0f3dd5290f443bd6bb44295c0f3d2b961044c5a9bc44295c0f3d2b961044c5a9bc44295c0f3dd5290f440000bc44295c0f3d00800d440000bc44295c0f3d00400e440060bc44295c0f3d00400e440060bc44295c0f3d00800d440000bd44295c0f3d599d0c440000bd44295c0f3da7220f440060bd44295c0f3da7220f440060bd44295c0f3d599d0c4400e0bd44295c0f3dae9c0e4400e0bd44295c0f3d522311440040be44295c0f3d522311440040be44295c0f3dae9c0e44
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -151,8 +151,8 @@ Mesh:
       m_BitSize: 0
     m_UVInfo: 0
   m_LocalAABB:
-    m_Center: {x: 1511.3193, y: 0.035, z: 568.1732}
-    m_Extent: {x: 8.624573, y: 0, z: 10.173187}
+    m_Center: {x: 1512.3474, y: 0.035, z: 571.50525}
+    m_Extent: {x: 9.652649, y: 0, z: 9.046661}
   m_MeshUsageFlags: 0
   m_CookingOptions: 30
   m_BakedConvexCollisionMesh: 

@@ -11,14 +11,14 @@ Mesh:
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
-    indexCount: 30
+    indexCount: 6
     topology: 0
     baseVertex: 0
     firstVertex: 0
-    vertexCount: 20
+    vertexCount: 4
     localAABB:
-      m_Center: {x: 1365.7842, y: 0.035, z: 978.4619}
-      m_Extent: {x: 10.928284, y: 0, z: 15.887329}
+      m_Center: {x: 1365.5, y: 0.035, z: 965}
+      m_Extent: {x: 2.7528076, y: 0, z: 2.425415}
   m_Shapes:
     vertices: []
     shapes: []
@@ -35,10 +35,10 @@ Mesh:
   m_KeepVertices: 1
   m_KeepIndices: 1
   m_IndexFormat: 0
-  m_IndexBuffer: 000001000200000002000300040005000600040006000700080009000a0008000a000b000c000d000e000c000e000f00100011001200100012001300
+  m_IndexBuffer: 000001000200000002000300
   m_VertexData:
     serializedVersion: 3
-    m_VertexCount: 20
+    m_VertexCount: 4
     m_Channels:
     - stream: 0
       offset: 0
@@ -96,8 +96,8 @@ Mesh:
       offset: 0
       format: 0
       dimension: 0
-    m_DataSize: 240
-    _typelessdata: 645ba944295c0f3dcfcc7044645ba944295c0f3d31b37144cc17aa44295c0f3d31b37144cc17aa44295c0f3dcfcc7044e987a944295c0f3d00007744e987a944295c0f3d743678441738aa44295c0f3d743678441738aa44295c0f3d00007744664eaa44295c0f3d00007744664eaa44295c0f3d00c077449ad1aa44295c0f3d00c077449ad1aa44295c0f3d00007744e957aa44295c0f3dc6a47044e957aa44295c0f3d3adb71441708ab44295c0f3d3adb71441708ab44295c0f3dc6a4704433e9aa44295c0f3d0000774433e9aa44295c0f3d5a967844cd16ac44295c0f3d5a967844cd16ac44295c0f3d00007744
+    m_DataSize: 48
+    _typelessdata: e957aa44295c0f3dc6a47044e957aa44295c0f3d3adb71441708ab44295c0f3d3adb71441708ab44295c0f3dc6a47044
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -151,8 +151,8 @@ Mesh:
       m_BitSize: 0
     m_UVInfo: 0
   m_LocalAABB:
-    m_Center: {x: 1365.7842, y: 0.035, z: 978.4619}
-    m_Extent: {x: 10.928284, y: 0, z: 15.887329}
+    m_Center: {x: 1365.5, y: 0.035, z: 965}
+    m_Extent: {x: 2.7528076, y: 0, z: 2.425415}
   m_MeshUsageFlags: 0
   m_CookingOptions: 30
   m_BakedConvexCollisionMesh: 

@@ -134,6 +134,30 @@ namespace Game.Editor
                 EditorApplication.Exit(0);
         }
 
+        [MenuItem("Game/Maps/Skirmish Desert Base/Regenerate Dense City Candidate")]
+        public static void RegenerateCandidate()
+        {
+            if (!TryRealizeCandidate(
+                    forceRegeneration: true,
+                    out string summary,
+                    out string error))
+            {
+                string message = $"Dense-city candidate regeneration rejected: {error}";
+                if (Application.isBatchMode)
+                {
+                    Debug.LogError(message);
+                    EditorApplication.Exit(1);
+                    return;
+                }
+
+                throw new InvalidOperationException(message);
+            }
+
+            Debug.Log($"[DenseCityCandidateAuthoringTransaction] result=Regenerated {summary}");
+            if (Application.isBatchMode)
+                EditorApplication.Exit(0);
+        }
+
         [MenuItem(
             "Game/Maps/Skirmish Desert Base/Apply Dense City Candidate DOTS Materials")]
         public static void ApplyCandidateMaterialCompatibilityBatch()
@@ -189,6 +213,17 @@ namespace Game.Editor
         }
 
         internal static bool TryRealizeCandidate(out string summary, out string error)
+        {
+            return TryRealizeCandidate(
+                forceRegeneration: false,
+                out summary,
+                out error);
+        }
+
+        internal static bool TryRealizeCandidate(
+            bool forceRegeneration,
+            out string summary,
+            out string error)
         {
             summary = null;
             error = null;
@@ -258,7 +293,7 @@ namespace Game.Editor
                                              OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId +
                                              "/Candidate/" + expectedGenerationHash +
                                              "/SurfaceProxies";
-                if (TryUseExistingRealization(
+                if (!forceRegeneration && TryUseExistingRealization(
                         mapScene,
                         entityScene,
                         mapRoot,

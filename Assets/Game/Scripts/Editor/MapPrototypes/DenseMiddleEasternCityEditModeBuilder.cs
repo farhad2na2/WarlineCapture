@@ -1376,6 +1376,7 @@ namespace Game.Editor
                 urbanDetails.OpenGroundExclusionAreas,
                 authoredGradeElevation,
                 config.RandomSeed,
+                protectedAutobahnReplacement != null,
                 generationTransactions);
             Debug.Log(
                 $"[DenseCityDetailPass] roofCaps={roofDetails} " +
@@ -7672,6 +7673,7 @@ namespace Game.Editor
             List<Rect> exclusionAreas,
             float gradeElevation,
             uint seed,
+            bool hasProtectedAutobahnReplacement,
             DenseCityGenerationTransactionContext generationTransactions)
         {
             if (generationTransactions == null)
@@ -7683,15 +7685,21 @@ namespace Game.Editor
             int count = 0;
             int gameplayTerrains = 0;
             // Reconciled with the corrected road-cell center used by building clearance.
-            // Keep this exact so future generator drift still fails closed.
+            // The protected Autobahn realization adds its exact route footprint to the
+            // candidate-only exclusions, so both deterministic generation contracts keep
+            // distinct exact counts and future drift still fails closed.
             const int acceptedOpenGroundPatchCount = 3539;
+            const int acceptedProtectedAutobahnOpenGroundPatchCount = 3456;
+            int expectedOpenGroundPatchCount = hasProtectedAutobahnReplacement
+                ? acceptedProtectedAutobahnOpenGroundPatchCount
+                : acceptedOpenGroundPatchCount;
             const float spacing = 10f;
             for (float z = spacing * 0.5f;
-                 z < mapDepth && count < acceptedOpenGroundPatchCount;
+                 z < mapDepth && count < expectedOpenGroundPatchCount;
                  z += spacing)
             {
                 for (float x = spacing * 0.5f;
-                     x < mapWidth && count < acceptedOpenGroundPatchCount;
+                     x < mapWidth && count < expectedOpenGroundPatchCount;
                      x += spacing)
                 {
                     uint cellHash = HashGroundPatch(
@@ -7839,11 +7847,12 @@ namespace Game.Editor
                 }
             }
 
-            if (count != acceptedOpenGroundPatchCount)
+            if (count != expectedOpenGroundPatchCount)
             {
                 throw new InvalidOperationException(
                     $"Open-ground compatibility count failed: patches={count} " +
-                    $"expected={acceptedOpenGroundPatchCount}.");
+                    $"expected={expectedOpenGroundPatchCount} " +
+                    $"protectedAutobahn={hasProtectedAutobahnReplacement}.");
             }
 
             SetStaticRecursively(rootObject);

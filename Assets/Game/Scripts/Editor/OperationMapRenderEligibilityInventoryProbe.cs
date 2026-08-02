@@ -40,8 +40,11 @@ namespace Game.Editor
             "Design/AgentReports/2026-07-28_dense_city_render_virtualization_capacity_budget.json";
         internal const int HistoricalPackedRenderRowCount = 82797;
         internal const int ExpectedEmbeddedDestroyedDuplicateRowRemoval = 4396;
+        internal const int ExpectedCorrectedLayoutRenderRowRemoval = 1884;
         internal const int ExpectedPackedRenderRowCount =
-            HistoricalPackedRenderRowCount - ExpectedEmbeddedDestroyedDuplicateRowRemoval;
+            HistoricalPackedRenderRowCount -
+            ExpectedEmbeddedDestroyedDuplicateRowRemoval -
+            ExpectedCorrectedLayoutRenderRowRemoval;
         internal const float RenderCellSize = 32f;
         // VRP-067 device evidence (House, stationary interior route) materialized
         // the inclusive envelope x=42..53, z=19..27. Sweep that exact 12x9
@@ -319,14 +322,16 @@ namespace Game.Editor
 
             if (rows.Count != ExpectedPackedRenderRowCount ||
                 HistoricalPackedRenderRowCount - rows.Count !=
-                    ExpectedEmbeddedDestroyedDuplicateRowRemoval)
+                    ExpectedEmbeddedDestroyedDuplicateRowRemoval +
+                    ExpectedCorrectedLayoutRenderRowRemoval)
             {
                 throw new InvalidOperationException(
                     "Normalized authoring render rows did not reconcile to the historical " +
                     $"packed evidence: current={rows.Count}, " +
                     $"expectedCurrent={ExpectedPackedRenderRowCount}, " +
                     $"historical={HistoricalPackedRenderRowCount}, " +
-                    $"expectedDuplicateRemoval={ExpectedEmbeddedDestroyedDuplicateRowRemoval}.");
+                    $"expectedDuplicateRemoval={ExpectedEmbeddedDestroyedDuplicateRowRemoval}, " +
+                    $"expectedCorrectedLayoutRemoval={ExpectedCorrectedLayoutRenderRowRemoval}.");
             }
             if (eligibleStableOwnerJoined != eligible)
             {
@@ -355,7 +360,7 @@ namespace Game.Editor
             return new InventoryReport
             {
                 schema = "warline.operation-map.render-virtualization-eligibility-inventory",
-                schemaVersion = 6,
+                schemaVersion = 7,
                 result = "Passed",
                 operationMapId = "opmap.skirmish.desert_base_01",
                 candidateScenePath = DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath,
@@ -367,6 +372,8 @@ namespace Game.Editor
                 packedEvidenceRenderRows = HistoricalPackedRenderRowCount,
                 normalizedEmbeddedDestroyedDuplicateRowsRemoved =
                     ExpectedEmbeddedDestroyedDuplicateRowRemoval,
+                correctedLayoutRenderRowsRemoved =
+                    ExpectedCorrectedLayoutRenderRowRemoval,
                 intactVisualNormalizationResult = "Passed",
                 totalRenderRows = rows.Count,
                 eligibleRenderRows = eligible,
@@ -2427,6 +2434,7 @@ namespace Game.Editor
             public string packedEvidencePath;
             public int packedEvidenceRenderRows;
             public int normalizedEmbeddedDestroyedDuplicateRowsRemoved;
+            public int correctedLayoutRenderRowsRemoved;
             public string intactVisualNormalizationResult;
             public int totalRenderRows;
             public int eligibleRenderRows;

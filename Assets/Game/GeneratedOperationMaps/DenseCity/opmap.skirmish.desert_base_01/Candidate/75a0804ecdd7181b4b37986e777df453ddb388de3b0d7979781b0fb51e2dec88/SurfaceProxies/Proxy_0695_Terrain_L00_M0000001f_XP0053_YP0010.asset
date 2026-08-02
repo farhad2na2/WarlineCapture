@@ -11,14 +11,14 @@ Mesh:
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
-    indexCount: 24
+    indexCount: 12
     topology: 0
     baseVertex: 0
     firstVertex: 0
-    vertexCount: 16
+    vertexCount: 8
     localAABB:
-      m_Center: {x: 1709.3373, y: 0.035, z: 332.12543}
-      m_Extent: {x: 14.875244, y: 0, z: 9.300018}
+      m_Center: {x: 1714.6343, y: 0.035, z: 326}
+      m_Extent: {x: 9.578186, y: 0, z: 3.174591}
   m_Shapes:
     vertices: []
     shapes: []
@@ -35,10 +35,10 @@ Mesh:
   m_KeepVertices: 1
   m_KeepIndices: 1
   m_IndexFormat: 0
-  m_IndexBuffer: 000001000200000002000300040005000600040006000700080009000a0008000a000b000c000d000e000c000e000f00
+  m_IndexBuffer: 000001000200000002000300040005000600040006000700
   m_VertexData:
     serializedVersion: 3
-    m_VertexCount: 16
+    m_VertexCount: 8
     m_Channels:
     - stream: 0
       offset: 0
@@ -96,8 +96,8 @@ Mesh:
       offset: 0
       format: 0
       dimension: 0
-    m_DataSize: 192
-    _typelessdata: c9ced344295c0f3da769a343c9ced344295c0f3d5996a64363fcd444295c0f3d5996a64363fcd444295c0f3da769a34386f5d344295c0f3d8b49a84386f5d344295c0f3d75b6aa43b4a5d444295c0f3d75b6aa43b4a5d444295c0f3d8b49a843cc21d544295c0f3d9f19a243cc21d544295c0f3d61e6a34334ded544295c0f3d61e6a34334ded544295c0f3d9f19a2433359d644295c0f3da769a1433359d644295c0f3d5996a443cd86d744295c0f3d5996a443cd86d744295c0f3da769a143
+    m_DataSize: 96
+    _typelessdata: cc21d544295c0f3d9f19a243cc21d544295c0f3d61e6a34334ded544295c0f3d61e6a34334ded544295c0f3d9f19a2433359d644295c0f3da769a1433359d644295c0f3d5996a443cd86d744295c0f3d5996a443cd86d744295c0f3da769a143
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -151,8 +151,8 @@ Mesh:
       m_BitSize: 0
     m_UVInfo: 0
   m_LocalAABB:
-    m_Center: {x: 1709.3373, y: 0.035, z: 332.12543}
-    m_Extent: {x: 14.875244, y: 0, z: 9.300018}
+    m_Center: {x: 1714.6343, y: 0.035, z: 326}
+    m_Extent: {x: 9.578186, y: 0, z: 3.174591}
   m_MeshUsageFlags: 0
   m_CookingOptions: 30
   m_BakedConvexCollisionMesh: 

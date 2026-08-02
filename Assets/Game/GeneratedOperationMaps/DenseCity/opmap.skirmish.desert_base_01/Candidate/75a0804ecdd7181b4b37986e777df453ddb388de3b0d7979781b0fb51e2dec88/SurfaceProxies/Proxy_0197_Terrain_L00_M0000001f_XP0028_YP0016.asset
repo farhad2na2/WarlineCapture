@@ -11,14 +11,14 @@ Mesh:
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
-    indexCount: 30
+    indexCount: 6
     topology: 0
     baseVertex: 0
     firstVertex: 0
-    vertexCount: 20
+    vertexCount: 4
     localAABB:
-      m_Center: {x: 915.70215, y: 0.035, z: 530.56226}
-      m_Extent: {x: 10.029572, y: 0, z: 16.987701}
+      m_Center: {x: 922, y: 0.035, z: 542.28577}
+      m_Extent: {x: 3.7317505, y: 0, z: 5.264221}
   m_Shapes:
     vertices: []
     shapes: []
@@ -35,10 +35,10 @@ Mesh:
   m_KeepVertices: 1
   m_KeepIndices: 1
   m_IndexFormat: 0
-  m_IndexBuffer: 000001000200000002000300040005000600040006000700080009000a0008000a000b000c000d000e000c000e000f00100011001200100012001300
+  m_IndexBuffer: 000001000200000002000300
   m_VertexData:
     serializedVersion: 3
-    m_VertexCount: 20
+    m_VertexCount: 4
     m_Channels:
     - stream: 0
       offset: 0
@@ -96,8 +96,8 @@ Mesh:
       offset: 0
       format: 0
       dimension: 0
-    m_DataSize: 240
-    _typelessdata: 0c6b6244295c0f3dc66400440c6b6244295c0f3d3a9b014468cb6344295c0f3d3a9b014468cb6344295c0f3dc66400440c6b6244295c0f3dc6e401440c6b6244295c0f3d3a1b034468cb6344295c0f3d3a1b034468cb6344295c0f3dc6e4014412a16244295c0f3d9863044412a16244295c0f3d68dc0544bed76344295c0f3d68dc0544bed76344295c0f3d9863044452636344295c0f3dae9c024452636344295c0f3d5223054452236444295c0f3d5223054452236444295c0f3dae9c02442b916544295c0f3d614106442b916544295c0f3d33e30844d56e6744295c0f3d33e30844d56e6744295c0f3d61410644
+    m_DataSize: 48
+    _typelessdata: 2b916544295c0f3d614106442b916544295c0f3d33e30844d56e6744295c0f3d33e30844d56e6744295c0f3d61410644
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -151,8 +151,8 @@ Mesh:
       m_BitSize: 0
     m_UVInfo: 0
   m_LocalAABB:
-    m_Center: {x: 915.70215, y: 0.035, z: 530.56226}
-    m_Extent: {x: 10.029572, y: 0, z: 16.987701}
+    m_Center: {x: 922, y: 0.035, z: 542.28577}
+    m_Extent: {x: 3.7317505, y: 0, z: 5.264221}
   m_MeshUsageFlags: 0
   m_CookingOptions: 30
   m_BakedConvexCollisionMesh: 

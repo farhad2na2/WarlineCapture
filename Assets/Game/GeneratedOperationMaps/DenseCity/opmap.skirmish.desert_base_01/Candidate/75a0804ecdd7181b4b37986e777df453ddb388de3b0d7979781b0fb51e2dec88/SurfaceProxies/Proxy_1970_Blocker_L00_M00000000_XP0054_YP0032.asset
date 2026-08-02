@@ -11,14 +11,14 @@ Mesh:
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
-    indexCount: 12
+    indexCount: 24
     topology: 0
     baseVertex: 0
     firstVertex: 0
-    vertexCount: 8
+    vertexCount: 16
     localAABB:
-      m_Center: {x: 1753.129, y: 0.035, z: 1029.6218}
-      m_Extent: {x: 7.640869, y: 0, z: 7.3743896}
+      m_Center: {x: 1753.8601, y: 0.035, z: 1042.2417}
+      m_Extent: {x: 8.371887, y: 0, z: 11.510925}
   m_Shapes:
     vertices: []
     shapes: []
@@ -35,10 +35,10 @@ Mesh:
   m_KeepVertices: 1
   m_KeepIndices: 1
   m_IndexFormat: 0
-  m_IndexBuffer: 000001000200000002000300040005000600040006000700
+  m_IndexBuffer: 000001000200000002000300040005000600040006000700080009000a0008000a000b000c000d000e000c000e000f00
   m_VertexData:
     serializedVersion: 3
-    m_VertexCount: 8
+    m_VertexCount: 16
     m_Channels:
     - stream: 0
       offset: 0
@@ -96,8 +96,8 @@ Mesh:
       offset: 0
       format: 0
       dimension: 0
-    m_DataSize: 96
-    _typelessdata: 9f2fda44295c0f3d1f0081449f2fda44295c0f3de19f81446130db44295c0f3de19f81446130db44295c0f3d1f0081445d27db44295c0f3dd68f7f445d27db44295c0f3d15f88044a318dc44295c0f3d15f88044a318dc44295c0f3dd68f7f44
+    m_DataSize: 192
+    _typelessdata: 9f2fda44295c0f3d1f0081449f2fda44295c0f3de19f81446130db44295c0f3de19f81446130db44295c0f3d1f008144666eda44295c0f3d00e08244666eda44295c0f3d004083449af1da44295c0f3d004083449af1da44295c0f3d00e0824494b8da44295c0f3d62d7804494b8da44295c0f3d9ec881446c47dc44295c0f3d9ec881446c47dc44295c0f3d62d780445d07db44295c0f3deb8782445d07db44295c0f3d15b88344a3f8db44295c0f3d15b88344a3f8db44295c0f3deb878244
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -151,8 +151,8 @@ Mesh:
       m_BitSize: 0
     m_UVInfo: 0
   m_LocalAABB:
-    m_Center: {x: 1753.129, y: 0.035, z: 1029.6218}
-    m_Extent: {x: 7.640869, y: 0, z: 7.3743896}
+    m_Center: {x: 1753.8601, y: 0.035, z: 1042.2417}
+    m_Extent: {x: 8.371887, y: 0, z: 11.510925}
   m_MeshUsageFlags: 0
   m_CookingOptions: 30
   m_BakedConvexCollisionMesh: 

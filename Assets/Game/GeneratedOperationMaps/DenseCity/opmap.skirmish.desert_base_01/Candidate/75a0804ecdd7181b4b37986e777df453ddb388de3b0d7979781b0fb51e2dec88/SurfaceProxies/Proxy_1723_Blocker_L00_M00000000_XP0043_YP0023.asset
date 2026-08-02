@@ -11,14 +11,14 @@ Mesh:
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
-    indexCount: 24
+    indexCount: 12
     topology: 0
     baseVertex: 0
     firstVertex: 0
-    vertexCount: 16
+    vertexCount: 8
     localAABB:
-      m_Center: {x: 1402.3654, y: 0.035, z: 748.63416}
-      m_Extent: {x: 7.5093994, y: 0, z: 15.291229}
+      m_Center: {x: 1406, y: 0.035, z: 753.5864}
+      m_Extent: {x: 3.7698975, y: 0, z: 10.338989}
   m_Shapes:
     vertices: []
     shapes: []
@@ -35,10 +35,10 @@ Mesh:
   m_KeepVertices: 1
   m_KeepIndices: 1
   m_IndexFormat: 0
-  m_IndexBuffer: 000001000200000002000300040005000600040006000700080009000a0008000a000b000c000d000e000c000e000f00
+  m_IndexBuffer: 000001000200000002000300040005000600040006000700
   m_VertexData:
     serializedVersion: 3
-    m_VertexCount: 16
+    m_VertexCount: 8
     m_Channels:
     - stream: 0
       offset: 0
@@ -96,8 +96,8 @@ Mesh:
       offset: 0
       format: 0
       dimension: 0
-    m_DataSize: 192
-    _typelessdata: 645bae44295c0f3dcf4c3d44645bae44295c0f3d31333e44cc17af44295c0f3d31333e44cc17af44295c0f3dcf4c3d440080ae44295c0f3d038439440080ae44295c0f3dfdfb3c44fe3bb044295c0f3dfdfb3c44fe3bb044295c0f3d03843944f0b8ae44295c0f3df3553744f0b8ae44295c0f3d0daa39441e71af44295c0f3d0daa39441e71af44295c0f3df3553744e967af44295c0f3dc6c43d44e967af44295c0f3d3afb3e441718b044295c0f3d3afb3e441718b044295c0f3dc6c43d44
+    m_DataSize: 96
+    _typelessdata: 5d47af44295c0f3dd6cf39445d47af44295c0f3d2a303c44a338b044295c0f3d2a303c44a338b044295c0f3dd6cf3944e967af44295c0f3dc6c43d44e967af44295c0f3d3afb3e441718b044295c0f3d3afb3e441718b044295c0f3dc6c43d44
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -151,8 +151,8 @@ Mesh:
       m_BitSize: 0
     m_UVInfo: 0
   m_LocalAABB:
-    m_Center: {x: 1402.3654, y: 0.035, z: 748.63416}
-    m_Extent: {x: 7.5093994, y: 0, z: 15.291229}
+    m_Center: {x: 1406, y: 0.035, z: 753.5864}
+    m_Extent: {x: 3.7698975, y: 0, z: 10.338989}
   m_MeshUsageFlags: 0
   m_CookingOptions: 30
   m_BakedConvexCollisionMesh: 

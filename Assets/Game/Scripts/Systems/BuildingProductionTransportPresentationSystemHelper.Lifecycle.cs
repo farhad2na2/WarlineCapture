@@ -6,6 +6,7 @@ namespace Game.Runtime
     {
         public void Dispose()
         {
+            ClearCanonicalDeliverySessions();
             if (_runtimeRoot != null)
                 DestroyRuntimeRoot(_runtimeRoot.gameObject);
 

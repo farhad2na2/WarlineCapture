@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 using Game.Components;
 
@@ -318,7 +319,29 @@ namespace Game.Runtime
                     ? null
                     : (BuildingProductionRequestSystemHelper.TryGetEntityManagerDelegate)(
                         (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager)),
-                source.EvaluateConstructionResources);
+                source.EvaluateConstructionResources,
+                source.TransportSystem == null || source.ProductionSystem == null
+                    ? null
+                    : (Entity producer, int requestId, GameObject unitPrefab, float3 dropPosition, float now) =>
+                    {
+                        BuildingProductionQueueCompositionSystemHelper.ProductionTransportSettings settings =
+                            source.ProductionSystem.ResolveProductionTransportSettings(
+                                unitPrefab,
+                                source.DefinitionSystem.ConfiguredUnitSpawnPrefabs,
+                                source.DefinitionSystem.UnitSpawnPrefabsByKey,
+                                BuildingDefinitionPrefabSystemHelper.TryGetPrefabLocalBounds);
+                        return source.TransportSystem.UpdateCanonicalOperationMapProductionDelivery(
+                            CreateProductionTransportContext(source),
+                            producer,
+                            requestId,
+                            unitPrefab,
+                            settings,
+                            dropPosition,
+                            now);
+                    },
+                source.TransportSystem == null
+                    ? null
+                    : now => source.TransportSystem.UpdateCanonicalOperationMapProductionDeliveryLifecycle(now));
         }
 
         public BuildingProductionQueueCompositionSystemHelper.QueueContext CreateProductionQueueContext(Source source)

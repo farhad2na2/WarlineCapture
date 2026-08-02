@@ -25,7 +25,8 @@ namespace Game.Runtime
             InvalidGrid = 5,
             SpawnCellUnresolved = 6,
             SpawnRejected = 7,
-            Spawned = 8
+            Spawned = 8,
+            DeliveryInProgress = 9
         }
 
         public readonly struct OperationMapProductionSchedulerDiagnostics
@@ -112,6 +113,13 @@ namespace Game.Runtime
         public delegate void LogWarningDelegate(string message);
         public delegate int CountFactionUnitsDelegate(byte factionId, string unitId);
         public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
+        public delegate OperationMapProductionDeliveryResult UpdateOperationMapProductionDeliveryDelegate(
+            Entity producer,
+            int requestId,
+            GameObject unitPrefab,
+            float3 dropPosition,
+            float now);
+        public delegate void UpdateOperationMapProductionDeliveryLifecycleDelegate(float now);
         public delegate FactionConstructionResourceMutationResult EvaluateConstructionResourcesDelegate(
             int creditsCost,
             int materialsCost);
@@ -155,6 +163,8 @@ namespace Game.Runtime
             public readonly TryGetConfiguredUnitReadModelDelegate TryGetConfiguredUnitReadModel;
             public readonly TryGetEntityManagerDelegate TryGetEntityManager;
             public readonly EvaluateConstructionResourcesDelegate EvaluateConstructionResources;
+            public readonly UpdateOperationMapProductionDeliveryDelegate UpdateOperationMapProductionDelivery;
+            public readonly UpdateOperationMapProductionDeliveryLifecycleDelegate UpdateOperationMapProductionDeliveryLifecycle;
 
             public Context(
                 IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
@@ -186,7 +196,9 @@ namespace Game.Runtime
                 CountFactionUnitsDelegate countRuntimeProducedUnitsForFaction,
                 TryGetConfiguredUnitReadModelDelegate tryGetConfiguredUnitReadModel = null,
                 TryGetEntityManagerDelegate tryGetEntityManager = null,
-                EvaluateConstructionResourcesDelegate evaluateConstructionResources = null)
+                EvaluateConstructionResourcesDelegate evaluateConstructionResources = null,
+                UpdateOperationMapProductionDeliveryDelegate updateOperationMapProductionDelivery = null,
+                UpdateOperationMapProductionDeliveryLifecycleDelegate updateOperationMapProductionDeliveryLifecycle = null)
             {
                 RuntimeBuildings = runtimeBuildings;
                 ConfiguredSpawnableDefinitions = configuredSpawnableDefinitions;
@@ -218,12 +230,22 @@ namespace Game.Runtime
                 TryGetConfiguredUnitReadModel = tryGetConfiguredUnitReadModel;
                 TryGetEntityManager = tryGetEntityManager;
                 EvaluateConstructionResources = evaluateConstructionResources;
+                UpdateOperationMapProductionDelivery = updateOperationMapProductionDelivery;
+                UpdateOperationMapProductionDeliveryLifecycle = updateOperationMapProductionDeliveryLifecycle;
             }
         }
 
         private readonly Dictionary<FixedString128Bytes, string> _unitIdStringCache = new(64);
         private readonly BuildingProductionCommandEntityCache _commandEntityCache = new();
         private const int MaxOperationMapProductionSpawnsPerUpdate = 16;
+
+        public enum OperationMapProductionDeliveryResult : byte
+        {
+            NotRequired = 0,
+            InProgress = 1,
+            ReadyToSpawn = 2,
+            Rejected = 3
+        }
 
         private struct ReadyOperationMapProducer
         {
@@ -1652,7 +1674,7 @@ namespace Game.Runtime
 
         public int ProcessReadyOperationMapProductions(EntityManager em, float now)
         {
-            return ProcessReadyOperationMapProductions(em, now, null, out _);
+            return ProcessReadyOperationMapProductions(default, em, now, null, out _);
         }
 
         public int ProcessReadyOperationMapProductions(
@@ -1661,6 +1683,17 @@ namespace Game.Runtime
             LogWarningDelegate logWarning,
             out OperationMapProductionSchedulerDiagnostics diagnostics)
         {
+            return ProcessReadyOperationMapProductions(default, em, now, logWarning, out diagnostics);
+        }
+
+        public int ProcessReadyOperationMapProductions(
+            Context context,
+            EntityManager em,
+            float now,
+            LogWarningDelegate logWarning,
+            out OperationMapProductionSchedulerDiagnostics diagnostics)
+        {
+            context.UpdateOperationMapProductionDeliveryLifecycle?.Invoke(now);
             if (float.IsNaN(now) ||
                 float.IsInfinity(now) ||
                 em.World == null ||
@@ -1856,9 +1889,28 @@ namespace Game.Runtime
                 }
 
                 int spawnedCount = 0;
+                int deliveryInProgressCount = 0;
                 for (int index = 0; index < resolved.Length; index++)
                 {
                     ResolvedOperationMapProductionSpawn spawn = resolved[index];
+                    OperationMapProductionDeliveryResult deliveryResult =
+                        ResolveOperationMapProductionDelivery(
+                            context,
+                            em,
+                            spawn.Building,
+                            spawn.RequestId,
+                            spawn.Position,
+                            now);
+                    if (deliveryResult == OperationMapProductionDeliveryResult.InProgress)
+                    {
+                        deliveryInProgressCount++;
+                        continue;
+                    }
+                    if (deliveryResult == OperationMapProductionDeliveryResult.Rejected)
+                    {
+                        continue;
+                    }
+
                     if (TrySpawnReadyOperationMapProduction(
                             em,
                             spawn.Building,
@@ -1874,6 +1926,8 @@ namespace Game.Runtime
 
                 OperationMapProductionSchedulerOutcome outcome = spawnedCount > 0
                     ? OperationMapProductionSchedulerOutcome.Spawned
+                    : deliveryInProgressCount > 0
+                        ? OperationMapProductionSchedulerOutcome.DeliveryInProgress
                     : resolved.Length > 0
                         ? OperationMapProductionSchedulerOutcome.SpawnRejected
                         : OperationMapProductionSchedulerOutcome.SpawnCellUnresolved;
@@ -1886,7 +1940,7 @@ namespace Game.Runtime
                     completeGridCount,
                     resolved.Length,
                     spawnedCount);
-                if (spawnedCount > 0)
+                if (spawnedCount > 0 || deliveryInProgressCount > 0)
                     ResetOperationMapSchedulerDiagnosticState();
                 else
                     ReportOperationMapSchedulerStall(now, logWarning, diagnostics);
@@ -1897,6 +1951,60 @@ namespace Game.Runtime
                 reserved.Dispose();
                 readyProducers.Dispose();
             }
+        }
+
+        private static OperationMapProductionDeliveryResult ResolveOperationMapProductionDelivery(
+            Context context,
+            EntityManager em,
+            Entity producer,
+            int requestId,
+            float3 dropPosition,
+            float now)
+        {
+            if (context.UpdateOperationMapProductionDelivery == null)
+                return OperationMapProductionDeliveryResult.NotRequired;
+            if (!TryFindOperationMapProductionRequest(em, producer, requestId, out OperationMapBuildingUnitProductionRequest request) ||
+                context.UnitSpawnPrefabsByKey == null ||
+                !context.UnitSpawnPrefabsByKey.TryGetValue(request.UnitSourceKey.ToString(), out GameObject unitPrefab) ||
+                unitPrefab == null)
+            {
+                return OperationMapProductionDeliveryResult.Rejected;
+            }
+
+            return context.UpdateOperationMapProductionDelivery(
+                producer,
+                requestId,
+                unitPrefab,
+                dropPosition,
+                now);
+        }
+
+        private static bool TryFindOperationMapProductionRequest(
+            EntityManager em,
+            Entity producer,
+            int requestId,
+            out OperationMapBuildingUnitProductionRequest request)
+        {
+            request = default;
+            if (producer == Entity.Null ||
+                !em.Exists(producer) ||
+                !em.HasBuffer<OperationMapBuildingUnitProductionRequest>(producer))
+            {
+                return false;
+            }
+
+            DynamicBuffer<OperationMapBuildingUnitProductionRequest> queue =
+                em.GetBuffer<OperationMapBuildingUnitProductionRequest>(producer, true);
+            for (int index = 0; index < queue.Length; index++)
+            {
+                if (queue[index].RequestId != requestId)
+                    continue;
+
+                request = queue[index];
+                return true;
+            }
+
+            return false;
         }
 
         private static OperationMapProductionSchedulerDiagnostics CreateSchedulerDiagnostics(

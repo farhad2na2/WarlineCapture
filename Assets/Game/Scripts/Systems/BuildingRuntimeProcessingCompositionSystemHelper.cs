@@ -152,6 +152,7 @@ namespace Game.Runtime
             ProcessUiProductionRequests(productionRequestSystem, productionRequestContext, em, frameCount, now);
             ProcessProductionRequests(productionRequestSystem, productionRequestContext, runtimeQuerySystem, runtimeQueryContext, em, boundaryEntity, now);
             productionRequestSystem.ProcessReadyOperationMapProductions(
+                productionRequestContext,
                 em,
                 now,
                 productionRequestContext.LogWarning,

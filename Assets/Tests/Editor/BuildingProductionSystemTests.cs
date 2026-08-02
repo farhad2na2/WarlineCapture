@@ -193,7 +193,8 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             tests.OperationMapProductionRuntimeScheduler_PrefersSoleAuthoredGridOverBootstrapFallback();
             tests.OperationMapProductionRuntimeScheduler_RejectsAmbiguousGridOwnership();
             tests.OperationMapProductionRuntimeScheduler_ReportsAmbiguousReadyStallOncePerInterval();
-            Debug.Log("[OperationMapProductionRuntimeSchedulerValidation] result=Passed tests=5");
+            tests.OperationMapProductionRuntimeScheduler_DefersSpawnWhileCanonicalDeliveryIsInProgress();
+            Debug.Log("[OperationMapProductionRuntimeSchedulerValidation] result=Passed tests=6");
             ValidationExit.Passed();
         }
         catch (Exception ex)
@@ -219,6 +220,24 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         {
             Debug.LogException(ex);
             Debug.LogError("[OperationMapCampProductionBridgeValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
+    [UnityEditor.MenuItem("Game/Validation/Run Canonical Tent Transport Presentation")]
+    public static void RunCanonicalTentTransportPresentationValidation()
+    {
+        try
+        {
+            var tests = new BuildingProductionQueueCompositionSystemHelperTests();
+            tests.CanonicalTentTransportPresentation_ArrivesRopesAndDefersSpawnUntilDropCompletes();
+            Debug.Log("[CanonicalTentTransportPresentationValidation] result=Passed transportVisible=1 ropeVisible=1 dropVisualVisible=1 ownership=canonical");
+            ValidationExit.Passed();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[CanonicalTentTransportPresentationValidation] result=Failed");
             ValidationExit.Failed();
         }
     }
@@ -303,6 +322,187 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             Debug.LogException(ex);
             Debug.LogError("[BuildingProductionRequestValidation] result=Failed");
             ValidationExit.Failed();
+        }
+    }
+
+    [Test]
+    public void CanonicalTentTransportPresentation_ArrivesRopesAndDefersSpawnUntilDropCompletes()
+    {
+        using var world = new World(nameof(CanonicalTentTransportPresentation_ArrivesRopesAndDefersSpawnUntilDropCompletes));
+        Entity producer = world.EntityManager.CreateEntity();
+        var transportPrefab = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        transportPrefab.name = "CanonicalTransportHelicopter";
+        transportPrefab.transform.localScale = new Vector3(4f, 1.5f, 6f);
+        Material transportMaterial = CreateCanonicalTransportEvidenceMaterial(new Color(0.95f, 0.44f, 0.08f, 1f));
+        transportPrefab.GetComponent<Renderer>().sharedMaterial = transportMaterial;
+        var rotor = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        rotor.name = "MainRotor";
+        rotor.transform.SetParent(transportPrefab.transform, false);
+        rotor.transform.localPosition = new Vector3(0f, 0.8f, 0f);
+        rotor.transform.localScale = new Vector3(3.2f, 0.08f, 0.18f);
+        rotor.GetComponent<Renderer>().sharedMaterial = transportMaterial;
+        transportPrefab.SetActive(false);
+        var unitPrefab = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+        unitPrefab.name = "CanonicalSoldier";
+        unitPrefab.transform.localScale = new Vector3(0.8f, 1.2f, 0.8f);
+        Material unitMaterial = CreateCanonicalTransportEvidenceMaterial(new Color(0.12f, 0.82f, 0.32f, 1f));
+        unitPrefab.GetComponent<Renderer>().sharedMaterial = unitMaterial;
+        unitPrefab.SetActive(false);
+        var ground = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        ground.name = "CanonicalTransportEvidenceGround";
+        ground.transform.position = new Vector3(0f, -0.05f, 0f);
+        ground.transform.localScale = new Vector3(2.4f, 1f, 2.4f);
+        Material groundMaterial = CreateCanonicalTransportEvidenceMaterial(new Color(0.18f, 0.22f, 0.27f, 1f));
+        ground.GetComponent<Renderer>().sharedMaterial = groundMaterial;
+        var cameraObject = new GameObject("CanonicalTransportEvidenceCamera");
+        var camera = cameraObject.AddComponent<Camera>();
+        camera.transform.position = new Vector3(13f, 10f, -18f);
+        camera.transform.LookAt(new Vector3(0f, 4.5f, 0f));
+        camera.fieldOfView = 46f;
+        camera.clearFlags = CameraClearFlags.SolidColor;
+        camera.backgroundColor = new Color(0.08f, 0.11f, 0.16f, 1f);
+        var lightObject = new GameObject("CanonicalTransportEvidenceLight");
+        var light = lightObject.AddComponent<Light>();
+        light.type = LightType.Directional;
+        light.intensity = 1.25f;
+        light.transform.rotation = Quaternion.Euler(42f, -28f, 0f);
+        var presentation = new BuildingProductionTransportPresentationSystemHelper();
+
+        try
+        {
+            var context = new BuildingProductionTransportPresentationSystemHelper.Context(
+                null,
+                camera,
+                new BuildingProductionQueueCompositionSystemHelper(),
+                new BuildingVisualSystem(),
+                null,
+                null,
+                default);
+            var settings = new BuildingProductionQueueCompositionSystemHelper.ProductionTransportSettings(
+                transportPrefab,
+                1f,
+                1f,
+                1,
+                BuildingProductionQueueCompositionSystemHelper.ProductionTransportMode.Helicopter,
+                false);
+            float3 dropPosition = new(0f, 0f, 0f);
+
+            Assert.AreEqual(
+                BuildingProductionRequestSystemHelper.OperationMapProductionDeliveryResult.InProgress,
+                presentation.UpdateCanonicalOperationMapProductionDelivery(
+                    context,
+                    producer,
+                    1,
+                    unitPrefab,
+                    settings,
+                    dropPosition,
+                    0f));
+            Assert.AreEqual(1, presentation.CanonicalDeliverySessionCount);
+            Assert.AreEqual(
+                BuildingProductionRequestSystemHelper.OperationMapProductionDeliveryResult.InProgress,
+                presentation.UpdateCanonicalOperationMapProductionDelivery(
+                    context,
+                    producer,
+                    1,
+                    unitPrefab,
+                    settings,
+                    dropPosition,
+                    1f));
+            Assert.AreEqual(
+                BuildingProductionRequestSystemHelper.OperationMapProductionDeliveryResult.InProgress,
+                presentation.UpdateCanonicalOperationMapProductionDelivery(
+                    context,
+                    producer,
+                    1,
+                    unitPrefab,
+                    settings,
+                    dropPosition,
+                    2f));
+
+            GameObject transportVisual = presentation.CanonicalDeliveryTransportInstanceForTests;
+            Assert.IsNotNull(transportVisual, "Canonical delivery should retain the active helicopter presentation while the soldier is dropping.");
+            Assert.IsTrue(transportVisual.activeInHierarchy, "Canonical helicopter presentation must be active during the drop.");
+            Renderer[] transportRenderers = transportVisual.GetComponentsInChildren<Renderer>(true);
+            Assert.IsTrue(Array.Exists(transportRenderers, renderer => renderer != null && renderer.enabled && renderer.gameObject.activeInHierarchy),
+                "Canonical helicopter presentation must contain an enabled, active renderer.");
+
+            GameObject dropVisual = presentation.CanonicalDeliveryDropVisualForTests;
+            Assert.IsNotNull(dropVisual, "Canonical delivery should expose the visible soldier drop visual before spawning the ECS unit.");
+            Assert.IsTrue(dropVisual.activeInHierarchy, "Canonical soldier drop visual must be active during the drop.");
+            Renderer[] dropRenderers = dropVisual.GetComponentsInChildren<Renderer>(true);
+            Assert.IsTrue(Array.Exists(dropRenderers, renderer => renderer != null && renderer.enabled && renderer.gameObject.activeInHierarchy),
+                "Canonical soldier drop visual must contain an enabled, active renderer.");
+            LineRenderer rope = UnityEngine.Object.FindAnyObjectByType<LineRenderer>(FindObjectsInactive.Include);
+            Assert.IsNotNull(rope, "Canonical delivery should expose a visible helicopter rope during the drop.");
+            Assert.AreEqual(2, rope.positionCount);
+            CaptureCanonicalTransportEvidence(camera);
+
+            Assert.AreEqual(
+                BuildingProductionRequestSystemHelper.OperationMapProductionDeliveryResult.ReadyToSpawn,
+                presentation.UpdateCanonicalOperationMapProductionDelivery(
+                    context,
+                    producer,
+                    1,
+                    unitPrefab,
+                    settings,
+                    dropPosition,
+                    3f));
+            presentation.UpdateCanonicalOperationMapProductionDeliveryLifecycle(4.1f);
+            Assert.AreEqual(0, presentation.CanonicalDeliverySessionCount);
+        }
+        finally
+        {
+            presentation.Dispose();
+            UnityEngine.Object.DestroyImmediate(lightObject);
+            UnityEngine.Object.DestroyImmediate(cameraObject);
+            UnityEngine.Object.DestroyImmediate(ground);
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+            UnityEngine.Object.DestroyImmediate(transportPrefab);
+            UnityEngine.Object.DestroyImmediate(groundMaterial);
+            UnityEngine.Object.DestroyImmediate(unitMaterial);
+            UnityEngine.Object.DestroyImmediate(transportMaterial);
+        }
+    }
+
+    private static Material CreateCanonicalTransportEvidenceMaterial(Color color)
+    {
+        Shader shader = Shader.Find("Universal Render Pipeline/Unlit") ??
+                        Shader.Find("Unlit/Color") ??
+                        Shader.Find("Standard");
+        Assert.IsNotNull(shader, "Canonical transport evidence requires a renderable shader.");
+        var material = new Material(shader);
+        if (material.HasProperty("_BaseColor"))
+            material.SetColor("_BaseColor", color);
+        if (material.HasProperty("_Color"))
+            material.SetColor("_Color", color);
+        material.color = color;
+        return material;
+    }
+
+    private static void CaptureCanonicalTransportEvidence(Camera camera)
+    {
+        string directory = System.IO.Path.GetFullPath("Build/EditorEvidence");
+        System.IO.Directory.CreateDirectory(directory);
+        string path = System.IO.Path.Combine(directory, "CanonicalTentTransportDrop.png");
+        var renderTexture = new RenderTexture(1280, 720, 24, RenderTextureFormat.ARGB32);
+        var texture = new Texture2D(1280, 720, TextureFormat.RGBA32, false);
+        RenderTexture previous = RenderTexture.active;
+        try
+        {
+            camera.targetTexture = renderTexture;
+            RenderTexture.active = renderTexture;
+            camera.Render();
+            texture.ReadPixels(new Rect(0f, 0f, 1280f, 720f), 0, 0);
+            texture.Apply();
+            System.IO.File.WriteAllBytes(path, texture.EncodeToPNG());
+            Debug.Log($"[CanonicalTentTransportPresentationValidation] evidence={path}");
+        }
+        finally
+        {
+            camera.targetTexture = null;
+            RenderTexture.active = previous;
+            UnityEngine.Object.DestroyImmediate(texture);
+            UnityEngine.Object.DestroyImmediate(renderTexture);
         }
     }
 
@@ -2570,6 +2770,95 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     }
 
     [Test]
+    public void OperationMapProductionRuntimeScheduler_DefersSpawnWhileCanonicalDeliveryIsInProgress()
+    {
+        NativeArray<int> blockerCounts = default;
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        NativeArray<byte> friendlyPassFactionIds = default;
+        World world = new(nameof(OperationMapProductionRuntimeScheduler_DefersSpawnWhileCanonicalDeliveryIsInProgress));
+        EntityManager em = world.EntityManager;
+        GameObject unitPrefab = new("Rifleman");
+        try
+        {
+            CreateOperationMapProductionRuntimeGrid(
+                em,
+                out blockerCounts,
+                out blocked,
+                out occupied,
+                out friendlyPassFactionIds);
+            Entity prefabEntity = CreateOperationMapUnitPrefab(em);
+            Entity producer = CreateOperationMapProducer(
+                em, prefabEntity, unitPrefab.name, FactionIdentity.PlayerFactionId, 3, "Player Tent");
+            em.AddComponentData(producer, new UnitGrid { Cell = new int2(5, 5) });
+            em.AddComponentData(producer, new UnitFootprint { Size = new int2(3, 3) });
+            var requestSystem = new BuildingProductionRequestSystemHelper();
+            int deliveryUpdateCount = 0;
+            int lifecycleUpdateCount = 0;
+            BuildingProductionRequestSystemHelper.OperationMapProductionDeliveryResult UpdateDelivery(
+                Entity _, int requestId, GameObject prefab, float3 position, float now)
+            {
+                Assert.Greater(requestId, 0);
+                Assert.AreSame(unitPrefab, prefab);
+                Assert.IsTrue(math.all(math.isfinite(position)));
+                deliveryUpdateCount++;
+                return deliveryUpdateCount == 1
+                    ? BuildingProductionRequestSystemHelper.OperationMapProductionDeliveryResult.InProgress
+                    : BuildingProductionRequestSystemHelper.OperationMapProductionDeliveryResult.ReadyToSpawn;
+            }
+
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
+                new Dictionary<int, RuntimeBuildingEntity>(),
+                new BuildingProductionQueueCompositionSystemHelper(),
+                unitPrefab,
+                em,
+                updateOperationMapProductionDelivery: UpdateDelivery,
+                updateOperationMapProductionDeliveryLifecycle: _ => lifecycleUpdateCount++);
+            Assert.IsTrue(requestSystem.TryEnqueueFriendlyOperationMapProduction(
+                context, unitPrefab, 0f, out _, out _, out _));
+
+            var warnings = new List<string>();
+            Assert.AreEqual(0, requestSystem.ProcessReadyOperationMapProductions(
+                context,
+                em,
+                60f,
+                warnings.Add,
+                out BuildingProductionRequestSystemHelper.OperationMapProductionSchedulerDiagnostics inProgress));
+            Assert.AreEqual(
+                BuildingProductionRequestSystemHelper.OperationMapProductionSchedulerOutcome.DeliveryInProgress,
+                inProgress.Outcome);
+            Assert.AreEqual(1, em.GetBuffer<OperationMapBuildingUnitProductionRequest>(producer, true).Length);
+            Assert.AreEqual(0, warnings.Count, "Expected delivery progress must not be reported as a scheduler stall.");
+
+            Assert.AreEqual(1, requestSystem.ProcessReadyOperationMapProductions(
+                context,
+                em,
+                61f,
+                warnings.Add,
+                out BuildingProductionRequestSystemHelper.OperationMapProductionSchedulerDiagnostics completed));
+            Assert.AreEqual(BuildingProductionRequestSystemHelper.OperationMapProductionSchedulerOutcome.Spawned, completed.Outcome);
+            Assert.AreEqual(0, em.GetBuffer<OperationMapBuildingUnitProductionRequest>(producer, true).Length);
+            Assert.AreEqual(2, deliveryUpdateCount);
+            Assert.AreEqual(2, lifecycleUpdateCount);
+            Assert.AreEqual(0, warnings.Count);
+        }
+        finally
+        {
+            if (world.IsCreated)
+                world.Dispose();
+            if (friendlyPassFactionIds.IsCreated)
+                friendlyPassFactionIds.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (blockerCounts.IsCreated)
+                blockerCounts.Dispose();
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
     public void OperationMapProductionRuntimeScheduler_RejectsAmbiguousGridOwnership()
     {
         NativeArray<int> blockerCounts = default;
@@ -4781,12 +5070,18 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         BuildingProductionRequestSystemHelper.TryQueuePlayerUnitDelegate tryQueuePlayerUnit = null,
         BuildingProductionRequestSystemHelper.TrySpendMaterialsDelegate trySpendMaterials = null,
         BuildingProductionRequestSystemHelper.RefundMaterialsDelegate refundMaterials = null,
-        int maxQueuedUnitProductions = 25)
+        int maxQueuedUnitProductions = 25,
+        BuildingProductionRequestSystemHelper.UpdateOperationMapProductionDeliveryDelegate updateOperationMapProductionDelivery = null,
+        BuildingProductionRequestSystemHelper.UpdateOperationMapProductionDeliveryLifecycleDelegate updateOperationMapProductionDeliveryLifecycle = null)
     {
         var unitPrefabs = new List<GameObject> { unitPrefab };
+        var unitPrefabsByKey = new Dictionary<string, GameObject>
+        {
+            [unitPrefab.name] = unitPrefab
+        };
         BuildingProductionQueueCompositionSystemHelper.QueueContext queueContext = new(
             unitPrefabs,
-            new Dictionary<string, GameObject>(),
+            unitPrefabsByKey,
             new BuildingProductionSlotUtilitySystemHelper(),
             null,
             null);
@@ -4802,7 +5097,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             null,
             null,
             unitPrefabs,
-            new Dictionary<string, GameObject>(),
+            unitPrefabsByKey,
             100000,
             maxQueuedUnitProductions,
             productionSystem,
@@ -4831,7 +5126,9 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             Debug.LogWarning,
             (_, _) => 0,
             (_, _) => 0,
-            tryGetEntityManager: TryGetEntityManager);
+            tryGetEntityManager: TryGetEntityManager,
+            updateOperationMapProductionDelivery: updateOperationMapProductionDelivery,
+            updateOperationMapProductionDeliveryLifecycle: updateOperationMapProductionDeliveryLifecycle);
     }
 
     private static Entity CreateOperationMapProducer(

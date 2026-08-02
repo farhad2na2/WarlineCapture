@@ -1611,15 +1611,38 @@ namespace Game.Runtime
                 return 0;
             }
 
-            using EntityQuery gridQuery = em.CreateEntityQuery(
-                ComponentType.ReadOnly<GridConfig>(),
-                ComponentType.ReadOnly<GridWalkable>(),
-                ComponentType.ReadOnly<DynamicBlockerComponent>(),
-                ComponentType.ReadOnly<DynamicOccupancyComponent>());
-            if (gridQuery.CalculateEntityCount() != 1)
+            using EntityQuery authoredGridQuery = em.CreateEntityQuery(new EntityQueryDesc
+            {
+                All = new[]
+                {
+                    ComponentType.ReadOnly<GridConfig>(),
+                    ComponentType.ReadOnly<GridWalkable>(),
+                    ComponentType.ReadOnly<DynamicBlockerComponent>(),
+                    ComponentType.ReadOnly<DynamicOccupancyComponent>()
+                },
+                None = new[] { ComponentType.ReadOnly<RuntimeGridBootstrapGridTag>() }
+            });
+            int authoredGridCount = authoredGridQuery.CalculateEntityCount();
+            if (authoredGridCount > 1)
                 return 0;
 
-            Entity gridEntity = gridQuery.GetSingletonEntity();
+            Entity gridEntity;
+            if (authoredGridCount == 1)
+            {
+                gridEntity = authoredGridQuery.GetSingletonEntity();
+            }
+            else
+            {
+                using EntityQuery fallbackGridQuery = em.CreateEntityQuery(
+                    ComponentType.ReadOnly<GridConfig>(),
+                    ComponentType.ReadOnly<GridWalkable>(),
+                    ComponentType.ReadOnly<DynamicBlockerComponent>(),
+                    ComponentType.ReadOnly<DynamicOccupancyComponent>());
+                if (fallbackGridQuery.CalculateEntityCount() != 1)
+                    return 0;
+
+                gridEntity = fallbackGridQuery.GetSingletonEntity();
+            }
             GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
             NativeArray<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity, true).AsNativeArray();
             NativeBitArray blocked = em.GetComponentData<DynamicBlockerComponent>(gridEntity).Blocked;

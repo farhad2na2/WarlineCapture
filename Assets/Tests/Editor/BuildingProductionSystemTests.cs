@@ -190,8 +190,9 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             var tests = new BuildingProductionQueueCompositionSystemHelperTests();
             tests.OperationMapProductionRuntimeScheduler_SpawnsReadyRequestFromLiveGrid();
             tests.OperationMapProductionRuntimeScheduler_PreservesNotReadyRequest();
+            tests.OperationMapProductionRuntimeScheduler_PrefersSoleAuthoredGridOverBootstrapFallback();
             tests.OperationMapProductionRuntimeScheduler_RejectsAmbiguousGridOwnership();
-            Debug.Log("[OperationMapProductionRuntimeSchedulerValidation] result=Passed tests=3");
+            Debug.Log("[OperationMapProductionRuntimeSchedulerValidation] result=Passed tests=4");
             ValidationExit.Passed();
         }
         catch (Exception ex)
@@ -2614,6 +2615,71 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
 
             Assert.AreEqual(0, requestSystem.ProcessReadyOperationMapProductions(em, 60f));
             Assert.AreEqual(1, em.GetBuffer<OperationMapBuildingUnitProductionRequest>(producer, true).Length);
+        }
+        finally
+        {
+            if (world.IsCreated)
+                world.Dispose();
+            if (friendlyPassFactionIds.IsCreated)
+                friendlyPassFactionIds.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (blockerCounts.IsCreated)
+                blockerCounts.Dispose();
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
+    public void OperationMapProductionRuntimeScheduler_PrefersSoleAuthoredGridOverBootstrapFallback()
+    {
+        NativeArray<int> blockerCounts = default;
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        NativeArray<byte> friendlyPassFactionIds = default;
+        World world = new(nameof(OperationMapProductionRuntimeScheduler_PrefersSoleAuthoredGridOverBootstrapFallback));
+        EntityManager em = world.EntityManager;
+        GameObject unitPrefab = new("Rifleman");
+        try
+        {
+            Entity authoredGrid = CreateOperationMapProductionRuntimeGrid(
+                em,
+                out blockerCounts,
+                out blocked,
+                out occupied,
+                out friendlyPassFactionIds);
+            Entity bootstrapGrid = em.CreateEntity(
+                typeof(GridConfig),
+                typeof(RuntimeGridBootstrapGridTag),
+                typeof(DynamicBlockerComponent),
+                typeof(DynamicOccupancyComponent));
+            em.SetComponentData(bootstrapGrid, em.GetComponentData<GridConfig>(authoredGrid));
+            em.SetComponentData(bootstrapGrid, em.GetComponentData<DynamicBlockerComponent>(authoredGrid));
+            em.SetComponentData(bootstrapGrid, em.GetComponentData<DynamicOccupancyComponent>(authoredGrid));
+            DynamicBuffer<GridWalkable> bootstrapWalkable = em.AddBuffer<GridWalkable>(bootstrapGrid);
+            DynamicBuffer<GridWalkable> authoredWalkable = em.GetBuffer<GridWalkable>(authoredGrid, true);
+            bootstrapWalkable.ResizeUninitialized(authoredWalkable.Length);
+            for (int index = 0; index < authoredWalkable.Length; index++)
+                bootstrapWalkable[index] = authoredWalkable[index];
+
+            Entity prefabEntity = CreateOperationMapUnitPrefab(em);
+            Entity producer = CreateOperationMapProducer(
+                em, prefabEntity, unitPrefab.name, FactionIdentity.PlayerFactionId, 3, "Player Tent");
+            em.AddComponentData(producer, new UnitGrid { Cell = new int2(5, 5) });
+            em.AddComponentData(producer, new UnitFootprint { Size = new int2(3, 3) });
+            var requestSystem = new BuildingProductionRequestSystemHelper();
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
+                new Dictionary<int, RuntimeBuildingEntity>(),
+                new BuildingProductionQueueCompositionSystemHelper(),
+                unitPrefab,
+                em);
+            Assert.IsTrue(requestSystem.TryEnqueueFriendlyOperationMapProduction(
+                context, unitPrefab, 0f, out _, out _, out _));
+
+            Assert.AreEqual(1, requestSystem.ProcessReadyOperationMapProductions(em, 60f));
+            Assert.AreEqual(0, em.GetBuffer<OperationMapBuildingUnitProductionRequest>(producer, true).Length);
         }
         finally
         {

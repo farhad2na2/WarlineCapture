@@ -372,6 +372,7 @@ namespace Game.Editor
                 throw new InvalidOperationException($"Failed to copy production runtime binding to {outputPath}");
             }
 
+            NormalizeCombinedMeshBakerSerializedIdentity(outputPath);
             AssetDatabase.ImportAsset(outputPath, ImportAssetOptions.ForceSynchronousImport);
             Scene scene = EditorSceneManager.OpenScene(outputPath, OpenSceneMode.Single);
             try
@@ -423,6 +424,7 @@ namespace Game.Editor
             // Fail-closed: Unity sometimes drops brand-new ScriptableObject refs in the same session.
             NormalizeAssetText(outputPath);
             NormalizeAssetText(outputPath + ".meta");
+            NormalizeCombinedMeshBakerSerializedIdentity(outputPath);
             PatchDefinitionReferenceIfMissing(outputPath, candidateDefinitionPath);
             AssetDatabase.ImportAsset(outputPath, ImportAssetOptions.ForceSynchronousImport);
 
@@ -445,6 +447,11 @@ namespace Game.Editor
             if (definitionSerialized.ApplyModifiedPropertiesWithoutUndo())
                 EditorUtility.SetDirty(definition);
             AssetDatabase.SaveAssetIfDirty(definition);
+
+            // Importing the repaired scene can rewrite the serialized class identifier back to the
+            // current assembly identity even though a cold Editor cannot resolve that retained row.
+            // Leave the candidate-only file on the single legacy identity covered by MovedFrom.
+            NormalizeCombinedMeshBakerSerializedIdentity(outputPath);
         }
 
         internal static bool TryReuseExistingCandidateRuntimeBinding(
@@ -508,6 +515,54 @@ namespace Game.Editor
             AssetDatabase.ReleaseCachedFileHandles();
             File.WriteAllBytes(physical, normalizedBytes);
             return true;
+        }
+
+        internal static bool NormalizeCombinedMeshBakerSerializedIdentity(string assetPath)
+        {
+            const string currentIdentity =
+                "m_EditorClassIdentifier: Game.Runtime::Game.Runtime.CombinedMeshBaker";
+            const string legacyIdentity =
+                "m_EditorClassIdentifier: Assembly-CSharp::CombinedMeshBaker";
+            string physical = Path.GetFullPath(Path.Combine(Application.dataPath, "..", assetPath));
+            if (!File.Exists(physical))
+                throw new InvalidOperationException(
+                    $"Runtime binding scene is missing while normalizing CombinedMeshBaker identity: {assetPath}");
+
+            string text = File.ReadAllText(physical, Utf8WithoutBom);
+            int currentCount = CountExactOccurrences(text, currentIdentity);
+            int legacyCount = CountExactOccurrences(text, legacyIdentity);
+            if (currentCount + legacyCount != 1)
+            {
+                throw new InvalidOperationException(
+                    "Runtime binding scene requires exactly one recognized CombinedMeshBaker serialized identity. " +
+                    $"current={currentCount} legacy={legacyCount} path={assetPath}");
+            }
+
+            if (currentCount == 0)
+                return false;
+
+            UnityEngine.Object loadedAsset = AssetDatabase.LoadMainAssetAtPath(assetPath);
+            if (loadedAsset != null)
+                Resources.UnloadAsset(loadedAsset);
+            AssetDatabase.ReleaseCachedFileHandles();
+            File.WriteAllText(
+                physical,
+                text.Replace(currentIdentity, legacyIdentity),
+                Utf8WithoutBom);
+            return true;
+        }
+
+        private static int CountExactOccurrences(string text, string value)
+        {
+            int count = 0;
+            int offset = 0;
+            while ((offset = text.IndexOf(value, offset, StringComparison.Ordinal)) >= 0)
+            {
+                count++;
+                offset += value.Length;
+            }
+
+            return count;
         }
 
         private static bool BytesEqual(byte[] left, byte[] right)

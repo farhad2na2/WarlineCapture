@@ -174,6 +174,22 @@ namespace Game.Runtime
 
         private readonly Dictionary<FixedString128Bytes, string> _unitIdStringCache = new(64);
         private readonly BuildingProductionCommandEntityCache _commandEntityCache = new();
+        private const int MaxOperationMapProductionSpawnsPerUpdate = 16;
+
+        private struct ReadyOperationMapProducer
+        {
+            public Entity Building;
+            public int PlacementIndex;
+            public int RequestId;
+        }
+
+        private struct ResolvedOperationMapProductionSpawn
+        {
+            public Entity Building;
+            public int RequestId;
+            public int2 Cell;
+            public float3 Position;
+        }
 
         public int EnqueueCreateUnitFromSelectedBuilding(EntityManager em, int? activeBuildingId, int productionIndex, int frameCount)
         {
@@ -1527,6 +1543,145 @@ namespace Game.Runtime
 
                 priorProducerReservations.Dispose();
             }
+        }
+
+        public int ProcessReadyOperationMapProductions(EntityManager em, float now)
+        {
+            if (float.IsNaN(now) ||
+                float.IsInfinity(now) ||
+                em.World == null ||
+                !em.World.IsCreated)
+            {
+                return 0;
+            }
+
+            using EntityQuery gridQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<GridConfig>(),
+                ComponentType.ReadOnly<GridWalkable>(),
+                ComponentType.ReadOnly<DynamicBlockerComponent>(),
+                ComponentType.ReadOnly<DynamicOccupancyComponent>());
+            if (gridQuery.CalculateEntityCount() != 1)
+                return 0;
+
+            Entity gridEntity = gridQuery.GetSingletonEntity();
+            GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
+            NativeArray<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity, true).AsNativeArray();
+            NativeBitArray blocked = em.GetComponentData<DynamicBlockerComponent>(gridEntity).Blocked;
+            NativeBitArray occupied = em.GetComponentData<DynamicOccupancyComponent>(gridEntity).Occupied;
+            long gridSize64 = (long)grid.Width * grid.Height;
+            if (gridSize64 <= 0 || gridSize64 > int.MaxValue)
+                return 0;
+
+            using EntityQuery producerQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<OperationMapBuildingComponent>(),
+                ComponentType.ReadOnly<OperationMapBuildingProductionQueueComponent>(),
+                ComponentType.ReadOnly<OperationMapBuildingUnitProductionRequest>());
+            using NativeArray<Entity> producers = producerQuery.ToEntityArray(Allocator.Temp);
+            var readyProducers = new NativeList<ReadyOperationMapProducer>(producers.Length, Allocator.Temp);
+            for (int index = 0; index < producers.Length; index++)
+            {
+                Entity producer = producers[index];
+                if (!TryPeekReadyOperationMapProduction(
+                        em,
+                        producer,
+                        now,
+                        out OperationMapBuildingUnitProductionRequest request))
+                {
+                    continue;
+                }
+
+                readyProducers.Add(new ReadyOperationMapProducer
+                {
+                    Building = producer,
+                    PlacementIndex = em.GetComponentData<OperationMapBuildingComponent>(producer).PlacementIndex,
+                    RequestId = request.RequestId
+                });
+            }
+
+            for (int index = 1; index < readyProducers.Length; index++)
+            {
+                ReadyOperationMapProducer candidate = readyProducers[index];
+                int cursor = index - 1;
+                while (cursor >= 0 && CompareReadyOperationMapProducers(candidate, readyProducers[cursor]) < 0)
+                {
+                    readyProducers[cursor + 1] = readyProducers[cursor];
+                    cursor--;
+                }
+
+                readyProducers[cursor + 1] = candidate;
+            }
+
+            var reserved = new NativeBitArray((int)gridSize64, Allocator.Temp, NativeArrayOptions.ClearMemory);
+            try
+            {
+                int resolveLimit = math.min(MaxOperationMapProductionSpawnsPerUpdate, readyProducers.Length);
+                using NativeList<ResolvedOperationMapProductionSpawn> resolved = new(resolveLimit, Allocator.Temp);
+                for (int index = 0; index < resolveLimit; index++)
+                {
+                    ReadyOperationMapProducer candidate = readyProducers[index];
+                    if (!TryResolveReadyOperationMapProductionSpawn(
+                            em,
+                            candidate.Building,
+                            candidate.RequestId,
+                            now,
+                            grid,
+                            walkable,
+                            blocked,
+                            occupied,
+                            ref reserved,
+                            out int2 spawnCell,
+                            out float3 spawnPosition))
+                    {
+                        continue;
+                    }
+
+                    resolved.Add(new ResolvedOperationMapProductionSpawn
+                    {
+                        Building = candidate.Building,
+                        RequestId = candidate.RequestId,
+                        Cell = spawnCell,
+                        Position = spawnPosition
+                    });
+                }
+
+                int spawnedCount = 0;
+                for (int index = 0; index < resolved.Length; index++)
+                {
+                    ResolvedOperationMapProductionSpawn spawn = resolved[index];
+                    if (TrySpawnReadyOperationMapProduction(
+                            em,
+                            spawn.Building,
+                            spawn.RequestId,
+                            now,
+                            spawn.Cell,
+                            spawn.Position,
+                            out _))
+                    {
+                        spawnedCount++;
+                    }
+                }
+
+                return spawnedCount;
+            }
+            finally
+            {
+                reserved.Dispose();
+                readyProducers.Dispose();
+            }
+        }
+
+        private static int CompareReadyOperationMapProducers(
+            ReadyOperationMapProducer left,
+            ReadyOperationMapProducer right)
+        {
+            int placementComparison = left.PlacementIndex.CompareTo(right.PlacementIndex);
+            if (placementComparison != 0)
+                return placementComparison;
+
+            int entityComparison = left.Building.Index.CompareTo(right.Building.Index);
+            return entityComparison != 0
+                ? entityComparison
+                : left.RequestId.CompareTo(right.RequestId);
         }
 
         private static void SetOrAddSpawnComponent<T>(EntityManager em, Entity entity, T component)

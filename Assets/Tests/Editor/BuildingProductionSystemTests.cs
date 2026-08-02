@@ -183,6 +183,25 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         }
     }
 
+    public static void RunOperationMapProductionRuntimeSchedulerValidation()
+    {
+        try
+        {
+            var tests = new BuildingProductionQueueCompositionSystemHelperTests();
+            tests.OperationMapProductionRuntimeScheduler_SpawnsReadyRequestFromLiveGrid();
+            tests.OperationMapProductionRuntimeScheduler_PreservesNotReadyRequest();
+            tests.OperationMapProductionRuntimeScheduler_RejectsAmbiguousGridOwnership();
+            Debug.Log("[OperationMapProductionRuntimeSchedulerValidation] result=Passed tests=3");
+            ValidationExit.Passed();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[OperationMapProductionRuntimeSchedulerValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
     public static void RunProductionMetadataValidation()
     {
         try
@@ -2410,6 +2429,190 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     }
 
     [Test]
+    public void OperationMapProductionRuntimeScheduler_SpawnsReadyRequestFromLiveGrid()
+    {
+        NativeArray<int> blockerCounts = default;
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        NativeArray<byte> friendlyPassFactionIds = default;
+        World world = new(nameof(OperationMapProductionRuntimeScheduler_SpawnsReadyRequestFromLiveGrid));
+        EntityManager em = world.EntityManager;
+        GameObject unitPrefab = new("Rifleman");
+        try
+        {
+            CreateOperationMapProductionRuntimeGrid(
+                em,
+                out blockerCounts,
+                out blocked,
+                out occupied,
+                out friendlyPassFactionIds);
+            Entity prefabEntity = CreateOperationMapUnitPrefab(em);
+            Entity producer = CreateOperationMapProducer(
+                em, prefabEntity, unitPrefab.name, FactionIdentity.PlayerFactionId, 3, "Player Tent");
+            em.AddComponentData(producer, new UnitGrid { Cell = new int2(5, 5) });
+            em.AddComponentData(producer, new UnitFootprint { Size = new int2(3, 3) });
+            var requestSystem = new BuildingProductionRequestSystemHelper();
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
+                new Dictionary<int, RuntimeBuildingEntity>(),
+                new BuildingProductionQueueCompositionSystemHelper(),
+                unitPrefab,
+                em);
+            Assert.IsTrue(requestSystem.TryEnqueueFriendlyOperationMapProduction(
+                context, unitPrefab, 0f, out _, out _, out _));
+
+            Assert.AreEqual(1, requestSystem.ProcessReadyOperationMapProductions(em, 60f));
+            Assert.AreEqual(0, em.GetBuffer<OperationMapBuildingUnitProductionRequest>(producer, true).Length);
+            using EntityQuery liveUnitQuery = em.CreateEntityQuery(new EntityQueryDesc
+            {
+                All = new[]
+                {
+                    ComponentType.ReadOnly<UnitSourcePrefabKey>(),
+                    ComponentType.ReadOnly<UnitGrid>(),
+                    ComponentType.ReadOnly<Faction>()
+                },
+                None = new[] { ComponentType.ReadOnly<Prefab>() }
+            });
+            Assert.AreEqual(1, liveUnitQuery.CalculateEntityCount());
+            Entity spawned = liveUnitQuery.GetSingletonEntity();
+            Assert.AreEqual(FactionIdentity.PlayerFactionId, em.GetComponentData<Faction>(spawned).Id);
+            Assert.IsFalse(UnitFootprintUtility.Overlaps(
+                em.GetComponentData<UnitGrid>(spawned).Cell,
+                em.GetComponentData<UnitFootprint>(spawned).Size,
+                new int2(5, 5),
+                new int2(3, 3)));
+        }
+        finally
+        {
+            if (world.IsCreated)
+                world.Dispose();
+            if (friendlyPassFactionIds.IsCreated)
+                friendlyPassFactionIds.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (blockerCounts.IsCreated)
+                blockerCounts.Dispose();
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
+    public void OperationMapProductionRuntimeScheduler_PreservesNotReadyRequest()
+    {
+        NativeArray<int> blockerCounts = default;
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        NativeArray<byte> friendlyPassFactionIds = default;
+        World world = new(nameof(OperationMapProductionRuntimeScheduler_PreservesNotReadyRequest));
+        EntityManager em = world.EntityManager;
+        GameObject unitPrefab = new("Rifleman");
+        try
+        {
+            CreateOperationMapProductionRuntimeGrid(
+                em,
+                out blockerCounts,
+                out blocked,
+                out occupied,
+                out friendlyPassFactionIds);
+            Entity prefabEntity = CreateOperationMapUnitPrefab(em);
+            Entity producer = CreateOperationMapProducer(
+                em, prefabEntity, unitPrefab.name, FactionIdentity.PlayerFactionId, 3, "Player Tent");
+            em.AddComponentData(producer, new UnitGrid { Cell = new int2(5, 5) });
+            em.AddComponentData(producer, new UnitFootprint { Size = new int2(3, 3) });
+            var requestSystem = new BuildingProductionRequestSystemHelper();
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
+                new Dictionary<int, RuntimeBuildingEntity>(),
+                new BuildingProductionQueueCompositionSystemHelper(),
+                unitPrefab,
+                em);
+            Assert.IsTrue(requestSystem.TryEnqueueFriendlyOperationMapProduction(
+                context, unitPrefab, 0f, out _, out _, out _));
+
+            Assert.AreEqual(0, requestSystem.ProcessReadyOperationMapProductions(em, 59f));
+            Assert.AreEqual(1, em.GetBuffer<OperationMapBuildingUnitProductionRequest>(producer, true).Length);
+        }
+        finally
+        {
+            if (world.IsCreated)
+                world.Dispose();
+            if (friendlyPassFactionIds.IsCreated)
+                friendlyPassFactionIds.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (blockerCounts.IsCreated)
+                blockerCounts.Dispose();
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
+    public void OperationMapProductionRuntimeScheduler_RejectsAmbiguousGridOwnership()
+    {
+        NativeArray<int> blockerCounts = default;
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        NativeArray<byte> friendlyPassFactionIds = default;
+        World world = new(nameof(OperationMapProductionRuntimeScheduler_RejectsAmbiguousGridOwnership));
+        EntityManager em = world.EntityManager;
+        GameObject unitPrefab = new("Rifleman");
+        try
+        {
+            Entity gridEntity = CreateOperationMapProductionRuntimeGrid(
+                em,
+                out blockerCounts,
+                out blocked,
+                out occupied,
+                out friendlyPassFactionIds);
+            Entity duplicateGrid = em.CreateEntity(
+                typeof(GridConfig),
+                typeof(DynamicBlockerComponent),
+                typeof(DynamicOccupancyComponent));
+            em.SetComponentData(duplicateGrid, em.GetComponentData<GridConfig>(gridEntity));
+            em.SetComponentData(duplicateGrid, em.GetComponentData<DynamicBlockerComponent>(gridEntity));
+            em.SetComponentData(duplicateGrid, em.GetComponentData<DynamicOccupancyComponent>(gridEntity));
+            DynamicBuffer<GridWalkable> duplicateWalkable = em.AddBuffer<GridWalkable>(duplicateGrid);
+            DynamicBuffer<GridWalkable> sourceWalkable = em.GetBuffer<GridWalkable>(gridEntity, true);
+            duplicateWalkable.ResizeUninitialized(sourceWalkable.Length);
+            for (int index = 0; index < sourceWalkable.Length; index++)
+                duplicateWalkable[index] = sourceWalkable[index];
+
+            Entity prefabEntity = CreateOperationMapUnitPrefab(em);
+            Entity producer = CreateOperationMapProducer(
+                em, prefabEntity, unitPrefab.name, FactionIdentity.PlayerFactionId, 3, "Player Tent");
+            em.AddComponentData(producer, new UnitGrid { Cell = new int2(5, 5) });
+            em.AddComponentData(producer, new UnitFootprint { Size = new int2(3, 3) });
+            var requestSystem = new BuildingProductionRequestSystemHelper();
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
+                new Dictionary<int, RuntimeBuildingEntity>(),
+                new BuildingProductionQueueCompositionSystemHelper(),
+                unitPrefab,
+                em);
+            Assert.IsTrue(requestSystem.TryEnqueueFriendlyOperationMapProduction(
+                context, unitPrefab, 0f, out _, out _, out _));
+
+            Assert.AreEqual(0, requestSystem.ProcessReadyOperationMapProductions(em, 60f));
+            Assert.AreEqual(1, em.GetBuffer<OperationMapBuildingUnitProductionRequest>(producer, true).Length);
+        }
+        finally
+        {
+            if (world.IsCreated)
+                world.Dispose();
+            if (friendlyPassFactionIds.IsCreated)
+                friendlyPassFactionIds.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (blockerCounts.IsCreated)
+                blockerCounts.Dispose();
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
     public void OperationMapProducerQueue_HonorsGlobalPendingLimit()
     {
         using var world = new World(nameof(OperationMapProducerQueue_HonorsGlobalPendingLimit));
@@ -4412,6 +4615,43 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             CellSize = 10f,
             Origin = float3.zero
         };
+    }
+
+    private static Entity CreateOperationMapProductionRuntimeGrid(
+        EntityManager entityManager,
+        out NativeArray<int> blockerCounts,
+        out NativeBitArray blocked,
+        out NativeBitArray occupied,
+        out NativeArray<byte> friendlyPassFactionIds)
+    {
+        GridConfig grid = CreateOperationMapProductionGrid();
+        int gridSize = grid.Width * grid.Height;
+        blockerCounts = new NativeArray<int>(gridSize, Allocator.Persistent);
+        blocked = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+        occupied = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+        friendlyPassFactionIds = new NativeArray<byte>(gridSize, Allocator.Persistent);
+        Entity gridEntity = entityManager.CreateEntity(
+            typeof(GridConfig),
+            typeof(DynamicBlockerComponent),
+            typeof(DynamicOccupancyComponent));
+        entityManager.SetComponentData(gridEntity, grid);
+        entityManager.SetComponentData(gridEntity, new DynamicBlockerComponent
+        {
+            GridSize = gridSize,
+            Counts = blockerCounts,
+            Blocked = blocked,
+            FriendlyPassFactionIds = friendlyPassFactionIds
+        });
+        entityManager.SetComponentData(gridEntity, new DynamicOccupancyComponent
+        {
+            GridSize = gridSize,
+            Occupied = occupied
+        });
+        DynamicBuffer<GridWalkable> walkable = entityManager.AddBuffer<GridWalkable>(gridEntity);
+        walkable.ResizeUninitialized(gridSize);
+        for (int index = 0; index < gridSize; index++)
+            walkable[index] = new GridWalkable { Value = 1 };
+        return gridEntity;
     }
 
     private static BuildingRuntimeReadModelCompositionSystemHelper.Context CreateRuntimeQueryContext(

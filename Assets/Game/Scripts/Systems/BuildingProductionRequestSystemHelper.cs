@@ -1153,6 +1153,113 @@ namespace Game.Runtime
             return false;
         }
 
+        public bool TryEnqueueFriendlyOperationMapProduction(
+            Context context,
+            GameObject unitPrefab,
+            float queuedAt,
+            out Entity buildingEntity,
+            out int requestId,
+            out string buildingDisplayName)
+        {
+            buildingEntity = Entity.Null;
+            requestId = 0;
+            buildingDisplayName = string.Empty;
+            if (float.IsNaN(queuedAt) ||
+                float.IsInfinity(queuedAt) ||
+                !TryFindFirstFriendlyOperationMapProducer(
+                    context,
+                    unitPrefab,
+                    out buildingEntity,
+                    out int productionIndex,
+                    out buildingDisplayName) ||
+                context.TryGetEntityManager == null ||
+                !context.TryGetEntityManager(out EntityManager em) ||
+                !em.HasComponent<OperationMapBuildingProductionQueueComponent>(buildingEntity) ||
+                !em.HasBuffer<OperationMapBuildingUnitProductionRequest>(buildingEntity))
+            {
+                return false;
+            }
+
+            int globalLimit = Mathf.Max(0, context.MaxQueuedUnitProductions);
+            if (globalLimit > 0)
+            {
+                int pendingCount = CountFriendlyPendingUnitProductions(context);
+                if (pendingCount >= globalLimit)
+                    return false;
+
+                using EntityQuery queueQuery = em.CreateEntityQuery(
+                    ComponentType.ReadOnly<OperationMapBuildingProductionQueueComponent>(),
+                    ComponentType.ReadOnly<OperationMapBuildingUnitProductionRequest>());
+                using NativeArray<Entity> queueOwners = queueQuery.ToEntityArray(Allocator.Temp);
+                for (int ownerIndex = 0; ownerIndex < queueOwners.Length; ownerIndex++)
+                {
+                    DynamicBuffer<OperationMapBuildingUnitProductionRequest> ownerQueue =
+                        em.GetBuffer<OperationMapBuildingUnitProductionRequest>(queueOwners[ownerIndex], true);
+                    for (int queueIndex = 0; queueIndex < ownerQueue.Length; queueIndex++)
+                    {
+                        if (ownerQueue[queueIndex].Status == OperationMapBuildingUnitProductionRequest.Pending &&
+                            ++pendingCount >= globalLimit)
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            OperationMapBuildingProductionQueueComponent queueState =
+                em.GetComponentData<OperationMapBuildingProductionQueueComponent>(buildingEntity);
+            if (queueState.LastRequestId == int.MaxValue)
+                return false;
+
+            Entity productionPrefab = ResolveOperationMapProductionPrefab(
+                em,
+                buildingEntity,
+                productionIndex,
+                unitPrefab.name);
+            if (productionPrefab == Entity.Null)
+                return false;
+
+            requestId = queueState.LastRequestId + 1;
+            queueState.LastRequestId = requestId;
+            em.SetComponentData(buildingEntity, queueState);
+            DynamicBuffer<OperationMapBuildingUnitProductionRequest> queue =
+                em.GetBuffer<OperationMapBuildingUnitProductionRequest>(buildingEntity);
+            queue.Add(new OperationMapBuildingUnitProductionRequest
+            {
+                RequestId = requestId,
+                ProductionIndex = productionIndex,
+                UnitPrefab = productionPrefab,
+                UnitSourceKey = new FixedString64Bytes(unitPrefab.name),
+                QueuedAt = queuedAt,
+                Status = OperationMapBuildingUnitProductionRequest.Pending
+            });
+            return true;
+        }
+
+        private static Entity ResolveOperationMapProductionPrefab(
+            EntityManager em,
+            Entity buildingEntity,
+            int productionIndex,
+            string unitSourceKey)
+        {
+            FixedString64Bytes sourceKey = new(unitSourceKey);
+            DynamicBuffer<OperationMapBuildingProductionPrefab> productions =
+                em.GetBuffer<OperationMapBuildingProductionPrefab>(buildingEntity, true);
+            for (int index = 0; index < productions.Length; index++)
+            {
+                OperationMapBuildingProductionPrefab production = productions[index];
+                if (production.ProductionIndex == productionIndex &&
+                    production.SourceKey == sourceKey &&
+                    production.Prefab != Entity.Null &&
+                    em.Exists(production.Prefab))
+                {
+                    return production.Prefab;
+                }
+            }
+
+            return Entity.Null;
+        }
+
         private bool TryFindFirstFriendlyProducerBuilding(
             Context context,
             GameObject unitPrefab,

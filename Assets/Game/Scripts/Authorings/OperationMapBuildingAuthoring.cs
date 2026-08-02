@@ -439,6 +439,12 @@ namespace Game.Authoring
                         SourceKey = new FixedString64Bytes(production.spawnUnitPrefab.name)
                     });
                 }
+
+                if (buffer.Length > 0)
+                {
+                    AddComponent(entity, new OperationMapBuildingProductionQueueComponent());
+                    AddBuffer<OperationMapBuildingUnitProductionRequest>(entity);
+                }
             }
         }
     }

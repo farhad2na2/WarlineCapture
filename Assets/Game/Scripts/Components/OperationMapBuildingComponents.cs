@@ -21,4 +21,22 @@ namespace Game.Components
     public struct OperationMapBuildingDestroyedComponent : IComponentData, IEnableableComponent
     {
     }
+
+    public struct OperationMapBuildingProductionQueueComponent : IComponentData
+    {
+        public int LastRequestId;
+    }
+
+    [InternalBufferCapacity(4)]
+    public struct OperationMapBuildingUnitProductionRequest : IBufferElementData
+    {
+        public const byte Pending = 0;
+
+        public int RequestId;
+        public int ProductionIndex;
+        public Entity UnitPrefab;
+        public FixedString64Bytes UnitSourceKey;
+        public float QueuedAt;
+        public byte Status;
+    }
 }

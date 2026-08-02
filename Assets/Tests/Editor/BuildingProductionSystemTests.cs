@@ -107,6 +107,25 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         }
     }
 
+    public static void RunOperationMapProducerQueueValidation()
+    {
+        try
+        {
+            var tests = new BuildingProductionQueueCompositionSystemHelperTests();
+            tests.OperationMapProducerQueue_EnqueuesDeterministicPendingRows();
+            tests.OperationMapProducerQueue_HonorsGlobalPendingLimit();
+            tests.OperationMapProducerQueue_RejectsMissingQueueOwnership();
+            Debug.Log("[OperationMapProducerQueueValidation] result=Passed tests=3");
+            ValidationExit.Passed();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[OperationMapProducerQueueValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
     public static void RunProductionMetadataValidation()
     {
         try
@@ -1871,6 +1890,151 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             Assert.IsFalse(requestSystem.TryFindFirstFriendlyOperationMapProducer(
                 context,
                 unitPrefab,
+                out _,
+                out _,
+                out _));
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
+    public void OperationMapProducerQueue_EnqueuesDeterministicPendingRows()
+    {
+        using var world = new World(nameof(OperationMapProducerQueue_EnqueuesDeterministicPendingRows));
+        EntityManager em = world.EntityManager;
+        GameObject unitPrefab = new("Rifleman");
+        try
+        {
+            Entity prefabEntity = em.CreateEntity(typeof(Prefab));
+            Entity producer = CreateOperationMapProducer(
+                em,
+                prefabEntity,
+                unitPrefab.name,
+                FactionIdentity.PlayerFactionId,
+                4,
+                "Player Tent");
+            var requestSystem = new BuildingProductionRequestSystemHelper();
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
+                new Dictionary<int, RuntimeBuildingEntity>(),
+                new BuildingProductionQueueCompositionSystemHelper(),
+                unitPrefab,
+                em);
+
+            Assert.IsTrue(requestSystem.TryEnqueueFriendlyOperationMapProduction(
+                context,
+                unitPrefab,
+                12.5f,
+                out Entity resolvedProducer,
+                out int firstRequestId,
+                out string displayName));
+            Assert.IsTrue(requestSystem.TryEnqueueFriendlyOperationMapProduction(
+                context,
+                unitPrefab,
+                13f,
+                out _,
+                out int secondRequestId,
+                out _));
+            Assert.AreEqual(producer, resolvedProducer);
+            Assert.AreEqual("Player Tent", displayName);
+            Assert.AreEqual(1, firstRequestId);
+            Assert.AreEqual(2, secondRequestId);
+
+            DynamicBuffer<OperationMapBuildingUnitProductionRequest> queue =
+                em.GetBuffer<OperationMapBuildingUnitProductionRequest>(producer, true);
+            Assert.AreEqual(2, queue.Length);
+            Assert.AreEqual(0, queue[0].ProductionIndex);
+            Assert.AreEqual(prefabEntity, queue[0].UnitPrefab);
+            Assert.AreEqual(unitPrefab.name, queue[0].UnitSourceKey.ToString());
+            Assert.AreEqual(12.5f, queue[0].QueuedAt);
+            Assert.AreEqual(OperationMapBuildingUnitProductionRequest.Pending, queue[0].Status);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
+    public void OperationMapProducerQueue_HonorsGlobalPendingLimit()
+    {
+        using var world = new World(nameof(OperationMapProducerQueue_HonorsGlobalPendingLimit));
+        EntityManager em = world.EntityManager;
+        GameObject unitPrefab = new("Rifleman");
+        try
+        {
+            Entity prefabEntity = em.CreateEntity(typeof(Prefab));
+            Entity producer = CreateOperationMapProducer(
+                em,
+                prefabEntity,
+                unitPrefab.name,
+                FactionIdentity.PlayerFactionId,
+                1,
+                "Player Tent");
+            DynamicBuffer<OperationMapBuildingUnitProductionRequest> queue =
+                em.GetBuffer<OperationMapBuildingUnitProductionRequest>(producer);
+            queue.Add(new OperationMapBuildingUnitProductionRequest
+            {
+                RequestId = 1,
+                ProductionIndex = 0,
+                UnitPrefab = prefabEntity,
+                UnitSourceKey = new FixedString64Bytes(unitPrefab.name),
+                Status = OperationMapBuildingUnitProductionRequest.Pending
+            });
+            var requestSystem = new BuildingProductionRequestSystemHelper();
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
+                new Dictionary<int, RuntimeBuildingEntity>(),
+                new BuildingProductionQueueCompositionSystemHelper(),
+                unitPrefab,
+                em,
+                maxQueuedUnitProductions: 1);
+
+            Assert.IsFalse(requestSystem.TryEnqueueFriendlyOperationMapProduction(
+                context,
+                unitPrefab,
+                2f,
+                out _,
+                out _,
+                out _));
+            Assert.AreEqual(1, em.GetBuffer<OperationMapBuildingUnitProductionRequest>(producer, true).Length);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
+    public void OperationMapProducerQueue_RejectsMissingQueueOwnership()
+    {
+        using var world = new World(nameof(OperationMapProducerQueue_RejectsMissingQueueOwnership));
+        EntityManager em = world.EntityManager;
+        GameObject unitPrefab = new("Rifleman");
+        try
+        {
+            Entity prefabEntity = em.CreateEntity(typeof(Prefab));
+            Entity producer = CreateOperationMapProducer(
+                em,
+                prefabEntity,
+                unitPrefab.name,
+                FactionIdentity.PlayerFactionId,
+                1,
+                "Player Tent");
+            em.RemoveComponent<OperationMapBuildingProductionQueueComponent>(producer);
+            em.RemoveComponent<OperationMapBuildingUnitProductionRequest>(producer);
+            var requestSystem = new BuildingProductionRequestSystemHelper();
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
+                new Dictionary<int, RuntimeBuildingEntity>(),
+                new BuildingProductionQueueCompositionSystemHelper(),
+                unitPrefab,
+                em);
+
+            Assert.IsFalse(requestSystem.TryEnqueueFriendlyOperationMapProduction(
+                context,
+                unitPrefab,
+                1f,
                 out _,
                 out _,
                 out _));
@@ -3761,6 +3925,8 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             Prefab = prefabEntity,
             SourceKey = new FixedString64Bytes(unitSourceKey)
         });
+        entityManager.AddComponentData(producer, new OperationMapBuildingProductionQueueComponent());
+        entityManager.AddBuffer<OperationMapBuildingUnitProductionRequest>(producer);
         return producer;
     }
 

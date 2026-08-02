@@ -48,6 +48,10 @@ namespace Game.Editor
         internal const string CandidateSharedMaterialFolder =
             "Assets/Game/GeneratedOperationMaps/DenseCity/" +
             "opmap.skirmish.desert_base_01/Candidate/SharedMaterials";
+        internal const string CanalWaterSourceMaterialPath =
+            "Assets/Synty/PolygonBattleRoyale/Materials/FX/PolygonBattleRoyale_Water.mat";
+        internal static readonly Color CandidateCanalWaterBaseColor =
+            new(0.025f, 0.2f, 0.55f, 0.82f);
         private const string SyntyGenericBasicShaderName = "Synty/Generic_Basic";
 
         internal readonly struct ProtectedPlacementConfigSnapshot
@@ -1287,6 +1291,8 @@ namespace Game.Editor
                 $"DenseCity_DOTS_{Path.GetFileNameWithoutExtension(sourcePath)}";
             CopyTexture(source, "_Albedo_Map", destination, "_BaseMap");
             CopyColor(source, "_BaseColor", destination, "_BaseColor");
+            if (TryGetCandidatePresentationColorOverride(sourcePath, out Color presentationColor))
+                destination.SetColor("_BaseColor", presentationColor);
             CopyTexture(source, "_Normal_Map", destination, "_BumpMap");
             CopyFloat(source, "_Normal_Amount", destination, "_BumpScale");
             CopyFloat(source, "_Metallic", destination, "_Metallic");
@@ -1322,6 +1328,23 @@ namespace Game.Editor
             CopyShaderPassState(source, destination, "MotionVectors");
             EditorUtility.SetDirty(destination);
             return destination;
+        }
+
+        internal static bool TryGetCandidatePresentationColorOverride(
+            string sourcePath,
+            out Color color)
+        {
+            if (string.Equals(
+                    sourcePath,
+                    CanalWaterSourceMaterialPath,
+                    StringComparison.Ordinal))
+            {
+                color = CandidateCanalWaterBaseColor;
+                return true;
+            }
+
+            color = default;
+            return false;
         }
 
         internal static bool IsDeterministicSyntyMaterialReplacement(

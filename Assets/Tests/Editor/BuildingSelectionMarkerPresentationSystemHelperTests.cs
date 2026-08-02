@@ -15,6 +15,7 @@ public sealed class BuildingSelectionMarkerPresentationSystemHelperTests
     private World _world;
     private readonly System.Collections.Generic.List<GameObject> _objects = new();
 
+    [MenuItem("Tools/Validation/Building Selection Marker Focused")]
     public static void RunFocusedValidation()
     {
         try
@@ -23,10 +24,11 @@ public sealed class BuildingSelectionMarkerPresentationSystemHelperTests
             RunCase(test => test.RefreshHidesMarkerWhenSelectionClearsOrSelectedBuildingIsDestroyed());
             RunCase(test => test.RefreshAppliesHologramCompatibleMarkerColorProperties());
             RunCase(test => test.RefreshKeepsMapAuthoredMarkerRenderableBoundsAboveSurface());
+            RunCase(test => test.RefreshUsesCanonicalFootprintInsteadOfBroadMapAuthoredRendererBounds());
             RunCase(test => test.RuntimeVisualInitializationCachesBuildingRenderersWithoutMarkerChildren());
             RunCase(test => test.RuntimeResourceVisualsPreferEcsStorageForProductionState());
             RunCase(test => test.RefreshCreatesMeshBoundObjectOutlineForSelectedBuilding());
-            Debug.Log("[BuildingSelectionMarkerFocusedValidation] result=Passed tests=7");
+            Debug.Log("[BuildingSelectionMarkerFocusedValidation] result=Passed tests=8");
         }
         catch (System.Exception ex)
         {
@@ -184,6 +186,36 @@ public sealed class BuildingSelectionMarkerPresentationSystemHelperTests
         Assert.IsNotNull(marker);
         Assert.IsTrue(marker.activeSelf);
         AssertMarkerRenderableMinY(marker, 0.3f);
+    }
+
+    [Test]
+    public void RefreshUsesCanonicalFootprintInsteadOfBroadMapAuthoredRendererBounds()
+    {
+        var runtimeBuildings = new RuntimeBuildingCollection<RuntimeBuildingEntity>();
+        RuntimeBuildingEntity building = CreateBuilding(1, new Vector2Int(4, 5), new Vector2Int(4, 3), 0.25f);
+        building.Instance.AddComponent<MapAuthoredBuildingVisualComponent>();
+
+        GameObject broadVisual = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        Object.DestroyImmediate(broadVisual.GetComponent<Collider>());
+        broadVisual.name = "BroadMapAuthoredVisualHierarchy";
+        broadVisual.transform.SetParent(building.Instance.transform, false);
+        broadVisual.transform.localScale = new Vector3(30f, 2f, 18f);
+        _objects.Add(broadVisual);
+
+        runtimeBuildings.AddBuilding(building.Id, building);
+        BuildingSelectionMarkerPresentationSystemHelper system = CreateBuildingSelectionMarkerPresentationSystemHelper();
+        BuildingSelectionMarkerPresentationSystemHelper.Context context = CreateContext(runtimeBuildings);
+
+        runtimeBuildings.SelectBuilding(building.Id);
+        system.Refresh(context);
+
+        GameObject marker = system.RuntimeMarkerForTests;
+        Assert.IsNotNull(marker);
+        Assert.IsTrue(marker.activeSelf);
+        Assert.That(marker.transform.position.x, Is.EqualTo(6f).Within(0.001f));
+        Assert.That(marker.transform.position.z, Is.EqualTo(6.5f).Within(0.001f));
+        Assert.That(marker.transform.localScale.x, Is.EqualTo(4f).Within(0.001f));
+        Assert.That(marker.transform.localScale.z, Is.EqualTo(3f).Within(0.001f));
     }
 
     [Test]

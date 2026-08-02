@@ -82,37 +82,25 @@ namespace Game.Runtime
             Vector2Int footprint = building.Definition != null
                 ? building.Definition.FootprintCells
                 : Vector2Int.one;
-            Vector3 center;
+            Vector3 center = context.GetFootprintCenter(building.OriginCell, footprint, grid);
             Quaternion rotation = Quaternion.identity;
-            float surfaceY;
             Bounds bounds = default;
             bool hasRendererBounds = building.Instance != null &&
                                      TryCalculateRendererBounds(building.Instance, out bounds);
-            if (IsMapAuthoredBuilding(building) && hasRendererBounds)
-            {
-                center = bounds.center;
-                surfaceY = ResolveMarkerSurfaceY(building.Instance, bounds, grid);
-                center.y = surfaceY;
-                rotation = Quaternion.Euler(0f, building.Instance.transform.eulerAngles.y, 0f);
-            }
-            else
-            {
-                center = context.GetFootprintCenter(building.OriginCell, footprint, grid);
-                surfaceY = building.Instance != null
+            float surfaceY = hasRendererBounds
+                ? ResolveMarkerSurfaceY(building.Instance, bounds, grid)
+                : building.Instance != null
                     ? building.Instance.transform.position.y
                     : center.y;
-                center.y = surfaceY;
-                if (building.Instance != null)
-                    rotation = Quaternion.Euler(0f, building.Instance.transform.eulerAngles.y, 0f);
-            }
+            center.y = surfaceY;
 
-            Vector2 markerWorldSize = ResolveMarkerWorldSize(footprint, grid, hasRendererBounds ? bounds : default);
+            Vector2 markerWorldSize = ResolveMarkerWorldSize(footprint, grid);
             Transform markerTransform = _markerInstance.transform;
             markerTransform.SetPositionAndRotation(center, rotation);
             markerTransform.localScale = ResolveScale(markerWorldSize);
             SetActive(true);
             LiftMarkerRendererBoundsAbove(surfaceY + MarkerSurfaceClearance);
-            ConfigureBoundaryView(building, footprint, grid, center, rotation, surfaceY, hasRendererBounds ? bounds : default);
+            ConfigureBoundaryView(footprint, grid, center, rotation, surfaceY, hasRendererBounds ? bounds : default);
             ConfigureObjectOutline(building, hasRendererBounds ? bounds : default);
         }
 
@@ -197,7 +185,6 @@ namespace Game.Runtime
         }
 
         private void ConfigureBoundaryView(
-            RuntimeBuildingEntity building,
             Vector2Int footprint,
             GridConfig grid,
             Vector3 markerCenter,
@@ -209,18 +196,12 @@ namespace Game.Runtime
                 return;
 
             bool hasRendererBounds = rendererBounds.size.sqrMagnitude > 0.0001f;
-            Vector2 worldSize = hasRendererBounds
-                ? new Vector2(Mathf.Max(grid.CellSize, rendererBounds.size.x), Mathf.Max(grid.CellSize, rendererBounds.size.z))
-                : new Vector2(
-                    Mathf.Max(grid.CellSize, footprint.x * grid.CellSize),
-                    Mathf.Max(grid.CellSize, footprint.y * grid.CellSize));
+            Vector2 worldSize = ResolveMarkerWorldSize(footprint, grid);
             float height = hasRendererBounds
                 ? Mathf.Max(0.8f, rendererBounds.size.y)
                 : Mathf.Max(1.1f, Mathf.Min(4.5f, Mathf.Max(worldSize.x, worldSize.y) * 0.38f));
-            Vector3 center = hasRendererBounds ? rendererBounds.center : markerCenter;
+            Vector3 center = markerCenter;
             center.y = surfaceY;
-            if (building.Instance != null && !hasRendererBounds)
-                markerRotation = Quaternion.Euler(0f, building.Instance.transform.eulerAngles.y, 0f);
 
             _boundaryView.Configure(center, markerRotation, worldSize, surfaceY, height, _markerColor, PremiumSelectionAccentColor);
         }
@@ -241,15 +222,8 @@ namespace Game.Runtime
                 outlineWidth);
         }
 
-        private static Vector2 ResolveMarkerWorldSize(Vector2Int footprint, GridConfig grid, Bounds rendererBounds)
+        private static Vector2 ResolveMarkerWorldSize(Vector2Int footprint, GridConfig grid)
         {
-            if (rendererBounds.size.sqrMagnitude > 0.0001f)
-            {
-                return new Vector2(
-                    Mathf.Max(grid.CellSize, rendererBounds.size.x),
-                    Mathf.Max(grid.CellSize, rendererBounds.size.z));
-            }
-
             return new Vector2(
                 Mathf.Max(grid.CellSize, footprint.x * grid.CellSize),
                 Mathf.Max(grid.CellSize, footprint.y * grid.CellSize));
@@ -290,12 +264,6 @@ namespace Game.Runtime
             }
 
             return hasBounds ? bounds.size : Vector3.one;
-        }
-
-        private static bool IsMapAuthoredBuilding(RuntimeBuildingEntity building)
-        {
-            return building?.Instance != null &&
-                building.Instance.GetComponent<MapAuthoredBuildingVisualComponent>() != null;
         }
 
         private static float ResolveMarkerSurfaceY(GameObject instance, Bounds bounds, GridConfig grid)

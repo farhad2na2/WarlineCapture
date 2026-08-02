@@ -846,6 +846,17 @@ Terra must stop and request Sol when the next dependency-ready item is marked `[
 
 The latest Xiaomi Tent rerun proves the candidate-only binding repair reaches the canonical ECS completion path: one Recruit consumes `25` materials and raises canonical units/source keys from `5005` to `5006` plus rendered models from `22` to `23`. It is still rejected as the intended production interaction because no helicopter arrival, rope/drop, or visibly observed delivery occurred; the canonical scheduler currently materializes the ready unit directly instead of entering the legacy transport presenter. The same device view reproduces the wrong Contractor Tent portrait and an oversized cyan selection footprint, while the focused base view falls as low as the on-screen `19 FPS`. Those remain separately scoped UI/selection defects and VRP-072 Android evidence; none advances this checklist.
 
+**Editor-first functional acceptance queue (Android packaging is blocked until every row passes in Unity Editor):**
+
+- [ ] Correct selection-panel image mapping for the selected owner, including Contractor Tent.
+- [ ] Selection marker matches the selected owner's actual footprint instead of a broad proxy/cell envelope.
+- [ ] Vehicle world and roster selection resolve the intended canonical vehicle.
+- [ ] Unit production visibly runs the helicopter arrival, rope/drop, and completion sequence.
+- [ ] The spawned unit visibly exists after delivery and is interactable through the normal selection path.
+- [ ] Building placement/spawn visibly completes with canonical ownership, footprint, interaction, and presentation intact.
+
+Each row is a separate bounded correctness item with its own checked-wrapper and visible Editor evidence. Passing one row cannot close another. Android is reserved for final functional confirmation and performance evidence after all six Editor rows pass.
+
 **Exit:** The complete candidate rendering representation is bounded for CPU and has enough GPU headroom for 60 FPS.
 
 ### Phase 8: Lifecycle, Determinism, And Parity

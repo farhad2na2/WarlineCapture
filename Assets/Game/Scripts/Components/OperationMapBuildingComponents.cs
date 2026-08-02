@@ -37,6 +37,7 @@ namespace Game.Components
         public Entity UnitPrefab;
         public FixedString64Bytes UnitSourceKey;
         public float QueuedAt;
+        public float ReadyAt;
         public byte Status;
     }
 }

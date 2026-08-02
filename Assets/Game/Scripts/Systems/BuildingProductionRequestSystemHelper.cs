@@ -1219,6 +1219,13 @@ namespace Game.Runtime
             if (productionPrefab == Entity.Null)
                 return false;
 
+            float durationSeconds = context.ProductionSystem != null
+                ? context.ProductionSystem.ResolveProductionDurationSeconds(unitPrefab)
+                : 60f;
+            float readyAt = queuedAt + Mathf.Max(0.01f, durationSeconds);
+            if (float.IsNaN(readyAt) || float.IsInfinity(readyAt))
+                return false;
+
             requestId = queueState.LastRequestId + 1;
             queueState.LastRequestId = requestId;
             em.SetComponentData(buildingEntity, queueState);
@@ -1231,9 +1238,97 @@ namespace Game.Runtime
                 UnitPrefab = productionPrefab,
                 UnitSourceKey = new FixedString64Bytes(unitPrefab.name),
                 QueuedAt = queuedAt,
+                ReadyAt = readyAt,
                 Status = OperationMapBuildingUnitProductionRequest.Pending
             });
             return true;
+        }
+
+        public bool TryPeekReadyOperationMapProduction(
+            EntityManager em,
+            Entity buildingEntity,
+            float now,
+            out OperationMapBuildingUnitProductionRequest request)
+        {
+            request = default;
+            if (float.IsNaN(now) ||
+                float.IsInfinity(now) ||
+                em.World == null ||
+                !em.World.IsCreated ||
+                buildingEntity == Entity.Null ||
+                !em.Exists(buildingEntity) ||
+                !em.HasComponent<OperationMapBuildingComponent>(buildingEntity) ||
+                !em.HasBuffer<OperationMapBuildingUnitProductionRequest>(buildingEntity) ||
+                !em.HasComponent<UnitHealth>(buildingEntity) ||
+                em.GetComponentData<UnitHealth>(buildingEntity).Current <= 0 ||
+                (em.HasComponent<OperationMapBuildingDestroyedComponent>(buildingEntity) &&
+                 em.IsComponentEnabled<OperationMapBuildingDestroyedComponent>(buildingEntity)))
+            {
+                return false;
+            }
+
+            DynamicBuffer<OperationMapBuildingUnitProductionRequest> queue =
+                em.GetBuffer<OperationMapBuildingUnitProductionRequest>(buildingEntity, true);
+            int bestIndex = -1;
+            int bestRequestId = int.MaxValue;
+            for (int index = 0; index < queue.Length; index++)
+            {
+                OperationMapBuildingUnitProductionRequest candidate = queue[index];
+                if (candidate.Status != OperationMapBuildingUnitProductionRequest.Pending ||
+                    candidate.RequestId <= 0 ||
+                    candidate.RequestId >= bestRequestId ||
+                    float.IsNaN(candidate.ReadyAt) ||
+                    float.IsInfinity(candidate.ReadyAt) ||
+                    candidate.ReadyAt > now ||
+                    candidate.UnitPrefab == Entity.Null ||
+                    !em.Exists(candidate.UnitPrefab))
+                {
+                    continue;
+                }
+
+                Entity expectedPrefab = ResolveOperationMapProductionPrefab(
+                    em,
+                    buildingEntity,
+                    candidate.ProductionIndex,
+                    candidate.UnitSourceKey.ToString());
+                if (expectedPrefab != candidate.UnitPrefab)
+                    continue;
+
+                bestIndex = index;
+                bestRequestId = candidate.RequestId;
+            }
+
+            if (bestIndex < 0)
+                return false;
+
+            request = queue[bestIndex];
+            return true;
+        }
+
+        public bool TryCompleteReadyOperationMapProduction(
+            EntityManager em,
+            Entity buildingEntity,
+            int requestId,
+            float now)
+        {
+            if (!TryPeekReadyOperationMapProduction(em, buildingEntity, now, out OperationMapBuildingUnitProductionRequest ready) ||
+                ready.RequestId != requestId)
+            {
+                return false;
+            }
+
+            DynamicBuffer<OperationMapBuildingUnitProductionRequest> queue =
+                em.GetBuffer<OperationMapBuildingUnitProductionRequest>(buildingEntity);
+            for (int index = 0; index < queue.Length; index++)
+            {
+                if (queue[index].RequestId != requestId)
+                    continue;
+
+                queue.RemoveAt(index);
+                return true;
+            }
+
+            return false;
         }
 
         private static Entity ResolveOperationMapProductionPrefab(

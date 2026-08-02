@@ -15,6 +15,55 @@ namespace Game.Runtime
 
     internal sealed class BuildingProductionRequestSystemHelper
     {
+        public enum OperationMapProductionSchedulerOutcome : byte
+        {
+            InvalidRuntime = 0,
+            NoPendingRequests = 1,
+            PendingNotReady = 2,
+            AmbiguousAuthoredGrid = 3,
+            MissingCompleteGrid = 4,
+            InvalidGrid = 5,
+            SpawnCellUnresolved = 6,
+            SpawnRejected = 7,
+            Spawned = 8
+        }
+
+        public readonly struct OperationMapProductionSchedulerDiagnostics
+        {
+            public readonly OperationMapProductionSchedulerOutcome Outcome;
+            public readonly int ProducerCount;
+            public readonly int PendingRequestCount;
+            public readonly int ReadyProducerCount;
+            public readonly int AuthoredGridCount;
+            public readonly int CompleteGridCount;
+            public readonly int ResolvedSpawnCount;
+            public readonly int SpawnedCount;
+
+            public OperationMapProductionSchedulerDiagnostics(
+                OperationMapProductionSchedulerOutcome outcome,
+                int producerCount,
+                int pendingRequestCount,
+                int readyProducerCount,
+                int authoredGridCount,
+                int completeGridCount,
+                int resolvedSpawnCount,
+                int spawnedCount)
+            {
+                Outcome = outcome;
+                ProducerCount = producerCount;
+                PendingRequestCount = pendingRequestCount;
+                ReadyProducerCount = readyProducerCount;
+                AuthoredGridCount = authoredGridCount;
+                CompleteGridCount = completeGridCount;
+                ResolvedSpawnCount = resolvedSpawnCount;
+                SpawnedCount = spawnedCount;
+            }
+        }
+
+        private const float OperationMapSchedulerDiagnosticIntervalSeconds = 5f;
+        private int _lastOperationMapSchedulerDiagnosticSignature = int.MinValue;
+        private float _nextOperationMapSchedulerDiagnosticAt;
+
         public enum FactionUnitProductionResultCode
         {
             Queued = 0,
@@ -1603,11 +1652,60 @@ namespace Game.Runtime
 
         public int ProcessReadyOperationMapProductions(EntityManager em, float now)
         {
+            return ProcessReadyOperationMapProductions(em, now, null, out _);
+        }
+
+        public int ProcessReadyOperationMapProductions(
+            EntityManager em,
+            float now,
+            LogWarningDelegate logWarning,
+            out OperationMapProductionSchedulerDiagnostics diagnostics)
+        {
             if (float.IsNaN(now) ||
                 float.IsInfinity(now) ||
                 em.World == null ||
                 !em.World.IsCreated)
             {
+                diagnostics = CreateSchedulerDiagnostics(OperationMapProductionSchedulerOutcome.InvalidRuntime);
+                return 0;
+            }
+
+            using EntityQuery producerQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<OperationMapBuildingComponent>(),
+                ComponentType.ReadOnly<OperationMapBuildingProductionQueueComponent>(),
+                ComponentType.ReadOnly<OperationMapBuildingUnitProductionRequest>());
+            using NativeArray<Entity> producers = producerQuery.ToEntityArray(Allocator.Temp);
+            int pendingRequestCount = 0;
+            int readyProducerCount = 0;
+            for (int index = 0; index < producers.Length; index++)
+            {
+                DynamicBuffer<OperationMapBuildingUnitProductionRequest> queue =
+                    em.GetBuffer<OperationMapBuildingUnitProductionRequest>(producers[index], true);
+                for (int requestIndex = 0; requestIndex < queue.Length; requestIndex++)
+                {
+                    if (queue[requestIndex].Status == OperationMapBuildingUnitProductionRequest.Pending)
+                        pendingRequestCount++;
+                }
+
+                if (TryPeekReadyOperationMapProduction(em, producers[index], now, out _))
+                    readyProducerCount++;
+            }
+
+            if (pendingRequestCount == 0)
+            {
+                diagnostics = CreateSchedulerDiagnostics(
+                    OperationMapProductionSchedulerOutcome.NoPendingRequests,
+                    producers.Length);
+                ResetOperationMapSchedulerDiagnosticState();
+                return 0;
+            }
+
+            if (readyProducerCount == 0)
+            {
+                diagnostics = CreateSchedulerDiagnostics(
+                    OperationMapProductionSchedulerOutcome.PendingNotReady,
+                    producers.Length,
+                    pendingRequestCount);
                 return 0;
             }
 
@@ -1624,12 +1722,24 @@ namespace Game.Runtime
             });
             int authoredGridCount = authoredGridQuery.CalculateEntityCount();
             if (authoredGridCount > 1)
+            {
+                diagnostics = CreateSchedulerDiagnostics(
+                    OperationMapProductionSchedulerOutcome.AmbiguousAuthoredGrid,
+                    producers.Length,
+                    pendingRequestCount,
+                    readyProducerCount,
+                    authoredGridCount,
+                    authoredGridCount);
+                ReportOperationMapSchedulerStall(now, logWarning, diagnostics);
                 return 0;
+            }
 
             Entity gridEntity;
+            int completeGridCount;
             if (authoredGridCount == 1)
             {
                 gridEntity = authoredGridQuery.GetSingletonEntity();
+                completeGridCount = 1;
             }
             else
             {
@@ -1638,8 +1748,19 @@ namespace Game.Runtime
                     ComponentType.ReadOnly<GridWalkable>(),
                     ComponentType.ReadOnly<DynamicBlockerComponent>(),
                     ComponentType.ReadOnly<DynamicOccupancyComponent>());
-                if (fallbackGridQuery.CalculateEntityCount() != 1)
+                completeGridCount = fallbackGridQuery.CalculateEntityCount();
+                if (completeGridCount != 1)
+                {
+                    diagnostics = CreateSchedulerDiagnostics(
+                        OperationMapProductionSchedulerOutcome.MissingCompleteGrid,
+                        producers.Length,
+                        pendingRequestCount,
+                        readyProducerCount,
+                        authoredGridCount,
+                        completeGridCount);
+                    ReportOperationMapSchedulerStall(now, logWarning, diagnostics);
                     return 0;
+                }
 
                 gridEntity = fallbackGridQuery.GetSingletonEntity();
             }
@@ -1648,14 +1769,25 @@ namespace Game.Runtime
             NativeBitArray blocked = em.GetComponentData<DynamicBlockerComponent>(gridEntity).Blocked;
             NativeBitArray occupied = em.GetComponentData<DynamicOccupancyComponent>(gridEntity).Occupied;
             long gridSize64 = (long)grid.Width * grid.Height;
-            if (gridSize64 <= 0 || gridSize64 > int.MaxValue)
+            if (gridSize64 <= 0 ||
+                gridSize64 > int.MaxValue ||
+                walkable.Length != (int)gridSize64 ||
+                !blocked.IsCreated ||
+                blocked.Length != (int)gridSize64 ||
+                !occupied.IsCreated ||
+                occupied.Length != (int)gridSize64)
+            {
+                diagnostics = CreateSchedulerDiagnostics(
+                    OperationMapProductionSchedulerOutcome.InvalidGrid,
+                    producers.Length,
+                    pendingRequestCount,
+                    readyProducerCount,
+                    authoredGridCount,
+                    completeGridCount);
+                ReportOperationMapSchedulerStall(now, logWarning, diagnostics);
                 return 0;
+            }
 
-            using EntityQuery producerQuery = em.CreateEntityQuery(
-                ComponentType.ReadOnly<OperationMapBuildingComponent>(),
-                ComponentType.ReadOnly<OperationMapBuildingProductionQueueComponent>(),
-                ComponentType.ReadOnly<OperationMapBuildingUnitProductionRequest>());
-            using NativeArray<Entity> producers = producerQuery.ToEntityArray(Allocator.Temp);
             var readyProducers = new NativeList<ReadyOperationMapProducer>(producers.Length, Allocator.Temp);
             for (int index = 0; index < producers.Length; index++)
             {
@@ -1740,6 +1872,24 @@ namespace Game.Runtime
                     }
                 }
 
+                OperationMapProductionSchedulerOutcome outcome = spawnedCount > 0
+                    ? OperationMapProductionSchedulerOutcome.Spawned
+                    : resolved.Length > 0
+                        ? OperationMapProductionSchedulerOutcome.SpawnRejected
+                        : OperationMapProductionSchedulerOutcome.SpawnCellUnresolved;
+                diagnostics = CreateSchedulerDiagnostics(
+                    outcome,
+                    producers.Length,
+                    pendingRequestCount,
+                    readyProducerCount,
+                    authoredGridCount,
+                    completeGridCount,
+                    resolved.Length,
+                    spawnedCount);
+                if (spawnedCount > 0)
+                    ResetOperationMapSchedulerDiagnosticState();
+                else
+                    ReportOperationMapSchedulerStall(now, logWarning, diagnostics);
                 return spawnedCount;
             }
             finally
@@ -1747,6 +1897,64 @@ namespace Game.Runtime
                 reserved.Dispose();
                 readyProducers.Dispose();
             }
+        }
+
+        private static OperationMapProductionSchedulerDiagnostics CreateSchedulerDiagnostics(
+            OperationMapProductionSchedulerOutcome outcome,
+            int producerCount = 0,
+            int pendingRequestCount = 0,
+            int readyProducerCount = 0,
+            int authoredGridCount = 0,
+            int completeGridCount = 0,
+            int resolvedSpawnCount = 0,
+            int spawnedCount = 0)
+        {
+            return new OperationMapProductionSchedulerDiagnostics(
+                outcome,
+                producerCount,
+                pendingRequestCount,
+                readyProducerCount,
+                authoredGridCount,
+                completeGridCount,
+                resolvedSpawnCount,
+                spawnedCount);
+        }
+
+        private void ReportOperationMapSchedulerStall(
+            float now,
+            LogWarningDelegate logWarning,
+            in OperationMapProductionSchedulerDiagnostics diagnostics)
+        {
+            if (logWarning == null || diagnostics.PendingRequestCount <= 0 || diagnostics.ReadyProducerCount <= 0)
+                return;
+
+            int signature = (int)diagnostics.Outcome;
+            signature = (signature * 397) ^ diagnostics.ProducerCount;
+            signature = (signature * 397) ^ diagnostics.PendingRequestCount;
+            signature = (signature * 397) ^ diagnostics.ReadyProducerCount;
+            signature = (signature * 397) ^ diagnostics.AuthoredGridCount;
+            signature = (signature * 397) ^ diagnostics.CompleteGridCount;
+            signature = (signature * 397) ^ diagnostics.ResolvedSpawnCount;
+            if (signature == _lastOperationMapSchedulerDiagnosticSignature &&
+                now < _nextOperationMapSchedulerDiagnosticAt)
+            {
+                return;
+            }
+
+            _lastOperationMapSchedulerDiagnosticSignature = signature;
+            _nextOperationMapSchedulerDiagnosticAt = now + OperationMapSchedulerDiagnosticIntervalSeconds;
+            logWarning(
+                $"[OperationMapProductionScheduler] result=Stalled outcome={diagnostics.Outcome} " +
+                $"producers={diagnostics.ProducerCount} pending={diagnostics.PendingRequestCount} " +
+                $"ready={diagnostics.ReadyProducerCount} authoredGrids={diagnostics.AuthoredGridCount} " +
+                $"completeGrids={diagnostics.CompleteGridCount} resolved={diagnostics.ResolvedSpawnCount} " +
+                $"spawned={diagnostics.SpawnedCount}");
+        }
+
+        private void ResetOperationMapSchedulerDiagnosticState()
+        {
+            _lastOperationMapSchedulerDiagnosticSignature = int.MinValue;
+            _nextOperationMapSchedulerDiagnosticAt = 0f;
         }
 
         private static int CompareReadyOperationMapProducers(

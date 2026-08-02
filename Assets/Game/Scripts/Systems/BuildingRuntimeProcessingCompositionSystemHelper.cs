@@ -151,7 +151,11 @@ namespace Game.Runtime
             ProcessResourceSellRequests(factionResourceSystem, runtimeBuildings, em, boundaryEntity, now);
             ProcessUiProductionRequests(productionRequestSystem, productionRequestContext, em, frameCount, now);
             ProcessProductionRequests(productionRequestSystem, productionRequestContext, runtimeQuerySystem, runtimeQueryContext, em, boundaryEntity, now);
-            productionRequestSystem.ProcessReadyOperationMapProductions(em, now);
+            productionRequestSystem.ProcessReadyOperationMapProductions(
+                em,
+                now,
+                productionRequestContext.LogWarning,
+                out _);
             ProcessRuntimeSpawnRequests(definitionSystem, runtimeSpawnSystem, runtimeSpawnContext, em, boundaryEntity, now);
         }
 

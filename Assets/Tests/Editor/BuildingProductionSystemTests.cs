@@ -164,6 +164,25 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         }
     }
 
+    public static void RunOperationMapProducerSpawnCellValidation()
+    {
+        try
+        {
+            var tests = new BuildingProductionQueueCompositionSystemHelperTests();
+            tests.OperationMapProducerSpawnCell_IsDeterministicAndOutsideProducer();
+            tests.OperationMapProducerSpawnCell_SkipsOccupiedPreferredCell();
+            tests.OperationMapProducerSpawnCell_RejectsMalformedGridOwnership();
+            Debug.Log("[OperationMapProducerSpawnCellValidation] result=Passed tests=3");
+            ValidationExit.Passed();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[OperationMapProducerSpawnCellValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
     public static void RunProductionMetadataValidation()
     {
         try
@@ -2235,6 +2254,162 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     }
 
     [Test]
+    public void OperationMapProducerSpawnCell_IsDeterministicAndOutsideProducer()
+    {
+        using var world = new World(nameof(OperationMapProducerSpawnCell_IsDeterministicAndOutsideProducer));
+        EntityManager em = world.EntityManager;
+        GameObject unitPrefab = new("Rifleman");
+        const int gridSize = 12 * 12;
+        var walkable = new NativeArray<GridWalkable>(gridSize, Allocator.Temp);
+        var blocked = new NativeBitArray(gridSize, Allocator.Temp, NativeArrayOptions.ClearMemory);
+        var occupied = new NativeBitArray(gridSize, Allocator.Temp, NativeArrayOptions.ClearMemory);
+        var reservedA = new NativeBitArray(gridSize, Allocator.Temp, NativeArrayOptions.ClearMemory);
+        var reservedB = new NativeBitArray(gridSize, Allocator.Temp, NativeArrayOptions.ClearMemory);
+        try
+        {
+            for (int index = 0; index < walkable.Length; index++)
+                walkable[index] = new GridWalkable { Value = 1 };
+            Entity prefabEntity = CreateOperationMapUnitPrefab(em);
+            Entity producer = CreateOperationMapProducer(
+                em, prefabEntity, unitPrefab.name, FactionIdentity.PlayerFactionId, 3, "Player Tent");
+            em.AddComponentData(producer, new UnitGrid { Cell = new int2(5, 5) });
+            em.AddComponentData(producer, new UnitFootprint { Size = new int2(3, 3) });
+            var requestSystem = new BuildingProductionRequestSystemHelper();
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
+                new Dictionary<int, RuntimeBuildingEntity>(),
+                new BuildingProductionQueueCompositionSystemHelper(),
+                unitPrefab,
+                em);
+            Assert.IsTrue(requestSystem.TryEnqueueFriendlyOperationMapProduction(
+                context, unitPrefab, 0f, out _, out int requestId, out _));
+            GridConfig grid = CreateOperationMapProductionGrid();
+
+            Assert.IsTrue(requestSystem.TryResolveReadyOperationMapProductionSpawn(
+                em, producer, requestId, 60f, grid, walkable, blocked, occupied, ref reservedA, out int2 cellA, out float3 positionA));
+            Assert.IsTrue(requestSystem.TryResolveReadyOperationMapProductionSpawn(
+                em, producer, requestId, 60f, grid, walkable, blocked, occupied, ref reservedB, out int2 cellB, out float3 positionB));
+            Assert.AreEqual(cellA, cellB);
+            Assert.AreEqual(positionA, positionB);
+            Assert.IsFalse(UnitFootprintUtility.Overlaps(cellA, new int2(1, 1), new int2(5, 5), new int2(3, 3)));
+        }
+        finally
+        {
+            reservedB.Dispose();
+            reservedA.Dispose();
+            occupied.Dispose();
+            blocked.Dispose();
+            walkable.Dispose();
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
+    public void OperationMapProducerSpawnCell_SkipsOccupiedPreferredCell()
+    {
+        using var world = new World(nameof(OperationMapProducerSpawnCell_SkipsOccupiedPreferredCell));
+        EntityManager em = world.EntityManager;
+        GameObject unitPrefab = new("Rifleman");
+        const int gridSize = 12 * 12;
+        var walkable = new NativeArray<GridWalkable>(gridSize, Allocator.Temp);
+        var blocked = new NativeBitArray(gridSize, Allocator.Temp, NativeArrayOptions.ClearMemory);
+        var occupied = new NativeBitArray(gridSize, Allocator.Temp, NativeArrayOptions.ClearMemory);
+        var reserved = new NativeBitArray(gridSize, Allocator.Temp, NativeArrayOptions.ClearMemory);
+        try
+        {
+            for (int index = 0; index < walkable.Length; index++)
+                walkable[index] = new GridWalkable { Value = 1 };
+            Entity prefabEntity = CreateOperationMapUnitPrefab(em);
+            Entity producer = CreateOperationMapProducer(
+                em, prefabEntity, unitPrefab.name, FactionIdentity.PlayerFactionId, 3, "Player Tent");
+            em.AddComponentData(producer, new UnitGrid { Cell = new int2(5, 5) });
+            em.AddComponentData(producer, new UnitFootprint { Size = new int2(3, 3) });
+            int2 preferredCell = new(5, 8);
+            occupied.Set(GridUtils.CellToIndex(preferredCell, 12), true);
+            var requestSystem = new BuildingProductionRequestSystemHelper();
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
+                new Dictionary<int, RuntimeBuildingEntity>(),
+                new BuildingProductionQueueCompositionSystemHelper(),
+                unitPrefab,
+                em);
+            Assert.IsTrue(requestSystem.TryEnqueueFriendlyOperationMapProduction(
+                context, unitPrefab, 0f, out _, out int requestId, out _));
+
+            Assert.IsTrue(requestSystem.TryResolveReadyOperationMapProductionSpawn(
+                em,
+                producer,
+                requestId,
+                60f,
+                CreateOperationMapProductionGrid(),
+                walkable,
+                blocked,
+                occupied,
+                ref reserved,
+                out int2 resolved,
+                out _));
+            Assert.AreNotEqual(preferredCell, resolved);
+            Assert.IsFalse(occupied.IsSet(GridUtils.CellToIndex(resolved, 12)));
+            Assert.IsFalse(UnitFootprintUtility.Overlaps(resolved, new int2(1, 1), new int2(5, 5), new int2(3, 3)));
+        }
+        finally
+        {
+            reserved.Dispose();
+            occupied.Dispose();
+            blocked.Dispose();
+            walkable.Dispose();
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
+    public void OperationMapProducerSpawnCell_RejectsMalformedGridOwnership()
+    {
+        using var world = new World(nameof(OperationMapProducerSpawnCell_RejectsMalformedGridOwnership));
+        EntityManager em = world.EntityManager;
+        GameObject unitPrefab = new("Rifleman");
+        var walkable = new NativeArray<GridWalkable>(143, Allocator.Temp);
+        var blocked = new NativeBitArray(144, Allocator.Temp, NativeArrayOptions.ClearMemory);
+        var occupied = new NativeBitArray(144, Allocator.Temp, NativeArrayOptions.ClearMemory);
+        var reserved = new NativeBitArray(144, Allocator.Temp, NativeArrayOptions.ClearMemory);
+        try
+        {
+            Entity prefabEntity = CreateOperationMapUnitPrefab(em);
+            Entity producer = CreateOperationMapProducer(
+                em, prefabEntity, unitPrefab.name, FactionIdentity.PlayerFactionId, 3, "Player Tent");
+            em.AddComponentData(producer, new UnitGrid { Cell = new int2(5, 5) });
+            em.AddComponentData(producer, new UnitFootprint { Size = new int2(3, 3) });
+            var requestSystem = new BuildingProductionRequestSystemHelper();
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
+                new Dictionary<int, RuntimeBuildingEntity>(),
+                new BuildingProductionQueueCompositionSystemHelper(),
+                unitPrefab,
+                em);
+            Assert.IsTrue(requestSystem.TryEnqueueFriendlyOperationMapProduction(
+                context, unitPrefab, 0f, out _, out int requestId, out _));
+
+            Assert.IsFalse(requestSystem.TryResolveReadyOperationMapProductionSpawn(
+                em,
+                producer,
+                requestId,
+                60f,
+                CreateOperationMapProductionGrid(),
+                walkable,
+                blocked,
+                occupied,
+                ref reserved,
+                out _,
+                out _));
+        }
+        finally
+        {
+            reserved.Dispose();
+            occupied.Dispose();
+            blocked.Dispose();
+            walkable.Dispose();
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
     public void OperationMapProducerQueue_HonorsGlobalPendingLimit()
     {
         using var world = new World(nameof(OperationMapProducerQueue_HonorsGlobalPendingLimit));
@@ -4226,6 +4401,17 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         entityManager.SetComponentData(prefab, new UnitFootprint { Size = new int2(1, 1) });
         entityManager.SetComponentData(prefab, LocalTransform.Identity);
         return prefab;
+    }
+
+    private static GridConfig CreateOperationMapProductionGrid()
+    {
+        return new GridConfig
+        {
+            Width = 12,
+            Height = 12,
+            CellSize = 10f,
+            Origin = float3.zero
+        };
     }
 
     private static BuildingRuntimeReadModelCompositionSystemHelper.Context CreateRuntimeQueryContext(

@@ -1409,6 +1409,126 @@ namespace Game.Runtime
             return true;
         }
 
+        public bool TryResolveReadyOperationMapProductionSpawn(
+            EntityManager em,
+            Entity buildingEntity,
+            int requestId,
+            float now,
+            in GridConfig grid,
+            in NativeArray<GridWalkable> walkable,
+            in NativeBitArray blocked,
+            in NativeBitArray occupied,
+            ref NativeBitArray reserved,
+            out int2 spawnCell,
+            out float3 spawnPosition)
+        {
+            spawnCell = default;
+            spawnPosition = default;
+            long gridSize64 = (long)grid.Width * grid.Height;
+            if (grid.Width <= 0 ||
+                grid.Height <= 0 ||
+                gridSize64 <= 0 ||
+                gridSize64 > int.MaxValue ||
+                !math.isfinite(grid.CellSize) ||
+                grid.CellSize <= 0f ||
+                !math.all(math.isfinite(grid.Origin)) ||
+                !walkable.IsCreated ||
+                walkable.Length != (int)gridSize64 ||
+                !blocked.IsCreated ||
+                blocked.Length != (int)gridSize64 ||
+                !occupied.IsCreated ||
+                occupied.Length != (int)gridSize64 ||
+                !reserved.IsCreated ||
+                reserved.Length != (int)gridSize64 ||
+                !TryPeekReadyOperationMapProduction(
+                    em,
+                    buildingEntity,
+                    now,
+                    out OperationMapBuildingUnitProductionRequest request) ||
+                request.RequestId != requestId ||
+                !em.HasComponent<UnitGrid>(buildingEntity) ||
+                !em.HasComponent<UnitFootprint>(buildingEntity) ||
+                !em.HasComponent<UnitFootprint>(request.UnitPrefab))
+            {
+                return false;
+            }
+
+            int2 producerCell = em.GetComponentData<UnitGrid>(buildingEntity).Cell;
+            int2 producerFootprint = UnitFootprintUtility.ClampSize(
+                em.GetComponentData<UnitFootprint>(buildingEntity).Size);
+            int2 unitFootprint = UnitFootprintUtility.ClampSize(
+                em.GetComponentData<UnitFootprint>(request.UnitPrefab).Size);
+            int2 producerMin = UnitFootprintUtility.GetMinCell(producerCell, producerFootprint);
+            int2 producerMax = producerMin + producerFootprint;
+            if (producerFootprint.x > grid.Width ||
+                producerFootprint.y > grid.Height ||
+                producerMin.x < 0 ||
+                producerMin.y < 0 ||
+                producerMax.x > grid.Width ||
+                producerMax.y > grid.Height)
+            {
+                return false;
+            }
+
+            int verticalOffset = ((producerFootprint.y + unitFootprint.y + 1) / 2) + 1;
+            int2 searchCenter = producerCell + new int2(0, verticalOffset);
+            int radius = math.max(producerFootprint.x, producerFootprint.y) + 4;
+            int placementIndex = em.GetComponentData<OperationMapBuildingComponent>(buildingEntity).PlacementIndex;
+            uint seed = ((uint)math.max(0, placementIndex) * 747796405u) ^
+                        ((uint)requestId * 2891336453u) ^
+                        0x9E3779B9u;
+            var random = new Unity.Mathematics.Random(math.max(1u, seed));
+            int producerCellCount = producerFootprint.x * producerFootprint.y;
+            var priorProducerReservations = new NativeArray<byte>(
+                producerCellCount,
+                Allocator.Temp,
+                NativeArrayOptions.UninitializedMemory);
+            try
+            {
+                int reservationIndex = 0;
+                for (int y = producerMin.y; y < producerMax.y; y++)
+                {
+                    int row = y * grid.Width;
+                    for (int x = producerMin.x; x < producerMax.x; x++)
+                    {
+                        int cellIndex = row + x;
+                        priorProducerReservations[reservationIndex++] = reserved.IsSet(cellIndex) ? (byte)1 : (byte)0;
+                        reserved.Set(cellIndex, true);
+                    }
+                }
+
+                if (!SpawnCellUtility.TryFindSpawnCellNear(
+                        ref random,
+                        grid,
+                        walkable,
+                        blocked,
+                        occupied,
+                        ref reserved,
+                        searchCenter,
+                        radius,
+                        unitFootprint,
+                        out spawnCell))
+                {
+                    return false;
+                }
+
+                spawnPosition = GridUtils.CellToWorldCenter(grid, spawnCell);
+                return math.all(math.isfinite(spawnPosition));
+            }
+            finally
+            {
+                int reservationIndex = 0;
+                for (int y = producerMin.y; y < producerMax.y; y++)
+                {
+                    int row = y * grid.Width;
+                    for (int x = producerMin.x; x < producerMax.x; x++)
+                        reserved.Set(row + x, priorProducerReservations[reservationIndex++] != 0);
+                }
+
+                priorProducerReservations.Dispose();
+            }
+        }
+
         private static void SetOrAddSpawnComponent<T>(EntityManager em, Entity entity, T component)
             where T : unmanaged, IComponentData
         {

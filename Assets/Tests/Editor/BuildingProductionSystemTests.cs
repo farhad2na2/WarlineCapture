@@ -88,6 +88,25 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         }
     }
 
+    public static void RunOperationMapProducerLookupValidation()
+    {
+        try
+        {
+            var tests = new BuildingProductionQueueCompositionSystemHelperTests();
+            tests.OperationMapProducerLookup_PrefersLowestPlacementPlayerProducer();
+            tests.OperationMapProducerLookup_FallsBackToLiveNeutralProducer();
+            tests.OperationMapProducerLookup_RejectsMissingPrefabAndSourceKeyMismatch();
+            Debug.Log("[OperationMapProducerLookupValidation] result=Passed tests=3");
+            ValidationExit.Passed();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[OperationMapProducerLookupValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
     public static void RunProductionMetadataValidation()
     {
         try
@@ -1725,6 +1744,136 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             Assert.AreEqual(neutralProducer.Id, buildingId);
             Assert.AreEqual(0, productionIndex);
             Assert.AreEqual("Neutral Helipad", displayName);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
+    public void OperationMapProducerLookup_PrefersLowestPlacementPlayerProducer()
+    {
+        using var world = new World(nameof(OperationMapProducerLookup_PrefersLowestPlacementPlayerProducer));
+        EntityManager em = world.EntityManager;
+        GameObject unitPrefab = new("Rifleman");
+        try
+        {
+            Entity prefabEntity = em.CreateEntity(typeof(Prefab));
+            CreateOperationMapProducer(em, prefabEntity, unitPrefab.name, FactionIdentity.NeutralFactionId, 1, "Neutral Tent");
+            CreateOperationMapProducer(em, prefabEntity, unitPrefab.name, FactionIdentity.PlayerFactionId, 9, "Later Tent");
+            Entity expected = CreateOperationMapProducer(
+                em,
+                prefabEntity,
+                unitPrefab.name,
+                FactionIdentity.PlayerFactionId,
+                3,
+                "Player Tent");
+            var requestSystem = new BuildingProductionRequestSystemHelper();
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
+                new Dictionary<int, RuntimeBuildingEntity>(),
+                new BuildingProductionQueueCompositionSystemHelper(),
+                unitPrefab,
+                em);
+
+            Assert.IsTrue(requestSystem.TryFindFirstFriendlyOperationMapProducer(
+                context,
+                unitPrefab,
+                out Entity producer,
+                out int productionIndex,
+                out string displayName));
+            Assert.AreEqual(expected, producer);
+            Assert.AreEqual(0, productionIndex);
+            Assert.AreEqual("Player Tent", displayName);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
+    public void OperationMapProducerLookup_FallsBackToLiveNeutralProducer()
+    {
+        using var world = new World(nameof(OperationMapProducerLookup_FallsBackToLiveNeutralProducer));
+        EntityManager em = world.EntityManager;
+        GameObject unitPrefab = new("Rifleman");
+        try
+        {
+            Entity prefabEntity = em.CreateEntity(typeof(Prefab));
+            Entity destroyedPlayer = CreateOperationMapProducer(
+                em,
+                prefabEntity,
+                unitPrefab.name,
+                FactionIdentity.PlayerFactionId,
+                1,
+                "Destroyed Tent");
+            em.SetComponentEnabled<OperationMapBuildingDestroyedComponent>(destroyedPlayer, true);
+            Entity neutral = CreateOperationMapProducer(
+                em,
+                prefabEntity,
+                unitPrefab.name,
+                FactionIdentity.NeutralFactionId,
+                2,
+                "Neutral Tent");
+            var requestSystem = new BuildingProductionRequestSystemHelper();
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
+                new Dictionary<int, RuntimeBuildingEntity>(),
+                new BuildingProductionQueueCompositionSystemHelper(),
+                unitPrefab,
+                em);
+
+            Assert.IsTrue(requestSystem.TryFindFirstFriendlyOperationMapProducer(
+                context,
+                unitPrefab,
+                out Entity producer,
+                out _,
+                out string displayName));
+            Assert.AreEqual(neutral, producer);
+            Assert.AreEqual("Neutral Tent", displayName);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
+    public void OperationMapProducerLookup_RejectsMissingPrefabAndSourceKeyMismatch()
+    {
+        using var world = new World(nameof(OperationMapProducerLookup_RejectsMissingPrefabAndSourceKeyMismatch));
+        EntityManager em = world.EntityManager;
+        GameObject unitPrefab = new("Rifleman");
+        try
+        {
+            Entity prefabEntity = em.CreateEntity(typeof(Prefab));
+            CreateOperationMapProducer(
+                em,
+                prefabEntity,
+                "DifferentUnit",
+                FactionIdentity.PlayerFactionId,
+                1,
+                "Wrong Tent");
+            CreateOperationMapProducer(
+                em,
+                Entity.Null,
+                unitPrefab.name,
+                FactionIdentity.PlayerFactionId,
+                2,
+                "Missing Prefab Tent");
+            var requestSystem = new BuildingProductionRequestSystemHelper();
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
+                new Dictionary<int, RuntimeBuildingEntity>(),
+                new BuildingProductionQueueCompositionSystemHelper(),
+                unitPrefab,
+                em);
+
+            Assert.IsFalse(requestSystem.TryFindFirstFriendlyOperationMapProducer(
+                context,
+                unitPrefab,
+                out _,
+                out _,
+                out _));
         }
         finally
         {
@@ -3532,6 +3681,12 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             null,
             null);
 
+        bool TryGetEntityManager(out EntityManager em)
+        {
+            em = entityManager;
+            return entityManager.World != null && entityManager.World.IsCreated;
+        }
+
         return new BuildingProductionRequestSystemHelper.Context(
             runtimeBuildings,
             null,
@@ -3565,7 +3720,48 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             _ => { },
             Debug.LogWarning,
             (_, _) => 0,
-            (_, _) => 0);
+            (_, _) => 0,
+            tryGetEntityManager: TryGetEntityManager);
+    }
+
+    private static Entity CreateOperationMapProducer(
+        EntityManager entityManager,
+        Entity prefabEntity,
+        string unitSourceKey,
+        byte factionId,
+        int placementIndex,
+        string displayName)
+    {
+        Entity producer = entityManager.CreateEntity(
+            typeof(OperationMapBuildingComponent),
+            typeof(OperationMapBuildingDestroyedComponent),
+            typeof(Faction),
+            typeof(UnitHealth),
+            typeof(UnitDisplayInfo));
+        entityManager.SetComponentEnabled<OperationMapBuildingDestroyedComponent>(producer, false);
+        entityManager.SetComponentData(producer, new OperationMapBuildingComponent
+        {
+            OperationMapId = new FixedString128Bytes("operation-map-producer-test"),
+            StableId = new FixedString128Bytes($"producer.{placementIndex}"),
+            SourceGlobalObjectId = new FixedString128Bytes($"source.{placementIndex}"),
+            PlacementIndex = placementIndex,
+            BlockerPolicy = OperationMapBuildingBlockerPolicy.RubbleRemainsBlocked
+        });
+        entityManager.SetComponentData(producer, new Faction { Id = factionId });
+        entityManager.SetComponentData(producer, new UnitHealth { Current = 100, Max = 100 });
+        entityManager.SetComponentData(producer, new UnitDisplayInfo
+        {
+            Name = new FixedString64Bytes(displayName)
+        });
+        DynamicBuffer<OperationMapBuildingProductionPrefab> productions =
+            entityManager.AddBuffer<OperationMapBuildingProductionPrefab>(producer);
+        productions.Add(new OperationMapBuildingProductionPrefab
+        {
+            ProductionIndex = 0,
+            Prefab = prefabEntity,
+            SourceKey = new FixedString64Bytes(unitSourceKey)
+        });
+        return producer;
     }
 
     private static BuildingRuntimeReadModelCompositionSystemHelper.Context CreateRuntimeQueryContext(

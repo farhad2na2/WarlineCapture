@@ -1057,6 +1057,102 @@ namespace Game.Runtime
             return TryFindFirstFriendlyProducerBuilding(context, unitPrefab, requireQueueCapacity: false, out buildingId, out productionIndex, out buildingDisplayName);
         }
 
+        public bool TryFindFirstFriendlyOperationMapProducer(
+            Context context,
+            GameObject unitPrefab,
+            out Entity buildingEntity,
+            out int productionIndex,
+            out string buildingDisplayName)
+        {
+            buildingEntity = Entity.Null;
+            productionIndex = -1;
+            buildingDisplayName = string.Empty;
+            if (unitPrefab == null ||
+                context.TryGetEntityManager == null ||
+                !context.TryGetEntityManager(out EntityManager em) ||
+                em.World == null ||
+                !em.World.IsCreated)
+            {
+                return false;
+            }
+
+            FixedString64Bytes unitSourceKey = new(unitPrefab.name);
+            using EntityQuery query = em.CreateEntityQuery(
+                ComponentType.ReadOnly<OperationMapBuildingComponent>(),
+                ComponentType.ReadOnly<Faction>(),
+                ComponentType.ReadOnly<UnitHealth>(),
+                ComponentType.ReadOnly<UnitDisplayInfo>(),
+                ComponentType.ReadOnly<OperationMapBuildingProductionPrefab>());
+            using NativeArray<Entity> candidates = query.ToEntityArray(Allocator.Temp);
+            for (int pass = 0; pass < 2; pass++)
+            {
+                Entity bestEntity = Entity.Null;
+                int bestProductionIndex = -1;
+                int bestPlacementIndex = int.MaxValue;
+                string bestDisplayName = string.Empty;
+                for (int candidateIndex = 0; candidateIndex < candidates.Length; candidateIndex++)
+                {
+                    Entity candidate = candidates[candidateIndex];
+                    byte factionId = em.GetComponentData<Faction>(candidate).Id;
+                    bool passMatches = pass == 0
+                        ? factionId == FactionIdentity.PlayerFactionId
+                        : factionId == FactionIdentity.NeutralFactionId;
+                    if (!passMatches || em.GetComponentData<UnitHealth>(candidate).Current <= 0)
+                        continue;
+                    if (em.HasComponent<Prefab>(candidate))
+                        continue;
+                    if (em.HasComponent<OperationMapBuildingDestroyedComponent>(candidate) &&
+                        em.IsComponentEnabled<OperationMapBuildingDestroyedComponent>(candidate))
+                    {
+                        continue;
+                    }
+
+                    DynamicBuffer<OperationMapBuildingProductionPrefab> productions =
+                        em.GetBuffer<OperationMapBuildingProductionPrefab>(candidate, true);
+                    int matchingProductionIndex = -1;
+                    for (int bufferIndex = 0; bufferIndex < productions.Length; bufferIndex++)
+                    {
+                        OperationMapBuildingProductionPrefab production = productions[bufferIndex];
+                        if (production.Prefab == Entity.Null ||
+                            !em.Exists(production.Prefab) ||
+                            production.SourceKey != unitSourceKey)
+                        {
+                            continue;
+                        }
+
+                        matchingProductionIndex = production.ProductionIndex;
+                        break;
+                    }
+
+                    if (matchingProductionIndex < 0)
+                        continue;
+
+                    int placementIndex = em.GetComponentData<OperationMapBuildingComponent>(candidate).PlacementIndex;
+                    if (bestEntity != Entity.Null &&
+                        (placementIndex > bestPlacementIndex ||
+                         (placementIndex == bestPlacementIndex && candidate.Index >= bestEntity.Index)))
+                    {
+                        continue;
+                    }
+
+                    bestEntity = candidate;
+                    bestProductionIndex = matchingProductionIndex;
+                    bestPlacementIndex = placementIndex;
+                    bestDisplayName = em.GetComponentData<UnitDisplayInfo>(candidate).Name.ToString();
+                }
+
+                if (bestEntity == Entity.Null)
+                    continue;
+
+                buildingEntity = bestEntity;
+                productionIndex = bestProductionIndex;
+                buildingDisplayName = bestDisplayName;
+                return true;
+            }
+
+            return false;
+        }
+
         private bool TryFindFirstFriendlyProducerBuilding(
             Context context,
             GameObject unitPrefab,

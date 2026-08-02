@@ -145,6 +145,25 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         }
     }
 
+    public static void RunOperationMapProducerSpawnTransactionValidation()
+    {
+        try
+        {
+            var tests = new BuildingProductionQueueCompositionSystemHelperTests();
+            tests.OperationMapProducerSpawnTransaction_InstantiatesConfiguredUnitAndCompletesRequest();
+            tests.OperationMapProducerSpawnTransaction_RejectsEarlyOrInvalidPlacement();
+            tests.OperationMapProducerSpawnTransaction_RejectsPrefabWithoutUnitContract();
+            Debug.Log("[OperationMapProducerSpawnTransactionValidation] result=Passed tests=3");
+            ValidationExit.Passed();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[OperationMapProducerSpawnTransactionValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
     public static void RunProductionMetadataValidation()
     {
         try
@@ -2082,6 +2101,131 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             em.SetComponentEnabled<OperationMapBuildingDestroyedComponent>(producer, false);
             em.DestroyEntity(prefabEntity);
             Assert.IsFalse(requestSystem.TryPeekReadyOperationMapProduction(em, producer, 60f, out _));
+            Assert.AreEqual(1, em.GetBuffer<OperationMapBuildingUnitProductionRequest>(producer, true).Length);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
+    public void OperationMapProducerSpawnTransaction_InstantiatesConfiguredUnitAndCompletesRequest()
+    {
+        using var world = new World(nameof(OperationMapProducerSpawnTransaction_InstantiatesConfiguredUnitAndCompletesRequest));
+        EntityManager em = world.EntityManager;
+        GameObject unitPrefab = new("Rifleman");
+        try
+        {
+            Entity prefabEntity = CreateOperationMapUnitPrefab(em);
+            Entity producer = CreateOperationMapProducer(
+                em,
+                prefabEntity,
+                unitPrefab.name,
+                FactionIdentity.PlayerFactionId,
+                1,
+                "Player Tent");
+            var requestSystem = new BuildingProductionRequestSystemHelper();
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
+                new Dictionary<int, RuntimeBuildingEntity>(),
+                new BuildingProductionQueueCompositionSystemHelper(),
+                unitPrefab,
+                em);
+            Assert.IsTrue(requestSystem.TryEnqueueFriendlyOperationMapProduction(
+                context, unitPrefab, 0f, out _, out int requestId, out _));
+
+            int2 spawnCell = new(21, 34);
+            float3 spawnPosition = new(215f, 2f, 345f);
+            Assert.IsTrue(requestSystem.TrySpawnReadyOperationMapProduction(
+                em,
+                producer,
+                requestId,
+                60f,
+                spawnCell,
+                spawnPosition,
+                out Entity spawned));
+            Assert.IsTrue(em.Exists(spawned));
+            Assert.IsFalse(em.HasComponent<Prefab>(spawned));
+            Assert.AreEqual(spawnCell, em.GetComponentData<UnitGrid>(spawned).Cell);
+            Assert.AreEqual(spawnPosition, em.GetComponentData<LocalTransform>(spawned).Position);
+            Assert.AreEqual(spawnPosition, em.GetComponentData<UnitPrevWorldPos>(spawned).Value);
+            Assert.AreEqual(FactionIdentity.PlayerFactionId, em.GetComponentData<Faction>(spawned).Id);
+            Assert.AreEqual(unitPrefab.name, em.GetComponentData<UnitSourcePrefabKey>(spawned).Value.ToString());
+            Assert.IsFalse(em.HasComponent<UnitGridInitialized>(spawned));
+            Assert.AreEqual(0, em.GetBuffer<OperationMapBuildingUnitProductionRequest>(producer, true).Length);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
+    public void OperationMapProducerSpawnTransaction_RejectsEarlyOrInvalidPlacement()
+    {
+        using var world = new World(nameof(OperationMapProducerSpawnTransaction_RejectsEarlyOrInvalidPlacement));
+        EntityManager em = world.EntityManager;
+        GameObject unitPrefab = new("Rifleman");
+        try
+        {
+            Entity prefabEntity = CreateOperationMapUnitPrefab(em);
+            Entity producer = CreateOperationMapProducer(
+                em,
+                prefabEntity,
+                unitPrefab.name,
+                FactionIdentity.PlayerFactionId,
+                1,
+                "Player Tent");
+            var requestSystem = new BuildingProductionRequestSystemHelper();
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
+                new Dictionary<int, RuntimeBuildingEntity>(),
+                new BuildingProductionQueueCompositionSystemHelper(),
+                unitPrefab,
+                em);
+            Assert.IsTrue(requestSystem.TryEnqueueFriendlyOperationMapProduction(
+                context, unitPrefab, 10f, out _, out int requestId, out _));
+
+            Assert.IsFalse(requestSystem.TrySpawnReadyOperationMapProduction(
+                em, producer, requestId, 69f, new int2(1, 1), float3.zero, out _));
+            Assert.IsFalse(requestSystem.TrySpawnReadyOperationMapProduction(
+                em, producer, requestId, 70f, new int2(-1, 1), float3.zero, out _));
+            Assert.IsFalse(requestSystem.TrySpawnReadyOperationMapProduction(
+                em, producer, requestId, 70f, new int2(1, 1), new float3(float.NaN), out _));
+            Assert.AreEqual(1, em.GetBuffer<OperationMapBuildingUnitProductionRequest>(producer, true).Length);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
+    public void OperationMapProducerSpawnTransaction_RejectsPrefabWithoutUnitContract()
+    {
+        using var world = new World(nameof(OperationMapProducerSpawnTransaction_RejectsPrefabWithoutUnitContract));
+        EntityManager em = world.EntityManager;
+        GameObject unitPrefab = new("Rifleman");
+        try
+        {
+            Entity prefabEntity = em.CreateEntity(typeof(Prefab));
+            Entity producer = CreateOperationMapProducer(
+                em,
+                prefabEntity,
+                unitPrefab.name,
+                FactionIdentity.PlayerFactionId,
+                1,
+                "Player Tent");
+            var requestSystem = new BuildingProductionRequestSystemHelper();
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
+                new Dictionary<int, RuntimeBuildingEntity>(),
+                new BuildingProductionQueueCompositionSystemHelper(),
+                unitPrefab,
+                em);
+            Assert.IsTrue(requestSystem.TryEnqueueFriendlyOperationMapProduction(
+                context, unitPrefab, 0f, out _, out int requestId, out _));
+
+            Assert.IsFalse(requestSystem.TrySpawnReadyOperationMapProduction(
+                em, producer, requestId, 60f, new int2(1, 1), float3.zero, out _));
             Assert.AreEqual(1, em.GetBuffer<OperationMapBuildingUnitProductionRequest>(producer, true).Length);
         }
         finally
@@ -4061,6 +4205,27 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         entityManager.AddComponentData(producer, new OperationMapBuildingProductionQueueComponent());
         entityManager.AddBuffer<OperationMapBuildingUnitProductionRequest>(producer);
         return producer;
+    }
+
+    private static Entity CreateOperationMapUnitPrefab(EntityManager entityManager)
+    {
+        Entity prefab = entityManager.CreateEntity(
+            typeof(Prefab),
+            typeof(UnitHealth),
+            typeof(UnitFootprint),
+            typeof(UnitGrid),
+            typeof(LocalTransform),
+            typeof(Faction),
+            typeof(UnitGridInitialized),
+            typeof(UnitPrevWorldPos),
+            typeof(UnitMoveVisualComponent),
+            typeof(UnitRespawnPrefab),
+            typeof(UnitAttackCooldownComponent),
+            typeof(UnitSourcePrefabKey));
+        entityManager.SetComponentData(prefab, new UnitHealth { Current = 100, Max = 100 });
+        entityManager.SetComponentData(prefab, new UnitFootprint { Size = new int2(1, 1) });
+        entityManager.SetComponentData(prefab, LocalTransform.Identity);
+        return prefab;
     }
 
     private static BuildingRuntimeReadModelCompositionSystemHelper.Context CreateRuntimeQueryContext(

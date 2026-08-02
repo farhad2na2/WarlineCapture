@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEngine;
 using Game.Components;
 using Game.Configs;
@@ -1329,6 +1331,98 @@ namespace Game.Runtime
             }
 
             return false;
+        }
+
+        public bool TrySpawnReadyOperationMapProduction(
+            EntityManager em,
+            Entity buildingEntity,
+            int requestId,
+            float now,
+            int2 spawnCell,
+            float3 spawnPosition,
+            out Entity spawnedUnit)
+        {
+            spawnedUnit = Entity.Null;
+            if (spawnCell.x < 0 ||
+                spawnCell.y < 0 ||
+                !math.all(math.isfinite(spawnPosition)) ||
+                !TryPeekReadyOperationMapProduction(
+                    em,
+                    buildingEntity,
+                    now,
+                    out OperationMapBuildingUnitProductionRequest request) ||
+                request.RequestId != requestId ||
+                !em.HasComponent<Prefab>(request.UnitPrefab) ||
+                !em.HasComponent<UnitHealth>(request.UnitPrefab) ||
+                !em.HasComponent<UnitFootprint>(request.UnitPrefab) ||
+                !em.HasComponent<Faction>(buildingEntity))
+            {
+                return false;
+            }
+
+            byte producerFaction = em.GetComponentData<Faction>(buildingEntity).Id;
+            byte spawnedFaction = producerFaction == FactionIdentity.NeutralFactionId
+                ? FactionIdentity.PlayerFactionId
+                : producerFaction;
+            Entity instance = em.Instantiate(request.UnitPrefab);
+            SetOrAddSpawnComponent(em, instance, new UnitGrid { Cell = spawnCell });
+            SetOrAddSpawnComponent(em, instance, LocalTransform.FromPosition(spawnPosition));
+            SetOrAddSpawnComponent(em, instance, new UnitPrevWorldPos { Value = spawnPosition });
+            SetOrAddSpawnComponent(em, instance, new UnitMoveVisualComponent());
+            SetOrAddSpawnComponent(em, instance, new Faction { Id = spawnedFaction });
+            SetOrAddSpawnComponent(em, instance, new UnitRespawnPrefab { Prefab = Entity.Null });
+            SetOrAddSpawnComponent(em, instance, new UnitAttackCooldownComponent());
+            SetOrAddSpawnComponent(em, instance, new UnitSourcePrefabKey { Value = request.UnitSourceKey });
+            if (em.HasComponent<UnitAirComponent>(instance))
+            {
+                em.SetComponentData(instance, new UnitAirComponent
+                {
+                    HomePosition = spawnPosition,
+                    HomeCell = spawnCell,
+                    HomeInitialized = 1
+                });
+            }
+            if (em.HasComponent<UnitIdleWanderComponent>(instance))
+            {
+                em.SetComponentData(instance, new UnitIdleWanderComponent
+                {
+                    RandomState = math.max(1u, (uint)requestId)
+                });
+            }
+
+            RemoveSpawnTransientComponent<UnitGridInitialized>(em, instance);
+            RemoveSpawnTransientComponent<UnitPathFollow>(em, instance);
+            RemoveSpawnTransientComponent<UnitPathRange>(em, instance);
+            RemoveSpawnTransientComponent<EngageTarget>(em, instance);
+            RemoveSpawnTransientComponent<UnitPathRequest>(em, instance);
+            RemoveSpawnTransientComponent<UnitTarget>(em, instance);
+            RemoveSpawnTransientComponent<AutoWanderMoveTag>(em, instance);
+            RemoveSpawnTransientComponent<SelectedUnitTag>(em, instance);
+
+            if (!TryCompleteReadyOperationMapProduction(em, buildingEntity, requestId, now))
+            {
+                em.DestroyEntity(instance);
+                return false;
+            }
+
+            spawnedUnit = instance;
+            return true;
+        }
+
+        private static void SetOrAddSpawnComponent<T>(EntityManager em, Entity entity, T component)
+            where T : unmanaged, IComponentData
+        {
+            if (em.HasComponent<T>(entity))
+                em.SetComponentData(entity, component);
+            else
+                em.AddComponentData(entity, component);
+        }
+
+        private static void RemoveSpawnTransientComponent<T>(EntityManager em, Entity entity)
+            where T : unmanaged, IComponentData
+        {
+            if (em.HasComponent<T>(entity))
+                em.RemoveComponent<T>(entity);
         }
 
         private static Entity ResolveOperationMapProductionPrefab(

@@ -716,6 +716,17 @@ namespace Game.Editor
 
             public int ReservedCount => _occupiedBounds.Count;
 
+            public int CountRoadOverlaps()
+            {
+                int overlapCount = 0;
+                for (int index = 0; index < _occupiedBounds.Count; index++)
+                {
+                    if (OverlapsRoad(_occupiedBounds[index]))
+                        overlapCount++;
+                }
+                return overlapCount;
+            }
+
             public BuildingPlacementContext(
                 HashSet<Vector2Int> roadCells,
                 Vector3 roadOrigin,
@@ -899,17 +910,12 @@ namespace Game.Editor
 
                         var roadCell = new Vector2Int(column, row);
                         bool dirtRoad = _dirtRoadCells.Contains(roadCell);
-                        float roadHalfExtent = dirtRoad
-                            ? DirtRoadVisualHalfExtent
-                            : RoadVisualHalfExtent;
-                        float centerOffset = dirtRoad ? RoadGridSize * 0.5f : 0f;
-                        float roadX = _roadOrigin.x + column * RoadGridSize + centerOffset;
-                        float roadZ = _roadOrigin.z + row * RoadGridSize + centerOffset;
-                        var roadBounds = new Rect(
-                            roadX - roadHalfExtent,
-                            roadZ - roadHalfExtent,
-                            roadHalfExtent * 2f,
-                            roadHalfExtent * 2f);
+                        Rect roadBounds = CreateRoadVisualBounds(
+                            roadCell,
+                            _roadOrigin,
+                            dirtRoad,
+                            RoadVisualHalfExtent,
+                            DirtRoadVisualHalfExtent);
                         if (roadBounds.Overlaps(candidate, true))
                             return true;
                     }
@@ -6455,6 +6461,29 @@ namespace Game.Editor
                 origin.x + (cell.x + 0.5f) * RoadGridSize,
                 origin.z + (cell.y + 0.5f) * RoadGridSize);
 
+        internal static Rect CreateRoadVisualBounds(
+            Vector2Int cell,
+            Vector3 origin,
+            bool dirtRoad,
+            float roadVisualHalfExtent,
+            float dirtRoadVisualHalfExtent)
+        {
+            if (!float.IsFinite(roadVisualHalfExtent) || roadVisualHalfExtent <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(roadVisualHalfExtent));
+            if (!float.IsFinite(dirtRoadVisualHalfExtent) || dirtRoadVisualHalfExtent <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(dirtRoadVisualHalfExtent));
+
+            Vector2 center = RoadCellWorldCenter(cell, origin);
+            float halfExtent = dirtRoad
+                ? dirtRoadVisualHalfExtent
+                : roadVisualHalfExtent;
+            return new Rect(
+                center.x - halfExtent,
+                center.y - halfExtent,
+                halfExtent * 2f,
+                halfExtent * 2f);
+        }
+
         private static RoadVisualVariantSystem.Prefabs LoadRoadPrefabs()
         {
             string configPath = AssetDatabase.GUIDToAssetPath(RoadBuildConfigGuid);
@@ -6949,10 +6978,17 @@ namespace Game.Editor
             }
 
             SetStaticRecursively(buildingObject);
+            int roadOverlapCount = placementContext.CountRoadOverlaps();
+            if (roadOverlapCount != 0)
+            {
+                throw new InvalidOperationException(
+                    $"Dense-city building placement retained {roadOverlapCount} road overlaps.");
+            }
             Debug.Log(
                 $"[DenseCityBuildingPlacementAudit] reserved={placementContext.ReservedCount} " +
                 $"centralLandmarks={centralLandmarkCount} " +
-                $"snappedFrontages={snappedFrontageCount} buildingOverlaps=0 roadOverlaps=0");
+                $"snappedFrontages={snappedFrontageCount} buildingOverlaps=0 " +
+                $"roadOverlaps={roadOverlapCount}");
             return new BuildingBakeResult(
                 buildingCount,
                 parkCount,
@@ -7646,7 +7682,9 @@ namespace Game.Editor
             var localBoundsByPrefab = new Dictionary<GameObject, Bounds>();
             int count = 0;
             int gameplayTerrains = 0;
-            const int acceptedOpenGroundPatchCount = 3870;
+            // Reconciled with the corrected road-cell center used by building clearance.
+            // Keep this exact so future generator drift still fails closed.
+            const int acceptedOpenGroundPatchCount = 3539;
             const float spacing = 10f;
             for (float z = spacing * 0.5f;
                  z < mapDepth && count < acceptedOpenGroundPatchCount;

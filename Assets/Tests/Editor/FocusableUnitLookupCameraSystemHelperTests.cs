@@ -21,7 +21,9 @@ public sealed class FocusableUnitLookupCameraSystemHelperTests
             RunCase(test => test.ScreenDistanceFallback_UsesVisualHitboxForLargeAircraft());
             RunCase(test => test.GridLookup_UsesAirSelectionHitboxPaddingForLargeMapAircraft());
             RunCase(test => test.GridLookup_RebindsAfterWorldReplacement());
-            UnityEngine.Debug.Log("[FocusableUnitLookupFocusedValidation] result=Passed tests=5");
+            RunCase(test => test.GridLookup_SelectsCanonicalOperationMapBuildingWithoutUnitMove());
+            RunCase(test => test.GridLookup_RejectsDestroyedCanonicalOperationMapBuilding());
+            UnityEngine.Debug.Log("[FocusableUnitLookupFocusedValidation] result=Passed tests=7");
         }
         catch (System.Exception ex)
         {
@@ -306,6 +308,68 @@ public sealed class FocusableUnitLookupCameraSystemHelperTests
         }
     }
 
+    [Test]
+    public void GridLookup_SelectsCanonicalOperationMapBuildingWithoutUnitMove()
+    {
+        GameObject cameraObject = new("FocusableCanonicalBuildingCamera");
+        Camera camera = cameraObject.AddComponent<Camera>();
+        camera.orthographic = true;
+        camera.orthographicSize = 16f;
+        camera.pixelRect = new Rect(0f, 0f, 100f, 100f);
+        camera.transform.position = new Vector3(0f, 0f, -10f);
+
+        try
+        {
+            CreateGrid(64, 64);
+            Entity building = CreateCanonicalBuilding(new int2(12, 8), new int2(4, 3));
+            var lookup = new FocusableUnitLookupCameraSystemHelper();
+
+            Assert.IsTrue(lookup.TryGetClickedUnitEntity(
+                _entityManager,
+                camera,
+                new int2(12, 8),
+                new Vector2(50f, 50f),
+                out Entity focused));
+            Assert.AreEqual(building, focused);
+            Assert.IsFalse(_entityManager.HasComponent<UnitMove>(building));
+            Assert.IsTrue(_entityManager.HasComponent<StaticGridBlocker>(building));
+        }
+        finally
+        {
+            Object.DestroyImmediate(cameraObject);
+        }
+    }
+
+    [Test]
+    public void GridLookup_RejectsDestroyedCanonicalOperationMapBuilding()
+    {
+        GameObject cameraObject = new("FocusableDestroyedBuildingCamera");
+        Camera camera = cameraObject.AddComponent<Camera>();
+        camera.orthographic = true;
+        camera.orthographicSize = 16f;
+        camera.pixelRect = new Rect(0f, 0f, 100f, 100f);
+        camera.transform.position = new Vector3(0f, 0f, -10f);
+
+        try
+        {
+            CreateGrid(64, 64);
+            Entity building = CreateCanonicalBuilding(new int2(12, 8), new int2(4, 3));
+            _entityManager.SetComponentEnabled<OperationMapBuildingDestroyedComponent>(building, true);
+            var lookup = new FocusableUnitLookupCameraSystemHelper();
+
+            Assert.IsFalse(lookup.TryGetClickedUnitEntity(
+                _entityManager,
+                camera,
+                new int2(12, 8),
+                new Vector2(50f, 50f),
+                out _));
+        }
+        finally
+        {
+            Object.DestroyImmediate(cameraObject);
+        }
+    }
+
     private void CreateGrid(int width, int height)
     {
         Entity grid = _entityManager.CreateEntity(typeof(GridConfig));
@@ -331,6 +395,29 @@ public sealed class FocusableUnitLookupCameraSystemHelperTests
         _entityManager.SetComponentData(entity, new UnitMove { Speed = 1f });
         _entityManager.SetComponentData(entity, new UnitFootprint { Size = footprint });
         _entityManager.SetComponentData(entity, new LocalToWorld { Value = float4x4.Translate(new float3(cell.x, 0f, cell.y)) });
+        return entity;
+    }
+
+    private Entity CreateCanonicalBuilding(int2 cell, int2 footprint)
+    {
+        Entity entity = _entityManager.CreateEntity(
+            typeof(OperationMapBuildingComponent),
+            typeof(OperationMapBuildingDestroyedComponent),
+            typeof(Faction),
+            typeof(UnitGrid),
+            typeof(UnitFootprint),
+            typeof(UnitHealth),
+            typeof(LocalToWorld),
+            typeof(StaticGridBlocker));
+        _entityManager.SetComponentEnabled<OperationMapBuildingDestroyedComponent>(entity, false);
+        _entityManager.SetComponentData(entity, new Faction { Id = FactionIdentity.PlayerFactionId });
+        _entityManager.SetComponentData(entity, new UnitGrid { Cell = cell });
+        _entityManager.SetComponentData(entity, new UnitFootprint { Size = footprint });
+        _entityManager.SetComponentData(entity, new UnitHealth { Current = 100, Max = 100 });
+        _entityManager.SetComponentData(entity, new LocalToWorld
+        {
+            Value = float4x4.Translate(new float3(cell.x, 0f, cell.y))
+        });
         return entity;
     }
 }

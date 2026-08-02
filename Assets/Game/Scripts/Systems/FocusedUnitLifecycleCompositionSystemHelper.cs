@@ -230,12 +230,6 @@ namespace Game.Runtime
                     $"tryFocusUnit result=False reason=NoClickedUnit screen={screenPosition} frame={UnityEngine.Time.frameCount}");
                 return false;
             }
-            if (IsBuildingEntity(em, bestEntity))
-            {
-                SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
-                    $"tryFocusUnit result=False reason=ClickedBuilding entity={DescribeSelectionEntity(em, bestEntity)} screen={screenPosition} frame={UnityEngine.Time.frameCount}");
-                return false;
-            }
             if (!FocusUnitEntity(
                     em,
                     bestEntity,
@@ -272,18 +266,6 @@ namespace Game.Runtime
             }
 
             return selectedEntities;
-        }
-
-        private static bool IsBuildingEntity(EntityManager em, Entity entity)
-        {
-            if (entity == Entity.Null || !em.Exists(entity))
-                return false;
-            if (em.HasComponent<UnitMove>(entity))
-                return false;
-            if (!em.HasComponent<UnitHealth>(entity) || !em.HasComponent<UnitRespawnPrefab>(entity))
-                return false;
-
-            return em.GetComponentData<UnitRespawnPrefab>(entity).Prefab == Entity.Null;
         }
 
         private static string DescribeSelectionEntity(EntityManager em, Entity entity)

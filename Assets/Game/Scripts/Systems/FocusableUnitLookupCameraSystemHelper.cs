@@ -28,7 +28,9 @@ namespace Game.Runtime
         private World _queryWorld;
         private EntityQuery _gridConfigQuery;
         private EntityQuery _focusableUnitsQuery;
+        private EntityQuery _focusableBuildingsQuery;
         private EntityQuery _changedFocusableCoverageQuery;
+        private EntityQuery _changedFocusableBuildingCoverageQuery;
         private readonly Dictionary<int, List<Entity>> _focusableUnitsByCell = new();
         private readonly Dictionary<Entity, FocusableUnitCoverage> _focusableUnitCoverage = new();
         private int _lastFocusableUnitCount = -1;
@@ -43,8 +45,15 @@ namespace Game.Runtime
             ResetLookup();
             _gridConfigQuery = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
             _focusableUnitsQuery = em.CreateEntityQuery(CreateFocusableUnitsQueryDesc());
+            _focusableBuildingsQuery = em.CreateEntityQuery(CreateFocusableBuildingsQueryDesc());
             _changedFocusableCoverageQuery = em.CreateEntityQuery(CreateFocusableUnitsQueryDesc());
             _changedFocusableCoverageQuery.SetChangedVersionFilter(new[]
+            {
+                ComponentType.ReadOnly<UnitGrid>(),
+                ComponentType.ReadOnly<UnitFootprint>()
+            });
+            _changedFocusableBuildingCoverageQuery = em.CreateEntityQuery(CreateFocusableBuildingsQueryDesc());
+            _changedFocusableBuildingCoverageQuery.SetChangedVersionFilter(new[]
             {
                 ComponentType.ReadOnly<UnitGrid>(),
                 ComponentType.ReadOnly<UnitFootprint>()
@@ -136,9 +145,9 @@ namespace Game.Runtime
             float maxDistanceSq = maxDistancePixels * maxDistancePixels;
             float bestDistanceSq = maxDistanceSq;
             using NativeList<FocusableScreenDistanceCandidate> candidates = new(
-                _focusableUnitsQuery.CalculateEntityCount(),
+                _focusableUnitsQuery.CalculateEntityCount() + _focusableBuildingsQuery.CalculateEntityCount(),
                 Allocator.TempJob);
-            JobHandle collectHandle = new CollectFocusableScreenDistanceCandidatesJob
+            CollectFocusableScreenDistanceCandidatesJob collectJob = new()
             {
                 EntityType = em.GetEntityTypeHandle(),
                 LocalToWorldType = em.GetComponentTypeHandle<LocalToWorld>(true),
@@ -148,7 +157,9 @@ namespace Game.Runtime
                 EngageTargetType = em.GetComponentTypeHandle<EngageTarget>(true),
                 UnitSelectionHitboxType = em.GetComponentTypeHandle<UnitSelectionHitbox>(true),
                 Candidates = candidates
-            }.Schedule(_focusableUnitsQuery, default);
+            };
+            JobHandle collectHandle = collectJob.Schedule(_focusableUnitsQuery, default);
+            collectHandle = collectJob.Schedule(_focusableBuildingsQuery, collectHandle);
             collectHandle.Complete();
 
             for (int i = 0; i < candidates.Length; i++)
@@ -206,6 +217,26 @@ namespace Game.Runtime
             };
         }
 
+        private static EntityQueryDesc CreateFocusableBuildingsQueryDesc()
+        {
+            return new EntityQueryDesc
+            {
+                All = new[]
+                {
+                    ComponentType.ReadOnly<OperationMapBuildingComponent>(),
+                    ComponentType.ReadOnly<Faction>(),
+                    ComponentType.ReadOnly<UnitGrid>(),
+                    ComponentType.ReadOnly<UnitFootprint>(),
+                    ComponentType.ReadOnly<UnitHealth>(),
+                    ComponentType.ReadOnly<LocalToWorld>()
+                },
+                None = new[]
+                {
+                    ComponentType.ReadOnly<Prefab>()
+                }
+            };
+        }
+
         private void RefreshLookup(EntityManager em)
         {
             EnsureEntityQueries(em);
@@ -213,24 +244,25 @@ namespace Game.Runtime
                 return;
 
             GridConfig grid = em.GetComponentData<GridConfig>(_gridConfigQuery.GetSingletonEntity());
-            int focusableUnitCount = _focusableUnitsQuery.CalculateEntityCount();
+            int focusableUnitCount =
+                _focusableUnitsQuery.CalculateEntityCount() +
+                _focusableBuildingsQuery.CalculateEntityCount();
             if (_lastFocusableUnitCount < 0 || focusableUnitCount != _lastFocusableUnitCount)
             {
                 RebuildLookup(em, grid, focusableUnitCount);
                 return;
             }
 
-            if (_changedFocusableCoverageQuery.IsEmptyIgnoreFilter)
+            if (_changedFocusableCoverageQuery.IsEmptyIgnoreFilter &&
+                _changedFocusableBuildingCoverageQuery.IsEmptyIgnoreFilter)
                 return;
 
-            EntityTypeHandle entityType = em.GetEntityTypeHandle();
-            using NativeArray<ArchetypeChunk> chunks = _changedFocusableCoverageQuery.ToArchetypeChunkArray(Allocator.Temp);
-            using var changedEntities = new NativeList<Entity>(_changedFocusableCoverageQuery.CalculateEntityCount(), Allocator.Temp);
-            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
-            {
-                NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
-                changedEntities.AddRange(entities);
-            }
+            using var changedEntities = new NativeList<Entity>(
+                _changedFocusableCoverageQuery.CalculateEntityCount() +
+                _changedFocusableBuildingCoverageQuery.CalculateEntityCount(),
+                Allocator.Temp);
+            CollectChangedEntities(em, _changedFocusableCoverageQuery, changedEntities);
+            CollectChangedEntities(em, _changedFocusableBuildingCoverageQuery, changedEntities);
 
             for (int i = 0; i < changedEntities.Length; i++)
                 RefreshLookupEntry(em, grid, changedEntities[i]);
@@ -241,10 +273,36 @@ namespace Game.Runtime
             _focusableUnitsByCell.Clear();
             _focusableUnitCoverage.Clear();
 
+            AddQueryEntries(em, grid, _focusableUnitsQuery);
+            AddQueryEntries(em, grid, _focusableBuildingsQuery);
+
+            _lastFocusableUnitCount = focusableUnitCount;
+        }
+
+        private static void CollectChangedEntities(
+            EntityManager em,
+            EntityQuery query,
+            NativeList<Entity> changedEntities)
+        {
+            if (query.IsEmptyIgnoreFilter)
+                return;
+
+            EntityTypeHandle entityType = em.GetEntityTypeHandle();
+            using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+            {
+                NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+                changedEntities.AddRange(entities);
+            }
+        }
+
+        private void AddQueryEntries(EntityManager em, GridConfig grid, EntityQuery query)
+        {
+
             EntityTypeHandle entityType = em.GetEntityTypeHandle();
             ComponentTypeHandle<UnitGrid> unitGridType = em.GetComponentTypeHandle<UnitGrid>(true);
             ComponentTypeHandle<UnitFootprint> footprintType = em.GetComponentTypeHandle<UnitFootprint>(true);
-            using NativeArray<ArchetypeChunk> chunks = _focusableUnitsQuery.ToArchetypeChunkArray(Allocator.Temp);
+            using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
             for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
             {
                 ArchetypeChunk chunk = chunks[chunkIndex];
@@ -260,8 +318,6 @@ namespace Game.Runtime
                     AddLookupEntry(em, grid, entity, grids[i].Cell, footprints[i].Size);
                 }
             }
-
-            _lastFocusableUnitCount = focusableUnitCount;
         }
 
         private void RefreshLookupEntry(EntityManager em, GridConfig grid, Entity entity)
@@ -282,6 +338,22 @@ namespace Game.Runtime
 
         private static bool IsFocusableUnitCandidate(EntityManager em, Entity entity)
         {
+            bool isOperationMapBuilding =
+                em.Exists(entity) &&
+                em.HasComponent<OperationMapBuildingComponent>(entity);
+            if (isOperationMapBuilding)
+            {
+                return !em.HasComponent<Prefab>(entity) &&
+                       em.HasComponent<Faction>(entity) &&
+                       em.HasComponent<UnitGrid>(entity) &&
+                       em.HasComponent<UnitFootprint>(entity) &&
+                       em.HasComponent<UnitHealth>(entity) &&
+                       em.GetComponentData<UnitHealth>(entity).Current > 0 &&
+                       em.HasComponent<LocalToWorld>(entity) &&
+                       (!em.HasComponent<OperationMapBuildingDestroyedComponent>(entity) ||
+                        !em.IsComponentEnabled<OperationMapBuildingDestroyedComponent>(entity));
+            }
+
             bool hasTransitTag = em.HasComponent<UnitSpawnTransitTag>(entity);
             if (hasTransitTag)
             {

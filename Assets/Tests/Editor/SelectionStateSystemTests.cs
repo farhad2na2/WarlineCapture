@@ -27,8 +27,9 @@ public sealed class SelectionStateCompositionSystemHelperTests
             RunCase(test => test.FocusedUnitLifecycle_RefreshFocusedUnit_FocusesSingleSelectedPlayerUnit());
             RunCase(test => test.FocusedUnitLifecycle_RefreshFocusedUnit_RebindsAfterWorldReplacement());
             RunCase(test => test.FocusedUnitLifecycle_RejectsEnemyFocusWithoutClearingCurrentSelection());
+            RunCase(test => test.FocusedUnitLifecycle_FocusesCanonicalOperationMapBuildingWithoutMovementAuthority());
             RunCase(test => test.FocusedUnitLifecycle_FocusAirUnitClearsAccidentalSelectionMoveThroughRequest());
-            UnityEngine.Debug.Log("[SelectionStateFocusedValidation] result=Passed tests=12");
+            UnityEngine.Debug.Log("[SelectionStateFocusedValidation] result=Passed tests=13");
         }
         catch (System.Exception ex)
         {
@@ -431,6 +432,43 @@ public sealed class SelectionStateCompositionSystemHelperTests
         Assert.AreEqual(playerUnit, selectionState.CachedSelectedMoveEntities[0]);
         Assert.IsFalse(hudCleared);
         Assert.AreEqual(Entity.Null, applied);
+    }
+
+    [Test]
+    public void FocusedUnitLifecycle_FocusesCanonicalOperationMapBuildingWithoutMovementAuthority()
+    {
+        var selectionState = new SelectionStateCompositionSystemHelper();
+        var lifecycle = new FocusedUnitLifecycleCompositionSystemHelper();
+        Entity building = _entityManager.CreateEntity(
+            typeof(OperationMapBuildingComponent),
+            typeof(Faction),
+            typeof(UnitGrid),
+            typeof(UnitFootprint),
+            typeof(UnitHealth),
+            typeof(StaticGridBlocker));
+        _entityManager.SetComponentData(building, new Faction { Id = FactionIdentity.PlayerFactionId });
+        _entityManager.SetComponentData(building, new UnitGrid { Cell = new int2(4, 6) });
+        _entityManager.SetComponentData(building, new UnitFootprint { Size = new int2(3, 2) });
+        _entityManager.SetComponentData(building, new UnitHealth { Current = 100, Max = 100 });
+
+        Entity applied = Entity.Null;
+        bool focused = lifecycle.FocusUnitEntity(
+            _entityManager,
+            building,
+            selectionState,
+            "CanonicalBuildingClick",
+            "CanonicalBuildingClick",
+            _ => { },
+            null,
+            () => { },
+            (_, entity) => applied = entity);
+
+        Assert.IsTrue(focused);
+        Assert.AreEqual(building, selectionState.FocusedUnit);
+        Assert.AreEqual(building, applied);
+        Assert.IsTrue(_entityManager.HasComponent<SelectedUnitTag>(building));
+        Assert.IsFalse(_entityManager.HasComponent<UnitMove>(building));
+        Assert.AreEqual(0, selectionState.CachedSelectedMoveEntities.Count);
     }
 
     [Test]

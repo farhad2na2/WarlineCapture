@@ -239,6 +239,8 @@ namespace Game.Editor
             var signatures = new Dictionary<string, CountPair>(StringComparer.Ordinal);
             var rendererTypes = new Dictionary<string, CountPair>(StringComparer.Ordinal);
             var policies = new Dictionary<string, CountPair>(StringComparer.Ordinal);
+            var materialSurfaces = new Dictionary<string, CountPair>(StringComparer.Ordinal);
+            var policyDispositions = new Dictionary<string, CountPair>(StringComparer.Ordinal);
             var ownership = new Dictionary<string, CountPair>(StringComparer.Ordinal);
             var reasons = new Dictionary<string, CountPair>(StringComparer.Ordinal);
             var buildingFamilies = new Dictionary<string, CountPair>(StringComparer.Ordinal);
@@ -265,6 +267,7 @@ namespace Game.Editor
                 bool policySupported = TryClassifyPolicy(
                     row.Renderer,
                     row.Material,
+                    out string materialSurface,
                     out string policy,
                     out OperationMapRenderPolicyKey policyKey);
                 string reason = Classify(
@@ -281,6 +284,11 @@ namespace Game.Editor
                 Increment(signatures, row.Signature, isEligible);
                 Increment(rendererTypes, row.Renderer.GetType().FullName ?? row.Renderer.GetType().Name, isEligible);
                 Increment(policies, policy, isEligible);
+                Increment(materialSurfaces, materialSurface, isEligible);
+                Increment(
+                    policyDispositions,
+                    PolicyDisposition(policySupported, materialSurface, policyKey),
+                    isEligible);
                 Increment(ownership, Ownership(row), isEligible);
                 Increment(reasons, reason, isEligible);
                 if (row.IsGeneratedBuildingFamily)
@@ -417,6 +425,11 @@ namespace Game.Editor
                     "physics/gameplay, LOD-special, custom behavior, unsupported renderers, " +
                     "and per-instance material-property blocks fail closed by stable reason; " +
                     "the existing repeated-signature and fixed render-policy gates still apply.",
+                materialSurfaceSelectionPolicy =
+                    "Opaque and alpha-clipped materials map to separate fixed shadow-on/off " +
+                    "buckets. Transparent materials are eligible only with cast/static shadows " +
+                    "disabled; transparent shadow-casting rows remain resident under the stable " +
+                    "unsupported-render-policy reason.",
                 infrastructureOwners = infrastructureOwnerDecisions
                     .OrderBy(pair => pair.Key.StableId, StringComparer.Ordinal)
                     .Select(pair => new InfrastructureOwnerReport
@@ -435,6 +448,8 @@ namespace Game.Editor
                 byPrototypeSignature = BuildBreakdown(signatures),
                 byRendererType = BuildBreakdown(rendererTypes),
                 byPolicyBucket = BuildBreakdown(policies),
+                byMaterialSurface = BuildBreakdown(materialSurfaces),
+                byPolicyDisposition = BuildBreakdown(policyDispositions),
                 byGameplayOwnership = BuildBreakdown(ownership),
                 byReasonCode = BuildBreakdown(reasons),
                 sourceRows = sourceRows,
@@ -702,7 +717,7 @@ namespace Game.Editor
                     owner.Any(row => row.BuildingVisualState == OperationMapRenderVisualState.Destroyed));
                 int unsupportedRendererRowCount = familyRows.Count(row => row.Renderer is not MeshRenderer);
                 int unsupportedPolicyRowCount = familyRows.Count(row =>
-                    !TryClassifyPolicy(row.Renderer, row.Material, out _, out _));
+                    !TryClassifyPolicy(row.Renderer, row.Material, out _, out _, out _));
                 int repeatedSignatureRowCount = familyRows.Count(row =>
                     signatureCounts.TryGetValue(row.Signature, out int count) && count > 1);
                 bool supportedRole = family.Key is BuildingRole.House or BuildingRole.Shop or BuildingRole.CityHall;
@@ -1773,12 +1788,14 @@ namespace Game.Editor
         private static bool TryClassifyPolicy(
             Renderer renderer,
             Material material,
+            out string materialSurface,
             out string policy,
             out OperationMapRenderPolicyKey policyKey)
         {
             policyKey = default;
             if (material == null)
             {
+                materialSurface = "MissingMaterial";
                 policy = "Unsupported:missing-material";
                 return false;
             }
@@ -1790,6 +1807,7 @@ namespace Game.Editor
                 surface = OperationMapRenderMaterialSurface.AlphaClipped;
             else
                 surface = OperationMapRenderMaterialSurface.Opaque;
+            materialSurface = surface.ToString();
 
             OperationMapRenderShadowFlags shadowFlags = OperationMapRenderShadowFlags.None;
             if (renderer.shadowCastingMode != ShadowCastingMode.Off)
@@ -1828,6 +1846,21 @@ namespace Game.Editor
                 (byte)key.ShadowFlags);
             policyKey = key;
             return true;
+        }
+
+        private static string PolicyDisposition(
+            bool supported,
+            string materialSurface,
+            OperationMapRenderPolicyKey policyKey)
+        {
+            if (supported)
+                return "SupportedPolicy:" + policyKey.Bucket;
+            return string.Equals(
+                materialSurface,
+                OperationMapRenderMaterialSurface.Transparent.ToString(),
+                StringComparison.Ordinal)
+                ? "Resident:TransparentShadowPolicyUnsupported"
+                : "Resident:UnsupportedRenderPolicy";
         }
 
         private static string Semantic(Row row) =>
@@ -2439,6 +2472,7 @@ namespace Game.Editor
             public string mutationBlocker;
             public string buildingFamilySelectionPolicy;
             public string infrastructureSelectionPolicy;
+            public string materialSurfaceSelectionPolicy;
             public List<BuildingFamilyReport> buildingFamilies;
             public List<InfrastructureOwnerReport> infrastructureOwners;
             public List<Breakdown> byBuildingFamily;
@@ -2446,6 +2480,8 @@ namespace Game.Editor
             public List<Breakdown> byPrototypeSignature;
             public List<Breakdown> byRendererType;
             public List<Breakdown> byPolicyBucket;
+            public List<Breakdown> byMaterialSurface;
+            public List<Breakdown> byPolicyDisposition;
             public List<Breakdown> byGameplayOwnership;
             public List<Breakdown> byReasonCode;
             [NonSerialized] public List<SourceRowReport> sourceRows;

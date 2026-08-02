@@ -67,6 +67,7 @@
     "mutationBlocker": "",
     "buildingFamilySelectionPolicy": "Generated building families are selected atomically only when repeated, every canonical owner has intact and destroyed recipes, and every family row satisfies the closed renderer and render-policy schema.",
     "infrastructureSelectionPolicy": "Generated render-only Infrastructure rows are selected only when their stable owner hierarchy contains transforms, mesh filters, plain mesh renderers, and its single dense identity. Animation, lights, particles, physics/gameplay, LOD-special, custom behavior, unsupported renderers, and per-instance material-property blocks fail closed by stable reason; the existing repeated-signature and fixed render-policy gates still apply.",
+    "materialSurfaceSelectionPolicy": "Opaque and alpha-clipped materials map to separate fixed shadow-on/off buckets. Transparent materials are eligible only with cast/static shadows disabled; transparent shadow-casting rows remain resident under the stable unsupported-render-policy reason.",
     "buildingFamilies": [
         {
             "family": "House",
@@ -121379,6 +121380,52 @@
             "eligible": 0,
             "excluded": 509,
             "total": 509
+        }
+    ],
+    "byMaterialSurface": [
+        {
+            "key": "AlphaClipped",
+            "eligible": 3629,
+            "excluded": 140,
+            "total": 3769
+        },
+        {
+            "key": "Opaque",
+            "eligible": 59950,
+            "excluded": 14173,
+            "total": 74123
+        },
+        {
+            "key": "Transparent",
+            "eligible": 0,
+            "excluded": 509,
+            "total": 509
+        }
+    ],
+    "byPolicyDisposition": [
+        {
+            "key": "Resident:TransparentShadowPolicyUnsupported",
+            "eligible": 0,
+            "excluded": 509,
+            "total": 509
+        },
+        {
+            "key": "SupportedPolicy:AlphaClippedShadowsOn",
+            "eligible": 3629,
+            "excluded": 140,
+            "total": 3769
+        },
+        {
+            "key": "SupportedPolicy:OpaqueShadowsOff",
+            "eligible": 0,
+            "excluded": 42,
+            "total": 42
+        },
+        {
+            "key": "SupportedPolicy:OpaqueShadowsOn",
+            "eligible": 59950,
+            "excluded": 14131,
+            "total": 74081
         }
     ],
     "byGameplayOwnership": [

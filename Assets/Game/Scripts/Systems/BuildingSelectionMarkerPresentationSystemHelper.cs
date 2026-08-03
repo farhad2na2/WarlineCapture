@@ -118,23 +118,14 @@ namespace Game.Runtime
                     : center.y;
             center.y = surfaceY;
 
-            // Static-reuse map owners have no managed child renderers. Their exact
-            // placement-prefab geometry owns marker presentation, while canonical
-            // gameplay cells remain the authoritative occupancy/fallback contract.
-            Vector2 markerWorldSize = isMapAuthored && authoredVisual.HasPresentationGeometry
-                ? new Vector2(
-                    authoredVisual.PresentationWorldSize.x,
-                    authoredVisual.PresentationWorldSize.z)
-                : hasPlausibleOwnedRendererBounds
-                    ? new Vector2(ownedRendererBounds.size.x, ownedRendererBounds.size.z)
-                : ResolveMarkerWorldSize(footprint, grid);
+            // Selection presentation must follow the canonical gameplay footprint.
+            // Map presentation prefabs can reuse packed render geometry whose bounds
+            // span neighbouring structures or roads; those visual bounds must never
+            // enlarge the marker or its perceived click ownership.
+            Vector2 markerWorldSize = ResolveMarkerWorldSize(footprint, grid);
             if (isMapAuthored && authoredVisual.HasPresentationGeometry)
                 rotation = Quaternion.Euler(0f, authoredVisual.PresentationYawDegrees, 0f);
-            string geometrySource = isMapAuthored && authoredVisual.HasPresentationGeometry
-                ? "exact-presentation"
-                : hasPlausibleOwnedRendererBounds
-                    ? "owned-renderer"
-                    : "gameplay-footprint";
+            string geometrySource = "gameplay-footprint";
             LogGeometryDiagnostic(
                 building,
                 authoredVisual,

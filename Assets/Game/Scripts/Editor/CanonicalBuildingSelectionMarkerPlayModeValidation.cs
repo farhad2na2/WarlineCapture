@@ -228,10 +228,13 @@ namespace Game.Editor
                         _tentPosition.x,
                         markerObject.transform.position.y,
                         _tentPosition.z);
+                    Vector2 expectedWorldSize = new(
+                        Mathf.Max(grid.CellSize, _footprintCells.x * grid.CellSize),
+                        Mathf.Max(grid.CellSize, _footprintCells.y * grid.CellSize));
                     Vector3 expectedScale = new(
-                        Mathf.Max(grid.CellSize, _tentPresentationSize.x) / Mathf.Max(0.001f, _markerBaseRendererSize.x),
+                        expectedWorldSize.x / Mathf.Max(0.001f, _markerBaseRendererSize.x),
                         1f,
-                        Mathf.Max(grid.CellSize, _tentPresentationSize.z) / Mathf.Max(0.001f, _markerBaseRendererSize.z));
+                        expectedWorldSize.y / Mathf.Max(0.001f, _markerBaseRendererSize.z));
                     Vector3 actualPosition = markerObject.transform.position;
                     Vector3 actualScale = markerObject.transform.localScale;
                     float yawDelta = Mathf.Abs(Mathf.DeltaAngle(

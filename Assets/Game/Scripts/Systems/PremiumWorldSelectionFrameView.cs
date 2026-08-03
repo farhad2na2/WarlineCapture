@@ -130,7 +130,7 @@ namespace Game.Runtime
             _lastDiagnosticTargetHeight = targetHeight;
 
             string message =
-                $"[BuildingSelectionFrameDiag] object={name} parent={transform.parent?.name ?? \"<null>\"} " +
+                $"[BuildingSelectionFrameDiag] object={name} parent={transform.parent?.name ?? "<null>"} " +
                 $"center={center:F3} yaw={rotation.eulerAngles.y:F3} " +
                 $"requested=({requestedFootprint.x:F3},{requestedFootprint.y:F3}) " +
                 $"rendered=({renderedWidth:F3},{renderedDepth:F3}) surfaceY={surfaceY:F3} " +

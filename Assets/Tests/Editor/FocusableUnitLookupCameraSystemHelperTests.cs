@@ -23,7 +23,8 @@ public sealed class FocusableUnitLookupCameraSystemHelperTests
             RunCase(test => test.GridLookup_RebindsAfterWorldReplacement());
             RunCase(test => test.GridLookup_SelectsCanonicalOperationMapBuildingWithoutUnitMove());
             RunCase(test => test.GridLookup_RejectsDestroyedCanonicalOperationMapBuilding());
-            UnityEngine.Debug.Log("[FocusableUnitLookupFocusedValidation] result=Passed tests=7");
+            RunCase(test => test.GridLookup_PrefersTighterBuildingVisualHitboxAtOverlappingCell());
+            UnityEngine.Debug.Log("[FocusableUnitLookupFocusedValidation] result=Passed tests=8");
         }
         catch (System.Exception ex)
         {
@@ -363,6 +364,50 @@ public sealed class FocusableUnitLookupCameraSystemHelperTests
                 new int2(12, 8),
                 new Vector2(50f, 50f),
                 out _));
+        }
+        finally
+        {
+            Object.DestroyImmediate(cameraObject);
+        }
+    }
+
+    [Test]
+    public void GridLookup_PrefersTighterBuildingVisualHitboxAtOverlappingCell()
+    {
+        GameObject cameraObject = new("FocusableOverlappingBuildingCamera");
+        Camera camera = cameraObject.AddComponent<Camera>();
+        camera.orthographic = true;
+        camera.orthographicSize = 16f;
+        camera.pixelRect = new Rect(0f, 0f, 100f, 100f);
+        camera.transform.position = new Vector3(0f, 0f, -10f);
+
+        try
+        {
+            CreateGrid(64, 64);
+            int2 sharedCell = new(12, 8);
+            Entity tighterBuilding = CreateCanonicalBuilding(sharedCell, new int2(4, 3));
+            _entityManager.AddComponentData(tighterBuilding, new UnitSelectionHitbox
+            {
+                Center = float3.zero,
+                Extents = new float3(1f, 1f, 1f)
+            });
+            Entity broadBuilding = CreateCanonicalBuilding(sharedCell, new int2(20, 10));
+            _entityManager.AddComponentData(broadBuilding, new UnitSelectionHitbox
+            {
+                Center = float3.zero,
+                Extents = new float3(5f, 5f, 1f)
+            });
+
+            Vector3 screen = camera.WorldToScreenPoint(new Vector3(sharedCell.x, 0f, sharedCell.y));
+            var lookup = new FocusableUnitLookupCameraSystemHelper();
+            Assert.IsTrue(lookup.TryGetClickedUnitEntity(
+                _entityManager,
+                camera,
+                sharedCell,
+                new Vector2(screen.x, screen.y),
+                out Entity focused));
+            Assert.AreEqual(tighterBuilding, focused);
+            Assert.AreNotEqual(broadBuilding, focused);
         }
         finally
         {

@@ -82,6 +82,9 @@ namespace Game.Runtime
                 return false;
 
             float bestDistanceSq = float.MaxValue;
+            float bestCenterDistanceSq = float.MaxValue;
+            float bestHitboxScreenArea = float.MaxValue;
+            bool bestContainsSelectionHitbox = false;
             for (int i = candidates.Count - 1; i >= 0; i--)
             {
                 Entity entity = candidates[i];
@@ -103,23 +106,39 @@ namespace Game.Runtime
 
                 LocalToWorld localToWorld = em.GetComponentData<LocalToWorld>(entity);
                 Vector3 screen = worldCamera.WorldToScreenPoint(localToWorld.Position);
-                float distanceSq = (new Vector2(screen.x, screen.y) - screenPosition).sqrMagnitude;
+                float centerDistanceSq = (new Vector2(screen.x, screen.y) - screenPosition).sqrMagnitude;
+                float distanceSq = centerDistanceSq;
+                float hitboxScreenArea = float.MaxValue;
+                bool containsSelectionHitbox = false;
                 if (em.HasComponent<UnitSelectionHitbox>(entity) &&
                     TryGetSelectionHitboxScreenDistanceSq(
                         worldCamera,
                         localToWorld.Value,
                         em.GetComponentData<UnitSelectionHitbox>(entity),
                         screenPosition,
-                        out float hitboxDistanceSq))
+                        out float hitboxDistanceSq,
+                        out hitboxScreenArea))
                 {
                     distanceSq = math.min(distanceSq, hitboxDistanceSq);
+                    containsSelectionHitbox = hitboxDistanceSq <= 0.0001f;
                 }
 
-                if (distanceSq < bestDistanceSq)
-                {
-                    bestDistanceSq = distanceSq;
-                    bestEntity = entity;
-                }
+                bool betterCandidate = bestEntity == Entity.Null ||
+                    containsSelectionHitbox && !bestContainsSelectionHitbox ||
+                    containsSelectionHitbox == bestContainsSelectionHitbox &&
+                    (containsSelectionHitbox
+                        ? hitboxScreenArea < bestHitboxScreenArea - 0.01f ||
+                          math.abs(hitboxScreenArea - bestHitboxScreenArea) <= 0.01f &&
+                          centerDistanceSq < bestCenterDistanceSq
+                        : distanceSq < bestDistanceSq);
+                if (!betterCandidate)
+                    continue;
+
+                bestDistanceSq = distanceSq;
+                bestCenterDistanceSq = centerDistanceSq;
+                bestHitboxScreenArea = hitboxScreenArea;
+                bestContainsSelectionHitbox = containsSelectionHitbox;
+                bestEntity = entity;
             }
 
             if (candidates.Count == 0)
@@ -175,7 +194,8 @@ namespace Game.Runtime
                         candidate.LocalToWorld,
                         candidate.SelectionHitbox,
                         screenPosition,
-                        out float hitboxDistanceSq))
+                        out float hitboxDistanceSq,
+                        out _))
                 {
                     distanceSq = math.min(distanceSq, hitboxDistanceSq);
                 }
@@ -471,9 +491,11 @@ namespace Game.Runtime
             float4x4 localToWorld,
             UnitSelectionHitbox hitbox,
             Vector2 screenPosition,
-            out float distanceSq)
+            out float distanceSq,
+            out float screenArea)
         {
             distanceSq = float.MaxValue;
+            screenArea = float.MaxValue;
             float3 extents = math.abs(hitbox.Extents);
             if (math.cmax(extents) <= MinimumSelectionHitboxExtent)
                 return false;
@@ -509,6 +531,8 @@ namespace Game.Runtime
             Vector2 padding = Vector2.one * SelectionHitboxScreenPaddingPixels;
             min -= padding;
             max += padding;
+            Vector2 screenSize = Vector2.Max(Vector2.zero, max - min);
+            screenArea = screenSize.x * screenSize.y;
 
             float dx = screenPosition.x < min.x
                 ? min.x - screenPosition.x

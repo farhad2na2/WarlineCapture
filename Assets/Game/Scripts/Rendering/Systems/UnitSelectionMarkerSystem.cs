@@ -305,6 +305,23 @@ namespace Game.Rendering
             int2 size = em.GetComponentData<UnitFootprint>(unit).Size;
             if (usesBuildingMarker)
             {
+                if (em.HasComponent<UnitSelectionHitbox>(unit))
+                {
+                    UnitSelectionHitbox hitbox = em.GetComponentData<UnitSelectionHitbox>(unit);
+                    float2 hitboxSize = math.abs(hitbox.Extents.xz) * 2f;
+                    float2 hitboxCenter = hitbox.Center.xz;
+                    if (math.all(math.isfinite(hitboxSize)) &&
+                        math.all(math.isfinite(hitboxCenter)) &&
+                        math.all(hitboxSize > new float2(0.001f, 0.001f)))
+                    {
+                        markerOffset = hitboxCenter;
+                        geometrySource = "baked-building-hitbox";
+                        return ClampBuildingMarkerScale(
+                            hitboxSize * BuildingMarkerMeshBoundsPadding,
+                            minimumScale);
+                    }
+                }
+
                 if (TryResolveVirtualizedBuildingMarkerGeometry(
                         em,
                         unit,

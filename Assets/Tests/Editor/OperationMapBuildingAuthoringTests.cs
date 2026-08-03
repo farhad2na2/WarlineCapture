@@ -19,8 +19,9 @@ public sealed class OperationMapBuildingAuthoringTests
         authoringTests.ConfigureGeneratedForEditor_AssignsCompleteValidatedOwnership();
         authoringTests.TryValidate_RejectsIncompleteGeneratedGameplayValues();
         authoringTests.TryValidate_RejectsMixedAuthoredAndGeneratedIdentities();
+        authoringTests.SelectionBounds_UseOnlyDeclaredIntactVisualGeometry();
         recordTests.RecordIdentity_CreatesDeterministicBoundedGeneratedStableId();
-        Debug.Log("[OperationMapGeneratedBuildingIdentityValidation] result=Passed tests=6");
+        Debug.Log("[OperationMapGeneratedBuildingIdentityValidation] result=Passed tests=7");
     }
 
     [Test]
@@ -245,6 +246,30 @@ public sealed class OperationMapBuildingAuthoringTests
 
         Assert.That(fixture.Authoring.TryValidate(out string error), Is.False);
         StringAssert.Contains("independent or mismatched presentation ownership", error);
+    }
+
+    [Test]
+    public void SelectionBounds_UseOnlyDeclaredIntactVisualGeometry()
+    {
+        using var fixture = new BuildingAuthoringFixture();
+        GameObject visual = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        visual.name = "ExactSelectionVisual";
+        visual.transform.SetParent(fixture.IntactVisual.transform, false);
+        visual.transform.localPosition = new Vector3(2f, 1f, -3f);
+        visual.transform.localScale = new Vector3(4f, 2f, 6f);
+
+        Assert.That(
+            OperationMapBuildingAuthoring.TryGetSelectionLocalBounds(
+                fixture.Owner.transform,
+                fixture.IntactVisual,
+                out Bounds bounds),
+            Is.True);
+        Assert.That(bounds.center.x, Is.EqualTo(2f).Within(0.001f));
+        Assert.That(bounds.center.y, Is.EqualTo(1f).Within(0.001f));
+        Assert.That(bounds.center.z, Is.EqualTo(-3f).Within(0.001f));
+        Assert.That(bounds.size.x, Is.EqualTo(4f).Within(0.001f));
+        Assert.That(bounds.size.y, Is.EqualTo(2f).Within(0.001f));
+        Assert.That(bounds.size.z, Is.EqualTo(6f).Within(0.001f));
     }
 
     private sealed class BuildingAuthoringFixture : System.IDisposable

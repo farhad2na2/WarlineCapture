@@ -175,6 +175,30 @@ namespace Game.Editor
                 }
 
                 SelectionMarkerVisualChild markerVisual = em.GetComponentData<SelectionMarkerVisualChild>(marker);
+                if (!em.HasComponent<UnitSelectionHitbox>(_building))
+                {
+                    Complete(false, BuildStatus("operation-map building has no baked visual selection hitbox"));
+                    return;
+                }
+
+                if (!em.HasComponent<LocalTransform>(marker))
+                {
+                    Complete(false, BuildStatus("dedicated ECS footprint marker has no local transform"));
+                    return;
+                }
+
+                UnitSelectionHitbox selectionHitbox = em.GetComponentData<UnitSelectionHitbox>(_building);
+                LocalTransform markerTransform = em.GetComponentData<LocalTransform>(marker);
+                Vector2 expectedMarkerOffset = new(selectionHitbox.Center.x, selectionHitbox.Center.z);
+                Vector2 actualMarkerOffset = new(markerTransform.Position.x, markerTransform.Position.z);
+                if (Vector2.Distance(expectedMarkerOffset, actualMarkerOffset) > 0.001f)
+                {
+                    Complete(false, BuildStatus(
+                        $"marker offset ({actualMarkerOffset.x:F3},{actualMarkerOffset.y:F3}) does not match " +
+                        $"baked hitbox center ({expectedMarkerOffset.x:F3},{expectedMarkerOffset.y:F3})"));
+                    return;
+                }
+
                 if (markerVisual.VisibleScaleX <= 0f || markerVisual.VisibleScaleZ <= 0f)
                 {
                     Complete(false, BuildStatus(
@@ -239,9 +263,11 @@ namespace Game.Editor
                     return;
 
                 Complete(true,
-                    $"tests=10 owner=OperationMapBuildingComponent stableId={_stableId} " +
+                    $"tests=12 owner=OperationMapBuildingComponent stableId={_stableId} " +
                     $"footprintMarker=preserved markerScale=({markerVisual.VisibleScaleX:F3},{markerVisual.VisibleScaleZ:F3}) " +
-                    "markerScaleMode=nonuniform-bounded sharedRendererOutline=suppressed repeatFrames=stable " +
+                    $"markerOffset=({actualMarkerOffset.x:F3},{actualMarkerOffset.y:F3}) " +
+                    "markerScaleMode=baked-hitbox-nonuniform-bounded hitOwnership=baked-hitbox " +
+                    "sharedRendererOutline=suppressed repeatFrames=stable " +
                     $"evidence={_evidencePath}");
             }
             catch (Exception exception)
@@ -305,6 +331,7 @@ namespace Game.Editor
                 typeof(OperationMapBuildingComponent),
                 typeof(UnitHealth),
                 typeof(UnitFootprint),
+                typeof(UnitSelectionHitbox),
                 typeof(StaticGridBlocker),
                 typeof(LocalTransform),
                 typeof(LocalToWorld));
@@ -316,6 +343,11 @@ namespace Game.Editor
             });
             defaultEm.SetComponentData(synthetic, new UnitHealth { Current = 100, Max = 100 });
             defaultEm.SetComponentData(synthetic, new UnitFootprint { Size = new Unity.Mathematics.int2(14, 8) });
+            defaultEm.SetComponentData(synthetic, new UnitSelectionHitbox
+            {
+                Center = new Unity.Mathematics.float3(2f, 1f, -3f),
+                Extents = new Unity.Mathematics.float3(2f, 1f, 3f)
+            });
             defaultEm.SetComponentData(synthetic, LocalTransform.FromPosition(new Unity.Mathematics.float3(0f, 0f, 0f)));
             defaultEm.SetComponentData(synthetic, new LocalToWorld { Value = Unity.Mathematics.float4x4.identity });
             buildingWorld = defaultWorld;

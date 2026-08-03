@@ -5,10 +5,40 @@ using System;
 using NUnit.Framework;
 using Unity.Entities;
 using Unity.Mathematics;
+using UnityEditor;
 using UnityEngine;
 
 public sealed class RuntimeBuildingSystemTests
 {
+    [MenuItem("Tools/Validation/Static Reuse Owned Renderer Fallback Focused")]
+    public static void RunOwnedRendererFallbackValidation()
+    {
+        try
+        {
+            var runtimeTests = new RuntimeBuildingSystemTests();
+            runtimeTests.StaticReuseScreenRectUsesPlausibleOwnedRendererWhenExactGeometryIsMissing();
+
+            var markerTests = new BuildingSelectionMarkerPresentationSystemHelperTests();
+            markerTests.SetUp();
+            try
+            {
+                markerTests.RefreshUsesPlausibleOwnedRendererBoundsWhenExactGeometryIsMissing();
+            }
+            finally
+            {
+                markerTests.TearDown();
+            }
+
+            Debug.Log("[StaticReuseOwnedRendererFallbackValidation] result=Passed tests=2");
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[StaticReuseOwnedRendererFallbackValidation] result=Failed");
+            throw;
+        }
+    }
+
     public static void RunFocusedValidation()
     {
         try
@@ -21,7 +51,8 @@ public sealed class RuntimeBuildingSystemTests
             tests.BuildingUiSelectionCommandRequest_DeletesSelectedBuildingAndWritesResult();
             tests.BuildingUiSelectionCommandRequest_ClearsSelectionAndWritesResult();
             tests.StaticReuseHitShapePrefersNearestAuthoredCenterOverSharedRenderers();
-            Debug.Log("[RuntimeBuildingSystemFocusedValidation] result=Passed tests=7");
+            tests.StaticReuseScreenRectUsesPlausibleOwnedRendererWhenExactGeometryIsMissing();
+            Debug.Log("[RuntimeBuildingSystemFocusedValidation] result=Passed tests=8");
             ValidationExit.Exit(0);
         }
         catch (Exception ex)
@@ -289,6 +320,80 @@ public sealed class RuntimeBuildingSystemTests
             UnityEngine.Object.DestroyImmediate(tentObject);
             UnityEngine.Object.DestroyImmediate(decoyObject);
             UnityEngine.Object.DestroyImmediate(sharedPackedVisual);
+            UnityEngine.Object.DestroyImmediate(barracksObject);
+            UnityEngine.Object.DestroyImmediate(cameraObject);
+        }
+    }
+
+    [Test]
+    public void StaticReuseScreenRectUsesPlausibleOwnedRendererWhenExactGeometryIsMissing()
+    {
+        GameObject cameraObject = new("StaticReuseOwnedRendererCamera");
+        GameObject barracksObject = new("StaticReuseOwnedRendererBarracks");
+        GameObject visual = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        try
+        {
+            Camera camera = cameraObject.AddComponent<Camera>();
+            camera.orthographic = true;
+            camera.orthographicSize = 20f;
+            camera.aspect = 1f;
+            camera.pixelRect = new Rect(0f, 0f, 512f, 512f);
+            cameraObject.transform.SetPositionAndRotation(new Vector3(0f, 30f, 0f), Quaternion.Euler(90f, 0f, 0f));
+
+            barracksObject.AddComponent<MapAuthoredBuildingVisualComponent>()
+                .ConfigurePresentationWorldCenter(Vector3.zero);
+            visual.name = "OwnedBarracksRenderer";
+            visual.transform.SetParent(barracksObject.transform, false);
+            visual.transform.localScale = new Vector3(10f, 4f, 12f);
+
+            var barracks = new RuntimeBuildingEntity
+            {
+                Id = 1,
+                Instance = barracksObject,
+                OriginCell = new Vector2Int(-5, -10),
+                Definition = new BuildingDefinition { FootprintCells = new Vector2Int(10, 20) },
+                HasOwnerFaction = true,
+                OwnerFactionId = FactionIdentity.PlayerFactionId
+            };
+            var runtimeBuildings = new RuntimeBuildingCollection<RuntimeBuildingEntity>();
+            runtimeBuildings.AddBuilding(barracks.Id, barracks);
+            var grid = new GridConfig
+            {
+                Width = 64,
+                Height = 64,
+                CellSize = 1f,
+                Origin = float3.zero
+            };
+            var selection = new BuildingSelectionRuntimeCompositionSystemHelper();
+            var context = new BuildingSelectionRuntimeCompositionSystemHelper.Context(
+                runtimeBuildingSystem: runtimeBuildings,
+                runtimeBuildings: runtimeBuildings.Buildings,
+                worldCamera: camera,
+                tryGetGrid: TryGetGrid,
+                getFootprintCenter: null,
+                suppressNextWorldClick: null,
+                refreshMarkers: null,
+                clearFocusedUnit: null,
+                showHudSelection: null,
+                smoothMoveCameraGroundCenterTo: null,
+                isBoardablePlayerTransportClick: null,
+                tryAssignSelectedHaulerOrders: null,
+                tryIssueMoveOrderToBuilding: null,
+                shouldUseExpandedSelectionArea: null);
+            Vector3 outsideOwnedRenderer = camera.WorldToScreenPoint(new Vector3(0f, 0f, 8f));
+            Rect probe = new(outsideOwnedRenderer.x - 1f, outsideOwnedRenderer.y - 1f, 2f, 2f);
+
+            Assert.IsFalse(selection.SelectFirstBuildingInScreenRect(context, probe));
+
+            bool TryGetGrid(out GridConfig value)
+            {
+                value = grid;
+                return true;
+            }
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(visual);
             UnityEngine.Object.DestroyImmediate(barracksObject);
             UnityEngine.Object.DestroyImmediate(cameraObject);
         }

@@ -90,10 +90,23 @@ namespace Game.Runtime
             MapAuthoredBuildingVisualComponent authoredVisual = null;
             bool isMapAuthored = building.Instance != null &&
                                  building.Instance.TryGetComponent(out authoredVisual);
+            Bounds ownedRendererBounds = default;
+            bool hasPlausibleOwnedRendererBounds = isMapAuthored &&
+                MapAuthoredBuildingSelectionGeometryUtility.TryResolvePlausibleOwnedRendererBounds(
+                    building.Instance,
+                    authoredVisual,
+                    footprint,
+                    grid,
+                    out ownedRendererBounds);
             if (isMapAuthored && authoredVisual.HasPresentationWorldCenter)
             {
                 center.x = authoredVisual.PresentationWorldCenter.x;
                 center.z = authoredVisual.PresentationWorldCenter.z;
+            }
+            if (hasPlausibleOwnedRendererBounds)
+            {
+                center.x = ownedRendererBounds.center.x;
+                center.z = ownedRendererBounds.center.z;
             }
             float surfaceY = hasPresentationBounds
                 ? ResolveMarkerSurfaceY(building.Instance, bounds, grid)
@@ -109,6 +122,8 @@ namespace Game.Runtime
                 ? new Vector2(
                     authoredVisual.PresentationWorldSize.x,
                     authoredVisual.PresentationWorldSize.z)
+                : hasPlausibleOwnedRendererBounds
+                    ? new Vector2(ownedRendererBounds.size.x, ownedRendererBounds.size.z)
                 : ResolveMarkerWorldSize(footprint, grid);
             if (isMapAuthored && authoredVisual.HasPresentationGeometry)
                 rotation = Quaternion.Euler(0f, authoredVisual.PresentationYawDegrees, 0f);

@@ -666,6 +666,17 @@ namespace Game.Runtime
                     renderers = building.Instance.GetComponentsInChildren<Renderer>(true);
             }
 
+            Bounds plausibleOwnedRendererBounds = default;
+            bool hasPlausibleOwnedRendererBounds = hasAuthoredPresentationCenter &&
+                context.TryGetGrid != null &&
+                context.TryGetGrid(out GridConfig ownedBoundsGrid) &&
+                MapAuthoredBuildingSelectionGeometryUtility.TryResolvePlausibleOwnedRendererBounds(
+                    building.Instance,
+                    authoredVisual,
+                    building.Definition.FootprintCells,
+                    ownedBoundsGrid,
+                    out plausibleOwnedRendererBounds);
+
             bool hasPoint = false;
             Vector2 min = new(float.MaxValue, float.MaxValue);
             Vector2 max = new(float.MinValue, float.MinValue);
@@ -678,6 +689,28 @@ namespace Game.Runtime
                     continue;
 
                 Bounds bounds = renderer.bounds;
+                for (int corner = 0; corner < 8; corner++)
+                {
+                    Vector3 world = new(
+                        (corner & 1) == 0 ? bounds.min.x : bounds.max.x,
+                        (corner & 2) == 0 ? bounds.min.y : bounds.max.y,
+                        (corner & 4) == 0 ? bounds.min.z : bounds.max.z);
+                    Vector3 screen = camera.WorldToScreenPoint(world);
+                    if (screen.z <= 0f)
+                        continue;
+
+                    hasPoint = true;
+                    min.x = Mathf.Min(min.x, screen.x);
+                    min.y = Mathf.Min(min.y, screen.y);
+                    max.x = Mathf.Max(max.x, screen.x);
+                    max.y = Mathf.Max(max.y, screen.y);
+                    minDepth = Mathf.Min(minDepth, screen.z);
+                }
+            }
+
+            if (!hasPoint && hasPlausibleOwnedRendererBounds)
+            {
+                Bounds bounds = plausibleOwnedRendererBounds;
                 for (int corner = 0; corner < 8; corner++)
                 {
                     Vector3 world = new(

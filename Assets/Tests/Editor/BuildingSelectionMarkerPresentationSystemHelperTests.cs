@@ -25,12 +25,13 @@ public sealed class BuildingSelectionMarkerPresentationSystemHelperTests
             RunCase(test => test.RefreshAppliesHologramCompatibleMarkerColorProperties());
             RunCase(test => test.RefreshKeepsMapAuthoredMarkerRenderableBoundsAboveSurface());
             RunCase(test => test.RefreshKeepsMapAuthoredAggregateBoundsInsideGameplayFootprint());
+            RunCase(test => test.RefreshUsesPlausibleOwnedRendererBoundsWhenExactGeometryIsMissing());
             RunCase(test => test.RefreshUsesBakedCenterForStaticReuseWithoutChildRenderers());
             RunCase(test => test.SelectedBuildingPortraitRefreshPrefersRuntimeDefinitionSprite());
             RunCase(test => test.RuntimeVisualInitializationCachesBuildingRenderersWithoutMarkerChildren());
             RunCase(test => test.RuntimeResourceVisualsPreferEcsStorageForProductionState());
             RunCase(test => test.RefreshCreatesMeshBoundObjectOutlineForSelectedBuilding());
-            Debug.Log("[BuildingSelectionMarkerFocusedValidation] result=Passed tests=10");
+            Debug.Log("[BuildingSelectionMarkerFocusedValidation] result=Passed tests=11");
         }
         catch (System.Exception ex)
         {
@@ -219,6 +220,37 @@ public sealed class BuildingSelectionMarkerPresentationSystemHelperTests
         Assert.That(marker.transform.position.z, Is.EqualTo(6.5f).Within(0.001f));
         Assert.That(marker.transform.localScale.x, Is.EqualTo(4f).Within(0.001f));
         Assert.That(marker.transform.localScale.z, Is.EqualTo(3f).Within(0.001f));
+    }
+
+    [Test]
+    public void RefreshUsesPlausibleOwnedRendererBoundsWhenExactGeometryIsMissing()
+    {
+        var runtimeBuildings = new RuntimeBuildingCollection<RuntimeBuildingEntity>();
+        RuntimeBuildingEntity building = CreateBuilding(1, new Vector2Int(4, 5), new Vector2Int(10, 20), 0.25f);
+        building.Instance.AddComponent<MapAuthoredBuildingVisualComponent>()
+            .ConfigurePresentationWorldCenter(new Vector3(9f, 0.25f, 12f));
+
+        GameObject visual = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        Object.DestroyImmediate(visual.GetComponent<Collider>());
+        visual.name = "OwnedBarracksVisual";
+        visual.transform.SetParent(building.Instance.transform, false);
+        visual.transform.position = new Vector3(9f, 2.25f, 12f);
+        visual.transform.localScale = new Vector3(10.72f, 4f, 12.67f);
+        _objects.Add(visual);
+
+        runtimeBuildings.AddBuilding(building.Id, building);
+        BuildingSelectionMarkerPresentationSystemHelper system = CreateBuildingSelectionMarkerPresentationSystemHelper();
+        BuildingSelectionMarkerPresentationSystemHelper.Context context = CreateContext(runtimeBuildings);
+
+        runtimeBuildings.SelectBuilding(building.Id);
+        system.Refresh(context);
+
+        GameObject marker = system.RuntimeMarkerForTests;
+        Assert.IsNotNull(marker);
+        Assert.That(marker.transform.position.x, Is.EqualTo(9f).Within(0.001f));
+        Assert.That(marker.transform.position.z, Is.EqualTo(12f).Within(0.001f));
+        Assert.That(marker.transform.localScale.x, Is.EqualTo(10.72f).Within(0.001f));
+        Assert.That(marker.transform.localScale.z, Is.EqualTo(12.67f).Within(0.001f));
     }
 
     [Test]

@@ -24,6 +24,8 @@ namespace Game.Runtime
         public GameObject QuaternarySpawnUnitPrefab;
         public GameObject Prefab;
         public GameObject DestroyedVisualPrefab;
+        public Sprite SelectionPortraitSprite;
+        public Sprite CardPortraitSprite;
         public Vector2Int FootprintCells;
         public BuildingRole Role;
         public bool IsWall;

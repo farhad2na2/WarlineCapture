@@ -27,6 +27,12 @@ namespace Game.Composition
                 Description = authoring.ConfiguredDescription,
                 MaxHealth = authoring.ConfiguredMaxHealth,
                 DestroyedVisualPrefab = authoring.ConfiguredDestroyedVisualPrefab,
+                SelectionPortraitSprite = authoring.ConfiguredPortraitActionSprite != null
+                    ? authoring.ConfiguredPortraitActionSprite
+                    : authoring.ConfiguredPortraitCardSprite,
+                CardPortraitSprite = authoring.ConfiguredPortraitCardSprite != null
+                    ? authoring.ConfiguredPortraitCardSprite
+                    : authoring.ConfiguredPortraitSprite,
                 FootprintCells = authoring.ConfiguredFootprintCells,
                 Role = authoring.ConfiguredRole,
                 IsWall = authoring.ConfiguredIsWall,

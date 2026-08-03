@@ -24,7 +24,7 @@ public sealed class BuildingSelectionMarkerPresentationSystemHelperTests
             RunCase(test => test.RefreshHidesMarkerWhenSelectionClearsOrSelectedBuildingIsDestroyed());
             RunCase(test => test.RefreshAppliesHologramCompatibleMarkerColorProperties());
             RunCase(test => test.RefreshKeepsMapAuthoredMarkerRenderableBoundsAboveSurface());
-            RunCase(test => test.RefreshUsesCanonicalFootprintInsteadOfBroadMapAuthoredRendererBounds());
+            RunCase(test => test.RefreshUsesMapAuthoredPresentationBoundsInsteadOfGameplayFootprint());
             RunCase(test => test.RuntimeVisualInitializationCachesBuildingRenderersWithoutMarkerChildren());
             RunCase(test => test.RuntimeResourceVisualsPreferEcsStorageForProductionState());
             RunCase(test => test.RefreshCreatesMeshBoundObjectOutlineForSelectedBuilding());
@@ -189,7 +189,7 @@ public sealed class BuildingSelectionMarkerPresentationSystemHelperTests
     }
 
     [Test]
-    public void RefreshUsesCanonicalFootprintInsteadOfBroadMapAuthoredRendererBounds()
+    public void RefreshUsesMapAuthoredPresentationBoundsInsteadOfGameplayFootprint()
     {
         var runtimeBuildings = new RuntimeBuildingCollection<RuntimeBuildingEntity>();
         RuntimeBuildingEntity building = CreateBuilding(1, new Vector2Int(4, 5), new Vector2Int(4, 3), 0.25f);
@@ -212,10 +212,10 @@ public sealed class BuildingSelectionMarkerPresentationSystemHelperTests
         GameObject marker = system.RuntimeMarkerForTests;
         Assert.IsNotNull(marker);
         Assert.IsTrue(marker.activeSelf);
-        Assert.That(marker.transform.position.x, Is.EqualTo(6f).Within(0.001f));
-        Assert.That(marker.transform.position.z, Is.EqualTo(6.5f).Within(0.001f));
-        Assert.That(marker.transform.localScale.x, Is.EqualTo(4f).Within(0.001f));
-        Assert.That(marker.transform.localScale.z, Is.EqualTo(3f).Within(0.001f));
+        Assert.That(marker.transform.position.x, Is.EqualTo(4f).Within(0.001f));
+        Assert.That(marker.transform.position.z, Is.EqualTo(5f).Within(0.001f));
+        Assert.That(marker.transform.localScale.x, Is.EqualTo(30f).Within(0.001f));
+        Assert.That(marker.transform.localScale.z, Is.EqualTo(18f).Within(0.001f));
     }
 
     [Test]

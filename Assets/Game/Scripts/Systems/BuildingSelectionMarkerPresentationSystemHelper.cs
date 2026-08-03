@@ -85,23 +85,36 @@ namespace Game.Runtime
             Vector3 center = context.GetFootprintCenter(building.OriginCell, footprint, grid);
             Quaternion rotation = Quaternion.identity;
             Bounds bounds = default;
-            bool hasRendererBounds = building.Instance != null &&
-                                     TryCalculateRendererBounds(building.Instance, out bounds);
-            float surfaceY = hasRendererBounds
+            bool hasPresentationBounds = building.Instance != null &&
+                                         (TryCalculateRendererBounds(building.Instance, out bounds) ||
+                                          TryCalculateDefinitionBounds(building, out bounds));
+            bool useAuthoredVisualBounds = hasPresentationBounds &&
+                                           building.Instance != null &&
+                                           building.Instance.TryGetComponent(out MapAuthoredBuildingVisualComponent _);
+            if (useAuthoredVisualBounds)
+            {
+                center.x = bounds.center.x;
+                center.z = bounds.center.z;
+            }
+            float surfaceY = hasPresentationBounds
                 ? ResolveMarkerSurfaceY(building.Instance, bounds, grid)
                 : building.Instance != null
                     ? building.Instance.transform.position.y
                     : center.y;
             center.y = surfaceY;
 
-            Vector2 markerWorldSize = ResolveMarkerWorldSize(footprint, grid);
+            Vector2 markerWorldSize = useAuthoredVisualBounds
+                ? new Vector2(
+                    Mathf.Max(grid.CellSize, bounds.size.x),
+                    Mathf.Max(grid.CellSize, bounds.size.z))
+                : ResolveMarkerWorldSize(footprint, grid);
             Transform markerTransform = _markerInstance.transform;
             markerTransform.SetPositionAndRotation(center, rotation);
             markerTransform.localScale = ResolveScale(markerWorldSize);
             SetActive(true);
             LiftMarkerRendererBoundsAbove(surfaceY + MarkerSurfaceClearance);
-            ConfigureBoundaryView(footprint, grid, center, rotation, surfaceY, hasRendererBounds ? bounds : default);
-            ConfigureObjectOutline(building, hasRendererBounds ? bounds : default);
+            ConfigureBoundaryView(markerWorldSize, center, rotation, surfaceY, hasPresentationBounds ? bounds : default);
+            ConfigureObjectOutline(building, hasPresentationBounds ? bounds : default);
         }
 
         public void Hide()
@@ -185,8 +198,7 @@ namespace Game.Runtime
         }
 
         private void ConfigureBoundaryView(
-            Vector2Int footprint,
-            GridConfig grid,
+            Vector2 worldSize,
             Vector3 markerCenter,
             Quaternion markerRotation,
             float surfaceY,
@@ -196,7 +208,6 @@ namespace Game.Runtime
                 return;
 
             bool hasRendererBounds = rendererBounds.size.sqrMagnitude > 0.0001f;
-            Vector2 worldSize = ResolveMarkerWorldSize(footprint, grid);
             float height = hasRendererBounds
                 ? Mathf.Max(0.8f, rendererBounds.size.y)
                 : Mathf.Max(1.1f, Mathf.Min(4.5f, Mathf.Max(worldSize.x, worldSize.y) * 0.38f));
@@ -339,6 +350,33 @@ namespace Game.Runtime
             }
 
             return hasBounds;
+        }
+
+        private static bool TryCalculateDefinitionBounds(RuntimeBuildingEntity building, out Bounds bounds)
+        {
+            bounds = default;
+            if (building?.Instance == null || building.Definition == null || !building.Definition.HasLocalBounds)
+                return false;
+
+            Bounds localBounds = building.Definition.LocalBounds;
+            bool hasPoint = false;
+            for (int corner = 0; corner < 8; corner++)
+            {
+                Vector3 local = new(
+                    (corner & 1) == 0 ? localBounds.min.x : localBounds.max.x,
+                    (corner & 2) == 0 ? localBounds.min.y : localBounds.max.y,
+                    (corner & 4) == 0 ? localBounds.min.z : localBounds.max.z);
+                Vector3 world = building.Instance.transform.TransformPoint(local);
+                if (hasPoint)
+                    bounds.Encapsulate(world);
+                else
+                {
+                    bounds = new Bounds(world, Vector3.zero);
+                    hasPoint = true;
+                }
+            }
+
+            return hasPoint;
         }
 
         private static bool IsSelectionObjectOutlineRenderer(Renderer renderer)

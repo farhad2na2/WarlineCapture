@@ -12,6 +12,9 @@ namespace Game.Runtime
             if (building == null)
                 return null;
 
+            if (building.Definition?.SelectionPortraitSprite != null)
+                return building.Definition.SelectionPortraitSprite;
+
             Sprite sprite = resolveSelectionPortraitSpriteFromPrefab?.Invoke(building.Definition?.Prefab);
             return sprite != null
                 ? sprite

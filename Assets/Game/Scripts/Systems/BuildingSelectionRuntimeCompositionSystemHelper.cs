@@ -468,6 +468,20 @@ namespace Game.Runtime
                 return true;
             }
 
+            // A visible building owns a direct tap on its presentation even when the
+            // ground projection lands inside another building's (possibly expanded)
+            // footprint. This is especially important for large authored compounds
+            // with broad gameplay footprints surrounding smaller nearby buildings.
+            if (TrySelectVisualBuildingAtScreenPosition(context, screenPosition))
+                return true;
+
+            int bestBuildingId = 0;
+            RuntimeBuildingEntity bestBuilding = null;
+            Vector2Int bestMin = default;
+            Vector2Int bestSize = default;
+            bool bestContainsCanonicalCell = false;
+            int bestCanonicalArea = int.MaxValue;
+
             foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in context.RuntimeBuildings)
             {
                 RuntimeBuildingEntity building = entry.Value;
@@ -476,8 +490,15 @@ namespace Game.Runtime
                 if (!IsSelectablePlayerBuilding(building))
                     continue;
 
-                Vector2Int min = building.OriginCell;
-                Vector2Int size = building.Definition.FootprintCells;
+                Vector2Int canonicalMin = building.OriginCell;
+                Vector2Int canonicalSize = building.Definition.FootprintCells;
+                bool containsCanonicalCell =
+                    cell.x >= canonicalMin.x &&
+                    cell.y >= canonicalMin.y &&
+                    cell.x < canonicalMin.x + canonicalSize.x &&
+                    cell.y < canonicalMin.y + canonicalSize.y;
+                Vector2Int min = canonicalMin;
+                Vector2Int size = canonicalSize;
                 if (context.ShouldUseExpandedSelectionArea != null &&
                     context.ShouldUseExpandedSelectionArea(building.Definition))
                 {
@@ -488,10 +509,24 @@ namespace Game.Runtime
                 if (cell.x < min.x || cell.y < min.y || cell.x >= min.x + size.x || cell.y >= min.y + size.y)
                     continue;
 
-                return SelectBuildingCandidate(context, entry.Key, min, size);
+                int canonicalArea = Mathf.Max(1, canonicalSize.x) * Mathf.Max(1, canonicalSize.y);
+                if (bestBuilding != null &&
+                    (bestContainsCanonicalCell && !containsCanonicalCell ||
+                     bestContainsCanonicalCell == containsCanonicalCell && canonicalArea > bestCanonicalArea ||
+                     bestContainsCanonicalCell == containsCanonicalCell && canonicalArea == bestCanonicalArea && entry.Key >= bestBuildingId))
+                {
+                    continue;
+                }
+
+                bestBuildingId = entry.Key;
+                bestBuilding = building;
+                bestMin = min;
+                bestSize = size;
+                bestContainsCanonicalCell = containsCanonicalCell;
+                bestCanonicalArea = canonicalArea;
             }
 
-            return TrySelectVisualBuildingAtScreenPosition(context, screenPosition);
+            return bestBuilding != null && SelectBuildingCandidate(context, bestBuildingId, bestMin, bestSize);
         }
 
         private static bool SelectBuildingCandidate(
@@ -547,10 +582,14 @@ namespace Game.Runtime
                     continue;
 
                 float area = rect.width * rect.height;
-                if (depth > bestDepth + 0.001f)
+                if (area > bestArea + 0.01f)
                     continue;
-                if (Mathf.Abs(depth - bestDepth) <= 0.001f && area >= bestArea)
+                if (Mathf.Abs(area - bestArea) <= 0.01f &&
+                    (depth > bestDepth + 0.001f ||
+                     Mathf.Abs(depth - bestDepth) <= 0.001f && entry.Key >= bestBuildingId))
+                {
                     continue;
+                }
 
                 bestBuildingId = entry.Key;
                 bestBuilding = building;
@@ -589,15 +628,13 @@ namespace Game.Runtime
             Renderer[] renderers = building.FactionVisualRenderers;
             if (renderers == null || renderers.Length == 0)
                 renderers = building.Instance.GetComponentsInChildren<Renderer>(true);
-            if (renderers == null || renderers.Length == 0)
-                return false;
 
             bool hasPoint = false;
             Vector2 min = new(float.MaxValue, float.MaxValue);
             Vector2 max = new(float.MinValue, float.MinValue);
             float minDepth = float.MaxValue;
 
-            for (int i = 0; i < renderers.Length; i++)
+            for (int i = 0; renderers != null && i < renderers.Length; i++)
             {
                 Renderer renderer = renderers[i];
                 if (renderer == null || !renderer.enabled || !renderer.gameObject.activeInHierarchy)
@@ -611,6 +648,33 @@ namespace Game.Runtime
                         (corner & 2) == 0 ? bounds.min.y : bounds.max.y,
                         (corner & 4) == 0 ? bounds.min.z : bounds.max.z);
                     Vector3 screen = camera.WorldToScreenPoint(world);
+                    if (screen.z <= 0f)
+                        continue;
+
+                    hasPoint = true;
+                    min.x = Mathf.Min(min.x, screen.x);
+                    min.y = Mathf.Min(min.y, screen.y);
+                    max.x = Mathf.Max(max.x, screen.x);
+                    max.y = Mathf.Max(max.y, screen.y);
+                    minDepth = Mathf.Min(minDepth, screen.z);
+                }
+            }
+
+            // Map-authored static presentation can reuse an ECS/static renderer while
+            // leaving only the managed selection owner in the scene hierarchy. In
+            // that case the canonical definition bounds are the visible hit shape;
+            // falling back to the gameplay cell would let a broad nearby footprint
+            // steal a tap on the smaller visible building.
+            if (!hasPoint && building.Definition != null && building.Definition.HasLocalBounds)
+            {
+                Bounds localBounds = building.Definition.LocalBounds;
+                for (int corner = 0; corner < 8; corner++)
+                {
+                    Vector3 local = new(
+                        (corner & 1) == 0 ? localBounds.min.x : localBounds.max.x,
+                        (corner & 2) == 0 ? localBounds.min.y : localBounds.max.y,
+                        (corner & 4) == 0 ? localBounds.min.z : localBounds.max.z);
+                    Vector3 screen = camera.WorldToScreenPoint(building.Instance.transform.TransformPoint(local));
                     if (screen.z <= 0f)
                         continue;
 

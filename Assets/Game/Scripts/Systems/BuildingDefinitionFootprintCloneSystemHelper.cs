@@ -21,6 +21,8 @@ namespace Game.Runtime
                 QuaternarySpawnUnitPrefab = definition.QuaternarySpawnUnitPrefab,
                 Prefab = definition.Prefab,
                 DestroyedVisualPrefab = definition.DestroyedVisualPrefab,
+                SelectionPortraitSprite = definition.SelectionPortraitSprite,
+                CardPortraitSprite = definition.CardPortraitSprite,
                 FootprintCells = footprintCells,
                 Role = definition.Role,
                 IsWall = definition.IsWall,

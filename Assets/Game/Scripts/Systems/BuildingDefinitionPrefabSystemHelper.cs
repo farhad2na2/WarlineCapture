@@ -23,6 +23,8 @@ namespace Game.Runtime
             public string Description;
             public int MaxHealth;
             public GameObject DestroyedVisualPrefab;
+            public Sprite SelectionPortraitSprite;
+            public Sprite CardPortraitSprite;
             public Vector2Int FootprintCells;
             public BuildingRole Role;
             public bool IsWall;
@@ -399,6 +401,8 @@ namespace Game.Runtime
                 QuaternarySpawnUnitPrefab = GetProductionPrefab(productionSlots, 3),
                 Prefab = prefab,
                 DestroyedVisualPrefab = metadata.HasDefinitionMetadata ? metadata.DefinitionMetadata.DestroyedVisualPrefab : null,
+                SelectionPortraitSprite = metadata.HasDefinitionMetadata ? metadata.DefinitionMetadata.SelectionPortraitSprite : null,
+                CardPortraitSprite = metadata.HasDefinitionMetadata ? metadata.DefinitionMetadata.CardPortraitSprite : null,
                 FootprintCells = metadata.HasVisualFootprint
                     ? metadata.VisualFootprint
                     : metadata.HasDefinitionMetadata
@@ -490,6 +494,8 @@ namespace Game.Runtime
                 QuaternarySpawnUnitPrefab = GetProductionPrefab(productionSlots, 3),
                 Prefab = prefab,
                 DestroyedVisualPrefab = hasMetadata ? metadata.DestroyedVisualPrefab : null,
+                SelectionPortraitSprite = hasMetadata ? metadata.SelectionPortraitSprite : null,
+                CardPortraitSprite = hasMetadata ? metadata.CardPortraitSprite : null,
                 FootprintCells = hasVisualFootprint ? visualFootprint : configuredFootprint,
                 Role = hasMetadata ? metadata.Role : BuildingRole.None,
                 IsWall = hasMetadata && metadata.IsWall,

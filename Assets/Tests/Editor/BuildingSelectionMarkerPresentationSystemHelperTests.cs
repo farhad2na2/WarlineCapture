@@ -229,7 +229,10 @@ public sealed class BuildingSelectionMarkerPresentationSystemHelperTests
         building.Definition.LocalBounds = new Bounds(new Vector3(-6f, 2f, 0f), new Vector3(30f, 4f, 18f));
         building.Definition.HasLocalBounds = true;
         building.Instance.AddComponent<MapAuthoredBuildingVisualComponent>()
-            .ConfigurePresentationWorldCenter(new Vector3(47.25f, 2.25f, 55.5f));
+            .ConfigurePresentationGeometry(
+                new Vector3(47.25f, 2.25f, 55.5f),
+                new Vector3(10.72f, 4.2f, 12.67f),
+                90f);
 
         runtimeBuildings.AddBuilding(building.Id, building);
         BuildingSelectionMarkerPresentationSystemHelper system = CreateBuildingSelectionMarkerPresentationSystemHelper();
@@ -242,8 +245,9 @@ public sealed class BuildingSelectionMarkerPresentationSystemHelperTests
         Assert.IsNotNull(marker);
         Assert.That(marker.transform.position.x, Is.EqualTo(47.25f).Within(0.001f));
         Assert.That(marker.transform.position.z, Is.EqualTo(55.5f).Within(0.001f));
-        Assert.That(marker.transform.localScale.x, Is.EqualTo(8f).Within(0.001f));
-        Assert.That(marker.transform.localScale.z, Is.EqualTo(14f).Within(0.001f));
+        Assert.That(marker.transform.localScale.x, Is.EqualTo(10.72f).Within(0.001f));
+        Assert.That(marker.transform.localScale.z, Is.EqualTo(12.67f).Within(0.001f));
+        Assert.That(marker.transform.eulerAngles.y, Is.EqualTo(90f).Within(0.001f));
     }
 
     [Test]

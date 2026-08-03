@@ -195,11 +195,11 @@ public sealed class RuntimeBuildingSystemTests
             cameraObject.transform.SetPositionAndRotation(new Vector3(0f, 30f, 0f), Quaternion.Euler(90f, 0f, 0f));
 
             barracksObject.AddComponent<MapAuthoredBuildingVisualComponent>()
-                .ConfigurePresentationWorldCenter(Vector3.zero);
+                .ConfigurePresentationGeometry(Vector3.zero, new Vector3(24f, 4f, 6f), 90f);
             tentObject.AddComponent<MapAuthoredBuildingVisualComponent>()
-                .ConfigurePresentationWorldCenter(new Vector3(8f, 0f, 0f));
+                .ConfigurePresentationGeometry(new Vector3(8f, 0f, 0f), new Vector3(2f, 2f, 2f), 0f);
             decoyObject.AddComponent<MapAuthoredBuildingVisualComponent>()
-                .ConfigurePresentationWorldCenter(new Vector3(8f, 0f, 1f));
+                .ConfigurePresentationGeometry(new Vector3(8f, 0f, 1f), Vector3.one, 0f);
             sharedPackedVisual.name = "SharedPackedBuildingRenderer";
             sharedPackedVisual.transform.SetParent(barracksObject.transform, false);
             sharedPackedVisual.transform.localScale = new Vector3(30f, 4f, 18f);
@@ -212,7 +212,7 @@ public sealed class RuntimeBuildingSystemTests
                 OriginCell = new Vector2Int(-2, -2),
                 Definition = new BuildingDefinition
                 {
-                    FootprintCells = new Vector2Int(4, 4),
+                    FootprintCells = new Vector2Int(30, 18),
                     HasLocalBounds = true,
                     LocalBounds = new Bounds(Vector3.zero, new Vector3(30f, 4f, 18f))
                 },

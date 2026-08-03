@@ -45,6 +45,8 @@ namespace Game.Editor
         private static object _tent;
         private static int _tentId;
         private static Vector3 _tentPosition;
+        private static Vector3 _tentPresentationSize;
+        private static float _tentPresentationYaw;
         private static Vector2Int _originCell;
         private static Vector2Int _footprintCells;
         private static Vector2Int _conflictingTentCell;
@@ -225,17 +227,20 @@ namespace Game.Editor
                         markerObject.transform.position.y,
                         _tentPosition.z);
                     Vector3 expectedScale = new(
-                        Mathf.Max(grid.CellSize, _footprintCells.x * grid.CellSize) / Mathf.Max(0.001f, _markerBaseRendererSize.x),
+                        Mathf.Max(grid.CellSize, _tentPresentationSize.x) / Mathf.Max(0.001f, _markerBaseRendererSize.x),
                         1f,
-                        Mathf.Max(grid.CellSize, _footprintCells.y * grid.CellSize) / Mathf.Max(0.001f, _markerBaseRendererSize.z));
+                        Mathf.Max(grid.CellSize, _tentPresentationSize.z) / Mathf.Max(0.001f, _markerBaseRendererSize.z));
                     Vector3 actualPosition = markerObject.transform.position;
                     Vector3 actualScale = markerObject.transform.localScale;
+                    float yawDelta = Mathf.Abs(Mathf.DeltaAngle(
+                        markerObject.transform.eulerAngles.y,
+                        _tentPresentationYaw));
                     float centerTolerance = Mathf.Max(0.05f, grid.CellSize * 0.05f);
                     if (Mathf.Abs(actualPosition.x - expectedCenter.x) > centerTolerance ||
                         Mathf.Abs(actualPosition.z - expectedCenter.z) > centerTolerance ||
                         Mathf.Abs(actualScale.x - expectedScale.x) > 0.02f ||
                         Mathf.Abs(actualScale.z - expectedScale.z) > 0.02f ||
-                        Mathf.Abs(markerObject.transform.eulerAngles.y) > 0.1f)
+                        yawDelta > 0.1f)
                     {
                         Complete(false, BuildStatus(
                             $"Barracks marker mismatch expectedCenter={expectedCenter} actualPosition={actualPosition} expectedScale={expectedScale} actualScale={actualScale} yaw={markerObject.transform.eulerAngles.y}"));
@@ -340,7 +345,7 @@ namespace Game.Editor
                     return;
 
                 Complete(true, BuildStatus(
-                    $"barracksMarker=canonicalFootprint barracksPortrait={_expectedPortrait.name} contractorTentClickOwner={_contractorTentId} barracksEvidence={_evidencePath} ownershipEvidence={_ownershipEvidencePath}"));
+                    $"barracksMarker=placementPrefabGeometry presentationSize={_tentPresentationSize} presentationYaw={_tentPresentationYaw:F2} barracksPortrait={_expectedPortrait.name} contractorTentClickOwner={_contractorTentId} barracksEvidence={_evidencePath} ownershipEvidence={_ownershipEvidencePath}"));
             }
             catch (Exception exception)
             {
@@ -404,6 +409,14 @@ namespace Game.Editor
                     continue;
                 }
                 _tentPosition = presentationCenter;
+                if (!instance.TryGetComponent(out MapAuthoredBuildingVisualComponent authoredVisual) ||
+                    !authoredVisual.HasPresentationGeometry)
+                {
+                    _tent = null;
+                    continue;
+                }
+                _tentPresentationSize = authoredVisual.PresentationWorldSize;
+                _tentPresentationYaw = authoredVisual.PresentationYawDegrees;
                 _originCell = (Vector2Int?)building.GetType().GetField("OriginCell")?.GetValue(building) ?? default;
                 _footprintCells = (Vector2Int?)definition.GetType().GetField("FootprintCells")?.GetValue(definition) ?? default;
                 if (_footprintCells.x <= 0 || _footprintCells.y <= 0)

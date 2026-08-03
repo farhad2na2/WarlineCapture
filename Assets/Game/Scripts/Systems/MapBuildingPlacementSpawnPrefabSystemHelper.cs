@@ -241,8 +241,19 @@ namespace Game.Runtime
             wrapper.transform.SetParent(parent, false);
             wrapper.transform.SetPositionAndRotation(placement.WorldPosition, Quaternion.Euler(placement.WorldEulerAngles));
             wrapper.transform.localScale = placement.WorldScale;
-            wrapper.AddComponent<MapAuthoredBuildingVisualComponent>()
-                .ConfigurePresentationWorldCenter(placement.WorldCenter);
+            MapAuthoredBuildingVisualComponent authoredVisual =
+                wrapper.AddComponent<MapAuthoredBuildingVisualComponent>();
+            if (TryCalculatePlacementPresentationSize(placement, out Vector3 presentationWorldSize))
+            {
+                authoredVisual.ConfigurePresentationGeometry(
+                    placement.WorldCenter,
+                    presentationWorldSize,
+                    placement.YawDegrees);
+            }
+            else
+            {
+                authoredVisual.ConfigurePresentationWorldCenter(placement.WorldCenter);
+            }
 
             bool useExistingStaticPresentation =
                 !hasAuthoringVisual &&
@@ -264,6 +275,56 @@ namespace Game.Runtime
                 source.gameObject.SetActive(false);
 
             return wrapper;
+        }
+
+        private static bool TryCalculatePlacementPresentationSize(
+            MapBuildingPlacementConfigEntry placement,
+            out Vector3 worldSize)
+        {
+            worldSize = default;
+            GameObject prefab = placement?.BuildingPrefab;
+            if (prefab == null)
+                return false;
+
+            Renderer[] renderers = prefab.GetComponentsInChildren<Renderer>(true);
+            bool hasBounds = false;
+            Bounds rootLocalBounds = default;
+            Matrix4x4 rootWorldToLocal = prefab.transform.worldToLocalMatrix;
+            for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
+            {
+                Renderer renderer = renderers[rendererIndex];
+                if (renderer == null)
+                    continue;
+
+                Bounds localBounds = renderer.localBounds;
+                Matrix4x4 rendererToRoot = rootWorldToLocal * renderer.transform.localToWorldMatrix;
+                for (int corner = 0; corner < 8; corner++)
+                {
+                    Vector3 local = new(
+                        (corner & 1) == 0 ? localBounds.min.x : localBounds.max.x,
+                        (corner & 2) == 0 ? localBounds.min.y : localBounds.max.y,
+                        (corner & 4) == 0 ? localBounds.min.z : localBounds.max.z);
+                    Vector3 rootLocal = rendererToRoot.MultiplyPoint3x4(local);
+                    if (hasBounds)
+                        rootLocalBounds.Encapsulate(rootLocal);
+                    else
+                    {
+                        rootLocalBounds = new Bounds(rootLocal, Vector3.zero);
+                        hasBounds = true;
+                    }
+                }
+            }
+
+            if (!hasBounds)
+                return false;
+
+            Vector3 scale = placement.WorldScale;
+            Vector3 size = rootLocalBounds.size;
+            worldSize = new Vector3(
+                Mathf.Abs(size.x * scale.x),
+                Mathf.Abs(size.y * scale.y),
+                Mathf.Abs(size.z * scale.z));
+            return worldSize.x > 0.001f && worldSize.z > 0.001f;
         }
 
         internal static bool TryAttachMapRunwayAnchor(

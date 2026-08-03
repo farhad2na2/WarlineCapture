@@ -102,10 +102,16 @@ namespace Game.Runtime
                     : center.y;
             center.y = surfaceY;
 
-            // Selection presentation is a gameplay footprint contract. Aggregate
-            // prefab/renderer bounds may include broad compounds, props, or static
-            // presentation owned elsewhere and must never enlarge the click frame.
-            Vector2 markerWorldSize = ResolveMarkerWorldSize(footprint, grid);
+            // Static-reuse map owners have no managed child renderers. Their exact
+            // placement-prefab geometry owns marker presentation, while canonical
+            // gameplay cells remain the authoritative occupancy/fallback contract.
+            Vector2 markerWorldSize = isMapAuthored && authoredVisual.HasPresentationGeometry
+                ? new Vector2(
+                    authoredVisual.PresentationWorldSize.x,
+                    authoredVisual.PresentationWorldSize.z)
+                : ResolveMarkerWorldSize(footprint, grid);
+            if (isMapAuthored && authoredVisual.HasPresentationGeometry)
+                rotation = Quaternion.Euler(0f, authoredVisual.PresentationYawDegrees, 0f);
             Transform markerTransform = _markerInstance.transform;
             markerTransform.SetPositionAndRotation(center, rotation);
             markerTransform.localScale = ResolveScale(markerWorldSize);

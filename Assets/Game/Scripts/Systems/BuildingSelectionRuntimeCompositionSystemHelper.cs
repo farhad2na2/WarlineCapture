@@ -698,8 +698,8 @@ namespace Game.Runtime
             }
 
             // Candidate Android presentation can leave the managed selection owner
-            // without child renderers. Its direct-hit shape is the canonical gameplay
-            // footprint at the baked visual center, never broad aggregate prefab bounds.
+            // without child renderers. Prefer exact placement-prefab geometry; gameplay
+            // footprint remains only the fallback when that presentation data is absent.
             if (!hasPoint &&
                 hasAuthoredPresentationCenter &&
                 context.TryGetGrid != null &&
@@ -707,22 +707,24 @@ namespace Game.Runtime
             {
                 Vector2Int footprint = building.Definition.FootprintCells;
                 Vector3 center = authoredVisual.PresentationWorldCenter;
-                float height = building.Definition.HasLocalBounds
-                    ? Mathf.Max(grid.CellSize, Mathf.Abs(building.Definition.LocalBounds.size.y))
-                    : grid.CellSize;
-                center.y = building.Instance.transform.position.y + height * 0.5f;
-                Bounds presentationBounds = new(
-                    center,
-                    new Vector3(
+                Vector3 size = authoredVisual.HasPresentationGeometry
+                    ? authoredVisual.PresentationWorldSize
+                    : new Vector3(
                         Mathf.Max(grid.CellSize, footprint.x * grid.CellSize),
-                        height,
-                        Mathf.Max(grid.CellSize, footprint.y * grid.CellSize)));
+                        building.Definition.HasLocalBounds
+                            ? Mathf.Max(grid.CellSize, Mathf.Abs(building.Definition.LocalBounds.size.y))
+                            : grid.CellSize,
+                        Mathf.Max(grid.CellSize, footprint.y * grid.CellSize));
+                Quaternion rotation = authoredVisual.HasPresentationGeometry
+                    ? Quaternion.Euler(0f, authoredVisual.PresentationYawDegrees, 0f)
+                    : Quaternion.identity;
                 for (int corner = 0; corner < 8; corner++)
                 {
-                    Vector3 world = new(
-                        (corner & 1) == 0 ? presentationBounds.min.x : presentationBounds.max.x,
-                        (corner & 2) == 0 ? presentationBounds.min.y : presentationBounds.max.y,
-                        (corner & 4) == 0 ? presentationBounds.min.z : presentationBounds.max.z);
+                    Vector3 offset = new(
+                        ((corner & 1) == 0 ? -0.5f : 0.5f) * size.x,
+                        ((corner & 2) == 0 ? -0.5f : 0.5f) * size.y,
+                        ((corner & 4) == 0 ? -0.5f : 0.5f) * size.z);
+                    Vector3 world = center + rotation * offset;
                     Vector3 screen = camera.WorldToScreenPoint(world);
                     if (screen.z <= 0f)
                         continue;

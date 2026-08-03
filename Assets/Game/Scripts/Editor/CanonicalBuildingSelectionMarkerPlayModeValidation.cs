@@ -49,11 +49,9 @@ namespace Game.Editor
         private static Vector2Int _footprintCells;
         private static Vector2Int _conflictingTentCell;
         private static bool _hasConflictingTentCell;
-        private static Bounds _targetRendererBounds;
         private static object _contractorTent;
         private static int _contractorTentId;
         private static Vector3 _contractorTentPosition;
-        private static Bounds _contractorTentBounds;
         private static object _buildingUiQueryContext;
         private static Sprite _expectedPortrait;
         private static Vector3 _markerBaseRendererSize;
@@ -106,11 +104,9 @@ namespace Game.Editor
                 _footprintCells = default;
                 _conflictingTentCell = default;
                 _hasConflictingTentCell = false;
-                _targetRendererBounds = default;
                 _contractorTent = null;
                 _contractorTentId = 0;
                 _contractorTentPosition = default;
-                _contractorTentBounds = default;
                 _buildingUiQueryContext = null;
                 _pendingExitCode = int.MinValue;
 
@@ -225,13 +221,13 @@ namespace Game.Editor
                     }
 
                     Vector3 expectedCenter = new(
-                        _targetRendererBounds.center.x,
+                        _tentPosition.x,
                         markerObject.transform.position.y,
-                        _targetRendererBounds.center.z);
+                        _tentPosition.z);
                     Vector3 expectedScale = new(
-                        Mathf.Max(grid.CellSize, _targetRendererBounds.size.x) / Mathf.Max(0.001f, _markerBaseRendererSize.x),
+                        Mathf.Max(grid.CellSize, _footprintCells.x * grid.CellSize) / Mathf.Max(0.001f, _markerBaseRendererSize.x),
                         1f,
-                        Mathf.Max(grid.CellSize, _targetRendererBounds.size.z) / Mathf.Max(0.001f, _markerBaseRendererSize.z));
+                        Mathf.Max(grid.CellSize, _footprintCells.y * grid.CellSize) / Mathf.Max(0.001f, _markerBaseRendererSize.z));
                     Vector3 actualPosition = markerObject.transform.position;
                     Vector3 actualScale = markerObject.transform.localScale;
                     float centerTolerance = Mathf.Max(0.05f, grid.CellSize * 0.05f);
@@ -312,11 +308,11 @@ namespace Game.Editor
 
                 GameObject ownershipMarker = GameObject.Find("BuildingSelectionMarkerRuntime");
                 if (ownershipMarker == null || !ownershipMarker.activeInHierarchy ||
-                    Mathf.Abs(ownershipMarker.transform.position.x - _contractorTentBounds.center.x) > 0.05f ||
-                    Mathf.Abs(ownershipMarker.transform.position.z - _contractorTentBounds.center.z) > 0.05f)
+                    Mathf.Abs(ownershipMarker.transform.position.x - _contractorTentPosition.x) > 0.05f ||
+                    Mathf.Abs(ownershipMarker.transform.position.z - _contractorTentPosition.z) > 0.05f)
                 {
                     Complete(false, BuildStatus(
-                        $"Contractor Tent did not own conflicting-cell marker expectedCenter={_contractorTentBounds.center} actual={ownershipMarker?.transform.position ?? default}"));
+                        $"Contractor Tent did not own conflicting-cell marker expectedCenter={_contractorTentPosition} actual={ownershipMarker?.transform.position ?? default}"));
                     return;
                 }
 
@@ -344,7 +340,7 @@ namespace Game.Editor
                     return;
 
                 Complete(true, BuildStatus(
-                    $"barracksMarker=visualBounds barracksPortrait={_expectedPortrait.name} contractorTentClickOwner={_contractorTentId} barracksEvidence={_evidencePath} ownershipEvidence={_ownershipEvidencePath}"));
+                    $"barracksMarker=canonicalFootprint barracksPortrait={_expectedPortrait.name} contractorTentClickOwner={_contractorTentId} barracksEvidence={_evidencePath} ownershipEvidence={_ownershipEvidencePath}"));
             }
             catch (Exception exception)
             {
@@ -383,17 +379,16 @@ namespace Game.Editor
                     continue;
 
                 int buildingId = (int?)building.GetType().GetProperty("Id")?.GetValue(building) ?? 0;
-                TryResolvePresentationBounds(instance, definition, out Bounds presentationBounds);
+                bool hasPresentationCenter = TryResolvePresentationCenter(instance, definition, out Vector3 presentationCenter);
 
                 if (_contractorTent == null && display.Contains("Contractor Tent", StringComparison.OrdinalIgnoreCase))
                 {
                     _conflictingTentCell = (Vector2Int?)building.GetType().GetField("OriginCell")?.GetValue(building) ?? default;
-                    if (presentationBounds.size.sqrMagnitude > 0.0001f)
+                    if (hasPresentationCenter)
                     {
-                        _contractorTentBounds = presentationBounds;
                         _contractorTent = building;
                         _contractorTentId = buildingId;
-                        _contractorTentPosition = _contractorTentBounds.center;
+                        _contractorTentPosition = presentationCenter;
                         _hasConflictingTentCell = true;
                     }
                 }
@@ -403,13 +398,12 @@ namespace Game.Editor
 
                 _tent = building;
                 _tentId = buildingId;
-                if (presentationBounds.size.sqrMagnitude <= 0.0001f)
+                if (!hasPresentationCenter)
                 {
                     _tent = null;
                     continue;
                 }
-                _targetRendererBounds = presentationBounds;
-                _tentPosition = _targetRendererBounds.center;
+                _tentPosition = presentationCenter;
                 _originCell = (Vector2Int?)building.GetType().GetField("OriginCell")?.GetValue(building) ?? default;
                 _footprintCells = (Vector2Int?)definition.GetType().GetField("FootprintCells")?.GetValue(definition) ?? default;
                 if (_footprintCells.x <= 0 || _footprintCells.y <= 0)
@@ -508,6 +502,24 @@ namespace Game.Editor
             }
 
             return hasPoint;
+        }
+
+        private static bool TryResolvePresentationCenter(GameObject instance, object definition, out Vector3 center)
+        {
+            center = default;
+            if (instance != null &&
+                instance.TryGetComponent(out MapAuthoredBuildingVisualComponent authoredVisual) &&
+                authoredVisual.HasPresentationWorldCenter)
+            {
+                center = authoredVisual.PresentationWorldCenter;
+                return true;
+            }
+
+            if (!TryResolvePresentationBounds(instance, definition, out Bounds bounds))
+                return false;
+
+            center = bounds.center;
+            return true;
         }
 
         private static bool TryCalculateRendererBounds(GameObject instance, out Bounds bounds)

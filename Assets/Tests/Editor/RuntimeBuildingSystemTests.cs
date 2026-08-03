@@ -4,6 +4,7 @@ using Game.Runtime;
 using System;
 using NUnit.Framework;
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 
 public sealed class RuntimeBuildingSystemTests
@@ -19,7 +20,8 @@ public sealed class RuntimeBuildingSystemTests
             tests.RuntimeBuildingSelection_SelectAndFocusIgnoresEnemyBuilding();
             tests.BuildingUiSelectionCommandRequest_DeletesSelectedBuildingAndWritesResult();
             tests.BuildingUiSelectionCommandRequest_ClearsSelectionAndWritesResult();
-            Debug.Log("[RuntimeBuildingSystemFocusedValidation] result=Passed tests=6");
+            tests.StaticReuseHitShapePrefersNearestAuthoredCenterOverSharedRenderers();
+            Debug.Log("[RuntimeBuildingSystemFocusedValidation] result=Passed tests=7");
             ValidationExit.Exit(0);
         }
         catch (Exception ex)
@@ -173,6 +175,123 @@ public sealed class RuntimeBuildingSystemTests
         Assert.AreEqual(0, result.BuildingId);
         Assert.IsFalse(runtimeBuildings.CurrentActiveBuildingId.HasValue);
         Assert.AreEqual(1, refreshCount);
+    }
+
+    [Test]
+    public void StaticReuseHitShapePrefersNearestAuthoredCenterOverSharedRenderers()
+    {
+        GameObject cameraObject = new("StaticReuseSelectionCamera");
+        GameObject barracksObject = new("StaticReuseBarracks");
+        GameObject tentObject = new("StaticReuseContractorTent");
+        GameObject decoyObject = new("StaticReuseNearbyDecoy");
+        GameObject sharedPackedVisual = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        try
+        {
+            Camera camera = cameraObject.AddComponent<Camera>();
+            camera.orthographic = true;
+            camera.orthographicSize = 20f;
+            camera.aspect = 1f;
+            camera.pixelRect = new Rect(0f, 0f, 512f, 512f);
+            cameraObject.transform.SetPositionAndRotation(new Vector3(0f, 30f, 0f), Quaternion.Euler(90f, 0f, 0f));
+
+            barracksObject.AddComponent<MapAuthoredBuildingVisualComponent>()
+                .ConfigurePresentationWorldCenter(Vector3.zero);
+            tentObject.AddComponent<MapAuthoredBuildingVisualComponent>()
+                .ConfigurePresentationWorldCenter(new Vector3(8f, 0f, 0f));
+            decoyObject.AddComponent<MapAuthoredBuildingVisualComponent>()
+                .ConfigurePresentationWorldCenter(new Vector3(8f, 0f, 1f));
+            sharedPackedVisual.name = "SharedPackedBuildingRenderer";
+            sharedPackedVisual.transform.SetParent(barracksObject.transform, false);
+            sharedPackedVisual.transform.localScale = new Vector3(30f, 4f, 18f);
+            Renderer sharedRenderer = sharedPackedVisual.GetComponent<Renderer>();
+
+            var barracks = new RuntimeBuildingEntity
+            {
+                Id = 1,
+                Instance = barracksObject,
+                OriginCell = new Vector2Int(-2, -2),
+                Definition = new BuildingDefinition
+                {
+                    FootprintCells = new Vector2Int(4, 4),
+                    HasLocalBounds = true,
+                    LocalBounds = new Bounds(Vector3.zero, new Vector3(30f, 4f, 18f))
+                },
+                FactionVisualRenderers = new[] { sharedRenderer },
+                HasOwnerFaction = true,
+                OwnerFactionId = FactionIdentity.PlayerFactionId
+            };
+            var contractorTent = new RuntimeBuildingEntity
+            {
+                Id = 2,
+                Instance = tentObject,
+                OriginCell = new Vector2Int(7, -1),
+                Definition = new BuildingDefinition { FootprintCells = new Vector2Int(2, 2) },
+                FactionVisualRenderers = new[] { sharedRenderer },
+                HasOwnerFaction = true,
+                OwnerFactionId = FactionIdentity.PlayerFactionId
+            };
+            var nearbyDecoy = new RuntimeBuildingEntity
+            {
+                Id = 3,
+                Instance = decoyObject,
+                OriginCell = new Vector2Int(8, 1),
+                Definition = new BuildingDefinition { FootprintCells = Vector2Int.one },
+                FactionVisualRenderers = new[] { sharedRenderer },
+                HasOwnerFaction = true,
+                OwnerFactionId = FactionIdentity.PlayerFactionId
+            };
+            var runtimeBuildings = new RuntimeBuildingCollection<RuntimeBuildingEntity>();
+            runtimeBuildings.AddBuilding(barracks.Id, barracks);
+            runtimeBuildings.AddBuilding(contractorTent.Id, contractorTent);
+            runtimeBuildings.AddBuilding(nearbyDecoy.Id, nearbyDecoy);
+            var grid = new GridConfig
+            {
+                Width = 64,
+                Height = 64,
+                CellSize = 1f,
+                Origin = float3.zero
+            };
+            var selection = new BuildingSelectionRuntimeCompositionSystemHelper();
+            var context = new BuildingSelectionRuntimeCompositionSystemHelper.Context(
+                runtimeBuildings,
+                runtimeBuildings.Buildings,
+                camera,
+                TryGetGrid,
+                (origin, footprint, config) => new Vector3(
+                    config.Origin.x + (origin.x + footprint.x * 0.5f) * config.CellSize,
+                    config.Origin.y,
+                    config.Origin.z + (origin.y + footprint.y * 0.5f) * config.CellSize),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+            Vector3 tentScreen = camera.WorldToScreenPoint(tentObject.GetComponent<MapAuthoredBuildingVisualComponent>().PresentationWorldCenter);
+
+            Assert.IsTrue(selection.HandleBuildingSelectionClick(
+                context,
+                new Vector2(tentScreen.x, tentScreen.y),
+                new Vector2Int(8, 0)));
+            Assert.AreEqual(contractorTent.Id, runtimeBuildings.CurrentActiveBuildingId);
+
+            bool TryGetGrid(out GridConfig value)
+            {
+                value = grid;
+                return true;
+            }
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(tentObject);
+            UnityEngine.Object.DestroyImmediate(decoyObject);
+            UnityEngine.Object.DestroyImmediate(sharedPackedVisual);
+            UnityEngine.Object.DestroyImmediate(barracksObject);
+            UnityEngine.Object.DestroyImmediate(cameraObject);
+        }
     }
 
     private static BuildingSelectionRuntimeCompositionSystemHelper.Context CreateSelectionContext(

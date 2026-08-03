@@ -86,15 +86,14 @@ namespace Game.Runtime
             Quaternion rotation = Quaternion.identity;
             Bounds bounds = default;
             bool hasPresentationBounds = building.Instance != null &&
-                                         (TryCalculateRendererBounds(building.Instance, out bounds) ||
-                                          TryCalculateDefinitionBounds(building, out bounds));
-            bool useAuthoredVisualBounds = hasPresentationBounds &&
-                                           building.Instance != null &&
-                                           building.Instance.TryGetComponent(out MapAuthoredBuildingVisualComponent _);
-            if (useAuthoredVisualBounds)
+                                         TryCalculateRendererBounds(building.Instance, out bounds);
+            MapAuthoredBuildingVisualComponent authoredVisual = null;
+            bool isMapAuthored = building.Instance != null &&
+                                 building.Instance.TryGetComponent(out authoredVisual);
+            if (isMapAuthored && authoredVisual.HasPresentationWorldCenter)
             {
-                center.x = bounds.center.x;
-                center.z = bounds.center.z;
+                center.x = authoredVisual.PresentationWorldCenter.x;
+                center.z = authoredVisual.PresentationWorldCenter.z;
             }
             float surfaceY = hasPresentationBounds
                 ? ResolveMarkerSurfaceY(building.Instance, bounds, grid)
@@ -103,11 +102,10 @@ namespace Game.Runtime
                     : center.y;
             center.y = surfaceY;
 
-            Vector2 markerWorldSize = useAuthoredVisualBounds
-                ? new Vector2(
-                    Mathf.Max(grid.CellSize, bounds.size.x),
-                    Mathf.Max(grid.CellSize, bounds.size.z))
-                : ResolveMarkerWorldSize(footprint, grid);
+            // Selection presentation is a gameplay footprint contract. Aggregate
+            // prefab/renderer bounds may include broad compounds, props, or static
+            // presentation owned elsewhere and must never enlarge the click frame.
+            Vector2 markerWorldSize = ResolveMarkerWorldSize(footprint, grid);
             Transform markerTransform = _markerInstance.transform;
             markerTransform.SetPositionAndRotation(center, rotation);
             markerTransform.localScale = ResolveScale(markerWorldSize);
@@ -350,33 +348,6 @@ namespace Game.Runtime
             }
 
             return hasBounds;
-        }
-
-        private static bool TryCalculateDefinitionBounds(RuntimeBuildingEntity building, out Bounds bounds)
-        {
-            bounds = default;
-            if (building?.Instance == null || building.Definition == null || !building.Definition.HasLocalBounds)
-                return false;
-
-            Bounds localBounds = building.Definition.LocalBounds;
-            bool hasPoint = false;
-            for (int corner = 0; corner < 8; corner++)
-            {
-                Vector3 local = new(
-                    (corner & 1) == 0 ? localBounds.min.x : localBounds.max.x,
-                    (corner & 2) == 0 ? localBounds.min.y : localBounds.max.y,
-                    (corner & 4) == 0 ? localBounds.min.z : localBounds.max.z);
-                Vector3 world = building.Instance.transform.TransformPoint(local);
-                if (hasPoint)
-                    bounds.Encapsulate(world);
-                else
-                {
-                    bounds = new Bounds(world, Vector3.zero);
-                    hasPoint = true;
-                }
-            }
-
-            return hasPoint;
         }
 
         private static bool IsSelectionObjectOutlineRenderer(Renderer renderer)

@@ -24,11 +24,13 @@ public sealed class BuildingSelectionMarkerPresentationSystemHelperTests
             RunCase(test => test.RefreshHidesMarkerWhenSelectionClearsOrSelectedBuildingIsDestroyed());
             RunCase(test => test.RefreshAppliesHologramCompatibleMarkerColorProperties());
             RunCase(test => test.RefreshKeepsMapAuthoredMarkerRenderableBoundsAboveSurface());
-            RunCase(test => test.RefreshUsesMapAuthoredPresentationBoundsInsteadOfGameplayFootprint());
+            RunCase(test => test.RefreshKeepsMapAuthoredAggregateBoundsInsideGameplayFootprint());
+            RunCase(test => test.RefreshUsesBakedCenterForStaticReuseWithoutChildRenderers());
+            RunCase(test => test.SelectedBuildingPortraitRefreshPrefersRuntimeDefinitionSprite());
             RunCase(test => test.RuntimeVisualInitializationCachesBuildingRenderersWithoutMarkerChildren());
             RunCase(test => test.RuntimeResourceVisualsPreferEcsStorageForProductionState());
             RunCase(test => test.RefreshCreatesMeshBoundObjectOutlineForSelectedBuilding());
-            Debug.Log("[BuildingSelectionMarkerFocusedValidation] result=Passed tests=8");
+            Debug.Log("[BuildingSelectionMarkerFocusedValidation] result=Passed tests=10");
         }
         catch (System.Exception ex)
         {
@@ -189,11 +191,12 @@ public sealed class BuildingSelectionMarkerPresentationSystemHelperTests
     }
 
     [Test]
-    public void RefreshUsesMapAuthoredPresentationBoundsInsteadOfGameplayFootprint()
+    public void RefreshKeepsMapAuthoredAggregateBoundsInsideGameplayFootprint()
     {
         var runtimeBuildings = new RuntimeBuildingCollection<RuntimeBuildingEntity>();
         RuntimeBuildingEntity building = CreateBuilding(1, new Vector2Int(4, 5), new Vector2Int(4, 3), 0.25f);
-        building.Instance.AddComponent<MapAuthoredBuildingVisualComponent>();
+        building.Instance.AddComponent<MapAuthoredBuildingVisualComponent>()
+            .ConfigurePresentationWorldCenter(new Vector3(6f, 0.25f, 6.5f));
 
         GameObject broadVisual = GameObject.CreatePrimitive(PrimitiveType.Cube);
         Object.DestroyImmediate(broadVisual.GetComponent<Collider>());
@@ -212,10 +215,67 @@ public sealed class BuildingSelectionMarkerPresentationSystemHelperTests
         GameObject marker = system.RuntimeMarkerForTests;
         Assert.IsNotNull(marker);
         Assert.IsTrue(marker.activeSelf);
-        Assert.That(marker.transform.position.x, Is.EqualTo(4f).Within(0.001f));
-        Assert.That(marker.transform.position.z, Is.EqualTo(5f).Within(0.001f));
-        Assert.That(marker.transform.localScale.x, Is.EqualTo(30f).Within(0.001f));
-        Assert.That(marker.transform.localScale.z, Is.EqualTo(18f).Within(0.001f));
+        Assert.That(marker.transform.position.x, Is.EqualTo(6f).Within(0.001f));
+        Assert.That(marker.transform.position.z, Is.EqualTo(6.5f).Within(0.001f));
+        Assert.That(marker.transform.localScale.x, Is.EqualTo(4f).Within(0.001f));
+        Assert.That(marker.transform.localScale.z, Is.EqualTo(3f).Within(0.001f));
+    }
+
+    [Test]
+    public void RefreshUsesBakedCenterForStaticReuseWithoutChildRenderers()
+    {
+        var runtimeBuildings = new RuntimeBuildingCollection<RuntimeBuildingEntity>();
+        RuntimeBuildingEntity building = CreateBuilding(1, new Vector2Int(40, 50), new Vector2Int(8, 14), 0.25f);
+        building.Definition.LocalBounds = new Bounds(new Vector3(-6f, 2f, 0f), new Vector3(30f, 4f, 18f));
+        building.Definition.HasLocalBounds = true;
+        building.Instance.AddComponent<MapAuthoredBuildingVisualComponent>()
+            .ConfigurePresentationWorldCenter(new Vector3(47.25f, 2.25f, 55.5f));
+
+        runtimeBuildings.AddBuilding(building.Id, building);
+        BuildingSelectionMarkerPresentationSystemHelper system = CreateBuildingSelectionMarkerPresentationSystemHelper();
+        BuildingSelectionMarkerPresentationSystemHelper.Context context = CreateContext(runtimeBuildings);
+
+        runtimeBuildings.SelectBuilding(building.Id);
+        system.Refresh(context);
+
+        GameObject marker = system.RuntimeMarkerForTests;
+        Assert.IsNotNull(marker);
+        Assert.That(marker.transform.position.x, Is.EqualTo(47.25f).Within(0.001f));
+        Assert.That(marker.transform.position.z, Is.EqualTo(55.5f).Within(0.001f));
+        Assert.That(marker.transform.localScale.x, Is.EqualTo(8f).Within(0.001f));
+        Assert.That(marker.transform.localScale.z, Is.EqualTo(14f).Within(0.001f));
+    }
+
+    [Test]
+    public void SelectedBuildingPortraitRefreshPrefersRuntimeDefinitionSprite()
+    {
+        const string BarracksPortraitPath =
+            "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Barrack_Action_512.png";
+        Sprite expected = AssetDatabase.LoadAssetAtPath<Sprite>(BarracksPortraitPath);
+        Assert.IsNotNull(expected);
+
+        GameObject fallbackPrefab = new("FallbackBuildingPrefab");
+        _objects.Add(fallbackPrefab);
+        var selected = new RuntimeBuildingEntity
+        {
+            Id = 18,
+            Definition = new BuildingDefinition
+            {
+                Prefab = fallbackPrefab,
+                SelectionPortraitSprite = expected
+            }
+        };
+        var buildings = new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity>
+        {
+            { selected.Id, selected }
+        };
+
+        Sprite actual = BuildingSelectionPortraitUiSystemHelper.ResolveSelected(
+            buildings,
+            selected.Id,
+            _ => null);
+
+        Assert.AreSame(expected, actual);
     }
 
     [Test]

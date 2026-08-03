@@ -241,7 +241,8 @@ namespace Game.Runtime
             wrapper.transform.SetParent(parent, false);
             wrapper.transform.SetPositionAndRotation(placement.WorldPosition, Quaternion.Euler(placement.WorldEulerAngles));
             wrapper.transform.localScale = placement.WorldScale;
-            wrapper.AddComponent<MapAuthoredBuildingVisualComponent>();
+            wrapper.AddComponent<MapAuthoredBuildingVisualComponent>()
+                .ConfigurePresentationWorldCenter(placement.WorldCenter);
 
             bool useExistingStaticPresentation =
                 !hasAuthoringVisual &&

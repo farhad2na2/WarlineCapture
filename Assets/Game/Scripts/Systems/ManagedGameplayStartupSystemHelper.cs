@@ -207,6 +207,13 @@ namespace Game.Runtime
 
             Sprite ResolveSelectedBuildingPortraitSprite()
             {
+                Sprite portrait = BuildingSelectionPortraitUiSystemHelper.ResolveSelected(
+                    building.RuntimeBuildings,
+                    building.UiQueryContext.GetActiveBuildingId?.Invoke(),
+                    resolveSelectionPortraitSpriteFromPrefab);
+                if (portrait != null)
+                    return portrait;
+
                 return building.UiQuery.TryGetSelectedBuildingPreviewPrefab(building.UiQueryContext, out GameObject prefab)
                     ? resolveSelectionPortraitSpriteFromPrefab?.Invoke(prefab)
                     : null;

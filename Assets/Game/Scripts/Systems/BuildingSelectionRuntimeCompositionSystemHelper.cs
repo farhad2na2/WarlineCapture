@@ -444,7 +444,7 @@ namespace Game.Runtime
                 if (!IsSelectablePlayerBuilding(building))
                     continue;
 
-                if (!TryGetBuildingScreenRect(context.WorldCamera, building, out Rect buildingRect, out _))
+                if (!TryGetBuildingScreenRect(context, building, out Rect buildingRect, out _))
                     continue;
                 if (!screenRect.Overlaps(buildingRect))
                     continue;
@@ -558,13 +558,14 @@ namespace Game.Runtime
             return true;
         }
 
-        private static bool TrySelectVisualBuildingAtScreenPosition(Context context, Vector2 screenPosition)
+        private bool TrySelectVisualBuildingAtScreenPosition(Context context, Vector2 screenPosition)
         {
             if (context.WorldCamera == null || context.RuntimeBuildings == null)
                 return false;
 
             int bestBuildingId = 0;
             RuntimeBuildingEntity bestBuilding = null;
+            float bestCenterDistanceSq = float.MaxValue;
             float bestDepth = float.MaxValue;
             float bestArea = float.MaxValue;
 
@@ -576,23 +577,43 @@ namespace Game.Runtime
                 if (!IsSelectablePlayerBuilding(building))
                     continue;
 
-                if (!TryGetBuildingScreenRect(context.WorldCamera, building, out Rect rect, out float depth))
+                if (!TryGetBuildingScreenRect(context, building, out Rect rect, out float depth))
                     continue;
                 if (!rect.Contains(screenPosition))
                     continue;
 
-                float area = rect.width * rect.height;
-                if (area > bestArea + 0.01f)
+                Vector3 hitCenterWorld;
+                if (building.Instance.TryGetComponent(out MapAuthoredBuildingVisualComponent authoredVisual) &&
+                    authoredVisual.HasPresentationWorldCenter)
+                {
+                    hitCenterWorld = authoredVisual.PresentationWorldCenter;
+                }
+                else
+                {
+                    hitCenterWorld = ResolveBuildingFocusWorldPosition(context, building);
+                }
+
+                Vector3 hitCenterScreen = context.WorldCamera.WorldToScreenPoint(hitCenterWorld);
+                if (hitCenterScreen.z <= 0f)
                     continue;
-                if (Mathf.Abs(area - bestArea) <= 0.01f &&
-                    (depth > bestDepth + 0.001f ||
-                     Mathf.Abs(depth - bestDepth) <= 0.001f && entry.Key >= bestBuildingId))
+
+                float centerDistanceSq =
+                    (screenPosition - new Vector2(hitCenterScreen.x, hitCenterScreen.y)).sqrMagnitude;
+                float area = rect.width * rect.height;
+                if (centerDistanceSq > bestCenterDistanceSq + 0.01f)
+                    continue;
+                if (Mathf.Abs(centerDistanceSq - bestCenterDistanceSq) <= 0.01f &&
+                    (area > bestArea + 0.01f ||
+                     Mathf.Abs(area - bestArea) <= 0.01f &&
+                     (depth > bestDepth + 0.001f ||
+                      Mathf.Abs(depth - bestDepth) <= 0.001f && entry.Key >= bestBuildingId)))
                 {
                     continue;
                 }
 
                 bestBuildingId = entry.Key;
                 bestBuilding = building;
+                bestCenterDistanceSq = centerDistanceSq;
                 bestDepth = depth;
                 bestArea = area;
             }
@@ -620,14 +641,30 @@ namespace Game.Runtime
                    FactionIdentity.IsPlayerControlled(building.OwnerFactionId);
         }
 
-        private static bool TryGetBuildingScreenRect(Camera camera, RuntimeBuildingEntity building, out Rect rect, out float depth)
+        private static bool TryGetBuildingScreenRect(Context context, RuntimeBuildingEntity building, out Rect rect, out float depth)
         {
             rect = default;
             depth = float.MaxValue;
+            Camera camera = context.WorldCamera;
+            if (camera == null)
+                return false;
 
-            Renderer[] renderers = building.FactionVisualRenderers;
-            if (renderers == null || renderers.Length == 0)
-                renderers = building.Instance.GetComponentsInChildren<Renderer>(true);
+            MapAuthoredBuildingVisualComponent authoredVisual = null;
+            bool hasAuthoredPresentationCenter =
+                building.Instance.TryGetComponent(out authoredVisual) &&
+                authoredVisual.HasPresentationWorldCenter;
+
+            // Static-reuse map owners can reference a packed renderer shared by many
+            // buildings. That renderer is valid for faction tinting, but it cannot own
+            // a direct click for any one building. Authored owners therefore always use
+            // their baked center and canonical footprint for hit ownership.
+            Renderer[] renderers = null;
+            if (!hasAuthoredPresentationCenter)
+            {
+                renderers = building.FactionVisualRenderers;
+                if (renderers == null || renderers.Length == 0)
+                    renderers = building.Instance.GetComponentsInChildren<Renderer>(true);
+            }
 
             bool hasPoint = false;
             Vector2 min = new(float.MaxValue, float.MaxValue);
@@ -660,21 +697,33 @@ namespace Game.Runtime
                 }
             }
 
-            // Map-authored static presentation can reuse an ECS/static renderer while
-            // leaving only the managed selection owner in the scene hierarchy. In
-            // that case the canonical definition bounds are the visible hit shape;
-            // falling back to the gameplay cell would let a broad nearby footprint
-            // steal a tap on the smaller visible building.
-            if (!hasPoint && building.Definition != null && building.Definition.HasLocalBounds)
+            // Candidate Android presentation can leave the managed selection owner
+            // without child renderers. Its direct-hit shape is the canonical gameplay
+            // footprint at the baked visual center, never broad aggregate prefab bounds.
+            if (!hasPoint &&
+                hasAuthoredPresentationCenter &&
+                context.TryGetGrid != null &&
+                context.TryGetGrid(out GridConfig grid))
             {
-                Bounds localBounds = building.Definition.LocalBounds;
+                Vector2Int footprint = building.Definition.FootprintCells;
+                Vector3 center = authoredVisual.PresentationWorldCenter;
+                float height = building.Definition.HasLocalBounds
+                    ? Mathf.Max(grid.CellSize, Mathf.Abs(building.Definition.LocalBounds.size.y))
+                    : grid.CellSize;
+                center.y = building.Instance.transform.position.y + height * 0.5f;
+                Bounds presentationBounds = new(
+                    center,
+                    new Vector3(
+                        Mathf.Max(grid.CellSize, footprint.x * grid.CellSize),
+                        height,
+                        Mathf.Max(grid.CellSize, footprint.y * grid.CellSize)));
                 for (int corner = 0; corner < 8; corner++)
                 {
-                    Vector3 local = new(
-                        (corner & 1) == 0 ? localBounds.min.x : localBounds.max.x,
-                        (corner & 2) == 0 ? localBounds.min.y : localBounds.max.y,
-                        (corner & 4) == 0 ? localBounds.min.z : localBounds.max.z);
-                    Vector3 screen = camera.WorldToScreenPoint(building.Instance.transform.TransformPoint(local));
+                    Vector3 world = new(
+                        (corner & 1) == 0 ? presentationBounds.min.x : presentationBounds.max.x,
+                        (corner & 2) == 0 ? presentationBounds.min.y : presentationBounds.max.y,
+                        (corner & 4) == 0 ? presentationBounds.min.z : presentationBounds.max.z);
+                    Vector3 screen = camera.WorldToScreenPoint(world);
                     if (screen.z <= 0f)
                         continue;
 

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Game.Runtime
@@ -19,6 +20,21 @@ namespace Game.Runtime
             return sprite != null
                 ? sprite
                 : resolveSelectionPortraitSpriteFromPrefab?.Invoke(building.Instance);
+        }
+
+        public static Sprite ResolveSelected(
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
+            int? selectedBuildingId,
+            Func<GameObject, Sprite> resolveSelectionPortraitSpriteFromPrefab)
+        {
+            if (selectedBuildingId.HasValue &&
+                runtimeBuildings != null &&
+                runtimeBuildings.TryGetValue(selectedBuildingId.Value, out RuntimeBuildingEntity building))
+            {
+                return Resolve(building, resolveSelectionPortraitSpriteFromPrefab);
+            }
+
+            return null;
         }
     }
 }

@@ -53,17 +53,29 @@ namespace Game.Runtime
         public bool HandleBuildingSelectionClick(Context context, Vector2 screenPosition)
         {
             if (context.HasPendingPathJob != null && context.HasPendingPathJob())
+            {
+                BuildingSelectionNativeDiagnostic.Log(
+                    $"[BuildingSelectionHitOwnerDiag] stage=outer-route tap=({screenPosition.x:F1},{screenPosition.y:F1}) result=blocked-pending-path");
                 return false;
+            }
 
             if (context.TryGetGrid == null || !context.TryGetGrid(out GridConfig grid))
+            {
+                BuildingSelectionNativeDiagnostic.Log(
+                    $"[BuildingSelectionHitOwnerDiag] stage=outer-route tap=({screenPosition.x:F1},{screenPosition.y:F1}) result=missing-grid");
                 return false;
+            }
 
             Vector2Int cell = new(int.MinValue / 2, int.MinValue / 2);
-            if (context.TryGetGridCell != null)
-                context.TryGetGridCell(screenPosition, grid, out cell);
+            bool projectedToGrid = context.TryGetGridCell != null &&
+                                   context.TryGetGridCell(screenPosition, grid, out cell);
 
-            return context.HandleCellSelection != null &&
-                   context.HandleCellSelection(screenPosition, cell);
+            bool handled = context.HandleCellSelection != null &&
+                           context.HandleCellSelection(screenPosition, cell);
+            BuildingSelectionNativeDiagnostic.Log(
+                $"[BuildingSelectionHitOwnerDiag] stage=outer-route tap=({screenPosition.x:F1},{screenPosition.y:F1}) " +
+                $"projected={(projectedToGrid ? 1 : 0)} cell=({cell.x},{cell.y}) handled={(handled ? 1 : 0)}");
+            return handled;
         }
 
         public Context CreateContext(Source source)

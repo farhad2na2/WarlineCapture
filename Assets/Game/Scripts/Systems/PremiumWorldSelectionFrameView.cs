@@ -23,6 +23,12 @@ namespace Game.Runtime
         private readonly LineRenderer[] _cornerBrackets = new LineRenderer[CornerBracketCount];
         private readonly LineRenderer[] _scanBands = new LineRenderer[ScanBandCount];
         private Material _runtimeMaterial;
+        private bool _hasGeometryDiagnostic;
+        private Vector3 _lastDiagnosticCenter;
+        private Quaternion _lastDiagnosticRotation;
+        private Vector2 _lastDiagnosticFootprint;
+        private float _lastDiagnosticSurfaceY;
+        private float _lastDiagnosticTargetHeight;
 
         public void Configure(
             Vector3 center,
@@ -48,6 +54,8 @@ namespace Game.Runtime
             float rimLineWidth = Mathf.Clamp(longestAxis * 0.01f, 0.034f, 0.105f);
             float postLineWidth = Mathf.Clamp(longestAxis * 0.008f, 0.03f, 0.09f);
             float bracketLength = Mathf.Clamp(longestAxis * 0.16f, 0.55f, shortestHalfAxis * 0.78f);
+
+            LogGeometryDiagnostic(center, rotation, footprintSize, surfaceY, targetHeight, width, depth, groundY, topY);
 
             Vector3 right = rotation * Vector3.right;
             Vector3 forward = rotation * Vector3.forward;
@@ -91,6 +99,43 @@ namespace Game.Runtime
                 halfZ,
                 rimLineWidth * 0.62f,
                 accentColor);
+        }
+
+        private void LogGeometryDiagnostic(
+            Vector3 center,
+            Quaternion rotation,
+            Vector2 requestedFootprint,
+            float surfaceY,
+            float targetHeight,
+            float renderedWidth,
+            float renderedDepth,
+            float groundY,
+            float topY)
+        {
+            if (_hasGeometryDiagnostic &&
+                (_lastDiagnosticCenter - center).sqrMagnitude < 0.000001f &&
+                Quaternion.Angle(_lastDiagnosticRotation, rotation) < 0.001f &&
+                (_lastDiagnosticFootprint - requestedFootprint).sqrMagnitude < 0.000001f &&
+                Mathf.Abs(_lastDiagnosticSurfaceY - surfaceY) < 0.0001f &&
+                Mathf.Abs(_lastDiagnosticTargetHeight - targetHeight) < 0.0001f)
+            {
+                return;
+            }
+
+            _hasGeometryDiagnostic = true;
+            _lastDiagnosticCenter = center;
+            _lastDiagnosticRotation = rotation;
+            _lastDiagnosticFootprint = requestedFootprint;
+            _lastDiagnosticSurfaceY = surfaceY;
+            _lastDiagnosticTargetHeight = targetHeight;
+
+            string message =
+                $"[BuildingSelectionFrameDiag] object={name} parent={transform.parent?.name ?? \"<null>\"} " +
+                $"center={center:F3} yaw={rotation.eulerAngles.y:F3} " +
+                $"requested=({requestedFootprint.x:F3},{requestedFootprint.y:F3}) " +
+                $"rendered=({renderedWidth:F3},{renderedDepth:F3}) surfaceY={surfaceY:F3} " +
+                $"targetHeight={targetHeight:F3} groundY={groundY:F3} topY={topY:F3}";
+            BuildingSelectionNativeDiagnostic.Log(message);
         }
 
         private void ConfigureCornerBrackets(
@@ -254,6 +299,29 @@ namespace Game.Runtime
                 Destroy(_runtimeMaterial);
             else
                 DestroyImmediate(_runtimeMaterial);
+        }
+    }
+
+    internal static class BuildingSelectionNativeDiagnostic
+    {
+        private const string AndroidLogTag = "WarlineSelection";
+
+        public static void Log(string message)
+        {
+            Debug.Log(message);
+#if UNITY_ANDROID && !UNITY_EDITOR
+            try
+            {
+                using (var androidLog = new AndroidJavaClass("android.util.Log"))
+                {
+                    androidLog.CallStatic<int>("i", AndroidLogTag, message);
+                }
+            }
+            catch (System.Exception exception)
+            {
+                Debug.LogWarning($"[BuildingSelectionNativeDiagnostic] android-log-failed={exception.GetType().Name}");
+            }
+#endif
         }
     }
 }

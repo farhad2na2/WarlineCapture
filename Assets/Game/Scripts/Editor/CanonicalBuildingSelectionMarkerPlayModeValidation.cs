@@ -43,6 +43,7 @@ namespace Game.Editor
         private static string _evidencePath;
         private static string _ownershipEvidencePath;
         private static object _tent;
+        private static GameObject _tentInstance;
         private static int _tentId;
         private static Vector3 _tentPosition;
         private static Vector3 _tentPresentationSize;
@@ -100,6 +101,7 @@ namespace Game.Editor
                 _ownershipCaptureFrame = -1;
                 _startedAt = EditorApplication.timeSinceStartup;
                 _tent = null;
+                _tentInstance = null;
                 _tentId = 0;
                 _tentPosition = default;
                 _originCell = default;
@@ -244,6 +246,13 @@ namespace Game.Editor
                     {
                         Complete(false, BuildStatus(
                             $"Barracks marker mismatch expectedCenter={expectedCenter} actualPosition={actualPosition} expectedScale={expectedScale} actualScale={actualScale} yaw={markerObject.transform.eulerAngles.y}"));
+                        return;
+                    }
+
+                    if (HasActiveSelectionObjectOutline(_tentInstance))
+                    {
+                        Complete(false, BuildStatus(
+                            "map-authored Barracks created an object outline from shared renderer geometry"));
                         return;
                     }
 
@@ -402,6 +411,7 @@ namespace Game.Editor
                     continue;
 
                 _tent = building;
+                _tentInstance = instance;
                 _tentId = buildingId;
                 if (!hasPresentationCenter)
                 {
@@ -558,6 +568,30 @@ namespace Game.Editor
             }
 
             return hasBounds;
+        }
+
+        private static bool HasActiveSelectionObjectOutline(GameObject instance)
+        {
+            if (instance == null)
+                return false;
+
+            Renderer[] renderers = instance.GetComponentsInChildren<Renderer>(true);
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                Renderer renderer = renderers[i];
+                if (renderer == null || !renderer.gameObject.activeInHierarchy)
+                    continue;
+
+                Transform current = renderer.transform;
+                while (current != null && current != instance.transform.parent)
+                {
+                    if (current.name.Contains("SelectionObjectOutline", StringComparison.OrdinalIgnoreCase))
+                        return true;
+                    current = current.parent;
+                }
+            }
+
+            return false;
         }
 
         private static object GetMatchBootstrap(MatchSceneView match)

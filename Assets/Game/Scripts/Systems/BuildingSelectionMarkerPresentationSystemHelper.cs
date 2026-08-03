@@ -151,7 +151,10 @@ namespace Game.Runtime
             SetActive(true);
             LiftMarkerRendererBoundsAbove(surfaceY + MarkerSurfaceClearance);
             ConfigureBoundaryView(markerWorldSize, center, rotation, surfaceY, hasPresentationBounds ? bounds : default);
-            ConfigureObjectOutline(building, hasPresentationBounds ? bounds : default);
+            ConfigureObjectOutline(
+                building,
+                hasPresentationBounds ? bounds : default,
+                allowObjectOutline: !isMapAuthored);
         }
 
         public void Hide()
@@ -310,10 +313,24 @@ namespace Game.Runtime
             _boundaryView.Configure(center, markerRotation, worldSize, surfaceY, height, _markerColor, PremiumSelectionAccentColor);
         }
 
-        private void ConfigureObjectOutline(RuntimeBuildingEntity building, Bounds rendererBounds)
+        private void ConfigureObjectOutline(
+            RuntimeBuildingEntity building,
+            Bounds rendererBounds,
+            bool allowObjectOutline)
         {
             if (_objectOutlineView == null || building?.Instance == null)
                 return;
+
+            // Map-authored static-reuse owners can reference a shared packed renderer
+            // that spans roads and neighbouring structures. Copying that renderer into
+            // the object-outline view makes selection appear map-sized. Their exact
+            // authored presentation geometry is already rendered by the bounded frame.
+            if (!allowObjectOutline)
+            {
+                _objectOutlineView.Hide();
+                _objectOutlineView.ClearOverlays();
+                return;
+            }
 
             float longestAxis = rendererBounds.size.sqrMagnitude > 0.0001f
                 ? Mathf.Max(rendererBounds.size.x, rendererBounds.size.y, rendererBounds.size.z)

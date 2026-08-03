@@ -836,7 +836,11 @@ namespace Game.Runtime
             string geometrySource,
             MapAuthoredBuildingSelectionGeometryUtility.Evaluation ownedRendererEvaluation)
         {
-            if ((!Application.isEditor && !Debug.isDebugBuild) || building?.Instance == null)
+            // Direct-hit diagnostics are emitted only for the winning building, so
+            // keep them available in every player build. Some Android candidate
+            // packages display the Development Build watermark while
+            // Debug.isDebugBuild is false, which otherwise hides this evidence.
+            if (building?.Instance == null)
                 return;
 
             building.Instance.TryGetComponent(out MapAuthoredBuildingVisualComponent authoredVisual);

@@ -198,7 +198,11 @@ namespace Game.Runtime
             Vector2 chosenSize,
             float chosenYaw)
         {
-            if ((!Application.isEditor && !Debug.isDebugBuild) || building == null)
+            // This one-shot record is intentionally available in every player build.
+            // The Android candidate can report Development Build while
+            // Debug.isDebugBuild is false, which previously suppressed the exact
+            // geometry evidence needed to diagnose packaged static-reuse owners.
+            if (building == null)
                 return;
 
             Vector3 presentationCenter = authoredVisual != null

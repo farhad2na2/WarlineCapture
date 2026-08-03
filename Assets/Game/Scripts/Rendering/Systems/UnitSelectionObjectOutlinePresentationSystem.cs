@@ -109,7 +109,7 @@ namespace Game.Rendering
                 // into one enormous cyan hit-looking region. Buildings retain the dedicated
                 // footprint marker created by UnitSelectionMarkerSystem; only the unsafe
                 // renderer-copy outline is suppressed here.
-                if (em.HasComponent<OperationMapBuildingComponent>(units[i]))
+                if (UnitSelectionMarkerSystem.IsBuildingSelectionOwner(em, units[i]))
                 {
                     DestroySelectionObjectOutlines(em, markers[i]);
                     continue;

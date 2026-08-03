@@ -24,6 +24,9 @@ namespace Game.Rendering
         private const float VehicleMarkerMinimumWorldWidth = 1.6f;
         private const float VehicleMarkerMinimumWorldDepth = 1.1f;
         private const float VehicleMarkerMaximumScale = 8f;
+        private const float BuildingMarkerMeshBoundsPadding = 1.05f;
+        private const float BuildingMarkerFootprintCellWorldSize = 1f;
+        private const float BuildingMarkerMaximumScale = 12.5f;
         private const float MarkerMinimumVehicleScale = 1.15f;
         private const float MarkerMinimumCharacterScale = 1f;
         private const float CharacterSelectionVolumeDefaultRadius = 0.68f;
@@ -102,8 +105,9 @@ namespace Game.Rendering
                     continue;
 
                 bool usesVehicleMarker = UsesVehicleSelectionMarker(em, entity);
+                bool usesBuildingMarker = IsBuildingSelectionOwner(em, entity);
                 bool isAirUnit = em.HasComponent<UnitAirMovement>(entity);
-                ApplyVehicleVariantVisibility(em, marker, usesVehicleMarker, isAirUnit);
+                ApplyVehicleVariantVisibility(em, marker, usesVehicleMarker || usesBuildingMarker, isAirUnit);
                 ApplyAirSelectionOutlineFilterState(em, marker, isAirUnit);
 
             }
@@ -168,21 +172,44 @@ namespace Game.Rendering
             else
                 em.SetComponentData(marker, new Parent { Value = unit });
 
+            bool usesVehicleMarker = UsesVehicleSelectionMarker(em, unit);
+            bool usesBuildingMarker = IsBuildingSelectionOwner(em, unit);
+            float2 markerScale = ResolveMarkerScale(
+                em,
+                unit,
+                usesVehicleMarker,
+                usesBuildingMarker,
+                renderEntityQuery,
+                out float2 markerOffset,
+                out string geometrySource);
+
             if (em.HasComponent<LocalTransform>(marker))
             {
                 LocalTransform transform = em.GetComponentData<LocalTransform>(marker);
-                transform.Position = new float3(0f, MarkerGroundLift, 0f);
+                transform.Position = new float3(markerOffset.x, MarkerGroundLift, markerOffset.y);
                 transform.Rotation = quaternion.identity;
                 transform.Scale = 1f;
                 em.SetComponentData(marker, transform);
             }
 
-            bool usesVehicleMarker = UsesVehicleSelectionMarker(em, unit);
             bool isAirUnit = em.HasComponent<UnitAirMovement>(unit);
-            EnsureSelectionMarkerComponents(em, marker, ResolveMarkerScale(em, unit, usesVehicleMarker, renderEntityQuery));
-            ApplyVehicleVariantVisibility(em, marker, usesVehicleMarker, isAirUnit);
+            EnsureSelectionMarkerComponents(em, marker, markerScale);
+            ApplyVehicleVariantVisibility(em, marker, usesVehicleMarker || usesBuildingMarker, isAirUnit);
             ApplyAirSelectionOutlineFilterState(em, marker, isAirUnit);
             em.AddComponentData(unit, new UnitSelectionMarkerInstanceReference { Instance = marker });
+
+            if (usesBuildingMarker)
+            {
+                int2 footprint = em.HasComponent<UnitFootprint>(unit)
+                    ? em.GetComponentData<UnitFootprint>(unit).Size
+                    : int2.zero;
+                Debug.Log(
+                    $"[BuildingEcsSelectionMarker] owner={unit} operationMap={Bool01(em.HasComponent<OperationMapBuildingComponent>(unit))} " +
+                    $"virtualized={Bool01(em.HasComponent<OperationMapVirtualizedBuildingPresentationComponent>(unit))} " +
+                    $"staticBlocker={Bool01(em.HasComponent<StaticGridBlocker>(unit))} footprint=({footprint.x},{footprint.y}) " +
+                    $"source={geometrySource} scale=({markerScale.x:F3},{markerScale.y:F3}) " +
+                    $"offset=({markerOffset.x:F3},{markerOffset.y:F3})");
+            }
         }
 
         private static void EnsureSelectionMarkerComponents(EntityManager em, Entity marker, float2 visibleScale)
@@ -261,8 +288,13 @@ namespace Game.Rendering
             EntityManager em,
             Entity unit,
             bool usesVehicleMarker,
-            EntityQuery renderEntityQuery)
+            bool usesBuildingMarker,
+            EntityQuery renderEntityQuery,
+            out float2 markerOffset,
+            out string geometrySource)
         {
+            markerOffset = float2.zero;
+            geometrySource = "minimum";
             float minimumScale = usesVehicleMarker
                 ? MarkerMinimumVehicleScale
                 : MarkerMinimumCharacterScale;
@@ -271,9 +303,31 @@ namespace Game.Rendering
                 return new float2(minimumScale, minimumScale);
 
             int2 size = em.GetComponentData<UnitFootprint>(unit).Size;
+            if (usesBuildingMarker)
+            {
+                if (TryResolveVirtualizedBuildingMarkerGeometry(
+                        em,
+                        unit,
+                        out float2 presentationSize,
+                        out markerOffset))
+                {
+                    geometrySource = "virtualized-render-database";
+                    return ClampBuildingMarkerScale(
+                        presentationSize * BuildingMarkerMeshBoundsPadding,
+                        minimumScale);
+                }
+
+                float2 buildingFallbackWorldSize = new(
+                    math.max(1, size.x) * BuildingMarkerFootprintCellWorldSize,
+                    math.max(1, size.y) * BuildingMarkerFootprintCellWorldSize);
+                geometrySource = "nonuniform-gameplay-footprint";
+                return ClampBuildingMarkerScale(buildingFallbackWorldSize, minimumScale);
+            }
+
             if (!usesVehicleMarker)
             {
                 float scale = math.max(minimumScale, math.max(size.x, size.y) * MarkerFootprintScaleMultiplier);
+                geometrySource = "character-footprint";
                 return new float2(scale, scale);
             }
 
@@ -281,13 +335,127 @@ namespace Game.Rendering
             {
                 float2 renderWorldSize = meshFootprint * VehicleMarkerMeshBoundsPadding;
                 float2 minimumWorldSize = new(VehicleMarkerMinimumWorldWidth, VehicleMarkerMinimumWorldDepth);
+                geometrySource = "vehicle-render-mesh";
                 return ClampVehicleMarkerScale(math.max(renderWorldSize, minimumWorldSize), minimumScale);
             }
 
             float2 fallbackWorldSize = new(
                 math.max(VehicleMarkerMinimumWorldWidth, math.max(1, size.x) * VehicleMarkerFootprintCellWorldSize),
                 math.max(VehicleMarkerMinimumWorldDepth, math.max(1, size.y) * VehicleMarkerFootprintCellWorldSize));
+            geometrySource = "vehicle-gameplay-footprint";
             return ClampVehicleMarkerScale(fallbackWorldSize, minimumScale);
+        }
+
+        private static float2 ClampBuildingMarkerScale(float2 desiredWorldSize, float minimumScale)
+        {
+            return math.min(
+                new float2(
+                    math.max(minimumScale, desiredWorldSize.x / VehicleMarkerMeshWidth),
+                    math.max(minimumScale, desiredWorldSize.y / VehicleMarkerMeshDepth)),
+                new float2(BuildingMarkerMaximumScale, BuildingMarkerMaximumScale));
+        }
+
+        private static bool TryResolveVirtualizedBuildingMarkerGeometry(
+            EntityManager em,
+            Entity unit,
+            out float2 size,
+            out float2 center)
+        {
+            size = float2.zero;
+            center = float2.zero;
+            if (!em.HasComponent<OperationMapVirtualizedBuildingPresentationComponent>(unit))
+                return false;
+
+            using EntityQuery databaseQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<OperationMapRenderDatabaseComponent>());
+            if (databaseQuery.CalculateEntityCount() != 1)
+                return false;
+
+            OperationMapRenderDatabaseComponent database =
+                databaseQuery.GetSingleton<OperationMapRenderDatabaseComponent>();
+            if (!database.Blob.IsCreated ||
+                !TryResolveOwnerWorldMatrix(em, unit, out float4x4 ownerWorld))
+            {
+                return false;
+            }
+
+            float determinant = math.determinant(ownerWorld);
+            if (!math.isfinite(determinant) || math.abs(determinant) < 0.000001f)
+                return false;
+
+            int stateOwnerIndex = em
+                .GetComponentData<OperationMapVirtualizedBuildingPresentationComponent>(unit)
+                .StateOwnerIndex;
+            float4x4 worldToOwner = math.inverse(ownerWorld);
+            float minX = float.PositiveInfinity;
+            float maxX = float.NegativeInfinity;
+            float minZ = float.PositiveInfinity;
+            float maxZ = float.NegativeInfinity;
+            bool found = false;
+            ref OperationMapRenderDatabaseBlob blob = ref database.Blob.Value;
+            for (int placementIndex = 0; placementIndex < blob.Placements.Length; placementIndex++)
+            {
+                ref OperationMapRenderPlacementBlob placement = ref blob.Placements[placementIndex];
+                if (placement.StateOwnerIndex != stateOwnerIndex ||
+                    placement.RequiredVisualState == OperationMapRenderVisualState.Destroyed ||
+                    placement.PrototypeIndex < 0 ||
+                    placement.PrototypeIndex >= blob.Prototypes.Length)
+                {
+                    continue;
+                }
+
+                ref OperationMapRenderPrototypeBlob prototype = ref blob.Prototypes[placement.PrototypeIndex];
+                OperationMapRenderBoundsBlob bounds = prototype.CombinedLocalBounds;
+                if (!math.all(math.isfinite(bounds.Center)) ||
+                    !math.all(math.isfinite(bounds.Extents)) ||
+                    math.any(bounds.Extents < float3.zero))
+                {
+                    continue;
+                }
+
+                for (int x = -1; x <= 1; x += 2)
+                for (int y = -1; y <= 1; y += 2)
+                for (int z = -1; z <= 1; z += 2)
+                {
+                    float3 localCorner = bounds.Center + bounds.Extents * new float3(x, y, z);
+                    float3 worldCorner = math.transform(placement.WorldMatrix, localCorner);
+                    float3 ownerCorner = math.transform(worldToOwner, worldCorner);
+                    minX = math.min(minX, ownerCorner.x);
+                    maxX = math.max(maxX, ownerCorner.x);
+                    minZ = math.min(minZ, ownerCorner.z);
+                    maxZ = math.max(maxZ, ownerCorner.z);
+                    found = true;
+                }
+            }
+
+            if (!found)
+                return false;
+
+            size = new float2(math.max(0f, maxX - minX), math.max(0f, maxZ - minZ));
+            center = new float2((minX + maxX) * 0.5f, (minZ + maxZ) * 0.5f);
+            return math.all(math.isfinite(size)) &&
+                   math.all(math.isfinite(center)) &&
+                   math.all(size > new float2(0.001f, 0.001f));
+        }
+
+        private static bool TryResolveOwnerWorldMatrix(EntityManager em, Entity unit, out float4x4 ownerWorld)
+        {
+            if (em.HasComponent<LocalToWorld>(unit))
+            {
+                ownerWorld = em.GetComponentData<LocalToWorld>(unit).Value;
+                return true;
+            }
+
+            if (em.HasComponent<LocalTransform>(unit))
+            {
+                ownerWorld = em.GetComponentData<LocalTransform>(unit).ToMatrix();
+                if (em.HasComponent<PostTransformMatrix>(unit))
+                    ownerWorld = math.mul(ownerWorld, em.GetComponentData<PostTransformMatrix>(unit).Value);
+                return true;
+            }
+
+            ownerWorld = float4x4.identity;
+            return false;
         }
 
         private static float2 ClampVehicleMarkerScale(float2 desiredWorldSize, float minimumScale)
@@ -441,6 +609,25 @@ namespace Game.Rendering
             return em.HasComponent<UnitMovementBehavior>(unit) &&
                    em.GetComponentData<UnitMovementBehavior>(unit).UsesVehicleMotion != 0;
         }
+
+        internal static bool IsBuildingSelectionOwner(EntityManager em, Entity unit)
+        {
+            if (unit == Entity.Null || !em.Exists(unit))
+                return false;
+
+            if (em.HasComponent<OperationMapBuildingComponent>(unit) ||
+                em.HasComponent<OperationMapVirtualizedBuildingPresentationComponent>(unit))
+            {
+                return true;
+            }
+
+            return em.HasComponent<StaticGridBlocker>(unit) &&
+                   em.HasComponent<UnitHealth>(unit) &&
+                   em.HasComponent<UnitFootprint>(unit) &&
+                   !em.HasComponent<UnitMovementBehavior>(unit);
+        }
+
+        private static int Bool01(bool value) => value ? 1 : 0;
 
         private static void ApplyVehicleVariantVisibility(EntityManager em, Entity marker, bool usesVehicleMarker, bool isAirUnit)
         {

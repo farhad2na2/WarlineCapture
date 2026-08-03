@@ -168,6 +168,34 @@ namespace Game.Editor
                     return;
                 }
 
+                if (!em.HasComponent<SelectionMarkerVisualChild>(marker))
+                {
+                    Complete(false, BuildStatus("dedicated ECS footprint marker has no visual child"));
+                    return;
+                }
+
+                SelectionMarkerVisualChild markerVisual = em.GetComponentData<SelectionMarkerVisualChild>(marker);
+                if (markerVisual.VisibleScaleX <= 0f || markerVisual.VisibleScaleZ <= 0f)
+                {
+                    Complete(false, BuildStatus(
+                        $"dedicated marker has invalid scale ({markerVisual.VisibleScaleX:F3},{markerVisual.VisibleScaleZ:F3})"));
+                    return;
+                }
+
+                if (Mathf.Approximately(markerVisual.VisibleScaleX, markerVisual.VisibleScaleZ))
+                {
+                    Complete(false, BuildStatus(
+                        $"building marker regressed to uniform scale ({markerVisual.VisibleScaleX:F3},{markerVisual.VisibleScaleZ:F3})"));
+                    return;
+                }
+
+                if (markerVisual.VisibleScaleX > 12.5f || markerVisual.VisibleScaleZ > 12.5f)
+                {
+                    Complete(false, BuildStatus(
+                        $"building marker exceeds bounded scale ({markerVisual.VisibleScaleX:F3},{markerVisual.VisibleScaleZ:F3})"));
+                    return;
+                }
+
                 if (!_staleOutlineSeeded)
                 {
                     DynamicBuffer<SelectionObjectOutlineInstanceElement> seededOutlines =
@@ -211,8 +239,9 @@ namespace Game.Editor
                     return;
 
                 Complete(true,
-                    $"tests=6 owner=OperationMapBuildingComponent stableId={_stableId} " +
-                    "footprintMarker=preserved sharedRendererOutline=suppressed repeatFrames=stable " +
+                    $"tests=10 owner=OperationMapBuildingComponent stableId={_stableId} " +
+                    $"footprintMarker=preserved markerScale=({markerVisual.VisibleScaleX:F3},{markerVisual.VisibleScaleZ:F3}) " +
+                    "markerScaleMode=nonuniform-bounded sharedRendererOutline=suppressed repeatFrames=stable " +
                     $"evidence={_evidencePath}");
             }
             catch (Exception exception)
@@ -276,6 +305,7 @@ namespace Game.Editor
                 typeof(OperationMapBuildingComponent),
                 typeof(UnitHealth),
                 typeof(UnitFootprint),
+                typeof(StaticGridBlocker),
                 typeof(LocalTransform),
                 typeof(LocalToWorld));
             defaultEm.SetName(synthetic, "ValidationOperationMapBarracks");

@@ -444,7 +444,7 @@ namespace Game.Runtime
                 if (!IsSelectablePlayerBuilding(building))
                     continue;
 
-                if (!TryGetBuildingScreenRect(context, building, out Rect buildingRect, out _))
+                if (!TryGetBuildingScreenRect(context, building, out Rect buildingRect, out _, out _, out _))
                     continue;
                 if (!screenRect.Overlaps(buildingRect))
                     continue;
@@ -568,6 +568,9 @@ namespace Game.Runtime
             float bestCenterDistanceSq = float.MaxValue;
             float bestDepth = float.MaxValue;
             float bestArea = float.MaxValue;
+            Rect bestRect = default;
+            string bestGeometrySource = null;
+            MapAuthoredBuildingSelectionGeometryUtility.Evaluation bestOwnedRendererEvaluation = default;
 
             foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in context.RuntimeBuildings)
             {
@@ -577,7 +580,13 @@ namespace Game.Runtime
                 if (!IsSelectablePlayerBuilding(building))
                     continue;
 
-                if (!TryGetBuildingScreenRect(context, building, out Rect rect, out float depth))
+                if (!TryGetBuildingScreenRect(
+                        context,
+                        building,
+                        out Rect rect,
+                        out float depth,
+                        out string geometrySource,
+                        out MapAuthoredBuildingSelectionGeometryUtility.Evaluation ownedRendererEvaluation))
                     continue;
                 if (!rect.Contains(screenPosition))
                     continue;
@@ -616,10 +625,23 @@ namespace Game.Runtime
                 bestCenterDistanceSq = centerDistanceSq;
                 bestDepth = depth;
                 bestArea = area;
+                bestRect = rect;
+                bestGeometrySource = geometrySource;
+                bestOwnedRendererEvaluation = ownedRendererEvaluation;
             }
 
             if (bestBuilding == null || bestBuilding.Definition == null)
                 return false;
+
+            LogHitGeometryDiagnostic(
+                context,
+                bestBuilding,
+                screenPosition,
+                bestRect,
+                bestDepth,
+                bestCenterDistanceSq,
+                bestGeometrySource,
+                bestOwnedRendererEvaluation);
 
             Vector2Int min = bestBuilding.OriginCell;
             Vector2Int size = bestBuilding.Definition.FootprintCells;
@@ -641,10 +663,18 @@ namespace Game.Runtime
                    FactionIdentity.IsPlayerControlled(building.OwnerFactionId);
         }
 
-        private static bool TryGetBuildingScreenRect(Context context, RuntimeBuildingEntity building, out Rect rect, out float depth)
+        private static bool TryGetBuildingScreenRect(
+            Context context,
+            RuntimeBuildingEntity building,
+            out Rect rect,
+            out float depth,
+            out string geometrySource,
+            out MapAuthoredBuildingSelectionGeometryUtility.Evaluation ownedRendererEvaluation)
         {
             rect = default;
             depth = float.MaxValue;
+            geometrySource = "none";
+            ownedRendererEvaluation = default;
             Camera camera = context.WorldCamera;
             if (camera == null)
                 return false;
@@ -666,16 +696,18 @@ namespace Game.Runtime
                     renderers = building.Instance.GetComponentsInChildren<Renderer>(true);
             }
 
-            Bounds plausibleOwnedRendererBounds = default;
-            bool hasPlausibleOwnedRendererBounds = hasAuthoredPresentationCenter &&
+            if (hasAuthoredPresentationCenter &&
                 context.TryGetGrid != null &&
-                context.TryGetGrid(out GridConfig ownedBoundsGrid) &&
-                MapAuthoredBuildingSelectionGeometryUtility.TryResolvePlausibleOwnedRendererBounds(
+                context.TryGetGrid(out GridConfig ownedBoundsGrid))
+            {
+                ownedRendererEvaluation = MapAuthoredBuildingSelectionGeometryUtility.EvaluateOwnedRendererBounds(
                     building.Instance,
                     authoredVisual,
                     building.Definition.FootprintCells,
-                    ownedBoundsGrid,
-                    out plausibleOwnedRendererBounds);
+                    ownedBoundsGrid);
+            }
+            Bounds plausibleOwnedRendererBounds = ownedRendererEvaluation.Bounds;
+            bool hasPlausibleOwnedRendererBounds = ownedRendererEvaluation.Accepted;
 
             bool hasPoint = false;
             Vector2 min = new(float.MaxValue, float.MaxValue);
@@ -707,6 +739,8 @@ namespace Game.Runtime
                     minDepth = Mathf.Min(minDepth, screen.z);
                 }
             }
+            if (hasPoint)
+                geometrySource = "instance-renderers";
 
             if (!hasPoint && hasPlausibleOwnedRendererBounds)
             {
@@ -728,6 +762,8 @@ namespace Game.Runtime
                     max.y = Mathf.Max(max.y, screen.y);
                     minDepth = Mathf.Min(minDepth, screen.z);
                 }
+                if (hasPoint)
+                    geometrySource = "owned-renderer";
             }
 
             // Candidate Android presentation can leave the managed selection owner
@@ -769,6 +805,12 @@ namespace Game.Runtime
                     max.y = Mathf.Max(max.y, screen.y);
                     minDepth = Mathf.Min(minDepth, screen.z);
                 }
+                if (hasPoint)
+                {
+                    geometrySource = authoredVisual.HasPresentationGeometry
+                        ? "exact-presentation"
+                        : "gameplay-footprint";
+                }
             }
 
             if (!hasPoint)
@@ -782,6 +824,48 @@ namespace Game.Runtime
                 max.y + PaddingPixels);
             depth = minDepth;
             return rect.width > 0f && rect.height > 0f;
+        }
+
+        private static void LogHitGeometryDiagnostic(
+            Context context,
+            RuntimeBuildingEntity building,
+            Vector2 screenPosition,
+            Rect rect,
+            float depth,
+            float centerDistanceSq,
+            string geometrySource,
+            MapAuthoredBuildingSelectionGeometryUtility.Evaluation ownedRendererEvaluation)
+        {
+            if ((!Application.isEditor && !Debug.isDebugBuild) || building?.Instance == null)
+                return;
+
+            building.Instance.TryGetComponent(out MapAuthoredBuildingVisualComponent authoredVisual);
+            Vector3 presentationCenter = authoredVisual != null
+                ? authoredVisual.PresentationWorldCenter
+                : default;
+            Vector3 presentationSize = authoredVisual != null
+                ? authoredVisual.PresentationWorldSize
+                : default;
+            Bounds rendererBounds = ownedRendererEvaluation.Bounds;
+            Vector2Int footprint = building.Definition != null
+                ? building.Definition.FootprintCells
+                : Vector2Int.zero;
+            float cellSize = context.TryGetGrid != null && context.TryGetGrid(out GridConfig grid)
+                ? grid.CellSize
+                : 0f;
+            Debug.Log(
+                $"[BuildingSelectionGeometryDiag] kind=hit-selected id={building.Id} " +
+                $"instance={building.Instance.name} prefab={building.Definition?.Prefab?.name ?? "<null>"} " +
+                $"tap=({screenPosition.x:F1},{screenPosition.y:F1}) rect=({rect.xMin:F1},{rect.yMin:F1},{rect.xMax:F1},{rect.yMax:F1}) " +
+                $"depth={depth:F3} centerDistanceSq={centerDistanceSq:F3} source={geometrySource ?? "none"} " +
+                $"hasCenter={(authoredVisual != null && authoredVisual.HasPresentationWorldCenter ? 1 : 0)} " +
+                $"hasExact={(authoredVisual != null && authoredVisual.HasPresentationGeometry ? 1 : 0)} " +
+                $"presentationCenter={presentationCenter:F3} presentationSize={presentationSize:F3} " +
+                $"presentationYaw={(authoredVisual != null ? authoredVisual.PresentationYawDegrees : 0f):F3} " +
+                $"footprint={footprint.x}x{footprint.y} cellSize={cellSize:F3} " +
+                $"ownedReason={ownedRendererEvaluation.Reason} renderers={ownedRendererEvaluation.RendererCount} " +
+                $"included={ownedRendererEvaluation.IncludedRendererCount} outlines={ownedRendererEvaluation.OutlineRendererCount} " +
+                $"rendererCenter={rendererBounds.center:F3} rendererSize={rendererBounds.size:F3}");
         }
     }
 }

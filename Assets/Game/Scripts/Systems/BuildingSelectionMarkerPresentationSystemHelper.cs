@@ -62,6 +62,8 @@ namespace Game.Runtime
         private PremiumWorldSelectionFrameView _boundaryView;
         private PremiumWorldSelectionObjectOutlineView _objectOutlineView;
         private Color _markerColor = PremiumSelectionColor;
+        private int _lastGeometryDiagnosticBuildingId = int.MinValue;
+        private string _lastGeometryDiagnosticSignature;
 
         internal GameObject RuntimeMarkerForTests => _markerInstance;
 
@@ -90,14 +92,15 @@ namespace Game.Runtime
             MapAuthoredBuildingVisualComponent authoredVisual = null;
             bool isMapAuthored = building.Instance != null &&
                                  building.Instance.TryGetComponent(out authoredVisual);
-            Bounds ownedRendererBounds = default;
-            bool hasPlausibleOwnedRendererBounds = isMapAuthored &&
-                MapAuthoredBuildingSelectionGeometryUtility.TryResolvePlausibleOwnedRendererBounds(
+            MapAuthoredBuildingSelectionGeometryUtility.Evaluation ownedRendererEvaluation = isMapAuthored
+                ? MapAuthoredBuildingSelectionGeometryUtility.EvaluateOwnedRendererBounds(
                     building.Instance,
                     authoredVisual,
                     footprint,
-                    grid,
-                    out ownedRendererBounds);
+                    grid)
+                : default;
+            Bounds ownedRendererBounds = ownedRendererEvaluation.Bounds;
+            bool hasPlausibleOwnedRendererBounds = ownedRendererEvaluation.Accepted;
             if (isMapAuthored && authoredVisual.HasPresentationWorldCenter)
             {
                 center.x = authoredVisual.PresentationWorldCenter.x;
@@ -127,6 +130,21 @@ namespace Game.Runtime
                 : ResolveMarkerWorldSize(footprint, grid);
             if (isMapAuthored && authoredVisual.HasPresentationGeometry)
                 rotation = Quaternion.Euler(0f, authoredVisual.PresentationYawDegrees, 0f);
+            string geometrySource = isMapAuthored && authoredVisual.HasPresentationGeometry
+                ? "exact-presentation"
+                : hasPlausibleOwnedRendererBounds
+                    ? "owned-renderer"
+                    : "gameplay-footprint";
+            LogGeometryDiagnostic(
+                building,
+                authoredVisual,
+                ownedRendererEvaluation,
+                footprint,
+                grid,
+                geometrySource,
+                center,
+                markerWorldSize,
+                rotation.eulerAngles.y);
             Transform markerTransform = _markerInstance.transform;
             markerTransform.SetPositionAndRotation(center, rotation);
             markerTransform.localScale = ResolveScale(markerWorldSize);
@@ -165,6 +183,58 @@ namespace Game.Runtime
             _baseRendererSize = Vector3.one;
             _boundaryView = null;
             _objectOutlineView = null;
+            _lastGeometryDiagnosticBuildingId = int.MinValue;
+            _lastGeometryDiagnosticSignature = null;
+        }
+
+        private void LogGeometryDiagnostic(
+            RuntimeBuildingEntity building,
+            MapAuthoredBuildingVisualComponent authoredVisual,
+            MapAuthoredBuildingSelectionGeometryUtility.Evaluation ownedRendererEvaluation,
+            Vector2Int footprint,
+            GridConfig grid,
+            string geometrySource,
+            Vector3 chosenCenter,
+            Vector2 chosenSize,
+            float chosenYaw)
+        {
+            if ((!Application.isEditor && !Debug.isDebugBuild) || building == null)
+                return;
+
+            Vector3 presentationCenter = authoredVisual != null
+                ? authoredVisual.PresentationWorldCenter
+                : default;
+            Vector3 presentationSize = authoredVisual != null
+                ? authoredVisual.PresentationWorldSize
+                : default;
+            Bounds rendererBounds = ownedRendererEvaluation.Bounds;
+            string signature =
+                $"source={geometrySource}|presentationCenter={presentationCenter:F3}|presentationSize={presentationSize:F3}|" +
+                $"reason={ownedRendererEvaluation.Reason}|rendererBounds={rendererBounds.center:F3}/{rendererBounds.size:F3}|" +
+                $"chosen={chosenCenter:F3}/{chosenSize.x:F3},{chosenSize.y:F3}/{chosenYaw:F3}";
+            if (_lastGeometryDiagnosticBuildingId == building.Id &&
+                string.Equals(_lastGeometryDiagnosticSignature, signature, StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            _lastGeometryDiagnosticBuildingId = building.Id;
+            _lastGeometryDiagnosticSignature = signature;
+            Debug.Log(
+                $"[BuildingSelectionGeometryDiag] kind=marker id={building.Id} " +
+                $"instance={building.Instance?.name ?? "<null>"} prefab={building.Definition?.Prefab?.name ?? "<null>"} " +
+                $"hasCenter={(authoredVisual != null && authoredVisual.HasPresentationWorldCenter ? 1 : 0)} " +
+                $"hasExact={(authoredVisual != null && authoredVisual.HasPresentationGeometry ? 1 : 0)} " +
+                $"presentationCenter={presentationCenter:F3} presentationSize={presentationSize:F3} " +
+                $"presentationYaw={(authoredVisual != null ? authoredVisual.PresentationYawDegrees : 0f):F3} " +
+                $"footprint={footprint.x}x{footprint.y} cellSize={grid.CellSize:F3} source={geometrySource} " +
+                $"ownedReason={ownedRendererEvaluation.Reason} renderers={ownedRendererEvaluation.RendererCount} " +
+                $"included={ownedRendererEvaluation.IncludedRendererCount} outlines={ownedRendererEvaluation.OutlineRendererCount} " +
+                $"rendererCenter={rendererBounds.center:F3} rendererSize={rendererBounds.size:F3} " +
+                $"rendererArea={ownedRendererEvaluation.RendererArea:F3}/{ownedRendererEvaluation.CanonicalArea:F3} " +
+                $"rendererAxis={ownedRendererEvaluation.RendererLongestAxis:F3}/{ownedRendererEvaluation.CanonicalLongestAxis:F3} " +
+                $"centerDistance={ownedRendererEvaluation.CenterDistance:F3}/{ownedRendererEvaluation.MaximumCenterDistance:F3} " +
+                $"chosenCenter={chosenCenter:F3} chosenSize=({chosenSize.x:F3},{chosenSize.y:F3}) chosenYaw={chosenYaw:F3}");
         }
 
         private bool TryResolveSelection(Context context, out RuntimeBuildingEntity building, out GridConfig grid)

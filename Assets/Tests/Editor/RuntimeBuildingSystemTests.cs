@@ -17,6 +17,8 @@ public sealed class RuntimeBuildingSystemTests
         {
             var runtimeTests = new RuntimeBuildingSystemTests();
             runtimeTests.StaticReuseScreenRectUsesPlausibleOwnedRendererWhenExactGeometryIsMissing();
+            runtimeTests.OwnedRendererDiagnosticReportsExactPresentationSource();
+            runtimeTests.OwnedRendererDiagnosticReportsOversizedAggregateRejection();
 
             var markerTests = new BuildingSelectionMarkerPresentationSystemHelperTests();
             markerTests.SetUp();
@@ -29,7 +31,7 @@ public sealed class RuntimeBuildingSystemTests
                 markerTests.TearDown();
             }
 
-            Debug.Log("[StaticReuseOwnedRendererFallbackValidation] result=Passed tests=2");
+            Debug.Log("[StaticReuseOwnedRendererFallbackValidation] result=Passed tests=4");
         }
         catch (Exception ex)
         {
@@ -52,7 +54,9 @@ public sealed class RuntimeBuildingSystemTests
             tests.BuildingUiSelectionCommandRequest_ClearsSelectionAndWritesResult();
             tests.StaticReuseHitShapePrefersNearestAuthoredCenterOverSharedRenderers();
             tests.StaticReuseScreenRectUsesPlausibleOwnedRendererWhenExactGeometryIsMissing();
-            Debug.Log("[RuntimeBuildingSystemFocusedValidation] result=Passed tests=8");
+            tests.OwnedRendererDiagnosticReportsExactPresentationSource();
+            tests.OwnedRendererDiagnosticReportsOversizedAggregateRejection();
+            Debug.Log("[RuntimeBuildingSystemFocusedValidation] result=Passed tests=10");
             ValidationExit.Exit(0);
         }
         catch (Exception ex)
@@ -396,6 +400,75 @@ public sealed class RuntimeBuildingSystemTests
             UnityEngine.Object.DestroyImmediate(visual);
             UnityEngine.Object.DestroyImmediate(barracksObject);
             UnityEngine.Object.DestroyImmediate(cameraObject);
+        }
+    }
+
+    [Test]
+    public void OwnedRendererDiagnosticReportsExactPresentationSource()
+    {
+        GameObject owner = new("ExactPresentationDiagnosticOwner");
+        try
+        {
+            MapAuthoredBuildingVisualComponent authored = owner.AddComponent<MapAuthoredBuildingVisualComponent>();
+            authored.ConfigurePresentationGeometry(
+                new Vector3(4f, 1f, 6f),
+                new Vector3(10.72f, 4f, 12.67f),
+                90f);
+            var grid = new GridConfig { CellSize = 1f };
+
+            MapAuthoredBuildingSelectionGeometryUtility.Evaluation evaluation =
+                MapAuthoredBuildingSelectionGeometryUtility.EvaluateOwnedRendererBounds(
+                    owner,
+                    authored,
+                    new Vector2Int(10, 20),
+                    grid);
+
+            Assert.AreEqual(
+                MapAuthoredBuildingSelectionGeometryUtility.EvaluationReason.ExactPresentationGeometryPresent,
+                evaluation.Reason);
+            Assert.IsFalse(evaluation.Accepted);
+            Assert.AreEqual(0, evaluation.RendererCount);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(owner);
+        }
+    }
+
+    [Test]
+    public void OwnedRendererDiagnosticReportsOversizedAggregateRejection()
+    {
+        GameObject owner = new("OversizedOwnedRendererDiagnosticOwner");
+        GameObject visual = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        try
+        {
+            UnityEngine.Object.DestroyImmediate(visual.GetComponent<Collider>());
+            MapAuthoredBuildingVisualComponent authored = owner.AddComponent<MapAuthoredBuildingVisualComponent>();
+            authored.ConfigurePresentationWorldCenter(Vector3.zero);
+            visual.transform.SetParent(owner.transform, false);
+            visual.transform.localScale = new Vector3(30f, 4f, 18f);
+            var grid = new GridConfig { CellSize = 1f };
+
+            MapAuthoredBuildingSelectionGeometryUtility.Evaluation evaluation =
+                MapAuthoredBuildingSelectionGeometryUtility.EvaluateOwnedRendererBounds(
+                    owner,
+                    authored,
+                    new Vector2Int(10, 20),
+                    grid);
+
+            Assert.AreEqual(
+                MapAuthoredBuildingSelectionGeometryUtility.EvaluationReason.AreaExceedsCanonicalLimit,
+                evaluation.Reason);
+            Assert.IsFalse(evaluation.Accepted);
+            Assert.AreEqual(1, evaluation.RendererCount);
+            Assert.AreEqual(1, evaluation.IncludedRendererCount);
+            Assert.That(evaluation.RendererArea, Is.EqualTo(540f).Within(0.01f));
+            Assert.That(evaluation.CanonicalArea, Is.EqualTo(200f).Within(0.01f));
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(visual);
+            UnityEngine.Object.DestroyImmediate(owner);
         }
     }
 

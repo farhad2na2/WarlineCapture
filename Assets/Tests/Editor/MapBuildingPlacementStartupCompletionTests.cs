@@ -24,7 +24,7 @@ public sealed class MapBuildingPlacementStartupCompletionTests
                         $"Runtime building focused validation exit={ValidationExit.LastExitCode?.ToString() ?? "missing"}.");
             }
 
-            Debug.Log("[StaticReuseSelectionGeometryValidation] result=Passed placementTests=5 markerTests=10 runtimeTests=7");
+            Debug.Log("[StaticReuseSelectionGeometryValidation] result=Passed placementTests=5 markerTests=10 runtimeTests=10");
             EditorApplication.Exit(0);
         }
         catch (Exception exception)

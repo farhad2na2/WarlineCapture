@@ -131,6 +131,30 @@ namespace Game.Editor
             BuildDenseCityCandidateAndroidApk(profilerBuild: true);
         }
 
+        [MenuItem("Tools/Validation/Build Dense City Candidate Android Profiler APK")]
+        private static void BuildDenseCityCandidateAndroidProfilerApkFromGui()
+        {
+            const string variableName = "GRADLE_USER_HOME";
+            string previousGradleUserHome =
+                Environment.GetEnvironmentVariable(variableName);
+            string shortGradleUserHome = Path.GetFullPath(".g");
+            CreateDirectory(shortGradleUserHome);
+
+            try
+            {
+                Environment.SetEnvironmentVariable(variableName, shortGradleUserHome);
+                UnityEngine.Debug.Log(
+                    $"[BuildScript] GUI short-path {variableName}: {shortGradleUserHome}");
+                BuildDenseCityCandidateAndroidProfilerApk();
+            }
+            finally
+            {
+                Environment.SetEnvironmentVariable(
+                    variableName,
+                    previousGradleUserHome);
+            }
+        }
+
         private static void BuildDenseCityCandidateAndroidApk(bool profilerBuild)
         {
             var arg = Environment.GetCommandLineArgs();

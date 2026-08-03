@@ -4,6 +4,7 @@ Assets/**/.DS_Store
 
 # Unity generated folders
 [Ll]ibrary/
+/.g/
 [Tt]emp/
 [Ll]ogs/
 [Oo]bj/

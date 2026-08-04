@@ -242,6 +242,45 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         }
     }
 
+    [UnityEditor.MenuItem("Game/Validation/Run Editor-First Production Functional Batch")]
+    public static void RunEditorFirstProductionFunctionalBatchValidation()
+    {
+        try
+        {
+            RunValidationSuite(RunOperationMapCampProductionBridgeValidation);
+            RunValidationSuite(RunOperationMapProducerQueueConsumerValidation);
+            RunValidationSuite(RunOperationMapProductionRuntimeSchedulerValidation);
+            RunValidationSuite(RunOperationMapProducerSpawnTransactionValidation);
+            RunValidationSuite(RunCanonicalTentTransportPresentationValidation);
+            RunValidationSuite(RunProductionCameraFocusValidation);
+            RunValidationSuite(RtsSelectionInputSystemTests.RunFocusedValidation);
+            RunValidationSuite(MatchHudSquadTraySelectionUiSystemHelperTests.RunFocusedValidation);
+            Debug.Log("[EditorFirstProductionFunctionalBatchValidation] result=Passed suites=8 tests=92");
+            ValidationExit.Passed();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[EditorFirstProductionFunctionalBatchValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
+    private static void RunValidationSuite(Action validation)
+    {
+        ValidationExit.ClearLastExitCode();
+        using (ValidationExit.SuppressProcessExit())
+        {
+            validation();
+        }
+
+        if (ValidationExit.LastExitCode is int exitCode && exitCode != 0)
+        {
+            throw new InvalidOperationException(
+                $"{validation.Method.DeclaringType?.Name}.{validation.Method.Name} failed validation.");
+        }
+    }
+
     public static void RunProductionMetadataValidation()
     {
         try

@@ -173,9 +173,12 @@ namespace Game.Runtime
                 for (int i = 0; i < entities.Length; i++)
                 {
                     Entity entity = entities[i];
+                    bool runtimeBuildingProxy =
+                        entityManager.HasComponent<RuntimeBuildingCombatTag>(entity) &&
+                        !entityManager.HasComponent<OperationMapBuildingComponent>(entity);
                     if (entityManager.HasComponent<Prefab>(entity) ||
                         entityManager.HasComponent<StaticGridBlocker>(entity) ||
-                        entityManager.HasComponent<RuntimeBuildingCombatTag>(entity))
+                        runtimeBuildingProxy)
                     {
                         continue;
                     }

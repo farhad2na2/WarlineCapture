@@ -741,6 +741,14 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
         entityManager.SetComponentData(runtimeBuildingProxy, new UnitGrid { Cell = new Unity.Mathematics.int2(9, 9) });
         entityManager.SetComponentData(runtimeBuildingProxy, new UnitFootprint { Size = new Unity.Mathematics.int2(3, 3) });
 
+        Entity operationMapBuilding = entityManager.CreateEntity(
+            typeof(UnitGrid),
+            typeof(UnitFootprint),
+            typeof(RuntimeBuildingCombatTag),
+            typeof(OperationMapBuildingComponent));
+        entityManager.SetComponentData(operationMapBuilding, new UnitGrid { Cell = new Unity.Mathematics.int2(16, 16) });
+        entityManager.SetComponentData(operationMapBuilding, new UnitFootprint { Size = new Unity.Mathematics.int2(4, 3) });
+
         Entity staticBlocker = entityManager.CreateEntity(
             typeof(UnitGrid),
             typeof(UnitFootprint),
@@ -768,10 +776,14 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
             entityManager,
             liveFootprints,
             new RectInt(12, 12, 2, 2)), "Static blockers remain owned by the static blocker validation path.");
+        Assert.IsTrue(BuildingRuntimeQueryCompositionSystemHelper.OverlapsAnyLiveUnitFootprint(
+            entityManager,
+            liveFootprints,
+            new RectInt(15, 15, 3, 3)), "Map-authored operation-map buildings must block building placement through their canonical ECS footprint.");
         Assert.IsFalse(BuildingRuntimeQueryCompositionSystemHelper.OverlapsAnyLiveUnitFootprint(
             entityManager,
             liveFootprints,
-            new RectInt(15, 15, 1, 1)), "An empty footprint must remain valid for the live occupancy layer.");
+            new RectInt(24, 24, 1, 1)), "An empty footprint must remain valid for the live occupancy layer.");
     }
 
     [Test]

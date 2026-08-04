@@ -373,6 +373,7 @@ namespace Game.Editor
             }
 
             NormalizeCombinedMeshBakerSerializedIdentity(outputPath);
+            NormalizeMapSurfaceAuthoringSerializedIdentity(outputPath);
             AssetDatabase.ImportAsset(outputPath, ImportAssetOptions.ForceSynchronousImport);
             Scene scene = EditorSceneManager.OpenScene(outputPath, OpenSceneMode.Single);
             try
@@ -425,6 +426,7 @@ namespace Game.Editor
             NormalizeAssetText(outputPath);
             NormalizeAssetText(outputPath + ".meta");
             NormalizeCombinedMeshBakerSerializedIdentity(outputPath);
+            NormalizeMapSurfaceAuthoringSerializedIdentity(outputPath);
             PatchDefinitionReferenceIfMissing(outputPath, candidateDefinitionPath);
             AssetDatabase.ImportAsset(outputPath, ImportAssetOptions.ForceSynchronousImport);
 
@@ -452,6 +454,7 @@ namespace Game.Editor
             // current assembly identity even though a cold Editor cannot resolve that retained row.
             // Leave the candidate-only file on the single legacy identity covered by MovedFrom.
             NormalizeCombinedMeshBakerSerializedIdentity(outputPath);
+            NormalizeMapSurfaceAuthoringSerializedIdentity(outputPath);
         }
 
         internal static bool TryReuseExistingCandidateRuntimeBinding(
@@ -522,11 +525,37 @@ namespace Game.Editor
             const string currentIdentity =
                 "m_EditorClassIdentifier: Game.Runtime::Game.Runtime.CombinedMeshBaker";
             const string legacyIdentity =
-                "m_EditorClassIdentifier: Assembly-CSharp::CombinedMeshBaker";
+                "m_EditorClassIdentifier: Game.Runtime::CombinedMeshBaker";
+            return NormalizeComponentSerializedIdentity(
+                assetPath,
+                currentIdentity,
+                legacyIdentity,
+                "CombinedMeshBaker");
+        }
+
+        internal static bool NormalizeMapSurfaceAuthoringSerializedIdentity(string assetPath)
+        {
+            const string currentIdentity =
+                "m_EditorClassIdentifier: Game.Authoring::Game.Authoring.MapSurfaceAuthoring";
+            const string legacyIdentity =
+                "m_EditorClassIdentifier: Game.Authoring::MapSurfaceAuthoring";
+            return NormalizeComponentSerializedIdentity(
+                assetPath,
+                currentIdentity,
+                legacyIdentity,
+                "MapSurfaceAuthoring");
+        }
+
+        private static bool NormalizeComponentSerializedIdentity(
+            string assetPath,
+            string currentIdentity,
+            string legacyIdentity,
+            string componentName)
+        {
             string physical = Path.GetFullPath(Path.Combine(Application.dataPath, "..", assetPath));
             if (!File.Exists(physical))
                 throw new InvalidOperationException(
-                    $"Runtime binding scene is missing while normalizing CombinedMeshBaker identity: {assetPath}");
+                    $"Runtime binding scene is missing while normalizing {componentName} identity: {assetPath}");
 
             string text = File.ReadAllText(physical, Utf8WithoutBom);
             int currentCount = CountExactOccurrences(text, currentIdentity);
@@ -534,7 +563,7 @@ namespace Game.Editor
             if (currentCount + legacyCount != 1)
             {
                 throw new InvalidOperationException(
-                    "Runtime binding scene requires exactly one recognized CombinedMeshBaker serialized identity. " +
+                    $"Runtime binding scene requires exactly one recognized {componentName} serialized identity. " +
                     $"current={currentCount} legacy={legacyCount} path={assetPath}");
             }
 

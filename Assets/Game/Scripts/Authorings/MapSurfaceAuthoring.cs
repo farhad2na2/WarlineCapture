@@ -2,12 +2,14 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 using Game.Components;
 using Game.Configs;
 
 namespace Game.Authoring
 {
     [DisallowMultipleComponent]
+    [MovedFrom(true, sourceNamespace: "", sourceAssembly: "Game.Authoring", sourceClassName: "MapSurfaceAuthoring")]
     public sealed class MapSurfaceAuthoring : MonoBehaviour
     {
         [SerializeField] private MapSurfaceDataAsset bakedSurfaceData;

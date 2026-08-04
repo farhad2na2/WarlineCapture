@@ -92,6 +92,7 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
             suite.TransformParityReport_SameLengthWriteSupportsMappedFile,
             suite.NormalizeAssetText_ChangesOnceThenBecomesByteNoOp,
             suite.NormalizeAssetText_UnloadsImportedAssetBeforeChangedWrite,
+            suite.RuntimeBindingComponentIdentityNormalization_ChangesOnceThenBecomesNoOp,
             suite.ProtectedProductionSnapshot_RejectsFileDrift,
             suite.BakeBudget_AcceptsCandidateBaseline,
             suite.BakeBudget_RejectsManagedVisualCompanions,
@@ -543,6 +544,41 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
         {
             AssetDatabase.DeleteAsset(folder);
         }
+    }
+
+    [Test]
+    public void RuntimeBindingComponentIdentityNormalization_ChangesOnceThenBecomesNoOp()
+    {
+        string relative =
+            "Temp/OperationMapEntitySceneCandidateBakeAllTests/runtime-binding.unity";
+        string physical = Path.Combine(projectRoot, relative);
+        File.WriteAllText(
+            physical,
+            "m_EditorClassIdentifier: Game.Runtime::Game.Runtime.CombinedMeshBaker\n" +
+            "m_EditorClassIdentifier: Game.Authoring::Game.Authoring.MapSurfaceAuthoring\n",
+            new UTF8Encoding(false));
+
+        Assert.That(
+            OperationMapEntitySceneCandidateAddressablesLayoutBuilder
+                .NormalizeCombinedMeshBakerSerializedIdentity(relative),
+            Is.True);
+        Assert.That(
+            OperationMapEntitySceneCandidateAddressablesLayoutBuilder
+                .NormalizeMapSurfaceAuthoringSerializedIdentity(relative),
+            Is.True);
+        Assert.That(
+            File.ReadAllText(physical, new UTF8Encoding(false)),
+            Is.EqualTo(
+                "m_EditorClassIdentifier: Game.Runtime::CombinedMeshBaker\n" +
+                "m_EditorClassIdentifier: Game.Authoring::MapSurfaceAuthoring\n"));
+        Assert.That(
+            OperationMapEntitySceneCandidateAddressablesLayoutBuilder
+                .NormalizeCombinedMeshBakerSerializedIdentity(relative),
+            Is.False);
+        Assert.That(
+            OperationMapEntitySceneCandidateAddressablesLayoutBuilder
+                .NormalizeMapSurfaceAuthoringSerializedIdentity(relative),
+            Is.False);
     }
 
     [Test]

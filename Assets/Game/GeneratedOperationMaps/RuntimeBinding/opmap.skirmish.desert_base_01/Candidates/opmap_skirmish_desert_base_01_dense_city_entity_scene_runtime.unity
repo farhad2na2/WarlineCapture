@@ -162,7 +162,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ff37f00c6585b49f2b142f7c43215901, type: 3}
   m_Name:
-  m_EditorClassIdentifier: Game.Runtime::Game.Runtime.CombinedMeshBaker
+  m_EditorClassIdentifier: Game.Runtime::CombinedMeshBaker
   combineOnStart: 0
   includeInactive: 1
   disableSourceRenderers: 1
@@ -393,7 +393,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e4a11c9241684f579a0926616f8c708a, type: 3}
   m_Name:
-  m_EditorClassIdentifier: Game.Authoring::Game.Authoring.MapSurfaceAuthoring
+  m_EditorClassIdentifier: Game.Authoring::MapSurfaceAuthoring
   bakedSurfaceData: {fileID: 11400000, guid: 12f517deb32ab49698acbfdaf7c3eac7, type: 2}
   gridConfig: {fileID: 11400000, guid: b201000000000000000000000000000b, type: 2}
   samplesPerCellAxis: 2

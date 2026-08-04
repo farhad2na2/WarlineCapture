@@ -504,6 +504,7 @@ namespace Game.Runtime
                 if (!_hasLastSummaryPanelKey || !_lastSummaryPanelKey.Equals(summaryKey))
                 {
                     ClearFocusedPanelCache();
+                    ClearSelectedBuildingPanelCache();
                     _matchHudSelectionPanelView.Apply(BuildSquadPanelModel(
                         context,
                         em,
@@ -539,6 +540,7 @@ namespace Game.Runtime
                 if (!_hasLastPanelKey || !_lastPanelKey.Equals(panelKey))
                 {
                     ClearSummaryPanelCache();
+                    ClearSelectedBuildingPanelCache();
                     _matchHudSelectionPanelView.Apply(BuildFocusedUnitPanelModel(
                         context,
                         em,
@@ -585,6 +587,7 @@ namespace Game.Runtime
                 if (!_hasLastSummaryPanelKey || !_lastSummaryPanelKey.Equals(summaryKey))
                 {
                     ClearFocusedPanelCache();
+                    ClearSelectedBuildingPanelCache();
                     _matchHudSelectionPanelView.Apply(BuildSquadPanelModel(
                         context,
                         em,
@@ -909,6 +912,7 @@ namespace Game.Runtime
         {
             ClearFocusedPanelCache();
             ClearSummaryPanelCache();
+            ClearSelectedBuildingPanelCache();
         }
 
         private void ClearSummaryPanelCache()
@@ -923,6 +927,10 @@ namespace Game.Runtime
             _lastPanelKey = default;
             _hasLastTransportKey = false;
             _lastTransportKey = default;
+        }
+
+        private void ClearSelectedBuildingPanelCache()
+        {
             _hasLastSelectedBuildingPanelKey = false;
             _lastSelectedBuildingPanelKey = default;
         }

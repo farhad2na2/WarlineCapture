@@ -24,7 +24,6 @@ namespace Game.Editor
     {
         private const string Marker = "[FreshContractorSelectionPanelEditorValidation]";
         private const string HudPrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab";
-        private const string BarracksConfigPath = "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Building_Barrack_Config.asset";
         private const string ContractorConfigPath = "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Tent_Contractor_Config.asset";
         private const string EvidenceRelativePath = "Build/EditorEvidence/FreshContractorSelectionPanelTransition.png";
 
@@ -37,12 +36,10 @@ namespace Game.Editor
             try
             {
                 GameObject hudPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(HudPrefabPath);
-                BuildingDefinitionAuthoringConfig barracks = AssetDatabase.LoadAssetAtPath<BuildingDefinitionAuthoringConfig>(BarracksConfigPath);
                 BuildingDefinitionAuthoringConfig contractor = AssetDatabase.LoadAssetAtPath<BuildingDefinitionAuthoringConfig>(ContractorConfigPath);
-                Sprite barracksPortrait = ResolvePortrait(barracks);
                 Sprite contractorPortrait = ResolvePortrait(contractor);
-                if (hudPrefab == null || barracksPortrait == null || contractorPortrait == null)
-                    throw new InvalidOperationException("HUD prefab and both canonical building portraits are required.");
+                if (hudPrefab == null || contractorPortrait == null)
+                    throw new InvalidOperationException("HUD prefab and the canonical Contractor portrait are required.");
 
                 EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
                 hudRoot = UnityEngine.Object.Instantiate(hudPrefab);
@@ -68,14 +65,17 @@ namespace Game.Editor
                 selectionState.SetFocusedUnit(staleBarracks);
                 var focusedLifecycle = new FocusedUnitLifecycleCompositionSystemHelper();
 
-                string selectedLabel = "Barracks (100,100)";
-                Sprite selectedPortrait = barracksPortrait;
-                ApplyBuildingModel(feedback, context, selectionState, focusedLifecycle, () => selectedLabel, () => selectedPortrait);
-                AssertPanel(panel, "Barracks", "(100,100)", barracksPortrait);
+                const string SelectedLabel = "Contractor Tent (113,100)";
+                bool hasSelectedBuilding = true;
+                ApplyCurrentSelectionModel();
+                AssertPanel(panel, "Contractor Tent", "(113,100)", contractorPortrait);
 
-                selectedLabel = "Contractor Tent (113,100)";
-                selectedPortrait = contractorPortrait;
-                ApplyBuildingModel(feedback, context, selectionState, focusedLifecycle, () => selectedLabel, () => selectedPortrait);
+                hasSelectedBuilding = false;
+                ApplyCurrentSelectionModel();
+                AssertFocusedBarracksPanel(panel);
+
+                hasSelectedBuilding = true;
+                ApplyCurrentSelectionModel();
                 AssertPanel(panel, "Contractor Tent", "(113,100)", contractorPortrait);
 
                 string evidencePath = Path.GetFullPath(Path.Combine(Application.dataPath, "..", EvidenceRelativePath));
@@ -85,6 +85,18 @@ namespace Game.Editor
                     throw new InvalidOperationException("Fresh Contractor panel evidence was not written.");
 
                 Debug.Log($"{Marker} result=Passed title=Contractor Tent origin=(113,100) portrait={contractorPortrait.name} subtitle=Base Structure order=Structure selected health=- evidence={evidencePath}");
+
+                void ApplyCurrentSelectionModel()
+                {
+                    ApplySelectionModel(
+                        feedback,
+                        context,
+                        selectionState,
+                        focusedLifecycle,
+                        () => hasSelectedBuilding,
+                        () => SelectedLabel,
+                        () => contractorPortrait);
+                }
             }
             catch (Exception exception)
             {
@@ -101,11 +113,12 @@ namespace Game.Editor
             }
         }
 
-        private static void ApplyBuildingModel(
+        private static void ApplySelectionModel(
             SelectionHudFeedbackUiSystemHelper feedback,
             SelectionHudFeedbackUiSystemHelper.Context context,
             SelectionStateCompositionSystemHelper selectionState,
             FocusedUnitLifecycleCompositionSystemHelper focusedLifecycle,
+            Func<bool> hasSelectedBuilding,
             Func<string> selectedLabel,
             Func<Sprite> selectedPortrait)
         {
@@ -120,13 +133,25 @@ namespace Game.Editor
                 resolveSelectionCardPortraitSprite: null,
                 resolveSelectedBuildingPortraitSprite: selectedPortrait,
                 resolveActiveSquadTrayPortraitSprite: null,
-                hasSelectedBuilding: () => true,
+                hasSelectedBuilding: hasSelectedBuilding,
                 selectedBuildingLabel: selectedLabel,
                 tryGetSelectedBuildingResourceStorage: null,
                 tryGetSelectedBuildingResourceStorageSnapshot: null,
                 tryGetSelectedMaterialFabricationReadModel: null,
                 isBoardCommandAvailable: null,
                 hasSelectedBoardAction: null);
+        }
+
+        private static void AssertFocusedBarracksPanel(MatchHudSelectionPanelView panel)
+        {
+            TMP_Text title = ReadField<TMP_Text>(panel, "titleText");
+            TMP_Text health = ReadField<TMP_Text>(panel, "healthText");
+            if (title == null || !title.text.Contains("Barracks", StringComparison.OrdinalIgnoreCase) ||
+                health == null || !health.text.Contains("1200/1200", StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException(
+                    $"Focused Barracks transition mismatch actualTitle={title?.text ?? "null"} health={health?.text ?? "null"}.");
+            }
         }
 
         private static Entity CreateStaleFocusedBarracks(EntityManager entityManager)

@@ -714,25 +714,17 @@ public sealed class SelectionSummaryQuerySystemTests
             var feedback = new SelectionHudFeedbackUiSystemHelper();
             feedback.BindMatchHudSelectionPanel(panel);
             var context = new SelectionHudFeedbackUiSystemHelper.Context(new SelectionUiReadModelLookup(), TryGetEntityManager);
+            bool hasSelectedBuilding = true;
 
-            feedback.UpdateMatchHudSelectionPanel(
-                context,
-                selectionState,
-                lifecycle,
-                null,
-                new List<MatchHudSelectionPanelPassengerItemModel>(),
-                null,
-                null,
-                null,
-                () => contractorPortrait,
-                null,
-                () => true,
-                () => "Contractor Tent (113,100)",
-                null,
-                null,
-                null,
-                null,
-                null);
+            ApplySelectionPanel();
+            Assert.AreEqual("Contractor Tent (113,100)", panel.AppliedModel.Title);
+
+            hasSelectedBuilding = false;
+            ApplySelectionPanel();
+            Assert.AreEqual("Barracks", panel.AppliedModel.Title);
+
+            hasSelectedBuilding = true;
+            ApplySelectionPanel();
 
             Assert.IsTrue(panel.AppliedModel.Visible);
             Assert.AreEqual("Contractor Tent (113,100)", panel.AppliedModel.Title);
@@ -740,6 +732,28 @@ public sealed class SelectionSummaryQuerySystemTests
             Assert.AreEqual("Structure selected", panel.AppliedModel.CurrentOrder);
             Assert.AreEqual("-", panel.AppliedModel.HealthText);
             Assert.AreSame(contractorPortrait, panel.AppliedModel.PortraitSprite);
+
+            void ApplySelectionPanel()
+            {
+                feedback.UpdateMatchHudSelectionPanel(
+                    context,
+                    selectionState,
+                    lifecycle,
+                    null,
+                    new List<MatchHudSelectionPanelPassengerItemModel>(),
+                    null,
+                    null,
+                    null,
+                    () => contractorPortrait,
+                    null,
+                    () => hasSelectedBuilding,
+                    () => "Contractor Tent (113,100)",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null);
+            }
         }
         finally
         {

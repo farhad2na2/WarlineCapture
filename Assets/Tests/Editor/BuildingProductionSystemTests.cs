@@ -5116,7 +5116,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         var unitPrefabs = new List<GameObject> { unitPrefab };
         var unitPrefabsByKey = new Dictionary<string, GameObject>
         {
-            [unitPrefab.name] = unitPrefab
+            [BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(unitPrefab.name)] = unitPrefab
         };
         BuildingProductionQueueCompositionSystemHelper.QueueContext queueContext = new(
             unitPrefabs,

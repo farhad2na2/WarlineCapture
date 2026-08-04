@@ -1963,9 +1963,14 @@ namespace Game.Runtime
         {
             if (context.UpdateOperationMapProductionDelivery == null)
                 return OperationMapProductionDeliveryResult.NotRequired;
-            if (!TryFindOperationMapProductionRequest(em, producer, requestId, out OperationMapBuildingUnitProductionRequest request) ||
+            if (!TryFindOperationMapProductionRequest(em, producer, requestId, out OperationMapBuildingUnitProductionRequest request))
+                return OperationMapProductionDeliveryResult.Rejected;
+
+            string normalizedUnitSourceKey = BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(
+                request.UnitSourceKey.ToString());
+            if (string.IsNullOrEmpty(normalizedUnitSourceKey) ||
                 context.UnitSpawnPrefabsByKey == null ||
-                !context.UnitSpawnPrefabsByKey.TryGetValue(request.UnitSourceKey.ToString(), out GameObject unitPrefab) ||
+                !context.UnitSpawnPrefabsByKey.TryGetValue(normalizedUnitSourceKey, out GameObject unitPrefab) ||
                 unitPrefab == null)
             {
                 return OperationMapProductionDeliveryResult.Rejected;

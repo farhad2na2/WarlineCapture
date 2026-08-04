@@ -226,6 +226,14 @@ public sealed class MapVehiclePlacementStartupCompletionTests
             Role = 1,
             PlacementIndex = 0
         });
+        Assert.IsTrue(
+            MapVehiclePlacementSpawnPrefabSystemHelper.IsAuthoredVehiclePresentationReady(em),
+            "Legacy authoring-root startup must remain compatible without a packed readiness contract.");
+        Assert.IsFalse(
+            MapVehiclePlacementSpawnPrefabSystemHelper.IsAuthoredVehiclePresentationReady(
+                em,
+                requireReadinessContract: true),
+            "Headless packed startup must not consume its one-shot placement cursor before the readiness contract streams in.");
         Entity readinessContract = em.CreateEntity(typeof(OperationMapEntityPresentationReadinessContract));
         em.SetComponentData(readinessContract, new OperationMapEntityPresentationReadinessContract
         {

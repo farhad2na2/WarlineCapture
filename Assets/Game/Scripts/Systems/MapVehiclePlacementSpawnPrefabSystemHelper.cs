@@ -108,7 +108,11 @@ namespace Game.Runtime
             // contract's authored vehicles are present. Otherwise an early startup tick can
             // permanently consume the placement cursor before the baked vehicles become
             // available for the normal neutral-vehicle adoption path.
-            if (!IsAuthoredVehiclePresentationReady(em))
+            bool requiresPackedPresentationContract =
+                context.AuthoringVehiclesRoot == null &&
+                context.Config.Placements != null &&
+                context.Config.Placements.Count > 0;
+            if (!IsAuthoredVehiclePresentationReady(em, requiresPackedPresentationContract))
                 return;
 
             SyncProgressSnapshot(progress);
@@ -136,12 +140,14 @@ namespace Game.Runtime
             SyncProgressSnapshot(progress);
         }
 
-        internal static bool IsAuthoredVehiclePresentationReady(EntityManager em)
+        internal static bool IsAuthoredVehiclePresentationReady(
+            EntityManager em,
+            bool requireReadinessContract = false)
         {
             using EntityQuery contractQuery = em.CreateEntityQuery(
                 ComponentType.ReadOnly<OperationMapEntityPresentationReadinessContract>());
             if (contractQuery.IsEmptyIgnoreFilter)
-                return true;
+                return !requireReadinessContract;
 
             using NativeArray<OperationMapEntityPresentationReadinessContract> contracts =
                 contractQuery.ToComponentDataArray<OperationMapEntityPresentationReadinessContract>(Allocator.Temp);

@@ -230,8 +230,9 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         try
         {
             var tests = new BuildingProductionQueueCompositionSystemHelperTests();
+            tests.ResolveProductionTransportSettings_RebuildsAfterLatePackedTransportRegistryMutation();
             tests.CanonicalTentTransportPresentation_ArrivesRopesAndDefersSpawnUntilDropCompletes();
-            Debug.Log("[CanonicalTentTransportPresentationValidation] result=Passed transportVisible=1 ropeVisible=1 dropVisualVisible=1 ownership=canonical");
+            Debug.Log("[CanonicalTentTransportPresentationValidation] result=Passed transportVisible=1 ropeVisible=1 dropVisualVisible=1 ownership=canonical latePackedTransport=1");
             ValidationExit.Passed();
         }
         catch (Exception ex)
@@ -255,7 +256,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             RunValidationSuite(RunProductionCameraFocusValidation);
             RunValidationSuite(RtsSelectionInputSystemTests.RunFocusedValidation);
             RunValidationSuite(MatchHudSquadTraySelectionUiSystemHelperTests.RunFocusedValidation);
-            Debug.Log("[EditorFirstProductionFunctionalBatchValidation] result=Passed suites=8 tests=92");
+            Debug.Log("[EditorFirstProductionFunctionalBatchValidation] result=Passed suites=8 tests=93");
             ValidationExit.Passed();
         }
         catch (Exception ex)
@@ -288,8 +289,9 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             var tests = new BuildingProductionQueueCompositionSystemHelperTests();
             tests.ResolveProductionDurationSeconds_UsesUnitAuthoringDuration();
             tests.ResolveProductionTransportSettings_UsesConfiguredTransportAuthoring();
+            tests.ResolveProductionTransportSettings_RebuildsAfterLatePackedTransportRegistryMutation();
             tests.ResolveProductionTransportSettings_DefaultsLargeVehicleToPlaneTransport();
-            Debug.Log("[BuildingProductionMetadataValidation] result=Passed tests=3");
+            Debug.Log("[BuildingProductionMetadataValidation] result=Passed tests=4");
             ValidationExit.Passed();
         }
         catch (Exception ex)
@@ -4483,6 +4485,40 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             Assert.AreEqual(4, settings.MaxConcurrent);
             Assert.AreEqual(BuildingProductionQueueCompositionSystemHelper.ProductionTransportMode.Helicopter, settings.Mode);
             Assert.IsFalse(settings.RequiresAirportRunway);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(producedPrefab);
+            UnityEngine.Object.DestroyImmediate(transportPrefab);
+        }
+    }
+
+    [Test]
+    public void ResolveProductionTransportSettings_RebuildsAfterLatePackedTransportRegistryMutation()
+    {
+        GameObject producedPrefab = new("Unit_Infantry_LatePackedTransport_Test");
+        GameObject transportPrefab = new("Unit_Veh_Helicopter_Transport");
+        try
+        {
+            producedPrefab.AddComponent<UnitGridAuthoring>();
+            transportPrefab.AddComponent<UnitGridAuthoring>();
+            var prefabs = new List<GameObject>();
+            var prefabsByKey = new Dictionary<string, GameObject>();
+            BuildingProductionQueueCompositionSystemHelper system = CreateProductionSystem();
+
+            BuildingProductionQueueCompositionSystemHelper.ProductionTransportSettings before =
+                system.ResolveProductionTransportSettings(producedPrefab, prefabs, prefabsByKey, null);
+            Assert.IsNull(before.TransportPrefab,
+                "An unpacked registry must not invent a transport before the canonical helicopter arrives.");
+
+            prefabs.Add(transportPrefab);
+            prefabsByKey.Add("unit_veh_helicopter_transport", transportPrefab);
+
+            BuildingProductionQueueCompositionSystemHelper.ProductionTransportSettings after =
+                system.ResolveProductionTransportSettings(producedPrefab, prefabs, prefabsByKey, null);
+            Assert.AreSame(transportPrefab, after.TransportPrefab,
+                "Late-packed registry contents must invalidate the null transport cache held by the same list and dictionary instances.");
+            Assert.AreEqual(BuildingProductionQueueCompositionSystemHelper.ProductionTransportMode.Helicopter, after.Mode);
         }
         finally
         {

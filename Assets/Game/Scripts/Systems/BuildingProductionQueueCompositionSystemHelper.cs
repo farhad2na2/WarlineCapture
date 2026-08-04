@@ -106,6 +106,8 @@ namespace Game.Runtime
         private readonly Dictionary<GameObject, ProductionTransportSettings> _productionTransportSettingsByPrefab = new();
         private IReadOnlyList<GameObject> _cachedTransportUnitSpawnPrefabs;
         private IReadOnlyDictionary<string, GameObject> _cachedTransportUnitSpawnPrefabsByKey;
+        private int _cachedTransportUnitSpawnPrefabCount = -1;
+        private int _cachedTransportUnitSpawnPrefabKeyCount = -1;
         private TryGetPrefabLocalBoundsDelegate _cachedTransportBoundsResolver;
         private GameObject _cachedDefaultHelicopterTransportPrefab;
         private GameObject _cachedDefaultPlaneTransportPrefab;
@@ -510,8 +512,24 @@ namespace Game.Runtime
             IReadOnlyDictionary<string, GameObject> unitSpawnPrefabsByKey,
             TryGetPrefabLocalBoundsDelegate tryGetPrefabLocalBounds)
         {
+            int prefabCount = unitSpawnPrefabs?.Count ?? 0;
+            int prefabKeyCount = unitSpawnPrefabsByKey?.Count ?? 0;
+            GameObject defaultHelicopterTransportPrefab = TryResolveConfiguredUnitPrefab(
+                HelicopterTransportPrefabName,
+                HelicopterTransportLookupKey,
+                unitSpawnPrefabs,
+                unitSpawnPrefabsByKey);
+            GameObject defaultPlaneTransportPrefab = TryResolveConfiguredUnitPrefab(
+                PlaneTransportPrefabName,
+                PlaneTransportLookupKey,
+                unitSpawnPrefabs,
+                unitSpawnPrefabsByKey);
             if (ReferenceEquals(_cachedTransportUnitSpawnPrefabs, unitSpawnPrefabs) &&
                 ReferenceEquals(_cachedTransportUnitSpawnPrefabsByKey, unitSpawnPrefabsByKey) &&
+                _cachedTransportUnitSpawnPrefabCount == prefabCount &&
+                _cachedTransportUnitSpawnPrefabKeyCount == prefabKeyCount &&
+                _cachedDefaultHelicopterTransportPrefab == defaultHelicopterTransportPrefab &&
+                _cachedDefaultPlaneTransportPrefab == defaultPlaneTransportPrefab &&
                 IsSameBoundsResolver(_cachedTransportBoundsResolver, tryGetPrefabLocalBounds))
             {
                 return;
@@ -519,17 +537,11 @@ namespace Game.Runtime
 
             _cachedTransportUnitSpawnPrefabs = unitSpawnPrefabs;
             _cachedTransportUnitSpawnPrefabsByKey = unitSpawnPrefabsByKey;
+            _cachedTransportUnitSpawnPrefabCount = prefabCount;
+            _cachedTransportUnitSpawnPrefabKeyCount = prefabKeyCount;
             _cachedTransportBoundsResolver = tryGetPrefabLocalBounds;
-            _cachedDefaultHelicopterTransportPrefab = TryResolveConfiguredUnitPrefab(
-                HelicopterTransportPrefabName,
-                HelicopterTransportLookupKey,
-                unitSpawnPrefabs,
-                unitSpawnPrefabsByKey);
-            _cachedDefaultPlaneTransportPrefab = TryResolveConfiguredUnitPrefab(
-                PlaneTransportPrefabName,
-                PlaneTransportLookupKey,
-                unitSpawnPrefabs,
-                unitSpawnPrefabsByKey);
+            _cachedDefaultHelicopterTransportPrefab = defaultHelicopterTransportPrefab;
+            _cachedDefaultPlaneTransportPrefab = defaultPlaneTransportPrefab;
             _productionTransportSettingsByPrefab.Clear();
         }
 

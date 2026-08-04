@@ -452,6 +452,46 @@ namespace Game.Runtime
 
             ensureEntityQueries?.Invoke(em);
             int selectedCount = CountSelectedTagsCached(em);
+            if (hasSelectedBuilding != null && hasSelectedBuilding())
+            {
+                MarkSelectionPanelVisible();
+                string buildingLabel = selectedBuildingLabel?.Invoke();
+                SelectedBuildingPanelCacheKey selectedBuildingPanelKey = new(StableStringHash(buildingLabel));
+                if (!_hasLastSelectedBuildingPanelKey || !_lastSelectedBuildingPanelKey.Equals(selectedBuildingPanelKey))
+                {
+                    ClearFocusedPanelCache();
+                    ClearSummaryPanelCache();
+                    _matchHudSelectionPanelView.Apply(BuildSelectedBuildingPanelModel(
+                        buildingLabel,
+                        resolveSelectedBuildingPortraitSprite));
+                    _lastSelectedBuildingPanelKey = selectedBuildingPanelKey;
+                    _hasLastSelectedBuildingPanelKey = true;
+                }
+
+                MatchHudTransportPassengersModel storageModel;
+                TransportPanelCacheKey storageKey;
+                if (tryGetSelectedMaterialFabricationReadModel != null &&
+                    tryGetSelectedMaterialFabricationReadModel(out UiMaterialFabricationReadModel fabrication))
+                {
+                    storageModel = BuildSelectedMaterialFabricationPanelModel(fabrication, out storageKey);
+                }
+                else
+                {
+                    storageModel = BuildSelectedBuildingResourceStoragePanelModel(
+                        tryGetSelectedBuildingResourceStorage,
+                        tryGetSelectedBuildingResourceStorageSnapshot,
+                        out storageKey);
+                }
+                if (!_hasLastTransportKey || !_lastTransportKey.Equals(storageKey))
+                {
+                    _matchHudSelectionPanelView.ApplyTransportPassengers(storageModel);
+                    _lastTransportKey = storageKey;
+                    _hasLastTransportKey = true;
+                }
+
+                return;
+            }
+
             if (selectedCount > 1)
             {
                 MarkSelectionPanelVisible();
@@ -558,46 +598,6 @@ namespace Game.Runtime
                 }
 
                 ApplyTransportPassengersHiddenCached();
-                return;
-            }
-
-            if (hasSelectedBuilding != null && hasSelectedBuilding())
-            {
-                MarkSelectionPanelVisible();
-                string buildingLabel = selectedBuildingLabel?.Invoke();
-                SelectedBuildingPanelCacheKey selectedBuildingPanelKey = new(StableStringHash(buildingLabel));
-                if (!_hasLastSelectedBuildingPanelKey || !_lastSelectedBuildingPanelKey.Equals(selectedBuildingPanelKey))
-                {
-                    ClearFocusedPanelCache();
-                    ClearSummaryPanelCache();
-                    _matchHudSelectionPanelView.Apply(BuildSelectedBuildingPanelModel(
-                        buildingLabel,
-                        resolveSelectedBuildingPortraitSprite));
-                    _lastSelectedBuildingPanelKey = selectedBuildingPanelKey;
-                    _hasLastSelectedBuildingPanelKey = true;
-                }
-
-                MatchHudTransportPassengersModel storageModel;
-                TransportPanelCacheKey storageKey;
-                if (tryGetSelectedMaterialFabricationReadModel != null &&
-                    tryGetSelectedMaterialFabricationReadModel(out UiMaterialFabricationReadModel fabrication))
-                {
-                    storageModel = BuildSelectedMaterialFabricationPanelModel(fabrication, out storageKey);
-                }
-                else
-                {
-                    storageModel = BuildSelectedBuildingResourceStoragePanelModel(
-                        tryGetSelectedBuildingResourceStorage,
-                        tryGetSelectedBuildingResourceStorageSnapshot,
-                        out storageKey);
-                }
-                if (!_hasLastTransportKey || !_lastTransportKey.Equals(storageKey))
-                {
-                    _matchHudSelectionPanelView.ApplyTransportPassengers(storageModel);
-                    _lastTransportKey = storageKey;
-                    _hasLastTransportKey = true;
-                }
-
                 return;
             }
 

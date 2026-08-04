@@ -2,12 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using Game.Components;
 using Game.Configs;
 using Game.Runtime;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
 using TMPro;
+using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -59,15 +63,19 @@ namespace Game.Editor
                         em = entityManager;
                         return true;
                     });
+                Entity staleBarracks = CreateStaleFocusedBarracks(entityManager);
+                var selectionState = new SelectionStateCompositionSystemHelper();
+                selectionState.SetFocusedUnit(staleBarracks);
+                var focusedLifecycle = new FocusedUnitLifecycleCompositionSystemHelper();
 
                 string selectedLabel = "Barracks (100,100)";
                 Sprite selectedPortrait = barracksPortrait;
-                ApplyBuildingModel(feedback, context, () => selectedLabel, () => selectedPortrait);
+                ApplyBuildingModel(feedback, context, selectionState, focusedLifecycle, () => selectedLabel, () => selectedPortrait);
                 AssertPanel(panel, "Barracks", "(100,100)", barracksPortrait);
 
                 selectedLabel = "Contractor Tent (113,100)";
                 selectedPortrait = contractorPortrait;
-                ApplyBuildingModel(feedback, context, () => selectedLabel, () => selectedPortrait);
+                ApplyBuildingModel(feedback, context, selectionState, focusedLifecycle, () => selectedLabel, () => selectedPortrait);
                 AssertPanel(panel, "Contractor Tent", "(113,100)", contractorPortrait);
 
                 string evidencePath = Path.GetFullPath(Path.Combine(Application.dataPath, "..", EvidenceRelativePath));
@@ -96,13 +104,15 @@ namespace Game.Editor
         private static void ApplyBuildingModel(
             SelectionHudFeedbackUiSystemHelper feedback,
             SelectionHudFeedbackUiSystemHelper.Context context,
+            SelectionStateCompositionSystemHelper selectionState,
+            FocusedUnitLifecycleCompositionSystemHelper focusedLifecycle,
             Func<string> selectedLabel,
             Func<Sprite> selectedPortrait)
         {
             feedback.UpdateMatchHudSelectionPanel(
                 context: context,
-                selectionStateSystem: new SelectionStateCompositionSystemHelper(),
-                focusedUnitLifecycleSystem: null,
+                selectionStateSystem: selectionState,
+                focusedUnitLifecycleSystem: focusedLifecycle,
                 focusedUnitUiReadModelSystem: null,
                 transportPassengerPanelItems: new List<MatchHudSelectionPanelPassengerItemModel>(),
                 ensureEntityQueries: null,
@@ -117,6 +127,29 @@ namespace Game.Editor
                 tryGetSelectedMaterialFabricationReadModel: null,
                 isBoardCommandAvailable: null,
                 hasSelectedBoardAction: null);
+        }
+
+        private static Entity CreateStaleFocusedBarracks(EntityManager entityManager)
+        {
+            Entity entity = entityManager.CreateEntity();
+            entityManager.AddComponentData(entity, new Faction { Id = 0 });
+            entityManager.AddComponentData(entity, new UnitGrid { Cell = new int2(100, 100) });
+            entityManager.AddComponentData(entity, new UnitHealth { Current = 1200, Max = 1200 });
+            entityManager.AddComponentData(entity, new UnitDisplayInfo
+            {
+                Name = new FixedString64Bytes("Barracks"),
+                Description = new FixedString128Bytes("Stale ECS selection owner")
+            });
+            entityManager.AddComponentData(entity, new UnitMove
+            {
+                Speed = 5f,
+                WalkSpeed = 5f,
+                RoadSpeedMultiplier = 1f,
+                ArriveDistance = 0.05f
+            });
+            entityManager.AddComponentData(entity, LocalTransform.FromPosition(new float3(100f, 0f, 100f)));
+            entityManager.AddComponent<SelectedUnitTag>(entity);
+            return entity;
         }
 
         private static void AssertPanel(

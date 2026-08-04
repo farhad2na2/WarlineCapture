@@ -37,12 +37,13 @@ public sealed class SelectionSummaryQuerySystemTests
             RunCase(test => test.FocusedResourceHaulerSelectionPanelShowsTypedLogisticsStatus());
             RunCase(test => test.SelectedBuildingSelectionPanelShowsOilFuelStorageChips());
             RunCase(test => test.SelectedBuildingSelectionPanelReplacesStaleOilFuelStorageValues());
+            RunCase(test => test.SelectedBuildingSelectionPanelOverridesStaleFocusedEntity());
             RunCase(test => test.SelectedBuildingResourceStoragePanelSkipsApplyUntilVersionChanges());
             RunCase(test => test.SelectedBuildingRefineryStoragePanelReportsConversionStatus());
             RunCase(test => test.SelectedBuildingFabricationPanelPrefersFabricationReadModel());
             RunCase(test => test.SelectedBuildingFabricationPanelSkipsApplyUntilVersionChanges());
             RunCase(test => test.SelectedBuildingFabricationPanelShowsTypedStatusCopy());
-            Debug.Log("[SelectionSummaryFocusedValidation] result=Passed tests=20");
+            Debug.Log("[SelectionSummaryFocusedValidation] result=Passed tests=21");
         }
         catch (System.Exception ex)
         {
@@ -693,6 +694,63 @@ public sealed class SelectionSummaryQuerySystemTests
                 null,
                 null,
                 null);
+        }
+    }
+
+    [Test]
+    public void SelectedBuildingSelectionPanelOverridesStaleFocusedEntity()
+    {
+        EntityManager em = _world.EntityManager;
+        Entity staleBarracks = CreatePlayerUnit(em, "Barracks", new int2(100, 100), 100);
+        em.AddComponent<SelectedUnitTag>(staleBarracks);
+        var selectionState = new SelectionStateCompositionSystemHelper();
+        selectionState.SetFocusedUnit(staleBarracks);
+        var lifecycle = new FocusedUnitLifecycleCompositionSystemHelper();
+        Texture2D contractorTexture = new Texture2D(1, 1);
+        Sprite contractorPortrait = Sprite.Create(contractorTexture, new Rect(0f, 0f, 1f, 1f), Vector2.one * 0.5f);
+        try
+        {
+            var panel = new RecordingSelectionPanelView(null);
+            var feedback = new SelectionHudFeedbackUiSystemHelper();
+            feedback.BindMatchHudSelectionPanel(panel);
+            var context = new SelectionHudFeedbackUiSystemHelper.Context(new SelectionUiReadModelLookup(), TryGetEntityManager);
+
+            feedback.UpdateMatchHudSelectionPanel(
+                context,
+                selectionState,
+                lifecycle,
+                null,
+                new List<MatchHudSelectionPanelPassengerItemModel>(),
+                null,
+                null,
+                null,
+                () => contractorPortrait,
+                null,
+                () => true,
+                () => "Contractor Tent (113,100)",
+                null,
+                null,
+                null,
+                null,
+                null);
+
+            Assert.IsTrue(panel.AppliedModel.Visible);
+            Assert.AreEqual("Contractor Tent (113,100)", panel.AppliedModel.Title);
+            Assert.AreEqual("Base Structure", panel.AppliedModel.Subtitle);
+            Assert.AreEqual("Structure selected", panel.AppliedModel.CurrentOrder);
+            Assert.AreEqual("-", panel.AppliedModel.HealthText);
+            Assert.AreSame(contractorPortrait, panel.AppliedModel.PortraitSprite);
+        }
+        finally
+        {
+            Object.DestroyImmediate(contractorPortrait);
+            Object.DestroyImmediate(contractorTexture);
+        }
+
+        bool TryGetEntityManager(out EntityManager entityManager)
+        {
+            entityManager = em;
+            return true;
         }
     }
 

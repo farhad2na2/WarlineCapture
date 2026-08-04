@@ -17,8 +17,9 @@ public sealed class MapVehiclePlacementStartupCompletionTests
         tests.EmptyPlacementConfigCompletesAfterAuthoringRootIsHidden();
         tests.PlayerPlacementFindsNeutralAuthoredVehicleForOwnershipAdoption();
         tests.EntityPresentationVehicleUsesStablePlacementIdentityBeforeTransformDistance();
+        tests.EntityPresentationTransportUsesStableIdentityAndTransportRosterSelection();
         tests.AdoptionDoesNotClaimSpawnedOrDistantVehicles();
-        UnityEngine.Debug.Log("[MapVehiclePlacementStartupCompletionValidation] result=Passed tests=4");
+        UnityEngine.Debug.Log("[MapVehiclePlacementStartupCompletionValidation] result=Passed tests=5");
     }
 
     [Test]
@@ -204,6 +205,90 @@ public sealed class MapVehiclePlacementStartupCompletionTests
             placement,
             default,
             out _));
+    }
+
+    [Test]
+    public void EntityPresentationTransportUsesStableIdentityAndTransportRosterSelection()
+    {
+        using World world = new("MapVehiclePlacementTransportStableIdentityTests");
+        EntityManager em = world.EntityManager;
+        float3 configuredPosition = new(790f, 1f, 426f);
+        Entity transport = CreateVehicle(
+            em,
+            configuredPosition + new float3(-8f, 0f, 4f),
+            FactionIdentity.NeutralFactionId,
+            Entity.Null);
+        Entity visualRoot = em.CreateEntity(typeof(OperationMapEntityPresentationIdentity));
+        em.SetComponentData(visualRoot, new OperationMapEntityPresentationIdentity
+        {
+            OperationMapId = new FixedString128Bytes("opmap.skirmish.desert_base_01"),
+            SourceGlobalObjectId = new FixedString128Bytes("GlobalObjectId_Vehicle_18"),
+            Role = 1,
+            PlacementIndex = 18
+        });
+        em.AddComponent<OperationMapAuthoredVehiclePresentation>(transport);
+        em.AddComponentData(transport, new UnitDetailedVisualReference { Root = visualRoot });
+        MapVehiclePlacementConfigEntry placement = CreatePlacement(
+            configuredPosition,
+            FactionIdentity.PlayerFactionId);
+
+        Assert.IsTrue(MapVehiclePlacementSpawnPrefabSystemHelper.TryFindAuthoredVehicleEntity(
+            em,
+            18,
+            placement,
+            default,
+            out Entity resolved));
+        Assert.AreEqual(transport, resolved);
+
+        Entity prefab = em.CreateEntity();
+        using (EntityCommandBuffer ecb = new(Allocator.Temp))
+        {
+            MapVehiclePlacementSpawnPrefabSystemHelper.ConfigureAdoptedVehicle(
+                em,
+                ecb,
+                resolved,
+                prefab,
+                placement.FactionId,
+                new int2(19, 11),
+                configuredPosition);
+            ecb.Playback(em);
+        }
+        em.AddComponentData(transport, new UnitSourcePrefabKey
+        {
+            Value = new FixedString64Bytes("Unit_Veh_Helicopter_Transport")
+        });
+        em.AddComponent<UnitAirMovement>(transport);
+        em.AddComponentData(transport, new UnitTransportCapacity { SoldierCapacity = 6 });
+        em.AddComponentData(transport, new LocalToWorld
+        {
+            Value = float4x4.Translate(configuredPosition)
+        });
+
+        var selection = new MatchHudSquadTraySelectionUiSystemHelper();
+        var view = new TestSquadTrayView();
+        var selectionState = new SelectionStateCompositionSystemHelper();
+        var focusedLifecycle = new FocusedUnitLifecycleCompositionSystemHelper();
+        var context = new MatchHudSquadTraySelectionUiSystemHelper.Context(
+            worldCamera: null,
+            TryGetEntityManager,
+            ensureSelectionDependencies: _ => { },
+            clearCurrentSelection: (_, _) => { },
+            clearSelectedBuilding: () => { },
+            applyHudSelection: (_, _) => { },
+            applyHudSquadSelection: _ => { },
+            logSelectionDiagnostic: null,
+            selectionState,
+            focusedLifecycle);
+        selection.SelectSlot(context, view, MatchHudSquadTraySlot.Transport);
+
+        Assert.AreEqual(MatchHudSquadTraySlot.Transport, view.SelectedSlot);
+        Assert.IsTrue(em.HasComponent<SelectedUnitTag>(transport));
+
+        bool TryGetEntityManager(out EntityManager entityManager)
+        {
+            entityManager = em;
+            return true;
+        }
     }
 
     private static Entity CreateVehicle(

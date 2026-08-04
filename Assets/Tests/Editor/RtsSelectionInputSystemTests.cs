@@ -71,6 +71,7 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.PendingCommandSummary_AggregatesRequestsResultsAndActiveMode());
             RunCase(test => test.SelectionCommandRequests_ProcessUiRequestsThroughCommandModeTransitions());
             RunCase(test => test.RuntimeInput_HandledBuildingClickConsumesReleaseWithoutUnitFocusFallthrough());
+            RunCase(test => test.RuntimeInput_CapturedUiReleaseDoesNotSuppressNextWorldSelection());
             RunCase(test => test.RuntimeInput_ActiveWorldCommandClickDoesNotFallThroughToFocusSelection());
             RunCase(test => test.RuntimeInput_MoveCommandModeAllowsCameraPanWhileTargeting());
             RunCase(test => test.RuntimeInput_AttackCommandModeAllowsCameraPanWhileTargeting());
@@ -87,7 +88,7 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.TransportFirstBoarding_PreservesSelectedTransportAfterSuccess());
             RunCase(test => test.AttackTargetLookup_CompletesSelectionMarkerTransformWriteBeforeRuntimeBuildingRead());
             RunCase(test => test.AttackTargetLookup_RebindsAfterWorldReplacement());
-            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=62");
+            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=63");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -2916,6 +2917,43 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
+    public void RuntimeInput_CapturedUiReleaseDoesNotSuppressNextWorldSelection()
+    {
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager);
+        var runtimeState = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager)
+        {
+            PlayRequested = true,
+            SelectionModeActive = false,
+            BuildModeActive = false,
+            SuppressNextWorldClick = true
+        };
+        inputSystem.CaptureUiClickSequence();
+
+        InvokeCompleteCapturedUiClickSequence(inputSystem, runtimeState);
+
+        Assert.IsFalse(inputSystem.IgnoreUiClickUntilRelease);
+        Assert.IsFalse(inputSystem.IgnoreNextLeftMouseRelease);
+        Assert.IsFalse(inputSystem.SkipNextWorldReleaseAfterSelection);
+        Assert.IsFalse(runtimeState.SuppressNextWorldClick);
+
+        Vector2 worldPointer = new(640f, 360f);
+        inputSystem.BeginPointerPress(worldPointer, pointerPressedOverUi: false);
+        int focusCalls = 0;
+        RtsSelectionRuntimeInputCompositionSystemHelper.Context worldContext = CreateRuntimeInputContext(
+            runtimeState,
+            inputSystem,
+            tryFocusUnit: _ =>
+            {
+                focusCalls++;
+                return true;
+            });
+
+        InvokeRuntimePointerRelease(worldContext, worldPointer);
+
+        Assert.AreEqual(1, focusCalls, "A completed gameplay-UI release must not consume the next world-unit selection.");
+    }
+
+    [Test]
     public void RuntimeInput_MoveCommandModeAllowsCameraPanWhileTargeting()
     {
         var inputSystem = new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager);
@@ -3654,6 +3692,26 @@ public sealed class RtsSelectionInputSystemTests
         Vector2 pointerPosition)
     {
         InvokeRuntimePointerMethod("HandlePointerReleased", context, pointerPosition);
+    }
+
+    private static void InvokeCompleteCapturedUiClickSequence(
+        RtsSelectionInputCompositionSystemHelper inputSystem,
+        RuntimeGameplayStateSystem runtimeState)
+    {
+        System.Reflection.MethodInfo method = typeof(RtsSelectionRuntimeInputCompositionSystemHelper).GetMethod(
+            "CompleteCapturedUiClickSequence",
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+        Assert.NotNull(method);
+
+        try
+        {
+            method.Invoke(null, new object[] { inputSystem, runtimeState });
+        }
+        catch (System.Reflection.TargetInvocationException exception) when (exception.InnerException != null)
+        {
+            System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(exception.InnerException).Throw();
+            throw;
+        }
     }
 
     private static void InvokeRuntimePointerMethod(

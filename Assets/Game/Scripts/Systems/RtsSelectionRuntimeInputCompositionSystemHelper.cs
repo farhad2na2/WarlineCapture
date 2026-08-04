@@ -188,9 +188,7 @@ namespace Game.Runtime
                 if (pointer.WasReleasedThisFrame || !pointer.IsPressed)
                 {
                     context.LogClickDiagnostic?.Invoke($"ignoreUiClickUntilRelease cleared pos={pointer.Position} frame={UnityEngine.Time.frameCount}");
-                    input.IgnoreUiClickUntilRelease = false;
-                    input.IgnoreNextLeftMouseRelease = false;
-                    input.SkipNextWorldReleaseAfterSelection = false;
+                    CompleteCapturedUiClickSequence(input, runtime);
                 }
 
                 return;
@@ -231,6 +229,16 @@ namespace Game.Runtime
 
             if (pointer.WasReleasedThisFrame)
                 HandlePointerReleased(context, pointerPosition);
+        }
+
+        private static void CompleteCapturedUiClickSequence(
+            RtsSelectionInputCompositionSystemHelper input,
+            RuntimeGameplayStateSystem runtime)
+        {
+            input.IgnoreUiClickUntilRelease = false;
+            input.IgnoreNextLeftMouseRelease = false;
+            input.SkipNextWorldReleaseAfterSelection = false;
+            runtime.SuppressNextWorldClick = false;
         }
 
         private static void HandlePointerPressed(Context context, Vector2 pointerPosition)

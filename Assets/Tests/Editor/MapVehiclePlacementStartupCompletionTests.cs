@@ -7,6 +7,7 @@ using UnityEngine;
 using Game.Components;
 using Game.Configs;
 using Game.Runtime;
+using Game.UI.Contracts;
 
 public sealed class MapVehiclePlacementStartupCompletionTests
 {
@@ -15,8 +16,9 @@ public sealed class MapVehiclePlacementStartupCompletionTests
         var tests = new MapVehiclePlacementStartupCompletionTests();
         tests.EmptyPlacementConfigCompletesAfterAuthoringRootIsHidden();
         tests.PlayerPlacementFindsNeutralAuthoredVehicleForOwnershipAdoption();
+        tests.EntityPresentationVehicleUsesStablePlacementIdentityBeforeTransformDistance();
         tests.AdoptionDoesNotClaimSpawnedOrDistantVehicles();
-        UnityEngine.Debug.Log("[MapVehiclePlacementStartupCompletionValidation] result=Passed tests=3");
+        UnityEngine.Debug.Log("[MapVehiclePlacementStartupCompletionValidation] result=Passed tests=4");
     }
 
     [Test]
@@ -72,6 +74,7 @@ public sealed class MapVehiclePlacementStartupCompletionTests
 
         Assert.IsTrue(MapVehiclePlacementSpawnPrefabSystemHelper.TryFindAuthoredVehicleEntity(
             em,
+            -1,
             placement,
             default,
             out Entity resolved));
@@ -97,6 +100,94 @@ public sealed class MapVehiclePlacementStartupCompletionTests
     }
 
     [Test]
+    public void EntityPresentationVehicleUsesStablePlacementIdentityBeforeTransformDistance()
+    {
+        using World world = new("MapVehiclePlacementStableIdentityAdoptionTests");
+        EntityManager em = world.EntityManager;
+        float3 configuredPosition = new(842f, 1f, 378f);
+        Entity authored = CreateVehicle(
+            em,
+            configuredPosition + new float3(6f, 0f, 0f),
+            FactionIdentity.NeutralFactionId,
+            Entity.Null);
+        Entity visualRoot = em.CreateEntity(typeof(OperationMapEntityPresentationIdentity));
+        em.SetComponentData(visualRoot, new OperationMapEntityPresentationIdentity
+        {
+            OperationMapId = new FixedString128Bytes("opmap.skirmish.desert_base_01"),
+            SourceGlobalObjectId = new FixedString128Bytes("GlobalObjectId_Vehicle_17"),
+            Role = 1,
+            PlacementIndex = 17
+        });
+        em.AddComponent<OperationMapAuthoredVehiclePresentation>(authored);
+        em.AddComponentData(authored, new UnitDetailedVisualReference { Root = visualRoot });
+        MapVehiclePlacementConfigEntry placement = CreatePlacement(
+            configuredPosition,
+            FactionIdentity.PlayerFactionId);
+
+        Assert.IsTrue(MapVehiclePlacementSpawnPrefabSystemHelper.TryFindAuthoredVehicleEntity(
+            em,
+            17,
+            placement,
+            default,
+            out Entity resolved));
+        Assert.AreEqual(authored, resolved);
+
+        Entity prefab = em.CreateEntity();
+        using (EntityCommandBuffer ecb = new(Allocator.Temp))
+        {
+            MapVehiclePlacementSpawnPrefabSystemHelper.ConfigureAdoptedVehicle(
+                em,
+                ecb,
+                resolved,
+                prefab,
+                placement.FactionId,
+                new int2(21, 9),
+                configuredPosition);
+            ecb.Playback(em);
+        }
+        em.AddComponentData(authored, new UnitSourcePrefabKey
+        {
+            Value = new FixedString64Bytes("Unit_Veh_Tank_USA")
+        });
+        em.AddComponentData(authored, new LocalToWorld
+        {
+            Value = float4x4.Translate(configuredPosition)
+        });
+
+        var selection = new MatchHudSquadTraySelectionUiSystemHelper();
+        var view = new TestSquadTrayView();
+        var selectionState = new SelectionStateCompositionSystemHelper();
+        var focusedLifecycle = new FocusedUnitLifecycleCompositionSystemHelper();
+        var context = new MatchHudSquadTraySelectionUiSystemHelper.Context(
+            worldCamera: null,
+            TryGetEntityManager,
+            ensureSelectionDependencies: _ => { },
+            clearCurrentSelection: (_, _) => { },
+            clearSelectedBuilding: () => { },
+            applyHudSelection: (_, _) => { },
+            applyHudSquadSelection: _ => { },
+            logSelectionDiagnostic: null,
+            selectionState,
+            focusedLifecycle);
+        selection.SelectSlot(context, view, MatchHudSquadTraySlot.CombatVehicles);
+        Assert.AreEqual(MatchHudSquadTraySlot.CombatVehicles, view.SelectedSlot);
+        Assert.IsTrue(em.HasComponent<SelectedUnitTag>(authored));
+
+        Assert.IsFalse(MapVehiclePlacementSpawnPrefabSystemHelper.TryFindAuthoredVehicleEntity(
+            em,
+            16,
+            placement,
+            default,
+            out _), "A migrated vehicle must not fall back to proximity when its stable identity belongs to another placement.");
+
+        bool TryGetEntityManager(out EntityManager entityManager)
+        {
+            entityManager = em;
+            return true;
+        }
+    }
+
+    [Test]
     public void AdoptionDoesNotClaimSpawnedOrDistantVehicles()
     {
         using World world = new("MapVehiclePlacementAuthoredAdoptionGuardTests");
@@ -109,6 +200,7 @@ public sealed class MapVehiclePlacementStartupCompletionTests
 
         Assert.IsFalse(MapVehiclePlacementSpawnPrefabSystemHelper.TryFindAuthoredVehicleEntity(
             em,
+            -1,
             placement,
             default,
             out _));
@@ -145,5 +237,22 @@ public sealed class MapVehiclePlacementStartupCompletionTests
             position,
             Vector3.zero,
             Vector3.one);
+    }
+
+    private sealed class TestSquadTrayView : IMatchHudSquadTrayView
+    {
+        public MatchHudSquadTraySlot SelectedSlot { get; private set; } = MatchHudSquadTraySlot.None;
+
+        public void Bind(System.Action<MatchHudSquadTraySlot> cardClicked) { }
+        public void ClearActiveSlot() => SelectedSlot = MatchHudSquadTraySlot.None;
+        public bool ContainsScreenPoint(Vector2 screenPosition) => false;
+        public void FlashDisabled(MatchHudSquadTraySlot slot) { }
+        public void SetSelectedSlot(MatchHudSquadTraySlot selectedSlot) => SelectedSlot = selectedSlot;
+        public bool TryGetPortraitSprite(MatchHudSquadTraySlot slot, out Sprite sprite)
+        {
+            sprite = null;
+            return false;
+        }
+        public void Unbind() { }
     }
 }

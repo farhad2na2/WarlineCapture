@@ -172,6 +172,7 @@ namespace Game.Runtime
                     em,
                     ecb,
                     grid,
+                    progress.NextPlacementIndex,
                     placement,
                     prefabEntity,
                     claimedAuthoredVehicles,
@@ -193,6 +194,7 @@ namespace Game.Runtime
             EntityManager em,
             EntityCommandBuffer ecb,
             GridConfig grid,
+            int placementIndex,
             MapVehiclePlacementConfigEntry placement,
             Entity prefabEntity,
             NativeHashSet<Entity> claimedAuthoredVehicles,
@@ -208,6 +210,7 @@ namespace Game.Runtime
             byte faction = placement.FactionId;
             bool adoptedAuthoredVehicle = TryFindAuthoredVehicleEntity(
                 em,
+                placementIndex,
                 placement,
                 claimedAuthoredVehicles,
                 out Entity instance);
@@ -256,6 +259,7 @@ namespace Game.Runtime
 
         internal static bool TryFindAuthoredVehicleEntity(
             EntityManager em,
+            int placementIndex,
             MapVehiclePlacementConfigEntry placement,
             NativeHashSet<Entity> claimedEntities,
             out Entity entity)
@@ -275,17 +279,42 @@ namespace Game.Runtime
                 ComponentType.ReadOnly<UnitRespawnPrefab>(),
                 ComponentType.ReadOnly<LocalTransform>());
             using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+
+            // Entity-presentation candidates already carry the canonical placement identity on
+            // their detailed visual root. Resolve that identity before considering the legacy
+            // transform heuristic: render-bound pivots and migration transforms are not required
+            // to remain within the compatibility placement's one-metre adoption radius.
+            if (placementIndex >= 0)
+            {
+                for (int i = 0; i < entities.Length; i++)
+                {
+                    Entity candidate = entities[i];
+                    if (!IsUnclaimedNeutralAuthoredVehicle(em, candidate, claimedEntities) ||
+                        !em.HasComponent<OperationMapAuthoredVehiclePresentation>(candidate) ||
+                        !em.HasComponent<UnitDetailedVisualReference>(candidate))
+                    {
+                        continue;
+                    }
+
+                    Entity visualRoot = em.GetComponentData<UnitDetailedVisualReference>(candidate).Root;
+                    if (visualRoot == Entity.Null ||
+                        !em.Exists(visualRoot) ||
+                        !em.HasComponent<OperationMapEntityPresentationIdentity>(visualRoot) ||
+                        em.GetComponentData<OperationMapEntityPresentationIdentity>(visualRoot).PlacementIndex != placementIndex)
+                    {
+                        continue;
+                    }
+
+                    entity = candidate;
+                    return true;
+                }
+            }
+
             for (int i = 0; i < entities.Length; i++)
             {
                 Entity candidate = entities[i];
-                if ((claimedEntities.IsCreated && claimedEntities.Contains(candidate)) ||
-                    em.HasComponent<Prefab>(candidate) ||
-                    em.HasComponent<Disabled>(candidate) ||
-                    em.HasComponent<StaticGridBlocker>(candidate) ||
-                    em.HasComponent<UnitTransportPassenger>(candidate) ||
-                    em.GetComponentData<Faction>(candidate).Id != FactionIdentity.NeutralFactionId ||
-                    em.GetComponentData<UnitMovementBehavior>(candidate).UsesVehicleMotion == 0 ||
-                    em.GetComponentData<UnitRespawnPrefab>(candidate).Prefab != Entity.Null)
+                if (!IsUnclaimedNeutralAuthoredVehicle(em, candidate, claimedEntities) ||
+                    em.HasComponent<OperationMapAuthoredVehiclePresentation>(candidate))
                 {
                     continue;
                 }
@@ -305,6 +334,21 @@ namespace Game.Runtime
             }
 
             return entity != Entity.Null;
+        }
+
+        private static bool IsUnclaimedNeutralAuthoredVehicle(
+            EntityManager em,
+            Entity candidate,
+            NativeHashSet<Entity> claimedEntities)
+        {
+            return (!claimedEntities.IsCreated || !claimedEntities.Contains(candidate)) &&
+                   !em.HasComponent<Prefab>(candidate) &&
+                   !em.HasComponent<Disabled>(candidate) &&
+                   !em.HasComponent<StaticGridBlocker>(candidate) &&
+                   !em.HasComponent<UnitTransportPassenger>(candidate) &&
+                   em.GetComponentData<Faction>(candidate).Id == FactionIdentity.NeutralFactionId &&
+                   em.GetComponentData<UnitMovementBehavior>(candidate).UsesVehicleMotion != 0 &&
+                   em.GetComponentData<UnitRespawnPrefab>(candidate).Prefab == Entity.Null;
         }
 
         internal static void ConfigureAdoptedVehicle(

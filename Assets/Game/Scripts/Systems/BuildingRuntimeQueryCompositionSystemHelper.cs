@@ -185,8 +185,22 @@ namespace Game.Runtime
                         continue;
                     }
 
-                    int2 size = UnitFootprintUtility.ClampSize(footprints[i].Size);
-                    int2 min = UnitFootprintUtility.GetMinCell(unitGrids[i].Cell, size);
+                    int2 size;
+                    int2 min;
+                    if (operationMapBuilding &&
+                        entityManager.HasComponent<RuntimeBuildingCombatInfo>(entity))
+                    {
+                        RuntimeBuildingCombatInfo buildingInfo =
+                            entityManager.GetComponentData<RuntimeBuildingCombatInfo>(entity);
+                        size = UnitFootprintUtility.ClampSize(buildingInfo.FootprintCells);
+                        min = buildingInfo.OriginCell;
+                    }
+                    else
+                    {
+                        size = UnitFootprintUtility.ClampSize(footprints[i].Size);
+                        min = UnitFootprintUtility.GetMinCell(unitGrids[i].Cell, size);
+                    }
+
                     var unitRect = new RectInt(min.x, min.y, size.x, size.y);
                     if (candidateRect.Overlaps(unitRect))
                         return true;

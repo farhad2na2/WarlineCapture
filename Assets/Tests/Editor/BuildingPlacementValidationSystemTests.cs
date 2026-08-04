@@ -745,10 +745,16 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
             typeof(UnitGrid),
             typeof(UnitFootprint),
             typeof(RuntimeBuildingCombatTag),
+            typeof(RuntimeBuildingCombatInfo),
             typeof(OperationMapBuildingComponent),
             typeof(StaticGridBlocker));
-        entityManager.SetComponentData(operationMapBuilding, new UnitGrid { Cell = new Unity.Mathematics.int2(16, 16) });
+        entityManager.SetComponentData(operationMapBuilding, new UnitGrid { Cell = new Unity.Mathematics.int2(30, 30) });
         entityManager.SetComponentData(operationMapBuilding, new UnitFootprint { Size = new Unity.Mathematics.int2(4, 3) });
+        entityManager.SetComponentData(operationMapBuilding, new RuntimeBuildingCombatInfo
+        {
+            OriginCell = new Unity.Mathematics.int2(16, 16),
+            FootprintCells = new Unity.Mathematics.int2(4, 3)
+        });
 
         Entity staticBlocker = entityManager.CreateEntity(
             typeof(UnitGrid),
@@ -780,7 +786,7 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
         Assert.IsTrue(BuildingRuntimeQueryCompositionSystemHelper.OverlapsAnyLiveUnitFootprint(
             entityManager,
             liveFootprints,
-            new RectInt(15, 15, 3, 3)), "A baked operation-map building carrying both runtime-building and static-blocker tags must block building placement through its canonical ECS footprint.");
+            new RectInt(16, 16, 4, 3)), "A baked operation-map building carrying both runtime-building and static-blocker tags must block building placement through its canonical combat origin even when its compatibility UnitGrid center is stale.");
         Assert.IsFalse(BuildingRuntimeQueryCompositionSystemHelper.OverlapsAnyLiveUnitFootprint(
             entityManager,
             liveFootprints,

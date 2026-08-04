@@ -429,27 +429,20 @@ namespace Game.Runtime
             {
                 if (runtime.SuppressNextWorldClick)
                 {
-                    bool sameGuardWindow = UnityEngine.Time.frameCount <= input.IgnoreWorldCommandsUntilFrame;
-                    bool focusedWhileSuppressed = sameGuardWindow && context.TryFocusUnit?.Invoke(pointerPosition) == true;
-                    context.LogClickDiagnostic?.Invoke($"clickSuppressed reason=SuppressNextWorldClick sameGuardWindow={sameGuardWindow} focusOverride={focusedWhileSuppressed} pos={pointerPosition}");
+                    context.LogClickDiagnostic?.Invoke($"clickSuppressed reason=SuppressNextWorldClick action=ConsumeRelease pos={pointerPosition}");
                     runtime.SuppressNextWorldClick = false;
-                    if (sameGuardWindow)
-                    {
-                        input.ClearQueuedMoveOrder();
-                        int removedMoveCommands = input.ClearPendingMoveCommandRequests();
-                        if (removedMoveCommands > 0)
-                            context.LogClickDiagnostic?.Invoke($"selectionClearedPendingMoveCommands count={removedMoveCommands} pos={pointerPosition}");
-                        LogOneClickDebug(context, pointerPosition, focusedWhileSuppressed ? "SuppressedFocus" : "SuppressedGuard");
-                        input.IsDraggingSelection = false;
-                        context.SetCameraDragging?.Invoke(false);
-                        input.PointerPressedOverUi = false;
-                        input.SelectionModeHoldArmed = false;
-                        input.HasLiveSelectionRect = false;
-                        input.BoardPassengerDragArmed = false;
-                        return;
-                    }
-
-                    context.LogClickDiagnostic?.Invoke($"staleSuppressCleared action=ContinueWorldClick pos={pointerPosition} frame={UnityEngine.Time.frameCount}");
+                    input.ClearQueuedMoveOrder();
+                    int removedMoveCommands = input.ClearPendingMoveCommandRequests();
+                    if (removedMoveCommands > 0)
+                        context.LogClickDiagnostic?.Invoke($"selectionClearedPendingMoveCommands count={removedMoveCommands} pos={pointerPosition}");
+                    LogOneClickDebug(context, pointerPosition, "SuppressedRelease");
+                    input.IsDraggingSelection = false;
+                    context.SetCameraDragging?.Invoke(false);
+                    input.PointerPressedOverUi = false;
+                    input.SelectionModeHoldArmed = false;
+                    input.HasLiveSelectionRect = false;
+                    input.BoardPassengerDragArmed = false;
+                    return;
                 }
 
                 if (!releasePointerOverBlockingUi)

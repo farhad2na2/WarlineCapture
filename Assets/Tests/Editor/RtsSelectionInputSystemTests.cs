@@ -70,6 +70,7 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.HasPendingTransportCommandRequests_DetectsTransportResults());
             RunCase(test => test.PendingCommandSummary_AggregatesRequestsResultsAndActiveMode());
             RunCase(test => test.SelectionCommandRequests_ProcessUiRequestsThroughCommandModeTransitions());
+            RunCase(test => test.RuntimeInput_HandledBuildingClickConsumesReleaseWithoutUnitFocusFallthrough());
             RunCase(test => test.RuntimeInput_ActiveWorldCommandClickDoesNotFallThroughToFocusSelection());
             RunCase(test => test.RuntimeInput_MoveCommandModeAllowsCameraPanWhileTargeting());
             RunCase(test => test.RuntimeInput_AttackCommandModeAllowsCameraPanWhileTargeting());
@@ -86,7 +87,7 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.TransportFirstBoarding_PreservesSelectedTransportAfterSuccess());
             RunCase(test => test.AttackTargetLookup_CompletesSelectionMarkerTransformWriteBeforeRuntimeBuildingRead());
             RunCase(test => test.AttackTargetLookup_RebindsAfterWorldReplacement());
-            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=61");
+            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=62");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -2849,6 +2850,69 @@ public sealed class RtsSelectionInputSystemTests
         Assert.IsFalse(inputSystem.BoardPassengerDragArmed);
         Assert.IsTrue(inputSystem.HasActiveWorldTargetCommandMode(out TacticalCommandMode activeMode));
         Assert.AreEqual(TacticalCommandMode.Attack, activeMode);
+    }
+
+    [Test]
+    public void RuntimeInput_HandledBuildingClickConsumesReleaseWithoutUnitFocusFallthrough()
+    {
+        var inputSystem = new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager);
+        var runtimeState = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager)
+        {
+            PlayRequested = true,
+            SelectionModeActive = false,
+            BuildModeActive = false,
+            SuppressNextWorldClick = true
+        };
+        Vector2 pointer = new(220f, 140f);
+        inputSystem.BeginPointerPress(pointer, pointerPressedOverUi: false);
+
+        int focusCalls = 0;
+        bool cameraDragging = true;
+        var context = new RtsSelectionRuntimeInputCompositionSystemHelper.Context(
+            runtimeGameplayStateSystem: runtimeState,
+            inputSystem: inputSystem,
+            mainMenuPlayUi: null,
+            dragThresholdPixels: 8f,
+            selectionModeHoldSeconds: 0.35f,
+            getExplicitAttackTargetModeActive: null,
+            setExplicitAttackTargetModeActive: null,
+            getCameraDragging: () => cameraDragging,
+            setCameraDragging: dragging => cameraDragging = dragging,
+            isPointerOverAnyUi: _ => false,
+            isPointerOverGameplayUi: _ => false,
+            tryIssueAttackOrderToClickedUnit: null,
+            tryIssueScanOrder: null,
+            orderMarkerSystem: null,
+            tryGetDefaultEntityManager: null,
+            tryGetScanClickedCell: null,
+            setHudWorldMarkersVisible: null,
+            tryIssueBoardTransportOrderToClickedUnit: null,
+            tryIssueBoardSelectedTransportOrderToClickedUnit: null,
+            tryIssueBoardSelectedTransportOrderToPassengerRect: null,
+            isBoardSelectedTransportPassengerTarget: null,
+            tryFocusUnit: _ =>
+            {
+                focusCalls++;
+                return true;
+            },
+            panCamera: null,
+            issueMoveOrder: null,
+            processSelectionRectangleRequests: null,
+            clearCommandMode: null,
+            logClickDiagnostic: null,
+            buildClickDebugSummary: _ => "summary=test",
+            isGameplayInputLocked: null);
+
+        InvokeRuntimePointerRelease(context, pointer);
+
+        Assert.AreEqual(0, focusCalls, "A handled building click must retain building ownership of the release.");
+        Assert.IsFalse(runtimeState.SuppressNextWorldClick);
+        Assert.IsFalse(cameraDragging);
+        Assert.IsFalse(inputSystem.PointerPressedOverUi);
+        Assert.IsFalse(inputSystem.IsDraggingSelection);
+        Assert.IsFalse(inputSystem.SelectionModeHoldArmed);
+        Assert.IsFalse(inputSystem.HasLiveSelectionRect);
+        Assert.IsFalse(inputSystem.BoardPassengerDragArmed);
     }
 
     [Test]

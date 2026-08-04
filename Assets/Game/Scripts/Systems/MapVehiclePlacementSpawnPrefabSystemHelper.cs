@@ -13,6 +13,7 @@ namespace Game.Runtime
     {
         private const int MaxPlacementsPerUpdate = 32;
         private const float UniformScaleEpsilon = 0.0001f;
+        private const float AuthoredVehicleAdoptionDistance = 1f;
 
         public delegate bool TryGetGridDataDelegate(
             out Entity gridEntity,
@@ -145,6 +146,8 @@ namespace Game.Runtime
             }
 
             using EntityCommandBuffer ecb = new(Allocator.Temp);
+            using NativeHashSet<Entity> claimedAuthoredVehicles =
+                new(math.max(1, context.Config.Placements.Count), Allocator.Temp);
             int processed = 0;
             for (; progress.NextPlacementIndex < context.Config.Placements.Count && processed < MaxPlacementsPerUpdate; progress.NextPlacementIndex++, processed++)
             {
@@ -164,7 +167,15 @@ namespace Game.Runtime
                     continue;
                 }
 
-                SpawnVehicle(context, em, ecb, grid, placement, prefabEntity, ref progress);
+                SpawnVehicle(
+                    context,
+                    em,
+                    ecb,
+                    grid,
+                    placement,
+                    prefabEntity,
+                    claimedAuthoredVehicles,
+                    ref progress);
             }
 
             ecb.Playback(em);
@@ -184,6 +195,7 @@ namespace Game.Runtime
             GridConfig grid,
             MapVehiclePlacementConfigEntry placement,
             Entity prefabEntity,
+            NativeHashSet<Entity> claimedAuthoredVehicles,
             ref MapVehiclePlacementProgressState progress)
         {
             bool hasPrefab = prefabEntity != Entity.Null && em.Exists(prefabEntity);
@@ -194,25 +206,130 @@ namespace Game.Runtime
             float3 position = ToFloat3(placement.WorldPosition);
             int2 cell = GridUtils.WorldToCell(grid, center);
             byte faction = placement.FactionId;
-            Entity instance = _unitSpawnApplySystem.InstantiateAndConfigureSpawnedUnit(
+            bool adoptedAuthoredVehicle = TryFindAuthoredVehicleEntity(
                 em,
-                ecb,
-                prefabEntity,
-                hasPrefab,
-                faction,
-                cell,
-                position);
+                placement,
+                claimedAuthoredVehicles,
+                out Entity instance);
+            if (adoptedAuthoredVehicle)
+            {
+                claimedAuthoredVehicles.Add(instance);
+                ConfigureAdoptedVehicle(
+                    em,
+                    ecb,
+                    instance,
+                    prefabEntity,
+                    faction,
+                    cell,
+                    position);
+            }
+            else
+            {
+                instance = _unitSpawnApplySystem.InstantiateAndConfigureSpawnedUnit(
+                    em,
+                    ecb,
+                    prefabEntity,
+                    hasPrefab,
+                    faction,
+                    cell,
+                    position);
+            }
 
             progress.RandomState = math.max(1u, progress.RandomState + 1u);
             var rng = new Unity.Mathematics.Random(progress.RandomState);
             _unitSpawnResetSystem.ResetSpawnedUnitRuntimeState(em, ecb, instance, prefabEntity, hasPrefab, ref rng);
             progress.RandomState = math.max(1u, rng.state);
 
-            ApplyAuthoredTransform(em, ecb, instance, prefabEntity, hasPrefab, placement);
+            ApplyAuthoredTransform(
+                em,
+                ecb,
+                instance,
+                prefabEntity,
+                hasPrefab,
+                placement,
+                adoptedAuthoredVehicle);
             FixedString64Bytes sourceKey = ResolveSpawnedVehicleSourceKey(em, prefabEntity, hasPrefab, placement);
             if (sourceKey.Length > 0)
                 SetOrAddComponent(em, ecb, instance, prefabEntity, hasPrefab, new UnitSourcePrefabKey { Value = sourceKey });
             SetOrAddComponent(em, ecb, instance, prefabEntity, hasPrefab, new UnitRespawnPrefab { Prefab = prefabEntity });
+        }
+
+        internal static bool TryFindAuthoredVehicleEntity(
+            EntityManager em,
+            MapVehiclePlacementConfigEntry placement,
+            NativeHashSet<Entity> claimedEntities,
+            out Entity entity)
+        {
+            entity = Entity.Null;
+            if (placement == null)
+                return false;
+
+            float3 target = ToFloat3(placement.WorldPosition);
+            float maximumDistanceSquared = AuthoredVehicleAdoptionDistance * AuthoredVehicleAdoptionDistance;
+            float bestDistanceSquared = maximumDistanceSquared;
+            using EntityQuery query = em.CreateEntityQuery(
+                ComponentType.ReadOnly<Faction>(),
+                ComponentType.ReadOnly<UnitGrid>(),
+                ComponentType.ReadOnly<UnitMove>(),
+                ComponentType.ReadOnly<UnitMovementBehavior>(),
+                ComponentType.ReadOnly<UnitRespawnPrefab>(),
+                ComponentType.ReadOnly<LocalTransform>());
+            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity candidate = entities[i];
+                if ((claimedEntities.IsCreated && claimedEntities.Contains(candidate)) ||
+                    em.HasComponent<Prefab>(candidate) ||
+                    em.HasComponent<Disabled>(candidate) ||
+                    em.HasComponent<StaticGridBlocker>(candidate) ||
+                    em.HasComponent<UnitTransportPassenger>(candidate) ||
+                    em.GetComponentData<Faction>(candidate).Id != FactionIdentity.NeutralFactionId ||
+                    em.GetComponentData<UnitMovementBehavior>(candidate).UsesVehicleMotion == 0 ||
+                    em.GetComponentData<UnitRespawnPrefab>(candidate).Prefab != Entity.Null)
+                {
+                    continue;
+                }
+
+                float3 candidatePosition = em.GetComponentData<LocalTransform>(candidate).Position;
+                float distanceSquared = math.distancesq(target, candidatePosition);
+                if (distanceSquared > bestDistanceSquared)
+                    continue;
+
+                if (entity == Entity.Null ||
+                    distanceSquared < bestDistanceSquared ||
+                    candidate.Index < entity.Index)
+                {
+                    entity = candidate;
+                    bestDistanceSquared = distanceSquared;
+                }
+            }
+
+            return entity != Entity.Null;
+        }
+
+        internal static void ConfigureAdoptedVehicle(
+            EntityManager em,
+            EntityCommandBuffer ecb,
+            Entity instance,
+            Entity prefab,
+            byte faction,
+            int2 cell,
+            float3 position)
+        {
+            SetOrAddExistingComponent(em, ecb, instance, new UnitGrid { Cell = cell });
+            SetOrAddExistingComponent(em, ecb, instance, new UnitPrevWorldPos { Value = position });
+            SetOrAddExistingComponent(
+                em,
+                ecb,
+                instance,
+                new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 0f });
+            SetOrAddExistingComponent(em, ecb, instance, new Faction { Id = faction });
+            SetOrAddExistingComponent(em, ecb, instance, new UnitRespawnPrefab { Prefab = prefab });
+            SetOrAddExistingComponent(
+                em,
+                ecb,
+                instance,
+                new UnitAttackCooldownComponent { CooldownRemaining = 0f });
         }
 
         private static FixedString64Bytes ResolveSpawnedVehicleSourceKey(
@@ -238,38 +355,44 @@ namespace Game.Runtime
             Entity instance,
             Entity prefab,
             bool hasPrefab,
-            MapVehiclePlacementConfigEntry placement)
+            MapVehiclePlacementConfigEntry placement,
+            bool adoptedExistingEntity)
         {
             quaternion rotation = quaternion.EulerXYZ(math.radians(ToFloat3(placement.WorldEulerAngles)));
             float3 scale = ToFloat3(placement.WorldScale);
             if (IsUniformScale(scale, out float uniformScale))
             {
-                SetOrAddComponent(
-                    em,
-                    ecb,
-                    instance,
-                    prefab,
-                    hasPrefab,
-                    LocalTransform.FromPositionRotationScale(ToFloat3(placement.WorldPosition), rotation, uniformScale));
-                if (hasPrefab && em.HasComponent<PostTransformMatrix>(prefab))
+                LocalTransform transform = LocalTransform.FromPositionRotationScale(
+                    ToFloat3(placement.WorldPosition),
+                    rotation,
+                    uniformScale);
+                if (adoptedExistingEntity)
+                    SetOrAddExistingComponent(em, ecb, instance, transform);
+                else
+                    SetOrAddComponent(em, ecb, instance, prefab, hasPrefab, transform);
+                if ((adoptedExistingEntity && em.HasComponent<PostTransformMatrix>(instance)) ||
+                    (!adoptedExistingEntity && hasPrefab && em.HasComponent<PostTransformMatrix>(prefab)))
+                {
                     ecb.RemoveComponent<PostTransformMatrix>(instance);
+                }
                 return;
             }
 
-            SetOrAddComponent(
-                em,
-                ecb,
-                instance,
-                prefab,
-                hasPrefab,
-                LocalTransform.FromPositionRotationScale(ToFloat3(placement.WorldPosition), rotation, 1f));
-            SetOrAddComponent(
-                em,
-                ecb,
-                instance,
-                prefab,
-                hasPrefab,
-                new PostTransformMatrix { Value = float4x4.Scale(scale) });
+            LocalTransform nonUniformTransform = LocalTransform.FromPositionRotationScale(
+                ToFloat3(placement.WorldPosition),
+                rotation,
+                1f);
+            PostTransformMatrix postTransform = new() { Value = float4x4.Scale(scale) };
+            if (adoptedExistingEntity)
+            {
+                SetOrAddExistingComponent(em, ecb, instance, nonUniformTransform);
+                SetOrAddExistingComponent(em, ecb, instance, postTransform);
+            }
+            else
+            {
+                SetOrAddComponent(em, ecb, instance, prefab, hasPrefab, nonUniformTransform);
+                SetOrAddComponent(em, ecb, instance, prefab, hasPrefab, postTransform);
+            }
         }
 
         private static bool IsUniformScale(float3 scale, out float uniformScale)
@@ -410,6 +533,19 @@ namespace Game.Runtime
             where T : unmanaged, IComponentData
         {
             if (hasPrefab && em.HasComponent<T>(prefab))
+                ecb.SetComponent(instance, component);
+            else
+                ecb.AddComponent(instance, component);
+        }
+
+        private static void SetOrAddExistingComponent<T>(
+            EntityManager em,
+            EntityCommandBuffer ecb,
+            Entity instance,
+            T component)
+            where T : unmanaged, IComponentData
+        {
+            if (em.HasComponent<T>(instance))
                 ecb.SetComponent(instance, component);
             else
                 ecb.AddComponent(instance, component);

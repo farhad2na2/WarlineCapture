@@ -30,7 +30,7 @@ namespace Game.Runtime
             GridConfig grid,
             bool rotateVertical);
 
-        internal delegate bool OverlapsAnyRuntimeBuildingDelegate(
+        internal delegate bool OverlapsAnyPlacementOccupantDelegate(
             BuildingGameplaySourceCompositionSystemHelper source,
             RectInt candidateRect);
 
@@ -124,7 +124,7 @@ namespace Game.Runtime
             DynamicBuffer<GridRoad> roads,
             DynamicBlockerComponent blockerData,
             GetEffectivePlacementRectDelegate getEffectivePlacementRect,
-            OverlapsAnyRuntimeBuildingDelegate overlapsAnyRuntimeBuilding)
+            OverlapsAnyPlacementOccupantDelegate overlapsAnyPlacementOccupant)
         {
             return source.BuildingPlacementInvalidCellCacheCompositionSystemHelper.IsPlacementValid(
                 definition,
@@ -138,7 +138,7 @@ namespace Game.Runtime
                 source.BuildingPlacementStartupSystemHelper,
                 (candidateDefinition, candidateOrigin, candidateGrid, candidateRotateVertical) =>
                     getEffectivePlacementRect(source, candidateDefinition, candidateOrigin, candidateGrid, candidateRotateVertical),
-                candidateRect => overlapsAnyRuntimeBuilding(source, candidateRect));
+                candidateRect => overlapsAnyPlacementOccupant(source, candidateRect));
         }
     }
 }

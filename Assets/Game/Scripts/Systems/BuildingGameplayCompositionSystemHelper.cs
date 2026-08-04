@@ -134,12 +134,17 @@ namespace Game.Runtime
             BuildingRuntimeContextCompositionSystemHelper.TryGetRuntimeBuildingDelegate tryGetRuntimeBuilding =
                 (BuildingGameplaySourceCompositionSystemHelper source, int id, out RuntimeBuildingEntity building) =>
                     source.BuildingRuntimeQueryCompositionSystemHelper.TryGetRuntimeBuilding(source, id, out building);
-            BuildingRuntimeContextCompositionSystemHelper.OverlapsAnyRuntimeBuildingDelegate overlapsAnyRuntimeBuilding =
-                (source, candidateRect) => source.BuildingRuntimeQueryCompositionSystemHelper.OverlapsAnyRuntimeBuilding(
-                    source,
-                    candidateRect,
-                    tryGetGridData,
-                    (querySource, definition, originCell, grid, rotateVertical) => getEffectivePlacementRect(querySource, definition, originCell, grid, rotateVertical));
+            BuildingRuntimeContextCompositionSystemHelper.OverlapsAnyPlacementOccupantDelegate overlapsAnyPlacementOccupant =
+                (source, candidateRect) =>
+                    source.BuildingRuntimeQueryCompositionSystemHelper.OverlapsAnyRuntimeBuilding(
+                        source,
+                        candidateRect,
+                        tryGetGridData,
+                        (querySource, definition, originCell, grid, rotateVertical) => getEffectivePlacementRect(querySource, definition, originCell, grid, rotateVertical)) ||
+                    source.BuildingRuntimeQueryCompositionSystemHelper.OverlapsAnyLiveUnitFootprint(
+                        source,
+                        candidateRect,
+                        (out EntityManager entityManager) => tryGetEntityManager(out entityManager));
             Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource> createRuntimeContextSource =
                 source => source.BuildingRuntimeContextCompositionSystemHelper.CreateRuntimeContextSource(
                     source,
@@ -167,7 +172,7 @@ namespace Game.Runtime
                     tryGetEntityManager,
                     tryGetGridData,
                     getEffectivePlacementRect,
-                    overlapsAnyRuntimeBuilding,
+                    overlapsAnyPlacementOccupant,
                     isHouseBuilding,
                     tryResolveBuildingFocusWorldPosition,
                     tryGetRuntimeBuilding,
@@ -200,7 +205,7 @@ namespace Game.Runtime
                         blockerData,
                         (placementSource, definition, originCell, placementGrid, placementRotateVertical) =>
                             getEffectivePlacementRect(placementSource, definition, originCell, placementGrid, placementRotateVertical),
-                        (placementSource, candidateRect) => overlapsAnyRuntimeBuilding(placementSource, candidateRect));
+                        (placementSource, candidateRect) => overlapsAnyPlacementOccupant(placementSource, candidateRect));
             BuildingPlacementCommandCompositionSystemHelper.GetCenterScreenPlacementOriginDelegate getCenterScreenPlacementOrigin =
                 (source, footprintCells) => source.BuildingPlacementAdapterCompositionSystemHelper.GetCenterScreenPlacementOrigin(
                     source,

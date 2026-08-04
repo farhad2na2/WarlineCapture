@@ -48,6 +48,24 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
         }
     }
 
+    public static void RunLiveOccupancyValidation()
+    {
+        try
+        {
+            var tests = new BuildingPlacementValidationUtilitySystemHelperTests();
+            tests.PlacementRectValidation_RejectsRoadCellsAndRuntimeBuildingOverlap();
+            tests.PlacementRectValidation_RejectsLiveInfantryAndVehicleFootprints();
+            Debug.Log("[BuildingPlacementLiveOccupancyValidation] result=Passed tests=2");
+            ValidationExit.Passed();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[BuildingPlacementLiveOccupancyValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
     [Test]
     public void BuildingPlacementCommandResultMapper_MapsConfirmFailureResultCodes()
     {
@@ -700,6 +718,60 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
             null,
             null,
             rect => rect.position == new Vector2Int(2, 2)));
+    }
+
+    [Test]
+    public void PlacementRectValidation_RejectsLiveInfantryAndVehicleFootprints()
+    {
+        using var world = new World("BuildingPlacementLiveOccupancyTests");
+        EntityManager entityManager = world.EntityManager;
+        Entity infantry = entityManager.CreateEntity(typeof(UnitGrid), typeof(UnitFootprint));
+        entityManager.SetComponentData(infantry, new UnitGrid { Cell = new Unity.Mathematics.int2(2, 2) });
+        entityManager.SetComponentData(infantry, new UnitFootprint { Size = new Unity.Mathematics.int2(1, 1) });
+
+        Entity vehicle = entityManager.CreateEntity(typeof(UnitGrid), typeof(UnitFootprint), typeof(UnitMovementBehavior));
+        entityManager.SetComponentData(vehicle, new UnitGrid { Cell = new Unity.Mathematics.int2(6, 6) });
+        entityManager.SetComponentData(vehicle, new UnitFootprint { Size = new Unity.Mathematics.int2(3, 2) });
+        entityManager.SetComponentData(vehicle, new UnitMovementBehavior { UsesVehicleMotion = 1 });
+
+        Entity runtimeBuildingProxy = entityManager.CreateEntity(
+            typeof(UnitGrid),
+            typeof(UnitFootprint),
+            typeof(RuntimeBuildingCombatTag));
+        entityManager.SetComponentData(runtimeBuildingProxy, new UnitGrid { Cell = new Unity.Mathematics.int2(9, 9) });
+        entityManager.SetComponentData(runtimeBuildingProxy, new UnitFootprint { Size = new Unity.Mathematics.int2(3, 3) });
+
+        Entity staticBlocker = entityManager.CreateEntity(
+            typeof(UnitGrid),
+            typeof(UnitFootprint),
+            typeof(StaticGridBlocker));
+        entityManager.SetComponentData(staticBlocker, new UnitGrid { Cell = new Unity.Mathematics.int2(12, 12) });
+        entityManager.SetComponentData(staticBlocker, new UnitFootprint { Size = new Unity.Mathematics.int2(2, 2) });
+
+        EntityQuery liveFootprints = entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<UnitGrid>(),
+            ComponentType.ReadOnly<UnitFootprint>());
+
+        Assert.IsTrue(BuildingRuntimeQueryCompositionSystemHelper.OverlapsAnyLiveUnitFootprint(
+            entityManager,
+            liveFootprints,
+            new RectInt(2, 2, 1, 1)), "Infantry must block building placement.");
+        Assert.IsTrue(BuildingRuntimeQueryCompositionSystemHelper.OverlapsAnyLiveUnitFootprint(
+            entityManager,
+            liveFootprints,
+            new RectInt(5, 5, 2, 2)), "The full vehicle footprint must block building placement.");
+        Assert.IsFalse(BuildingRuntimeQueryCompositionSystemHelper.OverlapsAnyLiveUnitFootprint(
+            entityManager,
+            liveFootprints,
+            new RectInt(8, 8, 3, 3)), "Runtime buildings are checked by the canonical runtime-building owner, not twice through unit occupancy.");
+        Assert.IsFalse(BuildingRuntimeQueryCompositionSystemHelper.OverlapsAnyLiveUnitFootprint(
+            entityManager,
+            liveFootprints,
+            new RectInt(12, 12, 2, 2)), "Static blockers remain owned by the static blocker validation path.");
+        Assert.IsFalse(BuildingRuntimeQueryCompositionSystemHelper.OverlapsAnyLiveUnitFootprint(
+            entityManager,
+            liveFootprints,
+            new RectInt(15, 15, 1, 1)), "An empty footprint must remain valid for the live occupancy layer.");
     }
 
     [Test]

@@ -23,7 +23,7 @@ namespace Game.Runtime
             GridConfig grid,
             bool rotateVertical);
 
-        internal delegate bool OverlapsAnyRuntimeBuildingDelegate(
+        internal delegate bool OverlapsAnyPlacementOccupantDelegate(
             BuildingGameplaySourceCompositionSystemHelper source,
             RectInt candidateRect);
 
@@ -48,7 +48,7 @@ namespace Game.Runtime
             TryGetEntityManagerDelegate tryGetEntityManager,
             TryGetGridDataDelegate tryGetGridData,
             GetEffectivePlacementRectDelegate getEffectivePlacementRect,
-            OverlapsAnyRuntimeBuildingDelegate overlapsAnyRuntimeBuilding,
+            OverlapsAnyPlacementOccupantDelegate overlapsAnyPlacementOccupant,
             IsHouseBuildingDelegate isHouseBuilding,
             TryResolveBuildingFocusWorldPositionDelegate tryResolveBuildingFocusWorldPosition,
             TryGetRuntimeBuildingDelegate tryGetRuntimeBuilding,
@@ -105,7 +105,7 @@ namespace Game.Runtime
                     blockerData,
                     (placementSource, placementDefinition, placementOrigin, placementGrid, placementRotateVertical) =>
                         getEffectivePlacementRect(placementSource, placementDefinition, placementOrigin, placementGrid, placementRotateVertical),
-                    (placementSource, candidateRect) => overlapsAnyRuntimeBuilding(placementSource, candidateRect)),
+                    (placementSource, candidateRect) => overlapsAnyPlacementOccupant(placementSource, candidateRect)),
                 source.BuildingPlacementInvalidCellCacheCompositionSystemHelper.HasCachedInvalidCellInFootprint,
                 source.BuildingPlacementVisualPresentationSystemHelper.CreateBuildingVisualInstance,
                 (instance, originCell, definition, grid, rotateVertical) => source.BuildingPlacementVisualPresentationSystemHelper.PositionBuildingObject(

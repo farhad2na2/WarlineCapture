@@ -1,5 +1,7 @@
 using System;
+using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 using Game.Components;
 using Game.Configs;
@@ -133,6 +135,57 @@ namespace Game.Runtime
                 RectInt existingRect = getEffectivePlacementRect(source, building.Definition, building.OriginCell, grid, false);
                 if (candidateRect.Overlaps(existingRect))
                     return true;
+            }
+
+            return false;
+        }
+
+        public bool OverlapsAnyLiveUnitFootprint(
+            BuildingGameplaySourceCompositionSystemHelper source,
+            RectInt candidateRect,
+            TryGetEntityManagerDelegate tryGetEntityManager)
+        {
+            if (tryGetEntityManager == null || !tryGetEntityManager(out EntityManager entityManager))
+                return false;
+
+            source.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries(entityManager);
+            return OverlapsAnyLiveUnitFootprint(
+                entityManager,
+                source.BuildingGameplayEcsQueryCompositionSystemHelper.LiveUnitFootprintQuery,
+                candidateRect);
+        }
+
+        internal static bool OverlapsAnyLiveUnitFootprint(
+            EntityManager entityManager,
+            EntityQuery liveUnitFootprintQuery,
+            RectInt candidateRect)
+        {
+            EntityTypeHandle entityType = entityManager.GetEntityTypeHandle();
+            ComponentTypeHandle<UnitGrid> unitGridType = entityManager.GetComponentTypeHandle<UnitGrid>(true);
+            ComponentTypeHandle<UnitFootprint> footprintType = entityManager.GetComponentTypeHandle<UnitFootprint>(true);
+            using NativeArray<ArchetypeChunk> chunks = liveUnitFootprintQuery.ToArchetypeChunkArray(Allocator.Temp);
+            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+            {
+                ArchetypeChunk chunk = chunks[chunkIndex];
+                NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
+                NativeArray<UnitGrid> unitGrids = chunk.GetNativeArray(ref unitGridType);
+                NativeArray<UnitFootprint> footprints = chunk.GetNativeArray(ref footprintType);
+                for (int i = 0; i < entities.Length; i++)
+                {
+                    Entity entity = entities[i];
+                    if (entityManager.HasComponent<Prefab>(entity) ||
+                        entityManager.HasComponent<StaticGridBlocker>(entity) ||
+                        entityManager.HasComponent<RuntimeBuildingCombatTag>(entity))
+                    {
+                        continue;
+                    }
+
+                    int2 size = UnitFootprintUtility.ClampSize(footprints[i].Size);
+                    int2 min = UnitFootprintUtility.GetMinCell(unitGrids[i].Cell, size);
+                    var unitRect = new RectInt(min.x, min.y, size.x, size.y);
+                    if (candidateRect.Overlaps(unitRect))
+                        return true;
+                }
             }
 
             return false;

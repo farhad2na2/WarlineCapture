@@ -181,6 +181,8 @@ namespace Game.Runtime
                 TryGetSelectedBuildingResourceStorageSnapshot;
             SelectionHudFeedbackUiSystemHelper.TryGetSelectedMaterialFabricationReadModelDelegate tryGetSelectedMaterialFabricationReadModelAction =
                 TryGetSelectedMaterialFabricationReadModel;
+            SelectionHudFeedbackUiSystemHelper.TryGetSelectedBuildingHealthDelegate tryGetSelectedBuildingHealthAction =
+                TryGetSelectedBuildingHealth;
             SelectionHudFeedbackUiSystemHelper.IsBoardCommandAvailableDelegate isBoardCommandAvailableAction =
                 IsBoardCommandAvailable;
             SelectionHudFeedbackUiSystemHelper.HasSelectedBoardActionDelegate hasSelectedBoardAction =
@@ -501,7 +503,8 @@ namespace Game.Runtime
                             tryGetSelectedBuildingResourceStorageSnapshotAction,
                             tryGetSelectedMaterialFabricationReadModelAction,
                             isBoardCommandAvailableAction,
-                            hasSelectedBoardAction);
+                            hasSelectedBoardAction,
+                            tryGetSelectedBuildingHealthAction);
                     }
 
                     MarkSelectionUiRefreshed();
@@ -1330,6 +1333,14 @@ namespace Game.Runtime
                        buildingUiQuery.TryGetSelectedMaterialFabricationReadModel(
                            buildingUiQueryContext,
                            out readModel);
+            }
+
+            bool TryGetSelectedBuildingHealth(out int current, out int max)
+            {
+                current = 0;
+                max = 0;
+                return buildingUiQuery != null &&
+                       buildingUiQuery.TryGetSelectedBuildingHealth(buildingUiQueryContext, out current, out max);
             }
 
             bool IsBoardCommandAvailable(EntityManager em, Entity entity)

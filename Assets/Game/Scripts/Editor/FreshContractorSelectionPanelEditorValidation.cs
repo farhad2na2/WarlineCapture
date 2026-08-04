@@ -84,7 +84,7 @@ namespace Game.Editor
                 if (!File.Exists(evidencePath) || new FileInfo(evidencePath).Length <= 0)
                     throw new InvalidOperationException("Fresh Contractor panel evidence was not written.");
 
-                Debug.Log($"{Marker} result=Passed title=Contractor Tent origin=(113,100) portrait={contractorPortrait.name} subtitle=Base Structure order=Structure selected health=- evidence={evidencePath}");
+                Debug.Log($"{Marker} result=Passed title=Contractor Tent origin=(113,100) portrait={contractorPortrait.name} subtitle=Base Structure order=Structure selected health=350/350 evidence={evidencePath}");
 
                 void ApplyCurrentSelectionModel()
                 {
@@ -139,7 +139,15 @@ namespace Game.Editor
                 tryGetSelectedBuildingResourceStorageSnapshot: null,
                 tryGetSelectedMaterialFabricationReadModel: null,
                 isBoardCommandAvailable: null,
-                hasSelectedBoardAction: null);
+                hasSelectedBoardAction: null,
+                tryGetSelectedBuildingHealth: TryGetContractorHealth);
+
+            static bool TryGetContractorHealth(out int current, out int max)
+            {
+                current = 350;
+                max = 350;
+                return true;
+            }
         }
 
         private static void AssertFocusedBarracksPanel(MatchHudSelectionPanelView panel)
@@ -195,7 +203,7 @@ namespace Game.Editor
                 !title.text.Contains(expectedOrigin, StringComparison.Ordinal) ||
                 subtitle == null || !subtitle.text.Contains("Base Structure", StringComparison.OrdinalIgnoreCase) ||
                 order == null || !order.text.Contains("Structure selected", StringComparison.OrdinalIgnoreCase) ||
-                health == null || !string.Equals(health.text.Trim(), "-", StringComparison.Ordinal))
+                health == null || !string.Equals(health.text.Trim(), "350/350", StringComparison.Ordinal))
             {
                 throw new InvalidOperationException(
                     $"Panel mismatch expected={expectedTitle}{expectedOrigin} actualTitle={title?.text ?? "null"} " +

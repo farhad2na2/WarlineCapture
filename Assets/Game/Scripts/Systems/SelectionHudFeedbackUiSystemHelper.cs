@@ -28,6 +28,7 @@ namespace Game.Runtime
             out SelectedBuildingResourceStorageSnapshot snapshot);
         public delegate bool TryGetSelectedMaterialFabricationReadModelDelegate(
             out UiMaterialFabricationReadModel readModel);
+        public delegate bool TryGetSelectedBuildingHealthDelegate(out int current, out int max);
 
         public readonly struct Context
         {
@@ -400,7 +401,8 @@ namespace Game.Runtime
             TryGetSelectedBuildingResourceStorageDelegate tryGetSelectedBuildingResourceStorage,
             TryGetSelectedBuildingResourceStorageSnapshotDelegate tryGetSelectedBuildingResourceStorageSnapshot,
             IsBoardCommandAvailableDelegate isBoardCommandAvailable,
-            HasSelectedBoardActionDelegate hasSelectedBoardAction)
+            HasSelectedBoardActionDelegate hasSelectedBoardAction,
+            TryGetSelectedBuildingHealthDelegate tryGetSelectedBuildingHealth = null)
         {
             UpdateMatchHudSelectionPanel(
                 context,
@@ -419,7 +421,8 @@ namespace Game.Runtime
                 tryGetSelectedBuildingResourceStorageSnapshot,
                 null,
                 isBoardCommandAvailable,
-                hasSelectedBoardAction);
+                hasSelectedBoardAction,
+                tryGetSelectedBuildingHealth);
         }
 
         public void UpdateMatchHudSelectionPanel(
@@ -439,7 +442,8 @@ namespace Game.Runtime
             TryGetSelectedBuildingResourceStorageSnapshotDelegate tryGetSelectedBuildingResourceStorageSnapshot,
             TryGetSelectedMaterialFabricationReadModelDelegate tryGetSelectedMaterialFabricationReadModel,
             IsBoardCommandAvailableDelegate isBoardCommandAvailable,
-            HasSelectedBoardActionDelegate hasSelectedBoardAction)
+            HasSelectedBoardActionDelegate hasSelectedBoardAction,
+            TryGetSelectedBuildingHealthDelegate tryGetSelectedBuildingHealth = null)
         {
             if (LiveMatchHudSelectionPanelView == null)
                 return;
@@ -456,14 +460,30 @@ namespace Game.Runtime
             {
                 MarkSelectionPanelVisible();
                 string buildingLabel = selectedBuildingLabel?.Invoke();
-                SelectedBuildingPanelCacheKey selectedBuildingPanelKey = new(StableStringHash(buildingLabel));
+                int buildingHealthCurrent = 0;
+                int buildingHealthMax = 0;
+                bool hasBuildingHealth = tryGetSelectedBuildingHealth != null &&
+                                         tryGetSelectedBuildingHealth(out buildingHealthCurrent, out buildingHealthMax) &&
+                                         buildingHealthMax > 0;
+                buildingHealthCurrent = hasBuildingHealth
+                    ? Mathf.Clamp(buildingHealthCurrent, 0, buildingHealthMax)
+                    : 0;
+                buildingHealthMax = hasBuildingHealth ? buildingHealthMax : 0;
+                SelectedBuildingPanelCacheKey selectedBuildingPanelKey = new(
+                    StableStringHash(buildingLabel),
+                    hasBuildingHealth,
+                    buildingHealthCurrent,
+                    buildingHealthMax);
                 if (!_hasLastSelectedBuildingPanelKey || !_lastSelectedBuildingPanelKey.Equals(selectedBuildingPanelKey))
                 {
                     ClearFocusedPanelCache();
                     ClearSummaryPanelCache();
                     _matchHudSelectionPanelView.Apply(BuildSelectedBuildingPanelModel(
                         buildingLabel,
-                        resolveSelectedBuildingPortraitSprite));
+                        resolveSelectedBuildingPortraitSprite,
+                        hasBuildingHealth,
+                        buildingHealthCurrent,
+                        buildingHealthMax));
                     _lastSelectedBuildingPanelKey = selectedBuildingPanelKey;
                     _hasLastSelectedBuildingPanelKey = true;
                 }
@@ -1382,7 +1402,10 @@ namespace Game.Runtime
 
         private MatchHudSelectionPanelModel BuildSelectedBuildingPanelModel(
             string selectedBuildingLabel,
-            System.Func<Sprite> resolveSelectedBuildingPortraitSprite)
+            System.Func<Sprite> resolveSelectedBuildingPortraitSprite,
+            bool hasBuildingHealth,
+            int buildingHealthCurrent,
+            int buildingHealthMax)
         {
             Sprite portraitSprite = resolveSelectedBuildingPortraitSprite?.Invoke();
             portraitSprite ??= _matchHudSelectionPanelView.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.Buildings);
@@ -1391,8 +1414,8 @@ namespace Game.Runtime
                 string.IsNullOrWhiteSpace(selectedBuildingLabel) ? Text("selection.building.selected_building", "Selected Building") : selectedBuildingLabel,
                 Text("selection.building.base_structure", "Base Structure"),
                 Text("selection.order.structure_selected", "Structure selected"),
-                "-",
-                0f,
+                hasBuildingHealth ? $"{buildingHealthCurrent}/{buildingHealthMax}" : "-",
+                hasBuildingHealth ? Mathf.Clamp01((float)buildingHealthCurrent / buildingHealthMax) : 0f,
                 portraitSprite,
                 false,
                 null,
@@ -1648,15 +1671,24 @@ namespace Game.Runtime
         private readonly struct SelectedBuildingPanelCacheKey : System.IEquatable<SelectedBuildingPanelCacheKey>
         {
             private readonly int _labelHash;
+            private readonly bool _hasHealth;
+            private readonly int _healthCurrent;
+            private readonly int _healthMax;
 
-            public SelectedBuildingPanelCacheKey(int labelHash)
+            public SelectedBuildingPanelCacheKey(int labelHash, bool hasHealth, int healthCurrent, int healthMax)
             {
                 _labelHash = labelHash;
+                _hasHealth = hasHealth;
+                _healthCurrent = healthCurrent;
+                _healthMax = healthMax;
             }
 
             public bool Equals(SelectedBuildingPanelCacheKey other)
             {
-                return _labelHash == other._labelHash;
+                return _labelHash == other._labelHash &&
+                       _hasHealth == other._hasHealth &&
+                       _healthCurrent == other._healthCurrent &&
+                       _healthMax == other._healthMax;
             }
         }
 

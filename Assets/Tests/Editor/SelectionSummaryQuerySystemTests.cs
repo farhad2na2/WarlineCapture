@@ -715,6 +715,7 @@ public sealed class SelectionSummaryQuerySystemTests
             feedback.BindMatchHudSelectionPanel(panel);
             var context = new SelectionHudFeedbackUiSystemHelper.Context(new SelectionUiReadModelLookup(), TryGetEntityManager);
             bool hasSelectedBuilding = true;
+            int contractorHealth = 350;
 
             ApplySelectionPanel();
             Assert.AreEqual("Contractor Tent (113,100)", panel.AppliedModel.Title);
@@ -730,8 +731,14 @@ public sealed class SelectionSummaryQuerySystemTests
             Assert.AreEqual("Contractor Tent (113,100)", panel.AppliedModel.Title);
             Assert.AreEqual("Base Structure", panel.AppliedModel.Subtitle);
             Assert.AreEqual("Structure selected", panel.AppliedModel.CurrentOrder);
-            Assert.AreEqual("-", panel.AppliedModel.HealthText);
+            Assert.AreEqual("350/350", panel.AppliedModel.HealthText);
+            Assert.AreEqual(1f, panel.AppliedModel.Health01);
             Assert.AreSame(contractorPortrait, panel.AppliedModel.PortraitSprite);
+
+            contractorHealth = 225;
+            ApplySelectionPanel();
+            Assert.AreEqual("225/350", panel.AppliedModel.HealthText);
+            Assert.AreEqual(225f / 350f, panel.AppliedModel.Health01, 0.0001f);
 
             void ApplySelectionPanel()
             {
@@ -752,7 +759,15 @@ public sealed class SelectionSummaryQuerySystemTests
                     null,
                     null,
                     null,
-                    null);
+                    null,
+                    TryGetContractorHealth);
+            }
+
+            bool TryGetContractorHealth(out int current, out int max)
+            {
+                current = contractorHealth;
+                max = 350;
+                return true;
             }
         }
         finally

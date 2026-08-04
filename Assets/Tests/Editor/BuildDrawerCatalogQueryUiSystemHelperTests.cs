@@ -143,6 +143,25 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
         }
     }
 
+    public static void RunProductionQueueSnapshotValidation()
+    {
+        int passed = 0;
+        try
+        {
+            RunValidationStep(
+                nameof(CurrentBuildDrawerPrefabBindsProductionQueueSnapshot),
+                test => test.CurrentBuildDrawerPrefabBindsProductionQueueSnapshot(),
+                ref passed);
+            Debug.Log("[BuildDrawerProductionQueueSnapshotValidation] result=Passed tests=1");
+            ValidationExit.Passed();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[BuildDrawerProductionQueueSnapshotValidation] result=Failed passed={passed}\n{exception}");
+            ValidationExit.Failed();
+        }
+    }
+
     private static void RunValidationStep(
         string name,
         Action<BuildDrawerCatalogQueryUiSystemHelperTests> action,

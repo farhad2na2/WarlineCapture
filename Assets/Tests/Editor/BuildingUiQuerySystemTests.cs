@@ -19,12 +19,13 @@ public sealed class BuildingUiQuerySystemTests
             tests.AddProducedUnitEntries_ResolvesReadyPrefabFromPassivePreviewDelegate();
             tests.SelectedBuildingProducedUnits_ReadsProducedUnitReadModel();
             tests.GetFriendlyPendingProductionUiEntries_IncludesPlayerOwnedProducerQueues();
+            tests.GetFriendlyPendingProductionUiEntries_IncludesOperationMapProducerQueues();
             tests.SelectedMaterialFabricationReadModel_JoinsAuthoritativeEcsStateAndShapesProgress();
             tests.SelectedMaterialFabricationReadModel_RejectsMissingDuplicateAndMismatchedOwners();
             tests.SelectedMaterialFabricationReadModel_RejectsNonDepotSelection();
             tests.SelectedMaterialFabricationReadModel_AdvancesVersionOnlyWhenSourceStateChanges();
             tests.SelectedMaterialFabricationReadModel_UnchangedReadAllocatesNoManagedMemory();
-            Debug.Log("[BuildingUiQueryValidation] result=Passed tests=10");
+            Debug.Log("[BuildingUiQueryValidation] result=Passed tests=11");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -347,6 +348,92 @@ public sealed class BuildingUiQuerySystemTests
             Assert.AreSame(prefab, entries[0].Prefab);
             Assert.AreEqual("Player Helipad", entries[0].ProducerDisplayName);
             Assert.AreEqual(0.25f, entries[0].Progress01, 0.0001f);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(prefab);
+        }
+    }
+
+    [Test]
+    public void GetFriendlyPendingProductionUiEntries_IncludesOperationMapProducerQueues()
+    {
+        using World world = new("BuildingUiQuerySystemTests_OperationMapProductionQueue");
+        EntityManager entityManager = world.EntityManager;
+        GameObject prefab = new("Rifle Infantry");
+        try
+        {
+            Entity prefabEntity = entityManager.CreateEntity();
+            Entity producer = entityManager.CreateEntity(
+                typeof(OperationMapBuildingComponent),
+                typeof(OperationMapBuildingProductionQueueComponent),
+                typeof(OperationMapBuildingUnitProductionRequest),
+                typeof(Faction),
+                typeof(UnitHealth),
+                typeof(UnitDisplayInfo));
+            entityManager.SetComponentData(producer, new OperationMapBuildingComponent
+            {
+                StableId = new FixedString128Bytes("contractor-tent-5006"),
+                PlacementIndex = 5006
+            });
+            entityManager.SetComponentData(producer, new Faction { Id = FactionIdentity.PlayerFactionId });
+            entityManager.SetComponentData(producer, new UnitHealth { Current = 350, Max = 350 });
+            entityManager.SetComponentData(producer, new UnitDisplayInfo
+            {
+                Name = new FixedString64Bytes("Contractor Tent")
+            });
+            entityManager.GetBuffer<OperationMapBuildingUnitProductionRequest>(producer).Add(
+                new OperationMapBuildingUnitProductionRequest
+                {
+                    RequestId = 3,
+                    ProductionIndex = 0,
+                    UnitPrefab = prefabEntity,
+                    UnitSourceKey = new FixedString64Bytes(prefab.name),
+                    QueuedAt = 10f,
+                    ReadyAt = 30f,
+                    Status = OperationMapBuildingUnitProductionRequest.Pending
+                });
+
+            BuildingUiQueryUiSystemHelper.Context context = new(
+                new Dictionary<int, RuntimeBuildingEntity>(),
+                null,
+                (out EntityManager em) =>
+                {
+                    em = entityManager;
+                    return true;
+                },
+                null,
+                () => 15f,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                (Entity unit, out GameObject resolvedPrefab) =>
+                {
+                    resolvedPrefab = unit == prefabEntity ? prefab : null;
+                    return resolvedPrefab != null;
+                });
+            var entries = new List<BuildingUiQueryUiSystemHelper.PendingProductionUiEntry>();
+
+            new BuildingUiQueryUiSystemHelper().GetFriendlyPendingProductionUiEntries(context, entries);
+
+            Assert.AreEqual(1, entries.Count);
+            Assert.AreEqual(5006, entries[0].BuildingId);
+            Assert.AreEqual(-1, entries[0].PendingProductionIndex);
+            Assert.AreSame(prefab, entries[0].Prefab);
+            Assert.AreEqual("Contractor Tent", entries[0].ProducerDisplayName);
+            Assert.AreEqual(0.25f, entries[0].Progress01, 0.0001f);
+            Assert.AreEqual(15f, entries[0].RemainingSeconds, 0.0001f);
         }
         finally
         {

@@ -198,33 +198,119 @@ namespace Game.Runtime
                 return;
 
             entries.Clear();
-            if (context.RuntimeBuildings == null)
-                return;
-
             float now = context.GetNow != null ? context.GetNow() : Time.time;
-            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
+            if (context.RuntimeBuildings != null)
             {
-                RuntimeBuildingEntity building = pair.Value;
-                if (building == null ||
-                    building.IsDestroyed ||
-                    building.PendingProductions == null ||
-                    building.PendingProductions.Count == 0)
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
+                {
+                    RuntimeBuildingEntity building = pair.Value;
+                    if (building == null ||
+                        building.IsDestroyed ||
+                        building.PendingProductions == null ||
+                        building.PendingProductions.Count == 0)
+                    {
+                        continue;
+                    }
+
+                    if (building.IsCityGenerated)
+                        continue;
+                    if (!IsFriendlyProductionBuilding(building))
+                        continue;
+
+                    AddPendingProductionUiEntries(
+                        pair.Key,
+                        building.PendingProductions,
+                        context.ProductionSystem,
+                        now,
+                        entries,
+                        ResolveProducerDisplayName(pair.Key, building));
+                }
+            }
+
+            AddOperationMapPendingProductionUiEntries(context, now, entries);
+        }
+
+        private static void AddOperationMapPendingProductionUiEntries(
+            BuildingUiQueryUiSystemHelper.Context context,
+            float now,
+            List<BuildingUiQueryUiSystemHelper.PendingProductionUiEntry> entries)
+        {
+            if (context.TryGetEntityManager == null ||
+                !context.TryGetEntityManager(out EntityManager em) ||
+                em.World == null ||
+                !em.World.IsCreated)
+            {
+                return;
+            }
+
+            BuildingProductionRequestSystemHelper.Context productionContext =
+                context.CreateProductionRequestContext != null
+                    ? context.CreateProductionRequestContext()
+                    : default;
+
+            using EntityQuery producerQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<OperationMapBuildingComponent>(),
+                ComponentType.ReadOnly<OperationMapBuildingProductionQueueComponent>(),
+                ComponentType.ReadOnly<OperationMapBuildingUnitProductionRequest>(),
+                ComponentType.ReadOnly<Faction>(),
+                ComponentType.ReadOnly<UnitHealth>());
+            using NativeArray<Entity> producers = producerQuery.ToEntityArray(Allocator.Temp);
+            for (int producerIndex = 0; producerIndex < producers.Length; producerIndex++)
+            {
+                Entity producer = producers[producerIndex];
+                if (em.GetComponentData<Faction>(producer).Id != FactionIdentity.PlayerFactionId ||
+                    em.GetComponentData<UnitHealth>(producer).Current <= 0 ||
+                    (em.HasComponent<OperationMapBuildingDestroyedComponent>(producer) &&
+                     em.IsComponentEnabled<OperationMapBuildingDestroyedComponent>(producer)))
                 {
                     continue;
                 }
 
-                if (building.IsCityGenerated)
-                    continue;
-                if (!IsFriendlyProductionBuilding(building))
-                    continue;
+                OperationMapBuildingComponent building =
+                    em.GetComponentData<OperationMapBuildingComponent>(producer);
+                string producerDisplayName = em.HasComponent<UnitDisplayInfo>(producer)
+                    ? em.GetComponentData<UnitDisplayInfo>(producer).Name.ToString()
+                    : building.StableId.ToString();
+                DynamicBuffer<OperationMapBuildingUnitProductionRequest> queue =
+                    em.GetBuffer<OperationMapBuildingUnitProductionRequest>(producer, true);
+                for (int requestIndex = 0; requestIndex < queue.Length; requestIndex++)
+                {
+                    OperationMapBuildingUnitProductionRequest request = queue[requestIndex];
+                    if (request.Status != OperationMapBuildingUnitProductionRequest.Pending)
+                        continue;
 
-                AddPendingProductionUiEntries(
-                    pair.Key,
-                    building.PendingProductions,
-                    context.ProductionSystem,
-                    now,
-                    entries,
-                    ResolveProducerDisplayName(pair.Key, building));
+                    GameObject prefab = null;
+                    context.TryResolveLiveUnitPreviewPrefab?.Invoke(request.UnitPrefab, out prefab);
+                    if (prefab == null)
+                    {
+                        string normalizedSourceKey = BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(
+                            request.UnitSourceKey.ToString());
+                        if (!string.IsNullOrEmpty(normalizedSourceKey) &&
+                            productionContext.UnitSpawnPrefabsByKey != null)
+                        {
+                            productionContext.UnitSpawnPrefabsByKey.TryGetValue(normalizedSourceKey, out prefab);
+                        }
+                    }
+
+                    if (prefab == null)
+                    {
+                        continue;
+                    }
+
+                    float duration = Mathf.Max(0.01f, request.ReadyAt - request.QueuedAt);
+                    float remaining = Mathf.Max(0f, request.ReadyAt - now);
+                    float progress = Mathf.Clamp01((now - request.QueuedAt) / duration);
+                    entries.Add(new BuildingUiQueryUiSystemHelper.PendingProductionUiEntry(
+                        building.PlacementIndex,
+                        -1,
+                        prefab,
+                        remaining,
+                        duration,
+                        progress,
+                        request.QueuedAt,
+                        request.ReadyAt,
+                        producerDisplayName));
+                }
             }
         }
 

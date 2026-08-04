@@ -18,8 +18,9 @@ public sealed class MapVehiclePlacementStartupCompletionTests
         tests.PlayerPlacementFindsNeutralAuthoredVehicleForOwnershipAdoption();
         tests.EntityPresentationVehicleUsesStablePlacementIdentityBeforeTransformDistance();
         tests.EntityPresentationTransportUsesStableIdentityAndTransportRosterSelection();
+        tests.LatePackedVehicleReconcilesCanonicalOwnershipAndRosterIdentity();
         tests.AdoptionDoesNotClaimSpawnedOrDistantVehicles();
-        UnityEngine.Debug.Log("[MapVehiclePlacementStartupCompletionValidation] result=Passed tests=5");
+        UnityEngine.Debug.Log("[MapVehiclePlacementStartupCompletionValidation] result=Passed tests=6");
     }
 
     [Test]
@@ -205,6 +206,99 @@ public sealed class MapVehiclePlacementStartupCompletionTests
             placement,
             default,
             out _));
+    }
+
+    [Test]
+    public void LatePackedVehicleReconcilesCanonicalOwnershipAndRosterIdentity()
+    {
+        using World world = new("MapVehiclePlacementLatePackedOwnershipTests");
+        EntityManager em = world.EntityManager;
+        Entity authored = CreateVehicle(
+            em,
+            new float3(842f, 1f, 378f),
+            FactionIdentity.NeutralFactionId,
+            Entity.Null);
+        Entity visualRoot = em.CreateEntity(typeof(OperationMapEntityPresentationIdentity));
+        em.SetComponentData(visualRoot, new OperationMapEntityPresentationIdentity
+        {
+            OperationMapId = new FixedString128Bytes("opmap.skirmish.desert_base_01"),
+            SourceGlobalObjectId = new FixedString128Bytes("GlobalObjectId_Vehicle_0"),
+            Role = 1,
+            PlacementIndex = 0
+        });
+        Entity readinessContract = em.CreateEntity(typeof(OperationMapEntityPresentationReadinessContract));
+        em.SetComponentData(readinessContract, new OperationMapEntityPresentationReadinessContract
+        {
+            OperationMapId = new FixedString128Bytes("opmap.skirmish.desert_base_01"),
+            ExpectedGameplayVehicleCount = 1
+        });
+        Assert.IsFalse(MapVehiclePlacementSpawnPrefabSystemHelper.IsAuthoredVehiclePresentationReady(em));
+        em.AddComponent<OperationMapAuthoredVehiclePresentation>(authored);
+        Assert.IsTrue(MapVehiclePlacementSpawnPrefabSystemHelper.IsAuthoredVehiclePresentationReady(em));
+        em.AddComponentData(authored, new UnitDetailedVisualReference { Root = visualRoot });
+        em.AddComponentData(authored, new UnitSourcePrefabKey
+        {
+            Value = new FixedString64Bytes("SM_Veh_Tank_USA")
+        });
+        em.AddComponentData(authored, new LocalToWorld
+        {
+            Value = float4x4.Translate(new float3(842f, 1f, 378f))
+        });
+
+        GameObject prefab = new("Unit_Veh_Tank_USA");
+        MapVehiclePlacementConfig config = ScriptableObject.CreateInstance<MapVehiclePlacementConfig>();
+        try
+        {
+            config.EditorSetPlacements(new System.Collections.Generic.List<MapVehiclePlacementConfigEntry>
+            {
+                new(
+                    "Map/Vehicles/Tank",
+                    "Unit_Veh_Tank_USA",
+                    prefab,
+                    FactionIdentity.PlayerFactionId,
+                    new Vector3(842f, 1f, 378f),
+                    new Vector3(842f, 1f, 378f),
+                    Vector3.zero,
+                    Vector3.one)
+            });
+
+            Assert.AreEqual(1,
+                MapVehiclePlacementSpawnPrefabSystemHelper.ReconcileAuthoredVehicleOwnership(em, config));
+            Assert.AreEqual(FactionIdentity.PlayerFactionId, em.GetComponentData<Faction>(authored).Id);
+            Assert.AreEqual("unit_veh_tank_usa",
+                em.GetComponentData<UnitSourcePrefabKey>(authored).Value.ToString());
+
+            var selection = new MatchHudSquadTraySelectionUiSystemHelper();
+            var view = new TestSquadTrayView();
+            selection.SelectSlot(
+                new MatchHudSquadTraySelectionUiSystemHelper.Context(
+                    worldCamera: null,
+                    TryGetEntityManager,
+                    ensureSelectionDependencies: _ => { },
+                    clearCurrentSelection: (_, _) => { },
+                    clearSelectedBuilding: () => { },
+                    applyHudSelection: (_, _) => { },
+                    applyHudSquadSelection: _ => { },
+                    logSelectionDiagnostic: null,
+                    new SelectionStateCompositionSystemHelper(),
+                    new FocusedUnitLifecycleCompositionSystemHelper()),
+                view,
+                MatchHudSquadTraySlot.CombatVehicles);
+
+            Assert.AreEqual(MatchHudSquadTraySlot.CombatVehicles, view.SelectedSlot);
+            Assert.IsTrue(em.HasComponent<SelectedUnitTag>(authored));
+        }
+        finally
+        {
+            Object.DestroyImmediate(config);
+            Object.DestroyImmediate(prefab);
+        }
+
+        bool TryGetEntityManager(out EntityManager entityManager)
+        {
+            entityManager = em;
+            return true;
+        }
     }
 
     [Test]

@@ -103,6 +103,14 @@ namespace Game.Runtime
             if (!TryGetProgressState(context, out EntityManager em, out Entity progressEntity, out MapVehiclePlacementProgressState progress))
                 return;
 
+            // Packed operation-map gameplay entities stream independently from the managed
+            // match shell. Do not consume the one-shot placement cursor until the readiness
+            // contract's authored vehicles are present. Otherwise an early startup tick can
+            // permanently consume the placement cursor before the baked vehicles become
+            // available for the normal neutral-vehicle adoption path.
+            if (!IsAuthoredVehiclePresentationReady(em))
+                return;
+
             SyncProgressSnapshot(progress);
             if (IsComplete)
                 return;
@@ -111,6 +119,7 @@ namespace Game.Runtime
 
             if (progress.Queued != 0)
             {
+                ReconcileAuthoredVehicleOwnership(em, context.Config);
                 MapVehiclePlacementClearanceSystemHelper.RefreshPlacementClearance(context, em, ref progress);
                 HideAuthoringVisuals(context, ref progress);
                 SaveProgressState(em, progressEntity, progress);
@@ -119,8 +128,87 @@ namespace Game.Runtime
             }
 
             SpawnPlacements(context, em, progressEntity, ref progress);
+            // Adoption must run while authored vehicles are still neutral. Reconcile only
+            // afterward so late-packed stable identities receive canonical faction/source
+            // data without preventing adoption or causing a duplicate prefab spawn.
+            ReconcileAuthoredVehicleOwnership(em, context.Config);
             SaveProgressState(em, progressEntity, progress);
             SyncProgressSnapshot(progress);
+        }
+
+        internal static bool IsAuthoredVehiclePresentationReady(EntityManager em)
+        {
+            using EntityQuery contractQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<OperationMapEntityPresentationReadinessContract>());
+            if (contractQuery.IsEmptyIgnoreFilter)
+                return true;
+
+            using NativeArray<OperationMapEntityPresentationReadinessContract> contracts =
+                contractQuery.ToComponentDataArray<OperationMapEntityPresentationReadinessContract>(Allocator.Temp);
+            int expectedVehicleCount = 0;
+            for (int i = 0; i < contracts.Length; i++)
+                expectedVehicleCount = math.max(expectedVehicleCount, contracts[i].ExpectedGameplayVehicleCount);
+            if (expectedVehicleCount <= 0)
+                return true;
+
+            using EntityQuery vehicleQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<OperationMapAuthoredVehiclePresentation>());
+            return vehicleQuery.CalculateEntityCount() >= expectedVehicleCount;
+        }
+
+        internal static int ReconcileAuthoredVehicleOwnership(
+            EntityManager em,
+            MapVehiclePlacementConfig config)
+        {
+            if (config == null || config.Placements == null || config.Placements.Count == 0)
+                return 0;
+
+            using EntityQuery query = em.CreateEntityQuery(
+                ComponentType.ReadOnly<OperationMapAuthoredVehiclePresentation>(),
+                ComponentType.ReadOnly<UnitDetailedVisualReference>(),
+                ComponentType.ReadWrite<Faction>());
+            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            int reconciled = 0;
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity candidate = entities[i];
+                if (em.HasComponent<Prefab>(candidate) || em.HasComponent<Disabled>(candidate))
+                    continue;
+
+                Entity visualRoot = em.GetComponentData<UnitDetailedVisualReference>(candidate).Root;
+                if (visualRoot == Entity.Null ||
+                    !em.Exists(visualRoot) ||
+                    !em.HasComponent<OperationMapEntityPresentationIdentity>(visualRoot))
+                {
+                    continue;
+                }
+
+                int placementIndex =
+                    em.GetComponentData<OperationMapEntityPresentationIdentity>(visualRoot).PlacementIndex;
+                if (placementIndex < 0 || placementIndex >= config.Placements.Count)
+                    continue;
+
+                MapVehiclePlacementConfigEntry placement = config.Placements[placementIndex];
+                FixedString64Bytes sourceKey = GetVehiclePrefabSourceKey(placement);
+                if (placement == null || sourceKey.Length == 0)
+                    continue;
+
+                Faction faction = em.GetComponentData<Faction>(candidate);
+                if (faction.Id != placement.FactionId)
+                {
+                    faction.Id = placement.FactionId;
+                    em.SetComponentData(candidate, faction);
+                }
+
+                UnitSourcePrefabKey source = new() { Value = sourceKey };
+                if (em.HasComponent<UnitSourcePrefabKey>(candidate))
+                    em.SetComponentData(candidate, source);
+                else
+                    em.AddComponentData(candidate, source);
+                reconciled++;
+            }
+
+            return reconciled;
         }
 
         private void SpawnPlacements(

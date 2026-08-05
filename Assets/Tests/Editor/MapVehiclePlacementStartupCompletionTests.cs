@@ -270,6 +270,27 @@ public sealed class MapVehiclePlacementStartupCompletionTests
                     Vector3.one)
             });
 
+            GameObject compatibilityRoot = new("CompatibilityVehiclesRoot");
+            try
+            {
+                var packedContext = new MapVehiclePlacementSpawnPrefabSystemHelper.Context(
+                    config,
+                    compatibilityRoot.transform,
+                    default,
+                    default,
+                    null,
+                    null,
+                    null,
+                    requirePackedPresentationContract: true);
+                Assert.IsTrue(
+                    MapVehiclePlacementSpawnPrefabSystemHelper.RequiresPackedPresentationContract(packedContext),
+                    "EntityScene startup must wait for the packed readiness contract even when the compatibility vehicle root is still assigned.");
+            }
+            finally
+            {
+                Object.DestroyImmediate(compatibilityRoot);
+            }
+
             Assert.AreEqual(1,
                 MapVehiclePlacementSpawnPrefabSystemHelper.ReconcileAuthoredVehicleOwnership(em, config));
             Assert.AreEqual(FactionIdentity.PlayerFactionId, em.GetComponentData<Faction>(authored).Id);

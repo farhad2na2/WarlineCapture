@@ -31,6 +31,7 @@ namespace Game.Runtime
             public readonly RuntimeUnitPrefabSystem.Context UnitPrefabContext;
             public readonly TryGetGridDataDelegate TryGetGridData;
             public readonly TryGetRuntimeBoundaryDelegate TryGetRuntimeBoundary;
+            public readonly bool RequirePackedPresentationContract;
             public readonly Action<string> LogWarning;
 
             public Context(
@@ -39,7 +40,8 @@ namespace Game.Runtime
                 RuntimeUnitPrefabSystem unitPrefabSystem,
                 RuntimeUnitPrefabSystem.Context unitPrefabContext,
                 TryGetGridDataDelegate tryGetGridData,
-                Action<string> logWarning)
+                Action<string> logWarning,
+                bool requirePackedPresentationContract = false)
                 : this(
                     config,
                     authoringVehiclesRoot,
@@ -47,7 +49,8 @@ namespace Game.Runtime
                     unitPrefabContext,
                     tryGetGridData,
                     null,
-                    logWarning)
+                    logWarning,
+                    requirePackedPresentationContract)
             {
             }
 
@@ -58,7 +61,8 @@ namespace Game.Runtime
                 RuntimeUnitPrefabSystem.Context unitPrefabContext,
                 TryGetGridDataDelegate tryGetGridData,
                 TryGetRuntimeBoundaryDelegate tryGetRuntimeBoundary,
-                Action<string> logWarning)
+                Action<string> logWarning,
+                bool requirePackedPresentationContract = false)
             {
                 Config = config;
                 AuthoringVehiclesRoot = authoringVehiclesRoot;
@@ -66,6 +70,7 @@ namespace Game.Runtime
                 UnitPrefabContext = unitPrefabContext;
                 TryGetGridData = tryGetGridData;
                 TryGetRuntimeBoundary = tryGetRuntimeBoundary;
+                RequirePackedPresentationContract = requirePackedPresentationContract;
                 LogWarning = logWarning;
             }
         }
@@ -108,10 +113,7 @@ namespace Game.Runtime
             // contract's authored vehicles are present. Otherwise an early startup tick can
             // permanently consume the placement cursor before the baked vehicles become
             // available for the normal neutral-vehicle adoption path.
-            bool requiresPackedPresentationContract =
-                context.AuthoringVehiclesRoot == null &&
-                context.Config.Placements != null &&
-                context.Config.Placements.Count > 0;
+            bool requiresPackedPresentationContract = RequiresPackedPresentationContract(context);
             if (!IsAuthoredVehiclePresentationReady(em, requiresPackedPresentationContract))
                 return;
 
@@ -160,6 +162,14 @@ namespace Game.Runtime
             using EntityQuery vehicleQuery = em.CreateEntityQuery(
                 ComponentType.ReadOnly<OperationMapAuthoredVehiclePresentation>());
             return vehicleQuery.CalculateEntityCount() >= expectedVehicleCount;
+        }
+
+        internal static bool RequiresPackedPresentationContract(Context context)
+        {
+            return context.Config != null &&
+                   context.Config.Placements != null &&
+                   context.Config.Placements.Count > 0 &&
+                   (context.RequirePackedPresentationContract || context.AuthoringVehiclesRoot == null);
         }
 
         internal static int ReconcileAuthoredVehicleOwnership(

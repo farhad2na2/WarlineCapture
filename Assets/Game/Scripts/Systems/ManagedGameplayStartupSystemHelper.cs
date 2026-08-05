@@ -157,7 +157,8 @@ namespace Game.Runtime
             BuildingDefinitionPrefabSystemHelper.TryGetUnitDefinitionMetadataDelegate tryGetUnitDefinitionMetadata,
             Transform mapBuildingAuthoringRoot,
             Transform mapVehicleAuthoringRoot,
-            IMatchIntroStateQuery matchIntroStateQuery)
+            IMatchIntroStateQuery matchIntroStateQuery,
+            bool requirePackedVehiclePresentationContract = false)
         {
             DayNightSystem dayNight = ResolveDayNightSystem();
             dayNight?.Init(dayNightConfig, directionalLight, globalVolume);
@@ -189,7 +190,8 @@ namespace Game.Runtime
                 prepareTransportDropVisual,
                 resolveSpawnableLookupKey,
                 tryGetBuildingDefinitionMetadata,
-                tryGetUnitDefinitionMetadata);
+                tryGetUnitDefinitionMetadata,
+                requirePackedVehiclePresentationContract);
 
             Sprite ResolveSelectionPortraitSprite(EntityManager em, Entity entity)
             {

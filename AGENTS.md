@@ -20,6 +20,16 @@ Windows validation is permitted through the checked-in PowerShell wrappers:
 - Before starting a run, confirm that no active Unity process owns this project. Do not terminate an existing Editor to make room for validation.
 - A wrapper timeout may terminate only the Unity process tree that wrapper started. Never terminate unrelated Unity or Unity Hub processes.
 
+### Windows licensing recovery ladder (authorized 2026-08-05)
+
+- Do not pause or declare the Windows validation lane blocked solely because Unity licensing or licensing IPC fails.
+- Start every Windows recovery attempt with the checked wrapper's GUI-licensing mode (`-GuiLicensing`) while Unity Hub remains open and signed in.
+- If GUI licensing still fails, use only the checked-in project recovery workaround applicable to the observed failure, after verifying that no Unity Editor owns this project.
+- If the checked recovery workaround still fails, the user has explicitly authorized restarting only the verified stale `Unity.Licensing.Client` process. Re-verify its executable path, start time, command line, and that no Unity Editor is active before restarting it; do not restart Unity Hub, Package Manager, or unrelated processes.
+- After each recovery step, rerun the same checked wrapper with an explicit log and timeout. Never bypass the wrapper or weaken its fail-closed pass-marker requirements.
+- If the verified licensing-client restart still fails, search current official Unity documentation, release notes, and support material for another narrowly scoped workaround, record the sources and exact recovery action, and continue until the checked validation can run. Do not wait for another approval merely to perform this authorized licensing recovery ladder.
+- These permissions are recovery-scoped only. They do not authorize terminating an active Editor, changing Unity/Jenkins paths, altering project assets, or killing unrelated processes.
+
 Example:
 
 ```powershell

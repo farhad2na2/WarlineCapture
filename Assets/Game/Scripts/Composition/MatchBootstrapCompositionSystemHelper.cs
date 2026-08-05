@@ -407,7 +407,8 @@ namespace Game.Composition
             Func<Transform, RTSSelectionSystemConfig, ISelectionRectangleView> createSelectionRectangleView,
             Transform mapBuildingAuthoringRoot,
             Transform mapVehicleAuthoringRoot,
-            IMatchIntroStateQuery matchIntroStateQuery)
+            IMatchIntroStateQuery matchIntroStateQuery,
+            bool requirePackedVehiclePresentationContract = false)
         {
             return managedGameplayStartupSystem.Initialize(
                 runtimeWorld.EntityManager,
@@ -435,7 +436,8 @@ namespace Game.Composition
                 BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetUnitDefinitionMetadata,
                 mapBuildingAuthoringRoot,
                 mapVehicleAuthoringRoot,
-                matchIntroStateQuery);
+                matchIntroStateQuery,
+                requirePackedVehiclePresentationContract);
         }
 
         public MainMenuPlayUI EnsureMainMenuRuntimeDependencies(bool resetRuntimeState = false)
@@ -757,7 +759,9 @@ namespace Game.Composition
                 EnsureSelectionRectangleView,
                 MapBuildingAuthoringRoot,
                 MapVehicleAuthoringRoot,
-                matchIntroStateQuery);
+                matchIntroStateQuery,
+                sceneView != null &&
+                sceneView.CanonicalPresentationMode == OperationMapCanonicalPresentationMode.EntityScene);
 
             BindDayNightSystem(managedSystems.DayNight);
             FactionVisuals = managedSystems.FactionVisuals;

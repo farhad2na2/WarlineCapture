@@ -42,7 +42,8 @@ namespace Game.Runtime
             BuildingProductionTransportPresentationSystemHelper.PrepareTransportDropVisualDelegate prepareTransportDropVisual = null,
             Func<GameObject, string> resolveSpawnableLookupKey = null,
             BuildingDefinitionPrefabSystemHelper.TryGetBuildingDefinitionMetadataDelegate tryGetBuildingDefinitionMetadata = null,
-            BuildingDefinitionPrefabSystemHelper.TryGetUnitDefinitionMetadataDelegate tryGetUnitDefinitionMetadata = null)
+            BuildingDefinitionPrefabSystemHelper.TryGetUnitDefinitionMetadataDelegate tryGetUnitDefinitionMetadata = null,
+            bool requirePackedVehiclePresentationContract = false)
         {
             MaterialPropertyBlock markerPropertyBlock = BuildingMarkerVisualPresentationSystemHelper.GetMarkerPropertyBlock(_markerVisualPresentationHelper);
             BuildingGameplaySourceCompositionSystemHelper childSystems = _childSystem.Create();
@@ -675,7 +676,8 @@ namespace Game.Runtime
                                 mapVehiclePrefabContext,
                                 TryGetMapGridData,
                                 TryGetMapRuntimeBoundary,
-                                Debug.LogWarning);
+                                Debug.LogWarning,
+                                requirePackedVehiclePresentationContract);
                         return () => source.MapVehiclePlacementSpawnPrefabSystemHelper.Update(mapVehiclePlacementContext);
                     },
                     DestroyedBuildingLifetimeSeconds);

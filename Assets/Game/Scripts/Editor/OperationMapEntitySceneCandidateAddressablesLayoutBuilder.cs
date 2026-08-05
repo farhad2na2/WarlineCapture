@@ -378,7 +378,6 @@ namespace Game.Editor
                 CloseSceneKeepingEditorValid(productionScene);
             }
 
-            StripSerializedCombinedMeshBakerForCandidateRebuild(outputPath);
             RestoreMapSurfaceAuthoringCurrentIdentityForEditorLoad(outputPath);
             AssetDatabase.ImportAsset(
                 outputPath,
@@ -411,7 +410,7 @@ namespace Game.Editor
                 CombinedMeshBaker decorationBaker = ResolveDecorationCombinedMeshBaker(
                     scene,
                     view,
-                    allowCleanCandidateRebuild: true);
+                    allowCleanCandidateRebuild: false);
                 viewData.FindProperty("operationMapId").stringValue = definition.OperationMapId;
                 viewData.FindProperty("definition").objectReferenceValue = definition;
                 viewData.FindProperty("decorationCombinedMeshBaker").objectReferenceValue = decorationBaker;
@@ -434,7 +433,6 @@ namespace Game.Editor
             }
 
             // Fail-closed: Unity sometimes drops brand-new ScriptableObject refs in the same session.
-            NormalizeEmbeddedCombinedMeshBakerScriptReference(outputPath);
             NormalizeAssetText(outputPath);
             NormalizeAssetText(outputPath + ".meta");
             RestoreMapSurfaceAuthoringCurrentIdentityForEditorLoad(outputPath);

@@ -162,7 +162,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ff37f00c6585b49f2b142f7c43215901, type: 3}
   m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::CombinedMeshBaker
+  m_EditorClassIdentifier: Game.Runtime::Game.Runtime.CombinedMeshBaker
   combineOnStart: 0
   includeInactive: 1
   disableSourceRenderers: 1

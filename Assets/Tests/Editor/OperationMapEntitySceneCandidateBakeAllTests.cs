@@ -93,6 +93,7 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
             suite.NormalizeAssetText_ChangesOnceThenBecomesByteNoOp,
             suite.NormalizeAssetText_UnloadsImportedAssetBeforeChangedWrite,
             suite.RuntimeBindingComponentIdentityNormalization_ChangesOnceThenBecomesNoOp,
+            suite.CombinedMeshBakerMonoScript_ResolvesRuntimeClass,
             suite.ProtectedProductionSnapshot_RejectsFileDrift,
             suite.BakeBudget_AcceptsCandidateBaseline,
             suite.BakeBudget_RejectsManagedVisualCompanions,
@@ -134,6 +135,26 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
 
         Debug.Log(
             "[CandidateRuntimeBindingColdRepairValidation] result=Passed scenes=2");
+    }
+
+    public static void RunCombinedMeshBakerMonoScriptValidation()
+    {
+        const string path = "Assets/Game/Scripts/Tools/CombinedMeshBaker.cs";
+        MonoScript script = AssetDatabase.LoadAssetAtPath<MonoScript>(path);
+        if (script == null)
+            throw new InvalidOperationException($"CombinedMeshBaker MonoScript is missing: {path}");
+        Type resolvedClass = script.GetClass();
+        if (resolvedClass != typeof(Game.Runtime.CombinedMeshBaker))
+        {
+            throw new InvalidOperationException(
+                $"CombinedMeshBaker MonoScript class mismatch: " +
+                $"actual={resolvedClass?.AssemblyQualifiedName ?? "<null>"}");
+        }
+
+        Debug.Log(
+            "[CombinedMeshBakerMonoScriptValidation] result=Passed " +
+            $"guid={AssetDatabase.AssetPathToGUID(path)} " +
+            $"class={resolvedClass.FullName} assembly={resolvedClass.Assembly.GetName().Name}");
     }
 
     [Test]
@@ -604,6 +625,19 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
             OperationMapEntitySceneCandidateAddressablesLayoutBuilder
                 .RestoreMapSurfaceAuthoringCurrentIdentityForEditorLoad(relative),
             Is.False);
+    }
+
+    [Test]
+    public void CombinedMeshBakerMonoScript_ResolvesRuntimeClass()
+    {
+        const string path = "Assets/Game/Scripts/Tools/CombinedMeshBaker.cs";
+        MonoScript script = AssetDatabase.LoadAssetAtPath<MonoScript>(path);
+
+        Assert.That(script, Is.Not.Null);
+        Assert.That(script.GetClass(), Is.EqualTo(typeof(Game.Runtime.CombinedMeshBaker)));
+        Assert.That(
+            AssetDatabase.AssetPathToGUID(path),
+            Is.EqualTo("ff37f00c6585b49f2b142f7c43215901"));
     }
 
     [Test]

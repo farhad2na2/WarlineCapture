@@ -231,8 +231,9 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         {
             var tests = new BuildingProductionQueueCompositionSystemHelperTests();
             tests.ResolveProductionTransportSettings_RebuildsAfterLatePackedTransportRegistryMutation();
+            tests.ResolveProductionTransportSettings_DefaultsPackedInfantryWithoutAuthoringMetadataToHelicopter();
             tests.CanonicalTentTransportPresentation_ArrivesRopesAndDefersSpawnUntilDropCompletes();
-            Debug.Log("[CanonicalTentTransportPresentationValidation] result=Passed transportVisible=1 ropeVisible=1 dropVisualVisible=1 ownership=canonical latePackedTransport=1");
+            Debug.Log("[CanonicalTentTransportPresentationValidation] result=Passed transportVisible=1 ropeVisible=1 dropVisualVisible=1 ownership=canonical latePackedTransport=1 packedInfantryFallback=1");
             ValidationExit.Passed();
         }
         catch (Exception ex)
@@ -4519,6 +4520,36 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             Assert.AreSame(transportPrefab, after.TransportPrefab,
                 "Late-packed registry contents must invalidate the null transport cache held by the same list and dictionary instances.");
             Assert.AreEqual(BuildingProductionQueueCompositionSystemHelper.ProductionTransportMode.Helicopter, after.Mode);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(producedPrefab);
+            UnityEngine.Object.DestroyImmediate(transportPrefab);
+        }
+    }
+
+    [Test]
+    public void ResolveProductionTransportSettings_DefaultsPackedInfantryWithoutAuthoringMetadataToHelicopter()
+    {
+        GameObject producedPrefab = new("Unit_Chr_Soldier_PackedRuntime_Test");
+        GameObject transportPrefab = new("Unit_Veh_Helicopter_Transport");
+        try
+        {
+            transportPrefab.AddComponent<UnitGridAuthoring>();
+            var prefabs = new List<GameObject> { producedPrefab, transportPrefab };
+            var prefabsByKey = new Dictionary<string, GameObject>
+            {
+                ["unit_chr_soldier_packedruntime_test"] = producedPrefab,
+                ["unit_veh_helicopter_transport"] = transportPrefab
+            };
+            BuildingProductionQueueCompositionSystemHelper system = CreateProductionSystem();
+
+            BuildingProductionQueueCompositionSystemHelper.ProductionTransportSettings settings =
+                system.ResolveProductionTransportSettings(producedPrefab, prefabs, prefabsByKey, null);
+
+            Assert.AreSame(transportPrefab, settings.TransportPrefab,
+                "A packed infantry prefab that remains spawnable without authoring metadata must still use the explicitly configured canonical helicopter.");
+            Assert.AreEqual(BuildingProductionQueueCompositionSystemHelper.ProductionTransportMode.Helicopter, settings.Mode);
         }
         finally
         {

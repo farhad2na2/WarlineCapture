@@ -805,12 +805,16 @@ namespace Game.Runtime
             if (spawnUnitPrefab == null)
                 return null;
 
-            if (!hasMetadata)
-                return null;
-
             GameObject helicopter = _cachedDefaultHelicopterTransportPrefab;
             if (helicopter == null)
                 return null;
+
+            if (!hasMetadata)
+            {
+                return IsLikelyGroundVehiclePrefab(spawnUnitPrefab) || IsLikelyAirUnitPrefab(spawnUnitPrefab)
+                    ? null
+                    : helicopter;
+            }
 
             if (metadata.IsAirUnit)
                 return null;
@@ -874,6 +878,18 @@ namespace Game.Runtime
                 return true;
 
             return false;
+        }
+
+        private static bool IsLikelyAirUnitPrefab(GameObject prefab)
+        {
+            if (prefab == null)
+                return false;
+
+            string name = prefab.name;
+            return name.IndexOf("Helicopter", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   name.IndexOf("Plane", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   name.IndexOf("Drone", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   name.IndexOf("Jet", System.StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         private static Vector2Int ResolveEffectiveProductionFootprintCells(

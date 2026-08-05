@@ -119,7 +119,15 @@ namespace Game.Runtime
 
             SyncProgressSnapshot(progress);
             if (IsComplete)
+            {
+                // A bootstrap stream can persist the one-shot placement cursor as complete
+                // before the candidate EntityScene arrives. Once the packed readiness contract
+                // is satisfied, reconcile those late entities even though no placement work
+                // remains; otherwise every authored vehicle stays neutral/source-stale.
+                if (requiresPackedPresentationContract)
+                    ReconcileAuthoredVehicleOwnership(em, context.Config);
                 return;
+            }
 
             TryPublishPlacementReadModel(context);
 

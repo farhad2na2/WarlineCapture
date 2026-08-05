@@ -5,7 +5,7 @@ using UnityEngine.Scripting.APIUpdating;
 namespace Game.Runtime
 {
     [DisallowMultipleComponent]
-    [MovedFrom(true, sourceNamespace: "", sourceAssembly: "Game.Runtime", sourceClassName: "CombinedMeshBaker")]
+    [MovedFrom(true, sourceNamespace: "", sourceAssembly: "Assembly-CSharp", sourceClassName: "CombinedMeshBaker")]
     public sealed class CombinedMeshBaker : MonoBehaviour
     {
         [SerializeField] private bool combineOnStart;

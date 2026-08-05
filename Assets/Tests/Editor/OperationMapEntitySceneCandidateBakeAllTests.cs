@@ -125,6 +125,17 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
         Debug.Log($"[OperationMapEntitySceneCandidateBakeAllValidation] result=Passed tests={tests.Length}");
     }
 
+    public static void RunCandidateRuntimeBindingColdRepairValidation()
+    {
+        OperationMapEntitySceneCandidateAddressablesLayoutBuilder
+            .EnsureCandidateRuntimeBindingScene();
+        OperationMapEntitySceneCandidateAddressablesLayoutBuilder
+            .EnsureDenseCityCandidateRuntimeBindingScene();
+
+        Debug.Log(
+            "[CandidateRuntimeBindingColdRepairValidation] result=Passed scenes=2");
+    }
+
     [Test]
     public void GenerationContract_AcceptsExactInputsAndRejectsStaleHash()
     {
@@ -578,6 +589,20 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
         Assert.That(
             OperationMapEntitySceneCandidateAddressablesLayoutBuilder
                 .NormalizeMapSurfaceAuthoringSerializedIdentity(relative),
+            Is.False);
+
+        Assert.That(
+            OperationMapEntitySceneCandidateAddressablesLayoutBuilder
+                .RestoreMapSurfaceAuthoringCurrentIdentityForEditorLoad(relative),
+            Is.True);
+        Assert.That(
+            File.ReadAllText(physical, new UTF8Encoding(false)),
+            Is.EqualTo(
+                "m_EditorClassIdentifier: Game.Runtime::CombinedMeshBaker\n" +
+                "m_EditorClassIdentifier: Game.Authoring::Game.Authoring.MapSurfaceAuthoring\n"));
+        Assert.That(
+            OperationMapEntitySceneCandidateAddressablesLayoutBuilder
+                .RestoreMapSurfaceAuthoringCurrentIdentityForEditorLoad(relative),
             Is.False);
     }
 

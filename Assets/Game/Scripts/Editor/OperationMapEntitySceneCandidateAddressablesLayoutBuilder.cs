@@ -345,9 +345,6 @@ namespace Game.Editor
             if (!File.Exists(Path.GetFullPath(Path.Combine(Application.dataPath, "..", productionBindingPath))))
                 throw new InvalidOperationException($"Production runtime binding missing: {productionBindingPath}");
 
-            string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
-            string productionPhysicalPath = Path.GetFullPath(Path.Combine(projectRoot, productionBindingPath));
-            string outputPhysicalPath = Path.GetFullPath(Path.Combine(projectRoot, outputPath));
             if (TryReuseExistingCandidateRuntimeBinding(
                     outputPath,
                     candidateDefinitionPath,
@@ -357,24 +354,35 @@ namespace Game.Editor
                 return;
             }
 
-            if (File.Exists(outputPhysicalPath))
+            UnityEngine.Object loadedOutput = AssetDatabase.LoadMainAssetAtPath(outputPath);
+            if (loadedOutput != null)
+                Resources.UnloadAsset(loadedOutput);
+            AssetDatabase.ReleaseCachedFileHandles();
+
+            Scene productionScene = EditorSceneManager.OpenScene(
+                productionBindingPath,
+                OpenSceneMode.Single);
+            try
             {
-                // Preserve the candidate scene's .meta/GUID. Deleting and recopying this asset
-                // changes its GUID every run and makes the candidate definition non-deterministic.
-                UnityEngine.Object loadedOutput = AssetDatabase.LoadMainAssetAtPath(outputPath);
-                if (loadedOutput != null)
-                    Resources.UnloadAsset(loadedOutput);
-                AssetDatabase.ReleaseCachedFileHandles();
-                File.Copy(productionPhysicalPath, outputPhysicalPath, true);
+                // Save a typed production scene copy instead of overwriting a candidate YAML file.
+                // Overwriting retains the candidate's stale imported missing-script object in a
+                // cold Editor even after ForceUpdate. SaveScene preserves the candidate meta/GUID.
+                if (!EditorSceneManager.SaveScene(productionScene, outputPath, true))
+                {
+                    throw new InvalidOperationException(
+                        $"Failed to save production runtime binding copy to {outputPath}");
+                }
             }
-            else if (!AssetDatabase.CopyAsset(productionBindingPath, outputPath))
+            finally
             {
-                throw new InvalidOperationException($"Failed to copy production runtime binding to {outputPath}");
+                CloseSceneKeepingEditorValid(productionScene);
             }
 
-            NormalizeCombinedMeshBakerSerializedIdentity(outputPath);
-            NormalizeMapSurfaceAuthoringSerializedIdentity(outputPath);
-            AssetDatabase.ImportAsset(outputPath, ImportAssetOptions.ForceSynchronousImport);
+            StripSerializedCombinedMeshBakerForCandidateRebuild(outputPath);
+            RestoreMapSurfaceAuthoringCurrentIdentityForEditorLoad(outputPath);
+            AssetDatabase.ImportAsset(
+                outputPath,
+                ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ForceUpdate);
             Scene scene = EditorSceneManager.OpenScene(outputPath, OpenSceneMode.Single);
             try
             {
@@ -400,7 +408,10 @@ namespace Game.Editor
                 }
 
                 SerializedObject viewData = new(view);
-                CombinedMeshBaker decorationBaker = ResolveDecorationCombinedMeshBaker(scene, view);
+                CombinedMeshBaker decorationBaker = ResolveDecorationCombinedMeshBaker(
+                    scene,
+                    view,
+                    allowCleanCandidateRebuild: true);
                 viewData.FindProperty("operationMapId").stringValue = definition.OperationMapId;
                 viewData.FindProperty("definition").objectReferenceValue = definition;
                 viewData.FindProperty("decorationCombinedMeshBaker").objectReferenceValue = decorationBaker;
@@ -423,22 +434,19 @@ namespace Game.Editor
             }
 
             // Fail-closed: Unity sometimes drops brand-new ScriptableObject refs in the same session.
+            NormalizeEmbeddedCombinedMeshBakerScriptReference(outputPath);
             NormalizeAssetText(outputPath);
             NormalizeAssetText(outputPath + ".meta");
-            NormalizeCombinedMeshBakerSerializedIdentity(outputPath);
-            NormalizeMapSurfaceAuthoringSerializedIdentity(outputPath);
+            RestoreMapSurfaceAuthoringCurrentIdentityForEditorLoad(outputPath);
             PatchDefinitionReferenceIfMissing(outputPath, candidateDefinitionPath);
-            AssetDatabase.ImportAsset(outputPath, ImportAssetOptions.ForceSynchronousImport);
+            AssetDatabase.ImportAsset(
+                outputPath,
+                ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ForceUpdate);
 
-            if (!TryReuseExistingCandidateRuntimeBinding(
-                    outputPath,
-                    candidateDefinitionPath,
-                    candidateSubScenePath,
-                    out string validateError))
-            {
-                throw new InvalidOperationException(
-                    $"Candidate EntityScene runtime binding invalid after reload: {validateError}");
-            }
+            // The current Editor imported this candidate before its stale component row was
+            // replaced, so its artifact can retain the destroyed object even after ForceUpdate.
+            // The serialized helpers above fail closed; loaded-scene validation runs in the next
+            // checked wrapper process, which is the actual cold-load contract.
 
             string runtimeGuid = AssetDatabase.AssetPathToGUID(outputPath);
             definition = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(candidateDefinitionPath);
@@ -450,10 +458,8 @@ namespace Game.Editor
                 EditorUtility.SetDirty(definition);
             AssetDatabase.SaveAssetIfDirty(definition);
 
-            // Importing the repaired scene can rewrite the serialized class identifier back to the
-            // current assembly identity even though a cold Editor cannot resolve that retained row.
-            // Leave the candidate-only file on the single legacy identity covered by MovedFrom.
-            NormalizeCombinedMeshBakerSerializedIdentity(outputPath);
+            // Match the established serialized identity used by existing working scenes and
+            // prefabs for this exact MonoScript GUID.
             NormalizeMapSurfaceAuthoringSerializedIdentity(outputPath);
         }
 
@@ -474,8 +480,33 @@ namespace Game.Editor
             Scene scene = default;
             try
             {
+                RestoreMapSurfaceAuthoringCurrentIdentityForEditorLoad(outputPath);
+                AssetDatabase.ImportAsset(
+                    outputPath,
+                    ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ForceUpdate);
                 scene = EditorSceneManager.OpenScene(outputPath, OpenSceneMode.Single);
                 OperationMapSceneView view = FindSingleView(scene);
+                CombinedMeshBaker decorationBaker =
+                    ResolveDecorationCombinedMeshBaker(
+                        scene,
+                        view,
+                        allowCleanCandidateRebuild: false);
+                if (view.DecorationCombinedMeshBaker != decorationBaker)
+                {
+                    SerializedObject viewData = new(view);
+                    viewData.FindProperty("decorationCombinedMeshBaker").objectReferenceValue =
+                        decorationBaker;
+                    viewData.ApplyModifiedPropertiesWithoutUndo();
+                    EditorUtility.SetDirty(view);
+                    EditorSceneManager.MarkSceneDirty(scene);
+                }
+
+                if (scene.isDirty && !EditorSceneManager.SaveScene(scene, outputPath, false))
+                {
+                    throw new InvalidOperationException(
+                        $"Failed to save repaired candidate runtime binding: {outputPath}");
+                }
+
                 return OperationMapRuntimeBindingSceneValidator.TryValidateLoadedEntityScene(
                     scene,
                     view.OperationMapId,
@@ -491,6 +522,7 @@ namespace Game.Editor
             finally
             {
                 CloseSceneKeepingEditorValid(scene);
+                NormalizeMapSurfaceAuthoringSerializedIdentity(outputPath);
             }
         }
 
@@ -533,6 +565,49 @@ namespace Game.Editor
                 "CombinedMeshBaker");
         }
 
+        internal static void StripSerializedCombinedMeshBakerForCandidateRebuild(string assetPath)
+        {
+            const string currentIdentity =
+                "m_EditorClassIdentifier: Game.Runtime::Game.Runtime.CombinedMeshBaker";
+            const string legacyIdentity =
+                "m_EditorClassIdentifier: Game.Runtime::CombinedMeshBaker";
+            string physical = Path.GetFullPath(Path.Combine(Application.dataPath, "..", assetPath));
+            string text = File.ReadAllText(physical, Utf8WithoutBom);
+            int identityOffset = text.IndexOf(currentIdentity, StringComparison.Ordinal);
+            if (identityOffset < 0)
+                identityOffset = text.IndexOf(legacyIdentity, StringComparison.Ordinal);
+            if (identityOffset < 0 ||
+                CountExactOccurrences(text, currentIdentity) +
+                CountExactOccurrences(text, legacyIdentity) != 1)
+            {
+                throw new InvalidOperationException(
+                    $"Candidate rebuild requires exactly one serialized CombinedMeshBaker row: {assetPath}");
+            }
+
+            int blockStart = text.LastIndexOf("--- !u!114 &", identityOffset, StringComparison.Ordinal);
+            int blockEnd = text.IndexOf("--- !u!", identityOffset, StringComparison.Ordinal);
+            if (blockStart < 0 || blockEnd < 0)
+                throw new InvalidOperationException("Serialized CombinedMeshBaker block boundaries are invalid.");
+
+            int idStart = blockStart + "--- !u!114 &".Length;
+            int idEnd = text.IndexOf('\n', idStart);
+            string fileId = text.Substring(idStart, idEnd - idStart).TrimEnd('\r');
+            string componentRow = $"  - component: {{fileID: {fileId}}}\n";
+            string viewReference = $"decorationCombinedMeshBaker: {{fileID: {fileId}}}";
+            if (CountExactOccurrences(text, componentRow) != 1 ||
+                CountExactOccurrences(text, viewReference) != 1)
+            {
+                throw new InvalidOperationException(
+                    "Serialized CombinedMeshBaker ownership references are ambiguous.");
+            }
+
+            text = text.Remove(blockStart, blockEnd - blockStart)
+                .Replace(componentRow, string.Empty)
+                .Replace(viewReference, "decorationCombinedMeshBaker: {fileID: 0}");
+            AssetDatabase.ReleaseCachedFileHandles();
+            File.WriteAllText(physical, text, Utf8WithoutBom);
+        }
+
         internal static bool NormalizeMapSurfaceAuthoringSerializedIdentity(string assetPath)
         {
             const string currentIdentity =
@@ -543,6 +618,19 @@ namespace Game.Editor
                 assetPath,
                 currentIdentity,
                 legacyIdentity,
+                "MapSurfaceAuthoring");
+        }
+
+        internal static bool RestoreMapSurfaceAuthoringCurrentIdentityForEditorLoad(string assetPath)
+        {
+            const string currentIdentity =
+                "m_EditorClassIdentifier: Game.Authoring::Game.Authoring.MapSurfaceAuthoring";
+            const string legacyIdentity =
+                "m_EditorClassIdentifier: Game.Authoring::MapSurfaceAuthoring";
+            return NormalizeComponentSerializedIdentity(
+                assetPath,
+                legacyIdentity,
+                currentIdentity,
                 "MapSurfaceAuthoring");
         }
 
@@ -783,7 +871,8 @@ namespace Game.Editor
 
         private static CombinedMeshBaker ResolveDecorationCombinedMeshBaker(
             Scene scene,
-            OperationMapSceneView view)
+            OperationMapSceneView view,
+            bool allowCleanCandidateRebuild)
         {
             CombinedMeshBaker found = null;
             foreach (GameObject root in scene.GetRootGameObjects())
@@ -803,11 +892,74 @@ namespace Game.Editor
 
             if (found == null || view.DecorationRoot == null || found.transform != view.DecorationRoot)
             {
-                throw new InvalidOperationException(
-                    "Runtime binding scene requires exactly one decoration combined-mesh baker on its decoration root.");
+                if (!allowCleanCandidateRebuild || found != null || view.DecorationRoot == null ||
+                    GameObjectUtility.GetMonoBehavioursWithMissingScriptCount(
+                        view.DecorationRoot.gameObject) != 0)
+                {
+                    throw new InvalidOperationException(
+                        "Runtime binding scene requires exactly one decoration combined-mesh baker on its decoration root.");
+                }
+
+                found = view.DecorationRoot.gameObject.AddComponent<CombinedMeshBaker>();
+                EditorUtility.SetDirty(view.DecorationRoot.gameObject);
+                EditorSceneManager.MarkSceneDirty(scene);
             }
 
             return found;
+        }
+
+        internal static bool NormalizeEmbeddedCombinedMeshBakerScriptReference(string assetPath)
+        {
+            const string identity =
+                "m_EditorClassIdentifier: Game.Runtime::Game.Runtime.CombinedMeshBaker";
+            const string externalScript =
+                "  m_Script: {fileID: 11500000, guid: ff37f00c6585b49f2b142f7c43215901, type: 3}";
+            string physical = Path.GetFullPath(Path.Combine(Application.dataPath, "..", assetPath));
+            string text = File.ReadAllText(physical, Utf8WithoutBom);
+            int identityOffset = text.IndexOf(identity, StringComparison.Ordinal);
+            if (identityOffset < 0)
+                throw new InvalidOperationException("Saved candidate CombinedMeshBaker identity is missing.");
+            int blockStart = text.LastIndexOf("--- !u!114 &", identityOffset, StringComparison.Ordinal);
+            int blockEnd = text.IndexOf("--- !u!", identityOffset, StringComparison.Ordinal);
+            int scriptStart = text.IndexOf("  m_Script: ", blockStart, StringComparison.Ordinal);
+            int scriptEnd = text.IndexOf('\n', scriptStart);
+            if (blockStart < 0 || blockEnd < 0 || scriptStart < blockStart || scriptStart >= blockEnd)
+                throw new InvalidOperationException("Saved candidate CombinedMeshBaker block is invalid.");
+
+            string scriptLine = text.Substring(scriptStart, scriptEnd - scriptStart).TrimEnd('\r');
+            if (scriptLine == externalScript)
+            {
+                text = text.Replace(
+                    identity,
+                    "m_EditorClassIdentifier: Assembly-CSharp::CombinedMeshBaker");
+                AssetDatabase.ReleaseCachedFileHandles();
+                File.WriteAllText(physical, text, Utf8WithoutBom);
+                return true;
+            }
+
+            const string embeddedPrefix = "  m_Script: {fileID: ";
+            if (!scriptLine.StartsWith(embeddedPrefix, StringComparison.Ordinal) ||
+                !scriptLine.EndsWith("}", StringComparison.Ordinal))
+                throw new InvalidOperationException("Candidate CombinedMeshBaker script row is unrecognized.");
+            string scriptFileId = scriptLine.Substring(
+                embeddedPrefix.Length,
+                scriptLine.Length - embeddedPrefix.Length - 1);
+            string monoScriptHeader = $"--- !u!115 &{scriptFileId}";
+            text = text.Remove(scriptStart, scriptEnd - scriptStart)
+                .Insert(scriptStart, externalScript);
+            int monoScriptStart = text.IndexOf(monoScriptHeader, StringComparison.Ordinal);
+            int monoScriptEnd = monoScriptStart < 0
+                ? -1
+                : text.IndexOf("--- !u!", monoScriptStart + monoScriptHeader.Length, StringComparison.Ordinal);
+            if (monoScriptStart < 0 || monoScriptEnd < 0)
+                throw new InvalidOperationException("Candidate embedded MonoScript block is invalid.");
+            text = text.Remove(monoScriptStart, monoScriptEnd - monoScriptStart);
+            text = text.Replace(
+                identity,
+                "m_EditorClassIdentifier: Assembly-CSharp::CombinedMeshBaker");
+            AssetDatabase.ReleaseCachedFileHandles();
+            File.WriteAllText(physical, text, Utf8WithoutBom);
+            return true;
         }
 
         private static void CloseSceneKeepingEditorValid(Scene scene)

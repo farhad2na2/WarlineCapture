@@ -234,6 +234,17 @@ public sealed class MapVehiclePlacementStartupCompletionTests
                 em,
                 requireReadinessContract: true),
             "Headless packed startup must not consume its one-shot placement cursor before the readiness contract streams in.");
+        Entity placeholderReadinessContract = em.CreateEntity(typeof(OperationMapEntityPresentationReadinessContract));
+        em.SetComponentData(placeholderReadinessContract, new OperationMapEntityPresentationReadinessContract
+        {
+            OperationMapId = new FixedString128Bytes("opmap.compatibility.bootstrap"),
+            ExpectedGameplayVehicleCount = 0
+        });
+        Assert.IsFalse(
+            MapVehiclePlacementSpawnPrefabSystemHelper.IsAuthoredVehiclePresentationReady(
+                em,
+                requireReadinessContract: true),
+            "EntityScene startup must not treat an earlier zero-vehicle bootstrap contract as the configured map's packed vehicle readiness contract.");
         Entity readinessContract = em.CreateEntity(typeof(OperationMapEntityPresentationReadinessContract));
         em.SetComponentData(readinessContract, new OperationMapEntityPresentationReadinessContract
         {

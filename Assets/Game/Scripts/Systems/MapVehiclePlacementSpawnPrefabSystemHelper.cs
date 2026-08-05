@@ -157,7 +157,7 @@ namespace Game.Runtime
             for (int i = 0; i < contracts.Length; i++)
                 expectedVehicleCount = math.max(expectedVehicleCount, contracts[i].ExpectedGameplayVehicleCount);
             if (expectedVehicleCount <= 0)
-                return true;
+                return !requireReadinessContract;
 
             using EntityQuery vehicleQuery = em.CreateEntityQuery(
                 ComponentType.ReadOnly<OperationMapAuthoredVehiclePresentation>());

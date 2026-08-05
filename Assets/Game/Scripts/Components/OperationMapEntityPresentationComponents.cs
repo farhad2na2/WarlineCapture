@@ -69,6 +69,8 @@ namespace Game.Components
 
     public struct OperationMapAuthoredVehiclePresentation : IComponentData
     {
+        public int PlacementIndex;
+        public byte FactionId;
     }
 
     public struct OperationMapBuildingPresentation : IComponentData

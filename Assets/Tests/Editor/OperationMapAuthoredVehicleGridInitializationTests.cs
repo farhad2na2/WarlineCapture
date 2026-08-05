@@ -1,4 +1,5 @@
 using Game.Components;
+using Game.Editor;
 using Game.Runtime;
 using NUnit.Framework;
 using Unity.Entities;
@@ -7,6 +8,52 @@ using Unity.Transforms;
 
 public sealed class OperationMapAuthoredVehicleGridInitializationTests
 {
+    [Test]
+    public void CandidateBakeOwnershipValidation_RequiresExactPlacementFactionParity()
+    {
+        using var world = new World(nameof(
+            CandidateBakeOwnershipValidation_RequiresExactPlacementFactionParity));
+        EntityManager entityManager = world.EntityManager;
+        var expectedFactions = new byte[22];
+        for (int placementIndex = 0; placementIndex < expectedFactions.Length; placementIndex++)
+        {
+            expectedFactions[placementIndex] = placementIndex == 9
+                ? FactionIdentity.NeutralFactionId
+                : FactionIdentity.PlayerFactionId;
+            Entity vehicle = entityManager.CreateEntity(
+                typeof(OperationMapAuthoredVehiclePresentation),
+                typeof(Faction));
+            entityManager.SetComponentData(vehicle, new OperationMapAuthoredVehiclePresentation
+            {
+                PlacementIndex = placementIndex,
+                FactionId = expectedFactions[placementIndex]
+            });
+            entityManager.SetComponentData(vehicle, new Faction { Id = expectedFactions[placementIndex] });
+        }
+
+        Assert.That(
+            OperationMapEntityPresentationCandidateBakeValidator.TryValidateVehicleOwnership(
+                entityManager,
+                expectedFactions,
+                out string rejectionReason),
+            Is.True,
+            rejectionReason);
+
+        using Unity.Collections.NativeArray<Entity> vehicles = entityManager.CreateEntityQuery(
+                typeof(OperationMapAuthoredVehiclePresentation),
+                typeof(Faction))
+            .ToEntityArray(Unity.Collections.Allocator.Temp);
+        Entity firstVehicle = vehicles[0];
+        entityManager.SetComponentData(firstVehicle, new Faction { Id = FactionIdentity.NeutralFactionId });
+        Assert.That(
+            OperationMapEntityPresentationCandidateBakeValidator.TryValidateVehicleOwnership(
+                entityManager,
+                expectedFactions,
+                out rejectionReason),
+            Is.False);
+        Assert.That(rejectionReason, Does.StartWith("vehicle-ownership-faction:"));
+    }
+
     [Test]
     public void AuthoredVehicleDerivesGridCellWithoutChangingAcceptedTransform()
     {

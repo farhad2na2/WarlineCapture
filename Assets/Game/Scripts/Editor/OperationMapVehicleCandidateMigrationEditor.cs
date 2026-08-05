@@ -143,6 +143,10 @@ namespace Game.Editor
                         i);
                     if (!identity.TryValidate(out string identityError))
                         throw new InvalidOperationException(identityError);
+                    OperationMapAuthoredVehicleOwnershipAuthoring ownership =
+                        candidateModel.GetComponent<OperationMapAuthoredVehicleOwnershipAuthoring>() ??
+                        candidateModel.gameObject.AddComponent<OperationMapAuthoredVehicleOwnershipAuthoring>();
+                    ownership.ConfigureForEditor(placement.FactionId);
                     RemoveProhibitedCandidateComponents(candidateOwner);
                     RequireAcceptedVisualParity(sourceOwner, candidateModel, i);
                     migrated++;
@@ -193,6 +197,121 @@ namespace Game.Editor
                         $"[OperationMapVehicleCandidateMigrationEditor] scene-setup-restore-skipped: {exception.Message}");
                 }
             }
+        }
+
+        [MenuItem("Game/Operation Maps/EntityScene Migration/Propagate Vehicle Ownership To Dense Candidate")]
+        public static void PropagateVehicleOwnershipToDenseCandidate()
+        {
+            string projectRoot = Path.GetDirectoryName(Application.dataPath);
+            string densePath = DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath;
+            string densePhysicalPath = ResolveProjectPath(projectRoot, densePath);
+            string denseMetaPhysicalPath = densePhysicalPath + ".meta";
+            if (!File.Exists(densePhysicalPath) || !File.Exists(denseMetaPhysicalPath))
+                throw new FileNotFoundException("Dense-city candidate EntityScene is missing.", densePhysicalPath);
+
+            byte[] denseBackup = File.ReadAllBytes(densePhysicalPath);
+            byte[] denseMetaBackup = File.ReadAllBytes(denseMetaPhysicalPath);
+            string acceptedSceneHash = ComputeSha256(ResolveProjectPath(
+                projectRoot,
+                OperationMapEntityPresentationCandidateSceneBuilder.AcceptedOperationMapScenePath));
+            string acceptedSubSceneHash = ComputeSha256(ResolveProjectPath(
+                projectRoot,
+                OperationMapEntityPresentationMigrationEditor.AcceptedSubScenePath));
+            string sourceCandidateHash = ComputeSha256(ResolveProjectPath(
+                projectRoot,
+                OperationMapEntityPresentationMigrationEditor.CandidateSubScenePath));
+            SceneSetup[] previousSetup = EditorSceneManager.GetSceneManagerSetup();
+            try
+            {
+                ConversionReportAndPlacements contract = LoadPlacementContract(projectRoot);
+                Scene denseScene = EditorSceneManager.OpenScene(densePath, OpenSceneMode.Additive);
+                OperationMapEntityPresentationIdentityAuthoring[] vehicles = denseScene.GetRootGameObjects()
+                    .SelectMany(root => root.GetComponentsInChildren<OperationMapEntityPresentationIdentityAuthoring>(true))
+                    .Where(identity => identity.Role == OperationMapEntityPresentationRole.GameplayVehicles)
+                    .OrderBy(identity => identity.PlacementIndex)
+                    .ToArray();
+                if (vehicles.Length != ExpectedVehicleCount)
+                    throw new InvalidOperationException($"Dense candidate vehicle identity count is {vehicles.Length}.");
+
+                for (int i = 0; i < vehicles.Length; i++)
+                {
+                    OperationMapEntityPresentationIdentityAuthoring identity = vehicles[i];
+                    if (identity.PlacementIndex != i ||
+                        !string.Equals(
+                            identity.SourceGlobalObjectId,
+                            contract.Report.placements[i].authoredSourceGlobalObjectId,
+                            StringComparison.Ordinal))
+                    {
+                        throw new InvalidOperationException($"Dense candidate vehicle identity drifted at placement {i}.");
+                    }
+
+                    OperationMapAuthoredVehicleOwnershipAuthoring ownership =
+                        identity.GetComponent<OperationMapAuthoredVehicleOwnershipAuthoring>() ??
+                        identity.gameObject.AddComponent<OperationMapAuthoredVehicleOwnershipAuthoring>();
+                    ownership.ConfigureForEditor(contract.Placements.Placements[i].FactionId);
+                    EditorUtility.SetDirty(ownership);
+                    EditorUtility.SetDirty(identity);
+                }
+
+                if (!EditorSceneManager.SaveScene(denseScene, densePath, false))
+                    throw new InvalidOperationException("Dense candidate vehicle ownership save failed.");
+
+                RequireHashUnchanged(acceptedSceneHash, ResolveProjectPath(
+                    projectRoot,
+                    OperationMapEntityPresentationCandidateSceneBuilder.AcceptedOperationMapScenePath));
+                RequireHashUnchanged(acceptedSubSceneHash, ResolveProjectPath(
+                    projectRoot,
+                    OperationMapEntityPresentationMigrationEditor.AcceptedSubScenePath));
+                RequireHashUnchanged(sourceCandidateHash, ResolveProjectPath(
+                    projectRoot,
+                    OperationMapEntityPresentationMigrationEditor.CandidateSubScenePath));
+                Debug.Log(
+                    $"[OperationMapVehicleCandidateMigrationEditor] status=DenseOwnershipPropagated " +
+                    $"vehicles={vehicles.Length} productionCutover=0");
+            }
+            catch
+            {
+                File.WriteAllBytes(densePhysicalPath, denseBackup);
+                File.WriteAllBytes(denseMetaPhysicalPath, denseMetaBackup);
+                AssetDatabase.ImportAsset(densePath, ImportAssetOptions.ForceSynchronousImport);
+                throw;
+            }
+            finally
+            {
+                try
+                {
+                    EditorSceneManager.RestoreSceneManagerSetup(previousSetup);
+                }
+                catch (Exception exception)
+                {
+                    Debug.LogWarning(
+                        $"[OperationMapVehicleCandidateMigrationEditor] scene-setup-restore-skipped: {exception.Message}");
+                }
+            }
+        }
+
+        private readonly struct ConversionReportAndPlacements
+        {
+            internal ConversionReportAndPlacements(
+                OperationMapVehicleEcsConversionInventoryProbe.ConversionReport report,
+                MapVehiclePlacementConfig placements)
+            {
+                Report = report;
+                Placements = placements;
+            }
+
+            internal OperationMapVehicleEcsConversionInventoryProbe.ConversionReport Report { get; }
+            internal MapVehiclePlacementConfig Placements { get; }
+        }
+
+        private static ConversionReportAndPlacements LoadPlacementContract(string projectRoot)
+        {
+            OperationMapVehicleEcsConversionInventoryProbe.ConversionReport report = LoadInventory(projectRoot);
+            MapVehiclePlacementConfig placements = AssetDatabase.LoadAssetAtPath<MapVehiclePlacementConfig>(
+                report.vehiclePlacementConfigPath);
+            if (placements == null || placements.Placements.Count != ExpectedVehicleCount)
+                throw new InvalidOperationException("Authoritative vehicle placement contract is unavailable.");
+            return new ConversionReportAndPlacements(report, placements);
         }
 
         private static Transform ResolveModelRoot(UnitGridAuthoring authoring)

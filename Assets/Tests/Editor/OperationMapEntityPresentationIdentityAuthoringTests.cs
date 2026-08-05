@@ -24,6 +24,7 @@ public sealed class OperationMapEntityPresentationIdentityAuthoringTests
             suite.TryValidate_RejectsMalformedSourceIdentity,
             suite.TryValidate_RejectsRolePlacementMismatch,
             suite.TryValidate_RejectsUnknownRole,
+            suite.VehicleOwnershipAuthoring_PreservesVehicleFaction,
             suite.Contract_IsPassiveAndBakesAnUnmanagedIdentity,
             suite.BackfillContract_RequiresEveryAcceptedOwner,
             suite.MatrixComparison_UsesExplicitTolerance,
@@ -107,6 +108,17 @@ public sealed class OperationMapEntityPresentationIdentityAuthoringTests
 
         Assert.That(marker.TryValidate(out string error), Is.False);
         Assert.That(error, Does.Contain("Unknown operation-map entity presentation role"));
+    }
+
+    [Test]
+    public void VehicleOwnershipAuthoring_PreservesVehicleFaction()
+    {
+        root = new GameObject(nameof(OperationMapEntityPresentationIdentityAuthoringTests));
+        OperationMapAuthoredVehicleOwnershipAuthoring ownership =
+            root.AddComponent<OperationMapAuthoredVehicleOwnershipAuthoring>();
+        ownership.ConfigureForEditor(FactionIdentity.PlayerFactionId);
+
+        Assert.That(ownership.FactionId, Is.EqualTo(FactionIdentity.PlayerFactionId));
     }
 
     [Test]

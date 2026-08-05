@@ -10,6 +10,7 @@ namespace Game.Editor
     using System.Text;
     using Game.Authoring;
     using Game.Components;
+    using Game.Configs;
     using Unity.Collections;
     using Unity.Entities;
     using Unity.Mathematics;
@@ -193,6 +194,42 @@ namespace Game.Editor
                     $"transformParityRows={parity.candidateIdentityCount} " +
                     $"runtimeParityManifestBytes={runtimeParityManifest.manifestBytes} " +
                     $"productionCutover=0 report={report.reportPath}");
+            }
+            finally
+            {
+                if (bakeWorld != null)
+                    bakeWorld.Dispose();
+                DisposeBlobAssetStore(blobStore);
+                RestoreSceneSetupOrCreateEmpty(previousSetup);
+            }
+        }
+
+        public static void BakeAndValidateDenseCityCandidateVehicleOwnership()
+        {
+            string candidatePath = DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath;
+            SceneSetup[] previousSetup = EditorSceneManager.GetSceneManagerSetup();
+            World bakeWorld = null;
+            object blobStore = null;
+            try
+            {
+                Scene candidateScene = EditorSceneManager.OpenScene(candidatePath, OpenSceneMode.Additive);
+                bakeWorld = new World("DenseCityCandidateVehicleOwnershipBake");
+                blobStore = CreateBlobAssetStore();
+                if (!TryBakeScene(bakeWorld, candidateScene, candidatePath, blobStore, out string bakeError))
+                    throw new InvalidOperationException($"Dense candidate vehicle ownership bake failed: {bakeError}");
+
+                if (!TryValidateVehicleOwnership(
+                        bakeWorld.EntityManager,
+                        LoadExpectedVehicleFactions(),
+                        out string rejectionReason))
+                {
+                    throw new InvalidOperationException(
+                        $"Dense candidate vehicle ownership rejected: {rejectionReason}");
+                }
+
+                Debug.Log(
+                    "[DenseCityCandidateVehicleOwnershipBake] result=Passed vehicles=22 " +
+                    "placementFactionParity=22/22");
             }
             finally
             {
@@ -407,6 +444,15 @@ namespace Game.Editor
             CaptureRenderAssetCounts(entityManager, report);
             CaptureBuildingVisualOwnership(entityManager, report);
 
+            if (!TryValidateVehicleOwnership(
+                    entityManager,
+                    LoadExpectedVehicleFactions(),
+                    out string vehicleOwnershipRejection))
+            {
+                report.rejectionReason = vehicleOwnershipRejection;
+                return report;
+            }
+
             if (report.gameplayBuildingCount != ExpectedGameplayBuildings)
             {
                 report.rejectionReason = $"gameplay-building-count:{report.gameplayBuildingCount}";
@@ -561,7 +607,14 @@ namespace Game.Editor
             CaptureDenseRenderAssetCounts(entityManager, report);
             CaptureDenseBuildingVisualOwnership(entityManager, report);
 
-            if (report.gameplayBuildingCount != ExpectedDenseGameplayBuildings)
+            bool vehicleOwnershipValid = TryValidateVehicleOwnership(
+                entityManager,
+                LoadExpectedVehicleFactions(),
+                out string vehicleOwnershipRejection);
+
+            if (!vehicleOwnershipValid)
+                report.rejectionReason = vehicleOwnershipRejection;
+            else if (report.gameplayBuildingCount != ExpectedDenseGameplayBuildings)
                 report.rejectionReason = $"gameplay-building-count:{report.gameplayBuildingCount}";
             else if (report.gameplayVehicleCount != ExpectedGameplayVehicles)
                 report.rejectionReason = $"gameplay-vehicle-count:{report.gameplayVehicleCount}";
@@ -631,6 +684,76 @@ namespace Game.Editor
                 "DenseCandidateBakeValidationPassed",
                 StringComparison.Ordinal);
             return report;
+        }
+
+        internal static bool TryValidateVehicleOwnership(
+            EntityManager entityManager,
+            IReadOnlyList<byte> expectedFactions,
+            out string rejectionReason)
+        {
+            if (expectedFactions == null || expectedFactions.Count != ExpectedGameplayVehicles)
+            {
+                rejectionReason = $"vehicle-faction-contract-count:{expectedFactions?.Count ?? -1}";
+                return false;
+            }
+
+            using EntityQuery query = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<OperationMapAuthoredVehiclePresentation>(),
+                ComponentType.ReadOnly<Faction>());
+            using NativeArray<OperationMapAuthoredVehiclePresentation> presentations =
+                query.ToComponentDataArray<OperationMapAuthoredVehiclePresentation>(Allocator.Temp);
+            using NativeArray<Faction> factions =
+                query.ToComponentDataArray<Faction>(Allocator.Temp);
+            if (presentations.Length != ExpectedGameplayVehicles || factions.Length != presentations.Length)
+            {
+                rejectionReason = $"vehicle-ownership-count:{presentations.Length}:{factions.Length}";
+                return false;
+            }
+
+            var seen = new bool[ExpectedGameplayVehicles];
+            for (int i = 0; i < presentations.Length; i++)
+            {
+                OperationMapAuthoredVehiclePresentation presentation = presentations[i];
+                int placementIndex = presentation.PlacementIndex;
+                if (placementIndex < 0 || placementIndex >= ExpectedGameplayVehicles || seen[placementIndex])
+                {
+                    rejectionReason = $"vehicle-ownership-placement:{placementIndex}";
+                    return false;
+                }
+
+                byte expectedFaction = expectedFactions[placementIndex];
+                if (presentation.FactionId != expectedFaction || factions[i].Id != expectedFaction)
+                {
+                    rejectionReason =
+                        $"vehicle-ownership-faction:{placementIndex}:{presentation.FactionId}:" +
+                        $"{factions[i].Id}:{expectedFaction}";
+                    return false;
+                }
+
+                seen[placementIndex] = true;
+            }
+
+            rejectionReason = null;
+            return true;
+        }
+
+        private static byte[] LoadExpectedVehicleFactions()
+        {
+            string projectRoot = Path.GetDirectoryName(Application.dataPath);
+            OperationMapVehicleEcsConversionInventoryProbe.ConversionReport inventory =
+                OperationMapVehicleCandidateMigrationEditor.LoadInventory(projectRoot);
+            MapVehiclePlacementConfig placements =
+                AssetDatabase.LoadAssetAtPath<MapVehiclePlacementConfig>(inventory.vehiclePlacementConfigPath);
+            if (placements == null || placements.Placements.Count != ExpectedGameplayVehicles)
+            {
+                throw new InvalidOperationException(
+                    "Authoritative vehicle placement factions are unavailable for baked ownership validation.");
+            }
+
+            var factions = new byte[ExpectedGameplayVehicles];
+            for (int i = 0; i < factions.Length; i++)
+                factions[i] = placements.Placements[i].FactionId;
+            return factions;
         }
 
         private static void CaptureDenseEntityLayoutCounts(

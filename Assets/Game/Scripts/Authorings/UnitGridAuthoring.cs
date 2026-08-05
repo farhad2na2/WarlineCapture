@@ -404,7 +404,22 @@ namespace Game.Authoring
                     });
                 }
 
-                AddComponent(entity, new Faction { Id = FactionIdentity.NeutralFactionId });
+                Transform model = ResolveModelRoot(authoring);
+                OperationMapEntityPresentationIdentityAuthoring operationMapIdentity =
+                    model != null
+                        ? model.GetComponent<OperationMapEntityPresentationIdentityAuthoring>()
+                        : null;
+                OperationMapAuthoredVehicleOwnershipAuthoring operationMapOwnership =
+                    model != null
+                        ? model.GetComponent<OperationMapAuthoredVehicleOwnershipAuthoring>()
+                        : null;
+                bool operationMapAuthoredVehicle = operationMapIdentity != null &&
+                    operationMapIdentity.Role == OperationMapEntityPresentationRole.GameplayVehicles &&
+                    operationMapOwnership != null;
+                byte bakedFactionId = operationMapAuthoredVehicle
+                    ? operationMapOwnership.FactionId
+                    : FactionIdentity.NeutralFactionId;
+                AddComponent(entity, new Faction { Id = bakedFactionId });
                 AddComponent(entity, new UnitCombat
                 {
                     AggroRangeCells = authoring.ConfiguredAggroRangeCells,
@@ -505,15 +520,18 @@ namespace Game.Authoring
                     }
                 }
 
-                Transform model = ResolveModelRoot(authoring);
                 Transform destroyed = ResolveDestroyedRoot(authoring);
                 if (model != null)
                 {
                     Entity modelEntity = GetEntity(model.gameObject, TransformUsageFlags.Renderable);
-                    bool operationMapAuthoredPresentation =
-                        model.GetComponent<OperationMapEntityPresentationIdentityAuthoring>() != null;
-                    if (operationMapAuthoredPresentation)
-                        AddComponent<OperationMapAuthoredVehiclePresentation>(entity);
+                    if (operationMapAuthoredVehicle)
+                    {
+                        AddComponent(entity, new OperationMapAuthoredVehiclePresentation
+                        {
+                            PlacementIndex = operationMapIdentity.PlacementIndex,
+                            FactionId = bakedFactionId
+                        });
+                    }
                     AddComponent(entity, new UnitModelLocalTransform
                     {
                         Position = model.localPosition,
@@ -525,7 +543,7 @@ namespace Game.Authoring
                         Root = modelEntity
                     });
 
-                    if (!operationMapAuthoredPresentation && authoring.MidLodPrefab != null)
+                    if (!operationMapAuthoredVehicle && authoring.MidLodPrefab != null)
                     {
                         Entity midLodPrefab = GetEntity(authoring.MidLodPrefab, TransformUsageFlags.Renderable);
                         AddComponent(entity, new UnitMidLodPrefabReference

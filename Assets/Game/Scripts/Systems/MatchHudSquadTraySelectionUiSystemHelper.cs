@@ -91,6 +91,8 @@ namespace Game.Runtime
                 {
                     view.FlashDisabled(slot);
                     context.LogSelectionDiagnostic?.Invoke($"result=SquadTraySelectSkipped slot={slot} reason=NoCandidates");
+                    if (slot is MatchHudSquadTraySlot.CombatVehicles or MatchHudSquadTraySlot.Transport)
+                        LogPackedVehicleDiagnostics(context, em, slot);
                     return;
                 }
             }
@@ -317,6 +319,58 @@ namespace Game.Runtime
             }
 
             return em.GetName(entity);
+        }
+
+        private static void LogPackedVehicleDiagnostics(
+            Context context,
+            EntityManager em,
+            MatchHudSquadTraySlot slot)
+        {
+            if (context.LogSelectionDiagnostic == null)
+                return;
+
+            using EntityQuery query = em.CreateEntityQuery(
+                ComponentType.ReadOnly<OperationMapAuthoredVehiclePresentation>());
+            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            context.LogSelectionDiagnostic(
+                $"result=PackedVehicleDiagnostic slot={slot} authored={entities.Length}");
+
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity entity = entities[i];
+                bool hasFaction = em.HasComponent<Faction>(entity);
+                byte faction = hasFaction ? em.GetComponentData<Faction>(entity).Id : byte.MaxValue;
+                bool hasDetail = em.HasComponent<UnitDetailedVisualReference>(entity);
+                Entity detailRoot = hasDetail
+                    ? em.GetComponentData<UnitDetailedVisualReference>(entity).Root
+                    : Entity.Null;
+                bool detailExists = detailRoot != Entity.Null && em.Exists(detailRoot);
+                bool hasIdentity = detailExists &&
+                                   em.HasComponent<OperationMapEntityPresentationIdentity>(detailRoot);
+                OperationMapEntityPresentationIdentity identity = hasIdentity
+                    ? em.GetComponentData<OperationMapEntityPresentationIdentity>(detailRoot)
+                    : default;
+                UnitKind kind = ResolveKind(em, entity);
+
+                context.LogSelectionDiagnostic(
+                    $"result=PackedVehicleEntity slot={slot} index={i} entity={entity} " +
+                    $"prefab={(em.HasComponent<Prefab>(entity) ? 1 : 0)} " +
+                    $"disabled={(em.HasComponent<Disabled>(entity) ? 1 : 0)} " +
+                    $"faction={(hasFaction ? faction : -1)} " +
+                    $"player={(hasFaction && FactionIdentity.IsPlayerControlled(faction) ? 1 : 0)} " +
+                    $"source={ResolveSource(em, entity)} " +
+                    $"grid={(em.HasComponent<UnitGrid>(entity) ? 1 : 0)} " +
+                    $"move={(em.HasComponent<UnitMove>(entity) ? 1 : 0)} " +
+                    $"world={(em.HasComponent<LocalToWorld>(entity) ? 1 : 0)} " +
+                    $"movementBehavior={(em.HasComponent<UnitMovementBehavior>(entity) ? 1 : 0)} " +
+                    $"transportCapacity={(em.HasComponent<UnitTransportCapacity>(entity) ? 1 : 0)} " +
+                    $"air={(em.HasComponent<UnitAirMovement>(entity) ? 1 : 0)} " +
+                    $"combat={(kind.IsCombatVehicle ? 1 : 0)} transport={(kind.IsTransport ? 1 : 0)} " +
+                    $"detail={(hasDetail ? 1 : 0)} detailExists={(detailExists ? 1 : 0)} " +
+                    $"identity={(hasIdentity ? 1 : 0)} identityRole={(hasIdentity ? identity.Role : -1)} " +
+                    $"placement={(hasIdentity ? identity.PlacementIndex : -1)} " +
+                    $"operationMap={(hasIdentity ? identity.OperationMapId.ToString() : "<missing>")}");
+            }
         }
 
         private static bool ContainsAny(string value, params string[] needles)

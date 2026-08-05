@@ -235,6 +235,67 @@ namespace Game.Runtime
             return reconciled;
         }
 
+        internal static bool IsAuthoredVehicleOwnershipReady(
+            EntityManager em,
+            MapVehiclePlacementConfig config,
+            bool requireReadinessContract)
+        {
+            if (!requireReadinessContract)
+                return true;
+            if (config == null || config.Placements == null || config.Placements.Count == 0)
+                return true;
+            if (!IsAuthoredVehiclePresentationReady(em, requireReadinessContract: true))
+                return false;
+
+            using EntityQuery query = em.CreateEntityQuery(
+                ComponentType.ReadOnly<OperationMapAuthoredVehiclePresentation>(),
+                ComponentType.ReadOnly<UnitDetailedVisualReference>(),
+                ComponentType.ReadOnly<Faction>());
+            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            int ready = 0;
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity candidate = entities[i];
+                if (em.HasComponent<Prefab>(candidate) || em.HasComponent<Disabled>(candidate))
+                    continue;
+
+                Entity visualRoot = em.GetComponentData<UnitDetailedVisualReference>(candidate).Root;
+                if (visualRoot == Entity.Null ||
+                    !em.Exists(visualRoot) ||
+                    !em.HasComponent<OperationMapEntityPresentationIdentity>(visualRoot))
+                {
+                    return false;
+                }
+
+                int placementIndex =
+                    em.GetComponentData<OperationMapEntityPresentationIdentity>(visualRoot).PlacementIndex;
+                if (placementIndex < 0 || placementIndex >= config.Placements.Count)
+                    return false;
+
+                MapVehiclePlacementConfigEntry placement = config.Placements[placementIndex];
+                FixedString64Bytes sourceKey = GetVehiclePrefabSourceKey(placement);
+                if (placement == null ||
+                    sourceKey.Length == 0 ||
+                    em.GetComponentData<Faction>(candidate).Id != placement.FactionId ||
+                    !em.HasComponent<UnitSourcePrefabKey>(candidate) ||
+                    !em.GetComponentData<UnitSourcePrefabKey>(candidate).Value.Equals(sourceKey))
+                {
+                    return false;
+                }
+
+                ready++;
+            }
+
+            using EntityQuery contractQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<OperationMapEntityPresentationReadinessContract>());
+            using NativeArray<OperationMapEntityPresentationReadinessContract> contracts =
+                contractQuery.ToComponentDataArray<OperationMapEntityPresentationReadinessContract>(Allocator.Temp);
+            int expected = 0;
+            for (int i = 0; i < contracts.Length; i++)
+                expected = math.max(expected, contracts[i].ExpectedGameplayVehicleCount);
+            return expected > 0 && ready >= expected;
+        }
+
         private void SpawnPlacements(
             Context context,
             EntityManager em,

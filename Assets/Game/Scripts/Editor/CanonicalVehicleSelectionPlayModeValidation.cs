@@ -38,6 +38,7 @@ namespace Game.Editor
         private static int _stateFrame;
         private static int _stableVehicleCount;
         private static int _stableVehicleFrames;
+        private static bool _packedVehicleDiagnosticEmitted;
         private static int _captureFrame;
         private static int _worldSelectedCount;
         private static int _rosterSelectedCount;
@@ -74,6 +75,7 @@ namespace Game.Editor
                 _stateFrame = 0;
                 _stableVehicleCount = -1;
                 _stableVehicleFrames = 0;
+                _packedVehicleDiagnosticEmitted = false;
                 _captureFrame = -1;
                 _worldSelectedCount = -1;
                 _rosterSelectedCount = -1;
@@ -143,6 +145,14 @@ namespace Game.Editor
                 if (_target == Entity.Null)
                 {
                     int vehicleCount = CountSelectablePlayerCombatVehicles(em);
+                    if (vehicleCount <= 0 &&
+                        !_packedVehicleDiagnosticEmitted &&
+                        _frame - _stateFrame >= 300)
+                    {
+                        _packedVehicleDiagnosticEmitted = true;
+                        Complete(false, BuildPackedVehicleDiagnostic(em));
+                        return;
+                    }
                     if (vehicleCount <= 0)
                         return;
 
@@ -340,6 +350,65 @@ namespace Game.Editor
             }
 
             return count;
+        }
+
+        private static string BuildPackedVehicleDiagnostic(EntityManager em)
+        {
+            using EntityQuery query = em.CreateEntityQuery(
+                ComponentType.ReadOnly<OperationMapAuthoredVehiclePresentation>());
+            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            var message = new System.Text.StringBuilder(2048);
+            message.Append("no selectable player combat vehicles; authored=")
+                .Append(entities.Length);
+
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity entity = entities[i];
+                bool hasDetail = em.HasComponent<UnitDetailedVisualReference>(entity);
+                Entity detailRoot = hasDetail
+                    ? em.GetComponentData<UnitDetailedVisualReference>(entity).Root
+                    : Entity.Null;
+                bool detailExists = detailRoot != Entity.Null && em.Exists(detailRoot);
+                bool hasIdentity = detailExists &&
+                                   em.HasComponent<OperationMapEntityPresentationIdentity>(detailRoot);
+                OperationMapEntityPresentationIdentity identity = hasIdentity
+                    ? em.GetComponentData<OperationMapEntityPresentationIdentity>(detailRoot)
+                    : default;
+                string source = em.HasComponent<UnitSourcePrefabKey>(entity)
+                    ? em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString()
+                    : "<missing>";
+                string faction = em.HasComponent<Faction>(entity)
+                    ? em.GetComponentData<Faction>(entity).Id.ToString()
+                    : "<missing>";
+
+                message.Append("\n  [")
+                    .Append(i)
+                    .Append("] entity=").Append(entity)
+                    .Append(" prefab=").Append(em.HasComponent<Prefab>(entity) ? 1 : 0)
+                    .Append(" disabled=").Append(em.HasComponent<Disabled>(entity) ? 1 : 0)
+                    .Append(" faction=").Append(faction)
+                    .Append(" player=").Append(
+                        em.HasComponent<Faction>(entity) &&
+                        FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id)
+                            ? 1
+                            : 0)
+                    .Append(" source=").Append(source)
+                    .Append(" grid=").Append(em.HasComponent<UnitGrid>(entity) ? 1 : 0)
+                    .Append(" move=").Append(em.HasComponent<UnitMove>(entity) ? 1 : 0)
+                    .Append(" footprint=").Append(em.HasComponent<UnitFootprint>(entity) ? 1 : 0)
+                    .Append(" world=").Append(em.HasComponent<LocalToWorld>(entity) ? 1 : 0)
+                    .Append(" movementBehavior=").Append(em.HasComponent<UnitMovementBehavior>(entity) ? 1 : 0)
+                    .Append(" transportCapacity=").Append(em.HasComponent<UnitTransportCapacity>(entity) ? 1 : 0)
+                    .Append(" air=").Append(em.HasComponent<UnitAirMovement>(entity) ? 1 : 0)
+                    .Append(" detail=").Append(hasDetail ? 1 : 0)
+                    .Append(" detailExists=").Append(detailExists ? 1 : 0)
+                    .Append(" identity=").Append(hasIdentity ? 1 : 0)
+                    .Append(" identityRole=").Append(hasIdentity ? identity.Role : -1)
+                    .Append(" placement=").Append(hasIdentity ? identity.PlacementIndex : -1)
+                    .Append(" operationMap=").Append(hasIdentity ? identity.OperationMapId.ToString() : "<missing>");
+            }
+
+            return message.ToString();
         }
 
         private static EntityQuery CreateVehicleQuery(EntityManager em)

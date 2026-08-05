@@ -697,12 +697,22 @@ namespace Game.Runtime
             }
             bool IsBuildingStartupComplete()
             {
-                return childSystems.MapBuildingPlacementSpawnPrefabSystemHelper.IsCompleteFor(
+                bool placementsComplete =
+                    childSystems.MapBuildingPlacementSpawnPrefabSystemHelper.IsCompleteFor(
                         mapBuildingPlacementConfig,
                         mapBuildingAuthoringRoot) &&
                     childSystems.MapVehiclePlacementSpawnPrefabSystemHelper.IsCompleteFor(
                         mapVehiclePlacementConfig,
                         mapVehicleAuthoringRoot);
+                if (!placementsComplete)
+                    return false;
+                if (!requirePackedVehiclePresentationContract)
+                    return true;
+                return tryGetEntityManager(out EntityManager em) &&
+                       MapVehiclePlacementSpawnPrefabSystemHelper.IsAuthoredVehicleOwnershipReady(
+                           em,
+                           mapVehiclePlacementConfig,
+                           requireReadinessContract: true);
             }
             return _resultSystem.Create(
                 childSystems.BuildingSelectionClickUtilitySystemHelper,

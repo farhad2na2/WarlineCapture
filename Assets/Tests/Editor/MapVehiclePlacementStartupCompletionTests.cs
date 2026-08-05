@@ -20,8 +20,9 @@ public sealed class MapVehiclePlacementStartupCompletionTests
         tests.EntityPresentationTransportUsesStableIdentityAndTransportRosterSelection();
         tests.LatePackedVehicleReconcilesCanonicalOwnershipAndRosterIdentity();
         tests.CompletedBootstrapProgressStillReconcilesLatePackedVehicleOwnership();
+        tests.PackedStartupCompletionWaitsForCanonicalVehicleOwnership();
         tests.AdoptionDoesNotClaimSpawnedOrDistantVehicles();
-        UnityEngine.Debug.Log("[MapVehiclePlacementStartupCompletionValidation] result=Passed tests=7");
+        UnityEngine.Debug.Log("[MapVehiclePlacementStartupCompletionValidation] result=Passed tests=8");
     }
 
     [Test]
@@ -429,6 +430,74 @@ public sealed class MapVehiclePlacementStartupCompletionTests
         {
             entityManager = em;
             return true;
+        }
+    }
+
+    [Test]
+    public void PackedStartupCompletionWaitsForCanonicalVehicleOwnership()
+    {
+        using World world = new("MapVehiclePlacementPackedOwnershipCompletionTests");
+        EntityManager em = world.EntityManager;
+        Entity authored = CreateVehicle(
+            em,
+            new float3(842f, 1f, 378f),
+            FactionIdentity.NeutralFactionId,
+            Entity.Null);
+        Entity visualRoot = em.CreateEntity(typeof(OperationMapEntityPresentationIdentity));
+        em.SetComponentData(visualRoot, new OperationMapEntityPresentationIdentity
+        {
+            OperationMapId = new FixedString128Bytes("opmap.skirmish.desert_base_01"),
+            SourceGlobalObjectId = new FixedString128Bytes("GlobalObjectId_Vehicle_0"),
+            Role = 2,
+            PlacementIndex = 0
+        });
+        em.AddComponent<OperationMapAuthoredVehiclePresentation>(authored);
+        em.AddComponentData(authored, new UnitDetailedVisualReference { Root = visualRoot });
+        em.AddComponentData(authored, new UnitSourcePrefabKey
+        {
+            Value = new FixedString64Bytes("unit_veh_tank_usa")
+        });
+        Entity readiness = em.CreateEntity(typeof(OperationMapEntityPresentationReadinessContract));
+        em.SetComponentData(readiness, new OperationMapEntityPresentationReadinessContract
+        {
+            OperationMapId = new FixedString128Bytes("opmap.skirmish.desert_base_01"),
+            ExpectedGameplayVehicleCount = 1
+        });
+
+        GameObject prefab = new("Unit_Veh_Tank_USA");
+        MapVehiclePlacementConfig config = ScriptableObject.CreateInstance<MapVehiclePlacementConfig>();
+        try
+        {
+            config.EditorSetPlacements(new System.Collections.Generic.List<MapVehiclePlacementConfigEntry>
+            {
+                new(
+                    "Map/Vehicles/Tank",
+                    "Unit_Veh_Tank_USA",
+                    prefab,
+                    FactionIdentity.PlayerFactionId,
+                    new Vector3(842f, 1f, 378f),
+                    new Vector3(842f, 1f, 378f),
+                    Vector3.zero,
+                    Vector3.one)
+            });
+
+            Assert.IsFalse(MapVehiclePlacementSpawnPrefabSystemHelper.IsAuthoredVehicleOwnershipReady(
+                em,
+                config,
+                requireReadinessContract: true));
+
+            Assert.AreEqual(1,
+                MapVehiclePlacementSpawnPrefabSystemHelper.ReconcileAuthoredVehicleOwnership(em, config));
+
+            Assert.IsTrue(MapVehiclePlacementSpawnPrefabSystemHelper.IsAuthoredVehicleOwnershipReady(
+                em,
+                config,
+                requireReadinessContract: true));
+        }
+        finally
+        {
+            Object.DestroyImmediate(config);
+            Object.DestroyImmediate(prefab);
         }
     }
 

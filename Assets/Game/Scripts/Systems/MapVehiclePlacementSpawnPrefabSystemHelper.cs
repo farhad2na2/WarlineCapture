@@ -113,7 +113,7 @@ namespace Game.Runtime
             // contract's authored vehicles are present. Otherwise an early startup tick can
             // permanently consume the placement cursor before the baked vehicles become
             // available for the normal neutral-vehicle adoption path.
-            bool requiresPackedPresentationContract = RequiresPackedPresentationContract(context);
+            bool requiresPackedPresentationContract = RequiresPackedPresentationContract(context, em);
             if (!IsAuthoredVehiclePresentationReady(em, requiresPackedPresentationContract))
                 return;
 
@@ -178,6 +178,34 @@ namespace Game.Runtime
                    context.Config.Placements != null &&
                    context.Config.Placements.Count > 0 &&
                    (context.RequirePackedPresentationContract || context.AuthoringVehiclesRoot == null);
+        }
+
+        internal static bool RequiresPackedPresentationContract(Context context, EntityManager em)
+        {
+            return context.Config != null &&
+                   context.Config.Placements != null &&
+                   context.Config.Placements.Count > 0 &&
+                   (context.RequirePackedPresentationContract ||
+                    context.AuthoringVehiclesRoot == null ||
+                    HasPositivePackedPresentationContract(em));
+        }
+
+        internal static bool HasPositivePackedPresentationContract(EntityManager em)
+        {
+            using EntityQuery contractQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<OperationMapEntityPresentationReadinessContract>());
+            if (contractQuery.IsEmptyIgnoreFilter)
+                return false;
+
+            using NativeArray<OperationMapEntityPresentationReadinessContract> contracts =
+                contractQuery.ToComponentDataArray<OperationMapEntityPresentationReadinessContract>(Allocator.Temp);
+            for (int i = 0; i < contracts.Length; i++)
+            {
+                if (contracts[i].ExpectedGameplayVehicleCount > 0)
+                    return true;
+            }
+
+            return false;
         }
 
         internal static int ReconcileAuthoredVehicleOwnership(

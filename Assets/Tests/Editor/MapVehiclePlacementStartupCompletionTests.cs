@@ -20,9 +20,10 @@ public sealed class MapVehiclePlacementStartupCompletionTests
         tests.EntityPresentationTransportUsesStableIdentityAndTransportRosterSelection();
         tests.LatePackedVehicleReconcilesCanonicalOwnershipAndRosterIdentity();
         tests.CompletedBootstrapProgressStillReconcilesLatePackedVehicleOwnership();
+        tests.LivePackedContractPromotesCompletedCompatibilityStartupOwnership();
         tests.PackedStartupCompletionWaitsForCanonicalVehicleOwnership();
         tests.AdoptionDoesNotClaimSpawnedOrDistantVehicles();
-        UnityEngine.Debug.Log("[MapVehiclePlacementStartupCompletionValidation] result=Passed tests=8");
+        UnityEngine.Debug.Log("[MapVehiclePlacementStartupCompletionValidation] result=Passed tests=9");
     }
 
     [Test]
@@ -423,6 +424,99 @@ public sealed class MapVehiclePlacementStartupCompletionTests
         finally
         {
             Object.DestroyImmediate(config);
+            Object.DestroyImmediate(prefab);
+        }
+
+        bool TryGetEntityManager(out EntityManager entityManager)
+        {
+            entityManager = em;
+            return true;
+        }
+    }
+
+    [Test]
+    public void LivePackedContractPromotesCompletedCompatibilityStartupOwnership()
+    {
+        using World world = new("MapVehiclePlacementLiveContractPromotionTests");
+        EntityManager em = world.EntityManager;
+        Entity authored = CreateVehicle(
+            em,
+            new float3(842f, 1f, 378f),
+            FactionIdentity.NeutralFactionId,
+            Entity.Null);
+        Entity visualRoot = em.CreateEntity(typeof(OperationMapEntityPresentationIdentity));
+        em.SetComponentData(visualRoot, new OperationMapEntityPresentationIdentity
+        {
+            OperationMapId = new FixedString128Bytes("opmap.skirmish.desert_base_01"),
+            SourceGlobalObjectId = new FixedString128Bytes("GlobalObjectId_Vehicle_0"),
+            Role = 2,
+            PlacementIndex = 0
+        });
+        em.AddComponent<OperationMapAuthoredVehiclePresentation>(authored);
+        em.AddComponentData(authored, new UnitDetailedVisualReference { Root = visualRoot });
+        em.AddComponentData(authored, new UnitSourcePrefabKey { Value = new FixedString64Bytes("stale-source") });
+
+        Entity readiness = em.CreateEntity(typeof(OperationMapEntityPresentationReadinessContract));
+        em.SetComponentData(readiness, new OperationMapEntityPresentationReadinessContract
+        {
+            OperationMapId = new FixedString128Bytes("opmap.skirmish.desert_base_01"),
+            ExpectedGameplayVehicleCount = 1
+        });
+        Entity progress = em.CreateEntity(typeof(MapVehiclePlacementProgressState));
+        em.SetComponentData(progress, new MapVehiclePlacementProgressState
+        {
+            NextPlacementIndex = 1,
+            Queued = 1,
+            AuthoringHidden = 1,
+            RandomState = MapVehiclePlacementProgressState.InitialRandomState
+        });
+
+        GameObject prefab = new("Unit_Veh_Tank_USA");
+        GameObject compatibilityRoot = new("CompatibilityVehiclesRoot");
+        MapVehiclePlacementConfig config = ScriptableObject.CreateInstance<MapVehiclePlacementConfig>();
+        try
+        {
+            config.EditorSetPlacements(new System.Collections.Generic.List<MapVehiclePlacementConfigEntry>
+            {
+                new(
+                    "Map/Vehicles/Tank",
+                    "Unit_Veh_Tank_USA",
+                    prefab,
+                    FactionIdentity.PlayerFactionId,
+                    new Vector3(842f, 1f, 378f),
+                    new Vector3(842f, 1f, 378f),
+                    Vector3.zero,
+                    Vector3.one)
+            });
+            var unitPrefabContext = new RuntimeUnitPrefabSystem.Context(
+                spawnPrefabSystem: default,
+                tryGetEntityManager: TryGetEntityManager,
+                ensureEntityQueries: null,
+                createSpawnPrefabContext: null);
+            var context = new MapVehiclePlacementSpawnPrefabSystemHelper.Context(
+                config,
+                compatibilityRoot.transform,
+                unitPrefabSystem: default,
+                unitPrefabContext,
+                tryGetGridData: null,
+                logWarning: null,
+                requirePackedPresentationContract: false);
+            MapVehiclePlacementSpawnPrefabSystemHelper system = new();
+
+            Assert.IsFalse(MapVehiclePlacementSpawnPrefabSystemHelper.RequiresPackedPresentationContract(context));
+            Assert.IsTrue(MapVehiclePlacementSpawnPrefabSystemHelper.RequiresPackedPresentationContract(context, em));
+
+            system.Update(context);
+
+            Assert.IsTrue(system.IsComplete);
+            Assert.AreEqual(FactionIdentity.PlayerFactionId, em.GetComponentData<Faction>(authored).Id);
+            Assert.AreEqual("unit_veh_tank_usa",
+                em.GetComponentData<UnitSourcePrefabKey>(authored).Value.ToString());
+        }
+        finally
+        {
+            Object.DestroyImmediate(config);
+            Object.DestroyImmediate(compatibilityRoot);
             Object.DestroyImmediate(prefab);
         }
 

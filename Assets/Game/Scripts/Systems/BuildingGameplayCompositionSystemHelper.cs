@@ -692,8 +692,39 @@ namespace Game.Runtime
             }
             void UpdateBuildingSimulationTick()
             {
-                if (EnsureRuntimeTickContext())
-                    childSystems.BuildingPlacementRuntimeTickCompositionSystemHelper.UpdateSimulation(runtimeTickContext);
+                if (!EnsureRuntimeTickContext())
+                    return;
+
+                childSystems.BuildingPlacementRuntimeTickCompositionSystemHelper.UpdateSimulation(runtimeTickContext);
+                if (TryGetLivePackedVehicleOwnershipState(out EntityManager em, out bool ownershipReady) &&
+                    !ownershipReady)
+                {
+                    runtimeTickContext.EnqueueMapVehiclePlacements?.Invoke();
+                }
+            }
+            bool TryGetLivePackedVehicleOwnershipState(out EntityManager em, out bool ownershipReady)
+            {
+                ownershipReady = false;
+                if (!tryGetEntityManager(out em) ||
+                    mapVehiclePlacementConfig == null ||
+                    mapVehiclePlacementConfig.Placements == null ||
+                    mapVehiclePlacementConfig.Placements.Count == 0)
+                {
+                    return false;
+                }
+
+                bool requiresPackedContract =
+                    requirePackedVehiclePresentationContract ||
+                    mapVehicleAuthoringRoot == null ||
+                    MapVehiclePlacementSpawnPrefabSystemHelper.HasPositivePackedPresentationContract(em);
+                if (!requiresPackedContract)
+                    return false;
+
+                ownershipReady = MapVehiclePlacementSpawnPrefabSystemHelper.IsAuthoredVehicleOwnershipReady(
+                    em,
+                    mapVehiclePlacementConfig,
+                    requireReadinessContract: true);
+                return true;
             }
             bool IsBuildingStartupComplete()
             {
@@ -706,13 +737,9 @@ namespace Game.Runtime
                         mapVehicleAuthoringRoot);
                 if (!placementsComplete)
                     return false;
-                if (!requirePackedVehiclePresentationContract)
+                if (!TryGetLivePackedVehicleOwnershipState(out EntityManager em, out bool ownershipReady))
                     return true;
-                return tryGetEntityManager(out EntityManager em) &&
-                       MapVehiclePlacementSpawnPrefabSystemHelper.IsAuthoredVehicleOwnershipReady(
-                           em,
-                           mapVehiclePlacementConfig,
-                           requireReadinessContract: true);
+                return ownershipReady;
             }
             return _resultSystem.Create(
                 childSystems.BuildingSelectionClickUtilitySystemHelper,

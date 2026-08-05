@@ -264,7 +264,6 @@ namespace Game.UI.Runtime
             if (root == null)
                 return;
 
-            MatchHudCanvasBatchingUtility.EnsureLocalCanvas(root.gameObject, needsRaycaster: true);
             _canvasGroup ??= GetComponent<CanvasGroup>();
             Image background = GetComponent<Image>();
             if (background != null && panelFrameSprite != null)

@@ -101,6 +101,55 @@ public sealed class UIShellCurrentContentLoadTests
         }
     }
 
+    public static void RunBuildPlacementParentCanvasValidation()
+    {
+        GameObject canvasRoot = null;
+        try
+        {
+            canvasRoot = new GameObject(
+                "BuildPlacementParentCanvasValidation",
+                typeof(RectTransform),
+                typeof(Canvas),
+                typeof(GraphicRaycaster));
+            Canvas parentCanvas = canvasRoot.GetComponent<Canvas>();
+            parentCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+
+            GameObject instance = new(
+                "BuildPlacementConfirmationBar",
+                typeof(RectTransform),
+                typeof(CanvasRenderer),
+                typeof(CanvasGroup),
+                typeof(Image));
+            instance.transform.SetParent(canvasRoot.transform, false);
+            BuildPlacementConfirmationBarView placementBar =
+                instance.AddComponent<BuildPlacementConfirmationBarView>();
+            Assert.NotNull(placementBar, "Build placement confirmation bar must initialize under the shell Canvas.");
+            Assert.IsNull(
+                placementBar.GetComponent<Canvas>(),
+                "Runtime layout caching must retain parent-shell Canvas ownership.");
+            Assert.IsNull(
+                placementBar.GetComponent<GraphicRaycaster>(),
+                "Runtime layout caching must retain the parent-shell GraphicRaycaster.");
+            Assert.AreSame(
+                parentCanvas,
+                placementBar.GetComponentInParent<Canvas>(),
+                "Rendered and interactive placement-bar geometry must resolve through the same parent shell Canvas.");
+
+            Debug.Log("[BuildPlacementParentCanvasValidation] result=Passed");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[BuildPlacementParentCanvasValidation] result=Failed\n{exception}");
+            ValidationExit.Exit(1);
+        }
+        finally
+        {
+            if (canvasRoot != null)
+                UnityEngine.Object.DestroyImmediate(canvasRoot);
+        }
+    }
+
     public static void RunCommanderBackgroundOwnershipValidation()
     {
         UIShellCurrentContentLoadTests tests = new();
@@ -212,6 +261,9 @@ public sealed class UIShellCurrentContentLoadTests
         CanvasGroup placementBarCanvasGroup = placementBar.GetComponent<CanvasGroup>();
         Assert.NotNull(placementBarCanvasGroup, "Build placement confirmation bar must have a CanvasGroup visibility gate.");
         Assert.IsFalse(placementBarCanvasGroup.blocksRaycasts, "Build placement confirmation bar must start hidden and non-blocking.");
+        Assert.IsNull(
+            placementBar.GetComponent<Canvas>(),
+            "Build placement confirmation bar must use the parent shell Canvas and raycaster so rendered and interactive geometry stay aligned.");
 
         AssertRegionIsEmpty(content.ShellView, UIShellRegionId.MiddleRegion);
         AssertRegionIsEmpty(content.ShellView, UIShellRegionId.LoadingLayer);

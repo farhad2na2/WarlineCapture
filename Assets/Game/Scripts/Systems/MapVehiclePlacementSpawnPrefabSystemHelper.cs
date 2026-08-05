@@ -83,6 +83,7 @@ namespace Game.Runtime
         private bool _isQueued;
         private bool _authoringHidden;
         private bool _isComplete;
+        private bool _liveContractPromotionDiagnosticLogged;
 
         internal int LastClearedBlockerCells => _lastClearedBlockerCells;
         public bool IsComplete => _isComplete;
@@ -114,6 +115,18 @@ namespace Game.Runtime
             // permanently consume the placement cursor before the baked vehicles become
             // available for the normal neutral-vehicle adoption path.
             bool requiresPackedPresentationContract = RequiresPackedPresentationContract(context, em);
+            if (!_liveContractPromotionDiagnosticLogged &&
+                requiresPackedPresentationContract &&
+                !RequiresPackedPresentationContract(context) &&
+                HasPositivePackedPresentationContract(em))
+            {
+                _liveContractPromotionDiagnosticLogged = true;
+                Debug.Log(
+                    $"[MapVehicleOwnershipRuntime] phase=PlacementUpdateLivePromotion " +
+                    $"configAssigned={(context.Config != null ? 1 : 0)} " +
+                    $"placements={context.Config?.Placements?.Count ?? -1} " +
+                    $"authoringRootAssigned={(context.AuthoringVehiclesRoot != null ? 1 : 0)}");
+            }
             if (!IsAuthoredVehiclePresentationReady(em, requiresPackedPresentationContract))
                 return;
 

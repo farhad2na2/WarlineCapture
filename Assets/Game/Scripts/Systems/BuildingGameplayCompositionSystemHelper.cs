@@ -568,6 +568,13 @@ namespace Game.Runtime
             };
             BuildingPlacementRuntimeTickCompositionSystemHelper.Context runtimeTickContext = default;
             bool runtimeTickContextReady = false;
+            bool liveVehicleContractDiagnosticLogged = false;
+            Debug.Log(
+                $"[MapVehicleOwnershipRuntime] phase=CompositionInit " +
+                $"configAssigned={(mapVehiclePlacementConfig != null ? 1 : 0)} " +
+                $"placements={mapVehiclePlacementConfig?.Placements?.Count ?? -1} " +
+                $"authoringRootAssigned={(mapVehicleAuthoringRoot != null ? 1 : 0)} " +
+                $"configuredPacked={(requirePackedVehiclePresentationContract ? 1 : 0)}");
             bool EnsureRuntimeTickContext()
             {
                 if (runtimeTickContextReady)
@@ -577,6 +584,13 @@ namespace Game.Runtime
                     return false;
 
                 childSystems.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries(em);
+                Debug.Log(
+                    $"[MapVehicleOwnershipRuntime] phase=RuntimeContextReady " +
+                    $"configAssigned={(mapVehiclePlacementConfig != null ? 1 : 0)} " +
+                    $"placements={mapVehiclePlacementConfig?.Placements?.Count ?? -1} " +
+                    $"authoringRootAssigned={(mapVehicleAuthoringRoot != null ? 1 : 0)} " +
+                    $"configuredPacked={(requirePackedVehiclePresentationContract ? 1 : 0)} " +
+                    $"positiveContract={(MapVehiclePlacementSpawnPrefabSystemHelper.HasPositivePackedPresentationContract(em) ? 1 : 0)}");
                 BuildingPlacementRuntimeTickContextCompositionSystemHelper.Source runtimeTickSource = _runtimeTickCompositionHelper.Create(
                     childSystems,
                     interactionContext,
@@ -696,6 +710,21 @@ namespace Game.Runtime
                     return;
 
                 childSystems.BuildingPlacementRuntimeTickCompositionSystemHelper.UpdateSimulation(runtimeTickContext);
+                if (!liveVehicleContractDiagnosticLogged &&
+                    tryGetEntityManager(out EntityManager diagnosticEntityManager) &&
+                    MapVehiclePlacementSpawnPrefabSystemHelper.HasPositivePackedPresentationContract(diagnosticEntityManager))
+                {
+                    using EntityQuery authoredVehicleQuery = diagnosticEntityManager.CreateEntityQuery(
+                        ComponentType.ReadOnly<OperationMapAuthoredVehiclePresentation>());
+                    liveVehicleContractDiagnosticLogged = true;
+                    Debug.Log(
+                        $"[MapVehicleOwnershipRuntime] phase=LiveContractObserved " +
+                        $"configAssigned={(mapVehiclePlacementConfig != null ? 1 : 0)} " +
+                        $"placements={mapVehiclePlacementConfig?.Placements?.Count ?? -1} " +
+                        $"authoringRootAssigned={(mapVehicleAuthoringRoot != null ? 1 : 0)} " +
+                        $"configuredPacked={(requirePackedVehiclePresentationContract ? 1 : 0)} " +
+                        $"authoredVehicles={authoredVehicleQuery.CalculateEntityCount()}");
+                }
                 if (TryGetLivePackedVehicleOwnershipState(out EntityManager em, out bool ownershipReady) &&
                     !ownershipReady)
                 {

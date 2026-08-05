@@ -43,8 +43,20 @@ namespace Game.Runtime
             Func<GameObject, string> resolveSpawnableLookupKey = null,
             BuildingDefinitionPrefabSystemHelper.TryGetBuildingDefinitionMetadataDelegate tryGetBuildingDefinitionMetadata = null,
             BuildingDefinitionPrefabSystemHelper.TryGetUnitDefinitionMetadataDelegate tryGetUnitDefinitionMetadata = null,
-            bool requirePackedVehiclePresentationContract = false)
+            bool requirePackedVehiclePresentationContract = false,
+            Func<MapVehiclePlacementConfig> resolveMapVehiclePlacementConfig = null,
+            Func<Transform> resolveMapVehicleAuthoringRoot = null)
         {
+            MapVehiclePlacementConfig ResolveMapVehiclePlacementConfig()
+            {
+                return resolveMapVehiclePlacementConfig?.Invoke() ?? mapVehiclePlacementConfig;
+            }
+
+            Transform ResolveMapVehicleAuthoringRoot()
+            {
+                return resolveMapVehicleAuthoringRoot?.Invoke() ?? mapVehicleAuthoringRoot;
+            }
+
             MaterialPropertyBlock markerPropertyBlock = BuildingMarkerVisualPresentationSystemHelper.GetMarkerPropertyBlock(_markerVisualPresentationHelper);
             BuildingGameplaySourceCompositionSystemHelper childSystems = _childSystem.Create();
             childSystems.BuildingDefinitionPrefabSystemHelper.ConfigureAuthoringMetadataResolvers(
@@ -571,9 +583,9 @@ namespace Game.Runtime
             bool liveVehicleContractDiagnosticLogged = false;
             Debug.Log(
                 $"[MapVehicleOwnershipRuntime] phase=CompositionInit " +
-                $"configAssigned={(mapVehiclePlacementConfig != null ? 1 : 0)} " +
-                $"placements={mapVehiclePlacementConfig?.Placements?.Count ?? -1} " +
-                $"authoringRootAssigned={(mapVehicleAuthoringRoot != null ? 1 : 0)} " +
+                $"configAssigned={(ResolveMapVehiclePlacementConfig() != null ? 1 : 0)} " +
+                $"placements={ResolveMapVehiclePlacementConfig()?.Placements?.Count ?? -1} " +
+                $"authoringRootAssigned={(ResolveMapVehicleAuthoringRoot() != null ? 1 : 0)} " +
                 $"configuredPacked={(requirePackedVehiclePresentationContract ? 1 : 0)}");
             bool EnsureRuntimeTickContext()
             {
@@ -586,9 +598,9 @@ namespace Game.Runtime
                 childSystems.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries(em);
                 Debug.Log(
                     $"[MapVehicleOwnershipRuntime] phase=RuntimeContextReady " +
-                    $"configAssigned={(mapVehiclePlacementConfig != null ? 1 : 0)} " +
-                    $"placements={mapVehiclePlacementConfig?.Placements?.Count ?? -1} " +
-                    $"authoringRootAssigned={(mapVehicleAuthoringRoot != null ? 1 : 0)} " +
+                    $"configAssigned={(ResolveMapVehiclePlacementConfig() != null ? 1 : 0)} " +
+                    $"placements={ResolveMapVehiclePlacementConfig()?.Placements?.Count ?? -1} " +
+                    $"authoringRootAssigned={(ResolveMapVehicleAuthoringRoot() != null ? 1 : 0)} " +
                     $"configuredPacked={(requirePackedVehiclePresentationContract ? 1 : 0)} " +
                     $"positiveContract={(MapVehiclePlacementSpawnPrefabSystemHelper.HasPositivePackedPresentationContract(em) ? 1 : 0)}");
                 BuildingPlacementRuntimeTickContextCompositionSystemHelper.Source runtimeTickSource = _runtimeTickCompositionHelper.Create(
@@ -682,17 +694,20 @@ namespace Game.Runtime
                             return boundaryEntity != Entity.Null && em.Exists(boundaryEntity);
                         }
 
-                        MapVehiclePlacementSpawnPrefabSystemHelper.Context mapVehiclePlacementContext =
-                            new(
-                                mapVehiclePlacementConfig,
-                                mapVehicleAuthoringRoot,
-                                source.RuntimeUnitPrefabSystem,
-                                mapVehiclePrefabContext,
-                                TryGetMapGridData,
-                                TryGetMapRuntimeBoundary,
-                                Debug.LogWarning,
-                                requirePackedVehiclePresentationContract);
-                        return () => source.MapVehiclePlacementSpawnPrefabSystemHelper.Update(mapVehiclePlacementContext);
+                        return () =>
+                        {
+                            MapVehiclePlacementSpawnPrefabSystemHelper.Context mapVehiclePlacementContext =
+                                new(
+                                    ResolveMapVehiclePlacementConfig(),
+                                    ResolveMapVehicleAuthoringRoot(),
+                                    source.RuntimeUnitPrefabSystem,
+                                    mapVehiclePrefabContext,
+                                    TryGetMapGridData,
+                                    TryGetMapRuntimeBoundary,
+                                    Debug.LogWarning,
+                                    requirePackedVehiclePresentationContract);
+                            source.MapVehiclePlacementSpawnPrefabSystemHelper.Update(mapVehiclePlacementContext);
+                        };
                     },
                     DestroyedBuildingLifetimeSeconds);
                 runtimeTickContext = _runtimeTickContextCompositionHelper.Create(runtimeTickSource);
@@ -719,9 +734,9 @@ namespace Game.Runtime
                     liveVehicleContractDiagnosticLogged = true;
                     Debug.Log(
                         $"[MapVehicleOwnershipRuntime] phase=LiveContractObserved " +
-                        $"configAssigned={(mapVehiclePlacementConfig != null ? 1 : 0)} " +
-                        $"placements={mapVehiclePlacementConfig?.Placements?.Count ?? -1} " +
-                        $"authoringRootAssigned={(mapVehicleAuthoringRoot != null ? 1 : 0)} " +
+                        $"configAssigned={(ResolveMapVehiclePlacementConfig() != null ? 1 : 0)} " +
+                        $"placements={ResolveMapVehiclePlacementConfig()?.Placements?.Count ?? -1} " +
+                        $"authoringRootAssigned={(ResolveMapVehicleAuthoringRoot() != null ? 1 : 0)} " +
                         $"configuredPacked={(requirePackedVehiclePresentationContract ? 1 : 0)} " +
                         $"authoredVehicles={authoredVehicleQuery.CalculateEntityCount()}");
                 }
@@ -734,24 +749,26 @@ namespace Game.Runtime
             bool TryGetLivePackedVehicleOwnershipState(out EntityManager em, out bool ownershipReady)
             {
                 ownershipReady = false;
+                MapVehiclePlacementConfig currentVehicleConfig = ResolveMapVehiclePlacementConfig();
+                Transform currentVehicleAuthoringRoot = ResolveMapVehicleAuthoringRoot();
                 if (!tryGetEntityManager(out em) ||
-                    mapVehiclePlacementConfig == null ||
-                    mapVehiclePlacementConfig.Placements == null ||
-                    mapVehiclePlacementConfig.Placements.Count == 0)
+                    currentVehicleConfig == null ||
+                    currentVehicleConfig.Placements == null ||
+                    currentVehicleConfig.Placements.Count == 0)
                 {
                     return false;
                 }
 
                 bool requiresPackedContract =
                     requirePackedVehiclePresentationContract ||
-                    mapVehicleAuthoringRoot == null ||
+                    currentVehicleAuthoringRoot == null ||
                     MapVehiclePlacementSpawnPrefabSystemHelper.HasPositivePackedPresentationContract(em);
                 if (!requiresPackedContract)
                     return false;
 
                 ownershipReady = MapVehiclePlacementSpawnPrefabSystemHelper.IsAuthoredVehicleOwnershipReady(
                     em,
-                    mapVehiclePlacementConfig,
+                    currentVehicleConfig,
                     requireReadinessContract: true);
                 return true;
             }
@@ -762,8 +779,8 @@ namespace Game.Runtime
                         mapBuildingPlacementConfig,
                         mapBuildingAuthoringRoot) &&
                     childSystems.MapVehiclePlacementSpawnPrefabSystemHelper.IsCompleteFor(
-                        mapVehiclePlacementConfig,
-                        mapVehicleAuthoringRoot);
+                        ResolveMapVehiclePlacementConfig(),
+                        ResolveMapVehicleAuthoringRoot());
                 if (!placementsComplete)
                     return false;
                 if (!TryGetLivePackedVehicleOwnershipState(out EntityManager em, out bool ownershipReady))

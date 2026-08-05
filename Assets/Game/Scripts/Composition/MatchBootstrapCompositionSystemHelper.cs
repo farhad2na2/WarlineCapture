@@ -437,7 +437,9 @@ namespace Game.Composition
                 mapBuildingAuthoringRoot,
                 mapVehicleAuthoringRoot,
                 matchIntroStateQuery,
-                requirePackedVehiclePresentationContract);
+                requirePackedVehiclePresentationContract,
+                () => MapVehiclePlacementConfig,
+                () => MapVehicleAuthoringRoot);
         }
 
         public MainMenuPlayUI EnsureMainMenuRuntimeDependencies(bool resetRuntimeState = false)

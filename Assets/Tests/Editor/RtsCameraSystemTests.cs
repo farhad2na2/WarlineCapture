@@ -43,6 +43,7 @@ public sealed class RtsCameraSystemTests
             RunCase(nameof(UpdateFullscreenIsoZoom_ClampsTargets), test => test.UpdateFullscreenIsoZoom_ClampsTargets());
             RunCase(nameof(TacticalFollowPoseRequest_UpdatesCameraThroughRequestQueue), test => test.TacticalFollowPoseRequest_UpdatesCameraThroughRequestQueue());
             RunCase(nameof(TacticalFollowPoseRequest_SmoothlyApproachesTargetWithoutSnapping), test => test.TacticalFollowPoseRequest_SmoothlyApproachesTargetWithoutSnapping());
+            RunCase(nameof(TacticalFollowPoseRequest_DistantTransitionPreservesBoundedDownwardFraming), test => test.TacticalFollowPoseRequest_DistantTransitionPreservesBoundedDownwardFraming());
             RunCase(nameof(TacticalFollowPoseRequest_ResetVelocityPreventsCarryOverOvershoot), test => test.TacticalFollowPoseRequest_ResetVelocityPreventsCarryOverOvershoot());
             RunCase(nameof(TacticalFollowPoseRequest_DoesNotClampToRtsGroundBoundary), test => test.TacticalFollowPoseRequest_DoesNotClampToRtsGroundBoundary());
             RunCase(nameof(TacticalFollowPoseRequest_SuppressesNormalRequestsAndBoundaryClampWhilePoseValid), test => test.TacticalFollowPoseRequest_SuppressesNormalRequestsAndBoundaryClampWhilePoseValid());
@@ -51,7 +52,7 @@ public sealed class RtsCameraSystemTests
             RunCase(nameof(RuntimeCameraTick_DoesNotAutoSettleManualZoomOutAfterIntroComplete), test => test.RuntimeCameraTick_DoesNotAutoSettleManualZoomOutAfterIntroComplete());
             RunCase(nameof(MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests), test => test.MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests());
             RunCase(nameof(MatchIntroFirstPlay_HoldsZoomedOutUntilIntroCompletes), test => test.MatchIntroFirstPlay_HoldsZoomedOutUntilIntroCompletes());
-            Debug.Log("[RtsCameraFocusedValidation] result=Passed tests=32");
+            Debug.Log("[RtsCameraFocusedValidation] result=Passed tests=33");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -999,6 +1000,59 @@ public sealed class RtsCameraSystemTests
                 camera.transform.position.x,
                 beforeSwitchX,
                 "Resetting tactical-follow velocity should move toward the new restore target immediately instead of carrying old velocity farther away.");
+        }
+        finally
+        {
+            if (world.IsCreated)
+                world.Dispose();
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
+    }
+
+    [Test]
+    public void TacticalFollowPoseRequest_DistantTransitionPreservesBoundedDownwardFraming()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        var world = new World("RtsCameraSystemTests.TacticalFollowDistantBoundedFraming");
+        World.DefaultGameObjectInjectionWorld = world;
+
+        try
+        {
+            RtsCameraSystem cameraSystem = world.GetOrCreateSystemManaged<RtsCameraSystem>();
+            RtsCameraRequestSystem cameraRequestSystem = world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
+            Vector3 initialForward = new Vector3(0f, -30f, 35f).normalized;
+            Camera camera = CreateCamera(
+                new Vector3(0f, 50f, 0f),
+                Quaternion.LookRotation(initialForward, Vector3.up));
+            Vector3 desiredPosition = new(900f, 40f, 900f);
+            Vector3 lookAt = desiredPosition + new Vector3(0f, -30f, 35f);
+
+            for (int frame = 0; frame < 180; frame++)
+            {
+                cameraRequestSystem.QueueUpdateTacticalFollowPose(
+                    world.EntityManager,
+                    desiredPosition,
+                    lookAt,
+                    38f,
+                    0.35f,
+                    false,
+                    0f,
+                    frame == 0);
+                cameraRequestSystem.ProcessPendingRequests(world.EntityManager, cameraSystem, camera);
+
+                Assert.Less(
+                    camera.transform.forward.y,
+                    -0.15f,
+                    $"Frame {frame} must retain a downward tactical view instead of aiming across the full map corridor.");
+                Assert.IsTrue(
+                    cameraSystem.TryGetCameraGroundBounds(camera, out Rect footprint),
+                    $"Frame {frame} must retain a finite ground footprint during the distant transition.");
+                Assert.Less(footprint.width, 600f, $"Frame {frame} ground footprint width exceeded the bounded transition envelope.");
+                Assert.Less(footprint.height, 600f, $"Frame {frame} ground footprint height exceeded the bounded transition envelope.");
+            }
+
+            Assert.That(Vector3.Distance(camera.transform.position, desiredPosition), Is.LessThan(0.1f));
+            Assert.That(Vector3.Angle(camera.transform.forward, (lookAt - camera.transform.position).normalized), Is.LessThan(1f));
         }
         finally
         {

@@ -10,12 +10,15 @@ namespace Game.Runtime
 
         private Vector3 _smoothFocusVelocity;
         private Vector3 _tacticalFollowPositionVelocity;
+        private Vector3 _tacticalFollowLookAtVelocity;
+        private Vector3 _tacticalFollowSmoothedLookAt;
         private float _zoomTransitionVelocity;
         private float _pitchTransitionVelocity;
         private float _yawTransitionVelocity;
         private float _fieldOfViewTransitionVelocity;
         private float _orthographicSizeTransitionVelocity;
         private bool _hasGroundBoundary;
+        private bool _hasTacticalFollowSmoothedLookAt;
         private Rect _groundBoundary;
 
         public bool IsDragging { get; private set; }
@@ -81,8 +84,16 @@ namespace Game.Runtime
         public void ResetTransitionVelocities()
         {
             ResetPerspectiveTransitionVelocities();
-            _tacticalFollowPositionVelocity = Vector3.zero;
+            ResetTacticalFollowTransitionState();
             _orthographicSizeTransitionVelocity = 0f;
+        }
+
+        private void ResetTacticalFollowTransitionState()
+        {
+            _tacticalFollowPositionVelocity = Vector3.zero;
+            _tacticalFollowLookAtVelocity = Vector3.zero;
+            _tacticalFollowSmoothedLookAt = default;
+            _hasTacticalFollowSmoothedLookAt = false;
         }
 
         private void ResetPerspectiveTransitionVelocities()
@@ -577,6 +588,12 @@ namespace Game.Runtime
             if (resetVelocity)
             {
                 _tacticalFollowPositionVelocity = Vector3.zero;
+                _tacticalFollowLookAtVelocity = Vector3.zero;
+                _tacticalFollowSmoothedLookAt = ResolveCurrentTacticalFollowLookAt(
+                    worldCamera,
+                    desiredPosition,
+                    lookAt);
+                _hasTacticalFollowSmoothedLookAt = true;
                 _fieldOfViewTransitionVelocity = 0f;
                 _orthographicSizeTransitionVelocity = 0f;
             }
@@ -589,6 +606,8 @@ namespace Game.Runtime
             if (resolvedSmoothTime <= 0.0001f)
             {
                 worldCamera.transform.position = desiredPosition;
+                _tacticalFollowSmoothedLookAt = lookAt;
+                _hasTacticalFollowSmoothedLookAt = true;
                 ApplyTacticalFollowRotation(worldCamera, desiredPosition, lookAt, 1f, targetRotation);
                 if (targetOrthographic)
                     worldCamera.orthographicSize = Mathf.Max(0.1f, targetOrthographicSize);
@@ -605,10 +624,38 @@ namespace Game.Runtime
                 Mathf.Infinity,
                 resolvedDeltaTime);
 
+            Vector3 resolvedLookAt = lookAt;
+            if (!targetRotation.HasValue)
+            {
+                if (!_hasTacticalFollowSmoothedLookAt)
+                {
+                    _tacticalFollowSmoothedLookAt = ResolveCurrentTacticalFollowLookAt(
+                        worldCamera,
+                        desiredPosition,
+                        lookAt);
+                    _tacticalFollowLookAtVelocity = Vector3.zero;
+                    _hasTacticalFollowSmoothedLookAt = true;
+                }
+
+                _tacticalFollowSmoothedLookAt = Vector3.SmoothDamp(
+                    _tacticalFollowSmoothedLookAt,
+                    lookAt,
+                    ref _tacticalFollowLookAtVelocity,
+                    resolvedSmoothTime,
+                    Mathf.Infinity,
+                    resolvedDeltaTime);
+                resolvedLookAt = _tacticalFollowSmoothedLookAt;
+            }
+            else
+            {
+                _tacticalFollowLookAtVelocity = Vector3.zero;
+                _hasTacticalFollowSmoothedLookAt = false;
+            }
+
             ApplyTacticalFollowRotation(
                 worldCamera,
                 worldCamera.transform.position,
-                lookAt,
+                resolvedLookAt,
                 1f - Mathf.Exp(-resolvedDeltaTime / resolvedSmoothTime),
                 targetRotation);
 
@@ -638,6 +685,23 @@ namespace Game.Runtime
                 : Mathf.Abs(worldCamera.fieldOfView - targetFieldOfView) <= 0.05f;
             return Vector3.Distance(worldCamera.transform.position, desiredPosition) <= 0.05f &&
                    zoomReached;
+        }
+
+        private static Vector3 ResolveCurrentTacticalFollowLookAt(
+            Camera worldCamera,
+            Vector3 desiredPosition,
+            Vector3 lookAt)
+        {
+            float targetViewDistance = Mathf.Max(1f, Vector3.Distance(desiredPosition, lookAt));
+            Vector3 currentForward = worldCamera.transform.forward;
+            if (currentForward.sqrMagnitude <= 0.0001f)
+            {
+                currentForward = lookAt - desiredPosition;
+                if (currentForward.sqrMagnitude <= 0.0001f)
+                    currentForward = Vector3.forward;
+            }
+
+            return worldCamera.transform.position + currentForward.normalized * targetViewDistance;
         }
 
         public void ClampCameraToGroundBoundary(Camera worldCamera)

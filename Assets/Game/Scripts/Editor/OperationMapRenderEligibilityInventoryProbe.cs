@@ -271,6 +271,7 @@ namespace Game.Editor
                     row.Renderer,
                     row.Material,
                     out string materialSurface,
+                    out OperationMapRenderMaterialSurface materialSurfaceKind,
                     out string policy,
                     out OperationMapRenderPolicyKey policyKey);
                 string reason = Classify(
@@ -280,6 +281,31 @@ namespace Game.Editor
                     buildingFamilyDecisions,
                     infrastructureOwnerDecisions);
                 bool isEligible = string.Equals(reason, "eligible", StringComparison.Ordinal);
+                OperationMapRenderLodFlags lodFlags = OperationMapRenderLodFlags.Lod0;
+                if (isEligible)
+                {
+                    Bounds worldBounds = row.Renderer.bounds;
+                    float maximumWorldExtentMeters = Mathf.Max(
+                        worldBounds.size.x,
+                        worldBounds.size.y,
+                        worldBounds.size.z);
+                    if (!OperationMapRenderAndroidVisualPolicy.TryApply(
+                            row.DenseOwner.Category,
+                            maximumWorldExtentMeters,
+                            materialSurfaceKind,
+                            policyKey,
+                            out OperationMapRenderAndroidVisualPolicyResult visualPolicy,
+                            out string visualPolicyError))
+                    {
+                        throw new InvalidOperationException(
+                            $"Android visual policy rejected {row.DenseOwner.StableId}: " +
+                            visualPolicyError);
+                    }
+
+                    policyKey = visualPolicy.Policy;
+                    lodFlags = visualPolicy.LodFlags;
+                    policy = FormatPolicy(policyKey);
+                }
                 if (isEligible)
                     eligible++;
 
@@ -316,7 +342,7 @@ namespace Game.Editor
                 if (isEligible)
                 {
                     eligiblePartCandidates.Add(
-                        BuildEligiblePartCandidate(row, sourceRow, policyKey));
+                        BuildEligiblePartCandidate(row, sourceRow, policyKey, lodFlags));
                 }
             }
 
@@ -610,7 +636,8 @@ namespace Game.Editor
         private static EligiblePartCandidate BuildEligiblePartCandidate(
             Row row,
             SourceRowReport sourceRow,
-            OperationMapRenderPolicyKey policy)
+            OperationMapRenderPolicyKey policy,
+            OperationMapRenderLodFlags lodFlags)
         {
             if (row.DenseOwner == null || !sourceRow.stableOwnerJoined)
             {
@@ -657,7 +684,7 @@ namespace Game.Editor
                 RenderingLayerMask = policy.RenderingLayerMask,
                 MotionVectorMode = policy.MotionVectorMode,
                 ShadowFlags = policy.ShadowFlags,
-                LodFlags = OperationMapRenderLodFlags.Lod0
+                LodFlags = lodFlags
             };
             if (!OperationMapRenderPrototypeFingerprint.TryCompute(
                     fingerprintInput,
@@ -688,7 +715,7 @@ namespace Game.Editor
                 LocalBounds = mesh.bounds,
                 LinearBaseColor = linearBaseColor,
                 Policy = policy,
-                LodFlags = OperationMapRenderLodFlags.Lod0,
+                LodFlags = lodFlags,
                 PartFingerprint = partFingerprint,
                 PartCanonicalSource = partCanonicalSource,
                 OwnerStableId = sourceRow.ownerStableId,
@@ -724,7 +751,7 @@ namespace Game.Editor
                     owner.Any(row => row.BuildingVisualState == OperationMapRenderVisualState.Destroyed));
                 int unsupportedRendererRowCount = familyRows.Count(row => row.Renderer is not MeshRenderer);
                 int unsupportedPolicyRowCount = familyRows.Count(row =>
-                    !TryClassifyPolicy(row.Renderer, row.Material, out _, out _, out _));
+                    !TryClassifyPolicy(row.Renderer, row.Material, out _, out _, out _, out _));
                 int repeatedSignatureRowCount = familyRows.Count(row =>
                     signatureCounts.TryGetValue(row.Signature, out int count) && count > 1);
                 bool supportedRole = family.Key is BuildingRole.House or BuildingRole.Shop or BuildingRole.CityHall;
@@ -1796,10 +1823,12 @@ namespace Game.Editor
             Renderer renderer,
             Material material,
             out string materialSurface,
+            out OperationMapRenderMaterialSurface materialSurfaceKind,
             out string policy,
             out OperationMapRenderPolicyKey policyKey)
         {
             policyKey = default;
+            materialSurfaceKind = default;
             if (material == null)
             {
                 materialSurface = "MissingMaterial";
@@ -1814,6 +1843,7 @@ namespace Game.Editor
                 surface = OperationMapRenderMaterialSurface.AlphaClipped;
             else
                 surface = OperationMapRenderMaterialSurface.Opaque;
+            materialSurfaceKind = surface;
             materialSurface = surface.ToString();
 
             OperationMapRenderShadowFlags shadowFlags = OperationMapRenderShadowFlags.None;
@@ -1844,15 +1874,20 @@ namespace Game.Editor
                 return false;
             }
 
-            policy = string.Join(
+            policy = FormatPolicy(key);
+            policyKey = key;
+            return true;
+        }
+
+        private static string FormatPolicy(in OperationMapRenderPolicyKey key)
+        {
+            return string.Join(
                 "|",
                 key.Bucket,
                 key.Layer.ToString(CultureInfo.InvariantCulture),
                 key.RenderingLayerMask.ToString(CultureInfo.InvariantCulture),
                 key.MotionVectorMode,
                 (byte)key.ShadowFlags);
-            policyKey = key;
-            return true;
         }
 
         private static string PolicyDisposition(

@@ -54,6 +54,8 @@ public sealed class OperationMapRenderVirtualizationValidation
             tests.PolicyClassifier_PreservesCompleteFixedFilterIdentity();
             tests.PolicyClassifier_UsesExplicitAlwaysResidentBucket();
             tests.PolicyClassifier_RejectsUnsupportedOrUnknownCombinations();
+            tests.AndroidVisualPolicy_DisablesEvidenceBoundShadowsAndPreservesLod0();
+            tests.AndroidVisualPolicy_PreservesLargeStructurePolicyAndFailsClosed();
             tests.CapacitySweep_IsOrderIndependentAndSortedByPolicy();
             tests.CapacitySweep_UsesPeakAndExactTwentyPercentCeiling();
             tests.CapacitySweep_RequiresIdenticalCanonicalSamplesPerPolicy();
@@ -72,7 +74,7 @@ public sealed class OperationMapRenderVirtualizationValidation
             tests.VirtualizedBuildingStateOwnerIndices_AreContiguousAndIdentityOrdered();
             tests.VirtualizedBuilding_ReplacesOnlyRenderRootOwnershipWithStateIndex();
             tests.InfrastructureEligibility_RejectsDynamicAndPerInstanceOwners();
-            Debug.Log("[OperationMapRenderVirtualizationValidation] result=Passed tests=46");
+            Debug.Log("[OperationMapRenderVirtualizationValidation] result=Passed tests=48");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -938,6 +940,98 @@ public sealed class OperationMapRenderVirtualizationValidation
     }
 
     [Test]
+    public void AndroidVisualPolicy_DisablesEvidenceBoundShadowsAndPreservesLod0()
+    {
+        OperationMapRenderPolicyKey source = ClassifyPolicy(
+            OperationMapRenderMaterialSurface.Opaque,
+            OperationMapRenderShadowFlags.CastShadows |
+            OperationMapRenderShadowFlags.ReceiveShadows);
+
+        Assert.That(
+            OperationMapRenderAndroidVisualPolicy.TryApply(
+                DenseCityPresentationSemanticCategory.Vegetation,
+                8f,
+                OperationMapRenderMaterialSurface.Opaque,
+                source,
+                out OperationMapRenderAndroidVisualPolicyResult vegetation,
+                out string vegetationError),
+            Is.True,
+            vegetationError);
+        Assert.That(
+            vegetation.Policy.Bucket,
+            Is.EqualTo(OperationMapRenderPolicyBucket.OpaqueShadowsOff));
+        Assert.That(
+            vegetation.Policy.ShadowFlags,
+            Is.EqualTo(OperationMapRenderShadowFlags.ReceiveShadows));
+        Assert.That(vegetation.LodFlags, Is.EqualTo(OperationMapRenderLodFlags.Lod0));
+        Assert.That(
+            vegetation.ReasonCode,
+            Is.EqualTo("android-evidence-vegetation-shadow-off"));
+
+        Assert.That(
+            OperationMapRenderAndroidVisualPolicy.TryApply(
+                DenseCityPresentationSemanticCategory.Infrastructure,
+                OperationMapRenderAndroidVisualPolicy.SmallDetailMaximumExtentMeters,
+                OperationMapRenderMaterialSurface.Opaque,
+                source,
+                out OperationMapRenderAndroidVisualPolicyResult smallDetail,
+                out string smallDetailError),
+            Is.True,
+            smallDetailError);
+        Assert.That(
+            smallDetail.Policy.Bucket,
+            Is.EqualTo(OperationMapRenderPolicyBucket.OpaqueShadowsOff));
+        Assert.That(
+            smallDetail.ReasonCode,
+            Is.EqualTo("android-evidence-small-detail-shadow-off"));
+    }
+
+    [Test]
+    public void AndroidVisualPolicy_PreservesLargeStructurePolicyAndFailsClosed()
+    {
+        OperationMapRenderPolicyKey source = ClassifyPolicy(
+            OperationMapRenderMaterialSurface.AlphaClipped,
+            OperationMapRenderShadowFlags.CastShadows |
+            OperationMapRenderShadowFlags.ReceiveShadows);
+
+        Assert.That(
+            OperationMapRenderAndroidVisualPolicy.TryApply(
+                DenseCityPresentationSemanticCategory.GameplayBuildingIntact,
+                12f,
+                OperationMapRenderMaterialSurface.AlphaClipped,
+                source,
+                out OperationMapRenderAndroidVisualPolicyResult largeStructure,
+                out string structureError),
+            Is.True,
+            structureError);
+        Assert.That(largeStructure.Policy, Is.EqualTo(source));
+        Assert.That(
+            largeStructure.ReasonCode,
+            Is.EqualTo("android-evidence-policy-unchanged"));
+
+        Assert.That(
+            OperationMapRenderAndroidVisualPolicy.TryApply(
+                DenseCityPresentationSemanticCategory.Unknown,
+                1f,
+                OperationMapRenderMaterialSurface.Opaque,
+                source,
+                out _,
+                out string unknownError),
+            Is.False);
+        Assert.That(unknownError, Does.Contain("Unknown dense-city semantic category"));
+        Assert.That(
+            OperationMapRenderAndroidVisualPolicy.TryApply(
+                DenseCityPresentationSemanticCategory.Prop,
+                float.NaN,
+                OperationMapRenderMaterialSurface.Opaque,
+                source,
+                out _,
+                out string extentError),
+            Is.False);
+        Assert.That(extentError, Does.Contain("finite and nonnegative"));
+    }
+
+    [Test]
     public void CapacitySweep_IsOrderIndependentAndSortedByPolicy()
     {
         OperationMapRenderPolicyKey opaque =
@@ -1521,7 +1615,7 @@ public sealed class OperationMapRenderVirtualizationValidation
         }
 
         Assert.That(descriptors, Has.Length.EqualTo(expectedTotal));
-        Assert.That(descriptors, Has.Length.EqualTo(7075));
+        Assert.That(descriptors, Has.Length.EqualTo(7784));
     }
 
     [Test]
@@ -1583,7 +1677,7 @@ public sealed class OperationMapRenderVirtualizationValidation
             EntityQuery slotsQuery = entityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<OperationMapRenderProxySlotComponent>());
             using NativeArray<Entity> slots = slotsQuery.ToEntityArray(Allocator.Temp);
-            Assert.That(slots, Has.Length.EqualTo(7075));
+            Assert.That(slots, Has.Length.EqualTo(7784));
 
             var seenSlotIndices = new HashSet<int>();
             var seenByBucket = new int[config.PoolBuckets.Count];

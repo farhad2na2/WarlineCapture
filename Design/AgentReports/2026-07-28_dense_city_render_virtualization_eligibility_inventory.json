@@ -4,7 +4,7 @@
     "result": "Passed",
     "operationMapId": "opmap.skirmish.desert_base_01",
     "candidateScenePath": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
-    "candidateSceneDependencyHash": "f96839d7742e5033959e8ca67cadb9bd",
+    "candidateSceneDependencyHash": "f916ae60e2e31760118f6c1dd1b8c67f",
     "packedEvidencePath": "Design/AgentReports/2026-07-25_dense_city_packed_asset_sharing.json",
     "packedEvidenceRenderRows": 82797,
     "normalizedEmbeddedDestroyedDuplicateRowsRemoved": 4396,
@@ -17,26 +17,26 @@
     "unresolvedOwnerRenderRows": 355,
     "eligibleStableOwnerJoinedRenderRows": 61925,
     "sourceRowCount": 76517,
-    "sourceRowsSha256": "c99ae4215a01d44c57781b5d1a8f22f4231a684b3058ef5af452ee25cabfd9e9",
+    "sourceRowsSha256": "540628d792861c9925c9503353179c3b2ca4f862e286fbb30f12d2baa922af20",
     "sourceRowsPath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_source_rows.json.gz",
     "sourceRowsCompression": "gzip",
-    "sourceRowsJsonSha256": "c15788e63a6139298cc1eadce600e9c96e75d636cb01509ec2d9ee608b046205",
-    "sourceRowsGzipSha256": "bac7cce5ba7ae2f275acb15de7f8c688d22c1e3c9093d8864d7f6aa829fff131",
+    "sourceRowsJsonSha256": "e3a63e1ad1d159f07dd394f98974ce9daecf5c0f9f1f621e7acb92e7c1abc256",
+    "sourceRowsGzipSha256": "13dcb35e41a1507e34279353564ccad8964533312ba50baa07bf73b760c3aa34",
     "logicalPlacementCount": 40460,
     "prototypeCount": 9107,
     "prototypePartCount": 12293,
     "prototypeRecipeRowsConsumed": 61925,
-    "prototypeRecipesSha256": "103994e29cd9c52b5c80da6d3b757bc59bea3a7aa3f0f4149c1b6ced27e62e38",
+    "prototypeRecipesSha256": "eb4213095f03ae0923ca8241d975eac0291a62998d6f8df4659e6f9c86e05b52",
     "prototypeRecipesPath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_prototype_recipes.json",
-    "prototypeRecipesJsonSha256": "b7337d1377255ab4db37b1d9473481cda6271609a1300cc199cde7af4dbbfe53",
+    "prototypeRecipesJsonSha256": "616cf7af713b6d9663c862bac12494a11b3d7e90d6b214d6e99a40b23e831a92",
     "placementCount": 40460,
     "stateOwnerCount": 4530,
     "stateLinkedPlacementCount": 9060,
     "renderOnlyPlacementCount": 31400,
     "placementPartRowCount": 61925,
-    "logicalPlacementsSha256": "68c1ea5e832677a580dd3ce65f81843143da0bfbe785af4fc7df4c20ca8288c7",
+    "logicalPlacementsSha256": "da9138a4e288bf06e7ab22a4b2a28d23864260b27c0db2c15bb29c3fd0de585e",
     "logicalPlacementsPath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_logical_placements.json",
-    "logicalPlacementsJsonSha256": "e2486ca5466f04950654731820496401aeaab58e897d7e2871823e39fe0416d1",
+    "logicalPlacementsJsonSha256": "4283374982956124083cfc9d26874c00cb4c0fd446e002e15e38903b861840d4",
     "renderCellSize": 32.0,
     "acceptedRenderGridOrigin": [
         0.0,
@@ -120118,10 +120118,16 @@
     ],
     "byPolicyBucket": [
         {
+            "key": "AlphaClippedShadowsOff|0|1|Object|2",
+            "eligible": 134,
+            "excluded": 0,
+            "total": 134
+        },
+        {
             "key": "AlphaClippedShadowsOn|0|1|Object|3",
-            "eligible": 3629,
+            "eligible": 3495,
             "excluded": 140,
-            "total": 3769
+            "total": 3635
         },
         {
             "key": "OpaqueShadowsOff|0|1|Object|0",
@@ -120131,15 +120137,15 @@
         },
         {
             "key": "OpaqueShadowsOff|0|1|Object|2",
-            "eligible": 0,
+            "eligible": 12051,
             "excluded": 41,
-            "total": 41
+            "total": 12092
         },
         {
             "key": "OpaqueShadowsOn|0|1|Object|3",
-            "eligible": 58296,
+            "eligible": 46245,
             "excluded": 13926,
-            "total": 72222
+            "total": 60171
         },
         {
             "key": "Unsupported:Transparent render policy does not support cast or static shadows.",
@@ -120176,22 +120182,28 @@
             "total": 484
         },
         {
+            "key": "SupportedPolicy:AlphaClippedShadowsOff",
+            "eligible": 134,
+            "excluded": 0,
+            "total": 134
+        },
+        {
             "key": "SupportedPolicy:AlphaClippedShadowsOn",
-            "eligible": 3629,
+            "eligible": 3495,
             "excluded": 140,
-            "total": 3769
+            "total": 3635
         },
         {
             "key": "SupportedPolicy:OpaqueShadowsOff",
-            "eligible": 0,
+            "eligible": 12051,
             "excluded": 42,
-            "total": 42
+            "total": 12093
         },
         {
             "key": "SupportedPolicy:OpaqueShadowsOn",
-            "eligible": 58296,
+            "eligible": 46245,
             "excluded": 13926,
-            "total": 72222
+            "total": 60171
         }
     ],
     "byGameplayOwnership": [

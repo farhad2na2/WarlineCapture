@@ -32,14 +32,14 @@ namespace Game.Editor
 
         private const int ExpectedEligibleRows = 61925;
         private const int ExpectedEligibleRenderers = 61783;
-        private const int ExpectedSlots = 6804;
+        private const int ExpectedSlots = 7784;
         private const int ExpectedPrototypes = 9107;
         private const int ExpectedParts = 12293;
         private const int ExpectedPlacements = 40460;
         private const int ExpectedRenderOnlyPlacements = 31400;
         private const int ExpectedGeneratedBuildingIdentities = 4530;
         private const int ExpectedCells = 1934;
-        private const int ExpectedPoolBuckets = 2;
+        private const int ExpectedPoolBuckets = 4;
         private static readonly UTF8Encoding Utf8WithoutBom = new(false);
 
         public static void RunTwoPassValidation()

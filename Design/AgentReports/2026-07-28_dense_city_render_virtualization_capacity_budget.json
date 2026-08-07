@@ -10,19 +10,19 @@
     "observedMaterializedEnvelopeHeightCells": 9,
     "observedMaterializedEnvelopeOrientationCount": 2,
     "canonicalSampleCount": 14592,
-    "policyCount": 2,
+    "policyCount": 4,
     "placementCount": 40460,
     "provisionalMapMmiEntityBudget": 40460,
     "mapMmiEntityLimit": 24000,
     "provisionalMapMmiEntityBudgetWithinLimit": false,
-    "totalPeakRequiredPartRows": 5669,
-    "totalProvisionalActiveProxySlots": 6804,
+    "totalPeakRequiredPartRows": 6485,
+    "totalProvisionalActiveProxySlots": 7784,
     "activeProxySlotLimit": 8000,
     "provisionalActiveProxySlotsWithinLimit": true,
     "zeroOverflowProvenForProvisionalCapacity": true,
-    "sourceRowsSha256": "c99ae4215a01d44c57781b5d1a8f22f4231a684b3058ef5af452ee25cabfd9e9",
-    "prototypeRecipesSha256": "103994e29cd9c52b5c80da6d3b757bc59bea3a7aa3f0f4149c1b6ced27e62e38",
-    "logicalPlacementsSha256": "68c1ea5e832677a580dd3ce65f81843143da0bfbe785af4fc7df4c20ca8288c7",
+    "sourceRowsSha256": "540628d792861c9925c9503353179c3b2ca4f862e286fbb30f12d2baa922af20",
+    "prototypeRecipesSha256": "eb4213095f03ae0923ca8241d975eac0291a62998d6f8df4659e6f9c86e05b52",
+    "logicalPlacementsSha256": "da9138a4e288bf06e7ab22a4b2a28d23864260b27c0db2c15bb29c3fd0de585e",
     "spatialCellsSha256": "a7dab969701b4739b37726d024550002d9ccff0b4223e3e3b4ddad4d033fa794",
     "capacityByPolicy": [
         {
@@ -32,10 +32,22 @@
             "motionVectorMode": "Object",
             "shadowFlags": 3,
             "sweepSampleCount": 14592,
-            "peakRequiredPartRows": 5153,
-            "peakSampleIdentity": "grid-cell:63:24:materialized=12x9",
-            "capacity": 6184,
-            "headroomCount": 1031
+            "peakRequiredPartRows": 4092,
+            "peakSampleIdentity": "grid-cell:65:25:materialized=9x12",
+            "capacity": 4911,
+            "headroomCount": 819
+        },
+        {
+            "policyBucket": "OpaqueShadowsOff",
+            "layer": 0,
+            "renderingLayerMask": 1,
+            "motionVectorMode": "Object",
+            "shadowFlags": 2,
+            "sweepSampleCount": 14592,
+            "peakRequiredPartRows": 1876,
+            "peakSampleIdentity": "grid-cell:57:26:materialized=9x12",
+            "capacity": 2252,
+            "headroomCount": 376
         },
         {
             "policyBucket": "AlphaClippedShadowsOn",
@@ -44,10 +56,22 @@
             "motionVectorMode": "Object",
             "shadowFlags": 3,
             "sweepSampleCount": 14592,
-            "peakRequiredPartRows": 516,
+            "peakRequiredPartRows": 495,
+            "peakSampleIdentity": "grid-cell:36:40:materialized=9x12",
+            "capacity": 594,
+            "headroomCount": 99
+        },
+        {
+            "policyBucket": "AlphaClippedShadowsOff",
+            "layer": 0,
+            "renderingLayerMask": 1,
+            "motionVectorMode": "Object",
+            "shadowFlags": 2,
+            "sweepSampleCount": 14592,
+            "peakRequiredPartRows": 22,
             "peakSampleIdentity": "grid-cell:69:0:materialized=9x12",
-            "capacity": 620,
-            "headroomCount": 104
+            "capacity": 27,
+            "headroomCount": 5
         }
     ]
 }

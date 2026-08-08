@@ -83,6 +83,10 @@ public sealed class UIShellCurrentContentLoadTests
                 test => test.MenuSceneShellSerializesMatchIntroCurtain(),
                 ref passed);
             RunValidationStep(
+                nameof(ShowLoadingCommandCompletesImmediatelyWithoutCoroutineScheduling),
+                test => test.ShowLoadingCommandCompletesImmediatelyWithoutCoroutineScheduling(),
+                ref passed);
+            RunValidationStep(
                 nameof(LoadingProgressGatewayQueuesRequestAndFlowAppliesIt),
                 test => test.LoadingProgressGatewayQueuesRequestAndFlowAppliesIt(),
                 ref passed);
@@ -98,6 +102,26 @@ public sealed class UIShellCurrentContentLoadTests
         {
             Debug.LogError($"[UIShellCurrentContentLoadValidation] result=Failed passed={passed}\n{exception}");
             ValidationExit.Exit(1);
+        }
+    }
+
+    public static void RunImmediateLoadingCompletionValidation()
+    {
+        UIShellCurrentContentLoadTests tests = new();
+        try
+        {
+            tests.ShowLoadingCommandCompletesImmediatelyWithoutCoroutineScheduling();
+            Debug.Log("[UIShellImmediateLoadingCompletionValidation] result=Passed tests=1");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[UIShellImmediateLoadingCompletionValidation] result=Failed\n{exception}");
+            ValidationExit.Exit(1);
+        }
+        finally
+        {
+            tests.TearDown();
         }
     }
 
@@ -267,6 +291,40 @@ public sealed class UIShellCurrentContentLoadTests
 
         AssertRegionIsEmpty(content.ShellView, UIShellRegionId.MiddleRegion);
         AssertRegionIsEmpty(content.ShellView, UIShellRegionId.LoadingLayer);
+    }
+
+    [Test]
+    public void ShowLoadingCommandCompletesImmediatelyWithoutCoroutineScheduling()
+    {
+        Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
+        UIShellContentView content = FindInScene<UIShellContentView>(scene);
+        Assert.NotNull(content, "Menu scene must contain the shell content binder.");
+        Assert.NotNull(content.ShellView, "Menu scene must serialize the shell view.");
+
+        const int sequenceId = 47;
+        int completedSequenceId = -1;
+        content.ShellView.ExecuteCommandSequence(
+            new[]
+            {
+                new UiShellPresentationCommandModel(
+                    UiShellCommandKind.ShowLoading,
+                    UiShellRegionId.LoadingLayer,
+                    UIRoute.MainMenu,
+                    UiShellMode.Loading,
+                    sequenceId)
+            },
+            sequenceId,
+            completedId => completedSequenceId = completedId);
+
+        Assert.AreEqual(
+            sequenceId,
+            completedSequenceId,
+            "An already-opaque loading command must acknowledge completion synchronously without waiting on a coroutine frame.");
+        Assert.IsTrue(
+            content.ShellView.TryGetRegion(UIShellRegionId.LoadingLayer, out UIShellRegionView loading),
+            "Loading command must retain the serialized loading layer.");
+        Assert.AreEqual(1f, loading.CanvasGroup.alpha, 0.0001f, "Loading layer must be fully opaque before completion is acknowledged.");
+        Assert.AreEqual(Vector3.one, loading.RegionRoot.localScale, "Loading layer must be visually reset before completion is acknowledged.");
     }
 
     [Test]

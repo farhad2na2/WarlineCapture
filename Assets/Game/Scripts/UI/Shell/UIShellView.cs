@@ -75,6 +75,13 @@ namespace Game.UI.Runtime
             contentSystem?.PrepareForCommandSequence(commands);
 
             int transitionId = motionHost.BeginTransition();
+            if (commands.Count == 1 && commands[0].Kind == UiShellCommandKind.ShowLoading)
+            {
+                ShowLoadingImmediately(commands[0].Route);
+                completed?.Invoke(sequenceId);
+                return;
+            }
+
             List<UIMotionStep> steps = new();
             for (int i = 0; i < commands.Count; i++)
                 AddStepsForCommand(commands[i], transitionId, steps);
@@ -124,18 +131,26 @@ namespace Game.UI.Runtime
 
         private void AddShowLoadingSteps(UIRoute route, int transitionId, List<UIMotionStep> steps)
         {
+            ShowLoadingImmediately(route);
             if (!TryGetRegion(UIShellRegionId.LoadingLayer, out UIShellRegionView loading))
                 return;
 
+            steps.Add(UIMotionStep.Single(
+                motionHost.AlphaStep(loading.CanvasGroup, 1f, 0f, motionHost.DefaultEnterEase, transitionId)));
+        }
+
+        private void ShowLoadingImmediately(UIRoute route)
+        {
             if (route == UIRoute.Match)
                 matchIntroCurtain?.ShowOpaque();
             else
                 matchIntroCurtain?.SetVisible(false);
 
+            if (!TryGetRegion(UIShellRegionId.LoadingLayer, out UIShellRegionView loading))
+                return;
+
             loading.ResetVisualState();
             loading.CanvasGroup.alpha = 1f;
-            steps.Add(UIMotionStep.Single(
-                motionHost.AlphaStep(loading.CanvasGroup, 1f, 0f, motionHost.DefaultEnterEase, transitionId)));
         }
 
         private void AddExitLoadingSteps(int transitionId, List<UIMotionStep> steps)

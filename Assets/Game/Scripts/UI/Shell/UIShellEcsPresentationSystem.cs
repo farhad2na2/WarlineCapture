@@ -78,6 +78,7 @@ namespace Game.UI.Runtime
             UiShellPresentationCommandModel finalCommand = commandScratch[commandScratch.Count - 1];
             activeSequenceId = finalCommand.SequenceId;
             isExecuting = true;
+            LogTransition("CommandStarted", finalCommand);
 
             shellView.ExecuteCommandSequence(commandScratch, activeSequenceId, completedSequenceId =>
             {
@@ -90,6 +91,7 @@ namespace Game.UI.Runtime
                     completedSequenceId);
                 hasPendingCompletion = true;
                 isExecuting = false;
+                LogTransition("CommandCompleted", finalCommand);
             });
     #if UNITY_EDITOR
             }
@@ -117,7 +119,26 @@ namespace Game.UI.Runtime
                 return;
 
             if (UiShellRuntimeGateway.TryEnqueueTransitionComplete(pendingCompletion))
+            {
+                LogTransition("CompletionFlushed", pendingCompletion);
                 hasPendingCompletion = false;
+            }
+        }
+
+        [System.Diagnostics.Conditional("UNITY_EDITOR")]
+        [System.Diagnostics.Conditional("DEVELOPMENT_BUILD")]
+        private static void LogTransition(string stage, UiShellPresentationCommandModel command)
+        {
+            Debug.Log(
+                $"[UiShellPresentation] stage={stage} sequence={command.SequenceId} kind={command.Kind} region={command.Region} route={command.Route}");
+        }
+
+        [System.Diagnostics.Conditional("UNITY_EDITOR")]
+        [System.Diagnostics.Conditional("DEVELOPMENT_BUILD")]
+        private static void LogTransition(string stage, UiShellTransitionCompleteModel completion)
+        {
+            Debug.Log(
+                $"[UiShellPresentation] stage={stage} sequence={completion.SequenceId} kind={completion.Kind} region={completion.Region}");
         }
     }
 }

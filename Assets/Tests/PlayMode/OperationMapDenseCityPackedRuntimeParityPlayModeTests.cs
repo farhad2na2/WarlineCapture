@@ -63,6 +63,15 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
         "Design/AgentReports/2026-07-24_dense_city_runtime_fixed_camera_parity.json";
     private const string DenseRuntimeFixedCameraCaptureDirectory =
         "Design/AgentReports/Captures/2026-07-24_dense_city_runtime_fixed_camera_parity";
+    private const string DenseVrp086EvidenceDirectory =
+        "Build/EditorEvidence/VRP086PackedProductionCamera";
+    private const string DenseVrp086ReportPath =
+        "Design/AgentReports/2026-08-08_dense_city_vrp086_camera_visual_evidence.json";
+    private const int DenseVrp086CaptureWidth = 1280;
+    private const int DenseVrp086CaptureHeight = 720;
+    private const int DenseVrp086FixedViewCount = 5;
+    private const int DenseVrp086EdgeFrameCount = 7;
+    private const float DenseVrp086SettleTimeoutSeconds = 30f;
 
     [Test]
     public void DenseComparePixels_UniformColorDriftRemainsInteriorFailure()
@@ -287,6 +296,7 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
         yield return DenseRunPackedMatchRoute(
             validateCameraTraversal: false,
             validateCameraSimulationState: false,
+            validateCameraVisualEvidence: false,
             validateVehicleMovement: true,
             validateParityManifest: true,
             unexpectedErrorContext: "Dense packed vehicle route emitted unexpected error logs.");
@@ -305,6 +315,7 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
         yield return DenseRunPackedMatchRoute(
             validateCameraTraversal: true,
             validateCameraSimulationState: false,
+            validateCameraVisualEvidence: false,
             validateVehicleMovement: false,
             validateParityManifest: false,
             unexpectedErrorContext: "Dense packed camera route emitted unexpected error logs.");
@@ -323,15 +334,37 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
         yield return DenseRunPackedMatchRoute(
             validateCameraTraversal: true,
             validateCameraSimulationState: true,
+            validateCameraVisualEvidence: false,
             validateVehicleMovement: false,
             validateParityManifest: false,
             unexpectedErrorContext:
                 "Dense packed camera simulation-state route emitted unexpected error logs.");
     }
 
+    [UnityTest]
+    [Timeout(900000)]
+    public IEnumerator DensePackedCandidate_FiveCameraAndEdgeTraversalVisualEvidencePasses()
+    {
+        if (SystemInfo.graphicsDeviceType ==
+            UnityEngine.Rendering.GraphicsDeviceType.Null)
+        {
+            Assert.Ignore("VRP-086 visual evidence requires a graphics device.");
+        }
+
+        yield return DenseRunPackedMatchRoute(
+            validateCameraTraversal: true,
+            validateCameraSimulationState: false,
+            validateCameraVisualEvidence: true,
+            validateVehicleMovement: false,
+            validateParityManifest: false,
+            unexpectedErrorContext:
+                "Dense packed VRP-086 visual-evidence route emitted unexpected error logs.");
+    }
+
     private static IEnumerator DenseRunPackedMatchRoute(
         bool validateCameraTraversal,
         bool validateCameraSimulationState,
+        bool validateCameraVisualEvidence,
         bool validateVehicleMovement,
         bool validateParityManifest,
         string unexpectedErrorContext)
@@ -451,6 +484,7 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
                 cycle: 1,
                 validateCameraTraversal: validateCameraTraversal,
                 validateCameraSimulationState: validateCameraSimulationState,
+                validateCameraVisualEvidence: validateCameraVisualEvidence,
                 validateSteadyStateAllocation: false,
                 validateBuildingDestruction: false,
                 validateVehicleMovement: validateVehicleMovement,
@@ -480,6 +514,444 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
             unexpectedErrors,
             Is.Empty,
             unexpectedErrorContext);
+    }
+
+    private static IEnumerator DenseCaptureProductionCameraVisualEvidence(
+        Aph805MenuMatchMenuLifecyclePlayModeTests.TransitionContext route)
+    {
+        string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+        string evidenceDirectory = DenseResolve(
+            projectRoot,
+            DenseVrp086EvidenceDirectory);
+        Directory.CreateDirectory(evidenceDirectory);
+
+        World world = route.World;
+        EntityManager entityManager = world.EntityManager;
+        Camera camera = route.Match.WorldCamera;
+        Assert.That(camera, Is.Not.Null);
+        using EntityQuery databaseQuery = entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<OperationMapRenderDatabaseComponent>(),
+            ComponentType.ReadOnly<OperationMapRenderVirtualizationStateComponent>(),
+            ComponentType.ReadOnly<OperationMapRenderVirtualizationMetricsComponent>(),
+            ComponentType.ReadOnly<OperationMapRenderSlotCommandStateComponent>());
+        Assert.That(databaseQuery.CalculateEntityCount(), Is.EqualTo(1));
+        Entity databaseEntity = databaseQuery.GetSingletonEntity();
+
+        Vector3 originalPosition = camera.transform.position;
+        Quaternion originalRotation = camera.transform.rotation;
+        bool originalOrthographic = camera.orthographic;
+        float originalFieldOfView = camera.fieldOfView;
+        float originalOrthographicSize = camera.orthographicSize;
+        RuntimeGameplayStateComponent originalGameplayState = default;
+        Entity gameplayStateEntity = Entity.Null;
+        bool gameplayStateCaptured = false;
+        Camera[] cameras = Camera.allCameras;
+        var cameraEnabledStates = new bool[cameras.Length];
+        var rows = new List<DenseVrp086VisualEvidenceRow>(
+            DenseVrp086FixedViewCount * 2 + DenseVrp086EdgeFrameCount);
+        var referenceFrames = new Dictionary<string, DenseVrp086CapturedFrame>(
+            StringComparer.Ordinal);
+        float maximumRepeatedMeanChannelDelta = 0f;
+        float maximumRepeatedInteriorChangedPixelRatio = 0f;
+        int totalSlotReassignmentCount = 0;
+        try
+        {
+            using (EntityQuery gameplayStateQuery = entityManager.CreateEntityQuery(
+                       ComponentType.ReadWrite<RuntimeGameplayStateComponent>()))
+            {
+                Assert.That(gameplayStateQuery.CalculateEntityCount(), Is.EqualTo(1));
+                gameplayStateEntity = gameplayStateQuery.GetSingletonEntity();
+                originalGameplayState = entityManager.GetComponentData<
+                    RuntimeGameplayStateComponent>(gameplayStateEntity);
+                RuntimeGameplayStateComponent quiescent = originalGameplayState;
+                quiescent.SimulationActive = 0;
+                entityManager.SetComponentData(gameplayStateEntity, quiescent);
+                gameplayStateCaptured = true;
+            }
+            yield return null;
+            entityManager.CompleteAllTrackedJobs();
+
+            for (int index = 0; index < cameras.Length; index++)
+            {
+                cameraEnabledStates[index] = cameras[index].enabled;
+                if (cameras[index] != camera)
+                    cameras[index].enabled = false;
+            }
+            camera.enabled = true;
+
+            Vector3 horizontalRight = Vector3.ProjectOnPlane(
+                camera.transform.right,
+                Vector3.up).normalized;
+            Vector3 horizontalForward = Vector3.ProjectOnPlane(
+                camera.transform.forward,
+                Vector3.up).normalized;
+            Assert.That(horizontalRight.sqrMagnitude, Is.GreaterThan(0.99f));
+            Assert.That(horizontalForward.sqrMagnitude, Is.GreaterThan(0.99f));
+            const float fixedOffset = 100f;
+            Vector3[] fixedPositions =
+            {
+                originalPosition,
+                originalPosition + horizontalRight * fixedOffset,
+                originalPosition - horizontalRight * fixedOffset,
+                originalPosition + horizontalForward * fixedOffset,
+                originalPosition - horizontalForward * fixedOffset
+            };
+
+            for (int view = 0; view < fixedPositions.Length; view++)
+            {
+                string viewName = $"fixed-{view + 1:D2}";
+                camera.transform.SetPositionAndRotation(
+                    fixedPositions[view],
+                    originalRotation);
+                var captured = new DenseVrp086CapturedFrame();
+                yield return DenseCaptureProductionVisualFrame(
+                    projectRoot,
+                    entityManager,
+                    databaseEntity,
+                    camera,
+                    $"{viewName}-a",
+                    "fixed-a",
+                    captured);
+                referenceFrames.Add(viewName, captured);
+                rows.Add(captured.Row);
+            }
+
+            Vector3 edgeStartPosition =
+                originalPosition - horizontalRight * fixedOffset;
+            Vector3 edgeEndPosition =
+                originalPosition + horizontalRight * fixedOffset;
+            for (int edge = 0; edge < DenseVrp086EdgeFrameCount; edge++)
+            {
+                float fraction = edge / (DenseVrp086EdgeFrameCount - 1f);
+                camera.transform.SetPositionAndRotation(
+                    Vector3.Lerp(edgeStartPosition, edgeEndPosition, fraction),
+                    originalRotation);
+                var captured = new DenseVrp086CapturedFrame();
+                yield return DenseCaptureProductionVisualFrame(
+                    projectRoot,
+                    entityManager,
+                    databaseEntity,
+                    camera,
+                    $"edge-{edge + 1:D2}",
+                    "edge-traversal",
+                    captured);
+                rows.Add(captured.Row);
+            }
+
+            for (int view = 0; view < fixedPositions.Length; view++)
+            {
+                string viewName = $"fixed-{view + 1:D2}";
+                camera.transform.SetPositionAndRotation(
+                    fixedPositions[view],
+                    originalRotation);
+                var captured = new DenseVrp086CapturedFrame();
+                yield return DenseCaptureProductionVisualFrame(
+                    projectRoot,
+                    entityManager,
+                    databaseEntity,
+                    camera,
+                    $"{viewName}-b",
+                    "fixed-b",
+                    captured);
+                DenseVrp086CapturedFrame reference = referenceFrames[viewName];
+                DensePixelComparison comparison = DenseComparePixels(
+                    reference.Pixels,
+                    captured.Pixels,
+                    DenseVrp086CaptureWidth,
+                    DenseVrp086CaptureHeight,
+                    3,
+                    16);
+                Assert.That(
+                    comparison.MeanChannelDelta,
+                    Is.LessThanOrEqualTo(0.0025f),
+                    $"VRP-086 repeated fixed view '{viewName}' drifted visually.");
+                Assert.That(
+                    comparison.InteriorChangedPixelRatio,
+                    Is.LessThanOrEqualTo(0.01f),
+                    $"VRP-086 repeated fixed view '{viewName}' changed interior pixels.");
+                Assert.That(
+                    DenseCaptureLogicalBindingKeys(captured.Bindings),
+                    Is.EqualTo(DenseCaptureLogicalBindingKeys(reference.Bindings)),
+                    $"VRP-086 repeated fixed view '{viewName}' retained stale logical bindings.");
+                captured.Row.slotReassignmentCount = DenseCountSlotReassignments(
+                    reference.Bindings,
+                    captured.Bindings);
+                totalSlotReassignmentCount += captured.Row.slotReassignmentCount;
+                captured.Row.meanChannelDeltaFromFixedA =
+                    comparison.MeanChannelDelta;
+                captured.Row.interiorChangedPixelRatioFromFixedA =
+                    comparison.InteriorChangedPixelRatio;
+                maximumRepeatedMeanChannelDelta = Math.Max(
+                    maximumRepeatedMeanChannelDelta,
+                    comparison.MeanChannelDelta);
+                maximumRepeatedInteriorChangedPixelRatio = Math.Max(
+                    maximumRepeatedInteriorChangedPixelRatio,
+                    comparison.InteriorChangedPixelRatio);
+                rows.Add(captured.Row);
+            }
+
+            var report = new DenseVrp086VisualEvidenceReport
+            {
+                schema = "warline.operation-map.vrp086-packed-production-camera-visual-evidence",
+                schemaVersion = 1,
+                result = "Passed",
+                operationMapId = ExpectedOperationMapId,
+                width = DenseVrp086CaptureWidth,
+                height = DenseVrp086CaptureHeight,
+                fixedViewCount = DenseVrp086FixedViewCount,
+                fixedCaptureCount = DenseVrp086FixedViewCount * 2,
+                edgeFrameCount = DenseVrp086EdgeFrameCount,
+                captureCount = rows.Count,
+                holeCount = 0,
+                staleBindingCount = 0,
+                slotReassignmentCount = totalSlotReassignmentCount,
+                overflowCount = 0,
+                highestDeficit = 0,
+                maximumRepeatedMeanChannelDelta =
+                    maximumRepeatedMeanChannelDelta,
+                maximumRepeatedInteriorChangedPixelRatio =
+                    maximumRepeatedInteriorChangedPixelRatio,
+                productionCutover = 0,
+                rows = rows.ToArray()
+            };
+            Assert.That(
+                report.captureCount,
+                Is.EqualTo(
+                    DenseVrp086FixedViewCount * 2 + DenseVrp086EdgeFrameCount));
+            string reportPath = DenseResolve(projectRoot, DenseVrp086ReportPath);
+            File.WriteAllText(reportPath, JsonUtility.ToJson(report, true) + "\n");
+            Debug.Log(
+                "[DensePackedCameraVisualEvidence] result=Passed " +
+                $"fixedViews={DenseVrp086FixedViewCount} " +
+                $"fixedCaptures={DenseVrp086FixedViewCount * 2} " +
+                $"edgeFrames={DenseVrp086EdgeFrameCount} captures={rows.Count} " +
+                $"maxRepeatedMeanDelta={maximumRepeatedMeanChannelDelta:R} " +
+                $"maxRepeatedInteriorChangedRatio=" +
+                $"{maximumRepeatedInteriorChangedPixelRatio:R} " +
+                $"slotReassignments={totalSlotReassignmentCount} " +
+                "holes=0 staleBindings=0 overflow=0 deficit=0 productionCutover=0");
+        }
+        finally
+        {
+            camera.transform.SetPositionAndRotation(originalPosition, originalRotation);
+            camera.orthographic = originalOrthographic;
+            camera.fieldOfView = originalFieldOfView;
+            camera.orthographicSize = originalOrthographicSize;
+            for (int index = 0; index < cameras.Length; index++)
+            {
+                if (cameras[index] != null)
+                    cameras[index].enabled = cameraEnabledStates[index];
+            }
+            if (gameplayStateCaptured &&
+                entityManager.Exists(gameplayStateEntity))
+            {
+                entityManager.SetComponentData(
+                    gameplayStateEntity,
+                    originalGameplayState);
+            }
+        }
+    }
+
+    private static IEnumerator DenseCaptureProductionVisualFrame(
+        string projectRoot,
+        EntityManager entityManager,
+        Entity databaseEntity,
+        Camera camera,
+        string name,
+        string role,
+        DenseVrp086CapturedFrame captured)
+    {
+        yield return DenseWaitForProductionVisualSettle(
+            entityManager,
+            databaseEntity,
+            name);
+        Color32[] pixels = null;
+        byte[] png = null;
+        yield return DenseRenderCamera(
+            camera,
+            DenseVrp086CaptureWidth,
+            DenseVrp086CaptureHeight,
+            (capturedPixels, capturedPng) =>
+            {
+                pixels = capturedPixels;
+                png = capturedPng;
+            });
+        Assert.That(pixels, Is.Not.Null, name);
+        Assert.That(png, Is.Not.Null, name);
+        Assert.That(
+            pixels.Length,
+            Is.EqualTo(DenseVrp086CaptureWidth * DenseVrp086CaptureHeight),
+            name);
+
+        double lumaSum = 0d;
+        double lumaSquaredSum = 0d;
+        int transparentPixels = 0;
+        for (int index = 0; index < pixels.Length; index++)
+        {
+            Color32 pixel = pixels[index];
+            double luma =
+                (0.2126d * pixel.r + 0.7152d * pixel.g + 0.0722d * pixel.b) /
+                255d;
+            lumaSum += luma;
+            lumaSquaredSum += luma * luma;
+            if (pixel.a == 0)
+                transparentPixels++;
+        }
+        double lumaMean = lumaSum / pixels.Length;
+        double lumaVariance =
+            lumaSquaredSum / pixels.Length - lumaMean * lumaMean;
+        Assert.That(lumaVariance, Is.GreaterThan(0.0001d), name);
+        Assert.That(transparentPixels, Is.Zero, name);
+
+        DenseVirtualizationObservation observation =
+            DenseObserveVirtualization(entityManager, databaseEntity);
+        DenseAssertBounded(observation, name);
+        DenseSlotBinding[] bindings = DenseCaptureActiveBindings(entityManager);
+        Assert.That(
+            bindings.Length,
+            Is.EqualTo(observation.Metrics.EnabledSlotCount),
+            name);
+        var slotKeys = new HashSet<int>();
+        var logicalKeys = new HashSet<string>(StringComparer.Ordinal);
+        for (int index = 0; index < bindings.Length; index++)
+        {
+            DenseSlotBinding binding = bindings[index];
+            Assert.That(slotKeys.Add(binding.SlotIndex), Is.True, name);
+            Assert.That(
+                logicalKeys.Add($"{binding.PlacementIndex}:{binding.PartIndex}"),
+                Is.True,
+                name);
+        }
+
+        string relativePath = $"{DenseVrp086EvidenceDirectory}/{name}.png";
+        string physicalPath = DenseResolve(projectRoot, relativePath);
+        File.WriteAllBytes(physicalPath, png);
+        Vector3 position = camera.transform.position;
+        Vector3 rotation = camera.transform.rotation.eulerAngles;
+        captured.Bindings = bindings;
+        captured.Pixels = pixels;
+        captured.Row = new DenseVrp086VisualEvidenceRow
+        {
+            name = name,
+            role = role,
+            result = "Passed",
+            path = relativePath,
+            sha256 = ComputeSha256(physicalPath),
+            cameraPosition = new[] { position.x, position.y, position.z },
+            cameraRotation = new[] { rotation.x, rotation.y, rotation.z },
+            fieldOfView = camera.fieldOfView,
+            lumaVariance = (float)lumaVariance,
+            transparentPixelCount = transparentPixels,
+            enabledSlotCount = observation.Metrics.EnabledSlotCount,
+            activeCellCount = observation.Metrics.ActiveCellCount,
+            activePlacementCount = observation.Metrics.ActivePlacementCount,
+            commandVersion = observation.Metrics.CommandVersion,
+            rebuildCount = observation.State.RebuildCount,
+            overflowCount = observation.Metrics.OverflowCount,
+            highestDeficit = observation.Metrics.HighestDeficit,
+            duplicateSlotCount = 0,
+            duplicateLogicalBindingCount = 0
+        };
+    }
+
+    private static string[] DenseCaptureLogicalBindingKeys(
+        IReadOnlyList<DenseSlotBinding> bindings)
+    {
+        var keys = new string[bindings.Count];
+        for (int index = 0; index < bindings.Count; index++)
+        {
+            DenseSlotBinding binding = bindings[index];
+            keys[index] =
+                $"{binding.PlacementIndex:D10}:" +
+                $"{binding.PartIndex:D6}:" +
+                $"{binding.PoolBucketIndex:D4}";
+        }
+        Array.Sort(keys, StringComparer.Ordinal);
+        return keys;
+    }
+
+    private static int DenseCountSlotReassignments(
+        IReadOnlyList<DenseSlotBinding> reference,
+        IReadOnlyList<DenseSlotBinding> captured)
+    {
+        var referenceSlots = new Dictionary<string, int>(
+            reference.Count,
+            StringComparer.Ordinal);
+        for (int index = 0; index < reference.Count; index++)
+        {
+            DenseSlotBinding binding = reference[index];
+            string key =
+                $"{binding.PlacementIndex}:" +
+                $"{binding.PartIndex}:" +
+                $"{binding.PoolBucketIndex}";
+            referenceSlots.Add(key, binding.SlotIndex);
+        }
+
+        int reassigned = 0;
+        for (int index = 0; index < captured.Count; index++)
+        {
+            DenseSlotBinding binding = captured[index];
+            string key =
+                $"{binding.PlacementIndex}:" +
+                $"{binding.PartIndex}:" +
+                $"{binding.PoolBucketIndex}";
+            Assert.That(referenceSlots.ContainsKey(key), Is.True, key);
+            if (referenceSlots[key] != binding.SlotIndex)
+                reassigned++;
+        }
+        return reassigned;
+    }
+
+    private static IEnumerator DenseWaitForProductionVisualSettle(
+        EntityManager entityManager,
+        Entity databaseEntity,
+        string stage)
+    {
+        yield return null;
+        float deadline =
+            Time.realtimeSinceStartup + DenseVrp086SettleTimeoutSeconds;
+        int stableFrames = 0;
+        uint previousCommandVersion = uint.MaxValue;
+        int previousRebuildCount = -1;
+        string lastState = "unobserved";
+        while (Time.realtimeSinceStartup < deadline && stableFrames < 3)
+        {
+            DenseVirtualizationObservation observation =
+                DenseObserveVirtualization(entityManager, databaseEntity);
+            lastState =
+                $"initial={observation.State.InitialViewApplied} " +
+                $"activeSlots={observation.State.ActiveSlotCount}/" +
+                $"{observation.Metrics.EnabledSlotCount} " +
+                $"activeCells={observation.Metrics.ActiveCellCount} " +
+                $"activePlacements={observation.Metrics.ActivePlacementCount} " +
+                $"stateOverflow={observation.State.OverflowCount} " +
+                $"metricsOverflow={observation.Metrics.OverflowCount} " +
+                $"deficit={observation.Metrics.HighestDeficit} " +
+                $"command={observation.Metrics.CommandVersion}/" +
+                $"{observation.CommandState.Version} " +
+                $"rebuilds={observation.State.RebuildCount}";
+            bool bounded =
+                observation.State.InitialViewApplied != 0 &&
+                observation.State.ActiveSlotCount > 0 &&
+                observation.State.OverflowCount == 0 &&
+                observation.Metrics.OverflowCount == 0 &&
+                observation.Metrics.HighestDeficit == 0 &&
+                observation.Metrics.CommandVersion ==
+                observation.CommandState.Version;
+            bool unchanged =
+                bounded &&
+                observation.Metrics.CommandVersion == previousCommandVersion &&
+                observation.State.RebuildCount == previousRebuildCount;
+            stableFrames = unchanged ? stableFrames + 1 : bounded ? 1 : 0;
+            previousCommandVersion = observation.Metrics.CommandVersion;
+            previousRebuildCount = observation.State.RebuildCount;
+            yield return null;
+        }
+        Assert.That(
+            stableFrames,
+            Is.GreaterThanOrEqualTo(3),
+            $"VRP-086 production camera frame '{stage}' did not settle; " +
+            lastState);
     }
 
     private static void DenseAssertCompleteRuntimeCounts(
@@ -2601,6 +3073,64 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
         public float maximumChangedPixelRatio;
         public int productionCutover;
         public DenseRuntimeFixedCameraRow[] rows;
+    }
+
+    [Serializable]
+    private sealed class DenseVrp086VisualEvidenceReport
+    {
+        public string schema;
+        public int schemaVersion;
+        public string result;
+        public string operationMapId;
+        public int width;
+        public int height;
+        public int fixedViewCount;
+        public int fixedCaptureCount;
+        public int edgeFrameCount;
+        public int captureCount;
+        public int holeCount;
+        public int staleBindingCount;
+        public int slotReassignmentCount;
+        public int overflowCount;
+        public int highestDeficit;
+        public float maximumRepeatedMeanChannelDelta;
+        public float maximumRepeatedInteriorChangedPixelRatio;
+        public int productionCutover;
+        public DenseVrp086VisualEvidenceRow[] rows;
+    }
+
+    [Serializable]
+    private sealed class DenseVrp086VisualEvidenceRow
+    {
+        public string name;
+        public string role;
+        public string result;
+        public string path;
+        public string sha256;
+        public float[] cameraPosition;
+        public float[] cameraRotation;
+        public float fieldOfView;
+        public float lumaVariance;
+        public int transparentPixelCount;
+        public int enabledSlotCount;
+        public int activeCellCount;
+        public int activePlacementCount;
+        public uint commandVersion;
+        public int rebuildCount;
+        public int overflowCount;
+        public int highestDeficit;
+        public int duplicateSlotCount;
+        public int duplicateLogicalBindingCount;
+        public int slotReassignmentCount;
+        public float meanChannelDeltaFromFixedA;
+        public float interiorChangedPixelRatioFromFixedA;
+    }
+
+    private sealed class DenseVrp086CapturedFrame
+    {
+        public DenseVrp086VisualEvidenceRow Row;
+        public DenseSlotBinding[] Bindings;
+        public Color32[] Pixels;
     }
 
     [Serializable]

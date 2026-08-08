@@ -564,6 +564,7 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
         bool validateBuildingDestruction,
         bool validateVehicleMovement,
         bool validateCameraSimulationState = false,
+        bool validateCameraVisualEvidence = false,
         Action<World, Entity[]> validateLoadedContent = null)
     {
         yield return Aph805MenuMatchMenuLifecyclePlayModeTests.EnterStableMatch(route);
@@ -613,6 +614,12 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
                 definition.RenderResidencyMode ==
                 OperationMapRenderResidencyMode.VirtualizedProxyPool,
                 validateCameraSimulationState);
+        }
+
+        if (validateCameraVisualEvidence)
+        {
+            yield return DenseCaptureProductionCameraVisualEvidence(
+                route);
         }
 
         if (validateSteadyStateAllocation)

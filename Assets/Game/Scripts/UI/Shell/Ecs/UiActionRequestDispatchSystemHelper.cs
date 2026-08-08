@@ -34,6 +34,11 @@ namespace Game.UI.Shell.Ecs
             switch (request.Kind)
             {
                 case UiActionKind.MatchMenu:
+                    // Route changes issued from the pause modal must close that modal first.
+                    // Otherwise the shell can begin its loading transition while the popup
+                    // presentation sequence still owns the popup layer, leaving the loading
+                    // sequence waiting indefinitely on packaged Android.
+                    EnqueuePopup(popupRequests, UiShellPopupKind.Pause, UiShellPopupIntent.Hide, request.PayloadId);
                     routeRequests.Add(new UiShellRouteRequestComponent
                     {
                         Route = UIRoute.MainMenu,

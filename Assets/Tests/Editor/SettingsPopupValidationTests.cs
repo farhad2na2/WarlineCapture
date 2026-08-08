@@ -182,6 +182,13 @@ public sealed class SettingsPopupValidationTests
         entityManager.AddBuffer<UiActionRequestComponent>(boundary);
         entityManager.AddBuffer<UiShellPopupRequestComponent>(boundary);
         entityManager.AddBuffer<UiShellRouteRequestComponent>(boundary);
+        entityManager.AddBuffer<UiShellLoadingProgressRequestComponent>(boundary);
+        entityManager.AddBuffer<UiShellRouteHistoryComponent>(boundary);
+        entityManager.AddBuffer<UiShellPresentationCommandComponent>(boundary);
+        entityManager.AddBuffer<UiShellTransitionCompleteComponent>(boundary);
+        entityManager.AddComponentData(boundary, new UiShellLoadingProgressComponent());
+        entityManager.AddComponentData(boundary, new MatchIntroTransitionComponent());
+        entityManager.AddComponentData(boundary, new UiShellActivePopupComponent());
 
         Entity selectionInput = entityManager.CreateEntity(
             typeof(RtsSelectionInputStateComponent),
@@ -227,6 +234,74 @@ public sealed class SettingsPopupValidationTests
         Assert.AreEqual(UiShellPopupKind.Pause, popupRequests[0].PopupKind);
         Assert.AreEqual(UiShellPopupIntent.Hide, popupRequests[0].Intent);
         Assert.AreEqual(88, popupRequests[0].PayloadId);
+
+        popupRequests.Clear();
+        actionRequests.Add(new UiActionRequestComponent
+        {
+            Kind = UiActionKind.MatchMenu,
+            PayloadId = 99
+        });
+        system.Update(world.Unmanaged);
+
+        Assert.AreEqual(0, actionRequests.Length, "MatchMenu action should be consumed by UiActionRequestSystem.");
+        Assert.AreEqual(1, popupRequests.Length, "MatchMenu must close the pause popup before changing routes.");
+        Assert.AreEqual(UiShellPopupKind.Pause, popupRequests[0].PopupKind);
+        Assert.AreEqual(UiShellPopupIntent.Hide, popupRequests[0].Intent);
+        Assert.AreEqual(99, popupRequests[0].PayloadId);
+        Assert.AreEqual(1, routeRequests.Length, "MatchMenu must retain exactly one main-menu route request.");
+        Assert.AreEqual(UIRoute.MainMenu, routeRequests[0].Route);
+        Assert.AreEqual(UiShellRouteIntent.ReturnToMainMenu, routeRequests[0].Intent);
+        Assert.AreEqual(0, routeRequests[0].PushHistory);
+
+        entityManager.SetComponentData(boundary, new UiShellStateComponent
+        {
+            CurrentMode = UiShellMode.MatchHud,
+            ActiveRoute = UIRoute.Match,
+            Phase = UiShellTransitionPhase.PopupVisible,
+            TransitionSequenceId = 20,
+            IsTransitionRunning = 0
+        });
+        entityManager.SetComponentData(boundary, new UiShellActivePopupComponent
+        {
+            PopupKind = UiShellPopupKind.Pause,
+            Visible = 1
+        });
+
+        SystemHandle flow = world.CreateSystem<UiShellFlowSystem>();
+        flow.Update(world.Unmanaged);
+
+        UiShellStateComponent shell = entityManager.GetComponentData<UiShellStateComponent>(boundary);
+        UiShellActivePopupComponent activePopup = entityManager.GetComponentData<UiShellActivePopupComponent>(boundary);
+        DynamicBuffer<UiShellPresentationCommandComponent> commands =
+            entityManager.GetBuffer<UiShellPresentationCommandComponent>(boundary);
+        Assert.AreEqual(21, shell.TransitionSequenceId);
+        Assert.AreEqual(1, shell.IsTransitionRunning);
+        Assert.AreEqual(UiShellTransitionPhase.HidingPopup, shell.Phase);
+        Assert.AreEqual(0, activePopup.Visible);
+        Assert.AreEqual(1, commands.Length);
+        Assert.AreEqual(UiShellCommandKind.HidePopup, commands[0].Kind);
+        Assert.AreEqual(1, routeRequests.Length, "The route must remain queued until pause-hide completion.");
+
+        entityManager.GetBuffer<UiShellTransitionCompleteComponent>(boundary).Add(
+            new UiShellTransitionCompleteComponent
+            {
+                Kind = UiShellCommandKind.HidePopup,
+                Region = UiShellRegionId.PopupLayer,
+                SequenceId = shell.TransitionSequenceId
+            });
+        flow.Update(world.Unmanaged);
+
+        shell = entityManager.GetComponentData<UiShellStateComponent>(boundary);
+        commands = entityManager.GetBuffer<UiShellPresentationCommandComponent>(boundary);
+        Assert.AreEqual(22, shell.TransitionSequenceId);
+        Assert.AreEqual(1, shell.IsTransitionRunning);
+        Assert.AreEqual(UiShellMode.Loading, shell.CurrentMode);
+        Assert.AreEqual(UIRoute.MainMenu, shell.ActiveRoute);
+        Assert.AreEqual(UiShellTransitionPhase.ShowingLoading, shell.Phase);
+        Assert.AreEqual(2, commands.Length);
+        Assert.AreEqual(UiShellCommandKind.ShowLoading, commands[0].Kind);
+        Assert.AreEqual(UiShellCommandKind.ExitMatchHud, commands[1].Kind);
+        Assert.AreEqual(0, routeRequests.Length);
     }
 
     [Test]

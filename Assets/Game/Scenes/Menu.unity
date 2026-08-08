@@ -2289,6 +2289,7 @@ MonoBehaviour:
   matchHudContentPrefab: {fileID: 8032040054424849745, guid: 19831a366284140cbabb9f7e0acc1858, type: 3}
   buildDrawerPopupPrefab: {fileID: 6681354990523575241, guid: f8fdfa57f1e92e74dbc1987ff731b3b3, type: 3}
   fullMapPopupPrefab: {fileID: 5212093184515549060, guid: 4cbbb8d6a3a28439784346da6e1c3022, type: 3}
+  pauseMenuPopupPrefab: {fileID: 7667151139918803537, guid: 12e2f9a0c0cff4807b4585300cdc930a, type: 3}
   settingsPopupPrefab: {fileID: 6007764285479271553, guid: aa32fc17726f147338fed3c55fbd6534, type: 3}
   resourceExchangePopupPrefab: {fileID: 7142867792348903761, guid: 3a34b9e4e9aa44bb8b55de86f8ce65ed, type: 3}
   ariaCommandAssistantPopupPrefab: {fileID: 5236695059298202961, guid: 1a18a4ea305ad4e3a8aadc4cfa8c9804, type: 3}

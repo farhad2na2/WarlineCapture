@@ -188,10 +188,30 @@ public sealed class ResourceExchangeHeaderRoutingTests
         Assert.NotNull(resourceStrip.GetComponent<Button>());
         Assert.IsTrue(resourceStrip.GetComponent<Image>().raycastTarget);
 
+        AssertScopedHeaderButton(sourceHeader, "PauseButton", UiActionKind.Pause);
+        AssertScopedHeaderButton(sourceHeader, "SettingsButton", UiActionKind.OpenSettings);
+
         Transform currentOrderBanner = sourceHeader.Find("CurrentOrderBanner");
         Assert.NotNull(currentOrderBanner);
         Assert.IsNull(currentOrderBanner.GetComponent<Canvas>(),
             "The original header layout must not gain another nested canvas.");
+    }
+
+    private static void AssertScopedHeaderButton(
+        Transform sourceHeader,
+        string buttonName,
+        UiActionKind expectedAction)
+    {
+        Transform buttonTransform = sourceHeader.Find(buttonName);
+        Assert.NotNull(buttonTransform, $"HeaderContent must retain {buttonName}.");
+        Assert.NotNull(buttonTransform.GetComponent<Canvas>(),
+            $"{buttonName} must own a scoped canvas under the batching header.");
+        Assert.NotNull(buttonTransform.GetComponent<GraphicRaycaster>(),
+            $"{buttonName} must own a scoped raycaster instead of passing input to the world.");
+        Assert.NotNull(buttonTransform.GetComponent<Button>());
+        UIShellActionButtonView action = buttonTransform.GetComponent<UIShellActionButtonView>();
+        Assert.NotNull(action, $"{buttonName} must enqueue its shell action.");
+        Assert.AreEqual(expectedAction, action.ActionKind);
     }
 
     [Test]

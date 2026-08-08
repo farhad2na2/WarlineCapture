@@ -22,6 +22,7 @@ namespace Game.UI.Runtime
         [SerializeField] private GameObject matchHudContentPrefab;
         [SerializeField] private GameObject buildDrawerPopupPrefab;
         [SerializeField] private GameObject fullMapPopupPrefab;
+        [SerializeField] private GameObject pauseMenuPopupPrefab;
         [SerializeField] private GameObject settingsPopupPrefab;
         [SerializeField] private GameObject resourceExchangePopupPrefab;
         [SerializeField] private GameObject ariaCommandAssistantPopupPrefab;
@@ -53,6 +54,7 @@ namespace Game.UI.Runtime
         private UnityAction _buildDrawerPopupCloseButtonListener;
         private GameObject _buildDrawerPopupInstance;
         private GameObject _fullMapPopupInstance;
+        private GameObject _pauseMenuPopupInstance;
         private GameObject _settingsPopupInstance;
         private SettingsPopupView _settingsPopupView;
         private MatchHudFullMapPopupView _fullMapPopupView;
@@ -70,6 +72,7 @@ namespace Game.UI.Runtime
         public GameObject MatchHudContentPrefab => matchHudContentPrefab;
         public GameObject BuildDrawerPopupPrefab => buildDrawerPopupPrefab;
         public GameObject FullMapPopupPrefab => fullMapPopupPrefab;
+        public GameObject PauseMenuPopupPrefab => pauseMenuPopupPrefab;
         public GameObject SettingsPopupPrefab => settingsPopupPrefab;
         public GameObject ResourceExchangePopupPrefab => resourceExchangePopupPrefab;
         public GameObject AriaCommandAssistantPopupPrefab => ariaCommandAssistantPopupPrefab;
@@ -152,6 +155,8 @@ namespace Game.UI.Runtime
                     case UiShellCommandKind.HidePopup:
                         if (commands[i].PopupKind == UiShellPopupKind.ResourceExchange)
                             CloseResourceExchangePopup(playPopupMotion: false);
+                        else if (commands[i].PopupKind == UiShellPopupKind.Pause)
+                            ClosePauseMenuPopup();
                         break;
                 }
             }
@@ -487,6 +492,9 @@ namespace Game.UI.Runtime
                 case UiShellPopupKind.Settings:
                     InstallSettingsPopup(command.Route);
                     break;
+                case UiShellPopupKind.Pause:
+                    InstallPauseMenuPopup();
+                    break;
                 case UiShellPopupKind.ResourceExchange:
                     InstallResourceExchangePopup();
                     break;
@@ -508,6 +516,36 @@ namespace Game.UI.Runtime
             }
 
             return _settingsPopupInstance;
+        }
+
+        public GameObject InstallPauseMenuPopup()
+        {
+            _pauseMenuPopupInstance = InstallRoot(pauseMenuPopupPrefab, UIShellRegionId.PopupLayer);
+            return _pauseMenuPopupInstance;
+        }
+
+        public void ClosePauseMenuPopup()
+        {
+            GameObject popup = _pauseMenuPopupInstance;
+            _pauseMenuPopupInstance = null;
+            if (popup == null)
+                return;
+
+            if (Application.isPlaying)
+            {
+                UIPopupMotionView motionView = popup.GetComponent<UIPopupMotionView>();
+                if (motionView != null && motionView.PlayHide(() =>
+                    {
+                        DestroyRegionObject(popup);
+                        MarkContentChanged();
+                    }))
+                {
+                    return;
+                }
+            }
+
+            DestroyRegionObject(popup);
+            MarkContentChanged();
         }
 
         public GameObject InstallResourceExchangePopup()

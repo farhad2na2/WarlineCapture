@@ -19,6 +19,7 @@ namespace Game.Editor
         private const string LegacyMatchPopupPath = PopupsRoot + "SCN08_MatchSettingsPopup.prefab";
         private const string MainMenuContentPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN02_MainMenuContent.prefab";
         private const string MatchHudContentPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab";
+        private const string PauseMenuPopupPath = "Assets/Game/Prefabs/UI/Popups/PauseMenuPopup.prefab";
         private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
         private const float PopupRuntimeScale = 2.1f;
         private static readonly Vector2 MenuReferenceResolution = new(4800f, 2160f);
@@ -63,9 +64,19 @@ namespace Game.Editor
             WireSettingsButtons(MainMenuContentPath);
             WireSettingsButtons(MatchHudContentPath);
             WireMenuScene(sharedPrefab);
+            RepairMatchLifecycleControlsInternal();
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             Debug.Log("[SettingsPopupPrefabBuilder] Shared settings popup prefab rebuilt and shell bindings updated.");
+        }
+
+        [MenuItem("Game/UI/Repair Match Lifecycle Controls")]
+        public static void RepairMatchLifecycleControls()
+        {
+            RepairMatchLifecycleControlsInternal();
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log("[MatchLifecycleControlsRepair] result=Passed");
         }
 
         [MenuItem("Game/UI/Capture Settings Popup QA")]
@@ -478,6 +489,97 @@ namespace Game.Editor
             {
                 PrefabUtility.UnloadPrefabContents(root);
             }
+        }
+
+        private static void RepairMatchLifecycleControlsInternal()
+        {
+            WireMatchHudLifecycleButtons();
+            WirePauseMenuButtons();
+            GameObject pauseMenuPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PauseMenuPopupPath);
+            if (pauseMenuPrefab == null)
+                throw new FileNotFoundException($"Missing pause menu prefab: {PauseMenuPopupPath}");
+            WirePauseMenuScene(pauseMenuPrefab);
+        }
+
+        private static void WireMatchHudLifecycleButtons()
+        {
+            GameObject root = PrefabUtility.LoadPrefabContents(MatchHudContentPath);
+            try
+            {
+                EnsureActionButton(root.transform, "PauseButton", UiActionKind.Pause, scopedPointerRoute: true);
+                EnsureActionButton(root.transform, "SettingsButton", UiActionKind.OpenSettings, scopedPointerRoute: true);
+                PrefabUtility.SaveAsPrefabAsset(root, MatchHudContentPath);
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(root);
+            }
+        }
+
+        private static void WirePauseMenuButtons()
+        {
+            GameObject root = PrefabUtility.LoadPrefabContents(PauseMenuPopupPath);
+            try
+            {
+                EnsureActionButton(root.transform, "ResumeButton", UiActionKind.ClosePause, scopedPointerRoute: false);
+                EnsureActionButton(root.transform, "SettingsButton", UiActionKind.OpenSettings, scopedPointerRoute: false);
+                EnsureActionButton(root.transform, "ExitButton", UiActionKind.MatchMenu, scopedPointerRoute: false);
+                PrefabUtility.SaveAsPrefabAsset(root, PauseMenuPopupPath);
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(root);
+            }
+        }
+
+        private static void EnsureActionButton(
+            Transform root,
+            string buttonName,
+            UiActionKind actionKind,
+            bool scopedPointerRoute)
+        {
+            Transform buttonTransform = FindDeepChild(root, buttonName);
+            if (buttonTransform == null)
+                throw new MissingReferenceException($"{root.name} is missing {buttonName}.");
+
+            Button button = buttonTransform.GetComponent<Button>();
+            if (button == null)
+                throw new MissingComponentException($"{root.name}/{buttonName} is missing Button.");
+
+            if (scopedPointerRoute)
+            {
+                Canvas canvas = buttonTransform.GetComponent<Canvas>();
+                if (canvas == null)
+                    canvas = buttonTransform.gameObject.AddComponent<Canvas>();
+                canvas.renderMode = RenderMode.WorldSpace;
+                canvas.overrideSorting = false;
+                if (buttonTransform.GetComponent<GraphicRaycaster>() == null)
+                    buttonTransform.gameObject.AddComponent<GraphicRaycaster>();
+            }
+
+            UIShellRouteButtonView routeButton = buttonTransform.GetComponent<UIShellRouteButtonView>();
+            if (routeButton != null)
+                Object.DestroyImmediate(routeButton, true);
+
+            UIShellActionButtonView actionButton = buttonTransform.GetComponent<UIShellActionButtonView>();
+            if (actionButton == null)
+                actionButton = buttonTransform.gameObject.AddComponent<UIShellActionButtonView>();
+            SetEnum(actionButton, "actionKind", (int)actionKind);
+            SetInt(actionButton, "payloadId", 0);
+            SetObject(actionButton, "button", button);
+        }
+
+        private static void WirePauseMenuScene(GameObject pauseMenuPrefab)
+        {
+            Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
+            UIShellContentView content = Object.FindAnyObjectByType<UIShellContentView>(FindObjectsInactive.Include);
+            if (content == null)
+                throw new MissingReferenceException($"{MenuScenePath} is missing UIShellContentView.");
+
+            SetObject(content, "pauseMenuPopupPrefab", pauseMenuPrefab);
+            EditorUtility.SetDirty(content);
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
         }
 
         private static void WireMenuScene(GameObject sharedPrefab)

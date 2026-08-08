@@ -44,6 +44,9 @@ namespace Game.UI.Shell.Ecs
                 case UiActionKind.Pause:
                     EnqueuePopup(popupRequests, UiShellPopupKind.Pause, UiShellPopupIntent.Show, request.PayloadId);
                     break;
+                case UiActionKind.ClosePause:
+                    EnqueuePopup(popupRequests, UiShellPopupKind.Pause, UiShellPopupIntent.Hide, request.PayloadId);
+                    break;
                 case UiActionKind.OpenSettings:
                     EnqueuePopup(popupRequests, UiShellPopupKind.Settings, UiShellPopupIntent.Show, request.PayloadId);
                     break;

@@ -95,7 +95,8 @@ namespace Game.UI.Runtime
             if (_button != null)
                 _button.onClick.RemoveListener(TogglePanel);
 
-            _popupView?.UnbindActions();
+            if (_popupView != null)
+                _popupView.UnbindActions();
             DestroyPopupInstance();
             if (_objectivePanel != null)
                 _objectivePanel.SetActive(_objectivePanelOriginalActive);
@@ -259,7 +260,8 @@ namespace Game.UI.Runtime
             }
             else
             {
-                _popupView?.Hide();
+                if (_popupView != null)
+                    _popupView.Hide();
             }
 
             MirrorPanelOpen(open);
@@ -276,7 +278,8 @@ namespace Game.UI.Runtime
 
         private void DestroyPopupInstance()
         {
-            _popupView?.UnbindActions();
+            if (_popupView != null)
+                _popupView.UnbindActions();
             DestroyObject(_popupInstance);
             _popupInstance = null;
             _popupView = null;

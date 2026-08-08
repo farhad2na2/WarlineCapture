@@ -118,7 +118,8 @@ namespace Game.UI.Contracts
         ResourceExchangeRushAll,
         ResourceExchangeClearCompleted,
         ResourceExchangeQueueRush,
-        ResourceExchangeQueueCancel
+        ResourceExchangeQueueCancel,
+        ClosePause
     }
 
     public enum UiBuildProductionActionKind : byte

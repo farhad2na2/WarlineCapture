@@ -23,6 +23,7 @@ public sealed class SettingsPopupValidationTests
     private const string LegacyMatchSettingsPopupPath = "Assets/Game/Prefabs/UI/Shell/Popups/SCN08_MatchSettingsPopup.prefab";
     private const string MainMenuContentPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN02_MainMenuContent.prefab";
     private const string MatchHudContentPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab";
+    private const string PauseMenuPopupPath = "Assets/Game/Prefabs/UI/Popups/PauseMenuPopup.prefab";
 
     public static void RunFocusedValidation()
     {
@@ -161,6 +162,9 @@ public sealed class SettingsPopupValidationTests
     {
         AssertSettingsButtonUsesOpenSettingsAction(MainMenuContentPath);
         AssertSettingsButtonUsesOpenSettingsAction(MatchHudContentPath);
+        AssertPauseMenuButtonAction("ResumeButton", UiActionKind.ClosePause);
+        AssertPauseMenuButtonAction("SettingsButton", UiActionKind.OpenSettings);
+        AssertPauseMenuButtonAction("ExitButton", UiActionKind.MatchMenu);
     }
 
     [Test]
@@ -209,6 +213,20 @@ public sealed class SettingsPopupValidationTests
         Assert.AreEqual(UiShellPopupKind.Settings, popupRequests[0].PopupKind);
         Assert.AreEqual(UiShellPopupIntent.Show, popupRequests[0].Intent);
         Assert.AreEqual(77, popupRequests[0].PayloadId);
+
+        popupRequests.Clear();
+        actionRequests.Add(new UiActionRequestComponent
+        {
+            Kind = UiActionKind.ClosePause,
+            PayloadId = 88
+        });
+        system.Update(world.Unmanaged);
+
+        Assert.AreEqual(0, actionRequests.Length, "ClosePause action should be consumed by UiActionRequestSystem.");
+        Assert.AreEqual(1, popupRequests.Length, "ClosePause must enqueue exactly one popup request.");
+        Assert.AreEqual(UiShellPopupKind.Pause, popupRequests[0].PopupKind);
+        Assert.AreEqual(UiShellPopupIntent.Hide, popupRequests[0].Intent);
+        Assert.AreEqual(88, popupRequests[0].PayloadId);
     }
 
     [Test]
@@ -219,6 +237,8 @@ public sealed class SettingsPopupValidationTests
         Assert.NotNull(content, "Menu scene must contain the shell content binder.");
         Assert.NotNull(content.SettingsPopupPrefab, "Shared settings popup prefab must be assigned on the shell content binder.");
         Assert.AreEqual("SCN_SettingsPopup", content.SettingsPopupPrefab.name);
+        Assert.NotNull(content.PauseMenuPopupPrefab, "Pause menu popup prefab must be assigned on the shell content binder.");
+        Assert.AreEqual("PauseMenuPopup", content.PauseMenuPopupPrefab.name);
 
         content.PrepareForCommandSequence(new[]
         {
@@ -258,12 +278,39 @@ public sealed class SettingsPopupValidationTests
                 UIRoute.Match,
                 UiShellMode.PopupOnly,
                 4,
+                UiShellPopupKind.Pause)
+        });
+
+        GameObject pausePopup = AssertRegionHasChild(content.ShellView, UIShellRegionId.PopupLayer);
+        Assert.AreEqual("PauseMenuPopup", pausePopup.name);
+        content.ClosePauseMenuPopup();
+        AssertRegionIsEmpty(content.ShellView, UIShellRegionId.PopupLayer);
+
+        content.PrepareForCommandSequence(new[]
+        {
+            new UiShellPresentationCommandModel(
+                UiShellCommandKind.ShowPopup,
+                UiShellRegionId.PopupLayer,
+                UIRoute.Match,
+                UiShellMode.PopupOnly,
+                5,
                 UiShellPopupKind.Settings)
         });
 
         GameObject matchPopup = AssertRegionHasChild(content.ShellView, UIShellRegionId.PopupLayer);
         Assert.AreEqual("SCN_SettingsPopup", matchPopup.name);
         AssertSettingsPopupInstance(matchPopup, SettingsPopupContext.Match);
+    }
+
+    private static void AssertPauseMenuButtonAction(string buttonName, UiActionKind expectedAction)
+    {
+        GameObject prefab = LoadPrefab(PauseMenuPopupPath);
+        Transform buttonTransform = FindChild(prefab.transform, buttonName);
+        Assert.NotNull(buttonTransform, $"Pause menu must include {buttonName}.");
+        UIShellActionButtonView actionButton = buttonTransform.GetComponent<UIShellActionButtonView>();
+        Assert.NotNull(actionButton, $"Pause menu {buttonName} must use UIShellActionButtonView.");
+        Assert.AreEqual(expectedAction, actionButton.ActionKind);
+        Assert.AreEqual(0, actionButton.PayloadId);
     }
 
     private static void AssertLegacyDuplicatePopupRemoved(string prefabPath)

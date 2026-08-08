@@ -1032,6 +1032,7 @@ GameObject:
   - component: {fileID: 1085496844367921911}
   - component: {fileID: 729528497810363597}
   - component: {fileID: 570766858943339561}
+  - component: {fileID: 7899637309850814200}
   m_Layer: 0
   m_Name: ExitButton
   m_TagString: Untagged
@@ -1198,6 +1199,21 @@ MonoBehaviour:
   openMotion: 1
   acceptedFlashColor: {r: 0.05, g: 0.85, b: 1, a: 0.42}
   invalidFlashColor: {r: 1, g: 0.18, b: 0.08, a: 0.55}
+--- !u!114 &7899637309850814200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3924708720582604889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34943d27a58af470b9f5ac567de42bf0, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.UIShellActionButtonView
+  actionKind: 1
+  payloadId: 0
+  button: {fileID: 548832010756783226}
 --- !u!1 &4564944923844459086
 GameObject:
   m_ObjectHideFlags: 0
@@ -1798,6 +1814,7 @@ GameObject:
   - component: {fileID: 5364459223847671060}
   - component: {fileID: 7000276424803608015}
   - component: {fileID: 7838164278184920118}
+  - component: {fileID: 7057058850595689330}
   m_Layer: 0
   m_Name: SettingsButton
   m_TagString: Untagged
@@ -1964,6 +1981,21 @@ MonoBehaviour:
   openMotion: 1
   acceptedFlashColor: {r: 0.05, g: 0.85, b: 1, a: 0.42}
   invalidFlashColor: {r: 1, g: 0.18, b: 0.08, a: 0.55}
+--- !u!114 &7057058850595689330
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5723194597924537814}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34943d27a58af470b9f5ac567de42bf0, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.UIShellActionButtonView
+  actionKind: 10
+  payloadId: 0
+  button: {fileID: 3284728350539441961}
 --- !u!1 &5984716407620274055
 GameObject:
   m_ObjectHideFlags: 0
@@ -2415,6 +2447,7 @@ GameObject:
   - component: {fileID: 194144207536715730}
   - component: {fileID: 2717972744205442116}
   - component: {fileID: 400981902270467737}
+  - component: {fileID: 8857862135660419330}
   m_Layer: 0
   m_Name: ResumeButton
   m_TagString: Untagged
@@ -2581,6 +2614,21 @@ MonoBehaviour:
   openMotion: 1
   acceptedFlashColor: {r: 0.08, g: 0.88, b: 1, a: 0.52}
   invalidFlashColor: {r: 1, g: 0.18, b: 0.08, a: 0.55}
+--- !u!114 &8857862135660419330
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6913008443003162696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34943d27a58af470b9f5ac567de42bf0, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.UIShellActionButtonView
+  actionKind: 55
+  payloadId: 0
+  button: {fileID: 3755003571864615835}
 --- !u!1 &6983726380894472601
 GameObject:
   m_ObjectHideFlags: 0

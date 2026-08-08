@@ -29,6 +29,21 @@ namespace Game.Editor
     {
         internal const string ReportPath =
             "Design/AgentReports/2026-07-30_dense_city_render_virtualization_pilot_enabled.json";
+        internal const string TwoRunBakeAllReportPath =
+            "Design/AgentReports/2026-08-08_dense_city_render_virtualization_two_run_bake_all.json";
+
+        private static readonly string[] BakeAllLogicalOutputPaths =
+        {
+            OperationMapRenderEligibilityInventoryProbe.ReportPath,
+            OperationMapRenderEligibilityInventoryProbe.SourceRowsPath,
+            OperationMapRenderEligibilityInventoryProbe.PrototypeRecipesPath,
+            OperationMapRenderEligibilityInventoryProbe.LogicalPlacementsPath,
+            OperationMapRenderEligibilityInventoryProbe.SpatialCellsPath,
+            OperationMapRenderEligibilityInventoryProbe.CapacityBudgetPath,
+            OperationMapRenderDatabaseBuilder.ConfigPath,
+            OperationMapRenderDatabaseBuilder.ConfigPath + ".meta",
+            OperationMapRenderDatabaseBuilder.ReportPath
+        };
 
         private const int ExpectedEligibleRows = 61925;
         private const int ExpectedEligibleRenderers = 61783;
@@ -164,6 +179,202 @@ namespace Game.Editor
                 $"retainedGeneratedRenderOnly=" +
                 $"{second.RetainedVirtualizedGeneratedRenderOnlyIdentityCount} " +
                 "productionCutover=0");
+        }
+
+        public static void RunTwoFullBakeAllDeterminismValidation()
+        {
+            string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+            var protectedSnapshot =
+                OperationMapEntitySceneCandidateBakeAll.ProtectedProductionSnapshot.Capture(
+                    projectRoot,
+                    new[]
+                    {
+                        OperationMapEntityPresentationCandidateSceneBuilder
+                            .AcceptedOperationMapScenePath,
+                        OperationMapEntityPresentationMigrationEditor.AcceptedSubScenePath,
+                        OperationMapAddressablesLayoutBuilder.DefinitionPath,
+                        OperationMapAddressablesLayoutBuilder.SourceScenePath,
+                        DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath,
+                        OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                            .DenseCandidateDefinitionPath,
+                        "Assets/AddressableAssetsData/AddressableAssetSettings.asset",
+                        DenseCityPresentationBudgetValidator.DensePackedAssetSharingReportPath
+                    },
+                    new[]
+                    {
+                        OperationMapEntityPresentationCandidateSceneBuilder.StaticRollbackRoot,
+                        "Assets/AddressableAssetsData/AssetGroups"
+                    });
+
+            BakeAllPassSummary first = RunFullBakeAllPass(projectRoot, "first");
+            protectedSnapshot.RequireUnchanged();
+            BakeAllPassSummary second = RunFullBakeAllPass(projectRoot, "second");
+            protectedSnapshot.RequireUnchanged();
+
+            RequireSameDirectBakeSummary(first.DirectBake, second.DirectBake);
+            if (!string.Equals(first.LogicalBytesSha256, second.LogicalBytesSha256,
+                    StringComparison.Ordinal) ||
+                first.LogicalByteCount != second.LogicalByteCount ||
+                !string.Equals(first.DatabaseContentHash, second.DatabaseContentHash,
+                    StringComparison.Ordinal) ||
+                !string.Equals(first.DatabaseOrderingHash, second.DatabaseOrderingHash,
+                    StringComparison.Ordinal) ||
+                first.MeshCount != second.MeshCount ||
+                first.MaterialCount != second.MaterialCount ||
+                first.PrototypeCount != second.PrototypeCount ||
+                first.PartCount != second.PartCount ||
+                first.PlacementCount != second.PlacementCount ||
+                first.CellCount != second.CellCount ||
+                first.CellPlacementIndexCount != second.CellPlacementIndexCount ||
+                first.PolicyBucketCount != second.PolicyBucketCount ||
+                first.TotalPoolSlotCapacity != second.TotalPoolSlotCapacity)
+            {
+                throw new InvalidOperationException(
+                    "Two complete virtualization Bake All runs produced different logical " +
+                    "hashes, counts, ordering, or serialized bytes.");
+            }
+
+            var report = new TwoRunBakeAllReport
+            {
+                schema = "warline.operation-map.render-virtualization-two-run-bake-all",
+                schemaVersion = 1,
+                result = "Passed",
+                operationMapId =
+                    OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
+                passCount = 2,
+                logicalOutputFileCount = BakeAllLogicalOutputPaths.Length,
+                logicalByteCount = second.LogicalByteCount,
+                firstLogicalBytesSha256 = first.LogicalBytesSha256,
+                secondLogicalBytesSha256 = second.LogicalBytesSha256,
+                contentHash = second.DatabaseContentHash,
+                orderingHash = second.DatabaseOrderingHash,
+                packedFingerprint = second.DirectBake.Fingerprint,
+                meshCount = second.MeshCount,
+                materialCount = second.MaterialCount,
+                prototypeCount = second.PrototypeCount,
+                partCount = second.PartCount,
+                placementCount = second.PlacementCount,
+                cellCount = second.CellCount,
+                cellPlacementIndexCount = second.CellPlacementIndexCount,
+                policyBucketCount = second.PolicyBucketCount,
+                proxySlotCount = second.TotalPoolSlotCapacity,
+                productionCutover = 0
+            };
+            string physicalReportPath = Path.Combine(projectRoot, TwoRunBakeAllReportPath);
+            Directory.CreateDirectory(
+                Path.GetDirectoryName(physicalReportPath) ?? projectRoot);
+            File.WriteAllText(
+                physicalReportPath,
+                JsonUtility.ToJson(report, true) + "\n",
+                Utf8WithoutBom);
+
+            Debug.Log(
+                "[OperationMapRenderVirtualizationTwoRunBakeAll] result=Passed " +
+                $"passes=2 logicalFiles={BakeAllLogicalOutputPaths.Length} " +
+                $"logicalBytes={second.LogicalByteCount} " +
+                $"logicalHash={second.LogicalBytesSha256} " +
+                $"contentHash={second.DatabaseContentHash} " +
+                $"orderingHash={second.DatabaseOrderingHash} " +
+                $"packedFingerprint={second.DirectBake.Fingerprint} " +
+                $"placements={second.PlacementCount} slots={second.TotalPoolSlotCapacity} " +
+                "productionCutover=0");
+        }
+
+        private static BakeAllPassSummary RunFullBakeAllPass(
+            string projectRoot,
+            string pass)
+        {
+            RequirePersistedModes();
+            OperationMapRenderEligibilityInventoryProbe.Run();
+            OperationMapRenderDatabaseBuilder.Run();
+            DirectBakeSummary directBake = BakeAndValidate(pass);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+
+            DatabaseLogicalReport database = JsonUtility.FromJson<DatabaseLogicalReport>(
+                File.ReadAllText(
+                    Path.Combine(projectRoot, OperationMapRenderDatabaseBuilder.ReportPath),
+                    Utf8WithoutBom));
+            if (database == null || database.result != "Passed" ||
+                string.IsNullOrWhiteSpace(database.contentHash) ||
+                string.IsNullOrWhiteSpace(database.recordOrderingSha256))
+            {
+                throw new InvalidOperationException(
+                    $"Virtualization Bake All {pass} database report is incomplete.");
+            }
+
+            string logicalBytesSha256 = ComputeLogicalOutputFingerprint(
+                projectRoot,
+                out long logicalByteCount);
+            return new BakeAllPassSummary(
+                logicalBytesSha256,
+                logicalByteCount,
+                database,
+                directBake);
+        }
+
+        private static string ComputeLogicalOutputFingerprint(
+            string projectRoot,
+            out long totalByteCount)
+        {
+            var manifest = new StringBuilder();
+            totalByteCount = 0;
+            foreach (string relativePath in BakeAllLogicalOutputPaths.OrderBy(
+                         value => value,
+                         StringComparer.Ordinal))
+            {
+                string physicalPath = Path.Combine(projectRoot, relativePath);
+                if (!File.Exists(physicalPath))
+                {
+                    throw new InvalidOperationException(
+                        $"Virtualization Bake All output is missing: {relativePath}");
+                }
+
+                byte[] bytes = File.ReadAllBytes(physicalPath);
+                totalByteCount += bytes.LongLength;
+                manifest.Append(relativePath)
+                    .Append('|')
+                    .Append(bytes.LongLength)
+                    .Append('|')
+                    .Append(ComputeSha256(bytes))
+                    .Append('\n');
+            }
+
+            return ComputeSha256(manifest.ToString());
+        }
+
+        private static void RequireSameDirectBakeSummary(
+            DirectBakeSummary first,
+            DirectBakeSummary second)
+        {
+            if (first.Fingerprint != second.Fingerprint ||
+                first.ContentHash != second.ContentHash ||
+                first.DatabaseSchemaVersion != second.DatabaseSchemaVersion ||
+                first.PrototypeCount != second.PrototypeCount ||
+                first.PartCount != second.PartCount ||
+                first.PlacementCount != second.PlacementCount ||
+                first.CellCount != second.CellCount ||
+                first.PoolBucketCount != second.PoolBucketCount ||
+                first.ProxySlotCount != second.ProxySlotCount ||
+                first.SourceRowCount != second.SourceRowCount ||
+                first.EligibleSourceRowCount != second.EligibleSourceRowCount ||
+                first.EligibleSourceRendererCount != second.EligibleSourceRendererCount ||
+                first.ResidentSourceRowCount != second.ResidentSourceRowCount ||
+                first.PackedMaterialMeshInfoEntityCount !=
+                    second.PackedMaterialMeshInfoEntityCount ||
+                first.VirtualizedGeneratedRenderOnlyIdentityCount !=
+                    second.VirtualizedGeneratedRenderOnlyIdentityCount ||
+                first.VirtualizedGeneratedBuildingIdentityCount !=
+                    second.VirtualizedGeneratedBuildingIdentityCount ||
+                first.RetainedVirtualizedGeneratedRenderOnlyIdentityCount !=
+                    second.RetainedVirtualizedGeneratedRenderOnlyIdentityCount ||
+                first.RetainedVirtualizedGeneratedBuildingIdentityCount !=
+                    second.RetainedVirtualizedGeneratedBuildingIdentityCount)
+            {
+                throw new InvalidOperationException(
+                    "Two complete virtualization Bake All runs produced different packed " +
+                    "logical counts or fingerprints.");
+            }
         }
 
         private static DirectBakeSummary BakeAndValidate(string pass)
@@ -704,6 +915,14 @@ namespace Game.Editor
                     .Select(item => item.ToString("x2")));
         }
 
+        private static string ComputeSha256(byte[] value)
+        {
+            using SHA256 sha256 = SHA256.Create();
+            return string.Concat(
+                sha256.ComputeHash(value)
+                    .Select(item => item.ToString("x2")));
+        }
+
         private static void RequireCount(string label, int actual, int expected)
         {
             if (actual != expected)
@@ -776,6 +995,90 @@ namespace Game.Editor
             internal int VirtualizedGeneratedBuildingIdentityCount { get; }
             internal int RetainedVirtualizedGeneratedRenderOnlyIdentityCount { get; }
             internal int RetainedVirtualizedGeneratedBuildingIdentityCount { get; }
+        }
+
+        private readonly struct BakeAllPassSummary
+        {
+            internal BakeAllPassSummary(
+                string logicalBytesSha256,
+                long logicalByteCount,
+                DatabaseLogicalReport database,
+                DirectBakeSummary directBake)
+            {
+                LogicalBytesSha256 = logicalBytesSha256;
+                LogicalByteCount = logicalByteCount;
+                DatabaseContentHash = database.contentHash;
+                DatabaseOrderingHash = database.recordOrderingSha256;
+                MeshCount = database.meshCount;
+                MaterialCount = database.materialCount;
+                PrototypeCount = database.prototypeCount;
+                PartCount = database.partCount;
+                PlacementCount = database.placementCount;
+                CellCount = database.cellCount;
+                CellPlacementIndexCount = database.cellPlacementIndexCount;
+                PolicyBucketCount = database.policyBucketCount;
+                TotalPoolSlotCapacity = database.totalPoolSlotCapacity;
+                DirectBake = directBake;
+            }
+
+            internal string LogicalBytesSha256 { get; }
+            internal long LogicalByteCount { get; }
+            internal string DatabaseContentHash { get; }
+            internal string DatabaseOrderingHash { get; }
+            internal int MeshCount { get; }
+            internal int MaterialCount { get; }
+            internal int PrototypeCount { get; }
+            internal int PartCount { get; }
+            internal int PlacementCount { get; }
+            internal int CellCount { get; }
+            internal int CellPlacementIndexCount { get; }
+            internal int PolicyBucketCount { get; }
+            internal int TotalPoolSlotCapacity { get; }
+            internal DirectBakeSummary DirectBake { get; }
+        }
+
+        [Serializable]
+        private sealed class DatabaseLogicalReport
+        {
+            public string result;
+            public string contentHash;
+            public string recordOrderingSha256;
+            public int meshCount;
+            public int materialCount;
+            public int prototypeCount;
+            public int partCount;
+            public int placementCount;
+            public int cellCount;
+            public int cellPlacementIndexCount;
+            public int policyBucketCount;
+            public int totalPoolSlotCapacity;
+        }
+
+        [Serializable]
+        private sealed class TwoRunBakeAllReport
+        {
+            public string schema;
+            public int schemaVersion;
+            public string result;
+            public string operationMapId;
+            public int passCount;
+            public int logicalOutputFileCount;
+            public long logicalByteCount;
+            public string firstLogicalBytesSha256;
+            public string secondLogicalBytesSha256;
+            public string contentHash;
+            public string orderingHash;
+            public string packedFingerprint;
+            public int meshCount;
+            public int materialCount;
+            public int prototypeCount;
+            public int partCount;
+            public int placementCount;
+            public int cellCount;
+            public int cellPlacementIndexCount;
+            public int policyBucketCount;
+            public int proxySlotCount;
+            public int productionCutover;
         }
 
         [Serializable]

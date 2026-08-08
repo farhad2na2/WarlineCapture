@@ -13,7 +13,7 @@ using UnityEngine;
 
 public sealed class AndroidPerformanceRecorderTests
 {
-    private const string PassMarker = "[AndroidPerformanceRecorderValidation] result=Passed tests=25";
+    private const string PassMarker = "[AndroidPerformanceRecorderValidation] result=Passed tests=26";
     private delegate void CaptureReleaseMetrics(long batches, long setPassCalls, long triangles, long vertices);
 
     public static void RunFocusedValidation()
@@ -43,6 +43,7 @@ public sealed class AndroidPerformanceRecorderTests
             tests.ReleaseMetricAggregationDoesNotAllocateAfterWarmup();
             tests.ReleaseValidationFailsWhenRequiredCountersAreUnavailable();
             tests.Vrp092ValidationDoesNotRequireUnavailableAndroidBatchCounter();
+            tests.Vrp092UsesMainThreadAllocationFallbackWhenProfilerCounterIsUnavailable();
             tests.PercentileMatchesEvidenceGateRounding();
             tests.PercentileIgnoresUnusedCapacityAndHandlesZeroSamples();
             tests.LaunchClock_SubsystemResetRestoresApplicationEpoch();
@@ -501,6 +502,35 @@ public sealed class AndroidPerformanceRecorderTests
 
         Assert.IsTrue((bool)method.Invoke(recorder, invocationArguments));
         Assert.AreEqual(string.Empty, invocationArguments[0]);
+        DisposeWithoutReport(recorder);
+    }
+
+    [Test]
+    public void Vrp092UsesMainThreadAllocationFallbackWhenProfilerCounterIsUnavailable()
+    {
+        AndroidPerformanceRecorder recorder = new();
+        InvokeInitialize(recorder, Vrp092Arguments("fixed"), false);
+        object gcRecorder = ReadField(recorder, "_gcAllocatedRecorder");
+        WriteField(
+            recorder,
+            "_gcAllocatedRecorder",
+            Activator.CreateInstance(gcRecorder.GetType()));
+
+        MethodInfo beginCapture = typeof(AndroidPerformanceRecorder).GetMethod(
+            "BeginCapture",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        MethodInfo captureMetrics = typeof(AndroidPerformanceRecorder).GetMethod(
+            "CaptureReleaseFrameMetrics",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.IsNotNull(beginCapture);
+        Assert.IsNotNull(captureMetrics);
+        beginCapture.Invoke(recorder, null);
+        captureMetrics.Invoke(recorder, new object[] { -1L, -1L, -1L, -1L });
+
+        Assert.AreEqual("main-thread-allocated-bytes", ReadField(recorder, "_gcAllocationSource"));
+        Assert.AreEqual(1, ReadField(recorder, "_gcCounterSampleCount"));
+        string json = BuildReportJson(recorder, "BuildReleaseReport");
+        StringAssert.Contains("\"allocationSource\":\"main-thread-allocated-bytes\"", json);
         DisposeWithoutReport(recorder);
     }
 

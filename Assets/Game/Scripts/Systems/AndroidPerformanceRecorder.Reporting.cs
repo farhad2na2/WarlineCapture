@@ -78,6 +78,7 @@ namespace Game.Runtime
         [Serializable]
         private sealed class GcMetrics
         {
+            public string allocationSource;
             public long totalAllocatedBytes;
             public double averageAllocatedBytesPerFrame;
             public int collectionCount;
@@ -235,6 +236,7 @@ namespace Game.Runtime
                 maximumFrameMs = Maximum(frameTimes, _sampleCount),
                 gc = new GcMetrics
                 {
+                    allocationSource = _gcAllocationSource ?? string.Empty,
                     totalAllocatedBytes = _totalGcAllocatedBytes,
                     averageAllocatedBytesPerFrame = _sampleCount > 0
                         ? _totalGcAllocatedBytes / (double)_sampleCount

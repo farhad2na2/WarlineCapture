@@ -66,6 +66,8 @@ namespace Game.Runtime
         private int _gpuTimingSampleCount;
         private int _gcCounterSampleCount;
         private int _renderCounterSampleCount;
+        private long _mainThreadAllocatedBytesAtPreviousSample;
+        private string _gcAllocationSource;
         private int _collectionCountAtCaptureStart;
         private bool _developmentBuild;
         private bool _scriptDebugging;
@@ -249,6 +251,8 @@ namespace Game.Runtime
             _gpuTimingSampleCount = 0;
             _gcCounterSampleCount = 0;
             _renderCounterSampleCount = 0;
+            _mainThreadAllocatedBytesAtPreviousSample = -1L;
+            _gcAllocationSource = string.Empty;
             _collectionCountAtCaptureStart = 0;
             _matchReady = false;
             _captureStarted = false;
@@ -434,6 +438,13 @@ namespace Game.Runtime
         {
             _captureStarted = true;
             _collectionCountAtCaptureStart = ReadCollectionCount();
+            if (_mode == RecorderMode.Release && !_gcAllocatedRecorder.Valid &&
+                string.Equals(TaskId, Vrp092TaskId, StringComparison.Ordinal))
+            {
+                _mainThreadAllocatedBytesAtPreviousSample =
+                    GC.GetAllocatedBytesForCurrentThread();
+                _gcAllocationSource = "main-thread-allocated-bytes";
+            }
             _batteryStartPercent = ReadBatteryPercent();
             _nextSlowMetricSeconds = SlowMetricIntervalSeconds;
             CaptureResidentSet();
@@ -448,6 +459,17 @@ namespace Game.Runtime
             if (_gcAllocatedRecorder.Valid)
             {
                 _totalGcAllocatedBytes += Math.Max(0L, _gcAllocatedRecorder.LastValue);
+                _gcCounterSampleCount++;
+                _gcAllocationSource = "profiler-recorder";
+            }
+            else if (_mainThreadAllocatedBytesAtPreviousSample >= 0L &&
+                     string.Equals(TaskId, Vrp092TaskId, StringComparison.Ordinal))
+            {
+                long allocatedBytes = GC.GetAllocatedBytesForCurrentThread();
+                _totalGcAllocatedBytes += Math.Max(
+                    0L,
+                    allocatedBytes - _mainThreadAllocatedBytesAtPreviousSample);
+                _mainThreadAllocatedBytesAtPreviousSample = allocatedBytes;
                 _gcCounterSampleCount++;
             }
 

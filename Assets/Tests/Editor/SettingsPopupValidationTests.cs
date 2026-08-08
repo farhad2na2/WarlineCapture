@@ -62,6 +62,10 @@ public sealed class SettingsPopupValidationTests
                 nameof(MenuSceneShell_InstallsMenuAndMatchSettingsPopups),
                 test => test.MenuSceneShell_InstallsMenuAndMatchSettingsPopups(),
                 ref passed);
+            RunValidationStep(
+                nameof(MenuDiagnosticsLogPanel_IsSuppressedDuringMatch),
+                test => test.MenuDiagnosticsLogPanel_IsSuppressedDuringMatch(),
+                ref passed);
 
             Debug.Log($"[SettingsPopupValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -70,6 +74,32 @@ public sealed class SettingsPopupValidationTests
         {
             Debug.LogError($"[SettingsPopupValidation] result=Failed passed={passed}\n{exception}");
             ValidationExit.Exit(1);
+        }
+    }
+
+    [Test]
+    public void MenuDiagnosticsLogPanel_IsSuppressedDuringMatch()
+    {
+        GameObject logPanel = new("MenuDiagnosticsLogPanelTest");
+        try
+        {
+            logPanel.SetActive(true);
+            Assert.IsTrue(
+                MenuDiagnosticsUiSystemHelper.SuppressRuntimeLogPanelForRoute(logPanel, UIRoute.Match),
+                "The legacy menu diagnostics log must be suppressed while the Match route owns the screen.");
+            Assert.IsFalse(
+                logPanel.activeSelf,
+                "The legacy full-screen log panel must not cover Match HUD controls or Android lifecycle input.");
+
+            logPanel.SetActive(true);
+            Assert.IsFalse(
+                MenuDiagnosticsUiSystemHelper.SuppressRuntimeLogPanelForRoute(logPanel, UIRoute.MainMenu),
+                "The menu route may retain its explicit diagnostics toggle.");
+            Assert.IsTrue(logPanel.activeSelf, "Menu diagnostics should remain available on menu routes.");
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(logPanel);
         }
     }
 

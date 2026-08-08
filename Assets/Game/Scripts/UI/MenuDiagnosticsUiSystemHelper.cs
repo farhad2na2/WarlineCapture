@@ -3,6 +3,7 @@ using System.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Game.UI.Contracts;
 
 namespace Game.UI.Runtime
 {
@@ -48,6 +49,9 @@ namespace Game.UI.Runtime
         {
             if (view == null)
                 return;
+
+            if (UiShellRuntimeGateway.TryReadShellState(out UiShellStateModel shellState))
+                SuppressRuntimeLogPanelForRoute(view.LogPanel, shellState.ActiveRoute);
 
             fpsFrames++;
             fpsAccumulatedSeconds += Mathf.Max(0f, unscaledDeltaTime);
@@ -174,9 +178,26 @@ namespace Game.UI.Runtime
             if (view == null || view.LogPanel == null)
                 return;
 
+            if (UiShellRuntimeGateway.TryReadShellState(out UiShellStateModel shellState) &&
+                SuppressRuntimeLogPanelForRoute(view.LogPanel, shellState.ActiveRoute))
+            {
+                return;
+            }
+
             bool visible = !view.LogPanel.activeSelf;
             view.LogPanel.SetActive(visible);
             RefreshRuntimeLogLabel(view, visible);
+        }
+
+        internal static bool SuppressRuntimeLogPanelForRoute(GameObject logPanel, UIRoute route)
+        {
+            if (route != UIRoute.Match)
+                return false;
+
+            if (logPanel != null && logPanel.activeSelf)
+                logPanel.SetActive(false);
+
+            return true;
         }
 
         private void HideRuntimeLogPanel()

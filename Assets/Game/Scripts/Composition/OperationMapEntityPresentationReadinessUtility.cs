@@ -331,26 +331,42 @@ namespace Game.Composition
                 int virtualizedGeneratedIdentityCount =
                     virtualizationContract.VirtualizedGeneratedBuildingIdentityCount +
                     virtualizationContract.VirtualizedGeneratedRenderOnlyIdentityCount;
-                if (generatedIdentities.Length + virtualizedGeneratedIdentityCount !=
+                int retainedVirtualizedGeneratedIdentityCount =
+                    virtualizationContract
+                        .RetainedVirtualizedGeneratedBuildingIdentityCount +
+                    virtualizationContract
+                        .RetainedVirtualizedGeneratedRenderOnlyIdentityCount;
+                int uniqueGeneratedIdentityCount =
+                    generatedIdentities.Length + virtualizedGeneratedIdentityCount -
+                    retainedVirtualizedGeneratedIdentityCount;
+                if (uniqueGeneratedIdentityCount !=
                     contract.ExpectedGeneratedIdentityCount)
                 {
                     error =
                         "Packed EntityScene generated identity count differs from the " +
                         $"readiness contract: " +
-                        $"{generatedIdentities.Length + virtualizedGeneratedIdentityCount}/" +
+                        $"{uniqueGeneratedIdentityCount}/" +
                         $"{contract.ExpectedGeneratedIdentityCount}.";
                     return false;
                 }
                 gameplayBuildings += generatedGameplayBuildings +
                                      virtualizationContract
-                                         .VirtualizedAcceptedBuildingIdentityCount +
+                                         .VirtualizedAcceptedBuildingIdentityCount -
                                      virtualizationContract
-                                         .VirtualizedGeneratedBuildingIdentityCount;
+                                         .RetainedVirtualizedAcceptedBuildingIdentityCount +
+                                     virtualizationContract
+                                         .VirtualizedGeneratedBuildingIdentityCount -
+                                     virtualizationContract
+                                         .RetainedVirtualizedGeneratedBuildingIdentityCount;
                 renderOnly += generatedRenderOnly +
                               virtualizationContract
-                                  .VirtualizedAcceptedRenderOnlyIdentityCount +
+                                  .VirtualizedAcceptedRenderOnlyIdentityCount -
                               virtualizationContract
-                                  .VirtualizedGeneratedRenderOnlyIdentityCount;
+                                  .RetainedVirtualizedAcceptedRenderOnlyIdentityCount +
+                              virtualizationContract
+                                  .VirtualizedGeneratedRenderOnlyIdentityCount -
+                              virtualizationContract
+                                  .RetainedVirtualizedGeneratedRenderOnlyIdentityCount;
                 if (gameplayBuildings != contract.ExpectedGameplayBuildingCount ||
                     gameplayVehicles != contract.ExpectedGameplayVehicleCount ||
                     renderOnly != contract.ExpectedRenderOnlyCount)
@@ -507,6 +523,18 @@ namespace Game.Composition
                 readiness.VirtualizedAcceptedRenderOnlyIdentityCount < 0 ||
                 readiness.VirtualizedGeneratedBuildingIdentityCount < 0 ||
                 readiness.VirtualizedGeneratedRenderOnlyIdentityCount < 0 ||
+                readiness.RetainedVirtualizedAcceptedBuildingIdentityCount < 0 ||
+                readiness.RetainedVirtualizedAcceptedRenderOnlyIdentityCount < 0 ||
+                readiness.RetainedVirtualizedGeneratedBuildingIdentityCount < 0 ||
+                readiness.RetainedVirtualizedGeneratedRenderOnlyIdentityCount < 0 ||
+                readiness.RetainedVirtualizedAcceptedBuildingIdentityCount >
+                    readiness.VirtualizedAcceptedBuildingIdentityCount ||
+                readiness.RetainedVirtualizedAcceptedRenderOnlyIdentityCount >
+                    readiness.VirtualizedAcceptedRenderOnlyIdentityCount ||
+                readiness.RetainedVirtualizedGeneratedBuildingIdentityCount >
+                    readiness.VirtualizedGeneratedBuildingIdentityCount ||
+                readiness.RetainedVirtualizedGeneratedRenderOnlyIdentityCount >
+                    readiness.VirtualizedGeneratedRenderOnlyIdentityCount ||
                 virtualizedBuildingIdentityCount +
                     virtualizedRenderOnlyIdentityCount <= 0 ||
                 virtualizedBuildingIdentityCount +

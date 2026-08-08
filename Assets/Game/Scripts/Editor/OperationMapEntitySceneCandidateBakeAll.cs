@@ -687,7 +687,10 @@ namespace Game.Editor
                     if (state.Existed)
                     {
                         Directory.CreateDirectory(Path.GetDirectoryName(physical) ?? projectRoot);
-                        File.WriteAllBytes(physical, state.Bytes);
+                        WriteCheckpointWithHandleRecovery(
+                            physical,
+                            state.Bytes,
+                            assetPath);
                     }
                     else if (File.Exists(physical))
                     {
@@ -695,6 +698,47 @@ namespace Game.Editor
                     }
                 }
                 AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+            }
+
+            private static void WriteCheckpointWithHandleRecovery(
+                string physicalPath,
+                byte[] bytes,
+                string assetPath)
+            {
+                const int maxAttempts = 20;
+                IOException lastError = null;
+                for (int attempt = 1; attempt <= maxAttempts; attempt++)
+                {
+                    try
+                    {
+                        File.WriteAllBytes(physicalPath, bytes);
+                        if (attempt > 1)
+                        {
+                            Debug.Log(
+                                "[OperationMapCandidateFileTransaction] " +
+                                $"rollbackHandleRecovery=Passed asset={assetPath} " +
+                                $"attempts={attempt}");
+                        }
+                        return;
+                    }
+                    catch (IOException error) when (
+                        error.Message.IndexOf("1224", StringComparison.Ordinal) >= 0 &&
+                        attempt < maxAttempts)
+                    {
+                        lastError = error;
+                        AssetDatabase.ReleaseCachedFileHandles();
+                        if (attempt == 1)
+                            EditorUtility.UnloadUnusedAssetsImmediate(true);
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        System.Threading.Thread.Sleep(250);
+                    }
+                }
+
+                throw new IOException(
+                    "Candidate file rollback could not release the exact asset " +
+                    $"handle after {maxAttempts} attempts: {assetPath}",
+                    lastError);
             }
 
             private readonly struct FileState

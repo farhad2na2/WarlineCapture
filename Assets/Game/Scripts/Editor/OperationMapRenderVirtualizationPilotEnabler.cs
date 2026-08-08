@@ -17,6 +17,9 @@ namespace Game.Editor
     /// </summary>
     internal static class OperationMapRenderVirtualizationPilotEnabler
     {
+        private const int CurrentAcceptedIdentityCount = 9544;
+        private const int CurrentVirtualizedGeneratedIdentityCount = 36304;
+
         private const string CandidateDefinitionPath =
             "Assets/Game/Configs/OperationMaps/Candidates/" +
             "OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset";
@@ -177,6 +180,187 @@ namespace Game.Editor
                 }
                 File.Delete(sceneBackup);
                 File.Delete(definitionBackup);
+            }
+        }
+
+        public static void SynchronizeCurrentReadinessContract()
+        {
+            string candidateScenePath =
+                DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath;
+            string physicalPath = Path.GetFullPath(
+                Path.Combine(Application.dataPath, "..", candidateScenePath));
+            string backupPath = Path.GetTempFileName();
+            File.Copy(physicalPath, backupPath, true);
+            SceneSetup[] previousSetup = EditorSceneManager.GetSceneManagerSetup();
+            try
+            {
+                Scene candidate = EditorSceneManager.OpenScene(
+                    candidateScenePath,
+                    OpenSceneMode.Single);
+                DenseCityPresentationIdentityAuthoring[] generatedIdentities =
+                    UnityEngine.Object.FindObjectsByType<
+                        DenseCityPresentationIdentityAuthoring>(
+                        FindObjectsInactive.Include,
+                        FindObjectsSortMode.None);
+                OperationMapEntityPresentationIdentityAuthoring[] acceptedIdentities =
+                    UnityEngine.Object.FindObjectsByType<
+                        OperationMapEntityPresentationIdentityAuthoring>(
+                        FindObjectsInactive.Include,
+                        FindObjectsSortMode.None);
+                int generatedIdentityCount = 0;
+                int acceptedIdentityCount = 0;
+                int gameplayBuildingCount = 0;
+                int gameplayVehicleCount = 0;
+                int renderOnlyCount = 0;
+                for (int index = 0; index < generatedIdentities.Length; index++)
+                {
+                    DenseCityPresentationIdentityAuthoring identity =
+                        generatedIdentities[index];
+                    if (identity.gameObject.scene != candidate)
+                        continue;
+                    if (!identity.TryValidate(out string identityError))
+                    {
+                        throw new InvalidOperationException(
+                            "Virtualized generated identity is invalid: " +
+                            identityError);
+                    }
+                    generatedIdentityCount++;
+                    switch (identity.Role)
+                    {
+                        case OperationMapEntityPresentationRole.GameplayBuildings:
+                            gameplayBuildingCount++;
+                            break;
+                        case OperationMapEntityPresentationRole.RenderOnly:
+                            renderOnlyCount++;
+                            break;
+                        default:
+                            throw new InvalidOperationException(
+                                "Virtualized generated identity has an unsupported role.");
+                    }
+                }
+                for (int index = 0; index < acceptedIdentities.Length; index++)
+                {
+                    OperationMapEntityPresentationIdentityAuthoring identity =
+                        acceptedIdentities[index];
+                    if (identity.gameObject.scene != candidate)
+                        continue;
+                    if (!identity.TryValidate(out string identityError))
+                    {
+                        throw new InvalidOperationException(
+                            "Virtualized accepted identity is invalid: " + identityError);
+                    }
+                    acceptedIdentityCount++;
+                    switch (identity.Role)
+                    {
+                        case OperationMapEntityPresentationRole.GameplayBuildings:
+                            gameplayBuildingCount++;
+                            break;
+                        case OperationMapEntityPresentationRole.GameplayVehicles:
+                            gameplayVehicleCount++;
+                            break;
+                        case OperationMapEntityPresentationRole.RenderOnly:
+                            renderOnlyCount++;
+                            break;
+                        default:
+                            throw new InvalidOperationException(
+                                "Virtualized accepted identity has an unsupported role.");
+                    }
+                }
+                if (generatedIdentityCount !=
+                    CurrentVirtualizedGeneratedIdentityCount)
+                {
+                    throw new InvalidOperationException(
+                        "Virtualized readiness synchronization expected " +
+                        $"{CurrentVirtualizedGeneratedIdentityCount} generated identities, " +
+                        $"found {generatedIdentityCount}.");
+                }
+                if (acceptedIdentityCount != CurrentAcceptedIdentityCount)
+                {
+                    throw new InvalidOperationException(
+                        "Virtualized readiness synchronization expected " +
+                        $"{CurrentAcceptedIdentityCount} accepted identities, " +
+                        $"found {acceptedIdentityCount}.");
+                }
+
+                OperationMapEntityPresentationRootAuthoring[] roots =
+                    UnityEngine.Object.FindObjectsByType<
+                        OperationMapEntityPresentationRootAuthoring>(
+                        FindObjectsInactive.Include,
+                        FindObjectsSortMode.None);
+                OperationMapEntityPresentationRootAuthoring contractRoot = null;
+                for (int index = 0; index < roots.Length; index++)
+                {
+                    if (roots[index].gameObject.scene != candidate ||
+                        roots[index].Role !=
+                        OperationMapEntityPresentationRole.GameplayBuildings)
+                    {
+                        continue;
+                    }
+                    if (contractRoot != null)
+                    {
+                        throw new InvalidOperationException(
+                            "Virtualized candidate contains more than one readiness-contract root.");
+                    }
+                    contractRoot = roots[index];
+                }
+                if (contractRoot == null)
+                {
+                    throw new InvalidOperationException(
+                        "Virtualized candidate readiness-contract root is missing.");
+                }
+
+                var serialized = new SerializedObject(contractRoot);
+                SerializedProperty expectedBuildings =
+                    serialized.FindProperty("expectedGameplayBuildingCount");
+                SerializedProperty expectedVehicles =
+                    serialized.FindProperty("expectedGameplayVehicleCount");
+                SerializedProperty expectedRenderOnly =
+                    serialized.FindProperty("expectedRenderOnlyCount");
+                SerializedProperty expectedGenerated =
+                    serialized.FindProperty("expectedGeneratedIdentityCount");
+                if (expectedBuildings == null ||
+                    expectedVehicles == null ||
+                    expectedRenderOnly == null ||
+                    expectedGenerated == null)
+                {
+                    throw new InvalidOperationException(
+                        "Virtualized identity-readiness properties are missing.");
+                }
+                expectedBuildings.intValue = gameplayBuildingCount;
+                expectedVehicles.intValue = gameplayVehicleCount;
+                expectedRenderOnly.intValue = renderOnlyCount;
+                expectedGenerated.intValue = generatedIdentityCount;
+                serialized.ApplyModifiedPropertiesWithoutUndo();
+                EditorUtility.SetDirty(contractRoot);
+                if (!EditorSceneManager.SaveScene(candidate, candidateScenePath, false))
+                {
+                    throw new InvalidOperationException(
+                        "Virtualized readiness-contract scene save failed.");
+                }
+                AssetDatabase.SaveAssets();
+                Debug.Log(
+                    "[OperationMapRenderVirtualizationReadinessContract] result=Passed " +
+                    $"acceptedIdentities={acceptedIdentityCount} " +
+                    $"generatedIdentities={generatedIdentityCount} " +
+                    $"buildings={gameplayBuildingCount} " +
+                    $"vehicles={gameplayVehicleCount} " +
+                    $"renderOnly={renderOnlyCount}");
+            }
+            catch
+            {
+                File.Copy(backupPath, physicalPath, true);
+                AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+                throw;
+            }
+            finally
+            {
+                File.Delete(backupPath);
+                if (previousSetup.Length > 0)
+                    EditorSceneManager.RestoreSceneManagerSetup(previousSetup);
+                else
+                    EditorSceneManager.NewScene(
+                        NewSceneSetup.EmptyScene,
+                        NewSceneMode.Single);
             }
         }
     }

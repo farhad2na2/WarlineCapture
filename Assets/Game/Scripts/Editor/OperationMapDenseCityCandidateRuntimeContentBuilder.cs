@@ -16,6 +16,7 @@ namespace Game.Editor
     using Unity.Scenes.Editor;
     using UnityEditor;
     using UnityEditor.Build;
+    using UnityEditor.SceneManagement;
     using UnityEditor.AddressableAssets;
     using UnityEditor.AddressableAssets.Build;
     using UnityEditor.AddressableAssets.Build.Layout;
@@ -23,6 +24,7 @@ namespace Game.Editor
     using UnityEditor.AddressableAssets.Settings;
     using UnityEditor.AddressableAssets.Settings.GroupSchemas;
     using UnityEngine;
+    using UnityEngine.SceneManagement;
     using Hash128 = Unity.Entities.Hash128;
 
     /// <summary>
@@ -90,6 +92,7 @@ namespace Game.Editor
         private static void BuildDenseCityCandidateRuntimeParityContent(
             string addressablesLoadPathOverride)
         {
+            EnsureGeneratedRuntimeSceneIsClosed();
             BuildTarget buildTarget = RequireSupportedValidationBuildTarget();
             string reportPath = GetReportPath(buildTarget);
             using IDisposable scriptingBackendScope =
@@ -198,6 +201,33 @@ namespace Game.Editor
                 reportTransaction.Rollback();
                 layoutTransaction.Rollback();
                 throw;
+            }
+        }
+
+        private static void EnsureGeneratedRuntimeSceneIsClosed()
+        {
+            string runtimeScenePath =
+                OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                    .DenseCandidateRuntimeBindingPath;
+            for (int index = 0; index < SceneManager.sceneCount; index++)
+            {
+                Scene scene = SceneManager.GetSceneAt(index);
+                if (!string.Equals(
+                        scene.path,
+                        runtimeScenePath,
+                        StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                EditorSceneManager.NewScene(
+                    NewSceneSetup.EmptyScene,
+                    NewSceneMode.Single);
+                AssetDatabase.ReleaseCachedFileHandles();
+                Debug.Log(
+                    "[OperationMapDenseCityRuntimeContent] " +
+                    "closedGeneratedRuntimeScene=1");
+                return;
             }
         }
 
@@ -1580,11 +1610,56 @@ namespace Game.Editor
                             Resources.UnloadAsset(loadedAsset);
                         AssetDatabase.ReleaseCachedFileHandles();
                     }
-                    File.WriteAllBytes(physicalPath, file.Value);
+                    WriteCheckpointWithHandleRecovery(
+                        physicalPath,
+                        file.Value,
+                        assetPath);
                 }
 
                 AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
                 restored = true;
+            }
+
+            private static void WriteCheckpointWithHandleRecovery(
+                string physicalPath,
+                byte[] bytes,
+                string assetPath)
+            {
+                const int maxAttempts = 20;
+                IOException lastError = null;
+                for (int attempt = 1; attempt <= maxAttempts; attempt++)
+                {
+                    try
+                    {
+                        File.WriteAllBytes(physicalPath, bytes);
+                        if (attempt > 1)
+                        {
+                            Debug.Log(
+                                "[OperationMapDenseCityRuntimeContent] " +
+                                $"rollbackHandleRecovery=Passed asset={assetPath} " +
+                                $"attempts={attempt}");
+                        }
+                        return;
+                    }
+                    catch (IOException error) when (
+                        error.Message.IndexOf("1224", StringComparison.Ordinal) >= 0 &&
+                        attempt < maxAttempts)
+                    {
+                        lastError = error;
+                        AssetDatabase.ReleaseCachedFileHandles();
+                        if (attempt == 1)
+                            EditorUtility.UnloadUnusedAssetsImmediate(true);
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        System.Threading.Thread.Sleep(250);
+                    }
+                }
+
+                throw new IOException(
+                    "Candidate directory rollback could not release the exact " +
+                    $"Addressables asset handle after {maxAttempts} attempts: " +
+                    assetPath,
+                    lastError);
             }
         }
 

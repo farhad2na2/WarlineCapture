@@ -165,6 +165,8 @@ namespace Game.Rendering
             var residentRows =
                 new List<OperationMapRenderResidentSourceRowComponent>();
             var virtualizedOwnerClasses = new Dictionary<OwnerKey, byte>();
+            var virtualizedOwnerEntities = new Dictionary<OwnerKey, Entity>();
+            var bakingOnlyRenderEntities = new HashSet<Entity>();
             var buildingSourceRowCounts = new Dictionary<OwnerKey, int>();
             var matchedBuildingRowCounts = new Dictionary<OwnerKey, int>();
             var additionalRenderEntities = new Dictionary<Entity, List<Entity>>();
@@ -255,6 +257,15 @@ namespace Game.Rendering
                             "One virtualized owner has inconsistent identity or gameplay roles.");
                     }
                     virtualizedOwnerClasses[sourceOwnerKey] = ownerClass;
+                    if (virtualizedOwnerEntities.TryGetValue(
+                            sourceOwnerKey,
+                            out Entity existingOwnerEntity) &&
+                        existingOwnerEntity != sourceOwner)
+                    {
+                        throw new InvalidOperationException(
+                            "One virtualized owner identity resolves to more than one owner entity.");
+                    }
+                    virtualizedOwnerEntities[sourceOwnerKey] = sourceOwner;
                     if (!matchedRenderers.Add(key))
                     {
                         throw new InvalidOperationException(
@@ -342,6 +353,7 @@ namespace Game.Rendering
                         commandBuffer.AddComponent<
                             OperationMapRenderEligibleSourceComponent>(renderEntity);
                         commandBuffer.AddComponent<BakingOnlyEntity>(renderEntity);
+                        bakingOnlyRenderEntities.Add(renderEntity);
                     }
                     if (rendererMatchedParts.Count != rows.Count)
                     {
@@ -418,21 +430,55 @@ namespace Game.Rendering
             int acceptedRenderOnlyCount = 0;
             int generatedBuildingCount = 0;
             int generatedRenderOnlyCount = 0;
-            foreach (byte ownerClass in virtualizedOwnerClasses.Values)
+            int retainedAcceptedBuildingCount = 0;
+            int retainedAcceptedRenderOnlyCount = 0;
+            int retainedGeneratedBuildingCount = 0;
+            int retainedGeneratedRenderOnlyCount = 0;
+            foreach (KeyValuePair<OwnerKey, byte> owner in virtualizedOwnerClasses)
             {
-                switch (ownerClass)
+                if (!virtualizedOwnerEntities.TryGetValue(
+                        owner.Key,
+                        out Entity ownerEntity) ||
+                    !entityManager.Exists(ownerEntity))
+                {
+                    throw new InvalidOperationException(
+                        "Virtualized identity accounting cannot resolve its owner entity.");
+                }
+                bool generatedOwner = (owner.Value & 2) != 0;
+                bool hasExpectedIdentity = generatedOwner
+                    ? entityManager.HasComponent<DenseCityPresentationIdentity>(ownerEntity)
+                    : entityManager.HasComponent<OperationMapEntityPresentationIdentity>(
+                        ownerEntity);
+                if (!hasExpectedIdentity)
+                {
+                    throw new InvalidOperationException(
+                        "Virtualized identity accounting cannot resolve its owner identity component.");
+                }
+                bool retainsIdentity =
+                    !bakingOnlyRenderEntities.Contains(ownerEntity) &&
+                    !entityManager.HasComponent<Prefab>(ownerEntity) &&
+                    !entityManager.HasComponent<Disabled>(ownerEntity);
+                switch (owner.Value)
                 {
                     case 0:
                         acceptedRenderOnlyCount++;
+                        if (retainsIdentity)
+                            retainedAcceptedRenderOnlyCount++;
                         break;
                     case 1:
                         acceptedBuildingCount++;
+                        if (retainsIdentity)
+                            retainedAcceptedBuildingCount++;
                         break;
                     case 2:
                         generatedRenderOnlyCount++;
+                        if (retainsIdentity)
+                            retainedGeneratedRenderOnlyCount++;
                         break;
                     case 3:
                         generatedBuildingCount++;
+                        if (retainsIdentity)
+                            retainedGeneratedBuildingCount++;
                         break;
                     default:
                         throw new InvalidOperationException(
@@ -455,7 +501,15 @@ namespace Game.Rendering
                     VirtualizedGeneratedBuildingIdentityCount =
                         generatedBuildingCount,
                     VirtualizedGeneratedRenderOnlyIdentityCount =
-                        generatedRenderOnlyCount
+                        generatedRenderOnlyCount,
+                    RetainedVirtualizedAcceptedBuildingIdentityCount =
+                        retainedAcceptedBuildingCount,
+                    RetainedVirtualizedAcceptedRenderOnlyIdentityCount =
+                        retainedAcceptedRenderOnlyCount,
+                    RetainedVirtualizedGeneratedBuildingIdentityCount =
+                        retainedGeneratedBuildingCount,
+                    RetainedVirtualizedGeneratedRenderOnlyIdentityCount =
+                        retainedGeneratedRenderOnlyCount
                 });
             commandBuffer.Playback(entityManager);
         }

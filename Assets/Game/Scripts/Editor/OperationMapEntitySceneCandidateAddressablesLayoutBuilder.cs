@@ -660,11 +660,54 @@ namespace Game.Editor
             if (loadedAsset != null)
                 Resources.UnloadAsset(loadedAsset);
             AssetDatabase.ReleaseCachedFileHandles();
-            File.WriteAllText(
+            WriteAllTextWithMappedFileRecovery(
                 physical,
                 text.Replace(currentIdentity, legacyIdentity),
-                Utf8WithoutBom);
+                assetPath,
+                componentName);
             return true;
+        }
+
+        private static void WriteAllTextWithMappedFileRecovery(
+            string physicalPath,
+            string text,
+            string assetPath,
+            string componentName)
+        {
+            const int maxAttempts = 20;
+            IOException lastError = null;
+            for (int attempt = 1; attempt <= maxAttempts; attempt++)
+            {
+                try
+                {
+                    File.WriteAllText(physicalPath, text, Utf8WithoutBom);
+                    if (attempt > 1)
+                    {
+                        Debug.Log(
+                            "[DenseCityCandidateAddressablesLayout] " +
+                            $"mappedFileRecovery=Passed component={componentName} " +
+                            $"attempts={attempt} asset={assetPath}");
+                    }
+                    return;
+                }
+                catch (IOException error) when (
+                    error.Message.IndexOf("1224", StringComparison.Ordinal) >= 0 &&
+                    attempt < maxAttempts)
+                {
+                    lastError = error;
+                    AssetDatabase.ReleaseCachedFileHandles();
+                    if (attempt == 1)
+                        EditorUtility.UnloadUnusedAssetsImmediate(true);
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                    System.Threading.Thread.Sleep(250);
+                }
+            }
+
+            throw new IOException(
+                $"Candidate {componentName} normalization could not release the " +
+                $"exact imported asset handle after {maxAttempts} attempts: {assetPath}",
+                lastError);
         }
 
         private static int CountExactOccurrences(string text, string value)

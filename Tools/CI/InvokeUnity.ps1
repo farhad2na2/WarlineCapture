@@ -84,7 +84,21 @@ function Find-UnityLoggedFailure {
     }
 
     try {
-        $logText = [System.IO.File]::ReadAllText($UnityLogFile)
+        $stream = [System.IO.File]::Open(
+            $UnityLogFile,
+            [System.IO.FileMode]::Open,
+            [System.IO.FileAccess]::Read,
+            [System.IO.FileShare]::ReadWrite -bor [System.IO.FileShare]::Delete)
+        try {
+            $reader = [System.IO.StreamReader]::new($stream)
+            try {
+                $logText = $reader.ReadToEnd()
+            } finally {
+                $reader.Dispose()
+            }
+        } finally {
+            $stream.Dispose()
+        }
     } catch {
         Write-Host "[UnityInvoke] WARN: Could not inspect Unity log for fatal markers: $($_.Exception.Message)"
         return $null
@@ -94,6 +108,9 @@ function Find-UnityLoggedFailure {
         'executeMethod method .+ threw exception\.',
         'Application will terminate with return code [1-9][0-9]*',
         'No valid Unity Editor license found\.',
+        'Licensing initialization failed after [0-9.]+s',
+        'The re-connection attempt was UN-successful\.',
+        'Test run completed\. Exiting with code [1-9][0-9]* \(Failed\)\.',
         'Aborting batchmode due to failure',
         'Crash!!!',
         'A crash has been intercepted by the crash handler\.'
@@ -122,7 +139,21 @@ function Find-UnityLoggedSuccess {
     }
 
     try {
-        $logText = [System.IO.File]::ReadAllText($UnityLogFile)
+        $stream = [System.IO.File]::Open(
+            $UnityLogFile,
+            [System.IO.FileMode]::Open,
+            [System.IO.FileAccess]::Read,
+            [System.IO.FileShare]::ReadWrite -bor [System.IO.FileShare]::Delete)
+        try {
+            $reader = [System.IO.StreamReader]::new($stream)
+            try {
+                $logText = $reader.ReadToEnd()
+            } finally {
+                $reader.Dispose()
+            }
+        } finally {
+            $stream.Dispose()
+        }
     } catch {
         Write-Host "[UnityInvoke] WARN: Could not inspect Unity log for success markers: $($_.Exception.Message)"
         return $null
@@ -130,6 +161,7 @@ function Find-UnityLoggedSuccess {
 
     $successPatterns = @(
         'Test run completed\. Exiting with code 0 \(Ok\)\. Run completed\.',
+        'Test run completed\. Exiting with code 0 \(Ok\)\. All tests passed\.',
         'Exiting batchmode successfully now!',
         'Application will terminate with return code 0'
     )
@@ -188,6 +220,27 @@ Write-InvocationLog "[UnityInvoke] ProcessArguments: $argumentLine"
 Write-InvocationLog "[UnityInvoke] StdoutLog: $stdoutLogFile"
 Write-InvocationLog "[UnityInvoke] StderrLog: $stderrLogFile"
 
+# Windows environment-variable names are case-insensitive, but a parent process can
+# still supply both Path and PATH. Windows PowerShell's Start-Process rejects that
+# duplicate environment block before Unity starts. Remove only the mixed-case Path
+# alias when both entries carry the same value, retaining conventional uppercase PATH
+# for child tools; fail closed if the values disagree.
+$processEnvironment = [System.Environment]::GetEnvironmentVariables(
+    [System.EnvironmentVariableTarget]::Process)
+$pathKeys = @($processEnvironment.Keys | Where-Object { $_.ToString() -ieq "Path" })
+if ($pathKeys.Count -gt 1) {
+    $pathValues = @($pathKeys | ForEach-Object { [string] $processEnvironment[$_] } | Select-Object -Unique)
+    if ($pathValues.Count -ne 1) {
+        throw "Process environment contains conflicting Path/PATH values; refusing to launch Unity."
+    }
+
+    [System.Environment]::SetEnvironmentVariable(
+        "Path",
+        $null,
+        [System.EnvironmentVariableTarget]::Process)
+    Write-InvocationLog "[UnityInvoke] EnvironmentNormalization: removed redundant Path alias"
+}
+
 $process = Start-Process `
     -FilePath $resolvedUnityExe `
     -ArgumentList $argumentLine `
@@ -195,19 +248,36 @@ $process = Start-Process `
     -RedirectStandardError $stderrLogFile `
     -PassThru
 
+function Stop-UnityProcessTree {
+    param(
+        [Parameter(Mandatory = $true)]
+        [System.Diagnostics.Process] $UnityProcess
+    )
+
+    $taskkillExe = Join-Path $env:SystemRoot "System32\taskkill.exe"
+    if (-not (Test-Path -LiteralPath $taskkillExe -PathType Leaf)) {
+        throw "Windows taskkill executable is missing: $taskkillExe"
+    }
+    & $taskkillExe /PID $UnityProcess.Id /T /F 2>&1 | ForEach-Object {
+        Write-InvocationLog "[UnityInvoke] taskkill: $_"
+    }
+}
+
 $timedOut = $false
+$fatalLogFailure = $null
 $startedAt = Get-Date
 while (-not $process.HasExited) {
+    $fatalLogFailure = Find-UnityLoggedFailure -UnityLogFile $resolvedLogFile
+    if (-not [string]::IsNullOrWhiteSpace($fatalLogFailure)) {
+        Write-InvocationLog "[UnityInvoke] ERROR: Unity reported a fatal log marker while running: $fatalLogFailure"
+        Stop-UnityProcessTree -UnityProcess $process
+        break
+    }
+
     if ($TimeoutSeconds -gt 0 -and ((Get-Date) - $startedAt).TotalSeconds -ge $TimeoutSeconds) {
         $timedOut = $true
         Write-InvocationLog "[UnityInvoke] ERROR: Unity timed out after $TimeoutSeconds seconds. Killing process tree for PID $($process.Id)."
-        $taskkillExe = Join-Path $env:SystemRoot "System32\taskkill.exe"
-        if (-not (Test-Path -LiteralPath $taskkillExe -PathType Leaf)) {
-            throw "Windows taskkill executable is missing: $taskkillExe"
-        }
-        & $taskkillExe /PID $process.Id /T /F 2>&1 | ForEach-Object {
-            Write-InvocationLog "[UnityInvoke] taskkill: $_"
-        }
+        Stop-UnityProcessTree -UnityProcess $process
         break
     }
 
@@ -216,7 +286,13 @@ while (-not $process.HasExited) {
 }
 
 $process.WaitForExit()
-$exitCode = if ($timedOut) { 124 } else { $process.ExitCode }
+$exitCode = if ($timedOut) {
+    124
+} elseif (-not [string]::IsNullOrWhiteSpace($fatalLogFailure)) {
+    1
+} else {
+    $process.ExitCode
+}
 if (-not $timedOut) {
     $loggedFailure = Find-UnityLoggedFailure -UnityLogFile $resolvedLogFile
     if (-not [string]::IsNullOrWhiteSpace($loggedFailure)) {

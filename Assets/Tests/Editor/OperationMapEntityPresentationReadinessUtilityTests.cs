@@ -34,6 +34,8 @@ public sealed class OperationMapEntityPresentationReadinessUtilityTests
             suite.TryValidate_RejectsGeneratedRoleCategoryMismatch,
             suite.TryValidate_RejectsProtectedOverlapOnNonInfrastructure,
             suite.TryValidate_AcceptsCompleteVirtualizedPackedContract,
+            suite.TryValidate_AcceptsRetainedVirtualizedIdentityOverlap,
+            suite.TryValidate_RejectsRetainedOverlapLargerThanVirtualizedClass,
             suite.TryValidate_RejectsVirtualizedMissingDatabase,
             suite.TryValidate_RejectsEligibleSourceSurvivor,
             suite.TryValidate_RejectsDuplicateProxySlotIdentity
@@ -251,6 +253,43 @@ public sealed class OperationMapEntityPresentationReadinessUtilityTests
     }
 
     [Test]
+    public void TryValidate_AcceptsRetainedVirtualizedIdentityOverlap()
+    {
+        ConfigureVirtualizedPackedContract(retainAcceptedRenderOnlyIdentity: true);
+
+        Assert.That(
+            OperationMapEntityPresentationReadinessUtility.TryValidate(
+                world.EntityManager,
+                sceneEntity,
+                OperationMapId,
+                OperationMapRenderResidencyMode.VirtualizedProxyPool,
+                out string error),
+            Is.True,
+            error);
+    }
+
+    [Test]
+    public void TryValidate_RejectsRetainedOverlapLargerThanVirtualizedClass()
+    {
+        ConfigureVirtualizedPackedContract(retainAcceptedRenderOnlyIdentity: true);
+        OperationMapRenderPackedReadinessComponent readiness =
+            world.EntityManager.GetComponentData<
+                OperationMapRenderPackedReadinessComponent>(virtualizedDatabaseEntity);
+        readiness.RetainedVirtualizedAcceptedRenderOnlyIdentityCount = 2;
+        world.EntityManager.SetComponentData(virtualizedDatabaseEntity, readiness);
+
+        Assert.That(
+            OperationMapEntityPresentationReadinessUtility.TryValidate(
+                world.EntityManager,
+                sceneEntity,
+                OperationMapId,
+                OperationMapRenderResidencyMode.VirtualizedProxyPool,
+                out string error),
+            Is.False);
+        Assert.That(error, Does.Contain("readiness metrics are invalid"));
+    }
+
+    [Test]
     public void TryValidate_RejectsVirtualizedMissingDatabase()
     {
         ConfigureVirtualizedPackedContract();
@@ -353,9 +392,11 @@ public sealed class OperationMapEntityPresentationReadinessUtilityTests
     }
 
     private void ConfigureVirtualizedPackedContract(
-        bool duplicateSlotIndex = false)
+        bool duplicateSlotIndex = false,
+        bool retainAcceptedRenderOnlyIdentity = false)
     {
-        world.EntityManager.DestroyEntity(renderOnlyIdentityEntity);
+        if (!retainAcceptedRenderOnlyIdentity)
+            world.EntityManager.DestroyEntity(renderOnlyIdentityEntity);
         virtualizedBlob = CreateVirtualizedBlob();
         virtualizedDatabaseEntity = CreateSectionEntity(
             typeof(OperationMapRenderDatabaseComponent),
@@ -379,7 +420,9 @@ public sealed class OperationMapEntityPresentationReadinessUtilityTests
                 EligibleSourceRendererCount = 1,
                 ResidentSourceRowCount = 1,
                 ProxySlotCount = 2,
-                VirtualizedAcceptedRenderOnlyIdentityCount = 1
+                VirtualizedAcceptedRenderOnlyIdentityCount = 1,
+                RetainedVirtualizedAcceptedRenderOnlyIdentityCount =
+                    retainAcceptedRenderOnlyIdentity ? 1 : 0
             });
         world.EntityManager.AddBuffer<
             OperationMapRenderResidentSourceRowComponent>(

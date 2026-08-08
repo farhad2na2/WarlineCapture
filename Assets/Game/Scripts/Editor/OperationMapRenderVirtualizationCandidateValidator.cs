@@ -38,6 +38,8 @@ namespace Game.Editor
         private const int ExpectedPlacements = 40460;
         private const int ExpectedRenderOnlyPlacements = 31400;
         private const int ExpectedGeneratedBuildingIdentities = 4530;
+        private const int ExpectedRetainedGeneratedBuildingIdentities = 4530;
+        private const int ExpectedRetainedGeneratedRenderOnlyIdentities = 5758;
         private const int ExpectedCells = 1934;
         private const int ExpectedPoolBuckets = 4;
         private const int PackedMaterialMeshInfoEntityLimit = 24000;
@@ -131,7 +133,11 @@ namespace Game.Editor
                 virtualizedGeneratedRenderOnlyIdentityCount =
                     second.VirtualizedGeneratedRenderOnlyIdentityCount,
                 virtualizedGeneratedBuildingIdentityCount =
-                    second.VirtualizedGeneratedBuildingIdentityCount
+                    second.VirtualizedGeneratedBuildingIdentityCount,
+                retainedVirtualizedGeneratedRenderOnlyIdentityCount =
+                    second.RetainedVirtualizedGeneratedRenderOnlyIdentityCount,
+                retainedVirtualizedGeneratedBuildingIdentityCount =
+                    second.RetainedVirtualizedGeneratedBuildingIdentityCount
             };
             string physicalReportPath = Path.Combine(projectRoot, ReportPath);
             Directory.CreateDirectory(
@@ -153,6 +159,10 @@ namespace Game.Editor
                 $"slots={second.ProxySlotCount} " +
                 $"slotLimit={FixedProxySlotLimit} " +
                 $"buildingIdentities={second.VirtualizedGeneratedBuildingIdentityCount} " +
+                $"retainedGeneratedBuildings=" +
+                $"{second.RetainedVirtualizedGeneratedBuildingIdentityCount} " +
+                $"retainedGeneratedRenderOnly=" +
+                $"{second.RetainedVirtualizedGeneratedRenderOnlyIdentityCount} " +
                 "productionCutover=0");
         }
 
@@ -318,6 +328,15 @@ namespace Game.Editor
                 "virtualized generated building identities",
                 readiness.VirtualizedGeneratedBuildingIdentityCount,
                 ExpectedGeneratedBuildingIdentities);
+            ValidateRetainedIdentityOverlap(readiness);
+            RequireCount(
+                "retained virtualized generated building identities",
+                readiness.RetainedVirtualizedGeneratedBuildingIdentityCount,
+                ExpectedRetainedGeneratedBuildingIdentities);
+            RequireCount(
+                "retained virtualized generated render-only identities",
+                readiness.RetainedVirtualizedGeneratedRenderOnlyIdentityCount,
+                ExpectedRetainedGeneratedRenderOnlyIdentities);
             if (readiness.ResidencyMode !=
                 (byte)OperationMapRenderResidencyMode.VirtualizedProxyPool)
             {
@@ -349,7 +368,9 @@ namespace Game.Editor
                 readiness.ProxySlotCount,
                 packedMaterialMeshInfoEntityCount,
                 readiness.VirtualizedGeneratedRenderOnlyIdentityCount,
-                readiness.VirtualizedGeneratedBuildingIdentityCount);
+                readiness.VirtualizedGeneratedBuildingIdentityCount,
+                readiness.RetainedVirtualizedGeneratedRenderOnlyIdentityCount,
+                readiness.RetainedVirtualizedGeneratedBuildingIdentityCount);
             return new DirectBakeSummary(
                 ComputeSha256(canonical),
                 contentHash,
@@ -366,7 +387,30 @@ namespace Game.Editor
                 readiness.ResidentSourceRowCount,
                 packedMaterialMeshInfoEntityCount,
                 readiness.VirtualizedGeneratedRenderOnlyIdentityCount,
-                readiness.VirtualizedGeneratedBuildingIdentityCount);
+                readiness.VirtualizedGeneratedBuildingIdentityCount,
+                readiness.RetainedVirtualizedGeneratedRenderOnlyIdentityCount,
+                readiness.RetainedVirtualizedGeneratedBuildingIdentityCount);
+        }
+
+        private static void ValidateRetainedIdentityOverlap(
+            OperationMapRenderPackedReadinessComponent readiness)
+        {
+            if (readiness.RetainedVirtualizedAcceptedBuildingIdentityCount < 0 ||
+                readiness.RetainedVirtualizedAcceptedRenderOnlyIdentityCount < 0 ||
+                readiness.RetainedVirtualizedGeneratedBuildingIdentityCount < 0 ||
+                readiness.RetainedVirtualizedGeneratedRenderOnlyIdentityCount < 0 ||
+                readiness.RetainedVirtualizedAcceptedBuildingIdentityCount >
+                    readiness.VirtualizedAcceptedBuildingIdentityCount ||
+                readiness.RetainedVirtualizedAcceptedRenderOnlyIdentityCount >
+                    readiness.VirtualizedAcceptedRenderOnlyIdentityCount ||
+                readiness.RetainedVirtualizedGeneratedBuildingIdentityCount >
+                    readiness.VirtualizedGeneratedBuildingIdentityCount ||
+                readiness.RetainedVirtualizedGeneratedRenderOnlyIdentityCount >
+                    readiness.VirtualizedGeneratedRenderOnlyIdentityCount)
+            {
+                throw new InvalidOperationException(
+                    "Direct bake retained-identity overlap is outside its virtualized class.");
+            }
         }
 
         private static int CountSourceRows(EntityManager entityManager)
@@ -685,7 +729,9 @@ namespace Game.Editor
                 int residentSourceRowCount,
                 int packedMaterialMeshInfoEntityCount,
                 int virtualizedGeneratedRenderOnlyIdentityCount,
-                int virtualizedGeneratedBuildingIdentityCount)
+                int virtualizedGeneratedBuildingIdentityCount,
+                int retainedVirtualizedGeneratedRenderOnlyIdentityCount,
+                int retainedVirtualizedGeneratedBuildingIdentityCount)
             {
                 Fingerprint = fingerprint;
                 ContentHash = contentHash;
@@ -706,6 +752,10 @@ namespace Game.Editor
                     virtualizedGeneratedRenderOnlyIdentityCount;
                 VirtualizedGeneratedBuildingIdentityCount =
                     virtualizedGeneratedBuildingIdentityCount;
+                RetainedVirtualizedGeneratedRenderOnlyIdentityCount =
+                    retainedVirtualizedGeneratedRenderOnlyIdentityCount;
+                RetainedVirtualizedGeneratedBuildingIdentityCount =
+                    retainedVirtualizedGeneratedBuildingIdentityCount;
             }
 
             internal string Fingerprint { get; }
@@ -724,6 +774,8 @@ namespace Game.Editor
             internal int PackedMaterialMeshInfoEntityCount { get; }
             internal int VirtualizedGeneratedRenderOnlyIdentityCount { get; }
             internal int VirtualizedGeneratedBuildingIdentityCount { get; }
+            internal int RetainedVirtualizedGeneratedRenderOnlyIdentityCount { get; }
+            internal int RetainedVirtualizedGeneratedBuildingIdentityCount { get; }
         }
 
         [Serializable]
@@ -762,6 +814,8 @@ namespace Game.Editor
             public int packedSourceRowsRemoved;
             public int virtualizedGeneratedRenderOnlyIdentityCount;
             public int virtualizedGeneratedBuildingIdentityCount;
+            public int retainedVirtualizedGeneratedRenderOnlyIdentityCount;
+            public int retainedVirtualizedGeneratedBuildingIdentityCount;
         }
     }
 }

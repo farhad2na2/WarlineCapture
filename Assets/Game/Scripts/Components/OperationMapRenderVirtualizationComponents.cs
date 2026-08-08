@@ -265,6 +265,10 @@ namespace Game.Components
         public int VirtualizedAcceptedRenderOnlyIdentityCount;
         public int VirtualizedGeneratedBuildingIdentityCount;
         public int VirtualizedGeneratedRenderOnlyIdentityCount;
+        public int RetainedVirtualizedAcceptedBuildingIdentityCount;
+        public int RetainedVirtualizedAcceptedRenderOnlyIdentityCount;
+        public int RetainedVirtualizedGeneratedBuildingIdentityCount;
+        public int RetainedVirtualizedGeneratedRenderOnlyIdentityCount;
     }
 
     public struct OperationMapRenderEligibleSourceComponent : IComponentData

@@ -38,6 +38,7 @@ public sealed class AndroidVisualQualityValidationTests
             RunCase(() => GraphicsSettingsRetainsBatchRendererGroupShaderVariants(), ref passed);
             RunCase(() => UniversalRenderPipelineGlobalSettingsRetainRuntimeResources(), ref passed);
             RunCase(() => AndroidBuildDisablesStaticBatchingForGpuResidentDrawer(), ref passed);
+            RunCase(() => AndroidBuildEnablesOptimizedFramePacing(), ref passed);
             RunCase(() => VisualQualityProfileUsesBalancedAndroidMatchRendering(), ref passed);
             RunCase(() => HighModeKeepsCameraPostProcessingDisabled(), ref passed);
             RunCase(() => MobileQualityTierUsesBalancedMsaaAndShadows(), ref passed);
@@ -232,6 +233,14 @@ public sealed class AndroidVisualQualityValidationTests
         Assert.False(
             PlayerSettings.GetStaticBatchingForPlatform(BuildTarget.Android),
             "Android static batching must remain disabled when GPU Resident Drawer owns instanced submission.");
+    }
+
+    [Test]
+    public static void AndroidBuildEnablesOptimizedFramePacing()
+    {
+        Assert.True(
+            PlayerSettings.Android.optimizedFramePacing,
+            "Android must use Unity optimized frame pacing so the 60 FPS target is evenly distributed on high-refresh displays.");
     }
 
     [Test]

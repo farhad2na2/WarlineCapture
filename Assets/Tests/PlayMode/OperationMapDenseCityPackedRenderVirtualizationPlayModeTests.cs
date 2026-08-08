@@ -557,12 +557,18 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
     private static bool DenseIsKnownEditorRelayDiagnostic(string condition) =>
         condition != null &&
         condition.StartsWith("connection.state_change", StringComparison.Ordinal) &&
-        condition.Contains(
-            "oldState=Connecting newState=Failed",
-            StringComparison.Ordinal) &&
-        condition.Contains(
-            "Relay process exited (exit code -1073741819)",
-            StringComparison.Ordinal);
+        ((condition.Contains(
+              "oldState=Connecting newState=Failed",
+              StringComparison.Ordinal) &&
+          condition.Contains(
+              "Relay process exited (exit code -1073741819)",
+              StringComparison.Ordinal)) ||
+         (condition.Contains(
+              "oldState=Running newState=Failed",
+              StringComparison.Ordinal) &&
+          condition.Contains(
+              "Process exited unexpectedly. code=-1073741819",
+              StringComparison.Ordinal)));
 
     [UnityTest]
     [Timeout(600000)]

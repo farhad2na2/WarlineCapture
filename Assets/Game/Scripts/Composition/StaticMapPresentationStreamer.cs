@@ -71,6 +71,7 @@ namespace Game.Composition
         internal int PendingOperationCount => _queueCount;
         internal bool HasActiveOperation => _activeOperation != null || _detachedOperation.IsPending;
         internal bool HasDetachedOperation => _detachedOperation.IsPending;
+        internal int StartedOperationCount { get; private set; }
         internal int LastSceneStateChecks { get; private set; }
         internal int TargetRebuildCount { get; private set; }
         public bool Bind(StaticMapPresentationManifest manifest, Camera camera)
@@ -228,6 +229,8 @@ namespace Game.Composition
                 _activeRequest = request;
                 if (_activeOperation == null)
                     HandleStartFailure(request);
+                else
+                    StartedOperationCount++;
             } catch (Exception exception)
             {
                 HandleStartFailure(request, exception.Message);

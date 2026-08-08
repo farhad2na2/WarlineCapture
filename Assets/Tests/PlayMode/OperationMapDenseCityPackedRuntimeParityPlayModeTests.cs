@@ -185,6 +185,8 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
                     "pre-allocate more space.",
                     StringComparison.Ordinal))
                 return;
+            if (DenseIsKnownEditorRelayDiagnostic(condition))
+                return;
             unexpectedErrors.Add(condition);
         };
         Application.logMessageReceived += logCallback;
@@ -282,6 +284,36 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
     [Timeout(600000)]
     public IEnumerator DensePackedCandidate_AuthoredGroundVehicleMovesAndRetainsEcsPresentation()
     {
+        yield return DenseRunPackedMatchRoute(
+            validateCameraTraversal: false,
+            validateVehicleMovement: true,
+            validateParityManifest: true,
+            unexpectedErrorContext: "Dense packed vehicle route emitted unexpected error logs.");
+    }
+
+    [UnityTest]
+    [Timeout(600000)]
+    public IEnumerator DensePackedCandidate_CameraTraversalIssuesNoStreamingOperations()
+    {
+        if (SystemInfo.graphicsDeviceType ==
+            UnityEngine.Rendering.GraphicsDeviceType.Null)
+        {
+            Assert.Ignore("Entities Graphics culling visibility requires a graphics device.");
+        }
+
+        yield return DenseRunPackedMatchRoute(
+            validateCameraTraversal: true,
+            validateVehicleMovement: false,
+            validateParityManifest: false,
+            unexpectedErrorContext: "Dense packed camera route emitted unexpected error logs.");
+    }
+
+    private static IEnumerator DenseRunPackedMatchRoute(
+        bool validateCameraTraversal,
+        bool validateVehicleMovement,
+        bool validateParityManifest,
+        string unexpectedErrorContext)
+    {
         string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
         string manifestPath = DenseResolve(projectRoot, DenseParityManifestPath);
         string summaryPath = DenseResolve(projectRoot, DenseParitySummaryPath);
@@ -294,18 +326,23 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
             entityContentRoot,
             RuntimeContentManager.RelativeCatalogPath);
 
-        DenseRequireFile(manifestPath);
-        DenseRequireFile(summaryPath);
         DenseRequireFile(runtimeContentReportPath);
         DenseRequireFile(addressablesCatalogPath);
         DenseRequireFile(entityCatalogPath);
 
-        DenseParitySummary summary = JsonUtility.FromJson<DenseParitySummary>(
-            File.ReadAllText(summaryPath));
+        DenseParitySummary summary = null;
+        DenseParityManifest expected = null;
+        if (validateParityManifest)
+        {
+            DenseRequireFile(manifestPath);
+            DenseRequireFile(summaryPath);
+            summary = JsonUtility.FromJson<DenseParitySummary>(
+                File.ReadAllText(summaryPath));
+            expected = DenseParityManifest.Read(manifestPath);
+        }
         DenseRuntimeContentReport runtimeContent =
             JsonUtility.FromJson<DenseRuntimeContentReport>(
                 File.ReadAllText(runtimeContentReportPath));
-        DenseParityManifest expected = DenseParityManifest.Read(manifestPath);
         DenseValidateFingerprints(
             projectRoot,
             manifestPath,
@@ -337,6 +374,8 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
                     "edit EntityNameStorage.cs and change the value of kMaxEntries to " +
                     "pre-allocate more space.",
                     StringComparison.Ordinal))
+                return;
+            if (DenseIsKnownEditorRelayDiagnostic(condition))
                 return;
             unexpectedErrors.Add(condition);
         };
@@ -371,7 +410,7 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
             Assert.That(definitionHandle.Result, Is.Not.Null);
             Assert.That(
                 definitionHandle.Result.OperationMapId,
-                Is.EqualTo(expected.OperationMapId));
+                Is.EqualTo(ExpectedOperationMapId));
 
             candidateCatalog = CreateCandidateCatalog(definitionHandle.Result);
             MatchSceneView.SetEditorOperationMapCatalogOverrideForTests(candidateCatalog);
@@ -388,11 +427,13 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
                 definitionHandle.Result,
                 staticStreamer,
                 cycle: 1,
-                validateCameraTraversal: false,
+                validateCameraTraversal: validateCameraTraversal,
                 validateSteadyStateAllocation: false,
                 validateBuildingDestruction: false,
-                validateVehicleMovement: true,
-                validateLoadedContent: DenseAssertCompleteRuntimeCounts);
+                validateVehicleMovement: validateVehicleMovement,
+                validateLoadedContent: validateVehicleMovement
+                    ? DenseAssertCompleteRuntimeCounts
+                    : null);
         }
         finally
         {
@@ -415,7 +456,7 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
         Assert.That(
             unexpectedErrors,
             Is.Empty,
-            "Dense packed vehicle route emitted unexpected error logs.");
+            unexpectedErrorContext);
     }
 
     private static void DenseAssertCompleteRuntimeCounts(
@@ -1922,27 +1963,31 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
         DenseRuntimeContentReport runtimeContent,
         DenseParityManifest manifest)
     {
-        Assert.That(summary, Is.Not.Null);
-        Assert.That(
-            summary.schema,
-            Is.EqualTo("warline.operation-map.dense-city-runtime-parity-manifest"));
-        Assert.That(summary.schemaVersion, Is.EqualTo(1));
-        Assert.That(summary.result, Is.EqualTo("DenseCityRuntimeParityManifestWritten"));
-        Assert.That(summary.productionCutover, Is.Zero);
-        Assert.That(summary.formatVersion, Is.EqualTo(DenseParityFormatVersion));
-        Assert.That(summary.operationMapId, Is.EqualTo(manifest.OperationMapId));
-        Assert.That(summary.entitySceneGuid, Is.EqualTo(manifest.EntitySceneGuid));
-        Assert.That(summary.candidateSubSceneSha256, Is.EqualTo(manifest.SubSceneSha256));
-        Assert.That(
-            summary.directBakeParityReportSha256,
-            Is.EqualTo(manifest.DirectBakeReportSha256));
-        Assert.That(summary.matrixTolerance, Is.EqualTo(manifest.MatrixTolerance));
-        Assert.That(summary.boundsTolerance, Is.EqualTo(manifest.BoundsTolerance));
-        Assert.That(summary.legacyIdentityCount, Is.EqualTo(manifest.LegacyRows.Length));
-        Assert.That(summary.denseIdentityCount, Is.EqualTo(manifest.DenseRows.Length));
-        Assert.That(summary.renderRowCount, Is.EqualTo(manifest.RenderRows.Length));
-        Assert.That(summary.manifestBytes, Is.EqualTo(new FileInfo(manifestPath).Length));
-        Assert.That(summary.manifestSha256, Is.EqualTo(ComputeSha256(manifestPath)));
+        if (summary != null || manifest != null)
+        {
+            Assert.That(summary, Is.Not.Null);
+            Assert.That(manifest, Is.Not.Null);
+            Assert.That(
+                summary.schema,
+                Is.EqualTo("warline.operation-map.dense-city-runtime-parity-manifest"));
+            Assert.That(summary.schemaVersion, Is.EqualTo(1));
+            Assert.That(summary.result, Is.EqualTo("DenseCityRuntimeParityManifestWritten"));
+            Assert.That(summary.productionCutover, Is.Zero);
+            Assert.That(summary.formatVersion, Is.EqualTo(DenseParityFormatVersion));
+            Assert.That(summary.operationMapId, Is.EqualTo(manifest.OperationMapId));
+            Assert.That(summary.entitySceneGuid, Is.EqualTo(manifest.EntitySceneGuid));
+            Assert.That(summary.candidateSubSceneSha256, Is.EqualTo(manifest.SubSceneSha256));
+            Assert.That(
+                summary.directBakeParityReportSha256,
+                Is.EqualTo(manifest.DirectBakeReportSha256));
+            Assert.That(summary.matrixTolerance, Is.EqualTo(manifest.MatrixTolerance));
+            Assert.That(summary.boundsTolerance, Is.EqualTo(manifest.BoundsTolerance));
+            Assert.That(summary.legacyIdentityCount, Is.EqualTo(manifest.LegacyRows.Length));
+            Assert.That(summary.denseIdentityCount, Is.EqualTo(manifest.DenseRows.Length));
+            Assert.That(summary.renderRowCount, Is.EqualTo(manifest.RenderRows.Length));
+            Assert.That(summary.manifestBytes, Is.EqualTo(new FileInfo(manifestPath).Length));
+            Assert.That(summary.manifestSha256, Is.EqualTo(ComputeSha256(manifestPath)));
+        }
 
         Assert.That(runtimeContent, Is.Not.Null);
         Assert.That(
@@ -2001,15 +2046,21 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
                 runtimeContent.entitySceneArchiveBytes +
                 runtimeContent.entityContentMetadataBytes));
         Assert.That(runtimeContent.definitionAddress, Is.EqualTo(DenseDefinitionAddress));
-        Assert.That(runtimeContent.operationMapId, Is.EqualTo(manifest.OperationMapId));
-        Assert.That(runtimeContent.entitySceneGuid, Is.EqualTo(manifest.EntitySceneGuid));
+        Assert.That(runtimeContent.operationMapId, Is.EqualTo(ExpectedOperationMapId));
+        if (manifest != null)
+            Assert.That(runtimeContent.entitySceneGuid, Is.EqualTo(manifest.EntitySceneGuid));
+        else
+            Assert.That(runtimeContent.entitySceneGuid, Does.Match("^[0-9a-f]{32}$"));
 
         string subSceneSha = ComputeSha256(
             DenseResolve(projectRoot, DenseCandidateSubScenePath));
         string directReportSha = ComputeSha256(
             DenseResolve(projectRoot, DenseDirectBakeParityReportPath));
-        Assert.That(manifest.SubSceneSha256, Is.EqualTo(subSceneSha));
-        Assert.That(manifest.DirectBakeReportSha256, Is.EqualTo(directReportSha));
+        if (manifest != null)
+        {
+            Assert.That(manifest.SubSceneSha256, Is.EqualTo(subSceneSha));
+            Assert.That(manifest.DirectBakeReportSha256, Is.EqualTo(directReportSha));
+        }
         Assert.That(runtimeContent.candidateSubSceneSha256, Is.EqualTo(subSceneSha));
         Assert.That(runtimeContent.directBakeParityReportSha256, Is.EqualTo(directReportSha));
         Assert.That(

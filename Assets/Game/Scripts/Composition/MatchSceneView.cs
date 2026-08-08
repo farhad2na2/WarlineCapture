@@ -156,6 +156,16 @@ namespace Game.Composition
         internal bool OperationMapPresentationManifestLoadComplete =>
             operationMapSceneLoadingSystem != null &&
             operationMapSceneLoadingSystem.PresentationManifestOperationComplete;
+        internal int OperationMapSourceSceneLoadOperationCount =>
+            operationMapSceneLoadingSystem?.SourceSceneLoadOperationCount ?? 0;
+        internal int OperationMapPresentationManifestLoadOperationCount =>
+            operationMapSceneLoadingSystem?.PresentationManifestLoadOperationCount ?? 0;
+        internal int OperationMapPackedEntitySceneLoadRequestCount =>
+            operationMapSceneLoadingSystem?.PackedEntitySceneLoadRequestCount ?? 0;
+        internal int OperationMapSourceSceneUnloadOperationCount =>
+            operationMapSceneLoadingSystem?.SourceSceneUnloadOperationCount ?? 0;
+        internal int OperationMapPackedEntitySceneUnloadRequestCount =>
+            operationMapSceneLoadingSystem?.PackedEntitySceneUnloadRequestCount ?? 0;
         internal float OperationMapContentProgress01 =>
             operationMapSceneLoadingSystem?.Progress01 ?? 0f;
         internal string OperationMapContentFailure =>

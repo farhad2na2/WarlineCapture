@@ -388,6 +388,11 @@ namespace Game.Composition
         public bool HasFailed => !string.IsNullOrEmpty(Failure);
         public bool SourceSceneOperationComplete => sceneOperation != null && sceneOperation.IsDone;
         public bool PresentationManifestOperationComplete => manifestOperation != null && manifestOperation.IsDone;
+        internal int SourceSceneLoadOperationCount { get; private set; }
+        internal int PresentationManifestLoadOperationCount { get; private set; }
+        internal int PackedEntitySceneLoadRequestCount { get; private set; }
+        internal int SourceSceneUnloadOperationCount { get; private set; }
+        internal int PackedEntitySceneUnloadRequestCount { get; private set; }
         public float Progress01 { get; private set; }
         public string Failure { get; private set; }
         public OperationMapLoadResultCode FailureCode { get; private set; }
@@ -449,9 +454,13 @@ namespace Game.Composition
             try
             {
                 sceneOperation = sceneApi.LoadAdditive(sourceReference.RuntimeKey);
+                if (sceneOperation != null)
+                    SourceSceneLoadOperationCount++;
                 manifestOperation = entityScene
                     ? new EntitySceneSkippedPresentationManifestOperation()
                     : manifestApi.Load(manifestReference.RuntimeKey);
+                if (!entityScene && manifestOperation != null)
+                    PresentationManifestLoadOperationCount++;
             }
             catch (Exception exception)
             {
@@ -593,6 +602,7 @@ namespace Game.Composition
             }
             if (!sceneOperation.TryBeginUnload(out error))
                 return false;
+            SourceSceneUnloadOperationCount++;
 
             if (!TryReleaseOwnedPackedEntityScene(out _, out error))
                 return false;
@@ -830,7 +840,8 @@ namespace Game.Composition
                 return true;
             }
 
-            return entitySceneApi.TryEnsureReady(
+            bool ownedBefore = ownsPackedEntityScene;
+            bool result = entitySceneApi.TryEnsureReady(
                 view.Definition.NavigationMetadata.AuthoredSubSceneGuid,
                 expectedOperationMapId,
                 view.Definition.RenderResidencyMode,
@@ -838,18 +849,25 @@ namespace Game.Composition
                 ref ownsPackedEntityScene,
                 out ready,
                 out error);
+            if (!ownedBefore && ownsPackedEntityScene)
+                PackedEntitySceneLoadRequestCount++;
+            return result;
         }
 
         private bool TryReleaseOwnedPackedEntityScene(
             out bool complete,
             out string error)
         {
-            return entitySceneApi.TryReleaseOwned(
+            bool releaseStartedBefore = packedEntitySceneReleaseStarted;
+            bool result = entitySceneApi.TryReleaseOwned(
                 ref packedEntityScene,
                 ref ownsPackedEntityScene,
                 ref packedEntitySceneReleaseStarted,
                 out complete,
                 out error);
+            if (!releaseStartedBefore && packedEntitySceneReleaseStarted)
+                PackedEntitySceneUnloadRequestCount++;
+            return result;
         }
 
         private static bool TryValidateManifest(

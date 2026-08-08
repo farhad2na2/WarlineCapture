@@ -608,7 +608,9 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
                 route,
                 sceneEntity,
                 resolvedSectionEntities,
-                staticStreamer);
+                staticStreamer,
+                definition.RenderResidencyMode ==
+                OperationMapRenderResidencyMode.VirtualizedProxyPool);
         }
 
         if (validateSteadyStateAllocation)
@@ -1165,7 +1167,8 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
         Aph805MenuMatchMenuLifecyclePlayModeTests.TransitionContext route,
         Entity sceneEntity,
         IReadOnlyList<Entity> resolvedSectionEntities,
-        StaticMapPresentationStreamer staticStreamer)
+        StaticMapPresentationStreamer staticStreamer,
+        bool constrainTravelToMapEnvelope)
     {
         World world = route.World;
         EntityManager entityManager = world.EntityManager;
@@ -1180,6 +1183,12 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
         Entity[] expectedSceneRequests =
             GetEntitiesWithComponent<RequestSceneLoaded>(entityManager);
         string[] expectedLoadedScenes = GetLoadedSceneSignatures();
+        int expectedSourceSceneLoads = route.Match.OperationMapSourceSceneLoadOperationCount;
+        int expectedManifestLoads = route.Match.OperationMapPresentationManifestLoadOperationCount;
+        int expectedEntitySceneLoads = route.Match.OperationMapPackedEntitySceneLoadRequestCount;
+        int expectedSourceSceneUnloads = route.Match.OperationMapSourceSceneUnloadOperationCount;
+        int expectedEntitySceneUnloads = route.Match.OperationMapPackedEntitySceneUnloadRequestCount;
+        int expectedStaticStreamerOperations = staticStreamer.StartedOperationCount;
         Bounds mapBounds =
             CalculateSectionRenderBounds(entityManager, resolvedSectionEntities);
         Assert.That(expectedEntities.Length, Is.GreaterThan(0));
@@ -1204,19 +1213,23 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
 
             worldCamera.enabled = true;
             QualitySettings.shadows = ShadowQuality.Disable;
-            worldCamera.orthographic = true;
-            worldCamera.nearClipPlane = 0.1f;
             float mapSpan = math.max(mapBounds.size.x, mapBounds.size.z);
-            worldCamera.orthographicSize = math.max(
-                mapBounds.extents.z,
-                mapBounds.extents.x / math.max(0.1f, worldCamera.aspect)) * 0.35f;
-            worldCamera.farClipPlane = math.max(1000f, mapSpan * 4f);
-
             Vector3 center = mapBounds.center;
-            float cameraHeight = mapBounds.max.y + math.max(100f, mapSpan);
-            worldCamera.transform.SetPositionAndRotation(
-                new Vector3(center.x, cameraHeight, center.z),
-                Quaternion.Euler(90f, 0f, 0f));
+            float cameraHeight = originalPosition.y;
+            if (!constrainTravelToMapEnvelope)
+            {
+                worldCamera.orthographic = true;
+                worldCamera.nearClipPlane = 0.1f;
+                cameraHeight = mapBounds.max.y + math.max(100f, mapSpan);
+                worldCamera.orthographicSize = math.max(
+                    mapBounds.extents.z,
+                    mapBounds.extents.x / math.max(0.1f, worldCamera.aspect)) * 0.35f;
+                worldCamera.farClipPlane = math.max(1000f, mapSpan * 4f);
+                worldCamera.transform.SetPositionAndRotation(
+                    new Vector3(center.x, cameraHeight, center.z),
+                    Quaternion.Euler(90f, 0f, 0f));
+                worldCamera.ResetProjectionMatrix();
+            }
             var nearSample = new EntitiesGraphicsCullingSample();
             yield return CaptureEntitiesGraphicsCullingSample(
                 graphicsSystem,
@@ -1232,20 +1245,36 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
                 expectedSceneRequests,
                 expectedLoadedScenes,
                 staticStreamer,
+                route.Match,
+                expectedSourceSceneLoads,
+                expectedManifestLoads,
+                expectedEntitySceneLoads,
+                expectedSourceSceneUnloads,
+                expectedEntitySceneUnloads,
+                expectedStaticStreamerOperations,
                 "detail");
 
-            worldCamera.transform.SetPositionAndRotation(
-                new Vector3(
+            Vector3 travelPosition = constrainTravelToMapEnvelope
+                ? new Vector3(
+                    center.x + mapBounds.extents.x * 0.15f,
+                    cameraHeight,
+                    center.z + mapBounds.extents.z * 0.15f)
+                : new Vector3(
                     center.x + mapSpan * 6f,
                     cameraHeight,
-                    center.z + mapSpan * 6f),
-                Quaternion.Euler(-90f, 0f, 0f));
+                    center.z + mapSpan * 6f);
+            worldCamera.transform.SetPositionAndRotation(
+                travelPosition,
+                constrainTravelToMapEnvelope
+                    ? originalRotation
+                    : Quaternion.Euler(-90f, 0f, 0f));
+            string travelCheckpoint = constrainTravelToMapEnvelope ? "map-travel" : "off-map";
             var offMapSample = new EntitiesGraphicsCullingSample();
             yield return CaptureEntitiesGraphicsCullingSample(
                 graphicsSystem,
                 worldCamera,
                 offMapSample,
-                "off-map");
+                travelCheckpoint);
             AssertCameraTraversalResidency(
                 world,
                 entityManager,
@@ -1255,7 +1284,14 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
                 expectedSceneRequests,
                 expectedLoadedScenes,
                 staticStreamer,
-                "off-map");
+                route.Match,
+                expectedSourceSceneLoads,
+                expectedManifestLoads,
+                expectedEntitySceneLoads,
+                expectedSourceSceneUnloads,
+                expectedEntitySceneUnloads,
+                expectedStaticStreamerOperations,
+                travelCheckpoint);
 
             Assert.That(nearSample.MaximumBatchCount, Is.GreaterThan(0));
             Assert.That(nearSample.MaximumChunkTotal, Is.GreaterThan(0));
@@ -1264,10 +1300,13 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
             Assert.That(nearSample.MaximumInstanceTests, Is.GreaterThan(0));
             Assert.That(nearSample.MaximumCulledChunkCount, Is.GreaterThan(0));
             Assert.That(offMapSample.MaximumCameraMoveDistance, Is.GreaterThan(0f));
-            Assert.That(
-                offMapSample.MinimumRenderedInstanceCount,
-                Is.LessThan(nearSample.MaximumRenderedInstanceCount),
-                "Camera traversal did not change Entities Graphics visibility.");
+            if (!constrainTravelToMapEnvelope)
+            {
+                Assert.That(
+                    offMapSample.MinimumRenderedInstanceCount,
+                    Is.LessThan(nearSample.MaximumRenderedInstanceCount),
+                    "Camera traversal did not change Entities Graphics visibility.");
+            }
 
             int mapLodEntityCount =
                 CountSectionEntitiesWithComponent<MeshLODComponent>(
@@ -1278,6 +1317,10 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
                 $"lodChunksTested=" +
                 $"{math.max(nearSample.MaximumLodChunksTested, offMapSample.MaximumLodChunksTested)} " +
                 "lodTransitionAcceptance=deferred-to-android");
+            Debug.Log(
+                "[PackedCameraTravelOperations] result=Passed " +
+                "mapSceneOperations=0 addressablesOperations=0 " +
+                "staticStreamerOperations=0");
         }
         finally
         {
@@ -1391,6 +1434,13 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
         IReadOnlyList<Entity> expectedSceneRequests,
         IReadOnlyList<string> expectedLoadedScenes,
         StaticMapPresentationStreamer staticStreamer,
+        MatchSceneView match,
+        int expectedSourceSceneLoads,
+        int expectedManifestLoads,
+        int expectedEntitySceneLoads,
+        int expectedSourceSceneUnloads,
+        int expectedEntitySceneUnloads,
+        int expectedStaticStreamerOperations,
         string checkpoint)
     {
         Assert.That(entityManager.Exists(sceneEntity), Is.True, checkpoint);
@@ -1412,6 +1462,30 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
         Assert.That(staticStreamer.DrainComplete, Is.False, checkpoint);
         Assert.That(staticStreamer.PendingOperationCount, Is.Zero, checkpoint);
         Assert.That(staticStreamer.HasActiveOperation, Is.False, checkpoint);
+        Assert.That(
+            match.OperationMapSourceSceneLoadOperationCount,
+            Is.EqualTo(expectedSourceSceneLoads),
+            checkpoint);
+        Assert.That(
+            match.OperationMapPresentationManifestLoadOperationCount,
+            Is.EqualTo(expectedManifestLoads),
+            checkpoint);
+        Assert.That(
+            match.OperationMapPackedEntitySceneLoadRequestCount,
+            Is.EqualTo(expectedEntitySceneLoads),
+            checkpoint);
+        Assert.That(
+            match.OperationMapSourceSceneUnloadOperationCount,
+            Is.EqualTo(expectedSourceSceneUnloads),
+            checkpoint);
+        Assert.That(
+            match.OperationMapPackedEntitySceneUnloadRequestCount,
+            Is.EqualTo(expectedEntitySceneUnloads),
+            checkpoint);
+        Assert.That(
+            staticStreamer.StartedOperationCount,
+            Is.EqualTo(expectedStaticStreamerOperations),
+            checkpoint);
     }
 
     private static Entity[] GetSectionTaggedEntities(

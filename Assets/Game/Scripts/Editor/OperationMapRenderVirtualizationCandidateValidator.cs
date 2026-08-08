@@ -40,6 +40,8 @@ namespace Game.Editor
         private const int ExpectedGeneratedBuildingIdentities = 4530;
         private const int ExpectedCells = 1934;
         private const int ExpectedPoolBuckets = 4;
+        private const int PackedMaterialMeshInfoEntityLimit = 24000;
+        private const int FixedProxySlotLimit = 8000;
         private static readonly UTF8Encoding Utf8WithoutBom = new(false);
 
         public static void RunTwoPassValidation()
@@ -86,7 +88,7 @@ namespace Game.Editor
             var report = new DirectBakeReport
             {
                 schema = "warline.operation-map.render-virtualization-direct-bake",
-                schemaVersion = 3,
+                schemaVersion = 4,
                 result = "Passed",
                 operationMapId =
                     OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
@@ -110,6 +112,16 @@ namespace Game.Editor
                 cellCount = second.CellCount,
                 poolBucketCount = second.PoolBucketCount,
                 proxySlotCount = second.ProxySlotCount,
+                packedMaterialMeshInfoEntityCount =
+                    second.PackedMaterialMeshInfoEntityCount,
+                packedMaterialMeshInfoEntityLimit =
+                    PackedMaterialMeshInfoEntityLimit,
+                packedMaterialMeshInfoEntitiesWithinLimit =
+                    second.PackedMaterialMeshInfoEntityCount <=
+                    PackedMaterialMeshInfoEntityLimit,
+                fixedProxySlotLimit = FixedProxySlotLimit,
+                fixedProxySlotsWithinLimit =
+                    second.ProxySlotCount <= FixedProxySlotLimit,
                 sourceRowCount = second.SourceRowCount,
                 virtualizedSourceRowCount = second.EligibleSourceRowCount,
                 virtualizedSourceRendererCount = second.EligibleSourceRendererCount,
@@ -136,7 +148,10 @@ namespace Game.Editor
                 $"virtualizedRows={second.EligibleSourceRowCount} " +
                 $"virtualizedRenderers={second.EligibleSourceRendererCount} " +
                 $"residentRows={second.ResidentSourceRowCount} " +
+                $"packedMmi={second.PackedMaterialMeshInfoEntityCount}/" +
+                $"{PackedMaterialMeshInfoEntityLimit} " +
                 $"slots={second.ProxySlotCount} " +
+                $"slotLimit={FixedProxySlotLimit} " +
                 $"buildingIdentities={second.VirtualizedGeneratedBuildingIdentityCount} " +
                 "productionCutover=0");
         }
@@ -224,6 +239,8 @@ namespace Game.Editor
 
             int sourceRowCount = CountSourceRows(entityManager);
             int eligibleTaggedCount = CountEligibleTaggedRows(entityManager);
+            int packedMaterialMeshInfoEntityCount =
+                CountPackedMaterialMeshInfoEntities(entityManager);
             ValidateResidentRows(entityManager, residentRows);
             ValidateSlots(entityManager, ref blob);
 
@@ -265,6 +282,21 @@ namespace Game.Editor
                 residentRows.Length,
                 expectedSourceRowCount - ExpectedEligibleRenderers);
             RequireCount("proxy readiness slots", readiness.ProxySlotCount, ExpectedSlots);
+            if (packedMaterialMeshInfoEntityCount <= 0)
+                throw new InvalidOperationException(
+                    "Packed candidate contains no MaterialMeshInfo entities.");
+            if (packedMaterialMeshInfoEntityCount > PackedMaterialMeshInfoEntityLimit)
+            {
+                throw new InvalidOperationException(
+                    $"Packed MaterialMeshInfo entity count {packedMaterialMeshInfoEntityCount} " +
+                    $"exceeds limit {PackedMaterialMeshInfoEntityLimit}.");
+            }
+            if (readiness.ProxySlotCount > FixedProxySlotLimit)
+            {
+                throw new InvalidOperationException(
+                    $"Fixed proxy slot count {readiness.ProxySlotCount} exceeds limit " +
+                    $"{FixedProxySlotLimit}.");
+            }
             RequireCount("prototypes", blob.Prototypes.Length, ExpectedPrototypes);
             RequireCount("parts", blob.Parts.Length, ExpectedParts);
             RequireCount("placements", blob.Placements.Length, ExpectedPlacements);
@@ -315,6 +347,7 @@ namespace Game.Editor
                 readiness.EligibleSourceRendererCount,
                 readiness.ResidentSourceRowCount,
                 readiness.ProxySlotCount,
+                packedMaterialMeshInfoEntityCount,
                 readiness.VirtualizedGeneratedRenderOnlyIdentityCount,
                 readiness.VirtualizedGeneratedBuildingIdentityCount);
             return new DirectBakeSummary(
@@ -331,6 +364,7 @@ namespace Game.Editor
                 readiness.EligibleSourceRowCount,
                 readiness.EligibleSourceRendererCount,
                 readiness.ResidentSourceRowCount,
+                packedMaterialMeshInfoEntityCount,
                 readiness.VirtualizedGeneratedRenderOnlyIdentityCount,
                 readiness.VirtualizedGeneratedBuildingIdentityCount);
         }
@@ -350,6 +384,21 @@ namespace Game.Editor
                         true).Length);
             }
             return count;
+        }
+
+        private static int CountPackedMaterialMeshInfoEntities(
+            EntityManager entityManager)
+        {
+            Type bakingOnlyType =
+                Type.GetType("Unity.Entities.BakingOnlyEntity, Unity.Entities.Hybrid", true);
+            TypeIndex bakingOnlyTypeIndex = TypeManager.GetTypeIndex(bakingOnlyType);
+            using EntityQuery query = entityManager.CreateEntityQuery(
+                new EntityQueryDesc
+                {
+                    All = new[] { ComponentType.ReadOnly<MaterialMeshInfo>() },
+                    None = new[] { ComponentType.FromTypeIndex(bakingOnlyTypeIndex) }
+                });
+            return query.CalculateEntityCount();
         }
 
         private static int CountAuthoringSourceRows(Scene scene)
@@ -634,6 +683,7 @@ namespace Game.Editor
                 int eligibleSourceRowCount,
                 int eligibleSourceRendererCount,
                 int residentSourceRowCount,
+                int packedMaterialMeshInfoEntityCount,
                 int virtualizedGeneratedRenderOnlyIdentityCount,
                 int virtualizedGeneratedBuildingIdentityCount)
             {
@@ -650,6 +700,8 @@ namespace Game.Editor
                 EligibleSourceRowCount = eligibleSourceRowCount;
                 EligibleSourceRendererCount = eligibleSourceRendererCount;
                 ResidentSourceRowCount = residentSourceRowCount;
+                PackedMaterialMeshInfoEntityCount =
+                    packedMaterialMeshInfoEntityCount;
                 VirtualizedGeneratedRenderOnlyIdentityCount =
                     virtualizedGeneratedRenderOnlyIdentityCount;
                 VirtualizedGeneratedBuildingIdentityCount =
@@ -669,6 +721,7 @@ namespace Game.Editor
             internal int EligibleSourceRowCount { get; }
             internal int EligibleSourceRendererCount { get; }
             internal int ResidentSourceRowCount { get; }
+            internal int PackedMaterialMeshInfoEntityCount { get; }
             internal int VirtualizedGeneratedRenderOnlyIdentityCount { get; }
             internal int VirtualizedGeneratedBuildingIdentityCount { get; }
         }
@@ -696,6 +749,11 @@ namespace Game.Editor
             public int cellCount;
             public int poolBucketCount;
             public int proxySlotCount;
+            public int packedMaterialMeshInfoEntityCount;
+            public int packedMaterialMeshInfoEntityLimit;
+            public bool packedMaterialMeshInfoEntitiesWithinLimit;
+            public int fixedProxySlotLimit;
+            public bool fixedProxySlotsWithinLimit;
             public int sourceRowCount;
             public int virtualizedSourceRowCount;
             public int virtualizedSourceRendererCount;

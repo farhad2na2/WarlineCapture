@@ -13,7 +13,7 @@ using UnityEngine;
 
 public sealed class AndroidPerformanceRecorderTests
 {
-    private const string PassMarker = "[AndroidPerformanceRecorderValidation] result=Passed tests=22";
+    private const string PassMarker = "[AndroidPerformanceRecorderValidation] result=Passed tests=25";
     private delegate void CaptureReleaseMetrics(long batches, long setPassCalls, long triangles, long vertices);
 
     public static void RunFocusedValidation()
@@ -31,6 +31,8 @@ public sealed class AndroidPerformanceRecorderTests
             tests.LegacyDevelopmentFlagRemainsEnabled();
             tests.ExplicitDevelopmentTaskRemainsEnabled();
             tests.ReleaseModeRequiresExactTaskAndFrameRate();
+            tests.Vrp092ModeRequiresExactSupportedRoute();
+            tests.Vrp092ReportCarriesRouteAnd120SecondContract();
             tests.ReleaseModeRunsInNonDevelopmentBuild();
             tests.UnknownTaskDoesNotEnableRecorder();
             tests.ReleaseModeRecordsInjectedProvenance();
@@ -40,6 +42,7 @@ public sealed class AndroidPerformanceRecorderTests
             tests.DevelopmentReportKeepsLegacyEvidenceShape();
             tests.ReleaseMetricAggregationDoesNotAllocateAfterWarmup();
             tests.ReleaseValidationFailsWhenRequiredCountersAreUnavailable();
+            tests.Vrp092ValidationDoesNotRequireUnavailableAndroidBatchCounter();
             tests.PercentileMatchesEvidenceGateRounding();
             tests.PercentileIgnoresUnusedCapacityAndHandlesZeroSamples();
             tests.LaunchClock_SubsystemResetRestoresApplicationEpoch();
@@ -311,6 +314,39 @@ public sealed class AndroidPerformanceRecorderTests
         InvokeInitialize(recorder, ReleaseArguments(), false);
         Assert.IsTrue(recorder.IsEnabled);
         Assert.AreEqual("Release", ReadField(recorder, "_mode").ToString());
+        Assert.IsFalse(recorder.SuppressesStandardDiagnostics);
+        DisposeWithoutReport(recorder);
+    }
+
+    [Test]
+    public void Vrp092ModeRequiresExactSupportedRoute()
+    {
+        AndroidPerformanceRecorder recorder = new();
+        InvokeInitialize(recorder, Vrp092Arguments("fullscreen-map"), false);
+        Assert.IsTrue(recorder.IsEnabled);
+        Assert.AreEqual("Release", ReadField(recorder, "_mode").ToString());
+        Assert.AreEqual("VRP-092", ReadField(recorder, "_taskId"));
+        Assert.AreEqual("fullscreen-map", ReadField(recorder, "_routeId"));
+        Assert.AreEqual(15f, ReadField(recorder, "_requiredWarmupSeconds"));
+        Assert.AreEqual(120f, ReadField(recorder, "_requiredCaptureSeconds"));
+        Assert.IsTrue(recorder.SuppressesStandardDiagnostics);
+        DisposeWithoutReport(recorder);
+
+        recorder = new AndroidPerformanceRecorder();
+        InvokeInitialize(recorder, Vrp092Arguments("unknown"), false);
+        Assert.IsFalse(recorder.IsEnabled);
+        Assert.IsFalse(recorder.SuppressesStandardDiagnostics);
+        recorder.Dispose();
+    }
+
+    [Test]
+    public void Vrp092ReportCarriesRouteAnd120SecondContract()
+    {
+        AndroidPerformanceRecorder recorder = CreateReportReadyRecorder(Vrp092Arguments("slow-pan"), false);
+        string json = BuildReportJson(recorder, "BuildReleaseReport");
+        StringAssert.Contains("\"taskId\":\"VRP-092\"", json);
+        StringAssert.Contains("\"routeId\":\"slow-pan\"", json);
+        Assert.AreEqual("vrp092_slow_pan_android_release_recorder.json", ReadField(recorder, "_outputFileName"));
         DisposeWithoutReport(recorder);
     }
 
@@ -453,6 +489,22 @@ public sealed class AndroidPerformanceRecorderTests
     }
 
     [Test]
+    public void Vrp092ValidationDoesNotRequireUnavailableAndroidBatchCounter()
+    {
+        AndroidPerformanceRecorder recorder = CreateReportReadyRecorder(Vrp092Arguments("fixed"), false);
+        WriteField(recorder, "_renderCounterSampleCount", 0);
+        object[] invocationArguments = { string.Empty };
+        MethodInfo method = typeof(AndroidPerformanceRecorder).GetMethod(
+            "TryValidateReleaseCapture",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.IsNotNull(method);
+
+        Assert.IsTrue((bool)method.Invoke(recorder, invocationArguments));
+        Assert.AreEqual(string.Empty, invocationArguments[0]);
+        DisposeWithoutReport(recorder);
+    }
+
+    [Test]
     public void PercentileMatchesEvidenceGateRounding()
     {
         float[] samples = { 1f, 2f, 3f, 4f, 100f };
@@ -474,6 +526,15 @@ public sealed class AndroidPerformanceRecorderTests
         {
             "app", "-warlineAutoStartMatch", "-warlineAndroidPerformanceGate", "APH-804",
             "-warlinePerformanceFrameRate", "60"
+        };
+    }
+
+    private static IReadOnlyList<string> Vrp092Arguments(string routeId)
+    {
+        return new[]
+        {
+            "app", "-warlineAutoStartMatch", "-warlineAndroidPerformanceGate", "VRP-092",
+            "-warlinePerformanceFrameRate", "60", "-warlinePerformanceRoute", routeId
         };
     }
 

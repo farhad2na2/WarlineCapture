@@ -10,13 +10,17 @@ namespace Game.Runtime
     {
         private const string GateCommandLineArgument = "-warlineAndroidPerformanceGate";
         private const string FrameRateCommandLineArgument = "-warlinePerformanceFrameRate";
+        private const string PerformanceRouteCommandLineArgument = "-warlinePerformanceRoute";
         private const string DevelopmentTaskId = "APH-803";
         private const string ReleaseTaskId = "APH-804";
+        private const string Vrp092TaskId = "VRP-092";
         private const string OutputDirectoryName = "WarlineCapture/Diagnostics";
         private const string DevelopmentOutputFileName = "aph803_android_development_recorder.json";
         private const string ReleaseOutputFileName = "aph804_android_release_recorder.json";
-        private const float WarmupSeconds = 60f;
-        private const float CaptureSeconds = 600f;
+        private const float ReleaseWarmupSeconds = 60f;
+        private const float ReleaseCaptureSeconds = 600f;
+        private const float Vrp092WarmupSeconds = 15f;
+        private const float Vrp092CaptureSeconds = 120f;
         private const float SlowMetricIntervalSeconds = 1f;
         private const int RequiredReleaseFrameRate = 60;
         private const int MaximumSamples = 90000;
@@ -38,6 +42,11 @@ namespace Game.Runtime
         private AndroidJavaClass _androidDebugClass;
         private ProfilerRecorder _gcAllocatedRecorder;
         private RecorderMode _mode;
+        private string _taskId;
+        private string _routeId;
+        private string _outputFileName;
+        private float _requiredWarmupSeconds;
+        private float _requiredCaptureSeconds;
         private double _matchReadyRealtimeSeconds;
         private double _activeWarmupSeconds;
         private double _capturedSeconds;
@@ -73,6 +82,9 @@ namespace Game.Runtime
         }
 
         public bool IsEnabled => _mode != RecorderMode.Disabled;
+
+        public bool SuppressesStandardDiagnostics =>
+            IsEnabled && string.Equals(TaskId, Vrp092TaskId, StringComparison.Ordinal);
 
         public void Initialize(bool profilerMarkersEnabled)
         {
@@ -112,7 +124,7 @@ namespace Game.Runtime
             }
 
             float deltaSeconds = Time.unscaledDeltaTime;
-            if (_activeWarmupSeconds < WarmupSeconds)
+            if (_activeWarmupSeconds < _requiredWarmupSeconds)
             {
                 _activeWarmupSeconds += deltaSeconds;
                 return;
@@ -123,7 +135,7 @@ namespace Game.Runtime
 
             if (_sampleCount >= MaximumSamples)
             {
-                Finish(false, $"sample capacity {MaximumSamples} exceeded before {CaptureSeconds:F0}s completed");
+                Finish(false, $"sample capacity {MaximumSamples} exceeded before {_requiredCaptureSeconds:F0}s completed");
                 return;
             }
 
@@ -156,7 +168,7 @@ namespace Game.Runtime
                 _nextSlowMetricSeconds += SlowMetricIntervalSeconds;
             }
 
-            if (_capturedSeconds >= CaptureSeconds)
+            if (_capturedSeconds >= _requiredCaptureSeconds)
                 Finish(true, string.Empty);
         }
 
@@ -173,24 +185,23 @@ namespace Game.Runtime
             IReadOnlyList<string> commandLineArguments,
             out int frameRate)
         {
-            frameRate = 0;
-            if (!TryGetArgumentValue(commandLineArguments, GateCommandLineArgument, out string taskId) ||
-                !string.Equals(taskId, ReleaseTaskId, StringComparison.OrdinalIgnoreCase) ||
-                !TryGetArgumentValue(commandLineArguments, FrameRateCommandLineArgument, out string frameRateText) ||
-                !int.TryParse(frameRateText, out frameRate) ||
-                frameRate != RequiredReleaseFrameRate)
-            {
-                frameRate = 0;
-                return false;
-            }
-
-            return true;
+            return TryResolveReleaseConfiguration(
+                commandLineArguments,
+                out _,
+                out frameRate,
+                out _,
+                out _,
+                out _,
+                out _);
         }
 
-        private string TaskId => _mode == RecorderMode.Release ? ReleaseTaskId : DevelopmentTaskId;
+        private string TaskId => string.IsNullOrWhiteSpace(_taskId)
+            ? DevelopmentTaskId
+            : _taskId;
 
-        private string OutputFileName =>
-            _mode == RecorderMode.Release ? ReleaseOutputFileName : DevelopmentOutputFileName;
+        private string OutputFileName => string.IsNullOrWhiteSpace(_outputFileName)
+            ? DevelopmentOutputFileName
+            : _outputFileName;
 
         private void Initialize(
             IReadOnlyList<string> commandLineArguments,
@@ -200,7 +211,14 @@ namespace Game.Runtime
             bool profilerMarkersEnabled)
         {
             InitializeRenderVirtualizationMetrics(commandLineArguments);
-            _mode = ResolveMode(commandLineArguments, isDevelopmentBuild);
+            _mode = ResolveMode(
+                commandLineArguments,
+                isDevelopmentBuild,
+                out _taskId,
+                out _routeId,
+                out _requiredWarmupSeconds,
+                out _requiredCaptureSeconds,
+                out _outputFileName);
             if (_mode == RecorderMode.Disabled)
                 return;
 
@@ -266,23 +284,109 @@ namespace Game.Runtime
 
         private static RecorderMode ResolveMode(
             IReadOnlyList<string> commandLineArguments,
-            bool isDevelopmentBuild)
+            bool isDevelopmentBuild,
+            out string taskId,
+            out string routeId,
+            out float warmupSeconds,
+            out float captureSeconds,
+            out string outputFileName)
         {
+            taskId = string.Empty;
+            routeId = string.Empty;
+            warmupSeconds = 0f;
+            captureSeconds = 0f;
+            outputFileName = string.Empty;
             if (!ContainsRequiredFlag(commandLineArguments))
                 return RecorderMode.Disabled;
 
-            if (TryGetRequestedReleaseFrameRate(commandLineArguments, out _))
+            if (TryResolveReleaseConfiguration(
+                    commandLineArguments,
+                    out taskId,
+                    out _,
+                    out routeId,
+                    out warmupSeconds,
+                    out captureSeconds,
+                    out outputFileName))
+            {
                 return RecorderMode.Release;
+            }
 
             if (!isDevelopmentBuild)
                 return RecorderMode.Disabled;
 
-            if (!TryGetArgumentValue(commandLineArguments, GateCommandLineArgument, out string taskId))
-                return RecorderMode.Development;
+            if (!TryGetArgumentValue(commandLineArguments, GateCommandLineArgument, out string developmentTaskId))
+                developmentTaskId = DevelopmentTaskId;
+            if (!string.Equals(developmentTaskId, DevelopmentTaskId, StringComparison.OrdinalIgnoreCase))
+                return RecorderMode.Disabled;
 
-            return string.Equals(taskId, DevelopmentTaskId, StringComparison.OrdinalIgnoreCase)
-                ? RecorderMode.Development
-                : RecorderMode.Disabled;
+            taskId = DevelopmentTaskId;
+            warmupSeconds = ReleaseWarmupSeconds;
+            captureSeconds = ReleaseCaptureSeconds;
+            outputFileName = DevelopmentOutputFileName;
+            return RecorderMode.Development;
+        }
+
+        private static bool TryResolveReleaseConfiguration(
+            IReadOnlyList<string> commandLineArguments,
+            out string taskId,
+            out int frameRate,
+            out string routeId,
+            out float warmupSeconds,
+            out float captureSeconds,
+            out string outputFileName)
+        {
+            taskId = string.Empty;
+            frameRate = 0;
+            routeId = string.Empty;
+            warmupSeconds = 0f;
+            captureSeconds = 0f;
+            outputFileName = string.Empty;
+            if (!TryGetArgumentValue(commandLineArguments, GateCommandLineArgument, out string requestedTaskId) ||
+                !TryGetArgumentValue(commandLineArguments, FrameRateCommandLineArgument, out string frameRateText) ||
+                !int.TryParse(frameRateText, out frameRate) ||
+                frameRate != RequiredReleaseFrameRate)
+            {
+                frameRate = 0;
+                return false;
+            }
+
+            if (string.Equals(requestedTaskId, ReleaseTaskId, StringComparison.OrdinalIgnoreCase))
+            {
+                taskId = ReleaseTaskId;
+                warmupSeconds = ReleaseWarmupSeconds;
+                captureSeconds = ReleaseCaptureSeconds;
+                outputFileName = ReleaseOutputFileName;
+                return true;
+            }
+
+            if (!string.Equals(requestedTaskId, Vrp092TaskId, StringComparison.OrdinalIgnoreCase) ||
+                !TryGetArgumentValue(commandLineArguments, PerformanceRouteCommandLineArgument, out routeId) ||
+                !IsSupportedVrp092Route(routeId))
+            {
+                frameRate = 0;
+                routeId = string.Empty;
+                return false;
+            }
+
+            routeId = routeId.ToLowerInvariant();
+            taskId = Vrp092TaskId;
+            warmupSeconds = Vrp092WarmupSeconds;
+            captureSeconds = Vrp092CaptureSeconds;
+            outputFileName = $"vrp092_{routeId.Replace('-', '_')}_android_release_recorder.json";
+            return true;
+        }
+
+        private static bool IsSupportedVrp092Route(string routeId)
+        {
+            return string.Equals(routeId, "fixed", StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(routeId, "slow-pan", StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(routeId, "fast-pan", StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(routeId, "zoom", StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(routeId, "tactical-follow", StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(routeId, "destruction", StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(routeId, "fullscreen-map", StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(routeId, "steady", StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(routeId, "thermal", StringComparison.OrdinalIgnoreCase);
         }
 
         private static bool ContainsRequiredFlag(IReadOnlyList<string> arguments)

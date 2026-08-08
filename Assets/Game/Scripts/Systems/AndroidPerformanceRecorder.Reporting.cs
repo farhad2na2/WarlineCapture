@@ -30,6 +30,7 @@ namespace Game.Runtime
         private sealed class ReleaseReport : ReportBase
         {
             public string recorderMode = "release-performance-evidence";
+            public string routeId;
             public string buildType;
             public bool developmentBuild;
             public bool scriptDebugging;
@@ -163,7 +164,9 @@ namespace Game.Runtime
                 return false;
             }
 
-            if (_gcCounterSampleCount <= 0 || _renderCounterSampleCount <= 0)
+            if (_gcCounterSampleCount <= 0 ||
+                (!string.Equals(TaskId, Vrp092TaskId, StringComparison.Ordinal) &&
+                 _renderCounterSampleCount <= 0))
             {
                 failure = "release recorder required profiler counters were unavailable";
                 return false;
@@ -216,6 +219,7 @@ namespace Game.Runtime
             float[] gpuTimes = CopySamples(_gpuFrameTimesMs, _sampleCount);
             ReleaseReport report = PopulateCommonReport(new ReleaseReport(), complete, failure);
             report.buildType = _developmentBuild ? "development" : "release";
+            report.routeId = _routeId ?? string.Empty;
             report.developmentBuild = _developmentBuild;
             report.scriptDebugging = _scriptDebugging;
             report.profilerAttached = _profilerAttached;

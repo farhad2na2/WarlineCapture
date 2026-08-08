@@ -7,6 +7,7 @@ namespace Game.Runtime
     public sealed partial class PerformanceDiagnosticsSystemHelper
     {
         private readonly AndroidPerformanceRecorder _androidPerformanceRecorder = new();
+        private bool _performanceRecorderSuppressesStandardDiagnostics;
 
         public void MarkMatchReady()
         {
@@ -16,6 +17,10 @@ namespace Game.Runtime
         private void InitializeAndroidPerformanceRecorder()
         {
             _androidPerformanceRecorder.Initialize(_enableProfilerMarkerDiagnostics);
+            _performanceRecorderSuppressesStandardDiagnostics =
+                _androidPerformanceRecorder.SuppressesStandardDiagnostics;
+            if (_performanceRecorderSuppressesStandardDiagnostics)
+                PerformanceDiagnosticsCapturePolicy.SetSuppressLogging(true);
         }
 
         private void SampleAndroidPerformanceRecorder(
@@ -62,6 +67,11 @@ namespace Game.Runtime
         private void DisposeAndroidPerformanceRecorder()
         {
             _androidPerformanceRecorder.Dispose();
+            if (_performanceRecorderSuppressesStandardDiagnostics)
+            {
+                PerformanceDiagnosticsCapturePolicy.SetSuppressLogging(false);
+                _performanceRecorderSuppressesStandardDiagnostics = false;
+            }
         }
     }
 }

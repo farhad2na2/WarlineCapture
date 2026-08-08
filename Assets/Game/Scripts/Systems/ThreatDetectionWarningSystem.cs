@@ -108,6 +108,7 @@ namespace Game.Runtime
             using NativeList<Entity> currentAirThreatList = new(Allocator.TempJob);
             using NativeList<ThreatCandidate> threatCandidates = new(math.max(1, targetCount), Allocator.TempJob);
             using NativeList<ThreatSensor> closeContactSensors = new(math.max(1, targetCount), Allocator.TempJob);
+            using NativeParallelHashSet<int2> closeContactSensorCells = new(math.max(1, targetCount), Allocator.TempJob);
             using NativeArray<ThreatScanResult> result = new(1, Allocator.TempJob);
 
             UpdateTypeHandles(ref state);
@@ -143,6 +144,7 @@ namespace Game.Runtime
                 CurrentAirThreatList = currentAirThreatList,
                 ThreatCandidates = threatCandidates,
                 CloseContactSensors = closeContactSensors,
+                CloseContactSensorCells = closeContactSensorCells,
                 CellSize = cellSize,
                 Result = result
             }.Schedule(state.Dependency);
@@ -301,7 +303,6 @@ namespace Game.Runtime
 
         private struct ThreatSensor
         {
-            public Entity Entity;
             public int2 Cell;
         }
 
@@ -324,6 +325,7 @@ namespace Game.Runtime
             public NativeList<Entity> CurrentAirThreatList;
             public NativeList<ThreatCandidate> ThreatCandidates;
             public NativeList<ThreatSensor> CloseContactSensors;
+            public NativeParallelHashSet<int2> CloseContactSensorCells;
             public float CellSize;
             public NativeArray<ThreatScanResult> Result;
 
@@ -387,17 +389,49 @@ namespace Game.Runtime
 
             private void ScanCloseContactThreats(ref ThreatScanResult scan)
             {
-                for (int sensorIndex = 0; sensorIndex < CloseContactSensors.Length; sensorIndex++)
+                for (int targetIndex = 0; targetIndex < ThreatCandidates.Length; targetIndex++)
                 {
-                    ThreatSensor sensor = CloseContactSensors[sensorIndex];
-                    ScanTargetsForSensor(
-                        sensor.Entity,
-                        sensor.Cell,
-                        CloseContactWarningRadiusCells,
-                        detectsAir: true,
-                        detectsGround: true,
-                        requireApproach: false,
-                        ref scan);
+                    ThreatCandidate candidate = ThreatCandidates[targetIndex];
+                    bool wasPreviouslyDetected = candidate.IsAir != 0
+                        ? PreviousAirThreats.Contains(candidate.Entity)
+                        : PreviousGroundThreats.Contains(candidate.Entity);
+                    bool foundCloseSensor = false;
+                    float bestEtaSeconds = float.MaxValue;
+
+                    for (int sensorIndex = 0; sensorIndex < CloseContactSensors.Length; sensorIndex++)
+                    {
+                        int2 sensorCell = CloseContactSensors[sensorIndex].Cell;
+                        if (ChebyshevDistance(sensorCell, candidate.Cell) > CloseContactWarningRadiusCells)
+                            continue;
+
+                        foundCloseSensor = true;
+                        if (wasPreviouslyDetected)
+                        {
+                            bestEtaSeconds = 0f;
+                            break;
+                        }
+
+                        bool movingTowardSensor = IsMovingTowardCell(
+                            TargetLookups,
+                            candidate.Entity,
+                            candidate.Cell,
+                            sensorCell);
+                        float etaSeconds = movingTowardSensor
+                            ? EstimateEtaSeconds(TargetLookups, candidate.Entity, sensorCell, candidate.Cell, CellSize)
+                            : 0f;
+                        bestEtaSeconds = math.min(bestEtaSeconds, etaSeconds);
+                        if (bestEtaSeconds <= 0f)
+                            break;
+                    }
+
+                    if (foundCloseSensor)
+                    {
+                        RegisterThreat(
+                            candidate.Entity,
+                            candidate.IsAir != 0,
+                            bestEtaSeconds,
+                            ref scan);
+                    }
                 }
             }
 
@@ -408,6 +442,7 @@ namespace Game.Runtime
             {
                 ThreatCandidates.Clear();
                 CloseContactSensors.Clear();
+                CloseContactSensorCells.Clear();
 
                 for (int targetChunkIndex = 0; targetChunkIndex < TargetChunks.Length; targetChunkIndex++)
                 {
@@ -425,11 +460,14 @@ namespace Game.Runtime
                         {
                             if (targetHealth.Current > 0)
                             {
-                                CloseContactSensors.Add(new ThreatSensor
+                                int2 sensorCell = targetGrids[targetIndex].Cell;
+                                if (CloseContactSensorCells.Add(sensorCell))
                                 {
-                                    Entity = target,
-                                    Cell = targetGrids[targetIndex].Cell
-                                });
+                                    CloseContactSensors.Add(new ThreatSensor
+                                    {
+                                        Cell = sensorCell
+                                    });
+                                }
                             }
                             continue;
                         }

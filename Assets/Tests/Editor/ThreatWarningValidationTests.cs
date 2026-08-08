@@ -80,9 +80,15 @@ public sealed class ThreatWarningValidationTests
         Assert.That(closeScanEnd, Is.GreaterThan(closeScanStart));
 
         string closeContactScan = source.Substring(closeScanStart, closeScanEnd - closeScanStart);
+        StringAssert.Contains("ThreatCandidates.Length", closeContactScan);
         StringAssert.Contains("CloseContactSensors.Length", closeContactScan);
+        StringAssert.Contains("wasPreviouslyDetected", closeContactScan);
+        StringAssert.Contains("bestEtaSeconds = math.min", closeContactScan);
         StringAssert.DoesNotContain("TargetChunks", closeContactScan);
         StringAssert.DoesNotContain("GetNativeArray", closeContactScan);
+
+        string candidateBuild = source.Substring(closeScanEnd, scanStart - closeScanEnd);
+        StringAssert.Contains("CloseContactSensorCells.Add(sensorCell)", candidateBuild);
     }
 
     [Test]

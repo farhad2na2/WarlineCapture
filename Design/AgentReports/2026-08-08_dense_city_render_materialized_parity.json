@@ -1,0 +1,43 @@
+{
+    "schema": "warline.operation-map.render-materialized-parity",
+    "schemaVersion": 1,
+    "operationMapId": "opmap.skirmish.desert_base_01",
+    "databaseContentHash": "bfb350f0c8d1474aa05252dc04c87eede4c1210adcee9c92dcdbecc35897896e",
+    "capacityContractPath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_capacity_budget.json",
+    "result": "Passed",
+    "canonicalEnvelopeCount": 14592,
+    "stateVariantCount": 2,
+    "sampleCount": 29184,
+    "placementCount": 40460,
+    "logicalRowCount": 61925,
+    "fixedSlotCount": 7784,
+    "maximumEnabledSlotCount": 4773,
+    "materializedFingerprint": "7674a2c08142bb2fa41969de8d39c67ac16076fd746566f4bc218713ec7e0b18",
+    "states": [
+        {
+            "visualState": "Intact",
+            "sampleCount": 14592,
+            "minimumEnabledSlotCount": 0,
+            "maximumEnabledSlotCount": 4773,
+            "peakEnabledSlotCount": 4773,
+            "peakSampleIdentity": "grid-cell:63:24:materialized=12x9",
+            "totalRetainedSlotCount": 9900848,
+            "totalReleasedSlotCount": 3263727,
+            "totalReboundSlotCount": 3263727,
+            "totalDirtySlotCount": 4421944
+        },
+        {
+            "visualState": "Destroyed",
+            "sampleCount": 14592,
+            "minimumEnabledSlotCount": 0,
+            "maximumEnabledSlotCount": 4396,
+            "peakEnabledSlotCount": 4396,
+            "peakSampleIdentity": "grid-cell:65:24:materialized=9x12",
+            "totalRetainedSlotCount": 9346474,
+            "totalReleasedSlotCount": 3082988,
+            "totalReboundSlotCount": 3082988,
+            "totalDirtySlotCount": 4214471
+        }
+    ],
+    "productionCutover": 0
+}

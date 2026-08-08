@@ -298,9 +298,8 @@ public sealed class SettingsPopupValidationTests
         Assert.AreEqual(UiShellMode.Loading, shell.CurrentMode);
         Assert.AreEqual(UIRoute.MainMenu, shell.ActiveRoute);
         Assert.AreEqual(UiShellTransitionPhase.ShowingLoading, shell.Phase);
-        Assert.AreEqual(2, commands.Length);
+        Assert.AreEqual(1, commands.Length, "Return-to-menu must not couple teardown to Match HUD exit tweens.");
         Assert.AreEqual(UiShellCommandKind.ShowLoading, commands[0].Kind);
-        Assert.AreEqual(UiShellCommandKind.ExitMatchHud, commands[1].Kind);
         Assert.AreEqual(0, routeRequests.Length);
     }
 

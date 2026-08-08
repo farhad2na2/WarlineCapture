@@ -165,8 +165,12 @@ namespace Game.UI.Shell.Ecs
                 case UiShellRouteIntent.ReturnToMainMenu:
                     routeHistory.Clear();
                     BeginCommandSequence(ref shellState, commands, UiShellCommandKind.ShowLoading, UiShellRegionId.LoadingLayer, UIRoute.MainMenu, UiShellMode.Loading);
-                    if (shellState.CurrentMode == UiShellMode.MatchHud)
-                        AppendCommand(commands, shellState, UiShellCommandKind.ExitMatchHud, UiShellRegionId.None, UIRoute.MainMenu, UiShellMode.Loading);
+                    // Keep the return transition limited to the zero-duration opaque loading
+                    // command. Packaged Android proved that combining it with the Match HUD
+                    // exit tween can leave the presentation sequence running forever, which
+                    // prevents MenuBootstrap from beginning authoritative map/scene teardown.
+                    // The later ExitLoading + EnterMenu sequence replaces every HUD region
+                    // while it is still covered by the opaque loading layer.
                     shellState.CurrentMode = UiShellMode.Loading;
                     shellState.ActiveRoute = UIRoute.MainMenu;
                     shellState.Phase = UiShellTransitionPhase.ShowingLoading;

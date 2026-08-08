@@ -563,6 +563,7 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
         bool validateSteadyStateAllocation,
         bool validateBuildingDestruction,
         bool validateVehicleMovement,
+        bool validateCameraSimulationState = false,
         Action<World, Entity[]> validateLoadedContent = null)
     {
         yield return Aph805MenuMatchMenuLifecyclePlayModeTests.EnterStableMatch(route);
@@ -610,7 +611,8 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
                 resolvedSectionEntities,
                 staticStreamer,
                 definition.RenderResidencyMode ==
-                OperationMapRenderResidencyMode.VirtualizedProxyPool);
+                OperationMapRenderResidencyMode.VirtualizedProxyPool,
+                validateCameraSimulationState);
         }
 
         if (validateSteadyStateAllocation)
@@ -1168,12 +1170,16 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
         Entity sceneEntity,
         IReadOnlyList<Entity> resolvedSectionEntities,
         StaticMapPresentationStreamer staticStreamer,
-        bool constrainTravelToMapEnvelope)
+        bool constrainTravelToMapEnvelope,
+        bool validateSimulationState)
     {
         World world = route.World;
         EntityManager entityManager = world.EntityManager;
         Camera worldCamera = route.Match.WorldCamera;
         Assert.That(worldCamera, Is.Not.Null);
+        Entity gameplayStateEntity = Entity.Null;
+        RuntimeGameplayStateComponent originalGameplayState = default;
+        bool gameplaySimulationPaused = false;
         EntitiesGraphicsSystem graphicsSystem =
             world.GetExistingSystemManaged<EntitiesGraphicsSystem>();
         Assert.That(graphicsSystem, Is.Not.Null);
@@ -1253,6 +1259,28 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
                 expectedEntitySceneUnloads,
                 expectedStaticStreamerOperations,
                 "detail");
+            PackedSimulationSnapshot simulationBefore = null;
+            if (validateSimulationState)
+            {
+                using (EntityQuery gameplayStateQuery = entityManager.CreateEntityQuery(
+                           ComponentType.ReadWrite<RuntimeGameplayStateComponent>()))
+                {
+                    Assert.That(gameplayStateQuery.CalculateEntityCount(), Is.EqualTo(1));
+                    gameplayStateEntity = gameplayStateQuery.GetSingletonEntity();
+                    originalGameplayState = entityManager.GetComponentData<
+                        RuntimeGameplayStateComponent>(gameplayStateEntity);
+                    RuntimeGameplayStateComponent quiescentGameplayState =
+                        originalGameplayState;
+                    quiescentGameplayState.SimulationActive = 0;
+                    entityManager.SetComponentData(
+                        gameplayStateEntity,
+                        quiescentGameplayState);
+                }
+                gameplaySimulationPaused = true;
+                yield return null;
+                entityManager.CompleteAllTrackedJobs();
+                simulationBefore = CapturePackedSimulationSnapshot(entityManager);
+            }
 
             Vector3 travelPosition = constrainTravelToMapEnvelope
                 ? new Vector3(
@@ -1292,6 +1320,21 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
                 expectedEntitySceneUnloads,
                 expectedStaticStreamerOperations,
                 travelCheckpoint);
+            if (validateSimulationState)
+            {
+                PackedSimulationSnapshot simulationAfter =
+                    CapturePackedSimulationSnapshot(entityManager);
+                AssertPackedSimulationSnapshotUnchanged(
+                    simulationBefore,
+                    simulationAfter);
+                Debug.Log(
+                    "[PackedCameraSimulationState] result=Passed " +
+                    $"simulationEntities={simulationAfter.SimulationEntityCount} " +
+                    $"buildings={simulationAfter.BuildingCount} " +
+                    $"vehicles={simulationAfter.VehicleCount} " +
+                    $"healthOwners={simulationAfter.HealthOwnerCount} " +
+                    $"canonicalStates={simulationAfter.CanonicalStates.Length}");
+            }
 
             Assert.That(nearSample.MaximumBatchCount, Is.GreaterThan(0));
             Assert.That(nearSample.MaximumChunkTotal, Is.GreaterThan(0));
@@ -1324,6 +1367,13 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
         }
         finally
         {
+            if (gameplaySimulationPaused &&
+                entityManager.Exists(gameplayStateEntity))
+            {
+                entityManager.SetComponentData(
+                    gameplayStateEntity,
+                    originalGameplayState);
+            }
             worldCamera.transform.SetPositionAndRotation(
                 originalPosition,
                 originalRotation);
@@ -1338,6 +1388,144 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
                     cameras[cameraIndex].enabled = cameraEnabledStates[cameraIndex];
             }
         }
+    }
+
+    private static PackedSimulationSnapshot CapturePackedSimulationSnapshot(
+        EntityManager entityManager)
+    {
+        using EntityQuery simulationQuery = entityManager.CreateEntityQuery(
+            new EntityQueryDesc
+            {
+                All = new[]
+                {
+                    ComponentType.ReadOnly<UnitGrid>(),
+                    ComponentType.ReadOnly<Faction>(),
+                    ComponentType.ReadOnly<UnitHealth>()
+                },
+                Options = EntityQueryOptions.IncludeDisabledEntities
+            });
+        using NativeArray<Entity> simulationEntities =
+            simulationQuery.ToEntityArray(Allocator.Temp);
+        var rows = new List<string>(simulationEntities.Length);
+        int buildingCount = 0;
+        int vehicleCount = 0;
+        for (int index = 0; index < simulationEntities.Length; index++)
+        {
+            Entity entity = simulationEntities[index];
+            UnitGrid grid = entityManager.GetComponentData<UnitGrid>(entity);
+            Faction faction = entityManager.GetComponentData<Faction>(entity);
+            UnitHealth health = entityManager.GetComponentData<UnitHealth>(entity);
+            string identity;
+            int destroyed = -1;
+            int presentationState = -1;
+            int lastProductionRequest = -1;
+            if (entityManager.HasComponent<OperationMapBuildingComponent>(entity))
+            {
+                OperationMapBuildingComponent building =
+                    entityManager.GetComponentData<OperationMapBuildingComponent>(entity);
+                identity = $"building:{building.StableId}:{building.PlacementIndex}";
+                buildingCount++;
+                if (entityManager.HasComponent<OperationMapBuildingDestroyedComponent>(entity))
+                {
+                    destroyed = entityManager.IsComponentEnabled<
+                        OperationMapBuildingDestroyedComponent>(entity)
+                        ? 1
+                        : 0;
+                }
+                if (entityManager.HasComponent<OperationMapBuildingPresentation>(entity))
+                {
+                    presentationState = entityManager
+                        .GetComponentData<OperationMapBuildingPresentation>(entity)
+                        .State;
+                }
+                if (entityManager.HasComponent<
+                        OperationMapBuildingProductionQueueComponent>(entity))
+                {
+                    lastProductionRequest = entityManager
+                        .GetComponentData<OperationMapBuildingProductionQueueComponent>(entity)
+                        .LastRequestId;
+                }
+            }
+            else if (entityManager.HasComponent<
+                         OperationMapAuthoredVehiclePresentation>(entity))
+            {
+                OperationMapAuthoredVehiclePresentation vehicle = entityManager
+                    .GetComponentData<OperationMapAuthoredVehiclePresentation>(entity);
+                identity = $"vehicle:{vehicle.PlacementIndex}:{vehicle.FactionId}";
+                vehicleCount++;
+            }
+            else
+            {
+                identity = $"entity:{entity.Index}:{entity.Version}";
+            }
+
+            rows.Add(
+                $"{identity}|grid={grid.Cell.x},{grid.Cell.y}|faction={faction.Id}|" +
+                $"health={health.Current},{health.Max}|destroyed={destroyed}|" +
+                $"presentation={presentationState}|production={lastProductionRequest}");
+        }
+        rows.Sort(StringComparer.Ordinal);
+
+        using EntityQuery buildingQuery = entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<OperationMapBuildingComponent>());
+        using EntityQuery vehicleQuery = entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<OperationMapAuthoredVehiclePresentation>());
+        using EntityQuery healthQuery = entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<UnitHealth>());
+        using EntityQuery canonicalStateQuery = entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<OperationMapRenderCanonicalStateComponent>());
+        Assert.That(canonicalStateQuery.CalculateEntityCount(), Is.EqualTo(1));
+        Entity canonicalStateOwner = canonicalStateQuery.GetSingletonEntity();
+        DynamicBuffer<OperationMapRenderCanonicalStateComponent> canonicalStateBuffer =
+            entityManager.GetBuffer<OperationMapRenderCanonicalStateComponent>(
+                canonicalStateOwner,
+                isReadOnly: true);
+        using NativeArray<OperationMapRenderCanonicalStateComponent> canonicalStates =
+            canonicalStateBuffer.ToNativeArray(Allocator.Temp);
+
+        return new PackedSimulationSnapshot
+        {
+            SimulationEntityCount = simulationEntities.Length,
+            BuildingCount = buildingQuery.CalculateEntityCount(),
+            VehicleCount = vehicleQuery.CalculateEntityCount(),
+            HealthOwnerCount = healthQuery.CalculateEntityCount(),
+            GameplayState =
+                GetSingletonComponent<RuntimeGameplayStateComponent>(entityManager),
+            EntityStateRows = rows.ToArray(),
+            CanonicalStates = canonicalStates.ToArray()
+        };
+    }
+
+    private static void AssertPackedSimulationSnapshotUnchanged(
+        PackedSimulationSnapshot before,
+        PackedSimulationSnapshot after)
+    {
+        Assert.That(before, Is.Not.Null);
+        Assert.That(after.SimulationEntityCount, Is.EqualTo(before.SimulationEntityCount));
+        Assert.That(after.BuildingCount, Is.EqualTo(before.BuildingCount));
+        Assert.That(after.VehicleCount, Is.EqualTo(before.VehicleCount));
+        Assert.That(after.HealthOwnerCount, Is.EqualTo(before.HealthOwnerCount));
+        Assert.That(after.EntityStateRows, Is.EqualTo(before.EntityStateRows));
+        Assert.That(after.CanonicalStates, Is.EqualTo(before.CanonicalStates));
+        Assert.That(after.GameplayState.PlayRequested, Is.EqualTo(before.GameplayState.PlayRequested));
+        Assert.That(after.GameplayState.SimulationActive, Is.EqualTo(before.GameplayState.SimulationActive));
+        Assert.That(after.GameplayState.SelectionModeActive, Is.EqualTo(before.GameplayState.SelectionModeActive));
+        Assert.That(after.GameplayState.BuildModeActive, Is.EqualTo(before.GameplayState.BuildModeActive));
+        Assert.That(after.GameplayState.FullscreenMapOpen, Is.EqualTo(before.GameplayState.FullscreenMapOpen));
+        Assert.That(after.GameplayState.FullscreenMapIsoMode, Is.EqualTo(before.GameplayState.FullscreenMapIsoMode));
+        Assert.That(after.GameplayState.SuppressNextWorldClick, Is.EqualTo(before.GameplayState.SuppressNextWorldClick));
+        Assert.That(after.GameplayState.PlayerAutoModeEnabled, Is.EqualTo(before.GameplayState.PlayerAutoModeEnabled));
+    }
+
+    private sealed class PackedSimulationSnapshot
+    {
+        public int SimulationEntityCount;
+        public int BuildingCount;
+        public int VehicleCount;
+        public int HealthOwnerCount;
+        public RuntimeGameplayStateComponent GameplayState;
+        public string[] EntityStateRows;
+        public OperationMapRenderCanonicalStateComponent[] CanonicalStates;
     }
 
     private static IEnumerator CaptureEntitiesGraphicsCullingSample(

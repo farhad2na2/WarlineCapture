@@ -286,6 +286,7 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
     {
         yield return DenseRunPackedMatchRoute(
             validateCameraTraversal: false,
+            validateCameraSimulationState: false,
             validateVehicleMovement: true,
             validateParityManifest: true,
             unexpectedErrorContext: "Dense packed vehicle route emitted unexpected error logs.");
@@ -303,13 +304,34 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
 
         yield return DenseRunPackedMatchRoute(
             validateCameraTraversal: true,
+            validateCameraSimulationState: false,
             validateVehicleMovement: false,
             validateParityManifest: false,
             unexpectedErrorContext: "Dense packed camera route emitted unexpected error logs.");
     }
 
+    [UnityTest]
+    [Timeout(600000)]
+    public IEnumerator DensePackedCandidate_CameraTraversalPreservesSimulationState()
+    {
+        if (SystemInfo.graphicsDeviceType ==
+            UnityEngine.Rendering.GraphicsDeviceType.Null)
+        {
+            Assert.Ignore("Entities Graphics camera travel requires a graphics device.");
+        }
+
+        yield return DenseRunPackedMatchRoute(
+            validateCameraTraversal: true,
+            validateCameraSimulationState: true,
+            validateVehicleMovement: false,
+            validateParityManifest: false,
+            unexpectedErrorContext:
+                "Dense packed camera simulation-state route emitted unexpected error logs.");
+    }
+
     private static IEnumerator DenseRunPackedMatchRoute(
         bool validateCameraTraversal,
+        bool validateCameraSimulationState,
         bool validateVehicleMovement,
         bool validateParityManifest,
         string unexpectedErrorContext)
@@ -428,6 +450,7 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
                 staticStreamer,
                 cycle: 1,
                 validateCameraTraversal: validateCameraTraversal,
+                validateCameraSimulationState: validateCameraSimulationState,
                 validateSteadyStateAllocation: false,
                 validateBuildingDestruction: false,
                 validateVehicleMovement: validateVehicleMovement,

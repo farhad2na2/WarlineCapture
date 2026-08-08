@@ -34,6 +34,7 @@ public sealed class ThreatWarningValidationTests
             tests.ThreatDetectionWarningSystem_CloseAirThreatWarnsWithoutDetectorOrApproachOrder();
             tests.ThreatDetectionWarningSystem_CloseGroundVehicleWarnsWithoutDetectorButIgnoresSoldiers();
             tests.ThreatDetectionWarningSystem_SatelliteWarnsOnlyForAirThreats();
+            tests.ThreatDetectionWarningSystem_PrefiltersEligibleThreatsBeforeSensorScans();
             tests.ThreatDetectionWarningSystem_CompletesPendingUnitGridWriterBeforeChunkRead();
             tests.ThreatWarningRuntimeState_IsIsolatedAcrossWorlds();
             tests.ThreatWarningRuntimeState_RecreatedWorldStartsClear();
@@ -52,6 +53,26 @@ public sealed class ThreatWarningValidationTests
             Debug.LogError("[ThreatWarningValidation] result=Failed");
             ValidationExit.Exit(1);
         }
+    }
+
+    [Test]
+    public void ThreatDetectionWarningSystem_PrefiltersEligibleThreatsBeforeSensorScans()
+    {
+        const string sourcePath = "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs";
+        string source = System.IO.File.ReadAllText(sourcePath);
+        StringAssert.Contains("BuildThreatCandidates(ref factionType, ref gridType, ref healthType);", source);
+        StringAssert.Contains("targetFactions[targetIndex].Id == PlayerFactionId", source);
+        StringAssert.Contains("!isAirTarget && !IsGroundVehicle(TargetLookups, target)", source);
+
+        int scanStart = source.IndexOf("private void ScanTargetsForSensor(", System.StringComparison.Ordinal);
+        int scanEnd = source.IndexOf("private void RegisterThreat(", scanStart, System.StringComparison.Ordinal);
+        Assert.That(scanStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(scanEnd, Is.GreaterThan(scanStart));
+
+        string sensorScan = source.Substring(scanStart, scanEnd - scanStart);
+        StringAssert.Contains("ThreatCandidates.Length", sensorScan);
+        StringAssert.DoesNotContain("TargetChunks", sensorScan);
+        StringAssert.DoesNotContain("GetNativeArray", sensorScan);
     }
 
     [Test]

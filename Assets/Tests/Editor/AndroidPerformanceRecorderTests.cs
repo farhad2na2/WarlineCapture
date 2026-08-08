@@ -13,7 +13,7 @@ using UnityEngine;
 
 public sealed class AndroidPerformanceRecorderTests
 {
-    private const string PassMarker = "[AndroidPerformanceRecorderValidation] result=Passed tests=26";
+    private const string PassMarker = "[AndroidPerformanceRecorderValidation] result=Passed tests=28";
     private delegate void CaptureReleaseMetrics(long batches, long setPassCalls, long triangles, long vertices);
 
     public static void RunFocusedValidation()
@@ -44,6 +44,8 @@ public sealed class AndroidPerformanceRecorderTests
             tests.ReleaseValidationFailsWhenRequiredCountersAreUnavailable();
             tests.Vrp092ValidationDoesNotRequireUnavailableAndroidBatchCounter();
             tests.Vrp092UsesMainThreadAllocationFallbackWhenProfilerCounterIsUnavailable();
+            tests.Vrp092CpuTimingUsesActiveMainThreadWorkInsteadOfFramePacingWait();
+            tests.Vrp092ResidentSetSamplingStaysOutsideTimedFrames();
             tests.PercentileMatchesEvidenceGateRounding();
             tests.PercentileIgnoresUnusedCapacityAndHandlesZeroSamples();
             tests.LaunchClock_SubsystemResetRestoresApplicationEpoch();
@@ -83,6 +85,34 @@ public sealed class AndroidPerformanceRecorderTests
 
         Assert.GreaterOrEqual(resetValue, beforeReset);
         Assert.LessOrEqual(resetValue, Time.realtimeSinceStartupAsDouble);
+    }
+
+    [Test]
+    public void Vrp092CpuTimingUsesActiveMainThreadWorkInsteadOfFramePacingWait()
+    {
+        MethodInfo resolve = typeof(AndroidPerformanceRecorder).GetMethod(
+            "ResolveCpuMainThreadFrameTime",
+            BindingFlags.Static | BindingFlags.NonPublic);
+        Assert.NotNull(resolve);
+        FrameTiming timing = new()
+        {
+            cpuFrameTime = 16.7d,
+            cpuMainThreadFrameTime = 7.5d,
+            cpuMainThreadPresentWaitTime = 9.2d
+        };
+
+        Assert.AreEqual(7.5f, (float)resolve.Invoke(null, new object[] { timing }));
+    }
+
+    [Test]
+    public void Vrp092ResidentSetSamplingStaysOutsideTimedFrames()
+    {
+        MethodInfo shouldSample = typeof(AndroidPerformanceRecorder).GetMethod(
+            "ShouldCapturePeriodicResidentSet",
+            BindingFlags.Static | BindingFlags.NonPublic);
+        Assert.NotNull(shouldSample);
+        Assert.IsFalse((bool)shouldSample.Invoke(null, new object[] { "VRP-092" }));
+        Assert.IsTrue((bool)shouldSample.Invoke(null, new object[] { "APH-804" }));
     }
 
     [Test]

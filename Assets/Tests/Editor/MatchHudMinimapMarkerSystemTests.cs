@@ -51,6 +51,7 @@ public sealed class MatchHudMinimapMarkerSystemTests
 
         SystemHandle system = world.CreateSystem<MatchHudMinimapMarkerSystem>();
         system.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs();
 
         using EntityQuery markerQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<MatchHudMinimapMarkerStateComponent>(),
@@ -108,6 +109,7 @@ public sealed class MatchHudMinimapMarkerSystemTests
 
         SystemHandle system = world.CreateSystem<MatchHudMinimapMarkerSystem>();
         system.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs();
 
         using EntityQuery markerQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<MatchHudMinimapMarkerStateComponent>(),
@@ -140,6 +142,7 @@ public sealed class MatchHudMinimapMarkerSystemTests
 
         SystemHandle system = world.CreateSystem<MatchHudMinimapMarkerSystem>();
         system.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs();
 
         using EntityQuery markerQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<MatchHudMinimapMarkerStateComponent>(),
@@ -164,7 +167,9 @@ public sealed class MatchHudMinimapMarkerSystemTests
 
         SystemHandle system = world.CreateSystem<MatchHudMinimapMarkerSystem>();
         system.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs();
         system.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs();
 
         using EntityQuery markerQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<MatchHudMinimapMarkerStateComponent>(),

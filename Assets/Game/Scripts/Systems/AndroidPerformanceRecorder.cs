@@ -166,7 +166,8 @@ namespace Game.Runtime
             _peakMonoMemoryBytes = Math.Max(_peakMonoMemoryBytes, Profiler.GetMonoUsedSizeLong());
             if (_mode == RecorderMode.Release && _capturedSeconds >= _nextSlowMetricSeconds)
             {
-                CaptureResidentSet();
+                if (ShouldCapturePeriodicResidentSet(TaskId))
+                    CaptureResidentSet();
                 _nextSlowMetricSeconds += SlowMetricIntervalSeconds;
             }
 
@@ -500,8 +501,24 @@ namespace Game.Runtime
             }
 
             FrameTiming timing = _latestFrameTiming[0];
-            cpuFrameMs = timing.cpuFrameTime > 0d ? (float)timing.cpuFrameTime : 0f;
+            cpuFrameMs = ResolveCpuMainThreadFrameTime(timing);
             gpuFrameMs = timing.gpuFrameTime > 0d ? (float)timing.gpuFrameTime : 0f;
+        }
+
+        private static float ResolveCpuMainThreadFrameTime(FrameTiming timing)
+        {
+            return timing.cpuMainThreadFrameTime > 0d
+                ? (float)timing.cpuMainThreadFrameTime
+                : 0f;
+        }
+
+        private static bool ShouldCapturePeriodicResidentSet(string taskId)
+        {
+            // VRP-092 owns frame-time acceptance. Android Debug.getPss is a
+            // synchronous process-memory probe, so capture it at the existing
+            // start/end boundaries without contaminating the timed frames.
+            // VRP-094 retains the separate peak-memory acceptance route.
+            return !string.Equals(taskId, Vrp092TaskId, StringComparison.Ordinal);
         }
 
         private void CaptureResidentSet()

@@ -1,6 +1,7 @@
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
 using Game.Components;
@@ -46,18 +47,33 @@ namespace Game.Runtime
                 MaxMarkers = MaxMarkers,
                 Markers = markerScratch
             }.Schedule(state.Dependency);
-            state.Dependency.Complete();
-
             DynamicBuffer<MatchHudMinimapMarkerElement> markers =
                 em.GetBuffer<MatchHudMinimapMarkerElement>(markerBoundaryEntity);
-            markers.Clear();
             if (markers.Capacity < MaxMarkers)
                 markers.Capacity = MaxMarkers;
-            int copyCount = math.min(markerScratch.Length, MaxMarkers);
-            for (int i = 0; i < copyCount; i++)
-                markers.Add(markerScratch[i]);
+            state.Dependency = new PublishMarkersJob
+            {
+                MaxMarkers = MaxMarkers,
+                Source = markerScratch,
+                Destination = markers
+            }.Schedule(state.Dependency);
+            state.Dependency = markerScratch.Dispose(state.Dependency);
+        }
 
-            markerScratch.Dispose();
+        [BurstCompile]
+        private struct PublishMarkersJob : IJob
+        {
+            public int MaxMarkers;
+            [ReadOnly] public NativeList<MatchHudMinimapMarkerElement> Source;
+            public DynamicBuffer<MatchHudMinimapMarkerElement> Destination;
+
+            public void Execute()
+            {
+                Destination.Clear();
+                int copyCount = math.min(Source.Length, MaxMarkers);
+                for (int i = 0; i < copyCount; i++)
+                    Destination.Add(Source[i]);
+            }
         }
 
         private Entity GetOrCreateMarkerBoundary(ref SystemState state, EntityManager em)

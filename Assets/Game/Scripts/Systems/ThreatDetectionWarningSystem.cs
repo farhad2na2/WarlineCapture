@@ -107,6 +107,7 @@ namespace Game.Runtime
             using NativeList<Entity> currentGroundThreatList = new(Allocator.TempJob);
             using NativeList<Entity> currentAirThreatList = new(Allocator.TempJob);
             using NativeList<ThreatCandidate> threatCandidates = new(math.max(1, targetCount), Allocator.TempJob);
+            using NativeList<ThreatSensor> closeContactSensors = new(math.max(1, targetCount), Allocator.TempJob);
             using NativeArray<ThreatScanResult> result = new(1, Allocator.TempJob);
 
             UpdateTypeHandles(ref state);
@@ -141,6 +142,7 @@ namespace Game.Runtime
                 CurrentGroundThreatList = currentGroundThreatList,
                 CurrentAirThreatList = currentAirThreatList,
                 ThreatCandidates = threatCandidates,
+                CloseContactSensors = closeContactSensors,
                 CellSize = cellSize,
                 Result = result
             }.Schedule(state.Dependency);
@@ -297,6 +299,12 @@ namespace Game.Runtime
             public byte IsAir;
         }
 
+        private struct ThreatSensor
+        {
+            public Entity Entity;
+            public int2 Cell;
+        }
+
         [BurstCompile]
         private struct ThreatScanJob : IJob
         {
@@ -315,6 +323,7 @@ namespace Game.Runtime
             public NativeList<Entity> CurrentGroundThreatList;
             public NativeList<Entity> CurrentAirThreatList;
             public NativeList<ThreatCandidate> ThreatCandidates;
+            public NativeList<ThreatSensor> CloseContactSensors;
             public float CellSize;
             public NativeArray<ThreatScanResult> Result;
 
@@ -372,44 +381,23 @@ namespace Game.Runtime
                     }
                 }
 
-                ScanCloseContactThreats(ref factionType, ref gridType, ref healthType, ref scan);
+                ScanCloseContactThreats(ref scan);
                 Result[0] = scan;
             }
 
-            private void ScanCloseContactThreats(
-                ref ComponentTypeHandle<Faction> factionType,
-                ref ComponentTypeHandle<UnitGrid> gridType,
-                ref ComponentTypeHandle<UnitHealth> healthType,
-                ref ThreatScanResult scan)
+            private void ScanCloseContactThreats(ref ThreatScanResult scan)
             {
-                for (int sensorChunkIndex = 0; sensorChunkIndex < TargetChunks.Length; sensorChunkIndex++)
+                for (int sensorIndex = 0; sensorIndex < CloseContactSensors.Length; sensorIndex++)
                 {
-                    ArchetypeChunk sensorChunk = TargetChunks[sensorChunkIndex];
-                    NativeArray<Entity> sensorEntities = sensorChunk.GetNativeArray(EntityType);
-                    NativeArray<Faction> sensorFactions = sensorChunk.GetNativeArray(ref factionType);
-                    NativeArray<UnitGrid> sensorGrids = sensorChunk.GetNativeArray(ref gridType);
-                    NativeArray<UnitHealth> sensorHealths = sensorChunk.GetNativeArray(ref healthType);
-
-                    for (int i = 0; i < sensorEntities.Length; i++)
-                    {
-                        Entity sensor = sensorEntities[i];
-                        Faction sensorFaction = sensorFactions[i];
-                        if (sensorFaction.Id != PlayerFactionId)
-                            continue;
-
-                        UnitHealth sensorHealth = sensorHealths[i];
-                        if (sensorHealth.Current <= 0)
-                            continue;
-
-                        ScanTargetsForSensor(
-                            sensor,
-                            sensorGrids[i].Cell,
-                            CloseContactWarningRadiusCells,
-                            detectsAir: true,
-                            detectsGround: true,
-                            requireApproach: false,
-                            ref scan);
-                    }
+                    ThreatSensor sensor = CloseContactSensors[sensorIndex];
+                    ScanTargetsForSensor(
+                        sensor.Entity,
+                        sensor.Cell,
+                        CloseContactWarningRadiusCells,
+                        detectsAir: true,
+                        detectsGround: true,
+                        requireApproach: false,
+                        ref scan);
                 }
             }
 
@@ -419,6 +407,7 @@ namespace Game.Runtime
                 ref ComponentTypeHandle<UnitHealth> healthType)
             {
                 ThreatCandidates.Clear();
+                CloseContactSensors.Clear();
 
                 for (int targetChunkIndex = 0; targetChunkIndex < TargetChunks.Length; targetChunkIndex++)
                 {
@@ -431,8 +420,21 @@ namespace Game.Runtime
                     for (int targetIndex = 0; targetIndex < targetEntities.Length; targetIndex++)
                     {
                         Entity target = targetEntities[targetIndex];
-                        if (targetFactions[targetIndex].Id == PlayerFactionId ||
-                            targetHealths[targetIndex].Current <= 0 ||
+                        UnitHealth targetHealth = targetHealths[targetIndex];
+                        if (targetFactions[targetIndex].Id == PlayerFactionId)
+                        {
+                            if (targetHealth.Current > 0)
+                            {
+                                CloseContactSensors.Add(new ThreatSensor
+                                {
+                                    Entity = target,
+                                    Cell = targetGrids[targetIndex].Cell
+                                });
+                            }
+                            continue;
+                        }
+
+                        if (targetHealth.Current <= 0 ||
                             TargetLookups.BuildingLookup.HasComponent(target))
                         {
                             continue;

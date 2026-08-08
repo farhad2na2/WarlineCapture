@@ -73,6 +73,16 @@ public sealed class ThreatWarningValidationTests
         StringAssert.Contains("ThreatCandidates.Length", sensorScan);
         StringAssert.DoesNotContain("TargetChunks", sensorScan);
         StringAssert.DoesNotContain("GetNativeArray", sensorScan);
+
+        int closeScanStart = source.IndexOf("private void ScanCloseContactThreats(", System.StringComparison.Ordinal);
+        int closeScanEnd = source.IndexOf("private void BuildThreatCandidates(", closeScanStart, System.StringComparison.Ordinal);
+        Assert.That(closeScanStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(closeScanEnd, Is.GreaterThan(closeScanStart));
+
+        string closeContactScan = source.Substring(closeScanStart, closeScanEnd - closeScanStart);
+        StringAssert.Contains("CloseContactSensors.Length", closeContactScan);
+        StringAssert.DoesNotContain("TargetChunks", closeContactScan);
+        StringAssert.DoesNotContain("GetNativeArray", closeContactScan);
     }
 
     [Test]

@@ -14,6 +14,8 @@ public sealed class MatchGameplayStartupCompositionSystemHelperTests
         "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs";
     private const string StartupHelperPath =
         "Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs";
+    private const string MatchStartPath =
+        "Assets/Game/Scripts/Composition/MatchStartSceneSystemHelper.cs";
 
     public static void RunFocusedValidation()
     {
@@ -24,8 +26,9 @@ public sealed class MatchGameplayStartupCompositionSystemHelperTests
             tests.Bootstrap_ForwardsGameplayStartStateWithoutOwningIt();
             tests.Advance_CapturesFailureOnceAndDoesNotRetry();
             tests.ResetForShutdown_PreservesTheExistingFailureLatch();
+            tests.MatchStart_DoesNotBlockGameplayRequestOnProjectedRuntimeContent();
             tests.SourceBoundary_IsNarrowAndKeepsTheBootstrapBelowItsRatchet();
-            Debug.Log("[MatchGameplayStartupCompositionValidation] result=Passed tests=5");
+            Debug.Log("[MatchGameplayStartupCompositionValidation] result=Passed tests=6");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -139,6 +142,17 @@ public sealed class MatchGameplayStartupCompositionSystemHelperTests
         Assert.IsTrue(helper.GameplayStartFailed);
         Assert.AreEqual("latched failure", helper.GameplayStartFailureMessage);
         Assert.AreEqual("Preparing match", helper.GameplayStartStatus);
+    }
+
+    [Test]
+    public void MatchStart_DoesNotBlockGameplayRequestOnProjectedRuntimeContent()
+    {
+        string source = File.ReadAllText(MatchStartPath);
+
+        StringAssert.Contains("matchScene.BeginGameplay();", source);
+        StringAssert.DoesNotContain("IsUnitPrefabRegistryReady", source);
+        StringAssert.DoesNotContain("Waiting for unit prefab registry", source);
+        StringAssert.DoesNotContain("RequiresUnitPrefabRegistry", source);
     }
 
     [Test]

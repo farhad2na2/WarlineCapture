@@ -3,8 +3,6 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 using Game.Components;
-using Game.Configs;
-using Game.Runtime;
 
 namespace Game.Composition
 {
@@ -157,15 +155,6 @@ namespace Game.Composition
                 return false;
             }
 
-            if (RequiresUnitPrefabRegistry(matchScene) &&
-                !IsUnitPrefabRegistryReady(entityManager.World))
-            {
-                waitStatus = MatchStartStatusKind.WaitingForRuntimeContent;
-                message = "Waiting for unit prefab registry";
-                progress01 = 0.05f;
-                return false;
-            }
-
             try
             {
                 if (!matchScene.GameplayStartRequested)
@@ -204,41 +193,6 @@ namespace Game.Composition
                 progress01 = 0f;
                 return false;
             }
-        }
-
-        private static bool RequiresUnitPrefabRegistry(MatchSceneView matchScene)
-        {
-            UnitPrefabRegistryAuthoringConfig config = matchScene != null &&
-                matchScene.BuildingPlacementConfig != null
-                    ? matchScene.BuildingPlacementConfig.UnitPrefabRegistryConfig
-                    : null;
-            return config != null && config.UnitSpawnPrefabs != null && config.UnitSpawnPrefabs.Count > 0;
-        }
-
-        private static bool IsUnitPrefabRegistryReady(World world)
-        {
-            if (world == null || !world.IsCreated)
-                return false;
-
-            EntityManager em = world.EntityManager;
-            using EntityQuery query = em.CreateEntityQuery(
-                ComponentType.ReadOnly<UnitPrefabRegistryTag>(),
-                ComponentType.ReadOnly<UnitPrefabRegistryEntry>());
-            if (query.IsEmptyIgnoreFilter)
-                return false;
-
-            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-            for (int i = 0; i < entities.Length; i++)
-            {
-                Entity entity = entities[i];
-                if (em.HasBuffer<UnitPrefabRegistryEntry>(entity) &&
-                    em.GetBuffer<UnitPrefabRegistryEntry>(entity).Length > 0)
-                {
-                    return true;
-                }
-            }
-
-            return false;
         }
 
         private static void EnqueueResult(EntityManager em, Entity entity, int requestId, MatchStartStatusKind status, string message)

@@ -31,6 +31,8 @@ ProjectSettings/EditorBuildSettings.asset
 
 The change record must also include every extracted operation-map scene, folder `.meta`, subscene, map config, catalog entry, generated map product, and build-setting path added by the split. No undeclared path may be part of the atomic cutover.
 
+For a later accepted `EntityScene + VirtualizedProxyPool` production cutover, the recorded ledger must additionally name the production operation-map definition and `.meta`, production thin runtime binding and `.meta`, production Addressables settings/catalog ownership changed by cutover, the accepted EntityScene content identity, and every promoted virtualized generated output. The candidate-only database/config/report and candidate scene remain generated evidence unless the cutover commit explicitly promotes their exact ownership. Never infer this supplemental set from a folder glob during rollback.
+
 ## Required Pre-Cutover Record
 
 Before the first scene edit:
@@ -76,6 +78,14 @@ After repository rollback:
 6. Verify `ProjectSettings/EditorBuildSettings.asset` is byte-identical to `<pre-cutover-sha>` and the Android resolver selects the accepted current-map chunks.
 7. Launch the current Match flow in Editor and verify camera, minimap, authored buildings/vehicles, surface movement, runway/helipad behavior, static presentation, and teardown.
 8. Run Android APK validation when the failed cutover changed build settings, scene inclusion, generated presentation ownership, or Android resolver behavior.
+
+For rollback from a virtualized production cutover, also require:
+
+1. production returns to `StaticSceneChunks + ResidentEntities` and the virtualized systems cannot initialize for the restored production definition;
+2. the frozen manifest/chunk root, integrity ledger, production Addressables labels/catalog, Match wiring, and Android resolver match the pre-cutover checkpoint;
+3. no promoted `VirtualizedProxyPool` database, thin binding, or EntityScene remains reachable from production Addressables/build ownership;
+4. candidate evidence remains candidate-only and is not rewritten to resemble the restored production package;
+5. the same authoritative static no-op bakes, Editor gameplay parity, and risk-required Android validation pass from the reviewed revert revision.
 
 ## Acceptance Gate
 

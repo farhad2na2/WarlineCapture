@@ -138,6 +138,18 @@ Rules:
 - do not remove the 514 static scenes or production labels until the tracker authorizes the separate cleanup commit;
 - retain the exact pre-cutover commit range and path ledger needed for a repository revert.
 
+### 7.1 Virtualized Candidate Ownership
+
+The accepted dense candidate keeps every canonical gameplay building/vehicle and all simulation state resident while eligible presentation rows move into immutable logical data plus a fixed ECS slot set. Authored sources remain the same; virtualization is generated output, not a new authoring surface.
+
+- `OperationMapRenderDatabaseBakeConfig` is generated from exact stable identities, renderer paths, mesh/material/submesh identities, matrices, bounds, linear colors, state ownership, policy buckets, and spatial cells.
+- Exactly one `OperationMapVirtualizedPresentationAuthoring` root references that config and the candidate presentation source root.
+- Baking produces one `OperationMapRenderDatabaseBlob`, one shared `RenderMeshArray`, and `7,784` hierarchy-free proxy leaf entities with disabled `MaterialMeshInfo`.
+- Eligible source renderer entities are baking-only/stripped only after exact logical parity. Named resident exceptions remain render entities.
+- Canonical building owners retain health, faction, grid, targeting, blocker, production, destruction, and stable state-owner identity; slots never become gameplay owners.
+
+Current accepted reconciliation is `76,517` material/submesh source rows = `61,925` eligible logical rows + `14,592` resident exceptions. The packed layer strips `61,783` eligible physical renderers, retains `14,017` unique resident owner/path render rows, and contains zero packed eligible source rows. Any changed source/config revision must regenerate the whole database/root output and rerun direct logical parity, exhaustive materialized parity, deterministic Bake All, packed lifecycle, package, and risk-required Android gates.
+
 ## 8. EntityScene Cutover
 
 Cutover is not authorized by candidate success alone. Before changing production:
@@ -149,6 +161,8 @@ Cutover is not authorized by candidate success alone. Before changing production
 5. require Addressables and player build scenes to exclude both source YAML hierarchies;
 6. keep shell routing, definition, Addressables layout, and build ownership in one reviewable cutover range;
 7. run the complete post-cutover Editor and Android acceptance matrix before static cleanup.
+
+The accepted candidate database hashes and counts are documentation inputs to cutover, not reusable authority: content `bfb350f0c8d1474aa05252dc04c87eede4c1210adcee9c92dcdbecc35897896e`, ordering `a43040ee38b9e8cfe752f1e52848cfa523e453fa2ebcde0cadc4142510d79318`, `40,460` placements, `61,925` logical rows, and `7,784` slots. VRP-102 must separately authorize changing the production definition and ownership.
 
 `Game > Operation Maps > Cut Over Current Match Shell` is the transactional Match shell split command. It is not, by itself, approval to switch the operation-map production presentation kind or delete the static rollback package.
 

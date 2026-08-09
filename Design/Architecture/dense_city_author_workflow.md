@@ -1,6 +1,6 @@
 # Dense City Author Workflow
 
-Status: Candidate-only workflow; production remains `StaticSceneChunks` until the tracker authorizes EntityScene cutover.
+Status: Candidate-only `EntityScene + VirtualizedProxyPool` workflow accepted through Android Phase 9; production remains `StaticSceneChunks + ResidentEntities` until the tracker authorizes cutover.
 
 This is the reproducible author path for changing persistent overrides, regenerating the dense city, validating it, baking the candidate package, reviewing evidence, and preparing device acceptance. It does not authorize edits to accepted/frozen generated assets or production Addressables ownership.
 
@@ -17,7 +17,8 @@ The protected inputs are:
 - accepted map: `Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01.unity`;
 - accepted entity-authoring source: `Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_candidate.unity`;
 - generator config: `Assets/Game/Configs/OperationMaps/Skirmish/SkirmishDesertBase_MapWideCity_Config.asset`;
-- legacy building-placement input: `Assets/Game/Configs/Scene/Match_MapBuildingPlacement_Config.asset`.
+- legacy building-placement input: `Assets/Game/Configs/Scene/Match_MapBuildingPlacement_Config.asset`;
+- generated virtualized database input: `Assets/Game/GeneratedOperationMapEntityPresentationCandidate/VirtualizedPresentation/OperationMapRenderDatabaseBakeConfig.asset` (generated output, never hand-edited).
 
 Never edit generated children as a way to preserve a change. Regeneration owns and replaces them.
 
@@ -92,6 +93,24 @@ After a failed Bake All:
 3. Confirm protected production validation passed after rollback.
 4. Do not reuse a stale budget, transform-parity, or package-success report.
 
+### 5.1 Accepted Virtualized Candidate Output
+
+The accepted candidate revision selects `OperationMapRenderResidencyMode.VirtualizedProxyPool` only on `OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset`. Production remains `StaticSceneChunks + ResidentEntities` with `productionCutover=0`.
+
+The deterministic generation/bake chain owns:
+
+1. exact renderer/material eligibility inventory;
+2. prototype and compound-part recipes;
+3. logical placements and spatial cells;
+4. measured-envelope fixed pool capacity;
+5. transactional `OperationMapRenderDatabaseBakeConfig` and matching report;
+6. one `OperationMapVirtualizedPresentationAuthoring` root in the candidate EntityScene authoring scene;
+7. one baked `OperationMapRenderDatabaseBlob`, one shared `RenderMeshArray`, and `7,784` hierarchy-free fixed proxy slots whose `MaterialMeshInfo` starts disabled.
+
+The accepted schema-1 database has content hash `bfb350f0c8d1474aa05252dc04c87eede4c1210adcee9c92dcdbecc35897896e`, ordering hash `a43040ee38b9e8cfe752f1e52848cfa523e453fa2ebcde0cadc4142510d79318`, and serialized config SHA-256 `047e07cc77d3a576df6c2ee25c78f93bdebdb57d3c1ffda2da6424a24ffc2a06`. It contains `88` meshes, `24` materials, `9,107` prototypes, `12,293` parts, `40,460` placements, `1,934` cells, `60,922` cell-placement indices, four policy buckets, and `7,784` fixed slots. Source reconciliation is `76,517 = 61,925` eligible logical rows `+ 14,592` resident exceptions. The packed candidate strips `61,783` eligible physical renderers, retains `14,017` unique resident render-owner rows, contains zero packed eligible source rows, and reproduces packed fingerprint `23bebb4580aef31d7cd666b7f300f207bc8ccca1df5ce732d132b703400a655a`.
+
+Run the tracker-required focused, direct-bake, packed lifecycle/parity, and package commands through the checked repository wrappers. Never bypass the wrapper, edit the generated config/report, inflate capacity, or enable production from this author workflow.
+
 ## 6. Review Reports
 
 Review and retain the exact-revision evidence:
@@ -107,12 +126,17 @@ Review and retain the exact-revision evidence:
   - `Design/AgentReports/2026-07-24_dense_city_runtime_parity_manifest.json`
 - presentation budget:
   - `Design/AgentReports/2026-07-22_dense_city_presentation_budget.json`
+- virtualized logical database and deterministic packed output:
+  - `Design/AgentReports/2026-07-28_dense_city_render_virtualization_database.json`
+  - `Design/AgentReports/2026-07-30_dense_city_render_virtualization_pilot_enabled.json`
+  - `Design/AgentReports/2026-08-08_dense_city_render_virtualization_two_run_bake_all.json`
+  - `Design/AgentReports/2026-08-08_dense_city_render_materialized_parity.json`
 
 Reject the revision if a report is missing, stale, failed, from a different source fingerprint, or records production cutover unexpectedly. Logs under temporary folders are validation evidence, not tracked project artifacts.
 
 ## 7. Device Test
 
-Device acceptance remains mandatory and open in the implementation tracker. Run it only after the candidate Editor/package gates pass and from the exact clean revision under review.
+Candidate device acceptance passed on Samsung `SM-S918B` / `R5CTC1J02VB` for package/source head `f6accf53e7cca54c6a5df632891b31558c62be2b`; that evidence does not authorize production cutover. Any later candidate or production revision that changes packed content must repeat the risk-required package/device gates from its exact checked revision.
 
 1. Build local Addressables through the approved Unity wrapper.
 2. Build APK and AAB through `BuildScript.BuildAndroid`, passing `-buildType APK` or `-buildType AAB`.
@@ -121,6 +145,8 @@ Device acceptance remains mandatory and open in the implementation tracker. Run 
 5. Capture package/installed/bundle bytes, duplicate dependencies, load timings, peak/retained memory, CPU/GPU frame distributions, draw/SetPass calls, visible renderers, triangles, shadows, Entities Graphics batches, GC, thermal behavior, and sustained FPS.
 6. Compare Android transform/bounds and fixed-camera evidence to the accepted Editor manifests.
 7. Reject any network dependency, authoring hierarchy in the player, current-map static manifest/chunk ownership after cutover, lifecycle leak, moved/missing/duplicated visual, orphaned destroyed-state attachment, or budget regression.
+
+The accepted final candidate thermal route records `59.980` average FPS, `59.997` p10 FPS, `16.672/16.670/16.740 ms` average/p95/p99 frame time, CPU `11.568/13.218 ms` average/p95, GPU `13.849/14.001 ms` average/p95, `0 B/frame` managed allocation, zero battery drain, and thermal status `0` before and after its `120.007 s` sample. Evidence is under `Build/AndroidDenseCandidate/Evidence/2026-08-09-vrp097-final-thermal-f6accf53e-cool-rerun2`.
 
 Do not mark Android or production cutover accepted from an Editor-only pass.
 

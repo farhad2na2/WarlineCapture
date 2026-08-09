@@ -63,6 +63,28 @@ This chain is independent of whether accepted source content is authored in the 
 - Compare bounded fixed strings or typed enums/reason codes, never managed strings, scene paths, hierarchy names, or diagnostic text for control flow.
 - Camera, minimap, objectives, movement, placement, and aircraft systems consume published data without acquiring Unity assets or loading content.
 
+### Accepted Candidate Virtualized Presentation
+
+For `opmap.skirmish.desert_base_01`, the dense candidate has accepted `EntityScene + VirtualizedProxyPool` through real-device performance and lifecycle gates. Production still selects `StaticSceneChunks + ResidentEntities`; this section documents the accepted candidate ownership boundary and does not perform cutover.
+
+```text
+OperationMapDefinition(RenderResidencyMode = VirtualizedProxyPool)
+  -> thin runtime binding + one EntityScene load
+  -> OperationMapVirtualizedPresentationAuthoring bake output
+  -> OperationMapRenderDatabaseComponent / OperationMapRenderDatabaseBlob
+  -> fixed OperationMapRenderProxySlotComponent entities
+  -> OperationMapRenderVirtualizationInitializationSystem
+  -> OperationMapRenderStateSyncSystem
+  -> OperationMapRenderProxyApplySystem
+  -> Entities Graphics
+```
+
+The ScriptableObject `OperationMapRenderDatabaseBakeConfig` is editor/bake input only. Runtime owns the immutable `OperationMapRenderDatabaseBlob`, map-generation state, canonical visual-state buffer, fixed slot bindings, slot-command buffer/version, and metrics. `OperationMapRenderVirtualizationStateComponent` and `OperationMapRenderStateSyncStateComponent` are the persistent map-owned coordinators; `OperationMapRenderProxySlotComponent` is disposable presentation binding, never gameplay identity. `OperationMapVirtualizedBuildingPresentationComponent.StateOwnerIndex` links presentation recipes to canonical resident building state without transferring health, faction, targeting, production, blocker, or grid ownership.
+
+The accepted database content hash is `bfb350f0c8d1474aa05252dc04c87eede4c1210adcee9c92dcdbecc35897896e`; ordering hash is `a43040ee38b9e8cfe752f1e52848cfa523e453fa2ebcde0cadc4142510d79318`. It owns `40,460` placements and `61,925` logical render rows across `1,934` cells. Four fixed buckets own `7,784` pre-baked leaf slots. Camera travel changes only immutable-data selection, slot component values, and enableable `MaterialMeshInfo`; it creates/destroys no entity, starts no map scene/Addressables/static-streamer operation, and changes no simulation entity/state count.
+
+Readiness requires exactly one packed database/readiness contract, exact source/logical/resident reconciliation, initial required-view apply, and zero overflow/deficit. Teardown completes outstanding dependencies, disables/releases slots, disposes the map-generation native owner/blob, clears readiness/state, and unloads the one EntityScene. Two complete Menu -> Match -> Menu cycles pass with zero stale ownership.
+
 ## Validation Order
 
 1. Validate scenario identity and its one operation-map id.

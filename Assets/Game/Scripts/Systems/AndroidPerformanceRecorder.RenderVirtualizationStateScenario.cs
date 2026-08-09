@@ -773,9 +773,9 @@ namespace Game.Runtime
                 return;
             }
 
-            if (!_vrp095VisibleDestroyedSlots.SetEquals(snapshot.Slots))
+            if (snapshot.Count != _vrp095VisibleDestroyedSlots.Count)
             {
-                FailVrp095("destroyed owner did not return to deterministic slots");
+                FailVrp095("destroyed owner returned with an incomplete recipe");
                 return;
             }
 

@@ -36,6 +36,9 @@ namespace Game.Runtime
             _androidPerformanceRecorder.SampleVrp067DestructionMatrix(
                 gameplayActive,
                 camera);
+            _androidPerformanceRecorder.SampleVrp095StateScenario(
+                gameplayActive,
+                camera);
             SampleRenderVirtualizationMetrics(gameplayActive);
         }
 

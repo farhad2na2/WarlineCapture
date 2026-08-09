@@ -13,7 +13,7 @@ using UnityEngine;
 
 public sealed class AndroidPerformanceRecorderTests
 {
-    private const string PassMarker = "[AndroidPerformanceRecorderValidation] result=Passed tests=30";
+    private const string PassMarker = "[AndroidPerformanceRecorderValidation] result=Passed tests=32";
     private delegate void CaptureReleaseMetrics(long batches, long setPassCalls, long triangles, long vertices);
 
     public static void RunFocusedValidation()
@@ -28,6 +28,8 @@ public sealed class AndroidPerformanceRecorderTests
             tests.Vrp067DestructionMatrixAcceptsHouseAndShopOnly();
             tests.Vrp067DestructionMatrixRemainsIndependentFromPerformanceGate();
             tests.Vrp067MetricsRetainTheExactMaterializedEnvelope();
+            tests.Vrp095StateScenarioIsIndependentExactAndOptIn();
+            tests.Vrp095SlotOverlapIsExactAndOrderIndependent();
             tests.LegacyDevelopmentFlagRemainsEnabled();
             tests.ExplicitDevelopmentTaskRemainsEnabled();
             tests.ReleaseModeRequiresExactTaskAndFrameRate();
@@ -313,6 +315,49 @@ public sealed class AndroidPerformanceRecorderTests
         Assert.AreEqual(876, arguments[5]);
         Assert.AreEqual(new int2(40, 11), arguments[6]);
         Assert.AreEqual(new int2(53, 20), arguments[7]);
+    }
+
+    [Test]
+    public void Vrp095StateScenarioIsIndependentExactAndOptIn()
+    {
+        AndroidPerformanceRecorder recorder = new();
+        InvokeInitialize(
+            recorder,
+            new[] { "app", "-WARLINEVRP095STATESCENARIO" },
+            true);
+        Assert.IsFalse(recorder.IsEnabled);
+        Assert.IsTrue((bool)ReadField(
+            recorder,
+            "_vrp095StateScenarioEnabled"));
+        DisposeWithoutReport(recorder);
+
+        recorder = new AndroidPerformanceRecorder();
+        InvokeInitialize(
+            recorder,
+            new[] { "app", "-warlineVrp095StateScenarioExtra" },
+            true);
+        Assert.IsFalse((bool)ReadField(
+            recorder,
+            "_vrp095StateScenarioEnabled"));
+        DisposeWithoutReport(recorder);
+    }
+
+    [Test]
+    public void Vrp095SlotOverlapIsExactAndOrderIndependent()
+    {
+        MethodInfo method = typeof(AndroidPerformanceRecorder).GetMethod(
+            "CountVrp095Overlap",
+            BindingFlags.Static | BindingFlags.NonPublic);
+        Assert.NotNull(method);
+        var left = new HashSet<int> { 7, 2, 11, 19 };
+        var right = new HashSet<int> { 20, 11, 2 };
+        Assert.AreEqual(2, method.Invoke(null, new object[] { left, right }));
+        Assert.AreEqual(2, method.Invoke(null, new object[] { right, left }));
+        Assert.AreEqual(
+            0,
+            method.Invoke(
+                null,
+                new object[] { left, new HashSet<int> { 1, 3, 5 } }));
     }
 
     [Test]

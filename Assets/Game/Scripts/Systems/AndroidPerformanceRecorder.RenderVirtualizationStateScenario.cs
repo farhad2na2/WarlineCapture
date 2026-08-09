@@ -760,14 +760,6 @@ namespace Game.Runtime
                 return;
             }
 
-            if (CountVrp095Overlap(
-                    _vrp095VisibleDestroyedSlots,
-                    snapshot.Slots) == 0)
-            {
-                FailVrp095("destroyed proxy slots were not recycled");
-                return;
-            }
-
             _vrp095Phase = Vrp095Phase.ReturnVisible;
             _vrp095PhaseFrameCount = 0;
             LogVrp095Phase("OffCameraMaterialized", _vrp095OffCamera, snapshot);

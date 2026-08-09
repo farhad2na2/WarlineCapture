@@ -458,6 +458,7 @@ namespace Game.Runtime
 
         private void VerifyVrp095Recycle(EntityManager entityManager)
         {
+            int travelAnchorStateOwner = _vrp095Recycle.StateOwnerIndex;
             if (!TryAwaitVrp095Snapshot(
                     entityManager,
                     _vrp095Recycle.StateOwnerIndex,
@@ -467,9 +468,20 @@ namespace Game.Runtime
                 return;
             }
 
-            if (CountVrp095Overlap(_vrp095VisibleIntactSlots, snapshot.Slots) == 0)
+            int recycledSlotCount = CountVrp095Overlap(
+                _vrp095VisibleIntactSlots,
+                snapshot.Slots);
+            if (recycledSlotCount == 0 &&
+                !TryResolveVrp095RecycledBuilding(
+                    entityManager,
+                    _vrp095VisibleIntactSlots,
+                    _vrp095Visible.StateOwnerIndex,
+                    out _vrp095Recycle,
+                    out snapshot,
+                    out recycledSlotCount))
             {
-                FailVrp095("visible intact proxy slots were not recycled");
+                FailVrp095(
+                    "visible intact proxy slots were not recycled through an active building");
                 return;
             }
 
@@ -487,7 +499,151 @@ namespace Game.Runtime
             TriggerVrp095Destruction(entityManager, _vrp095OffCamera.Entity);
             _vrp095Phase = Vrp095Phase.AwaitOffCameraDestroyed;
             _vrp095PhaseFrameCount = 0;
-            LogVrp095Phase("RecycleIntact", _vrp095Recycle, snapshot);
+            LogNoStackTrace(
+                "[VRP-095 StateScenario] phase=RecycleIntact " +
+                $"stateOwner={_vrp095Recycle.StateOwnerIndex} " +
+                $"travelAnchor={travelAnchorStateOwner} " +
+                $"recycledSlots={recycledSlotCount} " +
+                $"slots={snapshot.Count} intact={snapshot.IntactCount} " +
+                $"destroyed={snapshot.DestroyedCount}");
+        }
+
+        private static bool TryResolveVrp095RecycledBuilding(
+            EntityManager entityManager,
+            IReadOnlyCollection<int> releasedSlots,
+            int excludedStateOwnerIndex,
+            out Vrp095Candidate candidate,
+            out Vrp095Snapshot snapshot,
+            out int recycledSlotCount)
+        {
+            candidate = default;
+            snapshot = default;
+            recycledSlotCount = 0;
+            if (releasedSlots == null || releasedSlots.Count == 0 ||
+                !TryGetVrp095Database(
+                    entityManager,
+                    out OperationMapRenderDatabaseComponent database))
+            {
+                return false;
+            }
+
+            ref OperationMapRenderDatabaseBlob blob = ref database.Blob.Value;
+            HashSet<int> releasedSlotSet = releasedSlots as HashSet<int> ??
+                                            new HashSet<int>(releasedSlots);
+            var overlapByStateOwner = new Dictionary<int, int>();
+            using (EntityQuery slotQuery = entityManager.CreateEntityQuery(
+                       ComponentType.ReadOnly<
+                           OperationMapRenderProxySlotComponent>()))
+            using (NativeArray<OperationMapRenderProxySlotComponent> slots =
+                   slotQuery.ToComponentDataArray<
+                       OperationMapRenderProxySlotComponent>(Allocator.Temp))
+            {
+                for (int i = 0; i < slots.Length; i++)
+                {
+                    OperationMapRenderProxySlotComponent slot = slots[i];
+                    if (!releasedSlotSet.Contains(slot.SlotIndex) ||
+                        slot.PlacementIndex < 0 ||
+                        slot.PlacementIndex >= blob.Placements.Length)
+                    {
+                        continue;
+                    }
+
+                    ref OperationMapRenderPlacementBlob placement =
+                        ref blob.Placements[slot.PlacementIndex];
+                    int stateOwner = placement.StateOwnerIndex;
+                    if (stateOwner < 0 ||
+                        stateOwner == excludedStateOwnerIndex ||
+                        placement.RequiredVisualState !=
+                        OperationMapRenderVisualState.Intact)
+                    {
+                        continue;
+                    }
+
+                    overlapByStateOwner.TryGetValue(
+                        stateOwner,
+                        out int count);
+                    overlapByStateOwner[stateOwner] = count + 1;
+                }
+            }
+
+            if (overlapByStateOwner.Count == 0)
+                return false;
+
+            using EntityQuery buildingQuery = entityManager.CreateEntityQuery(
+                new EntityQueryDesc
+                {
+                    All = new[]
+                    {
+                        ComponentType.ReadOnly<
+                            OperationMapVirtualizedBuildingPresentationComponent>(),
+                        ComponentType.ReadOnly<OperationMapBuildingComponent>(),
+                        ComponentType.ReadOnly<UnitHealth>(),
+                        ComponentType.ReadOnly<LocalTransform>(),
+                        ComponentType.ReadOnly<
+                            OperationMapBuildingDestroyedComponent>()
+                    },
+                    Options = EntityQueryOptions.IgnoreComponentEnabledState
+                });
+            using NativeArray<Entity> entities =
+                buildingQuery.ToEntityArray(Allocator.Temp);
+            using NativeArray<
+                OperationMapVirtualizedBuildingPresentationComponent>
+                presentations = buildingQuery.ToComponentDataArray<
+                    OperationMapVirtualizedBuildingPresentationComponent>(
+                    Allocator.Temp);
+            using NativeArray<UnitHealth> health =
+                buildingQuery.ToComponentDataArray<UnitHealth>(Allocator.Temp);
+            using NativeArray<LocalTransform> transforms =
+                buildingQuery.ToComponentDataArray<LocalTransform>(Allocator.Temp);
+
+            for (int i = 0; i < entities.Length; i++)
+            {
+                int stateOwner = presentations[i].StateOwnerIndex;
+                if (!overlapByStateOwner.TryGetValue(
+                        stateOwner,
+                        out int overlap) ||
+                    health[i].Current <= 0 ||
+                    entityManager.IsComponentEnabled<
+                        OperationMapBuildingDestroyedComponent>(entities[i]))
+                {
+                    continue;
+                }
+
+                if (overlap < recycledSlotCount ||
+                    (overlap == recycledSlotCount &&
+                     candidate.Entity != Entity.Null &&
+                     stateOwner >= candidate.StateOwnerIndex))
+                {
+                    continue;
+                }
+
+                ResolveVrp095BucketMasks(
+                    ref blob,
+                    stateOwner,
+                    out uint intactMask,
+                    out uint destroyedMask);
+                if (intactMask == 0u || destroyedMask == 0u)
+                    continue;
+
+                candidate = new Vrp095Candidate(
+                    entities[i],
+                    stateOwner,
+                    transforms[i].Position,
+                    intactMask,
+                    destroyedMask);
+                recycledSlotCount = overlap;
+            }
+
+            return candidate.Entity != Entity.Null &&
+                   TryReadVrp095Snapshot(
+                       entityManager,
+                       candidate.StateOwnerIndex,
+                       out snapshot) &&
+                   IsVrp095SnapshotState(
+                       snapshot,
+                       OperationMapRenderVisualState.Intact) &&
+                   CountVrp095Overlap(releasedSlots, snapshot.Slots) ==
+                   recycledSlotCount;
         }
 
         private void AwaitVrp095OffCameraDestroyed(EntityManager entityManager)

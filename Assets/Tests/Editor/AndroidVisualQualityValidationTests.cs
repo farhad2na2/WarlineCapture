@@ -19,6 +19,7 @@ public sealed class AndroidVisualQualityValidationTests
     private const string MobileRenderPipelinePath = "Assets/Settings/Mobile_RPAsset.asset";
     private const string MobileRendererPath = "Assets/Settings/Mobile_Renderer.asset";
     private const string VisualQualityProfilePath = "Assets/Game/Rendering/VisualQualityConfig.asset";
+    private const string MainMenuPlayUiPath = "Assets/Game/Scripts/UI/MainMenuPlayUI.cs";
     private const float MinimumLowRenderScale = 0.50f;
     private const float BalancedMobileRenderScale = 0.50f;
     private const int BalancedMobileMsaa = 1;
@@ -50,6 +51,7 @@ public sealed class AndroidVisualQualityValidationTests
             RunCase(() => VisualQualityRoutingRemainsEventDriven(), ref passed);
             RunCase(() => DayNightRemainsAuthoritativeAcrossQualityChanges(), ref passed);
             RunCase(() => RuntimeQualityTierMappingsAreComplete(), ref passed);
+            RunCase(() => FullscreenMapSuspendsHiddenCompactMinimapRefresh(), ref passed);
             Debug.Log($"[AndroidVisualQualityValidation] result=Passed tests={passed}");
         }
         catch (Exception exception)
@@ -241,6 +243,20 @@ public sealed class AndroidVisualQualityValidationTests
         Assert.True(
             PlayerSettings.Android.optimizedFramePacing,
             "Android must use Unity optimized frame pacing so the 60 FPS target is evenly distributed on high-refresh displays.");
+    }
+
+    [Test]
+    public static void FullscreenMapSuspendsHiddenCompactMinimapRefresh()
+    {
+        string source = File.ReadAllText(Path.GetFullPath(Path.Combine(Application.dataPath, "../", MainMenuPlayUiPath)));
+        StringAssert.Contains(
+            "if (!fullMapOpen && now >= _nextCompactMinimapUpdateTime)",
+            source,
+            "The hidden compact minimap must not keep refreshing while the fullscreen tactical map owns presentation.");
+        StringAssert.Contains(
+            "if (fullMapOpen)\n                    _matchHudFullMapInputSystem.Update();",
+            source.Replace("\r\n", "\n"),
+            "The visible fullscreen tactical map must retain its own update path.");
     }
 
     [Test]

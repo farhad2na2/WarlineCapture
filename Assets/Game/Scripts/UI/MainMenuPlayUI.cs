@@ -141,13 +141,14 @@ namespace Game.UI.Runtime
             float now = Time.unscaledTime;
             using (MinimapUpdateMarker.Auto())
             {
-                if (now >= _nextCompactMinimapUpdateTime)
+                bool fullMapOpen = _matchHudFullMapPopupView != null && _matchHudFullMapPopupView.IsOpen;
+                if (!fullMapOpen && now >= _nextCompactMinimapUpdateTime)
                 {
                     _nextCompactMinimapUpdateTime = now + CompactMinimapUpdateIntervalSeconds;
                     _matchHudMinimapInputSystem.Update();
                 }
 
-                if (_matchHudFullMapPopupView != null && _matchHudFullMapPopupView.IsOpen)
+                if (fullMapOpen)
                     _matchHudFullMapInputSystem.Update();
             }
 

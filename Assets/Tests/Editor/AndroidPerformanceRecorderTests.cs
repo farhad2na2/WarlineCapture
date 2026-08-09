@@ -13,7 +13,7 @@ using UnityEngine;
 
 public sealed class AndroidPerformanceRecorderTests
 {
-    private const string PassMarker = "[AndroidPerformanceRecorderValidation] result=Passed tests=28";
+    private const string PassMarker = "[AndroidPerformanceRecorderValidation] result=Passed tests=30";
     private delegate void CaptureReleaseMetrics(long batches, long setPassCalls, long triangles, long vertices);
 
     public static void RunFocusedValidation()
@@ -46,6 +46,8 @@ public sealed class AndroidPerformanceRecorderTests
             tests.Vrp092UsesMainThreadAllocationFallbackWhenProfilerCounterIsUnavailable();
             tests.Vrp092CpuTimingUsesActiveMainThreadWorkInsteadOfFramePacingWait();
             tests.Vrp092ResidentSetSamplingStaysOutsideTimedFrames();
+            tests.Vrp092ManagedMemorySamplingStaysOutsideEveryTimedFrame();
+            tests.Vrp092SkipsKnownUnavailableRenderCounterReads();
             tests.PercentileMatchesEvidenceGateRounding();
             tests.PercentileIgnoresUnusedCapacityAndHandlesZeroSamples();
             tests.LaunchClock_SubsystemResetRestoresApplicationEpoch();
@@ -113,6 +115,28 @@ public sealed class AndroidPerformanceRecorderTests
         Assert.NotNull(shouldSample);
         Assert.IsFalse((bool)shouldSample.Invoke(null, new object[] { "VRP-092" }));
         Assert.IsTrue((bool)shouldSample.Invoke(null, new object[] { "APH-804" }));
+    }
+
+    [Test]
+    public void Vrp092ManagedMemorySamplingStaysOutsideEveryTimedFrame()
+    {
+        MethodInfo shouldSample = typeof(AndroidPerformanceRecorder).GetMethod(
+            "ShouldSampleManagedMemoryEveryFrame",
+            BindingFlags.Static | BindingFlags.NonPublic);
+        Assert.NotNull(shouldSample);
+        Assert.IsFalse((bool)shouldSample.Invoke(null, new object[] { "VRP-092" }));
+        Assert.IsTrue((bool)shouldSample.Invoke(null, new object[] { "APH-804" }));
+    }
+
+    [Test]
+    public void Vrp092SkipsKnownUnavailableRenderCounterReads()
+    {
+        MethodInfo shouldRead = typeof(AndroidPerformanceRecorder).GetMethod(
+            "ShouldReadRenderCounters",
+            BindingFlags.Static | BindingFlags.NonPublic);
+        Assert.NotNull(shouldRead);
+        Assert.IsFalse((bool)shouldRead.Invoke(null, new object[] { "VRP-092" }));
+        Assert.IsTrue((bool)shouldRead.Invoke(null, new object[] { "APH-804" }));
     }
 
     [Test]

@@ -124,6 +124,7 @@ namespace Game.Runtime
             if (_mode == RecorderMode.Release)
             {
                 _batteryEndPercent = ReadBatteryPercent();
+                CaptureManagedMemory();
                 CaptureResidentSet();
                 if (complete && !TryValidateReleaseCapture(out string validationFailure))
                 {

@@ -153,19 +153,29 @@ namespace Game.Runtime
             if (_mode == RecorderMode.Release)
             {
                 _profilerAttached |= Profiler.enabled;
-                CaptureReleaseFrameMetrics(
-                    ReadCounter(batches),
-                    ReadCounter(setPassCalls),
-                    ReadCounter(triangles),
-                    ReadCounter(vertices));
+                if (ShouldReadRenderCounters(TaskId))
+                {
+                    CaptureReleaseFrameMetrics(
+                        ReadCounter(batches),
+                        ReadCounter(setPassCalls),
+                        ReadCounter(triangles),
+                        ReadCounter(vertices));
+                }
+                else
+                {
+                    CaptureReleaseFrameMetrics(-1L, -1L, -1L, -1L);
+                }
             }
 
             _sampleCount++;
             _capturedSeconds += deltaSeconds;
-            _peakAllocatedMemoryBytes = Math.Max(_peakAllocatedMemoryBytes, Profiler.GetTotalAllocatedMemoryLong());
-            _peakMonoMemoryBytes = Math.Max(_peakMonoMemoryBytes, Profiler.GetMonoUsedSizeLong());
+            bool samplesManagedMemoryEveryFrame = ShouldSampleManagedMemoryEveryFrame(TaskId);
+            if (samplesManagedMemoryEveryFrame)
+                CaptureManagedMemory();
             if (_mode == RecorderMode.Release && _capturedSeconds >= _nextSlowMetricSeconds)
             {
+                if (!samplesManagedMemoryEveryFrame)
+                    CaptureManagedMemory();
                 if (ShouldCapturePeriodicResidentSet(TaskId))
                     CaptureResidentSet();
                 _nextSlowMetricSeconds += SlowMetricIntervalSeconds;
@@ -448,6 +458,7 @@ namespace Game.Runtime
             }
             _batteryStartPercent = ReadBatteryPercent();
             _nextSlowMetricSeconds = SlowMetricIntervalSeconds;
+            CaptureManagedMemory();
             CaptureResidentSet();
         }
 
@@ -519,6 +530,33 @@ namespace Game.Runtime
             // start/end boundaries without contaminating the timed frames.
             // VRP-094 retains the separate peak-memory acceptance route.
             return !string.Equals(taskId, Vrp092TaskId, StringComparison.Ordinal);
+        }
+
+        private static bool ShouldSampleManagedMemoryEveryFrame(string taskId)
+        {
+            // VRP-092 owns clean frame-time acceptance, while VRP-094 owns
+            // independent peak-memory acceptance. Retain boundary plus 1 Hz
+            // managed-memory evidence without adding two profiler queries to
+            // every measured VRP-092 frame.
+            return !string.Equals(taskId, Vrp092TaskId, StringComparison.Ordinal);
+        }
+
+        private static bool ShouldReadRenderCounters(string taskId)
+        {
+            // The release Samsung player does not expose these counters and
+            // VRP-092 explicitly accepts that absence. Avoid four known-empty
+            // recorder reads per timed frame; APH-804 remains unchanged.
+            return !string.Equals(taskId, Vrp092TaskId, StringComparison.Ordinal);
+        }
+
+        private void CaptureManagedMemory()
+        {
+            _peakAllocatedMemoryBytes = Math.Max(
+                _peakAllocatedMemoryBytes,
+                Profiler.GetTotalAllocatedMemoryLong());
+            _peakMonoMemoryBytes = Math.Max(
+                _peakMonoMemoryBytes,
+                Profiler.GetMonoUsedSizeLong());
         }
 
         private void CaptureResidentSet()

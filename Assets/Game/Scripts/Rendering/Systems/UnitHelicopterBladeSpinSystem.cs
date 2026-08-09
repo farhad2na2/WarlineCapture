@@ -29,11 +29,21 @@ namespace Game.Rendering
         private ComponentLookup<UnitAirComponent> _airStateLookup;
         private ComponentLookup<LocalTransform> _transformLookup;
         private EntityQuery _airMovementQuery;
+        private EntityQuery _legacyFallbackQuery;
 
         public void OnCreate(ref SystemState state)
         {
             _diagnosticLogged = false;
             _airMovementQuery = state.GetEntityQuery(ComponentType.ReadOnly<UnitAirMovement>());
+            _legacyFallbackQuery = state.GetEntityQuery(new EntityQueryDesc
+            {
+                All = new[] { ComponentType.ReadOnly<UnitAirMovement>() },
+                None = new[]
+                {
+                    ComponentType.ReadOnly<UnitDeathAnimationComponent>(),
+                    ComponentType.ReadOnly<UnitHelicopterBladeReference>()
+                }
+            });
             _bladeLookup = state.GetBufferLookup<UnitHelicopterBladeReference>(true);
             _childLookup = state.GetBufferLookup<Child>(true);
             _modelLookup = state.GetComponentLookup<UnitModelInstanceReference>(true);
@@ -69,26 +79,76 @@ namespace Game.Rendering
             bool shouldLogDiagnostics = SystemAPI.HasSingleton<RuntimeDiagnosticsStateComponent>() &&
                                         SystemAPI.GetSingleton<RuntimeDiagnosticsStateComponent>().VerboseAILogs != 0;
 
-            JobHandle bakedBladeHandle = new RotateBakedBladeReferencesJob
+            if (!_legacyFallbackQuery.IsEmptyIgnoreFilter)
             {
-                Radians = radians,
-                BladeLookup = _bladeLookup,
-                TransformLookup = _transformLookup
-            }.Schedule(state.Dependency);
-            bakedBladeHandle.Complete();
-            state.Dependency = bakedBladeHandle;
+                // Legacy entities without a baked blade buffer still use direct
+                // hierarchy writes, so preserve their explicit safety boundary.
+                // Canonical packed aircraft all own the buffer and skip this wait.
+                state.Dependency.Complete();
+                using var rotatedBlades = new NativeHashSet<Entity>(32, Allocator.Temp);
 
-            using var rotatedBlades = new NativeHashSet<Entity>(32, Allocator.Temp);
-
-            foreach (var (_, entity) in SystemAPI
-                         .Query<RefRO<UnitAirMovement>>()
-                         .WithNone<UnitDeathAnimationComponent>()
-                         .WithEntityAccess()
-                         )
-            {
-                bool shouldSpin = ShouldSpinBlades(entity, _transformLookup, _airStateLookup);
-                if (!shouldSpin)
+                foreach (var (_, entity) in SystemAPI
+                             .Query<RefRO<UnitAirMovement>>()
+                             .WithNone<UnitDeathAnimationComponent, UnitHelicopterBladeReference>()
+                             .WithEntityAccess())
                 {
+                    bool shouldSpin = ShouldSpinBlades(entity, _transformLookup, _airStateLookup);
+                    if (!shouldSpin)
+                    {
+                        if (shouldLogDiagnostics &&
+                            !_diagnosticLogged &&
+                            IsHelicopterDiagnosticCandidate(em, _childLookup, entity, _bladeLookup, _detailLookup, _modelLookup, _midLookup, _lowLookup, _sourceLookup))
+                        {
+                            _diagnosticLogged = true;
+                            LogHelicopterBladeDiagnostic(
+                                em,
+                                _childLookup,
+                                entity,
+                                _bladeLookup,
+                                _detailLookup,
+                                _modelLookup,
+                                _midLookup,
+                                _lowLookup,
+                                _sourceLookup,
+                                _displayLookup,
+                                _visualStateLookup,
+                                _airLookup,
+                                _airStateLookup,
+                                _transformLookup,
+                                false,
+                                0,
+                                0,
+                                0,
+                                SystemAPI.Time.DeltaTime);
+                        }
+
+                        continue;
+                    }
+
+                    rotatedBlades.Clear();
+
+                    int detailRotated = 0;
+                    int modelRotated = 0;
+                    bool hasVisualState = TryGetCurrentVisualKind(entity, _visualStateLookup, out UnitRenderVisualKind currentVisual);
+                    bool scanAllFallbackRoots = !hasVisualState;
+                    bool scanDetailFallback = scanAllFallbackRoots ||
+                                              currentVisual == UnitRenderVisualKind.Detail ||
+                                              currentVisual == UnitRenderVisualKind.Unknown;
+                    bool scanMidFallback = scanAllFallbackRoots || currentVisual == UnitRenderVisualKind.Mid;
+                    bool scanLowFallback = scanAllFallbackRoots || currentVisual == UnitRenderVisualKind.Low;
+
+                    if (scanDetailFallback && _detailLookup.HasComponent(entity))
+                        detailRotated = RotateBladeDescendants(em, _childLookup, _detailLookup[entity].Root, radians, rotatedBlades);
+
+                    if (scanDetailFallback && _modelLookup.HasComponent(entity))
+                        modelRotated = RotateBladeDescendants(em, _childLookup, _modelLookup[entity].Instance, radians, rotatedBlades);
+
+                    if (scanMidFallback && _midLookup.HasComponent(entity))
+                        RotateBladeDescendants(em, _childLookup, _midLookup[entity].Instance, radians, rotatedBlades);
+
+                    if (scanLowFallback && _lowLookup.HasComponent(entity))
+                        RotateBladeDescendants(em, _childLookup, _lowLookup[entity].Instance, radians, rotatedBlades);
+
                     if (shouldLogDiagnostics &&
                         !_diagnosticLogged &&
                         IsHelicopterDiagnosticCandidate(em, _childLookup, entity, _bladeLookup, _detailLookup, _modelLookup, _midLookup, _lowLookup, _sourceLookup))
@@ -109,82 +169,45 @@ namespace Game.Rendering
                             _airLookup,
                             _airStateLookup,
                             _transformLookup,
-                            false,
-                            0,
-                            0,
+                            true,
+                            detailRotated,
+                            modelRotated,
                             0,
                             SystemAPI.Time.DeltaTime);
                     }
-
-                    continue;
-                }
-
-                rotatedBlades.Clear();
-
-                int detailRotated = 0;
-                int modelRotated = 0;
-                int bakedRotated = MarkBakedBlades(_bladeLookup, entity, rotatedBlades);
-                bool hasVisualState = TryGetCurrentVisualKind(entity, _visualStateLookup, out UnitRenderVisualKind currentVisual);
-                bool scanAllFallbackRoots = !hasVisualState && bakedRotated == 0;
-                bool scanDetailFallback = scanAllFallbackRoots ||
-                                          (bakedRotated == 0 &&
-                                           (currentVisual == UnitRenderVisualKind.Detail ||
-                                            currentVisual == UnitRenderVisualKind.Unknown));
-                bool scanMidFallback = scanAllFallbackRoots ||
-                                       currentVisual == UnitRenderVisualKind.Mid;
-                bool scanLowFallback = scanAllFallbackRoots ||
-                                       currentVisual == UnitRenderVisualKind.Low;
-
-                if (scanDetailFallback && _detailLookup.HasComponent(entity))
-                    detailRotated = RotateBladeDescendants(em, _childLookup, _detailLookup[entity].Root, radians, rotatedBlades);
-
-                if (scanDetailFallback && _modelLookup.HasComponent(entity))
-                    modelRotated = RotateBladeDescendants(em, _childLookup, _modelLookup[entity].Instance, radians, rotatedBlades);
-
-                if (scanMidFallback && _midLookup.HasComponent(entity))
-                    RotateBladeDescendants(em, _childLookup, _midLookup[entity].Instance, radians, rotatedBlades);
-
-                if (scanLowFallback && _lowLookup.HasComponent(entity))
-                    RotateBladeDescendants(em, _childLookup, _lowLookup[entity].Instance, radians, rotatedBlades);
-
-                if (shouldLogDiagnostics &&
-                    !_diagnosticLogged &&
-                    IsHelicopterDiagnosticCandidate(em, _childLookup, entity, _bladeLookup, _detailLookup, _modelLookup, _midLookup, _lowLookup, _sourceLookup))
-                {
-                    _diagnosticLogged = true;
-                    LogHelicopterBladeDiagnostic(
-                        em,
-                        _childLookup,
-                        entity,
-                        _bladeLookup,
-                        _detailLookup,
-                        _modelLookup,
-                        _midLookup,
-                        _lowLookup,
-                        _sourceLookup,
-                        _displayLookup,
-                        _visualStateLookup,
-                        _airLookup,
-                        _airStateLookup,
-                        _transformLookup,
-                        true,
-                        detailRotated,
-                        modelRotated,
-                        bakedRotated,
-                        SystemAPI.Time.DeltaTime);
                 }
             }
 
+            JobHandle bakedBladeHandle = new RotateBakedBladeReferencesJob
+            {
+                Radians = radians,
+                BladeLookup = _bladeLookup,
+                TransformLookup = _transformLookup
+            }.Schedule(state.Dependency);
+            state.Dependency = bakedBladeHandle;
+
             if (shouldLogDiagnostics && !_diagnosticLogged)
             {
-                foreach (var (sourceKey, entity) in SystemAPI
-                             .Query<RefRO<UnitSourcePrefabKey>>()
-                             .WithAll<UnitGrid>()
+                bakedBladeHandle.Complete();
+                state.Dependency = bakedBladeHandle;
+                foreach (var (_, entity) in SystemAPI
+                             .Query<RefRO<UnitAirMovement>>()
                              .WithNone<UnitDeathAnimationComponent>()
                              .WithEntityAccess())
                 {
-                    if (!sourceKey.ValueRO.Value.ToString().Contains("Helicopter", System.StringComparison.OrdinalIgnoreCase))
+                    if (!IsHelicopterDiagnosticCandidate(
+                            em,
+                            _childLookup,
+                            entity,
+                            _bladeLookup,
+                            _detailLookup,
+                            _modelLookup,
+                            _midLookup,
+                            _lowLookup,
+                            _sourceLookup))
+                    {
                         continue;
+                    }
 
                     _diagnosticLogged = true;
                     LogHelicopterBladeDiagnostic(

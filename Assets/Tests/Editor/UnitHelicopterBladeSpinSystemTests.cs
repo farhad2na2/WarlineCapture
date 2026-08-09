@@ -69,6 +69,7 @@ public sealed class UnitHelicopterBladeSpinSystemTests
         world.SetTime(new TimeData(1d, 0.25f));
 
         system.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs();
 
         quaternion after = em.GetComponentData<LocalTransform>(blade).Rotation;
         Assert.Greater(math.length(after.value - before.value), 0.01f, "Helicopter blades must rotate while airborne or hovering, not only while movement flags are set.");
@@ -100,6 +101,7 @@ public sealed class UnitHelicopterBladeSpinSystemTests
         world.SetTime(new TimeData(1d, 0.25f));
 
         system.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs();
 
         quaternion after = em.GetComponentData<LocalTransform>(blade).Rotation;
         Assert.Greater(math.length(after.value - before.value), 0.01f, "The baked blade buffer path must rotate airborne helicopters without relying on entity names.");
@@ -144,6 +146,7 @@ public sealed class UnitHelicopterBladeSpinSystemTests
         world.SetTime(new TimeData(1d, 0.25f));
 
         system.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs();
 
         quaternion midAfter = em.GetComponentData<LocalTransform>(midBlade).Rotation;
         quaternion lowAfter = em.GetComponentData<LocalTransform>(lowBlade).Rotation;
@@ -180,6 +183,7 @@ public sealed class UnitHelicopterBladeSpinSystemTests
         world.SetTime(new TimeData(1d, 0.25f));
 
         system.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs();
 
         quaternion after = em.GetComponentData<LocalTransform>(blade).Rotation;
         Assert.Less(math.length(after.value - before.value), 0.0001f, "Landed helicopters must not spin their blades by default.");
@@ -214,6 +218,7 @@ public sealed class UnitHelicopterBladeSpinSystemTests
         world.SetTime(new TimeData(1d, 0.25f));
 
         system.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs();
 
         quaternion after = em.GetComponentData<LocalTransform>(blade).Rotation;
         Assert.Less(math.length(after.value - before.value), 0.0001f, "A grounded return/taxi state must not keep helicopter blades spinning.");

@@ -7739,7 +7739,8 @@ namespace Game.Editor
                         depth,
                         patchHeight,
                         hash,
-                        forcePrimaryGroundPrefab: true);
+                        forcePrimaryGroundPrefab: true,
+                        usePrefabMaterial: true);
                     if (!localBoundsByPrefab.TryGetValue(plan.Prefab, out Bounds localBounds))
                     {
                         if (!TryGetPrefabLocalRendererBounds(plan.Prefab.transform, out localBounds))
@@ -11431,7 +11432,8 @@ namespace Game.Editor
             float targetDepth,
             float targetHeight,
             uint hash,
-            bool forcePrimaryGroundPrefab = false)
+            bool forcePrimaryGroundPrefab = false,
+            bool usePrefabMaterial = false)
         {
             GameObject[] prefabs = LoadNaturalGroundPrefabs();
             int prefabIndex;
@@ -11457,10 +11459,49 @@ namespace Game.Editor
                 topCenter.z);
             return new NaturalGroundPatchPlan(
                 prefab,
-                GetGroundVariationMaterial(),
+                usePrefabMaterial
+                    ? GetNaturalGroundPrefabMaterial(prefab)
+                    : GetGroundVariationMaterial(),
                 position,
                 rotation,
                 scale);
+        }
+
+        private static Material GetNaturalGroundPrefabMaterial(GameObject prefab)
+        {
+            if (prefab == null)
+                throw new ArgumentNullException(nameof(prefab));
+
+            Material resolved = null;
+            Renderer[] renderers = prefab.GetComponentsInChildren<Renderer>(true);
+            for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
+            {
+                Material[] materials = renderers[rendererIndex].sharedMaterials;
+                for (int materialIndex = 0; materialIndex < materials.Length; materialIndex++)
+                {
+                    Material material = materials[materialIndex];
+                    if (material == null)
+                    {
+                        throw new InvalidOperationException(
+                            $"Natural ground prefab '{prefab.name}' has a null source material.");
+                    }
+
+                    if (resolved == null)
+                    {
+                        resolved = material;
+                        continue;
+                    }
+
+                    if (resolved != material)
+                    {
+                        throw new InvalidOperationException(
+                            $"Natural ground prefab '{prefab.name}' uses multiple source materials.");
+                    }
+                }
+            }
+
+            return resolved ?? throw new InvalidOperationException(
+                $"Natural ground prefab '{prefab.name}' has no source material.");
         }
 
         private static GameObject RealizeNaturalGroundPatch(

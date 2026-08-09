@@ -461,31 +461,45 @@ namespace Game.Runtime
         private void VerifyVrp095Recycle(EntityManager entityManager)
         {
             int travelAnchorStateOwner = _vrp095Recycle.StateOwnerIndex;
-            if (!TryAwaitVrp095Snapshot(
+            if (!TryReadVrp095Snapshot(
                     entityManager,
                     _vrp095Recycle.StateOwnerIndex,
-                    OperationMapRenderVisualState.Intact,
-                    out Vrp095Snapshot snapshot))
+                    out Vrp095Snapshot snapshot) ||
+                !IsVrp095SnapshotState(
+                    snapshot,
+                    OperationMapRenderVisualState.Intact))
             {
+                _vrp095PhaseFrameCount++;
+                if (_vrp095PhaseFrameCount > Vrp095WaitFrames)
+                    FailVrp095("recycle travel anchor did not materialize intact");
                 return;
             }
 
             int recycledSlotCount = CountVrp095Overlap(
                 _vrp095VisibleIntactSlots,
                 snapshot.Slots);
-            if (recycledSlotCount == 0 &&
-                !TryResolveVrp095RecycledBuilding(
-                    entityManager,
-                    _vrp095VisibleIntactSlots,
-                    _vrp095Visible.StateOwnerIndex,
-                    out _vrp095Recycle,
-                    out snapshot,
-                    out recycledSlotCount))
+            if (recycledSlotCount == 0)
             {
-                FailVrp095(
-                    "visible intact proxy slots were not recycled through an active building");
-                return;
+                if (!TryResolveVrp095RecycledBuilding(
+                        entityManager,
+                        _vrp095VisibleIntactSlots,
+                        _vrp095Visible.StateOwnerIndex,
+                        out _vrp095Recycle,
+                        out snapshot,
+                        out recycledSlotCount))
+                {
+                    _vrp095PhaseFrameCount++;
+                    if (_vrp095PhaseFrameCount > Vrp095WaitFrames)
+                    {
+                        FailVrp095(
+                            "visible intact proxy slots were not recycled through an active building");
+                    }
+
+                    return;
+                }
             }
+
+            _vrp095PhaseFrameCount = 0;
 
             if (!TryReadVrp095Snapshot(
                     entityManager,

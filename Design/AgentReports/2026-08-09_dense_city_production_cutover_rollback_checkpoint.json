@@ -1,0 +1,16 @@
+{
+    "schemaVersion": 1,
+    "result": "Passed",
+    "sourceRevision": "b9383b6a12e7b4ef6b9494a05a8a8788db90b859",
+    "rollbackDefinitionSha256": "49686c7368eecce60b22927cecb59aaa73fc83dba3b39f518ba1e5664e1f9692",
+    "rollbackRuntimeBindingSha256": "33656ad601617cdf85d9fef675d1f9abbc7f069e7ffcfce6f247d07c364f71bf",
+    "rollbackAddressablesSha256": "906b14ae50b76d0c87d54687e041a56259f5c4ae2d39eb6b90fa4cc4cd84e921",
+    "staticRollbackSha256": "8cb615f4a82b312da806d5124261ff2e8b1af0e0cb6fdb2f0307331f80403764",
+    "staticRollbackFileCount": 545,
+    "staticRollbackSceneCount": 269,
+    "staticRollbackBytes": 42765094,
+    "entitySceneGuid": "c00140f2e94a04c3084c8dcb0c18cbd0",
+    "productionDefinitionSha256": "b0f20d7e1bd18eeaa9a64d0c694b640561f5748261295eac81029dc0ce089026",
+    "productionRuntimeBindingSha256": "0ee7b340aec5c8f540a41ab5c709d250f00a3cc30c3a97b4f3df5c732c25fc10",
+    "productionCutover": 1
+}

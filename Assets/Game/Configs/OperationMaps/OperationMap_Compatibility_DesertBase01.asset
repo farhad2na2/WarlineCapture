@@ -42,7 +42,7 @@ MonoBehaviour:
     minimumHeight: -5.31082
     maximumHeight: 17.199179
   navigationMetadata:
-    authoredSubSceneGuid: d50925a18e9164ce782536576cb833d8
+    authoredSubSceneGuid: c00140f2e94a04c3084c8dcb0c18cbd0
     gridAuthoringLocalId: 146043441
     staticGridBlockerCount: 0
     usesSurfaceMovementMetadata: 1
@@ -120,6 +120,8 @@ MonoBehaviour:
     radius: 7.200793
     factionId: 1
     laneIndex: 2
+  presentationKind: 1
+  renderResidencyMode: 1
   sourceSceneReference:
     m_AssetGUID: d755eb43b9cb04aa292e471ace113ecf
     m_SubObjectName: 
@@ -127,13 +129,13 @@ MonoBehaviour:
     m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   optionalHeavyMetadataReference:
-    m_AssetGUID: 
+    m_AssetGUID:
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   staticPresentationManifestReference:
-    m_AssetGUID: 2d7b3d165106141ba81b98138bb8fa7f
+    m_AssetGUID:
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 
@@ -151,13 +153,13 @@ MonoBehaviour:
     m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   buildingPlacementsReference:
-    m_AssetGUID: a84d1564be130447197d5a5f2a7fe11d
+    m_AssetGUID:
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   vehiclePlacementsReference:
-    m_AssetGUID: 819521cb66e1e4e90a46b49e04b15aec
+    m_AssetGUID:
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 

@@ -49,6 +49,13 @@ namespace Game.Editor
             StaticMapAndroidBuildManifestSnapshot[] snapshots =
                 LoadCatalogSelectedManifestSnapshots();
 
+            if (snapshots.Length == 0)
+            {
+                return ResolveEntitySceneBaseScenes(
+                    enabledScenePaths,
+                    path => SceneExists(projectRoot, path));
+            }
+
             return Resolve(
                 enabledScenePaths,
                 snapshots,
@@ -75,7 +82,34 @@ namespace Game.Editor
                         contentHash,
                         scenePaths,
                         out _,
-                        out _));
+                    out _));
+        }
+
+        internal static string[] ResolveEntitySceneBaseScenes(
+            IEnumerable<string> enabledScenePaths,
+            Func<string, bool> sceneExists)
+        {
+            if (enabledScenePaths == null)
+                throw new InvalidOperationException("Android build scenes are missing.");
+            if (sceneExists == null)
+                throw new ArgumentNullException(nameof(sceneExists));
+
+            var result = new List<string>();
+            var included = new HashSet<string>(StringComparer.Ordinal);
+            foreach (string path in enabledScenePaths)
+            {
+                if (string.IsNullOrWhiteSpace(path))
+                    throw new InvalidOperationException(
+                        "Enabled build settings contain an invalid scene path.");
+                if (IsGeneratedChunkScenePath(path))
+                    continue;
+                if (!sceneExists(path))
+                    throw new InvalidOperationException($"Enabled base scene is missing: {path}");
+                if (included.Add(path))
+                    result.Add(path);
+            }
+
+            return result.ToArray();
         }
 
         internal static string[] Resolve(
@@ -179,10 +213,12 @@ namespace Game.Editor
                 throw new InvalidOperationException($"Operation-map build catalog is invalid: {catalogError}");
 
             ReadOnlySpan<OperationMapDefinition> definitions = catalog.Definitions;
-            var snapshots = new StaticMapAndroidBuildManifestSnapshot[definitions.Length];
+            var snapshots = new List<StaticMapAndroidBuildManifestSnapshot>(definitions.Length);
             for (int index = 0; index < definitions.Length; index++)
             {
                 OperationMapDefinition definition = definitions[index];
+                if (definition.PresentationKind == OperationMapPresentationKind.EntityScene)
+                    continue;
                 if (!StaticMapPresentationOutputPathContract.TryResolveManifestAssetPath(
                         definition.OperationMapId,
                         out string manifestPath,
@@ -199,10 +235,10 @@ namespace Game.Editor
                         $"Catalog-selected static map presentation manifest is missing: {manifestPath}");
                 }
 
-                snapshots[index] = CreateSnapshot(manifest);
+                snapshots.Add(CreateSnapshot(manifest));
             }
 
-            return snapshots;
+            return snapshots.ToArray();
         }
 
         private static StaticMapAndroidBuildManifestSnapshot CreateSnapshot(

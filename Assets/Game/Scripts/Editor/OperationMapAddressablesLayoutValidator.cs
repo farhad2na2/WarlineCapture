@@ -32,6 +32,20 @@ namespace Game.Editor
                     out error);
             }
 
+            OperationMapDefinition currentDefinition =
+                AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
+                    OperationMapAddressablesLayoutBuilder.DefinitionPath);
+            if (currentDefinition == null)
+                return Fail("Production operation-map definition is missing.", out error);
+            if (currentDefinition.PresentationKind == OperationMapPresentationKind.EntityScene)
+            {
+                return TryValidateEntitySceneLayout(
+                    settings,
+                    currentDefinition,
+                    requireMinimapRaster,
+                    out error);
+            }
+
             StaticMapPresentationManifest manifest =
                 AssetDatabase.LoadAssetAtPath<StaticMapPresentationManifest>(
                     OperationMapAddressablesLayoutBuilder.ManifestPath);
@@ -197,6 +211,78 @@ namespace Game.Editor
             {
                 if (partition.Value < 1 || partition.Value > 25)
                     return Fail($"Partition '{partition.Key}' has invalid chunk count {partition.Value}.", out error);
+            }
+
+            error = null;
+            return true;
+        }
+
+        private static bool TryValidateEntitySceneLayout(
+            AddressableAssetSettings settings,
+            OperationMapDefinition definition,
+            bool requireMinimapRaster,
+            out string error)
+        {
+            string definitionError = null;
+            if (definition.RenderResidencyMode !=
+                    OperationMapRenderResidencyMode.VirtualizedProxyPool ||
+                !definition.TryValidateLocalContentReferences(out definitionError))
+            {
+                return Fail(
+                    definitionError ?? "Production EntityScene definition is not virtualized or valid.",
+                    out error);
+            }
+
+            if (!TryRequireGroup(settings, OperationMapAddressablesLayoutBuilder.CatalogGroupName, 2, false, out AddressableAssetGroup catalog, out error) ||
+                !TryRequireGroup(settings, OperationMapAddressablesLayoutBuilder.SharedGroupName, 0, true, out _, out error) ||
+                !TryRequireGroup(settings, OperationMapAddressablesLayoutBuilder.CoreGroupName, 4, false, out AddressableAssetGroup core, out error) ||
+                !TryRequireGroup(settings, OperationMapAddressablesLayoutBuilder.PresentationGroupName, 0, true, out _, out error))
+            {
+                return false;
+            }
+
+            if (!TryRequireEntry(settings, catalog, OperationMapAddressablesLayoutBuilder.CatalogPath, "operation-map/catalog", OperationMapAddressablesLayoutBuilder.MetadataRoleLabel, false, out error) ||
+                !TryRequireEntry(settings, catalog, OperationMapAddressablesLayoutBuilder.DefinitionPath, OperationMapAddressablesLayoutBuilder.AddressPrefix + "definition", OperationMapAddressablesLayoutBuilder.DefinitionRoleLabel, false, out error) ||
+                !TryRequireEntry(settings, core, OperationMapAddressablesLayoutBuilder.SourceScenePath, OperationMapAddressablesLayoutBuilder.AddressPrefix + "source-scene", OperationMapAddressablesLayoutBuilder.SourceSceneRoleLabel, false, out error) ||
+                !TryRequireEntry(settings, core, OperationMapAddressablesLayoutBuilder.MapSurfacePath, OperationMapAddressablesLayoutBuilder.AddressPrefix + "map-surface", OperationMapAddressablesLayoutBuilder.MetadataRoleLabel, false, out error) ||
+                !TryRequireEntry(settings, core, OperationMapAddressablesLayoutBuilder.MinimapRasterPath, MinimapRasterAddress, OperationMapAddressablesLayoutBuilder.MinimapRasterRoleLabel, false, out error) ||
+                !TryRequireEntry(settings, core, DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath, OperationMapAddressablesLayoutBuilder.AddressPrefix + "entity-scene", OperationMapEntitySceneCandidateAddressablesLayoutPlanner.EntitySceneRoleLabel, false, out error))
+            {
+                return false;
+            }
+
+            if (requireMinimapRaster && !ContainsAddress(settings, MinimapRasterAddress))
+                return Fail($"Missing required address: {MinimapRasterAddress}.", out error);
+
+            string runtimeSceneGuid = AssetDatabase.AssetPathToGUID(
+                OperationMapAddressablesLayoutBuilder.SourceScenePath);
+            if (!string.Equals(
+                    definition.SourceSceneReference.AssetGUID,
+                    runtimeSceneGuid,
+                    StringComparison.Ordinal))
+            {
+                return Fail(
+                    "Production EntityScene definition does not reference the runtime binding scene.",
+                    out error);
+            }
+
+            string[] forbiddenPaths =
+            {
+                OperationMapAddressablesLayoutBuilder.ManifestPath,
+                OperationMapAddressablesLayoutBuilder.BuildingPlacementsPath,
+                OperationMapAddressablesLayoutBuilder.VehiclePlacementsPath,
+                OperationMapAddressablesLayoutBuilder.AuthoringScenePath,
+                OperationMapEntityPresentationMigrationEditor.AcceptedSubScenePath
+            };
+            for (int index = 0; index < forbiddenPaths.Length; index++)
+            {
+                string guid = AssetDatabase.AssetPathToGUID(forbiddenPaths[index]);
+                if (!string.IsNullOrEmpty(guid) && settings.FindAssetEntry(guid) != null)
+                {
+                    return Fail(
+                        $"Retired production asset remains Addressable: {forbiddenPaths[index]}.",
+                        out error);
+                }
             }
 
             error = null;

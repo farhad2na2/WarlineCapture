@@ -24,15 +24,6 @@ MonoBehaviour:
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-role-metadata
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 2d7b3d165106141ba81b98138bb8fa7f
-    m_Address: operation-map/opmap.skirmish.desert_base_01/static-manifest
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-role-metadata
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3b1a8dbd670bf4e94863c00acbc3a3a7
     m_Address: operation-map/opmap.skirmish.desert_base_01/minimap-raster
     m_ReadOnly: 0
@@ -42,23 +33,14 @@ MonoBehaviour:
     - operation-map-pack-skirmish-desert-base-01
     - operation-map-role-minimap-raster
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 819521cb66e1e4e90a46b49e04b15aec
-    m_Address: operation-map/opmap.skirmish.desert_base_01/vehicle-placements
+  - m_GUID: c00140f2e94a04c3084c8dcb0c18cbd0
+    m_Address: operation-map/opmap.skirmish.desert_base_01/entity-scene
     m_ReadOnly: 0
     m_SerializedLabels:
     - operation-map
     - operation-map-local
     - operation-map-pack-skirmish-desert-base-01
-    - operation-map-role-metadata
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: a84d1564be130447197d5a5f2a7fe11d
-    m_Address: operation-map/opmap.skirmish.desert_base_01/building-placements
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - operation-map
-    - operation-map-local
-    - operation-map-pack-skirmish-desert-base-01
-    - operation-map-role-metadata
+    - operation-map-role-entity-scene
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d755eb43b9cb04aa292e471ace113ecf
     m_Address: operation-map/opmap.skirmish.desert_base_01/source-scene

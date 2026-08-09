@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using Game.Configs;
 using UnityEditor;
 
 namespace Game.Editor
@@ -13,8 +14,10 @@ namespace Game.Editor
             if (!File.Exists(packagePath))
                 throw new InvalidOperationException($"Android package not found: {packagePath}");
 
-            string expectedGuid = AssetDatabase.AssetPathToGUID(
-                OperationMapAddressablesLayoutBuilder.SourceSubScenePath);
+            OperationMapDefinition definition =
+                AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
+                    OperationMapAddressablesLayoutBuilder.DefinitionPath);
+            string expectedGuid = definition?.NavigationMetadata.AuthoredSubSceneGuid;
             using var archive = ZipFile.OpenRead(packagePath);
             var entries = new List<string>(archive.Entries.Count);
             foreach (ZipArchiveEntry entry in archive.Entries)

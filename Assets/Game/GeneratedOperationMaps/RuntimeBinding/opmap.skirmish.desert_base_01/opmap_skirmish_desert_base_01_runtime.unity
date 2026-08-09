@@ -251,15 +251,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45a335734b1572644a6a5d09d87adc65, type: 3}
   m_Name:
   m_EditorClassIdentifier: Unity.Scenes::Unity.Scenes.SubScene
-  _SceneAsset: {fileID: 102900000, guid: d50925a18e9164ce782536576cb833d8, type: 3}
+  _SceneAsset: {fileID: 102900000, guid: c00140f2e94a04c3084c8dcb0c18cbd0, type: 3}
   _HierarchyColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   AutoLoadScene: 1
   _SceneGUID:
     Value:
-      x: 441618525
-      y: 3964017128
-      z: 1969443463
-      w: 2368965574
+      x: 788795404
+      y: 1010869406
+      z: 3168322688
+      w: 230457792
 --- !u!1 &414237149
 GameObject:
   m_ObjectHideFlags: 0
@@ -329,12 +329,12 @@ MonoBehaviour:
   vehicleAuthoringRoot: {fileID: 2117072818}
   mapSurfaceAuthoring: {fileID: 2029459287}
   gridAuthoringConfig: {fileID: 11400000, guid: b201000000000000000000000000000b, type: 2}
-  buildingPlacements: {fileID: 11400000, guid: a84d1564be130447197d5a5f2a7fe11d, type: 2}
-  vehiclePlacements: {fileID: 11400000, guid: 819521cb66e1e4e90a46b49e04b15aec, type: 2}
+  buildingPlacements: {fileID: 0}
+  vehiclePlacements: {fileID: 0}
   mapSubScene: {fileID: 390147488}
-  canonicalPresentationMode: 1
-  presentationSourceSceneGuid: ca1f2d7f265d8495f8c815441d68fda0
-  presentationSourceScenePath: Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01.unity
+  canonicalPresentationMode: 2
+  presentationSourceSceneGuid:
+  presentationSourceScenePath:
 --- !u!4 &1175376036
 Transform:
   m_ObjectHideFlags: 0

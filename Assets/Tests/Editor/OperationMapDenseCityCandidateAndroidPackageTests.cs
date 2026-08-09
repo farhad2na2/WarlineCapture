@@ -25,6 +25,7 @@ public sealed class OperationMapDenseCityCandidateAndroidPackageTests
             suite.PackageGate_AcceptsIsolatedDenseCandidate,
             suite.PackageGate_RejectsProductionEntityScene,
             suite.PackageGate_RejectsMissingCatalogOrBundles,
+            suite.PackageGate_RejectsUnexpectedStaleCandidateBundle,
             suite.RuntimeSelectionContract_AcceptsExactCandidate,
             suite.RuntimeSelectionContract_RejectsWrongEntityScene,
             suite.RuntimeOverride_ProductionBuildResolvesValidatedCatalog,
@@ -125,6 +126,7 @@ public sealed class OperationMapDenseCityCandidateAndroidPackageTests
             "assets/ContentArchives/archive_dependencies.txt",
             "assets/ContentArchives/b8ebb31853db87420b18072fd34a9579.archive",
             "assets/aa/DenseCityCandidate/catalog.bin",
+            "assets/aa/DenseCityCandidate/catalog.hash",
             "assets/aa/DenseCityCandidate/Android/candidate.bundle"
         };
         string archiveCatalog =
@@ -137,7 +139,13 @@ public sealed class OperationMapDenseCityCandidateAndroidPackageTests
                     entries,
                     DenseGuid,
                     ProductionGuid,
-                    archiveCatalog),
+                    archiveCatalog,
+                    new[]
+                    {
+                        "aa/DenseCityCandidate/catalog.bin",
+                        "aa/DenseCityCandidate/catalog.hash",
+                        "aa/DenseCityCandidate/Android/candidate.bundle"
+                    }),
             Is.Null);
     }
 
@@ -197,6 +205,38 @@ public sealed class OperationMapDenseCityCandidateAndroidPackageTests
                     ProductionGuid,
                     archiveCatalog),
             Does.Contain("no dense candidate Android bundles"));
+    }
+
+    [Test]
+    public void PackageGate_RejectsUnexpectedStaleCandidateBundle()
+    {
+        string[] entries =
+        {
+            $"assets/EntityScenes/{DenseGuid}.entityheader",
+            "assets/ContentArchives/archive_dependencies.bin",
+            "assets/ContentArchives/archive_dependencies.txt",
+            "assets/ContentArchives/b8ebb31853db87420b18072fd34a9579.archive",
+            "assets/aa/DenseCityCandidate/catalog.bin",
+            "assets/aa/DenseCityCandidate/catalog.hash",
+            "assets/aa/DenseCityCandidate/Android/candidate.bundle",
+            "assets/aa/DenseCityCandidate/Android/stale.bundle"
+        };
+        string archiveCatalog = $"\tObject: {DenseGuid}:0\n";
+
+        Assert.That(
+            OperationMapDenseCityCandidateAndroidPackageDeployment
+                .GetPackageValidationError(
+                    entries,
+                    DenseGuid,
+                    ProductionGuid,
+                    archiveCatalog,
+                    new[]
+                    {
+                        "aa/DenseCityCandidate/catalog.bin",
+                        "aa/DenseCityCandidate/catalog.hash",
+                        "aa/DenseCityCandidate/Android/candidate.bundle"
+                    }),
+            Does.Contain("unexpected stale dense candidate file"));
     }
 
     [Test]

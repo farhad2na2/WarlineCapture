@@ -207,7 +207,8 @@ namespace Game.Editor
             IReadOnlyList<string> packageEntries,
             string denseEntitySceneGuid,
             string productionEntitySceneGuid,
-            string archiveDependenciesText)
+            string archiveDependenciesText,
+            IReadOnlyCollection<string> expectedDensePackageDestinations = null)
         {
             if (packageEntries == null)
                 return "Android package entries are required.";
@@ -296,6 +297,42 @@ namespace Game.Editor
                 return $"Android package is missing {AddressablesDestinationRoot}/catalog.bin.";
             if (bundleCount == 0)
                 return "Android package contains no dense candidate Android bundles.";
+            if (expectedDensePackageDestinations != null)
+            {
+                var expectedDenseEntries = new HashSet<string>(
+                    expectedDensePackageDestinations.Select(destination =>
+                        "assets/" + (destination ?? string.Empty)
+                            .Replace('\\', '/')
+                            .TrimStart('/')),
+                    StringComparer.Ordinal);
+                var actualDenseEntries = new HashSet<string>(
+                    packageEntries
+                        .Select(entry => (entry ?? string.Empty)
+                            .Replace('\\', '/')
+                            .TrimStart('/'))
+                        .Where(entry => entry.StartsWith(
+                            "assets/" + AddressablesDestinationRoot + "/",
+                            StringComparison.Ordinal)),
+                    StringComparer.Ordinal);
+                string missing = expectedDenseEntries
+                    .Except(actualDenseEntries, StringComparer.Ordinal)
+                    .OrderBy(entry => entry, StringComparer.Ordinal)
+                    .FirstOrDefault();
+                if (missing != null)
+                {
+                    return "Android package is missing the planned dense candidate file: " +
+                           missing + ".";
+                }
+                string unexpected = actualDenseEntries
+                    .Except(expectedDenseEntries, StringComparer.Ordinal)
+                    .OrderBy(entry => entry, StringComparer.Ordinal)
+                    .FirstOrDefault();
+                if (unexpected != null)
+                {
+                    return "Android package contains an unexpected stale dense candidate file: " +
+                           unexpected + ".";
+                }
+            }
             if (hasProductionEntityScene)
             {
                 return "Android package contains the production EntityScene in addition to " +
@@ -342,7 +379,12 @@ namespace Game.Editor
                 entries,
                 denseEntitySceneGuid,
                 productionEntitySceneGuid,
-                archiveDependenciesText);
+                archiveDependenciesText,
+                CreateFilePlan(Path.GetFullPath(Path.Combine(
+                        UnityEngine.Application.dataPath,
+                        "..")))
+                    .Select(file => file.DestinationPath)
+                    .ToArray());
             if (error != null)
                 throw new InvalidOperationException(error);
         }

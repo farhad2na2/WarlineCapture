@@ -85,6 +85,7 @@ namespace Game.Runtime
         private HashSet<int> _vrp095VisibleIntactSlots;
         private HashSet<int> _vrp095VisibleDestroyedSlots;
         private HashSet<int> _vrp095RecycleSlots;
+        private bool _vrp095OffCameraDestructionTriggered;
         private uint _vrp095InitialSequence;
 
         private void InitializeVrp095StateScenario(
@@ -101,6 +102,7 @@ namespace Game.Runtime
             _vrp095VisibleIntactSlots = null;
             _vrp095VisibleDestroyedSlots = null;
             _vrp095RecycleSlots = null;
+            _vrp095OffCameraDestructionTriggered = false;
             _vrp095InitialSequence = 0u;
         }
 
@@ -496,7 +498,7 @@ namespace Game.Runtime
             }
 
             _vrp095RecycleSlots = snapshot.Slots;
-            TriggerVrp095Destruction(entityManager, _vrp095OffCamera.Entity);
+            _vrp095OffCameraDestructionTriggered = false;
             _vrp095Phase = Vrp095Phase.AwaitOffCameraDestroyed;
             _vrp095PhaseFrameCount = 0;
             LogNoStackTrace(
@@ -648,6 +650,57 @@ namespace Game.Runtime
 
         private void AwaitVrp095OffCameraDestroyed(EntityManager entityManager)
         {
+            if (!_vrp095OffCameraDestructionTriggered)
+            {
+                if (!TryReadVrp095Snapshot(
+                        entityManager,
+                        _vrp095Recycle.StateOwnerIndex,
+                        out Vrp095Snapshot stableRecycle) ||
+                    !IsVrp095SnapshotState(
+                        stableRecycle,
+                        OperationMapRenderVisualState.Intact) ||
+                    CountVrp095Overlap(
+                        _vrp095VisibleIntactSlots,
+                        stableRecycle.Slots) == 0)
+                {
+                    _vrp095Phase = Vrp095Phase.VerifyRecycle;
+                    _vrp095PhaseFrameCount = 0;
+                    return;
+                }
+
+                if (!_vrp095RecycleSlots.SetEquals(stableRecycle.Slots))
+                {
+                    _vrp095RecycleSlots = stableRecycle.Slots;
+                    _vrp095PhaseFrameCount = 0;
+                    return;
+                }
+
+                if (!TryReadVrp095Snapshot(
+                        entityManager,
+                        _vrp095OffCamera.StateOwnerIndex,
+                        out Vrp095Snapshot offCameraBeforeDestruction) ||
+                    offCameraBeforeDestruction.Count != 0)
+                {
+                    FailVrp095("off-camera target retained proxy slots");
+                    return;
+                }
+
+                _vrp095PhaseFrameCount++;
+                if (_vrp095PhaseFrameCount < Vrp095CenteringFrames)
+                    return;
+
+                TriggerVrp095Destruction(
+                    entityManager,
+                    _vrp095OffCamera.Entity);
+                _vrp095OffCameraDestructionTriggered = true;
+                _vrp095PhaseFrameCount = 0;
+                LogNoStackTrace(
+                    "[VRP-095 StateScenario] phase=RecycleStable " +
+                    $"stateOwner={_vrp095Recycle.StateOwnerIndex} " +
+                    $"slots={_vrp095RecycleSlots.Count}");
+                return;
+            }
+
             if (!RequireVrp095Destroyed(
                     entityManager,
                     _vrp095OffCamera,

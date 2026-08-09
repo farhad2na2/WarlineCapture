@@ -157,9 +157,6 @@ namespace Game.Editor
 
         private static void BuildDenseCityCandidateAndroidApk(bool profilerBuild)
         {
-            var arg = Environment.GetCommandLineArgs();
-            bool cleanBuildCache = arg.Any(value =>
-                string.Equals(value, "-cleanBuild", StringComparison.OrdinalIgnoreCase));
             AndroidBuildReportProvenance buildProvenance =
                 AndroidBuildReportGenerator.CaptureGitProvenance();
 
@@ -204,18 +201,14 @@ namespace Game.Editor
                 extraScriptingDefines =
                     OperationMapDenseCityCandidateAndroidPackageDeployment
                         .GetRuntimeScriptingDefines(denseGuid),
-                options = profilerBuild
-                    ? BuildOptions.Development
-                    : cleanBuildCache
-                        ? CleanReleaseAndroidBuildOptions
-                        : ReleaseAndroidBuildOptions,
+                options = ResolveDenseCityCandidateAndroidBuildOptions(profilerBuild),
                 locationPathName = outputPath
             };
 
             UnityEngine.Debug.Log(
                 "[BuildScript] Dense candidate Android package: " +
                 $"profilerBuild={(profilerBuild ? 1 : 0)} " +
-                $"cacheMode={(cleanBuildCache ? "clean" : "incremental")} " +
+                "cacheMode=clean " +
                 $"revision={buildProvenance.ExactCommit} dirty={buildProvenance.Dirty}");
             BuildReport report = ExecuteBuild(buildPlayerOptions);
 
@@ -229,6 +222,15 @@ namespace Game.Editor
                 "[DenseCityCandidateAndroidPackage] result=Passed " +
                 $"output={outputPath} bytes={report.summary.totalSize} " +
                 $"entitySceneGuid={denseGuid} productionEntitySceneIncluded=0");
+        }
+
+        internal static BuildOptions ResolveDenseCityCandidateAndroidBuildOptions(
+            bool profilerBuild)
+        {
+            BuildOptions options = profilerBuild
+                ? BuildOptions.Development
+                : ReleaseAndroidBuildOptions;
+            return options | BuildOptions.CleanBuildCache;
         }
 
         public static void ValidateDenseCityCandidateAndroidApk()

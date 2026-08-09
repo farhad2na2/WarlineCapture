@@ -30,7 +30,9 @@ public sealed class OperationMapDenseCityCandidateAndroidPackageTests
             suite.RuntimeSelectionContract_RejectsWrongEntityScene,
             suite.RuntimeOverride_ProductionBuildResolvesValidatedCatalog,
             suite.RuntimeOverride_ProductionBuildRejectsUnknownMap,
-            suite.DeploymentScope_ActivatesAndClearsAdditionalFiles
+            suite.DeploymentScope_ActivatesAndClearsAdditionalFiles,
+            suite.DenseCandidateReleaseBuild_AlwaysCleansBuildCache,
+            suite.DenseCandidateProfilerBuild_AlwaysCleansBuildCache
         };
         foreach (Action test in tests)
             test();
@@ -339,6 +341,27 @@ public sealed class OperationMapDenseCityCandidateAndroidPackageTests
                     .TryGetActiveFiles(out _),
                 Is.False);
         });
+    }
+
+    [Test]
+    public void DenseCandidateReleaseBuild_AlwaysCleansBuildCache()
+    {
+        BuildOptions options =
+            BuildScript.ResolveDenseCityCandidateAndroidBuildOptions(profilerBuild: false);
+
+        Assert.That(options & BuildOptions.CleanBuildCache, Is.Not.EqualTo(BuildOptions.None));
+        Assert.That(options & BuildOptions.DetailedBuildReport, Is.Not.EqualTo(BuildOptions.None));
+        Assert.That(options & BuildOptions.Development, Is.EqualTo(BuildOptions.None));
+    }
+
+    [Test]
+    public void DenseCandidateProfilerBuild_AlwaysCleansBuildCache()
+    {
+        BuildOptions options =
+            BuildScript.ResolveDenseCityCandidateAndroidBuildOptions(profilerBuild: true);
+
+        Assert.That(options & BuildOptions.CleanBuildCache, Is.Not.EqualTo(BuildOptions.None));
+        Assert.That(options & BuildOptions.Development, Is.Not.EqualTo(BuildOptions.None));
     }
 
     private static void WithFixture(Action<string> action)

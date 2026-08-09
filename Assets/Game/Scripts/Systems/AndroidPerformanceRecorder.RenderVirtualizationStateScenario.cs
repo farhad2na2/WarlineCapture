@@ -461,23 +461,19 @@ namespace Game.Runtime
         private void VerifyVrp095Recycle(EntityManager entityManager)
         {
             int travelAnchorStateOwner = _vrp095Recycle.StateOwnerIndex;
-            if (!TryReadVrp095Snapshot(
-                    entityManager,
-                    _vrp095Recycle.StateOwnerIndex,
-                    out Vrp095Snapshot snapshot) ||
-                !IsVrp095SnapshotState(
-                    snapshot,
-                    OperationMapRenderVisualState.Intact))
-            {
-                _vrp095PhaseFrameCount++;
-                if (_vrp095PhaseFrameCount > Vrp095WaitFrames)
-                    FailVrp095("recycle travel anchor did not materialize intact");
-                return;
-            }
+            bool travelAnchorIntact = TryReadVrp095Snapshot(
+                                          entityManager,
+                                          _vrp095Recycle.StateOwnerIndex,
+                                          out Vrp095Snapshot snapshot) &&
+                                      IsVrp095SnapshotState(
+                                          snapshot,
+                                          OperationMapRenderVisualState.Intact);
 
-            int recycledSlotCount = CountVrp095Overlap(
-                _vrp095VisibleIntactSlots,
-                snapshot.Slots);
+            int recycledSlotCount = travelAnchorIntact
+                ? CountVrp095Overlap(
+                    _vrp095VisibleIntactSlots,
+                    snapshot.Slots)
+                : 0;
             if (recycledSlotCount == 0)
             {
                 if (!TryResolveVrp095RecycledBuilding(

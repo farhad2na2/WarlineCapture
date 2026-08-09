@@ -1,0 +1,87 @@
+{
+  "reportSchema": "warline.dense-city.vrp094-android-memory-comparison",
+  "reportSchemaVersion": 1,
+  "result": "Accepted",
+  "candidateSourceCommit": "05a969892",
+  "documentationCommitAtCapture": "b7f90349cb1770f754853c67127c46b3d5b8d54c",
+  "package": {
+    "path": "Build/AndroidDenseCandidate/WarlineCapture-DenseCityCandidate.apk",
+    "bytes": 543998651,
+    "sha256": "e4e239486de3ecb8900e07ea1fdc117292d9ef7ca5a6570243360ca99fdcfb1e"
+  },
+  "phase0Baseline": {
+    "report": "Design/AgentReports/2026-07-21_dense_city_phase0_android_baseline.json",
+    "gitCommit": "8f93dafe06098e62ef029260ed4c6a732ba2ee1b",
+    "device": {
+      "model": "Xiaomi 24090RA29G",
+      "serial": "R4M7PZEQZ58T59ZH"
+    },
+    "memoryKiB": {
+      "matchTotalPss": 2489021,
+      "matchTotalRss": 2626948,
+      "matchGraphics": 1096532,
+      "matchNativeHeap": 63460,
+      "steadyTotalPss": 2492220,
+      "menuAfterUnloadTotalPss": 1268879
+    }
+  },
+  "currentCandidate": {
+    "device": {
+      "model": "Samsung SM-S918B",
+      "serial": "R5CTC1J02VB"
+    },
+    "route": "steady",
+    "warmupSeconds": 15.013461681082845,
+    "sampleDurationSeconds": 120.00685340352357,
+    "processToMatchReadyMs": 6456.222028321059,
+    "readyMemoryKiB": {
+      "totalPss": 2128729,
+      "totalRss": 2219812,
+      "graphics": 901472,
+      "nativeHeap": 64732
+    },
+    "retainedMemoryKiB": {
+      "totalPss": 2140028,
+      "totalRss": 2232260,
+      "graphics": 901816,
+      "nativeHeap": 65584
+    },
+    "peakRecorderMemoryMiB": {
+      "allocated": 904.1071081161499,
+      "mono": 26.5234375,
+      "residentSet": 2090.091796875
+    },
+    "routeFrameMetrics": {
+      "averageFrameMs": 16.66993380765283,
+      "p95FrameMs": 16.67039489746094,
+      "p99FrameMs": 16.734268188476564,
+      "averageFps": 59.98824168850854,
+      "managedAllocatedBytesPerFrame": 0.0
+    }
+  },
+  "retainedDeltaFromPhase0Steady": {
+    "totalPssKiB": -352192,
+    "totalPssPercent": -14.132,
+    "totalRssKiB": -394688,
+    "totalRssPercent": -15.025,
+    "graphicsKiB": -194716,
+    "graphicsPercent": -17.757,
+    "nativeHeapKiB": 2124,
+    "nativeHeapPercent": 3.347
+  },
+  "evidence": {
+    "root": "Build/AndroidDenseCandidate/Evidence/2026-08-09-vrp094-memory-b7f90349c-rerun",
+    "readyMeminfo": "meminfo-ready.txt",
+    "retainedMeminfo": "meminfo-retained.txt",
+    "recorder": "vrp094_current_steady_recorder.json",
+    "logcat": "logcat.txt",
+    "retainedScreenshot": "retained.png"
+  },
+  "notes": [
+    "The current candidate was not reinstalled; this capture uses the single accepted package already installed on the exact authorized Samsung.",
+    "The first VRP-094 launch probe is rejected because its Android activity arguments were malformed; only the corrected rerun evidence is accepted.",
+    "The frozen Phase 0 and current candidate were measured on different target Android devices, so deltas are exact artifact comparisons but not an identical-device causal attribution.",
+    "The retained screenshot shows complete dense-city geometry and gameplay UI without a white screen, gross holes, leakage, or stale presentation.",
+    "AC-powered device capture is accepted; no unplugged test is required by the user-authorized contract."
+  ]
+}

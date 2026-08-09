@@ -50,6 +50,9 @@ namespace Game.Editor
             "opmap.skirmish.desert_base_01/Candidate/SharedMaterials";
         internal const string CanalWaterSourceMaterialPath =
             "Assets/Synty/PolygonBattleRoyale/Materials/FX/PolygonBattleRoyale_Water.mat";
+        internal const string CanalSurfacePrefabPath =
+            "Assets/Synty/PolygonGeneric/Prefabs/Environment/" +
+            "SM_Gen_Env_Water_Plane_01.prefab";
         internal static readonly Color CandidateCanalWaterBaseColor =
             new(0.025f, 0.2f, 0.55f, 0.82f);
         private const string SyntyGenericBasicShaderName = "Synty/Generic_Basic";
@@ -1242,7 +1245,8 @@ namespace Game.Editor
 
             int compatibleRendererCount = 0;
             syntyMaterialSlotCount = 0;
-            var syntyMaterialCopies = new Dictionary<Material, Material>();
+            var syntyMaterialCopies = new Dictionary<string, Material>(
+                StringComparer.Ordinal);
             Renderer[] renderers = candidate.GetRootGameObjects()
                 .SelectMany(root => root.GetComponentsInChildren<Renderer>(true))
                 .ToArray();
@@ -1272,10 +1276,25 @@ namespace Game.Editor
                             StringComparison.Ordinal))
                         continue;
 
-                    if (!syntyMaterialCopies.TryGetValue(material, out Material converted))
+                    string sourcePath = AssetDatabase.GetAssetPath(material);
+                    string sourceGuid = AssetDatabase.AssetPathToGUID(sourcePath);
+                    string sourcePrefabPath =
+                        PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(
+                            renderers[rendererIndex].gameObject);
+                    bool applyCanalWaterOverride =
+                        ShouldApplyCandidateCanalWaterOverride(
+                            sourcePath,
+                            sourcePrefabPath);
+                    string materialCopyKey =
+                        $"{sourceGuid}|{(applyCanalWaterOverride ? "canal-water" : "default")}";
+                    if (!syntyMaterialCopies.TryGetValue(
+                            materialCopyKey,
+                            out Material converted))
                     {
-                        converted = CreateOrUpdateSyntyCompatibleMaterial(material);
-                        syntyMaterialCopies.Add(material, converted);
+                        converted = CreateOrUpdateSyntyCompatibleMaterial(
+                            material,
+                            applyCanalWaterOverride);
+                        syntyMaterialCopies.Add(materialCopyKey, converted);
                     }
                     materials[materialIndex] = converted;
                     syntyMaterialSlotCount++;
@@ -1287,7 +1306,9 @@ namespace Game.Editor
             return compatibleRendererCount;
         }
 
-        private static Material CreateOrUpdateSyntyCompatibleMaterial(Material source)
+        private static Material CreateOrUpdateSyntyCompatibleMaterial(
+            Material source,
+            bool applyCanalWaterOverride)
         {
             string sourcePath = AssetDatabase.GetAssetPath(source);
             string sourceGuid = AssetDatabase.AssetPathToGUID(sourcePath);
@@ -1308,8 +1329,16 @@ namespace Game.Editor
             if (shader == null)
                 throw new InvalidOperationException("URP Lit shader is unavailable.");
             EnsureAssetFolder(CandidateSharedMaterialFolder);
+            bool isNonCanalWaterVariant =
+                string.Equals(
+                    sourcePath,
+                    CanalWaterSourceMaterialPath,
+                    StringComparison.Ordinal) &&
+                !applyCanalWaterOverride;
+            string destinationSuffix = isNonCanalWaterVariant ? "_NonCanal" : string.Empty;
             string destinationPath =
-                $"{CandidateSharedMaterialFolder}/Synty_Generic_Basic_{sourceGuid}.mat";
+                $"{CandidateSharedMaterialFolder}/Synty_Generic_Basic_" +
+                $"{sourceGuid}{destinationSuffix}.mat";
             Material destination =
                 AssetDatabase.LoadAssetAtPath<Material>(destinationPath);
             if (destination == null)
@@ -1326,8 +1355,8 @@ namespace Game.Editor
                 $"DenseCity_DOTS_{Path.GetFileNameWithoutExtension(sourcePath)}";
             CopyTexture(source, "_Albedo_Map", destination, "_BaseMap");
             CopyColor(source, "_BaseColor", destination, "_BaseColor");
-            if (TryGetCandidatePresentationColorOverride(sourcePath, out Color presentationColor))
-                destination.SetColor("_BaseColor", presentationColor);
+            if (applyCanalWaterOverride)
+                destination.SetColor("_BaseColor", CandidateCanalWaterBaseColor);
             CopyTexture(source, "_Normal_Map", destination, "_BumpMap");
             CopyFloat(source, "_Normal_Amount", destination, "_BumpScale");
             CopyFloat(source, "_Metallic", destination, "_Metallic");
@@ -1365,14 +1394,24 @@ namespace Game.Editor
             return destination;
         }
 
+        internal static bool ShouldApplyCandidateCanalWaterOverride(
+            string sourcePath,
+            string sourcePrefabPath) =>
+            string.Equals(
+                sourcePath,
+                CanalWaterSourceMaterialPath,
+                StringComparison.Ordinal) &&
+            string.Equals(
+                sourcePrefabPath,
+                CanalSurfacePrefabPath,
+                StringComparison.Ordinal);
+
         internal static bool TryGetCandidatePresentationColorOverride(
             string sourcePath,
+            string sourcePrefabPath,
             out Color color)
         {
-            if (string.Equals(
-                    sourcePath,
-                    CanalWaterSourceMaterialPath,
-                    StringComparison.Ordinal))
+            if (ShouldApplyCandidateCanalWaterOverride(sourcePath, sourcePrefabPath))
             {
                 color = CandidateCanalWaterBaseColor;
                 return true;

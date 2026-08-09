@@ -13,17 +13,18 @@ public sealed class DenseCityCanalPresentationMaterialTests
     public static void RunFocusedValidation()
     {
         var suite = new DenseCityCanalPresentationMaterialTests();
-        suite.Override_IsLimitedToTheCanonicalCanalWaterSource();
+        suite.Override_RequiresCanonicalCanalWaterMaterialAndPrefab();
         suite.CandidateWaterMaterial_IsClearlyBlueAndRetainsTransparentPolicy();
         Debug.Log("[DenseCityCanalPresentationMaterialValidation] result=Passed tests=2");
     }
 
     [Test]
-    public void Override_IsLimitedToTheCanonicalCanalWaterSource()
+    public void Override_RequiresCanonicalCanalWaterMaterialAndPrefab()
     {
         Assert.That(
             DenseCityCandidateAuthoringTransaction.TryGetCandidatePresentationColorOverride(
                 DenseCityCandidateAuthoringTransaction.CanalWaterSourceMaterialPath,
+                DenseCityCandidateAuthoringTransaction.CanalSurfacePrefabPath,
                 out Color color),
             Is.True);
         AssertColor(
@@ -32,6 +33,13 @@ public sealed class DenseCityCanalPresentationMaterialTests
         Assert.That(
             DenseCityCandidateAuthoringTransaction.TryGetCandidatePresentationColorOverride(
                 "Assets/Other/Material.mat",
+                DenseCityCandidateAuthoringTransaction.CanalSurfacePrefabPath,
+                out _),
+            Is.False);
+        Assert.That(
+            DenseCityCandidateAuthoringTransaction.TryGetCandidatePresentationColorOverride(
+                DenseCityCandidateAuthoringTransaction.CanalWaterSourceMaterialPath,
+                "Assets/Game/Prefabs/Roads/Autobahn.prefab",
                 out _),
             Is.False);
     }

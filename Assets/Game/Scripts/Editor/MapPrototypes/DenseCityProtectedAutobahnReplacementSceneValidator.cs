@@ -369,6 +369,7 @@ namespace Game.Editor
                 manifests[0].Entries;
             var occupiedCells = new List<Vector2Int>(entries.Count);
             var usedPrefabGuids = new HashSet<string>(StringComparer.Ordinal);
+            int originalRoadMaterialSlotCount = 0;
             var generatedIdentityByStableId = FindInScene<DenseCityPresentationIdentityAuthoring>(
                     entityScene)
                 .ToDictionary(identity => identity.StableId, StringComparer.Ordinal);
@@ -413,6 +414,15 @@ namespace Game.Editor
                 }
                 usedPrefabGuids.Add(prefabGuid);
 
+                if (!TryValidateOriginalRoadMaterials(
+                        owner,
+                        out int roadMaterialSlotCount,
+                        out error))
+                {
+                    return false;
+                }
+                originalRoadMaterialSlotCount += roadMaterialSlotCount;
+
                 if (HasGameplaySurfaceAuthoring(owner))
                 {
                     error =
@@ -443,7 +453,8 @@ namespace Game.Editor
                 $"anchors={acceptedIds.Length} tiles={stats.TileCount} " +
                 $"laneCells={stats.LaneCellCount} connectorCells={stats.ConnectorCellCount} " +
                 $"connectorColumns={stats.ConnectorColumnCount} " +
-                $"prefabGuids={usedPrefabGuids.Count}";
+                $"prefabGuids={usedPrefabGuids.Count} " +
+                $"originalRoadMaterialSlots={originalRoadMaterialSlotCount}";
             error = string.Empty;
             return true;
         }
@@ -453,6 +464,80 @@ namespace Game.Editor
             owner.GetComponentInChildren<BridgeSurfaceAuthoring>(true) != null ||
             owner.GetComponentInChildren<MapBakeGroupAuthoring>(true) != null ||
             owner.GetComponentInChildren<StaticGridBlockerAuthoring>(true) != null;
+
+        private static bool TryValidateOriginalRoadMaterials(
+            GameObject owner,
+            out int materialSlotCount,
+            out string error)
+        {
+            materialSlotCount = 0;
+            Renderer[] renderers = owner.GetComponentsInChildren<Renderer>(true);
+            for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
+            {
+                Renderer renderer = renderers[rendererIndex];
+                Renderer sourceRenderer =
+                    PrefabUtility.GetCorrespondingObjectFromSource(renderer) as Renderer;
+                if (sourceRenderer == null)
+                {
+                    error =
+                        $"Protected Autobahn renderer " +
+                        $"'{GetHierarchyPath(renderer.transform)}' has no prefab source.";
+                    return false;
+                }
+
+                Material[] materials = renderer.sharedMaterials;
+                Material[] sourceMaterials = sourceRenderer.sharedMaterials;
+                if (materials.Length != sourceMaterials.Length)
+                {
+                    error =
+                        $"Protected Autobahn renderer " +
+                        $"'{GetHierarchyPath(renderer.transform)}' changed material-slot count " +
+                        $"from {sourceMaterials.Length} to {materials.Length}.";
+                    return false;
+                }
+
+                for (int materialIndex = 0; materialIndex < materials.Length; materialIndex++)
+                {
+                    Material material = materials[materialIndex];
+                    Material sourceMaterial = sourceMaterials[materialIndex];
+                    string materialPath = AssetDatabase.GetAssetPath(material);
+                    string sourceMaterialPath = AssetDatabase.GetAssetPath(sourceMaterial);
+                    if (material == null ||
+                        sourceMaterial == null ||
+                        !string.Equals(
+                            materialPath,
+                            sourceMaterialPath,
+                            StringComparison.Ordinal))
+                    {
+                        error =
+                            $"Protected Autobahn renderer " +
+                            $"'{GetHierarchyPath(renderer.transform)}' material slot " +
+                            $"{materialIndex} does not retain its prefab road material " +
+                            $"('{sourceMaterialPath}' -> '{materialPath}').";
+                        return false;
+                    }
+                    if (string.Equals(
+                            materialPath,
+                            DenseCityCandidateAuthoringTransaction.CanalWaterSourceMaterialPath,
+                            StringComparison.Ordinal) ||
+                        (material.HasProperty("_Surface") &&
+                         material.GetFloat("_Surface") >= 0.5f) ||
+                        material.renderQueue >= 3000)
+                    {
+                        error =
+                            $"Protected Autobahn renderer " +
+                            $"'{GetHierarchyPath(renderer.transform)}' material slot " +
+                            $"{materialIndex} is water/transparent instead of the original " +
+                            $"opaque road material ('{materialPath}').";
+                        return false;
+                    }
+                    materialSlotCount++;
+                }
+            }
+
+            error = string.Empty;
+            return true;
+        }
 
         private static bool IsCardinallyConnected(HashSet<Vector2Int> occupancy)
         {

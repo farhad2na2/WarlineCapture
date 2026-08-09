@@ -267,8 +267,21 @@ public sealed class OperationMapRenderStateSyncSystemTests
         fixture.UpdateStateSync();
         fixture.AppendChange(0, OperationMapRenderVisualState.Destroyed, 2);
 
+        DynamicBuffer<OperationMapRenderStateChangeComponent> changes =
+            fixture.EntityManager.GetBuffer<OperationMapRenderStateChangeComponent>(
+                fixture.DatabaseEntity);
+        OperationMapRenderStateChangeSequenceComponent sequence =
+            fixture.EntityManager.GetComponentData<
+                OperationMapRenderStateChangeSequenceComponent>(fixture.DatabaseEntity);
+        OperationMapRenderStateSyncStateComponent sync =
+            fixture.EntityManager.GetComponentData<
+                OperationMapRenderStateSyncStateComponent>(fixture.DatabaseEntity);
         Assert.That(
-            fixture.UpdateStateSync,
+            () => OperationMapRenderStateSyncSystem.ValidatePendingChanges(
+                changes,
+                sequence,
+                sync.LastAppliedChangeVersion,
+                sync.StateOwnerCount),
             Throws.TypeOf<InvalidOperationException>().With.Message.Contains(
                 "invalid or out of sequence"));
         Assert.That(

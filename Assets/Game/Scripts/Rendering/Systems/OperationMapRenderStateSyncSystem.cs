@@ -321,7 +321,7 @@ namespace Game.Rendering
             }
         }
 
-        private static void ValidatePendingChanges(
+        internal static void ValidatePendingChanges(
             DynamicBuffer<OperationMapRenderStateChangeComponent> changes,
             OperationMapRenderStateChangeSequenceComponent sequence,
             uint lastAppliedVersion,

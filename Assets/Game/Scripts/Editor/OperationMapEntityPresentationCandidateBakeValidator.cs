@@ -204,6 +204,127 @@ namespace Game.Editor
             }
         }
 
+        public static void BakeAndValidateProductionDenseCityMaterialTransformParity()
+        {
+            string projectRoot = Path.GetDirectoryName(Application.dataPath);
+            string candidatePath = DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath;
+            string candidatePhysicalPath = ResolveProjectPath(projectRoot, candidatePath);
+            if (!File.Exists(candidatePhysicalPath))
+            {
+                throw new FileNotFoundException(
+                    "The production dense-city EntityScene is missing.",
+                    candidatePhysicalPath);
+            }
+
+            RequireProductionDenseCityCandidateBinding();
+            string[] protectedPaths =
+            {
+                OperationMapAddressablesLayoutBuilder.DefinitionPath,
+                OperationMapAddressablesLayoutBuilder.SourceScenePath,
+                OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                    .DenseCandidateDefinitionPath,
+                DenseCityCandidateAuthoringTransaction.CandidateMapScenePath,
+                candidatePath,
+                MapWideConfigPath
+            };
+            var protectedHashes = protectedPaths.ToDictionary(
+                path => path,
+                path => ComputeSha256(ResolveProjectPath(projectRoot, path)),
+                StringComparer.Ordinal);
+
+            SceneSetup[] previousSetup = EditorSceneManager.GetSceneManagerSetup();
+            World bakeWorld = null;
+            object blobStore = null;
+            try
+            {
+                Scene candidateScene = EditorSceneManager.OpenScene(
+                    candidatePath,
+                    OpenSceneMode.Additive);
+                bakeWorld = new World("DenseCityProductionMaterialTransformParityBake");
+                blobStore = CreateBlobAssetStore();
+                if (!TryBakeScene(
+                        bakeWorld,
+                        candidateScene,
+                        candidatePath,
+                        blobStore,
+                        out string bakeError))
+                {
+                    throw new InvalidOperationException(
+                        $"Production dense-city parity bake failed: {bakeError}");
+                }
+
+                OperationMapDenseCityGeneratedTransformParityValidator
+                    .DenseCityGeneratedTransformParityReport parity =
+                    OperationMapDenseCityGeneratedTransformParityValidator.ValidateAndWrite(
+                        projectRoot,
+                        candidateScene,
+                        bakeWorld.EntityManager);
+
+                foreach (KeyValuePair<string, string> protectedHash in protectedHashes)
+                {
+                    RequireHashUnchanged(
+                        protectedHash.Value,
+                        ResolveProjectPath(projectRoot, protectedHash.Key));
+                }
+                RequireProductionDenseCityCandidateBinding();
+
+                Debug.Log(
+                    "[OperationMapProductionDenseCityMaterialTransformParity] result=Passed " +
+                    $"candidateIdentities={parity.candidateIdentityCount} " +
+                    $"bakedIdentities={parity.bakedIdentityCount} " +
+                    $"candidateRenderers={parity.generatedCandidateRendererEntityCount} " +
+                    $"bakedRenderers={parity.generatedBakedRenderEntityCount} " +
+                    $"meshMismatches={parity.generatedMeshMismatchCount} " +
+                    $"materialMismatches={parity.generatedMaterialMismatchCount} " +
+                    $"baseColorMismatches={parity.generatedBaseColorMismatchCount} " +
+                    $"rejectedRows={parity.rejectedRowCount} productionCutover=1");
+            }
+            finally
+            {
+                if (bakeWorld != null)
+                    bakeWorld.Dispose();
+                DisposeBlobAssetStore(blobStore);
+                RestoreSceneSetupOrCreateEmpty(previousSetup);
+            }
+        }
+
+        private static void RequireProductionDenseCityCandidateBinding()
+        {
+            OperationMapDefinition production =
+                AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
+                    OperationMapAddressablesLayoutBuilder.DefinitionPath);
+            OperationMapDefinition candidate =
+                AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
+                    OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                        .DenseCandidateDefinitionPath);
+            string entitySceneGuid = AssetDatabase.AssetPathToGUID(
+                DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath);
+            string sourceSceneGuid = AssetDatabase.AssetPathToGUID(
+                OperationMapAddressablesLayoutBuilder.SourceScenePath);
+
+            if (production == null || candidate == null ||
+                production.PresentationKind != OperationMapPresentationKind.EntityScene ||
+                production.RenderResidencyMode !=
+                    OperationMapRenderResidencyMode.VirtualizedProxyPool ||
+                !string.Equals(
+                    production.NavigationMetadata.AuthoredSubSceneGuid,
+                    entitySceneGuid,
+                    StringComparison.Ordinal) ||
+                !string.Equals(
+                    candidate.NavigationMetadata.AuthoredSubSceneGuid,
+                    entitySceneGuid,
+                    StringComparison.Ordinal) ||
+                !string.Equals(
+                    production.SourceSceneReference.AssetGUID,
+                    sourceSceneGuid,
+                    StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException(
+                    "Production is not bound to the accepted dense-city EntityScene proxy-pool " +
+                    "candidate and runtime source scene.");
+            }
+        }
+
         public static void BakeAndValidateDenseCityCandidateVehicleOwnership()
         {
             string candidatePath = DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath;

@@ -12,7 +12,7 @@ namespace Game.Runtime
         private const float DefaultMaxZoomHeight = 45f;
         private const float MobileNormalModeZoomHeightCap = 36f;
         private const float MobileBuildModeZoomHeightCap = 72f;
-        private const float MobileMaxZoomHeightCap = 72f;
+        private const float MobileMaxZoomHeightCap = 40f;
         private const string ForceMobileCameraLimitsEnv = "WARLINE_FORCE_MOBILE_CAMERA_LIMITS";
 
         public struct State

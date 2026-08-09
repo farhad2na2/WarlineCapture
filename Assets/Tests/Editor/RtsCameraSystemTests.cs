@@ -26,6 +26,7 @@ public sealed class RtsCameraSystemTests
             RunCase(nameof(PanCamera_MovesAlongFlattenedCameraAxes), test => test.PanCamera_MovesAlongFlattenedCameraAxes());
             RunCase(nameof(PanCamera_ClampsViewportInsideGroundBoundary), test => test.PanCamera_ClampsViewportInsideGroundBoundary());
             RunCase(nameof(ResolveClampSafePerspectiveHeight_LeavesPanRoomAtMaxZoom), test => test.ResolveClampSafePerspectiveHeight_LeavesPanRoomAtMaxZoom());
+            RunCase(nameof(MobileRuntimeCameraLimits_CapZoomOutAtFullscreenOverviewHeight), test => test.MobileRuntimeCameraLimits_CapZoomOutAtFullscreenOverviewHeight());
             RunCase(nameof(ProcessPendingRequests_ClampsInitialCameraViewportInsideGrid), test => test.ProcessPendingRequests_ClampsInitialCameraViewportInsideGrid());
             RunCase(nameof(ProcessPendingRequests_PrefersActiveOperationMapCameraBounds), test => test.ProcessPendingRequests_PrefersActiveOperationMapCameraBounds());
             RunCase(nameof(RuntimePanCamera_IgnoresDirectPanAndDragWhenTacticalFollowLocked), test => test.RuntimePanCamera_IgnoresDirectPanAndDragWhenTacticalFollowLocked());
@@ -52,7 +53,7 @@ public sealed class RtsCameraSystemTests
             RunCase(nameof(RuntimeCameraTick_DoesNotAutoSettleManualZoomOutAfterIntroComplete), test => test.RuntimeCameraTick_DoesNotAutoSettleManualZoomOutAfterIntroComplete());
             RunCase(nameof(MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests), test => test.MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests());
             RunCase(nameof(MatchIntroFirstPlay_HoldsZoomedOutUntilIntroCompletes), test => test.MatchIntroFirstPlay_HoldsZoomedOutUntilIntroCompletes());
-            Debug.Log("[RtsCameraFocusedValidation] result=Passed tests=33");
+            Debug.Log("[RtsCameraFocusedValidation] result=Passed tests=34");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -243,6 +244,29 @@ public sealed class RtsCameraSystemTests
 
         Assert.That(Vector2.Distance(beforePanXZ, afterPanXZ), Is.GreaterThan(0.001f), "Safe max zoom must leave enough boundary room for drag pan.");
         AssertCameraFootprintInside(cameraSystem, camera, boundary);
+    }
+
+    [Test]
+    public void MobileRuntimeCameraLimits_CapZoomOutAtFullscreenOverviewHeight()
+    {
+        const string forceMobileLimits = "WARLINE_FORCE_MOBILE_CAMERA_LIMITS";
+        string previous = Environment.GetEnvironmentVariable(forceMobileLimits);
+        try
+        {
+            Environment.SetEnvironmentVariable(forceMobileLimits, "1");
+
+            SelectionRuntimeConfigStartupSystemHelper.State state =
+                SelectionRuntimeConfigStartupSystemHelper.CreateStateFromConfig(null, null);
+
+            Assert.That(state.MaxZoomHeight, Is.EqualTo(40f).Within(0.0001f));
+            Assert.That(state.NormalModeZoomHeight, Is.EqualTo(24f).Within(0.0001f));
+            Assert.That(state.BuildModeZoomHeight, Is.EqualTo(40f).Within(0.0001f));
+            Assert.That(state.FullscreenIsoZoomHeight, Is.EqualTo(40f).Within(0.0001f));
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable(forceMobileLimits, previous);
+        }
     }
 
     [Test]

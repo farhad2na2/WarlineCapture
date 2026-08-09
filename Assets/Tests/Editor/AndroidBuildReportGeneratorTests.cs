@@ -305,6 +305,10 @@ public sealed class AndroidBuildReportGeneratorTests
             "buildType,\n                buildProvenance",
             method,
             "Report generation must consume the pre-build provenance snapshot.");
+        StringAssert.Contains(
+            "BuildAndroid(\"APK\", cleanBuildCache: true);",
+            method,
+            "The focused production APK entry point must force a clean build cache.");
     }
 
     [Test]
@@ -324,7 +328,7 @@ public sealed class AndroidBuildReportGeneratorTests
 
         string method = source.Substring(methodStart, methodEnd - methodStart);
         StringAssert.Contains(
-            "profilerBuild\n                    ? BuildOptions.Development",
+            "ResolveDenseCityCandidateAndroidBuildOptions(profilerBuild)",
             method);
         StringAssert.DoesNotContain("BuildOptions.ConnectWithProfiler", method);
         StringAssert.DoesNotContain("BuildOptions.EnableDeepProfilingSupport", method);

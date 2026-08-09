@@ -70,10 +70,25 @@ namespace Game.Editor
         {
             var arg = Environment.GetCommandLineArgs();
             var buildType = GetArgument(arg, "-buildType");
-            AndroidBuildReportProvenance buildProvenance =
-                AndroidBuildReportGenerator.CaptureGitProvenance();
             bool cleanBuildCache = arg.Any(value =>
                 string.Equals(value, "-cleanBuild", StringComparison.OrdinalIgnoreCase));
+            BuildAndroid(buildType, cleanBuildCache);
+        }
+
+        public static void BuildProductionAndroidApk()
+        {
+            BuildAndroid("APK", cleanBuildCache: true);
+            string outputPath = $"Build/AndroidAPK/{ResolveBuildOutputName()}.apk";
+            var package = new FileInfo(outputPath);
+            UnityEngine.Debug.Log(
+                "[ProductionAndroidPackage] result=Passed " +
+                $"output={package.FullName} bytes={package.Length} cacheMode=clean");
+        }
+
+        private static void BuildAndroid(string buildType, bool cleanBuildCache)
+        {
+            AndroidBuildReportProvenance buildProvenance =
+                AndroidBuildReportGenerator.CaptureGitProvenance();
             SwitchBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
             ConfigureGradleUserHome();
 

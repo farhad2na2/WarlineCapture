@@ -1,16 +1,41 @@
+using System;
+using Game.Configs;
 using Game.Editor;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings;
+using UnityEngine;
 
 public sealed class OperationMapEntitySceneBuildAdditionsTests
 {
-    [Test]
-    public void RegisteredEntitySceneMatchesOperationMapSourceSubScene()
+    public static void RunFocusedValidation()
     {
-        string expectedGuid = AssetDatabase.AssetPathToGUID(
-            OperationMapAddressablesLayoutBuilder.SourceSubScenePath);
+        try
+        {
+            var tests = new OperationMapEntitySceneBuildAdditionsTests();
+            tests.RegisteredEntitySceneMatchesProductionDefinition();
+            tests.SourceSubSceneIsNotManuallyAddressable();
+            Debug.Log("[OperationMapEntitySceneBuildAdditionsValidation] result=Passed tests=2");
+            ValidationExit.Passed();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[OperationMapEntitySceneBuildAdditionsValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
+    [Test]
+    public void RegisteredEntitySceneMatchesProductionDefinition()
+    {
+        OperationMapDefinition definition =
+            AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
+                OperationMapAddressablesLayoutBuilder.DefinitionPath);
+        Assert.That(definition, Is.Not.Null);
+        Assert.That(definition.PresentationKind, Is.EqualTo(OperationMapPresentationKind.EntityScene));
+        string expectedGuid = definition.NavigationMetadata.AuthoredSubSceneGuid;
         var additions = new OperationMapEntitySceneBuildAdditions();
 
         var registered = additions.RegisterAdditionalEntityScenesToBuild();

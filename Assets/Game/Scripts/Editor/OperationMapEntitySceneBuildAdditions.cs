@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Game.Configs;
 using Unity.Entities;
 using Unity.Scenes.Editor;
 using UnityEditor;
@@ -23,10 +24,27 @@ namespace Game.Editor
 
         public HashSet<Hash128> RegisterAdditionalEntityScenesToBuild()
         {
-            string scenePath = string.IsNullOrEmpty(currentProcessSceneOverride)
-                ? OperationMapAddressablesLayoutBuilder.SourceSubScenePath
-                : currentProcessSceneOverride;
-            string guid = AssetDatabase.AssetPathToGUID(scenePath);
+            string scenePath = currentProcessSceneOverride;
+            string guid;
+            if (!string.IsNullOrEmpty(scenePath))
+            {
+                guid = AssetDatabase.AssetPathToGUID(scenePath);
+            }
+            else
+            {
+                OperationMapDefinition definition =
+                    AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
+                        OperationMapAddressablesLayoutBuilder.DefinitionPath);
+                bool usesEntityScene = definition != null &&
+                    definition.PresentationKind == OperationMapPresentationKind.EntityScene;
+                scenePath = usesEntityScene
+                    ? AssetDatabase.GUIDToAssetPath(
+                        definition.NavigationMetadata.AuthoredSubSceneGuid)
+                    : OperationMapAddressablesLayoutBuilder.SourceSubScenePath;
+                guid = usesEntityScene
+                    ? definition.NavigationMetadata.AuthoredSubSceneGuid
+                    : AssetDatabase.AssetPathToGUID(scenePath);
+            }
             var sceneGuid = new Hash128(guid);
             if (!sceneGuid.IsValid)
             {

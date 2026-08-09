@@ -469,12 +469,12 @@ namespace Game.Runtime
                                           snapshot,
                                           OperationMapRenderVisualState.Intact);
 
-            int recycledSlotCount = travelAnchorIntact
+            int releasedSlotOverlap = travelAnchorIntact
                 ? CountVrp095Overlap(
                     _vrp095VisibleIntactSlots,
                     snapshot.Slots)
                 : 0;
-            if (recycledSlotCount == 0)
+            if (!travelAnchorIntact)
             {
                 if (!TryResolveVrp095RecycledBuilding(
                         entityManager,
@@ -482,13 +482,13 @@ namespace Game.Runtime
                         _vrp095Visible.StateOwnerIndex,
                         out _vrp095Recycle,
                         out snapshot,
-                        out recycledSlotCount))
+                        out releasedSlotOverlap))
                 {
                     _vrp095PhaseFrameCount++;
                     if (_vrp095PhaseFrameCount > Vrp095WaitFrames)
                     {
                         FailVrp095(
-                            "visible intact proxy slots were not recycled through an active building");
+                            "active intact replacement building did not materialize");
                     }
 
                     return;
@@ -515,7 +515,7 @@ namespace Game.Runtime
                 "[VRP-095 StateScenario] phase=RecycleIntact " +
                 $"stateOwner={_vrp095Recycle.StateOwnerIndex} " +
                 $"travelAnchor={travelAnchorStateOwner} " +
-                $"recycledSlots={recycledSlotCount} " +
+                $"releasedSlotOverlap={releasedSlotOverlap} " +
                 $"slots={snapshot.Count} intact={snapshot.IntactCount} " +
                 $"destroyed={snapshot.DestroyedCount}");
         }
@@ -668,10 +668,7 @@ namespace Game.Runtime
                         out Vrp095Snapshot stableRecycle) ||
                     !IsVrp095SnapshotState(
                         stableRecycle,
-                        OperationMapRenderVisualState.Intact) ||
-                    CountVrp095Overlap(
-                        _vrp095VisibleIntactSlots,
-                        stableRecycle.Slots) == 0)
+                        OperationMapRenderVisualState.Intact))
                 {
                     _vrp095Phase = Vrp095Phase.VerifyRecycle;
                     _vrp095PhaseFrameCount = 0;

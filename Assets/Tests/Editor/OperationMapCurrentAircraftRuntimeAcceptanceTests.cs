@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Game.Components;
 using Game.Composition;
@@ -10,9 +11,29 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEditor;
+using Debug = UnityEngine.Debug;
 
 public sealed class OperationMapCurrentAircraftRuntimeAcceptanceTests
 {
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            var aircraftTests = new OperationMapCurrentAircraftRuntimeAcceptanceTests();
+            aircraftTests.CurrentMap_RunwayInitializesFixedWingAndTeardownRestoresCompatibility();
+            aircraftTests.CurrentMap_HelipadsFeedSpawnConsumerAndTeardownRestoresCompatibility();
+            new CurrentOperationMapScenarioSetupTests()
+                .StandardSkirmish_UsesCurrentPhysicalMapAndTypedDeploymentAnchors();
+            Debug.Log("[OperationMapCurrentAircraftRuntimeAcceptanceValidation] result=Passed tests=3");
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError("[OperationMapCurrentAircraftRuntimeAcceptanceValidation] result=Failed");
+            Debug.LogException(exception);
+            throw;
+        }
+    }
+
     [Test]
     public void CurrentMap_RunwayInitializesFixedWingAndTeardownRestoresCompatibility()
     {

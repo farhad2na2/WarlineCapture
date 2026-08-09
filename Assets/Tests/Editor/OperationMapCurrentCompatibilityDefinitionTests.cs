@@ -94,7 +94,7 @@ public sealed class OperationMapCurrentCompatibilityDefinitionTests
         }
         Assert.That(definition.NavigationMetadata.AuthoredSubSceneGuid,
             Is.EqualTo(AssetDatabase.AssetPathToGUID(
-                "Assets/Game/Scenes/Match/MatchSubScene.unity")));
+                "Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01_subscene.unity")));
         Assert.That(definition.NavigationMetadata.GridAuthoringLocalId, Is.EqualTo(146043441));
         Assert.That(definition.NavigationMetadata.StaticGridBlockerCount, Is.EqualTo(0));
         Assert.That(definition.NavigationMetadata.UsesSurfaceMovementMetadata, Is.True);
@@ -170,9 +170,31 @@ public sealed class OperationMapCurrentCompatibilityDefinitionTests
 
     private static string ComputeFileHash(string assetPath)
     {
-        using FileStream stream = File.OpenRead(Path.GetFullPath(assetPath));
+        byte[] source = File.ReadAllBytes(Path.GetFullPath(assetPath));
+        int crlfCount = 0;
+        for (int index = 0; index + 1 < source.Length; index++)
+        {
+            if (source[index] == '\r' && source[index + 1] == '\n')
+                crlfCount++;
+        }
+
+        byte[] canonical = source;
+        if (crlfCount > 0)
+        {
+            canonical = new byte[source.Length - crlfCount];
+            int outputIndex = 0;
+            for (int inputIndex = 0; inputIndex < source.Length; inputIndex++)
+            {
+                if (source[inputIndex] == '\r' &&
+                    inputIndex + 1 < source.Length &&
+                    source[inputIndex + 1] == '\n')
+                    continue;
+                canonical[outputIndex++] = source[inputIndex];
+            }
+        }
+
         using SHA256 sha256 = SHA256.Create();
-        byte[] hash = sha256.ComputeHash(stream);
+        byte[] hash = sha256.ComputeHash(canonical);
         const string digits = "0123456789abcdef";
         char[] result = new char[hash.Length * 2];
         for (int index = 0; index < hash.Length; index++)

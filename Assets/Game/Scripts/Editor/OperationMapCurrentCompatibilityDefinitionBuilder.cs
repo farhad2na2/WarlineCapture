@@ -24,7 +24,8 @@ namespace Game.Editor
         private const string MatchScenePath = "Assets/Game/Scenes/Match.unity";
         private const string GridPath = "Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset";
         private const string SurfacePath = "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset";
-        private const string SubScenePath = "Assets/Game/Scenes/Match/MatchSubScene.unity";
+        private const string SubScenePath =
+            "Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01_subscene.unity";
         private const string ManifestPath =
             "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/StaticMapPresentationManifest.asset";
         private const long WorldCameraLocalId = 1220593093;
@@ -43,7 +44,7 @@ namespace Game.Editor
         private const string SurfaceContentHash = "aa08cb9115e8727bfdbc671a4a2cfd9334ef48134c00d58d7d29e350c45b752c";
         private const string BuildingPlacementContentHash = "26973214f433c44ebca01f302ecbe05789c84e573dc48eb8b2c21f241823464d";
         private const string MatchSceneFileHash = "182f3b4cb50f48e1a573e1e90ee0c13baf9d62fce46e35b1850ef72097db5d75";
-        private const string SubSceneFileHash = "bcc255f3fb140a0d91687b45b679b47fb60f01f5cfa8690bac3032ec642dadd8";
+        private const string SubSceneFileHash = "eff3ce6992d234c7438a321f0f9f552c2abebcc0a4738445014bc8f86579965d";
         private const string ManifestFileHash = "a006ed18eab6523d9f9aeec82d6f21b5ff7089d9743a95e778117fe0fbb89c1b";
 
         [MenuItem("Game/Operation Maps/Rebuild Current Compatibility Definition")]
@@ -288,11 +289,36 @@ namespace Game.Editor
 
         private static void RequireFileHash(string assetPath, string expectedHash)
         {
-            using FileStream stream = File.OpenRead(Path.GetFullPath(assetPath));
             using SHA256 sha256 = SHA256.Create();
-            string actualHash = ToLowerHex(sha256.ComputeHash(stream));
+            string actualHash = ToLowerHex(sha256.ComputeHash(ReadCanonicalTextBytes(assetPath)));
             if (!string.Equals(actualHash, expectedHash, StringComparison.Ordinal))
                 throw new InvalidOperationException($"Compatibility input is stale: {assetPath}.");
+        }
+
+        private static byte[] ReadCanonicalTextBytes(string assetPath)
+        {
+            byte[] source = File.ReadAllBytes(Path.GetFullPath(assetPath));
+            int crlfCount = 0;
+            for (int index = 0; index + 1 < source.Length; index++)
+            {
+                if (source[index] == '\r' && source[index + 1] == '\n')
+                    crlfCount++;
+            }
+
+            if (crlfCount == 0)
+                return source;
+
+            var canonical = new byte[source.Length - crlfCount];
+            int outputIndex = 0;
+            for (int inputIndex = 0; inputIndex < source.Length; inputIndex++)
+            {
+                if (source[inputIndex] == '\r' &&
+                    inputIndex + 1 < source.Length &&
+                    source[inputIndex + 1] == '\n')
+                    continue;
+                canonical[outputIndex++] = source[inputIndex];
+            }
+            return canonical;
         }
 
         private static string ToLowerHex(byte[] bytes)

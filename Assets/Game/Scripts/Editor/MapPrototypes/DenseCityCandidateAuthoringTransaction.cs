@@ -393,6 +393,12 @@ namespace Game.Editor
                 {
                     throw new InvalidOperationException(error);
                 }
+                Scene activeBeforeLightingCleanup = SceneManager.GetActiveScene();
+                SceneManager.SetActiveScene(entityScene);
+                Lightmapping.lightingDataAsset = null;
+                EditorSceneManager.MarkSceneDirty(entityScene);
+                if (activeBeforeLightingCleanup.IsValid() && activeBeforeLightingCleanup.isLoaded)
+                    SceneManager.SetActiveScene(activeBeforeLightingCleanup);
                 if (!EditorSceneManager.SaveScene(mapScene, CandidateMapScenePath, false) ||
                     !EditorSceneManager.SaveScene(entityScene, CandidateEntityScenePath, false))
                 {

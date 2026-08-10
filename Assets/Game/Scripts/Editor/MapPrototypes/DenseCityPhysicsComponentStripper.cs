@@ -51,7 +51,9 @@ namespace Game.Editor
             if (parent == null)
                 throw new ArgumentNullException(nameof(parent));
 
-            GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
+            GameObject resolvedPrefab = OperationMapPhysicsFreePrefabResolver.Resolve(prefab);
+            GameObject instance =
+                (GameObject)PrefabUtility.InstantiatePrefab(resolvedPrefab, parent);
             if (instance == null)
             {
                 throw new InvalidOperationException(

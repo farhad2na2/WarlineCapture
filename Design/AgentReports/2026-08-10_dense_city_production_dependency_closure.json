@@ -1,0 +1,27 @@
+{
+    "schemaVersion": 1,
+    "result": "Passed",
+    "exactValidationRevision": "7b06200b458486313599d9bb8e9930d65d7ae0bd",
+    "addressableRootCount": 6,
+    "dependencyAssetCount": 1665,
+    "dependencySceneCount": 2,
+    "dependencyGameObjectAssetCount": 898,
+    "excludedGameplayGameObjectAssetCount": 220,
+    "validatedGameObjectRootCount": 905,
+    "prohibitedPhysicsComponentCount": 0,
+    "authoringSceneDependencyCount": 0,
+    "productionStaticManifestCount": 0,
+    "productionStaticChunkCount": 0,
+    "roots": [
+        "Assets/Game/Configs/OperationMaps/OperationMapCatalog_Compatibility.asset",
+        "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01.asset",
+        "Assets/Game/GeneratedOperationMaps/RuntimeBinding/opmap.skirmish.desert_base_01/opmap_skirmish_desert_base_01_runtime.unity",
+        "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset",
+        "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/MinimapRaster.png",
+        "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity"
+    ],
+    "forbiddenAuthoringPaths": [
+        "Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01.unity",
+        "Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01_subscene.unity"
+    ]
+}

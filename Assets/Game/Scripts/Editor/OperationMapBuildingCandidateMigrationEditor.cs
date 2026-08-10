@@ -95,6 +95,7 @@ namespace Game.Editor
                         placement.BuildingPrefab.GetComponent<BuildingDefinitionAuthoring>();
                     if (definition == null)
                         throw new InvalidOperationException($"Building prefab lacks definition authoring: {row.buildingPrefabPath}");
+                    definition = OperationMapPhysicsFreeBuildingDefinitionResolver.Resolve(definition);
 
                     Transform categoryRoot = ResolveCategoryRoot(buildingRoot, placement.Category);
                     var candidateOwner = new GameObject($"Building_{i:D4}_{sourceOwner.name}");

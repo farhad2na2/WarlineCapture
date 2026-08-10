@@ -1,0 +1,21 @@
+{
+    "schemaVersion": 1,
+    "result": "Passed",
+    "exactValidationRevision": "b5d5534b1f28f293f97c81730430f87c49fa0262",
+    "rollbackSourceRevision": "b9383b6a12e7b4ef6b9494a05a8a8788db90b859",
+    "rollbackArchiveSha256": "8cb615f4a82b312da806d5124261ff2e8b1af0e0cb6fdb2f0307331f80403764",
+    "rollbackArchiveFileCount": 545,
+    "rollbackArchiveSceneCount": 269,
+    "rollbackArchiveBytes": 42765094,
+    "retiredFileCount": 543,
+    "retiredSceneCount": 269,
+    "retiredBytes": 42628450,
+    "retainedFileCount": 2,
+    "retainedBytes": 136644,
+    "retainedMinimapPath": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/MinimapRaster.png",
+    "productionEntitySceneValidated": 1,
+    "productionStaticAddressableManifestCount": 0,
+    "productionStaticAddressableChunkCount": 0,
+    "rollbackRestorePreviouslyValidated": 1,
+    "androidProductionPreviouslyAccepted": 1
+}

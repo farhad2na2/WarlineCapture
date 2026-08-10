@@ -18,8 +18,9 @@ namespace Game.Editor
             {
                 ValidateAuthoritativeRouteAndIdempotence();
                 ValidateLaunchKeepsShellPresentationAlive();
+                ValidateMatchHudClearsMenuPopupLayer();
                 ValidateMissingAndAmbiguousBoundariesFailClosed();
-                Debug.Log("[MatchLaunchRouteValidation] result=Passed tests=6");
+                Debug.Log("[MatchLaunchRouteValidation] result=Passed tests=7");
                 Debug.Log("Application will terminate with return code 0");
                 Exit(0);
             }
@@ -62,6 +63,65 @@ namespace Game.Editor
             {
                 World.DefaultGameObjectInjectionWorld = previousWorld;
                 UnityEngine.Object.DestroyImmediate(launchSource);
+                UnityEngine.Object.DestroyImmediate(shellRoot);
+            }
+        }
+
+        private static void ValidateMatchHudClearsMenuPopupLayer()
+        {
+            GameObject shellRoot = new("MatchLaunchRouteValidation-MatchHudShell");
+            try
+            {
+                UIShellView shellView = shellRoot.AddComponent<UIShellView>();
+                UIShellContentView contentView = shellRoot.AddComponent<UIShellContentView>();
+
+                GameObject popupRoot = new(
+                    "MatchLaunchRouteValidation-PopupLayer",
+                    typeof(RectTransform),
+                    typeof(CanvasGroup),
+                    typeof(UIShellRegionView));
+                popupRoot.transform.SetParent(shellRoot.transform, false);
+                RectTransform popupRect = popupRoot.GetComponent<RectTransform>();
+                CanvasGroup popupGroup = popupRoot.GetComponent<CanvasGroup>();
+
+                GameObject popupContentObject = new(
+                    "MatchLaunchRouteValidation-PopupContent",
+                    typeof(RectTransform));
+                popupContentObject.transform.SetParent(popupRoot.transform, false);
+                RectTransform popupContent = popupContentObject.GetComponent<RectTransform>();
+
+                UIShellRegionView popupRegion = popupRoot.GetComponent<UIShellRegionView>();
+                popupRegion.Configure(
+                    UIShellRegionId.PopupLayer,
+                    popupRect,
+                    popupContent,
+                    popupGroup,
+                    Vector2.zero);
+                shellView.Configure(null, new[] { popupRegion }, contentView);
+                contentView.Configure(shellView, null, null, null, null, null);
+
+                GameObject staleSetup = new("MatchLaunchRouteValidation-StaleSkirmishSetup");
+                staleSetup.transform.SetParent(popupContent, false);
+                Require(popupContent.childCount == 1,
+                    "Focused setup did not install its stale menu popup sentinel.");
+
+                contentView.PrepareForCommandSequence(new[]
+                {
+                    new UiShellPresentationCommandModel(
+                        UiShellCommandKind.EnterMatchHud,
+                        default,
+                        default,
+                        default,
+                        0)
+                });
+
+                Require(shellRoot.activeSelf,
+                    "Entering the Match HUD disabled the persistent shell root.");
+                Require(popupContent.childCount == 0,
+                    "Entering the Match HUD retained the Skirmish Setup popup layer.");
+            }
+            finally
+            {
                 UnityEngine.Object.DestroyImmediate(shellRoot);
             }
         }

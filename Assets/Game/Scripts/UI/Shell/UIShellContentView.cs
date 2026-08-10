@@ -328,6 +328,7 @@ namespace Game.UI.Runtime
         {
             ClearRegion(UIShellRegionId.LoadingLayer);
             ClearRegion(UIShellRegionId.MenuBackgroundRegion);
+            ClearRegion(UIShellRegionId.PopupLayer);
             _matchHudHeaderContent = InstallSection(matchHudContentPrefab, UIShellContentSectionId.Header, UIShellRegionId.HeaderRegion);
             _matchHudCurrentOrderBannerView = _matchHudHeaderContent != null
                 ? _matchHudHeaderContent.GetComponent<MatchHudCurrentOrderBannerView>()

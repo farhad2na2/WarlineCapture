@@ -1,8 +1,11 @@
 using System;
 using System.IO;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using Game.Composition;
 using Game.Runtime;
+using Game.UI.Contracts;
+using Game.UI.Shell.Contracts.Ecs;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using NUnit.Framework;
 using Unity.Entities;
@@ -27,8 +30,9 @@ public sealed class MatchGameplayStartupCompositionSystemHelperTests
             tests.Advance_CapturesFailureOnceAndDoesNotRetry();
             tests.ResetForShutdown_PreservesTheExistingFailureLatch();
             tests.MatchStart_DoesNotBlockGameplayRequestOnProjectedRuntimeContent();
+            tests.MenuBootstrap_AdvancesMatchStartWhileLoadedViewIsPublishing();
             tests.SourceBoundary_IsNarrowAndKeepsTheBootstrapBelowItsRatchet();
-            Debug.Log("[MatchGameplayStartupCompositionValidation] result=Passed tests=6");
+            Debug.Log("[MatchGameplayStartupCompositionValidation] result=Passed tests=7");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -153,6 +157,22 @@ public sealed class MatchGameplayStartupCompositionSystemHelperTests
         StringAssert.DoesNotContain("IsUnitPrefabRegistryReady", source);
         StringAssert.DoesNotContain("Waiting for unit prefab registry", source);
         StringAssert.DoesNotContain("RequiresUnitPrefabRegistry", source);
+    }
+
+    [Test]
+    public void MenuBootstrap_AdvancesMatchStartWhileLoadedViewIsPublishing()
+    {
+        var composition = new MenuBootstrapCompositionSystemHelper();
+        MethodInfo canAdvance = typeof(MenuBootstrapCompositionSystemHelper).GetMethod(
+            "CanAdvanceMatchStart",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.That(canAdvance, Is.Not.Null);
+
+        var matchState = new UiShellStateComponent { ActiveRoute = UIRoute.Match };
+        var menuState = new UiShellStateComponent { ActiveRoute = UIRoute.MainMenu };
+
+        Assert.That(canAdvance.Invoke(composition, new object[] { matchState }), Is.True);
+        Assert.That(canAdvance.Invoke(composition, new object[] { menuState }), Is.False);
     }
 
     [Test]

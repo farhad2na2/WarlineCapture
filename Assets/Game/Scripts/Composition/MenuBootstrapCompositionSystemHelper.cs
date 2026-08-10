@@ -537,7 +537,15 @@ namespace Game.Composition
 
         private bool CanAdvanceMatchStart(UiShellStateComponent shellState)
         {
-            return shellState.ActiveRoute == UIRoute.Match && IsStaticMapPresentationPreloadReady();
+            if (shellState.ActiveRoute != UIRoute.Match)
+                return false;
+
+            // The match-start boundary owns waiting for the loaded MatchSceneView. Requiring a
+            // streamed view here prevents that boundary from advancing while the view is still
+            // being published, which can leave the loading route parked indefinitely. Once a
+            // view exists, static-presentation routes still wait for their preload; EntityScene
+            // routes continue immediately because they do not use the static streamer.
+            return streamedMatchView == null || IsStaticMapPresentationPreloadReady();
         }
 
         private bool IsStaticMapPresentationPreloadReady()

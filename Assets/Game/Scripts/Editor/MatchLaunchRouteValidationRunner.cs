@@ -2,6 +2,7 @@ using System;
 using Game.Composition;
 using Game.Components;
 using Game.UI.Contracts;
+using Game.UI.Runtime;
 using Game.UI.Shell.Contracts.Ecs;
 using Unity.Entities;
 using UnityEditor;
@@ -16,8 +17,9 @@ namespace Game.Editor
             try
             {
                 ValidateAuthoritativeRouteAndIdempotence();
+                ValidateLaunchKeepsShellPresentationAlive();
                 ValidateMissingAndAmbiguousBoundariesFailClosed();
-                Debug.Log("[MatchLaunchRouteValidation] result=Passed tests=5");
+                Debug.Log("[MatchLaunchRouteValidation] result=Passed tests=6");
                 Debug.Log("Application will terminate with return code 0");
                 Exit(0);
             }
@@ -26,6 +28,41 @@ namespace Game.Editor
                 Debug.LogException(exception);
                 Debug.LogError("[MatchLaunchRouteValidation] result=Failed");
                 Exit(1);
+            }
+        }
+
+        private static void ValidateLaunchKeepsShellPresentationAlive()
+        {
+            World previousWorld = World.DefaultGameObjectInjectionWorld;
+            using World world = new("MatchLaunchRouteValidation-PresentationLifetime");
+            GameObject shellRoot = new("MatchLaunchRouteValidation-ShellRoot");
+            GameObject launchSource = new("MatchLaunchRouteValidation-LaunchSource");
+            try
+            {
+                World.DefaultGameObjectInjectionWorld = world;
+                Entity boundary = CreateShellBoundary(world.EntityManager);
+                UiShellStateComponent shellState = world.EntityManager.GetComponentData<UiShellStateComponent>(boundary);
+                shellState.IsTransitionRunning = 1;
+                world.EntityManager.SetComponentData(boundary, shellState);
+
+                shellRoot.AddComponent<UIRouterView>();
+                launchSource.transform.SetParent(shellRoot.transform, false);
+
+                var command = new MatchLaunchCommand(new QuickCustomGameConfigStore());
+                command.LaunchMatch(launchSource.transform);
+
+                Require(shellRoot.activeSelf,
+                    "Match launch disabled the shell presentation before the authoritative route could be consumed.");
+                DynamicBuffer<UiShellRouteRequestComponent> requests =
+                    world.EntityManager.GetBuffer<UiShellRouteRequestComponent>(boundary);
+                Require(requests.Length == 1 && requests[0].Intent == UiShellRouteIntent.EnterMatch,
+                    "Match launch did not retain its authoritative route while a menu transition was completing.");
+            }
+            finally
+            {
+                World.DefaultGameObjectInjectionWorld = previousWorld;
+                UnityEngine.Object.DestroyImmediate(launchSource);
+                UnityEngine.Object.DestroyImmediate(shellRoot);
             }
         }
 

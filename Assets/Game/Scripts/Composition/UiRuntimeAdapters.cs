@@ -326,12 +326,8 @@ namespace Game.Composition
 
         public void LaunchMatch(Component source)
         {
-            if (!QueueMatchRoute())
-                return;
-
-            UIRouterView router = source != null ? source.GetComponentInParent<UIRouterView>() : null;
-            if (router != null)
-                router.gameObject.SetActive(false);
+            _ = source;
+            QueueMatchRoute();
         }
 
         private bool QueueMatchRoute()

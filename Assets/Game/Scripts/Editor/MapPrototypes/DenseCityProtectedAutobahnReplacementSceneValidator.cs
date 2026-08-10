@@ -34,6 +34,9 @@ namespace Game.Editor
 
     public static class DenseCityProtectedAutobahnReplacementSceneValidator
     {
+        private const string MatteAutobahnPavementMaterialPath =
+            "Assets/Game/Materials/Gray.mat";
+
         private static readonly HashSet<string> ApprovedRoadPrefabGuids =
             new(StringComparer.Ordinal)
             {
@@ -370,6 +373,7 @@ namespace Game.Editor
             var occupiedCells = new List<Vector2Int>(entries.Count);
             var usedPrefabGuids = new HashSet<string>(StringComparer.Ordinal);
             int originalRoadMaterialSlotCount = 0;
+            int mattePavementMaterialSlotCount = 0;
             var generatedIdentityByStableId = FindInScene<DenseCityPresentationIdentityAuthoring>(
                     entityScene)
                 .ToDictionary(identity => identity.StableId, StringComparer.Ordinal);
@@ -417,11 +421,13 @@ namespace Game.Editor
                 if (!TryValidateOriginalRoadMaterials(
                         owner,
                         out int roadMaterialSlotCount,
+                        out int mattePavementSlotCount,
                         out error))
                 {
                     return false;
                 }
                 originalRoadMaterialSlotCount += roadMaterialSlotCount;
+                mattePavementMaterialSlotCount += mattePavementSlotCount;
 
                 if (HasGameplaySurfaceAuthoring(owner))
                 {
@@ -454,7 +460,8 @@ namespace Game.Editor
                 $"laneCells={stats.LaneCellCount} connectorCells={stats.ConnectorCellCount} " +
                 $"connectorColumns={stats.ConnectorColumnCount} " +
                 $"prefabGuids={usedPrefabGuids.Count} " +
-                $"originalRoadMaterialSlots={originalRoadMaterialSlotCount}";
+                $"originalRoadMaterialSlots={originalRoadMaterialSlotCount} " +
+                $"mattePavementMaterialSlots={mattePavementMaterialSlotCount}";
             error = string.Empty;
             return true;
         }
@@ -468,9 +475,11 @@ namespace Game.Editor
         private static bool TryValidateOriginalRoadMaterials(
             GameObject owner,
             out int materialSlotCount,
+            out int mattePavementSlotCount,
             out string error)
         {
             materialSlotCount = 0;
+            mattePavementSlotCount = 0;
             Renderer[] renderers = owner.GetComponentsInChildren<Renderer>(true);
             for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
             {
@@ -531,8 +540,36 @@ namespace Game.Editor
                             $"opaque road material ('{materialPath}').";
                         return false;
                     }
+                    if (string.Equals(
+                            materialPath,
+                            MatteAutobahnPavementMaterialPath,
+                            StringComparison.Ordinal))
+                    {
+                        if (!material.HasProperty("_EnvironmentReflections") ||
+                            material.GetFloat("_EnvironmentReflections") > 0.01f ||
+                            !material.IsKeywordEnabled("_ENVIRONMENTREFLECTIONS_OFF") ||
+                            !material.HasProperty("_Smoothness") ||
+                            material.GetFloat("_Smoothness") > 0.1f)
+                        {
+                            error =
+                                $"Protected Autobahn pavement material '{materialPath}' " +
+                                "must remain matte with environment reflections disabled " +
+                                "so the live Match runtime cannot tint the road blue.";
+                            return false;
+                        }
+                        mattePavementSlotCount++;
+                    }
                     materialSlotCount++;
                 }
+            }
+
+            if (mattePavementSlotCount == 0)
+            {
+                error =
+                    $"Protected Autobahn owner '{GetHierarchyPath(owner.transform)}' " +
+                    $"does not contain the approved matte pavement material " +
+                    $"'{MatteAutobahnPavementMaterialPath}'.";
+                return false;
             }
 
             error = string.Empty;

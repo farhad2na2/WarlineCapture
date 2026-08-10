@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "buildResultHash": "87319e35387dd6b5744d8b526660deed",
+  "buildTarget": "Android",
+  "aggregateBundleBytes": 135348884,
+  "maps": [
+    { "mapId": "opmap.skirmish.desert_base_01", "bundleCount": 5, "bundleBytes": 135348884 }
+  ],
+  "partitions": [  ],
+  "requiredAddresses": [
+    "operation-map/catalog",
+    "operation-map/opmap.skirmish.desert_base_01/definition",
+    "operation-map/opmap.skirmish.desert_base_01/entity-scene",
+    "operation-map/opmap.skirmish.desert_base_01/map-surface",
+    "operation-map/opmap.skirmish.desert_base_01/minimap-raster",
+    "operation-map/opmap.skirmish.desert_base_01/source-scene"
+  ],
+  "entitiesArtifacts": [  ],
+  "duplicateDependencies": [  ]
+}

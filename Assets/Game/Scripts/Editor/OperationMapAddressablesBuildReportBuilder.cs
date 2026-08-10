@@ -21,6 +21,8 @@ namespace Game.Editor
         internal const string MapId = "opmap.skirmish.desert_base_01";
         internal const string OutputPath =
             "Design/AgentReports/operation_map_addressables_build_report.json";
+        internal const string OutputPathEnvironmentVariable =
+            "WARLINE_OPERATION_MAP_ADDRESSABLES_REPORT_PATH";
 
         [MenuItem("Game/Operation Maps/Build Local Addressables And Publish Report")]
         public static void Run()
@@ -59,14 +61,16 @@ namespace Game.Editor
                     OperationMapAddressablesBuildReport report = Create(layout);
                     if (!TryValidateDuplicateDependencies(report.DuplicateDependencies, out string duplicateError))
                         throw new InvalidOperationException(duplicateError);
-                    bool wroteReport = Publish(OutputPath, Serialize(report));
+                    string outputPath = ResolveOutputPath();
+                    bool wroteReport = Publish(outputPath, Serialize(report));
                     Debug.Log(
                         $"[OperationMapAddressablesBuildReport] result=Passed " +
                         $"wrote={(wroteReport ? 1 : 0)} " +
                         $"maps={report.Maps.Length} bytes={report.AggregateBundleBytes} " +
                         $"partitions={report.Partitions.Length} addresses={report.RequiredAddresses.Length} " +
                         $"entitiesArtifacts={report.EntitiesArtifacts.Length} " +
-                        $"duplicates={report.DuplicateDependencies.Length}");
+                        $"duplicates={report.DuplicateDependencies.Length} " +
+                        $"report={outputPath}");
                 }
                 finally
                 {
@@ -482,6 +486,39 @@ namespace Game.Editor
                     File.Delete(temporaryPath);
             }
             return true;
+        }
+
+        internal static string ResolveOutputPath()
+        {
+            string requestedPath = Environment.GetEnvironmentVariable(
+                OutputPathEnvironmentVariable);
+            if (string.IsNullOrWhiteSpace(requestedPath))
+                return OutputPath;
+
+            string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+            string reportRoot = Path.GetFullPath(Path.Combine(
+                projectRoot,
+                "Design",
+                "AgentReports"));
+            string resolvedPath = Path.GetFullPath(
+                Path.IsPathRooted(requestedPath)
+                    ? requestedPath
+                    : Path.Combine(projectRoot, requestedPath));
+            string reportRootPrefix = reportRoot.TrimEnd(
+                Path.DirectorySeparatorChar,
+                Path.AltDirectorySeparatorChar) + Path.DirectorySeparatorChar;
+            if (!resolvedPath.StartsWith(reportRootPrefix, StringComparison.OrdinalIgnoreCase) ||
+                !string.Equals(
+                    Path.GetExtension(resolvedPath),
+                    ".json",
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException(
+                    $"{OutputPathEnvironmentVariable} must resolve to a JSON file under " +
+                    $"Design/AgentReports, not '{requestedPath}'.");
+            }
+
+            return resolvedPath;
         }
 
         private static void AppendSeparator(StringBuilder json, int index)

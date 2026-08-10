@@ -8,6 +8,7 @@ using Game.UI.Contracts;
 using Game.Components;
 using Game.Configs;
 using Game.UI.Runtime;
+using Game.UI.Shell.Contracts.Ecs;
 using Game.Runtime;
 
 namespace Game.Composition
@@ -318,40 +319,75 @@ namespace Game.Composition
 
     internal sealed class MatchLaunchCommand : IMatchLaunchCommand
     {
-        private readonly SceneLifecycleSceneSystemHelper sceneLifecycleSceneSystemHelper = new();
-        private readonly MatchStartRequestStartupSystemHelper matchStartRequestSystem = new();
-        private readonly QuickCustomGameConfigStore configStore;
-
         public MatchLaunchCommand(QuickCustomGameConfigStore configStore)
         {
-            this.configStore = configStore;
+            _ = configStore;
         }
 
         public void LaunchMatch(Component source)
         {
-            QueueMatchLoadAndStart();
+            if (!QueueMatchRoute())
+                return;
 
             UIRouterView router = source != null ? source.GetComponentInParent<UIRouterView>() : null;
             if (router != null)
                 router.gameObject.SetActive(false);
         }
 
-        private void QueueMatchLoadAndStart()
+        private bool QueueMatchRoute()
         {
             World world = World.DefaultGameObjectInjectionWorld;
             if (world == null || !world.IsCreated)
             {
-                Debug.LogError("[GameLaunch] Cannot queue Match start because the default ECS world is missing.");
-                return;
+                Debug.LogError("[GameLaunch] Cannot queue Match route because the default ECS world is missing.");
+                return false;
             }
 
-            EntityManager entityManager = world.EntityManager;
-            bool loadQueued = sceneLifecycleSceneSystemHelper.QueueLoadMatch(entityManager);
-            bool startQueued = matchStartRequestSystem.QueueStartAfterMatchLoaded(entityManager);
-            if (startQueued && configStore != null)
-                MatchAISettingsStartupProjection.Project(entityManager, configStore.CurrentSnapshot);
-            if (!loadQueued || !startQueued)
-                Debug.LogError($"[GameLaunch] Failed to queue Match start. loadQueued={(loadQueued ? 1 : 0)} startQueued={(startQueued ? 1 : 0)}");
+            return QueueMatchRoute(world.EntityManager);
+        }
+
+        internal bool QueueMatchRoute(EntityManager entityManager)
+        {
+            using EntityQuery query = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<UiShellRootComponent>(),
+                ComponentType.ReadWrite<UiShellStateComponent>(),
+                ComponentType.ReadWrite<UiShellRouteRequestComponent>());
+            if (query.IsEmptyIgnoreFilter)
+            {
+                Debug.LogError("[GameLaunch] Cannot queue Match route because the UI shell boundary is missing.");
+                return false;
+            }
+
+            Entity boundary;
+            try
+            {
+                boundary = query.GetSingletonEntity();
+            }
+            catch (System.Exception exception)
+            {
+                Debug.LogError($"[GameLaunch] Cannot queue Match route because the UI shell boundary is ambiguous. error={exception.Message}");
+                return false;
+            }
+
+            UiShellStateComponent shellState = entityManager.GetComponentData<UiShellStateComponent>(boundary);
+            DynamicBuffer<UiShellRouteRequestComponent> routeRequests =
+                entityManager.GetBuffer<UiShellRouteRequestComponent>(boundary);
+            bool alreadyQueued = shellState.ActiveRoute == UIRoute.Match;
+            for (int index = 0; index < routeRequests.Length && !alreadyQueued; index++)
+                alreadyQueued = routeRequests[index].Intent == UiShellRouteIntent.EnterMatch;
+
+            if (!alreadyQueued)
+            {
+                routeRequests.Add(new UiShellRouteRequestComponent
+                {
+                    Intent = UiShellRouteIntent.EnterMatch,
+                    Route = UIRoute.Match,
+                    PushHistory = 0
+                });
+            }
+
+            Debug.Log($"[GameLaunch] submitted authoritative Match route request. alreadyQueued={(alreadyQueued ? 1 : 0)}");
+            return true;
         }
     }
 

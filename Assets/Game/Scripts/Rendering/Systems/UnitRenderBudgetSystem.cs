@@ -192,6 +192,7 @@ namespace Game.Rendering
                 _queryContext.UnitQuery,
                 _unitEntityTypeHandle,
                 _unitLocalTransformTypeHandle,
+                state.Dependency,
                 Allocator.TempJob);
             NativeArray<Entity> units = snapshot.Units.AsArray();
             NativeArray<LocalTransform> transforms = snapshot.Transforms.AsArray();

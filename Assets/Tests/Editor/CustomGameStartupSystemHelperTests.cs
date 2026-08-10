@@ -20,15 +20,60 @@ public sealed class CustomGameStartupSystemHelperTests
             var tests = new CustomGameStartupSystemHelperTests();
             tests.InitializeFromLegacyConfigsCreatesStartupEntityAndBuffers();
             tests.InitializeFromLegacyConfigsResetsInitialSpawnLifecycleAndRequests();
+            tests.InitializeFromLegacyConfigsConsumesPackedRegistryOnStartupEntity();
             tests.InitializeFromLegacyConfigsKeepsFaction2TentBuildingKey();
             tests.InitializeCreatesSourceKeyStartupBuffers();
-            Debug.Log("[CustomGameStartupFocusedValidation] result=Passed tests=4");
+            Debug.Log("[CustomGameStartupFocusedValidation] result=Passed tests=5");
         }
         catch (Exception exception)
         {
             Debug.LogError("[CustomGameStartupFocusedValidation] result=Failed");
             Debug.LogException(exception);
             throw;
+        }
+    }
+
+    [Test]
+    public void InitializeFromLegacyConfigsConsumesPackedRegistryOnStartupEntity()
+    {
+        using var world = new World("CustomGameStartupPackedRegistryTests");
+        EntityManager em = world.EntityManager;
+        Entity convertedPrefab = em.CreateEntity(typeof(Prefab));
+        Entity startupEntity = em.CreateEntity(
+            typeof(CustomGameStartupStateComponent),
+            typeof(InitialUnitsSpawnConfig),
+            typeof(UnitPrefabRegistryTag));
+        em.AddBuffer<UnitPrefabRegistryEntry>(startupEntity).Add(new UnitPrefabRegistryEntry
+        {
+            Prefab = convertedPrefab
+        });
+
+        UnitPrefabRegistryAuthoringConfig registryConfig =
+            ScriptableObject.CreateInstance<UnitPrefabRegistryAuthoringConfig>();
+        GameObject sourcePrefab = new("Packed_Unit_Prefab");
+        try
+        {
+            SetPrivateField(
+                registryConfig,
+                "unitSpawnPrefabs",
+                new List<GameObject> { sourcePrefab });
+
+            CustomGameStartupSystemHelper system = new(em);
+            CustomGameStartupSystemHelper.Result result =
+                system.InitializeFromLegacyConfigs(null, registryConfig);
+
+            Assert.IsTrue(result.Initialized);
+            Assert.AreEqual(1, result.UnitRegistryEntryCount);
+            Assert.IsFalse(em.HasComponent<UnitPrefabRegistryTag>(startupEntity));
+            DynamicBuffer<UnitPrefabRegistryEntry> runtimeRegistry =
+                em.GetBuffer<UnitPrefabRegistryEntry>(startupEntity, true);
+            Assert.AreEqual(1, runtimeRegistry.Length);
+            Assert.AreEqual(convertedPrefab, runtimeRegistry[0].Prefab);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(sourcePrefab);
+            UnityEngine.Object.DestroyImmediate(registryConfig);
         }
     }
 

@@ -34,6 +34,7 @@ namespace Game.Rendering
             EntityQuery unitQuery,
             EntityTypeHandle entityTypeHandle,
             ComponentTypeHandle<LocalTransform> localTransformTypeHandle,
+            JobHandle dependency,
             Allocator allocator)
         {
             int capacity = unitQuery.CalculateEntityCount();
@@ -45,7 +46,7 @@ namespace Game.Rendering
                 LocalTransformTypeHandle = localTransformTypeHandle,
                 Units = units,
                 Transforms = transforms
-            }.Schedule(unitQuery, default);
+            }.Schedule(unitQuery, dependency);
             collectHandle.Complete();
 
             return new Snapshot(units, transforms);

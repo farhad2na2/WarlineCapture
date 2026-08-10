@@ -17,6 +17,7 @@ using Game.UI.Contracts;
 using Game.UI.Shell.Ecs;
 using Game.UI.Shell.Contracts.Ecs;
 using Game.Components;
+using Game.Composition;
 using Game.Configs;
 using Game.UI.Runtime;
 using Game.Runtime;
@@ -1256,12 +1257,14 @@ namespace Game.Editor
             bool matchSceneLoaded = IsSceneLoaded(MatchSceneName);
             bool hudLoaded = LoadedScenesContainMatchHudContent();
             bool curtainHidden = IsMatchIntroCurtainHidden();
+            string matchStartStatus = DescribeMatchStartBoundary();
+            string matchViewStatus = DescribeMatchSceneView();
             status =
                 $"mode={shellState.CurrentMode} route={shellState.ActiveRoute} phase={shellState.Phase} " +
                 $"transition={shellState.IsTransitionRunning} playRequested={runtimeState.PlayRequested} " +
                 $"matchIntro={matchIntro.State} inputLocked={matchIntro.InputLocked} " +
                 $"matchSceneLoaded={(matchSceneLoaded ? 1 : 0)} hudLoaded={(hudLoaded ? 1 : 0)} " +
-                $"curtainHidden={(curtainHidden ? 1 : 0)}";
+                $"curtainHidden={(curtainHidden ? 1 : 0)} {matchStartStatus} {matchViewStatus}";
 
             return shellState.CurrentMode == UiShellMode.MatchHud &&
                    shellState.ActiveRoute == UIRoute.Match &&
@@ -1272,6 +1275,46 @@ namespace Game.Editor
                    matchSceneLoaded &&
                    hudLoaded &&
                    (!requireCurtainHidden || curtainHidden);
+        }
+
+        private static string DescribeMatchStartBoundary()
+        {
+            World world = World.DefaultGameObjectInjectionWorld;
+            if (world == null || !world.IsCreated)
+                return "matchStart=world-missing";
+
+            EntityManager entityManager = world.EntityManager;
+            using EntityQuery query = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<MatchStartStateComponent>(),
+                ComponentType.ReadOnly<MatchStartQueueComponent>(),
+                ComponentType.ReadOnly<MatchStartProgressComponent>());
+            if (query.IsEmptyIgnoreFilter)
+                return "matchStart=boundary-missing";
+
+            Entity entity = query.GetSingletonEntity();
+            MatchStartQueueComponent queue = entityManager.GetComponentData<MatchStartQueueComponent>(entity);
+            MatchStartProgressComponent progress = entityManager.GetComponentData<MatchStartProgressComponent>(entity);
+            return
+                $"matchStart=status:{queue.LastStatus},pending:{queue.IsStartPending}," +
+                $"started:{queue.HasStarted},progress:{progress.Progress01:F2},detail:{progress.Status}";
+        }
+
+        private static string DescribeMatchSceneView()
+        {
+            MatchSceneView matchView = UnityEngine.Object.FindFirstObjectByType<MatchSceneView>(
+                FindObjectsInactive.Include);
+            if (matchView == null)
+                return "matchView=missing";
+
+            string failure = string.IsNullOrWhiteSpace(matchView.OperationMapContentFailure)
+                ? "none"
+                : matchView.OperationMapContentFailure.Replace(' ', '_');
+            return
+                $"matchView=present,bound:{(matchView.GameplayStartRequested ? 1 : 0)}," +
+                $"mapReady:{(matchView.OperationMapContentReady ? 1 : 0)}," +
+                $"mapProgress:{matchView.OperationMapContentProgress01:F2}," +
+                $"mapFailureCode:{matchView.OperationMapContentFailureCode}," +
+                $"mapFailure:{failure},presentation:{matchView.CanonicalPresentationMode}";
         }
 
         private static bool TryGetShellState(out UiShellStateComponent shellState)

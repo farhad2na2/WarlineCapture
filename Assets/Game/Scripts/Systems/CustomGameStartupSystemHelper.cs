@@ -702,7 +702,12 @@ namespace Game.Runtime
             for (int registryIndex = 0; registryIndex < registryEntities.Count; registryIndex++)
             {
                 Entity registryEntity = registryEntities[registryIndex];
-                if (registryEntity == startupEntity || !em.HasBuffer<UnitPrefabRegistryEntry>(registryEntity))
+                // The packed support EntityScene can place the baked registry buffer on
+                // the same entity that owns InitialUnitsSpawnConfig. Capture that buffer
+                // before InitializeFromLegacyConfigs removes its registry tag and rebuilds
+                // the runtime buffers. A previously initialized runtime entity has already
+                // lost the tag, so it cannot re-enter this query with stale data.
+                if (!em.HasBuffer<UnitPrefabRegistryEntry>(registryEntity))
                     continue;
 
                 DynamicBuffer<UnitPrefabRegistryEntry> entries = em.GetBuffer<UnitPrefabRegistryEntry>(registryEntity);

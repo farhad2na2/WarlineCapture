@@ -1,0 +1,22 @@
+{
+    "schemaVersion": 1,
+    "result": "Passed",
+    "sourceRevision": "b9383b6a12e7b4ef6b9494a05a8a8788db90b859",
+    "exactValidationRevision": "cad0b0309308e6961d18db36686a5a4e0064448a",
+    "rollbackDefinitionSha256": "49686c7368eecce60b22927cecb59aaa73fc83dba3b39f518ba1e5664e1f9692",
+    "rollbackRuntimeBindingSha256": "33656ad601617cdf85d9fef675d1f9abbc7f069e7ffcfce6f247d07c364f71bf",
+    "rollbackAddressablesSha256": "906b14ae50b76d0c87d54687e041a56259f5c4ae2d39eb6b90fa4cc4cd84e921",
+    "rollbackSourceAddressablesSha256": "a738ecf49a3304ac37189b57c2110b65dde626afc53c29cdb7335a471c3e23ca",
+    "productionTransactionSha256": "117f7f946aa0c00e70b90c1ac2a4b86c6e3c8ff2659ef6a8adcf2a7a6dcb84b8",
+    "productionRestoredSha256": "117f7f946aa0c00e70b90c1ac2a4b86c6e3c8ff2659ef6a8adcf2a7a6dcb84b8",
+    "staticRollbackSha256": "8cb615f4a82b312da806d5124261ff2e8b1af0e0cb6fdb2f0307331f80403764",
+    "staticRollbackFileCount": 545,
+    "staticRollbackSceneCount": 269,
+    "staticRollbackBytes": 42765094,
+    "transientAddressablesFileCount": 5,
+    "checkpointAddressablesIncludesTransient": 1,
+    "rollbackRestored": 1,
+    "productionReapplied": 1,
+    "staticPackagePreserved": 1,
+    "transientAddressablesRestored": 1
+}

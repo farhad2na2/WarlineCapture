@@ -1,0 +1,54 @@
+{
+  "schema": "warline.dense-city-final-android-package-evidence.v1",
+  "generatedUtc": "2026-08-10T22:15:00Z",
+  "result": "Passed",
+  "package": {
+    "type": "APK",
+    "path": "Build/AndroidAPK/WarlineCapture.apk",
+    "sourceRevision": "6b4d268b837f085987d4287e2ca2898f0db5b064",
+    "bytes": 557478145,
+    "sha256": "25e8dae2e4f19d93a2a3c994dab3dd898a8cc4cb3b1d7b0dfb608ff5afa71ff9",
+    "scriptingBackend": "IL2CPP",
+    "targetArchitecture": "ARM64",
+    "checkedBuildLog": "Build/Logs/parent-final-production-apk-6b4d268b8.log",
+    "requiredPassMarker": "[ProductionAndroidPackage] result=Passed"
+  },
+  "installedPackage": {
+    "deviceEndpoint": "192.168.2.33:44849",
+    "model": "SM-S918B",
+    "serial": "R5CTC1J02VB",
+    "packageName": "com.warlinecapture.game",
+    "basePath": "/data/app/~~ekfJjfTeHtekUjL7oQzz3A==/com.warlinecapture.game-U4adn6nPr9rQPfyI3AmIqg==/base.apk",
+    "baseBytes": 557478145,
+    "baseSha256": "25e8dae2e4f19d93a2a3c994dab3dd898a8cc4cb3b1d7b0dfb608ff5afa71ff9",
+    "baseByteIdenticalToPackage": true,
+    "installedCodeBytes": 741172224,
+    "installedDataBytes": 16035840,
+    "installedCacheBytes": 1085440,
+    "installedTotalReportedBytes": 758293504,
+    "installedExtractedLibraryBytes": 176291096,
+    "storageStatsNote": "Android package storage stats reported code/data/cache/APK/library bytes, then emitted a shell-UID SecurityException for a restricted follow-up query; the exact base APK length/hash were independently verified with device stat and sha256sum."
+  },
+  "packedContent": {
+    "mapCount": 1,
+    "requiredAddressCount": 6,
+    "bundleCount": 5,
+    "bundleBytes": 135348884,
+    "duplicatedDependencyCount": 0,
+    "duplicatedDependencyBytes": 0,
+    "staticPresentationPartitionCount": 0,
+    "productionStaticManifestCount": 0,
+    "productionStaticChunkCount": 0,
+    "authoringSceneDependencyCount": 0,
+    "authoringScenesExcluded": [
+      "Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01.unity",
+      "Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01_subscene.unity"
+    ]
+  },
+  "evidence": {
+    "addressablesReport": "Design/AgentReports/2026-08-10_dense_city_final_operation_map_addressables_build_report.json",
+    "dependencyClosureReport": "Design/AgentReports/2026-08-10_dense_city_production_dependency_closure.json",
+    "staticRetirementReport": "Design/AgentReports/2026-08-10_dense_city_static_retirement_validation.json"
+  },
+  "rejectedPackageReinstalled": false
+}

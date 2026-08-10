@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using Game.Editor;
 using Game.Runtime;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -14,6 +15,9 @@ public static class DenseCityBuildingPlacementIntegrationValidation
 {
     private const string ScenePath =
         "Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01.unity";
+    private const string GroundRoundMeshGuid = "6feace9dcba1b2941b298fba9b5b76a9";
+    private const string GroundRoundSourceMaterialGuid = "48843a2db7a47754f9c8d6ae390ebf4b";
+    private const string GroundVariationMaterialGuid = "e581a57183ed647799810867dc55e965";
 
     public static void RunFocusedValidation()
     {
@@ -36,6 +40,7 @@ public static class DenseCityBuildingPlacementIntegrationValidation
                     out string physicsError),
                 Is.True,
                 physicsError);
+            ValidateNaturalGroundPatchMaterials(view.GeneratedRoot);
             Assert.That(view.GeneratedRoot.position, Is.EqualTo(Vector3.zero));
             Assert.That(Quaternion.Angle(view.GeneratedRoot.rotation, Quaternion.identity), Is.LessThan(0.0001f));
             Assert.That(view.GeneratedRoot.lossyScale, Is.EqualTo(Vector3.one));
@@ -121,6 +126,50 @@ public static class DenseCityBuildingPlacementIntegrationValidation
         }
 
         ValidationExit.Exit(0);
+    }
+
+    private static void ValidateNaturalGroundPatchMaterials(Transform generatedRoot)
+    {
+        Assert.That(generatedRoot, Is.Not.Null);
+        int groundRoundRenderers = 0;
+        int sourceMaterialSlots = 0;
+        int customVariationMaterialSlots = 0;
+        MeshFilter[] filters = generatedRoot.GetComponentsInChildren<MeshFilter>(true);
+        for (int filterIndex = 0; filterIndex < filters.Length; filterIndex++)
+        {
+            MeshFilter filter = filters[filterIndex];
+            Mesh mesh = filter.sharedMesh;
+            if (mesh == null || AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(mesh)) != GroundRoundMeshGuid)
+                continue;
+
+            MeshRenderer renderer = filter.GetComponent<MeshRenderer>();
+            Assert.That(renderer, Is.Not.Null, $"Ground-round mesh '{filter.name}' has no MeshRenderer.");
+            groundRoundRenderers++;
+            Material[] materials = renderer.sharedMaterials;
+            Assert.That(materials, Is.Not.Empty, $"Ground-round renderer '{renderer.name}' has no materials.");
+            for (int materialIndex = 0; materialIndex < materials.Length; materialIndex++)
+            {
+                Material material = materials[materialIndex];
+                Assert.That(material, Is.Not.Null, $"Ground-round renderer '{renderer.name}' has a null material.");
+                string materialGuid = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(material));
+                if (materialGuid == GroundRoundSourceMaterialGuid)
+                    sourceMaterialSlots++;
+                if (materialGuid == GroundVariationMaterialGuid)
+                    customVariationMaterialSlots++;
+            }
+        }
+
+        Assert.That(groundRoundRenderers, Is.GreaterThan(0));
+        Assert.That(sourceMaterialSlots, Is.GreaterThan(0));
+        Assert.That(
+            customVariationMaterialSlots,
+            Is.Zero,
+            "Small ground-round patches must retain prefab-compatible materials; the custom macro shader renders black through virtualized slots.");
+        Debug.Log(
+            $"[DenseCityNaturalGroundMaterialValidation] result=Passed " +
+            $"groundRoundRenderers={groundRoundRenderers} " +
+            $"sourceMaterialSlots={sourceMaterialSlots} " +
+            $"customVariationMaterialSlots={customVariationMaterialSlots}");
     }
 
     private static void ValidateGeneratedFeatureRecordContracts(

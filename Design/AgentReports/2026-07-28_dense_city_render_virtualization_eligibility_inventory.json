@@ -4,7 +4,7 @@
     "result": "Passed",
     "operationMapId": "opmap.skirmish.desert_base_01",
     "candidateScenePath": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
-    "candidateSceneDependencyHash": "dda1738c26c013f8a4c50cd92c3ec30e",
+    "candidateSceneDependencyHash": "d5485e4f59fbbb7da67c01b4a38d94ab",
     "packedEvidencePath": "Design/AgentReports/2026-07-25_dense_city_packed_asset_sharing.json",
     "packedEvidenceRenderRows": 82797,
     "normalizedEmbeddedDestroyedDuplicateRowsRemoved": 4396,
@@ -17,26 +17,26 @@
     "unresolvedOwnerRenderRows": 355,
     "eligibleStableOwnerJoinedRenderRows": 61925,
     "sourceRowCount": 76517,
-    "sourceRowsSha256": "b814f2dda59817181c47e93571e669431c56379f90ae8ecb879512128e5cd0ff",
+    "sourceRowsSha256": "1b40fb3d1ee11e440b22124f59edd0c94e7f4b213d6a57c389797336d10177e5",
     "sourceRowsPath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_source_rows.json.gz",
     "sourceRowsCompression": "gzip",
-    "sourceRowsJsonSha256": "932ec43b05a27b83e8da0326130ec15fae1015d1b0a0188eb8c155698fa9d92a",
-    "sourceRowsGzipSha256": "e1a2f95c6fdbcecd56a4fa9f5425a83a044bd05d5895af942579ecfddd398b0d",
+    "sourceRowsJsonSha256": "66ee26978c3c4b85a9db1aaf6b15a36d2c3c089db039a7118d1b7e91ac6dea8c",
+    "sourceRowsGzipSha256": "5ee438e2f977d79643bbcb3897f231ae435185661158248ca7b5b705fd994811",
     "logicalPlacementCount": 40460,
-    "prototypeCount": 9108,
-    "prototypePartCount": 12294,
+    "prototypeCount": 9107,
+    "prototypePartCount": 12293,
     "prototypeRecipeRowsConsumed": 61925,
-    "prototypeRecipesSha256": "3541af813ef2d573a18f2f026b7d5aad9f72e3e8c23d87b40276110624e95b98",
+    "prototypeRecipesSha256": "68f41a47d8f8109eb1393d6b02d4d74c8e70a5ba6d57f8dc014572dba4bebf92",
     "prototypeRecipesPath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_prototype_recipes.json",
-    "prototypeRecipesJsonSha256": "9f75a4b3ab98d7ad61f01d8a55690c450a58ea06a349d8dec842d4777caafdf3",
+    "prototypeRecipesJsonSha256": "27c32ea03e64fc19b54da6ab3ecae1b843d561d649b644071b18b18dac0ca88f",
     "placementCount": 40460,
     "stateOwnerCount": 4530,
     "stateLinkedPlacementCount": 9060,
     "renderOnlyPlacementCount": 31400,
     "placementPartRowCount": 61925,
-    "logicalPlacementsSha256": "8447cbde849e8cfda0f02f85e10d5ea8df994dc5ec658234940ee88b5b293150",
+    "logicalPlacementsSha256": "76ac904fa1a2ef2cf251922c54565620d58873f482cb6561a96da6530090603c",
     "logicalPlacementsPath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_logical_placements.json",
-    "logicalPlacementsJsonSha256": "c88d5f8d23c2c5609a849c69780f26c22163c097ef0c1c56a9abfce6850f8a41",
+    "logicalPlacementsJsonSha256": "43d111ebdc0434ae25c3cc3595b92981aca0bb5c7eea983790e1ef234d5010e1",
     "renderCellSize": 32.0,
     "acceptedRenderGridOrigin": [
         0.0,
@@ -119586,16 +119586,16 @@
             "total": 1408
         },
         {
+            "key": "Infrastructure|prefab|5865dda7cc6f9e84495a47e8f9811563:5663504907340982192|5865dda7cc6f9e84495a47e8f9811563:5663504907338987888|88ef6d59d360f634b87dfa673d406580:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 168,
+            "excluded": 0,
+            "total": 168
+        },
+        {
             "key": "Infrastructure|prefab|5865dda7cc6f9e84495a47e8f9811563:5663504907340982192|5865dda7cc6f9e84495a47e8f9811563:5663504907338987888|88ef6d59d360f634b87dfa673d406580:4300000|59ec465e0e57248adb922ab08a27b755:2100000|0",
             "eligible": 752,
             "excluded": 0,
             "total": 752
-        },
-        {
-            "key": "Infrastructure|prefab|5865dda7cc6f9e84495a47e8f9811563:5663504907340982192|5865dda7cc6f9e84495a47e8f9811563:5663504907338987888|88ef6d59d360f634b87dfa673d406580:4300000|e581a57183ed647799810867dc55e965:2100000|0",
-            "eligible": 168,
-            "excluded": 0,
-            "total": 168
         },
         {
             "key": "Infrastructure|prefab|5c9b518346d37449587a4d7a10a7a470:125360972841645786|5c9b518346d37449587a4d7a10a7a470:6817077091035775243|a8108c677731e914491722c0e433889c:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
@@ -119652,16 +119652,16 @@
             "total": 29
         },
         {
+            "key": "Infrastructure|prefab|75631c8e76821f2479c1c06a4709a9b7:1532088383690136|75631c8e76821f2479c1c06a4709a9b7:23077661688082786|51ae3a82e4ede004088b051f37f99c62:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 154,
+            "excluded": 0,
+            "total": 154
+        },
+        {
             "key": "Infrastructure|prefab|75631c8e76821f2479c1c06a4709a9b7:1532088383690136|75631c8e76821f2479c1c06a4709a9b7:23077661688082786|51ae3a82e4ede004088b051f37f99c62:4300000|59ec465e0e57248adb922ab08a27b755:2100000|0",
             "eligible": 822,
             "excluded": 0,
             "total": 822
-        },
-        {
-            "key": "Infrastructure|prefab|75631c8e76821f2479c1c06a4709a9b7:1532088383690136|75631c8e76821f2479c1c06a4709a9b7:23077661688082786|51ae3a82e4ede004088b051f37f99c62:4300000|e581a57183ed647799810867dc55e965:2100000|0",
-            "eligible": 154,
-            "excluded": 0,
-            "total": 154
         },
         {
             "key": "Infrastructure|prefab|7688b8f8d8e484b088b5bb5183a569d0:2219165648693706337|7688b8f8d8e484b088b5bb5183a569d0:2610318579238923681|02d73b5526e75cc49ba953f6de18bc78:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
@@ -119743,21 +119743,15 @@
         },
         {
             "key": "Infrastructure|prefab|87f34f6fda934c743bede9cef5dd324a:1475455805769540|87f34f6fda934c743bede9cef5dd324a:23305772563269458|6feace9dcba1b2941b298fba9b5b76a9:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 3456,
+            "eligible": 7622,
             "excluded": 0,
-            "total": 3456
+            "total": 7622
         },
         {
             "key": "Infrastructure|prefab|87f34f6fda934c743bede9cef5dd324a:1475455805769540|87f34f6fda934c743bede9cef5dd324a:23305772563269458|6feace9dcba1b2941b298fba9b5b76a9:4300000|59ec465e0e57248adb922ab08a27b755:2100000|0",
             "eligible": 806,
             "excluded": 0,
             "total": 806
-        },
-        {
-            "key": "Infrastructure|prefab|87f34f6fda934c743bede9cef5dd324a:1475455805769540|87f34f6fda934c743bede9cef5dd324a:23305772563269458|6feace9dcba1b2941b298fba9b5b76a9:4300000|e581a57183ed647799810867dc55e965:2100000|0",
-            "eligible": 4166,
-            "excluded": 0,
-            "total": 4166
         },
         {
             "key": "Infrastructure|prefab|8a34e9514dfe04fd7a308e8dded1b154:4627792861614435960|8a34e9514dfe04fd7a308e8dded1b154:2785551417663278647|0000000000000000e000000000000000:10210|0fa5d366bb53f419589f173fccfd6863:2100000|0",
@@ -119832,16 +119826,16 @@
             "total": 18
         },
         {
+            "key": "Infrastructure|prefab|a9eb6b5686ff9db48a4766e125fd75d3:1144283006411506|a9eb6b5686ff9db48a4766e125fd75d3:23910814394105476|39e9c4895f0b5a34787c503110d9fd93:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 162,
+            "excluded": 0,
+            "total": 162
+        },
+        {
             "key": "Infrastructure|prefab|a9eb6b5686ff9db48a4766e125fd75d3:1144283006411506|a9eb6b5686ff9db48a4766e125fd75d3:23910814394105476|39e9c4895f0b5a34787c503110d9fd93:4300000|59ec465e0e57248adb922ab08a27b755:2100000|0",
             "eligible": 796,
             "excluded": 0,
             "total": 796
-        },
-        {
-            "key": "Infrastructure|prefab|a9eb6b5686ff9db48a4766e125fd75d3:1144283006411506|a9eb6b5686ff9db48a4766e125fd75d3:23910814394105476|39e9c4895f0b5a34787c503110d9fd93:4300000|e581a57183ed647799810867dc55e965:2100000|0",
-            "eligible": 162,
-            "excluded": 0,
-            "total": 162
         },
         {
             "key": "Infrastructure|prefab|ad3b72115e0cd44f099f64f43f090d1c:6752715572181065886|ad3b72115e0cd44f099f64f43f090d1c:3465647364283834676|c79f18f98ef15d94d9da27dc21f33692:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",

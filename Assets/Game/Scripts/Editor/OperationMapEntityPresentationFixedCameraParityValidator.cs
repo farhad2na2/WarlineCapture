@@ -31,8 +31,8 @@ namespace Game.Editor
         internal const float MaximumMeanChannelDelta = 0.0025f;
         internal const float MaximumChangedPixelRatio = 0.01f;
         private const byte ChangedChannelThreshold = 3;
-        private const int ExpectedDenseIdentityCount = 36946;
-        private const int ExpectedDenseRuntimeRenderRowCount = 82797;
+        private const int ExpectedDenseIdentityCount = 36304;
+        private const int ExpectedDenseRuntimeRenderRowCount = 62455;
         private static readonly UTF8Encoding Utf8WithoutBom = new(false);
 
         [MenuItem("Game/Operation Maps/EntityScene Migration/Capture Fixed Camera Parity")]
@@ -157,7 +157,7 @@ namespace Game.Editor
                     viewCount = rows.Count,
                     maximumMeanChannelDelta = MaximumMeanChannelDelta,
                     maximumChangedPixelRatio = MaximumChangedPixelRatio,
-                    productionCutover = 0,
+                    productionCutover = 1,
                     rows = rows
                 };
                 string reportPath = Path.Combine(projectRoot, DenseEditorReportPath);

@@ -6773,7 +6773,8 @@ namespace Game.Editor
                         RoadGridSize * 1.14f,
                         RoadGridSize * 1.14f,
                         patchHeight,
-                        HashGroundPatch(cell.x, cell.y, 0x51f2));
+                        HashGroundPatch(cell.x, cell.y, 0x51f2),
+                        usePrefabMaterial: true);
                     if (!groundMetadataByPrefab.TryGetValue(
                             patchPlan.Prefab,
                             out DenseCityVisualAssetMetadata groundMetadata))
@@ -11422,7 +11423,8 @@ namespace Game.Editor
                 targetDepth,
                 targetHeight,
                 hash,
-                forcePrimaryGroundPrefab);
+                forcePrimaryGroundPrefab,
+                usePrefabMaterial: true);
             return RealizeNaturalGroundPatch(parent, objectName, plan);
         }
 

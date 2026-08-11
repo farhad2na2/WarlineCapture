@@ -1178,3 +1178,9 @@ Accepted AM-020 progress snapshot:
 - Compiler and determinism: checked final Unity compile passes with `compilerErrors: 0`, marker `[OperationMapRenderMaterializedParityCompileValidation] result=Passed`, and log SHA-256 `0892de7a37269e32ca6e0cc5c8f7e971e81d75db25497ee18e04c556591cdcca`. Persistent ownership, Phase 2 delta, Phase 7 inventory, Python syntax, and full architecture Python `179 / 179` pass byte/current checks.
 - Review result: `640 / 567 / 73 / 0` ownership authority and `425 / 420 / 5 / 0 / 0` Phase 2 review arithmetic remain exact; source-growth blockers remain zero. The `94`-path child range has zero protected/excluded paths and zero paths outside owned domains; `git diff --check` passes. Exact artifacts, tools, validators, logs, ancestry, commands, exclusions, and rejected shell attempts were reviewed with no unresolved finding.
 - Result: AMFR-020 is accepted at child `20 / 22` without parent credit. AMFR-021 exit publication is next; AM-025 remains unchecked.
+
+### 2026-08-11 - AM-025 - AMFR-021 exit publication claim
+
+- Entry identity: clean pushed `main`/`origin/main` `4b8ff1f1e50965306eebe1e5ed1f875c54d57d16`, tree `1212d5b081238227f6e828c76185f0f91bbf60db`; AMFR-020 is accepted.
+- Publication scope is limited to the AM-WP-027 policy, exit evidence, acceptance record, acceptance validator, and both trackers. A stale policy summary field (`561` explicit owners) must be reconciled to the accepted current AM-021 value (`567`) before publication; no ownership decision changes.
+- Parent credit remains withheld until the exact artifacts, hashes, counts, ancestry, suites, exclusions, progress arithmetic, and AM-027 not-started route validate cleanly.

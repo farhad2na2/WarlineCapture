@@ -120,7 +120,7 @@ The worktree must be clean at every accepted commit and after every push. Genera
 - [x] `AMFR-018` Pass the complete `ArchitectureHardeningCloseoutValidationRunner.RunFocusedValidation` 23-suite architecture entrypoint and all required Python ownership/evidence checks.
 - [x] `AMFR-019` Pass the accepted World recreation, scene unload/reload, missing-singleton recovery, one-warm-up plus 10 measured transition cycles, structural/pool trend, and governed focused allocation suites.
 - [x] `AMFR-020` Complete canonical Unity compilation with zero errors; deterministic regeneration; exact artifact/source/tool hashes; protected-path audit; `git diff --check`; and focused independent review with no unresolved finding.
-- [ ] `AMFR-021` Publish the AM-025 exit evidence and acceptance record, update the parent tracker to `26 / 86` overall and `26 / 68` Core, mark Phase 2 accepted, and identify `AM-027` as the next maturity task without starting it.
+- [~] `AMFR-021` Publish the AM-025 exit evidence and acceptance record, update the parent tracker to `26 / 86` overall and `26 / 68` Core, mark Phase 2 accepted, and identify `AM-027` as the next maturity task without starting it.
 - [ ] `AMFR-022` Publish the feature-resume handoff: later UI, presentation/pooling, simulation, diagnostics, and enforcement work must consume relevant Phase 3-5/7/8 rows when a feature touches those domains; Phase 6 and 9 remain deferred.
 
 **Exit:** This child is complete, `AM-025` is honestly accepted and pushed, the Core lane is green through Phase 2, and new feature planning may resume.
@@ -478,6 +478,13 @@ The worktree must be clean at every accepted commit and after every push. Genera
 - Focused review: all `425` review rows remain classified exactly once (`420` resolved / `5` protected / `0` debt / `0` unclassified), all `640` persistent resources retain an owner (`567` explicit / `73` protected / `0` gaps), and source-growth blockers remain zero. The diff after the accepted 23-suite identity contains no production source; after the accepted AMFR-019 source identity it contains only the two tracker records. Commands, counts, hashes, ancestry, exclusions, and residual risks were rereviewed with no unresolved finding.
 - Rejected evidence: one PowerShell helper silently swallowed its argument array and one corrected invocation promoted unittest's normal stderr progress into a shell error; neither receives pass credit. The isolated process rerun supplies the accepted `179 / 179` exit and summary.
 - Result: AMFR-020 is accepted at child `20 / 22` without parent checklist credit. AMFR-021 is next; AM-025 remains unchecked.
+
+### 2026-08-11 - AMFR-021 - Phase 2 exit publication claim
+
+- Entry identity: clean pushed `main`/`origin/main` commit `4b8ff1f1e50965306eebe1e5ed1f875c54d57d16`, tree `1212d5b081238227f6e828c76185f0f91bbf60db`; AMFR-020 is accepted and AM-025 remains unchecked.
+- Exact write allowlist: `am025_phase2_exit_policy.json`, `am025_phase2_exit_evidence.json`, `am025_acceptance_record.json`, `Tools/CI/tests/test_architecture_phase2_acceptance.py`, this child tracker, and the parent tracker. All production, other tests/tools/evidence, assets, packages, settings, wrappers, thresholds, device work, features, and deferred Phase 6/9 work remain read-only.
+- Fail-closed publication finding: the policy's `am021ExplicitOwners` summary remains at stale intermediate value `561` while its hash-bound current AM-021 artifact reports `567`. Correct only that summary plus final status/progress routing, validate it against the accepted artifact, and record the finding/resolution in the exit bundle. No ownership decision or evidence count changes.
+- Acceptance: both new artifacts validate their identity, ancestry, hashes, prerequisite results, exact `640 / 567 / 73 / 0` ownership and `425 / 420 / 5 / 0 / 0` Phase 2 arithmetic, canonical suite markers, compile zero, deterministic/protected review, release exclusions, progress `26 / 86` and `26 / 68`, and `AM-027` next/not-started. Missing or mismatched data leaves AM-025 unchecked.
 
 ## 7. Validation And Evidence Contract
 

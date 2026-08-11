@@ -116,6 +116,22 @@ class ArchitectureDependencyHazardInventoryTests(unittest.TestCase):
         self.assertEqual(data["summary"]["mutableStaticCacheCandidateCount"], 1)
         self.assertEqual(data["summary"]["mutableStaticLifecycleStateCount"], 2)
 
+    def test_exact_handoff_path_is_not_protected_by_broader_owner_glob(self) -> None:
+        path = "Assets/Game/Scripts/Runtime/OperationMapRuntimeHost.cs"
+        exclusions = [{
+            "id": "operation-map",
+            "protectedPaths": ["Assets/Game/Scripts/**/*OperationMap*.cs"],
+            "handoffPaths": [path],
+        }]
+        self.assertEqual(inventory.protected_owner_ids(path, exclusions), [])
+        self.assertEqual(
+            inventory.protected_owner_ids(
+                "Assets/Game/Scripts/Runtime/OtherOperationMapOwner.cs",
+                exclusions,
+            ),
+            ["operation-map"],
+        )
+
     def test_hsl_world_and_authoring_discovery_use_disposition_specific_routes(self) -> None:
         self.write(
             "Assets/Game/Scripts/Composition/MatchIntroEcsStateQuery.cs",

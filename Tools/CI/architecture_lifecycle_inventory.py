@@ -437,6 +437,8 @@ def active_exclusions(root: Path) -> list[dict[str, Any]]:
     result = [
         {
             "authorityPath": item["authorityPath"],
+            "handoffAuthorityPath": item.get("handoffAuthorityPath"),
+            "handoffPaths": item.get("handoffPaths", []),
             "id": item["id"],
             "protectedPaths": item["protectedPaths"],
             "status": item["status"],
@@ -446,6 +448,11 @@ def active_exclusions(root: Path) -> list[dict[str, Any]]:
     ]
     if len(result) != len(owners) or [item["id"] for item in result] != sorted(item["id"] for item in result):
         raise ValueError("ownership exclusions must be valid and sorted by id")
+    for item in result:
+        if item["handoffPaths"] != sorted(set(item["handoffPaths"])):
+            raise ValueError(f"ownership handoff paths must be valid and sorted: {item['id']}")
+        if bool(item["handoffPaths"]) != bool(item["handoffAuthorityPath"]):
+            raise ValueError(f"ownership handoff paths and authority must be paired: {item['id']}")
     return result
 
 

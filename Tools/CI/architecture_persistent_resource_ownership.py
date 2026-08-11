@@ -130,6 +130,8 @@ def load_exclusions(root: Path) -> list[dict[str, Any]]:
             "id": owner["id"],
             "status": owner["status"],
             "authorityPath": owner["authorityPath"],
+            "handoffAuthorityPath": owner.get("handoffAuthorityPath"),
+            "handoffPaths": owner.get("handoffPaths", []),
             "protectedPaths": owner["protectedPaths"],
         }
         for owner in owners
@@ -142,6 +144,7 @@ def protected_owner_ids(path: str, exclusions: list[dict[str, Any]]) -> list[str
         for owner in exclusions
         for pattern in owner["protectedPaths"]
         if fnmatch.fnmatch(path, pattern)
+        and not any(fnmatch.fnmatch(path, handoff) for handoff in owner.get("handoffPaths", []))
     })
 
 

@@ -27,6 +27,11 @@ class ArchitectureOwnershipInventoryTests(unittest.TestCase):
         for relative in {
             *inventory.AUTHORITY_PATHS,
             *(item["authorityPath"] for item in inventory.ACTIVE_WORK_OWNERS),
+            *(
+                item["handoffAuthorityPath"]
+                for item in inventory.ACTIVE_WORK_OWNERS
+                if item.get("handoffAuthorityPath")
+            ),
         }:
             self.write(relative, f"authority:{relative}\n")
         owner_ids = sorted({
@@ -121,14 +126,29 @@ class ArchitectureOwnershipInventoryTests(unittest.TestCase):
         self.seed_sources()
         data = inventory.build_inventory(self.root, self.revision, self.tree)
         authorities = data["sourceAuthorities"]
+        handoff_authorities = {
+            item["handoffAuthorityPath"]
+            for item in inventory.ACTIVE_WORK_OWNERS
+            if item.get("handoffAuthorityPath")
+        }
         self.assertEqual(
             [item["path"] for item in authorities],
-            sorted({*inventory.AUTHORITY_PATHS, *(item["authorityPath"] for item in inventory.ACTIVE_WORK_OWNERS)}),
+            sorted({
+                *inventory.AUTHORITY_PATHS,
+                *(item["authorityPath"] for item in inventory.ACTIVE_WORK_OWNERS),
+                *handoff_authorities,
+            }),
         )
         self.assertTrue(all(len(item["sha256"]) == 64 for item in authorities))
         owners = data["activeWorkOwnership"]["owners"]
         self.assertEqual([item["id"] for item in owners], ["audio", "first-launch", "operation-map", "ui-visual-lock"])
         self.assertTrue(all(item["protectedPaths"] == sorted(item["protectedPaths"]) for item in owners))
+        operation_map = next(item for item in owners if item["id"] == "operation-map")
+        self.assertEqual(
+            operation_map["handoffAuthorityPath"],
+            "Design/Architecture/am025_feature_readiness_architecture_closeout_tracker.md",
+        )
+        self.assertEqual(operation_map["handoffPaths"], sorted(set(operation_map["handoffPaths"])))
 
     def test_invalid_identity_and_missing_authority_fail_closed(self) -> None:
         with self.assertRaisesRegex(ValueError, "exact 40-character"):

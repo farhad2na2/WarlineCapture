@@ -35,6 +35,22 @@ class PersistentResourceOwnershipTests(unittest.TestCase):
                 if row["protectedOwnerIds"]:
                     self.assertEqual("protected-owner", row["status"])
 
+    def test_exact_handoff_path_is_not_protected_by_broader_owner_glob(self):
+        path = "Assets/Game/Scripts/Composition/OperationMapSceneLoadingSceneSystemHelper.cs"
+        exclusions = [{
+            "id": "operation-map",
+            "protectedPaths": ["Assets/Game/Scripts/**/*OperationMap*.cs"],
+            "handoffPaths": [path],
+        }]
+        self.assertEqual(ownership.protected_owner_ids(path, exclusions), [])
+        self.assertEqual(
+            ownership.protected_owner_ids(
+                "Assets/Game/Scripts/Composition/OtherOperationMapOwner.cs",
+                exclusions,
+            ),
+            ["operation-map"],
+        )
+
     def test_native_rows_have_persistent_allocator_evidence(self):
         for row in self.report["categories"]["persistentNativeContainers"]:
             self.assertTrue(row["persistentAllocatorObserved"])

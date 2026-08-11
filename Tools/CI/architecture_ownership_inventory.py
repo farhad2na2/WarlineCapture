@@ -31,6 +31,14 @@ AUTHORITY_PATHS = (
 ACTIVE_WORK_OWNERS = (
     {
         "authorityPath": "Design/Architecture/operation_map_scene_split_and_generator_tracker.md",
+        "handoffAuthorityPath": "Design/Architecture/am025_feature_readiness_architecture_closeout_tracker.md",
+        "handoffPaths": [
+            "Assets/Game/Scripts/Composition/OperationMapRuntimeBootstrapSceneSystemHelper.cs",
+            "Assets/Game/Scripts/Composition/OperationMapSceneLoadingSceneSystemHelper.cs",
+            "Assets/Game/Scripts/Composition/OperationMapSceneReferenceSceneSystemHelper.cs",
+            "Assets/Game/Scripts/Environment/RuntimeCityRoadVisualPrototypeSystemHelper.cs",
+            "Assets/Game/Scripts/Environment/RuntimeOperationMapVisualQualitySystemHelper.cs",
+        ],
         "id": "operation-map",
         "protectedPaths": [
             "Assets/Game/Scenes/Game/OperationMaps/**",
@@ -389,7 +397,13 @@ def scan_assemblies(root: Path) -> dict[str, Any]:
 
 def validated_authorities(root: Path) -> list[dict[str, str]]:
     result: list[dict[str, str]] = []
-    for value in (*AUTHORITY_PATHS, *(item["authorityPath"] for item in ACTIVE_WORK_OWNERS)):
+    owner_authorities = [item["authorityPath"] for item in ACTIVE_WORK_OWNERS]
+    handoff_authorities = [
+        item["handoffAuthorityPath"]
+        for item in ACTIVE_WORK_OWNERS
+        if item.get("handoffAuthorityPath")
+    ]
+    for value in (*AUTHORITY_PATHS, *owner_authorities, *handoff_authorities):
         path = root / value
         if not path.is_file():
             raise ValueError(f"required authority is missing: {value}")
@@ -420,6 +434,11 @@ def validate_owner_domains(root: Path) -> None:
         paths = owner["protectedPaths"]
         if paths != sorted(set(paths)):
             raise ValueError(f"active owner protectedPaths must be unique and sorted: {owner['id']}")
+        handoff_paths = owner.get("handoffPaths", [])
+        if handoff_paths != sorted(set(handoff_paths)):
+            raise ValueError(f"active owner handoffPaths must be unique and sorted: {owner['id']}")
+        if bool(handoff_paths) != bool(owner.get("handoffAuthorityPath")):
+            raise ValueError(f"active owner handoff paths and authority must be paired: {owner['id']}")
 
 
 def build_inventory(root: Path, revision: str, tree: str) -> dict[str, Any]:
@@ -529,13 +548,20 @@ def render_markdown(data: dict[str, Any]) -> str:
         "",
         "## Active Work Exclusions",
         "",
-        "| Owner | Status | Authority | Protected paths |",
-        "|---|---|---|---|",
+        "| Owner | Status | Authority | Protected paths | Exact maturity handoff |",
+        "|---|---|---|---|---|",
     ])
     for owner in data["activeWorkOwnership"]["owners"]:
         paths = "<br>".join(f"`{path}`" for path in owner["protectedPaths"])
+        handoff_paths = "<br>".join(f"`{path}`" for path in owner.get("handoffPaths", [])) or "none"
+        handoff_authority = owner.get("handoffAuthorityPath")
+        handoff = (
+            f"{handoff_paths}<br>authority: `{handoff_authority}`"
+            if handoff_authority
+            else handoff_paths
+        )
         lines.append(
-            f"| `{owner['id']}` | {owner['status']} | `{owner['authorityPath']}` | {paths} |"
+            f"| `{owner['id']}` | {owner['status']} | `{owner['authorityPath']}` | {paths} | {handoff} |"
         )
     lines.extend([
         "",

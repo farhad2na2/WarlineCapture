@@ -150,6 +150,14 @@ The worktree must be clean at every accepted commit and after every push. Genera
 - Artifact decision: generated scratch files and logs remain ignored diagnostic inputs. No partial AM-007/AM-018/AM-021 replacement is committed while AM-025 and its closure audit would be inconsistent. The tracked tree remains clean except for this owned execution record.
 - Result: accepted as the exact current reconciliation input. AMFR-003 is dependency-ready and owns evidence/registry reconciliation only; production remediation remains gated.
 
+### 2026-08-11 - AMFR-003 - Exact active-owner handoff foundation
+
+- Diagnosis: the operation-map scene-split/generator tracker remains genuinely active (`117 / 177`) for future map/generator work, so retiring its broad active-owner protection would be false. AM-025 nevertheless requires five current operation-map helper paths for bounded source-growth and lifecycle reconciliation.
+- Ownership decision: keep `operation-map: active` and its existing broad protected globs, but hand exactly `OperationMapRuntimeBootstrapSceneSystemHelper.cs`, `OperationMapSceneLoadingSceneSystemHelper.cs`, `OperationMapSceneReferenceSceneSystemHelper.cs`, `RuntimeCityRoadVisualPrototypeSystemHelper.cs`, and `RuntimeOperationMapVisualQualitySystemHelper.cs` to this child authority. Every other matching operation-map path remains protected by the original owner.
+- Tooling: ownership, lifecycle, dependency-hazard, and persistent-resource generators now carry the paired handoff authority/path fields. Hazard and resource classification subtract only exact handoff paths from a broader owner glob; invalid, duplicate, unsorted, or unpaired handoffs fail closed.
+- Validation: ownership inventory tests `5 / 5`, lifecycle inventory tests `5 / 5`, dependency-hazard inventory tests `6 / 6`, and persistent-resource ownership tests `12 / 12` passed. Python compilation, `git diff --check`, and a current-tree scratch ownership regeneration passed; the regenerated operation-map owner retained `status: active` and listed only the five exact child paths.
+- Result: stable AMFR-003 tooling foundation only. The checklist row remains pending until every current report finding and source-growth item has an accepted disposition and the governed evidence set regenerates consistently.
+
 ## 7. Validation And Evidence Contract
 
 The parent work packages remain authoritative. This child does not replace their suite order, identity rules, evidence schema, allocation thresholds, lifecycle counts, or acceptance arithmetic.

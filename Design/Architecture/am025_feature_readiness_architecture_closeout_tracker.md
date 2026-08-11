@@ -1,7 +1,7 @@
 # AM-025 Feature-Readiness Architecture Closeout Tracker
 
 Date: 2026-08-11
-Status: Active. This child tracker closes the Phase 2 architecture gate before new feature implementation resumes.
+Status: Complete. All `22 / 22` feature-readiness checks are accepted; Phase 2 is accepted and feature planning is handed off without starting AM-027 or a feature.
 Parent tracker: `post_hardening_architecture_maturity_tracker.md`
 Parent checklist item: `AM-025`
 Related work packages: `WorkPackages/am_wp_027_phase2_exit_acceptance.md`, `WorkPackages/am_wp_028_phase2_debt_reconciliation.md`
@@ -121,7 +121,7 @@ The worktree must be clean at every accepted commit and after every push. Genera
 - [x] `AMFR-019` Pass the accepted World recreation, scene unload/reload, missing-singleton recovery, one-warm-up plus 10 measured transition cycles, structural/pool trend, and governed focused allocation suites.
 - [x] `AMFR-020` Complete canonical Unity compilation with zero errors; deterministic regeneration; exact artifact/source/tool hashes; protected-path audit; `git diff --check`; and focused independent review with no unresolved finding.
 - [x] `AMFR-021` Publish the AM-025 exit evidence and acceptance record, update the parent tracker to `26 / 86` overall and `26 / 68` Core, mark Phase 2 accepted, and identify `AM-027` as the next maturity task without starting it.
-- [~] `AMFR-022` Publish the feature-resume handoff: later UI, presentation/pooling, simulation, diagnostics, and enforcement work must consume relevant Phase 3-5/7/8 rows when a feature touches those domains; Phase 6 and 9 remain deferred.
+- [x] `AMFR-022` Publish the feature-resume handoff: later UI, presentation/pooling, simulation, diagnostics, and enforcement work must consume relevant Phase 3-5/7/8 rows when a feature touches those domains; Phase 6 and 9 remain deferred.
 
 **Exit:** This child is complete, `AM-025` is honestly accepted and pushed, the Core lane is green through Phase 2, and new feature planning may resume.
 
@@ -501,6 +501,16 @@ The worktree must be clean at every accepted commit and after every push. Genera
 - Exact write allowlist: `Design/Architecture/am025_feature_resume_handoff.md`, this child tracker, and the parent tracker. All production, tests, evidence, tools, assets, packages, settings, wrappers, thresholds, Android/device work, feature implementation, AM-027 implementation, and deferred Phase 6/9 work remain read-only.
 - Handoff contract: identify AM-027 as next/not-started; route later UI, presentation/pooling, deterministic simulation/failure-path, diagnostics, and enforcement feature collisions to the relevant Phase 3-5/7/8 rows; preserve accepted Phase 2 ownership and lifecycle invariants; and keep Phase 6/9 inactive.
 - Acceptance: the handoff contains exact consumer ranges, collision rules, residual-risk routing, stop conditions, validation expectations, and release exclusions; no checklist credit beyond AMFR-022 and no implementation change is introduced.
+
+### 2026-08-11 - AMFR-022 - Feature-resume handoff closure
+
+- Published `Design/Architecture/am025_feature_resume_handoff.md`, SHA-256 `d26374c344132ef019a807084dec7c37df3b1bebcc898584c5d16b0ea17c5d9c`.
+- Collision routing is explicit: UI consumes Phase 3 `AM-027..035`; runtime creation/pooling consumes Phase 4 `AM-036..044`; simulation/determinism/failure paths consume Phase 5 `AM-045..052`; diagnostics consumes Phase 7 `AM-063..069`; continuous enforcement consumes Phase 8 `AM-070..078`.
+- The handoff preserves the accepted Phase 2 single-owner/lifecycle/source-growth/validation contracts, exact protected-owner boundaries, and clean-commit rule. Multi-domain features must consume every colliding maturity row without creating duplicate behavior or architecture authority.
+- Phase 6 `AM-053..062` and Phase 9 `AM-079..086` remain inactive under their existing release activation contracts. No Android/device/build/certification work ran and no accepted threshold changed.
+- AM-027 is next and not started. No feature implementation, production source, test, evidence, tool, asset, package, setting, wrapper, threshold, or deferred-lane file changed in AMFR-022.
+- Final validation: the three-file allowlist/content/parent arithmetic checks and focused architecture contracts pass `29 / 29`; the full documentation-aware architecture discovery passes `185 / 185` in `108.138` seconds, log SHA-256 `b78ac2d45f09866a2f802cc1e9f971e4af15e90f34c050ac0f27c98abf7a4b64`; `git diff --check` passes.
+- Result: AMFR-001 through AMFR-022 are accepted (`22 / 22`), parent AM-025 is accepted, Phase 2 is accepted, overall progress is `26 / 86` and Core is `26 / 68`. The architecture feature-readiness closeout is complete.
 
 ## 7. Validation And Evidence Contract
 

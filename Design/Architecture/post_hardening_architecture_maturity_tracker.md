@@ -1,6 +1,6 @@
 # Post-Hardening Architecture Maturity Tracker
 
-Active Phase 2 child tracker: `am025_feature_readiness_architecture_closeout_tracker.md`. This bounded gate closes `AM-025` before new feature implementation resumes; it does not activate Phase 3 production work or the deferred Release Certification Lane.
+Completed Phase 2 child tracker: `am025_feature_readiness_architecture_closeout_tracker.md`. Its accepted handoff is `am025_feature_resume_handoff.md`; AM-027 is next and not started, and the Release Certification Lane remains deferred.
 
 ## Purpose
 
@@ -26,7 +26,7 @@ A literal `10 / 10` is treated as a sustained operating standard, not a one-time
 | Accepted entry rating | evidence-backed `8.5 / 10` from `AM-008` |
 | Practical target | evidence-backed `9.5+ / 10` |
 | Aspirational target | sustained `10 / 10` operating standard |
-| Program status | Phase 0 accepted; Phase 1 ready in the Core Architecture Lane; Release Certification Lane deferred |
+| Program status | Phases 0-2 accepted; Phase 3 is dependency-ready at AM-027; Release Certification Lane deferred |
 
 The core entry review verifies the accepted architecture/code-quality evidence and records release-only gaps as `measurement-required`; it does not convert them into passes. The release-lane entry review must reject missing, malformed, stale, commit-unknown, thermally invalid, visually incomplete, or deferred evidence and must never pass by weakening a budget or allowlist.
 
@@ -1197,3 +1197,11 @@ Accepted AM-020 progress snapshot:
 
 - Entry identity: clean pushed `main`/`origin/main` `6be65f01810f90fdf6403af5d2ecb6652f1631af`, tree `37cf6fd9c576aa2861b0ab368f4431661e4dcb82`; AM-025 and Phase 2 are accepted.
 - Scope is documentation-only: one bounded feature-resume handoff and both trackers. It maps future feature collisions to Phase 3-5/7/8 consumers, preserves AM-027 as next/not-started, and leaves Phase 6/9 deferred.
+
+### 2026-08-11 - AM-025 - Feature-resume handoff accepted
+
+- Published `Design/Architecture/am025_feature_resume_handoff.md`, SHA-256 `d26374c344132ef019a807084dec7c37df3b1bebcc898584c5d16b0ea17c5d9c`.
+- Future feature collisions are routed to Phase 3 `AM-027..035`, Phase 4 `AM-036..044`, Phase 5 `AM-045..052`, Phase 7 `AM-063..069`, and Phase 8 `AM-070..078` under their existing behavior/evidence authority. Accepted Phase 2 ownership and lifecycle invariants remain mandatory.
+- Phase 6 `AM-053..062` and Phase 9 `AM-079..086` remain deferred. The handoff performed no Android/device/build/certification work and changed no production source, tests, tools, evidence, assets, packages, settings, wrappers, or thresholds.
+- Final validation passes the exact three-file handoff allowlist/content/progress checks, focused architecture contracts `29 / 29`, full architecture Python `185 / 185`, and `git diff --check`.
+- AMFR-001 through AMFR-022 are accepted (`22 / 22`). AM-025 and Phase 2 remain accepted at `26 / 86` overall and `26 / 68` Core. AM-027 is next and not started.

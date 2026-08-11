@@ -1,9 +1,9 @@
 # WarlineCapture M01 First Contact Dense-City High-Level Design
 
 Date: 2026-08-12
-Status: Approved for implementation-tracker authoring
+Status: Approved for implementation
 Scope owner: Mission 1 product, gameplay, narrative, operation-map integration, Campaign replay, and validation contract
-Implementation status: HLD approved by the project owner on 2026-08-12; production implementation remains blocked until the separate implementation tracker is accepted
+Implementation status: HLD, technical architecture, and 43-item implementation tracker accepted by the project owner on 2026-08-12; M01DC-001 releases dependency-ready M01 production work while later FirstLaunch Gate 10 evidence remains open
 Technical architecture: `Design/Architecture/m01_first_contact_dense_city_technical_architecture.md`
 
 ## 1. Purpose

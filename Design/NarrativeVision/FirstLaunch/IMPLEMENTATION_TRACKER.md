@@ -2,7 +2,7 @@
 
 Date: 2026-07-11
 
-Status: Gate 6 passed; corrected Phase 10R live package is ready for Gate 9R review
+Status: Gate 9R accepted on 2026-08-12; Gate 10 remains open for M01-camera, Android-device, and existing shell-regression evidence
 
 Scope: Build a reviewable first-launch motion-comic slice from minimal logo through the M01 gameplay handoff, plus a review-only gameplay placeholder, M01 debrief, and command-base reveal. This tracker owns execution order, artifact manifests, approval gates, Unity boundaries, review controls, skip behavior, evidence, and completion status.
 
@@ -143,10 +143,10 @@ Skip-to-game may reach the handoff earlier. Loading time is measured separately 
 | 5. Storyboard and panel manifest | Complete | Gate 4: internal storyboard lock complete |
 | 6. Animatic and timing | Complete | Gate 5: revised presentation lock passed 2026-07-10 |
 | 7. Final layered art | Complete | Gate 6: all 22 revisions approved, exported, and verified 2026-07-11 |
-| 8. Audio, subtitles, and accessibility | In Progress | Gate 7R: live runtime audio and readability revision required by first user playback review |
+| 8. Audio, subtitles, and accessibility | Complete | Gate 7R: corrected runtime audio/readability accepted with Gate 9R on 2026-08-12 |
 | 9. Reusable Unity sequence player | Complete | Gate 8: Addressables-backed runtime player accepted 2026-07-11 |
-| 10. Review mode, skip, and route handoff | In Progress | Gate 9R: user playback revision for UI scale, visual fidelity, introductions, and runtime sound |
-| 11. Visual, device, memory, and regression QA | Paused | Gate 10 evidence must be refreshed after Gate 9R; later awaits M01 camera and physical Android profiling |
+| 10. Review mode, skip, and route handoff | Complete | Gate 9R: corrected presentation accepted by the project owner on 2026-08-12 |
+| 11. Visual, device, memory, and regression QA | In Progress | Gate 10 remains open for M01 camera continuity, physical Android profiling, and the existing shell regression |
 | 12. Closeout and next-slice handoff | Not Started | Gate 11: autonomous closeout and delivery |
 
 Progress update rule: update the phase row and the relevant checklist in the same change that adds evidence. A generated image, code file, prefab, or test is not complete until its review evidence is linked.
@@ -167,20 +167,20 @@ Reports use tracker evidence rather than treating tool completion or image gener
 
 ## Current Progress Snapshot
 
-Last reconciled: 2026-07-11
+Last reconciled: 2026-08-12
 
 | Measure | Current state |
 |---|---|
-| Passed gates | Gate 0, Gate 1A, Gate 1B, Gate 2, Gate 3, Gate 4, Gate 5, Gate 6, and Gate 8 architecture; prior Gate 7/9 presentation acceptance is reopened by user review |
-| Active gate | Gate 9R: corrected live FirstLaunch presentation confirmation before any M01 implementation handoff |
+| Passed gates | Gate 0, Gate 1A, Gate 1B, Gate 2, Gate 3, Gate 4, Gate 5, Gate 6, Gate 7R, Gate 8, and Gate 9R |
+| Active gate | Gate 10: M01-camera continuity, physical Android profiling, and existing shell-regression evidence |
 | Art-first phases 1-7 | Complete; all approved panel revisions are exported and source-to-runtime hash verified |
 | Final narrative panels | `22/22` user-approved, exported in 16:9 and 20:9, and configured as Unity sprites |
-| Checklist completion | `232/249` complete (`93.2%`), with 1 partial and 1 blocked item |
-| Runtime phases 8-12 | Phase 10R implementation complete; reusable architecture, routing, revised UI, introductions, and dedicated AI-generated narrative audio pass focused and live Menu validation |
-| Current blocker | Gate 9R requires user confirmation of the no-overlap narration and dynamic dialogue fixes; M01 camera, Android-device profiling, the unrelated shell naming-inventory drift, and the pre-existing `statusChipSprite` regression remain later Gate 10 prerequisites |
-| Next action | User reviews the revised live sequence through `Game/Narrative/First Launch/Review In Play Mode`; reconcile Gate 9R feedback before any M01 handoff |
-| User approval required now | Yes; replay the corrected Commander-to-FL-P09 path and one longer dialogue line |
-| Autonomous continuation | The Phase 10R heartbeat is stopped at its configured review gate; resume after user feedback |
+| Checklist completion | `233/249` complete (`93.6%`), with 1 partial and 1 blocked item |
+| Runtime phases 8-12 | Phase 10R accepted; Gate 10/Phase 11 stays open and Phase 12 remains deferred until its evidence exists |
+| Current blocker | No FirstLaunch blocker prevents M01 implementation. Gate 10 still cannot close until the M01 handoff camera, physical Android evidence, and pre-existing `statusChipSprite` shell regression are resolved or formally dispositioned. |
+| Next action | Continue the accepted M01 dense-city tracker from M01DC-002; feed its camera and Android evidence back into Gate 10 when available. |
+| User approval required now | No; the project owner approved the current comic/story direction and instructed Codex to continue M01. |
+| Autonomous continuation | Yes, within the accepted M01 HLD, technical architecture, and implementation tracker. |
 
 ## Current Baseline
 
@@ -815,7 +815,7 @@ This revision is a hard prerequisite to M01. The first live Unity review superse
 - [x] Integrate dedicated restrained calm/crisis score loops through the existing music settings; playback does not begin as silence and remains mixed below voice.
 - [x] Replace the rejected generic explosion/battlefield/objective mix with eight AI-generated FirstLaunch assets: calm/crisis score, city market, city attack, command room, convoy, distant attack, and emergency radio. Prompts, candidate metrics, rights note, and selected files are recorded under `Assets/Game/Audio/Narrative/FirstLaunch/`; generic large-explosion and transition cues are no longer wired. After second review, city-attack, command-room, and radio textures were regenerated with an explicit no-human-speech contract, and the radio event layer was disconnected from dialogue states.
 - [x] Verify voice, music, ambience, vehicle/conflict cues, mute settings, pause/resume, seek/restart, Skip, and route cancellation remain independently controllable and leave no stale audio. Clip/state/mix policy lives in `Game.Composition`; `NarrativeSequenceAudioView` is a passive serialized-reference/audio presentation view; `Game.UI.Runtime` has no `Game.Configs` dependency. Focused presentation/audio validation passes `9/9`, and assembly-boundary validation passes `31/31`; final live playback remains part of the next item.
-- [~] Re-run tests and capture complete 16:9/20:9/tablet normal, reduced-motion, subtitles-off, audio-layer, identity/guidance, Skip, and full-playback evidence; pass Gate 9R through another user live review before M01 begins. Corrected standard/long GPU layout evidence, `31/31` assembly-boundary checks, `29/29` focused checks, performance/residency validation, and strengthened `1/1` live Menu PlayMode integration pass through actual Commander/Guidance commits and single-source FL-P09 narration; only user playback confirmation remains.
+- [x] Re-run tests and capture complete 16:9/20:9/tablet normal, reduced-motion, subtitles-off, audio-layer, identity/guidance, Skip, and full-playback evidence; pass Gate 9R through another user live review before M01 begins. Corrected standard/long GPU layout evidence, `31/31` assembly-boundary checks, `29/29` focused checks, performance/residency validation, and strengthened `1/1` live Menu PlayMode integration pass through actual Commander/Guidance commits and single-source FL-P09 narration were retained from the July implementation batch. On 2026-08-12 the project owner approved the current FirstLaunch comic-style dialogue/story presentation and instructed Codex to continue M01. This is the required product acceptance; it does not claim that a new technical wrapper run occurred on that date.
 
 ### Phase 11: Visual, Device, Memory, And Regression QA
 

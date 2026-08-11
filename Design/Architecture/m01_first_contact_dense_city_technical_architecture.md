@@ -1,7 +1,7 @@
 # M01 First Contact Dense-City Technical Architecture
 
 Date: 2026-08-12
-Status: Draft for project-owner acceptance with M01DC-001
+Status: Accepted for implementation with M01DC-001 on 2026-08-12
 Scope owner: M01 contracts, runtime ownership, FirstLaunch/Campaign entry, UI projections, persistence, dense-city logical-view integration, first-gameplay QA, and performance
 High-level design: `Design/M01_FirstContact_Dense_City_High_Level_Design.md`
 Implementation tracker: `Design/Architecture/m01_first_contact_dense_city_implementation_tracker.md`
@@ -18,7 +18,7 @@ The three documents have distinct jobs:
 | This technical architecture | Exact type names, dependencies, state ownership, lifecycle, performance, QA, and anti-drift rules. |
 | Implementation tracker | Dependency order, evidence, commit boundaries, and acceptance state. |
 
-If they conflict, stop and reconcile them before implementation. Do not silently choose the easiest interpretation. This document authorizes no production edit until M01DC-001 records project-owner acceptance.
+If they conflict, stop and reconcile them before implementation. Do not silently choose the easiest interpretation. M01DC-001 recorded project-owner acceptance on 2026-08-12; dependency-ready production edits are authorized only within this contract and the tracker.
 
 ## 2. Non-Negotiable Architecture Principles
 
@@ -502,6 +502,6 @@ Any `yes` to a prohibited condition blocks acceptance. Correct the current slice
 
 ## 18. Acceptance
 
-M01DC-001 accepts this document together with the implementation tracker. Acceptance freezes the names, responsibility boundaries, dependency direction, one-writer rules, first-play QA loop, and performance gates above. Later exact-head evidence may correct a mistaken current-type assumption through a tracker/document amendment before dependent code starts; it may not use that correction to broaden scope.
+M01DC-001 accepted this document together with the implementation tracker on 2026-08-12. Acceptance freezes the names, responsibility boundaries, dependency direction, one-writer rules, first-play QA loop, and performance gates above. Later exact-head evidence may correct a mistaken current-type assumption through a tracker/document amendment before dependent code starts; it may not use that correction to broaden scope.
 
 Final M01 acceptance requires M01DC-001 through M01DC-043, the exact final Android package and device evidence, closed QA findings, updated parent authorities, main equal to origin/main, and a clean repository.

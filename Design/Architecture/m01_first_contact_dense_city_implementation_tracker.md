@@ -1,8 +1,8 @@
 # M01 First Contact Dense-City Implementation Tracker
 
 Date: 2026-08-12
-Status: Draft for project-owner review
-Progress: 0/43 accepted items (0%)
+Status: Active; M01DC-001 accepted and dependency-ready implementation authorized
+Progress: 1/43 accepted items (2.3%)
 Parent design: `Design/M01_FirstContact_Dense_City_High_Level_Design.md`
 Technical architecture: `Design/Architecture/m01_first_contact_dense_city_technical_architecture.md`
 Mission: `saga.ch01.m01.first_contact`
@@ -218,11 +218,11 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
 
 ### Phase A - Contract, Baseline, And Ownership
 
-- [ ] **M01DC-001 - Accept tracker and reconcile the production hold**
+- [x] **M01DC-001 - Accept tracker and reconcile the production hold**
   **Depends on:** approved HLD.
   **Deliverable:** record project-owner acceptance of this tracker and the linked technical architecture; reconcile FirstLaunch Phase 10R/Gate 9R evidence without rewriting its historical results; distinguish design approval, production release, and final mission acceptance; leave Gate 10 or equivalent completion open.
   **Acceptance:** the HLD, technical architecture, implementation tracker, and FirstLaunch tracker agree that the visual direction is accepted and M01 production work is authorized only through this tracker; exact type/responsibility/naming/QA/performance boundaries are frozen; no historical evidence is relabeled as a validation that did not run.
-  **Evidence:** authority diff, decision log entry, clean pushed head.
+  **Evidence:** project-owner messages approved the current FirstLaunch comic/story direction and instructed Codex to continue M01; accepted HLD/technical/tracker design head `edeb9dcf1`; FirstLaunch Gate 9R release recorded without relabeling July technical evidence as a new run; Gate 10 camera/Android/shell prerequisites remain open; authority diff and enclosing clean pushed acceptance commit.
 
 - [ ] **M01DC-002 - Capture exact-head baseline inventory**
   **Depends on:** M01DC-001.
@@ -529,12 +529,13 @@ Unity licensing, wrapper, device connection, disk space, or bounded tool interru
 | Date | Item | Decision/evidence | Commit | Status |
 |---|---|---|---|---|
 | 2026-08-12 | HLD | Project owner approved direct FirstLaunch-to-M01, inherited guidance, recommended replay tutorial policy, recommended civilian boundary, shared dense-city Old Market direction, and tracker authoring. | `aa04a6e85` | HLD approved; tracker draft created |
+| 2026-08-12 | M01DC-001 | Project owner accepted the current FirstLaunch comic/story presentation, linked M01 technical architecture, 43-item tracker, agent-operated QA amendment, and autonomous continuation. Gate 9R is released; Gate 10 remains honestly open. | enclosing M01DC-001 acceptance commit | Accepted |
 
 Implementation entries are appended only after an item is accepted and pushed. The final row must record M01DC-043, the final main/origin head, 43/43 progress, Android package/device identities, agent-QA/finding closure, validation summary, and clean worktree state.
 
 ## 15. Tracker Acceptance
 
-Before M01DC-001 begins, the project owner must confirm that this tracker correctly captures:
+M01DC-001 acceptance on 2026-08-12 confirmed that this tracker correctly captures:
 
 - the 43-item dependency order and scope;
 - direct FirstLaunch entry with no Main Menu;

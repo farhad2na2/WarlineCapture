@@ -6,6 +6,8 @@ Date: 2026-05-07
 
 2026-07-11 implementation hold: M01 planning may be studied, but M01 implementation and player-facing integration must not begin until `Design/NarrativeVision/FirstLaunch/IMPLEMENTATION_TRACKER.md` Phase 10R passes Gate 9R. That gate requires the second live FirstLaunch review to accept readable UI scale, clean speech-frame rendering, HUD-consistent controls, explicit Sahrin/Dalia/Samira/ARIA introductions, and layered runtime music/ambience/conflict/vehicle audio. This hold is independent of the later M01-camera and Android-device Gate 10 evidence.
 
+2026-08-12 hold release: the project owner approved the current comic-style FirstLaunch dialogue/story presentation and instructed Codex to continue M01 under `Design/M01_FirstContact_Dense_City_High_Level_Design.md`, `Design/Architecture/m01_first_contact_dense_city_technical_architecture.md`, and the 43-item implementation tracker. Phase 10R / Gate 9R is therefore accepted and no longer blocks M01 production. This release does not relabel the retained July validation as a new run and does not close later Gate 10 camera-continuity, Android-device, or existing shell-regression evidence.
+
 ## Purpose
 
 This is the implementation handoff for the first production tactical slice:

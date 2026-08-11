@@ -2,6 +2,7 @@ using Game.Components;
 using Game.Runtime;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System.Collections.Generic;
+using System.IO;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
@@ -20,12 +21,13 @@ public sealed class BuildingUiQuerySystemTests
             tests.SelectedBuildingProducedUnits_ReadsProducedUnitReadModel();
             tests.GetFriendlyPendingProductionUiEntries_IncludesPlayerOwnedProducerQueues();
             tests.GetFriendlyPendingProductionUiEntries_IncludesOperationMapProducerQueues();
+            tests.ProductionEntries_DecompositionPreservesReadModelBoundaries();
             tests.SelectedMaterialFabricationReadModel_JoinsAuthoritativeEcsStateAndShapesProgress();
             tests.SelectedMaterialFabricationReadModel_RejectsMissingDuplicateAndMismatchedOwners();
             tests.SelectedMaterialFabricationReadModel_RejectsNonDepotSelection();
             tests.SelectedMaterialFabricationReadModel_AdvancesVersionOnlyWhenSourceStateChanges();
             tests.SelectedMaterialFabricationReadModel_UnchangedReadAllocatesNoManagedMemory();
-            Debug.Log("[BuildingUiQueryValidation] result=Passed tests=11");
+            Debug.Log("[BuildingUiQueryValidation] result=Passed tests=12");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -439,6 +441,36 @@ public sealed class BuildingUiQuerySystemTests
         {
             UnityEngine.Object.DestroyImmediate(prefab);
         }
+    }
+
+    [Test]
+    public void ProductionEntries_DecompositionPreservesReadModelBoundaries()
+    {
+        string systemsRoot = Path.GetFullPath(Path.Combine(
+            Application.dataPath,
+            "Game/Scripts/Systems"));
+        string productionEntriesPath = Path.Combine(
+            systemsRoot,
+            "BuildingProductionEntriesUiSystemHelper.cs");
+        string productionEntriesSource = File.ReadAllText(productionEntriesPath);
+        string operationMapProjectionSource = File.ReadAllText(Path.Combine(
+            systemsRoot,
+            "BuildingOperationMapProductionQueueUiProjection.cs"));
+
+        Assert.That(File.ReadAllLines(productionEntriesPath).Length, Is.LessThanOrEqualTo(351));
+        Assert.That(new FileInfo(productionEntriesPath).Length, Is.LessThanOrEqualTo(13949));
+        Assert.That(productionEntriesSource, Does.Contain("TryAppendUnits"));
+        Assert.That(productionEntriesSource, Does.Contain("AddPendingProducedUnitEntries"));
+        Assert.That(productionEntriesSource, Does.Contain("AddPendingProductionUiEntries"));
+        Assert.That(productionEntriesSource, Does.Contain("BuildingOperationMapProductionQueueUiProjection.Append"));
+        Assert.That(productionEntriesSource, Does.Not.Contain("OperationMapBuildingUnitProductionRequest"));
+        Assert.That(operationMapProjectionSource, Does.Contain("internal static class BuildingOperationMapProductionQueueUiProjection"));
+        Assert.That(operationMapProjectionSource, Does.Contain("OperationMapBuildingUnitProductionRequest"));
+        Assert.That(operationMapProjectionSource, Does.Contain("Allocator.Temp"));
+        Assert.That(operationMapProjectionSource, Does.Not.Contain("World.DefaultGameObjectInjectionWorld"));
+        Assert.That(operationMapProjectionSource, Does.Not.Contain("private static World"));
+        Assert.That(operationMapProjectionSource, Does.Not.Contain("public void Update()"));
+        Assert.That(operationMapProjectionSource, Does.Not.Contain("ProjectionCache"));
     }
 
     [Test]

@@ -45,7 +45,7 @@ namespace Game.Runtime
                 return;
             }
 
-            if (TryAddProducedUnitsFromReadModel(building, em, results))
+            if (TryAppendUnits(building, em, results))
                 return;
 
             building.ProducedUnits ??= new List<Entity>();
@@ -135,7 +135,7 @@ namespace Game.Runtime
             }
 
             float now = context.GetNow != null ? context.GetNow() : Time.time;
-            if (TryAddProducedUnitEntriesFromReadModel(context, building, em, entries))
+            if (TryAppendEntries(context, building, em, entries))
             {
                 AddPendingProducedUnitEntries(building.PendingProductions, context.ProductionSystem, now, entries);
                 return;
@@ -214,7 +214,7 @@ namespace Game.Runtime
 
                     if (building.IsCityGenerated)
                         continue;
-                    if (!IsFriendlyProductionBuilding(building))
+                    if (!IsFriendlyProducer(building))
                         continue;
 
                     AddPendingProductionUiEntries(
@@ -223,98 +223,14 @@ namespace Game.Runtime
                         context.ProductionSystem,
                         now,
                         entries,
-                        ResolveProducerDisplayName(pair.Key, building));
+                        ResolveName(pair.Key, building));
                 }
             }
 
-            AddOperationMapPendingProductionUiEntries(context, now, entries);
+            BuildingOperationMapProductionQueueUiProjection.Append(context, now, entries);
         }
 
-        private static void AddOperationMapPendingProductionUiEntries(
-            BuildingUiQueryUiSystemHelper.Context context,
-            float now,
-            List<BuildingUiQueryUiSystemHelper.PendingProductionUiEntry> entries)
-        {
-            if (context.TryGetEntityManager == null ||
-                !context.TryGetEntityManager(out EntityManager em) ||
-                em.World == null ||
-                !em.World.IsCreated)
-            {
-                return;
-            }
-
-            BuildingProductionRequestSystemHelper.Context productionContext =
-                context.CreateProductionRequestContext != null
-                    ? context.CreateProductionRequestContext()
-                    : default;
-
-            using EntityQuery producerQuery = em.CreateEntityQuery(
-                ComponentType.ReadOnly<OperationMapBuildingComponent>(),
-                ComponentType.ReadOnly<OperationMapBuildingProductionQueueComponent>(),
-                ComponentType.ReadOnly<OperationMapBuildingUnitProductionRequest>(),
-                ComponentType.ReadOnly<Faction>(),
-                ComponentType.ReadOnly<UnitHealth>());
-            using NativeArray<Entity> producers = producerQuery.ToEntityArray(Allocator.Temp);
-            for (int producerIndex = 0; producerIndex < producers.Length; producerIndex++)
-            {
-                Entity producer = producers[producerIndex];
-                if (em.GetComponentData<Faction>(producer).Id != FactionIdentity.PlayerFactionId ||
-                    em.GetComponentData<UnitHealth>(producer).Current <= 0 ||
-                    (em.HasComponent<OperationMapBuildingDestroyedComponent>(producer) &&
-                     em.IsComponentEnabled<OperationMapBuildingDestroyedComponent>(producer)))
-                {
-                    continue;
-                }
-
-                OperationMapBuildingComponent building =
-                    em.GetComponentData<OperationMapBuildingComponent>(producer);
-                string producerDisplayName = em.HasComponent<UnitDisplayInfo>(producer)
-                    ? em.GetComponentData<UnitDisplayInfo>(producer).Name.ToString()
-                    : building.StableId.ToString();
-                DynamicBuffer<OperationMapBuildingUnitProductionRequest> queue =
-                    em.GetBuffer<OperationMapBuildingUnitProductionRequest>(producer, true);
-                for (int requestIndex = 0; requestIndex < queue.Length; requestIndex++)
-                {
-                    OperationMapBuildingUnitProductionRequest request = queue[requestIndex];
-                    if (request.Status != OperationMapBuildingUnitProductionRequest.Pending)
-                        continue;
-
-                    GameObject prefab = null;
-                    context.TryResolveLiveUnitPreviewPrefab?.Invoke(request.UnitPrefab, out prefab);
-                    if (prefab == null)
-                    {
-                        string normalizedSourceKey = BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(
-                            request.UnitSourceKey.ToString());
-                        if (!string.IsNullOrEmpty(normalizedSourceKey) &&
-                            productionContext.UnitSpawnPrefabsByKey != null)
-                        {
-                            productionContext.UnitSpawnPrefabsByKey.TryGetValue(normalizedSourceKey, out prefab);
-                        }
-                    }
-
-                    if (prefab == null)
-                    {
-                        continue;
-                    }
-
-                    float duration = Mathf.Max(0.01f, request.ReadyAt - request.QueuedAt);
-                    float remaining = Mathf.Max(0f, request.ReadyAt - now);
-                    float progress = Mathf.Clamp01((now - request.QueuedAt) / duration);
-                    entries.Add(new BuildingUiQueryUiSystemHelper.PendingProductionUiEntry(
-                        building.PlacementIndex,
-                        -1,
-                        prefab,
-                        remaining,
-                        duration,
-                        progress,
-                        request.QueuedAt,
-                        request.ReadyAt,
-                        producerDisplayName));
-                }
-            }
-        }
-
-        private static bool TryAddProducedUnitsFromReadModel(
+        private static bool TryAppendUnits(
             RuntimeBuildingEntity building,
             EntityManager em,
             List<Entity> results)
@@ -337,7 +253,7 @@ namespace Game.Runtime
             return matchedBuilding;
         }
 
-        private static bool TryAddProducedUnitEntriesFromReadModel(
+        private static bool TryAppendEntries(
             BuildingUiQueryUiSystemHelper.Context context,
             RuntimeBuildingEntity building,
             EntityManager em,
@@ -414,17 +330,13 @@ namespace Game.Runtime
                    em.GetComponentData<UnitHealth>(unit).Current > 0;
         }
 
-        private static bool IsFriendlyProductionBuilding(RuntimeBuildingEntity building)
-        {
-            if (building == null)
-                return false;
+        private static bool IsFriendlyProducer(RuntimeBuildingEntity building) =>
+            building != null &&
+            (!building.HasOwnerFaction ||
+             building.OwnerFactionId == FactionIdentity.NeutralFactionId ||
+             building.OwnerFactionId == FactionIdentity.PlayerFactionId);
 
-            return !building.HasOwnerFaction ||
-                   building.OwnerFactionId == FactionIdentity.NeutralFactionId ||
-                   building.OwnerFactionId == FactionIdentity.PlayerFactionId;
-        }
-
-        private static string ResolveProducerDisplayName(int buildingId, RuntimeBuildingEntity building)
+        private static string ResolveName(int buildingId, RuntimeBuildingEntity building)
         {
             string displayName = building != null && building.Definition != null
                 ? building.Definition.DisplayName

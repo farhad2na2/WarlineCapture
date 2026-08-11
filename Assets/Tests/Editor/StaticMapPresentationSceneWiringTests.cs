@@ -12,8 +12,30 @@ using UnityEngine.SceneManagement;
 
 public sealed class StaticMapPresentationSceneWiringTests
 {
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            var tests = new StaticMapPresentationSceneWiringTests();
+            tests.MatchScene_ResolvesSelectedPresentationOwnership();
+            tests.CompositionAndWiringSources_DoNotUseGameObjectFindFallback();
+            tests.MenuLifecycle_GatesMatchStartAndUnloadOnPresentationStreaming();
+            tests.MatchTeardown_RestoresCanonicalRenderersBeforeSourceSceneUnload();
+            tests.EntitySceneMenuTeardown_ReleasesMetadataBeforePackedContentAndMatchShell();
+            tests.EntitySceneSteadyState_DoesNotSearchHierarchyAccessSourceOrQueryPhysics();
+            Debug.Log("[StaticMapPresentationSceneWiringValidation] result=Passed tests=6");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError(
+                $"[StaticMapPresentationSceneWiringValidation] result=Failed\n{exception}");
+            ValidationExit.Exit(1);
+        }
+    }
+
     [Test]
-    public void MatchScene_ResolvesTheGeneratedPresentationManifestFromTheSelectedMap()
+    public void MatchScene_ResolvesSelectedPresentationOwnership()
     {
         SceneSetup[] previousSetup = EditorSceneManager.GetSceneManagerSetup();
         try
@@ -33,10 +55,32 @@ public sealed class StaticMapPresentationSceneWiringTests
             string presentationSourceScenePath =
                 StaticMapPresentationBaker.CurrentStagedOperationMapScenePath;
 
-            Assert.NotNull(manifest, "Generated static-map presentation manifest is missing.");
             Assert.IsNull(
                 view.StaticMapPresentationManifest,
                 "Thin Match shell must not serialize a map-owned manifest directly.");
+            if (OperationMapEntityScenePresentationPolicy.UsesEntityScenePresentation(definition))
+            {
+                Assert.IsNull(
+                    manifest,
+                    "EntityScene production ownership must not retain the retired static manifest.");
+                Assert.That(
+                    definition.StaticPresentationManifestReference == null ||
+                    string.IsNullOrEmpty(
+                        definition.StaticPresentationManifestReference.AssetGUID),
+                    Is.True,
+                    "EntityScene production ownership must leave the static manifest reference empty.");
+                Assert.Throws<InvalidOperationException>(() =>
+                    StaticMapPresentationSceneWiring.LoadValidatedManifest(
+                        view.OperationMapCatalog,
+                        view.OperationMapId,
+                        presentationSourceScenePath));
+                Assert.NotNull(
+                    view.WorldCamera,
+                    "MatchSceneView must serialize the camera used for packed presentation.");
+                return;
+            }
+
+            Assert.NotNull(manifest, "Generated static-map presentation manifest is missing.");
             Assert.AreSame(
                 manifest,
                 StaticMapPresentationSceneWiring.LoadValidatedManifest(
@@ -167,9 +211,9 @@ public sealed class StaticMapPresentationSceneWiringTests
         string matchSceneViewSource = File.ReadAllText(Path.Combine(
             projectRoot,
             "Assets/Game/Scripts/Composition/MatchSceneView.cs"));
-        string loaderSource = File.ReadAllText(Path.Combine(
+        string packedOwnershipSource = File.ReadAllText(Path.Combine(
             projectRoot,
-            "Assets/Game/Scripts/Composition/OperationMapSceneLoadingSceneSystemHelper.cs"));
+            "Assets/Game/Scripts/Composition/OperationMapPackedEntitySceneOwnership.cs"));
         string menuSource = File.ReadAllText(Path.Combine(
             projectRoot,
             "Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs"));
@@ -193,7 +237,7 @@ public sealed class StaticMapPresentationSceneWiringTests
                 "private void ShutdownMatchRuntimeBound",
                 StringComparison.Ordinal),
             StringComparison.Ordinal);
-        int packedReleaseIndex = loaderSource.IndexOf(
+        int packedReleaseIndex = packedOwnershipSource.IndexOf(
             "SceneSystem.UnloadParameters.DestroyMetaEntities",
             StringComparison.Ordinal);
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using Game.Authoring;
@@ -23,6 +24,7 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
         "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01.asset";
     private const string ScenePath =
         "Assets/Game/GeneratedOperationMaps/RuntimeBinding/opmap.skirmish.desert_base_01/opmap_skirmish_desert_base_01_runtime.unity";
+    private readonly List<UnityEngine.Object> transientObjects = new();
 
     public static void RunFocusedValidation()
     {
@@ -47,6 +49,7 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
             Run(nameof(ReadyLoadCanResetBeforeSequentialLoad), test => test.ReadyLoadCanResetBeforeSequentialLoad(), ref passed);
             Run(nameof(UnloadWaitsForCompletionBeforeReleasingHandles), test => test.UnloadWaitsForCompletionBeforeReleasingHandles(), ref passed);
             Run(nameof(UnloadFailureReleasesHandlesAndRetainsFailure), test => test.UnloadFailureReleasesHandlesAndRetainsFailure(), ref passed);
+            Run(nameof(DecompositionKeepsOneTransitionOwnerWithoutNewPollingLoops), test => test.DecompositionKeepsOneTransitionOwnerWithoutNewPollingLoops(), ref passed);
             Debug.Log($"[OperationMapSceneLoadingValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
         }
@@ -65,6 +68,12 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
         if (loaded.IsValid() && loaded.isLoaded)
             EditorSceneManager.CloseScene(loaded, true);
         EditorSceneManager.NewScene(NewSceneSetup.EmptyScene);
+        for (int index = transientObjects.Count - 1; index >= 0; index--)
+        {
+            if (transientObjects[index] != null)
+                UnityEngine.Object.DestroyImmediate(transientObjects[index]);
+        }
+        transientObjects.Clear();
     }
 
     [Test]
@@ -397,7 +406,7 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
         {
             Done = true,
             Success = true,
-            LoadedManifest = CreateMismatchedManifest(),
+            LoadedManifest = CreateMismatchedManifest(scene),
             Progress = 1f
         };
         var helper = CreateHelper(sceneOperation, manifestOperation);
@@ -644,6 +653,50 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
         UnityEngine.Object.DestroyImmediate(manifestOperation.LoadedManifest);
     }
 
+    [Test]
+    public void DecompositionKeepsOneTransitionOwnerWithoutNewPollingLoops()
+    {
+        string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+        string compositionRoot = Path.Combine(
+            projectRoot,
+            "Assets/Game/Scripts/Composition");
+        string transitionSource = File.ReadAllText(Path.Combine(
+            compositionRoot,
+            "OperationMapSceneLoadingSceneSystemHelper.cs"));
+        string operationsSource = File.ReadAllText(Path.Combine(
+            compositionRoot,
+            "OperationMapSceneLoadOperations.cs"));
+        string ownershipSource = File.ReadAllText(Path.Combine(
+            compositionRoot,
+            "OperationMapPackedEntitySceneOwnership.cs"));
+        string requestValidationSource = File.ReadAllText(Path.Combine(
+            compositionRoot,
+            "OperationMapSceneLoadRequestValidation.cs"));
+        string manifestValidationSource = File.ReadAllText(Path.Combine(
+            compositionRoot,
+            "OperationMapPresentationManifestValidation.cs"));
+
+        Assert.That(File.ReadLines(Path.Combine(
+            compositionRoot,
+            "OperationMapSceneLoadingSceneSystemHelper.cs")).Count(), Is.LessThanOrEqualTo(500));
+        Assert.That(
+            CountOccurrences(transitionSource, "public void Update()"),
+            Is.EqualTo(1));
+        Assert.That(transitionSource, Does.Not.Contain("Addressables."));
+        Assert.That(transitionSource, Does.Not.Contain("SceneSystem."));
+        Assert.That(transitionSource, Does.Not.Contain("World.DefaultGameObjectInjectionWorld"));
+        Assert.That(operationsSource, Does.Contain("Addressables.LoadSceneAsync"));
+        Assert.That(ownershipSource, Does.Contain("SceneSystem.UnloadScene"));
+        Assert.That(requestValidationSource, Does.Contain("TryCreate("));
+        Assert.That(manifestValidationSource, Does.Contain("TryValidate("));
+
+        string delegatedSource =
+            operationsSource + ownershipSource + requestValidationSource + manifestValidationSource;
+        Assert.That(delegatedSource, Does.Not.Contain("public void Update()"));
+        Assert.That(delegatedSource, Does.Not.Contain("IEnumerator"));
+        Assert.That(delegatedSource, Does.Not.Contain("while ("));
+    }
+
     private static OperationMapSceneLoadingSceneSystemHelper CreateHelper(
         FakeSceneOperation sceneOperation,
         FakeManifestOperation manifestOperation) =>
@@ -722,62 +775,125 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
         field.SetValue(definition, value);
     }
 
-    private static OperationMapDefinition LoadDefinition()
+    private OperationMapDefinition LoadDefinition()
     {
-        OperationMapDefinition definition =
+        OperationMapDefinition productionDefinition =
             AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(DefinitionPath);
-        Assert.That(definition, Is.Not.Null);
+        Assert.That(productionDefinition, Is.Not.Null);
+        OperationMapDefinition definition = Track(
+            UnityEngine.Object.Instantiate(productionDefinition));
+        Set(definition, "presentationKind", OperationMapPresentationKind.StaticSceneChunks);
+        Set(definition, "renderResidencyMode", OperationMapRenderResidencyMode.ResidentEntities);
+        Set(
+            definition,
+            "staticPresentationManifestReference",
+            new AssetReference(new string('a', 32)));
         return definition;
     }
 
-    private static StaticMapPresentationManifest LoadConfiguredManifest()
-    {
-        OperationMapDefinition definition = LoadDefinition();
-        string path = AssetDatabase.GUIDToAssetPath(
-            definition.StaticPresentationManifestReference.AssetGUID);
-        StaticMapPresentationManifest manifest =
-            AssetDatabase.LoadAssetAtPath<StaticMapPresentationManifest>(path);
-        Assert.That(manifest, Is.Not.Null);
-        return manifest;
-    }
-
-    private static StaticMapPresentationManifest CreateMatchingManifest(Scene scene)
+    private OperationMapSceneView PrepareStaticSceneView(Scene scene)
     {
         OperationMapDefinition definition = LoadDefinition();
         OperationMapSceneView view = scene.GetRootGameObjects()
             .SelectMany(root => root.GetComponentsInChildren<OperationMapSceneView>(true))
             .Single();
-        StaticMapPresentationManifest source = LoadConfiguredManifest();
+        var buildingPlacements = Track(
+            ScriptableObject.CreateInstance<MapBuildingPlacementConfig>());
+        buildingPlacements.EditorSetPlacements(new List<MapBuildingPlacementConfigEntry>
+        {
+            new("test/building", "test", null, 0, Vector3.zero, Vector3.zero,
+                Vector3.zero, Vector3.one, 0f, false)
+        });
+        var vehiclePlacements = Track(
+            ScriptableObject.CreateInstance<MapVehiclePlacementConfig>());
+        vehiclePlacements.EditorSetPlacements(new List<MapVehiclePlacementConfigEntry>
+        {
+            new("test/vehicle", "test", null, 0, Vector3.zero, Vector3.zero,
+                Vector3.zero, Vector3.one)
+        });
+        Set(
+            definition,
+            "navigationMetadata",
+            new OperationMapNavigationMetadataConfig(
+                view.MapSubScene.SceneGUID.ToString(),
+                0,
+                0,
+                false,
+                false,
+                false));
+
+        SerializedObject serialized = new(view);
+        serialized.FindProperty("definition").objectReferenceValue = definition;
+        serialized.FindProperty("canonicalPresentationMode").enumValueIndex =
+            (int)OperationMapCanonicalPresentationMode.SourceRenderersPresent;
+        serialized.FindProperty("buildingPlacements").objectReferenceValue = buildingPlacements;
+        serialized.FindProperty("vehiclePlacements").objectReferenceValue = vehiclePlacements;
+        serialized.ApplyModifiedPropertiesWithoutUndo();
+        return view;
+    }
+
+    private StaticMapPresentationManifest CreateMatchingManifest(Scene scene)
+    {
+        OperationMapSceneView view = PrepareStaticSceneView(scene);
         StaticMapPresentationManifest manifest =
-            UnityEngine.Object.Instantiate(source);
-        manifest.EditorSetData(
-            definition.OperationMapId,
-            view.PresentationSourceSceneGuid,
-            view.PresentationSourceScenePath,
-            source.CanonicalSceneDependencyHash,
-            source.ChunkSize,
-            source.ContentHash,
-            new List<StaticMapPresentationChunkEntry>(source.Chunks),
-            new List<StaticMapPresentationSourceEntry>(source.Sources));
+            ScriptableObject.CreateInstance<StaticMapPresentationManifest>();
+        SetManifestData(manifest, view, view.Definition.SourceSceneReference.AssetGUID, scene.path);
         return manifest;
     }
 
-    private static StaticMapPresentationManifest CreateMismatchedManifest()
+    private StaticMapPresentationManifest CreateMismatchedManifest(Scene scene)
     {
-        OperationMapDefinition definition = LoadDefinition();
-        StaticMapPresentationManifest source = LoadConfiguredManifest();
-        StaticMapPresentationManifest manifest = UnityEngine.Object.Instantiate(source);
+        OperationMapSceneView view = PrepareStaticSceneView(scene);
+        StaticMapPresentationManifest manifest =
+            ScriptableObject.CreateInstance<StaticMapPresentationManifest>();
         const string mismatchedScenePath = "Assets/Game/Scenes/Match.unity";
-        manifest.EditorSetData(
-            definition.OperationMapId,
+        SetManifestData(
+            manifest,
+            view,
             AssetDatabase.AssetPathToGUID(mismatchedScenePath),
-            mismatchedScenePath,
-            source.CanonicalSceneDependencyHash,
-            source.ChunkSize,
-            source.ContentHash,
-            new List<StaticMapPresentationChunkEntry>(source.Chunks),
-            new List<StaticMapPresentationSourceEntry>(source.Sources));
+            mismatchedScenePath);
         return manifest;
+    }
+
+    private static void SetManifestData(
+        StaticMapPresentationManifest manifest,
+        OperationMapSceneView view,
+        string sceneGuid,
+        string scenePath)
+    {
+        var bounds = new Bounds(Vector3.zero, Vector3.one);
+        manifest.EditorSetData(
+            view.OperationMapId,
+            sceneGuid,
+            scenePath,
+            "test-dependency-hash",
+            64f,
+            "test-content-hash",
+            new List<StaticMapPresentationChunkEntry>
+            {
+                new("0:0", scenePath, bounds, 0, 1)
+            },
+            new List<StaticMapPresentationSourceEntry>
+            {
+                new(
+                    "test-source",
+                    "Map/Test",
+                    "test-source-hash",
+                    "0:0",
+                    "TestSource",
+                    bounds,
+                    null,
+                    string.Empty,
+                    0,
+                    new List<StaticMapPresentationMaterialEntry>(),
+                    false)
+            });
+    }
+
+    private T Track<T>(T value) where T : UnityEngine.Object
+    {
+        transientObjects.Add(value);
+        return value;
     }
 
     private static void Run(
@@ -796,6 +912,9 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
             tests.TearDown();
         }
     }
+
+    private static int CountOccurrences(string source, string token) =>
+        source.Split(new[] { token }, StringSplitOptions.None).Length - 1;
 
     private sealed class FakeSceneApi : IOperationMapSourceSceneApi
     {

@@ -45,10 +45,12 @@ public sealed class RuntimeCityGenerationFocusedTests
             tests.VisualQualityClearance_PreservesLargeRockWithoutExplicitCleanup();
             tests.VisualQualityClearance_SuppressesLargeRockWithExplicitCleanup();
             tests.VisualQualityClearance_SuppressesSmallDressingOutsideDistrictFootprint();
+            tests.VisualQualityFoundation_BorrowedMaterialSurvivesDisposeAndColliderIsRemoved();
+            tests.VisualQualityBoundary_IsGenerationTimeOnlyAndOwnersDisposeIt();
             tests.RuntimeCameraPose_PreservesStageAndClampsPresentationValues();
             tests.RuntimeDistrictModuleRecipe_SupportsExactPrefabReplayOrIndexedSlices();
             tests.RuntimePrototypeArchitecture_UsesPassiveViewAndSystemBaseOwner();
-            Debug.Log("[RuntimeCityGenerationFocusedValidation] result=Passed tests=31");
+            Debug.Log("[RuntimeCityGenerationFocusedValidation] result=Passed tests=33");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -1178,6 +1180,76 @@ public sealed class RuntimeCityGenerationFocusedTests
             quality.Dispose();
             UnityEngine.Object.DestroyImmediate(visual);
         }
+    }
+
+    [Test]
+    public void VisualQualityFoundation_BorrowedMaterialSurvivesDisposeAndColliderIsRemoved()
+    {
+        Shader shader = Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Standard");
+        Assert.IsNotNull(shader);
+        GameObject root = new("RuntimeVisualQualityFoundationRoot");
+        Material borrowedMaterial = new(shader) { name = "BorrowedFoundationMaterial" };
+        var quality = new RuntimeOperationMapVisualQualitySystemHelper();
+        try
+        {
+            var settings = new Game.Configs.RuntimeOperationMapFoundationSettings(
+                borrowedMaterial,
+                new Vector3(10f, -0.2f, 12f),
+                new Vector3(24f, 0.4f, 30f),
+                Color.gray);
+
+            GameObject foundation = quality.CreateFoundation(
+                settings,
+                root.transform,
+                cloneSourceMaterial: false);
+
+            Assert.IsNotNull(foundation);
+            Assert.IsNull(foundation.GetComponent<Collider>());
+            Assert.AreSame(borrowedMaterial, foundation.GetComponent<MeshRenderer>().sharedMaterial);
+            Assert.AreEqual(1, quality.FoundationVisualCount);
+
+            quality.Dispose();
+
+            Assert.AreEqual(0, quality.FoundationVisualCount);
+            Assert.AreEqual(0, quality.SuppressedObstructionCount);
+            Assert.IsTrue(borrowedMaterial != null);
+        }
+        finally
+        {
+            quality.Dispose();
+            UnityEngine.Object.DestroyImmediate(root);
+            UnityEngine.Object.DestroyImmediate(borrowedMaterial);
+        }
+    }
+
+    [Test]
+    public void VisualQualityBoundary_IsGenerationTimeOnlyAndOwnersDisposeIt()
+    {
+        const string QualityPath = "Assets/Game/Scripts/Environment/RuntimeOperationMapVisualQualitySystemHelper.cs";
+        const string CompositionPath = "Assets/Game/Scripts/Environment/RuntimeCityRAndDMapCompositionSystemHelper.cs";
+        const string PresentationPath = "Assets/Game/Scripts/Environment/RuntimeOperationMapVisualRecipePresentationSystemHelper.cs";
+        string qualitySource = File.ReadAllText(QualityPath);
+        string compositionSource = File.ReadAllText(CompositionPath);
+        string presentationSource = File.ReadAllText(PresentationPath);
+
+        Assert.AreEqual(198, File.ReadAllLines(QualityPath).Length);
+        Assert.AreEqual(8170, new FileInfo(QualityPath).Length);
+        Assert.AreEqual(1, CountOccurrences(
+            compositionSource,
+            "new RuntimeOperationMapVisualQualitySystemHelper()"));
+        Assert.AreEqual(1, CountOccurrences(
+            presentationSource,
+            "new RuntimeOperationMapVisualQualitySystemHelper()"));
+        Assert.AreEqual(1, CountOccurrences(compositionSource, "_algorithmicVisualQuality.CreateFoundation("));
+        Assert.AreEqual(1, CountOccurrences(presentationSource, "_quality.CreateFoundation("));
+        Assert.AreEqual(1, CountOccurrences(compositionSource, "_algorithmicVisualQuality?.Dispose();"));
+        Assert.AreEqual(1, CountOccurrences(presentationSource, "_quality?.Dispose();"));
+        Assert.AreEqual(2, CountOccurrences(presentationSource, "_quality.ApplyClearanceRules("));
+        Assert.That(qualitySource, Does.Not.Contain("Update("));
+        Assert.That(qualitySource, Does.Not.Contain("IEnumerator"));
+        Assert.That(qualitySource, Does.Not.Contain("StartCoroutine"));
+        Assert.That(qualitySource, Does.Not.Contain("World.DefaultGameObjectInjectionWorld"));
+        Assert.That(qualitySource, Does.Not.Contain("EntityManager"));
     }
 
     [Test]

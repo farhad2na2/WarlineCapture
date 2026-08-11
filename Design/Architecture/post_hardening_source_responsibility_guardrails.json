@@ -55,6 +55,14 @@
       "scope": "system-helper"
     },
     {
+      "path": "Assets/Game/Scripts/Environment/RuntimeOperationMapVisualQualitySystemHelper.cs",
+      "trackerTaskId": "AMFR-010",
+      "acceptedCommit": "e172b6bb899ce5a39966cb48528ef4c971f1f7c2",
+      "maxLines": 198,
+      "maxBytes": 8170,
+      "scope": "system-helper"
+    },
+    {
       "path": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
       "trackerTaskId": "AM-013",
       "acceptedCommit": "664ae7fa4544699faad7da01b11db60434e39088",

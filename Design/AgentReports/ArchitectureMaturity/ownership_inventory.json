@@ -440,8 +440,8 @@
   },
   "baseline": {
     "branch": "main",
-    "commit": "3510a141702ce7617a2b2e57b0372a13f9d0f4ee",
-    "tree": "5e1aa38f7fefd4ffd797e410d1ebc8744fd8c51a"
+    "commit": "09abe92efe264468c1b6b07724c72443bb33a1b9",
+    "tree": "9b37ff665792efedd16a2a41529c6cf8b9cf1b4f"
   },
   "determinism": {
     "arrays": "All path/id collections sort ascending by Unicode code point; source locations break ties.",
@@ -2665,7 +2665,7 @@
     },
     {
       "path": "Design/Architecture/am025_feature_readiness_architecture_closeout_tracker.md",
-      "sha256": "ea23b647b7e49ca11bde661ecfc89c9c6bd40b49793255e9df93854f34fc698a"
+      "sha256": "45a4eb242dcdf8244d99576d8d8ec8ab8600b6d33994290b7830caae0a2ce2e8"
     },
     {
       "path": "Design/Architecture/first_launch_architecture_alignment_refactor_tracker.md",

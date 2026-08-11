@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,8 +10,10 @@ namespace Game.Runtime
     using TileConnectionMask = RoadNetworkCompositionSystemHelper.TileConnectionMask;
     using VariantData = RoadVisualVariantSystem.VariantData;
 
-    public sealed class RoadPreviewPresentationSystemHelper
+    public sealed class RoadPreviewPresentationSystemHelper : IDisposable
     {
+        public const int DefaultPoolCapacity = 256;
+
         public delegate RoadVisualType ResolveVisualTypeAction(Vector2Int cell, TileConnectionMask mask);
         public delegate bool TryGetVariantAction(RoadVisualType type, TileConnectionMask mask, out VariantData variant);
 
@@ -58,9 +61,39 @@ namespace Game.Runtime
         private readonly List<GameObject> _previewObjects = new();
         private readonly Dictionary<RoadVisualType, Stack<GameObject>> _previewPool = new();
         private readonly Dictionary<GameObject, RoadVisualType> _previewObjectTypes = new();
+        private readonly Dictionary<GameObject, Material[]> _previewOwnedMaterials = new();
+        private readonly int _poolCapacity;
+        private int _pooledObjectCount;
+        private int _createdObjectCount;
+        private int _destroyedObjectCount;
+        private bool _disposed;
+
+        public RoadPreviewPresentationSystemHelper(int poolCapacity = DefaultPoolCapacity)
+        {
+            if (poolCapacity < 0)
+                throw new ArgumentOutOfRangeException(nameof(poolCapacity), "Pool capacity must be non-negative.");
+
+            _poolCapacity = poolCapacity;
+        }
+
+        public int PoolCapacity => _poolCapacity;
+        public int ActiveObjectCount => _previewObjects.Count;
+        public int PooledObjectCount => _pooledObjectCount;
+        public int RetainedObjectCount => _previewObjectTypes.Count;
+        public int CreatedObjectCount => _createdObjectCount;
+        public int DestroyedObjectCount => _destroyedObjectCount;
+        public bool IsDisposed => _disposed;
 
         public void DisposePreview()
         {
+            Dispose();
+        }
+
+        public void Dispose()
+        {
+            if (_disposed)
+                return;
+
             ClearPreview();
 
             foreach (var pool in _previewPool.Values)
@@ -68,13 +101,16 @@ namespace Game.Runtime
                 while (pool.Count > 0)
                 {
                     GameObject preview = pool.Pop();
-                    if (preview != null)
-                        UnityEngine.Object.Destroy(preview);
+                    _pooledObjectCount--;
+                    DestroyOwnedPreviewObject(preview);
                 }
             }
 
             _previewPool.Clear();
             _previewObjectTypes.Clear();
+            _previewOwnedMaterials.Clear();
+            _pooledObjectCount = 0;
+            _disposed = true;
         }
 
         public void ClearPreview()
@@ -153,13 +189,20 @@ namespace Game.Runtime
 
         private GameObject GetPreviewObject(Context context, RoadVisualType type)
         {
+            if (_disposed)
+                throw new ObjectDisposedException(nameof(RoadPreviewPresentationSystemHelper));
+
             if (_previewPool.TryGetValue(type, out var pool))
             {
                 while (pool.Count > 0)
                 {
                     GameObject pooled = pool.Pop();
+                    _pooledObjectCount--;
                     if (pooled == null)
+                    {
+                        DestroyOwnedPreviewObject(pooled);
                         continue;
+                    }
 
                     pooled.SetActive(true);
                     return pooled;
@@ -168,21 +211,36 @@ namespace Game.Runtime
 
             GameObject preview = CreateRuntimeRoadObject(context, type);
             if (preview != null)
+            {
                 _previewObjectTypes[preview] = type;
+                _createdObjectCount++;
+            }
 
             return preview;
         }
 
         private void ReleasePreviewObject(GameObject preview)
         {
-            if (preview == null)
+            if (ReferenceEquals(preview, null))
                 return;
+
+            if (preview == null)
+            {
+                DestroyOwnedPreviewObject(preview);
+                return;
+            }
 
             preview.SetActive(false);
 
             if (!_previewObjectTypes.TryGetValue(preview, out var type))
             {
-                UnityEngine.Object.Destroy(preview);
+                DestroyRuntimeObject(preview);
+                return;
+            }
+
+            if (_pooledObjectCount >= _poolCapacity)
+            {
+                DestroyOwnedPreviewObject(preview);
                 return;
             }
 
@@ -193,9 +251,10 @@ namespace Game.Runtime
             }
 
             pool.Push(preview);
+            _pooledObjectCount++;
         }
 
-        private static GameObject CreateRuntimeRoadObject(Context context, RoadVisualType type)
+        private GameObject CreateRuntimeRoadObject(Context context, RoadVisualType type)
         {
             if (!context.VisualData.TryGetValue(type, out var visualData) ||
                 visualData.Mesh == null ||
@@ -212,12 +271,12 @@ namespace Game.Runtime
 
             var meshRenderer = roadObject.AddComponent<MeshRenderer>();
             meshRenderer.sharedMaterials = visualData.Materials;
-            SetPreviewMaterials(meshRenderer, context.PreviewAlpha);
+            _previewOwnedMaterials[roadObject] = SetPreviewMaterials(meshRenderer, context.PreviewAlpha);
 
             return roadObject;
         }
 
-        private static void SetPreviewMaterials(Renderer renderer, float alpha)
+        private static Material[] SetPreviewMaterials(Renderer renderer, float alpha)
         {
             var materials = renderer.sharedMaterials;
             var previewMaterials = new Material[materials.Length];
@@ -239,6 +298,35 @@ namespace Game.Runtime
             }
 
             renderer.sharedMaterials = previewMaterials;
+            return previewMaterials;
+        }
+
+        private void DestroyOwnedPreviewObject(GameObject preview)
+        {
+            if (ReferenceEquals(preview, null))
+                return;
+
+            if (_previewOwnedMaterials.Remove(preview, out Material[] materials))
+            {
+                for (int i = 0; i < materials.Length; i++)
+                    DestroyRuntimeObject(materials[i]);
+            }
+
+            _previewObjectTypes.Remove(preview);
+            if (preview != null)
+                DestroyRuntimeObject(preview);
+            _destroyedObjectCount++;
+        }
+
+        private static void DestroyRuntimeObject(UnityEngine.Object target)
+        {
+            if (target == null)
+                return;
+
+            if (Application.isPlaying)
+                UnityEngine.Object.Destroy(target);
+            else
+                UnityEngine.Object.DestroyImmediate(target);
         }
 
         private static void ApplyPlacement(Context context, Transform target, Vector2Int cell, VariantData variant)

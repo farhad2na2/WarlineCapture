@@ -366,9 +366,26 @@ MANUAL_REVIEW_OVERRIDES: dict[tuple[str, str, str], tuple[str, str, str]] = {
         "Manual review: consumes ECS `UnitAttackVfxRequest` entities and unwraps authored muzzle/impact GameObject prefab refs only at the VFX playback boundary.",
         "Counted managed presentation `SystemBase` exception consuming ECS unit attack VFX requests",
     ),
+    ("Assets/Game/Scripts/Environment/RuntimeCityRAndDMapSystem.cs", "RuntimeCityRAndDMapSystem", "SystemBase"): (
+        "ManagedPresentationSystemBaseException",
+        "Manual review: retained managed R&D presentation boundary; request methods enqueue existing generation state and do not move simulation policy into the managed owner.",
+        "Counted managed R&D presentation `SystemBase` exception",
+    ),
+    ("Assets/Game/Scripts/Rendering/Baking/OperationMapRenderMaterialBaseColorBakingSystem.cs", "OperationMapRenderMaterialBaseColorBakingSystem", "ISystem"): (
+        "Converted",
+        "Keep as a baking-world-only `ISystem`; managed material reads occur only in the filtered post-baking boundary and publish ECS material-property data.",
+        "`OperationMapRenderMaterialBaseColorBakingSystem : ISystem` baking boundary",
+    ),
+    ("Assets/Game/Scripts/Rendering/Baking/OperationMapRenderVirtualizationBakingSystem.cs", "OperationMapRenderVirtualizationBakingSystem", "ISystem"): (
+        "Converted",
+        "Keep as a baking-world-only `ISystem`; the lexical Material blocker is ECS render metadata and the system publishes deterministic baked virtualization data.",
+        "`OperationMapRenderVirtualizationBakingSystem : ISystem` baking boundary",
+    ),
 }
 
 MANUAL_RISK_OVERRIDES: dict[tuple[str, str, str], str] = {
+    ("Assets/Game/Scripts/Environment/RuntimeCityRAndDMapSystem.cs", "RuntimeCityRAndDMapSystem", "SystemBase"):
+        "Low: reviewed managed R&D presentation boundary only",
     ("Assets/Game/Scripts/Rendering/Systems/UnitAttachedLightSystem.cs", "UnitAttachedLightSystem", "SystemBase"):
         "Low: reviewed managed attached-light presentation boundary only",
     ("Assets/Game/Scripts/Rendering/Systems/UnitSelectionObjectOutlinePresentationSystem.cs", "UnitSelectionObjectOutlinePresentationSystem", "SystemBase"):

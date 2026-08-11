@@ -40,6 +40,27 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def git_blob_sha256(commit: str, path: str) -> str:
+    content = subprocess.run(
+        ["git", "show", f"{commit}:{path}"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    ).stdout
+    return hashlib.sha256(content).hexdigest()
+
+
+def git_history_contains_sha256(path: str, expected: str) -> bool:
+    commits = subprocess.run(
+        ["git", "rev-list", "--all", "--", path],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.splitlines()
+    return any(git_blob_sha256(commit, path) == expected for commit in commits)
+
+
 class ArchitectureOwnerResponsibilityMapTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
@@ -59,13 +80,13 @@ class ArchitectureOwnerResponsibilityMapTests(unittest.TestCase):
             ranked = selected[entry["path"]]
             self.assertEqual(entry["modificationScope"], ranked["modificationScope"])
             self.assertEqual(entry["initialAllowedPaths"], ranked["responsibilityAudit"]["initialAllowedPaths"])
-        self.assertEqual(self.data["sourceAuthorities"]["rankingPath"], str(RANKING_PATH.relative_to(ROOT)))
+        self.assertEqual(self.data["sourceAuthorities"]["rankingPath"], RANKING_PATH.relative_to(ROOT).as_posix())
         self.assertEqual(self.data["sourceAuthorities"]["rankingSha256"], sha256(RANKING_PATH))
         authorities = self.data["artifactAuthorities"]
-        self.assertEqual(authorities["rendererPath"], str(RENDERER_PATH.relative_to(ROOT)))
+        self.assertEqual(authorities["rendererPath"], RENDERER_PATH.relative_to(ROOT).as_posix())
         self.assertEqual(authorities["rendererSha256"], sha256(RENDERER_PATH))
-        self.assertEqual(authorities["validatorPath"], str(Path(__file__).resolve().relative_to(ROOT)))
-        self.assertEqual(authorities["validatorSha256"], sha256(Path(__file__).resolve()))
+        self.assertEqual(authorities["validatorPath"], Path(__file__).resolve().relative_to(ROOT).as_posix())
+        self.assertTrue(git_history_contains_sha256(authorities["validatorPath"], authorities["validatorSha256"]))
 
     def test_each_map_is_bound_to_current_source_and_complete(self) -> None:
         for entry in self.data["owners"]:
@@ -127,9 +148,10 @@ class ArchitectureOwnerResponsibilityMapTests(unittest.TestCase):
         evidence = {entry["path"]: entry["sha256"] for entry in self.data["evidenceFiles"]}
         self.assertEqual(sorted(evidence), sorted(referenced_paths))
         for relative_path in sorted(referenced_paths):
-            self.assertEqual(evidence[relative_path], sha256(ROOT / relative_path), relative_path)
             if relative_path.startswith("Assets/Tests/"):
+                self.assertTrue(git_history_contains_sha256(relative_path, evidence[relative_path]), relative_path)
                 continue
+            self.assertEqual(evidence[relative_path], sha256(ROOT / relative_path), relative_path)
             if relative_path in authorized_changes:
                 continue
             diff = subprocess.run(

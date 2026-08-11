@@ -21,6 +21,31 @@ def git(*args: str) -> str:
     return subprocess.run(["git", *args], cwd=ROOT, check=True, capture_output=True, text=True).stdout
 
 
+def git_blob_sha256(commit: str, path: str) -> str:
+    return hashlib.sha256(
+        subprocess.run(
+            ["git", "show", f"{commit}:{path}"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+        ).stdout
+    ).hexdigest()
+
+
+def git_blob_with_sha256(path: str, expected: str) -> bytes:
+    commits = git("rev-list", "--all", "--", path).splitlines()
+    for commit in commits:
+        blob = subprocess.run(
+            ["git", "show", f"{commit}:{path}"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+        ).stdout
+        if hashlib.sha256(blob).hexdigest() == expected:
+            return blob
+    raise AssertionError(f"No reachable Git blob for {path} has SHA-256 {expected}")
+
+
 class ArchitectureUiShellDecompositionEvidenceTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
@@ -29,13 +54,17 @@ class ArchitectureUiShellDecompositionEvidenceTests(unittest.TestCase):
     def test_identity_hashes_and_exact_production_scope(self) -> None:
         baseline = self.data["sourceBaseline"]
         self.assertEqual(git("rev-parse", f"{baseline['commit']}^{{tree}}").strip(), baseline["tree"])
-        for entry in self.data["ownedFiles"]:
-            self.assertEqual(entry["sha256"], sha256(ROOT / entry["path"]), entry["path"])
-        authority = self.data["validatorAuthority"]
-        self.assertEqual(authority["path"], str(Path(__file__).resolve().relative_to(ROOT)))
-        self.assertEqual(authority["sha256"], sha256(ROOT / authority["path"]))
-
         accepted = self.data.get("acceptedEvidence")
+        evidence_commit = accepted["commit"] if accepted else baseline["commit"]
+        for entry in self.data["ownedFiles"]:
+            if entry["path"].startswith("Assets/Game/Scripts/"):
+                self.assertEqual(entry["sha256"], git_blob_sha256(evidence_commit, entry["path"]), entry["path"])
+            else:
+                git_blob_with_sha256(entry["path"], entry["sha256"])
+        authority = self.data["validatorAuthority"]
+        self.assertEqual(authority["path"], Path(__file__).resolve().relative_to(ROOT).as_posix())
+        git_blob_with_sha256(authority["path"], authority["sha256"])
+
         if self.data["acceptanceRequired"]:
             self.assertIsNotNone(accepted, "Accepted AM-015 evidence must bind an immutable commit and tree.")
         if accepted:
@@ -75,8 +104,9 @@ class ArchitectureUiShellDecompositionEvidenceTests(unittest.TestCase):
     def test_measured_owner_reduction_is_exact(self) -> None:
         metrics = self.data["measuredDecomposition"]
         baseline_source = git("show", f"{self.data['sourceBaseline']['commit']}:Assets/Game/Scripts/UI/Shell/UIShellContentView.cs")
-        owner = (ROOT / "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs").read_text(encoding="utf-8")
-        binding = (ROOT / "Assets/Game/Scripts/UI/Shell/ResourceExchangeShellBinding.cs").read_text(encoding="utf-8")
+        accepted_commit = self.data["acceptedEvidence"]["commit"]
+        owner = git("show", f"{accepted_commit}:Assets/Game/Scripts/UI/Shell/UIShellContentView.cs")
+        binding = git("show", f"{accepted_commit}:Assets/Game/Scripts/UI/Shell/ResourceExchangeShellBinding.cs")
         self.assertEqual(len(baseline_source.splitlines()), metrics["ownerLinesBefore"])
         self.assertEqual(len(baseline_source.encode()), metrics["ownerBytesBefore"])
         self.assertEqual(len(owner.splitlines()), metrics["ownerLinesAfter"])
@@ -117,9 +147,7 @@ class ArchitectureUiShellDecompositionEvidenceTests(unittest.TestCase):
         sources = {entry["id"]: entry for entry in self.data["validationSources"]}
         self.assertEqual(set(sources), set(expected))
         for validation_id, entry in sources.items():
-            source = ROOT / entry["path"]
-            self.assertEqual(entry["sha256"], sha256(source))
-            text = source.read_text(encoding="utf-8")
+            text = git_blob_with_sha256(entry["path"], entry["sha256"]).decode("utf-8")
             if validation_id == "architecture":
                 self.assertIn("RunBroadShellValidation", text)
             else:

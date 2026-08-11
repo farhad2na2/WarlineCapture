@@ -12,11 +12,11 @@ public sealed class BuildingPlacementConstructionTransactionTests
         try
         {
             var tests = new BuildingPlacementConstructionTransactionTests();
-            tests.AffordablePlacement_SpendsBothResourcesExactlyOnce();
-            tests.TypedShortages_DoNotCommitOrMutateResources();
+            tests.AffordablePlacement_SpendsMaterialsAndPreservesCreditsExactlyOnce();
+            tests.CanonicalMaterialsShortage_DoesNotCommitOrMutateResources();
             tests.InvalidPlacementAndPreviewCancel_SpendNothing();
-            tests.RegistrationFailure_RollsBackBothResourcesExactlyOnce();
-            tests.PartialRegistration_RollsBackBothResourcesExactlyOnce();
+            tests.RegistrationFailure_RollsBackMaterialsExactlyOnce();
+            tests.PartialRegistration_RollsBackMaterialsExactlyOnce();
             tests.DuplicateTransaction_DoesNotSpendOrCommitTwice();
             Debug.Log("[BuildingPlacementConstructionTransactionValidation] result=Passed tests=6");
             ValidationExit.Exit(0);
@@ -30,24 +30,32 @@ public sealed class BuildingPlacementConstructionTransactionTests
     }
 
     [Test]
-    public void AffordablePlacement_SpendsBothResourcesExactlyOnce()
+    public void AffordablePlacement_SpendsMaterialsAndPreservesCreditsExactlyOnce()
     {
         using var fixture = new Fixture(credits: 500, materials: 100, creditsCost: 120, materialsCost: 30);
 
         Assert.IsTrue(fixture.Confirm(1, committed: true, out var failure));
 
         Assert.AreEqual(BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.None, failure);
-        Assert.AreEqual(380, fixture.Resources.CurrentDollars);
+        Assert.AreEqual(500, fixture.Resources.CurrentDollars);
         Assert.AreEqual(70, fixture.Resources.CurrentMaterials);
         Assert.AreEqual(1, fixture.CommitCount);
     }
 
     [Test]
-    public void TypedShortages_DoNotCommitOrMutateResources()
+    public void CanonicalMaterialsShortage_DoesNotCommitOrMutateResources()
     {
-        AssertShortage(credits: 99, materials: 50, expected: BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.InsufficientCredits);
+        using (var creditsBelowLegacyCost = new Fixture(credits: 99, materials: 50, creditsCost: 100, materialsCost: 20))
+        {
+            Assert.IsTrue(creditsBelowLegacyCost.Confirm(1, committed: true, out var failure));
+            Assert.AreEqual(BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.None, failure);
+            Assert.AreEqual(99, creditsBelowLegacyCost.Resources.CurrentDollars);
+            Assert.AreEqual(30, creditsBelowLegacyCost.Resources.CurrentMaterials);
+            Assert.AreEqual(1, creditsBelowLegacyCost.CommitCount);
+        }
+
         AssertShortage(credits: 150, materials: 19, expected: BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.InsufficientMaterials);
-        AssertShortage(credits: 99, materials: 19, expected: BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.InsufficientCreditsAndMaterials);
+        AssertShortage(credits: 99, materials: 19, expected: BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.InsufficientMaterials);
     }
 
     [Test]
@@ -72,7 +80,7 @@ public sealed class BuildingPlacementConstructionTransactionTests
     }
 
     [Test]
-    public void RegistrationFailure_RollsBackBothResourcesExactlyOnce()
+    public void RegistrationFailure_RollsBackMaterialsExactlyOnce()
     {
         using var fixture = new Fixture(500, 100, 120, 30);
 
@@ -85,7 +93,7 @@ public sealed class BuildingPlacementConstructionTransactionTests
     }
 
     [Test]
-    public void PartialRegistration_RollsBackBothResourcesExactlyOnce()
+    public void PartialRegistration_RollsBackMaterialsExactlyOnce()
     {
         using var fixture = new Fixture(500, 100, 120, 30);
 
@@ -106,7 +114,7 @@ public sealed class BuildingPlacementConstructionTransactionTests
         Assert.IsFalse(fixture.Confirm(7, committed: true, out var duplicateFailure));
 
         Assert.AreEqual(BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.DuplicateTransaction, duplicateFailure);
-        Assert.AreEqual(380, fixture.Resources.CurrentDollars);
+        Assert.AreEqual(500, fixture.Resources.CurrentDollars);
         Assert.AreEqual(70, fixture.Resources.CurrentMaterials);
         Assert.AreEqual(1, fixture.CommitCount);
     }
@@ -165,7 +173,7 @@ public sealed class BuildingPlacementConstructionTransactionTests
                 null,
                 null,
                 UnityEngine.Object.DestroyImmediate);
-            var runtimeState = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager);
+            var runtimeState = new RuntimeGameplayStateSystem(_world.EntityManager);
             _lifecycle.Begin(
                 new BuildingDefinition
                 {

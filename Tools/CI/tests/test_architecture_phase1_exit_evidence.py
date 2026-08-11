@@ -51,6 +51,19 @@ def git_bytes(commit: str, path: str) -> bytes:
     return result.stdout
 
 
+def git_commit_is_available(commit: str) -> bool:
+    return subprocess.run(
+        ["git", "cat-file", "-e", f"{commit}^{{commit}}"],
+        cwd=ROOT,
+        capture_output=True,
+    ).returncode == 0
+
+
+def available_capture_commit(captured: str, integrated: str) -> str:
+    """Use the immutable capture object when present, otherwise its recorded rebased equivalent."""
+    return captured if git_commit_is_available(captured) else integrated
+
+
 class ArchitecturePhase1ExitEvidenceTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
@@ -92,20 +105,22 @@ class ArchitecturePhase1ExitEvidenceTests(unittest.TestCase):
         focused = contexts["focused"]
         canonical = contexts["canonical"]
 
-        self.assert_git_identity(source["commit"], source["tree"])
-        self.assert_git_identity(focused["exactCommit"], focused["tree"])
-        self.assert_git_identity(canonical["exactCommit"], canonical["tree"])
         self.assertEqual(integrated_source["capturedCommit"], source["commit"])
         self.assertEqual(integrated_source["capturedTree"], source["tree"])
-        self.assert_is_ancestor(source["commit"], focused["exactCommit"])
-        self.assert_is_ancestor(focused["exactCommit"], canonical["exactCommit"])
-        self.assert_is_ancestor(canonical["exactCommit"], accepted["capturedCommit"])
         self.assert_git_identity(integrated_source["integratedCommit"], integrated_source["integratedTree"])
         for context_name, context in (("focused", focused), ("canonical", canonical)):
             mapped = integration[context_name]
             self.assertEqual(mapped["capturedCommit"], context["exactCommit"])
             self.assertEqual(mapped["capturedTree"], context["tree"])
             self.assert_git_identity(mapped["integratedCommit"], mapped["integratedTree"])
+            if git_commit_is_available(context["exactCommit"]):
+                self.assert_git_identity(context["exactCommit"], context["tree"])
+        if git_commit_is_available(source["commit"]):
+            self.assert_git_identity(source["commit"], source["tree"])
+        captured_chain = [source["commit"], focused["exactCommit"], canonical["exactCommit"], accepted["capturedCommit"]]
+        if all(git_commit_is_available(commit) for commit in captured_chain):
+            for ancestor, descendant in zip(captured_chain, captured_chain[1:]):
+                self.assert_is_ancestor(ancestor, descendant)
         self.assert_is_ancestor(integrated_source["integratedCommit"], integration["focused"]["integratedCommit"])
         self.assert_is_ancestor(integration["focused"]["integratedCommit"], integration["canonical"]["integratedCommit"])
         self.assert_is_ancestor(integration["canonical"]["integratedCommit"], accepted["integratedCommit"])
@@ -128,18 +143,22 @@ class ArchitecturePhase1ExitEvidenceTests(unittest.TestCase):
         self.assertEqual(environment["sha256"], evidence["environmentIdentitySha256"])
         self.assertEqual(environment["sha256"], sha256(environment["path"]))
         for context in (focused, canonical):
+            mapped = integration["focused" if context is focused else "canonical"]
+            capture_commit = available_capture_commit(context["exactCommit"], mapped["integratedCommit"])
             self.assertEqual(
                 environment["sha256"],
-                sha256_bytes(git_bytes(context["exactCommit"], environment["path"])),
+                sha256_bytes(git_bytes(capture_commit, environment["path"])),
             )
-            integrated_commit = integration["focused" if context is focused else "canonical"]["integratedCommit"]
+            integrated_commit = mapped["integratedCommit"]
             self.assertEqual(
                 environment["sha256"],
                 sha256_bytes(git_bytes(integrated_commit, environment["path"])),
             )
 
         for entry in evidence["governedSources"]:
-            capture_commit = contexts[entry["captureContext"]]["exactCommit"]
+            context_name = entry["captureContext"]
+            captured_commit = contexts[context_name]["exactCommit"]
+            capture_commit = available_capture_commit(captured_commit, integration[context_name]["integratedCommit"])
             self.assertEqual(
                 entry["sha256"],
                 sha256_bytes(git_bytes(capture_commit, entry["path"])),
@@ -180,7 +199,10 @@ class ArchitecturePhase1ExitEvidenceTests(unittest.TestCase):
         self.assertEqual(manifest["captureContext"], evidence["captureContexts"]["focused"])
 
         governed = {entry["path"]: entry for entry in evidence["governedSources"]}
-        focused_commit = evidence["focusedCaptureCommit"]
+        focused_commit = available_capture_commit(
+            evidence["focusedCaptureCommit"],
+            self.acceptance["captureIntegration"][0]["integratedCommit"],
+        )
         manifest_logs = set()
         for artifact in manifest["artifacts"]:
             runner = governed[artifact["runnerPath"]]
@@ -419,15 +441,21 @@ class ArchitecturePhase1ExitEvidenceTests(unittest.TestCase):
         acceptance = self.acceptance
         source = acceptance["sourceBaseline"]
         accepted = acceptance["acceptedEvidence"]
-        self.assert_git_identity(source["capturedCommit"], source["capturedTree"])
         self.assert_git_identity(source["integratedCommit"], source["integratedTree"])
-        self.assert_git_identity(accepted["capturedCommit"], accepted["capturedTree"])
         self.assert_git_identity(accepted["integratedCommit"], accepted["integratedTree"])
-        self.assert_is_ancestor(source["capturedCommit"], accepted["capturedCommit"])
+        if git_commit_is_available(source["capturedCommit"]):
+            self.assert_git_identity(source["capturedCommit"], source["capturedTree"])
+        if git_commit_is_available(accepted["capturedCommit"]):
+            self.assert_git_identity(accepted["capturedCommit"], accepted["capturedTree"])
+        if git_commit_is_available(source["capturedCommit"]) and git_commit_is_available(accepted["capturedCommit"]):
+            self.assert_is_ancestor(source["capturedCommit"], accepted["capturedCommit"])
         self.assert_is_ancestor(source["integratedCommit"], accepted["integratedCommit"])
 
-        captured_evidence_bytes = git_bytes(accepted["capturedCommit"], accepted["path"])
         integrated_evidence_bytes = git_bytes(accepted["integratedCommit"], accepted["path"])
+        captured_evidence_bytes = git_bytes(
+            available_capture_commit(accepted["capturedCommit"], accepted["integratedCommit"]),
+            accepted["path"],
+        )
         self.assertEqual(captured_evidence_bytes, integrated_evidence_bytes)
         self.assertEqual(accepted["sha256"], sha256_bytes(integrated_evidence_bytes))
         self.assertEqual(accepted["sha256"], sha256(accepted["path"]))

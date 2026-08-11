@@ -395,7 +395,8 @@ public sealed class MaterialsScenarioRecoveryStartupSystemHelperTests
             InitialMaterials = initialPlayerMaterials,
             MaterialsCapacity = 600,
             InitialAiMaterials = initialAiMaterials,
-            AiMaterialsCapacity = 655
+            AiMaterialsCapacity = 655,
+            InitialOil = 1800
         });
         entityManager.AddBuffer<InitialUnitsFactionBuildingSpawnEntry>(startupEntity);
         entityManager.AddBuffer<CustomGameFactionUnitSourceSpawnEntry>(startupEntity);

@@ -157,7 +157,8 @@ public sealed class ResourceExchangeRushSystemTests
         AssertRushAccepted(em, exchange, requestId, 1);
         ResourceExchangeWalletComponent wallet = em.GetComponentData<ResourceExchangeWalletComponent>(exchange);
         Assert.AreEqual(2, wallet.RushTickets);
-        Assert.AreEqual(93, em.GetComponentData<FactionEconomy>(exchange).Money);
+        Assert.AreEqual(0, em.GetComponentData<FactionEconomy>(exchange).Money);
+        Assert.AreEqual(493f, ResourceExchangePhysicalStorageTestHelper.GetStorage(em).StoredOilBarrels, 0.001f);
 
         DynamicBuffer<ResourceExchangeQueueComponent> queue = em.GetBuffer<ResourceExchangeQueueComponent>(exchange);
         Assert.AreEqual(ResourceExchangeQueueState.Completed, queue[0].State);
@@ -224,7 +225,7 @@ public sealed class ResourceExchangeRushSystemTests
         em.AddBuffer<ResourceExchangeQueueComponent>(entity);
         em.AddBuffer<ResourceExchangeResultComponent>(entity);
         em.AddBuffer<ResourceExchangeEconomyEventComponent>(entity);
-        ResourceExchangePhysicalStorageTestHelper.AddStorage(em, entity, oil: 1000);
+        ResourceExchangePhysicalStorageTestHelper.AddStorage(em, entity, oil: 500);
         return entity;
     }
 

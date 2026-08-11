@@ -167,7 +167,7 @@ public sealed class AIEndToEndValidationTests
         Assert.AreEqual(1, RuntimeGameplayStateTestHelper.CountRuntimeBuildingsForFaction(em, FactionIdentity.EnemyFactionId, "Tent_Regular"));
 
         if (assertDiagnosticLog)
-            LogAssert.Expect(LogType.Log, new Regex(@"\[AIProduction\] faction=2 unit=Rifleman cost=10000 result=Requested"));
+            LogAssert.Expect(LogType.Log, new Regex(@"\[AIProduction\] faction=2 unit=Rifleman cost=20 result=Requested"));
         productionSystem.Update(_world.Unmanaged);
         logFlushSystem.Update(_world.Unmanaged);
         if (assertDiagnosticLog)
@@ -179,7 +179,7 @@ public sealed class AIEndToEndValidationTests
         RuntimeGameplayStateTestHelper.PublishBuildingRuntimeState(em, TickBuildingRuntime);
 
         if (assertDiagnosticLog)
-            LogAssert.Expect(LogType.Log, new Regex(@"\[AIProduction\] faction=2 producer=Tent_Regular unit=Rifleman cost=10000 queue=1 result=Queued"));
+            LogAssert.Expect(LogType.Log, new Regex(@"\[AIProduction\] faction=2 producer=Tent_Regular unit=Rifleman cost=20 queue=1 result=Queued"));
         productionSystem.Update(_world.Unmanaged);
         logFlushSystem.Update(_world.Unmanaged);
         if (assertDiagnosticLog)
@@ -227,7 +227,7 @@ public sealed class AIEndToEndValidationTests
         AssertEngageOrder(em, unitD, target);
 
         FactionEconomy economy = em.GetComponentData<FactionEconomy>(economyEntity);
-        Assert.AreEqual(70000, economy.Money);
+        Assert.AreEqual(99980, economy.Money);
     }
 
     private void CreateBuildingPlacementHarness()

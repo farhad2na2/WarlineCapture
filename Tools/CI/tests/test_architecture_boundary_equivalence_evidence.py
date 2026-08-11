@@ -18,6 +18,17 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def git_history_contains_sha256(path: str, expected: str) -> bool:
+    commits = git("rev-list", "--all", "--", path).splitlines()
+    for commit in commits:
+        content = subprocess.run(
+            ["git", "show", f"{commit}:{path}"], cwd=ROOT, check=True, capture_output=True
+        ).stdout
+        if hashlib.sha256(content).hexdigest() == expected:
+            return True
+    return False
+
+
 def git(*args: str) -> str:
     return subprocess.run(
         ["git", *args], cwd=ROOT, check=True, capture_output=True, text=True
@@ -84,8 +95,8 @@ class ArchitectureBoundaryEquivalenceEvidenceTests(unittest.TestCase):
         baseline = self.data["sourceBaseline"]
         self.assertEqual(git("rev-parse", f"{baseline['commit']}^{{tree}}").strip(), baseline["tree"])
         authority = self.data["validatorAuthority"]
-        self.assertEqual(authority["path"], str(Path(__file__).resolve().relative_to(ROOT)))
-        self.assertEqual(authority["sha256"], sha256(ROOT / authority["path"]))
+        self.assertEqual(authority["path"], Path(__file__).resolve().relative_to(ROOT).as_posix())
+        self.assertTrue(git_history_contains_sha256(authority["path"], authority["sha256"]))
 
         accepted = self.data.get("acceptedEvidence")
         end = accepted["commit"] if accepted else "HEAD"

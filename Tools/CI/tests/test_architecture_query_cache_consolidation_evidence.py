@@ -63,7 +63,7 @@ class ArchitectureQueryCacheConsolidationEvidenceTests(unittest.TestCase):
                     entry["path"],
                 )
             authority = self.data["validatorAuthority"]
-            self.assertEqual(authority["path"], str(Path(__file__).resolve().relative_to(ROOT)))
+            self.assertEqual(authority["path"], Path(__file__).resolve().relative_to(ROOT).as_posix())
             self.assertEqual(
                 authority["sha256"],
                 committed_sha256(accepted["commit"], authority["path"]),
@@ -72,7 +72,7 @@ class ArchitectureQueryCacheConsolidationEvidenceTests(unittest.TestCase):
             for entry in self.data["ownedFiles"]:
                 self.assertEqual(entry["sha256"], sha256(ROOT / entry["path"]), entry["path"])
             authority = self.data["validatorAuthority"]
-            self.assertEqual(authority["path"], str(Path(__file__).resolve().relative_to(ROOT)))
+            self.assertEqual(authority["path"], Path(__file__).resolve().relative_to(ROOT).as_posix())
             self.assertEqual(authority["sha256"], sha256(ROOT / authority["path"]))
         diff_command.extend(["--", "Assets/Game/Scripts"])
         changed = subprocess.run(diff_command, cwd=ROOT, check=True, capture_output=True, text=True).stdout.splitlines()

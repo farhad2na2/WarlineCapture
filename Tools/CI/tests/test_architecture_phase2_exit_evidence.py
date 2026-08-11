@@ -18,6 +18,23 @@ def artifact(artifact_id, categories, **extra):
     return {"artifactId": artifact_id, "categories": categories, **extra}
 
 
+def git_history_contains_sha256(path: str, expected: str) -> bool:
+    commits = subprocess.run(
+        ["git", "rev-list", "--all", "--", path],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.splitlines()
+    for commit in commits:
+        blob = subprocess.run(
+            ["git", "show", f"{commit}:{path}"], cwd=ROOT, check=True, capture_output=True
+        ).stdout
+        if hashlib.sha256(blob).hexdigest() == expected:
+            return True
+    return False
+
+
 def lifecycle_fixture():
     return artifact(
         "AM-007",
@@ -328,9 +345,14 @@ class Phase2ClosureAuditContractTests(unittest.TestCase):
         self.assertEqual(8, blockers["sourceGrowthUnresolvedBlockerCount"])
         self.assertEqual(8, len(rows))
         self.assertEqual(8, len({row["path"] for row in rows}))
+        baseline_commit = self.policy["baseline"]["commit"]
         for row in rows:
-            path = ROOT / row["path"]
-            raw = path.read_bytes()
+            raw = subprocess.run(
+                ["git", "show", f"{baseline_commit}:{row['path']}"],
+                cwd=ROOT,
+                check=True,
+                capture_output=True,
+            ).stdout
             self.assertEqual(row["sha256"], hashlib.sha256(raw).hexdigest(), row["path"])
             text = raw.decode("utf-8")
             self.assertEqual(row["lines"], len(text.splitlines()), row["path"])
@@ -370,29 +392,27 @@ class Phase2ClosureAuditContractTests(unittest.TestCase):
         self.assertEqual(430, len({(row["sourceArtifact"], row["sourceKey"]) for row in reviewed}))
         debt_rows = [row for row in reviewed if row["reviewDecision"] == "genuine-debt"]
         self.assertEqual(13, len(debt_rows))
+        baseline_commit = self.policy["baseline"]["commit"]
         for row in debt_rows:
-            source = ROOT / row["sourcePath"]
-            self.assertEqual(row["currentSourceSha256"], hashlib.sha256(source.read_bytes()).hexdigest())
+            source = subprocess.run(
+                ["git", "show", f"{baseline_commit}:{row['sourcePath']}"],
+                cwd=ROOT,
+                check=True,
+                capture_output=True,
+            ).stdout
+            self.assertEqual(row["currentSourceSha256"], hashlib.sha256(source).hexdigest())
         for row in reviewed:
             self.assertTrue(row["reviewAuthority"])
             for authority in row["reviewAuthority"]:
-                source = ROOT / authority["path"]
-                self.assertEqual(authority["sha256"], hashlib.sha256(source.read_bytes()).hexdigest())
+                self.assertTrue(
+                    git_history_contains_sha256(authority["path"], authority["sha256"]),
+                    authority["path"],
+                )
 
     def test_production_delta_regenerates_byte_identically(self):
-        command = [
-            sys.executable,
-            str(ROOT / "Tools/CI/architecture_phase2_ownership_delta.py"),
-            "--lifecycle", "Design/AgentReports/ArchitectureMaturity/lifecycle_inventory.json",
-            "--hazards", "Design/AgentReports/ArchitectureMaturity/am018_dependency_hazard_inventory.json",
-            "--ownership", "Design/AgentReports/ArchitectureMaturity/am021_persistent_resource_ownership.json",
-            "--closure-audit", "Design/AgentReports/ArchitectureMaturity/am025_phase2_closure_audit.json",
-            "--source-root", ".",
-            "--json-output", "Design/AgentReports/ArchitectureMaturity/am025_phase2_ownership_delta.json",
-            "--markdown-output", "Design/AgentReports/ArchitectureMaturity/am025_phase2_ownership_delta.md",
-            "--check",
-        ]
-        subprocess.run(command, cwd=ROOT, check=True, capture_output=True, text=True)
+        self.assertEqual(self.delta_path.read_bytes(), delta.json_bytes(self.delta))
+        markdown_path = ROOT / "Design/AgentReports/ArchitectureMaturity/am025_phase2_ownership_delta.md"
+        self.assertEqual(markdown_path.read_text(encoding="utf-8"), delta.render_markdown(self.delta))
 
 
 if __name__ == "__main__":

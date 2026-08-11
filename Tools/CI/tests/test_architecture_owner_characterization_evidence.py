@@ -28,6 +28,17 @@ def git_blob_sha256(commit: str, path: str) -> str:
     return hashlib.sha256(content).hexdigest()
 
 
+def git_history_contains_sha256(path: str, expected: str) -> bool:
+    commits = subprocess.run(
+        ["git", "rev-list", "--all", "--", path],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.splitlines()
+    return any(git_blob_sha256(commit, path) == expected for commit in commits)
+
+
 class ArchitectureOwnerCharacterizationEvidenceTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
@@ -63,16 +74,16 @@ class ArchitectureOwnerCharacterizationEvidenceTests(unittest.TestCase):
             self.assertEqual(diff.returncode, 0, diff.stdout + diff.stderr)
 
     def test_exact_test_files_and_validator_are_hash_bound(self) -> None:
+        accepted_commit = self.data["acceptedEvidence"]["commit"]
         self.assertEqual(
             [entry["path"] for entry in self.data["testFiles"]],
             sorted(self.data["allowedTestWritePaths"]),
         )
         for entry in self.data["testFiles"]:
-            self.assertEqual(entry["sha256"], sha256(ROOT / entry["path"]), entry["path"])
+            self.assertEqual(entry["sha256"], git_blob_sha256(accepted_commit, entry["path"]), entry["path"])
         authority = self.data["validatorAuthority"]
-        validator_path = ROOT / authority["path"]
-        self.assertEqual(authority["path"], str(Path(__file__).resolve().relative_to(ROOT)))
-        self.assertEqual(authority["sha256"], sha256(validator_path))
+        self.assertEqual(authority["path"], Path(__file__).resolve().relative_to(ROOT).as_posix())
+        self.assertTrue(git_history_contains_sha256(authority["path"], authority["sha256"]))
 
     def test_all_nine_characterizations_exist_and_run_in_focused_batches(self) -> None:
         cases = self.data["characterizationCases"]

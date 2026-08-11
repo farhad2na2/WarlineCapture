@@ -59,6 +59,34 @@
     "guardedSourceCount": 2,
     "growthAuthorizationCount": 4
   },
+  "featureReadinessRevalidation": {
+    "taskId": "AMFR-017",
+    "result": "Passed",
+    "commit": "98d98a47f6b68d94acf3421f195dd9431931d9b7",
+    "tree": "14805bdd73fdc3e5e3dd2c735eff6c31028a4c61",
+    "contract": {
+      "path": "Design/Architecture/post_hardening_source_responsibility_guardrails.json",
+      "sha256": "12b92a5785324722f07a985241e8086da713bc024fb4820d961d28793a53d743",
+      "guardedSourceCount": 4,
+      "growthAuthorizationCount": 114
+    },
+    "canonicalValidator": {
+      "path": "Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs",
+      "sha256": "ef7eb14af2ded966fe51e11caba98709777dd5442b95e65b1cf3c1c2a446469e",
+      "passedTests": 17,
+      "compilerErrors": 0,
+      "log": "Build/Logs/amfr017-source-growth-owner-ratchet.log",
+      "logSha256": "97a7b738be30aa7d5ac812ffaadf52113f80edbe1d1de5830641712ffbe36f33",
+      "resultMarker": "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17"
+    },
+    "authorizationValidation": {
+      "passedTests": 1,
+      "compilerErrors": 0,
+      "log": "Build/Logs/amfr017-source-authorization-owner-ratchet.log",
+      "logSha256": "0c9a6a6746adc7a93d5e52765348c35351aa807d7eec5c1513dd7429a6914439"
+    },
+    "scope": "Supersedes only the active contract/validator/result binding. The original AM-016 evidence remains immutable historical acceptance evidence."
+  },
   "guardedSources": [
     {
       "path": "Assets/Game/Scripts/UI/Shell/ResourceExchangeShellBinding.cs",

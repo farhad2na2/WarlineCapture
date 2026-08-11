@@ -98,6 +98,7 @@ public sealed class ResourceExchangeRequestValidationSystemTests
             em,
             allowAiExchange: true,
             factionId: 2,
+            oil: 1000,
             fuel: 100,
             maxQueueItems: 2,
             credits: 1000);
@@ -159,7 +160,9 @@ public sealed class ResourceExchangeRequestValidationSystemTests
         ResourceExchangeWalletComponent importWallet =
             em.GetComponentData<ResourceExchangeWalletComponent>(importExchange);
         Assert.AreEqual(2, importWallet.FactionId);
-        Assert.AreEqual(600, em.GetComponentData<FactionEconomy>(importExchange).Money);
+        Assert.AreEqual(1000, em.GetComponentData<FactionEconomy>(importExchange).Money);
+        Assert.AreEqual(1000f, GetStoredOil(em, 2), 0.001f);
+        Assert.AreEqual(400f, GetReservedOil(em, 2), 0.001f);
         Assert.AreEqual(100f, GetStoredFuel(em, 2), 0.001f);
         Assert.AreEqual(0u, importWallet.Version);
 

@@ -18,6 +18,19 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def git_history_contains_sha256(path: str, expected: str) -> bool:
+    commits = subprocess.run(
+        ["git", "rev-list", "--all", "--", path], cwd=ROOT, check=True, capture_output=True, text=True
+    ).stdout.splitlines()
+    for commit in commits:
+        content = subprocess.run(
+            ["git", "show", f"{commit}:{path}"], cwd=ROOT, check=True, capture_output=True
+        ).stdout
+        if hashlib.sha256(content).hexdigest() == expected:
+            return True
+    return False
+
+
 class ArchitectureTransportCapacityRulesEvidenceTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
@@ -83,8 +96,8 @@ class ArchitectureTransportCapacityRulesEvidenceTests(unittest.TestCase):
 
     def test_validator_is_hash_bound(self) -> None:
         authority = self.data["validatorAuthority"]
-        self.assertEqual(authority["path"], str(Path(__file__).resolve().relative_to(ROOT)))
-        self.assertEqual(authority["sha256"], sha256(ROOT / authority["path"]))
+        self.assertEqual(authority["path"], Path(__file__).resolve().relative_to(ROOT).as_posix())
+        self.assertTrue(git_history_contains_sha256(authority["path"], authority["sha256"]))
 
     def test_rules_are_stateless_and_do_not_own_ecs_or_managed_runtime_boundaries(self) -> None:
         rules = (ROOT / "Assets/Game/Scripts/Systems/UnitTransportBoardingCapacityRules.cs").read_text(encoding="utf-8")

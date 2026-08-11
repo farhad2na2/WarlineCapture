@@ -13,14 +13,14 @@ public sealed class NonUiSystemBaseMigrationArchitectureTests
     private const string InventoryPath = "Design/Architecture/systembase_to_isystem_inventory.md";
     private const string MonoBehaviourLoopBaselinePath = "Design/Architecture/phase7_monobehaviour_loop_baseline.md";
     private const int ManagedExceptionPlanningCap = 30;
-    private const int FinalProductionDeclarationCount = 201;
-    private const int FinalProductionNonUiCount = 178;
-    private const int FinalProductionUiCount = 23;
+    private const int FinalProductionDeclarationCount = 206;
+    private const int FinalProductionNonUiCount = 184;
+    private const int FinalProductionUiCount = 22;
     private const int FinalProductionSystemBaseCount = 25;
-    private const int FinalProductionISystemCount = 176;
-    private const int FinalConvertedCount = 153;
+    private const int FinalProductionISystemCount = 181;
+    private const int FinalConvertedCount = 159;
     private const int FinalManagedExceptionCount = 25;
-    private const int FinalUiOutOfScopeCount = 23;
+    private const int FinalUiOutOfScopeCount = 22;
 
     private static readonly Regex TypeDeclarationRegex = new(
         @"^[ \t]*(?:(?:\[[^\]\r\n]*(?:\r?\n[ \t]*\[[^\]\r\n]*)*\][ \t]*)\r?\n[ \t]*)*" +
@@ -92,6 +92,12 @@ public sealed class NonUiSystemBaseMigrationArchitectureTests
         // This row consumes selected-unit marker state whose names contain selection
         // vocabulary, but only creates ECS object-outline render entities/materials.
         "P7-0383"
+    };
+
+    private static readonly HashSet<string> ReviewedConvertedBakingBoundaryRows = new(StringComparer.Ordinal)
+    {
+        "Assets/Game/Scripts/Rendering/Baking/OperationMapRenderMaterialBaseColorBakingSystem.cs|OperationMapRenderMaterialBaseColorBakingSystem|struct|ISystem",
+        "Assets/Game/Scripts/Rendering/Baking/OperationMapRenderVirtualizationBakingSystem.cs|OperationMapRenderVirtualizationBakingSystem|struct|ISystem"
     };
 
     public static void RunFocusedValidation()
@@ -236,9 +242,30 @@ public sealed class NonUiSystemBaseMigrationArchitectureTests
     [Test]
     public void ConvertedRowsAvoidManagedUnityObjectBlockers()
     {
+        string[] invalidReviewedBakingBoundaries = LoadInventoryRows()
+            .Where(row => ReviewedConvertedBakingBoundaryRows.Contains(row.Key))
+            .Where(row => row.Status != "Converted" ||
+                          !File.ReadAllText(row.Path).Contains(
+                              "WorldSystemFilter(WorldSystemFilterFlags.BakingSystem)",
+                              StringComparison.Ordinal) ||
+                          !File.ReadAllText(row.Path).Contains(
+                              "UpdateInGroup(typeof(PostBakingSystemGroup))",
+                              StringComparison.Ordinal))
+            .Select(row => row.Key)
+            .OrderBy(value => value, StringComparer.Ordinal)
+            .ToArray();
+        Assert.AreEqual(
+            ReviewedConvertedBakingBoundaryRows.Count,
+            LoadInventoryRows().Count(row => ReviewedConvertedBakingBoundaryRows.Contains(row.Key)),
+            "Every reviewed converted baking boundary must retain exactly one inventory row.");
+        Assert.IsEmpty(
+            invalidReviewedBakingBoundaries,
+            "Reviewed converted baking boundaries must remain baking-world-only PostBaking ISystem owners.");
+
         string[] violations = LoadInventoryRows()
             .Where(row => row.Status == "Converted")
             .Where(row => row.ManagedBlockers != "None" || HasManagedBlocker(ReadDeclarationBody(row)))
+            .Where(row => !ReviewedConvertedBakingBoundaryRows.Contains(row.Key))
             .Select(row => $"{row.Id} {row.Path} {row.Type} blockers={row.ManagedBlockers}")
             .OrderBy(value => value, StringComparer.Ordinal)
             .ToArray();
@@ -416,7 +443,7 @@ public sealed class NonUiSystemBaseMigrationArchitectureTests
         Assert.AreEqual(FinalManagedExceptionCount, managedExceptions, "Final Phase 7 managed exception count drifted.");
         Assert.AreEqual(FinalUiOutOfScopeCount, uiOutOfScope, "Final Phase 7 UI out-of-scope count drifted.");
         Assert.AreEqual(0, reviewRequired, "Final Phase 7 inventory must not retain ReviewRequired rows.");
-        Assert.AreEqual(0.876f, share, 0.001f, "Final Phase 7 production ISystem share drifted.");
+        Assert.AreEqual(0.879f, share, 0.001f, "Final Phase 7 production ISystem share drifted.");
     }
 
     [Test]

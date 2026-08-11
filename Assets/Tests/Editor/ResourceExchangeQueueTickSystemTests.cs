@@ -54,19 +54,22 @@ public sealed class ResourceExchangeQueueTickSystemTests
     {
         using World world = new(nameof(TickQueue_CompletesOnceAndGrantsOutput));
         EntityManager em = world.EntityManager;
-        Entity exchange = CreateExchangeEntity(em);
+        Entity exchange = CreateExchangeEntity(em, oil: 200);
         DynamicBuffer<ResourceExchangeQueueComponent> queue = em.GetBuffer<ResourceExchangeQueueComponent>(exchange);
-        queue.Add(CreateQueueItem(
+        ResourceExchangeQueueComponent item = CreateQueueItem(
             inputResource: ResourceExchangeResourceKind.Oil,
             outputResource: ResourceExchangeResourceKind.Oil,
-            reservedInputAmount: 0,
+            reservedInputAmount: 200,
             outputAmount: 93,
-            remainingSeconds: 0.25f));
+            remainingSeconds: 0.25f);
+        ReservePhysicalResources(em, exchange, item);
+        queue.Add(item);
 
         Tick(em, exchange, 0.5f);
 
         ResourceExchangeWalletComponent wallet = em.GetComponentData<ResourceExchangeWalletComponent>(exchange);
-        Assert.AreEqual(93, em.GetComponentData<FactionEconomy>(exchange).Money);
+        Assert.AreEqual(0, em.GetComponentData<FactionEconomy>(exchange).Money);
+        Assert.AreEqual(93f, GetStoredOil(em), 0.001f);
         Assert.AreEqual(0u, wallet.Version);
         queue = em.GetBuffer<ResourceExchangeQueueComponent>(exchange);
         Assert.AreEqual(ResourceExchangeQueueState.Completed, queue[0].State);
@@ -82,7 +85,8 @@ public sealed class ResourceExchangeQueueTickSystemTests
         Tick(em, exchange, 1f);
 
         wallet = em.GetComponentData<ResourceExchangeWalletComponent>(exchange);
-        Assert.AreEqual(93, em.GetComponentData<FactionEconomy>(exchange).Money);
+        Assert.AreEqual(0, em.GetComponentData<FactionEconomy>(exchange).Money);
+        Assert.AreEqual(93f, GetStoredOil(em), 0.001f);
         Assert.AreEqual(1, em.GetBuffer<ResourceExchangeEconomyEventComponent>(exchange).Length);
     }
 
@@ -94,7 +98,7 @@ public sealed class ResourceExchangeQueueTickSystemTests
         Entity exchange = CreateExchangeEntity(em, fuel: 930, fuelCapacity: 1000);
         DynamicBuffer<ResourceExchangeQueueComponent> queue = em.GetBuffer<ResourceExchangeQueueComponent>(exchange);
         ResourceExchangeQueueComponent item = CreateQueueItem(
-            inputResource: ResourceExchangeResourceKind.Oil,
+            inputResource: ResourceExchangeResourceKind.Materials,
             outputResource: ResourceExchangeResourceKind.Fuel,
             reservedInputAmount: 0,
             outputAmount: 50,
@@ -137,7 +141,7 @@ public sealed class ResourceExchangeQueueTickSystemTests
         Entity exchange = CreateExchangeEntity(em, fuel: 930, fuelCapacity: 1000);
         DynamicBuffer<ResourceExchangeQueueComponent> queue = em.GetBuffer<ResourceExchangeQueueComponent>(exchange);
         ResourceExchangeQueueComponent item = CreateQueueItem(
-            inputResource: ResourceExchangeResourceKind.Oil,
+            inputResource: ResourceExchangeResourceKind.Materials,
             outputResource: ResourceExchangeResourceKind.Fuel,
             reservedInputAmount: 0,
             outputAmount: 50,

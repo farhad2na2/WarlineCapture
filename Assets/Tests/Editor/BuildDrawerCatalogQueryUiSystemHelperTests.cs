@@ -1313,7 +1313,7 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
         serialized.FindProperty("canRequest").boolValue = canRequest;
         serialized.FindProperty("role").enumValueIndex = (int)role;
         serialized.FindProperty("isWall").boolValue = isWall;
-        serialized.FindProperty("price").intValue = 1234;
+        serialized.FindProperty("materialsCost").intValue = 1234;
         serialized.FindProperty("footprintCells").vector2IntValue = new Vector2Int(2, 2);
         serialized.ApplyModifiedPropertiesWithoutUndo();
         return prefab;
@@ -1353,7 +1353,7 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
         serialized.FindProperty("isAirUnit").boolValue = isAir;
         serialized.FindProperty("footprintCells").vector2IntValue = footprint;
         serialized.FindProperty("soldierTransportCapacity").intValue = transportCapacity;
-        serialized.FindProperty("price").intValue = 5678;
+        serialized.FindProperty("materialsCost").intValue = 5678;
         serialized.FindProperty("productionDurationSeconds").floatValue = 42f;
         serialized.ApplyModifiedPropertiesWithoutUndo();
         return prefab;

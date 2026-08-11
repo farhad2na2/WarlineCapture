@@ -1,0 +1,199 @@
+{
+  "schemaVersion": 1,
+  "reportId": "2026-08-11-dense-city-redmi-wireless-install-capture",
+  "recordedAtUtc": "2026-08-11T06:54:48.2168095Z",
+  "status": "rejected-against-final-android-performance-contract",
+  "scope": {
+    "request": "Install the accepted final Android APK on the user's Redmi over wireless ADB, capture a representative run, and document the result.",
+    "classification": "supplemental-device-evidence",
+    "acceptanceImpact": "none",
+    "notes": [
+      "This Redmi sample does not reopen or replace the accepted exact-Samsung final evidence.",
+      "Both implementation trackers remain complete at child 80/80 and parent 149/149.",
+      "The result is recorded honestly as rejected for this device and run; no threshold was weakened."
+    ]
+  },
+  "repository": {
+    "branch": "main",
+    "headBeforeReport": "5e2aa135d8f3b6a1d981248386a2e137f844caf4",
+    "originMainBeforeReport": "5e2aa135d8f3b6a1d981248386a2e137f844caf4"
+  },
+  "package": {
+    "packageName": "com.warlinecapture.game",
+    "activity": "com.unity3d.player.UnityPlayerGameActivity",
+    "sourcePath": "Build/AndroidAPK/WarlineCapture.apk",
+    "sourceRevision": "6b4d268b837f085987d4287e2ca2898f0db5b064",
+    "bytes": 557478145,
+    "sha256": "25e8dae2e4f19d93a2a3c994dab3dd898a8cc4cb3b1d7b0dfb608ff5afa71ff9",
+    "versionCode": 1,
+    "versionName": "0.1.0",
+    "installResult": "Success",
+    "installedBaseApkSha256": "25e8dae2e4f19d93a2a3c994dab3dd898a8cc4cb3b1d7b0dfb608ff5afa71ff9",
+    "replacedPreexistingRejectedApk": {
+      "bytes": 696278899,
+      "sha256": "cb24795d1e952fa46d3490bef6e384ad9f912891986b1cdfe5a24b4255ee012d",
+      "reused": false
+    }
+  },
+  "device": {
+    "transport": "wireless-adb",
+    "captureEndpoint": "192.168.2.171:45751",
+    "serial": "R4M7PZEQZ58T59ZH",
+    "manufacturer": "Xiaomi",
+    "model": "24090RA29G",
+    "deviceCodeName": "malachite",
+    "product": "malachite_eea",
+    "androidRelease": "16",
+    "sdkLevel": 36,
+    "physicalResolution": {
+      "width": 1220,
+      "height": 2712
+    },
+    "densityDpi": 520
+  },
+  "coldLaunch": {
+    "status": "ok",
+    "launchState": "COLD",
+    "totalTimeMs": 451,
+    "waitTimeMs": 458,
+    "menuRendered": true,
+    "matchLoadedManually": true,
+    "loadingGateReadyObserved": true,
+    "fatalOrAnrObserved": false,
+    "knownNonfatalLog": "The optional Play Asset Delivery AssetPackManager class was absent; the embedded local APK continued to the menu and Match as previously documented."
+  },
+  "automatedFixedRoute": {
+    "launchArguments": [
+      "-warlineAutoStartMatch",
+      "-warlineAndroidPerformanceGate",
+      "VRP-092",
+      "-warlinePerformanceFrameRate",
+      "60",
+      "-warlinePerformanceRoute",
+      "fixed"
+    ],
+    "diagnosticsSuppressed": true,
+    "processToMatchReadyMs": 10808.33961691702,
+    "warmupSeconds": 15.000906608998776,
+    "sampleDurationSeconds": 120.00333837047219,
+    "sampleCount": 6603,
+    "pidContinuous": true,
+    "foregroundContinuous": true,
+    "recorderComplete": false,
+    "recorderFailure": "release recorder battery measurement was unavailable or increased during capture",
+    "fatalOrAnrObservedForAppPid": false,
+    "metrics": {
+      "averageFps": 55.02346921871443,
+      "p10Fps": 30.585349194909615,
+      "averageFrameMs": 18.174063071615315,
+      "p95FrameMs": 32.74689483642578,
+      "p99FrameMs": 32.80218505859375,
+      "maximumFrameMs": 81.91131591796875,
+      "framesAtOrAbove20Ms": 714,
+      "framesAtOrAbove25Ms": 714,
+      "averageCpuFrameMs": 15.974385360614939,
+      "p95CpuFrameMs": 18.688922882080078,
+      "averageGpuFrameMs": 16.58029855393836,
+      "p95GpuFrameMs": 21.340923309326172,
+      "totalManagedAllocatedBytes": 0,
+      "averageManagedAllocatedBytesPerFrame": 0.0,
+      "gcCollectionCount": 27,
+      "peakAllocatedMemoryMB": 970.1810817718506,
+      "peakMonoMemoryMB": 25.6015625,
+      "peakResidentSetMB": 2148.8056640625
+    },
+    "contractEvaluation": {
+      "averageFpsAtLeast54": true,
+      "p10FpsAtLeast50": false,
+      "averageFrameMsAtMost18_6": true,
+      "p95FrameMsAtMost20": false,
+      "p99FrameMsLessThan25": false,
+      "averageCpuFrameMsAtMost12": false,
+      "p95CpuFrameMsAtMost16": false,
+      "averageGpuFrameMsAtMost16": false,
+      "p95GpuFrameMsAtMost18": false,
+      "managedAllocationZeroBytesPerFrame": true,
+      "recorderFailClosedComplete": false,
+      "overall": false
+    }
+  },
+  "powerAndThermal": {
+    "batteryStartPercent": 55.000001192092896,
+    "batteryEndPercent": 56.99999928474426,
+    "batteryIncreased": true,
+    "batteryTemperatureStartC": 41.0,
+    "batteryTemperatureEndC": 42.0,
+    "androidAggregateThermalStatusStart": 0,
+    "androidAggregateThermalStatusEnd": 0,
+    "maximumObservedSkinTemperatureStartC": 47.912,
+    "maximumObservedSkinTemperatureEndC": 50.858,
+    "maximumObservedSkinSensorStatusEnd": 3,
+    "interpretation": "The run was charging and thermally stressed at the skin sensor. It is preserved as a rejected Redmi sample, not accepted thermal evidence."
+  },
+  "visualReview": {
+    "startCaptureDimensions": [
+      2712,
+      1220
+    ],
+    "endCaptureDimensions": [
+      2712,
+      1220
+    ],
+    "denseGeometryPresent": true,
+    "hudPresent": true,
+    "controlsPresent": true,
+    "minimapPresent": true,
+    "whiteScreenObserved": false,
+    "obviousMissingContentHoleObserved": false,
+    "notes": "Start and end views remain visually complete at the fixed camera. This route does not constitute a traversal proof for camera-edge popping or the separately tracked canal/road-over-water defects."
+  },
+  "evidence": {
+    "root": "Build/AndroidAPK/Evidence/2026-08-11-redmi-final-6b4d268b8",
+    "ignoredByGit": true,
+    "files": [
+      {
+        "path": "Build/AndroidAPK/Evidence/2026-08-11-redmi-final-6b4d268b8/installed-package.txt",
+        "sha256": "a4a70f53dd9861d189563609b8f18b0b7863535261c370748088e7afe90141e9"
+      },
+      {
+        "path": "Build/AndroidAPK/Evidence/2026-08-11-redmi-final-6b4d268b8/cold-start-w.txt",
+        "sha256": "dbc544ccd0ad0b8560ed8b2f86ea64cdd8f148148a28dc824804d8a4704ed0e4"
+      },
+      {
+        "path": "Build/AndroidAPK/Evidence/2026-08-11-redmi-final-6b4d268b8/cold-menu.png",
+        "sha256": "f1c95a2214030c6fdca1a242a453e3a5c5d85281830efa4d772d39cbbb6046cd"
+      },
+      {
+        "path": "Build/AndroidAPK/Evidence/2026-08-11-redmi-final-6b4d268b8/match-ready.png",
+        "sha256": "0ddee4904bd57addd7c41244bd341d84218e44d8c3eff67226c663473adf2173"
+      },
+      {
+        "path": "Build/AndroidAPK/Evidence/2026-08-11-redmi-final-6b4d268b8/vrp092-fixed-start.png",
+        "sha256": "e1e9a49cd308e83a79f993420f78582fc4fe5f4079d69c3a24f15190a9ae0ed2"
+      },
+      {
+        "path": "Build/AndroidAPK/Evidence/2026-08-11-redmi-final-6b4d268b8/vrp092-fixed-end.png",
+        "sha256": "447515394a7f0c2e95efa1332735d4de54932b11c487f389854221b0af54e9fb"
+      },
+      {
+        "path": "Build/AndroidAPK/Evidence/2026-08-11-redmi-final-6b4d268b8/vrp092_fixed_android_release_recorder.json",
+        "sha256": "84b9dc8fcf3dcd6a8bd2556191667a10bf388de276dbe51770e676e7877710f2"
+      },
+      {
+        "path": "Build/AndroidAPK/Evidence/2026-08-11-redmi-final-6b4d268b8/vrp092-fixed-logcat.txt",
+        "sha256": "9dcf086f15314a57457e2caece94b4aa5c89f5bd7e9a552271b51175764a0289"
+      }
+    ]
+  },
+  "handoff": {
+    "applicationStopped": true,
+    "finalPackageRemainsInstalled": true,
+    "deviceSettingsRestored": {
+      "screenBrightness": 57,
+      "screenBrightnessMode": 1,
+      "screenOffTimeoutMs": 1800000,
+      "stayOnWhilePluggedIn": 15
+    },
+    "preservedWorktreeChangesUntouched": true
+  }
+}

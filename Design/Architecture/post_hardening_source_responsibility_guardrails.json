@@ -31,6 +31,30 @@
   },
   "growthAuthorizations": [
     {
+      "path": "Assets/Game/Scripts/Authorings/GridAuthoring.cs",
+      "trackerTaskId": "AMFR-013",
+      "acceptedCommit": "d1e055591d042390bd5fabfac7edf81bd353af87",
+      "maxLines": 534,
+      "maxBytes": 23663,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/GameplayFeatureStartupCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-013",
+      "acceptedCommit": "d1e055591d042390bd5fabfac7edf81bd353af87",
+      "maxLines": 128,
+      "maxBytes": 6243,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/GameplaySceneBindingSceneSystemHelper.cs",
+      "trackerTaskId": "AMFR-013",
+      "acceptedCommit": "d1e055591d042390bd5fabfac7edf81bd353af87",
+      "maxLines": 30,
+      "maxBytes": 785,
+      "scope": "system-helper-growth"
+    },
+    {
       "path": "Assets/Game/Scripts/Composition/OperationMapSceneLoadingSceneSystemHelper.cs",
       "trackerTaskId": "AMFR-004",
       "acceptedCommit": "e92f16815ff871e8ba0a04481a8e2abd28551d2b",

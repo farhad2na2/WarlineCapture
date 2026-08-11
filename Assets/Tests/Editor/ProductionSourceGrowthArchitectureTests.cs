@@ -772,8 +772,8 @@ public sealed class ProductionSourceGrowthArchitectureTests
         Require(contract.ReplacementOwnerBoundary != null, "The replacement-owner boundary is required.");
         Require(contract.GrowthAuthorizations != null, "Post-hardening growth authorizations are required.");
         Require(
-            contract.GrowthAuthorizations.Count == 14,
-            "Exactly fourteen accepted post-hardening growth authorizations are required.");
+            contract.GrowthAuthorizations.Count == 17,
+            "Exactly seventeen accepted post-hardening growth authorizations are required.");
         Require(
             contract.Entries.Count == PostHardeningGuardrailEntryCount,
             $"The post-hardening guardrail must contain exactly {PostHardeningGuardrailEntryCount} entries.");
@@ -1325,6 +1325,33 @@ public sealed class ProductionSourceGrowthArchitectureTests
         string featureReadinessTracker = File.ReadAllText(FeatureReadinessTrackerPath);
         var expected = new[]
         {
+            new PostHardeningGrowthAuthorization
+            {
+                Path = "Assets/Game/Scripts/Authorings/GridAuthoring.cs",
+                TrackerTaskId = "AMFR-013",
+                AcceptedCommit = "d1e055591d042390bd5fabfac7edf81bd353af87",
+                MaxLines = 534,
+                MaxBytes = 23663,
+                Scope = ProductionReviewScope
+            },
+            new PostHardeningGrowthAuthorization
+            {
+                Path = "Assets/Game/Scripts/Composition/GameplayFeatureStartupCompositionSystemHelper.cs",
+                TrackerTaskId = "AMFR-013",
+                AcceptedCommit = "d1e055591d042390bd5fabfac7edf81bd353af87",
+                MaxLines = 128,
+                MaxBytes = 6243,
+                Scope = SystemHelperGrowthScope
+            },
+            new PostHardeningGrowthAuthorization
+            {
+                Path = "Assets/Game/Scripts/Composition/GameplaySceneBindingSceneSystemHelper.cs",
+                TrackerTaskId = "AMFR-013",
+                AcceptedCommit = "d1e055591d042390bd5fabfac7edf81bd353af87",
+                MaxLines = 30,
+                MaxBytes = 785,
+                Scope = SystemHelperGrowthScope
+            },
             new PostHardeningGrowthAuthorization
             {
                 Path = "Assets/Game/Scripts/Composition/OperationMapSceneLoadingSceneSystemHelper.cs",

@@ -34,6 +34,33 @@ class DenseCityGeneratedArtifactOwnershipAuditTests(unittest.TestCase):
         self.assertEqual(report["result"], "FAIL")
         self.assertEqual(report["violations"]["missingRequiredPaths"], [missing])
 
+    def test_final_closeout_requires_complete_tracked_evidence(self) -> None:
+        report = audit.audit_paths(
+            [*complete_tracked_paths(), *audit.FINAL_REQUIRED_TRACKED_PATHS],
+            lambda _: True,
+            final_closeout=True,
+        )
+
+        self.assertEqual(report["result"], "PASS")
+        self.assertTrue(report["finalArtifactSetComplete"])
+        self.assertTrue(report["androidAcceptanceComplete"])
+        self.assertEqual(report["summary"]["missingFinalRequiredPathCount"], 0)
+
+    def test_final_closeout_missing_evidence_fails_closed(self) -> None:
+        required = list(audit.FINAL_REQUIRED_TRACKED_PATHS)
+        missing = required.pop()
+
+        report = audit.audit_paths(
+            [*complete_tracked_paths(), *required],
+            lambda _: True,
+            final_closeout=True,
+        )
+
+        self.assertEqual(report["result"], "FAIL")
+        self.assertFalse(report["finalArtifactSetComplete"])
+        self.assertFalse(report["androidAcceptanceComplete"])
+        self.assertEqual(report["violations"]["missingFinalRequiredPaths"], [missing])
+
     def test_tracked_transient_output_fails_closed(self) -> None:
         for transient in (
             "Library/OperationMapDenseCityRuntimeContent/Addressables/catalog.json",

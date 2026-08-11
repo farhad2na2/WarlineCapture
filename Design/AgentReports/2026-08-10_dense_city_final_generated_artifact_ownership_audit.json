@@ -1,0 +1,29 @@
+{
+  "androidAcceptanceComplete": true,
+  "finalArtifactSetComplete": true,
+  "result": "PASS",
+  "schemaVersion": 1,
+  "scope": "final repository ownership closeout",
+  "summary": {
+    "androidAcceptanceTrackedPathCount": 5,
+    "denseEvidenceTrackedFileCount": 111,
+    "finalRequiredTrackedPathCount": 11,
+    "forbiddenTransactionArtifactCount": 0,
+    "missingAndroidAcceptancePathCount": 0,
+    "missingFinalRequiredPathCount": 0,
+    "missingRequiredPathCount": 0,
+    "persistentOutputTrackedFileCount": 4803,
+    "requiredTrackedPathCount": 6,
+    "transientIgnoreProbeCount": 8,
+    "transientIgnoreProbeFailureCount": 0,
+    "transientTrackedViolationCount": 0
+  },
+  "violations": {
+    "missingAndroidAcceptancePaths": [],
+    "missingFinalRequiredPaths": [],
+    "missingRequiredPaths": [],
+    "trackedForbiddenTransactionArtifacts": [],
+    "trackedTransientPaths": [],
+    "unignoredTransientProbePaths": []
+  }
+}

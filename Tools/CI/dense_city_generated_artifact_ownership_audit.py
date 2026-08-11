@@ -24,6 +24,28 @@ REQUIRED_TRACKED_PATHS = (
     "Design/Architecture/dense_city_generated_output_ownership.md",
 )
 
+FINAL_REQUIRED_TRACKED_PATHS = (
+    "Design/Architecture/dense_city_editor_bake_hybrid_runtime_implementation_tracker.md",
+    "Design/Architecture/dense_city_virtualized_render_proxy_android_60fps_implementation_tracker.md",
+    "Design/AgentReports/2026-08-10_dense_city_final_operation_map_addressables_build_report.json",
+    "Design/AgentReports/2026-08-10_dense_city_production_dependency_closure.json",
+    "Design/AgentReports/2026-08-10_dense_city_static_retirement_validation.json",
+    "Design/AgentReports/2026-08-11_dense_city_final_android_package_evidence.json",
+    "Design/AgentReports/2026-08-11_dense_city_final_android_lifecycle_evidence.json",
+    "Design/AgentReports/2026-08-11_dense_city_final_android_performance_acceptance.json",
+    "Design/AgentReports/2026-08-11_dense_city_final_android_transform_bounds_parity.json",
+    "Design/AgentReports/2026-08-11_dense_city_final_destruction_family_acceptance.json",
+    "Design/AgentReports/2026-08-11_dense_city_final_evidence_index.json",
+)
+
+ANDROID_ACCEPTANCE_TRACKED_PATHS = (
+    "Design/AgentReports/2026-08-11_dense_city_final_android_package_evidence.json",
+    "Design/AgentReports/2026-08-11_dense_city_final_android_lifecycle_evidence.json",
+    "Design/AgentReports/2026-08-11_dense_city_final_android_performance_acceptance.json",
+    "Design/AgentReports/2026-08-11_dense_city_final_android_transform_bounds_parity.json",
+    "Design/AgentReports/2026-08-11_dense_city_final_destruction_family_acceptance.json",
+)
+
 PERSISTENT_OUTPUT_PREFIXES = (
     "Assets/Game/GeneratedOperationMaps/DenseCity/",
     "Assets/Game/GeneratedOperationMaps/RuntimeBinding/opmap.skirmish.desert_base_01/Candidates/",
@@ -90,6 +112,8 @@ def _is_dense_evidence(path: str) -> bool:
 def audit_paths(
     tracked_paths: Iterable[str],
     ignored: Callable[[str], bool],
+    *,
+    final_closeout: bool = False,
 ) -> dict[str, object]:
     tracked = _normalise(tracked_paths)
     tracked_set = set(tracked)
@@ -105,6 +129,16 @@ def audit_paths(
     ignore_probe_failures = sorted(
         path for path in TRANSIENT_IGNORE_PROBES if not ignored(path)
     )
+    missing_final_required = (
+        sorted(set(FINAL_REQUIRED_TRACKED_PATHS) - tracked_set)
+        if final_closeout
+        else []
+    )
+    missing_android_acceptance = (
+        sorted(set(ANDROID_ACCEPTANCE_TRACKED_PATHS) - tracked_set)
+        if final_closeout
+        else []
+    )
     persistent_outputs = [
         path for path in tracked if path.startswith(PERSISTENT_OUTPUT_PREFIXES)
     ]
@@ -114,14 +148,24 @@ def audit_paths(
         + len(transient_tracked)
         + len(forbidden_tracked)
         + len(ignore_probe_failures)
+        + len(missing_final_required)
+    )
+
+    final_artifact_set_complete = final_closeout and failures == 0
+    android_acceptance_complete = (
+        final_artifact_set_complete and not missing_android_acceptance
     )
 
     return {
         "schemaVersion": 1,
         "result": "PASS" if failures == 0 else "FAIL",
-        "scope": "repository ownership foundation",
-        "finalArtifactSetComplete": False,
-        "androidAcceptanceComplete": False,
+        "scope": (
+            "final repository ownership closeout"
+            if final_closeout
+            else "repository ownership foundation"
+        ),
+        "finalArtifactSetComplete": final_artifact_set_complete,
+        "androidAcceptanceComplete": android_acceptance_complete,
         "summary": {
             "requiredTrackedPathCount": len(REQUIRED_TRACKED_PATHS),
             "missingRequiredPathCount": len(missing_required),
@@ -131,12 +175,22 @@ def audit_paths(
             "forbiddenTransactionArtifactCount": len(forbidden_tracked),
             "transientIgnoreProbeCount": len(TRANSIENT_IGNORE_PROBES),
             "transientIgnoreProbeFailureCount": len(ignore_probe_failures),
+            "finalRequiredTrackedPathCount": len(FINAL_REQUIRED_TRACKED_PATHS),
+            "missingFinalRequiredPathCount": len(missing_final_required),
+            "androidAcceptanceTrackedPathCount": len(
+                ANDROID_ACCEPTANCE_TRACKED_PATHS
+            ),
+            "missingAndroidAcceptancePathCount": len(
+                missing_android_acceptance
+            ),
         },
         "violations": {
             "missingRequiredPaths": missing_required,
             "trackedTransientPaths": transient_tracked,
             "trackedForbiddenTransactionArtifacts": forbidden_tracked,
             "unignoredTransientProbePaths": ignore_probe_failures,
+            "missingFinalRequiredPaths": missing_final_required,
+            "missingAndroidAcceptancePaths": missing_android_acceptance,
         },
     }
 
@@ -168,9 +222,18 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])
     parser.add_argument("--output", type=Path)
+    parser.add_argument(
+        "--final-closeout",
+        action="store_true",
+        help="Require the complete committed final evidence set and Android acceptance reports.",
+    )
     arguments = parser.parse_args()
     root = arguments.root.resolve()
-    report = audit_paths(tracked_paths(root), lambda path: is_ignored(root, path))
+    report = audit_paths(
+        tracked_paths(root),
+        lambda path: is_ignored(root, path),
+        final_closeout=arguments.final_closeout,
+    )
     rendered = json.dumps(report, indent=2, sort_keys=True) + "\n"
 
     if arguments.output:

@@ -9,7 +9,7 @@ using Game.Runtime;
 
 namespace Game.Composition
 {
-    internal sealed class MapSurfaceRuntimeBootstrapSceneSystemHelper
+    internal sealed class MapSurfaceRuntimeBootstrapSceneSystemHelper : System.IDisposable
     {
         private readonly World createdWorld;
         private BlobAssetReference<MapSurfaceBlob> ownedSurfaceBlob;
@@ -178,7 +178,9 @@ namespace Game.Composition
             return true;
         }
 
-        public void DisposeRuntimeSurface()
+        public void DisposeRuntimeSurface() => Dispose();
+
+        public void Dispose()
         {
             if (runtimeSurfaceDisposed)
                 return;

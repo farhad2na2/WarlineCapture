@@ -184,7 +184,8 @@ public sealed class MapSurfaceRuntimeBootstrapSceneSystemHelperTests
 
             world.Dispose();
 
-            Assert.DoesNotThrow(() => bootstrap.DisposeRuntimeSurface());
+            Assert.That(bootstrap, Is.InstanceOf<IDisposable>());
+            Assert.DoesNotThrow(() => bootstrap.Dispose());
             Assert.DoesNotThrow(() => bootstrap.DisposeRuntimeSurface());
             Assert.That(bootstrap.HasOwnedRuntimeSurfaceBlob, Is.False);
         }

@@ -110,7 +110,7 @@ The worktree must be clean at every accepted commit and after every push. Genera
 - [ ] `AMFR-013` Correct or explicitly bound the `GridAuthoring` runtime-query boundary without introducing a service locator, shipping mutable authority, or per-frame discovery.
 - [ ] `AMFR-014` Reconcile map-surface bootstrap World ownership with its created-World lifecycle, generation replacement, blob disposal, and shutdown behavior.
 - [ ] `AMFR-015` Give the road-preview pool exact capacity, reuse, exhaustion, and disposal evidence without changing gameplay authority.
-- [ ] `AMFR-016` Remove or explicitly bound algorithmic-aftermath runtime hierarchy discovery and allocations. Preserve deterministic presentation and disposal without making authoring GameObjects runtime truth.
+- [ ] `AMFR-016` Close the remaining current presentation/application lifecycle hazards: remove or explicitly bound algorithmic-aftermath and commander-profile runtime hierarchy discovery, and give the diagnostics capture-suppression policy a tested subsystem reset. Preserve deterministic presentation and disposal without making authoring GameObjects runtime truth or retaining application-static state across subsystem recreation.
 
 **Exit:** The regenerated Phase 2 delta reports zero genuine-debt rows, zero unclassified rows, and no hidden or protected-path substitution.
 
@@ -157,6 +157,14 @@ The worktree must be clean at every accepted commit and after every push. Genera
 - Tooling: ownership, lifecycle, dependency-hazard, and persistent-resource generators now carry the paired handoff authority/path fields. Hazard and resource classification subtract only exact handoff paths from a broader owner glob; invalid, duplicate, unsorted, or unpaired handoffs fail closed.
 - Validation: ownership inventory tests `5 / 5`, lifecycle inventory tests `5 / 5`, dependency-hazard inventory tests `6 / 6`, and persistent-resource ownership tests `12 / 12` passed. Python compilation, `git diff --check`, and a current-tree scratch ownership regeneration passed; the regenerated operation-map owner retained `status: active` and listed only the five exact child paths.
 - Result: stable AMFR-003 tooling foundation only. The checklist row remains pending until every current report finding and source-growth item has an accepted disposition and the governed evidence set regenerates consistently.
+
+### 2026-08-11 - AMFR-003 - Current-row disposition refinement
+
+- Scanner rejection: AM-007 was incorrectly labeling numeric accumulation expressions such as `totalCapacity += bucket.Capacity` as event subscriptions. The focused scanner fix requires an observed callable handler or an exact paired unsubscribe; it reduced current subscription candidates from `86` to `25`, preserved all `25` real paired subscriptions, and removed `61` arithmetic false positives. Lifecycle tests passed `6 / 6`; dependent AM-021 tests passed `12 / 12`.
+- Current structural intake after that correction: `430` open pre-review rows. Replaying prior row identities and current exact evidence yields `412` resolved non-debt rows, `5` still-protected rows, and `13` genuine-debt rows grouped into `12` unique items, with `0` unclassified rows. The debt rows are one pool, five AM-007 World-owner candidates, two AM-018 reusable global-World lookups, four runtime-object discoveries, and one application-static diagnostics policy.
+- Drift disposition: `41` old closure rules have no current open-row match and must be retained only as explicit retired-rule evidence, not rewritten with zero counts. Of `45` genuinely new current rows, `42` route to existing tested/non-persistent boundaries and `3` are new debt: operation-map scene-reference discovery, commander-profile hierarchy discovery, and diagnostics capture-suppression lifecycle. The formerly protected operation-map runtime-bootstrap World row is separately promoted to debt by the exact AM-025 handoff.
+- Work routing: source-growth and operation-map lifecycle items remain AMFR-004 through AMFR-014; the preview pool remains AMFR-015; scene-reference discovery remains AMFR-007; algorithmic-aftermath, commander-profile discovery, and diagnostics capture reset are explicitly owned by the refined AMFR-016 row.
+- Result: disposition model accepted for governed regeneration. AMFR-003 remains pending until the exact-head AM-007/AM-018/AM-021/audit/delta artifact set regenerates byte-identically and is committed together.
 
 ## 7. Validation And Evidence Contract
 

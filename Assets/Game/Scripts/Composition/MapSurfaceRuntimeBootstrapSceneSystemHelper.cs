@@ -12,7 +12,10 @@ namespace Game.Composition
     internal sealed class MapSurfaceRuntimeBootstrapSceneSystemHelper
     {
         private readonly World createdWorld;
+        private BlobAssetReference<MapSurfaceBlob> ownedSurfaceBlob;
         private bool runtimeSurfaceDisposed;
+
+        internal bool HasOwnedRuntimeSurfaceBlob => ownedSurfaceBlob.IsCreated;
 
         public MapSurfaceRuntimeBootstrapSceneSystemHelper(World world)
         {
@@ -90,11 +93,13 @@ namespace Game.Composition
 
             surfaceEntity = ResolveRuntimeSurfaceEntity(entityManager);
             DisposeOwnedSurfaceBlob(entityManager, surfaceEntity);
+            DisposeTrackedOwnedSurfaceBlob();
 
             if (!entityManager.HasComponent<MapSurfaceComponent>(surfaceEntity))
                 entityManager.AddComponent<MapSurfaceComponent>(surfaceEntity);
 
             GetSurfaceFeatureFlags(ref blob, out byte hasLayeredCells, out byte hasRoadSurfaces, out byte hasBridgeSurfaces);
+            ownedSurfaceBlob = surfaceBlob;
             entityManager.SetComponentData(surfaceEntity, new MapSurfaceComponent
             {
                 SurfaceBlob = surfaceBlob,
@@ -180,6 +185,7 @@ namespace Game.Composition
 
             if (!TryGetLiveEntityManager(out EntityManager entityManager))
             {
+                DisposeTrackedOwnedSurfaceBlob();
                 runtimeSurfaceDisposed = true;
                 return;
             }
@@ -200,10 +206,9 @@ namespace Game.Composition
             }
             catch (System.InvalidOperationException)
             {
-                runtimeSurfaceDisposed = true;
-                return;
             }
 
+            DisposeTrackedOwnedSurfaceBlob();
             runtimeSurfaceDisposed = true;
         }
 
@@ -250,7 +255,7 @@ namespace Game.Composition
             return entityManager.CreateEntity();
         }
 
-        private static void RemoveOtherSurfaceEntities(EntityManager entityManager, Entity keepEntity)
+        private void RemoveOtherSurfaceEntities(EntityManager entityManager, Entity keepEntity)
         {
             using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
             using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
@@ -266,7 +271,7 @@ namespace Game.Composition
             }
         }
 
-        private static void DisposeOwnedSurfaceBlob(EntityManager entityManager, Entity entity)
+        private void DisposeOwnedSurfaceBlob(EntityManager entityManager, Entity entity)
         {
             if (!entityManager.Exists(entity) ||
                 !entityManager.HasComponent<MapSurfaceComponent>(entity) ||
@@ -277,8 +282,24 @@ namespace Game.Composition
             }
 
             MapSurfaceComponent surface = entityManager.GetComponentData<MapSurfaceComponent>(entity);
-            if (surface.SurfaceBlob.IsCreated)
-                surface.SurfaceBlob.Dispose();
+            if (!surface.SurfaceBlob.IsCreated)
+                return;
+
+            if (ownedSurfaceBlob.IsCreated && surface.SurfaceBlob.Equals(ownedSurfaceBlob))
+            {
+                ownedSurfaceBlob.Dispose();
+                ownedSurfaceBlob = default;
+                return;
+            }
+
+            surface.SurfaceBlob.Dispose();
+        }
+
+        private void DisposeTrackedOwnedSurfaceBlob()
+        {
+            if (ownedSurfaceBlob.IsCreated)
+                ownedSurfaceBlob.Dispose();
+            ownedSurfaceBlob = default;
         }
 
         private static void GetSurfaceFeatureFlags(

@@ -22,10 +22,12 @@ public sealed class MapSurfaceRuntimeBootstrapSceneSystemHelperTests
             tests.EnsureReplacesStaleSubsceneSurfaceWithAuthoredRuntimeAsset();
             tests.EnsureMatchingActiveMapPublishesSurface();
             tests.EnsureMismatchedActiveMapPreservesExistingSurface();
+            tests.EnsureSameWorldReplacementDisposesPriorOwnedBlob();
+            tests.OwningBootstrapShutdownDisposesSurfaceBeforeWorldLoss();
             tests.DisposeRuntimeSurfaceAfterWorldDisposeDoesNotThrow();
             tests.RuntimeBlobHashChangesWhenSurfacePayloadChanges();
             tests.MapSurfaceAuthoringBakerUsesContentHashDeduplication();
-            Debug.Log("[MapSurfaceRuntimeBootstrapValidation] result=Passed tests=6");
+            Debug.Log("[MapSurfaceRuntimeBootstrapValidation] result=Passed tests=8");
         }
         catch (Exception exception)
         {
@@ -166,10 +168,141 @@ public sealed class MapSurfaceRuntimeBootstrapSceneSystemHelperTests
     {
         World world = new("MapSurfaceRuntimeBootstrapSystemDisposeTests");
         MapSurfaceRuntimeBootstrapSceneSystemHelper bootstrap = new(world);
+        BlobAssetReference<MapSurfaceBlob> sourceBlob = default;
+        MapSurfaceDataAsset asset = ScriptableObject.CreateInstance<MapSurfaceDataAsset>();
+        try
+        {
+            sourceBlob = CreateSingleCellSurface(4f);
+            asset.ConfigureBakedSurface(
+                Vector3.zero,
+                1f,
+                Vector2Int.one,
+                sourceBlob,
+                generatedFlatEquivalent: false);
+            Assert.That(bootstrap.Ensure(asset, out string error), Is.True, error);
+            Assert.That(bootstrap.HasOwnedRuntimeSurfaceBlob, Is.True);
 
-        world.Dispose();
+            world.Dispose();
 
-        Assert.DoesNotThrow(() => bootstrap.DisposeRuntimeSurface());
+            Assert.DoesNotThrow(() => bootstrap.DisposeRuntimeSurface());
+            Assert.DoesNotThrow(() => bootstrap.DisposeRuntimeSurface());
+            Assert.That(bootstrap.HasOwnedRuntimeSurfaceBlob, Is.False);
+        }
+        finally
+        {
+            if (world.IsCreated)
+                world.Dispose();
+            if (sourceBlob.IsCreated)
+                sourceBlob.Dispose();
+            UnityEngine.Object.DestroyImmediate(asset);
+        }
+    }
+
+    [Test]
+    public void EnsureSameWorldReplacementDisposesPriorOwnedBlob()
+    {
+        using World world = new("MapSurfaceRuntimeBootstrapSystemReplacementTests");
+        MapSurfaceRuntimeBootstrapSceneSystemHelper bootstrap = new(world);
+        BlobAssetReference<MapSurfaceBlob> firstSource = default;
+        BlobAssetReference<MapSurfaceBlob> secondSource = default;
+        BlobAssetReference<MapSurfaceBlob> firstPublished = default;
+        MapSurfaceDataAsset asset = ScriptableObject.CreateInstance<MapSurfaceDataAsset>();
+        try
+        {
+            firstSource = CreateSingleCellSurface(1f);
+            asset.ConfigureBakedSurface(
+                Vector3.zero,
+                1f,
+                Vector2Int.one,
+                firstSource,
+                generatedFlatEquivalent: false);
+            Assert.That(bootstrap.Ensure(asset, out string firstError), Is.True, firstError);
+
+            using (EntityQuery firstQuery = world.EntityManager.CreateEntityQuery(
+                       ComponentType.ReadOnly<MapSurfaceComponent>()))
+            {
+                Entity firstEntity = firstQuery.GetSingletonEntity();
+                firstPublished = world.EntityManager
+                    .GetComponentData<MapSurfaceComponent>(firstEntity)
+                    .SurfaceBlob;
+            }
+
+            secondSource = CreateSingleCellSurface(7f);
+            asset.ConfigureBakedSurface(
+                Vector3.zero,
+                1f,
+                Vector2Int.one,
+                secondSource,
+                generatedFlatEquivalent: false);
+            Assert.That(bootstrap.Ensure(asset, out string secondError), Is.True, secondError);
+
+            using EntityQuery query = world.EntityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<MapSurfaceComponent>());
+            Assert.That(query.CalculateEntityCount(), Is.EqualTo(1));
+            MapSurfaceComponent current = query.GetSingleton<MapSurfaceComponent>();
+            Assert.That(ReadPrimaryHeight(current.SurfaceBlob), Is.EqualTo(7f));
+            Assert.That(current.SurfaceBlob.Equals(firstPublished), Is.False);
+            Assert.Throws<InvalidOperationException>(() => ReadPrimaryHeight(firstPublished));
+            Assert.That(bootstrap.HasOwnedRuntimeSurfaceBlob, Is.True);
+        }
+        finally
+        {
+            bootstrap.DisposeRuntimeSurface();
+            if (firstSource.IsCreated)
+                firstSource.Dispose();
+            if (secondSource.IsCreated)
+                secondSource.Dispose();
+            UnityEngine.Object.DestroyImmediate(asset);
+        }
+    }
+
+    [Test]
+    public void OwningBootstrapShutdownDisposesSurfaceBeforeWorldLoss()
+    {
+        using World world = new("MapSurfaceRuntimeBootstrapOwnerShutdownTests");
+        MapSurfaceRuntimeBootstrapSceneSystemHelper surfaceBootstrap = new(world);
+        BlobAssetReference<MapSurfaceBlob> sourceBlob = default;
+        MapSurfaceDataAsset asset = ScriptableObject.CreateInstance<MapSurfaceDataAsset>();
+        try
+        {
+            sourceBlob = CreateSingleCellSurface(3f);
+            asset.ConfigureBakedSurface(
+                Vector3.zero,
+                1f,
+                Vector2Int.one,
+                sourceBlob,
+                generatedFlatEquivalent: false);
+            Assert.That(surfaceBootstrap.Ensure(asset, out string error), Is.True, error);
+
+            var owner = new MatchBootstrapCompositionSystemHelper();
+            Assert.DoesNotThrow(() => owner.ShutdownRuntime(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                surfaceBootstrap,
+                null,
+                null));
+
+            using EntityQuery query = world.EntityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<MapSurfaceComponent>());
+            Assert.That(query.CalculateEntityCount(), Is.Zero);
+            Assert.That(surfaceBootstrap.HasOwnedRuntimeSurfaceBlob, Is.False);
+        }
+        finally
+        {
+            surfaceBootstrap.DisposeRuntimeSurface();
+            if (sourceBlob.IsCreated)
+                sourceBlob.Dispose();
+            UnityEngine.Object.DestroyImmediate(asset);
+        }
     }
 
     [Test]
@@ -274,6 +407,15 @@ public sealed class MapSurfaceRuntimeBootstrapSceneSystemHelperTests
         BlobAssetReference<MapSurfaceBlob> blob = builder.CreateBlobAssetReference<MapSurfaceBlob>(Allocator.Persistent);
         builder.Dispose();
         return blob;
+    }
+
+    private static float ReadPrimaryHeight(BlobAssetReference<MapSurfaceBlob> blob)
+    {
+        ref MapSurfaceBlob value = ref blob.Value;
+        Assert.That(
+            MapSurfaceBlobAccess.TryGetPrimarySurface(ref value, int2.zero, out MapSurfaceSample sample),
+            Is.True);
+        return sample.Height;
     }
 
     private static BlobAssetReference<OperationMapBlob> CreateActiveOperationMap(

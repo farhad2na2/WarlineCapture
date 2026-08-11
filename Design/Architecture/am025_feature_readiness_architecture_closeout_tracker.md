@@ -80,7 +80,7 @@ The worktree must be clean at every accepted commit and after every push. Genera
 
 ### Phase A - Exact-Head Reconciliation
 
-- [ ] `AMFR-001` Re-read `AGENTS.md`, both maturity work packages, both completed dense-map trackers, the parent maturity tracker, source-growth authority, current reports, `main`/`origin/main`, active Unity ownership, and preserved worktree state. Publish the exact slice allowlist and exclusions.
+- [x] `AMFR-001` Re-read `AGENTS.md`, both maturity work packages, both completed dense-map trackers, the parent maturity tracker, source-growth authority, current reports, `main`/`origin/main`, active Unity ownership, and preserved worktree state. Publish the exact slice allowlist and exclusions.
 - [ ] `AMFR-002` Regenerate AM-007, AM-018, AM-021, AM-025 ownership-delta, closure-audit, and current source-growth inputs at one exact clean capture identity without changing production code.
 - [ ] `AMFR-003` Reconcile every current finding with its accepted owner, tests, previous exception, map-closeout evidence, and removal/review condition. Reject stale, duplicate, retired, or already-resolved findings explicitly rather than silently dropping them.
 
@@ -125,7 +125,19 @@ The worktree must be clean at every accepted commit and after every push. Genera
 
 **Exit:** This child is complete, `AM-025` is honestly accepted and pushed, the Core lane is green through Phase 2, and new feature planning may resume.
 
-## 6. Validation And Evidence Contract
+## 6. Execution Record
+
+### 2026-08-11 - AMFR-001 - Exact entry and AMFR-002 evidence ownership
+
+- Entry identity: pushed `main`/`origin/main` commit `6bd8e913d7f860e0dda6f36b21d19fdf33d1d07a`, tree `c881e616463da7a2d86a0d07302bf5fcc9303b51`, clean worktree.
+- Environment: Unity Hub remained open; no Unity Editor process owned the project. No wrapper, package, device, scene, prefab, Addressables, or production-code action ran for this documentation/evidence ownership slice.
+- Authority reread: `AGENTS.md`; this child; the parent maturity tracker; `AM-WP-027`; `AM-WP-028`; both completed dense-city trackers; `production_source_growth_baseline.md`; current AM-025 delta/closure evidence; and the architecture exception registry. Their entry SHA-256 identities were captured during the slice and the tracker/source/evidence state was reconciled against the exact pushed head.
+- AMFR-002 write allowlist: `Design/AgentReports/ArchitectureMaturity/lifecycle_inventory.json/.md`, `am018_dependency_hazard_inventory.json/.md`, `am021_persistent_resource_ownership.json/.md`, `am025_phase2_ownership_delta.json/.md`, `am025_phase2_closure_audit.json`, and only the existing deterministic generators/tests under `Tools/CI/` when a current-head regeneration exposes a fail-closed schema defect. The child and parent trackers may record the result.
+- AMFR-002 exclusions: every production C# file; Unity scenes/prefabs/metas; generated EntityScenes and Addressables outputs; packages and `ProjectSettings`; Android/device evidence; thresholds and source exceptions; Jenkins/Unity paths; audio, FirstLaunch, UI visual-lock, feature work, and all deferred Phase 6/9 work.
+- Clean-tree decision: the five previously modified generated reports were restored to the pushed versions and the explicitly approved untracked `_Recovery/0 (1)` through `0 (7)` scene/meta files were deleted before this entry. Only this owned tracker update is permitted to differ for the AMFR-001 acceptance commit.
+- Result: accepted. AMFR-002 is dependency-ready; it must regenerate evidence before any production remediation or exception decision.
+
+## 7. Validation And Evidence Contract
 
 The parent work packages remain authoritative. This child does not replace their suite order, identity rules, evidence schema, allocation thresholds, lifecycle counts, or acceptance arithmetic.
 
@@ -144,7 +156,7 @@ Minimum final evidence:
 
 Map Android evidence may be referenced where its identity and scenario remain applicable. It cannot substitute for missing whole-project Core validation, and no Android reinstall or new release certification is required for this child.
 
-## 7. Rollback And Stop Rules
+## 8. Rollback And Stop Rules
 
 Rollback the owned slice if behavior/equivalence tests fail, ownership becomes duplicated, source responsibility broadens, a pool becomes unbounded, a World survives replacement, native memory lacks disposal, evidence is dirty/stale, or a threshold/exception was weakened to pass.
 

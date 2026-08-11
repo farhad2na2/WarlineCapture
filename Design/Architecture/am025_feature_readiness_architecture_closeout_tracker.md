@@ -118,7 +118,7 @@ The worktree must be clean at every accepted commit and after every push. Genera
 
 - [x] `AMFR-017` Pass `ProductionSourceGrowthArchitectureTests.RunFocusedValidation` with the exact 17-test marker and no weakened rule, ceiling, or allowlist.
 - [x] `AMFR-018` Pass the complete `ArchitectureHardeningCloseoutValidationRunner.RunFocusedValidation` 23-suite architecture entrypoint and all required Python ownership/evidence checks.
-- [ ] `AMFR-019` Pass the accepted World recreation, scene unload/reload, missing-singleton recovery, one-warm-up plus 10 measured transition cycles, structural/pool trend, and governed focused allocation suites.
+- [~] `AMFR-019` Pass the accepted World recreation, scene unload/reload, missing-singleton recovery, one-warm-up plus 10 measured transition cycles, structural/pool trend, and governed focused allocation suites.
 - [ ] `AMFR-020` Complete canonical Unity compilation with zero errors; deterministic regeneration; exact artifact/source/tool hashes; protected-path audit; `git diff --check`; and focused independent review with no unresolved finding.
 - [ ] `AMFR-021` Publish the AM-025 exit evidence and acceptance record, update the parent tracker to `26 / 86` overall and `26 / 68` Core, mark Phase 2 accepted, and identify `AM-027` as the next maturity task without starting it.
 - [ ] `AMFR-022` Publish the feature-resume handoff: later UI, presentation/pooling, simulation, diagnostics, and enforcement work must consume relevant Phase 3-5/7/8 rows when a feature touches those domains; Phase 6 and 9 remain deferred.
@@ -434,6 +434,14 @@ The worktree must be clean at every accepted commit and after every push. Genera
 - Current deterministic evidence: AM-007 reports `78` Worlds / `160` native candidates / `559` queries; AM-018 reports `237` findings; AM-021 reports `640` resources (`567` explicit / `73` protected / `0` gaps). The Phase 2 delta classifies all `425` review rows once as `420` resolved / `5` protected / `0` genuine debt, with `0` unclassified and `0` source-growth blockers.
 - Determinism and syntax: persistent-resource ownership `--check`, Phase 2 JSON/Markdown byte check, Phase 7 inventory `--check`, Python syntax compilation, and `git diff --check` pass. No production C#, scene, prefab, package, project-setting, wrapper, threshold, protected asset, Android package, or feature implementation is in the evidence checkpoint.
 - Result: AMFR-018 is accepted at child `18 / 22` without parent checklist credit. AMFR-019 is next; AM-025 remains unchecked.
+
+### 2026-08-11 - AMFR-019 - Lifecycle, transition, pool, and allocation validation claim
+
+- Entry identity: clean pushed `main`/`origin/main` commit `05d6e46ee06a4d0e1eba2082ebb192145d735533`; AMFR-018 is accepted with the complete 23-suite Unity marker and `179 / 179` current architecture Python checks.
+- Exact read-only Unity suites: `WorldLifecycleRecoveryMatrixTests` in EditMode (`8` current cases, including the accepted `180` warm-up plus `300` measured recovered-path zero-allocation gate); `WorldSceneLifecycleRecoveryPlayModeTests` (`2` current cases); `ArchitectureMenuMatchLifecycleStressPlayModeTests` (the current `2`-case fixture including one warm-up plus `10` measured production transitions); and `ArchitectureLifecycleMemoryPoolTrendPlayModeTests` (the current one-case fixture with one warm-up plus `5` measured structural-owner and governed-pool snapshots). The raw Editor memory investigation ceilings remain reported-only and are not converted into passes.
+- Exact supporting checks: focused `test_architecture_menu_match_lifecycle_stress.py` and `test_architecture_lifecycle_memory_pool_trend.py`, current accepted AM-022/023/024 record identities, zero skipped/failed Unity cases, zero C# compiler errors, `git diff --check`, and bounded result/log hashes.
+- Write allowlist: this child and parent tracker only for claim/acceptance records. All production source, Unity tests, scenes, prefabs, generated content, packages, `ProjectSettings`, wrappers, thresholds, source authority, Android/device work, feature work, and deferred Phase 6/9 work are read-only.
+- Acceptance: every exact current fixture must pass through `Tools/CI/InvokeUnity.ps1` with explicit log, results path, timeout, and fail-closed NUnit result; recurring recovered-path allocation remains exactly `0` bytes. Stale accepted results, partial fixtures, missing XML, skips, compiler errors, or release-lane reinterpretation receive no credit.
 
 ## 7. Validation And Evidence Contract
 

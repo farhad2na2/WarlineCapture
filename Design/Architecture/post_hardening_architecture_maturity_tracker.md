@@ -1145,3 +1145,9 @@ Accepted AM-020 progress snapshot:
 - Ownership evidence: AM-021 has `640` resources, `567` explicit owners, `73` protected owners, and zero gaps. Current Phase 2 review is `425 / 425`: `420` resolved, `5` protected, zero genuine-debt, and zero unclassified; the unchanged source-growth gate has zero blockers.
 - Determinism: persistent ownership, Phase 2 JSON/Markdown, Phase 7 inventory, Python syntax, and diff checks pass. No production or protected asset changed in the evidence slice.
 - Result: AMFR-018 is accepted at child `18 / 22` without parent credit. AMFR-019 is next; AM-025 remains unchecked.
+
+### 2026-08-11 - AM-025 - AMFR-019 lifecycle/transition validation claim
+
+- Entry identity: clean pushed `main`/`origin/main` commit `05d6e46ee06a4d0e1eba2082ebb192145d735533` with AMFR-018 accepted.
+- Exact gate: rerun the current AM-022 recovery fixtures (`8` EditMode plus `2` PlayMode), the current AM-023 transition fixture including one warm-up plus `10` measured production cycles, and the current AM-024 structural/pool fixture with one warm-up plus `5` measured cycles. The recovered-path `180 + 300` recurring allocation measurement remains exactly zero; exceeded raw Editor-memory investigation ceilings remain reported rather than passed.
+- Scope: production, tests, scenes, packages, thresholds, source authority, Android/device work, features, and deferred Phase 6/9 work are read-only. Only both trackers may record the claim and accepted current result. AM-025 remains unchecked while AMFR-019 is active.

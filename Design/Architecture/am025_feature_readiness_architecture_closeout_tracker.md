@@ -117,7 +117,7 @@ The worktree must be clean at every accepted commit and after every push. Genera
 ### Phase E - AM-025 Acceptance
 
 - [x] `AMFR-017` Pass `ProductionSourceGrowthArchitectureTests.RunFocusedValidation` with the exact 17-test marker and no weakened rule, ceiling, or allowlist.
-- [~] `AMFR-018` Pass the complete `ArchitectureHardeningCloseoutValidationRunner.RunFocusedValidation` 23-suite architecture entrypoint and all required Python ownership/evidence checks.
+- [x] `AMFR-018` Pass the complete `ArchitectureHardeningCloseoutValidationRunner.RunFocusedValidation` 23-suite architecture entrypoint and all required Python ownership/evidence checks.
 - [ ] `AMFR-019` Pass the accepted World recreation, scene unload/reload, missing-singleton recovery, one-warm-up plus 10 measured transition cycles, structural/pool trend, and governed focused allocation suites.
 - [ ] `AMFR-020` Complete canonical Unity compilation with zero errors; deterministic regeneration; exact artifact/source/tool hashes; protected-path audit; `git diff --check`; and focused independent review with no unresolved finding.
 - [ ] `AMFR-021` Publish the AM-025 exit evidence and acceptance record, update the parent tracker to `26 / 86` overall and `26 / 68` Core, mark Phase 2 accepted, and identify `AM-027` as the next maturity task without starting it.
@@ -425,6 +425,15 @@ The worktree must be clean at every accepted commit and after every push. Genera
 - Exact validation scope: read-only canonical Unity entrypoint `ArchitectureHardeningCloseoutValidationRunner.RunFocusedValidation` with required marker `[ArchitectureHardeningCloseoutValidation] result=Passed suites=23`; full `python -m unittest discover -s Tools/CI/tests -p test_architecture_*.py`; persistent-resource ownership `--check`; byte-identical ownership/lifecycle regeneration checks; Python syntax; and `git diff --check`. Each run requires a bounded log and a fail-closed result.
 - Write allowlist: this child and parent tracker only for the acceptance record. Evidence/generator/test changes are excluded unless a current exact failure proves a narrow schema defect owned by AM-025; all production source, assets, packages, project settings, wrappers, thresholds, feature work, and deferred Phase 6/9 work remain read-only.
 - Acceptance: all 23 Unity suites and all architecture Python ownership/evidence checks must pass from this exact clean source identity with zero compiler errors. Partial Jenkins/alias suites, stale evidence, skipped tests, or unlogged success receive no credit.
+
+### 2026-08-11 - AMFR-018 - Complete architecture validation closure
+
+- Exact validated source: fixture/evidence-validator checkpoint `98af580b742b3515452809ab11778f27e5934bf4`, tree `4a09a2c9846fceaba8794feacfe543ec1f93efbf`; current zero-debt evidence checkpoint `86be507863f2865723326a28f2bda6e75a3a7042`, tree `19ae2f0dc66aa698a873435a4f390471ef0dcaaf`, pushed identically to `origin/main` with a clean worktree.
+- Unity architecture gate: checked Windows wrapper log `Build/Logs/amfr018-architecture-closeout-23-rerun8.log`, SHA-256 `001703bbaaf76c49e2eef200856fe21c1f7201a9677e0d763215e88278f4fcd6`, contains `[ArchitectureHardeningCloseoutValidation] result=Passed suites=23` and zero C# compiler errors. Focused canonical fixture corrections passed their owning suites before the full entrypoint.
+- Python/evidence gate: full `test_architecture_*.py` discovery passes `179 / 179`; final current-evidence log `Build/Logs/amfr018-python-current-evidence.log`, SHA-256 `813b46e2376ccac152f13bdea9c790dfa5b541940b43022277601617e483d5b0`. Historical evidence validators now bind exact reachable Git blobs instead of comparing old acceptance hashes to later accepted files, while active source-responsibility evidence binds the AMFR-017 114-tuple contract and unchanged 17-test validator.
+- Current deterministic evidence: AM-007 reports `78` Worlds / `160` native candidates / `559` queries; AM-018 reports `237` findings; AM-021 reports `640` resources (`567` explicit / `73` protected / `0` gaps). The Phase 2 delta classifies all `425` review rows once as `420` resolved / `5` protected / `0` genuine debt, with `0` unclassified and `0` source-growth blockers.
+- Determinism and syntax: persistent-resource ownership `--check`, Phase 2 JSON/Markdown byte check, Phase 7 inventory `--check`, Python syntax compilation, and `git diff --check` pass. No production C#, scene, prefab, package, project-setting, wrapper, threshold, protected asset, Android package, or feature implementation is in the evidence checkpoint.
+- Result: AMFR-018 is accepted at child `18 / 22` without parent checklist credit. AMFR-019 is next; AM-025 remains unchecked.
 
 ## 7. Validation And Evidence Contract
 

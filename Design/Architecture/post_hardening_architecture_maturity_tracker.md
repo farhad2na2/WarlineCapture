@@ -1137,3 +1137,11 @@ Accepted AM-020 progress snapshot:
 - Entry identity: clean pushed `main`/`origin/main` commit `98d98a47f6b68d94acf3421f195dd9431931d9b7` with AMFR-017 accepted.
 - Required gate: the canonical 23-suite `ArchitectureHardeningCloseoutValidationRunner.RunFocusedValidation` marker, full architecture Python discovery, persistent-resource ownership check, byte-identical ownership/lifecycle regeneration, Python syntax, and diff checks. Partial or alias suites cannot substitute.
 - Scope: validators, production, evidence, thresholds, assets, and deferred work are read-only unless an exact current failure proves a narrow AM-025-owned evidence schema defect. AM-025 remains unchecked while AMFR-018 is active.
+
+### 2026-08-11 - AM-025 - AMFR-018 complete architecture validation closure
+
+- Identity: validated fixture/evidence checkpoint `98af580b742b3515452809ab11778f27e5934bf4`, followed by clean pushed zero-debt evidence checkpoint `86be507863f2865723326a28f2bda6e75a3a7042` (`origin/main` identical).
+- Architecture: the checked canonical Unity entrypoint passes all `23` suites with zero C# errors; full Python architecture discovery passes `179 / 179`. Historical captures are validated against immutable Git blobs, active AMFR-017 source authority is current, and the Phase 7 inventory is regenerated at `206` total systems (`181` `ISystem`, `25` reviewed `SystemBase`).
+- Ownership evidence: AM-021 has `640` resources, `567` explicit owners, `73` protected owners, and zero gaps. Current Phase 2 review is `425 / 425`: `420` resolved, `5` protected, zero genuine-debt, and zero unclassified; the unchanged source-growth gate has zero blockers.
+- Determinism: persistent ownership, Phase 2 JSON/Markdown, Phase 7 inventory, Python syntax, and diff checks pass. No production or protected asset changed in the evidence slice.
+- Result: AMFR-018 is accepted at child `18 / 22` without parent credit. AMFR-019 is next; AM-025 remains unchecked.

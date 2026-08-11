@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "reportId": "dense-city-final-android-lifecycle-evidence",
+  "recordedAtUtc": "2026-08-11T04:35:35Z",
+  "status": "Passed",
+  "sourceRevision": "6b4d268b837f085987d4287e2ca2898f0db5b064",
+  "installedPackage": {
+    "packageName": "com.warlinecapture.game",
+    "activity": "com.unity3d.player.UnityPlayerGameActivity",
+    "apkBytes": 557478145,
+    "apkSha256": "25e8dae2e4f19d93a2a3c994dab3dd898a8cc4cb3b1d7b0dfb608ff5afa71ff9",
+    "reinstalledForThisEvidence": false
+  },
+  "device": {
+    "manufacturer": "Samsung",
+    "model": "SM-S918B",
+    "serial": "R5CTC1J02VB",
+    "androidVersion": "16",
+    "adbEndpoint": "192.168.2.33:44849"
+  },
+  "coldLaunch": {
+    "launchState": "COLD",
+    "totalTimeMs": 230,
+    "waitTimeMs": 238,
+    "status": "ok"
+  },
+  "cycles": [
+    {
+      "cycle": 1,
+      "deferredMatchLoadSubmittedDeviceTime": "2026-08-11T06:32:23.264+02:00",
+      "gameplayReadyDeviceTime": "2026-08-11T06:32:26.303+02:00",
+      "deferredRequestToReadyMs": 3039,
+      "loadingFeedbackVisible": true,
+      "mapPresentationVisibleAtReady": true,
+      "exitInputDeviceTime": "2026-08-11T06:34:23.499+02:00",
+      "menuCaptureDeviceTime": "2026-08-11T06:34:29.104+02:00",
+      "exitToVisibleMenuUpperBoundMs": 5605,
+      "unloadAccepted": true
+    },
+    {
+      "cycle": 2,
+      "deferredMatchLoadSubmittedDeviceTime": "2026-08-11T06:34:51.621+02:00",
+      "gameplayReadyDeviceTime": "2026-08-11T06:34:54.472+02:00",
+      "deferredRequestToReadyMs": 2851,
+      "loadingFeedbackVisible": true,
+      "loadingProgressCapture": {
+        "label": "Loading map presentation",
+        "percent": 90,
+        "status": "LOADING REQUIRED DATA"
+      },
+      "mapPresentationVisibleAtReady": true,
+      "exitInputDeviceTime": "2026-08-11T06:35:24.492+02:00",
+      "menuCaptureDeviceTime": "2026-08-11T06:35:32.789+02:00",
+      "exitToVisibleMenuUpperBoundMs": 8297,
+      "unloadAccepted": true
+    }
+  ],
+  "preloadDecomposition": {
+    "acceptedChildLifecycleEvidence": {
+      "cycle1SupportEntitySceneMs": 512,
+      "cycle1CandidateEntitySceneMs": 2132,
+      "cycle2SupportEntitySceneMs": 449,
+      "cycle2CandidateEntitySceneMs": 2098
+    },
+    "finalPackageBehavior": "Both final-package cycles displayed bounded loading feedback, progressed through the deferred Match request, and reached the fail-closed LoadingGate ready marker with gameplayInitialized=1, playRequested=1, and simulationActive=1."
+  },
+  "evidence": [
+    {
+      "path": "Build/AndroidAPK/Evidence/2026-08-10-parent-final-6b4d268b8/lifecycle/cold-start-w.txt",
+      "bytes": 488,
+      "sha256": "37400323faf91298664b419939b37f2e15367d92d76cc3244f9696a174a67a5d"
+    },
+    {
+      "path": "Build/AndroidAPK/Evidence/2026-08-10-parent-final-6b4d268b8/lifecycle/cycle1-ready.png",
+      "bytes": 2202099,
+      "sha256": "0b83b99f7ec494fddf54074b10368dbfb4fdc3e869d8f0eff784551b82522d44"
+    },
+    {
+      "path": "Build/AndroidAPK/Evidence/2026-08-10-parent-final-6b4d268b8/lifecycle/cycle1-exit-attempt2.png",
+      "bytes": 4412460,
+      "sha256": "8ee4f1267ac161c2120d50ded6b1acabacd7aa7adc3e27f2a482f2fa395c1564"
+    },
+    {
+      "path": "Build/AndroidAPK/Evidence/2026-08-10-parent-final-6b4d268b8/lifecycle/cycle2-loading.png",
+      "bytes": 4261176,
+      "sha256": "26c8b2d1f76426c3a241b3ada6fb879dea92a694704efc80716a74a8fa9318a4"
+    },
+    {
+      "path": "Build/AndroidAPK/Evidence/2026-08-10-parent-final-6b4d268b8/lifecycle/cycle2-ready.png",
+      "bytes": 2269256,
+      "sha256": "2b559978aaeb0d0f30d84f8792443eda2fa29ea3df1620c7628a0d89fdcc01a7"
+    },
+    {
+      "path": "Build/AndroidAPK/Evidence/2026-08-10-parent-final-6b4d268b8/lifecycle/cycle2-menu.png",
+      "bytes": 4412454,
+      "sha256": "d5480a092c12f12af3370fff6ab8642b200fe579a8f5c3d0d9edb8f64358f318"
+    },
+    {
+      "path": "Build/AndroidAPK/Evidence/2026-08-10-parent-final-6b4d268b8/lifecycle/two-cycle-complete-logcat.txt",
+      "bytes": 2478036,
+      "sha256": "a19e75f7d27153c12742b53b60f19f689ac16ab0f97290767178d6b6a94e5bd9"
+    }
+  ],
+  "acceptance": {
+    "twoConsecutiveLoadsReady": true,
+    "twoConsecutiveUnloadsReturnToMenu": true,
+    "progressBehaviorVisible": true,
+    "fatalOrAnrObserved": false,
+    "result": "Passed"
+  },
+  "notes": [
+    "Exit-to-menu values are honest screenshot-polling upper bounds, not fabricated internal teardown durations.",
+    "The final package does not emit an explicit teardown-duration marker in release logging; visible Menu return is combined with the already accepted exact EntityScene two-cycle teardown contract.",
+    "No APK reinstall, package mutation, gate weakening, or protected asset change occurred."
+  ]
+}

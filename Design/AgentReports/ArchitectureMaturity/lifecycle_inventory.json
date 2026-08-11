@@ -2,6 +2,8 @@
   "activeWorkExclusions": [
     {
       "authorityPath": "Design/Audio_Config_Driven_Implementation_Spec.md",
+      "handoffAuthorityPath": null,
+      "handoffPaths": [],
       "id": "audio",
       "protectedPaths": [
         "Assets/Game/Scripts/Audio/**",
@@ -14,6 +16,8 @@
     },
     {
       "authorityPath": "Design/Architecture/first_launch_architecture_alignment_refactor_tracker.md",
+      "handoffAuthorityPath": null,
+      "handoffPaths": [],
       "id": "first-launch",
       "protectedPaths": [
         "Assets/Game/Scripts/**/FirstLaunch*.cs",
@@ -24,6 +28,14 @@
     },
     {
       "authorityPath": "Design/Architecture/operation_map_scene_split_and_generator_tracker.md",
+      "handoffAuthorityPath": "Design/Architecture/am025_feature_readiness_architecture_closeout_tracker.md",
+      "handoffPaths": [
+        "Assets/Game/Scripts/Composition/OperationMapRuntimeBootstrapSceneSystemHelper.cs",
+        "Assets/Game/Scripts/Composition/OperationMapSceneLoadingSceneSystemHelper.cs",
+        "Assets/Game/Scripts/Composition/OperationMapSceneReferenceSceneSystemHelper.cs",
+        "Assets/Game/Scripts/Environment/RuntimeCityRoadVisualPrototypeSystemHelper.cs",
+        "Assets/Game/Scripts/Environment/RuntimeOperationMapVisualQualitySystemHelper.cs"
+      ],
       "id": "operation-map",
       "protectedPaths": [
         "Assets/Game/Scenes/Game/OperationMaps/**",
@@ -35,6 +47,8 @@
     },
     {
       "authorityPath": "Design/AgentTasks/ui_current.md",
+      "handoffAuthorityPath": null,
+      "handoffPaths": [],
       "id": "ui-visual-lock",
       "protectedPaths": [
         "Assets/Game/Art/UI/Generated/**",
@@ -48,8 +62,8 @@
   "artifactId": "AM-007",
   "baseline": {
     "branch": "main",
-    "commit": "7f41260803d85f46f6bb11a0078b395bc30d1ee4",
-    "tree": "b90137d8c6dfd4b6bf7b5822955d2bf577671dd8"
+    "commit": "319a60f6156cf458d393eeaeffd605c0ca2e3a5a",
+    "tree": "d20060af0ddd0d3bbbcabf208b9e027742b2fa51"
   },
   "categories": {
     "nativeContainers": [
@@ -89,10 +103,376 @@
       {
         "cleanupMethodsObserved": [],
         "cleanupObserved": false,
+        "field": "SlotToLogicalRow",
+        "fieldType": "NativeArray<int>",
+        "lifecycleMethods": [],
+        "line": 39,
+        "ownerType": "OperationMapRenderAssignmentJob",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderAssignmentJob.cs",
+        "persistentAllocatorObserved": false
+      },
+      {
+        "cleanupMethodsObserved": [],
+        "cleanupObserved": false,
+        "field": "LogicalRowToSlot",
+        "fieldType": "NativeArray<int>",
+        "lifecycleMethods": [],
+        "line": 40,
+        "ownerType": "OperationMapRenderAssignmentJob",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderAssignmentJob.cs",
+        "persistentAllocatorObserved": false
+      },
+      {
+        "cleanupMethodsObserved": [],
+        "cleanupObserved": false,
+        "field": "SlotAssignmentGenerations",
+        "fieldType": "NativeArray<int>",
+        "lifecycleMethods": [],
+        "line": 41,
+        "ownerType": "OperationMapRenderAssignmentJob",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderAssignmentJob.cs",
+        "persistentAllocatorObserved": false
+      },
+      {
+        "cleanupMethodsObserved": [],
+        "cleanupObserved": false,
+        "field": "NextFreeSlotByBucket",
+        "fieldType": "NativeArray<int>",
+        "lifecycleMethods": [],
+        "line": 46,
+        "ownerType": "OperationMapRenderAssignmentJob",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderAssignmentJob.cs",
+        "persistentAllocatorObserved": false
+      },
+      {
+        "cleanupMethodsObserved": [],
+        "cleanupObserved": false,
+        "field": "SlotCommands",
+        "fieldType": "NativeArray<OperationMapRenderSlotCommandComponent>",
+        "lifecycleMethods": [],
+        "line": 47,
+        "ownerType": "OperationMapRenderAssignmentJob",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderAssignmentJob.cs",
+        "persistentAllocatorObserved": false
+      },
+      {
+        "cleanupMethodsObserved": [],
+        "cleanupObserved": false,
+        "field": "DirtySlotIndices",
+        "fieldType": "NativeList<int>",
+        "lifecycleMethods": [],
+        "line": 48,
+        "ownerType": "OperationMapRenderAssignmentJob",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderAssignmentJob.cs",
+        "persistentAllocatorObserved": false
+      },
+      {
+        "cleanupMethodsObserved": [],
+        "cleanupObserved": false,
+        "field": "Result",
+        "fieldType": "NativeReference<OperationMapRenderAssignmentResult>",
+        "lifecycleMethods": [],
+        "line": 49,
+        "ownerType": "OperationMapRenderAssignmentJob",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderAssignmentJob.cs",
+        "persistentAllocatorObserved": false
+      },
+      {
+        "cleanupMethodsObserved": [],
+        "cleanupObserved": false,
+        "field": "SelectedPlacementIndices",
+        "fieldType": "NativeList<int>",
+        "lifecycleMethods": [],
+        "line": 101,
+        "ownerType": "OperationMapRenderPlacementGatherJob",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderCellSelectionJobs.cs",
+        "persistentAllocatorObserved": false
+      },
+      {
+        "cleanupMethodsObserved": [],
+        "cleanupObserved": false,
+        "field": "SelectedLogicalRows",
+        "fieldType": "NativeList<OperationMapRenderLogicalRowKey>",
+        "lifecycleMethods": [],
+        "line": 102,
+        "ownerType": "OperationMapRenderPlacementGatherJob",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderCellSelectionJobs.cs",
+        "persistentAllocatorObserved": false
+      },
+      {
+        "cleanupMethodsObserved": [],
+        "cleanupObserved": false,
+        "field": "Failure",
+        "fieldType": "NativeReference<OperationMapRenderCellSelectionFailure>",
+        "lifecycleMethods": [],
+        "line": 103,
+        "ownerType": "OperationMapRenderPlacementGatherJob",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderCellSelectionJobs.cs",
+        "persistentAllocatorObserved": false
+      },
+      {
+        "cleanupMethodsObserved": [],
+        "cleanupObserved": false,
+        "field": "SelectedCellIndices",
+        "fieldType": "NativeList<int>",
+        "lifecycleMethods": [],
+        "line": 37,
+        "ownerType": "OperationMapRenderRequiredCellSelectionJob",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderCellSelectionJobs.cs",
+        "persistentAllocatorObserved": false
+      },
+      {
+        "cleanupMethodsObserved": [],
+        "cleanupObserved": false,
+        "field": "Failure",
+        "fieldType": "NativeReference<OperationMapRenderCellSelectionFailure>",
+        "lifecycleMethods": [],
+        "line": 38,
+        "ownerType": "OperationMapRenderRequiredCellSelectionJob",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderCellSelectionJobs.cs",
+        "persistentAllocatorObserved": false
+      },
+      {
+        "cleanupMethodsObserved": [],
+        "cleanupObserved": false,
+        "field": "_slotFailures",
+        "fieldType": "NativeArray<OperationMapRenderSlotApplyFailure>",
+        "lifecycleMethods": [
+          "OnCreate",
+          "OnDestroy"
+        ],
+        "line": 20,
+        "ownerType": "OperationMapRenderProxyApplySystem",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderProxyApplySystem.cs",
+        "persistentAllocatorObserved": true
+      },
+      {
+        "cleanupMethodsObserved": [],
+        "cleanupObserved": false,
+        "field": "SlotFailures",
+        "fieldType": "NativeArray<OperationMapRenderSlotApplyFailure>",
+        "lifecycleMethods": [],
+        "line": 38,
+        "ownerType": "OperationMapRenderSlotApplyJob",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderSlotApplyJob.cs",
+        "persistentAllocatorObserved": false
+      },
+      {
+        "cleanupMethodsObserved": [],
+        "cleanupObserved": false,
+        "field": "CanonicalStates",
+        "fieldType": "NativeArray<OperationMapRenderCanonicalStateComponent>",
+        "lifecycleMethods": [],
+        "line": 472,
+        "ownerType": "OperationMapRenderCanonicalStateInitializeJob",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderStateSyncSystem.cs",
+        "persistentAllocatorObserved": false
+      },
+      {
+        "cleanupMethodsObserved": [],
+        "cleanupObserved": false,
+        "field": "CanonicalStates",
+        "fieldType": "NativeArray<OperationMapRenderCanonicalStateComponent>",
+        "lifecycleMethods": [],
+        "line": 496,
+        "ownerType": "OperationMapRenderStateSyncJob",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderStateSyncSystem.cs",
+        "persistentAllocatorObserved": false
+      },
+      {
+        "cleanupMethodsObserved": [
+          "Dispose"
+        ],
+        "cleanupObserved": true,
+        "field": "_slotToLogicalRow",
+        "fieldType": "NativeArray<int>",
+        "lifecycleMethods": [
+          "Dispose"
+        ],
+        "line": 495,
+        "ownerType": "OperationMapRenderVirtualizationNativeState",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderVirtualizationInitializationSystem.cs",
+        "persistentAllocatorObserved": true
+      },
+      {
+        "cleanupMethodsObserved": [
+          "Dispose"
+        ],
+        "cleanupObserved": true,
+        "field": "_logicalRowToSlot",
+        "fieldType": "NativeArray<int>",
+        "lifecycleMethods": [
+          "Dispose"
+        ],
+        "line": 496,
+        "ownerType": "OperationMapRenderVirtualizationNativeState",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderVirtualizationInitializationSystem.cs",
+        "persistentAllocatorObserved": true
+      },
+      {
+        "cleanupMethodsObserved": [
+          "Dispose"
+        ],
+        "cleanupObserved": true,
+        "field": "_placementFirstLogicalRow",
+        "fieldType": "NativeArray<int>",
+        "lifecycleMethods": [
+          "Dispose"
+        ],
+        "line": 497,
+        "ownerType": "OperationMapRenderVirtualizationNativeState",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderVirtualizationInitializationSystem.cs",
+        "persistentAllocatorObserved": true
+      },
+      {
+        "cleanupMethodsObserved": [
+          "Dispose"
+        ],
+        "cleanupObserved": true,
+        "field": "_slotAssignmentGenerations",
+        "fieldType": "NativeArray<int>",
+        "lifecycleMethods": [
+          "Dispose"
+        ],
+        "line": 498,
+        "ownerType": "OperationMapRenderVirtualizationNativeState",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderVirtualizationInitializationSystem.cs",
+        "persistentAllocatorObserved": true
+      },
+      {
+        "cleanupMethodsObserved": [
+          "Dispose"
+        ],
+        "cleanupObserved": true,
+        "field": "_nextFreeSlotByBucket",
+        "fieldType": "NativeArray<int>",
+        "lifecycleMethods": [
+          "Dispose"
+        ],
+        "line": 504,
+        "ownerType": "OperationMapRenderVirtualizationNativeState",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderVirtualizationInitializationSystem.cs",
+        "persistentAllocatorObserved": true
+      },
+      {
+        "cleanupMethodsObserved": [
+          "Dispose"
+        ],
+        "cleanupObserved": true,
+        "field": "_selectedCells",
+        "fieldType": "NativeList<int>",
+        "lifecycleMethods": [
+          "Dispose"
+        ],
+        "line": 505,
+        "ownerType": "OperationMapRenderVirtualizationNativeState",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderVirtualizationInitializationSystem.cs",
+        "persistentAllocatorObserved": true
+      },
+      {
+        "cleanupMethodsObserved": [
+          "Dispose"
+        ],
+        "cleanupObserved": true,
+        "field": "_selectedPlacements",
+        "fieldType": "NativeList<int>",
+        "lifecycleMethods": [
+          "Dispose"
+        ],
+        "line": 506,
+        "ownerType": "OperationMapRenderVirtualizationNativeState",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderVirtualizationInitializationSystem.cs",
+        "persistentAllocatorObserved": true
+      },
+      {
+        "cleanupMethodsObserved": [
+          "Dispose"
+        ],
+        "cleanupObserved": true,
+        "field": "_selectedLogicalRows",
+        "fieldType": "NativeList<OperationMapRenderLogicalRowKey>",
+        "lifecycleMethods": [
+          "Dispose"
+        ],
+        "line": 507,
+        "ownerType": "OperationMapRenderVirtualizationNativeState",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderVirtualizationInitializationSystem.cs",
+        "persistentAllocatorObserved": true
+      },
+      {
+        "cleanupMethodsObserved": [
+          "Dispose"
+        ],
+        "cleanupObserved": true,
+        "field": "_dirtySlotIndices",
+        "fieldType": "NativeList<int>",
+        "lifecycleMethods": [
+          "Dispose"
+        ],
+        "line": 508,
+        "ownerType": "OperationMapRenderVirtualizationNativeState",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderVirtualizationInitializationSystem.cs",
+        "persistentAllocatorObserved": true
+      },
+      {
+        "cleanupMethodsObserved": [
+          "Dispose"
+        ],
+        "cleanupObserved": true,
+        "field": "_selectionFailure",
+        "fieldType": "NativeReference<OperationMapRenderCellSelectionFailure>",
+        "lifecycleMethods": [
+          "Dispose"
+        ],
+        "line": 509,
+        "ownerType": "OperationMapRenderVirtualizationNativeState",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderVirtualizationInitializationSystem.cs",
+        "persistentAllocatorObserved": true
+      },
+      {
+        "cleanupMethodsObserved": [
+          "Dispose"
+        ],
+        "cleanupObserved": true,
+        "field": "_assignmentResult",
+        "fieldType": "NativeReference<OperationMapRenderAssignmentResult>",
+        "lifecycleMethods": [
+          "Dispose"
+        ],
+        "line": 511,
+        "ownerType": "OperationMapRenderVirtualizationNativeState",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderVirtualizationInitializationSystem.cs",
+        "persistentAllocatorObserved": true
+      },
+      {
+        "cleanupMethodsObserved": [],
+        "cleanupObserved": false,
+        "field": "Metrics",
+        "fieldType": "NativeReference<OperationMapRenderVirtualizationMetricsComponent>",
+        "lifecycleMethods": [],
+        "line": 67,
+        "ownerType": "OperationMapRenderVirtualizationMetricsJob",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderVirtualizationInstrumentation.cs",
+        "persistentAllocatorObserved": false
+      },
+      {
+        "cleanupMethodsObserved": [],
+        "cleanupObserved": false,
+        "field": "Failure",
+        "fieldType": "NativeReference<OperationMapRenderMetricsFailure>",
+        "lifecycleMethods": [],
+        "line": 69,
+        "ownerType": "OperationMapRenderVirtualizationMetricsJob",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderVirtualizationInstrumentation.cs",
+        "persistentAllocatorObserved": false
+      },
+      {
+        "cleanupMethodsObserved": [],
+        "cleanupObserved": false,
         "field": "PatchCounts",
         "fieldType": "NativeArray<int>",
         "lifecycleMethods": [],
-        "line": 209,
+        "line": 358,
         "ownerType": "PatchMassRenderDataJob",
         "path": "Assets/Game/Scripts/Rendering/Systems/UnitMassRenderSettingsSystem.cs",
         "persistentAllocatorObserved": false
@@ -302,7 +682,7 @@
         "field": "Units",
         "fieldType": "NativeList<Entity>",
         "lifecycleMethods": [],
-        "line": 59,
+        "line": 60,
         "ownerType": "CollectSnapshotJob",
         "path": "Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetSnapshotSystem.cs",
         "persistentAllocatorObserved": false
@@ -313,7 +693,7 @@
         "field": "Transforms",
         "fieldType": "NativeList<LocalTransform>",
         "lifecycleMethods": [],
-        "line": 60,
+        "line": 61,
         "ownerType": "CollectSnapshotJob",
         "path": "Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetSnapshotSystem.cs",
         "persistentAllocatorObserved": false
@@ -358,39 +738,6 @@
         "ownerType": "SortDistancesJob",
         "path": "Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetSortSystem.cs",
         "persistentAllocatorObserved": false
-      },
-      {
-        "cleanupMethodsObserved": [],
-        "cleanupObserved": false,
-        "field": "scenarioGridBlockerCounts",
-        "fieldType": "NativeArray<int>",
-        "lifecycleMethods": [],
-        "line": 57,
-        "ownerType": "BattleScenarioLabVisualPlayback",
-        "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
-        "persistentAllocatorObserved": true
-      },
-      {
-        "cleanupMethodsObserved": [],
-        "cleanupObserved": false,
-        "field": "scenarioGridFriendlyPassFactionIds",
-        "fieldType": "NativeArray<byte>",
-        "lifecycleMethods": [],
-        "line": 60,
-        "ownerType": "BattleScenarioLabVisualPlayback",
-        "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
-        "persistentAllocatorObserved": true
-      },
-      {
-        "cleanupMethodsObserved": [],
-        "cleanupObserved": false,
-        "field": "scenarioGridPathPool",
-        "fieldType": "NativeList<int2>",
-        "lifecycleMethods": [],
-        "line": 61,
-        "ownerType": "BattleScenarioLabVisualPlayback",
-        "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
-        "persistentAllocatorObserved": true
       },
       {
         "cleanupMethodsObserved": [
@@ -458,7 +805,7 @@
         "field": "ControlledUnitCounts",
         "fieldType": "NativeArray<int>",
         "lifecycleMethods": [],
-        "line": 157,
+        "line": 154,
         "ownerType": "ApplyFactionControlJob",
         "path": "Assets/Game/Scripts/Systems/AIFactionControlSystem.cs",
         "persistentAllocatorObserved": false
@@ -518,7 +865,7 @@
         "field": "Diagnostics",
         "fieldType": "NativeList<TargetingDiagnosticEvent>",
         "lifecycleMethods": [],
-        "line": 230,
+        "line": 227,
         "ownerType": "AssignTargetsJob",
         "path": "Assets/Game/Scripts/Systems/AITargetingSystem.cs",
         "persistentAllocatorObserved": false
@@ -577,7 +924,7 @@
         "field": "Candidates",
         "fieldType": "NativeList<FocusableScreenDistanceCandidate>",
         "lifecycleMethods": [],
-        "line": 470,
+        "line": 566,
         "ownerType": "CollectFocusableScreenDistanceCandidatesJob",
         "path": "Assets/Game/Scripts/Systems/FocusableUnitLookupCameraSystemHelper.cs",
         "persistentAllocatorObserved": false
@@ -590,7 +937,7 @@
         "lifecycleMethods": [
           "Dispose"
         ],
-        "line": 1649,
+        "line": 1655,
         "ownerType": "InitialSpawnGridContext",
         "path": "Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs",
         "persistentAllocatorObserved": false
@@ -626,6 +973,28 @@
         "line": 83,
         "ownerType": "BuildDiagnosticsJob",
         "path": "Assets/Game/Scripts/Systems/MapSurfaceDiagnosticsSystem.cs",
+        "persistentAllocatorObserved": false
+      },
+      {
+        "cleanupMethodsObserved": [],
+        "cleanupObserved": false,
+        "field": "Markers",
+        "fieldType": "NativeList<MatchHudMinimapMarkerElement>",
+        "lifecycleMethods": [],
+        "line": 100,
+        "ownerType": "CollectMarkersJob",
+        "path": "Assets/Game/Scripts/Systems/MatchHudMinimapMarkerSystem.cs",
+        "persistentAllocatorObserved": false
+      },
+      {
+        "cleanupMethodsObserved": [],
+        "cleanupObserved": false,
+        "field": "Markers",
+        "fieldType": "NativeList<MatchHudMinimapMarkerElement>",
+        "lifecycleMethods": [],
+        "line": 134,
+        "ownerType": "CollectScanIntelMarkersJob",
+        "path": "Assets/Game/Scripts/Systems/MatchHudMinimapMarkerSystem.cs",
         "persistentAllocatorObserved": false
       },
       {
@@ -817,7 +1186,7 @@
         "field": "CurrentGroundThreats",
         "fieldType": "NativeParallelHashSet<Entity>",
         "lifecycleMethods": [],
-        "line": 365,
+        "line": 322,
         "ownerType": "ThreatScanJob",
         "path": "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs",
         "persistentAllocatorObserved": false
@@ -828,7 +1197,7 @@
         "field": "CurrentAirThreats",
         "fieldType": "NativeParallelHashSet<Entity>",
         "lifecycleMethods": [],
-        "line": 366,
+        "line": 323,
         "ownerType": "ThreatScanJob",
         "path": "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs",
         "persistentAllocatorObserved": false
@@ -839,7 +1208,7 @@
         "field": "CurrentGroundThreatList",
         "fieldType": "NativeList<Entity>",
         "lifecycleMethods": [],
-        "line": 367,
+        "line": 324,
         "ownerType": "ThreatScanJob",
         "path": "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs",
         "persistentAllocatorObserved": false
@@ -850,7 +1219,40 @@
         "field": "CurrentAirThreatList",
         "fieldType": "NativeList<Entity>",
         "lifecycleMethods": [],
-        "line": 368,
+        "line": 325,
+        "ownerType": "ThreatScanJob",
+        "path": "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs",
+        "persistentAllocatorObserved": false
+      },
+      {
+        "cleanupMethodsObserved": [],
+        "cleanupObserved": false,
+        "field": "ThreatCandidates",
+        "fieldType": "NativeList<ThreatCandidate>",
+        "lifecycleMethods": [],
+        "line": 326,
+        "ownerType": "ThreatScanJob",
+        "path": "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs",
+        "persistentAllocatorObserved": false
+      },
+      {
+        "cleanupMethodsObserved": [],
+        "cleanupObserved": false,
+        "field": "CloseContactSensors",
+        "fieldType": "NativeList<ThreatSensor>",
+        "lifecycleMethods": [],
+        "line": 327,
+        "ownerType": "ThreatScanJob",
+        "path": "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs",
+        "persistentAllocatorObserved": false
+      },
+      {
+        "cleanupMethodsObserved": [],
+        "cleanupObserved": false,
+        "field": "CloseContactSensorCells",
+        "fieldType": "NativeParallelHashSet<int2>",
+        "lifecycleMethods": [],
+        "line": 328,
         "ownerType": "ThreatScanJob",
         "path": "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs",
         "persistentAllocatorObserved": false
@@ -861,7 +1263,7 @@
         "field": "Result",
         "fieldType": "NativeArray<ThreatScanResult>",
         "lifecycleMethods": [],
-        "line": 370,
+        "line": 330,
         "ownerType": "ThreatScanJob",
         "path": "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs",
         "persistentAllocatorObserved": false
@@ -1645,7 +2047,7 @@
           "OnCreate",
           "OnDestroy"
         ],
-        "line": 36,
+        "line": 37,
         "ownerType": "UnitPathfindingSystem",
         "path": "Assets/Game/Scripts/Systems/UnitPathfindingSystem.cs",
         "persistentAllocatorObserved": false
@@ -1783,31 +2185,43 @@
         "path": "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationSystemHelper.cs"
       },
       {
-        "cleanupMethodsObserved": [],
-        "cleanupObserved": false,
+        "cleanupMethodsObserved": [
+          "OnDestroy"
+        ],
+        "cleanupObserved": true,
         "field": "_pool",
         "fieldType": "Stack<TrailInstance>",
-        "lifecycleMethods": [],
+        "lifecycleMethods": [
+          "OnDestroy"
+        ],
         "line": 30,
         "ownerType": "MissileTrailVfxView",
         "path": "Assets/Game/Scripts/Effects/MissileTrailVfxView.cs"
       },
       {
-        "cleanupMethodsObserved": [],
-        "cleanupObserved": false,
+        "cleanupMethodsObserved": [
+          "OnDestroy"
+        ],
+        "cleanupObserved": true,
         "field": "_availableByPrefab",
         "fieldType": "Dictionary<GameObject, Stack<PooledInstance>>",
-        "lifecycleMethods": [],
+        "lifecycleMethods": [
+          "OnDestroy"
+        ],
         "line": 23,
         "ownerType": "UnitAttackImpactVfxView",
         "path": "Assets/Game/Scripts/Effects/UnitAttackImpactVfxView.cs"
       },
       {
-        "cleanupMethodsObserved": [],
-        "cleanupObserved": false,
+        "cleanupMethodsObserved": [
+          "OnDestroy"
+        ],
+        "cleanupObserved": true,
         "field": "_active",
         "fieldType": "List<PooledInstance>",
-        "lifecycleMethods": [],
+        "lifecycleMethods": [
+          "OnDestroy"
+        ],
         "line": 24,
         "ownerType": "UnitAttackImpactVfxView",
         "path": "Assets/Game/Scripts/Effects/UnitAttackImpactVfxView.cs"
@@ -1923,12 +2337,12 @@
       {
         "cleanupMethodsObserved": [],
         "cleanupObserved": false,
-        "field": "_markerPool",
+        "field": "_markerImagePool",
         "fieldType": "System.Collections.Generic.List<Image>",
         "lifecycleMethods": [
           "Dispose"
         ],
-        "line": 44,
+        "line": 42,
         "ownerType": "MatchHudMinimapInputUiSystemHelper",
         "path": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs"
       }
@@ -1957,11 +2371,11 @@
         "path": "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs"
       },
       {
-        "field": "query",
-        "fieldType": "EntityQuery",
+        "field": "_queryCache",
+        "fieldType": "WorldScopedComponentQueryCache<MatchIntroTransitionComponent>",
         "lifecycleDisposition": "classification-required",
         "lifecycleMethods": [],
-        "line": 11,
+        "line": 17,
         "ownerType": "MatchIntroEcsStateQuery",
         "path": "Assets/Game/Scripts/Composition/MatchIntroEcsStateQuery.cs"
       },
@@ -1972,7 +2386,7 @@
         "lifecycleMethods": [
           "Shutdown"
         ],
-        "line": 34,
+        "line": 37,
         "ownerType": "MenuBootstrapCompositionSystemHelper",
         "path": "Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs"
       },
@@ -1983,7 +2397,7 @@
         "lifecycleMethods": [
           "Shutdown"
         ],
-        "line": 38,
+        "line": 41,
         "ownerType": "MenuBootstrapCompositionSystemHelper",
         "path": "Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs"
       },
@@ -1994,7 +2408,7 @@
         "lifecycleMethods": [
           "Shutdown"
         ],
-        "line": 41,
+        "line": 44,
         "ownerType": "MenuBootstrapCompositionSystemHelper",
         "path": "Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs"
       },
@@ -2005,7 +2419,7 @@
         "lifecycleMethods": [
           "Shutdown"
         ],
-        "line": 44,
+        "line": 47,
         "ownerType": "MenuBootstrapCompositionSystemHelper",
         "path": "Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs"
       },
@@ -2017,6 +2431,341 @@
         "line": 12,
         "ownerType": "RuntimeCityReadinessQueryCompositionSystemHelper",
         "path": "Assets/Game/Scripts/Environment/RuntimeCityReadinessQueryCompositionSystemHelper.cs"
+      },
+      {
+        "field": "_ownerSectionQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate"
+        ],
+        "line": 21,
+        "ownerType": "OperationMapRenderMaterialBaseColorBakingSystem",
+        "path": "Assets/Game/Scripts/Rendering/Baking/OperationMapRenderMaterialBaseColorBakingSystem.cs"
+      },
+      {
+        "field": "_renderQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate"
+        ],
+        "line": 22,
+        "ownerType": "OperationMapRenderMaterialBaseColorBakingSystem",
+        "path": "Assets/Game/Scripts/Rendering/Baking/OperationMapRenderMaterialBaseColorBakingSystem.cs"
+      },
+      {
+        "field": "_databaseQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate"
+        ],
+        "line": 16,
+        "ownerType": "OperationMapRenderVirtualizationBakingSystem",
+        "path": "Assets/Game/Scripts/Rendering/Baking/OperationMapRenderVirtualizationBakingSystem.cs"
+      },
+      {
+        "field": "_sourceRowQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate"
+        ],
+        "line": 17,
+        "ownerType": "OperationMapRenderVirtualizationBakingSystem",
+        "path": "Assets/Game/Scripts/Rendering/Baking/OperationMapRenderVirtualizationBakingSystem.cs"
+      },
+      {
+        "field": "_additionalRenderQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate"
+        ],
+        "line": 18,
+        "ownerType": "OperationMapRenderVirtualizationBakingSystem",
+        "path": "Assets/Game/Scripts/Rendering/Baking/OperationMapRenderVirtualizationBakingSystem.cs"
+      },
+      {
+        "field": "_buildingOwnerQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate"
+        ],
+        "line": 19,
+        "ownerType": "OperationMapRenderVirtualizationBakingSystem",
+        "path": "Assets/Game/Scripts/Rendering/Baking/OperationMapRenderVirtualizationBakingSystem.cs"
+      },
+      {
+        "field": "_slotQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate"
+        ],
+        "line": 20,
+        "ownerType": "OperationMapRenderVirtualizationBakingSystem",
+        "path": "Assets/Game/Scripts/Rendering/Baking/OperationMapRenderVirtualizationBakingSystem.cs"
+      },
+      {
+        "field": "VirtualizationStateLookup",
+        "fieldType": "ComponentLookup<OperationMapRenderVirtualizationStateComponent>",
+        "lifecycleDisposition": "classification-required",
+        "lifecycleMethods": [],
+        "line": 200,
+        "ownerType": "OperationMapRenderApplyCompletionJob",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderProxyApplySystem.cs"
+      },
+      {
+        "field": "_commandOwnerQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate",
+          "OnDestroy"
+        ],
+        "line": 18,
+        "ownerType": "OperationMapRenderProxyApplySystem",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderProxyApplySystem.cs"
+      },
+      {
+        "field": "_slotQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate",
+          "OnDestroy"
+        ],
+        "line": 19,
+        "ownerType": "OperationMapRenderProxyApplySystem",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderProxyApplySystem.cs"
+      },
+      {
+        "field": "_databaseLookup",
+        "fieldType": "ComponentLookup<OperationMapRenderDatabaseComponent>",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate",
+          "OnDestroy"
+        ],
+        "line": 27,
+        "ownerType": "OperationMapRenderProxyApplySystem",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderProxyApplySystem.cs"
+      },
+      {
+        "field": "_virtualizationStateLookup",
+        "fieldType": "ComponentLookup<OperationMapRenderVirtualizationStateComponent>",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate",
+          "OnDestroy"
+        ],
+        "line": 29,
+        "ownerType": "OperationMapRenderProxyApplySystem",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderProxyApplySystem.cs"
+      },
+      {
+        "field": "SyncStateLookup",
+        "fieldType": "ComponentLookup<OperationMapRenderStateSyncStateComponent>",
+        "lifecycleDisposition": "classification-required",
+        "lifecycleMethods": [],
+        "line": 502,
+        "ownerType": "OperationMapRenderStateSyncJob",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderStateSyncSystem.cs"
+      },
+      {
+        "field": "VirtualizationStateLookup",
+        "fieldType": "ComponentLookup<OperationMapRenderVirtualizationStateComponent>",
+        "lifecycleDisposition": "classification-required",
+        "lifecycleMethods": [],
+        "line": 504,
+        "ownerType": "OperationMapRenderStateSyncJob",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderStateSyncSystem.cs"
+      },
+      {
+        "field": "_activeMapQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate",
+          "OnDestroy"
+        ],
+        "line": 15,
+        "ownerType": "OperationMapRenderStateSyncSystem",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderStateSyncSystem.cs"
+      },
+      {
+        "field": "_databaseQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate",
+          "OnDestroy"
+        ],
+        "line": 16,
+        "ownerType": "OperationMapRenderStateSyncSystem",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderStateSyncSystem.cs"
+      },
+      {
+        "field": "_buildingQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate",
+          "OnDestroy"
+        ],
+        "line": 17,
+        "ownerType": "OperationMapRenderStateSyncSystem",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderStateSyncSystem.cs"
+      },
+      {
+        "field": "_syncStateLookup",
+        "fieldType": "ComponentLookup<OperationMapRenderStateSyncStateComponent>",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate",
+          "OnDestroy"
+        ],
+        "line": 23,
+        "ownerType": "OperationMapRenderStateSyncSystem",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderStateSyncSystem.cs"
+      },
+      {
+        "field": "_virtualizationStateLookup",
+        "fieldType": "ComponentLookup<OperationMapRenderVirtualizationStateComponent>",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate",
+          "OnDestroy"
+        ],
+        "line": 25,
+        "ownerType": "OperationMapRenderStateSyncSystem",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderStateSyncSystem.cs"
+      },
+      {
+        "field": "StateLookup",
+        "fieldType": "ComponentLookup<OperationMapRenderVirtualizationStateComponent>",
+        "lifecycleDisposition": "classification-required",
+        "lifecycleMethods": [],
+        "line": 857,
+        "ownerType": "OperationMapRenderAssignmentPublishJob",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderVirtualizationInitializationSystem.cs"
+      },
+      {
+        "field": "MetricsLookup",
+        "fieldType": "ComponentLookup<OperationMapRenderVirtualizationMetricsComponent>",
+        "lifecycleDisposition": "classification-required",
+        "lifecycleMethods": [],
+        "line": 859,
+        "ownerType": "OperationMapRenderAssignmentPublishJob",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderVirtualizationInitializationSystem.cs"
+      },
+      {
+        "field": "CommandStateLookup",
+        "fieldType": "ComponentLookup<OperationMapRenderSlotCommandStateComponent>",
+        "lifecycleDisposition": "classification-required",
+        "lifecycleMethods": [],
+        "line": 861,
+        "ownerType": "OperationMapRenderAssignmentPublishJob",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderVirtualizationInitializationSystem.cs"
+      },
+      {
+        "field": "_activeMapQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate",
+          "OnDestroy"
+        ],
+        "line": 16,
+        "ownerType": "OperationMapRenderVirtualizationInitializationSystem",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderVirtualizationInitializationSystem.cs"
+      },
+      {
+        "field": "_databaseQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate",
+          "OnDestroy"
+        ],
+        "line": 17,
+        "ownerType": "OperationMapRenderVirtualizationInitializationSystem",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderVirtualizationInitializationSystem.cs"
+      },
+      {
+        "field": "_stateOwnerQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate",
+          "OnDestroy"
+        ],
+        "line": 18,
+        "ownerType": "OperationMapRenderVirtualizationInitializationSystem",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderVirtualizationInitializationSystem.cs"
+      },
+      {
+        "field": "_slotQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate",
+          "OnDestroy"
+        ],
+        "line": 19,
+        "ownerType": "OperationMapRenderVirtualizationInitializationSystem",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderVirtualizationInitializationSystem.cs"
+      },
+      {
+        "field": "_cameraQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate",
+          "OnDestroy"
+        ],
+        "line": 20,
+        "ownerType": "OperationMapRenderVirtualizationInitializationSystem",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderVirtualizationInitializationSystem.cs"
+      },
+      {
+        "field": "_virtualizationStateLookup",
+        "fieldType": "ComponentLookup<OperationMapRenderVirtualizationStateComponent>",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate",
+          "OnDestroy"
+        ],
+        "line": 30,
+        "ownerType": "OperationMapRenderVirtualizationInitializationSystem",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderVirtualizationInitializationSystem.cs"
+      },
+      {
+        "field": "_metricsLookup",
+        "fieldType": "ComponentLookup<OperationMapRenderVirtualizationMetricsComponent>",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate",
+          "OnDestroy"
+        ],
+        "line": 32,
+        "ownerType": "OperationMapRenderVirtualizationInitializationSystem",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderVirtualizationInitializationSystem.cs"
+      },
+      {
+        "field": "_commandStateLookup",
+        "fieldType": "ComponentLookup<OperationMapRenderSlotCommandStateComponent>",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate",
+          "OnDestroy"
+        ],
+        "line": 34,
+        "ownerType": "OperationMapRenderVirtualizationInitializationSystem",
+        "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderVirtualizationInitializationSystem.cs"
       },
       {
         "field": "_candidateQuery",
@@ -2173,11 +2922,22 @@
         "path": "Assets/Game/Scripts/Rendering/Systems/UnitHelicopterBladeSpinSystem.cs"
       },
       {
+        "field": "_legacyFallbackQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate"
+        ],
+        "line": 32,
+        "ownerType": "UnitHelicopterBladeSpinSystem",
+        "path": "Assets/Game/Scripts/Rendering/Systems/UnitHelicopterBladeSpinSystem.cs"
+      },
+      {
         "field": "RenderBoundsLookup",
         "fieldType": "ComponentLookup<Unity.Rendering.RenderBounds>",
         "lifecycleDisposition": "classification-required",
         "lifecycleMethods": [],
-        "line": 206,
+        "line": 355,
         "ownerType": "PatchMassRenderDataJob",
         "path": "Assets/Game/Scripts/Rendering/Systems/UnitMassRenderSettingsSystem.cs"
       },
@@ -2186,7 +2946,7 @@
         "fieldType": "ComponentLookup<MeshLODComponent>",
         "lifecycleDisposition": "classification-required",
         "lifecycleMethods": [],
-        "line": 207,
+        "line": 356,
         "ownerType": "PatchMassRenderDataJob",
         "path": "Assets/Game/Scripts/Rendering/Systems/UnitMassRenderSettingsSystem.cs"
       },
@@ -2195,7 +2955,7 @@
         "fieldType": "ComponentLookup<MeshLODGroupComponent>",
         "lifecycleDisposition": "classification-required",
         "lifecycleMethods": [],
-        "line": 208,
+        "line": 357,
         "ownerType": "PatchMassRenderDataJob",
         "path": "Assets/Game/Scripts/Rendering/Systems/UnitMassRenderSettingsSystem.cs"
       },
@@ -2211,13 +2971,24 @@
         "path": "Assets/Game/Scripts/Rendering/Systems/UnitMassRenderSettingsSystem.cs"
       },
       {
+        "field": "_residentSourceQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate"
+        ],
+        "line": 29,
+        "ownerType": "UnitMassRenderSettingsSystem",
+        "path": "Assets/Game/Scripts/Rendering/Systems/UnitMassRenderSettingsSystem.cs"
+      },
+      {
         "field": "_parentLookup",
         "fieldType": "ComponentLookup<Parent>",
         "lifecycleDisposition": "ecs-system-owned",
         "lifecycleMethods": [
           "OnCreate"
         ],
-        "line": 29,
+        "line": 30,
         "ownerType": "UnitMassRenderSettingsSystem",
         "path": "Assets/Game/Scripts/Rendering/Systems/UnitMassRenderSettingsSystem.cs"
       },
@@ -2228,7 +2999,7 @@
         "lifecycleMethods": [
           "OnCreate"
         ],
-        "line": 30,
+        "line": 31,
         "ownerType": "UnitMassRenderSettingsSystem",
         "path": "Assets/Game/Scripts/Rendering/Systems/UnitMassRenderSettingsSystem.cs"
       },
@@ -2239,7 +3010,62 @@
         "lifecycleMethods": [
           "OnCreate"
         ],
-        "line": 31,
+        "line": 32,
+        "ownerType": "UnitMassRenderSettingsSystem",
+        "path": "Assets/Game/Scripts/Rendering/Systems/UnitMassRenderSettingsSystem.cs"
+      },
+      {
+        "field": "_operationMapIdentityLookup",
+        "fieldType": "ComponentLookup<OperationMapEntityPresentationIdentity>",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate"
+        ],
+        "line": 33,
+        "ownerType": "UnitMassRenderSettingsSystem",
+        "path": "Assets/Game/Scripts/Rendering/Systems/UnitMassRenderSettingsSystem.cs"
+      },
+      {
+        "field": "_operationMapVehicleLookup",
+        "fieldType": "ComponentLookup<OperationMapAuthoredVehiclePresentation>",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate"
+        ],
+        "line": 34,
+        "ownerType": "UnitMassRenderSettingsSystem",
+        "path": "Assets/Game/Scripts/Rendering/Systems/UnitMassRenderSettingsSystem.cs"
+      },
+      {
+        "field": "_prefabLookup",
+        "fieldType": "ComponentLookup<Prefab>",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate"
+        ],
+        "line": 36,
+        "ownerType": "UnitMassRenderSettingsSystem",
+        "path": "Assets/Game/Scripts/Rendering/Systems/UnitMassRenderSettingsSystem.cs"
+      },
+      {
+        "field": "_detailedVisualLookup",
+        "fieldType": "ComponentLookup<UnitDetailedVisualReference>",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate"
+        ],
+        "line": 37,
+        "ownerType": "UnitMassRenderSettingsSystem",
+        "path": "Assets/Game/Scripts/Rendering/Systems/UnitMassRenderSettingsSystem.cs"
+      },
+      {
+        "field": "_modelInstanceLookup",
+        "fieldType": "ComponentLookup<UnitModelInstanceReference>",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate"
+        ],
+        "line": 38,
         "ownerType": "UnitMassRenderSettingsSystem",
         "path": "Assets/Game/Scripts/Rendering/Systems/UnitMassRenderSettingsSystem.cs"
       },
@@ -2250,7 +3076,7 @@
         "lifecycleMethods": [
           "OnCreate"
         ],
-        "line": 32,
+        "line": 39,
         "ownerType": "UnitMassRenderSettingsSystem",
         "path": "Assets/Game/Scripts/Rendering/Systems/UnitMassRenderSettingsSystem.cs"
       },
@@ -2261,7 +3087,7 @@
         "lifecycleMethods": [
           "OnCreate"
         ],
-        "line": 33,
+        "line": 40,
         "ownerType": "UnitMassRenderSettingsSystem",
         "path": "Assets/Game/Scripts/Rendering/Systems/UnitMassRenderSettingsSystem.cs"
       },
@@ -2272,7 +3098,7 @@
         "lifecycleMethods": [
           "OnCreate"
         ],
-        "line": 34,
+        "line": 41,
         "ownerType": "UnitMassRenderSettingsSystem",
         "path": "Assets/Game/Scripts/Rendering/Systems/UnitMassRenderSettingsSystem.cs"
       },
@@ -2819,7 +3645,7 @@
         "lifecycleMethods": [
           "OnCreate"
         ],
-        "line": 38,
+        "line": 41,
         "ownerType": "UnitSelectionMarkerSystem",
         "path": "Assets/Game/Scripts/Rendering/Systems/UnitSelectionMarkerSystem.cs"
       },
@@ -2830,7 +3656,7 @@
         "lifecycleMethods": [
           "OnCreate"
         ],
-        "line": 39,
+        "line": 42,
         "ownerType": "UnitSelectionMarkerSystem",
         "path": "Assets/Game/Scripts/Rendering/Systems/UnitSelectionMarkerSystem.cs"
       },
@@ -2839,7 +3665,8 @@
         "fieldType": "EntityQuery",
         "lifecycleDisposition": "ecs-system-owned",
         "lifecycleMethods": [
-          "OnCreate"
+          "OnCreate",
+          "OnDestroy"
         ],
         "line": 46,
         "ownerType": "UnitSelectionObjectOutlinePresentationSystem",
@@ -3791,21 +4618,12 @@
       },
       {
         "field": "_moveOrderQueueQueryCache",
-        "fieldType": "UnitMoveOrderQueueQueryCache",
+        "fieldType": "WorldScopedComponentQueryCache<UnitMoveOrderQueueComponent>",
         "lifecycleDisposition": "classification-required",
         "lifecycleMethods": [],
         "line": 21,
         "ownerType": "BuildingResourceHaulerBridgeCompositionSystemHelper",
         "path": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs"
-      },
-      {
-        "field": "_query",
-        "fieldType": "EntityQuery",
-        "lifecycleDisposition": "classification-required",
-        "lifecycleMethods": [],
-        "line": 9,
-        "ownerType": "BuildingResourceStorageQueryCache",
-        "path": "Assets/Game/Scripts/Systems/BuildingResourceStorageQueryCache.cs"
       },
       {
         "field": "LiveUnitFootprintQuery",
@@ -4023,7 +4841,7 @@
           "OnCreate",
           "OnDestroy"
         ],
-        "line": 14,
+        "line": 13,
         "ownerType": "DynamicBlockerInitSystem",
         "path": "Assets/Game/Scripts/Systems/DynamicBlockerInitSystem.cs"
       },
@@ -4105,7 +4923,7 @@
       },
       {
         "field": "_storageQueryCache",
-        "fieldType": "BuildingResourceStorageQueryCache",
+        "fieldType": "WorldScopedComponentQueryCache<BuildingResourceStorageComponent>",
         "lifecycleDisposition": "classification-required",
         "lifecycleMethods": [],
         "line": 10,
@@ -4142,11 +4960,29 @@
         "path": "Assets/Game/Scripts/Systems/FocusableUnitLookupCameraSystemHelper.cs"
       },
       {
-        "field": "_changedFocusableCoverageQuery",
+        "field": "_focusableBuildingsQuery",
         "fieldType": "EntityQuery",
         "lifecycleDisposition": "classification-required",
         "lifecycleMethods": [],
         "line": 31,
+        "ownerType": "FocusableUnitLookupCameraSystemHelper",
+        "path": "Assets/Game/Scripts/Systems/FocusableUnitLookupCameraSystemHelper.cs"
+      },
+      {
+        "field": "_changedFocusableCoverageQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "classification-required",
+        "lifecycleMethods": [],
+        "line": 32,
+        "ownerType": "FocusableUnitLookupCameraSystemHelper",
+        "path": "Assets/Game/Scripts/Systems/FocusableUnitLookupCameraSystemHelper.cs"
+      },
+      {
+        "field": "_changedFocusableBuildingCoverageQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "classification-required",
+        "lifecycleMethods": [],
+        "line": 33,
         "ownerType": "FocusableUnitLookupCameraSystemHelper",
         "path": "Assets/Game/Scripts/Systems/FocusableUnitLookupCameraSystemHelper.cs"
       },
@@ -4197,7 +5033,7 @@
         "lifecycleMethods": [
           "Dispose"
         ],
-        "line": 37,
+        "line": 36,
         "ownerType": "GameplayRuntimeUpdateCompositionSystemHelper",
         "path": "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.cs"
       },
@@ -4208,7 +5044,7 @@
         "lifecycleMethods": [
           "Dispose"
         ],
-        "line": 38,
+        "line": 37,
         "ownerType": "GameplayRuntimeUpdateCompositionSystemHelper",
         "path": "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.cs"
       },
@@ -4219,7 +5055,7 @@
         "lifecycleMethods": [
           "Dispose"
         ],
-        "line": 39,
+        "line": 38,
         "ownerType": "GameplayRuntimeUpdateCompositionSystemHelper",
         "path": "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.cs"
       },
@@ -4454,6 +5290,92 @@
         "line": 14,
         "ownerType": "MissileFlightAudioSystem",
         "path": "Assets/Game/Scripts/Systems/MissileFlightAudioSystem.cs"
+      },
+      {
+        "field": "LocalTransforms",
+        "fieldType": "ComponentLookup<LocalTransform>",
+        "lifecycleDisposition": "classification-required",
+        "lifecycleMethods": [],
+        "line": 116,
+        "ownerType": "ApplyResidentBuildingVisualStateJob",
+        "path": "Assets/Game/Scripts/Systems/OperationMapBuildingDestructionSystem.cs"
+      },
+      {
+        "field": "_presenceQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate"
+        ],
+        "line": 15,
+        "ownerType": "OperationMapBuildingDestructionSystem",
+        "path": "Assets/Game/Scripts/Systems/OperationMapBuildingDestructionSystem.cs"
+      },
+      {
+        "field": "_residentQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate"
+        ],
+        "line": 16,
+        "ownerType": "OperationMapBuildingDestructionSystem",
+        "path": "Assets/Game/Scripts/Systems/OperationMapBuildingDestructionSystem.cs"
+      },
+      {
+        "field": "_virtualizedQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate"
+        ],
+        "line": 17,
+        "ownerType": "OperationMapBuildingDestructionSystem",
+        "path": "Assets/Game/Scripts/Systems/OperationMapBuildingDestructionSystem.cs"
+      },
+      {
+        "field": "_overlapQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate"
+        ],
+        "line": 18,
+        "ownerType": "OperationMapBuildingDestructionSystem",
+        "path": "Assets/Game/Scripts/Systems/OperationMapBuildingDestructionSystem.cs"
+      },
+      {
+        "field": "_stateChangeBufferQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate"
+        ],
+        "line": 19,
+        "ownerType": "OperationMapBuildingDestructionSystem",
+        "path": "Assets/Game/Scripts/Systems/OperationMapBuildingDestructionSystem.cs"
+      },
+      {
+        "field": "_stateChangeSequenceLookup",
+        "fieldType": "ComponentLookup<OperationMapRenderStateChangeSequenceComponent>",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate"
+        ],
+        "line": 20,
+        "ownerType": "OperationMapBuildingDestructionSystem",
+        "path": "Assets/Game/Scripts/Systems/OperationMapBuildingDestructionSystem.cs"
+      },
+      {
+        "field": "_localTransforms",
+        "fieldType": "ComponentLookup<LocalTransform>",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate"
+        ],
+        "line": 22,
+        "ownerType": "OperationMapBuildingDestructionSystem",
+        "path": "Assets/Game/Scripts/Systems/OperationMapBuildingDestructionSystem.cs"
       },
       {
         "field": "_activePaths",
@@ -5288,7 +6210,7 @@
         "fieldType": "EntityQuery",
         "lifecycleDisposition": "classification-required",
         "lifecycleMethods": [],
-        "line": 22,
+        "line": 23,
         "ownerType": "SelectionBuildingInteractionCompositionSystemHelper",
         "path": "Assets/Game/Scripts/Systems/SelectionBuildingInteractionCompositionSystemHelper.cs"
       },
@@ -5297,7 +6219,7 @@
         "fieldType": "EntityQuery",
         "lifecycleDisposition": "classification-required",
         "lifecycleMethods": [],
-        "line": 23,
+        "line": 24,
         "ownerType": "SelectionBuildingInteractionCompositionSystemHelper",
         "path": "Assets/Game/Scripts/Systems/SelectionBuildingInteractionCompositionSystemHelper.cs"
       },
@@ -5306,7 +6228,7 @@
         "fieldType": "EntityQuery",
         "lifecycleDisposition": "classification-required",
         "lifecycleMethods": [],
-        "line": 96,
+        "line": 111,
         "ownerType": "SelectionHudFeedbackUiSystemHelper",
         "path": "Assets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs"
       },
@@ -5315,14 +6237,14 @@
         "fieldType": "EntityQuery",
         "lifecycleDisposition": "classification-required",
         "lifecycleMethods": [],
-        "line": 98,
+        "line": 113,
         "ownerType": "SelectionHudFeedbackUiSystemHelper",
         "path": "Assets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs"
       },
       {
         "field": "_gridBlockerQuery",
         "fieldType": "EntityQuery",
-        "lifecycleDisposition": "classification-required",
+        "lifecycleDisposition": "explicit-dispose",
         "lifecycleMethods": [
           "Dispose"
         ],
@@ -5333,11 +6255,11 @@
       {
         "field": "_attackTargetPreviewQuery",
         "fieldType": "EntityQuery",
-        "lifecycleDisposition": "classification-required",
+        "lifecycleDisposition": "explicit-dispose",
         "lifecycleMethods": [
           "Dispose"
         ],
-        "line": 45,
+        "line": 46,
         "ownerType": "SelectionOrderMarkerPresentationSystemHelper",
         "path": "Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs"
       },
@@ -5475,36 +6397,44 @@
       {
         "field": "_modeQuery",
         "fieldType": "EntityQuery",
-        "lifecycleDisposition": "classification-required",
-        "lifecycleMethods": [],
-        "line": 10,
+        "lifecycleDisposition": "explicit-dispose",
+        "lifecycleMethods": [
+          "Dispose"
+        ],
+        "line": 11,
         "ownerType": "TacticalFollowCameraStateQueryCache",
         "path": "Assets/Game/Scripts/Systems/TacticalFollowCameraStateQueryCache.cs"
       },
       {
         "field": "_poseQuery",
         "fieldType": "EntityQuery",
-        "lifecycleDisposition": "classification-required",
-        "lifecycleMethods": [],
-        "line": 11,
+        "lifecycleDisposition": "explicit-dispose",
+        "lifecycleMethods": [
+          "Dispose"
+        ],
+        "line": 12,
         "ownerType": "TacticalFollowCameraStateQueryCache",
         "path": "Assets/Game/Scripts/Systems/TacticalFollowCameraStateQueryCache.cs"
       },
       {
         "field": "_followableSelectedUnitQuery",
         "fieldType": "EntityQuery",
-        "lifecycleDisposition": "classification-required",
-        "lifecycleMethods": [],
-        "line": 12,
+        "lifecycleDisposition": "explicit-dispose",
+        "lifecycleMethods": [
+          "Dispose"
+        ],
+        "line": 13,
         "ownerType": "TacticalFollowCameraStateQueryCache",
         "path": "Assets/Game/Scripts/Systems/TacticalFollowCameraStateQueryCache.cs"
       },
       {
         "field": "_focusedUnitReadModelQuery",
         "fieldType": "EntityQuery",
-        "lifecycleDisposition": "classification-required",
-        "lifecycleMethods": [],
-        "line": 13,
+        "lifecycleDisposition": "explicit-dispose",
+        "lifecycleMethods": [
+          "Dispose"
+        ],
+        "line": 14,
         "ownerType": "TacticalFollowCameraStateQueryCache",
         "path": "Assets/Game/Scripts/Systems/TacticalFollowCameraStateQueryCache.cs"
       },
@@ -5545,6 +6475,18 @@
         "path": "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs"
       },
       {
+        "field": "_warningStateQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate",
+          "OnDestroy"
+        ],
+        "line": 27,
+        "ownerType": "ThreatDetectionWarningSystem",
+        "path": "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs"
+      },
+      {
         "field": "_buildingLookup",
         "fieldType": "ComponentLookup<RuntimeBuildingCombatTag>",
         "lifecycleDisposition": "ecs-system-owned",
@@ -5552,7 +6494,7 @@
           "OnCreate",
           "OnDestroy"
         ],
-        "line": 32,
+        "line": 33,
         "ownerType": "ThreatDetectionWarningSystem",
         "path": "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs"
       },
@@ -5564,7 +6506,7 @@
           "OnCreate",
           "OnDestroy"
         ],
-        "line": 33,
+        "line": 34,
         "ownerType": "ThreatDetectionWarningSystem",
         "path": "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs"
       },
@@ -5576,7 +6518,7 @@
           "OnCreate",
           "OnDestroy"
         ],
-        "line": 34,
+        "line": 35,
         "ownerType": "ThreatDetectionWarningSystem",
         "path": "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs"
       },
@@ -5588,7 +6530,7 @@
           "OnCreate",
           "OnDestroy"
         ],
-        "line": 35,
+        "line": 36,
         "ownerType": "ThreatDetectionWarningSystem",
         "path": "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs"
       },
@@ -5600,7 +6542,7 @@
           "OnCreate",
           "OnDestroy"
         ],
-        "line": 36,
+        "line": 37,
         "ownerType": "ThreatDetectionWarningSystem",
         "path": "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs"
       },
@@ -5612,7 +6554,7 @@
           "OnCreate",
           "OnDestroy"
         ],
-        "line": 37,
+        "line": 38,
         "ownerType": "ThreatDetectionWarningSystem",
         "path": "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs"
       },
@@ -5624,7 +6566,7 @@
           "OnCreate",
           "OnDestroy"
         ],
-        "line": 38,
+        "line": 39,
         "ownerType": "ThreatDetectionWarningSystem",
         "path": "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs"
       },
@@ -5636,7 +6578,7 @@
           "OnCreate",
           "OnDestroy"
         ],
-        "line": 39,
+        "line": 40,
         "ownerType": "ThreatDetectionWarningSystem",
         "path": "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs"
       },
@@ -5648,9 +6590,20 @@
           "OnCreate",
           "OnDestroy"
         ],
-        "line": 40,
+        "line": 41,
         "ownerType": "ThreatDetectionWarningSystem",
         "path": "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs"
+      },
+      {
+        "field": "_queryCache",
+        "fieldType": "WorldScopedComponentQueryCache<ThreatWarningRuntimeStateComponent>",
+        "lifecycleDisposition": "explicit-dispose",
+        "lifecycleMethods": [
+          "Dispose"
+        ],
+        "line": 11,
+        "ownerType": "ThreatWarningPresentationState",
+        "path": "Assets/Game/Scripts/Systems/ThreatWarningPresentationState.cs"
       },
       {
         "field": "_commandQueueQuery",
@@ -6052,15 +7005,6 @@
         "path": "Assets/Game/Scripts/Systems/UnitLookAtTargetSystem.cs"
       },
       {
-        "field": "_query",
-        "fieldType": "EntityQuery",
-        "lifecycleDisposition": "classification-required",
-        "lifecycleMethods": [],
-        "line": 9,
-        "ownerType": "UnitMoveOrderQueueQueryCache",
-        "path": "Assets/Game/Scripts/Systems/UnitMoveOrderQueueQueryCache.cs"
-      },
-      {
         "field": "_queueQuery",
         "fieldType": "EntityQuery",
         "lifecycleDisposition": "ecs-system-owned",
@@ -6241,7 +7185,7 @@
           "OnCreate",
           "OnDestroy"
         ],
-        "line": 17,
+        "line": 18,
         "ownerType": "UnitPathfindingSystem",
         "path": "Assets/Game/Scripts/Systems/UnitPathfindingSystem.cs"
       },
@@ -6253,7 +7197,7 @@
           "OnCreate",
           "OnDestroy"
         ],
-        "line": 48,
+        "line": 49,
         "ownerType": "UnitPathfindingSystem",
         "path": "Assets/Game/Scripts/Systems/UnitPathfindingSystem.cs"
       },
@@ -6732,6 +7676,17 @@
         "path": "Assets/Game/Scripts/Systems/VisibleUnitSelectionCandidateSystem.cs"
       },
       {
+        "field": "_query",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "explicit-dispose",
+        "lifecycleMethods": [
+          "Dispose"
+        ],
+        "line": 18,
+        "ownerType": "WorldScopedComponentQueryCache",
+        "path": "Assets/Game/Scripts/Systems/WorldScopedComponentQueryCache.cs"
+      },
+      {
         "field": "boundaryQuery",
         "fieldType": "EntityQuery",
         "lifecycleDisposition": "ecs-system-owned",
@@ -6772,6 +7727,17 @@
           "OnCreate"
         ],
         "line": 31,
+        "ownerType": "AssistantCommandIntentSystem",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/AssistantCommandIntentSystem.cs"
+      },
+      {
+        "field": "operationMapMetadataQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate"
+        ],
+        "line": 32,
         "ownerType": "AssistantCommandIntentSystem",
         "path": "Assets/Game/Scripts/UI/Shell/Ecs/AssistantCommandIntentSystem.cs"
       },
@@ -6958,7 +7924,7 @@
         "lifecycleMethods": [
           "OnCreate"
         ],
-        "line": 340,
+        "line": 326,
         "ownerType": "AssistantRecommendationSystem",
         "path": "Assets/Game/Scripts/UI/Shell/Ecs/AssistantReadModelSystems.cs"
       },
@@ -6969,7 +7935,7 @@
         "lifecycleMethods": [
           "OnCreate"
         ],
-        "line": 341,
+        "line": 327,
         "ownerType": "AssistantRecommendationSystem",
         "path": "Assets/Game/Scripts/UI/Shell/Ecs/AssistantReadModelSystems.cs"
       },
@@ -6980,7 +7946,7 @@
         "lifecycleMethods": [
           "OnCreate"
         ],
-        "line": 342,
+        "line": 328,
         "ownerType": "AssistantRecommendationSystem",
         "path": "Assets/Game/Scripts/UI/Shell/Ecs/AssistantReadModelSystems.cs"
       },
@@ -7062,7 +8028,7 @@
         "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs"
       },
       {
-        "field": "buildingPlacementCommandQuery",
+        "field": "resourceExchangeRequestQuery",
         "fieldType": "EntityQuery",
         "lifecycleDisposition": "ecs-system-owned",
         "lifecycleMethods": [
@@ -7071,39 +8037,6 @@
         "line": 17,
         "ownerType": "UiActionRequestSystem",
         "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs"
-      },
-      {
-        "field": "resourceExchangeRequestQuery",
-        "fieldType": "EntityQuery",
-        "lifecycleDisposition": "ecs-system-owned",
-        "lifecycleMethods": [
-          "OnCreate"
-        ],
-        "line": 18,
-        "ownerType": "UiActionRequestSystem",
-        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs"
-      },
-      {
-        "field": "boundaryQuery",
-        "fieldType": "EntityQuery",
-        "lifecycleDisposition": "ecs-system-owned",
-        "lifecycleMethods": [
-          "OnCreate"
-        ],
-        "line": 363,
-        "ownerType": "UiBuildDrawerReadModelSystem",
-        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs"
-      },
-      {
-        "field": "boundaryQuery",
-        "fieldType": "EntityQuery",
-        "lifecycleDisposition": "ecs-system-owned",
-        "lifecycleMethods": [
-          "OnCreate"
-        ],
-        "line": 32,
-        "ownerType": "UiBuildPlacementReadModelSystem",
-        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildPlacementReadModelSystem.cs"
       },
       {
         "field": "boundaryQuery",
@@ -7127,6 +8060,28 @@
         "line": 14,
         "ownerType": "UiMatchHudResourceReadModelSystem",
         "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiMatchHudResourceReadModelSystem.cs"
+      },
+      {
+        "field": "_boundaryQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate"
+        ],
+        "line": 12,
+        "ownerType": "UiMatchIdentityReadModelSystem",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiMatchIdentityReadModelSystem.cs"
+      },
+      {
+        "field": "_activeMapQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "ecs-system-owned",
+        "lifecycleMethods": [
+          "OnCreate"
+        ],
+        "line": 13,
+        "ownerType": "UiMatchIdentityReadModelSystem",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiMatchIdentityReadModelSystem.cs"
       },
       {
         "field": "boundaryQuery",
@@ -7262,7 +8217,8 @@
         "lifecycleMethods": [
           "Awake",
           "OnDestroy",
-          "OnDisable"
+          "OnDisable",
+          "OnEnable"
         ],
         "ownerType": "AudioPlaybackPresentationRuntimeView",
         "path": "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs",
@@ -7300,14 +8256,18 @@
       },
       {
         "dontDestroyOnLoad": true,
-        "lifecycleMethods": [],
+        "lifecycleMethods": [
+          "OnDestroy"
+        ],
         "ownerType": "MissileTrailVfxView",
         "path": "Assets/Game/Scripts/Effects/MissileTrailVfxView.cs",
         "sceneEventAccess": false
       },
       {
         "dontDestroyOnLoad": true,
-        "lifecycleMethods": [],
+        "lifecycleMethods": [
+          "OnDestroy"
+        ],
         "ownerType": "UnitAttackImpactVfxView",
         "path": "Assets/Game/Scripts/Effects/UnitAttackImpactVfxView.cs",
         "sceneEventAccess": false
@@ -7349,6 +8309,7 @@
         "dontDestroyOnLoad": false,
         "lifecycleMethods": [
           "Awake",
+          "OnDestroy",
           "OnDisable",
           "OnEnable"
         ],
@@ -7365,102 +8326,6 @@
       }
     ],
     "staticCaches": [
-      {
-        "field": "Entries",
-        "fieldType": "Dictionary<string, string>",
-        "lifecycleMethods": [],
-        "line": 9,
-        "ownerType": "GameText",
-        "path": "Assets/Game/Scripts/Configs/GameText.cs",
-        "readonly": true,
-        "resetMethodsObserved": [],
-        "resetObserved": false
-      },
-      {
-        "field": "AudioEventIds",
-        "fieldType": "Dictionary<string, string>",
-        "lifecycleMethods": [],
-        "line": 10,
-        "ownerType": "GameText",
-        "path": "Assets/Game/Scripts/Configs/GameText.cs",
-        "readonly": true,
-        "resetMethodsObserved": [],
-        "resetObserved": false
-      },
-      {
-        "field": "Cache",
-        "fieldType": "Dictionary<PreviewKey, RenderTexture>",
-        "lifecycleMethods": [],
-        "line": 67,
-        "ownerType": "SharedPrefabPreviewCache",
-        "path": "Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs",
-        "readonly": true,
-        "resetMethodsObserved": [],
-        "resetObserved": false
-      },
-      {
-        "field": "s_CachedAudioWorld",
-        "fieldType": "World",
-        "lifecycleMethods": [
-          "OnCreate"
-        ],
-        "line": 14,
-        "ownerType": "AudioEventRequestSystem",
-        "path": "Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs",
-        "readonly": false,
-        "resetMethodsObserved": [],
-        "resetObserved": false
-      },
-      {
-        "field": "s_CachedAudioEntity",
-        "fieldType": "Entity",
-        "lifecycleMethods": [
-          "OnCreate"
-        ],
-        "line": 15,
-        "ownerType": "AudioEventRequestSystem",
-        "path": "Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs",
-        "readonly": false,
-        "resetMethodsObserved": [],
-        "resetObserved": false
-      },
-      {
-        "field": "s_CachedStateWorld",
-        "fieldType": "Unity.Entities.World",
-        "lifecycleMethods": [
-          "OnCreate"
-        ],
-        "line": 11,
-        "ownerType": "RuntimeGameplayStateSystem",
-        "path": "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs",
-        "readonly": false,
-        "resetMethodsObserved": [],
-        "resetObserved": false
-      },
-      {
-        "field": "s_CachedStateEntity",
-        "fieldType": "Entity",
-        "lifecycleMethods": [
-          "OnCreate"
-        ],
-        "line": 12,
-        "ownerType": "RuntimeGameplayStateSystem",
-        "path": "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs",
-        "readonly": false,
-        "resetMethodsObserved": [],
-        "resetObserved": false
-      },
-      {
-        "field": "SpriteByKey",
-        "fieldType": "Dictionary<string, Sprite>",
-        "lifecycleMethods": [],
-        "line": 22,
-        "ownerType": "UiBuildDrawerReadModelSource",
-        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs",
-        "readonly": true,
-        "resetMethodsObserved": [],
-        "resetObserved": false
-      },
       {
         "field": "cachedWorld",
         "fieldType": "World",
@@ -7878,31 +8743,9 @@
         "readonly": false,
         "resetMethodsObserved": [],
         "resetObserved": false
-      },
-      {
-        "field": "VisitedEntities",
-        "fieldType": "HashSet<Entity>",
-        "lifecycleMethods": [],
-        "line": 11,
-        "ownerType": "UnitTransportVisualUtility",
-        "path": "Assets/Game/Scripts/Utilities/UnitTransportVisualUtility.cs",
-        "readonly": true,
-        "resetMethodsObserved": [],
-        "resetObserved": false
       }
     ],
     "subscriptions": [
-      {
-        "handler": "economyEvent.Amount",
-        "lifecycleMethods": [],
-        "line": 237,
-        "ownerType": "BalanceMetrics",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Balance/BalanceMetrics.cs",
-        "target": "ResourceExchangeNetResourceDelta",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
       {
         "handler": "OnRuntimeSettingsApplied",
         "lifecycleMethods": [
@@ -7910,7 +8753,7 @@
           "OnDestroy",
           "Shutdown"
         ],
-        "line": 860,
+        "line": 880,
         "ownerType": "MatchBootstrapCompositionSystemHelper",
         "pairedUnsubscribeObserved": true,
         "path": "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs",
@@ -7923,7 +8766,7 @@
         "lifecycleMethods": [
           "Shutdown"
         ],
-        "line": 86,
+        "line": 329,
         "ownerType": "FirstLaunchNarrativeCompositionSystemHelper",
         "pairedUnsubscribeObserved": true,
         "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs",
@@ -7938,7 +8781,7 @@
         "lifecycleMethods": [
           "Shutdown"
         ],
-        "line": 87,
+        "line": 330,
         "ownerType": "FirstLaunchNarrativeCompositionSystemHelper",
         "pairedUnsubscribeObserved": true,
         "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs",
@@ -7953,7 +8796,7 @@
         "lifecycleMethods": [
           "Shutdown"
         ],
-        "line": 88,
+        "line": 331,
         "ownerType": "FirstLaunchNarrativeCompositionSystemHelper",
         "pairedUnsubscribeObserved": true,
         "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs",
@@ -7968,7 +8811,7 @@
         "lifecycleMethods": [
           "Shutdown"
         ],
-        "line": 89,
+        "line": 332,
         "ownerType": "FirstLaunchNarrativeCompositionSystemHelper",
         "pairedUnsubscribeObserved": true,
         "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs",
@@ -7983,7 +8826,7 @@
         "lifecycleMethods": [
           "Shutdown"
         ],
-        "line": 90,
+        "line": 333,
         "ownerType": "FirstLaunchNarrativeCompositionSystemHelper",
         "pairedUnsubscribeObserved": true,
         "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs",
@@ -7996,7 +8839,7 @@
       {
         "handler": "HandleCurrentReady",
         "lifecycleMethods": [],
-        "line": 31,
+        "line": 34,
         "ownerType": "FirstLaunchNarrativePanelPresentationSystemHelper",
         "pairedUnsubscribeObserved": true,
         "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativePanelPresentationSystemHelper.cs",
@@ -8007,7 +8850,7 @@
       {
         "handler": "HandleCurrentFailed",
         "lifecycleMethods": [],
-        "line": 32,
+        "line": 35,
         "ownerType": "FirstLaunchNarrativePanelPresentationSystemHelper",
         "pairedUnsubscribeObserved": true,
         "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativePanelPresentationSystemHelper.cs",
@@ -8016,11 +8859,37 @@
         "unsubscribeMethodsObserved": []
       },
       {
+        "handler": "HandlePanelReady",
+        "lifecycleMethods": [
+          "Start"
+        ],
+        "line": 107,
+        "ownerType": "FirstLaunchNarrativeSequencePresentationSystemHelper",
+        "pairedUnsubscribeObserved": true,
+        "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeSequencePresentationSystemHelper.cs",
+        "target": "panels.CurrentReady",
+        "teardownUnsubscribeObserved": false,
+        "unsubscribeMethodsObserved": []
+      },
+      {
+        "handler": "HandlePanelFailed",
+        "lifecycleMethods": [
+          "Start"
+        ],
+        "line": 108,
+        "ownerType": "FirstLaunchNarrativeSequencePresentationSystemHelper",
+        "pairedUnsubscribeObserved": true,
+        "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeSequencePresentationSystemHelper.cs",
+        "target": "panels.CurrentFailed",
+        "teardownUnsubscribeObserved": false,
+        "unsubscribeMethodsObserved": []
+      },
+      {
         "handler": "HandleSequenceOutput",
         "lifecycleMethods": [
           "Start"
         ],
-        "line": 99,
+        "line": 109,
         "ownerType": "FirstLaunchNarrativeSequencePresentationSystemHelper",
         "pairedUnsubscribeObserved": true,
         "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeSequencePresentationSystemHelper.cs",
@@ -8029,634 +8898,11 @@
         "unsubscribeMethodsObserved": []
       },
       {
-        "handler": "candidate.OutwardDirection",
-        "lifecycleMethods": [],
-        "line": 236,
-        "ownerType": "RuntimeCityRoadLayoutState",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Environment/RuntimeCityRoadLayoutUtilitySystemHelper.cs",
-        "target": "current",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "sources.Count",
-        "lifecycleMethods": [
-          "Dispose"
-        ],
-        "line": 379,
-        "ownerType": "StaticMapChunkBatchingPresentationSystemHelper",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Rendering/StaticMapChunkBatchingPresentationSystemHelper.cs",
-        "target": "stats.SkippedBatchTooSmall",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "planCounters.VisibleCharacterSafeGate",
-        "lifecycleMethods": [],
-        "line": 197,
-        "ownerType": "UnitRenderBudgetDecision",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs",
-        "target": "result.VisibleCharacterSafeGate",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "planCounters.VisibleCharacterMidInstances",
-        "lifecycleMethods": [],
-        "line": 198,
-        "ownerType": "UnitRenderBudgetDecision",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs",
-        "target": "result.VisibleCharacterMidInstances",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "planCounters.VisibleCharacterSafeMidInstances",
-        "lifecycleMethods": [],
-        "line": 199,
-        "ownerType": "UnitRenderBudgetDecision",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs",
-        "target": "result.VisibleCharacterSafeMidInstances",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "planCounters.VisibleCharacterLowInstances",
-        "lifecycleMethods": [],
-        "line": 200,
-        "ownerType": "UnitRenderBudgetDecision",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs",
-        "target": "result.VisibleCharacterLowInstances",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "planCounters.VisibleCharacterSafeLowInstances",
-        "lifecycleMethods": [],
-        "line": 201,
-        "ownerType": "UnitRenderBudgetDecision",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs",
-        "target": "result.VisibleCharacterSafeLowInstances",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "planCounters.VisibleCharacterUsingSafeMid",
-        "lifecycleMethods": [],
-        "line": 202,
-        "ownerType": "UnitRenderBudgetDecision",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs",
-        "target": "result.VisibleCharacterUsingSafeMid",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "planCounters.VisibleCharacterUsingSafeLow",
-        "lifecycleMethods": [],
-        "line": 203,
-        "ownerType": "UnitRenderBudgetDecision",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs",
-        "target": "result.VisibleCharacterUsingSafeLow",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "planCounters.VisibleCharacterUsingFarImpostor",
-        "lifecycleMethods": [],
-        "line": 204,
-        "ownerType": "UnitRenderBudgetDecision",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs",
-        "target": "result.VisibleCharacterUsingFarImpostor",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "planCounters.VisibleCharacterForcedDetailByUnsafeMid",
-        "lifecycleMethods": [],
-        "line": 205,
-        "ownerType": "UnitRenderBudgetDecision",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs",
-        "target": "result.VisibleCharacterForcedDetailByUnsafeMid",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "planCounters.VisibleCharacterBudgetDetail",
-        "lifecycleMethods": [],
-        "line": 206,
-        "ownerType": "UnitRenderBudgetDecision",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs",
-        "target": "result.VisibleCharacterBudgetDetail",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "planCounters.VisibleCharacterSafetyDetail",
-        "lifecycleMethods": [],
-        "line": 207,
-        "ownerType": "UnitRenderBudgetDecision",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Rendering/Systems/UnitRenderBudgetDecisionSystem.cs",
-        "target": "result.VisibleCharacterSafetyDetail",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "batch.Count",
-        "lifecycleMethods": [
-          "Dispose"
-        ],
-        "line": 490,
-        "ownerType": "UnitImpostorPresentationSystemHelper",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Rendering/UnitImpostorPresentationSystemHelper.cs",
-        "target": "LastDrawnCount",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "request.SoldOilBarrels",
-        "lifecycleMethods": [
-          "OnCreate"
-        ],
-        "line": 181,
-        "ownerType": "AIEconomySystem",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/AIEconomySystem.cs",
-        "target": "soldOil",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "request.SoldFuelBarrels",
-        "lifecycleMethods": [
-          "OnCreate"
-        ],
-        "line": 182,
-        "ownerType": "AIEconomySystem",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/AIEconomySystem.cs",
-        "target": "soldFuel",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "candidate.Cell",
-        "lifecycleMethods": [
-          "OnCreate"
-        ],
-        "line": 128,
-        "ownerType": "AISquadSystem",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/AISquadSystem.cs",
-        "target": "cellSum",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "DeltaTime",
-        "lifecycleMethods": [],
-        "line": 770,
-        "ownerType": "HomingProjectileJob",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/AirMissileLauncherSystems.cs",
-        "target": "projectile.ElapsedSeconds",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "SlowMetricIntervalSeconds",
-        "lifecycleMethods": [
-          "Dispose"
-        ],
-        "line": 153,
-        "ownerType": "AndroidPerformanceRecorder",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/AndroidPerformanceRecorder.cs",
-        "target": "_nextSlowMetricSeconds",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "result.IssuedCount",
-        "lifecycleMethods": [
-          "OnCreate"
-        ],
-        "line": 346,
-        "ownerType": "AttackOrderCommandSystem",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/AttackOrderCommandSystem.cs",
-        "target": "issuedCount",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "result.OilExtractedBarrels",
-        "lifecycleMethods": [
-          "OnCreate"
-        ],
-        "line": 73,
-        "ownerType": "BuildingResourceProductionEcsSystem",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/BuildingResourceProductionEcsSystem.cs",
-        "target": "oilExtracted",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "result.FuelProducedBarrels",
-        "lifecycleMethods": [
-          "OnCreate"
-        ],
-        "line": 74,
-        "ownerType": "BuildingResourceProductionEcsSystem",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/BuildingResourceProductionEcsSystem.cs",
-        "target": "fuelProduced",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "counts.ProducedCount",
-        "lifecycleMethods": [],
-        "line": 1038,
-        "ownerType": "BuildingRuntimeProcessingCompositionSystemHelper",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
-        "target": "summary.ProducedCount",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "counts.QueuedCount",
-        "lifecycleMethods": [],
-        "line": 1039,
-        "ownerType": "BuildingRuntimeProcessingCompositionSystemHelper",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
-        "target": "summary.QueuedCount",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "sample.Height",
-        "lifecycleMethods": [],
-        "line": 97,
-        "ownerType": "BuildingSurfacePlacementUtilitySystemHelper",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/BuildingSurfacePlacementUtilitySystemHelper.cs",
-        "target": "heightSum",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "result.OilExtractedBarrels",
-        "lifecycleMethods": [],
-        "line": 701,
-        "ownerType": "FactionResourceCompositionSystemHelper",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs",
-        "target": "oilExtracted",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "result.FuelProducedBarrels",
-        "lifecycleMethods": [],
-        "line": 702,
-        "ownerType": "FactionResourceCompositionSystemHelper",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs",
-        "target": "fuelProduced",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "result.OilExtractedBarrels",
-        "lifecycleMethods": [],
-        "line": 736,
-        "ownerType": "FactionResourceCompositionSystemHelper",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs",
-        "target": "oilExtracted",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "result.FuelProducedBarrels",
-        "lifecycleMethods": [],
-        "line": 737,
-        "ownerType": "FactionResourceCompositionSystemHelper",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs",
-        "target": "fuelProduced",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "DeltaTime",
-        "lifecycleMethods": [],
-        "line": 467,
-        "ownerType": "FlyingRocketVisualJob",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs",
-        "target": "flying.ElapsedSeconds",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "DeltaTime",
-        "lifecycleMethods": [],
-        "line": 608,
-        "ownerType": "ProjectileFlightJob",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs",
-        "target": "projectile.ElapsedSeconds",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "blockerSpawnResult.SpawnedForLog",
-        "lifecycleMethods": [
-          "OnCreate"
-        ],
-        "line": 383,
-        "ownerType": "InitialUnitsSpawnSystem",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs",
-        "target": "spawnedBlockersForLog",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "blockerSpawnResult.ProgressIncrement",
-        "lifecycleMethods": [
-          "OnCreate"
-        ],
-        "line": 384,
-        "ownerType": "InitialUnitsSpawnSystem",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs",
-        "target": "progress.BlockersSpawned",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "reservation.Amount",
-        "lifecycleMethods": [],
-        "line": 109,
-        "ownerType": "ResourceExchangePhysicalStorageUtilitySystemHelper",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/ResourceExchangePhysicalStorageUtilitySystemHelper.cs",
-        "target": "reservedInput",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "reservation.Amount",
-        "lifecycleMethods": [],
-        "line": 121,
-        "ownerType": "ResourceExchangePhysicalStorageUtilitySystemHelper",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/ResourceExchangePhysicalStorageUtilitySystemHelper.cs",
-        "target": "reservedOutput",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "commandResult.StructuralAdds",
-        "lifecycleMethods": [
-          "OnCreate"
-        ],
-        "line": 315,
-        "ownerType": "SelectedMoveOrderCommandSystem",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs",
-        "target": "structuralAdds",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "commandResult.StructuralRemoves",
-        "lifecycleMethods": [
-          "OnCreate"
-        ],
-        "line": 316,
-        "ownerType": "SelectedMoveOrderCommandSystem",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs",
-        "target": "structuralRemoves",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "commandResult.PathRequests",
-        "lifecycleMethods": [
-          "OnCreate"
-        ],
-        "line": 317,
-        "ownerType": "SelectedMoveOrderCommandSystem",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs",
-        "target": "pathRequestCount",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "commandResult.StaggeredPathRequests",
-        "lifecycleMethods": [
-          "OnCreate"
-        ],
-        "line": 318,
-        "ownerType": "SelectedMoveOrderCommandSystem",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs",
-        "target": "staggeredPathRequestCount",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "commandResult.AirUnits",
-        "lifecycleMethods": [
-          "OnCreate"
-        ],
-        "line": 320,
-        "ownerType": "SelectedMoveOrderCommandSystem",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs",
-        "target": "airUnitCount",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "commandResult.PathRequests",
-        "lifecycleMethods": [
-          "OnCreate"
-        ],
-        "line": 322,
-        "ownerType": "SelectedMoveOrderCommandSystem",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs",
-        "target": "immediateGroundPathRequests",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "attackRo.Damage",
-        "lifecycleMethods": [
-          "OnCreate",
-          "OnDestroy"
-        ],
-        "line": 327,
-        "ownerType": "UnitAttackSystem",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/UnitAttackSystem.cs",
-        "target": "effect.TotalDamage",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "plan.Damage",
-        "lifecycleMethods": [
-          "OnCreate",
-          "OnDestroy"
-        ],
-        "line": 662,
-        "ownerType": "UnitAttackSystem",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/UnitAttackSystem.cs",
-        "target": "effect.TotalDamage",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "DeltaTime",
-        "lifecycleMethods": [],
-        "line": 113,
-        "ownerType": "UnitGridMoveJob",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/UnitGridMovementSystem.cs",
-        "target": "vehicleKinematics.StallSeconds",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "DeltaTime",
-        "lifecycleMethods": [],
-        "line": 210,
-        "ownerType": "UnitGridMoveJob",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/UnitGridMovementSystem.cs",
-        "target": "vehicleKinematics.StallSeconds",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "DeltaTime",
-        "lifecycleMethods": [],
-        "line": 59,
-        "ownerType": "UpdateJob",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/UnitMoveVisualStateSystem.cs",
-        "target": "vis.StillSeconds",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "results.CompletedCount",
-        "lifecycleMethods": [],
-        "line": 115,
-        "ownerType": "UnitPathValidationMetrics",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/UnitPathValidationMetrics.cs",
-        "target": "_validationCompletedTotal",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "results.CompletedSegmentCount",
-        "lifecycleMethods": [],
-        "line": 116,
-        "ownerType": "UnitPathValidationMetrics",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/UnitPathValidationMetrics.cs",
-        "target": "_validationCompletedSegmentTotal",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "results.ManualCompletedCount",
-        "lifecycleMethods": [],
-        "line": 117,
-        "ownerType": "UnitPathValidationMetrics",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/UnitPathValidationMetrics.cs",
-        "target": "_validationManualCompletedTotal",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "results.RetriedCount",
-        "lifecycleMethods": [],
-        "line": 118,
-        "ownerType": "UnitPathValidationMetrics",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/UnitPathValidationMetrics.cs",
-        "target": "_validationRetriedTotal",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "results.RetriedSegmentCount",
-        "lifecycleMethods": [],
-        "line": 119,
-        "ownerType": "UnitPathValidationMetrics",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/UnitPathValidationMetrics.cs",
-        "target": "_validationRetriedSegmentTotal",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "results.ManualRetriedCount",
-        "lifecycleMethods": [],
-        "line": 120,
-        "ownerType": "UnitPathValidationMetrics",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/UnitPathValidationMetrics.cs",
-        "target": "_validationManualRetriedTotal",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "results.AbandonedCount",
-        "lifecycleMethods": [],
-        "line": 121,
-        "ownerType": "UnitPathValidationMetrics",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/Systems/UnitPathValidationMetrics.cs",
-        "target": "_validationAbandonedTotal",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
         "handler": "RequestFullMapPopup",
         "lifecycleMethods": [
           "Dispose"
         ],
-        "line": 194,
+        "line": 195,
         "ownerType": "MainMenuPlayUI",
         "pairedUnsubscribeObserved": true,
         "path": "Assets/Game/Scripts/UI/MainMenuPlayUI.cs",
@@ -8671,7 +8917,7 @@
         "lifecycleMethods": [
           "Dispose"
         ],
-        "line": 208,
+        "line": 209,
         "ownerType": "MainMenuPlayUI",
         "pairedUnsubscribeObserved": true,
         "path": "Assets/Game/Scripts/UI/MainMenuPlayUI.cs",
@@ -8686,7 +8932,7 @@
         "lifecycleMethods": [
           "Shutdown"
         ],
-        "line": 125,
+        "line": 129,
         "ownerType": "MenuDiagnosticsUiSystemHelper",
         "pairedUnsubscribeObserved": true,
         "path": "Assets/Game/Scripts/UI/MenuDiagnosticsUiSystemHelper.cs",
@@ -8708,9 +8954,9 @@
       {
         "handler": "HandleLogMessage",
         "lifecycleMethods": [],
-        "line": 34,
+        "line": 44,
         "ownerType": "RuntimeLogBuffer",
-        "pairedUnsubscribeObserved": false,
+        "pairedUnsubscribeObserved": true,
         "path": "Assets/Game/Scripts/UI/RuntimeLogBuffer.cs",
         "target": "Application.logMessageReceived",
         "teardownUnsubscribeObserved": false,
@@ -8743,40 +8989,12 @@
         "unsubscribeMethodsObserved": []
       },
       {
-        "handler": "ViewportDragHitPadding",
-        "lifecycleMethods": [
-          "Awake",
-          "OnDisable"
-        ],
-        "line": 423,
-        "ownerType": "MatchHudMinimapView",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapView.cs",
-        "target": "viewportInParent.xMax",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
-        "handler": "ViewportDragHitPadding",
-        "lifecycleMethods": [
-          "Awake",
-          "OnDisable"
-        ],
-        "line": 425,
-        "ownerType": "MatchHudMinimapView",
-        "pairedUnsubscribeObserved": false,
-        "path": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapView.cs",
-        "target": "viewportInParent.yMax",
-        "teardownUnsubscribeObserved": false,
-        "unsubscribeMethodsObserved": []
-      },
-      {
         "handler": "ApplyToDefaultWorld",
         "lifecycleMethods": [
           "OnCreate",
           "OnDestroy"
         ],
-        "line": 32,
+        "line": 39,
         "ownerType": "AssistantSettingsPersistenceSystem",
         "pairedUnsubscribeObserved": true,
         "path": "Assets/Game/Scripts/UI/Shell/Ecs/AssistantSettingsPersistenceSystem.cs",
@@ -8815,7 +9033,7 @@
       {
         "handler": "HandleRuntimeLogMessage",
         "lifecycleMethods": [],
-        "line": 116,
+        "line": 124,
         "ownerType": "UiDiagnosticsRuntimeLogBuffer",
         "pairedUnsubscribeObserved": true,
         "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiDiagnosticsReadModelSystem.cs",
@@ -8879,7 +9097,8 @@
         "lifecycleMethods": [
           "Awake",
           "OnDestroy",
-          "OnDisable"
+          "OnDisable",
+          "OnEnable"
         ],
         "ownerType": "AudioPlaybackPresentationRuntimeView",
         "path": "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs",
@@ -8909,7 +9128,7 @@
         ]
       },
       {
-        "defaultWorldAccessCount": 3,
+        "defaultWorldAccessCount": 0,
         "lifecycleMethods": [
           "Awake",
           "OnDestroy",
@@ -8917,7 +9136,9 @@
         ],
         "ownerType": "MatchBootstrapCompositionSystemHelper",
         "path": "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs",
-        "worldFields": []
+        "worldFields": [
+          "runtimeWorld"
+        ]
       },
       {
         "defaultWorldAccessCount": 1,
@@ -8941,16 +9162,25 @@
         "worldFields": []
       },
       {
-        "defaultWorldAccessCount": 1,
+        "defaultWorldAccessCount": 0,
         "lifecycleMethods": [],
         "ownerType": "MatchIntroEcsStateQuery",
         "path": "Assets/Game/Scripts/Composition/MatchIntroEcsStateQuery.cs",
         "worldFields": [
-          "cachedWorld"
+          "_world"
         ]
       },
       {
-        "defaultWorldAccessCount": 2,
+        "defaultWorldAccessCount": 0,
+        "lifecycleMethods": [],
+        "ownerType": "MatchSceneReferenceCompositionSystemHelper",
+        "path": "Assets/Game/Scripts/Composition/MatchSceneReferenceCompositionSystemHelper.cs",
+        "worldFields": [
+          "_world"
+        ]
+      },
+      {
+        "defaultWorldAccessCount": 4,
         "lifecycleMethods": [
           "Awake",
           "OnDestroy",
@@ -8962,7 +9192,7 @@
         "worldFields": []
       },
       {
-        "defaultWorldAccessCount": 1,
+        "defaultWorldAccessCount": 0,
         "lifecycleMethods": [],
         "ownerType": "MatchStartSceneSystemHelper",
         "path": "Assets/Game/Scripts/Composition/MatchStartSceneSystemHelper.cs",
@@ -8981,6 +9211,7 @@
           "cachedWorld",
           "matchStartBoundaryQueryWorld",
           "matchStartProgressQueryWorld",
+          "performanceDiagnosticsReferenceWorld",
           "sceneLifecycleQueryWorld",
           "startupRuntimeSettingsWorld"
         ]
@@ -8994,6 +9225,22 @@
         "path": "Assets/Game/Scripts/Composition/OperationMapRuntimeBootstrapSceneSystemHelper.cs",
         "worldFields": [
           "createdWorld"
+        ]
+      },
+      {
+        "defaultWorldAccessCount": 2,
+        "lifecycleMethods": [],
+        "ownerType": "OperationMapEntitySceneApi",
+        "path": "Assets/Game/Scripts/Composition/OperationMapSceneLoadingSceneSystemHelper.cs",
+        "worldFields": []
+      },
+      {
+        "defaultWorldAccessCount": 0,
+        "lifecycleMethods": [],
+        "ownerType": "PerformanceDiagnosticsReferenceCompositionSystemHelper",
+        "path": "Assets/Game/Scripts/Composition/PerformanceDiagnosticsReferenceCompositionSystemHelper.cs",
+        "worldFields": [
+          "_world"
         ]
       },
       {
@@ -9098,15 +9345,18 @@
         "worldFields": []
       },
       {
-        "defaultWorldAccessCount": 0,
-        "lifecycleMethods": [
-          "OnCreate"
-        ],
-        "ownerType": "AudioEventRequestSystem",
-        "path": "Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs",
-        "worldFields": [
-          "s_CachedAudioWorld"
-        ]
+        "defaultWorldAccessCount": 1,
+        "lifecycleMethods": [],
+        "ownerType": "AndroidPerformanceRecorder",
+        "path": "Assets/Game/Scripts/Systems/AndroidPerformanceRecorder.RenderVirtualizationDestruction.cs",
+        "worldFields": []
+      },
+      {
+        "defaultWorldAccessCount": 1,
+        "lifecycleMethods": [],
+        "ownerType": "AndroidPerformanceRecorder",
+        "path": "Assets/Game/Scripts/Systems/AndroidPerformanceRecorder.RenderVirtualizationStateScenario.cs",
+        "worldFields": []
       },
       {
         "defaultWorldAccessCount": 1,
@@ -9188,15 +9438,6 @@
       {
         "defaultWorldAccessCount": 0,
         "lifecycleMethods": [],
-        "ownerType": "BuildingResourceStorageQueryCache",
-        "path": "Assets/Game/Scripts/Systems/BuildingResourceStorageQueryCache.cs",
-        "worldFields": [
-          "_world"
-        ]
-      },
-      {
-        "defaultWorldAccessCount": 0,
-        "lifecycleMethods": [],
         "ownerType": "BuildingRuntimeProcessingCompositionSystemHelper",
         "path": "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
         "worldFields": [
@@ -9258,7 +9499,7 @@
         ]
       },
       {
-        "defaultWorldAccessCount": 2,
+        "defaultWorldAccessCount": 0,
         "lifecycleMethods": [
           "Dispose"
         ],
@@ -9295,6 +9536,13 @@
       },
       {
         "defaultWorldAccessCount": 1,
+        "lifecycleMethods": [],
+        "ownerType": "PerformanceDiagnosticsSystemHelper",
+        "path": "Assets/Game/Scripts/Systems/PerformanceDiagnosticsSystemHelper.AndroidPerformance.cs",
+        "worldFields": []
+      },
+      {
+        "defaultWorldAccessCount": 1,
         "lifecycleMethods": [
           "Dispose"
         ],
@@ -9326,7 +9574,7 @@
         "worldFields": []
       },
       {
-        "defaultWorldAccessCount": 1,
+        "defaultWorldAccessCount": 0,
         "lifecycleMethods": [],
         "ownerType": "RtsSelectionInputStateCompositionSystemHelper",
         "path": "Assets/Game/Scripts/Systems/RtsSelectionInputStateCompositionSystemHelper.cs",
@@ -9353,17 +9601,6 @@
         "worldFields": []
       },
       {
-        "defaultWorldAccessCount": 1,
-        "lifecycleMethods": [
-          "OnCreate"
-        ],
-        "ownerType": "RuntimeGameplayStateSystem",
-        "path": "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs",
-        "worldFields": [
-          "s_CachedStateWorld"
-        ]
-      },
-      {
         "defaultWorldAccessCount": 0,
         "lifecycleMethods": [],
         "ownerType": "SceneLifecycleSceneSystemHelper",
@@ -9382,20 +9619,13 @@
         ]
       },
       {
-        "defaultWorldAccessCount": 1,
+        "defaultWorldAccessCount": 0,
         "lifecycleMethods": [],
         "ownerType": "SelectionBuildingInteractionCompositionSystemHelper",
         "path": "Assets/Game/Scripts/Systems/SelectionBuildingInteractionCompositionSystemHelper.cs",
         "worldFields": [
           "_queryWorld"
         ]
-      },
-      {
-        "defaultWorldAccessCount": 3,
-        "lifecycleMethods": [],
-        "ownerType": "SelectionGameplayStartupSystemHelper",
-        "path": "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs",
-        "worldFields": []
       },
       {
         "defaultWorldAccessCount": 0,
@@ -9417,13 +9647,6 @@
         "worldFields": [
           "_queryWorld"
         ]
-      },
-      {
-        "defaultWorldAccessCount": 1,
-        "lifecycleMethods": [],
-        "ownerType": "SelectionRuntimeDiagnosticsSystemHelper",
-        "path": "Assets/Game/Scripts/Systems/SelectionRuntimeDiagnosticsSystemHelper.cs",
-        "worldFields": []
       },
       {
         "defaultWorldAccessCount": 3,
@@ -9459,7 +9682,9 @@
       },
       {
         "defaultWorldAccessCount": 0,
-        "lifecycleMethods": [],
+        "lifecycleMethods": [
+          "Dispose"
+        ],
         "ownerType": "TacticalFollowCameraStateQueryCache",
         "path": "Assets/Game/Scripts/Systems/TacticalFollowCameraStateQueryCache.cs",
         "worldFields": [
@@ -9468,15 +9693,6 @@
       },
       {
         "defaultWorldAccessCount": 0,
-        "lifecycleMethods": [],
-        "ownerType": "UnitMoveOrderQueueQueryCache",
-        "path": "Assets/Game/Scripts/Systems/UnitMoveOrderQueueQueryCache.cs",
-        "worldFields": [
-          "_world"
-        ]
-      },
-      {
-        "defaultWorldAccessCount": 1,
         "lifecycleMethods": [
           "Dispose"
         ],
@@ -9493,6 +9709,17 @@
         "path": "Assets/Game/Scripts/Systems/VisibleUnitSelectionCameraSystemHelper.cs",
         "worldFields": [
           "_queryWorld"
+        ]
+      },
+      {
+        "defaultWorldAccessCount": 0,
+        "lifecycleMethods": [
+          "Dispose"
+        ],
+        "ownerType": "WorldScopedComponentQueryCache",
+        "path": "Assets/Game/Scripts/Systems/WorldScopedComponentQueryCache.cs",
+        "worldFields": [
+          "_world"
         ]
       },
       {
@@ -9587,11 +9814,11 @@
     },
     {
       "path": "Design/AgentReports/ArchitectureMaturity/ownership_inventory.json",
-      "sha256": "620f2d2556cb9e1ccb9b74ac2dfdb359f27d205051a763bde0a9b3a4a4f66e13"
+      "sha256": "8c59dcc1bff2d1adf3feea7fb8134511d55da45659d183e4d40c851a79c75ac2"
     },
     {
       "path": "Design/AgentReports/ArchitectureMaturity/validator_registry.json",
-      "sha256": "cacda7796dcd1796cefeb7fa5f5fb312eedfa5ac7621223711ad1f21658edc3c"
+      "sha256": "ef862b538596b3bc0a06c96f1e27f67717387e7d8957418bbf08aac42c9221ae"
     },
     {
       "path": "Design/Architecture/phase7_monobehaviour_loop_baseline.md",
@@ -9603,20 +9830,20 @@
     }
   ],
   "summary": {
-    "nativeContainerCount": 129,
-    "nativeWithoutObservedCleanupCount": 63,
-    "persistentNativeContainerCount": 57,
+    "nativeContainerCount": 160,
+    "nativeWithoutObservedCleanupCount": 83,
+    "persistentNativeContainerCount": 66,
     "presentationPoolCount": 15,
-    "presentationPoolWithoutObservedCleanupCount": 12,
-    "queryCacheCount": 505,
-    "queryClassificationRequiredCount": 157,
+    "presentationPoolWithoutObservedCleanupCount": 9,
+    "queryCacheCount": 553,
+    "queryClassificationRequiredCount": 158,
     "sceneRootCount": 11,
-    "staticCacheCount": 47,
-    "staticCacheWithoutObservedResetCount": 47,
-    "subscriptionCount": 79,
-    "subscriptionWithoutDirectTeardownUnsubscribeCount": 71,
-    "subscriptionWithoutObservedUnsubscribeCount": 57,
-    "worldDefaultAccessCount": 87,
-    "worldOwnerCount": 77
+    "staticCacheCount": 38,
+    "staticCacheWithoutObservedResetCount": 38,
+    "subscriptionCount": 25,
+    "subscriptionWithoutDirectTeardownUnsubscribeCount": 17,
+    "subscriptionWithoutObservedUnsubscribeCount": 0,
+    "worldDefaultAccessCount": 79,
+    "worldOwnerCount": 78
   }
 }

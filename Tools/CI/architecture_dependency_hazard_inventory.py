@@ -6,8 +6,11 @@ from __future__ import annotations
 import argparse
 import fnmatch
 import hashlib
+import io
 import json
 import re
+import subprocess
+import tarfile
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Iterable
@@ -175,18 +178,55 @@ def parse_active_exclusions(content: bytes | str) -> list[dict[str, Any]]:
     return result
 
 
-def active_exclusions(root: Path) -> list[dict[str, Any]]:
+def active_exclusions(root: Path, snapshot: dict[str, bytes] | None = None) -> list[dict[str, Any]]:
     path = root / "Design/AgentReports/ArchitectureMaturity/ownership_inventory.json"
-    return parse_active_exclusions(path.read_bytes())
+    relative = "Design/AgentReports/ArchitectureMaturity/ownership_inventory.json"
+    return parse_active_exclusions(snapshot[relative] if snapshot is not None else path.read_bytes())
 
 
-def production_sources(root: Path) -> list[tuple[str, str, bytes]]:
+def revision_snapshot(root: Path, revision: str) -> dict[str, bytes] | None:
+    if not (root / ".git").exists():
+        return None
+    result = subprocess.run(
+        ["git", "archive", "--format=tar", revision, SOURCE_ROOT, *AUTHORITY_PATHS],
+        cwd=root,
+        check=True,
+        capture_output=True,
+    )
+    files: dict[str, bytes] = {}
+    with tarfile.open(fileobj=io.BytesIO(result.stdout), mode="r:") as archive:
+        for member in archive.getmembers():
+            if not member.isfile():
+                continue
+            extracted = archive.extractfile(member)
+            if extracted is None:
+                raise ValueError(f"cannot read archived baseline file: {member.name}")
+            files[member.name] = extracted.read()
+    for relative in AUTHORITY_PATHS:
+        if relative not in files:
+            raise ValueError(f"required baseline authority is missing: {relative}")
+    return files
+
+
+def production_sources(
+    root: Path,
+    snapshot: dict[str, bytes] | None = None,
+) -> list[tuple[str, str, bytes]]:
     rows: list[tuple[str, str, bytes]] = []
-    for source in sorted((root / SOURCE_ROOT).rglob("*.cs")):
-        path = lifecycle.relative(root, source)
+    if snapshot is not None:
+        candidates = [
+            (path, content)
+            for path, content in snapshot.items()
+            if path.startswith(f"{SOURCE_ROOT}/") and path.endswith(".cs")
+        ]
+    else:
+        candidates = [
+            (lifecycle.relative(root, source), source.read_bytes())
+            for source in (root / SOURCE_ROOT).rglob("*.cs")
+        ]
+    for path, content in sorted(candidates, key=lambda item: item[0]):
         if "/Editor/" in path or path.startswith("Assets/Game/Scripts/Editor/"):
             continue
-        content = source.read_bytes()
         rows.append((path, content.decode("utf-8"), content))
     return rows
 
@@ -594,13 +634,21 @@ def scan_sources(
     return categories
 
 
-def source_authorities(root: Path) -> list[dict[str, str]]:
+def source_authorities(
+    root: Path,
+    snapshot: dict[str, bytes] | None = None,
+) -> list[dict[str, str]]:
     rows: list[dict[str, str]] = []
     for relative_path in AUTHORITY_PATHS:
         path = root / relative_path
         if not path.is_file():
             raise ValueError(f"required authority is missing: {relative_path}")
-        rows.append({"path": relative_path, "sha256": lifecycle.sha256(path)})
+        digest = (
+            sha256_bytes(snapshot[relative_path])
+            if snapshot is not None
+            else lifecycle.sha256(path)
+        )
+        rows.append({"path": relative_path, "sha256": digest})
     return rows
 
 
@@ -617,8 +665,9 @@ def tool_manifest(root: Path) -> list[dict[str, str]]:
 def build_inventory(root: Path, revision: str, tree: str) -> dict[str, Any]:
     if not re.fullmatch(r"[0-9a-f]{40}", revision) or not re.fullmatch(r"[0-9a-f]{40}", tree):
         raise ValueError("revision and tree must be exact 40-character lowercase Git identities")
-    exclusions = active_exclusions(root)
-    source_rows = production_sources(root)
+    snapshot = revision_snapshot(root, revision)
+    exclusions = active_exclusions(root, snapshot)
+    source_rows = production_sources(root, snapshot)
     source_manifest = [
         {"path": path, "sha256": sha256_bytes(content)}
         for path, _text, content in source_rows
@@ -665,7 +714,7 @@ def build_inventory(root: Path, revision: str, tree: str) -> dict[str, Any]:
         },
         "schemaVersion": SCHEMA_VERSION,
         "scope": {"editorExcluded": True, "sourceRoot": SOURCE_ROOT},
-        "sourceAuthorities": source_authorities(root),
+        "sourceAuthorities": source_authorities(root, snapshot),
         "sourceManifest": {
             "digestSha256": source_manifest_digest(source_manifest),
             "fileCount": len(source_manifest),
@@ -730,8 +779,8 @@ def write_inventory(root: Path, revision: str, tree: str, json_output: str, mark
     markdown_path = root / markdown_output
     json_path.parent.mkdir(parents=True, exist_ok=True)
     markdown_path.parent.mkdir(parents=True, exist_ok=True)
-    json_path.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    markdown_path.write_text(render_markdown(data), encoding="utf-8")
+    json_path.write_bytes((json.dumps(data, indent=2, sort_keys=True) + "\n").encode("utf-8"))
+    markdown_path.write_bytes(render_markdown(data).encode("utf-8"))
     return data
 
 

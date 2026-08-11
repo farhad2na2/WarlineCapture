@@ -126,18 +126,18 @@ class ArchitectureDependencyHazardInventoryEvidenceTests(unittest.TestCase):
 
     def test_summary_and_routing_are_fail_closed(self) -> None:
         expected_counts = {
-            "globalWorldLookups": 87,
-            "hiddenSingletons": 9,
-            "mutableStaticCaches": 241,
+            "globalWorldLookups": 81,
+            "hiddenSingletons": 8,
+            "mutableStaticCaches": 143,
             "runtimeObjectDiscovery": 7,
             "staticEventSubscriptions": 8,
         }
         self.assertEqual(self.data["schemaVersion"], 2)
-        self.assertEqual(self.data["summary"]["findingCount"], 352)
+        self.assertEqual(self.data["summary"]["findingCount"], 247)
         self.assertEqual(self.data["summary"]["protectedFindingCount"], 10)
-        self.assertEqual(self.data["summary"]["mutableStaticCacheCandidateCount"], 64)
-        self.assertEqual(self.data["summary"]["mutableStaticLifecycleStateCount"], 108)
-        self.assertEqual(self.data["summary"]["immutableReferenceClassificationCount"], 69)
+        self.assertEqual(self.data["summary"]["mutableStaticCacheCandidateCount"], 54)
+        self.assertEqual(self.data["summary"]["mutableStaticLifecycleStateCount"], 30)
+        self.assertEqual(self.data["summary"]["immutableReferenceClassificationCount"], 59)
         for category, expected in expected_counts.items():
             self.assertEqual(len(self.data["categories"][category]), expected, category)
             self.assertEqual(self.data["summary"][f"{category}Count"], expected, category)
@@ -149,11 +149,11 @@ class ArchitectureDependencyHazardInventoryEvidenceTests(unittest.TestCase):
             self.assertTrue(all(row["disposition"] and row["rationale"] for row in self.data["categories"][category]))
         self.assertEqual(
             Counter(row["disposition"] for row in self.data["categories"]["globalWorldLookups"]),
-            {"AD": 21, "CE": 32, "HSL": 9, "PE": 25},
+            {"AD": 20, "CE": 32, "HSL": 4, "PE": 25},
         )
         self.assertEqual(
             Counter(row["disposition"] for row in self.data["categories"]["staticEventSubscriptions"]),
-            {"EIP": 6, "ESU": 1, "ETO": 1},
+            {"EIP": 7, "ETO": 1},
         )
         self.assertEqual(
             Counter(row["disposition"] for row in self.data["categories"]["runtimeObjectDiscovery"]),

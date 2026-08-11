@@ -2,105 +2,161 @@
   "artifactId": "AM025-PHASE2-CLOSURE-AUDIT",
   "schemaVersion": 1,
   "taskId": "AM-025",
-  "result": "RowBoundAuthorityRulesAcceptedForDraftDelta",
+  "result": "CurrentHeadRowBoundAuthorityRulesReconciledForDraftDelta",
   "capture": {
-    "commit": "e9dda1bf1be8811c56dfa18d8bc8d5ce2cb18c42",
-    "tree": "e81775cd5769ee05c0017f4d6313b10ef63114da",
+    "commit": "319a60f6156cf458d393eeaeffd605c0ca2e3a5a",
+    "tree": "d20060af0ddd0d3bbbcabf208b9e027742b2fa51",
     "branch": "main",
     "clean": true
   },
   "inputs": [
     {
-      "path": "Design/AgentReports/ArchitectureMaturity/am025_phase2_ownership_delta_intake.json",
-      "sha256": "6da10d56f8c66cee14c75e3fd55d2683f76a93f267c0140defd9e667257363e1"
-    },
-    {
       "path": "Design/AgentReports/ArchitectureMaturity/lifecycle_inventory.json",
-      "sha256": "966243512afcd4a48173a30ca3cec60a342685a7a00cff5fe68c4c004a4a86d8"
+      "sha256": "b42f1e4ed69674b712d943f0d8a560ed19c6c1efb3a5d9216129f60b1e8d57b1"
     },
     {
       "path": "Design/AgentReports/ArchitectureMaturity/am018_dependency_hazard_inventory.json",
-      "sha256": "13f6066d269243438186c70ef09fc516bfbb7b7ad4e7acd173d8bd6a010c3d60"
+      "sha256": "0b60262576995db872f33bb7a3019412f1b714e26d04174a76fec76cc24856e7"
     },
     {
       "path": "Design/AgentReports/ArchitectureMaturity/am021_persistent_resource_ownership.json",
-      "sha256": "4895e04bb0a70e165658205bc98798dff1806ca47f52353bb44fba44906ffbb6"
+      "sha256": "5e2abae79b59d3d55666addaa2835787b41cd9b11b517120a993426d4f4ed864"
     }
   ],
   "terminology": {
-    "am021PersistentResourceCount": 575,
+    "am021PersistentResourceCount": 634,
     "am021OwnershipGapCount": 0,
-    "am025HistoricalIntakeRowCount": 575,
-    "note": "The two counts both equal 575 but describe different populations and must never be combined."
+    "am025CurrentOpenIntakeRowCount": 430,
+    "am025ImmutableHistoricalIntakeRowCount": 575,
+    "note": "AM-021 resources, current AM-025 review intake, and immutable historical intake are distinct populations and must never be combined."
   },
   "projection": {
-    "historicalIntakeRowCount": 575,
-    "reviewedRowCount": 575,
-    "resolvedNonDebtRowCount": 560,
-    "protectedDeferredRowCount": 6,
-    "reviewedNonDebtRowCount": 566,
-    "genuineDebtRowCount": 9,
-    "uniqueDebtItemCount": 8,
+    "historicalIntakeRowCount": 430,
+    "reviewedRowCount": 430,
+    "resolvedNonDebtRowCount": 412,
+    "protectedDeferredRowCount": 5,
+    "reviewedNonDebtRowCount": 417,
+    "genuineDebtRowCount": 13,
+    "uniqueDebtItemCount": 12,
     "unclassifiedRowCount": 0,
     "acceptanceCreditGranted": false
   },
   "sourceBreakdown": [
     {
       "sourceArtifact": "AM-007",
-      "historicalOpenRowCount": 314,
-      "projectedResolvedNonDebtRowCount": 304,
-      "projectedProtectedDeferredRowCount": 5,
-      "projectedGenuineDebtRowCount": 5
+      "currentOpenRowCount": 273,
+      "projectedResolvedNonDebtRowCount": 263,
+      "projectedProtectedDeferredRowCount": 4,
+      "projectedGenuineDebtRowCount": 6
     },
     {
       "sourceArtifact": "AM-018",
-      "historicalOpenRowCount": 261,
-      "projectedResolvedNonDebtRowCount": 256,
+      "currentOpenRowCount": 157,
+      "projectedResolvedNonDebtRowCount": 149,
       "projectedProtectedDeferredRowCount": 1,
-      "projectedGenuineDebtRowCount": 4
+      "projectedGenuineDebtRowCount": 7
     }
   ],
   "genuineDebtLanes": [
     {
       "id": "world-singleton-discovery",
-      "projectedRows": 8,
-      "note": "Hazard rows; overlaps with World-owner lifecycle candidates are reconciled before unique debt-item counting."
+      "projectedRows": 7,
+      "note": "Five AM-007 World-owner candidates and two AM-018 HSL rows overlap by source and are reconciled before unique debt-item counting."
+    },
+    {
+      "id": "runtime-object-discovery",
+      "projectedRows": 4
     },
     {
       "id": "mutable-static-state",
-      "projectedRows": 43
+      "projectedRows": 1
     },
     {
       "id": "pool-and-lifecycle-cache",
-      "projectedRows": 8
-    },
-    {
-      "id": "world-owner-candidates",
-      "projectedRows": 10,
-      "note": "Lifecycle rows; may overlap hazard remediation and cannot be treated as 33 independent production defects."
+      "projectedRows": 1
     }
   ],
   "sourceGrowth": {
-    "unresolvedBlockerCount": 4,
+    "unresolvedBlockerCount": 8,
     "firstLaunchBlockerCount": 0,
-    "operationMapBlockerCount": 4
+    "operationMapHandoffBlockerCount": 5,
+    "directAm025BlockerCount": 3
   },
   "reviewRules": [
+    {
+      "id": "am018-static-msl-game-text-current-snapshot-owned",
+      "decision": "resolved",
+      "reasonCode": "atomic-application-session-snapshot-with-tested-reset",
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "sourcePath": "Assets/Game/Scripts/Configs/GameText.cs",
+        "symbol": "currentSnapshot"
+      },
+      "authority": [
+        "Assets/Tests/Editor/GameTextResolverAdapterTests.cs",
+        "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs"
+      ]
+    },
+    {
+      "id": "am018-static-msl-performance-capture-policy-debt",
+      "decision": "genuine-debt",
+      "reasonCode": "application-static-diagnostics-state-without-subsystem-reset",
+      "expectedCount": 1,
+      "debtIdPrefix": "AM025-STATIC-DIAGNOSTICS",
+      "ownerDomain": "architecture-core",
+      "workPackageId": "AM-WP-028",
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "sourcePath": "Assets/Game/Scripts/Systems/PerformanceDiagnosticsCapturePolicy.cs",
+        "symbol": "SuppressLogging"
+      },
+      "authority": [
+        "Design/Architecture/WorkPackages/am_wp_028_phase2_debt_reconciliation.md"
+      ]
+    },
+    {
+      "id": "am018-static-msl-main-menu-session-state-owned",
+      "decision": "resolved",
+      "reasonCode": "application-ui-state-with-tested-subsystem-reset",
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "sourcePath": "Assets/Game/Scripts/UI/Screens/MainMenuNavigationSessionState.cs",
+        "symbol": "ActiveTab"
+      },
+      "authority": [
+        "Assets/Tests/Editor/MainMenuNavigationViewTests.cs"
+      ]
+    },
     {
       "id": "am007-native-not-persistent",
       "decision": "resolved",
       "reasonCode": "reviewed-not-persistent",
-      "expectedCount": 62,
-      "match": {"sourceArtifact": "AM-007", "sourceCategory": "nativeContainers"},
-      "authority": ["Design/Architecture/WorkPackages/am_wp_028_phase2_debt_reconciliation.md"]
+      "expectedCount": 81,
+      "match": {
+        "sourceArtifact": "AM-007",
+        "sourceCategory": "nativeContainers"
+      },
+      "authority": [
+        "Design/Architecture/WorkPackages/am_wp_028_phase2_debt_reconciliation.md"
+      ]
     },
     {
       "id": "am007-query-not-persistent",
       "decision": "resolved",
       "reasonCode": "reviewed-not-persistent",
-      "expectedCount": 56,
-      "match": {"sourceArtifact": "AM-007", "sourceCategory": "queryCaches"},
-      "authority": ["Design/Architecture/WorkPackages/am_wp_028_phase2_debt_reconciliation.md"]
+      "expectedCount": 60,
+      "match": {
+        "sourceArtifact": "AM-007",
+        "sourceCategory": "queryCaches"
+      },
+      "authority": [
+        "Design/Architecture/WorkPackages/am_wp_028_phase2_debt_reconciliation.md"
+      ]
     },
     {
       "id": "am007-pool-debt",
@@ -115,7 +171,9 @@
         "sourceCategory": "presentationPools",
         "sourcePath": "Assets/Game/Scripts/Systems/RoadPreviewPresentationSystemHelper.cs"
       },
-      "authority": ["Design/AgentReports/ArchitectureMaturity/am024_lifecycle_memory_pool_trend_evidence.json"]
+      "authority": [
+        "Design/AgentReports/ArchitectureMaturity/am024_lifecycle_memory_pool_trend_evidence.json"
+      ]
     },
     {
       "id": "am007-minimap-marker-pool-owned",
@@ -127,113 +185,91 @@
         "sourceCategory": "presentationPools",
         "sourcePath": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs"
       },
-      "authority": ["Assets/Tests/Editor/MatchHudMinimapProjectionUiSystemHelperTests.cs"]
+      "authority": [
+        "Assets/Tests/Editor/MatchHudMinimapProjectionUiSystemHelperTests.cs"
+      ]
     },
     {
       "id": "am007-pool-owned",
       "decision": "resolved",
       "reasonCode": "tested-lifecycle-owner",
       "expectedCount": 13,
-      "match": {"sourceArtifact": "AM-007", "sourceCategory": "presentationPools"},
-      "authority": ["Design/AgentReports/ArchitectureMaturity/am021_presentation_root_lifecycle_evidence.json", "Design/AgentReports/ArchitectureMaturity/am024_lifecycle_memory_pool_trend_evidence.json"]
-    },
-    {
-      "id": "am007-static-audio-retired",
-      "decision": "resolved",
-      "reasonCode": "exact-static-cache-identities-retired",
-      "expectedCount": 2,
-      "match": {"sourceArtifact": "AM-007", "sourceCategory": "staticCaches", "sourcePath": "Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs"},
-      "authority": ["Assets/Tests/Editor/AudioRequestSystemTests.cs"]
-    },
-    {
-      "id": "am007-static-runtime-gameplay-state-owned",
-      "decision": "resolved",
-      "reasonCode": "tested-world-rebinding-runtime-gameplay-state-cache",
-      "expectedCount": 2,
       "match": {
         "sourceArtifact": "AM-007",
-        "sourceCategory": "staticCaches",
-        "sourcePath": "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs"
-      },
-      "authority": ["Assets/Tests/Editor/RuntimeGameplayStateSystemTests.cs"]
-    },
-    {
-      "id": "am007-static-unit-transport-visual-owned",
-      "decision": "resolved",
-      "reasonCode": "call-owned-temporary-native-scratch-tested",
-      "expectedCount": 1,
-      "match": {
-        "sourceArtifact": "AM-007",
-        "sourceCategory": "staticCaches",
-        "sourcePath": "Assets/Game/Scripts/Utilities/UnitTransportVisualUtility.cs"
-      },
-      "authority": ["Assets/Tests/Editor/UnitTransportValidationTests.cs", "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs"]
-    },
-    {
-      "id": "am007-static-game-text-application-snapshot-owned",
-      "decision": "resolved",
-      "reasonCode": "immutable-application-session-snapshot-with-tested-reset",
-      "expectedCount": 2,
-      "match": {
-        "sourceArtifact": "AM-007",
-        "sourceCategory": "staticCaches",
-        "sourcePath": "Assets/Game/Scripts/Configs/GameText.cs",
-        "field": ["AudioEventIds", "Entries"]
+        "sourceCategory": "presentationPools"
       },
       "authority": [
-        "Assets/Tests/Editor/GameTextResolverAdapterTests.cs",
-        "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs"
+        "Design/AgentReports/ArchitectureMaturity/am021_presentation_root_lifecycle_evidence.json",
+        "Design/AgentReports/ArchitectureMaturity/am024_lifecycle_memory_pool_trend_evidence.json"
       ]
-    },
-    {
-      "id": "am007-static-obsolete-build-drawer-ecs-retired",
-      "decision": "resolved",
-      "reasonCode": "obsolete-duplicate-build-ui-ecs-path-retired",
-      "expectedCount": 1,
-      "match": {
-        "sourceArtifact": "AM-007",
-        "sourceCategory": "staticCaches",
-        "sourcePath": "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs"
-      },
-      "authority": ["Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs", "Assets/Tests/Editor/BuildDrawerCatalogQueryUiSystemHelperTests.cs"]
     },
     {
       "id": "am007-static-owned",
       "decision": "resolved",
       "reasonCode": "tested-lifecycle-owner",
-      "expectedCount": 39,
-      "match": {"sourceArtifact": "AM-007", "sourceCategory": "staticCaches"},
-      "authority": ["Design/AgentReports/ArchitectureMaturity/am022_world_lifecycle_recovery_evidence.json", "Design/AgentReports/ArchitectureMaturity/am023_menu_match_lifecycle_stress_evidence.json"]
+      "expectedCount": 38,
+      "match": {
+        "sourceArtifact": "AM-007",
+        "sourceCategory": "staticCaches"
+      },
+      "authority": [
+        "Design/AgentReports/ArchitectureMaturity/am022_world_lifecycle_recovery_evidence.json",
+        "Design/AgentReports/ArchitectureMaturity/am023_menu_match_lifecycle_stress_evidence.json"
+      ]
     },
     {
       "id": "am007-subscription-reviewed",
       "decision": "resolved",
       "reasonCode": "arithmetic-or-tested-unsubscribe",
-      "expectedCount": 57,
-      "match": {"sourceArtifact": "AM-007", "sourceCategory": "subscriptions"},
-      "authority": ["Design/AgentReports/ArchitectureMaturity/am018_dependency_hazard_inventory.json", "Design/AgentReports/ArchitectureMaturity/am021_persistent_resource_ownership.json"]
+      "expectedCount": 1,
+      "match": {
+        "sourceArtifact": "AM-007",
+        "sourceCategory": "subscriptions"
+      },
+      "authority": [
+        "Design/AgentReports/ArchitectureMaturity/am018_dependency_hazard_inventory.json",
+        "Design/AgentReports/ArchitectureMaturity/am021_persistent_resource_ownership.json"
+      ]
     },
     {
       "id": "am007-world-audio-protected",
       "decision": "protected-deferred",
       "reasonCode": "protected-owner",
       "expectedCount": 4,
-      "protectedOwnerIds": ["audio"],
+      "protectedOwnerIds": [
+        "audio"
+      ],
       "match": {
         "sourceArtifact": "AM-007",
         "sourceCategory": "worlds",
-        "sourcePath": ["Assets/Game/Scripts/Audio/Runtime/AudioGameplayStateQueryCache.cs", "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs", "Assets/Game/Scripts/UI/Shell/Ecs/UiAudioEventBridgeSystem.cs", "Assets/Game/Scripts/UI/Shell/Ecs/UiAudioSettingsProjectionSystem.cs"]
+        "sourcePath": [
+          "Assets/Game/Scripts/Audio/Runtime/AudioGameplayStateQueryCache.cs",
+          "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs",
+          "Assets/Game/Scripts/UI/Shell/Ecs/UiAudioEventBridgeSystem.cs",
+          "Assets/Game/Scripts/UI/Shell/Ecs/UiAudioSettingsProjectionSystem.cs"
+        ]
       },
-      "authority": ["Design/AgentReports/ArchitectureMaturity/lifecycle_inventory.json"]
+      "authority": [
+        "Design/AgentReports/ArchitectureMaturity/lifecycle_inventory.json"
+      ]
     },
     {
       "id": "am007-world-operation-map-protected",
-      "decision": "protected-deferred",
-      "reasonCode": "protected-owner",
+      "decision": "genuine-debt",
+      "reasonCode": "world-owner-unproven-after-exact-am025-handoff",
       "expectedCount": 1,
-      "protectedOwnerIds": ["operation-map"],
-      "match": {"sourceArtifact": "AM-007", "sourceCategory": "worlds", "sourcePath": "Assets/Game/Scripts/Composition/OperationMapRuntimeBootstrapSceneSystemHelper.cs"},
-      "authority": ["Design/AgentReports/ArchitectureMaturity/lifecycle_inventory.json"]
+      "match": {
+        "sourceArtifact": "AM-007",
+        "sourceCategory": "worlds",
+        "sourcePath": "Assets/Game/Scripts/Composition/OperationMapRuntimeBootstrapSceneSystemHelper.cs"
+      },
+      "authority": [
+        "Design/Architecture/am025_feature_readiness_architecture_closeout_tracker.md",
+        "Design/Architecture/WorkPackages/am_wp_028_phase2_debt_reconciliation.md"
+      ],
+      "debtIdPrefix": "AM025-WORLD-OPMAP",
+      "ownerDomain": "architecture-core",
+      "workPackageId": "AM-WP-028"
     },
     {
       "id": "am007-world-tactical-camera-cache-owned",
@@ -245,7 +281,9 @@
         "sourceCategory": "worlds",
         "sourcePath": "Assets/Game/Scripts/Systems/TacticalFollowCameraStateQueryCache.cs"
       },
-      "authority": ["Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"]
+      "authority": [
+        "Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"
+      ]
     },
     {
       "id": "am007-world-building-command-cache-owned",
@@ -257,7 +295,9 @@
         "sourceCategory": "worlds",
         "sourcePath": "Assets/Game/Scripts/Systems/BuildingProductionCommandEntityCache.cs"
       },
-      "authority": ["Assets/Tests/Editor/BuildingProductionSystemTests.cs"]
+      "authority": [
+        "Assets/Tests/Editor/BuildingProductionSystemTests.cs"
+      ]
     },
     {
       "id": "am007-world-match-start-request-cache-owned",
@@ -269,7 +309,9 @@
         "sourceCategory": "worlds",
         "sourcePath": "Assets/Game/Scripts/Systems/MatchStartRequestStartupSystemHelper.cs"
       },
-      "authority": ["Assets/Game/Scripts/Editor/MatchStartRequestValidationRunner.cs"]
+      "authority": [
+        "Assets/Game/Scripts/Editor/MatchStartRequestValidationRunner.cs"
+      ]
     },
     {
       "id": "am007-world-building-ai-oil-query-owned",
@@ -281,7 +323,9 @@
         "sourceCategory": "worlds",
         "sourcePath": "Assets/Game/Scripts/Systems/BuildingFactionAIOilAllocationInputSystemHelper.cs"
       },
-      "authority": ["Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs"]
+      "authority": [
+        "Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs"
+      ]
     },
     {
       "id": "am007-world-performance-diagnostics-current-world",
@@ -293,7 +337,9 @@
         "sourceCategory": "worlds",
         "sourcePath": "Assets/Game/Scripts/Systems/PerformanceDiagnosticsSystemHelper.cs"
       },
-      "authority": ["Assets/Tests/Editor/PerformanceDiagnosticsSystemAllocationTests.cs"]
+      "authority": [
+        "Assets/Tests/Editor/PerformanceDiagnosticsSystemAllocationTests.cs"
+      ]
     },
     {
       "id": "am007-world-fuel-logistics-telemetry-query-owned",
@@ -305,7 +351,9 @@
         "sourceCategory": "worlds",
         "sourcePath": "Assets/Game/Scripts/Systems/FactionFuelLogisticsTelemetryBridgeCompositionSystemHelper.cs"
       },
-      "authority": ["Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs"]
+      "authority": [
+        "Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs"
+      ]
     },
     {
       "id": "am007-world-focusable-unit-lookup-owned",
@@ -317,7 +365,9 @@
         "sourceCategory": "worlds",
         "sourcePath": "Assets/Game/Scripts/Systems/FocusableUnitLookupCameraSystemHelper.cs"
       },
-      "authority": ["Assets/Tests/Editor/FocusableUnitLookupCameraSystemHelperTests.cs"]
+      "authority": [
+        "Assets/Tests/Editor/FocusableUnitLookupCameraSystemHelperTests.cs"
+      ]
     },
     {
       "id": "am007-world-focused-unit-lifecycle-owned",
@@ -329,7 +379,9 @@
         "sourceCategory": "worlds",
         "sourcePath": "Assets/Game/Scripts/Systems/FocusedUnitLifecycleCompositionSystemHelper.cs"
       },
-      "authority": ["Assets/Tests/Editor/SelectionStateSystemTests.cs"]
+      "authority": [
+        "Assets/Tests/Editor/SelectionStateSystemTests.cs"
+      ]
     },
     {
       "id": "am007-world-tactical-follow-camera-mode-owned",
@@ -341,7 +393,9 @@
         "sourceCategory": "worlds",
         "sourcePath": "Assets/Game/Scripts/Systems/TacticalFollowCameraModeSystemHelper.cs"
       },
-      "authority": ["Assets/Tests/Editor/TacticalFollowCameraModeCommandSystemHelperTests.cs"]
+      "authority": [
+        "Assets/Tests/Editor/TacticalFollowCameraModeCommandSystemHelperTests.cs"
+      ]
     },
     {
       "id": "am007-world-pathfinding-pending-state-reader-owned",
@@ -353,19 +407,9 @@
         "sourceCategory": "worlds",
         "sourcePath": "Assets/Game/Scripts/Systems/UnitPathfindingPendingStateStore.cs"
       },
-      "authority": ["Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"]
-    },
-    {
-      "id": "am007-world-runtime-gameplay-state-owned",
-      "decision": "resolved",
-      "reasonCode": "tested-world-rebinding-runtime-gameplay-state",
-      "expectedCount": 1,
-      "match": {
-        "sourceArtifact": "AM-007",
-        "sourceCategory": "worlds",
-        "sourcePath": "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs"
-      },
-      "authority": ["Assets/Tests/Editor/RuntimeGameplayStateSystemTests.cs"]
+      "authority": [
+        "Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"
+      ]
     },
     {
       "id": "am007-world-scene-lifecycle-queue-owned",
@@ -377,7 +421,9 @@
         "sourceCategory": "worlds",
         "sourcePath": "Assets/Game/Scripts/Systems/SceneLifecycleSceneSystemHelper.cs"
       },
-      "authority": ["Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"]
+      "authority": [
+        "Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"
+      ]
     },
     {
       "id": "am007-world-runtime-diagnostics-owned",
@@ -389,7 +435,9 @@
         "sourceCategory": "worlds",
         "sourcePath": "Assets/Game/Scripts/Systems/RuntimeDiagnosticsSystem.cs"
       },
-      "authority": ["Assets/Tests/Editor/RuntimeDiagnosticsSystemTests.cs"]
+      "authority": [
+        "Assets/Tests/Editor/RuntimeDiagnosticsSystemTests.cs"
+      ]
     },
     {
       "id": "am007-world-gameplay-startup-counts-owned",
@@ -401,7 +449,9 @@
         "sourceCategory": "worlds",
         "sourcePath": "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.cs"
       },
-      "authority": ["Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"]
+      "authority": [
+        "Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"
+      ]
     },
     {
       "id": "am007-world-selection-input-state-owned",
@@ -413,7 +463,9 @@
         "sourceCategory": "worlds",
         "sourcePath": "Assets/Game/Scripts/Systems/RtsSelectionInputStateCompositionSystemHelper.cs"
       },
-      "authority": ["Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"]
+      "authority": [
+        "Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"
+      ]
     },
     {
       "id": "am007-world-visible-unit-selection-owned",
@@ -425,7 +477,9 @@
         "sourceCategory": "worlds",
         "sourcePath": "Assets/Game/Scripts/Systems/VisibleUnitSelectionCameraSystemHelper.cs"
       },
-      "authority": ["Assets/Tests/Editor/SelectionStateSystemTests.cs"]
+      "authority": [
+        "Assets/Tests/Editor/SelectionStateSystemTests.cs"
+      ]
     },
     {
       "id": "am007-world-building-gameplay-queries-owned",
@@ -437,7 +491,9 @@
         "sourceCategory": "worlds",
         "sourcePath": "Assets/Game/Scripts/Systems/BuildingGameplayEcsQueryCompositionSystemHelper.cs"
       },
-      "authority": ["Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs"]
+      "authority": [
+        "Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs"
+      ]
     },
     {
       "id": "am007-world-building-runtime-boundary-owned",
@@ -449,7 +505,9 @@
         "sourceCategory": "worlds",
         "sourcePath": "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs"
       },
-      "authority": ["Assets/Tests/Editor/BuildingProductionSystemTests.cs"]
+      "authority": [
+        "Assets/Tests/Editor/BuildingProductionSystemTests.cs"
+      ]
     },
     {
       "id": "am007-world-selected-unit-order-snapshot-owned",
@@ -461,19 +519,9 @@
         "sourceCategory": "worlds",
         "sourcePath": "Assets/Game/Scripts/Systems/SelectedUnitOrderSnapshotCompositionSystemHelper.cs"
       },
-      "authority": ["Assets/Tests/Editor/SelectedUnitOrderSnapshotSystemTests.cs"]
-    },
-    {
-      "id": "am007-world-selection-runtime-diagnostics-owned",
-      "decision": "resolved",
-      "reasonCode": "explicit-match-world-selection-diagnostics",
-      "expectedCount": 1,
-      "match": {
-        "sourceArtifact": "AM-007",
-        "sourceCategory": "worlds",
-        "sourcePath": "Assets/Game/Scripts/Systems/SelectionRuntimeDiagnosticsSystemHelper.cs"
-      },
-      "authority": ["Assets/Tests/Editor/RuntimeDiagnosticsSystemTests.cs"]
+      "authority": [
+        "Assets/Tests/Editor/SelectedUnitOrderSnapshotSystemTests.cs"
+      ]
     },
     {
       "id": "am007-world-scenario-lab-action-boundary-owned",
@@ -485,7 +533,9 @@
         "sourceCategory": "worlds",
         "sourcePath": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs"
       },
-      "authority": ["Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"]
+      "authority": [
+        "Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"
+      ]
     },
     {
       "id": "am007-world-pointer-target-command-owned",
@@ -497,19 +547,9 @@
         "sourceCategory": "worlds",
         "sourcePath": "Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandCompositionSystemHelper.cs"
       },
-      "authority": ["Assets/Tests/Editor/RtsSelectionInputSystemTests.cs"]
-    },
-    {
-      "id": "am007-world-selection-startup-owned",
-      "decision": "resolved",
-      "reasonCode": "tested-world-rebinding-selection-startup-queries",
-      "expectedCount": 1,
-      "match": {
-        "sourceArtifact": "AM-007",
-        "sourceCategory": "worlds",
-        "sourcePath": "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs"
-      },
-      "authority": ["Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"]
+      "authority": [
+        "Assets/Tests/Editor/RtsSelectionInputSystemTests.cs"
+      ]
     },
     {
       "id": "am007-world-selection-building-interaction-owned",
@@ -521,7 +561,9 @@
         "sourceCategory": "worlds",
         "sourcePath": "Assets/Game/Scripts/Systems/SelectionBuildingInteractionCompositionSystemHelper.cs"
       },
-      "authority": ["Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"]
+      "authority": [
+        "Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"
+      ]
     },
     {
       "id": "am007-world-focused-unit-read-model-owned",
@@ -533,7 +575,9 @@
         "sourceCategory": "worlds",
         "sourcePath": "Assets/Game/Scripts/Systems/FocusedUnitUiReadModelUiSystemHelper.cs"
       },
-      "authority": ["Assets/Tests/Editor/SelectionUiReadModelLookupTests.cs"]
+      "authority": [
+        "Assets/Tests/Editor/SelectionUiReadModelLookupTests.cs"
+      ]
     },
     {
       "id": "am007-world-match-hud-squad-tray-selection-owned",
@@ -545,7 +589,9 @@
         "sourceCategory": "worlds",
         "sourcePath": "Assets/Game/Scripts/Systems/MatchHudSquadTraySelectionUiSystemHelper.cs"
       },
-      "authority": ["Assets/Tests/Editor/MatchHudSquadTraySelectionSystemTests.cs"]
+      "authority": [
+        "Assets/Tests/Editor/MatchHudSquadTraySelectionSystemTests.cs"
+      ]
     },
     {
       "id": "am007-world-selection-hud-feedback-owned",
@@ -557,7 +603,9 @@
         "sourceCategory": "worlds",
         "sourcePath": "Assets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs"
       },
-      "authority": ["Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"]
+      "authority": [
+        "Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"
+      ]
     },
     {
       "id": "am007-world-selection-order-marker-owned",
@@ -569,19 +617,9 @@
         "sourceCategory": "worlds",
         "sourcePath": "Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs"
       },
-      "authority": ["Assets/Tests/Editor/SelectionOrderMarkerPresentationSystemHelperTests.cs"]
-    },
-    {
-      "id": "am007-world-audio-request-owned",
-      "decision": "resolved",
-      "reasonCode": "ecs-singleton-owned-per-world",
-      "expectedCount": 1,
-      "match": {
-        "sourceArtifact": "AM-007",
-        "sourceCategory": "worlds",
-        "sourcePath": "Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs"
-      },
-      "authority": ["Assets/Tests/Editor/AudioRequestSystemTests.cs"]
+      "authority": [
+        "Assets/Tests/Editor/SelectionOrderMarkerPresentationSystemHelperTests.cs"
+      ]
     },
     {
       "id": "am007-world-debt",
@@ -594,89 +632,74 @@
       "match": {
         "sourceArtifact": "AM-007",
         "sourceCategory": "worlds",
-        "sourcePath": ["Assets/Game/Scripts/Authorings/GridAuthoring.cs", "Assets/Game/Scripts/Composition/MapSurfaceRuntimeBootstrapSceneSystemHelper.cs", "Assets/Game/Scripts/Environment/RuntimeCityReadinessQueryCompositionSystemHelper.cs", "Assets/Game/Scripts/Environment/RuntimeCityRoadBuildBridgeCompositionSystemHelper.cs", "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs", "Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs", "Assets/Game/Scripts/Systems/BuildingFactionAIOilAllocationInputSystemHelper.cs", "Assets/Game/Scripts/Systems/BuildingGameplayEcsQueryCompositionSystemHelper.cs", "Assets/Game/Scripts/Systems/BuildingProductionCommandEntityCache.cs", "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs", "Assets/Game/Scripts/Systems/FactionFuelLogisticsTelemetryBridgeCompositionSystemHelper.cs", "Assets/Game/Scripts/Systems/FocusableUnitLookupCameraSystemHelper.cs", "Assets/Game/Scripts/Systems/FocusedUnitLifecycleCompositionSystemHelper.cs", "Assets/Game/Scripts/Systems/FocusedUnitUiReadModelUiSystemHelper.cs", "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.cs", "Assets/Game/Scripts/Systems/MatchHudSquadTraySelectionUiSystemHelper.cs", "Assets/Game/Scripts/Systems/MatchStartRequestStartupSystemHelper.cs", "Assets/Game/Scripts/Systems/PerformanceDiagnosticsSystemHelper.cs", "Assets/Game/Scripts/Systems/RtsSelectionInputStateCompositionSystemHelper.cs", "Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandCompositionSystemHelper.cs", "Assets/Game/Scripts/Systems/RuntimeDiagnosticsSystem.cs", "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs", "Assets/Game/Scripts/Systems/SceneLifecycleSceneSystemHelper.cs", "Assets/Game/Scripts/Systems/SelectedUnitOrderSnapshotCompositionSystemHelper.cs", "Assets/Game/Scripts/Systems/SelectionBuildingInteractionCompositionSystemHelper.cs", "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs", "Assets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs", "Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs", "Assets/Game/Scripts/Systems/SelectionRuntimeDiagnosticsSystemHelper.cs", "Assets/Game/Scripts/Systems/TacticalFollowCameraModeSystemHelper.cs", "Assets/Game/Scripts/Systems/TacticalFollowCameraStateQueryCache.cs", "Assets/Game/Scripts/Systems/UnitPathfindingPendingStateStore.cs", "Assets/Game/Scripts/Systems/VisibleUnitSelectionCameraSystemHelper.cs"]
+        "sourcePath": [
+          "Assets/Game/Scripts/Authorings/GridAuthoring.cs",
+          "Assets/Game/Scripts/Composition/MapSurfaceRuntimeBootstrapSceneSystemHelper.cs",
+          "Assets/Game/Scripts/Environment/RuntimeCityReadinessQueryCompositionSystemHelper.cs",
+          "Assets/Game/Scripts/Environment/RuntimeCityRoadBuildBridgeCompositionSystemHelper.cs",
+          "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
+          "Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs",
+          "Assets/Game/Scripts/Systems/BuildingFactionAIOilAllocationInputSystemHelper.cs",
+          "Assets/Game/Scripts/Systems/BuildingGameplayEcsQueryCompositionSystemHelper.cs",
+          "Assets/Game/Scripts/Systems/BuildingProductionCommandEntityCache.cs",
+          "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
+          "Assets/Game/Scripts/Systems/FactionFuelLogisticsTelemetryBridgeCompositionSystemHelper.cs",
+          "Assets/Game/Scripts/Systems/FocusableUnitLookupCameraSystemHelper.cs",
+          "Assets/Game/Scripts/Systems/FocusedUnitLifecycleCompositionSystemHelper.cs",
+          "Assets/Game/Scripts/Systems/FocusedUnitUiReadModelUiSystemHelper.cs",
+          "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.cs",
+          "Assets/Game/Scripts/Systems/MatchHudSquadTraySelectionUiSystemHelper.cs",
+          "Assets/Game/Scripts/Systems/MatchStartRequestStartupSystemHelper.cs",
+          "Assets/Game/Scripts/Systems/PerformanceDiagnosticsSystemHelper.cs",
+          "Assets/Game/Scripts/Systems/RtsSelectionInputStateCompositionSystemHelper.cs",
+          "Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandCompositionSystemHelper.cs",
+          "Assets/Game/Scripts/Systems/RuntimeDiagnosticsSystem.cs",
+          "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs",
+          "Assets/Game/Scripts/Systems/SceneLifecycleSceneSystemHelper.cs",
+          "Assets/Game/Scripts/Systems/SelectedUnitOrderSnapshotCompositionSystemHelper.cs",
+          "Assets/Game/Scripts/Systems/SelectionBuildingInteractionCompositionSystemHelper.cs",
+          "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs",
+          "Assets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs",
+          "Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs",
+          "Assets/Game/Scripts/Systems/SelectionRuntimeDiagnosticsSystemHelper.cs",
+          "Assets/Game/Scripts/Systems/TacticalFollowCameraModeSystemHelper.cs",
+          "Assets/Game/Scripts/Systems/TacticalFollowCameraStateQueryCache.cs",
+          "Assets/Game/Scripts/Systems/UnitPathfindingPendingStateStore.cs",
+          "Assets/Game/Scripts/Systems/VisibleUnitSelectionCameraSystemHelper.cs"
+        ]
       },
-      "authority": ["Design/Architecture/WorkPackages/am_wp_028_phase2_debt_reconciliation.md"]
+      "authority": [
+        "Design/Architecture/WorkPackages/am_wp_028_phase2_debt_reconciliation.md"
+      ]
     },
     {
       "id": "am007-world-reviewed-boundary",
       "decision": "resolved",
       "reasonCode": "explicit-boundary-or-tested-owner",
-      "expectedCount": 39,
-      "match": {"sourceArtifact": "AM-007", "sourceCategory": "worlds"},
-      "authority": ["Design/AgentReports/ArchitectureMaturity/am018_dependency_hazard_inventory.json", "Design/AgentReports/ArchitectureMaturity/am022_world_lifecycle_recovery_evidence.json"]
-    },
-    {
-      "id": "am018-world-removed",
-      "decision": "resolved",
-      "reasonCode": "exact-identity-retired",
-      "expectedCount": 2,
+      "expectedCount": 44,
       "match": {
-        "sourceArtifact": "AM-018",
-        "sourceCategory": "globalWorldLookups",
-        "sourcePath": ["Assets/Game/Scripts/Composition/MatchIntroEcsStateQuery.cs", "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.cs"]
+        "sourceArtifact": "AM-007",
+        "sourceCategory": "worlds"
       },
-      "authority": ["Design/AgentReports/ArchitectureMaturity/am020_world_owned_runtime_state_evidence.json"]
-    },
-    {
-      "id": "am018-world-pathfinding-pending-state-owned",
-      "decision": "resolved",
-      "reasonCode": "explicit-composition-world-binding",
-      "expectedCount": 1,
-      "match": {
-        "sourceArtifact": "AM-018",
-        "sourceCategory": "globalWorldLookups",
-        "sourcePath": "Assets/Game/Scripts/Systems/UnitPathfindingPendingStateStore.cs"
-      },
-      "authority": ["Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"]
+      "authority": [
+        "Design/AgentReports/ArchitectureMaturity/am018_dependency_hazard_inventory.json",
+        "Design/AgentReports/ArchitectureMaturity/am022_world_lifecycle_recovery_evidence.json"
+      ]
     },
     {
       "id": "am018-world-runtime-gameplay-state-owned",
       "decision": "resolved",
       "reasonCode": "explicit-entity-manager-binding",
-      "expectedCount": 1,
+      "expectedCount": 2,
       "match": {
         "sourceArtifact": "AM-018",
         "sourceCategory": "globalWorldLookups",
         "sourcePath": "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs"
       },
-      "authority": ["Assets/Tests/Editor/RuntimeGameplayStateSystemTests.cs", "Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"]
-    },
-    {
-      "id": "am018-world-selection-input-owned",
-      "decision": "resolved",
-      "reasonCode": "shared-explicit-entity-manager-owner",
-      "expectedCount": 1,
-      "match": {
-        "sourceArtifact": "AM-018",
-        "sourceCategory": "globalWorldLookups",
-        "sourcePath": "Assets/Game/Scripts/Systems/RtsSelectionInputStateCompositionSystemHelper.cs"
-      },
-      "authority": ["Assets/Tests/Editor/RtsSelectionInputSystemTests.cs", "Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"]
-    },
-    {
-      "id": "am018-world-selection-building-interaction-owned",
-      "decision": "resolved",
-      "reasonCode": "explicit-selection-entity-manager-owner",
-      "expectedCount": 1,
-      "match": {
-        "sourceArtifact": "AM-018",
-        "sourceCategory": "globalWorldLookups",
-        "sourcePath": "Assets/Game/Scripts/Systems/SelectionBuildingInteractionCompositionSystemHelper.cs"
-      },
-      "authority": ["Assets/Tests/Editor/RtsSelectionInputSystemTests.cs", "Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"]
-    },
-    {
-      "id": "am018-world-selection-startup-owned",
-      "decision": "resolved",
-      "reasonCode": "explicit-selection-startup-world-owner",
-      "expectedCount": 1,
-      "match": {
-        "sourceArtifact": "AM-018",
-        "sourceCategory": "globalWorldLookups",
-        "sourcePath": "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs"
-      },
-      "authority": ["Assets/Tests/Editor/RtsSelectionInputSystemTests.cs", "Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"]
+      "authority": [
+        "Assets/Tests/Editor/RuntimeGameplayStateSystemTests.cs",
+        "Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"
+      ]
     },
     {
       "id": "am018-world-debt",
@@ -686,124 +709,42 @@
       "debtIdPrefix": "AM025-GLOBAL-WORLD",
       "ownerDomain": "architecture-core",
       "workPackageId": "AM-WP-028",
-      "match": {"sourceArtifact": "AM-018", "sourceCategory": "globalWorldLookups"},
-      "authority": ["Design/Architecture/world_scoped_query_entity_cache_contract.md"]
-    },
-    {
-      "id": "am018-singleton-ai-settings-world-handoff-owned",
-      "decision": "resolved",
-      "reasonCode": "menu-owned-settings-with-world-owned-match-handoff",
-      "expectedCount": 1,
-      "match": {"sourceArtifact": "AM-018", "sourceCategory": "hiddenSingletons", "sourcePath": "Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs"},
-      "authority": ["Assets/Tests/Editor/AISettingsOwnershipTests.cs", "Assets/Tests/Editor/AIStartupSystemValidationTests.cs"]
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "globalWorldLookups"
+      },
+      "authority": [
+        "Design/Architecture/world_scoped_query_entity_cache_contract.md"
+      ]
     },
     {
       "id": "am018-singleton-owned",
       "decision": "resolved",
       "reasonCode": "tested-presentation-or-gateway-owner",
       "expectedCount": 5,
-      "match": {"sourceArtifact": "AM-018", "sourceCategory": "hiddenSingletons"},
-      "authority": ["Design/AgentReports/ArchitectureMaturity/am021_presentation_root_lifecycle_evidence.json", "Design/AgentReports/ArchitectureMaturity/am022_world_lifecycle_recovery_evidence.json"]
-    },
-    {
-      "id": "am018-static-clr-runtime-gameplay-state-owned",
-      "decision": "resolved",
-      "reasonCode": "tested-world-rebinding-runtime-gameplay-state-cache",
-      "expectedCount": 2,
       "match": {
         "sourceArtifact": "AM-018",
-        "sourceCategory": "mutableStaticCaches",
-        "disposition": "CLR",
-        "sourcePath": "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs"
-      },
-      "authority": ["Assets/Tests/Editor/RuntimeGameplayStateSystemTests.cs"]
-    },
-    {
-      "id": "am018-static-clr-prefab-preview-match-owned",
-      "decision": "resolved",
-      "reasonCode": "match-owned-preview-cache-with-tested-disposal",
-      "expectedCount": 1,
-      "match": {
-        "sourceArtifact": "AM-018",
-        "sourceCategory": "mutableStaticCaches",
-        "disposition": "CLR",
-        "sourcePath": "Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs"
+        "sourceCategory": "hiddenSingletons"
       },
       "authority": [
-        "Assets/Tests/Editor/SharedPrefabPreviewCacheTests.cs",
-        "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs"
+        "Design/AgentReports/ArchitectureMaturity/am021_presentation_root_lifecycle_evidence.json",
+        "Design/AgentReports/ArchitectureMaturity/am022_world_lifecycle_recovery_evidence.json"
       ]
-    },
-    {
-      "id": "am018-static-clr-unused-terrain-lod-switch-retired",
-      "decision": "resolved",
-      "reasonCode": "unreferenced-runtime-loop-and-static-camera-cache-retired",
-      "expectedCount": 1,
-      "match": {
-        "sourceArtifact": "AM-018",
-        "sourceCategory": "mutableStaticCaches",
-        "disposition": "CLR",
-        "sourcePath": "Assets/Game/Scripts/Rendering/TerrainLodHeightSwitch.cs"
-      },
-      "authority": [
-        "Assets/Tests/Editor/Aph808MissingSerializedReferenceValidatorTests.cs",
-        "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs"
-      ]
-    },
-    {
-      "id": "am018-static-clr-obsolete-build-drawer-ecs-retired",
-      "decision": "resolved",
-      "reasonCode": "obsolete-duplicate-build-ui-ecs-path-retired",
-      "expectedCount": 4,
-      "match": {"sourceArtifact": "AM-018", "sourceCategory": "mutableStaticCaches", "disposition": "CLR", "sourcePath": "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs"},
-      "authority": ["Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs", "Assets/Tests/Editor/BuildDrawerCatalogQueryUiSystemHelperTests.cs"]
-    },
-    {
-      "id": "am018-static-clr-audio-retired",
-      "decision": "resolved",
-      "reasonCode": "exact-static-cache-identities-retired",
-      "expectedCount": 2,
-      "match": {
-        "sourceArtifact": "AM-018",
-        "sourceCategory": "mutableStaticCaches",
-        "disposition": "CLR",
-        "sourcePath": "Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs"
-      },
-      "authority": ["Assets/Tests/Editor/AudioRequestSystemTests.cs", "Assets/Tests/Editor/AudioPerformanceValidationTests.cs"]
     },
     {
       "id": "am018-static-clr-owned",
       "decision": "resolved",
       "reasonCode": "exact-query-or-tested-reset-owner",
       "expectedCount": 54,
-      "match": {"sourceArtifact": "AM-018", "sourceCategory": "mutableStaticCaches", "disposition": "CLR"},
-      "authority": ["Design/AgentReports/ArchitectureMaturity/am021_persistent_resource_ownership.json", "Design/AgentReports/ArchitectureMaturity/am022_world_lifecycle_recovery_evidence.json"]
-    },
-    {
-      "id": "am018-static-irc-tactical-cinematic-obstruction-owned",
-      "decision": "resolved",
-      "reasonCode": "stateless-obstruction-query",
-      "expectedCount": 1,
       "match": {
         "sourceArtifact": "AM-018",
         "sourceCategory": "mutableStaticCaches",
-        "disposition": "IRC",
-        "sourcePath": "Assets/Game/Scripts/Systems/TacticalFollowAttackCinematicCameraSystemHelper.cs"
+        "disposition": "CLR"
       },
-      "authority": ["Assets/Tests/Editor/TacticalFollowAttackCinematicHelperTests.cs"]
-    },
-    {
-      "id": "am018-static-irc-unit-transport-visual-owned",
-      "decision": "resolved",
-      "reasonCode": "call-owned-temporary-native-scratch-tested",
-      "expectedCount": 3,
-      "match": {
-        "sourceArtifact": "AM-018",
-        "sourceCategory": "mutableStaticCaches",
-        "disposition": "IRC",
-        "sourcePath": "Assets/Game/Scripts/Utilities/UnitTransportVisualUtility.cs"
-      },
-      "authority": ["Assets/Tests/Editor/UnitTransportValidationTests.cs", "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs"]
+      "authority": [
+        "Design/AgentReports/ArchitectureMaturity/am021_persistent_resource_ownership.json",
+        "Design/AgentReports/ArchitectureMaturity/am022_world_lifecycle_recovery_evidence.json"
+      ]
     },
     {
       "id": "am018-static-irc-ui-diagnostics-buffer-application-owned",
@@ -821,60 +762,41 @@
       ]
     },
     {
-      "id": "am018-static-irc-obsolete-build-drawer-ecs-retired",
-      "decision": "resolved",
-      "reasonCode": "obsolete-duplicate-build-ui-ecs-path-retired",
-      "expectedCount": 3,
-      "match": {"sourceArtifact": "AM-018", "sourceCategory": "mutableStaticCaches", "disposition": "IRC", "sourcePath": "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs"},
-      "authority": ["Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs", "Assets/Tests/Editor/BuildDrawerCatalogQueryUiSystemHelperTests.cs"]
-    },
-    {
-      "id": "am018-static-irc-minimap-viewport-corners-retired",
-      "decision": "resolved",
-      "reasonCode": "mutable-static-array-retired",
-      "expectedCount": 1,
-      "match": {
-        "sourceArtifact": "AM-018",
-        "sourceCategory": "mutableStaticCaches",
-        "disposition": "IRC",
-        "sourcePath": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapProjectionUiSystemHelper.cs",
-        "symbol": "ViewportCorners"
-      },
-      "authority": ["Assets/Tests/Editor/MatchHudMinimapProjectionUiSystemHelperTests.cs"]
-    },
-    {
       "id": "am018-static-irc-reviewed",
       "decision": "resolved",
       "reasonCode": "immutable-data-or-tested-reset-owner",
-      "expectedCount": 57,
-      "match": {"sourceArtifact": "AM-018", "sourceCategory": "mutableStaticCaches", "disposition": "IRC"},
-      "authority": ["Design/Architecture/WorkPackages/am_wp_028_phase2_debt_reconciliation.md", "Design/AgentReports/ArchitectureMaturity/am022_world_lifecycle_recovery_evidence.json"]
+      "expectedCount": 55,
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "IRC"
+      },
+      "authority": [
+        "Design/Architecture/WorkPackages/am_wp_028_phase2_debt_reconciliation.md",
+        "Design/AgentReports/ArchitectureMaturity/am022_world_lifecycle_recovery_evidence.json"
+      ]
     },
     {
       "id": "am018-static-msl-reviewed",
       "decision": "resolved",
       "reasonCode": "retired-false-positive-or-tested-reset-owner",
-      "expectedCount": 10,
+      "expectedCount": 6,
       "match": {
         "sourceArtifact": "AM-018",
         "sourceCategory": "mutableStaticCaches",
         "disposition": "MSL",
-        "sourcePath": ["Assets/Game/Scripts/Effects/MissileTrailVfxView.cs", "Assets/Game/Scripts/Effects/UnitAttackImpactVfxView.cs", "Assets/Game/Scripts/Systems/ThreatWarningRuntimeState.cs", "Assets/Game/Scripts/UI/Contracts/MatchHudSelectionPanelModels.cs", "Assets/Game/Scripts/UI/RuntimeLogBuffer.cs"]
+        "sourcePath": [
+          "Assets/Game/Scripts/Effects/MissileTrailVfxView.cs",
+          "Assets/Game/Scripts/Effects/UnitAttackImpactVfxView.cs",
+          "Assets/Game/Scripts/Systems/ThreatWarningRuntimeState.cs",
+          "Assets/Game/Scripts/UI/Contracts/MatchHudSelectionPanelModels.cs",
+          "Assets/Game/Scripts/UI/RuntimeLogBuffer.cs"
+        ]
       },
-      "authority": ["Design/AgentReports/ArchitectureMaturity/am020_world_owned_runtime_state_evidence.json", "Design/AgentReports/ArchitectureMaturity/am022_world_lifecycle_recovery_evidence.json"]
-    },
-    {
-      "id": "am018-static-msl-helicopter-diagnostic-owned",
-      "decision": "resolved",
-      "reasonCode": "world-owned-diagnostic-state",
-      "expectedCount": 1,
-      "match": {
-        "sourceArtifact": "AM-018",
-        "sourceCategory": "mutableStaticCaches",
-        "disposition": "MSL",
-        "sourcePath": "Assets/Game/Scripts/Rendering/Systems/UnitHelicopterBladeSpinSystem.cs"
-      },
-      "authority": ["Assets/Tests/Editor/UnitHelicopterBladeSpinSystemTests.cs"]
+      "authority": [
+        "Design/AgentReports/ArchitectureMaturity/am020_world_owned_runtime_state_evidence.json",
+        "Design/AgentReports/ArchitectureMaturity/am022_world_lifecycle_recovery_evidence.json"
+      ]
     },
     {
       "id": "am018-static-msl-gameplay-debug-flags-bounded",
@@ -887,47 +809,8 @@
         "disposition": "MSL",
         "sourcePath": "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateDebugFlags.cs"
       },
-      "authority": ["Assets/Tests/Editor/BuildingDefenseAttackSystemTests.cs"]
-    },
-    {
-      "id": "am018-static-msl-selection-outline-resources-owned",
-      "decision": "resolved",
-      "reasonCode": "world-owned-presentation-resources-with-tested-disposal",
-      "expectedCount": 4,
-      "match": {
-        "sourceArtifact": "AM-018",
-        "sourceCategory": "mutableStaticCaches",
-        "disposition": "MSL",
-        "sourcePath": "Assets/Game/Scripts/Rendering/Systems/UnitSelectionObjectOutlinePresentationSystem.cs"
-      },
-      "authority": ["Assets/Tests/Editor/VehicleVisualAdornmentsSystemTests.cs"]
-    },
-    {
-      "id": "am018-static-msl-runtime-stats-retired",
-      "decision": "resolved",
-      "reasonCode": "write-only-global-recorder-retired-to-immutable-report-value",
-      "expectedCount": 12,
-      "match": {
-        "sourceArtifact": "AM-018",
-        "sourceCategory": "mutableStaticCaches",
-        "disposition": "MSL",
-        "sourcePath": "Assets/Game/Scripts/Balance/GameRuntimeStats.cs"
-      },
-      "authority": ["Assets/Tests/Editor/GameRuntimeStatsTests.cs", "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs"]
-    },
-    {
-      "id": "am018-static-msl-match-hud-assistant-diagnostics-owned",
-      "decision": "resolved",
-      "reasonCode": "hud-instance-owned-diagnostic-state",
-      "expectedCount": 2,
-      "match": {
-        "sourceArtifact": "AM-018",
-        "sourceCategory": "mutableStaticCaches",
-        "disposition": "MSL",
-        "sourcePath": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.cs"
-      },
       "authority": [
-        "Assets/Tests/Editor/MatchHudAssistantUiSystemHelperTests.cs"
+        "Assets/Tests/Editor/BuildingDefenseAttackSystemTests.cs"
       ]
     },
     {
@@ -943,36 +826,6 @@
       },
       "authority": [
         "Assets/Tests/Editor/AssistantSettingsPersistenceSystemTests.cs"
-      ]
-    },
-    {
-      "id": "am018-static-msl-commander-background-shell-owned",
-      "decision": "resolved",
-      "reasonCode": "shell-owned-route-time-presentation-object",
-      "expectedCount": 3,
-      "match": {
-        "sourceArtifact": "AM-018",
-        "sourceCategory": "mutableStaticCaches",
-        "disposition": "MSL",
-        "sourcePath": "Assets/Game/Scripts/UI/Shell/CommanderProfileRouteLifecyclePresentation.cs"
-      },
-      "authority": [
-        "Assets/Tests/Editor/UIShellCurrentContentLoadTests.cs"
-      ]
-    },
-    {
-      "id": "am018-static-msl-main-menu-tab-session-reset",
-      "decision": "resolved",
-      "reasonCode": "application-ui-state-with-tested-subsystem-reset",
-      "expectedCount": 1,
-      "match": {
-        "sourceArtifact": "AM-018",
-        "sourceCategory": "mutableStaticCaches",
-        "disposition": "MSL",
-        "sourcePath": "Assets/Game/Scripts/UI/Screens/MainMenuNavigationView.cs"
-      },
-      "authority": [
-        "Assets/Tests/Editor/MainMenuNavigationViewTests.cs"
       ]
     },
     {
@@ -1021,72 +874,6 @@
       ]
     },
     {
-      "id": "am018-static-msl-prefab-preview-match-owned",
-      "decision": "resolved",
-      "reasonCode": "match-owned-preview-state-with-tested-disposal",
-      "expectedCount": 18,
-      "match": {
-        "sourceArtifact": "AM-018",
-        "sourceCategory": "mutableStaticCaches",
-        "disposition": "MSL",
-        "sourcePath": "Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs"
-      },
-      "authority": [
-        "Assets/Tests/Editor/SharedPrefabPreviewCacheTests.cs",
-        "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs"
-      ]
-    },
-    {
-      "id": "am018-static-msl-dead-initial-units-camera-retired",
-      "decision": "resolved",
-      "reasonCode": "dead-global-camera-reference-retired",
-      "expectedCount": 1,
-      "match": {
-        "sourceArtifact": "AM-018",
-        "sourceCategory": "mutableStaticCaches",
-        "disposition": "MSL",
-        "sourcePath": "Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs",
-        "symbol": "WorldCamera"
-      },
-      "authority": [
-        "Assets/Tests/Editor/RuntimeCameraReferenceSystemTests.cs",
-        "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs"
-      ]
-    },
-    {
-      "id": "am018-static-msl-game-text-application-snapshot-owned",
-      "decision": "resolved",
-      "reasonCode": "atomic-application-session-snapshot-with-tested-reset",
-      "expectedCount": 1,
-      "match": {
-        "sourceArtifact": "AM-018",
-        "sourceCategory": "mutableStaticCaches",
-        "disposition": "MSL",
-        "sourcePath": "Assets/Game/Scripts/Configs/GameText.cs",
-        "symbol": "initialized"
-      },
-      "authority": [
-        "Assets/Tests/Editor/GameTextResolverAdapterTests.cs",
-        "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs"
-      ]
-    },
-    {
-      "id": "am018-static-msl-menu-startup-settings-world-instance-owned",
-      "decision": "resolved",
-      "reasonCode": "menu-instance-owned-world-marker-with-shutdown-release",
-      "expectedCount": 1,
-      "match": {
-        "sourceArtifact": "AM-018",
-        "sourceCategory": "mutableStaticCaches",
-        "disposition": "MSL",
-        "sourcePath": "Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs",
-        "symbol": "startupRuntimeSettingsWorld"
-      },
-      "authority": [
-        "Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"
-      ]
-    },
-    {
       "id": "am018-static-msl-ui-shell-runtime-gateway-application-owned",
       "decision": "resolved",
       "reasonCode": "subsystem-registered-application-gateway-with-world-rebinding",
@@ -1103,27 +890,619 @@
       ]
     },
     {
-      "id": "am018-static-msl-ai-settings-world-handoff-owned",
+      "id": "am018-discovery-audio-protected",
+      "decision": "protected-deferred",
+      "reasonCode": "protected-owner",
+      "expectedCount": 1,
+      "protectedOwnerIds": [
+        "audio"
+      ],
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "runtimeObjectDiscovery",
+        "sourcePath": "Assets/Game/Scripts/Composition/MatchSceneView.cs"
+      },
+      "authority": [
+        "Design/AgentReports/ArchitectureMaturity/am018_dependency_hazard_inventory.json"
+      ]
+    },
+    {
+      "id": "am018-discovery-debt",
+      "decision": "genuine-debt",
+      "reasonCode": "runtime-object-discovery",
+      "expectedCount": 4,
+      "debtIdPrefix": "AM025-DISCOVERY",
+      "ownerDomain": "architecture-core",
+      "workPackageId": "AM-WP-028",
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "runtimeObjectDiscovery"
+      },
+      "authority": [
+        "Design/Architecture/WorkPackages/am_wp_028_phase2_debt_reconciliation.md"
+      ]
+    },
+    {
+      "id": "am018-event-owned",
       "decision": "resolved",
-      "reasonCode": "menu-owned-settings-with-world-owned-match-handoff",
-      "expectedCount": 13,
-      "match": {"sourceArtifact": "AM-018", "sourceCategory": "mutableStaticCaches", "disposition": "MSL", "sourcePath": "Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs"},
-      "authority": ["Assets/Tests/Editor/AISettingsOwnershipTests.cs", "Assets/Tests/Editor/AISettingsValidationTests.cs", "Assets/Tests/Editor/AIStartupSystemValidationTests.cs"]
+      "reasonCode": "exact-owned-unsubscribe",
+      "expectedCount": 5,
+      "match": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "staticEventSubscriptions"
+      },
+      "authority": [
+        "Design/AgentReports/ArchitectureMaturity/am021_persistent_resource_ownership.json",
+        "Design/AgentReports/ArchitectureMaturity/am022_world_lifecycle_recovery_evidence.json"
+      ]
+    }
+  ],
+  "acceptanceRule": "This artifact records row-bound current-head evidence but does not grant acceptance. AM-025 remains unchecked until genuine debt and unclassified counts reach zero and all eight source-growth blockers close.",
+  "retiredReviewRules": [
+    {
+      "id": "am007-static-audio-retired",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 2,
+      "previousMatch": {
+        "sourceArtifact": "AM-007",
+        "sourceCategory": "staticCaches",
+        "sourcePath": "Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/AudioRequestSystemTests.cs"
+      ]
+    },
+    {
+      "id": "am007-static-runtime-gameplay-state-owned",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 2,
+      "previousMatch": {
+        "sourceArtifact": "AM-007",
+        "sourceCategory": "staticCaches",
+        "sourcePath": "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/RuntimeGameplayStateSystemTests.cs"
+      ]
+    },
+    {
+      "id": "am007-static-unit-transport-visual-owned",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 1,
+      "previousMatch": {
+        "sourceArtifact": "AM-007",
+        "sourceCategory": "staticCaches",
+        "sourcePath": "Assets/Game/Scripts/Utilities/UnitTransportVisualUtility.cs"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/UnitTransportValidationTests.cs",
+        "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs"
+      ]
+    },
+    {
+      "id": "am007-static-game-text-application-snapshot-owned",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 2,
+      "previousMatch": {
+        "sourceArtifact": "AM-007",
+        "sourceCategory": "staticCaches",
+        "sourcePath": "Assets/Game/Scripts/Configs/GameText.cs",
+        "field": [
+          "AudioEventIds",
+          "Entries"
+        ]
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/GameTextResolverAdapterTests.cs",
+        "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs"
+      ]
+    },
+    {
+      "id": "am007-static-obsolete-build-drawer-ecs-retired",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 1,
+      "previousMatch": {
+        "sourceArtifact": "AM-007",
+        "sourceCategory": "staticCaches",
+        "sourcePath": "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs",
+        "Assets/Tests/Editor/BuildDrawerCatalogQueryUiSystemHelperTests.cs"
+      ]
+    },
+    {
+      "id": "am007-world-runtime-gameplay-state-owned",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 1,
+      "previousMatch": {
+        "sourceArtifact": "AM-007",
+        "sourceCategory": "worlds",
+        "sourcePath": "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/RuntimeGameplayStateSystemTests.cs"
+      ]
+    },
+    {
+      "id": "am007-world-selection-runtime-diagnostics-owned",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 1,
+      "previousMatch": {
+        "sourceArtifact": "AM-007",
+        "sourceCategory": "worlds",
+        "sourcePath": "Assets/Game/Scripts/Systems/SelectionRuntimeDiagnosticsSystemHelper.cs"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/RuntimeDiagnosticsSystemTests.cs"
+      ]
+    },
+    {
+      "id": "am007-world-selection-startup-owned",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 1,
+      "previousMatch": {
+        "sourceArtifact": "AM-007",
+        "sourceCategory": "worlds",
+        "sourcePath": "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"
+      ]
+    },
+    {
+      "id": "am007-world-audio-request-owned",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 1,
+      "previousMatch": {
+        "sourceArtifact": "AM-007",
+        "sourceCategory": "worlds",
+        "sourcePath": "Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/AudioRequestSystemTests.cs"
+      ]
+    },
+    {
+      "id": "am018-world-removed",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 2,
+      "previousMatch": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "globalWorldLookups",
+        "sourcePath": [
+          "Assets/Game/Scripts/Composition/MatchIntroEcsStateQuery.cs",
+          "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.cs"
+        ]
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Design/AgentReports/ArchitectureMaturity/am020_world_owned_runtime_state_evidence.json"
+      ]
+    },
+    {
+      "id": "am018-world-pathfinding-pending-state-owned",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 1,
+      "previousMatch": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "globalWorldLookups",
+        "sourcePath": "Assets/Game/Scripts/Systems/UnitPathfindingPendingStateStore.cs"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"
+      ]
+    },
+    {
+      "id": "am018-world-selection-input-owned",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 1,
+      "previousMatch": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "globalWorldLookups",
+        "sourcePath": "Assets/Game/Scripts/Systems/RtsSelectionInputStateCompositionSystemHelper.cs"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/RtsSelectionInputSystemTests.cs",
+        "Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"
+      ]
+    },
+    {
+      "id": "am018-world-selection-building-interaction-owned",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 1,
+      "previousMatch": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "globalWorldLookups",
+        "sourcePath": "Assets/Game/Scripts/Systems/SelectionBuildingInteractionCompositionSystemHelper.cs"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/RtsSelectionInputSystemTests.cs",
+        "Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"
+      ]
+    },
+    {
+      "id": "am018-world-selection-startup-owned",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 1,
+      "previousMatch": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "globalWorldLookups",
+        "sourcePath": "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/RtsSelectionInputSystemTests.cs",
+        "Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"
+      ]
+    },
+    {
+      "id": "am018-singleton-ai-settings-world-handoff-owned",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 1,
+      "previousMatch": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "hiddenSingletons",
+        "sourcePath": "Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/AISettingsOwnershipTests.cs",
+        "Assets/Tests/Editor/AIStartupSystemValidationTests.cs"
+      ]
+    },
+    {
+      "id": "am018-static-clr-runtime-gameplay-state-owned",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 2,
+      "previousMatch": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "CLR",
+        "sourcePath": "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/RuntimeGameplayStateSystemTests.cs"
+      ]
+    },
+    {
+      "id": "am018-static-clr-prefab-preview-match-owned",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 1,
+      "previousMatch": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "CLR",
+        "sourcePath": "Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/SharedPrefabPreviewCacheTests.cs",
+        "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs"
+      ]
+    },
+    {
+      "id": "am018-static-clr-unused-terrain-lod-switch-retired",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 1,
+      "previousMatch": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "CLR",
+        "sourcePath": "Assets/Game/Scripts/Rendering/TerrainLodHeightSwitch.cs"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/Aph808MissingSerializedReferenceValidatorTests.cs",
+        "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs"
+      ]
+    },
+    {
+      "id": "am018-static-clr-obsolete-build-drawer-ecs-retired",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 4,
+      "previousMatch": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "CLR",
+        "sourcePath": "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs",
+        "Assets/Tests/Editor/BuildDrawerCatalogQueryUiSystemHelperTests.cs"
+      ]
+    },
+    {
+      "id": "am018-static-clr-audio-retired",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 2,
+      "previousMatch": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "CLR",
+        "sourcePath": "Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/AudioRequestSystemTests.cs",
+        "Assets/Tests/Editor/AudioPerformanceValidationTests.cs"
+      ]
+    },
+    {
+      "id": "am018-static-irc-tactical-cinematic-obstruction-owned",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 1,
+      "previousMatch": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "IRC",
+        "sourcePath": "Assets/Game/Scripts/Systems/TacticalFollowAttackCinematicCameraSystemHelper.cs"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/TacticalFollowAttackCinematicHelperTests.cs"
+      ]
+    },
+    {
+      "id": "am018-static-irc-unit-transport-visual-owned",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 3,
+      "previousMatch": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "IRC",
+        "sourcePath": "Assets/Game/Scripts/Utilities/UnitTransportVisualUtility.cs"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/UnitTransportValidationTests.cs",
+        "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs"
+      ]
+    },
+    {
+      "id": "am018-static-irc-obsolete-build-drawer-ecs-retired",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 3,
+      "previousMatch": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "IRC",
+        "sourcePath": "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs",
+        "Assets/Tests/Editor/BuildDrawerCatalogQueryUiSystemHelperTests.cs"
+      ]
+    },
+    {
+      "id": "am018-static-irc-minimap-viewport-corners-retired",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 1,
+      "previousMatch": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "IRC",
+        "sourcePath": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapProjectionUiSystemHelper.cs",
+        "symbol": "ViewportCorners"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/MatchHudMinimapProjectionUiSystemHelperTests.cs"
+      ]
+    },
+    {
+      "id": "am018-static-msl-helicopter-diagnostic-owned",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 1,
+      "previousMatch": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "MSL",
+        "sourcePath": "Assets/Game/Scripts/Rendering/Systems/UnitHelicopterBladeSpinSystem.cs"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/UnitHelicopterBladeSpinSystemTests.cs"
+      ]
+    },
+    {
+      "id": "am018-static-msl-selection-outline-resources-owned",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 4,
+      "previousMatch": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "MSL",
+        "sourcePath": "Assets/Game/Scripts/Rendering/Systems/UnitSelectionObjectOutlinePresentationSystem.cs"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/VehicleVisualAdornmentsSystemTests.cs"
+      ]
+    },
+    {
+      "id": "am018-static-msl-runtime-stats-retired",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 12,
+      "previousMatch": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "MSL",
+        "sourcePath": "Assets/Game/Scripts/Balance/GameRuntimeStats.cs"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/GameRuntimeStatsTests.cs",
+        "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs"
+      ]
+    },
+    {
+      "id": "am018-static-msl-match-hud-assistant-diagnostics-owned",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 2,
+      "previousMatch": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "MSL",
+        "sourcePath": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.cs"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/MatchHudAssistantUiSystemHelperTests.cs"
+      ]
+    },
+    {
+      "id": "am018-static-msl-commander-background-shell-owned",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 3,
+      "previousMatch": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "MSL",
+        "sourcePath": "Assets/Game/Scripts/UI/Shell/CommanderProfileRouteLifecyclePresentation.cs"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/UIShellCurrentContentLoadTests.cs"
+      ]
+    },
+    {
+      "id": "am018-static-msl-main-menu-tab-session-reset",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 1,
+      "previousMatch": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "MSL",
+        "sourcePath": "Assets/Game/Scripts/UI/Screens/MainMenuNavigationView.cs"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/MainMenuNavigationViewTests.cs"
+      ]
+    },
+    {
+      "id": "am018-static-msl-prefab-preview-match-owned",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 18,
+      "previousMatch": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "MSL",
+        "sourcePath": "Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/SharedPrefabPreviewCacheTests.cs",
+        "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs"
+      ]
+    },
+    {
+      "id": "am018-static-msl-dead-initial-units-camera-retired",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 1,
+      "previousMatch": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "MSL",
+        "sourcePath": "Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs",
+        "symbol": "WorldCamera"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/RuntimeCameraReferenceSystemTests.cs",
+        "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs"
+      ]
+    },
+    {
+      "id": "am018-static-msl-game-text-application-snapshot-owned",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 1,
+      "previousMatch": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "MSL",
+        "sourcePath": "Assets/Game/Scripts/Configs/GameText.cs",
+        "symbol": "initialized"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/GameTextResolverAdapterTests.cs",
+        "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs"
+      ]
+    },
+    {
+      "id": "am018-static-msl-menu-startup-settings-world-instance-owned",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 1,
+      "previousMatch": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "MSL",
+        "sourcePath": "Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs",
+        "symbol": "startupRuntimeSettingsWorld"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"
+      ]
+    },
+    {
+      "id": "am018-static-msl-ai-settings-world-handoff-owned",
+      "previousDecision": "resolved",
+      "previousExpectedCount": 13,
+      "previousMatch": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "MSL",
+        "sourcePath": "Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs"
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/AISettingsOwnershipTests.cs",
+        "Assets/Tests/Editor/AISettingsValidationTests.cs",
+        "Assets/Tests/Editor/AIStartupSystemValidationTests.cs"
+      ]
     },
     {
       "id": "am018-static-msl-obsolete-build-ui-ecs-retired",
-      "decision": "resolved",
-      "reasonCode": "obsolete-duplicate-build-ui-ecs-path-retired",
-      "expectedCount": 4,
-      "match": {"sourceArtifact": "AM-018", "sourceCategory": "mutableStaticCaches", "disposition": "MSL", "sourcePath": ["Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs", "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildPlacementReadModelSystem.cs"]},
-      "authority": ["Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs", "Assets/Tests/Editor/BuildDrawerCatalogQueryUiSystemHelperTests.cs"]
+      "previousDecision": "resolved",
+      "previousExpectedCount": 4,
+      "previousMatch": {
+        "sourceArtifact": "AM-018",
+        "sourceCategory": "mutableStaticCaches",
+        "disposition": "MSL",
+        "sourcePath": [
+          "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs",
+          "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildPlacementReadModelSystem.cs"
+        ]
+      },
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs",
+        "Assets/Tests/Editor/BuildDrawerCatalogQueryUiSystemHelperTests.cs"
+      ]
     },
     {
       "id": "am018-static-msl-gameplay-camera-world-owned",
-      "decision": "resolved",
-      "reasonCode": "ecs-world-owned-gameplay-camera-state",
-      "expectedCount": 12,
-      "match": {
+      "previousDecision": "resolved",
+      "previousExpectedCount": 12,
+      "previousMatch": {
         "sourceArtifact": "AM-018",
         "sourceCategory": "mutableStaticCaches",
         "disposition": "MSL",
@@ -1143,16 +1522,16 @@
           "PlayerAutoModeEnabled"
         ]
       },
+      "disposition": "retired-no-current-open-row",
       "authority": [
         "Assets/Tests/Editor/RuntimeGameplayStateSystemTests.cs"
       ]
     },
     {
       "id": "am018-static-msl-initial-unit-diagnostics-world-owned",
-      "decision": "resolved",
-      "reasonCode": "ecs-world-owned-diagnostics-state",
-      "expectedCount": 3,
-      "match": {
+      "previousDecision": "resolved",
+      "previousExpectedCount": 3,
+      "previousMatch": {
         "sourceArtifact": "AM-018",
         "sourceCategory": "mutableStaticCaches",
         "disposition": "MSL",
@@ -1163,80 +1542,67 @@
           "BuildingRuntimeSliceDiagnostics"
         ]
       },
+      "disposition": "retired-no-current-open-row",
       "authority": [
         "Assets/Tests/Editor/RuntimeDiagnosticsSystemTests.cs"
       ]
     },
     {
       "id": "am018-static-msl-minimap-raster-buffer-instance-owned",
-      "decision": "resolved",
-      "reasonCode": "tested-instance-owned-raster-buffer",
-      "expectedCount": 1,
-      "match": {
+      "previousDecision": "resolved",
+      "previousExpectedCount": 1,
+      "previousMatch": {
         "sourceArtifact": "AM-018",
         "sourceCategory": "mutableStaticCaches",
         "disposition": "MSL",
         "sourcePath": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs",
         "symbol": "s_rasterBasePixels"
       },
-      "authority": ["Assets/Tests/Editor/MatchHudMinimapProjectionUiSystemHelperTests.cs"]
-    },
-    {
-      "id": "am018-discovery-audio-protected",
-      "decision": "protected-deferred",
-      "reasonCode": "protected-owner",
-      "expectedCount": 1,
-      "protectedOwnerIds": ["audio"],
-      "match": {"sourceArtifact": "AM-018", "sourceCategory": "runtimeObjectDiscovery", "sourcePath": "Assets/Game/Scripts/Composition/MatchSceneView.cs"},
-      "authority": ["Design/AgentReports/ArchitectureMaturity/am018_dependency_hazard_inventory.json"]
+      "disposition": "retired-no-current-open-row",
+      "authority": [
+        "Assets/Tests/Editor/MatchHudMinimapProjectionUiSystemHelperTests.cs"
+      ]
     },
     {
       "id": "am018-discovery-match-scene-ecs-reference-owned",
-      "decision": "resolved",
-      "reasonCode": "ecs-composition-reference-owned",
-      "expectedCount": 1,
-      "match": {
+      "previousDecision": "resolved",
+      "previousExpectedCount": 1,
+      "previousMatch": {
         "sourceArtifact": "AM-018",
         "sourceCategory": "runtimeObjectDiscovery",
         "sourcePath": "Assets/Game/Scripts/Composition/MatchSceneReferenceSceneSystemHelper.cs"
       },
+      "disposition": "retired-no-current-open-row",
       "authority": [
         "Assets/Tests/Editor/MatchSceneReferenceCompositionSystemHelperTests.cs"
       ]
     },
     {
       "id": "am018-discovery-performance-diagnostics-ecs-reference-owned",
-      "decision": "resolved",
-      "reasonCode": "ecs-composition-reference-owned",
-      "expectedCount": 1,
-      "match": {
+      "previousDecision": "resolved",
+      "previousExpectedCount": 1,
+      "previousMatch": {
         "sourceArtifact": "AM-018",
         "sourceCategory": "runtimeObjectDiscovery",
         "sourcePath": "Assets/Game/Scripts/Composition/PerformanceDiagnosticsReferenceDiagnosticsSystemHelper.cs"
       },
+      "disposition": "retired-no-current-open-row",
       "authority": [
         "Assets/Tests/Editor/PerformanceDiagnosticsSystemAllocationTests.cs"
       ]
-    },
-    {
-      "id": "am018-discovery-debt",
-      "decision": "genuine-debt",
-      "reasonCode": "runtime-object-discovery",
-      "expectedCount": 2,
-      "debtIdPrefix": "AM025-DISCOVERY",
-      "ownerDomain": "architecture-core",
-      "workPackageId": "AM-WP-028",
-      "match": {"sourceArtifact": "AM-018", "sourceCategory": "runtimeObjectDiscovery"},
-      "authority": ["Design/Architecture/WorkPackages/am_wp_028_phase2_debt_reconciliation.md"]
-    },
-    {
-      "id": "am018-event-owned",
-      "decision": "resolved",
-      "reasonCode": "exact-owned-unsubscribe",
-      "expectedCount": 5,
-      "match": {"sourceArtifact": "AM-018", "sourceCategory": "staticEventSubscriptions"},
-      "authority": ["Design/AgentReports/ArchitectureMaturity/am021_persistent_resource_ownership.json", "Design/AgentReports/ArchitectureMaturity/am022_world_lifecycle_recovery_evidence.json"]
     }
   ],
-  "acceptanceRule": "This artifact records row-bound evidence but does not grant acceptance. AM-025 remains unchecked until genuine debt and unclassified counts reach zero and all five source-growth blockers close."
+  "currentReconciliation": {
+    "previousReviewedIdentityCount": 575,
+    "currentOpenIdentityCount": 430,
+    "mappedPriorReviewIdentityCount": 385,
+    "newCurrentIdentityCount": 45,
+    "newCurrentResolvedCount": 42,
+    "newCurrentGenuineDebtCount": 3,
+    "retiredReviewRuleCount": 41,
+    "arithmeticSubscriptionFalsePositiveCount": 61,
+    "changedPriorDecisionRuleIds": [
+      "am007-world-operation-map-protected"
+    ]
+  }
 }

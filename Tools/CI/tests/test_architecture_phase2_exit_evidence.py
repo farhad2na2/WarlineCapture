@@ -346,7 +346,7 @@ class Phase2ClosureAuditContractTests(unittest.TestCase):
             encoding="utf-8"
         )
         self.assertIn("`412` resolved, `5` protected, and `13` genuine-debt", tracker)
-        self.assertIn("`12` unique file/rule items", package)
+        self.assertIn("`12` unique file/rule remediation items", package)
         self.assertIn("`13` remaining genuine-debt rows", package)
         self.assertIn("remains non-accepting", package)
         self.assertIn("acceptanceCreditGranted", json.dumps(self.audit, sort_keys=True))

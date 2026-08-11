@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 using Game.Tactical.Contracts;
 using Game.UI.Contracts;
@@ -51,14 +50,13 @@ namespace Game.UI.Runtime
         private TryResolveUiUnitCatalogMetadata _tryResolveUnitCatalogMetadata;
         private Button _rightQuickRailBuildButton;
         private Button _buildDrawerPopupCloseButton;
-        private UnityAction _buildDrawerPopupCloseButtonListener;
+        private UnityEngine.Events.UnityAction _buildDrawerPopupCloseButtonListener;
         private GameObject _buildDrawerPopupInstance;
         private GameObject _fullMapPopupInstance;
         private GameObject _pauseMenuPopupInstance;
         private GameObject _settingsPopupInstance;
         private SettingsPopupView _settingsPopupView;
         private MatchHudFullMapPopupView _fullMapPopupView;
-        private GameObject _commanderBackgroundScrim;
         private int _contentVersion;
 
         public UIShellView ShellView => shellView;
@@ -80,12 +78,7 @@ namespace Game.UI.Runtime
         public GameObject BuildPlacementConfirmationBarPrefab => buildPlacementConfirmationBarPrefab;
         public int ContentVersion => _contentVersion;
         internal IGameTextResolver GameTextResolver => _gameTextResolver;
-        internal GameObject CommanderBackgroundScrim
-        {
-            get => _commanderBackgroundScrim;
-            set => _commanderBackgroundScrim = value;
-        }
-
+        internal GameObject CommanderBackgroundScrim { get; set; }
         public void Configure(
             UIShellView view,
             GameObject loadingPrefab,

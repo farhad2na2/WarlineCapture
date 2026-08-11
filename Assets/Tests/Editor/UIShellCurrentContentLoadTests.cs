@@ -346,11 +346,11 @@ public sealed class UIShellCurrentContentLoadTests
     [Test]
     public void CommanderBackgroundOwnership_UsesShellInstanceStateWithoutHierarchySearch()
     {
-        FieldInfo field = typeof(UIShellContentView).GetField(
-            "_commanderBackgroundScrim",
+        PropertyInfo property = typeof(UIShellContentView).GetProperty(
+            "CommanderBackgroundScrim",
             BindingFlags.Instance | BindingFlags.NonPublic);
-        Assert.NotNull(field);
-        Assert.AreEqual(typeof(GameObject), field.FieldType);
+        Assert.NotNull(property);
+        Assert.AreEqual(typeof(GameObject), property.PropertyType);
 
         string source = File.ReadAllText(
             "Assets/Game/Scripts/UI/Shell/CommanderProfileRouteLifecyclePresentation.cs");

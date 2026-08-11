@@ -77,6 +77,14 @@
       "maxLines": 865,
       "maxBytes": 34274,
       "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/RuntimeGridPersistentStorageUtilitySystemHelper.cs",
+      "trackerTaskId": "AMFR-008",
+      "acceptedCommit": "4e6eeecc00846b2464e423892e522d4e423013f2",
+      "maxLines": 199,
+      "maxBytes": 8699,
+      "scope": "system-helper"
     }
   ],
   "entries": [

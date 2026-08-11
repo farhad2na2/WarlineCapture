@@ -116,7 +116,7 @@ The worktree must be clean at every accepted commit and after every push. Genera
 
 ### Phase E - AM-025 Acceptance
 
-- [ ] `AMFR-017` Pass `ProductionSourceGrowthArchitectureTests.RunFocusedValidation` with the exact 17-test marker and no weakened rule, ceiling, or allowlist.
+- [~] `AMFR-017` Pass `ProductionSourceGrowthArchitectureTests.RunFocusedValidation` with the exact 17-test marker and no weakened rule, ceiling, or allowlist.
 - [ ] `AMFR-018` Pass the complete `ArchitectureHardeningCloseoutValidationRunner.RunFocusedValidation` 23-suite architecture entrypoint and all required Python ownership/evidence checks.
 - [ ] `AMFR-019` Pass the accepted World recreation, scene unload/reload, missing-singleton recovery, one-warm-up plus 10 measured transition cycles, structural/pool trend, and governed focused allocation suites.
 - [ ] `AMFR-020` Complete canonical Unity compilation with zero errors; deterministic regeneration; exact artifact/source/tool hashes; protected-path audit; `git diff --check`; and focused independent review with no unresolved finding.
@@ -401,6 +401,13 @@ The worktree must be clean at every accepted commit and after every push. Genera
 - Exact classification: dependency-analyzer unit log SHA-256 `51ba4a3aa06d76dc5f6c127dc2391461d4ee902877c5f3de36551c1ef2d00c5e` passes `6 / 6`; exact output SHA-256 `508198aeaad17923020d535843e0c755486a1d4e5fa67cb37d5a5867b3959dbb` reports zero target hierarchy-discovery findings. The diagnostics mutable-static row remains visible and is resolved by its focused subsystem-reset owner.
 - Exact authority: seven superseding no-headroom scopes bind only the changed `5c812b21a...` governed blobs: aftermath `427 / 16,213`; R&D composition `935 / 39,502` under both applicable scopes; runtime-city composition `867 / 47,605` under both applicable scopes; and road visual `287 / 11,032`. The shell requires no growth exception: `f9b55cf49...` reduces it to `951 / 40,958`, below historical `952 / 41,372`, while its guarded source identity and one additional per-instance state slot are frozen exactly. Checked canonical authorization `Build/Logs/amfr016-source-authorization-final.log`, SHA-256 `b25153e07d7968001267dd1dac0e86b31ed77d2aa99833b4449459949aee4d98`, passes `1 / 1` with zero C# errors.
 - Result: accepted `16 / 22` without parent checklist credit. The four genuinely unresolved rows are closed; AMFR-005 and AMFR-007 already resolve the two stale governed rows. The validated Phase 2 projection is zero genuine-debt and zero unclassified rows; AMFR-017 is dependency-ready, while canonical regeneration and AM-025 acceptance remain open.
+
+### 2026-08-11 - AMFR-017 - Exact source-growth reconciliation claim
+
+- Entry identity: clean pushed `main`/`origin/main` commit `d767bcf1ebec653dd8c4ae30cd793965332286a0`. Checked canonical entrypoint `Build/Logs/amfr017-source-growth-baseline.log`, SHA-256 `6b0341f71d035d8ca58f974ee95975029052beaf3abd6f5eca160d551e8b08f3`, fails closed on exactly `44` retained review rows: `12` current sources newly above 500 lines and `32` sources grown beyond a frozen line/byte ceiling. The previously counted shell row is absent because AMFR-016 returned it below its historical ceiling.
+- Exact allowlist: `Design/Architecture/post_hardening_source_responsibility_guardrails.json`, `Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs`, this child tracker, and the parent maturity tracker. All 44 production sources are read-only immutable evidence at `d767bcf1e...`; scenes, prefabs, generated content, packages, `ProjectSettings`, thresholds, baseline history, wrappers, and every feature are excluded.
+- Required review: classify every reported path by its existing responsibility owner and applicable source-growth scope, verify its exact `git show d767bcf1e...` line/byte identity, bind it to `AMFR-017` with no spare headroom, record behavior/architecture evidence and a review/removal condition, reject duplicates or speculative ceilings, and preserve the exact 17-test logic. A cryptographic ordered-tuple ratchet may replace repetitive hard-coded tuples only if it remains exact, per-entry validation is retained, mismatches fail closed, and its focused validator passes.
+- Acceptance: exact authorization `1 / 1`, exact source-growth `17 / 17`, zero C# errors, no production diff, protected-path audit, and `git diff --check`. AMFR-017 earns no parent credit; AMFR-018 remains gated until the clean pushed closure.
 
 ## 7. Validation And Evidence Contract
 

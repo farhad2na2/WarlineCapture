@@ -1115,3 +1115,9 @@ Accepted AM-020 progress snapshot:
 - Authority: exact `AMFR-016` scopes bind changed governed blobs at immutable no-headroom sizes. The shell-ratchet commit `f9b55cf4968c41f3f22f0377d4606c8676b39b62` reduces `UIShellContentView` below its historical ceiling and freezes the new exact guarded identity without adding a growth exception. Checked canonical authorization passes `1 / 1` with zero C# errors.
 - Debt disposition: the four genuinely unresolved AMFR-016 rows are closed. With accepted AMFR-005 and AMFR-007 evidence for the two stale rows, the validated Phase 2 projection is zero genuine debt and zero unclassified rows; canonical regeneration remains in the acceptance phase.
 - Result: AMFR-016 accepted at child `16 / 22` without parent checklist credit. AMFR-017 is next; AM-025 remains unchecked.
+
+### 2026-08-11 - AM-025 - AMFR-017 source-growth reconciliation claim
+
+- Exact pushed-head diagnosis: the canonical 17-test entrypoint rejects `44` retained review rows (`12` newly above 500 lines / `32` grown). AMFR-016's shell row is no longer present.
+- Ownership: AMFR-017 may edit only the post-hardening source-authority contract, its exact frozen validator representation, and both trackers. All reported production sources are immutable evidence; no baseline, threshold, production source, asset, wrapper, or feature is owned.
+- Acceptance: every tuple requires exact current ceilings, immutable commit/blob binding, existing responsibility/behavior evidence, review/removal conditions, canonical authorization, and the unchanged `17 / 17` pass. AM-025 remains unchecked.

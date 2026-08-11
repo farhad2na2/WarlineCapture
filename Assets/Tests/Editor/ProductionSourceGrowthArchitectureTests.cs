@@ -772,8 +772,8 @@ public sealed class ProductionSourceGrowthArchitectureTests
         Require(contract.ReplacementOwnerBoundary != null, "The replacement-owner boundary is required.");
         Require(contract.GrowthAuthorizations != null, "Post-hardening growth authorizations are required.");
         Require(
-            contract.GrowthAuthorizations.Count == 10,
-            "Exactly ten accepted post-hardening growth authorizations are required.");
+            contract.GrowthAuthorizations.Count == 14,
+            "Exactly fourteen accepted post-hardening growth authorizations are required.");
         Require(
             contract.Entries.Count == PostHardeningGuardrailEntryCount,
             $"The post-hardening guardrail must contain exactly {PostHardeningGuardrailEntryCount} entries.");
@@ -1342,6 +1342,42 @@ public sealed class ProductionSourceGrowthArchitectureTests
                 MaxLines = 67,
                 MaxBytes = 2223,
                 Scope = SystemHelperScope
+            },
+            new PostHardeningGrowthAuthorization
+            {
+                Path = "Assets/Game/Scripts/Environment/RuntimeCityCompositionSystemHelper.cs",
+                TrackerTaskId = "AMFR-012",
+                AcceptedCommit = "acc7b52a799fa1929f9434452b659310faaf5a06",
+                MaxLines = 866,
+                MaxBytes = 47502,
+                Scope = ProductionReviewScope
+            },
+            new PostHardeningGrowthAuthorization
+            {
+                Path = "Assets/Game/Scripts/Environment/RuntimeCityCompositionSystemHelper.cs",
+                TrackerTaskId = "AMFR-012",
+                AcceptedCommit = "acc7b52a799fa1929f9434452b659310faaf5a06",
+                MaxLines = 866,
+                MaxBytes = 47502,
+                Scope = SystemHelperGrowthScope
+            },
+            new PostHardeningGrowthAuthorization
+            {
+                Path = "Assets/Game/Scripts/Environment/RuntimeCityReadinessQueryCompositionSystemHelper.cs",
+                TrackerTaskId = "AMFR-012",
+                AcceptedCommit = "acc7b52a799fa1929f9434452b659310faaf5a06",
+                MaxLines = 154,
+                MaxBytes = 5725,
+                Scope = SystemHelperGrowthScope
+            },
+            new PostHardeningGrowthAuthorization
+            {
+                Path = "Assets/Game/Scripts/Environment/RuntimeCityRoadBuildBridgeCompositionSystemHelper.cs",
+                TrackerTaskId = "AMFR-012",
+                AcceptedCommit = "acc7b52a799fa1929f9434452b659310faaf5a06",
+                MaxLines = 197,
+                MaxBytes = 7381,
+                Scope = SystemHelperGrowthScope
             },
             new PostHardeningGrowthAuthorization
             {

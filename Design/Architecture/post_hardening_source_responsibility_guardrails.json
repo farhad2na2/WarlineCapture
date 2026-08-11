@@ -47,6 +47,38 @@
       "scope": "system-helper"
     },
     {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-012",
+      "acceptedCommit": "acc7b52a799fa1929f9434452b659310faaf5a06",
+      "maxLines": 866,
+      "maxBytes": 47502,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-012",
+      "acceptedCommit": "acc7b52a799fa1929f9434452b659310faaf5a06",
+      "maxLines": 866,
+      "maxBytes": 47502,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityReadinessQueryCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-012",
+      "acceptedCommit": "acc7b52a799fa1929f9434452b659310faaf5a06",
+      "maxLines": 154,
+      "maxBytes": 5725,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityRoadBuildBridgeCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-012",
+      "acceptedCommit": "acc7b52a799fa1929f9434452b659310faaf5a06",
+      "maxLines": 197,
+      "maxBytes": 7381,
+      "scope": "system-helper-growth"
+    },
+    {
       "path": "Assets/Game/Scripts/Environment/RuntimeCityRoadVisualPrototypeSystemHelper.cs",
       "trackerTaskId": "AMFR-009",
       "acceptedCommit": "367e427336c845732fe04410ea1a81eb738c9376",

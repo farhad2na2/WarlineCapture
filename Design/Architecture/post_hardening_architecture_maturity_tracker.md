@@ -1,5 +1,7 @@
 # Post-Hardening Architecture Maturity Tracker
 
+Active Phase 2 child tracker: `am025_feature_readiness_architecture_closeout_tracker.md`. This bounded gate closes `AM-025` before new feature implementation resumes; it does not activate Phase 3 production work or the deferred Release Certification Lane.
+
 ## Purpose
 
 Move WarlineCapture from the `8.8 / 10` early-development architecture closeout to a practical, evidence-backed `9.5+ / 10` production architecture without making release-cycle device qualification a prerequisite for current code-quality work.

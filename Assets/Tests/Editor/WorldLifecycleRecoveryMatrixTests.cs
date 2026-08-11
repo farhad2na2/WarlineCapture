@@ -21,8 +21,9 @@ public sealed class WorldLifecycleRecoveryMatrixTests
         string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
         string authority = File.ReadAllText(Path.Combine(root, AuthorityPath));
 
-        StringAssert.Contains("\"totalResourceCount\": 575", authority);
-        StringAssert.Contains("\"explicitOwnerCount\": 553", authority);
+        StringAssert.Contains("\"totalResourceCount\": 640", authority);
+        StringAssert.Contains("\"explicitOwnerCount\": 567", authority);
+        StringAssert.Contains("\"protectedOwnerCount\": 73", authority);
         StringAssert.Contains("\"gapCount\": 0", authority);
         StringAssert.Contains("RuntimeGridPersistentStorageUtilitySystemHelper.EnsureStorage", authority);
         StringAssert.Contains("RuntimeGridPersistentStorageUtilitySystemHelper.DisposeStorage", authority);

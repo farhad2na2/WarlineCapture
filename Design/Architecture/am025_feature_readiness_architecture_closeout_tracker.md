@@ -443,6 +443,12 @@ The worktree must be clean at every accepted commit and after every push. Genera
 - Write allowlist: this child and parent tracker only for claim/acceptance records. All production source, Unity tests, scenes, prefabs, generated content, packages, `ProjectSettings`, wrappers, thresholds, source authority, Android/device work, feature work, and deferred Phase 6/9 work are read-only.
 - Acceptance: every exact current fixture must pass through `Tools/CI/InvokeUnity.ps1` with explicit log, results path, timeout, and fail-closed NUnit result; recurring recovered-path allocation remains exactly `0` bytes. Stale accepted results, partial fixtures, missing XML, skips, compiler errors, or release-lane reinterpretation receive no credit.
 
+### 2026-08-11 - AMFR-019 - Current ownership-authority fixture correction
+
+- Exact failure: checked Test Framework evidence `Build/Logs/amfr019-world-recovery-editmode-final.xml` ran all `8` recovery cases and correctly failed `AcceptedAuthority_HasZeroGapsAndEveryProductionPathResolves` because the fixture still expected the historical AM-021 `575` total / `553` explicit counts. The current deterministic authority accepted by AMFR-018 is `640` total / `567` explicit / `73` protected / `0` gaps. The other `7` recovery cases passed; no partial pass is credited.
+- Narrow correction allowlist: `Assets/Tests/Editor/WorldLifecycleRecoveryMatrixTests.cs` and both trackers. The fixture now freezes all four current summary counts and retains production-path resolution plus runtime-grid creator/disposer checks. No production source, generator, report, ownership rule, lifecycle behavior, allocation window, threshold, wrapper, asset, or feature is changed.
+- Recovery note: the first GUI Test Framework attempts produced no NUnit XML and received no credit. The wrapper-spawned Editor was positively identified by exact project command line and closed through its normal window-close path only; Unity Hub and unrelated processes were untouched. The subsequent checked batchmode run produced the canonical `7 / 8` failing evidence above and cleaned its own process tree.
+
 ## 7. Validation And Evidence Contract
 
 The parent work packages remain authoritative. This child does not replace their suite order, identity rules, evidence schema, allocation thresholds, lifecycle counts, or acceptance arithmetic.

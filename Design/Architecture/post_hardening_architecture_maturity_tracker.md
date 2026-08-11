@@ -1151,3 +1151,8 @@ Accepted AM-020 progress snapshot:
 - Entry identity: clean pushed `main`/`origin/main` commit `05d6e46ee06a4d0e1eba2082ebb192145d735533` with AMFR-018 accepted.
 - Exact gate: rerun the current AM-022 recovery fixtures (`8` EditMode plus `2` PlayMode), the current AM-023 transition fixture including one warm-up plus `10` measured production cycles, and the current AM-024 structural/pool fixture with one warm-up plus `5` measured cycles. The recovered-path `180 + 300` recurring allocation measurement remains exactly zero; exceeded raw Editor-memory investigation ceilings remain reported rather than passed.
 - Scope: production, tests, scenes, packages, thresholds, source authority, Android/device work, features, and deferred Phase 6/9 work are read-only. Only both trackers may record the claim and accepted current result. AM-025 remains unchecked while AMFR-019 is active.
+
+### 2026-08-11 - AM-025 - AMFR-019 current-authority fixture correction
+
+- Checked recovery evidence ran all `8` EditMode cases and failed only the authority guard because it retained historical `575 / 553` AM-021 counts. Current deterministic AMFR-018 authority is `640` resources, `567` explicit owners, `73` protected owners, and zero gaps.
+- The narrow fixture-only correction updates those exact fail-closed counts and adds the protected-owner assertion. Production, ownership generators/rules, lifecycle behavior, allocation windows, thresholds, assets, and features remain unchanged. AMFR-019 remains active until the complete current lifecycle/transition/pool suite passes.

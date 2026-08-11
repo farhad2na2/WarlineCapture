@@ -12,7 +12,17 @@ namespace Game.Authoring
     public class GridAuthoring : MonoBehaviour
     {
         [SerializeField] private GridAuthoringConfig config;
+#if UNITY_EDITOR
         private IRuntimeGridBlockerCellLookup _runtimeGridBlockers;
+        private World _runtimeDebugWorld;
+        private EntityQuery _runtimeRoadQuery;
+        private EntityQuery _runtimeSidewalkQuery;
+        private EntityQuery _runtimeBlockerQuery;
+        private EntityQuery _runtimeVehicleQuery;
+        private EntityQuery _runtimePathGridQuery;
+        private EntityQuery _runtimePathUnitQuery;
+        private bool _hasRuntimeDebugQueries;
+#endif
         public int Width => config != null ? config.Width : 16;
         public int Height => config != null ? config.Height : 16;
         public float CellSize => config != null ? config.CellSize : 1f;
@@ -46,10 +56,41 @@ namespace Game.Authoring
             this.config = config;
         }
 
-        public void BindRuntimeGridBlockers(IRuntimeGridBlockerCellLookup runtimeGridBlockers)
+#if UNITY_EDITOR
+        public void BindRuntimeDebugSources(
+            IRuntimeGridBlockerCellLookup runtimeGridBlockers,
+            World runtimeWorld)
         {
+            ClearRuntimeDebugSources();
             _runtimeGridBlockers = runtimeGridBlockers;
+            if (runtimeWorld == null || !runtimeWorld.IsCreated)
+                return;
+
+            _runtimeDebugWorld = runtimeWorld;
+            EntityManager entityManager = runtimeWorld.EntityManager;
+            _runtimeRoadQuery = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<GridConfig>(),
+                ComponentType.ReadOnly<GridRoad>());
+            _runtimeSidewalkQuery = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<GridConfig>(),
+                ComponentType.ReadOnly<GridRoadSidewalk>());
+            _runtimeBlockerQuery = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<GridConfig>(),
+                ComponentType.ReadOnly<DynamicBlockerComponent>());
+            _runtimeVehicleQuery = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<UnitGrid>(),
+                ComponentType.ReadOnly<UnitFootprint>(),
+                ComponentType.ReadOnly<UnitMovementBehavior>());
+            _runtimePathGridQuery = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<GridConfig>(),
+                ComponentType.ReadOnly<PathPoolComponent>());
+            _runtimePathUnitQuery = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<UnitGrid>(),
+                ComponentType.ReadOnly<UnitTarget>(),
+                ComponentType.ReadOnly<ManualMoveOrderTag>());
+            _hasRuntimeDebugQueries = true;
         }
+#endif
 
         private class GridBaker : Baker<GridAuthoring>
         {
@@ -94,6 +135,12 @@ namespace Game.Authoring
                     }
                 }
             }
+        }
+
+#if UNITY_EDITOR
+        private void OnDisable()
+        {
+            ClearRuntimeDebugSources();
         }
 
         private void OnDrawGizmos()
@@ -261,19 +308,29 @@ namespace Game.Authoring
             }
         }
 
-        private static bool TryGetRuntimeRoadBuffer(out DynamicBuffer<GridRoad> roads, out int width, out int height)
+        internal bool TryGetRuntimeDebugGridConfig(out GridConfig grid)
+        {
+            grid = default;
+            if (!TryGetRuntimeEntityManager(out EntityManager entityManager) ||
+                !TryGetFirstQueryEntity(_runtimeRoadQuery, out Entity gridEntity))
+            {
+                return false;
+            }
+
+            grid = entityManager.GetComponentData<GridConfig>(gridEntity);
+            return true;
+        }
+
+        private bool TryGetRuntimeRoadBuffer(out DynamicBuffer<GridRoad> roads, out int width, out int height)
         {
             roads = default;
             width = 0;
             height = 0;
 
-            World world = World.DefaultGameObjectInjectionWorld;
-            if (world == null || !world.IsCreated)
+            if (!TryGetRuntimeEntityManager(out EntityManager entityManager))
                 return false;
 
-            EntityManager entityManager = world.EntityManager;
-            using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>(), ComponentType.ReadOnly<GridRoad>());
-            if (!TryGetFirstQueryEntity(query, out Entity gridEntity))
+            if (!TryGetFirstQueryEntity(_runtimeRoadQuery, out Entity gridEntity))
                 return false;
 
             GridConfig grid = entityManager.GetComponentData<GridConfig>(gridEntity);
@@ -291,19 +348,16 @@ namespace Game.Authoring
             return Mathf.Max(1, Mathf.CeilToInt(Mathf.Sqrt(itemCount / (float)maxItems)));
         }
 
-        private static bool TryGetRuntimeSidewalkRoadBuffer(out DynamicBuffer<GridRoadSidewalk> sidewalks, out int width, out int height)
+        private bool TryGetRuntimeSidewalkRoadBuffer(out DynamicBuffer<GridRoadSidewalk> sidewalks, out int width, out int height)
         {
             sidewalks = default;
             width = 0;
             height = 0;
 
-            World world = World.DefaultGameObjectInjectionWorld;
-            if (world == null || !world.IsCreated)
+            if (!TryGetRuntimeEntityManager(out EntityManager entityManager))
                 return false;
 
-            EntityManager entityManager = world.EntityManager;
-            using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>(), ComponentType.ReadOnly<GridRoadSidewalk>());
-            if (!TryGetFirstQueryEntity(query, out Entity gridEntity))
+            if (!TryGetFirstQueryEntity(_runtimeSidewalkQuery, out Entity gridEntity))
                 return false;
 
             GridConfig grid = entityManager.GetComponentData<GridConfig>(gridEntity);
@@ -313,19 +367,16 @@ namespace Game.Authoring
             return true;
         }
 
-        private static bool TryGetRuntimeBuildingBlockers(out NativeBitArray blocked, out int width, out int height)
+        private bool TryGetRuntimeBuildingBlockers(out NativeBitArray blocked, out int width, out int height)
         {
             blocked = default;
             width = 0;
             height = 0;
 
-            World world = World.DefaultGameObjectInjectionWorld;
-            if (world == null || !world.IsCreated)
+            if (!TryGetRuntimeEntityManager(out EntityManager entityManager))
                 return false;
 
-            EntityManager entityManager = world.EntityManager;
-            using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>(), ComponentType.ReadOnly<DynamicBlockerComponent>());
-            if (!TryGetFirstQueryEntity(query, out Entity gridEntity))
+            if (!TryGetFirstQueryEntity(_runtimeBlockerQuery, out Entity gridEntity))
                 return false;
 
             GridConfig grid = entityManager.GetComponentData<GridConfig>(gridEntity);
@@ -339,23 +390,17 @@ namespace Game.Authoring
             return true;
         }
 
-        private static bool TryGetRuntimeVehicleFootprints(out List<int2> cells)
+        private bool TryGetRuntimeVehicleFootprints(out List<int2> cells)
         {
             cells = null;
 
-            World world = World.DefaultGameObjectInjectionWorld;
-            if (world == null || !world.IsCreated)
+            if (!TryGetRuntimeEntityManager(out EntityManager entityManager))
                 return false;
 
-            EntityManager entityManager = world.EntityManager;
-            using EntityQuery query = entityManager.CreateEntityQuery(
-                ComponentType.ReadOnly<UnitGrid>(),
-                ComponentType.ReadOnly<UnitFootprint>(),
-                ComponentType.ReadOnly<UnitMovementBehavior>());
-            if (query.IsEmptyIgnoreFilter)
+            if (_runtimeVehicleQuery.IsEmptyIgnoreFilter)
                 return false;
 
-            using var entities = query.ToEntityArray(Allocator.Temp);
+            using var entities = _runtimeVehicleQuery.ToEntityArray(Allocator.Temp);
             cells = new List<int2>();
             for (int i = 0; i < entities.Length; i++)
             {
@@ -383,26 +428,19 @@ namespace Game.Authoring
 
         private void DrawRuntimeUnitPaths()
         {
-            World world = World.DefaultGameObjectInjectionWorld;
-            if (world == null || !world.IsCreated)
+            if (!TryGetRuntimeEntityManager(out EntityManager entityManager))
                 return;
 
-            EntityManager entityManager = world.EntityManager;
-            using EntityQuery gridQuery = entityManager.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>(), ComponentType.ReadOnly<PathPoolComponent>());
-            if (!TryGetFirstQueryEntity(gridQuery, out Entity gridEntity))
+            if (!TryGetFirstQueryEntity(_runtimePathGridQuery, out Entity gridEntity))
                 return;
 
             GridConfig grid = entityManager.GetComponentData<GridConfig>(gridEntity);
             NativeArray<int2> pathPool = entityManager.GetComponentData<PathPoolComponent>(gridEntity).Cells.AsArray();
 
-            using EntityQuery unitQuery = entityManager.CreateEntityQuery(
-                ComponentType.ReadOnly<UnitGrid>(),
-                ComponentType.ReadOnly<UnitTarget>(),
-                ComponentType.ReadOnly<ManualMoveOrderTag>());
-            if (unitQuery.IsEmptyIgnoreFilter)
+            if (_runtimePathUnitQuery.IsEmptyIgnoreFilter)
                 return;
 
-            using var entities = unitQuery.ToEntityArray(Allocator.Temp);
+            using var entities = _runtimePathUnitQuery.ToEntityArray(Allocator.Temp);
             for (int i = 0; i < entities.Length; i++)
             {
                 Entity entity = entities[i];
@@ -458,5 +496,39 @@ namespace Game.Authoring
             entity = entities[0];
             return entity != Entity.Null;
         }
+
+        private bool TryGetRuntimeEntityManager(out EntityManager entityManager)
+        {
+            entityManager = default;
+            if (!_hasRuntimeDebugQueries || _runtimeDebugWorld == null || !_runtimeDebugWorld.IsCreated)
+                return false;
+
+            entityManager = _runtimeDebugWorld.EntityManager;
+            return true;
+        }
+
+        private void ClearRuntimeDebugSources()
+        {
+            if (_hasRuntimeDebugQueries && _runtimeDebugWorld != null && _runtimeDebugWorld.IsCreated)
+            {
+                _runtimeRoadQuery.Dispose();
+                _runtimeSidewalkQuery.Dispose();
+                _runtimeBlockerQuery.Dispose();
+                _runtimeVehicleQuery.Dispose();
+                _runtimePathGridQuery.Dispose();
+                _runtimePathUnitQuery.Dispose();
+            }
+
+            _runtimeRoadQuery = default;
+            _runtimeSidewalkQuery = default;
+            _runtimeBlockerQuery = default;
+            _runtimeVehicleQuery = default;
+            _runtimePathGridQuery = default;
+            _runtimePathUnitQuery = default;
+            _hasRuntimeDebugQueries = false;
+            _runtimeDebugWorld = null;
+            _runtimeGridBlockers = null;
+        }
+#endif
     }
 }

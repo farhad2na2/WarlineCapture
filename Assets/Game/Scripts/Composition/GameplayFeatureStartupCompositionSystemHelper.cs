@@ -71,7 +71,17 @@ namespace Game.Composition
                     : null;
             runtimeGridBlockers?.Init(runtimeGridBlockerConfig, runtimeBlockerRoot, runtimeCityReadModel);
             bindRoadGameplayFeatures?.Invoke(mainMenu, runtimeGridBlockers);
-            sceneBindingSystem?.BindRuntimeGridBlockerDebugViews(runtimeGridBlockers, runtimeGridDebugViews);
+#if UNITY_EDITOR
+            World runtimeDebugWorld = buildingRuntimeCitySpawnContext.TryGetEntityManager != null &&
+                                      buildingRuntimeCitySpawnContext.TryGetEntityManager(
+                                          out EntityManager runtimeEntityManager)
+                ? runtimeEntityManager.World
+                : null;
+            sceneBindingSystem?.BindRuntimeGridBlockerDebugViews(
+                runtimeGridBlockers,
+                runtimeDebugWorld,
+                runtimeGridDebugViews);
+#endif
             bindBuildingGameplayFeatures?.Invoke(
                 mainMenu,
                 selectionUiCameraSystem,

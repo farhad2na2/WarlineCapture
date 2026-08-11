@@ -1,13 +1,16 @@
 using System.Collections.Generic;
 using Game.Authoring;
 using Game.Runtime;
+using Unity.Entities;
 
 namespace Game.Composition
 {
     public sealed class GameplaySceneBindingSceneSystemHelper
     {
+#if UNITY_EDITOR
         public void BindRuntimeGridBlockerDebugViews(
             RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers,
+            World runtimeWorld,
             IReadOnlyList<GridAuthoring> grids)
         {
             if (grids == null)
@@ -19,8 +22,9 @@ namespace Game.Composition
                 if (grid == null)
                     continue;
 
-                grid.BindRuntimeGridBlockers(runtimeGridBlockers);
+                grid.BindRuntimeDebugSources(runtimeGridBlockers, runtimeWorld);
             }
         }
+#endif
     }
 }

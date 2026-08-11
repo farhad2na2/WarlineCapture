@@ -2,8 +2,9 @@
 
 Date: 2026-08-12
 Status: Draft for project-owner review
-Progress: 0/40 accepted items (0%)
+Progress: 0/43 accepted items (0%)
 Parent design: `Design/M01_FirstContact_Dense_City_High_Level_Design.md`
+Technical architecture: `Design/Architecture/m01_first_contact_dense_city_technical_architecture.md`
 Mission: `saga.ch01.m01.first_contact`
 Scenario: `scenario.ch01.m01.first_contact`
 Logical operation map: `opmap.ch01.district_edge_01`
@@ -11,11 +12,11 @@ Physical city source: accepted dense-city presentation currently used by `opmap.
 
 ## 1. Purpose
 
-This tracker turns the approved M01 high-level design into dependency-ordered, reviewable implementation slices. It covers the direct FirstLaunch handoff, Campaign launch and replay, shared dense-city Old Market mission view, runtime mission ownership, guidance, objectives, results, rewards, persistence, civilians, validation, and Android certification.
+This tracker turns the approved M01 high-level design into dependency-ordered, reviewable implementation slices. It covers the direct FirstLaunch handoff, Campaign launch and replay, shared dense-city Old Market mission view, runtime mission ownership, guidance, objectives, results, rewards, persistence, civilians, agent-operated first-gameplay QA with a mandatory feedback/fix loop, validation, and Android certification.
 
 This document authorizes no implementation until the project owner accepts the tracker. After acceptance, work proceeds in item order. Each accepted item must be evidence-backed, committed, pushed, and leave the repository clean before the next item begins.
 
-The 40 items below are granular acceptance slices, not 40 separate features. Together they deliver one bounded production feature: M01 First Contact.
+The 43 items below are granular acceptance slices, not 43 separate features. Together they deliver one bounded production feature: M01 First Contact.
 
 ## 2. Locked Product Contract
 
@@ -32,12 +33,14 @@ The following decisions are final unless the project owner explicitly amends the
 9. Stars are: complete the mission, take no squad loss, and finish under four minutes. Four minutes is a result threshold, not a failure timer.
 10. Rewards are configuration-owned and idempotent. M01 grants no Intel. Reduced replay Credits must be explicit data.
 11. The live M01 patrol is the same three-person Ash Line patrol shown in FirstLaunch FL-P15/FL-P18: Courier (`Chr_Insurgent_Male_03`), Warden (`Chr_Insurgent_Female_01`), and Broker (`Chr_Insurgent_Female_02`). `Chr_Insurgent_Male_05` is reserved exclusively for Nadir Qassem and may not appear or be revealed in M01; the Male 02 heavy gunner is also excluded.
+12. M01 is the first actual gameplay experience. Codex or the implementing agent must explicitly play the novice QA role and evaluate comprehension, controls, simplicity, fun, pacing, smoothness, audio, accessibility, recovery, and bugs on a fresh package. This is agent-operated QA, not a human participant study. P0-P2 findings must be fixed and replayed; P3 findings require a bounded fix or explicit project-owner deferral.
 
 ## 3. Authority And Dependency Order
 
 This tracker is subordinate to the following accepted authorities:
 
 - `Design/M01_FirstContact_Dense_City_High_Level_Design.md`
+- `Design/Architecture/m01_first_contact_dense_city_technical_architecture.md`
 - `Design/M01_FirstContact_Production_Contract.md`
 - `Design/First_Player_Experience_And_Story_Onboarding_Design.md`
 - `Design/Campaign_Mission_High_Level_Design_Catalog.md`
@@ -112,7 +115,7 @@ The tracker may add or narrowly modify M01-owned content under these families af
 - existing Campaign Operations, Mission Briefing, HUD, Mission Result, narrative, ARIA, and UI shell paths for their bounded read-model or routing changes
 - `Assets/Tests/Editor/` and `Assets/Tests/PlayMode/` for M01-focused tests
 - `Design/AgentReports/M01FirstContact/` for compact, reviewable evidence manifests and reports
-- this tracker, its parent HLD, and directly affected documentation authorities
+- this tracker, its parent HLD, the linked M01 technical architecture, and directly affected documentation authorities
 
 These are path families, not blanket edit permission. Every implementation item must record the exact files it will touch before editing them.
 
@@ -145,7 +148,7 @@ Mission-specific camera, bounds, anchor, surface, navigation, minimap, and logic
 
 Every item follows this sequence:
 
-1. Re-read `AGENTS.md`, this tracker, the parent HLD, affected authorities, current main/origin, active Unity ownership, and git status.
+1. Re-read `AGENTS.md`, this tracker, the parent HLD, the linked M01 technical architecture, affected authorities, current main/origin, active Unity ownership, and git status.
 2. Reconcile any newer accepted item. Start from the actual current head, never a stale hash.
 3. Regenerate the item's exact baseline evidence before editing.
 4. Record exact allowed files, exact excluded files, expected behavior, validation commands, pass markers, timeout, evidence outputs, and rollback.
@@ -217,8 +220,8 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
 
 - [ ] **M01DC-001 - Accept tracker and reconcile the production hold**
   **Depends on:** approved HLD.
-  **Deliverable:** record project-owner tracker acceptance; reconcile FirstLaunch Phase 10R/Gate 9R evidence without rewriting its historical results; distinguish design approval, production release, and final mission acceptance; leave Gate 10 or equivalent completion open.
-  **Acceptance:** the HLD and FirstLaunch tracker agree that the visual direction is accepted and M01 production work is authorized only through this tracker; no historical evidence is relabeled as a validation that did not run.
+  **Deliverable:** record project-owner acceptance of this tracker and the linked technical architecture; reconcile FirstLaunch Phase 10R/Gate 9R evidence without rewriting its historical results; distinguish design approval, production release, and final mission acceptance; leave Gate 10 or equivalent completion open.
+  **Acceptance:** the HLD, technical architecture, implementation tracker, and FirstLaunch tracker agree that the visual direction is accepted and M01 production work is authorized only through this tracker; exact type/responsibility/naming/QA/performance boundaries are frozen; no historical evidence is relabeled as a validation that did not run.
   **Evidence:** authority diff, decision log entry, clean pushed head.
 
 - [ ] **M01DC-002 - Capture exact-head baseline inventory**
@@ -229,21 +232,21 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
 
 - [ ] **M01DC-003 - Freeze item ownership, evidence, and rollback matrix**
   **Depends on:** M01DC-002.
-  **Deliverable:** exact file allowlist by remaining item, separately owned/read-only paths, generated-output policy, required validators, pass markers, timeouts, evidence destinations, and per-phase rollback boundaries.
-  **Acceptance:** there is no unbounded path family, no overlap with active architecture/map ownership, and no plan to modify accepted dense-city production assets.
+  **Deliverable:** exact file allowlist by remaining item, technical-architecture type/assembly inventory, separately owned/read-only paths, generated-output policy, required validators, pass markers, timeouts, evidence destinations, and per-phase rollback boundaries.
+  **Acceptance:** every planned type has one responsibility and assembly, forbidden names/patterns are audited, there is no unbounded path family or overlap with active architecture/map ownership, and no accepted dense-city production asset is planned for modification.
   **Evidence:** reviewed ownership matrix, protected-path audit, clean pushed head.
 
 ### Phase B - Additive Mission Data Contracts
 
 - [ ] **M01DC-004 - Add the validated MissionDefinition contract**
   **Depends on:** M01DC-003.
-  **Deliverable:** immutable/default-safe mission definition data for identity, display, sequences, objectives, stars, rewards, allowed commands, replay policy, and readiness requirements.
+  **Deliverable:** the technical architecture's `Game.Missions.Contracts` assembly and immutable/default-safe `MissionDefinitionConfig`/catalog/validation data for identity, display, sequences, objectives, stars, rewards, allowed commands, replay policy, and readiness requirements.
   **Acceptance:** invalid/duplicate IDs fail closed; existing non-Campaign paths retain defaults; no UI-local mission authority is introduced.
   **Evidence:** focused data/validation tests, compiler zero, architecture/source-growth check, clean pushed head.
 
 - [ ] **M01DC-005 - Add the immutable MissionLaunchPayload contract**
   **Depends on:** M01DC-004.
-  **Deliverable:** one typed payload/result contract carrying mission, scenario, logical map, launch origin, guidance mode, replay tutorial choice, first-clear/replay intent, and deterministic correlation/seed data.
+  **Deliverable:** the exact `MissionLaunchPayload`, related mission enums/results, and shared `MissionLaunchPayloadFactory` specified by the technical architecture, carrying mission, scenario, logical map, launch origin, guidance mode, replay tutorial choice, first-clear/replay intent, and deterministic correlation/seed data.
   **Acceptance:** FirstLaunch and Campaign can construct semantically equal payloads for equal inputs; payload validation fails closed; no route or UI object becomes the mission state owner.
   **Evidence:** construction/equality/invalid-input tests, clean pushed head.
 
@@ -261,8 +264,8 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
 
 - [ ] **M01DC-008 - Add Campaign mission progress schema and migration**
   **Depends on:** M01DC-004, M01DC-007.
-  **Deliverable:** versioned persistence for availability, first clear, best stars/time, first-clear settlement, replay records, resume state, and next-mission reveal.
-  **Acceptance:** default/new/older profile migration is deterministic; repeated settlement is idempotent; corrupt or future versions fail safely without inventing progress.
+  **Deliverable:** versioned `CampaignMissionProgressSaveData`, sole-owner `CampaignMissionProgressStore`, and atomic save path for availability, first clear, best stars/time, first-clear settlement, replay records, resume state, and next-mission reveal.
+  **Acceptance:** default/new/older profile migration is deterministic; repeated settlement is idempotent; interrupted writes preserve the prior valid profile; corrupt or future versions fail safely without inventing progress; settings and quick-game data regress zero.
   **Evidence:** migration, idempotency, corruption, and restart tests; clean pushed head.
 
 - [ ] **M01DC-009 - Author and register canonical M01 data**
@@ -445,26 +448,44 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
 
 - [ ] **M01DC-037 - Build, hash, and install a fresh checked Android package**
   **Depends on:** M01DC-036.
-  **Deliverable:** exact-head Android package built through checked wrappers with provenance, SHA-256, package metadata, installation, launch, and device identity.
+  **Deliverable:** exact-head gameplay-QA candidate Android package built through checked wrappers with provenance, SHA-256, package metadata, installation, launch, and device identity.
   **Acceptance:** the package is fresh, validators pass, install/launch succeeds on the exact authorized device, and no rejected/stale APK is installed or reused. Redmi evidence, if collected, remains supplemental.
   **Evidence:** package provenance/install manifest and checked build logs, clean pushed head.
 
-- [ ] **M01DC-038 - Pass diagnostics-disabled 120-second representative Android routes**
+- [ ] **M01DC-038 - Run agent-operated first-gameplay QA on the candidate**
   **Depends on:** M01DC-037.
-  **Deliverable:** 120-second routes for FirstLaunch-to-M01 entry, active Old Market combat/guidance, and Campaign replay with correctness, CPU/GPU/frame/allocation/proxy evidence.
+  **Deliverable:** Codex/agent-operated real-input sessions and the technical architecture's scored/finding-based QA report: cold novice with Full guidance, low-help Contextual with delayed/wrong actions and recovery, and Minimal Campaign replay with replay tutorial default off; include touch, camera, core commands, objective comprehension, simplicity, fun/pacing, smoothness, sound, guidance, UI, accessibility, recovery, bugs, and first confusion points.
+  **Acceptance:** all three required agent-operated sessions execute, including at least one complete fresh-profile story-to-command-base session and one Campaign replay run on a supported Android touch device with audio enabled; evidence names the agent/task, exact package/head/device, and `operatorKind=Agent`; every finding has severity, reproduction, evidence, owner, response, and disposition; no evidence claims a human participant or represents automated scripts/captures as player-role QA.
+  **Evidence:** `Design/AgentReports/M01FirstContact/qa/m01dc_038_first_gameplay_qa.md`, timestamped video/screenshots/audio notes/input log, scorecard, findings ledger, clean pushed head.
+
+- [ ] **M01DC-039 - Act on QA feedback and prove the closed loop**
+  **Depends on:** M01DC-038.
+  **Deliverable:** triage every QA finding, implement all bounded code/content/audio/UI responses covered by the accepted design, rerun affected automated/visual/lifecycle tests and agent-operated reproductions, and build/install a fresh QA-resolved package if any production input changed.
+  **Acceptance:** no P0/P1/P2 finding remains; every P3 is fixed or has explicit project-owner deferral/target; no finding is closed by prose alone; comprehension/control/simplicity/smoothness/audio recommendations meet the technical QA gate; fixed issues are replayed on the named fresh package with regressions zero.
+  **Evidence:** before/after finding matrix, commits, exact validation/replay logs, fresh package provenance when changed, clean pushed head.
+
+- [ ] **M01DC-040 - Pass diagnostics-disabled 120-second representative Android routes**
+  **Depends on:** M01DC-039.
+  **Deliverable:** 120-second routes on the QA-resolved package for FirstLaunch-to-M01 entry, active Old Market combat/guidance, and Campaign replay with correctness, CPU/GPU/frame/allocation/proxy evidence.
   **Acceptance:** every inherited FPS/frame-time/CPU/GPU/allocation/proxy/correctness gate passes on the canonical device; route identity and diagnostics-disabled state are proven.
   **Evidence:** raw captures, summaries, provenance links, and checked analyzer pass markers; clean pushed head.
 
-- [ ] **M01DC-039 - Pass final cooled two-minute thermal and device lifecycle route**
-  **Depends on:** M01DC-038.
+- [ ] **M01DC-041 - Pass final cooled two-minute thermal and device lifecycle route**
+  **Depends on:** M01DC-040.
   **Deliverable:** one final cooled exactly two-minute M01 thermal run plus background/foreground, interruption, retry, return, and relaunch checks on the same accepted package/device.
   **Acceptance:** the full inherited performance contract passes; no thermal drift, crash, ANR, missing content, state loss, duplicate reward, or lifecycle leak occurs.
   **Evidence:** thermal/device lifecycle manifest, raw data, analyzer output, and pass markers; clean pushed head.
 
-- [ ] **M01DC-040 - Final acceptance and feature handoff**
-  **Depends on:** M01DC-001 through M01DC-039.
-  **Deliverable:** reconcile all 40 items, update affected parent/catalog/FirstLaunch/M01 authorities, publish exact final heads and evidence index, mark production M01 accepted, and identify M02 as next without starting it.
-  **Acceptance:** 40/40 items are honestly accepted; all trackers agree; main equals origin/main; repository is clean; no protected content changed without authority; no temporary implementation/evidence output remains uncommitted.
+- [ ] **M01DC-042 - Sign off agent-operated gameplay on the certified package**
+  **Depends on:** M01DC-039 through M01DC-041.
+  **Deliverable:** agent-operated cold novice Full-guidance story-to-command-base session and Minimal Campaign replay smoke on the exact certified package/head, focused on the fixed findings and final sound/input/pacing/comprehension quality.
+  **Acceptance:** no fixed finding regresses; no new P0-P2 appears; all reviewed dimensions remain at or above the technical QA gate; package/head/device identity exactly matches certification evidence; any new finding reopens M01DC-039 and dependent package/performance items.
+  **Evidence:** final QA scorecard, closed finding ledger, timestamped captures, package/head/device correlation, clean pushed head.
+
+- [ ] **M01DC-043 - Final acceptance and feature handoff**
+  **Depends on:** M01DC-001 through M01DC-042.
+  **Deliverable:** reconcile all 43 items, update affected parent/catalog/FirstLaunch/M01 authorities, publish exact final heads and evidence index, mark production M01 accepted, and identify M02 as next without starting it.
+  **Acceptance:** 43/43 items are honestly accepted; all trackers agree; main equals origin/main; repository is clean; no protected content changed without authority; no temporary implementation/evidence output remains uncommitted.
   **Evidence:** final acceptance report, commit/push verification, clean status, project-owner handoff.
 
 ## 11. Phase Exit Gates
@@ -477,7 +498,7 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
 | D | One authoritative mission/objective/progress pipeline delivers deterministic gameplay, result, retry, civilians, and settlement. |
 | E | Full/Contextual/Minimal guidance, FirstLaunch direct handoff, narrative, debrief, and base reveal pass. |
 | F | Campaign, briefing, HUD, result, and replay routes are data-driven and accessible. |
-| G | Compiler, architecture, source growth, determinism, lifecycle, visual, Android, performance, thermal, documentation, and clean-repository gates pass. |
+| G | Compiler, architecture, source growth, determinism, lifecycle, visual, actual first-gameplay QA and feedback closure, Android, performance, thermal, documentation, and clean-repository gates pass. |
 
 No later phase may be accepted to compensate for a failed earlier phase. Later work may begin only when every listed dependency is accepted.
 
@@ -509,13 +530,13 @@ Unity licensing, wrapper, device connection, disk space, or bounded tool interru
 |---|---|---|---|---|
 | 2026-08-12 | HLD | Project owner approved direct FirstLaunch-to-M01, inherited guidance, recommended replay tutorial policy, recommended civilian boundary, shared dense-city Old Market direction, and tracker authoring. | `aa04a6e85` | HLD approved; tracker draft created |
 
-Implementation entries are appended only after an item is accepted and pushed. The final row must record M01DC-040, the final main/origin head, 40/40 progress, Android package/device identities, validation summary, and clean worktree state.
+Implementation entries are appended only after an item is accepted and pushed. The final row must record M01DC-043, the final main/origin head, 43/43 progress, Android package/device identities, agent-QA/finding closure, validation summary, and clean worktree state.
 
 ## 15. Tracker Acceptance
 
 Before M01DC-001 begins, the project owner must confirm that this tracker correctly captures:
 
-- the 40-item dependency order and scope;
+- the 43-item dependency order and scope;
 - direct FirstLaunch entry with no Main Menu;
 - Full/Contextual/Minimal guidance and replay tutorial behavior;
 - shared dense-city physical-source reuse and Old Market logical view;
@@ -523,6 +544,7 @@ Before M01DC-001 begins, the project owner must confirm that this tracker correc
 - first-clear/replay/result/reward/persistence behavior;
 - civilian limits;
 - the exact FirstLaunch Courier/Warden/Broker patrol continuity and the prohibition on revealing Qassem in M01;
+- the required agent-operated first-gameplay QA sessions, scored feedback, mandatory code/content response, replay, and final certified-package sign-off without claiming a human participant;
 - Android performance and two-minute thermal gates;
 - clean commit-and-push boundaries and stop conditions.
 

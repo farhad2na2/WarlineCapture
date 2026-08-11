@@ -4,6 +4,7 @@ Date: 2026-08-12
 Status: Approved for implementation-tracker authoring
 Scope owner: Mission 1 product, gameplay, narrative, operation-map integration, Campaign replay, and validation contract
 Implementation status: HLD approved by the project owner on 2026-08-12; production implementation remains blocked until the separate implementation tracker is accepted
+Technical architecture: `Design/Architecture/m01_first_contact_dense_city_technical_architecture.md`
 
 ## 1. Purpose
 
@@ -33,6 +34,7 @@ This HLD refines, but does not silently replace, the following authorities:
 - `Architecture/dense_city_editor_bake_hybrid_runtime_implementation_tracker.md`
 - `Architecture/dense_city_virtualized_render_proxy_android_60fps_implementation_tracker.md`
 - `Architecture/post_hardening_architecture_maturity_tracker.md`
+- `Architecture/m01_first_contact_dense_city_technical_architecture.md`
 
 The earlier M01 contract assumed a missing standalone town scene. The accepted decision is now to use the dense Sahrin city and its bazaar/Old Market district. The city source is shared; M01 does not clone or fork the authored city geometry.
 
@@ -49,6 +51,7 @@ The current operation-map validator permits `opmap.skirmish.*` and `opmap.chNN.*
 | Civilians | M01 shows a bounded ambient civilian/responder group and a deterministic post-victory evacuation. Civilians are not attackable, do not create a casualty simulation, and cannot fail the mission or reduce stars. |
 | City reuse | M01 uses the accepted dense city and bazaar/Old Market district. No second authored city and no cloned production geometry are created. |
 | First-contact Ash Line patrol | The three armed operatives shown in FirstLaunch FL-P15/FL-P18 are the exact live M01 patrol: `Chr_Insurgent_Male_03` / Courier, `Chr_Insurgent_Female_01` / Warden, and `Chr_Insurgent_Female_02` / Broker. They are threat-profile callsigns, not the campaign's principal villain. `Chr_Insurgent_Male_05` remains reserved exclusively for Nadir Qassem, who is not revealed in M01, and the Male 02 heavy gunner remains reserved for later escalation. |
+| First-gameplay QA | M01 is the first actual gameplay experience. Release requires Codex/agent-operated novice-style Android play sessions covering usability, simplicity, fun, pacing, smoothness, sound, comprehension, mistake recovery, accessibility, and bugs. The agent explicitly plays the QA role; evidence must not claim a human participant. Actionable findings must change code/content and be replayed; automated tests cannot substitute for this review. |
 
 ## 4. Player Experience Goals
 
@@ -61,9 +64,10 @@ M01 must:
 - present civilians as the reason for the operation without making an unfinished civilian simulation a hidden dependency;
 - finish in approximately four to six minutes for a first-time player;
 - impose no permanent penalty for tutorial defeat;
-- reveal the revoked ARIA credential in the first debrief;
+- surface a fragmentary obsolete/revoked-compatible ARIA credential trace in the first debrief without confirming Qassem or the complete Protocol Fragment;
 - reveal the command-base menu only after the first clear;
-- make replay available through Campaign Operations without replaying the cold open.
+- make replay available through Campaign Operations without replaying the cold open;
+- feel understandable, responsive, simple, and enjoyable in recorded first-play QA rather than only passing technical tests.
 
 ## 5. Non-Goals
 
@@ -222,7 +226,7 @@ The mission runtime may skip tutorial presentation phases when replay tutorial i
   - `Prefab_UnitGrid_Chr_Insurgent_Female_01_Config` (Warden, rifle-cell commander threat profile);
   - `Prefab_UnitGrid_Chr_Insurgent_Female_02_Config` (Broker, sidearm/logistics operative threat profile).
 - Their live models, equipment, weapons, silhouettes, and relative roles continue the approved `FACTION-ASH-01_FirstContactPatrol_CandidateB` and FL-P15/FL-P18 presentation. Hostility is communicated by confirmed weapons, conduct, and mission context, never ethnicity, clothing, gender, or neighborhood.
-- Nadir Qassem (`Chr_Insurgent_Male_05`) does not appear as an anonymous unit, portrait, voice, or clean reveal in M01. The debrief reveals coordinated orders and a revoked credential trace, not Qassem's identity.
+- Nadir Qassem (`Chr_Insurgent_Male_05`) does not appear as an anonymous unit, portrait, voice, or clean reveal in M01. The debrief reveals coordinated orders and a fragmentary obsolete/revoked-compatible credential trace, not Qassem's identity or the complete Protocol Fragment.
 - No active hostile vehicle or air threat is present.
 - The patrol follows or holds along the three typed patrol anchors until engagement.
 - The starting squad has enough survivability to tolerate tutorial hesitation.

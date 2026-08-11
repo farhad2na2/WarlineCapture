@@ -1192,3 +1192,8 @@ Accepted AM-020 progress snapshot:
 - Canonical Core evidence passes source growth `17 / 17`, the architecture closeout `23` suites, architecture Python `179 / 179`, current recovery/transition/pool/allocation gates, deterministic regeneration, protected-path audit, and final Unity compiler zero. The focused review has zero unresolved findings.
 - AM-WP-027 acceptance tests plus the existing Phase 2 evidence contract pass `25 / 25`; the full post-publication architecture discovery passes `185 / 185`. The first `184 / 185` run rejected a missing canonical release-deferment sentence; the restored wording passes its focused `4 / 4` check and the complete unchanged rerun. Release certification stays `0 / 18` deferred; raw Editor memory and extended transition investigations remain explicitly non-credit follow-up.
 - AM-025 and Phase 2 are accepted. Progress is `26 / 86` (`30.2%`) overall and `26 / 68` (`38.2%`) Core. AM-027 is next and has not started.
+
+### 2026-08-11 - AM-025 - AMFR-022 feature-resume handoff claim
+
+- Entry identity: clean pushed `main`/`origin/main` `6be65f01810f90fdf6403af5d2ecb6652f1631af`, tree `37cf6fd9c576aa2861b0ab368f4431661e4dcb82`; AM-025 and Phase 2 are accepted.
+- Scope is documentation-only: one bounded feature-resume handoff and both trackers. It maps future feature collisions to Phase 3-5/7/8 consumers, preserves AM-027 as next/not-started, and leaves Phase 6/9 deferred.

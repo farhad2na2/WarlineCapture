@@ -121,7 +121,7 @@ The worktree must be clean at every accepted commit and after every push. Genera
 - [x] `AMFR-019` Pass the accepted World recreation, scene unload/reload, missing-singleton recovery, one-warm-up plus 10 measured transition cycles, structural/pool trend, and governed focused allocation suites.
 - [x] `AMFR-020` Complete canonical Unity compilation with zero errors; deterministic regeneration; exact artifact/source/tool hashes; protected-path audit; `git diff --check`; and focused independent review with no unresolved finding.
 - [x] `AMFR-021` Publish the AM-025 exit evidence and acceptance record, update the parent tracker to `26 / 86` overall and `26 / 68` Core, mark Phase 2 accepted, and identify `AM-027` as the next maturity task without starting it.
-- [ ] `AMFR-022` Publish the feature-resume handoff: later UI, presentation/pooling, simulation, diagnostics, and enforcement work must consume relevant Phase 3-5/7/8 rows when a feature touches those domains; Phase 6 and 9 remain deferred.
+- [~] `AMFR-022` Publish the feature-resume handoff: later UI, presentation/pooling, simulation, diagnostics, and enforcement work must consume relevant Phase 3-5/7/8 rows when a feature touches those domains; Phase 6 and 9 remain deferred.
 
 **Exit:** This child is complete, `AM-025` is honestly accepted and pushed, the Core lane is green through Phase 2, and new feature planning may resume.
 
@@ -494,6 +494,13 @@ The worktree must be clean at every accepted commit and after every push. Genera
 - Rejected publication run: the first `184 / 185` full discovery correctly caught that the progress snapshot no longer contained one older test's exact release-deferment sentence. The canonical sentence was restored without changing meaning or scope; its focused `4 / 4` regression and the unchanged full rerun pass. The failing run receives no credit.
 - Parent result: AM-025 is accepted; Phase 2 is accepted; overall progress is `26 / 86` (`30.2%`), Core is `26 / 68` (`38.2%`), and Release remains `0 / 18` deferred. AM-027 is identified as next and has not started.
 - Result: AMFR-021 is accepted at child `21 / 22`. AMFR-022 is the final feature-resume handoff; it does not start AM-027 or any feature implementation.
+
+### 2026-08-11 - AMFR-022 - Feature-resume handoff claim
+
+- Entry identity: clean pushed `main`/`origin/main` commit `6be65f01810f90fdf6403af5d2ecb6652f1631af`, tree `37cf6fd9c576aa2861b0ab368f4431661e4dcb82`; AM-025 and Phase 2 are accepted at `26 / 86` overall and `26 / 68` Core.
+- Exact write allowlist: `Design/Architecture/am025_feature_resume_handoff.md`, this child tracker, and the parent tracker. All production, tests, evidence, tools, assets, packages, settings, wrappers, thresholds, Android/device work, feature implementation, AM-027 implementation, and deferred Phase 6/9 work remain read-only.
+- Handoff contract: identify AM-027 as next/not-started; route later UI, presentation/pooling, deterministic simulation/failure-path, diagnostics, and enforcement feature collisions to the relevant Phase 3-5/7/8 rows; preserve accepted Phase 2 ownership and lifecycle invariants; and keep Phase 6/9 inactive.
+- Acceptance: the handoff contains exact consumer ranges, collision rules, residual-risk routing, stop conditions, validation expectations, and release exclusions; no checklist credit beyond AMFR-022 and no implementation change is introduced.
 
 ## 7. Validation And Evidence Contract
 

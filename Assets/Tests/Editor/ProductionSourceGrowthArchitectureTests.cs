@@ -21,7 +21,7 @@ public sealed class ProductionSourceGrowthArchitectureTests
     private const string PostHardeningGuardrailPath =
         "Design/Architecture/post_hardening_source_responsibility_guardrails.json";
     private const string PostHardeningGuardrailContractId = "post-hardening-source-responsibility-v1";
-    private const int PostHardeningGuardrailEntryCount = 2;
+    private const int PostHardeningGuardrailEntryCount = 4;
     private const string TrackerPath =
         "Design/Architecture/architecture_performance_hardening_implementation_tracker.md";
     private const string PostHardeningTrackerPath =
@@ -47,6 +47,8 @@ public sealed class ProductionSourceGrowthArchitectureTests
         "18529b2c77b9a2823ea6bd23d3f774088d882f3eab8a28205b0d3ce7618780af";
     private const string ReviewedProductionCeilingsSha256 =
         "893d7bca1ca648334e0afb7e2656bdada0db054c67e62b324a0e625cb9ed36db";
+    private const string PostHardeningGrowthAuthorizationsSha256 =
+        "d11778b5cfacf0e924121d809c97618b2be85dc4575f18d21095426463b74297";
     private const string ManifestStartMarker = "<!-- production-source-growth-manifest:start -->";
     private const string ManifestEndMarker = "<!-- production-source-growth-manifest:end -->";
 
@@ -414,6 +416,10 @@ public sealed class ProductionSourceGrowthArchitectureTests
             .ToDictionary(entry => entry.Path, entry => entry, PathIdentityComparer);
         Dictionary<string, SourceFile> currentSources = EnumerateFiles(ProductionRoot, "*.cs", includeEditorPaths: true)
             .ToDictionary(entry => entry.Path, entry => entry, PathIdentityComparer);
+        HashSet<string> retiredHistoricalExceptionPaths = LoadPostHardeningGuardrails()
+            .RetiredHistoricalExceptionPaths
+            .ToHashSet(PathIdentityComparer);
+        var observedRetiredHistoricalExceptionPaths = new HashSet<string>(PathIdentityComparer);
         var uniqueAuthorizations = new HashSet<string>(PathIdentityComparer);
         var uniqueDecisionAuthorizations = new HashSet<string>(StringComparer.Ordinal);
 
@@ -441,7 +447,20 @@ public sealed class ProductionSourceGrowthArchitectureTests
                 $"Exception for `{exception.Path}` cites `{exception.DecisionId}`, which has no unique detailed Decision Log row.");
             Require(exception.MaxLines > 0, $"Exception for `{exception.Path}` requires a positive maxLines ceiling.");
             Require(exception.MaxBytes > 0, $"Exception for `{exception.Path}` requires a positive maxBytes ceiling.");
-            Require(currentSources.TryGetValue(exception.Path, out SourceFile current), $"Exception path does not exist: `{exception.Path}`.");
+            string decisionMarker = BuildExceptionDecisionMarker(exception);
+            RequireSingleDecisionAuthorization(
+                detailedDecisionRows,
+                exception.DecisionId,
+                detailedDecisionRow,
+                decisionMarker);
+            if (!currentSources.TryGetValue(exception.Path, out SourceFile current))
+            {
+                Require(
+                    retiredHistoricalExceptionPaths.Contains(exception.Path),
+                    $"Exception path does not exist without exact retirement authority: `{exception.Path}`.");
+                observedRetiredHistoricalExceptionPaths.Add(exception.Path);
+                continue;
+            }
             RequireRepositorySpelling(exception.Path, current.Path, "approved exception");
             bool supersededByPostHardeningAuthorization =
                 TryGetPostHardeningGrowthAuthorization(
@@ -457,13 +476,6 @@ public sealed class ProductionSourceGrowthArchitectureTests
                 supersededByPostHardeningAuthorization,
                 $"Exception for `{exception.Path}` caps {exception.MaxLines} lines/{exception.MaxBytes} bytes but " +
                 $"the source has {current.LineCount} lines/{current.ByteCount} bytes.");
-            string decisionMarker = BuildExceptionDecisionMarker(exception);
-            RequireSingleDecisionAuthorization(
-                detailedDecisionRows,
-                exception.DecisionId,
-                detailedDecisionRow,
-                decisionMarker);
-
             if (exception.Scope == SystemHelperScope)
             {
                 Require(
@@ -479,8 +491,14 @@ public sealed class ProductionSourceGrowthArchitectureTests
                     frozenHelpers.ContainsKey(exception.Path),
                     $"Helper growth exception path is not frozen: `{exception.Path}`.");
                 SourceHistoryState state = history[exception.Path];
+                bool supersededByPostHardeningRatchet =
+                    TryGetPostHardeningGuardrail(exception.Path, out PostHardeningSourceGuardrail guardrail) &&
+                    guardrail.MaxLines <= state.MinimumPositiveLines &&
+                    guardrail.MaxBytes <= state.MinimumPositiveBytes;
                 Require(
-                    current.LineCount > state.MinimumPositiveLines || current.ByteCount > state.MinimumPositiveBytes,
+                    current.LineCount > state.MinimumPositiveLines ||
+                    current.ByteCount > state.MinimumPositiveBytes ||
+                    supersededByPostHardeningRatchet,
                     $"Helper growth exception for `{exception.Path}` is unused.");
             }
             else if (exception.Scope == ProductionReviewScope)
@@ -554,6 +572,9 @@ public sealed class ProductionSourceGrowthArchitectureTests
                     $"{ProductionPathRecreationScope}, {SystemHelperRecreationScope}.");
             }
         }
+        Require(
+            observedRetiredHistoricalExceptionPaths.SetEquals(retiredHistoricalExceptionPaths),
+            "Every retired historical exception path must match one absent approved exception exactly.");
     }
 
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
@@ -772,8 +793,17 @@ public sealed class ProductionSourceGrowthArchitectureTests
         Require(contract.ReplacementOwnerBoundary != null, "The replacement-owner boundary is required.");
         Require(contract.GrowthAuthorizations != null, "Post-hardening growth authorizations are required.");
         Require(
-            contract.GrowthAuthorizations.Count == 20,
-            "Exactly twenty accepted post-hardening growth authorizations are required.");
+            contract.RetiredHistoricalExceptionPaths != null &&
+            contract.RetiredHistoricalExceptionPaths.SequenceEqual(
+                new[] { "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerProjectionSystemHelper.cs" },
+                StringComparer.Ordinal),
+            "The exact retired historical source exception path must remain frozen.");
+        Require(
+            contract.RetiredHistoricalExceptionPaths.All(path => !File.Exists(path)),
+            "A retired historical source exception cannot authorize a recreated path.");
+        Require(
+            contract.GrowthAuthorizations.Count == 114,
+            "Exactly one hundred fourteen accepted post-hardening growth authorizations are required.");
         Require(
             contract.Entries.Count == PostHardeningGuardrailEntryCount,
             $"The post-hardening guardrail must contain exactly {PostHardeningGuardrailEntryCount} entries.");
@@ -1106,6 +1136,7 @@ public sealed class ProductionSourceGrowthArchitectureTests
             "contractId",
             "replacementOwnerBoundary",
             "growthAuthorizations",
+            "retiredHistoricalExceptionPaths",
             "entries");
         JsonElement boundary = root.GetProperty("replacementOwnerBoundary");
         Require(boundary.ValueKind == JsonValueKind.Object, "replacementOwnerBoundary must be an object.");
@@ -1137,6 +1168,16 @@ public sealed class ProductionSourceGrowthArchitectureTests
                 "maxBytes",
                 "scope");
         }
+        JsonElement retiredHistoricalExceptionPaths = root.GetProperty("retiredHistoricalExceptionPaths");
+        Require(
+            retiredHistoricalExceptionPaths.ValueKind == JsonValueKind.Array,
+            "Post-hardening retiredHistoricalExceptionPaths must be an array.");
+        foreach (JsonElement retiredPath in retiredHistoricalExceptionPaths.EnumerateArray())
+        {
+            Require(
+                retiredPath.ValueKind == JsonValueKind.String,
+                "Every retired historical exception path must be a string.");
+        }
         JsonElement entries = root.GetProperty("entries");
         Require(entries.ValueKind == JsonValueKind.Array, "Post-hardening guardrail entries must be an array.");
         foreach (JsonElement entry in entries.EnumerateArray())
@@ -1164,10 +1205,44 @@ public sealed class ProductionSourceGrowthArchitectureTests
         {
             new()
             {
+                Path = "Assets/Game/Scripts/Composition/MatchStartSceneSystemHelper.cs",
+                SourceSha256 = "5fc4b4f9c0723c824331d13773341d2e1ca136bd86bdc31e8df122429b774d24",
+                MaxLines = 249,
+                MaxBytes = 9938,
+                MaxResponsibilityDomainSymbolOccurrences = 0,
+                MaxStateSlots = 2,
+                Responsibilities = new List<string>
+                {
+                    "match-start-request-queue",
+                    "match-scene-load-gating",
+                    "gameplay-start-transition",
+                    "match-start-result-and-progress-publication"
+                },
+                RequiredSymbols = new List<string>
+                {
+                    "public sealed class MatchStartSceneSystemHelper",
+                    "public bool QueueStartAfterMatchLoaded(",
+                    "public void Update(",
+                    "private bool TryStartLoadedMatch(",
+                    "private static void EnqueueResult(",
+                    "private static void SetProgress("
+                },
+                ForbiddenSymbols = new List<string>
+                {
+                    "SystemBase",
+                    "ServiceLocator",
+                    "static EntityManager",
+                    "static World"
+                },
+                ResponsibilitySignatureSymbols = new List<string>(),
+                ResponsibilitySignatureMatchThreshold = 0
+            },
+            new()
+            {
                 Path = "Assets/Game/Scripts/UI/Shell/ResourceExchangeShellBinding.cs",
-                SourceSha256 = "640758d7b1562455285ee8da14b8da38fd9c31102397e1267eafa90328d7ee07",
+                SourceSha256 = "d2a8d9426a1b712c7b8d3cb47bc11617c6afbbe2be213641bb6a9ef82c08d237",
                 MaxLines = 94,
-                MaxBytes = 3160,
+                MaxBytes = 3201,
                 MaxResponsibilityDomainSymbolOccurrences = 10,
                 MaxStateSlots = 4,
                 Responsibilities = new List<string>
@@ -1218,7 +1293,7 @@ public sealed class ProductionSourceGrowthArchitectureTests
                 SourceSha256 = "e250b07e6bd012554d37f8ef6376922f2ab4fdf9b0e51c5be194eeedd462c93f",
                 MaxLines = 951,
                 MaxBytes = 40958,
-                MaxResponsibilityDomainSymbolOccurrences = 11,
+                MaxResponsibilityDomainSymbolOccurrences = 14,
                 MaxStateSlots = 50,
                 Responsibilities = new List<string>
                 {
@@ -1246,6 +1321,39 @@ public sealed class ProductionSourceGrowthArchitectureTests
                     "ResourceExchangePopupView",
                     "BindResourceExchangePopup",
                     "MatchHudLargeTacticalPopup.ResourceExchange"
+                },
+                ResponsibilitySignatureSymbols = new List<string>(),
+                ResponsibilitySignatureMatchThreshold = 0
+            },
+            new()
+            {
+                Path = "Assets/Game/Scripts/Systems/AIStartupSystem.cs",
+                SourceSha256 = "451abd86723b32aa126e0f532aefc4094cda69bf0398e3d4a9bf9cf5ffcddf6a",
+                MaxLines = 537,
+                MaxBytes = 24773,
+                MaxResponsibilityDomainSymbolOccurrences = 0,
+                MaxStateSlots = 0,
+                Responsibilities = new List<string>
+                {
+                    "ai-startup-facade",
+                    "faction-economy-and-control-startup",
+                    "ai-build-plan-initialization",
+                    "explicit-ai-settings-snapshot-application"
+                },
+                RequiredSymbols = new List<string>
+                {
+                    "public partial struct AIStartupSystem : ISystem",
+                    "public Result Initialize(",
+                    "EntityManager em,",
+                    "AISettingsSnapshot aiSettings",
+                    "EnsureAIBuildPlansInitialized("
+                },
+                ForbiddenSymbols = new List<string>
+                {
+                    "SystemBase",
+                    "ServiceLocator",
+                    "static EntityManager",
+                    "static World"
                 },
                 ResponsibilitySignatureSymbols = new List<string>(),
                 ResponsibilitySignatureMatchThreshold = 0
@@ -1311,7 +1419,11 @@ public sealed class ProductionSourceGrowthArchitectureTests
             "genericLifecycleAnchorSymbols");
         RequireExactSequence(
             boundary.AllowedOwnerPaths,
-            Array.Empty<string>(),
+            new[]
+            {
+                "Assets/Game/Scripts/UI/Shell/ResourceExchangeShellBinding.cs",
+                "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs"
+            },
             boundary.Root,
             "allowedOwnerPaths");
     }
@@ -1537,6 +1649,46 @@ public sealed class ProductionSourceGrowthArchitectureTests
             Require(
                 accepted.LineCount == actual.MaxLines && accepted.ByteCount == actual.MaxBytes,
                 $"`{actual.Path}` authorization must exactly match its accepted commit blob.");
+        }
+
+        string authorizationHash = ComputeLineHash(authorizations.Select(actual =>
+            $"{actual.Path}\t{actual.TrackerTaskId}\t{actual.AcceptedCommit}\t" +
+            $"{actual.MaxLines}\t{actual.MaxBytes}\t{actual.Scope}"));
+        Require(
+            authorizationHash == PostHardeningGrowthAuthorizationsSha256,
+            "The ordered post-hardening growth authorization tuples changed.");
+
+        var tupleKeys = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        for (int index = expected.Length; index < authorizations.Count; index++)
+        {
+            PostHardeningGrowthAuthorization actual = authorizations[index];
+            Require(actual != null, "Post-hardening growth authorizations cannot contain null entries.");
+            RequireExactProjectSourcePath(actual.Path, "post-hardening growth authorization path");
+            Require(
+                tupleKeys.Add(actual.Path + "\t" + actual.Scope),
+                $"Duplicate post-hardening growth authorization `{actual.Path}` / `{actual.Scope}`.");
+            Require(
+                actual.TrackerTaskId == "AMFR-017",
+                $"`{actual.Path}` retained review must remain bound to `AMFR-017`.");
+            Require(actual.MaxLines > 0 && actual.MaxBytes > 0, $"`{actual.Path}` requires positive exact ceilings.");
+            Require(
+                actual.Scope == ProductionReviewScope ||
+                actual.Scope == StrictNoGrowthScope ||
+                actual.Scope == SystemHelperGrowthScope,
+                $"`{actual.Path}` has unexpected retained-review scope `{actual.Scope}`.");
+            Require(
+                featureReadinessTracker.Contains("- [x] `AMFR-017`", StringComparison.Ordinal),
+                "`AMFR-017` is not complete in its owning tracker.");
+            Require(
+                featureReadinessTracker.Contains(actual.AcceptedCommit, StringComparison.Ordinal),
+                "The feature-readiness tracker does not bind AMFR-017 to its immutable source commit.");
+
+            SourceFile accepted = MeasureContent(
+                actual.Path,
+                RunGitBytes($"show {actual.AcceptedCommit}:{actual.Path}"));
+            Require(
+                accepted.LineCount == actual.MaxLines && accepted.ByteCount == actual.MaxBytes,
+                $"`{actual.Path}` retained review must exactly match its accepted commit blob.");
         }
     }
 
@@ -2264,6 +2416,9 @@ public sealed class ProductionSourceGrowthArchitectureTests
 
         [JsonPropertyName("growthAuthorizations")]
         public List<PostHardeningGrowthAuthorization> GrowthAuthorizations { get; set; }
+
+        [JsonPropertyName("retiredHistoricalExceptionPaths")]
+        public List<string> RetiredHistoricalExceptionPaths { get; set; }
 
         [JsonPropertyName("entries")]
         public List<PostHardeningSourceGuardrail> Entries { get; set; }

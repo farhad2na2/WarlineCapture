@@ -27,7 +27,10 @@
       "InstallRoot(",
       "BindResourceExchangePopup"
     ],
-    "allowedOwnerPaths": []
+    "allowedOwnerPaths": [
+      "Assets/Game/Scripts/UI/Shell/ResourceExchangeShellBinding.cs",
+      "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs"
+    ]
   },
   "growthAuthorizations": [
     {
@@ -189,14 +192,799 @@
       "maxLines": 199,
       "maxBytes": 8699,
       "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Authorings/OperationMapBuildingAuthoring.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 533,
+      "maxBytes": 25567,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Authorings/UnitGridAuthoring.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 1258,
+      "maxBytes": 70024,
+      "scope": "production-over-1000-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 996,
+      "maxBytes": 47964,
+      "scope": "production-over-1000-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 752,
+      "maxBytes": 32405,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 1032,
+      "maxBytes": 43229,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/OperationMapEntityPresentationReadinessUtility.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 725,
+      "maxBytes": 34779,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/StaticMapPresentationStreamer.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 509,
+      "maxBytes": 19286,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/GameplayConfigModels.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 832,
+      "maxBytes": 62307,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/OperationMapDefinition.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 648,
+      "maxBytes": 26810,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/OperationMapRenderDatabaseBakeConfig.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 859,
+      "maxBytes": 37187,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Rendering/Baking/OperationMapRenderVirtualizationBakingSystem.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 681,
+      "maxBytes": 32053,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 728,
+      "maxBytes": 33700,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderStateSyncSystem.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 594,
+      "maxBytes": 24952,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Rendering/Systems/OperationMapRenderVirtualizationInitializationSystem.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 916,
+      "maxBytes": 40793,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Rendering/Systems/UnitHelicopterBladeSpinSystem.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 548,
+      "maxBytes": 24744,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Rendering/Systems/UnitSelectionMarkerSystem.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 1124,
+      "maxBytes": 48865,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Rendering/Systems/UnitSelectionObjectOutlinePresentationSystem.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 892,
+      "maxBytes": 39137,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Rendering/UnitImpostorPresentationSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 934,
+      "maxBytes": 37634,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 2775,
+      "maxBytes": 134348,
+      "scope": "production-over-1000-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/AndroidPerformanceRecorder.RenderVirtualizationDestruction.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 515,
+      "maxBytes": 20095,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/AndroidPerformanceRecorder.RenderVirtualizationStateScenario.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 1023,
+      "maxBytes": 39724,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/AndroidPerformanceRecorder.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 587,
+      "maxBytes": 22594,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingDefinitionPrefabSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 1005,
+      "maxBytes": 48790,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 863,
+      "maxBytes": 53734,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingProductionQueueCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 923,
+      "maxBytes": 39365,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 2682,
+      "maxBytes": 116804,
+      "scope": "production-over-1000-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 1678,
+      "maxBytes": 74777,
+      "scope": "production-over-1000-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingSelectionRuntimeCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 875,
+      "maxBytes": 40539,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/CustomGameStartupSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 973,
+      "maxBytes": 45666,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/FocusableUnitLookupCameraSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 626,
+      "maxBytes": 27381,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 1863,
+      "maxBytes": 84503,
+      "scope": "production-over-1000-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/MapBuildingPlacementSpawnPrefabSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 814,
+      "maxBytes": 32527,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/MapVehiclePlacementSpawnPrefabSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 893,
+      "maxBytes": 38814,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ResourceExchangeRequestValidationSystem.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 1145,
+      "maxBytes": 47411,
+      "scope": "production-over-1000-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/RtsCameraSystem.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 813,
+      "maxBytes": 31403,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/RtsSelectionInputCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 934,
+      "maxBytes": 38294,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/RtsSelectionRuntimeInputCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 817,
+      "maxBytes": 43356,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 1694,
+      "maxBytes": 88940,
+      "scope": "production-over-1000-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 2229,
+      "maxBytes": 97963,
+      "scope": "production-over-1000-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 1365,
+      "maxBytes": 60532,
+      "scope": "production-over-1000-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 608,
+      "maxBytes": 28664,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/MainMenuPlayUI.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 792,
+      "maxBytes": 30874,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 1290,
+      "maxBytes": 53377,
+      "scope": "production-over-1000-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellStateSystem.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 720,
+      "maxBytes": 31976,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 397,
+      "maxBytes": 16557,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellFlowSystem.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 496,
+      "maxBytes": 23404,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 304,
+      "maxBytes": 12021,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 449,
+      "maxBytes": 16385,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/BuildingDefinitionAuthoringMetadataPrefabSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 95,
+      "maxBytes": 5483,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/MapSurfaceRuntimeBootstrapSceneSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 346,
+      "maxBytes": 13619,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 996,
+      "maxBytes": 47964,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 1032,
+      "maxBytes": 43229,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/UiCatalogAuthoringMetadataUiSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 69,
+      "maxBytes": 2903,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityVisualPresentationSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 175,
+      "maxBytes": 6554,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Rendering/UnitImpostorPresentationSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 934,
+      "maxBytes": 37634,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingDefinitionPrefabSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 1005,
+      "maxBytes": 48790,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 863,
+      "maxBytes": 53734,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingGameplayStartupCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 40,
+      "maxBytes": 1918,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingPlacementAdapterCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 144,
+      "maxBytes": 6822,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingPlacementCommandCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 197,
+      "maxBytes": 12958,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingPlacementLifecycleCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 250,
+      "maxBytes": 11460,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingProductionContextCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 397,
+      "maxBytes": 25747,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingProductionQueueCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 923,
+      "maxBytes": 39365,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 2682,
+      "maxBytes": 116804,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeContextCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 266,
+      "maxBytes": 17383,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 1678,
+      "maxBytes": 74777,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeQueryCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 213,
+      "maxBytes": 8982,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingSelectionClickUtilitySystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 103,
+      "maxBytes": 4231,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingSelectionMarkerPresentationSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 478,
+      "maxBytes": 20719,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingSelectionPortraitUiSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 40,
+      "maxBytes": 1408,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingSelectionRuntimeCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 875,
+      "maxBytes": 40539,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/CitizenPopulationCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 249,
+      "maxBytes": 12105,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/CustomGameStartupSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 973,
+      "maxBytes": 45666,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/FocusableUnitLookupCameraSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 626,
+      "maxBytes": 27381,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ManagedGameplayStartupSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 368,
+      "maxBytes": 20265,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/MapBuildingPlacementSpawnPrefabSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 814,
+      "maxBytes": 32527,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/MapVehiclePlacementSpawnPrefabSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 893,
+      "maxBytes": 38814,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/MatchHudSquadTraySelectionUiSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 471,
+      "maxBytes": 21026,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/RoadPreviewPresentationSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 368,
+      "maxBytes": 13389,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/RtsSelectionInputCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 934,
+      "maxBytes": 38294,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/RtsSelectionInputStateCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 153,
+      "maxBytes": 5761,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/RtsSelectionRuntimeInputCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 817,
+      "maxBytes": 43356,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/RuntimeGridBootstrapStartupSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 110,
+      "maxBytes": 5217,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/SelectionBuildingInteractionCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 188,
+      "maxBytes": 7359,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 1694,
+      "maxBytes": 88940,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 2229,
+      "maxBytes": 97963,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 1365,
+      "maxBytes": 60532,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/SelectionRuntimeDiagnosticsSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 304,
+      "maxBytes": 13310,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/SelectionUiCommandUiSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 281,
+      "maxBytes": 10215,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/MenuDiagnosticsUiSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 292,
+      "maxBytes": 10201,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogQueryUiSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 474,
+      "maxBytes": 18020,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 347,
+      "maxBytes": 11942,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 1290,
+      "maxBytes": 53377,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapProjectionUiSystemHelper.cs",
+      "trackerTaskId": "AMFR-017",
+      "acceptedCommit": "d767bcf1ebec653dd8c4ae30cd793965332286a0",
+      "maxLines": 345,
+      "maxBytes": 15350,
+      "scope": "system-helper-growth"
     }
+  ],
+  "retiredHistoricalExceptionPaths": [
+    "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerProjectionSystemHelper.cs"
   ],
   "entries": [
     {
+      "path": "Assets/Game/Scripts/Composition/MatchStartSceneSystemHelper.cs",
+      "sourceSha256": "5fc4b4f9c0723c824331d13773341d2e1ca136bd86bdc31e8df122429b774d24",
+      "maxLines": 249,
+      "maxBytes": 9938,
+      "maxResponsibilityDomainSymbolOccurrences": 0,
+      "maxStateSlots": 2,
+      "responsibilities": [
+        "match-start-request-queue",
+        "match-scene-load-gating",
+        "gameplay-start-transition",
+        "match-start-result-and-progress-publication"
+      ],
+      "requiredSymbols": [
+        "public sealed class MatchStartSceneSystemHelper",
+        "public bool QueueStartAfterMatchLoaded(",
+        "public void Update(",
+        "private bool TryStartLoadedMatch(",
+        "private static void EnqueueResult(",
+        "private static void SetProgress("
+      ],
+      "forbiddenSymbols": [
+        "SystemBase",
+        "ServiceLocator",
+        "static EntityManager",
+        "static World"
+      ],
+      "responsibilitySignatureSymbols": [],
+      "responsibilitySignatureMatchThreshold": 0
+    },
+    {
       "path": "Assets/Game/Scripts/UI/Shell/ResourceExchangeShellBinding.cs",
-      "sourceSha256": "640758d7b1562455285ee8da14b8da38fd9c31102397e1267eafa90328d7ee07",
+      "sourceSha256": "d2a8d9426a1b712c7b8d3cb47bc11617c6afbbe2be213641bb6a9ef82c08d237",
       "maxLines": 94,
-      "maxBytes": 3160,
+      "maxBytes": 3201,
       "maxResponsibilityDomainSymbolOccurrences": 10,
       "maxStateSlots": 4,
       "responsibilities": [
@@ -242,7 +1030,7 @@
       "sourceSha256": "e250b07e6bd012554d37f8ef6376922f2ab4fdf9b0e51c5be194eeedd462c93f",
       "maxLines": 951,
       "maxBytes": 40958,
-      "maxResponsibilityDomainSymbolOccurrences": 11,
+      "maxResponsibilityDomainSymbolOccurrences": 14,
       "maxStateSlots": 50,
       "responsibilities": [
         "ui-route-interpretation",
@@ -267,6 +1055,35 @@
         "ResourceExchangePopupView",
         "BindResourceExchangePopup",
         "MatchHudLargeTacticalPopup.ResourceExchange"
+      ],
+      "responsibilitySignatureSymbols": [],
+      "responsibilitySignatureMatchThreshold": 0
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/AIStartupSystem.cs",
+      "sourceSha256": "451abd86723b32aa126e0f532aefc4094cda69bf0398e3d4a9bf9cf5ffcddf6a",
+      "maxLines": 537,
+      "maxBytes": 24773,
+      "maxResponsibilityDomainSymbolOccurrences": 0,
+      "maxStateSlots": 0,
+      "responsibilities": [
+        "ai-startup-facade",
+        "faction-economy-and-control-startup",
+        "ai-build-plan-initialization",
+        "explicit-ai-settings-snapshot-application"
+      ],
+      "requiredSymbols": [
+        "public partial struct AIStartupSystem : ISystem",
+        "public Result Initialize(",
+        "EntityManager em,",
+        "AISettingsSnapshot aiSettings",
+        "EnsureAIBuildPlansInitialized("
+      ],
+      "forbiddenSymbols": [
+        "SystemBase",
+        "ServiceLocator",
+        "static EntityManager",
+        "static World"
       ],
       "responsibilitySignatureSymbols": [],
       "responsibilitySignatureMatchThreshold": 0

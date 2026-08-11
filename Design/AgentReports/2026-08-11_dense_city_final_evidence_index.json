@@ -1,0 +1,142 @@
+{
+  "schema": "warline.operation-map.dense-city-final-evidence-index",
+  "schemaVersion": 1,
+  "recordedAtUtcDate": "2026-08-11",
+  "result": "Passed",
+  "operationMapId": "opmap.skirmish.desert_base_01",
+  "sourceRevision": "6b4d268b837f085987d4287e2ca2898f0db5b064",
+  "repositoryCloseoutRevision": "169e9857b21acd1b98598c51d89d30da53b5a70f",
+  "package": {
+    "path": "Build/AndroidAPK/WarlineCapture.apk",
+    "bytes": 557478145,
+    "sha256": "25e8dae2e4f19d93a2a3c994dab3dd898a8cc4cb3b1d7b0dfb608ff5afa71ff9",
+    "installedBaseBytes": 557478145,
+    "installedBaseSha256": "25e8dae2e4f19d93a2a3c994dab3dd898a8cc4cb3b1d7b0dfb608ff5afa71ff9",
+    "installedCodeBytes": 741172224,
+    "installedDataBytes": 16035840,
+    "installedCacheBytes": 1085440,
+    "installedTotalReportedBytes": 758293504,
+    "installedExtractedLibraryBytes": 176291096,
+    "byteIdenticalOnDevice": true
+  },
+  "device": {
+    "manufacturer": "Samsung",
+    "model": "SM-S918B",
+    "serial": "R5CTC1J02VB",
+    "androidVersion": 16,
+    "adbEndpoint": "192.168.2.33:44849"
+  },
+  "finalMapBundlesFromApk": {
+    "count": 5,
+    "bytes": 135348884,
+    "aggregateSha256": "d631e2b3ddf5b7ab1b5c3cafa029c08b1668a713d7506aad031b483caf9bf07e",
+    "aggregateContract": "SHA-256 over sorted UTF-8 rows path|length|sha256 followed by LF",
+    "buildResultHash": "87319e35387dd6b5744d8b526660deed",
+    "entries": [
+      {"path":"assets/aa/Android/055ad682c7304c206725f54a6bffb263.bundle","bytes":838283,"sha256":"a45141a240010d91188a34b35da72e223a8883ac06cfc817fb2ae9abf1d64e08"},
+      {"path":"assets/aa/Android/5673be990d8a2ba7e19c7b52fd24c761.bundle","bytes":5286,"sha256":"5dc4d4a4a43a7f2882f462cb01d87587eddde2cf08a54abe3e4a22e498c979fa"},
+      {"path":"assets/aa/Android/beb3ed5c8b6068519228928981dce8c2.bundle","bytes":134342099,"sha256":"ddf654ab5e16013acdde80971fd0fd73da4e44260e83b230f9c550e4c4b2cef6"},
+      {"path":"assets/aa/Android/db2c72ce54bf07206a6acda7d8c90cf6_monoscripts_15663a8ee56111d0febaa964fb0f254f.bundle","bytes":3654,"sha256":"1ae0c9affc83e6360c919cabe45baee5b8383912efdba065c2f241eb1ee4d1bc"},
+      {"path":"assets/aa/Android/db2c72ce54bf07206a6acda7d8c90cf6_unitybuiltinassets_c35f02a3f8f7da241f0ec6db6eab0ffe.bundle","bytes":159562,"sha256":"4706346694724b5fcdb3af871e9de7bae6717e65927ab5b60db9c17e66167f21"}
+    ],
+    "duplicateDependencyCount": 0,
+    "duplicateDependencyBytes": 0
+  },
+  "finalContentArchivesFromApk": {
+    "count": 3,
+    "bytes": 118765607,
+    "aggregateSha256": "30e4ad6b6e9000254f6edf79053a5f5d965310667fc76758606aeb02306b7846",
+    "aggregateContract": "SHA-256 over sorted UTF-8 rows path|length|sha256 followed by LF",
+    "entries": [
+      {"path":"assets/ContentArchives/15af288b98fef9b17dd869c3c6acefcf.archive","bytes":52639895,"sha256":"b37e50bdad58084558abd5a0017f774f9b0a3f347e6e1143ebc849dd7fc96aac"},
+      {"path":"assets/ContentArchives/c4496a36cea8aa6e4cb1f15a2c9ee666.archive","bytes":62433474,"sha256":"7e3547ed3c78e4773512bebf91f54e7793eab25dd5b9aaaad15444510340f897"},
+      {"path":"assets/ContentArchives/ede1ee917d19f7b368a173d38130dc59.archive","bytes":3692238,"sha256":"3f291c442a5a093796a652b8a0cf6ff58e615775a7f8811139300d8383cf2e37"}
+    ]
+  },
+  "deterministicRepresentation": {
+    "databaseContentHash": "04681634c40403c8d30e1de2c44a64ac598403b7cd8f0574e1359a12f5758d73",
+    "databaseRecordOrderingSha256": "a931d70e9e04915285c805cdd70545edd1b1852cb47a5fbb4a6ca0e1e7812fe7",
+    "databaseConfigSha256": "2fb85fd03d4b82621ba9c9168a21560e2ba8df3350e45594c5b3785a58768b8d",
+    "sourceRenderRows": 76517,
+    "eligibleLogicalRows": 61925,
+    "residentRows": 14592,
+    "placements": 40460,
+    "prototypes": 9107,
+    "parts": 12293,
+    "cells": 1934,
+    "policyBuckets": 4,
+    "fixedProxySlots": 7784,
+    "sharedRenderMeshArrayCount": 1,
+    "logicalParityResult": "Passed",
+    "isolationResult": "Passed"
+  },
+  "transformAndBounds": {
+    "candidateIdentityCount": 36304,
+    "bakedIdentityCount": 36304,
+    "candidateRendererCount": 62455,
+    "bakedRendererCount": 62455,
+    "matrixTolerance": 0.0001,
+    "boundsToleranceMeters": 0.001,
+    "meshMaterialBaseColorMatrixScaleBoundsMismatchCount": 0,
+    "missingUnexpectedDuplicateRejectedCount": 0,
+    "entitySceneGuid": "c00140f2e94a04c3084c8dcb0c18cbd0",
+    "finalAndroidEntitySceneStreamCount": 2
+  },
+  "performance": {
+    "routeCount": 9,
+    "secondsPerRoute": 120,
+    "totalSamples": 64735,
+    "minimumAverageFps": 59.762894,
+    "minimumP10Fps": 59.978353,
+    "maximumAverageFrameMs": 16.732791,
+    "maximumP95FrameMs": 16.676168,
+    "maximumP99FrameMs": 16.778509,
+    "maximumAverageCpuFrameMs": 11.979307,
+    "maximumP95CpuFrameMs": 13.700209,
+    "maximumAverageGpuFrameMs": 14.895588,
+    "maximumP95GpuFrameMs": 15.757083,
+    "maximumGcBytesPerFrame": 0,
+    "finalThermalStatus": "0 -> 0",
+    "finalBatteryTemperatureC": "36.8 -> 37.4",
+    "finalBatteryPercent": "100 -> 100",
+    "allRoutesPassed": true
+  },
+  "rollback": {
+    "manifestBytes": 10097753,
+    "chunkCount": 269,
+    "chunkBytes": 32381589,
+    "liveProductionStaticManifestCount": 0,
+    "liveProductionStaticChunkCount": 0,
+    "qualification": "Frozen static bytes are retained Git-backed rollback evidence and are not counted as live production package ownership."
+  },
+  "persistentReports": [
+    {"path":"Design/AgentReports/2026-08-10_dense_city_final_operation_map_addressables_build_report.json","bytes":718,"sha256":"181fb34ac95023cd6f974bb34074fab2c15dd5178723fec8a6304b1c3db9c2df"},
+    {"path":"Design/AgentReports/2026-08-10_dense_city_production_dependency_closure.json","bytes":1399,"sha256":"a0078ecdec59ec00a26fe7607d44effff52c44b6c9b8f3f8c2611585f0c6320c"},
+    {"path":"Design/AgentReports/2026-08-10_dense_city_static_retirement_validation.json","bytes":921,"sha256":"bbeec3855e36a9ff456dc082ec4b5099f91b58e7e212fb55695a9d36d2f9b524"},
+    {"path":"Design/AgentReports/2026-08-11_dense_city_final_android_package_evidence.json","bytes":2509,"sha256":"961798ea3b91a39fb3a0edb59d4031b312d2c7efa38281a9372b196dae841950"},
+    {"path":"Design/AgentReports/2026-08-11_dense_city_final_android_lifecycle_evidence.json","bytes":4706,"sha256":"bd7add588ac1c6edf851fd0d787ebdfa44098dd41c08660c67bd6ea857cd5729"},
+    {"path":"Design/AgentReports/2026-08-11_dense_city_final_android_performance_acceptance.json","bytes":9233,"sha256":"3b671c7152f64bd89a646d32730e91fbf11f6815645040211f29389b138b387b"},
+    {"path":"Design/AgentReports/2026-08-11_dense_city_final_android_transform_bounds_parity.json","bytes":5039,"sha256":"18becce8203a61bb22617739b527f271a4eb0b1ec4b420391c641b4b179b16cf"},
+    {"path":"Design/AgentReports/2026-08-11_dense_city_final_destruction_family_acceptance.json","bytes":7039,"sha256":"7c7b20dec8fcc6e1208f0daca490c61bfbb0e36f4fca94c6063df1a99237d2fa"},
+    {"path":"Design/AgentReports/2026-07-28_dense_city_render_virtualization_database.json","bytes":1100,"sha256":"e8a7318457d22b29f5c6bed4f4d4f166f0c02ef90aff1b7bdee5f5606c764121"},
+    {"path":"Design/AgentReports/2026-07-24_dense_city_generated_transform_parity.json","bytes":5561,"sha256":"d7f904899cfc8c86d1bd3d5f4c7899b33530f745415d543b41f5a6a402746168"},
+    {"path":"Design/AgentReports/2026-07-25_dense_city_frozen_rollback_byte_inventory.json","bytes":906,"sha256":"f5762f06dce4f152527628fa4a5b96abc45bee00bed3949163daceecbde57f96"}
+  ],
+  "routeLogsAndScreenshots": [
+    {"route":"fixed","screenshot":{"path":"fixed-final.png","bytes":2205734,"sha256":"08ff07bf7e05513df9ff33454fd2476361d7772b822a1698445c76de0935075f"},"log":{"path":"fixed-logcat.txt","bytes":5181159,"sha256":"0bd31106b40faf7b41c1548e05c152b7ae8b58d39247ca3eec275a9a9f21bcf0"}},
+    {"route":"slow-pan","screenshot":{"path":"slow-pan-r2-final.png","bytes":2206769,"sha256":"35d9485c60da497ac4bf713d63c7d7903315bcbd0b0b7e85b73724a43b13d77a"},"log":{"path":"slow-pan-r2-logcat.txt","bytes":1993368,"sha256":"2af43e938355504319b2891cfecd9e48010d5695192b7158a7dc529ef1b3c995"}},
+    {"route":"fast-pan","screenshot":{"path":"fast-pan-r2-final.png","bytes":2193174,"sha256":"55b63aaccf5d351df57893637bb1b871ad93a689c32450c723488c419e72afb8"},"log":{"path":"fast-pan-r2-logcat.txt","bytes":5990673,"sha256":"364c571a9bf94dbc8266427fe29b35bb25fe51a6d79cf1db4d481c5f9e18825d"}},
+    {"route":"zoom","screenshot":{"path":"zoom-final.png","bytes":2202794,"sha256":"5300e7a4009e453e6464d77e3710fbfa6c583c78979ed0796315ef8eb6b6bf28"},"log":{"path":"zoom-logcat.txt","bytes":1573110,"sha256":"6320e30eba33145c8cd90d9fb125bcd8a67d0093d0cfad029f198e69ad0aab0b"}},
+    {"route":"tactical-follow","screenshot":{"path":"tactical-follow-final.png","bytes":2547831,"sha256":"552006918c8a5eea2bb868d1ba90f2d4ec616bee0b0b1815957615c4182b9fb1"},"log":{"path":"tactical-follow-logcat.txt","bytes":1720960,"sha256":"5854fbe33be5b5a2c57d97699afe862050a744c40693c5adabd08dd4e8d36a26"}},
+    {"route":"destruction","screenshot":{"path":"destruction-r2-final.png","bytes":2203668,"sha256":"05044857a62416070b57bdd8a0f6651e510726c9b516b3f4aae40542d55ea805"},"log":{"path":"destruction-r2-logcat.txt","bytes":6183245,"sha256":"77f53dd99f23aaec60a4e8a198e3b555e3a5e05e06206df47b9a76c440ca26ea"}},
+    {"route":"fullscreen-map","screenshot":{"path":"fullscreen-map-active.png","bytes":1077329,"sha256":"ef98bb44e344ea3beccfdb6aa64dace553883cc54a82ee2ebb6ee2476b0af5fd"},"log":{"path":"fullscreen-map-logcat.txt","bytes":1789350,"sha256":"82b267fe0655c5be7c9cbf2b4586fd0fcd272cb7c01b370f510772ff7e0ad6d7"}},
+    {"route":"steady","screenshot":{"path":"steady-final.png","bytes":2204061,"sha256":"0e51554764f45322840d26ce014359f05deedddc13b4a38a5eac78fb7779f8d4"},"log":{"path":"steady-logcat.txt","bytes":1552094,"sha256":"20e458ae165710c92cc8f341ecd2d25de821b300cded10844c4b538ee5a40cb3"}},
+    {"route":"thermal","startScreenshot":{"path":"thermal-final-active.png","bytes":2201779,"sha256":"041df742e5cf12b39efea38630283f97dc9f90ea347f1429bc92fe57b23ab291"},"endScreenshot":{"path":"thermal-final.png","bytes":2203703,"sha256":"96418fcbdcc911513e92305fdb6652fef54a60d929ef8ee7f3cef51f65143235"},"log":{"path":"thermal-final-logcat.txt","bytes":6068043,"sha256":"33d9e116e4b8c29fc0629c7b9eee542baff9bda5741cc344c1bd3169c4fdabdd"}}
+  ],
+  "routeEvidenceRoot": "Build/AndroidAPK/Evidence/2026-08-10-parent-final-6b4d268b8",
+  "lifecycleEvidenceIndex": "Design/AgentReports/2026-08-11_dense_city_final_android_lifecycle_evidence.json",
+  "destructionEvidenceIndex": "Design/AgentReports/2026-08-11_dense_city_final_destruction_family_acceptance.json",
+  "rejectedEvidencePromoted": false,
+  "protectedAssetsMutated": false,
+  "productionAssetsMutated": false
+}

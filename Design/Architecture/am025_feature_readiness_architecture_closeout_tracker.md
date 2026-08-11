@@ -120,7 +120,7 @@ The worktree must be clean at every accepted commit and after every push. Genera
 - [x] `AMFR-018` Pass the complete `ArchitectureHardeningCloseoutValidationRunner.RunFocusedValidation` 23-suite architecture entrypoint and all required Python ownership/evidence checks.
 - [x] `AMFR-019` Pass the accepted World recreation, scene unload/reload, missing-singleton recovery, one-warm-up plus 10 measured transition cycles, structural/pool trend, and governed focused allocation suites.
 - [x] `AMFR-020` Complete canonical Unity compilation with zero errors; deterministic regeneration; exact artifact/source/tool hashes; protected-path audit; `git diff --check`; and focused independent review with no unresolved finding.
-- [~] `AMFR-021` Publish the AM-025 exit evidence and acceptance record, update the parent tracker to `26 / 86` overall and `26 / 68` Core, mark Phase 2 accepted, and identify `AM-027` as the next maturity task without starting it.
+- [x] `AMFR-021` Publish the AM-025 exit evidence and acceptance record, update the parent tracker to `26 / 86` overall and `26 / 68` Core, mark Phase 2 accepted, and identify `AM-027` as the next maturity task without starting it.
 - [ ] `AMFR-022` Publish the feature-resume handoff: later UI, presentation/pooling, simulation, diagnostics, and enforcement work must consume relevant Phase 3-5/7/8 rows when a feature touches those domains; Phase 6 and 9 remain deferred.
 
 **Exit:** This child is complete, `AM-025` is honestly accepted and pushed, the Core lane is green through Phase 2, and new feature planning may resume.
@@ -485,6 +485,15 @@ The worktree must be clean at every accepted commit and after every push. Genera
 - Exact write allowlist: `am025_phase2_exit_policy.json`, `am025_phase2_exit_evidence.json`, `am025_acceptance_record.json`, `Tools/CI/tests/test_architecture_phase2_acceptance.py`, this child tracker, and the parent tracker. All production, other tests/tools/evidence, assets, packages, settings, wrappers, thresholds, device work, features, and deferred Phase 6/9 work remain read-only.
 - Fail-closed publication finding: the policy's `am021ExplicitOwners` summary remains at stale intermediate value `561` while its hash-bound current AM-021 artifact reports `567`. Correct only that summary plus final status/progress routing, validate it against the accepted artifact, and record the finding/resolution in the exit bundle. No ownership decision or evidence count changes.
 - Acceptance: both new artifacts validate their identity, ancestry, hashes, prerequisite results, exact `640 / 567 / 73 / 0` ownership and `425 / 420 / 5 / 0 / 0` Phase 2 arithmetic, canonical suite markers, compile zero, deterministic/protected review, release exclusions, progress `26 / 86` and `26 / 68`, and `AM-027` next/not-started. Missing or mismatched data leaves AM-025 unchecked.
+
+### 2026-08-11 - AMFR-021 - Phase 2 exit publication closure
+
+- Published artifacts: `am025_phase2_exit_evidence.json` SHA-256 `d4bcef7b08b9fab5c0258dcb4bcb1f48386f1c762ae8d1be9d1dca3f2f7ff4cc`; `am025_acceptance_record.json` SHA-256 `e88abb89de2e59d9d7a290379e829dc62c83944280d5048526fe7242d623be9f`; corrected exit policy SHA-256 `a2f7567f24f2b5bd2e8681601cf241754f14eba9bc75738697c4f5785512f37d`.
+- Publication finding resolved: the policy now matches current authority at `640` resources / `567` explicit / `73` protected / `0` gaps, and its Python arithmetic is `157 + 22 = 179`. No underlying owner, source, threshold, or prior evidence was changed.
+- Validation: the new acceptance contract plus existing Phase 2 evidence contract pass `25 / 25`; all prerequisite and artifact/tool/test hashes resolve, all capture/tree identities are reachable, exact counts/suites/compile/protected/review gates pass, release certification remains inactive, and `git diff --check` passes. The full post-publication architecture discovery passes `185 / 185` in `108.063` seconds, log SHA-256 `088c3b027beee3e857d682b1f3bda70a8fa2c9ddd93801008235c22a942d6e00`. Acceptance-test source SHA-256 is `c81e8af2f7f278122b6861b00430007453bbe77a36b03426b5fe8968d5436acd`.
+- Rejected publication run: the first `184 / 185` full discovery correctly caught that the progress snapshot no longer contained one older test's exact release-deferment sentence. The canonical sentence was restored without changing meaning or scope; its focused `4 / 4` regression and the unchanged full rerun pass. The failing run receives no credit.
+- Parent result: AM-025 is accepted; Phase 2 is accepted; overall progress is `26 / 86` (`30.2%`), Core is `26 / 68` (`38.2%`), and Release remains `0 / 18` deferred. AM-027 is identified as next and has not started.
+- Result: AMFR-021 is accepted at child `21 / 22`. AMFR-022 is the final feature-resume handoff; it does not start AM-027 or any feature implementation.
 
 ## 7. Validation And Evidence Contract
 

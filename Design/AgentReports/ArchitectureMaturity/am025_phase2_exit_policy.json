@@ -2,7 +2,7 @@
   "artifactId": "AM025-PHASE2-EXIT-POLICY",
   "schemaVersion": 2,
   "taskId": "AM-025",
-  "status": "CurrentZeroDebtEvidenceReadyForFinalAcceptance",
+  "status": "AcceptedPhase2Exit",
   "baseline": {
     "commit": "98af580b742b3515452809ab11778f27e5934bf4",
     "tree": "4a09a2c9846fceaba8794feacfe543ec1f93efbf",
@@ -40,7 +40,7 @@
       "id": "integrated-architecture",
       "command": "python3 -m unittest discover -s Tools/CI/tests -p 'test_architecture_*.py'",
       "baselinePassed": 157,
-      "am025Added": 19,
+      "am025Added": 22,
       "requiredPassed": 179,
       "requiredFailed": 0
     },
@@ -97,7 +97,7 @@
     "am018Rows": 237,
     "am021Path": "Design/AgentReports/ArchitectureMaturity/am021_persistent_resource_ownership.json",
     "am021Rows": 640,
-    "am021ExplicitOwners": 561,
+    "am021ExplicitOwners": 567,
     "am021ProtectedOwners": 73,
     "am021GapCount": 0,
     "sourceKeyIncludesLineNumber": false,
@@ -142,9 +142,9 @@
     ]
   },
   "acceptanceProgress": {
-    "overall": "25 / 86 (29.1%)",
-    "core": "25 / 68 (36.8%)",
+    "overall": "26 / 86 (30.2%)",
+    "core": "26 / 68 (38.2%)",
     "release": "0 / 18 (0.0%); deferred",
-    "nextTask": "AM-025"
+    "nextTask": "AM-027"
   }
 }

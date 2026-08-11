@@ -111,16 +111,16 @@ Release-only categories are reported separately and never averaged into a premat
 
 | Field | Status |
 |---|---|
-| Checklist complete | `25 / 86` (`29.1%`) |
-| Core Architecture Lane | `25 / 68` (`36.8%`); active |
+| Checklist complete | `26 / 86` (`30.2%`) |
+| Core Architecture Lane | `26 / 68` (`38.2%`); active |
 | Release Certification Lane | `0 / 18` (`0.0%`); deferred |
-| Program state | Core Architecture Lane active; Phase 1 accepted; Phase 2 ownership, lifecycle recovery, bounded transition stress, and structural/pool trend accepted; AM-025 Phase 2 exit is dependency-ready; audit-only AM-026 accepted in parallel; release work inactive |
-| Current phase | Phase 2 - World Lifecycle And Dependency Hardening |
-| Current task | `AM-025` remains active for final acceptance. The regenerated current scan has `425` reviewable rows: `420` resolved, `5` protected, zero genuine-debt, and zero unclassified rows. AMFR-017 is accepted; AMFR-018 architecture validation and deterministic evidence reconciliation are active. The original `575` rows remain immutable historical intake. |
-| Parallel preparatory work | Audit-only `AM-026` is accepted with 29 surfaces and `AM-WP-001` through `AM-WP-023`; production tasks `AM-027` through `AM-035` remain gated. `AM-WP-007` is additionally blocked on mission/objective owner handoff and `AM-WP-009` preserves audio/FirstLaunch consumers as read-only dependencies. `AM-WP-024` through `AM-WP-028` define accepted lifecycle work plus active AM-025 exit/debt reconciliation; `AM-WP-026` is accepted |
-| Blockers | Phase 2 regeneration reports zero genuine-debt and zero unclassified rows, and source growth passes `17 / 17`. AM-025 still requires AMFR-018 through AMFR-022 architecture, lifecycle, compiler, evidence, acceptance, and feature-resume handoff gates. All non-handed-off operation-map paths remain protected. Release-only certification remains intentionally deferred. |
-| Latest validation | AMFR-015 road-preview pool checks pass `4 / 4` with zero C# errors; exact final-head lifecycle classification records target cleanup through standard `Dispose`. Capacity, reuse, active-preview preservation, exhaustion, object/material teardown, idempotence, and existing composition ownership are covered. |
-| Latest evidence | Current deterministic AM-007/AM-018/AM-021 inputs classify all `425` review rows once (`420` resolved / `5` protected / `0` genuine debt), with zero ownership gaps and zero unclassified rows. The unchanged source-growth gate passes `17 / 17` with exact no-headroom authority. |
+| Program state | Core Architecture Lane active; Phases 1 and 2 accepted; AM-025 exit evidence and acceptance are published; audit-only AM-026 is accepted; Phase 3 is dependency-ready; release work inactive |
+| Current phase | Phase 3 - Allocation-Free UI Projection |
+| Current task | `AM-027` is next and not started. It must add/correct semantic ECS source versions under its existing package authority before later UI projection-cache work proceeds. |
+| Parallel preparatory work | AM-026's 29-surface audit and `AM-WP-001` through `AM-WP-023` remain accepted inputs. AM-028 through AM-035 stay sequenced behind their dependency-ready rows; mission/objective and audio/FirstLaunch handoffs remain separately protected. |
+| Blockers | No Phase 2 blocker remains: ownership gaps, genuine debt, unclassified rows, source-growth blockers, compiler errors, protected-path findings, and unresolved review findings are all zero. AM-027 has not started. Release-only certification remains intentionally deferred. |
+| Latest validation | AMFR-020 final checked Unity compile passes with `compilerErrors: 0`; current deterministic ownership/Phase 2/Phase 7 checks pass; full architecture Python passes `179 / 179`; the exact child range has zero protected or outside-domain paths. |
+| Latest evidence | AM-025 exit evidence binds `640 / 567 / 73 / 0` ownership authority, `425 / 420 / 5 / 0 / 0` Phase 2 review arithmetic, source growth `17 / 17`, architecture `23` suites, accepted lifecycle/stress/pool/allocation evidence, and the final compiler-zero capture. |
 | Core entry baseline | Phase 0 accepted by `AM-001` through `AM-008`; exact-identity assembly and bounded Editor Match evidence are current at `9a0aa14252e6559680328e520d26c16bfc7b444e`; the dashboard required gate is accepted; the entry rating and owned deltas are published in `entry_baseline_report.md` |
 | Release entry review | Deferred until `pre_release_performance_certification_backlog.md` activates |
 | Architecture rating | Evidence-backed Phase 0 entry rating `8.5 / 10`; planning baseline only, not a `9.5` claim |
@@ -242,7 +242,7 @@ Make runtime dependencies explicit and prove that caches and native resources ca
 - [x] `AM-022` Add tests for World destruction/recreation, domain reload, scene unload/reload, missing singleton recovery, and replaced command entities.
 - [x] `AM-023` Run one warm-up plus 10 measured automated Menu-to-Match-to-Menu cycles without duplicate systems, stale entities, retained subscriptions, or presentation-root accumulation.
 - [x] `AM-024` Add native allocation and pool-count snapshots around lifecycle stress tests, prove no upward structural retained-owner/pool trend after warmup, and report supporting Editor memory trends without treating unforced-GC totals as leak verdicts. Accepted package: `Design/Architecture/WorkPackages/am_wp_026_lifecycle_memory_pool_trend.md`.
-- [ ] `AM-025` Run the full architecture, lifecycle, compiler, and focused allocation suites and publish the Phase 2 ownership delta. Active packages: `Design/Architecture/WorkPackages/am_wp_027_phase2_exit_acceptance.md` and `Design/Architecture/WorkPackages/am_wp_028_phase2_debt_reconciliation.md`; AM-021 through AM-024 are accepted, while `13` genuine-debt rows in `12` unique items and eight exact source-growth blockers remain.
+- [x] `AM-025` Run the full architecture, lifecycle, compiler, and focused allocation suites and publish the Phase 2 ownership delta. Accepted through `Design/AgentReports/ArchitectureMaturity/am025_phase2_exit_evidence.json` and `am025_acceptance_record.json`: zero ownership gaps, zero genuine debt, zero unclassified rows, zero source-growth blockers, compiler zero, and no unresolved review finding.
 
 ### Phase 2 Exit Gate
 
@@ -1184,3 +1184,11 @@ Accepted AM-020 progress snapshot:
 - Entry identity: clean pushed `main`/`origin/main` `4b8ff1f1e50965306eebe1e5ed1f875c54d57d16`, tree `1212d5b081238227f6e828c76185f0f91bbf60db`; AMFR-020 is accepted.
 - Publication scope is limited to the AM-WP-027 policy, exit evidence, acceptance record, acceptance validator, and both trackers. A stale policy summary field (`561` explicit owners) must be reconciled to the accepted current AM-021 value (`567`) before publication; no ownership decision changes.
 - Parent credit remains withheld until the exact artifacts, hashes, counts, ancestry, suites, exclusions, progress arithmetic, and AM-027 not-started route validate cleanly.
+
+### 2026-08-11 - AM-025 - Phase 2 exit accepted
+
+- Exit evidence SHA-256 `d4bcef7b08b9fab5c0258dcb4bcb1f48386f1c762ae8d1be9d1dca3f2f7ff4cc`; acceptance record SHA-256 `e88abb89de2e59d9d7a290379e829dc62c83944280d5048526fe7242d623be9f`; corrected current policy SHA-256 `a2f7567f24f2b5bd2e8681601cf241754f14eba9bc75738697c4f5785512f37d`.
+- Final authority is `640` resources / `567` explicit / `73` protected / `0` gaps. All `425` review rows are classified once as `420` resolved / `5` protected / `0` debt / `0` unclassified; source-growth blockers are zero.
+- Canonical Core evidence passes source growth `17 / 17`, the architecture closeout `23` suites, architecture Python `179 / 179`, current recovery/transition/pool/allocation gates, deterministic regeneration, protected-path audit, and final Unity compiler zero. The focused review has zero unresolved findings.
+- AM-WP-027 acceptance tests plus the existing Phase 2 evidence contract pass `25 / 25`; the full post-publication architecture discovery passes `185 / 185`. The first `184 / 185` run rejected a missing canonical release-deferment sentence; the restored wording passes its focused `4 / 4` check and the complete unchanged rerun. Release certification stays `0 / 18` deferred; raw Editor memory and extended transition investigations remain explicitly non-credit follow-up.
+- AM-025 and Phase 2 are accepted. Progress is `26 / 86` (`30.2%`) overall and `26 / 68` (`38.2%`) Core. AM-027 is next and has not started.

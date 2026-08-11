@@ -1,0 +1,191 @@
+{
+  "artifactId": "AM025-PHASE2-EXIT-EVIDENCE",
+  "schemaVersion": 1,
+  "taskId": "AM-025",
+  "result": "Passed",
+  "baseline": {
+    "commit": "98af580b742b3515452809ab11778f27e5934bf4",
+    "tree": "4a09a2c9846fceaba8794feacfe543ec1f93efbf"
+  },
+  "validatedCapture": {
+    "commit": "9c2fca1840b9f6f4a4f610db39e882a0481480b8",
+    "tree": "1ae83d202809c0ce5fcae813627fcd9bd622674e",
+    "branch": "main",
+    "originMatched": true,
+    "dirty": false
+  },
+  "finalReviewRecord": {
+    "commit": "4b8ff1f1e50965306eebe1e5ed1f875c54d57d16",
+    "tree": "1212d5b081238227f6e828c76185f0f91bbf60db"
+  },
+  "publicationClaim": {
+    "commit": "157a86535d34859b228ec810308b42c63632b00e",
+    "tree": "6f22c799df6a324de02eae696e7d0b2e32c2958a"
+  },
+  "ancestry": {
+    "controlCommit": "6bd8e913d7f860e0dda6f36b21d19fdf33d1d07a",
+    "controlIsAncestor": true,
+    "baselineIsAncestor": true,
+    "validatedCaptureIsAncestor": true,
+    "finalReviewIsAncestor": true
+  },
+  "prerequisites": [
+    {"taskId": "AM-021", "path": "Design/AgentReports/ArchitectureMaturity/am021_persistent_resource_ownership_acceptance.json", "sha256": "358a94b25e6467278889805cdec745bc4be64717cd8a8fa15750f15f2253b766", "result": "Accepted"},
+    {"taskId": "AM-022", "path": "Design/AgentReports/ArchitectureMaturity/am022_acceptance_record.json", "sha256": "ed0de1e74f54a9efdd50886e4fc904d8229f54979ebe6e7f4f1da20be9b2ceff", "result": "Accepted"},
+    {"taskId": "AM-023", "path": "Design/AgentReports/ArchitectureMaturity/am023_acceptance_record.json", "sha256": "702e9b98a133c655e20f3fd51028662c8d7960f26b67a50f56c1fc7aba585031", "result": "Accepted"},
+    {"taskId": "AM-024", "path": "Design/AgentReports/ArchitectureMaturity/am024_acceptance_record.json", "sha256": "e1f46d8551274461247b444affbb1279a41e36271b1ab555b58c02cbc7da3bf8", "result": "AcceptedWithReportedEditorMemoryFollowUp"}
+  ],
+  "ownership": {
+    "totalResources": 640,
+    "explicitOwners": 567,
+    "protectedOwners": 73,
+    "ownershipGaps": 0,
+    "currentReviewRows": 425,
+    "resolvedRows": 420,
+    "protectedDeferredRows": 5,
+    "genuineDebtRows": 0,
+    "uniqueDebtItems": 0,
+    "unclassifiedRows": 0,
+    "sourceGrowthBlockers": 0
+  },
+  "canonicalValidation": {
+    "sourceGrowth": {
+      "result": "Passed",
+      "tests": 17,
+      "marker": "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17",
+      "logSha256": "97a7b738be30aa7d5ac812ffaadf52113f80edbe1d1de5830641712ffbe36f33"
+    },
+    "architectureCloseout": {
+      "result": "Passed",
+      "suites": 23,
+      "marker": "[ArchitectureHardeningCloseoutValidation] result=Passed suites=23",
+      "logSha256": "001703bbaaf76c49e2eef200856fe21c1f7201a9677e0d763215e88278f4fcd6"
+    },
+    "architecturePython": {
+      "result": "Passed",
+      "tests": 179,
+      "failures": 0,
+      "seconds": 108.351,
+      "logSha256": "faa2a97d962e45e6816c526c6ff40389be1e6a8f6468a6fadd08510b8015ae69"
+    },
+    "worldRecovery": {
+      "editModePassed": 8,
+      "playModePassed": 2,
+      "warmupOperations": 180,
+      "measuredOperations": 300,
+      "recurringAllocatedBytes": 0,
+      "editModeLogSha256": "95f2df8ac98653eac093607c2457ac4f900d3b9d85bb76a115e09b3a3cdcad7d",
+      "editModeXmlSha256": "89da7462a94ccc60809530ad92d978314ebfba0400ab7f423d5e0901d26cf334",
+      "playModeLogSha256": "2d4b69c5e9fe6bd25a717322ec62ff45ef52f4846af6e62a6a54a21f68c2e47a",
+      "playModeXmlSha256": "42fc6acf0d74828032e201db7e16c273214bbaa3930c09673c2ac067ee28afd1"
+    },
+    "transitionStress": {
+      "result": "Passed",
+      "warmupCycles": 1,
+      "measuredCycles": 10,
+      "logSha256": "273487f38162491a9e00afba69d19564dc46a02bec98a8aba770f8892a54f4e7",
+      "xmlSha256": "72053af702811106166a22142b9fa9a99fdce93b9f1b2b9c7fb69023c2bb7d0d"
+    },
+    "structuralPoolTrend": {
+      "result": "Passed",
+      "warmupCycles": 1,
+      "measuredCycles": 5,
+      "structuralOwnerGrowth": 0,
+      "governedPoolGrowth": 0,
+      "rawEditorMemoryInvestigationOnly": true,
+      "logSha256": "311a1c4905f482cd8a6ae08e33c04060dbaf1a7a151af0a1102285e47d22c4a3",
+      "xmlSha256": "1b73d96aa49682fd041b98fe06c886b86fa3ded6b9b05674c169eae871f3bc3a"
+    },
+    "governedAllocation": {
+      "result": "Passed",
+      "tests": 4,
+      "combinations": 3,
+      "phases": 10,
+      "warmupOperationsPerPhase": 180,
+      "measuredOperationsPerPhase": 300,
+      "allocatedBytesPerPhase": 0,
+      "logSha256": "e5f12b6e3bf248f1ee9cbdeb564a7b1d9dafd091cc8558176d57a63aad789569"
+    },
+    "unityCompile": {
+      "result": "Passed",
+      "compilerErrors": 0,
+      "marker": "[OperationMapRenderMaterializedParityCompileValidation] result=Passed",
+      "logSha256": "0892de7a37269e32ca6e0cc5c8f7e971e81d75db25497ee18e04c556591cdcca",
+      "timeoutSeconds": 900
+    }
+  },
+  "artifactManifest": [
+    {"path": "Design/AgentReports/ArchitectureMaturity/lifecycle_inventory.json", "sha256": "3a1322a5982fe83c2c755953b774c86ad9859ed1ddc1e2c7d1f2c85b9323af63"},
+    {"path": "Design/AgentReports/ArchitectureMaturity/lifecycle_inventory.md", "sha256": "4086172074e8583a2778fb3a23fd09e3d6edc0b6526eac8737d3c3a34e0ce9ae"},
+    {"path": "Design/AgentReports/ArchitectureMaturity/am018_dependency_hazard_inventory.json", "sha256": "6975b000015259316c2bb049c29c15779520eba672ea9b4c16a244e2718d57f4"},
+    {"path": "Design/AgentReports/ArchitectureMaturity/am018_dependency_hazard_inventory.md", "sha256": "2cc3dbe6f3abeb9155371b919f9c93e43212bd7f0affe965913cdcac8ae1d39b"},
+    {"path": "Design/AgentReports/ArchitectureMaturity/am021_persistent_resource_ownership.json", "sha256": "fe992e8f92faa914cba35844f60d9d548a748fcf909701b734a4202b69f11b93"},
+    {"path": "Design/AgentReports/ArchitectureMaturity/am021_persistent_resource_ownership.md", "sha256": "5367feb933a7284d3e5564e4288398f2f6ce83c1fd31c3c389a8048033814ace"},
+    {"path": "Design/AgentReports/ArchitectureMaturity/am025_phase2_closure_audit.json", "sha256": "1f087f92cdd172bd5d0db85414fbbb9f3e49db7d7a3717501e95722175e9093b"},
+    {"path": "Design/AgentReports/ArchitectureMaturity/am025_phase2_ownership_delta.json", "sha256": "8323f1b6e652089d9fc7327c9b3b80676e356f9dc22bc94b446fb26d32b3b4fd"},
+    {"path": "Design/AgentReports/ArchitectureMaturity/am025_phase2_ownership_delta.md", "sha256": "e0d6487f34caaa66072bff0656e7f51de05cfeb58e513b9e86bf3f9c78369303"},
+    {"path": "Design/Architecture/systembase_to_isystem_inventory.md", "sha256": "deceed458fe59dc5bb3566d2900137ec566ea866e62f5b6a3df541e31c752ce4"},
+    {"path": "Design/Architecture/post_hardening_source_responsibility_guardrails.json", "sha256": "12b92a5785324722f07a985241e8086da713bc024fb4820d961d28793a53d743"}
+  ],
+  "toolManifest": [
+    {"path": "Tools/CI/architecture_lifecycle_inventory.py", "sha256": "b7e1a5b2684bb6398724564b11c2c56b985b119fa87fe3d9fe2cb29f6ee2b075"},
+    {"path": "Tools/CI/architecture_dependency_hazard_inventory.py", "sha256": "8c54fb8f21ba537783e017ea3082afce4f330ecc55aaf4d0ceb0d002495904b3"},
+    {"path": "Tools/CI/architecture_persistent_resource_ownership.py", "sha256": "6c7fdeabad3f927d675cff2f970ca3eb0e63a22fe2eb1598b8e64a1d2e6ba815"},
+    {"path": "Tools/CI/architecture_phase2_ownership_delta.py", "sha256": "8d08b28f54e6dc8382b8993c0b2591367dba27011a8558176d57a63aad789569"},
+    {"path": "Tools/Architecture/generate_systembase_to_isystem_inventory.py", "sha256": "c32d9909eb1237ae19642205a8da9f4fbd351c5f433da3a23442f9e5bacdbee3"}
+  ],
+  "testManifest": [
+    {"path": "Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs", "sha256": "ef7eb14af2ded966fe51e11caba98709777dd5442b95e65b1cf3c1c2a446469e"},
+    {"path": "Assets/Tests/Editor/ArchitectureHardeningCloseoutValidationRunner.cs", "sha256": "ad2d5ea5ee4999b7d10ddc4d3434760a4c6b41f66a8f1ee7306b414567a24c0f"},
+    {"path": "Assets/Tests/Editor/WorldLifecycleRecoveryMatrixTests.cs", "sha256": "7a143b42318879863dd08bdf3b79f3c152bcb64c567f696c48ef19b7c9d01f23"},
+    {"path": "Assets/Tests/PlayMode/WorldSceneLifecycleRecoveryPlayModeTests.cs", "sha256": "1372d34f15bf00797bf188a0b4daa8e0a9566beb24a1310f01b7d2dd1b9a0dae"},
+    {"path": "Assets/Tests/PlayMode/ArchitectureMenuMatchLifecycleStressPlayModeTests.cs", "sha256": "fcb0acb770c0d7f2efad8d13678c06b774c0b9e7e8db404fd1541a1c28f011f3"},
+    {"path": "Assets/Tests/PlayMode/ArchitectureLifecycleMemoryPoolTrendPlayModeTests.cs", "sha256": "a6e18e471a02987e3a1cde282c059b7449e0dfe576eacdea3e7166c7ba6d5926"},
+    {"path": "Assets/Tests/Editor/WorldScopedComponentQueryCachePerformanceValidation.cs", "sha256": "d36cec9fe5a60698bfa57e795bd16e4810e2049db04b57614690fcc2669a5d05"}
+  ],
+  "determinism": {
+    "persistentOwnershipCheck": "Passed",
+    "phase2DeltaCheck": "Passed",
+    "phase7InventoryCheck": "Passed",
+    "pythonSyntax": "Passed",
+    "gitDiffCheck": "Passed",
+    "logSha256": "4d28e8d05408e8a9129152cb2daef5cfddf689af7ddd173d76ce3b1edc15e246"
+  },
+  "protectedPathAudit": {
+    "range": "6bd8e913d7f860e0dda6f36b21d19fdf33d1d07a..9c2fca1840b9f6f4a4f610db39e882a0481480b8",
+    "changedPathCount": 94,
+    "protectedPathCount": 0,
+    "outsideOwnedDomainCount": 0,
+    "authorizedCodeMetaCount": 9,
+    "result": "Passed"
+  },
+  "focusedReview": {
+    "result": "Passed",
+    "unresolvedFindingCount": 0,
+    "resolvedFindings": [
+      "Corrected stale policy explicit-owner summary from 561 to hash-bound current 567.",
+      "Corrected integrated Python arithmetic from 157 + 19 to 157 + 22 = 179.",
+      "Rejected two PowerShell stream/orchestration attempts and retained only the isolated 179/179 process result."
+    ]
+  },
+  "releaseLane": {
+    "status": "Deferred",
+    "activated": false,
+    "excluded": ["Android device", "thermal", "cold/warm launch", "sustained gameplay", "graphics-memory certification", "APK/build artifacts"]
+  },
+  "residualRisks": [
+    "Raw Unity Editor memory totals remain investigation-only and are not accepted as a memory-ceiling pass.",
+    "The extended 100-cycle transition run remains deferred under its accepted contract.",
+    "Protected audio and FirstLaunch owners remain outside AM-025 scope.",
+    "Phase 6 and Phase 9 release work remains deferred."
+  ],
+  "progress": {
+    "overall": "26 / 86 (30.2%)",
+    "core": "26 / 68 (38.2%)",
+    "release": "0 / 18 (0.0%); deferred"
+  },
+  "nextTask": {
+    "taskId": "AM-027",
+    "started": false
+  }
+}

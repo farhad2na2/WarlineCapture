@@ -1,0 +1,58 @@
+{
+  "artifactId": "AM025-ACCEPTANCE-RECORD",
+  "schemaVersion": 1,
+  "taskId": "AM-025",
+  "result": "Accepted",
+  "implementation": {
+    "commit": "9c2fca1840b9f6f4a4f610db39e882a0481480b8",
+    "tree": "1ae83d202809c0ce5fcae813627fcd9bd622674e"
+  },
+  "finalReview": {
+    "commit": "4b8ff1f1e50965306eebe1e5ed1f875c54d57d16",
+    "tree": "1212d5b081238227f6e828c76185f0f91bbf60db"
+  },
+  "acceptedEvidence": {
+    "path": "Design/AgentReports/ArchitectureMaturity/am025_phase2_exit_evidence.json",
+    "sha256": "d4bcef7b08b9fab5c0258dcb4bcb1f48386f1c762ae8d1be9d1dca3f2f7ff4cc"
+  },
+  "policy": {
+    "path": "Design/AgentReports/ArchitectureMaturity/am025_phase2_exit_policy.json",
+    "sha256": "a2f7567f24f2b5bd2e8681601cf241754f14eba9bc75738697c4f5785512f37d"
+  },
+  "acceptance": {
+    "persistentResources": 640,
+    "explicitOwners": 567,
+    "protectedOwners": 73,
+    "ownershipGaps": 0,
+    "reviewedRows": 425,
+    "resolvedRows": 420,
+    "protectedDeferredRows": 5,
+    "genuineDebtRows": 0,
+    "unclassifiedRows": 0,
+    "sourceGrowthTests": 17,
+    "architectureSuites": 23,
+    "architecturePythonTests": 179,
+    "worldRecoveryEditModeTests": 8,
+    "worldRecoveryPlayModeTests": 2,
+    "transitionWarmupCycles": 1,
+    "transitionMeasuredCycles": 10,
+    "poolTrendWarmupCycles": 1,
+    "poolTrendMeasuredCycles": 5,
+    "governedAllocationPhases": 10,
+    "governedRecurringAllocatedBytes": 0,
+    "compilerErrors": 0,
+    "protectedPathCount": 0,
+    "unresolvedReviewFindings": 0,
+    "releaseCertificationActivated": false
+  },
+  "progress": {
+    "overall": "26 / 86 (30.2%)",
+    "core": "26 / 68 (38.2%)",
+    "release": "0 / 18 (0.0%); deferred"
+  },
+  "scope": "AM-025 closes Phase 2 architecture readiness only. It does not activate Android release certification, mutate protected assets, or begin feature implementation.",
+  "nextTask": {
+    "taskId": "AM-027",
+    "started": false
+  }
+}

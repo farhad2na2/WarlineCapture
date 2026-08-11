@@ -37,6 +37,10 @@ public sealed class PerformanceDiagnosticsSystemHelperAllocationTests
                 test => test.CapturePolicySuppressesAndRestoresDiagnosticLogging(),
                 ref passed);
             RunValidationStep(
+                nameof(CapturePolicySubsystemRegistrationClearsStaleSuppression),
+                test => test.CapturePolicySubsystemRegistrationClearsStaleSuppression(),
+                ref passed);
+            RunValidationStep(
                 nameof(RuntimeVisualCounts_FollowReplacementDefaultWorld),
                 test => test.RuntimeVisualCounts_FollowReplacementDefaultWorld(),
                 ref passed);
@@ -169,6 +173,25 @@ public sealed class PerformanceDiagnosticsSystemHelperAllocationTests
             PerformanceDiagnosticsCapturePolicy.SetSuppressLogging(false);
             Application.logMessageReceived -= OnLog;
         }
+    }
+
+    [Test]
+    public void CapturePolicySubsystemRegistrationClearsStaleSuppression()
+    {
+        MethodInfo reset = typeof(PerformanceDiagnosticsCapturePolicy).GetMethod(
+            "ResetBeforeSubsystemRegistration",
+            BindingFlags.Static | BindingFlags.NonPublic);
+        Assert.NotNull(reset);
+
+        PerformanceDiagnosticsCapturePolicy.SetSuppressLogging(true);
+        Assert.IsTrue(PerformanceDiagnosticsCapturePolicy.SuppressLogging);
+        reset.Invoke(null, null);
+        Assert.IsFalse(PerformanceDiagnosticsCapturePolicy.SuppressLogging);
+
+        PerformanceDiagnosticsCapturePolicy.SetSuppressLogging(true);
+        Assert.IsTrue(PerformanceDiagnosticsCapturePolicy.SuppressLogging,
+            "A recreated capture owner must remain able to opt into suppression after reset.");
+        reset.Invoke(null, null);
     }
 
     [Test]

@@ -23,6 +23,8 @@ namespace Game.Runtime
             RuntimeOperationMapAlgorithmicAftermathSettings settings,
             IReadOnlyList<GameObject> damagePrefabs,
             uint seed,
+            Transform visualRoot,
+            Transform roadVisualRoot,
             Transform parent)
         {
             CreateGroupedDressing(
@@ -31,6 +33,8 @@ namespace Game.Runtime
                 seed,
                 Vector3.zero,
                 1f,
+                visualRoot,
+                roadVisualRoot,
                 parent);
         }
 
@@ -40,13 +44,11 @@ namespace Game.Runtime
             uint seed,
             Vector3 cityCenter,
             float roadCellWorldSize,
+            Transform visualRoot,
+            Transform roadVisualRoot,
             Transform parent)
         {
-            if (!settings.IsConfigured || damagePrefabs == null || parent == null)
-                return;
-
-            Transform visualRoot = parent.Find("RuntimeCityVisuals");
-            if (visualRoot == null)
+            if (!settings.IsConfigured || damagePrefabs == null || visualRoot == null || parent == null)
                 return;
 
             HashSet<string> damageNames = CreateDamagePrefabNameSet(damagePrefabs);
@@ -60,7 +62,7 @@ namespace Game.Runtime
             }
 
             CollectProtectedBounds(visualRoot);
-            CollectProtectedBounds(parent.Find("RuntimeCityRoadVisuals"));
+            CollectProtectedBounds(roadVisualRoot);
 
             var rootObject = new GameObject(settings.GroupName);
             _root = rootObject.transform;

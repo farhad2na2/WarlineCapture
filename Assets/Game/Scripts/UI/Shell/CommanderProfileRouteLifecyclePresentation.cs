@@ -88,14 +88,14 @@ namespace Game.UI.Runtime
             if (!contentView.TryGetRegionContentRoot(UIShellRegionId.MenuBackgroundRegion, out RectTransform contentRoot))
                 return;
 
-            Transform existing = contentRoot.Find(BackgroundScrimName);
-            GameObject backgroundScrim = existing != null ? existing.gameObject : null;
+            GameObject backgroundScrim = contentView.CommanderBackgroundScrim;
 
             if (!visible)
             {
                 if (backgroundScrim != null)
                 {
                     UIShellContentView.DestroyRegionObject(backgroundScrim);
+                    contentView.CommanderBackgroundScrim = null;
                     contentView.MarkContentChanged();
                 }
                 return;
@@ -109,6 +109,7 @@ namespace Game.UI.Runtime
                     typeof(CanvasRenderer),
                     typeof(Image));
                 backgroundScrim.transform.SetParent(contentRoot, false);
+                contentView.CommanderBackgroundScrim = backgroundScrim;
             }
 
             UIShellContentView.Stretch(backgroundScrim.GetComponent<RectTransform>());

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System;
+using System.IO;
 using System.Reflection;
 using Unity.Collections;
 using Unity.Entities;
@@ -180,6 +181,7 @@ public sealed class UIShellCurrentContentLoadTests
         try
         {
             tests.CommanderBackgroundOwnership_DoesNotRetainSceneObjectsGlobally();
+            tests.CommanderBackgroundOwnership_UsesShellInstanceStateWithoutHierarchySearch();
             tests.MenuSceneShellInstallsCommanderProfileRouteWithoutReplacingHeader();
             Debug.Log("[CommanderBackgroundOwnershipValidation] result=Passed");
             ValidationExit.Exit(0);
@@ -339,6 +341,21 @@ public sealed class UIShellCurrentContentLoadTests
                 typeof(UnityEngine.Object).IsAssignableFrom(fields[i].FieldType),
                 $"Commander route must not retain scene object field {fields[i].Name} globally.");
         }
+    }
+
+    [Test]
+    public void CommanderBackgroundOwnership_UsesShellInstanceStateWithoutHierarchySearch()
+    {
+        FieldInfo field = typeof(UIShellContentView).GetField(
+            "_commanderBackgroundScrim",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.NotNull(field);
+        Assert.AreEqual(typeof(GameObject), field.FieldType);
+
+        string source = File.ReadAllText(
+            "Assets/Game/Scripts/UI/Shell/CommanderProfileRouteLifecyclePresentation.cs");
+        StringAssert.DoesNotContain("contentRoot.Find", source);
+        StringAssert.Contains("contentView.CommanderBackgroundScrim", source);
     }
 
     [Test]

@@ -63,6 +63,7 @@ namespace Game.Runtime
 
         public int StrokeCount { get; private set; }
         public int RoadCellCount => _spawnedRoadCells.Count;
+        internal Transform RoadVisualRoot => _roadRoot;
 
         public void Configure(
             Transform runtimeRoot,

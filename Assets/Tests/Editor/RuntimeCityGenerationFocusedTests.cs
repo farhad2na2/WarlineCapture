@@ -33,6 +33,7 @@ public sealed class RuntimeCityGenerationFocusedTests
             tests.AlgorithmicAftermathPresentation_GroupsDressingAroundPlacedDamage();
             tests.AlgorithmicAftermathPresentation_FillsSparseSeedsFromConfiguredDistrict();
             tests.AlgorithmicAftermathPresentation_ReservesAuthoredAnchorsWhenDamageIsDense();
+            tests.AlgorithmicAftermathPresentation_UsesExplicitOwnedRootsWithoutHierarchyDiscovery();
             tests.GenerationProgress_ReportsMonotonicStagesAndCompletion();
             tests.GenerationProgress_CancellationPreservesLastKnownWork();
             tests.GenerationRecovery_SchedulesOnlyOneDeterministicFallback();
@@ -53,7 +54,7 @@ public sealed class RuntimeCityGenerationFocusedTests
             tests.RuntimeCameraPose_PreservesStageAndClampsPresentationValues();
             tests.RuntimeDistrictModuleRecipe_SupportsExactPrefabReplayOrIndexedSlices();
             tests.RuntimePrototypeArchitecture_UsesPassiveViewAndSystemBaseOwner();
-            Debug.Log("[RuntimeCityGenerationFocusedValidation] result=Passed tests=36");
+            Debug.Log("[RuntimeCityGenerationFocusedValidation] result=Passed tests=37");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -359,8 +360,8 @@ public sealed class RuntimeCityGenerationFocusedTests
             environmentRoot,
             "RuntimeCityRAndDMapCompositionSystemHelper.cs"));
 
-        Assert.AreEqual(286, File.ReadAllLines(helperPath).Length);
-        Assert.AreEqual(10976, new FileInfo(helperPath).Length);
+        Assert.AreEqual(287, File.ReadAllLines(helperPath).Length);
+        Assert.AreEqual(11032, new FileInfo(helperPath).Length);
         Assert.AreEqual(1, CountOccurrences(
             ownerSource,
             "new RuntimeCityRoadVisualPrototypeSystemHelper()"));
@@ -606,7 +607,9 @@ public sealed class RuntimeCityGenerationFocusedTests
                 settings,
                 new List<GameObject> { damageAnchorPrefab },
                 seed: 100u,
-                root.transform);
+                visualRoot: visualRoot.transform,
+                roadVisualRoot: null,
+                parent: root.transform);
 
             Assert.AreEqual(1, presentation.GroupCount);
             Assert.GreaterOrEqual(presentation.DressingCount, 1);
@@ -669,7 +672,9 @@ public sealed class RuntimeCityGenerationFocusedTests
                 seed: 26071502u,
                 cityCenter: new Vector3(-1f, 0f, -1f),
                 roadCellWorldSize: 10f,
-                root.transform);
+                visualRoot: visualRoot.transform,
+                roadVisualRoot: null,
+                parent: root.transform);
 
             Assert.AreEqual(4, presentation.FallbackAnchorCount);
             Assert.AreEqual(4, presentation.GroupCount);
@@ -731,7 +736,9 @@ public sealed class RuntimeCityGenerationFocusedTests
                 seed: 26071501u,
                 cityCenter: Vector3.zero,
                 roadCellWorldSize: 10f,
-                root.transform);
+                visualRoot: visualRoot.transform,
+                roadVisualRoot: null,
+                parent: root.transform);
 
             Assert.AreEqual(
                 2,
@@ -750,6 +757,23 @@ public sealed class RuntimeCityGenerationFocusedTests
             UnityEngine.Object.DestroyImmediate(damageAnchorPrefab);
             UnityEngine.Object.DestroyImmediate(root);
         }
+    }
+
+    [Test]
+    public void AlgorithmicAftermathPresentation_UsesExplicitOwnedRootsWithoutHierarchyDiscovery()
+    {
+        string environmentRoot = Path.GetFullPath(Path.Combine(Application.dataPath, "Game/Scripts/Environment"));
+        string helperSource = File.ReadAllText(Path.Combine(
+            environmentRoot,
+            "RuntimeCityAlgorithmicAftermathPresentationSystemHelper.cs"));
+        string ownerSource = File.ReadAllText(Path.Combine(
+            environmentRoot,
+            "RuntimeCityRAndDMapCompositionSystemHelper.cs"));
+
+        StringAssert.DoesNotContain(".Find(", helperSource);
+        StringAssert.Contains("_runtimeCity.CityVisualRoot", ownerSource);
+        StringAssert.Contains("_roadVisuals?.RoadVisualRoot", ownerSource);
+        Assert.AreEqual(1, CountOccurrences(ownerSource, ".CreateGroupedDressing("));
     }
 
     [Test]

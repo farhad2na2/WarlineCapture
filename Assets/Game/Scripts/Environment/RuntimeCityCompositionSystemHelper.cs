@@ -106,6 +106,7 @@ namespace Game.Runtime
         public RuntimeCityGenerationProgress GenerationProgress => RuntimeCityGenerationState.Progress;
         public int VisualBuildingCount => RuntimeCitySpawnBridgeState.VisualSpawnCount;
         public int PlannedBuildingCount => RuntimeCitySpawnBridgeState.PlannedBuildingCount;
+        internal Transform CityVisualRoot => RuntimeCityVisualPresentationSystemHelper.CityVisualRoot;
         public int MaxObservedConsecutivePrefabSelections =>
             RuntimeCityPrefabSelectionState.MaxObservedConsecutiveSelections;
         public bool RequiresUpdate => _configured &&

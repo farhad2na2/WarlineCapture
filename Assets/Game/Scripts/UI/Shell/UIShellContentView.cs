@@ -58,6 +58,7 @@ namespace Game.UI.Runtime
         private GameObject _settingsPopupInstance;
         private SettingsPopupView _settingsPopupView;
         private MatchHudFullMapPopupView _fullMapPopupView;
+        private GameObject _commanderBackgroundScrim;
         private int _contentVersion;
 
         public UIShellView ShellView => shellView;
@@ -79,6 +80,11 @@ namespace Game.UI.Runtime
         public GameObject BuildPlacementConfirmationBarPrefab => buildPlacementConfirmationBarPrefab;
         public int ContentVersion => _contentVersion;
         internal IGameTextResolver GameTextResolver => _gameTextResolver;
+        internal GameObject CommanderBackgroundScrim
+        {
+            get => _commanderBackgroundScrim;
+            set => _commanderBackgroundScrim = value;
+        }
 
         public void Configure(
             UIShellView view,

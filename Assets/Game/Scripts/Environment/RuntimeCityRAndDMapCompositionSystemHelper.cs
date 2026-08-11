@@ -719,6 +719,8 @@ namespace Game.Runtime
                 _view.Config.RandomSeed,
                 cityCenter,
                 roadCellWorldSize,
+                _runtimeCity.CityVisualRoot,
+                _roadVisuals?.RoadVisualRoot,
                 _generatedRoot);
         }
 

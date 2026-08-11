@@ -152,7 +152,15 @@ namespace Game.Runtime
             RuntimeCityFreeScatterDecorationState.ConfigureMaximumDistanceOffset(3);
             RuntimeCityFreeScatterDecorationState.ConfigureMaximumAxisDistanceInset(0);
             RuntimeCityRoadLayoutState.ConfigureTerminalPolicy(default);
-            RuntimeCityRoadBuildBridgeState.Configure(roadRuntimeGenerationHelper, roadRuntimeGenerationContext);
+            World runtimeWorld = buildingRuntimeCitySpawnContext.TryGetEntityManager != null &&
+                                 buildingRuntimeCitySpawnContext.TryGetEntityManager(out EntityManager entityManager)
+                ? entityManager.World
+                : null;
+            RuntimeCityReadinessQueryCompositionSystemHelper.Configure(runtimeWorld);
+            RuntimeCityRoadBuildBridgeState.Configure(
+                roadRuntimeGenerationHelper,
+                roadRuntimeGenerationContext,
+                runtimeWorld);
             RuntimeCitySpawnBridgeState.Configure(buildingRuntimeCitySpawnSystem, buildingRuntimeCitySpawnContext);
             RuntimeCityVisualPresentationSystemHelper?.SetRuntimeRoot(runtimeRoot);
             RuntimeCityMinimapEventUiSystemHelper?.Configure(mainMenuPlayUi);

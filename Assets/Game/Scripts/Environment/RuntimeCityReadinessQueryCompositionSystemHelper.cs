@@ -12,6 +12,15 @@ namespace Game.Runtime
         private EntityQuery _gridDataQuery;
         private bool _hasGridDataQuery;
 
+        public void Configure(World queryWorld)
+        {
+            if (_queryWorld == queryWorld)
+                return;
+
+            ClearGridDataQuery();
+            _queryWorld = queryWorld;
+        }
+
         public bool TryGetGridConfig(out GridConfig grid)
         {
             bool hasGrid = TryGetGridData(out _, out GridConfig gridConfig, out _, out _);
@@ -119,7 +128,7 @@ namespace Game.Runtime
         private bool TryGetLiveEntityManager(out EntityManager entityManager)
         {
             entityManager = default;
-            World world = World.DefaultGameObjectInjectionWorld;
+            World world = _queryWorld;
             if (world == null || !world.IsCreated)
                 return false;
 

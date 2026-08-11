@@ -15,9 +15,10 @@ namespace Game.Runtime
 
         public void Configure(
             RoadRuntimeGenerationCompositionSystemHelper roadRuntimeGenerationHelper,
-            RoadRuntimeGenerationCompositionSystemHelper.Context roadRuntimeGenerationContext)
+            RoadRuntimeGenerationCompositionSystemHelper.Context roadRuntimeGenerationContext,
+            World queryWorld)
         {
-            _state.Configure(roadRuntimeGenerationHelper, roadRuntimeGenerationContext);
+            _state.Configure(roadRuntimeGenerationHelper, roadRuntimeGenerationContext, queryWorld);
         }
 
         public void Clear()
@@ -78,21 +79,25 @@ namespace Game.Runtime
         private const string RoadCellSizeFallbackFixTag = "RuntimeCityRoadCellFallbackFix_2026-05-26";
         private RoadRuntimeGenerationCompositionSystemHelper _roadRuntimeGenerationHelper;
         private RoadRuntimeGenerationCompositionSystemHelper.Context _roadRuntimeGenerationContext;
+        private World _queryWorld;
 
         public bool HasRoadRuntimeGenerationCompositionSystemHelper => _roadRuntimeGenerationHelper != null;
 
         public void Configure(
             RoadRuntimeGenerationCompositionSystemHelper roadRuntimeGenerationHelper,
-            RoadRuntimeGenerationCompositionSystemHelper.Context roadRuntimeGenerationContext)
+            RoadRuntimeGenerationCompositionSystemHelper.Context roadRuntimeGenerationContext,
+            World queryWorld)
         {
             _roadRuntimeGenerationHelper = roadRuntimeGenerationHelper;
             _roadRuntimeGenerationContext = roadRuntimeGenerationContext;
+            _queryWorld = queryWorld;
         }
 
         public void Clear()
         {
             _roadRuntimeGenerationHelper = null;
             _roadRuntimeGenerationContext = default;
+            _queryWorld = null;
         }
 
         public bool TryGetRoadCellSizeInGridCells(out int roadCellSizeInGridCells)
@@ -173,10 +178,10 @@ namespace Game.Runtime
                     out roadConnectionCell);
         }
 
-        private static bool TryGetGridCellSize(out float cellSize)
+        private bool TryGetGridCellSize(out float cellSize)
         {
             cellSize = 0f;
-            World world = World.DefaultGameObjectInjectionWorld;
+            World world = _queryWorld;
             if (world == null || !world.IsCreated)
                 return false;
 

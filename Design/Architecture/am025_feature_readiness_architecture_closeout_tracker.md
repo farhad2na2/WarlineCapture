@@ -106,7 +106,7 @@ The worktree must be clean at every accepted commit and after every push. Genera
 
 ### Phase D - Phase 2 Genuine Debt
 
-- [ ] `AMFR-012` Remove implicit global-World authority from runtime-city readiness and road-build composition. Supply the exact World/EntityManager through the owning lifecycle and prove replacement-World isolation.
+- [~] `AMFR-012` Remove implicit global-World authority from runtime-city readiness and road-build composition. Supply the exact World/EntityManager through the owning lifecycle and prove replacement-World isolation.
 - [ ] `AMFR-013` Correct or explicitly bound the `GridAuthoring` runtime-query boundary without introducing a service locator, shipping mutable authority, or per-frame discovery.
 - [ ] `AMFR-014` Reconcile map-surface bootstrap World ownership with its created-World lifecycle, generation replacement, blob disposal, and shutdown behavior.
 - [ ] `AMFR-015` Give the road-preview pool exact capacity, reuse, exhaustion, and disposal evidence without changing gameplay authority.
@@ -309,6 +309,13 @@ The worktree must be clean at every accepted commit and after every push. Genera
 - Exact authority: one `AMFR-011` `system-helper` authorization supersedes the historical `70` / `4,084` ceiling and binds `BuildingDefinitionFootprintCloneSystemHelper.cs` to immutable pushed commit `f50dc9c6f57c53fa3624d7c530adda903e987187` at exactly `72` lines / `4,230` bytes with no spare headroom.
 - Global fail-closed disposition: the unchanged 17-test entrypoint `Build/Logs/amfr011-source-growth-global.log`, SHA-256 `8d29b37ca41815ec3cb5273678e8484ad5e714019ec911b200eb07be974d914d`, no longer reports any of the eight helper paths that Phase B/C owned. It advances to the broader exact-baseline ratchet and rejects `45` later review items (`12` unreviewed and `33` grown); AMFR-017 remains their acceptance owner. The failed marker is recorded honestly and receives no pass credit.
 - Result: accepted `11 / 22`; the narrow-helper-authority phase exit is satisfied. AMFR-012 is dependency-ready; AM-025 remains unchecked and receives no parent checklist credit yet.
+
+### 2026-08-11 - AMFR-012 - Runtime-city explicit-World ownership claim
+
+- Entry identity: clean pushed `main`/`origin/main` commit `d90512bc852bf6591eb2d5bf04e62faf40b9262c`. Current exact debt is four overlapping rows over two lookups: the readiness helper's recurring grid/startup query path and the road-build bridge's grid-cell-size fallback each create an implicit `World.DefaultGameObjectInjectionWorld` dependency and each also appears as an AM-007 World-owner candidate.
+- Exact production allowlist: `Assets/Game/Scripts/Environment/RuntimeCityReadinessQueryCompositionSystemHelper.cs`, `Assets/Game/Scripts/Environment/RuntimeCityRoadBuildBridgeCompositionSystemHelper.cs`, and `Assets/Game/Scripts/Environment/RuntimeCityCompositionSystemHelper.cs`. Exact test/document allowlist: `Assets/Tests/Editor/RuntimeCityGenerationFocusedTests.cs`, this child, and the parent maturity tracker. Architecture reports remain read-only until the bounded behavior/ownership slice passes; they are regenerated only by their later governed acceptance item.
+- Required lifecycle: runtime-city composition resolves the exact live EntityManager through its already-owned `BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context` and supplies that manager's World to readiness and road fallback. Readiness query creation/disposal and road-size fallback bind only to that supplied World; reconfiguration clears the prior cached query before binding a replacement World; dispose/clear drops both World references. The isolated visual prototype and no-World validation paths remain explicitly null-bound and continue using supplied grid/road delegates rather than discovering global ECS state.
+- Acceptance: focused tests must prove first-World and replacement-World isolation while an unrelated default World is installed, road-size fallback reads only the bound World, clear returns unavailable, both production files contain zero default-World lookup, existing runtime-city generation behavior remains green, compilation has zero C# errors, and no new service locator/static/polling owner appears.
 
 ## 7. Validation And Evidence Contract
 

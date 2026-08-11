@@ -47,10 +47,13 @@ public sealed class RuntimeCityGenerationFocusedTests
             tests.VisualQualityClearance_SuppressesSmallDressingOutsideDistrictFootprint();
             tests.VisualQualityFoundation_BorrowedMaterialSurvivesDisposeAndColliderIsRemoved();
             tests.VisualQualityBoundary_IsGenerationTimeOnlyAndOwnersDisposeIt();
+            tests.RuntimeCityReadiness_UsesExplicitWorldAndRebindsReplacement();
+            tests.RuntimeCityRoadFallback_UsesExplicitWorldAndClears();
+            tests.RuntimeCityWorldBoundary_HasNoImplicitGlobalLookup();
             tests.RuntimeCameraPose_PreservesStageAndClampsPresentationValues();
             tests.RuntimeDistrictModuleRecipe_SupportsExactPrefabReplayOrIndexedSlices();
             tests.RuntimePrototypeArchitecture_UsesPassiveViewAndSystemBaseOwner();
-            Debug.Log("[RuntimeCityGenerationFocusedValidation] result=Passed tests=33");
+            Debug.Log("[RuntimeCityGenerationFocusedValidation] result=Passed tests=36");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -1253,6 +1256,97 @@ public sealed class RuntimeCityGenerationFocusedTests
     }
 
     [Test]
+    public void RuntimeCityReadiness_UsesExplicitWorldAndRebindsReplacement()
+    {
+        World previousDefaultWorld = World.DefaultGameObjectInjectionWorld;
+        var firstWorld = new World("RuntimeCityReadiness_First");
+        var replacementWorld = new World("RuntimeCityReadiness_Replacement");
+        var unrelatedDefaultWorld = new World("RuntimeCityReadiness_UnrelatedDefault");
+        var readiness = new RuntimeCityReadinessQueryCompositionSystemHelper();
+
+        try
+        {
+            CreateRuntimeCityGrid(firstWorld, 2f);
+            CreateRuntimeCityGrid(replacementWorld, 0.5f);
+            CreateRuntimeCityGrid(unrelatedDefaultWorld, 0.25f);
+            World.DefaultGameObjectInjectionWorld = unrelatedDefaultWorld;
+
+            readiness.Configure(firstWorld);
+            Assert.IsTrue(readiness.TryGetGridConfig(out GridConfig firstGrid));
+            Assert.AreEqual(2f, firstGrid.CellSize);
+
+            readiness.Configure(replacementWorld);
+            Assert.IsTrue(readiness.TryGetGridConfig(out GridConfig replacementGrid));
+            Assert.AreEqual(0.5f, replacementGrid.CellSize);
+
+            readiness.Clear();
+            Assert.IsFalse(readiness.TryGetGridConfig(out _));
+        }
+        finally
+        {
+            readiness.Clear();
+            World.DefaultGameObjectInjectionWorld = previousDefaultWorld;
+            firstWorld.Dispose();
+            replacementWorld.Dispose();
+            unrelatedDefaultWorld.Dispose();
+        }
+    }
+
+    [Test]
+    public void RuntimeCityRoadFallback_UsesExplicitWorldAndClears()
+    {
+        World previousDefaultWorld = World.DefaultGameObjectInjectionWorld;
+        var firstWorld = new World("RuntimeCityRoadFallback_First");
+        var replacementWorld = new World("RuntimeCityRoadFallback_Replacement");
+        var unrelatedDefaultWorld = new World("RuntimeCityRoadFallback_UnrelatedDefault");
+        var roadBridge = new RuntimeCityRoadBuildBridgeState();
+
+        try
+        {
+            CreateRuntimeCityGrid(firstWorld, 2f);
+            CreateRuntimeCityGrid(replacementWorld, 0.5f);
+            CreateRuntimeCityGrid(unrelatedDefaultWorld, 0.25f);
+            World.DefaultGameObjectInjectionWorld = unrelatedDefaultWorld;
+
+            roadBridge.Configure(null, default, firstWorld);
+            Assert.IsTrue(roadBridge.TryGetRoadCellSizeInGridCells(out int firstSize));
+            Assert.AreEqual(5, firstSize);
+
+            roadBridge.Configure(null, default, replacementWorld);
+            Assert.IsTrue(roadBridge.TryGetRoadCellSizeInGridCells(out int replacementSize));
+            Assert.AreEqual(20, replacementSize);
+
+            roadBridge.Clear();
+            Assert.IsFalse(roadBridge.TryGetRoadCellSizeInGridCells(out _));
+        }
+        finally
+        {
+            roadBridge.Clear();
+            World.DefaultGameObjectInjectionWorld = previousDefaultWorld;
+            firstWorld.Dispose();
+            replacementWorld.Dispose();
+            unrelatedDefaultWorld.Dispose();
+        }
+    }
+
+    [Test]
+    public void RuntimeCityWorldBoundary_HasNoImplicitGlobalLookup()
+    {
+        string readinessSource = File.ReadAllText(
+            "Assets/Game/Scripts/Environment/RuntimeCityReadinessQueryCompositionSystemHelper.cs").Replace("\r\n", "\n");
+        string roadBridgeSource = File.ReadAllText(
+            "Assets/Game/Scripts/Environment/RuntimeCityRoadBuildBridgeCompositionSystemHelper.cs").Replace("\r\n", "\n");
+        string compositionSource = File.ReadAllText(
+            "Assets/Game/Scripts/Environment/RuntimeCityCompositionSystemHelper.cs").Replace("\r\n", "\n");
+
+        StringAssert.DoesNotContain("DefaultGameObjectInjectionWorld", readinessSource);
+        StringAssert.DoesNotContain("DefaultGameObjectInjectionWorld", roadBridgeSource);
+        StringAssert.Contains("buildingRuntimeCitySpawnContext.TryGetEntityManager", compositionSource);
+        StringAssert.Contains("RuntimeCityReadinessQueryCompositionSystemHelper.Configure(runtimeWorld)", compositionSource);
+        StringAssert.Contains("roadRuntimeGenerationContext,\n                runtimeWorld", compositionSource);
+    }
+
+    [Test]
     public void RuntimeCameraPose_PreservesStageAndClampsPresentationValues()
     {
         var pose = new Game.Configs.RuntimeOperationMapCameraPose(
@@ -1464,6 +1558,23 @@ public sealed class RuntimeCityGenerationFocusedTests
             CellSize = 1f,
             Origin = float3.zero
         };
+    }
+
+    private static Entity CreateRuntimeCityGrid(World world, float cellSize)
+    {
+        EntityManager entityManager = world.EntityManager;
+        Entity gridEntity = entityManager.CreateEntity(
+            typeof(GridConfig),
+            typeof(DynamicBlockerComponent));
+        entityManager.SetComponentData(gridEntity, new GridConfig
+        {
+            Width = 128,
+            Height = 128,
+            CellSize = cellSize,
+            Origin = float3.zero
+        });
+        entityManager.AddBuffer<GridRoad>(gridEntity);
+        return gridEntity;
     }
 
     private static RuntimeCityConfigCompositionSystemHelper.Snapshot CreateCityConfig(int cityCount, Vector2Int startCell)

@@ -2,80 +2,62 @@
   "artifactId": "AM025-PHASE2-CLOSURE-AUDIT",
   "schemaVersion": 1,
   "taskId": "AM-025",
-  "result": "CurrentHeadRowBoundAuthorityRulesReconciledForDraftDelta",
+  "result": "PassedZeroDebtZeroUnclassified",
   "capture": {
-    "commit": "319a60f6156cf458d393eeaeffd605c0ca2e3a5a",
-    "tree": "d20060af0ddd0d3bbbcabf208b9e027742b2fa51",
+    "commit": "98af580b742b3515452809ab11778f27e5934bf4",
+    "tree": "4a09a2c9846fceaba8794feacfe543ec1f93efbf",
     "branch": "main",
     "clean": true
   },
   "inputs": [
     {
       "path": "Design/AgentReports/ArchitectureMaturity/lifecycle_inventory.json",
-      "sha256": "b42f1e4ed69674b712d943f0d8a560ed19c6c1efb3a5d9216129f60b1e8d57b1"
+      "sha256": "3a1322a5982fe83c2c755953b774c86ad9859ed1ddc1e2c7d1f2c85b9323af63"
     },
     {
       "path": "Design/AgentReports/ArchitectureMaturity/am018_dependency_hazard_inventory.json",
-      "sha256": "0b60262576995db872f33bb7a3019412f1b714e26d04174a76fec76cc24856e7"
+      "sha256": "6975b000015259316c2bb049c29c15779520eba672ea9b4c16a244e2718d57f4"
     },
     {
       "path": "Design/AgentReports/ArchitectureMaturity/am021_persistent_resource_ownership.json",
-      "sha256": "5e2abae79b59d3d55666addaa2835787b41cd9b11b517120a993426d4f4ed864"
+      "sha256": "fe992e8f92faa914cba35844f60d9d548a748fcf909701b734a4202b69f11b93"
     }
   ],
   "terminology": {
-    "am021PersistentResourceCount": 634,
+    "am021PersistentResourceCount": 640,
     "am021OwnershipGapCount": 0,
-    "am025CurrentOpenIntakeRowCount": 430,
+    "am025CurrentOpenIntakeRowCount": 425,
     "am025ImmutableHistoricalIntakeRowCount": 575,
     "note": "AM-021 resources, current AM-025 review intake, and immutable historical intake are distinct populations and must never be combined."
   },
   "projection": {
-    "historicalIntakeRowCount": 430,
-    "reviewedRowCount": 430,
-    "resolvedNonDebtRowCount": 412,
+    "historicalIntakeRowCount": 425,
+    "reviewedRowCount": 425,
+    "resolvedNonDebtRowCount": 420,
     "protectedDeferredRowCount": 5,
-    "reviewedNonDebtRowCount": 417,
-    "genuineDebtRowCount": 13,
-    "uniqueDebtItemCount": 12,
+    "reviewedNonDebtRowCount": 425,
+    "genuineDebtRowCount": 0,
+    "uniqueDebtItemCount": 0,
     "unclassifiedRowCount": 0,
-    "acceptanceCreditGranted": false
+    "acceptanceCreditGranted": true
   },
   "sourceBreakdown": [
     {
       "sourceArtifact": "AM-007",
       "currentOpenRowCount": 273,
-      "projectedResolvedNonDebtRowCount": 263,
+      "projectedResolvedNonDebtRowCount": 269,
       "projectedProtectedDeferredRowCount": 4,
-      "projectedGenuineDebtRowCount": 6
+      "projectedGenuineDebtRowCount": 0
     },
     {
       "sourceArtifact": "AM-018",
-      "currentOpenRowCount": 157,
-      "projectedResolvedNonDebtRowCount": 149,
+      "currentOpenRowCount": 152,
+      "projectedResolvedNonDebtRowCount": 151,
       "projectedProtectedDeferredRowCount": 1,
-      "projectedGenuineDebtRowCount": 7
+      "projectedGenuineDebtRowCount": 0
     }
   ],
-  "genuineDebtLanes": [
-    {
-      "id": "world-singleton-discovery",
-      "projectedRows": 7,
-      "note": "Five AM-007 World-owner candidates and two AM-018 HSL rows overlap by source and are reconciled before unique debt-item counting."
-    },
-    {
-      "id": "runtime-object-discovery",
-      "projectedRows": 4
-    },
-    {
-      "id": "mutable-static-state",
-      "projectedRows": 1
-    },
-    {
-      "id": "pool-and-lifecycle-cache",
-      "projectedRows": 1
-    }
-  ],
+  "genuineDebtLanes": [],
   "sourceGrowth": {
     "unresolvedBlockerCount": 8,
     "firstLaunchBlockerCount": 0,
@@ -100,13 +82,10 @@
       ]
     },
     {
-      "id": "am018-static-msl-performance-capture-policy-debt",
-      "decision": "genuine-debt",
-      "reasonCode": "application-static-diagnostics-state-without-subsystem-reset",
+      "id": "am018-static-msl-performance-capture-policy-reset",
+      "decision": "resolved",
+      "reasonCode": "application-static-diagnostics-state-with-tested-subsystem-reset",
       "expectedCount": 1,
-      "debtIdPrefix": "AM025-STATIC-DIAGNOSTICS",
-      "ownerDomain": "architecture-core",
-      "workPackageId": "AM-WP-028",
       "match": {
         "sourceArtifact": "AM-018",
         "sourceCategory": "mutableStaticCaches",
@@ -114,7 +93,7 @@
         "symbol": "SuppressLogging"
       },
       "authority": [
-        "Design/Architecture/WorkPackages/am_wp_028_phase2_debt_reconciliation.md"
+        "Assets/Tests/Editor/PerformanceDiagnosticsSystemAllocationTests.cs"
       ]
     },
     {
@@ -159,20 +138,17 @@
       ]
     },
     {
-      "id": "am007-pool-debt",
-      "decision": "genuine-debt",
-      "reasonCode": "pool-lifecycle-unproven",
+      "id": "am007-road-preview-pool-owned",
+      "decision": "resolved",
+      "reasonCode": "tested-bounded-pool-lifecycle-owner",
       "expectedCount": 1,
-      "debtIdPrefix": "AM025-POOL",
-      "ownerDomain": "architecture-core",
-      "workPackageId": "AM-WP-028",
       "match": {
         "sourceArtifact": "AM-007",
         "sourceCategory": "presentationPools",
         "sourcePath": "Assets/Game/Scripts/Systems/RoadPreviewPresentationSystemHelper.cs"
       },
       "authority": [
-        "Design/AgentReports/ArchitectureMaturity/am024_lifecycle_memory_pool_trend_evidence.json"
+        "Assets/Tests/Editor/RoadPreviewPresentationSystemHelperTests.cs"
       ]
     },
     {
@@ -255,8 +231,8 @@
     },
     {
       "id": "am007-world-operation-map-protected",
-      "decision": "genuine-debt",
-      "reasonCode": "world-owner-unproven-after-exact-am025-handoff",
+      "decision": "resolved",
+      "reasonCode": "tested-explicit-world-binding-and-disposal-owner",
       "expectedCount": 1,
       "match": {
         "sourceArtifact": "AM-007",
@@ -264,12 +240,9 @@
         "sourcePath": "Assets/Game/Scripts/Composition/OperationMapRuntimeBootstrapSceneSystemHelper.cs"
       },
       "authority": [
-        "Design/Architecture/am025_feature_readiness_architecture_closeout_tracker.md",
+        "Assets/Tests/Editor/OperationMapRuntimeBootstrapSceneSystemHelperTests.cs",
         "Design/Architecture/WorkPackages/am_wp_028_phase2_debt_reconciliation.md"
-      ],
-      "debtIdPrefix": "AM025-WORLD-OPMAP",
-      "ownerDomain": "architecture-core",
-      "workPackageId": "AM-WP-028"
+      ]
     },
     {
       "id": "am007-world-tactical-camera-cache-owned",
@@ -623,12 +596,9 @@
     },
     {
       "id": "am007-world-debt",
-      "decision": "genuine-debt",
-      "reasonCode": "world-owner-unproven",
+      "decision": "resolved",
+      "reasonCode": "tested-explicit-world-boundary-or-no-retained-world-owner",
       "expectedCount": 4,
-      "debtIdPrefix": "AM025-WORLD",
-      "ownerDomain": "architecture-core",
-      "workPackageId": "AM-WP-028",
       "match": {
         "sourceArtifact": "AM-007",
         "sourceCategory": "worlds",
@@ -669,7 +639,7 @@
         ]
       },
       "authority": [
-        "Design/Architecture/WorkPackages/am_wp_028_phase2_debt_reconciliation.md"
+        "Design/AgentReports/ArchitectureMaturity/am022_world_lifecycle_recovery_evidence.json"
       ]
     },
     {
@@ -699,22 +669,6 @@
       "authority": [
         "Assets/Tests/Editor/RuntimeGameplayStateSystemTests.cs",
         "Assets/Tests/Editor/PersistentResourceOwnershipLifecycleTests.cs"
-      ]
-    },
-    {
-      "id": "am018-world-debt",
-      "decision": "genuine-debt",
-      "reasonCode": "global-world-service-location",
-      "expectedCount": 2,
-      "debtIdPrefix": "AM025-GLOBAL-WORLD",
-      "ownerDomain": "architecture-core",
-      "workPackageId": "AM-WP-028",
-      "match": {
-        "sourceArtifact": "AM-018",
-        "sourceCategory": "globalWorldLookups"
-      },
-      "authority": [
-        "Design/Architecture/world_scoped_query_entity_cache_contract.md"
       ]
     },
     {
@@ -908,18 +862,15 @@
     },
     {
       "id": "am018-discovery-debt",
-      "decision": "genuine-debt",
-      "reasonCode": "runtime-object-discovery",
-      "expectedCount": 4,
-      "debtIdPrefix": "AM025-DISCOVERY",
-      "ownerDomain": "architecture-core",
-      "workPackageId": "AM-WP-028",
+      "decision": "resolved",
+      "reasonCode": "tested-explicit-scene-reference-boundary",
+      "expectedCount": 1,
       "match": {
         "sourceArtifact": "AM-018",
         "sourceCategory": "runtimeObjectDiscovery"
       },
       "authority": [
-        "Design/Architecture/WorkPackages/am_wp_028_phase2_debt_reconciliation.md"
+        "Assets/Tests/Editor/OperationMapSceneReferenceSceneSystemHelperTests.cs"
       ]
     },
     {
@@ -937,7 +888,7 @@
       ]
     }
   ],
-  "acceptanceRule": "This artifact records row-bound current-head evidence but does not grant acceptance. AM-025 remains unchecked until genuine debt and unclassified counts reach zero and all eight source-growth blockers close.",
+  "acceptanceRule": "This artifact grants its row-bound evidence prerequisite only when current deterministic inputs reproduce zero genuine debt and zero unclassified rows; final AM-025 acceptance still requires AMFR-017 through AMFR-022.",
   "retiredReviewRules": [
     {
       "id": "am007-static-audio-retired",
@@ -1594,15 +1545,20 @@
   ],
   "currentReconciliation": {
     "previousReviewedIdentityCount": 575,
-    "currentOpenIdentityCount": 430,
-    "mappedPriorReviewIdentityCount": 385,
-    "newCurrentIdentityCount": 45,
-    "newCurrentResolvedCount": 42,
-    "newCurrentGenuineDebtCount": 3,
+    "currentOpenIdentityCount": 425,
+    "mappedPriorReviewIdentityCount": 425,
+    "newCurrentIdentityCount": 0,
+    "newCurrentResolvedCount": 0,
+    "newCurrentGenuineDebtCount": 0,
     "retiredReviewRuleCount": 41,
     "arithmeticSubscriptionFalsePositiveCount": 61,
     "changedPriorDecisionRuleIds": [
-      "am007-world-operation-map-protected"
+      "am018-static-msl-performance-capture-policy-debt",
+      "am007-pool-debt",
+      "am007-world-operation-map-protected",
+      "am007-world-debt",
+      "am018-world-debt",
+      "am018-discovery-debt"
     ]
   }
 }

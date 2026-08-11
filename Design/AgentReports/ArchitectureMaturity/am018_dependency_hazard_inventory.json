@@ -62,8 +62,8 @@
   "artifactId": "AM-018",
   "baseline": {
     "branch": "main",
-    "commit": "319a60f6156cf458d393eeaeffd605c0ca2e3a5a",
-    "tree": "d20060af0ddd0d3bbbcabf208b9e027742b2fa51"
+    "commit": "98af580b742b3515452809ab11778f27e5934bf4",
+    "tree": "4a09a2c9846fceaba8794feacfe543ec1f93efbf"
   },
   "categories": {
     "globalWorldLookups": [
@@ -89,97 +89,12 @@
       {
         "accessKind": "global-world-property",
         "category": "globalWorldLookups",
-        "disposition": "AD",
-        "followUpTasks": [
-          "AM-019",
-          "AM-022"
-        ],
-        "line": 270,
-        "memberName": "TryGetRuntimeRoadBuffer",
-        "ownerType": "GridAuthoring",
-        "path": "Assets/Game/Scripts/Authorings/GridAuthoring.cs",
-        "protectedOwnerIds": [],
-        "rationale": "The lookup supports authoring, diagnostics, or scenario proof rather than gameplay authority.",
-        "responsibleOwner": "GridAuthoring",
-        "symbol": "World.DefaultGameObjectInjectionWorld"
-      },
-      {
-        "accessKind": "global-world-property",
-        "category": "globalWorldLookups",
-        "disposition": "AD",
-        "followUpTasks": [
-          "AM-019",
-          "AM-022"
-        ],
-        "line": 300,
-        "memberName": "TryGetRuntimeSidewalkRoadBuffer",
-        "ownerType": "GridAuthoring",
-        "path": "Assets/Game/Scripts/Authorings/GridAuthoring.cs",
-        "protectedOwnerIds": [],
-        "rationale": "The lookup supports authoring, diagnostics, or scenario proof rather than gameplay authority.",
-        "responsibleOwner": "GridAuthoring",
-        "symbol": "World.DefaultGameObjectInjectionWorld"
-      },
-      {
-        "accessKind": "global-world-property",
-        "category": "globalWorldLookups",
-        "disposition": "AD",
-        "followUpTasks": [
-          "AM-019",
-          "AM-022"
-        ],
-        "line": 322,
-        "memberName": "TryGetRuntimeBuildingBlockers",
-        "ownerType": "GridAuthoring",
-        "path": "Assets/Game/Scripts/Authorings/GridAuthoring.cs",
-        "protectedOwnerIds": [],
-        "rationale": "The lookup supports authoring, diagnostics, or scenario proof rather than gameplay authority.",
-        "responsibleOwner": "GridAuthoring",
-        "symbol": "World.DefaultGameObjectInjectionWorld"
-      },
-      {
-        "accessKind": "global-world-property",
-        "category": "globalWorldLookups",
-        "disposition": "AD",
-        "followUpTasks": [
-          "AM-019",
-          "AM-022"
-        ],
-        "line": 346,
-        "memberName": "TryGetRuntimeVehicleFootprints",
-        "ownerType": "GridAuthoring",
-        "path": "Assets/Game/Scripts/Authorings/GridAuthoring.cs",
-        "protectedOwnerIds": [],
-        "rationale": "The lookup supports authoring, diagnostics, or scenario proof rather than gameplay authority.",
-        "responsibleOwner": "GridAuthoring",
-        "symbol": "World.DefaultGameObjectInjectionWorld"
-      },
-      {
-        "accessKind": "global-world-property",
-        "category": "globalWorldLookups",
-        "disposition": "AD",
-        "followUpTasks": [
-          "AM-019",
-          "AM-022"
-        ],
-        "line": 386,
-        "memberName": "DrawRuntimeUnitPaths",
-        "ownerType": "GridAuthoring",
-        "path": "Assets/Game/Scripts/Authorings/GridAuthoring.cs",
-        "protectedOwnerIds": [],
-        "rationale": "The lookup supports authoring, diagnostics, or scenario proof rather than gameplay authority.",
-        "responsibleOwner": "GridAuthoring",
-        "symbol": "World.DefaultGameObjectInjectionWorld"
-      },
-      {
-        "accessKind": "global-world-property",
-        "category": "globalWorldLookups",
         "disposition": "CE",
         "followUpTasks": [
           "AM-019",
           "AM-022"
         ],
-        "line": 99,
+        "line": 109,
         "memberName": "ResolveRuntimeGridBlockerPresentationHelper",
         "ownerType": "GameplayFeatureStartupCompositionSystemHelper",
         "path": "Assets/Game/Scripts/Composition/GameplayFeatureStartupCompositionSystemHelper.cs",
@@ -196,7 +111,7 @@
           "AM-019",
           "AM-022"
         ],
-        "line": 112,
+        "line": 122,
         "memberName": "ResolveRuntimeDecorationSpawnerPresentationHelper",
         "ownerType": "GameplayFeatureStartupCompositionSystemHelper",
         "path": "Assets/Game/Scripts/Composition/GameplayFeatureStartupCompositionSystemHelper.cs",
@@ -383,11 +298,13 @@
           "AM-019",
           "AM-022"
         ],
-        "line": 80,
+        "line": 39,
         "memberName": "TryEnsureReady",
         "ownerType": "OperationMapEntitySceneApi",
-        "path": "Assets/Game/Scripts/Composition/OperationMapSceneLoadingSceneSystemHelper.cs",
-        "protectedOwnerIds": [],
+        "path": "Assets/Game/Scripts/Composition/OperationMapPackedEntitySceneOwnership.cs",
+        "protectedOwnerIds": [
+          "operation-map"
+        ],
         "rationale": "The lookup is at startup, teardown, scene wiring, or another explicit composition edge.",
         "responsibleOwner": "OperationMapEntitySceneApi",
         "symbol": "World.DefaultGameObjectInjectionWorld"
@@ -400,11 +317,13 @@
           "AM-019",
           "AM-022"
         ],
-        "line": 157,
+        "line": 116,
         "memberName": "TryReleaseOwned",
         "ownerType": "OperationMapEntitySceneApi",
-        "path": "Assets/Game/Scripts/Composition/OperationMapSceneLoadingSceneSystemHelper.cs",
-        "protectedOwnerIds": [],
+        "path": "Assets/Game/Scripts/Composition/OperationMapPackedEntitySceneOwnership.cs",
+        "protectedOwnerIds": [
+          "operation-map"
+        ],
         "rationale": "The lookup is at startup, teardown, scene wiring, or another explicit composition edge.",
         "responsibleOwner": "OperationMapEntitySceneApi",
         "symbol": "World.DefaultGameObjectInjectionWorld"
@@ -441,42 +360,6 @@
         "protectedOwnerIds": [],
         "rationale": "The lookup is at an ECS-to-Unity presentation or UI boundary.",
         "responsibleOwner": "RuntimeCityRAndDMapView",
-        "symbol": "World.DefaultGameObjectInjectionWorld"
-      },
-      {
-        "accessKind": "global-world-property",
-        "category": "globalWorldLookups",
-        "disposition": "HSL",
-        "followUpTasks": [
-          "AM-019",
-          "AM-020",
-          "AM-022"
-        ],
-        "line": 122,
-        "memberName": "TryGetLiveEntityManager",
-        "ownerType": "RuntimeCityReadinessQueryCompositionSystemHelper",
-        "path": "Assets/Game/Scripts/Environment/RuntimeCityReadinessQueryCompositionSystemHelper.cs",
-        "protectedOwnerIds": [],
-        "rationale": "Reusable runtime/query logic resolves global World state instead of receiving a lifecycle-bound dependency.",
-        "responsibleOwner": "RuntimeCityReadinessQueryCompositionSystemHelper",
-        "symbol": "World.DefaultGameObjectInjectionWorld"
-      },
-      {
-        "accessKind": "global-world-property",
-        "category": "globalWorldLookups",
-        "disposition": "HSL",
-        "followUpTasks": [
-          "AM-019",
-          "AM-020",
-          "AM-022"
-        ],
-        "line": 179,
-        "memberName": "TryGetGridCellSize",
-        "ownerType": "RuntimeCityRoadBuildBridgeState",
-        "path": "Assets/Game/Scripts/Environment/RuntimeCityRoadBuildBridgeCompositionSystemHelper.cs",
-        "protectedOwnerIds": [],
-        "rationale": "Reusable runtime/query logic resolves global World state instead of receiving a lifecycle-bound dependency.",
-        "responsibleOwner": "RuntimeCityRoadBuildBridgeState",
         "symbol": "World.DefaultGameObjectInjectionWorld"
       },
       {
@@ -5227,57 +5110,6 @@
         "rationale": "Runtime discovery must become a serialized, registered, or composition-provided dependency.",
         "responsibleOwner": "OperationMapSceneReferenceSceneSystemHelper",
         "symbol": "scene.GetRootGameObjects"
-      },
-      {
-        "accessKind": "hierarchy-or-generic-find",
-        "category": "runtimeObjectDiscovery",
-        "disposition": "ROD",
-        "followUpTasks": [
-          "AM-020",
-          "AM-022"
-        ],
-        "line": 48,
-        "memberName": "CreateGroupedDressing",
-        "ownerType": "RuntimeCityAlgorithmicAftermathPresentationSystemHelper",
-        "path": "Assets/Game/Scripts/Environment/RuntimeCityAlgorithmicAftermathPresentationSystemHelper.cs",
-        "protectedOwnerIds": [],
-        "rationale": "Runtime discovery must become a serialized, registered, or composition-provided dependency.",
-        "responsibleOwner": "RuntimeCityAlgorithmicAftermathPresentationSystemHelper",
-        "symbol": "parent.Find"
-      },
-      {
-        "accessKind": "hierarchy-or-generic-find",
-        "category": "runtimeObjectDiscovery",
-        "disposition": "ROD",
-        "followUpTasks": [
-          "AM-020",
-          "AM-022"
-        ],
-        "line": 63,
-        "memberName": "CreateGroupedDressing",
-        "ownerType": "RuntimeCityAlgorithmicAftermathPresentationSystemHelper",
-        "path": "Assets/Game/Scripts/Environment/RuntimeCityAlgorithmicAftermathPresentationSystemHelper.cs",
-        "protectedOwnerIds": [],
-        "rationale": "Runtime discovery must become a serialized, registered, or composition-provided dependency.",
-        "responsibleOwner": "RuntimeCityAlgorithmicAftermathPresentationSystemHelper",
-        "symbol": "parent.Find"
-      },
-      {
-        "accessKind": "hierarchy-or-generic-find",
-        "category": "runtimeObjectDiscovery",
-        "disposition": "ROD",
-        "followUpTasks": [
-          "AM-020",
-          "AM-022"
-        ],
-        "line": 91,
-        "memberName": "SetCommanderBackgroundScrim",
-        "ownerType": "CommanderProfileRouteLifecyclePresentation",
-        "path": "Assets/Game/Scripts/UI/Shell/CommanderProfileRouteLifecyclePresentation.cs",
-        "protectedOwnerIds": [],
-        "rationale": "Runtime discovery must become a serialized, registered, or composition-provided dependency.",
-        "responsibleOwner": "CommanderProfileRouteLifecyclePresentation",
-        "symbol": "contentRoot.Find"
       }
     ],
     "staticEventSubscriptions": [
@@ -5485,11 +5317,11 @@
     },
     {
       "path": "Design/Architecture/post_hardening_architecture_maturity_tracker.md",
-      "sha256": "b8def5ae749a36fb14350664658391ff8ae37e8d079c35250b8ddf001849d661"
+      "sha256": "a8dd86f9512e36654f49641e44986f06090bfd645988e38b0410728ab4882058"
     },
     {
       "path": "Design/AgentReports/ArchitectureMaturity/lifecycle_inventory.json",
-      "sha256": "966243512afcd4a48173a30ca3cec60a342685a7a00cff5fe68c4c004a4a86d8"
+      "sha256": "b42f1e4ed69674b712d943f0d8a560ed19c6c1efb3a5d9216129f60b1e8d57b1"
     },
     {
       "path": "Design/AgentReports/ArchitectureMaturity/ownership_inventory.json",
@@ -5509,8 +5341,8 @@
     }
   ],
   "sourceManifest": {
-    "digestSha256": "b7aad1dec4d44a4c65876fac642babdee2adf9250ef180ae6018b1588b225bcf",
-    "fileCount": 1065,
+    "digestSha256": "aae62ac22fbf91a420221906a99c79890ad44af7d0c42792f635ab0b48697a09",
+    "fileCount": 1072,
     "files": [
       {
         "path": "Assets/Game/Scripts/AssemblyInfo.cs",
@@ -5586,7 +5418,7 @@
       },
       {
         "path": "Assets/Game/Scripts/Authorings/GridAuthoring.cs",
-        "sha256": "5ac5169f0351d57ed44c89716614f177ac829d597f34780225da06eb0f4da348"
+        "sha256": "812472a2d295488b640c9e1bdf72cda98a6612fe2c975c3c609149039d856e27"
       },
       {
         "path": "Assets/Game/Scripts/Authorings/InitialUnitsSpawnerAuthoring.cs",
@@ -5962,11 +5794,11 @@
       },
       {
         "path": "Assets/Game/Scripts/Composition/GameplayFeatureStartupCompositionSystemHelper.cs",
-        "sha256": "c0da9803c0bca924d716f199a4e902cf4b9c458891924d523b729662ec26e832"
+        "sha256": "d1c7060cfcfa9d40dac4f40cd5c550e7a2b219602f79adff0022d4b021143ade"
       },
       {
         "path": "Assets/Game/Scripts/Composition/GameplaySceneBindingSceneSystemHelper.cs",
-        "sha256": "462a8f3a78c23c9d2dcace431029218c680aab3b3e76d5f7791ff4a7dabe3a56"
+        "sha256": "faa1b6d95c47c96ffb7aff33e3be0cf80f8e85bcb27e79779a8e91e98961eaa5"
       },
       {
         "path": "Assets/Game/Scripts/Composition/GpuAnimationTeardownFence.cs",
@@ -5974,7 +5806,7 @@
       },
       {
         "path": "Assets/Game/Scripts/Composition/MapSurfaceRuntimeBootstrapSceneSystemHelper.cs",
-        "sha256": "4461ca141df0189dc9554d5ff5168fdb468b15164fcfcae684278036c74e8005"
+        "sha256": "e70cce5573325f27f86dd6a5957e8cacff99f4cc36333bb4f46b0826dbc21e98"
       },
       {
         "path": "Assets/Game/Scripts/Composition/MapSurfaceSceneOverlayPresentation.cs",
@@ -6109,12 +5941,36 @@
         "sha256": "1607e0347daa02f3381cf71820d92b6a09054b2cd3830e9db47a5e76f995ed75"
       },
       {
+        "path": "Assets/Game/Scripts/Composition/OperationMapPackedEntitySceneOwnership.cs",
+        "sha256": "04df40c6b972bd3cdb07fc6c2d3c3f891f676f0a10e70703ec0adf7629f38cb8"
+      },
+      {
+        "path": "Assets/Game/Scripts/Composition/OperationMapPresentationManifestValidation.cs",
+        "sha256": "1351c1f93e0a133efdef58503de8591280cb62a6bdba267cd1d3a24bb68a57a8"
+      },
+      {
         "path": "Assets/Game/Scripts/Composition/OperationMapRuntimeBootstrapSceneSystemHelper.cs",
-        "sha256": "7d3fd8af315641a8998d41c90c21e26f038151981b709170afe11a8436a15645"
+        "sha256": "962dea51d5a250bc4c709f0548998017d3a9526d1ef5bb74f19f5f3770c69bbd"
+      },
+      {
+        "path": "Assets/Game/Scripts/Composition/OperationMapRuntimeReadinessProjection.cs",
+        "sha256": "218f38abeb7214791a9fc95177e78ef1ea8d71f2d0f433f8429405277411b488"
+      },
+      {
+        "path": "Assets/Game/Scripts/Composition/OperationMapRuntimeRootContract.cs",
+        "sha256": "886b000584b5f906db20e7ab80b0cbd6db283ddc93eaacd064ccabaf59b2d67f"
+      },
+      {
+        "path": "Assets/Game/Scripts/Composition/OperationMapSceneLoadOperations.cs",
+        "sha256": "711180a14d6d2a09b6068ceaf8b2d218d7540915fb2c10fdf438f0f4fe6e22d3"
+      },
+      {
+        "path": "Assets/Game/Scripts/Composition/OperationMapSceneLoadRequestValidation.cs",
+        "sha256": "8bd5b9bab66786efddf3f137cdad8ebd0ee9aedc8d0d715724bcf9571c741406"
       },
       {
         "path": "Assets/Game/Scripts/Composition/OperationMapSceneLoadingSceneSystemHelper.cs",
-        "sha256": "32afaa8e0050a04522ae5ded5f3035812f97f076c971de50169f05a4534fced9"
+        "sha256": "bf0b16ee35d6bab5dbbf0e575a13c104b2185cd7f69863e968257c657d825779"
       },
       {
         "path": "Assets/Game/Scripts/Composition/OperationMapSceneReferenceSceneSystemHelper.cs",
@@ -6422,7 +6278,7 @@
       },
       {
         "path": "Assets/Game/Scripts/Environment/RuntimeCityAlgorithmicAftermathPresentationSystemHelper.cs",
-        "sha256": "03078bfd6cfafaf9adc65a05c9e55b9468336c1a3fa0425b569067bd5c54c963"
+        "sha256": "edc23198535a21c81dc2f1dd2b7ec445558f10421bbffcf2487ba4ef6c603ff6"
       },
       {
         "path": "Assets/Game/Scripts/Environment/RuntimeCityAlgorithmicDistrictPresentationSystemHelper.cs",
@@ -6462,7 +6318,7 @@
       },
       {
         "path": "Assets/Game/Scripts/Environment/RuntimeCityCompositionSystemHelper.cs",
-        "sha256": "f94b00991fec7a5443a4111983bb1966246ae868682ec79ff54f8664e3df14c7"
+        "sha256": "20d2e690d421efc2314f8a4867256b82bf52a2b0b97d67bf53cd10a88aac995d"
       },
       {
         "path": "Assets/Game/Scripts/Environment/RuntimeCityConfigCompositionSystemHelper.cs",
@@ -6542,7 +6398,7 @@
       },
       {
         "path": "Assets/Game/Scripts/Environment/RuntimeCityRAndDMapCompositionSystemHelper.cs",
-        "sha256": "3a49d64f2eb4482cd2017e80e6028cabd773286cdf82039ecd0f544edb71cf69"
+        "sha256": "06bf88297d7b301d67bde88e5a3f51cdf232c6e6ea7f95f3b1026f1759c25476"
       },
       {
         "path": "Assets/Game/Scripts/Environment/RuntimeCityRAndDMapSystem.cs",
@@ -6558,11 +6414,11 @@
       },
       {
         "path": "Assets/Game/Scripts/Environment/RuntimeCityReadinessQueryCompositionSystemHelper.cs",
-        "sha256": "f3a361bb13430ca5890290379700a7edf90fe691e51a569aeb273e28c42bb4d8"
+        "sha256": "5f9e41784a374555230e9aa4479c698c9e2262a846407135dba45a4ea50f8d67"
       },
       {
         "path": "Assets/Game/Scripts/Environment/RuntimeCityRoadBuildBridgeCompositionSystemHelper.cs",
-        "sha256": "6c1196ec0587bfeb783e7c7b5b2af51c59dd29ce0ba6357692990923dfdab756"
+        "sha256": "a2f519abd734fe74fa5fb227f71d68387eca34a72aeeff2fd95cfeae290dfd16"
       },
       {
         "path": "Assets/Game/Scripts/Environment/RuntimeCityRoadCommitCompositionSystemHelper.cs",
@@ -6574,7 +6430,7 @@
       },
       {
         "path": "Assets/Game/Scripts/Environment/RuntimeCityRoadVisualPrototypeSystemHelper.cs",
-        "sha256": "8d9853cdc3c64414fd74db827521089b97fb8a5818abdd135e2c4a668d261171"
+        "sha256": "e3418d0f77e3da05b126fb03a9bd6b8427dbf2b0b734ca5440fafe9c8f8d2b99"
       },
       {
         "path": "Assets/Game/Scripts/Environment/RuntimeCityRoadsideBuildingSpawnPrefabSystemHelper.cs",
@@ -7249,6 +7105,10 @@
         "sha256": "d1b5bc73f9831993234892d49e756d44794547e65fa6ab98b0a30e91b9c3088f"
       },
       {
+        "path": "Assets/Game/Scripts/Systems/BuildingOperationMapProductionQueueUiProjection.cs",
+        "sha256": "dce0e95ea1f4cec0719dc13e8780b470e4b04aab87d8813dc80ec6ca3782ff74"
+      },
+      {
         "path": "Assets/Game/Scripts/Systems/BuildingPlacementAdapterCompositionSystemHelper.cs",
         "sha256": "270ce5ee476db18d293097138e74c71415f8545cf504931852d3ba94cfa07db5"
       },
@@ -7382,7 +7242,7 @@
       },
       {
         "path": "Assets/Game/Scripts/Systems/BuildingProductionEntriesUiSystemHelper.cs",
-        "sha256": "b91ac44a45e341b770818cd78798e261384ee004d57162bd2ed8d9509786d16b"
+        "sha256": "bbcd87717107c65f10a8a0622f9fa2577c54b32387067e062251358a25e6a09a"
       },
       {
         "path": "Assets/Game/Scripts/Systems/BuildingProductionQueueCompositionSystemHelper.cs",
@@ -7494,7 +7354,7 @@
       },
       {
         "path": "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
-        "sha256": "1d0f467b0ec5475b1e7c6e2a22bab0541c9b01b69db3330658e4501729f080c6"
+        "sha256": "003d707fe5e76e41f6e3183773f486adc48a6ad636548087d056eda8073b03ea"
       },
       {
         "path": "Assets/Game/Scripts/Systems/BuildingRuntimePublishCompositionSystemHelper.cs",
@@ -7978,7 +7838,7 @@
       },
       {
         "path": "Assets/Game/Scripts/Systems/PerformanceDiagnosticsCapturePolicy.cs",
-        "sha256": "184c7cf0ef6d1bb815b16e39af19e16865b25fbe9277bd354e9db18632ee25e1"
+        "sha256": "2bd048d294b368769a5702e52a781da3b439c286b0c85c3c0db59306a05156fa"
       },
       {
         "path": "Assets/Game/Scripts/Systems/PerformanceDiagnosticsSystemHelper.AndroidPerformance.cs",
@@ -8206,7 +8066,7 @@
       },
       {
         "path": "Assets/Game/Scripts/Systems/RoadPreviewPresentationSystemHelper.cs",
-        "sha256": "6f0cc693849a95d4136c3505d837ffd9885a30f5c8be6234ad9ba54653839b65"
+        "sha256": "08e3893a83585c540799bbb2f203b67c087ae11e99360f9a33edc3e22fc000c2"
       },
       {
         "path": "Assets/Game/Scripts/Systems/RoadRuntimeGenerationCompositionSystemHelper.cs",
@@ -9442,7 +9302,7 @@
       },
       {
         "path": "Assets/Game/Scripts/UI/Shell/CommanderProfileRouteLifecyclePresentation.cs",
-        "sha256": "acb31a8bad252514c82b44ebd0b76c4ccaf2903d3234c1ef0eebab08fc5f4a53"
+        "sha256": "8238287ecf852f4d1135f56b3fcd86370f56324011dbf76c65f4d0a775e6cf69"
       },
       {
         "path": "Assets/Game/Scripts/UI/Shell/Ecs/AssistantCommandIntentSystem.cs",
@@ -9710,7 +9570,7 @@
       },
       {
         "path": "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs",
-        "sha256": "277cd701988f2b085d01bfe70738fd0b8d07175cd7ee1618f8ca71fcbe285f29"
+        "sha256": "e250b07e6bd012554d37f8ef6376922f2ab4fdf9b0e51c5be194eeedd462c93f"
       },
       {
         "path": "Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs",
@@ -9775,15 +9635,15 @@
     ]
   },
   "summary": {
-    "findingCount": 247,
-    "globalWorldLookupsCount": 81,
+    "findingCount": 237,
+    "globalWorldLookupsCount": 74,
     "hiddenSingletonsCount": 8,
     "immutableReferenceClassificationCount": 59,
     "mutableStaticCacheCandidateCount": 54,
     "mutableStaticCachesCount": 143,
     "mutableStaticLifecycleStateCount": 30,
-    "protectedFindingCount": 10,
-    "runtimeObjectDiscoveryCount": 7,
+    "protectedFindingCount": 12,
+    "runtimeObjectDiscoveryCount": 4,
     "staticEventSubscriptionsCount": 8
   },
   "toolManifest": [
@@ -9797,7 +9657,7 @@
     },
     {
       "path": "Tools/CI/tests/test_architecture_dependency_hazard_inventory_evidence.py",
-      "sha256": "445eefa51d7aba7b8039a7acb52c6e274bc0876147be4bd142e0db0c2b6deee5"
+      "sha256": "01145cf48be89d102e2f28d4b7e834666ccd51c9bbafc06f21090a8d2bbd23b2"
     }
   ]
 }

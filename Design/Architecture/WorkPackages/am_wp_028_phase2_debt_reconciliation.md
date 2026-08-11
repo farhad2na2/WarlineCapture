@@ -1,23 +1,23 @@
 # AM-WP-028 - Phase 2 Debt Reconciliation
 
-Status: active audit and remediation package under `AM-025`. It does not change checklist arithmetic and cannot accept Phase 2 by itself.
+Status: remediation complete with zero genuine-debt and zero unclassified rows; final acceptance remains owned by `AM-025`.
 
 ## 1. Purpose
 
-The first AM-025 delta reported `575` open rows. That number remains immutable historical audit intake, not the number of AM-021 ownership gaps and not a valid current production-remediation count. The current exact-head scan contains `430` reviewable rows after rejecting `61` arithmetic `+=` false positives from the event-subscription inventory. AM-021 separately owns `634` persistent resources with `561` explicit owners, `73` protected owners, and zero ownership gaps.
+The first AM-025 delta reported `575` open rows. That number remains immutable historical audit intake, not the number of AM-021 ownership gaps and not a valid current production-remediation count. The final exact-head scan contains `425` reviewable rows. AM-021 separately owns `640` persistent resources with `567` explicit owners, `73` protected owners, and zero ownership gaps.
 
 Bounded read-only audits reviewed the AM-025 intake as:
 
 | Measure | Count |
 |---|---:|
-| Current exact-head intake rows | 430 |
-| Reviewed non-debt/protected rows | 417 |
-| Remaining genuine-debt rows | 13 |
-| Remaining unique debt items | 12 |
+| Current exact-head intake rows | 425 |
+| Reviewed non-debt/protected rows | 425 |
+| Remaining genuine-debt rows | 0 |
+| Remaining unique debt items | 0 |
 | Projected unclassified rows | 0 |
-| Source-growth blockers | 8 |
+| Source-growth blockers | 0 |
 
-The reconciled current-head evidence records `412` resolved non-debt rows, `5` protected rows, and `13` remaining genuine-debt rows grouped into `12` unique file/rule remediation items. It remains non-accepting because every genuine-debt item must be closed before Phase 2 can pass. The original `575`-row evidence remains historical intake and is not rewritten as the current population.
+The reconciled current-head evidence records `420` resolved non-debt rows, `5` protected rows, zero genuine-debt rows, and zero unclassified rows. The original `575`-row evidence remains historical intake and is not rewritten as the current population. This package's prerequisite is satisfied; AM-025 still owns the final architecture, lifecycle, compiler, evidence, and handoff acceptance gates.
 
 ## 2. Required Row Authority
 
@@ -49,15 +49,15 @@ Production remediation is serialized after row-bound evidence and occurs in sepa
 
 | Lane | Projected debt | Ownership rule |
 |---|---:|---|
-| World lookup and runtime discovery | 6 hazard rows plus 5 overlapping World-owner candidates | Architecture may change only exact handed-off/unprotected composition/runtime paths; audio and all other operation-map rows remain protected. |
-| Mutable static state | 1 diagnostics-policy row | Add one tested subsystem-reset owner; do not normalize application-static state from test cleanup alone. |
-| Pools and lifecycle caches | 1 lifecycle row | Add exact capacity, reuse, exhaustion, and teardown evidence; do not infer closure from a method name. |
-| World-owner candidates | 5 lifecycle rows after exact boundary/protected classifications | Reconcile overlaps with the hazard lane and avoid double-counting one production defect as multiple remediation items. |
-| Source growth | 8 helper paths | Five exact operation-map paths are handed to this child; three non-map paths are owned directly by AM-025. |
+| World lookup and runtime discovery | 0 | Closed by explicit World/reference owners and focused lifecycle evidence; protected audio remains separately deferred. |
+| Mutable static state | 0 | Closed by the tested diagnostics subsystem-reset owner. |
+| Pools and lifecycle caches | 0 | Closed by bounded road-preview capacity, reuse, exhaustion, and teardown evidence. |
+| World-owner candidates | 0 | Closed by exact World-boundary and no-retained-owner evidence without duplicate authority. |
+| Source growth | 0 | Closed by the unchanged 17-test canonical gate and exact no-headroom owner authority. |
 
 Row count and unique debt-item count are reported separately because multiple lexical rows can map to one production fix.
 
-Current external-gate note: the canonical Unity source-growth run reports eight exact helpers at their measured current sizes. Five operation-map paths have an explicit AM-025 handoff while the broad operation-map owner remains active; building production UI, runtime-grid storage, and footprint clone are direct AM-025 paths. FirstLaunch remains clear, and no ceiling receives spare headroom.
+Current external-gate note: the unchanged canonical Unity source-growth run passes all 17 checks. The former eight helper findings and later baseline ratchets have exact accepted dispositions with no spare headroom; FirstLaunch remains clear and no production source was changed by the final authority reconciliation.
 
 Completed remediation:
 

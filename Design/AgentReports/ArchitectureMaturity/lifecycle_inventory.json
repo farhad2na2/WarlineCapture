@@ -62,8 +62,8 @@
   "artifactId": "AM-007",
   "baseline": {
     "branch": "main",
-    "commit": "319a60f6156cf458d393eeaeffd605c0ca2e3a5a",
-    "tree": "d20060af0ddd0d3bbbcabf208b9e027742b2fa51"
+    "commit": "98af580b742b3515452809ab11778f27e5934bf4",
+    "tree": "4a09a2c9846fceaba8794feacfe543ec1f93efbf"
   },
   "categories": {
     "nativeContainers": [
@@ -2325,12 +2325,16 @@
         "path": "Assets/Game/Scripts/Systems/ResourceExchangeVisualPresentationSystemHelper.cs"
       },
       {
-        "cleanupMethodsObserved": [],
-        "cleanupObserved": false,
+        "cleanupMethodsObserved": [
+          "Dispose"
+        ],
+        "cleanupObserved": true,
         "field": "_previewPool",
         "fieldType": "Dictionary<RoadVisualType, Stack<GameObject>>",
-        "lifecycleMethods": [],
-        "line": 59,
+        "lifecycleMethods": [
+          "Dispose"
+        ],
+        "line": 62,
         "ownerType": "RoadPreviewPresentationSystemHelper",
         "path": "Assets/Game/Scripts/Systems/RoadPreviewPresentationSystemHelper.cs"
       },
@@ -2369,6 +2373,72 @@
         "line": 35,
         "ownerType": "AudioPlaybackPresentationBridgeSystemHelper",
         "path": "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs"
+      },
+      {
+        "field": "_runtimeRoadQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "explicit-dispose",
+        "lifecycleMethods": [
+          "OnDisable"
+        ],
+        "line": 18,
+        "ownerType": "GridAuthoring",
+        "path": "Assets/Game/Scripts/Authorings/GridAuthoring.cs"
+      },
+      {
+        "field": "_runtimeSidewalkQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "explicit-dispose",
+        "lifecycleMethods": [
+          "OnDisable"
+        ],
+        "line": 19,
+        "ownerType": "GridAuthoring",
+        "path": "Assets/Game/Scripts/Authorings/GridAuthoring.cs"
+      },
+      {
+        "field": "_runtimeBlockerQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "explicit-dispose",
+        "lifecycleMethods": [
+          "OnDisable"
+        ],
+        "line": 20,
+        "ownerType": "GridAuthoring",
+        "path": "Assets/Game/Scripts/Authorings/GridAuthoring.cs"
+      },
+      {
+        "field": "_runtimeVehicleQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "explicit-dispose",
+        "lifecycleMethods": [
+          "OnDisable"
+        ],
+        "line": 21,
+        "ownerType": "GridAuthoring",
+        "path": "Assets/Game/Scripts/Authorings/GridAuthoring.cs"
+      },
+      {
+        "field": "_runtimePathGridQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "explicit-dispose",
+        "lifecycleMethods": [
+          "OnDisable"
+        ],
+        "line": 22,
+        "ownerType": "GridAuthoring",
+        "path": "Assets/Game/Scripts/Authorings/GridAuthoring.cs"
+      },
+      {
+        "field": "_runtimePathUnitQuery",
+        "fieldType": "EntityQuery",
+        "lifecycleDisposition": "explicit-dispose",
+        "lifecycleMethods": [
+          "OnDisable"
+        ],
+        "line": 23,
+        "ownerType": "GridAuthoring",
+        "path": "Assets/Game/Scripts/Authorings/GridAuthoring.cs"
       },
       {
         "field": "_queryCache",
@@ -9060,7 +9130,7 @@
       {
         "handler": "OpenFullMapPopup",
         "lifecycleMethods": [],
-        "line": 895,
+        "line": 894,
         "ownerType": "UIShellContentView",
         "pairedUnsubscribeObserved": true,
         "path": "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs",
@@ -9071,7 +9141,7 @@
       {
         "handler": "CloseFullMapPopup",
         "lifecycleMethods": [],
-        "line": 896,
+        "line": 895,
         "ownerType": "UIShellContentView",
         "pairedUnsubscribeObserved": true,
         "path": "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs",
@@ -9105,11 +9175,15 @@
         "worldFields": []
       },
       {
-        "defaultWorldAccessCount": 5,
-        "lifecycleMethods": [],
+        "defaultWorldAccessCount": 0,
+        "lifecycleMethods": [
+          "OnDisable"
+        ],
         "ownerType": "GridAuthoring",
         "path": "Assets/Game/Scripts/Authorings/GridAuthoring.cs",
-        "worldFields": []
+        "worldFields": [
+          "_runtimeDebugWorld"
+        ]
       },
       {
         "defaultWorldAccessCount": 2,
@@ -9120,7 +9194,9 @@
       },
       {
         "defaultWorldAccessCount": 0,
-        "lifecycleMethods": [],
+        "lifecycleMethods": [
+          "Dispose"
+        ],
         "ownerType": "MapSurfaceRuntimeBootstrapSceneSystemHelper",
         "path": "Assets/Game/Scripts/Composition/MapSurfaceRuntimeBootstrapSceneSystemHelper.cs",
         "worldFields": [
@@ -9217,6 +9293,13 @@
         ]
       },
       {
+        "defaultWorldAccessCount": 2,
+        "lifecycleMethods": [],
+        "ownerType": "OperationMapEntitySceneApi",
+        "path": "Assets/Game/Scripts/Composition/OperationMapPackedEntitySceneOwnership.cs",
+        "worldFields": []
+      },
+      {
         "defaultWorldAccessCount": 0,
         "lifecycleMethods": [
           "Dispose"
@@ -9226,13 +9309,6 @@
         "worldFields": [
           "createdWorld"
         ]
-      },
-      {
-        "defaultWorldAccessCount": 2,
-        "lifecycleMethods": [],
-        "ownerType": "OperationMapEntitySceneApi",
-        "path": "Assets/Game/Scripts/Composition/OperationMapSceneLoadingSceneSystemHelper.cs",
-        "worldFields": []
       },
       {
         "defaultWorldAccessCount": 0,
@@ -9262,7 +9338,7 @@
         "worldFields": []
       },
       {
-        "defaultWorldAccessCount": 1,
+        "defaultWorldAccessCount": 0,
         "lifecycleMethods": [],
         "ownerType": "RuntimeCityReadinessQueryCompositionSystemHelper",
         "path": "Assets/Game/Scripts/Environment/RuntimeCityReadinessQueryCompositionSystemHelper.cs",
@@ -9271,11 +9347,13 @@
         ]
       },
       {
-        "defaultWorldAccessCount": 1,
+        "defaultWorldAccessCount": 0,
         "lifecycleMethods": [],
         "ownerType": "RuntimeCityRoadBuildBridgeState",
         "path": "Assets/Game/Scripts/Environment/RuntimeCityRoadBuildBridgeCompositionSystemHelper.cs",
-        "worldFields": []
+        "worldFields": [
+          "_queryWorld"
+        ]
       },
       {
         "defaultWorldAccessCount": 1,
@@ -9826,7 +9904,7 @@
     },
     {
       "path": "Design/Architecture/systembase_to_isystem_inventory.md",
-      "sha256": "377c81c031b0cbdde92e691eef94b284ab0b4c406ce3ee72dbadf321b0bb81df"
+      "sha256": "deceed458fe59dc5bb3566d2900137ec566ea866e62f5b6a3df541e31c752ce4"
     }
   ],
   "summary": {
@@ -9834,8 +9912,8 @@
     "nativeWithoutObservedCleanupCount": 83,
     "persistentNativeContainerCount": 66,
     "presentationPoolCount": 15,
-    "presentationPoolWithoutObservedCleanupCount": 9,
-    "queryCacheCount": 553,
+    "presentationPoolWithoutObservedCleanupCount": 8,
+    "queryCacheCount": 559,
     "queryClassificationRequiredCount": 158,
     "sceneRootCount": 11,
     "staticCacheCount": 38,
@@ -9843,7 +9921,7 @@
     "subscriptionCount": 25,
     "subscriptionWithoutDirectTeardownUnsubscribeCount": 17,
     "subscriptionWithoutObservedUnsubscribeCount": 0,
-    "worldDefaultAccessCount": 79,
+    "worldDefaultAccessCount": 72,
     "worldOwnerCount": 78
   }
 }

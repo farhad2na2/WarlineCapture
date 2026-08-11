@@ -2,10 +2,10 @@
   "artifactId": "AM025-PHASE2-EXIT-POLICY",
   "schemaVersion": 2,
   "taskId": "AM-025",
-  "status": "FrozenForCurrentAMFR003Capture",
+  "status": "CurrentZeroDebtEvidenceReadyForFinalAcceptance",
   "baseline": {
-    "commit": "319a60f6156cf458d393eeaeffd605c0ca2e3a5a",
-    "tree": "d20060af0ddd0d3bbbcabf208b9e027742b2fa51",
+    "commit": "98af580b742b3515452809ab11778f27e5934bf4",
+    "tree": "4a09a2c9846fceaba8794feacfe543ec1f93efbf",
     "branch": "main",
     "cleanRequired": true
   },
@@ -41,7 +41,7 @@
       "command": "python3 -m unittest discover -s Tools/CI/tests -p 'test_architecture_*.py'",
       "baselinePassed": 157,
       "am025Added": 19,
-      "requiredPassed": 176,
+      "requiredPassed": 179,
       "requiredFailed": 0
     },
     {
@@ -92,11 +92,11 @@
   ],
   "ownershipDelta": {
     "phase0Path": "Design/AgentReports/ArchitectureMaturity/lifecycle_inventory.json",
-    "phase0Rows": 880,
+    "phase0Rows": 886,
     "am018Path": "Design/AgentReports/ArchitectureMaturity/am018_dependency_hazard_inventory.json",
-    "am018Rows": 247,
+    "am018Rows": 237,
     "am021Path": "Design/AgentReports/ArchitectureMaturity/am021_persistent_resource_ownership.json",
-    "am021Rows": 634,
+    "am021Rows": 640,
     "am021ExplicitOwners": 561,
     "am021ProtectedOwners": 73,
     "am021GapCount": 0,
@@ -106,93 +106,20 @@
       "protected-deferred",
       "open"
     ],
-    "historicalInitialOpenRowCount": 430,
-    "projectedReviewedRowCount": 430,
-    "projectedReviewedNonDebtRowCount": 417,
-    "projectedGenuineDebtRowCount": 13,
-    "projectedUniqueDebtItemCount": 12,
+    "historicalInitialOpenRowCount": 425,
+    "projectedReviewedRowCount": 425,
+    "projectedReviewedNonDebtRowCount": 425,
+    "projectedGenuineDebtRowCount": 0,
+    "projectedUniqueDebtItemCount": 0,
     "projectedUnclassifiedRowCount": 0,
-    "projectionStatus": "CurrentHeadRowBoundAuthorityEvidenceGenerated",
+    "projectionStatus": "PassedZeroDebtZeroUnclassified",
     "requiredGenuineDebtCountForAcceptance": 0,
     "requiredUnclassifiedCountForAcceptance": 0,
     "unmatchedFinalClassification": "new-after-baseline"
   },
   "currentExternalExitBlockers": {
-    "sourceGrowthUnresolvedBlockerCount": 8,
-    "sourceGrowthBlockers": [
-      {
-        "path": "Assets/Game/Scripts/Composition/OperationMapRuntimeBootstrapSceneSystemHelper.cs",
-        "sha256": "7d3fd8af315641a8998d41c90c21e26f038151981b709170afe11a8436a15645",
-        "lines": 395,
-        "bytes": 15565,
-        "violation": "exceeded-system-helper-authorization",
-        "ownerDomain": "am025-operation-map-handoff",
-        "status": "blocked-owner-action"
-      },
-      {
-        "path": "Assets/Game/Scripts/Composition/OperationMapSceneLoadingSceneSystemHelper.cs",
-        "sha256": "32afaa8e0050a04522ae5ded5f3035812f97f076c971de50169f05a4534fced9",
-        "lines": 927,
-        "bytes": 34174,
-        "violation": "missing-system-helper-authorization",
-        "ownerDomain": "am025-operation-map-handoff",
-        "status": "blocked-owner-action"
-      },
-      {
-        "path": "Assets/Game/Scripts/Composition/OperationMapSceneReferenceSceneSystemHelper.cs",
-        "sha256": "7b7de2a93267894d0fe3f0cf63fc25c84813f1202c96c4aaa21e4f9b61d646e1",
-        "lines": 67,
-        "bytes": 2223,
-        "violation": "missing-system-helper-authorization",
-        "ownerDomain": "am025-operation-map-handoff",
-        "status": "blocked-owner-action"
-      },
-      {
-        "path": "Assets/Game/Scripts/Systems/BuildingProductionEntriesUiSystemHelper.cs",
-        "sha256": "b91ac44a45e341b770818cd78798e261384ee004d57162bd2ed8d9509786d16b",
-        "lines": 437,
-        "bytes": 18403,
-        "violation": "exceeded-system-helper-authorization",
-        "ownerDomain": "architecture-core",
-        "status": "blocked-owner-action"
-      },
-      {
-        "path": "Assets/Game/Scripts/Systems/RuntimeGridPersistentStorageUtilitySystemHelper.cs",
-        "sha256": "2012a78fc1073e9949ee1e1635e99a9745e584a316f069e4a722ab5dd6429075",
-        "lines": 199,
-        "bytes": 8699,
-        "violation": "missing-system-helper-authorization",
-        "ownerDomain": "architecture-core",
-        "status": "blocked-owner-action"
-      },
-      {
-        "path": "Assets/Game/Scripts/Environment/RuntimeCityRoadVisualPrototypeSystemHelper.cs",
-        "sha256": "8d9853cdc3c64414fd74db827521089b97fb8a5818abdd135e2c4a668d261171",
-        "lines": 286,
-        "bytes": 10976,
-        "violation": "exceeded-system-helper-authorization",
-        "ownerDomain": "am025-operation-map-handoff",
-        "status": "blocked-owner-action"
-      },
-      {
-        "path": "Assets/Game/Scripts/Environment/RuntimeOperationMapVisualQualitySystemHelper.cs",
-        "sha256": "7d2647600c996152e7a63c9a7b797b53a61d8837e6dc12df15df64b43471596b",
-        "lines": 198,
-        "bytes": 8170,
-        "violation": "exceeded-system-helper-authorization",
-        "ownerDomain": "am025-operation-map-handoff",
-        "status": "blocked-owner-action"
-      },
-      {
-        "path": "Assets/Game/Scripts/Systems/BuildingDefinitionFootprintCloneSystemHelper.cs",
-        "sha256": "c963de2d2ac527cb8fe017a0d8086688630fbb85028040dbc590de33e9b9cdd9",
-        "lines": 72,
-        "bytes": 4230,
-        "violation": "exceeded-system-helper-authorization",
-        "ownerDomain": "architecture-core",
-        "status": "blocked-owner-action"
-      }
-    ],
+    "sourceGrowthUnresolvedBlockerCount": 0,
+    "sourceGrowthBlockers": [],
     "requiredUnresolvedSourceGrowthBlockerCountForAcceptance": 0,
     "broadContractDomains": [
       "am025-operation-map-handoff",
@@ -200,7 +127,7 @@
       "FirstLaunch/UI",
       "package-bound"
     ],
-    "rule": "AM-025 remains unchecked until the current canonical run resolves or an accepted owner authority closes every Core blocker."
+    "rule": "The source-growth prerequisite is satisfied only while the unchanged canonical 17-test gate remains green; final AM-025 acceptance still requires AMFR-018 through AMFR-022."
   },
   "releaseLane": {
     "status": "Deferred",

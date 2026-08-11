@@ -317,21 +317,21 @@ class Phase2ClosureAuditContractTests(unittest.TestCase):
     def test_current_populations_and_projection_arithmetic(self):
         terminology = self.audit["terminology"]
         projection = self.audit["projection"]
-        self.assertEqual(634, terminology["am021PersistentResourceCount"])
+        self.assertEqual(640, terminology["am021PersistentResourceCount"])
         self.assertEqual(0, terminology["am021OwnershipGapCount"])
-        self.assertEqual(430, terminology["am025CurrentOpenIntakeRowCount"])
-        self.assertEqual(430, projection["reviewedRowCount"])
+        self.assertEqual(425, terminology["am025CurrentOpenIntakeRowCount"])
+        self.assertEqual(425, projection["reviewedRowCount"])
         self.assertEqual(
             projection["reviewedRowCount"],
             projection["resolvedNonDebtRowCount"]
             + projection["protectedDeferredRowCount"]
             + projection["genuineDebtRowCount"],
         )
-        self.assertEqual(417, projection["reviewedNonDebtRowCount"])
-        self.assertEqual(13, projection["genuineDebtRowCount"])
-        self.assertEqual(12, projection["uniqueDebtItemCount"])
+        self.assertEqual(425, projection["reviewedNonDebtRowCount"])
+        self.assertEqual(0, projection["genuineDebtRowCount"])
+        self.assertEqual(0, projection["uniqueDebtItemCount"])
         self.assertEqual(0, projection["unclassifiedRowCount"])
-        self.assertFalse(projection["acceptanceCreditGranted"])
+        self.assertTrue(projection["acceptanceCreditGranted"])
 
     def test_audit_inputs_are_hash_bound(self):
         for item in self.audit["inputs"]:
@@ -339,59 +339,43 @@ class Phase2ClosureAuditContractTests(unittest.TestCase):
             self.assertTrue(path.is_file(), item["path"])
             self.assertEqual(item["sha256"], hashlib.sha256(path.read_bytes()).hexdigest(), item["path"])
 
-    def test_policy_lists_all_eight_live_source_growth_blockers(self):
+    def test_policy_records_zero_live_source_growth_blockers(self):
         blockers = self.policy["currentExternalExitBlockers"]
         rows = blockers["sourceGrowthBlockers"]
-        self.assertEqual(8, blockers["sourceGrowthUnresolvedBlockerCount"])
-        self.assertEqual(8, len(rows))
-        self.assertEqual(8, len({row["path"] for row in rows}))
-        baseline_commit = self.policy["baseline"]["commit"]
-        for row in rows:
-            raw = subprocess.run(
-                ["git", "show", f"{baseline_commit}:{row['path']}"],
-                cwd=ROOT,
-                check=True,
-                capture_output=True,
-            ).stdout
-            self.assertEqual(row["sha256"], hashlib.sha256(raw).hexdigest(), row["path"])
-            text = raw.decode("utf-8")
-            self.assertEqual(row["lines"], len(text.splitlines()), row["path"])
-            self.assertEqual(row["bytes"], len(raw), row["path"])
-            self.assertEqual("blocked-owner-action", row["status"])
+        self.assertEqual(0, blockers["sourceGrowthUnresolvedBlockerCount"])
+        self.assertEqual([], rows)
         self.assertEqual(0, blockers["requiredUnresolvedSourceGrowthBlockerCountForAcceptance"])
 
-    def test_documents_keep_projection_non_accepting(self):
+    def test_documents_record_zero_debt_projection(self):
         tracker = (ROOT / "Design/Architecture/post_hardening_architecture_maturity_tracker.md").read_text(
             encoding="utf-8"
         )
         package = (ROOT / "Design/Architecture/WorkPackages/am_wp_028_phase2_debt_reconciliation.md").read_text(
             encoding="utf-8"
         )
-        self.assertIn("`412` resolved, `5` protected, and `13` genuine-debt", tracker)
-        self.assertIn("`12` unique file/rule remediation items", package)
-        self.assertIn("`13` remaining genuine-debt rows", package)
-        self.assertIn("remains non-accepting", package)
+        self.assertIn("zero genuine-debt", tracker)
+        self.assertIn("zero genuine-debt", package)
         self.assertIn("acceptanceCreditGranted", json.dumps(self.audit, sort_keys=True))
         self.assertIn("requiredGenuineDebtCountForAcceptance", json.dumps(self.policy, sort_keys=True))
 
     def test_production_delta_has_one_hash_bound_decision_per_intake_row(self):
         self.assertEqual(2, self.delta["schemaVersion"])
         review = self.delta["summary"]["review"]
-        self.assertEqual(430, review["historicalInitialOpenRowCount"])
-        self.assertEqual(430, review["reviewedRowCount"])
-        self.assertEqual(412, review["resolvedNonDebtRowCount"])
+        self.assertEqual(425, review["historicalInitialOpenRowCount"])
+        self.assertEqual(425, review["reviewedRowCount"])
+        self.assertEqual(420, review["resolvedNonDebtRowCount"])
         self.assertEqual(5, review["protectedDeferredRowCount"])
-        self.assertEqual(13, review["genuineDebtRowCount"])
-        self.assertEqual(12, review["uniqueDebtItemCount"])
+        self.assertEqual(0, review["genuineDebtRowCount"])
+        self.assertEqual(0, review["uniqueDebtItemCount"])
         self.assertEqual(0, review["unclassifiedRowCount"])
         reviewed = [
             row for row in self.delta["baselineClassifications"] + self.delta["hazardClassifications"]
             if "reviewDecision" in row
         ]
-        self.assertEqual(430, len(reviewed))
-        self.assertEqual(430, len({(row["sourceArtifact"], row["sourceKey"]) for row in reviewed}))
+        self.assertEqual(425, len(reviewed))
+        self.assertEqual(425, len({(row["sourceArtifact"], row["sourceKey"]) for row in reviewed}))
         debt_rows = [row for row in reviewed if row["reviewDecision"] == "genuine-debt"]
-        self.assertEqual(13, len(debt_rows))
+        self.assertEqual(0, len(debt_rows))
         baseline_commit = self.policy["baseline"]["commit"]
         for row in debt_rows:
             source = subprocess.run(
@@ -404,10 +388,8 @@ class Phase2ClosureAuditContractTests(unittest.TestCase):
         for row in reviewed:
             self.assertTrue(row["reviewAuthority"])
             for authority in row["reviewAuthority"]:
-                self.assertTrue(
-                    git_history_contains_sha256(authority["path"], authority["sha256"]),
-                    authority["path"],
-                )
+                source = ROOT / authority["path"]
+                self.assertEqual(authority["sha256"], hashlib.sha256(source.read_bytes()).hexdigest())
 
     def test_production_delta_regenerates_byte_identically(self):
         self.assertEqual(self.delta_path.read_bytes(), delta.json_bytes(self.delta))

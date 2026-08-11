@@ -126,15 +126,15 @@ class ArchitectureDependencyHazardInventoryEvidenceTests(unittest.TestCase):
 
     def test_summary_and_routing_are_fail_closed(self) -> None:
         expected_counts = {
-            "globalWorldLookups": 81,
+            "globalWorldLookups": 74,
             "hiddenSingletons": 8,
             "mutableStaticCaches": 143,
-            "runtimeObjectDiscovery": 7,
+            "runtimeObjectDiscovery": 4,
             "staticEventSubscriptions": 8,
         }
         self.assertEqual(self.data["schemaVersion"], 2)
-        self.assertEqual(self.data["summary"]["findingCount"], 247)
-        self.assertEqual(self.data["summary"]["protectedFindingCount"], 10)
+        self.assertEqual(self.data["summary"]["findingCount"], 237)
+        self.assertEqual(self.data["summary"]["protectedFindingCount"], 12)
         self.assertEqual(self.data["summary"]["mutableStaticCacheCandidateCount"], 54)
         self.assertEqual(self.data["summary"]["mutableStaticLifecycleStateCount"], 30)
         self.assertEqual(self.data["summary"]["immutableReferenceClassificationCount"], 59)
@@ -149,7 +149,7 @@ class ArchitectureDependencyHazardInventoryEvidenceTests(unittest.TestCase):
             self.assertTrue(all(row["disposition"] and row["rationale"] for row in self.data["categories"][category]))
         self.assertEqual(
             Counter(row["disposition"] for row in self.data["categories"]["globalWorldLookups"]),
-            {"AD": 20, "CE": 32, "HSL": 4, "PE": 25},
+            {"AD": 15, "CE": 32, "HSL": 2, "PE": 25},
         )
         self.assertEqual(
             Counter(row["disposition"] for row in self.data["categories"]["staticEventSubscriptions"]),
@@ -157,7 +157,7 @@ class ArchitectureDependencyHazardInventoryEvidenceTests(unittest.TestCase):
         )
         self.assertEqual(
             Counter(row["disposition"] for row in self.data["categories"]["runtimeObjectDiscovery"]),
-            {"AD": 2, "ROD": 5},
+            {"AD": 2, "ROD": 2},
         )
         self.assertEqual(
             [owner["id"] for owner in self.data["activeWorkExclusions"]],

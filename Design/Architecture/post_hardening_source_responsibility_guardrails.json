@@ -47,6 +47,14 @@
       "scope": "system-helper"
     },
     {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityRoadVisualPrototypeSystemHelper.cs",
+      "trackerTaskId": "AMFR-009",
+      "acceptedCommit": "367e427336c845732fe04410ea1a81eb738c9376",
+      "maxLines": 286,
+      "maxBytes": 10976,
+      "scope": "system-helper"
+    },
+    {
       "path": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
       "trackerTaskId": "AM-013",
       "acceptedCommit": "664ae7fa4544699faad7da01b11db60434e39088",

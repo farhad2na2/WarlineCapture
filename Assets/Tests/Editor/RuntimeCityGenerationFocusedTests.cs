@@ -21,6 +21,9 @@ public sealed class RuntimeCityGenerationFocusedTests
             tests.TownRoadLayout_BuildsConnectedRoadStrokesAndAutobahnExit();
             tests.TownRoadLayout_VisualTerminalPolicyCompactsOnlyConfiguredOuterRoads();
             tests.RoadVisualPrototype_CreatesContinuousShoulderedConnections();
+            tests.RoadVisualPrototype_DeduplicatesRepeatedCellsAndEdgesWithinOneRoot();
+            tests.RoadVisualPrototype_DisposeDestroysRootWithoutDestroyingBorrowedMaterials();
+            tests.RoadVisualPrototype_BoundaryIsRAndDOnlyAndOwnerDisposesIt();
             tests.RoadsidePlots_CarryCardinalRoadFacingIntent();
             tests.VisualPrototypeDistrictIntent_OrdersMarketResidentialAndUtilityPlots();
             tests.VisualPrototypeDamageScatter_BiasesTowardAuthoredCorridor();
@@ -45,7 +48,7 @@ public sealed class RuntimeCityGenerationFocusedTests
             tests.RuntimeCameraPose_PreservesStageAndClampsPresentationValues();
             tests.RuntimeDistrictModuleRecipe_SupportsExactPrefabReplayOrIndexedSlices();
             tests.RuntimePrototypeArchitecture_UsesPassiveViewAndSystemBaseOwner();
-            Debug.Log("[RuntimeCityGenerationFocusedValidation] result=Passed tests=28");
+            Debug.Log("[RuntimeCityGenerationFocusedValidation] result=Passed tests=31");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -258,6 +261,114 @@ public sealed class RuntimeCityGenerationFocusedTests
             roadVisuals.Dispose();
             UnityEngine.Object.DestroyImmediate(runtimeRoot);
         }
+    }
+
+    [Test]
+    public void RoadVisualPrototype_DeduplicatesRepeatedCellsAndEdgesWithinOneRoot()
+    {
+        GameObject runtimeRoot = new("RuntimeCityRoadVisualBoundedRoot");
+        var roadVisuals = new RuntimeCityRoadVisualPrototypeSystemHelper();
+        try
+        {
+            roadVisuals.Configure(
+                runtimeRoot.transform,
+                CreateGrid(width: 64, height: 64),
+                roadCellSizeInGridCells: 4,
+                material: null,
+                shoulderMaterial: null,
+                roadColor: Color.gray,
+                shoulderColor: Color.black);
+            var cells = new List<Vector2Int> { new(4, 5), new(5, 5), new(6, 5) };
+
+            roadVisuals.CreateStroke(cells, false, false, false);
+            Transform roadRoot = runtimeRoot.transform.Find("RuntimeCityRoadVisuals");
+            Assert.IsNotNull(roadRoot);
+            Assert.AreEqual(10, roadRoot.childCount, "Three nodes and two edges each own one road and shoulder slab.");
+
+            roadVisuals.CreateStroke(cells, false, false, false);
+            cells.Reverse();
+            roadVisuals.CreateStroke(cells, false, false, false);
+
+            Assert.AreEqual(3, roadVisuals.RoadCellCount);
+            Assert.AreEqual(3, roadVisuals.StrokeCount);
+            Assert.AreEqual(10, roadRoot.childCount, "Repeated or reversed strokes must not grow the R&D root.");
+        }
+        finally
+        {
+            roadVisuals.Dispose();
+            UnityEngine.Object.DestroyImmediate(runtimeRoot);
+        }
+    }
+
+    [Test]
+    public void RoadVisualPrototype_DisposeDestroysRootWithoutDestroyingBorrowedMaterials()
+    {
+        Shader shader = Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Standard");
+        Assert.IsNotNull(shader);
+        GameObject runtimeRoot = new("RuntimeCityRoadVisualDisposeRoot");
+        Material roadMaterial = new(shader) { name = "BorrowedRoadMaterial" };
+        Material shoulderMaterial = new(shader) { name = "BorrowedShoulderMaterial" };
+        var roadVisuals = new RuntimeCityRoadVisualPrototypeSystemHelper();
+        try
+        {
+            roadVisuals.Configure(
+                runtimeRoot.transform,
+                CreateGrid(width: 64, height: 64),
+                roadCellSizeInGridCells: 4,
+                material: roadMaterial,
+                shoulderMaterial: shoulderMaterial,
+                roadColor: Color.gray,
+                shoulderColor: Color.black,
+                cloneSourceMaterials: false);
+            roadVisuals.CreateStroke(
+                new List<Vector2Int> { new(4, 5), new(5, 5) },
+                false,
+                false,
+                false);
+            Assert.IsNotNull(runtimeRoot.transform.Find("RuntimeCityRoadVisuals"));
+
+            roadVisuals.Dispose();
+
+            Assert.IsNull(runtimeRoot.transform.Find("RuntimeCityRoadVisuals"));
+            Assert.IsTrue(roadMaterial != null);
+            Assert.IsTrue(shoulderMaterial != null);
+            Assert.AreEqual(0, roadVisuals.RoadCellCount);
+            Assert.AreEqual(0, roadVisuals.StrokeCount);
+        }
+        finally
+        {
+            roadVisuals.Dispose();
+            UnityEngine.Object.DestroyImmediate(roadMaterial);
+            UnityEngine.Object.DestroyImmediate(shoulderMaterial);
+            UnityEngine.Object.DestroyImmediate(runtimeRoot);
+        }
+    }
+
+    [Test]
+    public void RoadVisualPrototype_BoundaryIsRAndDOnlyAndOwnerDisposesIt()
+    {
+        string environmentRoot = Path.GetFullPath(Path.Combine(Application.dataPath, "Game/Scripts/Environment"));
+        string helperPath = Path.Combine(environmentRoot, "RuntimeCityRoadVisualPrototypeSystemHelper.cs");
+        string helperSource = File.ReadAllText(helperPath);
+        string ownerSource = File.ReadAllText(Path.Combine(
+            environmentRoot,
+            "RuntimeCityRAndDMapCompositionSystemHelper.cs"));
+
+        Assert.AreEqual(286, File.ReadAllLines(helperPath).Length);
+        Assert.AreEqual(10976, new FileInfo(helperPath).Length);
+        Assert.AreEqual(1, CountOccurrences(
+            ownerSource,
+            "new RuntimeCityRoadVisualPrototypeSystemHelper()"));
+        Assert.AreEqual(1, CountOccurrences(ownerSource, "_roadVisuals.Configure("));
+        Assert.AreEqual(1, CountOccurrences(ownerSource, "_roadVisuals?.Dispose();"));
+        Assert.That(
+            ownerSource.Replace("\r\n", "\n"),
+            Does.Contain("DisposeGeneration();\n            DestroyGeneratedRoot();"));
+        Assert.That(helperSource, Does.Contain("RuntimeCityRoad_RnD"));
+        Assert.That(helperSource, Does.Contain("RuntimeCityRoadShoulder_RnD"));
+        Assert.That(helperSource, Does.Not.Contain("World.DefaultGameObjectInjectionWorld"));
+        Assert.That(helperSource, Does.Not.Contain("EntityManager"));
+        Assert.That(helperSource, Does.Not.Contain("Update("));
     }
 
     [Test]
@@ -1265,6 +1376,11 @@ public sealed class RuntimeCityGenerationFocusedTests
     private static int ManhattanDistance(Vector2Int a, Vector2Int b)
     {
         return math.abs(a.x - b.x) + math.abs(a.y - b.y);
+    }
+
+    private static int CountOccurrences(string source, string value)
+    {
+        return source.Split(new[] { value }, StringSplitOptions.None).Length - 1;
     }
 
     private static GridConfig CreateGrid(int width, int height)

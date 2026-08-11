@@ -772,8 +772,8 @@ public sealed class ProductionSourceGrowthArchitectureTests
         Require(contract.ReplacementOwnerBoundary != null, "The replacement-owner boundary is required.");
         Require(contract.GrowthAuthorizations != null, "Post-hardening growth authorizations are required.");
         Require(
-            contract.GrowthAuthorizations.Count == 7,
-            "Exactly seven accepted post-hardening growth authorizations are required.");
+            contract.GrowthAuthorizations.Count == 8,
+            "Exactly eight accepted post-hardening growth authorizations are required.");
         Require(
             contract.Entries.Count == PostHardeningGuardrailEntryCount,
             $"The post-hardening guardrail must contain exactly {PostHardeningGuardrailEntryCount} entries.");
@@ -1341,6 +1341,15 @@ public sealed class ProductionSourceGrowthArchitectureTests
                 AcceptedCommit = "18ebc842961b31e33239f9c510c613a25902b89e",
                 MaxLines = 67,
                 MaxBytes = 2223,
+                Scope = SystemHelperScope
+            },
+            new PostHardeningGrowthAuthorization
+            {
+                Path = "Assets/Game/Scripts/Environment/RuntimeCityRoadVisualPrototypeSystemHelper.cs",
+                TrackerTaskId = "AMFR-009",
+                AcceptedCommit = "367e427336c845732fe04410ea1a81eb738c9376",
+                MaxLines = 286,
+                MaxBytes = 10976,
                 Scope = SystemHelperScope
             },
             new PostHardeningGrowthAuthorization

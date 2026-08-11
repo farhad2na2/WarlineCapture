@@ -1156,3 +1156,12 @@ Accepted AM-020 progress snapshot:
 
 - Checked recovery evidence ran all `8` EditMode cases and failed only the authority guard because it retained historical `575 / 553` AM-021 counts. Current deterministic AMFR-018 authority is `640` resources, `567` explicit owners, `73` protected owners, and zero gaps.
 - The narrow fixture-only correction updates those exact fail-closed counts and adds the protected-owner assertion. Production, ownership generators/rules, lifecycle behavior, allocation windows, thresholds, assets, and features remain unchanged. AMFR-019 remains active until the complete current lifecycle/transition/pool suite passes.
+
+### 2026-08-11 - AM-025 - AMFR-019 lifecycle/transition/allocation closure
+
+- Identity and scope: clean pushed `main`/`origin/main` commit `05ac7ac671587f8cd1c32bd595dc8d713e5c01b4`. The only source correction is the current authority-count fixture; production, assets, packages, settings, thresholds, wrappers, Android/device work, and features are unchanged.
+- Recovery: current World recovery passes `8 / 8`, scene/subsystem recovery passes `2 / 2`, and the recovered path retains `180` warm-ups plus `300` measured operations at exactly zero recurring managed bytes.
+- Stress and pools: the current lifecycle fixture passes `2 / 2`, including one warm-up plus `10` measured production transitions; the memory/pool fixture passes `1 / 1` with one warm-up plus `5` measured cycles and zero structural/governed-pool growth. Raw Editor memory totals remain investigation-only.
+- Governed allocations: `WorldScopedComponentQueryCachePerformanceValidation` passes `4` cases / `3` combinations / `10` phases; every 180+300 initial/rebound World, threat-state, and Match-intro phase reports `allocatedBytes=0`. Focused static contracts pass `10 / 10`; accepted Unity logs contain zero C# errors.
+- Rejected infrastructure-contaminated attempts receive no credit and no suppression: one background SubScene importer capacity log and one external Relay crash were absent from unchanged warm-state passing reruns.
+- Result: AMFR-019 is accepted at child `19 / 22` without parent credit. AMFR-020 is next; AM-025 remains unchecked.

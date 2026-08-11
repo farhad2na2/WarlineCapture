@@ -79,7 +79,10 @@ namespace Game.Composition
                 error = "Operation-map readiness requires a live ECS World.";
                 return false;
             }
-            if (!TryResolveSingleRoot(entityManager, out Entity rootEntity, out error))
+            if (!OperationMapRuntimeRootContract.TryResolveSingle(
+                    entityManager,
+                    out Entity rootEntity,
+                    out error))
                 return false;
             if (rootEntity == Entity.Null)
             {
@@ -87,50 +90,13 @@ namespace Game.Composition
                 return false;
             }
 
-            ActiveOperationMapComponent active =
-                entityManager.GetComponentData<ActiveOperationMapComponent>(rootEntity);
-            OperationMapReadinessComponent readiness =
-                entityManager.GetComponentData<OperationMapReadinessComponent>(rootEntity);
-            if (active.Generation != generation || readiness.Generation != generation)
-            {
-                error = "Operation-map readiness generation does not match the active map.";
-                return false;
-            }
-
-            OperationMapReadinessFlags allowedFlags = readiness.RequiredFlags;
-            if ((readyFlags & ~allowedFlags) != 0 || (failedFlags & ~allowedFlags) != 0)
-            {
-                error = "Operation-map readiness contains flags outside the active requirement set.";
-                return false;
-            }
-
-            if (readiness.ReadyFlags == readyFlags && readiness.FailedFlags == failedFlags)
-            {
-                error = null;
-                return true;
-            }
-
-            readiness.ReadyFlags = readyFlags;
-            readiness.FailedFlags = failedFlags;
-            entityManager.SetComponentData(rootEntity, readiness);
-
-            bool complete = HasRequiredReadiness(readyFlags, readiness.RequiredFlags);
-            OperationMapLoadStateComponent state =
-                entityManager.GetComponentData<OperationMapLoadStateComponent>(rootEntity);
-            state.Generation = generation;
-            state.Progress01 = CalculateReadinessProgress(readyFlags, readiness.RequiredFlags);
-            state.Status = failedFlags != OperationMapReadinessFlags.None
-                ? OperationMapLoadStatusKind.Failed
-                : complete
-                    ? OperationMapLoadStatusKind.Ready
-                    : (readyFlags & OperationMapReadinessFlags.SubScene) == 0
-                        ? OperationMapLoadStatusKind.LoadingSubScene
-                        : OperationMapLoadStatusKind.PreloadingPresentation;
-            state.Readiness = readyFlags;
-            state.IsBusy = complete || failedFlags != OperationMapReadinessFlags.None ? (byte)0 : (byte)1;
-            entityManager.SetComponentData(rootEntity, state);
-            error = null;
-            return true;
+            return OperationMapRuntimeReadinessProjection.TryApply(
+                entityManager,
+                rootEntity,
+                generation,
+                readyFlags,
+                failedFlags,
+                out error);
         }
 
         public bool TryPublish(
@@ -168,7 +134,10 @@ namespace Game.Composition
                 return false;
             }
 
-            if (!TryResolveSingleRoot(entityManager, out rootEntity, out error))
+            if (!OperationMapRuntimeRootContract.TryResolveSingle(
+                    entityManager,
+                    out rootEntity,
+                    out error))
                 return false;
 
             if (rootEntity != Entity.Null &&
@@ -191,9 +160,9 @@ namespace Game.Composition
             try
             {
                 if (rootEntity == Entity.Null)
-                    rootEntity = CreateRoot(entityManager);
+                    rootEntity = OperationMapRuntimeRootContract.Create(entityManager);
                 else
-                    EnsureRootContract(entityManager, rootEntity);
+                    OperationMapRuntimeRootContract.Ensure(entityManager, rootEntity);
 
                 OperationMapBoundsConfig sourceBounds = definition.Bounds;
                 entityManager.SetComponentData(rootEntity, new ActiveOperationMapComponent
@@ -231,8 +200,12 @@ namespace Game.Composition
                 {
                     ActiveRequestId = 0,
                     Generation = generation,
-                    Progress01 = HasRequiredReadiness(readyFlags, requiredFlags) ? 1f : 0f,
-                    Status = HasRequiredReadiness(readyFlags, requiredFlags)
+                    Progress01 = OperationMapRuntimeReadinessProjection.HasRequired(
+                        readyFlags,
+                        requiredFlags) ? 1f : 0f,
+                    Status = OperationMapRuntimeReadinessProjection.HasRequired(
+                        readyFlags,
+                        requiredFlags)
                         ? OperationMapLoadStatusKind.Ready
                         : OperationMapLoadStatusKind.BindingMetadata,
                     Readiness = readyFlags,
@@ -282,62 +255,6 @@ namespace Game.Composition
             disposed = true;
         }
 
-        private static Entity CreateRoot(EntityManager entityManager)
-        {
-            Entity entity = entityManager.CreateEntity(
-                typeof(OperationMapRootComponent),
-                typeof(OperationMapQueueComponent),
-                typeof(OperationMapLoadStateComponent),
-                typeof(ActiveOperationMapComponent),
-                typeof(OperationMapBoundsComponent),
-                typeof(OperationMapMetadataComponent),
-                typeof(OperationMapReadinessComponent));
-            entityManager.AddBuffer<OperationMapLoadRequestElement>(entity);
-            entityManager.AddBuffer<OperationMapLoadResultElement>(entity);
-            return entity;
-        }
-
-        private static void EnsureRootContract(EntityManager entityManager, Entity rootEntity)
-        {
-            EnsureComponent<OperationMapQueueComponent>(entityManager, rootEntity);
-            EnsureComponent<OperationMapLoadStateComponent>(entityManager, rootEntity);
-            EnsureComponent<ActiveOperationMapComponent>(entityManager, rootEntity);
-            EnsureComponent<OperationMapBoundsComponent>(entityManager, rootEntity);
-            EnsureComponent<OperationMapMetadataComponent>(entityManager, rootEntity);
-            EnsureComponent<OperationMapReadinessComponent>(entityManager, rootEntity);
-            if (!entityManager.HasBuffer<OperationMapLoadRequestElement>(rootEntity))
-                entityManager.AddBuffer<OperationMapLoadRequestElement>(rootEntity);
-            if (!entityManager.HasBuffer<OperationMapLoadResultElement>(rootEntity))
-                entityManager.AddBuffer<OperationMapLoadResultElement>(rootEntity);
-        }
-
-        private static void EnsureComponent<T>(EntityManager entityManager, Entity entity)
-            where T : unmanaged, IComponentData
-        {
-            if (!entityManager.HasComponent<T>(entity))
-                entityManager.AddComponent<T>(entity);
-        }
-
-        private static bool TryResolveSingleRoot(
-            EntityManager entityManager,
-            out Entity rootEntity,
-            out string error)
-        {
-            using EntityQuery query = entityManager.CreateEntityQuery(
-                ComponentType.ReadOnly<OperationMapRootComponent>());
-            using NativeArray<Entity> roots = query.ToEntityArray(Allocator.Temp);
-            if (roots.Length > 1)
-            {
-                rootEntity = Entity.Null;
-                error = "Exactly zero or one operation-map root is permitted before publication.";
-                return false;
-            }
-
-            rootEntity = roots.Length == 1 ? roots[0] : Entity.Null;
-            error = null;
-            return true;
-        }
-
         private bool TryGetLiveEntityManager(out EntityManager entityManager)
         {
             entityManager = default;
@@ -360,34 +277,6 @@ namespace Game.Composition
             if (ownedMetadataBlob.IsCreated)
                 ownedMetadataBlob.Dispose();
             ownedMetadataBlob = default;
-        }
-
-        private static bool HasRequiredReadiness(
-            OperationMapReadinessFlags readyFlags,
-            OperationMapReadinessFlags requiredFlags) =>
-            (readyFlags & requiredFlags) == requiredFlags;
-
-        private static float CalculateReadinessProgress(
-            OperationMapReadinessFlags readyFlags,
-            OperationMapReadinessFlags requiredFlags)
-        {
-            int readyCount = 0;
-            int requiredCount = 0;
-            ushort ready = (ushort)(readyFlags & requiredFlags);
-            ushort required = (ushort)requiredFlags;
-            while (required != 0)
-            {
-                if ((required & 1) != 0)
-                {
-                    requiredCount++;
-                    if ((ready & 1) != 0)
-                        readyCount++;
-                }
-                required >>= 1;
-                ready >>= 1;
-            }
-
-            return requiredCount == 0 ? 1f : (float)readyCount / requiredCount;
         }
 
         private static float3 ToFloat3(UnityEngine.Vector3 value) => new(value.x, value.y, value.z);

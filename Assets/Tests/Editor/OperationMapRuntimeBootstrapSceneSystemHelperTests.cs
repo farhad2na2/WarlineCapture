@@ -1,3 +1,4 @@
+using System.IO;
 using System.Reflection;
 using Game.Components;
 using Game.Composition;
@@ -11,6 +12,44 @@ using UnityEngine.TestTools;
 public sealed class OperationMapRuntimeBootstrapSceneSystemHelperTests
 {
     private const string Hash = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+
+    public static void RunFocusedValidation()
+    {
+        int passed = 0;
+        try
+        {
+            var tests = new OperationMapRuntimeBootstrapSceneSystemHelperTests();
+            Run(tests.MatchInitialReadiness_DistinguishesCompatibilityFromLoadedMap, ref passed);
+            Run(tests.CatalogPublish_ResolvesOnceAndPublishesSelectedDefinition, ref passed);
+            Run(tests.Publish_CreatesOneCompleteGenerationWithoutSurfaceOwnership, ref passed);
+            Run(tests.UpdateReadiness_PublishesProgressAndCompletesOneGeneration, ref passed);
+            Run(tests.Publish_RejectsInvalidOrNonMonotonicGenerationWithoutChangingCurrentState, ref passed);
+            Run(tests.Publish_RejectsMultipleRootsBeforeAllocatingOrMutating, ref passed);
+            Run(tests.ClearAndDispose_RemovePublishedStateAndReleaseOwnedBlob, ref passed);
+            Run(tests.Helper_HasNoUpdateMethod, ref passed);
+            Run(tests.MatchBootstrapCompatibilityPublish_PublishesConfiguredIdentityAndDisposesRoot, ref passed);
+            Run(tests.MatchBootstrapCompatibilityPublish_InvalidIdentityFailsWithoutRoot, ref passed);
+            Run(tests.MatchRuntimeBind_MissingCatalogFailsBeforeBootstrap, ref passed);
+            Run(tests.MatchRuntimeBind_MissingDefinitionFailsBeforeBootstrap, ref passed);
+            Run(() => tests.ValidateMatchSourceLoad_MissingOrInvalidIdPublishesTypedFailure(
+                "opmap.skirmish.missing",
+                OperationMapLoadResultCode.MissingDefinition,
+                expectLog: false), ref passed);
+            Run(() => tests.ValidateMatchSourceLoad_MissingOrInvalidIdPublishesTypedFailure(
+                "invalid operation map id",
+                OperationMapLoadResultCode.InvalidOperationMapId,
+                expectLog: false), ref passed);
+            Run(tests.DecompositionRetainsOneWorldAndBlobLifecycleOwner, ref passed);
+            Debug.Log($"[OperationMapRuntimeBootstrapValidation] result=Passed tests={passed}");
+            ValidationExit.Exit(0);
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogError(
+                $"[OperationMapRuntimeBootstrapValidation] result=Failed passed={passed}\n{exception}");
+            ValidationExit.Exit(1);
+        }
+    }
 
     [Test]
     public void MatchInitialReadiness_DistinguishesCompatibilityFromLoadedMap()
@@ -344,6 +383,41 @@ public sealed class OperationMapRuntimeBootstrapSceneSystemHelperTests
     }
 
     [Test]
+    public void DecompositionRetainsOneWorldAndBlobLifecycleOwner()
+    {
+        string compositionRoot = Path.GetFullPath(Path.Combine(
+            Application.dataPath,
+            "Game/Scripts/Composition"));
+        string bootstrapPath = Path.Combine(
+            compositionRoot,
+            "OperationMapRuntimeBootstrapSceneSystemHelper.cs");
+        string bootstrapSource = File.ReadAllText(bootstrapPath);
+        string rootContractSource = File.ReadAllText(Path.Combine(
+            compositionRoot,
+            "OperationMapRuntimeRootContract.cs"));
+        string readinessSource = File.ReadAllText(Path.Combine(
+            compositionRoot,
+            "OperationMapRuntimeReadinessProjection.cs"));
+
+        Assert.That(File.ReadAllLines(bootstrapPath).Length, Is.LessThanOrEqualTo(295));
+        Assert.That(new FileInfo(bootstrapPath).Length, Is.LessThanOrEqualTo(11398));
+        Assert.That(bootstrapSource, Does.Contain("private readonly World createdWorld;"));
+        Assert.That(bootstrapSource, Does.Contain("ownedMetadataBlob"));
+        Assert.That(bootstrapSource, Does.Contain("DisposeOwnedBlob()"));
+        Assert.That(bootstrapSource, Does.Not.Contain("SceneSystem."));
+        Assert.That(bootstrapSource, Does.Not.Contain("Addressables."));
+        Assert.That(bootstrapSource, Does.Not.Contain("public void Update()"));
+        Assert.That(rootContractSource, Does.Contain("internal static class OperationMapRuntimeRootContract"));
+        Assert.That(rootContractSource, Does.Not.Contain("private readonly World"));
+        Assert.That(readinessSource, Does.Contain("internal static class OperationMapRuntimeReadinessProjection"));
+        Assert.That(readinessSource, Does.Not.Contain("private readonly World"));
+        Assert.That(rootContractSource + readinessSource, Does.Not.Contain("public void Update()"));
+        Assert.That(rootContractSource + readinessSource, Does.Not.Contain("IEnumerator"));
+        Assert.That(rootContractSource + readinessSource, Does.Not.Contain("SceneSystem."));
+        Assert.That(rootContractSource + readinessSource, Does.Not.Contain("Addressables."));
+    }
+
+    [Test]
     public void MatchBootstrapCompatibilityPublish_PublishesConfiguredIdentityAndDisposesRoot()
     {
         using World world = new("OperationMapCompatibilityComposition");
@@ -463,7 +537,16 @@ public sealed class OperationMapRuntimeBootstrapSceneSystemHelperTests
         OperationMapLoadResultCode.InvalidOperationMapId)]
     public void MatchSourceLoad_MissingOrInvalidIdPublishesTypedFailure(
         string operationMapId,
-        OperationMapLoadResultCode expectedCode)
+        OperationMapLoadResultCode expectedCode) =>
+        ValidateMatchSourceLoad_MissingOrInvalidIdPublishesTypedFailure(
+            operationMapId,
+            expectedCode,
+            expectLog: true);
+
+    private void ValidateMatchSourceLoad_MissingOrInvalidIdPublishesTypedFailure(
+        string operationMapId,
+        OperationMapLoadResultCode expectedCode,
+        bool expectLog)
     {
         OperationMapDefinition definition = CreateValidDefinition();
         OperationMapCatalogConfig catalog = ScriptableObject.CreateInstance<OperationMapCatalogConfig>();
@@ -478,9 +561,12 @@ public sealed class OperationMapRuntimeBootstrapSceneSystemHelperTests
                 "EnsureOperationMapSourceSceneLoad",
                 BindingFlags.Instance | BindingFlags.NonPublic);
             Assert.That(ensureLoad, Is.Not.Null);
-            LogAssert.Expect(
-                LogType.Error,
-                $"[OperationMapSourceScene] code={expectedCode} error=Operation-map id '{operationMapId}' is not present in the catalog.");
+            if (expectLog)
+            {
+                LogAssert.Expect(
+                    LogType.Error,
+                    $"[OperationMapSourceScene] code={expectedCode} error=Operation-map id '{operationMapId}' is not present in the catalog.");
+            }
 
             ensureLoad.Invoke(view, null);
 
@@ -499,6 +585,12 @@ public sealed class OperationMapRuntimeBootstrapSceneSystemHelperTests
     {
         using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<OperationMapRootComponent>());
         return query.CalculateEntityCount();
+    }
+
+    private static void Run(System.Action action, ref int passed)
+    {
+        action();
+        passed++;
     }
 
     private static void AssertOwnedBlobCreated(

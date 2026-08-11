@@ -39,6 +39,14 @@
       "scope": "system-helper"
     },
     {
+      "path": "Assets/Game/Scripts/Composition/OperationMapSceneReferenceSceneSystemHelper.cs",
+      "trackerTaskId": "AMFR-007",
+      "acceptedCommit": "18ebc842961b31e33239f9c510c613a25902b89e",
+      "maxLines": 67,
+      "maxBytes": 2223,
+      "scope": "system-helper"
+    },
+    {
       "path": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
       "trackerTaskId": "AM-013",
       "acceptedCommit": "664ae7fa4544699faad7da01b11db60434e39088",

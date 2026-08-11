@@ -96,7 +96,7 @@ The worktree must be clean at every accepted commit and after every push. Genera
 
 ### Phase C - Narrow Helper Authority
 
-- [ ] `AMFR-007` Review and either register or correct `OperationMapSceneReferenceSceneSystemHelper.cs`, proving exactly-one view resolution occurs once per transition with bounded reused storage and deterministic zero/multiple-view failure.
+- [x] `AMFR-007` Review and either register or correct `OperationMapSceneReferenceSceneSystemHelper.cs`, proving exactly-one view resolution occurs once per transition with bounded reused storage and deterministic zero/multiple-view failure.
 - [ ] `AMFR-008` Review and either register or correct `RuntimeGridPersistentStorageUtilitySystemHelper.cs`, proving one creator/resizer/disposer, World replacement safety, and no retained native allocation across teardown.
 - [ ] `AMFR-009` Review the road-visual prototype helper overrun with focused R&D-root disposal and bounded-generation evidence; retain no speculative ceiling headroom.
 - [ ] `AMFR-010` Review the visual-quality helper overrun with explicit cleanup input, deterministic generation-time-only behavior, and no steady-state work; retain no speculative ceiling headroom.
@@ -232,6 +232,21 @@ The worktree must be clean at every accepted commit and after every push. Genera
 - Accepted evidence: checked version-matched-client `Build/Logs/amfr006-building-ui-query.log`, SHA-256 `d28c4b579d6f1089e52b6c6aef88e1aa358c98bcea2f4a60810b7609fc060a92`, marker `[BuildingUiQueryValidation] result=Passed tests=12`; checked real-prefab view `Build/Logs/amfr006-build-drawer-queue-view.log`, SHA-256 `4dad08abba0fe0085e4448cc01c0ecde90a366a174a44df2e9ccb76b44307ae4`, marker `[BuildDrawerProductionQueueSnapshotValidation] result=Passed tests=1`. Both logs contain zero C# errors; the structural ratchet enforces the retained ceiling and rejects default-World, mutable static World, Update, and premature projection-cache ownership.
 - Global fail-closed diagnostic: unchanged 17-test entrypoint `Build/Logs/amfr006-source-growth-global-diagnostic.log`, SHA-256 `a83620e7c261ef151b03572922598409fad04c593151ce8ae2d50c703a0cd78e`, remains failed on exactly five later helper paths and no longer lists the building-production helper. No new exception or ceiling was added.
 - Result: accepted `6 / 22`; the material-responsibility-drift phase exit is satisfied. AMFR-007 is dependency-ready; AM-025 remains unchecked and receives no parent checklist credit yet.
+
+### 2026-08-11 - AMFR-007 - Scene-reference authority claim
+
+- Entry identity: clean pushed `main`/`origin/main` commit `18ebc842961b31e33239f9c510c613a25902b89e`; `OperationMapSceneReferenceSceneSystemHelper.cs` is an unchanged `67` lines / `2,223` bytes with no source-growth authorization.
+- Exact allowlist: `Assets/Tests/Editor/OperationMapSceneReferenceSceneSystemHelperTests.cs`, `Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs`, `Design/Architecture/post_hardening_source_responsibility_guardrails.json`, this child, and the parent maturity tracker. Production source is read-only unless focused behavior proves a defect. No scene, prefab, generated content, package, `ProjectSettings`, threshold, wrapper, or other production/test file is owned.
+- Required boundary: exactly one loaded-scene view is resolved after source completion through one transition-owner call site; invalid/unloaded, zero-view, multiple-view, and requested-identity mismatch cases fail deterministically. The helper may retain only bounded reusable root/candidate scratch lists and may not own loading, unloading, retry, readiness, polling, recurring update, static mutable state, or cross-World/scene references.
+- Registration rule: focused behavior, warm zero-allocation reuse, structural single-call-site evidence, zero C# errors, and exact source identity must pass before adding one `AMFR-007` `system-helper` authorization bound to the immutable `18ebc8429...` blob at exactly `67` / `2,223` with no spare headroom.
+
+### 2026-08-11 - AMFR-007 - Scene-reference authority closure
+
+- Review result: no production correction was required. The unchanged helper has one narrow query method, owns only two bounded instance scratch lists (`4` roots and `2` candidates), clears/reuses both, retains no Scene/World/view after return, and has no static mutable state, load/unload/retry/readiness policy, recurring update, or polling loop. `OperationMapSceneLoadingSceneSystemHelper` contains exactly one scene-reference call site in its existing source-completion transition.
+- Behavior evidence: checked version-matched-client `Build/Logs/amfr007-scene-reference.log`, SHA-256 `4381fd123f475c5dc3a4ffd0757e12d7b7404609e0ae90f8b40ada54c848892a`, marker `[OperationMapSceneReferenceValidation] result=Passed tests=6`. It covers exactly-one success, unloaded/invalid failure, multiple-view failure, identity mismatch, 300 warm lookups with exactly zero current-thread managed bytes, and the structural transition-only/reused-storage ratchet. The accepted log has zero C# errors.
+- Exact authority: one `AMFR-007` `system-helper` authorization binds `OperationMapSceneReferenceSceneSystemHelper.cs` to immutable pushed commit `18ebc842961b31e33239f9c510c613a25902b89e` at exactly `67` lines / `2,223` bytes. Canonical checked `Build/Logs/amfr007-source-authorization.log`, SHA-256 `b58b710d7412250689a9350286dcf27995dded707db49ada2266fe7595967d9d`, passes `[PostHardeningSourceAuthorizationValidation] result=Passed tests=1` with zero C# errors.
+- Global fail-closed diagnostic: unchanged 17-test entrypoint `Build/Logs/amfr007-source-growth-global-diagnostic.log`, SHA-256 `7cf9784f96f6510211f649a4c80b78b35c1023d2ed921e82ef383c9a89f3f36e`, remains failed on exactly four later helpers and no longer lists scene reference. No production source, asset, threshold, wrapper, or unrelated authority changed.
+- Result: accepted `7 / 22`. AMFR-008 is dependency-ready; AM-025 remains unchecked and receives no parent checklist credit yet.
 
 ## 7. Validation And Evidence Contract
 

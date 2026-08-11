@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Reflection;
 using Game.Composition;
 using NUnit.Framework;
@@ -20,6 +21,7 @@ public sealed class OperationMapSceneReferenceSceneSystemHelperTests
             Run(nameof(RejectsMultipleViews), test => test.RejectsMultipleViews(), ref passed);
             Run(nameof(RejectsRequestedIdentityMismatch), test => test.RejectsRequestedIdentityMismatch(), ref passed);
             Run(nameof(WarmLookupDoesNotAllocate), test => test.WarmLookupDoesNotAllocate(), ref passed);
+            Run(nameof(BoundaryIsTransitionOnlyAndReusesStorage), test => test.BoundaryIsTransitionOnlyAndReusesStorage(), ref passed);
             Debug.Log($"[OperationMapSceneReferenceValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
         }
@@ -106,6 +108,34 @@ public sealed class OperationMapSceneReferenceSceneSystemHelperTests
         long allocated = GC.GetAllocatedBytesForCurrentThread() - start;
 
         Assert.That(allocated, Is.EqualTo(0L));
+    }
+
+    [Test]
+    public void BoundaryIsTransitionOnlyAndReusesStorage()
+    {
+        string compositionRoot = Path.GetFullPath(Path.Combine(
+            Application.dataPath,
+            "Game/Scripts/Composition"));
+        string helperPath = Path.Combine(
+            compositionRoot,
+            "OperationMapSceneReferenceSceneSystemHelper.cs");
+        string helperSource = File.ReadAllText(helperPath);
+        string loaderSource = File.ReadAllText(Path.Combine(
+            compositionRoot,
+            "OperationMapSceneLoadingSceneSystemHelper.cs"));
+        int callSites = loaderSource.Split(
+            new[] { "sceneReference.TryGetLoadedSceneView(" },
+            StringSplitOptions.None).Length - 1;
+
+        Assert.That(File.ReadAllLines(helperPath).Length, Is.EqualTo(67));
+        Assert.That(new FileInfo(helperPath).Length, Is.EqualTo(2223));
+        Assert.That(helperSource, Does.Contain("private readonly List<GameObject> roots = new(4);"));
+        Assert.That(helperSource, Does.Contain("private readonly List<OperationMapSceneView> candidates = new(2);"));
+        Assert.That(helperSource, Does.Contain("roots.Clear();"));
+        Assert.That(helperSource, Does.Contain("candidates.Clear();"));
+        Assert.That(helperSource, Does.Not.Contain("Update("));
+        Assert.That(helperSource, Does.Not.Contain("static readonly"));
+        Assert.That(callSites, Is.EqualTo(1));
     }
 
     private static OperationMapSceneView CreateView(string name, string operationMapId)

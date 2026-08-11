@@ -1,9 +1,9 @@
 # WarlineCapture M01 First Contact Dense-City High-Level Design
 
 Date: 2026-08-12
-Status: Draft for user review
+Status: Approved for implementation-tracker authoring
 Scope owner: Mission 1 product, gameplay, narrative, operation-map integration, Campaign replay, and validation contract
-Implementation status: Design only; no implementation tracker or production change is authorized by this document
+Implementation status: HLD approved by the project owner on 2026-08-12; production implementation remains blocked until the separate implementation tracker is accepted
 
 ## 1. Purpose
 
@@ -48,6 +48,7 @@ The current operation-map validator permits `opmap.skirmish.*` and `opmap.chNN.*
 | Replay tutorial | First play uses the selected guidance. Later replay offers `Replay Tutorial`, default off. When enabled, it uses the player's current guidance level. |
 | Civilians | M01 shows a bounded ambient civilian/responder group and a deterministic post-victory evacuation. Civilians are not attackable, do not create a casualty simulation, and cannot fail the mission or reduce stars. |
 | City reuse | M01 uses the accepted dense city and bazaar/Old Market district. No second authored city and no cloned production geometry are created. |
+| First-contact Ash Line patrol | The three armed operatives shown in FirstLaunch FL-P15/FL-P18 are the exact live M01 patrol: `Chr_Insurgent_Male_03` / Courier, `Chr_Insurgent_Female_01` / Warden, and `Chr_Insurgent_Female_02` / Broker. They are threat-profile callsigns, not the campaign's principal villain. `Chr_Insurgent_Male_05` remains reserved exclusively for Nadir Qassem, who is not revealed in M01, and the Male 02 heavy gunner remains reserved for later escalation. |
 
 ## 4. Player Experience Goals
 
@@ -216,7 +217,12 @@ The mission runtime may skip tutorial presentation phases when replay tutorial i
 ### 9.1 Starting State
 
 - One controllable JRC rifle squad starts at `anchor.ch01.m01.player_spawn`.
-- One small Ash Line infantry patrol starts at `anchor.ch01.m01.patrol_spawn`.
+- One small Ash Line infantry patrol starts at `anchor.ch01.m01.patrol_spawn` using exactly:
+  - `Prefab_UnitGrid_Chr_Insurgent_Male_03_Config` (Courier, raider/courier threat profile);
+  - `Prefab_UnitGrid_Chr_Insurgent_Female_01_Config` (Warden, rifle-cell commander threat profile);
+  - `Prefab_UnitGrid_Chr_Insurgent_Female_02_Config` (Broker, sidearm/logistics operative threat profile).
+- Their live models, equipment, weapons, silhouettes, and relative roles continue the approved `FACTION-ASH-01_FirstContactPatrol_CandidateB` and FL-P15/FL-P18 presentation. Hostility is communicated by confirmed weapons, conduct, and mission context, never ethnicity, clothing, gender, or neighborhood.
+- Nadir Qassem (`Chr_Insurgent_Male_05`) does not appear as an anonymous unit, portrait, voice, or clean reveal in M01. The debrief reveals coordinated orders and a revoked credential trace, not Qassem's identity.
 - No active hostile vehicle or air threat is present.
 - The patrol follows or holds along the three typed patrol anchors until engagement.
 - The starting squad has enough survivability to tolerate tutorial hesitation.

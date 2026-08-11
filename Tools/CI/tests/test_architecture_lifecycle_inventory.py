@@ -182,6 +182,21 @@ class ArchitectureLifecycleInventoryTests(unittest.TestCase):
         self.assertEqual(data["summary"]["nativeContainerCount"], 0)
         self.assertEqual(data["summary"]["subscriptionCount"], 0)
 
+    def test_numeric_accumulation_is_not_an_event_subscription(self) -> None:
+        self.write(
+            "Assets/Game/Scripts/Runtime/CapacityAccumulator.cs",
+            "public sealed class CapacityAccumulator\n"
+            "{\n"
+            "    private int Sum(int totalCapacity, Bucket bucket)\n"
+            "    {\n"
+            "        totalCapacity += bucket.Capacity;\n"
+            "        return totalCapacity;\n"
+            "    }\n"
+            "}\n",
+        )
+        data = inventory.build_inventory(self.root, self.revision, self.tree)
+        self.assertEqual(data["summary"]["subscriptionCount"], 0)
+
     def test_outputs_regenerate_byte_identically(self) -> None:
         self.seed_complete_lifecycle()
         inventory.write_inventory(

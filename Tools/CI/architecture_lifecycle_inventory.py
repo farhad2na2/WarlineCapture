@@ -393,6 +393,13 @@ def scan_lifecycle(root: Path) -> dict[str, list[dict[str, Any]]]:
                 unsubscribe_pattern,
             )
             paired_unsubscribe = re.search(unsubscribe_pattern, body) is not None
+            handler_name = handler.rsplit(".", 1)[-1]
+            handler_callable_observed = re.search(
+                rf"\b{re.escape(handler_name)}\s*\(",
+                body,
+            ) is not None
+            if not paired_unsubscribe and not handler_callable_observed:
+                continue
             subscriptions.append({
                 "handler": handler,
                 "lifecycleMethods": cleanup_methods(owner),

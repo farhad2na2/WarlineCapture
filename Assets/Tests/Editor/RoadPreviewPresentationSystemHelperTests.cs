@@ -69,6 +69,8 @@ namespace Game.Tests.Editor
             fixture.TrackActive(activeEnd);
             fixture.TrackActive(activeStraight);
             fixture.TrackActive(overflowEnd);
+            Assert.AreEqual(3, fixture.Helper.ActiveObjectCount,
+                "Pool capacity must not truncate the active road preview.");
             fixture.Helper.ClearPreview();
 
             Assert.AreEqual(2, fixture.Helper.PoolCapacity);

@@ -1165,3 +1165,9 @@ Accepted AM-020 progress snapshot:
 - Governed allocations: `WorldScopedComponentQueryCachePerformanceValidation` passes `4` cases / `3` combinations / `10` phases; every 180+300 initial/rebound World, threat-state, and Match-intro phase reports `allocatedBytes=0`. Focused static contracts pass `10 / 10`; accepted Unity logs contain zero C# errors.
 - Rejected infrastructure-contaminated attempts receive no credit and no suppression: one background SubScene importer capacity log and one external Relay crash were absent from unchanged warm-state passing reruns.
 - Result: AMFR-019 is accepted at child `19 / 22` without parent credit. AMFR-020 is next; AM-025 remains unchecked.
+
+### 2026-08-11 - AM-025 - AMFR-020 final validation and review claim
+
+- Entry identity: clean pushed `main`/`origin/main` commit `21df3bfda33183f472f13d27f8ef18bf31502534`; AMFR-019 is accepted.
+- Scope: one checked compiler-zero Unity run, deterministic current-evidence checks, exact source/tool/artifact hashes, ancestry, protected-path audit, `git diff --check`, and focused exit review. Only both trackers may record this claim and its closure; AM-WP-027 exit artifacts remain gated to AMFR-021.
+- Exclusions: production, tests, source authority, scenes, prefabs, generated content, packages, project settings, wrappers, thresholds, Android/device work, features, and deferred Phase 6/9 work are read-only. AM-025 remains unchecked while AMFR-020 is active.

@@ -119,7 +119,7 @@ The worktree must be clean at every accepted commit and after every push. Genera
 - [x] `AMFR-017` Pass `ProductionSourceGrowthArchitectureTests.RunFocusedValidation` with the exact 17-test marker and no weakened rule, ceiling, or allowlist.
 - [x] `AMFR-018` Pass the complete `ArchitectureHardeningCloseoutValidationRunner.RunFocusedValidation` 23-suite architecture entrypoint and all required Python ownership/evidence checks.
 - [x] `AMFR-019` Pass the accepted World recreation, scene unload/reload, missing-singleton recovery, one-warm-up plus 10 measured transition cycles, structural/pool trend, and governed focused allocation suites.
-- [ ] `AMFR-020` Complete canonical Unity compilation with zero errors; deterministic regeneration; exact artifact/source/tool hashes; protected-path audit; `git diff --check`; and focused independent review with no unresolved finding.
+- [~] `AMFR-020` Complete canonical Unity compilation with zero errors; deterministic regeneration; exact artifact/source/tool hashes; protected-path audit; `git diff --check`; and focused independent review with no unresolved finding.
 - [ ] `AMFR-021` Publish the AM-025 exit evidence and acceptance record, update the parent tracker to `26 / 86` overall and `26 / 68` Core, mark Phase 2 accepted, and identify `AM-027` as the next maturity task without starting it.
 - [ ] `AMFR-022` Publish the feature-resume handoff: later UI, presentation/pooling, simulation, diagnostics, and enforcement work must consume relevant Phase 3-5/7/8 rows when a feature touches those domains; Phase 6 and 9 remain deferred.
 
@@ -459,6 +459,13 @@ The worktree must be clean at every accepted commit and after every push. Genera
 - Governed allocation result: checked `WorldScopedComponentQueryCachePerformanceValidation.RunBatchValidation` passes marker `tests=4 combinations=3 phases=10`; all 10 initial/rebound World, threat-state, and Match-intro phases use `180` warm-up plus `300` measured operations and each reports `allocatedBytes=0`, with zero C# errors. Log SHA-256 `e5f12b6e3bf248f1ee9cbdeb564a7b1d9dafd091cc855f79efac373692a450b3`. Focused lifecycle static contracts pass `10 / 10`, log SHA-256 `85f979cc2e4c84abf669be51d95fc165624ca13ecf4ff1967bfb0e1fd79dc5c8`.
 - Rejected attempts remain non-acceptance evidence: GUI Test Framework launches without XML; historical-count EditMode `7 / 8`; first PlayMode recovery `1 / 2` due one-time background SubScene importer entity-name-capacity log; and first stress `1 / 2` due external Unity Relay crash. No test suppression, expected-error allowance, threshold change, or partial-suite credit was introduced. The unchanged warm-state reruns passed without either external error.
 - Result: AMFR-019 is accepted at child `19 / 22` without parent checklist credit. AMFR-020 is next; AM-025 remains unchecked.
+
+### 2026-08-11 - AMFR-020 - Final identity, compile, determinism, and review claim
+
+- Entry identity: clean pushed `main`/`origin/main` commit `21df3bfda33183f472f13d27f8ef18bf31502534`; AMFR-019 is accepted with current ownership, recovery, transition, pool, and recurring-allocation evidence.
+- Exact validation scope: one checked canonical Unity compile with explicit log, timeout, successful exit, and `compilerErrors: 0`; deterministic `--check` regeneration for persistent ownership, Phase 2 ownership delta, and Phase 7 inventory; current architecture Python evidence checks; exact SHA-256 manifests for governed reports, validators, sources, logs, and test outputs; baseline ancestry; protected-path and excluded-domain audits; `git diff --check`; and a focused command/arithmetic/hash/risk review with every finding resolved and rereviewed.
+- Write allowlist: this child and parent tracker for claim/closure records, followed only by the AM-WP-027-authorized exit-evidence and acceptance-record artifacts in AMFR-021. Production source, Unity tests, source authority, scenes, prefabs, generated content, Addressables output, packages, `ProjectSettings`, wrappers, thresholds, Android/device work, features, and deferred Phase 6/9 work remain read-only.
+- Acceptance: all current artifacts regenerate byte-identically at one exact reachable capture tree; the compile log contains no C# error and the exact zero-error marker; the owned range contains no protected or excluded path; all evidence hashes resolve; the review reports no unresolved finding; and the repository is clean and identical to `origin/main` before AMFR-021 starts.
 
 ## 7. Validation And Evidence Contract
 

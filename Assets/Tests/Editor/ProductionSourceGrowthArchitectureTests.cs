@@ -26,6 +26,8 @@ public sealed class ProductionSourceGrowthArchitectureTests
         "Design/Architecture/architecture_performance_hardening_implementation_tracker.md";
     private const string PostHardeningTrackerPath =
         "Design/Architecture/post_hardening_architecture_maturity_tracker.md";
+    private const string FeatureReadinessTrackerPath =
+        "Design/Architecture/am025_feature_readiness_architecture_closeout_tracker.md";
     private const string ProductionRoot = "Assets/Game/Scripts";
     private const string EditorPathSegment = "Editor";
     private const string SystemHelperSuffix = "SystemHelper.cs";
@@ -50,6 +52,10 @@ public sealed class ProductionSourceGrowthArchitectureTests
 
     public static readonly string FocusedRunnerMarker =
         "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17";
+    public static readonly string PostHardeningGuardrailFocusedRunnerMarker =
+        "[PostHardeningSourceGuardrailValidation] result=Passed tests=2";
+    public static readonly string PostHardeningAuthorizationFocusedRunnerMarker =
+        "[PostHardeningSourceAuthorizationValidation] result=Passed tests=1";
 
     private static readonly StringComparer PathIdentityComparer = StringComparer.OrdinalIgnoreCase;
 
@@ -95,6 +101,41 @@ public sealed class ProductionSourceGrowthArchitectureTests
         {
             Debug.LogException(exception);
             Debug.LogError("[ProductionSourceGrowthArchitectureValidation] result=Failed");
+            ValidationExit.Exit(1);
+        }
+    }
+
+    public static void RunPostHardeningGuardrailFocusedValidation()
+    {
+        try
+        {
+            var tests = new ProductionSourceGrowthArchitectureTests();
+            tests.PostHardeningGuardrailContractHasExpectedRatchets();
+            tests.PostHardeningGuardedSourcesStayBoundedAndNarrow();
+            Debug.Log(PostHardeningGuardrailFocusedRunnerMarker);
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[PostHardeningSourceGuardrailValidation] result=Failed");
+            ValidationExit.Exit(1);
+        }
+    }
+
+    public static void RunPostHardeningAuthorizationFocusedValidation()
+    {
+        try
+        {
+            var tests = new ProductionSourceGrowthArchitectureTests();
+            tests.PostHardeningGuardrailContractHasExpectedRatchets();
+            Debug.Log(PostHardeningAuthorizationFocusedRunnerMarker);
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[PostHardeningSourceAuthorizationValidation] result=Failed");
             ValidationExit.Exit(1);
         }
     }
@@ -730,7 +771,9 @@ public sealed class ProductionSourceGrowthArchitectureTests
         Require(contract.Entries != null, "The post-hardening guardrail entries are required.");
         Require(contract.ReplacementOwnerBoundary != null, "The replacement-owner boundary is required.");
         Require(contract.GrowthAuthorizations != null, "Post-hardening growth authorizations are required.");
-        Require(contract.GrowthAuthorizations.Count == 4, "Exactly four accepted AM-013 growth authorizations are required.");
+        Require(
+            contract.GrowthAuthorizations.Count == 5,
+            "Exactly five accepted post-hardening growth authorizations are required.");
         Require(
             contract.Entries.Count == PostHardeningGuardrailEntryCount,
             $"The post-hardening guardrail must contain exactly {PostHardeningGuardrailEntryCount} entries.");
@@ -1277,9 +1320,20 @@ public sealed class ProductionSourceGrowthArchitectureTests
         IReadOnlyList<PostHardeningGrowthAuthorization> authorizations)
     {
         Require(File.Exists(PostHardeningTrackerPath), $"Missing `{PostHardeningTrackerPath}`.");
-        string tracker = File.ReadAllText(PostHardeningTrackerPath);
+        Require(File.Exists(FeatureReadinessTrackerPath), $"Missing `{FeatureReadinessTrackerPath}`.");
+        string postHardeningTracker = File.ReadAllText(PostHardeningTrackerPath);
+        string featureReadinessTracker = File.ReadAllText(FeatureReadinessTrackerPath);
         var expected = new[]
         {
+            new PostHardeningGrowthAuthorization
+            {
+                Path = "Assets/Game/Scripts/Composition/OperationMapSceneLoadingSceneSystemHelper.cs",
+                TrackerTaskId = "AMFR-004",
+                AcceptedCommit = "e92f16815ff871e8ba0a04481a8e2abd28551d2b",
+                MaxLines = 465,
+                MaxBytes = 16734,
+                Scope = SystemHelperScope
+            },
             new PostHardeningGrowthAuthorization
             {
                 Path = "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
@@ -1325,14 +1379,19 @@ public sealed class ProductionSourceGrowthArchitectureTests
             Require(actual != null, "Post-hardening growth authorizations cannot contain null entries.");
             RequireExactProjectSourcePath(actual.Path, "post-hardening growth authorization path");
             Require(actual.Path == frozen.Path, $"Unexpected post-hardening growth path `{actual.Path}`.");
-            Require(actual.TrackerTaskId == frozen.TrackerTaskId, $"`{actual.Path}` must remain bound to AM-013.");
+            Require(
+                actual.TrackerTaskId == frozen.TrackerTaskId,
+                $"`{actual.Path}` must remain bound to `{frozen.TrackerTaskId}`.");
             Require(actual.AcceptedCommit == frozen.AcceptedCommit, $"`{actual.Path}` acceptedCommit changed.");
             Require(actual.MaxLines == frozen.MaxLines, $"`{actual.Path}` maxLines must remain {frozen.MaxLines}.");
             Require(actual.MaxBytes == frozen.MaxBytes, $"`{actual.Path}` maxBytes must remain {frozen.MaxBytes}.");
             Require(actual.Scope == frozen.Scope, $"`{actual.Path}` scope must remain `{frozen.Scope}`.");
+            string tracker = actual.TrackerTaskId.StartsWith("AMFR-", StringComparison.Ordinal)
+                ? featureReadinessTracker
+                : postHardeningTracker;
             Require(
                 tracker.Contains($"- [x] `{actual.TrackerTaskId}`", StringComparison.Ordinal),
-                $"`{actual.TrackerTaskId}` is not complete in the post-hardening tracker.");
+                $"`{actual.TrackerTaskId}` is not complete in its owning tracker.");
             Require(
                 tracker.Contains(actual.AcceptedCommit, StringComparison.Ordinal),
                 $"The tracker does not bind `{actual.TrackerTaskId}` to `{actual.AcceptedCommit}`.");

@@ -31,6 +31,14 @@
   },
   "growthAuthorizations": [
     {
+      "path": "Assets/Game/Scripts/Composition/OperationMapSceneLoadingSceneSystemHelper.cs",
+      "trackerTaskId": "AMFR-004",
+      "acceptedCommit": "e92f16815ff871e8ba0a04481a8e2abd28551d2b",
+      "maxLines": 465,
+      "maxBytes": 16734,
+      "scope": "system-helper"
+    },
+    {
       "path": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
       "trackerTaskId": "AM-013",
       "acceptedCommit": "664ae7fa4544699faad7da01b11db60434e39088",

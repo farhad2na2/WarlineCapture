@@ -88,7 +88,7 @@ The worktree must be clean at every accepted commit and after every push. Genera
 
 ### Phase B - Material Responsibility Drift
 
-- [ ] `AMFR-004` Decompose `OperationMapSceneLoadingSceneSystemHelper.cs` into existing-contract-aligned operations and one narrow transition owner. Preserve load/unload ordering, handle ownership, failure unwind, generation matching, readiness publication, retry, sequential switch, and zero new polling loops.
+- [x] `AMFR-004` Decompose `OperationMapSceneLoadingSceneSystemHelper.cs` into existing-contract-aligned operations and one narrow transition owner. Preserve load/unload ordering, handle ownership, failure unwind, generation matching, readiness publication, retry, sequential switch, and zero new polling loops.
 - [ ] `AMFR-005` Reconcile `OperationMapRuntimeBootstrapSceneSystemHelper.cs` growth. Keep one metadata/blob publication owner, explicit owned-blob disposal, map-surface reuse, and no scene-loading or recurring-update authority.
 - [ ] `AMFR-006` Reconcile `BuildingProductionEntriesUiSystemHelper.cs` growth with the Phase 3 source-version/projection-cache contract. Preserve produced-unit, pending-production, friendly-queue, and operation-map production behavior while separating unrelated read models rather than creating another coordinator.
 
@@ -190,6 +190,14 @@ The worktree must be clean at every accepted commit and after every push. Genera
 - Rejected evidence: the first scene-loading run compiled but failed after `1` pass because the retired live-asset static fixture produced `0.71` progress instead of `0.5`; the first wiring run failed because it still required the retired production static manifest. Neither run contributes pass credit.
 - Accepted focused evidence: checked GUI-licensing wrapper `Build/Logs/amfr004-scene-loading-decomposition-rerun.log`, SHA-256 `de77bd6eba56201a0c9e15dacb674bfe45b9bb2c12f63cace6230730cd8dc41f`, marker `[OperationMapSceneLoadingValidation] result=Passed tests=19`; checked wiring wrapper `Build/Logs/amfr004-static-map-wiring-rerun.log`, SHA-256 `558a11fd45f4fa72d529d3d794e954fda81d70ee320cb4bc3eb0a95b848804ae`, marker `[StaticMapPresentationSceneWiringValidation] result=Passed tests=6`. Both runs compiled with zero C# errors; `git diff --check` and the exact allowlist audit passed.
 - Source-authority handoff: implementation behavior is stable, but AMFR-004 remains pending until this exact implementation is committed and the post-hardening source contract binds the retained `*SystemHelper` path to that immutable blob at its exact `465` / `16,734` ceiling with no spare headroom.
+
+### 2026-08-11 - AMFR-004 - Immutable implementation identity
+
+- Accepted implementation checkpoint: pushed `main`/`origin/main` commit `e92f16815ff871e8ba0a04481a8e2abd28551d2b`. The retained transition-owner blob measures exactly `465` lines / `16,734` bytes at that commit.
+- Source authority: the existing post-hardening source-responsibility contract owns one new `system-helper` authorization for this exact path/blob, task `AMFR-004`, and no larger ceiling. The contract continues to verify the accepted blob through `git show`; it does not authorize extracted helpers to adopt the `*SystemHelper` suffix or permit transition responsibility to move out of the retained owner.
+- Accepted authority evidence: checked GUI-licensing `Build/Logs/amfr004-source-authorization.log`, SHA-256 `9e94635c0aa7a30b6da11a30a4b1b61f5f626c2b3eb6c4afc6b44d241821d86e`, marker `[PostHardeningSourceAuthorizationValidation] result=Passed tests=1`. This canonical test verifies all five post-hardening authorizations, the completed owning task, the tracker-bound commit, and exact `git show` line/byte identity.
+- Global fail-closed diagnostic: unchanged 17-test entrypoint `Build/Logs/amfr004-source-growth-global-diagnostic.log`, SHA-256 `e4011205cfbffd214116afe017c92c409e4925a0a2a3bb2e33890af7c2c06d1f`, correctly remains failed on exactly seven later AMFR helper paths and no longer lists the scene-loading helper. The broader two-test post-hardening runner also remains red on pre-existing Resource Exchange/UI shell ratchets; that failure is preserved for later whole-gate reconciliation and was not removed or bypassed.
+- Result: accepted `4 / 22`. Load/unload ordering, exact-once handles, packed metadata release, failure cleanup, readiness publication, retry, sequential switching, current presentation-mode ownership, and zero new polling loops are covered. AMFR-005 is dependency-ready.
 
 ## 7. Validation And Evidence Contract
 

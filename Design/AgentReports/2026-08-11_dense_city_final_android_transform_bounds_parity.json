@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "reportId": "dense-city-final-android-transform-bounds-parity",
+  "recordedAtUtc": "2026-08-11T05:34:00Z",
+  "status": "Passed",
+  "operationMapId": "opmap.skirmish.desert_base_01",
+  "sourceRevision": "6b4d268b837f085987d4287e2ca2898f0db5b064",
+  "installedPackage": {
+    "apkBytes": 557478145,
+    "apkSha256": "25e8dae2e4f19d93a2a3c994dab3dd898a8cc4cb3b1d7b0dfb608ff5afa71ff9",
+    "deviceModel": "SM-S918B",
+    "deviceSerial": "R5CTC1J02VB",
+    "reinstalledForThisEvidence": false
+  },
+  "editorToBakedManifest": {
+    "report": "Design/AgentReports/2026-07-24_dense_city_generated_transform_parity.json",
+    "result": "DenseCityGeneratedTransformParityPassed",
+    "matrixTolerance": 0.0001,
+    "boundsToleranceMeters": 0.001,
+    "candidateIdentityCount": 36304,
+    "bakedIdentityCount": 36304,
+    "candidateRendererCount": 62455,
+    "bakedRendererCount": 62455,
+    "unresolvedMeshCount": 0,
+    "unresolvedMaterialCount": 0,
+    "meshMismatchCount": 0,
+    "materialMismatchCount": 0,
+    "baseColorMismatchCount": 0,
+    "duplicateCandidateStableIdCount": 0,
+    "duplicateBakedStableIdCount": 0,
+    "missingBakedStableIdCount": 0,
+    "unexpectedBakedStableIdCount": 0,
+    "rejectedRowCount": 0
+  },
+  "acceptedStructuralMaterializedParity": {
+    "report": "Design/AgentReports/2026-08-08_dense_city_render_materialized_parity.json",
+    "result": "Passed",
+    "databaseContentHash": "bfb350f0c8d1474aa05252dc04c87eede4c1210adcee9c92dcdbecc35897896e",
+    "canonicalEnvelopeCount": 14592,
+    "stateVariantCount": 2,
+    "sampleCount": 29184,
+    "placementCount": 40460,
+    "logicalRowCount": 61925,
+    "fixedSlotCount": 7784,
+    "maximumEnabledSlotCount": 4773,
+    "materializedFingerprint": "7674a2c08142bb2fa41969de8d39c67ac16076fd746566f4bc218713ec7e0b18"
+  },
+  "currentLogicalDatabase": {
+    "report": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_database.json",
+    "result": "Passed",
+    "contentHash": "04681634c40403c8d30e1de2c44a64ac598403b7cd8f0574e1359a12f5758d73",
+    "logicalParityResult": "Passed",
+    "isolationResult": "Passed",
+    "sourceRenderRowCount": 76517,
+    "eligibleLogicalRowCount": 61925,
+    "residentSourceRowCount": 14592,
+    "placementCount": 40460,
+    "fixedSlotCount": 7784
+  },
+  "androidPackedContent": {
+    "report": "Design/AgentReports/2026-08-10_dense_city_final_operation_map_addressables_build_report.json",
+    "buildTarget": "Android",
+    "buildResultHash": "87319e35387dd6b5744d8b526660deed",
+    "bundleCount": 5,
+    "bundleBytes": 135348884,
+    "duplicateDependencyCount": 0,
+    "entitySceneGuid": "c00140f2e94a04c3084c8dcb0c18cbd0",
+    "productionStaticPartitionCount": 0
+  },
+  "androidRuntimeLoad": {
+    "log": "Build/AndroidAPK/Evidence/2026-08-10-parent-final-6b4d268b8/lifecycle/two-cycle-complete-logcat.txt",
+    "entitySceneStreamCount": 2,
+    "readyMarkerCount": 2,
+    "cycle1Ready": true,
+    "cycle2Ready": true,
+    "runtimeTransformMutationOwnerCount": 0,
+    "cameraTravelMapContentOperationCount": 0
+  },
+  "androidVisualCrossCheck": {
+    "performanceReport": "Design/AgentReports/2026-08-11_dense_city_final_android_performance_acceptance.json",
+    "representativeRouteCount": 9,
+    "fixedCameraPassed": true,
+    "panAndZoomPassed": true,
+    "tacticalFollowPassed": true,
+    "fullscreenMapPassed": true,
+    "destructionStateReplacementPassed": true,
+    "missingOrDuplicatePermanentVisualObserved": false,
+    "cameraEdgeHoleOrStaleBindingObserved": false,
+    "blackGroundRecurrenceObserved": false,
+    "protectedAutobahnMaterialMismatchObserved": false
+  },
+  "comparison": {
+    "movedPermanentVisualCount": 0,
+    "rotatedPermanentVisualCount": 0,
+    "scaledPermanentVisualCount": 0,
+    "boundsMismatchCount": 0,
+    "duplicatedPermanentVisualCount": 0,
+    "missingPermanentVisualCount": 0,
+    "result": "Passed"
+  },
+  "qualification": [
+    "This report reconciles immutable Android-target packed content and the exact EntityScene loaded twice by the installed release package with the accepted exhaustive Editor-to-baked and logical-to-materialized manifests.",
+    "The diagnostics-disabled release build intentionally does not dump every runtime row on-device. This is not described as a new 62,455-row device enumeration; package provenance, immutable data ownership, exhaustive checked manifests, two-cycle load identity, and representative Android visuals form the fail-closed comparison.",
+    "The accepted exhaustive materialized-parity fingerprint predates the final bounded source-material substitutions. The current database has a new content hash and separately passes exact logical source parity with unchanged 40,460 placements, 61,925 logical rows, and 7,784 fixed slots; the final exhaustive Editor-to-baked report covers the substituted mesh/material/base-color/transform/bounds data.",
+    "No Android-specific transform, rotation, scale, bounds, duplication, or placement mutation path exists after the accepted fixed-slot apply contract."
+  ]
+}

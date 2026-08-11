@@ -1107,3 +1107,11 @@ Accepted AM-020 progress snapshot:
 - Behavior: checked focused validation passes capacity bounds, same-type identity reuse, cross-type accounting, active-preview preservation, exhaustion, active/pooled/object/material teardown, borrowed-material survival, idempotence, and structural one-owner integration `4 / 4`, with zero C# errors.
 - Classification: exact final-head lifecycle regeneration changes the sole `_previewPool` row from no observed cleanup to `cleanupObserved=true` through standard `Dispose`. The `368`-line helper remains below the first source-growth threshold; the global diagnostic retains the same `45` broader items and no target.
 - Result: `AM025-POOL-001` is resolved. AMFR-015 is accepted at child `15 / 22` without parent checklist credit; the validated projection is `6` genuine-debt rows / `7` unique items. AMFR-016 is next; AM-025 remains unchecked.
+
+### 2026-08-11 - AM-025 - AMFR-016 final presentation/application lifecycle closure
+
+- Ownership: algorithmic aftermath uses explicit city/road roots, Commander background state is per-shell and route-cleared, and diagnostics suppression resets at subsystem registration. No target hierarchy discovery, cross-shell scene-object registry, new runtime truth owner, or stale application-static suppression remains.
+- Behavior: checked runtime-city passes `37 / 37`, exact Commander shell ownership passes, diagnostics allocation/reset passes `7 / 7`, and the dependency analyzer passes `6 / 6` with zero target discovery findings. All accepted Unity logs contain zero C# errors.
+- Authority: exact `AMFR-016` scopes bind changed governed blobs at immutable no-headroom sizes. The shell-ratchet commit `f9b55cf4968c41f3f22f0377d4606c8676b39b62` reduces `UIShellContentView` below its historical ceiling and freezes the new exact guarded identity without adding a growth exception. Checked canonical authorization passes `1 / 1` with zero C# errors.
+- Debt disposition: the four genuinely unresolved AMFR-016 rows are closed. With accepted AMFR-005 and AMFR-007 evidence for the two stale rows, the validated Phase 2 projection is zero genuine debt and zero unclassified rows; canonical regeneration remains in the acceptance phase.
+- Result: AMFR-016 accepted at child `16 / 22` without parent checklist credit. AMFR-017 is next; AM-025 remains unchecked.

@@ -71,19 +71,43 @@
       "scope": "system-helper"
     },
     {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityAlgorithmicAftermathPresentationSystemHelper.cs",
+      "trackerTaskId": "AMFR-016",
+      "acceptedCommit": "5c812b21aaf6544855f137b13ff03a818a52c69d",
+      "maxLines": 427,
+      "maxBytes": 16213,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityRAndDMapCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-016",
+      "acceptedCommit": "5c812b21aaf6544855f137b13ff03a818a52c69d",
+      "maxLines": 935,
+      "maxBytes": 39502,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Environment/RuntimeCityRAndDMapCompositionSystemHelper.cs",
+      "trackerTaskId": "AMFR-016",
+      "acceptedCommit": "5c812b21aaf6544855f137b13ff03a818a52c69d",
+      "maxLines": 935,
+      "maxBytes": 39502,
+      "scope": "system-helper"
+    },
+    {
       "path": "Assets/Game/Scripts/Environment/RuntimeCityCompositionSystemHelper.cs",
-      "trackerTaskId": "AMFR-012",
-      "acceptedCommit": "acc7b52a799fa1929f9434452b659310faaf5a06",
-      "maxLines": 866,
-      "maxBytes": 47502,
+      "trackerTaskId": "AMFR-016",
+      "acceptedCommit": "5c812b21aaf6544855f137b13ff03a818a52c69d",
+      "maxLines": 867,
+      "maxBytes": 47605,
       "scope": "production-over-500-review"
     },
     {
       "path": "Assets/Game/Scripts/Environment/RuntimeCityCompositionSystemHelper.cs",
-      "trackerTaskId": "AMFR-012",
-      "acceptedCommit": "acc7b52a799fa1929f9434452b659310faaf5a06",
-      "maxLines": 866,
-      "maxBytes": 47502,
+      "trackerTaskId": "AMFR-016",
+      "acceptedCommit": "5c812b21aaf6544855f137b13ff03a818a52c69d",
+      "maxLines": 867,
+      "maxBytes": 47605,
       "scope": "system-helper-growth"
     },
     {
@@ -104,10 +128,10 @@
     },
     {
       "path": "Assets/Game/Scripts/Environment/RuntimeCityRoadVisualPrototypeSystemHelper.cs",
-      "trackerTaskId": "AMFR-009",
-      "acceptedCommit": "367e427336c845732fe04410ea1a81eb738c9376",
-      "maxLines": 286,
-      "maxBytes": 10976,
+      "trackerTaskId": "AMFR-016",
+      "acceptedCommit": "5c812b21aaf6544855f137b13ff03a818a52c69d",
+      "maxLines": 287,
+      "maxBytes": 11032,
       "scope": "system-helper"
     },
     {
@@ -215,11 +239,11 @@
     },
     {
       "path": "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs",
-      "sourceSha256": "a729b621b4ae140807469c336e6277c6cfaaa81aac5dfe2fcd3c9b3e97d8d7a9",
-      "maxLines": 898,
-      "maxBytes": 38807,
+      "sourceSha256": "e250b07e6bd012554d37f8ef6376922f2ab4fdf9b0e51c5be194eeedd462c93f",
+      "maxLines": 951,
+      "maxBytes": 40958,
       "maxResponsibilityDomainSymbolOccurrences": 11,
-      "maxStateSlots": 49,
+      "maxStateSlots": 50,
       "responsibilities": [
         "ui-route-interpretation",
         "typed-ui-action-enqueue",

@@ -1171,3 +1171,10 @@ Accepted AM-020 progress snapshot:
 - Entry identity: clean pushed `main`/`origin/main` commit `21df3bfda33183f472f13d27f8ef18bf31502534`; AMFR-019 is accepted.
 - Scope: one checked compiler-zero Unity run, deterministic current-evidence checks, exact source/tool/artifact hashes, ancestry, protected-path audit, `git diff --check`, and focused exit review. Only both trackers may record this claim and its closure; AM-WP-027 exit artifacts remain gated to AMFR-021.
 - Exclusions: production, tests, source authority, scenes, prefabs, generated content, packages, project settings, wrappers, thresholds, Android/device work, features, and deferred Phase 6/9 work are read-only. AM-025 remains unchecked while AMFR-020 is active.
+
+### 2026-08-11 - AM-025 - AMFR-020 final validation and review closure
+
+- Exact identity: pushed `main`/`origin/main` `9c2fca1840b9f6f4a4f610db39e882a0481480b8`, tree `1ae83d202809c0ce5fcae813627fcd9bd622674e`; required control and validation identities are reachable ancestors.
+- Compiler and determinism: checked final Unity compile passes with `compilerErrors: 0`, marker `[OperationMapRenderMaterializedParityCompileValidation] result=Passed`, and log SHA-256 `0892de7a37269e32ca6e0cc5c8f7e971e81d75db25497ee18e04c556591cdcca`. Persistent ownership, Phase 2 delta, Phase 7 inventory, Python syntax, and full architecture Python `179 / 179` pass byte/current checks.
+- Review result: `640 / 567 / 73 / 0` ownership authority and `425 / 420 / 5 / 0 / 0` Phase 2 review arithmetic remain exact; source-growth blockers remain zero. The `94`-path child range has zero protected/excluded paths and zero paths outside owned domains; `git diff --check` passes. Exact artifacts, tools, validators, logs, ancestry, commands, exclusions, and rejected shell attempts were reviewed with no unresolved finding.
+- Result: AMFR-020 is accepted at child `20 / 22` without parent credit. AMFR-021 exit publication is next; AM-025 remains unchecked.

@@ -772,8 +772,8 @@ public sealed class ProductionSourceGrowthArchitectureTests
         Require(contract.ReplacementOwnerBoundary != null, "The replacement-owner boundary is required.");
         Require(contract.GrowthAuthorizations != null, "Post-hardening growth authorizations are required.");
         Require(
-            contract.GrowthAuthorizations.Count == 9,
-            "Exactly nine accepted post-hardening growth authorizations are required.");
+            contract.GrowthAuthorizations.Count == 10,
+            "Exactly ten accepted post-hardening growth authorizations are required.");
         Require(
             contract.Entries.Count == PostHardeningGuardrailEntryCount,
             $"The post-hardening guardrail must contain exactly {PostHardeningGuardrailEntryCount} entries.");
@@ -1359,6 +1359,15 @@ public sealed class ProductionSourceGrowthArchitectureTests
                 AcceptedCommit = "e172b6bb899ce5a39966cb48528ef4c971f1f7c2",
                 MaxLines = 198,
                 MaxBytes = 8170,
+                Scope = SystemHelperScope
+            },
+            new PostHardeningGrowthAuthorization
+            {
+                Path = "Assets/Game/Scripts/Systems/BuildingDefinitionFootprintCloneSystemHelper.cs",
+                TrackerTaskId = "AMFR-011",
+                AcceptedCommit = "f50dc9c6f57c53fa3624d7c530adda903e987187",
+                MaxLines = 72,
+                MaxBytes = 4230,
                 Scope = SystemHelperScope
             },
             new PostHardeningGrowthAuthorization

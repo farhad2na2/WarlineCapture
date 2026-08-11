@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Reflection;
 using Game.Authoring;
 using Game.Components;
 using Game.Composition;
@@ -67,7 +69,9 @@ public sealed class BuildingMaterialsCostConfigProjectionTests
             tests.AuthoredBuildingCosts_ProjectExactlyThroughRuntimeCatalogAndClone();
             tests.MatchConfig_AuthorsRequestedStartingMaterialsAndCapacity();
             tests.ZeroMaterialsCost_RemainsValidAcrossConfigMetadataRuntimeAndCatalog();
-            Debug.Log("[BuildingMaterialsCostConfigProjectionValidation] result=Passed tests=3");
+            tests.FootprintClone_PreservesEveryFieldExceptTheAuthorizedOverride();
+            tests.FootprintCloneBoundary_MapsEveryCurrentFieldExactlyOnce();
+            Debug.Log("[BuildingMaterialsCostConfigProjectionValidation] result=Passed tests=5");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -218,5 +222,97 @@ public sealed class BuildingMaterialsCostConfigProjectionTests
             UnityEngine.Object.DestroyImmediate(prefab);
             UnityEngine.Object.DestroyImmediate(config);
         }
+    }
+
+    [Test]
+    public void FootprintClone_PreservesEveryFieldExceptTheAuthorizedOverride()
+    {
+        Texture2D texture = new(2, 2);
+        Sprite selectionPortrait = Sprite.Create(texture, new Rect(0, 0, 1, 1), Vector2.zero);
+        Sprite cardPortrait = Sprite.Create(texture, new Rect(1, 1, 1, 1), Vector2.zero);
+        var source = new BuildingDefinition
+        {
+            DisplayName = "SourceDefinition",
+            Description = "Preserve every field",
+            MaxHealth = 731,
+            SelectionPortraitSprite = selectionPortrait,
+            CardPortraitSprite = cardPortrait,
+            FootprintCells = new Vector2Int(2, 3),
+            CreditsCost = 4400,
+            MaterialsCost = 57,
+            ProductionDurationSeconds = 12.5f,
+            AttackTraceColor = new Color(0.1f, 0.2f, 0.3f, 0.4f),
+            LocalBounds = new Bounds(new Vector3(1, 2, 3), new Vector3(4, 5, 6)),
+            ProductionSpawnLocalPositions = new[] { new Vector3(7, 8, 9) },
+            RunwayLocalRotation = Quaternion.Euler(0, 35, 0),
+            RunwayHalfExtents = new Vector3(10, 2, 3)
+        };
+        var overrideFootprint = new Vector2Int(7, 9);
+
+        try
+        {
+            BuildingDefinition clone = BuildingDefinitionFootprintCloneSystemHelper.Clone(
+                source,
+                overrideFootprint);
+
+            Assert.IsNotNull(clone);
+            foreach (FieldInfo field in typeof(BuildingDefinition).GetFields(BindingFlags.Instance | BindingFlags.Public))
+            {
+                if (field.Name == nameof(BuildingDefinition.FootprintCells))
+                {
+                    Assert.AreEqual(overrideFootprint, field.GetValue(clone));
+                    continue;
+                }
+
+                object expected = field.GetValue(source);
+                object actual = field.GetValue(clone);
+                if (field.FieldType.IsValueType)
+                    Assert.AreEqual(expected, actual, field.Name);
+                else
+                    Assert.AreSame(expected, actual, field.Name);
+            }
+            Assert.AreEqual(new Vector2Int(2, 3), source.FootprintCells);
+            Assert.IsNull(BuildingDefinitionFootprintCloneSystemHelper.Clone(null, overrideFootprint));
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(selectionPortrait);
+            UnityEngine.Object.DestroyImmediate(cardPortrait);
+            UnityEngine.Object.DestroyImmediate(texture);
+        }
+    }
+
+    [Test]
+    public void FootprintCloneBoundary_MapsEveryCurrentFieldExactlyOnce()
+    {
+        const string HelperPath = "Assets/Game/Scripts/Systems/BuildingDefinitionFootprintCloneSystemHelper.cs";
+        const string CallerPath = "Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs";
+        string helperSource = File.ReadAllText(HelperPath);
+        string callerSource = File.ReadAllText(CallerPath);
+
+        Assert.AreEqual(72, File.ReadAllLines(HelperPath).Length);
+        Assert.AreEqual(4230, new FileInfo(HelperPath).Length);
+        foreach (FieldInfo field in typeof(BuildingDefinition).GetFields(BindingFlags.Instance | BindingFlags.Public))
+        {
+            string mapping = field.Name == nameof(BuildingDefinition.FootprintCells)
+                ? "FootprintCells = footprintCells"
+                : $"{field.Name} = definition.{field.Name}";
+            Assert.AreEqual(1, CountOccurrences(helperSource, mapping), field.Name);
+        }
+
+        Assert.AreEqual(1, CountOccurrences(
+            callerSource,
+            "BuildingDefinitionFootprintCloneSystemHelper.Clone(definition, footprintCells)"));
+        Assert.That(helperSource, Does.Not.Contain("new GameObject"));
+        Assert.That(helperSource, Does.Not.Contain("Instantiate("));
+        Assert.That(helperSource, Does.Not.Contain("Destroy("));
+        Assert.That(helperSource, Does.Not.Contain("World."));
+        Assert.That(helperSource, Does.Not.Contain("EntityManager"));
+        Assert.That(helperSource, Does.Not.Contain("Allocator."));
+    }
+
+    private static int CountOccurrences(string source, string value)
+    {
+        return source.Split(new[] { value }, StringSplitOptions.None).Length - 1;
     }
 }

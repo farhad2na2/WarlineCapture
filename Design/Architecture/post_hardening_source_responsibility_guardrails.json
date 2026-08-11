@@ -63,6 +63,14 @@
       "scope": "system-helper"
     },
     {
+      "path": "Assets/Game/Scripts/Systems/BuildingDefinitionFootprintCloneSystemHelper.cs",
+      "trackerTaskId": "AMFR-011",
+      "acceptedCommit": "f50dc9c6f57c53fa3624d7c530adda903e987187",
+      "maxLines": 72,
+      "maxBytes": 4230,
+      "scope": "system-helper"
+    },
+    {
       "path": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
       "trackerTaskId": "AM-013",
       "acceptedCommit": "664ae7fa4544699faad7da01b11db60434e39088",

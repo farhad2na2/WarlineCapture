@@ -1,0 +1,20 @@
+{
+  "artifactId":"m01dc-013-anchor-manifest-v1", "taskId":"M01DC-013", "result":"Passed",
+  "operationMapId":"opmap.ch01.district_edge_01", "scenarioId":"scenario.ch01.m01.first_contact",
+  "anchorCount":11, "surfaceAuthority":"accepted physical source; unmodified",
+  "anchors": [
+    {"id":"anchor.ch01.m01.player_spawn","kind":"Deployment","position":[814,0.009,352],"yaw":41,"clearanceRadius":5},
+    {"id":"anchor.ch01.m01.camera_start","kind":"Camera","position":[868,1.129,386],"yaw":0,"clearanceRadius":1},
+    {"id":"anchor.ch01.m01.move_target","kind":"Objective","position":[847,1.269,370],"yaw":41,"clearanceRadius":3},
+    {"id":"anchor.ch01.m01.patrol_spawn","kind":"Spawn","position":[916,0.139,414],"yaw":243,"clearanceRadius":4},
+    {"id":"anchor.ch01.m01.patrol_route_a","kind":"Lane","position":[895,0.859,411],"yaw":243,"clearanceRadius":2},
+    {"id":"anchor.ch01.m01.patrol_route_b","kind":"Lane","position":[884,1.169,394],"yaw":243,"clearanceRadius":2},
+    {"id":"anchor.ch01.m01.patrol_route_c","kind":"Lane","position":[864,1.129,382],"yaw":243,"clearanceRadius":2},
+    {"id":"anchor.ch01.m01.patrol_objective","kind":"Hostile","position":[856,1.229,376],"yaw":243,"clearanceRadius":3},
+    {"id":"anchor.ch01.m01.civilian_safe_zone","kind":"Civilian","position":[954,0.009,438],"yaw":45,"clearanceRadius":7},
+    {"id":"anchor.ch01.m01.civilian_evacuation","kind":"Civilian","position":[980,0.009,458],"yaw":45,"clearanceRadius":7},
+    {"id":"anchor.ch01.m01.minimap_start","kind":"Minimap","position":[878,0.619,416],"yaw":0,"clearanceRadius":1}
+  ],
+  "patrolTiming":{"encounterStartMs":3000,"patrolDelayMs":3000,"conservativeSpeedMps":5,"earliestDirectCivilianSeconds":11.989,"requiredPostContextSeconds":6},
+  "validation":"[M01FirstContactAnchorValidation] result=Passed tests=13"
+}

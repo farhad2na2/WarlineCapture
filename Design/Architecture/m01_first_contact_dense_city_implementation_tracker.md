@@ -1,8 +1,8 @@
 # M01 First Contact Dense-City Implementation Tracker
 
 Date: 2026-08-12
-Status: Active; M01DC-012 accepted and M01DC-013 dependency-ready
-Progress: 12/43 accepted items (27.9%)
+Status: Active; M01DC-013 accepted and M01DC-014 dependency-ready
+Progress: 13/43 accepted items (30.2%)
 Parent design: `Design/M01_FirstContact_Dense_City_High_Level_Design.md`
 Technical architecture: `Design/Architecture/m01_first_contact_dense_city_technical_architecture.md`
 Mission: `saga.ch01.m01.first_contact`
@@ -294,11 +294,11 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
   **Acceptance:** the mission starts readable at supported aspect ratios; cameras remain inside valid bounds; minimap-to-world projection is deterministic and exact.
   **Evidence:** `Design/AgentReports/M01FirstContact/m01dc_012_camera_minimap.json` and contact sheet; exact `camera.ch01.m01.planning`, `camera.ch01.m01.battle_start`, and `minimap.ch01.m01.projection` records authored in the logical map only; all reviewed subjects remain inside frozen safe frames at `1920x1080`, `2400x1080`, and `1920x1200`; camera poses/FOV stay inside M01 bounds with clamp enabled; minimap origin `[760,0,300]`, size `[240,176]`, orientation `0`, exact world/normalized round trip within `0.001`, and out-of-range clamp pass; normal blend policy `1.25s` and reduced-motion cut `0s` frozen for M01DC-015 implementation; two-pass asset/report/contact-sheet hashes stable; focused `12 / 12`, source-growth `17 / 17`, architecture `23` suites, and compiler zero pass; seven incidental validator outputs restored to exact pre-run hashes; clean pushed head.
 
-- [ ] **M01DC-013 - Author and validate all required anchors**
+- [x] **M01DC-013 - Author and validate all required anchors**
   **Depends on:** M01DC-011.
   **Deliverable:** all eleven frozen M01 anchors with surface, clearance, orientation, reachability, and uniqueness validation.
   **Acceptance:** every required anchor resolves exactly once; units do not overlap geometry or each other; patrol timing cannot reach civilians before player control/context.
-  **Evidence:** anchor manifest, occupancy/reachability/timing validation, clean pushed head.
+  **Evidence:** `Design/AgentReports/M01FirstContact/m01dc_013_anchor_manifest.json`; all eleven frozen IDs resolve exactly once in `opmap.ch01.district_edge_01`; deterministic nearest-clear-cell placement proves each authored radius against the accepted, unmodified physical-source surface; unit-bearing anchors remain mutually clear; Courier/Warden/Broker scenario requirements remain exact; conservative direct patrol-to-civilian arrival is `11.989s` against the required `9s` minimum and route waypoints remain outside civilian clearance; asset/report hashes are identical across two focused passes; focused `13 / 13`, source-growth `17 / 17`, architecture `23` suites, and compiler zero pass; the test source remains below the 350-line target; seven incidental architecture-suite FirstLaunch outputs were backed up then restored to exact pre-run hashes; protected-path audit and diff check pass; clean pushed head.
 
 - [ ] **M01DC-014 - Publish the logical M01 OperationMapDefinition**
   **Depends on:** M01DC-010 through M01DC-013.
@@ -550,6 +550,7 @@ Unity licensing, wrapper, device connection, disk space, or bounded tool interru
 | 2026-08-12 | M01DC-012 ownership/source-growth amendment | Added only the deterministic Unity `.meta` paired with the authorized camera/minimap test and one stateless test-side evidence/capture source plus metadata. This keeps validation and image/report serialization separate under the 350-line target; no runtime class, physical city source, map bake, threshold, package, or project setting is authorized. | enclosing amendment commit | Accepted |
 | 2026-08-12 | M01DC-012 | Authored the two frozen M01 cameras and exact Old Market minimap crop in the logical map without a new runtime owner. Projection tests retain required subjects inside safe frames at 16:9, 20:9, and 16:10 tablet; camera bounds/zoom/clamp, exact minimap round trip/clamp, and future transition/reduced-motion policy pass. Two-pass outputs are hash-stable; focused `12 / 12`, source-growth `17 / 17`, architecture `23` suites, and compiler zero pass. | enclosing M01DC-012 acceptance commit | Accepted |
 | 2026-08-12 | M01DC-013 metadata amendment | Added only the deterministic Unity `.meta` paired with the already-authorized anchor test source. The scenario remains read-only; no physical city/surface, runtime class, threshold, package, or project setting is authorized. | enclosing metadata-amendment commit | Accepted |
+| 2026-08-12 | M01DC-013 | Authored all eleven frozen M01 anchors in the logical Old Market map only. Deterministic accepted-surface clearance, uniqueness, unit spacing, exact scenario requirements, and conservative patrol/civilian timing pass; map/report hashes are stable across two focused passes; focused `13 / 13`, source-growth `17 / 17`, architecture `23` suites, compiler zero, protected-path, and restored-output checks pass. | enclosing M01DC-013 acceptance commit | Accepted |
 
 Implementation entries are appended only after an item is accepted and pushed. The final row must record M01DC-043, the final main/origin head, 43/43 progress, Android package/device identities, agent-QA/finding closure, validation summary, and clean worktree state.
 

@@ -16,8 +16,8 @@ MonoBehaviour:
   schemaVersion: 1
   contentVersion: 1
   sourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900
-  contentHash: 3c24dc034d4dc13537d1bbf43fe2cd87e56bda083083c131d60fc7c253573628
-  generatedMetadataHash: ecec81044f5cdaaf4264d74d3a90380f1d0dd4370df3abaaac1ac576cdb48af0
+  contentHash: 1f70ab8af6614a979c6d02189266e5f7c4b55337580f2524279426f56e5bce21
+  generatedMetadataHash: dd72f1e25ca09444a7819de78ec7e727c3fca32b36bc6fffa901413fb88ce8e7
   sourceBinding:
     sourceOperationMapId: opmap.skirmish.desert_base_01
     sourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900
@@ -75,62 +75,83 @@ MonoBehaviour:
     projectionSize: {x: 240, y: 176}
     orientationDegrees: 0
   anchors:
-  - anchorId: anchor.skirmish.desert_base_01.compat_start
-    kind: 14
-    position: {x: 0, y: -0, z: 1024}
-    eulerAngles: {x: -0, y: 0, z: 0}
-    radius: 0
+  - anchorId: anchor.ch01.m01.player_spawn
+    kind: 3
+    position: {x: 814, y: 0.009179778, z: 352}
+    eulerAngles: {x: 0, y: 41, z: 0}
+    radius: 5
     factionId: -1
     laneIndex: -1
-  - anchorId: anchor.skirmish.desert_base_01.compat_end
-    kind: 14
-    position: {x: 2048, y: -0, z: 0}
+  - anchorId: anchor.ch01.m01.camera_start
+    kind: 12
+    position: {x: 868, y: 1.1291797, z: 386}
     eulerAngles: {x: -0, y: 0, z: 0}
-    radius: 0
+    radius: 1
     factionId: -1
     laneIndex: -1
-  - anchorId: anchor.skirmish.desert_base_01.deployment.faction_1
-    kind: 3
-    position: {x: 949, y: 23, z: 344.7}
-    eulerAngles: {x: -0, y: 0, z: 0}
-    radius: 102.1
-    factionId: 1
+  - anchorId: anchor.ch01.m01.move_target
+    kind: 2
+    position: {x: 847, y: 1.2691797, z: 370}
+    eulerAngles: {x: 0, y: 41, z: 0}
+    radius: 3
+    factionId: -1
     laneIndex: -1
-  - anchorId: anchor.skirmish.desert_base_01.deployment.faction_2
-    kind: 3
-    position: {x: 1686, y: 23, z: 108}
-    eulerAngles: {x: -0, y: 0, z: 0}
-    radius: 102.1
-    factionId: 2
+  - anchorId: anchor.ch01.m01.patrol_spawn
+    kind: 1
+    position: {x: 916, y: 0.13917978, z: 414}
+    eulerAngles: {x: 0, y: 243, z: 0}
+    radius: 4
+    factionId: -1
     laneIndex: -1
-  - anchorId: anchor.skirmish.desert_base_01.runway.faction_1.lane_0
-    kind: 9
-    position: {x: 886.8202, y: 0.6849844, z: 314.50977}
-    eulerAngles: {x: -0, y: 269.99036, z: 0}
-    radius: 90.65007
-    factionId: 1
-    laneIndex: 0
-  - anchorId: anchor.skirmish.desert_base_01.helipad.faction_1.lane_0
-    kind: 10
-    position: {x: 999.9, y: 0.73, z: 359.99994}
-    eulerAngles: {x: -0, y: 90, z: 0}
-    radius: 7.200793
-    factionId: 1
-    laneIndex: 0
-  - anchorId: anchor.skirmish.desert_base_01.helipad.faction_1.lane_1
-    kind: 10
-    position: {x: 1006.83, y: 0.73, z: 393.25995}
-    eulerAngles: {x: -0, y: 90, z: 0}
-    radius: 7.200793
-    factionId: 1
-    laneIndex: 1
-  - anchorId: anchor.skirmish.desert_base_01.helipad.faction_1.lane_2
-    kind: 10
-    position: {x: 975.8001, y: 0.73, z: 393.32996}
-    eulerAngles: {x: -0, y: 90, z: 0}
-    radius: 7.200793
-    factionId: 1
-    laneIndex: 2
+  - anchorId: anchor.ch01.m01.patrol_route_a
+    kind: 11
+    position: {x: 895, y: 0.85917974, z: 411}
+    eulerAngles: {x: 0, y: 243, z: 0}
+    radius: 2
+    factionId: -1
+    laneIndex: -1
+  - anchorId: anchor.ch01.m01.patrol_route_b
+    kind: 11
+    position: {x: 884, y: 1.1691798, z: 394}
+    eulerAngles: {x: 0, y: 243, z: 0}
+    radius: 2
+    factionId: -1
+    laneIndex: -1
+  - anchorId: anchor.ch01.m01.patrol_route_c
+    kind: 11
+    position: {x: 864, y: 1.1291797, z: 382}
+    eulerAngles: {x: 0, y: 243, z: 0}
+    radius: 2
+    factionId: -1
+    laneIndex: -1
+  - anchorId: anchor.ch01.m01.patrol_objective
+    kind: 6
+    position: {x: 856, y: 1.2291797, z: 376}
+    eulerAngles: {x: 0, y: 243, z: 0}
+    radius: 3
+    factionId: -1
+    laneIndex: -1
+  - anchorId: anchor.ch01.m01.civilian_safe_zone
+    kind: 5
+    position: {x: 954, y: 0.009179778, z: 438}
+    eulerAngles: {x: 0, y: 45, z: 0}
+    radius: 7
+    factionId: -1
+    laneIndex: -1
+  - anchorId: anchor.ch01.m01.civilian_evacuation
+    kind: 5
+    position: {x: 980, y: 0.009179778, z: 458}
+    eulerAngles: {x: 0, y: 45, z: 0}
+    radius: 7
+    factionId: -1
+    laneIndex: -1
+  - anchorId: anchor.ch01.m01.minimap_start
+    kind: 13
+    position: {x: 878, y: 0.6191798, z: 416}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 1
+    factionId: -1
+    laneIndex: -1
   presentationKind: 1
   renderResidencyMode: 1
   sourceSceneReference:

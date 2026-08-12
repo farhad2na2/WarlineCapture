@@ -1,0 +1,184 @@
+{
+  "artifactId": "M01DC-002-BASELINE-INVENTORY",
+  "schemaVersion": 1,
+  "taskId": "M01DC-002",
+  "result": "Passed",
+  "capture": {
+    "capturedUtc": "2026-08-12T06:58:00Z",
+    "branch": "main",
+    "commit": "70c46a8378cf68ec3d1fe177033a071f473e274f",
+    "tree": "98543d3d1bfa688c11ef66e61fb11c31b830c7c8",
+    "originMatched": true,
+    "dirtyBeforeCapture": false
+  },
+  "classifications": ["reuse", "narrow-extension", "new-owner", "read-only", "absent"],
+  "firstLaunch": {
+    "classification": "narrow-extension",
+    "currentBehavior": "New profiles enter FirstLaunch. Returning/completed profiles enter the menu. A watched or skipped FirstLaunch persists HandoffPending, FirstLaunchNarrativeShellCompositionSystemHelper.TryPublishHandoff changes startup disposition to EnterMenu, and FirstLaunchNarrativeCompositionSystemHelper then emits MenuHandoffRequested.",
+    "sources": [
+      "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs:40,88-93,151-161",
+      "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeShellCompositionSystemHelper.cs:16-41",
+      "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeProfileCompositionSystemHelper.cs:43-52,97-114,133-160",
+      "Assets/Game/Scripts/UI/Shell/Ecs/Contracts/UiShellEcsComponents.cs:11-16",
+      "Assets/Game/Scripts/Persistence/SaveDataModel.cs:37-61"
+    ],
+    "startupDispositions": ["Pending", "FirstLaunch", "EnterMenu"],
+    "persistedStatuses": ["NotStarted", "InProgress", "HandoffPending", "Completed"],
+    "persistedGuidanceField": "firstLaunchGuidance",
+    "m01Disposition": "Replace only the final handoff with a typed M01 launch while retaining returning-player EnterMenu behavior."
+  },
+  "campaignUi": {
+    "classification": "narrow-extension",
+    "routes": ["UIRoute.Campaign", "UIRoute.MissionBriefing"],
+    "views": [
+      {
+        "type": "Game.UI.Runtime.CampaignOperationsScreenView",
+        "classification": "reuse",
+        "role": "Dumb serialized-reference view exposing LaunchMissionButton."
+      },
+      {
+        "type": "Game.UI.Runtime.MissionBriefingScreenView",
+        "classification": "reuse",
+        "role": "Dumb serialized-reference view exposing DeployOperationButton."
+      }
+    ],
+    "deploy": {
+      "classification": "narrow-extension",
+      "interactable": false,
+      "persistentOnClickCount": 0,
+      "sources": [
+        "Assets/Game/Prefabs/UI/Shell/Content/SCN06_MissionBriefingContent.prefab:1371-1491",
+        "Assets/Game/Scripts/Editor/MissionBriefingPrefabBuilder.cs:228-233,382-385"
+      ]
+    },
+    "placeholderRewards": {
+      "classification": "absent",
+      "authority": "none",
+      "commanderXp": 260,
+      "credits": 1200,
+      "intel": 1,
+      "source": "Assets/Game/Scripts/Editor/MissionBriefingPrefabBuilder.cs:222-225",
+      "m01Disposition": "Replace with configuration projection; M01 grants no Intel."
+    }
+  },
+  "contracts": [
+    {"concern": "scenario", "type": "Game.Configs.ScenarioSetupConfig", "classification": "narrow-extension"},
+    {"concern": "operation map", "type": "Game.Configs.OperationMapDefinition", "classification": "narrow-extension"},
+    {"concern": "active map", "type": "Game.Components.ActiveOperationMapComponent", "classification": "reuse"},
+    {"concern": "objective state", "type": "Game.Components.MatchObjectiveRuntimeStateComponent", "classification": "reuse"},
+    {"concern": "objective rows", "type": "Game.Components.MatchObjectiveRuntimeElement", "classification": "reuse"},
+    {"concern": "mission definition", "type": "Game.Missions.Contracts.MissionDefinitionConfig", "classification": "absent", "m01Disposition": "new-owner"},
+    {"concern": "launch payload", "type": "Game.Missions.Contracts.MissionLaunchPayload", "classification": "absent", "m01Disposition": "new-owner"},
+    {"concern": "mission runtime", "type": "Game.Missions.Runtime.CampaignMissionRuntimeComponent", "classification": "absent", "m01Disposition": "new-owner"},
+    {"concern": "campaign progress", "type": "Game.Campaign.Runtime.CampaignMissionProgressStore", "classification": "absent", "m01Disposition": "new-owner"}
+  ],
+  "objectiveOwnership": {
+    "authoritativeWriter": {
+      "classification": "absent",
+      "finding": "No runtime source writes authoritative MatchObjectiveRuntimeElement rows or the active objective state.",
+      "auditSource": "Assets/Game/Scripts/Editor/OperationMapPhase0CameraMinimapOwnershipProbe.cs:851-862",
+      "m01Disposition": "Add exactly one CampaignMissionObjectiveSystem writer."
+    },
+    "readers": [
+      "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Assistant.cs",
+      "Assets/Game/Scripts/UI/Shell/Ecs/AssistantThreatReadModelSystem.cs",
+      "Assets/Game/Scripts/UI/Shell/Ecs/AssistantObjectiveProjectionUtility.cs",
+      "Assets/Game/Scripts/UI/Shell/Ecs/AssistantReadModelSystems.cs"
+    ],
+    "readerClassification": "read-only",
+    "assistantLifecycleNote": "AssistantGoalReadModelSystem ensures/clears boundary data and projects goals, but is not an authoritative mission objective-row writer.",
+    "testFixtureWritersExcluded": true
+  },
+  "progressRewardsAndSave": {
+    "playerProfile": {
+      "classification": "narrow-extension",
+      "existingFields": ["missionsCompleted", "starsEarned", "credits", "materials", "fuel", "intel"],
+      "missing": ["per-mission progress", "first-clear settlement", "best stars", "settlement token", "unlock state"]
+    },
+    "saveService": {"type": "Game.Runtime.SaveService", "classification": "narrow-extension"},
+    "jsonRepository": {
+      "type": "Game.Runtime.JsonSaveRepository",
+      "classification": "narrow-extension",
+      "currentWrite": "File.WriteAllText",
+      "atomicWrite": false
+    },
+    "saveMigration": {"type": "Game.Runtime.SaveMigration", "classification": "narrow-extension", "currentVersion": 1},
+    "campaignProgressOwner": {"classification": "absent", "m01Disposition": "new-owner"},
+    "rewardSettlementOwner": {"classification": "absent", "m01Disposition": "new-owner"},
+    "missionResultProjection": {
+      "classification": "narrow-extension",
+      "currentBehavior": "UiShellEcsGateway and UiShellRuntimeGateway return hard-coded UiMissionResultPopupModel.VictoryDefault."
+    }
+  },
+  "denseCityPhysicalSource": {
+    "classification": "read-only",
+    "operationMapId": "opmap.skirmish.desert_base_01",
+    "sourceIdentityHash": "2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900",
+    "contentHash": "2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c",
+    "generatedMetadataHash": "2089955094bb8a72f2f5e7ca1e05e67c78df049da9185a7d44eabce25d82dc69",
+    "gridContentHash": "8ef1b3f17074774040111a48ea82901b3355da8b8b86c8dc5c6e2a0bcccc2cfb",
+    "surfaceContentHash": "1402d769704008e254563ff7ecda835294db83afc2cee6d5bb456987f0392b4d",
+    "assets": [
+      {"role": "definition", "path": "Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset", "guid": "cbfc2f62e3142413485019bd83197539", "sha256": "f91b737280d8950d97264b54589b963f605a8d8911a0f4e17397bef667e4eba6"},
+      {"role": "authoring", "path": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_dense_city_authoring_candidate.unity", "guid": "a0c9dc175951148c48a94a26bc036bf5", "sha256": "5a15843d63868d639b88d2084ea41184af0cf5d6050b22b563a516ef13752b9c"},
+      {"role": "presentation", "path": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity", "guid": "c00140f2e94a04c3084c8dcb0c18cbd0", "sha256": "c1bc203591b3f32ae3d8410eaa0988e694b1d9d449ba1e938d9f38058698b598"},
+      {"role": "runtime binding", "path": "Assets/Game/GeneratedOperationMaps/RuntimeBinding/opmap.skirmish.desert_base_01/Candidates/opmap_skirmish_desert_base_01_dense_city_entity_scene_runtime.unity", "guid": "dad0bd13fb20943dfb2f881cbe225f05", "sha256": "f58a73d0a8f3627d7ddf42f72b42a9db495d5139ba5da6768492ac36e671ade9"},
+      {"role": "surface", "path": "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset", "guid": "12f517deb32ab49698acbfdaf7c3eac7", "sha256": "1402d769704008e254563ff7ecda835294db83afc2cee6d5bb456987f0392b4d"},
+      {"role": "minimap", "path": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/MinimapRaster.png", "guid": "3b1a8dbd670bf4e94863c00acbc3a3a7", "sha256": "420d9f07fec2418fad279d5d104a2c3caa248ee5481c3658fb9b2b65b9afcc3f"}
+    ],
+    "m01Disposition": "Create one M01-owned logical view; do not clone, rename, rebake, or mutate the physical source."
+  },
+  "sourceGrowth": {
+    "newM01ProductionFileTargetLines": 350,
+    "baseline": {"path": "Design/Architecture/production_source_growth_baseline.md", "sha256": "ff6632c34567a1371a302d74ecc58a1d466fc174e7177a5fd567f284b92fce57"},
+    "guardrail": {"path": "Design/Architecture/post_hardening_source_responsibility_guardrails.json", "sha256": "12b92a5785324722f07a985241e8086da713bc024fb4820d961d28793a53d743"},
+    "protectedSeams": [
+      {"path": "Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs", "classification": "read-only", "lines": 1863, "bytes": 84503, "ceiling": "AMFR-017 exact 1863/84503"},
+      {"path": "Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs", "classification": "read-only", "lines": 197, "bytes": 9675, "baselineCeiling": "850/42215 with committed-minimum ratchet"},
+      {"path": "Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs", "classification": "read-only", "lines": 144, "bytes": 5049},
+      {"path": "Assets/Game/Scripts/Composition/OperationMapSceneLoadingSceneSystemHelper.cs", "classification": "read-only", "lines": 465, "bytes": 16734, "ceiling": "AMFR-004 exact 465/16734"},
+      {"path": "Assets/Game/Scripts/Composition/OperationMapRuntimeBootstrapSceneSystemHelper.cs", "classification": "read-only", "lines": 284, "bytes": 10241, "registeredCeiling": "APH-710 295/11398; committed-minimum ratchet applies"},
+      {"path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs", "classification": "narrow-extension", "lines": 424, "bytes": 18242, "registeredCeiling": "APH-712 453/19785; committed-minimum ratchet applies"}
+    ]
+  },
+  "protectedPaths": {
+    "classification": "read-only",
+    "families": [
+      "accepted dense-city authoring/presentation/generated static/VRP/Addressables/bake outputs",
+      "Assets/Game/Scenes/MapPrototypes/Chapter01/M01_VisualPrototype.unity",
+      "Match.unity, Demo.unity, and Demo2.unity",
+      "unrelated Skirmish behavior",
+      "Packages/** and ProjectSettings/**",
+      "Jenkins, Unity installation paths, and Tools/CI infrastructure",
+      "AM-027 and deferred architecture Phase 6/9"
+    ]
+  },
+  "integrationSummary": [
+    {"integration": "FirstLaunch final handoff", "classification": "narrow-extension"},
+    {"integration": "Campaign/MissionBriefing views and routes", "classification": "reuse"},
+    {"integration": "mission definition/payload/runtime", "classification": "new-owner", "current": "absent"},
+    {"integration": "scenario/map logical view", "classification": "narrow-extension"},
+    {"integration": "dense-city physical source", "classification": "read-only"},
+    {"integration": "objective component/buffer", "classification": "reuse"},
+    {"integration": "objective writer", "classification": "new-owner", "current": "absent"},
+    {"integration": "assistant objective projection", "classification": "read-only"},
+    {"integration": "Campaign progression/rewards", "classification": "new-owner", "current": "absent"},
+    {"integration": "profile save/migration/result projection", "classification": "narrow-extension"},
+    {"integration": "generic spawn/bootstrap owners", "classification": "read-only"}
+  ],
+  "validation": {
+    "unityVersion": "6000.5.2f1",
+    "sourceGrowth": {"result": "Passed", "tests": 17, "marker": "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17", "compilerErrors": 0, "logSha256": "fecc75c110d6b9675d6cd86f4a694f104dea53bcd5176ebbf672bea99c1ab525"},
+    "architecture": {"result": "Passed", "suites": 23, "marker": "[ArchitectureHardeningCloseoutValidation] result=Passed suites=23", "compilerErrors": 0, "logSha256": "eb63c1c89e74611bf3740cc6f42d4dccd9746176b95752837d3a8ab245dfb710"},
+    "android": {"required": false, "status": "Deferred"},
+    "incidentalValidatorChangesRestored": true
+  },
+  "conclusion": {
+    "objectiveWriterGapConfirmed": true,
+    "campaignProgressOwnerGapConfirmed": true,
+    "rewardAuthorityGapConfirmed": true,
+    "currentFirstLaunchMenuHandoffConfirmed": true,
+    "denseCityLogicalReuseAvailable": true,
+    "m01dc003DependencyReady": true
+  }
+}

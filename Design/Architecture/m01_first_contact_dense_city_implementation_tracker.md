@@ -1,8 +1,8 @@
 # M01 First Contact Dense-City Implementation Tracker
 
 Date: 2026-08-12
-Status: Active; M01DC-001 accepted and dependency-ready implementation authorized
-Progress: 1/43 accepted items (2.3%)
+Status: Active; M01DC-002 accepted and M01DC-003 dependency-ready
+Progress: 2/43 accepted items (4.7%)
 Parent design: `Design/M01_FirstContact_Dense_City_High_Level_Design.md`
 Technical architecture: `Design/Architecture/m01_first_contact_dense_city_technical_architecture.md`
 Mission: `saga.ch01.m01.first_contact`
@@ -224,11 +224,11 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
   **Acceptance:** the HLD, technical architecture, implementation tracker, and FirstLaunch tracker agree that the visual direction is accepted and M01 production work is authorized only through this tracker; exact type/responsibility/naming/QA/performance boundaries are frozen; no historical evidence is relabeled as a validation that did not run.
   **Evidence:** project-owner messages approved the current FirstLaunch comic/story direction and instructed Codex to continue M01; accepted HLD/technical/tracker design head `edeb9dcf1`; FirstLaunch Gate 9R release recorded without relabeling July technical evidence as a new run; Gate 10 camera/Android/shell prerequisites remain open; authority diff and enclosing clean pushed acceptance commit.
 
-- [ ] **M01DC-002 - Capture exact-head baseline inventory**
+- [x] **M01DC-002 - Capture exact-head baseline inventory**
   **Depends on:** M01DC-001.
   **Deliverable:** machine-readable inventory of current FirstLaunch destinations, Campaign routes, disabled Deploy behavior, existing mission/scenario/map types, objective readers/writers, progress/reward owners, accepted dense-city source GUIDs/hashes, source-growth ceilings, protected paths, and current compiler/test state.
   **Acceptance:** every planned integration point is classified as reuse, narrow extension, new owner, read-only, or absent; the report identifies the current no-objective-writer gap and current menu-handoff behavior from exact source evidence.
-  **Evidence:** `Design/AgentReports/M01FirstContact/m01dc_002_baseline_inventory.json`, focused baseline logs, clean pushed head.
+  **Evidence:** `Design/AgentReports/M01FirstContact/m01dc_002_baseline_inventory.json`; compact validation manifest `m01dc_002_baseline_validation.md`; exact source-growth `17 / 17` and architecture `23`-suite checked-wrapper passes with zero compiler errors; incidental validator output restored; clean pushed head.
 
 - [ ] **M01DC-003 - Freeze item ownership, evidence, and rollback matrix**
   **Depends on:** M01DC-002.
@@ -530,6 +530,7 @@ Unity licensing, wrapper, device connection, disk space, or bounded tool interru
 |---|---|---|---|---|
 | 2026-08-12 | HLD | Project owner approved direct FirstLaunch-to-M01, inherited guidance, recommended replay tutorial policy, recommended civilian boundary, shared dense-city Old Market direction, and tracker authoring. | `aa04a6e85` | HLD approved; tracker draft created |
 | 2026-08-12 | M01DC-001 | Project owner accepted the current FirstLaunch comic/story presentation, linked M01 technical architecture, 43-item tracker, agent-operated QA amendment, and autonomous continuation. Gate 9R is released; Gate 10 remains honestly open. | enclosing M01DC-001 acceptance commit | Accepted |
+| 2026-08-12 | M01DC-002 | Exact-head inventory classifies every integration seam, confirms the current FirstLaunch `EnterMenu` handoff and absent objective/progression/reward owners, hash-binds the accepted dense-city source, freezes protected/source-growth boundaries, and passes source growth `17 / 17` plus architecture `23` suites with zero compiler errors. | enclosing M01DC-002 acceptance commit | Accepted |
 
 Implementation entries are appended only after an item is accepted and pushed. The final row must record M01DC-043, the final main/origin head, 43/43 progress, Android package/device identities, agent-QA/finding closure, validation summary, and clean worktree state.
 

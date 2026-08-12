@@ -4,6 +4,7 @@
     "references": [
         "Game.Components",
         "Game.Configs",
+        "Game.Missions.Contracts",
         "Game.Narrative.Contracts",
         "Game.Runtime.Combat",
         "Game.Runtime.Pathfinding",

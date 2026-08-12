@@ -1,8 +1,8 @@
 # M01 First Contact Dense-City Implementation Tracker
 
 Date: 2026-08-12
-Status: Active; M01DC-004 accepted and M01DC-005 dependency-ready
-Progress: 4/43 accepted items (9.3%)
+Status: Active; M01DC-005 accepted and M01DC-006 dependency-ready
+Progress: 5/43 accepted items (11.6%)
 Parent design: `Design/M01_FirstContact_Dense_City_High_Level_Design.md`
 Technical architecture: `Design/Architecture/m01_first_contact_dense_city_technical_architecture.md`
 Mission: `saga.ch01.m01.first_contact`
@@ -244,11 +244,11 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
   **Acceptance:** invalid/duplicate IDs fail closed; existing non-Campaign paths retain defaults; no UI-local mission authority is introduced.
   **Evidence:** `Design/AgentReports/M01FirstContact/m01dc_004_contract_validation.json`; checked-wrapper M01 contract `12 / 12`, source-growth `17 / 17`, and architecture `23`-suite passes with zero compiler errors; all four production sources remain at or below the `350`-line ceiling; seven incidental validator outputs restored exactly to the entry head; no scene, operation-map asset, or Skirmish-data modification; clean pushed head.
 
-- [ ] **M01DC-005 - Add the immutable MissionLaunchPayload contract**
+- [x] **M01DC-005 - Add the immutable MissionLaunchPayload contract**
   **Depends on:** M01DC-004.
   **Deliverable:** the exact `MissionLaunchPayload`, related mission enums/results, and shared `MissionLaunchPayloadFactory` specified by the technical architecture, carrying mission, scenario, logical map, launch origin, guidance mode, replay tutorial choice, first-clear/replay intent, and deterministic correlation/seed data.
   **Acceptance:** FirstLaunch and Campaign can construct semantically equal payloads for equal inputs; payload validation fails closed; no route or UI object becomes the mission state owner.
-  **Evidence:** construction/equality/invalid-input tests, clean pushed head.
+  **Evidence:** `Design/AgentReports/M01FirstContact/m01dc_005_launch_payload_validation.json`; checked-wrapper launch-payload `9 / 9`, source-growth `17 / 17`, and architecture `23`-suite passes with zero compiler errors; pure `69`-line shared factory, equal-input/value-equality and fail-closed invalid-input coverage, retry identity/session/seed preservation, no UI/route dependency; incidental validator outputs recoverably backed up then restored; clean pushed head.
 
 - [ ] **M01DC-006 - Extend ScenarioSetup with campaign-safe fields**
   **Depends on:** M01DC-004.
@@ -533,6 +533,7 @@ Unity licensing, wrapper, device connection, disk space, or bounded tool interru
 | 2026-08-12 | M01DC-002 | Exact-head inventory classifies every integration seam, confirms the current FirstLaunch `EnterMenu` handoff and absent objective/progression/reward owners, hash-binds the accepted dense-city source, freezes protected/source-growth boundaries, and passes source growth `17 / 17` plus architecture `23` suites with zero compiler errors. | enclosing M01DC-002 acceptance commit | Accepted |
 | 2026-08-12 | M01DC-003 | Exact-path ownership, evidence, validation, generated-output, and rollback authority is frozen for M01DC-004..043. Static audit covers `40 / 40` item allowlists, `164` exact path entries, and `61` unique types in `11` assemblies with no forbidden names, wildcard edit paths, read-only overlap, or accepted dense-city physical-source edits. | enclosing M01DC-003 acceptance commit | Accepted |
 | 2026-08-12 | M01DC-004 | Added dependency-root `Game.Missions.Contracts`, default-safe mission definition/catalog data, and fail-closed identity/reference/objective/star/reward/command/readiness validation. M01 rejects Intel and duplicate/invalid configuration; checked M01 `12 / 12`, source-growth `17 / 17`, and architecture `23`-suite gates pass with compiler zero. | enclosing M01DC-004 acceptance commit | Accepted |
+| 2026-08-12 | M01DC-005 | Added the sole stateless `MissionLaunchPayloadFactory` used by both entry origins. Equal inputs yield equal immutable payloads; retry preserves mission/scenario/map/session/seed and increments attempt/correlation only; invalid inputs fail closed. Checked payload `9 / 9`, source-growth `17 / 17`, and architecture `23` suites pass with compiler zero. | enclosing M01DC-005 acceptance commit | Accepted |
 
 Implementation entries are appended only after an item is accepted and pushed. The final row must record M01DC-043, the final main/origin head, 43/43 progress, Android package/device identities, agent-QA/finding closure, validation summary, and clean worktree state.
 

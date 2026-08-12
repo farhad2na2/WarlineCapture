@@ -1,0 +1,59 @@
+{
+  "artifactId": "m01dc-005-launch-payload-validation",
+  "schemaVersion": 1,
+  "itemId": "M01DC-005",
+  "entryHead": "37b879f824e531b8816fa54183a515dbe4e7ca08",
+  "result": "Passed",
+  "implementation": {
+    "factory": "Game.Runtime.MissionLaunchPayloadFactory",
+    "factorySourceLines": 69,
+    "sourceLineCeiling": 350,
+    "sharedByFirstLaunchAndCampaign": true,
+    "uiOrRouteDependency": false,
+    "retryPreservesIdentitySessionAndSeed": true,
+    "retryIncrementsOnlyAttemptAndCorrelation": true
+  },
+  "validation": [
+    {
+      "gate": "launch payload",
+      "method": "M01FirstContactLaunchPayloadTests.RunFocusedValidation",
+      "marker": "[M01FirstContactLaunchPayloadValidation] result=Passed tests=9",
+      "tests": 9,
+      "timeoutSeconds": 900,
+      "compilerErrors": 0,
+      "rawLogSha256": "3fc67596d873bbadec063f2376cf56bf3ae5e6a8c9a7e069caa43ab73a0ee87a"
+    },
+    {
+      "gate": "source growth",
+      "method": "ProductionSourceGrowthArchitectureTests.RunFocusedValidation",
+      "marker": "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17",
+      "tests": 17,
+      "timeoutSeconds": 900,
+      "compilerErrors": 0,
+      "rawLogSha256": "590277250b81e92936b373be92661395d2119dfc5f3b85ddd40f0adef9ab3e01"
+    },
+    {
+      "gate": "architecture",
+      "method": "ArchitectureHardeningCloseoutValidationRunner.RunFocusedValidation",
+      "marker": "[ArchitectureHardeningCloseoutValidation] result=Passed suites=23",
+      "suites": 23,
+      "timeoutSeconds": 1200,
+      "compilerErrors": 0,
+      "rawLogSha256": "63b4b51ecdab1a9a9ca08bbe15cdaccefccf4137b88b4650380db612fbbc7bab"
+    }
+  ],
+  "recovery": {
+    "guiLicensingRuns": 2,
+    "architectureFallback": "Checked non-GUI wrapper after healthy Hub generic pipe refused Editor protocol 1.18.1; Editor launched its version-matched LicenseClient-zfoul-6000.5.2.",
+    "hubRemainedOpen": true,
+    "wrapperBypassed": false,
+    "staleProjectLockClearedOnlyWithNoEditor": true
+  },
+  "incidentalValidatorOutputs": {
+    "count": 7,
+    "recoverableBackup": "Build/EditorEvidence/m01dc005_incidental_backup",
+    "restoredToEntryHead": true,
+    "committed": false
+  },
+  "nextDependencyReadyItem": "M01DC-006"
+}

@@ -284,7 +284,7 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
 
 - [ ] **M01DC-011 - Select the Old Market mission window**
   **Depends on:** M01DC-010.
-  **Deliverable:** reviewed logical bounds, playable surfaces, navigation scope, off-window exclusion, landmark orientation, and contact corridor using accepted city data.
+  **Deliverable:** reviewed logical bounds, playable surfaces, navigation scope, off-window exclusion, landmark orientation, and contact corridor using accepted city data. The approved current FirstLaunch comic panels `FL-P15` through `FL-P18`, with `FL-P18` as the binding handoff frame, are the visual/geographic authority; archived M01 prototype captures and earlier dense-city review images are not design authority.
   **Acceptance:** one player squad and one patrol fit readable M01 scale; reachable space has no road-over-water-without-bridge defect; blue Autobahn/canal isolation remains separately classified and is not conflated with this mission window.
   **Evidence:** top-down annotated capture, surface/nav report, exact bounds, review record, clean pushed head.
 
@@ -544,6 +544,7 @@ Unity licensing, wrapper, device connection, disk space, or bounded tool interru
 | 2026-08-12 | M01DC-010 metadata amendment | Added only the deterministic Unity `.meta` paired with M01DC-010's already-authorized focused test source. No production/config asset changed; exact-path and protected-path policies remain unchanged. | enclosing metadata-amendment commit | Accepted |
 | 2026-08-12 | M01DC-010 source-growth decomposition amendment | Added `OperationMapIdentityRules.cs` and its Unity `.meta` so the existing identity/hash rule responsibility can move out of the material `OperationMapDefinition.cs` while adding the authorized source-binding model. This is a bounded mechanical decomposition, not a source-growth exception or threshold change. | enclosing source-growth-decomposition commit | Accepted |
 | 2026-08-12 | M01DC-010 | Added the default-safe `OperationMapSourceBindingConfig` and fail-closed logical-to-physical resolver. Exact accepted dense-city GUID/hash/source-scene evidence passes; existing self-owned maps remain unchanged; stale, missing, mismatched, self, and chained bindings fail. Zero physical-source clones or protected changes exist; focused `10 / 10`, source-growth `17 / 17`, architecture `23` suites, and compiler zero pass. | enclosing M01DC-010 acceptance commit | Accepted |
+| 2026-08-12 | M01DC-011 authority/validation amendment | Project owner clarified that the current approved FirstLaunch comic, not old prototype or dense-city review images, is the bazaar/Old Market visual authority. Froze `FL-P15..18` at 16:9 and 20:9 read-only and authorized one focused checked-wrapper validator/capture source plus its metadata. No production asset, city source, map data, threshold, or protected content changed. | enclosing amendment commit | Accepted |
 
 Implementation entries are appended only after an item is accepted and pushed. The final row must record M01DC-043, the final main/origin head, 43/43 progress, Android package/device identities, agent-QA/finding closure, validation summary, and clean worktree state.
 

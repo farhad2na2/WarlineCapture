@@ -1,0 +1,60 @@
+{
+  "artifactId": "m01dc-007-rules-validation",
+  "schemaVersion": 1,
+  "itemId": "M01DC-007",
+  "entryHead": "834b563d5e7587fb2a271bd585b4ef03540f986a",
+  "result": "Passed",
+  "rules": {
+    "objectiveAndFailureDataTyped": true,
+    "underFourMinutesThresholdMilliseconds": 240000,
+    "underFourMinutesIsFailure": false,
+    "firstClearAndReplayRewardSetsIndependent": true,
+    "rewardSettlementIdentityExclusive": true,
+    "duplicateRewardIdentityRejected": true,
+    "placeholderRewardRejected": true,
+    "m01IntelKindRejected": true,
+    "m01IntelConfigReferenceRejected": true,
+    "displayDataProjectedFromDefinitions": true
+  },
+  "validation": [
+    {
+      "gate": "mission rules",
+      "marker": "[M01FirstContactMissionRuleValidation] result=Passed tests=14",
+      "tests": 14,
+      "timeoutSeconds": 900,
+      "compilerErrors": 0,
+      "rawLogSha256": "110a57c4a725b23c716c8f6537e517d1e538c10754d68db5f83eaad5f3ffc871"
+    },
+    {
+      "gate": "source growth",
+      "marker": "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17",
+      "tests": 17,
+      "timeoutSeconds": 900,
+      "compilerErrors": 0,
+      "rawLogSha256": "1b5ce9fd057eca5f898f3854d6cfa20edb33b73c36764e572facac79722ebea0"
+    },
+    {
+      "gate": "architecture",
+      "marker": "[ArchitectureHardeningCloseoutValidation] result=Passed suites=23",
+      "suites": 23,
+      "timeoutSeconds": 1200,
+      "compilerErrors": 0,
+      "rawLogSha256": "01dac65d27f0c05b583ecabc813b57fe93384a4ac881445ef53e4ecf90f660b9"
+    }
+  ],
+  "licensingRecovery": {
+    "hubGenericClientRestarted": true,
+    "hubRemainedOpen": true,
+    "projectEditorProcessesClosed": true,
+    "staleProjectLockCleared": true,
+    "acceptedRunsUsedCheckedWrapperAtNormalUserIntegrity": true,
+    "wrapperBypassed": false
+  },
+  "incidentalValidatorOutputs": {
+    "count": 7,
+    "recoverableBackup": "Build/EditorEvidence/m01dc007_incidental_backup",
+    "restoredToEntryHead": true,
+    "committed": false
+  },
+  "nextDependencyReadyItem": "M01DC-008"
+}

@@ -44,34 +44,83 @@ namespace Game.Configs
     {
         [SerializeField, Range(1, 3)] private byte starIndex;
         [SerializeField] private MissionStarRuleKind rule;
+        [SerializeField] private string displayTextKey;
         [SerializeField, Min(0)] private int threshold;
 
         public MissionStarDefinitionConfig(byte starIndex, MissionStarRuleKind rule, int threshold = 0)
+            : this(starIndex, rule, DefaultDisplayTextKey(rule), threshold)
+        {
+        }
+
+        public MissionStarDefinitionConfig(
+            byte starIndex,
+            MissionStarRuleKind rule,
+            string displayTextKey,
+            int threshold = 0)
         {
             this.starIndex = starIndex;
             this.rule = rule;
+            this.displayTextKey = displayTextKey;
             this.threshold = threshold;
         }
 
         public byte StarIndex => starIndex;
         public MissionStarRuleKind Rule => rule;
+        public string DisplayTextKey => displayTextKey;
         public int Threshold => threshold;
+
+        private static string DefaultDisplayTextKey(MissionStarRuleKind value) => value switch
+        {
+            MissionStarRuleKind.CompleteMission => "mission.star.complete",
+            MissionStarRuleKind.NoSquadLoss => "mission.star.no_squad_loss",
+            MissionStarRuleKind.CompleteUnderMilliseconds => "mission.star.under_time",
+            _ => string.Empty
+        };
     }
 
     [Serializable]
     public struct MissionRewardDefinitionConfig
     {
         [SerializeField] private MissionRewardKind kind;
+        [SerializeField] private string rewardConfigId;
+        [SerializeField] private string displayTextKey;
         [SerializeField, Min(1)] private int amount;
 
         public MissionRewardDefinitionConfig(MissionRewardKind kind, int amount)
+            : this(kind, string.Empty, DefaultDisplayTextKey(kind), amount)
+        {
+        }
+
+        public MissionRewardDefinitionConfig(string rewardConfigId, string displayTextKey, int amount)
+            : this(MissionRewardKind.None, rewardConfigId, displayTextKey, amount)
+        {
+        }
+
+        private MissionRewardDefinitionConfig(
+            MissionRewardKind kind,
+            string rewardConfigId,
+            string displayTextKey,
+            int amount)
         {
             this.kind = kind;
+            this.rewardConfigId = rewardConfigId;
+            this.displayTextKey = displayTextKey;
             this.amount = amount;
         }
 
         public MissionRewardKind Kind => kind;
+        public string RewardConfigId => rewardConfigId;
+        public string DisplayTextKey => displayTextKey;
         public int Amount => amount;
+
+        private static string DefaultDisplayTextKey(MissionRewardKind value) => value switch
+        {
+            MissionRewardKind.Credits => "mission.reward.credits",
+            MissionRewardKind.Materials => "mission.reward.materials",
+            MissionRewardKind.Fuel => "mission.reward.fuel",
+            MissionRewardKind.Intel => "mission.reward.intel",
+            _ => string.Empty
+        };
     }
 
     [Serializable]

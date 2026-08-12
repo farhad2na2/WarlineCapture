@@ -1,8 +1,8 @@
 # M01 First Contact Dense-City Implementation Tracker
 
 Date: 2026-08-12
-Status: Active; M01DC-006 accepted and M01DC-007 dependency-ready
-Progress: 6/43 accepted items (14.0%)
+Status: Active; M01DC-007 accepted and M01DC-008 dependency-ready
+Progress: 7/43 accepted items (16.3%)
 Parent design: `Design/M01_FirstContact_Dense_City_High_Level_Design.md`
 Technical architecture: `Design/Architecture/m01_first_contact_dense_city_technical_architecture.md`
 Mission: `saga.ch01.m01.first_contact`
@@ -256,11 +256,11 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
   **Acceptance:** the current Skirmish scenario serializes and behaves identically with defaults; missing required campaign data fails before runtime launch.
   **Evidence:** `Design/AgentReports/M01FirstContact/m01dc_006_scenario_compatibility.json`; checked-wrapper compatibility `8 / 8`, source-growth `17 / 17`, and architecture `23`-suite passes with zero compiler errors; legacy Skirmish JSON/defaults remain valid without Campaign data; Campaign seed, force groups, unit identity, patrol references, restrictions, timing, and optional ambient data fail closed before launch; `349` production lines; clean pushed head.
 
-- [ ] **M01DC-007 - Add objective, star, and reward definitions**
+- [x] **M01DC-007 - Add objective, star, and reward definitions**
   **Depends on:** M01DC-004.
   **Deliverable:** typed objective, failure, star, first-clear reward, and replay reward data with explicit no-Intel M01 configuration support.
   **Acceptance:** the under-four-minute rule is a star threshold, not failure; reward validation rejects duplicate or ambiguous settlement; display data is projected from definitions.
-  **Evidence:** focused rule tests and placeholder-reward detection, clean pushed head.
+  **Evidence:** `Design/AgentReports/M01FirstContact/m01dc_007_rules_validation.json`; checked-wrapper mission-rule `14 / 14`, source-growth `17 / 17`, and architecture `23`-suite passes with zero compiler errors; four-minute target is an independent `240000` ms star threshold and not a failure rule; typed objective/failure, star, first-clear/replay reward, settlement-identity, definition-projected display, placeholder, duplicate, and no-Intel M01 coverage; seven incidental validator outputs restored to the entry head; clean pushed head.
 
 - [ ] **M01DC-008 - Add Campaign mission progress schema and migration**
   **Depends on:** M01DC-004, M01DC-007.
@@ -535,6 +535,7 @@ Unity licensing, wrapper, device connection, disk space, or bounded tool interru
 | 2026-08-12 | M01DC-004 | Added dependency-root `Game.Missions.Contracts`, default-safe mission definition/catalog data, and fail-closed identity/reference/objective/star/reward/command/readiness validation. M01 rejects Intel and duplicate/invalid configuration; checked M01 `12 / 12`, source-growth `17 / 17`, and architecture `23`-suite gates pass with compiler zero. | enclosing M01DC-004 acceptance commit | Accepted |
 | 2026-08-12 | M01DC-005 | Added the sole stateless `MissionLaunchPayloadFactory` used by both entry origins. Equal inputs yield equal immutable payloads; retry preserves mission/scenario/map/session/seed and increments attempt/correlation only; invalid inputs fail closed. Checked payload `9 / 9`, source-growth `17 / 17`, and architecture `23` suites pass with compiler zero. | enclosing M01DC-005 acceptance commit | Accepted |
 | 2026-08-12 | M01DC-006 | Extended `ScenarioSetupConfig` additively with force groups/unit identities, deterministic timing, patrol routes, restrictions, and bounded ambient presentation. Legacy Skirmish defaults bypass Campaign requirements unchanged; Campaign data fails closed before launch. Checked compatibility `8 / 8`, source-growth `17 / 17`, and architecture `23` suites pass with compiler zero. | enclosing M01DC-006 acceptance commit | Accepted |
+| 2026-08-12 | M01DC-007 | Added definition-projected star/reward display data and exclusive typed-kind-or-config reward settlement identity. Duplicate, ambiguous, placeholder, and M01 Intel rewards fail closed; the `240000` ms goal remains a star threshold only. Checked rule `14 / 14`, source-growth `17 / 17`, and architecture `23` suites pass with compiler zero. | enclosing M01DC-007 acceptance commit | Accepted |
 
 Implementation entries are appended only after an item is accepted and pushed. The final row must record M01DC-043, the final main/origin head, 43/43 progress, Android package/device identities, agent-QA/finding closure, validation summary, and clean worktree state.
 

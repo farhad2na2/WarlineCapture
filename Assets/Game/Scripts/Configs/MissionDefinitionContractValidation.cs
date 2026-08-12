@@ -182,7 +182,8 @@ namespace Game.Configs
                 bool thresholdValid = star.Rule == MissionStarRuleKind.CompleteUnderMilliseconds
                     ? star.Threshold > 0
                     : star.Threshold == 0;
-                if (star.StarIndex is < 1 or > 3 || star.Rule == MissionStarRuleKind.None || !thresholdValid)
+                if (star.StarIndex is < 1 or > 3 || star.Rule == MissionStarRuleKind.None || !thresholdValid ||
+                    !IsValidScopedId(star.DisplayTextKey, "mission", 3, 8))
                 {
                     error = $"Mission '{definition.MissionId}' has invalid star rule at index {index}.";
                     return false;
@@ -230,18 +231,29 @@ namespace Game.Configs
             for (int index = 0; index < rewards.Length; index++)
             {
                 MissionRewardDefinitionConfig reward = rewards[index];
-                if (reward.Kind == MissionRewardKind.None || reward.Amount < 1 ||
-                    (definition.MissionId == FirstContactMissionId && reward.Kind == MissionRewardKind.Intel))
+                bool hasKind = reward.Kind != MissionRewardKind.None;
+                bool hasConfig = !string.IsNullOrEmpty(reward.RewardConfigId);
+                bool validConfig = !hasConfig ||
+                    IsValidScopedId(reward.RewardConfigId, "reward", 2, 6);
+                if (hasKind == hasConfig || !validConfig || reward.Amount < 1 ||
+                    !IsValidScopedId(reward.DisplayTextKey, "mission", 3, 8) ||
+                    IsPlaceholderToken(reward.RewardConfigId) || IsPlaceholderToken(reward.DisplayTextKey) ||
+                    (definition.MissionId == FirstContactMissionId && IsIntelReward(reward)))
                 {
-                    error = $"Mission '{definition.MissionId}' has invalid {label} reward at index {index}.";
+                    error = hasKind == hasConfig
+                        ? $"Mission '{definition.MissionId}' has ambiguous settlement identity for {label} reward at index {index}."
+                        : $"Mission '{definition.MissionId}' has invalid {label} reward definition at index {index}.";
                     return false;
                 }
 
                 for (int previous = 0; previous < index; previous++)
                 {
-                    if (rewards[previous].Kind == reward.Kind)
+                    MissionRewardDefinitionConfig prior = rewards[previous];
+                    if ((hasKind && prior.Kind == reward.Kind) ||
+                        (hasConfig && prior.RewardConfigId == reward.RewardConfigId))
                     {
-                        error = $"Mission '{definition.MissionId}' has duplicate {label} reward kind '{reward.Kind}'.";
+                        string identity = hasKind ? reward.Kind.ToString() : reward.RewardConfigId;
+                        error = $"Mission '{definition.MissionId}' has duplicate {label} reward '{identity}'.";
                         return false;
                     }
                 }
@@ -249,6 +261,23 @@ namespace Game.Configs
 
             error = null;
             return true;
+        }
+
+        private static bool IsIntelReward(MissionRewardDefinitionConfig reward) =>
+            reward.Kind == MissionRewardKind.Intel ||
+            string.Equals(reward.RewardConfigId, "reward.intel", StringComparison.Ordinal);
+
+        private static bool IsPlaceholderToken(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return false;
+            string[] parts = value.Split('.');
+            for (int index = 0; index < parts.Length; index++)
+            {
+                if (parts[index] is "placeholder" or "todo" or "tbd")
+                    return true;
+            }
+            return false;
         }
 
         private static bool TryValidateCommands(MissionDefinitionConfig definition, out string error)

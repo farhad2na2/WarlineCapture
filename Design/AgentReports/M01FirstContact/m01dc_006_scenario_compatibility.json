@@ -1,0 +1,61 @@
+{
+  "artifactId": "m01dc-006-scenario-compatibility",
+  "schemaVersion": 1,
+  "itemId": "M01DC-006",
+  "entryHead": "983dab34f8f92d46e9f110ef00aacdb2d0012109",
+  "result": "Passed",
+  "implementation": {
+    "productionFile": "Assets/Game/Scripts/Configs/ScenarioSetupConfig.cs",
+    "productionSourceLines": 349,
+    "sourceLineCeiling": 350,
+    "additiveTypes": [
+      "ScenarioUnitGroupConfig",
+      "ScenarioUnitEntryConfig",
+      "ScenarioPatrolRouteConfig",
+      "ScenarioRestrictionConfig",
+      "ScenarioAmbientPresentationConfig"
+    ],
+    "legacySkirmishCampaignRequirementsApplied": false,
+    "campaignValidationBeforeLaunch": true,
+    "runtimePerFrameAssetLookup": false
+  },
+  "validation": [
+    {
+      "gate": "scenario compatibility",
+      "marker": "[M01FirstContactScenarioCompatibilityValidation] result=Passed tests=8",
+      "tests": 8,
+      "timeoutSeconds": 900,
+      "compilerErrors": 0,
+      "rawLogSha256": "21ea779af536d0cadb8955f4082550b2975dfa80f57ab1a9fa48ef195676978f"
+    },
+    {
+      "gate": "source growth",
+      "marker": "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17",
+      "tests": 17,
+      "timeoutSeconds": 900,
+      "compilerErrors": 0,
+      "rawLogSha256": "9207701e616edf1396dd4c0a1bb66e7fb141efd3c5d0029df21b0e6f2beb38a7"
+    },
+    {
+      "gate": "architecture",
+      "marker": "[ArchitectureHardeningCloseoutValidation] result=Passed suites=23",
+      "suites": 23,
+      "timeoutSeconds": 1200,
+      "compilerErrors": 0,
+      "rawLogSha256": "786388c6ed6319b8ef70d3617dcb55523141ba5df59a9a6258c46e732c2692df"
+    }
+  ],
+  "rejectedAttempt": {
+    "reason": "Three typed-null test arguments omitted explicit generic array types.",
+    "productionDefect": false,
+    "fix": "Specified ScenarioUnitGroupConfig[], ScenarioPatrolRouteConfig[], and ScenarioAmbientPresentationConfig[] on the three calls.",
+    "acceptedEvidenceUsesRerunOnly": true
+  },
+  "incidentalValidatorOutputs": {
+    "count": 7,
+    "recoverableBackup": "Build/EditorEvidence/m01dc006_incidental_backup",
+    "restoredToEntryHead": true,
+    "committed": false
+  },
+  "nextDependencyReadyItem": "M01DC-007"
+}

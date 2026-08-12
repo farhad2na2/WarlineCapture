@@ -1,8 +1,8 @@
 # M01 First Contact Dense-City Implementation Tracker
 
 Date: 2026-08-12
-Status: Active; M01DC-005 accepted and M01DC-006 dependency-ready
-Progress: 5/43 accepted items (11.6%)
+Status: Active; M01DC-006 accepted and M01DC-007 dependency-ready
+Progress: 6/43 accepted items (14.0%)
 Parent design: `Design/M01_FirstContact_Dense_City_High_Level_Design.md`
 Technical architecture: `Design/Architecture/m01_first_contact_dense_city_technical_architecture.md`
 Mission: `saga.ch01.m01.first_contact`
@@ -250,11 +250,11 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
   **Acceptance:** FirstLaunch and Campaign can construct semantically equal payloads for equal inputs; payload validation fails closed; no route or UI object becomes the mission state owner.
   **Evidence:** `Design/AgentReports/M01FirstContact/m01dc_005_launch_payload_validation.json`; checked-wrapper launch-payload `9 / 9`, source-growth `17 / 17`, and architecture `23`-suite passes with zero compiler errors; pure `69`-line shared factory, equal-input/value-equality and fail-closed invalid-input coverage, retry identity/session/seed preservation, no UI/route dependency; incidental validator outputs recoverably backed up then restored; clean pushed head.
 
-- [ ] **M01DC-006 - Extend ScenarioSetup with campaign-safe fields**
+- [x] **M01DC-006 - Extend ScenarioSetup with campaign-safe fields**
   **Depends on:** M01DC-004.
   **Deliverable:** additive/default-safe scenario fields for forces, restrictions, deterministic configuration, encounter timing, required anchors, and optional ambient presentation.
   **Acceptance:** the current Skirmish scenario serializes and behaves identically with defaults; missing required campaign data fails before runtime launch.
-  **Evidence:** serialization compatibility, Skirmish regression, focused validation, clean pushed head.
+  **Evidence:** `Design/AgentReports/M01FirstContact/m01dc_006_scenario_compatibility.json`; checked-wrapper compatibility `8 / 8`, source-growth `17 / 17`, and architecture `23`-suite passes with zero compiler errors; legacy Skirmish JSON/defaults remain valid without Campaign data; Campaign seed, force groups, unit identity, patrol references, restrictions, timing, and optional ambient data fail closed before launch; `349` production lines; clean pushed head.
 
 - [ ] **M01DC-007 - Add objective, star, and reward definitions**
   **Depends on:** M01DC-004.
@@ -534,6 +534,7 @@ Unity licensing, wrapper, device connection, disk space, or bounded tool interru
 | 2026-08-12 | M01DC-003 | Exact-path ownership, evidence, validation, generated-output, and rollback authority is frozen for M01DC-004..043. Static audit covers `40 / 40` item allowlists, `164` exact path entries, and `61` unique types in `11` assemblies with no forbidden names, wildcard edit paths, read-only overlap, or accepted dense-city physical-source edits. | enclosing M01DC-003 acceptance commit | Accepted |
 | 2026-08-12 | M01DC-004 | Added dependency-root `Game.Missions.Contracts`, default-safe mission definition/catalog data, and fail-closed identity/reference/objective/star/reward/command/readiness validation. M01 rejects Intel and duplicate/invalid configuration; checked M01 `12 / 12`, source-growth `17 / 17`, and architecture `23`-suite gates pass with compiler zero. | enclosing M01DC-004 acceptance commit | Accepted |
 | 2026-08-12 | M01DC-005 | Added the sole stateless `MissionLaunchPayloadFactory` used by both entry origins. Equal inputs yield equal immutable payloads; retry preserves mission/scenario/map/session/seed and increments attempt/correlation only; invalid inputs fail closed. Checked payload `9 / 9`, source-growth `17 / 17`, and architecture `23` suites pass with compiler zero. | enclosing M01DC-005 acceptance commit | Accepted |
+| 2026-08-12 | M01DC-006 | Extended `ScenarioSetupConfig` additively with force groups/unit identities, deterministic timing, patrol routes, restrictions, and bounded ambient presentation. Legacy Skirmish defaults bypass Campaign requirements unchanged; Campaign data fails closed before launch. Checked compatibility `8 / 8`, source-growth `17 / 17`, and architecture `23` suites pass with compiler zero. | enclosing M01DC-006 acceptance commit | Accepted |
 
 Implementation entries are appended only after an item is accepted and pushed. The final row must record M01DC-043, the final main/origin head, 43/43 progress, Android package/device identities, agent-QA/finding closure, validation summary, and clean worktree state.
 

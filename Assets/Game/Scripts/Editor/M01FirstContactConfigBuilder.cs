@@ -15,6 +15,10 @@ namespace Game.Editor
             "Assets/Game/Configs/Missions/Chapter01/MissionDefinition_Ch01_M01_FirstContact.asset";
         public const string ScenarioPath =
             "Assets/Game/Configs/Scenarios/Chapter01/ScenarioSetup_Ch01_M01_FirstContact.asset";
+        public const string OperationMapPath =
+            "Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01_DistrictEdge01.asset";
+        public const string OperationMapCatalogPath =
+            "Assets/Game/Configs/OperationMaps/Chapter01/OperationMapCatalog_Chapter01.asset";
 
         [MenuItem("Game/Campaign/Build M01 First Contact Configs")]
         public static void BuildMenu() => Build();
@@ -24,15 +28,24 @@ namespace Game.Editor
             EnsureFolder("Assets/Game/Configs/Campaign");
             EnsureFolder("Assets/Game/Configs/Missions/Chapter01");
             EnsureFolder("Assets/Game/Configs/Scenarios/Chapter01");
+            EnsureFolder("Assets/Game/Configs/OperationMaps/Chapter01");
             MissionDefinitionConfig mission = LoadOrCreate<MissionDefinitionConfig>(MissionPath);
             ScenarioSetupConfig scenario = LoadOrCreate<ScenarioSetupConfig>(ScenarioPath);
             MissionDefinitionCatalogConfig catalog = LoadOrCreate<MissionDefinitionCatalogConfig>(CatalogPath);
+            OperationMapDefinition operationMap =
+                AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(OperationMapPath);
+            if (operationMap == null)
+                throw new InvalidOperationException($"M01 operation map is missing: {OperationMapPath}");
+            OperationMapCatalogConfig operationMapCatalog =
+                LoadOrCreate<OperationMapCatalogConfig>(OperationMapCatalogPath);
             PopulateMission(mission);
             PopulateScenario(scenario);
             PopulateCatalog(catalog, mission);
+            PopulateOperationMapCatalog(operationMapCatalog, operationMap);
             EditorUtility.SetDirty(mission);
             EditorUtility.SetDirty(scenario);
             EditorUtility.SetDirty(catalog);
+            EditorUtility.SetDirty(operationMapCatalog);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
         }
@@ -183,6 +196,25 @@ namespace Game.Editor
             {
                 Set(entry, "missionId", MissionId);
                 entry.FindPropertyRelative("definition").objectReferenceValue = mission;
+            });
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static void PopulateOperationMapCatalog(
+            OperationMapCatalogConfig target,
+            OperationMapDefinition operationMap)
+        {
+            SerializedObject serialized = new(target);
+            SetArray(serialized, "definitions", 1, (definition, _) =>
+                definition.objectReferenceValue = operationMap);
+            SetArray(serialized, "entries", 1, (entry, _) =>
+            {
+                entry.FindPropertyRelative("definition").objectReferenceValue = operationMap;
+                SerializedProperty pack = entry.FindPropertyRelative("contentPack");
+                Set(pack, "contentPackId", "opmap-pack.ch01.district_edge_01");
+                Set(pack, "deliveryKind", (int)OperationMapDeliveryKind.BuiltInLocal);
+                Set(pack, "contentVersion", operationMap.ContentVersion);
+                Set(pack, "contentHash", operationMap.ContentHash);
             });
             serialized.ApplyModifiedPropertiesWithoutUndo();
         }

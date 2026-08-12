@@ -1,0 +1,21 @@
+{
+  "artifactId": "m01dc-017-runtime-owner-v1",
+  "taskId": "M01DC-017",
+  "result": "Passed",
+  "runtimeWriterCount": 1,
+  "runtimeWriter": "Game.Runtime.CampaignMissionRuntimeSystem",
+  "phaseCount": 10,
+  "terminalOutcomeImmutable": true,
+  "staticMutableStateCount": 0,
+  "managedHotFieldCount": 0,
+  "catalogDisposalOwnerCount": 1,
+  "validation": "[M01FirstContactRuntimeOwnershipValidation] result=Passed tests=12",
+  "phase7Validation": "[NonUiSystemBaseMigrationArchitectureValidation] result=Passed tests=19",
+  "sourceGrowthValidation": "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17",
+  "architectureValidation": "[ArchitectureHardeningCloseoutValidation] result=Passed suites=23",
+  "compilerErrorCount": 0,
+  "inventoryDeterministic": true,
+  "productionSystemDeclarationCount": 208,
+  "productionISystemDeclarationCount": 183,
+  "managedExceptionCount": 25
+}

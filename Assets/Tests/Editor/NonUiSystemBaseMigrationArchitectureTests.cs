@@ -13,12 +13,12 @@ public sealed class NonUiSystemBaseMigrationArchitectureTests
     private const string InventoryPath = "Design/Architecture/systembase_to_isystem_inventory.md";
     private const string MonoBehaviourLoopBaselinePath = "Design/Architecture/phase7_monobehaviour_loop_baseline.md";
     private const int ManagedExceptionPlanningCap = 30;
-    private const int FinalProductionDeclarationCount = 206;
-    private const int FinalProductionNonUiCount = 184;
+    private const int FinalProductionDeclarationCount = 208;
+    private const int FinalProductionNonUiCount = 186;
     private const int FinalProductionUiCount = 22;
     private const int FinalProductionSystemBaseCount = 25;
-    private const int FinalProductionISystemCount = 181;
-    private const int FinalConvertedCount = 159;
+    private const int FinalProductionISystemCount = 183;
+    private const int FinalConvertedCount = 161;
     private const int FinalManagedExceptionCount = 25;
     private const int FinalUiOutOfScopeCount = 22;
 

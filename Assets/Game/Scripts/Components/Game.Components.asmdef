@@ -2,6 +2,8 @@
     "name": "Game.Components",
     "rootNamespace": "Game.Components",
     "references": [
+        "Game.Missions.Contracts",
+        "Game.Narrative.Contracts",
         "Unity.Collections",
         "Unity.Entities",
         "Unity.Entities.Graphics",

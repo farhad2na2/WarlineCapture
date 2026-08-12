@@ -46,9 +46,46 @@ namespace Game.Runtime
 
         public void Save<T>(string fileName, T data) where T : class, new()
         {
+            SaveAtomic(fileName, data);
+        }
+
+        public void SaveAtomic<T>(string fileName, T data) where T : class, new()
+        {
             Directory.CreateDirectory(_rootPath);
             string json = JsonUtility.ToJson(data ?? new T(), true);
-            File.WriteAllText(GetPath(fileName), json, Encoding.UTF8);
+            string destination = GetPath(fileName);
+            string temporary = destination + ".tmp";
+            string backup = destination + ".bak";
+            byte[] bytes = new UTF8Encoding(false).GetBytes(json);
+            using (FileStream stream = new(
+                temporary,
+                FileMode.Create,
+                FileAccess.Write,
+                FileShare.None,
+                4096,
+                FileOptions.WriteThrough))
+            {
+                stream.Write(bytes, 0, bytes.Length);
+                stream.Flush(true);
+            }
+
+            try
+            {
+                if (File.Exists(destination))
+                {
+                    File.Replace(temporary, destination, backup);
+                    if (File.Exists(backup)) File.Delete(backup);
+                }
+                else
+                {
+                    File.Move(temporary, destination);
+                }
+            }
+            catch
+            {
+                if (File.Exists(temporary)) File.Delete(temporary);
+                throw;
+            }
         }
 
         public void Delete(string fileName)

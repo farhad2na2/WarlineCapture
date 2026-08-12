@@ -1,0 +1,63 @@
+{
+  "artifactId": "m01dc-008-progress-migration",
+  "schemaVersion": 1,
+  "itemId": "M01DC-008",
+  "entryHead": "97ca1e03ff18b52a01d821c9e0490ce800c0284f",
+  "result": "Passed",
+  "implementation": {
+    "profileSchemaVersion": 3,
+    "campaignEntrySchemaVersion": 1,
+    "soleMutationOwner": "Game.Runtime.CampaignMissionProgressStore",
+    "deterministicMissionIdSort": true,
+    "settlementToken": "sessionToken:attemptOrdinal",
+    "atomicProfileWrites": true,
+    "sameDirectoryTemporaryWrite": true,
+    "flushToDiskBeforeReplace": true,
+    "settingsAndQuickGameBehaviorUnchanged": true
+  },
+  "coverage": {
+    "newAndOlderProfiles": true,
+    "futureEntryAndProfileVersions": true,
+    "corruptProfile": true,
+    "duplicateSettlement": true,
+    "firstClearAndReplay": true,
+    "bestStarsAndTime": true,
+    "pendingResume": true,
+    "nextMissionReveal": true,
+    "restart": true,
+    "interruptedAtomicReplace": true
+  },
+  "validation": [
+    {
+      "gate": "progress and migration",
+      "marker": "[M01FirstContactProgressStoreValidation] result=Passed tests=15",
+      "tests": 15,
+      "timeoutSeconds": 900,
+      "compilerErrors": 0,
+      "rawLogSha256": "c790ce739aadba91d74d4a9a52eaff4dc0bb5d577405195e84c8c8aec1a5925a"
+    },
+    {
+      "gate": "source growth",
+      "marker": "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17",
+      "tests": 17,
+      "timeoutSeconds": 900,
+      "compilerErrors": 0,
+      "rawLogSha256": "80c0d5d1853d86ba4f64dd14ecc98c0faac7a18f7ab8adafcf1fc0f966da3453"
+    },
+    {
+      "gate": "architecture",
+      "marker": "[ArchitectureHardeningCloseoutValidation] result=Passed suites=23",
+      "suites": 23,
+      "timeoutSeconds": 1200,
+      "compilerErrors": 0,
+      "rawLogSha256": "a3204b6a71d20695dd4e370f5036c6bebd0db07484a95f36707fb3f255d62049"
+    }
+  ],
+  "incidentalValidatorOutputs": {
+    "count": 7,
+    "recoverableBackup": "Build/EditorEvidence/m01dc008_incidental_backup",
+    "restoredToEntryHead": true,
+    "committed": false
+  },
+  "nextDependencyReadyItem": "M01DC-009"
+}

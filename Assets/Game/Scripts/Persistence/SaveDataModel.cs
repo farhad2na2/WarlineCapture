@@ -46,11 +46,13 @@ namespace Game.Runtime
         public string firstLaunchLanguage = nameof(Game.Narrative.Contracts.FirstLaunchNarrativeLanguage.Unselected);
         public bool firstLaunchWatched;
         public bool firstLaunchSkipped;
+        public CampaignMissionProgressSaveData[] campaignMissionProgress =
+            Array.Empty<CampaignMissionProgressSaveData>();
     }
 
     public static class FirstLaunchProfileState
     {
-        public const int CurrentSchemaVersion = 2;
+        public const int CurrentSchemaVersion = 3;
         public const string NotStarted = "NotStarted";
         public const string InProgress = "InProgress";
         public const string HandoffPending = "HandoffPending";
@@ -60,6 +62,22 @@ namespace Game.Runtime
         {
             return value == NotStarted || value == InProgress || value == HandoffPending || value == Completed;
         }
+    }
+
+    [Serializable]
+    public sealed class CampaignMissionProgressSaveData
+    {
+        public int schemaVersion = 1;
+        public string missionId = string.Empty;
+        public bool available;
+        public bool firstClearCompleted;
+        public int bestStars;
+        public int bestCompletionMilliseconds;
+        public bool firstClearRewardSettled;
+        public int successfulReplayCount;
+        public string lastSettledToken = string.Empty;
+        public bool pendingResume;
+        public int lastAttemptOrdinal;
     }
 
     [Serializable]

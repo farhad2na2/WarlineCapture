@@ -1,8 +1,8 @@
 # M01 First Contact Dense-City Implementation Tracker
 
 Date: 2026-08-12
-Status: Active; M01DC-007 accepted and M01DC-008 dependency-ready
-Progress: 7/43 accepted items (16.3%)
+Status: Active; M01DC-008 accepted and M01DC-009 dependency-ready
+Progress: 8/43 accepted items (18.6%)
 Parent design: `Design/M01_FirstContact_Dense_City_High_Level_Design.md`
 Technical architecture: `Design/Architecture/m01_first_contact_dense_city_technical_architecture.md`
 Mission: `saga.ch01.m01.first_contact`
@@ -262,11 +262,11 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
   **Acceptance:** the under-four-minute rule is a star threshold, not failure; reward validation rejects duplicate or ambiguous settlement; display data is projected from definitions.
   **Evidence:** `Design/AgentReports/M01FirstContact/m01dc_007_rules_validation.json`; checked-wrapper mission-rule `14 / 14`, source-growth `17 / 17`, and architecture `23`-suite passes with zero compiler errors; four-minute target is an independent `240000` ms star threshold and not a failure rule; typed objective/failure, star, first-clear/replay reward, settlement-identity, definition-projected display, placeholder, duplicate, and no-Intel M01 coverage; seven incidental validator outputs restored to the entry head; clean pushed head.
 
-- [ ] **M01DC-008 - Add Campaign mission progress schema and migration**
+- [x] **M01DC-008 - Add Campaign mission progress schema and migration**
   **Depends on:** M01DC-004, M01DC-007.
   **Deliverable:** versioned `CampaignMissionProgressSaveData`, sole-owner `CampaignMissionProgressStore`, and atomic save path for availability, first clear, best stars/time, first-clear settlement, replay records, resume state, and next-mission reveal.
   **Acceptance:** default/new/older profile migration is deterministic; repeated settlement is idempotent; interrupted writes preserve the prior valid profile; corrupt or future versions fail safely without inventing progress; settings and quick-game data regress zero.
-  **Evidence:** migration, idempotency, corruption, and restart tests; clean pushed head.
+  **Evidence:** `Design/AgentReports/M01FirstContact/m01dc_008_progress_migration.json`; checked-wrapper progress/migration `15 / 15`, source-growth `17 / 17`, and architecture `23`-suite passes with zero compiler errors; additive profile/entry schemas, deterministic mission-ID ordering, sole-owner store mutation, idempotent settlement tokens, first-clear/replay/best/resume/reveal state, corrupt/future-version safety, restart, settings/quick-game regression, and interrupted atomic-replace preservation; seven incidental validator outputs restored to the entry head; clean pushed head.
 
 - [ ] **M01DC-009 - Author and register canonical M01 data**
   **Depends on:** M01DC-005 through M01DC-008.
@@ -536,6 +536,7 @@ Unity licensing, wrapper, device connection, disk space, or bounded tool interru
 | 2026-08-12 | M01DC-005 | Added the sole stateless `MissionLaunchPayloadFactory` used by both entry origins. Equal inputs yield equal immutable payloads; retry preserves mission/scenario/map/session/seed and increments attempt/correlation only; invalid inputs fail closed. Checked payload `9 / 9`, source-growth `17 / 17`, and architecture `23` suites pass with compiler zero. | enclosing M01DC-005 acceptance commit | Accepted |
 | 2026-08-12 | M01DC-006 | Extended `ScenarioSetupConfig` additively with force groups/unit identities, deterministic timing, patrol routes, restrictions, and bounded ambient presentation. Legacy Skirmish defaults bypass Campaign requirements unchanged; Campaign data fails closed before launch. Checked compatibility `8 / 8`, source-growth `17 / 17`, and architecture `23` suites pass with compiler zero. | enclosing M01DC-006 acceptance commit | Accepted |
 | 2026-08-12 | M01DC-007 | Added definition-projected star/reward display data and exclusive typed-kind-or-config reward settlement identity. Duplicate, ambiguous, placeholder, and M01 Intel rewards fail closed; the `240000` ms goal remains a star threshold only. Checked rule `14 / 14`, source-growth `17 / 17`, and architecture `23` suites pass with compiler zero. | enclosing M01DC-007 acceptance commit | Accepted |
+| 2026-08-12 | M01DC-008 | Added additive Campaign mission progress schemas, sole-owner deterministic store mutation, idempotent settlement tokens, and same-directory flushed atomic profile replacement. New/older/corrupt/future profiles fail safely without invented progress; interrupted writes preserve the prior profile; settings and Quick Game remain unchanged. Checked progress `15 / 15`, source-growth `17 / 17`, and architecture `23` suites pass with compiler zero. | enclosing M01DC-008 acceptance commit | Accepted |
 
 Implementation entries are appended only after an item is accepted and pushed. The final row must record M01DC-043, the final main/origin head, 43/43 progress, Android package/device identities, agent-QA/finding closure, validation summary, and clean worktree state.
 

@@ -46,9 +46,18 @@ namespace Game.Runtime
         {
             bool exists = _repository.Exists(ProfileFileName);
             string raw = exists ? _repository.ReadRaw(ProfileFileName) : string.Empty;
-            PlayerProfileSaveData profile = _repository.Load<PlayerProfileSaveData>(ProfileFileName);
+            PlayerProfileSaveData profile;
+            try
+            {
+                profile = _repository.Load<PlayerProfileSaveData>(ProfileFileName);
+            }
+            catch (ArgumentException)
+            {
+                profile = new PlayerProfileSaveData();
+            }
             bool legacyProfile = exists && raw.IndexOf("\"firstLaunchStatus\"", StringComparison.Ordinal) < 0;
-            return NormalizeProfile(profile, legacyProfile);
+            bool futureProfile = profile.profileSchemaVersion > FirstLaunchProfileState.CurrentSchemaVersion;
+            return NormalizeProfile(profile, legacyProfile, futureProfile);
         }
 
         public SettingsSaveData LoadSettings()
@@ -63,7 +72,7 @@ namespace Game.Runtime
 
         public void SaveProfile(PlayerProfileSaveData data)
         {
-            _repository.Save(ProfileFileName, NormalizeProfile(data, false));
+            _repository.SaveAtomic(ProfileFileName, NormalizeProfile(data, false, false));
         }
 
         public void ResetFirstLaunchProgress()
@@ -88,7 +97,10 @@ namespace Game.Runtime
             _repository.Delete(QuickGameFileName);
         }
 
-        private static PlayerProfileSaveData NormalizeProfile(PlayerProfileSaveData profile, bool legacyProfile)
+        private static PlayerProfileSaveData NormalizeProfile(
+            PlayerProfileSaveData profile,
+            bool legacyProfile,
+            bool futureProfile = false)
         {
             profile ??= new PlayerProfileSaveData();
             profile.profileSchemaVersion = FirstLaunchProfileState.CurrentSchemaVersion;
@@ -123,8 +135,11 @@ namespace Game.Runtime
             }
             else
             {
-                profile.firstLaunchLanguage = language.ToString();
+            profile.firstLaunchLanguage = language.ToString();
             }
+            profile.campaignMissionProgress = futureProfile
+                ? Array.Empty<CampaignMissionProgressSaveData>()
+                : profile.campaignMissionProgress ?? Array.Empty<CampaignMissionProgressSaveData>();
             return profile;
         }
 

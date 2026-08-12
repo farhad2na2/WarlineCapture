@@ -1,8 +1,8 @@
 # M01 First Contact Dense-City Implementation Tracker
 
 Date: 2026-08-12
-Status: Active; M01DC-011 accepted and M01DC-012 dependency-ready
-Progress: 11/43 accepted items (25.6%)
+Status: Active; M01DC-012 accepted and M01DC-013 dependency-ready
+Progress: 12/43 accepted items (27.9%)
 Parent design: `Design/M01_FirstContact_Dense_City_High_Level_Design.md`
 Technical architecture: `Design/Architecture/m01_first_contact_dense_city_technical_architecture.md`
 Mission: `saga.ch01.m01.first_contact`
@@ -288,11 +288,11 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
   **Acceptance:** one player squad and one patrol fit readable M01 scale; reachable space has no road-over-water-without-bridge defect; blue Autobahn/canal isolation remains separately classified and is not conflated with this mission window.
   **Evidence:** `Design/AgentReports/M01FirstContact/m01dc_011_old_market_window.json` and `.png`; approved-current FirstLaunch `FL-P15..18` authority hash-bound at both aspect families with `FL-P18` as handoff and old images explicitly rejected; logical playable bounds XZ `[760,300]..[1000,476]`, contact corridor `[804,348]..[932,428]`, `37,415` connected infantry cells, `17,751` road cells, and zero bridge cells; actual-surface annotated crop review; road-over-water absent in-window while blue Autobahn/canal remains a separate out-of-window classification; two-pass logical asset/report/capture SHA-256 stable; focused `9 / 9`, source-growth `17 / 17`, architecture `23` suites, and compiler zero pass; seven incidental architecture-validator outputs restored to exact pre-run hashes; clean pushed head.
 
-- [ ] **M01DC-012 - Author planning, battle-start, and minimap projections**
+- [x] **M01DC-012 - Author planning, battle-start, and minimap projections**
   **Depends on:** M01DC-011.
   **Deliverable:** frozen camera and minimap identities with framing, clamp, zoom, projection, safe-area, and transition metadata.
   **Acceptance:** the mission starts readable at supported aspect ratios; cameras remain inside valid bounds; minimap-to-world projection is deterministic and exact.
-  **Evidence:** camera/minimap validator and captures at 16:9, 20:9, and tablet landscape; clean pushed head.
+  **Evidence:** `Design/AgentReports/M01FirstContact/m01dc_012_camera_minimap.json` and contact sheet; exact `camera.ch01.m01.planning`, `camera.ch01.m01.battle_start`, and `minimap.ch01.m01.projection` records authored in the logical map only; all reviewed subjects remain inside frozen safe frames at `1920x1080`, `2400x1080`, and `1920x1200`; camera poses/FOV stay inside M01 bounds with clamp enabled; minimap origin `[760,0,300]`, size `[240,176]`, orientation `0`, exact world/normalized round trip within `0.001`, and out-of-range clamp pass; normal blend policy `1.25s` and reduced-motion cut `0s` frozen for M01DC-015 implementation; two-pass asset/report/contact-sheet hashes stable; focused `12 / 12`, source-growth `17 / 17`, architecture `23` suites, and compiler zero pass; seven incidental validator outputs restored to exact pre-run hashes; clean pushed head.
 
 - [ ] **M01DC-013 - Author and validate all required anchors**
   **Depends on:** M01DC-011.
@@ -548,6 +548,7 @@ Unity licensing, wrapper, device connection, disk space, or bounded tool interru
 | 2026-08-12 | M01DC-011 source-growth decomposition amendment | Authorized one stateless `M01FirstContactOldMarketWindowEvidence` source and metadata so capture/report serialization remains separate from Old Market surface/navigation validation and both new editor files remain within the 350-line target. No exception, threshold, production runtime, or physical-source change is authorized. | enclosing amendment commit | Accepted |
 | 2026-08-12 | M01DC-011 | Selected the logical Old Market window from the accepted dense-city surface using only current approved FirstLaunch `FL-P15..18` comic authority. Deterministic connected-route selection validates exact bounds/corridor, readable 4-versus-3 scale, `37,415` connected infantry cells, `17,751` road cells, zero bridge cells, and separate canal classification. Actual-surface capture and logical asset/report are two-pass hash-stable; focused `9 / 9`, source-growth `17 / 17`, architecture `23` suites, and compiler zero pass. | enclosing M01DC-011 acceptance commit | Accepted |
 | 2026-08-12 | M01DC-012 ownership/source-growth amendment | Added only the deterministic Unity `.meta` paired with the authorized camera/minimap test and one stateless test-side evidence/capture source plus metadata. This keeps validation and image/report serialization separate under the 350-line target; no runtime class, physical city source, map bake, threshold, package, or project setting is authorized. | enclosing amendment commit | Accepted |
+| 2026-08-12 | M01DC-012 | Authored the two frozen M01 cameras and exact Old Market minimap crop in the logical map without a new runtime owner. Projection tests retain required subjects inside safe frames at 16:9, 20:9, and 16:10 tablet; camera bounds/zoom/clamp, exact minimap round trip/clamp, and future transition/reduced-motion policy pass. Two-pass outputs are hash-stable; focused `12 / 12`, source-growth `17 / 17`, architecture `23` suites, and compiler zero pass. | enclosing M01DC-012 acceptance commit | Accepted |
 
 Implementation entries are appended only after an item is accepted and pushed. The final row must record M01DC-043, the final main/origin head, 43/43 progress, Android package/device identities, agent-QA/finding closure, validation summary, and clean worktree state.
 

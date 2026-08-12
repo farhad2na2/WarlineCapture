@@ -16,8 +16,8 @@ MonoBehaviour:
   schemaVersion: 1
   contentVersion: 1
   sourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900
-  contentHash: 5d71265394cfa008e8d5e00f1c075e3d56a0d257c3e9ed656d3510aea1fcb9e8
-  generatedMetadataHash: 02258adedb7fc50aca106dc5d6d9ef86804e4a10d0224c53ad7efcf9abc91af1
+  contentHash: 3c24dc034d4dc13537d1bbf43fe2cd87e56bda083083c131d60fc7c253573628
+  generatedMetadataHash: ecec81044f5cdaaf4264d74d3a90380f1d0dd4370df3abaaac1ac576cdb48af0
   sourceBinding:
     sourceOperationMapId: opmap.skirmish.desert_base_01
     sourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900
@@ -53,19 +53,26 @@ MonoBehaviour:
     supportsDynamicBlockers: 1
     supportsDynamicOccupancy: 1
   cameras:
-  - cameraId: camera.skirmish.desert_base_01.active
-    position: {x: 870.0283, y: 42.030247, z: 325.60086}
-    eulerAngles: {x: 33.209724, y: 11.1042595, z: 0.0000068879754}
+  - cameraId: camera.ch01.m01.planning
+    position: {x: 870, y: 100, z: 320}
+    eulerAngles: {x: 58, y: 0, z: 0}
     orthographic: 0
-    fieldOfView: 31.2
+    fieldOfView: 50
     orthographicSize: 5
     clampToCameraBounds: 1
-  planningCameraId: camera.skirmish.desert_base_01.active
-  battleCameraId: camera.skirmish.desert_base_01.active
+  - cameraId: camera.ch01.m01.battle_start
+    position: {x: 870, y: 100, z: 330}
+    eulerAngles: {x: 65, y: 0, z: 0}
+    orthographic: 0
+    fieldOfView: 48
+    orthographicSize: 5
+    clampToCameraBounds: 1
+  planningCameraId: camera.ch01.m01.planning
+  battleCameraId: camera.ch01.m01.battle_start
   minimap:
-    minimapId: minimap.skirmish.desert_base_01.full
-    projectionOrigin: {x: 0, y: 0, z: 0}
-    projectionSize: {x: 2048, y: 1024}
+    minimapId: minimap.ch01.m01.projection
+    projectionOrigin: {x: 760, y: 0, z: 300}
+    projectionSize: {x: 240, y: 176}
     orientationDegrees: 0
   anchors:
   - anchorId: anchor.skirmish.desert_base_01.compat_start

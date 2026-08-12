@@ -1,8 +1,8 @@
 # M01 First Contact Dense-City Implementation Tracker
 
 Date: 2026-08-12
-Status: Active; M01DC-010 accepted and M01DC-011 dependency-ready
-Progress: 10/43 accepted items (23.3%)
+Status: Active; M01DC-011 accepted and M01DC-012 dependency-ready
+Progress: 11/43 accepted items (25.6%)
 Parent design: `Design/M01_FirstContact_Dense_City_High_Level_Design.md`
 Technical architecture: `Design/Architecture/m01_first_contact_dense_city_technical_architecture.md`
 Mission: `saga.ch01.m01.first_contact`
@@ -282,11 +282,11 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
   **Acceptance:** zero cloned city scenes, geometry, generated databases, Addressables content, or `.meta` identities; stale/mismatched source identity or hash fails closed.
   **Evidence:** `Design/AgentReports/M01FirstContact/m01dc_010_physical_source_reuse.json`; checked-wrapper source-binding `10 / 10`, source-growth `17 / 17`, and architecture `23`-suite passes with zero compiler errors; exact accepted definition/authoring/presentation/runtime-binding/surface/minimap GUIDs and SHA-256 hashes remain frozen; blank bindings preserve every existing map; resolved logical bindings require exact source identity/content hashes and source-scene GUID and reject missing, stale, mismatched, self, and chained bindings; duplicate scan finds exactly the two accepted Skirmish dense-city scenes and zero Campaign clone, geometry, generated database, or Addressables content; identity/hash rules decomposed without exception so material `OperationMapDefinition.cs` is `499` lines; seven incidental validator outputs restored; clean pushed head.
 
-- [ ] **M01DC-011 - Select the Old Market mission window**
+- [x] **M01DC-011 - Select the Old Market mission window**
   **Depends on:** M01DC-010.
   **Deliverable:** reviewed logical bounds, playable surfaces, navigation scope, off-window exclusion, landmark orientation, and contact corridor using accepted city data. The approved current FirstLaunch comic panels `FL-P15` through `FL-P18`, with `FL-P18` as the binding handoff frame, are the visual/geographic authority; archived M01 prototype captures and earlier dense-city review images are not design authority.
   **Acceptance:** one player squad and one patrol fit readable M01 scale; reachable space has no road-over-water-without-bridge defect; blue Autobahn/canal isolation remains separately classified and is not conflated with this mission window.
-  **Evidence:** top-down annotated capture, surface/nav report, exact bounds, review record, clean pushed head.
+  **Evidence:** `Design/AgentReports/M01FirstContact/m01dc_011_old_market_window.json` and `.png`; approved-current FirstLaunch `FL-P15..18` authority hash-bound at both aspect families with `FL-P18` as handoff and old images explicitly rejected; logical playable bounds XZ `[760,300]..[1000,476]`, contact corridor `[804,348]..[932,428]`, `37,415` connected infantry cells, `17,751` road cells, and zero bridge cells; actual-surface annotated crop review; road-over-water absent in-window while blue Autobahn/canal remains a separate out-of-window classification; two-pass logical asset/report/capture SHA-256 stable; focused `9 / 9`, source-growth `17 / 17`, architecture `23` suites, and compiler zero pass; seven incidental architecture-validator outputs restored to exact pre-run hashes; clean pushed head.
 
 - [ ] **M01DC-012 - Author planning, battle-start, and minimap projections**
   **Depends on:** M01DC-011.
@@ -546,6 +546,7 @@ Unity licensing, wrapper, device connection, disk space, or bounded tool interru
 | 2026-08-12 | M01DC-010 | Added the default-safe `OperationMapSourceBindingConfig` and fail-closed logical-to-physical resolver. Exact accepted dense-city GUID/hash/source-scene evidence passes; existing self-owned maps remain unchanged; stale, missing, mismatched, self, and chained bindings fail. Zero physical-source clones or protected changes exist; focused `10 / 10`, source-growth `17 / 17`, architecture `23` suites, and compiler zero pass. | enclosing M01DC-010 acceptance commit | Accepted |
 | 2026-08-12 | M01DC-011 authority/validation amendment | Project owner clarified that the current approved FirstLaunch comic, not old prototype or dense-city review images, is the bazaar/Old Market visual authority. Froze `FL-P15..18` at 16:9 and 20:9 read-only and authorized one focused checked-wrapper validator/capture responsibility plus its metadata. No production asset, city source, map data, threshold, or protected content changed. | enclosing amendment commit | Accepted |
 | 2026-08-12 | M01DC-011 source-growth decomposition amendment | Authorized one stateless `M01FirstContactOldMarketWindowEvidence` source and metadata so capture/report serialization remains separate from Old Market surface/navigation validation and both new editor files remain within the 350-line target. No exception, threshold, production runtime, or physical-source change is authorized. | enclosing amendment commit | Accepted |
+| 2026-08-12 | M01DC-011 | Selected the logical Old Market window from the accepted dense-city surface using only current approved FirstLaunch `FL-P15..18` comic authority. Deterministic connected-route selection validates exact bounds/corridor, readable 4-versus-3 scale, `37,415` connected infantry cells, `17,751` road cells, zero bridge cells, and separate canal classification. Actual-surface capture and logical asset/report are two-pass hash-stable; focused `9 / 9`, source-growth `17 / 17`, architecture `23` suites, and compiler zero pass. | enclosing M01DC-011 acceptance commit | Accepted |
 
 Implementation entries are appended only after an item is accepted and pushed. The final row must record M01DC-043, the final main/origin head, 43/43 progress, Android package/device identities, agent-QA/finding closure, validation summary, and clean worktree state.
 

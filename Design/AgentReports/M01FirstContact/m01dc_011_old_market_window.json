@@ -1,0 +1,27 @@
+{
+  "artifactId": "m01dc-011-old-market-window-v1", "taskId": "M01DC-011",
+  "captureHead": "dea48811fbfa1d81b1e6211dddb51dd1a40a7025", "result": "Passed",
+  "visualAuthority": {
+    "kind": "approved-current-first-launch-comic", "bindingPanel": "FL-P18",
+    "sequencePanels": ["FL-P15", "FL-P16", "FL-P17", "FL-P18"],
+    "flP18Sha256_16x9": "d68d9a3341ab9493d68d491b1d51eb481bc2fc862c47b57c60affc9572216a54", "flP18Sha256_20x9": "078abb9f5b759a3c606a030e6d44187194c156681db749bd4dbf8bed6cc4d548",
+    "rejectedAuthority": ["archived M01 prototype captures", "earlier dense-city review images"]
+  },
+  "physicalSource": {"operationMapId": "opmap.skirmish.desert_base_01", "mutated": false},
+  "logicalView": {
+    "operationMapId": "opmap.ch01.district_edge_01",
+    "playableBoundsXZ": {"min": [760, 300], "max": [1000, 476]},
+    "contactCorridorXZ": {"min": [804, 348], "max": [932, 428]},
+    "offWindowSimulation": "excluded"
+  },
+  "surfaceNavigation": {
+    "totalCells": 42240, "infantryCells": 37466,
+    "reachableCells": 37415, "roadCells": 17751,
+    "plazaCells": 0, "blockedCells": 4774,
+    "bridgeCells": 0, "minHeight": -0.701, "maxHeight": 10.129,
+    "roadOverWaterWithoutBridge": "absent-in-window",
+    "blueAutobahnCanalIsolation": "separate-out-of-window-defect-not-conflated"
+  },
+  "scaleReview": {"playerSquadCount": 4, "patrolCount": 3, "readable": true},
+  "capture": "Design/AgentReports/M01FirstContact/m01dc_011_old_market_window.png", "validation": "[M01FirstContactOldMarketWindowValidation] result=Passed tests=9"
+}

@@ -4,7 +4,9 @@
     "references": [
         "Game.Catalog.Contracts",
         "Game.Components",
+        "Game.Missions.Contracts",
         "Game.Narrative.Contracts",
+        "Game.Tactical.Contracts",
         "Unity.Addressables",
         "Unity.Collections",
         "Unity.Entities",

@@ -1,0 +1,71 @@
+{
+  "artifactId": "m01dc-004-contract-validation",
+  "schemaVersion": 1,
+  "itemId": "M01DC-004",
+  "entryHead": "ce3619a2d8a2c97da6da1271ca75db3d941aafc0",
+  "result": "Passed",
+  "scope": {
+    "newAssembly": "Game.Missions.Contracts",
+    "productionSourceFiles": 4,
+    "largestProductionSourceLines": 346,
+    "sourceLineCeiling": 350,
+    "existingScenesModified": 0,
+    "existingOperationMapAssetsModified": 0,
+    "existingSkirmishDataModified": 0
+  },
+  "validation": [
+    {
+      "gate": "M01 contract",
+      "method": "M01FirstContactContractTests.RunFocusedValidation",
+      "marker": "[M01FirstContactContractValidation] result=Passed tests=12",
+      "tests": 12,
+      "timeoutSeconds": 900,
+      "compilerErrors": 0,
+      "rawLogSha256": "4d827275c39b837b28923fef82db3f774db9e2075ab9a4c97e2f123f0635e4ea"
+    },
+    {
+      "gate": "source growth",
+      "method": "ProductionSourceGrowthArchitectureTests.RunFocusedValidation",
+      "marker": "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17",
+      "tests": 17,
+      "timeoutSeconds": 900,
+      "compilerErrors": 0,
+      "rawLogSha256": "96f32bf1eedd78c8220fad6d571983e913f31340ea06a931bc7756fdcde6daf1"
+    },
+    {
+      "gate": "architecture",
+      "method": "ArchitectureHardeningCloseoutValidationRunner.RunFocusedValidation",
+      "marker": "[ArchitectureHardeningCloseoutValidation] result=Passed suites=23",
+      "suites": 23,
+      "timeoutSeconds": 1200,
+      "compilerErrors": 0,
+      "rawLogSha256": "b0e62682f05fb4ca34a4b6bf39c274de300c689542f0d53ad08ff10091339b48"
+    }
+  ],
+  "contractChecks": {
+    "frozenEnumValues": true,
+    "dependencyRootAssembly": true,
+    "validM01DefinitionAccepted": true,
+    "invalidIdentityRejected": true,
+    "duplicateObjectivesRejected": true,
+    "missingReferencesRejected": true,
+    "invalidStarThresholdRejected": true,
+    "m01IntelRewardRejected": true,
+    "duplicateCommandsRejected": true,
+    "missingReadinessRejected": true,
+    "duplicateCatalogIdentityRejected": true,
+    "canonicalCatalogResolution": true
+  },
+  "recovery": {
+    "condition": "Unity Hub generic licensing client 1.17.4 held Unity-LicenseClient-zfoul and refused the Editor versioned client",
+    "action": "With no unrelated Editor and no project lock, closed only the verified failed wrapper-owned Editor, restarted only the verified generic Unity.Licensing.Client, and immediately reran each checked GUI-licensed wrapper.",
+    "hubRemainedOpen": true,
+    "wrapperBypassed": false
+  },
+  "incidentalValidatorOutputs": {
+    "count": 7,
+    "policy": "Restored exactly to the entry head after validation; none are owned by M01DC-004.",
+    "restored": true
+  },
+  "nextDependencyReadyItem": "M01DC-005"
+}

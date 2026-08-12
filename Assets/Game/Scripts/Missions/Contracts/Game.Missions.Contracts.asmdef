@@ -1,0 +1,16 @@
+{
+    "name": "Game.Missions.Contracts",
+    "rootNamespace": "Game.Missions.Contracts",
+    "references": [
+        "Game.Narrative.Contracts"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": true
+}

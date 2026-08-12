@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 976d0e40bd07865479ff5de27cefdbb8, type: 3}
+  m_Name: MissionDefinition_Ch01_M01_FirstContact
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.MissionDefinitionConfig
+  missionId: saga.ch01.m01.first_contact
+  schemaVersion: 1
+  displayNameKey: mission.m01.name
+  displaySummaryKey: mission.m01.summary
+  locationNameKey: mission.m01.location
+  scenarioId: scenario.ch01.m01.first_contact
+  operationMapId: opmap.ch01.district_edge_01
+  briefingSequenceId: seq.ch01.m01.brief
+  commsSequenceId: seq.ch01.m01.comms
+  debriefSequenceId: seq.ch01.m01.debrief
+  objectives:
+  - objectiveId: obj.ch01.m01.destroy_patrol
+    displayTextKey: mission.m01.objective.secure_corridor
+    rule: 1
+    missionRoleId: role.hostile.patrol
+    requiredCount: 3
+    failureOnRuleBreak: 0
+  - objectiveId: obj.ch01.m01.keep_command_squad_alive
+    displayTextKey: mission.m01.failure.command_squad_destroyed
+    rule: 2
+    missionRoleId: role.friendly.command_squad
+    requiredCount: 1
+    failureOnRuleBreak: 1
+  stars:
+  - starIndex: 1
+    rule: 1
+    displayTextKey: mission.m01.star.complete
+    threshold: 0
+  - starIndex: 2
+    rule: 2
+    displayTextKey: mission.m01.star.no_squad_loss
+    threshold: 0
+  - starIndex: 3
+    rule: 3
+    displayTextKey: mission.m01.star.under_four_minutes
+    threshold: 240000
+  firstClearRewards:
+  - kind: 0
+    rewardConfigId: reward.commander_xp
+    displayTextKey: mission.reward.commander_xp
+    amount: 260
+  - kind: 1
+    rewardConfigId: 
+    displayTextKey: mission.reward.credits
+    amount: 1200
+  replayRewards:
+  - kind: 1
+    rewardConfigId: 
+    displayTextKey: mission.reward.credits
+    amount: 250
+  commandPolicy:
+    allowedCommands: 0100000002000000030000000400000005000000
+  replayAllowed: 1
+  replayTutorialDefaultEnabled: 0
+  requireOperationMapReady: 1
+  requireGridReady: 1
+  requireUnitCatalogReady: 1
+  requiredFeatureIds:
+  - feature.operation_map
+  - feature.unit_catalog
+  - feature.tactical_commands

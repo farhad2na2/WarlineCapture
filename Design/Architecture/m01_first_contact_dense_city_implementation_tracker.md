@@ -1,8 +1,8 @@
 # M01 First Contact Dense-City Implementation Tracker
 
 Date: 2026-08-12
-Status: Active; M01DC-008 accepted and M01DC-009 dependency-ready
-Progress: 8/43 accepted items (18.6%)
+Status: Active; M01DC-009 accepted and M01DC-010 dependency-ready
+Progress: 9/43 accepted items (20.9%)
 Parent design: `Design/M01_FirstContact_Dense_City_High_Level_Design.md`
 Technical architecture: `Design/Architecture/m01_first_contact_dense_city_technical_architecture.md`
 Mission: `saga.ch01.m01.first_contact`
@@ -268,11 +268,11 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
   **Acceptance:** default/new/older profile migration is deterministic; repeated settlement is idempotent; interrupted writes preserve the prior valid profile; corrupt or future versions fail safely without inventing progress; settings and quick-game data regress zero.
   **Evidence:** `Design/AgentReports/M01FirstContact/m01dc_008_progress_migration.json`; checked-wrapper progress/migration `15 / 15`, source-growth `17 / 17`, and architecture `23`-suite passes with zero compiler errors; additive profile/entry schemas, deterministic mission-ID ordering, sole-owner store mutation, idempotent settlement tokens, first-clear/replay/best/resume/reveal state, corrupt/future-version safety, restart, settings/quick-game regression, and interrupted atomic-replace preservation; seven incidental validator outputs restored to the entry head; clean pushed head.
 
-- [ ] **M01DC-009 - Author and register canonical M01 data**
+- [x] **M01DC-009 - Author and register canonical M01 data**
   **Depends on:** M01DC-005 through M01DC-008.
   **Deliverable:** canonical `MissionDefinition`, `ScenarioSetup`, objectives, stars, rewards, narrative IDs, exact Courier/Warden/Broker patrol config references, and Campaign catalog registration for the frozen identities.
   **Acceptance:** deterministic regeneration is byte/hash stable; all cross-references resolve; the patrol contains those three exact FirstLaunch continuity identities and excludes Qassem/Male 05 and the Male 02 heavy gunner; the old hard-coded `+260/+1,200/+1 Intel` briefing placeholders are not authoritative and M01 grants no Intel.
-  **Evidence:** registration/reference validator, two-pass regeneration hashes, clean pushed head.
+  **Evidence:** `Design/AgentReports/M01FirstContact/m01dc_009_canonical_data.json`; checked-wrapper canonical-data `13 / 13`, source-growth `17 / 17`, and architecture `23`-suite passes with zero compiler errors; two-pass regeneration byte/hash stable for all three canonical assets; frozen mission/scenario/map/objective/narrative identities and all cross-references resolve; exact Courier/Warden/Broker patrol and four approved friendly identities are GUID/path bound; Qassem/Male 05 and the Male 02 heavy gunner are absent; first-clear `260` Commander XP plus `1200` Credits and replay `250` Credits grant zero Intel; seven incidental validator outputs restored; clean pushed head.
 
 ### Phase C - Shared Dense-City Old Market View
 
@@ -540,6 +540,7 @@ Unity licensing, wrapper, device connection, disk space, or bounded tool interru
 | 2026-08-12 | M01DC-009 ownership amendment | Added only the five deterministic Unity folder `.meta` paths required by M01DC-009's already-authorized nested canonical asset paths. No production/config asset changed; exact-path and protected-path policies remain unchanged. | enclosing ownership-amendment commit | Accepted |
 | 2026-08-12 | M01DC-009 metadata amendment | Added only the five deterministic Unity file `.meta` paths paired with M01DC-009's already-authorized canonical assets and source files. No production/config asset changed; exact-path and protected-path policies remain unchanged. | enclosing metadata-amendment commit | Accepted |
 | 2026-08-12 | M01DC-009 objective-identity amendment | Added only `MissionDefinitionContractValidation.cs` so M01DC-009 can reconcile the frozen `obj.ch01.*` authority with the prior validator's obsolete `objective.*`-only prefix. The change is bounded to canonical objective-ID acceptance and remains fail closed. | enclosing objective-identity-amendment commit | Accepted |
+| 2026-08-12 | M01DC-009 | Authored and catalogued deterministic canonical M01 mission/scenario data. Exact frozen identities, objective/star/reward policy, anchors, restrictions, ambient civilians, approved friendly squad, and Courier/Warden/Broker patrol validate; reserved Qassem/heavy-gunner identities and Intel are excluded. Two-pass assets are byte stable; canonical `13 / 13`, source-growth `17 / 17`, architecture `23` suites, and compiler zero pass. | enclosing M01DC-009 acceptance commit | Accepted |
 
 Implementation entries are appended only after an item is accepted and pushed. The final row must record M01DC-043, the final main/origin head, 43/43 progress, Android package/device identities, agent-QA/finding closure, validation summary, and clean worktree state.
 

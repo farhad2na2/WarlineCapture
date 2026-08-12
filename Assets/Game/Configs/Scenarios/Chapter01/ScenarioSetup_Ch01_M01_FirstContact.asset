@@ -1,0 +1,102 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19ea19a05fcb4fa5b6afe32e88bedc11, type: 3}
+  m_Name: ScenarioSetup_Ch01_M01_FirstContact
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.ScenarioSetupConfig
+  scenarioId: scenario.ch01.m01.first_contact
+  operationMapId: opmap.ch01.district_edge_01
+  requiredAnchors:
+  - anchorId: anchor.ch01.m01.player_spawn
+    kind: 3
+  - anchorId: anchor.ch01.m01.camera_start
+    kind: 12
+  - anchorId: anchor.ch01.m01.move_target
+    kind: 2
+  - anchorId: anchor.ch01.m01.patrol_spawn
+    kind: 1
+  - anchorId: anchor.ch01.m01.patrol_route_a
+    kind: 11
+  - anchorId: anchor.ch01.m01.patrol_route_b
+    kind: 11
+  - anchorId: anchor.ch01.m01.patrol_route_c
+    kind: 11
+  - anchorId: anchor.ch01.m01.patrol_objective
+    kind: 6
+  - anchorId: anchor.ch01.m01.civilian_safe_zone
+    kind: 5
+  - anchorId: anchor.ch01.m01.civilian_evacuation
+    kind: 5
+  - anchorId: anchor.ch01.m01.minimap_start
+    kind: 13
+  deterministicSeed: 1001001
+  encounterStartMilliseconds: 3000
+  unitGroups:
+  - groupId: group.ch01.m01.command_squad
+    factionIndex: 1
+    units:
+    - unitConfigKey: unit.jrc.rifle_male_02_alt_02
+      expectedAssetGuid: 70d525bdf4894529869cd1402ff5d62e
+      spawnAnchorId: anchor.ch01.m01.player_spawn
+      missionRoleId: role.friendly.command_squad
+      count: 1
+    - unitConfigKey: unit.jrc.rifle_male_02_alt_04
+      expectedAssetGuid: a3d36fd8847164cc596e0b5ba7bd9bb9
+      spawnAnchorId: anchor.ch01.m01.player_spawn
+      missionRoleId: role.friendly.command_squad
+      count: 1
+    - unitConfigKey: unit.jrc.rifle_female_01_alt_01
+      expectedAssetGuid: 970069fef3e4437195c3225a1615e384
+      spawnAnchorId: anchor.ch01.m01.player_spawn
+      missionRoleId: role.friendly.command_squad
+      count: 1
+    - unitConfigKey: unit.jrc.rifle_female_02_alt_01
+      expectedAssetGuid: b9481cc1ec42499c96846b5d161ac7b2
+      spawnAnchorId: anchor.ch01.m01.player_spawn
+      missionRoleId: role.friendly.command_squad
+      count: 1
+  - groupId: group.ch01.m01.hostile_patrol
+    factionIndex: 2
+    units:
+    - unitConfigKey: unit.ash.courier
+      expectedAssetGuid: fe23cbf9678344f4b182169b49fe68b6
+      spawnAnchorId: anchor.ch01.m01.patrol_spawn
+      missionRoleId: role.hostile.patrol
+      count: 1
+    - unitConfigKey: unit.ash.warden
+      expectedAssetGuid: 01045d2a58ec4359b395696309684ffa
+      spawnAnchorId: anchor.ch01.m01.patrol_spawn
+      missionRoleId: role.hostile.patrol
+      count: 1
+    - unitConfigKey: unit.ash.broker
+      expectedAssetGuid: 8093159068194fc187efe5c356116e9b
+      spawnAnchorId: anchor.ch01.m01.patrol_spawn
+      missionRoleId: role.hostile.patrol
+      count: 1
+  patrolRoutes:
+  - routeId: route.ch01.m01.hostile_patrol
+    unitGroupId: group.ch01.m01.hostile_patrol
+    anchorIds:
+    - anchor.ch01.m01.patrol_route_a
+    - anchor.ch01.m01.patrol_route_b
+    - anchor.ch01.m01.patrol_route_c
+    startDelayMilliseconds: 3000
+  restrictions:
+    buildingDisabled: 1
+    productionDisabled: 1
+    economyDisabled: 1
+    transportDisabled: 1
+    airDisabled: 1
+  ambientPresentations:
+  - presentationId: ambient.ch01.m01.civilians
+    anchorId: anchor.ch01.m01.civilian_safe_zone
+    routeId: route.ch01.m01.civilian_evacuation
+    instanceCount: 8

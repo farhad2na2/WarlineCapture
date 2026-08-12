@@ -144,7 +144,7 @@ namespace Game.Configs
             for (int index = 0; index < objectives.Length; index++)
             {
                 MissionObjectiveDefinitionConfig objective = objectives[index];
-                if (!IsValidScopedId(objective.ObjectiveId, "objective", 2, 7) ||
+                if (!IsValidObjectiveId(objective.ObjectiveId) ||
                     !IsValidScopedId(objective.DisplayTextKey, "mission", 3, 8) ||
                     !IsValidScopedId(objective.MissionRoleId, "role", 2, 7) ||
                     objective.Rule == MissionObjectiveRuleKind.None || objective.RequiredCount < 1)
@@ -345,6 +345,9 @@ namespace Game.Configs
             string[] parts = value.Split('.');
             return parts.Length >= minimumParts && parts.Length <= maximumParts && parts[0] == prefix;
         }
+
+        private static bool IsValidObjectiveId(string value) =>
+            IsValidScopedId(value, "objective", 2, 7) || IsValidScopedId(value, "obj", 4, 7);
 
         private static bool IsValidCharacters(string value, int maximumLength)
         {

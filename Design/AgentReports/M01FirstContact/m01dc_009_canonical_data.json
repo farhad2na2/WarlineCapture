@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "itemId": "M01DC-009",
+  "capturedAtUtc": "2026-08-12T09:56:11Z",
+  "entryHead": "ff36c24949ae335c83f947fab07b8c734ec94558",
+  "missionId": "saga.ch01.m01.first_contact",
+  "scenarioId": "scenario.ch01.m01.first_contact",
+  "operationMapId": "opmap.ch01.district_edge_01",
+  "deterministicRegeneration": {
+    "passes": 2,
+    "byteStable": true,
+    "assets": [
+      {
+        "path": "Assets/Game/Configs/Campaign/CampaignMissionCatalog.asset",
+        "sha256Pass1": "8e6190b16c276452283bb1b013105443dd8896828249a6f0696022a9feca23ab",
+        "sha256Pass2": "8e6190b16c276452283bb1b013105443dd8896828249a6f0696022a9feca23ab",
+        "bytes": 606
+      },
+      {
+        "path": "Assets/Game/Configs/Missions/Chapter01/MissionDefinition_Ch01_M01_FirstContact.asset",
+        "sha256Pass1": "76ffeaf51e508c9848a69579408cd19e80ddfff217e342ef8e9914384830a6c9",
+        "sha256Pass2": "76ffeaf51e508c9848a69579408cd19e80ddfff217e342ef8e9914384830a6c9",
+        "bytes": 2267
+      },
+      {
+        "path": "Assets/Game/Configs/Scenarios/Chapter01/ScenarioSetup_Ch01_M01_FirstContact.asset",
+        "sha256Pass1": "a911599a0fa93c881d01670f32140689a6ab57e29273ea330f2a0b290124bf9a",
+        "sha256Pass2": "a911599a0fa93c881d01670f32140689a6ab57e29273ea330f2a0b290124bf9a",
+        "bytes": 3526
+      }
+    ]
+  },
+  "canonicalData": {
+    "objectiveIds": [
+      "obj.ch01.m01.destroy_patrol",
+      "obj.ch01.m01.keep_command_squad_alive"
+    ],
+    "narrativeSequenceIds": [
+      "seq.ch01.m01.brief",
+      "seq.ch01.m01.comms",
+      "seq.ch01.m01.debrief"
+    ],
+    "firstClearRewards": {
+      "commanderXp": 260,
+      "credits": 1200,
+      "intel": 0
+    },
+    "replayRewards": {
+      "credits": 250,
+      "intel": 0
+    },
+    "underFourMinutesStarThresholdMilliseconds": 240000,
+    "requiredAnchorCount": 11,
+    "ambientCivilianCount": 8
+  },
+  "continuityPatrol": [
+    {
+      "callSign": "Courier",
+      "assetGuid": "fe23cbf9678344f4b182169b49fe68b6",
+      "assetPath": "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Chr_Insurgent_Male_03_Config.asset"
+    },
+    {
+      "callSign": "Warden",
+      "assetGuid": "01045d2a58ec4359b395696309684ffa",
+      "assetPath": "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Chr_Insurgent_Female_01_Config.asset"
+    },
+    {
+      "callSign": "Broker",
+      "assetGuid": "8093159068194fc187efe5c356116e9b",
+      "assetPath": "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Chr_Insurgent_Female_02_Config.asset"
+    }
+  ],
+  "excludedReservedAssetGuids": {
+    "qassemMale05": "5e83cd16726343b3b2ffd9fbb49cfa29",
+    "male02HeavyGunner": "6095a30179ca49bb9e2759a1ace9da39"
+  },
+  "validation": {
+    "canonicalData": {
+      "method": "M01FirstContactCanonicalDataTests.RunFocusedValidation",
+      "marker": "[M01FirstContactCanonicalDataValidation] result=Passed tests=13",
+      "logSha256": "6699d16a12a8bef391517537eecf8e6aeb9dc99d4041aa819c3bb4e00599e8ca"
+    },
+    "sourceGrowth": {
+      "method": "ProductionSourceGrowthArchitectureTests.RunFocusedValidation",
+      "marker": "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17",
+      "logSha256": "b46e33d5c7ae1b9f2b33c734dc83790ff78361b3221e1dd0b3a644a212c38d53"
+    },
+    "architecture": {
+      "method": "ArchitectureHardeningCloseoutValidationRunner.RunFocusedValidation",
+      "marker": "[ArchitectureHardeningCloseoutValidation] result=Passed suites=23",
+      "logSha256": "a050f31fa7753e605c73976f0fe84d0073ff6820914cb33a5a9b80f64fc2e174"
+    },
+    "compilerErrors": 0,
+    "protectedDenseCityPathsChanged": 0,
+    "incidentalValidatorOutputsRestored": 7
+  }
+}

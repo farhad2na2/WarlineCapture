@@ -4,10 +4,10 @@
 - Matrix: `m01dc_003_ownership_evidence_rollback_matrix.json`
 - Result: `Passed`
 - Remaining item coverage: `40 / 40` (`M01DC-004` through `M01DC-043`)
-- Exact planned edit entries: `171`
+- Exact planned edit entries: `173`
 - Assembly responsibilities: `11`
 - Type groups: `25`
-- Named planned types: `61`
+- Named planned types: `63`
 
 ## Static Acceptance Audit
 

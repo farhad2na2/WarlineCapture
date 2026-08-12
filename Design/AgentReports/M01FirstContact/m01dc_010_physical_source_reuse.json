@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "itemId": "M01DC-010",
+  "capturedAtUtc": "2026-08-12T10:20:45Z",
+  "entryHead": "d01922cafc1d29432a67d218020b98aaee1babd0",
+  "logicalOperationMapId": "opmap.ch01.district_edge_01",
+  "physicalSource": {
+    "operationMapId": "opmap.skirmish.desert_base_01",
+    "sourceIdentityHash": "2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900",
+    "contentHash": "2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c",
+    "generatedMetadataHash": "2089955094bb8a72f2f5e7ca1e05e67c78df049da9185a7d44eabce25d82dc69",
+    "assets": [
+      {
+        "role": "definition",
+        "path": "Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset",
+        "guid": "cbfc2f62e3142413485019bd83197539",
+        "sha256": "f91b737280d8950d97264b54589b963f605a8d8911a0f4e17397bef667e4eba6"
+      },
+      {
+        "role": "authoring",
+        "path": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_dense_city_authoring_candidate.unity",
+        "guid": "a0c9dc175951148c48a94a26bc036bf5",
+        "sha256": "5a15843d63868d639b88d2084ea41184af0cf5d6050b22b563a516ef13752b9c"
+      },
+      {
+        "role": "presentation",
+        "path": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
+        "guid": "c00140f2e94a04c3084c8dcb0c18cbd0",
+        "sha256": "c1bc203591b3f32ae3d8410eaa0988e694b1d9d449ba1e938d9f38058698b598"
+      },
+      {
+        "role": "runtimeBinding",
+        "path": "Assets/Game/GeneratedOperationMaps/RuntimeBinding/opmap.skirmish.desert_base_01/Candidates/opmap_skirmish_desert_base_01_dense_city_entity_scene_runtime.unity",
+        "guid": "dad0bd13fb20943dfb2f881cbe225f05",
+        "sha256": "f58a73d0a8f3627d7ddf42f72b42a9db495d5139ba5da6768492ac36e671ade9"
+      },
+      {
+        "role": "surface",
+        "path": "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset",
+        "guid": "12f517deb32ab49698acbfdaf7c3eac7",
+        "sha256": "1402d769704008e254563ff7ecda835294db83afc2cee6d5bb456987f0392b4d"
+      },
+      {
+        "role": "minimap",
+        "path": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/MinimapRaster.png",
+        "guid": "3b1a8dbd670bf4e94863c00acbc3a3a7",
+        "sha256": "420d9f07fec2418fad279d5d104a2c3caa248ee5481c3658fb9b2b65b9afcc3f"
+      }
+    ]
+  },
+  "bindingContract": {
+    "type": "OperationMapSourceBindingConfig",
+    "fields": ["SourceOperationMapId", "SourceIdentityHash", "SourceContentHash"],
+    "blankBindingPreservesSelfOwnedMaps": true,
+    "requiresResolvedPhysicalDefinition": true,
+    "requiresExactIdentityHash": true,
+    "requiresExactContentHash": true,
+    "requiresExactSourceSceneGuid": true,
+    "rejectsSelfReference": true,
+    "rejectsBindingChains": true
+  },
+  "duplicateContentAudit": {
+    "denseCityPhysicalSceneCount": 2,
+    "campaignDenseCitySceneCloneCount": 0,
+    "newGeometryCount": 0,
+    "newGeneratedDatabaseCount": 0,
+    "newAddressablesContentCount": 0,
+    "protectedDenseCityPathsChanged": 0
+  },
+  "sourceGrowthDecomposition": {
+    "result": "Passed",
+    "exceptionAdded": false,
+    "thresholdChanged": false,
+    "operationMapDefinitionLines": 499,
+    "operationMapIdentityRulesLines": 174,
+    "operationMapContractValidationLines": 278,
+    "rationale": "Moved the pre-existing identity/hash validation responsibility out of the material definition model so the source-binding responsibility remains bounded without an exception."
+  },
+  "validation": {
+    "sourceBinding": {
+      "method": "M01FirstContactMapSourceBindingTests.RunFocusedValidation",
+      "marker": "[M01FirstContactMapSourceBindingValidation] result=Passed tests=10",
+      "logSha256": "ad3541b3d99b52b456f3551bf8bab0f476554391f2c126ab9055cf3f39086802"
+    },
+    "sourceGrowth": {
+      "method": "ProductionSourceGrowthArchitectureTests.RunFocusedValidation",
+      "marker": "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17",
+      "logSha256": "7ff3adce0f19f220399a7443b083811662708fc2698fbc18773971b4bb6acb36"
+    },
+    "architecture": {
+      "method": "ArchitectureHardeningCloseoutValidationRunner.RunFocusedValidation",
+      "marker": "[ArchitectureHardeningCloseoutValidation] result=Passed suites=23",
+      "logSha256": "529a320d83ef66c2681171b6b432b88d30bea1d56044044ef34b7eb819b4a1e6"
+    },
+    "compilerErrors": 0,
+    "incidentalValidatorOutputsRestored": 7
+  }
+}

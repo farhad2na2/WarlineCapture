@@ -1,8 +1,8 @@
 # M01 First Contact Dense-City Implementation Tracker
 
 Date: 2026-08-12
-Status: Active; M01DC-009 accepted and M01DC-010 dependency-ready
-Progress: 9/43 accepted items (20.9%)
+Status: Active; M01DC-010 accepted and M01DC-011 dependency-ready
+Progress: 10/43 accepted items (23.3%)
 Parent design: `Design/M01_FirstContact_Dense_City_High_Level_Design.md`
 Technical architecture: `Design/Architecture/m01_first_contact_dense_city_technical_architecture.md`
 Mission: `saga.ch01.m01.first_contact`
@@ -276,11 +276,11 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
 
 ### Phase C - Shared Dense-City Old Market View
 
-- [ ] **M01DC-010 - Prove and implement physical-source reuse**
+- [x] **M01DC-010 - Prove and implement physical-source reuse**
   **Depends on:** M01DC-003, M01DC-009.
   **Deliverable:** exact proof that M01's logical map can reference the accepted dense-city physical source; if required, one bounded logical-view-to-source binding with identity/hash validation.
   **Acceptance:** zero cloned city scenes, geometry, generated databases, Addressables content, or `.meta` identities; stale/mismatched source identity or hash fails closed.
-  **Evidence:** GUID/hash/source manifest, duplicate-content scan, protected-path diff, clean pushed head.
+  **Evidence:** `Design/AgentReports/M01FirstContact/m01dc_010_physical_source_reuse.json`; checked-wrapper source-binding `10 / 10`, source-growth `17 / 17`, and architecture `23`-suite passes with zero compiler errors; exact accepted definition/authoring/presentation/runtime-binding/surface/minimap GUIDs and SHA-256 hashes remain frozen; blank bindings preserve every existing map; resolved logical bindings require exact source identity/content hashes and source-scene GUID and reject missing, stale, mismatched, self, and chained bindings; duplicate scan finds exactly the two accepted Skirmish dense-city scenes and zero Campaign clone, geometry, generated database, or Addressables content; identity/hash rules decomposed without exception so material `OperationMapDefinition.cs` is `499` lines; seven incidental validator outputs restored; clean pushed head.
 
 - [ ] **M01DC-011 - Select the Old Market mission window**
   **Depends on:** M01DC-010.
@@ -543,6 +543,7 @@ Unity licensing, wrapper, device connection, disk space, or bounded tool interru
 | 2026-08-12 | M01DC-009 | Authored and catalogued deterministic canonical M01 mission/scenario data. Exact frozen identities, objective/star/reward policy, anchors, restrictions, ambient civilians, approved friendly squad, and Courier/Warden/Broker patrol validate; reserved Qassem/heavy-gunner identities and Intel are excluded. Two-pass assets are byte stable; canonical `13 / 13`, source-growth `17 / 17`, architecture `23` suites, and compiler zero pass. | enclosing M01DC-009 acceptance commit | Accepted |
 | 2026-08-12 | M01DC-010 metadata amendment | Added only the deterministic Unity `.meta` paired with M01DC-010's already-authorized focused test source. No production/config asset changed; exact-path and protected-path policies remain unchanged. | enclosing metadata-amendment commit | Accepted |
 | 2026-08-12 | M01DC-010 source-growth decomposition amendment | Added `OperationMapIdentityRules.cs` and its Unity `.meta` so the existing identity/hash rule responsibility can move out of the material `OperationMapDefinition.cs` while adding the authorized source-binding model. This is a bounded mechanical decomposition, not a source-growth exception or threshold change. | enclosing source-growth-decomposition commit | Accepted |
+| 2026-08-12 | M01DC-010 | Added the default-safe `OperationMapSourceBindingConfig` and fail-closed logical-to-physical resolver. Exact accepted dense-city GUID/hash/source-scene evidence passes; existing self-owned maps remain unchanged; stale, missing, mismatched, self, and chained bindings fail. Zero physical-source clones or protected changes exist; focused `10 / 10`, source-growth `17 / 17`, architecture `23` suites, and compiler zero pass. | enclosing M01DC-010 acceptance commit | Accepted |
 
 Implementation entries are appended only after an item is accepted and pushed. The final row must record M01DC-043, the final main/origin head, 43/43 progress, Android package/device identities, agent-QA/finding closure, validation summary, and clean worktree state.
 

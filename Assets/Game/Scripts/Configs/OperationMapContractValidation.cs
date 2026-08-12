@@ -125,6 +125,9 @@ namespace Game.Configs
                     error = $"Operation-map definition '{definition.OperationMapId}' has stale version or hash evidence.";
                     return false;
                 }
+
+                if (!TryValidateSourceBinding(definitions, definition, out error))
+                    return false;
             }
 
             for (int index = 0; index < scenarios.Length; index++)
@@ -176,6 +179,44 @@ namespace Game.Configs
             }
 
             return -1;
+        }
+
+        private static bool TryValidateSourceBinding(
+            OperationMapDefinition[] definitions,
+            OperationMapDefinition logicalDefinition,
+            out string error)
+        {
+            OperationMapSourceBindingConfig binding = logicalDefinition.SourceBinding;
+            if (!binding.IsConfigured)
+            {
+                error = null;
+                return true;
+            }
+
+            int sourceIndex = FindOperationMapIndex(definitions, binding.SourceOperationMapId);
+            if (sourceIndex < 0)
+            {
+                error = $"Logical operation map '{logicalDefinition.OperationMapId}' references unresolved " +
+                        $"physical source '{binding.SourceOperationMapId}'.";
+                return false;
+            }
+
+            OperationMapDefinition source = definitions[sourceIndex];
+            if (source.SourceBinding.IsConfigured ||
+                !string.Equals(binding.SourceIdentityHash, source.SourceIdentityHash, StringComparison.Ordinal) ||
+                !string.Equals(binding.SourceContentHash, source.ContentHash, StringComparison.Ordinal) ||
+                !string.Equals(
+                    logicalDefinition.SourceSceneReference.AssetGUID,
+                    source.SourceSceneReference.AssetGUID,
+                    StringComparison.Ordinal))
+            {
+                error = $"Logical operation map '{logicalDefinition.OperationMapId}' has stale or mismatched " +
+                        $"physical-source identity, content hash, or scene reference.";
+                return false;
+            }
+
+            error = null;
+            return true;
         }
 
         private static bool TryValidateRequiredAnchors(

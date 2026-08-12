@@ -1,8 +1,8 @@
 # M01 First Contact Dense-City Implementation Tracker
 
 Date: 2026-08-12
-Status: Active; M01DC-002 accepted and M01DC-003 dependency-ready
-Progress: 2/43 accepted items (4.7%)
+Status: Active; M01DC-003 accepted and M01DC-004 dependency-ready
+Progress: 3/43 accepted items (7.0%)
 Parent design: `Design/M01_FirstContact_Dense_City_High_Level_Design.md`
 Technical architecture: `Design/Architecture/m01_first_contact_dense_city_technical_architecture.md`
 Mission: `saga.ch01.m01.first_contact`
@@ -230,11 +230,11 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
   **Acceptance:** every planned integration point is classified as reuse, narrow extension, new owner, read-only, or absent; the report identifies the current no-objective-writer gap and current menu-handoff behavior from exact source evidence.
   **Evidence:** `Design/AgentReports/M01FirstContact/m01dc_002_baseline_inventory.json`; compact validation manifest `m01dc_002_baseline_validation.md`; exact source-growth `17 / 17` and architecture `23`-suite checked-wrapper passes with zero compiler errors; incidental validator output restored; clean pushed head.
 
-- [ ] **M01DC-003 - Freeze item ownership, evidence, and rollback matrix**
+- [x] **M01DC-003 - Freeze item ownership, evidence, and rollback matrix**
   **Depends on:** M01DC-002.
   **Deliverable:** exact file allowlist by remaining item, technical-architecture type/assembly inventory, separately owned/read-only paths, generated-output policy, required validators, pass markers, timeouts, evidence destinations, and per-phase rollback boundaries.
   **Acceptance:** every planned type has one responsibility and assembly, forbidden names/patterns are audited, there is no unbounded path family or overlap with active architecture/map ownership, and no accepted dense-city production asset is planned for modification.
-  **Evidence:** reviewed ownership matrix, protected-path audit, clean pushed head.
+  **Evidence:** `Design/AgentReports/M01FirstContact/m01dc_003_ownership_evidence_rollback_matrix.json`; `m01dc_003_matrix_validation.md`; all `40 / 40` remaining item allowlists present with `164` exact path entries, `61` uniquely assigned types across `11` assemblies, zero forbidden type names, zero wildcard edit paths, zero read-only/protected dense-city overlaps, zero production changes, passing `git diff --check`, and clean pushed head.
 
 ### Phase B - Additive Mission Data Contracts
 
@@ -531,6 +531,7 @@ Unity licensing, wrapper, device connection, disk space, or bounded tool interru
 | 2026-08-12 | HLD | Project owner approved direct FirstLaunch-to-M01, inherited guidance, recommended replay tutorial policy, recommended civilian boundary, shared dense-city Old Market direction, and tracker authoring. | `aa04a6e85` | HLD approved; tracker draft created |
 | 2026-08-12 | M01DC-001 | Project owner accepted the current FirstLaunch comic/story presentation, linked M01 technical architecture, 43-item tracker, agent-operated QA amendment, and autonomous continuation. Gate 9R is released; Gate 10 remains honestly open. | enclosing M01DC-001 acceptance commit | Accepted |
 | 2026-08-12 | M01DC-002 | Exact-head inventory classifies every integration seam, confirms the current FirstLaunch `EnterMenu` handoff and absent objective/progression/reward owners, hash-binds the accepted dense-city source, freezes protected/source-growth boundaries, and passes source growth `17 / 17` plus architecture `23` suites with zero compiler errors. | enclosing M01DC-002 acceptance commit | Accepted |
+| 2026-08-12 | M01DC-003 | Exact-path ownership, evidence, validation, generated-output, and rollback authority is frozen for M01DC-004..043. Static audit covers `40 / 40` item allowlists, `164` exact path entries, and `61` unique types in `11` assemblies with no forbidden names, wildcard edit paths, read-only overlap, or accepted dense-city physical-source edits. | enclosing M01DC-003 acceptance commit | Accepted |
 
 Implementation entries are appended only after an item is accepted and pushed. The final row must record M01DC-043, the final main/origin head, 43/43 progress, Android package/device identities, agent-QA/finding closure, validation summary, and clean worktree state.
 

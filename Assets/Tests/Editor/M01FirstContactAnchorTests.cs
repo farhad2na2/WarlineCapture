@@ -26,17 +26,17 @@ public static class M01FirstContactAnchorTests
 
     private static readonly AnchorSpec[] Specs =
     {
-        new("anchor.ch01.m01.player_spawn", OperationMapAnchorKind.Deployment, new int2(814, 352), 5f, 41f),
-        new("anchor.ch01.m01.camera_start", OperationMapAnchorKind.Camera, new int2(870, 388), 1f, 0f),
-        new("anchor.ch01.m01.move_target", OperationMapAnchorKind.Objective, new int2(844, 372), 3f, 41f),
-        new("anchor.ch01.m01.patrol_spawn", OperationMapAnchorKind.Spawn, new int2(916, 414), 4f, 243f),
-        new("anchor.ch01.m01.patrol_route_a", OperationMapAnchorKind.Lane, new int2(902, 404), 2f, 243f),
-        new("anchor.ch01.m01.patrol_route_b", OperationMapAnchorKind.Lane, new int2(884, 394), 2f, 243f),
-        new("anchor.ch01.m01.patrol_route_c", OperationMapAnchorKind.Lane, new int2(864, 382), 2f, 243f),
-        new("anchor.ch01.m01.patrol_objective", OperationMapAnchorKind.Hostile, new int2(856, 376), 3f, 243f),
-        new("anchor.ch01.m01.civilian_safe_zone", OperationMapAnchorKind.Civilian, new int2(954, 438), 7f, 45f),
-        new("anchor.ch01.m01.civilian_evacuation", OperationMapAnchorKind.Civilian, new int2(980, 458), 7f, 45f),
-        new("anchor.ch01.m01.minimap_start", OperationMapAnchorKind.Minimap, new int2(878, 416), 1f, 0f)
+        new("anchor.ch01.m01.player_spawn", OperationMapAnchorKind.Deployment, new int2(1792, 716), 5f, 0f),
+        new("anchor.ch01.m01.camera_start", OperationMapAnchorKind.Camera, new int2(1792, 768), 1f, 0f),
+        new("anchor.ch01.m01.move_target", OperationMapAnchorKind.Objective, new int2(1792, 744), 3f, 0f),
+        new("anchor.ch01.m01.patrol_spawn", OperationMapAnchorKind.Spawn, new int2(1792, 806), 4f, 180f),
+        new("anchor.ch01.m01.patrol_route_a", OperationMapAnchorKind.Lane, new int2(1792, 792), 2f, 180f),
+        new("anchor.ch01.m01.patrol_route_b", OperationMapAnchorKind.Lane, new int2(1792, 778), 2f, 180f),
+        new("anchor.ch01.m01.patrol_route_c", OperationMapAnchorKind.Lane, new int2(1792, 764), 2f, 180f),
+        new("anchor.ch01.m01.patrol_objective", OperationMapAnchorKind.Hostile, new int2(1792, 754), 3f, 180f),
+        new("anchor.ch01.m01.civilian_safe_zone", OperationMapAnchorKind.Civilian, new int2(1840, 824), 7f, 45f),
+        new("anchor.ch01.m01.civilian_evacuation", OperationMapAnchorKind.Civilian, new int2(1870, 842), 7f, 45f),
+        new("anchor.ch01.m01.minimap_start", OperationMapAnchorKind.Minimap, new int2(1792, 768), 1f, 0f)
     };
 
     public static void RunFocusedValidation()

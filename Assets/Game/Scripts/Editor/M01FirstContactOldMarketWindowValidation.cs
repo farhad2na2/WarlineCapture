@@ -15,17 +15,17 @@ namespace Game.Editor
     {
         private const string DefinitionPath =
             "Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01_DistrictEdge01.asset";
-        private const string SourceDefinitionPath =
-            "Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset";
+        private const string SourceDefinitionPath = "Assets/Game/Configs/OperationMaps/Candidates/" +
+            "OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset";
         private const string SurfacePath = "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset";
+        private const string PresentationPath = "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/" +
+            "opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity";
+        private const string PresentationHash = "c1bc203591b3f32ae3d8410eaa0988e694b1d9d449ba1e938d9f38058698b598";
         private const string Marker = "[M01FirstContactOldMarketWindowValidation] result=Passed tests=9";
 
-        private static readonly RectInt Window = new(760, 300, 240, 176);
-        private static readonly RectInt Corridor = new(804, 348, 128, 80);
-        private static int2[] Route =
-        {
-            new(822, 364), new(846, 376), new(874, 388), new(902, 400), new(922, 414)
-        };
+        private static readonly RectInt Window = new(1672, 680, 240, 176);
+        private static readonly RectInt Corridor = new(1728, 720, 128, 80);
+        private static int2[] Route = { new(1746, 736), new(1770, 748), new(1798, 760), new(1826, 772), new(1846, 786) };
 
         [MenuItem("Game/Campaign/Validate M01 Old Market Window")]
         public static void RunFocusedValidation()
@@ -54,8 +54,7 @@ namespace Game.Editor
 
         private static string[] ValidateApprovedComicAuthority()
         {
-            string[] paths =
-            {
+            string[] paths = {
                 "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P15.png",
                 "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P16.png",
                 "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P17.png",
@@ -73,10 +72,8 @@ namespace Game.Editor
                 hashes[index] = M01FirstContactOldMarketWindowEvidence.Sha256File(paths[index]);
             }
 
-            Require(hashes[3] == "d68d9a3341ab9493d68d491b1d51eb481bc2fc862c47b57c60affc9572216a54",
-                "FL-P18 16:9 authority hash drifted.");
-            Require(hashes[7] == "078abb9f5b759a3c606a030e6d44187194c156681db749bd4dbf8bed6cc4d548",
-                "FL-P18 20:9 authority hash drifted.");
+            Require(hashes[3] == "d68d9a3341ab9493d68d491b1d51eb481bc2fc862c47b57c60affc9572216a54", "FL-P18 16:9 authority hash drifted.");
+            Require(hashes[7] == "078abb9f5b759a3c606a030e6d44187194c156681db749bd4dbf8bed6cc4d548", "FL-P18 20:9 authority hash drifted.");
             return hashes;
         }
 
@@ -84,12 +81,10 @@ namespace Game.Editor
         {
             Require(source != null && surface != null, "Accepted source definition and surface are required.");
             Require(source.OperationMapId == "opmap.skirmish.desert_base_01", "Physical source identity drifted.");
-            Require(source.SourceIdentityHash == "2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900",
-                "Physical source identity hash drifted.");
-            Require(source.ContentHash == "2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c",
-                "Physical source content hash drifted.");
-            Require(surface.Dimensions == new Vector2Int(2048, 1024) && Mathf.Approximately(surface.CellSize, 1f),
-                "Accepted surface dimensions drifted.");
+            Require(source.SourceIdentityHash == "2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900", "Physical source identity hash drifted.");
+            Require(source.ContentHash == "2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c", "Physical source content hash drifted.");
+            Require(surface.Dimensions == new Vector2Int(2048, 1024) && Mathf.Approximately(surface.CellSize, 1f), "Accepted surface dimensions drifted.");
+            Require(M01FirstContactOldMarketWindowEvidence.Sha256File(PresentationPath) == PresentationHash, "Accepted dense-city presentation scene drifted.");
         }
 
         private static WindowAnalysis AnalyzeWindow(MapSurfaceDataAsset surface)
@@ -122,10 +117,8 @@ namespace Game.Editor
                 for (int index = 0; index < Route.Length; index++)
                 {
                     MapSurfaceSample sample = Sample(ref blob.Value, Route[index].x, Route[index].y);
-                    Require((sample.MovementMask & MapSurfaceMovementMask.Infantry) != 0,
-                        $"Contact route cell {Route[index]} is not infantry-reachable.");
-                    Require(sample.SurfaceType != MapSurfaceType.Blocked,
-                        $"Contact route cell {Route[index]} is blocked.");
+                    Require((sample.MovementMask & MapSurfaceMovementMask.Infantry) != 0, $"Contact route cell {Route[index]} is not infantry-reachable.");
+                    Require(sample.SurfaceType != MapSurfaceType.Blocked, $"Contact route cell {Route[index]} is blocked.");
                     Require(sample.SurfaceType != MapSurfaceType.BridgeDeck &&
                             (sample.Flags & MapSurfaceFlags.Bridge) == 0,
                         $"Contact route cell {Route[index]} incorrectly crosses bridge/water space.");
@@ -143,12 +136,11 @@ namespace Game.Editor
             Require(analysis.TotalCells == Window.width * Window.height, "Window surface scan is incomplete.");
             Require(analysis.InfantryCells >= 30000, "Old Market window lacks readable infantry capacity.");
             Require(analysis.ReachableCells >= 28000, "Old Market contact corridor is not broadly connected.");
-            Require(analysis.RoadCells >= 1500, "Old Market window lacks a legible road corridor.");
+            Require(analysis.RoadCells == 0 && analysis.PlazaCells == 0, "Accepted civic-bazaar navigation contract drifted.");
             Require(analysis.BridgeCells == 0, "Old Market window intersects bridge/water traversal.");
-            Require(Window.xMin > 600 && Window.yMin < 476, "Window did not exclude the isolated canal/Autobahn edge.");
+            Require(Window.xMin > 1600 && Window.yMin > 640, "Window left the accepted civic-bazaar core.");
             Require(Corridor.xMin >= Window.xMin && Corridor.xMax <= Window.xMax &&
-                    Corridor.yMin >= Window.yMin && Corridor.yMax <= Window.yMax,
-                "Contact corridor must remain inside the playable window.");
+                Corridor.yMin >= Window.yMin && Corridor.yMax <= Window.yMax, "Contact corridor must remain inside the playable window.");
         }
         private static void PopulateLogicalDefinition(OperationMapDefinition logical, OperationMapDefinition source)
         {
@@ -157,10 +149,8 @@ namespace Game.Editor
             Set(target, "schemaVersion", 1);
             Set(target, "contentVersion", 1);
             Set(target, "sourceIdentityHash", source.SourceIdentityHash);
-            Set(target, "contentHash", M01FirstContactOldMarketWindowEvidence.Sha256Text(
-                $"{Window.x},{Window.y},{Window.width},{Window.height}|{Corridor}"));
-            Set(target, "generatedMetadataHash", M01FirstContactOldMarketWindowEvidence.Sha256Text(
-                "m01dc-011|approved-comic-fl-p15-p18|surface-v3"));
+            Set(target, "contentHash", M01FirstContactOldMarketWindowEvidence.Sha256Text($"{Window.x},{Window.y},{Window.width},{Window.height}|{Corridor}"));
+            Set(target, "generatedMetadataHash", M01FirstContactOldMarketWindowEvidence.Sha256Text("m01dc-011|approved-comic-fl-p15-p18|surface-v3"));
             SerializedProperty binding = target.FindProperty("sourceBinding");
             Set(binding, "sourceOperationMapId", source.OperationMapId);
             Set(binding, "sourceIdentityHash", source.SourceIdentityHash);
@@ -170,7 +160,7 @@ namespace Game.Editor
             Set(bounds, "worldMax", source.Bounds.WorldMax);
             Set(bounds, "playableMin", new Vector3(Window.xMin, source.Bounds.PlayableMin.y, Window.yMin));
             Set(bounds, "playableMax", new Vector3(Window.xMax, source.Bounds.PlayableMax.y, Window.yMax));
-            Set(bounds, "cameraMin", new Vector3(Window.xMin, source.Bounds.CameraMin.y, Window.yMin));
+            Set(bounds, "cameraMin", new Vector3(Window.xMin, 4f, Window.yMin));
             Set(bounds, "cameraMax", new Vector3(Window.xMax, source.Bounds.CameraMax.y, Window.yMax));
             Copy(target, source, "gridMetadata", "surfaceMetadata", "navigationMetadata", "cameras",
                 "planningCameraId", "battleCameraId", "minimap", "anchors", "presentationKind",
@@ -184,8 +174,7 @@ namespace Game.Editor
         private static void ValidateLogicalDefinition(OperationMapDefinition logical)
         {
             Require(logical.OperationMapId == "opmap.ch01.district_edge_01", "Logical map identity is incorrect.");
-            Require(logical.SourceBinding.SourceOperationMapId == "opmap.skirmish.desert_base_01",
-                "Logical map does not bind the accepted physical source.");
+            Require(logical.SourceBinding.SourceOperationMapId == "opmap.skirmish.desert_base_01", "Logical map does not bind the accepted physical source.");
             Require(logical.Bounds.PlayableMin.x == Window.xMin && logical.Bounds.PlayableMin.z == Window.yMin &&
                     logical.Bounds.PlayableMax.x == Window.xMax && logical.Bounds.PlayableMax.z == Window.yMax,
                 "Logical playable bounds do not match the reviewed Old Market window.");
@@ -317,14 +306,10 @@ namespace Game.Editor
                 target.CopyFromSerializedProperty(serializedSource.FindProperty(names[index]));
         }
 
-        private static void Set(SerializedObject target, string name, string value) =>
-            target.FindProperty(name).stringValue = value;
-        private static void Set(SerializedObject target, string name, int value) =>
-            target.FindProperty(name).intValue = value;
-        private static void Set(SerializedProperty target, string name, string value) =>
-            target.FindPropertyRelative(name).stringValue = value;
-        private static void Set(SerializedProperty target, string name, Vector3 value) =>
-            target.FindPropertyRelative(name).vector3Value = value;
+        private static void Set(SerializedObject target, string name, string value) => target.FindProperty(name).stringValue = value;
+        private static void Set(SerializedObject target, string name, int value) => target.FindProperty(name).intValue = value;
+        private static void Set(SerializedProperty target, string name, string value) => target.FindPropertyRelative(name).stringValue = value;
+        private static void Set(SerializedProperty target, string name, Vector3 value) => target.FindPropertyRelative(name).vector3Value = value;
 
         private static T Load<T>(string path) where T : UnityEngine.Object => AssetDatabase.LoadAssetAtPath<T>(path);
         private static void EnsureFolder(string path)

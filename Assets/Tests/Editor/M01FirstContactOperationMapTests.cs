@@ -62,8 +62,8 @@ public static class M01FirstContactOperationMapTests
             Require(map.SourceSceneReference.AssetGUID == source.SourceSceneReference.AssetGUID &&
                     map.MapSurfaceDataReference.AssetGUID == source.MapSurfaceDataReference.AssetGUID,
                 "M01 source scene or accepted surface binding drifted.");
-            Require(map.Bounds.PlayableMin == new Vector3(760f, -6.9545445f, 300f) &&
-                    map.Bounds.PlayableMax == new Vector3(1000f, 40.375454f, 476f),
+            Require(map.Bounds.PlayableMin == new Vector3(1672f, -6.9545445f, 680f) &&
+                    map.Bounds.PlayableMax == new Vector3(1912f, 40.375454f, 856f),
                 "M01 Old Market playable bounds drifted.");
             Require(map.Cameras.Length == 2 && map.Anchors.Length == 11 &&
                     map.Minimap.MinimapId == "minimap.ch01.m01.projection",
@@ -120,7 +120,7 @@ public static class M01FirstContactOperationMapTests
             $"  \"contentPackId\":\"{entry.ContentPack.ContentPackId}\", \"deliveryKind\":\"{entry.ContentPack.DeliveryKind}\",\n" +
             $"  \"physicalSourceId\":\"{source.OperationMapId}\", \"physicalSourceAssetSha256\":\"{SourceAssetHash}\",\n" +
             $"  \"sourceSceneGuid\":\"{map.SourceSceneReference.AssetGUID}\", \"surfaceGuid\":\"{map.MapSurfaceDataReference.AssetGUID}\",\n" +
-            "  \"playableBounds\":[760,-6.955,300,1000,40.375,476], \"cameraCount\":2, \"anchorCount\":11,\n" +
+            "  \"playableBounds\":[1672,-6.955,680,1912,40.375,856], \"cameraCount\":2, \"anchorCount\":11,\n" +
             $"  \"skirmishCatalogSha256\":\"{SkirmishCatalogHash}\", \"validation\":\"{Marker}\"\n" +
             "}\n";
         Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(ReportPath)) ?? string.Empty);

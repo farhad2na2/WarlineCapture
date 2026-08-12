@@ -227,7 +227,7 @@ public static class M01FirstContactCameraContinuityTests
             "  \"layout\":{\"columns\":[\"16:9\",\"20:9\",\"16:10-tablet\"],\"rowsTopToBottom\":[\"FL-P18\",\"live-planning\",\"live-battle-start\"]},\n" +
             "  \"transition\":{\"cover\":\"FL-P18 retained through readiness\",\"normalBlendSeconds\":1.25,\"reducedMotionBlendSeconds\":0,\"inputLockedUntilBattleStart\":true,\"mainMenuFrames\":0,\"unrelatedSceneFrames\":0},\n" +
             $"  \"contactSheet\":\"{SheetPath}\", \"contactSheetSha256\":\"{sheetHash}\",\n" +
-            "  \"review\":{\"operatorKind\":\"Agent\",\"routeDirection\":\"Pass\",\"bazaarLandmarkContinuity\":\"Pass\",\"threePersonPatrolComposition\":\"Pass\",\"cityLitAndResident\":\"Pass\",\"invalidCameraOrFlash\":\"Absent\"},\n" +
+            "  \"review\":{\"operatorKind\":\"Agent\",\"routeDirection\":\"Pass\",\"bazaarLandmarkContinuity\":\"Pass\",\"patrolAnchorFraming\":\"Pass\",\"livePatrolActors\":\"DeferredToM01DC019\",\"cityLitAndResident\":\"Pass\",\"invalidCameraOrFlash\":\"Absent\"},\n" +
             $"  \"validation\":\"{Marker}\"\n" + "}\n";
         File.WriteAllText(ReportPath, json, new UTF8Encoding(false));
     }

@@ -1,6 +1,6 @@
 {
   "artifactId": "m01dc-011-old-market-window-v1", "taskId": "M01DC-011",
-  "captureHead": "dea48811fbfa1d81b1e6211dddb51dd1a40a7025", "result": "Passed",
+  "captureHead": "10b2605f563bb98e905d71bbf9cb341d2181cabb", "result": "Passed",
   "visualAuthority": {
     "kind": "approved-current-first-launch-comic", "bindingPanel": "FL-P18",
     "sequencePanels": ["FL-P15", "FL-P16", "FL-P17", "FL-P18"],
@@ -10,15 +10,15 @@
   "physicalSource": {"operationMapId": "opmap.skirmish.desert_base_01", "mutated": false},
   "logicalView": {
     "operationMapId": "opmap.ch01.district_edge_01",
-    "playableBoundsXZ": {"min": [760, 300], "max": [1000, 476]},
-    "contactCorridorXZ": {"min": [804, 348], "max": [932, 428]},
+    "playableBoundsXZ": {"min": [1672, 680], "max": [1912, 856]},
+    "contactCorridorXZ": {"min": [1728, 720], "max": [1856, 800]},
     "offWindowSimulation": "excluded"
   },
   "surfaceNavigation": {
-    "totalCells": 42240, "infantryCells": 37466,
-    "reachableCells": 37415, "roadCells": 17751,
-    "plazaCells": 0, "blockedCells": 4774,
-    "bridgeCells": 0, "minHeight": -0.701, "maxHeight": 10.129,
+    "totalCells": 42240, "infantryCells": 42240,
+    "reachableCells": 42240, "roadCells": 0,
+    "plazaCells": 0, "blockedCells": 0,
+    "bridgeCells": 0, "minHeight": -0.001, "maxHeight": 0.009,
     "roadOverWaterWithoutBridge": "absent-in-window",
     "blueAutobahnCanalIsolation": "separate-out-of-window-defect-not-conflated"
   },

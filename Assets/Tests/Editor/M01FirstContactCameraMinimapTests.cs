@@ -16,13 +16,13 @@ public static class M01FirstContactCameraMinimapTests
         "Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01_DistrictEdge01.asset";
     private const string Marker = "[M01FirstContactCameraMinimapValidation] result=Passed tests=12";
     private static readonly OperationMapCameraConfig Planning = new(
-        "camera.ch01.m01.planning", new Vector3(870f, 100f, 320f), new Vector3(58f, 0f, 0f),
+        "camera.ch01.m01.planning", new Vector3(1792f, 6f, 684f), new Vector3(4f, 0f, 0f),
         false, 50f, 5f, true);
     private static readonly OperationMapCameraConfig Battle = new(
-        "camera.ch01.m01.battle_start", new Vector3(870f, 100f, 330f), new Vector3(65f, 0f, 0f),
+        "camera.ch01.m01.battle_start", new Vector3(1792f, 8f, 692f), new Vector3(6f, 0f, 0f),
         false, 48f, 5f, true);
     private static readonly OperationMapMinimapConfig Minimap = new(
-        "minimap.ch01.m01.projection", new Vector3(760f, 0f, 300f), new Vector2(240f, 176f), 0f);
+        "minimap.ch01.m01.projection", new Vector3(1672f, 0f, 680f), new Vector2(240f, 176f), 0f);
     private static readonly Vector2[] Aspects =
     {
         new(1920f, 1080f), new(2400f, 1080f), new(1920f, 1200f)
@@ -94,18 +94,18 @@ public static class M01FirstContactCameraMinimapTests
     {
         Vector3[] planningSubjects =
         {
-            new(814f, 0f, 352f), new(852f, 0f, 376f), new(888f, 0f, 398f), new(924f, 0f, 420f)
+            new(1792f, 0f, 716f), new(1792f, 0f, 746f), new(1792f, 0f, 776f), new(1792f, 0f, 806f)
         };
         Vector3[] battleSubjects =
         {
-            new(820f, 0f, 352f), new(868f, 0f, 388f), new(920f, 0f, 420f)
+            new(1792f, 0f, 720f), new(1792f, 0f, 768f), new(1792f, 0f, 806f)
         };
         foreach (Vector2 resolution in Aspects)
         {
             ValidateSubjects(Planning, resolution.x / resolution.y, planningSubjects, new Rect(0.05f, 0.05f, 0.90f, 0.90f));
             ValidateSubjects(Battle, resolution.x / resolution.y, battleSubjects, new Rect(0.06f, 0.06f, 0.88f, 0.88f));
         }
-        Require(map.Bounds.PlayableMin.x == 760f && map.Bounds.PlayableMax.z == 476f,
+        Require(map.Bounds.PlayableMin.x == 1672f && map.Bounds.PlayableMax.z == 856f,
             "Camera review no longer targets the accepted Old Market window.");
     }
 
@@ -117,7 +117,7 @@ public static class M01FirstContactCameraMinimapTests
             ref OperationMapMinimapBlob projection = ref blob.Value.Minimap;
             Vector3[] points =
             {
-                new(760f, 0f, 300f), new(1000f, 0f, 476f), new(880f, 0f, 388f), new(924f, 0f, 420f)
+                new(1672f, 0f, 680f), new(1912f, 0f, 856f), new(1792f, 0f, 768f), new(1848f, 0f, 806f)
             };
             foreach (Vector3 point in points)
             {
@@ -131,7 +131,7 @@ public static class M01FirstContactCameraMinimapTests
             }
             Require(OperationMapMetadataUtility.TryMinimapNormalizedToWorldClamped(in projection,
                 new float2(-1f, 2f), 0f, out float3 clamped), "Clamped minimap projection failed.");
-            Require(math.distance(clamped, new float3(760f, 0f, 476f)) <= 0.001f,
+            Require(math.distance(clamped, new float3(1672f, 0f, 856f)) <= 0.001f,
                 "Out-of-range minimap input did not clamp exactly.");
         }
         finally { blob.Dispose(); }
@@ -139,9 +139,9 @@ public static class M01FirstContactCameraMinimapTests
 
     private static void ValidateClampAndTransitionPolicy(OperationMapDefinition map)
     {
-        Vector3 outside = new(1200f, 160f, 150f);
+        Vector3 outside = new(2200f, 160f, 150f);
         Vector3 clamped = Vector3.Max(map.Bounds.CameraMin, Vector3.Min(map.Bounds.CameraMax, outside));
-        Require(clamped == new Vector3(1000f, 100f, 300f), "Camera clamp result drifted.");
+        Require(clamped == new Vector3(1912f, 100f, 680f), "Camera clamp result drifted.");
         Require(M01FirstContactCameraMinimapEvidence.NormalBlendSeconds == 1.25f,
             "Planning-to-battle normal blend policy drifted.");
         Require(M01FirstContactCameraMinimapEvidence.ReducedMotionBlendSeconds == 0f,

@@ -2,6 +2,7 @@ using Game.Missions.Contracts;
 using Game.Narrative.Contracts;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 
 namespace Game.Components
 {
@@ -155,6 +156,29 @@ namespace Game.Components
         public int RouteIndex;
         public int AttemptOrdinal;
         public byte Evacuating;
+    }
+
+    public enum CampaignMissionGuidancePromptKind : byte
+    {
+        None = 0, FindSquad = 1, MoveToCover = 2, ConfirmThreat = 3, Engage = 4, SecureCorridor = 5
+    }
+
+    public struct CampaignMissionGuidanceProjectionComponent : IComponentData
+    {
+        public int GuidanceId; public uint Version; public uint MissionSourceVersion;
+        public CampaignMissionGuidancePromptKind Prompt; public AssistantRecommendationKind RecommendationKind;
+        public AssistantMessagePriority Priority; public AssistantTargetKind TargetKind;
+        public Entity SourceEntity; public Entity TargetEntity; public int2 TargetCell; public float3 WorldPosition;
+        public FixedString64Bytes TargetId; public FixedString64Bytes Title; public FixedString128Bytes Body;
+        public FixedString64Bytes ActionLabel; public int AcknowledgedGuidanceId; public int CooldownUntilMilliseconds;
+        public byte Active; public byte HasTargetCell; public byte HasWorldPosition; public byte CanShow; public byte CanExecute;
+        public byte SubtitlesEnabled; public byte LargeTextEnabled; public byte HighContrastEnabled;
+    }
+
+    [InternalBufferCapacity(2)]
+    public struct CampaignMissionGuidanceAcknowledgementRequestElement : IBufferElementData
+    {
+        public int GuidanceId; public FixedString64Bytes SessionToken; public int AttemptOrdinal;
     }
 
     public struct CampaignMissionCatalogBlob

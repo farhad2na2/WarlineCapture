@@ -7,7 +7,7 @@ using Unity.Mathematics;
 
 namespace Game.UI.Shell.Ecs
 {
-    internal static class AssistantObjectiveProjectionUtility
+    public static class AssistantObjectiveProjectionUtility
     {
         public static bool UpdateHud(
             EntityManager em, Entity boundary, DynamicBuffer<MatchObjectiveRuntimeElement> objectives,
@@ -106,6 +106,40 @@ namespace Game.UI.Shell.Ecs
                 CanShow = 1
             };
             return true;
+        }
+
+        public static bool TryBuildCampaignGuidanceRecommendation(in CampaignMissionGuidanceProjectionComponent guidance,
+            out AssistantRecommendationElement recommendation)
+        {
+            recommendation = default;
+            if (guidance.Active == 0 || guidance.Version == 0 || guidance.GuidanceId == 0 || guidance.GuidanceId == guidance.AcknowledgedGuidanceId) return false;
+            recommendation = new AssistantRecommendationElement
+            {
+                RecommendationId = guidance.GuidanceId, SourceVersion = (int)guidance.Version, Kind = guidance.RecommendationKind,
+                Priority = guidance.Priority, TargetKind = guidance.TargetKind, SourceEntity = guidance.SourceEntity,
+                TargetEntity = guidance.TargetEntity, TargetCell = guidance.TargetCell, WorldPosition = guidance.WorldPosition,
+                TargetId = guidance.TargetId, Score = 94f, Title = guidance.Title, Reason = guidance.Body,
+                ActionLabel = guidance.ActionLabel, HasTargetCell = guidance.HasTargetCell, HasWorldPosition = guidance.HasWorldPosition,
+                CanShow = guidance.CanShow, CanExecute = guidance.CanExecute
+            };
+            return true;
+        }
+
+        public static bool RecommendationsMatch(DynamicBuffer<AssistantRecommendationElement> recommendations,
+            AssistantRecommendationElement expected)
+        {
+            if (expected.RecommendationId == 0) return recommendations.Length == 0;
+            if (recommendations.Length != 1) return false;
+            AssistantRecommendationElement current = recommendations[0];
+            return current.RecommendationId == expected.RecommendationId && current.SourceVersion == expected.SourceVersion &&
+                   current.Kind == expected.Kind && current.Priority == expected.Priority && current.TargetKind == expected.TargetKind &&
+                   current.SourceEntity == expected.SourceEntity && current.TargetEntity == expected.TargetEntity &&
+                   current.TargetCell.Equals(expected.TargetCell) && current.WorldPosition.Equals(expected.WorldPosition) &&
+                   current.TargetId.Equals(expected.TargetId) && current.Title.Equals(expected.Title) && current.Reason.Equals(expected.Reason) &&
+                   current.RejectionReason.Equals(expected.RejectionReason) && current.ActionLabel.Equals(expected.ActionLabel) &&
+                   current.HasTargetCell == expected.HasTargetCell && current.HasWorldPosition == expected.HasWorldPosition &&
+                   current.CanShow == expected.CanShow && current.CanExecute == expected.CanExecute &&
+                   current.CanTakeControl == expected.CanTakeControl;
         }
     }
 }

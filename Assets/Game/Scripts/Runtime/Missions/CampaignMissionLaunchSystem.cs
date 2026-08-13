@@ -85,6 +85,9 @@ namespace Game.Runtime
             ClearBufferIfPresent<CampaignMissionLaunchResultElement>(entityManager, root);
             ClearBufferIfPresent<CampaignMissionSettlementRequestElement>(entityManager, root);
             ClearBufferIfPresent<CampaignMissionSettlementResultElement>(entityManager, root);
+            ClearBufferIfPresent<CampaignMissionGuidanceAcknowledgementRequestElement>(entityManager, root);
+            if (entityManager.HasComponent<CampaignMissionGuidanceProjectionComponent>(root))
+                entityManager.SetComponentData(root, default(CampaignMissionGuidanceProjectionComponent));
             if (entityManager.HasComponent<CampaignMissionResultComponent>(root))
                 entityManager.SetComponentData(root, default(CampaignMissionResultComponent));
         }

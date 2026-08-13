@@ -139,13 +139,14 @@ namespace Game.Composition
             Entity root = entityManager.CreateEntity(
                 typeof(CampaignMissionRootComponent), typeof(CampaignMissionCatalogComponent),
                 typeof(CampaignMissionLaunchQueueComponent), typeof(CampaignMissionRuntimeComponent),
-                typeof(CampaignMissionAttemptFactsComponent));
+                typeof(CampaignMissionAttemptFactsComponent), typeof(CampaignMissionGuidanceProjectionComponent));
             entityManager.AddBuffer<CampaignMissionLaunchRequestElement>(root);
             entityManager.AddBuffer<CampaignMissionLaunchResultElement>(root);
             entityManager.AddBuffer<CampaignMissionActionRequestElement>(root);
             entityManager.AddBuffer<CampaignMissionActionResultElement>(root);
             entityManager.AddBuffer<CampaignMissionSettlementRequestElement>(root);
             entityManager.AddBuffer<CampaignMissionSettlementResultElement>(root);
+            entityManager.AddBuffer<CampaignMissionGuidanceAcknowledgementRequestElement>(root);
             entityManager.SetName(root, "CampaignMissionRoot");
             return root;
         }

@@ -1,8 +1,8 @@
 # M01 First Contact Dense-City Implementation Tracker
 
 Date: 2026-08-12
-Status: Active; M01DC-024 accepted and M01DC-025 dependency-ready
-Progress: 24/43 accepted items (55.8%)
+Status: Active; M01DC-025 accepted and M01DC-026 dependency-ready
+Progress: 25/43 accepted items (58.1%)
 Parent design: `Design/M01_FirstContact_Dense_City_High_Level_Design.md`
 Technical architecture: `Design/Architecture/m01_first_contact_dense_city_technical_architecture.md`
 Mission: `saga.ch01.m01.first_contact`
@@ -378,11 +378,15 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
 
 ### Phase E - Guidance, Narrative, And FirstLaunch
 
-- [ ] **M01DC-025 - Implement Full guidance**
+- [x] **M01DC-025 - Implement Full guidance**
   **Depends on:** M01DC-020.
   **Deliverable:** proactive Find Squad, Move to Cover, Confirm Threat, Engage, and Secure Corridor guidance plus typed Show Me/Do It requests within existing ARIA authority.
   **Acceptance:** guidance reads mission/objective projections, never writes outcome/gameplay truth, respects cooldown/acknowledgement/accessibility, and produces no per-frame allocation.
-  **Evidence:** phase/request/cooldown/accessibility/allocation tests, clean pushed head.
+  **Evidence:** `Design/AgentReports/M01FirstContact/m01dc_025_full_guidance.json`; one unmanaged projection owner publishes all five Full prompts while existing ARIA owners exclusively translate recommendations and execute typed Show Me/Do It requests. Acknowledgement, cooldown, accessibility, replay-tutorial suppression, attempt cleanup, one-writer, and stable `0 B` allocation coverage pass. Guidance `7 / 7`, ARIA `10 / 10`, Phase 7 `19 / 19`, source-growth `17 / 17`, architecture `23` suites, compiler zero, deterministic inventory, protected-path, restored-output, and diff checks pass; clean pushed head.
+
+  **Ownership amendment (2026-08-13):** exact-head review confirms `AssistantRecommendationSystem` remains the sole live ARIA recommendation-buffer writer and `AssistantCommandIntentSystem` remains the sole typed Show Me/Do It command bridge. Add only the unmanaged guidance projection/acknowledgement contracts and root projection, one guidance `ISystem` plus metadata, launch cleanup, ARIA-owned mapping/evaluation contracts and assembly references, the focused test plus metadata, and exact Phase 7 inventory/count paths. Mission guidance is projection-only and cannot write mission facts, objectives, outcome, commands, rewards, maps, scenes, or protected dense-city outputs.
+
+  **Source-growth correction (2026-08-13):** move the existing pure recommendation equality comparison into the existing stateless `AssistantObjectiveProjectionUtility.cs` with guidance mapping. `AssistantReadModelSystems.cs` remains below its exact 599-line ceiling; no exception, threshold, or speculative headroom is added.
 
 - [ ] **M01DC-026 - Implement Contextual and Minimal guidance**
   **Depends on:** M01DC-025.
@@ -585,6 +589,7 @@ Unity licensing, wrapper, device connection, disk space, or bounded tool interru
 | 2026-08-13 | M01DC-023 ownership/Phase 7 amendment | Exact-head review found authored star rules were not projected into the mission blob. Added only the existing mission component/projection paths for unmanaged rule projection and attempt correlation plus the Phase 7 inventory/count paths for one planned result `ISystem`; deterministic new-source metadata is implicit. No mission asset, threshold, UI, reward, persistence, settlement owner, map, city, package, scene, or Skirmish behavior is changed. | enclosing M01DC-023 acceptance commit | Accepted |
 | 2026-08-13 | M01DC-023 | Added deterministic attempt-correlated result projection from authoritative runtime facts and authored star rules. All five combinations, exact four-minute victory behavior, fail-closed contradictions, immutable same-attempt updates, retry isolation, one settlement request, and zero UI writers pass. Focused `8 / 8`, Phase 7 `19 / 19`, source-growth `17 / 17`, architecture `23` suites, compiler zero, deterministic inventory, protected-path, restored-output, and diff checks pass. | enclosing M01DC-023 acceptance commit | Accepted |
 | 2026-08-13 | M01DC-024 | Added the sole Campaign progress/reward writer with injected atomic persistence, configuration-projected first-clear/replay rewards, schema-v2 historical token idempotency, best metrics, resume clearing, canonical M02 reveal, and origin-preserving retry routes. Settlement `13 / 13`, progress regression `15 / 15`, Phase 7 `19 / 19`, source growth `17 / 17`, and architecture `23` suites pass with compiler zero and restored incidental outputs. | enclosing M01DC-024 acceptance commit | Accepted |
+| 2026-08-13 | M01DC-025 | Added Full-mode mission guidance as one unmanaged projection reader over mission/objective/map state. Existing ARIA owners retain recommendation and typed Show Me/Do It command authority; guidance writes no gameplay truth. Guidance `7 / 7`, ARIA `10 / 10`, Phase 7 `19 / 19`, source growth `17 / 17`, architecture `23` suites, compiler zero, deterministic inventory, protected-path, and restored-output checks pass. | enclosing M01DC-025 acceptance commit | Accepted |
 
 Implementation entries are appended only after an item is accepted and pushed. The final row must record M01DC-043, the final main/origin head, 43/43 progress, Android package/device identities, agent-QA/finding closure, validation summary, and clean worktree state.
 

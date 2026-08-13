@@ -175,6 +175,7 @@ namespace Game.Components
         public uint LastThreatVersion;
         public uint LastFocusedUnitVersion;
         public uint LastFuelVersion;
+        public uint LastCampaignGuidanceVersion;
         public int LastRouteTransitionSequenceId;
         public AssistantControlState LastControlState;
         public byte Initialized;

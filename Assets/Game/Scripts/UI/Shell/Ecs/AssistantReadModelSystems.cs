@@ -329,6 +329,7 @@ namespace Game.UI.Shell.Ecs
                 state.EntityManager.GetBuffer<AssistantRecommendationElement>(boundary);
             TryReadFocusedSelection(out FocusedUnitUiReadModelComponent focused);
             TryReadPlayerUsableFuelSummary(state.EntityManager, boundary, out BuildingRuntimeFactionUsableFuelSummary fuel);
+            SystemAPI.TryGetSingleton(out CampaignMissionGuidanceProjectionComponent campaignGuidance);
 
             UiShellStateComponent shell = state.EntityManager.GetComponentData<UiShellStateComponent>(boundary);
             AssistantRecommendationEvaluationStateComponent evaluation =
@@ -341,6 +342,7 @@ namespace Game.UI.Shell.Ecs
                 evaluation.LastThreatVersion == threatState.Version &&
                 evaluation.LastFocusedUnitVersion == focusedVersion &&
                 evaluation.LastFuelVersion == fuelVersion &&
+                evaluation.LastCampaignGuidanceVersion == campaignGuidance.Version &&
                 evaluation.LastRouteTransitionSequenceId == shell.TransitionSequenceId &&
                 evaluation.LastControlState == assistant.ControlState)
             {
@@ -351,13 +353,16 @@ namespace Game.UI.Shell.Ecs
             evaluation.LastThreatVersion = threatState.Version;
             evaluation.LastFocusedUnitVersion = focusedVersion;
             evaluation.LastFuelVersion = fuelVersion;
+            evaluation.LastCampaignGuidanceVersion = campaignGuidance.Version;
             evaluation.LastRouteTransitionSequenceId = shell.TransitionSequenceId;
             evaluation.LastControlState = assistant.ControlState;
             evaluation.Initialized = 1;
             state.EntityManager.SetComponentData(boundary, evaluation);
 
-            AssistantRecommendationElement next = BuildRecommendation(goals, threats, focused, fuel, goalVersion);
-            if (RecommendationsMatch(recommendations, next))
+            AssistantRecommendationElement next = AssistantObjectiveProjectionUtility.TryBuildCampaignGuidanceRecommendation(
+                in campaignGuidance, out AssistantRecommendationElement missionGuidance)
+                ? missionGuidance : BuildRecommendation(goals, threats, focused, fuel, goalVersion);
+            if (AssistantObjectiveProjectionUtility.RecommendationsMatch(recommendations, next))
                 return;
 
             recommendations.Clear();
@@ -565,35 +570,5 @@ namespace Game.UI.Shell.Ecs
             return true;
         }
 
-        private static bool RecommendationsMatch(
-            DynamicBuffer<AssistantRecommendationElement> recommendations,
-            AssistantRecommendationElement expected)
-        {
-            if (expected.RecommendationId == 0)
-                return recommendations.Length == 0;
-            if (recommendations.Length != 1)
-                return false;
-
-            AssistantRecommendationElement current = recommendations[0];
-            return current.RecommendationId == expected.RecommendationId &&
-                   current.SourceVersion == expected.SourceVersion &&
-                   current.Kind == expected.Kind &&
-                   current.Priority == expected.Priority &&
-                   current.TargetKind == expected.TargetKind &&
-                   current.SourceEntity == expected.SourceEntity &&
-                   current.TargetEntity == expected.TargetEntity &&
-                   current.TargetCell.Equals(expected.TargetCell) &&
-                   current.WorldPosition.Equals(expected.WorldPosition) &&
-                   current.TargetId.Equals(expected.TargetId) &&
-                   current.Title.Equals(expected.Title) &&
-                   current.Reason.Equals(expected.Reason) &&
-                   current.RejectionReason.Equals(expected.RejectionReason) &&
-                   current.ActionLabel.Equals(expected.ActionLabel) &&
-                   current.HasTargetCell == expected.HasTargetCell &&
-                   current.HasWorldPosition == expected.HasWorldPosition &&
-                   current.CanShow == expected.CanShow &&
-                   current.CanExecute == expected.CanExecute &&
-                   current.CanTakeControl == expected.CanTakeControl;
-        }
     }
 }

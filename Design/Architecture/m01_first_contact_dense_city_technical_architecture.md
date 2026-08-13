@@ -229,7 +229,7 @@ The existing `MatchObjectiveRuntimeStateComponent` and `MatchObjectiveRuntimeEle
 | `CampaignMissionObjectiveProjectionSystem` | `ISystem` | Sole writer of `MatchObjectiveRuntimeStateComponent` and `MatchObjectiveRuntimeElement` from mission truth. | Derive a competing mission phase or outcome. |
 | `CampaignMissionGuidanceProjectionSystem` | `ISystem` | Emit typed ARIA guidance requests only when source version/phase changes. | Execute gameplay, mutate objectives, or allocate per frame. |
 | `CampaignMissionResultProjectionSystem` | `ISystem` | Project immutable result/star facts from terminal mission state. | Grant rewards or navigate UI. |
-| `CampaignMissionProgressSettlementSystem` | `SystemBase` | Consume settlement requests and call the injected progress store exactly once. | Poll files, calculate combat facts, or become a second result owner. |
+| `CampaignMissionProgressSettlementSystem` | `ISystem` | Consume settlement requests and call the progress store injected through one ECS managed-reference component exactly once. | Poll files, calculate combat facts, retain static state, or become a second result owner. |
 | `CampaignMissionAmbientPresentationSystem` | `ISystem` | Create/update/clean bounded non-gameplay civilians and evacuation presentation. | Add health, targeting, selection, faction-combat, objective, reward, or star authority. |
 | `CampaignMissionCatalogDisposalSystem` | `ISystem` | Dispose replaced/world-shutdown mission blobs exactly once. | Create policy or retain static ownership. |
 

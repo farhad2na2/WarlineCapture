@@ -180,6 +180,8 @@ namespace Game.Components
         public BlobArray<CampaignMissionPatrolRouteBlob> PatrolRoutes;
         public BlobArray<CampaignMissionAmbientPresentationBlob> AmbientPresentations;
         public BlobArray<CampaignMissionStarRuleBlob> StarRules;
+        public BlobArray<CampaignMissionRewardBlob> FirstClearRewards;
+        public BlobArray<CampaignMissionRewardBlob> ReplayRewards;
     }
 
     public struct CampaignMissionForceGroupBlob
@@ -221,5 +223,12 @@ namespace Game.Components
         public MissionStarRuleKind Rule;
         public int Threshold;
         public byte StarIndex;
+    }
+
+    public struct CampaignMissionRewardBlob
+    {
+        public MissionRewardKind Kind;
+        public FixedString64Bytes RewardConfigId;
+        public int Amount;
     }
 }

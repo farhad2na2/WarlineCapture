@@ -130,7 +130,7 @@ namespace Game.Runtime
             {
                 phase = MissionPhaseKind.Result;
                 outcome = MissionOutcomeKind.Victory;
-                destination = current.RunKind == MissionRunKind.FirstClear
+                destination = current.LaunchOrigin == MissionLaunchOriginKind.FirstLaunch
                     ? MissionReturnDestinationKind.CommandBase
                     : MissionReturnDestinationKind.CampaignOperations;
             }

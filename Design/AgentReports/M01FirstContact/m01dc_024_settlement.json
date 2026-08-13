@@ -1,0 +1,54 @@
+{
+  "artifactId": "m01dc-024-settlement-v1",
+  "headBefore": "f19c809b5f00a09328163f33177fd6dd203ddec4",
+  "result": "Passed",
+  "progressWriter": "Game.Runtime.CampaignMissionProgressSettlementSystem",
+  "progressStore": "Game.Runtime.CampaignMissionProgressStore",
+  "rewardAuthority": "MissionDefinitionConfig firstClearRewards/replayRewards projected into CampaignMissionDefinitionBlob",
+  "nextMissionId": "saga.ch01.m02.establish_base",
+  "persistence": {
+    "entrySchemaVersion": 2,
+    "settlementToken": "SessionToken:AttemptOrdinal",
+    "historicalDuplicateProtection": true,
+    "atomicProfileWrite": true,
+    "firstClearReturn": "CommandBase",
+    "campaignReplayReturn": "CampaignOperations"
+  },
+  "rewards": {
+    "firstClearCommanderXp": 260,
+    "firstClearCredits": 1200,
+    "replayCredits": 250,
+    "intelGranted": 0,
+    "amountSourceChanged": false
+  },
+  "validation": {
+    "settlementFocused": "13 / 13",
+    "progressStoreRegression": "15 / 15",
+    "phase7": "19 / 19",
+    "sourceGrowth": "17 / 17",
+    "architecture": "23 suites",
+    "compilerErrors": 0,
+    "inventoryCheck": "Passed",
+    "protectedPathChanges": 0,
+    "incidentalUnityOutputsRestored": 7,
+    "diffCheck": "Passed",
+    "settlementLogSha256": "7e814b7045c1aa12516053574b7c5ec975895265d95ebaba1f57e553a1c105cc",
+    "progressRegressionLogSha256": "d89bf2e8da12e0999f9741f08369a29d027a7d3a6754469472d8de5c317b2698",
+    "architectureLogSha256": "3dfbc91641c0270603bc9015bd4305766e49db8a9460b7be4cf8043ba225b731"
+  },
+  "inventory": {
+    "totalEcsDeclarations": 215,
+    "iSystemDeclarations": 190,
+    "managedExceptions": 25,
+    "converted": 168
+  },
+  "ownedSourceHashes": {
+    "Assets/Game/Scripts/Runtime/Missions/CampaignMissionProgressSettlementSystem.cs": "f4b0004cd1f7dced4ee82c7b274219933fa1b2f5927fbe098063c5ee363dbd25",
+    "Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.cs": "8b4343178166dd3bda304a510f98fc056441492211de80cdc72bfcdbaff9fcb0",
+    "Assets/Game/Scripts/Runtime/Campaign/CampaignMissionProgressStore.cs": "9305dc33c0566be52a42b54a118bd06b3f480acae5c04ca378d7aa9fb8ea42d9",
+    "Assets/Game/Scripts/Persistence/SaveDataModel.cs": "e006a330339fe1094bf853f4ad7370249f07bd4736c9b9d9d26d2c069d4589da",
+    "Assets/Game/Scripts/Components/CampaignMissionComponents.cs": "a9d3cc9301ac7552746a8952ab2aec64c74ed936c37c08a022d5891e79781e08",
+    "Assets/Game/Scripts/Composition/CampaignMissionCatalogProjection.cs": "2f565724a6b96ecce1ca208f3e5d95adc51338aef0e17f248c0e152fa2f78bf8",
+    "Assets/Tests/Editor/M01FirstContactSettlementTests.cs": "9422af42d687957a5b050cc00c6bbb70129e1f21cbee0f9bf5b5bdc0fc766f33"
+  }
+}

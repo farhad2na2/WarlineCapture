@@ -76,6 +76,7 @@ namespace Game.Runtime
         public bool firstClearRewardSettled;
         public int successfulReplayCount;
         public string lastSettledToken = string.Empty;
+        public string[] settledTokens = Array.Empty<string>();
         public bool pendingResume;
         public int lastAttemptOrdinal;
     }

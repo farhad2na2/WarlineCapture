@@ -41,6 +41,7 @@ namespace Game.Composition
             }
 
             root = roots.Length == 1 ? roots[0] : CreateRoot(entityManager);
+            EnsureProgressStore(entityManager, root);
             CampaignMissionCatalogComponent previous = entityManager.GetComponentData<CampaignMissionCatalogComponent>(root);
             if (previous.SourceVersion == sourceVersion && previous.Blob.IsCreated &&
                 previous.Blob.Value.Missions.Length == 1 &&
@@ -69,6 +70,7 @@ namespace Game.Composition
             ProjectForces(ref builder, ref definition, scenario);
             ProjectAmbient(ref builder, ref definition, scenario);
             ProjectStars(ref builder, ref definition, mission);
+            ProjectRewards(ref builder, ref definition, mission);
             BlobAssetReference<CampaignMissionCatalogBlob> projected =
                 builder.CreateBlobAssetReference<CampaignMissionCatalogBlob>(Allocator.Persistent);
             builder.Dispose();
@@ -148,6 +150,15 @@ namespace Game.Composition
             return root;
         }
 
+        private static void EnsureProgressStore(EntityManager entityManager, Entity root)
+        {
+            if (entityManager.HasComponent<CampaignMissionProgressStoreReferenceComponent>(root)) return;
+            entityManager.AddComponentObject(root, new CampaignMissionProgressStoreReferenceComponent
+            {
+                Store = new CampaignMissionProgressStore(SaveService.CreateDefault())
+            });
+        }
+
         private static void ProjectAmbient(
             ref BlobBuilder builder, ref CampaignMissionDefinitionBlob definition, ScenarioSetupConfig scenario)
         {
@@ -180,6 +191,30 @@ namespace Game.Composition
                     Rule = source[i].Rule,
                     DisplayTextKey = new FixedString64Bytes(source[i].DisplayTextKey),
                     Threshold = source[i].Threshold
+                };
+            }
+        }
+
+        private static void ProjectRewards(
+            ref BlobBuilder builder, ref CampaignMissionDefinitionBlob definition, MissionDefinitionConfig mission)
+        {
+            ProjectRewardSet(ref builder, ref definition.FirstClearRewards, mission.FirstClearRewards);
+            ProjectRewardSet(ref builder, ref definition.ReplayRewards, mission.ReplayRewards);
+        }
+
+        private static void ProjectRewardSet(
+            ref BlobBuilder builder,
+            ref BlobArray<CampaignMissionRewardBlob> destination,
+            ReadOnlySpan<MissionRewardDefinitionConfig> source)
+        {
+            BlobBuilderArray<CampaignMissionRewardBlob> projected = builder.Allocate(ref destination, source.Length);
+            for (int i = 0; i < source.Length; i++)
+            {
+                projected[i] = new CampaignMissionRewardBlob
+                {
+                    Kind = source[i].Kind,
+                    RewardConfigId = new FixedString64Bytes(source[i].RewardConfigId ?? string.Empty),
+                    Amount = source[i].Amount
                 };
             }
         }

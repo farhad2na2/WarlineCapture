@@ -138,6 +138,10 @@ namespace Game.Components
     {
         public FixedString64Bytes MissionRoleId;
         public FixedString64Bytes UnitGroupId;
+        public FixedString64Bytes RouteId;
+        public FixedString64Bytes SessionToken;
+        public int RouteIndex;
+        public uint PatrolOrderVersion;
     }
 
     public struct CampaignMissionAmbientCivilianComponent : IComponentData
@@ -159,5 +163,39 @@ namespace Game.Components
         public FixedString64Bytes ScenarioId;
         public FixedString64Bytes OperationMapId;
         public int SchemaVersion;
+        public int DeterministicSeed;
+        public int EncounterStartMilliseconds;
+        public byte BuildingDisabled;
+        public byte ProductionDisabled;
+        public byte EconomyDisabled;
+        public byte TransportDisabled;
+        public byte AirDisabled;
+        public BlobArray<CampaignMissionForceGroupBlob> ForceGroups;
+        public BlobArray<CampaignMissionPatrolRouteBlob> PatrolRoutes;
+    }
+
+    public struct CampaignMissionForceGroupBlob
+    {
+        public FixedString64Bytes GroupId;
+        public byte FactionId;
+        public BlobArray<CampaignMissionForceUnitBlob> Units;
+    }
+
+    public struct CampaignMissionForceUnitBlob
+    {
+        public FixedString64Bytes SourceKey;
+        public FixedString64Bytes RuntimePrefabSourceKey;
+        public FixedString64Bytes ExpectedAssetGuid;
+        public FixedString64Bytes SpawnAnchorId;
+        public FixedString64Bytes MissionRoleId;
+        public int Count;
+    }
+
+    public struct CampaignMissionPatrolRouteBlob
+    {
+        public FixedString64Bytes RouteId;
+        public FixedString64Bytes UnitGroupId;
+        public int StartDelayMilliseconds;
+        public BlobArray<FixedString64Bytes> AnchorIds;
     }
 }

@@ -42,21 +42,25 @@ namespace Game.Configs
     public struct ScenarioUnitEntryConfig
     {
         [SerializeField] private string unitConfigKey;
+        [SerializeField] private string runtimePrefabSourceKey;
         [SerializeField] private string expectedAssetGuid;
         [SerializeField] private string spawnAnchorId;
         [SerializeField] private string missionRoleId;
         [SerializeField, Min(1)] private int count;
 
         public ScenarioUnitEntryConfig(
-            string unitConfigKey, string expectedAssetGuid, string spawnAnchorId, string missionRoleId, int count)
+            string unitConfigKey, string runtimePrefabSourceKey, string expectedAssetGuid,
+            string spawnAnchorId, string missionRoleId, int count)
         {
             this.unitConfigKey = unitConfigKey;
+            this.runtimePrefabSourceKey = runtimePrefabSourceKey;
             this.expectedAssetGuid = expectedAssetGuid;
             this.spawnAnchorId = spawnAnchorId;
             this.missionRoleId = missionRoleId;
             this.count = count;
         }
         public string UnitConfigKey => unitConfigKey;
+        public string RuntimePrefabSourceKey => runtimePrefabSourceKey;
         public string ExpectedAssetGuid => expectedAssetGuid;
         public string SpawnAnchorId => spawnAnchorId;
         public string MissionRoleId => missionRoleId;
@@ -273,7 +277,8 @@ namespace Game.Configs
                 }
                 foreach (ScenarioUnitEntryConfig unit in group.Units)
                 {
-                    if (!IsScopedId(unit.UnitConfigKey, "unit") || !IsLowerHexGuid(unit.ExpectedAssetGuid) ||
+                    if (!IsScopedId(unit.UnitConfigKey, "unit") || string.IsNullOrWhiteSpace(unit.RuntimePrefabSourceKey) ||
+                        unit.RuntimePrefabSourceKey.Length > 63 || !IsLowerHexGuid(unit.ExpectedAssetGuid) ||
                         !OperationMapIdentityRules.IsValidAnchorId(unit.SpawnAnchorId) ||
                         !IsScopedId(unit.MissionRoleId, "role") || unit.Count < 1)
                     {

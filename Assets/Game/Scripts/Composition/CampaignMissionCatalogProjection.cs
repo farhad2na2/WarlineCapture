@@ -54,13 +54,19 @@ namespace Game.Composition
             ref CampaignMissionCatalogBlob catalog = ref builder.ConstructRoot<CampaignMissionCatalogBlob>();
             catalog.SchemaVersion = mission.SchemaVersion;
             BlobBuilderArray<CampaignMissionDefinitionBlob> definitions = builder.Allocate(ref catalog.Missions, 1);
-            definitions[0] = new CampaignMissionDefinitionBlob
-            {
-                MissionId = new FixedString64Bytes(mission.MissionId),
-                ScenarioId = new FixedString64Bytes(scenario.ScenarioId),
-                OperationMapId = new FixedString64Bytes(mission.OperationMapId),
-                SchemaVersion = mission.SchemaVersion
-            };
+            ref CampaignMissionDefinitionBlob definition = ref definitions[0];
+            definition.MissionId = new FixedString64Bytes(mission.MissionId);
+            definition.ScenarioId = new FixedString64Bytes(scenario.ScenarioId);
+            definition.OperationMapId = new FixedString64Bytes(mission.OperationMapId);
+            definition.SchemaVersion = mission.SchemaVersion;
+            definition.DeterministicSeed = scenario.DeterministicSeed;
+            definition.EncounterStartMilliseconds = scenario.EncounterStartMilliseconds;
+            definition.BuildingDisabled = scenario.Restrictions.BuildingDisabled ? (byte)1 : (byte)0;
+            definition.ProductionDisabled = scenario.Restrictions.ProductionDisabled ? (byte)1 : (byte)0;
+            definition.EconomyDisabled = scenario.Restrictions.EconomyDisabled ? (byte)1 : (byte)0;
+            definition.TransportDisabled = scenario.Restrictions.TransportDisabled ? (byte)1 : (byte)0;
+            definition.AirDisabled = scenario.Restrictions.AirDisabled ? (byte)1 : (byte)0;
+            ProjectForces(ref builder, ref definition, scenario);
             BlobAssetReference<CampaignMissionCatalogBlob> projected =
                 builder.CreateBlobAssetReference<CampaignMissionCatalogBlob>(Allocator.Persistent);
             builder.Dispose();
@@ -74,6 +80,54 @@ namespace Game.Composition
             });
             error = null;
             return true;
+        }
+
+        private static void ProjectForces(
+            ref BlobBuilder builder, ref CampaignMissionDefinitionBlob definition, ScenarioSetupConfig scenario)
+        {
+            ReadOnlySpan<ScenarioUnitGroupConfig> sourceGroups = scenario.UnitGroups;
+            BlobBuilderArray<CampaignMissionForceGroupBlob> groups =
+                builder.Allocate(ref definition.ForceGroups, sourceGroups.Length);
+            for (int groupIndex = 0; groupIndex < sourceGroups.Length; groupIndex++)
+            {
+                ScenarioUnitGroupConfig sourceGroup = sourceGroups[groupIndex];
+                ref CampaignMissionForceGroupBlob group = ref groups[groupIndex];
+                group.GroupId = new FixedString64Bytes(sourceGroup.GroupId);
+                group.FactionId = sourceGroup.FactionIndex;
+                ReadOnlySpan<ScenarioUnitEntryConfig> sourceUnits = sourceGroup.Units;
+                BlobBuilderArray<CampaignMissionForceUnitBlob> units =
+                    builder.Allocate(ref group.Units, sourceUnits.Length);
+                for (int unitIndex = 0; unitIndex < sourceUnits.Length; unitIndex++)
+                {
+                    ScenarioUnitEntryConfig source = sourceUnits[unitIndex];
+                    units[unitIndex] = new CampaignMissionForceUnitBlob
+                    {
+                        SourceKey = new FixedString64Bytes(source.UnitConfigKey),
+                        RuntimePrefabSourceKey = new FixedString64Bytes(source.RuntimePrefabSourceKey),
+                        ExpectedAssetGuid = new FixedString64Bytes(source.ExpectedAssetGuid),
+                        SpawnAnchorId = new FixedString64Bytes(source.SpawnAnchorId),
+                        MissionRoleId = new FixedString64Bytes(source.MissionRoleId),
+                        Count = source.Count
+                    };
+                }
+            }
+
+            ReadOnlySpan<ScenarioPatrolRouteConfig> sourceRoutes = scenario.PatrolRoutes;
+            BlobBuilderArray<CampaignMissionPatrolRouteBlob> routes =
+                builder.Allocate(ref definition.PatrolRoutes, sourceRoutes.Length);
+            for (int routeIndex = 0; routeIndex < sourceRoutes.Length; routeIndex++)
+            {
+                ScenarioPatrolRouteConfig sourceRoute = sourceRoutes[routeIndex];
+                ref CampaignMissionPatrolRouteBlob route = ref routes[routeIndex];
+                route.RouteId = new FixedString64Bytes(sourceRoute.RouteId);
+                route.UnitGroupId = new FixedString64Bytes(sourceRoute.UnitGroupId);
+                route.StartDelayMilliseconds = sourceRoute.StartDelayMilliseconds;
+                ReadOnlySpan<string> sourceAnchors = sourceRoute.AnchorIds;
+                BlobBuilderArray<FixedString64Bytes> anchors =
+                    builder.Allocate(ref route.AnchorIds, sourceAnchors.Length);
+                for (int anchorIndex = 0; anchorIndex < sourceAnchors.Length; anchorIndex++)
+                    anchors[anchorIndex] = new FixedString64Bytes(sourceAnchors[anchorIndex]);
+            }
         }
 
         private static Entity CreateRoot(EntityManager entityManager)

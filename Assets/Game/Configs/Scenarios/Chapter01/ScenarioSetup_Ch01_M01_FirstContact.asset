@@ -44,21 +44,25 @@ MonoBehaviour:
     factionIndex: 1
     units:
     - unitConfigKey: unit.jrc.rifle_male_02_alt_02
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Male_02_Alt_02
       expectedAssetGuid: 70d525bdf4894529869cd1402ff5d62e
       spawnAnchorId: anchor.ch01.m01.player_spawn
       missionRoleId: role.friendly.command_squad
       count: 1
     - unitConfigKey: unit.jrc.rifle_male_02_alt_04
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Male_02_Alt_04
       expectedAssetGuid: a3d36fd8847164cc596e0b5ba7bd9bb9
       spawnAnchorId: anchor.ch01.m01.player_spawn
       missionRoleId: role.friendly.command_squad
       count: 1
     - unitConfigKey: unit.jrc.rifle_female_01_alt_01
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Female_01_Alt_01
       expectedAssetGuid: 970069fef3e4437195c3225a1615e384
       spawnAnchorId: anchor.ch01.m01.player_spawn
       missionRoleId: role.friendly.command_squad
       count: 1
     - unitConfigKey: unit.jrc.rifle_female_02_alt_01
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Female_02_Alt_01
       expectedAssetGuid: b9481cc1ec42499c96846b5d161ac7b2
       spawnAnchorId: anchor.ch01.m01.player_spawn
       missionRoleId: role.friendly.command_squad
@@ -67,16 +71,19 @@ MonoBehaviour:
     factionIndex: 2
     units:
     - unitConfigKey: unit.ash.courier
+      runtimePrefabSourceKey: Unit_Chr_Insurgent_Male_03
       expectedAssetGuid: fe23cbf9678344f4b182169b49fe68b6
       spawnAnchorId: anchor.ch01.m01.patrol_spawn
       missionRoleId: role.hostile.patrol
       count: 1
     - unitConfigKey: unit.ash.warden
+      runtimePrefabSourceKey: Unit_Chr_Insurgent_Female_01
       expectedAssetGuid: 01045d2a58ec4359b395696309684ffa
       spawnAnchorId: anchor.ch01.m01.patrol_spawn
       missionRoleId: role.hostile.patrol
       count: 1
     - unitConfigKey: unit.ash.broker
+      runtimePrefabSourceKey: Unit_Chr_Insurgent_Female_02
       expectedAssetGuid: 8093159068194fc187efe5c356116e9b
       spawnAnchorId: anchor.ch01.m01.patrol_spawn
       missionRoleId: role.hostile.patrol

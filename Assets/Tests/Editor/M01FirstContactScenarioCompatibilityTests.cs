@@ -103,7 +103,8 @@ public sealed class M01FirstContactScenarioCompatibilityTests
         try
         {
             ScenarioUnitEntryConfig invalid = new(
-                "unit.jrc.rifle", "NOT_A_GUID", "anchor.m01.friendly_spawn", "role.friendly.squad", 4);
+                "unit.jrc.rifle", "Unit_Chr_Soldier", "NOT_A_GUID",
+                "anchor.m01.friendly_spawn", "role.friendly.squad", 4);
             SetField(scenario, "unitGroups", new[]
             {
                 new ScenarioUnitGroupConfig("group.friendly", 1, new[] { invalid }), HostileGroup()
@@ -194,7 +195,7 @@ public sealed class M01FirstContactScenarioCompatibilityTests
         "group.friendly", 1, new[]
         {
             new ScenarioUnitEntryConfig(
-                "unit.jrc.rifle", "0123456789abcdef0123456789abcdef",
+                "unit.jrc.rifle", "Unit_Chr_Soldier", "0123456789abcdef0123456789abcdef",
                 "anchor.m01.friendly_spawn", "role.friendly.squad", 4)
         });
 
@@ -202,7 +203,7 @@ public sealed class M01FirstContactScenarioCompatibilityTests
         "group.hostile", 2, new[]
         {
             new ScenarioUnitEntryConfig(
-                "unit.hostile.courier", "abcdef0123456789abcdef0123456789",
+                "unit.hostile.courier", "Unit_Chr_Insurgent", "abcdef0123456789abcdef0123456789",
                 "anchor.m01.hostile_spawn", "role.hostile.patrol", 3)
         });
 

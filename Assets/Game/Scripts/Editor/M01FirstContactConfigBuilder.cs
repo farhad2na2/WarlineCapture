@@ -174,12 +174,18 @@ namespace Game.Editor
                     "970069fef3e4437195c3225a1615e384", "b9481cc1ec42499c96846b5d161ac7b2" }
                 : new[] { "fe23cbf9678344f4b182169b49fe68b6", "01045d2a58ec4359b395696309684ffa",
                     "8093159068194fc187efe5c356116e9b" };
+            string[] runtimeKeys = friendly
+                ? new[] { "Unit_Chr_Soldier_Male_02_Alt_02", "Unit_Chr_Soldier_Male_02_Alt_04",
+                    "Unit_Chr_Soldier_Female_01_Alt_01", "Unit_Chr_Soldier_Female_02_Alt_01" }
+                : new[] { "Unit_Chr_Insurgent_Male_03", "Unit_Chr_Insurgent_Female_01",
+                    "Unit_Chr_Insurgent_Female_02" };
             SerializedProperty units = group.FindPropertyRelative("units");
             units.arraySize = keys.Length;
             for (int unitIndex = 0; unitIndex < keys.Length; unitIndex++)
             {
                 SerializedProperty unit = units.GetArrayElementAtIndex(unitIndex);
                 Set(unit, "unitConfigKey", keys[unitIndex]);
+                Set(unit, "runtimePrefabSourceKey", runtimeKeys[unitIndex]);
                 Set(unit, "expectedAssetGuid", guids[unitIndex]);
                 Set(unit, "spawnAnchorId", friendly
                     ? "anchor.ch01.m01.player_spawn" : "anchor.ch01.m01.patrol_spawn");

@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "itemId": "M01DC-019",
+  "result": "Passed",
+  "missionId": "saga.ch01.m01.first_contact",
+  "scenarioId": "scenario.ch01.m01.first_contact",
+  "operationMapId": "opmap.ch01.district_edge_01",
+  "scenarioAssetSha256": "ea1d8ae2fb39f5d34f996c0e14d25422cd4b3555e23ed3254432a6b0a03ea6e9",
+  "forces": {
+    "friendlyCount": 4,
+    "hostileCount": 3,
+    "friendlyRuntimePrefabSourceKeys": ["Unit_Chr_Soldier_Male_02_Alt_02", "Unit_Chr_Soldier_Male_02_Alt_04", "Unit_Chr_Soldier_Female_01_Alt_01", "Unit_Chr_Soldier_Female_02_Alt_01"],
+    "hostileIdentities": [
+      { "character": "Courier", "semanticUnitId": "unit.ash.courier", "runtimePrefabSourceKey": "Unit_Chr_Insurgent_Male_03" },
+      { "character": "Warden", "semanticUnitId": "unit.ash.warden", "runtimePrefabSourceKey": "Unit_Chr_Insurgent_Female_01" },
+      { "character": "Broker", "semanticUnitId": "unit.ash.broker", "runtimePrefabSourceKey": "Unit_Chr_Insurgent_Female_02" }
+    ],
+    "excluded": ["Qassem", "Unit_Chr_Insurgent_Male_05", "Unit_Chr_Insurgent_Male_02", "heavy_gunner"],
+    "patrol": { "routeId": "route.ch01.m01.ash_patrol", "startDelayMilliseconds": 3000, "anchorCount": 3 },
+    "disabledSystems": ["building", "production", "economy", "transport", "air"],
+    "availableCommands": ["select", "move", "attack", "stop", "hold"]
+  },
+  "validation": {
+    "focusedPlayMode": { "result": "Passed", "total": 3, "passed": 3, "failed": 0, "results": "%TEMP%/warline-m01dc019-playmode-batch-r8.xml" },
+    "scenarioCompatibility": { "result": "Passed", "tests": 8, "log": "%TEMP%/warline-m01dc019-scenario.log" },
+    "nonUiLifecycleArchitecture": { "result": "Passed", "tests": 19, "log": "%TEMP%/warline-m01dc019-nonui-r2.log" },
+    "productionSourceGrowth": { "result": "Passed", "tests": 17, "log": "%TEMP%/warline-m01dc019-source-growth.log" },
+    "architectureCloseout": { "result": "Passed", "suites": 23, "log": "%TEMP%/warline-m01dc019-architecture.log" },
+    "compilerErrors": 0,
+    "spawnSystemLines": 222,
+    "patrolSystemLines": 66,
+    "protectedDenseCityPathsChanged": 0,
+    "incidentalGeneratedOutputsRestored": 7
+  }
+}

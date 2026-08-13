@@ -1,8 +1,8 @@
 # M01 First Contact Dense-City Implementation Tracker
 
 Date: 2026-08-12
-Status: Active; M01DC-018 accepted and M01DC-019 dependency-ready
-Progress: 18/43 accepted items (41.9%)
+Status: Active; M01DC-019 accepted and M01DC-020 dependency-ready
+Progress: 19/43 accepted items (44.2%)
 Parent design: `Design/M01_FirstContact_Dense_City_High_Level_Design.md`
 Technical architecture: `Design/Architecture/m01_first_contact_dense_city_technical_architecture.md`
 Mission: `saga.ch01.m01.first_contact`
@@ -332,11 +332,11 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
   **Acceptance:** equal payloads produce equal runtime setup; stale/missing data fails to a bounded recovery surface; no Campaign path reuses an inappropriate Skirmish shortcut.
   **Evidence:** `CampaignMissionCatalogProjection` validates mission/scenario/logical-map identity as one unit and publishes an owned, versioned blob idempotently; the single `CampaignMissionLaunchSystem` gates both typed origins on exact active-map identity and required readiness, preserves pending requests, returns bounded failures, rejects a Skirmish identity shortcut, and resets retries deterministically. Focused launch/bootstrap `10 / 10`, PlayMode `3 / 3`, Phase 7 `19 / 19`, source-growth `17 / 17`, architecture `23` suites, deterministic inventory, and compiler zero pass; the production inventory is exactly `209` declarations / `184` `ISystem` / `25` managed exceptions; seven incidental outputs restored; clean pushed head.
 
-- [ ] **M01DC-019 - Spawn deterministic friendly and hostile forces**
+- [x] **M01DC-019 - Spawn deterministic friendly and hostile forces**
   **Depends on:** M01DC-013, M01DC-018.
   **Deliverable:** one player rifle squad; the exact FirstLaunch Courier/Warden/Broker Ash Line patrol; route timing, hostility, command restrictions, and deterministic correlation to scenario data.
   **Acceptance:** the three live hostile entities resolve to `Chr_Insurgent_Male_03`, `Chr_Insurgent_Female_01`, and `Chr_Insurgent_Female_02` with continuity-correct roles/equipment; Qassem/Male 05 and the Male 02 heavy gunner are absent; no active vehicles/air/build/economy; select/move/attack/stop/hold remain available; spawn identity/count/position/route are deterministic and anchor-safe.
-  **Evidence:** scenario replay hashes, command-availability checks, spawn/route tests, clean pushed head.
+  **Evidence:** `Design/AgentReports/M01FirstContact/m01dc_019_forces.json`; the sole spawn path resolves four exact player rifle prefabs and the continuity-correct Courier/Warden/Broker trio from scenario-projected runtime keys, rejects missing/forbidden prefabs before any partial spawn, places all seven deterministically within accepted anchors, and queues the three hostile patrol orders exactly once after `3000 ms`; Qassem/Male 05, Male 02 heavy gunner, vehicles, air, build, production, and economy remain absent while select/move/attack/stop/hold remain enabled. Focused PlayMode `3 / 3`, scenario compatibility/command restrictions `8 / 8`, Phase 7 `19 / 19`, source-growth `17 / 17`, architecture `23` suites, compiler zero, exact `211 / 186 / 25` inventory, protected dense-city diff, and restored-output checks pass; clean pushed head.
 
 - [ ] **M01DC-020 - Add the single objective writer and projections**
   **Depends on:** M01DC-017, M01DC-019.
@@ -563,6 +563,8 @@ Unity licensing, wrapper, device connection, disk space, or bounded tool interru
 | 2026-08-13 | M01DC-018 Phase 7 registration amendment | M01DC-018's already-planned `CampaignMissionLaunchSystem : ISystem` necessarily adds one production ECS declaration. Added only the deterministic Phase 7 inventory and its exact frozen-count test to the item allowlist so the existing gate can register that declaration fail closed. No cap, exception, disposition, runtime behavior, protected content, or deferred architecture scope is changed. | enclosing amendment commit | Accepted |
 | 2026-08-13 | M01DC-018 | Added one shared catalog projection and launch system for FirstLaunch and Campaign origins. Exact canonical identities, readiness, bounded rejection, retry/reload, idempotent blob ownership, and explicit rejection of the Skirmish shortcut pass; focused `10 / 10`, PlayMode `3 / 3`, Phase 7 `19 / 19`, source-growth `17 / 17`, architecture `23` suites, compiler zero, deterministic inventory, and restored-output checks pass. | enclosing M01DC-018 acceptance commit | Accepted |
 | 2026-08-13 | M01DC-019 force-projection/Phase 7 amendment | The planned spawn and patrol systems require their canonical scenario force/route data in the already-owned mission blob, and add exactly two production `ISystem` declarations. Added only `CampaignMissionComponents.cs`, `CampaignMissionCatalogProjection.cs`, the deterministic Phase 7 inventory, and its exact-count test to M01DC-019. This authorizes data-only force/route blob projection and exact registration; it does not authorize scenario/map asset edits, a second owner, tactical-system changes, managed exceptions, thresholds, or protected content. | enclosing amendment commit | Accepted |
+| 2026-08-13 | M01DC-019 prefab-resolution/test-dependency correction | Exact-head evidence showed authored semantic unit IDs cannot resolve the existing prefab registry, whose keys are prefab names. Added one explicit `runtimePrefabSourceKey` per already-frozen scenario unit plus its generic config/projection field, and the direct mission-contract reference needed by the already-authorized PlayMode assembly to construct the unmanaged runtime fixture. The exact-path matrix now names these bounded paths. Semantic IDs and expected GUIDs remain authoritative; runtime keys are exact lookup data, not identity aliases. No map, prefab, registry, tactical system, threshold, or protected output changes. | enclosing M01DC-019 acceptance commit | Accepted |
+| 2026-08-13 | M01DC-019 | Added deterministic fail-closed force spawning and one-shot delayed patrol projection for the exact four-player/three-hostile scenario force. Courier, Warden, and Broker resolve to Male 03, Female 01, and Female 02; forbidden identities and missing prefabs cannot partially spawn. Focused PlayMode `3 / 3`, scenario compatibility `8 / 8`, Phase 7 `19 / 19`, source-growth `17 / 17`, architecture `23` suites, compiler zero, protected-path, and restored-output checks pass. | enclosing M01DC-019 acceptance commit | Accepted |
 
 Implementation entries are appended only after an item is accepted and pushed. The final row must record M01DC-043, the final main/origin head, 43/43 progress, Android package/device identities, agent-QA/finding closure, validation summary, and clean worktree state.
 

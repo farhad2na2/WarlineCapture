@@ -13,12 +13,12 @@ public sealed class NonUiSystemBaseMigrationArchitectureTests
     private const string InventoryPath = "Design/Architecture/systembase_to_isystem_inventory.md";
     private const string MonoBehaviourLoopBaselinePath = "Design/Architecture/phase7_monobehaviour_loop_baseline.md";
     private const int ManagedExceptionPlanningCap = 30;
-    private const int FinalProductionDeclarationCount = 208;
-    private const int FinalProductionNonUiCount = 186;
+    private const int FinalProductionDeclarationCount = 209;
+    private const int FinalProductionNonUiCount = 187;
     private const int FinalProductionUiCount = 22;
     private const int FinalProductionSystemBaseCount = 25;
-    private const int FinalProductionISystemCount = 183;
-    private const int FinalConvertedCount = 161;
+    private const int FinalProductionISystemCount = 184;
+    private const int FinalConvertedCount = 162;
     private const int FinalManagedExceptionCount = 25;
     private const int FinalUiOutOfScopeCount = 22;
 
@@ -443,7 +443,7 @@ public sealed class NonUiSystemBaseMigrationArchitectureTests
         Assert.AreEqual(FinalManagedExceptionCount, managedExceptions, "Final Phase 7 managed exception count drifted.");
         Assert.AreEqual(FinalUiOutOfScopeCount, uiOutOfScope, "Final Phase 7 UI out-of-scope count drifted.");
         Assert.AreEqual(0, reviewRequired, "Final Phase 7 inventory must not retain ReviewRequired rows.");
-        Assert.AreEqual(0.879f, share, 0.001f, "Final Phase 7 production ISystem share drifted.");
+        Assert.AreEqual(0.880f, share, 0.001f, "Final Phase 7 production ISystem share drifted.");
     }
 
     [Test]

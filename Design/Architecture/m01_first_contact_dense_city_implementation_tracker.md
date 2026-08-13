@@ -1,8 +1,8 @@
 # M01 First Contact Dense-City Implementation Tracker
 
 Date: 2026-08-12
-Status: Active; M01DC-017 accepted and M01DC-018 dependency-ready
-Progress: 17/43 accepted items (39.5%)
+Status: Active; M01DC-018 accepted and M01DC-019 dependency-ready
+Progress: 18/43 accepted items (41.9%)
 Parent design: `Design/M01_FirstContact_Dense_City_High_Level_Design.md`
 Technical architecture: `Design/Architecture/m01_first_contact_dense_city_technical_architecture.md`
 Mission: `saga.ch01.m01.first_contact`
@@ -326,11 +326,11 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
   **Acceptance:** exactly one writer is found; invalid transitions fail closed; UI/narrative/ARIA/audio remain readers; no static mutable state or parallel store appears.
   **Evidence:** `Assets/Game/Scripts/Components/CampaignMissionComponents.cs`, `Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.cs`, `Assets/Game/Scripts/Runtime/Missions/CampaignMissionCatalogDisposalSystem.cs`, and `Design/AgentReports/M01FirstContact/m01dc_017_runtime_owner.json`; one `CampaignMissionRuntimeComponent` semantic writer owns all ten approved phases and outcome/version changes, while invalid transitions and result rewrites fail closed and result presentation may advance only while preserving its outcome/return route; all runtime data is unmanaged, no static mutable state or parallel store exists, and the catalog blob has one idempotent disposal owner. Checked runtime ownership/transition/lifecycle `12 / 12`, exact Phase 7 inventory `19 / 19`, source-growth `17 / 17`, architecture `23` suites, deterministic inventory regeneration, and compiler zero pass; both new production systems are registered as `ISystem` without adding a managed exception; seven incidental architecture outputs were restored to HEAD; diff/protected-path checks pass; clean pushed head.
 
-- [ ] **M01DC-018 - Integrate one launch/bootstrap path**
+- [x] **M01DC-018 - Integrate one launch/bootstrap path**
   **Depends on:** M01DC-017.
   **Deliverable:** validated payload resolution, mission/scenario/map loading, readiness gating, and controlled entry used by both FirstLaunch and Campaign origins.
   **Acceptance:** equal payloads produce equal runtime setup; stale/missing data fails to a bounded recovery surface; no Campaign path reuses an inappropriate Skirmish shortcut.
-  **Evidence:** launch equivalence, failure-path, readiness, unload/reload tests; clean pushed head.
+  **Evidence:** `CampaignMissionCatalogProjection` validates mission/scenario/logical-map identity as one unit and publishes an owned, versioned blob idempotently; the single `CampaignMissionLaunchSystem` gates both typed origins on exact active-map identity and required readiness, preserves pending requests, returns bounded failures, rejects a Skirmish identity shortcut, and resets retries deterministically. Focused launch/bootstrap `10 / 10`, PlayMode `3 / 3`, Phase 7 `19 / 19`, source-growth `17 / 17`, architecture `23` suites, deterministic inventory, and compiler zero pass; the production inventory is exactly `209` declarations / `184` `ISystem` / `25` managed exceptions; seven incidental outputs restored; clean pushed head.
 
 - [ ] **M01DC-019 - Spawn deterministic friendly and hostile forces**
   **Depends on:** M01DC-013, M01DC-018.
@@ -561,6 +561,7 @@ Unity licensing, wrapper, device connection, disk space, or bounded tool interru
 | 2026-08-13 | M01DC-017 Phase 7 exact-count amendment | The regenerated inventory passed determinism but the focused Phase 7 gate failed closed at the frozen production declaration count (`206` expected, `208` actual). Added only `Assets/Tests/Editor/NonUiSystemBaseMigrationArchitectureTests.cs` to the M01DC-017 allowlist so its exact frozen counts can describe the two new authorized `ISystem` declarations. This changes no cap, exception, disposition, runtime behavior, protected content, or deferred architecture scope. | enclosing amendment commit | Accepted |
 | 2026-08-13 | M01DC-017 | Added the sole ECS mission phase/outcome writer and one owned catalog-blob disposer using unmanaged components and the approved ten-phase vocabulary. Result identity is immutable, invalid transitions fail closed, and no UI/narrative/ARIA/audio writer, static mutable state, or parallel store exists. Runtime `12 / 12`, Phase 7 `19 / 19`, source-growth `17 / 17`, architecture `23` suites, deterministic inventory, compiler zero, incidental-output restoration, and diff checks pass. | enclosing M01DC-017 acceptance commit | Accepted |
 | 2026-08-13 | M01DC-018 Phase 7 registration amendment | M01DC-018's already-planned `CampaignMissionLaunchSystem : ISystem` necessarily adds one production ECS declaration. Added only the deterministic Phase 7 inventory and its exact frozen-count test to the item allowlist so the existing gate can register that declaration fail closed. No cap, exception, disposition, runtime behavior, protected content, or deferred architecture scope is changed. | enclosing amendment commit | Accepted |
+| 2026-08-13 | M01DC-018 | Added one shared catalog projection and launch system for FirstLaunch and Campaign origins. Exact canonical identities, readiness, bounded rejection, retry/reload, idempotent blob ownership, and explicit rejection of the Skirmish shortcut pass; focused `10 / 10`, PlayMode `3 / 3`, Phase 7 `19 / 19`, source-growth `17 / 17`, architecture `23` suites, compiler zero, deterministic inventory, and restored-output checks pass. | enclosing M01DC-018 acceptance commit | Accepted |
 
 Implementation entries are appended only after an item is accepted and pushed. The final row must record M01DC-043, the final main/origin head, 43/43 progress, Android package/device identities, agent-QA/finding closure, validation summary, and clean worktree state.
 

@@ -6,18 +6,18 @@ Source root: `Assets/Game/Scripts`.
 
 ## Summary
 
-- Total ECS system declarations: `212`.
+- Total ECS system declarations: `213`.
 - Production `SystemBase`/legacy declarations: `25`.
-- Production `ISystem` declarations: `187`.
-- Current production `ISystem` share: `88.2%`.
-- Production non-UI rows: `190`.
+- Production `ISystem` declarations: `188`.
+- Current production `ISystem` share: `88.3%`.
+- Production non-UI rows: `191`.
 - Production UI rows: `22`.
 - Editor rows: `0`.
 - Test rows: `0`.
-- Scopes: `ProductionNonUI` 190, `ProductionUI` 22.
-- Owner lanes: `AgentB` 17, `AgentC` 12, `AgentD` 12, `AgentE` 11, `AgentF` 42, `Integration` 118.
-- Dispositions: `Converted` 165, `ManagedPresentationSystemBaseException` 25, `UIOutOfScope` 22.
-- Statuses: `Converted` 165, `Deferred` 22, `ManagedException` 25.
+- Scopes: `ProductionNonUI` 191, `ProductionUI` 22.
+- Owner lanes: `AgentB` 17, `AgentC` 12, `AgentD` 12, `AgentE` 11, `AgentF` 42, `Integration` 119.
+- Dispositions: `Converted` 166, `ManagedPresentationSystemBaseException` 25, `UIOutOfScope` 22.
+- Statuses: `Converted` 166, `Deferred` 22, `ManagedException` 25.
 
 ## Inventory
 
@@ -117,8 +117,9 @@ Source root: `Assets/Game/Scripts`.
 | `P7-0288` | `UnitVisualPrefabReferenceBackfillSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/UnitVisualPrefabReferenceBackfillSystem.cs` | 7 | `ProductionNonUI` | `AgentF` | `Converted` | None | Medium: Command, Health, Selection, Spawn | OnCreate (method), OnUpdate (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `UnitVisualPrefabReferenceBackfillSystem : ISystem` | Architecture guard + compile + rendering/VFX focused validation | `Converted` |
 | `P7-0289` | `VehicleDestroyedVisualSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/VehicleDestroyedVisualSystem.cs` | 8 | `ProductionNonUI` | `AgentF` | `Converted` | None | Medium: Command, Health, Selection, Spawn | OnCreate (method), OnUpdate (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `VehicleDestroyedVisualSystem : ISystem` | Architecture guard + compile + rendering/VFX focused validation | `Converted` |
 | `P7-0290` | `VisualQualitySettingsSystem` | `class` | `SystemBase` | `Assets/Game/Scripts/Systems/VisualQualitySettingsSystem.cs` | 9 | `ProductionNonUI` | `AgentF` | `ManagedPresentationSystemBaseException` | Camera, Light | Low: managed boundary only | ApplyRuntimeMode (method), Dispose (method), Initialize (method) | Document concrete Unity-object ticking blocker and ensure no gameplay policy remains here. | Counted managed presentation/config/camera `SystemBase` exception. | Architecture guard + compile + rendering/VFX focused validation | `ManagedException` |
+| `P7-0438` | `CampaignMissionAmbientPresentationSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionAmbientPresentationSystem.cs` | 10 | `ProductionNonUI` | `Integration` | `Converted` | None | Medium: Attack, Combat, Health, Spawn | OnCreate (method), OnDestroy (method), OnUpdate (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `CampaignMissionAmbientPresentationSystem : ISystem` | Architecture guard + compile | `Converted` |
 | `P7-0432` | `CampaignMissionCatalogDisposalSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionCatalogDisposalSystem.cs` | 7 | `ProductionNonUI` | `Integration` | `Converted` | None | None | DisposeOwned (method), OnCreate (method), OnDestroy (method), OnUpdate (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `CampaignMissionCatalogDisposalSystem : ISystem` | Architecture guard + compile | `Converted` |
-| `P7-0434` | `CampaignMissionLaunchSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionLaunchSystem.cs` | 8 | `ProductionNonUI` | `Integration` | `Converted` | None | Medium: Validate | OnCreate (method), OnUpdate (method), TryValidate (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `CampaignMissionLaunchSystem : ISystem` | Architecture guard + compile | `Converted` |
+| `P7-0434` | `CampaignMissionLaunchSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionLaunchSystem.cs` | 8 | `ProductionNonUI` | `Integration` | `Converted` | None | Medium: Command, Validate | OnCreate (method), OnUpdate (method), QueueAttemptCleanup (method), TryValidate (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `CampaignMissionLaunchSystem : ISystem` | Architecture guard + compile | `Converted` |
 | `P7-0437` | `CampaignMissionObjectiveProjectionSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionObjectiveProjectionSystem.cs` | 9 | `ProductionNonUI` | `Integration` | `Converted` | None | Medium: Command, Spawn | IsPublishable (method), IsStale (method), OnCreate (method), OnUpdate (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `CampaignMissionObjectiveProjectionSystem : ISystem` | Architecture guard + compile | `Converted` |
 | `P7-0435` | `CampaignMissionPatrolOrderSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionPatrolOrderSystem.cs` | 8 | `ProductionNonUI` | `Integration` | `Converted` | None | Medium: Command, MoveOrder, Path, Spawn | OnCreate (method), OnUpdate (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `CampaignMissionPatrolOrderSystem : ISystem` | Architecture guard + compile | `Converted` |
 | `P7-0433` | `CampaignMissionRuntimeSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.cs` | 8 | `ProductionNonUI` | `Integration` | `Converted` | None | Medium: Command, Spawn | IsValidTransition (method), OnCreate (method), OnUpdate (method), TryEvaluate (method), TryTransition (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `CampaignMissionRuntimeSystem : ISystem` | Architecture guard + compile | `Converted` |
@@ -369,10 +370,11 @@ Rows: `42`.
 
 ### Integration
 
-Rows: `118`.
+Rows: `119`.
 
 | Id | Type | Base | Disposition | Status | Path | First safe slice | Validation gate |
 | --- | --- | --- | --- | --- | --- | --- | --- |
+| `P7-0438` | `CampaignMissionAmbientPresentationSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionAmbientPresentationSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile |
 | `P7-0432` | `CampaignMissionCatalogDisposalSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionCatalogDisposalSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile |
 | `P7-0434` | `CampaignMissionLaunchSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionLaunchSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile |
 | `P7-0437` | `CampaignMissionObjectiveProjectionSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionObjectiveProjectionSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile |
@@ -590,7 +592,7 @@ Rows: `73`.
 | `P7-0390` | `ResourceExchangeVisualCueSystem` | 2 | `AgentF` | `Assets/Game/Scripts/Systems/ResourceExchangeVisualCueSystem.cs` | EmitVisualCues (method), ResolveVfxMarkerKind (method) |
 | `P7-0286` | `UnitDestroyedVisualSystem` | 1 | `AgentF` | `Assets/Game/Scripts/Systems/UnitDestroyedVisualSystem.cs` | SetChildVisible (method) |
 | `P7-0432` | `CampaignMissionCatalogDisposalSystem` | 1 | `Integration` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionCatalogDisposalSystem.cs` | DisposeOwned (method) |
-| `P7-0434` | `CampaignMissionLaunchSystem` | 1 | `Integration` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionLaunchSystem.cs` | TryValidate (method) |
+| `P7-0434` | `CampaignMissionLaunchSystem` | 2 | `Integration` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionLaunchSystem.cs` | QueueAttemptCleanup (method), TryValidate (method) |
 | `P7-0437` | `CampaignMissionObjectiveProjectionSystem` | 2 | `Integration` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionObjectiveProjectionSystem.cs` | IsPublishable (method), IsStale (method) |
 | `P7-0433` | `CampaignMissionRuntimeSystem` | 3 | `Integration` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.cs` | IsValidTransition (method), TryEvaluate (method), TryTransition (method) |
 | `P7-0436` | `CampaignMissionSpawnSystem` | 3 | `Integration` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionSpawnSystem.cs` | ToGridCell (method), TryFindAnchor (method), TryFindDefinition (method) |
@@ -720,8 +722,9 @@ Rows: `73`.
 | `P7-0288` | `public` | `Game.Runtime` | [UpdateInGroup(typeof(SimulationSystemGroup))] | OnCreate, OnUpdate, Update | OnCreate (method), OnUpdate (method) | EntityQuery, EntityManager, ECB | native container, query/lookup/cache | `Assets/Game/Scripts/Systems/UnitVisualPrefabReferenceBackfillSystem.cs\|UnitVisualPrefabReferenceBackfillSystem` |
 | `P7-0289` | `public` | `Game.Runtime` | [UpdateAfter(typeof(UnitDeathSystem))] | OnCreate, OnUpdate | OnCreate (method), OnUpdate (method) | EntityManager, ECB | native container | `Assets/Game/Scripts/Systems/VehicleDestroyedVisualSystem.cs\|VehicleDestroyedVisualSystem` |
 | `P7-0290` | `public` | `Game.Runtime` | None | OnCreate, OnUpdate, OnDestroy | ApplyRuntimeMode (method), Dispose (method), Initialize (method) | None | presentation view | `Assets/Game/Scripts/Systems/VisualQualitySettingsSystem.cs\|VisualQualitySettingsSystem` |
-| `P7-0432` | `public` | `Game.Runtime` | [UpdateInGroup(typeof(InitializationSystemGroup), OrderLast = true)] | OnCreate, OnUpdate, OnDestroy | DisposeOwned (method), OnCreate (method), OnDestroy (method), OnUpdate (method) | SystemAPI.Query | None | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionCatalogDisposalSystem.cs\|CampaignMissionCatalogDisposalSystem` |
-| `P7-0434` | `public` | `Game.Runtime` | [UpdateInGroup(typeof(InitializationSystemGroup))], [UpdateBefore(typeof(CampaignMissionRuntimeSystem))] | OnCreate, OnUpdate | OnCreate (method), OnUpdate (method), TryValidate (method) | SystemAPI.Query | None | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionLaunchSystem.cs\|CampaignMissionLaunchSystem` |
+| `P7-0438` | `public` | `Game.Runtime` | [UpdateInGroup(typeof(PresentationSystemGroup))], [UpdateAfter(typeof(CampaignMissionObjectiveProjectionSystem))] | OnCreate, OnUpdate, OnDestroy | OnCreate (method), OnDestroy (method), OnUpdate (method) | EntityQuery, EntityManager, ToEntityArray, ToComponentDataArray | native container, query/lookup/cache | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionAmbientPresentationSystem.cs\|CampaignMissionAmbientPresentationSystem` |
+| `P7-0432` | `public` | `Game.Runtime` | [UpdateInGroup(typeof(InitializationSystemGroup), OrderLast = true)] | OnCreate, OnUpdate, OnDestroy | DisposeOwned (method), OnCreate (method), OnDestroy (method), OnUpdate (method) | SystemAPI.Query, EntityQuery, EntityManager | query/lookup/cache | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionCatalogDisposalSystem.cs\|CampaignMissionCatalogDisposalSystem` |
+| `P7-0434` | `public` | `Game.Runtime` | [UpdateInGroup(typeof(InitializationSystemGroup))], [UpdateBefore(typeof(CampaignMissionRuntimeSystem))] | OnCreate, OnUpdate | OnCreate (method), OnUpdate (method), QueueAttemptCleanup (method), TryValidate (method) | SystemAPI.Query, EntityQuery, EntityManager, ToEntityArray, ECB | native container, query/lookup/cache | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionLaunchSystem.cs\|CampaignMissionLaunchSystem` |
 | `P7-0437` | `public` | `Game.Runtime` | [UpdateInGroup(typeof(SimulationSystemGroup))], [UpdateAfter(typeof(CampaignMissionRuntimeSystem))] | OnCreate, OnUpdate | IsPublishable (method), IsStale (method), OnCreate (method), OnUpdate (method) | EntityQuery, EntityManager | query/lookup/cache | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionObjectiveProjectionSystem.cs\|CampaignMissionObjectiveProjectionSystem` |
 | `P7-0435` | `public` | `Game.Runtime` | [UpdateInGroup(typeof(SimulationSystemGroup))], [UpdateBefore(typeof(UnitMoveOrderRequestSystem))], [UpdateBefore(typeof(CampaignMissionRuntimeSystem))] | OnCreate, OnUpdate | OnCreate (method), OnUpdate (method) | SystemAPI.Query, EntityManager | native container | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionPatrolOrderSystem.cs\|CampaignMissionPatrolOrderSystem` |
 | `P7-0433` | `public` | `Game.Runtime` | [UpdateInGroup(typeof(SimulationSystemGroup))] | OnCreate, OnUpdate | IsValidTransition (method), OnCreate (method), OnUpdate (method), TryEvaluate (method), TryTransition (method) | SystemAPI.Query | None | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.cs\|CampaignMissionRuntimeSystem` |

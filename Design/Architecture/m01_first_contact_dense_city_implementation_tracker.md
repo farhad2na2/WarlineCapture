@@ -1,8 +1,8 @@
 # M01 First Contact Dense-City Implementation Tracker
 
 Date: 2026-08-12
-Status: Active; M01DC-021 accepted and M01DC-022 dependency-ready
-Progress: 21/43 accepted items (48.8%)
+Status: Active; M01DC-022 accepted and M01DC-023 dependency-ready
+Progress: 22/43 accepted items (51.2%)
 Parent design: `Design/M01_FirstContact_Dense_City_High_Level_Design.md`
 Technical architecture: `Design/Architecture/m01_first_contact_dense_city_technical_architecture.md`
 Mission: `saga.ch01.m01.first_contact`
@@ -352,11 +352,13 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
 
   **Evidence:** `Design/AgentReports/M01FirstContact/m01dc_021_lifecycle.json`; accepted retry removes all prior `CampaignMissionUnitRoleComponent` entities, clears attempt-local launch/action/settlement queues and result/facts before publishing the new runtime identity, while system teardown removes remaining mission entities and disposes only its owned blob. Command-squad loss remains the sole deterministic defeat and applies no retry penalty. Focused PlayMode `4 / 4` including eight repeated retry cycles, Phase 7 `19 / 19`, source-growth `17 / 17`, architecture `23` suites, compiler zero, restored-output, protected-path, and diff checks pass; clean pushed head.
 
-- [ ] **M01DC-022 - Add bounded ambient civilians**
+- [x] **M01DC-022 - Add bounded ambient civilians**
   **Depends on:** M01DC-019, M01DC-021.
   **Deliverable:** capped ambient/scripted evacuation presentation driven one-way by mission completion and optional fallback when presentation capacity is unavailable.
   **Acceptance:** civilians are non-selectable, non-attackable, never targeted, never authoritative, never counted in objectives/stars/rewards, deterministically bounded, and fully cleaned up.
-  **Evidence:** target/filter/bounds/fallback/lifecycle/allocation tests, clean pushed head.
+  **Evidence:** `Design/AgentReports/M01FirstContact/m01dc_022_ambient.json`; the canonical scenario projects its authored eight civilians into the unmanaged mission blob; one presentation-only `ISystem` instantiates only the four approved civilian prefab keys, strips selection/faction/health/combat/attack/target/control components, begins deterministic evacuation only on `SecureCorridor` or victory, and creates zero entities when optional presentation capacity is unavailable. Authored eight and hard maximum twelve are independent and fail closed above twelve. Focused PlayMode `7 / 7` covers inert targeting, bounds, zero fallback, victory/defeat behavior, eight retries, teardown, and `0 B` stable-update managed allocation; Phase 7 `19 / 19`, source-growth `17 / 17`, architecture `23` suites, compiler zero, deterministic inventory, restored-output, protected-path, and diff checks pass; clean pushed head.
+
+  **Ownership amendment (2026-08-13):** fresh exact-head review found the canonical scenario's ambient count/anchor/route are validated but not projected into `CampaignMissionDefinitionBlob`; hard-coding them in the ambient system would violate configuration ownership. Add only `CampaignMissionComponents.cs` and `CampaignMissionCatalogProjection.cs` for unmanaged ambient blob projection, plus `systembase_to_isystem_inventory.md` and `NonUiSystemBaseMigrationArchitectureTests.cs` to register the one planned `CampaignMissionAmbientPresentationSystem : ISystem` with exact counts. Deterministic Unity metadata paired with the authorized new system/test is implicit. No scenario/map/prefab/city/objective/result/reward/threshold/package/scene data is changed.
 
 - [ ] **M01DC-023 - Evaluate stars and construct the mission result**
   **Depends on:** M01DC-020, M01DC-021.
@@ -574,6 +576,8 @@ Unity licensing, wrapper, device connection, disk space, or bounded tool interru
 | 2026-08-13 | M01DC-020 metadata amendment | Added only the three deterministic Unity `.meta` paths paired with the already-authorized objective writer and focused Editor/PlayMode test sources. No production asset, scene, map, package, threshold, or project setting is added. | enclosing M01DC-020 acceptance commit | Accepted |
 | 2026-08-13 | M01DC-020 | Added the sole objective writer and neutral projection boundary. Deterministic patrol progress/completion and command-squad failure reject stale/duplicate session, attempt, and source versions; assistant/HUD readers project without writing objective truth. Focused writer `5 / 5`, assistant projection `10 / 10`, PlayMode `1 / 1`, Phase 7 `19 / 19`, source-growth `17 / 17`, architecture `23` suites, compiler zero, protected-path, restored-output, and diff checks pass. | enclosing M01DC-020 acceptance commit | Accepted |
 | 2026-08-13 | M01DC-021 | Added bounded attempt lifecycle cleanup to the existing launch and catalog-disposal owners. Retry preserves deterministic identity while removing prior mission entities and attempt-local queues/results; teardown removes remaining mission entities and the owned blob. Focused lifecycle PlayMode `4 / 4` with eight retry cycles, Phase 7 `19 / 19`, source-growth `17 / 17`, architecture `23` suites, compiler zero, protected-path, restored-output, and diff checks pass. | enclosing M01DC-021 acceptance commit | Accepted |
+| 2026-08-13 | M01DC-022 ownership/Phase 7 amendment | Exact-head review found authored ambient count/anchor/route data was not in the mission blob. Added only the existing mission component/projection paths for unmanaged ambient projection and the Phase 7 inventory/count paths for the one planned ambient `ISystem`; deterministic new-source metadata is implicit. No scenario, map, prefab, city, gameplay truth, reward, threshold, package, or scene change is authorized. | enclosing M01DC-022 acceptance commit | Accepted |
+| 2026-08-13 | M01DC-022 | Added configuration-projected, bounded presentation-only civilians: canonical eight, hard cap twelve, deterministic safe-zone/evacuation placement, zero fallback when optional visual capacity is absent, no evacuation on defeat, and full retry/teardown cleanup. Focused PlayMode `7 / 7`, stable-update `0 B`, Phase 7 `19 / 19`, source-growth `17 / 17`, architecture `23` suites, compiler zero, deterministic inventory, protected-path, restored-output, and diff checks pass. | enclosing M01DC-022 acceptance commit | Accepted |
 
 Implementation entries are appended only after an item is accepted and pushed. The final row must record M01DC-043, the final main/origin head, 43/43 progress, Android package/device identities, agent-QA/finding closure, validation summary, and clean worktree state.
 

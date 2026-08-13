@@ -148,7 +148,10 @@ namespace Game.Components
     {
         public FixedString64Bytes PresentationId;
         public FixedString64Bytes RouteId;
+        public FixedString64Bytes SessionToken;
         public int RouteIndex;
+        public int AttemptOrdinal;
+        public byte Evacuating;
     }
 
     public struct CampaignMissionCatalogBlob
@@ -172,6 +175,7 @@ namespace Game.Components
         public byte AirDisabled;
         public BlobArray<CampaignMissionForceGroupBlob> ForceGroups;
         public BlobArray<CampaignMissionPatrolRouteBlob> PatrolRoutes;
+        public BlobArray<CampaignMissionAmbientPresentationBlob> AmbientPresentations;
     }
 
     public struct CampaignMissionForceGroupBlob
@@ -197,5 +201,13 @@ namespace Game.Components
         public FixedString64Bytes UnitGroupId;
         public int StartDelayMilliseconds;
         public BlobArray<FixedString64Bytes> AnchorIds;
+    }
+
+    public struct CampaignMissionAmbientPresentationBlob
+    {
+        public FixedString64Bytes PresentationId;
+        public FixedString64Bytes AnchorId;
+        public FixedString64Bytes RouteId;
+        public int InstanceCount;
     }
 }

@@ -67,6 +67,7 @@ namespace Game.Composition
             definition.TransportDisabled = scenario.Restrictions.TransportDisabled ? (byte)1 : (byte)0;
             definition.AirDisabled = scenario.Restrictions.AirDisabled ? (byte)1 : (byte)0;
             ProjectForces(ref builder, ref definition, scenario);
+            ProjectAmbient(ref builder, ref definition, scenario);
             BlobAssetReference<CampaignMissionCatalogBlob> projected =
                 builder.CreateBlobAssetReference<CampaignMissionCatalogBlob>(Allocator.Persistent);
             builder.Dispose();
@@ -144,6 +145,24 @@ namespace Game.Composition
             entityManager.AddBuffer<CampaignMissionSettlementResultElement>(root);
             entityManager.SetName(root, "CampaignMissionRoot");
             return root;
+        }
+
+        private static void ProjectAmbient(
+            ref BlobBuilder builder, ref CampaignMissionDefinitionBlob definition, ScenarioSetupConfig scenario)
+        {
+            ReadOnlySpan<ScenarioAmbientPresentationConfig> source = scenario.AmbientPresentations;
+            BlobBuilderArray<CampaignMissionAmbientPresentationBlob> projected =
+                builder.Allocate(ref definition.AmbientPresentations, source.Length);
+            for (int i = 0; i < source.Length; i++)
+            {
+                projected[i] = new CampaignMissionAmbientPresentationBlob
+                {
+                    PresentationId = new FixedString64Bytes(source[i].PresentationId),
+                    AnchorId = new FixedString64Bytes(source[i].AnchorId),
+                    RouteId = new FixedString64Bytes(source[i].RouteId),
+                    InstanceCount = source[i].InstanceCount
+                };
+            }
         }
     }
 }

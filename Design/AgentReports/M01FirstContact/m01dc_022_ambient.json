@@ -1,0 +1,53 @@
+{
+  "artifactId": "m01dc-022-ambient-v1",
+  "headBefore": "71877e1003dd7e36de5cbcc44694602072d061b1",
+  "result": "Passed",
+  "authoredCount": 8,
+  "hardMaximum": 12,
+  "presentationCapacityFallbackCount": 0,
+  "missionTruthWriterAdded": false,
+  "gameplayComponentsRemoved": [
+    "Faction",
+    "UnitHealth",
+    "UnitCombat",
+    "UnitAttack",
+    "ThreatDetector",
+    "SelectedUnitTag",
+    "EngageTarget",
+    "UnitTarget",
+    "AIControlledTag",
+    "ManualControlledTag"
+  ],
+  "validation": {
+    "ambientPlayMode": "7 / 7",
+    "launchCatalogRegression": "10 / 10 marker observed twice; wrapper rejected shutdown marker and evidence is non-acceptance supplemental only",
+    "phase7": "19 / 19",
+    "sourceGrowth": "17 / 17",
+    "architecture": "23 suites",
+    "compilerErrors": 0,
+    "stableUpdateManagedBytes": 0,
+    "inventoryTwoPassSha256": "41bba87aa4ac23d8ababf6813d849222e78d3888883f0ce21d1859939a92add4",
+    "protectedPathChanges": 0,
+    "incidentalUnityOutputsRestored": 8,
+    "diffCheck": "Passed"
+  },
+  "lifecycle": {
+    "retryCycles": 8,
+    "stableEntityCount": 8,
+    "systemTeardownEntityCount": 0,
+    "defeatEvacuates": false,
+    "victoryEvacuates": true
+  },
+  "inventory": {
+    "totalEcsDeclarations": 213,
+    "iSystemDeclarations": 188,
+    "managedExceptions": 25,
+    "converted": 166
+  },
+  "ownedSourceHashes": {
+    "Assets/Game/Scripts/Components/CampaignMissionComponents.cs": "299fb0c9339e5df0fc13f36bffb51f7960ad83a7a8f612bcd02d165a18c15b4f",
+    "Assets/Game/Scripts/Composition/CampaignMissionCatalogProjection.cs": "45844111231e026c27a0aeb5a9e7e7ea2095ed3191043a8a314db83453b2d837",
+    "Assets/Game/Scripts/Runtime/Missions/CampaignMissionAmbientPresentationSystem.cs": "cf874ecafef1e2f7bcc598318c04c728bb8c43ae0fd47578e9bcc685a18a0a9f",
+    "Assets/Tests/PlayMode/M01FirstContactAmbientPlayModeTests.cs": "700417bda07e68c501459b5e0813d5bc3a82e80ec12902bea495059912db0ea7"
+  }
+}

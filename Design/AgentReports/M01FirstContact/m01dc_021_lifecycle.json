@@ -1,0 +1,29 @@
+{
+  "item": "M01DC-021",
+  "result": "Passed",
+  "headAtValidation": "49973ee9abb333f33741f91de49c761f74c09081",
+  "ownership": {
+    "attemptCleanupOwner": "CampaignMissionLaunchSystem",
+    "worldTeardownOwner": "CampaignMissionCatalogDisposalSystem",
+    "missionEntityMarker": "CampaignMissionUnitRoleComponent",
+    "runtimeWriter": "CampaignMissionRuntimeSystem",
+    "newStateOwnerCount": 0
+  },
+  "behavior": {
+    "failure": "Command-squad destruction publishes deterministic Defeat and CampaignOperations return without mutating loss facts or applying a retry penalty.",
+    "retry": "Accepted relaunch preserves session and deterministic seed, increments the caller-owned attempt identity, removes prior mission-role entities, clears prior launch/action/settlement results and requests, resets result/facts, and cannot duplicate rewards, events, or entities.",
+    "unload": "Mission system teardown destroys remaining mission-role entities and idempotently disposes only an owned catalog blob.",
+    "stressCycles": 8
+  },
+  "validation": {
+    "lifecyclePlayMode": { "result": "Passed", "tests": 4, "log": "%TEMP%/warline-m01dc021-lifecycle-r3.log", "xml": "%TEMP%/warline-m01dc021-lifecycle-r3.xml" },
+    "phase7": { "result": "Passed", "tests": 19, "marker": "[NonUiSystemBaseMigrationArchitectureValidation] result=Passed tests=19" },
+    "sourceGrowth": { "result": "Passed", "tests": 17, "marker": "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17" },
+    "architecture": { "result": "Passed", "suites": 23, "marker": "[ArchitectureHardeningCloseoutValidation] result=Passed suites=23" },
+    "compilerErrors": 0,
+    "diffCheck": "Passed",
+    "incidentalUnityOutputs": "Seven known validator outputs restored exactly to entry head"
+  },
+  "protectedDenseCityOutputsModified": false,
+  "androidRequiredForItem": false
+}

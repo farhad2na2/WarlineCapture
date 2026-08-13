@@ -8,9 +8,13 @@ namespace Game.Runtime
     [UpdateInGroup(typeof(InitializationSystemGroup), OrderLast = true)]
     public partial struct CampaignMissionCatalogDisposalSystem : ISystem
     {
+        private EntityQuery _missionUnits;
+
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
+            _missionUnits = state.GetEntityQuery(
+                ComponentType.ReadOnly<CampaignMissionUnitRoleComponent>());
         }
 
         [BurstCompile]
@@ -37,6 +41,8 @@ namespace Game.Runtime
                 DisposeOwned(ref owned);
                 catalog.ValueRW = owned;
             }
+            if (!_missionUnits.IsEmptyIgnoreFilter)
+                state.EntityManager.DestroyEntity(_missionUnits);
         }
 
         public static void DisposeOwned(ref CampaignMissionCatalogComponent catalog)

@@ -13,17 +13,20 @@ namespace Game.Runtime
 
         public void OnUpdate(ref SystemState state)
         {
+            EntityCommandBuffer cleanup = new(Allocator.Temp);
+            bool cleanupQueued = false;
             foreach ((RefRO<CampaignMissionCatalogComponent> catalog,
                       RefRW<CampaignMissionLaunchQueueComponent> queue,
                       RefRW<CampaignMissionRuntimeComponent> runtime,
                       RefRW<CampaignMissionAttemptFactsComponent> facts,
                       DynamicBuffer<CampaignMissionLaunchRequestElement> requests,
-                      DynamicBuffer<CampaignMissionLaunchResultElement> results)
+                      DynamicBuffer<CampaignMissionLaunchResultElement> results,
+                      Entity root)
                      in SystemAPI.Query<RefRO<CampaignMissionCatalogComponent>,
                          RefRW<CampaignMissionLaunchQueueComponent>, RefRW<CampaignMissionRuntimeComponent>,
                          RefRW<CampaignMissionAttemptFactsComponent>,
                          DynamicBuffer<CampaignMissionLaunchRequestElement>,
-                         DynamicBuffer<CampaignMissionLaunchResultElement>>())
+                         DynamicBuffer<CampaignMissionLaunchResultElement>>().WithEntityAccess())
             {
                 if (requests.Length == 0)
                     continue;
@@ -44,6 +47,8 @@ namespace Game.Runtime
 
                 if (accepted)
                 {
+                    QueueAttemptCleanup(state.EntityManager, ref cleanup, root);
+                    cleanupQueued = true;
                     runtime.ValueRW = CreateRuntime(in request, catalog.ValueRO.SourceVersion, readiness);
                     facts.ValueRW = default;
                     CampaignMissionLaunchQueueComponent nextQueue = queue.ValueRO;
@@ -61,6 +66,34 @@ namespace Game.Runtime
                 });
                 requests.RemoveAt(0);
             }
+            if (cleanupQueued)
+                cleanup.Playback(state.EntityManager);
+            cleanup.Dispose();
+        }
+
+        internal static void QueueAttemptCleanup(
+            EntityManager entityManager, ref EntityCommandBuffer cleanup, Entity root)
+        {
+            using EntityQuery units = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<CampaignMissionUnitRoleComponent>());
+            using NativeArray<Entity> entities = units.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
+                cleanup.DestroyEntity(entities[i]);
+
+            ClearBufferIfPresent<CampaignMissionActionRequestElement>(entityManager, root);
+            ClearBufferIfPresent<CampaignMissionActionResultElement>(entityManager, root);
+            ClearBufferIfPresent<CampaignMissionLaunchResultElement>(entityManager, root);
+            ClearBufferIfPresent<CampaignMissionSettlementRequestElement>(entityManager, root);
+            ClearBufferIfPresent<CampaignMissionSettlementResultElement>(entityManager, root);
+            if (entityManager.HasComponent<CampaignMissionResultComponent>(root))
+                entityManager.SetComponentData(root, default(CampaignMissionResultComponent));
+        }
+
+        private static void ClearBufferIfPresent<T>(EntityManager entityManager, Entity root)
+            where T : unmanaged, IBufferElementData
+        {
+            if (entityManager.HasBuffer<T>(root))
+                entityManager.GetBuffer<T>(root).Clear();
         }
 
         public static bool TryValidate(

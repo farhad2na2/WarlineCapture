@@ -1,8 +1,8 @@
 # M01 First Contact Dense-City Implementation Tracker
 
 Date: 2026-08-12
-Status: Active; M01DC-020 accepted and M01DC-021 dependency-ready
-Progress: 20/43 accepted items (46.5%)
+Status: Active; M01DC-021 accepted and M01DC-022 dependency-ready
+Progress: 21/43 accepted items (48.8%)
 Parent design: `Design/M01_FirstContact_Dense_City_High_Level_Design.md`
 Technical architecture: `Design/Architecture/m01_first_contact_dense_city_technical_architecture.md`
 Mission: `saga.ch01.m01.first_contact`
@@ -344,11 +344,13 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
   **Acceptance:** destroy-patrol progress/completion and command-squad failure are deterministic; duplicate/stale writes are rejected; no reader derives a competing objective truth.
   **Evidence:** `Design/AgentReports/M01FirstContact/m01dc_020_objective_projection.json`; exactly one `CampaignMissionObjectiveProjectionSystem` writes the two authoritative objective rows from Campaign mission facts through the neutral `MatchObjectiveProjectionBoundaryComponent`. Destroy-patrol progress/completion, command-squad failure, session/attempt/source correlation, duplicate/stale rejection, and projection-only HUD/ARIA consumption pass. Focused writer `5 / 5`, assistant projection `10 / 10`, PlayMode `1 / 1`, Phase 7 `19 / 19`, source-growth `17 / 17`, architecture `23` suites, compiler zero, exact `212 / 187 / 25` inventory, protected-path, restored-output, and diff checks pass; clean pushed head.
 
-- [ ] **M01DC-021 - Implement failure, retry, unload, and lifecycle cleanup**
+- [x] **M01DC-021 - Implement failure, retry, unload, and lifecycle cleanup**
   **Depends on:** M01DC-018 through M01DC-020.
   **Deliverable:** command-squad failure, deterministic retry from the same payload/scenario, explicit exit/resume policy, and complete native/pool/entity/event cleanup.
   **Acceptance:** retry has no penalty and cannot duplicate rewards/events/entities; repeated launch/retry/exit cycles have no stale state, native leak, pool growth, or disposed access.
   **Evidence:** repeated lifecycle/transition/pool/native/allocation tests, clean pushed head.
+
+  **Evidence:** `Design/AgentReports/M01FirstContact/m01dc_021_lifecycle.json`; accepted retry removes all prior `CampaignMissionUnitRoleComponent` entities, clears attempt-local launch/action/settlement queues and result/facts before publishing the new runtime identity, while system teardown removes remaining mission entities and disposes only its owned blob. Command-squad loss remains the sole deterministic defeat and applies no retry penalty. Focused PlayMode `4 / 4` including eight repeated retry cycles, Phase 7 `19 / 19`, source-growth `17 / 17`, architecture `23` suites, compiler zero, restored-output, protected-path, and diff checks pass; clean pushed head.
 
 - [ ] **M01DC-022 - Add bounded ambient civilians**
   **Depends on:** M01DC-019, M01DC-021.
@@ -571,6 +573,7 @@ Unity licensing, wrapper, device connection, disk space, or bounded tool interru
 | 2026-08-13 | M01DC-020 neutral-boundary correction | The full architecture gate correctly rejected the provisional `Game.Runtime -> Game.UI.Shell.Contracts.Ecs` reference. Removed that reference and added one unmanaged `MatchObjectiveProjectionBoundaryComponent` in `Game.Components`; the existing assistant boundary initializer places the neutral structural marker without writing objective truth, while runtime depends only on `Game.Components`. No architecture exception or UI-shell dependency is added to runtime. | enclosing M01DC-020 acceptance commit | Accepted |
 | 2026-08-13 | M01DC-020 metadata amendment | Added only the three deterministic Unity `.meta` paths paired with the already-authorized objective writer and focused Editor/PlayMode test sources. No production asset, scene, map, package, threshold, or project setting is added. | enclosing M01DC-020 acceptance commit | Accepted |
 | 2026-08-13 | M01DC-020 | Added the sole objective writer and neutral projection boundary. Deterministic patrol progress/completion and command-squad failure reject stale/duplicate session, attempt, and source versions; assistant/HUD readers project without writing objective truth. Focused writer `5 / 5`, assistant projection `10 / 10`, PlayMode `1 / 1`, Phase 7 `19 / 19`, source-growth `17 / 17`, architecture `23` suites, compiler zero, protected-path, restored-output, and diff checks pass. | enclosing M01DC-020 acceptance commit | Accepted |
+| 2026-08-13 | M01DC-021 | Added bounded attempt lifecycle cleanup to the existing launch and catalog-disposal owners. Retry preserves deterministic identity while removing prior mission entities and attempt-local queues/results; teardown removes remaining mission entities and the owned blob. Focused lifecycle PlayMode `4 / 4` with eight retry cycles, Phase 7 `19 / 19`, source-growth `17 / 17`, architecture `23` suites, compiler zero, protected-path, restored-output, and diff checks pass. | enclosing M01DC-021 acceptance commit | Accepted |
 
 Implementation entries are appended only after an item is accepted and pushed. The final row must record M01DC-043, the final main/origin head, 43/43 progress, Android package/device identities, agent-QA/finding closure, validation summary, and clean worktree state.
 

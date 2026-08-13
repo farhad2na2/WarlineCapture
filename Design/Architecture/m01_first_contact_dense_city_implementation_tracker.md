@@ -1,8 +1,8 @@
 # M01 First Contact Dense-City Implementation Tracker
 
 Date: 2026-08-12
-Status: Active; M01DC-025 accepted and M01DC-026 dependency-ready
-Progress: 25/43 accepted items (58.1%)
+Status: Active; M01DC-026 accepted and M01DC-027 dependency-ready
+Progress: 26/43 accepted items (60.5%)
 Parent design: `Design/M01_FirstContact_Dense_City_High_Level_Design.md`
 Technical architecture: `Design/Architecture/m01_first_contact_dense_city_technical_architecture.md`
 Mission: `saga.ch01.m01.first_contact`
@@ -388,11 +388,15 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
 
   **Source-growth correction (2026-08-13):** move the existing pure recommendation equality comparison into the existing stateless `AssistantObjectiveProjectionUtility.cs` with guidance mapping. `AssistantReadModelSystems.cs` remains below its exact 599-line ceiling; no exception, threshold, or speculative headroom is added.
 
-- [ ] **M01DC-026 - Implement Contextual and Minimal guidance**
+- [x] **M01DC-026 - Implement Contextual and Minimal guidance**
   **Depends on:** M01DC-025.
   **Deliverable:** progressive contextual hints and mandatory-information-only minimal guidance using the same scenario and objective state.
   **Acceptance:** all three modes produce identical spawns, patrol behavior, commands, objectives, stars, rewards, and results for equal player actions; only presentation/help differs.
   **Evidence:** cross-mode equivalence matrix and focused tests, clean pushed head.
+
+  **Ownership amendment (2026-08-13):** M01DC-025 established the sole projection writer and its focused suite. M01DC-026 changes only the existing guidance projection component schema, guidance system/test, this tracker, the exact-path matrix, and compact evidence. Contextual escalation derives solely from attempt elapsed time and the existing cooldown; Minimal filters proactive phases and disables execution. No new system, writer, assembly dependency, gameplay fact, scenario/map asset, reward, threshold, or protected output is authorized.
+
+  **Accepted evidence (2026-08-13):** Full retains its existing proactive typed ARIA policy; Contextual presents the same five phase prompts, escalates from strength 1 to 2 only after the existing cooldown, and restricts Do It to the already-safe squad-selection and movement phases; Minimal presents only mandatory threat confirmation and corridor-security information and never executes. The focused cross-mode suite passes `10 / 10`, source growth passes `17 / 17`, and the architecture entrypoint passes `23` suites with zero compiler errors. Equal-action mission/runtime facts remain unchanged, protected dense-city outputs are unchanged, and exact log hashes are recorded in `m01dc_026_guidance_modes.json`.
 
 - [ ] **M01DC-027 - Replace the FirstLaunch menu handoff with typed M01 launch**
   **Depends on:** M01DC-015, M01DC-018, M01DC-026.
@@ -590,6 +594,7 @@ Unity licensing, wrapper, device connection, disk space, or bounded tool interru
 | 2026-08-13 | M01DC-023 | Added deterministic attempt-correlated result projection from authoritative runtime facts and authored star rules. All five combinations, exact four-minute victory behavior, fail-closed contradictions, immutable same-attempt updates, retry isolation, one settlement request, and zero UI writers pass. Focused `8 / 8`, Phase 7 `19 / 19`, source-growth `17 / 17`, architecture `23` suites, compiler zero, deterministic inventory, protected-path, restored-output, and diff checks pass. | enclosing M01DC-023 acceptance commit | Accepted |
 | 2026-08-13 | M01DC-024 | Added the sole Campaign progress/reward writer with injected atomic persistence, configuration-projected first-clear/replay rewards, schema-v2 historical token idempotency, best metrics, resume clearing, canonical M02 reveal, and origin-preserving retry routes. Settlement `13 / 13`, progress regression `15 / 15`, Phase 7 `19 / 19`, source growth `17 / 17`, and architecture `23` suites pass with compiler zero and restored incidental outputs. | enclosing M01DC-024 acceptance commit | Accepted |
 | 2026-08-13 | M01DC-025 | Added Full-mode mission guidance as one unmanaged projection reader over mission/objective/map state. Existing ARIA owners retain recommendation and typed Show Me/Do It command authority; guidance writes no gameplay truth. Guidance `7 / 7`, ARIA `10 / 10`, Phase 7 `19 / 19`, source growth `17 / 17`, architecture `23` suites, compiler zero, deterministic inventory, protected-path, and restored-output checks pass. | enclosing M01DC-025 acceptance commit | Accepted |
+| 2026-08-13 | M01DC-026 | Added Contextual cooldown-based hint escalation and mandatory-information-only Minimal projection through the existing sole guidance writer. Cross-mode equal-action gameplay truth is unchanged. Guidance `10 / 10`, source growth `17 / 17`, architecture `23` suites, compiler zero, protected-path, and restored-output checks pass. | enclosing M01DC-026 acceptance commit | Accepted |
 
 Implementation entries are appended only after an item is accepted and pushed. The final row must record M01DC-043, the final main/origin head, 43/43 progress, Android package/device identities, agent-QA/finding closure, validation summary, and clean worktree state.
 

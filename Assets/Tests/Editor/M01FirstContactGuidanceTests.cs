@@ -22,7 +22,8 @@ public sealed class M01FirstContactGuidanceTests
             FullGuidanceProjectsAllFivePhases(); passed++; ShowMeAndDoItStayInsideAriaAuthority(); passed++;
             StablePhaseHonorsCooldownAndAcknowledgement(); passed++; AccessibilitySettingsAreProjectedWithoutChangingGameplay(); passed++;
             ReplayTutorialOffSuppressesGuidance(); passed++; StableProjectionAllocatesZeroManagedBytes(); passed++;
-            ExactlyOneGuidanceProjectionWriterExists(); passed++;
+            ExactlyOneGuidanceProjectionWriterExists(); passed++; ContextualEscalatesWithoutUnsafeExecution(); passed++;
+            MinimalPublishesMandatoryInformationOnly(); passed++; GuidanceModesPreserveGameplayTruth(); passed++;
             Debug.Log($"[M01FirstContactGuidanceValidation] result=Passed tests={passed}"); ValidationExit.Exit(0);
         }
         catch (Exception e) { Debug.LogException(e); Debug.LogError($"[M01FirstContactGuidanceValidation] result=Failed passed={passed}"); ValidationExit.Exit(1); }
@@ -85,6 +86,41 @@ public sealed class M01FirstContactGuidanceTests
         string[] writers = Directory.GetFiles("Assets/Game/Scripts", "*.cs", SearchOption.AllDirectories).Where(path =>
             File.ReadAllText(path).Contains("SetComponentData(root, next)") && File.ReadAllText(path).Contains("CampaignMissionGuidanceProjectionComponent")).ToArray();
         Assert.That(writers, Has.Length.EqualTo(1)); Assert.That(writers[0].Replace('\\', '/'), Does.EndWith("CampaignMissionGuidanceProjectionSystem.cs"));
+    }
+
+    [Test] public static void ContextualEscalatesWithoutUnsafeExecution()
+    {
+        var runtime = Runtime(MissionPhaseKind.Engage); runtime.Guidance = NarrativeGuidanceMode.Contextual;
+        CampaignMissionGuidanceProjectionSystem.TryBuildProjection(default, runtime, Facts(), Settings(),
+            new Entity { Index = 2, Version = 1 }, new Entity { Index = 3, Version = 1 }, default, default, out var first);
+        Assert.That(first.HintStrength, Is.EqualTo(1)); Assert.That(first.CanExecute, Is.Zero);
+        var delayed = Facts(); delayed.ElapsedMilliseconds = first.CooldownUntilMilliseconds;
+        Assert.That(CampaignMissionGuidanceProjectionSystem.TryBuildProjection(first, runtime, delayed, Settings(),
+            first.SourceEntity, first.TargetEntity, default, default, out var stronger), Is.True);
+        Assert.That(stronger.HintStrength, Is.EqualTo(2)); Assert.That(stronger.ActionLabel.ToString(), Is.EqualTo("SHOW ME"));
+    }
+
+    [Test] public static void MinimalPublishesMandatoryInformationOnly()
+    {
+        var runtime = Runtime(MissionPhaseKind.MoveToCover); runtime.Guidance = NarrativeGuidanceMode.Minimal;
+        Assert.That(CampaignMissionGuidanceProjectionSystem.TryBuildProjection(default, runtime, Facts(), Settings(),
+            Entity.Null, Entity.Null, default, default, out _), Is.False);
+        runtime.Phase = MissionPhaseKind.ConfirmThreat;
+        Assert.That(CampaignMissionGuidanceProjectionSystem.TryBuildProjection(default, runtime, Facts(), Settings(),
+            Entity.Null, Entity.Null, default, new float3(2), out var mandatory), Is.True);
+        Assert.That(mandatory.CanExecute, Is.Zero); Assert.That(mandatory.ActionLabel.ToString(), Is.EqualTo("SHOW ME"));
+    }
+
+    [Test] public static void GuidanceModesPreserveGameplayTruth()
+    {
+        var facts = Facts(); var baseline = Runtime(MissionPhaseKind.Engage);
+        foreach (NarrativeGuidanceMode mode in new[] { NarrativeGuidanceMode.Full, NarrativeGuidanceMode.Contextual, NarrativeGuidanceMode.Minimal })
+        {
+            var runtime = baseline; runtime.Guidance = mode;
+            CampaignMissionGuidanceProjectionSystem.TryBuildProjection(default, runtime, facts, Settings(), Entity.Null, Entity.Null, default, default, out _);
+            Assert.That(runtime.MissionId, Is.EqualTo(baseline.MissionId)); Assert.That(runtime.Phase, Is.EqualTo(baseline.Phase));
+            Assert.That(runtime.Outcome, Is.EqualTo(baseline.Outcome)); Assert.That(facts.HostileTotalCount, Is.EqualTo(3));
+        }
     }
 
     private static CampaignMissionRuntimeComponent Runtime(MissionPhaseKind phase) => new()

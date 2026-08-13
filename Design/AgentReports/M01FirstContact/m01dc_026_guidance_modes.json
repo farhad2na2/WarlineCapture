@@ -1,0 +1,23 @@
+{
+  "item": "M01DC-026",
+  "headBefore": "f643b007388571920d09394ff494c16c092fd2ba",
+  "result": "Accepted",
+  "guidanceModes": {
+    "Full": { "proactivePhases": "all", "hintStrength": 0, "safeExecution": "existing typed ARIA policy" },
+    "Contextual": { "proactivePhases": "all", "hintStrength": "1 then 2 after existing cooldown", "safeExecution": "FindSquad and MoveToCover only" },
+    "Minimal": { "proactivePhases": "ConfirmThreat and SecureCorridor mandatory information only", "hintStrength": 0, "safeExecution": "disabled" }
+  },
+  "gameplayEquivalence": {
+    "sameForEqualActions": ["missionId", "session", "phase", "outcome", "spawns", "patrol", "commands", "objectives", "stars", "rewards", "results"],
+    "presentationOnlyDifferences": ["prompt eligibility", "hint strength", "Show Me copy", "safe Do It availability"],
+    "newGameplayWriter": false
+  },
+  "validation": {
+    "focusedGuidance": { "marker": "[M01FirstContactGuidanceValidation] result=Passed tests=10", "sha256": "86E25C1D805449A074B1718E7D24D120392479B0D1AADCC14312FF807DA6FB6D" },
+    "sourceGrowth": { "marker": "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17", "sha256": "8339F80FEAB08BA910A0AE3529DACFD6F0B7B6D8D6B654F097B1949589EBD2E7" },
+    "architecture": { "marker": "[ArchitectureHardeningCloseoutValidation] result=Passed suites=23", "sha256": "818284A5D5EF09F3EE63F0CA61EB2FB24BB1E381EA78166422BB79580BF044C2" },
+    "compilerErrors": 0,
+    "diffCheck": "Passed",
+    "protectedDenseCityOutputsChanged": false
+  }
+}

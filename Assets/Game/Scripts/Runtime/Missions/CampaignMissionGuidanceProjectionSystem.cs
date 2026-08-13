@@ -38,12 +38,15 @@ namespace Game.Runtime
         {
             next = current;
             bool suppressed = runtime.RunKind != MissionRunKind.FirstClear && runtime.ReplayTutorialEnabled == 0;
-            if (runtime.Version == 0 || runtime.Outcome != MissionOutcomeKind.None || runtime.Guidance != NarrativeGuidanceMode.Full || suppressed)
+            if (runtime.Version == 0 || runtime.Outcome != MissionOutcomeKind.None || suppressed)
             { if (current.Active == 0) return false; next = default; next.Version = Next(current.Version); return true; }
             CampaignMissionGuidancePromptKind prompt = PromptFor(runtime.Phase);
-            if (prompt == CampaignMissionGuidancePromptKind.None) return false;
-            int id = 25000 + (int)prompt;
-            bool same = current.Active != 0 && current.GuidanceId == id && current.MissionSourceVersion == runtime.Version;
+            if (prompt == CampaignMissionGuidancePromptKind.None || !Permits(runtime.Guidance, prompt))
+            { if (current.Active == 0) return false; next = default; next.Version = Next(current.Version); return true; }
+            byte strength = ResolveStrength(in current, in runtime, in facts, prompt);
+            int id = 25000 + (int)runtime.Guidance * 100 + (int)prompt * 10 + strength;
+            bool same = current.Active != 0 && current.GuidanceId == id && current.MissionSourceVersion == runtime.Version &&
+                        current.GuidanceMode == runtime.Guidance;
             if (same && current.AcknowledgedGuidanceId == id) return false;
             next = Build(prompt, id, in current, in runtime, in facts, in settings, friendly, hostile, move, patrol);
             return !same || !ProjectionEquals(in current, in next);
@@ -57,6 +60,7 @@ namespace Game.Runtime
             CampaignMissionGuidanceProjectionComponent next = new()
             {
                 GuidanceId = id, Version = Next(current.Version), MissionSourceVersion = runtime.Version, Prompt = prompt,
+                GuidanceMode = runtime.Guidance, HintStrength = ResolveStrength(in current, in runtime, in facts, prompt),
                 Priority = AssistantMessagePriority.High, Active = 1, AcknowledgedGuidanceId = current.AcknowledgedGuidanceId,
                 CooldownUntilMilliseconds = math.max(facts.ElapsedMilliseconds, current.CooldownUntilMilliseconds) + 3000,
                 SubtitlesEnabled = settings.SubtitlesEnabled, LargeTextEnabled = settings.LargeTextEnabled,
@@ -80,7 +84,36 @@ namespace Game.Runtime
                     Set(ref next, AssistantRecommendationKind.CameraFocus, AssistantTargetKind.Objective, "Secure the corridor", "Check the objective and secure the civilian route.", "SHOW ME");
                     next.TargetId = new FixedString64Bytes("anchor.ch01.m01.civilian_safe_zone"); next.WorldPosition = patrol; next.HasWorldPosition = 1; break;
             }
+            ApplyModePolicy(ref next);
             return next;
+        }
+
+        private static void ApplyModePolicy(ref CampaignMissionGuidanceProjectionComponent next)
+        {
+            if (next.GuidanceMode == NarrativeGuidanceMode.Full) return;
+            if (next.GuidanceMode == NarrativeGuidanceMode.Minimal)
+            { next.CanExecute = 0; next.ActionLabel = new FixedString64Bytes("SHOW ME"); return; }
+            if (next.Prompt != CampaignMissionGuidancePromptKind.FindSquad && next.Prompt != CampaignMissionGuidancePromptKind.MoveToCover)
+            { next.CanExecute = 0; next.ActionLabel = new FixedString64Bytes("SHOW ME"); }
+            if (next.HintStrength >= 2)
+            {
+                FixedString128Bytes body = next.Body; body.Append(" Use Show Me if you need the exact target."); next.Body = body;
+            }
+        }
+
+        private static bool Permits(NarrativeGuidanceMode mode, CampaignMissionGuidancePromptKind prompt) =>
+            mode != NarrativeGuidanceMode.Minimal || prompt == CampaignMissionGuidancePromptKind.ConfirmThreat ||
+            prompt == CampaignMissionGuidancePromptKind.SecureCorridor;
+
+        private static byte ResolveStrength(in CampaignMissionGuidanceProjectionComponent current,
+            in CampaignMissionRuntimeComponent runtime, in CampaignMissionAttemptFactsComponent facts,
+            CampaignMissionGuidancePromptKind prompt)
+        {
+            if (runtime.Guidance != NarrativeGuidanceMode.Contextual) return 0;
+            bool same = current.Active != 0 && current.GuidanceMode == runtime.Guidance && current.Prompt == prompt &&
+                        current.MissionSourceVersion == runtime.Version;
+            if (!same) return 1;
+            return facts.ElapsedMilliseconds >= current.CooldownUntilMilliseconds ? (byte)2 : current.HintStrength;
         }
 
         private static void Set(ref CampaignMissionGuidanceProjectionComponent p, AssistantRecommendationKind kind,
@@ -126,7 +159,8 @@ namespace Game.Runtime
         }
 
         private static bool ProjectionEquals(in CampaignMissionGuidanceProjectionComponent a, in CampaignMissionGuidanceProjectionComponent b) =>
-            a.GuidanceId == b.GuidanceId && a.Prompt == b.Prompt && a.TargetEntity == b.TargetEntity && a.SourceEntity == b.SourceEntity &&
+            a.GuidanceId == b.GuidanceId && a.Prompt == b.Prompt && a.GuidanceMode == b.GuidanceMode &&
+            a.HintStrength == b.HintStrength && a.TargetEntity == b.TargetEntity && a.SourceEntity == b.SourceEntity &&
             a.AcknowledgedGuidanceId == b.AcknowledgedGuidanceId && a.SubtitlesEnabled == b.SubtitlesEnabled &&
             a.LargeTextEnabled == b.LargeTextEnabled && a.HighContrastEnabled == b.HighContrastEnabled;
         private static uint Next(uint value) => value == uint.MaxValue ? uint.MaxValue : value + 1u;

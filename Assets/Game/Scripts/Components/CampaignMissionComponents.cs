@@ -167,12 +167,14 @@ namespace Game.Components
     {
         public int GuidanceId; public uint Version; public uint MissionSourceVersion;
         public CampaignMissionGuidancePromptKind Prompt; public AssistantRecommendationKind RecommendationKind;
+        public NarrativeGuidanceMode GuidanceMode;
         public AssistantMessagePriority Priority; public AssistantTargetKind TargetKind;
         public Entity SourceEntity; public Entity TargetEntity; public int2 TargetCell; public float3 WorldPosition;
         public FixedString64Bytes TargetId; public FixedString64Bytes Title; public FixedString128Bytes Body;
         public FixedString64Bytes ActionLabel; public int AcknowledgedGuidanceId; public int CooldownUntilMilliseconds;
         public byte Active; public byte HasTargetCell; public byte HasWorldPosition; public byte CanShow; public byte CanExecute;
         public byte SubtitlesEnabled; public byte LargeTextEnabled; public byte HighContrastEnabled;
+        public byte HintStrength;
     }
 
     [InternalBufferCapacity(2)]

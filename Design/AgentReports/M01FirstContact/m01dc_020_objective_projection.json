@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "itemId": "M01DC-020",
+  "result": "Passed",
+  "missionId": "saga.ch01.m01.first_contact",
+  "objectiveWriter": {
+    "productionWriterCount": 1,
+    "system": "CampaignMissionObjectiveProjectionSystem",
+    "projectionBoundary": "MatchObjectiveProjectionBoundaryComponent",
+    "objectives": [
+      "obj.ch01.m01.destroy_patrol",
+      "obj.ch01.m01.keep_command_squad_alive"
+    ],
+    "duplicateAndStaleSourcesRejected": true,
+    "readerWritesAuthoritativeObjectiveTruth": false
+  },
+  "validation": {
+    "objectiveWriter": {
+      "result": "Passed",
+      "tests": 5,
+      "marker": "[M01FirstContactObjectiveWriterValidation] result=Passed tests=5",
+      "log": "%TEMP%/warline-m01dc020-objective-host-corrected-entry.log",
+      "sha256": "8630fdd2b15ac11594dd80339fa7ba0c64fc760a709ed1b6dea3077c25f3a87f"
+    },
+    "assistantProjection": {
+      "result": "Passed",
+      "tests": 10,
+      "marker": "[AssistantReadModelValidation] result=Passed tests=10",
+      "log": "%TEMP%/warline-m01dc020-assistant-host.log",
+      "sha256": "807e6f7837dbd2b69256241851daf2cd42be2eb09150f3cfbeed25fc27185744"
+    },
+    "playMode": {
+      "result": "Passed",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "log": "%TEMP%/warline-m01dc020-playmode-host-corrected.log",
+      "logSha256": "d1dd49e27b7e1f7da6083a59c65d379ab44bb28d2b91c23e2ab629abef970c00",
+      "results": "%TEMP%/warline-m01dc020-playmode-host-corrected.xml",
+      "resultsSha256": "b45690a6cf67509b3e625e346f4c02dd566f792b6e1e0af8928e13dca2f069c7"
+    },
+    "phase7": {
+      "result": "Passed",
+      "tests": 19,
+      "logSha256": "f512d356052394c9cf827344b9e0ddb0a45c8b6ba1cb40c37d1d5b8d16c9a062"
+    },
+    "sourceGrowth": {
+      "result": "Passed",
+      "tests": 17,
+      "logSha256": "8de1cf3fabb4d2eb0fd3a565b361f548bbffbbaea78083d203214d9a65d161a5"
+    },
+    "architecture": {
+      "result": "Passed",
+      "suites": 23,
+      "logSha256": "176fda89c59dfa9f817cf6df1d25f6b52486eb887cfd4258659834fa3b4c85e1"
+    },
+    "compilerErrors": 0,
+    "inventory": {
+      "productionDeclarations": 212,
+      "iSystem": 187,
+      "managedExceptions": 25
+    },
+    "sourceLines": {
+      "CampaignMissionObjectiveProjectionSystem": 188,
+      "AssistantReadModelSystems": 599,
+      "AssistantObjectiveProjectionUtility": 111,
+      "MatchObjectiveComponents": 54
+    },
+    "protectedDenseCityPathsChanged": 0,
+    "incidentalGeneratedOutputsRestored": 7
+  }
+}

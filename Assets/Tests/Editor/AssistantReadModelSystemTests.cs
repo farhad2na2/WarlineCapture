@@ -103,6 +103,12 @@ public sealed class AssistantReadModelSystemTests
         Assert.AreEqual(1, goals[0].IsPrimary);
         Assert.AreEqual(AssistantGoalState.Complete, goals[1].State);
 
+        UiMatchHudStatusSurfacesComponent hud =
+            _entityManager.GetComponentData<UiMatchHudStatusSurfacesComponent>(boundary);
+        Assert.AreEqual("Neutralize hostile patrol", hud.Objective0Text.ToString());
+        Assert.AreEqual(UiMatchHudObjectiveIconKind.Checked, hud.Objective1IconKind);
+        Assert.AreEqual("TIME 0:00", hud.ElapsedText.ToString());
+
         AssistantStateComponent assistant = _entityManager.GetComponentData<AssistantStateComponent>(boundary);
         Assert.AreNotEqual(0u, assistant.SourceVersion);
         Assert.AreEqual(1, assistant.UiDirty);
@@ -317,7 +323,8 @@ public sealed class AssistantReadModelSystemTests
         SystemHandle controlOwnerSystem = _world.CreateSystem<AssistantControlOwnerSystem>();
         Assert.DoesNotThrow(() => controlOwnerSystem.Update(_world.Unmanaged));
 
-        Assert.IsTrue(_entityManager.HasBuffer<MatchObjectiveRuntimeElement>(boundary));
+        Assert.IsFalse(_entityManager.HasComponent<MatchObjectiveRuntimeStateComponent>(boundary));
+        Assert.IsFalse(_entityManager.HasBuffer<MatchObjectiveRuntimeElement>(boundary));
         Assert.IsTrue(_entityManager.HasBuffer<AssistantGoalReadModelElement>(boundary));
         Assert.IsTrue(_entityManager.HasBuffer<AssistantRecommendationElement>(boundary));
         Assert.IsTrue(_entityManager.HasBuffer<AssistantThreatReadModelElement>(boundary));

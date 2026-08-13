@@ -42,24 +42,6 @@ namespace Game.UI.Shell.Ecs
             changed |= ClearBuffer<AssistantCommandDispatchElement>(entityManager, boundary);
             changed |= ClearBuffer<AssistantPreviewHighlightElement>(entityManager, boundary);
 
-            if (entityManager.HasComponent<MatchObjectiveRuntimeStateComponent>(boundary))
-            {
-                MatchObjectiveRuntimeStateComponent objectiveState =
-                    entityManager.GetComponentData<MatchObjectiveRuntimeStateComponent>(boundary);
-                if (objectiveState.MatchActive != 0 || objectiveState.ElapsedWholeSeconds != 0 || objectiveState.MissionId.Length > 0)
-                {
-                    objectiveState.Version = NextVersion(objectiveState.Version);
-                    objectiveState.MatchActive = 0;
-                    objectiveState.MatchStartedAt = 0f;
-                    objectiveState.ElapsedWholeSeconds = 0;
-                    objectiveState.MissionId = default;
-                    entityManager.SetComponentData(boundary, objectiveState);
-                    changed = true;
-                }
-            }
-
-            changed |= ClearBuffer<MatchObjectiveRuntimeElement>(entityManager, boundary);
-
             if (entityManager.HasComponent<AssistantRecommendationReadModelComponent>(boundary))
             {
                 AssistantRecommendationReadModelComponent recommendation =
@@ -184,6 +166,14 @@ namespace Game.UI.Shell.Ecs
             if (!AssistantRuntimeStateUtility.IsActive(state.EntityManager, boundary, matchStartQuery))
             {
                 AssistantRuntimeStateUtility.ClearInactiveReadModels(state.EntityManager, boundary);
+                AssistantObjectiveProjectionUtility.ClearHud(state.EntityManager, boundary);
+                return;
+            }
+
+            if (!state.EntityManager.HasComponent<MatchObjectiveRuntimeStateComponent>(boundary) ||
+                !state.EntityManager.HasBuffer<MatchObjectiveRuntimeElement>(boundary))
+            {
+                AssistantObjectiveProjectionUtility.ClearHud(state.EntityManager, boundary);
                 return;
             }
 
@@ -194,15 +184,19 @@ namespace Game.UI.Shell.Ecs
             DynamicBuffer<AssistantGoalReadModelElement> goals =
                 state.EntityManager.GetBuffer<AssistantGoalReadModelElement>(boundary);
 
-            UpdateElapsed(ref state, boundary, ref objectiveState, (float)SystemAPI.Time.ElapsedTime);
-
             int expectedCount = objectiveState.MatchActive != 0 ? math.min(3, objectives.Length) : 0;
-            if (GoalsMatch(goals, objectives, expectedCount))
+            bool goalsMatch = GoalsMatch(goals, objectives, expectedCount);
+            bool hudMatches = AssistantObjectiveProjectionUtility.UpdateHud(
+                state.EntityManager, boundary, objectives, expectedCount, objectiveState.ElapsedWholeSeconds);
+            if (goalsMatch && hudMatches)
                 return;
 
-            goals.Clear();
-            for (int i = 0; i < expectedCount; i++)
-                goals.Add(ToGoal(objectives[i], objectiveState.Version));
+            if (!goalsMatch)
+            {
+                goals.Clear();
+                for (int i = 0; i < expectedCount; i++)
+                    goals.Add(ToGoal(objectives[i], objectiveState.Version));
+            }
 
             AssistantStateComponent assistant = state.EntityManager.GetComponentData<AssistantStateComponent>(boundary);
             assistant.SourceVersion = AssistantRuntimeStateUtility.NextVersion(assistant.SourceVersion);
@@ -214,6 +208,8 @@ namespace Game.UI.Shell.Ecs
         internal static void EnsureAssistantReadModelBoundary(ref SystemState state, Entity boundary)
         {
             EntityManager em = state.EntityManager;
+            if (!em.HasComponent<MatchObjectiveProjectionBoundaryComponent>(boundary))
+                em.AddComponent<MatchObjectiveProjectionBoundaryComponent>(boundary);
             if (!em.HasComponent<AssistantStateComponent>(boundary))
             {
                 AssistantSettingsComponent settings = em.HasComponent<AssistantSettingsComponent>(boundary)
@@ -241,10 +237,6 @@ namespace Game.UI.Shell.Ecs
                 em.AddComponentData(boundary, default(AssistantThreatReadModelStateComponent));
             if (!em.HasComponent<AssistantTargetLockReadModelComponent>(boundary))
                 em.AddComponentData(boundary, default(AssistantTargetLockReadModelComponent));
-            if (!em.HasComponent<MatchObjectiveRuntimeStateComponent>(boundary))
-                em.AddComponentData(boundary, default(MatchObjectiveRuntimeStateComponent));
-
-            EnsureBuffer<MatchObjectiveRuntimeElement>(em, boundary);
             EnsureBuffer<AssistantGoalReadModelElement>(em, boundary);
             EnsureBuffer<AssistantRecommendationElement>(em, boundary);
             EnsureBuffer<AssistantThreatReadModelElement>(em, boundary);
@@ -260,24 +252,6 @@ namespace Game.UI.Shell.Ecs
         {
             if (!entityManager.HasBuffer<T>(boundary))
                 entityManager.AddBuffer<T>(boundary);
-        }
-
-        private static void UpdateElapsed(
-            ref SystemState state,
-            Entity boundary,
-            ref MatchObjectiveRuntimeStateComponent objectiveState,
-            float now)
-        {
-            if (objectiveState.MatchActive == 0)
-                return;
-
-            int elapsed = math.max(0, (int)math.floor(now - objectiveState.MatchStartedAt));
-            if (elapsed == objectiveState.ElapsedWholeSeconds)
-                return;
-
-            objectiveState.ElapsedWholeSeconds = elapsed;
-            objectiveState.Version = AssistantRuntimeStateUtility.NextVersion(objectiveState.Version);
-            state.EntityManager.SetComponentData(boundary, objectiveState);
         }
 
         private static AssistantGoalReadModelElement ToGoal(MatchObjectiveRuntimeElement objective, uint sourceVersion)

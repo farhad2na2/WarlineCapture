@@ -4,6 +4,10 @@ using Unity.Mathematics;
 
 namespace Game.Components
 {
+    public struct MatchObjectiveProjectionBoundaryComponent : IComponentData
+    {
+    }
+
     public enum MatchObjectiveState : byte
     {
         Active = 0,
@@ -16,9 +20,15 @@ namespace Game.Components
     public struct MatchObjectiveRuntimeStateComponent : IComponentData
     {
         public uint Version;
+        public uint MissionSourceVersion;
         public FixedString64Bytes MissionId;
+        public FixedString64Bytes SessionToken;
+        public int AttemptOrdinal;
         public float MatchStartedAt;
         public int ElapsedWholeSeconds;
+        public int HostileTotalCount;
+        public int HostileDefeatedCount;
+        public byte CommandSquadAlive;
         public byte MatchActive;
     }
 

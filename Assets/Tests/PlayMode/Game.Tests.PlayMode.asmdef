@@ -13,6 +13,7 @@
         "Game.Rendering.Contracts",
         "Game.Tactical.Contracts",
         "Game.UI.Contracts",
+        "Game.UI.Shell.Contracts.Ecs",
         "Game.UI.Shell.Ecs",
         "Game.UI.Runtime",
         "Game.Runtime",

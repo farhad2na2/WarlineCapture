@@ -107,6 +107,9 @@ namespace Game.Components
 
     public struct CampaignMissionResultComponent : IComponentData
     {
+        public FixedString64Bytes MissionId;
+        public FixedString64Bytes SessionToken;
+        public int AttemptOrdinal;
         public uint SourceVersion;
         public MissionOutcomeKind Outcome;
         public MissionReturnDestinationKind ReturnDestination;
@@ -176,6 +179,7 @@ namespace Game.Components
         public BlobArray<CampaignMissionForceGroupBlob> ForceGroups;
         public BlobArray<CampaignMissionPatrolRouteBlob> PatrolRoutes;
         public BlobArray<CampaignMissionAmbientPresentationBlob> AmbientPresentations;
+        public BlobArray<CampaignMissionStarRuleBlob> StarRules;
     }
 
     public struct CampaignMissionForceGroupBlob
@@ -209,5 +213,13 @@ namespace Game.Components
         public FixedString64Bytes AnchorId;
         public FixedString64Bytes RouteId;
         public int InstanceCount;
+    }
+
+    public struct CampaignMissionStarRuleBlob
+    {
+        public FixedString64Bytes DisplayTextKey;
+        public MissionStarRuleKind Rule;
+        public int Threshold;
+        public byte StarIndex;
     }
 }

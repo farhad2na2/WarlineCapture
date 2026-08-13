@@ -68,6 +68,7 @@ namespace Game.Composition
             definition.AirDisabled = scenario.Restrictions.AirDisabled ? (byte)1 : (byte)0;
             ProjectForces(ref builder, ref definition, scenario);
             ProjectAmbient(ref builder, ref definition, scenario);
+            ProjectStars(ref builder, ref definition, mission);
             BlobAssetReference<CampaignMissionCatalogBlob> projected =
                 builder.CreateBlobAssetReference<CampaignMissionCatalogBlob>(Allocator.Persistent);
             builder.Dispose();
@@ -161,6 +162,24 @@ namespace Game.Composition
                     AnchorId = new FixedString64Bytes(source[i].AnchorId),
                     RouteId = new FixedString64Bytes(source[i].RouteId),
                     InstanceCount = source[i].InstanceCount
+                };
+            }
+        }
+
+        private static void ProjectStars(
+            ref BlobBuilder builder, ref CampaignMissionDefinitionBlob definition, MissionDefinitionConfig mission)
+        {
+            ReadOnlySpan<MissionStarDefinitionConfig> source = mission.Stars;
+            BlobBuilderArray<CampaignMissionStarRuleBlob> projected =
+                builder.Allocate(ref definition.StarRules, source.Length);
+            for (int i = 0; i < source.Length; i++)
+            {
+                projected[i] = new CampaignMissionStarRuleBlob
+                {
+                    StarIndex = source[i].StarIndex,
+                    Rule = source[i].Rule,
+                    DisplayTextKey = new FixedString64Bytes(source[i].DisplayTextKey),
+                    Threshold = source[i].Threshold
                 };
             }
         }

@@ -6,18 +6,18 @@ Source root: `Assets/Game/Scripts`.
 
 ## Summary
 
-- Total ECS system declarations: `213`.
+- Total ECS system declarations: `214`.
 - Production `SystemBase`/legacy declarations: `25`.
-- Production `ISystem` declarations: `188`.
+- Production `ISystem` declarations: `189`.
 - Current production `ISystem` share: `88.3%`.
-- Production non-UI rows: `191`.
+- Production non-UI rows: `192`.
 - Production UI rows: `22`.
 - Editor rows: `0`.
 - Test rows: `0`.
-- Scopes: `ProductionNonUI` 191, `ProductionUI` 22.
-- Owner lanes: `AgentB` 17, `AgentC` 12, `AgentD` 12, `AgentE` 11, `AgentF` 42, `Integration` 119.
-- Dispositions: `Converted` 166, `ManagedPresentationSystemBaseException` 25, `UIOutOfScope` 22.
-- Statuses: `Converted` 166, `Deferred` 22, `ManagedException` 25.
+- Scopes: `ProductionNonUI` 192, `ProductionUI` 22.
+- Owner lanes: `AgentB` 17, `AgentC` 12, `AgentD` 12, `AgentE` 11, `AgentF` 42, `Integration` 120.
+- Dispositions: `Converted` 167, `ManagedPresentationSystemBaseException` 25, `UIOutOfScope` 22.
+- Statuses: `Converted` 167, `Deferred` 22, `ManagedException` 25.
 
 ## Inventory
 
@@ -122,6 +122,7 @@ Source root: `Assets/Game/Scripts`.
 | `P7-0434` | `CampaignMissionLaunchSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionLaunchSystem.cs` | 8 | `ProductionNonUI` | `Integration` | `Converted` | None | Medium: Command, Validate | OnCreate (method), OnUpdate (method), QueueAttemptCleanup (method), TryValidate (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `CampaignMissionLaunchSystem : ISystem` | Architecture guard + compile | `Converted` |
 | `P7-0437` | `CampaignMissionObjectiveProjectionSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionObjectiveProjectionSystem.cs` | 9 | `ProductionNonUI` | `Integration` | `Converted` | None | Medium: Command, Spawn | IsPublishable (method), IsStale (method), OnCreate (method), OnUpdate (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `CampaignMissionObjectiveProjectionSystem : ISystem` | Architecture guard + compile | `Converted` |
 | `P7-0435` | `CampaignMissionPatrolOrderSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionPatrolOrderSystem.cs` | 8 | `ProductionNonUI` | `Integration` | `Converted` | None | Medium: Command, MoveOrder, Path, Spawn | OnCreate (method), OnUpdate (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `CampaignMissionPatrolOrderSystem : ISystem` | Architecture guard + compile | `Converted` |
+| `P7-0439` | `CampaignMissionResultProjectionSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionResultProjectionSystem.cs` | 7 | `ProductionNonUI` | `Integration` | `Converted` | None | Medium: Command, Spawn | OnCreate (method), OnUpdate (method), TryEvaluateStars (method), TryProject (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `CampaignMissionResultProjectionSystem : ISystem` | Architecture guard + compile | `Converted` |
 | `P7-0433` | `CampaignMissionRuntimeSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.cs` | 8 | `ProductionNonUI` | `Integration` | `Converted` | None | Medium: Command, Spawn | IsValidTransition (method), OnCreate (method), OnUpdate (method), TryEvaluate (method), TryTransition (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `CampaignMissionRuntimeSystem : ISystem` | Architecture guard + compile | `Converted` |
 | `P7-0436` | `CampaignMissionSpawnSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionSpawnSystem.cs` | 9 | `ProductionNonUI` | `Integration` | `Converted` | None | Medium: Command, Economy, Production, Spawn | OnCreate (method), OnUpdate (method), ToGridCell (method), TryFindAnchor (method), TryFindDefinition (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `CampaignMissionSpawnSystem : ISystem` | Architecture guard + compile | `Converted` |
 | `P7-0291` | `AirMissileHomingProjectileSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/AirMissileLauncherSystems.cs` | 611 | `ProductionNonUI` | `Integration` | `Converted` | None | Medium: Command, Damage | OnCreate (method), OnUpdate (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `AirMissileHomingProjectileSystem : ISystem` | Architecture guard + compile | `Converted` |
@@ -370,7 +371,7 @@ Rows: `42`.
 
 ### Integration
 
-Rows: `119`.
+Rows: `120`.
 
 | Id | Type | Base | Disposition | Status | Path | First safe slice | Validation gate |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -379,6 +380,7 @@ Rows: `119`.
 | `P7-0434` | `CampaignMissionLaunchSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionLaunchSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile |
 | `P7-0437` | `CampaignMissionObjectiveProjectionSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionObjectiveProjectionSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile |
 | `P7-0435` | `CampaignMissionPatrolOrderSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionPatrolOrderSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile |
+| `P7-0439` | `CampaignMissionResultProjectionSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionResultProjectionSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile |
 | `P7-0433` | `CampaignMissionRuntimeSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile |
 | `P7-0436` | `CampaignMissionSpawnSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionSpawnSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile |
 | `P7-0291` | `AirMissileHomingProjectileSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/AirMissileLauncherSystems.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile |
@@ -546,7 +548,7 @@ Rows: `13`.
 
 Converted rows in this section already use `ISystem`, but still expose public/internal helper APIs beyond lifecycle/runner methods. Domain conversion slices must replace these helpers with ECS request/result data, plain stateless helpers, or documented integration exceptions before marking the related Phase 7 row finally clean.
 
-Rows: `73`.
+Rows: `74`.
 
 | Id | Type | Helper count | Owner lane | Path | Helper APIs |
 | --- | --- | ---: | --- | --- | --- |
@@ -594,6 +596,7 @@ Rows: `73`.
 | `P7-0432` | `CampaignMissionCatalogDisposalSystem` | 1 | `Integration` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionCatalogDisposalSystem.cs` | DisposeOwned (method) |
 | `P7-0434` | `CampaignMissionLaunchSystem` | 2 | `Integration` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionLaunchSystem.cs` | QueueAttemptCleanup (method), TryValidate (method) |
 | `P7-0437` | `CampaignMissionObjectiveProjectionSystem` | 2 | `Integration` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionObjectiveProjectionSystem.cs` | IsPublishable (method), IsStale (method) |
+| `P7-0439` | `CampaignMissionResultProjectionSystem` | 2 | `Integration` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionResultProjectionSystem.cs` | TryEvaluateStars (method), TryProject (method) |
 | `P7-0433` | `CampaignMissionRuntimeSystem` | 3 | `Integration` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.cs` | IsValidTransition (method), TryEvaluate (method), TryTransition (method) |
 | `P7-0436` | `CampaignMissionSpawnSystem` | 3 | `Integration` | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionSpawnSystem.cs` | ToGridCell (method), TryFindAnchor (method), TryFindDefinition (method) |
 | `P7-0296` | `AirMissileLauncherTurretAimSystem` | 2 | `Integration` | `Assets/Game/Scripts/Systems/AirMissileLauncherSystems.cs` | MoveAngleRadians (method), ResolveDesiredLocalYaw (method) |
@@ -727,6 +730,7 @@ Rows: `73`.
 | `P7-0434` | `public` | `Game.Runtime` | [UpdateInGroup(typeof(InitializationSystemGroup))], [UpdateBefore(typeof(CampaignMissionRuntimeSystem))] | OnCreate, OnUpdate | OnCreate (method), OnUpdate (method), QueueAttemptCleanup (method), TryValidate (method) | SystemAPI.Query, EntityQuery, EntityManager, ToEntityArray, ECB | native container, query/lookup/cache | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionLaunchSystem.cs\|CampaignMissionLaunchSystem` |
 | `P7-0437` | `public` | `Game.Runtime` | [UpdateInGroup(typeof(SimulationSystemGroup))], [UpdateAfter(typeof(CampaignMissionRuntimeSystem))] | OnCreate, OnUpdate | IsPublishable (method), IsStale (method), OnCreate (method), OnUpdate (method) | EntityQuery, EntityManager | query/lookup/cache | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionObjectiveProjectionSystem.cs\|CampaignMissionObjectiveProjectionSystem` |
 | `P7-0435` | `public` | `Game.Runtime` | [UpdateInGroup(typeof(SimulationSystemGroup))], [UpdateBefore(typeof(UnitMoveOrderRequestSystem))], [UpdateBefore(typeof(CampaignMissionRuntimeSystem))] | OnCreate, OnUpdate | OnCreate (method), OnUpdate (method) | SystemAPI.Query, EntityManager | native container | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionPatrolOrderSystem.cs\|CampaignMissionPatrolOrderSystem` |
+| `P7-0439` | `public` | `Game.Runtime` | [UpdateInGroup(typeof(SimulationSystemGroup))], [UpdateAfter(typeof(CampaignMissionRuntimeSystem))] | OnCreate, OnUpdate | OnCreate (method), OnUpdate (method), TryEvaluateStars (method), TryProject (method) | EntityManager | None | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionResultProjectionSystem.cs\|CampaignMissionResultProjectionSystem` |
 | `P7-0433` | `public` | `Game.Runtime` | [UpdateInGroup(typeof(SimulationSystemGroup))] | OnCreate, OnUpdate | IsValidTransition (method), OnCreate (method), OnUpdate (method), TryEvaluate (method), TryTransition (method) | SystemAPI.Query | None | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.cs\|CampaignMissionRuntimeSystem` |
 | `P7-0436` | `public` | `Game.Runtime` | [UpdateInGroup(typeof(InitializationSystemGroup))], [UpdateAfter(typeof(CampaignMissionLaunchSystem))] | OnCreate, OnUpdate | OnCreate (method), OnUpdate (method), ToGridCell (method), TryFindAnchor (method), TryFindDefinition (method) | SystemAPI.Query, EntityQuery, EntityManager | native container, query/lookup/cache | `Assets/Game/Scripts/Runtime/Missions/CampaignMissionSpawnSystem.cs\|CampaignMissionSpawnSystem` |
 | `P7-0291` | `public` | `Game.Runtime` | [UpdateAfter(typeof(AirMissileLauncherFireControlSystem))], [UpdateAfter(typeof(GroundMissileProjectileFlightSystem))] | OnCreate, OnUpdate | OnCreate (method), OnUpdate (method) | EntityQuery, EntityManager, ECB, jobs, .ScheduleParallel | query/lookup/cache | `Assets/Game/Scripts/Systems/AirMissileLauncherSystems.cs\|AirMissileHomingProjectileSystem` |

@@ -1,0 +1,65 @@
+{
+  "artifactId": "m01dc-023-result-v1",
+  "headBefore": "6125ba1960ff13f12c5596f8b018dd3a7f6df9f0",
+  "result": "Passed",
+  "resultWriter": "Game.Runtime.CampaignMissionResultProjectionSystem",
+  "starRuleOwner": "MissionDefinitionConfig.Stars projected into CampaignMissionDefinitionBlob.StarRules",
+  "attemptCorrelation": [
+    "MissionId",
+    "SessionToken",
+    "AttemptOrdinal"
+  ],
+  "starCombinationExpectations": {
+    "victoryUnderFourMinutesNoLoss": 3,
+    "victoryAtFourMinutesNoLoss": 2,
+    "victoryUnderFourMinutesWithLoss": 2,
+    "victoryOverFourMinutesWithLoss": 1,
+    "defeat": 0
+  },
+  "fourMinuteBoundary": {
+    "elapsedMilliseconds": 240000,
+    "outcome": "Victory",
+    "stars": 2,
+    "missionFailure": false
+  },
+  "ownership": {
+    "resultUiWrites": 0,
+    "productionResultWriters": 1,
+    "settlementRequestsPerAttempt": 1,
+    "rewardWrites": 0,
+    "persistenceWrites": 0,
+    "priorBestMutation": false
+  },
+  "validation": {
+    "resultRuleFocused": "8 / 8",
+    "phase7": "19 / 19",
+    "sourceGrowth": "17 / 17",
+    "architecture": "23 suites",
+    "compilerErrors": 0,
+    "inventoryCheck": "Passed",
+    "protectedPathChanges": 0,
+    "incidentalUnityOutputsRestored": 7,
+    "diffCheck": "Passed",
+    "focusedLogSha256": "d435a4ee4d90b88c1ce0d306e30b53cf6a0425a093d583330be5c919c4e9dd88",
+    "architectureLogSha256": "c2d140372b9b48e0d3c855f469bfcf8948728121e5bd055163ae62a49884a419"
+  },
+  "recovery": {
+    "staleProjectLockRemovedAfterEditorCountZero": true,
+    "verifiedHubLicensingClientRestarted": true,
+    "checkedBatchmodeFallbackUsed": true,
+    "directUnityInvocation": false,
+    "unboundedWaitUsedForAcceptance": false
+  },
+  "inventory": {
+    "totalEcsDeclarations": 214,
+    "iSystemDeclarations": 189,
+    "managedExceptions": 25,
+    "converted": 167
+  },
+  "ownedSourceHashes": {
+    "Assets/Game/Scripts/Components/CampaignMissionComponents.cs": "a46532839d8cd4e6bd90b3451e28ad05733f1ab2ccb67d424b264cbf48229ea9",
+    "Assets/Game/Scripts/Composition/CampaignMissionCatalogProjection.cs": "e98e3e1ead5daa3fc00aaf17acc41c5588cbbecad55f6d52c22f31528ead13c0",
+    "Assets/Game/Scripts/Runtime/Missions/CampaignMissionResultProjectionSystem.cs": "c8a15b771f084d72b71fc61d53eb05bdb0ea73088b1ec8b422d17e5d7c1e3862",
+    "Assets/Tests/Editor/M01FirstContactResultRuleTests.cs": "d60dc9d0334445198ba7860ad9163548a8b09c6024e9753102459c222f778c9a"
+  }
+}

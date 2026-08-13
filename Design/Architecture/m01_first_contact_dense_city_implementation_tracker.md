@@ -1,8 +1,8 @@
 # M01 First Contact Dense-City Implementation Tracker
 
 Date: 2026-08-12
-Status: Active; M01DC-022 accepted and M01DC-023 dependency-ready
-Progress: 22/43 accepted items (51.2%)
+Status: Active; M01DC-023 accepted and M01DC-024 dependency-ready
+Progress: 23/43 accepted items (53.5%)
 Parent design: `Design/M01_FirstContact_Dense_City_High_Level_Design.md`
 Technical architecture: `Design/Architecture/m01_first_contact_dense_city_technical_architecture.md`
 Mission: `saga.ch01.m01.first_contact`
@@ -360,11 +360,13 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
 
   **Ownership amendment (2026-08-13):** fresh exact-head review found the canonical scenario's ambient count/anchor/route are validated but not projected into `CampaignMissionDefinitionBlob`; hard-coding them in the ambient system would violate configuration ownership. Add only `CampaignMissionComponents.cs` and `CampaignMissionCatalogProjection.cs` for unmanaged ambient blob projection, plus `systembase_to_isystem_inventory.md` and `NonUiSystemBaseMigrationArchitectureTests.cs` to register the one planned `CampaignMissionAmbientPresentationSystem : ISystem` with exact counts. Deterministic Unity metadata paired with the authorized new system/test is implicit. No scenario/map/prefab/city/objective/result/reward/threshold/package/scene data is changed.
 
-- [ ] **M01DC-023 - Evaluate stars and construct the mission result**
+- [x] **M01DC-023 - Evaluate stars and construct the mission result**
   **Depends on:** M01DC-020, M01DC-021.
   **Deliverable:** deterministic completion time, squad-loss, primary/failure, star, and result projection from authoritative runtime facts.
   **Acceptance:** all star combinations are tested; four minutes never fails the mission; result UI cannot alter the result; retries create a new bounded attempt without corrupting best data.
-  **Evidence:** boundary-value and projection tests, clean pushed head.
+  **Evidence:** `Design/AgentReports/M01FirstContact/m01dc_023_result.json`; canonical authored star rules project into the unmanaged mission blob and the sole result writer emits one attempt-correlated immutable result plus one settlement request. All five star combinations pass, exactly four minutes remains a victory worth two stars with no loss, contradictory facts fail closed, retry attempts do not mutate prior best data, and UI has zero result writers. Focused `8 / 8`, Phase 7 `19 / 19`, source-growth `17 / 17`, architecture `23` suites, compiler zero, deterministic inventory, protected-path, restored-output, and diff checks pass; clean pushed head.
+
+  **Ownership amendment (2026-08-13):** fresh exact-head review found the canonical mission's validated star rules are not projected into `CampaignMissionDefinitionBlob`; hard-coding their rules or four-minute threshold in the result writer would violate `MissionDefinition` ownership. Add only `CampaignMissionComponents.cs` and `CampaignMissionCatalogProjection.cs` for unmanaged star-rule projection and result attempt correlation, plus `systembase_to_isystem_inventory.md` and `NonUiSystemBaseMigrationArchitectureTests.cs` to register the one planned `CampaignMissionResultProjectionSystem : ISystem` with exact counts. Deterministic Unity metadata paired with the authorized new system/test is implicit. No mission asset, threshold, UI, reward, persistence, settlement, map, city, package, scene, or Skirmish behavior is changed.
 
 - [ ] **M01DC-024 - Settle progress, rewards, resume, and replay exactly once**
   **Depends on:** M01DC-008, M01DC-023.
@@ -578,6 +580,8 @@ Unity licensing, wrapper, device connection, disk space, or bounded tool interru
 | 2026-08-13 | M01DC-021 | Added bounded attempt lifecycle cleanup to the existing launch and catalog-disposal owners. Retry preserves deterministic identity while removing prior mission entities and attempt-local queues/results; teardown removes remaining mission entities and the owned blob. Focused lifecycle PlayMode `4 / 4` with eight retry cycles, Phase 7 `19 / 19`, source-growth `17 / 17`, architecture `23` suites, compiler zero, protected-path, restored-output, and diff checks pass. | enclosing M01DC-021 acceptance commit | Accepted |
 | 2026-08-13 | M01DC-022 ownership/Phase 7 amendment | Exact-head review found authored ambient count/anchor/route data was not in the mission blob. Added only the existing mission component/projection paths for unmanaged ambient projection and the Phase 7 inventory/count paths for the one planned ambient `ISystem`; deterministic new-source metadata is implicit. No scenario, map, prefab, city, gameplay truth, reward, threshold, package, or scene change is authorized. | enclosing M01DC-022 acceptance commit | Accepted |
 | 2026-08-13 | M01DC-022 | Added configuration-projected, bounded presentation-only civilians: canonical eight, hard cap twelve, deterministic safe-zone/evacuation placement, zero fallback when optional visual capacity is absent, no evacuation on defeat, and full retry/teardown cleanup. Focused PlayMode `7 / 7`, stable-update `0 B`, Phase 7 `19 / 19`, source-growth `17 / 17`, architecture `23` suites, compiler zero, deterministic inventory, protected-path, restored-output, and diff checks pass. | enclosing M01DC-022 acceptance commit | Accepted |
+| 2026-08-13 | M01DC-023 ownership/Phase 7 amendment | Exact-head review found authored star rules were not projected into the mission blob. Added only the existing mission component/projection paths for unmanaged rule projection and attempt correlation plus the Phase 7 inventory/count paths for one planned result `ISystem`; deterministic new-source metadata is implicit. No mission asset, threshold, UI, reward, persistence, settlement owner, map, city, package, scene, or Skirmish behavior is changed. | enclosing M01DC-023 acceptance commit | Accepted |
+| 2026-08-13 | M01DC-023 | Added deterministic attempt-correlated result projection from authoritative runtime facts and authored star rules. All five combinations, exact four-minute victory behavior, fail-closed contradictions, immutable same-attempt updates, retry isolation, one settlement request, and zero UI writers pass. Focused `8 / 8`, Phase 7 `19 / 19`, source-growth `17 / 17`, architecture `23` suites, compiler zero, deterministic inventory, protected-path, restored-output, and diff checks pass. | enclosing M01DC-023 acceptance commit | Accepted |
 
 Implementation entries are appended only after an item is accepted and pushed. The final row must record M01DC-043, the final main/origin head, 43/43 progress, Android package/device identities, agent-QA/finding closure, validation summary, and clean worktree state.
 

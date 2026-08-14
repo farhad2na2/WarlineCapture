@@ -11,6 +11,23 @@ namespace Game.Runtime
     [BurstCompile, UpdateInGroup(typeof(SimulationSystemGroup)), UpdateAfter(typeof(CampaignMissionObjectiveProjectionSystem))]
     public partial struct CampaignMissionGuidanceProjectionSystem : ISystem
     {
+        private static readonly FixedString64Bytes FindSquadTitle = "Find your squad";
+        private static readonly FixedString64Bytes MoveToCoverTitle = "Move to cover";
+        private static readonly FixedString64Bytes ConfirmThreatTitle = "Confirm the threat";
+        private static readonly FixedString64Bytes EngagePatrolTitle = "Engage the patrol";
+        private static readonly FixedString64Bytes SecureCorridorTitle = "Secure the corridor";
+        private static readonly FixedString128Bytes FindSquadBody = "Select the command squad to begin.";
+        private static readonly FixedString128Bytes MoveToCoverBody = "Move the squad to the marked cover position.";
+        private static readonly FixedString128Bytes ConfirmThreatBody = "Inspect the armed patrol near the civilians.";
+        private static readonly FixedString128Bytes EngagePatrolBody = "Attack the confirmed hostile patrol.";
+        private static readonly FixedString128Bytes SecureCorridorBody = "Check the objective and secure the civilian route.";
+        private static readonly FixedString128Bytes ContextualTargetHint = " Use Show Me if you need the exact target.";
+        private static readonly FixedString64Bytes DoItAction = "DO IT";
+        private static readonly FixedString64Bytes ShowMeAction = "SHOW ME";
+        private static readonly FixedString64Bytes MoveTargetAnchor = "anchor.ch01.m01.move_target";
+        private static readonly FixedString64Bytes PatrolObjectiveAnchor = "anchor.ch01.m01.patrol_objective";
+        private static readonly FixedString64Bytes CivilianSafeZoneAnchor = "anchor.ch01.m01.civilian_safe_zone";
+
         [BurstCompile] public void OnCreate(ref SystemState state) => state.RequireForUpdate<CampaignMissionRootComponent>();
 
         [BurstCompile]
@@ -69,20 +86,20 @@ namespace Game.Runtime
             switch (prompt)
             {
                 case CampaignMissionGuidancePromptKind.FindSquad:
-                    Set(ref next, AssistantRecommendationKind.Select, AssistantTargetKind.Entity, "Find your squad", "Select the command squad to begin.", "DO IT");
+                    Set(ref next, AssistantRecommendationKind.Select, AssistantTargetKind.Entity, FindSquadTitle, FindSquadBody, DoItAction);
                     next.TargetEntity = friendly; next.CanExecute = friendly != Entity.Null ? (byte)1 : (byte)0; break;
                 case CampaignMissionGuidancePromptKind.MoveToCover:
-                    Set(ref next, AssistantRecommendationKind.Move, AssistantTargetKind.WorldPosition, "Move to cover", "Move the squad to the marked cover position.", "DO IT");
+                    Set(ref next, AssistantRecommendationKind.Move, AssistantTargetKind.WorldPosition, MoveToCoverTitle, MoveToCoverBody, DoItAction);
                     next.SourceEntity = friendly; next.WorldPosition = move; next.HasWorldPosition = 1; next.CanExecute = friendly != Entity.Null ? (byte)1 : (byte)0; break;
                 case CampaignMissionGuidancePromptKind.ConfirmThreat:
-                    Set(ref next, AssistantRecommendationKind.CameraFocus, AssistantTargetKind.Objective, "Confirm the threat", "Inspect the armed patrol near the civilians.", "SHOW ME");
-                    next.TargetId = new FixedString64Bytes("anchor.ch01.m01.patrol_objective"); next.WorldPosition = patrol; next.HasWorldPosition = 1; break;
+                    Set(ref next, AssistantRecommendationKind.CameraFocus, AssistantTargetKind.Objective, ConfirmThreatTitle, ConfirmThreatBody, ShowMeAction);
+                    next.TargetId = PatrolObjectiveAnchor; next.WorldPosition = patrol; next.HasWorldPosition = 1; break;
                 case CampaignMissionGuidancePromptKind.Engage:
-                    Set(ref next, AssistantRecommendationKind.Attack, AssistantTargetKind.Entity, "Engage the patrol", "Attack the confirmed hostile patrol.", "DO IT");
+                    Set(ref next, AssistantRecommendationKind.Attack, AssistantTargetKind.Entity, EngagePatrolTitle, EngagePatrolBody, DoItAction);
                     next.SourceEntity = friendly; next.TargetEntity = hostile; next.CanExecute = friendly != Entity.Null && hostile != Entity.Null ? (byte)1 : (byte)0; break;
                 default:
-                    Set(ref next, AssistantRecommendationKind.CameraFocus, AssistantTargetKind.Objective, "Secure the corridor", "Check the objective and secure the civilian route.", "SHOW ME");
-                    next.TargetId = new FixedString64Bytes("anchor.ch01.m01.civilian_safe_zone"); next.WorldPosition = patrol; next.HasWorldPosition = 1; break;
+                    Set(ref next, AssistantRecommendationKind.CameraFocus, AssistantTargetKind.Objective, SecureCorridorTitle, SecureCorridorBody, ShowMeAction);
+                    next.TargetId = CivilianSafeZoneAnchor; next.WorldPosition = patrol; next.HasWorldPosition = 1; break;
             }
             ApplyModePolicy(ref next);
             return next;
@@ -92,12 +109,12 @@ namespace Game.Runtime
         {
             if (next.GuidanceMode == NarrativeGuidanceMode.Full) return;
             if (next.GuidanceMode == NarrativeGuidanceMode.Minimal)
-            { next.CanExecute = 0; next.ActionLabel = new FixedString64Bytes("SHOW ME"); return; }
+            { next.CanExecute = 0; next.ActionLabel = ShowMeAction; return; }
             if (next.Prompt != CampaignMissionGuidancePromptKind.FindSquad && next.Prompt != CampaignMissionGuidancePromptKind.MoveToCover)
-            { next.CanExecute = 0; next.ActionLabel = new FixedString64Bytes("SHOW ME"); }
+            { next.CanExecute = 0; next.ActionLabel = ShowMeAction; }
             if (next.HintStrength >= 2)
             {
-                FixedString128Bytes body = next.Body; body.Append(" Use Show Me if you need the exact target."); next.Body = body;
+                FixedString128Bytes body = next.Body; body.Append(ContextualTargetHint); next.Body = body;
             }
         }
 
@@ -154,8 +171,8 @@ namespace Game.Runtime
             if (!SystemAPI.TryGetSingleton(out ActiveOperationMapComponent active) || !SystemAPI.TryGetSingleton(out OperationMapMetadataComponent metadata) ||
                 !metadata.Blob.IsCreated || metadata.Generation != active.Generation) return;
             ref OperationMapBlob map = ref metadata.Blob.Value;
-            if (CampaignMissionSpawnSystem.TryFindAnchor(ref map, new FixedString64Bytes("anchor.ch01.m01.move_target"), out var a)) move = a.Position;
-            if (CampaignMissionSpawnSystem.TryFindAnchor(ref map, new FixedString64Bytes("anchor.ch01.m01.patrol_objective"), out var b)) patrol = b.Position;
+            if (CampaignMissionSpawnSystem.TryFindAnchor(ref map, MoveTargetAnchor, out var a)) move = a.Position;
+            if (CampaignMissionSpawnSystem.TryFindAnchor(ref map, PatrolObjectiveAnchor, out var b)) patrol = b.Position;
         }
 
         private static bool ProjectionEquals(in CampaignMissionGuidanceProjectionComponent a, in CampaignMissionGuidanceProjectionComponent b) =>

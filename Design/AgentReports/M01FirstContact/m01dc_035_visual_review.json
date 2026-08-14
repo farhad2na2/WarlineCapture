@@ -1,0 +1,49 @@
+{
+  "schemaVersion":1,
+  "itemId":"M01DC-035",
+  "result":"Passed",
+  "operatorKind":"Agent",
+  "authority":{"firstLaunchPanel":"current approved FL-P18 R1","oldImagesUsed":false,"physicalCitySource":"accepted dense-city presentation"},
+  "aspects":["16:9","20:9","tablet landscape"],
+  "identity":{"patrol":["Courier","Warden","Broker"],"excluded":["Qassem","Unit_Chr_Insurgent_Male_05","heavy_gunner"],"civilianCount":8,"civilianMaximum":12},
+  "accessibility":{"textExpansion":"captured at three supported aspect classes","subtitles":"mandatory narrative/result consequence projection retained","reducedMotionBlendSeconds":0,"safeAreas":"captured by current Campaign/briefing/HUD/result layouts"},
+  "review":{"cityVisible":"Pass","refineryProxyOverlap":"Absent","brownFallback":"Absent","invalidRoadWaterCrossing":"Absent","clipping":"Absent","uiOverlap":"Absent","patrolCivilianDistinction":"Pass","openP0P1P2":0},
+  "projectOwnerAuthority":{"approvedFirstLaunchComic":true,"approvedDenseCityReuse":true,"newContactSheetReviewClaimed":false},
+  "frames":[
+    {"index":1,"id":"fl_p18_current_16x9","source":"Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P18.png","sha256":"d68d9a3341ab9493d68d491b1d51eb481bc2fc862c47b57c60affc9572216a54"},
+    {"index":2,"id":"live_planning_16x9","source":"Design/AgentReports/M01FirstContact/m01dc_015_camera_continuity_contact_sheet.png","sha256":"3df9c75017afb9abad4fc14493a27c49f05374278b5e2286a93de6e6dab1b76b"},
+    {"index":3,"id":"live_battle_start_16x9","source":"Design/AgentReports/M01FirstContact/m01dc_015_camera_continuity_contact_sheet.png","sha256":"3df9c75017afb9abad4fc14493a27c49f05374278b5e2286a93de6e6dab1b76b"},
+    {"index":4,"id":"live_planning_20x9","source":"Design/AgentReports/M01FirstContact/m01dc_015_camera_continuity_contact_sheet.png","sha256":"3df9c75017afb9abad4fc14493a27c49f05374278b5e2286a93de6e6dab1b76b"},
+    {"index":5,"id":"live_battle_start_tablet","source":"Design/AgentReports/M01FirstContact/m01dc_015_camera_continuity_contact_sheet.png","sha256":"3df9c75017afb9abad4fc14493a27c49f05374278b5e2286a93de6e6dab1b76b"},
+    {"index":6,"id":"courier_warden_broker","source":"Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Chr_Insurgent_Male_03_Config.asset;Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Chr_Insurgent_Female_01_Config.asset;Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Chr_Insurgent_Female_02_Config.asset","sha256":"b530224082e2ed01ef456dcceb6b4d6104dc2b6ff7cbfbccef3514852d643774"},
+    {"index":7,"id":"bounded_civilians","source":"Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Chr_Civilian_Male_01_Config.asset;Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Chr_Civilian_Female_01_Config.asset;Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Chr_Civilian_Male_02_Config.asset;Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Chr_Civilian_Female_02_Config.asset","sha256":"5e58de2fc58d1ee8548433c9c747e92760214b97b25fdb1e3e659e4486a0aa1b"},
+    {"index":8,"id":"hud_move","source":"Build/EditorEvidence/M01FirstContact/M01DC035/hud_move.png","sha256":"b4e2d9e6bae6ba85a57a28447f90ddf61f1c508601a5c9181f5d86b37a79a962"},
+    {"index":9,"id":"hud_attack","source":"Build/EditorEvidence/M01FirstContact/M01DC035/hud_attack.png","sha256":"ac9aec1cd267bdc61ae7e1984ae88c3abc40b821f44a7d0b816470c583d76714"},
+    {"index":10,"id":"hud_invalid_recovery","source":"Build/EditorEvidence/M01FirstContact/M01DC035/hud_invalid_recovery.png","sha256":"695102aebaeb093b5a2f31675baba8fed9e158db893b85e24fc6033c63bb335d"},
+    {"index":11,"id":"campaign_16x9","source":"Build/EditorEvidence/M01FirstContact/M01DC029/campaign_16x9.png","sha256":"be434cdac54be17002cdd0db9581df1ef8006c7967877c1be5765c5cc5ad6a41"},
+    {"index":12,"id":"campaign_20x9","source":"Build/EditorEvidence/M01FirstContact/M01DC029/campaign_20x9.png","sha256":"22f6c7f25bc96356d9c1c6d8a397cb51233a0085e0ebea46d4dde7352e40f8e1"},
+    {"index":13,"id":"campaign_tablet","source":"Build/EditorEvidence/M01FirstContact/M01DC029/campaign_tablet4x3.png","sha256":"dceced461bb5ca2befb9f3b9ab15a62f03d51ec6da58e37fa7c76a59af27c55a"},
+    {"index":14,"id":"briefing_first_clear_16x9","source":"Build/EditorEvidence/M01FirstContact/M01DC030/briefing_first_clear_16x9.png","sha256":"1e744d0c594d566bfa0aadc9871eb808eca7702bdef061105f3ff4a1e01c93ac"},
+    {"index":15,"id":"briefing_replay_20x9","source":"Build/EditorEvidence/M01FirstContact/M01DC030/briefing_replay_20x9.png","sha256":"93e91a9d3825107a12c11a2822315eba60bc14033f3271a50b430a5806142cfc"},
+    {"index":16,"id":"briefing_replay_tablet","source":"Build/EditorEvidence/M01FirstContact/M01DC030/briefing_replay_tablet4x3.png","sha256":"e9b8b43f7f4244f50240269e10041a11f408cc4a5d7853fd2ccf5487ee883e8b"},
+    {"index":17,"id":"result_victory_16x9","source":"Build/EditorEvidence/M01FirstContact/M01DC031/result_victory_16x9.png","sha256":"30c623c826799a9b086781c1b7aee9e34cced47868dac160b06b8e7a461dc5ca"},
+    {"index":18,"id":"result_defeat_20x9","source":"Build/EditorEvidence/M01FirstContact/M01DC031/result_defeat_20x9.png","sha256":"b1aae0e9996f0ad604f995a2c2b12242cef2c8941226f30849594040ea5d8c6c"},
+    {"index":19,"id":"result_victory_tablet","source":"Build/EditorEvidence/M01FirstContact/M01DC031/result_victory_tablet4x3.png","sha256":"9749dbb746737fa0754b635efd82c73a53cfdce90a9d283bc7cad5bab708fc0e"},
+    {"index":20,"id":"fl_p18_current_20x9","source":"Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P18.png","sha256":"078abb9f5b759a3c606a030e6d44187194c156681db749bd4dbf8bed6cc4d548"}
+  ],
+  "contactSheet":{"path":"Design/AgentReports/M01FirstContact/m01dc_035_visual_contact_sheet.png","width":2400,"height":1080,"sha256":"26e0177881993fe787f1e1f7482a18117632eb970164755df8dd6e50c95dd6f6"},
+  "validation":{
+    "visual":{"marker":"[M01FirstContactVisualCapture] result=Passed captures=20 aspects=3","logSha256":"61dfbb9c8817de6515765334ee510beda6266a3397dba611eb295bd86f29238f"},
+    "continuity":{"marker":"[M01FirstContactCameraContinuityValidation] result=Passed tests=14","logSha256":"66742cd17ad16e23fabdc8e0e3fb978215f80d6b08e88c06a64599a0d650c907"},
+    "campaign":{"marker":"[M01FirstContactCampaignUiValidation] result=Passed tests=10 captures=3","logSha256":"8a525a9b63537d1305e51a0d4de8327dc433cf57692edfa354ce7eee0f7eaa07"},
+    "briefing":{"marker":"[M01FirstContactMissionBriefingValidation] result=Passed tests=11 captures=3","logSha256":"6a9c6a3a0c9d51e621dad50435cd91b93edd5f1ba424b45ecbc39be13c1daec8"},
+    "result":{"marker":"[M01FirstContactHudResultValidation] result=Passed tests=10 captures=3","logSha256":"82d6139517394be1606fdc24b05cc916b56a1909184fbb158f85d083620b0c02"},
+    "sourceGrowth":{"marker":"[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17","logSha256":"d1515a309901709d2898b7ac6ac169cfa2c3d2e7f7f4c95209d9c6da4ce103e1"},
+    "architecture":{"marker":"[ArchitectureHardeningCloseoutValidation] result=Passed suites=23","logSha256":"42ff4ffff1625c01f21f6b9307d60bb360a834a31c3022c26a74355a50d0a876"},
+    "compilerErrors":0
+  },
+  "rejectedRuns":[
+    {"logSha256":"eb0b5b97ecbe97b612037732b83cd3e1531d4b910bf5dfdbe70c369bf6fd343a","reason":"Legacy HUD capture self-exited after its pass marker; checked wrapper could not read a normal process exit, so the run was not accepted."},
+    {"logSha256":"3785ffcc397d9d521e170ddffcd3f485986720383f1af525c282ccbbfb8d17e3","reason":"First evidence-boundary replay failed closed on Windows error 1224 while rewriting a memory-mapped protected PNG; the accepted utility writes only temporary HUD inputs."}
+  ]
+}

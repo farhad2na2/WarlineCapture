@@ -1,6 +1,7 @@
 using Game.Components;
 using Game.Missions.Contracts;
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
 
 namespace Game.Runtime
@@ -12,13 +13,19 @@ namespace Game.Runtime
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
+            state.RequireForUpdate<CampaignMissionRootComponent>();
             state.RequireForUpdate<CampaignMissionRuntimeComponent>();
             state.RequireForUpdate<CampaignMissionAttemptFactsComponent>();
+            state.RequireForUpdate<CampaignMissionActionRequestElement>();
         }
 
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
+            if (SystemAPI.TryGetSingletonEntity<CampaignMissionRootComponent>(out Entity root) &&
+                TryConsumeAction(state.EntityManager, root))
+                return;
+
             foreach ((RefRW<CampaignMissionRuntimeComponent> runtime,
                       RefRO<CampaignMissionAttemptFactsComponent> facts)
                      in SystemAPI.Query<RefRW<CampaignMissionRuntimeComponent>,
@@ -29,6 +36,126 @@ namespace Game.Runtime
                     continue;
                 runtime.ValueRW = next;
             }
+        }
+
+        internal static bool TryConsumeAction(EntityManager entityManager, Entity root)
+        {
+            if (!entityManager.HasComponent<CampaignMissionRuntimeComponent>(root) ||
+                !entityManager.HasBuffer<CampaignMissionActionRequestElement>(root) ||
+                !entityManager.HasBuffer<CampaignMissionActionResultElement>(root))
+                return false;
+            DynamicBuffer<CampaignMissionActionRequestElement> requests =
+                entityManager.GetBuffer<CampaignMissionActionRequestElement>(root);
+            if (requests.Length == 0)
+                return false;
+
+            CampaignMissionActionRequestElement request = requests[0];
+            requests.RemoveAt(0);
+            CampaignMissionRuntimeComponent runtime =
+                entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root);
+            bool correlated = request.TransitionToken == runtime.TransitionToken &&
+                              request.SessionToken.Equals(runtime.SessionToken) &&
+                              request.AttemptOrdinal == runtime.AttemptOrdinal;
+            bool accepted = false;
+            FixedString64Bytes reason = default;
+            if (!correlated || runtime.Phase != MissionPhaseKind.Result)
+                reason = new FixedString64Bytes("stale-result-action");
+            else if (request.Action == MissionActionKind.Continue)
+                accepted = TryContinue(entityManager, root, ref runtime, out reason);
+            else if (request.Action == MissionActionKind.Retry)
+                accepted = TryQueueRetry(entityManager, root, in runtime, in request, out reason);
+            else
+                reason = new FixedString64Bytes("unsupported-result-action");
+
+            if (accepted && request.Action == MissionActionKind.Continue)
+                entityManager.SetComponentData(root, runtime);
+            entityManager.GetBuffer<CampaignMissionActionResultElement>(root).Add(
+                new CampaignMissionActionResultElement
+                {
+                    Action = request.Action,
+                    Accepted = accepted ? (byte)1 : (byte)0,
+                    TransitionToken = request.TransitionToken,
+                    SessionToken = request.SessionToken,
+                    AttemptOrdinal = request.AttemptOrdinal,
+                    ReasonCode = reason
+                });
+            return true;
+        }
+
+        private static bool TryContinue(
+            EntityManager entityManager, Entity root, ref CampaignMissionRuntimeComponent runtime,
+            out FixedString64Bytes reason)
+        {
+            reason = default;
+            if (runtime.Outcome != MissionOutcomeKind.Victory ||
+                !entityManager.HasBuffer<CampaignMissionSettlementResultElement>(root))
+            {
+                reason = new FixedString64Bytes("result-not-settled");
+                return false;
+            }
+            DynamicBuffer<CampaignMissionSettlementResultElement> settlements =
+                entityManager.GetBuffer<CampaignMissionSettlementResultElement>(root, true);
+            bool settled = false;
+            for (int index = settlements.Length - 1; index >= 0; index--)
+            {
+                CampaignMissionSettlementResultElement candidate = settlements[index];
+                if (candidate.SourceVersion == runtime.Version &&
+                    candidate.SessionToken.Equals(runtime.SessionToken) && candidate.Accepted != 0)
+                {
+                    settled = true;
+                    break;
+                }
+            }
+            if (!settled)
+            {
+                reason = new FixedString64Bytes("result-not-settled");
+                return false;
+            }
+            MissionPhaseKind nextPhase = runtime.ReturnDestination == MissionReturnDestinationKind.CommandBase
+                ? MissionPhaseKind.DebriefFirstClear : MissionPhaseKind.ReturnReplay;
+            if (!TryTransition(in runtime, nextPhase, runtime.Outcome, runtime.ReturnDestination, out runtime))
+            {
+                reason = new FixedString64Bytes("invalid-result-transition");
+                return false;
+            }
+            return true;
+        }
+
+        private static bool TryQueueRetry(
+            EntityManager entityManager, Entity root, in CampaignMissionRuntimeComponent runtime,
+            in CampaignMissionActionRequestElement action, out FixedString64Bytes reason)
+        {
+            reason = default;
+            if (runtime.Outcome != MissionOutcomeKind.Defeat || runtime.TransitionToken == ulong.MaxValue ||
+                runtime.AttemptOrdinal == int.MaxValue ||
+                !entityManager.HasBuffer<CampaignMissionLaunchRequestElement>(root))
+            {
+                reason = new FixedString64Bytes("retry-unavailable");
+                return false;
+            }
+            DynamicBuffer<CampaignMissionLaunchRequestElement> launches =
+                entityManager.GetBuffer<CampaignMissionLaunchRequestElement>(root);
+            if (launches.Length != 0)
+            {
+                reason = new FixedString64Bytes("retry-already-queued");
+                return false;
+            }
+            launches.Add(new CampaignMissionLaunchRequestElement
+            {
+                SchemaVersion = MissionLaunchPayloadFactory.CurrentSchemaVersion,
+                MissionId = runtime.MissionId,
+                ScenarioId = runtime.ScenarioId,
+                OperationMapId = runtime.OperationMapId,
+                LaunchOrigin = runtime.LaunchOrigin,
+                RunKind = MissionRunKind.Retry,
+                Guidance = runtime.Guidance,
+                ReplayTutorialEnabled = action.ReplayTutorialEnabled,
+                TransitionToken = runtime.TransitionToken + 1ul,
+                SessionToken = runtime.SessionToken,
+                AttemptOrdinal = runtime.AttemptOrdinal + 1,
+                DeterministicSeed = runtime.DeterministicSeed
+            });
+            return true;
         }
 
         public static bool TryEvaluate(

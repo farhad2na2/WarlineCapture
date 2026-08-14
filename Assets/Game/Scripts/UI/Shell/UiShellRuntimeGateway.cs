@@ -64,6 +64,11 @@ namespace Game.UI.Runtime
             return current.TryReadMissionResult(out result);
         }
 
+        public static bool TryEnqueueMissionResultAction(UiMissionResultActionKind action)
+        {
+            return current.TryEnqueueMissionResultAction(action);
+        }
+
         public static bool TryReadCampaignOperations(out UiCampaignOperationsModel campaign)
         {
             return current.TryReadCampaignOperations(out campaign);
@@ -231,6 +236,11 @@ namespace Game.UI.Runtime
             public bool TryReadMissionResult(out UiMissionResultPopupModel result)
             {
                 result = UiMissionResultPopupModel.VictoryDefault;
+                return false;
+            }
+
+            public bool TryEnqueueMissionResultAction(UiMissionResultActionKind action)
+            {
                 return false;
             }
 

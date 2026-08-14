@@ -1,0 +1,122 @@
+{
+  "item": "M01DC-031",
+  "status": "accepted",
+  "headBefore": "f1e9ad9b076650eb846dac507dbebfac44bacab1",
+  "authority": {
+    "missionRuntimeWriter": "Game.Runtime.CampaignMissionRuntimeSystem",
+    "objectiveWriter": "Game.Runtime.CampaignMissionObjectiveProjectionSystem",
+    "resultWriter": "Game.Runtime.CampaignMissionResultProjectionSystem",
+    "progressWriter": "Game.Runtime.CampaignMissionProgressSettlementSystem",
+    "resultViewOwnsTruth": false,
+    "binderUpdateLoop": false,
+    "localElapsedTimeOwnerRemoved": true,
+    "duplicateResultInputRejected": true
+  },
+  "routes": {
+    "firstClearContinue": "MissionPhaseKind.DebriefFirstClear",
+    "replayContinue": "MissionPhaseKind.ReturnReplay",
+    "defeatRetry": "one correlated MissionRunKind.Retry launch request",
+    "continueRequiresAcceptedSettlement": true,
+    "rewardSettlementDisplayIsAuthoritative": true
+  },
+  "presentation": {
+    "objectiveHudConsumesProjection": true,
+    "controllerAndTouchFocus": "active action selected on semantic result update",
+    "textExpansion": "TMP auto-sizing validated at 16:9, 20:9, and tablet 4:3",
+    "subtitles": "result consequence text remains visible",
+    "reducedMotion": "no result animation or per-frame view policy introduced",
+    "legacyResultOwnersRestored": false,
+    "falseLegacyRewardCardsVisible": false,
+    "prefabs": {
+      "uiShellAppCanvasSha256": "EA140F4D1E74B8B67D371E534099481A9FE9A857F68F7032D4F17AB6E1B29D5A",
+      "matchHudSha256": "AADD83CE04B5A246D2854D88D7E24BA9BEE3675C2261563E7CD1BBE36793E37B",
+      "missionResultSha256": "EA23214681B7835548BB26117045B7DBE59B3146AACCF8FD02C2F9006FEF5BA3"
+    },
+    "deterministicRegeneration": true
+  },
+  "captures": [
+    {
+      "state": "victory",
+      "aspect": "16:9",
+      "size": "1280x720",
+      "sha256": "30C623C826799A9B086781C1B7AEE9E34CCED47868DAC160B06B8E7A461DC5CA"
+    },
+    {
+      "state": "defeat",
+      "aspect": "20:9",
+      "size": "1000x450",
+      "sha256": "B1AAE0E9996F0AD604F995A2C2B12242CEF2C8941226F30849594040EA5D8C6C"
+    },
+    {
+      "state": "victory",
+      "aspect": "tablet 4:3",
+      "size": "1024x768",
+      "sha256": "9749DBB746737FA0754B635EFD82C73A53CFDCE90A9D283BC7CAD5BAB708FC0E"
+    }
+  ],
+  "agentVisualReview": {
+    "operatorKind": "Agent",
+    "result": "PassedAfterFix",
+    "finding": {
+      "severity": "P1",
+      "summary": "Legacy fixed Commander XP, Materials, Intel, and completed-objective surfaces contradicted authoritative M01 result truth.",
+      "action": "Replaced fixed reward cards/objective rows with authoritative reward and mission-statistics projections; corrected contrast, tablet text fit, and retry focus position.",
+      "replay": "Passed at 16:9, 20:9, and tablet 4:3"
+    },
+    "openP0P1P2": 0
+  },
+  "validation": [
+    {
+      "marker": "[M01FirstContactHudResultValidation] result=Passed tests=10 captures=3",
+      "sha256": "2C53868FD9CB574DCE809618568766AA98F82AF76F63AF906ABCE83D1006B0B1"
+    },
+    {
+      "marker": "PlayMode result=Passed total=2 passed=2 failed=0 skipped=0",
+      "logSha256": "6CE1B8B828281C16255940544D6AA5498C6AEAE1BB02B72A05850D1322DD7BCB",
+      "xmlSha256": "282DD04AD0200D3E49F678172CE765BCF1CADC1422F04B14F11E1DB94EF37AAC"
+    },
+    {
+      "marker": "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17",
+      "sha256": "38F5ED323A35EDBB82F42BE6662782553DB97E25DD8CFA1CECDB95B4CA33F17C"
+    },
+    {
+      "marker": "[ArchitectureHardeningCloseoutValidation] result=Passed suites=23",
+      "sha256": "E428BD455DEF3D200F28537AAB876AB331440C09A67513CA1DD82DA8FE5566A1"
+    },
+    {
+      "marker": "[M01HudResultPrefabBuilder] result=Passed prefabs=3",
+      "sha256": "5F71CD270B5A362679175B03DA49B28D34CB0895893FD2006A3135E51C87DBBD"
+    }
+  ],
+  "sourceReview": {
+    "productionSourceGrowthExceptionAddedOrEnlarged": false,
+    "unusedUiShellComponentsExceptionRetired": true,
+    "uiShellComponentsLinesRemoved": 45,
+    "campaignMissionRuntimeSystemLines": 299,
+    "missionResultModelsLines": 97,
+    "missionGatewayPartialLines": 70,
+    "resultViewLines": 105,
+    "resultBinderLines": 76,
+    "prefabBuilderLines": 191,
+    "compilerErrors": 0,
+    "focusedSourceJsonMarkdownDiffCheck": "Passed",
+    "generatedExcludedOutputsRestored": true,
+    "protectedDenseCityOutputsChanged": false,
+    "missionDefinitionsChanged": false,
+    "scenesChanged": false,
+    "addressablesChanged": false,
+    "packagesChanged": false,
+    "projectSettingsChanged": false,
+    "toolsCiChanged": false
+  },
+  "windowsRecovery": {
+    "reason": "restricted sandbox could not use normal-integrity Unity licensing IPC; one GUI run entered the repository Qualcomm D3D12 reopen guard",
+    "actions": [
+      "reran only checked repository wrappers outside the restricted sandbox",
+      "used the authorized wrapper batchmode recovery path and version-matched licensing client",
+      "verified both Unity process command lines belonged to the wrapper/project; the processes exited before a stop was required"
+    ],
+    "unityHubStopped": false,
+    "directUnityInvocation": false
+  }
+}

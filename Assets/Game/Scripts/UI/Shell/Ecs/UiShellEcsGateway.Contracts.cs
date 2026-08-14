@@ -10,6 +10,7 @@ using Game.UI.Shell.Contracts.Ecs;
 using Game.Components;
 using Game.UI.Runtime;
 using Game.Runtime;
+using Game.Missions.Contracts;
 
 namespace Game.UI.Shell.Ecs
 {
@@ -70,6 +71,11 @@ namespace Game.UI.Shell.Ecs
         bool IUiShellRuntimeGateway.TryReadMissionResult(out UiMissionResultPopupModel result)
         {
             return TryReadMissionResult(out result);
+        }
+
+        bool IUiShellRuntimeGateway.TryEnqueueMissionResultAction(UiMissionResultActionKind action)
+        {
+            return TryEnqueueMissionResultAction(action);
         }
 
         bool IUiShellRuntimeGateway.TryReadMatchHudSelection(out UiMatchHudSelectionPanelModel selection)

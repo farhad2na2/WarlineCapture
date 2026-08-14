@@ -311,51 +311,6 @@ namespace Game.UI.Contracts
         }
     }
 
-    public enum UiMissionResultOutcome : byte
-    {
-        Victory,
-        Loss
-    }
-
-    public readonly struct UiMissionResultPopupModel
-    {
-        public readonly UiMissionResultOutcome Outcome;
-        public readonly string Title;
-        public readonly string Subtitle;
-        public readonly string SummaryBody;
-        public readonly bool ReplayEnabled;
-
-        public UiMissionResultPopupModel(
-            UiMissionResultOutcome outcome,
-            string title,
-            string subtitle,
-            string summaryBody,
-            bool replayEnabled)
-        {
-            Outcome = outcome;
-            Title = title;
-            Subtitle = subtitle;
-            SummaryBody = summaryBody;
-            ReplayEnabled = replayEnabled;
-        }
-
-        public static UiMissionResultPopupModel VictoryDefault =>
-            new(
-                UiMissionResultOutcome.Victory,
-                "VICTORY",
-                "Sector secured. Command net restored.",
-                "Primary objectives completed with acceptable losses. Civilian risk stabilized and remaining hostile cells are retreating.",
-                true);
-
-        public static UiMissionResultPopupModel LossDefault =>
-            new(
-                UiMissionResultOutcome.Loss,
-                "MISSION FAILED",
-                "Command net disrupted. Extraction required.",
-                "Primary objectives were not completed. Regroup, resupply, and redeploy when command authorizes a new operation.",
-                true);
-    }
-
     public readonly struct UiMatchHudSelectionPanelModel
     {
         public readonly bool Visible;

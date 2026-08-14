@@ -16,6 +16,7 @@ namespace Game.UI.Shell.Ecs
                 if (hasGridConfigQuery) gridConfigQuery.Dispose();
                 if (hasResourceStorageQuery) resourceStorageQuery.Dispose();
                 if (hasAssistantMatchStartQuery) assistantMatchStartQuery.Dispose();
+                if (hasMissionRootQuery) missionRootQuery.Dispose();
             }
 
             cachedWorld = nextWorld;
@@ -27,6 +28,7 @@ namespace Game.UI.Shell.Ecs
             gridConfigQuery = default;
             resourceStorageQuery = default;
             assistantMatchStartQuery = default;
+            missionRootQuery = default;
             hasBoundaryQuery = false;
             hasFocusedSelectionQuery = false;
             hasSelectionInputQuery = false;
@@ -35,6 +37,7 @@ namespace Game.UI.Shell.Ecs
             hasGridConfigQuery = false;
             hasResourceStorageQuery = false;
             hasAssistantMatchStartQuery = false;
+            hasMissionRootQuery = false;
         }
     }
 }

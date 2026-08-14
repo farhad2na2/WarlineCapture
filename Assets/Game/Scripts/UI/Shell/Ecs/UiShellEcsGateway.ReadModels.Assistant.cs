@@ -26,6 +26,13 @@ namespace Game.UI.Shell.Ecs
             EnsureMatchHudStatusSurfacesState(entityManager, boundary);
             UiMatchHudStatusSurfacesComponent component =
                 entityManager.GetComponentData<UiMatchHudStatusSurfacesComponent>(boundary);
+            if (hasCachedMatchHudStatus && cachedMatchHudStatusWorld == entityManager.World &&
+                cachedMatchHudStatusBoundary == boundary &&
+                SameMatchHudStatus(in component, in cachedMatchHudStatusComponent))
+            {
+                statusSurfaces = cachedMatchHudStatus;
+                return true;
+            }
             statusSurfaces = new UiMatchHudStatusSurfacesModel(
                 component.ObjectivesTitle.ToString(),
                 new UiMatchHudObjectiveRowModel(component.Objective0Text.ToString(), component.Objective0IconKind),
@@ -42,8 +49,34 @@ namespace Game.UI.Shell.Ecs
                 component.BoardAllEnabled != 0,
                 component.CancelVisible != 0,
                 component.CancelEnabled != 0);
+            hasCachedMatchHudStatus = true;
+            cachedMatchHudStatusWorld = entityManager.World;
+            cachedMatchHudStatusBoundary = boundary;
+            cachedMatchHudStatusComponent = component;
+            cachedMatchHudStatus = statusSurfaces;
             return true;
         }
+
+        private static bool SameMatchHudStatus(
+            in UiMatchHudStatusSurfacesComponent left,
+            in UiMatchHudStatusSurfacesComponent right) =>
+            left.ObjectivesTitle.Equals(right.ObjectivesTitle) &&
+            left.Objective0Text.Equals(right.Objective0Text) &&
+            left.Objective1Text.Equals(right.Objective1Text) &&
+            left.Objective2Text.Equals(right.Objective2Text) &&
+            left.Objective0IconKind == right.Objective0IconKind &&
+            left.Objective1IconKind == right.Objective1IconKind &&
+            left.Objective2IconKind == right.Objective2IconKind &&
+            left.ElapsedText.Equals(right.ElapsedText) &&
+            left.ThreatVisible == right.ThreatVisible &&
+            left.ThreatTitle.Equals(right.ThreatTitle) &&
+            left.ThreatSubtitle.Equals(right.ThreatSubtitle) &&
+            left.JumpEnabled == right.JumpEnabled &&
+            left.FeedbackVisible == right.FeedbackVisible &&
+            left.FeedbackText.Equals(right.FeedbackText) &&
+            left.BoardAllVisible == right.BoardAllVisible &&
+            left.BoardAllEnabled == right.BoardAllEnabled &&
+            left.CancelVisible == right.CancelVisible && left.CancelEnabled == right.CancelEnabled;
 
         public static bool TryReadMatchHudAssistantPanel(out UiAssistantPanelModel assistantPanel)
         {

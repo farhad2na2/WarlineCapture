@@ -10,6 +10,7 @@ using Game.UI.Shell.Contracts.Ecs;
 using Game.Components;
 using Game.UI.Runtime;
 using Game.Runtime;
+using Game.Missions.Contracts;
 
 namespace Game.UI.Shell.Ecs
 {
@@ -105,7 +106,105 @@ namespace Game.UI.Shell.Ecs
         public static bool TryReadMissionResult(out UiMissionResultPopupModel result)
         {
             result = UiMissionResultPopupModel.VictoryDefault;
-            return false;
+            if (!TryGetMissionRoot(out EntityManager entityManager, out Entity root) ||
+                !entityManager.HasComponent<CampaignMissionRuntimeComponent>(root) ||
+                !entityManager.HasComponent<CampaignMissionResultComponent>(root) ||
+                !entityManager.HasComponent<CampaignMissionAttemptFactsComponent>(root) ||
+                !entityManager.HasComponent<CampaignMissionCatalogComponent>(root))
+                return false;
+
+            CampaignMissionRuntimeComponent runtime =
+                entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root);
+            CampaignMissionResultComponent projection =
+                entityManager.GetComponentData<CampaignMissionResultComponent>(root);
+            if (runtime.Phase != MissionPhaseKind.Result || projection.SourceVersion == 0 ||
+                !runtime.MissionId.Equals(projection.MissionId) ||
+                !runtime.SessionToken.Equals(projection.SessionToken) ||
+                runtime.AttemptOrdinal != projection.AttemptOrdinal)
+                return false;
+
+            byte settlementAccepted = 0;
+            if (projection.Outcome == MissionOutcomeKind.Victory &&
+                entityManager.HasBuffer<CampaignMissionSettlementResultElement>(root))
+            {
+                DynamicBuffer<CampaignMissionSettlementResultElement> settlements =
+                    entityManager.GetBuffer<CampaignMissionSettlementResultElement>(root, true);
+                for (int index = settlements.Length - 1; index >= 0; index--)
+                {
+                    CampaignMissionSettlementResultElement candidate = settlements[index];
+                    if (candidate.SourceVersion == projection.SourceVersion &&
+                        candidate.SessionToken.Equals(projection.SessionToken))
+                    {
+                        settlementAccepted = candidate.Accepted;
+                        break;
+                    }
+                }
+            }
+
+            if (cachedMissionResultWorld == entityManager.World && cachedMissionResultRoot == root &&
+                cachedMissionResultSession.Equals(projection.SessionToken) &&
+                cachedMissionResultAttempt == projection.AttemptOrdinal &&
+                cachedMissionResultVersion == projection.SourceVersion &&
+                cachedMissionSettlementAccepted == settlementAccepted)
+            {
+                result = cachedMissionResult;
+                return true;
+            }
+
+            CampaignMissionCatalogComponent catalog =
+                entityManager.GetComponentData<CampaignMissionCatalogComponent>(root);
+            if (!catalog.Blob.IsCreated || catalog.Blob.Value.Missions.Length != 1 ||
+                !catalog.Blob.Value.Missions[0].MissionId.Equals(runtime.MissionId))
+                return false;
+            ref CampaignMissionDefinitionBlob definition = ref catalog.Blob.Value.Missions[0];
+            CampaignMissionAttemptFactsComponent facts =
+                entityManager.GetComponentData<CampaignMissionAttemptFactsComponent>(root);
+            bool victory = projection.Outcome == MissionOutcomeKind.Victory;
+            bool firstClear = runtime.ReturnDestination == MissionReturnDestinationKind.CommandBase;
+            ref BlobArray<CampaignMissionRewardBlob> rewards = ref (
+                firstClear ? ref definition.FirstClearRewards : ref definition.ReplayRewards);
+            string rewardText = victory ? BuildMissionRewardText(ref rewards) : "NO REWARD";
+            int elapsedSeconds = projection.ElapsedMilliseconds / 1000;
+            result = new UiMissionResultPopupModel(
+                projection.SourceVersion,
+                projection.MissionId.ToString(),
+                victory ? UiMissionResultOutcome.Victory : UiMissionResultOutcome.Loss,
+                victory ? "VICTORY" : "MISSION FAILED",
+                "FIRST CONTACT • OLD MARKET",
+                victory ? "Hostile patrol neutralized. The Old Market corridor is secure."
+                    : "The command squad was lost. Regroup and redeploy.",
+                projection.Stars,
+                $"{elapsedSeconds / 60:00}:{elapsedSeconds % 60:00}",
+                projection.SquadLossCount.ToString(),
+                $"{facts.HostileDefeatedCount}/{facts.HostileTotalCount}",
+                rewardText,
+                victory ? "CONTINUE" : "RETRY",
+                !victory || settlementAccepted != 0,
+                !victory);
+            cachedMissionResultVersion = projection.SourceVersion;
+            cachedMissionSettlementAccepted = settlementAccepted;
+            cachedMissionResult = result;
+            cachedMissionResultWorld = entityManager.World;
+            cachedMissionResultRoot = root;
+            cachedMissionResultSession = projection.SessionToken;
+            cachedMissionResultAttempt = projection.AttemptOrdinal;
+            return true;
+        }
+
+        private static string BuildMissionRewardText(ref BlobArray<CampaignMissionRewardBlob> rewards)
+        {
+            if (rewards.Length == 0)
+                return "No reward";
+            string text = string.Empty;
+            for (int index = 0; index < rewards.Length; index++)
+            {
+                ref CampaignMissionRewardBlob reward = ref rewards[index];
+                if (index > 0) text += "  ·  ";
+                string label = reward.Kind == MissionRewardKind.None
+                    ? "COMMANDER XP" : reward.Kind.ToString().ToUpperInvariant();
+                text += $"{reward.Amount:N0} {label}";
+            }
+            return text;
         }
 
         public static bool TryReadCampaignOperations(out UiCampaignOperationsModel campaign)

@@ -13,6 +13,7 @@ namespace Game.UI.Runtime
         private static readonly ProfilerMarker ReadCommandsMarker = new("UIShellEcsPresentation.ReadCommands");
 
         [SerializeField] private UIShellView shellView;
+        [SerializeField] private CampaignMissionHudResultBinder missionHudResultBinder;
 
         private readonly List<UiShellPresentationCommandModel> commandScratch = new();
         private bool isExecuting;
@@ -44,6 +45,8 @@ namespace Game.UI.Runtime
         {
             if (shellView == null)
                 shellView = GetComponent<UIShellView>();
+            if (missionHudResultBinder == null)
+                missionHudResultBinder = GetComponent<CampaignMissionHudResultBinder>();
         }
 
         private void Update()
@@ -63,6 +66,9 @@ namespace Game.UI.Runtime
             {
                 FlushPendingCompletion();
             }
+
+            if (missionHudResultBinder != null)
+                missionHudResultBinder.RefreshPresentation();
 
             ResourceExchangePopupRuntimeView.RefreshActiveView();
 

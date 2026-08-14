@@ -10,6 +10,7 @@ using Game.UI.Shell.Contracts.Ecs;
 using Game.Components;
 using Game.UI.Runtime;
 using Game.Runtime;
+using Game.Missions.Contracts;
 
 namespace Game.UI.Shell.Ecs
 {
@@ -32,6 +33,44 @@ namespace Game.UI.Shell.Ecs
             {
                 Kind = kind,
                 PayloadId = payloadId
+            });
+            return true;
+        }
+
+        public static bool TryEnqueueMissionResultAction(UiMissionResultActionKind action)
+        {
+            if (action is not (UiMissionResultActionKind.Retry or UiMissionResultActionKind.Continue) ||
+                !TryGetMissionRoot(out EntityManager entityManager, out Entity root) ||
+                !entityManager.HasComponent<CampaignMissionRuntimeComponent>(root) ||
+                !entityManager.HasBuffer<CampaignMissionActionRequestElement>(root))
+                return false;
+
+            CampaignMissionRuntimeComponent runtime =
+                entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root);
+            if (runtime.Phase != MissionPhaseKind.Result ||
+                action == UiMissionResultActionKind.Retry && runtime.Outcome != MissionOutcomeKind.Defeat ||
+                action == UiMissionResultActionKind.Continue && runtime.Outcome != MissionOutcomeKind.Victory)
+                return false;
+
+            MissionActionKind missionAction = action == UiMissionResultActionKind.Retry
+                ? MissionActionKind.Retry : MissionActionKind.Continue;
+
+            DynamicBuffer<CampaignMissionActionRequestElement> requests =
+                entityManager.GetBuffer<CampaignMissionActionRequestElement>(root);
+            for (int index = 0; index < requests.Length; index++)
+                if (requests[index].Action == missionAction &&
+                    requests[index].TransitionToken == runtime.TransitionToken &&
+                    requests[index].SessionToken.Equals(runtime.SessionToken) &&
+                    requests[index].AttemptOrdinal == runtime.AttemptOrdinal)
+                    return false;
+
+            requests.Add(new CampaignMissionActionRequestElement
+            {
+                Action = missionAction,
+                TransitionToken = runtime.TransitionToken,
+                SessionToken = runtime.SessionToken,
+                AttemptOrdinal = runtime.AttemptOrdinal,
+                ReplayTutorialEnabled = runtime.ReplayTutorialEnabled
             });
             return true;
         }

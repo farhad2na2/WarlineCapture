@@ -32,6 +32,8 @@ namespace Game.UI.Contracts
 
         bool TryReadMissionResult(out UiMissionResultPopupModel result);
 
+        bool TryEnqueueMissionResultAction(UiMissionResultActionKind action) => false;
+
         bool TryReadCampaignOperations(out UiCampaignOperationsModel campaign)
         {
             campaign = default;

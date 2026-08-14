@@ -116,6 +116,7 @@ namespace Game.Runtime
             }
 
             profile.firstLaunchLastCompletedStateId ??= string.Empty;
+            profile.firstLaunchMissionSessionToken ??= string.Empty;
             profile.firstLaunchCommanderCallsign = string.IsNullOrWhiteSpace(profile.firstLaunchCommanderCallsign)
                 ? "COMMANDER"
                 : profile.firstLaunchCommanderCallsign.Trim();

@@ -1,0 +1,32 @@
+{
+  "item": "M01DC-027",
+  "status": "accepted",
+  "headBefore": "0d1504130f84616b8e45c3be380f0c97349dbf23",
+  "contract": {
+    "missionId": "saga.ch01.m01.first_contact",
+    "scenarioId": "scenario.ch01.m01.first_contact",
+    "operationMapId": "opmap.ch01.district_edge_01",
+    "launchOrigin": "FirstLaunch",
+    "normalSkipResumeUseSameTypedPayload": true,
+    "mainMenuRequestCount": 0,
+    "completionRequiresCorrelatedAcceptance": true,
+    "rejectionRetries": 3,
+    "restartReusesCorrelation": true
+  },
+  "validation": [
+    { "marker": "[M01FirstContactFirstLaunchHandoffValidation] result=Passed tests=5", "sha256": "0CB52345B236AB0413A9059D1DD1DEF9452BA245A5F4C6826A6B7EECB809D879" },
+    { "marker": "[FirstLaunchGate89Validation] result=Passed", "sha256": "8DF6768C9339D149CC30B43C0D2B7A4F4E445F7B38CA1061A9EB5A17046E5FC0" },
+    { "marker": "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17", "sha256": "7D02CFDA12801AF103BCF0E6E638B971FEBCFD18809B7525D2CBE7040BA00867" },
+    { "marker": "[ArchitectureHardeningCloseoutValidation] result=Passed suites=23", "sha256": "41F1EF93687ADA18A06A84E902F0BC2BC13C826621E20E59ECFE75FA9469227D" },
+    { "marker": "PlayMode result=Passed tests=1", "logSha256": "E8AF4B4B50F0324A8B85C477A88DE62733EEDF9BE7BF0ABA9086CE97C089C539", "resultsSha256": "3A64CAAD3E69E738E0CBE0E5E83DD6E3BEF5BDA9B606A27E9FCE101CE2CCA8A0" }
+  ],
+  "sourceGrowth": {
+    "FirstLaunchNarrativeCompositionSystemHelper": { "lines": 434, "bytes": 19077, "ceilingLines": 453, "ceilingBytes": 19785 },
+    "FirstLaunchNarrativeProfileCompositionSystemHelper": { "lines": 137, "bytes": 6385, "ceilingLines": 163, "ceilingBytes": 6425 },
+    "FirstLaunchNarrativeShellCompositionSystemHelper": { "lines": 78, "bytes": 3229, "ceilingLines": 87, "ceilingBytes": 3386 },
+    "exceptionAdded": false
+  },
+  "compilerErrors": 0,
+  "generatedOutputsRestored": true,
+  "protectedDenseCityOutputsChanged": false
+}

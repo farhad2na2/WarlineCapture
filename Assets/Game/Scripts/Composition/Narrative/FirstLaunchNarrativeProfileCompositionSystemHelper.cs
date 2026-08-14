@@ -1,4 +1,5 @@
 using System;
+using Game.Missions.Contracts;
 using Game.Narrative.Contracts;
 using Game.Runtime;
 
@@ -6,50 +7,32 @@ namespace Game.Composition
 {
     internal sealed class FirstLaunchNarrativeProfileCompositionSystemHelper
     {
-        private string commanderIdentityStateId = string.Empty;
-        private string guidanceChoiceStateId = string.Empty;
+        private string commanderIdentityStateId=string.Empty;
+        private string guidanceChoiceStateId=string.Empty;
         private SaveService store;
         private PlayerProfileSaveData profile;
-        public bool IsInitialized => profile != null;
-        public NarrativeCommanderIdentityData CommanderIdentity => new()
-        {
-            Callsign = profile?.firstLaunchCommanderCallsign ?? "COMMANDER",
-            DisplayName = profile?.firstLaunchCommanderDisplayName ?? "Commander"
-        };
-        public int CommanderPortraitIndex => Math.Max(0, profile?.firstLaunchCommanderPortraitIndex ?? 0);
-        public FirstLaunchNarrativeLanguage Language => Enum.TryParse(
-            profile?.firstLaunchLanguage,
-            true,
-            out FirstLaunchNarrativeLanguage language)
-                ? language
-                : FirstLaunchNarrativeLanguage.Unselected;
-        public bool RequiresLanguageSelection => Language == FirstLaunchNarrativeLanguage.Unselected;
-        public NarrativeGuidanceMode Guidance => Enum.TryParse(
-            profile?.firstLaunchGuidance,
-            true,
-            out NarrativeGuidanceMode guidance)
-                ? guidance
-                : NarrativeGuidanceMode.Full;
-        public void Initialize(
-            SaveService persistence,
-            string commanderStateId,
-            string guidanceStateId)
+        public bool IsInitialized=>profile!=null;
+        public NarrativeCommanderIdentityData CommanderIdentity=>new()
+        { Callsign = profile?.firstLaunchCommanderCallsign ?? "COMMANDER",
+          DisplayName = profile?.firstLaunchCommanderDisplayName ?? "Commander" };
+        public int CommanderPortraitIndex=>Math.Max(0,profile?.firstLaunchCommanderPortraitIndex??0);
+        public FirstLaunchNarrativeLanguage Language=>Enum.TryParse(profile?.firstLaunchLanguage,true,
+            out FirstLaunchNarrativeLanguage language) ? language : FirstLaunchNarrativeLanguage.Unselected;
+        public bool RequiresLanguageSelection=>Language==FirstLaunchNarrativeLanguage.Unselected;
+        public NarrativeGuidanceMode Guidance=>Enum.TryParse(profile?.firstLaunchGuidance,true,
+            out NarrativeGuidanceMode guidance) ? guidance : NarrativeGuidanceMode.Full;
+        public void Initialize(SaveService persistence, string commanderStateId, string guidanceStateId)
         {
             store = persistence ?? SaveService.CreateDefault();
             profile = store.LoadProfile();
             commanderIdentityStateId = commanderStateId ?? string.Empty;
             guidanceChoiceStateId = guidanceStateId ?? string.Empty;
         }
-        public bool ShouldEnterMenu(bool bypassForDiagnostics, bool reviewerMode)
-        {
-            return !reviewerMode &&
-                   (bypassForDiagnostics || profile.firstLaunchStatus == FirstLaunchProfileState.Completed);
-        }
+        public bool ShouldEnterMenu(bool bypassForDiagnostics, bool reviewerMode) => !reviewerMode &&
+            (bypassForDiagnostics || profile.firstLaunchStatus == FirstLaunchProfileState.Completed);
 
-        public bool ShouldResumeHandoff(bool reviewerMode)
-        {
-            return !reviewerMode && profile.firstLaunchStatus == FirstLaunchProfileState.HandoffPending;
-        }
+        public bool ShouldResumeHandoff(bool reviewerMode) => !reviewerMode &&
+            profile.firstLaunchStatus == FirstLaunchProfileState.HandoffPending;
 
         public void MarkInProgress(bool reviewerMode)
         {
@@ -81,10 +64,7 @@ namespace Game.Composition
                 Save();
         }
 
-        public void CommitCommanderIdentity(
-            in NarrativeCommanderIdentityData identity,
-            int portraitIndex,
-            bool persist)
+        public void CommitCommanderIdentity(in NarrativeCommanderIdentityData identity, int portraitIndex, bool persist)
         {
             profile.firstLaunchCommanderCallsign = identity.Callsign;
             profile.firstLaunchCommanderDisplayName = identity.DisplayName;
@@ -102,10 +82,21 @@ namespace Game.Composition
                 Save();
         }
 
-        public bool HasCommittedCommanderIdentity()
+        public bool HasCommittedCommanderIdentity() =>
+            profile.firstLaunchLastCompletedStateId == commanderIdentityStateId ||
+            profile.firstLaunchLastCompletedStateId == guidanceChoiceStateId;
+
+        public MissionLaunchPayload PrepareMissionHandoff(ulong transitionToken)
         {
-            return profile.firstLaunchLastCompletedStateId == commanderIdentityStateId ||
-                   profile.firstLaunchLastCompletedStateId == guidanceChoiceStateId;
+            MissionLaunchPayload payload = FirstLaunchMissionHandoffOperation.Prepare(profile, transitionToken, Guidance);
+            Save(); return payload;
+        }
+
+        public bool MarkMissionAccepted(in MissionLaunchPayload payload)
+        {
+            if (profile == null || profile.firstLaunchStatus != FirstLaunchProfileState.HandoffPending ||
+                !FirstLaunchMissionHandoffOperation.Matches(profile, payload)) return false;
+            profile.firstLaunchStatus = FirstLaunchProfileState.Completed; Save(); return true;
         }
 
         public void MarkSkipped(string lastCompletedStateId)
@@ -128,22 +119,8 @@ namespace Game.Composition
             Save();
         }
 
-        public void MarkHandoffComplete()
-        {
-            if (profile == null || profile.firstLaunchStatus != FirstLaunchProfileState.HandoffPending)
-                return;
-
-            profile.firstLaunchStatus = FirstLaunchProfileState.Completed;
-            Save();
-        }
-
         public void Reset()
-        {
-            profile = null;
-            store = null;
-            commanderIdentityStateId = string.Empty;
-            guidanceChoiceStateId = string.Empty;
-        }
+        { profile = null; store = null; commanderIdentityStateId = guidanceChoiceStateId = string.Empty; }
 
         private void EnsureValidDefaults()
         {
@@ -155,9 +132,6 @@ namespace Game.Composition
                 profile.firstLaunchGuidance = NarrativeGuidanceMode.Full.ToString();
         }
 
-        private void Save()
-        {
-            store.SaveProfile(profile);
-        }
+        private void Save()=>store.SaveProfile(profile);
     }
 }

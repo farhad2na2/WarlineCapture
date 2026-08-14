@@ -34,6 +34,11 @@ namespace Game.UI.Shell.Ecs
                 : UiShellStartupDisposition.EnterMenu;
             if (disposition == UiShellStartupDisposition.EnterMenu)
                 return false;
+            if (disposition == UiShellStartupDisposition.EnterMission)
+            {
+                ResetLoading(ref loading, "Preparing opening briefing");
+                state.EntityManager.SetComponentData(boundary, loading);
+            }
             state.EntityManager.SetComponentData(boundary, shellState);
             state.EntityManager.SetComponentData(boundary, matchIntro);
             return true;

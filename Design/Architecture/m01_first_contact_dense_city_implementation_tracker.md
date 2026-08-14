@@ -1,8 +1,8 @@
 # M01 First Contact Dense-City Implementation Tracker
 
 Date: 2026-08-12
-Status: Active; M01DC-026 accepted and M01DC-027 dependency-ready
-Progress: 26/43 accepted items (60.5%)
+Status: Active; M01DC-027 accepted and M01DC-028 dependency-ready
+Progress: 27/43 accepted items (62.8%)
 Parent design: `Design/M01_FirstContact_Dense_City_High_Level_Design.md`
 Technical architecture: `Design/Architecture/m01_first_contact_dense_city_technical_architecture.md`
 Mission: `saga.ch01.m01.first_contact`
@@ -398,11 +398,15 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
 
   **Accepted evidence (2026-08-13):** Full retains its existing proactive typed ARIA policy; Contextual presents the same five phase prompts, escalates from strength 1 to 2 only after the existing cooldown, and restricts Do It to the already-safe squad-selection and movement phases; Minimal presents only mandatory threat confirmation and corridor-security information and never executes. The focused cross-mode suite passes `10 / 10`, source growth passes `17 / 17`, and the architecture entrypoint passes `23` suites with zero compiler errors. Equal-action mission/runtime facts remain unchanged, protected dense-city outputs are unchanged, and exact log hashes are recorded in `m01dc_026_guidance_modes.json`.
 
-- [ ] **M01DC-027 - Replace the FirstLaunch menu handoff with typed M01 launch**
+- [x] **M01DC-027 - Replace the FirstLaunch menu handoff with typed M01 launch**
   **Depends on:** M01DC-015, M01DC-018, M01DC-026.
   **Deliverable:** normal-complete, skip, and interrupted `HandoffPending` flows persist identity/guidance then request the same validated M01 payload without entering Main Menu.
   **Acceptance:** all paths reach M01 once; resume cannot lose or duplicate the launch; unrelated returning-player/menu startup is unchanged; failed mission readiness returns to an explicit recoverable state rather than falsely completing FirstLaunch.
   **Evidence:** normal/skip/interruption/crash/restart/no-menu-frame tests and captures, clean pushed head.
+
+  **Ownership amendment (2026-08-13):** add only the stateless typed handoff operation, additive persisted correlation fields/normalization, append-only `EnterMission`, and narrow changes to the existing FirstLaunch composition/profile/shell and startup-cover seams, affected integration expectations, dedicated Editor/PlayMode tests, exact-path matrix, tracker, and compact evidence. `CampaignMissionLaunchSystem` remains the sole launch acceptor/runtime writer. No menu request, static scene bridge, second state owner, map/scene/config/reward change, or protected dense-city output is authorized.
+
+  **Accepted evidence (2026-08-14):** normal completion, skip, and persisted `HandoffPending` resume now create the same typed FirstLaunch-origin M01 payload and hold the startup cover in `EnterMission`; no Main Menu route is emitted. Correlation is persisted before publication, accepted results alone complete FirstLaunch, rejection retries are bounded at three, and restart reuses the same transition/session identity. Focused handoff passes `5 / 5`, inherited FirstLaunch Gate 89 passes, cross-frame PlayMode passes `1 / 1`, source growth passes `17 / 17` without an exception, and architecture passes `23` suites with compiler zero. Generated validation outputs were restored and protected dense-city outputs are unchanged; exact hashes are recorded in `m01dc_027_first_launch_handoff.json`.
 
 - [ ] **M01DC-028 - Integrate brief, comms, debrief, and command-base reveal**
   **Depends on:** M01DC-020, M01DC-024, M01DC-027.
@@ -595,6 +599,7 @@ Unity licensing, wrapper, device connection, disk space, or bounded tool interru
 | 2026-08-13 | M01DC-024 | Added the sole Campaign progress/reward writer with injected atomic persistence, configuration-projected first-clear/replay rewards, schema-v2 historical token idempotency, best metrics, resume clearing, canonical M02 reveal, and origin-preserving retry routes. Settlement `13 / 13`, progress regression `15 / 15`, Phase 7 `19 / 19`, source growth `17 / 17`, and architecture `23` suites pass with compiler zero and restored incidental outputs. | enclosing M01DC-024 acceptance commit | Accepted |
 | 2026-08-13 | M01DC-025 | Added Full-mode mission guidance as one unmanaged projection reader over mission/objective/map state. Existing ARIA owners retain recommendation and typed Show Me/Do It command authority; guidance writes no gameplay truth. Guidance `7 / 7`, ARIA `10 / 10`, Phase 7 `19 / 19`, source growth `17 / 17`, architecture `23` suites, compiler zero, deterministic inventory, protected-path, and restored-output checks pass. | enclosing M01DC-025 acceptance commit | Accepted |
 | 2026-08-13 | M01DC-026 | Added Contextual cooldown-based hint escalation and mandatory-information-only Minimal projection through the existing sole guidance writer. Cross-mode equal-action gameplay truth is unchanged. Guidance `10 / 10`, source growth `17 / 17`, architecture `23` suites, compiler zero, protected-path, and restored-output checks pass. | enclosing M01DC-026 acceptance commit | Accepted |
+| 2026-08-14 | M01DC-027 | Replaced the FirstLaunch Main Menu handoff with a persisted, typed, correlated M01 request for normal, skip, and resume paths. Completion waits for the sole launch owner's accepted result; retries are bounded and restart-safe. Focused `5 / 5`, Gate 89, PlayMode `1 / 1`, source growth `17 / 17`, architecture `23` suites, compiler zero, protected-path, restored-output, and diff checks pass. | enclosing M01DC-027 acceptance commit | Accepted |
 
 Implementation entries are appended only after an item is accepted and pushed. The final row must record M01DC-043, the final main/origin head, 43/43 progress, Android package/device identities, agent-QA/finding closure, validation summary, and clean worktree state.
 

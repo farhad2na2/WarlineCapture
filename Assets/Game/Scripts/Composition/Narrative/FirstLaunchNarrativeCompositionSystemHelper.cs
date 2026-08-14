@@ -36,8 +36,10 @@ namespace Game.Composition
         private bool awaitingLanguage;
         private bool sequenceEventsBound;
         private bool skipConfirmationPending;
+        private Game.Missions.Contracts.MissionLaunchPayload missionHandoff;
+        private bool missionHandoffActive, missionHandoffPublished;
+        private byte missionHandoffRejections;
         private string skipConfirmationReviewerStateId = string.Empty;
-        public event Action MenuHandoffRequested;
         public event Action<bool> SkipConfirmationVisibilityChanged;
 
         public bool IsPlaying => initialized && sequencePresentation.IsRunning;
@@ -95,9 +97,9 @@ namespace Game.Composition
 
             if (profileComposition.ShouldResumeHandoff(startInReviewerMode))
             {
-                view?.SetVisible(false);
+                view?.SetVisible(true);
                 languageChoiceView?.SetVisible(false);
-                shellComposition.RequestHandoff();
+                BeginMissionHandoff(0);
                 LogStartupDisposition(FirstLaunchNarrativeStartupDisposition.ResumeHandoff);
                 return FirstLaunchNarrativeStartupDisposition.ResumeHandoff;
             }
@@ -153,17 +155,16 @@ namespace Game.Composition
                 return;
             sequencePresentation.Tick(unscaledDeltaTime);
             reviewPresentation.Tick();
-            if (shellComposition.TryPublishHandoff())
-            {
-                profileComposition.MarkHandoffComplete();
-                view?.SetVisible(false);
-                MenuHandoffRequested?.Invoke();
-            }
         }
 
         public void ApplyShellState(EntityManager entityManager, Entity boundary)
         {
             shellComposition.Apply(entityManager, boundary);
+            if (!missionHandoffActive) return;
+            FirstLaunchMissionHandoffState state = FirstLaunchMissionHandoffOperation.Advance(
+                entityManager, missionHandoff, ref missionHandoffPublished, ref missionHandoffRejections);
+            if (state == FirstLaunchMissionHandoffState.Accepted && profileComposition.MarkMissionAccepted(missionHandoff))
+            { missionHandoffActive = false; view?.SetVisible(false); }
         }
 
         public static void ResetShellState(EntityManager entityManager, Entity boundary)
@@ -203,7 +204,7 @@ namespace Game.Composition
             view?.SkipConfirmationView?.SetVisible(false);
             SkipConfirmationVisibilityChanged?.Invoke(false);
             sequencePresentation.Cancel();
-            shellComposition.RequestHandoff();
+            BeginMissionHandoff(0);
         }
 
         public void CancelSkip()
@@ -247,6 +248,7 @@ namespace Game.Composition
             reviewerMode = false;
             awaitingLanguage = false;
             sequenceEventsBound = false;
+            missionHandoff = default; missionHandoffActive = false; missionHandoffPublished = false; missionHandoffRejections = 0;
             profileComposition.Reset();
         }
 
@@ -371,7 +373,7 @@ namespace Game.Composition
                     break;
                 case FirstLaunchNarrativeRouteAction.CompleteWatchedAndRequestMenu:
                     profileComposition.MarkWatchedHandoff(result);
-                    shellComposition.RequestHandoff();
+                    BeginMissionHandoff(result.TransitionToken);
                     break;
             }
         }
@@ -409,6 +411,14 @@ namespace Game.Composition
             view?.SetSkipState(false, false, sequencePresentation.SkipLabel);
             view?.SkipConfirmationView?.SetVisible(true);
             SkipConfirmationVisibilityChanged?.Invoke(true);
+        }
+
+        private void BeginMissionHandoff(ulong transitionToken)
+        {
+            missionHandoff = profileComposition.PrepareMissionHandoff(transitionToken);
+            missionHandoffActive = true; missionHandoffPublished = false; missionHandoffRejections = 0;
+            shellComposition.RequestHandoff();
+            view?.SetVisible(true);
         }
 
         private FirstLaunchNarrativeStartupDisposition ResolveCurrentDisposition()

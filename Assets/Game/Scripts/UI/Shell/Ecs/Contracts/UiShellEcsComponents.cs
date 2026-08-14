@@ -12,7 +12,8 @@ namespace Game.UI.Shell.Contracts.Ecs
     {
         Pending = 0,
         FirstLaunch = 1,
-        EnterMenu = 2
+        EnterMenu = 2,
+        EnterMission = 3
     }
 
     public struct UiShellStartupDispositionComponent : IComponentData

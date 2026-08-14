@@ -30,7 +30,7 @@ public static class FirstLaunchGate89Validation
             compositionBoundaries.ProfileBoundary_ProjectsStartupDispositionWithoutUiOrEcs();
             compositionBoundaries.ProfileBoundary_PersistsProductionChoicesAndHandoffState();
             compositionBoundaries.ProfileBoundary_ReviewerChoicesDoNotMutateSavedProfile();
-            compositionBoundaries.ShellBoundary_ReleasesStartupToMenuWithoutRouteRequest();
+            compositionBoundaries.ShellBoundary_HoldsStartupForTypedMissionWithoutRouteRequest();
 
             FirstLaunchNarrativeRouteUtilitySystemHelperTests routes = new();
             routes.HandoffRule_SeparatesProductionReviewerAndDebriefRoutes();

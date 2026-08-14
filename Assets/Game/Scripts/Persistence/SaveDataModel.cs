@@ -46,6 +46,9 @@ namespace Game.Runtime
         public string firstLaunchLanguage = nameof(Game.Narrative.Contracts.FirstLaunchNarrativeLanguage.Unselected);
         public bool firstLaunchWatched;
         public bool firstLaunchSkipped;
+        public ulong firstLaunchMissionTransitionToken;
+        public string firstLaunchMissionSessionToken = string.Empty;
+        public int firstLaunchMissionAttemptOrdinal;
         public CampaignMissionProgressSaveData[] campaignMissionProgress =
             Array.Empty<CampaignMissionProgressSaveData>();
     }

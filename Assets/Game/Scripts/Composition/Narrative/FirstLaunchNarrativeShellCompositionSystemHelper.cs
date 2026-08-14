@@ -27,17 +27,7 @@ namespace Game.Composition
         {
             handoffPending = true;
             handoffPublished = false;
-        }
-
-        public bool TryPublishHandoff()
-        {
-            if (!handoffPending || handoffPublished)
-                return false;
-
-            handoffPending = false;
-            handoffPublished = true;
-            startupDisposition = UiShellStartupDisposition.EnterMenu;
-            return true;
+            startupDisposition = UiShellStartupDisposition.EnterMission;
         }
 
         public void Apply(EntityManager entityManager, Entity boundary)
@@ -53,7 +43,8 @@ namespace Game.Composition
                 }
             }
 
-            if (startupDisposition == UiShellStartupDisposition.FirstLaunch &&
+            if ((startupDisposition == UiShellStartupDisposition.FirstLaunch ||
+                 startupDisposition == UiShellStartupDisposition.EnterMission) &&
                 entityManager.HasComponent<UiShellLoadingProgressComponent>(boundary))
             {
                 UiShellLoadingProgressComponent loading =

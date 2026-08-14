@@ -1,0 +1,90 @@
+{
+  "artifactId": "m01dc-034-transition-lifecycle-v1",
+  "taskId": "M01DC-034",
+  "status": "accepted",
+  "date": "2026-08-14",
+  "headBefore": "4daa0472ef492e830723f03244c42739831c2823",
+  "validator": {
+    "type": "M01FirstContactRuntimePlayModeTests",
+    "wrapper": "Tools/CI/InvokeUnity.ps1",
+    "testPlatform": "PlayMode",
+    "testFilter": "M01FirstContactRuntimePlayModeTests",
+    "licensingMode": "batchmode recovery fallback authorized by AGENTS.md",
+    "timeoutSeconds": 1800,
+    "requiredSuccessMarker": "Test run completed. Exiting with code 0 (Ok). Run completed.",
+    "result": "Passed",
+    "total": 18,
+    "passed": 18,
+    "failed": 0,
+    "inconclusive": 0,
+    "skipped": 0,
+    "durationSeconds": 0.5123646,
+    "compilerErrorCount": 0,
+    "compilerWarningCount": 0
+  },
+  "caseMatrix": [
+    {"id": "M01TL-01", "test": "NormalFirstLaunchQueuesExactlyOnceWithoutMenuRoute", "concern": "normal FirstLaunch handoff is EnterMission exactly once with no Main Menu request", "observed": "Passed"},
+    {"id": "M01TL-02", "test": "SkipAndNormalProduceEqualM01Payloads", "concern": "normal and skip produce equivalent M01 launch identity", "observed": "Passed"},
+    {"id": "M01TL-03", "test": "InterruptedFirstLaunchReusesPersistedCorrelation", "concern": "interrupted FirstLaunch resumes the persisted correlation without duplication", "observed": "Passed"},
+    {"id": "M01TL-04", "test": "FullGuidanceProjectsActionableHelpWithoutGameplayMutation", "concern": "Full guidance projects help without writing gameplay truth", "observed": "Passed"},
+    {"id": "M01TL-05", "test": "ContextualGuidanceEscalatesOnlyPresentation", "concern": "Contextual escalation changes presentation only", "observed": "Passed"},
+    {"id": "M01TL-06", "test": "MinimalGuidancePublishesMandatoryInformationOnly", "concern": "Minimal guidance retains mandatory information only", "observed": "Passed"},
+    {"id": "M01TL-07", "test": "CampaignReplayTutorialDefaultsOffAndMayOptIn", "concern": "Campaign replay tutorial defaults off and accepts explicit opt-in", "observed": "Passed"},
+    {"id": "M01TL-08", "test": "FirstClearAndReplayReturnToOwnedDestinations", "concern": "first clear and replay preserve their owned return destinations", "observed": "Passed"},
+    {"id": "M01TL-09", "test": "MigrationRestartAndSettlementRemainExactlyOnce", "concern": "migration, restart, and settlement remain idempotent", "observed": "Passed"},
+    {"id": "M01TL-10", "test": "LegacySkirmishDefaultsRemainUnrestricted", "concern": "legacy Skirmish defaults and menu route remain unchanged", "observed": "Passed"},
+    {"id": "M01TL-11", "test": "RetryRemovesPriorAttemptAndLocalQueues", "concern": "retry removes the prior attempt and attempt-local queues", "observed": "Passed"},
+    {"id": "M01TL-12", "test": "EightRetriesKeepEntityPoolAndQueueCountsStable", "concern": "eight retries preserve bounded entity, pool, and queue counts", "observed": "Passed"},
+    {"id": "M01TL-13", "test": "UnloadDisposesCatalogAndMissionEntities", "concern": "unload disposes the owned catalog blob and mission entities", "observed": "Passed"},
+    {"id": "M01TL-14", "test": "AmbientRetryAndTeardownCountsRemainStable", "concern": "ambient presentation is bounded across retry and teardown", "observed": "Passed"},
+    {"id": "M01TL-15", "test": "StableAmbientPresentationAllocatesZeroManagedBytes", "concern": "stable ambient presentation allocates zero managed bytes", "observed": "Passed"},
+    {"id": "M01TL-16", "test": "InvalidLaunchRemainsFailClosedAcrossFrame", "concern": "invalid launches remain rejected across a frame", "observed": "Passed"},
+    {"id": "M01TL-17", "test": "FirstLaunchRequestRemainsExactlyOnceAcrossFrames", "concern": "FirstLaunch request count remains exactly one across frames", "observed": "Passed"},
+    {"id": "M01TL-18", "test": "ActiveMissionExitPersistsResumeCleansAttemptAndRoutesExactlyOnce", "concern": "pause Exit persists resume, cleans attempt state, and routes exactly once only after acceptance", "observed": "Passed"}
+  ],
+  "runEvidence": {
+    "log": "%TEMP%/warline-m01dc034-playmode-final.log",
+    "logSha256": "203a955fb7b2e0159b32c7c7daaa6fdaba41c7224997bd91b4fdf7973a755fe1",
+    "results": "%TEMP%/warline-m01dc034-playmode-final-results.xml",
+    "resultsSha256": "e46ae5a089b72468434a18bfd815688ceafff10127ea3a889d28ab4e19fd16ef"
+  },
+  "architectureEvidence": {
+    "sourceGrowthMethod": "ProductionSourceGrowthArchitectureTests.RunFocusedValidation",
+    "sourceGrowthMarker": "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17",
+    "sourceGrowthLog": "%TEMP%/warline-m01dc034-source-growth-r4.log",
+    "sourceGrowthLogSha256": "578b7e334086089aef29daadaff34e1a54f12f2ba2f723ded629657f060d97f6",
+    "architectureMethod": "ArchitectureHardeningCloseoutValidationRunner.RunFocusedValidation",
+    "architectureMarker": "[ArchitectureHardeningCloseoutValidation] result=Passed suites=23",
+    "architectureLog": "%TEMP%/warline-m01dc034-architecture.log",
+    "architectureLogSha256": "e0eb5bf094bb6866e5380aa2833d00f0e01cd5eb2ed126bc9f2dd3181af3e11b",
+    "compilerErrors": 0,
+    "sourceGrowthExceptionsAddedOrEnlarged": 0
+  },
+  "recoveryAudit": {
+    "rejectedGuiRun": "The GUI-licensing wrapper restart produced no results XML or readable success marker and is not acceptance evidence.",
+    "rejectedBehaviorRuns": "The first Exit replay failed on a stale ECS buffer after structural cleanup; the next failed because repeated accepted Exit added a duplicate Pause-hide request. Both failures were corrected and are not acceptance evidence.",
+    "rejectedArchitectureRuns": "Source growth rejected the reserved SystemHelper suffix and a 3-line/115-byte dispatcher regrowth; Burst compilation rejected managed persistence in the Burst path. The utility was renamed, the dispatcher shrank below its existing ratchet, and Exit persistence moved behind a void Burst-discarded managed boundary without an exception.",
+    "verifiedRecovery": "Only wrapper-owned WarlineCapture Editors and the verified stale licensing client were closed. The exact Hub 1.17.4 versus Editor 1.18.1 LocalIPC mismatch was observed; the checked non-GUI wrapper then used the versioned Unity-LicenseClient-zfoul-6000.5.2 fallback. Unity Hub and Package Manager remained open and untouched.",
+    "acceptedReplay": "The final checked wrapper replay passed fail closed with the exact 18-test result and success marker."
+  },
+  "scopeAudit": {
+    "allowedPathCount": 10,
+    "productionSourceChanges": 4,
+    "productionSourcePaths": [
+      "Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.cs",
+      "Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs",
+      "Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestDispatchSystemHelper.cs",
+      "Assets/Game/Scripts/UI/Shell/Ecs/CampaignMissionExitDispatchUtility.cs"
+    ],
+    "missionOrScenarioAssetChanges": 0,
+    "denseCityPhysicalChanges": 0,
+    "vrpOrCapacityChanges": 0,
+    "addressablesChanges": 0,
+    "packagesChanges": 0,
+    "projectSettingsChanges": 0,
+    "toolsCiChanges": 0,
+    "exceptionsAddedOrEnlarged": 0,
+    "protectedIncidentalOutputsRestored": 7,
+    "result": "Passed"
+  }
+}

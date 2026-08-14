@@ -1,3 +1,4 @@
+using System;
 using Game.Components;
 using Game.Missions.Contracts;
 using Unity.Burst;
@@ -79,6 +80,82 @@ namespace Game.Runtime
                     AttemptOrdinal = request.AttemptOrdinal,
                     ReasonCode = reason
                 });
+            return true;
+        }
+
+        [BurstDiscard]
+        public static void TryConsumeActionManaged(
+            EntityManager entityManager, Entity root, ref bool consumed)
+        {
+            if (!entityManager.HasComponent<CampaignMissionRuntimeComponent>(root) ||
+                !entityManager.HasBuffer<CampaignMissionActionRequestElement>(root) ||
+                !entityManager.HasBuffer<CampaignMissionActionResultElement>(root))
+                return;
+            DynamicBuffer<CampaignMissionActionRequestElement> requests =
+                entityManager.GetBuffer<CampaignMissionActionRequestElement>(root);
+            if (requests.Length == 0 || requests[0].Action != MissionActionKind.Exit)
+            {
+                consumed = TryConsumeAction(entityManager, root);
+                return;
+            }
+
+            CampaignMissionActionRequestElement request = requests[0];
+            requests.RemoveAt(0);
+            CampaignMissionRuntimeComponent runtime =
+                entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root);
+            bool correlated = request.TransitionToken == runtime.TransitionToken &&
+                              request.SessionToken.Equals(runtime.SessionToken) &&
+                              request.AttemptOrdinal == runtime.AttemptOrdinal;
+            FixedString64Bytes reason = default;
+            bool accepted = correlated && TryExit(entityManager, root, in runtime, out reason);
+            if (!correlated)
+                reason = new FixedString64Bytes("stale-exit-action");
+            entityManager.GetBuffer<CampaignMissionActionResultElement>(root).Add(
+                new CampaignMissionActionResultElement
+                {
+                    Action = request.Action,
+                    Accepted = accepted ? (byte)1 : (byte)0,
+                    TransitionToken = request.TransitionToken,
+                    SessionToken = request.SessionToken,
+                    AttemptOrdinal = request.AttemptOrdinal,
+                    ReasonCode = reason
+                });
+            consumed = true;
+        }
+
+        private static bool TryExit(
+            EntityManager entityManager, Entity root, in CampaignMissionRuntimeComponent runtime,
+            out FixedString64Bytes reason)
+        {
+            reason = default;
+            if (runtime.Phase < MissionPhaseKind.Preparing || runtime.Phase > MissionPhaseKind.SecureCorridor ||
+                !entityManager.HasComponent<CampaignMissionProgressStoreReferenceComponent>(root))
+            {
+                reason = new FixedString64Bytes("exit-unavailable");
+                return false;
+            }
+
+            CampaignMissionProgressStore store = entityManager
+                .GetComponentObject<CampaignMissionProgressStoreReferenceComponent>(root).Store;
+            try
+            {
+                if (store == null)
+                    throw new InvalidOperationException("Campaign mission progress store is unavailable.");
+                store.SetPendingResume(runtime.MissionId.ToString(), true, runtime.AttemptOrdinal);
+            }
+            catch (Exception)
+            {
+                reason = new FixedString64Bytes("exit-persistence-failed");
+                return false;
+            }
+
+            EntityCommandBuffer cleanup = new(Allocator.Temp);
+            CampaignMissionLaunchSystem.QueueAttemptCleanup(entityManager, ref cleanup, root);
+            cleanup.Playback(entityManager);
+            cleanup.Dispose();
+            if (entityManager.HasComponent<CampaignMissionAttemptFactsComponent>(root))
+                entityManager.SetComponentData(root, default(CampaignMissionAttemptFactsComponent));
+            entityManager.SetComponentData(root, default(CampaignMissionRuntimeComponent));
             return true;
         }
 

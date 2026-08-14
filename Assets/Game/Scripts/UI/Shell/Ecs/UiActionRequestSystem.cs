@@ -48,15 +48,11 @@ namespace Game.UI.Shell.Ecs
             if (actionRequests.Length == 0)
                 return;
 
-            Game.Runtime.AudioEventRequestSystem.EnsureAudioEntity(state.EntityManager);
+            using NativeArray<UiActionRequestComponent> pending = actionRequests.ToNativeArray(Allocator.Temp);
+            actionRequests.Clear();
 
-            actionRequests = state.EntityManager.GetBuffer<UiActionRequestComponent>(boundary);
-            DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests =
-                state.EntityManager.GetBuffer<RtsSelectionCommandIntentRequestElement>(selectionInput);
-            DynamicBuffer<UiShellPopupRequestComponent> popupRequests =
-                state.EntityManager.GetBuffer<UiShellPopupRequestComponent>(boundary);
-            DynamicBuffer<UiShellRouteRequestComponent> routeRequests =
-                state.EntityManager.GetBuffer<UiShellRouteRequestComponent>(boundary);
+            AudioEventRequestSystem.EnsureAudioEntity(state.EntityManager);
+
             UiMatchHudPassengerDrawerStateComponent passengerDrawerState =
                 state.EntityManager.GetComponentData<UiMatchHudPassengerDrawerStateComponent>(boundary);
             UiMatchHudSquadTrayStateComponent squadTrayState =
@@ -86,10 +82,13 @@ namespace Game.UI.Shell.Ecs
                 CanPresentResourceExchange(shellState, matchIntroInputLocked);
             int frame = UnityEngine.Time.frameCount;
 
-            for (int i = 0; i < actionRequests.Length; i++)
+            for (int i = 0; i < pending.Length; i++)
             {
+                DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests = state.EntityManager.GetBuffer<RtsSelectionCommandIntentRequestElement>(selectionInput);
+                DynamicBuffer<UiShellPopupRequestComponent> popupRequests = state.EntityManager.GetBuffer<UiShellPopupRequestComponent>(boundary);
+                DynamicBuffer<UiShellRouteRequestComponent> routeRequests = state.EntityManager.GetBuffer<UiShellRouteRequestComponent>(boundary);
                 UiActionRequestDispatchSystemHelper.ProcessRequest(
-                    actionRequests[i],
+                    pending[i],
                     ref inputState,
                     ref queue,
                     commandRequests,
@@ -102,6 +101,7 @@ namespace Game.UI.Shell.Ecs
                     hasResourceExchangeState,
                     canPresentResourceExchange,
                     state.EntityManager,
+                    boundary,
                     resourceExchangeRequestEntity,
                     resourceExchangeRuntimeState,
                     hasResourceExchangeRequestEntity,
@@ -109,7 +109,6 @@ namespace Game.UI.Shell.Ecs
                     state.World);
             }
 
-            actionRequests.Clear();
             state.EntityManager.SetComponentData(boundary, passengerDrawerState);
             state.EntityManager.SetComponentData(boundary, squadTrayState);
             if (hasResourceExchangeState)

@@ -25,6 +25,7 @@ namespace Game.UI.Shell.Ecs
             bool hasResourceExchangeState,
             bool canPresentResourceExchange,
             EntityManager entityManager,
+            Entity uiBoundary,
             Entity resourceExchangeRequestEntity,
             in ResourceExchangeEnabledComponent resourceExchangeRuntimeState,
             bool hasResourceExchangeRequestEntity,
@@ -34,6 +35,9 @@ namespace Game.UI.Shell.Ecs
             switch (request.Kind)
             {
                 case UiActionKind.MatchMenu:
+                    if (CampaignMissionExitDispatchUtility.TryHandle(
+                            entityManager, uiBoundary, request.PayloadId))
+                        break;
                     // Route changes issued from the pause modal must close that modal first.
                     // Otherwise the shell can begin its loading transition while the popup
                     // presentation sequence still owns the popup layer, leaving the loading

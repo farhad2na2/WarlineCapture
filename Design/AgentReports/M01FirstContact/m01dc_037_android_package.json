@@ -1,0 +1,62 @@
+{
+  "artifactId": "m01dc-037-android-package-v1",
+  "taskId": "M01DC-037",
+  "status": "dependency_ready_partial",
+  "accepted": false,
+  "date": "2026-08-14",
+  "head": "89865295b006a39680b75476ba7702d948acc51c",
+  "originHead": "89865295b006a39680b75476ba7702d948acc51c",
+  "package": {
+    "path": "Build/AndroidAPK/WarlineCapture.apk",
+    "applicationId": "com.warlinecapture.game",
+    "versionCode": 1,
+    "versionName": "0.1.0",
+    "minSdk": 26,
+    "targetSdk": 36,
+    "bytes": 558886169,
+    "sha256": "e2f02601c41efb9a6824038395e3db4d7f8ccb0b150a3b5201381530710719e2",
+    "freshExactHead": true
+  },
+  "build": {
+    "wrapper": "Tools/CI/InvokeUnityExecuteMethodValidation.ps1",
+    "method": "Game.Editor.BuildScript.BuildProductionAndroidApk",
+    "target": "Android",
+    "timeoutSeconds": 7200,
+    "requiredMarker": "[ProductionAndroidPackage] result=Passed",
+    "log": "%TEMP%/warline-m01dc037-exact-head-production-android.log",
+    "logSha256": "9e01aa63d5855af8ed498f23d7995b0c96ed26bddd8cbf689f7d415008443870",
+    "result": "Passed"
+  },
+  "validation": {
+    "burstAotSource": { "passed": 3, "total": 3, "logSha256": "a68dbd19a47b6d59d429e24f8a71ba23dd065674725fe4cbf45c29548b7a23e5" },
+    "guidance": { "passed": 10, "total": 10, "logSha256": "9dd06f86d51831102c373f36c8dfacb6b8516ecf026586189eac8ab49c44e70e" },
+    "runtimePlayMode": { "passed": 18, "total": 18, "failed": 0, "skipped": 0, "inconclusive": 0, "logSha256": "dffc7dd9b3e807296599572c19d9d447187237f38b4886521f6c2446ba0978d2", "resultsSha256": "c0ac13dc1d1c76d593502d986412580abbae30c6297073d174ac33869d9499b2" },
+    "sourceGrowth": { "passed": 17, "total": 17, "logSha256": "984f112f835edba7e9c0d39ed4f03e6f1c977f4538ea00d783e2eed7a18227d2" },
+    "architecture": { "passedSuites": 23, "logSha256": "0acaa134911571eba5dfa9c5a55f1584461b74ca5ffd99c459753381a4d89b54" }
+  },
+  "device": {
+    "adbPath": "Editor/Data/PlaybackEngines/AndroidPlayer/SDK/platform-tools/adb.exe",
+    "probeResult": "zero_attached_devices",
+    "canonicalDevice": "Samsung SM-S918B R5CTC1J02VB",
+    "installExecuted": false,
+    "launchExecuted": false,
+    "identityVerified": false,
+    "acceptanceOpen": true
+  },
+  "rejectedRuns": [
+    "GUI-licensing focused validation timed out before project initialization and was rejected; the checked non-GUI fallback passed.",
+    "Two PlayMode invocations exited before creating XML due to argument binding and an early -quit flag; neither launched an accepted test run.",
+    "The first successful AOT package was built from the pre-commit correction tree and was rejected for exact-head provenance; the recorded package is the subsequent clean pushed-head rebuild."
+  ],
+  "cleanup": {
+    "restoredGeneratedTrackedPaths": [
+      "Design/AgentReports/architecture_performance_android_apk_build_report.json",
+      "Design/AgentReports/architecture_performance_android_apk_build_report.md",
+      "Design/AgentReports/operation_map_addressables_build_report.json"
+    ],
+    "protectedSourceChanges": 0,
+    "denseCityOrVrpChanges": 0,
+    "gateOrThresholdChanges": 0
+  },
+  "openAcceptance": "Attach an authorized Android device, then install this exact package, launch it, verify package/head/device identity, and rerun if any production input changes."
+}

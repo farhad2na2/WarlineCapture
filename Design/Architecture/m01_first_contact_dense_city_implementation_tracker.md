@@ -512,6 +512,8 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
   **Acceptance:** steady-state 0 B/frame, no unbounded query/hierarchy search, no proxy overflow/deficit, no lifecycle growth, and no regression relative to the accepted dense-city baseline.
   **Evidence:** instrumentation report and focused performance logs, clean pushed head.
 
+  **Exact-path metadata/tracker correction (2026-08-14):** the frozen M01DC-036 list names the planned PlayMode performance test and bounded instrumentation report but omits the test's mandatory deterministic Unity `.meta` file and the tracker/matrix paths required to record the item honestly. Add only those three exact paths. No production source, performance budget, dense-city/VRP capacity or threshold, mission/scenario/map data, scene, prefab, Addressables output, package, project setting, CI wrapper, or protected output changes.
+
 - [ ] **M01DC-037 - Build, hash, and install a fresh checked Android package**
   **Depends on:** M01DC-036.
   **Deliverable:** exact-head gameplay-QA candidate Android package built through checked wrappers with provenance, SHA-256, package metadata, installation, launch, and device identity.

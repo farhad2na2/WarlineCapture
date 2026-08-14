@@ -414,6 +414,8 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
   **Acceptance:** narrative emits typed requests only; the brief continues the exact FirstLaunch Courier/Warden/Broker threat; the debrief reveals coordination and a revoked credential trace without revealing or proxying Qassem; skip/reduced-motion/subtitles work; first clear cannot return to Main Menu/Campaign by mistake; replay does not automatically replay the cold open.
   **Evidence:** sequence/route/accessibility/interruption tests and representative captures, clean pushed head.
 
+  **Ownership amendment (2026-08-14):** add only the deterministic `Assets/Game/Configs/Narrative/Chapter01.meta` required by the already-authorized narrative asset directory, plus this tracker and the exact-path matrix so M01DC-028 acceptance can be recorded. Same-name asset/test metadata remains covered by the frozen implicit-meta rule. No runtime owner, UI prefab, scene, map, reward, Campaign state, source-growth exception, package, project setting, or protected dense-city output is authorized.
+
 ### Phase F - Campaign Operations, Briefing, HUD, And Result UI
 
 - [ ] **M01DC-029 - Make Campaign Operations data-driven for M01**
